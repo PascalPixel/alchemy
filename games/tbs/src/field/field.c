@@ -6147,6 +6147,8 @@ void DisplayBlend_DisableRunScript(void) {
   Scheduler_DisableCallbacks(DisplayBlend_RunScript);
 }
 
+// Allocates the palette cycling queue (heap slot 28) with its four entries
+// cleared.
 void Runtime_AllocateAndClearQueue(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -6169,6 +6171,9 @@ void Runtime_AllocateAndClearQueue(void) {
   queue->count = 0;
 }
 
+// Adds a palette cycle: count colours of background palette bank from
+// colour index, rotated by one every delay + 1 frames. Returns 0, or -1
+// when all four cycles are taken.
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count) {
   struct PaletteSnapshotWork *work;
   struct PaletteSnapshot *entry;
@@ -6193,15 +6198,19 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count) {
   return 0;
 }
 
+// Stops the palette cycles and frees their queue (heap slot 28).
 void Runtime_ScheduleCallbackAndReleaseBlock28(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(0x1C);
 }
 
+// Starts running the palette cycles each frame.
 void Scheduler_ScheduleCallbackBAfterFrames(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
+// Each frame: advances each palette cycle whose timer has run out by one
+// colour, writing the rotated colours back to the palette.
 void PaletteQueue_StepCycles(void) {
   struct PaletteSnapshotWork *work = gPaletteWork;
   u8 i;
@@ -6232,35 +6241,43 @@ void PaletteQueue_StepCycles(void) {
   }
 }
 
+// The terrain height functions (gMap_TerrainHeightFunctions): each takes a
+// cell's height samples after its kind byte and a pixel (x, y) within the
+// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
+// is flat: the first sample everywhere.
 s32 Curve_GetFirstSampleA(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 position) {
+// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
+s32 Curve_LerpTwoSamples(const s8 *samples, s32 x) {
   s32 start;
   s32 delta;
 
   start = samples[0] << CURVE_VALUE_SHIFT;
-  delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
+  delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * x;
   if (delta < 0) {
     delta += CURVE_FULL_STEPS - 1;
   }
   return start + (delta >> 4);
 }
 
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position) {
+// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
+s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y) {
   s32 base;
   s32 offset;
 
   base = samples[0] << CURVE_VALUE_SHIFT;
-  offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
+  offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * y;
   if (offset < 0) {
     offset += CURVE_FULL_STEPS - 1;
   }
   return base + (offset >> 4);
 }
 
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
+// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
+// it and the higher of the two on it.
+s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
@@ -6272,7 +6289,7 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
   if (second > first) {
     maximum = second;
   }
-  position = start + end;
+  position = x + y;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
   }
@@ -6282,12 +6299,14 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
+// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
+// y > x and the higher of the two on it.
+s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
   s32 difference;
-  u32 position = start;
+  u32 position = x;
 
   first = samples[0] << CURVE_VALUE_SHIFT;
   second = samples[1] << CURVE_VALUE_SHIFT;
@@ -6295,7 +6314,7 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
   if (second > first) {
     maximum = second;
   }
-  difference = end - position;
+  difference = y - position;
   position = difference + CURVE_FULL_STEPS - 1;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
@@ -6306,7 +6325,9 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
+// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
+// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
+s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 middle;
   s32 last;
@@ -6315,19 +6336,21 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
   first = *samples++ << CURVE_VALUE_SHIFT;
   middle = *samples << CURVE_VALUE_SHIFT;
   last = samples[1] << CURVE_VALUE_SHIFT;
-  start += end;
-  if (start == CURVE_FULL_STEPS - 1) {
+  x += y;
+  if (x == CURVE_FULL_STEPS - 1) {
     result = middle;
-  } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-    result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
+  } else if ((u32)x < CURVE_FULL_STEPS - 1) {
+    result = first + (middle - first) * x / (CURVE_FULL_STEPS - 1);
   } else {
-    start -= (CURVE_FULL_STEPS - 1);
-    result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
+    x -= (CURVE_FULL_STEPS - 1);
+    result = middle + (last - middle) * x / (CURVE_FULL_STEPS - 1);
   }
   return result;
 }
 
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
+// A slope that bends on the diagonal x = y: from sample 0 at the top right
+// corner to sample 1 on the diagonal to sample 2 at the bottom left.
+s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 third;
@@ -6337,16 +6360,16 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
   first = *samples++ << CURVE_VALUE_SHIFT;
   second = samples[0] << CURVE_VALUE_SHIFT;
   third = samples[1];
-  difference = end - start;
-  start = difference + CURVE_FULL_STEPS - 1;
+  difference = y - x;
+  x = difference + CURVE_FULL_STEPS - 1;
   third <<= CURVE_VALUE_SHIFT;
 
-  if (start == CURVE_FULL_STEPS - 1)
+  if (x == CURVE_FULL_STEPS - 1)
     return second;
 
-  if ((u32)start < CURVE_FULL_STEPS - 1) {
+  if ((u32)x < CURVE_FULL_STEPS - 1) {
     delta = second - first;
-    difference = delta * start;
+    difference = delta * x;
     if (difference < 0)
       difference += CURVE_FULL_STEPS - 1;
     difference >>= 4;
@@ -6359,41 +6382,47 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
   return second + difference;
 }
 
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
+// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
+// 1, sample 0 in the corners.
+s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 x, s32 y) {
   s32 start;
 
   start = samples[0] << CURVE_VALUE_SHIFT;
   return start + (((samples[1] << CURVE_VALUE_SHIFT) - start) *
-                  gCurve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+                  gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
-s32 Curve_StepAtHalf(const s8 *samples, u32 position) {
+// A step along x: sample 0 for x < 8, sample 1 from x = 8.
+s32 Curve_StepAtHalf(const s8 *samples, u32 x) {
   s32 value;
-  if (position < CURVE_HALF_STEPS)
+  if (x < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position) {
+// A step along y: sample 0 for y < 8, sample 1 from y = 8.
+s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 y) {
   s32 value;
-  if (position < CURVE_HALF_STEPS)
+  if (y < CURVE_HALF_STEPS)
     value = samples[0];
   else
     value = samples[1];
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
+// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
+// x = 8, towards sample 2 at x = 16.
+s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x) {
   s32 a;
   s32 b;
   s32 delta;
 
   a = *samples++ << CURVE_VALUE_SHIFT;
   b = *samples++ << CURVE_VALUE_SHIFT;
-  if (position < CURVE_HALF_STEPS) {
-    delta = (b - a) * position;
+  if (x < CURVE_HALF_STEPS) {
+    delta = (b - a) * x;
     if (delta < 0) {
       delta += CURVE_HALF_STEPS - 1;
     }
@@ -6404,7 +6433,7 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
     s32 pos;
 
     a = *samples << CURVE_VALUE_SHIFT;
-    pos = position;
+    pos = x;
     a -= b;
     pos -= CURVE_HALF_STEPS;
     delta = a * pos;
@@ -6415,7 +6444,8 @@ s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position) {
   }
 }
 
-s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
+// The same along y.
+s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y) {
   s32 a;
   s32 b;
   s32 pos;
@@ -6424,8 +6454,8 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
 
   a = *samples++ << CURVE_VALUE_SHIFT;
   b = *samples++ << CURVE_VALUE_SHIFT;
-  if (position < CURVE_HALF_STEPS) {
-    delta = (b - a) * position;
+  if (y < CURVE_HALF_STEPS) {
+    delta = (b - a) * y;
     if (delta < 0) {
       delta += CURVE_HALF_STEPS - 1;
     }
@@ -6433,7 +6463,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
   }
 
   a = *samples << CURVE_VALUE_SHIFT;
-  pos = position;
+  pos = y;
   a -= b;
   pos -= CURVE_HALF_STEPS;
   tail = a * pos;
@@ -6443,22 +6473,23 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position) {
   return b + (tail >> 3);
 }
 
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row) {
-  return samples[gCurve_SampleIndexTable[position + (row << 4)]]
+// The sample gCurve_SampleIndexTable picks for (x, y).
+s32 Curve_LookupSampleByTable(const s8 *samples, u32 x, u32 y) {
+  return samples[gCurve_SampleIndexTable[x + (y << 4)]] << CURVE_VALUE_SHIFT;
+}
+
+// The same, with the table mirrored left to right.
+s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 x, u32 y) {
+  return samples[gCurve_SampleIndexTable[((y << 4) - x) + CURVE_FULL_STEPS - 1]]
          << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position,
-                                      u32 row) {
-  return samples[gCurve_SampleIndexTable[((row << 4) - position) +
-                                         CURVE_FULL_STEPS - 1]]
-         << CURVE_VALUE_SHIFT;
-}
-
+// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleB(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
+// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleC(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
@@ -6467,6 +6498,8 @@ typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
 extern TerrainHeightFn gMap_TerrainHeightFunctions[16];
 
+// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
+// height function of the cell's terrain kind applied to its samples.
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapState *work = gMapWork[0];
   struct MapCell *cells;
@@ -6484,6 +6517,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
                                                          y & 15);
 }
 
+// Returns the terrain kind (the low four bits of the first collision byte)
+// of a layer's cell at (x, y) in 16.16 pixels.
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y) {
   struct MapState *state = gMapWork[0];
   struct MapCell *map;
@@ -6504,6 +6539,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y) {
   return *(Ram_MapCollision + attr * 4) & 15;
 }
 
+// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   struct MapState *state;
   struct MapCell *cells;
@@ -6519,6 +6555,7 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   return cells->collisionCode;
 }
 
+// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapState *state = gMapWork[0];
 
@@ -6532,6 +6569,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   }
 }
 
+// Returns the top two bits of the block word of the cell at pixel (x, y).
 s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 tileX = x / 16;
   s32 tileY = y / 16;
@@ -6541,6 +6579,9 @@ s32 Map_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
+// Returns whether an object can step to position: 2 when the cell there is
+// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
+// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
 s32 Map_CheckObjectStep(struct ObjectRuntime *object,
                         struct FieldPosition *position) {
   struct MapState *state;
@@ -6574,6 +6615,8 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   return 0;
 }
 
+// Returns 0 when the cell under position (its x, and y less its height) in
+// layer 2 is a wall (collision code 0xff), else -1.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   s32 x;
   s32 y;
@@ -6594,37 +6637,40 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   return (cell->collisionCode != 0xff) - 1;
 }
 
+// Returns the world map's collision value (1-15) at position: from the upper
+// collision layer where it has one, else the lower, else 7. Each layer is a
+// tile map of 4-bit collision pixels.
 s32 GetWorldMapCollision(struct WorldPosition *position) {
-  s32 x_step = position->x >> 17;
+  s32 stepX = position->x >> 17;
   s32 y = position->y;
-  s32 y_step = y >> 17;
+  s32 stepY = y >> 17;
   u32 cell;
-  u32 pixel_offset;
+  u32 pixelOffset;
   u8 tile;
-  u8 packed_pixels;
+  u8 pixelPair;
   u32 result;
 
-  cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
-  pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
+  cell = (((stepY / 8) & 63) << 6) + ((stepX / 8) & 63);
+  pixelOffset = (((stepY / 2) & 3) << 1) + ((stepX / 4) & 1);
 
   tile = BG_SCREEN_BLOCK(10)[cell];
-  packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  pixelPair = *(Ram_MapCollision + 0x800 + (tile << 3) + pixelOffset);
+  if (pixelPair != 0) {
+    if (stepX & 2)
+      result = pixelPair >> 4;
     else
-      result = packed_pixels & 15;
+      result = pixelPair & 15;
     if (result != 0)
       return result;
   }
 
   tile = BG_SCREEN_BLOCK(8)[cell];
-  packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
-  if (packed_pixels != 0) {
-    if (x_step & 2)
-      result = packed_pixels >> 4;
+  pixelPair = *(Ram_MapCollision + (tile << 3) + pixelOffset);
+  if (pixelPair != 0) {
+    if (stepX & 2)
+      result = pixelPair >> 4;
     else
-      result = packed_pixels & 15;
+      result = pixelPair & 15;
     if (result != 0)
       return result;
   }
@@ -6632,6 +6678,8 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   return 7;
 }
 
+// Returns 0 when the world map at position can be walked on (collision 5 to
+// 12), else -1.
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
@@ -6639,6 +6687,9 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
   return -1;
 }
 
+// Returns the world map's terrain behaviour at position from
+// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
+// terrainKind.
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrainKind) {
   s32 selector = GetWorldMapCollision(position);
@@ -6668,36 +6719,43 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2) {
+// Shakes the screen: sets the map's x and y shake amplitude and its decay
+// (16.16), leaving any negative value unchanged.
+void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY,
+                                        s32 shakeDecay) {
   struct MapScrollWork *work;
 
   work = gMapWork[0];
-  if (value0 >= 0) {
-    work->shakeX = value0;
+  if (shakeX >= 0) {
+    work->shakeX = shakeX;
   }
-  if (value1 >= 0) {
-    work->shakeY = value1;
+  if (shakeY >= 0) {
+    work->shakeY = shakeY;
   }
-  if (value2 >= 0) {
-    work->shakeDecay = value2;
+  if (shakeDecay >= 0) {
+    work->shakeDecay = shakeDecay;
   }
 }
 
+// Waits until the screen shake has died down (both amplitudes under 1/256
+// pixel), at most 300 frames, then stops it.
 void Map_WaitWorkValuesBelow256(void) {
   struct MapScrollWork *work;
-  s32 cnt;
+  s32 frames;
 
   work = gMapWork[0];
-  cnt = 0;
+  frames = 0;
   if (work->shakeX > 255 || work->shakeY > 255) {
   wait:
     WaitFrames(1);
-    if (++cnt < 300 && (work->shakeX > 255 || work->shakeY > 255))
+    if (++frames < 300 && (work->shakeX > 255 || work->shakeY > 255))
       goto wait;
   }
   work->shakeDecay = 0;
 }
 
+// Runs TileMap_DrawRows from RAM on a and b, with the BG tile buffer's
+// second half and the decode buffer as its work areas.
 void Resource_RunCopiedDecoder(s32 a, s32 b) {
   u8 *base;
 

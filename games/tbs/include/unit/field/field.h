@@ -284,19 +284,19 @@ void Scheduler_ScheduleCallbackBAfterFrames(void);
 void PaletteQueue_StepCycles(void);
 
 s32 Curve_GetFirstSampleA(const s8 *samples);
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 position);
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position);
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end);
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end);
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end);
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end);
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row);
-s32 Curve_StepAtHalf(const s8 *samples, u32 position);
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position);
-s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position);
-s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position);
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row);
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row);
+s32 Curve_LerpTwoSamples(const s8 *samples, s32 x);
+s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 y);
+s32 Curve_StepAtSummedPosition(const s8 *samples, s32 x, s32 y);
+s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 x, s32 y);
+s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 x, s32 y);
+s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 x, s32 y);
+s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 x, s32 y);
+s32 Curve_StepAtHalf(const s8 *samples, u32 x);
+s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 y);
+s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 x);
+s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 y);
+s32 Curve_LookupSampleByTable(const s8 *samples, u32 x, u32 y);
+s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 x, u32 y);
 s32 Curve_GetFirstSampleB(const s8 *samples);
 s32 Curve_GetFirstSampleC(const s8 *samples);
 
@@ -312,7 +312,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position);
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position);
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrain_kind);
-void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2);
+void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY, s32 shakeDecay);
 void Map_WaitWorkValuesBelow256(void);
 void Resource_RunCopiedDecoder(s32 a, s32 b);
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,

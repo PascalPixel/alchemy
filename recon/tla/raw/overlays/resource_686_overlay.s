@@ -1,9 +1,9 @@
-	.set OVERLAY_686_ES_IT, 0
+	.set ANKOHL_RUINS_ES_IT, 0
 	.ifdef TLA_EDITION_ES
-	.set OVERLAY_686_ES_IT, 1
+	.set ANKOHL_RUINS_ES_IT, 1
 	.endif
 	.ifdef TLA_EDITION_IT
-	.set OVERLAY_686_ES_IT, 1
+	.set ANKOHL_RUINS_ES_IT, 1
 	.endif
 .syntax unified
 	.thumb
@@ -4506,7 +4506,7 @@ Func_02002438:
 .L_ja_0200ab24:
 	.4byte Func_020023d0
 	.else
-	.if OVERLAY_686_ES_IT
+	.if ANKOHL_RUINS_ES_IT
 	.balign 4
 	.global Func_02002438
 	.thumb_func

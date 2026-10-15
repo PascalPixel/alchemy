@@ -1,20 +1,20 @@
-	.set OVERLAY_6B5_DE_ES_FR_IT, 0
+	.set LOBBY_DE_ES_FR_IT, 0
 	.ifdef TLA_EDITION_DE
-	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.set LOBBY_DE_ES_FR_IT, 1
 	.endif
 	.ifdef TLA_EDITION_ES
-	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.set LOBBY_DE_ES_FR_IT, 1
 	.endif
 	.ifdef TLA_EDITION_FR
-	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.set LOBBY_DE_ES_FR_IT, 1
 	.endif
 	.ifdef TLA_EDITION_IT
-	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.set LOBBY_DE_ES_FR_IT, 1
 	.endif
 .syntax unified
 	.thumb
 	.section .text.x0200839c,"ax",%progbits
-	.if OVERLAY_6B5_DE_ES_FR_IT
+	.if LOBBY_DE_ES_FR_IT
 	.global Func_0200039c
 	.thumb_func
 Func_0200039c:

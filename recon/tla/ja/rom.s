@@ -4005,14 +4005,9 @@ Func_08101c7c:
 	.incbin "baserom.gba", 0x00101c84, 0x000000b8
 	.section .rom.00101d64, "ax"
 	.incbin "baserom.gba", 0x00101d64, 0x00002ccc
-	.section .rom.00104b2e, "ax"
-	.incbin "baserom.gba", 0x00104b2e, 0x00000002
-	.section .rom.00104b30, "ax"
-	.global UiIcon_CreateStatChangeArrow
-	.type UiIcon_CreateStatChangeArrow, %function
-	.thumb_func
-UiIcon_CreateStatChangeArrow:
-	.incbin "baserom.gba", 0x00104b30, 0x00000174
+	.section .rom.00104bd8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00104bd8, 0x000000cc
 	.section .rom.00104d34, "ax"
 	.incbin "baserom.gba", 0x00104d34, 0x0000004c
 	.section .rom.00104d80, "ax"

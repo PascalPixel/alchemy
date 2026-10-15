@@ -1,19 +1,28 @@
-/* Draft (tla-en): listing 326 instructions, draft 326, common 314, differ 24.
+/* Draft (tla-en): listing 326 instructions, draft 326, common 317, differ 18.
  * The shape matches; what is left is the arm9tdmi scheduling leftover:
  * - after EffectPosition_ApplyAlternateStepAndYOffset the native loads
- *   BG2PA's 0x100 before it starts the register address. A u16 pinned to r3
- *   with a one-pass block before the store fixes that row, but the block
- *   then moves the earlier ResourceId load after "add r1, r10" (differ 24
- *   either way); the pin with an empty asm barrier moves the halfword pool.
- * - &sprite, kept on the stack at sp+8, is built in r3 and frame's 0 in r2
- *   (the draft swaps them); the frame-0 block's setup is in another order;
- *   two loads and one store of the frame-80 block move by one row.
+ *   BG2PA's 0x100 from the pool before it starts the register address.
+ *   f18284c.c's device (a u16 pinned to r3 behind an empty asm that holds
+ *   r2) fixes the row, but the asm counts four estimated bytes and the
+ *   halfword pool (range 64) is then placed before the loop with a jump
+ *   around it. s2614.c's one-pass block instead fixes the row and changes
+ *   sched2's tie-breaks of the first block (its barrier depends on the
+ *   early insns): "add r1, r10" comes before the resource id's pool load;
+ *   another one-pass block around or before that call only moves the swap
+ *   (to the pool load or to "mov r10, r3").
+ * - frame's 0 is set between "mov r3, sp" and "adds r3, #12"; the native
+ *   stores &sprite at sp+8 first. Through a "source" local set before the
+ *   loop the order is right but &sprite takes r2 and the 0 r3 (differ 24).
+ * - the frame-0 block's setup (y, i, the zero and step) is in another
+ *   order; the sprite mask's pool load and the stack load of sprite.bits
+ *   are swapped; the pool load of the step mask comes one row late; one
+ *   store of the frame-80 block moves by one row.
  * The sprite source word is two byte fields written with masks: as u32
  *   bitfields the compiler stores bytes (differ 57).
  * Resource 313 (BattleFx_CrossedDaggersSheet) needs its name in
  *   system/resource/directory.s when this is adopted.
- * Ten minutes of alchemy permute: differ 18 at best (moving the &sprite
- *   assignment), not kept.
+ * alchemy permute (16 minutes over two runs): differ 18 at best, by
+ *   writing &sprite at its uses as here.
  */
 #include "types.h"
 #include "io_reg.h"
@@ -81,7 +90,6 @@ void Func_08143bb8(void);
 void Func_0817b66c(struct BattleEffectArgument *effect)
 {
     struct FxWork *work = (struct FxWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct SpriteSource *source;
     struct SpriteSource sprite;
     struct EffectPosition pos;
     struct EffectStep *step;
@@ -101,7 +109,6 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
     EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
     REG_BG2PA = 0x100;
     REG_BG2X = (64 - pos.x) << 8;
-    source = &sprite;
     for (frame = 0; frame != 96; frame++) {
         if (frame == 0) {
             s32 y = 0x800000;
@@ -140,8 +147,8 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
         model->unknown_14 = 0;
         sprite.bits = (sprite.bits & ~0xff) | 5;
         sprite.bits = (sprite.bits & ~0xff00) | 0x500;
-        model->source = source;
-        source->pixels = (u8 *)work + 0x700;
+        model->source = &sprite;
+        sprite.pixels = (u8 *)work + 0x700;
         model->kind = 9;
         model->mesh = Data_08199450;
         model->vertices = vertices;

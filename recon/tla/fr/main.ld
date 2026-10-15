@@ -104,7 +104,6 @@ SECTIONS
     "*/games/tla/src/system/resource/initialize.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00014422)
     "*/games/tla/src/system/resource/rescache.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00014438)
     "*/games/tla/src/system/scheduler/callback_scheduler.o"(.text)
     "*/games/tla/src/system/scheduler/disable_callbacks.o"(.text)
     "*/games/tla/src/lib/math.o"(.text)

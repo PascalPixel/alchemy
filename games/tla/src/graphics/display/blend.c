@@ -16,6 +16,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
+#include "affine.h"
 
 // フェードは VBlank ごとに BlendTransition_Update が進める。
 // 明るさ（BLDY）は 0 で元のまま、16 で真っ白または真っ黒。
@@ -114,7 +115,6 @@ void Blend_WaitForTransition(void)
 	}
 }
 
-extern u8 gObjAffineCount;
 extern u8 gOamBucketMasks[];
 
 void Graphics_ResetFrameState(void)
@@ -122,22 +122,6 @@ void Graphics_ResetFrameState(void)
     gObjAffineCount = 0;
     Iwram_ClearWords(gOamBucketMasks, 32);
 }
-
-struct AffineTransform
-{
-    u16 scale_x;
-    u16 scale_y;
-    u16 angle;
-    u16 unknown_06;
-};
-
-union AffineMatrix
-{
-    s16 coefficients[4];
-    u32 rows[2];
-};
-
-extern union AffineMatrix gObjAffineMatrices[];
 
 // Takes the next of the 32 sprite affine matrices and fills it with the
 // rotation and scale of source; returns its index, or 31 when all are taken.

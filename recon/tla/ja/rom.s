@@ -107,8 +107,6 @@ Resource_FindFreeEntry:
 	.incbin "baserom.gba", 0x000143ac, 0x00000034
 	.section .rom.000143f6, "ax"
 	.incbin "baserom.gba", 0x000143f6, 0x00000002
-	.section .rom.0001440c, "ax"
-	.incbin "baserom.gba", 0x0001440c, 0x000000b4
 	.section .rom.00014b70, "ax"
 	.global Func_08014b70
 	.type Func_08014b70, %function

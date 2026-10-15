@@ -97,7 +97,6 @@ SECTIONS
         "*/games/tla/src/system/resource/initialize.o"(.text)
         "*/recon/tla/raw/080143f6.o"(.text)
         "*/games/tla/src/system/resource/rescache.o"(.text)
-        "*/recon/tla/raw/0801440c.o"(.text)
         "*/games/tla/src/system/scheduler/callback_scheduler.o"(.text)
         "*/games/tla/src/system/scheduler/disable_callbacks.o"(.text)
         "*/games/tla/src/lib/math.o"(.text)

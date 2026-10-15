@@ -1928,7 +1928,6 @@ SECTIONS
         "*/recon/tla/raw/0813fd84.o"(.text)
         "*/recon/tla/raw/0814153c.o"(.text)
         "*/recon/tla/raw/08142944.o"(.text)
-        "*/recon/tla/raw/08143000.o"(.text)
         "*/games/tla/src/battle/effect/s143114.o"(.text)
         "*/recon/tla/raw/08143174.o"(.text)
         "*/recon/tla/raw/08143264.o"(.text)

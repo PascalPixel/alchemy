@@ -2197,7 +2197,6 @@ SECTIONS
         "*/recon/tla/raw/0818df5c.o"(.text)
         "*/recon/tla/raw/0818eda4.o"(.text)
         "*/games/tla/src/battle/effect/canvas_modes.o"(.text)
-        "*/recon/tla/raw/0818f61e.o"(.text)
         "*/recon/tla/raw/0818f620.o"(.text)
         "*/recon/tla/raw/0818fefc.o"(.text)
         "*/recon/tla/raw/08190b74.o"(.text)

@@ -220,3 +220,20 @@ void Func_08143bb8(void)
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
     WaitFrames(1);
 }
+
+// Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
+// fades the background palette back and queues BG1's control word.
+void Func_08143d04(void)
+{
+    struct BtlWork *btl;
+    s32 *flag;
+
+    flag = &((struct BattleBackgroundView *)Ram_HeapSlots->transition_work)->second_mode;
+    btl = Ram_HeapSlots->battle_work;
+    *flag = 1;
+    QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
+    WaitFrames(1);
+    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)btl->unknown_670, 0);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f83, 0x20000);
+    WaitFrames(1);
+}

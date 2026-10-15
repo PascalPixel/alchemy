@@ -1873,7 +1873,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0014355c)
     "*/recon/tla/ja/rom.o"(.rom.001435e0)
     "*/games/tla/src/battle/effect/canvas.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00143d04)
+    "*/recon/tla/ja/rom.o"(.rom.00143d80)
     "*/recon/tla/ja/rom.o"(.rom.00143eb4)
     "*/games/tla/src/battle/effect/series_b.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00144628)

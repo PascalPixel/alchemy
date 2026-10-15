@@ -1,3 +1,4 @@
+/* Near miss: differ 10 of 152. The one-pass block (found by a greedy device search) moves one load; the remaining swaps put the native's pool loads of the OAM attribute words ahead of 0x300's split constant in each loop's preheader. */
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
@@ -27,7 +28,9 @@ void DisplayScroll_InitObjectTable(void)
     u32 i;
     u32 j;
 
-    *(void **)((u8 *)&DisplayScroll_Objects) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+    do {
+        *(void **)((u8 *)&DisplayScroll_Objects) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+    } while (0);
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;

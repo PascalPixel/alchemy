@@ -61,7 +61,7 @@ void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
 #if GAME_TLA
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
+void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PartyStatusDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);

@@ -40,7 +40,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   UiText_DrawStringAtOffsetFar((s32)gUi_HpString, win, 0, 40);
   UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 40);
   val = unit->maxHp;
-  UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
+  UiText_DrawNumberRightAligned(val, win, 88, 40);
   val = unit->hp;
   if (val < ((u16)unit->maxHp << 16) >> 18) {
     UiWork_SetParamNibbleFar(4);
@@ -48,14 +48,14 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   if (val == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
+  UiText_DrawNumberRightAligned(val, win, 48, 40);
   UiWork_SetParamNibbleFar(15);
   UiText_DrawStringAtOffsetFar((s32)gUi_PpString, win, 0, 48);
   UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 48);
   val = unit->pp;
-  UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
+  UiText_DrawNumberRightAligned(val, win, 48, 48);
   val = unit->maxPp;
-  UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
+  UiText_DrawNumberRightAligned(val, win, 88, 48);
 #else
   UiText_DrawStringInWindowFar((s32)gUi_HpRowString, win, 0, 40);
   val = unit->maxHp;

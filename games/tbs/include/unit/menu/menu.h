@@ -18,7 +18,7 @@ void UiWindow_InitializeWork(s32 unused);
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags);
 void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode);
-void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y);
+void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win);
 void UiText_DrawStatComparison(const struct BattleUnit *alt,
                                const struct BattleUnit *base, s32 work);

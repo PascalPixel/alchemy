@@ -7,7 +7,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_659/s004c.o"(.text)
         "*/games/tla/src/field/overlay_659/s01b8.o"(.text)
         "*/resource_659_overlay.o"(.text.x02008570)
-        "*/resource_659_overlay.o"(.text.x02008624)
         "*/games/tla/src/field/overlay_659/prepare.o"(.text)
         "*/resource_659_overlay.o"(.text.x02009008)
         "*/games/tla/src/field/overlay_659/events.o"(.text)

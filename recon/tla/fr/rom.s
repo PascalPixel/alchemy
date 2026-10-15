@@ -2000,8 +2000,6 @@ Owner_CalculateBaseElements:
 	.thumb_func
 Owner_DetermineClass:
 	.incbin "baserom.gba", 0x000b5144, 0x00000144
-	.section .rom.000b5514, "ax"
-	.incbin "baserom.gba", 0x000b5514, 0x00000194
 	.section .rom.000b575c, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b575c, 0x00000338

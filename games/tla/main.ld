@@ -825,7 +825,6 @@ SECTIONS
     "*/games/tla/src/game/character/get_record_stride84.o"(.text)
     "*/games/tla/src/game/random16.o"(.text)
     "*/games/tla/src/game/item/get_unleash_rate_bonus.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000ab510)
     "*/games/tla/src/game/djinn/weakness.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ab758)
     "*/games/tla/src/game/djinn/management.o"(.text)

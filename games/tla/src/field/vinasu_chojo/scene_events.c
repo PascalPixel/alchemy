@@ -13,6 +13,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "tla_edition.h"
+#include "scene_ids.h"
 
 #define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
 
@@ -55,11 +56,21 @@ struct AerieEventWork {
 };
 
 
-#if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)
 {
     ((struct AerieEventWork *)Ram_HeapSlots->event_work)->mode = 0x204;
     if (gPartyState.entrance == ENTRANCE_OPENING) {
+#if EDITION_INTERNATIONAL
+        // The international editions also save this scene and entrance 22.
+        {
+            s32 scene = (s32)&SceneId_VinasuChojo;
+
+            /* FAKEMATCH: the native loads the scene id before it builds the saved-scene offset (one reordered row without). */
+            __asm__ volatile("");
+            gPartyState.saved_scene = scene;
+        }
+        gPartyState.saved_entrance = 22;
+#endif
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
         Func_02000b2c();
@@ -79,4 +90,3 @@ s32 VinasuChojo_Start(void)
     }
     return 0;
 }
-#endif

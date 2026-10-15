@@ -20,7 +20,6 @@ SECTIONS
         "*/games/tla/src/field/vinasu_chojo/push.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/statue.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/scene_events.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x02008a54)
         "*/games/tla/src/field/vinasu_chojo/prepare.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/leave.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/import.o"(.text)

@@ -2887,6 +2887,9 @@ s32 NameEntry_EditOwnerName(s32 member) {
 #define TALK_WINDOW_WIDTH 16
 #endif
 
+// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
+// chosen with a pointing hand. Returns the choice (0-2), or -1 when
+// cancelled with B.
 s32 PartyTalkMenu_Choose(s32 unused) {
   /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an
    * equal-size struct changes stack-address construction in all six editions.
@@ -2911,8 +2914,8 @@ s32 PartyTalkMenu_Choose(s32 unused) {
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
   }
-  // The key under the cursor flashes between palette 15 and palette 14, a
-  // copy of it with colour 4 grey.
+  // The choice under the cursor flashes between palette 15 and palette 14,
+  // a copy of it with colour 4 grey.
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;
@@ -2958,7 +2961,10 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   return row;
 }
 
-void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn) {
+// Shows "The <element> Djinni <name> joined <member>." with the element's
+// Djinni portrait while the join fanfare (sound 81) plays, until it ends or A,
+// B, L or R is pressed. `djinn` is the Djinni's number in its element.
+void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   s32 name;
   struct UiWindow *window;
@@ -2984,6 +2990,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn) {
     id = Localization_LookupEntryId(name);
     UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
 
+    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
+    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = entry;
     *p++ = zero;
     *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
@@ -2992,7 +3000,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn) {
     work->result[0] = zero;
     work->result[1] = zero;
 
-    UiWork_PushValueSlot(pc, 1);
+    // The Djinni's name is ability 300 + 20 * element + djinn.
+    UiWork_PushValueSlot(member, 1);
     UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
 
     text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
@@ -3013,6 +3022,9 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn) {
   }
 }
 
+// Returns the portrait character of party member `member` (0-8): from
+// gCharacter_ChildSpriteTable while game flag 32 is set, from
+// gCharacter_SpriteTable otherwise; 0 for any other member.
 s32 Party_LookupCharacterValueByFlag32(u32 index) {
   if (index > 8) {
     return 0;
@@ -3023,6 +3035,8 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   return gCharacter_ChildSpriteTable[index];
 }
 
+// Shows "<member> joined your party." with the member's portrait while the
+// join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   struct UiWindow *window = NULL;
@@ -3038,6 +3052,8 @@ void Party_ShowJoinedMessage(s32 member) {
     UiGlyph_LoadEntryWithPalette(
         Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)),
         0, &handle, &palette, 14, 0);
+    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
+    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = entry;
     *p++ = 0;
     *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
@@ -3059,6 +3075,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
+// Shows "<first> and <second> joined your party." with both portraits while
+// the join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];
   struct UiWindow *window;
@@ -3070,8 +3088,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u32 zero;
   s32 *p;
 
-  // the window starts as NULL, though it is assigned before it is read; the
-  // same zero is the style argument below
+  // The window starts as NULL, though it is assigned before it is read; the
+  // same zero is the style argument below.
   window = NULL;
   entry1 = sprite1;
   window = UiWindow_Create(1, 1, 28, 5, 0);
@@ -3085,6 +3103,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     UiGlyph_LoadEntryWithPalette(
         Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)),
         0, &handle1, &palette, 14, zero);
+    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
+    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
     p = entry1;
     *p++ = zero;
     *p++ = 0x800c000c;
@@ -3125,36 +3145,47 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   }
 }
 
-void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
+// Decompresses picture `picture` of gRenderResource_PairSourceTable (two
+// 32x32 sprites side by side, 512 bytes) into VRAM slot `slot`. The heap
+// block is not freed when `slot` is not a valid VRAM slot.
+void RenderResource_LoadPair(s32 picture, s32 slot) {
   void *stagingBuffer = Runtime_AllocateBlock(14, 0x400);
-  const u8 *resource = gRenderResource_PairSourceTable[groupIndex];
+  const u8 *resource = gRenderResource_PairSourceTable[picture];
 
-  if (resourceIndex <= 0x5F) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Resource_DecodeByteLz(resource, stagingBuffer);
-    VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
+    VramBlock_LoadCached(slot, 0x200, stagingBuffer);
     Runtime_ReleaseHeapBlock(14);
   }
 }
 
-struct RenderOutput *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
-  s32 index;
+// Shows picture `picture` of gRenderResource_PairSourceTable as two 32x32
+// sprites side by side at (x, y) in `window`, on draw layer 253, and
+// returns the left one (the right one follows it in the window's list).
+// Returns NULL when no VRAM slot is free.
+struct RenderOutput *RenderResource_CreatePair(s32 picture,
+                                               struct RenderInput *window,
+                                               s32 x, s32 y) {
+  s32 slot;
   struct RenderOutput *first;
   struct RenderOutput *second;
 
-  index = Resource_FindFreeEntry();
-  if (index > 95)
+  slot = Resource_FindFreeEntry();
+  if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
-  RenderResource_LoadPair(group, index);
-  first = RenderOutput_Create(index, 0x80004000, input, x, y);
+  // 0x4000 is the wide shape bit of attribute 0, with size 2: 64x32.
+  RenderResource_LoadPair(picture, slot);
+  first = RenderOutput_Create(slot, 0x80004000, window, x, y);
   first->sentinel = 0xFD;
-  second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
+  second = RenderOutput_Create(slot, 0x80004000, window, x + 32, y);
   second->sentinel = 0xFD;
-  second->oam.index += 8;
+  second->oam.index += 8; // the right half's tiles
   return first;
 }
 
+// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
+// by gUi_PairBobOffsets, one step every four frames.
 void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj) {
   s32 value;
 
@@ -3169,37 +3200,46 @@ void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj) {
   obj->oam.y = value;
 }
 
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
+// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
+// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
+// when `remap` is nonzero.
+void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
   void *buffer = Runtime_AllocateBlock(14, size);
-  u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *icons = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  if (value <= 95) {
-    Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
-    if (flag != 0)
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
+    Resource_DecodeByteLz((void *)((u32)icons + icons[icon]), buffer);
+    if (remap != 0)
       Runtime_RemapBytesByTableFar(buffer, 768);
-    VramBlock_LoadCached(value, size, buffer);
+    VramBlock_LoadCached(slot, size, buffer);
     Runtime_ReleaseHeapBlock(14);
   }
 }
 
-struct RenderOutput *RenderResource_CreateFrame(s32 arg0, s32 arg1,
-                                                struct RenderInput *arg2,
-                                                s32 arg3, s32 arg4) {
-  s32 index;
-  struct RenderOutput *entity;
+// Shows command icon `icon` (see RenderResource_LoadFrame) as a 32x32
+// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
+// when no VRAM slot is free.
+struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
+                                                struct RenderInput *window,
+                                                s32 x, s32 y) {
+  s32 slot;
+  struct RenderOutput *output;
 
-  index = Resource_FindFreeEntry();
-  entity = NULL;
-  if (index != 0x60) {
-    RenderResource_LoadFrame(arg0, index, arg1);
-    entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
-    entity->oam.palette256 = 1;
-    entity->sentinel = 0xfb;
+  slot = Resource_FindFreeEntry();
+  output = NULL;
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
+    RenderResource_LoadFrame(icon, slot, remap);
+    output = RenderOutput_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+    output->oam.palette256 = 1;
+    output->sentinel = 0xfb;
   }
-  return entity;
+  return output;
 }
 
+// Makes the sprite `obj` pulse: scales it about its centre by
+// gUi_ObjectPulseScales (in 1/65536, used in 1/256), one step every two
+// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
 void Ui_ApplyTableScaleToObject(struct RenderOutput *obj) {
   s32 v = gUi_ObjectPulseScales[(gFrameTick >> 1) & 7];
   struct AffineTransform effect;

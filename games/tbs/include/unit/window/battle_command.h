@@ -87,18 +87,19 @@ s32 UiText_SetRenderString(const u8 *str);
 void UiText_DrawPaddedLabel(s32 window, u8 *name);
 s32 NameEntry_EditOwnerName(s32 member);
 s32 PartyTalkMenu_Choose(s32 unused);
-void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn);
+void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
-void RenderResource_LoadPair(s32 group_index, s32 resource_index);
-struct RenderOutput *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+void RenderResource_LoadPair(s32 picture, s32 slot);
+struct RenderOutput *RenderResource_CreatePair(s32 picture,
+                                               struct RenderInput *window,
+                                               s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj);
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
-struct RenderOutput *RenderResource_CreateFrame(s32 arg0, s32 arg1,
-                                                struct RenderInput *arg2,
-                                                s32 arg3, s32 arg4);
+void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap);
+struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
+                                                struct RenderInput *window,
+                                                s32 x, s32 y);
 void Ui_ApplyTableScaleToObject(struct RenderOutput *obj);
 
 struct BattleActionRecord;

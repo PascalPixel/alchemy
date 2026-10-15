@@ -1,10 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
+	.balign 4
 	.global Func_020000b8
 	.thumb_func
 Func_020000b8:
@@ -1336,9 +1333,8 @@ Func_02000e38:
 	.4byte gPartyState
 .L_02008f14:
 	.4byte 0xffff8000
-	.section .text.x0200933e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009340,"ax",%progbits
+	.balign 4
 	.global Func_02001340
 	.thumb_func
 Func_02001340:

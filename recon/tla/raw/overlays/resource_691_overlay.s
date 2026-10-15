@@ -1,12 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080ce,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200815a,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
+	.balign 4
 	.global Func_0200015c
 	.thumb_func
 Func_0200015c:
@@ -3478,9 +3473,8 @@ Func_020020f8:
 	.4byte Func_020020d0
 .L_0200a1e4:
 	.4byte 0xffe00000
-	.section .text.x0200a2aa,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200a2ac,"ax",%progbits
+	.balign 4
 	.global Func_020022ac
 	.thumb_func
 Func_020022ac:

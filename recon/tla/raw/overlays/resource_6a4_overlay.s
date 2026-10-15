@@ -569,9 +569,8 @@ Func_02000604:
 	movs r0, #0
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x0200878e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200879c,"ax",%progbits
+	.balign 4
 	.global Func_0200079c
 	.thumb_func
 Func_0200079c:
@@ -3013,11 +3012,8 @@ Func_02001a78:
 	.4byte 0xc000a000
 .L_02009c30:
 	.4byte Data_02003486
-	.section .text.x02009e3e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02009e76,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009e78,"ax",%progbits
+	.balign 4
 	.global Func_02001e78
 	.thumb_func
 Func_02001e78:
@@ -3906,9 +3902,8 @@ Func_020024a8:
 	.4byte 0xffff6667
 .L_0200a5e4:
 	.4byte gPartyState
-	.section .text.x0200a63e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200a640,"ax",%progbits
+	.balign 4
 	.global Func_02002640
 	.thumb_func
 Func_02002640:

@@ -4440,12 +4440,6 @@ BattlePresentation_WaitForAdvance:
 	.thumb_func
 Func_08120060:
 	.incbin "baserom.gba", 0x0012005c, 0x000000f8
-	.section .rom.001201c0, "ax"
-	.global BattleEv_DispatchQueued
-	.type BattleEv_DispatchQueued, %function
-	.thumb_func
-BattleEv_DispatchQueued:
-	.incbin "baserom.gba", 0x001201c0, 0x0000019c
 	.section .rom.00120450, "ax"
 	.global BtlTgtExec
 	.type BtlTgtExec, %function
@@ -4549,7 +4543,13 @@ EnmCntDec:
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001281e6, "ax"
-	.incbin "baserom.gba", 0x001281e6, 0x000005ea
+	.incbin "baserom.gba", 0x001281e6, 0x00000062
+	.section .rom.00128248, "ax"
+	.global Func_0812824c
+	.type Func_0812824c, %function
+	.thumb_func
+Func_0812824c:
+	.incbin "baserom.gba", 0x00128248, 0x00000588
 	.global Data_081287d4
 Data_081287d4:
 	.incbin "baserom.gba", 0x001287d0, 0x0000000e

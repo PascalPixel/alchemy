@@ -1797,7 +1797,6 @@ SECTIONS
         "*/recon/tla/raw/08120060.o"(.text)
         "*/games/tla/src/battle/f120158.o"(.text)
         "*/games/tla/src/battle/event_queue_set_flag_bit0.o"(.text)
-        "*/recon/tla/raw/081201c4.o"(.text)
         "*/games/tla/src/battle/btlev.o"(.text)
         "*/games/tla/src/battle/effect/deadchk.o"(.text)
         "*/games/tla/src/battle/party/insert_unit.o"(.text)

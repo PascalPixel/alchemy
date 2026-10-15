@@ -1,4 +1,4 @@
-/* Draft, differ 10 of 29: through the scene layer's inline the object stays in r0 and the owner in r2, as the native has them, and the angle argument repeats the stored expression, so CSE passes the stored value (adds r1, r3) as the native does. Left: the native builds the phase byte's address (adds r5, r0) and the position (adds r2, r0) one load earlier, filling each load's delay. Tried: an s32 or u16 angle variable (19), the phase pointer declared later (12), permuter 4 minutes (10). */
+/* Draft, differ 10 of 29: through the scene layer's inline the object stays in r0 and the owner in r2, as the native has them, and the angle argument repeats the stored expression, so CSE passes the stored value (adds r1, r3) as the native does. Left: the native builds the phase byte's address (adds r5, r0) and the position (adds r2, r0) one load earlier, filling each load's delay. Tried: an s32 or u16 angle variable (19), the phase pointer declared later (12), the lift through an asm-pinned temporary with an empty asm after the phase pointer (18), permuter 4 minutes (10). */
 #include "types.h"
 
 #include "ram_buffer.h"

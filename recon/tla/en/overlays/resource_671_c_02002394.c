@@ -4,7 +4,8 @@
  * terms load the velocity word one row later than the native. The inlines keep the -1 and
  * 0x50000 constants per call, as ☀️'s scene layer does (differ 59 called directly). Tried:
  * declaration orders, a do-while loop, velocity at function scope, the random terms as separate
- * subtractions, permuter 4 minutes (24). */
+ * subtractions, permuter 4 minutes (24), velocity through a pointer pinned to r6 with the cosine
+ * taken into a local first (63). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

@@ -6,4 +6,6 @@ BattleFx_PinkStarSheet:
 	.incbin "games/common/src/graphics/battle_fx/pink_star.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x80	@ PACKER: left in the buffer by BattleFx_TargetBurstImage+0x38f
+	.else
+	.byte 0x80	@ PACKER: left in the buffer by BattleFx_TargetBurstImage+0x38f
 	.endif

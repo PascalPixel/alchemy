@@ -26,4 +26,6 @@ BattleFx_FlareSheet:
 	.endif
 	.endif
 	.endif
+	.else
+	.byte 0x26, 0x20	@ PACKER: left in the buffer by Resource_Data0F3+0x1d86
 	.endif

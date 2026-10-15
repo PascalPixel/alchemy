@@ -6,4 +6,6 @@ BattleFx_FlameColumnSheet:
 	.incbin "games/common/src/graphics/battle_fx/flame_column.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x41	@ PACKER: left in the buffer by BattleFx_RuneSheet+0x3ab
+	.else
+	.byte 0x41	@ PACKER: left in the buffer by BattleFx_RuneSheet+0x3ab
 	.endif

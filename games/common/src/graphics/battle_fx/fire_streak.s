@@ -6,4 +6,6 @@ BattleFx_FireStreakSheet:
 	.incbin "games/common/src/graphics/battle_fx/fire_streak.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x00, 0x48	@ PACKER: left in the buffer by BattleFx_WhirlwindSheet+0x15c2
+	.else
+	.byte 0x00, 0x48	@ PACKER: left in the buffer by BattleFx_WhirlwindSheet+0x15c2
 	.endif

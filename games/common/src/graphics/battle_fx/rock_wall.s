@@ -6,4 +6,10 @@ BattleFx_RockWallSheet:
 	.incbin "games/common/src/graphics/battle_fx/rock_wall.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x07, 0x43, 0x0b	@ PACKER: left in the buffer by BattleFx_VineSheet+0xcd1
+	.else
+	.ifdef TLA_EDITION_JA
+	.byte 0x07, 0x43, 0x0b	@ PACKER: left in the buffer by BattleFx_VineSheet+0xcd1
+	.else
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif
 	.endif

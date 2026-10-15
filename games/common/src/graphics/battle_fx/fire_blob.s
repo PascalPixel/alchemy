@@ -6,4 +6,6 @@ BattleFx_FireBlobSheet:
 	.incbin "games/common/src/graphics/battle_fx/fire_blob.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x1a	@ PACKER: left in the buffer by BattleFx_RockWallSheet+0xb87
+	.else
+	.byte 0x1a	@ PACKER: left in the buffer by BattleFx_RockWallSheet+0xb87
 	.endif

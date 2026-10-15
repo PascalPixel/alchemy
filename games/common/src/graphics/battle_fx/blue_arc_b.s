@@ -6,4 +6,6 @@ BattleFx_BlueArcSheetB:
 	.incbin "games/common/src/graphics/battle_fx/blue_arc_b.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0xaa, 0x30	@ PACKER: left in the buffer by BattleFx_EmberStreakSheet+0xace
+	.else
+	.byte 0xaa, 0x30	@ PACKER: left in the buffer by BattleFx_EmberStreakSheet+0xace
 	.endif

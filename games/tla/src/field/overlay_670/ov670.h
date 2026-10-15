@@ -222,6 +222,14 @@ static inline void Ov670_SePlay(s32 cue)
     Func_02005c9c(cue);
 }
 
+void Func_02005bd4(s32 a, s32 b);
+
+static inline void Ov670_FadeTo(s32 a, s32 b)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005bd4(a, b);
+}
+
 static inline void Ov670_WaitFrames(s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */

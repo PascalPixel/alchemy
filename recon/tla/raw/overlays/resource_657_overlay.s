@@ -13,42 +13,6 @@
 	.endif
 .syntax unified
 	.thumb
-	.section .text.x02008288,"ax",%progbits
-	.global Func_02000288
-	.thumb_func
-Func_02000288:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r5, [r3, #32]
-	movs r2, #132
-	lsls r2, r2, #1
-	adds r5, r5, r2
-	bl Func_02002074
-	ldr r6, .L_020082c8
-	mov r8, r0
-	ldr r0, [r6]
-	bl Math_Sine
-	mov r2, r8
-	ldr r3, [r2, #12]
-	asrs r0, r0, #2
-	adds r3, r3, r0
-	str r3, [r2, #12]
-	movs r2, #128
-	ldr r3, [r5, #12]
-	lsls r2, r2, #2
-	adds r3, r3, r0
-	str r3, [r5, #12]
-	ldr r3, [r6]
-	adds r3, r3, r2
-	str r3, [r6]
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-.L_020082c8:
-	.4byte Data_020024b0
 	.section .text.x020082cc,"ax",%progbits
 	.global Func_020002cc
 	.thumb_func

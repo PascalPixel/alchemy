@@ -2305,7 +2305,6 @@ SECTIONS
         "*/games/tla/src/lib/multiply.o"(.text)
         "*/games/tla/src/lib/fixed_8.o"(.text)
         "*/games/tla/src/lib/recip.o"(.text)
-        "*/recon/tla/raw/081ac0f6.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/palette/scale_rgb555_buffer.o"(.text)
         "*/recon/tla/raw/081ac15c.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081ad348)

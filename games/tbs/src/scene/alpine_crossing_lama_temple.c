@@ -105,6 +105,7 @@ enum {
   TRIGGER_TEMPLE_WALL_WRITING = 5,
   TRIGGER_SIGNPOST = 7,
   TRIGGER_CHEST = 100,
+  TRIGGER_FEIZHI_ARRIVAL = 10,
   TRIGGER_STONE = 110
 };
 
@@ -455,10 +456,10 @@ static void LamaTemple_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-// Feizhi runs up the road, once she has set out after Hsu, and touches the
-// party: she finds the boulders blocking the Silk Road, cries out for Hsu
-// and runs ahead along the path to look for him, the party leader following
-// part of the way.
+// When the party steps onto the road by the rockslide, once Feizhi has set
+// out after Hsu, she runs up behind it: she finds the boulders blocking the
+// Silk Road, cries out for Hsu and runs ahead along the path to look for
+// him, the party leader following part of the way.
 static void AlpineCrossing_FeizhiArrives(void) {
   struct FieldActor *leader;
 
@@ -1066,7 +1067,7 @@ struct SceneEvent gAlpineCrossing_Events[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 5 },
-    { EVENT_TOUCH, ACTOR_FEIZHI, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
+    { EVENT_TOUCH, TRIGGER_FEIZHI_ARRIVAL, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(AlpineCrossing_TalkToFeizhi) },
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },
     { EVENT_TALK, ACTOR_HSU, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAmTrappedBetweenTheseTwo) },

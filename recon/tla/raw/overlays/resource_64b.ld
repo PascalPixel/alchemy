@@ -21,7 +21,6 @@ SECTIONS
         "*/games/tla/src/field/world_map/scene_events.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02008dc4)
         "*/games/tla/src/field/world_map/prepare.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x020091fc)
         "*/resource_64b_overlay.o"(.text.x020092bc)
         "*/games/tla/src/field/world_map/s1c5c.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02009e34)

@@ -5,4 +5,4 @@
 	overlay_veneer Tolbi_GetExits
 	overlay_veneer Tolbi_GetPlacements
 	overlay_veneer Tolbi_SelectEvents
-	overlay_veneer SceneData_ReturnZero
+	overlay_veneer Tolbi_GetRegions

@@ -5205,7 +5205,9 @@ Func_08144b14:
 	.type Func_0814512c, %function
 	.thumb_func
 Func_0814512c:
-	.incbin "baserom.gba", 0x0014512c, 0x000029a8
+	.incbin "baserom.gba", 0x0014512c, 0x00000b3c
+	.section .rom.00145df8, "ax"
+	.incbin "baserom.gba", 0x00145df8, 0x00001cdc
 	.section .rom.00147aec, "ax"
 	.balign 4
 	.global Func_08147aec

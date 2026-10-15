@@ -1977,6 +1977,8 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.00144b14)
     "*/games/tla/src/battle/effect/series_d.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0014512c)
+    "*/games/tla/src/battle/effect/blueramp.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.00145df8)
     "*/games/tla/src/battle/effect/series_e.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00147aec)
     "*/games/tla/src/battle/effect/series_f.o"(.text)

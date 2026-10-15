@@ -1957,7 +1957,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/series_d.o"(.text)
         "*/recon/tla/raw/0814512c.o"(.text)
         "*/recon/tla/raw/08145784.o"(.text)
-        "*/recon/tla/raw/08145c68.o"(.text)
+        "*/games/tla/src/battle/effect/blueramp.o"(.text)
         "*/recon/tla/raw/08145df8.o"(.text)
         "*/recon/tla/raw/0814627c.o"(.text)
         "*/recon/tla/raw/08146638.o"(.text)

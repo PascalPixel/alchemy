@@ -1,6 +1,6 @@
 /* Near miss, differ 30 of 137: The Broken Seal's
  * BattlePresentation_ConfigurePaletteFade, with this game's heap slots, its
- * callback Func_08125c0c at 0xcff and its IO write of 0x1f83 to BG1CNT. The
+ * callback BattlePres_UpdateHBlankScroll at 0xcff and its IO write of 0x1f83 to BG1CNT. The
  * two palette branches take one-pass blocks on the battle work, and the DMA
  * branch an empty barrier after the palette, as the native finishes the
  * palette before it starts the DMA addresses. Left: the native loads the
@@ -19,7 +19,7 @@
 #include "btldisp.h"
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_08125c0c(void);
+void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *destination);
 void Func_08125bb8(void *destination);
 
@@ -28,7 +28,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
     struct BattleBackgroundView *transition = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
 
     if (transition->mode == 0)
-        Scheduler_AddOrUpdateCallback(Func_08125c0c, 0xcff);
+        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0xcff);
     transition->mode = mode;
 
     if (mode == 1)

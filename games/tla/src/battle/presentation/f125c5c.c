@@ -4,8 +4,26 @@
 #include "io_reg.h"
 #include "bg_scroll.h"
 #include "btldisp.h"
+#include "iowrite.h"
 
 extern const u8 Data_0812cc74[];
+
+// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines and
+// the affine block, while the background view is in mode 2.
+void BattlePres_UpdateHBlankScroll(void)
+{
+    struct BattleAffineHdma *records;
+    u16 *record;
+
+    if (((struct BattleBackgroundView *)Ram_HeapSlots->transition_work)->mode == 2)
+    {
+        records = Ram_HeapSlots->unknown_28[0];
+        record = records->lines[records->page];
+        Io_Write16(record[0], &REG_BG2CNT);
+        Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
+        Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
+    }
+}
 
 void Func_08125c5c(void)
 {

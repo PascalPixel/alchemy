@@ -80,11 +80,11 @@ s32 NameEntry_CountLetters(const u8 *name);
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
                                 const void *source);
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
-                                   s32 y, s32 width, s32 height, u32 field);
-void Resource_CopyFixedBlockB(s32 arg0);
-void Resource_CopyFixedBlockA(s32 arg0);
+                                   s32 y, s32 width, s32 height, u32 palette);
+void Resource_CopyFixedBlockB(s32 slot);
+void Resource_CopyFixedBlockA(s32 slot);
 s32 UiText_SetRenderString(const u8 *str);
-void UiText_DrawPaddedLabel(s32 output, u8 *input);
+void UiText_DrawPaddedLabel(s32 window, u8 *name);
 s32 NameEntry_EditOwnerName(s32 entry);
 s32 PartyTalkMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn);

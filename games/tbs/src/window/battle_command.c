@@ -2096,15 +2096,24 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
 }
 
 #if EDITION_INTERNATIONAL
+// Always 1: the international name entry has no voicing marks to check.
 s32 Resource_ReturnTrue(void) { return 1; }
 #else
 
+// The kana voicing marks of the Japanese name entry, which join the letter
+// before them.
+#define NAME_VOICED_MARK 0xde     // dakuten
+#define NAME_SEMIVOICED_MARK 0xdf // handakuten
+
+// Returns whether `mark` may follow `letter` in a Japanese name: any
+// character but a voicing mark may, and a voicing mark only after a letter
+// in its table of ranges (pairs of first and last letter, ended by 0).
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   const u8 *range;
 
-  if (mark < 0xde || mark > 223)
+  if (mark < NAME_VOICED_MARK || mark > NAME_SEMIVOICED_MARK)
     return 1;
-  if (mark == 0xde)
+  if (mark == NAME_VOICED_MARK)
     range = gNameEntry_VoicedMarkRanges;
   else
     range = gNameEntry_SemivoicedMarkRanges;
@@ -2115,18 +2124,24 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   return 0;
 }
 
+// Returns how many letters the Japanese name `name` has, not counting the
+// voicing marks.
 s32 NameEntry_CountLetters(const u8 *name) {
   s32 count;
 
   count = 0;
   for (; *name != 0; name++) {
-    if ((u8)(*name - 0xde) > 1)
+    // Neither NAME_VOICED_MARK nor NAME_SEMIVOICED_MARK.
+    if ((u8)(*name - NAME_VOICED_MARK) > 1)
       count++;
   }
   return count;
 }
 #endif
 
+// Decompresses the type-01 tilemap `source` and copies it over `window`'s
+// rectangle, both into the BG screen block at 0x06002000 and into the UI
+// tilemap that mirrors it.
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
                                 const void *source) {
   struct UiRenderWork *work = UI_WORK;
@@ -2157,13 +2172,16 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
   MemFree(buffer);
 }
 
+// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
+// palette number of each entry (bits 12-15) after clearing only its lowest
+// bit.
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
-                                   s32 y, s32 width, s32 height, u32 field) {
-  u8 *base = gWindowWork[0];
+                                   s32 y, s32 width, s32 height, u32 palette) {
+  u8 *tilemap = gWindowWork[0];
 
   x += window->x + 1;
   y += window->y + 1;
-  field <<= 12;
+  palette <<= 12;
   if (x < 0) {
     width += x;
     x = 0;
@@ -2182,32 +2200,36 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
     y <<= 6;
     x = y + (x << 1);
     do {
-      u16 *cell = (u16 *)(x + (u32)base);
+      u16 *cell = (u16 *)(x + (u32)tilemap);
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *cell;
-        value &= 0xFFFFEFFF;
-        value |= field;
+        u32 entry = *cell;
+        entry &= ~0x1000;
+        entry |= palette;
         remaining--;
-        *cell = value;
+        *cell = entry;
         cell++;
       }
       height--;
       x += 64;
     } while (height != 0);
-    ((struct UiRenderWork *)base)->dirty = 1;
+    ((struct UiRenderWork *)tilemap)->dirty = 1;
   }
 }
 
-void Resource_CopyFixedBlockB(s32 arg0) {
-  VramBlock_LoadCached(arg0, 0x80, gResource_FixedBlockBTiles);
+// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
+void Resource_CopyFixedBlockB(s32 slot) {
+  VramBlock_LoadCached(slot, 0x80, gResource_FixedBlockBTiles);
 }
 
-void Resource_CopyFixedBlockA(s32 arg0) {
-  VramBlock_LoadCached(arg0, 0x80, gResource_FixedBlockATiles);
+// Loads the 16x16 sprite gResource_FixedBlockATiles into VRAM slot `slot`.
+void Resource_CopyFixedBlockA(s32 slot) {
+  VramBlock_LoadCached(slot, 0x80, gResource_FixedBlockATiles);
 }
 
 #if EDITION_INTERNATIONAL
+// Puts the string `str` into the UI's text entries and returns its width in
+// pixels.
 s32 UiText_SetRenderString(const u8 *str) {
   struct UiRenderWork *work;
   u16 *dst;
@@ -2231,29 +2253,36 @@ s32 UiText_SetRenderString(const u8 *str) {
   return width;
 }
 
-void UiText_DrawPaddedLabel(s32 output, u8 *input) {
+// The text control code that sets the colour of the text after it, from the
+// byte that follows ({text_color:N} in the message catalogs).
+#define TEXT_COLOR_COMMAND 8
+
+// Draws the name being entered, `name`, at the top left of `window`, with
+// the free places up to its seventh character shown as underscores in text
+// colour 2.
+void UiText_DrawPaddedLabel(s32 window, u8 *name) {
   u8 text[20];
   s32 length = 0;
 
-  if (*input != 0) {
+  if (*name != 0) {
     do {
-      text[length] = *input;
-      input++;
+      text[length] = *name;
+      name++;
       length++;
-    } while (*input != 0);
+    } while (*name != 0);
   }
 
-  text[length++] = 8;
+  text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = 2;
 
   while (length <= 6) {
-    text[length++] = 95;
+    text[length++] = '_';
   }
 
-  text[length++] = 8;
+  text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = 15;
   text[length] = 0;
-  UiText_DrawString(text, output, 0, -2);
+  UiText_DrawString(text, window, 0, -2);
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)

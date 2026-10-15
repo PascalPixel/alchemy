@@ -26,7 +26,6 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x02008880)
         "*/games/tla/src/field/overlay_692/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_692/s08f8.o"(.text)
-        "*/resource_692_overlay.o"(.text.x0200899c)
         "*/resource_692_overlay.o"(.text.x02008a30)
         "*/games/tla/src/field/overlay_692/s0ce4.o"(.text)
         "*/resource_692_overlay.o"(.text.x02008d1c)

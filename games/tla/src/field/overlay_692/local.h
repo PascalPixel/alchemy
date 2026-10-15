@@ -23,6 +23,15 @@ struct MapLayers {
 
 extern u8 gMapCellBuffer[];
 
+extern char SceneId_Ov692Room1;
+extern char SceneId_Ov692Room2;
+extern char SceneId_Ov692Room3;
+extern char SceneId_Ov692Room4;
+extern char SceneId_Ov692Room5;
+extern char SceneId_Ov692Room6;
+extern char SceneId_Ov692Room7;
+extern char SceneId_Ov692Room8;
+
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

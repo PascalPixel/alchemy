@@ -17,7 +17,7 @@ SECTIONS
         "*/resource_6ba_overlay.o"(.text.x02008688)
         "*/games/tla/src/field/overlay_6ba/prepare.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008704)
-        "*/resource_6ba_overlay.o"(.text.x02008748)
+        "*/games/tla/src/field/overlay_6ba/level.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008848)
         "*/games/tla/src/field/overlay_6ba/forward.o"(.text)
         "*/games/tla/src/field/overlay_6ba/drop.o"(.text)

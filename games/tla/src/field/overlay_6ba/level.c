@@ -1,4 +1,3 @@
-/* Near miss, differ 17 of 103: the native loads the input address twice on each pass, into r1 for the L/R tests and again into r5 for the A and B tests; this form loads it once into r5 for all four. A goto loop and a one-pass block before the A test measured the same. */
 #include "types.h"
 #include "party_state.h"
 #include "owner_state.h"
@@ -18,8 +17,9 @@ void UiWork_Finalize(void *window, s32 mode);
 void Func_02000704(s32 levels);
 void Func_02000e78(s32 cue);
 
-#define PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
+// The level-raising window, ☀️'s debug EV11_TALK: shows the current
+// member's name and level, raises every active member 5 levels on Start or
+// Select and 1 on A, and closes on B.
 void Func_02000748(void)
 {
     u8 *unit = UnitGet(gPartyState.current_owner);
@@ -31,8 +31,7 @@ void Func_02000748(void)
     UiText_DrawResource(message + 1, window, 0, 16);
     redraw = 1;
     UiText_DrawResource(message + 2, window, 0, 32);
-loop:
-    {
+    for (;;) {
         if (redraw) {
             RenderOutput_RedrawSavedRect(window);
             UiText_DrawStringAtOffset(unit, window, 0, 48);
@@ -41,18 +40,22 @@ loop:
             UiText_DrawNumberInWindow(unit[15], 0, window, 72, 48);
         }
         WaitFrames(1);
-        if ((PRESSED & 8) || (PRESSED & 4)) {
+        /* FAKEMATCH: the volatile reads load the pressed keys again for each test, as the native does (plain: differ 30). */
+        if ((((volatile struct InputState *)&gInput)->pressed & 8)
+            || (((volatile struct InputState *)&gInput)->pressed & 4)) {
             Func_02000704(5);
             Func_02000e78(93);
             redraw = 1;
         }
-        if (PRESSED & 1) {
+        /* FAKEMATCH: the memory barrier keeps GCSE's PRE from reusing the Start and Select tests' input address here, so the A test loads it again as the native does (differ 17 without). */
+        __asm__ volatile("" : : : "memory");
+        if (((volatile struct InputState *)&gInput)->pressed & 1) {
             Func_02000704(1);
             Func_02000e78(91);
             redraw = 1;
         }
-        if (!(PRESSED & 2))
-            goto loop;
+        if (((volatile struct InputState *)&gInput)->pressed & 2)
+            break;
     }
     Func_02000e78(113);
     UiWork_Finalize(window, 2);

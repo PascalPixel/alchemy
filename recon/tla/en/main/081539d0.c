@@ -1,51 +1,61 @@
-#include "mem.h"
+/* Near miss of Func_081539d0, ported from The Broken Seal's
+ * BattleFx_RunSwirlingStars (listing 272 instructions, draft 272, differ 14):
+ * seven reordered pairs, each the native placing a load one row earlier
+ * (the particle base before the rectangle call, the second loop's particle
+ * base, the cell offset table, the camera word) or a use of a loaded word
+ * one row later (frame's copy to sl after the record stores, the negations
+ * of the star's coordinates after the stores of the previous sums). All
+ * follow from a load latency of 3 in sched2. Tried: the particle pointer set
+ * before the rectangle call (differ 32, r5 and r6 trade). */
 #include "types.h"
-#include "battle_efx.h"
 #include "battle_effect_work.h"
-#include "callback_scheduler.h"
-#include "system.h"
+#include "battle_efx.h"
+#include "effect_step.h"
 #include "ram_buffer.h"
-extern u8 gBattleFxWork[];
-extern u8 gCameraWork[];
 
-extern const u16 ParticleStreams_CellOffsets[];
+extern char ResourceId_StarDotSheet;
+extern u16 Data_08197410[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
+u32 Random16(void);
+void WaitFrames(s32 frames);
+void BattleFx_BeginCanvasLayer(s32 bg_control);
+void Func_08143bb8(void);
+void Func_08143000(void);
+void Func_08144aac(s32 flip, DrawRectangle *out);
+void Func_080150e4(s32 angle);
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Scheduler_RemoveCallback(void (*callback)(void));
+void Runtime_ReleaseHeapBlock(s32 slot);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void Graphics_PrepareTransferInIwramWork(void *eye, void *pos);
 void SceneTransform_ApplyPosition(s32 *position);
-void Graphics_SaveTransferWorkOnce(void);
-void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
+void Graphics_SaveTransferWorkOnce(void);
+void Graphics_RestoreTransferWork(void);
+void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping, s32 gravity);
 
-void BattleFx_RunSwirlingStars(void *object)
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
+
+void Func_081539d0(struct BattleEffectArgument *effect)
 {
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 record[3];
     struct EffectPosition pos;
-    DrawRectangleFn draw[2];
+    DrawRectangle draw[2];
     struct EffectStep *star;
     s32 i;
     s32 frame;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    work->effect = object;
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
+    canvas = Ram_HeapSlots->battle_fx_work[1];
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
-    BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, (u32 *)draw);
+    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
+    Func_08144aac(effect->side ^ 1, draw);
     for (i = 0; i != 256; i++) {
-        star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+        star = &PARTICLES[i];
         star->x = ((Random16() & 0xff) - 127) << 16;
         star->y = ((Random16() & 0xff) - 127) << 16;
         star->z = ((Random16() & 0xff) - 127) << 16;
@@ -56,18 +66,18 @@ void BattleFx_RunSwirlingStars(void *object)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     record[0] = 0;
     record[1] = 160 << 15;
     record[2] = 0;
     for (frame = 0; frame != 160; frame++) {
-        s32 facing;
+        s32 *camera;
 
-        facing = *(s32 *)gCameraWork;
+        camera = Ram_HeapSlots->camera_work;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
         SceneTransform_ApplyPosition(record);
-        star = (struct EffectStep *)Ram_MapCellBuffer;
+        star = PARTICLES;
         for (i = 0; i != 64; i++, star++) {
             if (frame > i / 4 && star->variant == 0) {
                 s32 size;
@@ -81,11 +91,11 @@ void BattleFx_RunSwirlingStars(void *object)
                     SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
                     break;
                 case 2:
-                    SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+                    Func_080150e4(-frame * (i + 32) * 8);
                     break;
                 case 3:
                     SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
-                    SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+                    Func_080150e4(-frame * (i + 32) * 8);
                     break;
                 }
                 EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
@@ -97,9 +107,9 @@ void BattleFx_RunSwirlingStars(void *object)
                     pos.depth = 0x27a;
                 size = 9 - (pos.depth - 250) / 64;
                 draw[0](canvas,
-                    (u8 *)work + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
+                    work->sheet + ((i & 3) * 770 + Data_08197410[size - 1]),
                     pos.x - size / 2, pos.y - size, size, size * 2);
-                EffectStep_AdvanceWithGravity3D(star, 60, 0);
+                BattleFxKernels_IntegrateVector3(star, 60, 0);
                 if (frame > i / 4 + 30) {
                     s32 dx = -star->x >> 8;
                     s32 dy = -star->y >> 8;
@@ -114,8 +124,8 @@ void BattleFx_RunSwirlingStars(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
-    BattleFx_EndCanvasLayer();
+    Scheduler_RemoveCallback(Func_08143000);
+    Runtime_ReleaseHeapBlock(188);
+    Runtime_ReleaseHeapBlock(104);
+    Func_08143bb8();
 }

@@ -1889,18 +1889,6 @@ Func_080b11f8:
 	.incbin "baserom.gba", 0x000ac1c8, 0x00000084
 	.section .rom.000acef8, "ax"
 	.incbin "baserom.gba", 0x000acef8, 0x00000004
-	.section .rom.000c1ad4, "ax"
-	.global Data_080c6b04
-Data_080c6b04:
-	.incbin "baserom.gba", 0x000c1ad4, 0x00000014
-	.section .rom.000c1ae8, "ax"
-	.global Battle_Effect90Classes
-Battle_Effect90Classes:
-	.incbin "baserom.gba", 0x000c1ae8, 0x0000005e
-	.section .rom.000c1b46, "ax"
-	.global Battle_Effect91Classes
-Battle_Effect91Classes:
-	.incbin "baserom.gba", 0x000c1b46, 0x0000003a
 	.section .rom.000c8000, "ax"
 	.global Resource_FarCall006
 Resource_FarCall006:

@@ -868,9 +868,6 @@ SECTIONS
     "*/games/tla/src/game/character/d00c6604.o"(.rodata)
     "*/games/tla/src/game/character/d00c6644.o"(.rodata)
     "*/games/tla/src/game/character/elempre.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.000cbb04)
-    "*/recon/tla/fr/rom.o"(.rom.000cbb18)
-    "*/recon/tla/fr/rom.o"(.rom.000cbb76)
     "*/games/tla/src/game/djinn/djinntbl.o"(.rodata)
     . = ABSOLUTE(0x080cd000);
     "*/recon/tla/fr/rom.o"(.rom.000cd000)

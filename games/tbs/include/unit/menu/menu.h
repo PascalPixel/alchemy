@@ -178,11 +178,11 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
 void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
                                          s32 message_variant,
                                          s32 preserve_variant);
-void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
+void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode);
 void Runtime_RunBusyWaitDelay(void);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id);
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id);
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index);
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused);

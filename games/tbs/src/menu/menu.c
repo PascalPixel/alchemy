@@ -6127,6 +6127,13 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0);
 }
 
+// The member's status page. The left pane lists their ailments (or the stat
+// help when they have none) and the right pane the status entries (name and
+// level, experience, HP, PP, Djinn when the party has any, elemental levels,
+// Power and Resist); the cursor's entry is highlighted and explained in the
+// help window. Up and Down move in a pane, Left and Right switch panes, L and
+// R switch to the previous or next member; A goes on to the Psynergy page and
+// B backs out. Returns 1 or -1.
 s32 CharacterMenu_SelectCommand(void) {
   struct CharacterMenuState *menu;
   s32 pane;
@@ -6137,8 +6144,8 @@ s32 CharacterMenu_SelectCommand(void) {
   s32 done;
   s32 hasDjinn;
   s32 redraw;
-  s32 tab;
-  s32 total;
+  s32 member;
+  s32 djinnTotal;
   s32 i;
   u8 entries[8];
 
@@ -6146,9 +6153,9 @@ s32 CharacterMenu_SelectCommand(void) {
   pane = 0;
   result = 0;
   selected = 0;
-  total = Party_SumDjinnCountsFar(-1);
+  djinnTotal = Party_SumDjinnCountsFar(-1);
   hasDjinn = 0;
-  if (total != 0)
+  if (djinnTotal != 0)
     hasDjinn = 1;
   UiWindow_UpdateOrCreate((s32 *)&menu->helpWindow, 0, 0, 30, 5, 2);
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
@@ -6157,6 +6164,7 @@ s32 CharacterMenu_SelectCommand(void) {
   done = 0;
   UiMenu_SlideCursor(-10, 88);
 
+  // One member's page at a time; L and R start the next.
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     UnitGetFar(menu->selectedIds[0]);
     CharacterMenu_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
@@ -6245,18 +6253,19 @@ s32 CharacterMenu_SelectCommand(void) {
         redraw = 1;
         pane--;
       }
+      // L and R: the previous or next member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        tab = menu->ownerIndex[0];
+        member = menu->ownerIndex[0];
         if (gKeysRepeat & KEY_R)
-          tab++;
+          member++;
         else
-          tab--;
-        tab = (tab + menu->partyCount) % menu->partyCount;
-        menu->selectedOwner = menu->ownerIds[tab];
-        menu->selectedIds[0] = menu->ownerIds[tab];
-        menu->ownerIndex[0] = tab;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[tab]);
+          member--;
+        member = (member + menu->partyCount) % menu->partyCount;
+        menu->selectedOwner = menu->ownerIds[member];
+        menu->selectedIds[0] = menu->ownerIds[member];
+        menu->ownerIndex[0] = member;
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);
         break;
       }
     }
@@ -6271,15 +6280,19 @@ s32 CharacterMenu_SelectCommand(void) {
   return result;
 }
 
+// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
+// status page: in pane 0 the selected ailment row, as wide as its label
+// (gCharacterMenu_CursorWidths); in pane 1 one of the first four status rows
+// or of the rows below.
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert) {
-  struct CharacterMenuState *state = gMenuWork;
+  struct CharacterMenuState *menu = gMenuWork;
   u32 different;
   s32 count;
   s32 index;
   s32 x;
   s32 y;
-  s32 last;
+  s32 palette;
   u8 width;
 
   if (mode == 0) {
@@ -6308,11 +6321,15 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     width = 20;
   }
 
+  // Palette 14 (highlighted) when invert is 0, 15 when it is 1.
   different = 1 ^ invert;
-  last = 15 - (((0u - different) | different) >> 31);
-  Render_SetTilemapFlagRect(state->statusWindow, x, y, width, 1, last);
+  palette = 15 - (((0u - different) | different) >> 31);
+  Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
+// Writes the advice for the selected ailment (two lines, e.g. how to revive a
+// member who is down) into window target, or that the member is well when
+// they have no ailment.
 void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
                                        const u8 *entries) {
   s32 count = 0;
@@ -6334,12 +6351,17 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     UiText_DrawResourceFar(MsgStatusNormal, target, 0, 0);
 }
 
+// The longest status help text, in characters.
 #if EDITION_INTERNATIONAL
 #define PROGRESS_TEXT_MAX 0x80
 #else
 #define PROGRESS_TEXT_MAX 0x40
 #endif
 
+// Writes the help text of status entry messageVariant into destination: the
+// entries skip Djinn when the party has none (preserveVariant 0); the
+// experience entry says how many points the next level needs, or, at level 99,
+// gives the plain experience text.
 void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
                                          s32 messageVariant,
                                          s32 preserveVariant) {
@@ -6353,7 +6375,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     struct BattleUnit *owner = UnitGetFar(menu->selectedIds[0]);
 
     if (owner->level == 99) {
-      messageVariant = 8;
+      messageVariant = 8; // "These are your experience points."
     } else {
 #if EDITION_INTERNATIONAL
       u64 remaining =
@@ -6375,13 +6397,17 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
   MemFree(buffer);
 }
 
-void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
+// Draws member ownerId's status page into window: the top rows (ItemMenu_
+// DrawOwnerStatus), the ailment list or "Normal", and except on the chooser
+// page the Djinn counts by element and, in mode 1, the elemental levels,
+// Power and Resist. mode's 0x100 keeps what is drawn instead of clearing it.
+void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode) {
-  struct CharacterMenuState *state = gMenuWork;
-  struct BattleUnit *status;
-  s32 row;
+  struct CharacterMenuState *menu = gMenuWork;
+  struct BattleUnit *unit;
+  s32 djinnRow;
   s32 hasDjinn;
-  s32 keep;
+  s32 keepDrawn;
   s32 i;
   u8 ailments[8];
 
@@ -6389,18 +6415,19 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
     hasDjinn = 1;
   else
     hasDjinn = 0;
-  status = UnitGetFar(unit);
+  unit = UnitGetFar(ownerId);
   if ((mode & 0xff) == 1)
-    row = 7;
+    djinnRow = 7;
   else
-    row = 10;
-  state->statusCursor->active = ICON_SHOWN;
-  ItemMenu_DrawOwnerStatus((s32)window, unit, mode);
-  CharacterMenu_BuildAvailability(ailments, 1, unit);
+    djinnRow = 10;
+  menu->statusCursor->active = ICON_SHOWN;
+  ItemMenu_DrawOwnerStatus((s32)window, ownerId, mode);
+  CharacterMenu_BuildAvailability(ailments, 1, ownerId);
   CharacterMenu_UpdateSelectionIcons(ailments);
-  keep = mode & 0x100;
-  if (keep == 0)
+  keepDrawn = mode & 0x100;
+  if (keepDrawn == 0)
     UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
+  // The ailments, one a row, or "Normal".
   i = 0;
   if (ailments[CHARACTER_DOWN] != 0) {
     UiText_DrawCharacterAtOffsetFar(MsgDownLabel, window, 16, 40);
@@ -6426,55 +6453,60 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
     UiText_DrawCharacterAtOffsetFar(MsgNormalLabel, window, 0, 40);
   CharacterMenu_UpdateSelectionIcons(ailments);
   ItemMenu_ApplyFlags(ailments);
-  if (state->page == 3)
+  if (menu->page == 3)
     return;
-  if (keep == 0) {
+  if (keepDrawn == 0) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
+  // The four element icons, then the Djinn counts and, in mode 1, the
+  // elemental levels, Power and Resist.
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
-    UiWindow_SetTilemapEntryFar(window, 1, 15, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 2, 19, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 3, 23, row, 4);
-    UiWindow_SetTilemapEntryFar(window, 4, 27, row, 4);
+    UiWindow_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 3, 23, djinnRow, 4);
+    UiWindow_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
   }
   if (hasDjinn)
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64, row * 8 + 8);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64,
+                                    djinnRow * 8 + 8);
   if (mode == 1) {
     if (!hasDjinn)
-      row--;
+      djinnRow--;
 #if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, row * 8 + 16);
+    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
 #else
-    UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, row * 8 + 16);
+    UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
 #endif
-    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64, row * 8 + 24);
+    UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64,
+                                    djinnRow * 8 + 24);
     UiText_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
-                                    row * 8 + 32);
+                                    djinnRow * 8 + 32);
   }
   for (i = 0; i <= 3; i++) {
     if (hasDjinn)
-      UiText_DrawNumberInWindowFar(status->djinnOwnedCounts[i], 1, window,
-                                   i * 32 + 120, row * 8 + 8);
+      UiText_DrawNumberInWindowFar(unit->djinnOwnedCounts[i], 1, window,
+                                   i * 32 + 120, djinnRow * 8 + 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
-        UiText_DrawNumberInWindowFar(status->djinnActiveCounts[i], 1, window,
-                                     i * 32 + 104, row * 8 + 8);
+        UiText_DrawNumberInWindowFar(unit->djinnActiveCounts[i], 1, window,
+                                     i * 32 + 104, djinnRow * 8 + 8);
         UiText_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112,
-                                     row * 8 + 8);
+                                     djinnRow * 8 + 8);
       }
-      UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(unit, i), 2,
-                                   window, i * 32 + 112, row * 8 + 16);
-      UiText_DrawNumberInWindowFar(status->element[i].power, 3, window,
-                                   i * 32 + 104, row * 8 + 24);
-      UiText_DrawNumberInWindowFar(status->element[i].res, 3, window,
-                                   i * 32 + 104, row * 8 + 32);
+      UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(ownerId, i), 2,
+                                   window, i * 32 + 112, djinnRow * 8 + 16);
+      UiText_DrawNumberInWindowFar(unit->element[i].power, 3, window,
+                                   i * 32 + 104, djinnRow * 8 + 24);
+      UiText_DrawNumberInWindowFar(unit->element[i].res, 3, window,
+                                   i * 32 + 104, djinnRow * 8 + 32);
     }
   }
 }
 
 #if EDITION_INTERNATIONAL
+// Spins for 256 loop passes (international editions only).
 void Runtime_RunBusyWaitDelay(void) {
   s32 count = 0xff;
 
@@ -6486,6 +6518,7 @@ spin:
 
 #endif
 
+// The stat column of the status page's top rows.
 #if EDITION_INTERNATIONAL
 #define STAT_DIGITS 3
 #define STAT_X 200
@@ -6494,6 +6527,9 @@ spin:
 #define STAT_X 192
 #endif
 
+// Draws the top rows of member owner's status page into window: name, class,
+// level, experience, HP and PP on the left, Attack, Defense, Agility and Luck
+// on the right. flags' 0x100 keeps what is drawn instead of clearing it.
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   struct InventoryMenuState *menu;
   struct BattleUnit *unit;
@@ -6537,6 +6573,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
+  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
+  // before "Exp".
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 23, window, 152, 0);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 22, window, 152, 8);
   UiText_DrawCharacterAtOffsetFar(MsgExpLabel - 21, window, 152, 16);
@@ -6547,36 +6585,39 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   UiText_DrawNumberInWindowFar(unit->luck, STAT_DIGITS, window, STAT_X, 24);
 }
 
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
-  struct BattleUnit *state;
+// Fills ailments[0..4] (CharacterAilment) with member id's ailments: down
+// (only when requested is 1), poison or venom, curse and haunt. Returns how
+// many they have.
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id) {
+  struct BattleUnit *unit;
   s32 i;
   s32 count;
-  s32 mode;
+  s32 poison;
 
-  state = UnitGetFar(id);
+  unit = UnitGetFar(id);
   for (i = 4; i >= 0; i--)
-    output[i] = 0;
+    ailments[i] = 0;
 
   count = 0;
-  if (state->hp == 0 && requested == 1) {
-    output[CHARACTER_DOWN] = requested;
+  if (unit->hp == 0 && requested == 1) {
+    ailments[CHARACTER_DOWN] = requested;
     count = 1;
   }
 
-  mode = state->poison;
-  if (mode != 0) {
-    if (mode == 1)
-      output[CHARACTER_POISON] = mode;
+  poison = unit->poison;
+  if (poison != 0) {
+    if (poison == 1) // poison; any other value is venom
+      ailments[CHARACTER_POISON] = poison;
     else
-      output[CHARACTER_VENOM] = 1;
+      ailments[CHARACTER_VENOM] = 1;
     count++;
   }
-  if (state->restraint != 0) {
-    output[CHARACTER_CURSE] = 1;
+  if (unit->restraint != 0) {
+    ailments[CHARACTER_CURSE] = 1;
     count++;
   }
-  if (state->haunt != 0) {
-    output[CHARACTER_HAUNT] = 1;
+  if (unit->haunt != 0) {
+    ailments[CHARACTER_HAUNT] = 1;
     count++;
   }
   return count;

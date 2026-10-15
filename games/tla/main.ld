@@ -540,7 +540,6 @@ SECTIONS
     "*/games/tla/src/graphics/render/fromres.o"(.text)
     "*/games/tla/src/graphics/render/loaded.o"(.text)
     "*/games/tla/src/graphics/render/output.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00042594)
     "*/recon/tla/ja/rom.o"(.rom.0004264c)
     "*/games/tla/src/graphics/window/runtime_set_byte5_and_reset_halfword_c.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000426be)

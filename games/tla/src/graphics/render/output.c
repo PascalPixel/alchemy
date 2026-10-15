@@ -11,6 +11,10 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource.h"
+#include "window.h"
+
+s32 Localization_LookupEntryId(s32 key);
+void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse);
 
 struct RenderOutput *RenderOutput_CreateWithTransform(
     s32 arg0,
@@ -32,3 +36,48 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
     return result;
 }
 
+
+// Loads the character entry for the key into the given side, or into a free
+// one (resource id 999) when the side is 2 or more, and creates its output
+// with that side's palette (14 + side).
+struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
+{
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct RenderOutput *object = 0;
+    s32 first;
+    s32 second;
+    s32 id;
+    s32 slot;
+
+    id = Localization_LookupEntryId(object_kind);
+    if (id == -1)
+        return object;
+
+    if ((u32)side > 1) {
+        u32 current;
+
+        current = state->resource_ids[1];
+        /* FAKEMATCH: the barrier loads the second side's id before 999 is
+           built and the side is set; plain, both come first (one reordered
+           row, differ 2). */
+        asm("");
+        side = 1;
+        if (current != 999) {
+            side = 0;
+            if (state->resource_ids[0] != 999)
+                return object;
+        }
+    }
+
+    slot = 14 + side;
+    UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
+    object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3, arg4, arg5);
+    if (object != 0) {
+        object->oam.palette = slot;
+        object->kind = 2;
+    }
+
+    state->resource_ids[side] = id;
+    state->output_ids[side] = first;
+    return object;
+}

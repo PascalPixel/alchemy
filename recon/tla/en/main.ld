@@ -585,7 +585,6 @@ SECTIONS
         "*/games/tla/src/graphics/render/fromres.o"(.text)
         "*/games/tla/src/graphics/render/loaded.o"(.text)
         "*/games/tla/src/graphics/render/output.o"(.text)
-        "*/recon/tla/raw/08042450.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08042508.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/window/runtime_set_byte5_and_reset_halfword_c.o"(.text)
         "*/recon/tla/raw/0804257a.o"(.text)

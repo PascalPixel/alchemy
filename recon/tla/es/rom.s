@@ -1115,13 +1115,8 @@ UiText_DrawNumberInWindow:
 	.thumb_func
 RenderOutput_Create:
 	.incbin "baserom.gba", 0x00042380, 0x00000088
-	.section .rom.000424bc, "ax"
-	.global CreateSideObject
-	.type CreateSideObject, %function
-	.thumb_func
-CreateSideObject:
-	.incbin "baserom.gba", 0x000424bc, 0x000000b8
 	.section .rom.00042574, "ax"
+	.balign 4
 	.global Ui_LoadCharacterEntryForSlot
 	.type Ui_LoadCharacterEntryForSlot, %function
 	.thumb_func

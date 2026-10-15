@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Ui_LoadCharacterEntryForSlot
 	.thumb_func
 Ui_LoadCharacterEntryForSlot:

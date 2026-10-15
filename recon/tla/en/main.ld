@@ -2361,7 +2361,6 @@ SECTIONS
         "*/recon/tla/raw/081c09d0.o"(.text)
         "*/games/tla/src/sound/sndstub.o"(.text)
         "*/games/tla/src/sound/f1c0cac.o"(.text)
-        "*/recon/tla/raw/081c0cb0.o"(.text)
         "*/recon/tla/raw/081c0e30.o"(.text)
         "*/games/tla/src/sound/music_set_pitch.o"(.text)
         "*/games/tla/src/sound/music_set_volume.o"(.text)

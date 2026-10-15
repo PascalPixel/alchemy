@@ -3981,7 +3981,7 @@ Func_080fe580:
 	.type ItemMenu_DrawEquippedItemNames, %function
 	.thumb_func
 ItemMenu_DrawEquippedItemNames:
-	.incbin "baserom.gba", 0x00100548, 0x000000e4
+	.incbin "baserom.gba", 0x00100548, 0x000000a4
 	.section .rom.00100740, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00100740, 0x00000608

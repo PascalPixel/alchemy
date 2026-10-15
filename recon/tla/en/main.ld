@@ -1543,7 +1543,6 @@ SECTIONS
         "*/recon/tla/raw/0810021c.o"(.text)
         "*/games/tla/src/menu/item/category.o"(.text)
         "*/recon/tla/raw/08100540.o"(.text)
-        "*/recon/tla/raw/081005e4.o"(.text)
         "*/games/tla/src/menu/place_entry_object_in_grid.o"(.text)
         "*/recon/tla/raw/08100738.o"(.text)
         "*/recon/tla/raw/081007f8.o"(.text)

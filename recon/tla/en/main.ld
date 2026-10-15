@@ -2087,7 +2087,6 @@ SECTIONS
         "*/recon/tla/raw/08196404.o"(.text)
         "*/recon/tla/raw/0819690c.o"(.text)
         "*/games/tla/src/battle/effect/project_vertices.o"(.text)
-        "*/recon/tla/raw/08196a7c.o"(.text)
         "*/games/tla/src/battle/effect/fxconst.o"(.rodata)
         "*/games/tla/src/battle/effect/battle_effect_composite.o"(.text)
         "*/games/tla/src/battle/effect/battle_effect_composite_color.o"(.text .rodata .data .padding)

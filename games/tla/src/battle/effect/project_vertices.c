@@ -3,6 +3,7 @@
 #include "dma.h"
 #include "mem.h"
 #include "io_reg.h"
+#include "ramcode.h"
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
@@ -96,4 +97,161 @@ s32 Func_08196a28(struct Texture *source, struct Texture *copy) {
                   (size + misalign + 3) & -mask);
   copy->pixels += misalign;
   return 1;
+}
+
+// One entry of a model list. Func_081969f8 allocates the list with a cleared
+// entry after the last.
+struct Model {
+  s32 kind; // the rasterizer kernel that draws it; 0 ends the list
+  s32 flags;
+  const void *mesh;
+  void *matrix;
+  struct Texture *texture;
+  s32 fade;
+  u8 unk18;
+  u8 frame;
+};
+
+// The texture stays where it is, even when IWRAM has room for a copy.
+#define MODEL_TEXTURE_IN_PLACE 4
+
+typedef void (*ModelKernel)(struct Model *model);
+
+// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
+// bytes and, for three of them, in DMA words.
+extern const u8 Data_08138fc8[];
+extern const u8 Data_081391c8[];
+extern const u8 Data_081393d8[];
+extern const u8 Data_081395f8[];
+extern const u8 Data_08139aac[];
+extern const u8 Data_08139f70[];
+extern const u8 Data_0813a444[];
+extern const u8 Data_0813a924[];
+extern const u8 Data_0813ae14[];
+extern const u8 Data_0813b2ec[];
+extern const u8 Data_0813b7a0[];
+extern u8 Data_08138fc8CodeSize[];
+extern u8 Data_081391c8CodeSize[];
+extern u8 Data_081393d8CodeSize[];
+extern u8 Data_081395f8CodeSize[];
+extern u8 Data_08139aacCodeSize[];
+extern u8 Data_08139f70CodeSize[];
+extern u8 Data_0813a444CodeSize[];
+extern u8 Data_0813a924CodeSize[];
+extern u8 Data_0813ae14CodeSize[];
+extern u8 Data_0813b2ecCodeSize[];
+extern u8 Data_0813b7a0CodeSize[];
+extern u8 Data_081395f8CodeWords[];
+extern u8 Data_0813ae14CodeWords[];
+extern u8 Data_0813b2ecCodeWords[];
+
+// Copies a kernel whose DMA control is a word of its own. Kernels 8, 9 and 10
+// read it from the pool, one word each, two of them equal yet stored twice,
+// so it is a symbol of each kernel: written 0x84000000 | (size >> 2) the two
+// fold into one pool entry, and as a number the size is built in three
+// instructions.
+#define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
+  {                                                                            \
+    (to) = MemAlloc((u32)(bytes));                                             \
+    Dma_Set((code), (to), 0x84000000 + (u32)(words), REG_DMA3);                \
+  }
+
+// Copies the model's texture into IWRAM unless it is to stay in place.
+#define COPY_TEXTURE()                                                         \
+  {                                                                            \
+    if (!(model->flags & MODEL_TEXTURE_IN_PLACE) &&                            \
+        Func_08196a28(texture, &copy))                                         \
+      model->texture = &copy;                                                  \
+  }
+
+// Draws a list of models. A run of models of one kind loads that kind's
+// rasterizer into IWRAM once, and it is freed when the kind changes. Before
+// a textured model is drawn, its texture is copied into IWRAM where there is
+// room, and the copy is freed after the model is drawn.
+void Func_08196a7c(struct Model *model) {
+  ModelKernel code = NULL;
+  s32 lastKind = 0;
+  struct Texture copy;
+  struct Texture *texture;
+
+  for (;;) {
+    texture = model->texture;
+    if (model->kind != lastKind && code != NULL)
+      MemFree(code);
+    if (model->kind == 0)
+      break;
+    switch (model->kind) {
+    case 1:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08138fc8, Data_08138fc8CodeSize);
+      code(model);
+      break;
+    case 11:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813b7a0, Data_0813b7a0CodeSize);
+      code(model);
+      break;
+    case 2:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_081391c8, Data_081391c8CodeSize);
+      code(model);
+      break;
+    case 3:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_081393d8, Data_081393d8CodeSize);
+      code(model);
+      break;
+    case 8:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_081395f8, Data_081395f8CodeSize,
+                          Data_081395f8CodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 9:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_0813ae14, Data_0813ae14CodeSize,
+                          Data_0813ae14CodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 10:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_0813b2ec, Data_0813b2ecCodeSize,
+                          Data_0813b2ecCodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 4:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08139aac, Data_08139aacCodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 5:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08139f70, Data_08139f70CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 6:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813a444, Data_0813a444CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 7:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813a924, Data_0813a924CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    }
+    lastKind = model->kind;
+    if (model->texture == &copy) {
+      MemFree((void *)(model->texture->pixels & ~3));
+      model->texture = texture;
+    }
+    model++;
+  }
 }

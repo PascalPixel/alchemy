@@ -1894,7 +1894,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/nibble_pair.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00196408)
     "*/games/tla/src/battle/effect/project_vertices.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00196a80)
     "*/games/tla/src/battle/effect/fxconst.o"(.rodata)
     "*/games/tla/src/battle/effect/battle_effect_composite.o"(.text)
     "*/games/tla/src/battle/effect/battle_effect_composite_color.o"(.text .rodata .data .padding)

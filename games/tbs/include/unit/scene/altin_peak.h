@@ -17,7 +17,7 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s8 gAltinPeak_PaletteScript[];
 extern s32 gAltinPeak_ActorScript[];
-extern s32 gAltinPeak_EarlyActorScript[];
+extern s32 gAltinPeak_PuddleGrowScript[];
 extern s32 gAltinPeak_LogRideScript[];
 extern s32 gAltinPeak_LeaderRideScript[];
 extern s32 gAltinPeak_SparkScript[];

@@ -80,6 +80,8 @@ enum { ACTOR_LOG = 8, ACTOR_DJINNI = 14 };
 
 enum { SE_JUMP = 152, SE_LAND_ON_LOG = 159 };
 
+enum { SE_WATER_DRAIN = 230, SE_WATER_GONE = 0x121 };
+
 // The leader's jump animations.
 enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
 
@@ -394,7 +396,10 @@ static void Mine_FreezeRoom7ThirdPuddle(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
 }
 
-static void SceneState_SetDispcntBit9ByThreshold(void) {
+// Interrupt handler while the water layer vanishes: each time, background 1
+// (the water) stays on only when a random percentage reaches the timer, so
+// as the timer climbs to 100 the water flickers away.
+static void Water_FlickerOut(void) {
 #ifdef MODERN
   // modern GCC holds one type for a name in a file
   extern u16 gAltinPeak_RiseTimer_modern __asm__("gAltinPeak_RiseTimer");
@@ -421,112 +426,125 @@ static void SceneState_SetDispcntBit9ByThreshold(void) {
 #undef gAltinPeak_RiseTimer
 #endif
 
-static void FieldScene_RunEarlySequence(void) {
+// The first drain, after the Frost Jewel is found: the screen shakes, the
+// water layer sinks 24 pixels, one step every 4 frames (a puddle growing
+// from a tenth of its size partway down), then flickers away over 100
+// frames. The way on opens and the drain is remembered.
+static void Mine_DrainFirstWater(void) {
   extern u8 gAltinPeak_RiseTimer[];
 
-  s32 i;
-  struct FieldActor *record;
-  u8 *p5;
-  u8 *rec;
-  s32 v;
+  s32 step;
+  struct FieldActor *puddle;
+  u8 *mapWork;
+  u8 *waterLayer;
+  s32 timer;
 
-  p5 = gMapWork[0];
-  Event_PlayCue(230);
+  mapWork = gMapWork[0];
+  Event_PlayCue(SE_WATER_DRAIN);
   Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
   Engine_EventWait(10);
-  rec = p5 + 356;
-  for (i = 0; i <= 23; i++) {
-    *(s32 *)(rec + 12) -= 0x10000;
+  // Sink the water layer one pixel every 4 frames, 24 in all.
+  waterLayer = mapWork + 356;
+  for (step = 0; step <= 23; step++) {
+    *(s32 *)(waterLayer + 12) -= 0x10000;
     Engine_TaskWait(4);
-    if (i == 8) {
-      record = Object_GetById(8);
-      record->scaleX = 0x1999;
-      record = Actor_Get(8);
-      record->scaleY = 0x1999;
-      Actor_SetPosition(8, 0x980000, 0xd80000);
-      Engine_ActorEnableActionCallback(8, gAltinPeak_EarlyActorScript);
+    if (step == 8) {
+      puddle = Object_GetById(8);
+      puddle->scaleX = 0x1999;
+      puddle = Actor_Get(8);
+      puddle->scaleY = 0x1999;
+      Actor_SetPosition(8, PIXELS(152), PIXELS(216));
+      Engine_ActorEnableActionCallback(8, gAltinPeak_PuddleGrowScript);
     }
   }
-  Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
+  // Flicker the water away while the timer counts to 100.
+  Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   *(u16 *)gAltinPeak_RiseTimer = 0;
   do {
     Engine_TaskWait(1);
-    v = *(u16 *)gAltinPeak_RiseTimer + 1;
-    *(u16 *)gAltinPeak_RiseTimer = v;
-  } while ((u32)(v << 16) <= 0x640000);
+    timer = *(u16 *)gAltinPeak_RiseTimer + 1;
+    *(u16 *)gAltinPeak_RiseTimer = timer;
+  } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_WATER_GONE);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_EventWait(30);
   Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
   GameFlag_Set(FLAG_ALTIN_MINE_FIRST_DRAIN);
 }
 
-static void FieldScene_RunScene3a4SequenceH(void) {
+// The second drain: the same sinking and flicker over the cells the water
+// leaves behind, which then take their dry form.
+static void Mine_DrainSecondWater(void) {
   extern u8 gAltinPeak_RiseTimer[];
 
-  s32 i;
-  u8 *p5;
-  u8 *rec;
-  s32 v;
+  s32 step;
+  u8 *mapWork;
+  u8 *waterLayer;
+  s32 timer;
 
-  p5 = gMapWork[0];
+  mapWork = gMapWork[0];
   Map_CopyCells(93, 41, 16, 4, 77, 28);
-  Event_PlayCue(230);
+  Event_PlayCue(SE_WATER_DRAIN);
   Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
   Engine_EventWait(10);
-  rec = p5 + 356;
-  for (i = 23; i >= 0; i--) {
-    *(s32 *)(rec + 12) -= 0x10000;
+  // Sink the water layer one pixel every 4 frames, 24 in all.
+  waterLayer = mapWork + 356;
+  for (step = 23; step >= 0; step--) {
+    *(s32 *)(waterLayer + 12) -= 0x10000;
     Engine_TaskWait(4);
   }
-  Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
+  // Flicker the water away while the timer counts to 100.
+  Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   *(u16 *)gAltinPeak_RiseTimer = 0;
   do {
     Engine_TaskWait(1);
-    v = *(u16 *)gAltinPeak_RiseTimer + 1;
-    *(u16 *)gAltinPeak_RiseTimer = v;
-  } while ((u32)(v << 16) <= 0x640000);
+    timer = *(u16 *)gAltinPeak_RiseTimer + 1;
+    *(u16 *)gAltinPeak_RiseTimer = timer;
+  } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_WATER_GONE);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_EventWait(30);
   Map_CopyCells(77, 41, 16, 4, 77, 28);
   GameFlag_Set(FLAG_ALTIN_MINE_SECOND_DRAIN);
 }
 
-static void FieldScene_RunScene3a4SequenceI(void) {
+// The third drain, likewise.
+static void Mine_DrainThirdWater(void) {
   extern u8 gAltinPeak_RiseTimer[];
 
-  s32 i;
-  u8 *p8;
-  u8 *rec;
-  s32 v;
+  s32 step;
+  u8 *mapWork;
+  u8 *waterLayer;
+  s32 timer;
 
-  p8 = gMapWork[0];
+  mapWork = gMapWork[0];
   Map_CopyCellsTo(113, 31, 103, 17, 1, 1);
   Map_CopyCellsTo(111, 32, 104, 18, 3, 2);
   Map_CopyCellsTo(64, 32, 103, 18, 1, 2);
-  Event_PlayCue(230);
+  Event_PlayCue(SE_WATER_DRAIN);
   Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
   Engine_EventWait(10);
-  rec = p8 + 356;
-  for (i = 23; i >= 0; i--) {
-    *(s32 *)(rec + 12) -= 0x10000;
+  // Sink the water layer one pixel every 4 frames, 24 in all.
+  waterLayer = mapWork + 356;
+  for (step = 23; step >= 0; step--) {
+    *(s32 *)(waterLayer + 12) -= 0x10000;
     Engine_TaskWait(4);
   }
-  Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
+  // Flicker the water away while the timer counts to 100.
+  Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   *(u16 *)gAltinPeak_RiseTimer = 0;
   do {
     Engine_TaskWait(1);
-    v = *(u16 *)gAltinPeak_RiseTimer + 1;
-    *(u16 *)gAltinPeak_RiseTimer = v;
-  } while ((u32)(v << 16) <= 0x640000);
+    timer = *(u16 *)gAltinPeak_RiseTimer + 1;
+    *(u16 *)gAltinPeak_RiseTimer = timer;
+  } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_WATER_GONE);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_EventWait(30);
   Map_CopyCellsTo(103, 14, 103, 17, 4, 3);
@@ -1738,7 +1756,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void) {
   Camera_MoveTo(0x640000, 0, 0xf90000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  FieldScene_RunEarlySequence();
+  Mine_DrainFirstWater();
   Camera_MoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
   Engine_CameraWaitForMove();
   Event_LoadAreaScript(gAltinPeakEvents1Drained);
@@ -1759,7 +1777,7 @@ static void FieldScene_RunScene3a4SequenceF(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FieldScene_RunScene3a4SequenceH();
+  Mine_DrainSecondWater();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Engine_EventEnd();
 }
@@ -1777,7 +1795,7 @@ static void FieldScene_RunScene3a4SequenceE(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FieldScene_RunScene3a4SequenceI();
+  Mine_DrainThirdWater();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Engine_EventEnd();
 }
@@ -2246,7 +2264,8 @@ s32 gAltinPeak_ActorScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gAltinPeak_EarlyActorScript[] = {
+// The new puddle grows to full size over 108 frames.
+s32 gAltinPeak_PuddleGrowScript[] = {
     SC_ADD(SW_SCALE_X, 546),
     SC_ADD(SW_SCALE_Y, 546),
     SC_WAIT(1),

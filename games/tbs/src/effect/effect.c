@@ -3927,27 +3927,28 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 3 つの入口：mode を決めて本体を呼ぶ
-//--------------------------------------------------------------------------
+// Battle effect 353: the wall rises wide and shakes the screen hard.
 void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunFortyEightFrameEffect(effect, 1);
 }
 
+// Battle effect 348: the wall rises with a long gentle shake and the
+// recovery sound.
 void BattleFx_RunFortyEightFrameMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunFortyEightFrameEffect(effect, 0);
 }
 
+// Battle effect 389: a wide wall of fire, without a shake.
 void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect) {
   BattleFx_RunFortyEightFrameEffect(effect, 2);
 }
 
-//--------------------------------------------------------------------------
-// 最初の対象の足元に、左右対称の壁 (EarthWall の絵) を立てる
-// mode : 0 等倍、32 フレーム小さく揺らす
-//        1 横 1.25 倍、8 フレーム大きく揺らす
-//        2 横 1.25 倍、揺らさず Fireball のパレットで描く
-//--------------------------------------------------------------------------
+// Raises a symmetrical wall (the EarthWall images) at the first target's
+// feet for 48 frames; the target glows and the battle shows the result on
+// frame 24.
+// mode : 0 actual size, a gentle shake for 32 frames
+//        1 1.25 times as wide, a hard shake for 8 frames
+//        2 1.25 times as wide, no shake, in the Fireball colours
 void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
                                        s32 mode) {
   void **cursor;
@@ -3967,7 +3968,8 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // 絵は EarthWall、パレットは MarsDjinn (mode 2 は Fireball) で上書きする
+  // The EarthWall images, coloured with the Mars Djinn palette (the Fireball
+  // palette in mode 2).
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)0x05000000, palette, 128);
   palette += 128;
@@ -3979,19 +3981,20 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
     Iwram_CopyWords((void *)0x05000000, palette, 128);
   }
 
-  // キャンバスの x = 64 が対象の位置にくるよう BG2 をずらす
+  // Scroll BG2 so the canvas's x 64 is on the target.
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &pos);
   if (mode == 0) {
-    REG_BG2PA = 0x100; // 等倍
+    REG_BG2PA = 0x100; // unscaled
     x = 64 - pos.x;
     REG_BG2X = x << 8;
   } else {
-    REG_BG2PA = 0xcc; // 0.8 (横 1.25 倍に表示)
+    REG_BG2PA = 0xcc; // 0.8: shown 1.25 times as wide
     x = (-pos.x * 4) / 5 + 64;
     REG_BG2X = x << 8;
   }
 
-  // 左半分はそのまま、右半分は左右反転して比較合成で描く
+  // The left half as drawn, the right half mirrored, keeping the higher
+  // colour.
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
   slots = gWorkSlot;
@@ -4000,8 +4003,8 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  work->transferMode = 2;
-  work->transferValue = 50; // 転送のたびに半分へ減らして残像にする
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
+  work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -4025,10 +4028,10 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
     if (frame == 24)
       BattleEventRuntime_BeginPhaseFar(0);
     if (frame == 8 && mode == 0)
-      AudioCommand_PlayFar(126);
+      AudioCommand_PlayFar(SOUND_RECOVERY);
 
-    // 4 フレームごとに絵 0, 1, 2 と進め、その後は 2 と 1 を交互に (27
-    // フレームまで)
+    // Images 0, 1 and 2, four frames each, then 1 and 2 by turns, up to
+    // frame 27.
     if (frame <= 31) {
       cell = frame / 4;
       if (cell > 2)
@@ -4059,32 +4062,29 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
 }
 
 //--------------------------------------------------------------------------
-// member_beam.c
-// 戦闘エフェクト：ジンが現れ、光の粒が降り、空から光の柱が対象に落ちる
+// Beams of light: a Djinni appears, motes drift down, and a column of
+// light falls from the sky onto each target.
 //--------------------------------------------------------------------------
-// work->sheet の中の絵
-#define PIC_MOTE 0x2710  // 粒 (CrescentMoonSheet、24×24)
-#define PIC_DJINN 0x65c0 // ジン (40×40)
 
-//--------------------------------------------------------------------------
-// mode 0 : ヴィーナスのジン
-//--------------------------------------------------------------------------
+// Images in work->sheet.
+#define PIC_MOTE 0x2710  // the motes (CrescentMoonSheet, 24x24)
+#define PIC_DJINN 0x65c0 // the Djinni (40x40)
+
+// Battle effects 25 and 201: with a Venus Djinni.
 void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunMemberBeam(effect, 0);
 }
 
-//--------------------------------------------------------------------------
-// mode 1 : マーキュリーのジン
-//--------------------------------------------------------------------------
+// Battle effect 209: with a Mercury Djinni.
 void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunMemberBeam(effect, 1);
 }
 
-//--------------------------------------------------------------------------
-// prelude が 1 ならジンを出して揺らしながら上へ動かし、対象ごとに
-// 16 フレームずつずらして粒を 8 つ降らせ、72 フレーム目から光の柱を落とす
-// mode : 0 はヴィーナス、1 はマーキュリーのジンの絵
-//--------------------------------------------------------------------------
+// When effect->prelude is 1, a Djinni appears, sways and then rises out of
+// sight. Over each target in turn, 16 frames apart, eight motes drift down,
+// and from 72 frames after its turn starts a column of light falls on it
+// and narrows away; the battle shows the result on frame 80.
+// mode : 0 a Venus Djinni, 1 a Mercury Djinni.
 void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition one;
   struct EffectPosition pos;
@@ -4127,7 +4127,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + PIC_DJINN);
 
-  // 粒 : 80 ドットの高さから、揺れの位相はでたらめ
+  // The motes start 80 pixels up, each at a random point of its sway.
   for (i = 0; i != 512; i++) {
     PARTICLES[i].x = 0;
     PARTICLES[i].y = 80 << 16;
@@ -4135,8 +4135,8 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
     PARTICLES[i].variant = Random16() & 255;
   }
 
-  // 対象がひとりなら、その画面位置が x = 64 に来るよう BG2 をずらす
-  REG_BG2PA = 0x100;
+  // With one target, scroll BG2 so the target is at the canvas's x 64.
+  REG_BG2PA = 0x100; // unscaled
   if (work->effect->count == 1) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &one);
     offsetX = 64 - one.x;
@@ -4147,7 +4147,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
       offsetX = 0;
   }
   REG_BG2X = offsetX << 8;
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -4160,7 +4160,8 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 80)
       BattleEventRuntime_BeginPhaseFar(0);
 
-    // ジン : 左右に 20 ドット揺れ、32 フレームのちから 2 ドットずつ上がる
+    // The Djinni sways 20 pixels either way and from frame 32 rises 2
+    // pixels a frame.
     k = work->effect->prelude;
     if (k == 1) {
       s32 angle = frame << 11;
@@ -4176,13 +4177,14 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
-    // 粒 : 8 フレームおきに出て、左右に 16 ドット揺れながら
-    // 1 ドットずつ降り、高さ 8 ドットで消える
+    // Motes: one every 8 frames, swaying up to 16 pixels either way as
+    // they sink a pixel a frame; they go out 8 pixels above the ground.
     for (k = 0; k != work->effect->count; k++) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
@@ -4221,8 +4223,9 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    // 光の柱 : 画面の上から対象の足もとまで、左右対称に描く
-    // 幅は 6 ドット、88 フレーム目から 3 フレームに 1 ドットずつ細る
+    // The column: drawn in two mirrored halves from the top of the canvas
+    // down to the target's feet, 6 pixels each, narrowing by a pixel every
+    // 3 frames from 16 frames after it falls. The target glows meanwhile.
     for (i = 0; i != work->effect->count; i++) {
       s32 start = i * 16;
 
@@ -4249,7 +4252,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
             width = 6 - (frame - start - 88) / 3;
           if (pic > 2)
             pic = (pic & 1) + 1;
-          // 足もとの光
+          // The glow at the target's feet.
           if (frame < start + 100) {
             draw[0](canvas, work->sheet + gMemberBeam_HeadOffsets[pic],
                     pos.x - gMemberBeam_HeadWidths[pic],
@@ -4259,7 +4262,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
                     pos.y - gMemberBeam_HeadHeights[pic] + 8,
                     gMemberBeam_HeadWidths[pic], gMemberBeam_HeadHeights[pic]);
           }
-          // 柱 (1 行ずつ)
+          // The column, a row at a time.
           for (k = 0; k != pos.y; k++) {
             draw[0](canvas, work->sheet + 5, pos.x - width, k, width, 1);
             draw[1](canvas, work->sheet + 5, pos.x, k, width, 1);
@@ -4277,45 +4280,66 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+//--------------------------------------------------------------------------
+// Lobbed shells: a shell arcs from the user onto each target and bursts
+// into smoke or shards, in seven colourings.
+//--------------------------------------------------------------------------
+
+// Battle effect 347: gold shells that burst into shards.
 void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 4);
 }
 
+// Battle effect 350: green shells that burst into smoke.
 void BattleFx_RunSevenModeMode5(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 5);
 }
 
+// Battle effect 309: blue shells that burst into smoke.
 void BattleFx_RunSevenModeMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 0);
 }
 
+// Battle effect 315: shells in the spider web's colours that burst into
+// smoke.
 void BattleFx_RunSevenModeMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 1);
 }
 
+// Battle effect 340: shells in Mars Djinn colours that burst into smoke.
 void BattleFx_RunSevenModeMode6(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 6);
 }
 
+// Battle effect 322: lime shells that burst into smoke.
 void BattleFx_RunSevenModeMode2(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 2);
 }
 
+// Battle effect 330: green shells that burst into shards.
 void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect) {
   BattleFx_RunSevenMode(effect, 3);
 }
 
+// gSevenMode_Records has two entries per style; the first is nonzero when
+// the shells burst into shards instead of smoke.
 extern s8 gSevenMode_Records[];
 extern u8 gSevenMode_ShardWidths[];
 extern u8 gSevenMode_ShardHeights[];
 extern u16 gSevenMode_ShardOffsets[];
 
+// The bursts live after the shells in gMapCellBuffer.
 #define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
+// Lobs a shell from the user at each target in turn, 8 frames apart. Each
+// tumbles through ten images as it flies and, when it lands, the target
+// flashes and the battle shows the damage; the shell bursts into 4 smoke
+// puffs that drift up or 16 shards that fly up and fall.
+// mode : the style, 0 to 6: the colours and the row of gSevenMode_Records.
 void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   BlitterPair draw;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -4328,14 +4352,16 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
   s32 i;
   s32 height;
 
-  heapCache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
-  cursor = heapCache;
+  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = 0x1010; // an even mix
+
+  // The shell images, the smoke at 0x3e80 and the style's palette.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -4360,6 +4386,8 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
+  // Each target's shells start 4 pixels up at the user, with a 16-frame
+  // flight to the target and an upward throw.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -4383,28 +4411,35 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
   for (i = 0; i != 256; i++)
     gBursts[i].variant = -1;
 
+  // draw[0] draws the shells facing their flight; draw[1] draws the smoke
+  // additively, or the shards mirrored the other way from draw[0].
   if (effect->side == 0) {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                            COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                            CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   } else {
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                          COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     if (gSevenMode_Records[mode * 2] == 0) {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                            COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     } else {
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                            COMPOSITE_MAX);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   }
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -4419,6 +4454,8 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+    // The shells: target k's shell flies from frame 8k, and the target is
+    // hit on frame 8k + 17.
     k = 0;
     if (work->effect->count != 0) {
       do {
@@ -4449,6 +4486,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
                       position.y - 16, 24, 32);
             if (shot->variant == 0)
               EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
+            // On the ground: the shell stops and bursts.
             if (shot->y < 0) {
               s32 count;
               s8 *records = gSevenMode_Records;
@@ -4495,8 +4533,9 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
         k++;
       } while (k != work->effect->count);
     }
+    // The bursts, for 45 frames: smoke through six images, or shards that
+    // tumble through nine images, half of them from a second set.
     for (i = 0, burst = gBursts; i != 256; burst++, i++) {
-
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
         position.x >>= 1;
@@ -4537,10 +4576,16 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// The full-screen picture the blue ramp works on.
 #define PIXEL_BUFFER Ram_MapCellBuffer
 
+// Battle effect 40: a tall panel (57x98) swings across the screen three
+// times, each pass fading out through a ripple, the last over the first
+// target; on frame 88 it shatters in a white flash into a burst of larger
+// pieces and the target is knocked back, bouncing on frame 120. The effect
+// layer ripples throughout. 132 frames.
 void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -4559,8 +4604,8 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
   s32 zeroVal;
   s32 frame;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   /* FAKEMATCH: needed to match: the zero is held in sl through the setup calls.
@@ -4568,8 +4613,10 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
   zeroVal = 0;
   work->effect = object;
   BattleFx_BeginTiledCanvas(0);
-  REG_BG2PA = 0x100;
-  REG_BLDALPHA = 0x1010;
+  REG_BG2PA = 0x100;     // unscaled
+  REG_BLDALPHA = 0x1010; // an even mix
+
+  // The panel in work, the pieces of the burst in gMapCellBuffer.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords(BG_PLTT, sheet, 128);
   sheet = sheet + 128;
@@ -4578,15 +4625,18 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, cells);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
-  rectangle[0] = (DrawRectangle)heapCache[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 1);
-  rectangle[1] = (DrawRectangle)heapCache[8];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
+  rectangle[0] = (DrawRectangle)slots[7];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
+  rectangle[1] = (DrawRectangle)slots[8];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
-  work->transferMode = 1;
+  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = zeroVal;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  // curve is where the panel swings about, in 16.16 pixels: the first pass
+  // high up on the near side.
   drawEnabled = 1;
   if (work->effect->side == 1) {
     curve[0] = -0x500000;
@@ -4608,8 +4658,10 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
     screenX = (curve[0] >> 16) + ((Trig_Sin(spin) << 4) >> 16) + 48;
     screenY = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
     if (frame == 88) {
-      AudioCommand_PlayFar(134);
+      AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
     }
+    // Frame 32: the second pass, lower and further across; the panel skips
+    // a frame while it moves.
     if (frame == 32) {
       if (work->effect->side == 1) {
         curve[0] = -0x200000;
@@ -4623,6 +4675,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
       REG_BLDALPHA = 0x1010;
       drawEnabled = 1;
     }
+    // Frame 64: the last pass, on the first target.
     if (frame == 64) {
       EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], pos);
       if (work->effect->side == 1) {
@@ -4637,6 +4690,8 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
       REG_BLDALPHA = 0x1010;
       drawEnabled = 1;
     }
+    // The last 16 frames of each of the first two passes ripple harder and
+    // harder as the panel fades out.
     scanline = work->bg2X;
     amp = 0;
     if (frame <= 31) {
@@ -4671,6 +4726,8 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
          * drops a stack slot and shrinks the frame (differ 452). */
         idxB = i >> 31;
       }
+      // The panel until frame 91; from frame 88 the burst: a white flash
+      // over the whole canvas, then larger pieces two frames each.
       if (frame <= 87) {
         rectangle[work->effect->side](
             canvas, work, gCounterReveal_PanelX[idxA * 7],
@@ -4718,6 +4775,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
         }
       }
     }
+    // Frame 88: knock the target back, away from the middle of the field.
     if (frame == 88) {
       memberObject = GetBattleObjectSlotFar(work->effect->actors[0])->object;
       memberObject->velocityY = 0x10000;
@@ -4745,7 +4803,12 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
   BattleFx_EndCanvasLayer();
 }
 
-void Graphics_ConvertBackgroundToBlueRamp(void) {
+// Turns the full-screen picture in gMapCellBuffer into shades of a blue
+// ramp (colours 32 to 63), row by row from the top with a ragged edge that
+// speeds up, a frame at a time, then moves it onto a second blue ramp
+// (colours 96 to 127). Each pixel takes the brightest of its colour's red,
+// green and blue, inverted. Nothing calls it.
+UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
   u16 color;

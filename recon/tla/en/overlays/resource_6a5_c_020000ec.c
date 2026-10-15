@@ -5,6 +5,11 @@
  * The multiply takes the cosine first, and the timer steps through a signed
  * halfword pointer: with "-= 0x800" on the u16 field the step's constant is
  * loaded after the timer (4 differ).
+ * Tried 2026-10-15: the ☀️ twin SceneEffect_UpdateCounterDrivenOrbit ported
+ * as written (2); sched2 ranks the +6 (priority 81) above the reload of the
+ * centre (79). The radius sum reassociated three ways, the radius in a local
+ * with an empty asm barrier or a one-pass block, one-pass blocks around the
+ * cosine call or the x store, and alchemy permute for 3 minutes: no gain.
  */
 #include "types.h"
 #include "field_event.h"

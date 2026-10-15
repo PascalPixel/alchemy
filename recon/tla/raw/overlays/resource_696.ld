@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_696/s0280.o"(.text)
         "*/games/tla/src/field/overlay_696/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_696/s02dc.o"(.text)
-        "*/resource_696_overlay.o"(.text.x02008378)
+        "*/games/tla/src/field/overlay_696/s0378.o"(.text)
         "*/games/tla/src/field/overlay_696/s0420.o"(.text)
         "*/games/tla/src/field/overlay_696/s0458.o"(.text)
         "*/resource_696_overlay.o"(.text.x02008488)

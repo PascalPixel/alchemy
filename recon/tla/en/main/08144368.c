@@ -1,4 +1,4 @@
-/* Draft, differ 119 of 294 (the draft has 297).
+/* Draft, differ 101 of 294 (the draft has 297).
  *
  * Effect kind 34. Twin: The Broken Seal's BattleFx_RunMemberOrbit, ported
  * call for call. The Lost Age's changes: the effect argument read directly,
@@ -12,7 +12,8 @@
  * r11 for the four cels), in a 68-byte frame; here the screen address is
  * hoisted out of the frame loop and spilled (72 bytes) and the argument takes
  * r11. Tried: Func_081963ec returning s32 (123 -> 119); screen declared in
- * the member block (no change).
+ * the member block (no change); a greedy scan of the declaration order
+ * (canvas before work, offsetX before member) 119 -> 101.
  */
 #include "battle.h"
 #include "graphics.h"
@@ -55,13 +56,13 @@ extern char ResourceId_SpiralSheet;
 // spirals circle a point 40 pixels above it for 60 frames, the blitter
 // flipping every sixteen frames; the background waves line by line.
 void Func_08144368(struct BattleEffectArgument *effect) {
-  struct BattleEffectWork *work;
   void *canvas;
+  struct BattleEffectWork *work;
   DrawRectangle draw[2];
   s32 point[3];
   struct EffectPosition screen;
-  s32 member;
   s32 offsetX;
+  s32 member;
   s32 frame;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];

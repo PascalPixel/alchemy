@@ -1,4 +1,4 @@
-/* Near miss, differ 75 of 355 (the draft has 356).
+/* Near miss, differ 69 of 355 (the draft has 356).
  *
  * Effect kind 39. Twin: The Broken Seal's BattleFx_RunClosingSkulls, ported
  * call for call. The Lost Age's changes: work and canvas read directly, the
@@ -14,6 +14,10 @@
  * draft r8's pseudo is reloaded); the spill slots of camera + 12 and k * 8 are
  * swapped (16 and 20); 0xc80 is built whole before the first call in the
  * native; the rest are single swaps of a load with its neighbour.
+ *
+ * Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
+ * temporary for target->z, a block, a moved statement); a greedy scan of
+ * the declaration order (k first, the point before pos) 75 -> 69.
  */
 #include "battle.h"
 #include "graphics.h"
@@ -59,15 +63,15 @@ extern char ResourceId_PinkBurstSheet;
 // close in on a point 20 pixels above the target while the view of them
 // turns; the background waves line by line throughout.
 void Func_08144044(struct BattleEffectArgument *effect) {
-  struct EffectPosition pos;
+  s32 k;
   s32 point[3];
+  struct EffectPosition pos;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
   s32 *camera;
   s32 i;
-  s32 k;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];

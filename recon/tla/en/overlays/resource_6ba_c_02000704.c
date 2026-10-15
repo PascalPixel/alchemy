@@ -17,7 +17,7 @@ void Func_02000704(s32 levels)
         {
             u16 owner = owners[i++];
 
-            Party_AdvanceOwnerCountToTarget(owner, ((struct BattleUnit *)UnitGet(owner))->level + levels);
+            Unit_LevelUpTo(owner, ((struct BattleUnit *)UnitGet(owner))->level + levels);
             UnitCalc(owner);
         }
         if (i < count)

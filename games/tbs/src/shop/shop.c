@@ -1195,7 +1195,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
       Party_AdjustCoinsFar(0 - item->price);
       remaining -= 1;
-      Party_AdjustSixDigitCounterBFar(item->price);
+      Party_AdjustShopCreditFar(item->price);
       Shop_DrawMoney();
     } while (remaining != 0);
   }
@@ -1852,8 +1852,8 @@ void Shop_BuySpecialItem(void *window, s32 itemWindow) {
       AudioCommand_PlayFar(0x65);
       UiMessage_ShowAndRestoreState(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
-      Party_AdjustSixDigitCounterBFar(-price);
-      Party_AdjustCounterCappedAt28Far(1);
+      Party_AdjustShopCreditFar(-price);
+      Party_AdjustShopGiftsFar(1);
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {

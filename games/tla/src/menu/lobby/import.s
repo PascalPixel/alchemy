@@ -198,10 +198,10 @@ Func_020019e4:
 	.thumb_func
 Func_020019ec:
 	overlay_veneer Func_080382e0
-	.global Trade_GetOfferState
+	.global Djinn_GetRecoveryTable
 	.thumb_func
-Trade_GetOfferState:
-	overlay_veneer Trade_GetOfferStateFar
+Djinn_GetRecoveryTable:
+	overlay_veneer Djinn_GetRecoveryTableFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

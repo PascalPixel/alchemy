@@ -18,7 +18,7 @@ struct BattleAct *BattleActGet(s32 actionId);
 s32 GameFlag_TestFar(s32 flag_id);
 void UnitRatioFar(s32 unitId);
 s32 BattleRandomFar(void);
-s32 BattleEffectRevCheckFar(s32 effect_id);
+s32 Battle_IsReviveEffectFar(s32 effect_id);
 #endif
 #if GAME_TLA
 u32 Ability_CheckStatusOrSpecialId(s32 actionId);

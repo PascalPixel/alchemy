@@ -2122,7 +2122,7 @@ Func_08046b08:
 	bls .L_08047b66
 	movs r0, #1
 .L_08047b66:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r2, #148
 	adds r3, r0, #0
 	lsls r2, r2, #1
@@ -2672,7 +2672,7 @@ Func_08046b08:
 .L_08047fdc:
 	ldr r0, [sp, #144]
 	mov r1, r8
-	bl Owner_GetResistanceValueFar
+	bl Unit_GetElementLevelFar
 	movs r3, #80
 	ldr r2, [sp, #136]
 	str r3, [sp, #0]
@@ -3231,7 +3231,7 @@ Func_08046b08:
 	adds r1, r3, #0
 	adds r1, #1
 	ldr r0, [sp, #144]
-	bl Owner_GetLevelThresholdFar
+	bl Unit_GetExperienceForLevelFar
 	ldr r4, [sp, #64]
 	movs r1, #146
 	lsls r1, r1, #1

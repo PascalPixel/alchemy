@@ -37,7 +37,7 @@ void UnitRatio(s32 ownerId) {
   }
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
+void Unit_SetHp(struct BattleUnit *state, s32 input) {
   s32 value;
 
   if (input > state->maxHp) {

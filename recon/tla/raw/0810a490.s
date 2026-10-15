@@ -166,9 +166,9 @@ Func_0810a490:
 	bl Inventory_AddItemFar
 	mov r1, r11
 	negs r0, r1
-	bl Party_AdjustSixDigitCounterBFar
+	bl Party_AdjustShopCreditFar
 	movs r0, #1
-	bl Party_AdjustCounterCappedAt28Far
+	bl Party_AdjustShopGiftsFar
 	b .L_0810a630
 .L_0810a5fa:
 	ldr r3, [r1, #4]

@@ -256,7 +256,7 @@ s32 Event_ValidatePackedId(u32 packed_id) {
     return -1;
   if (GameFlag_TestFar(group) == 0)
     return -2;
-  if (Equipment_HasValueFar(group, entry) == 0)
+  if (Unit_KnowsActionFar(group, entry) == 0)
     return -3;
   return 0;
 }
@@ -513,7 +513,7 @@ s32 Object_CallSpawnRoutineAtOrigin(s32 value) {
 //--------------------------------------------------------------------------
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability) {
   // 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
-  OwnerAction_AddFar();
+  Unit_LearnPsynergyFar();
   AudioCommand_PlayFar(83);
   UiWork_PushValueSlotFar(unit, 1);
   UiWork_PushValueSlotFar(ability, 4);

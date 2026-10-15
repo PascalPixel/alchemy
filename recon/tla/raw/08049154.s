@@ -137,7 +137,7 @@ Func_08049154:
 	add r2, sp
 	mov r8, r2
 	mov r0, r8
-	bl Trade_ListFlaggedEntriesFar
+	bl Summon_ListLearnedFar
 	str r0, [sp, #80]
 	movs r7, #0
 	adds r3, r0, #0

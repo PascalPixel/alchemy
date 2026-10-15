@@ -4,7 +4,7 @@
 #include "inventory.h"
 
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
-void Owner_RefreshClassActions(s32 owner);
+void Unit_RefreshPsynergy(s32 owner);
 void UnitCalc(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
@@ -39,7 +39,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     }
 
     inv->inventory[slot] |= INVENTORY_EQUIPPED;
-    Owner_RefreshClassActions(owner);
+    Unit_RefreshPsynergy(owner);
     UnitCalc(owner);
     return 0;
 }

@@ -11,7 +11,7 @@
 // unit : ユニット
 // pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp) {
+void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   s32 cur;
 
   if (pp > unit->maxPp) {

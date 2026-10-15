@@ -1135,14 +1135,14 @@ static void EV90_TOUCH(void) {
   x = (leader->x.fixed - 0x15d00000) / 2 + 0x15d00000;
   z = (leader->z.fixed - 0x5300000) / 2 + 0x5300000;
   if (!GameFlag_IsSet(FLAG_DJINNI_MET)) {
-    Owner_RefreshActiveRatios(1);
+    Party_RestoreHpPp(1);
     GameFlag_Set(FLAG_DJINNI_MET);
     Event_Begin();
     leader = Actor_Get(0);
     if (leader != 0)
       Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_AddToOwner(0, 0, 0);
-    Trade_AddOffer(0, 0, 0);
+    DjinnRecovery_AddStandby(0, 0, 0);
     Battle_SetObjectFlag5bWhenMode3();
     Actor_FaceActor(0, DJINNI, 0);
     Event_Wait(10);

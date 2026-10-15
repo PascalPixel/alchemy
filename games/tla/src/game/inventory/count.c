@@ -9,7 +9,7 @@
 #include "inventory.h"
 #include "battle_type.h"
 
-s32 Equipment_HasValue(s32 owner, s32 value);
+s32 Unit_KnowsAction(s32 owner, s32 value);
 
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
@@ -44,7 +44,7 @@ s32 Party_FindOwnerWithAction(s32 action) {
   s32 i;
 
   for (i = 0; i < count; i++) {
-    if (Equipment_HasValue(owners[i], action) != 0)
+    if (Unit_KnowsAction(owners[i], action) != 0)
       break;
   }
   if (i == count)
@@ -52,7 +52,7 @@ s32 Party_FindOwnerWithAction(s32 action) {
   return owners[i];
 }
 
-s32 Equipment_HasValue(s32 owner, s32 value) {
+s32 Unit_KnowsAction(s32 owner, s32 value) {
   struct BattleUnit *unit = UnitGet(owner);
   struct OwnerActionSlot *entry;
   s32 index = 0;

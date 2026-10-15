@@ -94,7 +94,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object,
                                             s32 value);
-void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
+void Unit_SetHpFar(struct BattleUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 #endif
@@ -596,7 +596,7 @@ void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void Camera_ConfigureScene(s32 scene);
-s32 Curve_LookupScaledValue(s32 selector, s32 mode);
+s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
 s32 Djinn_ActivateFar(s32 unitId, s32 element, s32 index);
 s32 Func_08020190(s32, s32, s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
@@ -612,7 +612,7 @@ s32 Map_RenderAnimatedTileFramesForObjectFar(void *object);
 void Object_Destroy(struct DispatchObject *work);
 #endif
 void ObjectMotion_SnapToTerrain(void *object);
-s32 Owner_GetDefaultElement(void *state);
+s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Owner_RecalculateStatsFar
 void UnitCalcFar(s32);
 #endif
@@ -620,8 +620,8 @@ s32 Party_CountActiveOwnersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void SummonFx_RunCanvasEffect(void *action, s32 mode);
-struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
-s32 Trade_RemoveOfferFar(s32 unitId, s32 element, s32 index);
+struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
+s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 void PartyStatusDrawFar(s32 mode);

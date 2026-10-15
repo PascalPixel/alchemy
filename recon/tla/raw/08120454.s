@@ -780,7 +780,7 @@ BattleTargetExec:
 	bne .L_08120a44
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleEffectRevCheckFar
+	bl Battle_IsReviveEffectFar
 	cmp r0, #0
 	bne .L_08120a44
 	bl .L_08121480
@@ -2171,7 +2171,7 @@ BattleTargetExec:
 .L_081214c8:
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleEffectRevCheckFar
+	bl Battle_IsReviveEffectFar
 	cmp r0, #0
 	bne .L_081214ee
 	mov r5, r8

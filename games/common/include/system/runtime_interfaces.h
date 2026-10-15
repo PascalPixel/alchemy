@@ -5,7 +5,7 @@
 #include "types.h"
 
 #if GAME_TLA
-const u8 *Owner_GetRecord(s32 selector);
+const u8 *Enemy_GetDefinition(s32 selector);
 #endif
 
 #endif

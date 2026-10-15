@@ -27,14 +27,14 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index);
 
 // Each element's value, ten per digit: an enemy's from the preset its record
 // names, a character's from its djinn counts plus its growth record's bonus.
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
+s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   if (record > 7) {
     const struct ElementPreset *table;
     const struct ElementPreset *preset;
     u32 index;
     s32 i;
 
-    index = Owner_GetRecord(record)[42];
+    index = Enemy_GetDefinition(record)[42];
     if (index > 47)
       index = 0;
     table = gData_080c6684;
@@ -62,13 +62,13 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-s32 Owner_GetResistanceValue(s32 owner, s32 index) {
+s32 Unit_GetElementLevel(s32 owner, s32 index) {
   struct OwnerInventoryState *state = UnitGet(owner);
   s32 values[4];
   s32 result = 0;
 
   if (index <= 3) {
-    Owner_GetDigitValues(
+    Unit_GetElementLevels(
         state->classId,
         (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned,
         values);
@@ -79,9 +79,9 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index) {
 
 // The element of the preset the unit's enemy record names; an id past the
 // table's end reads the first preset.
-s32 Owner_GetDefaultElement(void *state) {
+s32 Enemy_GetAttackElement(void *state) {
   struct BattleUnit *unit = state;
-  u8 preset = Owner_GetRecord(unit->enemyId)[42];
+  u8 preset = Enemy_GetDefinition(unit->enemyId)[42];
   const struct ElementPreset *table;
   u32 offset;
 

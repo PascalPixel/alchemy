@@ -1,6 +1,6 @@
 #include "owner_state.h"
 
-u32 *Trade_AddOffer(u32 owner, u32 element, u32 djinn) {
+u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn) {
   struct TradeOfferState *state;
   u8 *entries;
   struct TradeOffer *entry;
@@ -8,8 +8,8 @@ u32 *Trade_AddOffer(u32 owner, u32 element, u32 djinn) {
   u32 count;
   u32 offset;
 
-  Trade_RemoveOffer(owner, element, djinn);
-  state = Trade_GetOfferState(owner > 7);
+  DjinnRecovery_Remove(owner, element, djinn);
+  state = Djinn_GetRecoveryTable(owner > 7);
   entries = (u8 *)state->offers;
   count_p = &state->count;
   count = *count_p;
@@ -40,8 +40,8 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
       if (present != 0) {
         Djinn_Activate(target, index, bit);
       } else {
-        Trade_RemoveOffer(source, index, bit);
-        Trade_AddOffer(target, index, bit);
+        DjinnRecovery_Remove(source, index, bit);
+        DjinnRecovery_AddStandby(target, index, bit);
       }
       return 0;
     }
@@ -49,9 +49,9 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
   return -1;
 }
 
-s32 Trade_CountPendingOffers(u8 *counts) {
+s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 found = 0;
-  struct TradeOfferState *state = Trade_GetOfferState(0);
+  struct TradeOfferState *state = Djinn_GetRecoveryTable(0);
   struct TradeOffer *entry = state->offers;
   s32 index;
 

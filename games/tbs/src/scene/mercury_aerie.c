@@ -156,7 +156,7 @@ static void FieldScene_RunFourActorPresentation(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
-  Owner_RefreshRatiosOnFlag();
+  Party_RestorePpOfLitElements();
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(1), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(2), 0);

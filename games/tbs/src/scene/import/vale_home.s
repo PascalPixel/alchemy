@@ -21,7 +21,7 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventWait, 1
 	.set import.Engine_EventBegin, 1
 	.set import.Engine_EventEnd, 1

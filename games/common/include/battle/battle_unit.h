@@ -103,7 +103,9 @@ struct BattleUnit {
   s8 reflect;
   u8 haunt;
   u8 grimReaper;
-  u8 unk142[2];
+  // The totals of equipment effects 23 (unleash chance) and 24 that UnitCalc
+  // sums; TBS never reads them back
+  u8 equipBonus[2];
   u8 ready;
   u8 immobile;
   u8 agiCnt;

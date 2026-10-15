@@ -1255,16 +1255,16 @@ Inventory_GetEquippedItemFar:
 BattleActGet:
 	.incbin "baserom.gba", 0x000b6078, 0x00000008
 	.section .rom.000b6080, "ax"
-	.global OwnerAction_AddFar
-	.type OwnerAction_AddFar, %function
+	.global Unit_LearnPsynergyFar
+	.type Unit_LearnPsynergyFar, %function
 	.thumb_func
-OwnerAction_AddFar:
+Unit_LearnPsynergyFar:
 	.incbin "baserom.gba", 0x000b6080, 0x00000008
 	.section .rom.000b6088, "ax"
-	.global Equipment_HasValueFar
-	.type Equipment_HasValueFar, %function
+	.global Unit_KnowsActionFar
+	.type Unit_KnowsActionFar, %function
 	.thumb_func
-Equipment_HasValueFar:
+Unit_KnowsActionFar:
 	.incbin "baserom.gba", 0x000b6088, 0x00000008
 	.section .rom.000b6090, "ax"
 	.global Func_080ad090
@@ -1291,10 +1291,10 @@ Func_080ad0a0:
 Func_080ad0a8:
 	.incbin "baserom.gba", 0x000b60a8, 0x00000008
 	.section .rom.000b60c0, "ax"
-	.global Owner_AdjustFirstValueFar
-	.type Owner_AdjustFirstValueFar, %function
+	.global Unit_AddHpFar
+	.type Unit_AddHpFar, %function
 	.thumb_func
-Owner_AdjustFirstValueFar:
+Unit_AddHpFar:
 	.incbin "baserom.gba", 0x000b60c0, 0x00000008
 	.section .rom.000b60c8, "ax"
 	.global UnitPpAddFar
@@ -1309,16 +1309,16 @@ UnitPpAddFar:
 UnitRatioFar:
 	.incbin "baserom.gba", 0x000b60d0, 0x00000008
 	.section .rom.000b60d8, "ax"
-	.global Owner_UpdateRatioPairFar
-	.type Owner_UpdateRatioPairFar, %function
+	.global Unit_SetHpFar
+	.type Unit_SetHpFar, %function
 	.thumb_func
-Owner_UpdateRatioPairFar:
+Unit_SetHpFar:
 	.incbin "baserom.gba", 0x000b60d8, 0x00000008
 	.section .rom.000b60e0, "ax"
-	.global Owner_UpdateSecondInputAndRatiosFar
-	.type Owner_UpdateSecondInputAndRatiosFar, %function
+	.global Unit_SetPpFar
+	.type Unit_SetPpFar, %function
 	.thumb_func
-Owner_UpdateSecondInputAndRatiosFar:
+Unit_SetPpFar:
 	.incbin "baserom.gba", 0x000b60e0, 0x00000008
 	.section .rom.000b60e8, "ax"
 	.global BattleUnitSetFar
@@ -1387,10 +1387,10 @@ BattlePowerCalc:
 BattleRecoveryCalc:
 	.incbin "baserom.gba", 0x000b6138, 0x00000008
 	.section .rom.000b6140, "ax"
-	.global Owner_GetRecordFar
-	.type Owner_GetRecordFar, %function
+	.global Enemy_GetDefinitionFar
+	.type Enemy_GetDefinitionFar, %function
 	.thumb_func
-Owner_GetRecordFar:
+Enemy_GetDefinitionFar:
 	.incbin "baserom.gba", 0x000b6140, 0x00000008
 	.section .rom.000b6148, "ax"
 	.global BattleRandomFar
@@ -1417,16 +1417,16 @@ Djinn_ActivateFar:
 Djinn_DeactivateFar:
 	.incbin "baserom.gba", 0x000b6160, 0x00000008
 	.section .rom.000b6168, "ax"
-	.global Trade_RemoveOfferFar
-	.type Trade_RemoveOfferFar, %function
+	.global DjinnRecovery_RemoveFar
+	.type DjinnRecovery_RemoveFar, %function
 	.thumb_func
-Trade_RemoveOfferFar:
+DjinnRecovery_RemoveFar:
 	.incbin "baserom.gba", 0x000b6168, 0x00000008
 	.section .rom.000b6170, "ax"
-	.global Trade_AddOfferFar
-	.type Trade_AddOfferFar, %function
+	.global DjinnRecovery_AddStandbyFar
+	.type DjinnRecovery_AddStandbyFar, %function
 	.thumb_func
-Trade_AddOfferFar:
+DjinnRecovery_AddStandbyFar:
 	.incbin "baserom.gba", 0x000b6170, 0x00000008
 	.section .rom.000b6178, "ax"
 	.global Djinn_TransferFar
@@ -1435,10 +1435,10 @@ Trade_AddOfferFar:
 Djinn_TransferFar:
 	.incbin "baserom.gba", 0x000b6178, 0x00000008
 	.section .rom.000b6180, "ax"
-	.global Trade_ListFlaggedEntriesFar
-	.type Trade_ListFlaggedEntriesFar, %function
+	.global Summon_ListLearnedFar
+	.type Summon_ListLearnedFar, %function
 	.thumb_func
-Trade_ListFlaggedEntriesFar:
+Summon_ListLearnedFar:
 	.incbin "baserom.gba", 0x000b6180, 0x00000008
 	.section .rom.000b6188, "ax"
 	.global SummonDefinition_Get
@@ -1453,22 +1453,22 @@ SummonDefinition_Get:
 Djinn_GetDefinitionHeaderFar:
 	.incbin "baserom.gba", 0x000b6190, 0x00000008
 	.section .rom.000b6198, "ax"
-	.global Party_AdvanceOwnerCountToTargetFar
-	.type Party_AdvanceOwnerCountToTargetFar, %function
+	.global Unit_LevelUpToFar
+	.type Unit_LevelUpToFar, %function
 	.thumb_func
-Party_AdvanceOwnerCountToTargetFar:
+Unit_LevelUpToFar:
 	.incbin "baserom.gba", 0x000b6198, 0x00000008
 	.section .rom.000b61a0, "ax"
-	.global Owner_GetResistanceValueFar
-	.type Owner_GetResistanceValueFar, %function
+	.global Unit_GetElementLevelFar
+	.type Unit_GetElementLevelFar, %function
 	.thumb_func
-Owner_GetResistanceValueFar:
+Unit_GetElementLevelFar:
 	.incbin "baserom.gba", 0x000b61a0, 0x00000008
 	.section .rom.000b61a8, "ax"
-	.global Trade_CountPendingOffersFar
-	.type Trade_CountPendingOffersFar, %function
+	.global DjinnRecovery_CountStandbyFar
+	.type DjinnRecovery_CountStandbyFar, %function
 	.thumb_func
-Trade_CountPendingOffersFar:
+DjinnRecovery_CountStandbyFar:
 	.incbin "baserom.gba", 0x000b61a8, 0x00000008
 	.section .rom.000b61b0, "ax"
 	.global Djinn_IsActiveFar
@@ -1477,10 +1477,10 @@ Trade_CountPendingOffersFar:
 Djinn_IsActiveFar:
 	.incbin "baserom.gba", 0x000b61b0, 0x00000008
 	.section .rom.000b61b8, "ax"
-	.global Trade_CanOfferDjinnFar
-	.type Trade_CanOfferDjinnFar, %function
+	.global Djinn_IsReadyFar
+	.type Djinn_IsReadyFar, %function
 	.thumb_func
-Trade_CanOfferDjinnFar:
+Djinn_IsReadyFar:
 	.incbin "baserom.gba", 0x000b61b8, 0x00000008
 	.section .rom.000b61c0, "ax"
 	.global Item_CanOwnerEquip
@@ -1531,10 +1531,10 @@ Inventory_CountFar:
 PartyInventory_HasSpaceFar:
 	.incbin "baserom.gba", 0x000b61f8, 0x00000008
 	.section .rom.000b6200, "ax"
-	.global Owner_GetLevelThresholdFar
-	.type Owner_GetLevelThresholdFar, %function
+	.global Unit_GetExperienceForLevelFar
+	.type Unit_GetExperienceForLevelFar, %function
 	.thumb_func
-Owner_GetLevelThresholdFar:
+Unit_GetExperienceForLevelFar:
 	.incbin "baserom.gba", 0x000b6200, 0x00000008
 	.section .rom.000b6208, "ax"
 	.global Func_080ad208
@@ -1597,16 +1597,16 @@ Djinn_AddToLeastLoadedOwnerFar:
 Party_SumDjinnCountsFar:
 	.incbin "baserom.gba", 0x000b6250, 0x00000008
 	.section .rom.000b6258, "ax"
-	.global Party_AdjustSixDigitCounterBFar
-	.type Party_AdjustSixDigitCounterBFar, %function
+	.global Party_AdjustShopCreditFar
+	.type Party_AdjustShopCreditFar, %function
 	.thumb_func
-Party_AdjustSixDigitCounterBFar:
+Party_AdjustShopCreditFar:
 	.incbin "baserom.gba", 0x000b6258, 0x00000008
 	.section .rom.000b6260, "ax"
-	.global Party_AdjustCounterCappedAt28Far
-	.type Party_AdjustCounterCappedAt28Far, %function
+	.global Party_AdjustShopGiftsFar
+	.type Party_AdjustShopGiftsFar, %function
 	.thumb_func
-Party_AdjustCounterCappedAt28Far:
+Party_AdjustShopGiftsFar:
 	.incbin "baserom.gba", 0x000b6260, 0x00000008
 	.section .rom.000b6268, "ax"
 	.global Func_080ad268
@@ -1627,16 +1627,16 @@ Func_080ad270:
 Inventory_DiscardFar:
 	.incbin "baserom.gba", 0x000b6278, 0x00000008
 	.section .rom.000b6280, "ax"
-	.global BattleEffectRevCheckFar
-	.type BattleEffectRevCheckFar, %function
+	.global Battle_IsReviveEffectFar
+	.type Battle_IsReviveEffectFar, %function
 	.thumb_func
-BattleEffectRevCheckFar:
+Battle_IsReviveEffectFar:
 	.incbin "baserom.gba", 0x000b6280, 0x00000008
 	.section .rom.000b6288, "ax"
-	.global Owner_RefreshClassActionsFar
-	.type Owner_RefreshClassActionsFar, %function
+	.global Unit_RefreshPsynergyFar
+	.type Unit_RefreshPsynergyFar, %function
 	.thumb_func
-Owner_RefreshClassActionsFar:
+Unit_RefreshPsynergyFar:
 	.incbin "baserom.gba", 0x000b6288, 0x00000008
 	.section .rom.000b6290, "ax"
 	.global Party_GetAverageLevelFar
@@ -1645,10 +1645,10 @@ Owner_RefreshClassActionsFar:
 Party_GetAverageLevelFar:
 	.incbin "baserom.gba", 0x000b6290, 0x00000008
 	.section .rom.000b6298, "ax"
-	.global Owner_RefreshDerivedDataFar
-	.type Owner_RefreshDerivedDataFar, %function
+	.global Unit_UpdateClassFar
+	.type Unit_UpdateClassFar, %function
 	.thumb_func
-Owner_RefreshDerivedDataFar:
+Unit_UpdateClassFar:
 	.incbin "baserom.gba", 0x000b6298, 0x00000008
 	.section .rom.000b62a0, "ax"
 	.global Inventory_CountItemFar
@@ -1765,25 +1765,25 @@ Owner_LevelUp:
 	.section .rom.000b8bf8, "ax"
 	.incbin "baserom.gba", 0x000b8bf8, 0x000001d0
 	.section .rom.000b9090, "ax"
-	.global Owner_CalculateBaseElements
-	.type Owner_CalculateBaseElements, %function
+	.global Unit_CalcBaseElements
+	.type Unit_CalcBaseElements, %function
 	.thumb_func
-Owner_CalculateBaseElements:
+Unit_CalcBaseElements:
 	.incbin "baserom.gba", 0x000b9090, 0x000000c0
 	.section .rom.000b9150, "ax"
-	.global Owner_DetermineClass
-	.type Owner_DetermineClass, %function
+	.global Class_Determine
+	.type Class_Determine, %function
 	.thumb_func
-Owner_DetermineClass:
+Class_Determine:
 	.incbin "baserom.gba", 0x000b9150, 0x00000144
 	.section .rom.000b9768, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b9768, 0x00000338
 	.section .rom.000b9d64, "ax"
-	.global Trade_RemoveOffer
-	.type Trade_RemoveOffer, %function
+	.global DjinnRecovery_Remove
+	.type DjinnRecovery_Remove, %function
 	.thumb_func
-Trade_RemoveOffer:
+DjinnRecovery_Remove:
 	.incbin "baserom.gba", 0x000b9d64, 0x000000ac
 	.section .rom.000ba094, "ax"
 	.balign 4

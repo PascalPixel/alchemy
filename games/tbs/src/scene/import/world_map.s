@@ -41,8 +41,8 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Djinn_AddToOwner, 1
-	.set import.Trade_AddOffer, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.DjinnRecovery_AddStandby, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1
 	.set import.Engine_EventWait, 1
 	.set import.Engine_EventBegin, 1

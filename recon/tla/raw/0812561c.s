@@ -35,7 +35,7 @@ Func_0812561c:
 	bls .L_0812565a
 	movs r0, #1
 .L_0812565a:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	adds r3, r0, #0
 	movs r0, #148
 	lsls r0, r0, #1
@@ -99,7 +99,7 @@ Func_0812561c:
 	beq .L_081256d8
 	movs r0, #1
 .L_081256d8:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	add r3, sp, #16
 	mov r11, r3
 	adds r6, r0, #0
@@ -349,7 +349,7 @@ Func_0812561c:
 	ldr r1, [r0, #96]
 	mov r0, r8
 	negs r1, r1
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_0812591c
 	mov r0, r8
@@ -358,7 +358,7 @@ Func_0812561c:
 	beq .L_081258f8
 	movs r1, #1
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	movs r0, #11
 	mov r1, r8
 	bl BattleEvPush
@@ -437,7 +437,7 @@ Func_0812561c:
 	strh r3, [r2]
 	negs r1, r7
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_081259dc
 	mov r0, r8
@@ -446,7 +446,7 @@ Func_0812561c:
 	beq .L_081259b8
 	movs r1, #1
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	movs r0, #11
 	mov r1, r8
 	bl BattleEvPush
@@ -496,7 +496,7 @@ Func_0812561c:
 	movs r1, #192
 	lsls r1, r1, #24
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_08125a60
 	movs r0, #0

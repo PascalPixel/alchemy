@@ -231,7 +231,7 @@ u8 *LaliveroInteriors_GetEvents(void) {
 static void FieldScene_RunPrimaryScript(void) {
 
   Engine_EventBegin();
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 6291456, 12058624);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
   Actor_FaceDirection(11, 0, 0);

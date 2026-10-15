@@ -1056,7 +1056,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
 
   Engine_ActorDestroy(39);
   Engine_ActorDestroy(40);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_AudioPlayCue(17);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x6080000, 0xc00000);

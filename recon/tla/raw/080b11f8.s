@@ -28,7 +28,7 @@ Func_080b11f8:
 	cmp r2, #0
 	bge .L_080b1218
 	adds r0, r6, #0
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	adds r0, r6, #0
 	adds r6, #1
 	bl UnitCalc

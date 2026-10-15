@@ -222,10 +222,10 @@ PartyInventory_Remove:
 	.thumb_func
 Func_020057ec:
 	overlay_veneer Inventory_EquipFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

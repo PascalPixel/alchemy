@@ -1346,16 +1346,16 @@ Owner_LevelUp:
 Func_080afbec:
 	.incbin "baserom.gba", 0x000bcbec, 0x000001d0
 	.section .rom.000bd084, "ax"
-	.global Owner_CalculateBaseElements
-	.type Owner_CalculateBaseElements, %function
+	.global Unit_CalcBaseElements
+	.type Unit_CalcBaseElements, %function
 	.thumb_func
-Owner_CalculateBaseElements:
+Unit_CalcBaseElements:
 	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.section .rom.000bd144, "ax"
-	.global Owner_DetermineClass
-	.type Owner_DetermineClass, %function
+	.global Class_Determine
+	.type Class_Determine, %function
 	.thumb_func
-Owner_DetermineClass:
+Class_Determine:
 	.incbin "baserom.gba", 0x000bd144, 0x00000144
 	.section .rom.000bd75c, "ax"
 	.global Func_080b075c
@@ -1365,10 +1365,10 @@ Owner_DetermineClass:
 Func_080b075c:
 	.incbin "baserom.gba", 0x000bd75c, 0x00000338
 	.section .rom.000bdd58, "ax"
-	.global Trade_RemoveOffer
-	.type Trade_RemoveOffer, %function
+	.global DjinnRecovery_Remove
+	.type DjinnRecovery_Remove, %function
 	.thumb_func
-Trade_RemoveOffer:
+DjinnRecovery_Remove:
 	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
 	.section .rom.000bdf5a, "ax"
 	.incbin "baserom.gba", 0x000bdf5a, 0x00000002

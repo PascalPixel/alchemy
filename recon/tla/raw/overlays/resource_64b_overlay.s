@@ -2309,7 +2309,7 @@ Func_02001e34:
 	movs r1, #0
 	movs r2, #7
 	adds r0, r7, #0
-	bl Trade_AddOffer
+	bl DjinnRecovery_AddStandby
 	bl Func_02004da8
 	movs r1, #9
 	movs r2, #0

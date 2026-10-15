@@ -97,14 +97,14 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   s32 i;
 
   if (target->classIndex == 0) {
-    entries = Owner_GetRecord(target->enemyId) + 0x3e;
+    entries = Enemy_GetDefinition(target->enemyId) + 0x3e;
     for (i = 0; i < 3; i++) {
       if (*entries == effectId)
         return 1;
       entries++;
     }
   } else {
-    entries = Owner_GetRecordStride84(target->classIndex)->weakEffects;
+    entries = Class_GetDefinition(target->classIndex)->weakEffects;
     for (i = 0; i < 3; i++) {
       if (*entries++ == effectId)
         return 1;
@@ -113,7 +113,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   return 0;
 }
 
-s32 BattleEffectRevCheck(s32 effect_id) {
+s32 Battle_IsReviveEffect(s32 effect_id) {
   if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39) ||
       (effect_id == 0x49)) {
     return 1;

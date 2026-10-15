@@ -286,10 +286,10 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
-	.global Trade_AddOffer
+	.global DjinnRecovery_AddStandby
 	.thumb_func
-Trade_AddOffer:
-	overlay_veneer Trade_AddOfferFar
+DjinnRecovery_AddStandby:
+	overlay_veneer DjinnRecovery_AddStandbyFar
 	.global Func_02004bf8
 	.thumb_func
 Func_02004bf8:

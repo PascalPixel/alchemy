@@ -120,15 +120,15 @@ Func_02000520:
 	movs r1, #100
 	negs r1, r1
 	movs r0, #4
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 	movs r1, #100
 	negs r1, r1
 	movs r0, #5
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 	movs r1, #33
 	negs r1, r1
 	movs r0, #6
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 	movs r1, #50
 	negs r1, r1
 	movs r0, #4
@@ -239,7 +239,7 @@ Func_02000704:
 	ldrb r1, [r0, #15]
 	adds r0, r5, #0
 	add r1, r8
-	bl Party_AdvanceOwnerCountToTarget
+	bl Unit_LevelUpTo
 	adds r0, r5, #0
 	bl UnitCalc
 	cmp r6, r7

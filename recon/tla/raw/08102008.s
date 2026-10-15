@@ -928,7 +928,7 @@ Func_08102008:
 	movs r1, #0
 	movs r2, #7
 	movs r0, #4
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 	movs r0, #4
 	bl UnitCalcFar
 	movs r7, #2
@@ -1420,7 +1420,7 @@ Func_08102008:
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 	b .L_08102b86
 .L_08102b6a:
 	movs r0, #175
@@ -1433,7 +1433,7 @@ Func_08102008:
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 .L_08102b86:
 	ldr r4, [sp, #8]
 	ldr r0, [sp, #32]
@@ -1655,7 +1655,7 @@ Func_08102008:
 	adds r1, r5, #0
 	adds r2, r7, #0
 	adds r0, r6, #0
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 	b .L_08102d58
 .L_08102d3c:
 	ldr r3, [sp, #36]
@@ -1669,7 +1669,7 @@ Func_08102008:
 	adds r1, r5, #0
 	adds r2, r7, #0
 	adds r0, r6, #0
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 .L_08102d58:
 	adds r0, r6, #0
 	bl UnitCalcFar

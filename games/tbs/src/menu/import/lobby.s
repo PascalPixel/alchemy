@@ -31,7 +31,7 @@
 	.set import.UiWork_ClearValueNameTables, 1
 	.set import.UiText_DrawQuantity, 1
 	.set import.SaveState_ProcessSelectedSlot, 1
-	.set import.Trade_GetOfferState, 1
+	.set import.Djinn_GetRecoveryTable, 1
 	.set import.UnitGet, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -39,7 +39,7 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountActiveOwners, 1
-	.set import.Owner_RefreshActiveRatios, 1
+	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_EventBegin, 1
 	.set import.Engine_EventEnd, 1
 	.set import.Engine_EventChooseYesNo, 1

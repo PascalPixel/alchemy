@@ -694,7 +694,7 @@ power_end:
     }
 
     if ((action->effect != 75 || slot == 0) && skip == 0
-        && (target->hp != 0 || BattleEffectRevCheckFar(action->effect) != 0)) {
+        && (target->hp != 0 || Battle_IsReviveEffectFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
 
@@ -1145,7 +1145,7 @@ power_end:
     }
     BattleEvPush(BATTLE_EVENT_UNIT, tid);
     if ((action->effect != 75 || slot != 0)
-        && (BattleEffectRevCheckFar(action->effect) != 0 || target->hp != 0
+        && (Battle_IsReviveEffectFar(action->effect) != 0 || target->hp != 0
             || BattleEffectDeadCheck(action->effect) != 0)
         && hit != 0) {
         switch (action->effect) {
@@ -1753,7 +1753,7 @@ power_end:
 
         case 74:
             MESSAGE_PUSH(MsgCounterReady);
-            target->unk142[1] = 1;
+            target->equipBonus[1] = 1;
             break;
 
         default:
@@ -1763,7 +1763,7 @@ power_end:
 
 done:
     BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-    if (plan->cmd != 9 && (s8)target->unk142[1] != 0
+    if (plan->cmd != 9 && (s8)target->equipBonus[1] != 0
         && action->targetMode == 1 && target->hp != 0) {
         work->unk858 = tid;
         /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unk85c's address before the store to unk858, where the ROM stores first, 2 instructions. */

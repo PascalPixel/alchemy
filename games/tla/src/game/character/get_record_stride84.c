@@ -12,27 +12,24 @@
 
 s32 Inventory_GetEquippedItem(struct BattleUnit *owner, s32 type);
 
-struct ClassDefinition *Owner_GetRecordStride84(s32 classId) {
+struct ClassDefinition *Class_GetDefinition(s32 classId) {
   return &gClass_DefinitionTable[classId];
 }
 
-void Owner_RefreshDerivedData(s32 ownerId) {
+void Unit_UpdateClass(s32 ownerId) {
   struct BattleUnit *owner = UnitGet(ownerId);
 
-  owner->classIndex =
-      Owner_DetermineClass(owner->enemyId, owner->djinnAvailable,
-                           Inventory_GetEquippedItem(owner, 10));
+  owner->classIndex = Class_Determine(owner->enemyId, owner->djinnAvailable,
+                                      Inventory_GetEquippedItem(owner, 10));
   Owner_UpdateClassActions(ownerId);
-  Owner_CalculateBaseElements(ownerId, owner->baseElement);
+  Unit_CalcBaseElements(ownerId, owner->baseElement);
 }
 
-void Owner_RefreshClassActions(s32 owner_id) {
-  Owner_RefreshDerivedData(owner_id);
-}
+void Unit_RefreshPsynergy(s32 owner_id) { Unit_UpdateClass(owner_id); }
 
 extern const s16 gElement_PowerResistCurve[5][2];
 
-s32 Curve_LookupScaledValue(s32 input, s32 halve) {
+s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 min;
   s32 max;
   s32 n;

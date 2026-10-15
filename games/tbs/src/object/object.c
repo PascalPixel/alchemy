@@ -1577,7 +1577,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Owner_AdjustFirstValueFar(gGameState.activeOwners[i], value);
+    Unit_AddHpFar(gGameState.activeOwners[i], value);
   }
 }
 
@@ -1609,7 +1609,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
       amount = 0;
       break;
     }
-    Owner_AdjustFirstValueFar(gGameState.activeOwners[i], amount);
+    Unit_AddHpFar(gGameState.activeOwners[i], amount);
   }
 
   if (result != 0) {

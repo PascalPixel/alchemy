@@ -19,7 +19,7 @@ void Party_RestoreSnapshot(void)
 
             for (i = 14; i >= 0; i--)
                 *dst++ = *src++;
-            Owner_RefreshDerivedData(owner);
+            Unit_UpdateClass(owner);
             UnitCalc(owner);
         }
         gPartyState.packedEvents[0] = *src++;

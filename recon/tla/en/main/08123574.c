@@ -13,7 +13,7 @@ struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[72]; s32 count; };
 struct PlacementTable { u8 padding[8]; struct PlacementList list; };
 
-struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
+struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
 {
@@ -34,7 +34,7 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     owner = 0;
     if (arg0 > 7)
         owner = 1;
-    list = &Trade_GetOfferStateFar(owner)->list;
+    list = &Djinn_GetRecoveryTableFar(owner)->list;
     if (counts != 0)
         for (j = 3; j >= 0; j--)
             counts[j] = 0;

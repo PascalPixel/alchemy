@@ -7,6 +7,6 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
 
   Djinn_AddToOwner(owner, element, djinn);
   flag += 0x30;
-  Trade_AddOffer(owner, element, djinn);
+  DjinnRecovery_AddStandby(owner, element, djinn);
   GameFlag_SetBit(flag);
 }

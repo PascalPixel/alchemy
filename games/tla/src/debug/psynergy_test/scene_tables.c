@@ -135,9 +135,9 @@ void Func_020001e0(void) {}
 
 void Func_020001e4(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgYouWentUp, 1);
-  Party_AdvanceOwnerCountToTarget(4, ((u8 *)UnitGet(4))[15] + 10);
-  Party_AdvanceOwnerCountToTarget(5, ((u8 *)UnitGet(5))[15] + 10);
-  Party_AdvanceOwnerCountToTarget(6, ((u8 *)UnitGet(6))[15] + 10);
+  Unit_LevelUpTo(4, ((u8 *)UnitGet(4))[15] + 10);
+  Unit_LevelUpTo(5, ((u8 *)UnitGet(5))[15] + 10);
+  Unit_LevelUpTo(6, ((u8 *)UnitGet(6))[15] + 10);
 }
 
 void Func_02000224(void) {
@@ -157,7 +157,7 @@ void Func_02000224(void) {
 static __inline__ void Owner_AdjustFirstValueBy(s32 owner, s32 delta) {
   /* FAKEMATCH: a direct call keeps -100 in r5 for the next call; ⚓️ builds it
    * again before each. */
-  Owner_AdjustFirstValue(owner, delta);
+  Unit_AddHp(owner, delta);
 }
 
 void Func_0200026c(void) {
@@ -166,7 +166,7 @@ void Func_0200026c(void) {
   UiText_ShowPositionedMessageAndWait((s32)MsgTheBodyIs, 1);
   Owner_AdjustFirstValueBy(4, -100);
   Owner_AdjustFirstValueBy(5, -100);
-  Owner_AdjustFirstValue(6, -33);
+  Unit_AddHp(6, -33);
   UnitPpAdd(4, -50);
   UnitPpAdd(5, -40);
   UnitPpAdd(6, -35);

@@ -900,7 +900,7 @@ static void Scene_RunExtendedActorSequence(void) {
   s32 v6;
   const u8 *pairActions;
 
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
   Camera_MoveTo(0xb40000, 0x100000, 0x26a0000, 0);

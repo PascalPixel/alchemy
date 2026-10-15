@@ -45,7 +45,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 
 
-s32 Owner_DetermineClass(s32 character, const u8 *djinn)
+s32 Class_Determine(s32 character, const u8 *djinn)
 {
     s32 levels[4];
     s32 primary;
@@ -58,7 +58,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
     result = -1;
     if (character > 7)
         return 0;
-    Owner_GetDigitValues(character, djinn, levels);
+    Unit_GetElementLevels(character, djinn, levels);
     if (GameFlag_Test(32)) {
         if (character == 0)
             return 200;
@@ -85,7 +85,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
             j = i;
         }
     }
-    series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
+    series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
     for (i = 202; i >= 0; i--) {
         if (gClass_DefinitionTable[i].series != series)
             continue;

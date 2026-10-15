@@ -76,8 +76,8 @@ LAYOUT_OFFSET_GUARD(TradeOfferState_Count, struct TradeOfferState, count,
                     0x128);
 
 void *UnitGet(s32 owner);
-void Owner_RefreshDerivedData(s32 owner);
-struct ClassDefinition *Owner_GetRecordStride84(s32 classId);
+void Unit_UpdateClass(s32 owner);
+struct ClassDefinition *Class_GetDefinition(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
 const u16 *Djinn_GetDefinition(u32 element, u32 djinn);
@@ -89,9 +89,9 @@ s32 Djinn_Activate(s32 owner, s32 element, s32 djinn);
 u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinn);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinn, s32 target);
 
-struct TradeOfferState *Trade_GetOfferState(s32 which);
-u32 *Trade_AddOffer(u32 owner, u32 element, u32 djinn);
-s32 Trade_RemoveOffer(s32 owner, s32 element, s32 djinn);
-s32 Trade_CountPendingOffers(u8 *counts);
+struct TradeOfferState *Djinn_GetRecoveryTable(s32 which);
+u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn);
+s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinn);
+s32 DjinnRecovery_CountStandby(u8 *counts);
 
 #endif

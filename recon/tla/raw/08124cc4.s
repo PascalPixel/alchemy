@@ -11,7 +11,7 @@ Func_08124cc4:
 	push {r5, r6, r7}
 	movs r2, #0
 	mov r9, r2
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r2, #8
 	adds r3, r0, #0
 	adds r2, r2, r3
@@ -129,7 +129,7 @@ Func_08124cc4:
 	ldrb r1, [r6]
 	ldrb r2, [r6, #1]
 	adds r0, r5, #0
-	bl Trade_RemoveOfferFar
+	bl DjinnRecovery_RemoveFar
 	adds r0, r5, #0
 	bl UnitCalcFar
 	adds r0, r5, #0

@@ -115,7 +115,7 @@ s32 Title_Run(void) {
   } else {
     Engine_AudioPlayCue(64);
     PaletteFar_Entry00(0);
-    Party_ApplyStatePreset();
+    Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, 16);
     Engine_AudioPlayCue(17);
   }

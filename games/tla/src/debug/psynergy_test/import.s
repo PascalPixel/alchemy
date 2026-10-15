@@ -122,10 +122,10 @@ UnitCalc:
 	.thumb_func
 Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
 	.global UnitPpAdd
 	.thumb_func
 UnitPpAdd:
@@ -138,10 +138,10 @@ Djinn_AddToOwner:
 	.thumb_func
 Djinn_Activate:
 	overlay_veneer Djinn_ActivateFar
-	.global Party_AdvanceOwnerCountToTarget
+	.global Unit_LevelUpTo
 	.thumb_func
-Party_AdvanceOwnerCountToTarget:
-	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+Unit_LevelUpTo:
+	overlay_veneer Unit_LevelUpToFar
 	.global Item_AdjustCounter
 	.thumb_func
 Item_AdjustCounter:

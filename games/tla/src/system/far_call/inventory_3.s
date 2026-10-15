@@ -9,14 +9,14 @@ Inventory_GetEquippedItemFar:
 	.thumb_func
 BattleActGet:
 	overlay_veneer BattleAction_GetDirect
-	.global OwnerAction_AddFar
+	.global Unit_LearnPsynergyFar
 	.thumb_func
-OwnerAction_AddFar:
-	overlay_veneer OwnerAction_Add
-	.global Equipment_HasValueFar
+Unit_LearnPsynergyFar:
+	overlay_veneer Unit_LearnPsynergy
+	.global Unit_KnowsActionFar
 	.thumb_func
-Equipment_HasValueFar:
-	overlay_veneer Equipment_HasValue
+Unit_KnowsActionFar:
+	overlay_veneer Unit_KnowsAction
 	.global Func_080ad090
 	.thumb_func
 Func_080ad090:

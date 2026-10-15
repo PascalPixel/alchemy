@@ -21,7 +21,7 @@ struct TradeOfferTable {
 
 // Whether the djinn can be set: it is owned, fewer than ten are set, it is
 // not set already, and no trade offer holds it unless the offer has run out.
-s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit) {
+s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = UnitGet(owner);
   struct TradeOfferList *table;
   s32 i;
@@ -40,9 +40,9 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit) {
   if ((state->flags.banks.active[index] & (1 << bit)) != 0)
     return 0;
 
-  table =
-      &((struct TradeOfferTable *)Trade_GetOfferState((owner < 0 || owner > 7)))
-           ->list;
+  table = &((struct TradeOfferTable *)Djinn_GetRecoveryTable(
+                (owner < 0 || owner > 7)))
+               ->list;
   for (i = 0; i < table->count; i++) {
     if (index == table->offers[i].element && bit == table->offers[i].djinn)
       break;
@@ -63,7 +63,7 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = UnitGet(owner);
-  s32 result = Trade_CanOfferDjinn(owner, index, bit);
+  s32 result = Djinn_IsReady(owner, index, bit);
 
   if (result != 0) {
     u32 owned = state->flags.banks.owned[index];
@@ -73,7 +73,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
       return 0;
     }
     state->counts.banks.active[index]++;
-    Owner_RefreshDerivedData(owner);
+    Unit_UpdateClass(owner);
   }
   return result;
 }
@@ -85,7 +85,7 @@ u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
   if (present != 0) {
     state->counts.banks.active[index]--;
     state->flags.banks.active[index] &= ~(1 << bit);
-    Owner_RefreshDerivedData(owner);
+    Unit_UpdateClass(owner);
   }
   return present;
 }

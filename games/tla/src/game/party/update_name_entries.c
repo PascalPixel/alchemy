@@ -142,7 +142,7 @@ s32 LinkBattle_SendParty(void) {
    * is emitted before the count's address as in the reference (differ 4 without
    * it), as The Broken Seal's LinkBattle_SendParty. */
   do {
-    Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+    Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
   list = &((struct LinkOfferTable *)buffer)->list;
   for (j = 0; j < list->count;) {

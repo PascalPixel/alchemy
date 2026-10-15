@@ -619,7 +619,7 @@ static void FieldScene_RunPairedEntranceWalk(s32 a0) {
 
   Engine_ActorDestroy(40);
   Engine_ActorDestroy(41);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x580000, 0x1000000);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x780000, 0x1000000);

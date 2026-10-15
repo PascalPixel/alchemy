@@ -5,7 +5,7 @@
 extern const u8 MsgTheBodyIs[];
 
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
-s32 Owner_AdjustFirstValue(s32 owner, s32 amount);
+s32 Unit_AddHp(s32 owner, s32 amount);
 void UnitPpAdd(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
 u8 *Func_02000d48(s32 item);
@@ -14,7 +14,7 @@ void Func_02000dc0(void);
 static __inline__ void AdjustFirstValue(s32 owner, s32 amount)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline keeps each call's own constant; direct calls share -100 in one register. */
-    Owner_AdjustFirstValue(owner, amount);
+    Unit_AddHp(owner, amount);
 }
 
 void Func_02000520(void)

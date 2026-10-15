@@ -9,7 +9,7 @@
 #include "system.h"
 #include "owner_state.h"
 
-s32 OwnerAction_Add(s32 stateIndex, s32 value) {
+s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct OwnerActionState *state =
       (struct OwnerActionState *)UnitGet(stateIndex);
   s32 key = value & OWNER_ACTION_ID_MASK;
@@ -44,7 +44,7 @@ s32 OwnerAction_Add(s32 stateIndex, s32 value) {
     }
   }
 
-  Owner_RefreshClassActions(stateIndex);
+  Unit_RefreshPsynergy(stateIndex);
   for (index = 0; index <= 31; index++) {
     if (state->actionSlots[index].encodedAction == key) {
       break;

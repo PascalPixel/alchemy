@@ -1565,8 +1565,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       UnitCalcFar(menu->paneOwner[0]);
       UnitCalcFar(menu->paneOwner[1]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[1]);
       result = 1;
       if (aborted == 0) {
         menu->paneOwner[0] = menu->paneOwner[1];
@@ -1696,8 +1696,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       } else {
         UnitCalcFar(menu->paneOwner[0]);
         UnitCalcFar(menu->paneOwner[1]);
-        Owner_RefreshClassActionsFar(menu->paneOwner[0]);
-        Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+        Unit_RefreshPsynergyFar(menu->paneOwner[0]);
+        Unit_RefreshPsynergyFar(menu->paneOwner[1]);
         ItemMenu_SetMsgWin5();
 #if EDITION_INTERNATIONAL
         ItemMenu_SetMsgWin6();
@@ -1755,7 +1755,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       UnitCalcFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
       menu->paneIcons[0]->active = 13;
       menu->itemCount =
           ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
@@ -1778,7 +1778,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UnitGetFar(menu->paneOwner[0])->inventory[menu->selectedSlots[0]] &=
           ~INVENTORY_EQUIPPED;
       UnitCalcFar(menu->paneOwner[0]);
-      Owner_RefreshClassActionsFar(menu->paneOwner[0]);
+      Unit_RefreshPsynergyFar(menu->paneOwner[0]);
       menu->paneIcons[0]->active = 13;
       menu->itemCount =
           ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
@@ -3533,7 +3533,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
     Iwram_CopyWords(state, saved, BATTLE_UNIT_SIZE);
   MemFree(saved);
   UnitCalcFar(menu->paneOwner[1]);
-  Owner_RefreshClassActionsFar(menu->paneOwner[1]);
+  Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   return selection;
 }
 
@@ -5799,13 +5799,13 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
       messageVariant = 8;
     } else {
 #if EDITION_INTERNATIONAL
-      u64 remaining =
-          Owner_GetLevelThresholdFar(menu->selectedIds[0], owner->level + 1) -
-          owner->experience;
+      u64 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
+                                                    owner->level + 1) -
+                      owner->experience;
 #else
-      u32 remaining =
-          Owner_GetLevelThresholdFar(menu->selectedIds[0], owner->level + 1) -
-          owner->experience;
+      u32 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
+                                                    owner->level + 1) -
+                      owner->experience;
 #endif
       UiWork_PushValueSlotFar(remaining, 5);
     }
@@ -5907,8 +5907,8 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
         UiText_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112,
                                      row * 8 + 8);
       }
-      UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(unit, i), 2,
-                                   window, i * 32 + 112, row * 8 + 16);
+      UiText_DrawNumberInWindowFar(Unit_GetElementLevelFar(unit, i), 2, window,
+                                   i * 32 + 112, row * 8 + 16);
       UiText_DrawNumberInWindowFar(status->element[i].power, 3, window,
                                    i * 32 + 104, row * 8 + 24);
       UiText_DrawNumberInWindowFar(status->element[i].res, 3, window,
@@ -7621,8 +7621,8 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
-      result = Trade_AddOfferFar(menu->shownOwner[0], menu->pairElement[0],
-                                 menu->pairIndex[0]);
+      result = DjinnRecovery_AddStandbyFar(
+          menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
       RenderOutput_ClearListFar(menu->listWindow);
@@ -7669,8 +7669,8 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
-      result = Trade_RemoveOfferFar(menu->shownOwner[0], menu->pairElement[0],
-                                    menu->pairIndex[0]);
+      result = DjinnRecovery_RemoveFar(
+          menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
       menu->cursor->active = 13;
       RenderOutput_ClearListFar(menu->listWindow);
@@ -7879,9 +7879,9 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         if ((ENTRY & DJINN_ENTRY_IS_SET) == 0)
           UiWork_SetParamNibbleFar(2);
         usable = 0;
-        if (Trade_CanOfferDjinnFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
-                                   (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
-                                   ENTRY & DJINN_ENTRY_INDEX) ||
+        if (Djinn_IsReadyFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
+                             (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
+                             ENTRY & DJINN_ENTRY_INDEX) ||
             Djinn_IsActiveFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
                               (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
                               ENTRY & DJINN_ENTRY_INDEX))
@@ -8230,12 +8230,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             UiText_DrawCharacterAtOffsetFar(MsgDjinnAllStandby,
                                             state->helpWindow, 0, 0);
           }
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)) ||
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                               DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                       DJINN_NUMBER(djinn)))
+            if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                                 DJINN_NUMBER(djinn)))
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
             else
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -8251,12 +8251,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         } else {
           UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose, state->helpWindow, 0,
                                           0);
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)) ||
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                               DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                       DJINN_NUMBER(djinn))) {
+            if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                                 DJINN_NUMBER(djinn))) {
               UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose + 3,
                                               state->helpWindow, 0, 16);
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
@@ -8276,12 +8276,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             FourObjectMotion_SetSlotPhase(mode, 0);
         }
       } else {
-        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                   DJINN_NUMBER(djinn)) ||
+        if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                             DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn))) {
-          if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)))
+          if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                               DJINN_NUMBER(djinn)))
             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
           else
             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -8360,7 +8360,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           BattlePlacement_UpdateTimedEntriesFar();
           BattlePlacement_UpdateTimedEntriesFar();
           Djinn_DeactivateFar(0, 0, 0);
-          Trade_AddOfferFar(0, 0, 0);
+          DjinnRecovery_AddStandbyFar(0, 0, 0);
           UnitCalcFar(0);
           repeat = 2;
           pressed = 2;
@@ -8500,8 +8500,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         continue;
       }
       i = 0;
-      if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                 DJINN_NUMBER(djinn)) ||
+      if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                           DJINN_NUMBER(djinn)) ||
           Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn)))
         i = 1;
@@ -8519,14 +8519,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         AudioCommand_PlayFar(175);
         Djinn_DeactivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn));
-        Trade_AddOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                          DJINN_NUMBER(djinn));
+        DjinnRecovery_AddStandbyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                                    DJINN_NUMBER(djinn));
       } else {
         AudioCommand_PlayFar(139);
         Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
-        Trade_RemoveOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                             DJINN_NUMBER(djinn));
+        DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                                DJINN_NUMBER(djinn));
       }
       UnitCalcFar(DJINN_OWNER(djinn));
       DjinnMenu_DrawElementList(&lists->list);
@@ -8545,8 +8545,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           continue;
         }
         i = 0;
-        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                   DJINN_NUMBER(djinn)) ||
+        if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
+                             DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn)))
           i = 1;
@@ -8599,8 +8599,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             u32 entry = lists->list.ids[i][j];
             s32 usable;
             usable = 0;
-            if (Trade_CanOfferDjinnFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                       DJINN_NUMBER(entry)) ||
+            if (Djinn_IsReadyFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
+                                 DJINN_NUMBER(entry)) ||
                 Djinn_IsActiveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                   DJINN_NUMBER(entry)))
               usable = 1;
@@ -8609,15 +8609,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 if (!(entry & 0x8000)) {
                   Djinn_ActivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                  Trade_RemoveOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                       DJINN_NUMBER(entry));
+                  DjinnRecovery_RemoveFar(DJINN_OWNER(entry),
+                                          DJINN_ELEMENT(entry),
+                                          DJINN_NUMBER(entry));
                   UnitCalcFar(DJINN_OWNER(entry));
                 }
               } else if (entry & 0x8000) {
                 Djinn_DeactivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                Trade_AddOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                  DJINN_NUMBER(entry));
+                DjinnRecovery_AddStandbyFar(DJINN_OWNER(entry),
+                                            DJINN_ELEMENT(entry),
+                                            DJINN_NUMBER(entry));
                 UnitCalcFar(DJINN_OWNER(entry));
               }
             }

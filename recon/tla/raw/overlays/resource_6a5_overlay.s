@@ -2216,7 +2216,7 @@ Func_02001388:
 	movs r1, #10
 	movs r0, #4
 	negs r1, r1
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 .L_020096ae:
 	movs r2, #166
 	lsls r2, r2, #1
@@ -2624,7 +2624,7 @@ Func_020016e8:
 	movs r1, #10
 	movs r0, #4
 	negs r1, r1
-	bl Owner_AdjustFirstValue
+	bl Unit_AddHp
 .L_02009a82:
 	movs r2, #166
 	lsls r2, r2, #1

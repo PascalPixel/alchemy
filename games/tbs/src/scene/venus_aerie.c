@@ -1700,7 +1700,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Party_SetFields1ceAnd1d0((s32)&SceneId_VenusAerie, 3);
   Event_SetDefeatDestination((s32)&SceneId_VenusAerie, 9);
   BattleFx_SetWeightedResult(98, 0);
-  Owner_RefreshRatiosOnFlag();
+  Party_RestorePpOfLitElements();
   GameFlag_Set(0x351);
 }
 

@@ -5,7 +5,7 @@
 s32 Inventory_AddItemFar(s32 unitId, s32 item_id);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 s32 Party_AdjustCoinsFar(s32 amount);
-s32 Party_AdjustSixDigitCounterBFar(s32 amount);
+s32 Party_AdjustShopCreditFar(s32 amount);
 extern u8 MsgHereYouGo[];
 void Audio_PlayCue(s32 cue);
 void Func_0810857c(s32 messageId);
@@ -29,7 +29,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
       Party_AdjustCoinsFar(0 - (u16)item->price);
       remaining -= 1;
-      Party_AdjustSixDigitCounterBFar((u16)item->price);
+      Party_AdjustShopCreditFar((u16)item->price);
       Func_08109188();
     } while (remaining != 0);
   }

@@ -454,7 +454,7 @@ static void ColossoRiver_RunPostMatchScene(s32 a0) {
 
   Engine_ActorDestroy(24);
   Engine_ActorDestroy(25);
-  Owner_RefreshActiveRatios(1);
+  Party_RestoreHpPp(1);
   Engine_EventBegin();
   Actor_SetPosition(8, 0x5280000, 0xc00000);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5080000, 0xc00000);

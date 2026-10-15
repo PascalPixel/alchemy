@@ -347,7 +347,7 @@ second:
   size = 0x140;
   heap = (s32)Runtime_BumpAllocateAlternatePool(size);
   tries = 0;
-  if ((ret = SerialRuntime_BeginReceive(Trade_GetOfferState(1))) != -1) {
+  if ((ret = SerialRuntime_BeginReceive(Djinn_GetRecoveryTable(1))) != -1) {
     goto test2;
   }
 failed:
@@ -483,7 +483,7 @@ next:
    * keeps the list base's copy first after the call; as a plain call: differ 6.
    */
   do {
-    Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
+    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
   {
     s32 timeout;
@@ -1241,7 +1241,7 @@ s32 LinkLobby_RunRoundResult(void) {
   FieldScheduler_AddCallback(callback, 0xc80);
   Scheduler_SetTaskFlags(callback, 1);
   if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
-    Owner_RefreshActiveRatios(1);
+    Party_RestoreHpPp(1);
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
   }
   return 0;

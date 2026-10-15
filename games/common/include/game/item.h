@@ -42,7 +42,22 @@ enum ItemEffectKind {
   ITEM_EFFECT_SCALE_ATTACK,
   ITEM_EFFECT_SCALE_DEFENSE,
   ITEM_EFFECT_SCALE_AGILITY,
-  ITEM_EFFECT_SCALE_LUCK
+  ITEM_EFFECT_SCALE_LUCK,
+  // Element power and resistance, in the element order Venus, Mercury, Mars,
+  // Jupiter
+  ITEM_EFFECT_ADD_VENUS_POWER,
+  ITEM_EFFECT_ADD_MERCURY_POWER,
+  ITEM_EFFECT_ADD_MARS_POWER,
+  ITEM_EFFECT_ADD_JUPITER_POWER,
+  ITEM_EFFECT_ADD_VENUS_RESIST,
+  ITEM_EFFECT_ADD_MERCURY_RESIST,
+  ITEM_EFFECT_ADD_MARS_RESIST,
+  ITEM_EFFECT_ADD_JUPITER_RESIST,
+  ITEM_EFFECT_ADD_UNLEASH_CHANCE, // percent added to the weapon's unleash
+  ITEM_EFFECT_24,                 // summed by UnitCalc; TBS never reads it
+  ITEM_EFFECT_25,                 // sets restraint bit 3, which lifts bit 0
+  ITEM_EFFECT_ADD_TURNS,          // more actions each round
+  ITEM_EFFECT_27                  // sets flag 0x167 while worn
 };
 
 struct ItemEffect {
@@ -63,10 +78,11 @@ struct ItemDefinition {
   u16 icon;
   s16 primaryBonus;
   s8 secondaryBonus;
-  u8 secondaryFlags;
+  u8 unleashChance; // in steps of 5 percent
   u8 useType;
   u8 reserved0d;
-  u16 descriptionMessage;
+  u16 unleashAction; // the action a weapon unleashes, or 0
+
   u8 reserved10[4];
   s32 element;
   struct ItemEffect effects[4];
@@ -85,12 +101,12 @@ LAYOUT_OFFSET_GUARD(ItemDefinition_PrimaryBonus, struct ItemDefinition,
                     primaryBonus, 0x08);
 LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryBonus, struct ItemDefinition,
                     secondaryBonus, 0x0a);
-LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryFlags, struct ItemDefinition,
-                    secondaryFlags, 0x0b);
+LAYOUT_OFFSET_GUARD(ItemDefinition_UnleashChance, struct ItemDefinition,
+                    unleashChance, 0x0b);
 LAYOUT_OFFSET_GUARD(ItemDefinition_UseType, struct ItemDefinition, useType,
                     0x0c);
-LAYOUT_OFFSET_GUARD(ItemDefinition_DescriptionMessage, struct ItemDefinition,
-                    descriptionMessage, 0x0e);
+LAYOUT_OFFSET_GUARD(ItemDefinition_UnleashAction, struct ItemDefinition,
+                    unleashAction, 0x0e);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Element, struct ItemDefinition, element,
                     0x14);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Effects, struct ItemDefinition, effects,

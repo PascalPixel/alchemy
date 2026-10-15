@@ -290,7 +290,7 @@ void Resource_ClearOwnerListAndCounters(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(s32, s32);
-void OwnerAction_AddFar(void);
+void Unit_LearnPsynergyFar(void);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(struct RenderOutput *node);
 #ifndef OWN_Resource_DecodeByteLzInRam

@@ -195,7 +195,7 @@
 	import SaveState_CountRecordsExcludingFlagged, SaveState_CountRecordsExcludingFlaggedFar
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
 @ farcall/game.h
-	import Trade_GetOfferState, Trade_GetOfferStateFar
+	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	import UnitGet, UnitGetFar
 	import UnitCalc, UnitCalcFar
 	import Engine_DebugGetItem, Item_GetDirectFar
@@ -215,7 +215,7 @@
 	import GameFlag_ClearBit, GameFlag_ClearBitFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
-	import Owner_AdjustFirstValue, Owner_AdjustFirstValueFar
+	import Unit_AddHp, Unit_AddHpFar
 	import UnitPpAdd, UnitPpAddFar
 	import Engine_OwnerRecalculateRatios, UnitRatioFar
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
@@ -225,17 +225,17 @@
 	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
 	import Djinn_AddToOwner, Djinn_AddToOwnerFar
 	import Djinn_Activate, Djinn_ActivateFar
-	import Trade_AddOffer, Trade_AddOfferFar
+	import DjinnRecovery_AddStandby, DjinnRecovery_AddStandbyFar
 	import Djinn_Transfer, Djinn_TransferFar
-	import Party_AdvanceOwnerCountToTarget, Party_AdvanceOwnerCountToTargetFar
+	import Unit_LevelUpTo, Unit_LevelUpToFar
 	import Party_AdjustCoins, Party_AdjustCoinsFar
 	import Item_AdjustCounter, Item_AdjustCounterFar
 	import Inventory_Count, Inventory_CountFar
 	import PartyInventory_HasSpace, PartyInventory_HasSpaceFar
-	import Owner_RefreshActiveRatios, Owner_RefreshActiveRatiosFar
-	import Owner_RefreshRatiosOnFlag, Owner_RefreshRatiosOnFlagFar
-	import Party_SetFlag32AndRefreshMembers, Party_SetFlag32AndRefreshMembersFar
-	import Party_ApplyStatePreset, Party_ApplyStatePresetFar
+	import Party_RestoreHpPp, Party_RestoreHpPpFar
+	import Party_RestorePpOfLitElements, Party_RestorePpOfLitElementsFar
+	import Party_BeginChildhood, Party_BeginChildhoodFar
+	import Party_EndChildhood, Party_EndChildhoodFar
 	import Inventory_Discard, Inventory_DiscardFar
 	import Party_GetAverageLevel, Party_GetAverageLevelFar
 	import PartyInventory_CountItem, PartyInventory_CountItemFar

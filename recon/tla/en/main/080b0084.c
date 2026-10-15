@@ -45,7 +45,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 
 
-u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
+u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2])
 {
     struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
     u32 index;
@@ -54,7 +54,7 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
     s32 i;
 
     if (state->classIndex == 0) {
-        index = ((const struct EnemyDefinition *)Owner_GetRecord(state->classId))->elementPreset;
+        index = ((const struct EnemyDefinition *)Enemy_GetDefinition(state->classId))->elementPreset;
         if (index > 43)
             index = 0;
 
@@ -70,7 +70,7 @@ copied:
         return index;
     }
 
-    Owner_GetDigitValues(state->classId, (u8 *)state->djinnAvailable, values);
+    Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
     i = 0;
     do {
         s32 value;

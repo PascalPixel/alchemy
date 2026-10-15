@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Owner_CalculateBaseElements
+	.global Unit_CalcBaseElements
 	.thumb_func
-Owner_CalculateBaseElements:
+Unit_CalcBaseElements:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -20,7 +20,7 @@ Owner_CalculateBaseElements:
 	adds r1, #33
 	adds r3, r2, r1
 	ldrh r0, [r3]
-	bl Owner_GetRecord
+	bl Enemy_GetDefinition
 	adds r0, #42
 	ldrb r0, [r0]
 	cmp r0, #47
@@ -52,7 +52,7 @@ Owner_CalculateBaseElements:
 	ldrh r0, [r3]
 	adds r2, r5, #0
 	adds r1, #248
-	bl Owner_GetDigitValues
+	bl Unit_GetElementLevels
 	ldr r7, .L_080b013c
 	mov r8, r5
 	movs r6, #3

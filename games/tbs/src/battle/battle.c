@@ -130,7 +130,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       continue;
 
     Party_AddActiveOwnerFar(owner);
-    Party_AdvanceOwnerCountToTargetFar(owner, gDebug_PartyPresets[row].level);
+    Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
     state = (struct BattleUnit *)UnitGetFar(owner);
     for (i = 0; i < 4; i++) {
       state->djinnOwnedCounts[i] = 0;
@@ -149,7 +149,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       *(u16 *)&state->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_PartyPresets[row].actions[i] != 0)
-        OwnerAction_AddFar(owner, gDebug_PartyPresets[row].actions[i]);
+        Unit_LearnPsynergyFar(owner, gDebug_PartyPresets[row].actions[i]);
     }
     for (i = 0; i < 4; i++) {
       for (j = 0; j < gDebug_PartyPresets[row].djinnCounts[i]; j++) {
@@ -527,8 +527,8 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->refrain = 0;
       unit->reflect = 0;
       unit->grimReaper = 0;
-      unit->unk142[0] = 0;
-      unit->unk142[1] = 0;
+      unit->equipBonus[0] = 0;
+      unit->equipBonus[1] = 0;
       unit->ready = 0;
       unit->immobile = 0;
       unit->agiCnt = 0;
@@ -555,9 +555,9 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
     owner = owners[i];
     for (element = 0; element <= 3; element++) {
       for (index = 0; index <= 19; index++) {
-        if (Trade_CanOfferDjinnFar(owner, element, index) != 0) {
+        if (Djinn_IsReadyFar(owner, element, index) != 0) {
           struct DjinnRecoveryList *list =
-              &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
+              &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (owner < 0 || owner > 7) ? 1 : 0))
                    ->list;
           s32 j;
@@ -568,7 +568,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
               break;
           }
           if (j == list->count)
-            Trade_AddOfferFar(owner, element, index);
+            DjinnRecovery_AddStandbyFar(owner, element, index);
         }
       }
     }
@@ -579,7 +579,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 
   {
     struct DjinnRecoveryList *list =
-        &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
+        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(0))->list;
     struct DjinnRecoveryEntry *entry;
 
     i = 0;
@@ -595,7 +595,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
           u8 index = entry->index;
 
           Djinn_ActivateFar(id, element, index);
-          Trade_RemoveOfferFar(id, element, index);
+          DjinnRecovery_RemoveFar(id, element, index);
         }
         i++;
         entry++;
@@ -657,7 +657,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   } while (element <= 31);
 
   {
-    struct BattleSummonState *state = Trade_GetOfferStateFar(0);
+    struct BattleSummonState *state = Djinn_GetRecoveryTableFar(0);
     state->availableMask = availableMask;
     return state;
   }
@@ -727,7 +727,7 @@ s32 UpdateNameEntries(void) {
   }
   MemFree(buffer);
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
-  if (SerialRuntime_BeginReceive(Trade_GetOfferStateFar(1)) != -1) {
+  if (SerialRuntime_BeginReceive(Djinn_GetRecoveryTableFar(1)) != -1) {
     SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
@@ -779,7 +779,7 @@ s32 LinkBattle_SendParty(void) {
    * the for's initializer, and the offer state read into a local first differ
    * the same 2. */
   do {
-    Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+    Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
@@ -1118,8 +1118,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   BattleParty_ReconcileDjinnRecovery();
   BattleSummon_UpdateAvailability();
-  if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->availableMask !=
-      0)
+  if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
+          ->availableMask != 0)
     battle->partyStatus = 3;
   else
     battle->partyStatus = 1;
@@ -1151,7 +1151,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   for (;;) {
     Battle_ReservedNoOp9B2C();
     BattleSummon_UpdateAvailability();
-    if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))
+    if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
             ->availableMask != 0)
       battle->partyStatus = 3;
     else
@@ -5090,7 +5090,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (applies) = 1;                                                           \
       break;                                                                   \
     }                                                                          \
-    if ((unit)->hp == 0 && BattleEffectRevCheckFar((action)->effect) == 0)     \
+    if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)    \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
       (damageClass) = ((action)->targetFlag & 0x0f) - 1;                       \
@@ -5213,7 +5213,7 @@ scan_complete:
     return -1;
 
   if (action->targetMode == 1 && action->range == 1 &&
-      ((struct EnemyDefinition *)Owner_GetRecordFar(
+      ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
            UnitGetFar(actorId)->classId))
               ->targetStrategy != 2 &&
       (u32)((action->targetFlag & 0x0f) - 3) <= 2) {
@@ -5223,7 +5223,7 @@ scan_complete:
            innerIndex++) {
         thisUnit = UnitGetFar(unitIds[innerIndex]);
         nextUnit = UnitGetFar(unitIds[innerIndex + 1]);
-        if (((struct EnemyDefinition *)Owner_GetRecordFar(
+        if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
                  UnitGetFar(actorId)->classId))
                 ->targetStrategy == 0) {
           value = thisUnit->hp;
@@ -5321,8 +5321,8 @@ s32 BattleActor_ResetRuntimeFields(s32 id) {
   unit->reflect = 0;
   unit->haunt = 0;
   unit->grimReaper = 0;
-  unit->unk142[0] = 0;
-  unit->unk142[1] = 0;
+  unit->equipBonus[0] = 0;
+  unit->equipBonus[1] = 0;
   unit->ready = 0;
   unit->immobile = 0;
   unit->agiCnt = 0;
@@ -5448,7 +5448,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
 
   creature = UnitGetFar(arg0);
   if (creature->side == 1) {
-    Owner_UpdateRatioPairFar(creature, 0);
+    Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
     ActivateBattleObjectSlot(arg0);
     runtime = BattleObjGet(arg0);
@@ -5817,7 +5817,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // ダメージ・回復
   //------------------------------------------------------------------
   if (skip == 0 &&
-      (target->hp != 0 || BattleEffectRevCheckFar(action->effect) != 0)) {
+      (target->hp != 0 || Battle_IsReviveEffectFar(action->effect) != 0)) {
     s32 pp;
     s32 cur;
     s32 ap;
@@ -6134,7 +6134,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // 状態異常・能力変化などの追加効果
   //------------------------------------------------------------------
   BattleEvPush(BATTLE_EVENT_UNIT, tid);
-  if ((BattleEffectRevCheckFar(action->effect) != 0 || target->hp != 0 ||
+  if ((Battle_IsReviveEffectFar(action->effect) != 0 || target->hp != 0 ||
        BattleEffectDeadCheck(action->effect) != 0) &&
       hit != 0) {
     switch (action->effect) {
@@ -6741,7 +6741,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry) {
   if (retry != 0 && req->command != CMD_ABILITY)
     return;
 
-  enemy = Owner_GetRecordFar(unit->classId);
+  enemy = Enemy_GetDefinitionFar(unit->classId);
   memo = (struct BattleAutomaticState *)&unit->rewards;
   strategy = &enemy->actionStrategy;
   itemMask = &enemy->itemActions;
@@ -7365,7 +7365,7 @@ s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts) {
   side = 0;
   if (unitId > 7)
     side = 1;
-  list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
   if (counts != 0)
     for (j = 3; j >= 0; j--)
       counts[j] = 0;
@@ -7533,7 +7533,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         break;
       if (id == BATTLE_UNIT_REMOVED)
         continue;
-      if (Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+      if (Unit_AddHpFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
       }
@@ -7764,14 +7764,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
                                              DJINN_INDEX(req->parameter));
     if (!Djinn_IsActiveFar(req->unitId, DJINN_ELEMENT(req->parameter),
                            DJINN_INDEX(req->parameter))) {
-      if (Trade_CanOfferDjinnFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                                 DJINN_INDEX(req->parameter))) {
+      if (Djinn_IsReadyFar(req->unitId, DJINN_ELEMENT(req->parameter),
+                           DJINN_INDEX(req->parameter))) {
         BattleActGet(abilityId);
         BattlePres_SetActorModes(0, 0);
         Djinn_ActivateFar(req->unitId, DJINN_ELEMENT(req->parameter),
                           DJINN_INDEX(req->parameter));
-        Trade_RemoveOfferFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                             DJINN_INDEX(req->parameter));
+        DjinnRecovery_RemoveFar(req->unitId, DJINN_ELEMENT(req->parameter),
+                                DJINN_INDEX(req->parameter));
         UnitCalcFar(req->unitId);
         BattleEventRuntime_Reset();
         BattleEventRuntime_SchedulePhase(30);
@@ -7806,8 +7806,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
 
       if (TargetSet(abilityId) == -1)
         return -1;
-      Trade_AddOfferFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                        DJINN_INDEX(req->parameter));
+      DjinnRecovery_AddStandbyFar(req->unitId, DJINN_ELEMENT(req->parameter),
+                                  DJINN_INDEX(req->parameter));
       act = BattleActGet(abilityId);
       UiWork_PushValueSlotFar(req->unitId, 1);
       UiWork_PushValueSlotFar(abilityId, 4);
@@ -7833,7 +7833,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     side = 0;
     if ((u16)req->unitId > ALLY_MAX)
       side = 1;
-    list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
+    list =
+        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
     for (i = 0; i < 4 && counts[i] >= summon->djinnRequired[i]; i++)
       counts[i] = summon->djinnRequired[i];
     abilityId = summon->nameMessageId;
@@ -8008,7 +8009,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         plan->outcome = 3;
     } else
       plan->outcome = 1;
-    if (BattleEffectRevCheckFar(act->effect))
+    if (Battle_IsReviveEffectFar(act->effect))
       plan->presentationFlags |= 0x10000;
     if (abilityId == 178 && plan->targetHit[0] != 0)
       plan->presentationFlags |= 0x1000;
@@ -8191,7 +8192,7 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
   s32 removed;
   s32 initialCount;
 
-  list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(0))->list;
   initialCount = list->count;
   index = 0;
   removed = 0;
@@ -8213,7 +8214,7 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
         u8 id = expiredEntry->unitId;
 
         Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
-        Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
+        DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
         UnitCalcFar(id);
         removed = 1;
       } else {
@@ -8255,7 +8256,8 @@ s32 Battle_ProcessRoundEnd(void) {
   work = gBattleWork;
   sides = (work->twoSided != 0) + 1;
   for (side = 0; side < sides; side++) {
-    list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
+    list =
+        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
     i = 0;
     if (i < list->count) {
       timedEntry = list->entries;
@@ -8293,8 +8295,8 @@ s32 Battle_ProcessRoundEnd(void) {
                 (struct DispatchObject *)BattleObjGet(id)->object, 32);
             element = expiredEntry->element;
             Djinn_ActivateFar(id, element, expiredEntry->index);
-            Trade_RemoveOfferFar(id, expiredEntry->element,
-                                 expiredEntry->index);
+            DjinnRecovery_RemoveFar(id, expiredEntry->element,
+                                    expiredEntry->index);
             UnitCalcFar(id);
             BattleFx_PlayUnitElementEffect(id, element, 3, 0);
             BattleEventRuntime_WaitForReady();
@@ -8336,7 +8338,7 @@ s32 Battle_ProcessRoundEnd(void) {
             if (unit->hp + hpAmount > unit->maxHp) {
               hpAmount = unit->maxHp - unit->hp;
             }
-            Owner_AdjustFirstValueFar(id, hpAmount);
+            Unit_AddHpFar(id, hpAmount);
             UiWork_PushValueSlotFar(id, 1);
             UiWork_PushValueSlotFar(hpAmount, 5);
             if (unit->hp == unit->maxHp) {
@@ -8455,9 +8457,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   id = plan->aid;
   bothSides = 0;
   unit = UnitGetFar(id);
-  list =
-      &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((id < 0 || id > 7)))
-           ->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+               (id < 0 || id > 7)))
+              ->list;
   for (best = 0; best < list->count; best++) {
     if (list->entries[best].unitId == id && list->entries[best].turns == -1) {
       Djinn_DeactivateFar(id, list->entries[best].element,
@@ -8472,7 +8474,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     s32 i;
     s32 owner;
     struct DjinnRecoveryList *pending;
-    pending = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
+    pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (id < 0 || id > 7)))
                    ->list;
     for (i = 0; i < 4; i++) {
@@ -8557,7 +8559,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_UNIT, id);
       BattleEvPush(BATTLE_EVENT_NUM, plan->hauntDmg);
       MESSAGE_PUSH(MsgCurseDamage);
-      if (Owner_AdjustFirstValueFar(id, -plan->hauntDmg) == 0) {
+      if (Unit_AddHpFar(id, -plan->hauntDmg) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);
@@ -8586,7 +8588,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       } else {
         state->events.pendingCue = 133;
       }
-      if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
+      if (Unit_AddHpFar(id, -damage) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);
@@ -8603,8 +8605,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     BattleEv_DispatchQueued();
     BattleEventRuntime_Reset();
     if (unit->grimReaper != 0) {
-      if (--unit->grimReaper == 0 &&
-          Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+      if (--unit->grimReaper == 0 && Unit_AddHpFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_UNIT, id);
         MESSAGE_PUSH(MsgReaperCalls);
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
@@ -9889,7 +9890,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 recordId) {
     if (record->maximumCounts[i] == 0)
       continue;
     id = record->memberIds[i];
-    enemy = Owner_GetRecordFar(id + 8);
+    enemy = Enemy_GetDefinitionFar(id + 8);
     if (enemy == 0)
       continue;
     if (enemy->level > 3 && !GameFlag_TestFar(372) &&
@@ -9959,7 +9960,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     pool[i].score = -1;
 
   for (i = 0; (u32)i <= 19; i++) {
-    Owner_GetRecordFar(gBattleFormation_LevelMatchedEnemies[i]);
+    Enemy_GetDefinitionFar(gBattleFormation_LevelMatchedEnemies[i]);
     GameFlag_ClearBitFar(gBattleFormation_LevelMatchedEnemies[i] + 1536);
   }
 
@@ -10543,7 +10544,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned) {
   if (GameFlag_TestFar(0x173))
     return 0;
   GameFlag_SetBitFar(unit->classId + 0x600);
-  rec = Owner_GetRecordFar(unit->classId);
+  rec = Enemy_GetDefinitionFar(unit->classId);
   if (earned != 0) {
     if (rec->coins != 0)
       spoils->coins += BattleEnemy_CalculateCoinReward(unit, &rec->coins);
@@ -10619,7 +10620,7 @@ void Battle_AwardSpoils(void) {
     unit = UnitGetFar(unitId);
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
-           Owner_GetValueIfLevelThresholdReachedFar(unitId, &gains) != 0) {
+           Unit_TryLevelUpFar(unitId, &gains) != 0) {
       AudioCommand_PlayFar(0x59);
       UiWork_ClearValueNameTablesFar();
       UiWork_PushValueSlotFar(unit->classIndex, 3);

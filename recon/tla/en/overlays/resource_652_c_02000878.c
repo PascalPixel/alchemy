@@ -31,7 +31,7 @@ void UnitCalc(s32 owner);
 s32 Inventory_GetQuantity(s32 member, s32 slot);
 s32 Inventory_CountItem(s32 member, s32 item);
 void Inventory_Discard(s32 member, s32 slot);
-void Owner_RefreshClassActions(s32 member);
+void Unit_RefreshPsynergy(s32 member);
 
 s32 Func_02000878(s32 item, s32 unused)
 {
@@ -81,7 +81,7 @@ s32 Func_02000878(s32 item, s32 unused)
             }
             for (i = 0; i < count; i++)
                 Inventory_Discard(member, slot);
-            Owner_RefreshClassActions(member);
+            Unit_RefreshPsynergy(member);
             UnitCalc(member);
             owner = PartyInventory_Add(item);
             Func_02000dfc(83);

@@ -111,7 +111,7 @@ Func_080af7ac:
 	bls .L_080af860
 	mov r3, r8
 	ldr r0, [r3]
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	movs r3, #128
 	lsls r3, r3, #7
 	strh r3, [r7, #22]
@@ -121,10 +121,10 @@ Func_080af7ac:
 	mov r1, r8
 	ldr r0, [r1]
 	ldrb r1, [r3]
-	bl Party_AdvanceOwnerCountToTarget
+	bl Unit_LevelUpTo
 	mov r2, r8
 	ldr r0, [r2]
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	mov r3, r8
 	ldr r0, [r3]
 	bl UnitCalc

@@ -3,10 +3,10 @@
 	.include "games/tla/src/system/overlay.inc"
 	.global Resource_FarCall005
 Resource_FarCall005:
-	.global Trade_GetOfferStateFar
+	.global Djinn_GetRecoveryTableFar
 	.thumb_func
-Trade_GetOfferStateFar:
-	overlay_veneer Trade_GetOfferState
+Djinn_GetRecoveryTableFar:
+	overlay_veneer Djinn_GetRecoveryTable
 	.global UnitCalcFar
 	.thumb_func
 UnitCalcFar:

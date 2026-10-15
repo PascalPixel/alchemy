@@ -156,7 +156,7 @@ Func_0810a108:
 	bne .L_0810a22a
 .L_0810a238:
 	mov r0, r8
-	bl Owner_RefreshClassActionsFar
+	bl Unit_RefreshPsynergyFar
 	mov r0, r8
 	bl UnitCalcFar
 	mov r0, r10

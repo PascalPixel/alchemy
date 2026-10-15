@@ -48,9 +48,9 @@ void Djinn_ActivateOfferedForParty(void) {
   for (i = 0; i < count; i++) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
-        if (Trade_CanOfferDjinn(owners[i], element, djinn)) {
+        if (Djinn_IsReady(owners[i], element, djinn)) {
           Djinn_Activate(owners[i], element, djinn);
-          Trade_RemoveOffer(owners[i], element, djinn);
+          DjinnRecovery_Remove(owners[i], element, djinn);
         }
       }
     }

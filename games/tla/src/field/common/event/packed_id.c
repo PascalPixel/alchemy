@@ -34,7 +34,7 @@ s32 Event_ValidatePackedId(u32 packed_id) {
     return -1;
   if (GameFlag_Test(group) == 0)
     return -2;
-  if (Equipment_HasValueFar(group, entry) == 0)
+  if (Unit_KnowsActionFar(group, entry) == 0)
     return -3;
   return 0;
 }

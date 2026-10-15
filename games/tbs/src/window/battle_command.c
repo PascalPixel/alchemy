@@ -3303,7 +3303,7 @@ s32 Ui_RunSelectionScreen(s32 mode) {
     num = 0;
     work->kinds[num++] = 0;
     work->kinds[num++] = 1;
-    if (*((s32 *)Trade_GetOfferStateFar(0)) != 0) {
+    if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
       BattlePlacement_CountValidEntriesFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
@@ -4449,7 +4449,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                       (struct RenderInput *)winMain,
                                       48 + j * 32 + 8, 72);
           }
-          UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, j), 2,
+          UiText_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
                                     (struct RenderInput *)winMain, 48 + j * 32,
                                     80);
           UiText_DrawNumberInWindow(object->element[j].power, 3,
@@ -4644,7 +4644,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                  OWNER_STATUS_TEXT_MAX);
       } else if (cur.entry == 2 && object->level <= 98) {
         UiWork_PushValueSlot(
-            Owner_GetLevelThresholdFar(owner, object->level + 1) -
+            Unit_GetExperienceForLevelFar(owner, object->level + 1) -
                 object->experience,
             5);
         UiText_CopyMessageString(MsgOwnerStatusNextLevel, text,
@@ -4844,7 +4844,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       } else if (unit->djinnAvailable[x] & (u32)(1 << y)) {
         u32 v;
         s32 k;
-        list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
+        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                      (u32)owner > 7 ? 1 : 0))
                     ->list;
         for (k = 0; k < list->count; k++) {
@@ -5343,7 +5343,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   }
 
   // 今のスタンバイ数で呼べる召喚を後ろから順に先頭へ、残りをもとの順で後ろへ
-  count = Trade_ListFlaggedEntriesFar(available);
+  count = Summon_ListLearnedFar(available);
   /* FAKEMATCH: instruction order only (block placement and schedule):
      with the first scan's exit inside this one-pass block, loop.c's
      find_and_verify_loops finds no barrier at depth 0 and leaves the
@@ -7129,7 +7129,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
     kind = 4;
   if (effect == 64) // 状態異常をすべてなおす
     kind = 6;
-  if (BattleEffectRevCheckFar(act->effect) != 0) // ふっき
+  if (Battle_IsReviveEffectFar(act->effect) != 0) // ふっき
     kind = 5;
   return kind;
 }

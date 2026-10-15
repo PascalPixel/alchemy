@@ -62,7 +62,7 @@ u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 static void SceneState_AddToRecordCount(s32 id, s32 amount) {
   u8 *entry = UnitGet(id);
 
-  Party_AdvanceOwnerCountToTarget(id, entry[15] + amount);
+  Unit_LevelUpTo(id, entry[15] + amount);
   UnitCalc(id);
 }
 

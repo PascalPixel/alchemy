@@ -653,7 +653,7 @@ Func_0811f66c:
 	lsls r3, r1, #16
 	cmp r3, #0
 	bne .L_0811fbb0
-	bl BattleEffectRevCheckFar
+	bl Battle_IsReviveEffectFar
 	cmp r0, #0
 	bne .L_0811fbb0
 	movs r6, #0
@@ -780,7 +780,7 @@ Func_0811f66c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Owner_GetRecordFar
+	bl Enemy_GetDefinitionFar
 	adds r0, #43
 	movs r3, #0
 	ldrsb r3, [r0, r3]
@@ -844,7 +844,7 @@ Func_0811f66c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Owner_GetRecordFar
+	bl Enemy_GetDefinitionFar
 	adds r0, #43
 	movs r3, #0
 	ldrsb r3, [r0, r3]

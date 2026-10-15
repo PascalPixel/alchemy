@@ -21,7 +21,7 @@ Func_08123648:
 	ldrb r5, [r0]
 	str r2, [sp, #24]
 	ldrb r0, [r0, #3]
-	bl BattleEffectRevCheckFar
+	bl Battle_IsReviveEffectFar
 	cmp r0, #0
 	beq .L_0812367a
 	movs r3, #1

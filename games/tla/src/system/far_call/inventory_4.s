@@ -9,14 +9,14 @@ Djinn_AddToLeastLoadedOwnerFar:
 	.thumb_func
 Party_SumDjinnCountsFar:
 	overlay_veneer Party_SumDjinnCounts
-	.global Party_AdjustSixDigitCounterBFar
+	.global Party_AdjustShopCreditFar
 	.thumb_func
-Party_AdjustSixDigitCounterBFar:
-	overlay_veneer Party_AdjustSixDigitCounterB
-	.global Party_AdjustCounterCappedAt28Far
+Party_AdjustShopCreditFar:
+	overlay_veneer Party_AdjustShopCredit
+	.global Party_AdjustShopGiftsFar
 	.thumb_func
-Party_AdjustCounterCappedAt28Far:
-	overlay_veneer Party_AdjustCounterCappedAt28
+Party_AdjustShopGiftsFar:
+	overlay_veneer Party_AdjustShopGifts
 	.global Func_080ad268
 	.thumb_func
 Func_080ad268:
@@ -29,22 +29,22 @@ Func_080ad270:
 	.thumb_func
 Inventory_DiscardFar:
 	overlay_veneer Inventory_Discard
-	.global BattleEffectRevCheckFar
+	.global Battle_IsReviveEffectFar
 	.thumb_func
-BattleEffectRevCheckFar:
-	overlay_veneer BattleEffectRevCheck
-	.global Owner_RefreshClassActionsFar
+Battle_IsReviveEffectFar:
+	overlay_veneer Battle_IsReviveEffect
+	.global Unit_RefreshPsynergyFar
 	.thumb_func
-Owner_RefreshClassActionsFar:
-	overlay_veneer Owner_RefreshClassActions
+Unit_RefreshPsynergyFar:
+	overlay_veneer Unit_RefreshPsynergy
 	.global Party_GetAverageLevelFar
 	.thumb_func
 Party_GetAverageLevelFar:
 	overlay_veneer Party_GetAverageLevel
-	.global Owner_RefreshDerivedDataFar
+	.global Unit_UpdateClassFar
 	.thumb_func
-Owner_RefreshDerivedDataFar:
-	overlay_veneer Owner_RefreshDerivedData
+Unit_UpdateClassFar:
+	overlay_veneer Unit_UpdateClass
 	.global Inventory_CountItemFar
 	.thumb_func
 Inventory_CountItemFar:

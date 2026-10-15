@@ -52,8 +52,8 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->refrain = 0;
       unit->reflect = 0;
       unit->grimReaper = 0;
-      unit->unk142[0] = 0;
-      unit->unk142[1] = 0;
+      unit->equipBonus[0] = 0;
+      unit->equipBonus[1] = 0;
       unit->ready = 0;
       unit->immobile = 0;
       unit->agiCnt = 0;

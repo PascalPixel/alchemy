@@ -218,7 +218,7 @@ Func_0200039c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	movs r0, #1
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
@@ -431,7 +431,7 @@ Func_0200039c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r9, r0
 	movs r0, #1
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
@@ -626,7 +626,7 @@ Func_02000578:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r7, r0, #0
 	movs r0, #0
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	ldr r3, .L_020087b0
 	adds r1, r0, #0
 	adds r2, r5, #0

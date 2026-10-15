@@ -45,7 +45,7 @@
 	.set import.GameFlag_ClearBit, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
-	.set import.Party_SetFlag32AndRefreshMembers, 1
+	.set import.Party_BeginChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
 	.set import.Engine_EventWait, 1

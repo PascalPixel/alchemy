@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Owner_GetLevelThresholdFar
+	.global Unit_GetExperienceForLevelFar
 	.thumb_func
-Owner_GetLevelThresholdFar:
-	overlay_veneer Owner_GetLevelThreshold
+Unit_GetExperienceForLevelFar:
+	overlay_veneer Unit_GetExperienceForLevel
 	.global Func_080ad208
 	.thumb_func
 Func_080ad208:

@@ -2,6 +2,12 @@
 #define ALCHEMY_FLAG_IDS_H
 
 enum GameFlagId {
+  FLAG_CHILDHOOD = 0x20, // the prologue: Isaac and Garet are children
+  // Lit lighthouses: the adepts of a lit element regain PP faster
+  FLAG_VENUS_LIGHTHOUSE_LIT = 0x110,
+  FLAG_MERCURY_LIGHTHOUSE_LIT = 0x111,
+  FLAG_MARS_LIGHTHOUSE_LIT = 0x112,
+  FLAG_JUPITER_LIGHTHOUSE_LIT = 0x113,
   FLAG_AUTO_BATTLE = 0x16a,
   FLAG_LINK_BATTLE = 0x16c,
   FLAG_DJINN_TUTORIAL = 0x16e,

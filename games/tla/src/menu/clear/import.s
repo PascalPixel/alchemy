@@ -192,10 +192,10 @@ Func_02002328:
 	.thumb_func
 Func_02002330:
 	overlay_veneer Func_08038430
-	.global Trade_GetOfferState
+	.global Djinn_GetRecoveryTable
 	.thumb_func
-Trade_GetOfferState:
-	overlay_veneer Trade_GetOfferStateFar
+Djinn_GetRecoveryTable:
+	overlay_veneer Djinn_GetRecoveryTableFar
 	.global UnitCalc
 	.thumb_func
 UnitCalc:
@@ -217,10 +217,10 @@ Party_AddActiveOwner:
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
 	.ifndef TLA_EDITION_JA
-	.global Owner_GetLevelThreshold
+	.global Unit_GetExperienceForLevel
 	.thumb_func
-Owner_GetLevelThreshold:
-	overlay_veneer Owner_GetLevelThresholdFar
+Unit_GetExperienceForLevel:
+	overlay_veneer Unit_GetExperienceForLevelFar
 	.endif
 	.global Func_02002370
 	.thumb_func
@@ -230,10 +230,10 @@ Func_02002370:
 	.thumb_func
 Djinn_AddToLeastLoadedOwner:
 	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
-	.global Owner_RefreshDerivedData
+	.global Unit_UpdateClass
 	.thumb_func
-Owner_RefreshDerivedData:
-	overlay_veneer Owner_RefreshDerivedDataFar
+Unit_UpdateClass:
+	overlay_veneer Unit_UpdateClassFar
 	.global Func_02002388
 	.thumb_func
 Func_02002388:

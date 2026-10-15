@@ -10419,7 +10419,7 @@ Func_020018e0:
 	cmp r7, #4
 	bne .L_ja_02009ad8
 	movs r0, #0
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	movs r3, #148
 	lsls r3, r3, #1
 	adds r0, r0, r3
@@ -10672,7 +10672,7 @@ Func_020018e0:
 	ldr r6, .L_ja_02009d00
 	lsls r5, r7, #2
 	ldr r0, [r6, r5]
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	adds r7, #1
 	ldr r0, [r6, r5]
 	bl UnitCalc
@@ -10881,7 +10881,7 @@ Func_020018e0:
 	strb r3, [r5, #15]
 	adds r0, r7, #0
 	ldrb r1, [r5, #15]
-	bl Owner_GetLevelThreshold
+	bl Unit_GetExperienceForLevel
 	movs r1, #146
 	lsls r1, r1, #1
 	adds r5, r5, r1
@@ -10891,7 +10891,7 @@ Func_020018e0:
 	cmp r7, #4
 	bne .L_02009a34
 	movs r0, #0
-	bl Trade_GetOfferState
+	bl Djinn_GetRecoveryTable
 	movs r2, #148
 	lsls r2, r2, #1
 	adds r0, r0, r2
@@ -11145,7 +11145,7 @@ Func_020018e0:
 	ldr r6, .L_02009c70
 	lsls r5, r7, #2
 	ldr r0, [r6, r5]
-	bl Owner_RefreshDerivedData
+	bl Unit_UpdateClass
 	adds r7, #1
 	ldr r0, [r6, r5]
 	bl UnitCalc

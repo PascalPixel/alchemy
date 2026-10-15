@@ -22,7 +22,7 @@ void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta);
+s32 Unit_AddHp(s32 owner, s32 delta);
 void UnitCalc(s32 owner);
 s32 UnitPpAdd(s32 owner, s32 delta);
 void Func_02004904(s32 a, s32 b);
@@ -31,7 +31,7 @@ static __inline__ void JupiterRoomM_AdjustFirstValue(s32 owner, s32 delta) {
   /* FAKEMATCH: forwarding through the inline reloads -10000 from the pool at
    * each call, as the native does (direct: the four uses share it in r5, differ
    * 23 of 160). */
-  Owner_AdjustFirstValue(owner, delta);
+  Unit_AddHp(owner, delta);
 }
 
 static __inline__ void JupiterRoomM_PpAdd(s32 owner, s32 delta) {

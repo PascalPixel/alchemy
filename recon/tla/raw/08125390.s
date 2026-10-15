@@ -75,7 +75,7 @@ Battle_ApplyActionExtras:
 	mov r0, r9
 	mov r1, r10
 	mov r2, r8
-	bl Trade_CanOfferDjinnFar
+	bl Djinn_IsReadyFar
 	cmp r0, #0
 	beq .L_08125430
 	mov r3, r10
@@ -118,7 +118,7 @@ Battle_ApplyActionExtras:
 	mov r1, r10
 	mov r2, r8
 	mov r0, r9
-	bl Trade_AddOfferFar
+	bl DjinnRecovery_AddStandbyFar
 	mov r0, r9
 	mov r1, r10
 	mov r2, r8
@@ -155,7 +155,7 @@ Battle_ApplyActionExtras:
 	bls .L_081254b8
 	movs r0, #1
 .L_081254b8:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r4, #148
 	adds r3, r0, #0
 	lsls r4, r4, #1
@@ -194,7 +194,7 @@ Battle_ApplyActionExtras:
 	bls .L_08125500
 	movs r0, #1
 .L_08125500:
-	bl Trade_GetOfferStateFar
+	bl Djinn_GetRecoveryTableFar
 	movs r4, #148
 	adds r3, r0, #0
 	lsls r4, r4, #1

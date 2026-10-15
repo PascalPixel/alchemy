@@ -1232,7 +1232,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/particles.o"(.text)
         "*/recon/tla/raw/080df1fc.o"(.text)
         "*/recon/tla/raw/080df6f4.o"(.text)
-        "*/recon/tla/raw/080df820.o"(.text)
+        "*/games/tla/src/battle/effect/item_break_mode1.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/recon/tla/raw/080df8de.o"(.text)
         "*/recon/tla/raw/080df8e0.o"(.text)

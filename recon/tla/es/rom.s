@@ -3926,7 +3926,7 @@ RunBattleEffect05:
 	.type Func_080df1fc, %function
 	.thumb_func
 Func_080df1fc:
-	.incbin "baserom.gba", 0x000e81f0, 0x000006ac
+	.incbin "baserom.gba", 0x000e81f0, 0x00000624
 	.section .rom.000e88d2, "ax"
 	.incbin "baserom.gba", 0x000e88d2, 0x00000002
 	.section .rom.000e88d4, "ax"

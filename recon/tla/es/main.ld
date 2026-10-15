@@ -1372,6 +1372,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000e7ddc)
     "*/games/tla/src/battle/effect/particles.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e81f0)
+    "*/games/tla/src/battle/effect/item_break_mode1.o"(.text)
     "*/games/tla/src/field/common/effect/move.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e88d2)
     "*/recon/tla/es/rom.o"(.rom.000e88d4)

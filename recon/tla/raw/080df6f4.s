@@ -34,7 +34,7 @@ Func_080df6f4:
 	movs r3, #128
 	str r2, [r5, #8]
 	lsls r3, r3, #8
-	bl Func_080df820
+	bl BattleFx_SpawnItemBreakMode1
 	ldr r3, .L_080df818
 	str r0, [sp, #0]
 	ldr r0, [r5]
@@ -42,7 +42,7 @@ Func_080df6f4:
 	adds r0, r0, r3
 	ldr r2, [r5, #8]
 	movs r3, #0
-	bl Func_080df820
+	bl BattleFx_SpawnItemBreakMode1
 	str r0, [sp, #4]
 	movs r0, #15
 	mov r11, sp

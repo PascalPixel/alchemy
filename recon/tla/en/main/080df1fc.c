@@ -59,7 +59,7 @@ extern const u8 Data_080f0e78[];
 extern u32 Data_0300122c;
 
 void BattleEffect_InitializeSharedScene(void);
-struct FxObject *Func_080df820(s32 x, s32 y, s32 z, s32 angle);
+struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void BattleFx_PrepareBufferInterpolation(void);
 void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
@@ -114,9 +114,9 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     p->x = work->x;
     p->y = work->y + 0x100000;
     p->z = work->z;
-    object = Func_080df820(p->x + 0x200000, p->y, p->z, 0x8000);
+    object = BattleFx_SpawnItemBreakMode1(p->x + 0x200000, p->y, p->z, 0x8000);
     anchors[0] = object;
-    right = Func_080df820(p->x - 0x200000, p->y, p->z, 0);
+    right = BattleFx_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
     anchors[1] = right;
     if (anchors[0] == NULL || right == NULL) {
         BattleFx_PrepareBufferInterpolation();

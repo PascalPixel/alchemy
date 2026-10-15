@@ -1,133 +1,163 @@
-/* Near miss of Func_08153c30, ported from The Broken Seal's
- * BattleFx_RunTargetBursts (listing 291 instructions, draft 291, differ 22):
- * ten reordered pairs, no other difference. The Lost Age loads its two
- * rectangle blitters through Func_081963ec into heap slots 104 and 188 and
- * reads the effect from its argument. Adopting needs the three resources
- * named in directory.s (SmokeSheet, TargetBurstImage, PinkBurstSheet). */
+/* Near miss of Func_08153c30, an unused effect (no caller): differ 20 of
+ * 291 (draft 291).
+ *
+ * Twin: The Broken Seal's BattleFx_RunTargetBursts (effect.c), call for
+ * call. The Lost Age loads its two blitters through Func_081963ec into heap
+ * slots 104 and 188 (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal
+ * has 3 and 2), reads the effect from its argument and orders the callback
+ * 0xc80. Resources not yet named in directory.s, by row and asset: 0x161
+ * BattleFx_SmokeSheet, 0x12d BattleFx_TargetBurstImage and 0x17f
+ * BattleFx_PinkBurstSheet.
+ *
+ * Left: ten rows, each a pair the native issues in the other order: the
+ * effect argument's spill before the RAM base, r1 before r0 for the first
+ * Func_081963ec, the record's address after the camera word, object->z
+ * before its store, the cell's 9x before the frame word.
+ *
+ * Tried (2026-10-15): the lane's rewrite (named modes, the burst offset as
+ * a constant): 22 -> 20.
+ */
 #include "types.h"
-#include "battle_effect_work.h"
+#include "battle_display.h"
 #include "battle_effect.h"
+#include "battle_effect_work.h"
 #include "battle_session.h"
+#include "callback_scheduler.h"
 #include "effect_step.h"
 #include "fixed_math.h"
+#include "graphics.h"
 #include "iwram_call.h"
+#include "mem.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "resource.h"
+#include "system.h"
+#include "transform.h"
+
+// The canvas layer and its helpers; the comments give The Broken Seal's
+// names where the twin is known.
+void BattleFx_BeginCanvasLayer(s32 bgControl);
+void Func_08143bb8(void); // BattleFx_EndCanvasLayer
+void Func_08143000(void); // BattlePresentation_ProcessPendingGraphicsTransfer
+void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                      s32 gravity);
+
+// The Lost Age's blitter modes, Func_081963ec's high nibble: 3 minus The
+// Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+#define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
+#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
+
+#define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
 
 extern char ResourceId_SmokeSheet;
 extern char ResourceId_TargetBurstImage;
 extern char ResourceId_PinkBurstSheet;
 
-u32 Random16(void);
-void WaitFrames(s32 frames);
-void BattleFx_BeginCanvasLayer(s32 bg_control);
-void Func_08143bb8(void);
-void Func_08143000(void);
-void Func_081963ec(s32 slot, s32 mode);
-void *Resource_GetTableEntry(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Runtime_ReleaseHeapBlock(s32 slot);
-void SceneTransform_ApplyPosition(s32 *position);
-void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping, s32 gravity);
+/* Bursts of smoke rise from each target in turn, eight frames apart.
+ *
+ * Setup: 64 puffs, six a target, each but the sixth thrown out at a random
+ * heading. Frame loop (96 frames): for 40 frames from its start a
+ * target's puffs rise 40 pixels above it through six 24x48 pictures; the
+ * sixth, drawn ADDITIVE, is the burst itself and falls faster. */
+void Func_08153c30(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  void *palette;
+  s32 frame;
+  DrawRectangle rectangleB;
+  DrawRectangle rectangleA;
+  struct EffectStep *step;
+  s32 i;
+  struct EffectPosition screen;
+  s32 record[3];
 
-// Bursts of smoke rise from each target in turn (The Broken Seal's
-// BattleFx_RunTargetBursts).
-void Func_08153c30(struct BattleEffectArgument *effect)
-{
-    struct BattleEffectWork *work;
-    void *canvas;
-    void *palette;
-    s32 frame;
-    DrawRectangle rectangleB;
-    DrawRectangle rectangleA;
-    struct EffectStep *step;
-    s32 i;
-    struct EffectPosition screen;
-    s32 record[3];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  BattleFx_BeginCanvasLayer(0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
+                             work->sheet + BURST_IMAGE, 0, 0);
+  palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Func_081963ec(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  Func_081963ec(188, BLIT_MODE(BLIT_MAX, CLIP));
+  rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    canvas = Ram_HeapSlots->battleFxWork[1];
-    BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, work->sheet + 0x1b00, 0, 0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
-    Func_081963ec(104, 3);
-    rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Func_081963ec(188, 19);
-    rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  for (i = 0; i != 64; i++) {
+    s32 angle;
+    s32 magnitude;
 
-    for (i = 0; i != 64; i++) {
-        s32 angle;
-        s32 magnitude;
-
-        step = &work->particles[i];
-        angle = Random16() & 0xffff;
-        magnitude = Random16() & 0xff;
-        step->x = 0;
-        step->y = 0;
-        step->z = 0;
-        if (i % 6 == 5) {
-            step->velocityX = 0;
-            step->velocityY = 0;
-        } else {
-            step->velocityX = (Trig_Sin(angle) * magnitude) >> 7;
-            step->velocityY = (Trig_Cos(angle) * magnitude) >> 9;
-        }
-        step->velocityZ = 0;
-        step->variant = 0;
+    step = &work->particles[i];
+    angle = Random16() & 0xffff;
+    magnitude = Random16() & 0xff;
+    step->x = 0;
+    step->y = 0;
+    step->z = 0;
+    if (i % 6 == 5) {
+      step->velocityX = 0;
+      step->velocityY = 0;
+    } else {
+      step->velocityX = (Trig_Sin(angle) * magnitude) >> 7;
+      step->velocityY = (Trig_Cos(angle) * magnitude) >> 9;
     }
+    step->velocityZ = 0;
+    step->variant = 0;
+  }
 
-    work->transferMode = 2;
-    work->transferValue = 75;
-    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
-    for (frame = 0; frame != 96; frame++) {
-        s32 member;
-        s32 *camera;
+  for (frame = 0; frame != 96; frame++) {
+    s32 member;
+    s32 *camera;
 
-        camera = Ram_HeapSlots->cameraWork;
-        for (member = 0; member != effect->count; member++) {
-            struct MotionObject *memberObject;
+    camera = Ram_HeapSlots->cameraWork;
+    for (member = 0; member != effect->count; member++) {
+      struct MotionObject *memberObject;
 
-            memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
-            Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(camera, camera + 3);
-            record[0] = memberObject->x;
-            record[1] = 160 << 13;
-            record[2] = memberObject->z;
-            SceneTransform_ApplyPosition(record);
-            if (frame >= member * 8 && frame < member * 8 + 40) {
-                struct EffectStep *p;
+      // The puffs rise from 40 pixels above the target.
+      memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
+      Render_ResetTransformState();
+      Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+      record[0] = memberObject->x;
+      record[1] = 160 << 13;
+      record[2] = memberObject->z;
+      SceneTransform_ApplyPosition(record);
+      if (frame >= member * 8 && frame < member * 8 + 40) {
+        struct EffectStep *p;
 
-                for (i = 0; i != 6; i++) {
-                    s32 cel;
+        for (i = 0; i != 6; i++) {
+          s32 cel;
 
-                    p = &work->particles[member * 6 + i];
-                    cel = p->variant / 6;
-                    if (cel > 5)
-                        cel = 5;
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)p, &screen);
-                    screen.x >>= 1;
-                    if (i == 5) {
-                        BattleFxKernels_IntegrateVector3(p, 62, 0x800);
-                        rectangleA(canvas, work->sheet + cel * 0x480 + 0x1b00,
-                            screen.x - 12, screen.y - 36, 24, 48);
-                    } else {
-                        BattleFxKernels_IntegrateVector3(p, 60, 0x200);
-                        rectangleB(canvas, work->sheet + cel * 0x480,
-                            screen.x - 12, screen.y - 36, 24, 48);
-                    }
-                    p->variant += 1;
-                }
-            }
+          // A picture every six frames, holding the last.
+          p = &work->particles[member * 6 + i];
+          cel = p->variant / 6;
+          if (cel > 5)
+            cel = 5;
+          EffectPosition_ApplyBaseAndYOffset((s32 *)p, &screen);
+          screen.x >>= 1;
+          if (i == 5) {
+            BattleFxKernels_IntegrateVector3(p, 62, 0x800);
+            rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
+                       screen.x - 12, screen.y - 36, 24, 48);
+          } else {
+            BattleFxKernels_IntegrateVector3(p, 60, 0x200);
+            rectangleB(canvas, work->sheet + cel * 0x480, screen.x - 12,
+                       screen.y - 36, 24, 48);
+          }
+          p->variant += 1;
         }
-        work->transferPending = 1;
-        WaitFrames(1);
+      }
     }
-    Scheduler_RemoveCallback(Func_08143000);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
-    Func_08143bb8();
+    work->transferPending = 1;
+    WaitFrames(1);
+  }
+  Scheduler_RemoveCallback(Func_08143000);
+  Runtime_ReleaseHeapBlock(188);
+  Runtime_ReleaseHeapBlock(104);
+  Func_08143bb8();
 }

@@ -16,7 +16,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_686/effadv.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008416)
         "*/resource_686_overlay.o"(.text.x02008418)
-        "*/resource_686_overlay.o"(.text.x020085c0)
         "*/games/tla/src/field/overlay_686/events_b.o"(.text)
         "*/resource_686_overlay.o"(.text.x020086d0)
         "*/resource_686_overlay.o"(.text.x02008850)

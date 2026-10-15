@@ -453,41 +453,6 @@ Func_02000418:
 .L_020085bc:
 	.4byte 0x01090001
 	.endif
-	.section .text.x020085c0,"ax",%progbits
-	.global Func_020005c0
-	.thumb_func
-Func_020005c0:
-	push {r5, lr}
-	movs r1, #0
-	adds r5, r0, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r1, [r5, #80]
-	movs r3, #13
-	ldrb r2, [r1, #9]
-	negs r3, r3
-	ands r3, r2
-	movs r2, #8
-	orrs r3, r2
-	strb r3, [r1, #9]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	adds r3, r5, #0
-	movs r2, #0
-	adds r3, #85
-	strb r2, [r3]
-	ldr r2, .L_020085fc
-	ldr r3, [r5, #12]
-	movs r0, #0
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020085fc:
-	.4byte 0xfffc0000
 	.section .text.x020086d0,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.balign 4

@@ -308,7 +308,7 @@ extern const u8 FieldFx_SparkleTiles[];
 extern const u8 Field_TileMessageOffsets[];
 extern const u8 FieldFx_MoteTiles[];
 extern s32		FourObjectMotion_ResourceIds[];
-extern s32		FuneHeya_CueTimer;
+extern s32		TolbiShipInteriors_CueTimer;
 #ifndef OWN_TolbiShipInteriors_TurnSteps
 #endif
 extern s16 *gKolimaForestBendLayout;

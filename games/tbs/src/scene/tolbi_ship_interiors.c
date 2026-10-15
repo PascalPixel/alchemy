@@ -2283,7 +2283,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 		{
 			if (Engine_GameFlagIsSet(0x302) != 0)
 			{
-				FuneHeya_CueTimer = 0;
+				TolbiShipInteriors_CueTimer = 0;
 				FieldScheduler_AddCallback(Scene_UpdateCueTimer, 0xc80);
 				Engine_ActorSetAnimation(9, 5);
 			}
@@ -3852,7 +3852,7 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Engine_ActorEnableActionCallback(IVAN, action);
 	Object_SetActionCallbackAndRefreshById(3, action);
 	GameFlag_Set(0x302);
-	FuneHeya_CueTimer = 0;
+	TolbiShipInteriors_CueTimer = 0;
 	FieldScheduler_AddCallback((s32)Scene_UpdateCueTimer, 0xc80);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_ActorDestroy(27);
@@ -3864,7 +3864,7 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
 	s32	 value;
-	s32 *timer = &FuneHeya_CueTimer;
+	s32 *timer = &TolbiShipInteriors_CueTimer;
 	s32	 remaining;
 	if (*timer != 0)
 	{
@@ -4799,4 +4799,4 @@ struct SceneEvent TolbiShipInteriors_SceneTable14[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 FuneHeya_CueTimer;
+s32 TolbiShipInteriors_CueTimer;

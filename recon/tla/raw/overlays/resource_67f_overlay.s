@@ -1736,51 +1736,6 @@ Func_0200100c:
 	bne .L_02009012
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x020091d4,"ax",%progbits
-	.balign 4
-	.global Func_020011d4
-	.thumb_func
-Func_020011d4:
-	push {lr}
-	ldr r3, .L_02009218
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_0200921c
-	cmp r2, r3
-	bne .L_020091f0
-	ldr r0, .L_02009220
-	bl Func_02001518
-	b .L_02009214
-.L_020091f0:
-	movs r1, #50
-	movs r2, #13
-	movs r0, #2
-	bl Func_02000eac
-	movs r3, #255
-	movs r2, #255
-	ands r3, r0
-	lsls r2, r2, #8
-	orrs r3, r2
-	movs r0, #2
-	movs r1, #50
-	movs r2, #13
-	bl Func_02000ee8
-	ldr r0, .L_02009224
-	bl Func_02001518
-.L_02009214:
-	pop {pc}
-	.2byte 0x0000
-.L_02009218:
-	.4byte gPartyState
-.L_0200921c:
-	.4byte 0x000000ac
-.L_02009220:
-	.4byte Data_02001654
-.L_02009224:
-	.4byte Data_02001658
 	.section .text.x020092dc,"ax",%progbits
 	.global Func_020012dc
 	.thumb_func

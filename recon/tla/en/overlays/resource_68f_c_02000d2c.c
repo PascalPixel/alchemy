@@ -1,5 +1,5 @@
 /* Draft, differ 12 of 76: in each column test the native loads X into r3 and shifts it in place; here the load goes to r2 (asrs r3, r2, #19), one more instruction on the fall-through path. Tried: an X local for the first test, braces, a one-pass block between the tests, reloading the object. permute (1 minute) reached differ 2 only by reading X through a pointer variable. */
-#include "../../../../games/tla/src/field/overlay_68f/ov68f.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020031a8(s32 cue);

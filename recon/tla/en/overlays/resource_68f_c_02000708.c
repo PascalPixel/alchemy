@@ -9,11 +9,11 @@
  * raw u16 store off the options pointer avoids it (47). velocityX written in place in four
  * statements compiles the same.
  */
-#include "../../../../games/tla/src/field/overlay_68f/ov68f.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 void Func_020006d4(union FieldObject *object);
 
-void Func_02000708(struct Ov68fPosition *position, s32 count, s32 scale)
+void Func_02000708(struct TundariaTowerPosition *position, s32 count, s32 scale)
 {
     struct EffectOptions options;
     struct EffectOptions *p = &options;
@@ -38,7 +38,7 @@ loop:
     velocityY = Random16Far() & 15;
     x = position->x - ((Random16Far() & 31) << 16) + 0xf0000;
     Func_020000b8(x, position->y + ((Random16Far() & 15) << 16), position->z, velocityX,
-                  (velocityY + 8) << 14, 0, 0x15e0000, (struct Ov68fEffectParams *)p);
+                  (velocityY + 8) << 14, 0, 0x15e0000, (struct TundariaTowerEffectParams *)p);
     if (++i != count)
         goto loop;
 }

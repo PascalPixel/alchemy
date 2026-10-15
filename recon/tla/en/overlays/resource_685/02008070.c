@@ -1,5 +1,5 @@
 /* Func_020004d4: differ 55. The native builds the transition id from the register that held its offset (428 then +85: both in r2), reads the entrance again with ldrsh for each of its two tests and keeps r1 free; here the entrance is also loaded unextended for the second test (ldrh, shifted compare), which takes r2 and moves every later constant. */
-#include "../../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
 
 extern u32 Data_0200375c[];

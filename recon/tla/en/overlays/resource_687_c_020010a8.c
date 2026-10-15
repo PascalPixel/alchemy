@@ -3,11 +3,11 @@
  * stores the spark's address to the stack before the position loads. Also tried: the spark through a pointer
  * (42); the offset pinned to r2 ahead of a barrier (6: the pinned set is dropped and the constant is
  * loaded again at its use). */
-#include "../../../../games/tla/src/field/overlay_687/ov687.h"
+#include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 
-void Func_020010a8(struct Ov687Object *object)
+void Func_020010a8(struct SeaOfTimeObject *object)
 {
-    struct Ov687Spark spark;
+    struct SeaOfTimeSpark spark;
     s32 even = gFrameCount & 1;
 
     if (even == 0) {

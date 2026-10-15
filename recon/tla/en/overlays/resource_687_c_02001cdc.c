@@ -1,8 +1,8 @@
 /* Near miss (87 of 197 instructions differ): the native keeps the
  * palette fill's colour and base inside its loop, reloading both each pass,
  * and builds the entrance offset in r0; the draft hoists them. Destined
- * for the head of overlay_687/fade.c as the overlay's start. */
-#include "../../../../games/tla/src/field/overlay_687/ov687.h"
+ * for the head of scene/sea_of_time/fade.c as the overlay's start. */
+#include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "party_state.h"
 #include "scene_ids.h"
 
@@ -16,7 +16,7 @@ void Func_0200201c(s32 a, s32 b);
 
 s32 Func_02001cdc(void)
 {
-    ((struct Ov687EventWork *)Ram_HeapSlots->event_work)->screen_effect = 256;
+    ((struct SeaOfTimeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 256;
     if (gPartyState.scene == (s32)&SceneId_Ov687Room1) {
         Data_020022c8 = gFrameCount;
         Data_020022cc = 1;

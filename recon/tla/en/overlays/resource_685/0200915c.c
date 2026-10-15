@@ -1,6 +1,6 @@
 /* Func_0200115c: differ 2 of 613. One pair is left: after the fourth Func_0200343c the native shifts the scale (lsls r5) before it adds the object to the flags offset (adds r2, r2, r7); here the add has five dependents and the shift three, because the barriers below hide the later stores of r5.
    What this draft measured: every call with a constant goes through a scene inline (direct calls share their costly constants in r5 to r10: differ 298); the two palette rows are read with one walking pointer; the locals are declared current, target, position. The asm barriers are devices, each needed for one pair: before the object fields, after each launch (which is also called as returning a value, so r0 loads last), around the target address in the palette copy, and after the party pointer. A do-while block in their place moves the hoisted zero out of r10. */
-#include "../../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
 #include "flag_call.h"
 

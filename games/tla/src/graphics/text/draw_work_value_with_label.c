@@ -12,7 +12,6 @@
 #include "party_state.h"
 #include "text/msg_ids.h"
 
-void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if !EDITION_INTERNATIONAL
 #endif

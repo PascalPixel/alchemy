@@ -305,6 +305,8 @@ void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
 void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                                   s32 reuse);
 #endif
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
+                                  s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
 void UiText_DrawString(u8 *text, s32 output, s32 x, s32 y);

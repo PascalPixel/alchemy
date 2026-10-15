@@ -6,9 +6,6 @@
 #include "types.h"
 #include "graphics.h"
 
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
-
 // Draws number in window so that it ends at pixel column x, giving it one
 // 8-pixel text cell per digit and at least two cells.
 //

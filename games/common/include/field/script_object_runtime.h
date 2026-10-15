@@ -40,7 +40,7 @@ struct ScriptObjectRuntime
     u8                          unk6c[0x04];
 };
 
-#define SCRIPT_OBJECT_RUNTIME_OFFSET(field) ((u32) & (((struct ScriptObjectRuntime *)0)->field))
+#define SCRIPT_OBJECT_RUNTIME_OFFSET(field) ((u32)&(((struct ScriptObjectRuntime *)0)->field))
 
 typedef char ScriptObjectRuntime_size[sizeof(struct ScriptObjectRuntime) == 0x70 ? 1 : -1];
 typedef char ScriptObjectRuntime_x_offset[SCRIPT_OBJECT_RUNTIME_OFFSET(x) == 0x08 ? 1 : -1];

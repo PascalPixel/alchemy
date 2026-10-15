@@ -68,7 +68,7 @@ struct ScriptOperands
     u32 word6c;
 };
 
-#define SCRIPT_OPERANDS_OFFSET(field) ((u32) & (((struct ScriptOperands *)0)->field))
+#define SCRIPT_OPERANDS_OFFSET(field) ((u32)&(((struct ScriptOperands *)0)->field))
 
 typedef char
     ScriptOperands_comparison_result_offset[SCRIPT_OPERANDS_OFFSET(comparisonResult) == 0x57 ? 1

@@ -409,7 +409,7 @@ static void EV03_TOUCH(void)
     {
         Engine_EventBegin();
         Party_SetFields1ceAnd1d0(gGameState.scene, 5);
-        ((u8 *)((s16(*)[1]) & gGameState))[0x22b] = 3;
+        ((u8 *)((s16 (*)[1]) & gGameState))[0x22b] = 3;
         switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6)
         {
         case 0:

@@ -50,7 +50,7 @@ struct ScriptMotionObject
     void (*hook)(struct ScriptMotionObject *);
 };
 
-#define SCRIPT_MOTION_OFFSET(field) ((u32) & (((struct ScriptMotionObject *)0)->field))
+#define SCRIPT_MOTION_OFFSET(field) ((u32)&(((struct ScriptMotionObject *)0)->field))
 typedef char ScriptMotionObject_size[sizeof(struct ScriptMotionObject) == 0x70 ? 1 : -1];
 typedef char ScriptMotionObject_vertical_offset[SCRIPT_MOTION_OFFSET(vertical) == 0x44 ? 1 : -1];
 typedef char

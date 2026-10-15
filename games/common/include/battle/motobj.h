@@ -55,7 +55,7 @@ void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 #endif
 
-#define MOTION_OBJECT_OFFSET(type, field) ((u32) & (((type *)0)->field))
+#define MOTION_OBJECT_OFFSET(type, field) ((u32)&(((type *)0)->field))
 
 typedef char MotionObject_size[sizeof(struct MotionObject) == 0x70 ? 1 : -1];
 typedef char

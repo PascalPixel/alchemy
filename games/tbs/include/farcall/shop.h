@@ -13,6 +13,6 @@ FAR_CALL(ShopCursor_SetPositionImmediateFar, ShopCursor_SetPositionImmediate, vo
 FAR_CALL(Shop_FillSelectorFar, Shop_FillSelector, void, (s32 count, s32 selector, u8 *base))
 FAR_CALL(Shop_RestoreSceneTilesFar, Shop_RestoreSceneTiles, void, (s32 layer))
 FAR_CALL(Shop_InitEffectFar, Shop_InitEffect, void, (void))
-FAR_CALL(Shop_PickUnitItemFar, Shop_PickUnitItem, s32, (s32 * selected_unit, s32 *selectedItem))
+FAR_CALL(Shop_PickUnitItemFar, Shop_PickUnitItem, s32, (s32 *selected_unit, s32 *selectedItem))
 FAR_CALL(AudioCommand_WaitForStateByteClearFar, AudioCommand_WaitForStateByteClear, void, (void))
 FAR_CALL(Inn_PlaySleepFar, Inn_PlaySleep, void, (s32 room_price))

@@ -11,7 +11,7 @@ struct Resource37deSceneRuntime
     s32 sceneSetupWord1c8;
 };
 
-#define RESOURCE37DE_SCENE_OFFSET(field) ((u32) & (((struct Resource37deSceneRuntime *)0)->field))
+#define RESOURCE37DE_SCENE_OFFSET(field) ((u32)&(((struct Resource37deSceneRuntime *)0)->field))
 typedef char Resource37deSceneRuntime_scene_request_offset
     [RESOURCE37DE_SCENE_OFFSET(sceneRequest1c0) == 0x1c0 ? 1 : -1];
 typedef char Resource37deSceneRuntime_scene_setup_word_offset

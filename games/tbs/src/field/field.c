@@ -7234,7 +7234,7 @@ restart:
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
         /* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the same through a pointer local, or a byte offset from alt all differ 55; a separate object variable 128 (the index and the object share r5). */
-        alt = (s32) & ((struct AnimationObject *)alt)->flags;
+        alt = (s32)&((struct AnimationObject *)alt)->flags;
         *(u8 *)alt = flag;
     }
 

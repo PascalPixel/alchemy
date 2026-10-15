@@ -96,8 +96,8 @@ void Colosso_RestoreCompetitor(s32 id)
     zero = 0;
     /* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store at a varying address may pass the scalar load of gColosso_CompetitorStartX (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no struct reference. The actor held as union FieldObject with field stores: differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
     control = (u8 *)state;
-    control[(u32) & ((struct CompetitorState *)0)->stage] = zero;
-    control[(u32) & ((struct CompetitorState *)0)->mode] = 15;
+    control[(u32)&((struct CompetitorState *)0)->stage] = zero;
+    control[(u32)&((struct CompetitorState *)0)->mode] = 15;
     actor->x.fixed = gColosso_CompetitorStartX;
     actor->z.fixed = gColosso_CompetitorStartZ;
     actor->facing = gColosso_CompetitorStartAngle;

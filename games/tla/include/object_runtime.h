@@ -55,7 +55,7 @@ struct ObjectRuntime
 typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x80 ? 1 : -1];
 
 typedef char ObjectRuntime_collision_flags_offset
-    [(u32) & ((struct ObjectRuntime *)0)->collisionFlags == 0x59 ? 1 : -1];
+    [(u32)&((struct ObjectRuntime *)0)->collisionFlags == 0x59 ? 1 : -1];
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *object);

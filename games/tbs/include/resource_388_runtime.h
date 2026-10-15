@@ -19,7 +19,7 @@ struct Resource388SlotView
     s8 unk59;
 };
 
-#define RESOURCE388_RUNTIME_OFFSET(type, field) ((u32) & (((type *)0)->field))
+#define RESOURCE388_RUNTIME_OFFSET(type, field) ((u32)&(((type *)0)->field))
 typedef char Resource388Runtime_setup_request_1c0_offset
     [RESOURCE388_RUNTIME_OFFSET(struct Resource388Runtime, setupRequest1c0) == 0x1c0 ? 1 : -1];
 typedef char Resource388Runtime_setup_value_1c8_offset

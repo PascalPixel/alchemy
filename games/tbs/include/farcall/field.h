@@ -48,11 +48,11 @@ FAR_CALL(ObjectDispatch_InitFromTable4WithArgumentFar, ObjectDispatch_InitFromTa
 FAR_SLOT(ObjectDispatch_InitFromTable5WithArgument)
 FAR_CALL(Object_SetPositionAndResetMotionFar, Object_SetPositionAndResetMotion, void,
     (struct ObjectRuntime * obj, s32 x, s32 y, s32 z))
-FAR_CALL(render_animated_tile_frameFar, Map_RenderAnimatedTileFrame, void, (u8 * obj, u32 pos))
+FAR_CALL(render_animated_tile_frameFar, Map_RenderAnimatedTileFrame, void, (u8 *obj, u32 pos))
 FAR_CALL(Map_RenderAnimatedTileFramesForObjectFar, Map_RenderAnimatedTileFramesForObject, void,
-    (u8 * obj))
+    (u8 *obj))
 FAR_CALL(Map_RenderAllAnimatedTileFramesFar, Map_RenderAllAnimatedTileFrames, void,
-    (u8 * *table, s32 cnt))
+    (u8 **table, s32 cnt))
 FAR_CALL(Map_LoadLayeredSceneFar, Map_LoadLayeredScene, s32, (s32 index))
 FAR_CALL(Map_InitializePerspectiveSceneFar, Map_InitializePerspectiveScene, s32, (void))
 FAR_SLOT(Map_SetCameraCenter)
@@ -71,7 +71,7 @@ FAR_SLOT(Map_GetScreenRelativePosition)
 FAR_SLOT(WorldMap_UpdateView)
 FAR_CALL(Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock, void, (void))
 FAR_CALL(Map_PlayMetatileCopySequenceFar, Map_PlayMetatileCopySequence, void,
-    (u16 * command, s32 destination_x, u32 destination_y))
+    (u16 *command, s32 destination_x, u32 destination_y))
 FAR_CALL(Map_CopyMetatileIndicesRectFar, Map_CopyMetatileIndicesRect, void,
     (s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 width, u32 height))
 FAR_CALL(Map_ClearLayerEntryFlagFar, Map_ClearLayerEntryFlag, void, (u32 no))
@@ -124,7 +124,7 @@ FAR_CALL(
     SetMapCellCollisionFar, SetMapCellCollision, void, (u32 layer, s32 x, s32 y, u32 collisionCode))
 FAR_CALL(AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps, void,
     (struct AnimationObject * group, s32 val))
-FAR_CALL(Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable, void, (u8 * buf, s32 cnt))
+FAR_CALL(Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable, void, (u8 *buf, s32 cnt))
 FAR_CALL(Map_EnableUpdateCallbackFar, Map_EnableUpdateCallback, void, (void))
 FAR_CALL(Map_DisableUpdateCallbackFar, Map_DisableUpdateCallback, void, (void))
 FAR_CALL(ScriptObject_FindOverlappingEntryFar, ScriptObject_FindOverlappingEntry,

@@ -31,11 +31,11 @@ FAR_CALL(
 FAR_CALL(UiText_DrawCharacterAtOffsetFar, UiText_DrawCharacterAtOffset, void,
     (s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY))
 #endif
-FAR_CALL(UiText_DrawStringFar, UiText_DrawString, void, (u8 * text, s32 arg1, s32 arg2, s32 arg3))
+FAR_CALL(UiText_DrawStringFar, UiText_DrawString, void, (u8 *text, s32 arg1, s32 arg2, s32 arg3))
 FAR_CALL(UiText_DrawStringAtOffsetFar, UiText_DrawStringAtOffset, void,
-    (u8 * text, struct RenderInput *work, s32 offsetX, s32 offsetY))
+    (u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY))
 FAR_CALL(UiText_DrawStringInWindowFar, UiText_DrawStringInWindow, void,
-    (u8 * text, s32 arg1, u32 x, u32 y))
+    (u8 *text, s32 arg1, u32 x, u32 y))
 FAR_CALL(UiText_DrawNumberFar, UiText_DrawNumber, void,
     (s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4))
 FAR_CALL(UiText_DrawNumberAtOffsetFar, UiText_DrawNumberAtOffset, void,
@@ -107,7 +107,7 @@ FAR_SLOT(Menu_RunSelectionHook)
 FAR_SLOT(Item_CallHandler48)
 FAR_CALL(Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem, void, (s32 code))
 FAR_CALL(UiText_RenderWideStringAtOffsetFar, UiText_RenderWideStringAtOffset, void,
-    (u16 * text, struct UiWindow *window, s32 x, s32 y))
+    (u16 *text, struct UiWindow *window, s32 x, s32 y))
 FAR_SLOT(GraphicsPalette_SelectionNoOp)
 FAR_CALL(UiWindow_FillFromSceneFar, UiWindow_FillFromScene, void, (void *dst))
 FAR_CALL(
@@ -124,7 +124,7 @@ FAR_CALL(Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot, s32,
 FAR_SLOT(Debug_SelectAbilityPair)
 FAR_CALL(UiWindow_MarkVisibleTileAttributesFar, UiWindow_MarkVisibleTileAttributes, void, (void))
 FAR_SLOT(ItemIcon_Compose)
-FAR_CALL(BattleLayout_HighlightPartyPanelsFar, BattleLayout_HighlightPartyPanels, s32, (u16 * ids))
+FAR_CALL(BattleLayout_HighlightPartyPanelsFar, BattleLayout_HighlightPartyPanels, s32, (u16 *ids))
 FAR_SLOT(UiIcon_BuildItemIconTiles)
 FAR_SLOT(UiIcon_BuildAbilityIconTiles)
 FAR_CALL(RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded, struct RenderOutput *,
@@ -167,8 +167,8 @@ FAR_CALL(UiWindow_SetPaletteBitRectFar, Ui_SetRectHighlight, void,
     (s32 x, s32 y, s32 width, s32 height, s32 alt))
 FAR_CALL(Ability_LoadGlyphFar, Ability_LoadGlyph, void,
     (s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse))
-FAR_CALL(Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable, void,
-    (u16 * dst))
+FAR_CALL(
+    Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable, void, (u16 *dst))
 FAR_CALL(UiWork_SetAltFlagAndClearTableFar, UiWork_SetAltFlagAndClearTable, void, (s32 flag))
 FAR_CALL(Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry, s32, (s32 arg0, s32 arg1))
 FAR_CALL(Ui_GetTableWordZeroFar, Ui_GetTableWordZero, s32, (s32 no))

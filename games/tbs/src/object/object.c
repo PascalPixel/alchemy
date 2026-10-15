@@ -4343,7 +4343,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
     s32 work = (s32)gEventWork;
     u32 off = (actor * 4) + 0x14; // EventWork の actors[actor]
 
-    s32                 srcZ = (s32) * (struct FieldActor **)(work + off);
+    s32                 srcZ = (s32)*(struct FieldActor **)(work + off);
     struct EffectVector pos;
     s32                 x;
 

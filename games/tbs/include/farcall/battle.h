@@ -2,7 +2,7 @@
 FAR_CALL(DebugBattle_RunMenuFar, DebugBattle_RunMenu, void, (void))
 FAR_SLOT(BattlePres_RunMosaicFadeOut)
 FAR_CALL(BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList, void,
-    (s16 * list, s32 refresh))
+    (s16 *list, s32 refresh))
 FAR_SLOT(Graphics_FadeAlphaOut)
 FAR_SLOT(Graphics_FadeAlphaIn)
 FAR_CALL(BattlePres_SetupTransitionSceneFar, BattlePres_SetupTransitionScene, void,
@@ -34,14 +34,14 @@ FAR_CALL(BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPositi
 FAR_CALL(BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition, s32,
     (s32 id, s32 *projected))
 FAR_SLOT(BattleParty_ListLivingUnits)
-FAR_CALL(BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners, s32, (u16 * owners))
+FAR_CALL(BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners, s32, (u16 *owners))
 FAR_CALL(Camera_ConfigureSceneFar, Camera_ConfigureScene, void, (s32 pos))
 FAR_CALL(
     GetMotionRecordFar, GetMotionRecord, void *, (struct MotionObject * object, s32 record_index))
-FAR_CALL(BattlePres_SetActorModesFar, BattlePres_SetActorModes, void, (u16 * actors, s32 mode))
+FAR_CALL(BattlePres_SetActorModesFar, BattlePres_SetActorModes, void, (u16 *actors, s32 mode))
 FAR_CALL(BattleEventRuntime_BeginPhaseFar, BattleEventRuntime_BeginPhase, void, (s32 cue))
 FAR_CALL(Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped, s32,
-    (u16 * source, u16 *destination, s32 scale, s32 count))
+    (u16 *source, u16 *destination, s32 scale, s32 count))
 FAR_CALL(BattlePlacement_UpdateTimedEntriesFar, BattlePlacement_UpdateTimedEntries, s32, (void))
 FAR_CALL(BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette, s32, (s32 id))
 FAR_CALL(BattlePlacement_UpdateTimedEntriesTwentyTimesFar,

@@ -44,7 +44,7 @@ struct StagedActor
     u32                         movementCallback;
 };
 
-#define STAGED_ACTOR_OFFSET(field) ((u32) & (((struct StagedActor *)0)->field))
+#define STAGED_ACTOR_OFFSET(field) ((u32)&(((struct StagedActor *)0)->field))
 typedef char StagedActor_size[sizeof(struct StagedActor) == 0x70 ? 1 : -1];
 typedef char StagedActor_x_offset[STAGED_ACTOR_OFFSET(x) == 0x08 ? 1 : -1];
 typedef char
@@ -85,7 +85,7 @@ struct StagedActorFootprint
     s32 z1;
 };
 
-#define STAGED_ACTOR_PROBE_OFFSET(field) ((u32) & (((struct StagedActorProbe *)0)->field))
+#define STAGED_ACTOR_PROBE_OFFSET(field) ((u32)&(((struct StagedActorProbe *)0)->field))
 typedef char StagedActorProbe_size[sizeof(struct StagedActorProbe) == 0x18 ? 1 : -1];
 typedef char
     StagedActorProbe_position_x_offset[STAGED_ACTOR_PROBE_OFFSET(positionX) == 0x08 ? 1 : -1];

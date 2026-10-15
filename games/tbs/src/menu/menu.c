@@ -8836,7 +8836,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
     {
         do
         {
-            p = &((u16(*)[32])work->tilemap)[y][x];
+            p = &((u16 (*)[32])work->tilemap)[y][x];
             for (col = width; col != 0; col--)
             {
                 tile = *p;

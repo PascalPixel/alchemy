@@ -15,7 +15,7 @@ struct FourObjectMotionState
     s32   phases[4];
 };
 
-#define FOUR_OBJECT_MOTION_OFFSET(field) ((u32) & (((struct FourObjectMotionState *)0)->field))
+#define FOUR_OBJECT_MOTION_OFFSET(field) ((u32)&(((struct FourObjectMotionState *)0)->field))
 
 typedef char FourObjectMotionState_vertical_origins_offset
     [FOUR_OBJECT_MOTION_OFFSET(verticalOrigins) == 0x144 ? 1 : -1];

@@ -3913,16 +3913,16 @@ struct SpriteOutput
     struct CursorSprite  attr;
 };
 
-LAYOUT_OFFSET_GUARD(SpriteOutput_X, struct SpriteOutput, x, (u32) & ((struct RenderOutput *)0)->x);
-LAYOUT_OFFSET_GUARD(SpriteOutput_Y, struct SpriteOutput, y, (u32) & ((struct RenderOutput *)0)->y);
+LAYOUT_OFFSET_GUARD(SpriteOutput_X, struct SpriteOutput, x, (u32)&((struct RenderOutput *)0)->x);
+LAYOUT_OFFSET_GUARD(SpriteOutput_Y, struct SpriteOutput, y, (u32)&((struct RenderOutput *)0)->y);
 LAYOUT_OFFSET_GUARD(
-    SpriteOutput_Active, struct SpriteOutput, active, (u32) & ((struct RenderOutput *)0)->active);
+    SpriteOutput_Active, struct SpriteOutput, active, (u32)&((struct RenderOutput *)0)->active);
 LAYOUT_OFFSET_GUARD(SpriteOutput_AnimStep, struct SpriteOutput, animStep,
-    (u32) & ((struct RenderOutput *)0)->animStep);
+    (u32)&((struct RenderOutput *)0)->animStep);
 LAYOUT_OFFSET_GUARD(
-    SpriteOutput_Index, struct SpriteOutput, index, (u32) & ((struct RenderOutput *)0)->index);
+    SpriteOutput_Index, struct SpriteOutput, index, (u32)&((struct RenderOutput *)0)->index);
 LAYOUT_OFFSET_GUARD(
-    SpriteOutput_Attr, struct SpriteOutput, attr, (u32) & ((struct RenderOutput *)0)->unk10);
+    SpriteOutput_Attr, struct SpriteOutput, attr, (u32)&((struct RenderOutput *)0)->unk10);
 
 #if EDITION_INTERNATIONAL
 

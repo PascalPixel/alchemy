@@ -793,16 +793,16 @@ s32 SaveState_ScanRecordFlags(void)
         for (i = 0; i < 3; i++)
         {
             if (flags[i * sizeof(struct SaveSummary)
-                      + ((u32) & ((struct SaveSummary *)0)->sendFlag - (u32)
-                          & ((struct SaveSummary *)0)->party[4])]
+                      + ((u32)&((struct SaveSummary *)0)->sendFlag
+                          - (u32)&((struct SaveSummary *)0)->party[4])]
                 != 0)
             {
                 gTitleSendOptionEnabled = 1;
                 cnt++;
             }
             if (flags[i * sizeof(struct SaveSummary)
-                      + ((u32) & ((struct SaveSummary *)0)->flagCount - (u32)
-                          & ((struct SaveSummary *)0)->party[4])]
+                      + ((u32)&((struct SaveSummary *)0)->flagCount
+                          - (u32)&((struct SaveSummary *)0)->party[4])]
                 != 0)
             {
                 (*(s16 *)&gTitleExtraOptionEnabled) = 1;
@@ -4033,7 +4033,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     {
         do
         {
-            u16 *p = &((u16(*)[32])render->tilemap)[y][x];
+            u16 *p = &((u16 (*)[32])render->tilemap)[y][x];
             s32  col = width;
 
             if (col != 0)

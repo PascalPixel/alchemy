@@ -26,7 +26,7 @@ struct StagedActorEffectRequest
     s16 cellZ;
 };
 
-#define STAGED_EFFECT_OFFSET(type, field) ((u32) & (((type *)0)->field))
+#define STAGED_EFFECT_OFFSET(type, field) ((u32)&(((type *)0)->field))
 typedef char StagedActorEffect_position_x_offset
     [STAGED_EFFECT_OFFSET(struct StagedActorEffect, positionX) == 0x0c ? 1 : -1];
 typedef char StagedActorEffect_elevation_rate_offset

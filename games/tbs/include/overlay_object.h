@@ -35,9 +35,9 @@ struct OverlayObject
     struct OverlayObject       *linkedObject;
 };
 
-#define OVERLAY_OBJECT_OFFSET(field) ((u32) & (((struct OverlayObject *)0)->field))
+#define OVERLAY_OBJECT_OFFSET(field) ((u32)&(((struct OverlayObject *)0)->field))
 typedef char OverlayObjectRecord_flags_offset
-    [((u32) & (((struct OverlayObjectRecord *)0)->flags)) == 0x09 ? 1 : -1];
+    [((u32)&(((struct OverlayObjectRecord *)0)->flags)) == 0x09 ? 1 : -1];
 typedef char OvObj_record_offset[OVERLAY_OBJECT_OFFSET(record) == 0x50 ? 1 : -1];
 typedef char OvObj_angle_offset[OVERLAY_OBJECT_OFFSET(angle) == 0x06 ? 1 : -1];
 typedef char OvObj_coordinate_08_offset[OVERLAY_OBJECT_OFFSET(coordinate08) == 0x08 ? 1 : -1];

@@ -12,7 +12,7 @@ struct Resource390TableEntry
     u8  unk16;
 };
 
-#define RESOURCE390_TABLE_ENTRY_OFFSET(field) ((u32) & (((struct Resource390TableEntry *)0)->field))
+#define RESOURCE390_TABLE_ENTRY_OFFSET(field) ((u32)&(((struct Resource390TableEntry *)0)->field))
 typedef char
     Resource390TableEntry_unknown_04_offset[RESOURCE390_TABLE_ENTRY_OFFSET(unk04) == 0x04 ? 1 : -1];
 typedef char

@@ -17,7 +17,7 @@ struct FacingObject
     struct FacingObject *facingTarget;
 };
 
-#define FACING_OBJECT_OFFSET(field) ((u32) & (((struct FacingObject *)0)->field))
+#define FACING_OBJECT_OFFSET(field) ((u32)&(((struct FacingObject *)0)->field))
 typedef char FacingObject_size[sizeof(struct FacingObject) == 0x6c ? 1 : -1];
 typedef char FacingObject_facing_offset[FACING_OBJECT_OFFSET(facing) == 0x06 ? 1 : -1];
 typedef char FacingObject_position_x_offset[FACING_OBJECT_OFFSET(positionX) == 0x08 ? 1 : -1];

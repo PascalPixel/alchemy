@@ -31,9 +31,9 @@ struct AudioTrackSlotWork
 typedef char AudioSlotNode_Size[sizeof(struct AudioSlotNode) == 12 ? 1 : -1];
 typedef char AudioTrackSlotWork_Size[sizeof(struct AudioTrackSlotWork) == 0x4444 ? 1 : -1];
 typedef char
-    AudioTrackSlotWork_Buckets[(u32) & ((struct AudioTrackSlotWork *)0)->bucket == 0x3000 ? 1 : -1];
+    AudioTrackSlotWork_Buckets[(u32)&((struct AudioTrackSlotWork *)0)->bucket == 0x3000 ? 1 : -1];
 typedef char AudioTrackSlotWork_InputCursor
-    [(u32) & ((struct AudioTrackSlotWork *)0)->inputCursor == 0x4438 ? 1 : -1];
+    [(u32)&((struct AudioTrackSlotWork *)0)->inputCursor == 0x4438 ? 1 : -1];
 
 #if GAME_TLA
 void AudioTrack_ResetSlotBuckets(void);

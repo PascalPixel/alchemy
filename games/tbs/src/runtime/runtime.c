@@ -1852,7 +1852,7 @@ s32 Runtime_GetRemainingIwram(void)
 {
     union HeapState *work = (union HeapState *)gWorkSlot;
 
-    return (s32)(*(u8(*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
+    return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)

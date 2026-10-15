@@ -15,7 +15,7 @@ struct ScriptObjectEntry
     u8    unk5a[0x16];
 };
 
-#define SCRIPT_OBJECT_ENTRY_OFFSET(field) ((u32) & (((struct ScriptObjectEntry *)0)->field))
+#define SCRIPT_OBJECT_ENTRY_OFFSET(field) ((u32)&(((struct ScriptObjectEntry *)0)->field))
 
 typedef char
     ScriptObjectEntry_values_08_offset[SCRIPT_OBJECT_ENTRY_OFFSET(values08) == 0x08 ? 1 : -1];

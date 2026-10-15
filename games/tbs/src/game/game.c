@@ -1629,8 +1629,8 @@ s32 OwnerAction_Add(s32 stateIndex, s32 value)
         /* FAKEMATCH: the scalar member-address walk: the slot offset is index * 4 + 88 from state, recomputed each pass as the bytes do. Plain forms measured 2026-10-13: state->actionSlots[index].encodedAction differ 22 (75 instructions, loop.c walks the slot address); the slot through a u16 pointer, a struct OwnerActionSlot pointer or a u16 view of the array differ 22 (79 instructions). */
         for (index = 0; index <= 30; index++)
         {
-            s32 offset = index * sizeof(state->actionSlots[0]) + (s32)
-                         & ((struct BattleUnit *)0)->actionSlots;
+            s32 offset =
+                index * sizeof(state->actionSlots[0]) + (s32)&((struct BattleUnit *)0)->actionSlots;
 
             if (*(u16 *)((u8 *)state + offset) == 0)
             {
@@ -2048,7 +2048,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix)
     unit->rewards = enemy->rewards;
     unit->classIndex = 0;
     unit->classId = enemyId;
-    Owner_CalculateBaseElements(unitId, (s16(*)[2])unit->baseElement);
+    Owner_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
     UnitCalc(unitId);
     unit->side = 1;
     switch (unit->classId)
@@ -2423,7 +2423,7 @@ void Owner_RefreshDerivedData(s32 ownerId)
 
     owner->classIndex = Owner_DetermineClass(owner->classId, (u8 *)owner->djinnAvailable);
     Owner_RefreshClassActions(ownerId);
-    Owner_CalculateBaseElements(ownerId, (s16(*)[2])owner->baseElement);
+    Owner_CalculateBaseElements(ownerId, (s16 (*)[2])owner->baseElement);
 }
 
 s32 Curve_LookupScaledValue(s32 input, s32 halve)
@@ -2747,7 +2747,7 @@ s32 BattleFx_RollSuccess(
 
     goto action4_check;
 action4_tail:
-    if (unit->stun == 0 && unit->sleep == 0 && state[(u32) & ((struct BattleUnit *)0)->psySeal] == 0
+    if (unit->stun == 0 && unit->sleep == 0 && state[(u32)&((struct BattleUnit *)0)->psySeal] == 0
         && unit->grimReaper == 0)
     {
         return 0;
@@ -2756,7 +2756,7 @@ action4_tail:
 action4_check:
     if (effectId == 4)
     {
-        if (unit->delusion == 0 && state[(u32) & ((struct BattleUnit *)0)->confusion] == 0
+        if (unit->delusion == 0 && state[(u32)&((struct BattleUnit *)0)->confusion] == 0
             && unit->charm == 0)
         {
             goto action4_tail;
@@ -2772,7 +2772,7 @@ action4_done:
     sleep = &unit->sleep;
     if (effectId == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
         && *stun == 0 && *sleep == 0 && unit->psySeal == 0 && unit->grimReaper == 0
-        && state[(u32) & ((struct BattleUnit *)0)->haunt] == 0)
+        && state[(u32)&((struct BattleUnit *)0)->haunt] == 0)
     {
         return 0;
     }

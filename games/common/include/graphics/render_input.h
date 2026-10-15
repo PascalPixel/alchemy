@@ -18,8 +18,8 @@ struct RenderInput
 };
 
 typedef char RenderInput_size[sizeof(struct RenderInput) == 0x10 ? 1 : -1];
-typedef char RenderInput_width_offset[(u32) & (((struct RenderInput *)0)->width) == 8 ? 1 : -1];
-typedef char RenderInput_x_offset[(u32) & (((struct RenderInput *)0)->x) == 12 ? 1 : -1];
+typedef char RenderInput_width_offset[(u32)&(((struct RenderInput *)0)->width) == 8 ? 1 : -1];
+typedef char RenderInput_x_offset[(u32)&(((struct RenderInput *)0)->x) == 12 ? 1 : -1];
 
 #if GAME_TLA
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source);
@@ -99,7 +99,7 @@ struct RenderOutput *RenderOutput_CreateFar(
 
 LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, animStep, 0x0c);
 
-#define RENDER_OUTPUT_OFFSET(field) ((u32) & (((struct RenderOutput *)0)->field))
+#define RENDER_OUTPUT_OFFSET(field) ((u32)&(((struct RenderOutput *)0)->field))
 
 typedef char RenderOutput_sentinel_offset[RENDER_OUTPUT_OFFSET(sentinel) == 0x0f ? 1 : -1];
 typedef char RenderOutput_oam_offset[RENDER_OUTPUT_OFFSET(oam) == 0x14 ? 1 : -1];

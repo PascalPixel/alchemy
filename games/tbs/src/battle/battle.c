@@ -5452,7 +5452,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit)
         for (;;)
         {
             index = 0;
-            slot = (u32) & ((struct BattleWork *)0)->partyUnits / sizeof(s16);
+            slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
             if (order->items[slot] != 255)
             {
                 entry = order->items;
@@ -5477,8 +5477,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit)
     else
     {
         index = 0;
-        slot = (u32) & ((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
-        tail = (u32) & ((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
+        slot = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
+        tail = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255)
@@ -7391,7 +7391,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
     u8                           targetMode;
 
     // 0-255 の乱数で、重みの表から行動表の番号を引く
-    s32 WeightRandom(u8 * weights)
+    s32 WeightRandom(u8 *weights)
     {
         s32 random;
         s32 total;

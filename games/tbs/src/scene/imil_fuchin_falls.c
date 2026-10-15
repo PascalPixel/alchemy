@@ -64,17 +64,17 @@ struct CaveDustOptions
 };
 
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
-    (u32) & ((struct EffectOptions *)0)->priority);
+    (u32)&((struct EffectOptions *)0)->priority);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
-    (u32) & ((struct EffectOptions *)0)->palette);
+    (u32)&((struct EffectOptions *)0)->palette);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, startScaleX,
-    (u32) & ((struct EffectOptions *)0)->startScaleX);
+    (u32)&((struct EffectOptions *)0)->startScaleX);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, startScaleY,
-    (u32) & ((struct EffectOptions *)0)->startScaleY);
+    (u32)&((struct EffectOptions *)0)->startScaleY);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, targetScaleX,
-    (u32) & ((struct EffectOptions *)0)->targetScaleX);
+    (u32)&((struct EffectOptions *)0)->targetScaleX);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, targetScaleY,
-    (u32) & ((struct EffectOptions *)0)->targetScaleY);
+    (u32)&((struct EffectOptions *)0)->targetScaleY);
 
 static void EV08_TALK(void)
 {

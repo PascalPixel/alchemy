@@ -719,7 +719,7 @@ SECTIONS
         "*/games/tla/src/graphics/window/curframe.o"(.rodata)
         "*/games/tla/src/graphics/window/windata.o"(.rodata)
         "*/games/tla/text/messages.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080aa0dc)
+        "*/games/tla/src/graphics/window/textspd.o"(.rodata)
         "*/games/tla/src/menu/d00aa0e8.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080aa128)
         . = ABSOLUTE(0x080ad000);

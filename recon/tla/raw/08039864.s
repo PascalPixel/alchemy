@@ -409,7 +409,7 @@ Func_08039864:
 .L_08039ba8:
 	.4byte gPartyState
 .L_08039bac:
-	.4byte Data_080aa0e2
+	.4byte UiText_SpeedSteps
 .L_08039bb0:
 	.4byte gLagFramesShown
 .L_08039bb4:
@@ -648,7 +648,7 @@ Func_08039864:
 .L_08039d64:
 	.4byte gPartyState
 .L_08039d68:
-	.4byte Data_080aa0e5
+	.4byte UiText_SpeedCueGaps
 .L_08039d6c:
 	cmp r0, #223
 	bne .L_08039d7e
@@ -771,7 +771,7 @@ Func_08039864:
 .L_08039e54:
 	.4byte gPartyState
 .L_08039e58:
-	.4byte Data_080aa0dc
+	.4byte UiText_SpeedDelays
 .L_08039e5c:
 	movs r0, #255
 	lsls r0, r0, #8

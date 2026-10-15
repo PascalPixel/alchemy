@@ -675,7 +675,7 @@ SECTIONS
     "*/games/tla/src/graphics/window/curframe.o"(.rodata)
     "*/games/tla/src/graphics/window/windata.o"(.rodata)
     "*/games/tla/text/messages.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.000a8df0)
+    "*/games/tla/src/graphics/window/textspd.o"(.rodata)
     "*/games/tla/src/menu/d00aa0e8.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.000a8e3c)
     "*/recon/tla/fr/rom.o"(.rom.000a90f0)

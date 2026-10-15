@@ -1337,7 +1337,7 @@ SECTIONS
     "*/games/tla/src/battle/effect/d00f0890.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f08b0.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f0ab0.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.000f5b44)
+    "*/games/tla/src/battle/effect/ground_offsets.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f0b7c.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.000f5bf0)
     "*/recon/tla/fr/rom.o"(.rom.000f5bf8)

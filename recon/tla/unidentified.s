@@ -390,10 +390,6 @@ Battle_Effect91Classes:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.section .unidentified.080f0b50,"a"
-	.global Data_080f0b50
-Data_080f0b50:
-	.incbin "baserom.gba", 0x000f0b50, 0x0000002c
 	.section .unidentified.080f0bfc,"a"
 	.global Data_080f0bfc
 Data_080f0bfc:

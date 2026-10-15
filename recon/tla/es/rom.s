@@ -4211,8 +4211,6 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000f6a00, 0x000000c0
 	.section .rom.000f8810, "ax"
 	.incbin "baserom.gba", 0x000f8810, 0x00000008
-	.section .rom.000f9b44, "ax"
-	.incbin "baserom.gba", 0x000f9b44, 0x0000002c
 	.section .rom.000f9bf0, "ax"
 	.global Data_080f0bfc
 Data_080f0bfc:

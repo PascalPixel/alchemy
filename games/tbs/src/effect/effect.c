@@ -4883,6 +4883,11 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   WaitFrames(1);
 }
 
+// Battle effects 38 and 218: a triangle of light spins and shrinks onto the
+// first target for 64 frames, then a rune stands on the target; the battle
+// shows the result on frame 64. When effect->prelude is 1 a Jupiter Djinni
+// appears first, sways and rises away. The canvas darkens a little faster
+// every 16 frames.
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   struct Vector3 vector;
@@ -4891,7 +4896,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   s32 originX;
   s32 originY;
   BlitterPair draw;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -4908,20 +4913,22 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  heapCache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
+  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  graphics = heapCache[2];
+  graphics = slots[2];
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
     BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &originX,
                                  &originY);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = 0x100; // unscaled
+
+  // The rune, the motes at 0x1000 and the Djinni at 0x2000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
   Resource_DecodeType01(
@@ -4932,8 +4939,8 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + 0x2000);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
+  work->transferMode = CANVAS_COPY_AND_DARKEN;
+  work->transferValue = 0x04040404; // 4 off every pixel each frame
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
@@ -4945,6 +4952,9 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
     if (frame == 64)
       BattleEventRuntime_BeginPhaseFar(0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+
+    // The Djinni sways 20 pixels either way and from frame 32 rises 2
+    // pixels a frame.
     if (work->effect->prelude == 1) {
       s32 x;
       s32 y;
@@ -4960,13 +4970,16 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
+
+    // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
@@ -4979,6 +4992,9 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset((s32 *)&vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
+        // The triangle: its three corners, turned a third of a circle
+        // apart and shrinking as they spin, are projected into the
+        // particles' velocity fields; each side is 24 motes.
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
@@ -5015,6 +5031,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
             }
           }
         }
+        // Then the rune, in two mirrored halves.
         if (tick > 63) {
           draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
           draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
@@ -5031,12 +5048,15 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 67: the spinning triangle and rune of
+// BattleFx_RunSpinningTriangle without the Djinni; on frame 46 the user
+// steps up to the first target.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   struct Vector3 vector;
   struct EffectPosition screen;
   struct Vector3 scale;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -5054,25 +5074,27 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  heapCache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
+  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  graphics = heapCache[2];
+  graphics = slots[2];
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = 0x100; // unscaled
+
+  // The rune, and the motes at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
   Resource_DecodeType01(palette, work->sheet + 0x1000);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
+  work->transferMode = CANVAS_COPY_AND_DARKEN;
+  work->transferValue = 0x04040404; // 4 off every pixel each frame
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
@@ -5087,13 +5109,16 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] =
         (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                          CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
+
+    // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
       object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
@@ -5106,6 +5131,9 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         EffectPosition_ApplyBaseAndYOffset((s32 *)&vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
+        // The triangle: its three corners, turned a third of a circle
+        // apart and shrinking as they spin, are projected into the
+        // particles' velocity fields; each side is 24 motes.
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
@@ -5142,6 +5170,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
             }
           }
         }
+        // Then the rune, in two mirrored halves.
         if (tick > 63) {
           draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
           draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
@@ -5158,6 +5187,10 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 68: three star-shaped rings of light fly from 40 pixels
+// above the user at the first target, 12 frames apart, growing and
+// spinning as they go, while the camera swings round; each knocks the
+// target back on arrival, and the third lets the battle show the damage.
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition base;
@@ -5192,14 +5225,14 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  Iwram_CopyWords((void *)0x05000000,
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
   ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  work->transferMode = 2;
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(
@@ -5207,6 +5240,8 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // Each ring reaches the target in 12 frames; the second and third aim
+  // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
     point->x = source->x;
     point->y = source->y + 0x280000;
@@ -5223,6 +5258,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
 
   trails = gMapCellBuffer;
   for (frame = 0; frame != 60; frame++) {
+    // Swing the camera round, slowing over frames 40 to 47.
     if (frame <= 47) {
       struct BattleCamera *view = *(gWorkSlot + HEAP_SLOT_CAMERA);
       s32 speed;
@@ -5246,6 +5282,8 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         SceneTransform_ApplyPosition(step);
+        // The ring's ten points, alternately near and far from its centre,
+        // projected onto the canvas; peak is the farthest depth.
         peak = 0;
         for (j = 0; j != 10; j++) {
           s32 depth;
@@ -5265,12 +5303,16 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
           if (peak < depth)
             peak = depth;
           pos.x >>= 1;
+          // These first stores read base, which is never set; the next
+          // two overwrite them.
           trails[i * 10 + j].velocityX = pos.x + base.x;
           trails[i * 10 + j].velocityY = pos.y + base.y;
           trails[i * 10 + j].velocityX = pos.x;
           trails[i * 10 + j].velocityY = pos.y;
           Graphics_RestoreTransferWork();
         }
+        // Join the points with 16 motes each, unless the ring is too far
+        // away.
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
             struct EffectStep *from =
@@ -5292,6 +5334,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
         step->x += step->velocityX;
         step->y += step->velocityY;
         step->z += step->velocityZ;
+        // The hit: knock the target back, away from the middle.
         if (frame == start + i + 10) {
           target->acceleration = 0x20000;
           target->speedLimit = 0x80000;
@@ -5304,9 +5347,9 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
           else
             Object_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            BattleEventRuntime_BeginPhaseFar(134);
+            BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
           } else {
-            AudioCommand_PlayFar(134);
+            AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
           }
           work->shakeFrames = 4;
@@ -5325,6 +5368,10 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 62: eight spinning star outlines fall from 120 pixels above
+// the user towards the first target, a few frames apart, and bounce off the
+// ground near it, each bounce shaking the screen and flashing the targets;
+// the battle shows the damage on frame 96. 128 frames.
 void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -5353,12 +5400,12 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  Iwram_CopyWords((void *)0x05000000,
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  work->transferMode = 2;
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(
@@ -5366,6 +5413,9 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // Each star aims at a random spot up to 64 pixels either side of the
+  // target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15 frames
+  // in (its variant).
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
@@ -5385,7 +5435,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 128; frame++) {
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
       step = &work->particles[i];
       if (frame >= step->variant) {
@@ -5393,6 +5443,8 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
         pos.x >>= 1;
+        // On the canvas, draw the star: ten points, alternately near and
+        // far, turning as it falls, joined by 12 motes each.
         if (pos.x >= -8 && pos.x <= 127) {
           if (pos.y <= 127) {
             if (pos.y >= -8) {
@@ -5427,12 +5479,13 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
             }
           }
         }
+        // Bounce below 30 pixels up, losing half the speed across.
         if (step->y <= 0x1dffff) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;
           step->velocityZ /= 2;
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(134);
+          AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
           for (j = 0; j != work->effect->count; j++)
             ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 8);
         }
@@ -5453,7 +5506,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// 倍率 {x, y} (Q16)
+// A scale {x, y} in 16.16 fixed point.
 typedef struct Scale {
   s32 x;
   s32 y;
@@ -5468,6 +5521,19 @@ extern u8 gWhirlwindComets_CellHeights[];
 extern u8 gWhirlwindComets_CellBiasY[];
 extern u16 gWhirlwindComets_CellOffsets[];
 
+// Large battle effect 8 (BattleFx_InitializeMode), 400 frames:
+//   0 to 159   : a whirlwind rises over the field and lifts the targets,
+//                spinning them round it and drawing them in, while dust
+//                spirals up;
+//   160        : the backdrop becomes the violet sky, and a 3x3 block of
+//                nine objects appears and sways;
+//   256 to 329 : motes gather into the middle of the block;
+//   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
+//                ring of sparks, striking the targets on frames 334, 347,
+//                359 and 372 (gWhirlwindComets_Frames);
+//   395        : the targets fall back to the ground.
+// Pressing A or B skips to frame 160, or from there to frame 395. At the
+// end the battle shows the damage and the targets go back to their places.
 void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   void **cells;
   void *drawDestination;
@@ -5511,28 +5577,32 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   runtime->effect = argument;
 
   BattleFx_BeginCanvasLayer(0);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle)cells[6];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                        COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)cells[7];
 
   table = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
-  Iwram_CopyWords((void *)0x05000000, table, 0x80);
+  Iwram_CopyWords((void *)BG_PLTT, table, 0x80);
   table += 0x80;
   Resource_DecodeType01(table, runtime);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 
-  runtime->transferMode = 2;
+  runtime->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   runtime->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
+  // wave is where the block of objects sways, drift a push from each comet.
   wave.x = 0x800000;
   wave.y = 0x280000;
   drift.x = 0;
   drift.y = 0;
 
+  // Remember each target's place, and its heading and distance from the
+  // middle of the field for the whirlwind to turn.
   for (index = 0; index != runtime->effect->count; index++) {
     context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
     object = context->object;
@@ -5547,6 +5617,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     object->verticalMotionStrength = 0;
   }
 
+  // The dust: each mote starts 120 out, after a random delay (variant).
   index = 0;
   do {
     point = &runtime->particles[index];
@@ -5562,6 +5633,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   width = 48;
   frame = 0;
   do {
+    // A or B skips ahead.
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
       if (frame <= 159)
         frame = 160;
@@ -5585,6 +5657,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     if (frame == 372)
       AudioCommand_PlayFar(212);
 
+    // The targets, from 16i frames: spin faster round the middle and close
+    // in, rising quickly once near it, until frame 160; they keep turning
+    // until frame 490 (past the end), and flash on each comet strike.
     for (index = 0; index != runtime->effect->count; index++) {
       if (frame > index * 16) {
         context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
@@ -5628,6 +5703,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       }
     }
 
+    // The whirlwind: three images in turn, growing up from the ground over
+    // frames 16 to 159, a second section above it from frame 48, and both
+    // at full height from frame 160 to 399.
     if ((u32)(frame - 16) <= 143) {
       size = frame * 2 - 32;
       if (size > 48)
@@ -5652,6 +5730,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       draw[0](drawDestination, src, 8, 64, width, 64);
     }
 
+    // The dust (24 motes): spiral in and up, starting again from the
+    // bottom when it passes 48 pixels up.
     if (frame <= 159) {
       index = 0;
       point = runtime->particles;
@@ -5689,6 +5769,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       } while (index != 24);
     }
 
+    // Frame 160: the violet sky, the nine objects and the comet images;
+    // the targets hang at random heights and the motes that will gather
+    // are scattered round the block.
     if (frame == 160) {
       s32 speed;
       s32 angle;
@@ -5700,7 +5783,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       BattleFx_SpawnObjects(9, 376, 2);
 
       table = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
-      Iwram_CopyWords((void *)0x05000000, table, 0x80);
+      Iwram_CopyWords((void *)BG_PLTT, table, 0x80);
       table += 0x80;
       Resource_DecodeType01(table, (u8 *)runtime + 0x3600);
 
@@ -5735,6 +5818,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       }
     }
 
+    // From frame 160: sway the block of objects, faster for its first 64
+    // frames, plus what is left of each comet's push.
     if (frame > 159) {
       scale = gBattleFx_StarsUnitScale;
       size = 16;
@@ -5771,6 +5856,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
         Render_ResetTransformState();
         SceneTransform_ApplyPosition(&shake);
 
+        // Frames 256 to 329: the motes close in on the middle of the
+        // block a pixel a frame; those that arrive swell one mote there.
         if (frame <= 329) {
           index = 0;
           do {
@@ -5814,6 +5901,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
           }
         }
 
+        // Each strike throws out 96 sparks.
         slot = 0;
         do {
           if (frame == gWhirlwindComets_Frames[slot]) {
@@ -5864,6 +5952,10 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
           slot++;
         } while (slot != 4);
 
+        // The four comets, from frame 330 + 12i: each leaves the middle of
+        // the block, flies down to the left growing through three images,
+        // and spreads a ring of 28 motes for 8 frames; it pushes the block
+        // and shakes the screen.
         index = 0;
         do {
           mark = &runtime->particles[index + 60];
@@ -5942,8 +6034,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     frame++;
   } while (frame != 400);
 
-  BattleEventRuntime_BeginPhaseFar(134);
+  BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
 
+  // Put the targets back.
   for (index = 0; index != runtime->effect->count; index++) {
     struct MotionObject *obj;
 

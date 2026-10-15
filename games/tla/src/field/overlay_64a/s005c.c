@@ -2,6 +2,7 @@
 #include "bg_scroll.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "io_write_queue.h"
 #include "party_state.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"
@@ -14,10 +15,12 @@ struct ClearWork
 };
 
 extern char ResourceId_LogoOnBlack;
+extern u16  Data_020024f4[];
 
 void                  Blend_SetDarkenTarget16(s32 frames);
 void                  Func_020021f8(void *source, void *destination);
 struct ObjectRuntime *Object_GetById(s32 id);
+void                  Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 static __inline__ void Decode_(void *source, void *destination)
 {
@@ -99,4 +102,21 @@ scroll_pair:
         zero = 0;
         leader->motion_flags = zero;
     }
+}
+
+// As ☀️'s Clear_UpdateBlend: queues an alpha blend of BG0 and the sprites over
+// the rest whose first weight rises by one every second frame (the second
+// weight 16 less), and removes the callback once the first weight passes 15.
+void Func_0200015c(void)
+{
+    s32 frame;
+    u32 level;
+
+    frame = Data_020024f4[0] + 1;
+    Data_020024f4[0] = frame;
+    level = (u16)frame >> 1;
+    IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level, 0x20000);
+    if (level > 15)
+        Scheduler_RemoveCallbackFar(Func_0200015c);
 }

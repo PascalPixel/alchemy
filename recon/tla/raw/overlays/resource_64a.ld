@@ -5,7 +5,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_64a/entry.o"(.text)
         "*/games/tla/src/field/overlay_64a/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_64a/s005c.o"(.text)
-        "*/resource_64a_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_64a/s01f4.o"(.text)
         "*/games/tla/src/field/overlay_64a/s02e0.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008328)

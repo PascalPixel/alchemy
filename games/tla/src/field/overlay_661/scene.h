@@ -67,6 +67,8 @@ void Func_020041a8(void);
 void Func_020041b0(void);
 void Func_020041b8(s32 skip);
 void Func_020041c8(s32 cue);
+void Func_020041d0(void);
+void Func_020041d8(s32 a, s32 b, s32 c, s32 d);
 s32 Func_020041e0(struct FieldActor *object);
 void Func_020040d0(s32 actor, s32 flags);
 void Func_020004e0(void);
@@ -153,6 +155,12 @@ static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02004000(a, b, c, d, e, f);
+}
+
+static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_020041d8(a, b, c, d);
 }
 
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration)

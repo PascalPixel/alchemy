@@ -591,7 +591,7 @@ msgctxt "message"
 msgid "00145"
 msgstr "Pas du tout"
 
-msgctxt "message"
+msgctxt "MsgItemPlainName"
 msgid "00146"
 msgstr "?"
 

@@ -564,51 +564,56 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
 }
 
 //--------------------------------------------------------------------------
-// run_five_mode_mode0.c
-// バトル演出：使う者から対象ごとに 3 本の筋を飛ばして当てる (色の違う五種)
+// Streak volleys: three streaks of light fly from the user to each target in
+// turn, in one of five colours.
 //--------------------------------------------------------------------------
-// gFiveMode_Records は mode ごとに 4 バイト
+
+// gFiveMode_Records has four flags for each style.
 #define REC(mode, n) gFiveMode_Records[(mode) * 4 + (n)]
-#define REC_ANIMATE 0 // 0 でなければ筋の絵を 3 枚で回す
-#define REC_HIT 1     // 0 でなければ当たりの音とパレット
-#define REC_MOTION 2  // 当たったときののけぞり (-1 ならなし)
-#define REC_SHAKE 3   // 0 でなければ当たった対象を震わせる
+#define REC_ANIMATE 0 // nonzero: the streak cycles through three images
+#define REC_HIT 1     // nonzero: play the hit sound and flash the target
+#define REC_MOTION 2  // the target's recoil motion on the hit (-1: none)
+#define REC_SHAKE 3   // nonzero: the struck target trembles from side to side
 
-#define STREAK_MAX 3 // 対象ひとりあたりの筋の数
+#define STREAK_MAX 3 // streaks fired at each target
 
-//--------------------------------------------------------------------------
-// mode ごとの入口 (色)
-//--------------------------------------------------------------------------
+// Battle effect 300: ember streaks.
 void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 0);
 }
 
+// Battle effect 301: lime streaks.
 void BattleFx_RunFiveModeMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 1);
 }
 
+// Battle effect 302: violet streaks.
 void BattleFx_RunFiveModeMode2(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 2);
 }
 
+// Battle effect 304: cyan streaks.
 void BattleFx_RunFiveModeMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 4);
 }
 
+// Battle effect 305: red streaks.
 void BattleFx_RunFiveModeMode3(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 3);
 }
 
-void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect) {
+// Lime streaks again; no effect table entry points here.
+UNUSED void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect) {
   BattleFx_RunFiveMode(effect, 1);
 }
 
-//--------------------------------------------------------------------------
-// 使う者の 20 ドット上から、対象ごとに 6 フレームおきに 3 本の筋を出し、
-// 24 フレームで対象へ届かせる。対象は 32 フレームおきに順に始まる
-// 筋の絵は 20x40 で、上半分を上下に反転して 20x80 に描く
-// mode : 色 (BG パレットの元の絵 0〜4) と gFiveMode_Records の行
-//--------------------------------------------------------------------------
+// Fires STREAK_MAX streaks at each target from 20 pixels above the user,
+// one every 6 frames, each reaching 20 pixels above its target 24 frames
+// later; each target's volley starts 32 frames after the previous one's.
+// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
+// streak that wavers from side to side and leaves a fading trail.
+// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
+//        cyan) and the row of gFiveMode_Records that says how a hit looks.
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   void **slots;
@@ -625,7 +630,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
   s32 frame;
   s32 j;
   s32 streaks = STREAK_MAX;
-  s32 lift = 20 << 16;
+  s32 lift = 20 << 16; // 20 pixels, 16.16
 
   slots = gBattleFxWork;
   cursor = slots;
@@ -635,7 +640,8 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
 
-  // 上半分は上下を反転して描く。向こう側なら左右も反転する
+  // The upper half of a streak is its image flipped vertically; on the
+  // party's side both halves are mirrored as well.
   if (work->effect->side == 0) {
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
@@ -652,7 +658,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
     drawLower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   }
 
-  // 筋の絵と、mode で選ぶ色
+  // The streak images, and the background palette for the style's colour.
   Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
   switch (mode) {
   case 0:
@@ -673,8 +679,8 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;   // 転送のたびに半分へ減らして残像にする
-  work->transferValue = 50; // 1/2
+  work->transferMode = CANVAS_COPY_AND_FADE; // halve the canvas each frame
+  work->transferValue = 50;                  // so streaks leave a trail
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -682,7 +688,8 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
   {
     s32 total = streaks * work->effect->count * 6 + 48;
 
-    // 筋は使う者の 20 ドット上から、24 フレームで対象の 20 ドット上へ
+    // Every streak starts 20 pixels above the user and moves in a straight
+    // line to 20 pixels above its target over 24 frames.
     for (k = 0; k != work->effect->count; k++) {
       target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
       for (j = 0; j != streaks; j++) {
@@ -694,17 +701,18 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
         streak->velocityX = (target->x - streak->x) / 24;
         streak->velocityY = (target->y + lift - streak->y) / 24;
         streak->velocityZ = (target->z - streak->z) / 24;
-        streak->variant = 0; // 出てからのフレーム数
+        streak->variant = 0; // frames since the streak set off
       }
     }
 
     for (frame = 0; frame != total; frame++) {
       s32 *row = work->bg2X;
 
-      // 160 ライン分の BG2X を sin で揺らす
+      // A sine wave of BG2X offsets, one per scanline, for the wave
+      // HBlank DMA; this effect does not start that DMA itself.
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
-      // 終わりの 16 フレームで半透明を薄くする
+      // Fade the canvas out over the last 16 frames.
       if (frame > total - 16)
         REG_BLDALPHA = (total - frame) | 0x1000;
       Render_ResetTransformState();
@@ -716,7 +724,8 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
               struct EffectStep *streak = &work->particles[k * streaks + j];
               s32 step;
 
-              // 絵は 8 フレームごとに次へ (6 枚目で止まる)
+              // Project the streak onto the half-width canvas; its image
+              // changes every 8 frames and stays on the sixth.
               EffectPosition_ApplyBaseAndYOffset((s32 *)streak, &position);
               position.x >>= 1;
               step = streak->variant / 8;
@@ -740,7 +749,8 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
             }
           }
 
-          // 当たりの 6 フレーム後から 32 フレームのあいだ、対象を左右に震わせる
+          // From 6 frames after the first streak hits, for 32 frames, the
+          // target trembles from side to side.
           if (REC(mode, REC_SHAKE) && frame >= k * 32 + 30 &&
               frame < k * 32 + 62) {
             struct MotionObject *struck =
@@ -754,18 +764,20 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
             ObjectGroup_UpdateMembers(work->effect->actors[k], -1, 5, -1, 0);
           }
 
-          // 当たり：音を鳴らし、パレット 7 にして 8 フレーム後に戻す (2 回)
+          // The hit: the first streak plays the hit sound and flashes the
+          // target in palette 7 with animation 5 for 8 frames, and it
+          // flashes again 16 frames later.
           if (REC(mode, REC_HIT)) {
             if (frame == k * 32 + 24) {
               AudioCommand_PlayFar(133);
-              if (k == 0)
-                BattleEventRuntime_BeginPhaseFar(
-                    -1); // 最初の当たりで結果へ進む
+              if (k == 0) // the first hit lets the battle show the damage
+                BattleEventRuntime_BeginPhaseFar(-1);
               ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 8);
             }
             if (frame == k * 32 + 40)
               ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 8);
           }
+          // The style's recoil motion, with a camera shake.
           if (REC(mode, REC_MOTION) != -1 && frame == k * 32 + 24) {
             work->shakeFrames = 4;
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[k],
@@ -786,14 +798,23 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 349: rising motes that drift onto the targets and strike.
 void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunParticlePool(effect, 1);
 }
 
+// Battle effect 344: rising healing motes.
 void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunParticlePool(effect, 0);
 }
 
+// Motes burst out of the user in every direction and float upwards,
+// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
+// target in turn reacts from frame 48, 8 frames apart.
+// mode 0: orange motes that stay close to the user; each target plays the
+//         recovery sound and glows (a healing effect).
+// mode 1: motes on the earth palette that drift across towards the far side
+//         of the field; each target flinches (an attack).
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
   s32 point[3];
   struct EffectPosition position;
@@ -817,10 +838,11 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] =
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -828,12 +850,15 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_OrangePaletteA;
   else
     resource = (s32)&ResourceId_EarthWallSheet;
-  Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
+  // Every mote starts 5 pixels above the user with a random direction and
+  // speed, mostly upwards, and a life of 48 to 79 frames. Only the first 128
+  // are ever drawn.
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   for (i = 0; i != 256; i++) {
     s32 speed;
@@ -865,6 +890,8 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
         s32 size;
 
+        // Wobble sideways, project onto the half-width canvas and draw a
+        // 1x2 to 6x12 mote, larger the nearer it is to the camera.
         point[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
         point[1] = mote->y;
         point[2] = mote->z;
@@ -878,6 +905,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
         draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
                 position.x - size / 2, position.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
+        // Mode 1 pushes every mote towards the other side of the field.
         if (mode == 1) {
           if (source->x < 0)
             mote->velocityX += 0x2000;
@@ -887,6 +915,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
         mote->variant--;
       }
     }
+    // Each target reacts in turn, and the battle shows its result.
     if (mode == 1) {
       for (i = 0; i != work->effect->count; i++) {
         if (frame == i * 8 + 48) {
@@ -897,7 +926,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
     } else {
       for (i = 0; i != work->effect->count; i++) {
         if (frame == i * 8 + 48) {
-          AudioCommand_PlayFar(126);
+          AudioCommand_PlayFar(SOUND_RECOVERY);
           BattleEventRuntime_BeginPhaseFar(-1);
           ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
         }
@@ -914,69 +943,109 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+//--------------------------------------------------------------------------
+// Target strikes: repeated slashes or columns of light on the first target,
+// in twelve styles.
+//--------------------------------------------------------------------------
+
+// The strike sparks live after the motes in gMapCellBuffer.
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
+// gTwelveMode_Records has seven entries for each style.
+#define STRIKE(mode, field) gTwelveMode_Records[(mode) * 7 + (field)]
+enum {
+  STRIKE_KIND,         // 0: sideways slashes, 1: columns of light
+  STRIKE_HITS,         // how many times the target is struck
+  STRIKE_FLAGS,        // STRIKE_SMOKE and so on
+  STRIKE_COLOUR,       // background palette, 0 to 5 (see below)
+  STRIKE_IMAGE_FRAMES, // frames each strike image is shown
+  STRIKE_COMPOSITE,    // how the columns are drawn (COMPOSITE_MAX or _ADDITIVE)
+  STRIKE_FRAMES        // length of the effect in frames
+};
+#define STRIKE_SMOKE 1  // each hit raises smoke puffs from the target's feet
+#define STRIKE_ABSORB 2 // motes fly out of the target and back into the user
+#define STRIKE_GLINTS 4 // glints sparkle around the target
+#define STRIKE_SPARKS 8 // each hit scatters sparks
+#define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
+
+// Battle effect 313: one slash with glints, lightning colours.
 void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 6);
 }
 
+// Battle effect 316: three ember columns that drain the target into the user.
 void BattleFx_RunTwelveModeMode3(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 3);
 }
 
+// Battle effects 318 and 323: one lime column with smoke.
 void BattleFx_RunTwelveModeMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 1);
 }
 
+// Battle effect 336: one column with smoke, Mars Djinn colours.
 void BattleFx_RunTwelveModeMode10(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 0xA);
 }
 
+// Battle effect 324: three lightning columns with glints.
 void BattleFx_RunTwelveModeMode5(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 5);
 }
 
+// Battle effect 325: one lime slash with smoke.
 void BattleFx_RunTwelveModeMode9(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 9);
 }
 
+// Battle effect 327: three columns that drain the target, Mars Djinn colours.
 void BattleFx_RunTwelveModeMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 4);
 }
 
+// Battle effect 332: two blue columns with sparks.
 void BattleFx_RunTwelveModeMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 0);
 }
 
+// Battle effect 333: one heavy slash with sparks, Mars Djinn colours.
 void BattleFx_RunTwelveModeMode8(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 8);
 }
 
+// Battle effect 335: two slashes with sparks, lightning colours.
 void BattleFx_RunTwelveModeMode7(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 7);
 }
 
+// Battle effect 337: three pink columns with smoke.
 void BattleFx_RunTwelveModeMode2(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 2);
 }
 
+// Battle effect 386: three additive columns that drain the target with large
+// motes, Mars Djinn colours.
 void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect) {
   BattleFx_RunTwelveMode(effect, 0xB);
 }
 
+// Strikes the first target STRIKE_HITS times with a sideways slash or a
+// column of light, with the extras its flags choose, and lets the battle
+// show the damage on the hits.
+// mode : the style, 0 to 11, a row of gTwelveMode_Records.
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
   struct EffectPosition alternate;
   struct EffectPosition position;
   BlitterPair draw;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   s32 k;
-  u8 *sheet;
+  u8 *particleSheet;
   struct BattleCamera *camera;
   struct MotionObject *target;
   struct MotionObject *source;
@@ -985,27 +1054,31 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
   s32 wispSheet = 0x3200;
   DrawRectangle *lower = &gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
-  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  particleSheet = slots[2];
+  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   if (mode == 8)
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  REG_BLDALPHA = 0x1010; // an even mix
+
+  // The images: glints at the start of the sheet, the slashes or the
+  // columns at 0xc80, smoke at 0x3200, and the style's palette.
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
+                             0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-  if (gTwelveMode_Records[mode * 7] == 0)
+  if (STRIKE(mode, STRIKE_KIND) == 0)
     Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage,
                                work->sheet + 0xc80, 0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
-  switch (gTwelveMode_Records[mode * 7 + 3]) {
+  switch (STRIKE(mode, STRIKE_COLOUR)) {
   case 0:
     resource = (s32)&ResourceId_BlueBeamSheet;
     break;
@@ -1026,10 +1099,13 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_LightningBoltSheet;
     break;
   }
-  Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200,
                              1, 0);
 
+  // Park every particle, idle, where it will start: smoke at the target's
+  // feet, motes and sparks 20 pixels up its body, each with a random
+  // velocity.
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
     for (i = 0; i != 64; i++) {
@@ -1060,12 +1136,12 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
       gSparks[i].x = target->x;
       gSparks[i].y = 0x140000;
       gSparks[i].z = target->z;
-      if (gTwelveMode_Records[mode * 7] == 1) {
+      if (STRIKE(mode, STRIKE_KIND) == 1) {
         gSparks[i].velocityX = ((Random16() & 255) - 128) << 11;
         gSparks[i].velocityY = ((Random16() & 255) - 128) << 11;
         gSparks[i].velocityZ = ((Random16() & 255) - 128) << 11;
       } else {
-        if (gTwelveMode_Records[mode * 7 + 2] & 16) {
+        if (STRIKE(mode, STRIKE_FLAGS) & 16) {
           gSparks[i].velocityX = (Random16() & 0x1ff) << 11;
           gSparks[i].velocityY = ((Random16() & 0x1ff) - 256) << 11;
           gSparks[i].velocityZ = ((Random16() & 0x1ff) - 256) << 11;
@@ -1074,34 +1150,38 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
           gSparks[i].velocityY = ((Random16() & 255) - 128) << 11;
           gSparks[i].velocityZ = ((Random16() & 255) - 128) << 11;
         }
-        if (gSparks[i].x > 0)
+        if (gSparks[i].x > 0) // slashes throw sparks towards the middle
           gSparks[i].velocityX = -gSparks[i].velocityX;
       }
       gSparks[i].variant = -1;
     }
   }
 
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+  // Strike halfway between the target's middle and its feet.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPosition);
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0],
                                               &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
-  for (frame = 0; frame != gTwelveMode_Records[mode * 7 + 6]; frame++) {
-    s32 span =
-        gTwelveMode_Records[mode * 7 + 1] * gTwelveMode_Records[mode * 7 + 4];
+  for (frame = 0; frame != STRIKE(mode, STRIKE_FRAMES); frame++) {
+    s32 span = STRIKE(mode, STRIKE_HITS) * STRIKE(mode, STRIKE_IMAGE_FRAMES);
     s32 length = span * 4;
     s32 glint = 0;
 
-    if (gTwelveMode_Records[mode * 7] == 0) {
+    if (STRIKE(mode, STRIKE_KIND) == 0) {
+      // Slashes: six images sweep across the target from the user's side,
+      // once per hit; the fifth image of each sweep is the hit.
       if (frame < span * 6) {
-        s32 picture = frame / gTwelveMode_Records[mode * 7 + 4] % 6;
+        s32 picture = frame / STRIKE(mode, STRIKE_IMAGE_FRAMES) % 6;
 
         if (work->effect->side == 1) {
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+                                CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
               targetPosition.x / 2 - (gTwelveMode_StrikeReach[picture] / 2) -
@@ -1110,7 +1190,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
               gTwelveMode_StrikeWidths[picture],
               gTwelveMode_StrikeHeights[picture]);
         } else {
-          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+          BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
           gBlitters[HEAP_SLOT_BLITTER](
               canvas, work->sheet + gTwelveMode_StrikeOffsets[picture],
               targetPosition.x / 2 + (gTwelveMode_StrikeReach[picture] / 2) - 8,
@@ -1119,15 +1199,18 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
               gTwelveMode_StrikeHeights[picture]);
         }
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-        if (frame % (gTwelveMode_Records[mode * 7 + 4] * 6) ==
-            gTwelveMode_Records[mode * 7 + 4] * 4) {
+        if (frame % (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) ==
+            STRIKE(mode, STRIKE_IMAGE_FRAMES) * 4) {
           if (mode == 8) {
-            BattleEventRuntime_BeginPhaseFar(134);
+            BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
           } else {
             AudioCommand_PlayFar(133);
             BattleEventRuntime_BeginPhaseFar(133);
           }
-          if (gTwelveMode_Records[mode * 7 + 2] & 16) {
+          // A heavy hit lights every spark at once; otherwise the hit
+          // lights the next 32. Each hit also starts the next 8 smoke
+          // puffs.
+          if (STRIKE(mode, STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 12);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
@@ -1138,7 +1221,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
             for (i = 0; i != 32; i++) {
               struct EffectStep *step =
-                  &gSparks[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) *
+                  &gSparks[frame / (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) *
                                32 +
                            i];
 
@@ -1148,7 +1231,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
           for (i = 0; i != 8; i++) {
             struct EffectStep *step =
                 &work->particles
-                     [frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 16 + i];
+                     [frame / (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) * 16 + i];
 
             step->variant = 0;
           }
@@ -1157,10 +1240,13 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= 12 && frame <= 31)
         glint = 1;
     } else if (frame < length + 4) {
+      // Columns: a column of light, drawn as two mirrored halves, rises
+      // through its stages on the target once per hit, then holds stage 3
+      // for 4 frames.
       s32 stage;
 
       if (frame < length) {
-        s32 picture = frame / gTwelveMode_Records[mode * 7 + 4];
+        s32 picture = frame / STRIKE(mode, STRIKE_IMAGE_FRAMES);
 
         while (picture > 4)
           picture -= 4;
@@ -1168,49 +1254,54 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         stage = 3;
       }
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3,
-                            gTwelveMode_Records[mode * 7 + 5]);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP,
+                            STRIKE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2 - 18, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7,
-                            gTwelveMode_Records[mode * 7 + 5]);
+      BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                            STRIKE(mode, STRIKE_COMPOSITE));
       gBlitters[HEAP_SLOT_BLITTER](canvas, work->sheet + stage * 864 + 0xc80,
                                    targetPosition.x / 2, 56, 18, 48);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      if (frame % (gTwelveMode_Records[mode * 7 + 4] * 4) ==
-          gTwelveMode_Records[mode * 7 + 4] * 3) {
+      if (frame % (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 4) ==
+          STRIKE(mode, STRIKE_IMAGE_FRAMES) * 3) {
+        // A hit: the target flashes; the last hit lets the battle show the
+        // damage, the others only play the hit sound. Each hit lights the
+        // next sparks, smoke puffs and motes.
         ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
-        if (frame > (gTwelveMode_Records[mode * 7 + 1] * 4 - 4) *
-                        gTwelveMode_Records[mode * 7 + 4])
+        if (frame > (STRIKE(mode, STRIKE_HITS) * 4 - 4) *
+                        STRIKE(mode, STRIKE_IMAGE_FRAMES))
           BattleEventRuntime_BeginPhaseFar(133);
         else
           AudioCommand_PlayFar(133);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step =
-              &gSparks[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 64 +
+              &gSparks[frame / (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) * 64 +
                        i];
 
           step->variant = (Random16() & 15) + 7;
         }
         for (i = 0; i != 8; i++) {
           struct EffectStep *step =
-              &work->particles[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) *
+              &work->particles[frame / (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) *
                                    16 +
                                i];
 
           step->variant = 0;
         }
         for (i = 0; i != 16; i++)
-          PARTICLES[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 16 + i]
+          PARTICLES[frame / (STRIKE(mode, STRIKE_IMAGE_FRAMES) * 6) * 16 + i]
               .variant = 0;
       }
       if (stage == 3)
         glint = 1;
     }
 
-    if ((gTwelveMode_Records[mode * 7 + 2] & 4) && glint) {
+    // Glints: three a frame, scattered at random around the target in
+    // random flips.
+    if ((STRIKE(mode, STRIKE_FLAGS) & STRIKE_GLINTS) && glint) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
         s32 angle = Random16() & 0xffff;
@@ -1224,8 +1315,8 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
         y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleFx_GlintCellHeights[image] / 2);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-                              gTwelveMode_GlintDrawFlags[Random16() & 3] | 3,
-                              3);
+                              gTwelveMode_GlintDrawFlags[Random16() & 3] | CLIP,
+                              COMPOSITE_ADDITIVE);
         (*lower)(canvas, work->sheet + gBattleFx_GlintCellOffsets[image], x, y,
                  gBattleFx_GlintCellWidths[image],
                  gBattleFx_GlintCellHeights[image]);
@@ -1235,13 +1326,15 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     draw[0] = gBlitters[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                          COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->effect->actor)->object;
-      if (gTwelveMode_Records[mode * 7 + 2] & 1) {
+      // Smoke puffs rise and spread through six images.
+      if (STRIKE(mode, STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != 64; i++) {
           struct EffectStep *step = &work->particles[i];
 
@@ -1255,7 +1348,10 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      if (gTwelveMode_Records[mode * 7 + 2] & 2) {
+      // Motes burst out of the target, then after 10 frames are pulled
+      // into the user, who glows from frame 55 to 90; a mote goes out when
+      // it reaches the user.
+      if (STRIKE(mode, STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 
         if (mode == 11)
@@ -1270,7 +1366,8 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
             position.x >>= 1;
-            draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            draw[1](canvas,
+                    particleSheet + gParticleStreams_CellOffsets[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
@@ -1290,7 +1387,8 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      if (gTwelveMode_Records[mode * 7 + 2] & 8) {
+      // Sparks fly out and shrink as their lives run out.
+      if (STRIKE(mode, STRIKE_FLAGS) & STRIKE_SPARKS) {
         for (i = 0; i != 128; i++) {
           struct EffectStep *step = &gSparks[i];
           s32 size = step->variant;
@@ -1301,7 +1399,8 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
             EffectStep_AdvanceWithGravity3D(step, 60, 0);
             size >>= 3;
             size++;
-            draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
+            draw[1](canvas,
+                    particleSheet + gParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             step->variant--;
           }
@@ -1310,7 +1409,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
     }
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    if (gTwelveMode_Records[mode * 7 + 2] & 16)
+    if (STRIKE(mode, STRIKE_FLAGS) & STRIKE_HEAVY)
       Camera_ApplyShake(8, 8);
     else
       Camera_ApplyShake(2, 4);

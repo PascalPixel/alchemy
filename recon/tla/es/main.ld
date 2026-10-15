@@ -1703,7 +1703,7 @@ SECTIONS
     "*/games/tla/src/menu/shop/service.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010e8f0)
     "*/games/tla/src/menu/shop/f10a960.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0010e9b0)
+    "*/recon/tla/es/rom.o"(.rom.0010ea00)
     "*/recon/tla/es/rom.o"(.rom.0010ea84)
     "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010ef28)

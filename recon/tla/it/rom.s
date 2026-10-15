@@ -4807,8 +4807,8 @@ Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a710, 0x0000003c
 	.section .rom.0010a8f0, "ax"
 	.incbin "baserom.gba", 0x0010a8f0, 0x00000074
-	.section .rom.0010a9b0, "ax"
-	.incbin "baserom.gba", 0x0010a9b0, 0x000004d8
+	.section .rom.0010aa00, "ax"
+	.incbin "baserom.gba", 0x0010aa00, 0x00000488
 	.section .rom.0010af08, "ax"
 	.incbin "baserom.gba", 0x0010af08, 0x00000198
 	.section .rom.0010b0a0, "ax"

@@ -9,7 +9,9 @@
  * a Placement struct for pos, an object local fetched first (differ 235) or
  * held through one or two empty asms (2, 22), row and column locals (76 to
  * 103), a separate object pointer for case 5 (4), alchemy permute 6 minutes
- * (no candidate below 2). */
+ * (no candidate below 2). By hand through sched2's ranking, a load costing
+ * 3 cycles instead of agscc's 2 gives the object's load priority 37 over
+ * the shifts' 36: the native order. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_fx_work.h"

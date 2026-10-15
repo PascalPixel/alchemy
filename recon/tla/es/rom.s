@@ -4900,7 +4900,7 @@ Func_0811c120:
 	.type Func_0811c710, %function
 	.thumb_func
 Func_0811c710:
-	.incbin "baserom.gba", 0x0011c728, 0x00000344
+	.incbin "baserom.gba", 0x0011c728, 0x00000274
 	.section .rom.0011ca6c, "ax"
 	.global Func_0811ca54
 	.type Func_0811ca54, %function

@@ -1737,6 +1737,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011c666)
     "*/games/tla/src/battle/presentation/escape.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011c70c)
+    "*/games/tla/src/battle/presentation/approach_action.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011ca50)
     "*/games/tla/src/battle/presentation/damage.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011cd78)

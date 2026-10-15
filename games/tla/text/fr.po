@@ -14523,7 +14523,7 @@ msgctxt "message"
 msgid "03628"
 msgstr "{protagonist_name} et son groupe ont été surpris!"
 
-msgctxt "message"
+msgctxt "MsgActorAttacks"
 msgid "03629"
 msgstr "{argument_actor_name:1} attaque!"
 

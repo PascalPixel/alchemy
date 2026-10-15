@@ -1762,7 +1762,7 @@ SECTIONS
         "*/recon/tla/raw/0811c66a.o"(.text)
         "*/games/tla/src/battle/presentation/escape.o"(.text)
         "*/recon/tla/raw/0811c710.o"(.text)
-        "*/recon/tla/raw/0811c984.o"(.text)
+        "*/games/tla/src/battle/presentation/approach_action.o"(.text)
         "*/recon/tla/raw/0811ca54.o"(.text)
         "*/games/tla/src/battle/presentation/damage.o"(.text)
         "*/recon/tla/raw/0811cd7a.o"(.text)

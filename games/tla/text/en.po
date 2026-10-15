@@ -12679,7 +12679,7 @@ msgctxt "message"
 msgid "03167"
 msgstr "{protagonist_name}'s party was caught by surprise!"
 
-msgctxt "message"
+msgctxt "MsgActorAttacks"
 msgid "03168"
 msgstr "{argument_actor_name:1} attacks!"
 

@@ -3073,7 +3073,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.008a9986)
     "*/games/tla/src/graphics/battle_fx/sheet_101.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.008aa32d)
-    "*/recon/tla/es/rom.o"(.rom.008aa330)
+    "*/games/tla/src/graphics/battle_fx/sheet_102.o"(.rodata)
     "*/games/tla/src/graphics/battle_fx/sheet_103.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.008ab155)
     "*/recon/tla/es/rom.o"(.rom.008ab158)

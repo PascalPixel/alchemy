@@ -41,7 +41,8 @@ u16 Runtime_GetBuildStampTime(void)
     shifted = 0x80 << 21;
     shifted |= packed << 16;
     result = shifted >> 16;
-    if (gDebugMode != 0) {
+    if (gDebugMode != 0)
+    {
         result |= ~0x7fff;
     }
     return result;

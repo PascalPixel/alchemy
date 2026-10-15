@@ -27,7 +27,8 @@ void Func_080ae118(void)
     s32 i;
     s32 count;
 
-    for (i = 10; i < 12; i++) {
+    for (i = 10; i < 12; i++)
+    {
         GameFlag_SetBit(i + 67);
         Djinn_AddToOwner(7, 1, i - 1);
         Djinn_Activate(7, 1, i - 1);

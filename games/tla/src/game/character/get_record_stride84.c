@@ -21,8 +21,8 @@ void Owner_RefreshDerivedData(s32 ownerId)
 {
     struct BattleUnit *owner = UnitGet(ownerId);
 
-    owner->classIndex = Owner_DetermineClass(owner->enemyId,
-        owner->djinnAvailable, Inventory_GetEquippedItem(owner, 10));
+    owner->classIndex = Owner_DetermineClass(
+        owner->enemyId, owner->djinnAvailable, Inventory_GetEquippedItem(owner, 10));
     Owner_UpdateClassActions(ownerId);
     Owner_CalculateBaseElements(ownerId, owner->baseElement);
 }
@@ -51,19 +51,24 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
         input = max;
     else if (input < min)
         input = min;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
+    {
         if (input > gElement_PowerResistCurve[i][0])
             break;
     }
-    if (i == n) {
+    if (i == n)
+    {
         value = gElement_PowerResistCurve[i - 1][1];
-    } else {
+    }
+    else
+    {
         dx = gElement_PowerResistCurve[i - 1][0] - gElement_PowerResistCurve[i][0];
         dy = gElement_PowerResistCurve[i - 1][1] - gElement_PowerResistCurve[i][1];
-        value = (input - gElement_PowerResistCurve[i][0]) * dy / dx
-            + gElement_PowerResistCurve[i][1];
+        value =
+            (input - gElement_PowerResistCurve[i][0]) * dy / dx + gElement_PowerResistCurve[i][1];
     }
-    switch (halve) {
+    switch (halve)
+    {
     case 0:
         break;
     case 1:

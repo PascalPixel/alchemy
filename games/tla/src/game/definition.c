@@ -22,7 +22,7 @@
 //--------------------------------------------------------------------------
 struct ItemDefinition *Item_GetDirect(s32 item)
 {
-	return gItem_DefinitionTable + (item & ITEM_ID_MASK);
+    return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 #include "owner_state.h"
 #include "battle_unit.h"
@@ -34,16 +34,16 @@ struct ItemDefinition *Item_GetDirect(s32 item)
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 {
 #if GAME_TLA
-	struct OwnerInventoryState *st = UnitGet(unit);
+    struct OwnerInventoryState *st = UnitGet(unit);
 #endif
-	struct ItemDefinition *def = Item_GetDirect(item);
-	s32					   mask = def->equipMask;
+    struct ItemDefinition *def = Item_GetDirect(item);
+    s32                    mask = def->equipMask;
 
-	if (st->classId >= 8)
-	{
-		return 0;
-	}
-	return (mask >> st->classId) & 1;
+    if (st->classId >= 8)
+    {
+        return 0;
+    }
+    return (mask >> st->classId) & 1;
 }
 
 //--------------------------------------------------------------------------
@@ -51,9 +51,9 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 //--------------------------------------------------------------------------
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item)
 {
-	if (Item_GetEquipmentGroup(item) == 0)
-	{
-		return 1;
-	}
-	return Item_CanOwnerEquipDirect(unit, item);
+    if (Item_GetEquipmentGroup(item) == 0)
+    {
+        return 1;
+    }
+    return Item_CanOwnerEquipDirect(unit, item);
 }

@@ -9,19 +9,21 @@
 #include "system.h"
 #include "inventory.h"
 
-
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {
     struct OwnerInventoryState *state = UnitGet(owner);
-    s32 result = 0;
-    s32 i;
+    s32                         result = 0;
+    s32                         i;
 
-    for (i = 0; i < INVENTORY_SLOTS; i++) {
-        if (state->inventory[i] == 0) {
+    for (i = 0; i < INVENTORY_SLOTS; i++)
+    {
+        if (state->inventory[i] == 0)
+        {
             result = 1;
             break;
         }
-        if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0) {
+        if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0)
+        {
             s32 quantity = state->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
             s32 count = quantity + 1;
             s32 cnt;

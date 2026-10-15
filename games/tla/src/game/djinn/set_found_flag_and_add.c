@@ -9,7 +9,6 @@
 #include "system.h"
 #include "types.h"
 
-
 s32 GameFlag_SetBit(s32);
 
 void Djinn_SetFoundFlagAndAdd(s32 arg0, s32 arg1, s32 arg2)

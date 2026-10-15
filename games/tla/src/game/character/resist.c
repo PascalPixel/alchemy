@@ -13,10 +13,11 @@
 #include "runtime_interfaces.h"
 
 // One of the 48 element presets an enemy record names.
-struct ElementPreset {
+struct ElementPreset
+{
     u32 element;
-    u8 digits[4];
-    u8 unk08[16];
+    u8  digits[4];
+    u8  unk08[16];
 };
 
 struct OwnerGrowthRecord;
@@ -29,11 +30,12 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index);
 // names, a character's from its djinn counts plus its growth record's bonus.
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 {
-    if (record > 7) {
+    if (record > 7)
+    {
         const struct ElementPreset *table;
         const struct ElementPreset *preset;
-        u32 index;
-        s32 i;
+        u32                         index;
+        s32                         i;
 
         index = Owner_GetRecord(record)[42];
         if (index > 47)
@@ -48,12 +50,15 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
         asm("" : "+r"(preset) : "r"(table));
         for (i = 0; i <= 3; i++)
             output[i] = preset->digits[i] * 10;
-    } else {
+    }
+    else
+    {
         s32 i;
 
         for (i = 0; i <= 3; i++)
             output[i] = source[36 + i] * 10;
-        if (record <= 7) {
+        if (record <= 7)
+        {
             const u8 *definition = (const u8 *)Character_GetDefinition(record);
 
             for (i = 0; i <= 3; i++)
@@ -66,11 +71,13 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
     struct OwnerInventoryState *state = UnitGet(owner);
-    s32 values[4];
-    s32 result = 0;
+    s32                         values[4];
+    s32                         result = 0;
 
-    if (index <= 3) {
-        Owner_GetDigitValues(state->classId, (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned, values);
+    if (index <= 3)
+    {
+        Owner_GetDigitValues(state->classId,
+            (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned, values);
         result = values[index] / 10;
     }
     return result;
@@ -80,10 +87,10 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 // table's end reads the first preset.
 s32 Owner_GetDefaultElement(void *state)
 {
-    struct BattleUnit *unit = state;
-    u8 preset = Owner_GetRecord(unit->enemyId)[42];
+    struct BattleUnit          *unit = state;
+    u8                          preset = Owner_GetRecord(unit->enemyId)[42];
     const struct ElementPreset *table;
-    u32 offset;
+    u32                         offset;
 
     if (preset > 47)
         preset = 0;

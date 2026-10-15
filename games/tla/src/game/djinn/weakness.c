@@ -11,7 +11,6 @@
 #include "runtime_interfaces.h"
 #include "owner_state.h"
 
-
 // A rate for the effect id: 20 to 75 for the ids listed, otherwise a
 // negative value (-60, -90 and -70 for three ids, -100 by default).
 s32 Func_080b0514(s32 effect_id)
@@ -20,7 +19,8 @@ s32 Func_080b0514(s32 effect_id)
     u32 entry_index;
 
     entry_index = effect_id - 8;
-    switch (entry_index) {
+    switch (entry_index)
+    {
     case 4:
     case 5:
         return 70;
@@ -74,12 +74,12 @@ s32 Func_080b0514(s32 effect_id)
     return 0 - battle_result;
 }
 
-
 s32 Battle_IsEffect90Class(s32 classId)
 {
     u32 i;
 
-    for (i = 0; i < 47; i++) {
+    for (i = 0; i < 47; i++)
+    {
         if (classId == gBattle_Effect90Classes[i])
             return 1;
     }
@@ -90,7 +90,8 @@ s32 Battle_IsEffect91Class(s32 classId)
 {
     u32 i;
 
-    for (i = 0; i < 29; i++) {
+    for (i = 0; i < 29; i++)
+    {
         if (classId == gBattle_Effect91Classes[i])
             return 1;
     }
@@ -100,18 +101,23 @@ s32 Battle_IsEffect91Class(s32 classId)
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId)
 {
     const u8 *entries;
-    s32 i;
+    s32       i;
 
-    if (target->classIndex == 0) {
+    if (target->classIndex == 0)
+    {
         entries = Owner_GetRecord(target->enemyId) + 0x3e;
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < 3; i++)
+        {
             if (*entries == effectId)
                 return 1;
             entries++;
         }
-    } else {
+    }
+    else
+    {
         entries = Owner_GetRecordStride84(target->classIndex)->weakEffects;
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < 3; i++)
+        {
             if (*entries++ == effectId)
                 return 1;
         }
@@ -121,8 +127,8 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId)
 
 s32 BattleEffectRevCheck(s32 effect_id)
 {
-    if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)
-        || (effect_id == 0x49)) {
+    if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39) || (effect_id == 0x49))
+    {
         return 1;
     }
     return 0;

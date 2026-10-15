@@ -2169,8 +2169,6 @@ SECTIONS
     "*/games/tla/src/sound/driver/command_byte_setters.o"(.text .rodata .data .padding)
     "*/games/common/src/sound/sound.o"(.text)
     "*/games/tla/src/system/sound_get_jump_list.o"(.text .rodata .data .padding)
-    "*/recon/tla/ja/rom.o"(.rom.001c2314)
-    "*/recon/tla/ja/rom.o"(.rom.001c2328)
     "*/games/tla/src/sound/engine.o"(.text)
     "*/games/tla/src/sound/music_track_operate_work_byte.o"(.text)
     "*/games/tla/src/sound/music_track_dispatch_stream_command.o"(.text)

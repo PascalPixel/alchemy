@@ -121,7 +121,7 @@ AlchemyUncreditedEnd_081c1922:
 	b.n	.L_081c19bc
 .L_081c19b6:
 	adds	r0, r4, #0
-	bl	Func_081c2314
+	bl	AudioCommand_InvokeSlot34
 .L_081c19bc:
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
@@ -132,7 +132,7 @@ AlchemyUncreditedEnd_081c1922:
 	tst	r0, r3
 	beq.n	.L_081c1a40
 	adds	r0, r5, #0
-	bl	Func_081c2328
+	bl	AudioCommand_InvokeSlot35
 	movs	r0, #128
 	strb	r0, [r5, #0]
 	movs	r0, #2
@@ -297,7 +297,7 @@ AlchemyUncreditedEnd_081c1922:
 	tst	r0, r1
 	bne.n	.L_081c1afe
 	adds	r0, r4, #0
-	bl	Func_081c2314
+	bl	AudioCommand_InvokeSlot34
 	b.n	.L_081c1b5a
 .L_081c1afe:
 	ldrb	r0, [r4, #1]

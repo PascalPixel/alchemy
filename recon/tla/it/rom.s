@@ -5836,20 +5836,6 @@ Func_081c1e48:
 	.incbin "baserom.gba", 0x001c1e48, 0x0000001c
 	.section .rom.001c1e6e, "ax"
 	.incbin "baserom.gba", 0x001c1e6e, 0x00000002
-	.section .rom.001c2314, "ax"
-	.global Func_081c2314
-	.type Func_081c2314, %function
-	.thumb_func
-Func_081c2314:
-	.incbin "baserom.gba", 0x001c2314, 0x00000014
-AudioCommand_InvokeSlot35:
-	.section .rom.001c2328, "ax"
-	.global AudioCommand_InvokeSlot35
-	.global Func_081c2328
-	.type AudioCommand_InvokeSlot35, %function
-	.thumb_func
-Func_081c2328:
-	.incbin "baserom.gba", 0x001c2328, 0x00000014
 	.section .rom.001c339a, "ax"
 	.incbin "baserom.gba", 0x001c339a, 0x00000002
 	.section .rom.001c33ae, "ax"

@@ -2,6 +2,10 @@
 #define ALCHEMY_FARCALL_H
 
 // The far-call banks (games/tbs/src/system/far_call) as C declarations.
+// A stub is 8 bytes that jump to a routine of its bank, and code in other
+// banks calls the routine through it. A stub is usually named for its
+// routine with Far added: a call to UiText_DrawNumberAtOffsetFar runs
+// UiText_DrawNumberAtOffset in the window bank.
 // Each bank is one list: FAR_CALL names a stub and declares it, FAR_ENTRY
 // names a stub no declaration is established for, FAR_SLOT is a stub with
 // no name. The bank's assembly reads the same list for the stubs.

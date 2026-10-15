@@ -2432,7 +2432,6 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.081c3430)
         "*/games/common/src/sound/tables.o"(.rodata)
         "*/games/tla/sound/voices.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.081c43b0)
         "*/games/tla/sound/cgb_waves.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.081c44d0)
         "*/games/tla/sound/songs.o"(.rodata)

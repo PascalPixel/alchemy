@@ -2569,8 +2569,6 @@ Data_081ba30c:
 	.global Data_081c3430
 Data_081c3430:
 	.incbin "baserom.gba", 0x001c3430, 0x0000000c
-	.section .unidentified.081c43b0,"a"
-	.incbin "baserom.gba", 0x001c43b0, 0x00000090
 	.section .unidentified.081c44d0,"a"
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:

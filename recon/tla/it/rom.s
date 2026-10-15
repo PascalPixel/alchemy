@@ -5835,8 +5835,6 @@ Func_081c2328:
 	.thumb_func
 Audio_EmptyCallback:
 	.incbin "baserom.gba", 0x001c342c, 0x00000010
-	.section .rom.001c43b0, "ax"
-	.incbin "baserom.gba", 0x001c43b0, 0x00000090
 	.section .rom.001c44d0, "ax"
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:

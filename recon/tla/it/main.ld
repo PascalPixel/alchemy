@@ -2283,7 +2283,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.001c342c)
     "*/games/common/src/sound/tables.o"(.rodata)
     "*/games/tla/sound/voices.o"(.rodata)
-    "*/recon/tla/it/rom.o"(.rom.001c43b0)
     "*/games/tla/sound/cgb_waves.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.001c44d0)
     "*/games/tla/sound/songs.o"(.rodata)

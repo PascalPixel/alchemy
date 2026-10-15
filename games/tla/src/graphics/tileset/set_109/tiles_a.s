@@ -2,3 +2,4 @@
 	.global Tileset_Set109TilesA
 Tileset_Set109TilesA:
 	.incbin "games/tla/src/graphics/tileset/set_109/tiles_a.4bpp.mtf"
+	.byte 0x10, 0x00	@ PACKER: left in the buffer by Field_Map257+0x22aa

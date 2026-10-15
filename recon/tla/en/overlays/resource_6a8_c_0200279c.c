@@ -1,4 +1,4 @@
-/* Draft, differ 2 of 30: the listing loads the zero for arrived from the literal pool (ldr r2, =0) before it moves the frames, the mark of a constant held in a halfword register; this draft builds it after. alchemy permute matched only by truncating the update pointer through a short, which is no source form. Earlier tries: an asm barrier (6), a u8 zero local (5), the byte store first (20). */
+/* Draft, differ 2 of 30: the listing loads the zero for arrived from the literal pool (ldr r2, =0) before it moves the frames, the mark of a constant held in a halfword register; this draft builds it after. alchemy permute matched only by truncating the update pointer through a short, which is no source form. Earlier tries: an asm barrier (6), a u8 zero local (5), the byte store first (20). Also tried: a u16 zero or (u16)0 (2), frames as u32, s16, u16 or u8 (2 to 22), a barrier or one-pass block around either store (4 to 24), three more minutes of permute (nothing better). sched2 ties the zero's load and the frames copy (mov r0, r8) at priority 69 and takes the copy, which has one more dependent. */
 #include "types.h"
 
 struct Walker {

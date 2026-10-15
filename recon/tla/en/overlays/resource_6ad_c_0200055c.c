@@ -1,7 +1,9 @@
 /* Draft, differ 37 of 116, written from the listing, as a goto loop (a do-while lets loop.c hoist
  * the kind 0x149 into r11: differ 78). Left: the random test builds 0x8000 and branches on bcs where
  * the native builds 0x7fff and branches on bhi (tried <= 0x7fff, > 0x7fff, < 0x8000, a signed cast),
- * and the origin, speed and scale take r9, r8 and r10 where the native has r8, r10 and r9. */
+ * and the origin, speed and scale take r9, r8 and r10 where the native has r8, r10 and r9.
+ * Also tried: the limit in an asm-pinned variable keeps 0x7fff and bhi but builds it in r3, not
+ * r1 (differ 54), pinned to r1 (46); for, while and do-while loops (78, 79). */
 #include "../../../../games/tla/src/field/overlay_6ad/room.h"
 #include "iwram_call.h"
 

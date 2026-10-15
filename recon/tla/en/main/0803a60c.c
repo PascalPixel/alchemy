@@ -1,44 +1,35 @@
+/* Draft, differ 2 of 43: the native loads the render work right after the
+ * heap slot base (movs r3, #192; lsls r3, #18; ldr r5, [r3, #60]; movs r2,
+ * #152), this starts the result offset 0x1384 before the load. Measured: a
+ * barrier or one-pass block after the load (differ 6, the stack adjustment
+ * and the argument copy move up instead), the result stores in either order,
+ * through a pointer, as one word or from a zero temporary (2 to 7); two
+ * minutes of permuter found nothing. */
 #include "types.h"
-extern u8 Data_03001e8c[];
+#include "window.h"
+#include "ram_buffer.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
 
-struct Work;
-struct Slot;
+s32 UiText_BuildRenderEntries(s32 key, s32 mode);
+s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *bounds, s32 mode);
 
-struct UiTextMessageWorkGlobals {
-    void *state;
-    u8 padding4[0x54];
-    void *control;
-};
-
-extern volatile struct UiTextMessageWorkGlobals gWindowWork;
-
-s32 UiText_BuildRenderEntries(s32, s32);
-struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
-struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
-void UiWork_Finalize(struct Work *, s32);
-
-s32 UiText_OpenEntryMessage(s32 no, s32 argument)
+s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    struct UiRenderWork *work = UI_WORK;
     s32 entry;
-    s32 entry_offset;
     s32 result = 0;
-    /* FAKEMATCH: an unused buffer reproduces the reference's 16-byte frame. */
-    u8 unused[8];
+    /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two outgoing arguments, exactly these four slots; without them the frame is 8 bytes, not 16 (differ 4 in tbs-en). */
+    u16 entries[4];
 
-    *(u16 *)(base + 0x12f4) = 0;
-    *(u16 *)(base + 0x12f6) = 0;
-    entry = Func_08018038(argument, 1);
-    entry_offset = entry * 2;
-    entry_offset += 0xeb0;
-    if (*(u16 *)(base + entry_offset) == 0)
+    work->result[0] = 0;
+    work->result[1] = 0;
+    entry = UiText_BuildRenderEntries(argument, 1);
+    if (work->entries[entry] == 0)
         return 0;
-    if (no == 0)
+    if (window == 0)
         return 0;
-    result = UiText_QueueRenderEntries(no, entry, 0, 0, 0, 1);
+    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)window, entry, 0, 0, 0, 1);
     if (result == 0)
         return 0;
     return result;

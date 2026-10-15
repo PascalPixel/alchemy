@@ -4,7 +4,7 @@
 	.global Func_08038248
 	.thumb_func
 Func_08038248:
-	overlay_veneer Func_0803d92c
+	overlay_veneer Ui_PrepareTransferForItem
 	.global UiText_RenderWideStringAtOffsetFar
 	.thumb_func
 UiText_RenderWideStringAtOffsetFar:

@@ -502,8 +502,6 @@ SECTIONS
         "*/recon/tla/raw/0803d680.o"(.text)
         "*/games/tla/src/graphics/tile/copy_resource_to_slot.o"(.text)
         "*/games/tla/src/graphics/render/build_pattern_to_slot.o"(.text)
-        "*/recon/tla/raw/0803d92a.o"(.text)
-        "*/recon/tla/raw/0803d92c.o"(.text)
         "*/games/tla/src/graphics/tile/ability_glyph.o"(.text)
         "*/recon/tla/raw/0803d9ba.o"(.text)
         "*/recon/tla/raw/0803d9bc.o"(.text)

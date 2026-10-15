@@ -925,14 +925,6 @@ Func_0803d5c4:
 	.thumb_func
 ItemIcon_Compose:
 	.incbin "baserom.gba", 0x0003d6e0, 0x0000022c
-	.section .rom.0003d98a, "ax"
-	.incbin "baserom.gba", 0x0003d98a, 0x00000002
-	.section .rom.0003d98c, "ax"
-	.global Func_0803d92c
-	.type Func_0803d92c, %function
-	.thumb_func
-Func_0803d92c:
-	.incbin "baserom.gba", 0x0003d98c, 0x00000060
 	.section .rom.0003da1a, "ax"
 	.incbin "baserom.gba", 0x0003da1a, 0x00000002
 	.section .rom.0003da1c, "ax"

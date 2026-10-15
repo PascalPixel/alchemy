@@ -483,8 +483,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.0003d6e0)
     "*/games/tla/src/graphics/tile/copy_resource_to_slot.o"(.text)
     "*/games/tla/src/graphics/render/build_pattern_to_slot.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0003d98a)
-    "*/recon/tla/es/rom.o"(.rom.0003d98c)
     "*/games/tla/src/graphics/tile/ability_glyph.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0003da1a)
     "*/recon/tla/es/rom.o"(.rom.0003da1c)

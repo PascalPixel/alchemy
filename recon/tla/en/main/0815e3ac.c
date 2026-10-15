@@ -28,7 +28,7 @@
  * recoil depends on the kind, the summon test reads the enemy id, and the
  * palette goes by DMA.
  *
- * Listing 687 instructions, draft 687, differ 54 (2026-10-15). Left: rows
+ * Listing 687 instructions, draft 687, differ 50 (2026-10-15). Left: rows
  * one place apart (stack and pool loads, constants built around them, the
  * call arguments' stores), the usual residue; no allocation difference.
  *
@@ -37,6 +37,7 @@
  *     draw[1] as ☀️ has it                                   210 (695 rows)
  *   the beam with draw[0], as the listing loads [sp, #56]    210 -> 54
  *   declaration order, a greedy sweep                        54
+ *   the tables without const, as ☀️'s readers extern theirs 54 -> 50
  */
 #include "types.h"
 #include "battle_effect_work.h"
@@ -73,13 +74,13 @@ extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
 // The strike's six cels: ☀️'s gBeamSequence_CellSheetOffsets and
 // gTwelveMode_StrikeReach, _StrikeWidths and _StrikeHeights.
-extern const u16 Data_0819886c[];
-extern const u8 Data_08198878[];
-extern const u8 Data_08198860[];
-extern const u8 Data_08198866[];
+extern u16 Data_0819886c[];
+extern u8 Data_08198878[];
+extern u8 Data_08198860[];
+extern u8 Data_08198866[];
 // Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
 // gReelGame_SparkCellOffsets).
-extern const u16 Data_08197424[];
+extern u16 Data_08197424[];
 
 void WaitFrames(s32 frames);
 u32 Random16(void);

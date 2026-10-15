@@ -90,7 +90,6 @@ SECTIONS
         "*/recon/tla/raw/08014174.o"(.text)
         "*/games/tla/src/system/resource/clear_slot_references.o"(.text)
         "*/games/tla/src/system/resource/activate_entry.o"(.text)
-        "*/recon/tla/raw/080142d4.o"(.text)
         "*/games/tla/src/system/resource/initialize.o"(.text)
         "*/recon/tla/raw/080143f6.o"(.text)
         "*/games/tla/src/system/resource/rescache.o"(.text)

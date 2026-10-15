@@ -58,7 +58,7 @@ void Palette_LightenBankHighlight(s32 bank);
 void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 page_size,
                             s32 selected_page, s32 right_edge);
 void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field);
+                               s32 width, s32 height, u32 highlight);
 void Palette_CopyObjectBankToBackground14(void);
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void UiText_DrawWorkValueWithLabel(s32 work);

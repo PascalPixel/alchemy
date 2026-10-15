@@ -972,38 +972,49 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   }
 }
 
+// The page indicator: the window font's digit tiles for pages 1, 2, ..., and
+// the two caps around them.
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
+// Moves a paged list's cursor and page with the d-pad's repeating keys.
+//
+// count entries are shown per_page at a time; *cursor is the row on the page
+// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
+// and Down and turn pages with Left and Right; horizontal lists the other way
+// round. Moving past either end wraps round; turning to a shorter page pulls
+// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
+// cursor move and -1 when nothing moved or the list is empty.
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
                          s32 *page) {
   s32 pages;
   s32 next;
   s32 previous;
-  s32 page_forward;
+  s32 pageForward;
   s32 result;
 
   result = -1;
   if (count == 0)
     return result;
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(0x06002500); // animate the page arrows
   pages = count / per_page;
   if (count % per_page != 0)
     pages++;
+  // horizontal is reused for the page-back key.
   if (horizontal) {
     next = gKeysRepeat & KEY_RIGHT;
     previous = gKeysRepeat & KEY_LEFT;
     horizontal = gKeysRepeat & KEY_UP;
-    page_forward = gKeysRepeat & KEY_DOWN;
+    pageForward = gKeysRepeat & KEY_DOWN;
   } else {
     next = gKeysRepeat & KEY_DOWN;
     previous = gKeysRepeat & KEY_UP;
     horizontal = gKeysRepeat & KEY_LEFT;
-    page_forward = gKeysRepeat & KEY_RIGHT;
+    pageForward = gKeysRepeat & KEY_RIGHT;
   }
   if (horizontal) {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
     if (*cursor + *page * per_page > count - 1) {
@@ -1011,12 +1022,12 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
       if (*cursor > per_page - 1)
         *cursor = per_page - 1;
     }
-    Runtime_SetMainState19();
+    Runtime_SetMainState19(); // restart the key repeat delay
     result = 1;
     return result;
   }
-  if (page_forward) {
-    AudioCommand_PlayFar(111);
+  if (pageForward) {
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * per_page > count - 1) {
@@ -1029,7 +1040,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
     return result;
   }
   if (previous) {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     if (--*cursor < 0) {
       *cursor = per_page - 1;
       *cursor = count - *page * per_page - 1;
@@ -1042,7 +1053,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   if (next == 0)
     return result;
   {
-    AudioCommand_PlayFar(111);
+    AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     result = 0;
     if (++*cursor == count - *page * per_page)
       *cursor = result;
@@ -1052,6 +1063,9 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   return 0;
 }
 
+// Copies the last background palette (15) into background palette bank and
+// lightens its colour 4 by 9 steps in each channel: the highlight colour of
+// the menu's selected rows.
 void Palette_LightenBankHighlight(s32 bank) {
   u16 *palette = (u16 *)(0x05000000 + (bank << 5));
   u32 red;
@@ -1075,6 +1089,9 @@ void Palette_LightenBankHighlight(s32 bank) {
   palette[4] = (blue << 10) | (green << 5) | red;
 }
 
+// Draws a paged list's page numbers on the top border of window, ending at
+// tile rightEdge: one digit per page between two caps, selectedPage in
+// palette 14 and the others in palette 15. Draws nothing for a single page.
 void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
                             s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -1094,9 +1111,9 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
+        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2); // palette 14
       else
-        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3);
+        UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3); // palette 15
       tile++;
       x++;
     }
@@ -1105,14 +1122,18 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
   }
 }
 
+// Sets or clears the highlight over a rectangle of a window's text: the
+// palette bit 0x1000 of each map entry, set when highlight is 1. (x, y) and
+// the size are in tiles inside the window's border; the rectangle is clipped
+// to the screen.
 void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+                               s32 width, s32 height, u32 highlight) {
   struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-  u8 *base = (u8 *)work->tilemap;
+  u8 *tilemap = (u8 *)work->tilemap;
 
   x += object->x + 1;
   y += object->y + 1;
-  field <<= 12;
+  highlight <<= 12;
   if (x < 0) {
     width += x;
     x = 0;
@@ -1128,18 +1149,19 @@ void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
     height = 20 - y;
   }
   if (width > 0 && height > 0) {
+    // Byte offset of the first entry: 32 two-byte entries a row.
     y <<= 6;
     x = y + (x << 1);
     do {
-      u16 *pixel = (u16 *)(x + (u32)base);
+      u16 *entry = (u16 *)(x + (u32)tilemap);
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
+        u32 value = *entry;
         value &= 0xFFFFEFFF;
-        value |= field;
+        value |= highlight;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *entry = value;
+        entry++;
       }
       height--;
       x += 64;
@@ -1148,11 +1170,16 @@ void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
   }
 }
 
+// Copies the first sprite palette into background palette 14, then colour 4
+// of background palette 15 over its colour 14.
 void Palette_CopyObjectBankToBackground14(void) {
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
 }
 
+// Shows the item icons of one page of the item list: entries first to
+// first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
+// others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   struct RenderOutput *icon;
@@ -1174,14 +1201,16 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   }
 }
 
+// Writes the party's coins and the "Coins" label into window (work).
 void UiText_DrawWorkValueWithLabel(s32 work) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, work, 8, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 0x40, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 64, 0);
 #if !EDITION_INTERNATIONAL
   UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif
 }
 
+// Moves and resizes a window, in tiles.
 void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
                         s32 height) {
   if (window != NULL) {
@@ -1192,6 +1221,7 @@ void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
   }
 }
 
+// Marks the window system busy with the menu, or no longer busy.
 void UiWork_SetMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
 }
@@ -1200,53 +1230,67 @@ void UiWork_ClearMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
 }
 
+// Plays a sound and returns 1.
 s32 Audio_PlayCueReturnOne(s32 cue) {
   AudioCommand_PlayFar(cue);
   return 1;
 }
 
+// Game flag 0x150: Start was pressed, and every menu screen unwinds and closes
+// the whole menu.
+#define FLAG_MENU_START_PRESSED 0x150
+
+// Scheduler callback while a menu runs: on Start, plays the cancel sound,
+// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_CancelSoundTick(void) {
   if (gKeyState & KEY_START) {
     AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-    GameFlag_SetBitFar(0x150);
+    GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
   }
 }
 
+// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
+// Menu_CancelSoundTick.
 void Menu_CancelSoundReset(void) {
-  GameFlag_ClearBitFar(0x150);
+  GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
   Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
 }
 
+// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
-  if (GameFlag_TestFar(0x150) == 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
   }
 }
 
-void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(15); }
+// Set the window text colour: normal (15), no HP (2) and low HP (4).
+void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
-void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(2); }
+void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
-void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(4); }
+void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 
-// イベントの作業領域（struct EventWork）の別の見え方。0x180 と 0x19a
-// は共有ヘッダーにまだ名前がない
+// The event work as the item picker sees it: what the player chose, for the
+// event script. The shared header has no names for these two fields yet.
 struct AssetSelectionResult {
   s32 unk000[0x60];
-  u16 unk180;
+  u16 chosenItem; // owner << 10 | item id
   u8 unk182[0x18];
-  u16 unk19a;
+  u16 chosenSlot; // the owner's inventory slot
 };
 
+// The item picker an event script opens (window command 3): the item menu,
+// in which the player chooses one party member's item. Records the choice in
+// the event work and returns 1 if one was made.
 s32 RunAssetSelectionScreen(void) {
 #if EDITION_INTERNATIONAL
   void *backup;
 #endif
   struct InventoryMenuState *screen;
-  s32 index;
-  s32 value;
-  s32 category;
+  s32 item;
+  s32 target;
+  s32 owner;
   s32 result;
 #if EDITION_INTERNATIONAL
   s32 size;
@@ -1254,6 +1298,7 @@ s32 RunAssetSelectionScreen(void) {
   void **process;
   void **cache;
 
+  // Open the menu over the field, which stops moving.
 #if EDITION_INTERNATIONAL
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
@@ -1271,21 +1316,26 @@ s32 RunAssetSelectionScreen(void) {
   Link_DrawShiftedTilePairFar(0x06002500);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if EDITION_INTERNATIONAL
+  // Save the window tiles the menu draws over, and fill them with colour 3.
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
   Iwram_FillWords((void *)0x06004000, size, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
 #endif
+
+  // Let the player choose.
   Menu_CancelSoundReset();
-  result = ItemMenu_RunCommands(&category, &value, &index);
+  result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_EnsureCancelSound();
   if (result == 1) {
     struct AssetSelectionResult *selection =
         cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
 
-    selection->unk180 = (category << 10) | (index & ITEM_ID_MASK);
-    selection->unk19a = screen->selectedSlots[0];
+    selection->chosenItem = (owner << 10) | (item & ITEM_ID_MASK);
+    selection->chosenSlot = screen->selectedSlots[0];
   }
+
+  // Close the menu and give the screen back to the field.
   RenderOutput_ClearListFar(screen->statusWindow);
   process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL];
   ((struct UiRenderWork *)*process)->menuBusy = 1;
@@ -1383,7 +1433,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   state = ITEM_STEP_OWNER;
   menu = gMenuWork;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
     case ITEM_STEP_OWNER:
       menu->selectedSlots[0] = 0;
@@ -1692,7 +1742,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
       }
-      if (GameFlag_TestFar(0x150) != 0) {
+      if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
         break;
       }
       ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
@@ -1822,7 +1872,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedItems[0] &= ITEM_ID_MASK;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
-        if (GameFlag_TestFar(0x150) == 0) {
+        if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
           RenderOutput_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWin5();
           ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
@@ -1935,7 +1985,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     }
   }
 
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     ret = -1;
   }
   return ret;
@@ -2151,7 +2201,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
                                   (s32)menu->helpWindow, 32, 8);
 #endif
   menu->paneIcons[0]->active = pending;
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     selection = (selection + count) % count;
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     if (pending) {
@@ -2179,17 +2229,17 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         InventoryMenu_SortByListOrder(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       } else if (ItemMenu_Count(ownerIds[selection])) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       } else {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -2202,12 +2252,12 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       pending = 1;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
       pending = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
       pending = 1;
     }
@@ -2251,7 +2301,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   UnitGetFar(menu->ownerIds[menu->paneIndex[0]]);
   Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators,
                                 0xc80);
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (pending) {
       pending = 0;
       selection = (selection + count) % count;
@@ -2328,25 +2378,25 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     WaitFrames(1);
     if (gKeyState & KEY_A) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         continue;
       }
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = 255;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
       pending = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       pending = 1;
       selection++;
     }
@@ -2759,7 +2809,7 @@ s32 ItemMenu_ChooseCmd(void) {
 #endif
 
   for (;;) {
-    if (GameFlag_TestFar(0x150) != 0)
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0)
       break;
     if (needRedraw != 0) {
       needRedraw = 0;
@@ -2795,7 +2845,7 @@ s32 ItemMenu_ChooseCmd(void) {
 
     if ((gKeyState & KEY_A) != 0) {
       if (commandStates[index] == -1) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       } else {
         switch (index) {
         case 0:
@@ -2807,13 +2857,13 @@ s32 ItemMenu_ChooseCmd(void) {
         case 2:
         case 3:
         case 5:
-          AudioCommand_PlayFar(112);
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
         case 4:
           AudioCommand_PlayFar(117);
           break;
         default:
-          AudioCommand_PlayFar(112);
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
         }
         menu->listMode = index;
@@ -2821,7 +2871,7 @@ s32 ItemMenu_ChooseCmd(void) {
       }
     }
     if ((gKeyState & KEY_B) != 0) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       index = -1;
       menu->listMode = index;
       break;
@@ -2830,19 +2880,19 @@ s32 ItemMenu_ChooseCmd(void) {
     if ((gKeysRepeat & KEY_UP) != 0) {
       row -= 1;
       needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_DOWN) != 0) {
       row += 1;
       needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
       col += 1;
       needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_LEFT) != 0) {
       col -= 1;
       needRedraw = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
   }
 
@@ -3418,7 +3468,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
                                     (struct RenderInput *)window, 80, 32);
     object->oam.index += 4;
     UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
-    while (!GameFlag_TestFar(0x150)) {
+    while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
         quantity = (range + quantity) % range;
@@ -3455,24 +3505,24 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
                                        window, 80, 16);
       }
       if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
       if (gKeyState & KEY_B) {
         quantity = -1;
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         break;
       }
       UiMenu_PositionCursor(GIVE_CURSOR_X, 40);
       if (gKeysRepeat & KEY_LEFT) {
         quantity--;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       if (gKeysRepeat & KEY_RIGHT) {
         quantity++;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
@@ -3481,7 +3531,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
   RenderOutput_ClearListFar((void *)window);
   Runtime_ReleaseHeapBlock(14);
   menu->selectedItemIcon->active = 13;
-  if (GameFlag_TestFar(0x150))
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     quantity = -1;
   return quantity;
 }
@@ -3533,18 +3583,18 @@ s32 ItemMenu_ConfirmDrop(s32 a0) {
   UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
   UiMenu_SlideCursor(104, 86);
   for (;;) {
-    if (GameFlag_TestFar(0x150))
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;
     if (changed) {
       changed = 0;
       selection = (selection + rows) % rows;
     }
     if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       selection = 1;
       break;
     }
@@ -3552,16 +3602,16 @@ s32 ItemMenu_ConfirmDrop(s32 a0) {
     if (gKeysRepeat & KEY_UP) {
       selection--;
       changed = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selection++;
       changed = 1;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     }
     WaitFrames(1);
   }
-  if (GameFlag_TestFar(0x150)) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     selection = 1;
   }
   UiWork_FinalizeFar((void *)win, 1);
@@ -3603,7 +3653,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
     UiMenu_SlideCursor(184, 5);
 #endif
     for (;;) {
-      if (GameFlag_TestFar(0x150))
+      if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
         break;
       if (changed) {
         changed = 0;
@@ -3614,7 +3664,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         break;
       }
       if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -3627,7 +3677,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection--;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
 #if EDITION_INTERNATIONAL
       if (gKeysRepeat & KEY_RIGHT) {
@@ -3636,12 +3686,12 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection++;
         changed = 1;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
   }
-  if (GameFlag_TestFar(0x150))
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     selection = 1;
   if (selection == 1)
     Iwram_CopyWords(state, saved, BATTLE_UNIT_SIZE);
@@ -3813,7 +3863,7 @@ s32 ItemMenu_RunList(s32 pane) {
   window = (s32)menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->paneOwner[pane]);
     menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
@@ -3823,7 +3873,7 @@ s32 ItemMenu_RunList(s32 pane) {
     changed = 1;
     redraw = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       UiMenu_PositionCursor(98, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -3888,17 +3938,17 @@ s32 ItemMenu_RunList(s32 pane) {
         break;
       }
       if ((gKeyState & KEY_B) != 0) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (pane == 1) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
           WaitFrames(1);
         } else {
-          AudioCommand_PlayFar(111);
+          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
               state.selectedIndex;
           tab = menu->paneIndex[pane];
@@ -3930,7 +3980,7 @@ s32 ItemMenu_RunList(s32 pane) {
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->paneOwner[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   WaitFrames(1);
@@ -4018,7 +4068,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   work = gMenuWork;
   result = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
     case 0: {
       s32 cancelled;
@@ -4151,7 +4201,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         InventoryMenu_ShowModalMessage(work->useResult + MsgItemUseResult, 0,
                                        -1);
       } else {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar((void *)work->infoWindow);
         InventoryMenu_ShowModalMessage(work->useResult + MsgItemUseResult,
                                        result, result);
@@ -4177,7 +4227,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
     }
   }
 
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   return result;
@@ -4290,7 +4340,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
         2, 0, (struct RenderInput *)menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = 13;
   }
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (pending) {
       pending = 0;
       selection = (count + selection) % count;
@@ -4318,11 +4368,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
     WaitFrames(1);
     if (gKeyState & KEY_A) {
       if (menu->psynergyCount) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       }
-      AudioCommand_PlayFar(114);
+      AudioCommand_PlayFar(SOUND_MENU_ERROR);
     }
     if ((gKeyState & KEY_L) || (gKeyState & KEY_R)) {
       result = ownerIds[selection];
@@ -4337,24 +4387,24 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
       actionCount = found;
       if (actionCount == 0) {
         menu->mode = actionCount;
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       } else {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
       pending = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
       pending = 1;
     }
@@ -4405,7 +4455,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
   shown = 0;
   UnitGetFar(menu->ownerTable[menu->tabIndex[0]]);
   UiMenu_SlideCursor(selection * 24 - 10, 16);
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (pending) {
       pending = 0;
       selection = (selection + count) % count;
@@ -4442,22 +4492,22 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
     if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = menu->ownerTable[selection];
       break;
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection--;
       pending = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       selection++;
       pending = 1;
     }
@@ -4932,7 +4982,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->ownerIds[pane]);
     if (menu->mode != 0) {
       menu->psynergyCount =
@@ -4947,7 +4997,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
     changed = 1;
     menu->paneIcon[pane]->active = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
 #if EDITION_INTERNATIONAL
       UiMenu_PositionCursor(88, state.row * 16 + 36);
 #else
@@ -5004,7 +5054,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->type0c == 0) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
           } else {
             AudioCommand_PlayFar(174);
             prompt = 1;
@@ -5032,13 +5082,13 @@ s32 PsynergyMenu_RunList(s32 pane) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           if (PsynergyMenu_IsActionRestricted(
                   menu->psynergies[state.selectedIndex]) != 0) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
             continue;
           }
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
-            AudioCommand_PlayFar(114);
+            AudioCommand_PlayFar(SOUND_MENU_ERROR);
           } else {
             AudioCommand_PlayFar(173);
             result = menu->psynergies[state.selectedIndex];
@@ -5049,7 +5099,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
       }
 
       if ((gKeyState & KEY_B) != 0) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
@@ -5058,7 +5108,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
       if (((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) &&
           (gKeysHeld & KEY_SELECT) == 0) {
         mode = menu->mode != 0 ? 1 : 2;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         menu->selectedIndexByOwner[menu->ownerIds[pane]] = state.selectedIndex;
         tab = menu->tabIndex[pane];
         do {
@@ -5088,7 +5138,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
         } else {
           AudioCommand_PlayFar(130);
           if (PsynergyMenu_SetShortcut(menu->ownerIds[pane],
@@ -5106,7 +5156,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
         } else {
           if (PsynergyMenu_SetShortcut(menu->ownerIds[pane],
                                        menu->psynergies[state.selectedIndex],
@@ -5127,7 +5177,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
   menu->paneRow[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->ownerIds[pane]] = state.selectedIndex;
   menu->paneAction[pane] = result;
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   WaitFrames(1);
@@ -5277,7 +5327,7 @@ s32 Menu_RunActionFlow(void) {
   s32 result = 0;
   u32 changed;
 
-  while (!finished && !GameFlag_TestFar(0x150)) {
+  while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
     case 0:
       state->selectedSlots[0] = finished;
@@ -5311,7 +5361,7 @@ s32 Menu_RunActionFlow(void) {
     }
   }
 
-  if (GameFlag_TestFar(0x150))
+  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     result = -1;
 
   return result;
@@ -5354,7 +5404,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  AudioCommand_PlayFar(112);
+  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
   RenderOutput_RedrawSavedRectFar(menu->helpWindow);
   UiText_DrawCharacterAtOffsetFar(MsgReturnHelp, menu->helpWindow, 0, 16);
   menu->cursor->active = 13;
@@ -5387,7 +5437,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   }
   (*(struct UiWork **)&gWindowWork)->dirty = 1;
   for (;;) {
-    if (GameFlag_TestFar(0x150))
+    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;
     WaitFrames(1);
     if (gKeyState & (KEY_A | KEY_B | KEY_SELECT))
@@ -5405,7 +5455,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   }
   menu->cursor->active = 1;
   menu->secondCursor->active = 1;
-  AudioCommand_PlayFar(113);
+  AudioCommand_PlayFar(SOUND_MENU_CANCEL);
   /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) after this
    * void call. */
 }
@@ -5437,7 +5487,7 @@ s32 CharacterSelector_RunRearrange(void) {
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
-  while (!GameFlag_TestFar(0x150)) {
+  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
       RenderOutput_RedrawSavedRectFar((s32)work->selectorWindow);
@@ -5556,25 +5606,25 @@ s32 PsynergyMenu_SelectOwner(void) {
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
     if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     {
       if (gKeysRepeat & 32) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection--;
           pending = 1;
         }
       }
       if (gKeysRepeat & 16) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection++;
           pending = 1;
@@ -5713,7 +5763,7 @@ s32 CharacterMenu_SelectCommand(void) {
   done = 0;
   UiMenu_SlideCursor(-10, 88);
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     UnitGetFar(menu->selectedIds[0]);
     CharacterMenu_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
                                      1);
@@ -5725,7 +5775,7 @@ s32 CharacterMenu_SelectCommand(void) {
       hasAilments = 1;
     redraw = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         s32 limit;
 
@@ -5770,39 +5820,39 @@ s32 CharacterMenu_SelectCommand(void) {
       if (gKeysRepeat & KEYS_DPAD)
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
       if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
       if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         done = 1;
         result = -1;
         break;
       }
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         selected--;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         selected++;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         pane++;
       }
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
         pane--;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         tab = menu->ownerIndex[0];
         if (gKeysRepeat & KEY_R)
           tab++;
@@ -6436,7 +6486,7 @@ s32 PsynergyMenu_SelectAction(void) {
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2,
                                   menu->statusWindow, 0, -24);
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -6448,7 +6498,7 @@ s32 PsynergyMenu_SelectAction(void) {
     redraw = 1;
     first = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         redraw = 0;
         if (first != 0) {
@@ -6476,20 +6526,20 @@ s32 PsynergyMenu_SelectAction(void) {
       if (nav == -1)
         redraw = 0;
       if (gKeyState & KEY_A) {
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         result = 1;
         done = 1;
         break;
       }
       if (gKeyState & KEY_B) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         done = 1;
         Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         tab = menu->tabIndex[0];
         menu->selectedIndexByOwner[menu->ownerTable[tab]] = state.selectedIndex;
         if (gKeysRepeat & KEY_R)
@@ -6718,7 +6768,7 @@ s32 ItemMenu_SelectItem(void) {
   Menu_SpawnIconEntries(menu, (s32)menu->messageWindow);
 
   done = 0;
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     owner = UnitGetFar(menu->paneOwner[0]);
@@ -6734,7 +6784,7 @@ s32 ItemMenu_SelectItem(void) {
     redraw = 1;
     first = 1;
 
-    while (GameFlag_TestFar(0x150) == 0) {
+    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         RenderOutput_ClearListFar(menu->infoWindow);
         redraw = 0;
@@ -7711,7 +7761,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 13:
-      AudioCommand_PlayFar(126);
+      AudioCommand_PlayFar(SOUND_RECOVERY);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownOwner[1]);
       UnitCalcFar(menu->shownOwner[0]);
@@ -7750,7 +7800,7 @@ s32 DjinnMenu_RunScreen(void) {
       if (result < 0)
         break;
     case 14:
-      AudioCommand_PlayFar(126);
+      AudioCommand_PlayFar(SOUND_RECOVERY);
       Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0], menu->shownOwner[1]);
       result = Djinn_TransferFar(menu->shownOwner[1], menu->pairElement[1],
@@ -8127,30 +8177,30 @@ s32 DjinnMenu_ShowHelp(void) {
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         break;
       }
       if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         break;
       } else if (gKeyState & KEY_START) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -2;
         break;
       } else if (gKeyState & (KEY_B | KEY_SELECT)) {
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         result = -1;
         break;
       } else if (gKeyState & KEY_A) {
         if (UiWork_IsCompleteFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
-          AudioCommand_PlayFar(112);
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
           break;
         }
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
     }
     if (work->glyphResource != 99) {
@@ -8609,7 +8659,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     if (mode == 0 && (pressed & 0x100)) {
       if (selection == -1) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         continue;
       }
       i = 0;
@@ -8621,7 +8671,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       groupMode = 1;
       gKeysPressedLatch = 0;
       if (i == 0) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(state->listWindow);
         UiWindow_ClearInteriorTilesFar(state->listWindow, 0, 80, 216, 104);
         UiText_DrawResourceFar(MsgDjinnNowRecovering, state->listWindow, 0, 96);
@@ -8647,14 +8697,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     if (mode == 0 && (pressed & 0x200)) {
       result = 7;
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
       i = 1;
       if (!(buf[x] & 1)) {
         if (selection == -1) {
-          AudioCommand_PlayFar(114);
+          AudioCommand_PlayFar(SOUND_MENU_ERROR);
           continue;
         }
         i = 0;
@@ -8665,7 +8715,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           i = 1;
       }
       if (i == 0) {
-        AudioCommand_PlayFar(114);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(state->listWindow);
         UiWindow_ClearInteriorTilesFar(state->listWindow, 0, 80, 216, 104);
         UiText_DrawResourceFar(MsgDjinnNowRecovering, state->listWindow, 0, 96);
@@ -8687,16 +8737,16 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         result = 1;
       }
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if (pressed & 8) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     }
     if (pressed & 2) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -8742,12 +8792,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         result = 10;
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         break;
       }
     }
     if (repeat & 0x40) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (buf[x] & 4)
         continue;
       Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2, CURSOR_WIDTH,
@@ -8772,7 +8822,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x80) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (buf[x] & 4)
         continue;
       Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2, CURSOR_WIDTH,
@@ -8793,7 +8843,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x20) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (!(buf[x] & 4))
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
@@ -8816,7 +8866,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & 0x10) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       if (!(buf[x] & 4))
         Menu_DrawAtWindowOffset(state->listWindow, x * 7 + 1, y + 2,
                                 CURSOR_WIDTH, 1, 15);
@@ -9870,35 +9920,35 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         result = 1;
         break;
       }
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if ((inputEdge & 8) != 0) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     } else if ((inputEdge & 2) != 0) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     } else if ((inputEdge & 0x100) != 0) {
       if (mode <= 1) {
         page = ((page + 1) % 3);
         dirty = 2;
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
     } else if ((inputHeld & 32) != 0) {
       if (page <= 1) {
         cursor[page]--;
         cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         Runtime_SetMainState19();
         dirty = 1;
       }
     } else if ((inputHeld & 16) != 0) {
       if (page <= 1) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         Runtime_SetMainState19();
         cursor[page]++;
         dirty = 1;
@@ -10036,24 +10086,24 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }
     if (keys & KEY_START) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -2;
       break;
     }
     if (keys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeat & KEY_LEFT) {
       cursor[side]--;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       Runtime_SetMainState19();
       pending = 1;
     } else if (repeat & KEY_RIGHT) {
       cursor[side]++;
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       Runtime_SetMainState19();
       pending = 1;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);

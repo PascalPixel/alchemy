@@ -2931,7 +2931,7 @@ SECTIONS
     "*/games/tla/src/graphics/battle_fx/sheet_0b0.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.0087c34e)
     "*/games/tla/src/graphics/battle_fx/sheet_0b1.o"(.rodata)
-    "*/recon/tla/es/rom.o"(.rom.0087c790)
+    "*/games/tla/src/graphics/battle_fx/sheet_0b2.o"(.rodata)
     "*/games/tla/src/graphics/battle_fx/sheet_0b3.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.0087cb72)
     "*/games/tla/src/graphics/battle_fx/sheet_0b4.o"(.rodata)

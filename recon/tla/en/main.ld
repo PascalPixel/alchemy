@@ -1882,8 +1882,6 @@ SECTIONS
         "*/games/tla/src/battle/d012cacc.o"(.rodata)
         "*/games/tla/src/battle/d012cc74.o"(.rodata)
         "*/games/tla/src/battle/d012cd74.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0812ce54)
-        "*/recon/tla/raw/0812ce74.o"(.text)
         "*/games/tla/src/battle/btlvars.o"(.rodata)
         . = ABSOLUTE(0x08138000);
         "*/games/tla/src/system/far_call/table_47.o"(.text .rodata .data .padding)

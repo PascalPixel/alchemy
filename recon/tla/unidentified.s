@@ -667,10 +667,6 @@ Data_0810c248:
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c384, 0x0000000a
-	.section .unidentified.0812ce54,"a"
-	.global Data_0812ce54
-Data_0812ce54:
-	.incbin "baserom.gba", 0x0012ce54, 0x00000020
 	.section .unidentified.08196dd8,"a"
 	.global Data_08196dd8
 Data_08196dd8:

@@ -1,5 +1,7 @@
 	.section .rodata
 	.balign 4
+	.include "games/common/src/battle/presentation/highlight_ramp.s"
+	.4byte 1, 38
 @ 敵の編成 660 個
 	.global BattleFormation_Records
 BattleFormation_Records:

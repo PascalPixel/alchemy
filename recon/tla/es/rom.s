@@ -5068,8 +5068,6 @@ EnmCntDec:
 	.incbin "baserom.gba", 0x00128202, 0x0000003e
 	.section .rom.00128264, "ax"
 	.incbin "baserom.gba", 0x00128264, 0x00000578
-	.section .rom.0012ce6c, "ax"
-	.incbin "baserom.gba", 0x0012ce6c, 0x00000028
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"

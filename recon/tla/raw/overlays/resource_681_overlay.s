@@ -8258,63 +8258,6 @@ Func_020044f8:
 	.4byte Data_020023c4 + 0x288
 .L_0200c858:
 	.4byte gRandomState
-	.section .text.x0200c904,"ax",%progbits
-	.global Func_02004904
-	.thumb_func
-Func_02004904:
-	push {lr}
-	ldr r2, .L_0200c958
-	ldr r1, [r2]
-	lsls r3, r1, #3
-	adds r3, r3, r2
-	adds r3, #4
-	ldrb r2, [r3, #2]
-	adds r1, #1
-	cmp r2, #251
-	beq .L_0200c91c
-	cmp r2, r1
-	bne .L_0200c922
-.L_0200c91c:
-	movs r0, #128
-	lsls r0, r0, #7
-	b .L_0200c954
-.L_0200c922:
-	ldrb r2, [r3, #3]
-	cmp r2, #251
-	beq .L_0200c92c
-	cmp r2, r1
-	bne .L_0200c932
-.L_0200c92c:
-	movs r0, #128
-	lsls r0, r0, #8
-	b .L_0200c954
-.L_0200c932:
-	ldrb r2, [r3, #4]
-	cmp r2, #251
-	beq .L_0200c93c
-	cmp r2, r1
-	bne .L_0200c940
-.L_0200c93c:
-	movs r0, #0
-	b .L_0200c954
-.L_0200c940:
-	ldrb r2, [r3, #5]
-	cmp r2, #251
-	beq .L_0200c94a
-	cmp r2, r1
-	bne .L_0200c950
-.L_0200c94a:
-	movs r0, #192
-	lsls r0, r0, #8
-	b .L_0200c954
-.L_0200c950:
-	movs r0, #1
-	negs r0, r0
-.L_0200c954:
-	pop {pc}
-	.2byte 0x0000
-.L_0200c958:
-	.4byte Data_020023c4 + 0x288
 	.section .text.x0200c95c,"ax",%progbits
 	.global Func_0200495c
 	.thumb_func

@@ -7,16 +7,16 @@
 
 struct NodeChainNode
 {
-	u8					  padding00[4];
-	struct NodeChainNode *next;
+    u8                    padding00[4];
+    struct NodeChainNode *next;
 };
 
 struct NodeChainState
 {
-	u8					  padding000[840];
-	struct NodeChainNode *node;
-	u8					  padding34c[82];
-	u16					  count;
+    u8                    padding000[840];
+    struct NodeChainNode *node;
+    u8                    padding34c[82];
+    u16                   count;
 };
 
 LAYOUT_SIZE_GUARD(NodeChainNode_Size, struct NodeChainNode, 8);

@@ -6,25 +6,25 @@
 
 struct EffectStep
 {
-	s32 x;
-	s32 y;
-	s32 z;
-	s32 velocityX;
-	s32 velocityY;
-	s32 velocityZ;
-	s32 variant;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 velocityX;
+    s32 velocityY;
+    s32 velocityZ;
+    s32 variant;
 };
 
 struct EffectPosition
 {
-	s32 x;
-	s32 y;
-	s32 depth;
+    s32 x;
+    s32 y;
+    s32 depth;
 };
 
 #if GAME_TLA
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
-s32	 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
+s32  EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
 #endif
 

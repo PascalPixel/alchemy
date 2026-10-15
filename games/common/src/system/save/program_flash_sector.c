@@ -6,7 +6,7 @@ extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramFlashSector(u16 sector, u8 *source)
 {
-    u8 savedCode[64];
+    u8  savedCode[64];
     u16 result;
     u8 *destination;
 
@@ -18,16 +18,12 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
         return result;
 
     CopyFlashReadRoutineToRam(savedCode);
-    REG_WAITCNT =
-        (REG_WAITCNT & 0xFFFC) |
-        gFlash->wait[0];
-    gFlashNumRemainingBytes =
-        gFlash->sector.size;
-    destination = (u8 *)(
-        (sector << gFlash->sector.shift) +
-        0x0E000000);
+    REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
+    gFlashNumRemainingBytes = gFlash->sector.size;
+    destination = (u8 *)((sector << gFlash->sector.shift) + 0x0E000000);
 
-    while (gFlashNumRemainingBytes != 0) {
+    while (gFlashNumRemainingBytes != 0)
+    {
         result = ProgramFlashByte(source, destination);
         if (result != 0)
             break;
@@ -36,8 +32,7 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
         destination++;
     }
 
-    REG_WAITCNT =
-        (REG_WAITCNT & 0xFFFC) | 3;
+    REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
     return result;
 }

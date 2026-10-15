@@ -9,54 +9,54 @@ struct AnimationObject;
 
 struct ArcEffectObject
 {
-	u8						unk00[6];
-	u16						angle;
-	u8						unk08[0x48];
-	struct AnimationObject *records;
-	u8						unk54[0x10];
-	s16						phase;
-	s16						step;
-	struct FieldActor	   *linkedObject;
-	void				   *callback;
+    u8                      unk00[6];
+    u16                     angle;
+    u8                      unk08[0x48];
+    struct AnimationObject *records;
+    u8                      unk54[0x10];
+    s16                     phase;
+    s16                     step;
+    struct FieldActor      *linkedObject;
+    void                   *callback;
 };
 
 struct BattleFxScene
 {
-	s32	  angle;
-	s32	  x;
-	s32	  y;
-	s32	  z;
-	void *mainObject;
-	void *child;
-	s16	  firstObjectId;
-	s16	  secondObjectId;
-	u16	  action;
-	s16	  animation;
-	s8	  enabled;
-	u8	  mode;
-	s8	  visible;
-	s8	  active;
-	void (*finishCallback)(void);
-	u8				  unk28[0x0c];
-	s8				  childOption;
-	s8				  childMode;
-	u8				  unk36[2];
-	void			 *savedCallback;
-	const s32		 *savedScript;
-	u8				  unk40[4];
-	u8				  savedPalette;
-	u8				  lit;
-	u16				  tileSlot;
-	u16				  unk48;
-	u16				  freeBlocks;
-	s32				  savedX;
-	s32				  savedY;
-	s32				  savedZ;
-	struct EffectSlot slots[24];
-	u8				  unk718[2];
-	s16				  arcTileSlot;
-	s8				  messageMode;
-	u8				  unk71d[3];
+    s32   angle;
+    s32   x;
+    s32   y;
+    s32   z;
+    void *mainObject;
+    void *child;
+    s16   firstObjectId;
+    s16   secondObjectId;
+    u16   action;
+    s16   animation;
+    s8    enabled;
+    u8    mode;
+    s8    visible;
+    s8    active;
+    void (*finishCallback)(void);
+    u8                unk28[0x0c];
+    s8                childOption;
+    s8                childMode;
+    u8                unk36[2];
+    void             *savedCallback;
+    const s32        *savedScript;
+    u8                unk40[4];
+    u8                savedPalette;
+    u8                lit;
+    u16               tileSlot;
+    u16               unk48;
+    u16               freeBlocks;
+    s32               savedX;
+    s32               savedY;
+    s32               savedZ;
+    struct EffectSlot slots[24];
+    u8                unk718[2];
+    s16               arcTileSlot;
+    s8                messageMode;
+    u8                unk71d[3];
 };
 
 LAYOUT_SIZE_GUARD(BattleFxScene_Size, struct BattleFxScene, 0x720);
@@ -71,7 +71,7 @@ LAYOUT_OFFSET_GUARD(BattleFxScene_MessageMode, struct BattleFxScene, messageMode
 
 static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step)
 {
-	return from + (to - from) * step / 10;
+    return from + (to - from) * step / 10;
 }
 
 #endif

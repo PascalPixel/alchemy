@@ -12,15 +12,15 @@
 
 struct BattleCamera
 {
-	s32	 eye[3];
-	s32	 pos[3];
-	s32	 unk18;
-	s32 *followPos;
-	s32	 distance;
-	u8	 unk24[16];
-	u16	 pitch;
-	u16	 yaw;
-	u8	 unk38[20];
+    s32  eye[3];
+    s32  pos[3];
+    s32  unk18;
+    s32 *followPos;
+    s32  distance;
+    u8   unk24[16];
+    u16  pitch;
+    u16  yaw;
+    u8   unk38[20];
 };
 
 LAYOUT_SIZE_GUARD(BattleCamera_Size, struct BattleCamera, 0x4c);
@@ -33,56 +33,56 @@ extern struct BattleCamera *gCameraWork;
 
 struct BattlePresentationTransition
 {
-	s32 targetYaw;
-	s32 frames;
-	u8	unk08[8];
-	s32 active;
-	s32 flag;
-	s32 unk18;
-	s32 unk1c;
+    s32 targetYaw;
+    s32 frames;
+    u8  unk08[8];
+    s32 active;
+    s32 flag;
+    s32 unk18;
+    s32 unk1c;
 };
 
 struct BattlePresentationWork
 {
-	s32 kind;
-	s32 side;
-	s32 actor;
-	s32 firstTarget;
-	s32 initialValue;
-	s32 count;
-	s32 variant;
-	s32 flags;
-	u8	unk20[4];
-	s16 actors[8];
-	u8	params[8][4];
+    s32 kind;
+    s32 side;
+    s32 actor;
+    s32 firstTarget;
+    s32 initialValue;
+    s32 count;
+    s32 variant;
+    s32 flags;
+    u8  unk20[4];
+    s16 actors[8];
+    u8  params[8][4];
 };
 
 LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x20);
 LAYOUT_OFFSET_GUARD(
-	BattlePresentationTransition_Active, struct BattlePresentationTransition, active, 0x10);
+    BattlePresentationTransition_Active, struct BattlePresentationTransition, active, 0x10);
 LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork, 0x54);
 LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors, struct BattlePresentationWork, actors, 0x24);
 
 struct BattleBackgroundView
 {
-	u8	unk00[8];
-	s32 mode;
-	s32 secondMode;
-	s32 busy;
+    u8  unk00[8];
+    s32 mode;
+    s32 secondMode;
+    s32 busy;
 };
 
 struct BattleAffine
 {
-	u16 pa, pb, pc, pd;
-	s32 x, y;
+    u16 pa, pb, pc, pd;
+    s32 x, y;
 };
 
 struct BattleAffineHdma
 {
-	u32					page;
-	u8					unk04[12];
-	struct BattleAffine affine;
-	u16					lines[2][160];
+    u32                 page;
+    u8                  unk04[12];
+    struct BattleAffine affine;
+    u16                 lines[2][160];
 };
 
 LAYOUT_SIZE_GUARD(BattleBackgroundView_Size, struct BattleBackgroundView, 0x14);
@@ -99,8 +99,8 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan, struct BattlePresentatio
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
-s32	 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action);
-s32	 BattleObject_IsValidId(u32 objectId);
+s32  BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action);
+s32  BattleObject_IsValidId(u32 objectId);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BattleObjPut(void);

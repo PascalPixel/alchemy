@@ -5,9 +5,9 @@
 
 struct FixedPointPosition
 {
-	s32 x;
-	s32 y;
-	s32 z;
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
 #define FIXED_POINT_POSITION_OFFSET(field) ((u32) & (((struct FixedPointPosition *)0)->field))

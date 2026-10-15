@@ -2,8 +2,8 @@
 #include "audio_engine.h"
 #include "ram_buffer.h"
 
-s32 Audio_UmulHigh32(s32, s32);
-extern u8 gSound_PcmPitchCodes[];
+s32        Audio_UmulHigh32(s32, s32);
+extern u8  gSound_PcmPitchCodes[];
 extern u32 gSound_PcmFrequencySteps[];
 
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
@@ -15,23 +15,19 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
 
     keyIndex = key;
     pitchScale = pitch << 24;
-    if (keyIndex > 178) {
+    if (keyIndex > 178)
+    {
         keyIndex = 178;
         pitchScale = 255 << 24;
     }
 
     lowerFrequency = gSound_PcmPitchCodes[keyIndex];
-    lowerFrequency =
-        gSound_PcmFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
+    lowerFrequency = gSound_PcmFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
     upperFrequency = gSound_PcmPitchCodes[keyIndex + 1];
-    upperFrequency =
-        gSound_PcmFrequencySteps[upperFrequency & 15] >> (upperFrequency >> 4);
+    upperFrequency = gSound_PcmFrequencySteps[upperFrequency & 15] >> (upperFrequency >> 4);
 
     return Audio_UmulHigh32(*(s32 *)((u8 *)wave + 4),
-        lowerFrequency
-            + Audio_UmulHigh32(
-                upperFrequency - lowerFrequency,
-                pitchScale));
+        lowerFrequency + Audio_UmulHigh32(upperFrequency - lowerFrequency, pitchScale));
 }
 
 void Audio_NoopStub(void)
@@ -53,11 +49,11 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
-extern struct SoundWork gSound_Work;
-extern struct CgbNote gSound_CgbNotes[4];
-extern u8 gSound_WorkBytes[];
+extern struct SoundWork        gSound_Work;
+extern struct CgbNote          gSound_CgbNotes[4];
+extern u8                      gSound_WorkBytes[];
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry  gSound_SongTable[];
 
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
@@ -69,12 +65,13 @@ void MusicPlayer_StepFade(struct SoundPlayer *player);
 void MusicTrack_CalcOutput(struct SoundPlayer *player, struct SoundTrack *track);
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
-s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
+s32  Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 extern SoundCommand gSound_CommandTable[36];
 
 void Audio_ResumePlayer(struct SoundPlayer *player)
 {
-    if (player->lock == SOUND_LOCK) {
+    if (player->lock == SOUND_LOCK)
+    {
         player->lock++;
         player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
@@ -83,7 +80,8 @@ void Audio_ResumePlayer(struct SoundPlayer *player)
 
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed)
 {
-    if (player->lock == SOUND_LOCK) {
+    if (player->lock == SOUND_LOCK)
+    {
         player->lock++;
         player->fadeCounter = speed;
         player->fadePeriod = speed;
@@ -100,10 +98,12 @@ void Audio_Initialize(void)
     AudioEngine_Initialize(&gSound_Work);
     CgbAudio_Initialize(gSound_CgbNotes);
     AudioEngine_SetMode(AUDIO_INITIAL_MODE);
-    for (i = 0; i < SOUND_PLAYER_COUNT; i++) {
+    for (i = 0; i < SOUND_PLAYER_COUNT; i++)
+    {
         struct SoundPlayer *player = gSound_PlayerSlots[i].player;
 
-        MusicPlayer_Initialize(player, gSound_PlayerSlots[i].tracks, gSound_PlayerSlots[i].trackCount);
+        MusicPlayer_Initialize(
+            player, gSound_PlayerSlots[i].tracks, gSound_PlayerSlots[i].trackCount);
         player->checkPriority = gSound_PlayerSlots[i].checkPriority;
         player->workBytes = gSound_WorkBytes;
     }
@@ -117,8 +117,8 @@ void AudioEngine_RunMixer(void)
 void Audio_PlaySound(u16 id)
 {
     const struct PlayerSlot *slots = gSound_PlayerSlots;
-    const struct SongEntry *songs = gSound_SongTable;
-    const struct SongEntry *song = &songs[id];
+    const struct SongEntry  *songs = gSound_SongTable;
+    const struct SongEntry  *song = &songs[id];
 
     MusicPlayer_StartSong(slots[song->slot].player, song->header);
 }
@@ -126,9 +126,9 @@ void Audio_PlaySound(u16 id)
 void Audio_PlaySoundIfInactive(u16 id)
 {
     const struct PlayerSlot *slots = gSound_PlayerSlots;
-    const struct SongEntry *songs = gSound_SongTable;
-    const struct SongEntry *song = &songs[id];
-    struct SoundPlayer *player = slots[song->slot].player;
+    const struct SongEntry  *songs = gSound_SongTable;
+    const struct SongEntry  *song = &songs[id];
+    struct SoundPlayer      *player = slots[song->slot].player;
 
     if (player->header != song->header)
         MusicPlayer_StartSong(player, song->header);
@@ -139,9 +139,9 @@ void Audio_PlaySoundIfInactive(u16 id)
 void Audio_PlayOrResumeSound(u16 id)
 {
     const struct PlayerSlot *slots = gSound_PlayerSlots;
-    const struct SongEntry *songs = gSound_SongTable;
-    const struct SongEntry *song = &songs[id];
-    struct SoundPlayer *player = slots[song->slot].player;
+    const struct SongEntry  *songs = gSound_SongTable;
+    const struct SongEntry  *song = &songs[id];
+    struct SoundPlayer      *player = slots[song->slot].player;
 
     if (player->header != song->header)
         MusicPlayer_StartSong(player, song->header);
@@ -154,9 +154,9 @@ void Audio_PlayOrResumeSound(u16 id)
 void Audio_StopSound(u16 id)
 {
     const struct PlayerSlot *slots = gSound_PlayerSlots;
-    const struct SongEntry *songs = gSound_SongTable;
-    const struct SongEntry *song = &songs[id];
-    struct SoundPlayer *player = slots[song->slot].player;
+    const struct SongEntry  *songs = gSound_SongTable;
+    const struct SongEntry  *song = &songs[id];
+    struct SoundPlayer      *player = slots[song->slot].player;
 
     if (player->header == song->header)
         MusicPlayer_Stop(player);
@@ -165,9 +165,9 @@ void Audio_StopSound(u16 id)
 void Audio_ResumeSound(u16 id)
 {
     const struct PlayerSlot *slots = gSound_PlayerSlots;
-    const struct SongEntry *songs = gSound_SongTable;
-    const struct SongEntry *song = &songs[id];
-    struct SoundPlayer *player = slots[song->slot].player;
+    const struct SongEntry  *songs = gSound_SongTable;
+    const struct SongEntry  *song = &songs[id];
+    struct SoundPlayer      *player = slots[song->slot].player;
 
     if (player->header == song->header)
         Audio_ResumePlayer(player);
@@ -201,7 +201,8 @@ void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed)
 
 void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed)
 {
-    if (player->lock == SOUND_LOCK) {
+    if (player->lock == SOUND_LOCK)
+    {
         player->lock++;
         player->fadeCounter = speed;
         player->fadePeriod = speed;
@@ -212,7 +213,8 @@ void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed)
 
 void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
 {
-    if (player->lock == SOUND_LOCK) {
+    if (player->lock == SOUND_LOCK)
+    {
         player->lock++;
         player->fadeCounter = speed;
         player->fadePeriod = speed;
@@ -224,12 +226,15 @@ void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
 
 void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
 {
-    s32 count = player->trackCount;
+    s32                count = player->trackCount;
     struct SoundTrack *track = player->tracks;
 
-    while (count > 0) {
-        if (track->flags & SOUND_TRACK_ACTIVE) {
-            if (track->flags & SOUND_TRACK_RESET) {
+    while (count > 0)
+    {
+        if (track->flags & SOUND_TRACK_ACTIVE)
+        {
+            if (track->flags & SOUND_TRACK_RESET)
+            {
                 AudioCommand_InvokeSlot35(track);
                 track->flags = SOUND_TRACK_ACTIVE;
                 track->bendRange = 2;
@@ -246,7 +251,7 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
 void CgbAudio_Initialize(struct CgbNote *notes)
 {
     struct SoundWork *work;
-    u32 lock;
+    u32               lock;
 
     REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
     REG_SOUNDCNT_L = 0;

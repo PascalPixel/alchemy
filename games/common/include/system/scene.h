@@ -18,19 +18,19 @@ s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 
 struct Ent
 {
-	s32 f00;
-	u8	f04;
-	u8	f05;
-	u16 f06 : 9;
-	u16 f07 : 7;
-	s32 f08;
+    s32 f00;
+    u8  f04;
+    u8  f05;
+    u16 f06 : 9;
+    u16 f07 : 7;
+    s32 f08;
 };
 
 struct Cam
 {
-	u8	pad[228];
-	s32 x;
-	s32 y;
+    u8  pad[228];
+    s32 x;
+    s32 y;
 };
 
 #endif

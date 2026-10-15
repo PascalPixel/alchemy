@@ -15,10 +15,10 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId);
 #if GAME_TLA
 struct BattleUnit *UnitGetFar(s32 unitId);
 struct BattleAct  *BattleActGet(s32 actionId);
-s32				GameFlag_TestFar(s32 flag_id);
-void			UnitRatioFar(s32 unitId);
-s32				BattleRandomFar(void);
-s32				BattleEffectRevCheckFar(s32 effect_id);
+s32                GameFlag_TestFar(s32 flag_id);
+void               UnitRatioFar(s32 unitId);
+s32                BattleRandomFar(void);
+s32                BattleEffectRevCheckFar(s32 effect_id);
 #endif
 #if GAME_TLA
 u32 Ability_CheckStatusOrSpecialId(s32 actionId);

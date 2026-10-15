@@ -4,7 +4,8 @@
 void Func_0200061c(struct ObjectRuntime *object)
 {
     object->motionFlags = 3;
-    do {
+    do
+    {
         WaitFrames(1);
     } while (object->velocityY != 0);
     Func_02003ef4(188);

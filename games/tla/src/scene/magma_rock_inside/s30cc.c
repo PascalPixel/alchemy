@@ -2,28 +2,33 @@
 #include "call.h"
 #include "event_work.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 extern const u8 MsgBlazeTabletInscription[];
 
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
-s32 Func_02004d40();
-s32 Func_02004d48();
-s32 Func_02004dd0();
-s32 Func_02004da8();
-s32 Func_02004de0();
-s32 Func_02004da0();
-s32 Func_02004d10();
-s32 Func_02004d18();
-s32 Func_02002cd0();
-s32 UiText_DrawQuantityPairWithCue();
-s32 Object_LinkPair();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ResetAndSetPosition();
+s32  Func_02004d40();
+s32  Func_02004d48();
+s32  Func_02004dd0();
+s32  Func_02004da8();
+s32  Func_02004de0();
+s32  Func_02004da0();
+s32  Func_02004d10();
+s32  Func_02004d18();
+s32  Func_02002cd0();
+s32  UiText_DrawQuantityPairWithCue();
+s32  Object_LinkPair();
+s32  ObjectMotion_SetSpeedParameters();
+s32  ObjectMotion_CommitCurrentPositionAndActivate();
+s32  ObjectMotion_ArmCallback();
+s32  ObjectMotion_SetPositionAndReset();
+s32  ObjectMotion_ResetAndSetPosition();
 
 static inline void Call0(void (*f)())
 {
@@ -40,9 +45,12 @@ void Func_020030cc(void)
     Func_02004d40();
     Call1(Func_02004e90, 0);
     UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription, 1);
-    if (Value1(GameFlag_Test, 0x9fa) != 0) {
+    if (Value1(GameFlag_Test, 0x9fa) != 0)
+    {
         Func_02004d48();
-    } else {
+    }
+    else
+    {
         Call1(Func_02004dd0, (s32)MsgBlazeTabletInscription);
         EVENT_WORK->messageId++;
         Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xb333, 0x5999);
@@ -91,7 +99,8 @@ void Func_020030cc(void)
         Call2(Object_SetModeById, 5, 2);
         object = Object_GetById(gPartyState.currentOwner);
         if (object != 0)
-            Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10), FIELD_AT(object, s16, 18));
+            Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10),
+                FIELD_AT(object, s16, 18));
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
         Call3(Func_02004da0, 5, 0, 0);
         Object_SetActionCallback(Object_GetById(8), 9);

@@ -55,7 +55,8 @@ void Func_02000fec(void)
 void Func_02001010(struct ShrineOfTheSeaGodObject *object)
 {
     object->motionFlags = 3;
-    do {
+    do
+    {
         WaitFrames(1);
     } while (object->speed != 0);
     Func_02003b48(188);
@@ -66,9 +67,10 @@ void Func_02001010(struct ShrineOfTheSeaGodObject *object)
 void Func_02001038(void)
 {
     struct ShrineOfTheSeaGodObject *object = Object_GetById(8);
-    s32 z = object->z >> 20;
+    s32                             z = object->z >> 20;
 
-    if (z == 16) {
+    if (z == 16)
+    {
         Func_020039d8();
         Func_02003b08(0);
         Func_02001010(object);
@@ -82,17 +84,21 @@ void Func_02001038(void)
 void Func_02001088(void)
 {
     struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
-    u32 id;
+    u32                             id;
 
-    for (id = 9; id <= 13;) {
+    for (id = 9; id <= 13;)
+    {
         u8 *flags = &Object_GetById(id)->priorityFlags;
         u32 next = id + 1;
 
-        if (leader->y > 0x100000) {
+        if (leader->y > 0x100000)
+        {
             ObjectMotion_SetActionVariant(id, 2);
             /* FAKEMATCH: the native ties the flag or to the constant's register. */
             *flags = *flags + 2 - (*flags & 2);
-        } else {
+        }
+        else
+        {
             ObjectMotion_SetActionVariant(id, 1);
             *flags &= ~2;
         }
@@ -103,7 +109,7 @@ void Func_02001088(void)
 void Func_020010e8(void)
 {
     struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
-    s32 y;
+    s32                             y;
 
     Func_02003b28();
     y = leader->y;
@@ -118,26 +124,32 @@ void Func_020010e8(void)
 void Func_02001128(void)
 {
     struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
-    s32 y;
-    s32 z;
+    s32                             y;
+    s32                             z;
 
     y = leader->y;
     /* FAKEMATCH: loads the leader height before it builds the threshold. */
     __asm__("");
-    if (y < 0x100000) {
+    if (y < 0x100000)
+    {
         z = leader->z;
         /* FAKEMATCH: loads the leader depth before it builds the threshold. */
         __asm__("");
-        if (z < 0x1280000) {
+        if (z < 0x1280000)
+        {
             ObjectMotion_SetActionVariant(10, 1);
             ObjectMotion_SetActionVariant(11, 1);
             ObjectMotion_SetActionVariant(12, 2);
-        } else {
+        }
+        else
+        {
             ObjectMotion_SetActionVariant(10, 2);
             ObjectMotion_SetActionVariant(11, 2);
             ObjectMotion_SetActionVariant(12, 3);
         }
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetActionVariant(10, 2);
         ObjectMotion_SetActionVariant(11, 2);
         ObjectMotion_SetActionVariant(12, 3);

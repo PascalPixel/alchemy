@@ -17,7 +17,8 @@ u8 *Func_02000874(void)
         return gData_020054ec;
     if (scene == (s32)&SceneId_Ov694Room4)
         return gData_02005870;
-    if (scene == (s32)&SceneId_Ov694Room2) {
+    if (scene == (s32)&SceneId_Ov694Room2)
+    {
         if (gPartyState.entrance == 4)
             return gData_02005e70;
         return gData_02005a44;

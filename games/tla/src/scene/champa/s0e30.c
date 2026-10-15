@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 
@@ -11,51 +16,55 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags)
     UiText_OpenMessageAtObject(speaker, flags);
 }
 
-#define CHAMPA_EMOTE(actor, emote, frames) \
-    { \
-        /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Through an inline the actor comes one row early wherever the emote takes two instructions, and an empty asm barrier at each call moves the literal pools of a long scene. */ \
-        register s32 emote_ __asm__("r1") = (emote); \
- \
-        s32 frames_ = (frames); \
-        Func_02002b1c((actor), emote_, frames_); \
+#define CHAMPA_EMOTE(actor, emote, frames)                                                       \
+    {                                                                                            \
+        /* FAKEMATCH: the native loads the emote and the frames before the actor at every */     \
+        /* emote of this overlay; pinned to their argument registers they are loaded first, */   \
+        /* as there. Through an inline the actor comes one row early wherever the emote takes */ \
+        /* two instructions, and an empty asm barrier at each call moves the literal pools of */ \
+        /* a long scene. */                                                                      \
+        register s32 emote_ __asm__("r1") = (emote);                                             \
+                                                                                                 \
+        s32 frames_ = (frames);                                                                  \
+        Func_02002b1c((actor), emote_, frames_);                                                 \
     }
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
-s32 Func_02002a44();
-s32 Func_02002b64();
-s32 Func_02002adc();
-s32 ObjectMotion_SetSpeedParameters();
-s32 Func_02002a9c();
-s32 Func_02002bc4();
-s32 Func_02002af4();
-s32 Func_02002b1c();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Motion_CamBounds();
-s32 Func_02002b3c();
-s32 Battle_WaitMode0();
-s32 Func_02002b74();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Func_02002b04();
-s32 ObjectMotion_ArmCallback();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
-s32 ObjectMotion_SetVariantCallback();
-s32 Func_02002b24();
-s32 Motion_SetVarCbAndRefresh();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_Launch();
-s32 Object_GetById();
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 Object_LinkObjectAndSetCallback();
-s32 Object_AttachWorkTargetToObject();
-s32 Object_SetModeById();
-s32 Func_02000c90();
-s32 Func_02002b0c();
-s32 Func_02000d4c();
-s32 Func_02000e04();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 Func_02002a4c();
+s32       GameFlag_Test();
+s32       GameFlag_SetBit();
+s32       Func_02002a44();
+s32       Func_02002b64();
+s32       Func_02002adc();
+s32       ObjectMotion_SetSpeedParameters();
+s32       Func_02002a9c();
+s32       Func_02002bc4();
+s32       Func_02002af4();
+s32       Func_02002b1c();
+s32       ObjectMotion_SetPositionAndReset();
+s32       Motion_CamBounds();
+s32       Func_02002b3c();
+s32       Battle_WaitMode0();
+s32       Func_02002b74();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Motion_SetModeAndWaitAnimation();
+s32       Func_02002b04();
+s32       ObjectMotion_ArmCallback();
+s32       UiText_OpenMessageAtObject();
+s32       Inventory_PromptAndSetObjectMode();
+s32       ObjectMotion_SetVariantCallback();
+s32       Func_02002b24();
+s32       Motion_SetVarCbAndRefresh();
+s32       ObjectMotion_CommitPositionAndActivate();
+s32       ObjectMotion_Launch();
+s32       Object_GetById();
+s32       ObjectMotion_OffsetPositionAndReset();
+s32       Object_LinkObjectAndSetCallback();
+s32       Object_AttachWorkTargetToObject();
+s32       Object_SetModeById();
+s32       Func_02000c90();
+s32       Func_02002b0c();
+s32       Func_02000d4c();
+s32       Func_02000e04();
+s32       ObjectMotion_ResetAndSetPosition();
+s32       Func_02002a4c();
 extern u8 MsgChampa25[];
 extern u8 gPartyState[];
 
@@ -77,7 +86,8 @@ void Func_02000e30(void)
     s32 t691;
 
     t0 = Value1(GameFlag_Test, 0x970);
-    if (t0 == 0) {
+    if (t0 == 0)
+    {
         return;
     }
     Call1(GameFlag_SetBit, 0x971);
@@ -125,13 +135,18 @@ void Func_02000e30(void)
     CHAMPA_EMOTE(0x19, 0x101, 0x1e)
     Champa_MessageOpen(0x2019, 0);
     t42 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
-    if (t42 == 0) {
+    if (t42 == 0)
+    {
         Call1(Battle_WaitMode0, 0xf);
         Call2(Func_02002af4, 0x2019, 0);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-    } else {
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    }
+    else
+    {
         Call1(Battle_WaitMode0, 0x23);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
         Call2(Func_02002af4, 0x2019, 0);
     }
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
@@ -160,21 +175,26 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
     Call2(Func_02002b04, 0x1c, 0);
     t67 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
-    if (t67 == 0) {
+    if (t67 == 0)
+    {
         Call1(Battle_WaitMode0, 0x14);
         Call2(Motion_SetModeAndWaitAnimation, 6, 3);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Func_02002b04, 6, 0xc000);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Func_02002af4, 6, 0);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-    } else {
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    }
+    else
+    {
         Call1(Battle_WaitMode0, 0x28);
         Call2(Motion_SetModeAndWaitAnimation, 6, 3);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Func_02002b04, 6, 0xc000);
         Call1(Battle_WaitMode0, 0xa);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
         Call2(Func_02002af4, 6, 0);
     }
     Call2(Func_02002b04, 0x19, 0x5000);
@@ -784,19 +804,24 @@ void Func_02000e30(void)
     Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
     Call2(Func_02002b04, 4, 0x6000);
     t613 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
-    if (t613 == 0) {
+    if (t613 == 0)
+    {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0xf);
         /* FAKEMATCH: the emote and the frames are loaded before the actor; see CHAMPA_EMOTE. */
         CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
         Call2(Func_02002af4, 0x1c, 0);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-    } else {
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    }
+    else
+    {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0x23);
         /* FAKEMATCH: the emote and the frames are loaded before the actor; see CHAMPA_EMOTE. */
         CHAMPA_EMOTE(0x1c, 0x105, 0x1e)
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
         Call2(Func_02002af4, 0x1c, 0);
     }
     Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
@@ -857,35 +882,42 @@ void Func_02000e30(void)
     Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2(Object_SetModeById, 5, 2);
     t673 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
-    if (t673 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(t673, s16, 10), FIELD_AT(t673, s16, 18));
+    if (t673 != 0)
+    {
+        Call3(
+            ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(t673, s16, 10), FIELD_AT(t673, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
     Call3(Func_02002a9c, 5, 0, 0);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Object_SetModeById, 6, 2);
     t679 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
-    if (t679 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 6, FIELD_AT(t679, s16, 10), FIELD_AT(t679, s16, 18));
+    if (t679 != 0)
+    {
+        Call3(
+            ObjectMotion_ResetAndSetPosition, 6, FIELD_AT(t679, s16, 10), FIELD_AT(t679, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
     Call3(Func_02002a9c, 6, 0, 0);
     Call3(ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2(Object_SetModeById, 7, 2);
     t685 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
-    if (t685 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 7, FIELD_AT(t685, s16, 10), FIELD_AT(t685, s16, 18));
+    if (t685 != 0)
+    {
+        Call3(
+            ObjectMotion_ResetAndSetPosition, 7, FIELD_AT(t685, s16, 10), FIELD_AT(t685, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 7);
     Call3(Func_02002a9c, 7, 0, 0);
     Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x13333, 0x9999);
     Call2(Object_SetModeById, 0x1c, 2);
     t691 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
-    if (t691 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 0x1c, FIELD_AT(t691, s16, 10), FIELD_AT(t691, s16, 18));
+    if (t691 != 0)
+    {
+        Call3(ObjectMotion_ResetAndSetPosition, 0x1c, FIELD_AT(t691, s16, 10),
+            FIELD_AT(t691, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1c);
     Call3(Func_02002a9c, 0x1c, 0, 0);
     Func_02002a4c();
 }
-

@@ -7,51 +7,54 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById();
-void ObjectMotion_ResetAndSetPosition();
-void Animation_SetIndexAndInitObjects();
-void Battle_WaitMode0();
-void Func_020001bc();
-void Func_02001bcc();
-void Func_02001bd4();
-void Func_02001c2c();
-void Func_02001c6c();
-void Func_02001c7c();
-void Func_02001c94();
-void Func_02001ca4();
-void Func_02001d04();
-void Func_02001d0c();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_Launch();
-void ObjectMotion_SetActionVariant();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void Object_AttachWorkTargetToObject();
-void Object_LinkObjectAndSetCallback();
-void Object_SetModeById();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  Animation_SetIndexAndInitObjects();
+void                  Battle_WaitMode0();
+void                  Func_020001bc();
+void                  Func_02001bcc();
+void                  Func_02001bd4();
+void                  Func_02001c2c();
+void                  Func_02001c6c();
+void                  Func_02001c7c();
+void                  Func_02001c94();
+void                  Func_02001ca4();
+void                  Func_02001d04();
+void                  Func_02001d0c();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_CommitPositionAndActivate();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_SetActionVariant();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  Object_AttachWorkTargetToObject();
+void                  Object_LinkObjectAndSetCallback();
+void                  Object_SetModeById();
 
 void Func_02000e7c(s32 id)
 {
     struct ObjectRuntime *leader;
-    s32 a;
-    s32 b;
-    s32 c;
+    s32                   a;
+    s32                   b;
+    s32                   c;
 
     Func_02001bcc();
     Call1((void (*)())Func_02001d04, 0);
     Call1((void (*)())Func_02001c6c, (s32)MsgOh2);
     Call2((void (*)())Animation_SetIndexAndInitObjects, (s32)Object_GetById(12), 56);
-    if (id == 21) {
+    if (id == 21)
+    {
         Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x178, 0x3c8);
         Call3((void (*)())ObjectMotion_ArmCallback, 4, 0, 0);
         Call4((void (*)())Func_02001d0c, 12, 16, -16, 0);
         a = 0;
         b = 0x800a;
         c = 0x5000;
-    } else {
+    }
+    else
+    {
         Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x228, 0x3c8);
         Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x8000, 0);
         Call4((void (*)())Func_02001d0c, 12, -16, -16, 0x8000);

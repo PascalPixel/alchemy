@@ -1,20 +1,22 @@
 #include "local.h"
 
-struct MapCell {
+struct MapCell
+{
     u8 unk0[2];
     u8 unk2;
     u8 unk3;
 };
 
-struct MapWork170 {
-    u8 unk000[0x170];
+struct MapWork170
+{
+    u8              unk000[0x170];
     struct MapCell *cells;
 };
 
 void Func_02001c8c(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 priority = ((struct FieldSprite *)leader->animation)->priority;
+    s32                   priority = ((struct FieldSprite *)leader->animation)->priority;
 
     ObjectMotion_SetActionVariant(13, priority);
     ObjectMotion_SetActionVariant(14, priority);
@@ -24,11 +26,12 @@ void Func_02001c8c(void)
 void Func_02001cc4(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
+    struct MapWork170    *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
 
     struct MapCell *cell = &map->cells[Func_020053b0()];
 
-    if (cell->unk2 != 0) {
+    if (cell->unk2 != 0)
+    {
         leader->y = 0;
         leader->terrainHeight = 0;
     }
@@ -101,22 +104,24 @@ void Func_02001e44(void)
     Func_02001db4();
 }
 
-
 void Func_02001e58(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 x = leader->x >> 20;
-    s32 z = leader->z >> 20;
-    struct PartyState *party;
-    u8 *flags;
-    s32 zero;
+    s32                   x = leader->x >> 20;
+    s32                   z = leader->z >> 20;
+    struct PartyState    *party;
+    u8                   *flags;
+    s32                   zero;
 
-    if (z == 5) {
+    if (z == 5)
+    {
         if (x == 9 && (gInput.held & 16) == 0)
             return;
         if (x == 11 && (gInput.held & 32) == 0)
             return;
-    } else if (x == 10 && z == 6 && (gInput.held & 64) == 0) {
+    }
+    else if (x == 10 && z == 6 && (gInput.held & 64) == 0)
+    {
         return;
     }
     Func_020051c0();

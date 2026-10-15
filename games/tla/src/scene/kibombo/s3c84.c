@@ -6,7 +6,8 @@ void Func_02005be4(s32 frames);
 void Func_02003c84(void)
 {
     Func_02005c9c(212);
-    do {
+    do
+    {
         /* FAKEMATCH: the one-pass block ends CSE's block, so each fade builds 0x7fff afresh as the native does; without the three blocks 0x7fff, 0x10000 and 1 stay in callee-saved registers across the fades (differ 68). */
         Kibombo_FadeTo(0x7fff, 0);
         Func_02005be4(1);
@@ -22,7 +23,8 @@ void Func_02003c84(void)
     WaitFrames(1);
 
     Func_02005c9c(212);
-    do {
+    do
+    {
         /* FAKEMATCH: as above. */
         Kibombo_FadeTo(0x7fff, 0);
         Func_02005be4(1);
@@ -40,7 +42,8 @@ void Func_02003c84(void)
     WaitFrames(1);
 
     Func_02005c9c(212);
-    do {
+    do
+    {
         /* FAKEMATCH: as above. */
         Kibombo_FadeTo(0x7fff, 0);
         Func_02005be4(1);

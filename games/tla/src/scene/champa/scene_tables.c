@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gSceneEntrances;
@@ -27,7 +26,7 @@ const u32 *Scene_GetExits(void)
 
 extern s16 gData_02002c5c[];
 extern s16 gData_02002efc[];
-s32 GameFlag_Test(s32 flag);
+s32        GameFlag_Test(s32 flag);
 
 const s16 *Func_0200004c(void)
 {

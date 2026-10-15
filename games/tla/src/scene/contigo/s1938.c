@@ -1,8 +1,8 @@
 #include "contigo.h"
 #include "scene_ids.h"
 
-s32 PartyInventory_CountItem(s32 item);
-s32 PartyInventory_CountFreeSlots(void);
+s32  PartyInventory_CountItem(s32 item);
+s32  PartyInventory_CountFreeSlots(void);
 void Func_0200422c(void);
 void Func_0200403c(s32 value, s32 digits);
 void Field_SetDestination(s32 scene, s32 entrance);

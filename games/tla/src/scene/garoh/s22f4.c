@@ -1,30 +1,30 @@
 #include "types.h"
 #include "call.h"
 
-s32 Battle_WaitMode0();
-s32 Func_020051ac();
-s32 Func_020051b4();
-s32 Func_0200520c();
-s32 Func_0200524c();
-s32 Func_0200525c();
-s32 Func_0200528c();
-s32 Func_02005294();
-s32 Func_020052b4();
-s32 Func_02005324();
-s32 Func_02005334();
-s32 GameFlag_SetBit();
-s32 Motion_CamBounds();
-s32 Motion_SetVarCbAndRefresh();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetVariantCallback();
-s32 Object_AttachWorkTargetToObject();
-s32 Object_GetById();
-s32 Object_SetModeById();
+s32       Battle_WaitMode0();
+s32       Func_020051ac();
+s32       Func_020051b4();
+s32       Func_0200520c();
+s32       Func_0200524c();
+s32       Func_0200525c();
+s32       Func_0200528c();
+s32       Func_02005294();
+s32       Func_020052b4();
+s32       Func_02005324();
+s32       Func_02005334();
+s32       GameFlag_SetBit();
+s32       Motion_CamBounds();
+s32       Motion_SetVarCbAndRefresh();
+s32       ObjectMotion_ArmCallback();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_ResetAndSetPosition();
+s32       ObjectMotion_SetPositionAndReset();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_SetVariantCallback();
+s32       Object_AttachWorkTargetToObject();
+s32       Object_GetById();
+s32       Object_SetModeById();
 extern u8 MsgGaroh13[];
 extern u8 gPartyState[];
 

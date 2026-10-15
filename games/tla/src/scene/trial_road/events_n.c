@@ -2,9 +2,10 @@
 
 void Func_02001104(s32 id, s32 a, s32 frame)
 {
-    if (frame == 30) {
+    if (frame == 30)
+    {
         struct ObjectRuntime *object = Object_GetById(id);
-        s32 height;
+        s32                   height;
 
         object->x = object->action << 16;
         object->z = (s16)object->unk66 << 16;
@@ -36,11 +37,14 @@ void Func_02001178(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *block = Object_GetById(15);
 
-    if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {
+    if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20)
+    {
         s32 y = leader->y;
 
         /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it, as in Func_020007b4). */
-        do { } while (0);
+        do
+        {
+        } while (0);
         if (y < 0x200000)
             leader->y = 0x200000;
     }

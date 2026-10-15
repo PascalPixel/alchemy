@@ -11,8 +11,8 @@ void Func_020009ac(s32 a, s32 b)
 next:
     {
         struct ObjectRuntime *object = Object_GetById(id);
-        s32 x = object->x >> 20;
-        s32 z = object->z >> 20;
+        s32                   x = object->x >> 20;
+        s32                   z = object->z >> 20;
         u8 *covered = &OBJECT_BYTE(Object_GetById(gData_02005a88[(id - 18) & 3]), 99);
         s32 other;
 
@@ -22,7 +22,8 @@ next:
     step:
         other++;
     test:
-        if (other <= 17) {
+        if (other <= 17)
+        {
             object = Object_GetById(other);
             if (x != object->x >> 20)
                 goto step;

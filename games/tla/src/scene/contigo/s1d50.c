@@ -11,10 +11,10 @@ extern const u8 gData_02006030[];
 void Func_02001d50(void)
 {
     struct ContigoObject *object;
-    s32 answer;
+    s32                   answer;
     /* FAKEMATCH: the native reloads the leader into r5, the register of the pointer it came through, after each yes/no prompt and copies it to r0 in each branch; unpinned, the answer moves to r3 and the leader loads straight into r0 (28 differ), and a load of the leader in each branch measured 18. */
     register s32 owner __asm__("r5");
-    s32 angle;
+    s32          angle;
 
     object = Object_GetById(8);
     Func_0200406c();
@@ -147,12 +147,15 @@ void Func_02001d50(void)
     Contigo_ObjTurn(9, 0x3000, 0);
     answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
     owner = gPartyState.currentOwner;
-    if (answer == 0) {
+    if (answer == 0)
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_ObjMode(2, 3);
         Contigo_MessagePut(2, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Contigo_ObjMode(2, 4);
@@ -210,12 +213,15 @@ void Func_02001d50(void)
     Contigo_ObjTurn(9, 0x3000, 0);
     answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
     owner = gPartyState.currentOwner;
-    if (answer == 0) {
+    if (answer == 0)
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_ObjEmote(1, 258);
         Contigo_MessagePut(0x4001, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_Jump(1, 264, 20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -420,12 +426,15 @@ void Func_02001d50(void)
     Contigo_ObjTurn(5, 0x4000, 20);
     Contigo_MessageOpen(5, 0);
     Contigo_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+    {
         Contigo_ObjFace(9, 0x3000);
         Contigo_ObjMode(9, 3);
         Contigo_MessagePut(0x1009, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         Contigo_ObjFace(9, 0x3000);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Contigo_ObjMode(9, 4);

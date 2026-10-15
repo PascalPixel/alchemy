@@ -1,11 +1,16 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Object_GetById();
-s32 Func_02004dac();
-s32 ObjectDispatch_ApplyValueToChildren();
-s32 Func_02004f34();
+s32       Object_GetById();
+s32       Func_02004dac();
+s32       ObjectDispatch_ApplyValueToChildren();
+s32       Func_02004f34();
 extern u8 gData_020055c0[];
 
 s32 Func_02000718(void)
@@ -19,4 +24,3 @@ s32 Func_02000718(void)
     Call2(Func_02004f34, 0xa, 0x102);
     return 0;
 }
-

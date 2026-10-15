@@ -15,7 +15,7 @@
 
 void GameFlag_SetBit();
 void Battle_WaitMode0();
-s32 Inventory_PromptAndSetObjectMode();
+s32  Inventory_PromptAndSetObjectMode();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_EnableActionAndSetCallback();
 void Object_RefreshSelectorById();
@@ -27,9 +27,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Engine_ActorPlaceAtActor();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
-s32 UiText_OpenMessageAtObject();
+s32  UiText_OpenMessageAtObject();
 void ObjectMotion_ArmCallback();
-s32 Engine_ActorShowEmote();
+s32  Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
 void Engine_CameraSetSpeed();
 void Motion_CamBounds();
@@ -89,11 +89,14 @@ void Idejima_RunAlexDeparture(void)
     Value2(UiText_OpenMessageAtObject, 0x2008, 0);
     ObjectMotion_ArmCallback(6, 0, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+    {
         Motion_SetModeAndWaitAnimation(8, 4);
         Call2(Engine_EventShowMessage, 0x2008, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    } else {
+    }
+    else
+    {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Motion_SetModeAndWaitAnimation(8, 3);
         Call2(Engine_EventShowMessage, 0x2008, 0);
@@ -118,12 +121,15 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventShowMessage(6, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
     Value2(UiText_OpenMessageAtObject, 5, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, 8, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, 8, 0) == 0)
+    {
         Call3(ObjectMotion_ArmCallback, 8, 0x3000, 20);
         Motion_SetModeAndWaitAnimation(8, 3);
         Call2(Engine_EventShowMessage, 0x2008, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    } else {
+    }
+    else
+    {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Value3(Engine_ActorShowEmote, 8, 0x103, 0);
         Call3(ObjectMotion_ArmCallback, 8, 0x4000, 20);
@@ -143,12 +149,15 @@ void Idejima_RunAlexDeparture(void)
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 20);
     Value2(UiText_OpenMessageAtObject, 0x2008, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+    {
         Value3(Engine_ActorShowEmote, 6, 0x103, 0);
         ObjectMotion_ArmCallback(6, 0, 20);
         Engine_EventShowMessage(6, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    } else {
+    }
+    else
+    {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Value3(Engine_ActorShowEmote, 6, 0x108, 0);
         ObjectMotion_ArmCallback(6, 0, 20);
@@ -216,11 +225,14 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventShowMessage(5, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
     Value2(UiText_OpenMessageAtObject, 5, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+    {
         Engine_ActorSetAnimation(5, 3);
         Engine_EventShowMessage(5, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    } else {
+    }
+    else
+    {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Engine_ActorSetAnimation(5, 4);
         Engine_EventShowMessage(5, 0);

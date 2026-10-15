@@ -1,22 +1,24 @@
 #include "types.h"
 
-struct PuzzleCell {
+struct PuzzleCell
+{
     u8 kind;
     u8 blocked;
     u8 state;
     u8 occupied;
 };
 
-struct SceneState {
+struct SceneState
+{
     struct PuzzleCell cells[88];
-    u8 unk160[4];
-    s16 firstId;
-    s16 endId;
-    u16 tileEntry;
-    s8 redrawA;
-    s8 redrawB;
-    s16 originX;
-    s16 originZ;
+    u8                unk160[4];
+    s16               firstId;
+    s16               endId;
+    u16               tileEntry;
+    s8                redrawA;
+    s8                redrawB;
+    s16               originX;
+    s16               originZ;
 };
 
 extern struct SceneState gSceneState;
@@ -31,7 +33,8 @@ static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 
 void Func_020046c8(void)
 {
-    if (gSceneState.redrawB != 0) {
+    if (gSceneState.redrawB != 0)
+    {
         Map_Copy(0, 12, 1, 1, gSceneState.originX + 7, gSceneState.originZ - 2);
         gSceneState.redrawB = 0;
     }

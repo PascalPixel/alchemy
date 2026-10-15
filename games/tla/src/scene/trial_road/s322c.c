@@ -15,12 +15,12 @@ void Func_02005880(void);
 void Func_020059e8(s32 value);
 void Func_02005970(s32 a, s32 b);
 void Func_020058f0(s32 actor, s32 value);
-s32 Func_02002d20(s32 value);
-s32 Func_02002d50(s32 value);
-s32 Func_02002d38(s32 value);
+s32  Func_02002d20(s32 value);
+s32  Func_02002d50(s32 value);
+s32  Func_02002d38(s32 value);
 void Func_02005980(void);
 void Func_02005938(s32 message);
-s32 Func_02005960(s32 actor, s32 value, s32 frames);
+s32  Func_02005960(s32 actor, s32 value, s32 frames);
 void Func_02005940(s32 actor, s32 flags);
 
 static __inline__ void Motion_CamBounds_(s32 a, s32 b, s32 c, s32 d)

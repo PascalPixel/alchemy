@@ -6,19 +6,20 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct FieldActor *Object_GetById();
-s32 Map_GetTerrainHeight();
-void Func_02002b54();
-void Func_02002c44();
+s32                Map_GetTerrainHeight();
+void               Func_02002b54();
+void               Func_02002c44();
 
 void Func_020012a8(s32 id)
 {
     struct FieldActor *object;
-    s32 height;
+    s32                height;
 
     object = Object_GetById(id);
     object->motionFlags = 4;
     height = object->terrainHeight;
-    asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
+    /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
+    asm volatile("" : "+l"(height));
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     {

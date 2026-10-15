@@ -9,15 +9,17 @@ s32 Func_0200166c(struct ObjectRuntime *object)
 
 void Func_02001684(void)
 {
-    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
-        s32 offset = Random16Far() << 5;
-        s32 x = offset + 0x1800000;
-        s32 z = 0x1900000 - offset;
-        s32 y = 0xa00000;
+    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000)
+    {
+        s32                   offset = Random16Far() << 5;
+        s32                   x = offset + 0x1800000;
+        s32                   z = 0x1900000 - offset;
+        s32                   y = 0xa00000;
         struct ObjectRuntime *object = Func_02002808(0x12d, x, y, z);
-        s32 scale = 0x547a;
+        s32                   scale = 0x547a;
 
-        if (object != NULL) {
+        if (object != NULL)
+        {
             object->scaleX = scale;
             object->scaleY = scale;
             object->motionFlags = 2;
@@ -31,15 +33,17 @@ void Func_02001684(void)
 
 void Func_020016fc(void)
 {
-    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
-        s32 offset = Random16Far() << 5;
-        s32 x = offset + 0x1a00000;
-        s32 z = 0x1600000 - offset;
-        s32 y = 0xa00000;
+    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000)
+    {
+        s32                   offset = Random16Far() << 5;
+        s32                   x = offset + 0x1a00000;
+        s32                   z = 0x1600000 - offset;
+        s32                   y = 0xa00000;
         struct ObjectRuntime *object = Func_02002808(0x12d, x, y, z);
-        s32 scale = 0x547a;
+        s32                   scale = 0x547a;
 
-        if (object != NULL) {
+        if (object != NULL)
+        {
             object->scaleX = scale;
             object->scaleY = scale;
             object->motionFlags = 2;

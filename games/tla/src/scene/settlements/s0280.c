@@ -23,8 +23,8 @@ s32 Func_020002b0(struct ObjectRuntime *object)
 
 s32 Func_020002bc(struct ObjectRuntime *object)
 {
-    u8 *phase = (u8 *)object + 0x62;
-    s32 step = *phase & 63;
+    u8  *phase = (u8 *)object + 0x62;
+    s32  step = *phase & 63;
     s16 *animation = object->animation;
 
     object->motionFlags = 3;

@@ -1,20 +1,25 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-void GameFlag_SetBit(s32 a);
-void PartyInventory_Remove(s32 a);
-void Func_02001be4(void);
-void Func_02001cfc(s32 a);
-void Func_02001c74(s32 a);
-void Battle_WaitMode0(s32 a);
-void ObjectMotion_SetAngleToward(s32 a, s32 b, s32 c);
-void Func_02001c84(s32 a, s32 b, s32 c);
-void Object_SetModeById(s32 a, s32 b);
-void ObjectMotion_Launch(s32 a, s32 b, s32 c);
-void Func_02000398(s32 a);
-void ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
-void Func_02001bec(void);
+void      GameFlag_SetBit(s32 a);
+void      PartyInventory_Remove(s32 a);
+void      Func_02001be4(void);
+void      Func_02001cfc(s32 a);
+void      Func_02001c74(s32 a);
+void      Battle_WaitMode0(s32 a);
+void      ObjectMotion_SetAngleToward(s32 a, s32 b, s32 c);
+void      Func_02001c84(s32 a, s32 b, s32 c);
+void      Object_SetModeById(s32 a, s32 b);
+void      ObjectMotion_Launch(s32 a, s32 b, s32 c);
+void      Func_02000398(s32 a);
+void      ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
+void      Func_02001bec(void);
 extern u8 MsgAlhafra69[];
 extern u8 gPartyState[];
 
@@ -38,4 +43,3 @@ void Func_020002f8(void)
     Call3(ObjectMotion_ArmCallback, 0x1b, 0x4000, 0);
     Func_02001bec();
 }
-

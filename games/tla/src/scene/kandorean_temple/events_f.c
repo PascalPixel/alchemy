@@ -37,7 +37,8 @@ void Func_02000bf4(void)
 {
     s32 position[3];
 
-    if (gData_02006298 != 0 && gFrameCount % 9 == 0) {
+    if (gData_02006298 != 0 && gFrameCount % 9 == 0)
+    {
         position[0] = 0x1280000;
         position[1] = 0;
         position[2] = 0xb00000;
@@ -49,7 +50,8 @@ void Func_02000c34(void)
 {
     s32 position[3];
 
-    if (gData_0200629c != 0 && gFrameCount % 5 == 0) {
+    if (gData_0200629c != 0 && gFrameCount % 5 == 0)
+    {
         position[0] = 0x1580000;
         position[1] = 0;
         position[2] = 0xa00000;
@@ -118,16 +120,19 @@ void Func_02000d64(void)
     ObjectMotion_SetActionVariant_(9, 2);
     Object_GetById_(9)->priorityFlags &= ~2;
     Object_SetPositionAndResetMotion_(Object_GetById_(9), 0xd80000, 0x80000, 0xd80000);
-    if (GameFlag_Test_(0x208)) {
+    if (GameFlag_Test_(0x208))
+    {
         Object_SetModeById_(9, 4);
-        Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner), 0xd80000, 0xc0000, 0xd80000);
+        Object_SetPositionAndResetMotion_(
+            Object_GetById(gPartyState.currentOwner), 0xd80000, 0xc0000, 0xd80000);
         ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.currentOwner), 0);
     }
     Object_GetById_(11)->scaleY = 0x10000;
     Object_SetPositionAndResetMotion_(Object_GetById_(11), 0xd80000, 0, 0xd80000);
     Func_02000c90(13);
     Func_02000c90(14);
-    if (GameFlag_Test_(0x301)) {
+    if (GameFlag_Test_(0x301))
+    {
         Func_02000c90(15);
         Func_02000c90(16);
     }
@@ -146,16 +151,19 @@ void Func_02000e60(void)
     ObjectMotion_SetActionVariant_(10, 2);
     Object_GetById_(10)->priorityFlags &= ~2;
     Object_SetPositionAndResetMotion_(Object_GetById_(10), 0x1780000, 0x80000, 0xf80000);
-    if (GameFlag_Test_(0x209)) {
+    if (GameFlag_Test_(0x209))
+    {
         Object_SetModeById_(10, 4);
-        Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner), 0x1780000, 0xc0000, 0xf80000);
+        Object_SetPositionAndResetMotion_(
+            Object_GetById(gPartyState.currentOwner), 0x1780000, 0xc0000, 0xf80000);
         ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.currentOwner), 0);
     }
     Object_GetById_(12)->scaleY = 0x10000;
     Object_SetPositionAndResetMotion_(Object_GetById_(12), 0x1780000, 0, 0xf80000);
     Func_02000cb4(17);
     Func_02000cb4(18);
-    if (GameFlag_Test_(0x300)) {
+    if (GameFlag_Test_(0x300))
+    {
         Func_02000cb4(19);
         Func_02000cb4(20);
     }

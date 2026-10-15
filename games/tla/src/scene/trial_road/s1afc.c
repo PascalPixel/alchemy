@@ -27,17 +27,23 @@ void Func_02001afc(void)
     Func_0200062c(15);
     Func_0200062c(16);
     Func_0200062c(17);
-    if (!GameFlag_Test(0x335)) {
+    if (!GameFlag_Test(0x335))
+    {
         Func_0200095c(18);
         Func_02000924(19);
-    } else {
+    }
+    else
+    {
         Func_0200095c(19);
         Func_02000924(18);
     }
-    if (!GameFlag_Test(0x337)) {
+    if (!GameFlag_Test(0x337))
+    {
         Func_0200095c(20);
         Func_02000924(21);
-    } else {
+    }
+    else
+    {
         Func_0200095c(21);
         Func_02000924(20);
     }

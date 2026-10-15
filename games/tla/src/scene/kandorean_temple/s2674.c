@@ -35,7 +35,8 @@ void Func_020026cc(void)
     ObjectMotion_SetPositionAndCommit(13, 356, 164);
     Battle_WaitMode0(40);
     /* FAKEMATCH: the loop note ends the scheduling block before the battle rule is set: without it the native order of the last position call's arguments (r1 shifted before r2 is loaded) is one reordered pair. */
-    do {
+    do
+    {
     } while (0);
     gPartyState.battleRule24b = 2;
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov653Room3, 3);

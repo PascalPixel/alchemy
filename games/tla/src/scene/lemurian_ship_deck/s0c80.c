@@ -8,29 +8,29 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02001f5c(void);
-void Func_02001f64(void);
-void Func_02001fc4(s32 id, s32 x, s32 z);
-void Func_0200201c(const void *message);
-void Func_02002034(s32 id, s32 flags);
-void Func_02002044(s32 id, s32 angle);
-s32 Func_0200204c(s32 id, s32 emote, s32 frames);
-void Func_0200205c(s32 speed, s32 acceleration);
-void Func_0200206c(void);
-void Func_020020ac(s32 skip);
-void Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
-void Func_02001f2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
+void                  UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02001f5c(void);
+void                  Func_02001f64(void);
+void                  Func_02001fc4(s32 id, s32 x, s32 z);
+void                  Func_0200201c(const void *message);
+void                  Func_02002034(s32 id, s32 flags);
+void                  Func_02002044(s32 id, s32 angle);
+s32                   Func_0200204c(s32 id, s32 emote, s32 frames);
+void                  Func_0200205c(s32 speed, s32 acceleration);
+void                  Func_0200206c(void);
+void                  Func_020020ac(s32 skip);
+void                  Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
+void                  Func_02001f2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
@@ -40,7 +40,8 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 
 s32 Func_02000c80(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov657Room1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov657Room1)
+    {
         Func_02001f2c_(2, 2, 10, 24, 18, 10);
         Func_02001f2c_(0, 62, 26, 62, 3, 8);
         Func_02001f2c_(50, 65, 25, 61, 6, 1);
@@ -55,7 +56,8 @@ void Func_02000ce0(void)
     s32 answer;
     s32 owner;
 
-    if (Flag_IsSet(0x8ff) != 0) {
+    if (Flag_IsSet(0x8ff) != 0)
+    {
         Flag_Set(0x980);
         return;
     }
@@ -99,12 +101,15 @@ void Func_02000ce0(void)
     Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 0);
     answer = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
     owner = gPartyState.currentOwner;
-    if (answer == 0) {
+    if (answer == 0)
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Call2((void (*)())Object_SetModeById, 9, 3);
         Call2((void (*)())Func_02002034, 9, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Func_0200201c(MsgLookItS + 5); // the fifth message after it
         Call2((void (*)())Func_02002034, 9, 0);

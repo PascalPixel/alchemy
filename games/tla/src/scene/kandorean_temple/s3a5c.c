@@ -1,6 +1,7 @@
 #include "local.h"
 
-struct MapWork17 {
+struct MapWork17
+{
     u8 unk00[0x17];
     u8 bits0 : 2;
     u8 mode : 2;
@@ -20,9 +21,12 @@ void Func_02003a8c(void)
 {
     Func_02005390();
     Func_020053a8(0, 0x20f, 8, 9);
-    if (GameFlag_Test(0x849)) {
+    if (GameFlag_Test(0x849))
+    {
         Func_02005230(10, 0, 0);
-    } else {
+    }
+    else
+    {
         ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
         Object_SetModeById(10, 6);
         ObjectMotion_EnableActionAndSetCallback(10, gData_02005550);

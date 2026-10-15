@@ -2,7 +2,7 @@
 
 extern char SceneId_SuhallaGate1;
 extern char SceneId_VenusEntrance;
-extern u8 MsgWaahhhItS[];
+extern u8   MsgWaahhhItS[];
 
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);

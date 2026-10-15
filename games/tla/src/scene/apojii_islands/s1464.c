@@ -3,8 +3,8 @@
 void Func_02001464(s32 entrance)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 mode;
-    s32 *owner = &gPartyState.currentOwner;
+    s32                   mode;
+    s32                  *owner = &gPartyState.currentOwner;
 
     Func_02001cc4();
     Func_02001dcc(0);
@@ -30,17 +30,18 @@ void Func_02001464(s32 entrance)
 void Func_02001500(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 flag = GameFlag_Test(0x109);
-    s32 *owner = &gPartyState.currentOwner;
-    s32 offset;
+    s32                   flag = GameFlag_Test(0x109);
+    s32                  *owner = &gPartyState.currentOwner;
+    s32                   offset;
 
-    if (flag == 0) {
+    if (flag == 0)
+    {
         Func_02001cc4();
         Func_02001dcc(0);
         Motion_CamBounds_(-1, -1, -1, 0);
         leader->motionFlags = flag;
-        Func_02001d04(*owner, ((s16 *)&leader->x)[1] << 16,
-            (((s16 *)&leader->z)[1] << 16) - 0x100000);
+        Func_02001d04(
+            *owner, ((s16 *)&leader->x)[1] << 16, (((s16 *)&leader->z)[1] << 16) - 0x100000);
         Object_SetPartAttribute(Object_GetById(*owner), 9);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(*owner), 0);
         Event_StartScreenTransition();

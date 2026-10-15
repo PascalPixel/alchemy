@@ -10,10 +10,13 @@ void Func_02000188(void)
     msg = (s32)&MsgFieldAreYouLookingForSomeone;
     Func_02000698(msg);
     UiText_OpenMessageAtObject(9, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020006e8(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020006e8(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000698(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000698(msg + 2);
     }
@@ -30,7 +33,8 @@ void Func_020001e0(void)
 
 void Func_02000218(void)
 {
-    if (GameFlag_Test_(0x200) == 0) {
+    if (GameFlag_Test_(0x200) == 0)
+    {
         Func_02000620(0);
         Func_02000620(1);
         Func_02000620(2);
@@ -55,9 +59,9 @@ s32 Func_020002f8(void)
 
 s32 Func_0200030c(void)
 {
-    struct PartyState *party;
+    struct PartyState    *party;
     struct ObjectRuntime *object;
-    u8 flags;
+    u8                    flags;
 
     object = Object_GetById(16);
     flags = object->priorityFlags & ~1;
@@ -66,10 +70,14 @@ s32 Func_0200030c(void)
     asm("");
     object->priorityFlags = flags;
     /* FAKEMATCH: the loop note keeps currentOwner's offset after the store; without it the offset's movs and lsls move above the strb (differ 2). */
-    do { } while (0);
+    do
+    {
+    } while (0);
     Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
-    if (party->scene == (s32)&SceneId_Ov65dRoom2) {
-        if (GameFlag_Test(0x200)) {
+    if (party->scene == (s32)&SceneId_Ov65dRoom2)
+    {
+        if (GameFlag_Test(0x200))
+        {
             Func_02000620(0);
             Func_02000620(1);
             Func_02000620(2);
@@ -83,7 +91,9 @@ s32 Func_0200030c(void)
             Func_02000628_(28, 92, 2, 2, 15, 92);
             Func_02000628_(30, 92, 2, 2, 17, 92);
         }
-    } else if (GameFlag_Test(0x85b)) {
+    }
+    else if (GameFlag_Test(0x85b))
+    {
         Func_020001e0();
     }
     return 0;

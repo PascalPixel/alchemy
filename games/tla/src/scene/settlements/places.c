@@ -2,7 +2,7 @@
 
 const u8 *Func_02000318(void)
 {
-    s32 scene = gPartyState.scene;
+    s32       scene = gPartyState.scene;
     const u8 *placements;
 
     if (scene == (s32)&SceneId_Ov690Room5)

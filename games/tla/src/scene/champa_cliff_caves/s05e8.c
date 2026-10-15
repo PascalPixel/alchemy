@@ -1,7 +1,8 @@
 #include "scene.h"
 
 /* The byte at 0x5a of an actor, as the field its bit 0 is set through. */
-struct ActorSolid {
+struct ActorSolid
+{
     u8 unk00[0x5a];
     u8 solid : 8;
 };
@@ -53,7 +54,8 @@ void Func_0200067c(s32 value)
     Battle_WaitMode0(15);
     Object_SetModeById(8, 1);
     Battle_WaitMode0(15);
-    if (value == 0) {
+    if (value == 0)
+    {
         Object_GetById(8)->unk5a[0] &= mask;
         ObjectMotion_CommitPositionAndActivate_(8, 0, -6);
         Battle_WaitMode0(1);

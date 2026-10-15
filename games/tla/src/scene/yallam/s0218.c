@@ -2,8 +2,8 @@
 #include "types.h"
 #include "party_state.h"
 
-extern char SceneId_Ov676Room1;
-extern char SceneId_Ov676Room2;
+extern char     SceneId_Ov676Room1;
+extern char     SceneId_Ov676Room2;
 extern const u8 gData_02002ac4[];
 extern const u8 gData_02002be4[];
 extern const u8 gData_02002bfc[];
@@ -43,10 +43,12 @@ void Func_02000270(void)
 
     Func_02002488();
     Func_02002590(0);
-    for (i = 8; i <= 63; i++) {
+    for (i = 8; i <= 63; i++)
+    {
         u8 *actor = (u8 *)Object_GetById(i);
 
-        if (actor != NULL) {
+        if (actor != NULL)
+        {
             u8 *flags = &actor[85];
             /* FAKEMATCH: the zero pinned to r3 is rebuilt on every pass as the native does; loop.c hoists a plain zero out of the loop into a saved register. */
             register s32 zero asm("r3") = 0;

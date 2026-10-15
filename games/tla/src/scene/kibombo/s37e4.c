@@ -1,7 +1,8 @@
 #include "kibombo.h"
 
-struct KibomboEffectWork {
-    u8 unk000[0x7c4];
+struct KibomboEffectWork
+{
+    u8  unk000[0x7c4];
     s16 field7c4;
 };
 
@@ -9,8 +10,12 @@ void Func_020037e4(void)
 {
     struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the work pointer before it builds the field's offset (2 differ without it). */
-    if (work->field7c4 != 0) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the work pointer before it builds the field's offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if (work->field7c4 != 0)
+    {
         if (GameFlag_Test(0x220))
             Func_02000624();
         else if (GameFlag_Test(0x221))
@@ -71,11 +76,14 @@ void Func_02003930(void)
 void Func_02003948(void)
 {
     struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
-    struct KibomboObject *leader;
-    s32 x;
-    s32 px;
+    struct KibomboObject    *leader;
+    s32                      x;
+    s32                      px;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state's address before it builds the owner's offset (2 differ without it). */
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state's address before it builds the owner's offset (2 differ without it). */
+    do
+    {
+    } while (0);
     leader = Object_GetById(gPartyState.currentOwner);
     Func_02005a9c();
     Func_02005c3c(0);

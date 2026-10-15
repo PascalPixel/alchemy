@@ -17,9 +17,11 @@ void Func_020001ec(void)
     struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
-    if (!GameFlag_Test(3999)) {
+    if (!GameFlag_Test(3999))
+    {
         Call3((void (*)())Func_02000d40, 64, 0x1c80000, 0x2480000);
-        if (object->x >> 20 == 28 && object->z >> 20 == 36) {
+        if (object->x >> 20 == 28 && object->z >> 20 == 36)
+        {
             Func_02000d00();
             Func_02000dd0(0);
             Func_02000d90(gPartyState.currentOwner, 258);
@@ -36,13 +38,16 @@ void Func_0200027c(void)
     struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
-    if (!GameFlag_Test(4000)) {
+    if (!GameFlag_Test(4000))
+    {
         Call3((void (*)())Func_02000d40, 65, 0x1d80000, 0x2280000);
-        if (object->x >> 20 == 29 && object->z >> 20 == 34) {
+        if (object->x >> 20 == 29 && object->z >> 20 == 34)
+        {
             Func_02000d00();
             Func_02000dd0(0);
             Func_02000d90(gPartyState.currentOwner, 258);
-            Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.currentOwner, 0, -16);
+            Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.currentOwner,
+                0, -16);
             object->velocityY = 0x60000;
             ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
             Func_02000d08();
@@ -70,9 +75,11 @@ void Func_0200036c(void)
     struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
-    if (!GameFlag_Test(4001)) {
+    if (!GameFlag_Test(4001))
+    {
         Call3((void (*)())Func_02000d40, 66, 0xa80000, 0x1480000);
-        if (object->x >> 20 == 10 && object->z >> 20 == 20) {
+        if (object->x >> 20 == 10 && object->z >> 20 == 20)
+        {
             Func_02000d00();
             Func_02000dd0(0);
             Func_02000d90(gPartyState.currentOwner, 258);

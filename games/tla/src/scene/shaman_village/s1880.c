@@ -48,7 +48,8 @@ void Func_02001880(void)
     shaman->unk63 = 0;
     ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02004c5c);
     ObjectMotion_EnableActionAndSetCallback(15, gData_02004cac);
-    do {
+    do
+    {
         WaitFrames(1);
     } while (owner->unk63 == 0 || shaman->unk63 == 0);
     /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the owner's, so it takes r5 and the owner's r6 as the native has; plain, the owner's address, tested in both natural loops, is allocated first (differ 36). Measured against it: explicit pointers in either order, a for loop with break, nested do loops and a goto loop. */
@@ -115,7 +116,8 @@ void Func_02001aa4(void)
     shaman->unk63 = 0;
     ObjectMotion_EnableActionAndSetCallback(15, gData_02004c5c);
     ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02004cac);
-    do {
+    do
+    {
         WaitFrames(1);
     } while (owner->unk63 == 0 || shaman->unk63 == 0);
     /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the owner's (r5, then r6), as in Func_02001880 above. */

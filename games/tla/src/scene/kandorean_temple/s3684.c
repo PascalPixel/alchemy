@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000cd8(s32 id, s32 dy, s32 scale);
+void       Func_02000cd8(s32 id, s32 dy, s32 scale);
 extern s32 gData_020062a0;
 extern s32 gData_020062a4;
 
@@ -18,7 +18,8 @@ void Func_02003684(void)
     Motion_CamBounds_(-1, -1, -1, 0);
     WaitFrames_(1);
     leader->motionFlags = 0;
-    Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner), 0x1b80000, -0x140000, 0xc80000);
+    Object_SetPositionAndResetMotion_(
+        Object_GetById(gPartyState.currentOwner), 0x1b80000, -0x140000, 0xc80000);
     ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.currentOwner), 0);
     Object_SetPositionAndResetMotion_(Object_GetById_(13), 0x1b80000, -0x140000, 0xcc0000);
     Object_SetPositionAndResetMotion_(Object_GetById_(15), 0x1b80000, -0x140000, 0xc80000);
@@ -65,7 +66,8 @@ void Func_020037e0(void)
     Motion_CamBounds_(-1, -1, -1, 0);
     WaitFrames_(1);
     leader->motionFlags = 0;
-    Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner), 0x2580000, -0x140000, 0xe80000);
+    Object_SetPositionAndResetMotion_(
+        Object_GetById(gPartyState.currentOwner), 0x2580000, -0x140000, 0xe80000);
     ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.currentOwner), 0);
     Object_SetPositionAndResetMotion_(Object_GetById_(14), 0x2580000, -0x140000, 0xec0000);
     Object_SetPositionAndResetMotion_(Object_GetById_(16), 0x2580000, -0x140000, 0xe80000);

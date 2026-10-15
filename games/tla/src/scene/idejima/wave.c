@@ -14,7 +14,8 @@ void Func_02001558(void)
     s32 offset = line[0];
 
     /* FAKEMATCH: a one-pass block builds BG3VOFS's address after the first line is loaded (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     *(volatile u16 *)0x0400001e = offset;
     Dma_Set(line + 1, (void *)0x0400001e, 0xa2600001, REG_DMA0);

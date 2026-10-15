@@ -1,37 +1,42 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
-s32 Func_02002a44();
-s32 Func_02002b64();
-s32 Func_02002adc();
-s32 Func_02002aa4();
-s32 Func_02002aec();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
-s32 Battle_WaitMode0();
-s32 Object_AttachWorkTargetToObject();
-s32 Func_02002b3c();
-s32 Func_02002b1c();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
-s32 Func_02002b74();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Motion_SetVarCbAndRefresh();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Func_02002b04();
-s32 Object_LinkPair();
-s32 ObjectMotion_Launch();
-void Func_0200060c(void);
-s32 Object_SetModeById();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 Func_02002a9c();
-s32 Func_02002a4c();
+s32       GameFlag_Test();
+s32       GameFlag_SetBit();
+s32       Func_02002a44();
+s32       Func_02002b64();
+s32       Func_02002adc();
+s32       Func_02002aa4();
+s32       Func_02002aec();
+s32       ObjectMotion_SetPositionAndReset();
+s32       ObjectMotion_ArmCallback();
+s32       Battle_WaitMode0();
+s32       Object_AttachWorkTargetToObject();
+s32       Func_02002b3c();
+s32       Func_02002b1c();
+s32       UiText_OpenMessageAtObject();
+s32       Inventory_PromptAndSetObjectMode();
+s32       Func_02002b74();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Motion_SetVarCbAndRefresh();
+s32       Motion_SetModeAndWaitAnimation();
+s32       Func_02002b04();
+s32       Object_LinkPair();
+s32       ObjectMotion_Launch();
+void      Func_0200060c(void);
+s32       Object_SetModeById();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_OffsetPositionAndReset();
+s32       Object_GetById();
+s32       ObjectMotion_ResetAndSetPosition();
+s32       Func_02002a9c();
+s32       Func_02002a4c();
 extern u8 MsgChampa52[];
 
 void Func_02000638(void)
@@ -44,13 +49,18 @@ void Func_02000638(void)
     s32 t106;
 
     t0 = Value1(GameFlag_Test, 0x822);
-    if (t0 == 0) {
-    } else {
+    if (t0 == 0)
+    {
+    }
+    else
+    {
 #if !defined(TLA_EDITION_JA)
         // The Japanese edition has no flag 0 test.
         t1 = Value1(GameFlag_Test, 0);
-        if (t1 != 0) {
-        } else
+        if (t1 != 0)
+        {
+        }
+        else
 #endif
         {
             Call1(GameFlag_SetBit, 0xa75);
@@ -58,7 +68,8 @@ void Func_02000638(void)
             Call1(Func_02002b64, 0);
             Call1(Func_02002adc, (s32)MsgChampa52);
             {
-                s32 angle = 0xc000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+                /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+                s32 angle = 0xc000;
 
                 Call4(Func_02002aa4, 0x1d, 0x13a0000, 0x2a70000, angle);
             }
@@ -73,11 +84,16 @@ void Func_02000638(void)
             Func_02002b1c(0x1d, 0x101, 0x1e);
             UiText_OpenMessageAtObject(0x1d, 0);
             t17 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
-            if (t17 == 0) {
+            if (t17 == 0)
+            {
                 Call3(Func_02002aec, 0x1d, 0, 5);
-                FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-            } else {
-                FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+                FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+                    (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+            }
+            else
+            {
+                FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
+                    (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
                 Call3(Func_02002aec, 0x1d, 0, 5);
             }
             Func_02002b1c(0x1d, 0x109, 0x1e);
@@ -184,8 +200,10 @@ void Func_02000638(void)
             Call1(Battle_WaitMode0, 0x1e);
             Call2(Object_SetModeById, 0x1e, 2);
             t106 = Value1(Object_GetById, 4);
-            if (t106 != 0) {
-                Call3(ObjectMotion_ResetAndSetPosition, 0x1e, FIELD_AT(t106, s16, 10), FIELD_AT(t106, s16, 18));
+            if (t106 != 0)
+            {
+                Call3(ObjectMotion_ResetAndSetPosition, 0x1e, FIELD_AT(t106, s16, 10),
+                    FIELD_AT(t106, s16, 18));
             }
             Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1e);
             Call3(Func_02002a9c, 0x1e, 0, 0);
@@ -194,4 +212,3 @@ void Func_02000638(void)
         }
     }
 }
-

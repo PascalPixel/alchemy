@@ -6,13 +6,13 @@ extern char SceneId_VenusEntrance;
 extern char SceneId_SuhallaGate3;
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Func_02000990(void);
-void Func_02000a40(s32 a, s32 b);
+void                  Battle_WaitMode0(s32 frames);
+void                  ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void                  ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void                  Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void                  Party_SetFields1f2And1f4(s32 scene, s32 entrance);
+void                  Func_02000990(void);
+void                  Func_02000a40(s32 a, s32 b);
 
 void Func_020005e8(void)
 {

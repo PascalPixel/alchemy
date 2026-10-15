@@ -13,7 +13,7 @@ static inline void QueueBlend(u32 address, u32 value)
 // Every other two frames the world map's blend alternates between two strengths.
 void Func_02003c50(void)
 {
-    s32 odd;
+    s32  odd;
     u16 *alpha;
 
     QueueIoWriteDelay2(0x04000050, 0x3f41);

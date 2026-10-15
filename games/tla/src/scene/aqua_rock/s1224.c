@@ -16,7 +16,7 @@ void Func_02001d98(struct ObjectRuntime *object);
 void Func_02001224(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 i;
+    s32                   i;
 
     Func_02002998();
     Func_02002a48(0);
@@ -24,7 +24,8 @@ void Func_02001224(s32 unused, s32 id)
     WaitFrames(30);
     Func_02002834(8);
     Func_02002a70(220);
-    for (i = 3; i >= 0; i--) {
+    for (i = 3; i >= 0; i--)
+    {
         Func_02002a20(Random16Far() & 0x7fff, 0);
         Func_02002a28(15);
         WaitFrames(10);
@@ -55,7 +56,8 @@ void Func_02001224(s32 unused, s32 id)
     Object_GetById(15)->priorityFlags |= 2;
     Object_GetById(15)->update = (void (*)(void))Func_02001d98;
     Battle_WaitMode0(30);
-    for (i = 5; i >= 0; i--) {
+    for (i = 5; i >= 0; i--)
+    {
         Func_02002a70(623);
         WaitFrames(10);
     }

@@ -15,9 +15,9 @@ void Func_020018a8(s32 x, s32 z, s32 actor)
 void Func_02001928(s32 x, s32 z, s32 actor)
 {
     struct SeaOfTimeSpark spark;
-    s32 px;
-    s32 pz;
-    s32 i;
+    s32                   px;
+    s32                   pz;
+    s32                   i;
 
     Func_02001fec(0x60000, 0xc000);
     px = (x << 19) + 0x80000;
@@ -34,7 +34,8 @@ void Func_02001928(s32 x, s32 z, s32 actor)
     Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
     Object_GetById(actor)->scale = 0x1999;
     Func_020018a8(x, z, actor);
-    for (i = 0; i != 10; i++) {
+    for (i = 0; i != 10; i++)
+    {
         Object_GetById(actor)->scale += 0x1999;
         Battle_WaitMode0(1);
     }

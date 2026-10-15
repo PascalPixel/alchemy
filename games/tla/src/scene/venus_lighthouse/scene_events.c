@@ -15,12 +15,12 @@
 #include "tla_edition.h"
 #include "scene_ids.h"
 
-#define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
+#define Object_SetPartAttribute ((void (*)(struct FieldActor *, s32))Object_SetPartAttribute)
 
-enum {
+enum
+{
     ENTRANCE_OPENING = 99
 };
-
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -32,11 +32,11 @@ s32 VenusLighthouse_Idle(void)
     return 0;
 }
 
-struct SetupWork {
+struct SetupWork
+{
     u8 unk00[0x24];
     s32 (*idle)(void);
 };
-
 
 void VenusLighthouse_RunSetupStep(void)
 {
@@ -50,16 +50,17 @@ void VenusLighthouse_RunSetupStep(void)
     Func_02001c94();
 }
 
-struct AerieEventWork {
-    u8 unk000[0x1ac];
+struct AerieEventWork
+{
+    u8  unk000[0x1ac];
     s32 mode;
 };
-
 
 s32 VenusLighthouse_Start(void)
 {
     ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
-    if (gPartyState.entrance == ENTRANCE_OPENING) {
+    if (gPartyState.entrance == ENTRANCE_OPENING)
+    {
 #if EDITION_INTERNATIONAL
         // The international editions also save this scene and entrance 22.
         {
@@ -76,7 +77,9 @@ s32 VenusLighthouse_Start(void)
         Func_02000b2c();
         Func_02000d30();
         Engine_EventEnd();
-    } else {
+    }
+    else
+    {
         Object_SetPartAttribute(Engine_ActorGet(10), 6);
         Object_SetPartAttribute(Engine_ActorGet(17), 6);
         Object_SetPartAttribute(Engine_ActorGet(18), 6);

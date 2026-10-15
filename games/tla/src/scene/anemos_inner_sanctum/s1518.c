@@ -6,20 +6,20 @@
 extern char SceneId_Ov6B0Room4;
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 value, s32 frames);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003318(struct ObjectRuntime *object);
-void Func_02003398(void);
-void Func_020033a0(void);
-void Func_02003450(s32 countdown);
-void Func_02003488(s32 a);
-void Func_020034b8(s32 cue);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ArmCallback(s32 id, s32 value, s32 frames);
+void                  Battle_WaitMode0(s32 frames);
+void                  Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void                  Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void                  Func_02003318(struct ObjectRuntime *object);
+void                  Func_02003398(void);
+void                  Func_020033a0(void);
+void                  Func_02003450(s32 countdown);
+void                  Func_02003488(s32 a);
+void                  Func_020034b8(s32 cue);
 
 // Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or actor 9 with cue 198,
 // 4 pixels at once and then 128 more, before the screen transition finishes.
@@ -30,10 +30,13 @@ void Func_02001518(void)
 
     Func_02003398();
     Func_02003488(0);
-    if (gPartyState.scene == (s32)&SceneId_Ov6B0Room4) {
+    if (gPartyState.scene == (s32)&SceneId_Ov6B0Room4)
+    {
         object = Object_GetById(8);
         Func_02003450(13);
-    } else {
+    }
+    else
+    {
         object = Object_GetById(9);
         Func_02003450(11);
     }

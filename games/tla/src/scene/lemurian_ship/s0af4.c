@@ -4,7 +4,8 @@ void Func_02000af4(void)
 {
     struct LemurianShipObject *leader;
 
-    if (!GameFlag_Test(0x983)) {
+    if (!GameFlag_Test(0x983))
+    {
         leader = Object_GetById(gPartyState.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
@@ -104,7 +105,10 @@ void Func_02000d44(void)
     Battle_WaitMode0(20);
     Func_02002de0(52);
     Object_SetActionCallbackAndRefreshById(8, gData_02002e9c);
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state address before it builds the field offset (2 differ without it). */
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state address before it builds the field offset (2 differ without it). */
+    do
+    {
+    } while (0);
     gPartyState.battleRule24b = 2;
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
     Func_02002d78(11, 1);

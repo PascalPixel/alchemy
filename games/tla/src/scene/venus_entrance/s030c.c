@@ -1,21 +1,26 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_SetBit();
-s32 Object_GetById();
-s32 Object_SetPositionAndResetMotion();
-s32 Func_0200297c();
-s32 Motion_CamBounds();
-s32 Event_StartScreenTransition();
-s32 Event_WaitTransitionFrames();
-s32 Object_SetModeById();
-s32 Engine_AudioPlayCue();
-s32 Func_02002884();
-s32 Func_02002864();
-s32 Battle_WaitMode0();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Func_0200298c();
+s32       GameFlag_SetBit();
+s32       Object_GetById();
+s32       Object_SetPositionAndResetMotion();
+s32       Func_0200297c();
+s32       Motion_CamBounds();
+s32       Event_StartScreenTransition();
+s32       Event_WaitTransitionFrames();
+s32       Object_SetModeById();
+s32       Engine_AudioPlayCue();
+s32       Func_02002884();
+s32       Func_02002864();
+s32       Battle_WaitMode0();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Func_0200298c();
 extern u8 gData_0200b000[];
 
 void Func_0200030c(void)
@@ -59,4 +64,3 @@ void Func_0200030c(void)
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0xb);
     Func_0200298c();
 }
-

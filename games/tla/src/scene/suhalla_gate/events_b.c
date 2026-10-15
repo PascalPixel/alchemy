@@ -4,7 +4,8 @@ void Func_02000110(void)
 {
     if (gPartyState.entrance == 99)
         GameFlag_SetBit(0x894);
-    if (GameFlag_Test(0x894)) {
+    if (GameFlag_Test(0x894))
+    {
         Func_020009d0_(8, 0x1c80000, 0x1380000);
         Func_02000a98(8, 0x4000, 0);
         Object_SetActionCallback(Object_GetById(8), 8);
@@ -16,7 +17,8 @@ void Func_02000168(void)
     Func_02000978_(108, 38, 1, 1, 102, 56);
     if (gPartyState.entrance == 99)
         GameFlag_SetBit(0x895);
-    if (GameFlag_Test(0x895)) {
+    if (GameFlag_Test(0x895))
+    {
         Func_020009d0_(13, 0x24e0000, 0x3980000);
         Func_020009d0_(14, 0x2700000, 0x3ab0000);
         Func_020009d0_(15, 0x2780000, 0x3980000);

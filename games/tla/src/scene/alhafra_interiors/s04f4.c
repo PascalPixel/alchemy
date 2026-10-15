@@ -6,10 +6,13 @@ void Func_020004f4(s32 actor)
 
     Func_02000b24(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000ba4(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02000ba4(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000b24(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000b24(msg + 2);
     }

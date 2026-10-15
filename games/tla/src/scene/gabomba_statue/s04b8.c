@@ -13,7 +13,7 @@ extern const u8 gData_02006a90[];
 
 const u8 *Func_020004b8(void)
 {
-    s16 scene = gPartyState.scene;
+    s16       scene = gPartyState.scene;
     const u8 *table = gData_02006b20;
 
     if (scene == (s32)&SceneId_Ov671Room1)

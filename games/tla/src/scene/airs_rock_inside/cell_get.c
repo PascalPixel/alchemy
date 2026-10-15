@@ -3,7 +3,7 @@
 s32 Func_02000690(u32 layer, s32 x, s32 y)
 {
     struct AirsRockInsideMapWork *map = (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
-    u8 *cell;
+    u8                           *cell;
 
     if (map == NULL)
         return 0;

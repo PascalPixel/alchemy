@@ -4,7 +4,8 @@ void Func_0200316c(void)
 {
     Func_02003820(gData_02004768);
     Func_02004180(0);
-    if (gPartyState.entrance == 1) {
+    if (gPartyState.entrance == 1)
+    {
         GameFlag_SetBit(0xa29);
         GameFlag_ClearBit(0xa2a);
         GameFlag_ClearBit(0xa2b);
@@ -18,7 +19,8 @@ void Func_020031b4(void)
     s32 angleB;
     s32 angle;
 
-    if (GameFlag_Test(0x8b3)) {
+    if (GameFlag_Test(0x8b3))
+    {
         Func_02004090(8, 0, 0);
         Func_02004090(9, 0, 0);
         Func_02004090(10, 0, 0);
@@ -26,7 +28,9 @@ void Func_020031b4(void)
         Func_02004090(12, 0, 0);
         Func_02004090(13, 0, 0);
         Func_02004090(14, 0, 0);
-    } else if (GameFlag_Test(0x8f0)) {
+    }
+    else if (GameFlag_Test(0x8f0))
+    {
         // The angles go through locals, as overlay 695 writes them (with
         // every angle a constant, differ 38; with the single-use ones
         // constants, they are built after the positions, differ 12).

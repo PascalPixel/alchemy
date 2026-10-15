@@ -10,7 +10,6 @@
 #include "field_scene.h"
 #include "scene_ids.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gSceneEntrances;

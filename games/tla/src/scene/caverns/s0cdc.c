@@ -25,12 +25,13 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
         ObjectDispatch_SetSingleChildFlags(object, 0);
         {
             struct PartyState *party = &gPartyState;
-            s32 x = position[1];
-            s32 z = position[5];
-            s32 owner = party->currentOwner;
+            s32                x = position[1];
+            s32                z = position[5];
+            s32                owner = party->currentOwner;
 
             /* FAKEMATCH: the one-pass block keeps the party state's address loaded before the position (plain call: differ 2; owner read without the party pointer: differ 12). */
-            do {
+            do
+            {
                 ObjectMotion_SetPositionAndCommit(owner, x, z);
             } while (0);
         }
@@ -46,11 +47,12 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
 void Func_02000cdc(void)
 {
     struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
-    s32 position[3];
-    s32 x;
+    s32                position[3];
+    s32                x;
 
     /* FAKEMATCH: the one-pass block loads x before the offset is built (differ 2 without it). */
-    do {
+    do
+    {
         x = leader->x;
     } while (0);
     x += 0x200000;

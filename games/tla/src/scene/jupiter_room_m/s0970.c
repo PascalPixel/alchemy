@@ -18,7 +18,8 @@ void Func_02000970(s32 actor)
 {
     Func_020047d4();
     Func_0200494c(0);
-    switch (actor) {
+    switch (actor)
+    {
     case 0:
         Motion_SetVarCbAndRefresh(0, 2);
         Func_0200488c(MsgNoWhyAre);

@@ -8,9 +8,13 @@ static __inline__ void Blend_SetAlpha(s32 value)
 void Func_02002084(s32 fade)
 {
     Func_02002828();
-    if (fade) {
+    if (fade)
+    {
         Blend_SetAlpha(0xe06);
-        do { } while (0); /* FAKEMATCH: the one-pass block ends the scheduling block after the first blend write: ⚓️ finishes the value (adds r3, #6) before the register address (adds r5, #82); without it the address, which the later writes share, is finished first (differ 2). */
+        /* FAKEMATCH: the one-pass block ends the scheduling block after the first blend write: ⚓️ finishes the value (adds r3, #6) before the register address (adds r5, #82); without it the address, which the later writes share, is finished first (differ 2). */
+        do
+        {
+        } while (0);
         WaitFrames(10);
         Blend_SetAlpha(0xd04);
         WaitFrames(10);

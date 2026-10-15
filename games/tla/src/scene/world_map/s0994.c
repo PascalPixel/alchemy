@@ -5,35 +5,36 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-struct EventDestination {
-    u8 unk000[0x154];
+struct EventDestination
+{
+    u8  unk000[0x154];
     s16 scene;
 };
 
-void WaitFrames(s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004c88(s32 actor, s32 x, s32 z);
-void Func_02004c98(s32 actor, s32 target);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 actor, s32 flags);
-void Func_02004d00(s32 actor, s32 angle);
-s32 Func_02004d08(s32 actor, s32 value, s32 frames);
-void Func_02004d10(s32 actor, s32 value);
-void Func_02004d40(s32 value);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004db8(s32 value);
-void Func_02004df8(s32 value, s32 mode);
-void Func_02004e30(s32 cue);
+void                  WaitFrames(s32 frames);
+void                  ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void                  ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void                  Func_02004c20(void);
+void                  Func_02004c28(void);
+void                  Func_02004c88(s32 actor, s32 x, s32 z);
+void                  Func_02004c98(s32 actor, s32 target);
+void                  Func_02004cd8(s32 message);
+void                  Func_02004cf0(s32 actor, s32 flags);
+void                  Func_02004d00(s32 actor, s32 angle);
+s32                   Func_02004d08(s32 actor, s32 value, s32 frames);
+void                  Func_02004d10(s32 actor, s32 value);
+void                  Func_02004d40(s32 value);
+void                  Func_02004da8(void);
+void                  Func_02004db0(void);
+void                  Func_02004db8(s32 value);
+void                  Func_02004df8(s32 value, s32 mode);
+void                  Func_02004e30(s32 cue);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200050c(void);
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_0200050c(void);
 
 // 主人公の位置へ集まる
 static __inline__ void Actor_JoinLeader(s32 actor)
@@ -88,18 +89,20 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 void Func_02000918(void)
 {
     struct EventDestination *work = Ram_HeapSlots->eventWork;
-    struct ObjectRuntime *leader = Object_GetById(8);
+    struct ObjectRuntime    *leader = Object_GetById(8);
 
     Func_02004c20();
     Func_02004db8(0);
-    do {
+    do
+    {
         /* FAKEMATCH: the loop note keeps gPartyState's load ahead of the 0x212 offset, as in the native (differ 4 without). */
     } while (0);
     if (gPartyState.renderMode == 8)
         Func_0200050c();
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    do {
+    do
+    {
         /* FAKEMATCH: inside a one-pass block the z offset starts before z is loaded, as in the native (alchemy permute; differ 2 without). */
         gPartyState.savedX = leader->x;
         gPartyState.savedZ = leader->z;
@@ -114,11 +117,12 @@ void Func_02000918(void)
 void Func_02000994(void)
 {
     struct ObjectRuntime *object;
-    s32 x;
-    s32 z;
-    s32 seen;
+    s32                   x;
+    s32                   z;
+    s32                   seen;
 
-    if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
+    if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0))
+    {
         object = Object_GetById(gPartyState.currentOwner);
         x = object->x;
         z = object->z;
@@ -129,7 +133,8 @@ void Func_02000994(void)
         z >>= 20;
         x <<= 4;
         z <<= 4;
-        if (seen) {
+        if (seen)
+        {
             Func_02004df8_(0x16666, 6);
             Func_02004c98(5, gPartyState.currentOwner);
             WaitFrames(1);
@@ -144,7 +149,9 @@ void Func_02000994(void)
             WaitFrames(1);
             ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
             Func_02004df8_(0x10000, 6);
-        } else {
+        }
+        else
+        {
             Func_02004df8_(0x16666, 6);
             Func_02004c98(5, gPartyState.currentOwner);
             WaitFrames(1);
@@ -176,7 +183,9 @@ void Func_02000994(void)
         }
         WaitFrames(8);
         Func_02004c28();
-    } else {
+    }
+    else
+    {
         struct EventDestination *work = Ram_HeapSlots->eventWork;
 
         Func_02004c20();

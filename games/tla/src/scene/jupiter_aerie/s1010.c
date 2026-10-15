@@ -7,7 +7,8 @@ void Func_02001010(struct ObjectRuntime *object)
     s32 phase = *step & 3;
 
     *fill = 2;
-    switch (phase) {
+    switch (phase)
+    {
     case 1:
         Animation_ApplyChildValues(object, 13);
         break;

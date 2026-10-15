@@ -4,7 +4,8 @@ void Func_020004a8(void)
 {
     struct ObjectRuntime *object;
 
-    if (GameFlag_Test(0x842) == 0) {
+    if (GameFlag_Test(0x842) == 0)
+    {
         GameFlag_SetBit(0x230);
         Func_020051c0();
         Func_02005370(0);

@@ -11,7 +11,7 @@ void Func_020026a0(void)
 {
     struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(21);
     struct ObjectRuntime *object;
-    struct FieldActor **followed;
+    struct FieldActor   **followed;
 
     Scene_TaskAdd(Func_02002180, 0x480);
     /* FAKEMATCH: through the pointer, taken here, gData_0200480c's address loads before the call that fetches actor 22, as in the native (as in Func_02002318). */
@@ -29,7 +29,8 @@ void Func_020026a0(void)
     ObjectMotion_SetActionVariant(21, 3);
     Func_020040f8(21);
     Object_GetById(21)->motionFlags = 3;
-    if (!GameFlag_Test(0x109)) {
+    if (!GameFlag_Test(0x109))
+    {
         Scene_Call4098(21, 232 << 16, 664 << 16, 0);
         *((u8 *)leader + 98) = 0;
         leader->update = Func_020023cc;

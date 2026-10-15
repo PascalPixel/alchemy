@@ -2,7 +2,7 @@
 
 extern s32 gData_0200320c[];
 extern s32 gData_0200b410[];
-s32 GameFlag_Test(s32 flag);
+s32        GameFlag_Test(s32 flag);
 
 extern u32 gFrameCount;
 
@@ -15,10 +15,11 @@ const s32 *Func_02000a60(void)
 
 void Func_02000a80(void)
 {
-    if ((gFrameCount & 1) == 0) {
+    if ((gFrameCount & 1) == 0)
+    {
         volatile u16 *palette;
-        s16 saved;
-        s32 index;
+        s16           saved;
+        s32           index;
 
         saved = *(volatile u16 *)0x0500007c;
         index = 14;

@@ -1,7 +1,8 @@
 #include "types.h"
 #include "party_state.h"
 
-struct ContigoTopicState {
+struct ContigoTopicState
+{
     u8 unk000[340];
     s8 cursor[6];
 };
@@ -13,9 +14,9 @@ u32 Random16Far(void);
 s32 Func_02001a60(s32 topic)
 {
     struct ContigoTopicState *state;
-    s32 cursor;
-    s32 variant;
-    s32 index;
+    s32                       cursor;
+    s32                       variant;
+    s32                       index;
 
     if (topic < 0)
         return 0;
@@ -26,6 +27,9 @@ s32 Func_02001a60(s32 topic)
     variant = (cursor + (s32)((u32)(Random16Far() * 2) >> 16) + 4) % 3;
     state->cursor[topic] = variant;
     index = topic * 2;
-    do { } while (0); /* FAKEMATCH: a forced temporary and the loop note after it: the native loads the table address between the doubling of the topic and the rest of the index (two rows late as one expression, one row early with the note alone). */
+    /* FAKEMATCH: a forced temporary and the loop note after it: the native loads the table address between the doubling of the topic and the rest of the index (two rows late as one expression, one row early with the note alone). */
+    do
+    {
+    } while (0);
     return gData_02004630[index + topic + variant];
 }

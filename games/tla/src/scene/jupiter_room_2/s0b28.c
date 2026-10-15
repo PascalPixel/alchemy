@@ -5,17 +5,18 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct FieldActor *Object_GetById();
-s32 Map_GetTerrainHeight();
-void Func_0200223c();
-void Func_0200230c();
+s32                Map_GetTerrainHeight();
+void               Func_0200223c();
+void               Func_0200230c();
 
 void Func_02000b28(s32 id)
 {
     struct FieldActor *object;
-    s32 height;
+    s32                height;
 
     /* FAKEMATCH: the one-pass block loads the ground height before the word is cleared; as plain statements the ARM9TDMI schedule clears it first (differ 2). */
-    do {
+    do
+    {
         object = Object_GetById(id);
         object->motionFlags = 4;
         height = object->terrainHeight;

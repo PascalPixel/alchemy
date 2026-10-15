@@ -4,11 +4,11 @@
 
 struct FieldActor;
 
-void GameFlag_SetBit(s32 flag);
+void               GameFlag_SetBit(s32 flag);
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
-void Func_02004eec(s32 id, s32 a, s32 b);
-void Func_02004f6c(s32 a);
-void Func_02005014(s32 cue);
+void               Func_02004eec(s32 id, s32 a, s32 b);
+void               Func_02004f6c(s32 a);
+void               Func_02005014(s32 cue);
 
 static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b)
 {

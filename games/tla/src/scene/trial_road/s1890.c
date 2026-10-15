@@ -1,9 +1,9 @@
 #include "trial_road.h"
 
-extern const u8 gData_02007044[];
-extern const u8 gData_02007cf8[];
-extern const u8 gData_02007d40[];
-extern const u8 gData_02007d94[];
+extern const u8        gData_02007044[];
+extern const u8        gData_02007cf8[];
+extern const u8        gData_02007d40[];
+extern const u8        gData_02007d94[];
 extern const u8 *const gData_02007e00[];
 
 const u8 *Func_02001890(void)

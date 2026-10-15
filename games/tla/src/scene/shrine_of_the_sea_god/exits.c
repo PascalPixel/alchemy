@@ -30,7 +30,6 @@ extern const u8 gData_02004928[];
 extern const u8 gData_020049a0[];
 extern const u8 gData_020049f4[];
 
-
 const u32 *Scene_GetExits(void)
 {
     return gSceneExits;

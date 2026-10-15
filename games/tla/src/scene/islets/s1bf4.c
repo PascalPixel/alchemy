@@ -23,10 +23,13 @@ void Func_02001c4c(void)
     s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
     asm volatile("" : "+l"(y)); /* FAKEMATCH: the listing loads y before it builds 0x280000 */
-    if (y < 0x280000) {
+    if (y < 0x280000)
+    {
         Object_GetById(11)->collisionFlags |= 8;
         Object_GetById(12)->collisionFlags |= 8;
-    } else {
+    }
+    else
+    {
         Object_GetById(11)->collisionFlags &= ~8;
         Object_GetById(12)->collisionFlags &= ~8;
     }

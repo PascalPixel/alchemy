@@ -7,51 +7,51 @@
 #include "party_state.h"
 #include "field_scene.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
+extern const struct SceneEntrance  gSceneEntrances[];
+extern const u32                   gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
+extern const struct SceneEvent     gSceneEvents[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
-void Object_SetActionCallback(struct ObjectRuntime *object, s32 a);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void Func_02000800(void);
-void Func_02000970(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000978(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020009d0(s32 id, s32 x, s32 z);
-void Func_02000a38(s32 a);
-void Func_02000a48(s32 a, s32 b);
-void Func_02000a90(s32 id, s32 a);
-void Func_02000a98(s32 id, s32 a, s32 b);
-void Func_02000aa0(s32 a);
-void Func_02000988(void);
-void Func_02000990(void);
-void Func_02000a00(s32 message);
-void Func_02000a08(s32 id, s32 a, s32 b);
-void Func_02000a18(s32 id, s32 a, s32 b);
-void Func_02000a30(void);
-void Func_02000a70(s32 a);
-void Func_02000a78(s32 id, s32 x, s32 y, s32 z);
-void Func_020005e8(void);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 id, s32 a);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-extern u8 MsgMyThatWas;
-extern u8 MsgNotThatWay;
+void                  Object_SetModeById(u32 id, s32 mode);
+void                  Object_SetActionCallback(struct ObjectRuntime *object, s32 a);
+void                  ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void                  Func_02000800(void);
+void                  Func_02000970(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000978(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_020009d0(s32 id, s32 x, s32 z);
+void                  Func_02000a38(s32 a);
+void                  Func_02000a48(s32 a, s32 b);
+void                  Func_02000a90(s32 id, s32 a);
+void                  Func_02000a98(s32 id, s32 a, s32 b);
+void                  Func_02000aa0(s32 a);
+void                  Func_02000988(void);
+void                  Func_02000990(void);
+void                  Func_02000a00(s32 message);
+void                  Func_02000a08(s32 id, s32 a, s32 b);
+void                  Func_02000a18(s32 id, s32 a, s32 b);
+void                  Func_02000a30(void);
+void                  Func_02000a70(s32 a);
+void                  Func_02000a78(s32 id, s32 x, s32 y, s32 z);
+void                  Func_020005e8(void);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void                  ObjectMotion_Launch(s32 id, s32 a, s32 b);
+void                  ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void                  Object_AttachWorkTargetToObject(s32 id, s32 a);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+extern u8             MsgMyThatWas;
+extern u8             MsgNotThatWay;
 
 static __inline__ s32 GameFlag_Test_(s32 flag)
 {
@@ -77,7 +77,7 @@ static __inline__ void Battle_WaitMode0_(s32 frames)
     Battle_WaitMode0(frames);
 }
 
-static __inline__ struct ObjectRuntime * Object_GetById_(s32 id)
+static __inline__ struct ObjectRuntime *Object_GetById_(s32 id)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return Object_GetById(id);

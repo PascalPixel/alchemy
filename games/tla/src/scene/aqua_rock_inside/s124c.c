@@ -11,7 +11,7 @@ static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c)
 void Func_0200124c(void)
 {
     s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
-    s32 i;
+    s32  i;
 
     Func_02003d7c();
     Func_02003eac(0);
@@ -34,7 +34,8 @@ shake:
     if (i >= 0)
         goto shake;
     WaitFrames(10);
-    for (i = 127; i >= 0; i--) {
+    for (i = 127; i >= 0; i--)
+    {
         layer[3] += 0x4000;
         WaitFrames(1);
     }

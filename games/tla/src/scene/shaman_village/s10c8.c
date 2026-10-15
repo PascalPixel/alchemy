@@ -2,9 +2,12 @@
 
 void Func_020010c8(void)
 {
-    if (Func_02000f94()) {
+    if (Func_02000f94())
+    {
         Func_02004a7c(8);
-    } else {
+    }
+    else
+    {
         Func_020048c4();
         Func_02004a24(0);
         if (GameFlag_Test(0x9fe))
@@ -29,15 +32,21 @@ void Func_0200113c(void)
 {
     Func_020048c4();
     Func_02004a24(0);
-    if (ShamanVillage_FlagCheck(0x9ed)) {
+    if (ShamanVillage_FlagCheck(0x9ed))
+    {
         Func_0200498c((s32)MsgShamanMoapaNeverForgetsVictor);
         Func_020049a4(11, 0);
-    } else {
+    }
+    else
+    {
         Func_0200498c((s32)MsgShamanMoapaAsksVictorsNames);
         UiText_OpenMessageAtObject(11, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+        {
             Func_020049a4(11, 0);
-        } else {
+        }
+        else
+        {
             ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
             Func_020049a4(11, 0);
             ShamanVillage_FlagSet(0x9ed);
@@ -48,9 +57,12 @@ void Func_0200113c(void)
 
 void Func_020011c0(void)
 {
-    if (Func_02000f94()) {
+    if (Func_02000f94())
+    {
         Func_02004a74(29, 12);
-    } else {
+    }
+    else
+    {
         Func_020048c4();
         Func_02004a24(0);
         Func_0200498c((s32)MsgShamanWelcomeContigoHero);
@@ -73,22 +85,28 @@ void Func_0200122c(void)
 {
     Func_020048c4();
     Func_02004a24(0);
-    if (GameFlag_Test(0x301)) {
+    if (GameFlag_Test(0x301))
+    {
         if (GameFlag_Test(0xa21))
             Func_0200498c((s32)MsgShamanFortuneAvoidNortheast);
         else
             Func_0200498c((s32)MsgShamanFortuneAvoidSouth);
         Func_020049a4(17, 0);
-    } else {
+    }
+    else
+    {
         Engine_AudioPlayCue(0);
         if (GameFlag_Test(0xa21))
             Func_0200498c((s32)MsgShamanFortuneOfferAfterTrial);
         else
             Func_0200498c((s32)MsgShamanFortuneOfferBeforeTrial);
         UiText_OpenMessageAtObject(17, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+        {
             Func_020049a4(17, 0);
-        } else {
+        }
+        else
+        {
             ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
             Func_020049a4(17, 0);
             Engine_AudioPlayCue(11);
@@ -119,9 +137,12 @@ void Func_0200122c(void)
 
 void Func_02001380(void)
 {
-    if (GameFlag_Test(0x200)) {
+    if (GameFlag_Test(0x200))
+    {
         Func_0200498c((s32)MsgShamanTrialRulesAreSimple);
-    } else {
+    }
+    else
+    {
         Engine_AudioPlayCue(78);
         Func_020048c4();
         Func_02004a24(0);
@@ -199,14 +220,17 @@ void Func_02001644(void)
     UiText_OpenMessageAtObject(15, 0);
     Object_SetModeById(gPartyState.currentOwner, 1);
     ShamanVillage_ObjArm(gPartyState.currentOwner, 0xe000, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+    {
         Func_020049a4(15, 0);
         Func_020049e4(0x4cccc, 0x9999);
         ShamanVillage_CamMove(0xa80000, -1, 0x1700000, 1);
         ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
         ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 368);
         GameFlag_ClearBit(0x201);
-    } else {
+    }
+    else
+    {
         ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
         Func_020049a4(15, 0);
         Func_020049e4(0x13333, 0x2666);
@@ -231,18 +255,24 @@ void Func_02001764(void)
     ShamanVillage_ObjTurn(15, 0x8000);
     Func_0200498c((s32)MsgShamanChallengeTrialRoadPrompt);
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+    {
         ShamanVillage_MessagePut(0x200f, 0);
         Func_0200289c();
-    } else {
+    }
+    else
+    {
         ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
         ShamanVillage_MessageOpen(0x200f, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+        {
             Engine_AudioPlayCue(76);
             ShamanVillage_MessagePut(0x200f, 0);
             GameFlag_SetBit(0x200);
             Func_02001380();
-        } else {
+        }
+        else
+        {
             ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
             Func_0200290c();
         }

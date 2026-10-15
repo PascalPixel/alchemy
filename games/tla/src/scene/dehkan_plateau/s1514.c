@@ -7,7 +7,8 @@ void Func_02001514(s32 show, s32 first, u32 count)
 {
     u32 i;
 
-    for (i = 0; i < count;) {
+    for (i = 0; i < count;)
+    {
         u8 *flags = &Object_GetById(first + i)->priorityFlags;
         u32 next = i + 1;
 

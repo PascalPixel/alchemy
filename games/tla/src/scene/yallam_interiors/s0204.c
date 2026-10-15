@@ -20,10 +20,13 @@ void Func_02000244(void)
     msg = (s32)MsgYallamInteriors10;
     Func_02000a18(msg);
     UiText_OpenMessageAtObject(9, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000a18(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000a18(msg + 2);
     }
@@ -35,10 +38,16 @@ void Func_0200029c(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000)
+    {
         Func_02000a68(20, actor);
-    } else {
+    }
+    else
+    {
         Func_020009b0();
         Func_02000a50(0);
         Func_02000a18((s32)MsgYallamInteriors21);
@@ -51,10 +60,16 @@ void Func_020002fc(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000)
+    {
         Func_02000a68(21, actor);
-    } else {
+    }
+    else
+    {
         Func_020009b0();
         Func_02000a50(0);
         Func_02000a18((s32)MsgYallamInteriors23);
@@ -67,10 +82,16 @@ void Func_0200035c(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000)
+    {
         Func_02000a68(22, actor);
-    } else {
+    }
+    else
+    {
         Func_020009b0();
         Func_02000a50(0);
         Func_02000a18((s32)MsgYallamInteriors25);
@@ -83,11 +104,17 @@ void Func_020003bc(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000)
+    {
         Func_02000a78(7, actor);
         GameFlag_ClearBit(0x301);
-    } else {
+    }
+    else
+    {
         Func_020009b0();
         Func_02000a50(0);
         Func_02000a18((s32)MsgYallamInteriors27);
@@ -100,10 +127,16 @@ void Func_02000424(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
+    do
+    {
+    } while (0);
+    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000)
+    {
         Func_02000a70(actor);
-    } else {
+    }
+    else
+    {
         Func_020009b0();
         Func_02000a50(0);
         Func_02000a18((s32)MsgMikasallaInteriors27);
@@ -122,10 +155,13 @@ void Func_02000480(void)
     msg = (s32)MsgYallamInteriors31;
     Func_02000a18(msg);
     UiText_OpenMessageAtObject(14, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000a18(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000a18(msg + 2);
     }

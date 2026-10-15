@@ -2,7 +2,7 @@
 #include "party_state.h"
 #include "call.h"
 
-extern u8 MsgIsTheWay[];
+extern u8       MsgIsTheWay[];
 extern const u8 gData_020017f8[];
 
 void WaitFrames(s32 frames);

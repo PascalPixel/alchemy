@@ -1,19 +1,20 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern s16 gData_02001cde;
+extern s16                   gData_02001cde;
 extern struct ObjectRuntime *gData_02001ce0[];
-extern u16 gData_02001de2;
-extern u16 gData_02001de4;
-struct ObjectRuntime *Object_GetById(s32 id);
+extern u16                   gData_02001de2;
+extern u16                   gData_02001de4;
+struct ObjectRuntime        *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32  Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_02000ba4(s32 id, s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->action = value;
         /* FAKEMATCH: ⚓️ stores the action before it addresses the list */
         asm volatile("");

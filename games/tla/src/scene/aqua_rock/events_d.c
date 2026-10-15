@@ -33,9 +33,10 @@ void Func_02001164(s32 unused, s32 id)
 void Func_0200119c(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 column = object->x >> 20;
+    s32                   column = object->x >> 20;
 
-    if (column == 53) {
+    if (column == 53)
+    {
         WaitFrames(30);
         object->z += 0x10000;
         GameFlag_SetBit(0x951);
@@ -46,9 +47,10 @@ void Func_0200119c(s32 unused, s32 id)
 void Func_020011e0(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 column = object->x >> 20;
+    s32                   column = object->x >> 20;
 
-    if (column == 53) {
+    if (column == 53)
+    {
         WaitFrames(30);
         object->z += 0x10000;
         GameFlag_SetBit(0x952);

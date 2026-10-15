@@ -1,6 +1,6 @@
 #include "jupiter_room_m.h"
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_020047d4(void);
 void Func_020047dc(void);

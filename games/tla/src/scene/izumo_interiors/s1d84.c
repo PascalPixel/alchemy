@@ -1,7 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 typedef s32 (*HandlerFn)(void);
 

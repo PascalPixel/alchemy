@@ -15,8 +15,6 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-
-
 s32 Func_02000038(s32 arg0)
 {
     *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
@@ -24,21 +22,21 @@ s32 Func_02000038(s32 arg0)
     return 1;
 }
 
-void Battle_WaitMode0();
-void Func_02000a30();
-void Func_02000a38();
-void Func_02000a40();
-void Func_02000a68();
-void Func_02000a70();
-void Func_02000ab0();
-void Func_02000ac0();
-void Func_02000ad0();
-void Func_02000ad8();
-void Func_02000af0();
-void Func_02000b30();
-void GameFlag_SetBit();
-void GameFlag_Test();
-void Motion_CamBounds();
+void                  Battle_WaitMode0();
+void                  Func_02000a30();
+void                  Func_02000a38();
+void                  Func_02000a40();
+void                  Func_02000a68();
+void                  Func_02000a70();
+void                  Func_02000ab0();
+void                  Func_02000ac0();
+void                  Func_02000ad0();
+void                  Func_02000ad8();
+void                  Func_02000af0();
+void                  Func_02000b30();
+void                  GameFlag_SetBit();
+void                  GameFlag_Test();
+void                  Motion_CamBounds();
 struct ObjectRuntime *Object_GetById();
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -71,11 +69,12 @@ void Func_02000064(void)
 
 void Func_020000a8(void)
 {
-    s32 result0;
+    s32                   result0;
     struct ObjectRuntime *object1;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0x200);
-    if (result0 != 0) goto L_02008100;
+    if (result0 != 0)
+        goto L_02008100;
     Call1((void (*)())GameFlag_SetBit, 0x200);
     ((void (*)())Func_02000a68)();
     Call1((void (*)())Func_02000b30, 0);
@@ -93,11 +92,12 @@ L_02008100:
 
 void Func_02000108(void)
 {
-    s32 result0;
+    s32                   result0;
     struct ObjectRuntime *object1;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0x90c);
-    if (result0 != 0) goto L_020081d2;
+    if (result0 != 0)
+        goto L_020081d2;
     Call1((void (*)())GameFlag_SetBit, 0x90c);
     ((void (*)())Func_02000a68)();
     Call1((void (*)())Func_02000b30, 0);

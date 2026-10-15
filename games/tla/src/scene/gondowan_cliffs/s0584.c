@@ -3,11 +3,11 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void Func_020011d4();
-void Func_020011dc();
-void Func_0200124c();
-s32 Map_GetTerrainHeight(s32, s32, s32);
+void                  GameFlag_SetBit(s32 flag);
+void                  Func_020011d4();
+void                  Func_020011dc();
+void                  Func_0200124c();
+s32                   Map_GetTerrainHeight(s32, s32, s32);
 
 void Func_02000584(void)
 {
@@ -40,7 +40,8 @@ void Func_02000610(s32 unused, s32 cell)
 {
     struct ObjectRuntime *object;
 
-    if (cell == 30) {
+    if (cell == 30)
+    {
         object = Object_GetById(17);
         Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
         Call3(Func_0200124c, 17, 0x7780000, 0x2d80000);

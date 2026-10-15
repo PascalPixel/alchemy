@@ -3,26 +3,26 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02002ae8(const void *data, s32 a, s32 b);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02002ae8(const void *data, s32 a, s32 b);
 void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
@@ -36,7 +36,7 @@ void Func_02002bf8(s32 id, s32 a);
 void Func_02002c08(s32 id, s32 a, s32 b);
 void Func_02002c30(s32 a);
 void Func_02002c58(s32 a);
-s32 Func_02002c80(void);
+s32  Func_02002c80(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02002c90(s32 a);
 void Func_02000f80(void);
@@ -187,7 +187,8 @@ void Func_02000320(void)
 
 void Func_0200036c(void)
 {
-    if (Flag_Test(0x20f) == 0) {
+    if (Flag_Test(0x20f) == 0)
+    {
         Func_02002b28();
         Func_02002c58(0);
         Walk(33, 0x105, 30);
@@ -204,10 +205,13 @@ void Func_020003b8(s32 actor)
 
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02002bd0(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02002bd0(msg + 2);
     }
@@ -219,18 +223,24 @@ void Func_02000404(void)
     s32 msg;
 
     ObjectMotion_SetAngleToward(26, 4, 0);
-    if (Flag_Test(0x281)) {
+    if (Flag_Test(0x281))
+    {
         Func_02002bd0((s32)&MsgYeahWellWe);
-    } else {
+    }
+    else
+    {
         msg = (s32)&MsgYouCominThrough;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(26, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Flag_Set(0x281);
             Battle_WaitMode0(10);
             Walk(26, 0x102, 0);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Motion_SetModeAndWaitAnimation(26, 3);
             Func_02002bd0(msg + 2);
@@ -244,18 +254,24 @@ void Func_02000490(void)
     s32 msg;
 
     ObjectMotion_SetAngleToward(26, 4, 0);
-    if (Flag_Test(0x281)) {
+    if (Flag_Test(0x281))
+    {
         Func_02002bd0((s32)&MsgYeahUhWe);
-    } else {
+    }
+    else
+    {
         msg = (s32)&MsgOhUhYou;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(26, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Flag_Set(0x281);
             Battle_WaitMode0(10);
             Walk(26, 0x102, 0);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Motion_SetModeAndWaitAnimation(26, 3);
             Func_02002bd0(msg + 2);

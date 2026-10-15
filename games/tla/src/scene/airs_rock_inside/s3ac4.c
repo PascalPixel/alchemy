@@ -1,8 +1,8 @@
 #include "airs_rock_inside.h"
 
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02005e84(s32 owner, s32 a, s32 b);
-void Func_02005efc(s32 countdown);
+void               Func_02005e84(s32 owner, s32 a, s32 b);
+void               Func_02005efc(s32 countdown);
 
 void Func_02003ac4(void)
 {

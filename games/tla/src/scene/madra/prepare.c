@@ -4,26 +4,26 @@
 #include "party_state.h"
 #include "field_scene.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02002ae8(const void *data, s32 a, s32 b);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02002ae8(const void *data, s32 a, s32 b);
 void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
@@ -37,7 +37,7 @@ void Func_02002bf8(s32 id, s32 a);
 void Func_02002c08(s32 id, s32 a, s32 b);
 void Func_02002c30(s32 a);
 void Func_02002c58(s32 a);
-s32 Func_02002c80(void);
+s32  Func_02002c80(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02002c90(s32 a);
 void Func_02000f80(void);
@@ -182,10 +182,13 @@ void Func_0200083c(s32 actor)
     msg = (s32)&MsgWasIJust;
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02002bd0(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02002bd0(msg + 2);
     }
@@ -199,28 +202,37 @@ void Func_02000894(void)
 
     Func_02002b28();
     Func_02002c58(0);
-    if (GameFlag_Test(0x8ab)) {
+    if (GameFlag_Test(0x8ab))
+    {
         msg = (s32)&MsgHeyMisterAre;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(8, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02002bd0(msg + 2);
         }
         Func_02002be8(8, 0);
-    } else {
+    }
+    else
+    {
         if (GameFlag_Test(0x300) == 0)
             ObjectMotion_SetAngleToward(14, 4, 0);
         msg = (s32)&MsgDidYouCome;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(8, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02002bd0(msg + 2);
         }
@@ -237,20 +249,27 @@ void Func_02000968(void)
 
     Func_02002b28();
     Func_02002c58(0);
-    if (GameFlag_Test(0x8ab)) {
+    if (GameFlag_Test(0x8ab))
+    {
         msg = (s32)&MsgHeyMisterAre;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(8, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02002bd0(msg + 2);
         }
         Func_02002be8(8, 0);
-    } else {
-        if (GameFlag_Test(0x300) == 0) {
+    }
+    else
+    {
+        if (GameFlag_Test(0x300) == 0)
+        {
             x = 0x100;
             z = 30;
             /* FAKEMATCH: the native loads both distances before the actor id. */
@@ -261,10 +280,13 @@ void Func_02000968(void)
         msg = (s32)&MsgDidYouCome;
         Func_02002bd0(msg);
         UiText_OpenMessageAtObject(8, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02002bd0(msg + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02002bd0(msg + 2);
         }
@@ -287,11 +309,14 @@ void Func_02000a48(void)
     /* FAKEMATCH: the native loads the flags before the actor id. */
     __asm__ volatile("" : "+r"(flags));
     UiText_OpenMessageAtObject(11, flags);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         GameFlag_SetBit(0x301);
         Func_02002be8(11, 0);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
+    }
+    else
+    {
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be8(11, 0);
     }

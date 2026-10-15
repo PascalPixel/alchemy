@@ -19,7 +19,8 @@ s32 Func_02002444(s32 limit)
 {
     struct RideWork *work = RIDE_WORK;
 
-    if (!GameFlag_Test(260)) {
+    if (!GameFlag_Test(260))
+    {
         if (++work->counter >= limit)
             work->counter = 0;
     }
@@ -28,7 +29,7 @@ s32 Func_02002444(s32 limit)
 
 void Func_0200246c(s32 index, s32 value)
 {
-    struct RideWork *work = RIDE_WORK;
+    struct RideWork  *work = RIDE_WORK;
     struct RideEntry *entry = &work->entries[index];
 
     entry->d = (value & 15) << 16;

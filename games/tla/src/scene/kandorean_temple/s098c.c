@@ -1,15 +1,17 @@
 #include "local.h"
 
-s32 Math_Cosine(s32 angle);
+s32  Math_Cosine(s32 angle);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Func_02000930(struct ObjectRuntime *object, s32 priority);
-s32 Func_02000864(struct ObjectRuntime *object);
+s32  Func_02000864(struct ObjectRuntime *object);
 
 void Func_0200098c(s32 *position, s32 value)
 {
-    struct ObjectRuntime *object = Func_02005140_(0x11d, position[0], position[1], position[2] - 0x20000);
+    struct ObjectRuntime *object =
+        Func_02005140_(0x11d, position[0], position[1], position[2] - 0x20000);
 
-    if (object) {
+    if (object)
+    {
         s32 timer;
 
         object->bounce = Math_Cosine(((Random16Far() * 0x3000) >> 16) + 0x3000);
@@ -29,11 +31,11 @@ void Func_02000a0c(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *other = Object_GetById(12);
-    s32 vx = object->bounce;
-    s32 vz;
-    struct FieldSprite *sprite;
-    s32 rate;
-    s32 scale;
+    s32                   vx = object->bounce;
+    s32                   vz;
+    struct FieldSprite   *sprite;
+    s32                   rate;
+    s32                   scale;
 
     object->x += vx;
     object->y += object->gravity;
@@ -56,14 +58,16 @@ void Func_02000a0c(struct ObjectRuntime *object)
         /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action, as Func_02000864. */
         asm volatile("");
         sprite->rotation += object->action;
-        if (Func_02000824(first, leader)) {
+        if (Func_02000824(first, leader))
+        {
             ((struct FieldSprite *)object->animation)->priority = 3;
             object->z -= object->unk4c;
             object->gravity += object->unk4c >> 2;
             object->unk4c = 0;
         }
     }
-    if (Func_02000824(object, other)) {
+    if (Func_02000824(object, other))
+    {
         ((struct FieldSprite *)object->animation)->priority = 3;
         object->z -= object->unk4c;
         object->gravity += object->unk4c >> 3;

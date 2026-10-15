@@ -17,8 +17,8 @@ void Func_02003b24(void)
 void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
 {
     struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
-    struct ShamanVillageObject *object;
-    s32 cell;
+    struct ShamanVillageObject    *object;
+    s32                            cell;
 
     Func_020048c4();
     Func_02004a24(0);
@@ -29,7 +29,8 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
     ShamanVillage_MapCopy(a, b, c, d, mode, f);
     Battle_WaitMode0(20);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-    if (mode == 1) {
+    if (mode == 1)
+    {
         object = Object_GetById(gPartyState.currentOwner);
         cell = object->x >> 16;
         Func_02004834(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z);

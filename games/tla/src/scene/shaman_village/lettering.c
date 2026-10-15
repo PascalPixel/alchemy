@@ -5,14 +5,15 @@
 #include "io_reg.h"
 
 // The European editions' lettering sheet has one more palette row.
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) \
+    || defined(TLA_EDITION_IT)
 #define LETTERING_PALETTE_ROWS 6
 #else
 #define LETTERING_PALETTE_ROWS 5
 #endif
 
-extern s16 gData_02005158[];
-extern u8 gData_02004bfe[];
+extern s16  gData_02005158[];
+extern u8   gData_02004bfe[];
 extern char ResourceId_LetteringBanner;
 
 void Func_0200479c(const void *source, void *destination);
@@ -38,7 +39,8 @@ void Func_02002fb0(s32 graphic)
         graphic = 4;
     Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_LetteringBanner), buffer);
     Dma_Set(buffer + palette, (void *)0x050003e0, 0x84000008, REG_DMA3);
-    Vram_Load(gData_02005158[0], 0x400, (u8 *)((graphic << 10) + (s32)buffer + 32 * LETTERING_PALETTE_ROWS));
+    Vram_Load(gData_02005158[0], 0x400,
+        (u8 *)((graphic << 10) + (s32)buffer + 32 * LETTERING_PALETTE_ROWS));
     while ((s32)((struct DmaRegisters volatile *)REG_DMA3)->control < 0)
         ;
     MemFree(buffer);

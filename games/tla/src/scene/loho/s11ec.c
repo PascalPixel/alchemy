@@ -3,7 +3,7 @@
 
 extern char SceneId_Ov6A6Room1;
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void Func_020000ac(void);
 
 s32 Func_020011ec(void)

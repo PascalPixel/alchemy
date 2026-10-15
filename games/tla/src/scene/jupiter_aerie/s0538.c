@@ -35,13 +35,16 @@ s32 Func_02000604(void)
 
     Scene_SetArrivalFlags(0);
     Func_02001cb4();
-    if (GameFlag_Test(0xa0a)) {
+    if (GameFlag_Test(0xa0a))
+    {
         Func_02002ab8(13, 0, 0);
         Func_02002a50(66, 39, 1, 1, 70, 10);
         Func_02002a50(5, 75, 1, 1, 6, 75);
         Func_02002a48(5, 12, 1, 1, 6, 12);
         Func_02002a50(70, 39, 1, 1, 71, 10);
-    } else {
+    }
+    else
+    {
         Func_02001dbc(13, 3);
         Object_GetById(13)->priorityFlags |= 32;
     }
@@ -54,13 +57,16 @@ s32 Func_02000604(void)
         asm volatile("" : "+l"(last));
         Func_02002a78(object->x, object->z, 0, last);
     }
-    if (GameFlag_Test(0xa0b)) {
+    if (GameFlag_Test(0xa0b))
+    {
         Func_02002ab8(14, 0, 0);
         Func_02002a50(68, 39, 1, 1, 121, 10);
         Func_02002a50(58, 75, 1, 1, 57, 75);
         Func_02002a48(58, 12, 1, 1, 57, 12);
         Func_02002a50(72, 39, 1, 1, 120, 10);
-    } else {
+    }
+    else
+    {
         Func_02001dbc(14, 5);
         Object_GetById(14)->priorityFlags |= 32;
     }

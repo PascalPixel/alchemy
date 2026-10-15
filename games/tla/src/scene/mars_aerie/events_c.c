@@ -1,33 +1,33 @@
 #include "mars_aerie.h"
 #include "event_work.h"
 
-extern const u8 MsgWhatSTheMatter[];
+extern const u8       MsgWhatSTheMatter[];
 struct ObjectRuntime *Func_0200573c(void);
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_020053e4();
-void Func_020054e4();
-void Func_020055ac();
-void Func_020055fc();
-void Func_0200567c();
-void Func_020056ec();
-void Func_02005724();
-void Func_02005734();
-void Func_020057dc();
-void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_Launch();
-void ObjectMotion_SetActionVariant();
-void ObjectMotion_SetPositionAndCommit();
-void Object_SetModeById();
-void Object_SetPositionAndResetMotion();
-void Party_RemoveOwnerRestored();
-void UiText_OpenMessageAtObject(s32 actor, s32 flags);
-void WaitFrames();
-extern u8 gData_02006b70[];
-extern u8 gData_02006c20[];
+void                  Event_StartScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Func_020053e4();
+void                  Func_020054e4();
+void                  Func_020055ac();
+void                  Func_020055fc();
+void                  Func_0200567c();
+void                  Func_020056ec();
+void                  Func_02005724();
+void                  Func_02005734();
+void                  Func_020057dc();
+void                  GameFlag_SetBit();
+void                  Inventory_PromptAndSetObjectMode();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_SetActionVariant();
+void                  ObjectMotion_SetPositionAndCommit();
+void                  Object_SetModeById();
+void                  Object_SetPositionAndResetMotion();
+void                  Party_RemoveOwnerRestored();
+void                  UiText_OpenMessageAtObject(s32 actor, s32 flags);
+void                  WaitFrames();
+extern u8             gData_02006b70[];
+extern u8             gData_02006c20[];
 
 void Func_02005714(s32 actor, s32 a, s32 b);
 
@@ -40,7 +40,6 @@ static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b)
 
     Func_02005714(actor, second, third);
 }
-
 
 void Func_0200298c(s32 id)
 {
@@ -262,11 +261,14 @@ void Func_020029ac(void)
     Call2((void (*)())Object_SetPartAttribute, (s32)Object_GetById(0x1c), 0xf);
     Call3((void (*)())Func_0200567c, 0x1c, 0x2380000, 0x1120000);
     Object_GetById(0x11)->motionFlags = 0;
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x11), 0x1ec0000, 0x600000, 0x11c0000);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x11), 0x1ec0000,
+        0x600000, 0x11c0000);
     Object_GetById(0x1d)->motionFlags = 0;
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1d), 0x1fe0000, 0x600000, 0x1270000);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1d), 0x1fe0000,
+        0x600000, 0x1270000);
     Object_GetById(0x1e)->motionFlags = 0;
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1e), 0x21c0000, 0x600000, 0x12c0000);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1e), 0x21c0000,
+        0x600000, 0x12c0000);
     Call1((void (*)())WaitFrames, 1);
     Call1((void (*)())GameFlag_SetBit, 0x17c);
     Call1((void (*)())GameFlag_SetBit, 0x144);

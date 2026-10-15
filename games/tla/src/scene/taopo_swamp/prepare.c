@@ -9,10 +9,14 @@ void Func_02001eb8(void)
 {
     s32 frame = -1;
 
-    if (GameFlag_Test(0x348)) {
+    if (GameFlag_Test(0x348))
+    {
         frame = 62;
-    } else {
-        switch (gData_020035f0) {
+    }
+    else
+    {
+        switch (gData_020035f0)
+        {
         case 0:
             frame = 59;
             break;

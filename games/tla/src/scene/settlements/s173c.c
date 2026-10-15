@@ -6,9 +6,11 @@ void Func_0200173c(void)
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
-    if (work->actionCounter != 0) {
+    if (work->actionCounter != 0)
+    {
         Flag_Set(0x106);
         Func_02002118();
         Func_02002148();

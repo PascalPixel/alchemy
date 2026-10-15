@@ -7,9 +7,11 @@ void Func_0200094c(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *steam;
 
-    if ((gFrameCount & 7) == 0) {
+    if ((gFrameCount & 7) == 0)
+    {
         steam = Func_0200115c(14, leader->x, leader->y + 0x60000, leader->z);
-        if (steam) {
+        if (steam)
+        {
             ObjectDispatch_SetSingleChildFlags(steam, 0);
             Func_0200114c(steam, 1);
             Func_02001154(steam, gData_0200128c);

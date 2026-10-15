@@ -1,7 +1,8 @@
 #include "types.h"
 #include "object_runtime.h"
 
-struct YampiDesertVisual {
+struct YampiDesertVisual
+{
     u8 unk00[5];
     u8 flags05;
     u8 unk06[3];
@@ -14,18 +15,18 @@ struct YampiDesertVisual {
 };
 
 struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
-void Func_02004030(s32 item);
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+void                  Func_02004030(s32 item);
+u8                   *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void                  Runtime_ReleaseHeapBlock(s32 slot);
+s32                   VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 struct ObjectRuntime *Func_02001b70(void)
 {
     struct ObjectRuntime *object = Func_02003fc0(489, 232 << 16, 32 << 16, 200 << 16);
-    u8 *buffer = 0;
+    u8                   *buffer = 0;
 
     struct YampiDesertVisual *visual;
-    s32 mask;
+    s32                       mask;
 
     if (object == 0)
         return 0;

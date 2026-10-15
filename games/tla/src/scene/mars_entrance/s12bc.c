@@ -2,7 +2,8 @@
 
 void Func_020012bc(struct ObjectRuntime *object)
 {
-    switch (gFrameCount & 7) {
+    switch (gFrameCount & 7)
+    {
     case 0:
         Animation_ApplyChildValues(object, 0);
         break;

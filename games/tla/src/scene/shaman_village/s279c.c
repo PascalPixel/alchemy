@@ -29,7 +29,8 @@ void Func_020027e4(void)
 
 void Func_02002808(void)
 {
-    if (GameFlag_Test(0x9fe)) {
+    if (GameFlag_Test(0x9fe))
+    {
         Engine_AudioPlayCue(0);
         Func_020048c4();
         Func_02004a24(0);

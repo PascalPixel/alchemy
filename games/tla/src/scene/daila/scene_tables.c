@@ -10,7 +10,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gDailaEntrances;

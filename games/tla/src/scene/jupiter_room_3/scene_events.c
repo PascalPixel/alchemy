@@ -5,24 +5,28 @@
 void Func_02000134(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 placed = 0;
-    s32 i;
+    s32                   placed = 0;
+    s32                   i;
     /* FAKEMATCH: the mode pinned to r2 and set before an empty asm barrier builds it right after the motion flag store, before the position loads, as the native has it (plain, through Lift_ too: differ 2, built after both loads; a one-pass block on the store or the pin alone: differ 2). */
     register s32 mode asm("r2");
 
-    if (object->x >> 20 == 20 && object->z >> 20 == 36) {
+    if (object->x >> 20 == 20 && object->z >> 20 == 36)
+    {
         GameFlag_SetBit_(0xa04);
         placed = 1;
     }
     /* FAKEMATCH: the volatile x read stops PRE keeping x in r2 across the first test and reloading it after the call (plain: differ 22). */
-    if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36) {
+    if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36)
+    {
         GameFlag_SetBit_(0xa05);
         placed = 1;
     }
-    if (placed) {
+    if (placed)
+    {
         WaitFrames_(10);
         Func_02002470(134);
-        for (i = 0; i < 30; i++) {
+        for (i = 0; i < 30; i++)
+        {
             if (object->y <= object->terrainHeight && object->velocityY == 0)
                 break;
             WaitFrames(1);
@@ -59,11 +63,12 @@ s32 Func_020001d4(void)
 s32 Func_02000250(void)
 {
     struct ObjectRuntime *object;
-    s32 i;
-    s32 x;
+    s32                   i;
+    s32                   x;
 
     Scene_SetArrivalFlags(0);
-    if (GameFlag_Test(0xa04)) {
+    if (GameFlag_Test(0xa04))
+    {
         object = Object_GetById(14);
         object->motionFlags = 0;
         object->terrainHeight = -0x200000;
@@ -71,7 +76,8 @@ s32 Func_02000250(void)
         Func_020023b0_(14, 0x1480000, 0x2480000);
         Func_02002368(object->x, object->z, 0, 0);
     }
-    if (GameFlag_Test(0xa05)) {
+    if (GameFlag_Test(0xa05))
+    {
         object = Object_GetById(15);
         object->motionFlags = 0;
         object->terrainHeight = -0x200000;
@@ -96,8 +102,10 @@ s32 Func_02000250(void)
     Func_02000c78(9);
     Func_02000c78(10);
     Func_02000c78(11);
-    if (GameFlag_Test(0x200)) {
-        for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
+    if (GameFlag_Test(0x200))
+    {
+        for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000)
+        {
             Lift_(0x1000000, x, 0, 0);
             Func_02002458_(0x1000000, x, 0, 0);
             if (i <= 1)

@@ -3,8 +3,8 @@
 
 void Effect_MoveLocal(union FieldObject *object)
 {
-    s32 x;
-    s32 velocityX;
+    s32                 x;
+    s32                 velocityX;
     struct FieldSprite *sprite;
 
     x = object->effect.x;

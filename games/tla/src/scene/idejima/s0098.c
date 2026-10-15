@@ -6,12 +6,13 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Task_Wait(s32 frames);
+void                  Engine_ActorSetAnimation(s32 actor, s32 animation);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Task_Wait(s32 frames);
 
-struct ActorSprite {
-    u8 unk00[18];
+struct ActorSprite
+{
+    u8  unk00[18];
     u16 rotation;
 };
 
@@ -42,7 +43,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_SetAngleToward();
 void ObjectMotion_ArmCallback();
-s32 Engine_ActorShowEmote();
+s32  Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
 void Func_02003310();
 void Func_02003190();
@@ -50,8 +51,8 @@ void Func_02003228();
 void Func_02003298();
 void Motion_SetVarCbAndRefresh();
 void UiText_ShowPositionedMessageAndWait();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32  UiText_OpenMessageAtObject();
+s32  Inventory_PromptAndSetObjectMode();
 void Event_PrepareObjectAndApplyValue();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
@@ -59,7 +60,7 @@ void ObjectMotion_Launch();
 // A scene of actor 8 and the leader that ends by setting flag 0x863.
 void Func_020000f0(void)
 {
-    s32 message;
+    s32                   message;
     struct ObjectRuntime *actor;
     struct ObjectRuntime *leader;
 
@@ -154,10 +155,13 @@ void Func_020002b4(void)
     Battle_WaitMode0(40);
     Value3(Engine_ActorShowEmote, 5, 0x101, 0);
     Value2(UiText_OpenMessageAtObject, 5, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+    {
         Engine_ActorSetAnimation(5, 3);
         Engine_EventShowMessage(5, 0);
-    } else {
+    }
+    else
+    {
         *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
         Engine_EventShowMessage(5, 0);
     }

@@ -6,88 +6,89 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-extern u8 gData_020033c8[];
-void Battle_WaitMode0();
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02000438();
-void Func_02003130();
-void Func_02003138();
-void Func_02003198();
-void Func_020031c8();
-void Func_020031d8();
-void Func_020031f0();
-void Func_020031f8();
-void Func_02003200();
-void Func_02003218();
-void Func_02003240();
-void Func_02003260();
-void Func_020032a0();
-void Inventory_PromptAndSetObjectMode();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectDispatch_SetSingleChildFlags();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_EnableActionAndSetCallback();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndReset();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetVariantCallback();
-void Object_AttachWorkTargetToObject();
+extern u8             gData_020033c8[];
+void                  Battle_WaitMode0();
+void                  Event_StartScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Func_02000438();
+void                  Func_02003130();
+void                  Func_02003138();
+void                  Func_02003198();
+void                  Func_020031c8();
+void                  Func_020031d8();
+void                  Func_020031f0();
+void                  Func_020031f8();
+void                  Func_02003200();
+void                  Func_02003218();
+void                  Func_02003240();
+void                  Func_02003260();
+void                  Func_020032a0();
+void                  Inventory_PromptAndSetObjectMode();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectDispatch_SetSingleChildFlags();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_CommitPositionAndActivate();
+void                  ObjectMotion_EnableActionAndSetCallback();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_OffsetPositionAndReset();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_SetVariantCallback();
+void                  Object_AttachWorkTargetToObject();
 struct ObjectRuntime *Object_GetById();
-void Object_SetModeById();
-void Object_SetPositionAndResetMotion();
-void UiText_OpenMessageAtObject();
+void                  Object_SetModeById();
+void                  Object_SetPositionAndResetMotion();
+void                  UiText_OpenMessageAtObject();
 
 #include "map.h"
 #include "scene_ids.h"
 
-struct EventWork1c4 {
-    u8 unk000[0x1c4];
+struct EventWork1c4
+{
+    u8  unk000[0x1c4];
     u16 count;
 };
 
 extern u8 gData_020032b0[];
 extern u8 gData_0200333c[];
-void Battle_WaitMode0();
-void Func_02000438();
-void Func_02003130();
-void Func_02003138();
-void Func_020031c8();
-void Func_020031d8();
-void Func_020031f8();
-void Func_02003200();
-void Func_02003218();
-void Func_02003220();
-void Func_02003240();
-void Func_02003248();
-void Func_020032a0();
-void Func_020032a8();
-void Inventory_PromptAndSetObjectMode();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_EnableActionAndSetCallback();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndReset();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetVariantCallback();
-void Object_RefreshSelectorById();
-void Party_SetFields1eeAnd1f0();
-void UiText_OpenMessageAtObject();
+void      Battle_WaitMode0();
+void      Func_02000438();
+void      Func_02003130();
+void      Func_02003138();
+void      Func_020031c8();
+void      Func_020031d8();
+void      Func_020031f8();
+void      Func_02003200();
+void      Func_02003218();
+void      Func_02003220();
+void      Func_02003240();
+void      Func_02003248();
+void      Func_020032a0();
+void      Func_020032a8();
+void      Inventory_PromptAndSetObjectMode();
+void      Motion_CamBounds();
+void      Motion_SetModeAndWaitAnimation();
+void      Motion_SetVarCbAndRefresh();
+void      ObjectMotion_ArmCallback();
+void      ObjectMotion_CommitCurrentPositionAndActivate();
+void      ObjectMotion_EnableActionAndSetCallback();
+void      ObjectMotion_Launch();
+void      ObjectMotion_OffsetPositionAndReset();
+void      ObjectMotion_SetPositionAndReset();
+void      ObjectMotion_SetSpeedParameters();
+void      ObjectMotion_SetVariantCallback();
+void      Object_RefreshSelectorById();
+void      Party_SetFields1eeAnd1f0();
+void      UiText_OpenMessageAtObject();
 
 void Func_020004f4(void)
 {
     struct MapWork *map;
-    s32 result;
+    s32             result;
 
     Func_02003130();
     Call1((void (*)())Func_02003240, 0);
@@ -263,13 +264,16 @@ void Func_020004f4(void)
     Value3((s32 (*)())Func_020031f8, 25, 0x109, 50);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 0x1019, 0);
     result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result == 0) {
+    if (result == 0)
+    {
         Call1((void (*)())Battle_WaitMode0, 20);
         Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
         Call1((void (*)())Battle_WaitMode0, 20);
         Call3((void (*)())Func_020031d8, 5, 0, 10);
         ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
-    } else {
+    }
+    else
+    {
         Func_020032a0();
         Call1((void (*)())Battle_WaitMode0, 20);
         Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
@@ -288,7 +292,10 @@ void Func_020004f4(void)
     Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 9, 0, -16);
     Call1((void (*)())Battle_WaitMode0, 10);
     Call2((void (*)())Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov669, 99);
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (differ 2 without it). */
+    /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (differ 2 without it). */
+    do
+    {
+    } while (0);
     gPartyState.battleRule24b = 2;
     Call2((void (*)())Func_02003220, 10, 1);
     Func_02003138();
@@ -302,7 +309,7 @@ void Func_02000c5c(void)
     struct ObjectRuntime *object3;
     struct ObjectRuntime *object4;
     struct ObjectRuntime *object5;
-    s32 result6;
+    s32                   result6;
     struct ObjectRuntime *result7;
     struct ObjectRuntime *result8;
     struct ObjectRuntime *result9;
@@ -314,8 +321,8 @@ void Func_02000c5c(void)
     struct ObjectRuntime *object15;
     struct ObjectRuntime *object16;
     struct ObjectRuntime *object17;
-    s32 result18;
-    s32 result19;
+    s32                   result18;
+    s32                   result19;
     struct ObjectRuntime *object20;
     struct ObjectRuntime *object21;
     struct ObjectRuntime *object22;
@@ -405,7 +412,8 @@ void Func_02000c5c(void)
     Call1((void (*)())Battle_WaitMode0, 10);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 8, 0);
     result6 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result6 != 0) goto L_0200900c;
+    if (result6 != 0)
+        goto L_0200900c;
     Call1((void (*)())Battle_WaitMode0, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
     Call1((void (*)())Battle_WaitMode0, 10);
@@ -489,7 +497,8 @@ L_0200903c:
     Call3((void (*)())Func_020031d8, 0x1019, 0, 10);
     result7 = (struct ObjectRuntime *)Value3((s32 (*)())Func_020031f8, 8, 0x107, 0);
     result7->update = 0;
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result7, (result7->x + 0x160000), (result7->y + 0x80000), result7->z);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result7, (result7->x + 0x160000),
+        (result7->y + 0x80000), result7->z);
     Call1((void (*)())Battle_WaitMode0, 30);
     Call3((void (*)())Func_020031d8, 0x1008, 0, 10);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x8000, 0);
@@ -534,7 +543,8 @@ L_0200903c:
     Call3((void (*)())Func_020031d8, 17, 0, 10);
     result8 = (struct ObjectRuntime *)Value3((s32 (*)())Func_020031f8, 8, 0x100, 0);
     result8->update = 0;
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result8, (result8->x + 0x160000), (result8->y + 0x80000), result8->z);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result8, (result8->x + 0x160000),
+        (result8->y + 0x80000), result8->z);
     Value3((s32 (*)())Func_020031f8, 10, 0x100, 0);
     Value3((s32 (*)())Func_020031f8, 4, 0x100, 0);
     Value3((s32 (*)())Func_020031f8, 5, 0x100, 0);
@@ -722,7 +732,8 @@ L_0200903c:
         s32 x = result9->x;
         s32 y = result9->y;
         result9->update = 0;
-        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result9, x + 0x160000, y + 0x80000, result9->z);
+        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)result9, x + 0x160000, y + 0x80000,
+            result9->z);
     }
     Call1((void (*)())Battle_WaitMode0, 50);
     Call4((void (*)())Motion_CamBounds, 0x1d00000, -1, 0x1580000, 1);
@@ -749,7 +760,8 @@ L_0200903c:
     Call1((void (*)())Battle_WaitMode0, 30);
     Call3((void (*)())Func_020031d8, 0x1008, 0, 10);
     object10 = Object_GetById(8);
-    Call3((void (*)())Func_02003198, 8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000), ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
+    Call3((void (*)())Func_02003198, 8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
+        ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
     Value2((s32 (*)())Func_02003260, 8, 0);
     object11 = Object_GetById(8);
     Call2((void (*)())ObjectDispatch_SetSingleChildFlags, (s32)object11, 1);
@@ -1151,7 +1163,8 @@ L_0200903c:
     Call1((void (*)())Battle_WaitMode0, 10);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 25, 0);
     result18 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result18 != 0) goto L_0200ab7a;
+    if (result18 != 0)
+        goto L_0200ab7a;
     Call1((void (*)())Battle_WaitMode0, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 25, 3);
     Call1((void (*)())Battle_WaitMode0, 10);
@@ -1272,7 +1285,8 @@ L_0200abc0:
     Value2((s32 (*)())UiText_OpenMessageAtObject, 6, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xe000, 0);
     result19 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result19 != 0) goto L_0200afbe;
+    if (result19 != 0)
+        goto L_0200afbe;
     Call1((void (*)())Battle_WaitMode0, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
     Call1((void (*)())Battle_WaitMode0, 20);
@@ -1292,24 +1306,30 @@ L_0200afe8:
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
     object20 = Object_GetById(gPartyState.currentOwner);
-    if (object20 == 0) goto L_0200b03c;
-    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object20 + 10), *(s16 *)((u8 *)object20 + 18));
+    if (object20 == 0)
+        goto L_0200b03c;
+    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object20 + 10),
+        *(s16 *)((u8 *)object20 + 18));
 L_0200b03c:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 5);
     Call3((void (*)())Func_02003198, 5, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
     object21 = Object_GetById(gPartyState.currentOwner);
-    if (object21 == 0) goto L_0200b07a;
-    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object21 + 10), *(s16 *)((u8 *)object21 + 18));
+    if (object21 == 0)
+        goto L_0200b07a;
+    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object21 + 10),
+        *(s16 *)((u8 *)object21 + 18));
 L_0200b07a:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 6);
     Call3((void (*)())Func_02003198, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 25, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 25, 2);
     object22 = Object_GetById(gPartyState.currentOwner);
-    if (object22 == 0) goto L_0200b0b8;
-    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 25, *(s16 *)((u8 *)object22 + 10), *(s16 *)((u8 *)object22 + 18));
+    if (object22 == 0)
+        goto L_0200b0b8;
+    Call3((void (*)())ObjectMotion_ResetAndSetPosition, 25, *(s16 *)((u8 *)object22 + 10),
+        *(s16 *)((u8 *)object22 + 18));
 L_0200b0b8:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 25);
     Call3((void (*)())Func_02003198, 25, 0, 0);

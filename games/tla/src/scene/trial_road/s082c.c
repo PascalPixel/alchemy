@@ -4,7 +4,8 @@ void Func_0200082c(s32 a, s32 id)
 {
     s32 x;
 
-    if ((u32)(id - 15) <= 1) {
+    if ((u32)(id - 15) <= 1)
+    {
         Func_0200062c(id);
         return;
     }
@@ -20,10 +21,12 @@ void Func_0200082c(s32 a, s32 id)
         id = 19;
     if (x == 19)
         id = 20;
-    if (id != 0) {
+    if (id != 0)
+    {
         s32 flag = id + 0x203;
 
-        if (GameFlag_Test(flag) == 0) {
+        if (GameFlag_Test(flag) == 0)
+        {
             struct ObjectRuntime *object = Object_GetById(id);
 
             object->update = NULL;

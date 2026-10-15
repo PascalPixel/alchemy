@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;

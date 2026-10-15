@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 s32 ObjectTable_ReadActiveValue();
@@ -15,4 +20,3 @@ void Func_02000e04(s32 a0, s32 a1)
     Call1(UiWork_FinalizeEntityMatchingLocalizedId, t0);
     Call1(UiWork_FinalizeEntityMatchingLocalizedId, t1);
 }
-

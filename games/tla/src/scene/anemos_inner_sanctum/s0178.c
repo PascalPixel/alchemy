@@ -1,12 +1,12 @@
 #include "types.h"
 #include "callback_scheduler.h"
 
-extern u16 gData_02004434;
-extern u16 gData_0200443c;
-extern u16 gData_02004440;
+extern u16  gData_02004434;
+extern u16  gData_0200443c;
+extern u16  gData_02004440;
 extern u16 *gData_02004444;
-extern u16 gData_02004450;
-extern u16 gData_02004454;
+extern u16  gData_02004450;
+extern u16  gData_02004454;
 
 void Func_020001f8(void);
 

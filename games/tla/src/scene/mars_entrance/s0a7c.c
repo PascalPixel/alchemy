@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char     SceneId_Ov6aaRoom1;
+extern char     SceneId_Ov6aaRoom2;
+extern char     SceneId_Ov6aaRoom3;
+extern char     SceneId_Ov6aaRoom4;
+extern char     SceneId_Ov6aaRoom5;
+extern char     SceneId_Ov6aaRoom6;
+extern char     SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -53,7 +53,8 @@ void Func_02000af4(void)
         u8 *party = (u8 *)&gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party[0x2c2] = 2;
     }
@@ -76,7 +77,8 @@ void Func_02000b54(void)
 
 void Func_02000b84(s32 state, s32 frame)
 {
-    if (state == 1) {
+    if (state == 1)
+    {
         Func_02004de0(0x23e);
         Func_02004d58(0x10000, 0);
         Func_02004d60(60);
@@ -87,7 +89,8 @@ void Func_02000b84(s32 state, s32 frame)
     }
     if (frame > 96 && frame < 272 && frame % 30 == 0)
         Func_02000414(12);
-    if (frame == 276) {
+    if (frame == 276)
+    {
         Func_02004d58(0x7fff, 0);
         Func_02004d60(20);
     }

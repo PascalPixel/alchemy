@@ -7,32 +7,32 @@
 #include "party_state.h"
 #include "field_scene.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
+extern const struct SceneEntrance  gSceneEntrances[];
+extern const u32                   gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
+extern const struct SceneEvent     gSceneEvents[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02000618(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000620(s32 a);
-void Func_02000628(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000630(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000648(void);
-void Func_02000650(void);
-void Func_02000698(s32 message);
-void Func_020006a8(s32 id, s32 a);
-void Func_020006d0(s32 a);
-void Func_020006d8(s32 a, s32 b, s32 c);
-s32 Func_020006e8(void);
+void                  Object_SetModeById(u32 id, s32 mode);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02000618(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000620(s32 a);
+void                  Func_02000628(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000630(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000648(void);
+void                  Func_02000650(void);
+void                  Func_02000698(s32 message);
+void                  Func_020006a8(s32 id, s32 a);
+void                  Func_020006d0(s32 a);
+void                  Func_020006d8(s32 a, s32 b, s32 c);
+s32                   Func_020006e8(void);
 
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
@@ -65,7 +65,7 @@ static __inline__ void Battle_WaitMode0_(s32 frames)
     Battle_WaitMode0(frames);
 }
 
-static __inline__ struct ObjectRuntime * Object_GetById_(s32 id)
+static __inline__ struct ObjectRuntime *Object_GetById_(s32 id)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return Object_GetById(id);

@@ -2,20 +2,23 @@
 
 s32 Func_02001564(struct ObjectRuntime *object)
 {
-    s32 flag;
-    s32 count;
+    s32                   flag;
+    s32                   count;
     struct ObjectRuntime *spark;
-    s32 scale;
+    s32                   scale;
 
-    if (object->y + object->velocityY < object->terrainHeight) {
+    if (object->y + object->velocityY < object->terrainHeight)
+    {
         flag = GameFlag_Test(0x221);
-        if (flag) {
+        if (flag)
+        {
             Func_020029b0(106);
             return 0;
         }
         spark = Func_02002808_(0x10d, object->x, object->y, object->z);
         scale = 0x8ccc;
-        if (spark) {
+        if (spark)
+        {
             spark->scaleX = scale;
             spark->scaleY = scale;
             Func_02002800(spark, gData_02002a48);
@@ -25,9 +28,11 @@ s32 Func_02001564(struct ObjectRuntime *object)
         Func_020029b0(106);
         object->y = object->terrainHeight;
         object->velocityY = 0;
-        if (GameFlag_Test(0x104) == 0) {
+        if (GameFlag_Test(0x104) == 0)
+        {
             count = GameFlag_GetByte_(0x230);
-            if (count <= 3) {
+            if (count <= 3)
+            {
                 count++;
                 GameFlag_SetByte_(0x230, count);
             }

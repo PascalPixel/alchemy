@@ -4,7 +4,8 @@ void Func_02002e04(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object != 0) {
+    if (object != 0)
+    {
         u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
 
         meta[5] = 0;
@@ -17,7 +18,7 @@ void Func_02002e04(s32 id)
 void Func_02002e34(s32 entrance)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 i;
+    s32                   i;
 
     Func_02003d7c();
     Func_02003eac(0);
@@ -29,7 +30,8 @@ void Func_02002e34(s32 entrance)
     Func_02003ef4(215);
     Func_02003cc4(leader, 18);
     Func_02003ef4(612);
-    for (i = 0; i < 60; i++) {
+    for (i = 0; i < 60; i++)
+    {
         s32 angle;
 
         if (i == 30)

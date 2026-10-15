@@ -1,15 +1,15 @@
 #include "contigo.h"
 
-extern u16 gData_02006000;
-extern u16 gData_02006008;
-extern u16 gData_0200600c;
+extern u16  gData_02006000;
+extern u16  gData_02006008;
+extern u16  gData_0200600c;
 extern u16 *gData_02006010;
-extern u16 gData_0200601c;
-extern u16 gData_02006020;
+extern u16  gData_0200601c;
+extern u16  gData_02006020;
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
-s32 Func_020001d4(s16 *list);
+s32  Func_020001d4(s16 *list);
 void Func_020001f8(void);
 
 void Func_020000f4(void)

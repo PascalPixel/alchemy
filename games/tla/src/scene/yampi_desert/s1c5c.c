@@ -3,10 +3,11 @@
 void Func_02001c5c(void)
 {
     struct FieldActor *object;
-    s16 scene;
+    s16                scene;
 
     ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = gData_02004808;
-    if (gData_0200480c != 0) {
+    if (gData_0200480c != 0)
+    {
         scene = gPartyState.scene;
         if (scene == (s32)&SceneId_Ov661Room4)
             object = Object_GetById(16);

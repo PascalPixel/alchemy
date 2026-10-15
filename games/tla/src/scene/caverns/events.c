@@ -51,7 +51,8 @@ void Func_02000e6c(void)
 
 void Func_02000e88(s32 arg0)
 {
-    if (arg0 != 1) goto L_02008e9c;
+    if (arg0 != 1)
+        goto L_02008e9c;
     Value0((s32 (*)())Func_02000d28);
     Value1((s32 (*)())GameFlag_SetBit, 0x9af);
 L_02008e9c:
@@ -63,7 +64,8 @@ void Func_02000ea0(void)
     s32 result0;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0x917);
-    if (result0 == 0) goto L_02008eee;
+    if (result0 == 0)
+        goto L_02008eee;
     Call6((void (*)())Func_020010ac, 31, 43, 9, 12, 48, 47);
     Call6((void (*)())Func_02001094, 30, 110, 48, 110, 9, 13);
     Call6((void (*)())Func_020010ac, 52, 110, 1, 1, 52, 111);

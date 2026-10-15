@@ -20,7 +20,8 @@ void Func_02000c90(void)
     Object_SetModeById(7, 2);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
-        ObjectMotion_ResetAndSetPosition(7, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
+        ObjectMotion_ResetAndSetPosition(
+            7, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
     ObjectMotion_CommitCurrentPositionAndActivate(7);
     Func_02005b0c(7, 0, 0);
     GameFlag_ClearBit(0x92f);

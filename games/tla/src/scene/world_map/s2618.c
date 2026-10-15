@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02004c88(s32 id, s32 x, s32 z);
+void                  Func_02004c88(s32 id, s32 x, s32 z);
 
 static __inline__ void PosSet(s32 id, s32 x, s32 z)
 {

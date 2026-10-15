@@ -3,7 +3,7 @@
 void Func_02003278(void)
 {
     void *buffer;
-    s32 priority;
+    s32   priority;
 
     Iwram_ClearWords(&gData_0200536c, 0x604);
     buffer = MemAlloc_(0xc80);

@@ -4,7 +4,8 @@ void Func_020036d0(void)
 {
     if (Object_GetById(64) != 0)
         Func_02004090(64, 0, 0);
-    if (gPartyState.entrance == 2) {
+    if (gPartyState.entrance == 2)
+    {
         GameFlag_ClearBit(0xa29);
         GameFlag_ClearBit(0xa2a);
         GameFlag_SetBit(0xa2b);
@@ -21,15 +22,19 @@ void Func_0200371c(void)
 {
     ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     GameFlag_SetBit(0x144);
-    if (gPartyState.entrance == 1 && !GameFlag_Test(0x88c)) {
+    if (gPartyState.entrance == 1 && !GameFlag_Test(0x88c))
+    {
         Func_02002ebc();
-    } else {
+    }
+    else
+    {
         /* FAKEMATCH: the memory clobber keeps GCSE from carrying the party state's address from the first test into this one, which reloads it (plainly PRE keeps it in r5 across the flag test, differ 13; a one-pass block, an empty asm without the clobber and the scene layer's flag tests leave it). */
         asm("" ::: "memory");
         if (gPartyState.entrance == 2 && !GameFlag_Test(0x88c))
             Func_02001bec();
     }
-    if (GameFlag_Test(0x8ed)) {
+    if (GameFlag_Test(0x8ed))
+    {
         Func_02003ff0(35, 39, 13, 11, 3, 3);
         Scene_Call4090(9, 232 << 16, 200 << 16);
     }

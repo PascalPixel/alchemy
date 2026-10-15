@@ -4,11 +4,11 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById();
-void Motion_CamBounds();
-void Object_AttachWorkTargetToObject();
-void Func_02000190(s32, s32);
-void Func_02000200(s32, s32);
-s32 Func_02004c7c();
+void                  Motion_CamBounds();
+void                  Object_AttachWorkTargetToObject();
+void                  Func_02000190(s32, s32);
+void                  Func_02000200(s32, s32);
+s32                   Func_02004c7c();
 
 void Func_02000394(s32 unused, s32 id)
 {
@@ -27,9 +27,9 @@ void Func_02000394(s32 unused, s32 id)
 void Func_0200042c(s32 mode, s32 id)
 {
     struct ObjectRuntime *object;
-    s32 x;
-    s32 z;
-    s32 open;
+    s32                   x;
+    s32                   z;
+    s32                   open;
 
     object = Object_GetById(id);
     x = object->x >> 20;

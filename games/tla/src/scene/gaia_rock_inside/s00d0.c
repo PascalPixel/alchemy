@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 s32 Engine_ObjectCreate();
@@ -12,7 +17,8 @@ s32 Func_020000d0(s32 a0, s32 a1, s32 a2, s32 a3)
     s32 t0;
 
     t0 = Value4(Engine_ObjectCreate, a3, a0, a1, a2);
-    if (t0 != 0) {
+    if (t0 != 0)
+    {
         Call2(Object_SetSpritePriority, t0, 1);
         FIELD_AT((t0 + 0x55), u8, 0) = 0;
         FIELD_AT(((t0 + 0x55) + 4), u8, 0) = 8;
@@ -23,4 +29,3 @@ s32 Func_020000d0(s32 a0, s32 a1, s32 a2, s32 a3)
     }
     return 0;
 }
-

@@ -9,14 +9,13 @@
 #include "scene_ids.h"
 #include "field_sprite.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-s32 Random16Far(void);
-
+void                  ObjectMotion_SetActionVariant(u32 id, s32 variant);
+s32                   Random16Far(void);
 
 extern s16 gData_02003780;
 extern s16 gData_02003782;
@@ -24,7 +23,7 @@ extern s16 gData_02003784;
 extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Battle_WaitMode0(s32 frames);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
@@ -33,7 +32,7 @@ void Func_02000b30(s32 id, s32 cue);
 void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_02001f7c(void);
-s32 Func_02002dcc(void (*callback)(void));
+s32  Func_02002dcc(void (*callback)(void));
 void Func_02002df4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002dfc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002e24(s32 a, s32 b, s32 c);

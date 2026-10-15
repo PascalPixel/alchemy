@@ -12,16 +12,22 @@ void Func_02000318(s32 actor)
     message = (s32)MsgGarohInteriors01;
     Func_02000844(message);
     Message_Open(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+    {
         Func_02000844(message + 2);
         Message_Open(actor, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+        {
             Func_0200085c(actor, 0);
-        } else {
+        }
+        else
+        {
             ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
             Func_0200085c(actor, 0);
         }
-    } else {
+    }
+    else
+    {
         Func_0200085c(actor, 0);
     }
     Func_020007fc();
@@ -81,10 +87,13 @@ void Func_0200049c(void)
 
     Func_02000844(message);
     UiText_OpenMessageAtObject(11, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000844(message + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000844(message + 2);
     }
@@ -96,20 +105,24 @@ void Func_0200049c(void)
 // first room, the entrance.
 const u8 *Func_020004f0(void)
 {
-    s32 moved = GameFlag_Test(0x91b);
+    s32                moved = GameFlag_Test(0x91b);
     struct PartyState *party = &gPartyState;
-    s32 room1 = (s32)&SceneId_Ov660Room1;
-    s32 scene;
+    s32                room1 = (s32)&SceneId_Ov660Room1;
+    s32                scene;
 
-    if (moved) {
+    if (moved)
+    {
         scene = party->scene;
         if (scene == room1)
             return gData_02000e44;
         if (scene == (s32)&SceneId_Ov660Room2)
             return gData_02000fe8;
-    } else {
+    }
+    else
+    {
         scene = party->scene;
-        if (scene == room1) {
+        if (scene == room1)
+        {
             if (party->entrance == 99)
                 return gData_02000e44;
             return gData_02000b80;

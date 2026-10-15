@@ -4,7 +4,8 @@ struct FieldActor *Func_020000d0(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         Object_SetSpritePriority(object, 1);
         object->motionFlags = 0;
         object->collisionFlags = 8;

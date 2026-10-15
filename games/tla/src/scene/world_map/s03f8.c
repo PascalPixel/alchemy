@@ -12,19 +12,20 @@ extern u8 gData_02006700[];
 extern u8 gData_02006790[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void UiWork_FinalizePendingCore(void);
-void Func_02003bf0(void);
-void Func_020049bc(void);
-void Func_02004b28(void);
-void Func_02004ba8(s32 a, s32 b);
-void Func_02004da8(void);
-void Func_02004db0(void);
-s32 Func_02004e10(void);
+void                  UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void                  UiWork_FinalizePendingCore(void);
+void                  Func_02003bf0(void);
+void                  Func_020049bc(void);
+void                  Func_02004b28(void);
+void                  Func_02004ba8(s32 a, s32 b);
+void                  Func_02004da8(void);
+void                  Func_02004db0(void);
+s32                   Func_02004e10(void);
 
 u8 *Func_020003f8(void)
 {
-    switch (gPartyState.entrance) {
+    switch (gPartyState.entrance)
+    {
     case 64:
         return gData_02006500;
     case 65:
@@ -48,7 +49,8 @@ void Func_02000458(void)
     /* FAKEMATCH: an empty asm after the work load keeps it ahead of the 0x212 offset, which the native starts before it loads gPartyState's address (plain: differ 4; a one-pass block in its place: 2). */
     asm("");
     gPartyState.renderMode = 8;
-    if (Flag_IsSet(0x147)) {
+    if (Flag_IsSet(0x147))
+    {
         Func_02004da8();
         Func_02004ba8(153, 4);
         UiText_ShowPositionedMessageAndWait((s32)MsgBlank2, 4);
@@ -60,7 +62,8 @@ void Func_02000458(void)
         work[3387] = 0;
     else
         work[3387] = 1;
-    if (Flag_IsSet(0x147)) {
+    if (Flag_IsSet(0x147))
+    {
         UiWork_FinalizePendingCore();
         Func_02004db0();
     }

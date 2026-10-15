@@ -9,7 +9,8 @@ void Func_020004e4(s32 a, s32 b)
     const s8 *x = gData_02000ee0;
     const s8 *z = gData_02000ee0 + 1;
 
-    for (i = 9; i <= 14; i++) {
+    for (i = 9; i <= 14; i++)
+    {
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object->x >> 20 != *x)
@@ -32,15 +33,19 @@ void Func_020004e4(s32 a, s32 b)
 void Func_02000534(s32 a)
 {
     struct PartyState *party;
-    s32 held = Func_02000d4c();
+    s32                held = Func_02000d4c();
 
     party = &gPartyState;
-    if (held) {
-        if (Func_02000d0c(party->currentOwner) != -1) {
+    if (held)
+    {
+        if (Func_02000d0c(party->currentOwner) != -1)
+        {
             Func_02000d54();
             Func_020004e4(0, a);
         }
-    } else {
+    }
+    else
+    {
         if (Object_GetById(party->currentOwner)->y > -0x1c0000)
             Func_02000d14();
     }

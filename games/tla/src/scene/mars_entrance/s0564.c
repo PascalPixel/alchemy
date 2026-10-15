@@ -2,8 +2,9 @@
 #include "ram_buffer.h"
 #include "scene_call.h"
 
-struct EventWork {
-    u8 unk000[0x15a];
+struct EventWork
+{
+    u8  unk000[0x15a];
     u16 unk15a;
 };
 

@@ -25,9 +25,9 @@ void Func_02003574(void)
 void Func_02003584(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    u32 i;
-    s32 delta;
-    struct PartyState *party;
+    u32                   i;
+    s32                   delta;
+    struct PartyState    *party;
 
     Func_020051c0();
     Func_02005370(0);
@@ -43,7 +43,8 @@ void Func_02003584(void)
         __asm__("" : "+l"(owner) : "l"(mode));
         Object_SetModeById(*owner, mode);
     }
-    for (i = 0; i <= 7; i++) {
+    for (i = 0; i <= 7; i++)
+    {
         Object_SetPositionAndResetMotion(object, object->x, object->y, object->z + 0x30000);
         WaitFrames_(1);
     }
@@ -58,7 +59,8 @@ void Func_02003584(void)
     Object_SetModeById_(party->currentOwner, 28);
     Battle_WaitMode0_(10);
     ObjectMotion_SetActionVariant_(party->currentOwner, 3);
-    for (i = 0; i <= 39; i++) {
+    for (i = 0; i <= 39; i++)
+    {
         {
             s32 scale = object->scaleX;
 
@@ -72,7 +74,8 @@ void Func_02003584(void)
         WaitFrames_(1);
         if (i == 10)
             Func_020053d8(204);
-        if (i == 20) {
+        if (i == 20)
+        {
             ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
             Event_FinishScreenTransition();
         }

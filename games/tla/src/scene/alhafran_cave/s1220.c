@@ -9,4 +9,3 @@ void Func_02001228(void)
 {
     ObjectGroup_ApplyRandomChildValues();
 }
-

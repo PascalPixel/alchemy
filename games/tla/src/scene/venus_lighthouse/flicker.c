@@ -10,8 +10,7 @@
 #include "types.h"
 #include "field_event.h"
 
-#define Object_SetPartAttribute ((void (*)(void*,s32))Object_SetPartAttribute)
-
+#define Object_SetPartAttribute ((void (*)(void *, s32))Object_SetPartAttribute)
 
 extern u32 gFrameCount;
 

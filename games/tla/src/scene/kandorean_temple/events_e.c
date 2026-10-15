@@ -14,11 +14,11 @@ void Func_02000864(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *other = Object_GetById(8);
-    s32 vx = object->bounce;
-    s32 vz;
-    struct FieldSprite *sprite;
-    s32 rate;
-    s32 scale;
+    s32                   vx = object->bounce;
+    s32                   vz;
+    struct FieldSprite   *sprite;
+    s32                   rate;
+    s32                   scale;
 
     object->x += vx;
     object->y += object->gravity;
@@ -36,13 +36,16 @@ void Func_02000864(struct ObjectRuntime *object)
     /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action (differ 2 without it). */
     asm volatile("");
     sprite->rotation += object->action;
-    if (leader->y == 0) {
-        if (Func_02000824(object, leader)) {
+    if (leader->y == 0)
+    {
+        if (Func_02000824(object, leader))
+        {
             object->z -= object->unk4c;
             object->gravity += object->unk4c >> 2;
             object->unk4c = 0;
         }
-        if (leader->y == 0 && Func_02000824(object, other)) {
+        if (leader->y == 0 && Func_02000824(object, other))
+        {
             object->z -= object->unk4c;
             object->gravity += object->unk4c >> 2;
             object->unk4c = 0;

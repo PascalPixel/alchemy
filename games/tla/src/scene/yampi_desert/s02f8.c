@@ -17,7 +17,8 @@ const u8 *Func_020002f8(void)
 
     if (scene == (s32)&SceneId_Ov661Room1)
         return gData_020049dc;
-    if (scene == (s32)&SceneId_Ov661Room2) {
+    if (scene == (s32)&SceneId_Ov661Room2)
+    {
         if (GameFlag_Test(0x8f0))
             return gData_02004b44;
         return gData_02004a84;

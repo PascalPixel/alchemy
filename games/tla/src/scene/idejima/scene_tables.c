@@ -10,11 +10,11 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum {
+enum
+{
     ENTRANCE_WAKE = 2,
     ENTRANCE_WAKE_AGAIN = 4
 };
-
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -38,7 +38,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    switch (gPartyState.entrance) {
+    switch (gPartyState.entrance)
+    {
     case 1:
     case 3:
         return gIdejimaEventsEntrance1;

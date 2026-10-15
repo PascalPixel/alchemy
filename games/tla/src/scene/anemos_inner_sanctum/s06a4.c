@@ -6,12 +6,12 @@
 extern const u8 gData_02003674[];
 
 struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void Func_020032e0(struct ObjectRuntime *object, s32 mode);
-void Func_020032e8(struct ObjectRuntime *object, const u8 *script);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void                  Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void                  Func_020032e0(struct ObjectRuntime *object, s32 mode);
+void                  Func_020032e8(struct ObjectRuntime *object, const u8 *script);
 
 void Func_020006a4(struct ObjectRuntime *source)
 {

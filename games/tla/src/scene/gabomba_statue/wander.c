@@ -1,17 +1,18 @@
 #include "types.h"
 
-struct Wanderer {
-    u8 unk00[6];
+struct Wanderer
+{
+    u8  unk00[6];
     u16 facing;
-    u8 unk08[90];
-    u8 timer;
-    u8 turned;
+    u8  unk08[90];
+    u8  timer;
+    u8  turned;
     u16 facingA;
     u16 facingB;
 };
 
 void Func_020057cc(s32 a, s32 b);
-u32 Random16Far(void);
+u32  Random16Far(void);
 
 void Func_02000280(void)
 {
@@ -21,22 +22,28 @@ s32 Func_0200028c(struct Wanderer *actor)
 {
     u8 *timer = &actor->timer;
 
-    if (*timer != 0) {
+    if (*timer != 0)
+    {
         (*timer)--;
-    } else {
-        u8 *turned;
+    }
+    else
+    {
+        u8  *turned;
         u16 *facing;
 
         *timer = (Random16Far() * 40 >> 16) + 10;
         /* FAKEMATCH: ⚓️ stores the new time before it addresses the turn flag */
         asm volatile("");
         turned = &actor->turned;
-        if (*turned != 0) {
+        if (*turned != 0)
+        {
             *turned = 0;
             /* FAKEMATCH: and clears the flag before it addresses the facing */
             asm volatile("");
             facing = &actor->facingA;
-        } else {
+        }
+        else
+        {
             *turned = 1;
             facing = &actor->facingB;
         }

@@ -10,9 +10,12 @@ void Func_020000a0(struct KibomboObject *object)
 
 s32 Func_020000c4(struct KibomboObject *object)
 {
-    if (object->timer != 0) {
+    if (object->timer != 0)
+    {
         object->timer--;
-    } else {
+    }
+    else
+    {
         object->timer = ((Random16Far() * 10) >> 16) + 10;
         object->facing = Random16Far();
     }

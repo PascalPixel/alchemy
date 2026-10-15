@@ -48,10 +48,13 @@ void Func_02000564(void)
 
     Func_02000648();
     Func_020006d0(0);
-    if (x % 16 <= 7) {
+    if (x % 16 <= 7)
+    {
         ObjectMotion_CommitPositionAndActivate_(4, -4, -4);
         ObjectMotion_CommitPositionAndActivate_(4, -4, -8);
-    } else {
+    }
+    else
+    {
         ObjectMotion_CommitPositionAndActivate_(4, 4, -4);
         ObjectMotion_CommitPositionAndActivate_(4, 4, -8);
     }

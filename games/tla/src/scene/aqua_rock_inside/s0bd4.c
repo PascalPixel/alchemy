@@ -5,7 +5,8 @@ void Func_02000bd4(void)
     s32 i;
     s32 result;
 
-    if (GameFlag_Test(0x249)) {
+    if (GameFlag_Test(0x249))
+    {
         Func_02000b24(12, 38);
         Func_02003628();
         Func_02003688(12, 2, 45, 1);

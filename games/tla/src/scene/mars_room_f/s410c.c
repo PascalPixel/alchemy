@@ -8,7 +8,8 @@ void Func_0200410c(void)
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
     asm volatile("");
-    if (S16_AT(event, 0xca2)) {
+    if (S16_AT(event, 0xca2))
+    {
         Flag_Set(0x106);
         Func_02005608();
         Func_02005640();

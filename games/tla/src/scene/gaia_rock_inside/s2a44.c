@@ -1,10 +1,10 @@
 #include "types.h"
 #include "party_state.h"
 
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
-extern char SceneId_Ov681Room5;
+extern char     SceneId_Ov681Room2;
+extern char     SceneId_Ov681Room3;
+extern char     SceneId_Ov681Room4;
+extern char     SceneId_Ov681Room5;
 extern const u8 gData_02005ee8[];
 extern const u8 gData_02005f30[];
 extern const u8 gData_02005fcc[];

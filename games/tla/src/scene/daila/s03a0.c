@@ -143,7 +143,8 @@ void Func_020003a0(void)
     Engine_EventWait(30);
     ObjectMotion_SetAngleToward(5, gPartyState.currentOwner, 0);
     Engine_EventOpenMessage(5, 0);
-    if (Engine_EventChooseYesNo(Engine_PartyGetLeaderActor(), 0) == 0) {
+    if (Engine_EventChooseYesNo(Engine_PartyGetLeaderActor(), 0) == 0)
+    {
         Engine_EventWait(30);
         Engine_EventSetMessage(msg + 11);
         Engine_EventShowMessage(27, 0);
@@ -153,7 +154,9 @@ void Func_020003a0(void)
         ObjectMotion_SetAngleToward(5, 27, 0);
         Engine_EventShowMessage(5, 0);
         Engine_EventSetMessage(msg + 15);
-    } else {
+    }
+    else
+    {
         Engine_EventWait(30);
         Engine_EventSetMessage(msg + 13);
         Engine_EventShowMessage(27, 0);

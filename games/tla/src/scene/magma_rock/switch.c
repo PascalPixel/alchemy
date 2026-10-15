@@ -5,16 +5,16 @@
 #include "magma_rock.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Func_020014bc(s32 mode, s32 cue);
-void Func_02003aec(void);
-void Func_02003af4(void);
-void Func_02003b7c(s32 a);
-void Func_02003bcc(s32 value);
-void Func_02003c54(s32 a);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  Battle_WaitMode0(s32 frames);
+void                  ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void                  Func_020014bc(s32 mode, s32 cue);
+void                  Func_02003aec(void);
+void                  Func_02003af4(void);
+void                  Func_02003b7c(s32 a);
+void                  Func_02003bcc(s32 value);
+void                  Func_02003c54(s32 a);
 
 void Func_02001a8c(s32 mode, s32 cue)
 {
@@ -48,7 +48,8 @@ void Func_02001b24(void)
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     if (party->renderMode != 2)
         GameFlag_ClearBit(0x2f8);
@@ -59,9 +60,11 @@ void Func_02001b44(void)
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
-    if (party->renderMode != 2) {
+    if (party->renderMode != 2)
+    {
         Func_02003aec();
         Func_02003bcc(0);
         Object_GetById(party->currentOwner)->motionFlags = 0;

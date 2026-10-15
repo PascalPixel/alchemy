@@ -1,7 +1,8 @@
 #include "local.h"
 
-struct MagmaRockInsideSparkWork {
-    u8 unk0000[0x1604];
+struct MagmaRockInsideSparkWork
+{
+    u8  unk0000[0x1604];
     s16 resource;
 };
 

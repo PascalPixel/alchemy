@@ -5,16 +5,17 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-struct PartyState254 {
-    u8 unk000[0x254];
+struct PartyState254
+{
+    u8  unk000[0x254];
     u16 value;
 };
 
 extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
-s32 GameFlag_Test(s32 flag);
-s32 Random16Far(void);
+s32  GameFlag_Test(s32 flag);
+s32  Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Func_02001bec(struct ObjectRuntime *object, s32 mode);
 void Func_02001ce4(s32 a);
@@ -47,7 +48,8 @@ void Func_02000074(void)
 void Func_02000094(void)
 {
     Func_02001d1c_(64, 0, 4, 3, 89, 28, 1);
-    if (!GameFlag_Test(0x9b8)) {
+    if (!GameFlag_Test(0x9b8))
+    {
         Func_02001d44_(249, 424, 488);
         ((struct PartyState254 *)&gPartyState)->value = 0x19b8;
         gPartyState.battleRule24b = 2;
@@ -79,7 +81,8 @@ const u8 *Func_02000130(void)
 
 void Func_0200015c(struct ObjectRuntime *object)
 {
-    if (Random16Far() & 0xff) {
+    if (Random16Far() & 0xff)
+    {
         s32 position[3];
         s32 radius;
         s32 angle;

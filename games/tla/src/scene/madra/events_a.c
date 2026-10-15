@@ -3,26 +3,26 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02002ae8(const void *data, s32 a, s32 b);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02002ae8(const void *data, s32 a, s32 b);
 void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
@@ -36,7 +36,7 @@ void Func_02002bf8(s32 id, s32 a);
 void Func_02002c08(s32 id, s32 a, s32 b);
 void Func_02002c30(s32 a);
 void Func_02002c58(s32 a);
-s32 Func_02002c80(void);
+s32  Func_02002c80(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02002c90(s32 a);
 void Func_02000f80(void);
@@ -173,7 +173,8 @@ void Func_02000108(s32 arg)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000)
+    {
         Func_02002c88(4, arg);
         return;
     }
@@ -192,7 +193,8 @@ void Func_0200018c(s32 arg)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000)
+    {
         Func_02002c88(5, arg);
         return;
     }
@@ -211,7 +213,8 @@ void Func_02000210(s32 arg)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000)
+    {
         Func_02002c88(6, arg);
         return;
     }

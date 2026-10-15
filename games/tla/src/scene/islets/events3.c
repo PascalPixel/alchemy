@@ -6,10 +6,10 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Func_02003e64();
-void Func_02003e6c();
-void Func_02003f0c();
-void Func_02003fa4();
+void                  Func_02003e64();
+void                  Func_02003e6c();
+void                  Func_02003f0c();
+void                  Func_02003fa4();
 struct ObjectRuntime *Object_GetById();
 
 void Func_0200208c(void)

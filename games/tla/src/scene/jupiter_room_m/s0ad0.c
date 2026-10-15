@@ -1,11 +1,12 @@
 #include "types.h"
 
-s32 Random16Far();
+s32  Random16Far();
 void Func_020049c4();
 
 s32 Func_02000ad0(void)
 {
-    switch (Random16Far() & 7) {
+    switch (Random16Far() & 7)
+    {
     case 0:
         Func_020049c4(126);
         break;

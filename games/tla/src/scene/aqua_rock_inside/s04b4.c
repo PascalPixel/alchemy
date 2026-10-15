@@ -9,10 +9,10 @@ void Func_0200349c(u32 index, s32 height);
 
 void Func_020004bc(s32 unused, s32 id)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+    u8  *map = (u8 *)Ram_HeapSlots->mapWork;
     s32 *layer;
-    s32 i;
-    s32 column;
+    s32  i;
+    s32  column;
     /* FAKEMATCH: the id pinned to r5 copies it after the map work load and keeps the stack adjustment after the
      * first call's argument; plain, the copy comes first (differ 2), and Func_02000574's one-pass block moves the
      * stack adjustment to the start instead (differ 2). */
@@ -29,7 +29,8 @@ void Func_020004bc(s32 unused, s32 id)
     Func_02003d7c();
     Func_02003eac(0);
     Func_02003ef4(0x22c);
-    for (i = 0; i <= 31; i++) {
+    for (i = 0; i <= 31; i++)
+    {
         Func_02003460(i << 16);
         {
             /* FAKEMATCH: the zero pinned to r1 is set before the column is copied to r0 (differ 2 plain). */

@@ -1,25 +1,30 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_SetBit();
-s32 Func_02001be4();
-s32 Func_02001cfc();
-s32 Func_02001c74();
-s32 Motion_CamBounds();
-void Func_02001ccc(void);
-s32 Battle_WaitMode0();
-s32 Motion_SetVarCbAndRefresh();
-s32 Func_02001c84();
-s32 ObjectMotion_ArmCallback();
-s32 Object_SetModeById();
-s32 Func_02001d4c();
-s32 Func_02001cec();
-s32 ObjectMotion_Launch();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Func_02001ca4();
-s32 Object_AttachWorkTargetToObject();
-s32 Func_02001bec();
+s32       GameFlag_SetBit();
+s32       Func_02001be4();
+s32       Func_02001cfc();
+s32       Func_02001c74();
+s32       Motion_CamBounds();
+void      Func_02001ccc(void);
+s32       Battle_WaitMode0();
+s32       Motion_SetVarCbAndRefresh();
+s32       Func_02001c84();
+s32       ObjectMotion_ArmCallback();
+s32       Object_SetModeById();
+s32       Func_02001d4c();
+s32       Func_02001cec();
+s32       ObjectMotion_Launch();
+s32       Motion_SetModeAndWaitAnimation();
+s32       Func_02001ca4();
+s32       Object_AttachWorkTargetToObject();
+s32       Func_02001bec();
 extern u8 MsgAlhafra74[];
 extern u8 gPartyState[];
 
@@ -82,4 +87,3 @@ void Func_0200047c(void)
     Func_02001ccc();
     Func_02001bec();
 }
-

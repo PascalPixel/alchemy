@@ -3,8 +3,8 @@
 void Func_02000d84(void)
 {
     struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->eventWork;
-    struct ObjectRuntime *object;
-    u32 id;
+    struct ObjectRuntime              *object;
+    u32                                id;
 
     Func_02001080();
     Func_020011e0(0);

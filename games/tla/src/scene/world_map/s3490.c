@@ -3,19 +3,19 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200343c(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004d40(s32 value);
-void Func_02004db8(s32 value);
-void Func_02004df8(s32 value, s32 mode);
+void                  WaitFrames(s32 frames);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void                  Event_StartScreenTransition(void);
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_0200343c(void);
+void                  Func_02004c20(void);
+void                  Func_02004c28(void);
+void                  Func_02004d40(s32 value);
+void                  Func_02004db8(s32 value);
+void                  Func_02004df8(s32 value, s32 mode);
 
 static __inline__ void ObjectMotion_SetPositionAndCommit_(s32 actor, s32 x, s32 z)
 {

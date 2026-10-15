@@ -4,10 +4,10 @@
 
 extern char SceneId_Ov676Room1;
 
-s32 GameFlag_Test(s32 flag);
+s32                   GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02002470(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020023c8(void);
+void                  Func_02002470(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_020023c8(void);
 
 static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
@@ -17,7 +17,8 @@ static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 
 void Func_02002244(void)
 {
-    if (GameFlag_Test(0x300)) {
+    if (GameFlag_Test(0x300))
+    {
         Object_GetById(9)->x = 0xa80000;
         Object_GetById(9)->y = 0;
         Object_GetById(9)->z = 0xc00000;
@@ -26,7 +27,8 @@ void Func_02002244(void)
 
 s32 Func_02002278(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov676Room1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov676Room1)
+    {
         if (gPartyState.entrance == 15)
             Func_020023c8();
         else
@@ -45,4 +47,3 @@ s32 Func_020022b0(void)
 void Func_020022f4(void)
 {
 }
-

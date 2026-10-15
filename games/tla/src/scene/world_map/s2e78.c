@@ -7,31 +7,32 @@
 #include "input.h"
 #include "scene_ids.h"
 
-struct EventCounters {
-    u8 unk000[0x1c4];
+struct EventCounters
+{
+    u8  unk000[0x1c4];
     u16 count;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004c88(s32 actor, s32 x, s32 z);
-void Func_02004cd8(s32 message);
-void Func_02004ce8(s32 actor, s32 flags, s32 frames);
-s32 Func_02004d08(s32 actor, s32 value, s32 frames);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004db8(s32 value);
-void WaitFrames(s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_02004d20(s32 a, s32 b);
-void Func_02004d38(s32 scene, s32 b);
+void                  Battle_WaitMode0(s32 frames);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_02004c20(void);
+void                  Func_02004c28(void);
+void                  Func_02004c88(s32 actor, s32 x, s32 z);
+void                  Func_02004cd8(s32 message);
+void                  Func_02004ce8(s32 actor, s32 flags, s32 frames);
+s32                   Func_02004d08(s32 actor, s32 value, s32 frames);
+void                  Func_02004da8(void);
+void                  Func_02004db0(void);
+void                  Func_02004db8(s32 value);
+void                  WaitFrames(s32 frames);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void                  Func_02004d20(s32 a, s32 b);
+void                  Func_02004d38(s32 scene, s32 b);
 
 static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 {
@@ -58,7 +59,8 @@ void Func_02002e00(void)
     // Entered at its test: as a while loop the test is copied ahead of it and
     // gInput hoisted (differ 17).
     goto wait;
-    do {
+    do
+    {
         WaitFrames(1);
     wait:;
     } while (gInput.held == 0);
@@ -70,7 +72,8 @@ void Func_02002e78(void)
     s32 scale;
     s32 seen = Flag_IsSet(0x8de);
 
-    if (seen == 0) {
+    if (seen == 0)
+    {
         Func_02004c20();
         Func_02004db8(0);
         scale = Object_GetById(gPartyState.currentOwner)->scaleX;
@@ -92,11 +95,14 @@ void Func_02002e78(void)
         Func_02004ce8(5, 0, 10);
         /* FAKEMATCH: called as returning a value, which the native's argument order shows (r1 before r0). */
         ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(7, 0);
-        if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+        {
             Func_02004d08_(8, 265, 30);
             Func_02004ce8(9, 0, 10);
             ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-        } else {
+        }
+        else
+        {
             Func_02004d08_(8, 265, 30);
             ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
             Func_02004ce8(9, 0, 10);

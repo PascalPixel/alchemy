@@ -4,7 +4,8 @@ void Func_020010d0(struct ObjectRuntime *object)
 {
     s32 frames = 60;
 
-    while (frames != 0) {
+    while (frames != 0)
+    {
         WaitFrames(1);
         frames--;
         if (object->velocityY == 0)
@@ -38,7 +39,8 @@ void Func_02001170(void)
     s32 i;
     s32 result;
 
-    if (GameFlag_Test(0x24b)) {
+    if (GameFlag_Test(0x24b))
+    {
         /* FAKEMATCH: called as void through a cast, these two calls set r0 before r1 as the native does; called as declared (value-returning, as the third) they load r1 first (differ 4). */
         ((void (*)(s32, s32))Func_02000b24)(12, 38);
         ((void (*)(s32, s32))Func_02000b24)(13, 39);

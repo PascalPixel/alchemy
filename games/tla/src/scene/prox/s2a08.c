@@ -4,7 +4,7 @@
 #include "field_sprite.h"
 
 struct FieldActor *Object_GetById(s32 id);
-void ObjectMotion_SetActionVariant(u32 actor, s32 variant);
+void               ObjectMotion_SetActionVariant(u32 actor, s32 variant);
 
 void Func_02002a08(void)
 {

@@ -10,7 +10,8 @@ void Func_020024f0(void)
 {
     struct ObjectRuntime *object;
 
-    if (gInput.held & 0x40) {
+    if (gInput.held & 0x40)
+    {
         object = Object_GetById(gPartyState.currentOwner);
         Func_02003e64();
         Func_02003fa4(0);

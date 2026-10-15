@@ -23,21 +23,34 @@ void Func_02003254(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Ov664Room1) {
+    if (scene == (s32)&SceneId_Ov664Room1)
+    {
         Func_02005f74(gData_02006050);
-    } else if (scene == (s32)&SceneId_Ov664Room2) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room2)
+    {
         Func_02005f74(gData_02006054);
-    } else if (scene == (s32)&SceneId_Ov664Room3) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room3)
+    {
         Func_02005f74(gData_0200605a);
-    } else if (scene == (s32)&SceneId_Ov664Room4) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room4)
+    {
         Func_02005f74(gData_02006064);
-    } else if (scene == (s32)&SceneId_Ov664Room7) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room7)
+    {
         ClearLayer2Shape(0x2600000, 0x1500000);
         ClearLayer2Shape(0x2700000, 0x1500000);
         Func_02005f74(gData_02006068);
-    } else if (scene == (s32)&SceneId_Ov664Room8) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room8)
+    {
         Func_02005f74(gData_02006072);
-    } else if (scene == (s32)&SceneId_Ov664Room9) {
+    }
+    else if (scene == (s32)&SceneId_Ov664Room9)
+    {
         Object_GetById(10)->timer = 0;
         Func_02005f74(gData_0200607e);
     }

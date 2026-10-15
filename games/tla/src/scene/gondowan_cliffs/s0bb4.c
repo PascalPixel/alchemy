@@ -3,7 +3,12 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 extern const u8 gData_02001ac8[];
 

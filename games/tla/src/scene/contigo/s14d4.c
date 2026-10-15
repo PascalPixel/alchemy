@@ -4,7 +4,8 @@ void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 
 void Func_020014d4(void)
 {
-    if (!GameFlag_Test(62)) {
+    if (!GameFlag_Test(62))
+    {
         struct EventWork *work = Ram_HeapSlots->eventWork;
 
         Func_0200406c();

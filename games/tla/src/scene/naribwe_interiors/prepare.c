@@ -5,10 +5,10 @@
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02001158(s32 id);
-void Func_02001108(s32 id, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void                  Func_02001158(s32 id);
+void                  Func_02001108(s32 id, s32 x, s32 z);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
 s32 Func_02000f28(void)
 {

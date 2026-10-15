@@ -6,31 +6,31 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02005714(s32 id, s32 a, s32 b);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
-void Func_020011bc(s32 message, s32 value);
-void GameFlag_SetBit(s32 flag);
-void Func_020056b4(void);
-void Func_0200580c(s32 value);
-void Func_02005854(s32 sound);
-void Func_0200533c(void);
-void Battle_WaitMode0(s32 frames);
-void Func_02005754(const u8 *message);
-void Func_02005764(s32 id, s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_020057b4(void);
-void WaitFrames(s32 frames);
-void Func_020057e4(s32 a, s32 b);
-void Func_020057dc(s32 a, s32 b);
-void Func_020057ec(s32 a);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-s32 Func_02004d48(s32 a, s32 b);
-void Func_0200581c(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020057c4(s32 exit);
+void                  Func_02005714(s32 id, s32 a, s32 b);
+void                  ObjectMotion_EnableActionAndResetMotion(s32 id);
+void                  Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
+void                  Func_020011bc(s32 message, s32 value);
+void                  GameFlag_SetBit(s32 flag);
+void                  Func_020056b4(void);
+void                  Func_0200580c(s32 value);
+void                  Func_02005854(s32 sound);
+void                  Func_0200533c(void);
+void                  Battle_WaitMode0(s32 frames);
+void                  Func_02005754(const u8 *message);
+void                  Func_02005764(s32 id, s32 value);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void                  Func_020057b4(void);
+void                  WaitFrames(s32 frames);
+void                  Func_020057e4(s32 a, s32 b);
+void                  Func_020057dc(s32 a, s32 b);
+void                  Func_020057ec(s32 a);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+s32                   Func_02004d48(s32 a, s32 b);
+void                  Func_0200581c(void);
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_020057c4(s32 exit);
 
 static __inline__ void Func_020057e4_(s32 a, s32 b)
 {
@@ -97,7 +97,8 @@ void Func_02000fc0(void)
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    switch (result) {
+    switch (result)
+    {
     case 3:
         Func_020057c4(14);
         break;

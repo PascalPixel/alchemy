@@ -16,7 +16,8 @@ void Func_020015b8(void)
 void Func_020015d8(void)
 {
     Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
-    if (!GameFlag_Test(0x9b9)) {
+    if (!GameFlag_Test(0x9b9))
+    {
         Func_02005a60(249, 72, 152);
         ((struct PartyState254 *)&gPartyState)->value = 0x19b9;
         gPartyState.battleRule24b = 2;
@@ -51,11 +52,15 @@ void Func_020016c8(void)
 
 void Func_02001754(s32 sound)
 {
-    if (GameFlag_Test(0x9ff)) {
-        if (gTrialRoadState->mirrored == 0) {
+    if (GameFlag_Test(0x9ff))
+    {
+        if (gTrialRoadState->mirrored == 0)
+        {
             Map_Stamp(26, 79, 1, 2, 13, 79);
             Map_CopyCells(78, 18, 1, 1, 77, 18);
-        } else {
+        }
+        else
+        {
             Map_Stamp(26, 79, 1, 2, 18, 79);
             Map_CopyCells(81, 18, 1, 1, 82, 18);
         }
@@ -68,7 +73,7 @@ void Func_02001754(s32 sound)
 void Func_020017e0(void)
 {
     struct PartyState *party;
-    s32 count = GameFlag_Test(0x381);
+    s32                count = GameFlag_Test(0x381);
 
     count += GameFlag_Test(0x382);
     count += GameFlag_Test(0x383);
@@ -78,11 +83,14 @@ void Func_020017e0(void)
     else
         Func_0200322c();
     /* FAKEMATCH: the one-pass block loads the party state address before it builds the field offset, and the empty one after the store keeps the scene id load behind it (differ 6 without both). */
-    do {
+    do
+    {
         party = &gPartyState;
     } while (0);
     party->battleRule24b = 2;
-    do { } while (0);
+    do
+    {
+    } while (0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov697Room2, 4);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
     Func_02005998(13, 4 - count);
@@ -94,7 +102,8 @@ void Func_0200185c(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->x >> 20 == 8) {
+    if (object->x >> 20 == 8)
+    {
         GameFlag_SetBit(0x9fc);
         object->motionFlags = 0;
         {

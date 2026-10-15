@@ -21,16 +21,17 @@ void Func_020029f8(s32 id, s32 value);
 void Func_0200106c(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 saved = object->gravity;
-    s32 i;
-    struct PartyState *state;
+    s32                   saved = object->gravity;
+    s32                   i;
+    struct PartyState    *state;
 
     Func_02002998();
     Func_02002a48(0);
     Func_020029f8(gPartyState.currentOwner, 257);
     Func_02002910(object, 40);
     object->motionFlags = 3;
-    for (i = 0; i < 180; i++) {
+    for (i = 0; i < 180; i++)
+    {
         WaitFrames(1);
         if (object->y <= object->terrainHeight)
             break;

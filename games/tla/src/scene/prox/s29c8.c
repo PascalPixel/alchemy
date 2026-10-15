@@ -1,11 +1,16 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Func_020045dc();
-s32 Scheduler_AddOrUpdateCallback();
-s32 GameFlag_Test();
-s32 Func_02001cf0();
+s32       Func_020045dc();
+s32       Scheduler_AddOrUpdateCallback();
+s32       GameFlag_Test();
+s32       Func_02001cf0();
 extern u8 gPartyState[];
 extern u8 Func_020029a4[];
 
@@ -15,11 +20,12 @@ void Func_020029c8(void)
 
     Call1(Func_020045dc, 0);
     Call2(Scheduler_AddOrUpdateCallback, (s32)Func_020029a4, 0x480);
-    if (FIELD_AT(gPartyState, s16, 482) == 0x14) {
+    if (FIELD_AT(gPartyState, s16, 482) == 0x14)
+    {
         t2 = Value1(GameFlag_Test, 0x9c5);
-        if (t2 == 0) {
+        if (t2 == 0)
+        {
             Func_02001cf0();
         }
     }
 }
-

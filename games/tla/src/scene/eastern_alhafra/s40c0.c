@@ -3,8 +3,9 @@
 #include "resource.h"
 #include "mem.h"
 
-struct EasternAlhafraSparkWork {
-    u8 unk0000[0x1604];
+struct EasternAlhafraSparkWork
+{
+    u8  unk0000[0x1604];
     s16 resource;
 };
 

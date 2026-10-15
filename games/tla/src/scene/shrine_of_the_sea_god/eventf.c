@@ -1,7 +1,8 @@
 #include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
 
-struct ShrineOfTheSeaGodSpot {
+struct ShrineOfTheSeaGodSpot
+{
     s32 x;
     s32 z;
     s32 field18;
@@ -9,8 +10,8 @@ struct ShrineOfTheSeaGodSpot {
 };
 
 extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
-extern const u8 gData_02003cbc[];
-extern const u8 gData_02003c10[];
+extern const u8                           gData_02003cbc[];
+extern const u8                           gData_02003c10[];
 
 void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
@@ -96,10 +97,13 @@ void Func_02002fb0(s32 id)
 
 void Func_02002fe0(void)
 {
-    if (GameFlag_Test(265)) {
+    if (GameFlag_Test(265))
+    {
         if (GameFlag_Test(0x208) == 0)
             Func_0200123c();
-    } else {
+    }
+    else
+    {
         GameFlag_SetBit(0x208);
     }
 }
@@ -116,12 +120,13 @@ void Func_0200300c(void)
 void Func_02003024(void)
 {
     const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;
-    u32 i;
+    u32                                 i;
 
     /* FAKEMATCH: loads the spot table before it clears the counter. */
     __asm__("");
-    for (i = 0; i <= 15; i++) {
-        s32 id = i + 8;
+    for (i = 0; i <= 15; i++)
+    {
+        s32                             id = i + 8;
         struct ShrineOfTheSeaGodObject *object = Object_GetById(id);
         struct ShrineOfTheSeaGodSprite *sprite;
 
@@ -141,7 +146,8 @@ void Func_02003024(void)
 
 void Func_02003094(void)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+    struct ShrineOfTheSeaGodMapWork *map =
+        (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
     Func_02003854(8);
     Func_02003854(9);
@@ -154,7 +160,8 @@ void Func_02003094(void)
     }
     Func_02003b18();
     Func_02003b20(0, 515, 10, 11);
-    if (GameFlag_Test(0x872)) {
+    if (GameFlag_Test(0x872))
+    {
         Func_02003a30(12, 0, 0);
         Func_02003a30(13, 0, 0);
     }
@@ -164,8 +171,8 @@ void Func_020030fc(void)
 {
     struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     struct ShrineOfTheSeaGodObject *object = Object_GetById(11);
-    s32 x = object->x;
-    u8 *flags = &object->collisionFlags;
+    s32                             x = object->x;
+    u8                             *flags = &object->collisionFlags;
 
     if (x > leader->x)
         /* FAKEMATCH: the native ties the flag or to the constant's register. */
@@ -187,9 +194,12 @@ void Func_02003134(void)
     Func_02003aa0(12);
     Object_GetById(12)->motionFlags = 0;
     ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
-    if (GameFlag_Test(0x873)) {
+    if (GameFlag_Test(0x873))
+    {
         Func_02003a30(11, 0, 0);
-    } else if (GameFlag_Test(0x872)) {
+    }
+    else if (GameFlag_Test(0x872))
+    {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 2. */
         angle = 0x8000;
         ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
@@ -205,7 +215,7 @@ void Func_02003134(void)
 void Func_0200320c(void)
 {
     struct ShrineOfTheSeaGodObject *block;
-    s32 angle;
+    s32                             angle;
 
     Func_02002f88(9);
     Func_02002f88(10);
@@ -223,7 +233,8 @@ void Func_0200320c(void)
     ObjectMotion_SetActionVariant(13, 1);
     ObjectMotion_SetActionVariant(14, 1);
     ShrineOfTheSeaGod_TaskAdd(Func_02001088, 0x480);
-    if (GameFlag_Test(0x230)) {
+    if (GameFlag_Test(0x230))
+    {
         ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -0xd0000, 336 << 16);
         ((struct ShrineOfTheSeaGodSprite *)block->sprite)->rotation = 0x1000;
         ObjectMotion_SetActionVariant(14, 3);
@@ -235,7 +246,8 @@ void Func_0200320c(void)
     Func_02003b30(gData_02003cbc);
     if (GameFlag_Test(0x875))
         Func_02003a30(15, 0, 0);
-    else if (GameFlag_Test(0x874)) {
+    else if (GameFlag_Test(0x874))
+    {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
         angle = 0x4000;
         ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
@@ -246,7 +258,8 @@ void Func_0200320c(void)
 
 void Func_02003354(void)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+    struct ShrineOfTheSeaGodMapWork *map =
+        (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
     if (GameFlag_Test(0x876) == 0)
         Func_02003024();
@@ -261,15 +274,18 @@ void Func_02003354(void)
 
 void Func_0200338c(void)
 {
-    s32 angle;
+    s32                             angle;
     struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
-    u8 *flags = &object->priorityFlags;
+    u8                             *flags = &object->priorityFlags;
 
-    if ((u16)(gPartyState.entrance - 2) <= 1) {
+    if ((u16)(gPartyState.entrance - 2) <= 1)
+    {
         ObjectMotion_SetActionVariant(13, 3);
         /* FAKEMATCH: the native ties the flag or to the constant's register. */
         *flags = *flags + 2 - (*flags & 2);
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetActionVariant(13, 1);
         *flags &= ~2;
     }
@@ -286,18 +302,24 @@ void Func_0200338c(void)
     Func_02003b30(gData_02003cbc);
     Func_02002e70();
     ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
-    if (GameFlag_Test(115) || GameFlag_Test(0x340)) {
+    if (GameFlag_Test(115) || GameFlag_Test(0x340))
+    {
         GameFlag_SetBit(0x205);
-    } else if (GameFlag_Test(0x87c)) {
+    }
+    else if (GameFlag_Test(0x87c))
+    {
         struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
-        s32 moved = GameFlag_Test(265);
+        s32                             moved = GameFlag_Test(265);
 
-        if (moved == 0) {
+        if (moved == 0)
+        {
             block->state = moved;
             ShrineOfTheSeaGod_ObjPlace(14, 392 << 16, 296 << 16);
         }
         Object_LinkObjectAndSetCallback(14, gPartyState.currentOwner);
-    } else if (GameFlag_Test(0x877)) {
+    }
+    else if (GameFlag_Test(0x877))
+    {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
         angle = 0x4000;
         ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
@@ -311,13 +333,16 @@ void Func_02003504(void)
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     open = GameFlag_Test(0x301);
-    if (open) {
+    if (open)
+    {
         ShrineOfTheSeaGod_ObjPlace(8, 248 << 16, 264 << 16);
         ObjectMotion_SetActionVariant(8, 3);
         Object_GetById(8)->motionFlags = 0;
         ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, 16);
         Func_02003aa0(8);
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetActionVariant(8, 1);
         Object_GetById(8)->motionFlags = open;
     }

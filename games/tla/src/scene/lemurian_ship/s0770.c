@@ -18,21 +18,23 @@ void Func_02000788(void)
 void Func_02000798(void)
 {
     struct LemurianShipObject *object;
-    s32 x;
-    u8 *flags;
-    s32 moving;
+    s32                        x;
+    u8                        *flags;
+    s32                        moving;
 
     Func_02002dd8();
     object = Object_GetById(8);
     x = object->x >> 20;
-    if (x == 16) {
+    if (x == 16)
+    {
         Func_02002c68();
         Func_02002da8(0);
         LemurianShip_BlendStart(16, 47, 1, 1, x, 46);
         WaitFrames(1);
         flags = &object->motionFlags;
         *flags = 3;
-        do {
+        do
+        {
             WaitFrames(1);
             moving = object->velocityY;
         } while (moving != 0);

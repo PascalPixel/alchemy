@@ -3,8 +3,8 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
+void                  GameFlag_SetBit(s32 flag);
+void                  Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 
 void Func_02000440(void)
 {

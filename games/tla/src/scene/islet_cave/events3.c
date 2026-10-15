@@ -6,26 +6,26 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Func_020009f8();
-void Func_02001234();
-void GameFlag_SetBit();
+void                  Func_020009f8();
+void                  Func_02001234();
+void                  GameFlag_SetBit();
 struct ObjectRuntime *Object_GetById();
-void WaitFrames();
-void GameFlag_ClearBit();
+void                  WaitFrames();
+void                  GameFlag_ClearBit();
 
-void Func_020009f8();
-void Func_02001234();
-void GameFlag_ClearBit();
+void                  Func_020009f8();
+void                  Func_02001234();
+void                  GameFlag_ClearBit();
 struct ObjectRuntime *Object_GetById();
-void WaitFrames();
-void GameFlag_SetBit();
+void                  WaitFrames();
+void                  GameFlag_SetBit();
 
 void Func_02000aec(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(8);
@@ -35,7 +35,8 @@ void Func_02000aec(void)
     Call3((void (*)())Func_020009f8, 8, 32, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(8);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_ClearBit, 0x280);
     return;
@@ -44,9 +45,9 @@ void Func_02000aec(void)
 void Func_02000b4c(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(8);
@@ -56,7 +57,8 @@ void Func_02000b4c(void)
     Call3((void (*)())Func_020009f8, 8, -32, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(8);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_SetBit, 0x280);
     return;
@@ -65,9 +67,9 @@ void Func_02000b4c(void)
 void Func_02000bb0(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(9);
@@ -78,7 +80,8 @@ void Func_02000bb0(void)
     Value3((s32 (*)())Func_020009f8, 9, 96, 0);
     Value1((s32 (*)())WaitFrames, 2);
     object4 = Object_GetById(9);
-    ((void (*)())Func_02001234)((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    ((void (*)())Func_02001234)(
+        (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
     Value6((s32 (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Value1((s32 (*)())GameFlag_ClearBit, 0x281);
     return;
@@ -87,9 +90,9 @@ void Func_02000bb0(void)
 void Func_02000c1c(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(9);
@@ -100,7 +103,8 @@ void Func_02000c1c(void)
     Call3((void (*)())Func_020009f8, 9, -96, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(9);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_SetBit, 0x281);
     return;
@@ -109,9 +113,9 @@ void Func_02000c1c(void)
 void Func_02000c8c(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(10);
@@ -121,7 +125,8 @@ void Func_02000c8c(void)
     Value3((s32 (*)())Func_020009f8, 10, 80, 0);
     Value1((s32 (*)())WaitFrames, 2);
     object4 = Object_GetById(10);
-    ((void (*)())Func_02001234)((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    ((void (*)())Func_02001234)(
+        (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
     Value6((s32 (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Value1((s32 (*)())GameFlag_SetBit, 0x282);
     return;
@@ -130,9 +135,9 @@ void Func_02000c8c(void)
 void Func_02000cf0(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(10);
@@ -142,7 +147,8 @@ void Func_02000cf0(void)
     Call3((void (*)())Func_020009f8, 10, -80, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(10);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_ClearBit, 0x282);
     return;
@@ -151,9 +157,9 @@ void Func_02000cf0(void)
 void Func_02000d54(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(11);
@@ -163,7 +169,8 @@ void Func_02000d54(void)
     Value3((s32 (*)())Func_020009f8, 11, 80, 0);
     Value1((s32 (*)())WaitFrames, 2);
     object4 = Object_GetById(11);
-    ((void (*)())Func_02001234)((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    ((void (*)())Func_02001234)(
+        (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
     Value6((s32 (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Value1((s32 (*)())GameFlag_ClearBit, 0x283);
     return;
@@ -172,9 +179,9 @@ void Func_02000d54(void)
 void Func_02000db8(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(11);
@@ -184,7 +191,8 @@ void Func_02000db8(void)
     Call3((void (*)())Func_020009f8, 11, -80, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(11);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_ClearBit, 0x283);
     return;
@@ -193,9 +201,9 @@ void Func_02000db8(void)
 void Func_02000e1c(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(12);
@@ -205,7 +213,8 @@ void Func_02000e1c(void)
     Call3((void (*)())Func_020009f8, 12, 80, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(12);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_SetBit, 0x284);
     return;
@@ -214,9 +223,9 @@ void Func_02000e1c(void)
 void Func_02000e7c(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(12);
@@ -226,7 +235,8 @@ void Func_02000e7c(void)
     Call3((void (*)())Func_020009f8, 12, -80, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(12);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_ClearBit, 0x284);
     return;
@@ -235,9 +245,9 @@ void Func_02000e7c(void)
 void Func_02000ee0(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(13);
@@ -247,7 +257,8 @@ void Func_02000ee0(void)
     Value3((s32 (*)())Func_020009f8, 13, 80, 0);
     Value1((s32 (*)())WaitFrames, 2);
     object4 = Object_GetById(13);
-    ((void (*)())Func_02001234)((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    ((void (*)())Func_02001234)(
+        (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
     Value6((s32 (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Value1((s32 (*)())GameFlag_ClearBit, 0x285);
     return;
@@ -256,9 +267,9 @@ void Func_02000ee0(void)
 void Func_02000f44(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
+    s32                   value1;
     struct ObjectRuntime *object2;
-    s32 value3;
+    s32                   value3;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(13);
@@ -268,7 +279,8 @@ void Func_02000f44(void)
     Call3((void (*)())Func_020009f8, 13, -80, 0);
     Call1((void (*)())WaitFrames, 2);
     object4 = Object_GetById(13);
-    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20), ((value3 >> 20) - 1));
+    Call6((void (*)())Func_02001234, (value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
+        ((value3 >> 20) - 1));
     Call6((void (*)())Func_02001234, 0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
     Call1((void (*)())GameFlag_SetBit, 0x285);
     return;
@@ -277,11 +289,11 @@ void Func_02000f44(void)
 void Func_02000fa8(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
-    s32 v5;
+    s32                   value1;
+    s32                   v5;
     struct ObjectRuntime *object2;
-    s32 v6;
-    s32 v8;
+    s32                   v6;
+    s32                   v8;
     struct ObjectRuntime *object3;
 
     object0 = Object_GetById(14);
@@ -308,11 +320,11 @@ void Func_02000fa8(void)
 void Func_02001034(void)
 {
     struct ObjectRuntime *object0;
-    s32 value1;
-    s32 v5;
+    s32                   value1;
+    s32                   v5;
     struct ObjectRuntime *object2;
-    s32 value3;
-    s32 v6;
+    s32                   value3;
+    s32                   v6;
     struct ObjectRuntime *object4;
 
     object0 = Object_GetById(14);

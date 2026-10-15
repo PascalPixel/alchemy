@@ -3,10 +3,11 @@
 void Func_02000468(struct ObjectRuntime *object)
 {
     struct FieldSprite *sprite;
-    s32 angle;
+    s32                 angle;
 
     angle = object->angle;
-    do {
+    do
+    {
         sprite = object->animation;
     } while (0);
     sprite->rotation = angle + 0x4000;

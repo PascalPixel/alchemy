@@ -22,7 +22,8 @@ void Func_02000634(s32 a, s32 b)
 void Func_02000648(s32 a, s32 b)
 {
     Func_0200388c(gData_020047d2, a, b);
-    if (a == 1) {
+    if (a == 1)
+    {
         if (gData_02004808 == 0)
             gData_02004808 = 210;
     }
@@ -36,7 +37,8 @@ void Func_02000670(s32 a, s32 b)
 void Func_02000684(s32 a, s32 b)
 {
     Func_0200388c(gData_020047ec, a, b);
-    if (a == 1) {
+    if (a == 1)
+    {
         if (gData_02004808 == 0)
             gData_02004808 = 210;
     }

@@ -22,10 +22,13 @@ void Func_0200043c(s32 actor)
 
     Func_020020e0(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020021a8(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020021a8(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_020020e0(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_020020e0(msg + 2);
     }
@@ -40,10 +43,11 @@ void Func_02000488(void)
 void Func_020004a8(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32                   x = object->x >> 20;
+    s32                   z = object->z >> 20;
 
-    if (x == 5 && z == 17) {
+    if (x == 5 && z == 17)
+    {
         ObjectMotion_Launch(gPartyState.currentOwner, 2, 0);
         SetPosCommit(gPartyState.currentOwner, 88, 296);
     }

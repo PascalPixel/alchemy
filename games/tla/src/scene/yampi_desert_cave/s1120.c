@@ -9,13 +9,15 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001040(void)
 {
     Object_GetById(gPartyState.currentOwner)->terrainId = 2;
-    if (gPartyState.scene == (s32)&SceneId_Ov662Room1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov662Room1)
+    {
         YampiDesertCave_Call1848(55, 71, 4, 1, 43, 70);
         YampiDesertCave_Call1848(43, 71, 4, 1, 55, 71);
     }
     /* FAKEMATCH: the native reads the scene again here, as Func_02001120 does; without the barrier the read is moved up both paths */
     __asm__("" : : : "memory");
-    if (gPartyState.scene == (s32)&SceneId_Ov662Room3) {
+    if (gPartyState.scene == (s32)&SceneId_Ov662Room3)
+    {
         YampiDesertCave_Call1848(110, 45, 5, 2, 90, 50);
         YampiDesertCave_Call1848(113, 47, 2, 1, 90, 52);
         YampiDesertCave_Call1848(107, 48, 3, 2, 90, 53);
@@ -32,7 +34,8 @@ void Func_02001120(void)
         YampiDesertCave_Call1848(43, 70, 4, 1, 55, 71);
     /* FAKEMATCH: the native reads the scene again here; without the barrier the read is moved up both paths (differ 18) */
     __asm__("" : : : "memory");
-    if (gPartyState.scene == (s32)&SceneId_Ov662Room3) {
+    if (gPartyState.scene == (s32)&SceneId_Ov662Room3)
+    {
         YampiDesertCave_Call1848(90, 50, 5, 2, 110, 45);
         YampiDesertCave_Call1848(90, 52, 2, 1, 113, 47);
         YampiDesertCave_Call1848(90, 53, 3, 2, 107, 48);

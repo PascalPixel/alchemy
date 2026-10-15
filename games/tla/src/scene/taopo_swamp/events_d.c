@@ -3,7 +3,7 @@
 void Func_0200065c(void)
 {
     struct ObjectRuntime *object = Object_GetById(8);
-    s32 speed;
+    s32                   speed;
     /* FAKEMATCH: the counter pinned to r6; unpinned, the object outranks it in global allocation and takes r6, pushing the counter to r7 (differ 16, 13 with the object pinned to r7 instead). */
     register s32 i asm("r6");
 
@@ -16,7 +16,8 @@ void Func_0200065c(void)
     Func_02002910_(8, 257);
     speed = 0x8000;
     i = 2;
-    do {
+    do
+    {
         object->velocityY = 0x20000;
         Func_020029b0(152);
         object->speedLimit = speed;
@@ -35,10 +36,11 @@ void Func_0200065c(void)
 void Func_02000710(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 n = 60;
+    s32                   n = 60;
 
     object->motionFlags = 3;
-    while (n != 0) {
+    while (n != 0)
+    {
         WaitFrames(1);
         if (object->velocityY == 0)
             break;
@@ -52,7 +54,8 @@ void Func_02000744(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (id == 9 && object->x >> 20 == 16) {
+    if (id == 9 && object->x >> 20 == 16)
+    {
         Func_02000710(9);
         Func_02002840(15, 26, 1, 1, 16, 26);
         GameFlag_SetBit(0xa6f);
@@ -82,7 +85,7 @@ void Func_02000810(s32 id)
 {
     struct ObjectRuntime *leader;
     struct ObjectRuntime *object;
-    s32 zero = 0;
+    s32                   zero = 0;
 
     Object_SetModeById(id, 8);
     ObjectMotion_SetActionVariant(id, 3);
@@ -94,7 +97,8 @@ void Func_02000810(s32 id)
     GameFlag_ClearBit(0x222);
     leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
-    if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20) {
+    if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20)
+    {
         Func_02002910_(gPartyState.currentOwner, 0x102);
         ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
         Battle_WaitMode0_(2);
@@ -120,7 +124,8 @@ void Func_02000920(s32 a, s32 id)
     ObjectMotion_SetActionVariant(id, 3);
     Object_GetById(id)->priorityFlags |= 2;
     Object_SetModeById(id, 1);
-    if (a == 5 || GameFlag_GetByte(0x230) > 3) {
+    if (a == 5 || GameFlag_GetByte(0x230) > 3)
+    {
         GameFlag_SetBit(0x220);
         GameFlag_SetBit(0x222);
     }
@@ -152,7 +157,8 @@ void Func_020009c0(s32 id)
     GameFlag_SetByte(0x230, 0);
     leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
-    if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20) {
+    if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20)
+    {
         Func_02002910_(gPartyState.currentOwner, 0x102);
         ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
         Battle_WaitMode0_(2);
@@ -186,7 +192,8 @@ void Func_02000afc(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->x >> 20 == 7) {
+    if (object->x >> 20 == 7)
+    {
         Object_SetModeById(id, 3);
         object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
@@ -210,7 +217,8 @@ void Func_02000b90(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->z >> 20 == 16) {
+    if (object->z >> 20 == 16)
+    {
         Object_SetModeById(id, 3);
         object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
@@ -233,9 +241,9 @@ void Func_02000c14(struct ObjectRuntime *object)
 
 void Func_02000c24(void)
 {
-    s32 a;
-    s32 x;
-    s32 z;
+    s32                   a;
+    s32                   x;
+    s32                   z;
     struct ObjectRuntime *object;
 
     gData_02003458--;

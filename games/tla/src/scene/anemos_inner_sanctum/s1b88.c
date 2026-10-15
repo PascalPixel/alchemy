@@ -1,16 +1,21 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Func_02003398();
-s32 Func_02003488();
-s32 Func_02003460();
-s32 Func_02003458();
-s32 Func_02003468();
-s32 Battle_WaitMode0();
-s32 Func_02003388();
-s32 GameFlag_SetBit();
-s32 Func_020033a0();
+s32       Func_02003398();
+s32       Func_02003488();
+s32       Func_02003460();
+s32       Func_02003458();
+s32       Func_02003468();
+s32       Battle_WaitMode0();
+s32       Func_02003388();
+s32       GameFlag_SetBit();
+s32       Func_020033a0();
 extern u8 MsgSummonInheritedEarthDarkness[];
 
 void Func_02001b88(void)
@@ -28,4 +33,3 @@ void Func_02001b88(void)
     Call1(GameFlag_SetBit, 0xa8c);
     Func_020033a0();
 }
-

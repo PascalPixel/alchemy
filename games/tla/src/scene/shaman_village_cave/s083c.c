@@ -10,11 +10,13 @@ void Func_0200083c(void)
         struct PartyState *party = &gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party->battleRule24b = 2;
         /* FAKEMATCH: the loop note ends the scheduling block after the store; without it the scene id is loaded before the store (two reordered rows). */
-        do {
+        do
+        {
         } while (0);
     }
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov695, 20);

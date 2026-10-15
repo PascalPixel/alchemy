@@ -11,7 +11,7 @@ extern u32 gData_020069e4[];
 extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
-s32 Math_Cosine(s32 angle);
+s32  Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);

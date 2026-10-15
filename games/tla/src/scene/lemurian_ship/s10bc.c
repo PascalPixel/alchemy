@@ -40,8 +40,8 @@ void Func_02001128(void)
 void Func_02001138(void)
 {
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
-    struct LemurianShipObject *object = Object_GetById(8);
-    u32 i;
+    struct LemurianShipObject    *object = Object_GetById(8);
+    u32                           i;
 
     Func_02002c68();
     Func_02002da8(0);
@@ -50,7 +50,8 @@ void Func_02001138(void)
     GameFlag_ClearBit(0x204);
     Battle_WaitMode0(20);
     Func_02002de0(186);
-    for (i = 0; i <= 63; i++) {
+    for (i = 0; i <= 63; i++)
+    {
         object->y += 0x4000;
         WaitFrames(1);
     }
@@ -67,8 +68,8 @@ void Func_02001138(void)
 void Func_020011f4(void)
 {
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
-    struct LemurianShipObject *object = Object_GetById(9);
-    u32 i;
+    struct LemurianShipObject    *object = Object_GetById(9);
+    u32                           i;
 
     Func_02002c68();
     Func_02002da8(0);
@@ -77,7 +78,8 @@ void Func_020011f4(void)
     GameFlag_ClearBit(0x205);
     Battle_WaitMode0(20);
     Func_02002de0(186);
-    for (i = 0; i <= 63; i++) {
+    for (i = 0; i <= 63; i++)
+    {
         object->y += 0x4000;
         WaitFrames(1);
     }

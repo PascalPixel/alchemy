@@ -1,24 +1,25 @@
 #include "types.h"
 
-struct Orbiter {
-    u8 unk00[6];
-    u16 facing;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unk14[15];
-    u8 flags23;
-    u8 unk24[62];
-    u8 phase;
-    u8 unk63;
-    s16 centerX;
-    s16 centerZ;
+struct Orbiter
+{
+    u8    unk00[6];
+    u16   facing;
+    s32   x;
+    s32   y;
+    s32   z;
+    u8    unk14[15];
+    u8    flags23;
+    u8    unk24[62];
+    u8    phase;
+    u8    unk63;
+    s16   centerX;
+    s16   centerZ;
     void *link;
 };
 
 extern s32 gData_02005af0;
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
-s32 __divsi3(s32 numerator, s32 denominator);
+void       Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
+s32        __divsi3(s32 numerator, s32 denominator);
 
 void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z)
 {

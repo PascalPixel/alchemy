@@ -1,6 +1,7 @@
 #include "shrine_of_the_sea_god.h"
 
-struct ShrineOfTheSeaGodSpot {
+struct ShrineOfTheSeaGodSpot
+{
     s32 x;
     s32 z;
     s32 field18;
@@ -8,8 +9,8 @@ struct ShrineOfTheSeaGodSpot {
 };
 
 extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
-extern const u8 gData_02003cbc[];
-extern const u8 gData_02003c10[];
+extern const u8                           gData_02003cbc[];
+extern const u8                           gData_02003c10[];
 
 void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);

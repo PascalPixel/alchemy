@@ -14,7 +14,8 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct DoorStep {
+struct DoorStep
+{
     s32 script;
     u16 x;
     u16 z;
@@ -22,54 +23,57 @@ struct DoorStep {
 
 extern struct DoorStep gData_02005290[];
 
-s32 GameFlag_Test();
-void GameFlag_SetBit();
+s32                   GameFlag_Test();
+void                  GameFlag_SetBit();
 struct ObjectRuntime *Object_GetById();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void Motion_SetVarCbAndRefresh();
-void Battle_WaitMode0();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_0200112c(void);
-void Func_020017ec(void);
-void Func_02001cb0(void);
-void Func_02000394(s32, s32);
-void Func_0200042c(s32, s32);
-void Func_02000514(void);
-s32 Func_02004a44();
-s32 Func_02004a84();
-void Func_02004a94();
-void Func_02004a9c();
-s32 Func_02004b04();
-s32 Func_02004b3c();
-s32 Func_02004b4c();
-s32 Func_02004b5c();
-s32 Func_02004b6c();
-s32 Func_02004bac();
-s32 Func_02004bb4();
-s32 Func_02004be4();
-s32 Func_02004bec();
-s32 Func_02004c44();
-s32 Func_02004c4c();
-void Func_02004c9c(s32);
+void                  ObjectMotion_SetAngleToward();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  Motion_SetVarCbAndRefresh();
+void                  Battle_WaitMode0();
+s32                   UiText_OpenMessageAtObject();
+s32                   Inventory_PromptAndSetObjectMode();
+void                  Event_FinishScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Func_0200112c(void);
+void                  Func_020017ec(void);
+void                  Func_02001cb0(void);
+void                  Func_02000394(s32, s32);
+void                  Func_0200042c(s32, s32);
+void                  Func_02000514(void);
+s32                   Func_02004a44();
+s32                   Func_02004a84();
+void                  Func_02004a94();
+void                  Func_02004a9c();
+s32                   Func_02004b04();
+s32                   Func_02004b3c();
+s32                   Func_02004b4c();
+s32                   Func_02004b5c();
+s32                   Func_02004b6c();
+s32                   Func_02004bac();
+s32                   Func_02004bb4();
+s32                   Func_02004be4();
+s32                   Func_02004bec();
+s32                   Func_02004c44();
+s32                   Func_02004c4c();
+void                  Func_02004c9c(s32);
 
 void Func_020006ec(s32 mode)
 {
     s32 tile;
 
     tile = Func_02004bb4(gPartyState.currentOwner);
-    if (tile == 16) {
+    if (tile == 16)
+    {
         Func_02000394(mode, 16);
         if (Func_02004c44() != 0)
             Func_02004c4c();
         Func_0200042c(mode, 16);
-    } else if (tile == 15) {
+    }
+    else if (tile == 15)
+    {
         Func_02000514();
     }
 }
@@ -87,24 +91,33 @@ void Func_02000730(void)
     Motion_SetVarCbAndRefresh(22, 2);
     Battle_WaitMode0(10);
     UiText_OpenMessageAtObject(22, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) != 0)
+    {
         Battle_WaitMode0(30);
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         UiText_OpenMessageAtObject(22, 0);
-        if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+        if (Inventory_PromptAndSetObjectMode(4, 0) != 0)
+        {
             Battle_WaitMode0(30);
             Call3((void (*)())Func_02004b4c, 22, 0, 0);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
             UiText_OpenMessageAtObject(22, 0);
-            if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+            if (Inventory_PromptAndSetObjectMode(4, 0) != 0)
+            {
                 Battle_WaitMode0(30);
                 Call3((void (*)())Func_02004b4c, 22, 0, 0);
-            } else {
+            }
+            else
+            {
                 Battle_WaitMode0(20);
                 ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
                 Call3((void (*)())Func_02004b4c, 22, 0, 0);
@@ -117,17 +130,25 @@ void Func_02000730(void)
 
 void Func_02000838(void)
 {
-    if (Value1(GameFlag_Test, 0x8a7)) {
-        if (Value1(GameFlag_Test, 0x904) == 0) {
+    if (Value1(GameFlag_Test, 0x8a7))
+    {
+        if (Value1(GameFlag_Test, 0x904) == 0)
+        {
             Call1(GameFlag_SetBit, 0x904);
             Func_02001cb0();
         }
-    } else if (Value1(GameFlag_Test, 0x8ab)) {
-        if (Value1(GameFlag_Test, 0x8a0) && Func_02004a84(151) == -1 && Value1(GameFlag_Test, 0x8ad) == 0) {
+    }
+    else if (Value1(GameFlag_Test, 0x8ab))
+    {
+        if (Value1(GameFlag_Test, 0x8a0) && Func_02004a84(151) == -1
+            && Value1(GameFlag_Test, 0x8ad) == 0)
+        {
             Call1(GameFlag_SetBit, 0x8ad);
             Func_020017ec();
         }
-    } else if (Value1(GameFlag_Test, 0x8a9) == 0) {
+    }
+    else if (Value1(GameFlag_Test, 0x8a9) == 0)
+    {
         Call1(GameFlag_SetBit, 0x8a9);
         Func_0200112c();
     }

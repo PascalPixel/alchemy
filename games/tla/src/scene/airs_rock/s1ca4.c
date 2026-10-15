@@ -1,8 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct AirsRockEventWork {
-    u8 unk000[0xcbc];
+struct AirsRockEventWork
+{
+    u8  unk000[0xcbc];
     s32 valueCbc;
 };
 

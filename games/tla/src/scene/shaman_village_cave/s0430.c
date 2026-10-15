@@ -32,13 +32,17 @@ void Object_SetModeById();
 void Party_SetFields1eeAnd1f0();
 void Party_SetFields1f2And1f4();
 
-#define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames) \
-    { \
-        /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Through an inline the actor comes one row early wherever the emote takes two instructions, and an empty asm barrier at each call moves the literal pools of a long scene. */ \
-        register s32 emote_ __asm__("r1") = (emote); \
-        /* FAKEMATCH: the frames, pinned with the emote above. */ \
-        register s32 frames_ __asm__("r2") = (frames); \
-        Func_02001160((actor), emote_, frames_); \
+#define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames)                                          \
+    {                                                                                            \
+        /* FAKEMATCH: the native loads the emote and the frames before the actor at every */     \
+        /* emote of this overlay; pinned to their argument registers they are loaded first, */   \
+        /* as there. Through an inline the actor comes one row early wherever the emote takes */ \
+        /* two instructions, and an empty asm barrier at each call moves the literal pools of */ \
+        /* a long scene. */                                                                      \
+        register s32 emote_ __asm__("r1") = (emote);                                             \
+        /* FAKEMATCH: the frames, pinned with the emote above. */                                \
+        register s32 frames_ __asm__("r2") = (frames);                                           \
+        Func_02001160((actor), emote_, frames_);                                                 \
     }
 
 // The JA edition has its own form of this function; it stays on its listing in recon/tla/raw/overlays (S4).
@@ -164,7 +168,8 @@ void Func_02000430(void)
     Call3(ObjectMotion_OffsetPositionAndResetMotion, 19, -16, 24);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 19);
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
+    do
+    {
         gPartyState.battleRule24b = 2;
     } while (0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov695, 20);

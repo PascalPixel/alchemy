@@ -14,12 +14,15 @@ void Func_02000f9c(struct ObjectRuntime *object)
     object->y += object->gravity;
     object->x += object->bounce;
     object->z += object->unk4c;
-    if ((object->x >> 19) <= 39) {
+    if ((object->x >> 19) <= 39)
+    {
         object->bounce += 0x18000;
         /* FAKEMATCH: the barrier ends the scheduling block after the speed store, so the step constant is started before scaleX is loaded; plainly it is started before the store (differ 4), and a one-pass block here loads scaleX first (differ 2). */
         __asm__("");
         scale = object->scaleX + 0xccc;
-    } else {
+    }
+    else
+    {
         object->bounce -= 0x18000;
         scale = object->scaleX - 0x51e;
     }

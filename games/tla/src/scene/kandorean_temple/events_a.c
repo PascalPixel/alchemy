@@ -15,9 +15,12 @@ u32 Func_0200028c(struct ObjectRuntime *object)
 
 s32 Func_020002a0(struct ObjectRuntime *object)
 {
-    if (object->action != 0) {
+    if (object->action != 0)
+    {
         object->action--;
-    } else {
+    }
+    else
+    {
         Func_020052c8((s16)object->unk66, 0x105, 0);
         object->action = ((Random16Far() * 240) >> 16) + 240;
     }

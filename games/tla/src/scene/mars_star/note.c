@@ -3,8 +3,9 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-struct EventNote {
-    u8 unk000[0x15a];
+struct EventNote
+{
+    u8  unk000[0x15a];
     u16 unk15a;
 };
 

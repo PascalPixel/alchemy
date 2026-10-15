@@ -1,16 +1,18 @@
 #include "mars_star.h"
 #include "iwram_call.h"
 
-struct RideAnimation {
+struct RideAnimation
+{
     u8 unk00[0x10];
     u8 value10;
     u8 flag11 : 1;
 };
 
-struct RideWork {
-    u8 unk00[0xc];
-    u16 value0c;
-    u8 unk0e[0x62];
+struct RideWork
+{
+    u8                    unk00[0xc];
+    u16                   value0c;
+    u8                    unk0e[0x62];
     struct ObjectRuntime *handle;
 };
 
@@ -18,7 +20,7 @@ extern u8 gData_020023c4[];
 
 void Func_02001d7c(void)
 {
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+    struct RideWork      *work = (struct RideWork *)(gData_020023c4 + 0x188);
     struct ObjectRuntime *object;
     struct RideAnimation *animation;
 

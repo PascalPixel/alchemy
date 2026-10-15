@@ -28,7 +28,8 @@ void Func_020006a4(void)
     Object_SetModeById(32, 3);
     Battle_WaitMode0(15);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 32, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+    {
         Battle_WaitMode0(90);
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 32, 0x6666, 0x3333);
         ObjectMotion_ResetAndSetPositionInMode2(32, 200, 216);
@@ -41,7 +42,9 @@ void Func_020006a4(void)
         ObjectMotion_SetActionVariant(32, 3);
         Object_GetById(32)->motionFlags |= 2;
         GameFlag_SetBit(0x302);
-    } else {
+    }
+    else
+    {
         Func_02000814();
     }
     Func_02000d08();

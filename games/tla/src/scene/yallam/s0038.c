@@ -3,8 +3,9 @@
 
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 
-struct TileSprite {
-    u8 unk00[18];
+struct TileSprite
+{
+    u8  unk00[18];
     u16 tile;
 };
 

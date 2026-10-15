@@ -52,12 +52,14 @@ void Func_020014bc(s32 mode, s32 cue)
 
     if (cue == 0)
         Func_020038dc();
-    if (mode == 2) {
+    if (mode == 2)
+    {
         struct ObjectRuntime *object = work->target;
 
         Func_02003820(object->x, object->y + 0xf0000, object->z, 1);
     }
-    if (mode == 3) {
+    if (mode == 3)
+    {
         struct ObjectRuntime *object = work->target;
         struct ObjectRuntime *target;
 

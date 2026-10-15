@@ -11,8 +11,10 @@ extern u32 gData_02003848[];
 
 u32 *Func_020000b8(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov656Room1) {
-        switch (gPartyState.entrance) {
+    if (gPartyState.scene == (s32)&SceneId_Ov656Room1)
+    {
+        switch (gPartyState.entrance)
+        {
         case 3:
         case 4:
         case 5:
@@ -31,8 +33,11 @@ u32 *Func_020000b8(void)
         case 30:
             return gData_02003590;
         }
-    } else if (gPartyState.scene == (s32)&SceneId_Ov656Room2) {
-        switch (gPartyState.entrance) {
+    }
+    else if (gPartyState.scene == (s32)&SceneId_Ov656Room2)
+    {
+        switch (gPartyState.entrance)
+        {
         case 1:
         case 2:
         case 3:

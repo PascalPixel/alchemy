@@ -1,9 +1,10 @@
 #include "local.h"
 
-#define LEADER_HOP() \
-    do { \
-        Func_0200119c(); \
-        Func_0200125c(0); \
+#define LEADER_HOP()                                    \
+    do                                                  \
+    {                                                   \
+        Func_0200119c();                                \
+        Func_0200125c(0);                               \
         Func_02001204(gPartyState.currentOwner, 0x102); \
     } while (0)
 
@@ -47,9 +48,11 @@ void Func_02000100(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_02001274_(22, 15, 0, 5, 5, 63, 52);
-    if (GameFlag_Test(0xf53) == 0) {
+    if (GameFlag_Test(0xf53) == 0)
+    {
         Func_020011cc_(64, 0x1880000, 0x1580000);
-        if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
+        if (leader->x >> 20 == 24 && leader->z >> 20 == 21)
+        {
             LEADER_HOP();
             ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
             leader->velocityY = 0x60000;
@@ -82,7 +85,8 @@ void Func_020001e0(void)
 
     Func_02001274_(7, 22, 0, 3, 3, 56, 58);
     Func_020011cc_(8, 0x880000, 0x1780000);
-    if (leader->x >> 20 == 8 && leader->z >> 20 == 23) {
+    if (leader->x >> 20 == 8 && leader->z >> 20 == 23)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -97,7 +101,8 @@ void Func_02000260(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(9, 0x880000, 0xf80000);
-    if (leader->x >> 20 == 8 && leader->z >> 20 == 15) {
+    if (leader->x >> 20 == 8 && leader->z >> 20 == 15)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -112,7 +117,8 @@ void Func_020002e0(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(10, 0x980000, 0x1080000);
-    if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
+    if (leader->x >> 20 == 9 && leader->z >> 20 == 16)
+    {
         Func_0200119c();
         Func_0200125c_(0);
         Func_02001204_(gPartyState.currentOwner, 0x102);
@@ -129,7 +135,8 @@ void Func_02000364(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(11, 0x880000, 0x1180000);
-    if (leader->x >> 20 == 8 && leader->z >> 20 == 17) {
+    if (leader->x >> 20 == 8 && leader->z >> 20 == 17)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -144,7 +151,8 @@ void Func_020003e4(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(12, 0x680000, 0x1180000);
-    if (leader->x >> 20 == 6 && leader->z >> 20 == 17) {
+    if (leader->x >> 20 == 6 && leader->z >> 20 == 17)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -159,7 +167,8 @@ void Func_02000464(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(13, 0x580000, 0x1080000);
-    if (leader->x >> 20 == 5 && leader->z >> 20 == 16) {
+    if (leader->x >> 20 == 5 && leader->z >> 20 == 16)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -174,7 +183,8 @@ void Func_020004e4(void)
 
     Func_02001274_(5, 13, 0, 5, 3, 56, 52);
     Func_020011cc_(14, 0x680000, 0xf80000);
-    if (leader->x >> 20 == 6 && leader->z >> 20 == 15) {
+    if (leader->x >> 20 == 6 && leader->z >> 20 == 15)
+    {
         LEADER_HOP();
         ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
         leader->velocityY = 0x60000;
@@ -189,7 +199,8 @@ void Func_02000564(void)
 
     Func_02001274_(16, 13, 0, 4, 8, 61, 52);
     Func_020011cc_(8, 0x1180000, 0x1280000);
-    if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
+    if (leader->x >> 20 == 17 && leader->z >> 20 == 18)
+    {
         Func_0200119c();
         Func_0200125c_(0);
         Func_02001204_(gPartyState.currentOwner, 0x102);
@@ -208,7 +219,8 @@ void Func_020005e8(void)
 void Func_02000608(void)
 {
     Func_02001274_(7, 23, 0, 4, 5, 60, 56);
-    if (GameFlag_Test(0x9b5) == 0) {
+    if (GameFlag_Test(0x9b5) == 0)
+    {
         Func_0200127c_(249, 168, 424);
         ((struct GabombaCatacombsParty *)&gPartyState)->value254 = 0x19b5;
         gPartyState.battleRule24b = 2;

@@ -1,6 +1,7 @@
 #include "trial_road.h"
 
-struct TrialRoadControl {
+struct TrialRoadControl
+{
     s16 state;
     s16 field02;
     s16 field04;
@@ -15,10 +16,11 @@ void Func_02004ddc(void);
 
 void Func_02005688(s32 a)
 {
-    u8 *work = Ram_HeapSlots->unkec[0];
+    u8                      *work = Ram_HeapSlots->unkec[0];
     struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
-    if (GameFlag_Test(0x109) == 0) {
+    if (GameFlag_Test(0x109) == 0)
+    {
         /* FAKEMATCH: a temporary reads the work value before the three stores (differ 4 without it). */
         s32 value = *(u16 *)(work + 228);
 
@@ -36,7 +38,7 @@ void Func_02005688(s32 a)
 
 void Func_020056c4(s32 a)
 {
-    u8 *work = Ram_HeapSlots->unkec[0];
+    u8                      *work = Ram_HeapSlots->unkec[0];
     struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
     /* FAKEMATCH: a word temporary builds 0 with movs for both halfword stores, where a halfword constant loads from the pool. */
     s32 zero = 0;

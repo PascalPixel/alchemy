@@ -12,7 +12,8 @@ u8 *Func_0200004c(void)
         return gData_0200494c;
     if (scene == (s32)&SceneId_Ov674Room4)
         return gData_020049c4;
-    if (scene == (s32)&SceneId_Ov674Room5) {
+    if (scene == (s32)&SceneId_Ov674Room5)
+    {
         if (GameFlag_Test(0xaa5))
             gData_02004a84[46] = 1;
         return gData_02004a84;
@@ -22,10 +23,11 @@ u8 *Func_0200004c(void)
 
 void Func_020000d8(void)
 {
-    struct IsletsTarget target;
+    struct IsletsTarget   target;
     struct ObjectRuntime *object = Object_GetById(10);
 
-    if (Func_020037d8(&target)) {
+    if (Func_020037d8(&target))
+    {
         Func_02003a5c(target);
         WaitFrames(5);
         object->gravity = 0x8000;

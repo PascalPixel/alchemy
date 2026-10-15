@@ -12,7 +12,8 @@ s32 Func_0200020c(void)
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
     if (!Flag_IsSet(0x109) && gPartyState.entrance == 6)
         Func_02001bcc(gPartyState.currentOwner);
-    if (Flag_IsSet(0xa01)) {
+    if (Flag_IsSet(0xa01))
+    {
         Func_02001b4c(10, 0x1180000, 0x2180000);
         Func_02000060(0);
     }

@@ -4,7 +4,8 @@ void Func_02002860(void);
 
 s32 Func_020029a0(void)
 {
-    if (RIDE_WORK->active) {
+    if (RIDE_WORK->active)
+    {
         Func_02002860();
         return 1;
     }

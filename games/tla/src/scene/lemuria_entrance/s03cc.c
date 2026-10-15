@@ -3,7 +3,7 @@
 #include "party_state.h"
 #include "event_work.h"
 
-extern u8 MsgFieldAddressCompanion;
+extern u8       MsgFieldAddressCompanion;
 extern const u8 gData_020005e4[];
 
 void Battle_WaitMode0(s32 frames);
@@ -28,7 +28,7 @@ static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed, s32 a
 void Func_020003cc(void)
 {
     struct EventWork *work;
-    u8 saved;
+    u8                saved;
 
     saved = gPartyState.eventMode;
     gPartyState.eventMode = 2;

@@ -37,9 +37,11 @@ void Func_02000a68(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-    if (GameFlag_Test(0xf9b) == 0) {
+    if (GameFlag_Test(0xf9b) == 0)
+    {
         Func_02001d04_(65, 0x1780000, 0x1780000);
-        if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
+        if (leader->x >> 20 == 23 && leader->z >> 20 == 23)
+        {
             Func_02001cc4();
             Func_02001dcc(0);
             Func_02001d74(gPartyState.currentOwner, 0x102);
@@ -56,9 +58,11 @@ void Func_02000af8(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-    if (GameFlag_Test(0xf9a) == 0) {
+    if (GameFlag_Test(0xf9a) == 0)
+    {
         Func_02001d04_(64, 0x2580000, 0x1980000);
-        if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
+        if (leader->x >> 20 == 37 && leader->z >> 20 == 25)
+        {
             Func_02001cc4();
             Func_02001dcc(0);
             Func_02001d74(gPartyState.currentOwner, 0x102);
@@ -80,9 +84,11 @@ void Func_02000ba8(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
-    if (GameFlag_Test(0xf9e) == 0) {
+    if (GameFlag_Test(0xf9e) == 0)
+    {
         Func_02001d04_(64, 0xc80000, 0x980000);
-        if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
+        if (leader->x >> 20 == 12 && leader->z >> 20 == 9)
+        {
             Func_02001cc4();
             Func_02001dcc(0);
             Func_02001d74(gPartyState.currentOwner, 0x102);
@@ -123,7 +129,8 @@ s32 Func_02000cb4(void)
     facing = (s16)((angle + 0x2000) & 0xc000);
     Func_02001cc4();
     Func_02001dcc(0);
-    if (facing) {
+    if (facing)
+    {
         ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
         Func_02001d44((s32)&MsgWhyDoesMy);
         Func_02001d54(9, 0);
@@ -143,7 +150,8 @@ s32 Func_02000d20(void)
     facing = (s16)((angle + 0x2000) & 0xc000);
     Func_02001cc4();
     Func_02001dcc(0);
-    if (facing) {
+    if (facing)
+    {
         Func_02001d44((s32)&MsgICanTEver);
         Func_02001d54(9, 0);
     }

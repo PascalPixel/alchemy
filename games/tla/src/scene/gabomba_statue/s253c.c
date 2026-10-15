@@ -4,51 +4,52 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-struct Wanderer {
+struct Wanderer
+{
     u8 unk00[98];
     u8 timer;
 };
 
-extern u32 gData_02005af4[];
-extern u32 gData_02005b1c[];
-extern u32 gData_02005b60[];
-extern u32 gData_02005ba4[];
-extern u32 gData_02005be8[];
-extern s32 gData_02005c74[];
-extern s32 gData_02005ca0[];
+extern u32            gData_02005af4[];
+extern u32            gData_02005b1c[];
+extern u32            gData_02005b60[];
+extern u32            gData_02005ba4[];
+extern u32            gData_02005be8[];
+extern s32            gData_02005c74[];
+extern s32            gData_02005ca0[];
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_020056b4(void);
-void Func_0200580c(s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void                  Func_020056b4(void);
+void                  Func_0200580c(s32 value);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
 struct ObjectRuntime *Func_020057bc(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Battle_WaitMode0(s32 frames);
-void Func_02005754(const u8 *message);
-void Func_02005764(s32 id, s32 value);
-void Func_02005724(s32 id, s32 target);
-void WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
-void Func_020057a4(s32 speed, s32 acceleration);
-void Func_02005774(s32 id, s32 value);
-void Func_020057b4(void);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Func_020057e4(s32 a, s32 b);
-void Func_020057dc(s32 a, s32 b);
-void Func_020057ec(s32 a);
-void Func_020057c4(s32 exit);
-void Func_02005854(s32 sound);
-void Func_0200571c(s32 id, s32 x, s32 z, s32 speed);
-void Func_02000f6c(void);
-void Func_0200578c(s32 id, s32 a, s32 b);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-u32 Random16Far(void);
-s32 Func_02004d48(s32 a, s32 b);
-void GameFlag_SetBit(s32 flag);
-void Event_FinishScreenTransition(void);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Battle_WaitMode0(s32 frames);
+void                  Func_02005754(const u8 *message);
+void                  Func_02005764(s32 id, s32 value);
+void                  Func_02005724(s32 id, s32 target);
+void                  WaitFrames(s32 frames);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
+void                  Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+void                  Func_020057a4(s32 speed, s32 acceleration);
+void                  Func_02005774(s32 id, s32 value);
+void                  Func_020057b4(void);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void                  ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void                  Func_020057e4(s32 a, s32 b);
+void                  Func_020057dc(s32 a, s32 b);
+void                  Func_020057ec(s32 a);
+void                  Func_020057c4(s32 exit);
+void                  Func_02005854(s32 sound);
+void                  Func_0200571c(s32 id, s32 x, s32 z, s32 speed);
+void                  Func_02000f6c(void);
+void                  Func_0200578c(s32 id, s32 a, s32 b);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+u32                   Random16Far(void);
+s32                   Func_02004d48(s32 a, s32 b);
+void                  GameFlag_SetBit(s32 flag);
+void                  Event_FinishScreenTransition(void);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode)
 {
@@ -239,7 +240,8 @@ void Func_020027cc(void)
     Object_SetPartAttribute(Object_GetById(10), 3);
     Object_SetPartAttribute(Object_GetById(9), 0);
     WaitFrames(8);
-    ((struct Wanderer *)Object_GetById(gPartyState.currentOwner))->timer = (Random16Far() * 40 >> 16) + 10;
+    ((struct Wanderer *)Object_GetById(gPartyState.currentOwner))->timer =
+        (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(7))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(5))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(6))->timer = (Random16Far() * 40 >> 16) + 10;

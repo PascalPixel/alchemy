@@ -1,9 +1,14 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Object_GetById();
-s32 ObjectMotion_SetActionVariant();
+s32       Object_GetById();
+s32       ObjectMotion_SetActionVariant();
 extern u8 gPartyState[];
 
 void Func_020004d0(s32 a0, s32 a1)
@@ -15,4 +20,3 @@ void Func_020004d0(s32 a0, s32 a1)
     Call2(ObjectMotion_SetActionVariant, a1, 1);
     Call2(ObjectMotion_SetActionVariant, FIELD_AT(gPartyState, s32, 532), 1);
 }
-

@@ -15,7 +15,8 @@ void Func_02001594(void)
 
 void Func_020015d4(s32 mode)
 {
-    if (mode == 1) {
+    if (mode == 1)
+    {
         Func_02001594();
         GameFlag_SetBit(0x88d);
     }
@@ -47,7 +48,8 @@ void Func_02001650(s32 show, s32 first, u32 count)
 {
     u32 i;
 
-    for (i = 0; i < count;) {
+    for (i = 0; i < count;)
+    {
         u8 *flags = &Object_GetById(first + i)->priorityFlags;
         u32 next = i + 1;
 

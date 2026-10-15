@@ -4,7 +4,8 @@ void Func_02001d34(void)
 {
     s32 done = AnkohlRuins_FlagCheck(0x202);
 
-    if (done == 0) {
+    if (done == 0)
+    {
         Func_02002edc(0);
         Func_02002eec(584);
         Battle_WaitMode0(15);
@@ -25,7 +26,8 @@ void Func_02001d34(void)
 
 void Func_02001ddc(void)
 {
-    if (AnkohlRuins_FlagCheck(0x9e2) == 0) {
+    if (AnkohlRuins_FlagCheck(0x9e2) == 0)
+    {
         AnkohlRuins_FlagSet(0x9e2);
         Func_02002eec(584);
         Func_02002e44();
@@ -43,7 +45,8 @@ void Func_02001e54(void)
 {
     s32 done = AnkohlRuins_FlagCheck(0x203);
 
-    if (done == 0) {
+    if (done == 0)
+    {
         Func_02002edc(0);
         Func_02002eec(584);
         Battle_WaitMode0(15);
@@ -64,7 +67,8 @@ void Func_02001e54(void)
 
 void Func_02001f04(void)
 {
-    if (AnkohlRuins_FlagCheck(0x9e3) == 0) {
+    if (AnkohlRuins_FlagCheck(0x9e3) == 0)
+    {
         AnkohlRuins_FlagSet(0x9e3);
         Func_02002eec(584);
         Func_02002e44();
@@ -77,4 +81,3 @@ void Func_02001f04(void)
         Func_02002e4c();
     }
 }
-

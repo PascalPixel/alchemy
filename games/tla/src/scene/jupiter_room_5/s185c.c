@@ -1,8 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct SparkWork {
-    u8 unk0000[0x1d9c];
+struct SparkWork
+{
+    u8  unk0000[0x1d9c];
     s16 resource;
 };
 

@@ -13,8 +13,8 @@ void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 // state changes.
 void Func_020006c8(s32 state)
 {
-    s32 next;
-    s32 odd;
+    s32  next;
+    s32  odd;
     u16 *flash;
 
     if (state == gData_02003a82)

@@ -1,7 +1,7 @@
 #include "tundaria_tower.h"
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
+s32  MapCell_GetAttributes(u32 layer, s32 x, s32 z);
+s32  Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void Func_02003030(s32 x, s32 z, s32 terrain, s32 height);
 
@@ -17,13 +17,16 @@ void Func_02000338(struct ObjectRuntime *object)
     s32 attr2 = MapCell_GetAttributes(2, x, z);
     s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-    if (GameFlag_Test(object->action)) {
+    if (GameFlag_Test(object->action))
+    {
         attr2 &= 0xffff00ff;
         attr0 &= ~128;
         if ((object->terrainHeight >> 19) != height)
             height -= 4;
         Object_SetSpritePriority(object, 3);
-    } else {
+    }
+    else
+    {
         attr2 = (attr2 & 0xff) | 0xff00;
         attr0 |= 128;
         height += 4;

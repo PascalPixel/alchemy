@@ -9,7 +9,7 @@ struct GaiaRockInsideNode
 
 struct GaiaRockInsidePath
 {
-    s32              current;
+    s32                       current;
     struct GaiaRockInsideNode nodes[1];
 };
 
@@ -22,11 +22,11 @@ extern u8 gData_020023c4[];
 s32 Func_02004904(void)
 {
     struct GaiaRockInsidePath *path = GAIA_ROCK_INSIDE_PATH;
-    s32               current = path->current;
+    s32                        current = path->current;
     /* FAKEMATCH: the node is pinned to r3 and each link to r2: the native keeps the node pointer in r3 and loads the links into r2, where plainly the two trade places (differ 26; the node pinned alone, 11). */
     register struct GaiaRockInsideNode *node asm("r3") = &path->nodes[current];
-    s32                        next = current + 1;
-    register u32               link asm("r2");
+    s32                                 next = current + 1;
+    register u32                        link asm("r2");
 
     link = node->next[0];
     if (link == 251 || link == next)

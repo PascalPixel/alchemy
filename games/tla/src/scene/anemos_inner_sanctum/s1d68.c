@@ -3,14 +3,14 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void Event_StartScreenTransition(void);
-void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003318(struct ObjectRuntime *object);
-void Func_02003398(void);
-void Func_020033a0(void);
-void Func_020033e0(s32 id, s32 x, s32 z);
-void Func_02003488(s32 a);
+void                  GameFlag_SetBit(s32 flag);
+void                  Event_StartScreenTransition(void);
+void                  Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void                  Func_02003318(struct ObjectRuntime *object);
+void                  Func_02003398(void);
+void                  Func_020033a0(void);
+void                  Func_020033e0(s32 id, s32 x, s32 z);
+void                  Func_02003488(s32 a);
 
 static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z)
 {
@@ -21,7 +21,7 @@ static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z)
 void Func_02001d68(void)
 {
     struct ObjectRuntime *object = Object_GetById(9);
-    s32 y;
+    s32                   y;
 
     Func_02003398();
     Func_02003488(0);
@@ -43,7 +43,7 @@ void Func_02001d68(void)
 void Func_02001df4(void)
 {
     struct ObjectRuntime *object = Object_GetById(11);
-    s32 y;
+    s32                   y;
 
     Func_02003398();
     Func_02003488(0);

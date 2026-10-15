@@ -10,7 +10,8 @@ void Func_0200060c(void)
     s32 angle;
 
     Call2(Func_02002bbc, 31, 415);
-    angle = 0xc000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+    /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+    angle = 0xc000;
     Call4(Func_02002aa4, 31, 0x1380000, 0x2510000, angle);
     GameFlag_SetBit(0xa74);
 }

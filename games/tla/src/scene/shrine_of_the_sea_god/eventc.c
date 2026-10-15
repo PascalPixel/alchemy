@@ -6,7 +6,7 @@
 void Func_020024e4(void)
 {
     struct ShrineOfTheSeaGodObject *object = Object_GetById(13);
-    s32 angle;
+    s32                             angle;
 
     Func_020039d8();
     Func_02003b08(0);
@@ -48,7 +48,8 @@ void Func_020025fc(void)
 {
     s32 done = ShrineOfTheSeaGod_FlagCheck(0x876);
 
-    if (done == 0) {
+    if (done == 0)
+    {
         Func_020039d8();
         Func_02003b08(0);
         Func_02003aa8(gPartyState.currentOwner, 0x100, 0);
@@ -80,7 +81,8 @@ void Func_020026f8(void)
 {
     u8 off;
 
-    if (GameFlag_Test(0x877)) {
+    if (GameFlag_Test(0x877))
+    {
         Func_020039d8();
         Func_02003b08(0);
         off = 0;
@@ -127,21 +129,24 @@ void Func_020027f8(void)
 void Func_02002830(void)
 {
     struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
-    u8 *state;
-    s32 flag;
+    u8                             *state;
+    s32                             flag;
 
     Func_0200279c();
     ShrineOfTheSeaGod_CamMove(360 << 16, 16 << 16, 216 << 16, 1);
     ShrineOfTheSeaGod_ObjWalk(14, 360, 216);
     flag = GameFlag_Test(0x207);
     state = &block->state;
-    if (flag) {
+    if (flag)
+    {
         block->facing = 0x8000;
         ShrineOfTheSeaGod_ObjEmote(14, 258);
         ShrineOfTheSeaGod_Wait(20);
         *state = 4;
         GameFlag_SetBit(0x206);
-    } else {
+    }
+    else
+    {
         ShrineOfTheSeaGod_Wait(5);
         ShrineOfTheSeaGod_CamMove(296 << 16, 16 << 16, 216 << 16, 1);
         Func_02003b48(153);
@@ -201,21 +206,24 @@ void Func_020029dc(void)
 void Func_02002a2c(void)
 {
     struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
-    u8 *state;
-    s32 flag;
+    u8                             *state;
+    s32                             flag;
 
     Func_0200279c();
     ShrineOfTheSeaGod_CamMove(328 << 16, 16 << 16, 216 << 16, 1);
     ShrineOfTheSeaGod_ObjWalk(14, 328, 216);
     flag = GameFlag_Test(0x207);
     state = &block->state;
-    if (flag) {
+    if (flag)
+    {
         block->facing = 0;
         ShrineOfTheSeaGod_ObjEmote(14, 258);
         ShrineOfTheSeaGod_Wait(20);
         *state = 5;
         GameFlag_SetBit(0x206);
-    } else {
+    }
+    else
+    {
         ShrineOfTheSeaGod_Wait(5);
         ShrineOfTheSeaGod_CamMove(392 << 16, 16 << 16, 216 << 16, 1);
         Func_02003b48(153);
@@ -244,19 +252,22 @@ void Func_02002b18(void)
 void Func_02002b50(void)
 {
     struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
-    u8 *state;
-    s32 flag;
+    u8                             *state;
+    s32                             flag;
 
     Func_0200279c();
     flag = GameFlag_Test(0x207);
     state = &block->state;
-    if (flag) {
+    if (flag)
+    {
         block->facing = 0x8000;
         ShrineOfTheSeaGod_ObjEmote(14, 258);
         ShrineOfTheSeaGod_Wait(20);
         *state = 4;
         GameFlag_SetBit(0x206);
-    } else {
+    }
+    else
+    {
         ShrineOfTheSeaGod_CamMove(296 << 16, 16 << 16, 216 << 16, 1);
         Func_02003b48(153);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 0);
@@ -293,19 +304,22 @@ void Func_02002c50(void)
 void Func_02002c88(void)
 {
     struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
-    u8 *state;
-    s32 flag;
+    u8                             *state;
+    s32                             flag;
 
     Func_0200279c();
     flag = GameFlag_Test(0x207);
     state = &block->state;
-    if (flag) {
+    if (flag)
+    {
         block->facing = 0;
         ShrineOfTheSeaGod_ObjEmote(14, 258);
         ShrineOfTheSeaGod_Wait(20);
         *state = 5;
         GameFlag_SetBit(0x206);
-    } else {
+    }
+    else
+    {
         ShrineOfTheSeaGod_CamMove(392 << 16, 16 << 16, 216 << 16, 1);
         Func_02003b48(153);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 0);

@@ -4,15 +4,15 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById();
-s32 GameFlag_Test(s32 flag);
-void Func_0200406c(void);
-void Func_02004074(void);
-void Func_0200412c(s32 message);
-void Func_02004144(s32 speaker, s32 flags);
-void Func_02004204(s32 skip);
-void Func_02004294(s32 a, s32 b);
-void Func_0200429c(s32 a);
-void Func_020042a4(s32 a, s32 b);
+s32                   GameFlag_Test(s32 flag);
+void                  Func_0200406c(void);
+void                  Func_02004074(void);
+void                  Func_0200412c(s32 message);
+void                  Func_02004144(s32 speaker, s32 flags);
+void                  Func_02004204(s32 skip);
+void                  Func_02004294(s32 a, s32 b);
+void                  Func_0200429c(s32 a);
+void                  Func_020042a4(s32 a, s32 b);
 
 s32 Func_02000cc4(void)
 {
@@ -28,9 +28,12 @@ s32 Func_02000cc4(void)
 
 void Func_02000cf4(void)
 {
-    if (Func_02000cc4()) {
+    if (Func_02000cc4())
+    {
         Func_02004294(28, 13);
-    } else {
+    }
+    else
+    {
         Func_0200406c();
         Func_02004204(0);
         if (GameFlag_Test(0x9b2))
@@ -44,9 +47,12 @@ void Func_02000cf4(void)
 
 void Func_02000d44(void)
 {
-    if (Func_02000cc4()) {
+    if (Func_02000cc4())
+    {
         Func_02004294(26, 18);
-    } else {
+    }
+    else
+    {
         Func_0200406c();
         Func_02004204(0);
         if (GameFlag_Test(0x9b2))
@@ -60,9 +66,12 @@ void Func_02000d44(void)
 
 void Func_02000d94(void)
 {
-    if (Func_02000cc4()) {
+    if (Func_02000cc4())
+    {
         Func_02004294(27, 19);
-    } else {
+    }
+    else
+    {
         Func_0200406c();
         Func_02004204(0);
         if (GameFlag_Test(0x9b2))
@@ -76,9 +85,12 @@ void Func_02000d94(void)
 
 void Func_02000de4(void)
 {
-    if (Func_02000cc4()) {
+    if (Func_02000cc4())
+    {
         Func_020042a4(12, 20);
-    } else {
+    }
+    else
+    {
         Func_0200406c();
         Func_02004204(0);
         if (GameFlag_Test(0x9b2))
@@ -94,9 +106,12 @@ void Func_02000de4(void)
 
 void Func_02000e50(void)
 {
-    if (Func_02000cc4()) {
+    if (Func_02000cc4())
+    {
         Func_0200429c(28);
-    } else {
+    }
+    else
+    {
         Func_0200406c();
         Func_02004204(0);
         if (GameFlag_Test(0x9b2))

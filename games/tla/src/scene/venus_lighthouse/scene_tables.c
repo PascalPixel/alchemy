@@ -12,15 +12,15 @@
 #include "field_event.h"
 #include "party_state.h"
 
-#define ObjectDispatch_SetSingleChildFlags ((void (*)(void*,s32))ObjectDispatch_SetSingleChildFlags)
+#define ObjectDispatch_SetSingleChildFlags \
+    ((void (*)(void *, s32))ObjectDispatch_SetSingleChildFlags)
 
-#define Object_SetPartAttribute ((void (*)(void*,s32))Object_SetPartAttribute)
+#define Object_SetPartAttribute ((void (*)(void *, s32))Object_SetPartAttribute)
 
-enum {
+enum
+{
     ENTRANCE_ALTERNATE_PLACEMENTS = 99
 };
-
-
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

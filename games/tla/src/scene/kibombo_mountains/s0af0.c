@@ -6,23 +6,23 @@
 extern u8 MsgHereTheIntruder[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
-void GameFlag_SetBit(s32 flag);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void Func_02000ad4(s32 actor);
-void Func_02001084(void);
-void Func_0200108c(void);
-void Func_020010d4(s32 actor, s32 x, s32 z);
-void Func_02001104(const u8 *message);
-void Func_0200110c(s32 actor, s32 flags);
-void Func_0200111c(s32 actor, s32 a, s32 b);
-void Func_02001164(s32 value);
+void                  Battle_WaitMode0(s32 frames);
+void                  GameFlag_SetBit(s32 flag);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void                  Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void                  ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void                  ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void                  Func_02000ad4(s32 actor);
+void                  Func_02001084(void);
+void                  Func_0200108c(void);
+void                  Func_020010d4(s32 actor, s32 x, s32 z);
+void                  Func_02001104(const u8 *message);
+void                  Func_0200110c(s32 actor, s32 flags);
+void                  Func_0200111c(s32 actor, s32 a, s32 b);
+void                  Func_02001164(s32 value);
 
 void Func_02000af0(void)
 {

@@ -31,7 +31,8 @@ void Func_020011fc(void)
     Func_02004e00();
     Func_02004da8();
     Motion_SetVarCbAndRefresh(9, 2);
-    Func_02004cd8(Flag_IsSet(0x175) * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) + (s32)MsgAfterBringingA);
+    Func_02004cd8(Flag_IsSet(0x175) * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA)
+                  + (s32)MsgAfterBringingA);
     Func_02004cf0(9, 0);
     Battle_WaitMode0(30);
     Func_02004e30(111);

@@ -5,7 +5,8 @@ s32 Func_02002ce8(s32 side)
     struct TrialRoadState *state;
 
     /* FAKEMATCH: the one-pass block loads the state address before the index is built; with the address as a constant in the indexed read the compiler stops with an internal error. */
-    do {
+    do
+    {
         state = gTrialRoadState;
     } while (0);
     return state->field16[side & 1];

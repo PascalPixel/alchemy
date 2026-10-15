@@ -4,9 +4,12 @@ void Func_02000038(struct ObjectRuntime *object)
 {
     u8 *timer = &object->unk5c[6];
 
-    if (*timer != 0) {
+    if (*timer != 0)
+    {
         (*timer)--;
-    } else {
+    }
+    else
+    {
         *timer = (((u32)Random16Far() * 80) >> 16) + 60;
         object->angle = Random16Far();
     }
@@ -28,22 +31,28 @@ void Func_0200008c(struct ObjectRuntime *object)
     s32 scale = object->scaleX;
 
     /* FAKEMATCH: a one-pass block loads the scale before the bound is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
-    if (scale > 0x10000) {
+    if (scale > 0x10000)
+    {
         object->scaleX = scale - 0x800;
         object->scaleY -= 0x400;
     }
     timer = &object->unk5c[6];
-    if (*timer != 0) {
+    if (*timer != 0)
+    {
         (*timer)--;
-    } else {
+    }
+    else
+    {
         u32 r = Random16Far();
         /* FAKEMATCH: the random number times 4 apart from times 80, and the timer read in a one-pass block, read the timer between the multiply's two halves; as one expression it is read after (differ 2). */
         u32 r4 = r << 2;
-        u8 t;
+        u8  t;
 
-        do {
+        do
+        {
             t = *timer;
         } while (0);
         *timer = t + (((r4 + r) * 16) >> 16) + 40;

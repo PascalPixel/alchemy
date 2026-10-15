@@ -18,14 +18,15 @@ void Func_02001cd0(s32 a, s32 b)
     GameFlag_SetBit(0x351);
 }
 
-struct EffectConfig {
-    s32 kind;
-    s32 variant;
-    u8 unk08[16];
-    u16 id;
-    u8 unk1a[2];
+struct EffectConfig
+{
+    s32       kind;
+    s32       variant;
+    u8        unk08[16];
+    u16       id;
+    u8        unk1a[2];
     const u8 *data;
-    u8 unk20[8];
+    u8        unk20[8];
 };
 
 extern const u8 gData_0200502c[];
@@ -36,7 +37,8 @@ void Func_02001d04(struct ObjectRuntime *object)
 {
     if (++object->action > 64)
         object->update = 0;
-    if ((object->action & 1) == 0) {
+    if ((object->action & 1) == 0)
+    {
         struct EffectConfig config;
 
         config.id = 403;

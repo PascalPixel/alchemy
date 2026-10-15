@@ -20,7 +20,8 @@ void Func_02000958(s32 value)
     Func_02003cf4(108, 98, 19, 29, width, height);
     Battle_WaitMode0(15);
     Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
-    Object_GetById(gPartyState.currentOwner)->speedLimit = Object_GetById(gPartyState.currentOwner)->acceleration = 0x8000;
+    Object_GetById(gPartyState.currentOwner)->speedLimit =
+        Object_GetById(gPartyState.currentOwner)->acceleration = 0x8000;
     Func_02003ef4(123);
     ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 312, 496);
     Battle_WaitMode0(5);

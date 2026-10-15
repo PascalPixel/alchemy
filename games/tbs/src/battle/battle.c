@@ -5542,19 +5542,20 @@ u32 BattleEvPush(u32 opcode, u32 operand) {
 
 //--------------------------------------------------------------------------
 // tgtexec.c
-// バトル：対象ごとの効果処理
+// Battle: an ability's effect on each of its targets
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 対象が倒れていても追加効果を出す効果なら 1 を返す
-// うばう効果は、与えたダメージを行動側に戻すため
-// effect : 効果番号
+// Returns 1 for an effect that still applies when the ability's damage has
+// just knocked its target out: the drains, which give the damage they dealt
+// back to the actor.
+// effect : the ability's effect number
 //--------------------------------------------------------------------------
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
-  case 31: // HPをうばう
-  case 32: // PPをうばう
-  case 60: // HPをうばう（半分）
-  case 69: // PPをうばう（1/10）
+  case 31: // Drain HP (Drain)
+  case 32: // Drain PP (Psy Drain)
+  case 60: // Drain half the HP (Sap)
+  case 69: // A tenth of the damage as PP (Psy Leech)
     return 1;
   default:
     return 0;
@@ -5562,12 +5563,14 @@ s32 BattleEffectDeadCheck(s32 effect) {
 }
 
 //--------------------------------------------------------------------------
-// 対象の判定・効果計算・メッセージ登録
+// The target's checks, effect and messages
 //--------------------------------------------------------------------------
-#define ALLY 2 // 味方
+#define ALLY 2 // BattleUnit.side of a party member
 
+// Unit ids 0 to 7 are the party's; the enemies' start at 8.
 #define ALLY_CHECK(id) ((id) >= 0 && (id) < 8)
 
+// Holds a stat stage within -4 to +4.
 #define STEP_LIM(v)                                                            \
   {                                                                            \
     if ((v) < -4)                                                              \
@@ -5576,31 +5579,38 @@ s32 BattleEffectDeadCheck(s32 effect) {
       (v) = 4;                                                                 \
   }
 
+// The actor's elemental power less the target's resistance to it, for an
+// ability that has an element (4 is none).
 #define ELEMENT_BONUS()                                                        \
   {                                                                            \
     if (element != 4)                                                          \
-      bonus = power - target->element[element].res;                            \
+      elementBonus = elementPower - target->element[element].res;              \
   }
 
+// Shows one message for a party member and another for an enemy.
 #define MESSAGE_SIDE(m, e)                                                     \
   {                                                                            \
-    if (ALLY_CHECK(tid))                                                       \
+    if (ALLY_CHECK(targetId))                                                  \
       MESSAGE_PUSH(m);                                                         \
     else                                                                       \
       MESSAGE_PUSH(e);                                                         \
   }
 
+// A guarding target takes half the damage, or a tenth behind a stronger
+// guard.
 #define GUARD_CUT()                                                            \
   {                                                                            \
     guard = target->guardLv;                                                   \
     if (guard != 0) {                                                          \
       if (guard == 1)                                                          \
-        dmg /= 2;                                                              \
+        amount /= 2;                                                           \
       else                                                                     \
-        dmg /= 10;                                                             \
+        amount /= 10;                                                          \
     }                                                                          \
   }
 
+// Changes the target's Resistance stage by d, shows the change v (20 a
+// stage) with message m, and keeps it for seven turns.
 #define RES_STEP(d, v, m)                                                      \
   {                                                                            \
     target->resLv += (d);                                                      \
@@ -5610,6 +5620,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
     target->resCnt = 7;                                                        \
   }
 
+// Shows message m and gives the target the status f for seven turns.
 #define STAT_SET(f, m)                                                         \
   {                                                                            \
     MESSAGE_PUSH(m);                                                           \
@@ -5617,166 +5628,199 @@ s32 BattleEffectDeadCheck(s32 effect) {
   }
 
 //--------------------------------------------------------------------------
-// わざの効果を対象ひとりにかける
-// plan : 行動と対象の情報
-// slot : 対象配列の位置
+// Applies the planned ability to one of its targets: first its damage or
+// healing, then its added effect (a status, a stat change, a revival...).
+// Nothing is shown here: each step queues battle events (the names and
+// numbers a message needs, the message, the target's reactions) that
+// BattleEvent_Playback then plays in order.
+//
+// plan : the action under way: the actor, the ability, its element and its
+//        targets, each with its distance from the aimed position, damage
+//        multiplier, critical hit and any hit roll made in advance.
+// slot : which of the plan's targets (0 to plan->targetCount - 1).
+//
+// Declared to return s32, as the bytes require (the epilogue keeps r0), but
+// it returns nothing and its callers ignore the result.
 //--------------------------------------------------------------------------
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
-  s32 dist;
-  struct BattleAct *action;
+  s32 distance; // steps from the aimed position (0 to 5)
+  struct BattleAct *ability;
   struct BattleUnit *actor;
-  s32 aid;
+  s32 actorId;
   s32 abilityId;
-  s32 bonus;
+  s32 elementBonus; // elemental power less resistance
   struct BattleWork *work;
-  s32 half;
-  s32 adj;
-  s32 dealt;
-  s32 crush;
-  s32 hit;
-  s32 crit;
-  s32 skip;
-  s32 type;
-  s32 aff;
-  struct BattleUnit *bak;
-  s32 power;
+  s32 halveDefense; // the attack counts half the target's Defense
+  s32 multiplier;   // 0 on a miss, 2 or 3 for a double or triple blow
+  s32 damageDealt;  // HP or PP the target lost (negative if healed)
+  s32 leaveOneHp;   // the damage leaves the target 1 HP at most
+  s32 hit;          // the ability's effect landed
+  s32 critical;     // 1 a critical hit, 2 an ability's stronger one
+  s32 skipDamage;   // the effect replaces the damage
+  s32 kind;         // how the ability's power applies
+  s32 affinity;     // -1 a resisted element, 1 a weakness
+  struct BattleUnit *savedTarget; // the target as it was, to show changes
+  s32 elementPower;               // the actor's power in the ability's element
   s32 hp;
-  s32 rate;
-  s16 *cmd;
-  s32 tid;
+  s32 maxHpPercent; // a summon's added damage, in % of max HP
+  s16 *command;     // the command the action came from
+  s32 targetId;
   s32 element;
   struct BattleUnit *target;
-  u32 n;
-  s32 value;
-  s32 dmg;
-  s32 scale;
+  u32 actionIndex;
+  s32 resistance;
+  s32 amount; // the damage, or the HP or PP restored
+  s32 defense;
   s32 pass;
   s32 guard;
-  s16 list[8];
-  s32 cnt;
-  s32 tmp;
-  s32 size;
+  s16 enemyIds[8];
+  s32 enemyIndex;
+  s32 restored;
+  s32 unitSize;
 
-  // 変化量の計算用に、対象の状態を保存する
-  bonus = 0;
+  // Keep a copy of the target as it was, to show how much each stat changes.
+  elementBonus = 0;
   work = gBattleWork;
-  half = 0;
-  dealt = 0;
-  crush = 0;
-  skip = 0;
-  aff = 0;
-  size = sizeof(struct BattleUnit);
-  bak = MemAlloc(size);
+  halveDefense = 0;
+  damageDealt = 0;
+  leaveOneHp = 0;
+  skipDamage = 0;
+  affinity = 0;
+  unitSize = sizeof(struct BattleUnit);
+  savedTarget = MemAlloc(unitSize);
 
-  aid = plan->aid;
-  tid = plan->targetIds[slot];
+  actorId = plan->aid;
+  targetId = plan->targetIds[slot];
   abilityId = plan->abilityId;
   element = plan->element;
-  adj = plan->targetAdj[slot];
-  crit = plan->targetCrit[slot];
+  multiplier = plan->targetAdj[slot];
+  critical = plan->targetCrit[slot];
 
-  action = BattleActGet(abilityId);
-  actor = UnitGetFar(aid);
-  target = UnitGetFar(tid);
-  Iwram_CopyWords(bak, target, size);
+  ability = BattleActGet(abilityId);
+  actor = UnitGetFar(actorId);
+  target = UnitGetFar(targetId);
+  Iwram_CopyWords(savedTarget, target, unitSize);
 
-  // 範囲内での距離と属性の相性
-  if (action->range != 255) {
-    dist = plan->targetDist[slot];
-    if (dist < 0)
-      dist = -dist;
+  // The target's distance from the aimed position: every damage and
+  // healing table falls off with it. An ability that reaches the whole side
+  // (range 255) treats every target as aimed at.
+  if (ability->range != 255) {
+    distance = plan->targetDist[slot];
+    if (distance < 0)
+      distance = -distance;
   } else {
-    dist = 0;
+    distance = 0;
   }
 
+  // The element's affinity: -1 when the target resists no element better
+  // than this one, 1 when it resists none worse. It picks the damage
+  // message ("damage.", "damage!" or "damage!!!").
   if (element != 4) {
     s32 i;
 
-    value = target->baseElement[element].res;
-    for (i = 0; i < 4 && value >= target->baseElement[i].res; i++)
+    resistance = target->baseElement[element].res;
+    for (i = 0; i < 4 && resistance >= target->baseElement[i].res; i++)
       ;
     if (i == 4)
-      aff = -1;
+      affinity = -1;
 
-    for (i = 0; i < 4 && value <= target->baseElement[i].res; i++)
+    for (i = 0; i < 4 && resistance <= target->baseElement[i].res; i++)
       ;
     if (i == 4)
-      aff = 1;
+      affinity = 1;
   }
 
+  // The actor's power in the ability's element; items always use 100.
   if (plan->element >= 0 && plan->element <= 3 && plan->cmd != 2)
-    power = actor->element[plan->element].power;
+    elementPower = actor->element[plan->element].power;
   else
-    power = 100;
-  cmd = &plan->cmd;
+    elementPower = 100;
+  command = &plan->cmd;
 
-  if (plan->cmd == 5 && (plan->element >= 0 && plan->element <= 3) && aff > 0) {
+  // A Djinni striking the target's weakness may earn the Djinn bonus: an
+  // enemy it fells then gives more coins and experience and a better chance
+  // of its item (BattleEnemy_RecordDefeat). The chance is the power less
+  // the resistance, plus 30, in percent; the event's operand is unused.
+  if (plan->cmd == 5 && (plan->element >= 0 && plan->element <= 3) &&
+      affinity > 0) {
     s32 chance;
 
-    chance = power - target->element[plan->element].res;
+    chance = elementPower - target->element[plan->element].res;
     chance += 30;
     chance *= 65536 / 100;
     if (chance > (BattleRandomFar() & 0xffff))
       BattleEvPush(BATTLE_EVENT_SCR, 5);
   }
 
-  // 命中判定と、効果に応じた事前処理
-  type = action->targetFlag & 15;
+  // Whether the effect lands: a roll made when the action was planned, or
+  // one made now, less likely the farther the target is.
+  kind = ability->targetFlag & 15;
   {
-    s32 res;
+    s32 presetHit;
 
-    res = plan->targetHit[slot];
-    if (res == -1)
-      hit = BattleHitCheck(aid, tid, element, action->effect, gHitTable[dist]);
+    presetHit = plan->targetHit[slot];
+    if (presetHit == -1)
+      hit = BattleHitCheck(actorId, targetId, element, ability->effect,
+                           gHitTable[distance]);
     else
-      hit = res;
+      hit = presetHit;
   }
-  if (action->effect == 50 || action->effect == 51) { /* なかまをよぶ */
-    s32 cls;
-    s32 ent;
 
-    cls = actor->classId;
-    ent = EnemySlotGet();
-    if (action->effect == 51)
-      cls = BattleGroupRandom(work->enemyGroup);
-    if (hit != 0 && EnemyCheck(cls) != 0 && ent >= 0) {
-      s32 chg;
+  // Call for help: an enemy calls another of its kind (effect 50), or a
+  // random member of its formation (51), into an empty enemy slot. Speed
+  // Surge (503) is an enemy splitting itself in two.
+  if (ability->effect == 50 || ability->effect == 51) {
+    s32 classId;
+    s32 newUnitId;
 
-      chg = EnemyCountDecrement(cls, 1);
-      if (chg & 0x8000)
-        EnemyCountClear(cls);
-      BattleUnitSetFar(ent, cls, chg & 0x7fff);
+    classId = actor->classId;
+    newUnitId = EnemySlotGet();
+    if (ability->effect == 51)
+      classId = BattleGroupRandom(work->enemyGroup);
+    if (hit != 0 && EnemyCheck(classId) != 0 && newUnitId >= 0) {
+      s32 suffix;
+
+      // The newcomer's name letter; on the first duplicate the enemy
+      // already there takes a letter too.
+      suffix = EnemyCountDecrement(classId, 1);
+      if (suffix & 0x8000)
+        EnemyCountClear(classId);
+      BattleUnitSetFar(newUnitId, classId, suffix & 0x7fff);
+      // Fill a removed enemy's place in the list, or append the newcomer.
       {
         s32 i;
 
         for (i = 0; i < 6; i++) {
           if (work->enemyIds[i] == 254) {
-            work->enemyIds[i] = ent;
+            work->enemyIds[i] = newUnitId;
             break;
           }
           if (work->enemyIds[i] == 255) {
-            work->enemyIds[i] = ent;
+            work->enemyIds[i] = newUnitId;
             work->enemyIds[i + 1] = 255;
             break;
           }
         }
       }
+      // Lay the enemies out again and put the newcomer's sprite in place
+      // (the anchors are 16.16 fixed point).
       EnemyUpdate();
       {
         struct BattleObj *obj;
 
-        obj = BattleObjGet(ent);
-        BattleObjMake(obj, ent, obj->anchorX / 0x10000, obj->anchorZ / 0x10000);
+        obj = BattleObjGet(newUnitId);
+        BattleObjMake(obj, newUnitId, obj->anchorX / 0x10000,
+                      obj->anchorZ / 0x10000);
       }
       BattleObjPut();
       {
-        s32 num;
+        s32 enemyCount;
 
-        num = BattleEnemyList(list);
-        for (cnt = 0; cnt < num; cnt++)
-          ObjMotRst((u16)list[cnt]);
+        enemyCount = BattleEnemyList(enemyIds);
+        for (enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++)
+          ObjMotRst((u16)enemyIds[enemyIndex]);
       }
-      BattleEvPush(BATTLE_EVENT_UNIT, ent);
+      BattleEvPush(BATTLE_EVENT_UNIT, newUnitId);
       if (abilityId != 503)
         MESSAGE_PUSH(MsgAppears);
       else
@@ -5788,385 +5832,417 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     }
   }
 
+  // Effects that change how the damage step works.
   if (hit != 0) {
-    if (action->effect == 53) {
+    if (ability->effect == 53) {
+      // Ground holds only a target that still has an action to take this
+      // turn.
       hit = 0;
-      for (n = 0; n < 20; n++) {
-        if (work->actions[n].unitId == tid) {
+      for (actionIndex = 0; actionIndex < 20; actionIndex++) {
+        if (work->actions[actionIndex].unitId == targetId) {
           hit = 1;
           break;
         }
       }
-    } else if (action->effect == 35) {
-      half = 1;
-    } else if (action->effect == 34) {
-      crush = 1;
-    } else if (action->effect == 27) {
-      skip = 1;
-    } else if (action->effect == 55) {
+    } else if (ability->effect == 35) {
+      halveDefense = 1;
+    } else if (ability->effect == 34) {
+      leaveOneHp = 1;
+    } else if (ability->effect == 27) {
+      skipDamage = 1;
+    } else if (ability->effect == 55) {
       if (actor->hp != 0)
-        BattleEvPush(BATTLE_EVENT_OBJ_EFFECT, aid);
-    } else if (action->effect == 32) {
+        BattleEvPush(BATTLE_EVENT_OBJ_EFFECT, actorId);
+    } else if (ability->effect == 32) {
+      // Psy Drain does PP damage, and misses a target with no PP.
       if (target->pp != 0)
-        type = 10;
+        kind = 10;
       else
         hit = 0;
     }
   }
 
   //------------------------------------------------------------------
-  // ダメージ・回復
+  // Damage and healing
   //------------------------------------------------------------------
-  if (skip == 0 &&
-      (target->hp != 0 || BattleEffectRevCheckFar(action->effect) != 0)) {
+  // A downed target is skipped, unless the ability revives.
+  if (skipDamage == 0 &&
+      (target->hp != 0 || BattleEffectRevCheckFar(ability->effect) != 0)) {
     s32 pp;
-    s32 cur;
-    s32 ap;
+    s32 newHp;
+    s32 power;
 
-    switch (type) {
-    case 3: /* こうげき */
+    switch (kind) {
+    case 3: // An attack: the actor's Attack against the target's Defense
     case 4: {
-      s32 def;
+      s32 baseDefense;
 
       hp = target->hp;
-      def = target->def;
-      scale = def;
-      if (half != 0)
-        scale = (u32)def >> 1;
+      baseDefense = target->def;
+      defense = baseDefense;
+      if (halveDefense != 0)
+        defense = (u32)baseDefense >> 1;
+      // This loop runs once, with pass 1, so its pass-0 code never runs:
+      // the element bonus always applies and the critical hit message is
+      // never shown.
       pass = 1;
       do {
         ELEMENT_BONUS();
         if (pass == 0)
-          bonus = 0;
-        ap = action->power;
-        if (type == 4)
-          dmg = BattleAtkCalc(actor->atk, scale, 0, bonus) * ap / 10;
+          elementBonus = 0;
+        power = ability->power;
+        // Kind 4 multiplies the attack by power / 10; kind 3 adds power.
+        if (kind == 4)
+          amount =
+              BattleAtkCalc(actor->atk, defense, 0, elementBonus) * power / 10;
         else
-          dmg = BattleAtkCalc(actor->atk, scale, ap, bonus);
-        dmg *= adj;
-        if (crit != 0) {
-          if (crit == 1)
-            dmg = dmg * 5 / 4;
+          amount = BattleAtkCalc(actor->atk, defense, power, elementBonus);
+        amount *= multiplier;
+        // A critical hit adds a quarter (a half for an ability's), then
+        // the target's level / 5 + 6.
+        if (critical != 0) {
+          if (critical == 1)
+            amount = amount * 5 / 4;
           else
-            dmg = dmg * 3 / 2;
-          dmg += (target->level / 5) + 6;
+            amount = amount * 3 / 2;
+          amount += (target->level / 5) + 6;
           if (pass == 0) {
             BattleEvPush(BATTLE_EVENT_MARK, 0);
             {
               s32 message;
 
+              // "A critical hit!", or "A bitter blow!" (the next message)
+              // when it lands on the party.
               message = MsgCritical;
-              if (ALLY_CHECK(tid))
+              if (ALLY_CHECK(targetId))
                 message += 1;
               BattleEvPush(BATTLE_EVENT_MESSAGE_ADD, message);
             }
           }
         }
-        dmg += BattleRandomFar() & 3;
+        amount += BattleRandomFar() & 3;
         GUARD_CUT();
-        if (dmg <= 0)
-          dmg = 1;
-        if (crush != 0) {
-          if (dmg < hp - 1) {
-            dmg = hp - 1;
-            if (dmg <= 0)
-              dmg = 1;
+        if (amount <= 0)
+          amount = 1;
+        if (leaveOneHp != 0) {
+          if (amount < hp - 1) {
+            amount = hp - 1;
+            if (amount <= 0)
+              amount = 1;
           }
         }
-        if (GameFlag_TestFar(366) != 0 && *cmd == 5 && hp <= dmg) {
-          dmg = hp - 1;
+        // In the Djinn tutorial a Djinni's blow always leaves 1 HP.
+        if (GameFlag_TestFar(366) != 0 && *command == 5 && hp <= amount) {
+          amount = hp - 1;
         }
         pass++;
       } while (pass <= 1);
-      hp -= dmg;
-      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
-      BattleEvPush(BATTLE_EVENT_NUM, dmg);
-      MESSAGE_PUSH((ALLY_CHECK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+      hp -= amount;
+      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, amount);
+      // The affinity picks "damage.", "damage!" or "damage!!!".
+      MESSAGE_PUSH((ALLY_CHECK(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
+                   affinity);
 
       if (hp <= 0) {
-        BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         hp = 0;
         MESSAGE_SIDE(MsgGoesDown, MsgFelled);
       } else
-        BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-      dealt = target->hp - hp;
+        BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+      damageDealt = target->hp - hp;
       target->hp = hp;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 10: /* PPダメージ */
+    case 10: // PP damage
     {
-      if (action->power == 0)
+      if (ability->power == 0)
         break;
       pp = target->pp;
       ELEMENT_BONUS();
-      ap = action->power;
-      dmg = BattlePowerCalc(ap, bonus, 256);
-      dmg = dmg * gPpLossTable[dist] / 100;
-      dmg *= adj;
+      power = ability->power;
+      amount = BattlePowerCalc(power, elementBonus, 256);
+      amount = amount * gPpLossTable[distance] / 100;
+      amount *= multiplier;
       GUARD_CUT();
-      if (action->effect == 32 && dmg > pp)
-        dmg = pp;
+      // Psy Drain takes no more PP than the target has.
+      if (ability->effect == 32 && amount > pp)
+        amount = pp;
 
-      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
-      BattleEvPush(BATTLE_EVENT_NUM, dmg);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
-      MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgPpLossP : MsgPpLossE);
-      pp -= dmg;
+      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, amount);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+      MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgPpLossP : MsgPpLossE);
+      pp -= amount;
       if (pp <= 0)
         pp = 0;
-      BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-      dealt = target->pp - pp;
+      BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+      damageDealt = target->pp - pp;
       target->pp = pp;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 1: /* HPかいふく */
+    case 1: // HP healing
     {
-      if (action->power == 0)
+      if (ability->power == 0)
         break;
-      cur = target->hp;
+      newHp = target->hp;
 
-      ap = action->power;
-      dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gHpRecoveryTable[dist] / 100;
-      dmg *= adj;
-      dmg += BattleRandomFar() & 3;
-      cur += dmg;
-      if (cur > target->maxHp) {
-        cur = target->maxHp;
-        dmg = cur - target->hp;
+      // An item heals at power 100; otherwise the actor's power counts.
+      power = ability->power;
+      amount =
+          BattleRecoveryCalc(power, element == 4 ? 100 : elementPower, 256);
+      amount = amount * gHpRecoveryTable[distance] / 100;
+      amount *= multiplier;
+      amount += BattleRandomFar() & 3;
+      newHp += amount;
+      if (newHp > target->maxHp) {
+        newHp = target->maxHp;
+        amount = newHp - target->hp;
       }
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
-      if (cur == target->maxHp)
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+      if (newHp == target->maxHp)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, dmg);
+        BattleEvPush(BATTLE_EVENT_NUM, amount);
         MESSAGE_PUSH(MsgHpRecover);
       }
-      dealt = target->hp - cur;
-      target->hp = cur;
-      UnitRatioFar(tid);
+      damageDealt = target->hp - newHp;
+      target->hp = newHp;
+      UnitRatioFar(targetId);
       break;
     }
 
-    case -1: {
-      if (action->power == 0)
+    case -1: // Never reached (the kind is 0 to 15): PP damage that, unlike
+             // kind 10, does not count as damage dealt
+    {
+      if (ability->power == 0)
         break;
       pp = target->pp;
       ELEMENT_BONUS();
-      ap = action->power;
-      dmg = BattlePowerCalc(ap, bonus, 256);
-      dmg = dmg * gPpDmgTable[dist] / 100;
-      dmg *= adj;
+      power = ability->power;
+      amount = BattlePowerCalc(power, elementBonus, 256);
+      amount = amount * gPpDmgTable[distance] / 100;
+      amount *= multiplier;
       GUARD_CUT();
-      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
-      BattleEvPush(BATTLE_EVENT_NUM, dmg);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
-      MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgDmgP : MsgDmgE);
-      pp -= dmg;
+      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, amount);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+      MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgDmgP : MsgDmgE);
+      pp -= amount;
       if (pp <= 0)
         pp = 0;
-      BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
+      BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
       target->pp = pp;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 5: /* HPダメージ */
-    case 6:
-    case 8: {
+    case 5:   // HP damage from the ability's power: Psynergy, enemies'
+    case 6:   // unleashed abilities and summons, each with its own fall-off
+    case 8: { // by distance
       s32 round;
 
-      if (action->power == 0)
+      if (ability->power == 0)
         break;
-      cur = target->hp;
+      newHp = target->hp;
+      // Runs once, like the attack's loop.
       round = 1;
       do {
         ELEMENT_BONUS();
         if (round == 0)
-          bonus = 0;
-        ap = action->power;
-        if (*cmd == 6) {
-          s32 item;
+          elementBonus = 0;
+        power = ability->power;
+        // A summon adds 3, 6, 9 or 12% of the target's max HP by its tier.
+        // The summons are four to an element, six ids apart.
+        if (*command == 6) {
+          s32 summon;
 
-          item = abilityId - 380;
-          if (item >= 0 && item <= 21) {
-            switch (item) {
+          summon = abilityId - 380;
+          if (summon >= 0 && summon <= 21) {
+            switch (summon) {
             case 0:
             case 6:
             case 12:
             case 18:
-              rate = 3;
+              maxHpPercent = 3;
               break;
             case 1:
             case 7:
             case 13:
             case 19:
-              rate = 6;
+              maxHpPercent = 6;
               break;
             case 2:
             case 8:
             case 14:
             case 20:
-              rate = 9;
+              maxHpPercent = 9;
               break;
             case 3:
             case 9:
             case 15:
             case 21:
-              rate = 12;
+              maxHpPercent = 12;
               break;
             }
           }
-          ap += target->maxHp * rate / 100;
+          power += target->maxHp * maxHpPercent / 100;
         }
-        dmg = BattlePowerCalc(ap, bonus, 256);
-        dmg *= adj;
-        switch (type & 15) {
+        amount = BattlePowerCalc(power, elementBonus, 256);
+        amount *= multiplier;
+        switch (kind & 15) {
         case 5:
-          dmg = gHpDmgTable5[dist] * dmg / 100;
+          amount = gHpDmgTable5[distance] * amount / 100;
           break;
         case 8:
-          dmg = dmg * gHpDmgTable8[dist] / 100;
+          amount = amount * gHpDmgTable8[distance] / 100;
           break;
         case 6:
-          dmg = dmg * gHpDmgTable6[dist] / 100;
+          amount = amount * gHpDmgTable6[distance] / 100;
           break;
         }
-        dmg += BattleRandomFar() & 3;
+        amount += BattleRandomFar() & 3;
         GUARD_CUT();
-        if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg) {
-          dmg = cur;
+        // In the Djinn tutorial a summon always fells its target.
+        if (GameFlag_TestFar(366) != 0 && *command == 6 && newHp > amount) {
+          amount = newHp;
         }
         round++;
       } while (round <= 1);
-      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
-      BattleEvPush(BATTLE_EVENT_NUM, dmg);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
-      MESSAGE_PUSH((ALLY_CHECK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
-      cur -= dmg;
+      BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, amount);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+      MESSAGE_PUSH((ALLY_CHECK(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
+                   affinity);
+      newHp -= amount;
 
-      if (cur <= 0) {
-        BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
-        cur = 0;
-        MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgGoesDown : MsgFelled);
+      if (newHp <= 0) {
+        BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+        newHp = 0;
+        MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgGoesDown : MsgFelled);
       } else
-        BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-      dealt = target->hp - cur;
-      target->hp = cur;
-      UnitRatioFar(tid);
+        BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+      damageDealt = target->hp - newHp;
+      target->hp = newHp;
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 11: /* PPかいふく */
+    case 11: // PP healing
     {
-      if (action->power == 0)
+      if (ability->power == 0)
         break;
       pp = target->pp;
-      ap = action->power;
-      dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-      dmg = dmg * gPpRecoveryTable[dist] / 100;
-      dmg *= adj;
-      pp += dmg;
+      power = ability->power;
+      amount =
+          BattleRecoveryCalc(power, element == 4 ? 100 : elementPower, 256);
+      amount = amount * gPpRecoveryTable[distance] / 100;
+      amount *= multiplier;
+      pp += amount;
       if (pp > target->maxPp) {
         pp = target->maxPp;
-        dmg = pp - target->pp;
+        amount = pp - target->pp;
       }
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       if (pp == target->maxPp)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, dmg);
+        BattleEvPush(BATTLE_EVENT_NUM, amount);
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = pp;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
     }
 
+    // No damage or healing: 0 is no ability, 7 Granite, Flash and Kite, 9
+    // field Psynergy, Defend, Flee and enemies' commands.
     case 0:
     case 7:
     case 9:
       break;
 
-    case 2:
+    case 2: // An effect ability: its power deals damage only if it lands
       if (hit != 0) {
-        if (action->power == 0)
+        if (ability->power == 0)
           break;
-        cur = target->hp;
+        newHp = target->hp;
         ELEMENT_BONUS();
-        ap = action->power;
-        dmg = BattlePowerCalc(ap, bonus, 256);
-        dmg *= adj;
-        dmg = dmg * gHpDmgTable[dist] / 100;
+        power = ability->power;
+        amount = BattlePowerCalc(power, elementBonus, 256);
+        amount *= multiplier;
+        amount = amount * gHpDmgTable[distance] / 100;
         GUARD_CUT();
-        BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
-        BattleEvPush(BATTLE_EVENT_NUM, dmg);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
-        MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgDmgP : MsgDmgE);
-        cur -= dmg;
+        BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
+        BattleEvPush(BATTLE_EVENT_NUM, amount);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+        MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgDmgP : MsgDmgE);
+        newHp -= amount;
 
-        if (cur <= 0) {
-          BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
-          BattleEvPush(BATTLE_EVENT_UNIT, tid);
-          cur = 0;
+        if (newHp <= 0) {
+          BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
+          BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+          newHp = 0;
           MESSAGE_SIDE(MsgGoesDown, MsgFelled);
         } else
-          BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-        dealt = target->hp - cur;
-        target->hp = cur;
-        UnitRatioFar(tid);
+          BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+        damageDealt = target->hp - newHp;
+        target->hp = newHp;
+        UnitRatioFar(targetId);
         break;
       }
-      BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
+      BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       MESSAGE_PUSH(MsgNoEffect);
       break;
     }
   }
 
   //------------------------------------------------------------------
-  // 状態異常・能力変化などの追加効果
+  // The added effect: a status, a stat change, a cure or a revival
   //------------------------------------------------------------------
-  BattleEvPush(BATTLE_EVENT_UNIT, tid);
-  if ((BattleEffectRevCheckFar(action->effect) != 0 || target->hp != 0 ||
-       BattleEffectDeadCheck(action->effect) != 0) &&
+  // It needs the effect to have landed on a target still standing, unless
+  // it revives or drains.
+  BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+  if ((BattleEffectRevCheckFar(ability->effect) != 0 || target->hp != 0 ||
+       BattleEffectDeadCheck(ability->effect) != 0) &&
       hit != 0) {
-    switch (action->effect) {
+    switch (ability->effect) {
 
-    case 64: /* 状態異常をすべてなおす */
+    case 64: // Tonic: cures every ailment
       if (target->delusion != 0) {
         target->delusion = 0;
         MESSAGE_PUSH(MsgCureDelusion);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->stun != 0) {
         target->stun = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         MESSAGE_PUSH(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
         MESSAGE_PUSH(MsgCureSeal);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->grimReaper != 0) {
         target->grimReaper = 0;
         MESSAGE_PUSH(MsgCureCurse);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->haunt != 0) {
         target->haunt = 0;
         MESSAGE_PUSH(MsgCureSpirit);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->poison != 0) {
         MESSAGE_PUSH(MsgCurePoison);
@@ -6175,279 +6251,285 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
       break;
 
-    case 4: /* 状態異常をなおす */
+    case 4: // Restore: cures delusion, stun, sleep, the Psynergy seal and
+            // the Grim Reaper
       if (target->delusion != 0) {
         target->delusion = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         MESSAGE_PUSH(MsgCureDelusion);
       }
       if (target->stun != 0) {
         target->stun = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         MESSAGE_PUSH(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         MESSAGE_PUSH(MsgCureSeal);
       }
       if (target->grimReaper == 0)
         break;
       target->grimReaper = 0;
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT, tid);
+      BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       MESSAGE_PUSH(MsgCureCurse);
       break;
 
-    case 61: /* HPかいふく */
-    case 62: /* HPかいふく */
+    case 61: // Fizz: restores 60% of max HP
+    case 62: // Spritz: restores 30%
     {
-      s32 old;
-      s32 maxu;
-      s32 maxv;
-      s32 heal;
-      u16 *pt;
+      s32 oldHp;
+      s32 maxHpBits;
+      s32 maxHp;
+      s32 newHp;
+      u16 *stat;
 
       /* FAKEMATCH: walking a pointer down from hp to maxHp reads each stat
        * twice, unsigned and signed, as the ROM does; plain member reads,
        * (u16)target->hp beside target->hp and the same for maxHp, share one
        * load each (differ 116 in tbs-en). */
-      pt = (u16 *)&target->hp;
-      old = *pt--;
-      heal = *(s16 *)(pt + 1);
-      pt--;
-      maxu = *pt--;
-      maxv = *(s16 *)(pt + 1);
-      if (action->effect == 61)
-        heal += maxv * 60 / 100;
+      stat = (u16 *)&target->hp;
+      oldHp = *stat--;
+      newHp = *(s16 *)(stat + 1);
+      stat--;
+      maxHpBits = *stat--;
+      maxHp = *(s16 *)(stat + 1);
+      if (ability->effect == 61)
+        newHp += maxHp * 60 / 100;
       else
-        heal += maxv * 30 / 100;
-      if (heal > (s16)maxu)
-        heal = (s16)maxu;
-      tmp = heal - (s16)old;
-      if (tmp == 0 && type != 1)
+        newHp += maxHp * 30 / 100;
+      if (newHp > (s16)maxHpBits)
+        newHp = (s16)maxHpBits;
+      restored = newHp - (s16)oldHp;
+      // Nothing to show if no HP came back, unless the ability heals.
+      if (restored == 0 && kind != 1)
         break;
-      if (heal == (s16)maxu)
+      if (newHp == (s16)maxHpBits)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, tmp);
+        BattleEvPush(BATTLE_EVENT_NUM, restored);
         MESSAGE_PUSH(MsgHpRecover);
       }
-      target->hp = heal;
-      UnitRatioFar(tid);
+      target->hp = newHp;
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 63: /* PPかいふく */
+    case 63: // Ember: restores 7% of max PP
     {
-      s32 old;
-      s32 maxv;
-      s32 heal;
+      s32 oldPp;
+      s32 maxPp;
+      s32 newPp;
 
-      heal = target->pp;
-      maxv = target->maxPp;
-      old = heal;
-      heal += maxv * 7 / 100;
-      if (heal > maxv)
-        heal = maxv;
-      tmp = heal - old;
-      if (tmp == 0 && type != 11)
+      newPp = target->pp;
+      maxPp = target->maxPp;
+      oldPp = newPp;
+      newPp += maxPp * 7 / 100;
+      if (newPp > maxPp)
+        newPp = maxPp;
+      restored = newPp - oldPp;
+      if (restored == 0 && kind != 11)
         break;
-      if (heal == maxv)
+      if (newPp == maxPp)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, tmp);
+        BattleEvPush(BATTLE_EVENT_NUM, restored);
         MESSAGE_PUSH(MsgPpRecover);
       }
-      target->pp = heal;
-      UnitRatioFar(tid);
+      target->pp = newPp;
+      UnitRatioFar(targetId);
       break;
     }
 
-    case 59: /* すばやさアップ */
+    // Stat changes: a stage is an eighth of the stat (UnitCalc). The amount
+    // shown is the stat's change, measured after recalculating it.
+    case 59: // Zephyr: Agility up to the most, for five turns
       target->agiLv = 8;
       target->agiCnt = 5;
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, target->agi - bak->agi);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, target->agi - savedTarget->agi);
       MESSAGE_PUSH(MsgAgiUp);
       break;
 
-    case 58: /* すばやさダウン */
+    case 58: // Vine: Agility down to the least, for five turns
       target->agiLv = -4;
       target->agiCnt = 5;
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, bak->agi - target->agi);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, savedTarget->agi - target->agi);
       MESSAGE_PUSH(MsgAgiDown);
       break;
 
-    case 9: /* こうげき下がる */
+    case 9: // Attack down one stage (Blunt)
       target->atkLv -= 1;
       STEP_LIM(target->atkLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->atkCnt = 7;
       break;
 
-    case 8: /* こうげき下がる */
+    case 8: // Attack down two stages (Dull)
       target->atkLv -= 2;
       STEP_LIM(target->atkLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->atkCnt = 7;
       break;
 
-    case 7: /* こうげき上がる */
+    case 7: // Attack up one stage (High Impact)
       target->atkLv += 1;
       STEP_LIM(target->atkLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->atkCnt = 7;
       break;
 
-    case 6: /* こうげき上がる */
+    case 6: // Attack up two stages (Impact)
       target->atkLv += 2;
       STEP_LIM(target->atkLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->atkCnt = 7;
       break;
 
-    case 13: /* ぼうぎょ下がる */
+    case 13: // Defense down one stage (Debilitate)
       target->defLv -= 1;
       STEP_LIM(target->defLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defCnt = 7;
       break;
 
-    case 12: /* ぼうぎょ下がる */
+    case 12: // Defense down two stages (Impair)
       target->defLv -= 2;
       STEP_LIM(target->defLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defCnt = 7;
       break;
 
-    case 11: /* ぼうぎょ上がる */
+    case 11: // Defense up one stage (Protect)
       target->defLv += 1;
       STEP_LIM(target->defLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defCnt = 7;
       break;
 
-    case 10: /* ぼうぎょ上がる */
+    case 10: // Defense up two stages (Guard)
       target->defLv += 2;
       STEP_LIM(target->defLv);
-      UnitCalcFar(tid);
-      BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
+      UnitCalcFar(targetId);
+      BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defCnt = 7;
       break;
 
-    case 5: /* ふっき */
+    case 5: // Revive: back with full HP
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
 
-    case 56: /* ふっき */
+    case 56: // Quartz: back with half
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp / 2;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
 
-    case 57: /* ふっき */
+    case 57: // Dew: back with 80%
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp * 8 / 10;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
 
-    case 3: /* 毒がきえる */
+    case 3: // Cure Poison
       if (target->poison != 0)
         MESSAGE_PUSH(MsgCurePoison);
       target->poison = 0;
       break;
 
-    case 17: /* たいせいダウン */
-      RES_STEP(-1, (bak->resLv - target->resLv) * 20, MsgResDown);
+    // Resistance stages, 20 points of every element's resistance each.
+    case 17: // Resistance down one stage (Enfeeble)
+      RES_STEP(-1, (savedTarget->resLv - target->resLv) * 20, MsgResDown);
       break;
 
-    case 16: /* たいせいダウン */
-      RES_STEP(-2, (bak->resLv - target->resLv) * 20, MsgResDown);
+    case 16: // Resistance down two stages (Weaken)
+      RES_STEP(-2, (savedTarget->resLv - target->resLv) * 20, MsgResDown);
       break;
 
-    case 15: /* たいせいアップ */
-      RES_STEP(1, (target->resLv - bak->resLv) * 20, MsgResUp);
+    case 15: // Resistance up one stage (Resist)
+      RES_STEP(1, (target->resLv - savedTarget->resLv) * 20, MsgResUp);
       break;
 
-    case 14: /* たいせいアップ */
-      RES_STEP(2, (target->resLv - bak->resLv) * 20, MsgResUp);
+    case 14: // Resistance up two stages (Ward)
+      RES_STEP(2, (target->resLv - savedTarget->resLv) * 20, MsgResUp);
       break;
 
-    case 18: /* 毒 */
+    case 18: // Poison, unless already poisoned
       if (target->poison != 0)
         break;
       MESSAGE_PUSH(MsgPoisoned);
       target->poison = 1;
       break;
 
-    case 19: /* もう毒 */
+    case 19: // Deadly poison, unless it already has it
       if (target->poison > 1)
         break;
       MESSAGE_PUSH(MsgVenom);
       target->poison = 2;
       break;
 
-    case 20: /* まぼろし */
+    case 20: // Delusion
       STAT_SET(target->delusion, MsgDelusion);
       break;
 
-    case 21: /* こんらん */
+    case 21: // Confusion
       STAT_SET(target->confusion, MsgConfused);
       break;
 
-    case 22: /* こころをうばう */
+    case 22: // Charm: "X's heart has been stolen!"
       STAT_SET(target->charm, MsgCharmed);
       break;
 
-    case 23: /* しびれ */
+    case 23: // Stun
       STAT_SET(target->stun, MsgStunned);
       break;
 
-    case 24: /* ねむり */
+    case 24: // Sleep
       STAT_SET(target->sleep, MsgAsleep);
       break;
 
-    case 25: /* エナジーふうじ */
+    case 25: // Bind: seals Psynergy for seven turns, which may end early
       MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
       target->psySeal |= 7;
       break;
 
-    case 67: /* エナジーふうじ */
+    case 67: // Luff: seals Psynergy for two turns that never end early
+             // (the seal counts down 8 a turn above its low three bits)
       MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
       target->psySeal |= 16;
       break;
 
-    case 27: /* せんとうふのう */
-      BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
+    case 27: // Instant death (Condemn); Drown suffocates
+      BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
       if (target->side == ALLY)
         MESSAGE_PUSH(MsgKoDown);
       else if (abilityId == 219)
@@ -6455,82 +6537,84 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       else
         MESSAGE_PUSH(MsgSpiritDrain);
       target->hp = 0;
-      UnitRatioFar(tid);
+      UnitRatioFar(targetId);
       break;
 
-    case 29: /* リフレイン */
+    case 29: // Regenerate
       STAT_SET(target->refrain, MsgRefrain);
       break;
 
-    case 30: /* リフレクト */
+    case 30: // Reflect
       STAT_SET(target->reflect, MsgReflect);
       break;
 
-    case 31: /* HPをうばう */
-    case 60: {
-      s32 heal;
+    // The drains give the damage dealt back to the actor.
+    case 31:   // Drain: all of it as HP
+    case 60: { // Sap: half
+      s32 newHp;
 
-      heal = actor->hp;
-      dmg = dealt;
-      if (action->effect == 60)
-        dmg /= 2;
-      heal += dmg;
-      if (heal > actor->maxHp) {
-        heal = actor->maxHp;
-        dmg = heal - actor->hp;
+      newHp = actor->hp;
+      amount = damageDealt;
+      if (ability->effect == 60)
+        amount /= 2;
+      newHp += amount;
+      if (newHp > actor->maxHp) {
+        newHp = actor->maxHp;
+        amount = newHp - actor->hp;
       }
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT, aid);
-      if (heal == actor->maxHp)
+      BattleEvPush(BATTLE_EVENT_UNIT, actorId);
+      if (newHp == actor->maxHp)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, dmg);
+        BattleEvPush(BATTLE_EVENT_NUM, amount);
         MESSAGE_PUSH(MsgHpRecover);
       }
-      actor->hp = heal;
-      UnitRatioFar(aid);
+      actor->hp = newHp;
+      UnitRatioFar(actorId);
       break;
     }
 
-    case 32: /* PPをうばう */
+    case 32: // Psy Drain: the PP taken
     {
-      s32 heal;
-      s32 amt;
+      s32 newPp;
+      s32 drained;
 
-      heal = actor->pp;
-      amt = dealt;
-      heal += amt;
-      if (heal > actor->maxPp) {
-        heal = actor->maxPp;
-        amt = heal - actor->pp;
+      newPp = actor->pp;
+      drained = damageDealt;
+      newPp += drained;
+      if (newPp > actor->maxPp) {
+        newPp = actor->maxPp;
+        drained = newPp - actor->pp;
       }
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-      BattleEvPush(BATTLE_EVENT_UNIT, aid);
-      if (heal == actor->maxPp)
+      BattleEvPush(BATTLE_EVENT_UNIT, actorId);
+      if (newPp == actor->maxPp)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvPush(BATTLE_EVENT_NUM, amt);
+        BattleEvPush(BATTLE_EVENT_NUM, drained);
         MESSAGE_PUSH(MsgPpRecover);
       }
-      actor->pp = heal;
-      UnitRatioFar(aid);
+      actor->pp = newPp;
+      UnitRatioFar(actorId);
       break;
     }
 
-    case 69: /* PPをうばう */
-      dmg = dealt / 10;
-      if (target->pp < dmg)
-        dmg = target->pp;
-      if (actor->pp + dmg > actor->maxPp)
-        dmg = actor->maxPp - actor->pp;
-      if (dmg == 0)
+    case 69: // Psy Leech: a tenth of the damage as PP, as far as the
+             // target has it and the actor has room
+      amount = damageDealt / 10;
+      if (target->pp < amount)
+        amount = target->pp;
+      if (actor->pp + amount > actor->maxPp)
+        amount = actor->maxPp - actor->pp;
+      if (amount == 0)
         break;
-      BattleEvPush(BATTLE_EVENT_NUM, dmg);
+      BattleEvPush(BATTLE_EVENT_NUM, amount);
       MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
-      UnitPpAddFar(aid, dmg);
+      UnitPpAddFar(actorId, amount);
       break;
 
-    case 33: /* つよさがもどる */
+    case 33: // Break: undoes every raised stat and the element stages
       if (target->atkLv > 0) {
         target->atkLv = 0;
         target->atkCnt = 0;
@@ -6552,12 +6636,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       MESSAGE_PUSH(MsgBuffsReset);
       break;
 
-    case 26: /* あくりょう */
+    case 26: // Haunt: an evil spirit grips the target
       MESSAGE_PUSH(MsgEvilSpirit);
       target->haunt = 1;
       break;
 
-    case 28: /* しりょう */
+    case 28: // Curse: the Grim Reaper counts down seven turns; each curse
+             // after the first brings it a turn closer
       if (target->grimReaper == 0) {
         MESSAGE_PUSH(MsgDeathCurse);
         target->grimReaper = 7;
@@ -6570,38 +6655,38 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       MESSAGE_PUSH(MsgDeathCount);
       break;
 
-    case 66: /* そなえ */
+    case 66: // Kite: the target acts twice next turn
       MESSAGE_PUSH(MsgReadies);
       target->ready = 2;
       break;
 
-    case 54: /* ちょうはつ */
+    case 54: // The target rises to the challenge
       MESSAGE_PUSH(MsgChallenge);
       target->challenge = 1;
-      if (ALLY_CHECK(tid))
+      if (ALLY_CHECK(targetId))
         work->challengeFlag |= 2;
       break;
 
-    case 53: /* みうごき */
+    case 53: // Ground: the target loses its action this turn
       MESSAGE_PUSH(MsgImmobile);
       target->immobile = 1;
       break;
 
-    case 46: /* まもりのオーラ */
+    case 46: // Defend and Granite: a guard that halves damage
       MESSAGE_PUSH(MsgAura);
       if (target->guardLv > 0)
         break;
       target->guardLv = 1;
       break;
 
-    case 47: /* まもりのオーラ */
+    case 47: // Total Defense and Flash: a guard that cuts it to a tenth
       MESSAGE_PUSH(MsgAura2);
       if (target->guardLv > 1)
         break;
       target->guardLv = 2;
       break;
 
-    case 45:
+    case 45: // Contain, Threaten and Tremble: only a pause
       BattleEvPush(BATTLE_EVENT_MESSAGE, -1);
       break;
 
@@ -6611,28 +6696,32 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 
   //------------------------------------------------------------------
-  // ダメージによる目覚めと、能力・表示の更新
+  // Waking from damage, and the recalculated stats
   //------------------------------------------------------------------
   BattleEvPush(BATTLE_EVENT_CLEAR, 0);
 
+  // Damage wakes a sleeping target one time in four, unless it fell asleep
+  // this turn (its count still at seven).
   if (target->hp != 0) {
     if (target->sleep != 0)
-      if (target->sleep <= 6 && dealt > 0 && (3 & BattleRandomFar()) == 0) {
+      if (target->sleep <= 6 && damageDealt > 0 &&
+          (3 & BattleRandomFar()) == 0) {
         target->sleep = 0;
-        BattleEvPush(BATTLE_EVENT_UNIT, tid);
+        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         MESSAGE_PUSH(MsgWakes);
       }
   }
-  MemFree(bak);
-  UnitCalcFar(tid);
+  MemFree(savedTarget);
+  UnitCalcFar(targetId);
   PartyStatusDrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
-    BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-  // あくりょうによる反動を行動側に加算する
-  if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && dealt > 0) {
+    BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
+  // A haunted actor: the evil spirit may hurt it for a quarter of the
+  // damage it dealt, at the end of its turn (BattleUnit_ProcessTurnEnd).
+  if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 
-    share = dealt >> 2;
+    share = damageDealt >> 2;
     if (share == 0)
       share = 1;
     plan->hauntDmg += share;

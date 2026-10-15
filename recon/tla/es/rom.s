@@ -4516,7 +4516,14 @@ DjinnMenu_DrawPage:
 Func_08101c7c:
 	.incbin "baserom.gba", 0x00107dd4, 0x000000b8
 	.section .rom.00107eb4, "ax"
-	.incbin "baserom.gba", 0x00107eb4, 0x00002cf0
+	.incbin "baserom.gba", 0x00107eb4, 0x00002bc0
+	.section .rom.0010aad8, "ax"
+	.balign 4
+	.global Func_0810498c
+	.type Func_0810498c, %function
+	.thumb_func
+Func_0810498c:
+	.incbin "baserom.gba", 0x0010aad8, 0x000000cc
 	.section .rom.0010ad4c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010ad4c, 0x000000cc

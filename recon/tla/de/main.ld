@@ -1420,6 +1420,8 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.0010be48)
     "*/games/tla/src/menu/panel_palette.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010bf28)
+    "*/games/tla/src/menu/djinn_balance.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.0010eb58)
     "*/games/tla/src/graphics/tile/create_with_loaded_resource.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010edcc)
     "*/games/tla/src/menu/pagearrw.o"(.text)

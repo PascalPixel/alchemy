@@ -1568,7 +1568,7 @@ SECTIONS
         "*/recon/tla/raw/08103218.o"(.text)
         "*/recon/tla/raw/081039fc.o"(.text)
         "*/recon/tla/raw/08104540.o"(.text)
-        "*/recon/tla/raw/08104928.o"(.text)
+        "*/games/tla/src/menu/djinn_balance.o"(.text)
         "*/recon/tla/raw/0810498c.o"(.text)
         "*/recon/tla/raw/081049c8.o"(.text)
         "*/games/tla/src/graphics/tile/create_with_loaded_resource.o"(.text)

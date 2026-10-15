@@ -70,3 +70,36 @@ void Func_020002b8(s32 unused, s32 id)
     if (x >> 20 == object->action >> 4)
         Func_02005598(kind, 0, 0);
 }
+
+#if !defined(TLA_EDITION_JA) /* not in the Japanese edition */
+void Func_020002ec(void)
+{
+    struct ObjectRuntime *object;
+    s32 id;
+    s32 x;
+    s32 z;
+
+    Func_020054e8(53, 72, 1, 1, 38, 72);
+    Func_020054e8(53, 72, 1, 1, 43, 72);
+    Func_020054e8_(53, 8, 1, 1, 47, 8);
+    for (id = 10; id <= 12; id++) {
+        object = Object_GetById(id);
+        x = object->x >> 20;
+        z = object->z >> 20;
+        if (x == 38 && z == 8)
+            Func_020054e8(54, 72, 1, 1, 38, 72);
+    }
+    for (id = 10; id <= 12; id++) {
+        object = Object_GetById(id);
+        x = object->x >> 20;
+        z = object->z >> 20;
+        if (x == 43 && z == 8)
+            Func_020054e8(54, 72, 1, 1, 43, 72);
+    }
+    object = Object_GetById(10);
+    x = object->x >> 20;
+    z = object->z >> 20;
+    if (x == 47 && z == 8)
+        Func_020054e8(54, 8, 1, 1, 47, 8);
+}
+#endif

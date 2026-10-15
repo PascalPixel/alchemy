@@ -7,7 +7,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ad/s004c.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x02008170)
         "*/games/tla/src/field/overlay_6ad/s01f4.o"(.text)
-        "*/resource_6ad_overlay.o"(.text.x020082ec)
         "*/games/tla/src/field/overlay_6ad/s03b4.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200855c)
         "*/games/tla/src/field/overlay_6ad/s0670.o"(.text)

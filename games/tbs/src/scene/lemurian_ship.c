@@ -784,9 +784,9 @@ struct FadeSprite
 	u32 tile;
 };
 
-static struct FadeSprite LemurianShip_FadeSprites[24];
-static s16				 LemurianShip_FadeStep;
-static s16				 LemurianShip_FadeSlot;
+static struct FadeSprite sFadeSprites[24];
+static s16				 sFadeStep;
+static s16				 sFadeSlot;
 
 static void LemurianShip_StepFade(void)
 {
@@ -796,15 +796,15 @@ static void LemurianShip_StepFade(void)
 	s32	 x;
 	u32	 i;
 
-	tile = gVramBlockCache[LemurianShip_FadeSlot].offset >> 5;
-	entry = (u32 *)LemurianShip_FadeSprites;
-	if (LemurianShip_FadeStep != 0)
-		LemurianShip_FadeStep--;
+	tile = gVramBlockCache[sFadeSlot].offset >> 5;
+	entry = (u32 *)sFadeSprites;
+	if (sFadeStep != 0)
+		sFadeStep--;
 	for (i = 0; i < 8; i++)
 	{
 		s32 left;
 
-		step = LemurianShip_FadeStep;
+		step = sFadeStep;
 		left = -step / 2;
 		*entry++ = 0;
 		*entry++ = (left & 0xff) | (i << 21) | 0x80004000;
@@ -818,7 +818,7 @@ static void LemurianShip_StepFade(void)
 		*entry++ = tile;
 	}
 	i = 0;
-	x = (LemurianShip_FadeStep / 2 + 152) & 0xff;
+	x = (sFadeStep / 2 + 152) & 0xff;
 	for (; i < 8; i++)
 	{
 		*entry++ = 0;
@@ -826,7 +826,7 @@ static void LemurianShip_StepFade(void)
 		*entry++ = tile;
 	}
 	for (i = 0; i < 24; i++)
-		Runtime_PushSlotEntry(&LemurianShip_FadeSprites[i], 255);
+		Runtime_PushSlotEntry(&sFadeSprites[i], 255);
 }
 
 static void LemurianShip_ScheduleFade(void)
@@ -834,11 +834,11 @@ static void LemurianShip_ScheduleFade(void)
 	u8 *buf;
 
 	buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-	LemurianShip_FadeSlot = Resource_FindFreeEntry();
+	sFadeSlot = Resource_FindFreeEntry();
 	Dma_Fill32(0x11111111, buf, 0x100);
-	Engine_VramLoad(LemurianShip_FadeSlot, 0x100, (s32)buf);
+	Engine_VramLoad(sFadeSlot, 0x100, (s32)buf);
 
-	LemurianShip_FadeStep = 0x30;
+	sFadeStep = 0x30;
 	FieldScheduler_AddCallback(LemurianShip_StepFade, 0xc80);
 }
 

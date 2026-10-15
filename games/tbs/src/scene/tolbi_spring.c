@@ -927,17 +927,17 @@ static void TolbiSpring_SetActorActive(s32 arg0, s32 arg1)
 	}
 }
 
-static struct SpringRide TolbiSpring_Ride;
+static struct SpringRide sRide;
 
-static s32 TolbiSpring_RideSide;
+static s32 sRideSide;
 
-static s32 TolbiSpring_RideUnknown[3];
+static s32 sRideUnknown[3];
 
-static struct SpringActor TolbiSpring_ActorRecords[4];
+static struct SpringActor sActorRecords[4];
 
-static s32 TolbiSpring_RideFrame;
-static s32 TolbiSpring_RideEnded;
-static s32 TolbiSpring_RideResult;
+static s32 sRideFrame;
+static s32 sRideEnded;
+static s32 sRideResult;
 
 static void FieldScene_RunSecondaryScript(void)
 {
@@ -956,7 +956,7 @@ static void FieldScene_RunSecondaryScript(void)
 	/* FAKEMATCH: never used; the reference's frame keeps twelve bytes that no instruction touches. */
 	struct SpringPoint spare;
 
-	ride = &TolbiSpring_Ride;
+	ride = &sRide;
 	i = 3;
 	do
 	{
@@ -979,7 +979,7 @@ static void FieldScene_RunSecondaryScript(void)
 			if (ride->velocity.y != 0)
 			{
 				ride->velocity.y = 0;
-				if (TolbiSpring_RideSide == 1)
+				if (sRideSide == 1)
 				{
 					Object_SetMode(Object_GetById(17), 1);
 				}
@@ -1018,7 +1018,7 @@ static void FieldScene_RunSecondaryScript(void)
 				}
 				if (ride->velocity.x == 0 && ride->velocity.z == 0)
 				{
-					if (TolbiSpring_RideSide == 1)
+					if (sRideSide == 1)
 					{
 						Object_SetMode(Object_GetById(17), 2);
 						TolbiSpring_SetActorActive(15, 0);
@@ -1037,26 +1037,26 @@ static void FieldScene_RunSecondaryScript(void)
 						s32 dz = (0x470000 - ride->trail[0].z) >> 16;
 						s32 dist = dx * dx + dz * dz;
 
-						TolbiSpring_RideEnded = 1;
+						sRideEnded = 1;
 						if (dist <= 224)
 						{
-							TolbiSpring_RideResult = 0;
+							sRideResult = 0;
 						}
 						else if (dist <= 624)
 						{
-							TolbiSpring_RideResult = 1;
+							sRideResult = 1;
 						}
 						else if (dist <= 1088)
 						{
-							TolbiSpring_RideResult = 2;
+							sRideResult = 2;
 						}
 						else if (dist <= 1680)
 						{
-							TolbiSpring_RideResult = 3;
+							sRideResult = 3;
 						}
 						else
 						{
-							TolbiSpring_RideResult = 4;
+							sRideResult = 4;
 						}
 					}
 				}
@@ -1165,7 +1165,7 @@ static void FieldScene_RunSecondaryScript(void)
 	i = 0;
 	do
 	{
-		rec = &TolbiSpring_ActorRecords[i];
+		rec = &sActorRecords[i];
 
 		if (rec->react > 0)
 		{
@@ -1377,7 +1377,7 @@ static void FieldScene_RunSecondaryScript(void)
 	ride->shadow.y = 0;
 	ride->shadow.z = ride->trail[0].z;
 
-	if (TolbiSpring_RideSide == 1)
+	if (sRideSide == 1)
 	{
 		TolbiSpring_PlaceActor(17, &ride->trail[0].x, 0, 0, 16);
 		TolbiSpring_PlaceActor(16, &ride->shadow.x, 0, 0, 16);
@@ -1408,7 +1408,7 @@ static void FieldScene_RunSecondaryScript(void)
 
 static void SceneState_InitFourActorRecordsAndInstallTask(void)
 {
-	struct SpringRide *ride = &TolbiSpring_Ride;
+	struct SpringRide *ride = &sRide;
 	s32				   i = 0;
 	u8				  *xtbl;
 	u16				  *htbl;
@@ -1416,7 +1416,7 @@ static void SceneState_InitFourActorRecordsAndInstallTask(void)
 	u8				  *ztbl;
 
 	xtbl = (u8 *)TolbiSpring_ActorTileX;
-	rec = (u8 *)TolbiSpring_ActorRecords;
+	rec = (u8 *)sActorRecords;
 	htbl = (u16 *)TolbiSpring_ActorHeadings;
 	ztbl = (u8 *)TolbiSpring_ActorTileZ;
 
@@ -1461,21 +1461,21 @@ static s32 TolbiSpring_RunSpringRide(s32 side)
 {
 	struct SpringRide *ride;
 
-	ride = &TolbiSpring_Ride;
+	ride = &sRide;
 	ride->trail[0].y = 0;
 	ride->trail[1].y = 0;
 	ride->trail[2].y = 0;
 	ride->trail[3].y = 0;
-	TolbiSpring_RideSide = side;
-	TolbiSpring_RideEnded = 0;
+	sRideSide = side;
+	sRideEnded = 0;
 	ride->hold = 0xffff;
-	for (TolbiSpring_RideFrame = 0;; TolbiSpring_RideFrame++)
+	for (sRideFrame = 0;; sRideFrame++)
 	{
-		if (TolbiSpring_RideFrame == 50)
+		if (sRideFrame == 50)
 		{
 			Engine_AudioPlayCue(300);
 		}
-		if (TolbiSpring_RideFrame == 16)
+		if (sRideFrame == 16)
 		{
 			Engine_ActorSetAnimation(gGameState.selectedActor, 29);
 			ride->hold = 0;
@@ -1486,7 +1486,7 @@ static s32 TolbiSpring_RunSpringRide(s32 side)
 			ride->trail[0].y = 0x100000;
 			ride->trail[0].z = 0x980000;
 			ride->frames = 300;
-			if (TolbiSpring_RideSide == 1)
+			if (sRideSide == 1)
 			{
 				Object_SetMode(Object_GetById(16), 3);
 				Object_SetMode(Object_GetById(17), 0);
@@ -1504,12 +1504,12 @@ static s32 TolbiSpring_RunSpringRide(s32 side)
 			}
 		}
 		Engine_TaskWait(1);
-		if (TolbiSpring_RideEnded == 1)
+		if (sRideEnded == 1)
 		{
 			break;
 		}
 	}
-	return TolbiSpring_RideResult;
+	return sRideResult;
 }
 
 const struct SceneEntrance TolbiSpring_SceneTableA[] = {

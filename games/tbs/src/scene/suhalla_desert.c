@@ -54,7 +54,7 @@ struct StateMarkerWork
 	u16 stateOneMarker;
 };
 
-static u16 gSuhallaDesertShownLevel;
+static u16 sSuhallaDesertShownLevel;
 
 #define ACTOR_ID 13
 
@@ -600,7 +600,7 @@ static s32 FieldScene_RunOpeningAuxiliarySequence(void)
 		Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
 		Map_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 		record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
-		Io_Write16(gSuhallaDesertShownLevel, &EncounterPalette);
+		Io_Write16(sSuhallaDesertShownLevel, &EncounterPalette);
 		return record;
 	}
 }
@@ -644,7 +644,7 @@ s32 SuhallaDesert_RunSceneScript(void)
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1
 		|| gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
-		gSuhallaDesertShownLevel = EncounterPalette;
+		sSuhallaDesertShownLevel = EncounterPalette;
 		FieldScene_RunOpeningAuxiliarySequence();
 	}
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1)

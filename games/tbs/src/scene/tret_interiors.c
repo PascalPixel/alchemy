@@ -42,9 +42,9 @@ static void TretInteriors_SpawnSwirlSparks(void);
 static void TretInteriors_ApplyFlaggedMapPatches(void);
 static void TretInteriors_RunLandingDustScene(void);
 
-static u8	TretInteriors_SparkOrigin[12];
-static u8	TretInteriors_SparkCounter[4];
-static s16 *TretInteriors_PaletteBuffer;
+static u8	sSparkOrigin[12];
+static u8	sSparkCounter[4];
+static s16 *sPaletteBuffer;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
@@ -131,16 +131,16 @@ static void TretInteriors_HandleFloorSwitch(s32 flag, s32 srcX, s32 srcY, s32 en
 	destY = gGameState.z >> 20;
 	leader = gGameState.selectedActor;
 	actor = Object_GetById(leader);
-	if (entrance == *TretInteriors_PaletteBuffer)
+	if (entrance == *sPaletteBuffer)
 		return;
-	*TretInteriors_PaletteBuffer = entrance;
+	*sPaletteBuffer = entrance;
 	if (Engine_GameFlagIsSet(flag) == 0)
 	{
 		Map_CopyCells(srcX, srcY, 1, 1, destX, destY);
 		Engine_GameFlagSet(flag);
 		return;
 	}
-	*TretInteriors_PaletteBuffer = -1;
+	*sPaletteBuffer = -1;
 	Map_CopyCells(srcX, srcY + 1, 1, 1, destX, destY);
 	Engine_AudioPlayCue(206);
 	Engine_EventBegin();
@@ -275,7 +275,7 @@ static void EV59_TOUCH(void)
 static void SceneState_ClearStoryVariantWhenIdle(void)
 {
 	if (Engine_LeaderCheckAhead() == 0)
-		*TretInteriors_PaletteBuffer = -1;
+		*sPaletteBuffer = -1;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
@@ -510,9 +510,9 @@ static void FieldScene_RunFourActorEncounter(void)
 	Actor_FaceDirection(GARET, (v6 << 8), 0);
 	Actor_FaceDirection(IVAN, (v6 << 8), 20);
 	Engine_EventWait(20);
-	*(s32 *)TretInteriors_SparkCounter = 0;
+	*(s32 *)sSparkCounter = 0;
 	{
-		s32 *bank = (s32 *)TretInteriors_SparkOrigin;
+		s32 *bank = (s32 *)sSparkOrigin;
 		bank[0] = 0xa80000;
 		bank[1] = 0x200000;
 		spark_task = (s32)TretInteriors_SpawnSwirlSparks;
@@ -601,7 +601,7 @@ s32 TretInteriors_EnterRoom(void)
 	s32				   leader;
 
 	lamp = Object_GetById(8);
-	TretInteriors_PaletteBuffer = (s16 *)gSceneState;
+	sPaletteBuffer = (s16 *)gSceneState;
 	TretPalette_CaptureBank();
 	lamp->motionFlags = 0;
 	lamp->y.fixed = -0xa0000;
@@ -863,7 +863,7 @@ static void TretInteriors_SpawnSwirlSparks(void)
 	u32				   i;
 	s32				  *counter;
 
-	counter = &TretInteriors_SparkCounter;
+	counter = &sSparkCounter;
 	frame = *counter;
 	previous = 0;
 	/* FAKEMATCH: the explicit libgcc call keeps the final count's reload
@@ -881,9 +881,9 @@ static void TretInteriors_SpawnSwirlSparks(void)
 		Engine_AudioPlayCue(220);
 		for (i = 0; i < 6 - wave; i++)
 		{
-			spark = Engine_ObjectCreate(0x11d, (*(struct Vec *)TretInteriors_SparkOrigin).x,
-				(*(struct Vec *)TretInteriors_SparkOrigin).y,
-				(*(struct Vec *)TretInteriors_SparkOrigin).z);
+			spark = Engine_ObjectCreate(0x11d, (*(struct Vec *)sSparkOrigin).x,
+				(*(struct Vec *)sSparkOrigin).y,
+				(*(struct Vec *)sSparkOrigin).z);
 			if (spark != 0)
 			{
 				previous = Object_ReplaceResourceEntry(spark->sprite, previous);
@@ -893,9 +893,9 @@ static void TretInteriors_SpawnSwirlSparks(void)
 				Object_SetMode(spark, 1);
 				((struct Spark *)spark)->phase = 0;
 				((struct Spark *)spark)->angle = ((360 / (u32)(6 - wave) * i) << 16) / 360;
-				spark->targetX = (*(struct Vec *)TretInteriors_SparkOrigin).x;
-				spark->targetY = (*(struct Vec *)TretInteriors_SparkOrigin).y;
-				spark->targetZ = (*(struct Vec *)TretInteriors_SparkOrigin).z;
+				spark->targetX = (*(struct Vec *)sSparkOrigin).x;
+				spark->targetY = (*(struct Vec *)sSparkOrigin).y;
+				spark->targetZ = (*(struct Vec *)sSparkOrigin).z;
 				spark->speed = 0x19999;
 				spark->update = TretInteriors_UpdateSwirlObject;
 			}
@@ -906,7 +906,7 @@ static void TretInteriors_SpawnSwirlSparks(void)
 		 * across the spark loop, where the loop index takes its register.
 		 * Measured: without it, differ 36; with the division also written
 		 * with /, differ 51. */
-		counter = &TretInteriors_SparkCounter;
+		counter = &sSparkCounter;
 		break;
 	}
 	if (++*counter > 120)

@@ -112,8 +112,8 @@ struct FocusWork
 };
 
 // bss in this order: as commons of one object the linker would sort them itself
-static struct SealScene gSealScene;
-static struct Ent		SolStatue_SpriteRows[27];
+static struct SealScene sSealScene;
+static struct Ent		sSpriteRows[27];
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {
@@ -614,7 +614,7 @@ static void SolStatue_RunSealOpenedSequence(void)
 static void SceneEffect_UpdateScrollingSpriteRows(void)
 {
 	s32		   *cp = &((struct Cam *)gMapWork[0])->x;
-	struct Ent *e = SolStatue_SpriteRows;
+	struct Ent *e = sSpriteRows;
 	s32			sx = cp[0] / 65536;
 	s32			sy = 80 - cp[1] / 65536;
 	s32			v;
@@ -827,7 +827,7 @@ static void Scene_RunGuardSequenceC(void)
 	s32 *p;
 	s32	 buf;
 
-	p = (s32 *)SolStatue_SpriteRows;
+	p = (s32 *)sSpriteRows;
 	buf = (s32)Runtime_AllocateBlock(14, 0x400);
 	Resource_DecodeByteLz((s32)SolStatue_SpriteRowsGfx, buf);
 	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
@@ -1193,7 +1193,7 @@ static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
 
 static void SolStatue_OpenNorthwestSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 0;
 	p[1] = 55;
 	p[2] = 32;
@@ -1248,7 +1248,7 @@ static void SolStatue_OpenNorthwestSeal(void)
 
 static void SolStatue_OpenNortheastSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 4;
 	p[1] = 55;
 	p[2] = 36;
@@ -1303,7 +1303,7 @@ static void SolStatue_OpenNortheastSeal(void)
 
 static void SolStatue_OpenSouthwestSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 0;
 	p[1] = 58;
 	p[2] = 32;
@@ -1358,7 +1358,7 @@ static void SolStatue_OpenSouthwestSeal(void)
 
 static void SolStatue_OpenSoutheastSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 4;
 	p[1] = 58;
 	p[2] = 36;
@@ -1428,17 +1428,17 @@ static void SolStatue_OpenSeal(void)
 		Engine_CameraMoveTo(0x2400000, -1, 0xac0000, 1);
 		Engine_CameraWaitForMove();
 		Engine_AudioPlayCue(186);
-		COPY_CELLS(gSealScene.open);
+		COPY_CELLS(sSealScene.open);
 		for (i = 0; i != 20; i++)
 		{
 			Engine_AudioPlayCue(246);
-			COPY_CELLS(gSealScene.pulseA);
+			COPY_CELLS(sSealScene.pulseA);
 			Engine_EventWait(4);
 			Engine_AudioPlayCue(246);
-			COPY_CELLS(gSealScene.pulseB);
+			COPY_CELLS(sSealScene.pulseB);
 			Engine_EventWait(4);
 		}
-		scene = &gSealScene;
+		scene = &sSealScene;
 		COPY_CELLS(scene->opened);
 		Engine_GameFlagSet(scene->flag);
 		result = SceneEventRuntime_SelectInitialSceneByFlags();

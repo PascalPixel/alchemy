@@ -593,10 +593,10 @@ struct PillarSlot
 	s32					 flag;
 };
 
-static struct PillarSlot CrossbonePillar_PillarSlots[4];
-static s32				 CrossbonePillar_ProbePosition[3];
-static u8				 CrossbonePillar_ShakenScroll[12];
-static s32				 CrossbonePillar_ShakeChance;
+static struct PillarSlot sPillarSlots[4];
+static s32				 sProbePosition[3];
+static u8				 sShakenScroll[12];
+static s32				 sShakeChance;
 
 static void CrossbonePillar_JitterBackgroundScroll(void)
 {
@@ -606,9 +606,9 @@ static void CrossbonePillar_JitterBackgroundScroll(void)
 
 	if (line == 227 || line <= 46)
 	{
-		if ((u32)(Engine_RandomNext() * 100) >> 16 < CrossbonePillar_ShakeChance)
+		if ((u32)(Engine_RandomNext() * 100) >> 16 < sShakeChance)
 		{
-			src = ((u32 *)CrossbonePillar_ShakenScroll);
+			src = ((u32 *)sShakenScroll);
 		}
 	}
 	*reg = *src++;
@@ -634,11 +634,11 @@ static void CopyAndOffsetCoordinatePreset(void)
 	u16		  *coordinates;
 
 	source = (const u32 *)&((u32 *)gBgScroll)[1];
-	destination = (u32 *)CrossbonePillar_ShakenScroll;
+	destination = (u32 *)sShakenScroll;
 	*destination++ = *source++;
 	*destination++ = *source++;
 	*destination = *source;
-	coordinates = (u16 *)CrossbonePillar_ShakenScroll;
+	coordinates = (u16 *)sShakenScroll;
 	coordinates[1] += 0xc0;
 	coordinates[3] += 0xc0;
 	coordinates[5] += 0xc0;
@@ -661,16 +661,16 @@ static void FieldScene_RunScene3b3SequenceA(void)
 		Map_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
 		Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
 	}
-	CrossbonePillar_ShakeChance = 0;
+	sShakeChance = 0;
 	FieldScheduler_AddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, CrossbonePillar_JitterBackgroundScroll);
 	Engine_AudioPlayCue(231);
-	CrossbonePillar_ShakeChance = 0;
+	sShakeChance = 0;
 	do
 	{
 		Engine_TaskWait(1);
-	} while (++CrossbonePillar_ShakeChance <= 100);
+	} while (++sShakeChance <= 100);
 	Engine_AudioPlayCue(0x121);
 	if (Engine_GameFlagIsSet(0x200) == 0)
 	{
@@ -875,23 +875,23 @@ static void CrossbonePillar_SortPillarActors(void)
 			Dma_Wait(DMA3);
 			Dma_Set(actor, a, 0x8400001c, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(&CrossbonePillar_PillarSlots[j], slot, 0x84000004, DMA3);
+			Dma_Set(&sPillarSlots[j], slot, 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(&CrossbonePillar_PillarSlots[i], &CrossbonePillar_PillarSlots[j], 0x84000004, DMA3);
+			Dma_Set(&sPillarSlots[i], &sPillarSlots[j], 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(slot, &CrossbonePillar_PillarSlots[i], 0x84000004, DMA3);
+			Dma_Set(slot, &sPillarSlots[i], 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			if (Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[i].flag)
-				&& !Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[j].flag))
+			if (Engine_GameFlagIsSet(sPillarSlots[i].flag)
+				&& !Engine_GameFlagIsSet(sPillarSlots[j].flag))
 			{
-				Engine_GameFlagClear(CrossbonePillar_PillarSlots[i].flag);
-				Engine_GameFlagSet(CrossbonePillar_PillarSlots[j].flag);
+				Engine_GameFlagClear(sPillarSlots[i].flag);
+				Engine_GameFlagSet(sPillarSlots[j].flag);
 			}
-			else if (!Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[i].flag)
-					 && Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[j].flag))
+			else if (!Engine_GameFlagIsSet(sPillarSlots[i].flag)
+					 && Engine_GameFlagIsSet(sPillarSlots[j].flag))
 			{
-				Engine_GameFlagSet(CrossbonePillar_PillarSlots[i].flag);
-				Engine_GameFlagClear(CrossbonePillar_PillarSlots[j].flag);
+				Engine_GameFlagSet(sPillarSlots[i].flag);
+				Engine_GameFlagClear(sPillarSlots[j].flag);
 			}
 		}
 	}
@@ -927,22 +927,22 @@ static void CrossbonePillar_UpdatePillarActors(void)
 		actor = (struct PillarActor *)Object_GetById(id);
 		actor->unk22 = 2;
 		i = id - 8;
-		if ((actor->x >> 20) == CrossbonePillar_PillarSlots[i].x
-			&& (actor->z >> 20) == CrossbonePillar_PillarSlots[i].z && actor->velocityY == 0)
+		if ((actor->x >> 20) == sPillarSlots[i].x
+			&& (actor->z >> 20) == sPillarSlots[i].z && actor->velocityY == 0)
 		{
 			continue;
 		}
-		Dma_Set(&actor->x, CrossbonePillar_ProbePosition, 0x84000003, DMA3);
+		Dma_Set(&actor->x, sProbePosition, 0x84000003, DMA3);
 		Dma_Wait(DMA3);
-		if (FieldObject_CheckMovementCollision(actor, CrossbonePillar_ProbePosition) == -1)
+		if (FieldObject_CheckMovementCollision(actor, sProbePosition) == -1)
 		{
 			actor->motionFlags = 3;
 		}
 		flags = &actor->motionFlags;
-		CrossbonePillar_SetCellAttributes(0, CrossbonePillar_PillarSlots[i].x,
-			CrossbonePillar_PillarSlots[i].z, (struct MapCell *)&CrossbonePillar_PillarSlots[i].cell);
-		CrossbonePillar_SetCellAttributes(2, CrossbonePillar_PillarSlots[i].x,
-			CrossbonePillar_PillarSlots[i].z, (struct MapCell *)&CrossbonePillar_PillarSlots[i].cell);
+		CrossbonePillar_SetCellAttributes(0, sPillarSlots[i].x,
+			sPillarSlots[i].z, (struct MapCell *)&sPillarSlots[i].cell);
+		CrossbonePillar_SetCellAttributes(2, sPillarSlots[i].x,
+			sPillarSlots[i].z, (struct MapCell *)&sPillarSlots[i].cell);
 		if (*flags & 1)
 		{
 			if (GetMapCellCollision(2, actor->x, actor->z) == 50)
@@ -973,31 +973,31 @@ static void CrossbonePillar_UpdatePillarActors(void)
 			*flags = 0;
 		}
 		CrossbonePillar_ReadMapCell(
-			0, actor->x >> 20, actor->z >> 20, &CrossbonePillar_PillarSlots[i].cell);
+			0, actor->x >> 20, actor->z >> 20, &sPillarSlots[i].cell);
 		if (actor->y >= 0)
 		{
 			CrossbonePillar_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
 			CrossbonePillar_SetCellAttributes(
 				0, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
-			cell.kind = CrossbonePillar_PillarSlots[i].cell.kind;
+			cell.kind = sPillarSlots[i].cell.kind;
 			CrossbonePillar_SetCellAttributes(
 				2, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
 		}
-		CrossbonePillar_PillarSlots[i].x = actor->x >> 20;
-		CrossbonePillar_PillarSlots[i].y = actor->y >> 20;
-		CrossbonePillar_PillarSlots[i].z = actor->z >> 20;
+		sPillarSlots[i].x = actor->x >> 20;
+		sPillarSlots[i].y = actor->y >> 20;
+		sPillarSlots[i].z = actor->z >> 20;
 		for (k = 0; k <= 3; k++)
 		{
 			if (k == i)
 			{
 				continue;
 			}
-			Engine_GameFlagClear(CrossbonePillar_PillarSlots[k].flag);
+			Engine_GameFlagClear(sPillarSlots[k].flag);
 			other = (struct PillarActor *)Object_GetById(k + 8);
 			if ((actor->x >> 20) == (other->x >> 20) && (actor->z >> 20) == (other->z >> 20)
 				&& actor->y > other->y)
 			{
-				Engine_GameFlagSet(CrossbonePillar_PillarSlots[k].flag);
+				Engine_GameFlagSet(sPillarSlots[k].flag);
 			}
 		}
 	}
@@ -1449,7 +1449,7 @@ s32 CrossbonePillar_SetupArea(void)
 		OverlayObject_SetCallbackAndMode2(10);
 		OverlayObject_SetCallbackAndMode2(11);
 		{
-			s32 *entry = (s32 *)CrossbonePillar_PillarSlots;
+			s32 *entry = (s32 *)sPillarSlots;
 
 			for (i = 0; i < 4; i++)
 			{

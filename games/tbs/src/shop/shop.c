@@ -331,7 +331,7 @@ struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state)
 }
 
 // 選択枠のタイル位置
-static const u16 Shop_SelectorTileOffsets[30] =
+static const u16 sSelectorTileOffsets[30] =
 {
 	0x00, 0x01, 0x02, 0x03,
 	0x20, 0x21, 0x22, 0x23,
@@ -351,7 +351,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 
 	if (count > 0)
 	{
-		offset = Shop_SelectorTileOffsets;
+		offset = sSelectorTileOffsets;
 		do
 		{
 			struct SelectorRecord *record = (struct SelectorRecord *)(base + *offset++);
@@ -367,7 +367,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 }
 
 // 数字の転送先
-static const u16 Shop_GlyphOffsets[5] =
+static const u16 sGlyphOffsets[5] =
 {
 	0xc0, 0x90, 0x80, 0x50, 0x40,
 };
@@ -375,7 +375,7 @@ static const u16 Shop_GlyphOffsets[5] =
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
 	u8 *src = Shop_GlyphBytes + (arg0 << 5);
-	u8 *dst = arg1 + Shop_GlyphOffsets[arg2] + 2;
+	u8 *dst = arg1 + sGlyphOffsets[arg2] + 2;
 	s32 count = 3;
 
 	do
@@ -1974,7 +1974,7 @@ void Shop_RepairItem(s32 unitId, s32 slot)
 }
 
 // 贈り物の値段
-static const s16 Shop_SpecialItemPrices[30] =
+static const s16 sSpecialItemPrices[30] =
 {
 	300, 300, 300, 300, 300,
 	500, 500, 500, 500, 500,
@@ -2005,7 +2005,7 @@ void Shop_BuySpecialItem(void *window, s32 itemWindow)
 	redraw = 1;
 	unitId = 0;
 	saved = shop->selectedItem;
-	price = Shop_SpecialItemPrices[gGameState.shopGifts];
+	price = sSpecialItemPrices[gGameState.shopGifts];
 	selectedIndex = 0;
 
 	if (price > gGameState.shopCredit)
@@ -2075,7 +2075,7 @@ void Shop_BuySpecialItem(void *window, s32 itemWindow)
 }
 
 // 店ごとの品物: 品物 24 個 (0 で終わり), 特別な品物 8 個 (0 で終わり), 種類
-static const s16 Shop_StockTable[35][33] =
+static const s16 sStockTable[35][33] =
 {
 	{
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -2272,10 +2272,10 @@ void EventTable_ApplyRowAbilities(s32 row_no)
 	{
 		GameFlag_SetBitFar(flag);
 		count = 0;
-		value = Shop_StockTable[row_no][24];
+		value = sStockTable[row_no][24];
 		if (value != 0)
 		{
-			row = Shop_StockTable[row_no];
+			row = sStockTable[row_no];
 			entry = row + 24;
 			do
 			{
@@ -2297,10 +2297,10 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 	s32		   count;
 
 	count = 0;
-	if (Shop_StockTable[row_no][0] != 0)
+	if (sStockTable[row_no][0] != 0)
 	{
 		dst = output;
-		src = Shop_StockTable[row_no];
+		src = sStockTable[row_no];
 		do
 		{
 			/* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. Without volatile: differ 41; indexed and while forms: 34 to 54; read or copied as u16 (2026-10-13): differ 41, the sentinel read is reused for the copy. */
@@ -2318,7 +2318,7 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 
 s32 EventTable_GetRowType(s32 index)
 {
-	return Shop_StockTable[index][32];
+	return sStockTable[index][32];
 }
 
 s32 Shop_ServicePrice(s32 entry_id, s32 kind)
@@ -2787,7 +2787,7 @@ void Shop_ResetEffects(void)
 }
 
 // 仲間の動作ごとの効果音
-static const s8 Shop_PartyActionCues[4] =
+static const s8 sPartyActionCues[4] =
 {
 	0x52, 0x54, 0x58, 0x57,
 };
@@ -2806,7 +2806,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 	saved_kind = shop->cursor.anchor->active;
 	shop->burstMember = 0xff;
 	shop->cursor.anchor->active = 13;
-	AudioCommand_PlayFar(Shop_PartyActionCues[shop->partyAction]);
+	AudioCommand_PlayFar(sPartyActionCues[shop->partyAction]);
 	Shop_RestoreSceneTiles(0x00202108);
 	AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
 	WaitFrames(20);
@@ -2896,7 +2896,7 @@ enum InnMessageId
 #endif
 
 // 宿代の倍率
-static const s8 Inn_PriceMultipliers[12] =
+static const s8 sInnPriceMultipliers[12] =
 {
 	2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
 };
@@ -2905,7 +2905,7 @@ s32 Inn_RoomPrice(s32 mode)
 {
 	struct ShopRuntime *shop = gMenuWork;
 	s32					active = 0;
-	s32					factor = Inn_PriceMultipliers[mode];
+	s32					factor = sInnPriceMultipliers[mode];
 	s32					index;
 
 	for (index = 0; index < shop->partyMemberCount; index++)

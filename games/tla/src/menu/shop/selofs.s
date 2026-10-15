@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's Shop_SelectorTileOffsets, byte for byte
+@ The Broken Seal's sSelectorTileOffsets, byte for byte
 	.global Shop_SelectorOffsets
 Shop_SelectorOffsets:
 	.2byte 0x00, 0x01, 0x02, 0x03

@@ -76,7 +76,7 @@ struct LinkPeer
 	s32 values[6];
 };
 
-static s32 gLinkLobbyWaitFrames;
+static s32 sLinkLobbyWaitFrames;
 
 u8 *LinkLobby_GetEntrances(void)
 {
@@ -173,21 +173,21 @@ static s32 LinkLobby_PollPeerReady(void)
 		LinkLobby_PeerSlotMatches(0);
 		if (!Engine_GameFlagIsSet(0x303))
 		{
-			if (++gLinkLobbyWaitFrames > 25)
+			if (++sLinkLobbyWaitFrames > 25)
 			{
 				for (i = 0; i < 4; i++)
 				{
 					Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
 				}
-				gLinkLobbyWaitFrames = 0;
+				sLinkLobbyWaitFrames = 0;
 				LinkLobby_WriteSlotValue(4);
 			}
 		}
 		else
 		{
-			gLinkLobbyWaitFrames = 0;
+			sLinkLobbyWaitFrames = 0;
 		}
-		if (gLinkLobbyWaitFrames == 0)
+		if (sLinkLobbyWaitFrames == 0)
 		{
 			if (LinkLobby_PeerSlotMatches(0)
 				&& (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2)))
@@ -212,7 +212,7 @@ static s32 LinkLobby_PollPeerReady(void)
 		}
 	}
 	if ((GameFlag_IsSet(0x201) || GameFlag_IsSet(0x202)) && !GameFlag_IsSet(0x173)
-		&& !LinkLobby_PeerSlotMatches(0) && gLinkLobbyWaitFrames > 24)
+		&& !LinkLobby_PeerSlotMatches(0) && sLinkLobbyWaitFrames > 24)
 	{
 		work->raisedTrigger = 2;
 		GameFlag_Set(0x205);
@@ -1245,7 +1245,7 @@ s32 LinkLobby_RunRoundResult(void)
 	void (*callback)(void);
 
 	gLinkLobbyCallFrames = 0;
-	gLinkLobbyWaitFrames = 0;
+	sLinkLobbyWaitFrames = 0;
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Sound_LoadPresetParameters(2);
 	LinkLobby_DrawThreeDigitValue(gGameState.linkTallies[6]);

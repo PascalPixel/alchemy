@@ -304,19 +304,19 @@ struct MapWork
 	struct MapLayer layers[8];
 };
 
-static u16 TolbiShipDeck_SlotPhase[4];
+static u16 sSlotPhase[4];
 
-static s32 TolbiShipDeck_WaveAngleY;
-static s32 TolbiShipDeck_SlotWork;
+static s32 sWaveAngleY;
+static s32 sSlotWork;
 
-static u16 TolbiShipDeck_SlotValue[8];
+static u16 sSlotValue[8];
 
-static s32 TolbiShipDeck_LayerScroll[2];
+static s32 sLayerScroll[2];
 
-static s32 TolbiShipDeck_WaveAngleX;
-static s32 TolbiShipDeck_DeckSpare;
+static s32 sWaveAngleX;
+static s32 sDeckSpare;
 
-static s32 TolbiShipDeck_LayerSpeed[2];
+static s32 sLayerSpeed[2];
 
 static s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
@@ -1006,11 +1006,11 @@ s32 TolbiShipDeck_ResetDeck(void)
 	Engine_GameFlagClear(0x11c);
 	*(s32 *)(base[19] + 0x1c0) = 0x209;
 	*(s32 *)(map + 0x1c) = 0;
-	TolbiShipDeck_WaveAngleX = (u16)Engine_RandomNext();
-	TolbiShipDeck_WaveAngleY = (u16)Engine_RandomNext();
-	TolbiShipDeck_LayerScroll[0] = 0;
-	TolbiShipDeck_LayerScroll[1] = 0;
-	TolbiShipDeck_LayerSpeed[0] = 0;
+	sWaveAngleX = (u16)Engine_RandomNext();
+	sWaveAngleY = (u16)Engine_RandomNext();
+	sLayerScroll[0] = 0;
+	sLayerScroll[1] = 0;
+	sLayerSpeed[0] = 0;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	TolbiShipDeck_ApplyEntryState();
@@ -1043,15 +1043,15 @@ static void TolbiShipDeck_ApplyEntryState(void)
 		SceneState_ApplyFiveRectsAtColumn78();
 		SceneEffect_InitSlotsEightToNineteen();
 		Task_AddCallback(SceneState_ConfigureEntries8Through19, 0xc80);
-		TolbiShipDeck_LayerScroll[1] = 0x200000;
-		TolbiShipDeck_LayerSpeed[1] = 0x13333;
+		sLayerScroll[1] = 0x200000;
+		sLayerSpeed[1] = 0x13333;
 		FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, 0xc80);
 	}
 	else if (Engine_GameFlagIsSet(0x928) != 0)
 	{
 		SceneState_ApplyFiveRectsAtColumn78();
-		TolbiShipDeck_LayerScroll[1] = flag;
-		TolbiShipDeck_LayerSpeed[1] = flag;
+		sLayerScroll[1] = flag;
+		sLayerSpeed[1] = flag;
 		FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, 0xc80);
 	}
 	if (Engine_GameFlagIsSet(0x927) == 0)
@@ -2144,32 +2144,32 @@ static void TolbiShipDeck_RockDeck(void)
 {
 	struct MapWork	*map = gMapWork[0];
 	s32				*camera = map->camera;
-	s32				 dx = Engine_MathCos(TolbiShipDeck_WaveAngleX);
-	s32				 dy = Engine_MathSin(TolbiShipDeck_WaveAngleY);
+	s32				 dx = Engine_MathCos(sWaveAngleX);
+	s32				 dy = Engine_MathSin(sWaveAngleY);
 	struct MapLayer *layer;
 
 	*camera++ += dx >> 1;
 	*camera += dy;
-	TolbiShipDeck_WaveAngleX += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
-	TolbiShipDeck_WaveAngleY += (u32)(Engine_RandomNext() << 9) >> 16;
-	TolbiShipDeck_WaveAngleX &= 0xffff;
-	TolbiShipDeck_WaveAngleY &= 0xffff;
+	sWaveAngleX += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
+	sWaveAngleY += (u32)(Engine_RandomNext() << 9) >> 16;
+	sWaveAngleX &= 0xffff;
+	sWaveAngleY &= 0xffff;
 	layer = &map->layers[5];
-	layer->x = TolbiShipDeck_LayerScroll[0];
-	TolbiShipDeck_LayerScroll[0] -= TolbiShipDeck_LayerSpeed[0];
-	if (TolbiShipDeck_LayerScroll[0] < 0)
+	layer->x = sLayerScroll[0];
+	sLayerScroll[0] -= sLayerSpeed[0];
+	if (sLayerScroll[0] < 0)
 	{
-		TolbiShipDeck_LayerScroll[0] += 0x200000;
+		sLayerScroll[0] += 0x200000;
 	}
-	if (TolbiShipDeck_LayerScroll[0] > 0x200000)
+	if (sLayerScroll[0] > 0x200000)
 	{
-		TolbiShipDeck_LayerScroll[0] -= 0x200000;
+		sLayerScroll[0] -= 0x200000;
 	}
-	layer->y = TolbiShipDeck_LayerScroll[1];
-	TolbiShipDeck_LayerScroll[1] -= TolbiShipDeck_LayerSpeed[1];
-	if (TolbiShipDeck_LayerScroll[1] < 0)
+	layer->y = sLayerScroll[1];
+	sLayerScroll[1] -= sLayerSpeed[1];
+	if (sLayerScroll[1] < 0)
 	{
-		TolbiShipDeck_LayerScroll[1] += 0x200000;
+		sLayerScroll[1] += 0x200000;
 	}
 }
 
@@ -2300,13 +2300,13 @@ static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection)
 static void SceneState_ConfigureEntries8Through19(void)
 {
 	SceneEffect_AdvanceSlotByValueBand(8, 0);
-	TolbiShipDeck_SlotPhase[0] = 0;
+	sSlotPhase[0] = 0;
 	SceneEffect_AdvanceSlotByValueBand(9, 1);
-	TolbiShipDeck_SlotPhase[1] += 0x80;
+	sSlotPhase[1] += 0x80;
 	SceneEffect_AdvanceSlotByValueBand(10, 2);
-	TolbiShipDeck_SlotPhase[2] += 0x100;
+	sSlotPhase[2] += 0x100;
 	SceneEffect_AdvanceSlotByValueBand(11, 3);
-	TolbiShipDeck_SlotPhase[3] += 0x200;
+	sSlotPhase[3] += 0x200;
 	SceneEffect_SelectSlotValueAndPosition(12, 0, 0);
 	SceneEffect_SelectSlotValueAndPosition(13, 1, 0);
 	SceneEffect_SelectSlotValueAndPosition(14, 2, 0);
@@ -2319,26 +2319,26 @@ static void SceneState_ConfigureEntries8Through19(void)
 
 static void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot)
 {
-	u16 value = TolbiShipDeck_SlotValue[slot];
+	u16 value = sSlotValue[slot];
 
 	if (value >= 0x6801 && value <= 0x6fff)
 	{
-		TolbiShipDeck_SlotPhase[slot] += 0x70;
+		sSlotPhase[slot] += 0x70;
 		Engine_ActorSetAnimation(actor, 3);
 	}
 	else if (value >= 0xe801 && value <= 0xefff)
 	{
-		TolbiShipDeck_SlotPhase[slot] += 0xe0;
+		sSlotPhase[slot] += 0xe0;
 		Engine_ActorSetAnimation(actor, 3);
 	}
 	else if (value >= 0x7001 && value <= 0xefff)
 	{
-		TolbiShipDeck_SlotPhase[slot] += 0x1c0;
+		sSlotPhase[slot] += 0x1c0;
 		Engine_ActorSetAnimation(actor, 2);
 	}
 	else
 	{
-		TolbiShipDeck_SlotPhase[slot] += 0x300;
+		sSlotPhase[slot] += 0x300;
 		Engine_ActorSetAnimation(actor, 1);
 	}
 }
@@ -2354,33 +2354,33 @@ static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 		switch (FuneKanpan_SlotMode[slot])
 		{
 		case 1:
-			TolbiShipDeck_SlotValue[slot] = TolbiShipDeck_SlotPhase[0];
+			sSlotValue[slot] = sSlotPhase[0];
 			ObjectVisual_CopyAttributes(id, 8);
 			break;
 		case 2:
-			TolbiShipDeck_SlotValue[slot] = TolbiShipDeck_SlotPhase[1];
+			sSlotValue[slot] = sSlotPhase[1];
 			ObjectVisual_CopyAttributes(id, 9);
 			break;
 		case 3:
-			TolbiShipDeck_SlotValue[slot] = TolbiShipDeck_SlotPhase[2];
+			sSlotValue[slot] = sSlotPhase[2];
 			ObjectVisual_CopyAttributes(id, 10);
 			break;
 		case 4:
-			TolbiShipDeck_SlotValue[slot] = TolbiShipDeck_SlotPhase[3];
+			sSlotValue[slot] = sSlotPhase[3];
 			ObjectVisual_CopyAttributes(id, 11);
 			break;
 		}
 	}
 	if (flags & 1)
 	{
-		sine = Engine_MathSin(TolbiShipDeck_SlotValue[slot]);
-		sprite->tilt = Engine_MathSin(TolbiShipDeck_SlotValue[slot] + 0x8000) >> 5;
+		sine = Engine_MathSin(sSlotValue[slot]);
+		sprite->tilt = Engine_MathSin(sSlotValue[slot] + 0x8000) >> 5;
 		actor->z.fixed = FuneKanpan_SlotDepth[slot] - (sine << 2) - (sine << 1);
 	}
 	else
 	{
-		sine = Engine_MathSin(TolbiShipDeck_SlotValue[slot] + 0x8000);
-		sprite->tilt = Engine_MathSin(TolbiShipDeck_SlotValue[slot]) >> 5;
+		sine = Engine_MathSin(sSlotValue[slot] + 0x8000);
+		sprite->tilt = Engine_MathSin(sSlotValue[slot]) >> 5;
 		actor->z.fixed = FuneKanpan_SlotDepth[slot] + (sine << 2) + (sine << 1);
 	}
 }
@@ -2391,7 +2391,7 @@ static void SceneState_InitActorSlots8To19(void)
 	u32				   i;
 
 	for (i = 0; i <= 7; i++)
-		TolbiShipDeck_SlotValue[i] = 0xc000;
+		sSlotValue[i] = 0xc000;
 	OverlayObject_ActivateSlotWithMode3(8);
 	Engine_ActorSetPosition(9, 0, 0);
 	Engine_ActorSetPosition(10, 0, 0);
@@ -2488,8 +2488,8 @@ static void FieldScene_CallPairWith10(s32 a, s32 b)
 static void TolbiShipDeck_ArriveAtTolbi(void)
 {
 	Engine_EventBegin();
-	TolbiShipDeck_LayerScroll[0] = 0x40000;
-	TolbiShipDeck_LayerSpeed[0] = -0x8000;
+	sLayerScroll[0] = 0x40000;
+	sLayerSpeed[0] = -0x8000;
 	Event_CallWithLastActiveObjectId(TolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(21, 0xb60000, 0x26a0000);

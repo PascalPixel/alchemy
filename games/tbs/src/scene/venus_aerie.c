@@ -2297,8 +2297,8 @@ static void FieldScene_RunMultiActorPresentation(void)
 	Actor_ShowEmote(21, 0x103, 40);
 }
 
-static s32 VenusAerie_TransitionTimer;
-static s32 VenusAerie_TransitionStep;
+static s32 sTransitionTimer;
+static s32 sTransitionStep;
 
 static void VenusAerie_RunActorTransition(void)
 {
@@ -2482,8 +2482,8 @@ static void VenusAerie_RunActorTransition(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(PARTICLE_SOURCE_ACTOR), 0);
 	Engine_ActorSetChildValue(PARTICLE_SOURCE_ACTOR, 7);
 	Engine_ActorSetSpritePriority(PARTICLE_SOURCE_ACTOR, 2);
-	VenusAerie_TransitionStep = 0;
-	VenusAerie_TransitionTimer = 240;
+	sTransitionStep = 0;
+	sTransitionTimer = 240;
 	FieldScheduler_AddCallback(VenusAerie_RunTransitionStep, TASK_PRIORITY_SCENE);
 	do
 	{
@@ -2934,7 +2934,7 @@ static void VenusAerie_RunTransitionStep(void)
 
 	center = Actor_Get(23);
 	spawn = 0;
-	switch (VenusAerie_TransitionStep)
+	switch (sTransitionStep)
 	{
 	case 0:
 		Event_PlayCue(220);
@@ -2959,12 +2959,12 @@ static void VenusAerie_RunTransitionStep(void)
 		Engine_ActorEnableActionCallback(23, VenusAerie_RiseActionScript);
 		break;
 	case 25:
-		VenusAerie_TransitionStep--;
+		sTransitionStep--;
 		if (center->y.fixed > 0)
 		{
 			ColorBuffer_ApplyTarget(0x203210, 0);
 			Engine_ColorBufferInterpolate(16);
-			VenusAerie_TransitionStep++;
+			sTransitionStep++;
 			Actor_Get(0)->riseCounter = 1;
 			Actor_Get(1)->riseCounter = 1;
 			Actor_Get(2)->riseCounter = 1;
@@ -2981,12 +2981,12 @@ static void VenusAerie_RunTransitionStep(void)
 		}
 		break;
 	case 26:
-		VenusAerie_TransitionStep--;
+		sTransitionStep--;
 		if (center->y.fixed > (160 << 14))
 		{
 			ColorBuffer_ApplyTarget(0x10000, 0);
 			Engine_ColorBufferInterpolate(40);
-			VenusAerie_TransitionStep++;
+			sTransitionStep++;
 		}
 		else
 		{
@@ -3038,7 +3038,7 @@ static void VenusAerie_RunTransitionStep(void)
 			sprite->priority = 1;
 		}
 	}
-	VenusAerie_TransitionStep++;
+	sTransitionStep++;
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(0));
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(1));
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(2));

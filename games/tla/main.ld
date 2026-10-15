@@ -1273,7 +1273,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000e3cc0)
     "*/recon/tla/ja/rom.o"(.rom.000e4200)
     "*/games/tla/src/field/common/event/blockcue.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000e4360)
+    "*/recon/tla/ja/rom.o"(.rom.000e4428)
     "*/recon/tla/ja/rom.o"(.rom.000e46ec)
     "*/games/tla/src/battle/effect/psynergy_effects_04.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000e49f0)

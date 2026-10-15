@@ -1211,7 +1211,6 @@ SECTIONS
         "*/recon/tla/raw/080e3d04.o"(.text)
         "*/recon/tla/raw/080e4244.o"(.text)
         "*/games/tla/src/field/common/event/blockcue.o"(.text)
-        "*/recon/tla/raw/080e43a4.o"(.text)
         "*/recon/tla/raw/080e446c.o"(.text)
         "*/recon/tla/raw/080e4510.o"(.text)
         "*/games/tla/src/battle/effect/psynergy_effects_03.o"(.text)

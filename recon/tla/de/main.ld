@@ -1121,7 +1121,7 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.000f07e0)
     "*/recon/tla/de/rom.o"(.rom.000f1244)
     "*/games/tla/src/field/common/event/blockcue.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000f13a4)
+    "*/recon/tla/de/rom.o"(.rom.000f146c)
     "*/games/tla/src/battle/effect/psynergy_effects_03.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000f15a8)
     "*/recon/tla/de/rom.o"(.rom.000f1730)

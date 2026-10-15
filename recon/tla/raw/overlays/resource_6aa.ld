@@ -54,7 +54,7 @@ SECTIONS
         "*/resource_6aa_overlay.o"(.text.x0200a2e4)
         "*/games/tla/src/field/overlay_6aa/ride_row.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200a4c0)
-        "*/resource_6aa_overlay.o"(.text.x0200a5ac)
+        "*/games/tla/src/field/common/effect/advance_spin.o"(.text)
         "*/games/tla/src/field/overlay_6aa/flash.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200a63c)
         "*/games/tla/src/field/overlay_6aa/ride_step.o"(.text)

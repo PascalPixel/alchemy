@@ -12,7 +12,8 @@ s32 Curve_LerpTwoSamples(const s8 *samples, s32 position)
 
     start = samples[0] << CURVE_VALUE_SHIFT;
     delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
-    if (delta < 0) {
+    if (delta < 0)
+    {
         delta += CURVE_FULL_STEPS - 1;
     }
     return start + (delta >> 4);
@@ -25,7 +26,8 @@ s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position)
 
     base = samples[0] << CURVE_VALUE_SHIFT;
     offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
-    if (offset < 0) {
+    if (offset < 0)
+    {
         offset += CURVE_FULL_STEPS - 1;
     }
     return base + (offset >> 4);
@@ -41,14 +43,17 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end)
     first = samples[0] << CURVE_VALUE_SHIFT;
     second = samples[1] << CURVE_VALUE_SHIFT;
     maximum = first;
-    if (second > first) {
+    if (second > first)
+    {
         maximum = second;
     }
     position = start + end;
-    if (position == CURVE_FULL_STEPS - 1) {
+    if (position == CURVE_FULL_STEPS - 1)
+    {
         return maximum;
     }
-    if (position < CURVE_FULL_STEPS - 1) {
+    if (position < CURVE_FULL_STEPS - 1)
+    {
         second = first;
     }
     return second;
@@ -65,15 +70,18 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)
     first = samples[0] << CURVE_VALUE_SHIFT;
     second = samples[1] << CURVE_VALUE_SHIFT;
     maximum = first;
-    if (second > first) {
+    if (second > first)
+    {
         maximum = second;
     }
     difference = end - position;
     position = difference + CURVE_FULL_STEPS - 1;
-    if (position == CURVE_FULL_STEPS - 1) {
+    if (position == CURVE_FULL_STEPS - 1)
+    {
         return maximum;
     }
-    if (position < CURVE_FULL_STEPS - 1) {
+    if (position < CURVE_FULL_STEPS - 1)
+    {
         second = first;
     }
     return second;
@@ -90,11 +98,16 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
     middle = *samples << CURVE_VALUE_SHIFT;
     last = samples[1] << CURVE_VALUE_SHIFT;
     start = start + end;
-    if ((u32)start == CURVE_FULL_STEPS - 1) {
+    if ((u32)start == CURVE_FULL_STEPS - 1)
+    {
         result = middle;
-    } else if ((u32)start < CURVE_FULL_STEPS - 1) {
+    }
+    else if ((u32)start < CURVE_FULL_STEPS - 1)
+    {
         result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
-    } else {
+    }
+    else
+    {
         start = start - (CURVE_FULL_STEPS - 1);
         result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
     }

@@ -10,7 +10,6 @@
 #include "iwram_call.h"
 #include "fixed_math.h"
 
-
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
 {
     *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));
@@ -21,16 +20,21 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
 s32 ArcTan2(s32 x, s32 y)
 {
     const u16 *table;
-    s32 value;
-    s32 ratio;
-    s32 result;
-    u32 bit;
+    s32        value;
+    s32        ratio;
+    s32        result;
+    u32        bit;
 
-    if (x == 0) {
+    if (x == 0)
+    {
         result = 0;
-    } else if (y == 0) {
+    }
+    else if (y == 0)
+    {
         result = 0x4000;
-    } else {
+    }
+    else
+    {
         ratio = y;
         if (ratio < 0)
             ratio = -ratio;
@@ -40,55 +44,63 @@ s32 ArcTan2(s32 x, s32 y)
 
         ratio = Iwram_UnsignedDivide(value << 8, ratio);
         result = 0x4000;
-        if (ratio <= 0xFB6A) {
+        if (ratio <= 0xFB6A)
+        {
             table = gMath_ArcTanTable;
             result = 0;
             bit = 0x2000;
 
             value = *table;
             table -= 0x40;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 0x80;
             }
             value = *table;
             bit >>= 1;
             table -= 0x20;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 0x40;
             }
             value = *table;
             bit >>= 1;
             table -= 0x10;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 0x20;
             }
             value = *table;
             bit >>= 1;
             table -= 8;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 0x10;
             }
             value = *table;
             bit >>= 1;
             table -= 4;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 8;
             }
             value = *table;
             bit >>= 1;
             table -= 2;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += bit;
                 table += 4;
             }
             value = *table;
             table--;
-            if (ratio > value) {
+            if (ratio > value)
+            {
                 result += 0x80;
                 table += 2;
             }
@@ -116,9 +128,11 @@ s32 Math_IntegerSqrt(s32 value)
     remainder = value;
     result = 0;
     bit = 0xf;
-    do {
+    do
+    {
         trial = (result << (bit + 1)) + (1 << (bit * 2));
-        if (trial <= remainder) {
+        if (trial <= remainder)
+        {
             result |= 1 << bit;
             remainder -= trial;
         }
@@ -131,7 +145,6 @@ s32 FixedSqrt(s32 value)
 {
     return Iwram_Sqrt(value) << 8;
 }
-
 
 s32 Runtime_GetLowTableAddress(void)
 {

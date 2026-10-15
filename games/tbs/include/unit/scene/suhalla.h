@@ -4,20 +4,22 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-s32 SceneData_SelectActorTableByFlag96f(void);
-s32 SceneData_SelectExtraTableByFlag96f(void);
-s32 SceneState_InitEntryWorkspaceAndFlag96f(void);
-extern struct SceneEntrance gSuhalla_Scripts[];
-extern u32 gSuhalla_Messages[];
-extern struct ScenePlacement gSuhalla_Actors[];
-extern struct ScenePlacement gSuhalla_ActorsFlag96f[];
-extern s16 gSuhalla_CellAnimationOrigins[][2];
-extern u16 gSuhalla_CellSteps0[];
-extern u16 gSuhalla_CellSteps1[];
-extern struct SceneEvent gSuhalla_Extras[];
-extern struct SceneEvent gSuhalla_ExtrasFlag96f[];
+struct SceneRegion;
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gSuhallaEntrances[];
+extern u32 gSuhallaExits[];
+extern struct ScenePlacement gSuhallaPlacements[];
+extern struct ScenePlacement gSuhallaPlacementsLater[];
+extern s16 gSuhallaDoorCells[][2];
+extern u16 gSuhallaDoorOpenSteps[];
+extern u16 gSuhallaWideDoorOpenSteps[];
+extern struct SceneEvent gSuhallaEvents[];
+extern struct SceneEvent gSuhallaEventsLater[];
 
 #endif

@@ -1774,6 +1774,8 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.00118738)
     "*/games/tla/src/battle/presentation/m8118954.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00118958)
+    "*/games/tla/src/battle/presentation/announce.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.00118c68)
     "*/games/tla/src/battle/presentation/tile_pattern.o"(.text)
     "*/games/tla/src/battle/party/reset_active_runtime_fields.o"(.text)
     "*/games/tla/src/battle/party/f118e64.o"(.text)

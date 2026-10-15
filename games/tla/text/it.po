@@ -14507,19 +14507,19 @@ msgctxt "message"
 msgid "03624"
 msgstr "Sconosciuta"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "03625"
 msgstr "Appare {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "03626"
 msgstr "Appare {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "03627"
 msgstr "Squadra di {protagonist_name} attacca prima!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "03628"
 msgstr "La squadra di {protagonist_name} è sorpresa!"
 
@@ -21163,11 +21163,11 @@ msgctxt "message"
 msgid "05288"
 msgstr "Ho rianimato{line_break}{argument_actor_name:1}!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "05289"
 msgstr "Rianim.: {argument_signed_number} monet{control:13}{end_wait}."
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "05290"
 msgstr "Non ha bisogno di cure."
 

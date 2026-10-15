@@ -1688,7 +1688,7 @@ SECTIONS
         "*/games/tla/src/battle/presentation/m8118954.o"(.text)
         "*/recon/tla/raw/08118958.o"(.text)
         "*/recon/tla/raw/08118adc.o"(.text)
-        "*/recon/tla/raw/08118bcc.o"(.text)
+        "*/games/tla/src/battle/presentation/announce.o"(.text)
         "*/recon/tla/raw/08118c68.o"(.text)
         "*/games/tla/src/battle/presentation/tile_pattern.o"(.text)
         "*/games/tla/src/battle/party/reset_active_runtime_fields.o"(.text)

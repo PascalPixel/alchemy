@@ -12663,19 +12663,19 @@ msgctxt "message"
 msgid "03163"
 msgstr "なぞの女"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "03164"
 msgstr "{argument_actor_name:150}゙ あらわれた!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "03165"
 msgstr "{argument_actor_name:150}゙ あらわれた!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "03166"
 msgstr "{protagonist_name}たちの せんせいこうげき!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "03167"
 msgstr "{protagonist_name}たちは ふいをつかれた!"
 
@@ -19267,11 +19267,11 @@ msgctxt "message"
 msgid "04814"
 msgstr "{argument_actor_name:234}{line_break}せんとうかのうになりました{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "04815"
 msgstr "{argument_signed_number}コインでふっかつ"
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "04816"
 msgstr "だいじょうぶです"
 

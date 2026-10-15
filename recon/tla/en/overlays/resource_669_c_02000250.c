@@ -1,10 +1,12 @@
-/* Draft, differ 4 of 170: the scene setup of overlay 669, written from the listing (its ☀️ twin
- * by shape, haidia_heya.c's Scene_RunSupplementalSequenceOne, is a different scene). Left: two
- * scheduling swaps. At the start the native loads gPartyState's address before it stores the
- * screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the draft stores first. At
- * the end the native builds the 0x100000 step before it loads object->y; the draft loads first.
- * Measured: one-pass blocks around the y step or the priority bit (4), a party pointer (4), an
- * "+l" barrier on the step (4), alchemy permute 3 minutes (4). */
+/* Draft, differ 2 of 170: the scene setup of overlay 669, written from the listing (its ☀️ twin
+ * by shape, haidia_heya.c's Scene_RunSupplementalSequenceOne, is a different scene). Left: one
+ * scheduling swap at the start: the native loads gPartyState's address before it stores the
+ * screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the draft stores first. In
+ * sched2 the 0x209 add ranks 7 (its store anti-depends into the next constant) and the pool load
+ * 6, one below. Measured: one-pass blocks around the y step or the priority bit (4), a party
+ * pointer (4), an "+l" barrier on the step (4), alchemy permute 3 minutes (4). Round two: the y
+ * step read and written as long (another alias set than the priority byte store before it) fixes
+ * the end, where the native builds the 0x100000 step before it loads y (4 to 2). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -75,7 +77,8 @@ s32 Func_02000250(void)
             Object_GetById(14)->priority_flags |= 128;
             object = Object_GetById(15);
             object->priority_flags |= 64;
-            object->y += 0x100000;
+            /* FAKEMATCH: as long, so the y load does not depend on the priority byte store. */
+            *(long *)&object->y += 0x100000;
             object->terrain_height += 0x100000;
         }
     }

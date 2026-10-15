@@ -396,48 +396,6 @@ Func_020004f4:
 	.4byte Data_020023c4 + 0x88
 .L_020085b0:
 	.4byte MsgTrialRoadStoredItem
-	.section .text.x02008728,"ax",%progbits
-	.balign 4
-	.global Func_02000728
-	.thumb_func
-Func_02000728:
-	push {lr}
-	ldr r3, .L_02008744
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #18
-	adds r3, r3, r2
-	ldrb r3, [r3]
-	adds r0, r1, #0
-	cmp r3, #0
-	bne .L_02008740
-	bl Func_02000660
-.L_02008740:
-	pop {pc}
-	.2byte 0x0000
-.L_02008744:
-	.4byte gPartyState
-	.section .text.x02008748,"ax",%progbits
-	.balign 4
-	.global Func_02000748
-	.thumb_func
-Func_02000748:
-	push {lr}
-	ldr r3, .L_02008764
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #18
-	adds r3, r3, r2
-	ldrb r3, [r3]
-	adds r0, r1, #0
-	cmp r3, #0
-	bne .L_02008760
-	bl Func_0200062c
-.L_02008760:
-	pop {pc}
-	.2byte 0x0000
-.L_02008764:
-	.4byte gPartyState
 	.section .text.x02008a18,"ax",%progbits
 	.balign 4
 	.global Func_02000a18

@@ -1,57 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200808c,"ax",%progbits
-	.balign 4
-	.global Func_0200008c
-	.thumb_func
-Func_0200008c:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	ldr r3, [r5, #24]
-	movs r2, #128
-	lsls r2, r2, #9
-	cmp r3, r2
-	ble .L_020080a8
-	ldr r2, .L_020080dc
-	adds r3, r3, r2
-	str r3, [r5, #24]
-	ldr r2, .L_020080e0
-	ldr r3, [r5, #28]
-	adds r3, r3, r2
-	str r3, [r5, #28]
-.L_020080a8:
-	adds r6, r5, #0
-	adds r6, #98
-	ldrb r2, [r6]
-	adds r3, r2, #0
-	cmp r3, #0
-	beq .L_020080ba
-	adds r3, #255
-	strb r3, [r6]
-	b .L_020080da
-.L_020080ba:
-	bl Random16Far
-	lsls r3, r0, #2
-	ldrb r2, [r6]
-	adds r3, r3, r0
-	lsls r3, r3, #4
-	lsrs r3, r3, #16
-	adds r2, r2, r3
-	movs r3, #144
-	lsls r3, r3, #9
-	adds r2, #40
-	strb r2, [r6]
-	str r3, [r5, #24]
-	movs r3, #136
-	lsls r3, r3, #9
-	str r3, [r5, #28]
-.L_020080da:
-	pop {r5, r6, pc}
-.L_020080dc:
-	.4byte 0xfffff800
-.L_020080e0:
-	.4byte 0xfffffc00
 	.section .text.x020080e4,"ax",%progbits
+	.balign 4
 	.global Func_020000e4
 	.thumb_func
 Func_020000e4:

@@ -1,4 +1,8 @@
-/* differ 4: ported from ☀️ radpart.c; native starts the acceleration constant before it loads z */
+/* Near miss, differ 2 of 151 (ported from The Broken Seal's radpart.c): the
+   native starts the acceleration constant (movs r5, #192) before it loads z
+   for the target; with the acceleration in a local it is one row late (plain,
+   differ 4). The local declared earlier, or the acceleration stored first,
+   differ 8 to 88; permute (3 min) found nothing. */
 #include "types.h"
 #include "system.h"
 #include "animspr.h"
@@ -173,11 +177,15 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
             Random16(),
             &position);
 
-        effect->target_x = position.x;
-        effect->target_z = position.z;
-        effect->x = position.x;
-        effect->z = position.z - 0x640000;
-        effect->acceleration = 0x30000;
+        {
+            s32 accel = 0x30000;
+
+            effect->target_x = position.x;
+            effect->target_z = position.z;
+            effect->x = position.x;
+            effect->z = position.z - 0x640000;
+            effect->acceleration = accel;
+        }
         effect->max_speed = Random16() * 3 + 0x30000;
         effect->scale_x = 0x10000;
         effect->scale_y = 0x10000;

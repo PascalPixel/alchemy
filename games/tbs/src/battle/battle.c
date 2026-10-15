@@ -123,11 +123,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
   s32 i;
 
   notFound = 0;
-  Party_RemoveActiveOwnerFar(0);
-  Party_RemoveActiveOwnerFar(1);
-  Party_RemoveActiveOwnerFar(2);
-  Party_RemoveActiveOwnerFar(3);
-  Party_RemoveActiveOwnerFar(5);
+  Party_RemoveActiveOwnerFar(ISAAC);
+  Party_RemoveActiveOwnerFar(GARET);
+  Party_RemoveActiveOwnerFar(IVAN);
+  Party_RemoveActiveOwnerFar(MIA);
+  Party_RemoveActiveOwnerFar(JENNA);
 
   currentPreset = 0;
   for (i = 0; i < NUM_ELEMENTS; i++)
@@ -349,7 +349,7 @@ restart:
     GameFlag_ClearBitFar(FLAG_AUTO_BATTLE);
     preset = 0;
     for (;;) {
-      GameFlag_ClearBitFar(32);
+      GameFlag_ClearBitFar(32); // the flag for the childhood sprites
       WaitFrames(1);
       for (;;) {
         if (gKeysRepeat & KEY_RIGHT)
@@ -1525,14 +1525,25 @@ finished:
   return result;
 }
 
+// The party fights four at a time, three in a link battle; six enemies at
+// most, three in a link battle.
+#define PARTY_BATTLE_SIZE 4
+#define ENEMY_BATTLE_SIZE 6
+
+//--------------------------------------------------------------------------
+// Lists the party members who fight (the first four of the party, three in
+// a link battle) and marks each unit as a party member. owners, if not
+// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
+// fight.
+//--------------------------------------------------------------------------
 s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   s32 limit;
   s32 count;
   s32 index;
 
-  limit = 4;
+  limit = PARTY_BATTLE_SIZE;
   if (gBattleWork->twoSided != 0)
-    limit = 3;
+    limit = LINK_PARTY_SIZE;
 
   count = Party_CountActiveOwnersFar();
   if (count > limit)
@@ -1551,41 +1562,51 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   return count;
 }
 
+//--------------------------------------------------------------------------
+// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
+// how many there are (0 when unitIds is null).
+//--------------------------------------------------------------------------
 s32 BattleEnemyList(s16 *unitIds) {
   s16 *output;
-  s32 battleResult;
+  s32 count;
   s32 id;
-  s32 entryLimit;
-  s32 entryCount;
+  s32 lastId;
+  s32 listed;
 
   output = unitIds;
-  entryCount = 0;
-  entryLimit = 6;
-  battleResult = 0;
+  listed = 0;
+  lastId = ENEMY_BATTLE_SIZE;
+  count = 0;
   if (output != NULL) {
-    if (GameFlag_TestFar(0x16C) != 0) {
-      entryLimit = 3;
+    if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+      lastId = LINK_PARTY_SIZE;
     }
-    id = 0x80;
-    entryLimit += 0x80;
-    for (; id < entryLimit; id += 1) {
-      if (UnitGetFar(id)->side != 0) {
+    id = FIRST_ENEMY_UNIT;
+    lastId += FIRST_ENEMY_UNIT;
+    for (; id < lastId; id += 1) {
+      if (UnitGetFar(id)->side != BATTLE_UNIT_ABSENT) {
         *output = id;
-        entryCount += 1;
+        listed += 1;
         output += 1;
       }
     }
     *output = BATTLE_UNIT_LIST_END;
-    battleResult = entryCount;
+    count = listed;
   }
-  return battleResult;
+  return count;
 }
 
+//--------------------------------------------------------------------------
+// Lists the units still standing (HP above 0) on the sides in sideMask
+// (BATTLE_SIDE_PARTY, BATTLE_SIDE_ENEMIES or both), party first. unitIds,
+// if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns how
+// many there are.
+//--------------------------------------------------------------------------
 s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
   s32 remaining;
-  s32 enemyLimit;
+  s32 lastEnemy;
   u16 *output;
   s32 livingCount;
   s32 enemyCapacity;
@@ -1597,9 +1618,9 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
 
   output = unitIds;
   livingCount = 0;
-  enemyCapacity = 6;
-  if (GameFlag_TestFar(0x16C) != 0) {
-    enemyCapacity = 3;
+  enemyCapacity = ENEMY_BATTLE_SIZE;
+  if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+    enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
     base = activeMembers;
@@ -1623,12 +1644,13 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_ENEMIES) {
-    remaining = 0x80;
-    enemyLimit = enemyCapacity + 0x80;
-    if (remaining < enemyLimit) {
+    // remaining walks the enemy unit ids here.
+    remaining = FIRST_ENEMY_UNIT;
+    lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
+    if (remaining < lastEnemy) {
       do {
         unit = UnitGetFar(remaining);
-        if ((unit->side != 0) && (unit->hp > 0)) {
+        if ((unit->side != BATTLE_UNIT_ABSENT) && (unit->hp > 0)) {
           if (output != NULL) {
             *output = remaining;
             output += 1;
@@ -1636,7 +1658,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
           livingCount += 1;
         }
         remaining += 1;
-      } while (remaining < enemyLimit);
+      } while (remaining < lastEnemy);
     }
   }
   if (output != NULL) {
@@ -1645,90 +1667,122 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
-  struct BattleWork *order;
+//--------------------------------------------------------------------------
+// Lists the units in the battle's unit lists on the sides in sideMask,
+// party first, skipping those removed from the battle. unitIds, if not
+// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
+// there are.
+//--------------------------------------------------------------------------
+s32 BattleParty_ListActorIds(s32 sideMask, u16 *unitIds) {
+  struct BattleWork *battle;
   s32 count;
   s32 i;
 
-  order = gBattleWork;
+  battle = gBattleWork;
   count = 0;
-  if (groups & BATTLE_SIDE_PARTY) {
-    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->partyUnits[i];
+  if (sideMask & BATTLE_SIDE_PARTY) {
+    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->partyUnits[i];
         count++;
       }
     }
   }
-  if (groups & BATTLE_SIDE_ENEMIES) {
-    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->enemyIds[i];
+  if (sideMask & BATTLE_SIDE_ENEMIES) {
+    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->enemyIds[i];
         count++;
       }
     }
   }
-  if (dst != NULL)
-    *dst = BATTLE_UNIT_LIST_END;
+  if (unitIds != NULL)
+    *unitIds = BATTLE_UNIT_LIST_END;
   return count;
 }
 
 //--------------------------------------------------------------------------
 // actor_commit_placement.c
-// バトル：全ユニットのオブジェクト配置
+// Battle: placing every unit's object
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、
-// 全員の表示モードと動作を設定し直す
+// Readies the sprite of every unit in the battle (releasing those of units
+// that left) and sets each one's display mode and motion afresh.
 //--------------------------------------------------------------------------
 void BattleObjPut(void) {
-  s16 list[14];
+  s16 unitIds[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-  BattleActor_SpawnObjectsForList(list, 1);
+  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
+  BattleActor_SpawnObjectsForList(unitIds, 1);
 }
 
 //--------------------------------------------------------------------------
 // list_all_units_and_submit.c
-// バトル：全ユニットのオブジェクト配置
+// Battle: placing every unit's object
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 戦闘中の全ユニットの絵を用意する（いなくなったユニットの絵は解放）
+// Readies the sprite of every unit in the battle (releasing those of units
+// that left), keeping their modes and motions.
 //--------------------------------------------------------------------------
 void BattleParty_ListAllUnitsAndSubmit(void) {
-  s16 list[14];
+  s16 unitIds[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-  BattleActor_SpawnObjectsForList(list, 0);
+  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
+  BattleActor_SpawnObjectsForList(unitIds, 0);
 }
 
+//--------------------------------------------------------------------------
+// Returns the palette of unit id's battle sprite.
+//--------------------------------------------------------------------------
 s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
-s32 EnemyCheck(s32 summon) {
-  struct BattleWork *ptr;
-  s32 retval;
+// The battle has six enemy sprite slots; a large enemy takes two side by
+// side, a small one (Summon_IsEntryFlagged) one.
+#define ENEMY_SPRITE_SLOTS 6
+
+//--------------------------------------------------------------------------
+// Returns 1 if an enemy of class classId would find room among the enemy
+// sprite slots: one free slot for a small enemy, two free side by side for
+// a large one.
+//--------------------------------------------------------------------------
+s32 EnemyCheck(s32 classId) {
+  struct BattleWork *battle;
+  s32 small;
   s32 i;
 
-  retval = Summon_IsEntryFlagged(summon);
-  ptr = gBattleWork;
-  for (i = 0; i <= 5; i++) {
-    if (ptr->spriteSlots[i] != 0)
+  small = Summon_IsEntryFlagged(classId);
+  battle = gBattleWork;
+  for (i = 0; i < ENEMY_SPRITE_SLOTS; i++) {
+    if (battle->spriteSlots[i] != 0)
       continue;
-    if (retval != 0)
+    if (small != 0)
       break;
-    if (i <= 4 && ptr->spriteSlots[i + 1] == 0)
+    if (i < ENEMY_SPRITE_SLOTS - 1 && battle->spriteSlots[i + 1] == 0)
       break;
   }
-  return i != 6;
+  return i != ENEMY_SPRITE_SLOTS;
 }
 
+// The two battle sprites whose next sprite is loaded with them (into a
+// second free place), the pass after them loading animation + 1.
+#define SPRITE_WITH_SECOND_PART_A 476
+#define SPRITE_WITH_SECOND_PART_B 483
+
+//--------------------------------------------------------------------------
+// Loads an enemy unit's battle sprite into the first free enemy sprite
+// slots (one for a small enemy, two side by side for a large one) and
+// records the unit as their owner. Two sprites take a second part,
+// loaded the same way into further slots. Returns the first slot and the
+// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
+// a load fails.
+//--------------------------------------------------------------------------
 s32 SummonSlot_RegisterActorSprites(s32 unit) {
   s32 pass;
-  struct BattleWork *table = gBattleWork;
+  struct BattleWork *battle = gBattleWork;
   struct BattleUnit *actor = UnitGetFar(unit);
-  s32 singleSlot = Summon_IsEntryFlagged(actor->classId);
+  s32 small = Summon_IsEntryFlagged(actor->classId);
   /* FAKEMATCH: initializing the two halves preserves the word copy into pass,
    * mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction
    * differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass
@@ -1738,11 +1792,11 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     s32 value;
     u16 halves[2];
   } result;
-  s32 spriteValue;
+  s32 sprite;
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  spriteValue = Summon_GetEntryValue(actor->classId);
+  sprite = Summon_GetEntryValue(actor->classId);
   pass = result.value;
   do {
     s32 slot;
@@ -1750,148 +1804,191 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     if (actor->classIndex != 0)
       continue;
 
-    for (slot = 0; slot <= 5; slot++) {
-      if (table->spriteSlots[slot] != 0)
+    // The first free slot (and, for a large enemy, the one after it).
+    for (slot = 0; slot < ENEMY_SPRITE_SLOTS; slot++) {
+      if (battle->spriteSlots[slot] != 0)
         continue;
-      if (singleSlot)
+      if (small)
         break;
-      if (slot <= 4 && table->spriteSlots[slot + 1] == 0)
+      if (slot < ENEMY_SPRITE_SLOTS - 1 && battle->spriteSlots[slot + 1] == 0)
         break;
     }
 
-    if (slot == 6)
+    if (slot == ENEMY_SPRITE_SLOTS)
       break;
 
     {
-      s32 flag = Summon_GetEntryFlag1Field(actor->classId);
-      s32 bufferAddr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
+      s32 palette = Summon_GetEntryFlag1Field(actor->classId);
+      s32 buffer = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
-      if (ResourceSlot_LoadFar(slot, (u32 *)bufferAddr, spriteValue + pass,
-                               flag) == 0)
+      if (ResourceSlot_LoadFar(slot, (u32 *)buffer, sprite + pass, palette) ==
+          0)
         return 0;
     }
 
-    /* FAKEMATCH: cancelling updates retain spriteValue's allocation
+    /* FAKEMATCH: cancelling updates retain sprite's allocation
      * priority; a self-assignment instead differs in 18 rows.
      * 2026-10-13: without them 18 of 114 differ; the exit test written
-     * !(== || ==) or as a switch on spriteValue 18; the load's
-     * value as pass + spriteValue 16. */
-    spriteValue ^= 1;
-    spriteValue ^= 1;
+     * !(== || ==) or as a switch on sprite 18; the load's
+     * value as pass + sprite 16. */
+    sprite ^= 1;
+    sprite ^= 1;
     if (pass == 0)
-      result.value = (slot << 12) | spriteValue;
+      result.value = (slot << 12) | sprite;
 
-    table->spriteSlots[slot] = unit;
-    if (!singleSlot)
-      table->spriteSlots[slot + 1] = unit;
+    battle->spriteSlots[slot] = unit;
+    if (!small)
+      battle->spriteSlots[slot + 1] = unit;
 
-    if (spriteValue != 476 && spriteValue != 483)
+    if (sprite != SPRITE_WITH_SECOND_PART_A &&
+        sprite != SPRITE_WITH_SECOND_PART_B)
       break;
   } while (++pass <= 1);
 
   return result.value;
 }
 
-s32 BattleMotion_ReleaseObjectSlotByValue(s32 value) {
+//--------------------------------------------------------------------------
+// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
+//--------------------------------------------------------------------------
+s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
   struct BattleWork *work = gBattleWork;
   s32 index;
 
-  for (index = 0; index <= 5; index++) {
-    if (work->spriteSlots[index] == value) {
+  for (index = 0; index < ENEMY_SPRITE_SLOTS; index++) {
+    if (work->spriteSlots[index] == unitId) {
       ResourceSlot_LoadFar(index, 0, 0, 0);
       work->spriteSlots[index] = 0;
     }
   }
 }
 
-s32 Resource_FindFreeSlot(s32 key) {
+// gResource_SlotAssignments: each entry is a weapon's item id in the low nine
+// bits and its kind above them; the list ends with -1.
+#define WEAPON_ITEM_MASK 0x1ff
+#define WEAPON_KIND_SHIFT 9
+#define WEAPON_KIND_NONE 6
+
+//--------------------------------------------------------------------------
+// Returns the kind of the weapon whose item id is itemId (0 to 5), which
+// picks a party member's attack animation, or WEAPON_KIND_NONE for an item
+// the list lacks.
+//--------------------------------------------------------------------------
+s32 Resource_FindFreeSlot(s32 itemId) {
   struct SlotAssignmentView {
     volatile u16 entries[52];
   };
   s32 index;
   s32 entry;
   u32 value;
-  s32 result;
+  s32 kind;
 
   for (index = 0;; index++) {
     entry = gResource_SlotAssignments[index];
-    if (key == (entry & 0x1ff)) {
+    if (itemId == (entry & WEAPON_ITEM_MASK)) {
       /* FAKEMATCH: the volatile array member preserves the native second ldrh
        * [table, index]. A scalar pointer needs an extra address add; a
        * nonvolatile member reuses the first load. */
       value = ((struct SlotAssignmentView *)gResource_SlotAssignments)
                   ->entries[index];
-      result = value >> 9;
+      kind = value >> WEAPON_KIND_SHIFT;
       break;
     }
     if ((s16)entry == -1) {
-      result = 6;
+      kind = WEAPON_KIND_NONE;
       break;
     }
   }
-  return result;
+  return kind;
 }
 
+// The inventory's weapon slot, for Inventory_FindEquippedFar.
+#define EQUIP_WEAPON 1
+
+//--------------------------------------------------------------------------
+// Returns the weapon sprite a party member's attack shows for the kind of
+// weapon they have equipped (gBattleUnit_WeaponAnimsClass*), or 0 for no
+// weapon, for Felix, or for a unit that is no party member.
+//--------------------------------------------------------------------------
 s32 BattleUnit_LookupWeaponValueByClass(s32 id) {
-  struct BattleUnit *state;
-  s32 entry;
-  s32 result;
+  struct BattleUnit *unit;
+  s32 slot;
+  s32 weaponSprite;
 
-  state = UnitGetFar(id);
-  entry = Inventory_FindEquippedFar(id, 1);
-  result = 0;
-  if (entry >= 0) {
-    s32 selection;
+  unit = UnitGetFar(id);
+  slot = Inventory_FindEquippedFar(id, EQUIP_WEAPON);
+  weaponSprite = 0;
+  if (slot >= 0) {
+    s32 kind;
 
-    selection = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
-    switch (state->classId) {
+    kind = Resource_FindFreeSlot(unit->inventory[slot] & WEAPON_ITEM_MASK);
+    switch (unit->classId) {
     case ISAAC:
-      result = gBattleUnit_WeaponAnimsClass0[selection];
+      weaponSprite = gBattleUnit_WeaponAnimsClass0[kind];
       break;
     case GARET:
-      result = gBattleUnit_WeaponAnimsClass1[selection];
+      weaponSprite = gBattleUnit_WeaponAnimsClass1[kind];
       break;
     case IVAN:
-      result = gBattleUnit_WeaponAnimsClass2[selection];
+      weaponSprite = gBattleUnit_WeaponAnimsClass2[kind];
       break;
     case MIA:
-      result = gBattleUnit_WeaponAnimsClass3[selection];
+      weaponSprite = gBattleUnit_WeaponAnimsClass3[kind];
       break;
     case FELIX:
       break;
     case JENNA:
-      result = gBattleUnit_WeaponAnimsClass5[selection];
+      weaponSprite = gBattleUnit_WeaponAnimsClass5[kind];
       break;
     }
   }
-  return result;
+  return weaponSprite;
 }
 
+// Isaac and Garet hold a Machete with sprites of their own.
+#define ITEM_MACHETE 15
+#define SPRITE_ISAAC_MACHETE 480
+#define SPRITE_GARET_MACHETE 482
+
+// BattleObj.scale and MotionObject scales are 16.16 fixed point.
+#define SCALE_ONE 0x10000
+
+// BattleObj.effect while no effect is attached.
+#define BATTLE_OBJ_NO_EFFECT 0x1fe
+
+//--------------------------------------------------------------------------
+// Creates the battle object of unit at (x, y) on the battlefield, in
+// pixels: its sprite (an enemy's from its class, sharing the slot it
+// already holds; a party member's battle sprite), palette, size and weapon
+// sprite, turned to face the centre, and starts its motion script.
+//--------------------------------------------------------------------------
 void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedY;
-  s32 actorFlag;
+  s32 palette;
   s32 sprite;
-  s32 existingSprite;
+  s32 loadedSprite;
   struct BattleUnit *unitRecord;
   struct MotionObject *object;
-  s32 position;
-  s32 anim;
+  s32 angle;
+  s32 weaponSprite;
   u8 classId;
 
   fixedX = x << 16;
   fixedY = y << 16;
   object = Object_CreateFar(0xf000, fixedX, 0, fixedY);
   unitRecord = UnitGetFar(unit);
-  actorFlag = 0;
-  existingSprite = SummonSlot_RegisterActorSprites(unit);
+  palette = 0;
+  loadedSprite = SummonSlot_RegisterActorSprites(unit);
 
+  // The sprite: an enemy's from its class, a party member's by character;
+  // enemies use the second palette.
   if (unitRecord->classIndex == 0) {
     sprite = Summon_GetEntryValue(unitRecord->classId);
-    if (existingSprite == 0)
-      actorFlag = Summon_GetEntryFlag1Field(unitRecord->classId);
+    if (loadedSprite == 0)
+      palette = Summon_GetEntryFlag1Field(unitRecord->classId);
     else
-      sprite = existingSprite;
+      sprite = loadedSprite;
   } else {
     switch (unitRecord->classId) {
     case GARET:
@@ -1912,10 +2009,11 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y) {
       break;
     }
     if (unit < 0 || unit > 7)
-      actorFlag = 1;
+      palette = 1;
   }
 
-  actor->scale = 0x10000;
+  // The enemy classes drawn larger or smaller than their sprites.
+  actor->scale = SCALE_ONE;
   switch (unitRecord->classId) {
   case 78:
     actor->scale = 0x19999;
@@ -2058,50 +2156,66 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y) {
   actor->object = object;
   actor->anchorX = fixedX;
   actor->anchorZ = fixedY;
-  actor->palette = actorFlag;
+  actor->palette = palette;
   actor->resource = sprite;
-  anim = BattleUnit_LookupWeaponValueByClass(unit);
+  weaponSprite = BattleUnit_LookupWeaponValueByClass(unit);
   actor->animation = 0;
   actor->animationEntry = 0;
   actor->effectEntry = 0;
   actor->active = 0;
   actor->fading = 0;
-  actor->effect = 0x1fe;
+  actor->effect = BATTLE_OBJ_NO_EFFECT;
   classId = unitRecord->classId;
-  actor->overlay = anim;
+  actor->overlay = weaponSprite;
 
-  if (classId <= GARET && Inventory_GetEquippedItemFar(unitRecord, 1) == 15) {
+  if (classId <= GARET &&
+      Inventory_GetEquippedItemFar(unitRecord, EQUIP_WEAPON) == ITEM_MACHETE) {
     if (unitRecord->classId == ISAAC) {
-      sprite = 480;
+      sprite = SPRITE_ISAAC_MACHETE;
       actor->resource = sprite;
     } else {
-      sprite = 482;
+      sprite = SPRITE_GARET_MACHETE;
       actor->resource = sprite;
     }
     actor->overlay = 0;
   }
 
-  position = ArcTan2(y / 8, x) + 0x8000;
-  object->angle = position;
+  // Face the centre of the battlefield; enemies are drawn larger.
+  angle = ArcTan2(y / 8, x) + 0x8000;
+  object->angle = angle;
   object->unk59 = 3;
   object->motionFlags = 2;
   if (unitRecord->classIndex == 0) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;
   } else {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = SCALE_ONE;
+    object->scaleY = SCALE_ONE;
   }
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gBattlePres_ActorObjectScript);
 }
 
+//--------------------------------------------------------------------------
+// Reads the battlefield position of party place index from
+// gBattlePlacement_StepPairs, in pixels.
+//--------------------------------------------------------------------------
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
   index *= 2;
   *x = gBattlePlacement_StepPairs[index];
   *y = gBattlePlacement_StepPairs[index + 1];
 }
 
+// BattleWork.enemyIds of an enemy that left the battle, and of a place
+// held for one: unit ids 254 and 255 in the list.
+#define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
+
+//--------------------------------------------------------------------------
+// Lays out count enemies in a column 80 pixels left of the centre, spaced
+// by their size (38 pixels around a large enemy, 27 around a small one, 25
+// around an empty place, closer when there are more than four) and centred
+// on the line. Two large classes stand nearer, 50 pixels left.
+//--------------------------------------------------------------------------
 void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
                             s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -2116,7 +2230,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       struct BattleUnit *actor;
 
       spacing = 25;
-      if ((u16)(actorIds[index] - 254) > 1) {
+      if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = UnitGetFar(actorIds[index]);
         spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
         if (actor->classId == 148 || actor->classId == 121) {
@@ -2127,7 +2241,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     z -= spacing / 2;
     zPositions[index] = z;
     spacing = 25;
-    if ((u16)(actorIds[index] - 254) > 1) {
+    if (!IS_PLACEHOLDER_ID(actorIds[index])) {
       struct BattleUnit *actor = UnitGetFar(actorIds[index]);
 
       spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
@@ -2136,20 +2250,27 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
   }
 }
 
+//--------------------------------------------------------------------------
+// Returns the id of the first free enemy unit, or -1 when all six are taken.
+//--------------------------------------------------------------------------
 s32 EnemySlotGet(void) {
   s32 i;
   s32 id;
 
-  for (i = 0; i <= 5; i++) {
-    id = i + 0x80;
-    if (UnitGetFar(id)->side == 0)
+  for (i = 0; i < ENEMY_BATTLE_SIZE; i++) {
+    id = i + FIRST_ENEMY_UNIT;
+    if (UnitGetFar(id)->side == BATTLE_UNIT_ABSENT)
       break;
   }
-  if (i == 6)
+  if (i == ENEMY_BATTLE_SIZE)
     return -1;
   return id;
 }
 
+//--------------------------------------------------------------------------
+// Lays the enemies out again (after one joins or leaves) and moves each
+// one's object to its new place.
+//--------------------------------------------------------------------------
 s32 EnemyUpdate(void) {
   struct BattleWork *work = gBattleWork;
   u16 unitIds[14];
@@ -2158,14 +2279,15 @@ s32 EnemyUpdate(void) {
   s32 count;
   s32 i;
 
-  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
     unitIds[i] = work->enemyIds[i];
   count = i;
   Summon_LayoutPositions(unitIds, count, x, z);
   for (i = 0; i < count; i++) {
     s32 id = work->enemyIds[i];
 
-    if (id != 0xfe) {
+    if (id != BATTLE_UNIT_REMOVED) {
       struct BattleObj *object = BattleObjGet(id);
 
       object->anchorX = x[i] << 16;
@@ -2174,6 +2296,11 @@ s32 EnemyUpdate(void) {
   }
 }
 
+//--------------------------------------------------------------------------
+// Places every unit at the start of a battle: numbers the places (party
+// members 0 up in their order, enemies 8 to 13) and creates each unit's
+// object at its spot.
+//--------------------------------------------------------------------------
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *work;
   u16 ids[14];
@@ -2197,6 +2324,8 @@ void BattleUnit_RefreshPlacement(void) {
   p = &work->placement[13];
   for (n = 5, value = 13; n >= 0; n--, value--)
     *p-- = value;
+
+  // The party, at its fixed spots.
   for (i = 0; i < count; place++, i++) {
     s32 id = ids[i];
 
@@ -2204,37 +2333,40 @@ void BattleUnit_RefreshPlacement(void) {
     BattleObjMake(BattleObjGet(id), id, gBattlePlacement_StepPairs[place * 2],
                   gBattlePlacement_StepPairs[place * 2 + 1]);
   }
-  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
+
+  // The enemies, laid out by size.
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
     ids[i] = work->enemyIds[i];
   count = i;
   Summon_LayoutPositions(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
     s32 id = work->enemyIds[i];
 
-    if (id != 0xfe)
+    if (id != BATTLE_UNIT_REMOVED)
       BattleObjMake(BattleObjGet(id), id, x[stand], z[stand]);
   }
 }
 
 //--------------------------------------------------------------------------
 // contains_id.c
-// バトル：ユニット番号リストの検索
+// Battle: searching a list of unit ids
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 並び番号のユニットがリストにいれば 1 を返す
-// list : ユニット番号のリスト（0xff で終わる、最大 14）
-// no   : 並び番号（0-7 味方、8-13 敵）
+// Returns 1 if the unit at place no is in list.
+// list : unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
+// no   : the place (0 to 7 the party, 8 to 13 the enemies)
 //--------------------------------------------------------------------------
 s32 BattlePlacement_ContainsId(s16 *list, s32 no) {
   u32 i;
 
   if (no > 7)
-    no += 120; // 敵のユニット番号は 128 から
+    no += FIRST_ENEMY_UNIT - 8; // enemy unit ids start at 128
   i = 0;
   do {
     u16 id = *list++;
 
-    if (id == 0xff)
+    if (id == BATTLE_UNIT_LIST_END)
       break;
     if (id == no)
       return 1;

@@ -1,0 +1,117 @@
+/* Draft, differ 2 of 127: ☀️'s InitializeStagedActorSceneOrbitingEffect with ⚓️'s blend, callback and
+ * flag 0xf5d gate before it. Left: the native loads sprite byte 5 right after the negs of -13,
+ * this draft two rows later (after movs r3, #4); the scheduler ranks the byte-9 chain higher.
+ * Tried: the three bitfield stores in other orders, explicit byte masks, byte 5 read first
+ * into a local or a pinned r1, a volatile store, an asm barrier or one-pass block around the
+ * stores, 8 minutes of alchemy permute. The alpha pin with a one-pass block and the priority
+ * temporary (both as in overlay 696) are what place the literal pool where the native has it:
+ * an empty asm before the pool moves it (its estimated 4 bytes). */
+#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "io_reg.h"
+
+struct OrbitSprite {
+    u8 unknown_00[5];
+    u8 flags_05_low : 5;
+    u8 flags_05_bit_5 : 1;
+    u8 flags_05_high : 2;
+    u8 unknown_06[3];
+    u8 flags_09_low : 2;
+    u8 flags_09_mode : 2;
+    u8 flags_09_high : 4;
+    u8 unknown_0a[6];
+    u8 palette;
+    u8 unknown_11[10];
+    u8 state;
+};
+
+struct OrbitObject {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[15];
+    u8 flags_23;
+    u8 unknown_24[12];
+    s32 orbit_angle;
+    u8 unknown_34[4];
+    s32 orbit_center_x;
+    s32 orbit_center_y;
+    s32 orbit_center_z;
+    u8 unknown_44[12];
+    struct OrbitSprite *sprite;
+    u8 unknown_54;
+    u8 mode;
+    u8 state;
+    u8 unknown_57[5];
+    u8 active;
+    u8 unknown_5d[4];
+    u8 visible;
+    u8 unknown_62[10];
+    u32 callback;
+};
+
+void Func_02002180(s32 a, s32 b, s32 c, s32 d);
+void Func_02002058(s32 item);
+void Func_02002170(void);
+u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void Runtime_ReleaseHeapBlock(s32 slot);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+void Func_020007d8(void);
+s32 Func_020007fc(s32 *p);
+
+static __inline__ void Ov690_Func_02002180(s32 a, s32 b, s32 c, s32 d)
+{
+    Func_02002180(a, b, c, d);
+}
+
+void Func_02000860(void)
+{
+    struct OrbitObject *actor;
+    struct OrbitSprite *sprite;
+    u8 *transfer;
+
+    {
+        register u16 alpha __asm__("r3") = 0xc08;
+
+        do {
+        } while (0);
+        REG_BLDALPHA = alpha;
+    }
+    REG_BLDCNT = 0x3f10;
+    {
+        s32 priority = 0x480;
+
+        Scheduler_AddOrUpdateCallback(Func_020007d8, priority);
+    }
+    Func_02002170();
+    Func_02002170();
+    Ov690_Func_02002180(1, 0x203, 8, 9);
+    if (GameFlag_Test(0xf5d)) {
+        Func_020020c0(11, 0, 0);
+        return;
+    }
+    actor = (struct OrbitObject *)Object_GetById(11);
+    sprite = actor->sprite;
+    sprite->flags_09_mode = 1;
+    sprite->flags_05_bit_5 = 0;
+    sprite->flags_09_high = 0;
+    sprite->state = 0;
+    ObjectDispatch_SetSingleChildFlags((struct ObjectRuntime *)actor, 0);
+    actor->active = 0;
+    actor->mode = 0;
+    if (GameFlag_Test(0x109) == 0)
+        actor->y += 0x100000;
+    actor->flags_23 &= 0xfe;
+    actor->visible = 1;
+    transfer = Runtime_AllocateHeapBlockFar(68, 0x608);
+    Func_02002058(193);
+    transfer += 0x400;
+    VramBlock_LoadCached(sprite->palette, 128, transfer);
+    Runtime_ReleaseHeapBlock(68);
+    actor->orbit_center_x = actor->x;
+    actor->orbit_angle = 0;
+    actor->orbit_center_y = actor->y;
+    actor->active = 1;
+    actor->callback = (u32)Func_020007fc;
+    actor->state = 0;
+}

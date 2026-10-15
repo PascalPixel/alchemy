@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_693/s03e4.o"(.text)
         "*/resource_693_overlay.o"(.text.x02008640)
         "*/games/tla/src/field/overlay_693/gate.o"(.text)
-        "*/resource_693_overlay.o"(.text.x0200897c)
+        "*/games/tla/src/field/overlay_693/s097c.o"(.text)
         "*/games/tla/src/field/overlay_693/variant.o"(.text)
         "*/games/tla/src/field/overlay_693/s0c14.o"(.text)
         "*/games/tla/src/field/overlay_693/s0c8c.o"(.text)

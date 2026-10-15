@@ -1,5 +1,4 @@
-/* Near misses of overlay 6ad: Func_02000c80 differ 6 (Func_02000cb8 has the same shape, with 0 for 255 and
- * priority_flags |= 2): three rows of the cell address are scheduled apart. Func_020028ec differ 8 with the forced turn step, 4 without it: the listing
+/* Near miss of overlay 6ad (Func_02000c80 and Func_02000cb8 are C in s0cf4.c): Func_020028ec differ 8 with the forced turn step, 4 without it: the listing
  * builds 0x1000 across the two scale updates. */
 #include "../../../../games/tla/src/field/overlay_6ad/room.h"
 #include "iwram_call.h"
@@ -19,19 +18,6 @@ extern u16 Data_020074c8;
 
 void Func_02002f6c(void);
 void Func_02005640(void);
-
-void Func_02000c80(s32 id)
-{
-    struct ObjectRuntime *object = Object_GetById(id);
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
-    s32 z = object->z >> 20;
-    s32 x = object->x >> 20;
-    u8 *cell = map->layers[2].cells;
-
-    cell += (x + (z << 7)) << 2;
-    cell[2] = 255;
-    Object_GetById(id)->priority_flags = 0;
-}
 
 void Func_020028ec(struct ObjectRuntime *object)
 {

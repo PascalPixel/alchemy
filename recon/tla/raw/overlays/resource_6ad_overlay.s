@@ -569,68 +569,6 @@ Func_02000b40:
 	.4byte 0xfff00000
 .L_02008c7c:
 	.4byte gMapCellBuffer
-	.section .text.x02008c80,"ax",%progbits
-	.global Func_02000c80
-	.thumb_func
-Func_02000c80:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Object_GetById
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r1, [r3, #32]
-	ldr r2, [r0, #16]
-	ldr r3, [r0, #8]
-	movs r0, #212
-	lsls r0, r0, #1
-	adds r1, r1, r0
-	asrs r2, r2, #20
-	lsls r2, r2, #7
-	ldr r1, [r1]
-	asrs r3, r3, #20
-	adds r3, r3, r2
-	lsls r3, r3, #2
-	adds r1, r1, r3
-	movs r3, #255
-	strb r3, [r1, #2]
-	adds r0, r5, #0
-	bl Object_GetById
-	movs r3, #0
-	adds r0, #35
-	strb r3, [r0]
-	pop {r5, pc}
-	.section .text.x02008cb8,"ax",%progbits
-	.global Func_02000cb8
-	.thumb_func
-Func_02000cb8:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Object_GetById
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r1, [r3, #32]
-	ldr r2, [r0, #16]
-	ldr r3, [r0, #8]
-	movs r0, #212
-	lsls r0, r0, #1
-	adds r1, r1, r0
-	asrs r2, r2, #20
-	lsls r2, r2, #7
-	ldr r1, [r1]
-	asrs r3, r3, #20
-	adds r3, r3, r2
-	lsls r3, r3, #2
-	adds r1, r1, r3
-	movs r3, #0
-	strb r3, [r1, #2]
-	adds r0, r5, #0
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #2
-	orrs r3, r2
-	strb r3, [r0]
-	pop {r5, pc}
 	.section .text.x02008e7c,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.balign 4

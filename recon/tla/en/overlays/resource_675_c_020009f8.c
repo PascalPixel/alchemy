@@ -1,10 +1,16 @@
-/* Near miss, differ 4 of 103: The Broken Seal's
+/* Near miss, differ 2 of 103: The Broken Seal's
  * StagedActor_PlacePairAtOffsetAndRun with this overlay's stubs. The native
- * spills dx before dz (str r1, [sp, #4]; str r2, [sp, #0]) after the party
- * state's pool load; this spills dz first. Measured: an empty asm barrier or
- * a one-pass block at entry gives the native spill order but copies the id
- * to r5 before the pool load, which the native does after the offset is
- * added (differ 4). */
+ * order is sub sp; ldr r3, =gPartyState; str r1, [sp, #4]; str r2, [sp];
+ * movs r2, #133 ... adds r5, r0, #0. Plain (differ 4) dz is spilled first
+ * and dx after the offset is built. With the loop note after the party
+ * address and the id pinned to r5 after it (below) the spills and the id
+ * copy fall into place but the pool load rises above sub sp (differ 2).
+ * Tried 2026-10-15: a second note before the address (the load then
+ * follows both spills), an asm barrier instead of the note (the same),
+ * dx and dz copied to locals after the note (the copies coalesce with the
+ * parameters, whose spills stay at entry), the parameters pinned to r1 and
+ * r2 (dx moves to r8: differ 32); permute 3 minutes on the plain form found
+ * nothing below 4. */
 #include "types.h"
 #include "party_state.h"
 
@@ -33,9 +39,18 @@ void Func_020009f8(s32 actor_id, s32 dx, s32 dz)
     struct FieldActor *actor;
     s32 x;
     s32 z;
+    struct PartyState *party;
+    s32 *owner;
 
-    leader = Object_GetById(gPartyState.current_owner);
-    actor = Object_GetById(actor_id);
+    party = &gPartyState;
+    do { } while (0);
+    owner = &party->current_owner;
+    {
+        register s32 id asm("r5") = actor_id;
+
+        leader = Object_GetById(*owner);
+        actor = Object_GetById(id);
+    }
     Func_02001254();
     Func_02001324(0);
     {

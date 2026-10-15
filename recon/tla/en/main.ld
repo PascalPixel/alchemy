@@ -579,8 +579,6 @@ SECTIONS
         "*/games/tla/src/graphics/text/drawstr.o"(.text)
         "*/recon/tla/raw/080420fc.o"(.text)
         "*/games/tla/src/graphics/text/render.o"(.text)
-        "*/recon/tla/raw/080421e4.o"(.text)
-        "*/recon/tla/raw/08042214.o"(.text)
         "*/recon/tla/raw/08042244.o"(.text)
         "*/recon/tla/raw/08042274.o"(.text)
         "*/recon/tla/raw/08042314.o"(.text)

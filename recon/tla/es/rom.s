@@ -1102,19 +1102,8 @@ UiText_DrawCharacterAtOffset:
 	.thumb_func
 UiText_DrawStringAtOffset:
 	.incbin "baserom.gba", 0x00042168, 0x0000008c
-	.section .rom.00042250, "ax"
-	.global UiText_DrawNumber
-	.type UiText_DrawNumber, %function
-	.thumb_func
-UiText_DrawNumber:
-	.incbin "baserom.gba", 0x00042250, 0x00000030
-	.section .rom.00042280, "ax"
-	.global UiText_DrawNumberAtOffset
-	.type UiText_DrawNumberAtOffset, %function
-	.thumb_func
-UiText_DrawNumberAtOffset:
-	.incbin "baserom.gba", 0x00042280, 0x00000030
 	.section .rom.000422b0, "ax"
+	.balign 4
 	.global UiText_DrawNumberInWindow
 	.type UiText_DrawNumberInWindow, %function
 	.thumb_func

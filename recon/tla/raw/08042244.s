@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiText_DrawNumberInWindow
 	.thumb_func
 UiText_DrawNumberInWindow:

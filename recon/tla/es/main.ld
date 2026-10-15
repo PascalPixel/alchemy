@@ -553,8 +553,6 @@ SECTIONS
     "*/games/tla/src/graphics/text/drawstr.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00042168)
     "*/games/tla/src/graphics/text/render.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00042250)
-    "*/recon/tla/es/rom.o"(.rom.00042280)
     "*/recon/tla/es/rom.o"(.rom.000422b0)
     "*/recon/tla/es/rom.o"(.rom.00042380)
     "*/games/tla/src/graphics/render/fromres.o"(.text)

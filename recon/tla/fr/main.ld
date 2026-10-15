@@ -551,8 +551,6 @@ SECTIONS
     "*/games/tla/src/graphics/text/drawstr.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0004214c)
     "*/games/tla/src/graphics/text/render.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00042234)
-    "*/recon/tla/fr/rom.o"(.rom.00042264)
     "*/recon/tla/fr/rom.o"(.rom.00042294)
     "*/recon/tla/fr/rom.o"(.rom.00042364)
     "*/games/tla/src/graphics/render/fromres.o"(.text)

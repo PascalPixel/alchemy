@@ -87,3 +87,22 @@ void Func_020017e0(void)
     Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
     Func_02005998(13, 4 - count);
 }
+
+// When the object stands in column 8, sets flag 0x9fc, stops its motion and
+// lifts it one pixel.
+void Func_0200185c(s32 a, s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+
+    if (object->x >> 20 == 8) {
+        GameFlag_SetBit(0x9fc);
+        object->motion_flags = 0;
+        {
+            s32 step = -0x10000;
+
+            /* FAKEMATCH: an empty asm that takes the step loads -0x10000 from the pool before y, as ⚓️ does; plain (y -= 0x10000, a step local, a one-pass block or a bare barrier) loads y first (differ 2). */
+            asm("" : : "l"(step));
+            object->y += step;
+        }
+    }
+}

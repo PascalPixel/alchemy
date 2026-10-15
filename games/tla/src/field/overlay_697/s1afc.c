@@ -5,6 +5,7 @@ extern const u8 Data_02007734[];
 void Func_02000924(s32 id);
 void Func_0200095c(s32 id);
 void Func_020042f0(const void *data);
+void Func_02000d70(void);
 
 void Func_02001afc(void)
 {
@@ -45,4 +46,27 @@ void Func_02001afc(void)
 void Func_02001bdc(void)
 {
     Func_020042f0(Data_02007734);
+}
+
+// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
+// their collision flags; then runs Func_02000d70, and Func_020006b4 and
+// Func_0200062c for object 15.
+void Func_02001bec(void)
+{
+    Map_CopyCells(11, 22, 11, 8, 11, 64);
+    Map_CopyCells(79, 22, 11, 8, 79, 64);
+    OBJECT_BYTE(Object_GetById(16), 98) = 1;
+    OBJECT_BYTE(Object_GetById(17), 98) = 1;
+    OBJECT_BYTE(Object_GetById(18), 98) = 1;
+    {
+        /* FAKEMATCH: the zero pinned to r6, where ⚓️ builds it; unpinned it reuses r5, which held the 1 (differ 12). */
+        register s32 clear asm("r6") = 0;
+
+        Object_GetById(16)->collision_flags = clear;
+        Object_GetById(17)->collision_flags = clear;
+        Object_GetById(18)->collision_flags = clear;
+    }
+    Func_02000d70();
+    Func_020006b4(15);
+    Func_0200062c(15);
 }

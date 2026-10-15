@@ -1,5 +1,8 @@
-/* Near miss, differ 6: three loads are scheduled one instruction away from
- * the listing (the pooled zero, object->x and the sprite pointer). */
+/* Near miss, differ 2 of 32 (6 plain): the x load and the sprite pointer now
+ * straddle their constants as in ⚓️ (an operand asm each, the pointer pinned to
+ * r2). Left: the native loads the pooled zero between the halves of 0x4000
+ * (movs r3, #128; ldr r2, =0; lsls r3, r3, #7); sched2 ranks the zero 44 against
+ * 45 for the second half, and an asm can only lower a load's chain. */
 #include "types.h"
 #include "object_runtime.h"
 
@@ -18,8 +21,18 @@ void Func_02002f88(s32 id)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
     object->angle = 0x4000;
     object->motion_flags = 0;
-    object->x += 0xc0000;
+    {
+        s32 x = object->x;
+
+        asm("" : "+l"(x));
+        object->x = x + 0xc0000;
+    }
     object->y = 0x100000;
     object->collision_flags = 0;
-    ((struct ActorSprite *)object->animation)->rotation = 0xc000;
+    {
+        register struct ActorSprite *sprite asm("r2") = (struct ActorSprite *)object->animation;
+
+        asm("" : "+l"(sprite));
+        sprite->rotation = 0xc000;
+    }
 }

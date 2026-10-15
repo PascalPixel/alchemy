@@ -8,9 +8,9 @@
 struct RenderInput;
 struct RenderOutput;
 
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags,
-                                         struct RenderInput *input, s32 offsetX,
-                                         s32 offsetY);
+struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
+                                         struct RenderInput *window,
+                                         s32 offsetX, s32 offsetY);
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
                                                      struct RenderInput *input,
                                                      s32 x, s32 y);
@@ -25,10 +25,10 @@ struct RenderOutput *RenderOutput_CreateFromTable(s32 table_entry,
                                                   s32 x, s32 y);
 struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
                                       s32 window, s32 x, s32 y);
-void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value);
+void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
-void RenderOutput_SetInvertedSentinel(void *arg0, s32 arg1);
-void UiWindow_FillFromScene(void *dst);
+void RenderOutput_SetInvertedSentinel(void *output, s32 priority);
+void UiWindow_FillFromScene(void *spans);
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
                                   u32 height, s32 value);
 
@@ -36,11 +36,11 @@ void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
 void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags);
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
-                                s32 value);
+                                s32 length);
 void PartyStatusDraw(s32 flags);
 void UiWork_FinalizeAndReleaseBlock16(void);
 void UiWindow_SetTileAttributeBitRect(const struct RenderInput *window, s32 x,
-                                      s32 y, s32 width, s32 height, u32 field);
+                                      s32 y, s32 width, s32 height, u32 set);
 
 struct SaveSummary;
 struct UiWindow;

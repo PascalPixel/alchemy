@@ -874,7 +874,6 @@ SECTIONS
         "*/recon/tla/raw/080cd5bc.o"(.text)
         "*/recon/tla/raw/080cd680.o"(.text)
         "*/recon/tla/raw/080cd808.o"(.text)
-        "*/recon/tla/raw/080cd91c.o"(.text)
         "*/games/tla/src/battle/effect/find_descriptor_entry.o"(.text)
         "*/games/tla/src/battle/effect/descriptor_range.o"(.text)
         "*/recon/tla/raw/080cdac0.o"(.text)

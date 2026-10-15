@@ -2605,12 +2605,6 @@ SceneEvent_FindActiveRecord:
 	.section .rom.000cd5b4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000cd5b4, 0x00000360
-	.section .rom.000cd914, "ax"
-	.global Func_080cd91c
-	.type Func_080cd91c, %function
-	.thumb_func
-Func_080cd91c:
-	.incbin "baserom.gba", 0x000cd914, 0x0000013c
 	.section .rom.000cdab8, "ax"
 	.balign 4
 	.global Func_080cdac0

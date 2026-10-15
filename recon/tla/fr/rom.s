@@ -1989,12 +1989,6 @@ Func_080ccec8:
 	.section .rom.000d25bc, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000d25bc, 0x00000360
-	.section .rom.000d291c, "ax"
-	.global Func_080cd91c
-	.type Func_080cd91c, %function
-	.thumb_func
-Func_080cd91c:
-	.incbin "baserom.gba", 0x000d291c, 0x0000013c
 	.section .rom.000d2a84, "ax"
 	.balign 4
 	.global Func_080cda84

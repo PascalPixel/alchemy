@@ -884,7 +884,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000d1ec8)
     "*/games/tla/src/battle/effect/run_descriptor_handler.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d25bc)
-    "*/recon/tla/fr/rom.o"(.rom.000d291c)
     "*/games/tla/src/battle/effect/find_descriptor_entry.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d2a84)
     "*/recon/tla/fr/rom.o"(.rom.000d2ac0)

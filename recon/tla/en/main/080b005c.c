@@ -1,57 +1,29 @@
-/* ported from games/tbs/src/game/character/owners.c */
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "minigame.h"
-#include "sound.h"
-#include "system.h"
-#include "edition.h"
-#include "game_flags.h"
-#include "party_state.h"
+/* Near miss, differ 2 of 17 (one reordered pair), 2026-10-15: The Broken
+ * Seal's Owner_GetDefaultElement on this game's preset table (48 presets of
+ * 24 bytes at Data_080c6684) and the unit's enemy id. Remaining: the native
+ * loads the table's address from the pool (ldr r3) before it doubles the
+ * index (lsls r2, r1, #1); this doubles first. The table in a local behind
+ * an empty asm or a one-pass block loads it first but addresses the word as
+ * [r2, r3], not [r3, r2], whatever the index's form; pinning the local to r3
+ * does the same. The draft it replaces did not compile.
+ */
 #include "types.h"
-#include "btlsmn.h"
+#include "battle_unit.h"
 #include "runtime_interfaces.h"
-#include "fixed_math.h"
-#include "owner_state.h"
-#include "iwram_call.h"
 
-s32 GameFlag_SetBit(s32);
-
-struct TradeFlags {
-    u32 flags;
+struct ElementPreset {
+    u32 element;
+    u8 digits[4];
+    u8 unknown_08[16];
 };
 
-struct ElementLevelBonus {
-    u16 pow;
-    u16 res;
-};
-
-extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
-
-s32 GameFlag_Test(s32 flag);
-
-#if EDITION_INTERNATIONAL
-#define ENEMY_SUFFIX_FIRST '1'
-#define ENEMY_SUFFIX_LAST 8
-#else
-#define ENEMY_SUFFIX_FIRST 'A'
-#define ENEMY_SUFFIX_LAST 25
-#endif
-
-typedef s32 (*ClearWordsFn)(void *destination, s32 size);
-
-
+extern const struct ElementPreset Data_080c6684[];
 
 s32 Owner_GetDefaultElement(struct BtlUnit *state)
 {
-    const struct EnemyDefinition *record =
-        (const struct EnemyDefinition *)Owner_GetRecord(state->class_id);
-    u8 value = record->element_preset;
+    u8 value = Owner_GetRecord(state->enemy_id)[42];
 
-    if (value > 43)
+    if (value > 47)
         value = 0;
-    return Enemy_ElementPresetTable[value].first;
+    return Data_080c6684[value].element;
 }

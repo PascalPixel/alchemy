@@ -1,4 +1,4 @@
-/* Near miss, differ 98 of 518 (the draft has 516).
+/* Near miss, differ 84 of 518.
  *
  * Effect kinds 38 and 218. Twin: The Broken Seal's
  * BattleFx_RunSpinningTriangle, ported call for call; the body is
@@ -9,12 +9,13 @@
  * unpacked with its palette; and the prelude's blitter pair comes from
  * Func_08144aac.
  *
- * Left: order and allocation, as in Func_0814627c: the native rebuilds the
- * 0x03000000 base for each blitter read in the frame loop where agscc keeps
- * it in r5 across the second Func_081963ec; the rest are single swaps.
+ * Left: order only, as in Func_0814627c: single swaps of a load with its
+ * neighbour.
  *
  * Tried: the prelude arrays declared before the anchor, which gives the
- * native's slots (148, 136, then the anchor at 124): 104 -> 98.
+ * native's slots (148, 136, then the anchor at 124): 104 -> 98; the
+ * tagged heap pointer for the second blitter's read (see Func_0814627c)
+ * 98 -> 84.
  */
 #include "battle.h"
 #include "graphics.h"
@@ -94,11 +95,19 @@ void Func_08145df8(struct BattleEffectArgument *effect) {
   s32 size;
   s32 j;
   s32 k;
+  struct HeapSlots *heap;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
+  /* FAKEMATCH: a pointer to the heap slots held from here, used only for
+   * the second blitter's read: spilled, it makes reload rebuild the
+   * 0x03000000 base at that read (movs, lsls, adds #188) as the native does,
+   * where agscc otherwise keeps the base in r5 across the second
+   * Func_081963ec. Measured (2026-10-15): TriangleStrike 94 -> 66,
+   * SpinningTriangle 98 -> 84; the pointer for both reads, 95 and 103. */
+  heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
   // Djinn with its palette, and a transfer that fades the canvas by 4 each frame.
@@ -151,7 +160,7 @@ void Func_08145df8(struct BattleEffectArgument *effect) {
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 

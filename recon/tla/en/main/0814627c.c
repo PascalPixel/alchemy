@@ -1,4 +1,4 @@
-/* Near miss, differ 94 of 428 (the draft has 426).
+/* Near miss, differ 66 of 428.
  *
  * Effect kind 67. Twin: The Broken Seal's BattleFx_RunTriangleStrike, ported
  * call for call. The Lost Age's changes: three Resource_LoadAndDecompress
@@ -7,11 +7,16 @@
  * callback at 0xc80, Func_081963ec for the two blitters, the landed picture
  * drawn from work->sheet, and the effect argument read directly.
  *
- * Left: order and allocation. The frame is the native's (132 bytes). The
- * native rebuilds the 0x03000000 base for each blitter read in the frame
- * loop (movs, lsls; and adds #188 for the second), where agscc keeps it in
- * r5 across the second Func_081963ec; the effect argument's spill and the
- * object's three stores are each one row apart; the rest follow.
+ * Left: order only. The frame is the native's (132 bytes); the prologue's
+ * argument spill, the object's three stores and about a dozen more places
+ * are a load one row from its neighbour.
+ *
+ * Tried (2026-10-15): alchemy permute 10 minutes (56, through four
+ * rewrites: REG_BG2PA written before BeginCanvasLayer, which would undo the
+ * layer's own 0x80 and was rejected; the work pointer copied; &vector
+ * through a pointer temporary; and a 0x03000000 integer held from the setup
+ * for the second blitter's read). The last, written as the tagged heap
+ * pointer, takes 94 to 66; the others, alone, 88 (rejected), 94 and 94.
  */
 #include "battle.h"
 #include "graphics.h"
@@ -83,11 +88,19 @@ void Func_0814627c(struct BattleEffectArgument *effect) {
   s32 size;
   s32 j;
   s32 k;
+  struct HeapSlots *heap;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
+  /* FAKEMATCH: a pointer to the heap slots held from here, used only for
+   * the second blitter's read: spilled, it makes reload rebuild the
+   * 0x03000000 base at that read (movs, lsls, adds #188) as the native does,
+   * where agscc otherwise keeps the base in r5 across the second
+   * Func_081963ec. Measured (2026-10-15): TriangleStrike 94 -> 66,
+   * SpinningTriangle 98 -> 84; the pointer for both reads, 95 and 103. */
+  heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
@@ -119,7 +132,7 @@ void Func_0814627c(struct BattleEffectArgument *effect) {
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 

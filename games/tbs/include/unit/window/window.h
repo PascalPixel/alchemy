@@ -82,22 +82,22 @@ enum {
 
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_ReleaseFree(struct RenderOutput *out);
-void UiWork_InitFreeList(void);
+void RenderOutput_InitFreeList(void);
 void UiWork_InitializeWithResourceCounters(void);
 void UiWork_Initialize(s32 loadGlyphTiles);
 void UiWork_UploadDirtyBlocks(void);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(struct UiWindow *window);
+void UiWindow_DrawOpened(struct UiWindow *window);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs);
-void UiWork_WaitWindowDuration(struct UiWindow *window);
+void UiWindow_WaitZoom(struct UiWindow *window);
 void UiWork_Finalize(struct UiWindow *window, s32 instant);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *outputs);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
-void UiWork_UpdateListTail(struct RenderOutputList *list);
+void RenderOutputList_UpdateTail(struct RenderOutputList *list);
 /* RenderOutput_AppendToList is called from battle_command.c with no prototype
  * in scope: in one file its definition would come before RenderOutput_Create
  * and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
@@ -108,18 +108,18 @@ void RenderOutput_Release(struct RenderOutput *entry);
  * Djinn_ShowJoinedMessage pass five of its six arguments, and in one file, with
  * its definition first, they would not compile. Split evidence for
  * window|battle_command. */
-struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *window, s32 entry,
-                                             s32 keepPosition);
+struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
+                                                s32 entry, s32 keepPosition);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
 void UiWork_ResetFreeChannel(void);
-void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
-void UiWork_ResetChannelTransition(struct UiChannelSlot *channel);
-void UiWork_ShiftPanelRowsLeft(s32 step);
+void UiText_ApplyChannelStyle(struct UiChannelSlot *channel);
+void UiText_StartCanvasScroll(struct UiChannelSlot *channel);
+void UiText_ScrollCanvasUp(s32 step);
 void UiWork_ProcessRenderChannels(void);
 s32 UiWork_StepChannelScript(struct UiChannelSlot *ch);
 void UiWork_ProcessDirectWork(void);
-void UiWindow_UpdateInterpolatedGeometry(void *windowArg, s32 savePosition);
+void UiWindow_DrawZoomFrame(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
@@ -169,8 +169,8 @@ s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width,
                                     u32 *height);
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height,
                                    u16 *spacing);
-void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height,
-                                 u16 *spacing);
+void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
+                            u16 *spacing);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode);
 /* UiWindow_PutGlyph is called from battle_command.c with no prototype in scope,
@@ -187,12 +187,12 @@ s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
 s32 *Runtime_ClearWordIfSet(s32 *p);
 void UiWork_DrainPending(s32 unused);
-void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch);
+void UiWindow_StepSwellEffect(struct UiChannelSlot *ch);
 void UiWork_ClearValueNameTables(void);
 void UiWork_PushValueSlot(u32 value, u32 kind);
 u32 UiRender_LookupNamedValue(u32 kind, u32 clear);
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch);
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch);
+s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch);
+s32 UiText_CheckTextDismissed(struct UiChannelSlot *ch);
 void UiWork_FinalizePendingCore(void);
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset);
 s32 UiText_BuildRenderEntriesMode1(s32 arg0);
@@ -224,8 +224,8 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
     return 1;                                                                  \
   }
 
-s32 Ui_CountIconTableEntries(void);
-s32 Ui_CountSecondTableEntries(void);
+s32 UiIcon_CountItemIcons(void);
+s32 UiIcon_CountPsynergyIcons(void);
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                   s32 flag);
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,

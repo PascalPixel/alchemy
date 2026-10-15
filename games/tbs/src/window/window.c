@@ -165,7 +165,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 }
 
 // Links all 64 render outputs of the pool into the free list.
-void UiWork_InitFreeList(void) {
+void RenderOutput_InitFreeList(void) {
   s32 n;
   struct UiRenderWork *work;
   struct RenderOutput *out;
@@ -213,7 +213,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
-  UiWork_InitFreeList();
+  RenderOutput_InitFreeList();
   UiWork_SetTwoEntriesTo999();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
   UiWork_InitCountersWithResourceAndScheduleRefresh();
@@ -258,7 +258,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
-  UiWork_InitFreeList();
+  RenderOutput_InitFreeList();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
   UiWork_InitCountersAndScheduleRefresh(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
@@ -359,7 +359,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 // Draws a window at its full size: its frame, and for a text canvas window
 // the canvas, filled with colour 4 under a frame when the window is framed and
 // transparent otherwise.
-void UiWork_DrawByAttributes(struct UiWindow *window) {
+void UiWindow_DrawOpened(struct UiWindow *window) {
   u32 flags;
   u32 value;
   u32 x;
@@ -439,12 +439,12 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
       found->flags |= UI_WINDOW_INSTANT;
       found->frame = 0;
       found->duration = 1;
-      UiWork_DrawByAttributes(found);
+      UiWindow_DrawOpened(found);
     } else {
       // Zoom open over eight frames, and wait until it is open.
       found->duration = 8;
       found->frame = 7;
-      UiWork_WaitWindowDuration(found);
+      UiWindow_WaitZoom(found);
       WaitFrames(1);
     }
   }
@@ -452,7 +452,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 }
 
 // Waits until a zooming window has finished opening or closing.
-void UiWork_WaitWindowDuration(struct UiWindow *window) {
+void UiWindow_WaitZoom(struct UiWindow *window) {
   if (!(UI_WINDOW_INSTANT & window->flags) && window->duration != 0) {
     do {
       WaitFrames(1);
@@ -577,7 +577,7 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left,
 
 // Points a list's tail link back at its last output, after the list has been
 // edited by hand.
-void UiWork_UpdateListTail(struct RenderOutputList *list) {
+void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
   struct RenderOutput *node = list->head;
   struct RenderOutput **tail = &list->head;
 
@@ -663,8 +663,8 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
 // window. A channel that already serves a finished window continues below its
 // last line (scrolling up once both lines are used) unless keepPosition is
 // set. Returns the channel, or NULL when all three are busy.
-struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *window, s32 entry,
-                                             s32 keepPosition) {
+struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
+                                                s32 entry, s32 keepPosition) {
   struct UiChannelSlot *slot;
   struct UiChannelSlot *selected;
   u16 *spacing;
@@ -693,7 +693,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *window, s32 entry,
       } else if (selected->y < 13 << 8) {
         selected->y += 13 << 8;
       } else {
-        UiWork_ResetChannelTransition(selected);
+        UiText_StartCanvasScroll(selected);
       }
       selected->x = 3 << 8;
     }
@@ -756,7 +756,7 @@ void UiWork_ResetFreeChannel(void) {
 
 // Makes a channel's text colour, outline and line spacing the ones glyphs are
 // drawn with.
-void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel) {
+void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
 
   work->colour = channel->colour;
@@ -765,7 +765,7 @@ void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel) {
 }
 
 // Starts a channel scrolling its canvas up a line, over two frames.
-void UiWork_ResetChannelTransition(struct UiChannelSlot *channel) {
+void UiText_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }
 
@@ -777,7 +777,7 @@ void UiWork_ResetChannelTransition(struct UiChannelSlot *channel) {
 
 // Scrolls the battle message canvas up by 6 pixel rows per step, below its
 // top 8 rows, and clears the rows this uncovers.
-void UiWork_ShiftPanelRowsLeft(s32 step) {
+void UiText_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
   u32 *base = UI_CANVAS_VRAM;
   s32 n;
@@ -824,7 +824,7 @@ void UiWork_ProcessRenderChannels(void) {
         s32 step;
 
         if (pending != 0) {
-          UiWork_AdvanceChannelTransition(channel);
+          UiWindow_StepSwellEffect(channel);
         } else {
           step = UiWork_StepChannelScript(channel);
           switch (step) {
@@ -921,7 +921,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
 
   // Finish scrolling the canvas up a line before any more text.
   if (ch->transition != 0) {
-    UiWork_ShiftPanelRowsLeft(1);
+    UiText_ScrollCanvasUp(1);
     ch->transition = (s16)ch->transition - 1;
     return CHANNEL_STEP_RUNNING;
   }
@@ -945,7 +945,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         ch->x = ch->startX;
         if (ch->work->flags & UI_WINDOW_TEXT_CANVAS) {
           if (ch->y >= 13 << 8) {
-            UiWork_ResetChannelTransition(ch);
+            UiText_StartCanvasScroll(ch);
             glyphsLeft = 1;
           } else {
             ch->y += 13 << 8;
@@ -961,7 +961,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         if (work->mode != 0 && ch->countdown < 900)
           gKeysPressedLatch = 0;
         ch->countdown = 919;
-        if (UiWork_CheckCancelByModeInput(ch) == 0) {
+        if (UiText_CheckTextDismissed(ch) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
           // corner.
           struct UiWindow *pane = ch->work;
@@ -1028,7 +1028,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         ch->colour = 15;
         ch->outline = 0;
         ch->lineSpacing = 10;
-        UiWork_CopyParamsToRenderWork(ch);
+        UiText_ApplyChannelStyle(ch);
 #endif
         Resource_ResetEntry(work->glyphResource);
         work->glyphResource = 99;
@@ -1037,7 +1037,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
       case TEXT_WAIT_KEY:
         if (work->mode != 0 && ch->countdown < 900)
           gKeysPressedLatch = 0;
-        if (UiWork_CheckCancelByModeInput(ch) != 0)
+        if (UiText_CheckTextDismissed(ch) != 0)
           return CHANNEL_STEP_CLOSE;
         ch->countdown = 919;
         break;
@@ -1046,14 +1046,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         if (ch->countdown == 0)
           ch->countdown = 20;
         work->result[1] = 0;
-        UiWork_CheckCancelByInput(ch);
+        UiText_CheckPauseSkipped(ch);
         break;
 
       case TEXT_PAUSE_LONGEST:
         if (ch->countdown == 0)
           ch->countdown = 120;
         work->result[1] = 0;
-        UiWork_CheckCancelByInput(ch);
+        UiText_CheckPauseSkipped(ch);
         break;
 
       case TEXT_PAUSE_LONG:
@@ -1065,26 +1065,26 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
       case TEXT_COLOUR:
         ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
         ch->colour = work->entries[ch->entry];
-        UiWork_CopyParamsToRenderWork(ch);
+        UiText_ApplyChannelStyle(ch);
         break;
 
       case TEXT_OUTLINE:
         ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
         ch->outline = work->entries[ch->entry];
-        UiWork_CopyParamsToRenderWork(ch);
+        UiText_ApplyChannelStyle(ch);
         break;
 
       case TEXT_LINE_SPACING:
         ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
         ch->lineSpacing = work->entries[ch->entry];
-        UiWork_CopyParamsToRenderWork(ch);
+        UiText_ApplyChannelStyle(ch);
         break;
 
       case TEXT_COLOURS_RESET:
         ch->colour = 15;
         ch->outline = 0;
         ch->lineSpacing = 10;
-        UiWork_CopyParamsToRenderWork(ch);
+        UiText_ApplyChannelStyle(ch);
         break;
 
       case TEXT_WINDOW_STATE:
@@ -1215,10 +1215,10 @@ loop:
   if (work->flags != 0) {
     // Opening: zoom out one step a frame, then draw the window in full.
     if ((s16)work->frame != 0) {
-      UiWindow_UpdateInterpolatedGeometry(work, 0);
+      UiWindow_DrawZoomFrame(work, 0);
       work->frame = (s16)work->frame - 1;
     } else if (work->duration != 0) {
-      UiWork_DrawByAttributes(work);
+      UiWindow_DrawOpened(work);
     }
   } else if (work->duration != 0) {
     // Closing: zoom in one step a frame, then erase it and free its slot.
@@ -1226,7 +1226,7 @@ loop:
       UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                (s16)work->previousWidth,
                                (s16)work->previousHeight);
-      UiWindow_UpdateInterpolatedGeometry(work, 1);
+      UiWindow_DrawZoomFrame(work, 1);
       work->frame++;
       dirty = 1;
       state->dirty = dirty;
@@ -1262,7 +1262,7 @@ loop:
 // Draws the frame of a zooming window at its size for this frame: the window
 // grows from its centre as frame counts down to 0. With savePosition set (when
 // closing) the drawn rectangle is remembered, for the next frame to erase.
-void UiWindow_UpdateInterpolatedGeometry(void *windowArg, s32 savePosition) {
+void UiWindow_DrawZoomFrame(void *windowArg, s32 savePosition) {
   struct UiWindow *window = windowArg;
   struct UiWindowInterpolationScratch scratch;
   s32 frame;
@@ -1515,7 +1515,7 @@ void UiText_PrepareMessageWork(s32 argument) {
       work = existing;
     }
     if (work != NULL) {
-      result = UiWork_ActivateChannel(work, index, control->marked);
+      result = UiText_StartBattleMessage(work, index, control->marked);
       control->offset = (struct BattleDisplayOffset *)result;
       control->marked = 0;
       if (result == NULL) {
@@ -3302,7 +3302,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #endif
 
 // Sizes a window for decoded text no and moves (*px, *py) so the window fits
-// on the screen. flags: bit 0 measures every page (UiText_MeasureStringVariant)
+// on the screen. flags: bit 0 measures every page (UiText_MeasureAllPages)
 // rather than the first; bit 1 takes the size in *pw and *ph as given, in
 // tiles, instead of measuring. Measuring returns the size in tiles in *pw and
 // *ph and fills spacing with each line's extra character gap.
@@ -3328,7 +3328,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 
   if (!(flags & 2)) {
     if (flags & 1)
-      UiText_MeasureStringVariant(no, pw, ph, spacing);
+      UiText_MeasureAllPages(no, pw, ph, spacing);
     else
       UiText_MeasureEntryDimensions(no, pw, ph, spacing);
   }
@@ -3558,8 +3558,8 @@ done:
 // Measures decoded text from start over all its pages: the width of the first
 // page's longest line and the height of its tallest page, in pixels, with each
 // line's extra character gap in spacing as UiText_MeasureEntryDimensions.
-void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
-                                 u16 *spacing) {
+void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
+                            u16 *spacing) {
   u32 pageHeights[16];
   u16 counts[4];
   u16 widths[4];
@@ -4470,7 +4470,7 @@ void UiWork_DrainPending(s32 unused) {
 
 // Steps a channel's window effect (UI_WINDOW_EFFECT_SWELL): the frame is drawn
 // a tile bigger on every side until the countdown ends, then back to normal.
-void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch) {
+void UiWindow_StepSwellEffect(struct UiChannelSlot *ch) {
   struct UiWindow *work = ch->work;
   s32 effect = work->effect;
   s32 x = work->x;
@@ -4546,7 +4546,7 @@ u32 UiRender_LookupNamedValue(u32 kind, u32 clear) {
 // Ends a channel's pause early: when the message waits on a sound that has
 // finished (busy), or while A, B, L or R is held. Clears the countdown and
 // returns 1 if it ended.
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
+s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct UiRenderWork *work = UI_WORK;
   s32 cancel = 0;
   s32 zero;
@@ -4563,10 +4563,10 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   return zero;
 }
 
-// As UiWork_CheckCancelByInput, but on a newly pressed button: the latched
+// As UiText_CheckPauseSkipped, but on a newly pressed button: the latched
 // presses while UiRenderWork.mode is set. Returns 1 when the player has
 // dismissed the text.
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
+s32 UiText_CheckTextDismissed(struct UiChannelSlot *ch) {
   struct UiRenderWork *work = UI_WORK;
   s32 key;
   s32 cancel = 0;
@@ -4609,6 +4609,10 @@ void UiWork_FinalizePendingCore(void) {
 }
 #endif
 
+// Shows a message centred on the screen (yOffset tiles lower) and waits until
+// it is typed out, then closes it. With mode 0 the window has no frame or
+// size and opens and closes at once; otherwise it is a zooming window sized
+// to the message.
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
   struct UiRenderWork *work;
   struct UiWindow *window;
@@ -4654,10 +4658,14 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
   }
 }
 
+// Decodes message arg0 and empties the argument table; returns where its
+// decoded text starts.
 s32 UiText_BuildRenderEntriesMode1(s32 arg0) {
   return UiText_BuildRenderEntries(arg0, 1);
 }
 
+// Points reader at the start of message (its compressed bits and first
+// context), running the ARM lookup routine from a RAM copy.
 void UiText_LookupMessage(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
 
@@ -4668,6 +4676,10 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message) {
 
 extern const void *const Text_MessageContexts[][2];
 
+// Decodes the next symbol of a message. Messages are Huffman coded with one
+// tree per previous symbol: the previous code picks the tree, the message's
+// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
+// becomes the next context.
 s32 UiText_DecodeSymbol(struct TextReader *reader) {
   u32 code;
   u32 hi;
@@ -4747,6 +4759,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader) {
   return code;
 }
 
+// Marks both portrait slots free (999).
 void UiWork_SetTwoEntriesTo999(void) {
   struct UiRenderWork *work = UI_WORK;
   s32 index = 0;
@@ -4757,6 +4770,8 @@ void UiWork_SetTwoEntriesTo999(void) {
   } while (index != 2);
 }
 
+// Returns the portrait of a character (ids below 20) or another speaker's
+// sprite (128 and up for those), or -1 when it has none.
 s32 Localization_LookupEntryId(u32 value) {
   s32 result = -1;
   s32 i = 0;
@@ -4792,6 +4807,9 @@ s32 Localization_LookupEntryId(u32 value) {
   return result;
 }
 
+// Opens a portrait window at tile (x, y) showing the portrait of speaker arg0
+// (arg1 is passed on to the portrait object), and returns it as an integer,
+// or 0 when the speaker has no portrait.
 s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y) {
   s32 win;
   s32 minus_four;
@@ -4816,6 +4834,7 @@ s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y) {
   return win;
 }
 
+// Closes the portrait window showing speaker entry, if one is open.
 void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry) {
   struct UiRenderWork *state;
   struct UiWindow *work;
@@ -4849,14 +4868,19 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry) {
   }
 }
 
-s32 Ui_CountIconTableEntries(void) {
+// Returns how many item icons there are.
+s32 UiIcon_CountItemIcons(void) {
   return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
 }
 
-s32 Ui_CountSecondTableEntries(void) {
+// Returns how many Psynergy icons there are.
+s32 UiIcon_CountPsynergyIcons(void) {
   return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
 
+// Builds a command icon (overlay no0 over frame no1) and loads it into a
+// sprite tile slot: *slot, or a free one when flag is 0. Returns the tile in
+// *ret.
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                   s32 flag) {
   GlyphTransfer *work;
@@ -4877,12 +4901,17 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
+// Builds the icon of a battle action's item (its first operand) into a slot,
+// as UiIcon_BuildItemIconTiles.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
                             tile, reuse);
 }
 
+// Builds item icon glyph, over the icon frame when withBase is set, and loads
+// it into sprite tile slot *src (a free slot unless reuse is set). Returns the
+// tile in *dst.
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
                                s32 reuse) {
   GlyphTransfer *work;
@@ -4891,7 +4920,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
   slot = 0;
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
 
-  if (glyph >= Ui_CountIconTableEntries())
+  if (glyph >= UiIcon_CountItemIcons())
     glyph = 0;
 
   if (withBase != 0) {
@@ -4923,6 +4952,11 @@ extern GlyphTransfer *gGlyphWork;
 #define ICON_BROKEN 16
 #define ICON_ARTIFACT 32
 
+// Draws an item's icon into the glyph work buffer from its inventory code
+// (item id in the low 9 bits, broken 0x200, equipped 0x400, count less one in
+// the top 5 bits) with the layers asked for (ICON_ flags): the frame, the
+// equipped, broken and artifact marks, and the count. Returns 256, or -1 when
+// there is no glyph work buffer.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -4992,6 +5026,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
+// Composes an item's icon (inventory code arg0, layers arg1) and loads it into
+// sprite tile slot arg2.
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
   GlyphTransfer *work;
 
@@ -5002,6 +5038,7 @@ s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
   return 1;
 }
 
+// Builds one of the other icons and loads it into sprite tile slot slot.
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot) {
   GlyphTransfer *work;
 
@@ -5013,6 +5050,7 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot) {
 }
 extern const u8 *gRenderResource_PairSourceTable[];
 
+// Loads one of four small fixed images into sprite tile slot slot.
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   /* FAKEMATCH: three more names of the one table keep each case's own literal
    * slot; with the one name in every case the switch folds away, differ 21 on
@@ -5040,6 +5078,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   return 1;
 }
 
+// Draws an item's icon from its inventory code into the glyph work buffer.
 void Ui_PrepareTransferForItem(s32 code) {
   GlyphTransfer *state = gGlyphWork;
   struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
@@ -5054,6 +5093,8 @@ void Ui_PrepareTransferForItem(s32 code) {
   UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
+// Builds the Psynergy icon of a battle action, as
+// UiIcon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse) {
   UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
@@ -5062,6 +5103,9 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 
 #define ROUTINE_BLOCK 49
 
+// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
+// loads it into sprite tile slot *src (a free slot unless reuse is set).
+// Returns the tile in *dst.
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
                                   s32 reuse) {
   GlyphTransfer *work;
@@ -5070,7 +5114,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   slot = 0;
 
-  if (glyph >= Ui_CountSecondTableEntries())
+  if (glyph >= UiIcon_CountPsynergyIcons())
     glyph = 0;
 
   if (withBase != 0) {
@@ -5093,6 +5137,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
+// Draws one of the other icons into the glyph work buffer.
 void Ui_PrepareTransferFromTableEntry(u32 index) {
   GlyphTransfer *state = gGlyphWork;
 
@@ -5102,6 +5147,9 @@ void Ui_PrepareTransferFromTableEntry(u32 index) {
   UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
+// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
+// free slot unless reuse is set) and its colours into sprite palette palette.
+// Returns the tile in *tile.
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
   GlyphTransfer *work;
@@ -5127,8 +5175,11 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(palette, 0), 0x80000010, REG_DMA3);
 }
 
+// Does nothing.
 void UiGlyph_ReservedNoOp(void) {}
 
+// Decodes a compressed icon into the glyph buffer and expands it to tiles,
+// opaque for the first layer or masked over what is there when overlay is set.
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
@@ -5159,6 +5210,8 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   cursor->cursor = 0;
 }
 
+// Allocates and resets the selection screen: the row of icons the player picks
+// from, with arrows at each end and a pointing hand over the chosen target.
 void UiGlyph_ResetWorkState(void) {
   struct SelectionScreen *work;
   struct SelectionSprite *visual;
@@ -5206,6 +5259,7 @@ void UiGlyph_ResetWorkState(void) {
   visual->priority = 0;
 }
 
+// Empties the selection screen's list of entries.
 void Resource_ClearOwnerListAndCounters(void) {
   struct SelectionScreen *screen;
 
@@ -5220,6 +5274,7 @@ void Resource_ClearOwnerListAndCounters(void) {
   screen->count = 0;
 }
 
+// Adds an entry (kind and id) to the selection screen's list, up to 16.
 void Resource_PushPendingPair(u32 first, u32 second) {
   struct SelectionScreen *state = gResQueueWork;
   u16 cnt = state->count;
@@ -5231,6 +5286,8 @@ void Resource_PushPendingPair(u32 first, u32 second) {
   }
 }
 
+// Creates icons for the first five listed entries in a row along the bottom of
+// the screen.
 void MenuSelection_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 count = screen->count;
@@ -5284,8 +5341,11 @@ void MenuSelection_BuildEntries(u32 unused) {
   Menu_LoadSelectedResource();
 }
 
+// Does nothing.
 void UiWork_ReservedNoOp(void) {}
 
+// Returns a free selection icon record: one of the seven row icons (kind 0) or
+// of the five chosen icons (otherwise), or NULL.
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind) {
   struct SelectionScreen *state = gResQueueWork;
   s32 i;
@@ -5304,14 +5364,19 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind) {
   return NULL;
 }
 
+// Starts drawing the selection screen each frame.
 void Resource_ScheduleOwnerResetDelayed(void) {
   Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 0xC80);
 }
 
+// Stops drawing the selection screen.
 void Resource_ScheduleOwnerReset(void) {
   Scheduler_RemoveCallback(MenuSelection_DrawFrame);
 }
 
+// The selection screen's per-frame callback: slides and draws the row of
+// icons, the large icon over the chosen one, the end arrows, the icons already
+// chosen and the pointing hand.
 void MenuSelection_DrawFrame(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
@@ -5487,6 +5552,8 @@ void MenuSelection_DrawFrame(void) {
   state->status += 1;
 }
 
+// Draws the selection screen's left (index 0) or right (1) arrow, nudged
+// outwards while it flashes after a scroll.
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index) {
   u32 frame = (gFrameTick >> 2) & 7;
   struct SelectionSprite *entry;
@@ -5520,6 +5587,10 @@ void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index) {
     state->records[index].base--;
 }
 
+// Opens or refits the name window above the selection row and writes the name
+// of the icon under the cursor, or that nothing is known (mode 4, Psynergy)
+// or held (mode 2, items). mode 6 is a yes or no question, placed at the
+// bottom or top of the screen.
 void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
@@ -5564,6 +5635,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   }
 }
 
+// Closes the selection screen and frees its icons, tiles and work block.
 void Resource_ResetOwnerEntries(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *node;
@@ -5598,6 +5670,7 @@ void Resource_ResetOwnerEntries(void) {
   Runtime_ReleaseHeapBlock(18);
 }
 
+// Moves the row of icons to start at (first, second), 16 pixels apart.
 void Menu_SetNodeCoordinates(u32 first, u32 second) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *node;
@@ -5615,6 +5688,7 @@ void Menu_SetNodeCoordinates(u32 first, u32 second) {
   }
 }
 
+// Sets up both end arrows of the selection row.
 void Menu_SetupSelectionBothSides(void) {
   struct SelectionScreen *state;
 
@@ -5623,6 +5697,8 @@ void Menu_SetupSelectionBothSides(void) {
   Menu_SetupSelectionSide(state, 1);
 }
 
+// Sets up the left (index 0) or right (1) arrow of the selection row, shown
+// when there are entries beyond that end.
 void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index) {
   struct SelectionSprite *entry = &state->records[index].sprite;
   u8 *frames = 0;
@@ -5689,6 +5765,9 @@ struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
+// Runs the selection row until the player chooses (the chosen entry's index)
+// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
+// moving or choosing.
 s32 Menu_SelectionLoop(s32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
 
@@ -5713,6 +5792,7 @@ s32 Menu_SelectionLoop(s32 mode) {
   }
 }
 
+// As Menu_SelectionLoop, with the menu sounds.
 u32 Menu_WaitForSelectionInput(u32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 result;
@@ -5753,6 +5833,7 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
   }
 }
 
+// Moves the cursor one entry right, scrolling the row at its fourth place.
 void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   u32 end = screen->top + screen->cursorIndex + 1;
 
@@ -5780,6 +5861,7 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   WaitFrames(1);
 }
 
+// Moves the cursor one entry left, scrolling the row at its second place.
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   u32 cursor;
 
@@ -5808,6 +5890,8 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   WaitFrames(1);
 }
 
+// Moves the cursor one entry right, scrolling the row at its edge and
+// wrapping from the last entry to the first.
 void Menu_StepRight(struct SelectionScreen *state) {
   struct SelectionNode *node;
   u16 *ids;
@@ -5874,6 +5958,8 @@ void Menu_StepRight(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
+// Moves the cursor one entry left, scrolling the row at its edge and
+// wrapping from the first entry to the last.
 void Menu_StepLeft(struct SelectionScreen *state) {
   struct SelectionNode *node;
   s32 i;
@@ -5948,6 +6034,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
+// Redraws the command icon at row place index in its plain state.
 void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index) {
   struct SelectionNode *node = state->head;
   u32 output;
@@ -5965,6 +6052,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index) {
   }
 }
 
+// Redraws the command icon at row place index and loads its large icon.
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index) {
   struct SelectionNode *node = state->head;
   u32 res;
@@ -5983,6 +6071,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index) {
   }
 }
 
+// Tells the battle presentation how many icons the row shows.
 void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
@@ -5996,6 +6085,8 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   BattlePres_SetActorModesFar(data, 0);
 }
 
+// Scrolls the row one entry: forward brings an icon in from the right as the
+// leftmost shrinks away, and back the reverse; waits until it has moved.
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *p;
   struct SelectionNode *last;
@@ -6091,6 +6182,9 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   }
 }
 
+// Loads the icon of an entry of kind mode (1 and 6 commands, 2 items, 4
+// Psynergy, 9 fixed images) into a free sprite tile slot and returns it, or
+// -1.
 s32 Resource_LoadByMode(s32 mode, s32 value) {
   s32 output;
   s32 result = -1;
@@ -6119,6 +6213,9 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
   return result;
 }
 
+// Loads the icon of an entry of kind mode into sprite tile slot result (a free
+// slot when -1) and returns the slot. Kind 7 is an item icon without its
+// count, 8 one of the other icons.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -6154,6 +6251,8 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   return result;
 }
 
+// Sets up a selection icon for an entry: its icon tiles (in its old slot when
+// reuse is set), its name message and its sprite.
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
                               s32 reuse) {
   s32 src;
@@ -6201,6 +6300,9 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
   obj->priority = 0;
 }
 
+// Chooses the entry under the cursor: the other icons gather into it and
+// vanish, and it joins the chosen icons at the top left. Returns the entry's
+// index.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
@@ -6293,6 +6395,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return index;
 }
 
+// Does nothing.
 void UiTextResource_NoOpCallback(void) {}
 
 void UiTextResource_NoOpCallbackBank(void) {}
@@ -6305,6 +6408,8 @@ void UiTextResource_NoOpCallback3(void) {}
 
 void UiTextResource_NoOpCallback4(void) {}
 
+// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
+// in *slot).
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot) {
   const void *data = gMenu_CursorObjectTiles;
   s32 value = Resource_FindFreeEntry();
@@ -6321,14 +6426,17 @@ void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot) {
   object->oam.f.priority = 0;
 }
 
+// Places an arrow sprite at (x, y) and queues it for drawing.
 void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y) {
   obj->oam.f.x = x;
   obj->oam.f.y = y;
   Runtime_PushSlotEntry((s32 *)obj, 0xFC);
 }
 
+// Frees an arrow sprite's tile slot.
 void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 
+// Loads the large icon of the command under the cursor, zooming in.
 void Menu_LoadSelectedResource(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
@@ -6363,6 +6471,7 @@ void Menu_LoadSelectedResource(void) {
   Runtime_ReleaseHeapBlock(17);
 }
 
+// Frees the large command icon, if it is shown.
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *transfer = &gResQueueWork->records[15];
 
@@ -6378,6 +6487,8 @@ void Resource_ResetPendingTransfer(void) {
 #define HAS_LOCALIZED_MENU_GUARD 1
 #endif
 
+// Runs the field menu until the player picks something that leaves it, and
+// returns that choice's result.
 s32 Menu_RunTopSelection(void) {
   s32 ret;
   s32 selection;
@@ -6437,6 +6548,7 @@ s32 Menu_RunTopSelection(void) {
   return ret;
 }
 
+// Opens the field menu's window and waits a frame.
 void UiWindow_OpenMode1AndWaitFrame(void) {
   UiWindow_CreateWithLayoutBounds(1);
   WaitFrames(1);
@@ -6445,12 +6557,15 @@ void UiWindow_OpenMode1AndWaitFrame(void) {
 // Closes the window kept in heap block 16 and frees the block.
 void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
 
+// Sets up an empty selection screen and waits a frame.
 void Ui_ClearWorkStateAndWaitFrame(void) {
   UiGlyph_ResetWorkState();
   Resource_ClearOwnerListAndCounters();
   WaitFrames(1);
 }
 
+// Runs a selection row with the cursor on entry value, cancellable, and
+// returns the entry chosen or -1.
 u32 Menu_RunSelectionForValue(u32 value) {
   struct SelectionScreen *state = gResQueueWork;
   u32 result;
@@ -6472,6 +6587,7 @@ struct TimedNoticeWork {
   u16 countdown;
 };
 
+// Shows the area's name in a window near the top of the screen for 90 frames.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *work;
   s32 height;
@@ -6496,6 +6612,7 @@ void UiTimedNotice_Create(void) {
   Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 
+// Counts the area name down, and closes it at 0.
 void UiTimedNotice_Tick(void) {
   struct TimedNoticeWork *work;
   u16 count;
@@ -6508,6 +6625,7 @@ void UiTimedNotice_Tick(void) {
   }
 }
 
+// Closes the area name at once, if it is shown.
 void UiTimedNotice_CloseIfActive(void) {
   struct UiWindow *window;
 
@@ -6518,13 +6636,17 @@ void UiTimedNotice_CloseIfActive(void) {
   }
 }
 
+// Removes inventory entry arg1 and returns 0.
 s32 Item_CallHandler48(s32 arg0, s32 arg1) {
   PartyInventory_RemoveFar(arg1);
   return 0;
 }
 
+// Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
+// Steps the window hue one step: back when arg0 has LEFT (0x20), on
+// otherwise.
 void Party_AdjustPaletteGlowPhase(s32 arg0) {
   u8 value = gGameState.paletteGlow[0];
   if (arg0 & 0x20)
@@ -6539,6 +6661,9 @@ struct AbilityListEntry {
   u16 ability;
 };
 
+// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
+// showing each one's cost and description, and stores them in
+// gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
   struct RenderInput *win;
@@ -6670,6 +6795,8 @@ void Debug_SelectAbilityPair(void) {
   MemFree(list);
 }
 
+// Lists every Psynergy of the party's active members as (owner, Psynergy)
+// pairs in output and returns how many.
 s32 Object_CollectResources(struct AbilityListEntry *output) {
   u16 objectIds[14];
   s32 outputCount = 0;
@@ -6700,6 +6827,8 @@ s32 Object_CollectResources(struct AbilityListEntry *output) {
   return outputCount;
 }
 
+// Finds the two Psynergy shortcuts in a list from Object_CollectResources, and
+// returns their indexes (0 for one not found).
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
   s32 i;
@@ -6724,6 +6853,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   }
 }
 
+// Runs the Psynergy shortcut picker.
 void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
 
 struct SelectionWorkspace {
@@ -6738,6 +6868,7 @@ struct SelectionWorkspace {
   u8 unkff8[12];
 };
 
+// Allocates the work block of heap slot 19 and clears its two icon flags.
 void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
@@ -6748,6 +6879,8 @@ void Menu_AllocateSelectionWorkspace(void) {
   work->secondActive = zero;
 }
 
+// Closes the window of heap slot 19's work block, frees its two icons and
+// frees the block.
 void Ui_FinalizeWorkAndReleaseHeap13(void) {
   struct SelectionWorkspace *state;
 

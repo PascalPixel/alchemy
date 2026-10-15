@@ -1,20 +1,26 @@
-/* Draft, differ 22 of 29: the native indexes the owner list from sp on every pass (lsls, mov sp, ldrh) and counts i up to count; this form strength-reduces the index to a pointer and counts down. Tried: owners[i++] in a while loop, a u16 list, one minute of permute (best differ 19). */
+/* Draft, differ 17 of 29: raises each active owner by levels. A goto loop keeps loop.c from strength-reducing the index (the for loop: 22), so the native's lsls, mov sp, ldrh comes out; but GCSE's PRE then reuses the array address computed for Party_ListActiveOwners's argument (insn 31 becomes a copy of 34), keeping sp in r8 across the calls and moving levels to r10. Tried: a u16 list, owners[i++] in a while loop, i stepped after the load, one minute (earlier) and three minutes of permute (nothing valid). */
 #include "types.h"
 #include "owner_state.h"
 #include "party_state.h"
 
 void UnitCalc(s32 owner);
 
+
 void Func_02000704(s32 levels)
 {
     s16 owners[16];
     s32 count = Party_ListActiveOwners(owners);
-    s32 i;
+    s32 i = 0;
 
-    for (i = 0; i < count; i++) {
-        s32 owner = (u16)owners[i];
+    if (i < count) {
+    loop:
+        {
+            u16 owner = owners[i++];
 
-        Party_AdvanceOwnerCountToTarget(owner, ((struct BtlUnit *)UnitGet(owner))->level + levels);
-        UnitCalc(owner);
+            Party_AdvanceOwnerCountToTarget(owner, ((struct BtlUnit *)UnitGet(owner))->level + levels);
+            UnitCalc(owner);
+        }
+        if (i < count)
+            goto loop;
     }
 }

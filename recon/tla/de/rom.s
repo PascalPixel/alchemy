@@ -4314,7 +4314,7 @@ Func_08196404:
 	.section .rom.001985a6, "ax"
 	.incbin "baserom.gba", 0x001985a6, 0x00001c02
 	.section .rom.001a052c, "ax"
-	.incbin "baserom.gba", 0x001a052c, 0x00000188
+	.incbin "baserom.gba", 0x001a052c, 0x00000148
 	.section .rom.001a06e0, "ax"
 	.global Func_081a06e0
 	.type Func_081a06e0, %function

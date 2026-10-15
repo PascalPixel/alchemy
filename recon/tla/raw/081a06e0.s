@@ -34,9 +34,9 @@ Func_081a06e0:
 	lsls r5, r5, #19
 	strh r3, [r5]
 	ldr r0, .L_081a075c
-	bl Func_081a0674
+	bl DisplayScroll_BuildHblankWordTable
 	ldr r0, .L_081a0760
-	bl Func_081a0674
+	bl DisplayScroll_BuildHblankWordTable
 	movs r0, #0
 	bl Graphics_ClearCharacterBlockAndPalette
 	movs r0, #1

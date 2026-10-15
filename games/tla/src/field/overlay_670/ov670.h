@@ -178,6 +178,12 @@ static inline void Ov670_CamMove(s32 x, s32 y, s32 z, s32 mode)
     Motion_CamBounds(x, y, z, mode);
 }
 
+static inline void Ov670_CamSpeed(s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005ba4(speed, acceleration);
+}
+
 static inline void Ov670_ObjSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */

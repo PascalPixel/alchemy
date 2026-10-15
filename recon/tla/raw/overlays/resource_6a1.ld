@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a1/s0054.o"(.text)
         "*/resource_6a1_overlay.o"(.text.x02008094)
         "*/games/tla/src/field/overlay_6a1/scene_events.o"(.text)
-        "*/resource_6a1_overlay.o"(.text.x02008110)
+        "*/games/tla/src/field/overlay_6a1/s0110.o"(.text)
         "*/games/tla/src/field/overlay_6a1/s01d4.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/games/tla/src/field/overlay_6a1/s0270.o"(.text)

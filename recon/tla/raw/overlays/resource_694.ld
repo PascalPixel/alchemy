@@ -39,7 +39,7 @@ SECTIONS
         "*/resource_694_overlay.o"(.text.x020095ac)
         "*/games/tla/src/field/overlay_694/event6.o"(.text)
         "*/games/tla/src/field/overlay_694/s17bc.o"(.text)
-        "*/resource_694_overlay.o"(.text.x020097f4)
+        "*/games/tla/src/field/overlay_694/s17f4.o"(.text)
         "*/games/tla/src/field/overlay_694/s1938.o"(.text)
         "*/games/tla/src/field/overlay_694/s1a60.o"(.text)
         "*/games/tla/src/field/overlay_694/dice.o"(.text)

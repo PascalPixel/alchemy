@@ -7,7 +7,7 @@
 // A scene builds its flag id again for every command: each call goes
 // through an inline, as the ☀️ scene script layer does.
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 

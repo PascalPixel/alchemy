@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Battle_WaitMode0(s32 frames);
@@ -18,7 +18,7 @@ void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32  Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
 #endif

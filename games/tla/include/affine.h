@@ -23,7 +23,7 @@ LAYOUT_OFFSET_GUARD(AffineTransform_ScaleY, struct AffineTransform, scaleY, 2);
 LAYOUT_OFFSET_GUARD(AffineTransform_Angle, struct AffineTransform, angle, 4);
 LAYOUT_SIZE_GUARD(AffineMatrix_Size, union AffineMatrix, 8);
 
-extern u8 gObjAffineCount;
+extern u8                 gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];
 
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source);

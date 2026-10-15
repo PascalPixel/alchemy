@@ -38,14 +38,14 @@ void Func_02000378(void)
     scroll = (volatile u16 *)0x04000010;
     *scroll = *line;
     dma = REG_DMA0;
-    /* FAKEMATCH: the one-pass block reads the control before its mask is built, as in overlay 674's Func_02001cac (differ 2 without it) */
+    /* FAKEMATCH: the one-pass block reads the control before its mask is built, as in overlay 674's Func_02001cac (differ 4 without it) */
     do {
         dma[5] &= 0xc5ff; // stop the start timing and the repeat
         dma[5] &= 0x7fff; // stop the channel
-        source = line + 1;
-        /* FAKEMATCH: keeps the source step before the last control read (differ 2 without it) */
-        __asm__("" : : "r"(source));
     } while (0);
+    source = line + 1;
     (void)dma[5];
-    Dma_Set(source, (void *)scroll, 0xa2600001, (volatile u32 *)dma);
+    /* FAKEMATCH: line, reused for the destination, keeps the source step before the last control read; plain, combine folds the step into Dma_Set's r0 copy after the read (differ 2), and an asm barrier on the source also matches */
+    line = (s16 *)scroll;
+    Dma_Set(source, line, 0xa2600001, (volatile u32 *)dma);
 }

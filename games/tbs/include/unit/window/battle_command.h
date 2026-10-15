@@ -23,8 +23,8 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
 struct RenderOutput *RenderOutput_CreateFromTable(s32 table_entry,
                                                   struct RenderInput *input,
                                                   s32 x, s32 y);
-struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side,
-                                      s32 arg3, s32 arg4, s32 arg5);
+struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
+                                      s32 window, s32 x, s32 y);
 void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value);
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
 void RenderOutput_SetInvertedSentinel(void *arg0, s32 arg1);

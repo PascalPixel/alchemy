@@ -156,7 +156,7 @@ SECTIONS
     "*/games/common/src/system/save/program_flash_sector.o"(.text)
     "*/games/common/src/system/save/atmel.o"(.text)
     "*libgcc.a:_call_via_rX.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000178b4)
+    "*/games/tla/src/system/runtime_irq_table.o"(.rodata.irq_handlers)
     "*/games/tla/src/lib/mathtan.o"(.rodata)
     "*/games/tla/src/system/memory/winpal.o"(.rodata)
     "*/games/tla/src/system/memory/syspal.o"(.rodata)

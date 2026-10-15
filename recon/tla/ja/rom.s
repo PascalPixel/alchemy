@@ -214,10 +214,6 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dd0, 0x00000028
 	.section .rom.00016e02, "ax"
 	.incbin "baserom.gba", 0x00016e02, 0x00000002
-	.section .rom.000178b4, "ax"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178b4, 0x00000038
 	.section .rom.00017cd0, "ax"
 	.global Data_08017cd0
 Data_08017cd0:

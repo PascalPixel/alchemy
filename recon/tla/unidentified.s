@@ -1,7 +1,3 @@
-	.section .unidentified.080178b4,"a"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178b4, 0x00000038
 	.section .unidentified.08017cd0,"a"
 	.global Data_08017cd0
 Data_08017cd0:

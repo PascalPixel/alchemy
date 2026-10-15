@@ -1609,7 +1609,6 @@ SECTIONS
         "*/recon/tla/raw/08108690.o"(.text)
         "*/games/tla/src/menu/shop/shop.o"(.text)
         "*/recon/tla/raw/08108948.o"(.text)
-        "*/recon/tla/raw/081089e4.o"(.text)
         "*/games/tla/src/menu/shop/cursor_set.o"(.text)
         "*/games/tla/src/menu/shop/cursor_place.o"(.text)
         "*/games/tla/src/system/resource/load_resource_to_block.o"(.text)

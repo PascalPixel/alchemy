@@ -54,6 +54,66 @@ struct ShopCursorSprite3 {
 
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 
+// Moves the cursor's sprite a quarter of the way to its target on each
+// axis, at least one pixel. The Broken Seal's ShopCursor_MoveTowardTarget.
+void Func_081089e4(struct ShopCursor *cursor)
+{
+    struct ShopCursorSprite3 *sprite;
+    s32 delta;
+    s32 step;
+    u32 mask;
+
+    sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+    if (sprite != NULL) {
+        delta = sprite->x - cursor->target_x;
+        step = delta / 4;
+        if (step < 0)
+            step = -step;
+        if (delta > 0) {
+            if (step != 0)
+                sprite->x = sprite->x - step;
+            else
+                sprite->x = sprite->x - 1;
+        } else if (delta < 0) {
+            if (step != 0)
+                sprite->x = sprite->x + step;
+            else
+                sprite->x = sprite->x + 1;
+        } else {
+            // Neither move: skip the shared sprite update.
+            goto y_axis;
+        }
+        {
+            /* FAKEMATCH: the barrier reloads x before the 0x1ff mask is built, and x pinned to r3 leaves the mask r2, as native. Plain, as The Broken Seal writes the update in each branch, the mask starts first (differ 2; three minutes of alchemy permute found nothing better); the barrier alone swaps the two registers (differ 8); devices in each branch keep the two copies apart (differ 82), so both moves share this one. */
+            register u32 x asm("r3") = sprite->x;
+
+            asm volatile("");
+            mask = 0x1ff;
+            mask &= x;
+            sprite->oam.x = mask;
+        }
+
+    y_axis:
+        delta = sprite->y - cursor->target_y;
+        step = delta / 4;
+        if (step < 0)
+            step = -step;
+        if (delta > 0) {
+            if (step != 0)
+                sprite->y = sprite->y - step;
+            else
+                sprite->y = sprite->y - 1;
+            sprite->oam.y = sprite->y;
+        } else if (delta < 0) {
+            if (step != 0)
+                sprite->y = sprite->y + step;
+            else
+                sprite->y = sprite->y + 1;
+            sprite->oam.y = sprite->y;
+        }
+    }
+}
+
 void Shop_SetCursor(
     struct ShopCursor *cursor,
     s32 target_x,

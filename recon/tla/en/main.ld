@@ -1503,7 +1503,7 @@ SECTIONS
         "*/recon/tla/raw/080fc6bc.o"(.text)
         "*/recon/tla/raw/080fcab8.o"(.text)
         "*/recon/tla/raw/080fcbd8.o"(.text)
-        "*/recon/tla/raw/080fcf14.o"(.text)
+        "*/games/tla/src/menu/item/psyclass.o"(.text)
         "*/recon/tla/raw/080fcf5c.o"(.text)
         "*/recon/tla/raw/080fd000.o"(.text)
         "*/games/tla/src/menu/item/psylist.o"(.text)

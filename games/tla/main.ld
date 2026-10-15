@@ -1532,6 +1532,8 @@ SECTIONS
     "*/games/tla/src/menu/item/page.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fc51c)
     "*/recon/tla/ja/rom.o"(.rom.000fca7c)
+    "*/games/tla/src/menu/item/psyclass.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000fcf20)
     "*/games/tla/src/menu/item/psylist.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fd2a8)
     "*/games/tla/src/game/party/set_packed_event.o"(.text)

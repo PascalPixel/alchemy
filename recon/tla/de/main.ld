@@ -1386,6 +1386,8 @@ SECTIONS
     "*/games/tla/src/menu/item/page.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00106620)
     "*/recon/tla/de/rom.o"(.rom.00106bb4)
+    "*/games/tla/src/menu/item/psyclass.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.001070d0)
     "*/games/tla/src/menu/item/psylist.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010745c)
     "*/games/tla/src/game/party/set_packed_event.o"(.text)

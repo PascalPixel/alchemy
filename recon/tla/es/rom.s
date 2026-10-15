@@ -4454,7 +4454,9 @@ Func_080fb8b8:
 	.type Func_080fcab8, %function
 	.thumb_func
 Func_080fcab8:
-	.incbin "baserom.gba", 0x00102b3c, 0x00000854
+	.incbin "baserom.gba", 0x00102b3c, 0x000004d4
+	.section .rom.00103058, "ax"
+	.incbin "baserom.gba", 0x00103058, 0x00000338
 	.section .rom.001033e4, "ax"
 	.incbin "baserom.gba", 0x001033e4, 0x00000244
 	.section .rom.00103658, "ax"

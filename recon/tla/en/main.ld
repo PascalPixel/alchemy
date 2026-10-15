@@ -1041,7 +1041,6 @@ SECTIONS
         "*/recon/tla/raw/080d3b28.o"(.text)
         "*/games/tla/src/field/common/object/active.o"(.text)
         "*/recon/tla/raw/080d3c88.o"(.text)
-        "*/recon/tla/raw/080d3fb0.o"(.text)
         "*/games/tla/src/field/common/event/msgprompt.o"(.text)
         "*/games/tla/src/field/common/event/show_counter_at_position.o"(.text)
         "*/games/tla/src/field/common/object/table_run_if_active.o"(.text)

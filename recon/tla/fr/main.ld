@@ -1065,7 +1065,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000d8b1c)
     "*/games/tla/src/field/common/object/active.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d8c7c)
-    "*/recon/tla/fr/rom.o"(.rom.000d8fa4)
     "*/games/tla/src/field/common/event/msgprompt.o"(.text)
     "*/games/tla/src/field/common/event/show_counter_at_position.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d91da)

@@ -153,7 +153,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
       if (act->command == 3 || act->command == 7) {
 #if GAME_TLA
         unit = UnitGet(act->unitId);
-        unit->guardLv = act->command == 3 ? 1 : 3;
+        unit->guardLevel = act->command == 3 ? 1 : 3;
 #endif
       }
       act++;

@@ -36,7 +36,7 @@ s32 Func_0811de78(struct BattlePlan *plan)
         u16 halves[2];
     } completed;
     struct EscapeTransition *presentation = (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
-    u32 aid = plan->aid;
+    u32 aid = plan->actorId;
     struct BattleWork *scene = Ram_HeapSlots->battleWork;
     s32 partyMode;
 
@@ -72,12 +72,12 @@ s32 Func_0811de78(struct BattlePlan *plan)
     } else if (((Random16() * 10) >> 16) <= 6) {
         s16 event[2];
 
-        event[0] = plan->aid;
+        event[0] = plan->actorId;
         event[1] = 0xff;
         BattleMotion_SetupEscapeObject(event[0]);
         WaitFrames(8);
-        BattleActor_RemoveFromLists(plan->aid);
-        ActivateBattleObjectSlot(plan->aid);
+        BattleActor_RemoveFromLists(plan->actorId);
+        ActivateBattleObjectSlot(plan->actorId);
     } else {
         UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
         BattlePresentation_WaitForAdvance();

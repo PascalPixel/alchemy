@@ -3656,7 +3656,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   removed = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].encodedAction != 0; i++) {
-    if (BattleActGet(newGrid[i].encodedAction)->targetFlag & 0x80) {
+    if (BattleActGet(newGrid[i].encodedAction)->flags & 0x80) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
       for (j = 0; j < 32; j++) {
@@ -3671,7 +3671,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
     }
   }
   for (i = 0; i < 32 && oldGrid[i].encodedAction != 0; i++) {
-    if (BattleActGet(oldGrid[i].encodedAction)->targetFlag & 0x80) {
+    if (BattleActGet(oldGrid[i].encodedAction)->flags & 0x80) {
       for (j = 0; j < 32; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
@@ -3877,8 +3877,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
     i = page * 5 - 5;
     for (n = 0; n < rows && i < total; n++, i++) {
       info = BattleActGet(list[i]);
-      if (info->damageClass != 4)
-        UiWindow_SetTilemapEntry(win, 0x5001 + info->damageClass, 15, n * 2, 0);
+      if (info->element != 4)
+        UiWindow_SetTilemapEntry(win, 0x5001 + info->element, 15, n * 2, 0);
 
       tile = info->range;
       if (tile == 255)
@@ -4455,7 +4455,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           UiText_DrawNumberInWindow(object->element[j].power, 3,
                                     (struct RenderInput *)winMain, 40 + j * 32,
                                     88);
-          UiText_DrawNumberInWindow(object->element[j].res, 3,
+          UiText_DrawNumberInWindow(object->element[j].resistance, 3,
                                     (struct RenderInput *)winMain, 40 + j * 32,
                                     96);
         }
@@ -4520,43 +4520,43 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           if (i > 7) {
             break;
           }
-          if (object->atkCnt != 0) {
-            if (object->atkLv > 0) {
+          if (object->attackTurns != 0) {
+            if (object->attackStage > 0) {
               selection[i++] = 9;
             }
-            if (object->atkLv < 0) {
+            if (object->attackStage < 0) {
               selection[i++] = 10;
             }
           }
           if (i > 7) {
             break;
           }
-          if (object->defCnt != 0) {
-            if (object->defLv > 0) {
+          if (object->defenseTurns != 0) {
+            if (object->defenseStage > 0) {
               selection[i++] = 11;
             }
-            if (object->defLv < 0) {
+            if (object->defenseStage < 0) {
               selection[i++] = 12;
             }
           }
           if (i > 7) {
             break;
           }
-          if (object->resCnt != 0) {
-            if (object->resLv > 0) {
+          if (object->resistanceTurns != 0) {
+            if (object->resistanceStage > 0) {
               selection[i++] = 13;
             }
-            if (object->resLv < 0) {
+            if (object->resistanceStage < 0) {
               selection[i++] = 14;
             }
           }
           if (i > 7) {
             break;
           }
-          if (object->agiLv > 0) {
+          if (object->agilityStage > 0) {
             selection[i++] = 17;
           }
-          if (object->agiLv < 0) {
+          if (object->agilityStage < 0) {
             selection[i++] = 18;
           }
         } while (0);
@@ -4595,9 +4595,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         atkDelta = object->atk;
         defDelta = object->def;
         agiDelta = object->agi;
-        object->atkLv = 0;
-        object->defLv = 0;
-        object->agiLv = 0;
+        object->attackStage = 0;
+        object->defenseStage = 0;
+        object->agilityStage = 0;
         UnitCalcFar(owner);
         atkDelta -= object->atk;
         defDelta -= object->def;
@@ -4629,7 +4629,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           break;
         case 13:
         case 14:
-          code = object->resLv * 20;
+          code = object->resistanceStage * 20;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
           if (code < 0) {
             code = -code;
@@ -5261,7 +5261,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 // アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
 //--------------------------------------------------------------------------
 
-#define BATTLE_OK 0x80 // targetFlag：戦闘で使える
+#define BATTLE_OK 0x80 // flags：戦闘で使える
 
 #if !GAME_TLA
 
@@ -5664,7 +5664,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if ((def->type != 0) && (Item_CanOwnerEquip(unit, item) == 0)) {
     return ret;
   }
-  if ((BATTLE_OK & BattleActGet(def->actionId)->targetFlag) == 0) {
+  if ((BATTLE_OK & BattleActGet(def->actionId)->flags) == 0) {
     return 2;
   }
   return 0;
@@ -6048,7 +6048,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           Ability_LoadGlyph(entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
           sprites[i].oam.f.tile = glyph;
 
-          if ((action->targetFlag & ACTION_USABLE_IN_BATTLE) == 0) {
+          if ((action->flags & ACTION_USABLE_IN_BATTLE) == 0) {
             UiWork_SetParamNibble(4);
           } else if (action->ppCost > unit->pp) {
             UiWork_SetParamNibble(2);
@@ -6064,8 +6064,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           UiWork_SetParamNibble(15);
           render->level = 15;
 
-          if (action->damageClass != 4) {
-            UiWindow_SetTilemapEntry(window, action->damageClass + 0x5001, 15,
+          if (action->element != 4) {
+            UiWindow_SetTilemapEntry(window, action->element + 0x5001, 15,
                                      i * 2, 0);
           }
 
@@ -6141,8 +6141,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     if ((gKeyState & KEY_A) != 0) {
       if (count != 0) {
         result = page + row;
-        if ((BattleActGet(actions[result])->targetFlag &
-             ACTION_USABLE_IN_BATTLE) != 0) {
+        if ((BattleActGet(actions[result])->flags & ACTION_USABLE_IN_BATTLE) !=
+            0) {
           break;
         }
         /* FAKEMATCH: a dead store here keeps the test above from being
@@ -7117,7 +7117,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   u8 effect;
 
   kind = 0;
-  type = act->targetFlag & 15;
+  type = act->flags & 15;
   if (type == 1) // HPかいふく
     kind = 1;
   if (type == 11) // PPかいふく
@@ -7429,7 +7429,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         cur = actor->actionSlots[k].encodedAction & ACTION_ID_MASK;
         if (cur != 0) {
           do {
-            if ((BattleActGet(cur)->targetFlag & 0x80) != 0) {
+            if ((BattleActGet(cur)->flags & 0x80) != 0) {
               pick[cnt] = k;
               list[cnt] = cur;
               cnt++;
@@ -7490,8 +7490,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
 #else
         UiWindow_SetTilemapEntry(win, 61470, 12, 0, 0);
 #endif
-        if (ability->damageClass != 4) {
-          UiWindow_SetTilemapEntry(win, ability->damageClass + 20481, 15, 0, 0);
+        if (ability->element != 4) {
+          UiWindow_SetTilemapEntry(win, ability->element + 20481, 15, 0, 0);
         }
         ent->range = cost;
         AudioCommand_PlayFar(112);

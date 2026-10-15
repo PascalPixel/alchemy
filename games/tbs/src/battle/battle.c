@@ -513,12 +513,12 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
         *cursor-- = 0;
       } while (remaining >= 0);
 
-      unit->atkCnt = 0;
-      unit->atkLv = 0;
-      unit->defCnt = 0;
-      unit->defLv = 0;
-      unit->resCnt = 0;
-      unit->resLv = 0;
+      unit->attackTurns = 0;
+      unit->attackStage = 0;
+      unit->defenseTurns = 0;
+      unit->defenseStage = 0;
+      unit->resistanceTurns = 0;
+      unit->resistanceStage = 0;
       unit->delusion = 0;
       unit->confusion = 0;
       unit->charm = 0;
@@ -532,8 +532,8 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->unk142[1] = 0;
       unit->ready = 0;
       unit->immobile = 0;
-      unit->agiCnt = 0;
-      unit->agiLv = 0;
+      unit->agilityTurns = 0;
+      unit->agilityStage = 0;
       unit->challenge = 0;
 
       UnitCalcFar(owners[i]);
@@ -3432,7 +3432,7 @@ void BattleUnit_ResetGuardLevels(void) {
     struct BattleUnit *actor;
 
     actor = UnitGetFar(ids[index]);
-    actor->guardLv = 0;
+    actor->guardLevel = 0;
     UnitCalcFar(ids[index]);
   }
 }
@@ -3915,7 +3915,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
     do {
       if (act->command == 3 || act->command == 7) {
         unit = UnitGetFar(act->unitId);
-        unit->guardLv = act->command == 3 ? 1 : 2;
+        unit->guardLevel = act->command == 3 ? 1 : 2;
       }
       act++;
       i--;
@@ -4077,7 +4077,7 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
   flags = plan->presentationFlags;
   work->kind = flags & 0xfff;
   work->variant = (flags & 0x3000) >> 12;
-  work->actor = plan->aid;
+  work->actor = plan->actorId;
   i = 0;
   if (i < plan->targetCount) {
     target = plan->targetIds;
@@ -4121,7 +4121,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan) {
   presentation->active = 1;
   BattlePres_SetActorModes(0, 0);
 
-  if (plan->aid <= 7) {
+  if (plan->actorId <= 7) {
     partyMode = completed.value;
 
     if (scene->encounterMode != 2) {
@@ -4150,12 +4150,12 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan) {
   } else if (((Random16() * 10) >> 16) <= 6) {
     s16 event[2];
 
-    event[0] = plan->aid;
+    event[0] = plan->actorId;
     event[1] = 0xff;
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
-    BattleActor_RemoveFromLists(plan->aid);
-    ActivateBattleObjectSlot(plan->aid);
+    BattleActor_RemoveFromLists(plan->actorId);
+    ActivateBattleObjectSlot(plan->actorId);
   } else {
     UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
     BattlePresentation_WaitForAdvance();
@@ -4178,7 +4178,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   void **slots = (void **)&gBattleWork;
 
   BattlePres_BuildTargetList(plan, &work);
-  actor = plan->aid;
+  actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->presentationFlags & 0x8000) {
     struct BattlePresentationTransition *transition;
@@ -4224,7 +4224,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvPush(0, plan->aid);
+      BattleEvPush(0, plan->actorId);
       BattleEvPush(4, MsgPsynergyBlocked);
     } else {
       BattleEvPush(4, MsgCastLacksPp);
@@ -4352,12 +4352,12 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
     if (transition)
       plan = savedPlan;
   }
-  object = BattleObjGet(plan->aid)->object;
+  object = BattleObjGet(plan->actorId)->object;
   z = object->z;
   x = object->x;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (plan->aid > 7)
+  if (plan->actorId > 7)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -4377,10 +4377,10 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode) {
 
   unit = UnitGetFar(work.actor);
   UnitGetFar(work.actors[0]);
-  scripted = plan->targetCrit[0];
-  direct = plan->targetAdj[0] == 0;
+  scripted = plan->targetCritical[0];
+  direct = plan->targetMultiplier[0] == 0;
 
-  animation = GetMotionRecord(BattleObjGet(plan->aid)->object, 0);
+  animation = GetMotionRecord(BattleObjGet(plan->actorId)->object, 0);
   divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
                                                   2, 1);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], divisor,
@@ -4482,12 +4482,12 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
 
   transition = gTransitionWork;
   savedInput = input;
-  object = BattleObjGet(savedInput->aid)->object;
+  object = BattleObjGet(savedInput->actorId)->object;
   z = object->z;
   x = object->x;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (savedInput->aid > 7)
+  if (savedInput->actorId > 7)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -4506,7 +4506,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
   UnitGetFar(savedInput->targetIds[0]);
 
   scripted = flags & 2;
-  animation = GetMotionRecord(BattleObjGet(savedInput->aid)->object, 0);
+  animation = GetMotionRecord(BattleObjGet(savedInput->actorId)->object, 0);
   divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
                                                   2, 1);
   BattleMotion_ApproachTarget(work.actor, savedInput->targetIds[0], divisor, 0);
@@ -4545,7 +4545,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
   struct BattlePresentationTransition *transition = gTransitionWork;
   s32 facing;
 
-  if (plan->aid > 4)
+  if (plan->actorId > 4)
     facing = -0x2000;
   else
     facing = 0x2000;
@@ -4678,26 +4678,26 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   s32 i;
 
   if (plan->presentationFlags & 0x40000) {
-    transition->targetYaw = plan->aid <= 7 ? -0x2000 : 0x5000;
+    transition->targetYaw = plan->actorId <= 7 ? -0x2000 : 0x5000;
     transition->frames = 60;
   } else {
-    struct MotionObject *actor = BattleObjGet(plan->aid)->object;
+    struct MotionObject *actor = BattleObjGet(plan->actorId)->object;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
     s32 current;
 
-    if (plan->aid <= 7)
+    if (plan->actorId <= 7)
       current = angle - 0x1800;
     else
       current = angle + 0x1800;
     current = (s16)current;
-    current += ((plan->aid <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-    if (!((plan->aid <= 7) ^ (plan->targetIds[0] <= 7)))
-      current = plan->aid <= 7 ? 0x2400 : -0x2400;
+    current += ((plan->actorId <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
+    if (!((plan->actorId <= 7) ^ (plan->targetIds[0] <= 7)))
+      current = plan->actorId <= 7 ? 0x2400 : -0x2400;
     if (transition->targetYaw != current)
       transition->targetYaw = current;
   }
   if (plan->presentationFlags & 0x80000) {
-    transition->targetYaw = plan->aid <= 7 ? -0x2000 : 0x2000;
+    transition->targetYaw = plan->actorId <= 7 ? -0x2000 : 0x2000;
     transition->frames = 60;
   }
 
@@ -4730,7 +4730,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvPush(0, plan->aid);
+      BattleEvPush(0, plan->actorId);
       BattleEvPush(4, MsgPsynergyBlocked);
     } else {
       BattleEvPush(4, MsgCastLacksPp);
@@ -4974,11 +4974,11 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                  \
   {                                                                            \
-    if ((unit)->atkLv > 0)                                                     \
+    if ((unit)->attackStage > 0)                                               \
       (count)++;                                                               \
-    if ((unit)->defLv > 0)                                                     \
+    if ((unit)->defenseStage > 0)                                              \
       (count)++;                                                               \
-    if ((unit)->resLv > 0)                                                     \
+    if ((unit)->resistanceStage > 0)                                           \
       (count)++;                                                               \
     if ((unit)->elementLevels[0] > 0)                                          \
       (count)++;                                                               \
@@ -4996,44 +4996,44 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     switch ((action)->effect) {                                                \
     case EFFECT_ATK_UP2:                                                       \
     case EFFECT_ATK_UP1:                                                       \
-      if ((unit)->atkLv + 1 <= 4)                                              \
+      if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
-      if ((unit)->atkCnt == 1)                                                 \
+      if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_ATK_DOWN2:                                                     \
     case EFFECT_ATK_DOWN1:                                                     \
-      if ((unit)->atkLv - 1 >= -4)                                             \
+      if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
-      if ((unit)->atkCnt == 1)                                                 \
+      if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_DEF_UP2:                                                       \
     case EFFECT_DEF_UP1:                                                       \
-      if ((unit)->defLv + 1 <= 4)                                              \
+      if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
-      if ((unit)->defCnt == 1)                                                 \
+      if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_DEF_DOWN2:                                                     \
     case EFFECT_DEF_DOWN1:                                                     \
-      if ((unit)->defLv - 1 >= -4)                                             \
+      if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
-      if ((unit)->defCnt == 1)                                                 \
+      if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_RES_UP2:                                                       \
     case EFFECT_RES_UP1:                                                       \
-      if ((unit)->resLv + 1 <= 4)                                              \
+      if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
-      if ((unit)->resCnt == 1)                                                 \
+      if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_RES_DOWN2:                                                     \
     case EFFECT_RES_DOWN1:                                                     \
-      if ((unit)->resLv - 1 >= -4)                                             \
+      if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \
-      if ((unit)->resCnt == 1)                                                 \
+      if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_CURE_POISON:                                                   \
@@ -5095,7 +5095,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     if ((unit)->hp == 0 && BattleEffectRevCheckFar((action)->effect) == 0)     \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
-      (damageClass) = ((action)->targetFlag & 0x0f) - 1;                       \
+      (damageClass) = ((action)->flags & 0x0f) - 1;                            \
       switch (damageClass) {                                                   \
       case 2:                                                                  \
       case 3:                                                                  \
@@ -5218,7 +5218,7 @@ scan_complete:
       ((struct EnemyDefinition *)Owner_GetRecordFar(
            UnitGetFar(actorId)->classId))
               ->targetStrategy != 2 &&
-      (u32)((action->targetFlag & 0x0f) - 3) <= 2) {
+      (u32)((action->flags & 0x0f) - 3) <= 2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -5307,12 +5307,12 @@ s32 BattleActor_ResetRuntimeFields(s32 id) {
   } while (n >= 0);
 
   unit->poison = 0;
-  unit->atkCnt = 0;
-  unit->atkLv = 0;
-  unit->defCnt = 0;
-  unit->defLv = 0;
-  unit->resCnt = 0;
-  unit->resLv = 0;
+  unit->attackTurns = 0;
+  unit->attackStage = 0;
+  unit->defenseTurns = 0;
+  unit->defenseStage = 0;
+  unit->resistanceTurns = 0;
+  unit->resistanceStage = 0;
   unit->delusion = 0;
   unit->confusion = 0;
   unit->charm = 0;
@@ -5327,8 +5327,8 @@ s32 BattleActor_ResetRuntimeFields(s32 id) {
   unit->unk142[1] = 0;
   unit->ready = 0;
   unit->immobile = 0;
-  unit->agiCnt = 0;
-  unit->agiLv = 0;
+  unit->agilityTurns = 0;
+  unit->agilityStage = 0;
   unit->challenge = 0;
 
   UnitCalcFar(id);
@@ -5589,7 +5589,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
-// BattleUnit.guardLv: Defend and Granite halve the damage, Total Defense and
+// BattleUnit.guardLevel: Defend and Granite halve the damage, Total Defense and
 // Flash cut it to a tenth.
 #define GUARD_DEFEND 1
 #define GUARD_TOTAL_DEFENSE 2
@@ -5632,7 +5632,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 // A guarding unit takes half the damage, or a tenth behind Total Defense.
 #define REDUCE_BY_GUARD(damage, unit)                                          \
   {                                                                            \
-    s32 guard = (unit)->guardLv;                                               \
+    s32 guard = (unit)->guardLevel;                                            \
                                                                                \
     if (guard != 0) {                                                          \
       if (guard == GUARD_DEFEND)                                               \
@@ -5694,12 +5694,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   unitSize = sizeof(struct BattleUnit);
   savedTarget = MemAlloc(unitSize);
 
-  actorId = plan->aid;
+  actorId = plan->actorId;
   targetId = plan->targetIds[slot];
   abilityId = plan->abilityId;
   element = plan->element;
-  multiplier = plan->targetAdj[slot];
-  critical = plan->targetCrit[slot];
+  multiplier = plan->targetMultiplier[slot];
+  critical = plan->targetCritical[slot];
 
   ability = BattleActGet(abilityId);
   actor = UnitGetFar(actorId);
@@ -5710,7 +5710,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // healing table falls off with it. An ability that reaches the whole side
   // treats every target as aimed at.
   if (ability->range != ABILITY_RANGE_ALL) {
-    distance = plan->targetDist[slot];
+    distance = plan->targetOffset[slot];
     if (distance < 0)
       distance = -distance;
   } else {
@@ -5724,16 +5724,16 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     s32 resistance;
     s32 i;
 
-    resistance = target->baseElement[element].res;
+    resistance = target->baseElement[element].resistance;
     for (i = 0; i < NUM_ELEMENTS; i++) {
-      if (resistance < target->baseElement[i].res)
+      if (resistance < target->baseElement[i].resistance)
         break;
     }
     if (i == NUM_ELEMENTS)
       affinity = -1;
 
     for (i = 0; i < NUM_ELEMENTS; i++) {
-      if (resistance > target->baseElement[i].res)
+      if (resistance > target->baseElement[i].resistance)
         break;
     }
     if (i == NUM_ELEMENTS)
@@ -5743,7 +5743,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // The actor's power in the ability's element; items always use 100. (Here
   // and below the element is read from the plan again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
-      plan->cmd != CMD_ITEM)
+      plan->command != CMD_ITEM)
     elementPower = actor->element[plan->element].power;
   else
     elementPower = 100;
@@ -5752,12 +5752,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // enemy it fells then gives more coins and experience and a better chance
   // of its item (BattleEnemy_RecordDefeat). The chance is the power less
   // the resistance, plus 30, in percent; the event's operand is unused.
-  if (plan->cmd == CMD_DJINN &&
+  if (plan->command == CMD_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
     s32 chance;
 
-    chance = elementPower - target->element[plan->element].res;
+    chance = elementPower - target->element[plan->element].resistance;
     chance += 30;
     chance *= 65536 / 100; // percent to a fraction of the 16-bit random range
     if (chance > (BattleRandomFar() & 0xffff))
@@ -5766,7 +5766,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
   // Whether the effect lands: a roll made when the action was planned, or
   // one made now, less likely the farther the target is.
-  kind = ability->targetFlag & ABILITY_KIND_MASK;
+  kind = ability->flags & ABILITY_KIND_MASK;
   {
     s32 plannedHit;
 
@@ -5908,7 +5908,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       // never shown.
       for (pass = 1; pass <= 1; pass++) {
         if (element != ELEMENT_NONE)
-          elementBonus = elementPower - target->element[element].res;
+          elementBonus = elementPower - target->element[element].resistance;
         if (pass == 0)
           elementBonus = 0;
         power = ability->power;
@@ -5953,7 +5953,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         }
         // In the Djinn tutorial a Djinni's blow always leaves 1 HP.
         if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
-            plan->cmd == CMD_DJINN && hp <= amount) {
+            plan->command == CMD_DJINN && hp <= amount) {
           amount = hp - 1;
         }
       }
@@ -5983,7 +5983,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       pp = target->pp;
       if (element != ELEMENT_NONE)
-        elementBonus = elementPower - target->element[element].res;
+        elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
       amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
       amount = amount * gPpLossTable[distance] / 100;
@@ -6044,7 +6044,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       pp = target->pp;
       if (element != ELEMENT_NONE)
-        elementBonus = elementPower - target->element[element].res;
+        elementBonus = elementPower - target->element[element].resistance;
       power = ability->power;
       amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
       amount = amount * gPpDmgTable[distance] / 100;
@@ -6076,12 +6076,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       // Runs once, like the attack's loop.
       for (pass = 1; pass <= 1; pass++) {
         if (element != ELEMENT_NONE)
-          elementBonus = elementPower - target->element[element].res;
+          elementBonus = elementPower - target->element[element].resistance;
         if (pass == 0)
           elementBonus = 0;
         power = ability->power;
         // A summon adds 3% of the target's max HP for each Djinni it costs.
-        if (plan->cmd == CMD_SUMMON) {
+        if (plan->command == CMD_SUMMON) {
           s32 maxHpPercent;
 
           switch (abilityId) {
@@ -6131,7 +6131,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         REDUCE_BY_GUARD(amount, target);
         // In the Djinn tutorial a summon always fells its target.
         if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
-            plan->cmd == CMD_SUMMON && newHp > amount) {
+            plan->command == CMD_SUMMON && newHp > amount) {
           amount = newHp;
         }
       }
@@ -6194,7 +6194,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           break;
         newHp = target->hp;
         if (element != ELEMENT_NONE)
-          elementBonus = elementPower - target->element[element].res;
+          elementBonus = elementPower - target->element[element].resistance;
         power = ability->power;
         amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
         amount *= multiplier;
@@ -6370,91 +6370,91 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // The stat changes. The amount shown is how much the stat itself moved,
     // measured against the saved copy once UnitCalc has recalculated it.
     case ABILITY_EFFECT_AGILITY_UP:
-      target->agiLv = AGILITY_STAGE_DOUBLED;
-      target->agiCnt = AGILITY_CHANGE_TURNS;
+      target->agilityStage = AGILITY_STAGE_DOUBLED;
+      target->agilityTurns = AGILITY_CHANGE_TURNS;
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->agi - savedTarget->agi);
       PUSH_MESSAGE(MsgAgiUp);
       break;
 
     case ABILITY_EFFECT_AGILITY_DOWN:
-      target->agiLv = STAT_STAGE_MIN;
-      target->agiCnt = AGILITY_CHANGE_TURNS;
+      target->agilityStage = STAT_STAGE_MIN;
+      target->agilityTurns = AGILITY_CHANGE_TURNS;
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->agi - target->agi);
       PUSH_MESSAGE(MsgAgiDown);
       break;
 
     case ABILITY_EFFECT_ATTACK_DOWN:
-      target->atkLv -= 1;
-      CLAMP_STAT_STAGE(target->atkLv);
+      target->attackStage -= 1;
+      CLAMP_STAT_STAGE(target->attackStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
-      target->atkCnt = STAT_CHANGE_TURNS;
+      target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_DOWN_2:
-      target->atkLv -= 2;
-      CLAMP_STAT_STAGE(target->atkLv);
+      target->attackStage -= 2;
+      CLAMP_STAT_STAGE(target->attackStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
       PUSH_MESSAGE(MsgAtkDown);
-      target->atkCnt = STAT_CHANGE_TURNS;
+      target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_UP:
-      target->atkLv += 1;
-      CLAMP_STAT_STAGE(target->atkLv);
+      target->attackStage += 1;
+      CLAMP_STAT_STAGE(target->attackStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
-      target->atkCnt = STAT_CHANGE_TURNS;
+      target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_UP_2:
-      target->atkLv += 2;
-      CLAMP_STAT_STAGE(target->atkLv);
+      target->attackStage += 2;
+      CLAMP_STAT_STAGE(target->attackStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
       PUSH_MESSAGE(MsgAtkUp);
-      target->atkCnt = STAT_CHANGE_TURNS;
+      target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_DOWN:
-      target->defLv -= 1;
-      CLAMP_STAT_STAGE(target->defLv);
+      target->defenseStage -= 1;
+      CLAMP_STAT_STAGE(target->defenseStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
-      target->defCnt = STAT_CHANGE_TURNS;
+      target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_DOWN_2:
-      target->defLv -= 2;
-      CLAMP_STAT_STAGE(target->defLv);
+      target->defenseStage -= 2;
+      CLAMP_STAT_STAGE(target->defenseStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
       PUSH_MESSAGE(MsgDefDown);
-      target->defCnt = STAT_CHANGE_TURNS;
+      target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_UP:
-      target->defLv += 1;
-      CLAMP_STAT_STAGE(target->defLv);
+      target->defenseStage += 1;
+      CLAMP_STAT_STAGE(target->defenseStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
-      target->defCnt = STAT_CHANGE_TURNS;
+      target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_UP_2:
-      target->defLv += 2;
-      CLAMP_STAT_STAGE(target->defLv);
+      target->defenseStage += 2;
+      CLAMP_STAT_STAGE(target->defenseStage);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
       PUSH_MESSAGE(MsgDefUp);
-      target->defCnt = STAT_CHANGE_TURNS;
+      target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
     // The revivals bring back a downed target with all, half or 80% of its
@@ -6492,39 +6492,43 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // A Resistance change needs no recalculation to show: it is the change
     // in stages times RESISTANCE_PER_STAGE.
     case ABILITY_EFFECT_RESISTANCE_DOWN:
-      target->resLv -= 1;
-      CLAMP_STAT_STAGE(target->resLv);
+      target->resistanceStage -= 1;
+      CLAMP_STAT_STAGE(target->resistanceStage);
       BattleEvPush(BATTLE_EVENT_NUM,
-                   (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE);
+                   (savedTarget->resistanceStage - target->resistanceStage) *
+                       RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResDown);
-      target->resCnt = STAT_CHANGE_TURNS;
+      target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_DOWN_2:
-      target->resLv -= 2;
-      CLAMP_STAT_STAGE(target->resLv);
+      target->resistanceStage -= 2;
+      CLAMP_STAT_STAGE(target->resistanceStage);
       BattleEvPush(BATTLE_EVENT_NUM,
-                   (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE);
+                   (savedTarget->resistanceStage - target->resistanceStage) *
+                       RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResDown);
-      target->resCnt = STAT_CHANGE_TURNS;
+      target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_UP:
-      target->resLv += 1;
-      CLAMP_STAT_STAGE(target->resLv);
+      target->resistanceStage += 1;
+      CLAMP_STAT_STAGE(target->resistanceStage);
       BattleEvPush(BATTLE_EVENT_NUM,
-                   (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE);
+                   (target->resistanceStage - savedTarget->resistanceStage) *
+                       RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResUp);
-      target->resCnt = STAT_CHANGE_TURNS;
+      target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_UP_2:
-      target->resLv += 2;
-      CLAMP_STAT_STAGE(target->resLv);
+      target->resistanceStage += 2;
+      CLAMP_STAT_STAGE(target->resistanceStage);
       BattleEvPush(BATTLE_EVENT_NUM,
-                   (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE);
+                   (target->resistanceStage - savedTarget->resistanceStage) *
+                       RESISTANCE_PER_STAGE);
       PUSH_MESSAGE(MsgResUp);
-      target->resCnt = STAT_CHANGE_TURNS;
+      target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
     // Poison does nothing to a poisoned target, deadly poison nothing to one
@@ -6672,20 +6676,20 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
     // Break undoes every raised stat and the element stages.
     case ABILITY_EFFECT_BREAK:
-      if (target->atkLv > 0) {
-        target->atkLv = 0;
-        target->atkCnt = 0;
+      if (target->attackStage > 0) {
+        target->attackStage = 0;
+        target->attackTurns = 0;
       }
-      if (target->defLv > 0) {
-        target->defLv = 0;
-        target->defCnt = 0;
+      if (target->defenseStage > 0) {
+        target->defenseStage = 0;
+        target->defenseTurns = 0;
       }
-      if (target->resLv > 0) {
-        target->resLv = 0;
-        target->resCnt = 0;
+      if (target->resistanceStage > 0) {
+        target->resistanceStage = 0;
+        target->resistanceTurns = 0;
       }
-      if (target->agiLv > 0)
-        target->agiLv = 0;
+      if (target->agilityStage > 0)
+        target->agilityStage = 0;
       target->elementLevels[ELEMENT_VENUS] = 0;
       target->elementLevels[ELEMENT_MERCURY] = 0;
       target->elementLevels[ELEMENT_MARS] = 0;
@@ -6737,16 +6741,16 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
     case ABILITY_EFFECT_DEFEND:
       PUSH_MESSAGE(MsgAura);
-      if (target->guardLv > 0)
+      if (target->guardLevel > 0)
         break;
-      target->guardLv = GUARD_DEFEND;
+      target->guardLevel = GUARD_DEFEND;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
       PUSH_MESSAGE(MsgAura2);
-      if (target->guardLv > GUARD_DEFEND)
+      if (target->guardLevel > GUARD_DEFEND)
         break;
-      target->guardLv = GUARD_TOTAL_DEFENSE;
+      target->guardLevel = GUARD_TOTAL_DEFENSE;
       break;
 
     // Contain, Threaten and Tremble do nothing; the player only reads their
@@ -6786,7 +6790,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     share = damageDealt >> 2;
     if (share == 0)
       share = 1;
-    plan->hauntDmg += share;
+    plan->hauntDamage += share;
   }
 }
 
@@ -6939,7 +6943,7 @@ select_again:
         itemAct = BattleActGet(item->actionId);
         abilityId = item->actionId;
         req->command = CMD_ITEM;
-        targetFlag = itemAct->targetFlag;
+        targetFlag = itemAct->flags;
         req->parameter = 0;
         switch (targetFlag) {
         case 1:
@@ -7574,16 +7578,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     }
     switch (mode) {
     case 0: // ひとり
-      plan->targetDist[0] = mode;
+      plan->targetOffset[0] = mode;
       plan->targetCount = 1;
       plan->targetIds[0] = tid;
-      plan->targetAdj[0] = 1;
+      plan->targetMultiplier[0] = 1;
       break;
     case 4:
-      plan->targetDist[0] = 0;
+      plan->targetOffset[0] = 0;
       plan->targetCount = 1;
       plan->targetIds[0] = tid;
-      plan->targetAdj[0] = 1;
+      plan->targetMultiplier[0] = 1;
       break;
     default:
       // 狙った位置から range - 1 までの並び
@@ -7612,8 +7616,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
               continue;
             if (!deadOk && UnitGetFar(id)->hp == 0)
               continue;
-            plan->targetAdj[cnt] = 1;
-            plan->targetDist[cnt] = pos - center;
+            plan->targetMultiplier[cnt] = 1;
+            plan->targetOffset[cnt] = pos - center;
             plan->targetIds[cnt] = id;
             cnt++;
           } else {
@@ -7624,8 +7628,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
               continue;
             if (!deadOk && UnitGetFar(id)->hp == 0)
               continue;
-            plan->targetAdj[cnt] = 1;
-            plan->targetDist[cnt] = pos - center;
+            plan->targetMultiplier[cnt] = 1;
+            plan->targetOffset[cnt] = pos - center;
             plan->targetIds[cnt] = id;
             cnt++;
           }
@@ -7635,8 +7639,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       if (cnt <= 0) {
         UiWork_PushValueSlotFar(req->unitId, 1);
         UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
-        if (unit->guardLv == 0)
-          unit->guardLv = 1;
+        if (unit->guardLevel == 0)
+          unit->guardLevel = 1;
         return -1;
       }
     }
@@ -7644,8 +7648,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
 
   tid = Battle_GetTaggedSlotValue(req->target);
   BattleEventRuntime_Reset();
-  plan->hauntDmg = 0;
-  plan->aid = req->unitId;
+  plan->hauntDamage = 0;
+  plan->actorId = req->unitId;
   plan->targetCount = 0;
   plan->presentationFlags = 0;
   plan->failure = 0;
@@ -7712,7 +7716,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     s32 i;
 
     for (i = 0; i < TARGET_MAX; i++)
-      plan->targetCrit[i] = 0;
+      plan->targetCritical[i] = 0;
     for (i = 0; i < TARGET_MAX; i++)
       plan->targetHit[i] = -1;
   }
@@ -7791,8 +7795,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     if (abilityId == 0 || (unit->inventory[req->parameter] & 0x400)) {
       UiWork_PushValueSlotFar(req->unitId, 1);
       UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
-      if (unit->guardLv == 0)
-        unit->guardLv = 1;
+      if (unit->guardLevel == 0)
+        unit->guardLevel = 1;
       return -1;
     }
     if (TargetSet(abilityId) == -1)
@@ -7834,7 +7838,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       return -1;
     UiWork_PushValueSlotFar(req->unitId, 1);
     UiWork_PushValueSlotFar(abilityId, 4);
-    if ((BattleActGet(abilityId)->targetFlag & 15) == 6)
+    if ((BattleActGet(abilityId)->flags & 15) == 6)
       message = MsgActorUnleashesAbility;
     else
       message = MsgActorUsesAbility;
@@ -7950,7 +7954,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       UiWork_PushValueSlotFar(req->unitId, 1);
       UiWork_PushValueSlotFar(abilityId, 4);
       UiText_ShowMessageAndWaitCoreFar(MsgActorUnleashesDjinn);
-      plan->element = act->damageClass;
+      plan->element = act->element;
     }
     break;
 
@@ -8045,19 +8049,19 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
           target->immobile != 0 || target->charm != 0)
         break;
       if (unit->delusion != 0 && (BattleRandomFar() & 255) <= 152)
-        plan->targetAdj[0] = 0;
+        plan->targetMultiplier[0] = 0;
       if ((BattleRandomFar() & 31) == 0)
-        plan->targetAdj[0] = 0;
+        plan->targetMultiplier[0] = 0;
     } while (0);
     if (GameFlag_TestFar(366))
-      plan->targetAdj[0] = 0;
+      plan->targetMultiplier[0] = 0;
     // 会心：1/32、または装備による確率
     if (target->hp != 0) {
       if ((BattleRandomFar() & 31) == 0)
-        plan->targetCrit[0] = 1;
+        plan->targetCritical[0] = 1;
       else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 >
                (BattleRandomFar() & 0xffff))
-        plan->targetCrit[0] = 1;
+        plan->targetCritical[0] = 1;
     }
   }
 
@@ -8067,7 +8071,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   else {
     struct BattleAct *act = BattleActGet(abilityId);
 
-    plan->element = act->damageClass;
+    plan->element = act->element;
     plan->presentationFlags = 0;
     plan->abilityId = abilityId;
     if (act->effect == 65 || act->effect == 41 || act->effect == 42 ||
@@ -8090,7 +8094,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         s32 i;
 
         for (i = 0; i < plan->targetCount; i++)
-          plan->targetAdj[i] += amount;
+          plan->targetMultiplier[i] += amount;
       }
     } else if (act->effect >= 36 && act->effect <= 40) {
       // 会心の確率 1/64 ～ 1/4
@@ -8118,7 +8122,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         s32 i;
 
         for (i = 0; i < plan->targetCount; i++)
-          plan->targetCrit[i] = 2;
+          plan->targetCritical[i] = 2;
       }
     } else if (abilityId == 178) // めっさつのじゅつ：命中を先に決める
     {
@@ -8126,13 +8130,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
 
       for (i = 0; i < plan->targetCount; i++)
         plan->targetHit[i] = BattleHitCheck(req->unitId, plan->targetIds[i],
-                                            act->damageClass, act->effect, 100);
+                                            act->element, act->effect, 100);
     }
     if (abilityId >= 0 && abilityId <= 518) {
       plan->presentationFlags = gBattle_ActionFlags[abilityId];
-      if (plan->targetAdj[0] > 1)
+      if (plan->targetMultiplier[0] > 1)
         plan->presentationFlags = gBattle_ActionFlags[abilityId] +
-                                  (plan->targetAdj[0] << 12) - 0x1000;
+                                  (plan->targetMultiplier[0] << 12) - 0x1000;
     }
     if ((abilityId >= 0 && abilityId <= 517) &&
         gBattle_ActionStatus[abilityId] != 0)
@@ -8153,7 +8157,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   }
   if (req->command == CMD_ITEM && plan->outcome != 5 && plan->outcome != 9)
     plan->outcome = 4;
-  plan->cmd = req->command;
+  plan->command = req->command;
   return 0;
 }
 
@@ -8171,18 +8175,18 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 s32 BattleUnit_TickAttackModifier(s32 unitId) {
   struct BattleUnit *state = UnitGetFar(unitId);
 
-  if (state->atkCnt != 0) {
+  if (state->attackTurns != 0) {
     s32 zero;
-    state->atkCnt--;
+    state->attackTurns--;
     zero = 0;
-    if (state->atkCnt == 0) {
-      state->atkLv = zero;
+    if (state->attackTurns == 0) {
+      state->attackStage = zero;
       return 1;
     }
-    if (state->atkLv < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, state->atkCnt, 30) != 0) {
-        state->atkLv = zero;
-        state->atkCnt = zero;
+    if (state->attackStage < 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, state->attackTurns, 30) != 0) {
+        state->attackStage = zero;
+        state->attackTurns = zero;
         return 1;
       }
     }
@@ -8213,8 +8217,9 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
     return 0;                                                                  \
   }
 
-DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defCnt, defLv)
-DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resCnt, resLv)
+DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
+DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
+                     resistanceStage)
 
 // 状態異常の残りターン (counter) を 1 減らす。0 になったとき、または
 // BattleUnit_RollCounterEarlyEnd (bias) で早く切れたときに 1 を返す
@@ -8310,11 +8315,11 @@ s32 BattleUnit_TickReflect(s32 id) {
 
 s32 BattleUnit_TickAgilityModifier(s32 id) {
   struct BattleUnit *unit = UnitGetFar(id);
-  u8 *value = &unit->agiCnt;
+  u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
-      unit->agiLv = 0;
+      unit->agilityStage = 0;
       return 1;
     }
   }
@@ -8590,7 +8595,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 best;
   s32 order;
 
-  id = plan->aid;
+  id = plan->actorId;
   bothSides = 0;
   unit = UnitGetFar(id);
   list =
@@ -8690,12 +8695,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   if (bothSides != 0) {
     s8 *poison;
     BattleEventRuntime_Reset();
-    if (plan->hauntDmg != 0) {
+    if (plan->hauntDamage != 0) {
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
       BattleEvPush(BATTLE_EVENT_UNIT, id);
-      BattleEvPush(BATTLE_EVENT_NUM, plan->hauntDmg);
+      BattleEvPush(BATTLE_EVENT_NUM, plan->hauntDamage);
       PUSH_MESSAGE(MsgCurseDamage);
-      if (Owner_AdjustFirstValueFar(id, -plan->hauntDmg) == 0) {
+      if (Owner_AdjustFirstValueFar(id, -plan->hauntDamage) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);

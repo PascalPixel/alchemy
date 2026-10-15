@@ -14,7 +14,7 @@
  * Scores: the old hand draft 806; ☀️'s source compiled for this game with
  * only its names resolved 3237. One power variable (apwr) for
  * every damage case moved it from differ 2590 to 779, the additive case's
- * own loop counter to 657, ⚓️'s unsigned guardLv to 552, case 401 as a
+ * own loop counter to 657, ⚓️'s unsigned guardLevel to 552, case 401 as a
  * case of its own in the rate switch (rate 12 set before the test, as the
  * listing does) to 510, the HP drain halving dealt in apwr (declared for
  * the whole function, so it keeps r7 as in the listing) to
@@ -382,7 +382,7 @@
 #define ELEMENT_BONUS()                                                           \
     {                                                                          \
         if (element != 4)                                                        \
-            bonus = power - target->element[element].res;                    \
+            bonus = power - target->element[element].resistance;                    \
     }
 
 #define MESSAGE_PUSH(m) BattleEvPush(BATTLE_EVENT_MESSAGE, (u32)(m))
@@ -397,7 +397,7 @@
 
 #define GUARD_CUT()                                                         \
     {                                                                         \
-        guard = target->guardLv;                                          \
+        guard = target->guardLevel;                                          \
         if (guard != 0) {                                                     \
             if (guard == 1)                                                   \
                 dmg /= 2;                                                     \
@@ -410,11 +410,11 @@
 
 #define RES_STEP(d, v, message)                                 \
 {                                                                              \
-    target->resLv += (d);                                           \
-    STEP_LIM(target->resLv);                                           \
+    target->resistanceStage += (d);                                           \
+    STEP_LIM(target->resistanceStage);                                           \
     BattleEvPush(BATTLE_EVENT_NUM, (v));                           \
     MESSAGE_PUSH(message);                                                            \
-    target->resCnt = 7;                                            \
+    target->resistanceTurns = 7;                                            \
 }
 
 #define STAT_SET(f, message)                                               \
@@ -477,12 +477,12 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     if (abilityId == 312 || abilityId == 316)
         aid = plan->actorId2;
     else
-        aid = plan->aid;
+        aid = plan->actorId;
     tid = plan->targetIds[slot];
     abilityId = plan->abilityId;
     element = plan->element;
-    adj = plan->targetAdj[slot];
-    crit = plan->targetCrit[slot];
+    adj = plan->targetMultiplier[slot];
+    crit = plan->targetCritical[slot];
 
     action = BattleActGet(abilityId);
     actor = UnitGet(aid);
@@ -490,7 +490,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     Iwram_CopyWords(bak, target, size);
     switch (target->enemyId) {
     case 221:
-        if (plan->cmd == 1 && (u32)(aid ^ tid) >> 7 != 0) {
+        if (plan->command == 1 && (u32)(aid ^ tid) >> 7 != 0) {
             BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
             BattleEvPush(BATTLE_EVENT_UNIT, tid);
             MESSAGE_PUSH(MsgDissipated);
@@ -509,7 +509,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
         }
         break;
     }
-    if (target->guardLv == 4 && (u32)(aid ^ tid) >> 7 != 0) {
+    if (target->guardLevel == 4 && (u32)(aid ^ tid) >> 7 != 0) {
         BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
         BattleEvPush(BATTLE_EVENT_UNIT, tid);
         MESSAGE_PUSH(MsgNoEffect);
@@ -517,7 +517,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     }
 
     if (action->range != 255) {
-        dist = plan->targetDist[slot];
+        dist = plan->targetOffset[slot];
         if (dist < 0)
             dist = -dist;
     } else {
@@ -527,33 +527,33 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     if (element != 4) {
         s32 i;
 
-        value = target->baseElement[element].res;
-        for (i = 0; i < 4 && value >= target->baseElement[i].res; i++)
+        value = target->baseElement[element].resistance;
+        for (i = 0; i < 4 && value >= target->baseElement[i].resistance; i++)
             ;
         if (i == 4)
             aff = -1;
 
-        for (i = 0; i < 4 && value <= target->baseElement[i].res; i++)
+        for (i = 0; i < 4 && value <= target->baseElement[i].resistance; i++)
             ;
         if (i == 4)
             aff = 1;
     }
 
     if (plan->element >= 0 && plan->element <= 3) {
-        cmd = &plan->cmd;
+        cmd = &plan->command;
         if (*cmd != 2) {
             power = actor->element[plan->element].power;
             goto power_end;
         }
     } else
-        cmd = &plan->cmd;
+        cmd = &plan->command;
     power = 100;
 power_end:
 
-    if (plan->cmd == 5 && (plan->element >= 0 && plan->element <= 3) && aff > 0) {
+    if (plan->command == 5 && (plan->element >= 0 && plan->element <= 3) && aff > 0) {
         s32 chance;
 
-        chance = power - target->element[plan->element].res;
+        chance = power - target->element[plan->element].resistance;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BattleRandomFar() & 0xffff))
@@ -566,7 +566,7 @@ power_end:
         Battle_ApplyActionExtras(tid, 1, 0);
     if (abilityId == 728)
         Battle_ApplyActionExtras(tid, 1, 1);
-    type = action->targetFlag & 15;
+    type = action->flags & 15;
     {
         s32 res;
 
@@ -704,7 +704,7 @@ power_end:
         {
             s32 def;
 
-            if (target->guardLv == 4)
+            if (target->guardLevel == 4)
                 break;
             hp = target->hp;
             def = target->def;
@@ -730,7 +730,7 @@ power_end:
 
                     atk = actor->atk;
                     if (abilityId == 312 || abilityId == 316) {
-                        atk = ((struct BattleUnit *)UnitGet(plan->aid))->atk;
+                        atk = ((struct BattleUnit *)UnitGet(plan->actorId))->atk;
                         if (abilityId == 312)
                             atk += ((struct BattleUnit *)UnitGet(plan->actorId2))->atk / 4;
                     }
@@ -766,7 +766,7 @@ power_end:
                             dmg = 1;
                     }
                 }
-                if (GameFlag_Test(366) != 0 && plan->cmd == 5
+                if (GameFlag_Test(366) != 0 && plan->command == 5
                     && hp <= dmg) {
                     dmg = hp - 1;
                 }
@@ -812,7 +812,7 @@ power_end:
 
         case 10:
         {
-            if (target->guardLv == 4)
+            if (target->guardLevel == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -883,7 +883,7 @@ power_end:
 
         case -1:
         {
-            if (target->guardLv == 4)
+            if (target->guardLevel == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -921,7 +921,7 @@ power_end:
         {
             s32 round;
 
-            if (target->guardLv == 4)
+            if (target->guardLevel == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -935,7 +935,7 @@ power_end:
                     bonus = 0;
                 ap = action->power;
                 if (abilityId == 683 || abilityId == 673 || abilityId == 724
-                    || plan->cmd == 6 || plan->cmd == 10) {
+                    || plan->command == 6 || plan->command == 10) {
                     s32 rate;
 
                     rate = 0;
@@ -1004,7 +1004,7 @@ power_end:
                 dmg += BattleRandomFar() & 3;
                 GUARD_CUT();
                 if ((gPartyState.battleRule24b == 6
-                        || (GameFlag_Test(366) != 0 && plan->cmd == 6))
+                        || (GameFlag_Test(366) != 0 && plan->command == 6))
                     && cur > dmg) {
                     dmg = cur;
                 }
@@ -1081,7 +1081,7 @@ power_end:
             break;
 
         case 2:
-            if (target->guardLv == 4)
+            if (target->guardLevel == 4)
                 break;
             if (hit != 0) {
             if (action->power == 0)
@@ -1340,97 +1340,97 @@ power_end:
         }
 
         case 59:
-            target->agiLv = 8;
-            target->agiCnt = 5;
+            target->agilityStage = 8;
+            target->agilityTurns = 5;
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->agi - bak->agi);
             MESSAGE_PUSH(MsgAgiUp);
             break;
 
         case 58:
-            am = &target->agiLv;
+            am = &target->agilityStage;
         {
             u8 v;
 
             v = -4;
             *am = v;
         }
-            target->agiCnt = 5;
+            target->agilityTurns = 5;
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->agi - target->agi);
             MESSAGE_PUSH(MsgAgiDown);
             break;
 
         case 9:
-            target->atkLv -= 1;
-            STEP_LIM(target->atkLv);
+            target->attackStage -= 1;
+            STEP_LIM(target->attackStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
             MESSAGE_PUSH(MsgAtkDown);
-            target->atkCnt = 7;
+            target->attackTurns = 7;
             break;
 
         case 8:
-            target->atkLv -= 2;
-            STEP_LIM(target->atkLv);
+            target->attackStage -= 2;
+            STEP_LIM(target->attackStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
             MESSAGE_PUSH(MsgAtkDown);
-            target->atkCnt = 7;
+            target->attackTurns = 7;
             break;
 
         case 7:
-            target->atkLv += 1;
-            STEP_LIM(target->atkLv);
+            target->attackStage += 1;
+            STEP_LIM(target->attackStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
             MESSAGE_PUSH(MsgAtkUp);
-            target->atkCnt = 7;
+            target->attackTurns = 7;
             break;
 
         case 6:
-            target->atkLv += 2;
-            STEP_LIM(target->atkLv);
+            target->attackStage += 2;
+            STEP_LIM(target->attackStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
             MESSAGE_PUSH(MsgAtkUp);
-            target->atkCnt = 7;
+            target->attackTurns = 7;
             break;
 
         case 13:
-            target->defLv -= 1;
-            STEP_LIM(target->defLv);
+            target->defenseStage -= 1;
+            STEP_LIM(target->defenseStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
             MESSAGE_PUSH(MsgDefDown);
-            target->defCnt = 7;
+            target->defenseTurns = 7;
             break;
 
         case 12:
-            target->defLv -= 2;
-            STEP_LIM(target->defLv);
+            target->defenseStage -= 2;
+            STEP_LIM(target->defenseStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
             MESSAGE_PUSH(MsgDefDown);
-            target->defCnt = 7;
+            target->defenseTurns = 7;
             break;
 
         case 11:
-            target->defLv += 1;
-            STEP_LIM(target->defLv);
+            target->defenseStage += 1;
+            STEP_LIM(target->defenseStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
             MESSAGE_PUSH(MsgDefUp);
-            target->defCnt = 7;
+            target->defenseTurns = 7;
             break;
 
         case 10:
-            target->defLv += 2;
-            STEP_LIM(target->defLv);
+            target->defenseStage += 2;
+            STEP_LIM(target->defenseStage);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
             MESSAGE_PUSH(MsgDefUp);
-            target->defCnt = 7;
+            target->defenseTurns = 7;
             break;
 
         case 5:
@@ -1472,36 +1472,36 @@ power_end:
             break;
 
         case 17:
-            RES_STEP(-1, (bak->resLv - target->resLv) * 20, MsgResDown);
+            RES_STEP(-1, (bak->resistanceStage - target->resistanceStage) * 20, MsgResDown);
             break;
 
         case 16:
         {
-            target->resLv -= 2;
-            if (-4 > target->resLv)
-                target->resLv = -4;
-            if (target->resLv > 4)
-                target->resLv = 4;
-            BattleEvPush(BATTLE_EVENT_NUM, (bak->resLv - target->resLv) * 20);
+            target->resistanceStage -= 2;
+            if (-4 > target->resistanceStage)
+                target->resistanceStage = -4;
+            if (target->resistanceStage > 4)
+                target->resistanceStage = 4;
+            BattleEvPush(BATTLE_EVENT_NUM, (bak->resistanceStage - target->resistanceStage) * 20);
             MESSAGE_PUSH(MsgResDown);
-            target->resCnt = 7;
+            target->resistanceTurns = 7;
         }
             break;
 
         case 15:
-            RES_STEP(1, (target->resLv - bak->resLv) * 20, MsgResUp);
+            RES_STEP(1, (target->resistanceStage - bak->resistanceStage) * 20, MsgResUp);
             break;
 
         case 14:
         {
-            target->resLv += 2;
-            if (*(rm = &target->resLv) < -4)
-                target->resLv = -4;
-            if (target->resLv > 4)
-                target->resLv = 4;
-            BattleEvPush(BATTLE_EVENT_NUM, (target->resLv - bak->resLv) * 20);
+            target->resistanceStage += 2;
+            if (*(rm = &target->resistanceStage) < -4)
+                target->resistanceStage = -4;
+            if (target->resistanceStage > 4)
+                target->resistanceStage = 4;
+            BattleEvPush(BATTLE_EVENT_NUM, (target->resistanceStage - bak->resistanceStage) * 20);
             MESSAGE_PUSH(MsgResUp);
-            target->resCnt = 7;
+            target->resistanceTurns = 7;
         }
             break;
 
@@ -1648,20 +1648,20 @@ power_end:
             break;
 
         case 33:
-            if (target->atkLv > 0) {
-                target->atkLv = 0;
-                target->atkCnt = 0;
+            if (target->attackStage > 0) {
+                target->attackStage = 0;
+                target->attackTurns = 0;
             }
-            if (target->defLv > 0) {
-                target->defLv = 0;
-                target->defCnt = 0;
+            if (target->defenseStage > 0) {
+                target->defenseStage = 0;
+                target->defenseTurns = 0;
             }
-            if (target->resLv > 0) {
-                target->resLv = 0;
-                target->resCnt = 0;
+            if (target->resistanceStage > 0) {
+                target->resistanceStage = 0;
+                target->resistanceTurns = 0;
             }
-            if (target->agiLv > 0)
-                target->agiLv = 0;
+            if (target->agilityStage > 0)
+                target->agilityStage = 0;
             target->elementLevels[0] = 0;
             target->elementLevels[1] = 0;
             target->elementLevels[2] = 0;
@@ -1710,31 +1710,31 @@ power_end:
         case 46:
 
             MESSAGE_PUSH(MsgAura);
-            if (target->guardLv > 0)
+            if (target->guardLevel > 0)
                 break;
-            target->guardLv = 1;
+            target->guardLevel = 1;
             break;
 
         case 72:
             MESSAGE_PUSH(MsgAura);
-            if ((u32)target->guardLv > 1)
+            if ((u32)target->guardLevel > 1)
                 break;
-            target->guardLv = 2;
+            target->guardLevel = 2;
             break;
 
         case 47:
         case 88:
             MESSAGE_PUSH(MsgAura2);
-            if (target->guardLv > 2)
+            if (target->guardLevel > 2)
                 break;
-            target->guardLv = 3;
+            target->guardLevel = 3;
             break;
 
         case 79:
             MESSAGE_PUSH(MsgVanished);
-            if ((u32)target->guardLv > 3)
+            if ((u32)target->guardLevel > 3)
                 break;
-            target->guardLv = 4;
+            target->guardLevel = 4;
             break;
 
         case 45:
@@ -1763,7 +1763,7 @@ power_end:
 
 done:
     BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-    if (plan->cmd != 9 && (s8)target->unk142[1] != 0
+    if (plan->command != 9 && (s8)target->unk142[1] != 0
         && action->targetMode == 1 && target->hp != 0) {
         work->unk858 = tid;
         /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unk85c's address before the store to unk858, where the ROM stores first, 2 instructions. */
@@ -1792,6 +1792,6 @@ done:
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        plan->hauntDmg += share;
+        plan->hauntDamage += share;
     }
 }

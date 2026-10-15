@@ -17,7 +17,7 @@ struct OwnerActionSlot {
 
 struct BattleElementStats {
   s16 power;
-  s16 res;
+  s16 resistance;
 };
 
 // The elements, in the order of every table kept per element: a unit's
@@ -36,7 +36,7 @@ enum Element {
 // as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
-// The low four bits of BattleAct.targetFlag: how BattleTargetExec applies
+// The low four bits of BattleAct.flags: how BattleTargetExec applies
 // the ability's power. Kinds 0, 7 and 9 apply none: 0 is no ability, 7 is
 // Granite, Flash and Kite, 9 the field Psynergy, Defend, Flee and enemies'
 // commands.
@@ -131,11 +131,11 @@ enum AbilityEffect {
 
 struct BattleAct {
   u8 targetMode;
-  u8 targetFlag;
-  u8 damageClass;
-  u8 effect;
+  u8 flags;   // the kind (ABILITY_KIND_MASK) and where it can be used
+  u8 element; // enum Element
+  u8 effect;  // enum AbilityEffect
   u8 unk04[4];
-  u8 range;
+  u8 range; // the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost;
   u16 power;
   u8 type0c;
@@ -189,34 +189,37 @@ struct BattleUnit {
   u8 classIndex;
   u8 side;
 #if GAME_TLA
-  u8 guardLv;
+  u8 guardLevel;
 #else
-  s8 guardLv;
+  s8 guardLevel;
 #endif
   s8 elementLevels[4];
   s8 restraint;
-  s8 poison;
-  u8 atkCnt;
-  s8 atkLv;
-  u8 defCnt;
-  s8 defLv;
-  u8 resCnt;
-  s8 resLv;
+  s8 poison; // 1 poisoned, 2 deadly poison
+  // Each stat change: the turns it has left, and its stage (UnitCalc: an
+  // eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
+  u8 attackTurns;
+  s8 attackStage;
+  u8 defenseTurns;
+  s8 defenseStage;
+  u8 resistanceTurns;
+  s8 resistanceStage;
+  // Delusion to sleep: the turns each status has left.
   u8 delusion;
   s8 confusion;
   u8 charm;
   u8 stun;
   u8 sleep;
-  u8 psySeal;
+  u8 psySeal; // Bind's turns in the low three bits, Luff's above
   u8 refrain;
   s8 reflect;
-  u8 haunt;
-  u8 grimReaper;
+  u8 haunt;      // set while an evil spirit grips the unit
+  u8 grimReaper; // the Grim Reaper's countdown
   u8 unk142[2];
   u8 ready;
   u8 immobile;
-  u8 agiCnt;
-  s8 agiLv;
+  u8 agilityTurns;
+  s8 agilityStage;
   s8 challenge;
   u8 unk149;
   u16 enemyId;
@@ -249,7 +252,8 @@ LAYOUT_OFFSET_GUARD(BattleUnit_DjinnOwnedCounts, struct BattleUnit,
                     djinnOwnedCounts, 0x118);
 LAYOUT_OFFSET_GUARD(BattleUnit_DjinnActiveCounts, struct BattleUnit,
                     djinnActiveCounts, 0x11c);
-LAYOUT_OFFSET_GUARD(BattleUnit_GuardLevel, struct BattleUnit, guardLv, 0x12b);
+LAYOUT_OFFSET_GUARD(BattleUnit_GuardLevel, struct BattleUnit, guardLevel,
+                    0x12b);
 LAYOUT_OFFSET_GUARD(BattleUnit_Status13a, struct BattleUnit, charm, 0x13a);
 LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BattleUnit, haunt, 0x140);
 

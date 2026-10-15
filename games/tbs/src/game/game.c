@@ -355,15 +355,15 @@ void UnitCalc(s32 owner) {
     }
   }
 
-  work->atk = work->atk * (st->atkLv + 8) / 8;
-  work->def = work->def * (st->defLv + 8) / 8;
-  work->agi = work->agi * (st->agiLv + 8) / 8;
+  work->atk = work->atk * (st->attackStage + 8) / 8;
+  work->def = work->def * (st->defenseStage + 8) / 8;
+  work->agi = work->agi * (st->agilityStage + 8) / 8;
   for (i = 0; i < 4; i++)
     work->element[i][0] +=
         (st->elementLevels[i] * st->elementLevels[i] + st->elementLevels[i]) *
         5;
   for (i = 0; i < 4; i++)
-    work->element[i][1] += st->resLv * 20;
+    work->element[i][1] += st->resistanceStage * 20;
 
   if (st->classIndex) {
     flag = 0;
@@ -436,7 +436,7 @@ void UnitCalc(s32 owner) {
   st->ppRegen = work->ppRegen;
   for (i = 0; i < 4; i++) {
     st->element[i].power = work->element[i][0];
-    st->element[i].res = work->element[i][1];
+    st->element[i].resistance = work->element[i][1];
   }
 
   cap = 9999;

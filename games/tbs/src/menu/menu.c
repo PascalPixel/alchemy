@@ -2873,7 +2873,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 
       if (result == 1) {
         s32 mask = 0x80;
-        u8 flags = action->targetFlag;
+        u8 flags = action->flags;
 
         if ((flags & 0x40) != 0) {
           u8 range = action->range;
@@ -4609,13 +4609,13 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
               owner->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK);
 
           if (j == 0 &&
-              (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0)) {
+              (ability->type0c != 0 || (ability->flags & 0x40) != 0)) {
             actions[count] = owner->actionSlots[i].encodedAction;
             count++;
           } else if (j == 1) {
           } else if (j == 2) {
           } else if (j == 3 && ability->type0c == 0 &&
-                     (ability->targetFlag & 0x40) == 0) {
+                     (ability->flags & 0x40) == 0) {
             actions[count] = owner->actionSlots[i].encodedAction;
             count++;
           }
@@ -5023,7 +5023,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
 s32 PsynergyMenu_IsActionRestricted(s32 no) {
   struct BattleAct *action = BattleActGet((u32)(no << 18) >> 18);
 
-  if (action->type0c != 0 || (action->targetFlag & 0xc0) == 0xc0)
+  if (action->type0c != 0 || (action->flags & 0xc0) == 0xc0)
     return 0;
   return 1;
 }
@@ -5910,7 +5910,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit,
                                    window, i * 32 + 112, row * 8 + 16);
       UiText_DrawNumberInWindowFar(status->element[i].power, 3, window,
                                    i * 32 + 104, row * 8 + 24);
-      UiText_DrawNumberInWindowFar(status->element[i].res, 3, window,
+      UiText_DrawNumberInWindowFar(status->element[i].resistance, 3, window,
                                    i * 32 + 104, row * 8 + 32);
     }
   }
@@ -6146,10 +6146,10 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #if EDITION_INTERNATIONAL
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
-    if (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0) {
+    if (ability->type0c != 0 || (ability->flags & 0x40) != 0) {
       row = 2;
     }
-    if ((ability->targetFlag & 0x80) != 0) {
+    if ((ability->flags & 0x80) != 0) {
       row |= 1;
     }
     if (row == 3) {
@@ -6162,11 +6162,11 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #else
     UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
     row = 0;
-    if (ability->type0c != 0 || (ability->targetFlag & 0x40) != 0) {
+    if (ability->type0c != 0 || (ability->flags & 0x40) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 72);
       row = 1;
     }
-    if ((ability->targetFlag & 0x80) != 0) {
+    if ((ability->flags & 0x80) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInBattle, window, 0,
                                       row * 8 + 72);
       row++;
@@ -6180,8 +6180,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     if (row == state->row) {
       ability =
           BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
-      if (ability->damageClass != 4) {
-        UiWindow_SetTilemapEntryFar(window, ability->damageClass + 1, 24,
+      if (ability->element != 4) {
+        UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   14);
@@ -6194,8 +6194,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     } else {
       ability =
           BattleActGet(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
-      if (ability->damageClass != 4) {
-        UiWindow_SetTilemapEntryFar(window, ability->damageClass + 1, 24,
+      if (ability->element != 4) {
+        UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 4);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   15);
@@ -7078,14 +7078,14 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     amount = effect->power;
-    switch (effect->targetFlag & 0xf) {
+    switch (effect->flags & 0xf) {
     case BATTLE_DAMAGE_HP_HEAL:
       if (fixedScale == 0) {
-        if (effect->damageClass != 4) {
+        if (effect->element != 4) {
           s32 statOffset;
 
           source = UnitGetFar(sourceId);
-          statOffset = effect->damageClass;
+          statOffset = effect->element;
           scale = source->element[statOffset].power;
         } else
           scale = 100;
@@ -7308,7 +7308,7 @@ void Ability_PlayUseAnimation(s32 action) {
   struct BattleAct *ability;
 
   ability = BattleActGet(action);
-  animationType = 0xf & ability->targetFlag;
+  animationType = 0xf & ability->flags;
   switch (animationType) {
   case 1:
     Audio_PlayCueReturnOne(0x7e);

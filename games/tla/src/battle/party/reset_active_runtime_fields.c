@@ -37,12 +37,12 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
         *cursor-- = 0;
       } while (remaining >= 0);
 
-      unit->atkCnt = 0;
-      unit->atkLv = 0;
-      unit->defCnt = 0;
-      unit->defLv = 0;
-      unit->resCnt = 0;
-      unit->resLv = 0;
+      unit->attackTurns = 0;
+      unit->attackStage = 0;
+      unit->defenseTurns = 0;
+      unit->defenseStage = 0;
+      unit->resistanceTurns = 0;
+      unit->resistanceStage = 0;
       unit->delusion = 0;
       unit->confusion = 0;
       unit->charm = 0;
@@ -56,8 +56,8 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->unk142[1] = 0;
       unit->ready = 0;
       unit->immobile = 0;
-      unit->agiCnt = 0;
-      unit->agiLv = 0;
+      unit->agilityTurns = 0;
+      unit->agilityStage = 0;
       unit->challenge = 0;
 
       BattleUnit_Recalculate(owners[i]);

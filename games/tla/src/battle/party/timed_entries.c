@@ -84,11 +84,11 @@ s32 BattleUnit_TickReflect(s32 id) {
 
 s32 BattleUnit_TickAgilityModifier(s32 id) {
   struct BattleUnit *unit = UnitGet(id);
-  u8 *value = &unit->agiCnt;
+  u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
-      unit->agiLv = 0;
+      unit->agilityStage = 0;
       return 1;
     }
   }

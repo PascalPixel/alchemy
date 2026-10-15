@@ -7,7 +7,7 @@
  * arm9tdmi's 2. Tried: the heap base read into a local held by
  * asm volatile("" : "+l"(slots)) before the work load (differ 2: lsls r3
  * then falls after the parameter copies), a one-pass block there (differ 4),
- * barriers or "+l" asms on work, shake_range or remaining_frames (differ
+ * barriers or "+l" asms on work, shake_range or remainingFrames (differ
  * 4 to 8), alchemy permute 4 minutes (no better). */
 #include "types.h"
 #include "battle_effect_work.h"

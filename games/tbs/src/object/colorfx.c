@@ -348,7 +348,7 @@ struct ReelWork
 #endif
 };
 
-// gGameState seen from +12, the base the bytes load: wonPrizes is gGameState.won_prizes
+// gGameState seen from +12, the base the bytes load: wonPrizes is gGameState.wonPrizes
 // (through the field itself ReelGame_RunFrame differs 12)
 struct ReelSave
 {

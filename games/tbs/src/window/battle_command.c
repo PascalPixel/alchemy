@@ -771,7 +771,7 @@ s32 SaveState_ScanRecordFlags(void)
 {
 	/* FAKEMATCH: the signed cursor from the party tail keeps the native
 	 * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
-	 * fields read as summary[i].send_flag and .flag_count, or through a
+	 * fields read as summary[i].sendFlag and .flagCount, or through a
 	 * walking summary pointer, base the cursor on sendFlag (0x1071)
 	 * with offsets 0 and 1 (differ 4). */
 	s32 err;
@@ -6536,7 +6536,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 		   without it differ 56; with it but without the assignment before
 		   the loop, differ 14; the cursor written directly, with no cur,
 		   781 instructions for 770 (differ 209). Battle_SelectAbility sets
-		   cur_spr the same two ways, untagged (394 and 36 without them). */
+		   curSpr the same two ways, untagged (394 and 36 without them). */
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;

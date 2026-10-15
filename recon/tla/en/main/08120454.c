@@ -42,7 +42,7 @@
  * load takes. The summon's enemy reset as a for loop over saved[] keeps
  * 330 only with its (u16) read (377 without). Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
- * 716), while loops for the affinity scans, plain hp/max_hp reads in the
+ * 716), while loops for the affinity scans, plain hp/maxHp reads in the
  * heal (557: one ldrh shared by both; 445 with the signed read first),
  * the heal branches reading through stat_ptr (808), the HP drain's amount in a block-local amt or with the
  * new HP held in dmg (605 both), rate set to 0 in the switch's default

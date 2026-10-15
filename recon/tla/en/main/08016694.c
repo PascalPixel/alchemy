@@ -4,7 +4,7 @@
  * way round, a cast, a u16 or u32 temporary (differ 16, a movs or an extra
  * extension), barriers before or after the timer store, the register through
  * a pinned pointer (all differ 2 or worse); three minutes of permuter found
- * nothing. Fixed so far: sio_control set before the data read (the permuter's
+ * nothing. Fixed so far: sioControl set before the data read (the permuter's
  * form, differ 6 to 4) and the send index read into a temporary before a
  * barrier, so it loads before the isParent store (differ 4 to 2). */
 #include "serial_runtime.h"

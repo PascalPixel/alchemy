@@ -1,6 +1,6 @@
 /* Near miss: The Broken Seal source without its last wait, the actor read before the mode call. Left:
  * the transition work and the result swap r8 and r10 once the result is the twin union (as a plain word
- * they are right, but then party_mode takes an immediate zero where the native copies r10), and the
+ * they are right, but then partyMode takes an immediate zero where the native copies r10), and the
  * actor byte is loaded two rows late. Message 3228 (no escape, English numbering) has no name in the
  * catalogs yet: MsgNoEscape here is undefined. */
 #include "types.h"

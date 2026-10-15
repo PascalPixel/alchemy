@@ -166,4 +166,4 @@ Func_081263fc:
 .L_08126540:
 	.4byte 0x0600ffc0
 .L_08126544:
-	.4byte Func_08125c0c
+	.4byte BattlePres_UpdateHBlankScroll

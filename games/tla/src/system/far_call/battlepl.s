@@ -20,7 +20,7 @@ Battle_RunEncounterFar:
 	.global BattleMotion_ProjectPositionFar
 	.thumb_func
 BattleMotion_ProjectPositionFar:
-	overlay_veneer Func_0811bd50
+	overlay_veneer BattleMotion_ProjectPosition
 	.global BattleMotion_ProjectScaledPositionFar
 	.thumb_func
 BattleMotion_ProjectScaledPositionFar:

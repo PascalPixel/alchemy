@@ -23,6 +23,48 @@
 
 void BattleMotion_ReservedNoOp83B0();
 
+// The actor walks three quarters of the way to its target, at a speed that
+// covers the distance in about travelDivisor frames.
+void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor, s32 initialVelocityY)
+{
+    struct BtlObj *actorSlot = BtlObjGet(actorId);
+    struct BtlObj *targetSlot = BtlObjGet(targetId);
+    struct MotionObject *object = actorSlot->object;
+    struct MotionObject *target = targetSlot->object;
+    s32 scale = 75;
+    s32 dx = target->x - object->x;
+    s32 startX = object->x;
+    s32 stepX = scale * dx / 100;
+    s32 dz = target->z - object->z;
+    s32 startZ = object->z;
+    s32 stepZ = scale * dz / 100;
+    s32 x = startX + stepX;
+    s32 z = startZ + stepZ;
+    s32 cellX = stepX >> 8;
+    s32 cellZ = stepZ >> 8;
+    s32 sum = cellX * cellX + cellZ * cellZ;
+    s32 dist;
+
+    if (sum != 0)
+        dist = Iwram_Sqrt(sum) << 8;
+    else
+        dist = 0;
+    dist = dist / travelDivisor;
+    object->acceleration = dist;
+    object->speed_limit = dist;
+    object->snap_to_target = 1;
+
+    if (object->motion_flags & 4)
+        object->velocity_y = initialVelocityY;
+    object->velocity_y = initialVelocityY;
+    object->vertical_motion_strength = 0xab85;
+    object->auto_face_motion = 1;
+    Object_ResetMotion(object);
+    if (dist != 0)
+        Object_SetPosition(object, x, 0, z);
+    Object_SetMode(object, 2);
+}
+
 void BattleMotion_ResetSlotObjectMode2(s32 id)
 {
     struct MotionObject *object;

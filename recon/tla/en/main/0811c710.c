@@ -1,127 +1,125 @@
+/* Near miss, differ 14 of 276 (seven reordered rows, 28 before): The Broken
+ * Seal's BattlePresentation_RunPairedUnitTransition with this game's heap slots.
+ * Left are load-before-constant swaps of the ARM9 schedule: the transition
+ * work's heap base after the stacked parameter, fp after the zero store, and
+ * three BLDCNT/BLDALPHA blocks where the native loads the pool value before or
+ * between the register address rows. Not yet tried: f18284c.c's pinned value
+ * and one-pass blocks on those stores. */
 #include "types.h"
-#include "system.h"
-#include "btlpty.h"
-#include "btlsys.h"
+#include "battle.h"
+#include "battle_unit.h"
 #include "btldisp.h"
+#include "btlpty.h"
 #include "motobj.h"
-
-extern u8 gTransitionWork[];
-
-struct TransitionContext {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    u8 unknown_0c[8];
-    s32 count;
-    u8 unknown_18[12];
-    s16 actors[14];
-    u8 unknown_40[20];
-};
+#include "io_reg.h"
+#include "owner_state.h"
+#include "ram_buffer.h"
+#include "system.h"
 
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action)
+s32 Func_0811c710(struct BattleActionRecord *action)
 {
-    u16 visible_units[14];
-    struct TransitionContext context;
-    s32 actor_id;
-    s32 target_id;
-    u32 side_start;
-    u32 side_count;
-    u32 living_count;
-    struct MotionObject *actor_record;
+    u16 visibleUnits[14];
+    struct BattlePresentationWork context;
+    s32 actorId;
+    s32 targetId;
+    u32 sideStart;
+    u32 sideCount;
+    u32 livingCount;
+    struct MotionObject *actorRecord;
     u32 index;
 
-    living_count = 0;
-    actor_id = action->unit_id;
-    if (BattleObject_IsValidId(actor_id) < 0) {
+    livingCount = 0;
+    actorId = action->unit_id;
+    if (BattleObject_IsValidId(actorId) < 0)
         return -1;
-    }
-    target_id = action->target;
-    if (BattleObject_IsValidId(target_id) < 0) {
+    targetId = action->target;
+    if (BattleObject_IsValidId(targetId) < 0)
         return -1;
-    }
 
     {
-        struct BattlePresentationTransition *transition =
-            *(struct BattlePresentationTransition **)gTransitionWork;
+        struct BattlePresentationTransition *transition = Ram_HeapSlots->transition_work;
         transition->target_yaw = action->unit_id > 4 ? 0x5000 : 0x2000;
         transition->frames = 60;
     }
     WaitFrames(10);
     Random16();
-    actor_record = BtlObjGet(actor_id)->object;
+    actorRecord = BtlObjGet(actorId)->object;
 
-    if ((u32)target_id <= 7) {
-        side_count = BattleParty_ListLivingUnits(2, visible_units);
-        side_start = 0x80;
-    } else {
-        side_count = BattleParty_ListLivingUnits(1, visible_units);
-        side_start = 0;
+    if (targetId >= 0 && targetId <= 7)
+    {
+        sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
+        sideStart = 0x80;
+    }
+    else
+    {
+        sideCount = BattleParty_ListLivingUnits(1, visibleUnits);
+        sideStart = 0;
     }
 
-    for (index = 0; index != side_count; index++) {
-        if (index + side_start == actor_id) {
-            Object_SetMode(actor_record, 3);
-        }
+    for (index = 0; index != sideCount; index++)
+    {
+        if (index + sideStart == actorId)
+            Object_SetMode(actorRecord, 3);
     }
 
     WaitFrames(30);
-    *(u16 *)0x04000050 = 0x3f40;
-    for (index = 0; index != side_count; index++) {
-        BattlePres_SetActorRecordMode(index + side_start, 1);
-    }
-    for (index = 0; index != 16; index++) {
-        *(u16 *)0x04000052 = (16 - index) | 0x1000;
+    REG_BLDCNT = 0x3f40;
+    for (index = 0; index != sideCount; index++)
+        BattlePres_SetActorRecordMode(index + sideStart, 1);
+    for (index = 0; index != 16; index++)
+    {
+        REG_BLDALPHA = (16 - index) | 0x1000;
         WaitFrames(1);
     }
     PtyStDrawFar(9);
 
-    if (target_id > 0x7f) {
-        u32 count = BattleParty_ListLivingUnits(2, visible_units);
-        for (index = 0; living_count != count; index++) {
+    if (targetId > 0x7f)
+    {
+        u32 count = BattleParty_ListLivingUnits(2, visibleUnits);
+        for (index = 0; livingCount != count; index++)
+        {
             u32 unit = index + 0x80;
-            if (UnitGetFar(unit)->hp > 0) {
-                visible_units[living_count++] = unit;
-            }
-        }
-    } else {
-        u32 count = BattleParty_ListLivingUnits(1, visible_units);
-        for (index = 0; living_count != count; index++) {
-            if (UnitGetFar(index)->hp > 0) {
-                visible_units[living_count++] = index;
-            }
+            if (((struct BtlUnit *)UnitGet(unit))->hp > 0)
+                visibleUnits[livingCount++] = unit;
         }
     }
-    visible_units[living_count] = 0xff;
-    BattleActor_SpawnObjectsForList(visible_units, 0);
+    else
+    {
+        u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
+        for (index = 0; livingCount != count; index++)
+        {
+            if (((struct BtlUnit *)UnitGet(index))->hp > 0)
+                visibleUnits[livingCount++] = index;
+        }
+    }
+    visibleUnits[livingCount] = 0xff;
+    BattleActor_SpawnObjectsForList((s16 *)visibleUnits, 0);
 
     context.kind = action->parameter;
-    context.actor = actor_id;
-    for (index = 0; index != living_count; index++) {
-        context.actors[index] = visible_units[index];
-    }
-    context.count = living_count;
-    if ((u32)target_id <= 7) {
+    context.actor = actorId;
+    for (index = 0; index != livingCount; index++)
+        context.actors[index] = visibleUnits[index];
+    context.count = livingCount;
+    if (targetId >= 0 && targetId <= 7)
         context.side = 1;
-    } else {
+    else
         context.side = 0;
-    }
     BattleFx_InitializeModeFar((s32 *)&context);
 
     WaitFrames(10);
     BtlObjPut();
-    *(u16 *)0x04000050 = 0x3f40;
-    for (index = 0; index != side_count; index++) {
-        BattlePres_SetActorRecordMode(index + side_start, 1);
-    }
-    for (index = 0; index != 16; index++) {
-        *(u16 *)0x04000052 = index | 0x1000;
+    REG_BLDCNT = 0x3f40;
+    for (index = 0; index != sideCount; index++)
+        BattlePres_SetActorRecordMode(index + sideStart, 1);
+    for (index = 0; index != 16; index++)
+    {
+        REG_BLDALPHA = index | 0x1000;
         WaitFrames(1);
     }
-    for (index = 0; index != side_count; index++) {
-        BattlePres_SetActorRecordMode(index + side_start, 0);
-    }
+    for (index = 0; index != sideCount; index++)
+        BattlePres_SetActorRecordMode(index + sideStart, 0);
     BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
     WaitFrames(3);
     return 0;

@@ -8,6 +8,8 @@
 #include "system.h"
 #include "types.h"
 #include "ram_buffer.h"
+#include "owner_state.h"
+#include "chara.h"
 
 
 struct BtlSpriteSlots
@@ -59,5 +61,63 @@ s32 Resource_FindFreeSlot(s32 key)
     }
     result = 6;
 done:
+    return result;
+}
+
+extern const u16 Data_081287d4[];
+extern const u16 Data_081287e2[];
+extern const u16 Data_081287f0[];
+extern const u16 Data_081287fe[];
+extern const u16 Data_0812880c[];
+extern const u16 Data_0812881a[];
+extern const u16 Data_08128828[];
+extern const u16 Data_08128836[];
+
+s32 Inventory_FindEquippedFar(s32 owner, s32 kind);
+
+// The value of the owner's equipped weapon from its class's table, or 0.
+s32 BattleUnit_LookupWeaponValueByClass(s32 owner)
+{
+    struct OwnerInventoryState *unit = UnitGet(owner);
+    s32 slot = Inventory_FindEquippedFar(owner, 1);
+    s32 result = 0;
+
+    if (slot >= 0)
+    {
+        /* FAKEMATCH: the native loads the equipped item before it starts the id mask 0x1ff; plainly the mask is started first (one reordered row, differ 2). The item is pinned to the r3 it takes there and the barrier holds the mask until it is loaded; the barrier alone gives the item r0 and the mask r3 (differ 8), as does a one-pass block, and the pin alone or with an operand barrier differs 2 and 4. */
+        register u32 item __asm__("r3") = unit->inventory[slot];
+        s32 index;
+
+        /* FAKEMATCH: the barrier of the pin above. */
+        __asm__ volatile("");
+        index = Resource_FindFreeSlot(item & 0x1ff);
+        switch (unit->class_id)
+        {
+        case ROBIN:
+            result = Data_081287d4[index];
+            break;
+        case GERALD:
+            result = Data_081287e2[index];
+            break;
+        case IWAN:
+            result = Data_081287f0[index];
+            break;
+        case MEARI:
+            result = Data_081287fe[index];
+            break;
+        case JASMINE:
+            result = Data_0812880c[index];
+            break;
+        case GARUSHIA:
+            result = Data_0812881a[index];
+            break;
+        case SHIBA:
+            result = Data_08128828[index];
+            break;
+        case PIKAADO:
+            result = Data_08128836[index];
+            break;
+        }
+    }
     return result;
 }

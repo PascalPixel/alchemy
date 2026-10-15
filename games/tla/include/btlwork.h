@@ -48,7 +48,10 @@ struct BtlWork {
     s8 queue_count;
     u16 palette[128];
     s32 brightness;
-    u8 unknown_670[0x74];
+    u8 unknown_670[6];
+    u16 highlight_step;
+    u16 highlight_mode;
+    u8 unknown_67a[0x6a];
     struct BattleEventState events;
     u8 unknown_854[4];
     s32 unknown_858;
@@ -76,6 +79,8 @@ LAYOUT_OFFSET_GUARD(
     queued_summons,
     0x564);
 LAYOUT_OFFSET_GUARD(BattleSession_QueueCount, struct BtlWork, queue_count, 0x56b);
+LAYOUT_OFFSET_GUARD(BattleSession_HighlightStep, struct BtlWork, highlight_step, 0x676);
+LAYOUT_OFFSET_GUARD(BattleSession_HighlightMode, struct BtlWork, highlight_mode, 0x678);
 LAYOUT_OFFSET_GUARD(BattleSession_Events, struct BtlWork, events, 0x6e4);
 LAYOUT_OFFSET_GUARD(BattleSession_Unknown868, struct BtlWork, unknown_868, 0x868);
 

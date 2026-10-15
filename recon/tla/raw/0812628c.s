@@ -122,7 +122,7 @@ Func_0812628c:
 .L_0812636c:
 	.4byte 0x0000001f
 .L_08126370:
-	.4byte Func_08125c0c
+	.4byte BattlePres_UpdateHBlankScroll
 .L_08126374:
 	.4byte gIoWriteQueue
 .L_08126378:

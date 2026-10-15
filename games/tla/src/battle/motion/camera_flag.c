@@ -5,6 +5,7 @@
 #include "fixed_point_position.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "btlwork.h"
 
 void Object_Destroy(void *object);
 void Render_ResetTransformState(void);
@@ -31,4 +32,44 @@ s32 Camera_ApplyTransformByFlag(void)
     } else {
         return Graphics_PrepareTransferInIwramWork(state, state->pos);
     }
+}
+
+// BtlObjGet, as the native expands it here.
+static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
+{
+    u8 *work = (u8 *)Ram_HeapSlots->battle_work;
+    struct BtlObj *slots = ((struct BtlWork *)work)->slots;
+
+    if (id > 7)
+        id -= 0x78;
+    id += 0x74;
+    if (work[id] == 0xff)
+        return NULL;
+    return &slots[work[id]];
+}
+
+// Projects a battle object's position to the screen, in projected.
+s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
+{
+    struct MotionObject *object = BattleObject_FindSlot(id)->object;
+    struct MotionRecordScale *record = GetMotionRecord(object, 0);
+    s32 position[3];
+    s32 scaled;
+
+    Camera_ApplyTransformByFlag();
+    {
+        s32 *pos = position;
+        /* FAKEMATCH: the native copies projected to its argument register r1 between the first store of the position and the second load; plainly the load comes first (one reordered row, differ 2). The pointer is pinned to r1 and the barrier, which uses it and the position, holds the rest of the position after the copy. Measured against it: the barrier alone (differ 2), the pin alone (2), the barrier on the pin alone (4, the position's base moves). */
+        register s32 *out __asm__("r1");
+
+        pos[0] = object->x;
+        out = projected;
+        /* FAKEMATCH: the barrier of the pin above. */
+        __asm__ volatile("" : : "l"(out), "l"(pos));
+        pos[1] = object->y;
+        pos[2] = object->z;
+        scaled = Render_ProjectPoint(pos, out);
+    }
+    (void)Iwram_MulQ16(scaled, record->scale);
+    return 0;
 }

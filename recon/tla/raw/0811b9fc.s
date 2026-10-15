@@ -60,7 +60,7 @@ Func_0811b9fc:
 	beq .L_0811ba9a
 	adds r0, r5, #0
 	ldr r6, [r5]
-	bl Func_0811b598
+	bl BattleStatusIcon_Cycle
 	ldr r3, [r5, #36]
 	cmp r3, #0
 	beq .L_0811ba9a

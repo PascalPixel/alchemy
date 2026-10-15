@@ -3815,59 +3815,6 @@ Func_02003a08:
 	.4byte gPartyState
 .L_0200bac4:
 	.4byte 0xfff40000
-	.section .text.x0200bc14,"ax",%progbits
-	.balign 4
-	.global Func_02003c14
-	.thumb_func
-Func_02003c14:
-	push {r5, lr}
-	bl Func_02005a9c
-	movs r0, #0
-	bl Func_02005c3c
-	bl Event_StartScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200bc7c
-	bl Scheduler_AddOrUpdateCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r5, #0
-	b .L_0200bc3e
-.L_0200bc3c:
-	adds r5, #1
-.L_0200bc3e:
-	cmp r5, #159
-	bhi .L_0200bc54
-	movs r0, #1
-	bl Battle_WaitMode0
-	ldr r3, .L_0200bc80
-	movs r2, #11
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200bc3c
-.L_0200bc54:
-	ldr r0, .L_0200bc7c
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #218
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #32
-	str r2, [r3]
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r0, #11
-	bl Func_02005bc4
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200bc7c:
-	.4byte Func_02002d64
-.L_0200bc80:
-	.4byte gInput
 	.section .text.x0200c294,"ax",%progbits
 	.global Func_02004294
 	.thumb_func

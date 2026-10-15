@@ -75,6 +75,7 @@ void Func_02002910(struct ObjectRuntime *object, s32 mode);
 void Func_02002918(struct ObjectRuntime *object, const void *data);
 void Func_02002928(struct ObjectRuntime *object);
 void Func_02002960(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02002958(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 s32 Func_02002a68(void);
 void Func_02002998(void);
 void Func_020029a0(void);
@@ -289,6 +290,12 @@ static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02002960(a, b, c, d, e, f);
+}
+
+static __inline__ void Func_02002958_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002958(a, b, c, d, e, f);
 }
 
 static __inline__ void *MemAlloc_(s32 size)

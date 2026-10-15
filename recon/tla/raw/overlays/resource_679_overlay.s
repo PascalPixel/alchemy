@@ -1586,37 +1586,6 @@ Func_020015f8:
 	.4byte 0x060101c0
 .L_020097b8:
 	.4byte 0x40000400
-	.section .text.x020097bc,"ax",%progbits
-	.global Func_020017bc
-	.thumb_func
-Func_020017bc:
-	push {r5, lr}
-	ldr r5, .L_020097ec
-	movs r1, #128
-	lsls r1, r1, #5
-	ldr r3, .L_020097f0
-	adds r1, #4
-	adds r0, r5, #0
-	mov lr, r3
-	.2byte 0xf800
-	bl Resource_FindFreeEntry
-	strh r0, [r5]
-	movs r1, #128
-	ldrh r0, [r5]
-	lsls r1, r1, #2
-	movs r2, #0
-	bl VramBlock_LoadCached
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_020097f4
-	bl Scheduler_AddOrUpdateCallback
-	pop {r5, pc}
-.L_020097ec:
-	.4byte Data_02002aa0
-.L_020097f0:
-	.4byte IwramClearWords
-.L_020097f4:
-	.4byte Func_020015f8
 	.section .text.x020097f8,"ax",%progbits
 	.global Func_020017f8
 	.thumb_func

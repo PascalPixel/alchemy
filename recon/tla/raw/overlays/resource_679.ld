@@ -35,7 +35,7 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x020093d8)
         "*/games/tla/src/field/overlay_679/s1464.o"(.text)
         "*/resource_679_overlay.o"(.text.x020095f8)
-        "*/resource_679_overlay.o"(.text.x020097bc)
+        "*/games/tla/src/field/overlay_679/s17bc.o"(.text)
         "*/resource_679_overlay.o"(.text.x020097f8)
         "*/resource_679_overlay.o"(.text.x02009940)
         "*/resource_679_overlay.o"(.text.x02009ad8)

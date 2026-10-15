@@ -58,4 +58,13 @@ void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s
     UiText_DrawStringAtOffset(UiText_FormatNumber(data, pinned, width), work, x, y);
 }
 
+void UiText_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y)
+{
+    u8 data[16];
+    /* FAKEMATCH: pinned to r4 as in UiText_DrawNumber (differ 2 without). */
+    register s32 pinned asm("r4") = value;
+
+    UiText_DrawStringInWindow(UiText_FormatNumber(data, pinned, width), output, x, y);
+}
+
 #endif

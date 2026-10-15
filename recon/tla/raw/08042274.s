@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiText_DrawPrefixedNumberAtOffset
 	.thumb_func
 UiText_DrawPrefixedNumberAtOffset:

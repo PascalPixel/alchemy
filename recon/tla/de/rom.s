@@ -4112,12 +4112,6 @@ Func_0815585c:
 	.thumb_func
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x00156140, 0x000013a0
-	.section .rom.00157530, "ax"
-	.global Func_08157530
-	.type Func_08157530, %function
-	.thumb_func
-Func_08157530:
-	.incbin "baserom.gba", 0x00157530, 0x000000bc
 	.section .rom.00157636, "ax"
 	.incbin "baserom.gba", 0x00157636, 0x000006be
 	.section .rom.00157d30, "ax"

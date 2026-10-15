@@ -2033,7 +2033,6 @@ SECTIONS
         "*/recon/tla/raw/0815613e.o"(.text)
         "*/recon/tla/raw/08156140.o"(.text)
         "*/games/tla/src/battle/effect/rise.o"(.text)
-        "*/recon/tla/raw/08157530.o"(.text)
         "*/games/tla/src/battle/effect/transpose_copy.o"(.text)
         "*/recon/tla/raw/08157636.o"(.text)
         "*/recon/tla/raw/08157638.o"(.text)

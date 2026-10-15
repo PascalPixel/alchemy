@@ -1928,7 +1928,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0015613e)
     "*/recon/tla/ja/rom.o"(.rom.00156140)
     "*/games/tla/src/battle/effect/rise.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00157530)
     "*/games/tla/src/battle/effect/transpose_copy.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00157636)
     "*/games/tla/src/battle/effect/load_and_decompress.o"(.text)

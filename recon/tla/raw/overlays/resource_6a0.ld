@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a0/call_e20.o"(.text)
         "*/games/tla/src/field/overlay_6a0/scene_events.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02008e30)
-        "*/resource_6a0_overlay.o"(.text.x02008fc0)
+        "*/games/tla/src/field/overlay_6a0/s0fc0.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x0200915a)
         "*/games/tla/src/field/overlay_6a0/set_value.o"(.text)

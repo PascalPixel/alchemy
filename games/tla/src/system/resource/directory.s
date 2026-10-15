@@ -411,7 +411,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_RedPaletteC
 	resource , BattleFx_VioletPaletteD
 	resource , BattleFx_BlueBeamSheet
-	resource , BattleFx_VortexSheet
+	resource VortexSheet, BattleFx_VortexSheet
 	resource , BattleFx_TornadoSheet
 	resource , BattleFx_CrystalSheet
 	resource , BattleFx_LightningPillarSheet

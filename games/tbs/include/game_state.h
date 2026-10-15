@@ -7,87 +7,87 @@
 
 struct GameState
 {
-	u32			   buildStamp;
-	u32			   playTime;
-	u8			   unk008[8];
-	s32			   coins;
-	u8			   unk014[0x104];
-	s32			   shopCredit;
-	s8			   shopGifts;
-	s8			   prizeWeights[0x0f];
-	s8			   wonPrizes[0x10];
-	u8			   unk13c[0x84];
-	s16			   scene;
-	s16			   entrance;
-	s16			   savedScene;
-	s16			   savedEntrance;
-	s16			   defaultScene;
-	s16			   defaultEntrance;
-	s16			   sceneGroup;
-	s16			   nextScene;
-	s16			   nextEntrance;
-	s16			   defeatScene;
-	s16			   defeatEntrance;
-	s16			   special;
-	u8			   unk1d8[2];
-	s16			   map;
-	s32			   x;
-	s32			   y;
-	s32			   z;
-	u32			   heading;
-	u16			   turn;
-	s16			   sceneCue;
-	s16			   cue;
-	u8			   movementMode;
-	u8			   unk1f3;
-	s32			   selectedActor;
-	u8			   activeOwners[8];
-	u8			   unk200[5];
-	u8			   paletteGlow[2];
-	u8			   unk207[3];
-	u8			   speech;
-	u8			   unk20b;
-	u8			   messageSpeed;
-	u8			   unk20d[2];
-	u8			   unk20f;
-	u16			   aKeys;
-	u16			   bKeys;
-	u16			   selectKeys;
-	u16			   startKeys;
-	u16			   firstShortcutKeys;
-	u16			   secondShortcutKeys;
-	u16			   dashKeys;
-	s16			   returnCue;
-	u16			   firstShortcut;
-	u16			   secondShortcut;
-	u8			   perspectiveScene;
-	u8			   unk225[5];
-	u8			   savedOptions;
-	u8			   battleStart;
-	s16			   hazardLimit;
-	s16			   hazardMode;
-	s16			   hazardDamage;
-	s16			   hazardSteps;
-	s16			   pendingDjinnEvent;
-	s16			   sceneChangeReason;
-	s32			   encounterSteps;
-	u16			   pendingItem;
-	s16			   sceneVariant;
-	s16			   retreatScene;
-	s16			   retreatEntrance;
-	s32			   avoidDistance;
-	s8			   avoidByItem;
-	s8			   pausedPose;
-	s16			   pausedObject;
-	s16			   cloaked;
-	u8			   unk24e[2];
-	u32			   pausedUpdate;
-	u8			   unk254[0x50];
-	u16			   linkTallies[8];
-	u8			   unk2b4[4];
-	u32			   startStamp;
-	u8			   unk2bc[4];
-	struct BattleUnit owners[8];
+    u32               buildStamp;
+    u32               playTime;
+    u8                unk008[8];
+    s32               coins;
+    u8                unk014[0x104];
+    s32               shopCredit;
+    s8                shopGifts;
+    s8                prizeWeights[0x0f];
+    s8                wonPrizes[0x10];
+    u8                unk13c[0x84];
+    s16               scene;
+    s16               entrance;
+    s16               savedScene;
+    s16               savedEntrance;
+    s16               defaultScene;
+    s16               defaultEntrance;
+    s16               sceneGroup;
+    s16               nextScene;
+    s16               nextEntrance;
+    s16               defeatScene;
+    s16               defeatEntrance;
+    s16               special;
+    u8                unk1d8[2];
+    s16               map;
+    s32               x;
+    s32               y;
+    s32               z;
+    u32               heading;
+    u16               turn;
+    s16               sceneCue;
+    s16               cue;
+    u8                movementMode;
+    u8                unk1f3;
+    s32               selectedActor;
+    u8                activeOwners[8];
+    u8                unk200[5];
+    u8                paletteGlow[2];
+    u8                unk207[3];
+    u8                speech;
+    u8                unk20b;
+    u8                messageSpeed;
+    u8                unk20d[2];
+    u8                unk20f;
+    u16               aKeys;
+    u16               bKeys;
+    u16               selectKeys;
+    u16               startKeys;
+    u16               firstShortcutKeys;
+    u16               secondShortcutKeys;
+    u16               dashKeys;
+    s16               returnCue;
+    u16               firstShortcut;
+    u16               secondShortcut;
+    u8                perspectiveScene;
+    u8                unk225[5];
+    u8                savedOptions;
+    u8                battleStart;
+    s16               hazardLimit;
+    s16               hazardMode;
+    s16               hazardDamage;
+    s16               hazardSteps;
+    s16               pendingDjinnEvent;
+    s16               sceneChangeReason;
+    s32               encounterSteps;
+    u16               pendingItem;
+    s16               sceneVariant;
+    s16               retreatScene;
+    s16               retreatEntrance;
+    s32               avoidDistance;
+    s8                avoidByItem;
+    s8                pausedPose;
+    s16               pausedObject;
+    s16               cloaked;
+    u8                unk24e[2];
+    u32               pausedUpdate;
+    u8                unk254[0x50];
+    u16               linkTallies[8];
+    u8                unk2b4[4];
+    u32               startStamp;
+    u8                unk2bc[4];
+    struct BattleUnit owners[8];
 };
 
 LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, buildStamp, 0);
@@ -125,10 +125,10 @@ extern struct GameState gGameState;
 
 // 戦闘開始の種類を設定
 /* A statement macro (S2: a layer, 34 sites): written as one, its store stays in place at every use; as a plain assignment, tbs-en differs. */
-#define Battle_SetStart(mode)             \
-	do                                    \
-	{                                     \
-		gGameState.battleStart = (mode); \
-	} while (0)
+#define Battle_SetStart(mode)            \
+    do                                   \
+    {                                    \
+        gGameState.battleStart = (mode); \
+    } while (0)
 
 #endif

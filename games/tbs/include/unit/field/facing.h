@@ -13,7 +13,7 @@ extern const u8 gAnimationFacing_Kind88[8];
 extern const u8 gAnimationFacing_Kind4[64];
 extern const u8 gAnimationFacing_Kind6[64];
 
-extern const u8 gMap_TileDissolveOrder[64];
+extern const u8  gMap_TileDissolveOrder[64];
 extern const u16 gMap_TileDissolveTail;
 extern const s32 gCamera_FixedViewMatrix[12];
 extern const s32 gScriptObject_CycleTable[32];

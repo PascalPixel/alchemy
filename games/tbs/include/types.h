@@ -4,12 +4,12 @@
 #include "version.h"
 #include "config.h"
 
-typedef signed char		   s8;
-typedef unsigned char	   u8;
-typedef signed short	   s16;
-typedef unsigned short	   u16;
-typedef signed int		   s32;
-typedef unsigned int	   u32;
+typedef signed char        s8;
+typedef unsigned char      u8;
+typedef signed short       s16;
+typedef unsigned short     u16;
+typedef signed int         s32;
+typedef unsigned int       u32;
 typedef signed long long   s64;
 typedef unsigned long long u64;
 
@@ -25,14 +25,14 @@ typedef unsigned long long u64;
 // the linked name is pasted before it is macro-expanded: a name that is
 // itself a macro would otherwise expand first and cannot be pasted
 #define FIXED_LINKED_(symbol, name)             \
-	({                                          \
-		extern char symbol[] __asm__(name);     \
-		void *volatile modern_address = symbol; \
-		modern_address;                         \
-	})
+    ({                                          \
+        extern char symbol[] __asm__(name);     \
+        void *volatile modern_address = symbol; \
+        modern_address;                         \
+    })
 #define FIXED_ADDRESS(type, address, linked) (type FIXED_LINKED_(modern_##linked, #linked))
 #define FIXED_OFFSET(value, linked, from) \
-	((u32)FIXED_LINKED_(modern_##linked, #linked) - (u32)FIXED_LINKED_(modern_##from, #from))
+    ((u32)FIXED_LINKED_(modern_##linked, #linked) - (u32)FIXED_LINKED_(modern_##from, #from))
 #else
 #define FIXED_ADDRESS(type, address, linked) (type address)
 #define FIXED_OFFSET(value, linked, from) value

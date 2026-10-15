@@ -6,17 +6,17 @@
 
 struct SceneMotion
 {
-	u8	unk00[12];
-	s32 y;
-	u8	unk10[4];
-	s32 ground;
-	u8	unk18[16];
-	s32 velocity;
-	u8	unk2c[47];
-	u8	state;
-	u8	unk5c[8];
-	s16 timer, delay;
-	s32 active;
+    u8  unk00[12];
+    s32 y;
+    u8  unk10[4];
+    s32 ground;
+    u8  unk18[16];
+    s32 velocity;
+    u8  unk2c[47];
+    u8  state;
+    u8  unk5c[8];
+    s16 timer, delay;
+    s32 active;
 };
 
 LAYOUT_OFFSET_GUARD(SceneMotion_Velocity, struct SceneMotion, velocity, 0x28);

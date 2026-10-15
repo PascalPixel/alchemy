@@ -7,6 +7,7 @@ struct BgAffine;
 struct Position;
 struct ScanVertex;
 
-void Transform_UpdateVertices(struct Position *eye, struct Position *target, struct ScanVertex *vtx, struct BgAffine *out);
+void Transform_UpdateVertices(
+    struct Position *eye, struct Position *target, struct ScanVertex *vtx, struct BgAffine *out);
 
 #endif

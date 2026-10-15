@@ -7,27 +7,27 @@
 
 struct MapScanline
 {
-	s32 scale, depth;
-	s32 offsetX, offsetY;
-	s16 pa, pc;
+    s32 scale, depth;
+    s32 offsetX, offsetY;
+    s16 pa, pc;
 };
 
 struct MapAffineLine
 {
-	s16 pa, pb, pc, pd;
-	s32 x, y;
+    s16 pa, pb, pc, pd;
+    s32 x, y;
 };
 
 struct MapAffinePair
 {
-	struct MapAffineLine bg2, bg3;
+    struct MapAffineLine bg2, bg3;
 };
 
 struct MapFrameWork
 {
-	struct MapScanline	 scanlines[160];
-	struct MapAffinePair pages[2][160];
-	u8					 unk3480[4];
+    struct MapScanline   scanlines[160];
+    struct MapAffinePair pages[2][160];
+    u8                   unk3480[4];
 };
 
 LAYOUT_SIZE_GUARD(MapScanline_Size, struct MapScanline, 20);

@@ -10,9 +10,9 @@ extern struct EventWork *gEventWork;
 
 enum SceneTransitionStyle
 {
-	TRANSITION_FADE = 0,
-	TRANSITION_BACKDROP_FADE = 1,
-	TRANSITION_WINDOW = 2
+    TRANSITION_FADE = 0,
+    TRANSITION_BACKDROP_FADE = 1,
+    TRANSITION_WINDOW = 2
 };
 
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
@@ -25,43 +25,43 @@ union FieldObject;
 
 struct FieldActor
 {
-	u8					  unk00[6];
-	u16					  facing;
-	union FieldCoordinate x;
-	union FieldCoordinate y;
-	union FieldCoordinate z;
-	s32					  terrainHeight;
-	s32					  scaleX;
-	s32					  scaleY;
-	u16					  radius;
-	u8					  terrainId;
-	u8					  priorityFlags;
-	s32					  velocityX;
-	s32					  velocityY;
-	s32					  velocityZ;
-	s32					  speed;
-	s32					  acceleration;
-	s32					  targetX;
-	s32					  targetY;
-	s32					  targetZ;
-	s32					  bounce;
-	s32					  gravity;
-	s32					  riseBaseY;
-	struct FieldSprite	 *sprite;
-	u8					  active;
-	u8					  motionFlags;
-	u8					  unk56[3];
-	u8					  collisionFlags;
-	u8					  steeringFlags;
-	u8					  paused;
-	u8					  unk5c;
-	u8					  unk5d[5];
-	u8					  riseCounter;
-	u8					  riseEnabled;
-	s16					  timer;
-	u16					  work;
-	struct FieldActor	 *linkedObject; // 関連する物体
-	void (*update)(union FieldObject *object);
+    u8                    unk00[6];
+    u16                   facing;
+    union FieldCoordinate x;
+    union FieldCoordinate y;
+    union FieldCoordinate z;
+    s32                   terrainHeight;
+    s32                   scaleX;
+    s32                   scaleY;
+    u16                   radius;
+    u8                    terrainId;
+    u8                    priorityFlags;
+    s32                   velocityX;
+    s32                   velocityY;
+    s32                   velocityZ;
+    s32                   speed;
+    s32                   acceleration;
+    s32                   targetX;
+    s32                   targetY;
+    s32                   targetZ;
+    s32                   bounce;
+    s32                   gravity;
+    s32                   riseBaseY;
+    struct FieldSprite   *sprite;
+    u8                    active;
+    u8                    motionFlags;
+    u8                    unk56[3];
+    u8                    collisionFlags;
+    u8                    steeringFlags;
+    u8                    paused;
+    u8                    unk5c;
+    u8                    unk5d[5];
+    u8                    riseCounter;
+    u8                    riseEnabled;
+    s16                   timer;
+    u16                   work;
+    struct FieldActor    *linkedObject; // 関連する物体
+    void (*update)(union FieldObject *object);
 };
 
 LAYOUT_OFFSET_GUARD(FieldActor_Facing, struct FieldActor, facing, 0x06);
@@ -88,19 +88,19 @@ LAYOUT_OFFSET_GUARD(FieldActor_Update, struct FieldActor, update, 0x6c);
 
 enum ActorPriorityFlag
 {
-	ACTOR_PRIORITY_AUTOMATIC = 0x01,
-	ACTOR_PRIORITY_UNDERFOOT = 0x02
+    ACTOR_PRIORITY_AUTOMATIC = 0x01,
+    ACTOR_PRIORITY_UNDERFOOT = 0x02
 };
 
 enum ActorMotionFlag
 {
-	ACTOR_FOLLOWS_TERRAIN = 0x01,
-	ACTOR_FALLS = 0x02
+    ACTOR_FOLLOWS_TERRAIN = 0x01,
+    ACTOR_FALLS = 0x02
 };
 
 enum ActorSteeringFlag
 {
-	ACTOR_FACES_MOTION = 0x01
+    ACTOR_FACES_MOTION = 0x01
 };
 
 #endif

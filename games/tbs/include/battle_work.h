@@ -10,30 +10,30 @@
 
 struct BattlePromptSprite
 {
-	struct BattlePromptSprite *next;
-	u16						   y : 8;
-	u16						   flags : 8;
-	u16						   x : 9;
-	u16						   size : 7;
-	u16						   tile : 10;
-	u16						   palette : 6;
-	u16						   unk0a;
+    struct BattlePromptSprite *next;
+    u16                        y : 8;
+    u16                        flags : 8;
+    u16                        x : 9;
+    u16                        size : 7;
+    u16                        tile : 10;
+    u16                        palette : 6;
+    u16                        unk0a;
 };
 
 struct UiWindow;
 
 struct BattleDisplayOffset
 {
-	s32 unk00;
-	u16 x;
-	u16 y;
+    s32 unk00;
+    u16 x;
+    u16 y;
 };
 
 struct BattleDisplayWork
 {
-	struct UiWindow			   *window;
-	struct BattleDisplayOffset *offset;
-	s32							marked;
+    struct UiWindow            *window;
+    struct BattleDisplayOffset *offset;
+    s32                         marked;
 };
 
 LAYOUT_SIZE_GUARD(BattleDisplayOffset_Size, struct BattleDisplayOffset, 8);
@@ -43,59 +43,59 @@ extern struct BattleDisplayWork *gBattleDisplayWork;
 
 struct BattleEventState
 {
-	struct BattleEventQueue	  queue;
-	s32						  phase;
-	s32						  eventIndex;
-	s32						  timer;
-	struct BattlePromptSprite displayEntry;
-	s32						  displaySource;
-	s32						  actorId;
-	s32						  pendingCue;
-	s32						  flags;
+    struct BattleEventQueue   queue;
+    s32                       phase;
+    s32                       eventIndex;
+    s32                       timer;
+    struct BattlePromptSprite displayEntry;
+    s32                       displaySource;
+    s32                       actorId;
+    s32                       pendingCue;
+    s32                       flags;
 };
 
 struct BattleWork
 {
-	s32						  enemyGroup;
-	s16						  spriteSlots[6];
-	u16						  enemyClasses[6];
-	u32						  summonMasks[6];
-	s8						  summonChannels[6];
-	u8						  unk03a[2];
-	u16						  firstDefeated;
-	u16						  defeatState;
-	u8						  summonCount;
-	u8						  partyStatus;
-	u8						  battleType;
-	u8						  challengeFlag;
-	u8						  twoSided;
-	u8						  encounterMode;
-	u8						  escapeFailures;
-	u8						  unk047;
-	u8						  ownerSlots[8];
-	u8						  linkSide;
-	u8						  linkMisses;
-	u8						  linkPaused;
-	u8						  unk053;
-	s32						  promptSlot;
-	s16						  partyUnits[7];
-	s16						  enemyIds[7];
-	struct BattleObj			  slots[14];
-	u8						  placement[14];
-	u8						  unk2ea[2];
-	struct BattleActionRecord actions[20];
-	u8						  unk42c[0x104];
-	struct BattleSpoils		  spoils;
-	u16						  palette[128];
-	s32						  brightness;
-	u16						  background;
-	u8						  unk64a[4];
-	u16						  highlightStep;
-	u16						  highlightMode;
-	u8						  unk652[2];
-	struct BattlePlan			  plan;
-	struct BattleEventState	  events;
-	s32						  debugValue;
+    s32                       enemyGroup;
+    s16                       spriteSlots[6];
+    u16                       enemyClasses[6];
+    u32                       summonMasks[6];
+    s8                        summonChannels[6];
+    u8                        unk03a[2];
+    u16                       firstDefeated;
+    u16                       defeatState;
+    u8                        summonCount;
+    u8                        partyStatus;
+    u8                        battleType;
+    u8                        challengeFlag;
+    u8                        twoSided;
+    u8                        encounterMode;
+    u8                        escapeFailures;
+    u8                        unk047;
+    u8                        ownerSlots[8];
+    u8                        linkSide;
+    u8                        linkMisses;
+    u8                        linkPaused;
+    u8                        unk053;
+    s32                       promptSlot;
+    s16                       partyUnits[7];
+    s16                       enemyIds[7];
+    struct BattleObj          slots[14];
+    u8                        placement[14];
+    u8                        unk2ea[2];
+    struct BattleActionRecord actions[20];
+    u8                        unk42c[0x104];
+    struct BattleSpoils       spoils;
+    u16                       palette[128];
+    s32                       brightness;
+    u16                       background;
+    u8                        unk64a[4];
+    u16                       highlightStep;
+    u16                       highlightMode;
+    u8                        unk652[2];
+    struct BattlePlan         plan;
+    struct BattleEventState   events;
+    s32                       debugValue;
 };
 
 LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleWork, 0x82c);

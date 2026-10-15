@@ -8,32 +8,32 @@
 
 struct MapLayerScroll
 {
-	s32				x, y;
-	s32				offsetX, offsetY;
-	s32				scaleX, scaleY;
-	s32				speedX, speedY;
-	s32				phaseX, phaseY;
-	u16				maskX, maskY;
-	struct MapCell *cells;
+    s32             x, y;
+    s32             offsetX, offsetY;
+    s32             scaleX, scaleY;
+    s32             speedX, speedY;
+    s32             phaseX, phaseY;
+    u16             maskX, maskY;
+    struct MapCell *cells;
 };
 
 struct MapScrollWork
 {
-	s32					   *origin;
-	s32						shakeX, shakeY, shakeDecay;
-	u8					   *script;
-	u16						flags;
-	u8						wideTiles;
-	u8						footprints;
-	struct MapAnimation		anim[16];
-	struct BlendScriptState blend;
-	s32						viewX, viewY;
-	s32						minX, minY, maxX, maxY;
-	s8						animationActive;
-	u8						unk0fd[3];
-	u8						enabled[3];
-	u8						unk103;
-	struct MapLayerScroll	layers[3];
+    s32                    *origin;
+    s32                     shakeX, shakeY, shakeDecay;
+    u8                     *script;
+    u16                     flags;
+    u8                      wideTiles;
+    u8                      footprints;
+    struct MapAnimation     anim[16];
+    struct BlendScriptState blend;
+    s32                     viewX, viewY;
+    s32                     minX, minY, maxX, maxY;
+    s8                      animationActive;
+    u8                      unk0fd[3];
+    u8                      enabled[3];
+    u8                      unk103;
+    struct MapLayerScroll   layers[3];
 };
 
 #include "perspective.h"
@@ -49,7 +49,7 @@ LAYOUT_OFFSET_GUARD(MapScrollWork_Layers, struct MapScrollWork, layers, 0x104);
 
 struct BgScroll
 {
-	u16 x, y;
+    u16 x, y;
 };
 
 extern struct BgScroll gBgScroll[];

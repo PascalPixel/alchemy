@@ -3,17 +3,17 @@
 
 enum ItemId
 {
-	ITEM_NUT = 0xb5,
-	ITEM_VIAL = 0xb6,
-	ITEM_ANTIDOTE = 0xbb,
-	ITEM_ELIXIR = 0xbc,
-	ITEM_WATER_OF_LIFE = 0xbd,
-	ITEM_SMOKE_BOMB = 0xe2,
-	ITEM_SLEEP_BOMB = 0xe3,
-	ITEM_LUCKY_MEDAL = 0xe5,
-	ITEM_BONE = 0xe7,
-	ITEM_CELL_KEY = 0xea,
-	ITEM_BLACK_ORB = 0xf2
+    ITEM_NUT = 0xb5,
+    ITEM_VIAL = 0xb6,
+    ITEM_ANTIDOTE = 0xbb,
+    ITEM_ELIXIR = 0xbc,
+    ITEM_WATER_OF_LIFE = 0xbd,
+    ITEM_SMOKE_BOMB = 0xe2,
+    ITEM_SLEEP_BOMB = 0xe3,
+    ITEM_LUCKY_MEDAL = 0xe5,
+    ITEM_BONE = 0xe7,
+    ITEM_CELL_KEY = 0xea,
+    ITEM_BLACK_ORB = 0xf2
 };
 
 #endif

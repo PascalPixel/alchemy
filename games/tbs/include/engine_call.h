@@ -26,71 +26,71 @@ struct MenuSprite;
 // FieldScheduler_AddOrUpdateCallback もこれを通る (オーバーレイはこのルーチンを一つの名前で呼ぶ)。
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback, s32 priority)
 {
-	return Scheduler_AddOrUpdateCallback(callback, priority);
+    return Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void FieldUiTextResource_Initialize(struct MenuSprite *cursor, s32 *slot)
 {
-	UiTextResource_Initialize(cursor, slot);
+    UiTextResource_Initialize(cursor, slot);
 }
 
 static inline void FieldUiTextResource_SetPosition(struct MenuSprite *cursor, s32 x, s32 y)
 {
-	UiTextResource_SetPosition(cursor, x, y);
+    UiTextResource_SetPosition(cursor, x, y);
 }
 
 static inline void FieldUi_AdjustValueWithoutLimit(s32 message, s32 buffer)
 {
-	Ui_AdjustValueWithoutLimit(message, buffer);
+    Ui_AdjustValueWithoutLimit(message, buffer);
 }
 
 static inline void FieldMap_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY)
 {
-	Map_SetViewBounds(minX, minY, maxX, maxY);
+    Map_SetViewBounds(minX, minY, maxX, maxY);
 }
 
 static inline void FieldBattleFx_RunRisingObjectSequence(s32 actor, s32 mode, s32 action)
 {
-	BattleFx_RunRisingObjectSequence(actor, mode, action);
+    BattleFx_RunRisingObjectSequence(actor, mode, action);
 }
 
 static inline s32 FieldObject_CheckMovementCollision(
-	struct FieldActor *actor, struct FieldPosition *position)
+    struct FieldActor *actor, struct FieldPosition *position)
 {
-	return Object_CheckMovementCollision((struct ObjectRuntime *)actor, position);
+    return Object_CheckMovementCollision((struct ObjectRuntime *)actor, position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag)
 {
-	return GameFlag_GetByte(flag);
+    return GameFlag_GetByte(flag);
 }
 
 static inline void FieldGameFlag_SetByte(s32 flag, s32 value)
 {
-	GameFlag_SetByte(flag, value);
+    GameFlag_SetByte(flag, value);
 }
 
 static inline s32 FieldParty_ListActiveOwners(s16 *owners)
 {
-	return Party_ListActiveOwners(owners);
+    return Party_ListActiveOwners(owners);
 }
 
 static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta)
 {
-	return Owner_AdjustFirstValue(owner, delta);
+    return Owner_AdjustFirstValue(owner, delta);
 }
 
 // 型 01 の圧縮データを展開する。シーンのほかタイトルとクリアのメニューもこれを取り込む。
 // 本体の field/camera.c の同じ展開は call.h のタグ付きの Value2 で呼ぶ。
 static inline s32 FieldResource_DecodeType01(const void *source, void *destination)
 {
-	return Resource_DecodeType01(source, destination);
+    return Resource_DecodeType01(source, destination);
 }
 
 static inline void DisplayScroll_StartHBlankDma(
-	s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY, s32 ampY)
+    s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY, s32 ampY)
 {
-	Engine_DisplayScrollStartHBlankDma(mode, freqX, stepX, ampX, freqY, stepY, ampY);
+    Engine_DisplayScrollStartHBlankDma(mode, freqX, stepX, ampX, freqY, stepY, ampY);
 }
 
 #endif

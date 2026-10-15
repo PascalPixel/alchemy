@@ -1359,7 +1359,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/effect04_entry.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000de210)
     "*/games/tla/src/battle/effect/update_orbiting_particle_main.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000de67c)
     "*/games/tla/src/battle/effect/sway.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000de858)
     "*/recon/tla/it/rom.o"(.rom.000de8c4)

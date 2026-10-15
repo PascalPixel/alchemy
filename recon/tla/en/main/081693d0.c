@@ -19,7 +19,11 @@
  * tile pointer in a local set first (446); work declared right after the
  * canvas, found by a greedy scan of declaration positions (360); alchemy
  * permute 6 minutes: 349 with a reused variable, not kept. Renaming the locals
- * for this draft left 360. */
+ * for this draft left 360. alchemy permute 10 minutes, 2 jobs, on this draft
+ * (2026-10-15): 278 to 298, each only through an invented temporary (the
+ * 0x03000000 base held in the frame variable, the canvas in a two-word array,
+ * a spare u16 pointer), not kept; they say the native holds the heap base in
+ * a register the frame later takes. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

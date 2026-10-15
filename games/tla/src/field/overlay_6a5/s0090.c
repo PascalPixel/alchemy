@@ -25,3 +25,24 @@ void Func_02000090(struct FieldActor *self)
     self->target_z = z;
     *(s16 *)&self->timer += -0x800;
 }
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+// Circles object 36 as ☀️'s SceneEffect_UpdateCounterDrivenOrbit does:
+// wider across than deep, by the actor's speed and its byte at 98.
+void Func_020000ec(struct FieldActor *self)
+{
+    struct FieldActor *centre = Object_GetById(36);
+    u16 angle = self->timer;
+    s32 cosine = Math_Cosine(angle);
+    s32 radius = self->speed + BYTE_AT(self, 98);
+    /* FAKEMATCH: the centre pinned to r1 and held by an empty asm before the radius is finished copies it out of r8 ahead of the + 6, as the native does; plain, sched2 ranks the + 6 above the reload of the centre (differ 2). */
+    register struct FieldActor *anchor asm("r1") = centre;
+
+    asm volatile("" : "+r"(anchor));
+    self->x = anchor->x + cosine * (radius + 6);
+    self->z = centre->z + Math_Sine(angle) * (BYTE_AT(self, 98) + 4);
+    self->target_x = self->x;
+    self->target_z = self->z;
+    *(s16 *)&self->timer += -0x800;
+}

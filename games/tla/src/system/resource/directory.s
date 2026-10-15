@@ -458,7 +458,7 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesD6
 	resource , Field_WhirlwindTiles
 	resource , Field_WhirlwindMap
-	resource , Resource_Data1C0
+	resource , Field_LightningTiles
 	resource , Field_LightningMap
 	resource , Field_WalkPathA
 	resource , Field_WalkPathB

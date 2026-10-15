@@ -3529,6 +3529,7 @@ SECTIONS
         "*/games/tla/src/graphics/field/whirlwind_tiles.o"(.rodata)
         "*/games/tla/src/graphics/field/whirlwind_map.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08953f65)
+        "*/games/tla/src/graphics/field/lightning_tiles.o"(.rodata)
         "*/games/tla/src/graphics/field/lightning_map.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.089542ea)
         "*/games/tla/src/graphics/field/walk_path_a.o"(.rodata)

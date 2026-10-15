@@ -3196,7 +3196,7 @@ SECTIONS
     "*/games/tla/src/graphics/field/whirlwind_tiles.o"(.rodata)
     "*/games/tla/src/graphics/field/whirlwind_map.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.00954145)
-    "*/recon/tla/de/rom.o"(.rom.00954148)
+    "*/games/tla/src/graphics/field/lightning_tiles.o"(.rodata)
     "*/games/tla/src/graphics/field/lightning_map.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.009544ca)
     "*/games/tla/src/graphics/field/walk_path_a.o"(.rodata)

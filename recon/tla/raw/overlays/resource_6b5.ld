@@ -8,7 +8,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b5/layout.o"(.text)
         "*/games/tla/src/field/overlay_6b5/peer.o"(.text)
         "*/games/tla/src/field/overlay_6b5/lobby.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x02008134)
         "*/games/tla/src/field/overlay_6b5/circle.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x0200839c)
         "*/games/tla/src/field/overlay_6b5/owners.o"(.text)

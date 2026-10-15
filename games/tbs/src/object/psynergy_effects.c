@@ -144,10 +144,11 @@ struct FieldWork {
   s16 effectFrames;  // frames the effect has left
   s16 effectCenterX; // centre of the effect, in pixels
   s16 effectCenterY;
-  s16 unkcc0;
-  u8 unkcc2[4];
+  s16 effectTimerRunning; // the timed effect (kind 8) counts down while set
+  s16 choiceNameMessage;  // the yes/no menu's name window (EventPromptWork)
+  s16 choiceNameWidth;
   s8 resolvingAction; // set while a Psynergy effect is being shown
-  s8 unkcc7;
+  s8 castStarted;     // set once a cast has been announced
   s16 queuedSound;
 };
 
@@ -4415,6 +4416,11 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   }
 }
 
+// A Venus Djinni joins the party: it hops twice, spins and leaps, then
+// shrinks away; the leader turns to the camera and plays animation 28 while
+// 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
+// spiral down onto the leader from 120 pixels above
+// (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
 void BattleFx_RunVenusDjinnCapture(s32 arg) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
@@ -4546,6 +4552,10 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
+// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
+// pixels above to a random point near the leader (state 0), then darts
+// between random points 12 pixels apart (states 1 and 2, a sound each time)
+// until the sequence sets state 3, which frees it.
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
@@ -4600,6 +4610,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   }
 }
 
+// Per-frame update of an afterimage: closes half the distance to the object
+// it is linked to.
 void BattleFx_HalveDistanceToTarget(struct FieldActor *object) {
   struct FieldActor *target = object->linkedObject;
 
@@ -4609,19 +4621,17 @@ void BattleFx_HalveDistanceToTarget(struct FieldActor *object) {
 }
 
 //--------------------------------------------------------------------------
-// run_mercury_djinn_capture.c
-// フィールド演出：水のジンが仲間になるとき、跳ねて残像を引いて昇り、粒を降らせる
+// A Mercury Djinni joining the party.
 //--------------------------------------------------------------------------
 
-#define AFTERIMAGE_MAX 8 // 残像の数
-#define PARTICLE_MAX 24  // 降らせる粒の数 (scene->slots)
+#define AFTERIMAGE_MAX 8 // afterimages of the rising Djinni
+#define PARTICLE_MAX 24  // droplets (one an effect slot)
 
-//--------------------------------------------------------------------------
-// 画面を青く染め、ジンを 3 回跳ねさせてから 8 つの残像を引いて 120 ドット
-// 昇らせて消す。selectedActor を mode 28 にしたあと、そのまわりに粒を
-// 1 フレームに 1 つずつ 24 個降らせ、最後に色を戻す
-// id : ジンのオブジェクト番号
-//--------------------------------------------------------------------------
+// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
+// bounces twice and hops three times ever higher, then rises 120 pixels out
+// of sight trailing eight afterimages. The leader turns to the camera and
+// plays animation 28 while 24 droplets rain round it, one a frame
+// (BattleFx_UpdateRandomTargetParticle); then the colours return.
 void BattleFx_RunMercuryDjinnCapture(s32 id) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
@@ -4642,7 +4652,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
   if (djinni == NULL)
     return;
 
-  // 画面の色を青 (R4 G4 B16) で染める
+  // Tint the screen blue (red 4, green 4, blue 16).
   BattleFx_InitializeSlots();
   scene = gEffectWork;
   Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | (16 << 10) | (4 << 5) | 4);
@@ -4654,7 +4664,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
   Motion_SetVarCbAndRefresh(id, 1);
   WaitFrames(20);
 
-  // 3・5・7 ドット/フレームで 3 回跳ねる
+  // Three hops, at 3, 5 and 7 pixels a frame.
   AudioCommand_PlayFar(152);
   ObjectMotion_Launch(id, 3, 14);
   AudioCommand_PlayFar(152);
@@ -4663,7 +4673,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
   ObjectMotion_Launch(id, 7, 18);
   WaitFrames(20);
 
-  // 残像：同じ絵を 8 つ作り、それぞれ一つ前を半分ずつ追いかけさせる
+  // Eight afterimages of the same sprite, each closing half the distance to
+  // the one before it every frame.
   kind = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
   resource = NULL;
   previous = djinni;
@@ -4689,7 +4700,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
     }
   }
 
-  // 8 ドットずつ 15 フレーム昇らせ、ジンと残像を消す
+  // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
+  // afterimages (and their VRAM block, unless it is the shared block 96).
   resourceId = resource->vramBlock;
   AudioCommand_PlayFar(153);
   djinni->motionFlags = 0;
@@ -4710,8 +4722,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
       Object_GetById(gGameState.selectedActor), 28);
   WaitFrames(20);
 
-  // 粒 (種類 240) を 1 フレームに 1 つずつ出す。動きは
-  // BattleFx_UpdateRandomTargetParticle
+  // The droplets (object 240), one a frame, from where the Djinni was on
+  // screen (BattleFx_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
   position.z = djinni->z.fixed;
@@ -4731,7 +4743,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
     slot += 72; // sizeof(struct EffectSlot)
   } while (remaining >= 0);
 
-  // 120 フレーム後、動いている粒 (active) の state を 2 にする
+  // After 120 frames every droplet still in use goes on to state 2.
   WaitFrames(120);
   {
     s32 nextState;
@@ -4748,23 +4760,21 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
     } while (remaining >= 0);
   }
 
-  // 色を戻す
+  // Restore the colours.
   WaitFrames(50);
   Shop_InitEffectFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
 //--------------------------------------------------------------------------
-// dispatch_type_handler.c
-// フィールド：演出処理の呼び分け
+// Running a Psynergy effect on the field, by its kind.
 //--------------------------------------------------------------------------
-// 物体や座標は関数ごとの構造体で渡すので、引数は void * で受ける
+// Each effect passes its objects and positions in a structure of its own,
+// so the handlers take void *.
 
-//--------------------------------------------------------------------------
-// kind に応じた演出の処理を呼ぶ
-// kind : 0 対象を指定せずに実行、1 指定の対象 (secondObjectId) に実行、2
-// 終わり、3 種類ごとの処理
-//--------------------------------------------------------------------------
+// Runs one step of the current Psynergy effect: 0 casts it with no target,
+// 1 casts it on its target (secondObjectId), 2 finishes it and 3 runs its
+// kind's extra handler.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == 0)
     BattleFx_Run();
@@ -4777,17 +4787,17 @@ void Field_DispatchTypeHandler(s32 kind) {
 }
 
 //--------------------------------------------------------------------------
-// effect.c
-// フィールド効果：種類ごとの振り分けと、効果のイベント処理
+// Psynergy effects on the field: the handlers for each kind, and the events
+// an effect sets off.
 //--------------------------------------------------------------------------
 
-#define HEAP_SLOT_FX 56 // エナジー演出のワーク (gWorkSlot[56] は gEffectWork)
+#define HEAP_SLOT_FX                                                           \
+  56 // the Psynergy effect's work (gWorkSlot[56], gEffectWork)
 
 void _call_via_r3(s32, s32);
 
-//--------------------------------------------------------------------------
-// 効果の種類 (animation) ごとに本体を走らせる
-//--------------------------------------------------------------------------
+// Casts the current Psynergy effect with no target: runs the body of its
+// kind (scene->animation).
 void BattleFx_Run(void) {
   struct BattleFxScene *scene;
   struct BattleRuntime *runtime;
@@ -4831,7 +4841,7 @@ void BattleFx_Run(void) {
   case 13:
     RunBattleEffect13();
     return;
-  case 9: // 前に止めた対象を戻し、近くの対象を止める
+  case 9: // free the object stopped before, then stop the nearest one
     if (gGameState.pausedObject != -1) {
       BattleFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
@@ -4849,7 +4859,7 @@ void BattleFx_Run(void) {
       BattleEffect_RunFallbackObjectTransition();
     }
     return;
-  case 2: // 波と色の効果 (種類 8 の効果が動いていれば先に止める)
+  case 2: // the wave and colour effect (stopping a running kind 8 first)
     if (*(s16 *)&runtime->unkcb8[0] != 0)
       ResetSceneTransitionEffect();
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
@@ -4869,9 +4879,8 @@ void BattleFx_Run(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 対象が決まっているときの振り分け
-//--------------------------------------------------------------------------
+// Casts the current Psynergy effect on its target (secondObjectId): runs the
+// handler of its kind.
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct BattleRuntime *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
@@ -4887,7 +4896,7 @@ void BattleFx_DispatchRequestKind(void) {
       ((struct ObjectRuntime *)scene->child)->movementState = 1;
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     break;
-  case 1: // 方向キーで対象を押す
+  case 1: // push the target with the direction keys
     BattleFx_SteerPushedTarget(targetId);
     break;
   case 7:
@@ -4941,9 +4950,8 @@ void BattleFx_DispatchRequestKind(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 種類 2 の後始末：効果を終え、止めていない対象の movementState を戻す
-//--------------------------------------------------------------------------
+// Finishes an effect of kind 2: ends the effect and lets its target move
+// again, unless the target is the object kept stopped.
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
@@ -4955,9 +4963,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 種類 8, 10, 16 の追加処理
-//--------------------------------------------------------------------------
+// The extra handler of effect kinds 8, 10 and 16.
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
@@ -4975,13 +4981,10 @@ void FieldEvent_RunTypeHandler(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 効果に結びついたイベントを実行する
-// event  : オフセット 8 の値が 0x10000
-// 未満ならメッセージ番号、それ以上なら処理の番地 param  : 処理へ渡す値
-// (使った者など) target : 対象 フラグ 322
-// が立っていれば「何も起こらない」を出す
-//--------------------------------------------------------------------------
+// Runs the event tied to an effect: a result below 0x10000 is a message,
+// shown at target; a larger one is a routine, called with param and target
+// (through r3). Afterwards, with flag 322 set, says "But nothing happens.".
+// Returns 0.
 s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
   s32 script;
 
@@ -5006,9 +5009,8 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// 各パーツのパレットをフレーム数 % 6 にする (毎フレーム呼ぶと色が巡る)
-//--------------------------------------------------------------------------
+// Per-frame update: sets every part of an object's sprite to param
+// frame % 6, which cycles its colours.
 void ObjectGroup_ApplyRandomChildValues(void *owner) {
   s32 kind;
   void *anim;
@@ -5045,9 +5047,8 @@ void ObjectGroup_ApplyRandomChildValues(void *owner) {
   }
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトを向き angle へ magnitude だけずらした位置に置く
-//--------------------------------------------------------------------------
+// Sends an object toward the point magnitude (16.16 pixels) away from it in
+// direction angle.
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle) {
   s32 pos[3];
@@ -5061,8 +5062,9 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
   }
 }
 
-// 以下では物体を関数ごとの構造体で渡す
+// From here on objects are passed in each function's own view of them.
 
+// Counts the free blocks (owner 0xff) of the 512 resource blocks.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount = 0;
@@ -5077,6 +5079,10 @@ s32 ResourceTable_CountFreeBlocks(void) {
   return freeCount;
 }
 
+// Makes the sprite src share the VRAM block of alt, releasing its own; with
+// no alt it keeps its block. Marks the sprite for redrawing and returns the
+// sprite whose block is shared from now on (alt, or src when there was none),
+// or NULL for no src. Chains of afterimages pass one block along this way.
 void *Object_ReplaceResourceEntry(void *src, void *alt) {
   void *ret;
   struct FieldSprite *obj;
@@ -5097,14 +5103,9 @@ void *Object_ReplaceResourceEntry(void *src, void *alt) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// arcupdat.c
-// エナジー演出：演出用の物体、ほかの物体の一括設定、ふくらむ弧の動き
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 演出用の物体を出す
-// アニメのない物体は消して NULL。高さは使う者に合わせ、優先度は 0
-//--------------------------------------------------------------------------
+// Creates an object for an effect, at the caster's ground height, with
+// sprite priority 0 and animation 1. An object without animation is released
+// and NULL returned.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct BattleFxScene *work = gEffectWork;
   struct ObjectRuntime *obj;
@@ -5126,9 +5127,8 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return obj;
 }
 
-//--------------------------------------------------------------------------
-// 主人公と except 以外のすべての物体に、動きの状態と値を設定する
-//--------------------------------------------------------------------------
+// Sets the movement state and animation timer steps of every object but the
+// player's and except.
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;
@@ -5147,10 +5147,10 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
   } while (id <= OBJ_LAST);
 }
 
-//--------------------------------------------------------------------------
-// 弧 A：32 フレームでふくらんでしぼみ、毎フレーム 1 ドット上がる
-// z は物体の 9 ドット先から、小さいほど 5 ドットまで離れる
-//--------------------------------------------------------------------------
+// Per-frame update of arc A: over 32 frames it swells and shrinks again
+// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
+// it follows, 9 pixels in front of it and up to 5 pixels further while
+// small.
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj) {
   struct FieldActor *link;
   s32 v;
@@ -5170,10 +5170,8 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj) {
   obj->z.fixed = link->z.fixed + (0x10000 - v) * 5 + 0x90000;
 }
 
-//--------------------------------------------------------------------------
-// 弧 B：A の上下を反転したもの。z は物体の 16 ドット先から、小さいほど 5
-// ドットまで寄る
-//--------------------------------------------------------------------------
+// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
+// object and up to 5 pixels nearer while small.
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj) {
   struct FieldActor *link;
   s32 v;
@@ -5194,10 +5192,11 @@ void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj) {
 }
 
 //--------------------------------------------------------------------------
-// actsetup.c
-// エナジー演出：ワークの準備、使う者と対象の記録、ふくらむ弧の物体
+// Psynergy effects: preparing the work, recording caster and target, and
+// spawning the swelling arcs.
 //--------------------------------------------------------------------------
-// スプライト：OAM の三つの属性と管理情報
+// A sprite as the arcs set it up: its three OAM attributes and its
+// bookkeeping.
 struct ArcSprite {
   u8 pad00[4];
   u16 y : 8;
@@ -5205,7 +5204,7 @@ struct ArcSprite {
   u16 doubleSize : 1;
   u16 mode : 2;
   u16 mosaic : 1;
-  u16 color : 1; // 1 = 256 色
+  u16 color : 1; // 1 = 256 colours
   u16 shape : 2;
   u16 x : 9;
   u16 unused : 3;
@@ -5216,7 +5215,7 @@ struct ArcSprite {
   u16 priority : 2;
   u16 palette : 4;
   u8 pad0a[18];
-  u8 slot; // VRAM ブロック
+  u8 slot; // VRAM block
   u8 active : 1;
   u8 displayFlags : 7;
   u8 pad1e[8];
@@ -5225,10 +5224,8 @@ struct ArcSprite {
   struct AnimationEntry *child;
 };
 
-//--------------------------------------------------------------------------
-// 物体の位置に二つの弧を出す (B は上下を反転)
-// 弧は 32 フレームでふくらんでしぼみ、物体についていく
-//--------------------------------------------------------------------------
+// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
+// down); they follow it for 32 frames.
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
@@ -5248,10 +5245,10 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->linkedObject = linked;
-    obj->scaleX = obj->scaleY = 0x1999; // 0.1 倍
+    obj->scaleX = obj->scaleY = 0x1999; // 0.1
     if (spr == 0)
       continue;
-    // 演出のタイルを使う 16 色の横長スプライト
+    // A wide 16-colour sprite drawn from the effect's tiles.
     AnimationObjects_SelectAnimationFar((struct AnimationObject *)spr, 0);
     spr->flags = 0;
     Resource_ResetEntry(spr->slot);
@@ -5263,7 +5260,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
     spr->size = 2;
     spr->child->frame = 0;
   }
-  // B の弧は最前面、A の弧は使う者と同じ優先度
+  // Arc B in front of everything, arc A at the caster's priority.
   objs[0]->update = BattleFx_UpdateScaledArcObjectB;
   objs[0]->sprite->priority = 0;
   objs[1]->update = BattleFx_UpdateScaledArcObjectA;
@@ -5271,9 +5268,8 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   objs[1]->priorityFlags = 2;
 }
 
-//--------------------------------------------------------------------------
-// 2 フレームごとに色 7 と 0 を切り替え、16 フレームごとに弧を出す
-//--------------------------------------------------------------------------
+// Per-frame update: flashes an object between sprite param 7 and 0 every 2
+// frames and spawns the swelling arcs on it every 16.
 void BattleFx_FlickerObjectAndTick(s32 obj) {
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 7);
@@ -5285,9 +5281,8 @@ void BattleFx_FlickerObjectAndTick(s32 obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 2 フレームごとに色 0-5 を順に回し、16 フレームごとに弧を出す
-//--------------------------------------------------------------------------
+// Per-frame update: cycles an object through sprite params 0 to 5, one step
+// every 2 frames, and spawns the swelling arcs on it every 16.
 void BattleFx_CycleObjectValueByCounter(s32 obj) {
   if ((gFrameCount & 1) != 0) {
     s32 col = (gFrameCount >> 1) % 6;
@@ -5299,15 +5294,12 @@ void BattleFx_CycleObjectValueByCounter(s32 obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 演出スロット 24 個を動かす
-//--------------------------------------------------------------------------
+// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllEffectSlots(void) { UpdateAllEffectSlots(); }
 
-//--------------------------------------------------------------------------
-// エナジー演出のワークを用意し、わざの演出を準備する
-// 演出中にもう一度呼ばれたら、わざだけを入れ替える
-//--------------------------------------------------------------------------
+// Prepares the work of the Psynergy effect for ability (heap slot 56) and
+// loads its spark tiles. Called again while an effect resolves, it only
+// switches the ability.
 void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
@@ -5332,7 +5324,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->enabled = 1;
   work->active = 1;
   work->messageMode = 1;
-  // マップのゆれの大きさと減り方を取っておき、演出の後で戻す
+  // Keep the map's shake and its decay, to restore after the effect.
   work->savedX = map->shakeX;
   work->savedY = map->shakeY;
   work->savedZ = map->shakeDecay;
@@ -5342,16 +5334,15 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
   if (work->animation != 8)
-    ev->unkcc0 = running;
+    ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
   VramBlock_LoadCached((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
-//--------------------------------------------------------------------------
-// 使う者と対象の物体を記録する
-// 対象がなければ、使う者の向きに 16 ドット先を演出の位置にする
-//--------------------------------------------------------------------------
+// Records the caster and the target of an effect. With no target, the effect
+// takes place 16 pixels in front of the caster (facing to the nearest
+// quarter turn).
 void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
@@ -5364,11 +5355,11 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   work->secondObjectId = targetId;
   work->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
-  dir = (user->facing + 0x2000) & 0xc000; // 四方向にまるめる
+  dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
   work->child = target;
   work->angle = dir;
   if (target != NULL) {
-    // 対象の動きと色を、あとで戻すために取っておく
+    // Keep the target's motion and colours, to restore them later.
     work->savedCallback = (void *)target->hook;
     work->savedScript = (const s32 *)target->script;
     {
@@ -5389,9 +5380,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   Vector_AddPolarOffset(0x100000, dir, &work->x);
 }
 
-//--------------------------------------------------------------------------
-// 使う者の動きを止めて、色を戻す
-//--------------------------------------------------------------------------
+// Stops the caster's per-frame hook and restores its colours.
 void EffectRuntime_StopCurrentObject(void) {
   struct BattleFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
@@ -5410,6 +5399,11 @@ struct BattleEffectPosition {
 
 #define BATTLE_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
 
+// Ends a Psynergy effect: frees the effect slots still in use and, unless
+// another effect is being resolved, waits (at most 30 frames) for the
+// swelling arcs to end, stops the slot callback, releases the effect's
+// tiles, restores the map's shake, plays the queued sound and releases the
+// effect's work.
 void BattleEffect_CleanupSceneObjects(void) {
   struct BattleFxScene **sceneCell;
   struct BattleFxScene *scene;
@@ -5420,6 +5414,8 @@ void BattleEffect_CleanupSceneObjects(void) {
 
   sceneCell = (struct BattleFxScene **)&gEffectWork;
   scene = *sceneCell;
+  // The event work (slot 27) and the map work (slot 8), reached from the
+  // effect's slot 56 of gWorkSlot.
   runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
   position = *(struct BattleEffectPosition **)((u8 *)sceneCell - 192);
   for (remaining = 0; remaining < 24; remaining++) {
@@ -5458,19 +5454,24 @@ void BattleEffect_CleanupSceneObjects(void) {
       }
     } while (active != 0 && waited <= 29);
 
-    runtime->unkcc7 = 0;
+    runtime->castStarted = 0;
     Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)scene->tileSlot);
     position->x = scene->savedX;
     position->y = scene->savedY;
     position->z = scene->savedZ;
     if (scene->animation != 8)
-      runtime->unkcc0 = 1;
+      runtime->effectTimerRunning = 1;
     BattleFx_PlayQueuedSound();
     Runtime_ReleaseHeapBlock(0x38);
   }
 }
 
+// Starts casting: the caster takes its casting pose (animation 20) and
+// stops. Unless the effect is silent the caster flashes with a sound; unless
+// it is quiet, the ability's name is shown while every other object stands
+// still. With flag 0x140 the caster's colours keep cycling and it
+// takes pose 21; otherwise the caster's hook stops.
 void EventObject_Initialize(void) {
   s32 eventValue;
   s32 eventIndex;
@@ -5514,9 +5515,13 @@ void EventObject_Initialize(void) {
   } else {
     EffectRuntime_StopCurrentObject();
   }
-  ((struct FieldWork *)renderState)->unkcc7 = 1;
+  ((struct FieldWork *)renderState)->castStarted = 1;
 }
 
+// Saves the palettes for the effect (once, unless an effect is already
+// shown) and fades them toward one of the eight effect colours
+// (gBattleFx_TargetColors), picked by the frame counter or forced by flags
+// 0x148 to 0x14f, over 8 frames.
 void BattleEffect_InitializeSharedScene(void) {
   u8 *scene;
   struct BattleEffectBuffers *work;
@@ -5551,6 +5556,8 @@ void BattleEffect_InitializeSharedScene(void) {
   BattleFx_StartBufferInterpolation(8);
 }
 
+// Fades the palettes back from an effect's colours to the saved ones (or to
+// palette 0x10001 while an effect is shown) over 8 frames.
 void BattleFx_PrepareBufferInterpolation(void) {
   s32 value;
   u8 *state;
@@ -5566,6 +5573,9 @@ void BattleFx_PrepareBufferInterpolation(void) {
   BattleFx_StartBufferInterpolation(8);
 }
 
+// Converts a world position (16.16 pixels) to the screen: x and z receive
+// the screen's x and y and y becomes 0. The world map uses its perspective
+// projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct EventRuntime **data = (struct EventRuntime **)&gEventWork;
 
@@ -5577,6 +5587,7 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     position->z = result.y << 16;
     position->y = 0;
   } else {
+    // The map work, gWorkSlot[8], reached from the event work's slot 27.
     struct MapScrollWork *state = *(struct MapScrollWork **)((u8 *)data - 76);
     s32 x = state->viewX & 0xffff0000;
     s32 z = state->viewY & 0xffff0000;
@@ -5588,23 +5599,26 @@ void Camera_WorldToScreen(struct EffectVector *position) {
   }
 }
 
-// 以下では座標を関数ごとの構造体で渡す
+// From here on positions are passed in each function's own structures.
 
-// RunSceneTransitionEffect が 0x298 バイト確保して初期化する
+// Work slot 22 of the wave effect, 0x298 bytes (RunSceneTransitionEffect).
 struct WaveFxWork {
-  u16 lines[2][162]; // ラインごとのずれ (2 面を交互に書く)
-  u16 phase;         // 波の位相
-  u8 page;           // 書き込む面
-  s8 red;            // 色相から求めた色 (赤・緑・青、各 4〜11)
+  u16 lines[2][162]; // each scanline's offset, two pages written in turn
+  u16 phase;         // the wave's phase
+  u8 page;           // the page being written
+  s8 red;            // the hue as a colour (red, green, blue, 4 to 11 each)
   s8 green;
   s8 blue;
-  u16 hue;      // 色相 (0〜359 度)
-  u16 sourceId; // 使い手
-  u16 targetId; // 対象
-  u8 delay;     // 開始までの待ち
-  u8 counter;   // 粒を出す周期 (0〜60)
+  u16 hue;      // hue, 0 to 359 degrees
+  u16 sourceId; // the caster
+  u16 targetId; // the target
+  u8 delay;     // frames before it starts
+  u8 counter;   // particle spawn cycle (0 to 60)
 };
 
+// Starts the wave effect (kind 2) of caster sourceId on target targetId:
+// fades the palettes toward a hue that shifts with the frame counter, and
+// starts its per-frame update (BattleFx_UpdateWaveScene) after 8 frames.
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 
@@ -5625,8 +5639,8 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
 }
 
 //--------------------------------------------------------------------------
-// finish_scene_and_release_heap_block.c
-// フィールド効果：ラインごとの波と色の変化、対象から使い手へ流れる粒
+// The wave effect: scanline waves, shifting colours, and particles flowing
+// from the target to the caster.
 //--------------------------------------------------------------------------
 
 struct WaveFxSprite {
@@ -5639,9 +5653,8 @@ struct WaveFxSprite {
   u8 palette;
 };
 
-//--------------------------------------------------------------------------
-// 効果を止めて使い手の色を戻し、作業領域を返す
-//--------------------------------------------------------------------------
+// Stops the wave effect: restores the caster's colours and the palettes and
+// releases the effect's work.
 void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   void *work;
 
@@ -5654,9 +5667,11 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   Runtime_ReleaseHeapBlock(22);
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理 (スケジューラから呼ばれる)
-//--------------------------------------------------------------------------
+// Scheduler callback of the wave effect: once its delay has run out, writes
+// the next page of scanline offsets (a sine wave of 4 pixels either way),
+// steps the colour fade and the hue, keeps the caster's colours lit, and
+// every 60 frames sends three particles (object 281) from the target to the
+// caster, with sound 130.
 void BattleFx_UpdateWaveScene(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   u16 *line;
@@ -5674,7 +5689,8 @@ void BattleFx_UpdateWaveScene(void) {
     return;
   }
 
-  // 160 ライン分のずれを ±4 ドットの正弦波で作り、面を切り替える
+  // The 160 scanlines' offsets, a sine wave of 4 pixels either way, on the
+  // hidden page; then show that page.
   line = work->lines[work->page ^ 1];
   for (i = 0; i < 160; i++)
     *line++ = Trig_Sin(((u32)((work->phase + i * 8) << 16) / (u32)160)) >> 14;
@@ -5688,12 +5704,13 @@ void BattleFx_UpdateWaveScene(void) {
   }
   Animation_ApplyChildPalette(Object_GetById(work->sourceId), 0);
 
-  // 周期の 0, 8, 16 で、対象から使い手へ向かう粒を出す
+  // At steps 0, 8 and 16 of the cycle, a particle from the target to the
+  // caster.
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
     src = Object_GetById(work->sourceId);
     dst = Object_GetById(work->targetId);
     if (src != 0 && dst != 0) {
-      // メタデータの boxX を高さに使い、そこから 2 ドット下
+      // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = src->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)BattleAction_FindDescriptor(work->sourceId)->sprite);
@@ -5708,7 +5725,7 @@ void BattleFx_UpdateWaveScene(void) {
       if (obj != 0) {
         sprite = obj->sprite;
         obj->motionFlags = 0;
-        obj->speed = 0xa3d7; // 0.64 倍
+        obj->speed = 0xa3d7; // 0.64 pixels a frame
         obj->acceleration = 0xa3d7;
         obj->facing = ArcTan2(from.z - to.z, from.x - to.x);
         obj->update = BattleFx_SetCallbackWhenTargetUnset;
@@ -5726,31 +5743,28 @@ void BattleFx_UpdateWaveScene(void) {
 }
 
 //--------------------------------------------------------------------------
-// hue.c
-// 背景の走査線スクロール DMA、色相の巡回、BG パレット 15 の切り替え
+// The background's scanline scroll DMA, the hue cycle, and BG palette 15.
 //--------------------------------------------------------------------------
 
-#define GREY28 0x739c // 灰色 (赤・緑・青とも 28)
+#define GREY28 0x739c // grey: red, green and blue 28
 
-//--------------------------------------------------------------------------
-// BG0 の横スクロールを走査線ごとに書き換える HBlank DMA を張りなおす
-//--------------------------------------------------------------------------
+// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
+// scroll for each scanline from the wave's shown page.
 void BattleFx_ArmBg0HBlankDma(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   if (!work->delay) {
     u16 *line = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
-    dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
-    dma[5] &= 0x7fff; // 止める
+    dma[5] &= 0xc5ff; // clear the start timing and repeat
+    dma[5] &= 0x7fff; // stop
     (void)dma[5];
-    // HBlank ごとに 16 ビットを 1 回 (リピート、転送先リロード)
+    // One halfword at each HBlank (repeating, destination reloaded).
     Dma_Set(line, REG_BG0HOFS, 0xa2600001, (volatile u32 *)dma);
   }
 }
 
-//--------------------------------------------------------------------------
-// 色相を 4 度すすめ、その色を求める
-//--------------------------------------------------------------------------
+// Moves the wave's hue on 4 degrees and works out its colour, each channel
+// 4 to 11.
 void BattleFx_AdvanceHueCycle(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   s32 r = 0;
@@ -5763,7 +5777,7 @@ void BattleFx_AdvanceHueCycle(void) {
 
   BattleFx_ComputeHueChannels(work->hue << 16, &r, &g, &b);
 
-  // 0〜31 を 4〜11 に縮める (offset は rgb の位置から 1 ずつ進む)
+  // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
   offset = 0x28b;
   pr = (u8 *)work + offset;
   *pr = (r >> 18) + 4;
@@ -5785,20 +5799,16 @@ void BattleFx_AdvanceHueCycle(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 色相から赤・緑・青を求める (各 0〜31、16.16 固定小数)
-// hue : 色相 (度、16.16 固定小数)
-//--------------------------------------------------------------------------
+// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
+// (16.16).
 void BattleFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
   *r = BattleFx_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
   *g = BattleFx_HueChannelRamp(hue, 0, 31 << 16);
   *b = BattleFx_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
 }
 
-//--------------------------------------------------------------------------
-// 色相に対する色の強さ
-// 0〜60 度で上がり、60〜180 度は high、180〜240 度で下がり、ほかは low
-//--------------------------------------------------------------------------
+// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
+// high from 60 to 180, falling from 180 to 240, low elsewhere.
 s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
   angle = Fixed_Remainder(angle, 360 << 16);
   if (angle < 60 << 16)
@@ -5810,9 +5820,7 @@ s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
   return low;
 }
 
-//--------------------------------------------------------------------------
-// 16.16 固定小数の剰余 (divisor が 0 なら 0)
-//--------------------------------------------------------------------------
+// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
 s32 Fixed_Remainder(s32 value, s32 divisor) {
   s32 quot;
 
@@ -5821,19 +5829,19 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
   if (divisor & 0xf0000000)
     divisor = -divisor;
   quot = Iwram_RatioMulQ14(divisor, value);
-  return value - Iwram_MulQ16(quot & 0xffff0000,
-                              divisor); // 商の整数部 × divisor を引く
+  return value -
+         Iwram_MulQ16(quot & 0xffff0000,
+                      divisor); // less the quotient's whole part times divisor
 }
 
-//--------------------------------------------------------------------------
-// 移動の目標がなければ、目標なしのスクリプトを始める
-//--------------------------------------------------------------------------
+// Per-frame update: once the object has arrived (no destination left), runs
+// the script for untargeted objects.
 void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj) {
   s32 ty;
   s32 tx;
 
   tx = obj->targetX;
-  if (tx == 0x80000000) // 目標なし
+  if (tx == 0x80000000) // no destination
   {
     ty = obj->targetY;
     if ((ty == tx) && (obj->targetZ == ty)) {
@@ -5843,9 +5851,8 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// BG パレット 15 の色 1, 3〜12 を灰色にし、走査線スクロールを始める
-//--------------------------------------------------------------------------
+// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
+// scanline scroll (BattleFx_ArmBg0HBlankDma).
 void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 
@@ -5875,56 +5882,44 @@ void Ui_FillBank15PaletteGrey(void) {
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 
-//--------------------------------------------------------------------------
-// 走査線スクロールを止め、BG パレット 15 を戻す
-//--------------------------------------------------------------------------
+// Stops the BG0 scanline scroll and restores BG palette 15.
 void Ui_SetBank15PaletteAndClearRenderMode(void) {
   void *work;
 
   work = gWindowWork[0];
   Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = 0x7fff;  // 白
-  BG_PLTT_COLOR(15, 3) = 0;       // 黒
-  BG_PLTT_COLOR(15, 11) = 0x294a; // 灰 (10)
-  BG_PLTT_COLOR(15, 12) = 0x5294; // 灰 (20)
+  BG_PLTT_COLOR(15, 1) = 0x7fff;  // white
+  BG_PLTT_COLOR(15, 3) = 0;       // black
+  BG_PLTT_COLOR(15, 11) = 0x294a; // grey (10)
+  BG_PLTT_COLOR(15, 12) = 0x5294; // grey (20)
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   ((struct UiRenderWork *)work)->mode = 0;
 }
 
-//--------------------------------------------------------------------------
-// pattern.c
-// バトル効果：十字キーの入力を向きに変える
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 押している十字キーの向き（0x10000 で 1 周）を返す
-// 右 0、下 0x4000、左 0x8000、上 0xc000
-// 何も押していないとき、斜めのときは 0xffff
-//--------------------------------------------------------------------------
+// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
+// 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
 s32 BattleFx_GetCycledTableWord(u32 unused) {
   return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) &
-                                     15]; // 右・左・上・下の 4 ビット
+                                     15]; // the right, left, up and down bits
 }
 
 //--------------------------------------------------------------------------
-// fragment.c
-// 演出：アイテムがこわれる演出の本体の動き
+// The item break effect: the main fragment's motion.
 //--------------------------------------------------------------------------
-// FieldActor と同じ物体。FieldActor に欄のない 0x5e を読むための見え方
+// A FieldActor seen with the halfword at 0x5e (its lifetime), which
+// FieldActor does not name.
 struct ItemBreakFragmentObject {
   u8 reserved00[72];
   s32 gravity;
   u8 reserved4c[9];
   u8 motionFlags;
   u8 reserved56[8];
-  u16 unk5e;
+  u16 lifetime;
 };
 
-//--------------------------------------------------------------------------
-// こわれたアイテムの本体の update
-// 向く相手がいれば、そちらへ 1 回に 0x1000（22.5 度）まで曲がる
-// そして、まわりにかけらの粒をひとつ出す
-// src : 本体のオブジェクト
-//--------------------------------------------------------------------------
+// Per-frame update of a broken item's main fragment: turns it toward the
+// object it is linked to, at most 1/16 turn a frame, and sheds a particle
+// (object 0x11d) round it.
 void BattleFx_UpdateItemBreakFragment(struct FieldActor *src) {
   struct FieldActor *target;
   struct EffectVector pos;
@@ -5948,8 +5943,8 @@ void BattleFx_UpdateItemBreakFragment(struct FieldActor *src) {
     src->steeringFlags = 0;
   }
 
-  // 粒は本体から y を 8〜24 ずらし、ランダムな向きに半径 0〜48
-  // 散らした位置に出す
+  // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
+  // random direction.
   pos.x = src->x.fixed;
   pos.y = src->y.fixed - (Random16() << 4) - 0x80000;
   pos.z = src->z.fixed;
@@ -5962,24 +5957,24 @@ void BattleFx_UpdateItemBreakFragment(struct FieldActor *src) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    obj->unk5e = 12;
+    obj->lifetime = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_CommonParticleScript);
   }
 }
 
 //--------------------------------------------------------------------------
-// fieldfx.c
-// フィールド効果：方向キーで対象を押す処理、出現と消滅の粒、範囲の見張り
+// Field effects: pushing a target with the d-pad, appearing and vanishing
+// particles, and watching the leader's range.
 //--------------------------------------------------------------------------
 
-#define CELL_MASK 0xfff00000 // 16 ドットのマス
+#define CELL_MASK 0xfff00000 // a 16-pixel tile
 
-//--------------------------------------------------------------------------
-// 対象のそばに押すオブジェクトを出し、方向キーの向きへ対象を 16 ドット押す
-// A, B, L, R で取りやめる。押せないときは 16 フレームごとにエラー音
-// 押す先が使い手と重なるときは、使い手の位置しだいで押せないか、使い手も動かす
-//--------------------------------------------------------------------------
+// Move (kind 1): puts the pushing hand beside the target and pushes the
+// target 16 pixels the way the d-pad points, for as long as the player
+// pushes; A, B, L or R end it. Where the target cannot go, an error sound
+// plays every 16 frames. When the push would run into the caster, the caster
+// blocks it or, when the tile beyond is free, is pushed along too.
 void BattleFx_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
@@ -6001,7 +5996,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   work = gEffectWork;
   user = work->mainObject;
   target = work->child;
-  angle = work->angle + 0x8000; // work->angle の反対向き
+  angle = work->angle + 0x8000; // opposite work->angle
   moved = 0;
   if (target == NULL)
     return;
@@ -6015,7 +6010,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     return;
   }
 
-  // 押すオブジェクトは対象の 16 ドット上、angle の向きへ 16 ドットの位置
+  // The hand goes 16 pixels above the target and 16 pixels toward angle.
   pusher->linkedObject = target;
   p = &position;
   p->x = target->x.fixed;
@@ -6027,7 +6022,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
   pusher->motionFlags = 4;
-  target->update = ObjectGroup_ApplyRandomChildValues; // 押す間は色を巡らせる
+  target->update = ObjectGroup_ApplyRandomChildValues; // cycle its colours
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
@@ -6038,7 +6033,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     if (keys != 0)
       break;
 
-    // 方向キーが離れていれば押すオブジェクトを元の位置へ戻す
+    // With the d-pad released, the hand goes back to its place.
     dir = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
     if (dir == 0xffff) {
       position.x = target->x.fixed;
@@ -6053,8 +6048,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       continue;
     }
 
-    // 押すオブジェクトを押す向きへ 2 ドット寄せ、対象の 16 ドット先と 32
-    // ドット先を調べる
+    // The hand leans 2 pixels the way it pushes; check the tiles 16 and 32
+    // pixels beyond the target.
     position.x = target->x.fixed;
     position.y = target->y.fixed + (16 << 16);
     position.z = target->z.fixed;
@@ -6085,8 +6080,9 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
         continue;
       }
 
-      // 押す先が使い手と重なる：使い手のマスが押す先なら押せない。使い手が 32
-      // ドット先の マスにいれば、そこが通れるときだけ使い手もそこへ動かす
+      // The push runs into the caster: if the caster stands on the tile the
+      // target would move to, it cannot be pushed; if the caster stands on the
+      // tile 32 pixels on, the caster moves along when the tile beyond is free.
       cellX = user->x.fixed & CELL_MASK;
       cellZ = user->z.fixed & CELL_MASK;
       if (cellX == (p->x & CELL_MASK) && cellZ == (p->z & CELL_MASK)) {
@@ -6107,7 +6103,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       }
     }
 
-    // 押す：押すオブジェクトの動作は angle と押す向きの差 (90° 単位) で選ぶ
+    // Push: the hand's animation comes from the turn between angle and the
+    // push (in quarter turns).
     AudioCommand_PlayFar(175);
     x = position.x;
     z = position.z;
@@ -6138,7 +6135,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     break;
   }
 
-  // 対象の色、スクリプト、毎フレームの処理を元に戻し、押すオブジェクトを消す
+  // Restore the target's colours, script and update, and remove the hand.
   Animation_ApplyChildValuesFar(target, work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                work->savedScript);
@@ -6150,9 +6147,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   UpdateRisingParticleBurst(pusher);
 }
 
-//--------------------------------------------------------------------------
-// 粒の動き：元の位置から 30 ドット先へ飛び、また元の位置へ戻って消える
-//--------------------------------------------------------------------------
+// Effect slot callback of a particle that flies 30 pixels out from where it
+// started, comes back and is freed.
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
   struct EffectVector position;
   s8 *statePtr = &slot->state;
@@ -6197,9 +6193,8 @@ next_state:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-//--------------------------------------------------------------------------
-// 使い手のそばにオブジェクトを出し、30 フレーム見せてから粒にして消す
-//--------------------------------------------------------------------------
+// The item break effect cast with no target: shows the broken item beside
+// the caster for 30 frames, then turns it into particles.
 void BattleFx_RunItemBreakSequence(void) {
   s32 work[3];
   struct BattleFxScene *scene;
@@ -6224,11 +6219,9 @@ void BattleFx_RunItemBreakSequence(void) {
   UpdateRisingParticleBurst(object);
 }
 
-//--------------------------------------------------------------------------
-// object の 16 ドット上にオブジェクト 215 を出し、向いている側
-// (90° 単位) へ 16 ドット動かす。周りに粒 8 個を散らす
-// 戻り値：出したオブジェクト (出せなければ 0)
-//--------------------------------------------------------------------------
+// Spawns the broken item (object 215) 16 pixels above object and moves it 16
+// pixels the way object faces (to the nearest quarter turn), with 8
+// particles round it. Returns the item, or 0.
 void *BattleFx_StartItemBreak(void *object) {
   struct MotionObject *src = object;
   struct MotionObject *parent;
@@ -6240,11 +6233,11 @@ void *BattleFx_StartItemBreak(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (src->angle + 0x2000) & 0xc000; // いちばん近い 90° の向き
+  angle = (src->angle + 0x2000) & 0xc000; // to the nearest quarter turn
   parent = Object_Spawn(215, src->x, src->y + (16 << 16), src->z);
   if (parent == 0)
     return 0;
-  parent->scaleY = 0x4000; // 0.25 倍から
+  parent->scaleY = 0x4000; // from 0.25
   parent->scaleX = 0x4000;
   parent->update = BattleFx_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
@@ -6253,7 +6246,8 @@ void *BattleFx_StartItemBreak(void *object) {
   ObjectDispatch_ApplyArgumentToChildrenFar(parent, 3);
   Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
-  // 粒：向きの ±45° へ 8〜32 ドット、速さ 1〜2 ドット
+  // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
+  // pixels a frame.
   for (i = 7; i >= 0; i--) {
     child = Object_Spawn(285, src->x, src->y + (16 << 16), src->z);
     if (child != 0) {
@@ -6276,9 +6270,8 @@ void *BattleFx_StartItemBreak(void *object) {
   return parent;
 }
 
-//--------------------------------------------------------------------------
-// 拡大率を 1/16 刻みで等倍まで上げ、位置を確定する
-//--------------------------------------------------------------------------
+// Per-frame update: grows an object's scale by 1/16 a frame up to full size
+// and fixes its position.
 void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   s32 next;
   s32 scale;
@@ -6297,9 +6290,8 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 31 フレームかけて回りながら上り、縮んでから粒 8 個になって消える
-//--------------------------------------------------------------------------
+// Per-frame update: the object spins as it rises for 31 frames, shrinks, and
+// bursts into 8 particles.
 void UpdateRisingParticleBurst(void *object) {
   struct MotionObject *src = object;
   struct MotionObject *child;
@@ -6310,7 +6302,7 @@ void UpdateRisingParticleBurst(void *object) {
   AudioCommand_PlayFar(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
-    src->angle += 0x2000; // 45°
+    src->angle += 0x2000; // 1/8 turn
     src->scaleX += -0x800;
     src->scaleY += -0x800;
     WaitFrames(1);
@@ -6346,9 +6338,8 @@ void UpdateRisingParticleBurst(void *object) {
   ObjectDispatch_ReleaseFar(src);
 }
 
-//--------------------------------------------------------------------------
-// 64 個のオブジェクトのうち、最初のパーツが絵 200 のものへ value を渡す
-//--------------------------------------------------------------------------
+// Passes value (as animation timer steps) to every one of the 64 objects
+// whose first sprite part shows sprite 200.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   struct ObjectRuntime *object = gObjectSlots;
   s32 cnt = 63;
@@ -6372,10 +6363,10 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   } while (cnt >= 0);
 }
 
-//--------------------------------------------------------------------------
-// 効果の中心から操作キャラが 60 ドット離れるか、残り時間が尽きたら終了を頼む
-// (中心と時間は RunBattleEffect08 が gEventWork の 0xcb8〜 に置く)
-//--------------------------------------------------------------------------
+// Scheduler callback of the timed effect (kind 8): asks for it to end once
+// the leader is 60 pixels from its centre or its time has run out. The
+// centre and the time are in the event work from 0xcb8 on
+// (RunBattleEffect08).
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
@@ -6385,14 +6376,13 @@ void FieldEffect_WatchLeaderDistance(void) {
 
   work = (struct FieldWork *)gEventWork;
   actor = ObjectTable_Get(gGameState.selectedActor);
-  if (work->unkcc0 != 0) // 時間を減らすか
-  {
+  if (work->effectTimerRunning != 0) {
     timer = &work->effectFrames;
     if (*timer != 0)
       (*timer)--;
   }
 
-  // x は 0xd105 (約 0.82) 倍して比べる
+  // x is scaled by 0xd105 (about 0.82) for the comparison.
   dx = Iwram_MulQ16(work->effectCenterX - actor->x / 0x10000, 0xd105);
   dz = work->effectCenterY - (actor->z - actor->y) / 0x10000;
   if (dx * dx + dz * dz >= 3600 || work->effectFrames == 0) {
@@ -6404,14 +6394,11 @@ void FieldEffect_WatchLeaderDistance(void) {
 }
 
 //--------------------------------------------------------------------------
-// markers.c
-// 戦闘エフェクト 8 番：選択中のオブジェクトを中心に画面を切りかえ、印を出す
+// Psynergy effect 8: a screen transition centred on the caster, and markers.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 戦闘エフェクト 8 番
-// 選択中のオブジェクトの位置を中心に画面切りかえを始め、
-// 合うイベントがあれば動かしてから、まわりに印を出す
-//--------------------------------------------------------------------------
+
+// Psynergy effect 8: starts a screen transition centred on the leader, runs
+// the matching event if there is one, and puts markers round the leader.
 void RunBattleEffect08(void) {
   struct FieldWork *scene;
   struct DisplayTransitionState *work;
@@ -6444,7 +6431,7 @@ void RunBattleEffect08(void) {
   scene->effectCenterX = work->centreX / 0x10000;
   scene->effectCenterY = work->centreY / 0x10000;
   scene->effectFrames = 600;
-  scene->unkcc0 = 1;
+  scene->effectTimerRunning = 1;
   FieldEffect_SpawnNearbyMarkers();
   frame = 0;
   do {
@@ -6967,7 +6954,7 @@ struct SparkObject {
   u8 unk4c[9];
   u8 motionFlags; // FieldActor と同じ位置
   u8 unk56[8];
-  u16 unk5e;
+  u16 lifetime;
   u8 unk60[4];
   s16 phase; // ゆれの位相（128 フレームで 1 周）
   u8 unk66[6];
@@ -7394,7 +7381,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
       spark->phase = Random16() >> 9;
       spark->anchorX = spark->x;
       Animation_ApplyChildValuesFar(spark, 9);
-      spark->unk5e = 72;
+      spark->lifetime = 72;
       ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
                                    gBattleFx_CommonParticleScript);
     }
@@ -7948,7 +7935,7 @@ void BattleFx_SpawnFallingParticles(void) {
     obj->motionFlags = ACTOR_FALLS;
     obj->gravity = 0x1999; // 重力 0.1 ドット
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    obj->unk5e = 12;
+    obj->lifetime = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_CommonParticleScript);
   }

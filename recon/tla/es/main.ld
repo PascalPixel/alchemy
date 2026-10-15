@@ -1349,7 +1349,7 @@ SECTIONS
     "*/games/tla/src/battle/effect/itembrk.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e651a)
     "*/recon/tla/es/rom.o"(.rom.000e651c)
-    "*/recon/tla/es/rom.o"(.rom.000e6630)
+    "*/games/tla/src/battle/effect/snap_scale.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e665c)
     "*/games/tla/src/battle/effect/delay.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e6748)

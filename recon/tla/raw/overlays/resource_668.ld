@@ -15,7 +15,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_668/prepare.o"(.text)
         "*/resource_668_overlay.o"(.text.x02008fa4)
         "*/games/tla/src/field/overlay_668/events.o"(.text)
-        "*/resource_668_overlay.o"(.text.x02009b9c)
         "*/resource_668_overlay.o"(.text.x02009bf4)
         "*/resource_668_overlay.o"(.text.x02009cb0)
         "*/resource_668_overlay.o"(.text.x0200a048)

@@ -344,53 +344,66 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 }
 
 #endif
-//--------------------------------------------------------------------------
-// ウィンドウの y 40 に HP、y 48 に PP を書く
-// HP は最大の 1/4 未満なら色 4、0 なら色 2 で書く
-// unit : キャラクター
-// win  : 書き込み先のウィンドウ
-//--------------------------------------------------------------------------
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
-  s16 val;
+
+// Draws a character's HP and PP into window as two rows, "HP current/maximum"
+// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
+// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
+// then the colour goes back to 15, the default text colour.
+//
+// unit:   the character whose figures are drawn
+// window: the window to draw in, its struct RenderInput pointer held as an
+//         s32
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
+  // Each figure in turn, as an s16. Read straight from unit, the figures
+  // compile differently.
+  s16 value;
 
 #if EDITION_INTERNATIONAL
-  UiText_DrawStringAtOffsetFar(gUi_HpString, win, 0, 40);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 40);
-  val = unit->maxHp;
-  UiText_DrawNumberRightAligned(val, win, 88, 40);
-  val = unit->hp;
-  if (val < ((u16)unit->maxHp << 16) >> 18) {
+  // The label at the left and a slash at 48. A current figure ends before
+  // the slash, at 48, and a maximum at 88, each in a field as wide as its
+  // digits.
+  UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
+  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
+  value = unit->maxHp;
+  UiText_DrawNumberRightAligned(value, window, 88, 40);
+  value = unit->hp;
+  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(4);
   }
-  if (val == 0) {
+  if (value == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawNumberRightAligned(val, win, 48, 40);
+  UiText_DrawNumberRightAligned(value, window, 48, 40);
   UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringAtOffsetFar(gUi_PpString, win, 0, 48);
-  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 48);
-  val = unit->pp;
-  UiText_DrawNumberRightAligned(val, win, 48, 48);
-  val = unit->maxPp;
-  UiText_DrawNumberRightAligned(val, win, 88, 48);
+  UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
+  UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
+  value = unit->pp;
+  UiText_DrawNumberRightAligned(value, window, 48, 48);
+  value = unit->maxPp;
+  UiText_DrawNumberRightAligned(value, window, 88, 48);
 #else
-  UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, win, 0, 40);
-  val = unit->maxHp;
-  UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
-  val = unit->hp;
-  if (val < ((u16)unit->maxHp << 16) >> 18) {
+  // Each row string ("HP    /" and "EP    /") holds the label and the slash,
+  // one character to an 8-pixel cell, the slash in the cell at 48. Each
+  // figure is four characters padded with spaces: the current one drawn
+  // from 16 at the font's widths, the maximum from 56 a cell a character,
+  // ending at 88.
+  UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
+  value = unit->maxHp;
+  UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
+  value = unit->hp;
+  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
     UiWork_SetParamNibbleFar(4);
   }
-  if (val == 0) {
+  if (value == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
+  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
   UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, win, 0, 48);
-  val = unit->pp;
-  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
-  val = unit->maxPp;
-  UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
+  UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
+  value = unit->pp;
+  UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
+  value = unit->maxPp;
+  UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }
 void UiText_DrawStatComparison(const struct BattleUnit *alt,

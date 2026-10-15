@@ -257,14 +257,14 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
   return result;
 }
 
-// Runs the reel game, keeping BG palette 14 across it.
+// Runs the slot machine, keeping BG palette 14 across it.
 static __inline__ s32 RunReelGame(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(14, 0);
   void *saved = MemAlloc(64);
   s32 result;
 
   Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-  result = Runtime_BlankDisplayLoadValueAndRunFar(entrance);
+  result = ReelGame_StartFar(entrance);
   Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
   MemFree(saved);
   return result;

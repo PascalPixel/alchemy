@@ -9,6 +9,7 @@ enum ItemId {
   ITEM_WATER_OF_LIFE = 0xbd,
   ITEM_SMOKE_BOMB = 0xe2,
   ITEM_SLEEP_BOMB = 0xe3,
+  ITEM_GAME_TICKET = 0xe4,
   ITEM_LUCKY_MEDAL = 0xe5,
   ITEM_BONE = 0xe7,
   ITEM_CELL_KEY = 0xea,

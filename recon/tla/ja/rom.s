@@ -2851,6 +2851,10 @@ Func_080ce458:
 Func_080cf050:
 	.incbin "baserom.gba", 0x000cf030, 0x00000080
 	.section .rom.000cf138, "ax"
+	.global Func_080cf158
+	.type Func_080cf158, %function
+	.thumb_func
+Func_080cf158:
 	.incbin "baserom.gba", 0x000cf138, 0x00000024
 	.section .rom.000cf15c, "ax"
 	.global BattleFx_StartRandomParticleEmitter
@@ -3735,8 +3739,6 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000ed918, 0x000000c0
 	.section .rom.000ef728, "ax"
 	.incbin "baserom.gba", 0x000ef728, 0x00000008
-	.section .rom.000f00c4, "ax"
-	.incbin "baserom.gba", 0x000f00c4, 0x0000000c
 	.section .rom.000f0212, "ax"
 	.incbin "baserom.gba", 0x000f0212, 0x00000002
 	.section .rom.000f0a5c, "ax"

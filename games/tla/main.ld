@@ -1419,7 +1419,7 @@ SECTIONS
     "*/games/tla/src/battle/effect/pairrule.o"(.rodata)
     "*/games/tla/src/debug/swatch.o"(.rodata)
     "*/games/tla/src/battle/effect/descent.o"(.rodata)
-    "*/recon/tla/ja/rom.o"(.rom.000f00c4)
+    "*/games/tla/src/battle/effect/marker_script.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f01c4.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f01e6.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f0206.o"(.rodata)

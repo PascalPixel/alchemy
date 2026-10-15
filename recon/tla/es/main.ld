@@ -1469,7 +1469,7 @@ SECTIONS
     "*/games/tla/src/battle/effect/f0ed804.o"(.text)
     "*/games/tla/src/battle/effect/arctiles.o"(.rodata)
     "*/games/tla/src/battle/effect/d00ed90c.o"(.rodata)
-    "*/recon/tla/es/rom.o"(.rom.000f6a00)
+    "*/games/tla/src/battle/effect/glint.o"(.rodata)
     "*/games/tla/src/battle/effect/encount.o"(.rodata)
     "*/games/tla/src/battle/effect/ENCFIELD.o"(.rodata)
     "*/games/tla/src/battle/effect/encrule.o"(.rodata)

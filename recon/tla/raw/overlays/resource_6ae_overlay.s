@@ -509,66 +509,6 @@ Func_020004a4:
 	pop {r5, r6, r7, pc}
 .L_0200859c:
 	.4byte Data_0200eb60
-	.section .text.x020085a0,"ax",%progbits
-	.global Func_020005a0
-	.thumb_func
-Func_020005a0:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r0, #0
-	adds r7, r5, #0
-	adds r7, #100
-	ldrh r6, [r7]
-	ldr r1, [r5, #104]
-	adds r0, r6, #0
-	mov r8, r1
-	bl Math_Cosine
-	ldr r3, [r5, #48]
-	mov r1, r8
-	adds r3, #28
-	adds r2, r3, #0
-	muls r2, r0
-	ldr r3, [r1, #8]
-	adds r0, r6, #0
-	adds r3, r3, r2
-	str r3, [r5, #8]
-	bl Math_Sine
-	movs r2, #132
-	ldr r3, [r5, #8]
-	lsls r0, r0, #4
-	lsls r2, r2, #17
-	adds r0, r0, r2
-	str r0, [r5, #16]
-	str r3, [r5, #56]
-	str r0, [r5, #64]
-	ldr r1, [r5, #80]
-	cmp r0, r2
-	bge .L_020085f0
-	ldrb r3, [r1, #9]
-	movs r2, #13
-	negs r2, r2
-	ands r2, r3
-	movs r3, #8
-	b .L_020085fa
-.L_020085f0:
-	ldrb r3, [r1, #9]
-	movs r2, #13
-	negs r2, r2
-	ands r2, r3
-	movs r3, #4
-.L_020085fa:
-	orrs r2, r3
-	strb r2, [r1, #9]
-	ldrh r3, [r7]
-	ldr r1, .L_0200860c
-	adds r3, r3, r1
-	strh r3, [r7]
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-.L_0200860c:
-	.4byte 0xfffffe00
 	.section .text.x0200865c,"ax",%progbits
 	.balign 4
 	.global Func_0200065c

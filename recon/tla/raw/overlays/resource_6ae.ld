@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_6ae_overlay.o"(.text.x02008314)
         "*/resource_6ae_overlay.o"(.text.x02008450)
         "*/resource_6ae_overlay.o"(.text.x020084a4)
-        "*/resource_6ae_overlay.o"(.text.x020085a0)
+        "*/games/tla/src/field/overlay_6ae/arc.o"(.text)
         "*/games/tla/src/field/overlay_6ae/events_b.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200865c)
         "*/games/tla/src/field/overlay_6ae/blink.o"(.text)

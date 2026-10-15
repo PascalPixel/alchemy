@@ -13,109 +13,99 @@
 #include "ram_buffer.h"
 #include "resource_menu.h"
 
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+                                 s32 style);
 
 void Menu_CenterResourceEntries(s32, s32, s32);
 
 // Lays the entries out in a row three cells apart from x, on row y, and
 // opens the menu's window after them.
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase)
-{
-    struct ResourceMenuWork  *work;
-    s32                       i;
-    struct ResourceMenuEntry *entry;
-    s16                      *widthp;
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
+  struct ResourceMenuWork *work;
+  s32 i;
+  struct ResourceMenuEntry *entry;
+  s16 *widthp;
 
-    work = Ram_HeapSlots->menuSelectWork;
-    widthp = &work->width;
-    *widthp = width + 2;
-    work->resourceBase = resourceBase;
-    work->row = y;
-    /* FAKEMATCH: the empty asm that reads the row back and passes the work
-       pointer on makes the count's address wait for the row's store, as the
-       native does; plainly the count's address (movs r7, #142) is started
-       first (one reordered pair, differ 2). The width is read back through
-       a pointer taken before it, which the asm leaves alone (differ 43
-       through the work pointer). Measured against it: operand-tied asms
-       with a memory clobber on x (differ 2), y (20) and the work pointer
-       (43). */
-    asm("" : "+r"(work) : "m"(work->row));
-    for (i = 0; i < work->count; i++)
-    {
-        entry = &work->entries[i];
-        entry->y = y << 3;
-        entry->x = x << 3;
-        x += 3;
-    }
-    work->window = UiWindow_Create(x, y, *widthp, 3, 2);
+  work = Ram_HeapSlots->menuSelectWork;
+  widthp = &work->width;
+  *widthp = width + 2;
+  work->resourceBase = resourceBase;
+  work->row = y;
+  /* FAKEMATCH: the empty asm that reads the row back and passes the work
+     pointer on makes the count's address wait for the row's store, as the
+     native does; plainly the count's address (movs r7, #142) is started
+     first (one reordered pair, differ 2). The width is read back through
+     a pointer taken before it, which the asm leaves alone (differ 43
+     through the work pointer). Measured against it: operand-tied asms
+     with a memory clobber on x (differ 2), y (20) and the work pointer
+     (43). */
+  asm("" : "+r"(work) : "m"(work->row));
+  for (i = 0; i < work->count; i++) {
+    entry = &work->entries[i];
+    entry->y = y << 3;
+    entry->x = x << 3;
+    x += 3;
+  }
+  work->window = UiWindow_Create(x, y, *widthp, 3, 2);
 }
 
-static __inline__ s32 TableGet(s8 *table, s32 index)
-{
-    return table[index];
-}
+static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
 
-s32 Menu_SelectTopEntry(s32 selection)
-{
-    s32 group = 0;
-    s32 offset;
-    s32 triple;
-    s32 ret;
-    s8 *table;
+s32 Menu_SelectTopEntry(s32 selection) {
+  s32 group = 0;
+  s32 offset;
+  s32 triple;
+  s32 ret;
+  s8 *table;
 
-    if (Party_SumDjinnCountsFar(-1) == 0)
-    {
-        group = 1;
-    }
+  if (Party_SumDjinnCountsFar(-1) == 0) {
+    group = 1;
+  }
 
-    triple = group * 3;
-    table = gMenu_TopEntryPositionByCommand;
-    offset = triple << 1;
-    selection = TableGet(table, selection + offset) - 1;
-    if (selection < 0)
-    {
-        selection = 0;
-    }
+  triple = group * 3;
+  table = gMenu_TopEntryPositionByCommand;
+  offset = triple << 1;
+  selection = TableGet(table, selection + offset) - 1;
+  if (selection < 0) {
+    selection = 0;
+  }
 
-    AffineEffect_InitializeWork();
-    Menu_AppendResourceEntry(1);
-    if (group == 0)
-    {
-        Menu_AppendResourceEntry(15);
-    }
-    Menu_AppendResourceEntry(2);
-    Menu_AppendResourceEntry(7);
-    Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
-    ret = Menu_RunResourceSelectionLoop(selection);
-    Menu_EndResourceSelection();
+  AffineEffect_InitializeWork();
+  Menu_AppendResourceEntry(1);
+  if (group == 0) {
+    Menu_AppendResourceEntry(15);
+  }
+  Menu_AppendResourceEntry(2);
+  Menu_AppendResourceEntry(7);
+  Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+  ret = Menu_RunResourceSelectionLoop(selection);
+  Menu_EndResourceSelection();
 
-    if (ret >= 0)
-    {
-        s8 *commands = gMenu_TopEntryCommandByPosition;
-        s32 index;
+  if (ret >= 0) {
+    s8 *commands = gMenu_TopEntryCommandByPosition;
+    s32 index;
 
-        /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
-        asm volatile("" : "+l"(commands));
-        index = ret + offset + 1;
-        ret = commands[index];
-    }
+    /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
+    asm volatile("" : "+l"(commands));
+    index = ret + offset + 1;
+    ret = commands[index];
+  }
 
-    return ret;
+  return ret;
 }
 
 // 日本語版はこの関数が違うので、まだ scaffold のまま (S4)
 #if !defined(TLA_EDITION_JA)
-s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
-{
-    UiWindow_OpenMode1AndWaitFrame();
-    AffineEffect_InitializeWork();
-    Menu_AppendResourceEntry(1);
-    Menu_AppendResourceEntry(0xF);
-    Menu_AppendResourceEntry(2);
-    Menu_AppendResourceEntry(7);
-    arg1 = Menu_SelectResource(arg0, arg1 - 1);
-    Menu_EndResourceSelection();
-    UiWork_CloseAndRelease();
-    return arg1;
+s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
+  UiWindow_OpenMode1AndWaitFrame();
+  AffineEffect_InitializeWork();
+  Menu_AppendResourceEntry(1);
+  Menu_AppendResourceEntry(0xF);
+  Menu_AppendResourceEntry(2);
+  Menu_AppendResourceEntry(7);
+  arg1 = Menu_SelectResource(arg0, arg1 - 1);
+  Menu_EndResourceSelection();
+  UiWork_CloseAndRelease();
+  return arg1;
 }
 #endif

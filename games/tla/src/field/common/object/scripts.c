@@ -65,11 +65,7 @@ const s32 gObject_OffsetMotionScript[] = {
 };
 
 const s32 gData_080f32e0[] = {
-    SC_SYNC,
-    SC_WAIT(1),
-    SC_ARG(1),
-    SC_CALL(ObjectMotion_StepAngle),
-    SC_END,
+    SC_SYNC, SC_WAIT(1), SC_ARG(1), SC_CALL(ObjectMotion_StepAngle), SC_END,
 };
 
 const s32 gObjectMotion_StepAngleScript[] = {

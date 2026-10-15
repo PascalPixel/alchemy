@@ -12,7 +12,8 @@ void Func_0200025c(void);
 void Func_02000280(void);
 void Func_020002b8(void);
 void Func_020002ec(void);
-#if defined(TLA_EDITION_JA) /* 日本版には Func_020002ec がなく、表は 0 を持つ */
+#if defined(TLA_EDITION_JA) /* 日本版には Func_020002ec がなく、表は 0 を持つ \
+                             */
 #define MARS_ROOM_F_FUNC_020002EC 0
 #else
 #define MARS_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)
@@ -68,56 +69,26 @@ extern u8 gData_02005ebc[];
 extern u32 gData_02006980[];
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(292),
-    SCENE_EXIT(1, 290, 2),
-    SCENE_EXIT(2, 292, 3),
-    SCENE_EXIT(3, 292, 2),
-    SCENE_EXIT(4, 296, 3),
-    SCENE_EXITS(293),
-    SCENE_EXIT(1, 288, 2),
-    SCENE_EXIT(2, 293, 3),
-    SCENE_EXIT(3, 293, 2),
-    SCENE_EXIT(4, 293, 5),
-    SCENE_EXIT(5, 293, 4),
-    SCENE_EXIT(6, 293, 7),
-    SCENE_EXIT(7, 293, 6),
-    SCENE_EXIT(8, 296, 2),
-    SCENE_EXIT(9, 293, 9),
-    SCENE_EXITS(294),
-    SCENE_EXIT(1, 289, 2),
-    SCENE_EXIT(2, 294, 3),
-    SCENE_EXIT(3, 294, 2),
-    SCENE_EXIT(4, 294, 5),
-    SCENE_EXIT(5, 294, 4),
-    SCENE_EXIT(6, 294, 6),
-    SCENE_EXIT(7, 294, 7),
-    SCENE_EXIT(8, 294, 9),
-    SCENE_EXIT(9, 294, 8),
-    SCENE_EXIT(10, 294, 10),
-    SCENE_EXIT(11, 294, 12),
-    SCENE_EXIT(12, 294, 11),
-    SCENE_EXIT(13, 294, 14),
-    SCENE_EXIT(14, 294, 13),
-    SCENE_EXIT(15, 296, 4),
-    SCENE_EXIT(16, 294, 16),
-    SCENE_EXITS(295),
-    SCENE_EXIT(1, 291, 2),
-    SCENE_EXIT(6, 295, 7),
-    SCENE_EXIT(7, 295, 6),
-    SCENE_EXIT(8, 295, 9),
-    SCENE_EXIT(9, 295, 8),
-    SCENE_EXIT(10, 295, 11),
-    SCENE_EXIT(11, 295, 10),
-    SCENE_EXIT(12, 295, 13),
-    SCENE_EXIT(13, 295, 12),
-    SCENE_EXIT(14, 295, 15),
-    SCENE_EXIT(15, 295, 14),
-    SCENE_EXIT(5, 296, 1),
+    SCENE_EXITS(292),        SCENE_EXIT(1, 290, 2),   SCENE_EXIT(2, 292, 3),
+    SCENE_EXIT(3, 292, 2),   SCENE_EXIT(4, 296, 3),   SCENE_EXITS(293),
+    SCENE_EXIT(1, 288, 2),   SCENE_EXIT(2, 293, 3),   SCENE_EXIT(3, 293, 2),
+    SCENE_EXIT(4, 293, 5),   SCENE_EXIT(5, 293, 4),   SCENE_EXIT(6, 293, 7),
+    SCENE_EXIT(7, 293, 6),   SCENE_EXIT(8, 296, 2),   SCENE_EXIT(9, 293, 9),
+    SCENE_EXITS(294),        SCENE_EXIT(1, 289, 2),   SCENE_EXIT(2, 294, 3),
+    SCENE_EXIT(3, 294, 2),   SCENE_EXIT(4, 294, 5),   SCENE_EXIT(5, 294, 4),
+    SCENE_EXIT(6, 294, 6),   SCENE_EXIT(7, 294, 7),   SCENE_EXIT(8, 294, 9),
+    SCENE_EXIT(9, 294, 8),   SCENE_EXIT(10, 294, 10), SCENE_EXIT(11, 294, 12),
+    SCENE_EXIT(12, 294, 11), SCENE_EXIT(13, 294, 14), SCENE_EXIT(14, 294, 13),
+    SCENE_EXIT(15, 296, 4),  SCENE_EXIT(16, 294, 16), SCENE_EXITS(295),
+    SCENE_EXIT(1, 291, 2),   SCENE_EXIT(6, 295, 7),   SCENE_EXIT(7, 295, 6),
+    SCENE_EXIT(8, 295, 9),   SCENE_EXIT(9, 295, 8),   SCENE_EXIT(10, 295, 11),
+    SCENE_EXIT(11, 295, 10), SCENE_EXIT(12, 295, 13), SCENE_EXIT(13, 295, 12),
+    SCENE_EXIT(14, 295, 15), SCENE_EXIT(15, 295, 14), SCENE_EXIT(5, 296, 1),
     SCENE_EXITS_END,
 };
 

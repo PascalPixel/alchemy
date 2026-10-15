@@ -19,44 +19,45 @@ void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target);
 #endif
 
-static __inline__ void Transform_SetIdentity(void *matrix)
-{
-    CAMELOT_ASM("three stmia no C store or copy compiles to")
-    __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"
-                     "mov r4, #0\n\tlsl r1, r1, #9\n\t"
-                     "stmia r0!, {r1, r2, r3, r4}\n\t"
-                     "stmia r0!, {r1, r2, r3, r4}\n\t"
-                     "stmia r0!, {r1, r2, r3, r4}"
-        :
-        : "r"(matrix)
-        : "r0", "r1", "r2", "r3", "r4", "memory");
+static __inline__ void Transform_SetIdentity(void *matrix) {
+  CAMELOT_ASM("three stmia no C store or copy compiles to")
+  __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"
+                   "mov r4, #0\n\tlsl r1, r1, #9\n\t"
+                   "stmia r0!, {r1, r2, r3, r4}\n\t"
+                   "stmia r0!, {r1, r2, r3, r4}\n\t"
+                   "stmia r0!, {r1, r2, r3, r4}"
+                   :
+                   : "r"(matrix)
+                   : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
 // 今の行列を単位行列に戻す。
-static __inline__ void Transform_ResetCurrent(void)
-{
-    s32 zero;
+static __inline__ void Transform_ResetCurrent(void) {
+  s32 zero;
 
 #if GAME_TLA
-    CAMELOT_ASM("Transform_SetIdentity's three stmia, applied to the current matrix")
-    __asm__ volatile("mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
-                     "mov %0, #0\n\tmov r4, #0\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}"
-        : "=l"(zero)
-        : "r"(gTransform)
-        : "r0", "r1", "r2", "r4", "memory");
+  CAMELOT_ASM(
+      "Transform_SetIdentity's three stmia, applied to the current matrix")
+  __asm__ volatile(
+      "mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
+      "mov %0, #0\n\tmov r4, #0\n\t"
+      "stmia r0!, {r1, r2, %0, r4}\n\t"
+      "stmia r0!, {r1, r2, %0, r4}\n\t"
+      "stmia r0!, {r1, r2, %0, r4}"
+      : "=l"(zero)
+      : "r"(gTransform)
+      : "r0", "r1", "r2", "r4", "memory");
 #else
-    CAMELOT_ASM("Transform_SetIdentity's three stmia, applied to the current matrix")
-    __asm__ volatile("mov r0, %1\n\tmov r1, #128\n\tmov r2, #0\n\tmov %0, #0\n\t"
-                     "mov r4, #0\n\tlsl r1, r1, #9\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}\n\t"
-                     "stmia r0!, {r1, r2, %0, r4}"
-        : "=l"(zero)
-        : "r"(gTransform)
-        : "r0", "r1", "r2", "r4", "memory");
+  CAMELOT_ASM(
+      "Transform_SetIdentity's three stmia, applied to the current matrix")
+  __asm__ volatile("mov r0, %1\n\tmov r1, #128\n\tmov r2, #0\n\tmov %0, #0\n\t"
+                   "mov r4, #0\n\tlsl r1, r1, #9\n\t"
+                   "stmia r0!, {r1, r2, %0, r4}\n\t"
+                   "stmia r0!, {r1, r2, %0, r4}\n\t"
+                   "stmia r0!, {r1, r2, %0, r4}"
+                   : "=l"(zero)
+                   : "r"(gTransform)
+                   : "r0", "r1", "r2", "r4", "memory");
 #endif
 }
 

@@ -11,9 +11,8 @@ s32 BattleFx_GetFlags();
 // 今の演出定義の flags が 0xff なら、対象なし (-1) を返す
 // id : 対象オブジェクト番号
 //--------------------------------------------------------------------------
-s32 BattleFx_FilterObjectIdByFlags(s32 id)
-{
-    if (BattleFx_GetFlags() == 0xff)
-        return -1;
-    return id;
+s32 BattleFx_FilterObjectIdByFlags(s32 id) {
+  if (BattleFx_GetFlags() == 0xff)
+    return -1;
+  return id;
 }

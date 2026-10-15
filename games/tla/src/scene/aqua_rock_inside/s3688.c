@@ -1,14 +1,13 @@
 #include "local.h"
 
-s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind)
-{
-    struct BeamWork  *work = &gData_02005970;
-    struct BeamEntry *entry = work->entries;
+s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
+  struct BeamWork *work = &gData_02005970;
+  struct BeamEntry *entry = work->entries;
 
-    if (entry->x != 0)
-        entry++;
-    entry->x = (x << 20) + 0x80000;
-    entry->y = y << 20;
-    entry->z = (z << 20) + 0x80000;
-    entry->kind = kind;
+  if (entry->x != 0)
+    entry++;
+  entry->x = (x << 20) + 0x80000;
+  entry->y = y << 20;
+  entry->z = (z << 20) + 0x80000;
+  entry->kind = kind;
 }

@@ -1,0 +1,2 @@
+# Assembly the assembler reads through .include, not C.
+games/common/include/game/ed_asm.h

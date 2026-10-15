@@ -18,151 +18,118 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-u8 *SceneData_GetScriptTable(void)
-{
-    return (u8 *)gSuhalla_Scripts;
+u8 *SceneData_GetScriptTable(void) { return (u8 *)gSuhalla_Scripts; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+u8 *SceneData_GetMessageTable(void) { return (u8 *)gSuhalla_Messages; }
+
+s32 SceneData_SelectActorTableByFlag96f(void) {
+  if (Engine_GameFlagIsSet(0x96f) != 0) {
+    return (s32)gSuhalla_ActorsFlag96f;
+  }
+  return (s32)gSuhalla_Actors;
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+static void EV09_TALK(s32 obj) {
+  s32 cue = MsgSuhallaTryingGetLalivero;
+  Engine_EventSetMessage(cue);
+  Engine_EventOpenMessage(obj, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(cue + 1);
+  } else {
+    Engine_EventSetMessage(cue + 2);
+  }
+  Engine_EventShowMessage(obj, 0);
 }
 
-u8 *SceneData_GetMessageTable(void)
-{
-    return (u8 *)gSuhalla_Messages;
+static void EV13_TALK(s32 obj) {
+  s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
+  Engine_EventSetMessage(cue);
+  Engine_EventOpenMessage(obj, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(cue + 1);
+  } else {
+    Engine_EventSetMessage(cue + 2);
+  }
+  Engine_EventShowMessage(obj, 0);
 }
 
-s32 SceneData_SelectActorTableByFlag96f(void)
-{
-    if (Engine_GameFlagIsSet(0x96f) != 0)
-    {
-        return (s32)gSuhalla_ActorsFlag96f;
-    }
-    return (s32)gSuhalla_Actors;
+static void EV16_PSYNERGY(void) {
+
+  Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
+  Engine_GameFlagSet(0x201);
 }
 
-static void EV09_TALK(s32 obj)
-{
-    s32 cue = MsgSuhallaTryingGetLalivero;
-    Engine_EventSetMessage(cue);
-    Engine_EventOpenMessage(obj, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(cue + 1);
-    }
-    else
-    {
-        Engine_EventSetMessage(cue + 2);
-    }
-    Engine_EventShowMessage(obj, 0);
+static void Suhalla_AnimateCells0(void) {
+  struct EventWork *work = gEventWork;
+  s32 no = work->touchedTrigger;
+  u16 x = gSuhalla_CellAnimationOrigins[no][0];
+  u16 y = gSuhalla_CellAnimationOrigins[no][1];
+
+  Event_PlayCue(158);
+  Map_AnimateCells(gSuhalla_CellSteps0, x, y);
+  Actor_WalkBy(0, 0, -16);
+  gEventWork->transitionFrames = 16;
+  Engine_EventRequestExit(no);
 }
 
-static void EV13_TALK(s32 obj)
-{
-    s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
-    Engine_EventSetMessage(cue);
-    Engine_EventOpenMessage(obj, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(cue + 1);
-    }
-    else
-    {
-        Engine_EventSetMessage(cue + 2);
-    }
-    Engine_EventShowMessage(obj, 0);
+static void EV02_TOUCH(void) {
+  struct EventWork *work = gEventWork;
+  s32 no = work->touchedTrigger;
+  u16 x = gSuhalla_CellAnimationOrigins[no][0];
+  u16 y = gSuhalla_CellAnimationOrigins[no][1];
+
+  Event_PlayCue(158);
+  Map_AnimateCells(gSuhalla_CellSteps1, x, y);
+  Actor_WalkBy(0, 0, -16);
+  gEventWork->transitionFrames = 16;
+  Engine_EventRequestExit(no);
 }
 
-static void EV16_PSYNERGY(void)
-{
-
-    Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-    Engine_GameFlagSet(0x201);
+s32 SceneData_SelectExtraTableByFlag96f(void) {
+  if (Engine_GameFlagIsSet(0x96F) != 0) {
+    return (s32)gSuhalla_ExtrasFlag96f;
+  }
+  return (s32)gSuhalla_Extras;
 }
 
-static void Suhalla_AnimateCells0(void)
-{
-    struct EventWork *work = gEventWork;
-    s32               no = work->touchedTrigger;
-    u16               x = gSuhalla_CellAnimationOrigins[no][0];
-    u16               y = gSuhalla_CellAnimationOrigins[no][1];
+s32 SceneState_InitEntryWorkspaceAndFlag96f(void) {
+  struct EventWork *work;
 
-    Event_PlayCue(158);
-    Map_AnimateCells(gSuhalla_CellSteps0, x, y);
-    Actor_WalkBy(0, 0, -16);
-    gEventWork->transitionFrames = 16;
-    Engine_EventRequestExit(no);
-}
+  if (gGameState.entrance == 90) {
+    Engine_GameFlagSet(0x96f);
+  }
 
-static void EV02_TOUCH(void)
-{
-    struct EventWork *work = gEventWork;
-    s32               no = work->touchedTrigger;
-    u16               x = gSuhalla_CellAnimationOrigins[no][0];
-    u16               y = gSuhalla_CellAnimationOrigins[no][1];
+  work = gEventWork;
+  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transitionFrames = 24;
 
-    Event_PlayCue(158);
-    Map_AnimateCells(gSuhalla_CellSteps1, x, y);
-    Actor_WalkBy(0, 0, -16);
-    gEventWork->transitionFrames = 16;
-    Engine_EventRequestExit(no);
-}
-
-s32 SceneData_SelectExtraTableByFlag96f(void)
-{
-    if (Engine_GameFlagIsSet(0x96F) != 0)
-    {
-        return (s32)gSuhalla_ExtrasFlag96f;
-    }
-    return (s32)gSuhalla_Extras;
-}
-
-s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
-{
-    struct EventWork *work;
-
-    if (gGameState.entrance == 90)
-    {
-        Engine_GameFlagSet(0x96f);
-    }
-
-    work = gEventWork;
-    work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    work->transitionFrames = 24;
-
-    if (Engine_GameFlagIsSet(0x201) != 0)
-    {
-        EV16_PSYNERGY();
-        Engine_ActorSetAnimation(16, 4);
-    }
-    return 0;
+  if (Engine_GameFlagIsSet(0x201) != 0) {
+    EV16_PSYNERGY();
+    Engine_ActorSetAnimation(16, 4);
+  }
+  return 0;
 }
 
 struct SceneEntrance gSuhalla_Scripts[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 3, CONDITION_ALWAYS, 88, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 4, CONDITION_ALWAYS, 216, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 296, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 6, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { 10, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {3, CONDITION_ALWAYS, 88, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {4, CONDITION_ALWAYS, 216, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 296, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {6, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSuhalla_Messages[] = {
-    SCENE_EXITS(167),
-    SCENE_EXIT(1, 168, 1),
-    SCENE_EXIT(2, 168, 2),
-    SCENE_EXIT(3, 168, 3),
-    SCENE_EXIT(4, 168, 4),
-    SCENE_EXIT(5, 168, 5),
-    SCENE_EXIT(10, 2, 27),
-    SCENE_EXIT(11, 2, 56),
-    SCENE_EXIT(12, 2, 57),
+    SCENE_EXITS(167),      SCENE_EXIT(1, 168, 1), SCENE_EXIT(2, 168, 2),
+    SCENE_EXIT(3, 168, 3), SCENE_EXIT(4, 168, 4), SCENE_EXIT(5, 168, 5),
+    SCENE_EXIT(10, 2, 27), SCENE_EXIT(11, 2, 56), SCENE_EXIT(12, 2, 57),
     SCENE_EXITS_END,
 };
 

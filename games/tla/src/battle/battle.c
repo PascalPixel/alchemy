@@ -12,12 +12,11 @@
 // 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、
 // 全員の表示モードと動作を設定し直す
 //--------------------------------------------------------------------------
-void BattleObjPut(void)
-{
-    s16 list[14];
+void BattleObjPut(void) {
+  s16 list[14];
 
-    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-    BattleActor_SpawnObjectsForList(list, 1);
+  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+  BattleActor_SpawnObjectsForList(list, 1);
 }
 
 //--------------------------------------------------------------------------
@@ -31,10 +30,9 @@ void BattleObjPut(void)
 //--------------------------------------------------------------------------
 // 戦闘中の全ユニットの絵を用意する（いなくなったユニットの絵は解放）
 //--------------------------------------------------------------------------
-void BattleParty_ListAllUnitsAndSubmit(void)
-{
-    s16 list[14];
+void BattleParty_ListAllUnitsAndSubmit(void) {
+  s16 list[14];
 
-    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-    BattleActor_SpawnObjectsForList(list, 0);
+  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+  BattleActor_SpawnObjectsForList(list, 0);
 }

@@ -2,8 +2,9 @@
 FAR_CALL(WaitFramesFar, WaitFrames, void, (s32 frames))
 FAR_SLOT(Scheduler_ResetTaskTable)
 FAR_CALL(Scheduler_AddOrUpdateCallbackFar, Scheduler_AddOrUpdateCallback, s32,
-    (SchedulerCallback callback, s32 order))
-FAR_CALL(Scheduler_RemoveCallbackFar, Scheduler_RemoveCallback, s32, (SchedulerCallback callback))
+         (SchedulerCallback callback, s32 order))
+FAR_CALL(Scheduler_RemoveCallbackFar, Scheduler_RemoveCallback, s32,
+         (SchedulerCallback callback))
 FAR_SLOT(Scheduler_EnableCallbacks)
 FAR_SLOT(Scheduler_DisableCallbacks)
 FAR_SLOT(Runtime_InvokeCallbacksByKey)
@@ -13,37 +14,41 @@ FAR_SLOT(Math_IntegerSqrt)
 FAR_CALL(FixedSqrtFar, FixedSqrt, s32, (s32 value))
 FAR_ENTRY(Trig_SinFar, Trig_Sin)
 FAR_ENTRY(Trig_CosFar, Trig_Cos)
-FAR_CALL(
-    Vector_AddPolarOffsetFar, Vector_AddPolarOffset, void, (s32 radius, s32 angle, s32 *position))
+FAR_CALL(Vector_AddPolarOffsetFar, Vector_AddPolarOffset, void,
+         (s32 radius, s32 angle, s32 *position))
 FAR_CALL(Runtime_SetIrqHandlerFar, Runtime_SetIrqHandler, void,
-    (u32 irq, s32 vcount, InterruptHandler handler))
+         (u32 irq, s32 vcount, InterruptHandler handler))
 FAR_SLOT(Runtime_InitializeHeap)
-FAR_CALL(Runtime_AllocateHeapBlockFar, Runtime_AllocateHeapBlock, void *, (s32 kind, s32 size))
-FAR_CALL(Runtime_AllocateBlockFar, Runtime_AllocateBlock, void *, (s32 kind, s32 size))
+FAR_CALL(Runtime_AllocateHeapBlockFar, Runtime_AllocateHeapBlock, void *,
+         (s32 kind, s32 size))
+FAR_CALL(Runtime_AllocateBlockFar, Runtime_AllocateBlock, void *,
+         (s32 kind, s32 size))
 FAR_ENTRY(Runtime_ReleaseHeapBlockFar, Runtime_ReleaseHeapBlock)
 FAR_SLOT(Runtime_GetRemainingIwram)
 FAR_SLOT(Runtime_GetRemainingEwram)
 FAR_CALL(Runtime_BumpAllocateFar, MemAlloc, void *, (s32 size))
-FAR_CALL(
-    Runtime_BumpAllocateAlternatePoolFar, Runtime_BumpAllocateAlternatePool, void *, (s32 size))
+FAR_CALL(Runtime_BumpAllocateAlternatePoolFar,
+         Runtime_BumpAllocateAlternatePool, void *, (s32 size))
 FAR_ENTRY(Sys_FreeFar, MemFree)
 FAR_SLOT(Runtime_WriteDebugTextTiles)
 FAR_SLOT(Text_DrawHexRightAligned)
 FAR_SLOT(Text_DrawSignedDecimalRightAligned)
 FAR_SLOT(Graphics_FillWordStreamWithF000)
-FAR_CALL(
-    Resource_DecodeByteLzFar, Resource_DecodeByteLz, s32, (const void *source, void *destination))
-FAR_CALL(
-    Resource_DecodeType01Far, Resource_DecodeType01, s32, (const void *source, void *destination))
+FAR_CALL(Resource_DecodeByteLzFar, Resource_DecodeByteLz, s32,
+         (const void *source, void *destination))
+FAR_CALL(Resource_DecodeType01Far, Resource_DecodeType01, s32,
+         (const void *source, void *destination))
 FAR_SLOT(Resource_InitializeTable)
 FAR_CALL(Resource_ResetEntryFar, Resource_ResetEntry, s32, (u32 no))
 FAR_CALL(Resource_ActivateEntryFar, Resource_ActivateEntry, s32, (u32 no))
-FAR_CALL(VramBlock_LoadCachedFar, VramBlock_LoadCached, s32, (u32 no, u32 size, const void *src))
+FAR_CALL(VramBlock_LoadCachedFar, VramBlock_LoadCached, s32,
+         (u32 no, u32 size, const void *src))
 FAR_CALL(Resource_FindFreeEntryFar, Resource_FindFreeEntry, s32, (void))
 FAR_SLOT(Bg0_ClearTilemap)
 FAR_CALL(AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect, s32,
-    (struct AffineTransform * source))
-FAR_CALL(Runtime_PushSlotEntryFar, Runtime_PushSlotEntry, void, (void *slot_entry, s32 slot))
+         (struct AffineTransform * source))
+FAR_CALL(Runtime_PushSlotEntryFar, Runtime_PushSlotEntry, void,
+         (void *slot_entry, s32 slot))
 FAR_CALL(Ui_LoadWindowGraphicsFar, Ui_LoadWindowGraphics, void, (void))
 FAR_SLOT(PaletteDma_LoadBlock)
 FAR_SLOT(Render_ResetTransformState)
@@ -65,9 +70,11 @@ FAR_SLOT(Camera_StoreSceneParameters)
 FAR_SLOT(Resource_LoadWorkHeader)
 FAR_SLOT(RuntimeDispatch_ReturnZero)
 FAR_CALL(Resource_GetTableEntryFar, Resource_GetTableEntry, void *, (s32 index))
-FAR_CALL(RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook, void, (s32 unused))
+FAR_CALL(RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook, void,
+         (s32 unused))
 FAR_SLOT(Resource_LoadCode)
-FAR_CALL(Blend_SetDarkenTarget16Far, Blend_SetDarkenTarget16, void, (s32 frames))
+FAR_CALL(Blend_SetDarkenTarget16Far, Blend_SetDarkenTarget16, void,
+         (s32 frames))
 FAR_SLOT(Blend_SetDarkenTarget0)
 FAR_SLOT(Blend_SetBrightenTarget16)
 FAR_SLOT(Blend_SetBrightenTarget0)
@@ -80,7 +87,7 @@ FAR_SLOT(RuntimeDispatch_ReservedNoOpD)
 FAR_SLOT(RuntimeDispatch_ReservedNoOpE)
 FAR_CALL(SerialRuntime_InitializeFar, SerialRuntime_Initialize, void, (void))
 FAR_CALL(SerialRuntime_PollAndTransferFar, SerialRuntime_PollAndTransfer, s32,
-    (void *send, void *receive))
+         (void *send, void *receive))
 FAR_SLOT(QueueIoWriteDelay1)
 FAR_ENTRY(QueueIoWriteDelay2Far, QueueIoWriteDelay2)
 FAR_ENTRY(QueueIoWriteDelay3Far, QueueIoWriteDelay3)
@@ -93,15 +100,19 @@ FAR_SLOT(QueueIoWriteDelay11)
 FAR_SLOT(Runtime_SetMainState19)
 FAR_SLOT(Graphics_PrepareTransferAndRun)
 FAR_SLOT(SerialRuntime_WaitForStatusMask)
-FAR_CALL(SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers, void, (void))
-FAR_CALL(Sound_LoadPresetParametersFar, Sound_LoadPresetParameters, s32, (s32 preset))
+FAR_CALL(SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers,
+         void, (void))
+FAR_CALL(Sound_LoadPresetParametersFar, Sound_LoadPresetParameters, s32,
+         (s32 preset))
 FAR_CALL(SerialRuntime_BeginTransferAFar, SerialRuntime_BeginTransferA, s32,
-    (void *source, s32 transferValue))
-FAR_CALL(SerialRuntime_BeginTransferBFar, SerialRuntime_BeginTransferB, s32, (void *destination))
+         (void *source, s32 transferValue))
+FAR_CALL(SerialRuntime_BeginTransferBFar, SerialRuntime_BeginTransferB, s32,
+         (void *destination))
 FAR_SLOT(SerialRuntime_WaitForTransferA)
 FAR_SLOT(SerialRuntime_WaitForTransferB)
 FAR_SLOT(SerialRuntime_WaitForTransfers)
-FAR_CALL(SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers, s32, (void))
+FAR_CALL(SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers,
+         s32, (void))
 FAR_SLOT(SerialRuntime_StepBlockTransfer)
 FAR_CALL(Scheduler_SetCallbackMaskFar, Scheduler_SetCallbackMask, s32,
-    (SchedulerCallback callback, u32 mask))
+         (SchedulerCallback callback, u32 mask))

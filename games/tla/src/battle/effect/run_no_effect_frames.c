@@ -10,17 +10,14 @@
 // 何もしない BattleFx_RunNoEffect を cnt 回呼ぶ（フレーム待ちはしない）
 // cnt : 呼ぶ回数
 //--------------------------------------------------------------------------
-void BattleFx_RunNoEffectFrames(s32 cnt)
-{
-    s32 n;
+void BattleFx_RunNoEffectFrames(s32 cnt) {
+  s32 n;
 
-    n = 0;
-    if (cnt != 0)
-    {
-        do
-        {
-            n += 1;
-            BattleFx_RunNoEffect();
-        } while (n != cnt);
-    }
+  n = 0;
+  if (cnt != 0) {
+    do {
+      n += 1;
+      BattleFx_RunNoEffect();
+    } while (n != cnt);
+  }
 }

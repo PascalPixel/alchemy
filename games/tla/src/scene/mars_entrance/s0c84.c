@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char     SceneId_Ov6aaRoom1;
-extern char     SceneId_Ov6aaRoom2;
-extern char     SceneId_Ov6aaRoom3;
-extern char     SceneId_Ov6aaRoom4;
-extern char     SceneId_Ov6aaRoom5;
-extern char     SceneId_Ov6aaRoom6;
-extern char     SceneId_Ov6aaRoom7;
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -28,53 +28,48 @@ void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void Func_02000c84(void)
-{
-    Func_020046b4();
-    Func_02004dd0();
-    {
-        u8 *party = (u8 *)&gPartyState;
+void Func_02000c84(void) {
+  Func_020046b4();
+  Func_02004dd0();
+  {
+    u8 *party = (u8 *)&gPartyState;
 
-        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do
-        {
-        } while (0);
-        party[0x2c2] = 2;
-    }
-    Func_02004d30(12);
-    Battle_WaitMode0(40);
-    Func_02004718();
+    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+     * built (one reordered row). */
+    do {
+    } while (0);
+    party[0x2c2] = 2;
+  }
+  Func_02004d30(12);
+  Battle_WaitMode0(40);
+  Func_02004718();
 }
 
-void Func_02000cb4(void)
-{
-    Func_020046b4();
-    Func_02004dd0();
-    {
-        u8 *party = (u8 *)&gPartyState;
+void Func_02000cb4(void) {
+  Func_020046b4();
+  Func_02004dd0();
+  {
+    u8 *party = (u8 *)&gPartyState;
 
-        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do
-        {
-        } while (0);
-        party[0x2c2] = 2;
-    }
-    Func_02004d30(13);
-    Battle_WaitMode0(40);
-    Func_02004718();
+    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+     * built (one reordered row). */
+    do {
+    } while (0);
+    party[0x2c2] = 2;
+  }
+  Func_02004d30(13);
+  Battle_WaitMode0(40);
+  Func_02004718();
 }
 
-void Func_02000ce4(s32 unused, s32 id)
-{
-    if (id == 8)
-    {
-        struct ObjectRuntime *object = Object_GetById(8);
+void Func_02000ce4(s32 unused, s32 id) {
+  if (id == 8) {
+    struct ObjectRuntime *object = Object_GetById(8);
 
-        if (object->x >> 20 == 5)
-        {
-            Battle_WaitMode0(5);
-            object->z += 0x10000;
-            Flag_Set(0xa4e);
-        }
+    if (object->x >> 20 == 5) {
+      Battle_WaitMode0(5);
+      object->z += 0x10000;
+      Flag_Set(0xa4e);
     }
+  }
 }

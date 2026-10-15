@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char     SceneId_Ov6aaRoom1;
-extern char     SceneId_Ov6aaRoom2;
-extern char     SceneId_Ov6aaRoom3;
-extern char     SceneId_Ov6aaRoom4;
-extern char     SceneId_Ov6aaRoom5;
-extern char     SceneId_Ov6aaRoom6;
-extern char     SceneId_Ov6aaRoom7;
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -28,81 +28,71 @@ void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void Func_02000718(void)
-{
-    SCENE_WORK->unk166 = 0;
-    Flag_Clear(0x106);
-    Flag_Clear(0x104);
-    Func_02004ca8();
-    Func_02004da0(0);
-    Func_02004d10(0x10000, 0x2000);
-    Camera_SetBounds(0xa80000, 0, 0x2980000, 1);
-    Func_02004d20();
-    WaitFrames(10);
-    Func_02004d10(0x40000, 0x8000);
-    Camera_SetBounds(0x1d80000, 0, 0x2980000, 1);
-    Func_02004d20();
-    Battle_WaitMode0(90);
-    Func_02004cb0();
+void Func_02000718(void) {
+  SCENE_WORK->unk166 = 0;
+  Flag_Clear(0x106);
+  Flag_Clear(0x104);
+  Func_02004ca8();
+  Func_02004da0(0);
+  Func_02004d10(0x10000, 0x2000);
+  Camera_SetBounds(0xa80000, 0, 0x2980000, 1);
+  Func_02004d20();
+  WaitFrames(10);
+  Func_02004d10(0x40000, 0x8000);
+  Camera_SetBounds(0x1d80000, 0, 0x2980000, 1);
+  Func_02004d20();
+  Battle_WaitMode0(90);
+  Func_02004cb0();
 }
 
-void Func_02000798(void)
-{
-    Func_02004c28(14, 55, 14, 3, 14, 41);
-    Func_02004c30(64, 64, 14, 3, 78, 41);
-    Func_02004c30(64, 64, 14, 3, 14, 104);
-    Func_02004c28(64, 64, 14, 3, 78, 41);
-    Func_02004c28(64, 64, 14, 3, 14, 105);
+void Func_02000798(void) {
+  Func_02004c28(14, 55, 14, 3, 14, 41);
+  Func_02004c30(64, 64, 14, 3, 78, 41);
+  Func_02004c30(64, 64, 14, 3, 14, 104);
+  Func_02004c28(64, 64, 14, 3, 78, 41);
+  Func_02004c28(64, 64, 14, 3, 14, 105);
 }
 
-void Func_02000808(void)
-{
-    struct ObjectRuntime *object = Object_GetById(20);
+void Func_02000808(void) {
+  struct ObjectRuntime *object = Object_GetById(20);
 
-    if (!Flag_IsSet(0xa47))
-    {
-        Func_02004de0(0x23d);
-        Flag_Set(0x231);
-        object->x = S16_AT(object, 100) << 16;
-        object->z = S16_AT(object, 102) << 16;
-        Flag_Set(0xa48);
-        Func_02000798();
-    }
+  if (!Flag_IsSet(0xa47)) {
+    Func_02004de0(0x23d);
+    Flag_Set(0x231);
+    object->x = S16_AT(object, 100) << 16;
+    object->z = S16_AT(object, 102) << 16;
+    Flag_Set(0xa48);
+    Func_02000798();
+  }
 }
 
-void Func_0200085c(s32 state, s32 frame)
-{
-    if (state == 1)
-    {
-        Func_02004de0(0x23e);
-        Func_02004d58(0x10000, 0);
-        Func_02004d60(60);
-        Func_02004c30(28, 92, 8, 8, 28, 100);
-        Func_02004c28(92, 38, 8, 8, 28, 38);
-        Func_02004cd8(20, 0, 0);
-        Flag_Set(0xa47);
-    }
-    if (frame > 96 && frame < 272 && frame % 30 == 0)
-        Func_02000414(20);
-    if (frame == 276)
-    {
-        Func_02004d58(0x7fff, 0);
-        Func_02004d60(20);
-    }
+void Func_0200085c(s32 state, s32 frame) {
+  if (state == 1) {
+    Func_02004de0(0x23e);
+    Func_02004d58(0x10000, 0);
+    Func_02004d60(60);
+    Func_02004c30(28, 92, 8, 8, 28, 100);
+    Func_02004c28(92, 38, 8, 8, 28, 38);
+    Func_02004cd8(20, 0, 0);
+    Flag_Set(0xa47);
+  }
+  if (frame > 96 && frame < 272 && frame % 30 == 0)
+    Func_02000414(20);
+  if (frame == 276) {
+    Func_02004d58(0x7fff, 0);
+    Func_02004d60(20);
+  }
 }
 
-void Func_020008f4(s32 unused, s32 id)
-{
-    if (id == 8)
-    {
-        struct ObjectRuntime *object = Object_GetById(8);
+void Func_020008f4(s32 unused, s32 id) {
+  if (id == 8) {
+    struct ObjectRuntime *object = Object_GetById(8);
 
-        if (object->x >> 20 == 20)
-        {
-            Battle_WaitMode0(5);
-            object->z += 0x10000;
-            BYTE_AT(object, 98) = 1;
-            Flag_Set(0xa4f);
-        }
+    if (object->x >> 20 == 20) {
+      Battle_WaitMode0(5);
+      object->z += 0x10000;
+      BYTE_AT(object, 98) = 1;
+      Flag_Set(0xa4f);
     }
+  }
 }

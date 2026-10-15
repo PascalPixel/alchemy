@@ -1,21 +1,19 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct SerialWork
-{
-    u8  unk0000[0x313c];
-    u32 command;
-    u16 progress;
-    u16 state;
+struct SerialWork {
+  u8 unk0000[0x313c];
+  u32 command;
+  u16 progress;
+  u16 state;
 };
 
-void SerialRuntime_QueueCommand(u32 command)
-{
-    struct SerialWork *work = Ram_HeapSlots->serialWork;
+void SerialRuntime_QueueCommand(u32 command) {
+  struct SerialWork *work = Ram_HeapSlots->serialWork;
 
-    if (work == 0)
-        return;
-    work->command = command;
-    work->progress = 0;
-    work->state = 3;
+  if (work == 0)
+    return;
+  work->command = command;
+  work->progress = 0;
+  work->state = 3;
 }

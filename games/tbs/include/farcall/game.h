@@ -5,11 +5,14 @@ FAR_CALL(UnitGetFar, UnitGet, struct BattleUnit *, (u32 owner))
 #endif
 FAR_CALL(UnitCalcFar, UnitCalc, void, (s32 owner))
 FAR_CALL(Item_GetDirectFar, Item_GetDirect, struct ItemDefinition *, (s32 item))
-FAR_CALL(Shop_GetSelectionState, Inventory_GetQuantity, s32, (s32 owner, s32 slot))
-FAR_CALL(Inventory_AddItemFar, Inventory_AddItem, s32, (s32 owner_id, s32 item_id))
+FAR_CALL(Shop_GetSelectionState, Inventory_GetQuantity, s32,
+         (s32 owner, s32 slot))
+FAR_CALL(Inventory_AddItemFar, Inventory_AddItem, s32,
+         (s32 owner_id, s32 item_id))
 FAR_CALL(PartyInventory_AddFar, PartyInventory_Add, s32, (s32 item_id))
 FAR_CALL(Inventory_FindFar, Inventory_Find, s32, (s32 owner, s32 item_id))
-FAR_CALL(PartyInventory_FindOwnerFar, PartyInventory_FindOwner, s32, (s32 item_id))
+FAR_CALL(PartyInventory_FindOwnerFar, PartyInventory_FindOwner, s32,
+         (s32 item_id))
 FAR_CALL(PartyInventory_RemoveFar, PartyInventory_Remove, s32, (s32 item_id))
 FAR_CALL(Inventory_EquipFar, Inventory_Equip, s32, (s32 owner, s32 slot))
 FAR_CALL(Inventory_RemoveFar, Inventory_Remove, s32, (s32 owner, s32 slot))
@@ -17,16 +20,18 @@ FAR_CALL(Inventory_BreakFar, Inventory_Break, s32, (s32 owner, s32 slot))
 FAR_CALL(Inventory_RepairFar, Inventory_Repair, s32, (s32 owner, s32 slot))
 FAR_SLOT(Item_GetTargetMode)
 FAR_CALL(Inventory_GetEquippedItemFar, Inventory_GetEquippedItem, s32,
-    (struct BattleUnit * inv, s32 type))
-FAR_CALL(BattleActGet, BattleAction_GetDirect, struct BattleAct *, (s32 actionId))
+         (struct BattleUnit * inv, s32 type))
+FAR_CALL(BattleActGet, BattleAction_GetDirect, struct BattleAct *,
+         (s32 actionId))
 FAR_CALL(OwnerAction_AddFar, OwnerAction_Add, s32, ())
 FAR_CALL(Equipment_HasValueFar, Equipment_HasValue, s32, (s32 owner, s32 value))
 FAR_CALL(GameState_InitDefaultsFar, GameState_InitDefaults, void, (void))
 FAR_SLOT(OwnerAction_CheckLevelThreshold)
 FAR_SLOT(Owner_InitRecords)
 FAR_SLOT(Owner_LevelNoOp)
-FAR_CALL(Owner_GetValueIfLevelThresholdReachedFar, Owner_GetValueIfLevelThresholdReached,
-    struct LevelUpResult *, (s32 owner_id, struct LevelUpResult *value))
+FAR_CALL(Owner_GetValueIfLevelThresholdReachedFar,
+         Owner_GetValueIfLevelThresholdReached, struct LevelUpResult *,
+         (s32 owner_id, struct LevelUpResult *value))
 FAR_CALL(GameFlag_TestFar, GameFlag_Test, s32, (s32 flag))
 FAR_CALL(GameFlag_SetBitFar, GameFlag_SetBit, s32, (s32 flag))
 FAR_CALL(GameFlag_ClearBitFar, GameFlag_ClearBit, void, (s32 flag))
@@ -38,73 +43,106 @@ FAR_SLOT(GameFlag_DecrementByte)
 FAR_SLOT(GameFlag_GetNibble)
 FAR_SLOT(GameFlag_SetNibble)
 FAR_SLOT(Owner_RefreshAndResetZero)
-FAR_CALL(Owner_AdjustFirstValueFar, Owner_AdjustFirstValue, s32, (s32 owner, s32 delta))
+FAR_CALL(Owner_AdjustFirstValueFar, Owner_AdjustFirstValue, s32,
+         (s32 owner, s32 delta))
 FAR_CALL(UnitPpAddFar, UnitPpAdd, s16, (s32 owner, s32 delta))
 FAR_CALL(UnitRatioFar, UnitRatio, void, (s32 owner_id))
-FAR_CALL(
-    Owner_UpdateRatioPairFar, Owner_UpdateRatioPair, void, (struct BattleUnit * state, s32 input))
+FAR_CALL(Owner_UpdateRatioPairFar, Owner_UpdateRatioPair, void,
+         (struct BattleUnit * state, s32 input))
 FAR_SLOT(Owner_UpdateSecondInputAndRatios)
-FAR_CALL(BattleUnitSetFar, BattleUnitSet, s32, (s32 unitId, s32 enemyId, s32 suffix))
+FAR_CALL(BattleUnitSetFar, BattleUnitSet, s32,
+         (s32 unitId, s32 enemyId, s32 suffix))
 FAR_CALL(Party_CountActiveOwnersFar, Party_CountActiveOwners, s32, (void))
 FAR_CALL(Party_AddActiveOwnerFar, Party_AddActiveOwner, s32, (s32 value))
 FAR_CALL(Party_ListActiveOwnersFar, Party_ListActiveOwners, s32, (s16 *owners))
-FAR_CALL(RollWeaponUnleashFar, RollWeaponUnleash, s32, (struct BattleUnit * owner))
+FAR_CALL(RollWeaponUnleashFar, RollWeaponUnleash, s32,
+         (struct BattleUnit * owner))
 FAR_CALL(Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner, s32, (s32 value))
 FAR_CALL(Item_GetEquippedElementFar, Item_GetEquippedElement, s32, (s32 id))
 FAR_CALL(BattleHitCheck, BattleFx_RollSuccess, s32,
-    (s32 caster, s32 target, s32 resistance_category, s32 effect_id, s32 success_scale))
-FAR_CALL(BattleAtkCalc, Owner_ScaleAdjustedAmount, s32, (s32 atk, s32 def, s32 add, s32 bonus))
-FAR_CALL(BattlePowerCalc, Owner_ScaleValueByCurve, s32, (s32 power, s32 bonus, s32 rate))
-FAR_CALL(BattleRecoveryCalc, Owner_ScaleValueByOffsetCurve, s32, (s32 power, s32 element, s32 rate))
+         (s32 caster, s32 target, s32 resistance_category, s32 effect_id,
+          s32 success_scale))
+FAR_CALL(BattleAtkCalc, Owner_ScaleAdjustedAmount, s32,
+         (s32 atk, s32 def, s32 add, s32 bonus))
+FAR_CALL(BattlePowerCalc, Owner_ScaleValueByCurve, s32,
+         (s32 power, s32 bonus, s32 rate))
+FAR_CALL(BattleRecoveryCalc, Owner_ScaleValueByOffsetCurve, s32,
+         (s32 power, s32 element, s32 rate))
 FAR_CALL(Owner_GetRecordFar, Owner_GetRecord, const u8 *, (s32 selector))
 FAR_CALL(BattleRandomFar, BattleRandom, s32, (void))
-FAR_CALL(Djinn_AddToOwnerFar, Djinn_AddToOwner, s32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Djinn_ActivateFar, Djinn_Activate, s32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Djinn_DeactivateFar, Djinn_Deactivate, u32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Trade_RemoveOfferFar, Trade_RemoveOffer, s32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Trade_AddOfferFar, Trade_AddOffer, u32 *, (u32 kind, u32 first, u32 second))
-FAR_CALL(Djinn_TransferFar, Djinn_Transfer, s32, (s32 source, s32 index, s32 bit, s32 target))
-FAR_CALL(Trade_ListFlaggedEntriesFar, Trade_ListFlaggedEntries, s32, (u8 *output))
-FAR_CALL(SummonDefinition_Get, SummonDefinition_GetNear, const struct SummonDefinition *,
-    (u32 summon_id))
-FAR_CALL(Djinn_GetDefinitionHeaderFar, Djinn_GetDefinitionHeader, s32, (u32 group, u32 index))
-FAR_CALL(
-    Party_AdvanceOwnerCountToTargetFar, Party_AdvanceOwnerCountToTarget, void, (s32 unit, s32 lv))
-FAR_CALL(Owner_GetResistanceValueFar, Owner_GetResistanceValue, s32, (s32 owner, s32 index))
+FAR_CALL(Djinn_AddToOwnerFar, Djinn_AddToOwner, s32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Djinn_ActivateFar, Djinn_Activate, s32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Djinn_DeactivateFar, Djinn_Deactivate, u32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Trade_RemoveOfferFar, Trade_RemoveOffer, s32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Trade_AddOfferFar, Trade_AddOffer, u32 *,
+         (u32 kind, u32 first, u32 second))
+FAR_CALL(Djinn_TransferFar, Djinn_Transfer, s32,
+         (s32 source, s32 index, s32 bit, s32 target))
+FAR_CALL(Trade_ListFlaggedEntriesFar, Trade_ListFlaggedEntries, s32,
+         (u8 *output))
+FAR_CALL(SummonDefinition_Get, SummonDefinition_GetNear,
+         const struct SummonDefinition *, (u32 summon_id))
+FAR_CALL(Djinn_GetDefinitionHeaderFar, Djinn_GetDefinitionHeader, s32,
+         (u32 group, u32 index))
+FAR_CALL(Party_AdvanceOwnerCountToTargetFar, Party_AdvanceOwnerCountToTarget,
+         void, (s32 unit, s32 lv))
+FAR_CALL(Owner_GetResistanceValueFar, Owner_GetResistanceValue, s32,
+         (s32 owner, s32 index))
 FAR_SLOT(Trade_CountPendingOffers)
-FAR_CALL(Djinn_IsActiveFar, Djinn_IsActive, u32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Trade_CanOfferDjinnFar, Trade_CanOfferDjinn, s32, (s32 owner, s32 index, s32 bit))
-FAR_CALL(Item_CanOwnerEquip, Item_CanOwnerEquipDirect, s32, (s32 unit, s32 item))
-FAR_CALL(Item_IsCompatibleWithOwnerFar, Item_IsCompatibleWithOwner, s32, (s32 unit, s32 item))
-FAR_CALL(Inventory_FindEquippedFar, Inventory_FindEquipped, s32, (s32 owner, s32 type))
+FAR_CALL(Djinn_IsActiveFar, Djinn_IsActive, u32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Trade_CanOfferDjinnFar, Trade_CanOfferDjinn, s32,
+         (s32 owner, s32 index, s32 bit))
+FAR_CALL(Item_CanOwnerEquip, Item_CanOwnerEquipDirect, s32,
+         (s32 unit, s32 item))
+FAR_CALL(Item_IsCompatibleWithOwnerFar, Item_IsCompatibleWithOwner, s32,
+         (s32 unit, s32 item))
+FAR_CALL(Inventory_FindEquippedFar, Inventory_FindEquipped, s32,
+         (s32 owner, s32 type))
 FAR_CALL(Party_AdjustCoinsFar, Party_AdjustCoins, s32, (s32 amount))
 FAR_CALL(Item_GetEquipmentGroupFar, Item_GetEquipmentGroup, s32, (s32 item_id))
-FAR_CALL(Item_AdjustCounterFar, Item_AdjustCounter, s32, (s32 item_id, s32 delta))
+FAR_CALL(Item_AdjustCounterFar, Item_AdjustCounter, s32,
+         (s32 item_id, s32 delta))
 FAR_CALL(Inventory_CountFar, Inventory_Count, s32, (s32 owner))
 FAR_CALL(PartyInventory_HasSpaceFar, PartyInventory_HasSpace, s32, (void))
-FAR_CALL(Owner_GetLevelThresholdFar, Owner_GetLevelThreshold, u32, (s32 owner, s32 level))
-FAR_CALL(Owner_RefreshActiveRatiosFar, Owner_RefreshActiveRatios, void, (s32 arg0))
+FAR_CALL(Owner_GetLevelThresholdFar, Owner_GetLevelThreshold, u32,
+         (s32 owner, s32 level))
+FAR_CALL(Owner_RefreshActiveRatiosFar, Owner_RefreshActiveRatios, void,
+         (s32 arg0))
 FAR_CALL(Owner_RefreshRatiosOnFlagFar, Owner_RefreshRatiosOnFlag, void, (void))
-FAR_CALL(Party_SetFlag32AndRefreshMembersFar, Party_SetFlag32AndRefreshMembers, void, (void))
+FAR_CALL(Party_SetFlag32AndRefreshMembersFar, Party_SetFlag32AndRefreshMembers,
+         void, (void))
 FAR_CALL(Party_ApplyStatePresetFar, Party_ApplyStatePreset, void, (void))
 FAR_SLOT(Owner_RatioNoOp)
-FAR_CALL(Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner, s32, (s32 index, u8 *state))
+FAR_CALL(Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner, s32,
+         (s32 index, u8 *state))
 FAR_CALL(Party_SumDjinnCountsFar, Party_SumDjinnCounts, s32, (s32 index))
-FAR_CALL(Party_AdjustSixDigitCounterBFar, Party_AdjustSixDigitCounterB, s32, (s32 amount))
-FAR_CALL(Party_AdjustCounterCappedAt28Far, Party_AdjustCounterCappedAt28, s32, (s32 amount))
-FAR_CALL(Inventory_CheckDiscardFar, Inventory_CheckDiscard, s32, (s32 owner, s32 slot))
+FAR_CALL(Party_AdjustSixDigitCounterBFar, Party_AdjustSixDigitCounterB, s32,
+         (s32 amount))
+FAR_CALL(Party_AdjustCounterCappedAt28Far, Party_AdjustCounterCappedAt28, s32,
+         (s32 amount))
+FAR_CALL(Inventory_CheckDiscardFar, Inventory_CheckDiscard, s32,
+         (s32 owner, s32 slot))
 FAR_CALL(Inventory_DiscardFar, Inventory_Discard, s32, (s32 owner, s32 slot))
 FAR_CALL(BattleEffectRevCheckFar, BattleEffectRevCheck, s32, (s32 effect_id))
-FAR_CALL(Owner_RefreshClassActionsFar, Owner_RefreshClassActions, s32, (s32 owner))
+FAR_CALL(Owner_RefreshClassActionsFar, Owner_RefreshClassActions, s32,
+         (s32 owner))
 FAR_CALL(Party_GetAverageLevelFar, Party_GetAverageLevel, u32, (void))
 FAR_SLOT(Owner_RefreshDerivedData)
-FAR_CALL(Inventory_CountItemFar, Inventory_CountItem, s32, (s32 owner, s32 item_id))
-FAR_CALL(PartyInventory_CountItemFar, PartyInventory_CountItem, s32, (s32 item_id))
+FAR_CALL(Inventory_CountItemFar, Inventory_CountItem, s32,
+         (s32 owner, s32 item_id))
+FAR_CALL(PartyInventory_CountItemFar, PartyInventory_CountItem, s32,
+         (s32 item_id))
 FAR_CALL(PartyInventory_DiscardFar, PartyInventory_Discard, s32, (s32 item_id))
 FAR_CALL(GameFlag_RefreshLureCapFar, GameFlag_RefreshLureCap, void, (void))
 FAR_CALL(Equipment_GetUnleashRateBonusFar, Equipment_GetUnleashRateBonus, s32,
-    (struct BattleUnit * owner))
+         (struct BattleUnit * owner))
 FAR_CALL(Runtime_GetBuildStampTimeFar, Runtime_GetBuildStampTime, u32, ())
-FAR_CALL(PartyInventory_CountFreeSlotsFar, PartyInventory_CountFreeSlots, s32, (void))
+FAR_CALL(PartyInventory_CountFreeSlotsFar, PartyInventory_CountFreeSlots, s32,
+         (void))
 FAR_CALL(InventorySnapshot_SaveFar, InventorySnapshot_Save, void, (void))
 FAR_CALL(InventorySnapshot_RestoreFar, InventorySnapshot_Restore, void, (void))

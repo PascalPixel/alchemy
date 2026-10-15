@@ -23,768 +23,704 @@
 #include "objcmd.h"
 #include "field_effect.h"
 
-static __inline__ void Scene_AdvanceStep(s32 amount)
-{
-    gEventWork->message += amount;
+static __inline__ void Scene_AdvanceStep(s32 amount) {
+  gEventWork->message += amount;
 }
 
-static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
-{
-    object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    object->actor.sprite->priority = 3;
-    object->actor.sprite->secondPriority = 3;
-    return 0;
+static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object) {
+  object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  object->actor.sprite->priority = 3;
+  object->actor.sprite->secondPriority = 3;
+  return 0;
 }
 
-static s32 OverlayObject_SetFacingTowardObject10(void *self)
-{
-    struct FieldActor *actor = self;
-    struct FieldActor *obj;
+static s32 OverlayObject_SetFacingTowardObject10(void *self) {
+  struct FieldActor *actor = self;
+  struct FieldActor *obj;
 
-    obj = Object_GetById(0xA);
-    actor->facing = ArcTan2(obj->z.fixed - actor->z.fixed, obj->x.fixed - actor->x.fixed);
-    return 0;
+  obj = Object_GetById(0xA);
+  actor->facing =
+      ArcTan2(obj->z.fixed - actor->z.fixed, obj->x.fixed - actor->x.fixed);
+  return 0;
 }
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
-    {
-        return gAlpineCrossingLamaTemple_TempleEntrances;
-    }
-    return gAlpineCrossingLamaTemple_Entrances;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
+    return gAlpineCrossingLamaTemple_TempleEntrances;
+  }
+  return gAlpineCrossingLamaTemple_Entrances;
 }
 
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
+
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
+    return gAlpineCrossingLamaTemple_TemplePlacements;
+  }
+  return gAlpineCrossingLamaTemple_Placements;
 }
 
-const u32 *Scene_GetExits(void)
-{
-    return gAlpineCrossingLamaTemple_Exits;
-}
+static void SceneDialogue_RunMessage1958Step(void) {
 
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
-    {
-        return gAlpineCrossingLamaTemple_TemplePlacements;
-    }
-    return gAlpineCrossingLamaTemple_Placements;
-}
+  struct EventWork *work;
 
-static void SceneDialogue_RunMessage1958Step(void)
-{
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
+  Engine_EventOpenMessage(10, 0);
 
-    struct EventWork *work;
-
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
-    Engine_EventOpenMessage(10, 0);
-
-    if (Engine_EventChooseYesNo(0, 0) == 1)
-    {
-        Engine_EventWait(20);
-        Engine_EventShowMessage(10, 0);
-    }
-    else
-    {
-        work = gEventWork;
-        work->message += 1;
-        Engine_EventAskYesNo(10, 0);
-    }
-
-    Engine_EventEnd();
-}
-
-static void EV11_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgMountainDoKnowMeditation);
-    Engine_EventAskYesNo(11, 0);
-    Engine_EventEnd();
-}
-
-static void EV13_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
-    Engine_EventAskYesNo(13, 0);
-    Engine_EventEnd();
-}
-
-static void EV02_TOUCH(void)
-{
-    Event_PlayCue(188);
-    Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
-    Object_GetById(0)->motionFlags = 0;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
-    Engine_EventWait(16);
-    Engine_EventRequestExit(2);
-}
-
-static void FieldScene_RunScene3a2SequenceA(void)
-{
-    void Event_ShowMessageAndWait();
-
-    Engine_EventBegin();
-    Actor_SetPosition(8, 0x880000, 0xa80000);
-    Actor_FaceDirection(8, 0x5000, 0);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x900000, 0xc80000);
-    Actor_SetPosition(GARET, 0xa00000, 0xc00000);
-    Actor_SetPosition(IVAN, 0x800000, 0xc80000);
-    Actor_SetPosition(MIA, 0x700000, 0xc00000);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(GARET, 0xa000, 0);
-    Actor_FaceDirection(IVAN, 0xc000, 0);
-    Actor_FaceDirection(MIA, 0xe000, 0);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    Engine_EventOpenScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventWait(60);
-    Engine_ActorSetAnimationAndWait(8, 3);
+  if (Engine_EventChooseYesNo(0, 0) == 1) {
     Engine_EventWait(20);
-    Engine_EventSetMessage(MsgMountainAdeptsLetMeThankAgain);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(IVAN, 3);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Engine_EventShowMessage(10, 0);
+  } else {
+    work = gEventWork;
+    work->message += 1;
+    Engine_EventAskYesNo(10, 0);
+  }
+
+  Engine_EventEnd();
+}
+
+static void EV11_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgMountainDoKnowMeditation);
+  Engine_EventAskYesNo(11, 0);
+  Engine_EventEnd();
+}
+
+static void EV13_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
+  Engine_EventAskYesNo(13, 0);
+  Engine_EventEnd();
+}
+
+static void EV02_TOUCH(void) {
+  Event_PlayCue(188);
+  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
+  Object_GetById(0)->motionFlags = 0;
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
+  Engine_EventWait(16);
+  Engine_EventRequestExit(2);
+}
+
+static void FieldScene_RunScene3a2SequenceA(void) {
+  void Event_ShowMessageAndWait();
+
+  Engine_EventBegin();
+  Actor_SetPosition(8, 0x880000, 0xa80000);
+  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x900000, 0xc80000);
+  Actor_SetPosition(GARET, 0xa00000, 0xc00000);
+  Actor_SetPosition(IVAN, 0x800000, 0xc80000);
+  Actor_SetPosition(MIA, 0x700000, 0xc00000);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+  Actor_FaceDirection(GARET, 0xa000, 0);
+  Actor_FaceDirection(IVAN, 0xc000, 0);
+  Actor_FaceDirection(MIA, 0xe000, 0);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  Engine_EventOpenScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventWait(60);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Engine_EventSetMessage(MsgMountainAdeptsLetMeThankAgain);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(8, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Actor_FaceDirection(8, 0x5000, 20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Actor_ShowEmote(IVAN, 0x102, 60);
+  Engine_EventWait(120);
+  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(GARET, 0x6000, 20);
+  Event_OpenMessage(GARET, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(8, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimationAndWait(MIA, 4);
-    Engine_EventWait(20);
+    Actor_FaceDirection(MIA, 0, 20);
+    Actor_ShowEmote(MIA, 0x101, 60);
     Event_ShowMessageAndWait(MIA, 0, 20);
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Actor_FaceDirection(8, 0x5000, 20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_ShowEmote(IVAN, 0x102, 60);
-    Engine_EventWait(120);
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(GARET, 0x6000, 20);
-    Event_OpenMessage(GARET, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(20);
-        Actor_FaceDirection(MIA, 0, 20);
-        Actor_ShowEmote(MIA, 0x101, 60);
-        Event_ShowMessageAndWait(MIA, 0, 20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-        Actor_FaceDirection(IVAN, 0xe000, 0);
-        Engine_ActorStartRepeatedMotion(GARET, 2);
-        Actor_SetAttachedEffect(GARET, 0x102);
-        Engine_EventWait(60);
-        Actor_FaceDirection(GARET, 0x8000, 20);
-        Event_ShowMessageAndWait(GARET, 0, 20);
-        gEventWork->message += 2;
-    }
-    else
-    {
-        gEventWork->message += 2;
-        Engine_EventWait(20);
-        Actor_FaceDirection(MIA, 0, 20);
-        Engine_ActorSetAnimationAndWait(MIA, 3);
-        Engine_EventWait(20);
-        Event_ShowMessageAndWait(MIA, 0, 20);
-        Actor_ShowEmote(GARET, 0x102, 60);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-        Actor_FaceDirection(IVAN, 0xe000, 0);
-        Event_ShowMessageAndWait(GARET, 0, 20);
-    }
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(GARET, 0xa000, 0);
-    Actor_FaceDirection(IVAN, 0xc000, 0);
-    Actor_FaceDirection(MIA, 0xe000, 0);
-    Engine_EventWait(20);
-    Actor_FaceDirection(8, 0x3000, 20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(GARET, 3);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(IVAN, 3);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Actor_FaceDirection(8, 0xc000, 30);
-    Event_PlayCue(188);
-    Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
-    Actor_SetSpeed(8, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(8, 136, 136);
-    Actor_SetPosition(8, 0, 0);
-    Event_PlayCue(188);
-    Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
+    Actor_FaceDirection(IVAN, 0xe000, 0);
+    Engine_ActorStartRepeatedMotion(GARET, 2);
+    Actor_SetAttachedEffect(GARET, 0x102);
     Engine_EventWait(60);
-    BattleFx_PlayQueuedSound();
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(GARET, 0x6000, 20);
+    Actor_FaceDirection(GARET, 0x8000, 20);
     Event_ShowMessageAndWait(GARET, 0, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
+    gEventWork->message += 2;
+  } else {
+    gEventWork->message += 2;
     Engine_EventWait(20);
-    Actor_FaceDirection(MIA, 0x2000, 20);
-    Event_ShowMessageAndWait(MIA, 0, 20);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
-    Event_AskYesNo(GARET, 0);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorStartRepeatedMotion(GARET, 1);
-    Engine_ActorRunRepeatedMotion(MIA, 1);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(IVAN, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorRunRepeatedMotion(MIA, 2);
+    Actor_FaceDirection(MIA, 0, 20);
+    Engine_ActorSetAnimationAndWait(MIA, 3);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(MIA, 0, 20);
-    Actor_FaceDirection(IVAN, 0xb000, 20);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
     Actor_ShowEmote(GARET, 0x102, 60);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
+    Actor_FaceDirection(IVAN, 0xe000, 0);
     Event_ShowMessageAndWait(GARET, 0, 20);
-    Actor_FaceDirection(IVAN, 0xe000, 20);
-    Engine_ActorSetAnimationAndWait(IVAN, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(MIA, 0x102, 60);
-    Event_ShowMessageAndWait(MIA, 0, 20);
-    Actor_FaceDirection(IVAN, 0xa000, 20);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorStartRepeatedMotion(GARET, 1);
-    Engine_ActorRunRepeatedMotion(MIA, 1);
-    Engine_EventWait(20);
-    Actor_SetSpeed(IVAN, 0x8000, 0x4000);
-    Actor_WalkToAndWait(IVAN, 128, 184);
-    Actor_FaceDirection(IVAN, 0x4000, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(GARET, 0xa000, 0);
-    Actor_FaceDirection(MIA, 0xe000, 20);
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
-    Engine_EventWait(20);
-    Actor_SetSpeed(GARET, 0x8000, 0x4000);
-    Actor_SetSpeed(MIA, 0x8000, 0x4000);
-    Actor_WalkTo(GARET, 144, 200);
-    Actor_WalkTo(IVAN, 144, 200);
-    Actor_WalkTo(MIA, 144, 200);
-    Engine_ActorWaitForMove(GARET);
-    Actor_SetPosition(GARET, 0, 0);
-    Engine_ActorWaitForMove(IVAN);
-    Actor_SetPosition(IVAN, 0, 0);
-    Engine_ActorWaitForMove(MIA);
-    Actor_SetPosition(MIA, 0, 0);
-    Engine_EventEnd();
+  }
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+  Actor_FaceDirection(GARET, 0xa000, 0);
+  Actor_FaceDirection(IVAN, 0xc000, 0);
+  Actor_FaceDirection(MIA, 0xe000, 0);
+  Engine_EventWait(20);
+  Actor_FaceDirection(8, 0x3000, 20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Actor_FaceDirection(8, 0xc000, 30);
+  Event_PlayCue(188);
+  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
+  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(8, 136, 136);
+  Actor_SetPosition(8, 0, 0);
+  Event_PlayCue(188);
+  Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
+  Engine_EventWait(60);
+  BattleFx_PlayQueuedSound();
+  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(GARET, 0x6000, 20);
+  Event_ShowMessageAndWait(GARET, 0, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(MIA, 0x2000, 20);
+  Event_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ActorRunRepeatedMotion(GARET, 1);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
+  Event_AskYesNo(GARET, 0);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorStartRepeatedMotion(GARET, 1);
+  Engine_ActorRunRepeatedMotion(MIA, 1);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ActorRunRepeatedMotion(MIA, 2);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(MIA, 0, 20);
+  Actor_FaceDirection(IVAN, 0xb000, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Actor_ShowEmote(GARET, 0x102, 60);
+  Event_ShowMessageAndWait(GARET, 0, 20);
+  Actor_FaceDirection(IVAN, 0xe000, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+  Actor_ShowEmote(MIA, 0x102, 60);
+  Event_ShowMessageAndWait(MIA, 0, 20);
+  Actor_FaceDirection(IVAN, 0xa000, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorStartRepeatedMotion(GARET, 1);
+  Engine_ActorRunRepeatedMotion(MIA, 1);
+  Engine_EventWait(20);
+  Actor_SetSpeed(IVAN, 0x8000, 0x4000);
+  Actor_WalkToAndWait(IVAN, 128, 184);
+  Actor_FaceDirection(IVAN, 0x4000, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+  Actor_FaceDirection(GARET, 0xa000, 0);
+  Actor_FaceDirection(MIA, 0xe000, 20);
+  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_EventWait(20);
+  Actor_SetSpeed(GARET, 0x8000, 0x4000);
+  Actor_SetSpeed(MIA, 0x8000, 0x4000);
+  Actor_WalkTo(GARET, 144, 200);
+  Actor_WalkTo(IVAN, 144, 200);
+  Actor_WalkTo(MIA, 144, 200);
+  Engine_ActorWaitForMove(GARET);
+  Actor_SetPosition(GARET, 0, 0);
+  Engine_ActorWaitForMove(IVAN);
+  Actor_SetPosition(IVAN, 0, 0);
+  Engine_ActorWaitForMove(MIA);
+  Actor_SetPosition(MIA, 0, 0);
+  Engine_EventEnd();
 }
 
-static void EV05_SEARCH(void)
-{
+static void EV05_SEARCH(void) {
 
+  Engine_EventBegin();
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_MessageShowCentered(MsgMountainHeWhoHasPowerSee, 1);
+  Engine_EventEnd();
+}
+
+static void ConfigureAndPlaceActorFourteen(void) {
+
+  Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
+  Engine_MapObjectSetPosition(100, 0, 0);
+  Actor_SetPosition(14, 0x01580000, 0x00980000);
+}
+
+static void AlpineCrossingLamaTemple_ClearActorPlacement(void) {
+  Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
+  MapObject_SetPosition(100, -1, -1);
+  Actor_SetPosition(14, 0, 0);
+}
+
+static void EV15_TALK(void) {
+
+  u32 heading = Object_GetById(0)->facing;
+
+  Engine_EventBegin();
+  if (heading - 0xA001 <= 0x3FFE) {
+    Engine_SanctumOpen(15);
+  } else {
+    Engine_EventSetMessage(MsgMountainAmTravelingAroundWorldSpread);
+    Engine_EventShowMessage(15, 0);
+  }
+  Engine_EventEnd();
+}
+
+static void EV10_TOUCH(void) {
+  struct FieldActor *record;
+  s32 none;
+
+  if (GameFlag_IsSet(0x89a) == 0) {
+  } else {
     Engine_EventBegin();
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MsgMountainHeWhoHasPowerSee, 1);
-    Engine_EventEnd();
-}
-
-static void ConfigureAndPlaceActorFourteen(void)
-{
-
-    Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
-    Engine_MapObjectSetPosition(100, 0, 0);
-    Actor_SetPosition(14, 0x01580000, 0x00980000);
-}
-
-static void AlpineCrossingLamaTemple_ClearActorPlacement(void)
-{
-    Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
-    MapObject_SetPosition(100, -1, -1);
-    Actor_SetPosition(14, 0, 0);
-}
-
-static void EV15_TALK(void)
-{
-
-    u32 heading = Object_GetById(0)->facing;
-
-    Engine_EventBegin();
-    if (heading - 0xA001 <= 0x3FFE)
-    {
-        Engine_SanctumOpen(15);
+    Actor_SetPosition(10, 0x2180000, 0xd80000);
+    Engine_EventSetMessage(MsgMountainYahhSilkRoadBouldersBlock);
+    Event_ShowMessageAndWait(10, 0, 20);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_EventWait(20);
+    record = Object_GetById(0);
+    record->update =
+        (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
+    record = Object_GetById(0);
+    if ((record->z.fixed >> 20) == 13) {
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
     }
-    else
+    Actor_SetSpeed(10, 0x20000, 0x10000);
+    Engine_ActorSetSpritePriority(10, 2);
+    Actor_WalkToAndWait(10, 0x198, 216);
     {
-        Engine_EventSetMessage(MsgMountainAmTravelingAroundWorldSpread);
-        Engine_EventShowMessage(15, 0);
+      struct FieldActor *record = Object_GetById(10);
+
+      record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
     }
-    Engine_EventEnd();
-}
-
-static void EV10_TOUCH(void)
-{
-    struct FieldActor *record;
-    s32                none;
-
-    if (GameFlag_IsSet(0x89a) == 0)
-    {
-    }
-    else
-    {
-        Engine_EventBegin();
-        Actor_SetPosition(10, 0x2180000, 0xd80000);
-        Engine_EventSetMessage(MsgMountainYahhSilkRoadBouldersBlock);
-        Event_ShowMessageAndWait(10, 0, 20);
-        Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Engine_EventWait(20);
-        record = Object_GetById(0);
-        record->update = (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
-        record = Object_GetById(0);
-        if ((record->z.fixed >> 20) == 13)
-        {
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
-        }
-        Actor_SetSpeed(10, 0x20000, 0x10000);
-        Engine_ActorSetSpritePriority(10, 2);
-        Actor_WalkToAndWait(10, 0x198, 216);
-        {
-            struct FieldActor *record = Object_GetById(10);
-
-            record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-        }
-        Engine_EventWait(10);
-        Actor_FaceDirection(10, 0x8000, 20);
-        Event_ShowMessageAndWait(10, 0, 20);
-        Engine_ActorStartRepeatedMotion(10, 2);
-        Actor_SetAttachedEffect(10, 0x102);
-        Engine_EventWait(60);
-        Event_ShowMessageAndWait(10, 0, 20);
-        Engine_ActorEnableActionCallback(10, gAlpineCrossingLamaTemple_HsuAction);
-        Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
-        GameFlag_Set(0x8b0);
-        Object_RefreshSelectorById(10);
-        Engine_CameraWaitForMove();
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        Engine_ActorEnableActionCallback(
-            ACTOR_PARTY_LEADER, gAlpineCrossingLamaTemple_LeaderAction);
-        Object_RefreshSelectorById(0);
-        Engine_EventWait(10);
-        none = 0;
-        record = Object_GetById(0);
-        record->update = (void (*)(union FieldObject *))none;
-        Engine_EventWait(30);
-        Engine_ActorRunRepeatedMotion(10, 2);
-        Engine_EventWait(20);
-        Actor_FaceDirection(10, 0x5000, 120);
-        Actor_ShowEmote(10, 0x105, 60);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
-        Engine_ActorSetAnimationAndWait(10, 4);
-        Engine_EventWait(20);
-        Event_ShowMessageAndWait(10, 0, 20);
-        Engine_EventEnd();
-    }
-}
-
-static void Scene_RunActorCue(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
+    Engine_EventWait(10);
+    Actor_FaceDirection(10, 0x8000, 20);
+    Event_ShowMessageAndWait(10, 0, 20);
+    Engine_ActorStartRepeatedMotion(10, 2);
+    Actor_SetAttachedEffect(10, 0x102);
+    Engine_EventWait(60);
+    Event_ShowMessageAndWait(10, 0, 20);
+    Engine_ActorEnableActionCallback(10, gAlpineCrossingLamaTemple_HsuAction);
+    Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
+    GameFlag_Set(0x8b0);
+    Object_RefreshSelectorById(10);
+    Engine_CameraWaitForMove();
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
+                                     gAlpineCrossingLamaTemple_LeaderAction);
+    Object_RefreshSelectorById(0);
+    Engine_EventWait(10);
+    none = 0;
+    record = Object_GetById(0);
+    record->update = (void (*)(union FieldObject *))none;
+    Engine_EventWait(30);
+    Engine_ActorRunRepeatedMotion(10, 2);
+    Engine_EventWait(20);
+    Actor_FaceDirection(10, 0x5000, 120);
     Actor_ShowEmote(10, 0x105, 60);
-    Event_OpenMessage(10, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 1)
-    {
-        Scene_AdvanceStep(1);
-    }
-    Engine_EventWait(20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
     Engine_ActorSetAnimationAndWait(10, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(10, 0, 20);
     Engine_EventEnd();
+  }
 }
 
-static void Scene_RunActorExchange(void)
-{
-    Engine_EventBegin();
-    Engine_EventOpenScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventWait(30);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Engine_CameraMoveToActor(9, 1);
-    Engine_CameraWaitForMove();
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Engine_EventWait(20);
-    Engine_EventSetMessage(MsgMountainHsuOkay);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorRunRepeatedMotion(9, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_FaceDirection(10, 0xd000, 20);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(60);
-    Actor_ShowEmote(8, 0x102, 60);
-    Engine_ActorSetAnimationAndWait(8, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorStartRepeatedMotion(10, 2);
-    Actor_SetAttachedEffect(10, 0x102);
-    Engine_EventWait(60);
-    Actor_FaceDirection(10, 0xb000, 20);
-    Engine_ActorSetAnimation(9, 5);
-    Engine_EventEnd();
-    GameFlag_Set(0x8b1);
+static void Scene_RunActorCue(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
+  Actor_ShowEmote(10, 0x105, 60);
+  Event_OpenMessage(10, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 1) {
+    Scene_AdvanceStep(1);
+  }
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(10, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_EventEnd();
 }
 
-static void EV11_PSYNERGY(void)
-{
-
-    s32 mask;
-
-    Engine_EventBegin();
-    Actor_SetAttachedEffect(8, 0x102);
-    Engine_ActorStartRepeatedMotion(8, 2);
-    Engine_EventWait(60);
-    Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_SetAttachedEffect(10, 0x102);
-    Engine_ActorJump(10, 4, 0);
-    Engine_EventWait(60);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorRunRepeatedMotion(8, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_FaceDirection(10, 0xd000, 20);
-    Engine_ActorSetAnimationAndWait(10, 3);
-    Engine_EventWait(20);
-    Actor_WalkTo(8, 178, 0x114);
-    Actor_WalkToAndWait(10, 172, 0x11c);
-    Engine_ActorWaitForMove(8);
-    Actor_FaceDirection(8, 0x5000, 0);
-    Actor_FaceDirection(10, 0xb000, 0);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Engine_EventWait(20);
-    mask = 254;
-    Event_ShowMessageAndWait(8, 0, 20);
-    Object_GetById(8)->steeringFlags &= mask;
-    Object_GetById(10)->steeringFlags &= mask;
-    Actor_SetSpeed(8, 0x3333, 0x1999);
-    Actor_SetSpeed(10, 0x3333, 0x1999);
-    Engine_ActorSetAnimation(8, 5);
-    Engine_ActorSetAnimation(10, 6);
-    Engine_EventWait(20);
-    Event_PlayCue(125);
-    Actor_SetDestinationOffset(8, 2, 0);
-    Actor_SetDestinationOffset(9, 2, 0);
-    Actor_SetDestinationOffset(10, 2, 0);
-    Engine_ActorWaitForMove(10);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimation(8, 5);
-    Engine_ActorSetAnimation(10, 6);
-    Engine_EventWait(20);
-    Event_PlayCue(125);
-    Actor_SetDestinationOffset(8, 4, 0);
-    Actor_SetDestinationOffset(9, 4, 0);
-    Actor_SetDestinationOffset(10, 4, 0);
-    Engine_ActorWaitForMove(10);
-    Engine_ActorStop(9);
-    Engine_ActorSetAnimation(8, 1);
-    Engine_ActorSetAnimation(10, 1);
-    Engine_EventWait(50);
-    Engine_ActorJump(10, 2, 0);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_AskYesNo(8, 0);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimation(8, 5);
-    Engine_ActorSetAnimation(10, 6);
-    Engine_EventWait(20);
-    Event_PlayCue(125);
-    Actor_SetDestinationOffset(8, 2, 0);
-    Actor_SetDestinationOffset(9, 2, 0);
-    Actor_SetDestinationOffset(10, 2, 0);
-    Engine_ActorWaitForMove(10);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimation(8, 5);
-    Engine_ActorSetAnimation(10, 6);
-    Engine_EventWait(20);
-    Event_PlayCue(125);
-    Actor_SetDestinationOffset(8, 4, 0);
-    Actor_SetDestinationOffset(9, 4, 0);
-    Actor_SetDestinationOffset(10, 4, 0);
-    Engine_ActorWaitForMove(10);
-    Engine_EventWait(40);
-    Engine_ActorSetAnimation(8, 1);
-    Engine_ActorSetAnimation(10, 1);
-    Engine_ActorJump(10, 2, 0);
-    Engine_EventWait(20);
-    Actor_FaceDirection(10, 0xd000, 20);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 30);
-    Event_ShowMessageAndWait(8, 0, 20);
-    {
-        struct FieldActor *record = Object_GetById(10);
-
-        record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
-    }
-    Actor_SetSpeed(10, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(10, 168, 0x128);
-    Actor_FaceDirection(10, 0xd000, 20);
-    Engine_ActorSetAnimation(10, 5);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimationAndWait(10, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Engine_ActorSetAnimationAndWait(8, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Engine_EventWait(20);
-    Engine_EventEnd();
-    GameFlag_Set(0x8b2);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    Engine_EventRequestExit(6);
+static void Scene_RunActorExchange(void) {
+  Engine_EventBegin();
+  Engine_EventOpenScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventWait(30);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+  Engine_CameraMoveToActor(9, 1);
+  Engine_CameraWaitForMove();
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventWait(20);
+  Engine_EventSetMessage(MsgMountainHsuOkay);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(9, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(9, 0, 20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Actor_FaceDirection(10, 0xd000, 20);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(60);
+  Actor_ShowEmote(8, 0x102, 60);
+  Engine_ActorSetAnimationAndWait(8, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorStartRepeatedMotion(10, 2);
+  Actor_SetAttachedEffect(10, 0x102);
+  Engine_EventWait(60);
+  Actor_FaceDirection(10, 0xb000, 20);
+  Engine_ActorSetAnimation(9, 5);
+  Engine_EventEnd();
+  GameFlag_Set(0x8b1);
 }
 
-static void EV07_SEARCH(void)
-{
-    Engine_EventBegin();
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MsgMountainNorthAltinMineWestLama, 1);
-    Engine_EventEnd();
+static void EV11_PSYNERGY(void) {
+
+  s32 mask;
+
+  Engine_EventBegin();
+  Actor_SetAttachedEffect(8, 0x102);
+  Engine_ActorStartRepeatedMotion(8, 2);
+  Engine_EventWait(60);
+  Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Actor_SetAttachedEffect(10, 0x102);
+  Engine_ActorJump(10, 4, 0);
+  Engine_EventWait(60);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Actor_FaceDirection(10, 0xd000, 20);
+  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_EventWait(20);
+  Actor_WalkTo(8, 178, 0x114);
+  Actor_WalkToAndWait(10, 172, 0x11c);
+  Engine_ActorWaitForMove(8);
+  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(10, 0xb000, 0);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventWait(20);
+  mask = 254;
+  Event_ShowMessageAndWait(8, 0, 20);
+  Object_GetById(8)->steeringFlags &= mask;
+  Object_GetById(10)->steeringFlags &= mask;
+  Actor_SetSpeed(8, 0x3333, 0x1999);
+  Actor_SetSpeed(10, 0x3333, 0x1999);
+  Engine_ActorSetAnimation(8, 5);
+  Engine_ActorSetAnimation(10, 6);
+  Engine_EventWait(20);
+  Event_PlayCue(125);
+  Actor_SetDestinationOffset(8, 2, 0);
+  Actor_SetDestinationOffset(9, 2, 0);
+  Actor_SetDestinationOffset(10, 2, 0);
+  Engine_ActorWaitForMove(10);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimation(8, 5);
+  Engine_ActorSetAnimation(10, 6);
+  Engine_EventWait(20);
+  Event_PlayCue(125);
+  Actor_SetDestinationOffset(8, 4, 0);
+  Actor_SetDestinationOffset(9, 4, 0);
+  Actor_SetDestinationOffset(10, 4, 0);
+  Engine_ActorWaitForMove(10);
+  Engine_ActorStop(9);
+  Engine_ActorSetAnimation(8, 1);
+  Engine_ActorSetAnimation(10, 1);
+  Engine_EventWait(50);
+  Engine_ActorJump(10, 2, 0);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_AskYesNo(8, 0);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimation(8, 5);
+  Engine_ActorSetAnimation(10, 6);
+  Engine_EventWait(20);
+  Event_PlayCue(125);
+  Actor_SetDestinationOffset(8, 2, 0);
+  Actor_SetDestinationOffset(9, 2, 0);
+  Actor_SetDestinationOffset(10, 2, 0);
+  Engine_ActorWaitForMove(10);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimation(8, 5);
+  Engine_ActorSetAnimation(10, 6);
+  Engine_EventWait(20);
+  Event_PlayCue(125);
+  Actor_SetDestinationOffset(8, 4, 0);
+  Actor_SetDestinationOffset(9, 4, 0);
+  Actor_SetDestinationOffset(10, 4, 0);
+  Engine_ActorWaitForMove(10);
+  Engine_EventWait(40);
+  Engine_ActorSetAnimation(8, 1);
+  Engine_ActorSetAnimation(10, 1);
+  Engine_ActorJump(10, 2, 0);
+  Engine_EventWait(20);
+  Actor_FaceDirection(10, 0xd000, 20);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 30);
+  Event_ShowMessageAndWait(8, 0, 20);
+  {
+    struct FieldActor *record = Object_GetById(10);
+
+    record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
+  }
+  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(10, 168, 0x128);
+  Actor_FaceDirection(10, 0xd000, 20);
+  Engine_ActorSetAnimation(10, 5);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(10, 0, 20);
+  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_EventWait(20);
+  Engine_EventEnd();
+  GameFlag_Set(0x8b2);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  Engine_EventRequestExit(6);
 }
 
-static void FieldScene_RunPairedLayoutStepsThenSetOne(void)
-{
-    {
-        s32 fifth = 1;
-        s32 sixth = 2;
-
-        Map_CopyCellsTo(5, 28, 5, 13, fifth, sixth);
-    }
-    {
-        s32 fifth = 5;
-        s32 sixth = 13;
-
-        Map_CopyCellAttributes(5, 28, 1, 2, fifth, sixth);
-    }
-    Engine_EventWait(1);
+static void EV07_SEARCH(void) {
+  Engine_EventBegin();
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_MessageShowCentered(MsgMountainNorthAltinMineWestLama, 1);
+  Engine_EventEnd();
 }
 
-static void SceneState_RunRect6x28Step(void)
-{
-    {
-        s32 fifth = 1;
-        s32 sixth = 2;
+static void FieldScene_RunPairedLayoutStepsThenSetOne(void) {
+  {
+    s32 fifth = 1;
+    s32 sixth = 2;
 
-        Map_CopyCellsTo(6, 28, 5, 13, fifth, sixth);
-    }
-    {
-        s32 fifth = 5;
-        s32 sixth = 13;
+    Map_CopyCellsTo(5, 28, 5, 13, fifth, sixth);
+  }
+  {
+    s32 fifth = 5;
+    s32 sixth = 13;
 
-        Map_CopyCellAttributes(6, 28, 1, 2, fifth, sixth);
-    }
-    Engine_EventWait(1);
+    Map_CopyCellAttributes(5, 28, 1, 2, fifth, sixth);
+  }
+  Engine_EventWait(1);
 }
 
-static s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
-{
-    if (Object_GetById(0)->y.fixed > actor->y.fixed)
-    {
-        actor->priorityFlags |= 2;
-    }
-    else
-    {
-        actor->priorityFlags &= 0xFD;
-    }
+static void SceneState_RunRect6x28Step(void) {
+  {
+    s32 fifth = 1;
+    s32 sixth = 2;
+
+    Map_CopyCellsTo(6, 28, 5, 13, fifth, sixth);
+  }
+  {
+    s32 fifth = 5;
+    s32 sixth = 13;
+
+    Map_CopyCellAttributes(6, 28, 1, 2, fifth, sixth);
+  }
+  Engine_EventWait(1);
 }
 
-static void EV14_SCRIPT(void)
-{
-    struct FieldActor *current = Object_GetById(0);
-    struct FieldActor *other = Object_GetById(14);
-
-    if (current->z.fixed <= other->z.fixed)
-    {
-        Engine_ActorSetSpritePriority(14, 1);
-    }
+static s32
+SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor) {
+  if (Object_GetById(0)->y.fixed > actor->y.fixed) {
+    actor->priorityFlags |= 2;
+  } else {
+    actor->priorityFlags &= 0xFD;
+  }
 }
 
-static void EV14_PSYNERGY(void)
-{
-    Engine_EventBegin();
+static void EV14_SCRIPT(void) {
+  struct FieldActor *current = Object_GetById(0);
+  struct FieldActor *other = Object_GetById(14);
 
-    Object_GetById(14)->priorityFlags &= 0xfd;
-    Object_GetById(14)->collisionFlags &= 0xfd;
-    Object_GetById(14)->motionFlags = 0;
-    Object_GetById(14)->update =
-        (void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
-
-    Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
-    Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
-
-    Engine_TaskWait(1);
-    Engine_GameFlagSet(512);
-    Engine_ActorSetSpritePriority(14, 2);
-    Engine_EventEnd();
+  if (current->z.fixed <= other->z.fixed) {
+    Engine_ActorSetSpritePriority(14, 1);
+  }
 }
 
-static void EV15_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    {
+static void EV14_PSYNERGY(void) {
+  Engine_EventBegin();
 
-        Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
-    }
-    Object_GetById(15)->collisionFlags = 254;
-    Engine_GameFlagSet(0x201);
-    Engine_EventEnd();
+  Object_GetById(14)->priorityFlags &= 0xfd;
+  Object_GetById(14)->collisionFlags &= 0xfd;
+  Object_GetById(14)->motionFlags = 0;
+  Object_GetById(14)->update = (void (*)(
+      union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
+
+  Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
+  Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
+
+  Engine_TaskWait(1);
+  Engine_GameFlagSet(512);
+  Engine_ActorSetSpritePriority(14, 2);
+  Engine_EventEnd();
 }
 
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
-    {
-        return gAlpineCrossingLamaTemple_TempleEvents;
-    }
-    return gAlpineCrossingLamaTemple_Events;
+static void EV15_PSYNERGY(void) {
+  Engine_EventBegin();
+  {
+
+    Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
+  }
+  Object_GetById(15)->collisionFlags = 254;
+  Engine_GameFlagSet(0x201);
+  Engine_EventEnd();
 }
 
-s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
-{
-    s32 entrance;
+const struct SceneEvent *Scene_GetEvents(void) {
+  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
+    return gAlpineCrossingLamaTemple_TempleEvents;
+  }
+  return gAlpineCrossingLamaTemple_Events;
+}
 
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2)
-    {
-        BattleFx_SetQueuedSoundAndPlay(169);
-        Engine_ActorSetAnimation(11, 5);
-        Engine_ActorSetAnimation(12, 5);
-        Engine_ActorSetAnimation(14, 2);
-        Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
-        ConfigureAndPlaceActorFourteen();
-        if (Engine_GameFlagIsSet(0x8b2))
-        {
-            Actor_SetPosition(13, 0x880000, 0x1000000);
-            Engine_ActorFaceDirection(13, 0, 0);
-        }
-        entrance = gGameState.entrance;
-        if (entrance == 2)
-        {
-            Engine_GameFlagClear(0x12f);
-        }
-        else if (entrance == 3 && !Engine_GameFlagIsSet(0x109))
-        {
-            FieldScene_RunScene3a2SequenceA();
-        }
+s32 AlpineCrossingLamaTemple_ApplyEntryState(void) {
+  s32 entrance;
+
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2) {
+    BattleFx_SetQueuedSoundAndPlay(169);
+    Engine_ActorSetAnimation(11, 5);
+    Engine_ActorSetAnimation(12, 5);
+    Engine_ActorSetAnimation(14, 2);
+    Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
+    ConfigureAndPlaceActorFourteen();
+    if (Engine_GameFlagIsSet(0x8b2)) {
+      Actor_SetPosition(13, 0x880000, 0x1000000);
+      Engine_ActorFaceDirection(13, 0, 0);
     }
-    else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
-    {
-        Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-        Object_GetById(14)->priorityFlags |= 2;
-        if (Engine_GameFlagIsSet(0x200))
-        {
-            Engine_ActorSetAnimation(14, 5);
-            EV14_PSYNERGY();
-        }
-        if (Engine_GameFlagIsSet(0x201))
-        {
-            Engine_ActorSetAnimation(15, 4);
-            EV15_PSYNERGY();
-        }
-        if (gGameState.entrance == 4 || gGameState.entrance == 5)
-        {
-            Engine_GameFlagClear(0x12f);
-        }
-        if (!Engine_GameFlagIsSet(0x89a) && !Engine_GameFlagIsSet(0x895)
-            && !Engine_GameFlagIsSet(0x8b2))
-        {
-            Engine_ActorSetPosition(10, 0, 0);
-        }
-        if (!GameFlag_IsSet(0x8b2) && Engine_GameFlagIsSet(0x895) && gGameState.entrance == 2)
-        {
-            Engine_ActorSetPosition(11, 0, 0);
-            Engine_GameFlagSet(0x8b2);
-            Engine_GameFlagSet(0x8b3);
-            Engine_ActorSetPosition(10, 0, 0);
-        }
-        if (GameFlag_IsSet(0x8b2))
-        {
-            Map_CopyCellsTo(54, 21, 53, 21, 1, 2);
-            Map_CopyCellAttributes(18, 20, 1, 3, 17, 21);
-            Map_CopyCellsTo(44, 18, 43, 17, 1, 1);
-            Map_CopyCellAttributes(8, 17, 1, 1, 7, 17);
-        }
-        if (Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2))
-        {
-            Engine_ActorSetPosition(12, 0, 0);
-            Engine_ActorSetPosition(13, 0, 0);
-            Actor_SetPosition(8, 0xc00000, 0x1080000);
-            Actor_SetPosition(9, 0xa40000, 0x1180000);
-            Actor_SetPosition(10, 0xb80000, 0x1300000);
-            Actor_FaceDirection(8, 0x5000, 0);
-            Actor_FaceDirection(10, 0xb000, 0);
-            Engine_ActorEnableActionCallback(9, gAlpineCrossingLamaTemple_ActorNineAction);
-            Object_GetById(9)->scaleX = -0x10000;
-        }
-        if (!GameFlag_IsSet(0x8b2))
-        {
-            Actor_SetPosition(9, 0xa40000, 0x1180000);
-            Engine_ActorEnableActionCallback(9, gAlpineCrossingLamaTemple_ActorNineAction);
-            Object_GetById(9)->scaleX = -0x10000;
-        }
-        if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109)
-            && !Engine_GameFlagIsSet(0x8b2))
-        {
-            Scene_RunActorExchange();
-        }
+    entrance = gGameState.entrance;
+    if (entrance == 2) {
+      Engine_GameFlagClear(0x12f);
+    } else if (entrance == 3 && !Engine_GameFlagIsSet(0x109)) {
+      FieldScene_RunScene3a2SequenceA();
     }
-    return 0;
+  } else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1) {
+    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
+    Object_GetById(14)->priorityFlags |= 2;
+    if (Engine_GameFlagIsSet(0x200)) {
+      Engine_ActorSetAnimation(14, 5);
+      EV14_PSYNERGY();
+    }
+    if (Engine_GameFlagIsSet(0x201)) {
+      Engine_ActorSetAnimation(15, 4);
+      EV15_PSYNERGY();
+    }
+    if (gGameState.entrance == 4 || gGameState.entrance == 5) {
+      Engine_GameFlagClear(0x12f);
+    }
+    if (!Engine_GameFlagIsSet(0x89a) && !Engine_GameFlagIsSet(0x895) &&
+        !Engine_GameFlagIsSet(0x8b2)) {
+      Engine_ActorSetPosition(10, 0, 0);
+    }
+    if (!GameFlag_IsSet(0x8b2) && Engine_GameFlagIsSet(0x895) &&
+        gGameState.entrance == 2) {
+      Engine_ActorSetPosition(11, 0, 0);
+      Engine_GameFlagSet(0x8b2);
+      Engine_GameFlagSet(0x8b3);
+      Engine_ActorSetPosition(10, 0, 0);
+    }
+    if (GameFlag_IsSet(0x8b2)) {
+      Map_CopyCellsTo(54, 21, 53, 21, 1, 2);
+      Map_CopyCellAttributes(18, 20, 1, 3, 17, 21);
+      Map_CopyCellsTo(44, 18, 43, 17, 1, 1);
+      Map_CopyCellAttributes(8, 17, 1, 1, 7, 17);
+    }
+    if (Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2)) {
+      Engine_ActorSetPosition(12, 0, 0);
+      Engine_ActorSetPosition(13, 0, 0);
+      Actor_SetPosition(8, 0xc00000, 0x1080000);
+      Actor_SetPosition(9, 0xa40000, 0x1180000);
+      Actor_SetPosition(10, 0xb80000, 0x1300000);
+      Actor_FaceDirection(8, 0x5000, 0);
+      Actor_FaceDirection(10, 0xb000, 0);
+      Engine_ActorEnableActionCallback(
+          9, gAlpineCrossingLamaTemple_ActorNineAction);
+      Object_GetById(9)->scaleX = -0x10000;
+    }
+    if (!GameFlag_IsSet(0x8b2)) {
+      Actor_SetPosition(9, 0xa40000, 0x1180000);
+      Engine_ActorEnableActionCallback(
+          9, gAlpineCrossingLamaTemple_ActorNineAction);
+      Object_GetById(9)->scaleX = -0x10000;
+    }
+    if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) &&
+        !Engine_GameFlagIsSet(0x109) && !Engine_GameFlagIsSet(0x8b2)) {
+      Scene_RunActorExchange();
+    }
+  }
+  return 0;
 }
 
 s32 gAlpineCrossingLamaTemple_TemplePlacement1[] = {
@@ -793,50 +729,32 @@ s32 gAlpineCrossingLamaTemple_TemplePlacement1[] = {
 };
 
 s32 gAlpineCrossingLamaTemple_HsuAction[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(392), 0, PIXELS(232)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(376), 0, PIXELS(232)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(344), 0, PIXELS(264)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(344), 0, PIXELS(312)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(312), 0, PIXELS(344)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(296), 0, PIXELS(344)),
-    SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(2), SC_MOVE(PIXELS(392), 0, PIXELS(232)),
+    SC_SYNC,   SC_MOVE(PIXELS(376), 0, PIXELS(232)),
+    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(264)),
+    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(312)),
+    SC_SYNC,   SC_MOVE(PIXELS(312), 0, PIXELS(344)),
+    SC_SYNC,   SC_MOVE(PIXELS(296), 0, PIXELS(344)),
+    SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
 s32 gAlpineCrossingLamaTemple_LeaderAction[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(392), 0, PIXELS(232)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(376), 0, PIXELS(232)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(344), 0, PIXELS(264)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(344), 0, PIXELS(312)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(328), 0, PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
+    SC_ARG(2), SC_MOVE(PIXELS(392), 0, PIXELS(232)),
+    SC_SYNC,   SC_MOVE(PIXELS(376), 0, PIXELS(232)),
+    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(264)),
+    SC_SYNC,   SC_MOVE(PIXELS(344), 0, PIXELS(312)),
+    SC_SYNC,   SC_MOVE(PIXELS(328), 0, PIXELS(328)),
+    SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
 s32 gAlpineCrossingLamaTemple_ActorNineAction[] = {
-    SC_ARG(1),
-    SC_ARG(5),
-    SC_WAIT(240),
-    SC_ARG(1),
-    SC_ARG(5),
-    SC_WAIT(60),
-    SC_ARG(1),
-    SC_ARG(5),
-    SC_WAIT(300),
-    SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_ARG(1),    SC_ARG(5),
+    SC_WAIT(240), SC_ARG(1),
+    SC_ARG(5),    SC_WAIT(60),
+    SC_ARG(1),    SC_ARG(5),
+    SC_WAIT(300), SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,
 };
 
@@ -853,36 +771,29 @@ u16 gAlpineCrossingLamaTemple_BoulderCellsBack[] = {
 };
 
 struct SceneEntrance gAlpineCrossingLamaTemple_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 136, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 3, CONDITION_ALWAYS, 144, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {2, CONDITION_ALWAYS, 136, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {3, CONDITION_ALWAYS, 144, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAlpineCrossingLamaTemple_TempleEntrances[] = {
-    { 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, 16, 32, 520, 416, 0 },
-    { 2, CONDITION_ALWAYS, 384, 0, 72, FACING_SOUTH, 0, 16, 32, 520, 416, 0 },
-    { 3, CONDITION_ALWAYS, 40, 0, 280, FACING_EAST, 0, 16, 32, 520, 416, 0 },
-    { 4, CONDITION_ALWAYS, 88, 0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0 },
-    { 5, CONDITION_ALWAYS, 216, 0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, 16, 32, 520, 416, 0},
+    {2, CONDITION_ALWAYS, 384, 0, 72, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
+    {3, CONDITION_ALWAYS, 40, 0, 280, FACING_EAST, 0, 16, 32, 520, 416, 0},
+    {4, CONDITION_ALWAYS, 88, 0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
+    {5, CONDITION_ALWAYS, 216, 0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gAlpineCrossingLamaTemple_Exits[] = {
-    SCENE_EXITS(88),
-    SCENE_EXIT(1, 2, 17),
-    SCENE_EXIT(2, 61, 3),
-    SCENE_EXIT(0, 74, 0),
-    SCENE_EXIT(1, 2, 15),
-    SCENE_EXIT(2, 2, 50),
-    SCENE_EXIT(3, 2, 51),
-    SCENE_EXIT(4, 80, 6),
-    SCENE_EXIT(5, 80, 7),
-    SCENE_EXIT(6, 88, 3),
-    SCENE_EXITS_END,
+    SCENE_EXITS(88),      SCENE_EXIT(1, 2, 17), SCENE_EXIT(2, 61, 3),
+    SCENE_EXIT(0, 74, 0), SCENE_EXIT(1, 2, 15), SCENE_EXIT(2, 2, 50),
+    SCENE_EXIT(3, 2, 51), SCENE_EXIT(4, 80, 6), SCENE_EXIT(5, 80, 7),
+    SCENE_EXIT(6, 88, 3), SCENE_EXITS_END,
 };
 
 // clang-format off

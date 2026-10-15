@@ -9,23 +9,20 @@
 #include "system.h"
 #include "render_input.h"
 
-void RenderOutput_ClearList(void *work)
-{
-    struct RenderOutputList *list = work;
-    struct RenderOutput     *node;
-    struct RenderOutput     *next;
+void RenderOutput_ClearList(void *work) {
+  struct RenderOutputList *list = work;
+  struct RenderOutput *node;
+  struct RenderOutput *next;
 
-    next = NULL;
-    if (list != NULL)
-    {
-        node = list->head;
-        list->tailLink = &list->head;
-        list->head = next;
-        while (node != NULL)
-        {
-            next = node->next;
-            RenderOutput_Release(node);
-            node = next;
-        }
+  next = NULL;
+  if (list != NULL) {
+    node = list->head;
+    list->tailLink = &list->head;
+    list->head = next;
+    while (node != NULL) {
+      next = node->next;
+      RenderOutput_Release(node);
+      node = next;
     }
+  }
 }

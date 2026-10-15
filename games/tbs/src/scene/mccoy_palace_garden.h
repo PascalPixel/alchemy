@@ -9,9 +9,6 @@
 
 #include "facing_object.h"
 
-enum
-{
-    ITEM_NUT = 181
-};
+enum { ITEM_NUT = 181 };
 
 #endif

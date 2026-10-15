@@ -3,59 +3,58 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct YampiDesertCaveEventWork
-{
-    u8  unk000[0x1ac];
-    s32 value1ac;
+struct YampiDesertCaveEventWork {
+  u8 unk000[0x1ac];
+  s32 value1ac;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void                  GameFlag_SetBit(s32 flag);
-void                  WaitFrames(s32 frames);
-void                  Event_StartScreenTransition(void);
-void                  Event_WaitTransitionFrames(void);
-void                  Func_020008fc(void);
-void                  Func_0200091c(void);
-void                  Func_020018f0(s32 a, s32 b);
-void                  Func_02001900(s32 a);
-void                  Func_02001950(void);
+void GameFlag_SetBit(s32 flag);
+void WaitFrames(s32 frames);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_020008fc(void);
+void Func_0200091c(void);
+void Func_020018f0(s32 a, s32 b);
+void Func_02001900(s32 a);
+void Func_02001950(void);
 
-static __inline__ void Func_020018f0_(s32 a, s32 b)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_020018f0(a, b);
+static __inline__ void Func_020018f0_(s32 a, s32 b) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  Func_020018f0(a, b);
 }
 
-void Func_02000acc(void)
-{
-    struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
-    s32                              saved;
+void Func_02000acc(void) {
+  struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
+  s32 saved;
 
-    /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-    do
-    {
+  /* FAKEMATCH: a one-pass block loads the event work before its offset is built
+   * (one reordered row). */
+  do {
+  } while (0);
+  saved = work->value1ac;
+  Func_020018f0_(0x202108, 1);
+  Func_020018f0_(0x10000, 2);
+  ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+      0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_0200091c();
+  Func_02001950();
+  WaitFrames(40);
+  Func_020008fc();
+  Func_020018f0_(0x10000, 1);
+  Func_02001900(16);
+  WaitFrames(16);
+  {
+    struct PartyState *party = &gPartyState;
+
+    /* FAKEMATCH: a one-pass block loads the party state before its offset is
+     * built (one reordered row). */
+    do {
     } while (0);
-    saved = work->value1ac;
-    Func_020018f0_(0x202108, 1);
-    Func_020018f0_(0x10000, 2);
-    ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Func_0200091c();
-    Func_02001950();
-    WaitFrames(40);
-    Func_020008fc();
-    Func_020018f0_(0x10000, 1);
-    Func_02001900(16);
-    WaitFrames(16);
-    {
-        struct PartyState *party = &gPartyState;
-
-        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do
-        {
-        } while (0);
-        party->unk2c2 = 0;
-    }
-    work->value1ac = saved;
+    party->unk2c2 = 0;
+  }
+  work->value1ac = saved;
 }

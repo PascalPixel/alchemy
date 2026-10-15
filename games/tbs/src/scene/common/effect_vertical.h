@@ -2,52 +2,48 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
-static void Effect_AnimateVerticalPositive(union FieldObject *object)
-{
-    struct FieldActor *self = &object->actor;
-    struct FieldActor *anchor;
-    s32                frame;
-    s32                amplitude;
+static void Effect_AnimateVerticalPositive(union FieldObject *object) {
+  struct FieldActor *self = &object->actor;
+  struct FieldActor *anchor;
+  s32 frame;
+  s32 amplitude;
 
-    anchor = self->linkedObject;
-    self->timer = (self->timer + 1);
-    frame = self->timer;
+  anchor = self->linkedObject;
+  self->timer = (self->timer + 1);
+  frame = self->timer;
 
-    if (frame > 31)
-    {
-        Engine_ObjectDispatchRelease(self);
-        return;
-    }
+  if (frame > 31) {
+    Engine_ObjectDispatchRelease(self);
+    return;
+  }
 
-    amplitude = Engine_MathSin(frame << 10);
-    self->scaleX = amplitude;
-    self->scaleY = amplitude;
-    self->x.fixed = anchor->x.fixed;
-    self->y.fixed += 0x10000;
-    self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+  amplitude = Engine_MathSin(frame << 10);
+  self->scaleX = amplitude;
+  self->scaleY = amplitude;
+  self->x.fixed = anchor->x.fixed;
+  self->y.fixed += 0x10000;
+  self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-static void Effect_AnimateVerticalNegative(union FieldObject *object)
-{
-    struct FieldActor *self = &object->actor;
-    struct FieldActor *anchor;
-    s32                frame;
-    s32                amplitude;
+static void Effect_AnimateVerticalNegative(union FieldObject *object) {
+  struct FieldActor *self = &object->actor;
+  struct FieldActor *anchor;
+  s32 frame;
+  s32 amplitude;
 
-    anchor = self->linkedObject;
-    self->timer = (self->timer + 1);
-    frame = self->timer;
+  anchor = self->linkedObject;
+  self->timer = (self->timer + 1);
+  frame = self->timer;
 
-    if (frame > 31)
-    {
-        Engine_ObjectDispatchRelease(self);
-        return;
-    }
+  if (frame > 31) {
+    Engine_ObjectDispatchRelease(self);
+    return;
+  }
 
-    amplitude = Engine_MathSin(frame << 10);
-    self->scaleX = amplitude;
-    self->scaleY = -amplitude;
-    self->x.fixed = anchor->x.fixed;
-    self->y.fixed += 0x10000;
-    self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+  amplitude = Engine_MathSin(frame << 10);
+  self->scaleX = amplitude;
+  self->scaleY = -amplitude;
+  self->x.fixed = anchor->x.fixed;
+  self->y.fixed += 0x10000;
+  self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
 }

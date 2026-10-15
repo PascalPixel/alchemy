@@ -1,5 +1,5 @@
-// Overlay 674 keeps its own palette queue between its allocation and step functions;
-// its PaletteQueue_Add is the main image's.
+// Overlay 674 keeps its own palette queue between its allocation and step
+// functions; its PaletteQueue_Add is the main image's.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

@@ -8,7 +8,8 @@ struct SoundPlayer;
 struct SoundTrack;
 
 typedef void (*SoundFunc)(void);
-typedef void (*SoundCommand)(struct SoundPlayer *player, struct SoundTrack *track);
+typedef void (*SoundCommand)(struct SoundPlayer *player,
+                             struct SoundTrack *track);
 
 void MusicTrack_FinishSequence(void);
 void MusicTrack_Goto(void);
@@ -37,16 +38,26 @@ void MusicTrack_CalcOutput(void);
 void SoundNote_Detach(void);
 void SoundDriver_ClearBuffer(void);
 
-void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceKind(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceAttack(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceDecay(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceSustain(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceRelease(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetTailLevel(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetTailLength(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoiceLength(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player, struct SoundTrack *track);
+void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
+                                struct SoundTrack *track);
+void MusicTrack_SetVoiceKind(struct SoundPlayer *player,
+                             struct SoundTrack *track);
+void MusicTrack_SetVoiceAttack(struct SoundPlayer *player,
+                               struct SoundTrack *track);
+void MusicTrack_SetVoiceDecay(struct SoundPlayer *player,
+                              struct SoundTrack *track);
+void MusicTrack_SetVoiceSustain(struct SoundPlayer *player,
+                                struct SoundTrack *track);
+void MusicTrack_SetVoiceRelease(struct SoundPlayer *player,
+                                struct SoundTrack *track);
+void MusicTrack_SetTailLevel(struct SoundPlayer *player,
+                             struct SoundTrack *track);
+void MusicTrack_SetTailLength(struct SoundPlayer *player,
+                              struct SoundTrack *track);
+void MusicTrack_SetVoiceLength(struct SoundPlayer *player,
+                               struct SoundTrack *track);
+void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
+                                   struct SoundTrack *track);
 void Runtime_CallWorkEntryWithArgs();
 
 // プレイヤーごとにコピーするシーケンスコマンドとドライバの入口

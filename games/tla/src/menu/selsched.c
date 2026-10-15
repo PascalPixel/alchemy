@@ -3,7 +3,6 @@
 
 void Menu_RunSelection(void);
 
-void Func_0804dabc(void)
-{
-    Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0x480);
+void Func_0804dabc(void) {
+  Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0x480);
 }

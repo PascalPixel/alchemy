@@ -26,221 +26,160 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 XianInteriors_GetEntrances(void)
-{
-    return (s32)gXianInteriors_SceneTable0;
+s32 XianInteriors_GetEntrances(void) { return (s32)gXianInteriors_SceneTable0; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+s32 XianInteriors_GetExits(void) { return (s32)gXianInteriors_SceneTable1; }
+
+s32 XianInteriors_SelectPlacements(void) {
+  if (gGameState.entrance == 8) {
+    return (s32)gXianInteriors_SceneTable2Entrance8;
+  }
+  SceneTable_Prepare(gXianInteriors_SceneTable2);
+  return (s32)gXianInteriors_SceneTable2;
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+static void EV14_TALK(void) {
+  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
+  u32 value = state[3];
+
+  Engine_EventBegin();
+  if (value >= 0xa001 && value <= 0xdfff) {
+    Engine_ShopOpen(16, 14);
+  } else {
+    if (Engine_GameFlagIsSet(0x895) == 0) {
+      Engine_EventSetMessage(MsgXianXianHasMartialArtsBut);
+    } else {
+      Engine_EventSetMessage(MsgXianHsusInjuryTaughtGoodLesson);
+    }
+    Engine_EventShowMessage(14, 0);
+  }
+  Engine_EventEnd();
 }
 
-s32 XianInteriors_GetExits(void)
-{
-    return (s32)gXianInteriors_SceneTable1;
+static void EV15_TALK(void) {
+  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
+  u32 value = state[3];
+
+  Engine_EventBegin();
+  if (value >= 0xa001 && value <= 0xdfff) {
+    Engine_ShopOpen(17, 15);
+  } else {
+    if (Engine_GameFlagIsSet(0x895) == 0) {
+      Engine_EventSetMessage(MsgXianMartialArtistsCantUseHeavy);
+    } else {
+      Engine_EventSetMessage(MsgXianKungFuMakesQuickDoes);
+    }
+    Engine_EventShowMessage(15, 0);
+  }
+  Engine_EventEnd();
 }
 
-s32 XianInteriors_SelectPlacements(void)
-{
-    if (gGameState.entrance == 8)
-    {
-        return (s32)gXianInteriors_SceneTable2Entrance8;
-    }
-    SceneTable_Prepare(gXianInteriors_SceneTable2);
-    return (s32)gXianInteriors_SceneTable2;
+static void EV16_TALK(void) {
+
+  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
+  u32 value = state[3];
+
+  Engine_EventBegin();
+  if (value >= 0xa001 && value <= 0xdfff) {
+    Engine_ShopOpen(18, 16);
+  } else if (Engine_GameFlagIsSet(0x895) == 0) {
+    Engine_EventSetMessage(MsgXianXiansSpecialArmorNotSuited);
+    Engine_EventShowMessage(16, 0);
+  } else {
+    Engine_EventSetMessage(MsgXianDoPlanCrossDesertWarrior);
+    Engine_EventAskYesNo(16, 0);
+  }
+  Engine_EventEnd();
 }
 
-static void EV14_TALK(void)
-{
-    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-    u32  value = state[3];
+static void EV17_TALK(void) {
 
-    Engine_EventBegin();
-    if (value >= 0xa001 && value <= 0xdfff)
-    {
-        Engine_ShopOpen(16, 14);
+  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
+  u32 value = state[3];
+
+  Engine_EventBegin();
+  if (value < 0x2000 || value > 0xe000) {
+    Engine_InnOpen(5, 17);
+  } else {
+    if (Engine_GameFlagIsSet(0x895) == 0) {
+      Engine_EventSetMessage(MsgXianWarriorsShouldLearnAboutTowns);
+    } else {
+      Engine_EventSetMessage(MsgXianWeHaveFewCustomersThese);
     }
-    else
-    {
-        if (Engine_GameFlagIsSet(0x895) == 0)
-        {
-            Engine_EventSetMessage(MsgXianXianHasMartialArtsBut);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgXianHsusInjuryTaughtGoodLesson);
-        }
-        Engine_EventShowMessage(14, 0);
-    }
-    Engine_EventEnd();
+    Engine_EventShowMessage(17, 0);
+  }
+  Engine_EventEnd();
 }
 
-static void EV15_TALK(void)
-{
-    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-    u32  value = state[3];
+static void EV10_TALK(void) {
 
-    Engine_EventBegin();
-    if (value >= 0xa001 && value <= 0xdfff)
-    {
-        Engine_ShopOpen(17, 15);
-    }
-    else
-    {
-        if (Engine_GameFlagIsSet(0x895) == 0)
-        {
-            Engine_EventSetMessage(MsgXianMartialArtistsCantUseHeavy);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgXianKungFuMakesQuickDoes);
-        }
-        Engine_EventShowMessage(15, 0);
-    }
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
+  Engine_EventAskYesNo(10, 0);
+  Engine_EventEnd();
 }
 
-static void EV16_TALK(void)
-{
+static void EV12_TALK(void) {
 
-    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-    u32  value = state[3];
-
-    Engine_EventBegin();
-    if (value >= 0xa001 && value <= 0xdfff)
-    {
-        Engine_ShopOpen(18, 16);
-    }
-    else if (Engine_GameFlagIsSet(0x895) == 0)
-    {
-        Engine_EventSetMessage(MsgXianXiansSpecialArmorNotSuited);
-        Engine_EventShowMessage(16, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgXianDoPlanCrossDesertWarrior);
-        Engine_EventAskYesNo(16, 0);
-    }
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
+  Engine_EventAskYesNo(12, 0);
+  Engine_EventEnd();
 }
 
-static void EV17_TALK(void)
-{
+static void EV09_TALK(void) {
 
-    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-    u32  value = state[3];
-
-    Engine_EventBegin();
-    if (value < 0x2000 || value > 0xe000)
-    {
-        Engine_InnOpen(5, 17);
-    }
-    else
-    {
-        if (Engine_GameFlagIsSet(0x895) == 0)
-        {
-            Engine_EventSetMessage(MsgXianWarriorsShouldLearnAboutTowns);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgXianWeHaveFewCustomersThese);
-        }
-        Engine_EventShowMessage(17, 0);
-    }
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgXianWarriorWelcome);
+  Engine_EventShowMessageAndWait(9, 0, 20);
+  Engine_ActorFaceActor(9, 10, 0);
+  Engine_EventWait(60);
+  Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(9, 0);
+  Engine_EventEnd();
 }
 
-static void EV10_TALK(void)
-{
-
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
-    Engine_EventAskYesNo(10, 0);
-    Engine_EventEnd();
+s32 XianInteriors_SelectEvents(void) {
+  if (gGameState.entrance == 8) {
+    return (s32)gXianInteriors_SceneTable3Entrance8;
+  }
+  return (s32)gXianInteriors_SceneTable3;
 }
 
-static void EV12_TALK(void)
-{
+s32 XianInteriors_PrepareWindowTransition(void) {
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
-    Engine_EventAskYesNo(12, 0);
-    Engine_EventEnd();
-}
+  s16 scene;
 
-static void EV09_TALK(void)
-{
-
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgXianWarriorWelcome);
-    Engine_EventShowMessageAndWait(9, 0, 20);
-    Engine_ActorFaceActor(9, 10, 0);
-    Engine_EventWait(60);
-    Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(9, 0);
-    Engine_EventEnd();
-}
-
-s32 XianInteriors_SelectEvents(void)
-{
-    if (gGameState.entrance == 8)
-    {
-        return (s32)gXianInteriors_SceneTable3Entrance8;
-    }
-    return (s32)gXianInteriors_SceneTable3;
-}
-
-s32 XianInteriors_PrepareWindowTransition(void)
-{
-
-    s16 scene;
-
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    scene = gGameState.entrance;
-    if (scene == 4 || scene == 7)
-    {
-        OverlayObject_CreateConfiguredObject(0x00f80000, 0, 0x01a10000, 20);
-    }
-    else if (scene == 6)
-    {
-        OverlayObject_CreateConfiguredObject(0x01cc0000, 0, 0x02380000, 20);
-        OverlayObject_CreateConfiguredObject(0x01e40000, 0, 0x02380000, 20);
-    }
-    else if (scene == 8)
-    {
-        Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
-        Engine_ActorSetAnimation(10, 6);
-    }
-    return 0;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  scene = gGameState.entrance;
+  if (scene == 4 || scene == 7) {
+    OverlayObject_CreateConfiguredObject(0x00f80000, 0, 0x01a10000, 20);
+  } else if (scene == 6) {
+    OverlayObject_CreateConfiguredObject(0x01cc0000, 0, 0x02380000, 20);
+    OverlayObject_CreateConfiguredObject(0x01e40000, 0, 0x02380000, 20);
+  } else if (scene == 8) {
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_ActorSetAnimation(10, 6);
+  }
+  return 0;
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -250,28 +189,22 @@ const s32 *gEffectScripts[] = {
 };
 
 struct SceneEntrance gXianInteriors_SceneTable0[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0 },
-    { 2, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0, 288, 8, 592, 224, 0 },
-    { 3, CONDITION_ALWAYS, 736, 0, 200, FACING_NORTH, 0, 608, 8, 848, 224, 0 },
-    { 4, CONDITION_ALWAYS, 160, 0, 472, FACING_NORTH, 0, 48, 288, 336, 496, 0 },
-    { 5, CONDITION_ALWAYS, 472, 0, 360, FACING_EAST, 0, 384, 288, 672, 496, 0 },
-    { 6, CONDITION_ALWAYS, 512, 0, 696, FACING_NORTH, 0, 352, 496, 656, 720, 0 },
-    { 7, CONDITION_ALWAYS, 120, 0, 360, FACING_EAST, 0, 48, 288, 336, 496, 0 },
-    { 8, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 64, 544, 304, 744, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0},
+    {2, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0, 288, 8, 592, 224, 0},
+    {3, CONDITION_ALWAYS, 736, 0, 200, FACING_NORTH, 0, 608, 8, 848, 224, 0},
+    {4, CONDITION_ALWAYS, 160, 0, 472, FACING_NORTH, 0, 48, 288, 336, 496, 0},
+    {5, CONDITION_ALWAYS, 472, 0, 360, FACING_EAST, 0, 384, 288, 672, 496, 0},
+    {6, CONDITION_ALWAYS, 512, 0, 696, FACING_NORTH, 0, 352, 496, 656, 720, 0},
+    {7, CONDITION_ALWAYS, 120, 0, 360, FACING_EAST, 0, 48, 288, 336, 496, 0},
+    {8, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 64, 544, 304, 744, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gXianInteriors_SceneTable1[] = {
-    SCENE_EXITS(73),
-    SCENE_EXIT(1, 72, 5),
-    SCENE_EXIT(2, 72, 6),
-    SCENE_EXIT(3, 72, 7),
-    SCENE_EXIT(4, 72, 8),
-    SCENE_EXIT(5, 73, 7),
-    SCENE_EXIT(6, 72, 9),
-    SCENE_EXIT(7, 73, 5),
-    SCENE_EXIT(8, 61, 4),
+    SCENE_EXITS(73),      SCENE_EXIT(1, 72, 5), SCENE_EXIT(2, 72, 6),
+    SCENE_EXIT(3, 72, 7), SCENE_EXIT(4, 72, 8), SCENE_EXIT(5, 73, 7),
+    SCENE_EXIT(6, 72, 9), SCENE_EXIT(7, 73, 5), SCENE_EXIT(8, 61, 4),
     SCENE_EXITS_END,
 };
 

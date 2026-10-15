@@ -23,8 +23,8 @@ extern u8 gData_02000e14[];
 extern u8 gData_02000ecc[];
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off

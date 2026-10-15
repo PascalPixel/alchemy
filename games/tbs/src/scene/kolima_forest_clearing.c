@@ -27,79 +27,55 @@
 // implicit int declaration of a u16 function
 #endif
 
-enum
-{
-    ITEM_NUT = 181
-};
+enum { ITEM_NUT = 181 };
 
-typedef struct
-{
-    s32 lo, hi;
+typedef struct {
+  s32 lo, hi;
 } Pair;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
 
-u8 *SceneData_GetScriptTable(void)
-{
-    return gKolimaForestClearing_Scripts;
+u8 *SceneData_GetScriptTable(void) { return gKolimaForestClearing_Scripts; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+u8 *SceneData_GetMessageTable(void) { return gKolimaForestClearing_Messages; }
+
+u8 *SceneData_GetActorTable(void) { return gKolimaForestClearing_Actors; }
+
+static void EV10_SCRIPT(void) {
+  struct StagedActorProbe result;
+  Engine_EventBegin();
+  if (StagedActor_FindClearPosition(&result))
+    SceneActor_MoveAndRedraw(result);
+  Engine_EventEnd();
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+static void EV11_PSYNERGY(void) {
+  Engine_EventBegin();
+  Engine_ActorSetPosition(11, 0, 0);
+  Engine_GameFlagSet(0xfd3);
+  Engine_ItemShowFound(ITEM_NUT, 3);
+  Engine_PartyGiveItem(ITEM_NUT, 0);
+  Engine_EventEnd();
 }
 
-u8 *SceneData_GetMessageTable(void)
-{
-    return gKolimaForestClearing_Messages;
-}
+u8 *SceneData_GetExtraTable(void) { return gKolimaForestClearing_Extras; }
 
-u8 *SceneData_GetActorTable(void)
-{
-    return gKolimaForestClearing_Actors;
-}
+s32 FieldScene_SetupEntryActors8To11(void) {
 
-static void EV10_SCRIPT(void)
-{
-    struct StagedActorProbe result;
-    Engine_EventBegin();
-    if (StagedActor_FindClearPosition(&result))
-        SceneActor_MoveAndRedraw(result);
-    Engine_EventEnd();
-}
-
-static void EV11_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    Engine_ActorSetPosition(11, 0, 0);
-    Engine_GameFlagSet(0xfd3);
-    Engine_ItemShowFound(ITEM_NUT, 3);
-    Engine_PartyGiveItem(ITEM_NUT, 0);
-    Engine_EventEnd();
-}
-
-u8 *SceneData_GetExtraTable(void)
-{
-    return gKolimaForestClearing_Extras;
-}
-
-s32 FieldScene_SetupEntryActors8To11(void)
-{
-
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (Engine_GameFlagIsSet(0xfd3) == 0)
-    {
-        InitializeStagedActorSceneOrbitingEffect(11);
-    }
-    FieldScene_RedrawActorFootprint(8);
-    FieldScene_RedrawActorFootprint(9);
-    FieldScene_RedrawActorFootprint(10);
-    if (Engine_GameFlagIsSet(0x845) == 0)
-    {
-        SceneEffect_AdjustPaletteColors(11);
-    }
-    return 0;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  if (Engine_GameFlagIsSet(0xfd3) == 0) {
+    InitializeStagedActorSceneOrbitingEffect(11);
+  }
+  FieldScene_RedrawActorFootprint(8);
+  FieldScene_RedrawActorFootprint(9);
+  FieldScene_RedrawActorFootprint(10);
+  if (Engine_GameFlagIsSet(0x845) == 0) {
+    SceneEffect_AdjustPaletteColors(11);
+  }
+  return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -110,21 +86,11 @@ s32 FieldScene_SetupEntryActors8To11(void)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
     DIRECTION_STEP(16, 0),
 };
 
@@ -175,11 +141,11 @@ struct ScenePlacement gKolimaForestClearing_Actors[] = {
 // clang-format on
 
 struct SceneEvent gKolimaForestClearing_Extras[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xfd3, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { SCENE_EVENTS_END },
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xfd3, EVENT_SCRIPT(EV11_PSYNERGY)},
+    {SCENE_EVENTS_END},
 };
 
 // .bss 内の並びは最初に宣言した順 (field.h の extern)

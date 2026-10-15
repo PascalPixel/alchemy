@@ -26,313 +26,252 @@
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_spotflag.h"
 
-u8 *SceneData_GetScriptTable(void)
-{
-    return (u8 *)gPlacement_Scripts;
+u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
+
+u8 *SceneData_GetPreparedActors(void) {
+  u8 *slot = (u8 *)gPlacement_Actors;
+
+  FieldScene_PrepareActors(slot);
+  return slot;
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+static void SceneActor_RunActorStep(s32 arg0) {
+  Engine_EventBegin();
+  Engine_ActorSetAnimation(arg0, 1);
+  Engine_EventShowMessage(arg0, 0);
+  Engine_EventEnd();
 }
 
-u8 *SceneData_GetMessageTable(void)
-{
-    return (u8 *)gPlacement_Messages;
+static void EV09_TALK(void) {
+  Engine_EventSetMessage(MsgVaultThoughtSawCatGetUp);
+  Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
+  SceneActor_RunActorStep(9);
 }
 
-u8 *SceneData_GetPreparedActors(void)
-{
-    u8 *slot = (u8 *)gPlacement_Actors;
-
-    FieldScene_PrepareActors(slot);
-    return slot;
+static void EV11_TALK(void) {
+  Engine_EventSetMessage(MsgVaultDodonpasHenchmenNeverAttackedUs);
+  Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
+  SceneActor_RunActorStep(11);
 }
 
-static void SceneActor_RunActorStep(s32 arg0)
-{
-    Engine_EventBegin();
-    Engine_ActorSetAnimation(arg0, 1);
-    Engine_EventShowMessage(arg0, 0);
-    Engine_EventEnd();
+static void EV12_TALK(void) {
+  Engine_EventSetMessage(MsgVaultItsNearTimeForColosso);
+  Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
+  SceneActor_RunActorStep(12);
 }
 
-static void EV09_TALK(void)
-{
-    Engine_EventSetMessage(MsgVaultThoughtSawCatGetUp);
-    Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
-    SceneActor_RunActorStep(9);
+static void FieldScene_RunActor16Sequence(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
+  Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(16, 1);
+  Event_ShowMessageAndWait(16, 0, 20);
+  Engine_ActorSetAnimationAndWait(16, 4);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(16, 0, 20);
+  Actor_ShowEmote(16, 0x102, 60);
+  Event_ShowMessageAndWait(16, 0, 30);
+  Event_OpenMessage(16, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    gEventWork->message++;
+  }
+  Event_ShowMessageAndWait(16, 0, 20);
+  GameFlag_Set(0x300);
+  GameFlag_Set(0x868);
+  Engine_EventEnd();
 }
 
-static void EV11_TALK(void)
-{
-    Engine_EventSetMessage(MsgVaultDodonpasHenchmenNeverAttackedUs);
-    Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
-    SceneActor_RunActorStep(11);
+static void SceneDialogue_RunActor16Line(void) {
+  Engine_EventSetMessage(MsgVaultThoseGuysReallyWantedRevenge);
+  Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
+  SceneActor_RunActorStep(16);
 }
 
-static void EV12_TALK(void)
-{
-    Engine_EventSetMessage(MsgVaultItsNearTimeForColosso);
-    Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
-    SceneActor_RunActorStep(12);
+static void EV23_TALK(void) {
+  Engine_EventSetMessage(MsgVaultDidSomeCookingNowIve);
+  Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
+  SceneActor_RunActorStep(23);
 }
 
-static void FieldScene_RunActor16Sequence(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
-    Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-    Engine_ActorSetAnimation(16, 1);
-    Event_ShowMessageAndWait(16, 0, 20);
-    Engine_ActorSetAnimationAndWait(16, 4);
+static void EV18_TALK(void) {
+  Engine_EventBegin();
+  Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+  if (GameFlag_IsSet(0x85b) == 0) {
+    Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
+    Event_OpenMessage(18, 0);
+  } else {
+    Engine_EventSetMessage(MsgVaultWantMoreBones);
+    Event_OpenMessage(18, 0);
+  }
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(16, 0, 20);
-    Actor_ShowEmote(16, 0x102, 60);
-    Event_ShowMessageAndWait(16, 0, 30);
-    Event_OpenMessage(16, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        gEventWork->message++;
+    Event_ShowMessage(18, 0);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(18, 2);
+    Engine_EventWait(20);
+    if (PartyInventory_HasSpace() == 0) {
+      Engine_ActorSetAnimationAndWait(18, 4);
+      Engine_EventWait(20);
+      Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
+      Event_ShowMessage(18, 0);
+    } else {
+      Engine_ItemShowFound(ITEM_BONE, 3);
+      Engine_PartyGiveItem(ITEM_BONE, 0);
+      GameFlag_Set(0x85b);
     }
-    Event_ShowMessageAndWait(16, 0, 20);
-    GameFlag_Set(0x300);
-    GameFlag_Set(0x868);
-    Engine_EventEnd();
+  } else {
+    gEventWork->message++;
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(18, 3);
+    Engine_EventWait(20);
+    Event_ShowMessage(18, 0);
+  }
+  Actor_FaceDirection(18, 0x4000, 0);
+  Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Line(void)
-{
-    Engine_EventSetMessage(MsgVaultThoseGuysReallyWantedRevenge);
-    Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-    SceneActor_RunActorStep(16);
-}
+static void EV1040_PSYNERGY(void) {
+  u8 *slot;
+  u8 clear = 0;
 
-static void EV23_TALK(void)
-{
-    Engine_EventSetMessage(MsgVaultDidSomeCookingNowIve);
-    Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
-    SceneActor_RunActorStep(23);
-}
-
-static void EV18_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
-    if (GameFlag_IsSet(0x85b) == 0)
-    {
-        Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
-        Event_OpenMessage(18, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultWantMoreBones);
-        Event_OpenMessage(18, 0);
-    }
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(20);
-        Event_ShowMessage(18, 0);
-        Engine_EventWait(20);
-        Engine_ActorRunRepeatedMotion(18, 2);
-        Engine_EventWait(20);
-        if (PartyInventory_HasSpace() == 0)
-        {
-            Engine_ActorSetAnimationAndWait(18, 4);
-            Engine_EventWait(20);
-            Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-            Event_ShowMessage(18, 0);
-        }
-        else
-        {
-            Engine_ItemShowFound(ITEM_BONE, 3);
-            Engine_PartyGiveItem(ITEM_BONE, 0);
-            GameFlag_Set(0x85b);
-        }
-    }
-    else
-    {
-        gEventWork->message++;
-        Engine_EventWait(20);
-        Engine_ActorSetAnimationAndWait(18, 3);
-        Engine_EventWait(20);
-        Event_ShowMessage(18, 0);
-    }
-    Actor_FaceDirection(18, 0x4000, 0);
-    Engine_EventEnd();
-}
-
-static void EV1040_PSYNERGY(void)
-{
-    u8 *slot;
-    u8  clear = 0;
-
-    Engine_EventBegin();
-    Engine_ActorRunRepeatedMotion(16, 1);
-    Engine_EventEnd();
-    slot = &Object_GetById(16)->paused;
-    *slot = 1;
-    FieldScene_RunActor16Sequence();
-    slot = &Object_GetById(16)->paused;
-    *slot = clear;
-    Engine_ActorEnableActionCallback(16, 2);
+  Engine_EventBegin();
+  Engine_ActorRunRepeatedMotion(16, 1);
+  Engine_EventEnd();
+  slot = &Object_GetById(16)->paused;
+  *slot = 1;
+  FieldScene_RunActor16Sequence();
+  slot = &Object_GetById(16)->paused;
+  *slot = clear;
+  Engine_ActorEnableActionCallback(16, 2);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_bone.h"
 
-static void EV19_TALK(void)
-{
-    u32 place;
+static void EV19_TALK(void) {
+  u32 place;
 
-    place = Object_GetById(0)->facing;
-    Engine_EventBegin();
+  place = Object_GetById(0)->facing;
+  Engine_EventBegin();
 
-    if (place + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(4, 19);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultTheresRiverFireOnOther);
-        Engine_EventShowMessage(19, 0);
-    }
+  if (place + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(4, 19);
+  } else {
+    Engine_EventSetMessage(MsgVaultTheresRiverFireOnOther);
+    Engine_EventShowMessage(19, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV20_TALK(void)
-{
-    u32 place;
+static void EV20_TALK(void) {
+  u32 place;
 
-    place = Object_GetById(0)->facing;
-    Engine_EventBegin();
+  place = Object_GetById(0)->facing;
+  Engine_EventBegin();
 
-    if (place + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(5, 20);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultTheySayVolcanoOnMt);
-        Engine_EventShowMessage(20, 0);
-    }
+  if (place + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(5, 20);
+  } else {
+    Engine_EventSetMessage(MsgVaultTheySayVolcanoOnMt);
+    Engine_EventShowMessage(20, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV21_TALK(void)
-{
-    u32 place;
+static void EV21_TALK(void) {
+  u32 place;
 
-    place = Object_GetById(0)->facing;
-    Engine_EventBegin();
+  place = Object_GetById(0)->facing;
+  Engine_EventBegin();
 
-    if (place + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(6, 21);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultWeHaventBeenGettingMany);
-        Engine_EventShowMessage(21, 0);
-    }
+  if (place + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(6, 21);
+  } else {
+    Engine_EventSetMessage(MsgVaultWeHaventBeenGettingMany);
+    Engine_EventShowMessage(21, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV22_TALK(void)
-{
-    u32 place;
+static void EV22_TALK(void) {
+  u32 place;
 
-    place = Object_GetById(0)->facing;
-    Engine_EventBegin();
+  place = Object_GetById(0)->facing;
+  Engine_EventBegin();
 
-    if (place + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_InnOpen(1, 22);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultMmmmNothingDoNothingDo);
-        Engine_EventShowMessage(22, 0);
-    }
+  if (place + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_InnOpen(1, 22);
+  } else {
+    Engine_EventSetMessage(MsgVaultMmmmNothingDoNothingDo);
+    Engine_EventShowMessage(22, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV18_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x85B) == 0)
-    {
-        Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
-    }
-    Engine_EventShowMessage(18, 0);
-    Engine_EventEnd();
+static void EV18_PSYNERGY(void) {
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x85B) == 0) {
+    Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
+  } else {
+    Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
+  }
+  Engine_EventShowMessage(18, 0);
+  Engine_EventEnd();
 }
 
-u8 *SceneData_GetEffectTable(void)
-{
-    return (u8 *)gPlacement_Effects;
-}
+u8 *SceneData_GetEffectTable(void) { return (u8 *)gPlacement_Effects; }
 
-s32 FieldScene_InitSceneStateByStep(void)
-{
-    s32 scene;
-    s32 zero;
+s32 FieldScene_InitSceneStateByStep(void) {
+  s32 scene;
+  s32 zero;
 
-    gEventWork->startTransition = 521;
-    scene = gGameState.entrance;
+  gEventWork->startTransition = 521;
+  scene = gGameState.entrance;
 
-    if (scene == 5)
-    {
+  if (scene == 5) {
 
-        Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
-        zero = 0;
-        Object_GetById(8)->motionFlags = zero;
-        Object_GetById(8)->y.fixed = zero;
-        Object_GetById(8)->terrainHeight = zero;
-    }
-    else if (scene == 7 || scene == 11)
-    {
-        OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-        FieldScheduler_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
-    }
+    Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
+    zero = 0;
+    Object_GetById(8)->motionFlags = zero;
+    Object_GetById(8)->y.fixed = zero;
+    Object_GetById(8)->terrainHeight = zero;
+  } else if (scene == 7 || scene == 11) {
+    OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000,
+                                                  0x02a00000);
+    FieldScheduler_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
+  }
 
-    return 0;
+  return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_itemobj.h"
 
 struct SceneEntrance gPlacement_Scripts[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0 },
-    { 6, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0 },
-    { 7, CONDITION_ALWAYS, 720, 0, 782, FACING_NORTH, 0, 432, 576, 800, 800, 0 },
-    { 8, CONDITION_ALWAYS, 624, 0, 236, FACING_NORTH, 0, 560, 32, 848, 256, 0 },
-    { 9, CONDITION_ALWAYS, 144, 0, 492, FACING_NORTH, 0, 16, 288, 256, 512, 0 },
-    { 10, CONDITION_ALWAYS, 416, 0, 526, FACING_NORTH, 0, 320, 288, 592, 544, 0 },
-    { 11, CONDITION_ALWAYS, 744, 0, 640, FACING_SOUTH, 0, 432, 576, 800, 800, 0 },
-    { 12, CONDITION_ALWAYS, 358, 0, 632, FACING_SOUTH, 0, 32, 576, 400, 776, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0},
+    {6, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0},
+    {7, CONDITION_ALWAYS, 720, 0, 782, FACING_NORTH, 0, 432, 576, 800, 800, 0},
+    {8, CONDITION_ALWAYS, 624, 0, 236, FACING_NORTH, 0, 560, 32, 848, 256, 0},
+    {9, CONDITION_ALWAYS, 144, 0, 492, FACING_NORTH, 0, 16, 288, 256, 512, 0},
+    {10, CONDITION_ALWAYS, 416, 0, 526, FACING_NORTH, 0, 320, 288, 592, 544, 0},
+    {11, CONDITION_ALWAYS, 744, 0, 640, FACING_SOUTH, 0, 432, 576, 800, 800, 0},
+    {12, CONDITION_ALWAYS, 358, 0, 632, FACING_SOUTH, 0, 32, 576, 400, 776, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gPlacement_Messages[] = {
-    SCENE_EXITS(24),
-    SCENE_EXIT(5, 23, 5),
-    SCENE_EXIT(6, 23, 6),
-    SCENE_EXIT(7, 23, 7),
-    SCENE_EXIT(8, 23, 8),
-    SCENE_EXIT(9, 23, 9),
-    SCENE_EXIT(10, 23, 10),
-    SCENE_EXIT(11, 24, 11),
-    SCENE_EXIT(12, 24, 12),
+    SCENE_EXITS(24),        SCENE_EXIT(5, 23, 5),   SCENE_EXIT(6, 23, 6),
+    SCENE_EXIT(7, 23, 7),   SCENE_EXIT(8, 23, 8),   SCENE_EXIT(9, 23, 9),
+    SCENE_EXIT(10, 23, 10), SCENE_EXIT(11, 24, 11), SCENE_EXIT(12, 24, 12),
     SCENE_EXITS_END,
 };
 

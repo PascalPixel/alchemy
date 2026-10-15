@@ -9,7 +9,4 @@
 #include "types.h"
 #include "field_scene.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

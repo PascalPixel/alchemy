@@ -15,68 +15,65 @@
 #include "object_runtime.h"
 #include "display_transition.h"
 
-void EventRuntime_StartScreen(void)
-{
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+void EventRuntime_StartScreen(void) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    DisplayTransition_Start(event->screenEffect, event->delay);
-    event->screenStatus = 1;
+  DisplayTransition_Start(event->screenEffect, event->delay);
+  event->screenStatus = 1;
 }
 
-void EventRuntime_FinishScreen(void)
-{
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+void EventRuntime_FinishScreen(void) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    DisplayTransition_Finish(event->screenEffect, event->delay);
-    event->screenStatus = 0;
+  DisplayTransition_Finish(event->screenEffect, event->delay);
+  event->screenStatus = 0;
 }
 
-void EventRuntime_WaitDelay(void)
-{
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+void EventRuntime_WaitDelay(void) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    WaitFrames(event->delay);
+  WaitFrames(event->delay);
 }
 
-void EventRuntime_SetDestination(s32 scene, s32 entrance)
-{
-    struct EventWork  *event = Ram_HeapSlots->eventWork;
-    struct PartyState *party;
+void EventRuntime_SetDestination(s32 scene, s32 entrance) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct PartyState *party;
 
-    event->countdown = 999;
-    /* FAKEMATCH: materialize the party pointer before building the scene offset. */
-    asm volatile("" : "=r"(party) : "0"(&gPartyState));
-    party->scene = scene;
-    party->entrance = entrance;
+  event->countdown = 999;
+  /* FAKEMATCH: materialize the party pointer before building the scene offset.
+   */
+  asm volatile("" : "=r"(party) : "0"(&gPartyState));
+  party->scene = scene;
+  party->entrance = entrance;
 }
 
-void EventRuntime_SetSavedDestination(s32 scene, s32 entrance)
-{
-    struct EventWork  *event = Ram_HeapSlots->eventWork;
-    struct PartyState *party;
+void EventRuntime_SetSavedDestination(s32 scene, s32 entrance) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct PartyState *party;
 
-    event->countdown = 999;
-    /* FAKEMATCH: materialize the party pointer before building the saved-scene offset. */
-    asm volatile("" : "=r"(party) : "0"(&gPartyState));
-    party->savedScene = scene;
-    party->savedEntrance = entrance;
+  event->countdown = 999;
+  /* FAKEMATCH: materialize the party pointer before building the saved-scene
+   * offset. */
+  asm volatile("" : "=r"(party) : "0"(&gPartyState));
+  party->savedScene = scene;
+  party->savedEntrance = entrance;
 }
 
-void EventRuntime_SetCountdown(u16 frames)
-{
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+void EventRuntime_SetCountdown(u16 frames) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    event->countdown = frames;
+  event->countdown = frames;
 }
 
-void BattleFx_SetWeightedResult(s32 row, s32 column)
-{
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+void BattleFx_SetWeightedResult(s32 row, s32 column) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    event->battleGroup = BattleFx_GetWeightedResult(row, column);
-    /* FAKEMATCH: the ARM9 scheduling would address the control mode before storing the group. */
-    __asm__("");
-    if (event->controlMode == 3)
-        BattleFx_LookupResult((u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
-    BattleFx_SelectBattleCue(row, column);
+  event->battleGroup = BattleFx_GetWeightedResult(row, column);
+  /* FAKEMATCH: the ARM9 scheduling would address the control mode before
+   * storing the group. */
+  __asm__("");
+  if (event->controlMode == 3)
+    BattleFx_LookupResult(
+        (u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
+  BattleFx_SelectBattleCue(row, column);
 }

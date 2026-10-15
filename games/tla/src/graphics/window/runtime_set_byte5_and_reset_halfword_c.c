@@ -10,11 +10,9 @@
 // active を mode にして、アニメの段（animStep）を 0 に戻す
 // out : スプライト出力（NULL なら何もしない）
 //--------------------------------------------------------------------------
-void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode)
-{
-    if (out != NULL)
-    {
-        out->active = mode;
-        out->animStep = 0;
-    }
+void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
+  if (out != NULL) {
+    out->active = mode;
+    out->animStep = 0;
+  }
 }

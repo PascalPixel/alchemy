@@ -1515,14 +1515,9 @@ s32 gData_02007d94[] = {
 };
 
 s32 gData_02007e00[] = {
-    (s32)gData_02007050,
-    (s32)gData_02007200,
-    (s32)gData_020073bc,
-    (s32)gData_0200756c,
-    (s32)gData_02007740,
-    (s32)gData_0200789c,
-    (s32)gData_02007a64,
-    (s32)gData_02007bcc,
+    (s32)gData_02007050, (s32)gData_02007200, (s32)gData_020073bc,
+    (s32)gData_0200756c, (s32)gData_02007740, (s32)gData_0200789c,
+    (s32)gData_02007a64, (s32)gData_02007bcc,
 };
 
 s32 gData_02007e20[] = {

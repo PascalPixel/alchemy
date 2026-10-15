@@ -12,7 +12,8 @@
 typedef s32 (*ScriptCommandFn)();
 
 struct ScriptOperands;
-typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation, s32 value);
+typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
+                            s32 value);
 
 s32 Script_StoreLookupResult();
 s32 Script_WaitForEvent();
@@ -64,44 +65,82 @@ s32 Script_InvokeCallback();
 s32 Func_08025428();
 s32 Func_0802509c();
 
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareWord68(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareByte62(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareByte63(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
+                                s32 value);
+void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
+                          s32 value);
+void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
+                          s32 value);
+void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
+                          s32 value);
+void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
+                                  s32 value);
+void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
+                                  s32 value);
+void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
+                                  s32 value);
+void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
+                                   s32 value);
+void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
+                                s32 value);
+void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
+                                s32 value);
+void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
+                                s32 value);
+void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
+                                s32 value);
+void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+                                      s32 operation, s32 value);
+void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
+                                  s32 value);
+void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
+                                      s32 operation, s32 value);
+void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareRepeatCount(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void Script_SetOrCompareHalfword5e(struct ScriptOperands *state, s32 operation,
+                                   s32 value);
+void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void Script_SetOrCompareWord68(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareUpdateAddress(struct ScriptOperands *state,
+                                      s32 operation, s32 value);
+void Script_SetOrCompareByte62(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void Script_SetOrCompareByte63(struct ScriptOperands *state, s32 operation,
+                               s32 value);
 
 // Each runs one control command every frame: the command, SC_WAIT(1),
 // SC_LOOP(SC_FOREVER, SC_TOP).

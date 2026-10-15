@@ -10,43 +10,29 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum
-{
-    ENTRANCE_WAKE = 2,
-    ENTRANCE_WAKE_AGAIN = 4
-};
+enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gIdejimaEntrances;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gIdejimaEntrances;
 }
 
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gIdejimaExits; }
+
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  return gIdejimaPlacements;
 }
 
-const u32 *Scene_GetExits(void)
-{
-    return gIdejimaExits;
-}
-
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    return gIdejimaPlacements;
-}
-
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    switch (gPartyState.entrance)
-    {
-    case 1:
-    case 3:
-        return gIdejimaEventsEntrance1;
-    case ENTRANCE_WAKE:
-    case ENTRANCE_WAKE_AGAIN:
-        return gIdejimaEventsWake;
-    default:
-        return gIdejimaEvents;
-    }
+const struct SceneEvent *Scene_GetEvents(void) {
+  switch (gPartyState.entrance) {
+  case 1:
+  case 3:
+    return gIdejimaEventsEntrance1;
+  case ENTRANCE_WAKE:
+  case ENTRANCE_WAKE_AGAIN:
+    return gIdejimaEventsWake;
+  default:
+    return gIdejimaEvents;
+  }
 }

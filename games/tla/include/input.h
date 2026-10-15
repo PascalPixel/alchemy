@@ -7,18 +7,20 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct InputState
-{
-    u32 held;
-    u32 pressed;
-    u32 previousVblankHeld;
-    /* FAKEMATCH: volatile steers The Lost Age only: without it, in tla-en, WaitFrames: differ 57, Menu_WaitForSelectionInput: 24, Func_02000e4c: 17 and Menu_SelectionLoop: 15. The six tbs editions build the same bytes without it: no tbs code reads gInput. */
-    volatile u32 repeat;
-    u32          direction;
-    u32          previousDirection;
-    u32          previousHeld;
-    u32          pendingPressed;
-    s32          repeatTimer;
+struct InputState {
+  u32 held;
+  u32 pressed;
+  u32 previousVblankHeld;
+  /* FAKEMATCH: volatile steers The Lost Age only: without it, in tla-en,
+   * WaitFrames: differ 57, Menu_WaitForSelectionInput: 24, Func_02000e4c: 17
+   * and Menu_SelectionLoop: 15. The six tbs editions build the same bytes
+   * without it: no tbs code reads gInput. */
+  volatile u32 repeat;
+  u32 direction;
+  u32 previousDirection;
+  u32 previousHeld;
+  u32 pendingPressed;
+  s32 repeatTimer;
 };
 
 LAYOUT_SIZE_GUARD(InputState_Size, struct InputState, 0x24);
@@ -28,6 +30,6 @@ LAYOUT_OFFSET_GUARD(InputState_Repeat, struct InputState, repeat, 12);
 LAYOUT_OFFSET_GUARD(InputState_RepeatTimer, struct InputState, repeatTimer, 32);
 
 extern struct InputState gInput;
-void                     Input_UpdateKeyRepeatAndDirection(void);
+void Input_UpdateKeyRepeatAndDirection(void);
 
 #endif

@@ -27,8 +27,8 @@ extern s16 gData_020032f0[];
 extern s16 gData_020032fc[];
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -142,26 +142,11 @@ s16 gData_020032fc[] = {
 // clang-format on
 
 s32 gData_02003308[] = {
-    (s32)gData_020032fc,
-    0x30014,
-    (s32)gData_020032f0,
-    0x17000d,
-    (s32)gData_020032f0,
-    0x110011,
-    (s32)gData_020032f0,
-    0x120017,
-    (s32)gData_020032f0,
-    0xa001c,
-    (s32)gData_020032f0,
-    0x6001c,
-    (s32)gData_020032f0,
-    0x60009,
-    (s32)gData_020032f0,
-    0x180013,
-    (s32)gData_020032f0,
-    0,
-    (s32)gData_020032fc,
-    0x30011,
+    (s32)gData_020032fc, 0x30014,  (s32)gData_020032f0, 0x17000d,
+    (s32)gData_020032f0, 0x110011, (s32)gData_020032f0, 0x120017,
+    (s32)gData_020032f0, 0xa001c,  (s32)gData_020032f0, 0x6001c,
+    (s32)gData_020032f0, 0x60009,  (s32)gData_020032f0, 0x180013,
+    (s32)gData_020032f0, 0,        (s32)gData_020032fc, 0x30011,
 };
 
 s32 gData_02003358[] = {

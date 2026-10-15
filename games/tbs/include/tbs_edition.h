@@ -79,8 +79,8 @@
 
 #define MENU_TEXT_Y 60
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-    || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define COLOSSO_PALETTE_BYTES 192
 #define LOBBY_PREFIX_LIMIT 7
 #else
@@ -88,8 +88,8 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-    || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define TICKET_COUNTER_WINDOW_X 18
 #define TICKET_COUNTER_WIDTH 12
 #define TICKET_COUNTER_X 32
@@ -247,7 +247,8 @@
 #define REEL_RELEASE_X 23
 #define REEL_RELEASE_WIDTH 7
 #endif
-#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || defined(TBS_EDITION_ES)
+#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                      \
+    defined(TBS_EDITION_ES)
 #define REEL_COIN_DIGITS 3
 #define REEL_COIN_X 56
 #define REEL_HINT_BEFORE_LAST_SPIN 1
@@ -259,8 +260,8 @@
 
 #if !EDITION_INTERNATIONAL
 #define RENDER_RESOURCE_BASE 0x9D4
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-    || defined(TBS_EDITION_IT)
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                    \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define RENDER_RESOURCE_BASE 0xBDF
 #else
 #define RENDER_RESOURCE_BASE 0x99B
@@ -286,8 +287,8 @@
 #define LIST_EMPTY_Y 17
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-    || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define SAVE_SLOT_NAME_X 6
 #else
 #define SAVE_SLOT_NAME_X 12

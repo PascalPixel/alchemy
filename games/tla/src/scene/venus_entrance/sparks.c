@@ -12,21 +12,19 @@
 #include "resource.h"
 #include "mem.h"
 
-struct SparkWork
-{
-    u8  unk0000[0x2102];
-    u16 tileBase;
-    u8  unk2104[0x80];
-    s16 resource;
+struct SparkWork {
+  u8 unk0000[0x2102];
+  u16 tileBase;
+  u8 unk2104[0x80];
+  s16 resource;
 };
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
-void VenusEntrance_StopSparks(void)
-{
-    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+void VenusEntrance_StopSparks(void) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-    Scheduler_RemoveCallbackFar(Func_0200258c);
-    Resource_ResetEntry(work->resource);
-    Runtime_ReleaseHeapBlock(220);
+  Scheduler_RemoveCallbackFar(Func_0200258c);
+  Resource_ResetEntry(work->resource);
+  Runtime_ReleaseHeapBlock(220);
 }

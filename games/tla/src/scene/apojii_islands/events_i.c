@@ -1,50 +1,48 @@
 #include "local.h"
 
-void Func_02001308(s32 id)
-{
-    struct ObjectRuntime *object = Object_GetById(id);
+void Func_02001308(s32 id) {
+  struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object != 0)
-    {
-        u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
+  if (object != 0) {
+    u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
 
-        meta[5] = 0;
-        meta[6] = 0;
-        Func_02001c6c(object, 0);
-        Func_02001c6c(object, 2);
-    }
+    meta[5] = 0;
+    meta[6] = 0;
+    Func_02001c6c(object, 0);
+    Func_02001c6c(object, 2);
+  }
 }
 
-void Func_02001338(s32 entrance)
-{
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32                   i;
+void Func_02001338(s32 entrance) {
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  s32 i;
 
-    Func_02001cc4();
-    Func_02001dcc(0);
-    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
-    leader->motionFlags = 0;
-    /* FAKEMATCH: the native clears the motion flags before it addresses the priority flags (differ 2 without the barrier). */
-    __asm__("" : "+r"(leader), "+m"(leader->motionFlags));
-    leader->priorityFlags |= 0x20;
-    Func_02001e2c(215);
-    Func_02001c6c(leader, 18);
-    Func_02001e2c(612);
-    for (i = 0; i < 60; i++)
-    {
-        s32 angle;
+  Func_02001cc4();
+  Func_02001dcc(0);
+  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+  leader->motionFlags = 0;
+  /* FAKEMATCH: the native clears the motion flags before it addresses the
+   * priority flags (differ 2 without the barrier). */
+  __asm__("" : "+r"(leader), "+m"(leader->motionFlags));
+  leader->priorityFlags |= 0x20;
+  Func_02001e2c(215);
+  Func_02001c6c(leader, 18);
+  Func_02001e2c(612);
+  for (i = 0; i < 60; i++) {
+    s32 angle;
 
-        if (i == 30)
-            Event_FinishScreenTransition();
-        leader->y -= 0x4000;
-        angle = leader->angle;
-        /* FAKEMATCH: the native loads the angle before it builds the turn (differ 2 without the barrier). */
-        __asm__ volatile("" : "+r"(angle));
-        leader->angle = angle + 0x1000;
-        if ((i & 7) == 0)
-            Func_020010d8(Object_GetById(15));
-        WaitFrames(1);
-    }
-    Func_02001ccc();
-    Func_02001d94(entrance);
+    if (i == 30)
+      Event_FinishScreenTransition();
+    leader->y -= 0x4000;
+    angle = leader->angle;
+    /* FAKEMATCH: the native loads the angle before it builds the turn (differ 2
+     * without the barrier). */
+    __asm__ volatile("" : "+r"(angle));
+    leader->angle = angle + 0x1000;
+    if ((i & 7) == 0)
+      Func_020010d8(Object_GetById(15));
+    WaitFrames(1);
+  }
+  Func_02001ccc();
+  Func_02001d94(entrance);
 }

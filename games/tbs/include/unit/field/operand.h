@@ -5,7 +5,8 @@
 
 struct ScriptOperands;
 
-typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation, s32 value);
+typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
+                            s32 value);
 
 extern const OperandFunc gScript_OperandHandlerTable[41];
 

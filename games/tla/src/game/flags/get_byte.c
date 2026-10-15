@@ -8,8 +8,7 @@
 #include "system.h"
 #include "types.h"
 
-u8 GameFlag_GetByte(s32 flag)
-{
-    flag = ((u32)flag << 20) >> 23;
-    return gGameFlagBytes[flag];
+u8 GameFlag_GetByte(s32 flag) {
+  flag = ((u32)flag << 20) >> 23;
+  return gGameFlagBytes[flag];
 }

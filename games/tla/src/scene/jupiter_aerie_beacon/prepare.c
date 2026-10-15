@@ -10,8 +10,7 @@
 #include "types.h"
 #include "field_scene.h"
 
-s32 Scene_PrepareMap(void)
-{
-    Scene_SetArrivalFlags(0);
-    return 0;
+s32 Scene_PrepareMap(void) {
+  Scene_SetArrivalFlags(0);
+  return 0;
 }

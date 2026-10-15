@@ -17,12 +17,15 @@
 #include "types.h"
 #include "battle_unit.h"
 
-#define UiText_DrawStringInWindowFar ((void (*)(s32, s32, s32, s32))UiText_DrawStringInWindowFar)
+#define UiText_DrawStringInWindowFar                                           \
+  ((void (*)(s32, s32, s32, s32))UiText_DrawStringInWindowFar)
 
 void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-s32  UiWork_SetParamNibbleFar(s32 color);
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
+                                  s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x,
+                                  s32 y);
+s32 UiWork_SetParamNibbleFar(s32 color);
 
 //--------------------------------------------------------------------------
 // ウィンドウの y 40 に HP、y 48 に PP を書く
@@ -30,51 +33,46 @@ s32  UiWork_SetParamNibbleFar(s32 color);
 // unit : キャラクター
 // win  : 書き込み先のウィンドウ
 //--------------------------------------------------------------------------
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
-{
-    s16 val;
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
+  s16 val;
 
 #if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar((s32)gUi_HpString, win, 0, 40);
-    UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 40);
-    val = unit->maxHp;
-    UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
-    val = unit->hp;
-    if (val < ((u16)unit->maxHp << 16) >> 18)
-    {
-        UiWork_SetParamNibbleFar(4);
-    }
-    if (val == 0)
-    {
-        UiWork_SetParamNibbleFar(2);
-    }
-    UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
-    UiWork_SetParamNibbleFar(15);
-    UiText_DrawStringAtOffsetFar((s32)gUi_PpString, win, 0, 48);
-    UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 48);
-    val = unit->pp;
-    UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
-    val = unit->maxPp;
-    UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
+  UiText_DrawStringAtOffsetFar((s32)gUi_HpString, win, 0, 40);
+  UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 40);
+  val = unit->maxHp;
+  UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
+  val = unit->hp;
+  if (val < ((u16)unit->maxHp << 16) >> 18) {
+    UiWork_SetParamNibbleFar(4);
+  }
+  if (val == 0) {
+    UiWork_SetParamNibbleFar(2);
+  }
+  UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
+  UiWork_SetParamNibbleFar(15);
+  UiText_DrawStringAtOffsetFar((s32)gUi_PpString, win, 0, 48);
+  UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 48);
+  val = unit->pp;
+  UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
+  val = unit->maxPp;
+  UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
 #else
-    UiText_DrawStringInWindowFar((s32)gUi_HpRowString, win, 0, 40);
-    val = unit->maxHp;
-    UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
-    val = unit->hp;
-    if (val < ((u16)unit->maxHp << 16) >> 18)
-    {
-        UiWork_SetParamNibbleFar(4);
-    }
-    if (val == 0)
-    {
-        UiWork_SetParamNibbleFar(2);
-    }
-    UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
-    UiWork_SetParamNibbleFar(15);
-    UiText_DrawStringInWindowFar((s32)gUi_PpRowString, win, 0, 48);
-    val = unit->pp;
-    UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
-    val = unit->maxPp;
-    UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
+  UiText_DrawStringInWindowFar((s32)gUi_HpRowString, win, 0, 40);
+  val = unit->maxHp;
+  UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
+  val = unit->hp;
+  if (val < ((u16)unit->maxHp << 16) >> 18) {
+    UiWork_SetParamNibbleFar(4);
+  }
+  if (val == 0) {
+    UiWork_SetParamNibbleFar(2);
+  }
+  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
+  UiWork_SetParamNibbleFar(15);
+  UiText_DrawStringInWindowFar((s32)gUi_PpRowString, win, 0, 48);
+  val = unit->pp;
+  UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
+  val = unit->maxPp;
+  UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
 #endif
 }

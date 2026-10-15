@@ -1,146 +1,145 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) \
-    (((struct {                   \
-        u8   pad[off];            \
-        type v;                   \
-    } *)(base))                   \
-            ->v)
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
 
 #include "call.h"
-s32       Func_020028b4();
-s32       Func_020029cc();
-s32       Func_0200290c();
-s32       ObjectMotion_ArmCallback();
-s32       ObjectMotion_SetActionVariant();
-s32       Func_020029fc();
-s32       Object_GetById();
-s32       ObjectDispatch_SetSingleChildFlags();
-s32       Func_02002994();
-s32       Event_StartScreenTransition();
-s32       Event_WaitTransitionFrames();
-s32       Battle_WaitMode0();
-s32       Func_0200293c();
-s32       Func_02002964();
-s32       Func_0200294c();
-s32       Motion_SetVarCbAndRefresh();
-s32       Motion_SetModeAndWaitAnimation();
-s32       ObjectMotion_Launch();
-s32       ObjectMotion_CommitPositionAndActivate();
-s32       ObjectMotion_SetSpeedParameters();
-s32       Object_SetModeById();
-s32       Object_LinkObjectAndSetCallback();
-s32       ObjectMotion_OffsetPositionAndReset();
-s32       ObjectMotion_CommitCurrentPositionAndActivate();
-s32       ObjectMotion_ResetAndSetPosition();
-void      Func_020028bc(void);
+s32 Func_020028b4();
+s32 Func_020029cc();
+s32 Func_0200290c();
+s32 ObjectMotion_ArmCallback();
+s32 ObjectMotion_SetActionVariant();
+s32 Func_020029fc();
+s32 Object_GetById();
+s32 ObjectDispatch_SetSingleChildFlags();
+s32 Func_02002994();
+s32 Event_StartScreenTransition();
+s32 Event_WaitTransitionFrames();
+s32 Battle_WaitMode0();
+s32 Func_0200293c();
+s32 Func_02002964();
+s32 Func_0200294c();
+s32 Motion_SetVarCbAndRefresh();
+s32 Motion_SetModeAndWaitAnimation();
+s32 ObjectMotion_Launch();
+s32 ObjectMotion_CommitPositionAndActivate();
+s32 ObjectMotion_SetSpeedParameters();
+s32 Object_SetModeById();
+s32 Object_LinkObjectAndSetCallback();
+s32 ObjectMotion_OffsetPositionAndReset();
+s32 ObjectMotion_CommitCurrentPositionAndActivate();
+s32 ObjectMotion_ResetAndSetPosition();
+void Func_020028bc(void);
 extern u8 MsgAreAreYou[];
 
-void Func_02001c30(void)
-{
-    s32 t96;
+void Func_02001c30(void) {
+  s32 t96;
 
-    Func_020028b4();
-    Call1(Func_020029cc, 0);
-    Call3(Func_0200290c, 5, 0x16c0000, 0x9c0000);
-    Call3(Func_0200290c, 8, 0x16a0000, 0x8e0000);
-    Call3(Func_0200290c, 9, 0x1860000, 0x900000);
-    Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
-    Call3(ObjectMotion_ArmCallback, 9, 0x4000, 0);
-    Call2(ObjectMotion_SetActionVariant, 8, 2);
-    Call2(Func_020029fc, 5, 0x4000);
-    Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 5), 0);
-    Call2(Func_02002994, 5, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x3c;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Call1(Battle_WaitMode0, 0x14);
-    Call1(Func_0200293c, (s32)MsgAreAreYou);
-    Func_02002964(8, 0x102, 0x28);
-    Call3(Func_0200294c, 8, 0, 0xa);
-    Call2(Motion_SetVarCbAndRefresh, 5, 2);
-    Call1(Battle_WaitMode0, 0x1e);
-    Call2(Motion_SetModeAndWaitAnimation, 9, 3);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_0200294c, 9, 0, 0xa);
-    Call2(Motion_SetVarCbAndRefresh, 8, 2);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_0200294c, 8, 0, 0xa);
-    Call2(Motion_SetVarCbAndRefresh, 5, 2);
-    Call1(Battle_WaitMode0, 0x1e);
-    Call3(Func_0200290c, 5, 0x1780000, 0xa40000);
-    Call2(Func_020029fc, 5, 0);
-    Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 5), 1);
-    Call3(ObjectMotion_Launch, 5, 6, 0x32);
-    Call2(Motion_SetModeAndWaitAnimation, 5, 4);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(ObjectMotion_CommitPositionAndActivate, 5, -14, -2);
-    Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-    Call1(Battle_WaitMode0, 0x14);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(ObjectMotion_ArmCallback, 9, 0x6000, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(Func_0200294c, 9, 0, 0xa);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(ObjectMotion_ArmCallback, 8, 0, 0);
-    Call3(ObjectMotion_ArmCallback, 5, 0xf000, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_0200294c, 8, 0, 0xa);
-    Call2(Motion_SetModeAndWaitAnimation, 9, 4);
-    Call3(Func_0200294c, 9, 0, 0xa);
-    Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
-    Call3(ObjectMotion_CommitPositionAndActivate, 9, 0, 0x10);
-    Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(Func_0200294c, 9, 0, 0xa);
-    Call2(Motion_SetVarCbAndRefresh, 9, 2);
-    Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_0200294c, 9, 0, 0xa);
-    Call2(Motion_SetModeAndWaitAnimation, 9, 3);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Object_SetModeById, 5, 3);
-    Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Object_LinkObjectAndSetCallback, 5, 9);
-    Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
-    Call3(ObjectMotion_OffsetPositionAndReset, 9, 0, 0x78);
-    Call1(Battle_WaitMode0, 0x28);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
-    Call3(ObjectMotion_CommitPositionAndActivate, 8, 0x18, 0);
-    Call3(ObjectMotion_CommitPositionAndActivate, 8, 0, 0x14);
-    Call3(ObjectMotion_ArmCallback, 5, 0x3000, 0);
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 9);
-    Call3(Func_0200290c, 9, 0, 0);
-    Call1(Battle_WaitMode0, 0xa);
-    Func_02002964(8, 0x105, 0x1e);
-    Call3(Func_0200294c, 8, 0, 0xa);
-    Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-    Call1(Battle_WaitMode0, 0x1e);
-    Call2(Motion_SetVarCbAndRefresh, 8, 2);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(ObjectMotion_Launch, 8, 4, 0);
-    Call3(ObjectMotion_ArmCallback, 8, 0x8000, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(Func_0200294c, 8, 0, 0xa);
-    Call3(ObjectMotion_ArmCallback, 5, 0, 0);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-    Call1(Battle_WaitMode0, 0x14);
-    Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-    Call1(Battle_WaitMode0, 0x14);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x13333, 0x9999);
-    Call2(Object_SetModeById, 8, 2);
-    t96 = Value1(Object_GetById, 5);
-    if (t96 != 0)
-    {
-        Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t96, s16, 10), FIELD_AT(t96, s16, 18));
-    }
-    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
-    Call3(Func_0200290c, 8, 0, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 8;
-    Func_020028bc();
+  Func_020028b4();
+  Call1(Func_020029cc, 0);
+  Call3(Func_0200290c, 5, 0x16c0000, 0x9c0000);
+  Call3(Func_0200290c, 8, 0x16a0000, 0x8e0000);
+  Call3(Func_0200290c, 9, 0x1860000, 0x900000);
+  Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
+  Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
+  Call3(ObjectMotion_ArmCallback, 9, 0x4000, 0);
+  Call2(ObjectMotion_SetActionVariant, 8, 2);
+  Call2(Func_020029fc, 5, 0x4000);
+  Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 5), 0);
+  Call2(Func_02002994, 5, 0);
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x3c;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Call1(Battle_WaitMode0, 0x14);
+  Call1(Func_0200293c, (s32)MsgAreAreYou);
+  Func_02002964(8, 0x102, 0x28);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call2(Motion_SetVarCbAndRefresh, 5, 2);
+  Call1(Battle_WaitMode0, 0x1e);
+  Call2(Motion_SetModeAndWaitAnimation, 9, 3);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call2(Motion_SetVarCbAndRefresh, 8, 2);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call2(Motion_SetVarCbAndRefresh, 5, 2);
+  Call1(Battle_WaitMode0, 0x1e);
+  Call3(Func_0200290c, 5, 0x1780000, 0xa40000);
+  Call2(Func_020029fc, 5, 0);
+  Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, 5), 1);
+  Call3(ObjectMotion_Launch, 5, 6, 0x32);
+  Call2(Motion_SetModeAndWaitAnimation, 5, 4);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(ObjectMotion_CommitPositionAndActivate, 5, -14, -2);
+  Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Motion_SetModeAndWaitAnimation, 5, 3);
+  Call1(Battle_WaitMode0, 0x14);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(ObjectMotion_ArmCallback, 9, 0x6000, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(ObjectMotion_ArmCallback, 8, 0, 0);
+  Call3(ObjectMotion_ArmCallback, 5, 0xf000, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Motion_SetModeAndWaitAnimation, 8, 3);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call2(Motion_SetModeAndWaitAnimation, 9, 4);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Call3(ObjectMotion_CommitPositionAndActivate, 9, 0, 0x10);
+  Call3(ObjectMotion_ArmCallback, 9, 0x8000, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call2(Motion_SetVarCbAndRefresh, 9, 2);
+  Call1(Battle_WaitMode0, 0xa);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call2(Motion_SetModeAndWaitAnimation, 9, 3);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Object_SetModeById, 5, 3);
+  Call2(Motion_SetModeAndWaitAnimation, 8, 3);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Object_LinkObjectAndSetCallback, 5, 9);
+  Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Call3(ObjectMotion_OffsetPositionAndReset, 9, 0, 0x78);
+  Call1(Battle_WaitMode0, 0x28);
+  Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3(ObjectMotion_CommitPositionAndActivate, 8, 0x18, 0);
+  Call3(ObjectMotion_CommitPositionAndActivate, 8, 0, 0x14);
+  Call3(ObjectMotion_ArmCallback, 5, 0x3000, 0);
+  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 9);
+  Call3(Func_0200290c, 9, 0, 0);
+  Call1(Battle_WaitMode0, 0xa);
+  Func_02002964(8, 0x105, 0x1e);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call2(Motion_SetModeAndWaitAnimation, 5, 3);
+  Call1(Battle_WaitMode0, 0x1e);
+  Call2(Motion_SetVarCbAndRefresh, 8, 2);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(ObjectMotion_Launch, 8, 4, 0);
+  Call3(ObjectMotion_ArmCallback, 8, 0x8000, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call3(ObjectMotion_ArmCallback, 5, 0, 0);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Motion_SetModeAndWaitAnimation, 5, 3);
+  Call1(Battle_WaitMode0, 0x14);
+  Call2(Motion_SetModeAndWaitAnimation, 8, 3);
+  Call1(Battle_WaitMode0, 0x14);
+  Call3(ObjectMotion_SetSpeedParameters, 8, 0x13333, 0x9999);
+  Call2(Object_SetModeById, 8, 2);
+  t96 = Value1(Object_GetById, 5);
+  if (t96 != 0) {
+    Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t96, s16, 10),
+          FIELD_AT(t96, s16, 18));
+  }
+  Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
+  Call3(Func_0200290c, 8, 0, 0);
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 8;
+  Func_020028bc();
 }

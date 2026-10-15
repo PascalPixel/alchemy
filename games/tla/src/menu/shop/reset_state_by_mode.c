@@ -13,38 +13,27 @@
 
 #define Item_Get ((u8 *(*)(u16))Item_Get)
 
-void BattleUnit_ResetStateByMode(s32 id, s32 mode)
-{
-    struct BattleUnit *unit;
+void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
+  struct BattleUnit *unit;
 
-    unit = UnitGet(id);
-    if (mode == 0)
-    {
-        unit->hp = unit->maxHp;
-        UnitRatioFar(id);
-    }
-    else if (mode == 1)
-    {
-        unit->poison = 0;
-    }
-    else if (mode == 2)
-    {
-        unit->haunt = 0;
-    }
-    else if (mode == 3)
-    {
-        s32 i;
+  unit = UnitGet(id);
+  if (mode == 0) {
+    unit->hp = unit->maxHp;
+    UnitRatioFar(id);
+  } else if (mode == 1) {
+    unit->poison = 0;
+  } else if (mode == 2) {
+    unit->haunt = 0;
+  } else if (mode == 3) {
+    s32 i;
 
-        for (i = 0; i < 15; i++)
-        {
-            if (unit->inventory[i] & 0x200)
-            {
-                if (Item_Get(unit->inventory[i])[3] & 1)
-                {
-                    unit->inventory[i] ^= 0x200;
-                    UnitCalcFar(id);
-                }
-            }
+    for (i = 0; i < 15; i++) {
+      if (unit->inventory[i] & 0x200) {
+        if (Item_Get(unit->inventory[i])[3] & 1) {
+          unit->inventory[i] ^= 0x200;
+          UnitCalcFar(id);
         }
+      }
     }
+  }
 }

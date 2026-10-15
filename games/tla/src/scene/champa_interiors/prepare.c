@@ -5,15 +5,11 @@
 
 void GameFlag_ClearBit(s32 flag);
 
-s32 Scene_PrepareMap(void)
-{
-    return 0;
-}
+s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_0200014c(void)
-{
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+void Func_0200014c(void) {
+  struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screenEffect = 0x209;
-    GameFlag_ClearBit(0x12f);
+  work->screenEffect = 0x209;
+  GameFlag_ClearBit(0x12f);
 }

@@ -6,11 +6,10 @@
 extern u8 gCurve_LerpWeightTable[];
 extern u8 gCurve_SampleIndexTable[];
 
-enum
-{
-    CURVE_VALUE_SHIFT = 19,
-    CURVE_HALF_STEPS = 8,
-    CURVE_FULL_STEPS = 16,
+enum {
+  CURVE_VALUE_SHIFT = 19,
+  CURVE_HALF_STEPS = 8,
+  CURVE_FULL_STEPS = 16,
 };
 
 s32 Curve_GetFirstSampleA(const s8 *samples);

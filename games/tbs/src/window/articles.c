@@ -27,14 +27,9 @@ static const s8 sArticleDas[] = "das ";
 
 // 種類ごとの冠詞
 const s8 *const gUiText_ArticleTable[8] = {
-    gUiText_ArticleEmpty,
-    sArticleEin,
-    sArticleEine,
-    sArticleDie,
-    sArticleDas,
-    gUiText_ArticleEmpty,
-    gUiText_ArticleEmpty,
-    gUiText_ArticleEmpty,
+    gUiText_ArticleEmpty, sArticleEin,          sArticleEine,
+    sArticleDie,          sArticleDas,          gUiText_ArticleEmpty,
+    gUiText_ArticleEmpty, gUiText_ArticleEmpty,
 };
 
 // 数える語 (gUiText_NumberWords が {単数, 複数} に並べる)
@@ -71,11 +66,7 @@ static const s8 sArticleLas[] = "las ";
 
 // 種類ごとの定冠詞
 const s8 *const gUiText_ArticleTable[5] = {
-    gUiText_ArticleEmpty,
-    sArticleEl,
-    sArticleLa,
-    sArticleLos,
-    sArticleLas,
+    gUiText_ArticleEmpty, sArticleEl, sArticleLa, sArticleLos, sArticleLas,
 };
 
 static const s8 sArticleUn[] = "un ";
@@ -85,11 +76,7 @@ static const s8 sArticleUnas[] = "unas ";
 
 // 種類ごとの不定冠詞
 const s8 *const gUiText_IndefiniteArticles[5] = {
-    gUiText_ArticleEmpty,
-    sArticleUn,
-    sArticleUna,
-    sArticleUnos,
-    sArticleUnas,
+    gUiText_ArticleEmpty, sArticleUn, sArticleUna, sArticleUnos, sArticleUnas,
 };
 
 static const s8 sPossessiveTu[] = "tu ";
@@ -115,14 +102,8 @@ static const s8 sArticleDes[] = "des ";
 
 // 種類ごとの冠詞
 const s8 *const gUiText_ArticleTable[8] = {
-    gUiText_ArticleEmpty,
-    sArticleLe,
-    sArticleLa,
-    sArticleL,
-    sArticleLes,
-    sArticleUn,
-    sArticleUne,
-    sArticleDes,
+    gUiText_ArticleEmpty, sArticleLe, sArticleLa,  sArticleL,
+    sArticleLes,          sArticleUn, sArticleUne, sArticleDes,
 };
 
 const s8 gUiText_ItemPronoun[] = "vous ";
@@ -144,17 +125,9 @@ static const s8 sArticleUna[] = "una ";
 
 // 種類ごとの冠詞
 const s8 *const gUiText_ArticleTable[11] = {
-    gUiText_ArticleEmpty,
-    sArticleIl,
-    sArticleL,
-    sArticleLa,
-    sArticleLo,
-    sArticleLe,
-    sArticleGli,
-    sArticleUn,
-    sArticleUnElided,
-    sArticleUno,
-    sArticleUna,
+    gUiText_ArticleEmpty, sArticleIl,  sArticleL,   sArticleLa,
+    sArticleLo,           sArticleLe,  sArticleGli, sArticleUn,
+    sArticleUnElided,     sArticleUno, sArticleUna,
 };
 
 static const s8 sPossessiveIlTuo[] = "Il tuo ";
@@ -179,14 +152,10 @@ static const s8 sArticleThe[] = "the ";
 
 // 種類ごとの冠詞
 const s8 *const gUiText_ArticleTable[8] = {
-    gUiText_ArticleEmpty,
-    sArticleA,
-    sArticleAn,
-    sArticleSome,
-    gUiText_ArticleEmpty,
-    sArticleThe,
-    gUiText_ArticleEmpty,
-    gUiText_ArticleEmpty,
+    gUiText_ArticleEmpty, sArticleA,
+    sArticleAn,           sArticleSome,
+    gUiText_ArticleEmpty, sArticleThe,
+    gUiText_ArticleEmpty, gUiText_ArticleEmpty,
 };
 
 #endif

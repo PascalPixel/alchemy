@@ -8,9 +8,8 @@
 #include "system.h"
 #include "types.h"
 
-void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
-{
-    index *= 2;
-    *x = gBattlePlacement_StepPairs[index];
-    *y = gBattlePlacement_StepPairs[index + 1];
+void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
+  index *= 2;
+  *x = gBattlePlacement_StepPairs[index];
+  *y = gBattlePlacement_StepPairs[index + 1];
 }

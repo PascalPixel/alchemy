@@ -45,8 +45,8 @@ u16 gData_02002490[] = {
 // clang-format on
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -54,11 +54,11 @@ u32 gSceneExits[] = {
 };
 
 struct ScenePlacement gScenePlacements[] = {
-    { SCENE_TABLE_END },
+    {SCENE_TABLE_END},
 };
 
 struct SceneEvent gSceneEvents[] = {
-    { SCENE_EVENTS_END },
+    {SCENE_EVENTS_END},
 };
 
 u16 gData_020024f4[] = {

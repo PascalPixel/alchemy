@@ -8,8 +8,8 @@ void Func_020002dc(void);
 extern s16 gData_02000604[];
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -42,10 +42,10 @@ s32 gData_02000610[] = {
 };
 
 struct SceneEvent gSceneEvents[] = {
-    { 1, 2, CONDITION_ALWAYS, 2 },
-    { 0xc602, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020002dc) },
-    { 2, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200006c) },
-    { 0, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000158) },
-    { 0x8d15, 1032, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000158) },
-    { SCENE_EVENTS_END },
+    {1, 2, CONDITION_ALWAYS, 2},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020002dc)},
+    {2, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200006c)},
+    {0, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000158)},
+    {0x8d15, 1032, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000158)},
+    {SCENE_EVENTS_END},
 };

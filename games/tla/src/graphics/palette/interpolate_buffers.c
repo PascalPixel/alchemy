@@ -14,22 +14,20 @@
 // step   : 変化量の書き込み先
 // frames : かけるフレーム数（0 以下なら何もしない）
 //--------------------------------------------------------------------------
-void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step, s32 frames)
-{
-    s32 n;
-    s32 from;
-    s32 to;
+void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step,
+                                        s32 frames) {
+  s32 n;
+  s32 from;
+  s32 to;
 
-    if (frames > 0)
-    {
-        for (n = 0; n < 3 * 512; n++)
-        {
-            from = *src;
-            to = *dst;
-            *step = Iwram_SignedDivide(to - from, frames);
-            src++;
-            dst++;
-            step++;
-        }
+  if (frames > 0) {
+    for (n = 0; n < 3 * 512; n++) {
+      from = *src;
+      to = *dst;
+      *step = Iwram_SignedDivide(to - from, frames);
+      src++;
+      dst++;
+      step++;
     }
+  }
 }

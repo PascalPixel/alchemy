@@ -5,67 +5,64 @@
 #include "layout_guard.h"
 #include "window.h"
 
-struct SelectionSprite
-{
-    struct SelectionSprite *next;
-    u8                      y;
-    u8                      affine : 2;
-    u8                      mode : 2;
-    u8                      mosaic : 1;
-    u8                      colors : 1;
-    u8                      shape : 2;
-    u16                     x : 9;
-    u16                     param : 5;
-    u16                     size : 2;
-    u16                     tile : 10;
-    u16                     priority : 2;
-    u16                     palette : 4;
+struct SelectionSprite {
+  struct SelectionSprite *next;
+  u8 y;
+  u8 affine : 2;
+  u8 mode : 2;
+  u8 mosaic : 1;
+  u8 colors : 1;
+  u8 shape : 2;
+  u16 x : 9;
+  u16 param : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
 };
 
-struct SelectionNode
-{
-    struct SelectionNode  *prev;
-    struct SelectionNode  *next;
-    u16                    base;
-    u16                    kind;
-    u16                    slot;
-    u16                    tile;
-    s16                    x;
-    s16                    y;
-    s16                    dx;
-    s16                    dy;
-    s16                    targetX;
-    s16                    targetY;
-    s16                    homeX;
-    s16                    homeY;
-    u16                    message;
-    s16                    scale;
-    s16                    scaleStep;
-    s16                    scaleEnd;
-    struct SelectionSprite sprite;
+struct SelectionNode {
+  struct SelectionNode *prev;
+  struct SelectionNode *next;
+  u16 base;
+  u16 kind;
+  u16 slot;
+  u16 tile;
+  s16 x;
+  s16 y;
+  s16 dx;
+  s16 dy;
+  s16 targetX;
+  s16 targetY;
+  s16 homeX;
+  s16 homeY;
+  u16 message;
+  s16 scale;
+  s16 scaleStep;
+  s16 scaleEnd;
+  struct SelectionSprite sprite;
 };
 
-struct SelectionScreen
-{
-    struct SelectionNode  records[16];
-    u16                   matrix[4];
-    struct SelectionNode *head;
-    struct SelectionNode *path;
-    struct UiWindow      *window;
-    u16                   kinds[16];
-    u16                   bases[16];
-    u16                   count;
-    u16                   baseX;
-    u16                   baseY;
-    u16                   unk39a;
-    u16                   top;
-    u16                   cursorIndex;
-    u16                   verticalScroll;
-    u16                   status;
-    u16                   pathTop[5];
-    u16                   pathCursor[5];
-    u16                   locked;
-    u8                    unk3ba[42];
+struct SelectionScreen {
+  struct SelectionNode records[16];
+  u16 matrix[4];
+  struct SelectionNode *head;
+  struct SelectionNode *path;
+  struct UiWindow *window;
+  u16 kinds[16];
+  u16 bases[16];
+  u16 count;
+  u16 baseX;
+  u16 baseY;
+  u16 unk39a;
+  u16 top;
+  u16 cursorIndex;
+  u16 verticalScroll;
+  u16 status;
+  u16 pathTop[5];
+  u16 pathCursor[5];
+  u16 locked;
+  u8 unk3ba[42];
 };
 
 LAYOUT_SIZE_GUARD(SelectionSprite_Size, struct SelectionSprite, 0x0c);
@@ -73,9 +70,12 @@ LAYOUT_SIZE_GUARD(SelectionNode_Size, struct SelectionNode, 0x34);
 LAYOUT_OFFSET_GUARD(SelectionNode_Message, struct SelectionNode, message, 0x20);
 LAYOUT_OFFSET_GUARD(SelectionNode_Sprite, struct SelectionNode, sprite, 0x28);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Head, struct SelectionScreen, head, 0x348);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds, 0x354);
-LAYOUT_OFFSET_GUARD(SelectionScreen_CursorIndex, struct SelectionScreen, cursorIndex, 0x39e);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Locked, struct SelectionScreen, locked, 0x3b8);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds,
+                    0x354);
+LAYOUT_OFFSET_GUARD(SelectionScreen_CursorIndex, struct SelectionScreen,
+                    cursorIndex, 0x39e);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Locked, struct SelectionScreen, locked,
+                    0x3b8);
 LAYOUT_SIZE_GUARD(SelectionScreen_Size, struct SelectionScreen, 0x3e4);
 
 #endif

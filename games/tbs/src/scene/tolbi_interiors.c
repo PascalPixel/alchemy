@@ -12,505 +12,408 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-u8 *TolbiInteriors_GetEntrances(void)
-{
-    return gTolbiInteriorsEntrances;
-}
+u8 *TolbiInteriors_GetEntrances(void) { return gTolbiInteriorsEntrances; }
 
-s32 TolbiInteriors_GetDefaultResult(void)
-{
-    return 0;
-}
+s32 TolbiInteriors_GetDefaultResult(void) { return 0; }
 
-u8 *TolbiInteriors_GetExits(void)
-{
-    return gTolbiInteriorsExits;
-}
+u8 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
 
-s32 TolbiInteriors_SelectPlacements(void)
-{
-    if (Engine_GameFlagIsSet(0x950) != 0)
-    {
-        return (s32)gTolbiInteriorsPlacementsFlag950;
-    }
-    return (s32)gTolbiInteriorsPlacements;
+s32 TolbiInteriors_SelectPlacements(void) {
+  if (Engine_GameFlagIsSet(0x950) != 0) {
+    return (s32)gTolbiInteriorsPlacementsFlag950;
+  }
+  return (s32)gTolbiInteriorsPlacements;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-static void SceneDialogue_AskBabiWasMissing(s32 subject)
-{
-    s32 msg;
+static void SceneDialogue_AskBabiWasMissing(s32 subject) {
+  s32 msg;
 
-    msg = MsgTolbiInteriorsBabiShowedHimselfAtFinals;
-    Engine_EventSetMessage(msg);
-    Engine_EventOpenMessage(subject, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(msg + 1);
-    }
-    else
-    {
-        Engine_EventSetMessage(msg + 2);
-    }
-    Engine_EventShowMessage(subject, 0);
+  msg = MsgTolbiInteriorsBabiShowedHimselfAtFinals;
+  Engine_EventSetMessage(msg);
+  Engine_EventOpenMessage(subject, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(msg + 1);
+  } else {
+    Engine_EventSetMessage(msg + 2);
+  }
+  Engine_EventShowMessage(subject, 0);
 }
 #endif
 
-u8 *TolbiInteriors_SelectEvents(void)
-{
-    if (Engine_GameFlagIsSet(0x950) != 0)
-    {
-        return gTolbiInteriorsEventsFlag950;
-    }
-    if (Engine_GameFlagIsSet(0x962) != 0)
-    {
-        return gTolbiInteriorsEventsFlag962;
-    }
-    return gTolbiInteriorsEvents;
+u8 *TolbiInteriors_SelectEvents(void) {
+  if (Engine_GameFlagIsSet(0x950) != 0) {
+    return gTolbiInteriorsEventsFlag950;
+  }
+  if (Engine_GameFlagIsSet(0x962) != 0) {
+    return gTolbiInteriorsEventsFlag962;
+  }
+  return gTolbiInteriorsEvents;
 }
 
-static void TolbiInteriors_StartWindowTransition(void)
-{
-    struct EventWork *state = gEventWork;
+static void TolbiInteriors_StartWindowTransition(void) {
+  struct EventWork *state = gEventWork;
 
-    state->startTransition = 0x201;
-    state->transitionFrames = 24;
-    Engine_EventRequestExit();
+  state->startTransition = 0x201;
+  state->transitionFrames = 24;
+  Engine_EventRequestExit();
 }
 
-static void FieldScene_RunPrimarySequence(void)
-{
-    u32                i;
-    struct FieldActor *record;
-    u8                *p6;
-    s32                n;
+static void FieldScene_RunPrimarySequence(void) {
+  u32 i;
+  struct FieldActor *record;
+  u8 *p6;
+  s32 n;
 
-    p6 = *(u8 **)&gEventWork;
-    for (i = 8; i < 66; i++)
-    {
-        record = Object_GetById(i);
-        if (record != 0)
-        {
-            record->motionFlags = 0;
-        }
+  p6 = *(u8 **)&gEventWork;
+  for (i = 8; i < 66; i++) {
+    record = Object_GetById(i);
+    if (record != 0) {
+      record->motionFlags = 0;
     }
-    p6 += 0x16c;
-    n = *(s16 *)p6 - 14;
-    Engine_AudioPlayCue(158);
-    Map_AnimateCells(gTolbiInteriors_ExitCells[n].steps, gTolbiInteriors_ExitCells[n].x,
-        gTolbiInteriors_ExitCells[n].y);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetById(0)->motionFlags = 0;
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Engine_EventRequestExit(*(s16 *)p6);
+  }
+  p6 += 0x16c;
+  n = *(s16 *)p6 - 14;
+  Engine_AudioPlayCue(158);
+  Map_AnimateCells(gTolbiInteriors_ExitCells[n].steps,
+                   gTolbiInteriors_ExitCells[n].x,
+                   gTolbiInteriors_ExitCells[n].y);
+  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Object_GetById(0)->motionFlags = 0;
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_EventRequestExit(*(s16 *)p6);
 }
 
-static void FieldScene_RunScene3b6SequenceA(void)
-{
-    s32 rec7;
+static void FieldScene_RunScene3b6SequenceA(void) {
+  s32 rec7;
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgTolbiHeyWhatsThis);
-    Engine_EventWait(40);
-    rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
-    Engine_ActorSetSpriteFlags(rec7, 0);
-    Object_SetMode(rec7, 6);
-    Engine_EventWait(10);
-    Object_SetMode(rec7, 1);
-    Engine_EventWait(40);
-    Engine_ObjectDispatchRelease(rec7);
-    Engine_EventWait(2);
-    Actor_ShowEmote(25, 0x100, 50);
-    Actor_SetSpeed(25, 0x10000, 0x8000);
-    Actor_WalkToAndWait(25, 0x258, 0x350);
-    Actor_FaceDirection(25, 0xc000, 0);
-    Engine_EventWait(40);
-    Event_ShowMessage(25, 0);
-    Engine_ActorRunRepeatedMotion(25, 2);
-    Engine_EventWait(30);
-    Actor_WalkToAndWait(25, 0x238, 0x350);
-    Actor_FaceDirection(25, 0xc000, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(25, 0x108, 50);
-    Engine_EventWait(20);
-    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-    Engine_EventWait(20);
-    Actor_FaceDirection(25, 0x3000, 0);
-    Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(25, 2);
-    Engine_EventWait(20);
-    Event_ShowMessage(25, 0);
-    Engine_EventWait(20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(25, 4);
-    Engine_EventWait(20);
-    Event_ShowMessage(25, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(25, 0x102, 50);
-    Event_ShowMessage(25, 0);
-    Actor_SetSpeed(25, 0x16666, 0xb333);
-    Actor_WalkByAndWait(25, 16, 0);
-    Actor_WalkByAndWait(25, 0, 32);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(25, 3);
-    Engine_EventWait(20);
-    Event_ShowMessage(25, 0);
-    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    Engine_EventWait(20);
-    Actor_SetSpeed(25, 0x1cccc, 0xe666);
-    Actor_WalkByAndWait(25, 0, 48);
-    Actor_SetPosition(25, 0, 0);
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgTolbiHeyWhatsThis);
+  Engine_EventWait(40);
+  rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
+  Engine_ActorSetSpriteFlags(rec7, 0);
+  Object_SetMode(rec7, 6);
+  Engine_EventWait(10);
+  Object_SetMode(rec7, 1);
+  Engine_EventWait(40);
+  Engine_ObjectDispatchRelease(rec7);
+  Engine_EventWait(2);
+  Actor_ShowEmote(25, 0x100, 50);
+  Actor_SetSpeed(25, 0x10000, 0x8000);
+  Actor_WalkToAndWait(25, 0x258, 0x350);
+  Actor_FaceDirection(25, 0xc000, 0);
+  Engine_EventWait(40);
+  Event_ShowMessage(25, 0);
+  Engine_ActorRunRepeatedMotion(25, 2);
+  Engine_EventWait(30);
+  Actor_WalkToAndWait(25, 0x238, 0x350);
+  Actor_FaceDirection(25, 0xc000, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(25, 0x108, 50);
+  Engine_EventWait(20);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
+  Engine_EventWait(20);
+  Actor_FaceDirection(25, 0x3000, 0);
+  Engine_EventWait(30);
+  Engine_ActorRunRepeatedMotion(25, 2);
+  Engine_EventWait(20);
+  Event_ShowMessage(25, 0);
+  Engine_EventWait(20);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(25, 4);
+  Engine_EventWait(20);
+  Event_ShowMessage(25, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(25, 0x102, 50);
+  Event_ShowMessage(25, 0);
+  Actor_SetSpeed(25, 0x16666, 0xb333);
+  Actor_WalkByAndWait(25, 16, 0);
+  Actor_WalkByAndWait(25, 0, 32);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(25, 3);
+  Engine_EventWait(20);
+  Event_ShowMessage(25, 0);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+  Engine_EventWait(20);
+  Actor_SetSpeed(25, 0x1cccc, 0xe666);
+  Actor_WalkByAndWait(25, 0, 48);
+  Actor_SetPosition(25, 0, 0);
+  Engine_EventEnd();
 }
 
-static void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
-{
+static void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void) {
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
-    Engine_EventWait(30);
-    Engine_ActorJump(31, 4, 13);
-    Engine_ActorJump(31, 4, 30);
-    Engine_EventShowMessage(31, 0);
-    Engine_EventWait(10);
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
+  Engine_EventWait(30);
+  Engine_ActorJump(31, 4, 13);
+  Engine_ActorJump(31, 4, 30);
+  Engine_EventShowMessage(31, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorShowEmote(32, 0x102, 50);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(32, 3);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(32, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(33, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(33, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(31, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(31, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(32, 3);
-    Engine_EventWait(30);
-    Engine_EventEnd();
+  Engine_ActorShowEmote(32, 0x102, 50);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(32, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(32, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(33, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(33, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(31, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(31, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(32, 3);
+  Engine_EventWait(30);
+  Engine_EventEnd();
 }
 
-s32 Scene_InitFacingActors(void)
-{
-    u8 *record;
-    s32 none;
+s32 Scene_InitFacingActors(void) {
+  u8 *record;
+  s32 none;
 
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (Engine_GameFlagIsSet(0x950) != 0)
-    {
-        Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
-        record = Object_GetById(31);
-        record[35] = none = 0;
-        (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        record = Object_GetById(32);
-        record[35] = none;
-        (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        if (GameFlag_IsSet(0x8bc) != 0)
-        {
-            Actor_SetPosition(25, 0x2300000, 0x2a80000);
-            Actor_FaceDirection(25, 0x8000, 0);
-        }
-        if (gGameState.entrance == 19)
-        {
-            if (GameFlag_IsSet(0x8bc) == 0)
-            {
-                Engine_GameFlagSet(0x8bc);
-                Engine_EventOpenScreen();
-                FieldScene_RunScene3b6SequenceA();
-            }
-        }
-        if (gGameState.entrance == 16)
-        {
-            if (GameFlag_IsSet(0x300) == 0)
-            {
-                Engine_GameFlagSet(0x300);
-                Engine_EventOpenScreen();
-                FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();
-            }
-        }
-        if (Engine_GameFlagIsSet(0x8ab) != 0)
-        {
-            Engine_ActorSetPosition(35, 0, 0);
-            Engine_ActorSetPosition(36, 0, 0);
-        }
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  if (Engine_GameFlagIsSet(0x950) != 0) {
+    Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
+    record = Object_GetById(31);
+    record[35] = none = 0;
+    (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
+    record = Object_GetById(32);
+    record[35] = none;
+    (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
+    if (GameFlag_IsSet(0x8bc) != 0) {
+      Actor_SetPosition(25, 0x2300000, 0x2a80000);
+      Actor_FaceDirection(25, 0x8000, 0);
     }
-    return 0;
+    if (gGameState.entrance == 19) {
+      if (GameFlag_IsSet(0x8bc) == 0) {
+        Engine_GameFlagSet(0x8bc);
+        Engine_EventOpenScreen();
+        FieldScene_RunScene3b6SequenceA();
+      }
+    }
+    if (gGameState.entrance == 16) {
+      if (GameFlag_IsSet(0x300) == 0) {
+        Engine_GameFlagSet(0x300);
+        Engine_EventOpenScreen();
+        FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();
+      }
+    }
+    if (Engine_GameFlagIsSet(0x8ab) != 0) {
+      Engine_ActorSetPosition(35, 0, 0);
+      Engine_ActorSetPosition(36, 0, 0);
+    }
+  }
+  return 0;
 }
 
-static void EV21_TALK(s32 no)
-{
-    struct FieldActor *actor = Object_GetById(0);
-    s32                msg;
-    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0x8000)
-    {
-        Engine_ShopOpen(28, no);
-    }
-    else if (Engine_GameFlagIsSet(0x950) != 0)
-    {
-        Engine_EventSetMessage(MsgTolbiRightOneWell);
-        Engine_EventShowMessage(no, 0);
-    }
-    else if (Engine_GameFlagIsSet(0x962) != 0)
-    {
-        Engine_EventSetMessage(MsgTolbiRequireLotHealing);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        msg = MsgTolbiFirstTimeTolbi;
-        Engine_EventSetMessage(msg);
-        Engine_EventOpenMessage(no, 0);
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            Engine_EventWait(10);
-            Engine_EventSetMessage(msg + 1);
-        }
-        else
-        {
-            Engine_EventSetMessage(msg + 2);
-        }
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void EV19_TALK(s32 no)
-{
-    struct FieldActor *actor = Object_GetById(0);
-    s32                msg;
-    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)
-    {
-        Engine_ShopOpen(26, no);
-    }
-    else if (Engine_GameFlagIsSet(0x950) != 0)
-    {
-        msg = MsgTolbiComeWayKalay;
-        Engine_EventSetMessage(msg);
-        Engine_EventOpenMessage(no, 0);
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            Engine_EventWait(10);
-            Engine_EventSetMessage(msg + 1);
-        }
-        else
-        {
-            Engine_EventSetMessage(msg + 2);
-        }
-        Engine_EventShowMessage(no, 0);
-    }
-    else if (Engine_GameFlagIsSet(0x962) != 0)
-    {
-        Engine_EventSetMessage(MsgTolbiColossoFinalsFinally);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgTolbiLookStrongGo);
-        Engine_EventShowMessage(no, 0);
-        Engine_ActorShowEmote(no, 0x106, 0);
-        Engine_EventWait(40);
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void EV20_TALK(s32 no)
-{
-    struct FieldActor *actor = Object_GetById(0);
-    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)
-    {
-        Engine_ShopOpen(27, no);
-    }
-    else
-    {
-        if (Engine_GameFlagIsSet(0x950) != 0)
-        {
-            Engine_EventSetMessage(MsgTolbiWasntAbleWatch);
-            Engine_EventShowMessage(no, 0);
-        }
-        else if (Engine_GameFlagIsSet(0x962) != 0)
-        {
-            Engine_EventSetMessage(MsgTolbiMaybeCloseShop);
-            Engine_EventShowMessage(no, 0);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgTolbiIfCanMakeNameFor);
-            Engine_EventShowMessage(no, 0);
-        }
-    }
-}
-
-static void EV26_TALK(s32 subject)
-{
-    s32 message;
-
-    Engine_EventBegin();
-
-    message = MsgTolbiLookLikeWarrior;
-    Engine_EventSetMessage(message);
-    Engine_EventOpenMessage(subject, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(message + 1);
-    }
-    else
-    {
-        Engine_EventSetMessage(message + 2);
-    }
-
-    Engine_EventShowMessage(subject, 0);
-    Engine_EventEnd();
-}
-
-static void EV27_TALK(s32 no)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
+static void EV21_TALK(s32 no) {
+  struct FieldActor *actor = Object_GetById(0);
+  s32 msg;
+  if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0x8000) {
+    Engine_ShopOpen(28, no);
+  } else if (Engine_GameFlagIsSet(0x950) != 0) {
+    Engine_EventSetMessage(MsgTolbiRightOneWell);
     Engine_EventShowMessage(no, 0);
-    Engine_EventEnd();
-}
-
-static void EV09_TALK(s32 subject)
-{
-    s32 msg;
-
-    Engine_EventBegin();
-
-    msg = MsgTolbiWantStay;
+  } else if (Engine_GameFlagIsSet(0x962) != 0) {
+    Engine_EventSetMessage(MsgTolbiRequireLotHealing);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    msg = MsgTolbiFirstTimeTolbi;
     Engine_EventSetMessage(msg);
-    Engine_EventOpenMessage(subject, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(msg + 1);
+    Engine_EventOpenMessage(no, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      Engine_EventWait(10);
+      Engine_EventSetMessage(msg + 1);
+    } else {
+      Engine_EventSetMessage(msg + 2);
     }
-    else
-    {
-        Engine_EventSetMessage(msg + 2);
-    }
-
-    Engine_EventShowMessage(subject, 0);
-    Engine_EventEnd();
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV25_TALK(s32 a0)
-{
-    s32 msg;
-
-    Engine_EventBegin();
-    if (GameFlag_IsSet(0x8bd) == 0)
-    {
-        msg = MsgTolbiHeeHeeLook;
-        Engine_EventSetMessage(msg);
-        Event_OpenMessage(a0, 0);
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            Engine_EventWait(10);
-            Engine_EventSetMessage(msg + 1);
-        }
-        else
-        {
-            Engine_EventSetMessage(msg + 2);
-        }
-        Event_ShowMessage(a0, 0);
+static void EV19_TALK(s32 no) {
+  struct FieldActor *actor = Object_GetById(0);
+  s32 msg;
+  if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
+    Engine_ShopOpen(26, no);
+  } else if (Engine_GameFlagIsSet(0x950) != 0) {
+    msg = MsgTolbiComeWayKalay;
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(no, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      Engine_EventWait(10);
+      Engine_EventSetMessage(msg + 1);
+    } else {
+      Engine_EventSetMessage(msg + 2);
     }
-    else
-    {
-        if (GameFlag_IsSet(0x8be) == 0)
-        {
-            GameFlag_Set(0x8be);
-            Engine_EventSetMessage(MsgTolbiHello);
-            Event_ShowMessage(a0, 0);
-            Engine_EventWait(10);
-            Engine_ActorRunRepeatedMotion(a0, 2);
-            Engine_EventWait(20);
-        }
-        Engine_EventSetMessage(MsgTolbiHoHumFine);
-        Event_ShowMessage(a0, 0);
-    }
-    Engine_EventEnd();
+    Engine_EventShowMessage(no, 0);
+  } else if (Engine_GameFlagIsSet(0x962) != 0) {
+    Engine_EventSetMessage(MsgTolbiColossoFinalsFinally);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgTolbiLookStrongGo);
+    Engine_EventShowMessage(no, 0);
+    Engine_ActorShowEmote(no, 0x106, 0);
+    Engine_EventWait(40);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV25_PSYNERGY(void)
-{
-
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x8BE) == 0)
-    {
-        Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
+static void EV20_TALK(s32 no) {
+  struct FieldActor *actor = Object_GetById(0);
+  if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
+    Engine_ShopOpen(27, no);
+  } else {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
+      Engine_EventSetMessage(MsgTolbiWasntAbleWatch);
+      Engine_EventShowMessage(no, 0);
+    } else if (Engine_GameFlagIsSet(0x962) != 0) {
+      Engine_EventSetMessage(MsgTolbiMaybeCloseShop);
+      Engine_EventShowMessage(no, 0);
+    } else {
+      Engine_EventSetMessage(MsgTolbiIfCanMakeNameFor);
+      Engine_EventShowMessage(no, 0);
     }
-    else
-    {
-        Engine_EventSetMessage(MsgTolbiThingFoundDefinitelySameAs);
-    }
-    Engine_EventShowMessage(25, 0);
-    Engine_EventEnd();
+  }
 }
 
-static void EV31_TALK(s32 a0)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
-    Actor_ShowEmote(31, 0x103, 40);
+static void EV26_TALK(s32 subject) {
+  s32 message;
+
+  Engine_EventBegin();
+
+  message = MsgTolbiLookLikeWarrior;
+  Engine_EventSetMessage(message);
+  Engine_EventOpenMessage(subject, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(message + 1);
+  } else {
+    Engine_EventSetMessage(message + 2);
+  }
+
+  Engine_EventShowMessage(subject, 0);
+  Engine_EventEnd();
+}
+
+static void EV27_TALK(s32 no) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
+  Engine_EventShowMessage(no, 0);
+  Engine_EventEnd();
+}
+
+static void EV09_TALK(s32 subject) {
+  s32 msg;
+
+  Engine_EventBegin();
+
+  msg = MsgTolbiWantStay;
+  Engine_EventSetMessage(msg);
+  Engine_EventOpenMessage(subject, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(msg + 1);
+  } else {
+    Engine_EventSetMessage(msg + 2);
+  }
+
+  Engine_EventShowMessage(subject, 0);
+  Engine_EventEnd();
+}
+
+static void EV25_TALK(s32 a0) {
+  s32 msg;
+
+  Engine_EventBegin();
+  if (GameFlag_IsSet(0x8bd) == 0) {
+    msg = MsgTolbiHeeHeeLook;
+    Engine_EventSetMessage(msg);
+    Event_OpenMessage(a0, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      Engine_EventWait(10);
+      Engine_EventSetMessage(msg + 1);
+    } else {
+      Engine_EventSetMessage(msg + 2);
+    }
     Event_ShowMessage(a0, 0);
-    Engine_EventEnd();
+  } else {
+    if (GameFlag_IsSet(0x8be) == 0) {
+      GameFlag_Set(0x8be);
+      Engine_EventSetMessage(MsgTolbiHello);
+      Event_ShowMessage(a0, 0);
+      Engine_EventWait(10);
+      Engine_ActorRunRepeatedMotion(a0, 2);
+      Engine_EventWait(20);
+    }
+    Engine_EventSetMessage(MsgTolbiHoHumFine);
+    Event_ShowMessage(a0, 0);
+  }
+  Engine_EventEnd();
 }
 
-static void EV35_TALK(s32 subject)
-{
-    s32 message;
+static void EV25_PSYNERGY(void) {
 
-    Engine_EventBegin();
-
-    message = MsgTolbiWarriorRemember;
-    Engine_EventSetMessage(message);
-    Engine_EventOpenMessage(subject, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(message + 1);
-    }
-    else
-    {
-        Engine_EventSetMessage(message + 2);
-    }
-
-    Engine_EventShowMessage(subject, 0);
-    Engine_EventEnd();
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x8BE) == 0) {
+    Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
+  } else {
+    Engine_EventSetMessage(MsgTolbiThingFoundDefinitelySameAs);
+  }
+  Engine_EventShowMessage(25, 0);
+  Engine_EventEnd();
 }
 
-static void EV30_TALK(s32 no)
-{
+static void EV31_TALK(s32 a0) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
+  Actor_ShowEmote(31, 0x103, 40);
+  Event_ShowMessage(a0, 0);
+  Engine_EventEnd();
+}
 
-    struct FieldActor *actor = Object_GetById(0);
-    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)
-    {
-        Engine_SanctumOpen(no);
+static void EV35_TALK(s32 subject) {
+  s32 message;
+
+  Engine_EventBegin();
+
+  message = MsgTolbiWarriorRemember;
+  Engine_EventSetMessage(message);
+  Engine_EventOpenMessage(subject, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(message + 1);
+  } else {
+    Engine_EventSetMessage(message + 2);
+  }
+
+  Engine_EventShowMessage(subject, 0);
+  Engine_EventEnd();
+}
+
+static void EV30_TALK(s32 no) {
+
+  struct FieldActor *actor = Object_GetById(0);
+  if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
+    Engine_SanctumOpen(no);
+  } else {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
+      Engine_EventSetMessage(MsgTolbiShipsArentGoing);
+      Engine_EventShowMessage(no, 0);
+    } else if (Engine_GameFlagIsSet(0x962) != 0) {
+      Engine_EventSetMessage(MsgTolbiMissFinalsTolbis);
+      Engine_EventShowMessage(no, 0);
+    } else {
+      Engine_EventSetMessage(MsgTolbiWasteStuckHereWhenSuch);
+      Engine_EventShowMessage(no, 0);
     }
-    else
-    {
-        if (Engine_GameFlagIsSet(0x950) != 0)
-        {
-            Engine_EventSetMessage(MsgTolbiShipsArentGoing);
-            Engine_EventShowMessage(no, 0);
-        }
-        else if (Engine_GameFlagIsSet(0x962) != 0)
-        {
-            Engine_EventSetMessage(MsgTolbiMissFinalsTolbis);
-            Engine_EventShowMessage(no, 0);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgTolbiWasteStuckHereWhenSuch);
-            Engine_EventShowMessage(no, 0);
-        }
-    }
+  }
 }
 
 s32 gTolbiInteriors_ScaleBounceScript[] = {
@@ -544,63 +447,49 @@ s32 gTolbiInteriors_ScaleBounceScript[] = {
 };
 
 struct SceneEntrance gTolbiInteriorsEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 160, 0, 216, FACING_NORTH, 0, 0, 0, 256, 256, 0 },
-    { 2, CONDITION_ALWAYS, 336, 0, 200, FACING_NORTH, 0, 248, 64, 488, 216, 0 },
-    { 3, CONDITION_ALWAYS, 544, 0, 200, FACING_NORTH, 0, 520, 48, 696, 216, 0 },
-    { 4, CONDITION_ALWAYS, 792, 0, 216, FACING_NORTH, 0, 688, 0, 960, 240, 0 },
-    { 5, CONDITION_ALWAYS, 544, 0, 424, FACING_NORTH, 0, 488, 264, 696, 448, 0 },
-    { 6, CONDITION_ALWAYS, 312, 0, 472, FACING_NORTH, 0, 208, 272, 456, 488, 0 },
-    { 8, CONDITION_ALWAYS, 824, 0, 528, FACING_NORTH, 0, 688, 248, 944, 568, 0 },
-    { 9, CONDITION_ALWAYS, 128, 0, 768, FACING_NORTH, 0, 0, 536, 304, 800, 0 },
-    { 10, CONDITION_ALWAYS, 56, 0, 608, FACING_NORTH, 0, 0, 536, 304, 800, 0 },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 160, 0, 216, FACING_NORTH, 0, 0, 0, 256, 256, 0},
+    {2, CONDITION_ALWAYS, 336, 0, 200, FACING_NORTH, 0, 248, 64, 488, 216, 0},
+    {3, CONDITION_ALWAYS, 544, 0, 200, FACING_NORTH, 0, 520, 48, 696, 216, 0},
+    {4, CONDITION_ALWAYS, 792, 0, 216, FACING_NORTH, 0, 688, 0, 960, 240, 0},
+    {5, CONDITION_ALWAYS, 544, 0, 424, FACING_NORTH, 0, 488, 264, 696, 448, 0},
+    {6, CONDITION_ALWAYS, 312, 0, 472, FACING_NORTH, 0, 208, 272, 456, 488, 0},
+    {8, CONDITION_ALWAYS, 824, 0, 528, FACING_NORTH, 0, 688, 248, 944, 568, 0},
+    {9, CONDITION_ALWAYS, 128, 0, 768, FACING_NORTH, 0, 0, 536, 304, 800, 0},
+    {10, CONDITION_ALWAYS, 56, 0, 608, FACING_NORTH, 0, 0, 536, 304, 800, 0},
 #if !EDITION_INTERNATIONAL
-    { 11, CONDITION_ALWAYS, 464, 0, 624, FACING_SOUTH, 0, 320, 568, 616, 736, 0 },
-    { 12, CONDITION_ALWAYS, 392, 0, 728, FACING_NORTH, 0, 320, 568, 616, 736, 0 },
-    { 13, CONDITION_ALWAYS, 536, 0, 728, FACING_NORTH, 0, 320, 568, 616, 736, 0 },
-    { 14, CONDITION_ALWAYS, 392, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 736, 0 },
-    { 15, CONDITION_ALWAYS, 536, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 736, 0 },
-    { 16, CONDITION_ALWAYS, 808, 0, 664, FACING_SOUTH, 0, 704, 608, 944, 768, 0 },
-    { 17, CONDITION_ALWAYS, 840, 0, 824, FACING_SOUTH, 0, 704, 768, 944, 928, 0 },
-    { 18, CONDITION_ALWAYS, 440, 0, 920, FACING_NORTH, 0, 288, 768, 528, 928, 0 },
-    { 19, CONDITION_ALWAYS, 584, 0, 920, FACING_NORTH, 0, 496, 768, 736, 928, 0 },
+    {11, CONDITION_ALWAYS, 464, 0, 624, FACING_SOUTH, 0, 320, 568, 616, 736, 0},
+    {12, CONDITION_ALWAYS, 392, 0, 728, FACING_NORTH, 0, 320, 568, 616, 736, 0},
+    {13, CONDITION_ALWAYS, 536, 0, 728, FACING_NORTH, 0, 320, 568, 616, 736, 0},
+    {14, CONDITION_ALWAYS, 392, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 736, 0},
+    {15, CONDITION_ALWAYS, 536, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 736, 0},
+    {16, CONDITION_ALWAYS, 808, 0, 664, FACING_SOUTH, 0, 704, 608, 944, 768, 0},
+    {17, CONDITION_ALWAYS, 840, 0, 824, FACING_SOUTH, 0, 704, 768, 944, 928, 0},
+    {18, CONDITION_ALWAYS, 440, 0, 920, FACING_NORTH, 0, 288, 768, 528, 928, 0},
+    {19, CONDITION_ALWAYS, 584, 0, 920, FACING_NORTH, 0, 496, 768, 736, 928, 0},
 #else
-    { 11, CONDITION_ALWAYS, 464, 0, 624, FACING_SOUTH, 0, 320, 568, 616, 744, 0 },
-    { 12, CONDITION_ALWAYS, 392, 0, 728, FACING_NORTH, 0, 320, 568, 616, 744, 0 },
-    { 13, CONDITION_ALWAYS, 536, 0, 728, FACING_NORTH, 0, 320, 568, 616, 744, 0 },
-    { 14, CONDITION_ALWAYS, 392, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 744, 0 },
-    { 15, CONDITION_ALWAYS, 536, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 744, 0 },
-    { 16, CONDITION_ALWAYS, 808, 0, 664, FACING_SOUTH, 0, 704, 608, 952, 768, 0 },
-    { 17, CONDITION_ALWAYS, 840, 0, 824, FACING_SOUTH, 0, 704, 768, 952, 928, 0 },
-    { 18, CONDITION_ALWAYS, 440, 0, 920, FACING_NORTH, 0, 288, 768, 528, 936, 0 },
-    { 19, CONDITION_ALWAYS, 584, 0, 920, FACING_NORTH, 0, 496, 768, 736, 936, 0 },
+    {11, CONDITION_ALWAYS, 464, 0, 624, FACING_SOUTH, 0, 320, 568, 616, 744, 0},
+    {12, CONDITION_ALWAYS, 392, 0, 728, FACING_NORTH, 0, 320, 568, 616, 744, 0},
+    {13, CONDITION_ALWAYS, 536, 0, 728, FACING_NORTH, 0, 320, 568, 616, 744, 0},
+    {14, CONDITION_ALWAYS, 392, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 744, 0},
+    {15, CONDITION_ALWAYS, 536, 0, 680, FACING_SOUTH, 0, 320, 568, 616, 744, 0},
+    {16, CONDITION_ALWAYS, 808, 0, 664, FACING_SOUTH, 0, 704, 608, 952, 768, 0},
+    {17, CONDITION_ALWAYS, 840, 0, 824, FACING_SOUTH, 0, 704, 768, 952, 928, 0},
+    {18, CONDITION_ALWAYS, 440, 0, 920, FACING_NORTH, 0, 288, 768, 528, 936, 0},
+    {19, CONDITION_ALWAYS, 584, 0, 920, FACING_NORTH, 0, 496, 768, 736, 936, 0},
 #endif
-    { 30, CONDITION_ALWAYS, 824, 0, 352, FACING_NORTH, 0, 688, 248, 944, 568, 0 },
-    { SCENE_TABLE_END },
+    {30, CONDITION_ALWAYS, 824, 0, 352, FACING_NORTH, 0, 688, 248, 944, 568, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gTolbiInteriorsExits[] = {
-    SCENE_EXITS(136),
-    SCENE_EXIT(1, 135, 2),
-    SCENE_EXIT(2, 135, 3),
-    SCENE_EXIT(3, 135, 4),
-    SCENE_EXIT(4, 135, 5),
-    SCENE_EXIT(5, 135, 6),
-    SCENE_EXIT(6, 135, 7),
-    SCENE_EXIT(7, 135, 8),
-    SCENE_EXIT(8, 135, 9),
-    SCENE_EXIT(9, 135, 10),
-    SCENE_EXIT(10, 136, 11),
-    SCENE_EXIT(11, 136, 10),
-    SCENE_EXIT(12, 136, 17),
-    SCENE_EXIT(13, 136, 16),
-    SCENE_EXIT(14, 136, 18),
-    SCENE_EXIT(15, 136, 19),
-    SCENE_EXIT(16, 136, 13),
-    SCENE_EXIT(17, 136, 12),
-    SCENE_EXIT(18, 136, 14),
-    SCENE_EXIT(19, 136, 15),
-    SCENE_EXITS_END,
+    SCENE_EXITS(136),        SCENE_EXIT(1, 135, 2),   SCENE_EXIT(2, 135, 3),
+    SCENE_EXIT(3, 135, 4),   SCENE_EXIT(4, 135, 5),   SCENE_EXIT(5, 135, 6),
+    SCENE_EXIT(6, 135, 7),   SCENE_EXIT(7, 135, 8),   SCENE_EXIT(8, 135, 9),
+    SCENE_EXIT(9, 135, 10),  SCENE_EXIT(10, 136, 11), SCENE_EXIT(11, 136, 10),
+    SCENE_EXIT(12, 136, 17), SCENE_EXIT(13, 136, 16), SCENE_EXIT(14, 136, 18),
+    SCENE_EXIT(15, 136, 19), SCENE_EXIT(16, 136, 13), SCENE_EXIT(17, 136, 12),
+    SCENE_EXIT(18, 136, 14), SCENE_EXIT(19, 136, 15), SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -965,8 +854,8 @@ u16 gTolbiInteriors_ExitCellSteps[] = {
 };
 
 struct MapCellAnim gTolbiInteriors_ExitCells[] = {
-    { gTolbiInteriors_ExitCellSteps, 24, 100 },
-    { gTolbiInteriors_ExitCellSteps, 33, 100 },
-    { gTolbiInteriors_ExitCellSteps, 50, 99 },
-    { gTolbiInteriors_ExitCellSteps, 52, 109 },
+    {gTolbiInteriors_ExitCellSteps, 24, 100},
+    {gTolbiInteriors_ExitCellSteps, 33, 100},
+    {gTolbiInteriors_ExitCellSteps, 50, 99},
+    {gTolbiInteriors_ExitCellSteps, 52, 109},
 };

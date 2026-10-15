@@ -139,12 +139,7 @@ s32 gIdejimaEvents[] = {
 };
 
 s32 gIdejimaEventsEntrance1[] = {
-    0xc602,
-    (s32)0xffff0003,
-    (s32)Func_02000640,
-    -1,
-    0,
-    0,
+    0xc602, (s32)0xffff0003, (s32)Func_02000640, -1, 0, 0,
 };
 
 s32 gIdejimaEventsWake[] = {

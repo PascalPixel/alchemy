@@ -28,723 +28,648 @@
 // 前方宣言
 static void FieldScene_RunSecondaryScript(void);
 
-enum
-{
-    ENTRANCE_SANCTUM_RETURN = 12,
-    ENTRANCE_HOUSE_AFTER_REPORT = 21,
-    ENTRANCE_FROM_AERIE = 90,
-    ENTRANCE_HOUSE_REPORT = 99
+enum {
+  ENTRANCE_SANCTUM_RETURN = 12,
+  ENTRANCE_HOUSE_AFTER_REPORT = 21,
+  ENTRANCE_FROM_AERIE = 90,
+  ENTRANCE_HOUSE_REPORT = 99
 };
 
-enum
-{
-    ACTOR_HOUSE_REPORT_SECOND = 11,
-    ACTOR_HOUSE_REPORT_FIRST = 12,
-    ACTOR_HOUSE_RESIDENT = 13,
-    ACTOR_SANCTUM_SECOND = 18,
-    ACTOR_SANCTUM_THIRD = 19,
-    ACTOR_SANCTUM_FIRST = 20
+enum {
+  ACTOR_HOUSE_REPORT_SECOND = 11,
+  ACTOR_HOUSE_REPORT_FIRST = 12,
+  ACTOR_HOUSE_RESIDENT = 13,
+  ACTOR_SANCTUM_SECOND = 18,
+  ACTOR_SANCTUM_THIRD = 19,
+  ACTOR_SANCTUM_FIRST = 20
 };
 
-enum
-{
-    FLAG_AERIE_EVENTS_DONE = 0x9a7
-};
+enum { FLAG_AERIE_EVENTS_DONE = 0x9a7 };
 
-static s32 SceneActor_SetActor14Pose258(void)
-{
-    Actor_SetAttachedEffect(14, 258);
-    return 0;
+static s32 SceneActor_SetActor14Pose258(void) {
+  Actor_SetAttachedEffect(14, 258);
+  return 0;
 }
 
-u8 *LaliveroInteriors_GetEntrances(void)
-{
-    return gLaliveroEntrances;
+u8 *LaliveroInteriors_GetEntrances(void) { return gLaliveroEntrances; }
+
+u8 *LaliveroInteriors_GetRegions(void) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1) {
+    return gLaliveroSanctumRegions;
+  }
+  return gLaliveroRegions;
 }
 
-u8 *LaliveroInteriors_GetRegions(void)
-{
-    if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1)
-    {
-        return gLaliveroSanctumRegions;
+u8 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
+
+u8 *LaliveroInteriors_GetPlacements(void) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+    if (Engine_GameFlagIsSet(0x9A7) != 0) {
+      return gLaliveroInteriorsPlacements9a7;
     }
-    return gLaliveroRegions;
+    return gLaliveroInteriorsPlacements;
+  }
+  return gLaliveroPlacements;
 }
 
-u8 *LaliveroInteriors_GetExits(void)
-{
-    return gLaliveroExits;
+static void EV18_TALK(s32 keeper) {
+  struct FieldActor *leader = Object_GetById(0);
+  u16 facing = (leader->facing + 0x2000) & 0xc000;
+
+  if (facing == 0xc000) {
+    Shop_Run(32, keeper);
+  } else if (Engine_GameFlagIsSet(0x9a7)) {
+    Engine_EventSetMessage(MsgLaliveroWentOceanLook);
+    Engine_EventShowMessage(keeper, 0);
+  } else {
+    s32 message = MsgLaliveroTakenHostageFaran;
+
+    Engine_EventSetMessage(message);
+    Engine_EventOpenMessage(keeper, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      Engine_EventWait(10);
+      Engine_EventSetMessage(message + 1);
+    } else {
+      Engine_EventSetMessage(message + 2);
+    }
+    Engine_EventShowMessage(keeper, 0);
+  }
 }
 
-u8 *LaliveroInteriors_GetPlacements(void)
-{
-    if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
-    {
-        if (Engine_GameFlagIsSet(0x9A7) != 0)
-        {
-            return gLaliveroInteriorsPlacements9a7;
-        }
-        return gLaliveroInteriorsPlacements;
-    }
-    return gLaliveroPlacements;
+static void EV19_TALK(s32 no) {
+  u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
+  if (party_facing == 0xc000) {
+    Shop_Run(33, no);
+  } else if (Engine_GameFlagIsSet(0x9a7)) {
+    Engine_EventSetMessage(MsgLaliveroWantedSendShips);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgLaliveroWarriorRightPlease);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV18_TALK(s32 keeper)
-{
-    struct FieldActor *leader = Object_GetById(0);
-    u16                facing = (leader->facing + 0x2000) & 0xc000;
-
-    if (facing == 0xc000)
-    {
-        Shop_Run(32, keeper);
-    }
-    else if (Engine_GameFlagIsSet(0x9a7))
-    {
-        Engine_EventSetMessage(MsgLaliveroWentOceanLook);
-        Engine_EventShowMessage(keeper, 0);
-    }
-    else
-    {
-        s32 message = MsgLaliveroTakenHostageFaran;
-
-        Engine_EventSetMessage(message);
-        Engine_EventOpenMessage(keeper, 0);
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            Engine_EventWait(10);
-            Engine_EventSetMessage(message + 1);
-        }
-        else
-        {
-            Engine_EventSetMessage(message + 2);
-        }
-        Engine_EventShowMessage(keeper, 0);
-    }
+static void EV20_TALK(s32 no) {
+  u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
+  if (party_facing == 0xc000) {
+    Shop_Run(34, no);
+  } else if (Engine_GameFlagIsSet(0x9a7)) {
+    Engine_EventSetMessage(MsgLaliveroImpossibleGoOcean);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgLaliveroGuessPeopleAngara);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV19_TALK(s32 no)
-{
-    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
-    if (party_facing == 0xc000)
-    {
-        Shop_Run(33, no);
-    }
-    else if (Engine_GameFlagIsSet(0x9a7))
-    {
-        Engine_EventSetMessage(MsgLaliveroWantedSendShips);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgLaliveroWarriorRightPlease);
-        Engine_EventShowMessage(no, 0);
-    }
+static void EV21_TALK(s32 no) {
+  u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
+  if (party_facing == 0xc000) {
+    Shop_ConfirmAct(no);
+  } else if (Engine_GameFlagIsSet(0x9a7)) {
+    Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgLaliveroBabiIsntBuilding);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV20_TALK(s32 no)
-{
-    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
-    if (party_facing == 0xc000)
-    {
-        Shop_Run(34, no);
-    }
-    else if (Engine_GameFlagIsSet(0x9a7))
-    {
-        Engine_EventSetMessage(MsgLaliveroImpossibleGoOcean);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgLaliveroGuessPeopleAngara);
-        Engine_EventShowMessage(no, 0);
-    }
+static void EV13_TALK(s32 no) {
+  u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
+  if (party_facing == 0xc000) {
+    Inn_CheckIn(11, no);
+  } else if (Engine_GameFlagIsSet(0x9a7)) {
+    Engine_EventSetMessage(MsgLaliveroDidntKnowTime);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgLaliveroWantStayLet);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV21_TALK(s32 no)
-{
-    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
-    if (party_facing == 0xc000)
-    {
-        Shop_ConfirmAct(no);
-    }
-    else if (Engine_GameFlagIsSet(0x9a7))
-    {
-        Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgLaliveroBabiIsntBuilding);
-        Engine_EventShowMessage(no, 0);
-    }
-}
+static void LaliveroScene_PlayPoseSequence(void) {
+  s16 facing;
 
-static void EV13_TALK(s32 no)
-{
-    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
-    if (party_facing == 0xc000)
-    {
-        Inn_CheckIn(11, no);
-    }
-    else if (Engine_GameFlagIsSet(0x9a7))
-    {
-        Engine_EventSetMessage(MsgLaliveroDidntKnowTime);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgLaliveroWantStayLet);
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void LaliveroScene_PlayPoseSequence(void)
-{
-    s16 facing;
-
-    facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-    GameFlag_Set(0x300);
-    Engine_EventBegin();
-    Engine_ResetSceneEffectCounter();
-    Engine_EventSetMessage(MsgLaliveroImSorry);
-    Engine_EventWait(50);
-    Actor_ShowEmote(14, 0x102, 50);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
-    Event_ShowMessage(14, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(14, 4);
-    Engine_EventWait(30);
-    Event_ShowMessage(14, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(14, 2);
-    Engine_EventWait(30);
-    Event_ShowMessage(14, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(14, 3);
+  facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  GameFlag_Set(0x300);
+  Engine_EventBegin();
+  Engine_ResetSceneEffectCounter();
+  Engine_EventSetMessage(MsgLaliveroImSorry);
+  Engine_EventWait(50);
+  Actor_ShowEmote(14, 0x102, 50);
+  Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
+  Event_ShowMessage(14, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(14, 4);
+  Engine_EventWait(30);
+  Event_ShowMessage(14, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_EventWait(30);
+  Event_ShowMessage(14, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(14, 3);
+  Engine_EventWait(20);
+  Event_ShowMessage(14, 0);
+  if ((u16)facing == 0x8000) {
+    Engine_ActorWalkByAndWait(0, 0, 16);
+    Engine_ActorFaceDirection(0, 0xc000, 0);
     Engine_EventWait(20);
-    Event_ShowMessage(14, 0);
-    if ((u16)facing == 0x8000)
-    {
-        Engine_ActorWalkByAndWait(0, 0, 16);
-        Engine_ActorFaceDirection(0, 0xc000, 0);
-        Engine_EventWait(20);
+  }
+  Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
+  Engine_EventEnd();
+}
+
+static void EV51_TOUCH(void) {
+
+  Engine_GameFlagSet(0x9BC);
+  Engine_EventBegin();
+  Engine_ResetSceneEffectCounter();
+  Engine_EventWait(0xA);
+  Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
+  Engine_CameraWaitForMove();
+  Engine_EventWait(0x1E);
+  Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
+  Engine_EventShowMessage(0xC, 0);
+  Engine_EventWait(0xA);
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
+  Engine_EventWait(0x1E);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_EventWait(0x1E);
+  Engine_EventEnd();
+}
+
+static void EV12_TALK(void) {
+
+  Engine_GameFlagSet(0x9BC);
+  Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
+  Engine_EventShowMessage(0xC, 0);
+}
+
+static void LaliveroInteriors_RequestTouchedExitAndPlayCue(void) {
+  struct EventWork *work = gEventWork;
+  s16 *p = (s16 *)&work->touchedTrigger;
+
+  Engine_EventRequestExit(*p);
+  Engine_AudioPlayCue(0x7B);
+}
+
+u8 *LaliveroInteriors_GetEvents(void) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+    if (Engine_GameFlagIsSet(0x9a7) != 0) {
+      return gLaliveroInteriorsEvents9a7;
     }
-    Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
-    Engine_EventEnd();
+    return gLaliveroInteriorsEvents;
+  }
+  if (Engine_GameFlagIsSet(0x9a7) != 0) {
+    return gLaliveroEvents9a7;
+  }
+  return gLaliveroEvents;
 }
 
-static void EV51_TOUCH(void)
-{
+static void FieldScene_RunPrimaryScript(void) {
 
-    Engine_GameFlagSet(0x9BC);
-    Engine_EventBegin();
-    Engine_ResetSceneEffectCounter();
-    Engine_EventWait(0xA);
-    Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
-    Engine_CameraWaitForMove();
-    Engine_EventWait(0x1E);
-    Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
-    Engine_EventShowMessage(0xC, 0);
-    Engine_EventWait(0xA);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
-    Engine_EventWait(0x1E);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Engine_EventWait(0x1E);
-    Engine_EventEnd();
-}
-
-static void EV12_TALK(void)
-{
-
-    Engine_GameFlagSet(0x9BC);
-    Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
-    Engine_EventShowMessage(0xC, 0);
-}
-
-static void LaliveroInteriors_RequestTouchedExitAndPlayCue(void)
-{
-    struct EventWork *work = gEventWork;
-    s16              *p = (s16 *)&work->touchedTrigger;
-
-    Engine_EventRequestExit(*p);
-    Engine_AudioPlayCue(0x7B);
-}
-
-u8 *LaliveroInteriors_GetEvents(void)
-{
-    if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
-    {
-        if (Engine_GameFlagIsSet(0x9a7) != 0)
-        {
-            return gLaliveroInteriorsEvents9a7;
-        }
-        return gLaliveroInteriorsEvents;
-    }
-    if (Engine_GameFlagIsSet(0x9a7) != 0)
-    {
-        return gLaliveroEvents9a7;
-    }
-    return gLaliveroEvents;
-}
-
-static void FieldScene_RunPrimaryScript(void)
-{
-
-    Engine_EventBegin();
-    Owner_RefreshActiveRatios(1);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 6291456, 12058624);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-    Actor_FaceDirection(11, 0, 0);
-    Actor_FaceDirection(12, 32768, 0);
-    Engine_EventSetMessage(MsgLaliveroHowDidSearchForSheba);
-    Engine_EventOpenScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventWait(10);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-    Engine_ActorWalkToAndWait(0, 104, 136);
-    Engine_EventWait(10);
-    FieldMotion_LaunchFromFocusedObject(1, -16, 16, 49152);
-    FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
-    FieldMotion_LaunchFromFocusedObject(2, 16, 16, 49152);
-    Engine_ActorWaitForMove(1);
-    Engine_EventWait(20);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(2, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(11, 16384, 0);
-    Engine_ActorFaceDirection(12, 16384, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(11, 261, 70);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
+  Engine_EventBegin();
+  Owner_RefreshActiveRatios(1);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 6291456, 12058624);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
+  Actor_FaceDirection(11, 0, 0);
+  Actor_FaceDirection(12, 32768, 0);
+  Engine_EventSetMessage(MsgLaliveroHowDidSearchForSheba);
+  Engine_EventOpenScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventWait(10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
+  Engine_ActorWalkToAndWait(0, 104, 136);
+  Engine_EventWait(10);
+  FieldMotion_LaunchFromFocusedObject(1, -16, 16, 49152);
+  FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
+  FieldMotion_LaunchFromFocusedObject(2, 16, 16, 49152);
+  Engine_ActorWaitForMove(1);
+  Engine_EventWait(20);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(2, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(11, 16384, 0);
+  Engine_ActorFaceDirection(12, 16384, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(11, 261, 70);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(11, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(20);
+  Actor_ShowEmote(12, 258, 40);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(12, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(20);
+  Engine_EventWait(10);
+  Actor_ShowEmote(11, 261, 50);
+  Engine_EventShowMessage(11, 0);
+  if (GameFlag_IsSet(2495) == 0) {
+    FieldScene_RunSecondaryScript();
+  } else {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(11, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(11, 0);
-    Engine_EventWait(20);
-    Actor_ShowEmote(12, 258, 40);
-    Engine_EventShowMessage(12, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(12, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(20);
+    Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
     Engine_EventWait(10);
-    Actor_ShowEmote(11, 261, 50);
-    Engine_EventShowMessage(11, 0);
-    if (GameFlag_IsSet(2495) == 0)
-    {
-        FieldScene_RunSecondaryScript();
-    }
-    else
-    {
-        Engine_EventWait(20);
-        Engine_ActorRunRepeatedMotion(11, 2);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(11, 0);
-        Engine_EventWait(10);
-        Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
-        Engine_EventWait(10);
-        Engine_ActorFaceDirection(1, 49152, 0);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(1, 0);
-        Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(3, 4);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(3, 0);
-        Engine_EventWait(10);
-        Engine_ActorRunRepeatedMotion(2, 2);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(2, 0);
-        Engine_EventWait(20);
-        Actor_ShowEmote(12, 257, 40);
-        Event_OpenMessage(12, 0);
-        Engine_EventChooseYesNo(0, 0);
-        Engine_EventWait(20);
-        Engine_ActorRunRepeatedMotion(12, 2);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(12, 0);
-        Engine_EventWait(20);
-        Engine_ActorSetAnimationAndWait(0, 3);
-        Engine_EventWait(30);
-        Engine_EventWait(10);
-        Engine_ActorRunRepeatedMotion(1, 2);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(1, 0);
-        Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(3, 4);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(3, 0);
-        Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(2, 3);
-        Engine_EventWait(30);
-        Engine_EventShowMessage(2, 0);
-        Engine_EventWait(10);
-        Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
-        Event_OpenMessage(8194, 0);
-    }
-    Engine_EventSetMessage(MsgLaliveroDoNotWorryAboutSheba);
-    Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
-    Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 20);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-        Actor_FaceDirection(GARET, 49152, 0);
-        Engine_ActorFaceDirection(2, 49152, 0);
-        Engine_EventWait(30);
-        Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(11, 3);
-        Engine_EventWait(30);
-        Engine_EventShowMessage(11, 0);
-        (gEventWork->message)++;
-    }
-    else
-    {
-        Engine_EventWait(20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-        Actor_FaceDirection(GARET, 49152, 0);
-        Engine_ActorFaceDirection(2, 49152, 0);
-        Engine_EventWait(30);
-        Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(11, 4);
-        Engine_EventWait(20);
-        (gEventWork->message)++;
-        Event_ShowMessage(11, 0);
-    }
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(11, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
-    Engine_ActorFaceEachOther(3, 2, 0);
-    Engine_EventWait(40);
-    Engine_EventWait(10);
-    Actor_ShowEmote(11, 258, 40);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-    Actor_FaceDirection(GARET, 49152, 0);
-    Actor_FaceDirection(IVAN, 49152, 0);
-    Actor_FaceDirection(3, 49152, 0);
-    Engine_EventWait(50);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 3);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(11, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Actor_ShowEmote(MIA, 256, 40);
-    Engine_EventShowMessage(3, 0);
-    Engine_EventWait(20);
-    Engine_ActorFaceDirection(11, 0, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(12, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(12, 32768, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(2, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(11, 16384, 0);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Actor_ShowEmote(12, 258, 50);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(20);
-    Actor_ShowEmote(11, 257, 65);
-    Engine_ActorFaceDirection(11, 0, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(20);
-    Actor_ShowEmote(12, 256, 40);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(20);
-    Actor_FaceDirection(12, 16384, 0);
-    Engine_EventWait(40);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(11, 16384, 0);
-    Engine_EventWait(50);
-    Actor_ShowEmote(11, 262, 60);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 3);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorStartRepeatedMotion(GARET, 2);
-    Engine_ActorStartRepeatedMotion(MIA, 2);
-    Engine_ActorRunRepeatedMotion(2, 2);
-    Engine_EventWait(30);
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(11, 0, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(12, 2);
-    Engine_EventWait(30);
-    Actor_FaceDirection(12, 32768, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(10);
-    Actor_ShowEmote(11, 257, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(1, 57344, 0);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(1, 4);
+    Engine_ActorFaceDirection(1, 49152, 0);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_FaceDirection(12, 16384, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(12, 261, 60);
+    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_EventWait(20);
+    Engine_EventShowMessage(3, 0);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(2, 2);
+    Engine_EventWait(20);
+    Engine_EventShowMessage(2, 0);
+    Engine_EventWait(20);
+    Actor_ShowEmote(12, 257, 40);
+    Event_OpenMessage(12, 0);
+    Engine_EventChooseYesNo(0, 0);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(12, 2);
+    Engine_EventWait(20);
     Engine_EventShowMessage(12, 0);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(0, 3);
+    Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_FaceDirection(11, 16384, 0);
-    Engine_EventWait(40);
-    Actor_ShowEmote(11, 258, 40);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(2, 32768, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(IVAN, 263, 60);
-    Engine_ActorFaceDirection(2, 49152, 0);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(2, 4);
+    Engine_ActorSetAnimationAndWait(3, 4);
     Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
+    Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorStartRepeatedMotion(GARET, 2);
-    Engine_ActorStartRepeatedMotion(MIA, 2);
-    Engine_ActorRunRepeatedMotion(2, 2);
-    Engine_EventWait(30);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(11, 3);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(MIA, 3);
     Engine_ActorSetAnimationAndWait(2, 3);
     Engine_EventWait(30);
+    Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(11, 2);
+    Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
+    Event_OpenMessage(8194, 0);
+  }
+  Engine_EventSetMessage(MsgLaliveroDoNotWorryAboutSheba);
+  Engine_EventWait(10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
+  Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 20);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(1, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(1, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
+    Actor_FaceDirection(GARET, 49152, 0);
+    Engine_ActorFaceDirection(2, 49152, 0);
+    Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(11, 3);
     Engine_EventWait(30);
     Engine_EventShowMessage(11, 0);
+    (gEventWork->message)++;
+  } else {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
+    Actor_FaceDirection(GARET, 49152, 0);
+    Engine_ActorFaceDirection(2, 49152, 0);
     Engine_EventWait(30);
-    Engine_EventShowMessage(3, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(11, 4);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
-    Actor_FaceDirection(GARET, 57344, 0);
-    Engine_ActorFaceDirection(2, 40960, 0);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(0, 3);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimation(IVAN, 3);
-    Engine_ActorSetAnimationAndWait(3, 3);
-    Engine_EventWait(30);
-    Actor_SetSpeed(GARET, 78643, 39321);
-    Actor_SetSpeed(MIA, 78643, 39321);
-    Actor_SetSpeed(IVAN, 78643, 39321);
-    Engine_ActorSetAnimation(1, 2);
-    {
-        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
-        if (rec != 0)
-        {
-            s16 y = *(s16 *)(rec + 10);
-            s16 x = *(s16 *)(rec + 18);
-            Engine_ActorSetDestination(1, y, x);
-        }
+    (gEventWork->message)++;
+    Event_ShowMessage(11, 0);
+  }
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(11, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceEachOther(3, 2, 0);
+  Engine_EventWait(40);
+  Engine_EventWait(10);
+  Actor_ShowEmote(11, 258, 40);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
+  Actor_FaceDirection(GARET, 49152, 0);
+  Actor_FaceDirection(IVAN, 49152, 0);
+  Actor_FaceDirection(3, 49152, 0);
+  Engine_EventWait(50);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(11, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Actor_ShowEmote(MIA, 256, 40);
+  Engine_EventShowMessage(3, 0);
+  Engine_EventWait(20);
+  Engine_ActorFaceDirection(11, 0, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(12, 32768, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(2, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(11, 16384, 0);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Actor_ShowEmote(12, 258, 50);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(20);
+  Actor_ShowEmote(11, 257, 65);
+  Engine_ActorFaceDirection(11, 0, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(20);
+  Actor_ShowEmote(12, 256, 40);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(20);
+  Actor_FaceDirection(12, 16384, 0);
+  Engine_EventWait(40);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(11, 16384, 0);
+  Engine_EventWait(50);
+  Actor_ShowEmote(11, 262, 60);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorStartRepeatedMotion(GARET, 2);
+  Engine_ActorStartRepeatedMotion(MIA, 2);
+  Engine_ActorRunRepeatedMotion(2, 2);
+  Engine_EventWait(30);
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(11, 0, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_EventWait(30);
+  Actor_FaceDirection(12, 32768, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(10);
+  Actor_ShowEmote(11, 257, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(1, 57344, 0);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimationAndWait(1, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(12, 16384, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(12, 261, 60);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(1, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(11, 16384, 0);
+  Engine_EventWait(40);
+  Actor_ShowEmote(11, 258, 40);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(2, 32768, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(IVAN, 263, 60);
+  Engine_ActorFaceDirection(2, 49152, 0);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimationAndWait(2, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorStartRepeatedMotion(GARET, 2);
+  Engine_ActorStartRepeatedMotion(MIA, 2);
+  Engine_ActorRunRepeatedMotion(2, 2);
+  Engine_EventWait(30);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(MIA, 3);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(30);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(11, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(1, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(11, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(3, 0);
+  Engine_EventWait(20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
+  Actor_FaceDirection(GARET, 57344, 0);
+  Engine_ActorFaceDirection(2, 40960, 0);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_EventWait(30);
+  Actor_SetSpeed(GARET, 78643, 39321);
+  Actor_SetSpeed(MIA, 78643, 39321);
+  Actor_SetSpeed(IVAN, 78643, 39321);
+  Engine_ActorSetAnimation(1, 2);
+  {
+    u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
+    if (rec != 0) {
+      s16 y = *(s16 *)(rec + 10);
+      s16 x = *(s16 *)(rec + 18);
+      Engine_ActorSetDestination(1, y, x);
     }
-    Engine_ActorWaitForMove(1);
-    Actor_SetPosition(GARET, 0, 0);
-    Engine_ActorSetAnimation(3, 2);
-    {
-        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
-        if (rec != 0)
-        {
-            s16 y = *(s16 *)(rec + 10);
-            s16 x = *(s16 *)(rec + 18);
-            Engine_ActorSetDestination(3, y, x);
-        }
+  }
+  Engine_ActorWaitForMove(1);
+  Actor_SetPosition(GARET, 0, 0);
+  Engine_ActorSetAnimation(3, 2);
+  {
+    u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
+    if (rec != 0) {
+      s16 y = *(s16 *)(rec + 10);
+      s16 x = *(s16 *)(rec + 18);
+      Engine_ActorSetDestination(3, y, x);
     }
-    Engine_ActorWaitForMove(3);
-    Actor_SetPosition(MIA, 0, 0);
-    Engine_ActorSetAnimation(2, 2);
-    {
-        u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
-        if (rec != 0)
-        {
-            s16 y = *(s16 *)(rec + 10);
-            s16 x = *(s16 *)(rec + 18);
-            Engine_ActorSetDestination(2, y, x);
-        }
+  }
+  Engine_ActorWaitForMove(3);
+  Actor_SetPosition(MIA, 0, 0);
+  Engine_ActorSetAnimation(2, 2);
+  {
+    u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
+    if (rec != 0) {
+      s16 y = *(s16 *)(rec + 10);
+      s16 x = *(s16 *)(rec + 18);
+      Engine_ActorSetDestination(2, y, x);
     }
-    Engine_ActorWaitForMove(2);
-    Engine_ActorSetPosition(2, 0, 0);
-    Engine_EventWait(10);
-    Engine_EventEnd();
+  }
+  Engine_ActorWaitForMove(2);
+  Engine_ActorSetPosition(2, 0, 0);
+  Engine_EventWait(10);
+  Engine_EventEnd();
 }
 
-static void FieldScene_RunSecondaryScript(void)
-{
-    Engine_EventSetMessage(MsgLaliveroTellOthers);
-    Engine_EventWait(20);
+static void FieldScene_RunSecondaryScript(void) {
+  Engine_EventSetMessage(MsgLaliveroTellOthers);
+  Engine_EventWait(20);
 
-    Engine_ActorRunRepeatedMotion(11, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(11, 0);
-    Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(11, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(11, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(GARET, 0xc000, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(GARET, 0);
-    Engine_EventWait(10);
+  Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
+  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(GARET, 0xc000, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(GARET, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorSetAnimationAndWait(MIA, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(MIA, 0);
-    Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(MIA, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(IVAN, 0);
-    Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(IVAN, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorRunRepeatedMotion(12, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(12, 0);
-    Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(12, 0);
+  Engine_EventWait(20);
 
-    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_EventWait(20);
-    Engine_EventWait(25);
+  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Engine_EventWait(20);
+  Engine_EventWait(25);
 
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(GARET, 0);
-    Engine_EventWait(30);
+  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(GARET, 0);
+  Engine_EventWait(30);
 
-    Engine_ActorSetAnimationAndWait(GARET, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(GARET, 0);
-    Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(GARET, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorSetAnimationAndWait(MIA, 4);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(MIA, 0);
-    Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(MIA, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorSetAnimationAndWait(IVAN, 3);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(IVAN, 0);
-    Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(IVAN, 0);
+  Engine_EventWait(10);
 
-    Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
-    Engine_EventOpenMessage(0x2002, 0);
+  Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
+  Engine_EventOpenMessage(0x2002, 0);
 }
 
-s32 Scene_Initialize(void)
-{
-    s32                scene;
-    s16                entrance;
-    struct FieldActor *actor;
+s32 Scene_Initialize(void) {
+  s32 scene;
+  s16 entrance;
+  struct FieldActor *actor;
 
-    if (gGameState.entrance == ENTRANCE_FROM_AERIE)
-    {
-        Engine_GameFlagSet(FLAG_AERIE_EVENTS_DONE);
+  if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
+    Engine_GameFlagSet(FLAG_AERIE_EVENTS_DONE);
+  }
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  scene = gGameState.scene;
+  if (scene == (s32)&SceneId_LaliveroInteriors1) {
+    actor = Object_GetById(ACTOR_SANCTUM_FIRST);
+    actor->priorityFlags = 0;
+    actor->collisionFlags |= 4;
+    actor->sprite->priority = 2;
+    actor = Object_GetById(ACTOR_SANCTUM_SECOND);
+    actor->priorityFlags = 0;
+    actor->collisionFlags |= 4;
+    actor->sprite->priority = 2;
+    actor = Object_GetById(ACTOR_SANCTUM_THIRD);
+    actor->collisionFlags |= 4;
+    actor->priorityFlags = 0;
+    actor->sprite->priority = 2;
+    Engine_ActorSetAnimation(15, 6);
+    entrance = gGameState.entrance;
+    if (entrance == ENTRANCE_SANCTUM_RETURN) {
+      gGameState.savedScene = scene;
+      gGameState.savedEntrance = entrance;
     }
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    scene = gGameState.scene;
-    if (scene == (s32)&SceneId_LaliveroInteriors1)
-    {
-        actor = Object_GetById(ACTOR_SANCTUM_FIRST);
-        actor->priorityFlags = 0;
-        actor->collisionFlags |= 4;
-        actor->sprite->priority = 2;
-        actor = Object_GetById(ACTOR_SANCTUM_SECOND);
-        actor->priorityFlags = 0;
-        actor->collisionFlags |= 4;
-        actor->sprite->priority = 2;
-        actor = Object_GetById(ACTOR_SANCTUM_THIRD);
-        actor->collisionFlags |= 4;
-        actor->priorityFlags = 0;
-        actor->sprite->priority = 2;
-        Engine_ActorSetAnimation(15, 6);
-        entrance = gGameState.entrance;
-        if (entrance == ENTRANCE_SANCTUM_RETURN)
-        {
-            gGameState.savedScene = scene;
-            gGameState.savedEntrance = entrance;
-        }
+  }
+  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+    actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
+    actor->collisionFlags |= 4;
+    actor->priorityFlags = 0;
+    actor->sprite->priority = 2;
+    if (Engine_GameFlagIsSet(0x300) != 0) {
+      Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
     }
-    if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
-    {
-        actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
-        actor->collisionFlags |= 4;
-        actor->priorityFlags = 0;
-        actor->sprite->priority = 2;
-        if (Engine_GameFlagIsSet(0x300) != 0)
-        {
-            Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
-        }
-        if (gGameState.entrance == ENTRANCE_HOUSE_REPORT)
-        {
-            FieldScene_RunPrimaryScript();
-            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_FIRST), 6);
-            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_SECOND), 6);
-            gGameState.entrance = ENTRANCE_HOUSE_AFTER_REPORT;
-        }
+    if (gGameState.entrance == ENTRANCE_HOUSE_REPORT) {
+      FieldScene_RunPrimaryScript();
+      Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_FIRST),
+                                    6);
+      Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_SECOND),
+                                    6);
+      gGameState.entrance = ENTRANCE_HOUSE_AFTER_REPORT;
     }
-    return 0;
+  }
+  return 0;
 }
 
 s32 gLaliveroPoseAction[] = {
@@ -782,31 +707,31 @@ s32 gLaliveroPoseAction[] = {
 };
 
 struct SceneEntrance gLaliveroEntrances[] = {
-    { 1, CONDITION_ALWAYS, 144, 0, 168, FACING_NORTH, 0, 0, 8, 240, 192, 0 },
-    { 2, CONDITION_ALWAYS, 400, 0, 168, FACING_NORTH, 0, 256, 8, 496, 192, 0 },
-    { 3, CONDITION_ALWAYS, 648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0 },
-    { 4, CONDITION_ALWAYS, 128, 0, 472, FACING_NORTH, 0, 0, 216, 240, 488, 0 },
-    { 5, CONDITION_ALWAYS, 136, 0, 296, FACING_SOUTH, 0, 0, 216, 240, 488, 0 },
-    { 6, CONDITION_ALWAYS, 368, 0, 472, FACING_NORTH, 0, 240, 216, 480, 488, 0 },
-    { 7, CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0 },
-    { 8, CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0 },
-    { 9, CONDITION_ALWAYS, 96, 0, 680, FACING_NORTH, 0, 8, 520, 312, 696, 0 },
-    { 10, CONDITION_ALWAYS, 200, 0, 600, FACING_SOUTH, 0, 8, 520, 312, 696, 0 },
-    { 11, CONDITION_ALWAYS, 432, 0, 728, FACING_NORTH, 0, 312, 520, 552, 744, 0 },
-    { 12, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0, 312, 520, 552, 744, 0 },
-    { 21, CONDITION_ALWAYS, 96, 0, 168, FACING_NORTH, 0, 8, 8, 312, 192, 0 },
-    { 22, CONDITION_ALWAYS, 216, 0, 88, FACING_SOUTH, 0, 8, 8, 312, 192, 0 },
-    { 23, CONDITION_ALWAYS, 224, 0, 392, FACING_NORTH, 0, 8, 232, 312, 416, 0 },
-    { 24, CONDITION_ALWAYS, 88, 0, 312, FACING_SOUTH, 0, 8, 232, 312, 416, 0 },
-    { 25, CONDITION_ALWAYS, 384, 0, 368, FACING_NORTH, 0, 320, 240, 632, 400, 0 },
-    { 26, CONDITION_ALWAYS, 456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0 },
-    { 27, CONDITION_ALWAYS, 504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0 },
-    { 28, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0 },
-    { 29, CONDITION_ALWAYS, 744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0 },
-    { 30, CONDITION_ALWAYS, 832, 0, 872, FACING_NORTH, 0, 280, 504, 912, 896, 0 },
-    { 31, CONDITION_ALWAYS, 464, 0, 832, FACING_SOUTH, 0, 280, 504, 912, 896, 0 },
-    { 99, CONDITION_ALWAYS, 96, 0, 168, FACING_NORTH, 0, 8, 8, 312, 192, 0 },
-    { SCENE_TABLE_END },
+    {1, CONDITION_ALWAYS, 144, 0, 168, FACING_NORTH, 0, 0, 8, 240, 192, 0},
+    {2, CONDITION_ALWAYS, 400, 0, 168, FACING_NORTH, 0, 256, 8, 496, 192, 0},
+    {3, CONDITION_ALWAYS, 648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
+    {4, CONDITION_ALWAYS, 128, 0, 472, FACING_NORTH, 0, 0, 216, 240, 488, 0},
+    {5, CONDITION_ALWAYS, 136, 0, 296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
+    {6, CONDITION_ALWAYS, 368, 0, 472, FACING_NORTH, 0, 240, 216, 480, 488, 0},
+    {7, CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0},
+    {8, CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0},
+    {9, CONDITION_ALWAYS, 96, 0, 680, FACING_NORTH, 0, 8, 520, 312, 696, 0},
+    {10, CONDITION_ALWAYS, 200, 0, 600, FACING_SOUTH, 0, 8, 520, 312, 696, 0},
+    {11, CONDITION_ALWAYS, 432, 0, 728, FACING_NORTH, 0, 312, 520, 552, 744, 0},
+    {12, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0, 312, 520, 552, 744, 0},
+    {21, CONDITION_ALWAYS, 96, 0, 168, FACING_NORTH, 0, 8, 8, 312, 192, 0},
+    {22, CONDITION_ALWAYS, 216, 0, 88, FACING_SOUTH, 0, 8, 8, 312, 192, 0},
+    {23, CONDITION_ALWAYS, 224, 0, 392, FACING_NORTH, 0, 8, 232, 312, 416, 0},
+    {24, CONDITION_ALWAYS, 88, 0, 312, FACING_SOUTH, 0, 8, 232, 312, 416, 0},
+    {25, CONDITION_ALWAYS, 384, 0, 368, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {26, CONDITION_ALWAYS, 456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {27, CONDITION_ALWAYS, 504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {28, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
+    {29, CONDITION_ALWAYS, 744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
+    {30, CONDITION_ALWAYS, 832, 0, 872, FACING_NORTH, 0, 280, 504, 912, 896, 0},
+    {31, CONDITION_ALWAYS, 464, 0, 832, FACING_SOUTH, 0, 280, 504, 912, 896, 0},
+    {99, CONDITION_ALWAYS, 96, 0, 168, FACING_NORTH, 0, 8, 8, 312, 192, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off

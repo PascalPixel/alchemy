@@ -3,62 +3,60 @@
 #include "battle.h"
 #include "battle_work.h"
 
-struct BattleFxRequest
-{
-    s32 field00;
-    s32 field04;
-    s32 field08;
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    u8  unk1c[8];
-    s16 field24;
-    u8  unk26[0x32];
+struct BattleFxRequest {
+  s32 field00;
+  s32 field04;
+  s32 field08;
+  s32 field0c;
+  s32 field10;
+  s32 field14;
+  s32 field18;
+  u8 unk1c[8];
+  s16 field24;
+  u8 unk26[0x32];
 };
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 
-s32               ActivateBattleObjectSlot(s32 objectId);
-s32               EnemyCountDecrement(s32 classId, s32 n);
-s32               BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
-s32               EnemyUpdate(void);
+s32 ActivateBattleObjectSlot(s32 objectId);
+s32 EnemyCountDecrement(s32 classId, s32 n);
+s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 EnemyUpdate(void);
 struct BattleObj *BattleObjGet(s32 objectId);
-void              BattleObjPut(void);
+void BattleObjPut(void);
 
-void Func_08119734(s32 id)
-{
-    struct BattleWork *work = Ram_HeapSlots->battleWork;
-    s32                unit;
-    s32               *object;
+void Func_08119734(s32 id) {
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  s32 unit;
+  s32 *object;
 
-    if (id == 78)
-        unit = 373;
-    else
-        unit = 376;
-    ActivateBattleObjectSlot(128);
-    BattleMotion_DestroyAllSlotObjects();
-    EnemyCountDecrement(unit, 1);
-    BattleUnitSetFar(128, unit, 255);
-    work->enemyIds[0] = 128;
-    work->enemyIds[1] = 255;
-    EnemyUpdate();
-    object = (s32 *)BattleObjGet(128);
-    BattleObjMake((struct BattleObj *)object, 128, object[3] / 0x10000, object[4] / 0x10000);
-    BattleObjPut();
+  if (id == 78)
+    unit = 373;
+  else
+    unit = 376;
+  ActivateBattleObjectSlot(128);
+  BattleMotion_DestroyAllSlotObjects();
+  EnemyCountDecrement(unit, 1);
+  BattleUnitSetFar(128, unit, 255);
+  work->enemyIds[0] = 128;
+  work->enemyIds[1] = 255;
+  EnemyUpdate();
+  object = (s32 *)BattleObjGet(128);
+  BattleObjMake((struct BattleObj *)object, 128, object[3] / 0x10000,
+                object[4] / 0x10000);
+  BattleObjPut();
 }
 
-void Func_081197a8(s32 value)
-{
-    struct BattleFxRequest request;
+void Func_081197a8(s32 value) {
+  struct BattleFxRequest request;
 
-    request.field10 = 0;
-    request.field08 = 128;
-    request.field0c = 0;
-    request.field14 = 1;
-    request.field24 = 128;
-    request.field04 = 0;
-    request.field00 = 0;
-    request.field18 = 0;
-    Func_08138050(&request, value);
+  request.field10 = 0;
+  request.field08 = 128;
+  request.field0c = 0;
+  request.field14 = 1;
+  request.field24 = 128;
+  request.field04 = 0;
+  request.field00 = 0;
+  request.field18 = 0;
+  Func_08138050(&request, value);
 }

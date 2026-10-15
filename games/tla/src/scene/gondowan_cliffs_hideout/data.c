@@ -13,8 +13,8 @@ u32 gData_02000224[] = {
 };
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 194, 0, 215, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 194, 0, 215, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -90,15 +90,17 @@ s32 gData_02000318[] = {
 };
 
 struct SceneEvent gSceneEvents[] = {
-    { 1, 1, CONDITION_ALWAYS, 1 },
-    { 2, 10, 0x98f, EVENT_SCRIPT(Func_02000074) },
-    { 0, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself) },
-    { 0, 11, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsBlameContinentsCollision) },
-    { 0, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping) },
-    { 0, 13, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing) },
-    { 0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid) },
-    { 0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood) },
-    { 0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown) },
-    { 0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsWonderAboutPrisoners) },
-    { SCENE_EVENTS_END },
+    {1, 1, CONDITION_ALWAYS, 1},
+    {2, 10, 0x98f, EVENT_SCRIPT(Func_02000074)},
+    {0, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
+    {0, 11, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsBlameContinentsCollision)},
+    {0, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping)},
+    {0, 13, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing)},
+    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
+    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
+    {0x8d15, 13, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
+    {SCENE_EVENTS_END},
 };

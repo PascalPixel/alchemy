@@ -2,12 +2,11 @@
 
 void GameFlag_SetBit(s32 flag);
 
-void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn)
-{
-    s32 flag = element * 20 + djinn;
+void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
+  s32 flag = element * 20 + djinn;
 
-    Djinn_AddToOwner(owner, element, djinn);
-    flag += 0x30;
-    Trade_AddOffer(owner, element, djinn);
-    GameFlag_SetBit(flag);
+  Djinn_AddToOwner(owner, element, djinn);
+  flag += 0x30;
+  Trade_AddOffer(owner, element, djinn);
+  GameFlag_SetBit(flag);
 }

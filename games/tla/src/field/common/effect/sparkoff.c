@@ -3,7 +3,4 @@
 
 void Func_080d6674(void);
 
-void Func_080d7024(void)
-{
-    Scheduler_RemoveCallback(Func_080d6674);
-}
+void Func_080d7024(void) { Scheduler_RemoveCallback(Func_080d6674); }

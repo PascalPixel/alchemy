@@ -3,11 +3,10 @@
 
 #include "types.h"
 
-enum BattleEncounterAdvantage
-{
-    BATTLE_ENCOUNTER_NORMAL = 0,
-    BATTLE_ENCOUNTER_PARTY_FIRST = 1,
-    BATTLE_ENCOUNTER_ENEMIES_FIRST = 2
+enum BattleEncounterAdvantage {
+  BATTLE_ENCOUNTER_NORMAL = 0,
+  BATTLE_ENCOUNTER_PARTY_FIRST = 1,
+  BATTLE_ENCOUNTER_ENEMIES_FIRST = 2
 };
 
 #endif

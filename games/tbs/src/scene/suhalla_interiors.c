@@ -11,445 +11,399 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-u8 *SuhallaInteriors_GetEntrances(void)
-{
-    return gSuhallaInteriorsEntrances;
+u8 *SuhallaInteriors_GetEntrances(void) { return gSuhallaInteriorsEntrances; }
+
+u8 *SuhallaInteriors_GetRegions(void) { return gSuhallaInteriorsRegions; }
+
+u8 *SuhallaInteriors_GetExits(void) { return gSuhallaInteriorsExits; }
+
+s32 SuhallaInteriors_SelectPlacements(void) {
+  if (Engine_GameFlagIsSet(0x96f) != 0) {
+    return (s32)gSuhallaInteriorsPlacements96f;
+  }
+  return (s32)gSuhallaInteriorsPlacements;
 }
 
-u8 *SuhallaInteriors_GetRegions(void)
-{
-    return gSuhallaInteriorsRegions;
-}
-
-u8 *SuhallaInteriors_GetExits(void)
-{
-    return gSuhallaInteriorsExits;
-}
-
-s32 SuhallaInteriors_SelectPlacements(void)
-{
-    if (Engine_GameFlagIsSet(0x96f) != 0)
-    {
-        return (s32)gSuhallaInteriorsPlacements96f;
-    }
-    return (s32)gSuhallaInteriorsPlacements;
-}
-
-static void EV12_TALK(s32 no)
-{
-    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-    if (facing == 0xc000)
-    {
-        Engine_ShopOpen(31, no);
-    }
-    else if (Engine_GameFlagIsSet(0x96f))
-    {
-        s32 msg = MsgSuhallaArentSurprisedFind;
-        Engine_EventSetMessage(msg);
-        Engine_EventOpenMessage(no, 0);
-        if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
-        {
-            Engine_EventWait(10);
-            Engine_EventSetMessage(msg + 1);
-        }
-        else
-        {
-            Engine_EventSetMessage(msg + 2);
-        }
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgSuhallaOursOnlyStore);
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void EV13_TALK(s32 no)
-{
-    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-    if (facing == 0xc000)
-    {
-        Engine_InnCheckIn(10, no);
-    }
-    else if (Engine_GameFlagIsSet(0x96f))
-    {
-        Engine_EventSetMessage(MsgSuhallaBusyEverSince);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgSuhallaSighNothinMaybe);
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void EV18_TALK(s32 no)
-{
-    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-    if (facing == 0xc000)
-    {
-        Engine_ShopConfirmAct(no);
-    }
-    else if (Engine_GameFlagIsSet(0x96f))
-    {
-        Engine_EventSetMessage(MsgSuhallaWonderWhySandstorms);
-        Engine_EventShowMessage(no, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgSuhallaGetSickThinkingAboutLalivero);
-        Engine_EventShowMessage(no, 0);
-    }
-}
-
-static void EV17_TALK(s32 obj)
-{
-    s32 msg = MsgSuhallaSupposeFolkBlown;
+static void EV12_TALK(s32 no) {
+  u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  if (facing == 0xc000) {
+    Engine_ShopOpen(31, no);
+  } else if (Engine_GameFlagIsSet(0x96f)) {
+    s32 msg = MsgSuhallaArentSurprisedFind;
     Engine_EventSetMessage(msg);
-    Engine_EventOpenMessage(obj, 0);
-    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
-    {
-        Engine_EventWait(10);
-        Engine_EventSetMessage(msg + 1);
+    Engine_EventOpenMessage(no, 0);
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+      Engine_EventWait(10);
+      Engine_EventSetMessage(msg + 1);
+    } else {
+      Engine_EventSetMessage(msg + 2);
     }
-    else
-    {
-        Engine_EventSetMessage(msg + 2);
-    }
-    Engine_EventShowMessage(obj, 0);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgSuhallaOursOnlyStore);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void SuhallaInteriors_PlayCueAndRequestTouchedExit(void)
-{
-    struct EventWork *state = gEventWork;
-    s16              *cnt = (s16 *)&state->touchedTrigger;
-
-    Engine_EventRequestExit(*cnt);
-    Engine_AudioPlayCue(0x7B);
+static void EV13_TALK(s32 no) {
+  u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  if (facing == 0xc000) {
+    Engine_InnCheckIn(10, no);
+  } else if (Engine_GameFlagIsSet(0x96f)) {
+    Engine_EventSetMessage(MsgSuhallaBusyEverSince);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgSuhallaSighNothinMaybe);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-static void EV50_TOUCH(void)
-{
-    struct FieldActor *record;
-    GameFlag_Set(2480);
-    if (GameFlag_IsSet(2442) == 0)
-    {
-        Event_PlayCue(30);
-        Event_Begin();
-        Camera_MoveTo(24117248, -1, 6815744, 1);
-        Actor_WalkToAndWait(0, 368, 160);
-        Actor_FaceDirection(0, 49152, 0);
-        FieldMotion_LaunchFromFocusedObject(19, 0, -16, 49152);
-        Actor_WaitForMove(19);
-        Camera_WaitForMove();
-        Event_SetMessage(MsgSuhallaIodem);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(20, 2);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(19, 2);
-        Event_Wait(20);
-        Actor_SetSpeed(19, 78643, 39321);
-        Actor_WalkByAndWait(19, 0, -16);
-        Actor_FaceDirection(19, 0, 0);
-        Event_Wait(30);
-        Actor_FaceDirection(19, 57344, 0);
-        Event_Wait(30);
-        Actor_FaceDirection(19, 0, 0);
-        Event_Wait(30);
-        Actor_ShowEmote(19, 256, 40);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_SetSpeed(19, 78643, 39321);
-        Actor_WalkByAndWait(19, 0, -24);
-        Actor_WalkByAndWait(19, 48, 0);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(20);
-        Actor_ShowEmote(19, 256, 40);
-        Event_ShowMessage(19, 0);
-        Event_Wait(20);
-        Actor_ShowEmote(20, 258, 40);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(20);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(21, 4);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(30);
-        Actor_ShowEmote(19, 263, 40);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_StartRepeatedMotion(20, 2);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Actor_SetSpeed(0, 78643, 39321);
-        Actor_WalkToAndWait(0, 368, 104);
-        Actor_WalkByAndWait(0, 16, 0);
-        Actor_FaceDirection(0, 0, 0);
-        Event_Wait(20);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(19, 4);
-        Event_Wait(20);
-        Event_ShowMessage(19, 0);
-        Event_Wait(20);
-        Actor_ShowEmote(19, 258, 50);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(20, 2);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_FaceActor(0, 20, 0);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(20);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_FaceActor(0, 21, 0);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(40);
-        Actor_SetAnimationAndWait(19, 3);
-        Event_Wait(30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(21, 4);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_FaceEachOther(19, 0, 30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(20, 2);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_FaceActor(0, 20, 0);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(40);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_FaceActor(0, 21, 0);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(40);
-        Actor_SetAnimation(0, 3);
-        Actor_SetAnimationAndWait(19, 3);
-        Event_Wait(30);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(20, 4);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(0, 256, 0);
-        Actor_ShowEmote(19, 256, 40);
-        Event_Wait(10);
-        Actor_FaceActor(0, 20, 0);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(40);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(0, 256, 50);
-        Actor_FaceActor(0, 21, 0);
-        Event_Wait(30);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(30);
-        Event_Wait(10);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(21, 3);
-        Event_Wait(30);
-        Event_Wait(10);
-        Actor_ShowEmote(19, 258, 40);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(20, 4);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(19, 257, 50);
-        Event_Wait(10);
-        Actor_FaceActor(0, 20, 0);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(20);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(20, 2);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(19, 256, 40);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_Wait(10);
-        Actor_FaceEachOther(19, 0, 0);
-        Event_Wait(30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(20, 4);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(0, 258, 0);
-        Actor_ShowEmote(19, 258, 80);
-        Actor_ShowEmote(21, 258, 50);
-        Event_ShowMessage(21, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(20);
-        Event_ShowMessage(21, 0);
-        Actor_RunRepeatedMotion(21, 3);
-        Event_Wait(20);
-        Event_Wait(10);
-        Actor_FaceDirection(19, 49152, 0);
-        Event_Wait(30);
-        Actor_RunRepeatedMotion(19, 2);
-        Event_Wait(10);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(20, 2);
-        Event_Wait(20);
-        Event_ShowMessage(20, 0);
-        Event_Wait(10);
-        Actor_FaceActor(0, 20, 0);
-        Actor_FaceDirection(19, 8192, 0);
-        Event_Wait(30);
-        Actor_SetAnimationAndWait(19, 3);
-        Event_Wait(30);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_StartRepeatedMotion(20, 2);
-        Actor_RunRepeatedMotion(21, 2);
-        Event_Wait(30);
-        Event_Wait(10);
-        Actor_FaceEachOther(19, 0, 20);
-        Actor_WalkByAndWait(19, -12, 0);
-        Event_Wait(20);
-        Event_OpenMessage(19, 0);
-        if (Event_ChooseYesNo(0, 0) == 0)
-        {
-            Event_Wait(20);
-            Event_ShowMessage(19, 0);
-            gEventWork->message++;
-        }
-        else
-        {
-            Event_Wait(10);
-            gEventWork->message++;
-            Event_ShowMessage(19, 0);
-        }
-        Event_Wait(10);
-        Actor_RunRepeatedMotion(19, 2);
-        Event_Wait(20);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_ShowEmote(19, 258, 50);
-        Event_ShowMessage(19, 0);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(0, 3);
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(19, 3);
-        Event_Wait(30);
-        Event_PlayCue(30);
-        Actor_SetSpeed(19, 78643, 39321);
-        Actor_SetAnimation(19, 2);
-        record = Actor_Get(0);
-        if (record != 0)
-        {
-            Actor_SetDestination(19, record->x.part.pixel, record->z.part.pixel);
-        }
-        Actor_WaitForMove(19);
-        Actor_SetPosition(19, 0, 0);
-        Event_Wait(10);
-        Audio_PlayCueFromEventWork();
-        Event_End();
-    }
+static void EV18_TALK(s32 no) {
+  u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  if (facing == 0xc000) {
+    Engine_ShopConfirmAct(no);
+  } else if (Engine_GameFlagIsSet(0x96f)) {
+    Engine_EventSetMessage(MsgSuhallaWonderWhySandstorms);
+    Engine_EventShowMessage(no, 0);
+  } else {
+    Engine_EventSetMessage(MsgSuhallaGetSickThinkingAboutLalivero);
+    Engine_EventShowMessage(no, 0);
+  }
 }
 
-s32 SuhallaInteriors_SelectEvents(void)
-{
-    if (Engine_GameFlagIsSet(0x96F) != 0)
-    {
-        return (s32)gSuhallaInteriorsEvents96f;
-    }
-    return (s32)gSuhallaInteriorsEvents;
+static void EV17_TALK(s32 obj) {
+  s32 msg = MsgSuhallaSupposeFolkBlown;
+  Engine_EventSetMessage(msg);
+  Engine_EventOpenMessage(obj, 0);
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+    Engine_EventWait(10);
+    Engine_EventSetMessage(msg + 1);
+  } else {
+    Engine_EventSetMessage(msg + 2);
+  }
+  Engine_EventShowMessage(obj, 0);
 }
 
-s32 Scene_InitActorRecords(void)
-{
-    union SceneActor *work;
-    if (gGameState.entrance == 90)
-        Engine_GameFlagSet(0x96f);
-    gEventWork->startTransition = 521;
-    gEventWork->transitionFrames = 24;
-    ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
-    ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
-    work = (union SceneActor *)Object_GetById(20);
-    work->fields.record->field26 = 0;
-    work->fields.record->angle = 0x4000;
-    {
-        struct SceneRecord *record = work->fields.record;
-        s32                 flags = ~12;
+static void SuhallaInteriors_PlayCueAndRequestTouchedExit(void) {
+  struct EventWork *state = gEventWork;
+  s16 *cnt = (s16 *)&state->touchedTrigger;
 
-        flags &= record->flags;
-        record->flags = flags | 4;
+  Engine_EventRequestExit(*cnt);
+  Engine_AudioPlayCue(0x7B);
+}
+
+static void EV50_TOUCH(void) {
+  struct FieldActor *record;
+  GameFlag_Set(2480);
+  if (GameFlag_IsSet(2442) == 0) {
+    Event_PlayCue(30);
+    Event_Begin();
+    Camera_MoveTo(24117248, -1, 6815744, 1);
+    Actor_WalkToAndWait(0, 368, 160);
+    Actor_FaceDirection(0, 49152, 0);
+    FieldMotion_LaunchFromFocusedObject(19, 0, -16, 49152);
+    Actor_WaitForMove(19);
+    Camera_WaitForMove();
+    Event_SetMessage(MsgSuhallaIodem);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(20, 2);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(19, 2);
+    Event_Wait(20);
+    Actor_SetSpeed(19, 78643, 39321);
+    Actor_WalkByAndWait(19, 0, -16);
+    Actor_FaceDirection(19, 0, 0);
+    Event_Wait(30);
+    Actor_FaceDirection(19, 57344, 0);
+    Event_Wait(30);
+    Actor_FaceDirection(19, 0, 0);
+    Event_Wait(30);
+    Actor_ShowEmote(19, 256, 40);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_SetSpeed(19, 78643, 39321);
+    Actor_WalkByAndWait(19, 0, -24);
+    Actor_WalkByAndWait(19, 48, 0);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(20);
+    Actor_ShowEmote(19, 256, 40);
+    Event_ShowMessage(19, 0);
+    Event_Wait(20);
+    Actor_ShowEmote(20, 258, 40);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(20);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Actor_SetAnimationAndWait(21, 4);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(30);
+    Actor_ShowEmote(19, 263, 40);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_StartRepeatedMotion(20, 2);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Actor_SetSpeed(0, 78643, 39321);
+    Actor_WalkToAndWait(0, 368, 104);
+    Actor_WalkByAndWait(0, 16, 0);
+    Actor_FaceDirection(0, 0, 0);
+    Event_Wait(20);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(19, 4);
+    Event_Wait(20);
+    Event_ShowMessage(19, 0);
+    Event_Wait(20);
+    Actor_ShowEmote(19, 258, 50);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(20, 2);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_FaceActor(0, 20, 0);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(20);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_FaceActor(0, 21, 0);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(40);
+    Actor_SetAnimationAndWait(19, 3);
+    Event_Wait(30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Actor_SetAnimationAndWait(21, 4);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_FaceEachOther(19, 0, 30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(20, 2);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_FaceActor(0, 20, 0);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(40);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_FaceActor(0, 21, 0);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(40);
+    Actor_SetAnimation(0, 3);
+    Actor_SetAnimationAndWait(19, 3);
+    Event_Wait(30);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(20, 4);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(0, 256, 0);
+    Actor_ShowEmote(19, 256, 40);
+    Event_Wait(10);
+    Actor_FaceActor(0, 20, 0);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(40);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(0, 256, 50);
+    Actor_FaceActor(0, 21, 0);
+    Event_Wait(30);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(30);
+    Event_Wait(10);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Actor_SetAnimationAndWait(21, 3);
+    Event_Wait(30);
+    Event_Wait(10);
+    Actor_ShowEmote(19, 258, 40);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(20, 4);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(19, 257, 50);
+    Event_Wait(10);
+    Actor_FaceActor(0, 20, 0);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(20);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(20, 2);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(19, 256, 40);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_Wait(10);
+    Actor_FaceEachOther(19, 0, 0);
+    Event_Wait(30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(20, 4);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(0, 258, 0);
+    Actor_ShowEmote(19, 258, 80);
+    Actor_ShowEmote(21, 258, 50);
+    Event_ShowMessage(21, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(20);
+    Event_ShowMessage(21, 0);
+    Actor_RunRepeatedMotion(21, 3);
+    Event_Wait(20);
+    Event_Wait(10);
+    Actor_FaceDirection(19, 49152, 0);
+    Event_Wait(30);
+    Actor_RunRepeatedMotion(19, 2);
+    Event_Wait(10);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(20, 2);
+    Event_Wait(20);
+    Event_ShowMessage(20, 0);
+    Event_Wait(10);
+    Actor_FaceActor(0, 20, 0);
+    Actor_FaceDirection(19, 8192, 0);
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(19, 3);
+    Event_Wait(30);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_StartRepeatedMotion(20, 2);
+    Actor_RunRepeatedMotion(21, 2);
+    Event_Wait(30);
+    Event_Wait(10);
+    Actor_FaceEachOther(19, 0, 20);
+    Actor_WalkByAndWait(19, -12, 0);
+    Event_Wait(20);
+    Event_OpenMessage(19, 0);
+    if (Event_ChooseYesNo(0, 0) == 0) {
+      Event_Wait(20);
+      Event_ShowMessage(19, 0);
+      gEventWork->message++;
+    } else {
+      Event_Wait(10);
+      gEventWork->message++;
+      Event_ShowMessage(19, 0);
     }
-    work = (union SceneActor *)Object_GetById(21);
-    work->fields.record->field26 = 0;
-    work->fields.record->angle = 0x4000;
-    work->bytes[85] = 2;
-    work->fields.y = 0;
-    return 0;
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(19, 2);
+    Event_Wait(20);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_ShowEmote(19, 258, 50);
+    Event_ShowMessage(19, 0);
+    Event_Wait(10);
+    Actor_SetAnimationAndWait(0, 3);
+    Event_Wait(20);
+    Actor_SetAnimationAndWait(19, 3);
+    Event_Wait(30);
+    Event_PlayCue(30);
+    Actor_SetSpeed(19, 78643, 39321);
+    Actor_SetAnimation(19, 2);
+    record = Actor_Get(0);
+    if (record != 0) {
+      Actor_SetDestination(19, record->x.part.pixel, record->z.part.pixel);
+    }
+    Actor_WaitForMove(19);
+    Actor_SetPosition(19, 0, 0);
+    Event_Wait(10);
+    Audio_PlayCueFromEventWork();
+    Event_End();
+  }
+}
+
+s32 SuhallaInteriors_SelectEvents(void) {
+  if (Engine_GameFlagIsSet(0x96F) != 0) {
+    return (s32)gSuhallaInteriorsEvents96f;
+  }
+  return (s32)gSuhallaInteriorsEvents;
+}
+
+s32 Scene_InitActorRecords(void) {
+  union SceneActor *work;
+  if (gGameState.entrance == 90)
+    Engine_GameFlagSet(0x96f);
+  gEventWork->startTransition = 521;
+  gEventWork->transitionFrames = 24;
+  ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
+  ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
+  work = (union SceneActor *)Object_GetById(20);
+  work->fields.record->field26 = 0;
+  work->fields.record->angle = 0x4000;
+  {
+    struct SceneRecord *record = work->fields.record;
+    s32 flags = ~12;
+
+    flags &= record->flags;
+    record->flags = flags | 4;
+  }
+  work = (union SceneActor *)Object_GetById(21);
+  work->fields.record->field26 = 0;
+  work->fields.record->angle = 0x4000;
+  work->bytes[85] = 2;
+  work->fields.y = 0;
+  return 0;
 }
 
 struct SceneEntrance gSuhallaInteriorsEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 256, 0, 456, FACING_NORTH, 0, 0, 280, 336, 480, 0 },
-    { 2, CONDITION_ALWAYS, 432, 0, 728, FACING_NORTH, 0, 312, 528, 552, 752, 0 },
-    { 3, CONDITION_ALWAYS, 640, 0, 168, FACING_NORTH, 0, 496, 16, 736, 192, 0 },
-    { 4, CONDITION_ALWAYS, 112, 0, 168, FACING_NORTH, 0, 0, 16, 240, 208, 0 },
-    { 5, CONDITION_ALWAYS, 352, 0, 216, FACING_NORTH, 0, 256, 16, 496, 232, 0 },
-    { 6, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0, 312, 528, 552, 752, 0 },
-    { 7, CONDITION_ALWAYS, 680, 0, 120, FACING_WEST, 0, 496, 16, 736, 192, 0 },
-    { 10, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0 },
-    { 11, CONDITION_ALWAYS, 152, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0 },
-    { 12, CONDITION_ALWAYS, 472, 0, 344, FACING_SOUTH, 0, 344, 280, 584, 440, 0 },
-    { 13, CONDITION_ALWAYS, 712, 0, 344, FACING_SOUTH, 0, 600, 280, 840, 440, 0 },
-    { 14, CONDITION_ALWAYS, 88, 0, 352, FACING_SOUTH, 0, 0, 280, 336, 480, 0 },
-    { 15, CONDITION_ALWAYS, 88, 0, 584, FACING_NORTH, 0, 16, 528, 256, 688, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 256, 0, 456, FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {2, CONDITION_ALWAYS, 432, 0, 728, FACING_NORTH, 0, 312, 528, 552, 752, 0},
+    {3, CONDITION_ALWAYS, 640, 0, 168, FACING_NORTH, 0, 496, 16, 736, 192, 0},
+    {4, CONDITION_ALWAYS, 112, 0, 168, FACING_NORTH, 0, 0, 16, 240, 208, 0},
+    {5, CONDITION_ALWAYS, 352, 0, 216, FACING_NORTH, 0, 256, 16, 496, 232, 0},
+    {6, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0, 312, 528, 552, 752, 0},
+    {7, CONDITION_ALWAYS, 680, 0, 120, FACING_WEST, 0, 496, 16, 736, 192, 0},
+    {10, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {11, CONDITION_ALWAYS, 152, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {12, CONDITION_ALWAYS, 472, 0, 344, FACING_SOUTH, 0, 344, 280, 584, 440, 0},
+    {13, CONDITION_ALWAYS, 712, 0, 344, FACING_SOUTH, 0, 600, 280, 840, 440, 0},
+    {14, CONDITION_ALWAYS, 88, 0, 352, FACING_SOUTH, 0, 0, 280, 336, 480, 0},
+    {15, CONDITION_ALWAYS, 88, 0, 584, FACING_NORTH, 0, 16, 528, 256, 688, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off

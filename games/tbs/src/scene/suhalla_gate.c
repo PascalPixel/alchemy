@@ -20,377 +20,336 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-static void EV13_TALK(void)
-{
-    BattleFx_SetPhaseRequest(0xD, 0x1A);
+static void EV13_TALK(void) { BattleFx_SetPhaseRequest(0xD, 0x1A); }
+
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGate2) {
+    return gSuhallaGateEntrances2;
+  }
+  if (scene == (s32)&SceneId_SuhallaGate3) {
+    return gSuhallaGateEntrances3;
+  }
+  return gSuhallaGateEntrancesOther;
 }
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    s16 scene = gGameState.scene;
+s32 SceneData_ReturnZero(void) { return 0; }
 
-    if (scene == (s32)&SceneId_SuhallaGate2)
-    {
-        return gSuhallaGateEntrances2;
+u8 *SceneData_GetSceneTable(void) { return (u8 *)gSuhallaGate_SceneTable; }
+
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGate2) {
+    return gSuhallaGatePlacements2;
+  }
+  if (scene == (s32)&SceneId_SuhallaGate1) {
+    if (Engine_GameFlagIsSet(0x96f) != 0) {
+      return gSuhallaGatePlacements1Flagged;
     }
-    if (scene == (s32)&SceneId_SuhallaGate3)
-    {
-        return gSuhallaGateEntrances3;
-    }
-    return gSuhallaGateEntrancesOther;
+    return gSuhallaGatePlacements1;
+  }
+  return gSuhallaGatePlacementsOther;
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+const struct SceneEvent *Scene_GetEvents(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGate2) {
+    return gSuhallaGateEvents2;
+  }
+  if (scene == (s32)&SceneId_SuhallaGate3) {
+    return gSuhallaGateEvents3;
+  }
+  return gSuhallaGateEventsOther;
 }
 
-u8 *SceneData_GetSceneTable(void)
-{
-    return (u8 *)gSuhallaGate_SceneTable;
-}
+s32 SuhallaGate_EnterScene(void) {
+  s32 scene;
 
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    s16 scene = gGameState.scene;
-
-    if (scene == (s32)&SceneId_SuhallaGate2)
-    {
-        return gSuhallaGatePlacements2;
+  if (Engine_GameFlagIsSet(0x89f)) {
+    gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
+    gGameState.savedEntrance = 10;
+  }
+  scene = gGameState.scene;
+  if (scene == (s32)&SceneId_SuhallaGate1) {
+    if (Engine_GameFlagIsSet(0x897))
+      Engine_ActorSetPosition(10, 0, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+    else if (Engine_GameFlagIsSet(0x96f))
+      Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
+    if (Engine_GameFlagIsSet(0x96f)) {
+      Map_CopyCellAttributes(0, 0, 2, 1, 8, 25);
+      Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
     }
-    if (scene == (s32)&SceneId_SuhallaGate1)
-    {
-        if (Engine_GameFlagIsSet(0x96f) != 0)
-        {
-            return gSuhallaGatePlacements1Flagged;
-        }
-        return gSuhallaGatePlacements1;
-    }
-    return gSuhallaGatePlacementsOther;
-}
-
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    s16 scene = gGameState.scene;
-
-    if (scene == (s32)&SceneId_SuhallaGate2)
-    {
-        return gSuhallaGateEvents2;
-    }
-    if (scene == (s32)&SceneId_SuhallaGate3)
-    {
-        return gSuhallaGateEvents3;
-    }
-    return gSuhallaGateEventsOther;
-}
-
-s32 SuhallaGate_EnterScene(void)
-{
-    s32 scene;
-
-    if (Engine_GameFlagIsSet(0x89f))
-    {
-        gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
-        gGameState.savedEntrance = 10;
-    }
-    scene = gGameState.scene;
-    if (scene == (s32)&SceneId_SuhallaGate1)
-    {
-        if (Engine_GameFlagIsSet(0x897))
-            Engine_ActorSetPosition(10, 0, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-        else if (Engine_GameFlagIsSet(0x96f))
-            Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
-        if (Engine_GameFlagIsSet(0x96f))
-        {
-            Map_CopyCellAttributes(0, 0, 2, 1, 8, 25);
-            Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
-        }
 #endif
-        if (gGameState.entrance == 3)
-        {
-            if (Engine_GameFlagIsSet(0x8fb))
-            {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-                gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
+    if (gGameState.entrance == 3) {
+      if (Engine_GameFlagIsSet(0x8fb)) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+        gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
 #else
-                gGameState.retreatScene = scene;
+        gGameState.retreatScene = scene;
 #endif
-                gGameState.retreatEntrance = 1;
-            }
-            if (Engine_GameFlagIsSet(0x8fc))
-            {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-                gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
+        gGameState.retreatEntrance = 1;
+      }
+      if (Engine_GameFlagIsSet(0x8fc)) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+        gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
 #else
-                gGameState.retreatScene = scene;
+        gGameState.retreatScene = scene;
 #endif
-                gGameState.retreatEntrance = 5;
-            }
-            Engine_GameFlagClear(0x12f);
-        }
-        if (gGameState.entrance == 1)
-        {
-            Engine_GameFlagSet(0x8fb);
-            if (!Engine_GameFlagIsSet(0x96f))
-                Map_CopyCellAttributes(6, 0, 2, 1, 8, 27);
-        }
-        if (gGameState.entrance == 5)
-            Engine_GameFlagSet(0x8fc);
+        gGameState.retreatEntrance = 5;
+      }
+      Engine_GameFlagClear(0x12f);
     }
-    else if (scene == (s32)&SceneId_SuhallaGate2)
-    {
-        Engine_ActorSetAnimation(8, 4);
-        Engine_ActorSetAnimation(9, 4);
-        Engine_ActorSetAnimation(10, 3);
-        Engine_ActorSetAnimation(11, 4);
-        Engine_ActorSetAnimation(12, 3);
-        Object_GetById(15)->scaleY = 0x19999;
-        Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
+    if (gGameState.entrance == 1) {
+      Engine_GameFlagSet(0x8fb);
+      if (!Engine_GameFlagIsSet(0x96f))
+        Map_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
-    return 0;
+    if (gGameState.entrance == 5)
+      Engine_GameFlagSet(0x8fc);
+  } else if (scene == (s32)&SceneId_SuhallaGate2) {
+    Engine_ActorSetAnimation(8, 4);
+    Engine_ActorSetAnimation(9, 4);
+    Engine_ActorSetAnimation(10, 3);
+    Engine_ActorSetAnimation(11, 4);
+    Engine_ActorSetAnimation(12, 3);
+    Object_GetById(15)->scaleY = 0x19999;
+    Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
+  }
+  return 0;
 }
 
-static void EV03_TOUCH(void)
-{
-    s32 arg;
-    s32 v5;
+static void EV03_TOUCH(void) {
+  s32 arg;
+  s32 v5;
 
-    arg = gEventWork->touchedTrigger;
-    Actor_Get(0)->motionFlags = 0;
-    v5 = 2;
-    Event_PlayCue(158);
-    Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
-    Engine_TaskWait(4);
-    Map_CopyCellsTo(68, 36, 71, 8, v5, v5);
-    Engine_TaskWait(4);
-    Actor_CenterAndWalk(0, 3, -16);
-    Engine_EventRequestExit(arg);
+  arg = gEventWork->touchedTrigger;
+  Actor_Get(0)->motionFlags = 0;
+  v5 = 2;
+  Event_PlayCue(158);
+  Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
+  Engine_TaskWait(4);
+  Map_CopyCellsTo(68, 36, 71, 8, v5, v5);
+  Engine_TaskWait(4);
+  Actor_CenterAndWalk(0, 3, -16);
+  Engine_EventRequestExit(arg);
 }
 
-static void Dialogue_ShowMessages8fbAnd8fc(void)
-{
-    s16 token = gEventWork->touchedTrigger;
+static void Dialogue_ShowMessages8fbAnd8fc(void) {
+  s16 token = gEventWork->touchedTrigger;
 
-    Engine_AudioPlayCue(123);
-    Engine_GameFlagClear(0x8FB);
-    Engine_GameFlagClear(0x8FC);
-    Engine_EventRequestExit(token);
+  Engine_AudioPlayCue(123);
+  Engine_GameFlagClear(0x8FB);
+  Engine_GameFlagClear(0x8FC);
+  Engine_EventRequestExit(token);
 }
 
-static void Scene_RunPrimarySequence(void)
-{
-    Engine_EventBegin();
-    Actor_SetSpeed(8, 65536, 32768);
-    Actor_SetSpeed(9, 65536, 32768);
-    Actor_WalkTo(8, 136, 384);
-    Actor_WalkToAndWait(9, 152, 384);
-    Actor_FaceDirection(8, 16384, 0);
-    Actor_FaceDirection(9, 16384, 0);
-    Engine_ActorSetAnimation(8, 1);
-    Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
-    Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+static void Scene_RunPrimarySequence(void) {
+  Engine_EventBegin();
+  Actor_SetSpeed(8, 65536, 32768);
+  Actor_SetSpeed(9, 65536, 32768);
+  Actor_WalkTo(8, 136, 384);
+  Actor_WalkToAndWait(9, 152, 384);
+  Actor_FaceDirection(8, 16384, 0);
+  Actor_FaceDirection(9, 16384, 0);
+  Engine_ActorSetAnimation(8, 1);
+  Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+  Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+  Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
 #else
-    Map_CopyCellAttributes(9, 26, 2, 1, 7, 26);
+  Map_CopyCellAttributes(9, 26, 2, 1, 7, 26);
 #endif
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void Scene_RunScene3c3SequenceA(void)
-{
-    struct FieldActor *record;
-    s32                v5;
+static void Scene_RunScene3c3SequenceA(void) {
+  struct FieldActor *record;
+  s32 v5;
 
-    Engine_EventBegin();
-    Actor_SetSpeed(0, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(0, 120, 0x1b6);
-    Actor_FaceDirection(0, 0xc000, 0);
-    record = Actor_Get(0);
-    if (record != 0)
-    {
-        Actor_SetPosition(11, record->x.fixed, record->z.fixed);
-    }
-    Engine_TaskWait(1);
-    Actor_SetSpeed(11, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(11, 108, 0x1af);
-    Actor_FaceDirection(11, 0xd000, 10);
-    Actor_ShowEmote(11, 0x100, 20);
-    Actor_FaceDirection(11, 0xd000, 20);
-    Actor_FaceDirection(11, 0, 40);
+  Engine_EventBegin();
+  Actor_SetSpeed(0, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(0, 120, 0x1b6);
+  Actor_FaceDirection(0, 0xc000, 0);
+  record = Actor_Get(0);
+  if (record != 0) {
+    Actor_SetPosition(11, record->x.fixed, record->z.fixed);
+  }
+  Engine_TaskWait(1);
+  Actor_SetSpeed(11, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(11, 108, 0x1af);
+  Actor_FaceDirection(11, 0xd000, 10);
+  Actor_ShowEmote(11, 0x100, 20);
+  Actor_FaceDirection(11, 0xd000, 20);
+  Actor_FaceDirection(11, 0, 40);
+  Actor_FaceDirection(11, 0xd000, 40);
+  Actor_FaceDirection(11, 0, 20);
+  Engine_ActorStartRepeatedMotion(11, 2);
+  Engine_EventSetMessage(MsgSuhallaMeaning);
+  Event_ShowMessageAndWait(11, 0, 40);
+  Actor_ShowEmote(8, 0x100, 0);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_WalkToAndWait(11, 132, 0x1a4);
+  Actor_FaceDirection(11, 0xd000, 0);
+  Actor_FaceDirection(0, 0xe000, 0);
+  Actor_WalkToAndWait(11, 138, 0x1a0);
+  Actor_FaceDirection(11, 0xb000, 10);
+  Engine_ActorStartRepeatedMotion(11, 2);
+  Event_ShowMessageAndWait(11, 0, 40);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Event_ShowMessageAndWait(8, 0, 40);
+  Actor_ShowEmote(9, 0x100, 20);
+  Engine_ActorRunRepeatedMotion(9, 2);
+  Event_ShowMessageAndWait(9, 0, 20);
+  Actor_FaceDirection(0, 0xc000, 0);
+  Actor_WalkToAndWait(11, 144, 0x1a4);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(9, 2);
+  Event_ShowMessageAndWait(9, 0, 20);
+  Actor_SetAttachedEffect(9, 0x102);
+  Engine_ActorStartRepeatedMotion(9, 3);
+  Event_ShowMessageAndWait(9, 0, 20);
+  Actor_FaceDirection(11, 0x5000, 20);
+  Event_AskYesNo(11, 0);
+  if (GameFlag_IsSet(0x9b0) != 0) {
     Actor_FaceDirection(11, 0xd000, 40);
-    Actor_FaceDirection(11, 0, 20);
-    Engine_ActorStartRepeatedMotion(11, 2);
-    Engine_EventSetMessage(MsgSuhallaMeaning);
-    Event_ShowMessageAndWait(11, 0, 40);
-    Actor_ShowEmote(8, 0x100, 0);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 10);
-    Actor_WalkToAndWait(11, 132, 0x1a4);
-    Actor_FaceDirection(11, 0xd000, 0);
-    Actor_FaceDirection(0, 0xe000, 0);
-    Actor_WalkToAndWait(11, 138, 0x1a0);
-    Actor_FaceDirection(11, 0xb000, 10);
-    Engine_ActorStartRepeatedMotion(11, 2);
-    Event_ShowMessageAndWait(11, 0, 40);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 40);
-    Actor_ShowEmote(9, 0x100, 20);
-    Engine_ActorRunRepeatedMotion(9, 2);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_WalkToAndWait(11, 144, 0x1a4);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(9, 2);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Actor_SetAttachedEffect(9, 0x102);
-    Engine_ActorStartRepeatedMotion(9, 3);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Actor_FaceDirection(11, 0x5000, 20);
-    Event_AskYesNo(11, 0);
-    if (GameFlag_IsSet(0x9b0) != 0)
-    {
-        Actor_FaceDirection(11, 0xd000, 40);
-        Actor_SetAttachedEffect(11, 0x102);
-        Engine_EventWait(40);
-        Event_ShowMessageAndWait(11, 0, 10);
-    }
-    else
-    {
-        gEventWork->message += 1;
-    }
-    Actor_FaceDirection(11, 0x5000, 10);
-    Event_ShowMessageAndWait(11, 0, 40);
-    Actor_ShowEmote(11, 0x100, 40);
-    Actor_FaceDirection(11, 0xb000, 10);
-    Event_ShowMessageAndWait(11, 0, 10);
-    Actor_WalkToAndWait(11, 138, 0x1a0);
-    Actor_FaceDirection(11, 0xb000, 20);
-    Engine_ActorStartRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 10);
     Actor_SetAttachedEffect(11, 0x102);
-    Engine_ActorRunRepeatedMotion(11, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(11, 0, 20);
-    Engine_ActorRunRepeatedMotion(9, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(0, 0xe000, 10);
-    Engine_ActorRunRepeatedMotion(9, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(9, 0, 10);
-    Engine_ActorRunRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorRunRepeatedMotion(11, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(11, 0, 20);
-    Actor_FaceDirection(11, 0x5000, 10);
+    Engine_EventWait(40);
     Event_ShowMessageAndWait(11, 0, 10);
-    Engine_ActorSetAnimation(11, 2);
-    record = Actor_Get(0);
-    if (record != 0)
-    {
-        Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
-    }
-    Engine_ActorWaitForMove(11);
-    Actor_SetPosition(11, 0, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
-    Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
-    Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+  } else {
+    gEventWork->message += 1;
+  }
+  Actor_FaceDirection(11, 0x5000, 10);
+  Event_ShowMessageAndWait(11, 0, 40);
+  Actor_ShowEmote(11, 0x100, 40);
+  Actor_FaceDirection(11, 0xb000, 10);
+  Event_ShowMessageAndWait(11, 0, 10);
+  Actor_WalkToAndWait(11, 138, 0x1a0);
+  Actor_FaceDirection(11, 0xb000, 20);
+  Engine_ActorStartRepeatedMotion(8, 2);
+  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_SetAttachedEffect(11, 0x102);
+  Engine_ActorRunRepeatedMotion(11, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(11, 0, 20);
+  Engine_ActorRunRepeatedMotion(9, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(0, 0xe000, 10);
+  Engine_ActorRunRepeatedMotion(9, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(9, 0, 10);
+  Engine_ActorRunRepeatedMotion(8, 2);
+  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(11, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(11, 0, 20);
+  Actor_FaceDirection(11, 0x5000, 10);
+  Event_ShowMessageAndWait(11, 0, 10);
+  Engine_ActorSetAnimation(11, 2);
+  record = Actor_Get(0);
+  if (record != 0) {
+    Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
+  }
+  Engine_ActorWaitForMove(11);
+  Actor_SetPosition(11, 0, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+  Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+  Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+  Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
 #else
-    v5 = 7;
-    Map_CopyCellAttributes(6, 27, 1, 1, v5, 27);
-    Map_CopyCellAttributes(9, 26, 2, 1, v5, 26);
+  v5 = 7;
+  Map_CopyCellAttributes(6, 27, 1, 1, v5, 27);
+  Map_CopyCellAttributes(9, 26, 2, 1, v5, 26);
 #endif
-    GameFlag_Set(0x89f);
-    Engine_EventEnd();
+  GameFlag_Set(0x89f);
+  Engine_EventEnd();
 }
 
-static void EV09_TALK(void)
-{
-    u8 *work;
+static void EV09_TALK(void) {
+  u8 *work;
 
-    Engine_EventBegin();
+  Engine_EventBegin();
 
-    if (Engine_GameFlagIsSet(0x89f) != 0)
+  if (Engine_GameFlagIsSet(0x89f) != 0) {
+    Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
+    Engine_EventShowMessage(9, 0);
+  } else {
+    Engine_EventSetMessage(MsgSuhallaWantGoBabi);
     {
-        Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
-        Engine_EventShowMessage(9, 0);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgSuhallaWantGoBabi);
-        {
-            s32 mode = 0;
-            s32 no = 9;
+      s32 mode = 0;
+      s32 no = 9;
 
-            Engine_EventOpenMessage(no, mode);
-        }
-
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            Engine_EventShowMessage(9, 0);
-            Engine_ActorSetAnimationAndWait(9, 4);
-            Engine_EventShowMessage(9, 0);
-        }
-        else
-        {
-            work = (u8 *)gEventWork;
-            *(u16 *)(work + 472) += 2;
-            Engine_EventShowMessage(9, 0);
-        }
+      Engine_EventOpenMessage(no, mode);
     }
 
-    Engine_EventEnd();
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      Engine_EventShowMessage(9, 0);
+      Engine_ActorSetAnimationAndWait(9, 4);
+      Engine_EventShowMessage(9, 0);
+    } else {
+      work = (u8 *)gEventWork;
+      *(u16 *)(work + 472) += 2;
+      Engine_EventShowMessage(9, 0);
+    }
+  }
+
+  Engine_EventEnd();
 }
 
-static void Scene_RunActorTenRepeatedMotion(void)
-{
-    unsigned int beat;
+static void Scene_RunActorTenRepeatedMotion(void) {
+  unsigned int beat;
 
-    Engine_EventBegin();
+  Engine_EventBegin();
 
-    Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
-    Event_ShowMessageAndWait(10, 0, 10);
+  Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
+  Event_ShowMessageAndWait(10, 0, 10);
 
-    beat = 0;
-    do
-    {
-        Actor_SetChildValue(10, 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 1);
-        Engine_TaskWait(4);
+  beat = 0;
+  do {
+    Actor_SetChildValue(10, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(10), 1);
+    Engine_TaskWait(4);
 
-        Actor_SetChildValue(10, 15);
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
-        beat++;
-        Engine_TaskWait(4);
-    } while (beat <= 5);
+    Actor_SetChildValue(10, 15);
+    Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
+    beat++;
+    Engine_TaskWait(4);
+  } while (beat <= 5);
 
-    beat = 0;
-    do
-    {
-        Actor_SetChildValue(10, 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 1);
-        Engine_TaskWait(2);
+  beat = 0;
+  do {
+    Actor_SetChildValue(10, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(10), 1);
+    Engine_TaskWait(2);
 
-        Actor_SetChildValue(10, 15);
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
-        beat++;
-        Engine_TaskWait(2);
-    } while (beat <= 11);
+    Actor_SetChildValue(10, 15);
+    Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
+    beat++;
+    Engine_TaskWait(2);
+  } while (beat <= 11);
 
-    Actor_SetPosition(10, 0, 0);
+  Actor_SetPosition(10, 0, 0);
 
-    GameFlag_Set(0x897);
+  GameFlag_Set(0x897);
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Map_CopyCellAttributes(29, 19, 2, 1, 29, 18);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+  Map_CopyCellAttributes(29, 19, 2, 1, 29, 18);
 #endif
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
 s32 gSuhallaGate_PatrolStartup[] = {
     SC_SET(SW_COLLISION, 0),
 };
@@ -401,7 +360,8 @@ s32 gSuhallaGatePlacements1Flagged1[] = {
     SC_END,
 };
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
 s32 gSuhallaGate_FirstGuardStartup[] = {
     SC_SET(SW_COLLISION, 0),
 };
@@ -414,55 +374,43 @@ s32 gSuhallaGatePlacements1Flagged0[] = {
 };
 
 struct SceneEntrance gSuhallaGateEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0 },
-    { 1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0 },
-    { 2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0 },
-    { 3, CONDITION_ALWAYS, 136, 0, 304, FACING_SOUTH, 0, 32, 32, 272, 544, 0 },
-    { 4, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0 },
-    { 5, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
+    {1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
+    {2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
+    {3, CONDITION_ALWAYS, 136, 0, 304, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
+    {4, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
+    {5, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGateEntrances2[] = {
-    { 1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0 },
-    { 2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0 },
-    { 3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0 },
-    { 4, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0 },
-    { 5, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0 },
-    { SCENE_TABLE_END },
+    {1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
+    {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
+    {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
+    {4, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
+    {5, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGateEntrances3[] = {
-    { 1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0 },
-    { 2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0 },
-    { 3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0 },
-    { 4, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH, 0, 208, 288, 704, 640, 0 },
-    { SCENE_TABLE_END },
+    {1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
+    {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
+    {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
+    {4, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH, 0, 208, 288, 704, 640, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSuhallaGate_SceneTable[] = {
-    SCENE_EXITS(169),
-    SCENE_EXIT(1, 2, 29),
-    SCENE_EXIT(2, 170, 1),
-    SCENE_EXIT(3, 105, 10),
-    SCENE_EXIT(4, 170, 4),
-    SCENE_EXIT(5, 2, 42),
-    SCENE_EXIT(0, 170, 0),
-    SCENE_EXIT(1, 169, 2),
-    SCENE_EXIT(2, 170, 3),
-    SCENE_EXIT(3, 170, 2),
-    SCENE_EXIT(4, 169, 4),
-    SCENE_EXIT(5, 171, 1),
-    SCENE_EXIT(0, 171, 0),
-    SCENE_EXIT(1, 170, 5),
-    SCENE_EXIT(2, 171, 3),
-    SCENE_EXIT(3, 171, 2),
-    SCENE_EXIT(4, 2, 33),
-    SCENE_EXITS_END,
+    SCENE_EXITS(169),       SCENE_EXIT(1, 2, 29),  SCENE_EXIT(2, 170, 1),
+    SCENE_EXIT(3, 105, 10), SCENE_EXIT(4, 170, 4), SCENE_EXIT(5, 2, 42),
+    SCENE_EXIT(0, 170, 0),  SCENE_EXIT(1, 169, 2), SCENE_EXIT(2, 170, 3),
+    SCENE_EXIT(3, 170, 2),  SCENE_EXIT(4, 169, 4), SCENE_EXIT(5, 171, 1),
+    SCENE_EXIT(0, 171, 0),  SCENE_EXIT(1, 170, 5), SCENE_EXIT(2, 171, 3),
+    SCENE_EXIT(3, 171, 2),  SCENE_EXIT(4, 2, 33),  SCENE_EXITS_END,
 };
 
 struct ScenePlacement gSuhallaGatePlacementsOther[] = {
-    { SCENE_TABLE_END },
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -533,23 +481,23 @@ struct SceneEvent gSuhallaGateEventsOther[] = {
 // clang-format on
 
 struct SceneEvent gSuhallaGateEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-    { 0xc413, 100, 0xfb4, FIND_ITEM(0xc3) },
-    { 0x413, 100, 0xfb4, FIND_ITEM(0xc3) },
-    { 0x8413, 100, 0xfb4, FIND_ITEM(0xc3) },
-    { SCENE_EVENTS_END },
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+    {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK)},
+    {0xc413, 100, 0xfb4, FIND_ITEM(0xc3)},
+    {0x413, 100, 0xfb4, FIND_ITEM(0xc3)},
+    {0x8413, 100, 0xfb4, FIND_ITEM(0xc3)},
+    {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gSuhallaGateEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { 0x31, 2, CONDITION_ALWAYS, 2 },
-    { 0x21, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE },
-    { SCENE_EVENTS_END },
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x31, 2, CONDITION_ALWAYS, 2},
+    {0x21, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+    {SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE},
+    {SCENE_EVENTS_END},
 };

@@ -1,16 +1,15 @@
 #include "shrine_of_the_sea_god.h"
 
-struct ShrineOfTheSeaGodSpot
-{
-    s32 x;
-    s32 z;
-    s32 field18;
-    s32 rotation;
+struct ShrineOfTheSeaGodSpot {
+  s32 x;
+  s32 z;
+  s32 field18;
+  s32 rotation;
 };
 
 extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
-extern const u8                           gData_02003cbc[];
-extern const u8                           gData_02003c10[];
+extern const u8 gData_02003cbc[];
+extern const u8 gData_02003c10[];
 
 void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
@@ -37,19 +36,16 @@ void Func_02002c18(void);
 void Func_02002c50(void);
 void Func_02002c88(void);
 
-void Func_02002e70(void)
-{
-    Object_SetModeById(8, 2);
-    Object_SetModeById(9, 0);
-    Func_02003aa0(9);
+void Func_02002e70(void) {
+  Object_SetModeById(8, 2);
+  Object_SetModeById(9, 0);
+  Func_02003aa0(9);
 }
 
-void Func_02002e8c(void)
-{
-    Object_GetById(gPartyState.currentOwner)->layer = 2;
+void Func_02002e8c(void) {
+  Object_GetById(gPartyState.currentOwner)->layer = 2;
 }
 
-void Func_02002ea8(void)
-{
-    Object_GetById(gPartyState.currentOwner)->layer = 0;
+void Func_02002ea8(void) {
+  Object_GetById(gPartyState.currentOwner)->layer = 0;
 }

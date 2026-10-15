@@ -14,74 +14,63 @@
 
 s32 ArcTan2(s32 y, s32 x);
 
-void Object_LinkPair(s32 firstId, s32 secondId, s32 wait)
-{
-    void *first = ObjectTable_Get(firstId);
-    void *second = ObjectTable_Get(secondId);
+void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
+  void *first = ObjectTable_Get(firstId);
+  void *second = ObjectTable_Get(secondId);
 
-    if (first != NULL && second != NULL)
-    {
-        FacingObject_TurnPairToFaceEachOther(first, second);
-        EventRuntime_Wait(wait);
-    }
+  if (first != NULL && second != NULL) {
+    FacingObject_TurnPairToFaceEachOther(first, second);
+    EventRuntime_Wait(wait);
+  }
 }
 
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second)
-{
-    s32 toward;
-    s32 away;
-    s32 frame;
-    s32 turning;
-    s32 delta;
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
+                                          struct FacingObject *second) {
+  s32 toward;
+  s32 away;
+  s32 frame;
+  s32 turning;
+  s32 delta;
 
-    if (first == NULL || second == NULL)
-        return;
-    toward =
-        (u16)ArcTan2(second->positionZ - first->positionZ, second->positionX - first->positionX);
-    away = toward + 0x8000;
-    for (frame = 0; frame < 60; frame++)
-    {
-        delta = (s16)(toward - first->facing);
-        turning = 2;
-        if (delta != 0)
-        {
-            if (delta > 0x1000)
-                delta = 0x1000;
-            if (delta < -0x1000)
-                delta = -0x1000;
-            first->facing += delta;
-        }
-        else
-        {
-            turning = 1;
-        }
-        delta = (s16)(away - second->facing);
-        if (delta != 0)
-        {
-            if (delta > 0x1000)
-                delta = 0x1000;
-            if (delta < -0x1000)
-                delta = -0x1000;
-            second->facing += delta;
-        }
-        else
-        {
-            turning--;
-        }
-        if (turning == 0)
-            break;
-        WaitFrames(1);
+  if (first == NULL || second == NULL)
+    return;
+  toward = (u16)ArcTan2(second->positionZ - first->positionZ,
+                        second->positionX - first->positionX);
+  away = toward + 0x8000;
+  for (frame = 0; frame < 60; frame++) {
+    delta = (s16)(toward - first->facing);
+    turning = 2;
+    if (delta != 0) {
+      if (delta > 0x1000)
+        delta = 0x1000;
+      if (delta < -0x1000)
+        delta = -0x1000;
+      first->facing += delta;
+    } else {
+      turning = 1;
     }
+    delta = (s16)(away - second->facing);
+    if (delta != 0) {
+      if (delta > 0x1000)
+        delta = 0x1000;
+      if (delta < -0x1000)
+        delta = -0x1000;
+      second->facing += delta;
+    } else {
+      turning--;
+    }
+    if (turning == 0)
+      break;
+    WaitFrames(1);
+  }
 }
 
-void ObjectTable_DestroyById(s32 id)
-{
-    void             *object = ObjectTable_Get(id);
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+void ObjectTable_DestroyById(s32 id) {
+  void *object = ObjectTable_Get(id);
+  struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    if (object != NULL)
-    {
-        Object_Destroy(object);
-        work->objects[id] = NULL;
-    }
+  if (object != NULL) {
+    Object_Destroy(object);
+    work->objects[id] = NULL;
+  }
 }

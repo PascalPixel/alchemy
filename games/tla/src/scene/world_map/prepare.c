@@ -17,42 +17,44 @@ void Func_02004e00(void);
 void Func_02004e28(void);
 void Func_02004e30(s32 cue);
 
-s32 Scene_PrepareMap(void)
-{
-    return 0;
-}
+s32 Scene_PrepareMap(void) { return 0; }
 
-// The djinn tutorial, as The Broken Seal's WorldMap_ShowDjinnTutorial. With flag
-// 0x175 set each message is offset by MsgDjinnGiveTutorialB less A.
-void Func_020011fc(void)
-{
-    Func_02004db0();
-    Func_02004df8(0x10000, 6);
-    Func_02004e00();
-    Func_02004da8();
-    Motion_SetVarCbAndRefresh(9, 2);
-    Func_02004cd8(Flag_IsSet(0x175) * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA)
-                  + (s32)MsgAfterBringingA);
-    Func_02004cf0(9, 0);
-    Battle_WaitMode0(30);
-    Func_02004e30(111);
-    Menu_AnimateSelectionToEntry(0, 2);
-    Flag_Clear(0x16f);
-    Flag_Clear(0x171);
-    Func_02004e28();
-    ObjectMotion_Launch(9, 4, 30);
-    {
-        s32 flag = Flag_IsSet(0x175);
-        s32 base = (s32)MsgNextILl;
+// The djinn tutorial, as The Broken Seal's WorldMap_ShowDjinnTutorial. With
+// flag 0x175 set each message is offset by MsgDjinnGiveTutorialB less A.
+void Func_020011fc(void) {
+  Func_02004db0();
+  Func_02004df8(0x10000, 6);
+  Func_02004e00();
+  Func_02004da8();
+  Motion_SetVarCbAndRefresh(9, 2);
+  Func_02004cd8(Flag_IsSet(0x175) *
+                    ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
+                (s32)MsgAfterBringingA);
+  Func_02004cf0(9, 0);
+  Battle_WaitMode0(30);
+  Func_02004e30(111);
+  Menu_AnimateSelectionToEntry(0, 2);
+  Flag_Clear(0x16f);
+  Flag_Clear(0x171);
+  Func_02004e28();
+  ObjectMotion_Launch(9, 4, 30);
+  {
+    s32 flag = Flag_IsSet(0x175);
+    s32 base = (s32)MsgNextILl;
 
-        /* FAKEMATCH: the empty asm ties the flag to the message base, so the base loads before the multiply as in the native (plain, sched2 multiplies first: differ 2; a one-pass block or asm volatile there moves ObjectMotion_Launch's argument setup instead: differ 2). */
-        asm("" : "+r"(flag) : "r"(base));
-        Func_02004cd8(flag * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) + base);
-    }
-    Func_02004cf0(9, 0);
-    Flag_Clear(0x16f);
-    Flag_Set(0x171);
-    Func_02004e28();
-    Battle_WaitMode0(30);
-    Func_02004d48(9, 5);
+    /* FAKEMATCH: the empty asm ties the flag to the message base, so the base
+     * loads before the multiply as in the native (plain, sched2 multiplies
+     * first: differ 2; a one-pass block or asm volatile there moves
+     * ObjectMotion_Launch's argument setup instead: differ 2). */
+    asm("" : "+r"(flag) : "r"(base));
+    Func_02004cd8(
+        flag * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
+        base);
+  }
+  Func_02004cf0(9, 0);
+  Flag_Clear(0x16f);
+  Flag_Set(0x171);
+  Func_02004e28();
+  Battle_WaitMode0(30);
+  Func_02004d48(9, 5);
 }

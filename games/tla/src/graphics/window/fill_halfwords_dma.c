@@ -10,12 +10,10 @@
 //--------------------------------------------------------------------------
 // dst から count 個を value で埋め、埋め終えた次の位置を返す
 //--------------------------------------------------------------------------
-u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count)
-{
-    if (count > 0)
-    {
-        Dma_Fill16(value, dst, count * 2);
-        dst += count;
-    }
-    return dst;
+u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
+  if (count > 0) {
+    Dma_Fill16(value, dst, count * 2);
+    dst += count;
+  }
+  return dst;
 }

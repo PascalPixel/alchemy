@@ -10,16 +10,14 @@
 // うばう効果は、与えたダメージを行動側に戻すため
 // effect : 効果番号
 //--------------------------------------------------------------------------
-s32 BattleEffectDeadCheck(s32 effect)
-{
-    switch (effect)
-    {
-    case 31: // HPをうばう
-    case 32: // PPをうばう
-    case 60: // HPをうばう（半分）
-    case 69: // PPをうばう（1/10）
-        return 1;
-    default:
-        return 0;
-    }
+s32 BattleEffectDeadCheck(s32 effect) {
+  switch (effect) {
+  case 31: // HPをうばう
+  case 32: // PPをうばう
+  case 60: // HPをうばう（半分）
+  case 69: // PPをうばう（1/10）
+    return 1;
+  default:
+    return 0;
+  }
 }

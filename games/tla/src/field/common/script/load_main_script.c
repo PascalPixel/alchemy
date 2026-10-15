@@ -9,11 +9,10 @@
 #include "types.h"
 #include "script.h"
 
-s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
-{
-    s32 result;
+s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
+  s32 result;
 
-    interpreter->script = gScript_MainScript;
-    interpreter->cursor = (result = 0);
-    return result;
+  interpreter->script = gScript_MainScript;
+  interpreter->cursor = (result = 0);
+  return result;
 }

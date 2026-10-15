@@ -42,986 +42,865 @@ static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-union DriftingObject
-{
-    struct FieldActor          actor;
-    struct OverlayEffectMotion motion;
+union DriftingObject {
+  struct FieldActor actor;
+  struct OverlayEffectMotion motion;
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_nearby.h"
 
-static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
-{
-    u8                *base = gWindowWork[0];
-    u8                *workspace = gWindowWork[12];
-    s32                flag = 0;
-    s32                selector = 18;
-    struct FieldActor *leader;
+static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity) {
+  u8 *base = gWindowWork[0];
+  u8 *workspace = gWindowWork[12];
+  s32 flag = 0;
+  s32 selector = 18;
+  struct FieldActor *leader;
 
-    if (entity->targetX == 0x80000000)
-        return 0;
-
-    leader = Object_GetById(ACTOR_PARTY_LEADER);
-    if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFFSET] != 0)
-    {
-        selector = 26;
-        flag = 1;
-    }
-    SceneActor_CheckFacingAndRange(entity, leader, selector, flag);
+  if (entity->targetX == 0x80000000)
     return 0;
+
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFFSET] != 0) {
+    selector = 26;
+    flag = 1;
+  }
+  SceneActor_CheckFacingAndRange(entity, leader, selector, flag);
+  return 0;
 }
 
-void *SceneData_GetScriptTable(void)
-{
-    return gVault_Scripts;
+void *SceneData_GetScriptTable(void) { return gVault_Scripts; }
+
+int SceneData_ReturnZero(void) { return 0; }
+
+void *SceneData_GetMessageTable(void) { return gVault_Messages; }
+
+void *SceneData_SelectActorTableByFlag855(void) {
+  if (Engine_GameFlagIsSet(0x855) != 0)
+    return gVault_ActorsFlag855;
+  return gVault_Actors;
 }
 
-int SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-void *SceneData_GetMessageTable(void)
-{
-    return gVault_Messages;
-}
-
-void *SceneData_SelectActorTableByFlag855(void)
-{
-    if (Engine_GameFlagIsSet(0x855) != 0)
-        return gVault_ActorsFlag855;
-    return gVault_Actors;
-}
-
-static int Vault_GetIvanVenusDjinnCount(void)
-{
-    return UnitGet(2)->djinnOwnedCounts[0];
+static int Vault_GetIvanVenusDjinnCount(void) {
+  return UnitGet(2)->djinnOwnedCounts[0];
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_djinn.h"
 
-static void Vault_SayFarewellToIvan(void)
-{
-    struct FieldActor *record;
-    struct EventWork  *p5;
+static void Vault_SayFarewellToIvan(void) {
+  struct FieldActor *record;
+  struct EventWork *p5;
 
-    p5 = gEventWork;
-    if (GameFlag_IsSet(0x855) != 0 || GameFlag_IsSet(0x856) == 0)
-    {
-        Engine_EventRequestExit(p5->touchedTrigger - 19);
-        return;
-    }
-    Engine_EventBegin();
-    record = Actor_Get(ACTOR_PARTY_LEADER);
-    if (record != 0)
-    {
-        Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
-    }
-    Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-    if (p5->touchedTrigger == 20)
-    {
-        Actor_WalkToAndWait(IVAN, 0x190, 0x1c0);
-    }
-    else
-    {
-        Camera_SetSpeed(0xcccc, 0x1999);
-        Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
-        Actor_WalkToAndWait(IVAN, 224, 162);
-        Engine_CameraWaitForMove();
-    }
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-    Engine_EventWait(20);
-    Engine_EventSetMessage(MsgVaultLeavingImStillWorriedAbout);
-    Event_ShowMessageAndWait(0x9002, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    if (Vault_GetIvanVenusDjinnCount() != 0)
-    {
-        Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
-        Event_ShowMessage(IVAN, 0);
-        OverlayObject_RunObject2WhenFlagged();
-        Engine_TaskWait(20);
-    }
-    Party_RemoveOwnerRestored(2);
+  p5 = gEventWork;
+  if (GameFlag_IsSet(0x855) != 0 || GameFlag_IsSet(0x856) == 0) {
     Engine_EventRequestExit(p5->touchedTrigger - 19);
-    Engine_EventCloseScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventEnd();
+    return;
+  }
+  Engine_EventBegin();
+  record = Actor_Get(ACTOR_PARTY_LEADER);
+  if (record != 0) {
+    Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
+  }
+  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+  if (p5->touchedTrigger == 20) {
+    Actor_WalkToAndWait(IVAN, 0x190, 0x1c0);
+  } else {
+    Camera_SetSpeed(0xcccc, 0x1999);
+    Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
+    Actor_WalkToAndWait(IVAN, 224, 162);
+    Engine_CameraWaitForMove();
+  }
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
+  Engine_EventWait(20);
+  Engine_EventSetMessage(MsgVaultLeavingImStillWorriedAbout);
+  Event_ShowMessageAndWait(0x9002, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  if (Vault_GetIvanVenusDjinnCount() != 0) {
+    Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
+    Event_ShowMessage(IVAN, 0);
+    OverlayObject_RunObject2WhenFlagged();
+    Engine_TaskWait(20);
+  }
+  Party_RemoveOwnerRestored(2);
+  Engine_EventRequestExit(p5->touchedTrigger - 19);
+  Engine_EventCloseScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventEnd();
 }
 
-static void EV90_SEARCH(void)
-{
-    Engine_EventBegin();
-    Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-    Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
-    Engine_EventEnd();
+static void EV90_SEARCH(void) {
+  Engine_EventBegin();
+  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+  Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
+  Engine_EventEnd();
 }
 
-void *Vault_SelectEvents(void)
-{
-    if (Engine_GameFlagIsSet(0x855) != 0)
-        return gVault_ExtrasFlag855;
-    return gVault_Extras;
+void *Vault_SelectEvents(void) {
+  if (Engine_GameFlagIsSet(0x855) != 0)
+    return gVault_ExtrasFlag855;
+  return gVault_Extras;
 }
 
-static void EV09_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
-    SceneActor_ApplyActorCueThenWait(9, 0, 2);
-    Event_OpenMessage(9, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        gEventWork->message++;
-    }
-    Event_ShowMessage(9, 0);
-    Actor_FaceDirection(9, 0x5000, 0);
-    Engine_EventEnd();
+static void EV09_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
+  SceneActor_ApplyActorCueThenWait(9, 0, 2);
+  Event_OpenMessage(9, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    gEventWork->message++;
+  }
+  Event_ShowMessage(9, 0);
+  Actor_FaceDirection(9, 0x5000, 0);
+  Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorThirteenSceneSetup(void)
-{
-    struct EventWork *workspace;
+static void ActorPresentation_RunActorThirteenSceneSetup(void) {
+  struct EventWork *workspace;
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultThoseTravelersLeftInBig);
-    Engine_ActorSetAnimation(13, 1);
-    SceneActor_ApplyActorCueThenWait(13, 0, 2);
-    Engine_EventOpenMessage(13, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(13, 0);
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultThoseTravelersLeftInBig);
+  Engine_ActorSetAnimation(13, 1);
+  SceneActor_ApplyActorCueThenWait(13, 0, 2);
+  Engine_EventOpenMessage(13, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(13, 0);
+  Engine_EventEnd();
 }
 
-static void EV17_TALK(void)
-{
-    struct EventWork *workspace;
+static void EV17_TALK(void) {
+  struct EventWork *workspace;
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultAccusingUsStealingHammetsTreasured);
-    SceneActor_ApplyActorCueThenWait(17, 0, 2);
-    Engine_EventOpenMessage(17, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(17, 0);
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultAccusingUsStealingHammetsTreasured);
+  SceneActor_ApplyActorCueThenWait(17, 0, 2);
+  Engine_EventOpenMessage(17, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(17, 0);
+  Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorEighteenSceneSetup(void)
-{
-    struct EventWork *workspace;
+static void ActorPresentation_RunActorEighteenSceneSetup(void) {
+  struct EventWork *workspace;
 
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultOffOnAdventure);
-    SceneActor_ApplyActorCueThenWait(18, 0, 2);
-    Engine_EventOpenMessage(18, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(18, 0);
-    Engine_EventEnd();
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultOffOnAdventure);
+  SceneActor_ApplyActorCueThenWait(18, 0, 2);
+  Engine_EventOpenMessage(18, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(18, 0);
+  Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor11Line(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultGuessFolksGot);
-    SceneActor_RunActorStep(11);
-    Engine_EventEnd();
+static void SceneDialogue_RunActor11Line(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultGuessFolksGot);
+  SceneActor_RunActorStep(11);
+  Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Line(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultNobodysStealingAnything);
-    SceneActor_RunActorStep(16);
-    Engine_EventEnd();
+static void SceneDialogue_RunActor16Line(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultNobodysStealingAnything);
+  SceneActor_RunActorStep(16);
+  Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor19Line(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultRuffRrruff);
-    Engine_ActorSetAnimation(19, 0);
-    SceneActor_ApplyActorCueThenWait(19, 0, 2);
-    Engine_EventShowMessage(19, 0);
-    Engine_EventEnd();
+static void SceneDialogue_RunActor19Line(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultRuffRrruff);
+  Engine_ActorSetAnimation(19, 0);
+  SceneActor_ApplyActorCueThenWait(19, 0, 2);
+  Engine_EventShowMessage(19, 0);
+  Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorFourteenDialogue(void)
-{
-    struct FieldActor *actor = Object_GetById(14);
-    s16                saved = actor->facing;
+static void ActorPresentation_RunActorFourteenDialogue(void) {
+  struct FieldActor *actor = Object_GetById(14);
+  s16 saved = actor->facing;
 
-    actor->timer |= 2;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultPoorGuyLeft);
-    Engine_ActorSetAnimation(14, 0);
-    SceneActor_ApplyActorCueThenWait(14, 0, 2);
-    SceneActor_ApplyActorZeroThenWait(14, 10);
-    actor->facing = saved;
-    Engine_TaskWait(1);
-    Engine_EventEnd();
-    actor->timer &= 1;
+  actor->timer |= 2;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultPoorGuyLeft);
+  Engine_ActorSetAnimation(14, 0);
+  SceneActor_ApplyActorCueThenWait(14, 0, 2);
+  SceneActor_ApplyActorZeroThenWait(14, 10);
+  actor->facing = saved;
+  Engine_TaskWait(1);
+  Engine_EventEnd();
+  actor->timer &= 1;
 }
 
-static void ActorPresentation_RunActorFifteenDialogue(void)
-{
-    struct FieldActor *actor = Object_GetById(15);
-    s16                saved = actor->facing;
+static void ActorPresentation_RunActorFifteenDialogue(void) {
+  struct FieldActor *actor = Object_GetById(15);
+  s16 saved = actor->facing;
 
-    actor->timer |= 2;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultMasterHammetsCaravan);
-    Engine_ActorSetAnimation(15, 0);
-    SceneActor_ApplyActorCueThenWait(15, 0, 2);
-    SceneActor_ApplyActorZeroThenWait(15, 10);
-    actor->facing = saved;
-    Engine_TaskWait(1);
-    Engine_EventEnd();
-    actor->timer &= 1;
+  actor->timer |= 2;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultMasterHammetsCaravan);
+  Engine_ActorSetAnimation(15, 0);
+  SceneActor_ApplyActorCueThenWait(15, 0, 2);
+  SceneActor_ApplyActorZeroThenWait(15, 10);
+  actor->facing = saved;
+  Engine_TaskWait(1);
+  Engine_EventEnd();
+  actor->timer &= 1;
 }
 
-static void EV21_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultFixingRoofCant);
-    SceneActor_ApplyActorCueThenWait(21, 0, 2);
-    Engine_ActorShowEmote(21, 0x103, 0);
-    Engine_EventWait(30);
-    Engine_EventOpenMessage(21, 0);
-    Engine_EventEnd();
+static void EV21_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultFixingRoofCant);
+  SceneActor_ApplyActorCueThenWait(21, 0, 2);
+  Engine_ActorShowEmote(21, 0x103, 0);
+  Engine_EventWait(30);
+  Engine_EventOpenMessage(21, 0);
+  Engine_EventEnd();
 }
 
-static void SceneActor_RunActorStep(s32 actor)
-{
-    Engine_EventBegin();
-    Engine_ActorSetAnimation(actor, 1);
-    SceneActor_ApplyActorCueThenWait(actor, 0, 2);
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventEnd();
+static void SceneActor_RunActorStep(s32 actor) {
+  Engine_EventBegin();
+  Engine_ActorSetAnimation(actor, 1);
+  SceneActor_ApplyActorCueThenWait(actor, 0, 2);
+  Engine_EventShowMessage(actor, 0);
+  Engine_EventEnd();
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_talk.h"
 
-static void EV08_TALK(void)
-{
-    struct EventWork *workspace;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
-    SceneActor_ApplyActorCueThenWait(8, 0, 2);
-    Engine_EventOpenMessage(8, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(8, 0);
-    Engine_EventEnd();
+static void EV08_TALK(void) {
+  struct EventWork *workspace;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
+  SceneActor_ApplyActorCueThenWait(8, 0, 2);
+  Engine_EventOpenMessage(8, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(8, 0);
+  Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor11SecondLine(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultGreatCaughtThieves);
-    SceneActor_RunActorStep(11);
-    Engine_EventEnd();
+static void SceneDialogue_RunActor11SecondLine(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultGreatCaughtThieves);
+  SceneActor_RunActorStep(11);
+  Engine_EventEnd();
 }
 
-static void EV12_TALK(void)
-{
-    struct EventWork *workspace;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultTalkingAboutHammetsServantIvan);
+static void EV12_TALK(void) {
+  struct EventWork *workspace;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultTalkingAboutHammetsServantIvan);
+  if (Engine_GameFlagIsSet(2) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  SceneActor_RunActorStep(12);
+  Engine_EventEnd();
+}
+
+static void SceneDialogue_RunActor13Line(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultEruptionDevastatedRoads);
+  SceneActor_RunActorStep(13);
+  Engine_EventEnd();
+}
+
+static void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void) {
+  struct FieldActor *actor = Object_GetById(14);
+  u16 *flags = (u16 *)&actor->timer;
+  s16 saved = actor->facing;
+
+  s32 tmp;
+
+  *flags = (tmp = *flags | 2);
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultDidntGoLunpa);
+  if (Engine_GameFlagIsSet(2) != 0)
+    ++gEventWork->message;
+  Engine_ActorSetAnimation(14, 0);
+  SceneActor_ApplyActorCueThenWait(14, 0, 2);
+  SceneActor_ApplyActorZeroThenWait(14, 10);
+  actor->facing = saved;
+  Engine_TaskWait(1);
+  Engine_EventEnd();
+  *flags &= 1;
+}
+
+static void ActorPresentation_RunActorFifteenFollowupDialogue(void) {
+  struct FieldActor *actor = Object_GetById(15);
+  s16 saved = actor->facing;
+
+  actor->timer |= 2;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultEveryoneGratefulCaptured);
+  Engine_ActorSetAnimation(15, 0);
+  SceneActor_ApplyActorCueThenWait(15, 0, 2);
+  SceneActor_ApplyActorZeroThenWait(15, 10);
+  actor->facing = saved;
+  Engine_TaskWait(1);
+  Engine_EventEnd();
+  actor->timer &= 1;
+}
+
+static void ActorPresentation_RunActorSixteenSceneSetup(void) {
+  struct EventWork *workspace;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
+  Engine_ActorSetAnimation(16, 1);
+  SceneActor_ApplyActorCueThenWait(16, 0, 2);
+  Engine_EventOpenMessage(16, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(16, 0);
+  Engine_EventEnd();
+}
+
+static void ActorPresentation_RunActorEighteenFollowupSceneSetup(void) {
+  struct EventWork *workspace;
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultOnesWhoCapturedThieves);
+  SceneActor_ApplyActorCueThenWait(18, 0, 2);
+  Engine_EventOpenMessage(18, 0);
+  if (Engine_EventChooseYesNo(0, 0) != 0) {
+    workspace = gEventWork;
+    ++workspace->message;
+  }
+  Engine_EventShowMessage(18, 0);
+  Engine_EventEnd();
+}
+
+static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultRuffRrruff2);
+  Engine_ActorSetAnimation(19, 0);
+  SceneActor_ApplyActorCueThenWait(19, 0, 2);
+  Engine_EventShowMessage(19, 0);
+  Engine_ActorSetAnimation(19, 1);
+  if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
+    u16 *p = &gEventWork->unk172;
+    u16 value = 1;
+
+    *p = value;
+  }
+  Engine_EventEnd();
+}
+
+static void EV20_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultThankForOtherDayLeaving);
+  SceneActor_ApplyActorCueThenWait(20, 0, 2);
+  Engine_ActorSetAnimationAndWait(20, 3);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(20, 0);
+  Engine_EventEnd();
+}
+
+static void EV11_PSYNERGY(void) {
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0)
+    Engine_EventSetMessage(MsgVaultManShouldStealFromAnother);
+  else
+    Engine_EventSetMessage(MsgVaultHowPunishPrisoners);
+  SceneActor_RunActorCommandWithFlag91(11);
+  Engine_EventEnd();
+}
+
+static void EV13_PSYNERGY(void) {
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0) {
+    Engine_EventSetMessage(MsgVaultGroupTravelersWasStrangeBunch);
+  } else {
+    Engine_EventSetMessage(MsgVaultWithRoadOutOnlyWay);
+  }
+  SceneActor_RunActorCommandWithFlag91(13);
+  Engine_EventEnd();
+}
+
+static void EV14_PSYNERGY(void) {
+  Object_GetById(14)->timer |= 2;
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0) {
+    Engine_EventSetMessage(MsgVaultBetWasThoseThreeCreeps);
+  } else {
+    Engine_EventSetMessage(MsgVaultWhereDidIvanGoBy);
     if (Engine_GameFlagIsSet(2) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    SceneActor_RunActorStep(12);
-    Engine_EventEnd();
+      ++gEventWork->message;
+  }
+  SceneActor_RunActorCommandWithFlag91(14);
+  Engine_EventEnd();
+  Object_GetById(14)->timer &= 1;
 }
 
-static void SceneDialogue_RunActor13Line(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultEruptionDevastatedRoads);
-    SceneActor_RunActorStep(13);
-    Engine_EventEnd();
+static void EV15_PSYNERGY(void) {
+  Object_GetById(15)->timer |= 2;
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0)
+    Engine_EventSetMessage(MsgVaultSupposeDoesntMatterHowRich);
+  else
+    Engine_EventSetMessage(MsgVaultMustStrongerThanLookHave);
+  SceneActor_RunActorCommandWithFlag91(15);
+  Engine_EventEnd();
+  Object_GetById(15)->timer &= 1;
 }
 
-static void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
-{
-    struct FieldActor *actor = Object_GetById(14);
-    u16               *flags = (u16 *)&actor->timer;
-    s16                saved = actor->facing;
-
-    s32 tmp;
-
-    *flags = (tmp = *flags | 2);
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultDidntGoLunpa);
-    if (Engine_GameFlagIsSet(2) != 0)
-        ++gEventWork->message;
-    Engine_ActorSetAnimation(14, 0);
-    SceneActor_ApplyActorCueThenWait(14, 0, 2);
-    SceneActor_ApplyActorZeroThenWait(14, 10);
-    actor->facing = saved;
-    Engine_TaskWait(1);
-    Engine_EventEnd();
-    *flags &= 1;
+static void EV16_PSYNERGY(void) {
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0)
+    Engine_EventSetMessage(MsgVaultEveryoneKnowsThoseThreeAt);
+  else
+    Engine_EventSetMessage(MsgVaultFeelMuchBetter);
+  SceneActor_RunActorCommandWithFlag91(16);
+  Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorFifteenFollowupDialogue(void)
-{
-    struct FieldActor *actor = Object_GetById(15);
-    s16                saved = actor->facing;
-
-    actor->timer |= 2;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultEveryoneGratefulCaptured);
-    Engine_ActorSetAnimation(15, 0);
-    SceneActor_ApplyActorCueThenWait(15, 0, 2);
-    SceneActor_ApplyActorZeroThenWait(15, 10);
-    actor->facing = saved;
-    Engine_TaskWait(1);
-    Engine_EventEnd();
-    actor->timer &= 1;
-}
-
-static void ActorPresentation_RunActorSixteenSceneSetup(void)
-{
-    struct EventWork *workspace;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
-    Engine_ActorSetAnimation(16, 1);
-    SceneActor_ApplyActorCueThenWait(16, 0, 2);
-    Engine_EventOpenMessage(16, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(16, 0);
-    Engine_EventEnd();
-}
-
-static void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
-{
-    struct EventWork *workspace;
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultOnesWhoCapturedThieves);
-    SceneActor_ApplyActorCueThenWait(18, 0, 2);
-    Engine_EventOpenMessage(18, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        workspace = gEventWork;
-        ++workspace->message;
-    }
-    Engine_EventShowMessage(18, 0);
-    Engine_EventEnd();
-}
-
-static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultRuffRrruff2);
+static void EV19_PSYNERGY(void) {
+  struct FieldActor *actor = Object_GetById(19);
+  actor->paused = 1;
+  Engine_EventBegin();
+  if (Engine_GameFlagIsSet(0x855) == 0) {
+    Engine_EventSetMessage(MsgVaultStealingInMidstVolcanicEruption);
     Engine_ActorSetAnimation(19, 0);
-    SceneActor_ApplyActorCueThenWait(19, 0, 2);
-    Engine_EventShowMessage(19, 0);
-    Engine_ActorSetAnimation(19, 1);
-    if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0)
-    {
-        u16 *p = &gEventWork->unk172;
-        u16  value = 1;
-
-        *p = value;
-    }
-    Engine_EventEnd();
+    Engine_EventWait(2);
+  } else if (Engine_GameFlagIsSet(0x858) != 0) {
+    Engine_EventSetMessage(MsgVaultCarefulSearchWillRevealPassage);
+  } else {
+    Engine_EventSetMessage(MsgVaultIfBringMeBoneIll);
+  }
+  Engine_EventShowMessage(19, 0);
+  Engine_EventEnd();
+  actor->paused = 0;
 }
 
-static void EV20_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultThankForOtherDayLeaving);
-    SceneActor_ApplyActorCueThenWait(20, 0, 2);
-    Engine_ActorSetAnimationAndWait(20, 3);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(20, 0);
-    Engine_EventEnd();
-}
-
-static void EV11_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-        Engine_EventSetMessage(MsgVaultManShouldStealFromAnother);
-    else
-        Engine_EventSetMessage(MsgVaultHowPunishPrisoners);
-    SceneActor_RunActorCommandWithFlag91(11);
-    Engine_EventEnd();
-}
-
-static void EV13_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-    {
-        Engine_EventSetMessage(MsgVaultGroupTravelersWasStrangeBunch);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultWithRoadOutOnlyWay);
-    }
-    SceneActor_RunActorCommandWithFlag91(13);
-    Engine_EventEnd();
-}
-
-static void EV14_PSYNERGY(void)
-{
-    Object_GetById(14)->timer |= 2;
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-    {
-        Engine_EventSetMessage(MsgVaultBetWasThoseThreeCreeps);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultWhereDidIvanGoBy);
-        if (Engine_GameFlagIsSet(2) != 0)
-            ++gEventWork->message;
-    }
-    SceneActor_RunActorCommandWithFlag91(14);
-    Engine_EventEnd();
-    Object_GetById(14)->timer &= 1;
-}
-
-static void EV15_PSYNERGY(void)
-{
-    Object_GetById(15)->timer |= 2;
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-        Engine_EventSetMessage(MsgVaultSupposeDoesntMatterHowRich);
-    else
-        Engine_EventSetMessage(MsgVaultMustStrongerThanLookHave);
-    SceneActor_RunActorCommandWithFlag91(15);
-    Engine_EventEnd();
-    Object_GetById(15)->timer &= 1;
-}
-
-static void EV16_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-        Engine_EventSetMessage(MsgVaultEveryoneKnowsThoseThreeAt);
-    else
-        Engine_EventSetMessage(MsgVaultFeelMuchBetter);
-    SceneActor_RunActorCommandWithFlag91(16);
-    Engine_EventEnd();
-}
-
-static void EV19_PSYNERGY(void)
-{
-    struct FieldActor *actor = Object_GetById(19);
-    actor->paused = 1;
-    Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x855) == 0)
-    {
-        Engine_EventSetMessage(MsgVaultStealingInMidstVolcanicEruption);
-        Engine_ActorSetAnimation(19, 0);
-        Engine_EventWait(2);
-    }
-    else if (Engine_GameFlagIsSet(0x858) != 0)
-    {
-        Engine_EventSetMessage(MsgVaultCarefulSearchWillRevealPassage);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgVaultIfBringMeBoneIll);
-    }
-    Engine_EventShowMessage(19, 0);
-    Engine_EventEnd();
-    actor->paused = 0;
-}
-
-static void EV21_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgVaultSneakWastingTime);
-    SceneActor_RunActorCommandWithFlag91(21);
-    Engine_EventEnd();
+static void EV21_PSYNERGY(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgVaultSneakWastingTime);
+  SceneActor_RunActorCommandWithFlag91(21);
+  Engine_EventEnd();
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_toggle.h"
 
-static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
-{
-    Actor_SetSpeed(0, 0x8000, 0x4000);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
-    gEventWork->transitionFrames = 16;
-    Engine_EventRequestExit(continuation);
+static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation) {
+  Actor_SetSpeed(0, 0x8000, 0x4000);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
+  gEventWork->transitionFrames = 16;
+  Engine_EventRequestExit(continuation);
 }
 
-static void EV05_TOUCH(void)
-{
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
-    SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
+static void EV05_TOUCH(void) {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
+  SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
-static void EV06_TOUCH(void)
-{
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
-    SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
+static void EV06_TOUCH(void) {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
+  SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
-static void EV07_TOUCH(void)
-{
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
-    SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
+static void EV07_TOUCH(void) {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
+  SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
-static void EV08_TOUCH(void)
-{
-    struct FieldActor          *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
+static void EV08_TOUCH(void) {
+  struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldSpritePriority *sprite =
+      (struct FieldSpritePriority *)actor->sprite;
 
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene8Cells, 54, 13);
-    {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene8Cells, 54, 13);
+  {
 
-        Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
-    }
-    actor->priorityFlags &= ~1;
-    sprite->priority = 3;
-    SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
+    Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
+  }
+  actor->priorityFlags &= ~1;
+  sprite->priority = 3;
+  SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
 
-static void EV09_TOUCH(void)
-{
-    struct FieldActor          *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
+static void EV09_TOUCH(void) {
+  struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldSpritePriority *sprite =
+      (struct FieldSpritePriority *)actor->sprite;
 
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene9Cells, 49, 10);
-    {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene9Cells, 49, 10);
+  {
 
-        Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
-    }
-    actor->priorityFlags &= ~1;
-    sprite->priority = 3;
-    SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
+    Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
+  }
+  actor->priorityFlags &= ~1;
+  sprite->priority = 3;
+  SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
 
-static void EV10_TOUCH(void)
-{
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
-    SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
+static void EV10_TOUCH(void) {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
+  SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_scene_cells.h"
 
-static void EV12_TOUCH(void)
-{
-    struct FieldActor          *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
+static void EV12_TOUCH(void) {
+  struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldSpritePriority *sprite =
+      (struct FieldSpritePriority *)actor->sprite;
 
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(gVault_Scene12Cells, 35, 9);
-    {
+  Engine_AudioPlayCue(158);
+  Engine_MapAnimateCells(gVault_Scene12Cells, 35, 9);
+  {
 
-        Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
-    }
-    actor->priorityFlags &= ~1;
-    sprite->priority = 3;
-    SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
+    Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
+  }
+  actor->priorityFlags &= ~1;
+  sprite->priority = 3;
+  SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-static void EV13_TOUCH(void)
-{
-    Engine_AudioPlayCue(123);
-    SceneActor_PlaceAndSetSceneDelay(152, 264, 13);
+static void EV13_TOUCH(void) {
+  Engine_AudioPlayCue(123);
+  SceneActor_PlaceAndSetSceneDelay(152, 264, 13);
 }
 
-static void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
-{
-    struct FieldActor *record = Object_GetById(actor);
-    int                frames;
-    Engine_ActorSetSpeed(actor, 0x30000, 0x18000);
-    record->gravity = 0x8000;
-    record->bounce = 0;
-    record->velocityY = field40;
-    Engine_ActorSetSpriteFlags(record, 0);
-    Engine_ActorMoveToAndWait(actor, x, z);
-    Engine_ActorSetPosition(actor, x << 16, z << 16);
-    for (frames = 60; frames != 0; --frames)
-    {
-        Engine_TaskWait(1);
-        if (*(s16 *)((u8 *)record + 42) == 0)
-            break;
-    }
-    Engine_ActorSetSpriteFlags(record, 1);
-    record->gravity = 0x10000;
+static void ActorPresentation_MoveActorToPositionAndWait(int actor, int x,
+                                                         int z, int field40) {
+  struct FieldActor *record = Object_GetById(actor);
+  int frames;
+  Engine_ActorSetSpeed(actor, 0x30000, 0x18000);
+  record->gravity = 0x8000;
+  record->bounce = 0;
+  record->velocityY = field40;
+  Engine_ActorSetSpriteFlags(record, 0);
+  Engine_ActorMoveToAndWait(actor, x, z);
+  Engine_ActorSetPosition(actor, x << 16, z << 16);
+  for (frames = 60; frames != 0; --frames) {
+    Engine_TaskWait(1);
+    if (*(s16 *)((u8 *)record + 42) == 0)
+      break;
+  }
+  Engine_ActorSetSpriteFlags(record, 1);
+  record->gravity = 0x10000;
 }
 
-static void EV30_SEARCH(void)
-{
-    Engine_EventBegin();
-    Event_PlayCue(100);
-    Engine_EventWait(40);
-    if (GameFlag_IsSet(0x867) == 0)
-    {
-        Actor_SetAttachedEffect(23, 0x102);
-        Engine_ActorJump(23, 4, 0);
-        Engine_EventWait(12);
-        Engine_ActorJump(23, 4, 0);
-        Engine_EventWait(20);
-        ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
-        Engine_EventWait(20);
-        Actor_WalkToAndWait(23, 0x198, 104);
-        Actor_WalkToAndWait(23, 0x198, 120);
-        GameFlag_Set(0x867);
-    }
-    Engine_EventEnd();
+static void EV30_SEARCH(void) {
+  Engine_EventBegin();
+  Event_PlayCue(100);
+  Engine_EventWait(40);
+  if (GameFlag_IsSet(0x867) == 0) {
+    Actor_SetAttachedEffect(23, 0x102);
+    Engine_ActorJump(23, 4, 0);
+    Engine_EventWait(12);
+    Engine_ActorJump(23, 4, 0);
+    Engine_EventWait(20);
+    ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
+    Engine_EventWait(20);
+    Actor_WalkToAndWait(23, 0x198, 104);
+    Actor_WalkToAndWait(23, 0x198, 120);
+    GameFlag_Set(0x867);
+  }
+  Engine_EventEnd();
 }
 
-static void EV19_SCRIPT(void)
-{
-    PartyInventory_Discard(231);
-    Engine_EventBegin();
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(19, 2);
-    Actor_SetSpeed(19, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(19, 216, 0x198);
-    Engine_EventWait(10);
-    Actor_FaceDirection(19, 0x4000, 20);
-    Engine_ActorJump(19, 6, 0);
-    Engine_EventWait(30);
-    Engine_ActorJump(19, 6, 0);
-    Engine_EventWait(30);
-    Engine_ActorJump(19, 6, 0);
-    Engine_EventWait(30);
-    Actor_WalkToAndWait(19, 216, 0x188);
-    Engine_EventWait(10);
-    Actor_FaceDirection(19, 0x4000, 20);
-    GameFlag_Set(0x858);
-    Engine_EventEnd();
+static void EV19_SCRIPT(void) {
+  PartyInventory_Discard(231);
+  Engine_EventBegin();
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(19, 2);
+  Actor_SetSpeed(19, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(19, 216, 0x198);
+  Engine_EventWait(10);
+  Actor_FaceDirection(19, 0x4000, 20);
+  Engine_ActorJump(19, 6, 0);
+  Engine_EventWait(30);
+  Engine_ActorJump(19, 6, 0);
+  Engine_EventWait(30);
+  Engine_ActorJump(19, 6, 0);
+  Engine_EventWait(30);
+  Actor_WalkToAndWait(19, 216, 0x188);
+  Engine_EventWait(10);
+  Actor_FaceDirection(19, 0x4000, 20);
+  GameFlag_Set(0x858);
+  Engine_EventEnd();
 }
 
-s32 Vault_RestoreEntryState(void)
-{
-    s32                rec7;
-    struct FieldActor *record;
-    s32                v7;
-    s32                zero;
+s32 Vault_RestoreEntryState(void) {
+  s32 rec7;
+  struct FieldActor *record;
+  s32 v7;
+  s32 zero;
 
-    if (Engine_GameFlagIsSet(0x87a) != 0)
-    {
-        Engine_EventRequestExit(14);
+  if (Engine_GameFlagIsSet(0x87a) != 0) {
+    Engine_EventRequestExit(14);
+  }
+  if (Engine_GameFlagIsSet(0x200) != 0) {
+    Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
+  }
+  OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
+  v7 = 1;
+  zero = 0;
+  record = Object_GetById(14);
+  record->timer = v7;
+  record->update =
+      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  record = Object_GetById(15);
+  record->timer = zero;
+  record->update =
+      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  if (Engine_GameFlagIsSet(0x858) != 0) {
+    Actor_SetPosition(19, 0xd80000, 0x1880000);
+  }
+  rec7 = Engine_GameFlagIsSet(0x853);
+  if (Engine_GameFlagIsSet(0x855) == 0) {
+    if ((v7 & rec7) != 0) {
+      record = Object_GetById(21);
+      record->update = (void (*)(
+          union FieldObject *))ActorPresentation_UpdateEntityFromLeader;
     }
-    if (Engine_GameFlagIsSet(0x200) != 0)
-    {
-        Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
-    }
-    OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
-    v7 = 1;
-    zero = 0;
-    record = Object_GetById(14);
-    record->timer = v7;
-    record->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
-    record = Object_GetById(15);
-    record->timer = zero;
-    record->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
-    if (Engine_GameFlagIsSet(0x858) != 0)
-    {
-        Actor_SetPosition(19, 0xd80000, 0x1880000);
-    }
-    rec7 = Engine_GameFlagIsSet(0x853);
-    if (Engine_GameFlagIsSet(0x855) == 0)
-    {
-        if ((v7 & rec7) != 0)
-        {
-            record = Object_GetById(21);
-            record->update =
-                (void (*)(union FieldObject *))ActorPresentation_UpdateEntityFromLeader;
+  }
+  if (gGameState.entrance <= 2) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
+      Engine_GameFlagClear(0x867);
+      if (Engine_GameFlagIsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x856) != 0) {
+          Engine_EventBegin();
+          record = Object_GetById(0);
+          if (record != 0) {
+            Engine_ActorSetPosition(2, record->x.fixed, record->z.fixed);
+          }
+          if (gGameState.entrance == 1) {
+            Actor_SetPosition(2, 0x1900000, 0x1c00000);
+          } else {
+            Actor_SetPosition(2, 0xe00000, 0xa20000);
+          }
+          Engine_ActorFaceEachOther(2, 0, 0);
+          Engine_EventOpenScreen();
+          Engine_EventWaitForScreen();
+          Engine_EventWait(30);
+          Engine_ActorRunRepeatedMotion(2, 2);
+          Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
+          Engine_EventShowMessageAndWait(2, 0, 20);
+          Engine_ActorSetAnimationAndWait(0, 3);
+          Actor_SetSpeed(2, 0xcccc, 0x6666);
+          Engine_ActorSetAnimation(2, 2);
+          record = Object_GetById(0);
+          if (record != 0) {
+            Engine_ActorSetDestination(2, record->x.part.pixel,
+                                       record->z.part.pixel);
+          }
+          Engine_ActorWaitForMove(2);
+          Engine_ActorSetPosition(2, 0, 0);
+          Event_PrepareObjectAndApplyValue(2, 0);
+          Engine_EventEnd();
         }
+      }
     }
-    if (gGameState.entrance <= 2)
-    {
-        if (Engine_GameFlagIsSet(0x109) == 0)
-        {
-            Engine_GameFlagClear(0x867);
-            if (Engine_GameFlagIsSet(0x855) == 0)
-            {
-                if (Engine_GameFlagIsSet(0x856) != 0)
-                {
-                    Engine_EventBegin();
-                    record = Object_GetById(0);
-                    if (record != 0)
-                    {
-                        Engine_ActorSetPosition(2, record->x.fixed, record->z.fixed);
-                    }
-                    if (gGameState.entrance == 1)
-                    {
-                        Actor_SetPosition(2, 0x1900000, 0x1c00000);
-                    }
-                    else
-                    {
-                        Actor_SetPosition(2, 0xe00000, 0xa20000);
-                    }
-                    Engine_ActorFaceEachOther(2, 0, 0);
-                    Engine_EventOpenScreen();
-                    Engine_EventWaitForScreen();
-                    Engine_EventWait(30);
-                    Engine_ActorRunRepeatedMotion(2, 2);
-                    Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
-                    Engine_EventShowMessageAndWait(2, 0, 20);
-                    Engine_ActorSetAnimationAndWait(0, 3);
-                    Actor_SetSpeed(2, 0xcccc, 0x6666);
-                    Engine_ActorSetAnimation(2, 2);
-                    record = Object_GetById(0);
-                    if (record != 0)
-                    {
-                        Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
-                    }
-                    Engine_ActorWaitForMove(2);
-                    Engine_ActorSetPosition(2, 0, 0);
-                    Event_PrepareObjectAndApplyValue(2, 0);
-                    Engine_EventEnd();
-                }
-            }
+  }
+  if (Engine_GameFlagIsSet(0x867) != 0) {
+    Actor_SetPosition(23, 0x1980000, 0x780000);
+  }
+  if (gGameState.entrance == 11) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
+      if (Engine_GameFlagIsSet(0x856) != 0) {
+        if (Engine_GameFlagIsSet(2) == 0) {
+          Engine_EventBegin();
+          Actor_SetPosition(2, 0x280000, 0x1360000);
+          Engine_ActorFaceEachOther(2, 0, 0);
+          Engine_EventOpenScreen();
+          Engine_EventWaitForScreen();
+          Engine_EventWait(30);
+          Engine_ActorRunRepeatedMotion(2, 2);
+          Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
+          Engine_EventShowMessageAndWait(2, 0, 20);
+          Engine_ActorSetAnimationAndWait(0, 3);
+          Actor_SetSpeed(2, 0xcccc, 0x6666);
+          Engine_ActorSetAnimation(2, 2);
+          record = Object_GetById(0);
+          if (record != 0) {
+            Engine_ActorSetDestination(2, record->x.part.pixel,
+                                       record->z.part.pixel);
+          }
+          Engine_ActorWaitForMove(2);
+          Engine_ActorSetPosition(2, 0, 0);
+          Event_PrepareObjectAndApplyValue(2, 0);
+          Engine_EventEnd();
         }
+      }
     }
-    if (Engine_GameFlagIsSet(0x867) != 0)
-    {
-        Actor_SetPosition(23, 0x1980000, 0x780000);
+    Engine_GameFlagClear(0x12f);
+  } else {
+    if (gGameState.entrance == 13) {
+      if (Engine_GameFlagIsSet(0x855) != 0) {
+        Engine_ActorSetPosition(20, 0, 0);
+      }
     }
-    if (gGameState.entrance == 11)
-    {
-        if (Engine_GameFlagIsSet(0x855) == 0)
-        {
-            if (Engine_GameFlagIsSet(0x856) != 0)
-            {
-                if (Engine_GameFlagIsSet(2) == 0)
-                {
-                    Engine_EventBegin();
-                    Actor_SetPosition(2, 0x280000, 0x1360000);
-                    Engine_ActorFaceEachOther(2, 0, 0);
-                    Engine_EventOpenScreen();
-                    Engine_EventWaitForScreen();
-                    Engine_EventWait(30);
-                    Engine_ActorRunRepeatedMotion(2, 2);
-                    Engine_EventSetMessage(MsgVaultWelcomeBackTwo);
-                    Engine_EventShowMessageAndWait(2, 0, 20);
-                    Engine_ActorSetAnimationAndWait(0, 3);
-                    Actor_SetSpeed(2, 0xcccc, 0x6666);
-                    Engine_ActorSetAnimation(2, 2);
-                    record = Object_GetById(0);
-                    if (record != 0)
-                    {
-                        Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
-                    }
-                    Engine_ActorWaitForMove(2);
-                    Engine_ActorSetPosition(2, 0, 0);
-                    Event_PrepareObjectAndApplyValue(2, 0);
-                    Engine_EventEnd();
-                }
-            }
-        }
-        Engine_GameFlagClear(0x12f);
-    }
-    else
-    {
-        if (gGameState.entrance == 13)
-        {
-            if (Engine_GameFlagIsSet(0x855) != 0)
-            {
-                Engine_ActorSetPosition(20, 0, 0);
-            }
-        }
-    }
-    return 0;
+  }
+  return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 
-static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
-{
-    Engine_EventShowMessage(actor, 0);
-    Engine_EventWait(delay);
+static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay) {
+  Engine_EventShowMessage(actor, 0);
+  Engine_EventWait(delay);
 }
 
-static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
-{
-    Engine_ActorFaceEachOther(actor, cue, 0);
-    Engine_EventWait(delay);
+static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay) {
+  Engine_ActorFaceEachOther(actor, cue, 0);
+  Engine_EventWait(delay);
 }
 
-static void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
-{
-    s32 horizontalRate;
-    s32 verticalRate;
+static void
+SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect) {
+  s32 horizontalRate;
+  s32 verticalRate;
 
-    effect->x += effect->horizontalRate;
-    effect->shadowX = effect->x;
+  effect->x += effect->horizontalRate;
+  effect->shadowX = effect->x;
 
-    if (effect->mode != 0)
-    {
-        effect->y += effect->verticalRate;
-        effect->shadowY = effect->y;
-    }
-    else
-    {
-        effect->z += effect->verticalRate;
-        effect->shadowZ = effect->z;
-        effect->y += 1024;
-        effect->shadowY = effect->y;
-    }
+  if (effect->mode != 0) {
+    effect->y += effect->verticalRate;
+    effect->shadowY = effect->y;
+  } else {
+    effect->z += effect->verticalRate;
+    effect->shadowZ = effect->z;
+    effect->y += 1024;
+    effect->shadowY = effect->y;
+  }
 
-    horizontalRate = effect->horizontalRate;
-    effect->horizontalRate = horizontalRate - Math_Divide(horizontalRate, 28);
-    verticalRate = effect->verticalRate;
-    effect->verticalRate = verticalRate - Math_Divide(verticalRate, 28);
+  horizontalRate = effect->horizontalRate;
+  effect->horizontalRate = horizontalRate - Math_Divide(horizontalRate, 28);
+  verticalRate = effect->verticalRate;
+  effect->verticalRate = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-static void Vault_SpawnDriftingEffect(s32 flags)
-{
-    union DriftingObject *leader;
-    union DriftingObject *leaf;
-    struct FieldSprite   *sprite;
-    s32                   x;
-    s32                   z;
-    u8                    zero;
+static void Vault_SpawnDriftingEffect(s32 flags) {
+  union DriftingObject *leader;
+  union DriftingObject *leaf;
+  struct FieldSprite *sprite;
+  s32 x;
+  s32 z;
+  u8 zero;
 
-    leader = (union DriftingObject *)Object_GetById(19);
-    if (leader == NULL)
-        return;
-    x = Engine_RandomNext();
-    z = Engine_RandomNext();
-    x <<= 3;
-    x = (u32)x >> 16;
-    z <<= 3;
-    x -= 4;
-    z = (u32)z >> 16;
-    z -= 4;
-    x <<= 16;
-    z <<= 16;
-    {
-        s32 baseX = leader->motion.x;
-        s32 baseZ = leader->motion.z;
-        s32 baseY;
+  leader = (union DriftingObject *)Object_GetById(19);
+  if (leader == NULL)
+    return;
+  x = Engine_RandomNext();
+  z = Engine_RandomNext();
+  x <<= 3;
+  x = (u32)x >> 16;
+  z <<= 3;
+  x -= 4;
+  z = (u32)z >> 16;
+  z -= 4;
+  x <<= 16;
+  z <<= 16;
+  {
+    s32 baseX = leader->motion.x;
+    s32 baseZ = leader->motion.z;
+    s32 baseY;
 
-        x += baseX;
-        baseY = leader->motion.y;
-        z += baseZ;
-        leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, baseY, z);
-    }
-    if (leaf == NULL)
-        return;
-    sprite = leaf->actor.sprite;
-    switch (Engine_RandomNext() & 1)
-    {
-    case 1:
-        Object_SetMode(&leaf->actor, 3);
-        Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptA);
-        break;
-    default:
-        Object_SetMode(&leaf->actor, 2);
-        Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptB);
-        break;
-    }
-    {
-        u8 *motionFlags = &leaf->actor.motionFlags;
+    x += baseX;
+    baseY = leader->motion.y;
+    z += baseZ;
+    leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, baseY, z);
+  }
+  if (leaf == NULL)
+    return;
+  sprite = leaf->actor.sprite;
+  switch (Engine_RandomNext() & 1) {
+  case 1:
+    Object_SetMode(&leaf->actor, 3);
+    Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptA);
+    break;
+  default:
+    Object_SetMode(&leaf->actor, 2);
+    Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptB);
+    break;
+  }
+  {
+    u8 *motionFlags = &leaf->actor.motionFlags;
 
-        zero = 0;
-        *motionFlags = zero;
-    }
-    if (flags & 2)
-    {
-        s32 cnt;
-        s32 bias;
+    zero = 0;
+    *motionFlags = zero;
+  }
+  if (flags & 2) {
+    s32 cnt;
+    s32 bias;
 
-        cnt = (u32)Engine_RandomNext() % 10 + 5;
-        /* FAKEMATCH: reuse the coordinate local for the direction mask. With the literal 1, also as (flags ^ 1) << 2 or through a mask local of its own: differ 116. */
-        x = 1;
-        flags &= x;
-        bias = flags ^ x;
-        bias <<= 2;
-        cnt += bias;
-        leaf->motion.verticalRate = (0x3332 * flags - 0x1999) * cnt;
-        cnt = (u32)Engine_RandomNext() % 15 - 7;
-        leaf->motion.horizontalRate = 0x1999 * cnt;
-        leaf->motion.mode = zero;
-    }
-    else
-    {
-        s32 cnt;
+    cnt = (u32)Engine_RandomNext() % 10 + 5;
+    /* FAKEMATCH: reuse the coordinate local for the direction mask. With the
+     * literal 1, also as (flags ^ 1) << 2 or through a mask local of its own:
+     * differ 116. */
+    x = 1;
+    flags &= x;
+    bias = flags ^ x;
+    bias <<= 2;
+    cnt += bias;
+    leaf->motion.verticalRate = (0x3332 * flags - 0x1999) * cnt;
+    cnt = (u32)Engine_RandomNext() % 15 - 7;
+    leaf->motion.horizontalRate = 0x1999 * cnt;
+    leaf->motion.mode = zero;
+  } else {
+    s32 cnt;
 
-        cnt = (u32)Engine_RandomNext() % 10 + 8;
-        leaf->motion.horizontalRate = (0x3332 * flags - 0x1999) * cnt;
-        cnt = (u32)Engine_RandomNext() % 14 + 1;
-        leaf->motion.verticalRate = 0x1999 * cnt;
-        leaf->motion.mode = 1;
-    }
-    {
-        void (*update)(union FieldObject *) =
-            (void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
-        u8 *spriteFlags;
+    cnt = (u32)Engine_RandomNext() % 10 + 8;
+    leaf->motion.horizontalRate = (0x3332 * flags - 0x1999) * cnt;
+    cnt = (u32)Engine_RandomNext() % 14 + 1;
+    leaf->motion.verticalRate = 0x1999 * cnt;
+    leaf->motion.mode = 1;
+  }
+  {
+    void (*update)(union FieldObject *) =
+        (void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
+    u8 *spriteFlags;
 
-        /* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As plain stores, sprite->flags = 0 after the update pointer or through the pointer local: differ 2; the flags stored first: differ 4. */
-        do
-        {
-            spriteFlags = &sprite->flags;
-        } while (0);
-        leaf->actor.update = update;
-        *spriteFlags = 0;
-    }
-    sprite->priority = leader->actor.sprite->priority;
+    /* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As
+     * plain stores, sprite->flags = 0 after the update pointer or through the
+     * pointer local: differ 2; the flags stored first: differ 4. */
+    do {
+      spriteFlags = &sprite->flags;
+    } while (0);
+    leaf->actor.update = update;
+    *spriteFlags = 0;
+  }
+  sprite->priority = leader->actor.sprite->priority;
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
@@ -1137,36 +1016,27 @@ s32 gVault_Actor1[] = {
 };
 
 struct SceneEntrance gVault_Scripts[] = {
-    { 0, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 408, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 6, CONDITION_ALWAYS, 312, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 7, CONDITION_ALWAYS, 216, 0, 312, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 8, CONDITION_ALWAYS, 376, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 9, CONDITION_ALWAYS, 296, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 10, CONDITION_ALWAYS, 120, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 11, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 12, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 13, CONDITION_ALWAYS, 152, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 408, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {6, CONDITION_ALWAYS, 312, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {7, CONDITION_ALWAYS, 216, 0, 312, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {8, CONDITION_ALWAYS, 376, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {9, CONDITION_ALWAYS, 296, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 120, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {11, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {12, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {13, CONDITION_ALWAYS, 152, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gVault_Messages[] = {
-    SCENE_EXITS(20),
-    SCENE_EXIT(1, 2, 3),
-    SCENE_EXIT(2, 2, 44),
-    SCENE_EXIT(5, 21, 5),
-    SCENE_EXIT(6, 21, 6),
-    SCENE_EXIT(7, 21, 7),
-    SCENE_EXIT(8, 21, 8),
-    SCENE_EXIT(9, 21, 9),
-    SCENE_EXIT(10, 21, 10),
-    SCENE_EXIT(11, 9, 10),
-    SCENE_EXIT(12, 22, 1),
-    SCENE_EXIT(13, 21, 13),
-    SCENE_EXIT(14, 23, 1),
-    SCENE_EXITS_END,
+    SCENE_EXITS(20),       SCENE_EXIT(1, 2, 3),   SCENE_EXIT(2, 2, 44),
+    SCENE_EXIT(5, 21, 5),  SCENE_EXIT(6, 21, 6),  SCENE_EXIT(7, 21, 7),
+    SCENE_EXIT(8, 21, 8),  SCENE_EXIT(9, 21, 9),  SCENE_EXIT(10, 21, 10),
+    SCENE_EXIT(11, 9, 10), SCENE_EXIT(12, 22, 1), SCENE_EXIT(13, 21, 13),
+    SCENE_EXIT(14, 23, 1), SCENE_EXITS_END,
 };
 
 // clang-format off

@@ -5,28 +5,28 @@
 #include "edition.h"
 #include "layout_guard.h"
 
-enum VramBlockLimits
-{
-    VRAM_CACHE_ENTRY_COUNT = 96,
-    VRAM_BLOCK_COUNT = 512,
-    VRAM_BLOCK_BYTES = 64,
-    VRAM_BLOCK_OWNER_FREE = 0xff,
-    VRAM_CACHE_OFFSET_FREE = 0xffff
+enum VramBlockLimits {
+  VRAM_CACHE_ENTRY_COUNT = 96,
+  VRAM_BLOCK_COUNT = 512,
+  VRAM_BLOCK_BYTES = 64,
+  VRAM_BLOCK_OWNER_FREE = 0xff,
+  VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
 extern u8 gResourceBlockOwners[VRAM_BLOCK_COUNT];
 
-struct VramBlockCacheEntry
-{
-    u16 size;
-    u16 offset;
+struct VramBlockCacheEntry {
+  u16 size;
+  u16 offset;
 };
 
 LAYOUT_SIZE_GUARD(VramBlockCacheEntry_Size, struct VramBlockCacheEntry, 4);
-LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry, offset, 2);
+LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry,
+                    offset, 2);
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) \
-    || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) ||                      \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 extern struct VramBlockCacheEntry gResourceTableEntries[];
 #else
 extern struct VramBlockCacheEntry gVramBlockCache[];

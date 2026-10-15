@@ -17,22 +17,17 @@ void BattlePresentation_WaitForAdvance(void);
 // 対象がいなければ、メッセージの送りを待つだけ
 // plan : 行動と対象の情報
 //--------------------------------------------------------------------------
-s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
-{
-    s32 i;
+s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
+  s32 i;
 
-    BattlePres_SetActorModes(0, 0);
-    if (plan->targetCount == 0)
-    {
-        BattlePresentation_WaitForAdvance();
+  BattlePres_SetActorModes(0, 0);
+  if (plan->targetCount == 0) {
+    BattlePresentation_WaitForAdvance();
+  } else {
+    for (i = 0; i < plan->targetCount; i++) {
+      BattleTargetExec(plan, i);
+      BattleEv_DispatchQueued();
     }
-    else
-    {
-        for (i = 0; i < plan->targetCount; i++)
-        {
-            BattleTargetExec(plan, i);
-            BattleEv_DispatchQueued();
-        }
-    }
-    WaitFrames(1);
+  }
+  WaitFrames(1);
 }

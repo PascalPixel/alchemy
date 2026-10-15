@@ -12,28 +12,22 @@
 #include "staged_actor.h"
 #include "object_runtime.h"
 
-typedef struct SceneActor
-{
-    u8  pad0[8];
-    s32 x;
-    s32 y;
-    s32 z;
+typedef struct SceneActor {
+  u8 pad0[8];
+  s32 x;
+  s32 y;
+  s32 z;
 } SceneActor;
 
-typedef struct DirectionalSceneActor
-{
-    u8  pad0[6];
-    u16 dir;
-    s32 x;
-    s32 y;
-    s32 z;
+typedef struct DirectionalSceneActor {
+  u8 pad0[6];
+  u16 dir;
+  s32 x;
+  s32 y;
+  s32 z;
 } DirectionalSceneActor;
 
-static __inline__ void SetSceneValue(s16 *field, s32 value)
-{
-
-    *field = value;
-}
+static __inline__ void SetSceneValue(s16 *field, s32 value) { *field = value; }
 
 #include "object_runtime.h"
 

@@ -7,40 +7,38 @@ void Func_020043f8(void);
 void Func_02004534(void);
 void Func_020046ec(void);
 
-void Func_02003f78(void)
-{
-    Func_020048c4();
-    Func_02004a24(0);
-    Func_0200498c((s32)MsgShamanMoapaAdvisesLeaving);
-    Object_GetById(15)->facing = 0x8000;
-    Object_GetById(16)->facing = 0x8000;
-    Object_GetById(17)->facing = 0x8000;
-    Motion_CamBounds(0xe00000, -1, 0x1180000, 0);
-    WaitFrames(1);
-    Func_0200482c();
-    WaitFrames(1);
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Battle_WaitMode0(20);
-    Func_020049a4(0x200f, 0);
-    Func_0200289c();
-    GameFlag_ClearBit(0x12f);
-    Func_020048cc();
+void Func_02003f78(void) {
+  Func_020048c4();
+  Func_02004a24(0);
+  Func_0200498c((s32)MsgShamanMoapaAdvisesLeaving);
+  Object_GetById(15)->facing = 0x8000;
+  Object_GetById(16)->facing = 0x8000;
+  Object_GetById(17)->facing = 0x8000;
+  Motion_CamBounds(0xe00000, -1, 0x1180000, 0);
+  WaitFrames(1);
+  Func_0200482c();
+  WaitFrames(1);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Battle_WaitMode0(20);
+  Func_020049a4(0x200f, 0);
+  Func_0200289c();
+  GameFlag_ClearBit(0x12f);
+  Func_020048cc();
 }
 
-s32 Func_02003ff8(void)
-{
-    s32 scene = gPartyState.scene;
+s32 Func_02003ff8(void) {
+  s32 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Shaman1)
-        Func_02004060();
-    else if (scene == (s32)&SceneId_Shaman3)
-        Func_020041b8();
-    else if (scene == (s32)&SceneId_Shaman2)
-        Func_020043f8();
-    else if (scene == (s32)&SceneId_Shaman4)
-        Func_02004534();
-    else if (scene == (s32)&SceneId_Shaman6)
-        Func_020046ec();
-    return 0;
+  if (scene == (s32)&SceneId_Shaman1)
+    Func_02004060();
+  else if (scene == (s32)&SceneId_Shaman3)
+    Func_020041b8();
+  else if (scene == (s32)&SceneId_Shaman2)
+    Func_020043f8();
+  else if (scene == (s32)&SceneId_Shaman4)
+    Func_02004534();
+  else if (scene == (s32)&SceneId_Shaman6)
+    Func_020046ec();
+  return 0;
 }

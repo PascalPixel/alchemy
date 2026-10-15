@@ -8,9 +8,6 @@
 
 #define NULL ((void *)0)
 
-enum
-{
-    FLAG_REWARD_TAKEN = 0x84e
-};
+enum { FLAG_REWARD_TAKEN = 0x84e };
 
 #endif

@@ -10,9 +10,6 @@
 #include "field_scene.h"
 #include "select_overlay_data_by_runtime_selector.h"
 
-enum
-{
-    ITEM_HARD_NUT = 194
-};
+enum { ITEM_HARD_NUT = 194 };
 
 #endif

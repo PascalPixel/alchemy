@@ -7,7 +7,7 @@
 #include "farcall.h"
 #endif
 
-extern u8  gHitTable[];
+extern u8 gHitTable[];
 extern s32 gPpLossTable[];
 extern s32 gHpRecoveryTable[];
 extern s32 gPpDmgTable[];

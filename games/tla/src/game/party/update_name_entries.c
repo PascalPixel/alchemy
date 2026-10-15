@@ -17,164 +17,147 @@
 #include "battle_work.h"
 #include "iwram_call.h"
 
-s32 UpdateNameEntries(void)
-{
-    u16   name_text[16];
-    void *buffer;
-    u8   *name_entry;
-    s32   named_count;
-    s32   index;
-    s32   len;
-    s32   i;
+s32 UpdateNameEntries(void) {
+  u16 name_text[16];
+  void *buffer;
+  u8 *name_entry;
+  s32 named_count;
+  s32 index;
+  s32 len;
+  s32 i;
 
-    buffer = Runtime_BumpAllocateAlternatePool(340);
-    named_count = 0;
-    index = 0;
-    while (index <= 2)
-    {
-        name_entry = UnitGet(index + 128);
-        if (SerialRuntime_BeginTransferB(name_entry) == -1)
-        {
-            break;
+  buffer = Runtime_BumpAllocateAlternatePool(340);
+  named_count = 0;
+  index = 0;
+  while (index <= 2) {
+    name_entry = UnitGet(index + 128);
+    if (SerialRuntime_BeginTransferB(name_entry) == -1) {
+      break;
+    }
+    SerialRuntime_WaitForTransferB();
+    if (name_entry[298] != 0) {
+      named_count += 1;
+    }
+    WaitFrames(2);
+    Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
+    i = 0;
+    if (name_text[i] != 0) {
+      do {
+        i += 1;
+        if (i > NAME_PREFIX_LAST_INDEX) {
+          break;
         }
-        SerialRuntime_WaitForTransferB();
-        if (name_entry[298] != 0)
-        {
-            named_count += 1;
-        }
-        WaitFrames(2);
-        Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
-        i = 0;
-        if (name_text[i] != 0)
-        {
-            do
-            {
-                i += 1;
-                if (i > NAME_PREFIX_LAST_INDEX)
-                {
-                    break;
-                }
-            } while (name_text[i] != 0);
-        }
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) \
-    || defined(TLA_EDITION_IT)
-        name_text[i] = ' ';
-        len = i + 1;
+      } while (name_text[i] != 0);
+    }
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    name_text[i] = ' ';
+    len = i + 1;
 #else
-        len = i;
+    len = i;
 #endif
-        for (i = 14; i >= len; i--)
-        {
-            name_entry[i] = name_entry[i - len];
-        }
-        for (i = 0; i < len; i++)
-        {
-            name_entry[i] = name_text[i];
-        }
-        name_entry[14] = 0;
-        index += 1;
+    for (i = 14; i >= len; i--) {
+      name_entry[i] = name_entry[i - len];
     }
-    MemFree(buffer);
-    buffer = Runtime_BumpAllocateAlternatePool(340);
-    if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1)
-    {
-        SerialRuntime_WaitForTransferB();
-        WaitFrames(2);
+    for (i = 0; i < len; i++) {
+      name_entry[i] = name_text[i];
     }
-    MemFree(buffer);
-    return named_count;
+    name_entry[14] = 0;
+    index += 1;
+  }
+  MemFree(buffer);
+  buffer = Runtime_BumpAllocateAlternatePool(340);
+  if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1) {
+    SerialRuntime_WaitForTransferB();
+    WaitFrames(2);
+  }
+  MemFree(buffer);
+  return named_count;
 }
 
 #define LINK_PARTY_UNIT_BYTES 340
 #define LINK_PARTY_OFFER_BYTES 340
 
-struct LinkOfferEntry
-{
-    u8 unk00[2];
-    u8 unitId;
-    u8 unk03;
+struct LinkOfferEntry {
+  u8 unk00[2];
+  u8 unitId;
+  u8 unk03;
 };
 
-struct LinkOfferList
-{
-    struct LinkOfferEntry entries[72];
-    s32                   count;
+struct LinkOfferList {
+  struct LinkOfferEntry entries[72];
+  s32 count;
 };
 
-struct LinkOfferTable
-{
-    u8                   unk00[8];
-    struct LinkOfferList list;
+struct LinkOfferTable {
+  u8 unk00[8];
+  struct LinkOfferList list;
 };
 
-struct LinkUnit
-{
-    u8 unk000[0x12a];
-    u8 side;
+struct LinkUnit {
+  u8 unk000[0x12a];
+  u8 side;
 };
 
 s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
 
-s32 LinkBattle_SendParty(void)
-{
-    u8                   *buffer;
-    struct BattleWork    *work;
-    s32                   j;
-    struct LinkOfferList *list;
-    s32                   size;
-    s32                   count;
-    s32                   i;
-    s32                   mark;
-    u16                   owners[8];
+s32 LinkBattle_SendParty(void) {
+  u8 *buffer;
+  struct BattleWork *work;
+  s32 j;
+  struct LinkOfferList *list;
+  s32 size;
+  s32 count;
+  s32 i;
+  s32 mark;
+  u16 owners[8];
 
-    size = LINK_PARTY_UNIT_BYTES;
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    mark = 0xff;
-    work = Ram_HeapSlots->battleWork;
-    for (i = 7; i >= 0; i--)
-        work->ownerSlots[i] = mark;
-    count = BattleParty_PrepareActiveOwners(owners);
-    for (i = 0; i < count; i++)
-    {
-        Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
-        ((struct LinkUnit *)buffer)->side = 2;
-        work->ownerSlots[owners[i]] = i - 128;
-        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-            break;
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(2);
-    }
-    for (; i <= 2; i++)
-    {
-        ((struct LinkUnit *)buffer)->side = 0;
-        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-            break;
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(2);
-    }
-    size = LINK_PARTY_OFFER_BYTES;
-    MemFree(buffer);
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference (differ 4 without it), as The Broken Seal's LinkBattle_SendParty. */
-    do
-    {
-        Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+  size = LINK_PARTY_UNIT_BYTES;
+  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  mark = 0xff;
+  work = Ram_HeapSlots->battleWork;
+  for (i = 7; i >= 0; i--)
+    work->ownerSlots[i] = mark;
+  count = BattleParty_PrepareActiveOwners(owners);
+  for (i = 0; i < count; i++) {
+    Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
+    ((struct LinkUnit *)buffer)->side = 2;
+    work->ownerSlots[owners[i]] = i - 128;
+    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+      break;
+    SerialRuntime_WaitForTransferA();
+    WaitFrames(2);
+  }
+  for (; i <= 2; i++) {
+    ((struct LinkUnit *)buffer)->side = 0;
+    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+      break;
+    SerialRuntime_WaitForTransferA();
+    WaitFrames(2);
+  }
+  size = LINK_PARTY_OFFER_BYTES;
+  MemFree(buffer);
+  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy
+   * is emitted before the count's address as in the reference (differ 4 without
+   * it), as The Broken Seal's LinkBattle_SendParty. */
+  do {
+    Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+  } while (0);
+  list = &((struct LinkOfferTable *)buffer)->list;
+  for (j = 0; j < list->count;) {
+    list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
+    /* FAKEMATCH: the empty one-pass block ends the scheduling region after the
+     * step, so the entry pointer advances before the count is reloaded as in
+     * the reference (differ 2 without it). */
+    j++;
+    do {
     } while (0);
-    list = &((struct LinkOfferTable *)buffer)->list;
-    for (j = 0; j < list->count;)
-    {
-        list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
-        /* FAKEMATCH: the empty one-pass block ends the scheduling region after the step, so the entry pointer advances before the count is reloaded as in the reference (differ 2 without it). */
-        j++;
-        do
-        {
-        } while (0);
-    }
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1)
-    {
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(1);
-        WaitFrames(2);
-    }
-    MemFree(buffer);
+  }
+  if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+    SerialRuntime_WaitForTransferA();
+    WaitFrames(1);
+    WaitFrames(2);
+  }
+  MemFree(buffer);
 }

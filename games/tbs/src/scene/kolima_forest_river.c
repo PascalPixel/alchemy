@@ -33,83 +33,66 @@
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
 
-u8 *MapStagedScene_SelectPrimaryData(void)
-{
-    return gKolimaForestRiverEntrances;
+u8 *MapStagedScene_SelectPrimaryData(void) {
+  return gKolimaForestRiverEntrances;
 }
 
-s32 MapStagedScene_GetEmptyData(void)
-{
-    return 0;
+s32 MapStagedScene_GetEmptyData(void) { return 0; }
+
+u8 *MapStagedScene_SelectSecondaryData(void) { return gKolimaForestRiverExits; }
+
+u8 *MapStagedScene_SelectTertiaryData(void) {
+  return gKolimaForestRiverPlacements;
 }
 
-u8 *MapStagedScene_SelectSecondaryData(void)
-{
-    return gKolimaForestRiverExits;
-}
-
-u8 *MapStagedScene_SelectTertiaryData(void)
-{
-    return gKolimaForestRiverPlacements;
-}
-
-static void EV10_SCRIPT(void)
-{
-    struct StagedActorProbe result;
-    Engine_EventBegin();
-    if (StagedActor_FindClearPosition(&result))
-    {
-        SceneActor_MoveAndRedraw(result);
-        if (result.actorSlot == 10 && (result.positionX >> 20) == 12)
-        {
-            struct FieldActor *actor;
-            Engine_ActorSetAnimation(10, 3);
-            Engine_ActorSetDestinationOffset(10, -18, 6);
-            Engine_EventWait(30);
-            Engine_AudioPlayCue(240);
-            Engine_ActorSetAnimation(10, 8);
-            Object_GetById(10)->priorityFlags = 2;
-            Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-            StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-            Engine_GameFlagSet(0x201);
-            actor = Object_GetById(10);
-            Engine_ActorSetSpriteFlags(actor, 0);
-        }
+static void EV10_SCRIPT(void) {
+  struct StagedActorProbe result;
+  Engine_EventBegin();
+  if (StagedActor_FindClearPosition(&result)) {
+    SceneActor_MoveAndRedraw(result);
+    if (result.actorSlot == 10 && (result.positionX >> 20) == 12) {
+      struct FieldActor *actor;
+      Engine_ActorSetAnimation(10, 3);
+      Engine_ActorSetDestinationOffset(10, -18, 6);
+      Engine_EventWait(30);
+      Engine_AudioPlayCue(240);
+      Engine_ActorSetAnimation(10, 8);
+      Object_GetById(10)->priorityFlags = 2;
+      Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
+      StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+      Engine_GameFlagSet(0x201);
+      actor = Object_GetById(10);
+      Engine_ActorSetSpriteFlags(actor, 0);
     }
-    Engine_EventEnd();
+  }
+  Engine_EventEnd();
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_jump.h"
 
-u8 *KolimaForestRiver_GetEvents(void)
-{
-    return gKolimaForestRiverEvents;
-}
+u8 *KolimaForestRiver_GetEvents(void) { return gKolimaForestRiverEvents; }
 
-s32 KolimaForestRiver_PrepareWindowTransition(void)
-{
-    struct EventWork *work = gEventWork;
+s32 KolimaForestRiver_PrepareWindowTransition(void) {
+  struct EventWork *work = gEventWork;
 
-    work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    FieldScene_RedrawActorFootprint(10);
+  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  FieldScene_RedrawActorFootprint(10);
 
-    if (Engine_GameFlagIsSet(0x201) != 0)
-    {
-        Object_GetById(10)->priorityFlags = 2;
-        Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-        StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-    }
+  if (Engine_GameFlagIsSet(0x201) != 0) {
+    Object_GetById(10)->priorityFlags = 2;
+    Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
+    StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+  }
 
-    FieldScene_RedrawActorFootprint(8);
-    FieldScene_RedrawActorFootprint(9);
+  FieldScene_RedrawActorFootprint(8);
+  FieldScene_RedrawActorFootprint(9);
 
-    if (Engine_GameFlagIsSet(0x845) == 0)
-    {
-        SceneEffect_AdjustPaletteColors(6);
-    }
-    return 0;
+  if (Engine_GameFlagIsSet(0x845) == 0) {
+    SceneEffect_AdjustPaletteColors(6);
+  }
+  return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -119,21 +102,11 @@ s32 KolimaForestRiver_PrepareWindowTransition(void)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
     DIRECTION_STEP(16, 0),
 };
 
@@ -177,11 +150,12 @@ struct ScenePlacement gKolimaForestRiverPlacements[] = {
 // clang-format on
 
 struct SceneEvent gKolimaForestRiverEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
-    { SCENE_EVENTS_END },
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+    {TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EV11_TOUCH)},
+    {SCENE_EVENTS_END},
 };
 
 // .bss 内の並びは最初に宣言した順 (field.h の extern)

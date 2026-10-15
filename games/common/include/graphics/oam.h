@@ -5,10 +5,9 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct OamUsage
-{
-    u16 used;
-    u16 limit;
+struct OamUsage {
+  u16 used;
+  u16 limit;
 };
 
 LAYOUT_SIZE_GUARD(OamUsage_Size, struct OamUsage, 4);

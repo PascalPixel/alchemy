@@ -9,28 +9,18 @@
 #include "types.h"
 #include "field_scene.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
-}
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
+const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern s16 gData_02002c5c[];
 extern s16 gData_02002efc[];
-s32        GameFlag_Test(s32 flag);
+s32 GameFlag_Test(s32 flag);
 
-const s16 *Func_0200004c(void)
-{
-    if (GameFlag_Test(0x97f))
-        return gData_02002efc;
-    return gData_02002c5c;
+const s16 *Func_0200004c(void) {
+  if (GameFlag_Test(0x97f))
+    return gData_02002efc;
+  return gData_02002c5c;
 }

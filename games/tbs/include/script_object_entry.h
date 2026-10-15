@@ -4,26 +4,27 @@
 #include "unit/field/field.h"
 #include "types.h"
 
-struct ScriptObjectEntry
-{
-    void *data;
-    u8    unk04[4];
-    s32   values08[6];
-    u16   value20;
-    u8    unk22[0x37];
-    u8    flags59;
-    u8    unk5a[0x16];
+struct ScriptObjectEntry {
+  void *data;
+  u8 unk04[4];
+  s32 values08[6];
+  u16 value20;
+  u8 unk22[0x37];
+  u8 flags59;
+  u8 unk5a[0x16];
 };
 
-#define SCRIPT_OBJECT_ENTRY_OFFSET(field) ((u32)&(((struct ScriptObjectEntry *)0)->field))
+#define SCRIPT_OBJECT_ENTRY_OFFSET(field)                                      \
+  ((u32)&(((struct ScriptObjectEntry *)0)->field))
 
+typedef char ScriptObjectEntry_values_08_offset
+    [SCRIPT_OBJECT_ENTRY_OFFSET(values08) == 0x08 ? 1 : -1];
+typedef char ScriptObjectEntry_value_20_offset
+    [SCRIPT_OBJECT_ENTRY_OFFSET(value20) == 0x20 ? 1 : -1];
+typedef char ScriptObjectEntry_flags_59_offset
+    [SCRIPT_OBJECT_ENTRY_OFFSET(flags59) == 0x59 ? 1 : -1];
 typedef char
-    ScriptObjectEntry_values_08_offset[SCRIPT_OBJECT_ENTRY_OFFSET(values08) == 0x08 ? 1 : -1];
-typedef char
-    ScriptObjectEntry_value_20_offset[SCRIPT_OBJECT_ENTRY_OFFSET(value20) == 0x20 ? 1 : -1];
-typedef char
-    ScriptObjectEntry_flags_59_offset[SCRIPT_OBJECT_ENTRY_OFFSET(flags59) == 0x59 ? 1 : -1];
-typedef char ScriptObjectEntry_size[sizeof(struct ScriptObjectEntry) == 0x70 ? 1 : -1];
+    ScriptObjectEntry_size[sizeof(struct ScriptObjectEntry) == 0x70 ? 1 : -1];
 
 #undef SCRIPT_OBJECT_ENTRY_OFFSET
 

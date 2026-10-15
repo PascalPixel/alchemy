@@ -9,7 +9,4 @@
 #include "types.h"
 #include "field_scene.h"
 
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
+const u32 *Scene_GetExits(void) { return gSceneExits; }

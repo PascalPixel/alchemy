@@ -9,21 +9,17 @@
 #include "types.h"
 #include "field_scene.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "scene_ids.h"
 
 extern const u8 gData_02000f5c[];
 extern const u8 gData_02000f8c[];
 
-const struct ScenePlacement *Func_02000040(void)
-{
-    if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
-        return (const struct ScenePlacement *)gData_02000f5c;
-    if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
-        return (const struct ScenePlacement *)gData_02000f8c;
-    return 0;
+const struct ScenePlacement *Func_02000040(void) {
+  if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
+    return (const struct ScenePlacement *)gData_02000f5c;
+  if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
+    return (const struct ScenePlacement *)gData_02000f8c;
+  return 0;
 }

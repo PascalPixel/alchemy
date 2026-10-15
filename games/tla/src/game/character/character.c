@@ -10,41 +10,35 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-struct TradeOfferState *Trade_GetOfferState(s32 which)
-{
-    if (which != 0)
-    {
-        return UnitGet(0x83);
-    }
-    return (struct TradeOfferState *)&gPartyState.unk000[0xc];
+struct TradeOfferState *Trade_GetOfferState(s32 which) {
+  if (which != 0) {
+    return UnitGet(0x83);
+  }
+  return (struct TradeOfferState *)&gPartyState.unk000[0xc];
 }
 
-u32 Party_GetAverageLevel(void)
-{
-    s32 count;
-    s32 total;
-    s32 i;
+u32 Party_GetAverageLevel(void) {
+  s32 count;
+  s32 total;
+  s32 i;
 
-    total = 0;
-    count = Party_CountActiveOwners();
-    if (count == 0)
-    {
-        return 0;
-    }
-    for (i = 0; i < count; i++)
-    {
-        total += ((struct BattleUnit *)UnitGet(gPartyState.activeOwners[i]))->level;
-    }
-    total = total / count;
-    return total;
+  total = 0;
+  count = Party_CountActiveOwners();
+  if (count == 0) {
+    return 0;
+  }
+  for (i = 0; i < count; i++) {
+    total += ((struct BattleUnit *)UnitGet(gPartyState.activeOwners[i]))->level;
+  }
+  total = total / count;
+  return total;
 }
 
-const u8 *Owner_GetRecord(s32 selector)
-{
-    u32 recordIndex;
+const u8 *Owner_GetRecord(s32 selector) {
+  u32 recordIndex;
 
-    recordIndex = selector - 8;
-    if (recordIndex > 999U)
-        recordIndex = 0;
-    return &gEnemy_DefinitionTable[recordIndex * 76];
+  recordIndex = selector - 8;
+  if (recordIndex > 999U)
+    recordIndex = 0;
+  return &gEnemy_DefinitionTable[recordIndex * 76];
 }

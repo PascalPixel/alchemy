@@ -2,29 +2,26 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct ObjectLayerAnimation
-{
-    u8 unk00[9];
-    u8 unused09 : 2;
-    u8 layer : 2;
-    u8 unk0a[27];
-    u8 unused25 : 2;
-    u8 shadowLayer : 2;
+struct ObjectLayerAnimation {
+  u8 unk00[9];
+  u8 unused09 : 2;
+  u8 layer : 2;
+  u8 unk0a[27];
+  u8 unused25 : 2;
+  u8 shadowLayer : 2;
 };
 
 // 先頭のキャラクターと同じ表示レイヤーにする
-s32 Func_080d4ab4(struct ObjectRuntime *object)
-{
-    struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
-    s32                   layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
+s32 Func_080d4ab4(struct ObjectRuntime *object) {
+  struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
+  s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
 
-    if ((object->animationKind & 0xf) == 1)
-    {
-        struct ObjectLayerAnimation *animation = object->animation;
+  if ((object->animationKind & 0xf) == 1) {
+    struct ObjectLayerAnimation *animation = object->animation;
 
-        animation->layer = layer;
-        animation->shadowLayer = layer;
-        object->priorityFlags &= 0xfe;
-    }
-    return 0;
+    animation->layer = layer;
+    animation->shadowLayer = layer;
+    object->priorityFlags &= 0xfe;
+  }
+  return 0;
 }

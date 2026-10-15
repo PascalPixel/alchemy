@@ -20,9 +20,8 @@
 // アイテムの定義データを返す
 // item : アイテム番号（持ち物の値なら上位の装備・個数ビットを無視する）
 //--------------------------------------------------------------------------
-struct ItemDefinition *Item_GetDirect(s32 item)
-{
-    return gItem_DefinitionTable + (item & ITEM_ID_MASK);
+struct ItemDefinition *Item_GetDirect(s32 item) {
+  return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 #include "owner_state.h"
 #include "battle_unit.h"
@@ -31,29 +30,25 @@ struct ItemDefinition *Item_GetDirect(s32 item)
 // キャラクターがアイテムを装備できるか
 // equipMask の classId 番目のビットで決まり、classId が 8 以上なら 0
 //--------------------------------------------------------------------------
-s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
-{
+s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
 #if GAME_TLA
-    struct OwnerInventoryState *st = UnitGet(unit);
+  struct OwnerInventoryState *st = UnitGet(unit);
 #endif
-    struct ItemDefinition *def = Item_GetDirect(item);
-    s32                    mask = def->equipMask;
+  struct ItemDefinition *def = Item_GetDirect(item);
+  s32 mask = def->equipMask;
 
-    if (st->classId >= 8)
-    {
-        return 0;
-    }
-    return (mask >> st->classId) & 1;
+  if (st->classId >= 8) {
+    return 0;
+  }
+  return (mask >> st->classId) & 1;
 }
 
 //--------------------------------------------------------------------------
 // 装備品でなければ 1、装備品ならキャラクターが装備できるかを返す
 //--------------------------------------------------------------------------
-s32 Item_IsCompatibleWithOwner(s32 unit, s32 item)
-{
-    if (Item_GetEquipmentGroup(item) == 0)
-    {
-        return 1;
-    }
-    return Item_CanOwnerEquipDirect(unit, item);
+s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
+  if (Item_GetEquipmentGroup(item) == 0) {
+    return 1;
+  }
+  return Item_CanOwnerEquipDirect(unit, item);
 }

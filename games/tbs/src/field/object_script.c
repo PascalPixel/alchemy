@@ -7,7 +7,8 @@
 
 //--------------------------------------------------------------------------
 // 物体スクリプト: エンジンが自分で始めるスクリプトと命令の表
-// Field object scripts: the ones the engine starts itself, and the command table.
+// Field object scripts: the ones the engine starts itself, and the command
+// table.
 //--------------------------------------------------------------------------
 
 // 何もせず本スクリプトへ戻る

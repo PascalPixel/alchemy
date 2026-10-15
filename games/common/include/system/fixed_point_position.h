@@ -3,18 +3,25 @@
 
 #include "types.h"
 
-struct FixedPointPosition
-{
-    s32 x;
-    s32 y;
-    s32 z;
+struct FixedPointPosition {
+  s32 x;
+  s32 y;
+  s32 z;
 };
 
-#define FIXED_POINT_POSITION_OFFSET(field) ((u32)&(((struct FixedPointPosition *)0)->field))
-typedef char FixedPointPosition_size[sizeof(struct FixedPointPosition) == 0x0c ? 1 : -1];
-typedef char FixedPointPosition_x_offset[FIXED_POINT_POSITION_OFFSET(x) == 0x00 ? 1 : -1];
-typedef char FixedPointPosition_y_offset[FIXED_POINT_POSITION_OFFSET(y) == 0x04 ? 1 : -1];
-typedef char FixedPointPosition_z_offset[FIXED_POINT_POSITION_OFFSET(z) == 0x08 ? 1 : -1];
+#define FIXED_POINT_POSITION_OFFSET(field)                                     \
+  ((u32)&(((struct FixedPointPosition *)0)->field))
+typedef char
+    FixedPointPosition_size[sizeof(struct FixedPointPosition) == 0x0c ? 1 : -1];
+typedef char FixedPointPosition_x_offset[FIXED_POINT_POSITION_OFFSET(x) == 0x00
+                                             ? 1
+                                             : -1];
+typedef char FixedPointPosition_y_offset[FIXED_POINT_POSITION_OFFSET(y) == 0x04
+                                             ? 1
+                                             : -1];
+typedef char FixedPointPosition_z_offset[FIXED_POINT_POSITION_OFFSET(z) == 0x08
+                                             ? 1
+                                             : -1];
 #undef FIXED_POINT_POSITION_OFFSET
 
 #endif

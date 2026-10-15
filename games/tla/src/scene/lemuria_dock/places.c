@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    return gScenePlacements;
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  return gScenePlacements;
 }

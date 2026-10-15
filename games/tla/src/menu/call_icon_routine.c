@@ -20,7 +20,6 @@
 // menu : 呼び出し元のメニュー（使わない）
 // unit : キャラクター番号
 //--------------------------------------------------------------------------
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit)
-{
-    Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
+  Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }

@@ -21,23 +21,15 @@ void Func_0200095c(void);
 void Func_02000c8c(void);
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 72, 0, 295, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 72, 0, 295, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(234),
-    SCENE_EXIT(1, 40, 1),
-    SCENE_EXIT(2, 235, 1),
-    SCENE_EXIT(3, 235, 5),
-    SCENE_EXIT(4, 2, 52),
-    SCENE_EXITS(235),
-    SCENE_EXIT(1, 234, 2),
-    SCENE_EXIT(2, 2, 53),
-    SCENE_EXIT(3, 237, 21),
-    SCENE_EXIT(4, 235, 4),
-    SCENE_EXIT(5, 234, 3),
-    SCENE_EXIT(6, 2, 53),
+    SCENE_EXITS(234),      SCENE_EXIT(1, 40, 1),  SCENE_EXIT(2, 235, 1),
+    SCENE_EXIT(3, 235, 5), SCENE_EXIT(4, 2, 52),  SCENE_EXITS(235),
+    SCENE_EXIT(1, 234, 2), SCENE_EXIT(2, 2, 53),  SCENE_EXIT(3, 237, 21),
+    SCENE_EXIT(4, 235, 4), SCENE_EXIT(5, 234, 3), SCENE_EXIT(6, 2, 53),
     SCENE_EXITS_END,
 };
 

@@ -11,28 +11,22 @@
 #include "frame.h"
 #include "field_event.h"
 
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
+const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-struct FieldPartBytes
-{
-    u8 unk00[5];
-    u8 frame;
+struct FieldPartBytes {
+  u8 unk00[5];
+  u8 frame;
 };
 
-struct FieldAnimation
-{
-    u8                     unk00[40];
-    struct FieldPartBytes *part;
+struct FieldAnimation {
+  u8 unk00[40];
+  struct FieldPartBytes *part;
 };
 
-s32 Func_02000364(struct FieldActor *actor)
-{
-    u32 frame = gFrameCount;
+s32 Func_02000364(struct FieldActor *actor) {
+  u32 frame = gFrameCount;
 
-    if (frame % 10 == 0)
-        ((struct FieldAnimation *)actor->sprite)->part->frame = frame % 20 / 10 + 3;
-    return 1;
+  if (frame % 10 == 0)
+    ((struct FieldAnimation *)actor->sprite)->part->frame = frame % 20 / 10 + 3;
+  return 1;
 }

@@ -18,8 +18,8 @@
 #define MENU_TEXT_Y 60
 #endif
 
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) \
-    || defined(TLA_EDITION_IT)
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #define NAME_PREFIX_LAST_INDEX 7
 #else
 #define NAME_PREFIX_LAST_INDEX 4

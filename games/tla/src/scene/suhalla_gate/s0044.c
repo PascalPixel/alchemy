@@ -8,13 +8,12 @@ extern u8 gData_02000cd8[];
 extern u8 gData_02000d98[];
 extern u8 gData_02000e40[];
 
-u8 *Func_02000044(void)
-{
-    s16 scene = gPartyState.scene;
+u8 *Func_02000044(void) {
+  s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_SuhallaGate2)
-        return gData_02000d98;
-    if (scene == (s32)&SceneId_SuhallaGate3)
-        return gData_02000e40;
-    return gData_02000cd8;
+  if (scene == (s32)&SceneId_SuhallaGate2)
+    return gData_02000d98;
+  if (scene == (s32)&SceneId_SuhallaGate3)
+    return gData_02000e40;
+  return gData_02000cd8;
 }

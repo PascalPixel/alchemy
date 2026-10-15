@@ -46,806 +46,749 @@ static void LemurianShip_ScheduleFade(void);
 
 s32 Math_DivideUnsigned();
 
-u8 *LemurianShip_GetEntrances(void)
-{
-    return gLemurianShip_SceneTableA;
+u8 *LemurianShip_GetEntrances(void) { return gLemurianShip_SceneTableA; }
+
+s32 LemurianShip_GetDefaultResult(void) { return 0; }
+
+u8 *LemurianShip_GetExits(void) { return gLemurianShip_SceneTableB; }
+
+u8 *LemurianShip_GetPlacements(void) { return gLemurianShip_SceneTableC; }
+
+static void EV01_TOUCH(void) {
+  Engine_EventRequestExit(gEventWork->touchedTrigger);
+  Io_Write16(0, &PLTT_BACKDROP);
 }
 
-s32 LemurianShip_GetDefaultResult(void)
-{
-    return 0;
+static void LemurianShip_LoadTablesAndStopDma(void) {
+  SceneEffect_LoadTablesAndStopDma0();
 }
 
-u8 *LemurianShip_GetExits(void)
-{
-    return gLemurianShip_SceneTableB;
+static void FieldScene_ConfigureFixedPointValues(void) {
+  DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
+                                    0x8000, 0x4000);
 }
 
-u8 *LemurianShip_GetPlacements(void)
-{
-    return gLemurianShip_SceneTableC;
+u8 *LemurianShip_GetEvents(void) { return gLemurianShip_SceneTableD; }
+
+static void LemurianShip_CyclePalette(void) {
+  u16 *frame;
+  s32 v;
+
+  frame = &gLemurianShip_PaletteStep;
+  v = Math_DivideUnsigned(*frame, 6);
+  Dma_Set(
+      (const void *)(((u32)(v << 16) >> 15) + (u32)gLemurianShip_PaletteFrames),
+      (void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
+  (*frame)++;
+  if (*frame > 35)
+    *frame = 0;
 }
 
-static void EV01_TOUCH(void)
-{
-    Engine_EventRequestExit(gEventWork->touchedTrigger);
-    Io_Write16(0, &PLTT_BACKDROP);
-}
+static void LemurianShip_UpdateDriftingObject(u8 *obj) {
+  u16 *wait = &((struct FieldActor *)obj)->timer;
+  s32 left = *wait;
 
-static void LemurianShip_LoadTablesAndStopDma(void)
-{
-    SceneEffect_LoadTablesAndStopDma0();
-}
+  if (*(s16 *)wait != 0) {
+    s32 drift;
 
-static void FieldScene_ConfigureFixedPointValues(void)
-{
-    DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
-}
-
-u8 *LemurianShip_GetEvents(void)
-{
-    return gLemurianShip_SceneTableD;
-}
-
-static void LemurianShip_CyclePalette(void)
-{
-    u16 *frame;
-    s32  v;
-
-    frame = &gLemurianShip_PaletteStep;
-    v = Math_DivideUnsigned(*frame, 6);
-    Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)gLemurianShip_PaletteFrames),
-        (void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
-    (*frame)++;
-    if (*frame > 35)
-        *frame = 0;
-}
-
-static void LemurianShip_UpdateDriftingObject(u8 *obj)
-{
-    u16 *wait = &((struct FieldActor *)obj)->timer;
-    s32  left = *wait;
-
-    if (*(s16 *)wait != 0)
+    *wait = left - 1;
+    drift = Engine_RandomNext();
+    drift -= Engine_RandomNext();
+    ((struct FieldActor *)obj)->x.fixed += drift;
+    ((struct FieldActor *)obj)->y.fixed += 0xcccc;
+  } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
+    *(s16 *)&((struct FieldActor *)obj)->work = 0;
+    Object_SetMode(obj, 1);
     {
-        s32 drift;
+      u16 *p = (u16 *)(obj + 94);
+      s32 delay = 20;
 
-        *wait = left - 1;
-        drift = Engine_RandomNext();
-        drift -= Engine_RandomNext();
-        ((struct FieldActor *)obj)->x.fixed += drift;
-        ((struct FieldActor *)obj)->y.fixed += 0xcccc;
+      *p = delay;
     }
-    else if (*(s16 *)&((struct FieldActor *)obj)->work != 0)
-    {
-        *(s16 *)&((struct FieldActor *)obj)->work = 0;
-        Object_SetMode(obj, 1);
-        {
-            u16 *p = (u16 *)(obj + 94);
-            s32  delay = 20;
-
-            *p = delay;
-        }
-        Engine_ObjectSetScript(obj, gLemurianShip_DriftScript);
-    }
+    Engine_ObjectSetScript(obj, gLemurianShip_DriftScript);
+  }
 }
 
-static void SceneState_CountDownEveryFortyTicks(void)
-{
-    s32 n = gLemurianShip_CountTicks + 1;
+static void SceneState_CountDownEveryFortyTicks(void) {
+  s32 n = gLemurianShip_CountTicks + 1;
 
-    gLemurianShip_CountTicks = n;
-    if (n == 40)
-    {
-        if (gLemurianShip_Count > 4)
-        {
-            gLemurianShip_Count -= 1;
-            gLemurianShip_CountTicks = 0;
-        }
+  gLemurianShip_CountTicks = n;
+  if (n == 40) {
+    if (gLemurianShip_Count > 4) {
+      gLemurianShip_Count -= 1;
+      gLemurianShip_CountTicks = 0;
     }
+  }
 }
 
-struct WaveMapLayer
-{
-    s32 unk00[3];
-    s32 y;
-    s32 unk10[8];
+struct WaveMapLayer {
+  s32 unk00[3];
+  s32 y;
+  s32 unk10[8];
 };
 
-struct WaveMap
-{
-    u8                  unk00[20];
-    struct WaveMapLayer layers[8];
+struct WaveMap {
+  u8 unk00[20];
+  struct WaveMapLayer layers[8];
 };
 
-static void LemurianShip_UpdateWaves(void)
-{
-    /* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18 and is loaded again with ldrh for the register write (a 20-byte frame for 16). Without it differ 24, 223 instructions for 225. */
-    volatile u16               blend;
-    struct FixedPointPosition  place;
-    struct FixedPointPosition *pos;
-    struct WaveMap            *map;
-    struct FieldActor         *actor;
-    s32                        swell;
-    s32                        x, z;
+static void LemurianShip_UpdateWaves(void) {
+  /* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18
+   * and is loaded again with ldrh for the register write (a 20-byte frame for
+   * 16). Without it differ 24, 223 instructions for 225. */
+  volatile u16 blend;
+  struct FixedPointPosition place;
+  struct FixedPointPosition *pos;
+  struct WaveMap *map;
+  struct FieldActor *actor;
+  s32 swell;
+  s32 x, z;
 
-    map = gMapWork[0];
-    if (gLemurianShip_ShimmerActive != 0)
-    {
-        swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_ShimmerPhase << 9), 3);
-        blend = gLemurianShip_Count + ((swell + 8) << 8);
-        Io_Write16(blend, &REG_BLDALPHA);
-        gLemurianShip_ShimmerPhase++;
+  map = gMapWork[0];
+  if (gLemurianShip_ShimmerActive != 0) {
+    swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_ShimmerPhase << 9), 3);
+    blend = gLemurianShip_Count + ((swell + 8) << 8);
+    Io_Write16(blend, &REG_BLDALPHA);
+    gLemurianShip_ShimmerPhase++;
+  }
+  if (gLemurianShip_SwellActive != 0) {
+    swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_SwellPhase << 9), 2)
+            << 16;
+    map->layers[6].y = gLemurianShip_SwellLayerSixY + swell;
+    map->layers[7].y = gLemurianShip_SwellLayerSevenY + swell;
+    if (gLemurianShip_StoredSlot0 != -0x10000) {
+      actor = Object_GetById(0);
+      actor->y.fixed = gLemurianShip_StoredSlot0 + swell;
+      actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+      actor->motionFlags = 0;
     }
-    if (gLemurianShip_SwellActive != 0)
-    {
-        swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_SwellPhase << 9), 2) << 16;
-        map->layers[6].y = gLemurianShip_SwellLayerSixY + swell;
-        map->layers[7].y = gLemurianShip_SwellLayerSevenY + swell;
-        if (gLemurianShip_StoredSlot0 != -0x10000)
-        {
-            actor = Object_GetById(0);
-            actor->y.fixed = gLemurianShip_StoredSlot0 + swell;
-            actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
-            actor->motionFlags = 0;
-        }
-        if (gLemurianShip_StoredRecord1 != -0x10000)
-        {
-            actor = Object_GetById(1);
-            actor->y.fixed = gLemurianShip_StoredRecord1 + swell;
-            actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
-            actor->motionFlags = 0;
-        }
-        if (gLemurianShip_StoredSlot3 != -0x10000)
-        {
-            actor = Object_GetById(3);
-            actor->y.fixed = gLemurianShip_StoredSlot3 + swell;
-            actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
-            actor->motionFlags = 0;
-        }
-        if (gLemurianShip_StoredRecord2 != -0x10000)
-        {
-            actor = Object_GetById(2);
-            actor->y.fixed = gLemurianShip_StoredRecord2 + swell;
-            actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
-            actor->motionFlags = 0;
-        }
-        gLemurianShip_SwellPhase++;
+    if (gLemurianShip_StoredRecord1 != -0x10000) {
+      actor = Object_GetById(1);
+      actor->y.fixed = gLemurianShip_StoredRecord1 + swell;
+      actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+      actor->motionFlags = 0;
     }
-    if (gLemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0)
-    {
-        x = map->layers[4].unk10[0] & -0x10000;
-        z = map->layers[4].unk10[1] & -0x10000;
-        x += Random_Next() * 240;
-        pos = &place;
-        pos->x = x;
-        pos->y = 0;
-        z += Random_Next() * 160;
-        z += 0x1e0000;
-        pos->z = z;
-        actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
-        if (actor != 0)
-        {
-            actor->update = (void (*)(union FieldObject *))LemurianShip_UpdateDriftingObject;
-            actor->timer = 60;
-            actor->work = 1;
-            actor->motionFlags = 0;
-            actor->priorityFlags = 2;
-            actor->sprite->priority = 2;
-            Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
-            Object_SetMode(actor, 0);
-        }
+    if (gLemurianShip_StoredSlot3 != -0x10000) {
+      actor = Object_GetById(3);
+      actor->y.fixed = gLemurianShip_StoredSlot3 + swell;
+      actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+      actor->motionFlags = 0;
     }
+    if (gLemurianShip_StoredRecord2 != -0x10000) {
+      actor = Object_GetById(2);
+      actor->y.fixed = gLemurianShip_StoredRecord2 + swell;
+      actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+      actor->motionFlags = 0;
+    }
+    gLemurianShip_SwellPhase++;
+  }
+  if (gLemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0) {
+    x = map->layers[4].unk10[0] & -0x10000;
+    z = map->layers[4].unk10[1] & -0x10000;
+    x += Random_Next() * 240;
+    pos = &place;
+    pos->x = x;
+    pos->y = 0;
+    z += Random_Next() * 160;
+    z += 0x1e0000;
+    pos->z = z;
+    actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
+    if (actor != 0) {
+      actor->update =
+          (void (*)(union FieldObject *))LemurianShip_UpdateDriftingObject;
+      actor->timer = 60;
+      actor->work = 1;
+      actor->motionFlags = 0;
+      actor->priorityFlags = 2;
+      actor->sprite->priority = 2;
+      Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
+      Object_SetMode(actor, 0);
+    }
+  }
 }
 
-static s32 LemurianShip_StoreLeaderHeight(void)
-{
-    s32               *d;
-    struct FieldActor *p;
+static s32 LemurianShip_StoreLeaderHeight(void) {
+  s32 *d;
+  struct FieldActor *p;
 
-    d = &gLemurianShip_StoredSlot0;
-    p = Object_GetById(0);
-    *d = p->y.fixed;
-    return 0;
+  d = &gLemurianShip_StoredSlot0;
+  p = Object_GetById(0);
+  *d = p->y.fixed;
+  return 0;
 }
 
-static s32 LemurianShip_StoreActorOneHeight(void)
-{
-    s32               *p;
-    struct FieldActor *rec;
+static s32 LemurianShip_StoreActorOneHeight(void) {
+  s32 *p;
+  struct FieldActor *rec;
 
-    p = &gLemurianShip_StoredRecord1;
-    rec = Object_GetById(1);
-    *p = rec->y.fixed;
-    return 0;
+  p = &gLemurianShip_StoredRecord1;
+  rec = Object_GetById(1);
+  *p = rec->y.fixed;
+  return 0;
 }
 
-static s32 LemurianShip_StoreActorThreeHeight(void)
-{
-    s32               *d;
-    struct FieldActor *p;
+static s32 LemurianShip_StoreActorThreeHeight(void) {
+  s32 *d;
+  struct FieldActor *p;
 
-    d = &gLemurianShip_StoredSlot3;
-    p = Object_GetById(3);
-    *d = p->y.fixed;
-    return 0;
+  d = &gLemurianShip_StoredSlot3;
+  p = Object_GetById(3);
+  *d = p->y.fixed;
+  return 0;
 }
 
-static s32 LemurianShip_StoreActorTwoHeight(void)
-{
-    s32               *d;
-    struct FieldActor *p;
+static s32 LemurianShip_StoreActorTwoHeight(void) {
+  s32 *d;
+  struct FieldActor *p;
 
-    d = &gLemurianShip_StoredRecord2;
-    p = Object_GetById(2);
-    *d = p->y.fixed;
-    return 0;
+  d = &gLemurianShip_StoredRecord2;
+  p = Object_GetById(2);
+  *d = p->y.fixed;
+  return 0;
 }
 
-static void Scene_RunExtendedPresentationSequence(void)
-{
-    struct MapScrollWork *scroll;
-    struct FieldActor    *ship;
-    struct EventWork     *event;
+static void Scene_RunExtendedPresentationSequence(void) {
+  struct MapScrollWork *scroll;
+  struct FieldActor *ship;
+  struct EventWork *event;
 
-    Engine_EventBegin();
-    Camera_MoveTo(-1, -1, -1, 0);
-    Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
-    Engine_EventSetMessage(MsgFieldLooksLikeFinally);
-    FieldMotion_LaunchFromFocusedObject(1, -10, 16, 49152);
-    FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
-    Motion_LaunchFromFocusedObject(2, 10, 16, 49152);
-    Engine_ActorWaitForMove(1);
-    Engine_EventWait(50);
-    Engine_ActorRunRepeatedMotion(1, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(1, 0);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(3, 16384, 0);
-    Engine_EventWait(40);
-    Engine_EventShowMessage(3, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(0, 16384, 0);
-    Actor_FaceDirection(1, 16384, 0);
-    Engine_ActorFaceDirection(2, 16384, 0);
-    Engine_EventWait(60);
-    Engine_ActorSetAnimation(0, 3);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(60);
-    Engine_ActorRunRepeatedMotion(1, 2);
+  Engine_EventBegin();
+  Camera_MoveTo(-1, -1, -1, 0);
+  Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
+  Engine_EventSetMessage(MsgFieldLooksLikeFinally);
+  FieldMotion_LaunchFromFocusedObject(1, -10, 16, 49152);
+  FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
+  Motion_LaunchFromFocusedObject(2, 10, 16, 49152);
+  Engine_ActorWaitForMove(1);
+  Engine_EventWait(50);
+  Engine_ActorRunRepeatedMotion(1, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(3, 16384, 0);
+  Engine_EventWait(40);
+  Engine_EventShowMessage(3, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(0, 16384, 0);
+  Actor_FaceDirection(1, 16384, 0);
+  Engine_ActorFaceDirection(2, 16384, 0);
+  Engine_EventWait(60);
+  Engine_ActorSetAnimation(0, 3);
+  Engine_ActorSetAnimation(1, 3);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(60);
+  Engine_ActorRunRepeatedMotion(1, 2);
+  Engine_EventWait(30);
+  Engine_ActorFaceDirection(1, 57344, 0);
+  Engine_EventWait(20);
+  UiText_OpenMessageAtObject(1, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
+    Actor_ShowEmote(1, 258, 50);
+    Engine_EventShowMessage(1, 0);
+    gEventWork->message++;
+  } else {
+    Engine_EventWait(30);
+    Actor_ShowEmote(1, 258, 50);
+    gEventWork->message++;
+    Engine_EventShowMessage(1, 0);
+  }
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(2, 32768, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(2, 257, 50);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(1, 0, 0);
+  Engine_EventWait(30);
+  Actor_ShowEmote(1, 257, 60);
+  Engine_ActorRunRepeatedMotion(3, 2);
+  Engine_EventWait(30);
+  Engine_ActorFaceDirection(3, 40960, 0);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(3, 0);
+  Engine_EventWait(10);
+  Actor_ShowEmote(1, 256, 50);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Engine_ActorRunRepeatedMotion(2, 2);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Engine_ActorFaceDirection(3, 49152, 0);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(3, 4);
+  Engine_EventWait(20);
+  UiText_OpenMessageAtObject(3, 0);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(1, 2);
+    Engine_EventWait(20);
     Engine_ActorFaceDirection(1, 57344, 0);
     Engine_EventWait(20);
-    UiText_OpenMessageAtObject(1, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(30);
-        Actor_ShowEmote(1, 258, 50);
-        Engine_EventShowMessage(1, 0);
-        gEventWork->message++;
-    }
-    else
-    {
-        Engine_EventWait(30);
-        Actor_ShowEmote(1, 258, 50);
-        gEventWork->message++;
-        Engine_EventShowMessage(1, 0);
-    }
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(2, 32768, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(2, 257, 50);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(1, 0, 0);
-    Engine_EventWait(30);
-    Actor_ShowEmote(1, 257, 60);
-    Engine_ActorRunRepeatedMotion(3, 2);
-    Engine_EventWait(30);
-    Engine_ActorFaceDirection(3, 40960, 0);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(3, 0);
-    Engine_EventWait(10);
-    Actor_ShowEmote(1, 256, 50);
     Engine_EventShowMessage(1, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(2, 2);
+    gEventWork->message++;
+  } else {
     Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
-    Engine_ActorFaceDirection(3, 49152, 0);
+    Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_ActorFaceDirection(1, 57344, 0);
     Engine_EventWait(20);
-    UiText_OpenMessageAtObject(3, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(20);
-        Engine_ActorRunRepeatedMotion(1, 2);
-        Engine_EventWait(20);
-        Engine_ActorFaceDirection(1, 57344, 0);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(1, 0);
-        gEventWork->message++;
-    }
-    else
-    {
-        Engine_EventWait(20);
-        Engine_ActorRunRepeatedMotion(1, 2);
-        Engine_EventWait(20);
-        Engine_ActorFaceDirection(1, 57344, 0);
-        Engine_EventWait(20);
-        gEventWork->message++;
-        Engine_EventShowMessage(1, 0);
-    }
-    Engine_EventWait(10);
-    Engine_ActorShowEmote(0, 258, 50);
-    Engine_EventWait(10);
-    Actor_FaceDirection(2, 40960, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(20);
+    gEventWork->message++;
     Engine_EventShowMessage(1, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(0, 3);
+  }
+  Engine_EventWait(10);
+  Engine_ActorShowEmote(0, 258, 50);
+  Engine_EventWait(10);
+  Actor_FaceDirection(2, 40960, 0);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(20);
+  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_EventWait(30);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_EventWait(20);
+  UiText_OpenMessageAtObject(3, 0);
+  Actor_FaceDirection(1, 57344, 0);
+  Actor_FaceDirection(3, 49152, 0);
+  Engine_ActorFaceDirection(2, 40960, 0);
+  Engine_EventWait(20);
+  if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(3, 3);
-    Engine_EventWait(20);
-    UiText_OpenMessageAtObject(3, 0);
-    Actor_FaceDirection(1, 57344, 0);
-    Actor_FaceDirection(3, 49152, 0);
-    Engine_ActorFaceDirection(2, 40960, 0);
-    Engine_EventWait(20);
-    if (Engine_EventChooseYesNo(0, 0) == 0)
-    {
-        Engine_EventWait(30);
-        Engine_ActorSetAnimationAndWait(3, 3);
-        Engine_EventWait(20);
-        Engine_EventShowMessage(3, 0);
-        gEventWork->message++;
-    }
-    else
-    {
-        Engine_EventWait(30);
-        Engine_ActorSetAnimationAndWait(3, 3);
-        Engine_EventWait(20);
-        gEventWork->message++;
-        Engine_EventShowMessage(3, 0);
-    }
-    Engine_EventWait(10);
-    Actor_FaceDirection(1, 49152, 0);
-    Engine_EventWait(30);
-    Engine_EventShowMessage(1, 0);
-    Engine_EventWait(10);
-    Actor_FaceDirection(0, 49152, 0);
-    Engine_EventWait(30);
-    Engine_EventWait(10);
-    Actor_FaceDirection(2, 49152, 0);
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(2, 0);
-    Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(3, 3);
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
-    Engine_AudioPlayCue(17);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimation(0, 3);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(40);
-    Actor_SetSpeed(0, 78643, 39321);
-    Actor_SetSpeed(1, 78643, 39321);
-    Actor_SetSpeed(2, 78643, 39321);
-    Actor_SetSpeed(3, 78643, 39321);
-    Engine_ActorEnableActionCallback(0, gLemurianShip_ActionScriptA);
-    Engine_EventWait(50);
-    Camera_MoveTo(17301504, -1, 13107200, 1);
-    Engine_ActorEnableActionCallback(1, gLemurianShip_ActionScriptB);
-    Engine_EventWait(50);
-    Engine_ActorEnableActionCallback(2, gLemurianShip_ActionScriptC);
-    Object_RefreshSelectorById(2);
-    Actor_FaceDirection(0, 16384, 0);
-    Actor_FaceDirection(1, 16384, 0);
-    Actor_FaceDirection(2, 16384, 0);
-    FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
+    gEventWork->message++;
+  } else {
     Engine_EventWait(30);
-    Engine_ActorFaceDirection(3, 16384, 0);
-    Engine_EventWait(60);
-    Actor_FaceDirection(3, 32768, 0);
+    Engine_ActorSetAnimationAndWait(3, 3);
     Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(3, gLemurianShip_ActionScriptD);
-    Object_RefreshSelectorById(3);
-    Engine_ActorFaceDirection(3, 49152, 0);
-    Engine_EventWait(20);
-    Camera_MoveTo(14155776, -1, 11010048, 1);
-    Engine_CameraWaitForMove();
-    Engine_EventWait(20);
-    Actor_FaceDirection(0, 32768, 0);
-    Actor_FaceDirection(1, 32768, 0);
-    Actor_FaceDirection(2, 32768, 0);
-    Engine_ActorFaceDirection(3, 32768, 0);
-    Engine_EventWait(40);
-    Engine_ActorSetAnimation(0, 3);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimation(3, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
-    Engine_EventWait(30);
-    Engine_AudioPlayCue(67);
-    MusicCommand_SetPitchAndUpdateFrequency(240);
-    LemurianShip_ScheduleFade();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Engine_EventWait(30);
+    gEventWork->message++;
+    Engine_EventShowMessage(3, 0);
+  }
+  Engine_EventWait(10);
+  Actor_FaceDirection(1, 49152, 0);
+  Engine_EventWait(30);
+  Engine_EventShowMessage(1, 0);
+  Engine_EventWait(10);
+  Actor_FaceDirection(0, 49152, 0);
+  Engine_EventWait(30);
+  Engine_EventWait(10);
+  Actor_FaceDirection(2, 49152, 0);
+  Engine_EventWait(30);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(2, 0);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_EventWait(20);
+  Engine_EventShowMessage(3, 0);
+  Engine_AudioPlayCue(17);
+  Engine_EventWait(10);
+  Engine_ActorSetAnimation(0, 3);
+  Engine_ActorSetAnimation(1, 3);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(40);
+  Actor_SetSpeed(0, 78643, 39321);
+  Actor_SetSpeed(1, 78643, 39321);
+  Actor_SetSpeed(2, 78643, 39321);
+  Actor_SetSpeed(3, 78643, 39321);
+  Engine_ActorEnableActionCallback(0, gLemurianShip_ActionScriptA);
+  Engine_EventWait(50);
+  Camera_MoveTo(17301504, -1, 13107200, 1);
+  Engine_ActorEnableActionCallback(1, gLemurianShip_ActionScriptB);
+  Engine_EventWait(50);
+  Engine_ActorEnableActionCallback(2, gLemurianShip_ActionScriptC);
+  Object_RefreshSelectorById(2);
+  Actor_FaceDirection(0, 16384, 0);
+  Actor_FaceDirection(1, 16384, 0);
+  Actor_FaceDirection(2, 16384, 0);
+  FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
+  Engine_EventWait(30);
+  Engine_ActorFaceDirection(3, 16384, 0);
+  Engine_EventWait(60);
+  Actor_FaceDirection(3, 32768, 0);
+  Engine_EventWait(20);
+  Engine_ActorEnableActionCallback(3, gLemurianShip_ActionScriptD);
+  Object_RefreshSelectorById(3);
+  Engine_ActorFaceDirection(3, 49152, 0);
+  Engine_EventWait(20);
+  Camera_MoveTo(14155776, -1, 11010048, 1);
+  Engine_CameraWaitForMove();
+  Engine_EventWait(20);
+  Actor_FaceDirection(0, 32768, 0);
+  Actor_FaceDirection(1, 32768, 0);
+  Actor_FaceDirection(2, 32768, 0);
+  Engine_ActorFaceDirection(3, 32768, 0);
+  Engine_EventWait(40);
+  Engine_ActorSetAnimation(0, 3);
+  Engine_ActorSetAnimation(1, 3);
+  Engine_ActorSetAnimation(3, 3);
+  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_EventWait(30);
+  Engine_AudioPlayCue(67);
+  MusicCommand_SetPitchAndUpdateFrequency(240);
+  LemurianShip_ScheduleFade();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
+    defined(TBS_EDITION_IT)
+  Engine_EventWait(30);
 #else
-    Engine_EventWait(80);
+  Engine_EventWait(80);
 #endif
-    scroll = gMapWork[0];
-    ship = Object_GetById(8);
-    ship->acceleration = 131;
-    ship->speed = 0x20000;
-    scroll->layers[0].speedX = -0x3000;
-    ObjectMotion_CommitPositionAndActivate(8, 60, 0);
-    scroll->layers[0].speedX = -0x6000;
-    ObjectMotion_CommitPositionAndActivate(8, 60, 0);
-    Engine_EventWait(80);
-    Engine_EventWait(100);
-    Engine_CameraSetSpeed(144179, 655);
-    Engine_CameraMoveTo(52953088, -1, 11010048, 1);
-    Engine_EventWait(300);
-    event = gMapWork[19];
-    event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Io_Write16(0, &PLTT_BACKDROP);
-    event->transitionFrames = 96;
-    Engine_EventCloseScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventWait(30);
-    Engine_GameFlagSet(282);
-    Event_SetDestination((s32)&SceneId_Title, 9);
+  scroll = gMapWork[0];
+  ship = Object_GetById(8);
+  ship->acceleration = 131;
+  ship->speed = 0x20000;
+  scroll->layers[0].speedX = -0x3000;
+  ObjectMotion_CommitPositionAndActivate(8, 60, 0);
+  scroll->layers[0].speedX = -0x6000;
+  ObjectMotion_CommitPositionAndActivate(8, 60, 0);
+  Engine_EventWait(80);
+  Engine_EventWait(100);
+  Engine_CameraSetSpeed(144179, 655);
+  Engine_CameraMoveTo(52953088, -1, 11010048, 1);
+  Engine_EventWait(300);
+  event = gMapWork[19];
+  event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Io_Write16(0, &PLTT_BACKDROP);
+  event->transitionFrames = 96;
+  Engine_EventCloseScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventWait(30);
+  Engine_GameFlagSet(282);
+  Event_SetDestination((s32)&SceneId_Title, 9);
 }
 
-union GameStateRows
-{
-    u8  bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
+union GameStateRows {
+  u8 bytes[512][2];
+  s16 halves[512][1];
+  s32 words[256];
 };
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
-#define SET_PRIORITY(actor, n) \
-    ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->secondPriority = 1))
+#define SET_PRIORITY(actor, n)                                                 \
+  ((n) == 9 ? (SPRITE_OF(actor)->priority = 1)                                 \
+            : (SPRITE_OF(actor)->secondPriority = 1))
 
-struct ScrollWork
-{
-    u16 pages[2][0x3c0];
-    u8  page;
-    u8  mode;
-    u16 phase;
-    u8  unkf04[4];
-    s32 frequency[2];
-    s32 step[2];
-    s32 amplitude[2];
+struct ScrollWork {
+  u16 pages[2][0x3c0];
+  u8 page;
+  u8 mode;
+  u16 phase;
+  u8 unkf04[4];
+  s32 frequency[2];
+  s32 step[2];
+  s32 amplitude[2];
 };
 
-static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
-{
-    return (u16)(Iwram_MulQ16(gLemurianShip_WaveSine[(angle >> 16) & 0xff], amplitude) / 256)
-           + base;
+static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
+  return (u16)(Iwram_MulQ16(gLemurianShip_WaveSine[(angle >> 16) & 0xff],
+                            amplitude) /
+               256) +
+         base;
 }
 
-static void EV10_SCRIPT(void)
-{
-    struct WaveMap *map;
-    s32             i;
-    s32             flash;
-    s32             white;
-    s32             dark;
-    s32             sunk;
-    /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+6 and each BGxCNT value is stored there with strh on its way to the register (an 8-byte frame for 4). Without it differ 26, 225 instructions for 231. */
-    volatile u16 cnt;
+static void EV10_SCRIPT(void) {
+  struct WaveMap *map;
+  s32 i;
+  s32 flash;
+  s32 white;
+  s32 dark;
+  s32 sunk;
+  /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+6
+   * and each BGxCNT value is stored there with strh on its way to the register
+   * (an 8-byte frame for 4). Without it differ 26, 225 instructions for 231. */
+  volatile u16 cnt;
 
-    map = gMapWork[0];
+  map = gMapWork[0];
 
-    Event_Begin();
-    Battle_ResetEffectCounter();
-    Actor_WalkToAndWait(0, 312, 232);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Event_Wait(40);
-    Event_PlayCue(140);
-    for (i = 0; i <= 15; i++)
-    {
-        Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
-        Event_Wait(10);
+  Event_Begin();
+  Battle_ResetEffectCounter();
+  Actor_WalkToAndWait(0, 312, 232);
+  Actor_FaceDirection(0, 0xc000, 0);
+  Event_Wait(40);
+  Event_PlayCue(140);
+  for (i = 0; i <= 15; i++) {
+    Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
+    Event_Wait(10);
+  }
+  {
+    u16 color = 0x7e00;
+
+    PLTT_BACKDROP = color;
+  }
+  {
+    u16 bright = 0x1010;
+
+    for (flash = 0; flash < 3; flash++) {
+      Event_PlayCue(212);
+      REG_BLDALPHA = bright;
+      Event_Wait(3);
+      Io_Write16(0x810, &REG_BLDALPHA);
+      Event_Wait(65);
     }
-    {
-        u16 color = 0x7e00;
-
-        PLTT_BACKDROP = color;
-    }
-    {
-        u16 bright = 0x1010;
-
-        for (flash = 0; flash < 3; flash++)
-        {
-            Event_PlayCue(212);
-            REG_BLDALPHA = bright;
-            Event_Wait(3);
-            Io_Write16(0x810, &REG_BLDALPHA);
-            Event_Wait(65);
-        }
-    }
-    gLemurianShip_ShimmerActive = 1;
-    gLemurianShip_ShimmerPhase = 0;
-    FieldScheduler_AddCallback(LemurianShip_UpdateWaves, TASK_PRIORITY_SCENE);
-    gLemurianShip_DriftActive = 1;
-    Event_Wait(20);
-    Event_PlayCue(163);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(60);
-    gLemurianShip_DriftActive = 1;
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(60);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    gLemurianShip_CountTicks = 0;
-    FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
-    sunk = 0;
-    do
-    {
-        map->layers[6].y += 0x3333;
-        map->layers[7].y += 0x3333;
-        sunk += 0x3333;
-        Task_Wait(1);
-    } while (sunk <= 0x59ffff);
-    Engine_TaskRemoveCallback(SceneState_CountDownEveryFortyTicks);
-    gLemurianShip_DriftActive = 0;
-    REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 3;
-    REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
-    REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
-    gLemurianShip_ShimmerActive = 0;
-    Event_PlayCue(288);
+  }
+  gLemurianShip_ShimmerActive = 1;
+  gLemurianShip_ShimmerPhase = 0;
+  FieldScheduler_AddCallback(LemurianShip_UpdateWaves, TASK_PRIORITY_SCENE);
+  gLemurianShip_DriftActive = 1;
+  Event_Wait(20);
+  Event_PlayCue(163);
+  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Event_Wait(60);
+  gLemurianShip_DriftActive = 1;
+  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Event_Wait(60);
+  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  gLemurianShip_CountTicks = 0;
+  FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks,
+                             TASK_PRIORITY_SCENE);
+  sunk = 0;
+  do {
+    map->layers[6].y += 0x3333;
+    map->layers[7].y += 0x3333;
+    sunk += 0x3333;
     Task_Wait(1);
-    Event_PlayCue(145);
-    Io_Write16(191, &REG_BLDCNT);
-    for (white = 0; white <= 16; white++)
-    {
-        REG_BLDY = white;
-        Event_Wait(1);
-    }
-    Event_Wait(40);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    gLemurianShip_SwellLayerSixY = map->layers[6].y;
-    gLemurianShip_SwellLayerSevenY = map->layers[7].y;
-    gLemurianShip_SwellActive = 1;
-    for (dark = 16; dark >= 0; dark--)
-    {
-        REG_BLDY = dark;
-        Event_Wait(8);
-    }
-    FieldScheduler_AddCallback(LemurianShip_CyclePalette, TASK_PRIORITY_SCENE);
-    Event_PlayCue(80);
-    AudioCommand_WaitForStateByteClear();
-    Event_Wait(20);
-    Event_End();
-    Scene_RunExtendedPresentationSequence();
+  } while (sunk <= 0x59ffff);
+  Engine_TaskRemoveCallback(SceneState_CountDownEveryFortyTicks);
+  gLemurianShip_DriftActive = 0;
+  REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 3;
+  REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
+  REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
+  gLemurianShip_ShimmerActive = 0;
+  Event_PlayCue(288);
+  Task_Wait(1);
+  Event_PlayCue(145);
+  Io_Write16(191, &REG_BLDCNT);
+  for (white = 0; white <= 16; white++) {
+    REG_BLDY = white;
+    Event_Wait(1);
+  }
+  Event_Wait(40);
+  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  gLemurianShip_SwellLayerSixY = map->layers[6].y;
+  gLemurianShip_SwellLayerSevenY = map->layers[7].y;
+  gLemurianShip_SwellActive = 1;
+  for (dark = 16; dark >= 0; dark--) {
+    REG_BLDY = dark;
+    Event_Wait(8);
+  }
+  FieldScheduler_AddCallback(LemurianShip_CyclePalette, TASK_PRIORITY_SCENE);
+  Event_PlayCue(80);
+  AudioCommand_WaitForStateByteClear();
+  Event_Wait(20);
+  Event_End();
+  Scene_RunExtendedPresentationSequence();
 }
 
-s32 LemurianShip_SetupScene(void)
-{
-    struct WaveMap *map;
-    /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2 and each step is stored there with strh (a 4-byte frame for none). Without it (2026-10-13, the BGxCNT writes chained as in EV10_SCRIPT) differ 23, 158 instructions for 165. */
-    volatile u16 cnt;
+s32 LemurianShip_SetupScene(void) {
+  struct WaveMap *map;
+  /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
+   * and each step is stored there with strh (a 4-byte frame for none). Without
+   * it (2026-10-13, the BGxCNT writes chained as in EV10_SCRIPT) differ 23, 158
+   * instructions for 165. */
+  volatile u16 cnt;
 
-    map = gMapWork[0];
-    if (((union GameStateRows *)&gGameState)->halves[225][0] == 99)
-    {
-        Inventory_AddItem(0, 242);
-    }
-    ((struct EventWork *)gMapWork[19])->startTransition =
-        SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Object_GetById(8)->collisionFlags = 0;
-    Object_GetById(8)->priorityFlags = 2;
-    Object_GetById(9)->collisionFlags = 0;
-    Object_GetById(9)->priorityFlags = 2;
-    {
-        struct FieldActor *actor = Object_GetById(8);
+  map = gMapWork[0];
+  if (((union GameStateRows *)&gGameState)->halves[225][0] == 99) {
+    Inventory_AddItem(0, 242);
+  }
+  ((struct EventWork *)gMapWork[19])->startTransition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Object_GetById(8)->collisionFlags = 0;
+  Object_GetById(8)->priorityFlags = 2;
+  Object_GetById(9)->collisionFlags = 0;
+  Object_GetById(9)->priorityFlags = 2;
+  {
+    struct FieldActor *actor = Object_GetById(8);
 
-        SET_PRIORITY(actor, 9);
-    }
-    {
-        struct FieldActor *actor = Object_GetById(9);
+    SET_PRIORITY(actor, 9);
+  }
+  {
+    struct FieldActor *actor = Object_GetById(9);
 
-        SET_PRIORITY(actor, 9);
-    }
-    {
-        struct FieldActor *actor = Object_GetById(0);
+    SET_PRIORITY(actor, 9);
+  }
+  {
+    struct FieldActor *actor = Object_GetById(0);
 
-        SET_PRIORITY(actor, 9);
-        SET_PRIORITY(actor, 21);
-    }
-    {
-        struct FieldActor *actor = Object_GetById(1);
+    SET_PRIORITY(actor, 9);
+    SET_PRIORITY(actor, 21);
+  }
+  {
+    struct FieldActor *actor = Object_GetById(1);
 
-        SET_PRIORITY(actor, 9);
-        SET_PRIORITY(actor, 21);
-    }
-    {
-        struct FieldActor *actor = Object_GetById(2);
+    SET_PRIORITY(actor, 9);
+    SET_PRIORITY(actor, 21);
+  }
+  {
+    struct FieldActor *actor = Object_GetById(2);
 
-        SET_PRIORITY(actor, 9);
-        SET_PRIORITY(actor, 21);
-    }
-    {
-        struct FieldActor *actor = Object_GetById(3);
+    SET_PRIORITY(actor, 9);
+    SET_PRIORITY(actor, 21);
+  }
+  {
+    struct FieldActor *actor = Object_GetById(3);
 
-        SET_PRIORITY(actor, 9);
-        SET_PRIORITY(actor, 21);
-    }
-    REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 2;
-    REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
-    REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 3;
-    Io_Write16(0x2648, &REG_BLDCNT);
-    Io_Write16(0x810, &REG_BLDALPHA);
-    {
-        struct WaveMapLayer *layer = map->layers + 6;
+    SET_PRIORITY(actor, 9);
+    SET_PRIORITY(actor, 21);
+  }
+  REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 2;
+  REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
+  REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 3;
+  Io_Write16(0x2648, &REG_BLDCNT);
+  Io_Write16(0x810, &REG_BLDALPHA);
+  {
+    struct WaveMapLayer *layer = map->layers + 6;
 
-        layer->y += -0x5a0000;
-        layer = map->layers + 7;
-        layer->y += -0x5a0000;
-    }
-    Engine_MapRedraw();
-    FieldScene_ConfigureFixedPointValues();
-    return 0;
+    layer->y += -0x5a0000;
+    layer = map->layers + 7;
+    layer->y += -0x5a0000;
+  }
+  Engine_MapRedraw();
+  FieldScene_ConfigureFixedPointValues();
+  return 0;
 }
 
-void DisplayScroll_ArmHBlankDma(void)
-{
-    struct ScrollWork *work;
-    u32               *source;
-    volatile u16      *dma0;
-    volatile u32      *destination;
+void DisplayScroll_ArmHBlankDma(void) {
+  struct ScrollWork *work;
+  u32 *source;
+  volatile u16 *dma0;
+  volatile u32 *destination;
 
-    work = gHBlankScrollWork;
-    source = (u32 *)work->pages[work->page];
+  work = gHBlankScrollWork;
+  source = (u32 *)work->pages[work->page];
 
-    dma0 = REG_DMA0;
-    destination = (volatile u32 *)&REG_BG3HOFS;
-    dma0[5] &= ~DMA_START_HBLANK_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
+  dma0 = REG_DMA0;
+  destination = (volatile u32 *)&REG_BG3HOFS;
+  dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+  dma0[5] &= ~DMA_ENABLE;
+  dma0[5];
 
-    *destination = *source++;
-    Dma_Set(source, destination, 0xa6600001, (volatile u32 *)dma0);
+  *destination = *source++;
+  Dma_Set(source, destination, 0xa6600001, (volatile u32 *)dma0);
 }
 
-void DisplayScroll_BuildAndSwapHBlankPage(void)
-{
-    struct ScrollWork *work;
-    u16               *line;
-    s32                angle;
-    u16                base;
-    s32                amplitude;
-    s32                step;
-    u16                y;
-    s32                i;
+void DisplayScroll_BuildAndSwapHBlankPage(void) {
+  struct ScrollWork *work;
+  u16 *line;
+  s32 angle;
+  u16 base;
+  s32 amplitude;
+  s32 step;
+  u16 y;
+  s32 i;
 
-    work = gHBlankScrollWork;
-    y = gBgScroll[3].y;
-    line = work->pages[work->page ^ 1];
-    step = work->step[0];
-    angle = (work->phase + y) * work->frequency[0];
-    amplitude = work->amplitude[0];
-    base = gBgScroll[3].x;
-    for (i = 0; i != 160; i++)
-    {
-        *line = Wave_Offset(angle, amplitude, base);
-        angle += step;
-        line += 2;
-    }
-    line = work->pages[work->page ^ 1] + 1;
-    step = work->step[1];
-    angle = (work->phase + y) * work->frequency[1];
-    amplitude = work->amplitude[1];
-    for (i = 0; i != 160; i++)
-    {
-        *line = Wave_Offset(angle, amplitude, y);
-        angle += step;
-        line += 2;
-    }
-    work->phase++;
-    work->page ^= 1;
+  work = gHBlankScrollWork;
+  y = gBgScroll[3].y;
+  line = work->pages[work->page ^ 1];
+  step = work->step[0];
+  angle = (work->phase + y) * work->frequency[0];
+  amplitude = work->amplitude[0];
+  base = gBgScroll[3].x;
+  for (i = 0; i != 160; i++) {
+    *line = Wave_Offset(angle, amplitude, base);
+    angle += step;
+    line += 2;
+  }
+  line = work->pages[work->page ^ 1] + 1;
+  step = work->step[1];
+  angle = (work->phase + y) * work->frequency[1];
+  amplitude = work->amplitude[1];
+  for (i = 0; i != 160; i++) {
+    *line = Wave_Offset(angle, amplitude, y);
+    angle += step;
+    line += 2;
+  }
+  work->phase++;
+  work->page ^= 1;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/scroll_initialize_hblank_dma.h"
 
-static void SceneEffect_LoadTablesAndStopDma0(void)
-{
-    volatile u16 *reg;
+static void SceneEffect_LoadTablesAndStopDma0(void) {
+  volatile u16 *reg;
 
-    Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
-    Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
-    reg = REG_DMA0;
-    reg[5] = 0xC5FF & reg[5];
-    reg[5] = 0x7FFF & reg[5];
-    reg[5];
+  Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
+  Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
+  reg = REG_DMA0;
+  reg[5] = 0xC5FF & reg[5];
+  reg[5] = 0x7FFF & reg[5];
+  reg[5];
 }
 
-struct FadeSprite
-{
-    u32 unused;
-    u32 attributes;
-    u32 tile;
+struct FadeSprite {
+  u32 unused;
+  u32 attributes;
+  u32 tile;
 };
 
 static struct FadeSprite sFadeSprites[24];
-static s16               sFadeStep;
-static s16               sFadeSlot;
+static s16 sFadeStep;
+static s16 sFadeSlot;
 
-static void LemurianShip_StepFade(void)
-{
-    u32 *entry;
-    u32  tile;
-    s32  step;
-    s32  x;
-    u32  i;
+static void LemurianShip_StepFade(void) {
+  u32 *entry;
+  u32 tile;
+  s32 step;
+  s32 x;
+  u32 i;
 
-    tile = gVramBlockCache[sFadeSlot].offset >> 5;
-    entry = (u32 *)sFadeSprites;
-    if (sFadeStep != 0)
-        sFadeStep--;
-    for (i = 0; i < 8; i++)
-    {
-        s32 left;
+  tile = gVramBlockCache[sFadeSlot].offset >> 5;
+  entry = (u32 *)sFadeSprites;
+  if (sFadeStep != 0)
+    sFadeStep--;
+  for (i = 0; i < 8; i++) {
+    s32 left;
 
-        step = sFadeStep;
-        left = -step / 2;
-        *entry++ = 0;
-        *entry++ = (left & 0xff) | (i << 21) | 0x80004000;
-        *entry++ = tile;
-    }
-    x = (step / 2 + 136) & 0xff;
-    for (i = 0; i < 8; i++)
-    {
-        *entry++ = 0;
-        *entry++ = (i << 21) | x | 0x80004000;
-        *entry++ = tile;
-    }
-    i = 0;
-    x = (sFadeStep / 2 + 152) & 0xff;
-    for (; i < 8; i++)
-    {
-        *entry++ = 0;
-        *entry++ = (i << 21) | x | 0x80004000;
-        *entry++ = tile;
-    }
-    for (i = 0; i < 24; i++)
-        Runtime_PushSlotEntry(&sFadeSprites[i], 255);
+    step = sFadeStep;
+    left = -step / 2;
+    *entry++ = 0;
+    *entry++ = (left & 0xff) | (i << 21) | 0x80004000;
+    *entry++ = tile;
+  }
+  x = (step / 2 + 136) & 0xff;
+  for (i = 0; i < 8; i++) {
+    *entry++ = 0;
+    *entry++ = (i << 21) | x | 0x80004000;
+    *entry++ = tile;
+  }
+  i = 0;
+  x = (sFadeStep / 2 + 152) & 0xff;
+  for (; i < 8; i++) {
+    *entry++ = 0;
+    *entry++ = (i << 21) | x | 0x80004000;
+    *entry++ = tile;
+  }
+  for (i = 0; i < 24; i++)
+    Runtime_PushSlotEntry(&sFadeSprites[i], 255);
 }
 
-static void LemurianShip_ScheduleFade(void)
-{
-    u8 *buf;
+static void LemurianShip_ScheduleFade(void) {
+  u8 *buf;
 
-    buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-    sFadeSlot = Resource_FindFreeEntry();
-    Dma_Fill32(0x11111111, buf, 0x100);
-    Engine_VramLoad(sFadeSlot, 0x100, (s32)buf);
+  buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
+  sFadeSlot = Resource_FindFreeEntry();
+  Dma_Fill32(0x11111111, buf, 0x100);
+  Engine_VramLoad(sFadeSlot, 0x100, (s32)buf);
 
-    sFadeStep = 0x30;
-    FieldScheduler_AddCallback(LemurianShip_StepFade, 0xc80);
+  sFadeStep = 0x30;
+  FieldScheduler_AddCallback(LemurianShip_StepFade, 0xc80);
 }
 
 struct SceneEvent gLemurianShip_PaletteFrames[] = {
-    { 0x69c05860, 0x7f20, 0x69c0, 0x48005860 },
-    { 0x69c05860, 0x7f20, 0x69c0, 0x5860 },
+    {0x69c05860, 0x7f20, 0x69c0, 0x48005860},
+    {0x69c05860, 0x7f20, 0x69c0, 0x5860},
 };
 
 s32 gLemurianShip_DriftScript[] = {
@@ -890,9 +833,9 @@ s16 gLemurianShip_WaveSine[256] = {
 // clang-format on
 
 struct SceneEntrance gLemurianShip_SceneTableA[] = {
-    { 0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gLemurianShip_SceneTableB[] = {
@@ -902,24 +845,27 @@ u32 gLemurianShip_SceneTableB[] = {
 };
 
 struct ScenePlacement gLemurianShip_SceneTableC[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248), FACING_SOUTH,
-        TALK_KEEP_FACING, 0 },
-    { 0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312), FACING_SOUTH,
-        TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST,
+     TALK_FACE_PARTY, 0},
+    {IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
+     0},
+    {MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
+     0},
+    {0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248),
+     FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312),
+     FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEvent gLemurianShip_SceneTableD[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(LemurianShip_LoadTablesAndStopDma) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(FieldScene_ConfigureFixedPointValues) },
-    { 0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
-    { SCENE_EVENTS_END },
+    {EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH)},
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LemurianShip_LoadTablesAndStopDma)},
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
+     EVENT_SCRIPT(FieldScene_ConfigureFixedPointValues)},
+    {0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+    {SCENE_EVENTS_END},
 };
 
 s32 gLemurianShip_ShimmerActive = 0;

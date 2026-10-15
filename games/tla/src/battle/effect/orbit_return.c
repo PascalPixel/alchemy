@@ -4,64 +4,58 @@
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
-struct Output_08097f80
-{
-    s32 x;
-    s32 y;
-    s32 z;
+struct Output_08097f80 {
+  s32 x;
+  s32 y;
+  s32 z;
 };
 
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
-void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
-{
-    struct Output_08097f80 position;
-    s8                    *statePointer = &effect->state;
-    s32                    state;
+void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect) {
+  struct Output_08097f80 position;
+  s8 *statePointer = &effect->state;
+  s32 state;
 
 next_state:
-    state = *statePointer;
-    if (state == 0)
-    {
-        u32 angle;
+  state = *statePointer;
+  if (state == 0) {
+    u32 angle;
 
-        position.x = effect->originX;
-        position.z = effect->originZ;
-        angle = Random16();
-        Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
-        effect->targetX = position.x;
-        effect->targetZ = position.z;
-        effect->acceleration = 0x40000;
-        effect->maxSpeed = 0x40000;
-        effect->flag42 = state;
-        (*statePointer)++;
-        return;
+    position.x = effect->originX;
+    position.z = effect->originZ;
+    angle = Random16();
+    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->acceleration = 0x40000;
+    effect->maxSpeed = 0x40000;
+    effect->flag42 = state;
+    (*statePointer)++;
+    return;
+  }
+
+  if (state == 1) {
+    if (BattleFx_HasReachedTarget(effect) == 0) {
+      (*statePointer)++;
+      goto next_state;
     }
+    return;
+  }
 
-    if (state == 1)
+  if (state == 2) {
+    effect->targetX = effect->originX;
+    effect->targetZ = effect->originZ;
     {
-        if (BattleFx_HasReachedTarget(effect) == 0)
-        {
-            (*statePointer)++;
-            goto next_state;
-        }
-        return;
+      u32 value = 0x400;
+
+      effect->maxTurnStep = value;
     }
+    effect->flag42 = 1;
+    (*statePointer)++;
+    return;
+  }
 
-    if (state == 2)
-    {
-        effect->targetX = effect->originX;
-        effect->targetZ = effect->originZ;
-        {
-            u32 value = 0x400;
-
-            effect->maxTurnStep = value;
-        }
-        effect->flag42 = 1;
-        (*statePointer)++;
-        return;
-    }
-
-    if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
-        BattleFx_ClearOwnedSlot(effect);
+  if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+    BattleFx_ClearOwnedSlot(effect);
 }

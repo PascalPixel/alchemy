@@ -20,31 +20,27 @@
 //--------------------------------------------------------------------------
 // 16 進で digits けた（1〜8、範囲外なら 8）
 //--------------------------------------------------------------------------
-void Text_DrawHexRightAligned(u32 value, s32 digits)
-{
-    s32 n;
+void Text_DrawHexRightAligned(u32 value, s32 digits) {
+  s32 n;
 
-    n = digits;
-    if ((n - 1) > 7U)
-    {
-        n = 8;
-    }
-    Text_FormatHexToWork(value);
-    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+  n = digits;
+  if ((n - 1) > 7U) {
+    n = 8;
+  }
+  Text_FormatHexToWork(value);
+  Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
 }
 
 //--------------------------------------------------------------------------
 // 符号つきの 10 進で digits けた（1〜10、範囲外なら 10）
 //--------------------------------------------------------------------------
-void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits)
-{
-    s32 n;
+void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits) {
+  s32 n;
 
-    n = digits;
-    if ((n - 1) > 9U)
-    {
-        n = 10;
-    }
-    Text_FormatSignedDecimalToWork(value);
-    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+  n = digits;
+  if ((n - 1) > 9U) {
+    n = 10;
+  }
+  Text_FormatSignedDecimalToWork(value);
+  Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }

@@ -17,7 +17,4 @@
 //--------------------------------------------------------------------------
 // ヒープ 16 番のウィンドウを閉じ、ブロックを返す
 //--------------------------------------------------------------------------
-void UiWork_CloseAndRelease(void)
-{
-    UiWork_FinalizeAndReleaseBlock16();
-}
+void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }

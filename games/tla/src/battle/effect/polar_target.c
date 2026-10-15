@@ -8,16 +8,15 @@
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
-struct CompositeAnimation
-{
-    u8                     unk00[0x11];
-    u8                     displayFlags;
-    u8                     unk12[7];
-    u8                     dirty;
-    u8                     unk1a;
-    u8                     count;
-    u8                     unk1c[0x0c];
-    struct AnimationEntry *entries[4];
+struct CompositeAnimation {
+  u8 unk00[0x11];
+  u8 displayFlags;
+  u8 unk12[7];
+  u8 dirty;
+  u8 unk1a;
+  u8 count;
+  u8 unk1c[0x0c];
+  struct AnimationEntry *entries[4];
 };
 
 void Func_080dd950(void);
@@ -30,104 +29,94 @@ void Func_080e87c4(void);
 void Func_080dca50(void);
 
 // party_state.h の unk26a
-struct PartyPauseView
-{
-    u8  unk000[0x26a];
-    s16 pausedObject;
+struct PartyPauseView {
+  u8 unk000[0x26a];
+  s16 pausedObject;
 };
 
-void BattleFx_ClearChildValueOnMismatch(void)
-{
-    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+void BattleFx_ClearChildValueOnMismatch(void) {
+  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-    if (scene->animation == 2)
-    {
-        struct PartyPauseView *party;
+  if (scene->animation == 2) {
+    struct PartyPauseView *party;
 
-        Func_080dca50();
-        party = (struct PartyPauseView *)&gPartyState;
-        /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2) */
-        asm volatile("");
-        if (party->pausedObject != scene->secondObjectId)
-            ((struct ObjectRuntime *)scene->child)->movementState = 0;
-    }
+    Func_080dca50();
+    party = (struct PartyPauseView *)&gPartyState;
+    /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field
+     * offset; read as a plain field the offset's first half is scheduled ahead
+     * of the load (differ 2) */
+    asm volatile("");
+    if (party->pausedObject != scene->secondObjectId)
+      ((struct ObjectRuntime *)scene->child)->movementState = 0;
+  }
 }
 
 // 種類ごとの追加処理
-void FieldEvent_RunTypeHandler(void)
-{
-    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+void FieldEvent_RunTypeHandler(void) {
+  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-    switch (scene->animation)
-    {
-    case 8:
-        Func_080dd950();
-        break;
-    case 10:
-        Func_080debd8();
-        break;
-    case 16:
-        FieldEvent_ShowStatusMessage();
-        break;
-    case 23:
-        Func_080e4730();
-        break;
-    case 24:
-        Func_080e9db4();
-        break;
-    case 28:
-        Func_080e87c4();
-        break;
-    }
+  switch (scene->animation) {
+  case 8:
+    Func_080dd950();
+    break;
+  case 10:
+    Func_080debd8();
+    break;
+  case 16:
+    FieldEvent_ShowStatusMessage();
+    break;
+  case 23:
+    Func_080e4730();
+    break;
+  case 24:
+    Func_080e9db4();
+    break;
+  case 28:
+    Func_080e87c4();
+    break;
+  }
 }
 
-void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner)
-{
-    s32                        state;
-    struct CompositeAnimation *target;
-    s32                        initialCount;
-    s32                        count;
-    struct AnimationEntry    **entry;
-    struct AnimationEntry     *current;
-    u32                        frame;
-    s32                        value;
+void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner) {
+  s32 state;
+  struct CompositeAnimation *target;
+  s32 initialCount;
+  s32 count;
+  struct AnimationEntry **entry;
+  struct AnimationEntry *current;
+  u32 frame;
+  s32 value;
 
-    state = owner->animationKind;
-    if (state == 1)
-    {
-        target = owner->animation;
-        if (target != 0 && (target->displayFlags & state) == 0)
-        {
-            initialCount = target->count;
-            if (initialCount != 0)
-            {
-                entry = target->entries;
-                frame = gFrameCount;
-                count = initialCount;
-                do
-                {
-                    current = *entry++;
-                    value = frame % 6;
-                    count--;
-                    current->param = value;
-                } while (count != 0);
-            }
-            target->dirty = 1;
-        }
+  state = owner->animationKind;
+  if (state == 1) {
+    target = owner->animation;
+    if (target != 0 && (target->displayFlags & state) == 0) {
+      initialCount = target->count;
+      if (initialCount != 0) {
+        entry = target->entries;
+        frame = gFrameCount;
+        count = initialCount;
+        do {
+          current = *entry++;
+          value = frame % 6;
+          count--;
+          current->param = value;
+        } while (count != 0);
+      }
+      target->dirty = 1;
     }
+  }
 }
 
-void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct ObjectRuntime *object, s32 magnitude, s32 angle)
-{
-    s32 values[3];
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+                                                s32 magnitude, s32 angle) {
+  s32 values[3];
 
-    if (object != 0)
-    {
-        values[0] = object->x;
-        values[1] = object->y;
-        values[2] = object->z;
-        Vector_AddPolarOffset(magnitude, angle, values);
-        Object_SetPosition(object, values[0], values[1], values[2]);
-    }
+  if (object != 0) {
+    values[0] = object->x;
+    values[1] = object->y;
+    values[2] = object->z;
+    Vector_AddPolarOffset(magnitude, angle, values);
+    Object_SetPosition(object, values[0], values[1], values[2]);
+  }
 }

@@ -6,8 +6,9 @@
 
 #if GAME_TLA
 struct RenderOutput *RenderOutput_AcquireFree(void);
-void                 RenderOutput_ReleaseFree(struct RenderOutput *entry);
-void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node);
+void RenderOutput_ReleaseFree(struct RenderOutput *entry);
+void RenderOutput_AppendToList(struct RenderOutputList *list,
+                               struct RenderOutput *node);
 #endif
 
 #endif

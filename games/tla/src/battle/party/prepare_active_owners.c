@@ -14,30 +14,28 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-s32 BattleParty_PrepareActiveOwners(u16 *owners)
-{
-    s32 limit;
-    s32 count;
-    s32 index;
+s32 BattleParty_PrepareActiveOwners(u16 *owners) {
+  s32 limit;
+  s32 count;
+  s32 index;
 
-    limit = 4;
-    if (Ram_HeapSlots->battleWork->twoSided != 0)
-        limit = 3;
+  limit = 4;
+  if (Ram_HeapSlots->battleWork->twoSided != 0)
+    limit = 3;
 
-    count = Party_CountActiveOwnersFar();
-    if (count > limit)
-        count = limit;
+  count = Party_CountActiveOwnersFar();
+  if (count > limit)
+    count = limit;
 
-    for (index = 0; index < count; index++)
-    {
-        s32 owner = gPartyState.activeOwners[index];
-
-        if (owners != 0)
-            *owners++ = owner;
-        ((struct BattleUnit *)UnitGet(owner))->side = 2;
-    }
+  for (index = 0; index < count; index++) {
+    s32 owner = gPartyState.activeOwners[index];
 
     if (owners != 0)
-        *owners = 0xff;
-    return count;
+      *owners++ = owner;
+    ((struct BattleUnit *)UnitGet(owner))->side = 2;
+  }
+
+  if (owners != 0)
+    *owners = 0xff;
+  return count;
 }

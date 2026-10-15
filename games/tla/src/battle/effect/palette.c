@@ -8,21 +8,19 @@
 //--------------------------------------------------------------------------
 // 5 ビットの成分を 0〜31 に収める
 //--------------------------------------------------------------------------
-s32 Graphics_ClampRgb555Channel(s32 val)
-{
-    if (val > 31)
-        return 31;
-    if (val < 0)
-        val = 0;
-    return val;
+s32 Graphics_ClampRgb555Channel(s32 val) {
+  if (val > 31)
+    return 31;
+  if (val < 0)
+    val = 0;
+  return val;
 }
 
 //--------------------------------------------------------------------------
 // 値の上限を 0x7c00（RGB555 の青の最大と同じ値）に収める。下限はない
 //--------------------------------------------------------------------------
-s32 Graphics_ClampRgb555Component(s32 val)
-{
-    if (val > 0x7c00)
-        val = 0x7c00;
-    return val;
+s32 Graphics_ClampRgb555Component(s32 val) {
+  if (val > 0x7c00)
+    val = 0x7c00;
+  return val;
 }

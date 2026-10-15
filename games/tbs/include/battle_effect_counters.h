@@ -6,14 +6,14 @@
 
 #include "battle_effect_runtime.h"
 
-struct BattleEffectCounterState
-{
-    u8  padding000[0x16c];
-    s16 counters[12];
+struct BattleEffectCounterState {
+  u8 padding000[0x16c];
+  s16 counters[12];
 };
 
-LAYOUT_OFFSET_GUARD(
-    BattleEffectCounterState_Counters, struct BattleEffectCounterState, counters, 0x16c);
-LAYOUT_SIZE_GUARD(BattleEffectCounterState_Size, struct BattleEffectCounterState, 0x184);
+LAYOUT_OFFSET_GUARD(BattleEffectCounterState_Counters,
+                    struct BattleEffectCounterState, counters, 0x16c);
+LAYOUT_SIZE_GUARD(BattleEffectCounterState_Size,
+                  struct BattleEffectCounterState, 0x184);
 
 #endif

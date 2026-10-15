@@ -21,31 +21,27 @@ extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
-void Resource_ClearOwnerListAndCounters(void)
-{
-    struct SelectionScreen *screen;
+void Resource_ClearOwnerListAndCounters(void) {
+  struct SelectionScreen *screen;
 
-    screen = Ram_HeapSlots->menuWork;
-    screen->head = NULL;
-    screen->unk39a = 0;
-    if (screen->cursorIndex & 0x80)
-    {
-        screen->top = 0;
-        screen->cursorIndex = 0;
-    }
-    screen->verticalScroll = 0;
-    screen->count = 0;
+  screen = Ram_HeapSlots->menuWork;
+  screen->head = NULL;
+  screen->unk39a = 0;
+  if (screen->cursorIndex & 0x80) {
+    screen->top = 0;
+    screen->cursorIndex = 0;
+  }
+  screen->verticalScroll = 0;
+  screen->count = 0;
 }
 
-void Resource_PushPendingPair(u32 first, u32 second)
-{
-    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-    u16                     cnt = state->count;
+void Resource_PushPendingPair(u32 first, u32 second) {
+  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  u16 cnt = state->count;
 
-    if (cnt != 16)
-    {
-        state->kinds[cnt] = first;
-        state->bases[cnt] = second;
-        state->count++;
-    }
+  if (cnt != 16) {
+    state->kinds[cnt] = first;
+    state->bases[cnt] = second;
+    state->count++;
+  }
 }

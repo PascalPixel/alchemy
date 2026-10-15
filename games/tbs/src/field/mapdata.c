@@ -5,7 +5,8 @@
 
 //--------------------------------------------------------------------------
 // 地形の高さと振る舞い
-// Map terrain: the height curve of each cell kind and the world map's terrain behaviour.
+// Map terrain: the height curve of each cell kind and the world map's terrain
+// behaviour.
 //--------------------------------------------------------------------------
 
 // 地形の高さ関数: セルの当たりの最初のバイトの下位 4 ビットで選び、
@@ -42,14 +43,8 @@ const u8 gWorldMap_TerrainBehaviorTable[48] = {
 
 // 半径 40 の 8 方向 (x, y)
 const s8 gWorldMap_DirectionOffsets[8][2] = {
-    { 0, -40 },
-    { 28, -28 },
-    { 40, 0 },
-    { 28, 28 },
-    { 0, 40 },
-    { -28, 28 },
-    { -40, 0 },
-    { -28, -28 },
+    {0, -40}, {28, -28}, {40, 0},  {28, 28},
+    {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
 // 1.0 (Q16) が 2 つ

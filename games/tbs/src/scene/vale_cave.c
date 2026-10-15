@@ -41,712 +41,606 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-static void EV08_SCRIPT(void)
-{
-    BattleFx_RunPageEffectForSlot(8, 3, 4);
+static void EV08_SCRIPT(void) { BattleFx_RunPageEffectForSlot(8, 3, 4); }
+
+static void SceneActor_WaitActorDescent(struct FieldActor *actor) {
+  s32 frames = 60;
+
+  while (frames != 0) {
+    Engine_TaskWait(1);
+    frames--;
+    if (actor->y.fixed <= actor->terrainHeight)
+      break;
+  }
+  actor->y.fixed = actor->terrainHeight;
 }
 
-static void SceneActor_WaitActorDescent(struct FieldActor *actor)
-{
-    s32 frames = 60;
+static s32 SceneActor_FaceActorZero(struct FieldActor *obj) {
+  struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
+  s32 dz = target->z.fixed - obj->z.fixed;
+  s32 dx = target->x.fixed - obj->x.fixed;
 
-    while (frames != 0)
-    {
-        Engine_TaskWait(1);
-        frames--;
-        if (actor->y.fixed <= actor->terrainHeight)
-            break;
-    }
-    actor->y.fixed = actor->terrainHeight;
+  obj->facing = ArcTan2(dz, dx);
+  return 0;
 }
 
-static s32 SceneActor_FaceActorZero(struct FieldActor *obj)
-{
-    struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
-    s32                dz = target->z.fixed - obj->z.fixed;
-    s32                dx = target->x.fixed - obj->x.fixed;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  s16 scene = gGameState.scene;
 
-    obj->facing = ArcTan2(dz, dx);
-    return 0;
+  if (scene == (s32)&SceneId_ValeCave1) {
+    return gValeCaveEntrances1;
+  }
+  if (scene == (s32)&SceneId_ValeCave2) {
+    return gValeCaveEntrances2;
+  }
+  if (scene == (s32)&SceneId_ValeCave3) {
+    return gValeCaveEntrances3;
+  }
+  return gValeCaveEntrancesOther;
 }
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    s16 scene = gGameState.scene;
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-    if (scene == (s32)&SceneId_ValeCave1)
-    {
-        return gValeCaveEntrances1;
-    }
-    if (scene == (s32)&SceneId_ValeCave2)
-    {
-        return gValeCaveEntrances2;
-    }
-    if (scene == (s32)&SceneId_ValeCave3)
-    {
-        return gValeCaveEntrances3;
-    }
-    return gValeCaveEntrancesOther;
-}
+const u32 *Scene_GetExits(void) { return gValeCave_Exits; }
 
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
-}
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  s16 scene = gGameState.scene;
 
-const u32 *Scene_GetExits(void)
-{
-    return gValeCave_Exits;
-}
-
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    s16 scene = gGameState.scene;
-
-    if (scene == (s32)&SceneId_ValeCave1)
-    {
-        return gValeCavePlacements1;
-    }
-    if (scene == (s32)&SceneId_ValeCave2)
-    {
-        return gValeCavePlacements2;
-    }
-    if (scene == (s32)&SceneId_ValeCave3)
-    {
-        return gValeCavePlacements3;
-    }
+  if (scene == (s32)&SceneId_ValeCave1) {
     return gValeCavePlacements1;
+  }
+  if (scene == (s32)&SceneId_ValeCave2) {
+    return gValeCavePlacements2;
+  }
+  if (scene == (s32)&SceneId_ValeCave3) {
+    return gValeCavePlacements3;
+  }
+  return gValeCavePlacements1;
 }
 
-static void FieldScene_ConfigureRegionAtRow15(void)
-{
-    Map_CopyCells(16, 15, 1, 1, 15, 15);
+static void FieldScene_ConfigureRegionAtRow15(void) {
+  Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-static void FieldScene_ConfigureRegionAtRow17(void)
-{
-    Map_CopyCells(16, 17, 1, 1, 15, 15);
+static void FieldScene_ConfigureRegionAtRow17(void) {
+  Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
-static void EV09_PSYNERGY(void)
-{
-    struct EffectOptions  options;
-    struct EffectOptions *o;
-    struct FieldActor    *left;
-    struct FieldActor    *right;
-    u32                   i;
+static void EV09_PSYNERGY(void) {
+  struct EffectOptions options;
+  struct EffectOptions *o;
+  struct FieldActor *left;
+  struct FieldActor *right;
+  u32 i;
 
-    Engine_EventBegin();
-    if (Object_GetById(9)->x.fixed >> 20 == 23)
-    {
-        Actor_MoveToAndWait(0, 360, 664);
-        Engine_ActorFaceDirection(0, 0xe000, 10);
-        Object_GetById(9)->x.fixed += 0x20000;
-        left = OverlayObject_PrepareObject(
-            Object_GetById(9)->x.fixed, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
-        right = OverlayObject_PrepareObject(
-            Object_GetById(9)->x.fixed + 0x100000, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
-        Object_GetById(9)->motionFlags = 0;
-        o = &options;
-        o->startScaleX = 0x9999;
-        o->startScaleY = 0x9999;
-        o->palette = 7;
-        Engine_AudioPlayCue(216);
-        for (i = 0; i < 68; i++)
-        {
-            s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1700000;
-            s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2700000;
+  Engine_EventBegin();
+  if (Object_GetById(9)->x.fixed >> 20 == 23) {
+    Actor_MoveToAndWait(0, 360, 664);
+    Engine_ActorFaceDirection(0, 0xe000, 10);
+    Object_GetById(9)->x.fixed += 0x20000;
+    left =
+        OverlayObject_PrepareObject(Object_GetById(9)->x.fixed, 0,
+                                    Object_GetById(9)->z.fixed + 0x340000, 241);
+    right =
+        OverlayObject_PrepareObject(Object_GetById(9)->x.fixed + 0x100000, 0,
+                                    Object_GetById(9)->z.fixed + 0x340000, 241);
+    Object_GetById(9)->motionFlags = 0;
+    o = &options;
+    o->startScaleX = 0x9999;
+    o->startScaleY = 0x9999;
+    o->palette = 7;
+    Engine_AudioPlayCue(216);
+    for (i = 0; i < 68; i++) {
+      s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1700000;
+      s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2700000;
 
-            Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
-            Object_GetById(9)->y.fixed -= 0x8000;
-            Engine_EventWait(1);
-        }
-        Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
-        Object_GetById(9)->priorityFlags |= 2;
-        Engine_GameFlagSet(0x200);
-        Object_GetById(9)->y.fixed = -0x80000;
-        Engine_ActorSetAnimation(9, 2);
-        Engine_ObjectDispatchRelease(left);
-        Engine_ObjectDispatchRelease(right);
-        Engine_EventWait(30);
+      Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
+      Object_GetById(9)->y.fixed -= 0x8000;
+      Engine_EventWait(1);
     }
-    Engine_EventEnd();
-}
-
-static void EV10_PSYNERGY(void)
-{
-    struct EffectOptions  options;
-    struct EffectOptions *o;
-    struct FieldActor    *left;
-    struct FieldActor    *right;
-    u32                   i;
-
-    Engine_EventBegin();
-    if (Object_GetById(10)->x.fixed >> 20 == 27)
-    {
-        left = OverlayObject_PrepareObject(
-            Object_GetById(10)->x.fixed - 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
-        right = OverlayObject_PrepareObject(
-            Object_GetById(10)->x.fixed + 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
-        Object_GetById(9)->motionFlags = 0;
-        o = &options;
-        o->startScaleX = 0x9999;
-        o->startScaleY = 0x9999;
-        o->palette = 7;
-        Engine_AudioPlayCue(216);
-        for (i = 0; i < 68; i++)
-        {
-            s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1b00000;
-            s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2900000;
-
-            Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
-            Object_GetById(10)->y.fixed -= 0x8000;
-            Engine_EventWait(1);
-        }
-        Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
-        Object_GetById(10)->priorityFlags |= 2;
-        Engine_GameFlagSet(0x201);
-        Object_GetById(10)->y.fixed = -0x80000;
-        Engine_ActorSetAnimation(10, 2);
-        Engine_ObjectDispatchRelease(left);
-        Engine_ObjectDispatchRelease(right);
-        Engine_EventWait(30);
-    }
-    Engine_EventEnd();
-}
-
-static void EV24_SCRIPT(void)
-{
-    Engine_EventBegin();
-    StagedActor_AdvancePair();
-    Engine_EventEnd();
-    EV10_PSYNERGY();
-}
-
-static s32 FieldScene_RunPrimarySequence(s32 a0)
-{
-
-    union FieldCoordinate to[3];
-    struct FieldActor    *leader;
-    u8                   *flags;
-    s32                   saved;
-
-    leader = Object_GetById(ACTOR_PARTY_LEADER);
-    flags = &leader->motionFlags;
-    saved = *flags;
-#if EDITION_INTERNATIONAL
-    to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
-    to[1].fixed = leader->y.fixed;
-    to[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;
-#else
-    to[0].fixed = leader->x.fixed;
-    to[1].fixed = leader->y.fixed;
-    to[2].fixed = leader->z.fixed + 0x200000;
-#endif
-    if (FieldObject_CheckMovementCollision(leader, to) == 0)
-    {
-        Engine_EventBegin();
-        Object_SetMode(leader, 6);
-        Engine_TaskWait(6);
-        Engine_AudioPlayCue(152);
-        Object_SetMode(leader, 7);
-        leader->speed = 0x30000;
-        leader->acceleration = 0x20000;
-        leader->velocityY = 0x40000;
-        *flags &= 126;
-        Engine_ActorSetSpriteFlags(leader, 0);
-        Engine_ActorMoveToAndWait(0, to[0].part.pixel, to[2].part.pixel);
-        Object_SetMode(leader, 6);
-        Engine_ActorSetSpriteFlags(leader, 1);
-        *flags = saved;
-        Engine_EventEnd();
-        return 1;
-    }
-    return 0;
-}
-
-static void EV40_TOUCH(void)
-{
-
-    struct FieldActor *record;
-
-    if (GameFlag_IsSet(0x200) == 0)
-    {
-        GameFlag_Set(0x200);
-        Engine_EventBegin();
-        Camera_SetSpeed(0x10000, 0x2000);
-        Engine_CameraFollowActor(8, 1);
-        Engine_CameraWaitForMove();
-        Engine_EventWait(60);
-        Actor_FaceDirection(8, 0xc000, 20);
-        Actor_SetAttachedEffect(8, 0x102);
-        Engine_ActorRunRepeatedMotion(8, 2);
-        Engine_EventWait(20);
-        Actor_SetSpeed(8, 0x10000, 0x8000);
-        Actor_WalkToAndWait(8, 0x318, 248);
-        Engine_AudioPlayCue(152);
-        record = Actor_Get(8);
-        record->velocityY = 0x80000;
-        Actor_WalkToAndWait(8, 0x318, 0x118);
-        Engine_EventWait(20);
-        Actor_FaceDirection(8, 0xc000, 20);
-        Engine_EventWait(30);
-        Engine_EventEnd();
-    }
-}
-
-static void EV41_TOUCH(void)
-{
-
-    struct FieldActor *record;
-
-    if (GameFlag_IsSet(0x200) != 0)
-    {
-        if (GameFlag_IsSet(0x201) == 0)
-        {
-            GameFlag_Set(0x201);
-            GameFlag_Set(0x302);
-            Engine_EventBegin();
-            Actor_SetAttachedEffect(8, 0x102);
-            Engine_ActorRunRepeatedMotion(8, 2);
-            Engine_EventWait(20);
-            Actor_SetSpeed(8, 0x20000, 0x10000);
-            Actor_WalkToAndWait(8, 0x2f8, 0x118);
-            Actor_WalkToAndWait(8, 0x2f8, 0x138);
-            Actor_WalkToAndWait(8, 0x318, 0x138);
-            Engine_EventWait(10);
-            Actor_FaceDirection(8, 0xc000, 20);
-            record = Actor_Get(8);
-            record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
-            Engine_EventEnd();
-        }
-    }
-}
-
-static void FieldScene_RunScene3a6SequenceC(void)
-{
-
-    struct FieldActor *rec8;
-    struct FieldActor *record;
-    s32                idx;
-    s32                table;
-    s32                idx4;
-    s32                off24a;
-    struct EventWork  *p5;
-
-    p5 = gEventWork;
-    if (Engine_GameFlagIsSet(0x302) != 0)
-    {
-        off24a = 0x24a;
-        if (*(s16 *)((s32)&gGameState + off24a) != 8)
-        {
-            idx = p5->touchedTrigger;
-            rec8 = Object_GetById(8);
-            record = Object_GetById(ACTOR_PARTY_LEADER);
-            rec8->speed = record->speed;
-            rec8 = Object_GetById(8);
-            record = Object_GetById(ACTOR_PARTY_LEADER);
-            rec8->acceleration = record->acceleration;
-            idx -= 45;
-            table = (s32)gValeCave_WalkTargets;
-            idx <<= 3;
-            idx4 = idx + 4;
-            Engine_ActorWalkTo(8, *(s32 *)(table + idx), *(s32 *)(table + idx4));
-        }
-    }
-}
-
-static void EV08_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    Engine_ActorSetAnimation(8, 0);
-    Engine_EventEnd();
-}
-
-static void EV20_SCRIPT(void)
-{
-    struct FieldActor      *record;
-    s32                     v6;
-    s32                     v5;
-    s32                     two;
-    struct StagedActorProbe probe;
-
-    Engine_EventBegin();
-    if (StagedActor_FindClearPosition(&probe) != 0)
-    {
-        SceneActor_MoveAndRedraw(probe);
-        if ((probe.positionX >> 20) == 17)
-        {
-            Engine_ActorSetAnimation(probe.actorSlot, 3);
-            v6 = 0;
-            Object_GetById(probe.actorSlot)->motionFlags = v6;
-            record = Object_GetById(probe.actorSlot);
-            record->bounce = v6;
-            Engine_ActorSetDestinationOffset(probe.actorSlot, -12, 0);
-            Engine_ActorWaitForMove(probe.actorSlot);
-            Engine_ActorSetAnimation(probe.actorSlot, 3);
-            Engine_ActorSetSpritePriority(10, 3);
-            Object_GetById(probe.actorSlot)->motionFlags = 3;
-            Engine_ActorSetDestinationOffset(probe.actorSlot, -6, 0);
-            SceneActor_WaitActorDescent(Object_GetById(probe.actorSlot));
-            Engine_ActorSetAnimation(probe.actorSlot, 8);
-            {
-                struct FieldActor *obj = Object_GetById(probe.actorSlot);
-
-                two = 2;
-                obj->priorityFlags = two;
-            }
-            v5 = 4;
-            StagedActor_FillGridAttributeRectangle(
-                0, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
-            StagedActor_FillGridAttributeRectangle(
-                2, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
-            StagedActor_FillGridAttributeRectangle(2, 16, 18, 1, two, v6);
-            StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, v5, v6);
-            Engine_GameFlagSet(0x203);
-            Engine_AudioPlayCue(240);
-        }
-    }
-    Engine_EventEnd();
-}
-
-static void EV21_TOUCH_3(void)
-{
-
-    struct FieldActor *record;
-    s32                zero;
-
-    Engine_EventBegin();
-    Engine_EventWait(10);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
-    Engine_EventWait(15);
-    Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
-    Engine_EventWait(4);
-    Event_PlayCue(0x120);
-    Event_PlayCue(239);
-    Actor_SetSpeed(9, 0x8000, 0x1999);
+    Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
+    Object_GetById(9)->priorityFlags |= 2;
+    Engine_GameFlagSet(0x200);
+    Object_GetById(9)->y.fixed = -0x80000;
     Engine_ActorSetAnimation(9, 2);
-    zero = 0;
-    Object_GetById(9)->motionFlags = zero;
-    record = Actor_Get(9);
-    record->bounce = zero;
-    Engine_ActorSetDestinationOffset(9, 12, 0);
-    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorWaitForMove(9);
-    Event_PlayCue(0x120);
-    Event_PlayCue(213);
-    Engine_ActorSetAnimation(9, 3);
-    Object_GetById(9)->motionFlags = 3;
-    Engine_ActorSetDestinationOffset(9, 6, 0);
-    SceneActor_WaitActorDescent(Actor_Get(9));
-    Engine_ActorSetAnimation(9, 8);
-    Engine_ActorSetSpritePriority(9, 3);
-    Object_GetById(9)->priorityFlags = 2;
-    StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-    StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
-    GameFlag_Set(0x202);
-    Event_PlayCue(240);
-    Engine_EventEnd();
+    Engine_ObjectDispatchRelease(left);
+    Engine_ObjectDispatchRelease(right);
+    Engine_EventWait(30);
+  }
+  Engine_EventEnd();
 }
 
-static void EV22_SCRIPT(void)
-{
-    struct StagedActorProbe probe;
+static void EV10_PSYNERGY(void) {
+  struct EffectOptions options;
+  struct EffectOptions *o;
+  struct FieldActor *left;
+  struct FieldActor *right;
+  u32 i;
 
+  Engine_EventBegin();
+  if (Object_GetById(10)->x.fixed >> 20 == 27) {
+    left = OverlayObject_PrepareObject(Object_GetById(10)->x.fixed - 0x80000, 0,
+                                       Object_GetById(10)->z.fixed + 0x340000,
+                                       241);
+    right = OverlayObject_PrepareObject(
+        Object_GetById(10)->x.fixed + 0x80000, 0,
+        Object_GetById(10)->z.fixed + 0x340000, 241);
+    Object_GetById(9)->motionFlags = 0;
+    o = &options;
+    o->startScaleX = 0x9999;
+    o->startScaleY = 0x9999;
+    o->palette = 7;
+    Engine_AudioPlayCue(216);
+    for (i = 0; i < 68; i++) {
+      s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1b00000;
+      s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2900000;
+
+      Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
+      Object_GetById(10)->y.fixed -= 0x8000;
+      Engine_EventWait(1);
+    }
+    Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
+    Object_GetById(10)->priorityFlags |= 2;
+    Engine_GameFlagSet(0x201);
+    Object_GetById(10)->y.fixed = -0x80000;
+    Engine_ActorSetAnimation(10, 2);
+    Engine_ObjectDispatchRelease(left);
+    Engine_ObjectDispatchRelease(right);
+    Engine_EventWait(30);
+  }
+  Engine_EventEnd();
+}
+
+static void EV24_SCRIPT(void) {
+  Engine_EventBegin();
+  StagedActor_AdvancePair();
+  Engine_EventEnd();
+  EV10_PSYNERGY();
+}
+
+static s32 FieldScene_RunPrimarySequence(s32 a0) {
+
+  union FieldCoordinate to[3];
+  struct FieldActor *leader;
+  u8 *flags;
+  s32 saved;
+
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  flags = &leader->motionFlags;
+  saved = *flags;
+#if EDITION_INTERNATIONAL
+  to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
+  to[1].fixed = leader->y.fixed;
+  to[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;
+#else
+  to[0].fixed = leader->x.fixed;
+  to[1].fixed = leader->y.fixed;
+  to[2].fixed = leader->z.fixed + 0x200000;
+#endif
+  if (FieldObject_CheckMovementCollision(leader, to) == 0) {
     Engine_EventBegin();
-    if (StagedActor_FindClearPosition(&probe) != 0)
-    {
-        SceneActor_MoveAndRedraw(probe);
-        Engine_ActorSetAnimation(11, 3);
-        Actor_SetSpeed(11, 0x4000, 0x8000);
-        Engine_ActorSetDestinationOffset(11, 0, -16);
-        Engine_EventWait(45);
-        Engine_AudioPlayCue(240);
-        Engine_ActorSetAnimation(11, 8);
-        {
-            struct FieldActor *obj = Object_GetById(11);
-            s32                two = 2;
-            s32                zero = 0;
-
-            obj->priorityFlags = two;
-            StagedActor_FillGridAttributeRectangle(
-                0, 13, (probe.positionZ >> 20) - 1, 4, two, zero);
-        }
-        if ((probe.positionZ >> 20) == 20)
-        {
-            Engine_GameFlagSet(0x205);
-        }
-        else
-        {
-            Engine_GameFlagSet(0x204);
-            {
-
-                Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
-                Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
-            }
-        }
-    }
+    Object_SetMode(leader, 6);
+    Engine_TaskWait(6);
+    Engine_AudioPlayCue(152);
+    Object_SetMode(leader, 7);
+    leader->speed = 0x30000;
+    leader->acceleration = 0x20000;
+    leader->velocityY = 0x40000;
+    *flags &= 126;
+    Engine_ActorSetSpriteFlags(leader, 0);
+    Engine_ActorMoveToAndWait(0, to[0].part.pixel, to[2].part.pixel);
+    Object_SetMode(leader, 6);
+    Engine_ActorSetSpriteFlags(leader, 1);
+    *flags = saved;
     Engine_EventEnd();
+    return 1;
+  }
+  return 0;
 }
 
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    s16 scene = gGameState.scene;
+static void EV40_TOUCH(void) {
 
-    if (scene == (s32)&SceneId_ValeCave1)
-    {
-        return gValeCaveEvents1;
-    }
-    if (scene == (s32)&SceneId_ValeCave2)
-    {
-        return gValeCaveEvents2;
-    }
-    if (scene == (s32)&SceneId_ValeCave3)
-    {
-        return gValeCaveEvents3;
-    }
-    return gValeCaveEventsOther;
+  struct FieldActor *record;
+
+  if (GameFlag_IsSet(0x200) == 0) {
+    GameFlag_Set(0x200);
+    Engine_EventBegin();
+    Camera_SetSpeed(0x10000, 0x2000);
+    Engine_CameraFollowActor(8, 1);
+    Engine_CameraWaitForMove();
+    Engine_EventWait(60);
+    Actor_FaceDirection(8, 0xc000, 20);
+    Actor_SetAttachedEffect(8, 0x102);
+    Engine_ActorRunRepeatedMotion(8, 2);
+    Engine_EventWait(20);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
+    Actor_WalkToAndWait(8, 0x318, 248);
+    Engine_AudioPlayCue(152);
+    record = Actor_Get(8);
+    record->velocityY = 0x80000;
+    Actor_WalkToAndWait(8, 0x318, 0x118);
+    Engine_EventWait(20);
+    Actor_FaceDirection(8, 0xc000, 20);
+    Engine_EventWait(30);
+    Engine_EventEnd();
+  }
 }
 
-s32 ValeCave_RunSceneScript(void)
-{
-    s32 *request = &gEventWork->startTransition;
+static void EV41_TOUCH(void) {
 
-    *request = 0x204;
-    if (gGameState.scene == (s32)&SceneId_ValeCave1)
-    {
-        *request = 0x100;
-        Engine_TaskWait(1);
-        Engine_ActorSetSpritePriority(11, 3);
-        Engine_ActorSetSpritePriority(12, 3);
-        Engine_GameFlagClear(0x12f);
+  struct FieldActor *record;
+
+  if (GameFlag_IsSet(0x200) != 0) {
+    if (GameFlag_IsSet(0x201) == 0) {
+      GameFlag_Set(0x201);
+      GameFlag_Set(0x302);
+      Engine_EventBegin();
+      Actor_SetAttachedEffect(8, 0x102);
+      Engine_ActorRunRepeatedMotion(8, 2);
+      Engine_EventWait(20);
+      Actor_SetSpeed(8, 0x20000, 0x10000);
+      Actor_WalkToAndWait(8, 0x2f8, 0x118);
+      Actor_WalkToAndWait(8, 0x2f8, 0x138);
+      Actor_WalkToAndWait(8, 0x318, 0x138);
+      Engine_EventWait(10);
+      Actor_FaceDirection(8, 0xc000, 20);
+      record = Actor_Get(8);
+      record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
+      Engine_EventEnd();
     }
-    ValeCave_ApplyEntryState();
-    return 0;
+  }
 }
 
-static void ValeCave_PlayCueAndRequestTouchedExit(void)
-{
-    s32 val = gEventWork->touchedTrigger;
+static void FieldScene_RunScene3a6SequenceC(void) {
 
-    Engine_AudioPlayCue(123);
-    Engine_EventRequestExit(val);
+  struct FieldActor *rec8;
+  struct FieldActor *record;
+  s32 idx;
+  s32 table;
+  s32 idx4;
+  s32 off24a;
+  struct EventWork *p5;
+
+  p5 = gEventWork;
+  if (Engine_GameFlagIsSet(0x302) != 0) {
+    off24a = 0x24a;
+    if (*(s16 *)((s32)&gGameState + off24a) != 8) {
+      idx = p5->touchedTrigger;
+      rec8 = Object_GetById(8);
+      record = Object_GetById(ACTOR_PARTY_LEADER);
+      rec8->speed = record->speed;
+      rec8 = Object_GetById(8);
+      record = Object_GetById(ACTOR_PARTY_LEADER);
+      rec8->acceleration = record->acceleration;
+      idx -= 45;
+      table = (s32)gValeCave_WalkTargets;
+      idx <<= 3;
+      idx4 = idx + 4;
+      Engine_ActorWalkTo(8, *(s32 *)(table + idx), *(s32 *)(table + idx4));
+    }
+  }
 }
 
-static void DialogueLayout_ConfigureRowsByFlag301(void)
-{
-    Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
+static void EV08_PSYNERGY(void) {
+  Engine_EventBegin();
+  Engine_ActorSetAnimation(8, 0);
+  Engine_EventEnd();
+}
 
-    if (Engine_GameFlagIsSet(0x301) != 0)
-    {
-        SceneActor_PlaceAtTile(11, 35, 35);
-        Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
+static void EV20_SCRIPT(void) {
+  struct FieldActor *record;
+  s32 v6;
+  s32 v5;
+  s32 two;
+  struct StagedActorProbe probe;
+
+  Engine_EventBegin();
+  if (StagedActor_FindClearPosition(&probe) != 0) {
+    SceneActor_MoveAndRedraw(probe);
+    if ((probe.positionX >> 20) == 17) {
+      Engine_ActorSetAnimation(probe.actorSlot, 3);
+      v6 = 0;
+      Object_GetById(probe.actorSlot)->motionFlags = v6;
+      record = Object_GetById(probe.actorSlot);
+      record->bounce = v6;
+      Engine_ActorSetDestinationOffset(probe.actorSlot, -12, 0);
+      Engine_ActorWaitForMove(probe.actorSlot);
+      Engine_ActorSetAnimation(probe.actorSlot, 3);
+      Engine_ActorSetSpritePriority(10, 3);
+      Object_GetById(probe.actorSlot)->motionFlags = 3;
+      Engine_ActorSetDestinationOffset(probe.actorSlot, -6, 0);
+      SceneActor_WaitActorDescent(Object_GetById(probe.actorSlot));
+      Engine_ActorSetAnimation(probe.actorSlot, 8);
+      {
+        struct FieldActor *obj = Object_GetById(probe.actorSlot);
+
+        two = 2;
+        obj->priorityFlags = two;
+      }
+      v5 = 4;
+      StagedActor_FillGridAttributeRectangle(
+          0, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
+      StagedActor_FillGridAttributeRectangle(
+          2, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
+      StagedActor_FillGridAttributeRectangle(2, 16, 18, 1, two, v6);
+      StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, v5, v6);
+      Engine_GameFlagSet(0x203);
+      Engine_AudioPlayCue(240);
     }
-    else
+  }
+  Engine_EventEnd();
+}
+
+static void EV21_TOUCH_3(void) {
+
+  struct FieldActor *record;
+  s32 zero;
+
+  Engine_EventBegin();
+  Engine_EventWait(10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
+  Engine_EventWait(15);
+  Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
+  Engine_EventWait(4);
+  Event_PlayCue(0x120);
+  Event_PlayCue(239);
+  Actor_SetSpeed(9, 0x8000, 0x1999);
+  Engine_ActorSetAnimation(9, 2);
+  zero = 0;
+  Object_GetById(9)->motionFlags = zero;
+  record = Actor_Get(9);
+  record->bounce = zero;
+  Engine_ActorSetDestinationOffset(9, 12, 0);
+  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorWaitForMove(9);
+  Event_PlayCue(0x120);
+  Event_PlayCue(213);
+  Engine_ActorSetAnimation(9, 3);
+  Object_GetById(9)->motionFlags = 3;
+  Engine_ActorSetDestinationOffset(9, 6, 0);
+  SceneActor_WaitActorDescent(Actor_Get(9));
+  Engine_ActorSetAnimation(9, 8);
+  Engine_ActorSetSpritePriority(9, 3);
+  Object_GetById(9)->priorityFlags = 2;
+  StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
+  StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+  GameFlag_Set(0x202);
+  Event_PlayCue(240);
+  Engine_EventEnd();
+}
+
+static void EV22_SCRIPT(void) {
+  struct StagedActorProbe probe;
+
+  Engine_EventBegin();
+  if (StagedActor_FindClearPosition(&probe) != 0) {
+    SceneActor_MoveAndRedraw(probe);
+    Engine_ActorSetAnimation(11, 3);
+    Actor_SetSpeed(11, 0x4000, 0x8000);
+    Engine_ActorSetDestinationOffset(11, 0, -16);
+    Engine_EventWait(45);
+    Engine_AudioPlayCue(240);
+    Engine_ActorSetAnimation(11, 8);
     {
-        SceneActor_PlaceAtTile(11, 23, 35);
-        Map_CopyCellAttributes(24, 34, 1, 3, 35, 34);
+      struct FieldActor *obj = Object_GetById(11);
+      s32 two = 2;
+      s32 zero = 0;
+
+      obj->priorityFlags = two;
+      StagedActor_FillGridAttributeRectangle(0, 13, (probe.positionZ >> 20) - 1,
+                                             4, two, zero);
     }
+    if ((probe.positionZ >> 20) == 20) {
+      Engine_GameFlagSet(0x205);
+    } else {
+      Engine_GameFlagSet(0x204);
+      {
+
+        Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+        Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
+      }
+    }
+  }
+  Engine_EventEnd();
+}
+
+const struct SceneEvent *Scene_GetEvents(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_ValeCave1) {
+    return gValeCaveEvents1;
+  }
+  if (scene == (s32)&SceneId_ValeCave2) {
+    return gValeCaveEvents2;
+  }
+  if (scene == (s32)&SceneId_ValeCave3) {
+    return gValeCaveEvents3;
+  }
+  return gValeCaveEventsOther;
+}
+
+s32 ValeCave_RunSceneScript(void) {
+  s32 *request = &gEventWork->startTransition;
+
+  *request = 0x204;
+  if (gGameState.scene == (s32)&SceneId_ValeCave1) {
+    *request = 0x100;
+    Engine_TaskWait(1);
+    Engine_ActorSetSpritePriority(11, 3);
+    Engine_ActorSetSpritePriority(12, 3);
+    Engine_GameFlagClear(0x12f);
+  }
+  ValeCave_ApplyEntryState();
+  return 0;
+}
+
+static void ValeCave_PlayCueAndRequestTouchedExit(void) {
+  s32 val = gEventWork->touchedTrigger;
+
+  Engine_AudioPlayCue(123);
+  Engine_EventRequestExit(val);
+}
+
+static void DialogueLayout_ConfigureRowsByFlag301(void) {
+  Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
+
+  if (Engine_GameFlagIsSet(0x301) != 0) {
+    SceneActor_PlaceAtTile(11, 35, 35);
+    Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
+  } else {
+    SceneActor_PlaceAtTile(11, 23, 35);
+    Map_CopyCellAttributes(24, 34, 1, 3, 35, 34);
+  }
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_pairmove.h"
 
-static void EV20_TOUCH(void)
-{
+static void EV20_TOUCH(void) {
 
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(11, 112, 0);
-    SceneActor_PlacePairAtOffset(11, 80, 0);
-    Engine_GameFlagSet(0x301);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureRowsByFlag301();
-    Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(241);
+  SceneActor_PlacePairAtOffset(11, 112, 0);
+  SceneActor_PlacePairAtOffset(11, 80, 0);
+  Engine_GameFlagSet(0x301);
+  Engine_TaskWait(2);
+  DialogueLayout_ConfigureRowsByFlag301();
+  Engine_AudioPlayCue(0x121);
 }
 
-static void FieldScene_RunActor11Transition301(void)
-{
+static void FieldScene_RunActor11Transition301(void) {
 
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(11, -112, 0);
-    SceneActor_PlacePairAtOffset(11, -80, 0);
-    Engine_GameFlagClear(0x301);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureRowsByFlag301();
-    Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(241);
+  SceneActor_PlacePairAtOffset(11, -112, 0);
+  SceneActor_PlacePairAtOffset(11, -80, 0);
+  Engine_GameFlagClear(0x301);
+  Engine_TaskWait(2);
+  DialogueLayout_ConfigureRowsByFlag301();
+  Engine_AudioPlayCue(0x121);
 }
 
-static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
-{
-    struct FieldActor *rec = Object_GetById(id);
+static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y) {
+  struct FieldActor *rec = Object_GetById(id);
 
-    if (rec != 0)
-    {
-        Engine_ActorSetSpritePriority(id, 3);
-        rec->terrainId = 2;
-        rec->priorityFlags |= 2;
-        rec->x.fixed = (x << 20) + 0x80000;
-        rec->z.fixed = (y << 20) + 0x80000;
+  if (rec != 0) {
+    Engine_ActorSetSpritePriority(id, 3);
+    rec->terrainId = 2;
+    rec->priorityFlags |= 2;
+    rec->x.fixed = (x << 20) + 0x80000;
+    rec->z.fixed = (y << 20) + 0x80000;
+  }
+}
+
+static void ValeCave_ApplyEntryState(void) {
+  s32 flag;
+
+  if (gGameState.scene == (s32)&SceneId_ValeCave2) {
+    switch (gGameState.entrance) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      Engine_ActorSetSpritePriority(15, 3);
+      Engine_ActorSetSpritePriority(13, 3);
+      OverlayObject_CreateConfiguredObject(0x780000, 0, 0xe80000, 223);
+      break;
+    case 5:
+    case 6:
+    case 7:
+      if (Engine_GameFlagIsSet(0x70) != 0) {
+        break;
+      }
+      if (Engine_GameFlagIsSet(0x302) == 0) {
+        break;
+      }
+      Engine_GameFlagSet(0x200);
+      if (gGameState.entrance == 5) {
+        Engine_GameFlagSet(0x201);
+      }
+      Engine_TaskWait(1);
+      if (Engine_GameFlagIsSet(0x109) != 0) {
+        break;
+      }
+      Actor_SetPosition(8, 0x3180000, 0x1180000);
+      Object_GetById(8)->update = SceneActor_FaceActorZero;
+      break;
+    case 8:
+    case 9:
+    case 10:
+      OverlayObject_CreateConfiguredObject(0x2820000, 0, 0x2280000, 20);
+      Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
+      DialogueLayout_ConfigureRowsByFlag301();
+      if (Engine_GameFlagIsSet(0x200) != 0) {
+        Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
+      }
+      if (Engine_GameFlagIsSet(0x201) != 0) {
+        Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
+      }
+      break;
     }
+  } else if (gGameState.scene == (s32)&SceneId_ValeCave3) {
+    switch (gGameState.entrance) {
+    case 1:
+    case 2:
+    case 3:
+      if (Engine_GameFlagIsSet(0x202) != 0) {
+        StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
+        StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+      } else {
+        FieldScene_RedrawActorFootprint(9);
+      }
+      if (Engine_GameFlagIsSet(0x203) != 0) {
+        StagedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
+        StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
+      } else {
+        FieldScene_RedrawActorFootprint(10);
+      }
+      flag = Engine_GameFlagIsSet(0x205);
+      if (flag != 0) {
+        StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
+      } else if (Engine_GameFlagIsSet(0x204) != 0) {
+        StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
+        Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+        Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
+      } else {
+        FieldScene_RedrawActorFootprint(11);
+        Engine_ActorSetSpritePriority(11, 3);
+      }
+      break;
+    }
+  }
 }
 
-static void ValeCave_ApplyEntryState(void)
-{
-    s32 flag;
-
-    if (gGameState.scene == (s32)&SceneId_ValeCave2)
-    {
-        switch (gGameState.entrance)
-        {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-            Engine_ActorSetSpritePriority(15, 3);
-            Engine_ActorSetSpritePriority(13, 3);
-            OverlayObject_CreateConfiguredObject(0x780000, 0, 0xe80000, 223);
-            break;
-        case 5:
-        case 6:
-        case 7:
-            if (Engine_GameFlagIsSet(0x70) != 0)
-            {
-                break;
-            }
-            if (Engine_GameFlagIsSet(0x302) == 0)
-            {
-                break;
-            }
-            Engine_GameFlagSet(0x200);
-            if (gGameState.entrance == 5)
-            {
-                Engine_GameFlagSet(0x201);
-            }
-            Engine_TaskWait(1);
-            if (Engine_GameFlagIsSet(0x109) != 0)
-            {
-                break;
-            }
-            Actor_SetPosition(8, 0x3180000, 0x1180000);
-            Object_GetById(8)->update = SceneActor_FaceActorZero;
-            break;
-        case 8:
-        case 9:
-        case 10:
-            OverlayObject_CreateConfiguredObject(0x2820000, 0, 0x2280000, 20);
-            Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
-            DialogueLayout_ConfigureRowsByFlag301();
-            if (Engine_GameFlagIsSet(0x200) != 0)
-            {
-                Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
-            }
-            if (Engine_GameFlagIsSet(0x201) != 0)
-            {
-                Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
-            }
-            break;
-        }
-    }
-    else if (gGameState.scene == (s32)&SceneId_ValeCave3)
-    {
-        switch (gGameState.entrance)
-        {
-        case 1:
-        case 2:
-        case 3:
-            if (Engine_GameFlagIsSet(0x202) != 0)
-            {
-                StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-                StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
-            }
-            else
-            {
-                FieldScene_RedrawActorFootprint(9);
-            }
-            if (Engine_GameFlagIsSet(0x203) != 0)
-            {
-                StagedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
-                StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
-            }
-            else
-            {
-                FieldScene_RedrawActorFootprint(10);
-            }
-            flag = Engine_GameFlagIsSet(0x205);
-            if (flag != 0)
-            {
-                StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
-            }
-            else if (Engine_GameFlagIsSet(0x204) != 0)
-            {
-                StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-                Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
-                Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
-            }
-            else
-            {
-                FieldScene_RedrawActorFootprint(11);
-                Engine_ActorSetSpritePriority(11, 3);
-            }
-            break;
-        }
-    }
-}
-
-static void ActorPresentation_AdvanceActorElevenStates(void)
-{
-    Engine_ActorSetAnimation(11, 1);
-    Engine_ActorSetAnimation(11, 2);
+static void ActorPresentation_AdvanceActorElevenStates(void) {
+  Engine_ActorSetAnimation(11, 1);
+  Engine_ActorSetAnimation(11, 2);
 }
 
 s32 gEffectScript0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(22, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript1[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(44, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
 s32 gEffectScript2[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POS(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
+    SC_WAIT(1),      SC_LOOP(126, SC_TOP), SC_WAIT(1),
+    SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
     DIRECTION_STEP(16, 0),
 };
 
@@ -949,13 +843,14 @@ struct SceneEvent gValeCaveEvents2[] = {
 // clang-format on
 
 struct SceneEvent gValeCaveEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH_3) },
-    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT) },
-    { SCENE_EVENTS_END },
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT)},
+    {TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EV21_TOUCH_3)},
+    {0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT)},
+    {SCENE_EVENTS_END},
 };

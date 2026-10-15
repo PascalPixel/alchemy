@@ -2,18 +2,17 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-struct SceneWork
-{
-    u8  unk000[0x1ac];
-    s32 unk1ac;
+struct SceneWork {
+  u8 unk000[0x1ac];
+  s32 unk1ac;
 };
 
-extern char     SceneId_Ov65aRoom1;
-extern char     SceneId_Ov65aRoom2;
-extern char     SceneId_Ov65aRoom3;
-extern char     SceneId_Ov65aRoom4;
-extern char     SceneId_Ov65aRoom5;
-extern char     SceneId_Ov65aRoom6;
+extern char SceneId_Ov65aRoom1;
+extern char SceneId_Ov65aRoom2;
+extern char SceneId_Ov65aRoom3;
+extern char SceneId_Ov65aRoom4;
+extern char SceneId_Ov65aRoom5;
+extern char SceneId_Ov65aRoom6;
 extern const u8 gData_020013d0[];
 extern const u8 gData_02001400[];
 extern const u8 gData_02001430[];
@@ -37,20 +36,18 @@ void Func_02000fbc(void);
 void Func_02000fd8(void);
 void Func_0200102c(void);
 
-const u8 *Func_02000318(void)
-{
-    if (gPartyState.scene == (s32)&SceneId_Ov65aRoom4)
-        return gData_02001400;
-    if (gPartyState.scene == (s32)&SceneId_Ov65aRoom5)
-        return gData_02001430;
-    return gData_020013d0;
+const u8 *Func_02000318(void) {
+  if (gPartyState.scene == (s32)&SceneId_Ov65aRoom4)
+    return gData_02001400;
+  if (gPartyState.scene == (s32)&SceneId_Ov65aRoom5)
+    return gData_02001430;
+  return gData_020013d0;
 }
 
-const u8 *Func_02000358(void)
-{
-    s16 scene = gPartyState.scene;
+const u8 *Func_02000358(void) {
+  s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Ov65aRoom2)
-        return gData_020014a8;
-    return 0;
+  if (scene == (s32)&SceneId_Ov65aRoom2)
+    return gData_020014a8;
+  return 0;
 }

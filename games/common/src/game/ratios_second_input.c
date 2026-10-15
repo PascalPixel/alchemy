@@ -11,20 +11,16 @@
 // unit : ユニット
 // pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp)
-{
-    s32 cur;
+void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp) {
+  s32 cur;
 
-    if (pp > unit->maxPp)
-    {
-        cur = unit->maxPp;
-    }
-    else
-    {
-        cur = 0;
-        if (pp >= 0)
-            cur = pp;
-    }
-    unit->pp = cur;
-    Unit_UpdateGauges(unit);
+  if (pp > unit->maxPp) {
+    cur = unit->maxPp;
+  } else {
+    cur = 0;
+    if (pp >= 0)
+      cur = pp;
+  }
+  unit->pp = cur;
+  Unit_UpdateGauges(unit);
 }

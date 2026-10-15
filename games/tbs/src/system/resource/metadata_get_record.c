@@ -3,7 +3,6 @@
 
 extern struct AnimationMetadata gCharacter_DescriptorTable[];
 
-struct AnimationMetadata *Resource_GetMetadataRecord(u32 number)
-{
-    return &gCharacter_DescriptorTable[number & 0xfff];
+struct AnimationMetadata *Resource_GetMetadataRecord(u32 number) {
+  return &gCharacter_DescriptorTable[number & 0xfff];
 }

@@ -10,18 +10,14 @@
 #include "field_scene.h"
 #include "scene_ids.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u8 gData_0200635c[];
 
-u8 *Func_020000fc(void)
-{
-    s16 scene = gPartyState.scene;
+u8 *Func_020000fc(void) {
+  s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kibombo3)
-        return gData_0200635c;
-    return 0;
+  if (scene == (s32)&SceneId_Kibombo3)
+    return gData_0200635c;
+  return 0;
 }

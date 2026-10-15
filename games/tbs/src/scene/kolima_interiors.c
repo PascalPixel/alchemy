@@ -22,235 +22,193 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-static void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
-{
-    u32 i;
-    u8  v16;
-    s32 v04;
-    u16 def00;
-    u16 alt00;
+static void SceneData_InitRecordTable(struct Resource390TableEntry *entry) {
+  u32 i;
+  u8 v16;
+  s32 v04;
+  u16 def00;
+  u16 alt00;
 
-    i = 0;
-    v16 = 2;
-    v04 = 1;
-    def00 = 0x69;
-    alt00 = 0x6E;
-    do
-    {
-        entry->unk16 = v16;
-        entry->unk04 = v04;
-        entry->unk00 = def00;
-        if (i == 4 || i == 7)
-        {
-            entry->unk00 = alt00;
-        }
-        i++;
-        entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
-    } while (i <= 0xE);
+  i = 0;
+  v16 = 2;
+  v04 = 1;
+  def00 = 0x69;
+  alt00 = 0x6E;
+  do {
+    entry->unk16 = v16;
+    entry->unk04 = v04;
+    entry->unk00 = def00;
+    if (i == 4 || i == 7) {
+      entry->unk00 = alt00;
+    }
+    i++;
+    entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
+  } while (i <= 0xE);
 }
 
-u8 *SceneData_GetPrimaryTable(void)
-{
-    return (u8 *)gEntryLayout_PrimaryTable;
+u8 *SceneData_GetPrimaryTable(void) { return (u8 *)gEntryLayout_PrimaryTable; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+u8 *SceneData_GetSecondaryTable(void) {
+  return (u8 *)gEntryLayout_SecondaryTable;
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+u8 *SceneData_GetPreparedRecords(void) {
+  u8 *buf;
+
+  if (Engine_GameFlagIsSet(0x845) == 0) {
+    SceneData_InitRecordTable(
+        (struct Resource390TableEntry *)gEntryLayout_Records);
+  }
+  buf = (u8 *)gEntryLayout_Records;
+  FieldScene_PrepareActors(buf);
+  return buf;
 }
 
-u8 *SceneData_GetSecondaryTable(void)
-{
-    return (u8 *)gEntryLayout_SecondaryTable;
+static void EV16_TALK(void) {
+
+  u32 dir = Object_GetById(0)->facing;
+
+  Engine_EventBegin();
+
+  if (dir + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(13, 16);
+  } else {
+    Engine_EventSetMessage(MsgKolimaFuchinTempleOnOtherSide);
+    Engine_EventShowMessage(16, 0);
+  }
+
+  Engine_EventEnd();
 }
 
-u8 *SceneData_GetPreparedRecords(void)
-{
-    u8 *buf;
+static void EV17_TALK(void) {
 
-    if (Engine_GameFlagIsSet(0x845) == 0)
-    {
-        SceneData_InitRecordTable((struct Resource390TableEntry *)gEntryLayout_Records);
-    }
-    buf = (u8 *)gEntryLayout_Records;
-    FieldScene_PrepareActors(buf);
-    return buf;
+  u32 dir = Object_GetById(0)->facing;
+
+  Engine_EventBegin();
+
+  if (dir + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(14, 17);
+  } else {
+    Engine_EventSetMessage(MsgKolimaGrandBridgeAcrossRiverPride);
+    Engine_EventShowMessage(17, 0);
+  }
+
+  Engine_EventEnd();
 }
 
-static void EV16_TALK(void)
-{
+static void EV18_TALK(void) {
 
-    u32 dir = Object_GetById(0)->facing;
+  u32 dir = Object_GetById(0)->facing;
 
-    Engine_EventBegin();
+  Engine_EventBegin();
 
-    if (dir + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(13, 16);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgKolimaFuchinTempleOnOtherSide);
-        Engine_EventShowMessage(16, 0);
-    }
+  if (dir + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_ShopOpen(15, 18);
+  } else {
+    Engine_EventSetMessage(MsgKolimaWhenWasTreeLearnedAppreciate);
+    Engine_EventShowMessage(18, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV17_TALK(void)
-{
+static void EV19_TALK(void) {
 
-    u32 dir = Object_GetById(0)->facing;
+  u32 dir = Object_GetById(0)->facing;
 
-    Engine_EventBegin();
+  Engine_EventBegin();
 
-    if (dir + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(14, 17);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgKolimaGrandBridgeAcrossRiverPride);
-        Engine_EventShowMessage(17, 0);
-    }
+  if (dir + 0xFFFF5FFF <= 0x3FFE) {
+    Engine_InnOpen(3, 19);
+  } else {
+    Engine_EventSetMessage(MsgKolimaTheySayMccoyHaltedConstruction);
+    Engine_EventShowMessage(19, 0);
+  }
 
-    Engine_EventEnd();
+  Engine_EventEnd();
 }
 
-static void EV18_TALK(void)
-{
+u8 *SceneData_GetFourthTable(void) { return (u8 *)gEntryLayout_FourthTable; }
 
-    u32 dir = Object_GetById(0)->facing;
+s32 FieldScene_SetupEntryLayoutsBySelector(void) {
 
-    Engine_EventBegin();
+  struct EventWork *work = gEventWork;
+  s32 id;
+  s16 *selectionP;
+  u32 selection;
 
-    if (dir + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_ShopOpen(15, 18);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgKolimaWhenWasTreeLearnedAppreciate);
-        Engine_EventShowMessage(18, 0);
-    }
+  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
-    Engine_EventEnd();
-}
+  if (Engine_GameFlagIsSet(0x845) == 0) {
+    id = 8;
+    do {
+      struct FieldActor *record = Object_GetById(id);
 
-static void EV19_TALK(void)
-{
+      id++;
+      Engine_ActorSetSpriteFlags(record, 0);
+    } while ((u32)id <= 22);
+  }
 
-    u32 dir = Object_GetById(0)->facing;
+  {
+    s32 off = 450;
+    selectionP = (s16 *)((u8 *)&gGameState + off);
+    selection = *(u16 *)selectionP;
+  }
 
-    Engine_EventBegin();
-
-    if (dir + 0xFFFF5FFF <= 0x3FFE)
-    {
-        Engine_InnOpen(3, 19);
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgKolimaTheySayMccoyHaltedConstruction);
-        Engine_EventShowMessage(19, 0);
-    }
-
-    Engine_EventEnd();
-}
-
-u8 *SceneData_GetFourthTable(void)
-{
-    return (u8 *)gEntryLayout_FourthTable;
-}
-
-s32 FieldScene_SetupEntryLayoutsBySelector(void)
-{
-
-    struct EventWork *work = gEventWork;
-    s32               id;
-    s16              *selectionP;
-    u32               selection;
-
-    work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-
-    if (Engine_GameFlagIsSet(0x845) == 0)
-    {
-        id = 8;
-        do
-        {
-            struct FieldActor *record = Object_GetById(id);
-
-            id++;
-            Engine_ActorSetSpriteFlags(record, 0);
-        } while ((u32)id <= 22);
-    }
-
-    {
-        s32 off = 450;
-        selectionP = (s16 *)((u8 *)&gGameState + off);
-        selection = *(u16 *)selectionP;
-    }
-
-    if ((s16)selection == 7)
-    {
-        s32 arg5;
-        s32 arg4;
-        arg4 = 13;
-        arg5 = 8;
-        Map_CopyCellsTo(34, 34, 18, 16, arg4, arg5);
-        Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
-        Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
-    }
-    else if (((selection - 8) << 16) <= (128 << 9))
-    {
-        s32 arg5;
-        s32 arg4;
-        arg4 = 11;
-        arg5 = 8;
-        Map_CopyCellsTo(34, 43, 19, 23, arg4, arg5);
-        Map_CopyCellsTo(34, 94, 19, 83, arg4, arg5);
-        Map_CopyCellsTo(94, 34, 79, 23, arg4, arg5);
-        Engine_ActorSetPosition(10, 0, 0);
-        Engine_ActorSetPosition(11, 0, 0);
-        Engine_ActorSetPosition(12, 0, 0);
-    }
-    return 0;
+  if ((s16)selection == 7) {
+    s32 arg5;
+    s32 arg4;
+    arg4 = 13;
+    arg5 = 8;
+    Map_CopyCellsTo(34, 34, 18, 16, arg4, arg5);
+    Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
+    Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
+  } else if (((selection - 8) << 16) <= (128 << 9)) {
+    s32 arg5;
+    s32 arg4;
+    arg4 = 11;
+    arg5 = 8;
+    Map_CopyCellsTo(34, 43, 19, 23, arg4, arg5);
+    Map_CopyCellsTo(34, 94, 19, 83, arg4, arg5);
+    Map_CopyCellsTo(94, 34, 79, 23, arg4, arg5);
+    Engine_ActorSetPosition(10, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
+  }
+  return 0;
 }
 
 struct SceneEntrance gEntryLayout_PrimaryTable[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0 },
-    { 2, CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216, 0 },
-    { 3, CONDITION_ALWAYS, 392, 0, 200, FACING_NORTH, 0, 288, 64, 512, 232, 0 },
-    { 4, CONDITION_ALWAYS, 648, 0, 200, FACING_NORTH, 0, 528, 64, 768, 232, 0 },
-    { 5, CONDITION_ALWAYS, 704, 0, 168, FACING_SOUTHWEST, 0, 528, 64, 768, 224, 0 },
-    { 6, CONDITION_ALWAYS, 128, 0, 416, FACING_EAST, 0, 16, 280, 256, 440, 0 },
-    { 7, CONDITION_ALWAYS, 392, 0, 472, FACING_NORTH, 0, 288, 264, 512, 504, 0 },
-    { 8, CONDITION_ALWAYS, 392, 0, 328, FACING_SOUTH, 0, 288, 264, 512, 496, 0 },
-    { 9, CONDITION_ALWAYS, 392, 0, 344, FACING_NORTH, 0, 288, 264, 512, 496, 0 },
-    { 10, CONDITION_ALWAYS, 648, 0, 424, FACING_NORTH, 0, 528, 288, 768, 456, 0 },
-    { 11, CONDITION_ALWAYS, 704, 0, 392, FACING_SOUTHWEST, 0, 528, 288, 768, 448, 0 },
-    { 12, CONDITION_ALWAYS, 128, 0, 688, FACING_EAST, 0, 16, 552, 256, 712, 0 },
-    { 13, CONDITION_ALWAYS, 192, 0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712, 0 },
-    { 14, CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
+    {2, CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216,
+     0},
+    {3, CONDITION_ALWAYS, 392, 0, 200, FACING_NORTH, 0, 288, 64, 512, 232, 0},
+    {4, CONDITION_ALWAYS, 648, 0, 200, FACING_NORTH, 0, 528, 64, 768, 232, 0},
+    {5, CONDITION_ALWAYS, 704, 0, 168, FACING_SOUTHWEST, 0, 528, 64, 768, 224,
+     0},
+    {6, CONDITION_ALWAYS, 128, 0, 416, FACING_EAST, 0, 16, 280, 256, 440, 0},
+    {7, CONDITION_ALWAYS, 392, 0, 472, FACING_NORTH, 0, 288, 264, 512, 504, 0},
+    {8, CONDITION_ALWAYS, 392, 0, 328, FACING_SOUTH, 0, 288, 264, 512, 496, 0},
+    {9, CONDITION_ALWAYS, 392, 0, 344, FACING_NORTH, 0, 288, 264, 512, 496, 0},
+    {10, CONDITION_ALWAYS, 648, 0, 424, FACING_NORTH, 0, 528, 288, 768, 456, 0},
+    {11, CONDITION_ALWAYS, 704, 0, 392, FACING_SOUTHWEST, 0, 528, 288, 768, 448,
+     0},
+    {12, CONDITION_ALWAYS, 128, 0, 688, FACING_EAST, 0, 16, 552, 256, 712, 0},
+    {13, CONDITION_ALWAYS, 192, 0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712,
+     0},
+    {14, CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gEntryLayout_SecondaryTable[] = {
-    SCENE_EXITS(37),
-    SCENE_EXIT(1, 37, 11),
-    SCENE_EXIT(2, 37, 14),
-    SCENE_EXIT(3, 36, 4),
-    SCENE_EXIT(4, 36, 3),
-    SCENE_EXIT(5, 37, 12),
-    SCENE_EXIT(6, 37, 13),
-    SCENE_EXIT(7, 36, 5),
-    SCENE_EXIT(8, 36, 7),
-    SCENE_EXIT(9, 36, 6),
-    SCENE_EXIT(10, 37, 1),
-    SCENE_EXIT(11, 37, 5),
-    SCENE_EXIT(12, 37, 6),
-    SCENE_EXIT(13, 37, 2),
-    SCENE_EXIT(14, 38, 1),
+    SCENE_EXITS(37),       SCENE_EXIT(1, 37, 11), SCENE_EXIT(2, 37, 14),
+    SCENE_EXIT(3, 36, 4),  SCENE_EXIT(4, 36, 3),  SCENE_EXIT(5, 37, 12),
+    SCENE_EXIT(6, 37, 13), SCENE_EXIT(7, 36, 5),  SCENE_EXIT(8, 36, 7),
+    SCENE_EXIT(9, 36, 6),  SCENE_EXIT(10, 37, 1), SCENE_EXIT(11, 37, 5),
+    SCENE_EXIT(12, 37, 6), SCENE_EXIT(13, 37, 2), SCENE_EXIT(14, 38, 1),
     SCENE_EXITS_END,
 };
 

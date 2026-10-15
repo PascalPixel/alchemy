@@ -3,7 +3,8 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const void *script);
+void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+                                  const void *script);
 
 extern const u8 gData_080f34e4[];
 extern const u8 gData_080f3428[];
@@ -17,44 +18,42 @@ extern const u8 gData_080f3764[];
 extern const u8 gData_080f3500[];
 extern const u8 gData_080f34f4[];
 
-void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind)
-{
-    switch (kind)
-    {
-    case 1:
-        kind = (s32)gData_080f34e4;
-        break;
-    case 2:
-        kind = (s32)gData_080f3428;
-        break;
-    case 3:
-        kind = (s32)gData_080f350c;
-        break;
-    case 4:
-        kind = (s32)gData_080f35c8;
-        break;
-    case 5:
-        kind = (s32)gData_080f373c;
-        break;
-    case 6:
-        object->linkedObject = Object_GetById(gPartyState.currentOwner);
-        kind = (s32)gData_080f3750;
-        break;
-    case 7:
-        kind = (s32)gData_080f34e8;
-        break;
-    case 8:
-        kind = (s32)gData_080f3614;
-        break;
-    case 9:
-        kind = (s32)gData_080f3764;
-        break;
-    case 10:
-        kind = (s32)gData_080f3500;
-        break;
-    case 11:
-        kind = (s32)gData_080f34f4;
-        break;
-    }
-    ObjectDispatch_InitializeFar(object, (const void *)kind);
+void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind) {
+  switch (kind) {
+  case 1:
+    kind = (s32)gData_080f34e4;
+    break;
+  case 2:
+    kind = (s32)gData_080f3428;
+    break;
+  case 3:
+    kind = (s32)gData_080f350c;
+    break;
+  case 4:
+    kind = (s32)gData_080f35c8;
+    break;
+  case 5:
+    kind = (s32)gData_080f373c;
+    break;
+  case 6:
+    object->linkedObject = Object_GetById(gPartyState.currentOwner);
+    kind = (s32)gData_080f3750;
+    break;
+  case 7:
+    kind = (s32)gData_080f34e8;
+    break;
+  case 8:
+    kind = (s32)gData_080f3614;
+    break;
+  case 9:
+    kind = (s32)gData_080f3764;
+    break;
+  case 10:
+    kind = (s32)gData_080f3500;
+    break;
+  case 11:
+    kind = (s32)gData_080f34f4;
+    break;
+  }
+  ObjectDispatch_InitializeFar(object, (const void *)kind);
 }

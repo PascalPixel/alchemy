@@ -5,15 +5,11 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum
-{
-    ACTOR_KRADEN = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_KRADEN = ACTOR_FIRST_PLACED };
 
-enum SanctumEntranceFlag
-{
-    FLAG_SOL_SANCTUM_ENTERED = 0x802,
-    FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
+enum SanctumEntranceFlag {
+  FLAG_SOL_SANCTUM_ENTERED = 0x802,
+  FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
 };
 
 #define GATE_ID 2081

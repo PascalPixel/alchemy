@@ -20,14 +20,14 @@
 // 位置に置く
 // x0, y0 : 格子の左上
 //--------------------------------------------------------------------------
-void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0, s32 cols)
-{
-    struct RenderOutput *obj;
+void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
+                       s32 cols) {
+  struct RenderOutput *obj;
 
-    if (i > 15)
-        i = 0;
-    obj = *slot;
-    obj->y = i / cols * 16 + y0;
-    obj->x = i % cols * 24 + x0;
-    UiIcon_PrepareObject(obj);
+  if (i > 15)
+    i = 0;
+  obj = *slot;
+  obj->y = i / cols * 16 + y0;
+  obj->x = i % cols * 24 + x0;
+  UiIcon_PrepareObject(obj);
 }

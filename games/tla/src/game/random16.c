@@ -17,22 +17,18 @@
 //--------------------------------------------------------------------------
 // バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
 //--------------------------------------------------------------------------
-u32 BattleRandom(void)
-{
-    s32 seed;
+u32 BattleRandom(void) {
+  s32 seed;
 
-    seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
-    gBattleRandomSeed = seed;
-    return (u32)(seed << 8) >> 16;
+  seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
+  gBattleRandomSeed = seed;
+  return (u32)(seed << 8) >> 16;
 }
 
 //--------------------------------------------------------------------------
 // 0 から 99 までの乱数
 //--------------------------------------------------------------------------
-u32 BattleRandomPercent(void)
-{
-    return (BattleRandom() * 100) >> 16;
-}
+u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
 
 //--------------------------------------------------------------------------
 // こうげきのダメージ（BattleAtkCalc）
@@ -43,22 +39,21 @@ u32 BattleRandomPercent(void)
 // add   : わざの威力
 // bonus : 属性の差（力 - たいせい）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus)
-{
-    s32 dmg;
-    s32 val;
+s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus) {
+  s32 dmg;
+  s32 val;
 
-    atk -= def;
-    dmg = bonus;
-    if (atk < 0)
-        atk = 0;
-    val = Curve_LookupScaledValue(dmg, 1) * (atk + (add * 2));
-    if (val < 0)
-        val += 0x1ff;
-    dmg = val >> 9;
-    if (dmg < 0)
-        dmg = 0;
-    return dmg;
+  atk -= def;
+  dmg = bonus;
+  if (atk < 0)
+    atk = 0;
+  val = Curve_LookupScaledValue(dmg, 1) * (atk + (add * 2));
+  if (val < 0)
+    val += 0x1ff;
+  dmg = val >> 9;
+  if (dmg < 0)
+    dmg = 0;
+  return dmg;
 }
 
 //--------------------------------------------------------------------------
@@ -68,14 +63,13 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus)
 // bonus : 属性の差（力 - たいせい）
 // rate  : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate)
-{
-    s32 val;
+s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate) {
+  s32 val;
 
-    val = Curve_LookupScaledValue(bonus, 0) * power * rate;
-    if (val < 0)
-        val = val + 0xffff;
-    return val >> 16;
+  val = Curve_LookupScaledValue(bonus, 0) * power * rate;
+  if (val < 0)
+    val = val + 0xffff;
+  return val >> 16;
 }
 
 //--------------------------------------------------------------------------
@@ -86,17 +80,16 @@ s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate)
 // element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
 // rate : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate)
-{
-    s32 val;
-    u32 prod;
+s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate) {
+  s32 val;
+  u32 prod;
 
-    prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
-    prod = rate * prod;
-    val = prod;
-    if (val < 0)
-        val = val + 0xffff;
-    return val >> 16;
+  prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
+  prod = rate * prod;
+  val = prod;
+  if (val < 0)
+    val = val + 0xffff;
+  return val >> 16;
 }
 
 s32 Owner_GetDefaultElement(void *state);
@@ -106,16 +99,15 @@ s32 Owner_GetDefaultElement(void *state);
 // 敵は種類ごとの属性、味方は装備した武器の属性
 // id : ユニット番号
 //--------------------------------------------------------------------------
-s32 Item_GetEquippedElement(s32 id)
-{
-    struct ItemDefinition *item;
-    struct BattleUnit     *unit;
+s32 Item_GetEquippedElement(s32 id) {
+  struct ItemDefinition *item;
+  struct BattleUnit *unit;
 
-    unit = UnitGet(id);
-    if (unit->classIndex == 0)
-        return Owner_GetDefaultElement(unit);
-    item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
-    if (item != NULL)
-        return item->element;
-    return 4;
+  unit = UnitGet(id);
+  if (unit->classIndex == 0)
+    return Owner_GetDefaultElement(unit);
+  item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
+  if (item != NULL)
+    return item->element;
+  return 4;
 }

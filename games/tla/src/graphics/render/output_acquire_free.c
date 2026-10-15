@@ -17,59 +17,54 @@
 //--------------------------------------------------------------------------
 // あきリストの先頭をとり出す（なければ NULL）
 //--------------------------------------------------------------------------
-struct RenderOutput *RenderOutput_AcquireFree(void)
-{
-    struct UiRenderWork *work = UI_WORK;
-    struct RenderOutput *out = work->freeOutputs.head;
+struct RenderOutput *RenderOutput_AcquireFree(void) {
+  struct UiRenderWork *work = UI_WORK;
+  struct RenderOutput *out = work->freeOutputs.head;
 
-    if (out != NULL)
-    {
-        if (out->next == NULL)
-            work->freeOutputs.tailLink = &work->freeOutputs.head; // 空になった
-        work->freeOutputs.head = out->next;
-        out->next = NULL;
-    }
-    return out;
+  if (out != NULL) {
+    if (out->next == NULL)
+      work->freeOutputs.tailLink = &work->freeOutputs.head; // 空になった
+    work->freeOutputs.head = out->next;
+    out->next = NULL;
+  }
+  return out;
 }
 
 //--------------------------------------------------------------------------
 // あきリストの最後に返す（outputs[] の外のものは返さない）
 //--------------------------------------------------------------------------
-void RenderOutput_ReleaseFree(struct RenderOutput *out)
-{
-    struct UiRenderWork *work = UI_WORK;
+void RenderOutput_ReleaseFree(struct RenderOutput *out) {
+  struct UiRenderWork *work = UI_WORK;
 
-    if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->freeOutputs.head)
-    {
-        struct RenderOutput **tail = work->freeOutputs.tailLink;
+  if ((u32)out >= (u32)work->outputs &&
+      (u32)out < (u32)&work->freeOutputs.head) {
+    struct RenderOutput **tail = work->freeOutputs.tailLink;
 
-        work->freeOutputs.tailLink = &out->next;
-        *tail = out;
-        out->next = NULL;
-    }
+    work->freeOutputs.tailLink = &out->next;
+    *tail = out;
+    out->next = NULL;
+  }
 }
 
 //--------------------------------------------------------------------------
 // outputs[] の 64 個をすべてつないで、あきリストにする
 //--------------------------------------------------------------------------
-void UiWork_InitFreeList(void)
-{
-    s32                  n;
-    struct UiRenderWork *work;
-    struct RenderOutput *out;
-    struct RenderOutput *next;
+void UiWork_InitFreeList(void) {
+  s32 n;
+  struct UiRenderWork *work;
+  struct RenderOutput *out;
+  struct RenderOutput *next;
 
-    work = UI_WORK;
-    out = work->outputs;
-    work->freeOutputs.head = out;
-    n = UI_OUTPUT_COUNT - 2;
-    do
-    {
-        next = out + 1;
-        n--;
-        out->next = next;
-        out = next;
-    } while (n >= 0);
-    next->next = NULL;
-    work->freeOutputs.tailLink = &next->next;
+  work = UI_WORK;
+  out = work->outputs;
+  work->freeOutputs.head = out;
+  n = UI_OUTPUT_COUNT - 2;
+  do {
+    next = out + 1;
+    n--;
+    out->next = next;
+    out = next;
+  } while (n >= 0);
+  next->next = NULL;
+  work->freeOutputs.tailLink = &next->next;
 }

@@ -9,25 +9,25 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct JupiterRoom7Cell
-{
-    u8  unk00[6];
-    s16 x;
-    s16 z;
+struct JupiterRoom7Cell {
+  u8 unk00[6];
+  s16 x;
+  s16 z;
 };
 
 extern u32 gFrameCount;
 extern s16 gData_02002c64[];
 
-void                  WaitFrames(s32 frames);
-s32                   GameFlag_Test(s32 flag);
-void                  GameFlag_SetBit(s32 flag);
-void                  GameFlag_ClearBit(s32 flag);
-void                  Battle_WaitMode0(s32 frames);
+void WaitFrames(s32 frames);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void                  ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void                  ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 
 void Func_02000060(s32 mode);
 void Func_020005e8(s32 mode);

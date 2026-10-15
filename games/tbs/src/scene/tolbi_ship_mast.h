@@ -5,10 +5,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum
-{
-    ITEM_ANCHOR_CHARM = 232
-};
+enum { ITEM_ANCHOR_CHARM = 232 };
 
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;
@@ -18,11 +15,6 @@ extern s32 gTolbiShipMast_CameraCenter[2];
 extern s32 gTolbiShipMast_CameraOrigin[2];
 extern s32 gTolbiShipMast_SwayX;
 
-enum
-{
-    FLAG_MAST_923 = 0x923,
-    FLAG_MAST_922 = 0x922,
-    FLAG_MAST_924 = 0x924
-};
+enum { FLAG_MAST_923 = 0x923, FLAG_MAST_922 = 0x922, FLAG_MAST_924 = 0x924 };
 
 #endif

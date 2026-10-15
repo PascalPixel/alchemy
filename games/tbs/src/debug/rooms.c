@@ -15,144 +15,75 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-u8 *TestRooms_GetEntrances(void)
-{
-    return (u8 *)gTestRooms_Entrances;
+u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }
+
+s32 SceneData_ReturnZero(void) { return 0; }
+
+u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
+
+u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
+
+static void EV08_TALK(void) {
+  BattleFx_RunPageEffectForSlot(8, 0, 0);
+  Engine_GameFlagClear(0x30);
 }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
+static void EV09_TALK(void) {
+  BattleFx_RunPageEffectForSlot(9, 1, 0);
+  Engine_GameFlagClear(0x44);
 }
 
-u8 *TestRooms_GetExits(void)
-{
-    return (u8 *)gTestRooms_Exits;
+static void EV10_TALK(void) {
+  BattleFx_RunPageEffectForSlot(0xA, 2, 0);
+  Engine_GameFlagClear(0x58);
 }
 
-u8 *TestRooms_GetPlacements(void)
-{
-    return (u8 *)gTestRooms_Placements;
+static void EV11_TALK(void) {
+  BattleFx_RunPageEffectForSlot(0xB, 3, 0);
+  Engine_GameFlagClear(0x6C);
 }
 
-static void EV08_TALK(void)
-{
-    BattleFx_RunPageEffectForSlot(8, 0, 0);
-    Engine_GameFlagClear(0x30);
-}
+u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
-static void EV09_TALK(void)
-{
-    BattleFx_RunPageEffectForSlot(9, 1, 0);
-    Engine_GameFlagClear(0x44);
-}
-
-static void EV10_TALK(void)
-{
-    BattleFx_RunPageEffectForSlot(0xA, 2, 0);
-    Engine_GameFlagClear(0x58);
-}
-
-static void EV11_TALK(void)
-{
-    BattleFx_RunPageEffectForSlot(0xB, 3, 0);
-    Engine_GameFlagClear(0x6C);
-}
-
-u8 *TestRooms_GetEvents(void)
-{
-    return (u8 *)gTestRooms_Events;
-}
-
-s32 Scene_RunEmptyScene(void)
-{
-    return 0;
-}
+s32 Scene_RunEmptyScene(void) { return 0; }
 
 u32 gTestRooms_EntrancesHead[] = {
-    0x500050,
-    0,
-    80,
-    0x500000,
-    0x10003,
-    2,
-    0,
-    0x780078,
-    0,
-    120,
-    0x780000,
-    0x10003,
-    2,
-    0,
-    0x28003c,
-    0,
-    128,
-    0x800000,
-    0x10002,
-    1,
-    0,
-    0x28003c,
-    0,
-    128,
-    0x800000,
-    0x10002,
-    3,
-    0,
-    0x800080,
-    0,
-    128,
-    0x800000,
-    0x20003,
-    1,
-    0,
-    0x800080,
-    0,
-    128,
-    0x800000,
-    0x20003,
-    1,
-    0,
-    0x200020,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0x800080,
-    0,
-    128,
-    0x800000,
-    0x20003,
-    1,
-    0,
+    0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
+    0x780078, 0, 120, 0x780000, 0x10003, 2, 0,
+    0x28003c, 0, 128, 0x800000, 0x10002, 1, 0,
+    0x28003c, 0, 128, 0x800000, 0x10002, 3, 0,
+    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
+    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
+    0x200020, 0, 0,   0,        0,       0, 0,
+    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
 };
 
 struct SceneEntrance gTestRooms_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gTestRooms_Exits[] = {
-    SCENE_EXITS(191),
-    SCENE_EXIT(0, 192, 0),
-    SCENE_EXIT(0, 193, 0),
-    SCENE_EXIT(0, 194, 0),
-    SCENE_EXITS_END,
+    SCENE_EXITS(191),      SCENE_EXIT(0, 192, 0), SCENE_EXIT(0, 193, 0),
+    SCENE_EXIT(0, 194, 0), SCENE_EXITS_END,
 };
 
 struct ScenePlacement gTestRooms_Placements[] = {
-    { 0x5a, 0x30, ACTOR_STAND, PIXELS(496), 0, PIXELS(176), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x5b, 0x44, ACTOR_STAND, PIXELS(496), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x5c, 0x58, ACTOR_STAND, PIXELS(528), 0, PIXELS(176), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x5d, 0x6c, ACTOR_STAND, PIXELS(528), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SCENE_TABLE_END },
+    {0x5a, 0x30, ACTOR_STAND, PIXELS(496), 0, PIXELS(176), FACING_EAST,
+     TALK_FACE_PARTY, 0},
+    {0x5b, 0x44, ACTOR_STAND, PIXELS(496), 0, PIXELS(200), FACING_EAST,
+     TALK_FACE_PARTY, 0},
+    {0x5c, 0x58, ACTOR_STAND, PIXELS(528), 0, PIXELS(176), FACING_WEST,
+     TALK_FACE_PARTY, 0},
+    {0x5d, 0x6c, ACTOR_STAND, PIXELS(528), 0, PIXELS(200), FACING_WEST,
+     TALK_FACE_PARTY, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEvent gTestRooms_Events[] = {
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-    { SCENE_EVENTS_END },
+    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+    {SCENE_EVENTS_END},
 };

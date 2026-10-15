@@ -2,7 +2,7 @@
 #include "battle_work.h"
 #include "text/msg_ids.h"
 
-s32  BattleEnemyList(s16 *unit_ids);
+s32 BattleEnemyList(s16 *unit_ids);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 void UiText_DrawQuantity(s32 value, s32 slot);
@@ -11,44 +11,38 @@ void BattlePresentation_WaitForAdvance(void);
 
 // Announces each enemy that appears, then who strikes first. The Broken
 // Seal's BattleIntro_AnnounceEncounter.
-void Func_08118bcc(s32 enemyCount)
-{
-    s16                enemies[8];
-    struct BattleWork *battle;
-    s16               *enemy;
-    s32                announced;
+void Func_08118bcc(s32 enemyCount) {
+  s16 enemies[8];
+  struct BattleWork *battle;
+  s16 *enemy;
+  s32 announced;
 
-    battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
+  UiWork_ClearValueNameTablesFar();
+  BattleEnemyList(enemies);
+
+  announced = 0;
+  if (enemyCount != 0) {
+    enemy = enemies;
+    do {
+      UiText_DrawQuantity((u16)*enemy++, 1);
+      if (announced == enemyCount - 1)
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+      else
+        UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
+      announced++;
+      BattlePresentation_WaitForAdvance();
+    } while (announced != enemyCount);
+  }
+
+  UiWork_FinalizeSharedSlotFar();
+  if (battle->encounterMode == 1) {
     UiWork_ClearValueNameTablesFar();
-    BattleEnemyList(enemies);
-
-    announced = 0;
-    if (enemyCount != 0)
-    {
-        enemy = enemies;
-        do
-        {
-            UiText_DrawQuantity((u16)*enemy++, 1);
-            if (announced == enemyCount - 1)
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
-            else
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
-            announced++;
-            BattlePresentation_WaitForAdvance();
-        } while (announced != enemyCount);
-    }
-
-    UiWork_FinalizeSharedSlotFar();
-    if (battle->encounterMode == 1)
-    {
-        UiWork_ClearValueNameTablesFar();
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
-        BattlePresentation_WaitForAdvance();
-    }
-    else if (battle->encounterMode == 2)
-    {
-        UiWork_ClearValueNameTablesFar();
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
-        BattlePresentation_WaitForAdvance();
-    }
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+    BattlePresentation_WaitForAdvance();
+  } else if (battle->encounterMode == 2) {
+    UiWork_ClearValueNameTablesFar();
+    UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
+    BattlePresentation_WaitForAdvance();
+  }
 }

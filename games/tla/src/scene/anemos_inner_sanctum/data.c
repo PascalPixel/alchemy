@@ -814,12 +814,8 @@ s16 gData_020043fa[] = {
 // clang-format on
 
 s32 gData_02004410[] = {
-    (s32)gData_020043fa,
-    0x4000b,
-    (s32)gData_020043fa,
-    0x4001a,
-    (s32)gData_020043fa,
-    0x40035,
+    (s32)gData_020043fa, 0x4000b, (s32)gData_020043fa, 0x4001a,
+    (s32)gData_020043fa, 0x40035,
 };
 
 s32 gData_02004428[] = {

@@ -11,6 +11,6 @@
 #define BATTLE_OPTIONS gKeysHeld
 
 extern const u32 gBattle_ActionFlags[];
-extern const u8  gBattle_ActionStatus[];
+extern const u8 gBattle_ActionStatus[];
 
 #endif

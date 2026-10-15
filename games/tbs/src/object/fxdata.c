@@ -12,9 +12,10 @@
 // 読む側は battle.h, field.h, graphics.h, scroll.h と object_effect_scripts.h、
 // 色の曲線は object.c が宣言する。次の表は読む側が const なしで宣言する:
 // battle.h の gBattleFx_TargetRangeByMode, gAnimation_ChildPaletteCycle,
-// gBattleFx_DefinitionTable, gFieldFx_GroundParticleFrames, gBattleFx_PulseScales,
-// gBattleFx_CyclePatternWords, gBattleFx_RandomChildValues、graphics.h の
-// gDisplayTransition_NoiseWidths, gDisplayTransition_EdgeOffsets、field.h の
+// gBattleFx_DefinitionTable, gFieldFx_GroundParticleFrames,
+// gBattleFx_PulseScales, gBattleFx_CyclePatternWords,
+// gBattleFx_RandomChildValues、graphics.h の gDisplayTransition_NoiseWidths,
+// gDisplayTransition_EdgeOffsets、field.h の
 // gObjectGroup_BlinkChildValues、object.c の gBattlePalette_ChannelCurve 3 つ。
 // それでも定義はすべて const: rom_main_04 では .data が scripts.o の後に
 // 置かれ、この表が動くから。だからこのファイルはそれらのヘッダを読まない。

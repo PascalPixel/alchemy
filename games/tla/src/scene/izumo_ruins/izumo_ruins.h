@@ -9,68 +9,63 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct IzumoRuinsEventWork
-{
-    u8                    unk000[0x154];
-    s16                   exit;
-    u8                    unk156[0x56];
-    s32                   field1ac;
-    u8                    unk1b0[0xb0c];
-    struct ObjectRuntime *objectCbc;
+struct IzumoRuinsEventWork {
+  u8 unk000[0x154];
+  s16 exit;
+  u8 unk156[0x56];
+  s32 field1ac;
+  u8 unk1b0[0xb0c];
+  struct ObjectRuntime *objectCbc;
 };
 
-struct IzumoRuinsAnimation
-{
-    u8  unk00[9];
-    u8  unused09 : 2;
-    u8  layer : 2;
-    u8  unk0a[8];
-    u16 angle;
+struct IzumoRuinsAnimation {
+  u8 unk00[9];
+  u8 unused09 : 2;
+  u8 layer : 2;
+  u8 unk0a[8];
+  u16 angle;
 };
 
-struct IzumoRuinsMapLayer
-{
-    u8  unk00[0x30];
-    u8 *cells;
-    u8  unk34[4];
+struct IzumoRuinsMapLayer {
+  u8 unk00[0x30];
+  u8 *cells;
+  u8 unk34[4];
 };
 
-struct IzumoRuinsMapWork
-{
-    u8                        unk000[0x108];
-    struct IzumoRuinsMapLayer layers[3];
+struct IzumoRuinsMapWork {
+  u8 unk000[0x108];
+  struct IzumoRuinsMapLayer layers[3];
 };
 
-struct IzumoRuinsPlacement
-{
-    u16 id;
-    u16 unk02;
-    s16 flag;
+struct IzumoRuinsPlacement {
+  u16 id;
+  u16 unk02;
+  s16 flag;
 };
 
-struct IzumoRuinsEffectWork
-{
-    u8  unk00[26];
-    s16 objectId;
+struct IzumoRuinsEffectWork {
+  u8 unk00[26];
+  s16 objectId;
 };
 
-extern u32  gFrameCount;
-extern u8   gMapCellBuffer[];
+extern u32 gFrameCount;
+extern u8 gMapCellBuffer[];
 extern char SceneId_Ov67FRoom1;
 extern char SceneId_Ov67FRoom2;
 
-void                  WaitFrames(s32 frames);
-s32                   GameFlag_Test(s32 flag);
-void                  GameFlag_SetBit(s32 flag);
-void                  GameFlag_ClearBit(s32 flag);
-void                  Battle_WaitMode0(s32 frames);
+void WaitFrames(s32 frames);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
 
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_02000bc0(s32 a, s32 b, s32 owner);
-s32  Func_02000eac(u32 layer, s32 x, s32 y);
-s32  Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
+s32 Func_02000eac(u32 layer, s32 x, s32 y);
+s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
 void Func_02000f30(struct ObjectRuntime *object);
 void Func_02001428(struct ObjectRuntime *object, s32 value);
 void Func_02001450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -101,12 +96,12 @@ void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02001448(void);
 void Func_02001470(s32 a, s32 b, s32 c);
-s32  Func_02001508(struct ObjectRuntime *object);
+s32 Func_02001508(struct ObjectRuntime *object);
 void Func_02001510(const void *data);
 void Func_020014e0(s32 value);
 void Func_020014f8(const void *data);
 void Func_02001538(s32 cue);
-s32  Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Object_AttachWorkTargetToObject(s32 id, s32 flag);
 
 #endif

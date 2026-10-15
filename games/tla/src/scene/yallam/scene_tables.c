@@ -9,17 +9,8 @@
 #include "types.h"
 #include "field_scene.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void)
-{
-    return gSceneEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void)
-{
-    return 0;
-}
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void)
-{
-    return gSceneExits;
-}
+const u32 *Scene_GetExits(void) { return gSceneExits; }

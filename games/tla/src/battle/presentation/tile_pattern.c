@@ -12,25 +12,22 @@
 // VRAM 0x06000290 からの 16 バイトを 0x06000280 へ詰め、
 // 0x0600028c からの 20 バイトを 0 で消す
 //--------------------------------------------------------------------------
-s32 BattlePresentation_InitializeTilePattern(void)
-{
-    Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008, REG_DMA3); // 16 ビット × 8
-    return Iwram_ClearWords((void *)0x0600028c, 20);
+s32 BattlePresentation_InitializeTilePattern(void) {
+  Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008,
+          REG_DMA3); // 16 ビット × 8
+  return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
 //--------------------------------------------------------------------------
 // BG0 の縦スクロールを 0 にもどす
 //--------------------------------------------------------------------------
-void BattlePresentation_ClearBg0VerticalOffset(void)
-{
-    u32 zero = 0;
+void BattlePresentation_ClearBg0VerticalOffset(void) {
+  u32 zero = 0;
 
-    REG_BG0VOFS = zero;
+  REG_BG0VOFS = zero;
 }
 
 //--------------------------------------------------------------------------
 // 何もしない
 //--------------------------------------------------------------------------
-void Party_ReservedNoOp5B14(void)
-{
-}
+void Party_ReservedNoOp5B14(void) {}

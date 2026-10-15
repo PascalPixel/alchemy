@@ -19,34 +19,29 @@
 // unit   : キャラクター番号
 // item   : 持ち物の値
 //--------------------------------------------------------------------------
-s32 Item_ClassifyUseAbility(s32 unit, s32 item)
-{
-    s32                    ret;
-    struct ItemDefinition *def;
+s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
+  s32 ret;
+  struct ItemDefinition *def;
 
-    if (item == 0)
-    {
-        return 1;
-    }
+  if (item == 0) {
+    return 1;
+  }
 #if GAME_TLA
-    def = Item_Get(item);
+  def = Item_Get(item);
 #endif
-    ret = 1;
-    if (def->useType == 3) // エナジーを授ける装備
-    {
-        return ret;
-    }
-    if (def->actionId == 0)
-    {
-        return ret;
-    }
-    if ((def->type != 0) && (Item_CanOwnerEquip(unit, item) == 0))
-    {
-        return ret;
-    }
-    if ((BATTLE_OK & BattleActGet(def->actionId)->targetFlag) == 0)
-    {
-        return 2;
-    }
-    return 0;
+  ret = 1;
+  if (def->useType == 3) // エナジーを授ける装備
+  {
+    return ret;
+  }
+  if (def->actionId == 0) {
+    return ret;
+  }
+  if ((def->type != 0) && (Item_CanOwnerEquip(unit, item) == 0)) {
+    return ret;
+  }
+  if ((BATTLE_OK & BattleActGet(def->actionId)->targetFlag) == 0) {
+    return 2;
+  }
+  return 0;
 }

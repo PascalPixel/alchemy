@@ -33,339 +33,294 @@ static void FieldScene_OpenGate(void);
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_facing.h"
 
-u8 *SceneData_GetScriptTable(void)
-{
-    return (u8 *)gPlacement_Scripts;
-}
+u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
 
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
+s32 SceneData_ReturnZero(void) { return 0; }
 
-u8 *SceneData_GetMessageTable(void)
-{
-    return (u8 *)gPlacement_Messages;
-}
+u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
-const struct ScenePlacement *Scene_GetPlacements(void)
-{
-    if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
-    {
-        if (Engine_GameFlagIsSet(0x84f) != 0)
-            gMcCoyPalaceGardenPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
-        if (Engine_GameFlagIsSet(0x845) != 0)
-            gMcCoyPalaceGardenPlacements[2].talkFacing = TALK_FACE_PARTY;
-        return gMcCoyPalaceGardenPlacements;
-    }
-    return gMcCoyPalaceGardenPlacementsOther;
-}
-
-static void EV13_PSYNERGY(void)
-{
-    Engine_EventBegin();
-    Engine_ActorSetPosition(0xD, 0, 0);
-    Engine_GameFlagSet(0xFD2);
-    Engine_ItemShowFound(ITEM_NUT, 3);
-    Engine_PartyGiveItem(ITEM_NUT, 0);
-    Engine_EventEnd();
-}
-
-static void EV90_SEARCH(void)
-{
-    Engine_EventBegin();
-    Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-    Engine_MessageShowCentered(MsgBilibinUponCloserInspectionSeemsDried, 1);
-    Engine_EventEnd();
-}
-
-const struct SceneEvent *Scene_GetEvents(void)
-{
-    if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
-    {
-        return gMcCoyPalaceGardenEvents;
-    }
-    return gMcCoyPalaceGardenEventsOther;
-}
-
-static void EV09_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
-    Engine_EventAskYesNo(9, 0);
-    Engine_EventEnd();
-}
-
-static void EV10_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
-    Engine_EventAskYesNo(10, 0);
-    Engine_EventEnd();
-}
-
-static void EV11_TALK(void)
-{
-    Engine_EventBegin();
-    Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
-    Engine_EventAskYesNo(11, 0);
-    Engine_EventEnd();
-}
-
-static void EV12_TALK(void)
-{
-    Engine_EventBegin();
-    if (GameFlag_IsSet(0x84a) != 0)
-    {
-        if (Engine_GameFlagIsSet(0x304) != 0)
-        {
-            if (GameFlag_IsSet(0x201) == 0)
-            {
-                Engine_EventSetMessage(MsgBilibinWhere);
-                Engine_EventShowMessageAndWait(12, 0, 10);
-                Actor_ShowEmote(12, 0x107, 40);
-                Engine_EventShowMessageAndWait(12, 0, 10);
-                Engine_ActorRunRepeatedMotion(12, 2);
-                Engine_GameFlagSet(0x201);
-            }
-            Engine_EventSetMessage(MsgBilibinMasterQuiteCranky);
-            Engine_EventShowMessage(12, 0);
-        }
-        else
-        {
-            Engine_EventSetMessage(MsgBilibinLordMccoyDifficult);
-            Engine_EventShowMessage(12, 0);
-            goto guard;
-        }
-    }
-    else
-    {
-        Engine_EventSetMessage(MsgBilibinLordOnlyMeet);
-        Engine_EventOpenMessage(12, 0);
-        if (Engine_EventChooseYesNo(0, 0) == 0)
-        {
-            gEventWork->message++;
-            Engine_EventShowMessageAndWait(12, 0, 10);
-            if (Object_GetById(0)->z.fixed < 0x10e0000)
-            {
-                Actor_SetSpeed(12, 0xcccc, 0x6666);
-                Actor_WalkToAndWait(0, 0x15a, 0x112);
-                Actor_WalkToAndWait(0, 0x148, 0x11a);
-                Actor_FaceDirection(0, 0xc000, 0);
-            }
-            Actor_FaceDirection(11, 0x1000, 0);
-            Actor_FaceDirection(12, 0x7000, 20);
-            Actor_ShowEmote(11, 0x102, 20);
-            Engine_ActorStartRepeatedMotion(11, 1);
-            Engine_EventShowMessageAndWait(11, 0, 10);
-            Actor_ShowEmote(12, 0x108, 60);
-            Engine_ActorStartRepeatedMotion(12, 1);
-            Engine_EventShowMessageAndWait(12, 0, 20);
-            Engine_ActorSetAnimation(11, 3);
-            Engine_ActorSetAnimationAndWait(12, 3);
-            Actor_FaceDirection(11, 0x3000, 0);
-            Actor_FaceDirection(12, 0x5000, 10);
-            Engine_ActorStartRepeatedMotion(11, 1);
-            Engine_EventShowMessageAndWait(11, 0, 20);
-            Actor_FaceDirection(11, 0xf000, 0);
-            Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-            Object_GetById(12)->steeringFlags &= ~ACTOR_FACES_MOTION;
-            Actor_WalkToAndWait(12, 0x15a, 0x107);
-            Engine_EventWait(1);
-            Object_GetById(12)->steeringFlags |= ACTOR_FACES_MOTION;
-            Actor_SetSpeed(11, 0x9999, 0x4ccc);
-            Actor_WalkToAndWait(11, 0x148, 0x107);
-            Actor_WalkToAndWait(11, 0x148, 252);
-            Actor_FaceDirection(11, 0xc000, 10);
-            FieldScene_OpenGate();
-            Actor_WalkToAndWait(11, 0x148, 246);
-            /* FAKEMATCH: instruction order only: called through a cast with no
-               prototype that returns a value, the call sets r0, so sched2 loads
-               the actor id after the two zeros, as native. Plain forms measured
-               (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
-               their prototype load r0 first (differ 2). */
-            ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-            /* FAKEMATCH: instruction order only: the one-pass block's loop note
-               after the call above is a scheduling barrier; with the cast it
-               keeps r0 last among that call's arguments. A plain call or
-               GameFlag_Set here loads r0 first (differ 2). */
-            do
-            {
-                Engine_GameFlagSet(0x84a);
-            } while (0);
-        guard:
-            FieldObject_SetTargetAndCallback(12, 0x10000, gMcCoyPalaceGarden_GuardScript);
-        }
-        else
-        {
-            Engine_EventShowMessage(12, 0);
-            Actor_FaceDirection(12, 0x3000, 10);
-        }
-    }
-    Engine_EventEnd();
-}
-
-static void EV02_TOUCH(void)
-{
-    Engine_EventBegin();
-    if (GameFlag_IsSet(0x200) == 0)
-    {
-        FieldScene_OpenGate();
-    }
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-    Engine_EventWait(16);
-    Engine_EventRequestExit(2);
-    Engine_EventEnd();
-}
-
-s32 Scene_Initialize(void)
-{
-    struct EventWork  *work = gEventWork;
-    struct FieldActor *actor;
-
-    work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-
-    actor = Object_GetById(8);
-    actor->priorityFlags = 0;
-    actor->sprite->priority = 1;
-
-    if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
-    {
-        McCoyPalaceGarden_ApplyEntryState();
-    }
-
-    return 0;
-}
-
-static void McCoyPalaceGarden_ApplyEntryState(void)
-{
-    if (Engine_GameFlagIsSet(0x109) != 0)
-    {
-        Engine_GameFlagClear(0x200);
-    }
-    if (Engine_GameFlagIsSet(0xfd2) == 0)
-    {
-        InitializeStagedActorSceneOrbitingEffect(13);
-    }
-    if (Engine_GameFlagIsSet(0x84a) != 0)
-    {
-        Actor_SetPosition(11, 0x1340000, 0x1070000);
-        Engine_ActorSetPosition(12, 0x15a0000, 0x1070000);
-        if (Engine_GameFlagIsSet(0x84f) == 0)
-        {
-            if (Engine_GameFlagIsSet(0x845) == 0)
-            {
-                Engine_ActorSetPosition(11, 0, 0);
-                FieldObject_SetTargetAndCallback(12, 0x10000, gMcCoyPalaceGarden_GuardScript);
-            }
-        }
-    }
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
+    if (Engine_GameFlagIsSet(0x84f) != 0)
+      gMcCoyPalaceGardenPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(0x845) != 0)
-    {
-        Actor_SetPosition(10, 0xe00000, 0x1240000);
-        Actor_FaceDirection(10, 0x4000, 0);
-        Engine_ActorFaceDirection(8, 0, 0);
-        if (Engine_GameFlagIsSet(0x85e) == 0)
-        {
-            McCoyPalaceGarden_RunGardenScene();
-        }
-    }
+      gMcCoyPalaceGardenPlacements[2].talkFacing = TALK_FACE_PARTY;
+    return gMcCoyPalaceGardenPlacements;
+  }
+  return gMcCoyPalaceGardenPlacementsOther;
 }
 
-static void McCoyPalaceGarden_RunGardenScene(void)
-{
+static void EV13_PSYNERGY(void) {
+  Engine_EventBegin();
+  Engine_ActorSetPosition(0xD, 0, 0);
+  Engine_GameFlagSet(0xFD2);
+  Engine_ItemShowFound(ITEM_NUT, 3);
+  Engine_PartyGiveItem(ITEM_NUT, 0);
+  Engine_EventEnd();
+}
 
-    Engine_EventBegin();
-    Camera_MoveTo(-1, -1, -1, 0);
-    Camera_MoveTo(0x1400000, -1, 0x1400000, 0);
-    Engine_MapRedraw();
-    Engine_TaskWait(1);
-    Actor_SetPosition(0, 0x1400000, 0x1740000);
-    Engine_EventOpenScreen();
-    Engine_CameraSetSpeed(0x3333, 0x666);
-    Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
-    Actor_SetSpeed(0, 0x9999, 0x4ccc);
-    Actor_WalkToAndWait(0, 0x140, 0x136);
-    Actor_FaceDirection(11, 0x3000, 10);
-    Engine_ActorStartRepeatedMotion(11, 2);
-    Actor_ShowEmote(11, 0x100, 60);
-    Engine_EventSetMessage(MsgBilibinOhItS);
-    Engine_EventShowMessageAndWait(11, 0, 10);
-    Actor_FaceDirection(12, 0x5000, 10);
-    Engine_ActorStartRepeatedMotion(12, 2);
-    Actor_ShowEmote(12, 0x100, 60);
-    Engine_EventShowMessageAndWait(12, 0, 20);
-    Actor_FaceDirection(11, 0x1000, 0);
-    Actor_FaceDirection(12, 0x7000, 40);
-    Actor_FaceDirection(11, 0x3000, 0);
-    Actor_FaceDirection(12, 0x5000, 10);
-    Engine_ActorRunRepeatedMotion(11, 1);
-    Engine_EventShowMessageAndWait(11, 0, 10);
-    Engine_ActorRunRepeatedMotion(12, 1);
-    Engine_EventOpenMessage(12, 0);
-    Actor_FaceDirection(0, 0xe000, 0);
-    while (Engine_EventChooseYesNo(0, 0) != 0)
-    {
-        Engine_ActorShowEmote(12, 0x100, 60);
-        Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
+static void EV90_SEARCH(void) {
+  Engine_EventBegin();
+  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+  Engine_MessageShowCentered(MsgBilibinUponCloserInspectionSeemsDried, 1);
+  Engine_EventEnd();
+}
+
+const struct SceneEvent *Scene_GetEvents(void) {
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
+    return gMcCoyPalaceGardenEvents;
+  }
+  return gMcCoyPalaceGardenEventsOther;
+}
+
+static void EV09_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
+  Engine_EventAskYesNo(9, 0);
+  Engine_EventEnd();
+}
+
+static void EV10_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
+  Engine_EventAskYesNo(10, 0);
+  Engine_EventEnd();
+}
+
+static void EV11_TALK(void) {
+  Engine_EventBegin();
+  Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
+  Engine_EventAskYesNo(11, 0);
+  Engine_EventEnd();
+}
+
+static void EV12_TALK(void) {
+  Engine_EventBegin();
+  if (GameFlag_IsSet(0x84a) != 0) {
+    if (Engine_GameFlagIsSet(0x304) != 0) {
+      if (GameFlag_IsSet(0x201) == 0) {
+        Engine_EventSetMessage(MsgBilibinWhere);
         Engine_EventShowMessageAndWait(12, 0, 10);
-        Engine_ActorStartRepeatedMotion(12, 2);
-        Engine_EventOpenMessage(12, 0);
+        Actor_ShowEmote(12, 0x107, 40);
+        Engine_EventShowMessageAndWait(12, 0, 10);
+        Engine_ActorRunRepeatedMotion(12, 2);
+        Engine_GameFlagSet(0x201);
+      }
+      Engine_EventSetMessage(MsgBilibinMasterQuiteCranky);
+      Engine_EventShowMessage(12, 0);
+    } else {
+      Engine_EventSetMessage(MsgBilibinLordMccoyDifficult);
+      Engine_EventShowMessage(12, 0);
+      goto guard;
     }
-    Engine_EventWait(10);
-    Actor_FaceDirection(11, 0x3000, 0);
-    Actor_FaceDirection(12, 0x5000, 20);
-    Engine_ActorSetAnimation(11, 3);
-    Engine_ActorSetAnimationAndWait(12, 3);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(11, 1);
-    Engine_EventSetMessage(MsgBilibinUnderArrest);
-    Engine_EventShowMessageAndWait(11, 0, 10);
-    Actor_SetSpeed(11, 0x10000, 0x8000);
-    Actor_WalkToAndWait(11, 0x13a, 0x118);
-    Actor_FaceDirection(0, 0xc000, 20);
-    Engine_EventShowMessageAndWait(11, 0, 40);
-    Actor_SetAttachedEffect(0, 0x102);
-    Engine_EventWait(60);
-    if (Engine_GameFlagIsSet(0x84a) == 0)
-    {
-        Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        Object_GetById(12)->steeringFlags &= 254;
-        Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
-        Engine_EventWait(1);
-        {
-            struct FieldActor *record = Object_GetById(12);
-
-            record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
-        }
+  } else {
+    Engine_EventSetMessage(MsgBilibinLordOnlyMeet);
+    Engine_EventOpenMessage(12, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+      gEventWork->message++;
+      Engine_EventShowMessageAndWait(12, 0, 10);
+      if (Object_GetById(0)->z.fixed < 0x10e0000) {
+        Actor_SetSpeed(12, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(0, 0x15a, 0x112);
+        Actor_WalkToAndWait(0, 0x148, 0x11a);
+        Actor_FaceDirection(0, 0xc000, 0);
+      }
+      Actor_FaceDirection(11, 0x1000, 0);
+      Actor_FaceDirection(12, 0x7000, 20);
+      Actor_ShowEmote(11, 0x102, 20);
+      Engine_ActorStartRepeatedMotion(11, 1);
+      Engine_EventShowMessageAndWait(11, 0, 10);
+      Actor_ShowEmote(12, 0x108, 60);
+      Engine_ActorStartRepeatedMotion(12, 1);
+      Engine_EventShowMessageAndWait(12, 0, 20);
+      Engine_ActorSetAnimation(11, 3);
+      Engine_ActorSetAnimationAndWait(12, 3);
+      Actor_FaceDirection(11, 0x3000, 0);
+      Actor_FaceDirection(12, 0x5000, 10);
+      Engine_ActorStartRepeatedMotion(11, 1);
+      Engine_EventShowMessageAndWait(11, 0, 20);
+      Actor_FaceDirection(11, 0xf000, 0);
+      Engine_ActorSetSpeed(12, 0x10000, 0x8000);
+      Object_GetById(12)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(12, 0x15a, 0x107);
+      Engine_EventWait(1);
+      Object_GetById(12)->steeringFlags |= ACTOR_FACES_MOTION;
+      Actor_SetSpeed(11, 0x9999, 0x4ccc);
+      Actor_WalkToAndWait(11, 0x148, 0x107);
+      Actor_WalkToAndWait(11, 0x148, 252);
+      Actor_FaceDirection(11, 0xc000, 10);
+      FieldScene_OpenGate();
+      Actor_WalkToAndWait(11, 0x148, 246);
+      /* FAKEMATCH: instruction order only: called through a cast with no
+         prototype that returns a value, the call sets r0, so sched2 loads
+         the actor id after the two zeros, as native. Plain forms measured
+         (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
+         their prototype load r0 first (differ 2). */
+      ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
+      /* FAKEMATCH: instruction order only: the one-pass block's loop note
+         after the call above is a scheduling barrier; with the cast it
+         keeps r0 last among that call's arguments. A plain call or
+         GameFlag_Set here loads r0 first (differ 2). */
+      do {
+        Engine_GameFlagSet(0x84a);
+      } while (0);
+    guard:
+      FieldObject_SetTargetAndCallback(12, 0x10000,
+                                       gMcCoyPalaceGarden_GuardScript);
+    } else {
+      Engine_EventShowMessage(12, 0);
+      Actor_FaceDirection(12, 0x3000, 10);
     }
-    Actor_SetSpeed(11, 0xcccc, 0x6666);
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_WalkTo(11, 0x148, 0x106);
-    Actor_WalkToAndWait(0, 0x148, 0x116);
-    Engine_ActorSetAnimation(11, 1);
-    FieldScene_OpenGate();
-    Engine_EventWait(40);
-    Actor_WalkTo(0, 0x148, 242);
-    Actor_WalkToAndWait(11, 0x148, 242);
-    Engine_ActorSetPosition(11, 0, 0);
-    Engine_ActorWaitForMove(0);
-    Engine_ActorSetPosition(0, 0, 0);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    Engine_EventCloseScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventRequestExit(10);
-    Engine_EventEnd();
+  }
+  Engine_EventEnd();
 }
 
-static void FieldScene_OpenGate(void)
-{
-    Engine_AudioPlayCue(0xBC);
-    Engine_MapAnimateCells(gGarden_GateCells, 0x34, 0xB);
-    Engine_GameFlagSet(0x200);
+static void EV02_TOUCH(void) {
+  Engine_EventBegin();
+  if (GameFlag_IsSet(0x200) == 0) {
+    FieldScene_OpenGate();
+  }
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
+  Engine_EventWait(16);
+  Engine_EventRequestExit(2);
+  Engine_EventEnd();
+}
+
+s32 Scene_Initialize(void) {
+  struct EventWork *work = gEventWork;
+  struct FieldActor *actor;
+
+  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+
+  actor = Object_GetById(8);
+  actor->priorityFlags = 0;
+  actor->sprite->priority = 1;
+
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
+    McCoyPalaceGarden_ApplyEntryState();
+  }
+
+  return 0;
+}
+
+static void McCoyPalaceGarden_ApplyEntryState(void) {
+  if (Engine_GameFlagIsSet(0x109) != 0) {
+    Engine_GameFlagClear(0x200);
+  }
+  if (Engine_GameFlagIsSet(0xfd2) == 0) {
+    InitializeStagedActorSceneOrbitingEffect(13);
+  }
+  if (Engine_GameFlagIsSet(0x84a) != 0) {
+    Actor_SetPosition(11, 0x1340000, 0x1070000);
+    Engine_ActorSetPosition(12, 0x15a0000, 0x1070000);
+    if (Engine_GameFlagIsSet(0x84f) == 0) {
+      if (Engine_GameFlagIsSet(0x845) == 0) {
+        Engine_ActorSetPosition(11, 0, 0);
+        FieldObject_SetTargetAndCallback(12, 0x10000,
+                                         gMcCoyPalaceGarden_GuardScript);
+      }
+    }
+  }
+  if (Engine_GameFlagIsSet(0x845) != 0) {
+    Actor_SetPosition(10, 0xe00000, 0x1240000);
+    Actor_FaceDirection(10, 0x4000, 0);
+    Engine_ActorFaceDirection(8, 0, 0);
+    if (Engine_GameFlagIsSet(0x85e) == 0) {
+      McCoyPalaceGarden_RunGardenScene();
+    }
+  }
+}
+
+static void McCoyPalaceGarden_RunGardenScene(void) {
+
+  Engine_EventBegin();
+  Camera_MoveTo(-1, -1, -1, 0);
+  Camera_MoveTo(0x1400000, -1, 0x1400000, 0);
+  Engine_MapRedraw();
+  Engine_TaskWait(1);
+  Actor_SetPosition(0, 0x1400000, 0x1740000);
+  Engine_EventOpenScreen();
+  Engine_CameraSetSpeed(0x3333, 0x666);
+  Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
+  Actor_SetSpeed(0, 0x9999, 0x4ccc);
+  Actor_WalkToAndWait(0, 0x140, 0x136);
+  Actor_FaceDirection(11, 0x3000, 10);
+  Engine_ActorStartRepeatedMotion(11, 2);
+  Actor_ShowEmote(11, 0x100, 60);
+  Engine_EventSetMessage(MsgBilibinOhItS);
+  Engine_EventShowMessageAndWait(11, 0, 10);
+  Actor_FaceDirection(12, 0x5000, 10);
+  Engine_ActorStartRepeatedMotion(12, 2);
+  Actor_ShowEmote(12, 0x100, 60);
+  Engine_EventShowMessageAndWait(12, 0, 20);
+  Actor_FaceDirection(11, 0x1000, 0);
+  Actor_FaceDirection(12, 0x7000, 40);
+  Actor_FaceDirection(11, 0x3000, 0);
+  Actor_FaceDirection(12, 0x5000, 10);
+  Engine_ActorRunRepeatedMotion(11, 1);
+  Engine_EventShowMessageAndWait(11, 0, 10);
+  Engine_ActorRunRepeatedMotion(12, 1);
+  Engine_EventOpenMessage(12, 0);
+  Actor_FaceDirection(0, 0xe000, 0);
+  while (Engine_EventChooseYesNo(0, 0) != 0) {
+    Engine_ActorShowEmote(12, 0x100, 60);
+    Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
+    Engine_EventShowMessageAndWait(12, 0, 10);
+    Engine_ActorStartRepeatedMotion(12, 2);
+    Engine_EventOpenMessage(12, 0);
+  }
+  Engine_EventWait(10);
+  Actor_FaceDirection(11, 0x3000, 0);
+  Actor_FaceDirection(12, 0x5000, 20);
+  Engine_ActorSetAnimation(11, 3);
+  Engine_ActorSetAnimationAndWait(12, 3);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(11, 1);
+  Engine_EventSetMessage(MsgBilibinUnderArrest);
+  Engine_EventShowMessageAndWait(11, 0, 10);
+  Actor_SetSpeed(11, 0x10000, 0x8000);
+  Actor_WalkToAndWait(11, 0x13a, 0x118);
+  Actor_FaceDirection(0, 0xc000, 20);
+  Engine_EventShowMessageAndWait(11, 0, 40);
+  Actor_SetAttachedEffect(0, 0x102);
+  Engine_EventWait(60);
+  if (Engine_GameFlagIsSet(0x84a) == 0) {
+    Engine_ActorSetSpeed(12, 0x10000, 0x8000);
+    Object_GetById(12)->steeringFlags &= 254;
+    Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
+    Engine_EventWait(1);
+    {
+      struct FieldActor *record = Object_GetById(12);
+
+      record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
+    }
+  }
+  Actor_SetSpeed(11, 0xcccc, 0x6666);
+  Actor_SetSpeed(0, 0xcccc, 0x6666);
+  Actor_WalkTo(11, 0x148, 0x106);
+  Actor_WalkToAndWait(0, 0x148, 0x116);
+  Engine_ActorSetAnimation(11, 1);
+  FieldScene_OpenGate();
+  Engine_EventWait(40);
+  Actor_WalkTo(0, 0x148, 242);
+  Actor_WalkToAndWait(11, 0x148, 242);
+  Engine_ActorSetPosition(11, 0, 0);
+  Engine_ActorWaitForMove(0);
+  Engine_ActorSetPosition(0, 0, 0);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  Engine_EventCloseScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventRequestExit(10);
+  Engine_EventEnd();
+}
+
+static void FieldScene_OpenGate(void) {
+  Engine_AudioPlayCue(0xBC);
+  Engine_MapAnimateCells(gGarden_GateCells, 0x34, 0xB);
+  Engine_GameFlagSet(0x200);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

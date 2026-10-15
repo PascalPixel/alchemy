@@ -16,53 +16,52 @@
 #include "ram_buffer.h"
 #include "node_chain.h"
 
-#define Resource_DecodeByteLzInRam ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
+#define Resource_DecodeByteLzInRam                                             \
+  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
 
-void Menu_LoadSelectedResource(void)
-{
-    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-    struct SelectionNode   *selection = NodeChain_GetNodeAtCount(state);
-    struct SelectionNode   *transfer;
-    GlyphTransfer          *buffer;
-    u8                     *table;
-    void                   *resource;
-    s32                     no;
+void Menu_LoadSelectedResource(void) {
+  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
+  struct SelectionNode *transfer;
+  GlyphTransfer *buffer;
+  u8 *table;
+  void *resource;
+  s32 no;
 
-    if (selection->kind != 1 && selection->kind != 6)
-        return;
+  if (selection->kind != 1 && selection->kind != 6)
+    return;
 
-    buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
-    transfer = &state->records[15];
-    no = selection->base;
-    table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
-    {
-        u8 **destination = &buffer->encoded;
-        resource = table + *(u16 *)(table + selection->base * 2);
-        *destination = resource;
-    }
-    Resource_DecodeByteLzInRam(resource, buffer);
+  buffer =
+      (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+  transfer = &state->records[15];
+  no = selection->base;
+  table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  {
+    u8 **destination = &buffer->encoded;
+    resource = table + *(u16 *)(table + selection->base * 2);
+    *destination = resource;
+  }
+  Resource_DecodeByteLzInRam(resource, buffer);
 
-    if (transfer->kind == 0)
-        transfer->slot = Resource_FindFreeEntry();
-    transfer->tile = VramBlock_LoadCached(transfer->slot, 0x400, buffer);
-    transfer->kind = 1;
-    transfer->base = no;
-    transfer->scale = 40;
-    transfer->scaleStep = 40;
-    transfer->scaleEnd = 240;
-    Runtime_ReleaseHeapBlock(68);
+  if (transfer->kind == 0)
+    transfer->slot = Resource_FindFreeEntry();
+  transfer->tile = VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+  transfer->kind = 1;
+  transfer->base = no;
+  transfer->scale = 40;
+  transfer->scaleStep = 40;
+  transfer->scaleEnd = 240;
+  Runtime_ReleaseHeapBlock(68);
 }
 
-void Resource_ResetPendingTransfer(void)
-{
-    struct SelectionNode *transfer =
-        &((struct SelectionScreen *)Ram_HeapSlots->menuWork)->records[15];
+void Resource_ResetPendingTransfer(void) {
+  struct SelectionNode *transfer =
+      &((struct SelectionScreen *)Ram_HeapSlots->menuWork)->records[15];
 
-    if (transfer->kind != 0)
-    {
-        Resource_ResetEntry(transfer->slot);
-        transfer->kind = 0;
-    }
+  if (transfer->kind != 0) {
+    Resource_ResetEntry(transfer->slot);
+    transfer->kind = 0;
+  }
 }

@@ -22,8 +22,8 @@ void Func_02000630(void);
 extern u32 gData_0200101c[];
 
 struct SceneEntrance gSceneEntrances[] = {
-    { 0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    {0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off

@@ -1,5 +1,3 @@
 
 
-void Func_08118954(void)
-{
-}
+void Func_08118954(void) {}

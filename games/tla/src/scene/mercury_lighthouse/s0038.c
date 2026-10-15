@@ -16,11 +16,10 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
 
-s32 Func_02000038(struct ObjectRuntime *object)
-{
-    if ((gData_020007e4 >> 1) & 1)
-        Object_SetPartAttribute(object, 15);
-    else
-        Object_SetPartAttribute(object, 7);
-    return 0;
+s32 Func_02000038(struct ObjectRuntime *object) {
+  if ((gData_020007e4 >> 1) & 1)
+    Object_SetPartAttribute(object, 15);
+  else
+    Object_SetPartAttribute(object, 7);
+  return 0;
 }

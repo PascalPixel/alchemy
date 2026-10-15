@@ -3,24 +3,20 @@
 #include "event_work.h"
 #include "party_state.h"
 
-void Event_NoOp(void)
-{
-}
+void Event_NoOp(void) {}
 
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void Audio_PlayCue(s32 cue);
 
-void Func_080d2c9c(void)
-{
-    u8 *work = Ram_HeapSlots->eventWork;
+void Func_080d2c9c(void) {
+  u8 *work = Ram_HeapSlots->eventWork;
 
-    if (work != 0)
-    {
-        s16 cue = *(s16 *)(work + 0xcb8);
+  if (work != 0) {
+    s16 cue = *(s16 *)(work + 0xcb8);
 
-        if (cue != -1)
-            Audio_PlayCue(cue);
-    }
+    if (cue != -1)
+      Audio_PlayCue(cue);
+  }
 }
 
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
@@ -29,54 +25,47 @@ void GameFlag_ClearBit(s32 flag);
 
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-struct EventWork15a
-{
-    u8  unk000[0x15a];
-    u16 flag;
+struct EventWork15a {
+  u8 unk000[0x15a];
+  u16 flag;
 };
 
-void Func_080d2cc4(s32 message)
-{
-    EventRuntime_Begin();
-    EventRuntime_ResolvePendingActions(0);
-    UiText_ShowPositionedMessageAndWaitFar(message, 1);
-    GameFlag_ClearBit(0x142);
-    EventRuntime_End();
-    if (Party_FindOwnerWithActionFar(136) != -1)
-        ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
+void Func_080d2cc4(s32 message) {
+  EventRuntime_Begin();
+  EventRuntime_ResolvePendingActions(0);
+  UiText_ShowPositionedMessageAndWaitFar(message, 1);
+  GameFlag_ClearBit(0x142);
+  EventRuntime_End();
+  if (Party_FindOwnerWithActionFar(136) != -1)
+    ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
 
-struct CueObject
-{
-    u8  unk00[8];
-    s32 x;
-    s32 base;
-    s32 top;
+struct CueObject {
+  u8 unk00[8];
+  s32 x;
+  s32 base;
+  s32 top;
 };
 
-struct EventWork1cc
-{
-    u8                unk000[0x1cc];
-    struct CueObject *focus;
+struct EventWork1cc {
+  u8 unk000[0x1cc];
+  struct CueObject *focus;
 };
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
-void Func_080d2d08(struct CueObject *object, s32 cue)
-{
-    struct CueObject *focus = ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
+void Func_080d2d08(struct CueObject *object, s32 cue) {
+  struct CueObject *focus =
+      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
 
-    if (object == 0 || focus == 0)
-        return;
-    if (ABS(focus->x - object->x) > 0x980000)
-        return;
-    if (ABS((focus->top - focus->base) - (object->top - object->base)) > 0x700000)
-        return;
-    Audio_PlayCue(cue);
+  if (object == 0 || focus == 0)
+    return;
+  if (ABS(focus->x - object->x) > 0x980000)
+    return;
+  if (ABS((focus->top - focus->base) - (object->top - object->base)) > 0x700000)
+    return;
+  Audio_PlayCue(cue);
 }
 
-void Func_080d2d70(void)
-{
-    gPartyState.counter274++;
-}
+void Func_080d2d70(void) { gPartyState.counter274++; }
 #endif

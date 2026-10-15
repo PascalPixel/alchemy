@@ -24,20 +24,18 @@ void RenderOutput_ClearListFar();
 #endif
 
 //--------------------------------------------------------------------------
-// win を描きなおし、メッセージ message を左上から書く（win が 0 なら何もしない）
-// 日本版は描きなおしたあと 1 フレーム待つ
+// win を描きなおし、メッセージ message を左上から書く（win が 0
+// なら何もしない） 日本版は描きなおしたあと 1 フレーム待つ
 //--------------------------------------------------------------------------
-void Shop_DrawMsg(s32 win, s32 message)
-{
-    if (win != 0)
-    {
+void Shop_DrawMsg(s32 win, s32 message) {
+  if (win != 0) {
 #if EDITION_INTERNATIONAL
-        RenderOutput_RedrawSavedRectFar(win);
-        UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
+    RenderOutput_RedrawSavedRectFar(win);
+    UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
-        RenderOutput_ClearListFar(win);
-        WaitFrames(1);
-        UiText_DrawResourceFar(message, win, 0, 0);
+    RenderOutput_ClearListFar(win);
+    WaitFrames(1);
+    UiText_DrawResourceFar(message, win, 0, 0);
 #endif
-    }
+  }
 }

@@ -1,11 +1,10 @@
 #include "shrine_of_the_sea_god.h"
 
-void Func_02000618(void)
-{
-    struct ShrineOfTheSeaGodMapWork *map =
-        (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
-    struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
+void Func_02000618(void) {
+  struct ShrineOfTheSeaGodMapWork *map =
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+  struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
-    layer->y += -0x10000;
-    WaitFrames(4);
+  layer->y += -0x10000;
+  WaitFrames(4);
 }

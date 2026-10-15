@@ -11,14 +11,12 @@
 
 void GameFlag_SetBit(s32 flag);
 
-void ObjectEffect_BeginContextEffect26(void)
-{
-    ObjectEffect_PrepareContextEffect(0x1A);
-    GameFlag_SetBit(0x120);
+void ObjectEffect_BeginContextEffect26(void) {
+  ObjectEffect_PrepareContextEffect(0x1A);
+  GameFlag_SetBit(0x120);
 }
 
-void ObjectEffect_BeginContextEffect25(void)
-{
-    ObjectEffect_PrepareContextEffect(0x19);
-    GameFlag_SetBit(0x121);
+void ObjectEffect_BeginContextEffect25(void) {
+  ObjectEffect_PrepareContextEffect(0x19);
+  GameFlag_SetBit(0x121);
 }

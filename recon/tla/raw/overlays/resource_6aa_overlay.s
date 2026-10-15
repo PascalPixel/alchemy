@@ -390,52 +390,6 @@ Func_02000414:
 	.4byte Data_02005394
 .L_02008518:
 	.4byte IwramMulQ16
-	.section .text.x0200896c,"ax",%progbits
-	.balign 4
-	.global Func_0200096c
-	.thumb_func
-Func_0200096c:
-	push {r5, lr}
-	adds r0, r1, #0
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #11
-	bne .L_02008998
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #6
-	str r3, [r5, #52]
-	movs r1, #152
-	movs r3, #198
-	ldr r2, [r5, #12]
-	lsls r1, r1, #16
-	lsls r3, r3, #18
-	bl Func_02004bf8
-.L_02008998:
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #10
-	bne .L_020089bc
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #6
-	str r3, [r5, #52]
-	movs r1, #200
-	movs r3, #198
-	ldr r2, [r5, #12]
-	adds r0, r5, #0
-	lsls r1, r1, #16
-	lsls r3, r3, #18
-	bl Func_02004bf8
-.L_020089bc:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x02008d18,"ax",%progbits
 	.balign 4
 	.global Func_02000d18

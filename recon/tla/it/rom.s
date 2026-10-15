@@ -1818,13 +1818,6 @@ Owner_LevelUp:
 	.incbin "baserom.gba", 0x000afbf8, 0x000001d0
 	.section .rom.000aff34, "ax"
 	.incbin "baserom.gba", 0x000aff34, 0x00000054
-	.section .rom.000affb8, "ax"
-	.balign 4
-	.global Owner_GetDigitValues
-	.type Owner_GetDigitValues, %function
-	.thumb_func
-Owner_GetDigitValues:
-	.incbin "baserom.gba", 0x000affb8, 0x0000007c
 	.section .rom.000b0090, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

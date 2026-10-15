@@ -1403,13 +1403,6 @@ Func_080afbec:
 	.thumb_func
 Trade_ListFlaggedEntries:
 	.incbin "baserom.gba", 0x000bcf28, 0x00000054
-	.section .rom.000bcfac, "ax"
-	.balign 4
-	.global Owner_GetDigitValues
-	.type Owner_GetDigitValues, %function
-	.thumb_func
-Owner_GetDigitValues:
-	.incbin "baserom.gba", 0x000bcfac, 0x0000007c
 	.section .rom.000bd084, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

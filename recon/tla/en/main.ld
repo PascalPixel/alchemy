@@ -759,7 +759,6 @@ SECTIONS
         "*/games/tla/src/game/party/counters.o"(.text)
         "*/recon/tla/raw/080aff28.o"(.text .rodata .data .padding)
         "*/games/tla/src/game/djinn/get_definition.o"(.text)
-        "*/recon/tla/raw/080affac.o"(.text)
         "*/games/tla/src/game/character/resist.o"(.text)
         "*/recon/tla/raw/080b0084.o"(.text)
         "*/recon/tla/raw/080b0144.o"(.text)

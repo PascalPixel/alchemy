@@ -760,7 +760,6 @@ SECTIONS
     "*/games/tla/src/game/party/counters.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aaf24)
     "*/games/tla/src/game/djinn/get_definition.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000aafa8)
     "*/games/tla/src/game/character/resist.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ab080)
     "*/recon/tla/ja/rom.o"(.rom.000ab140)

@@ -196,7 +196,7 @@ void BattleFx_SetPrimaryBufferValue(u32 col);
 void BattleFx_StartBufferInterpolation(s32 frames);
 s32 BattleFx_ClampRgb555Channel(s32 value);
 s32 BattleFx_ClampRgb555Component(s32 value);
-void Object_EffectSpawnCallback(void);
+void FadeOverlay_DrawMarks(void);
 void BattleFx_StartFadeOverlay(void *object);
 void Object_EnableEffectSpawnCallback(void);
 void Object_DisableEffectSpawnCallback(void);

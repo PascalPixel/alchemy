@@ -4364,10 +4364,10 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// ウィンドウ 0/1 を有効にし、ページの値を WININ, WINOUT, WIN0H, WIN1H
-// に入れてから 残りを HBlank ごとに DMA0 で WIN0H と WIN1H へ 1 ワードずつ送る
-//--------------------------------------------------------------------------
+// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
+// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
+// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
+// of the screen gets its own window edges.
 void BattleFx_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work = gDisplayTransition;
   u16 *src = work->pages[work->page];
@@ -4403,6 +4403,15 @@ struct TransitionShape {
 
 extern struct TransitionShape gDisplayTransition_Shapes[];
 
+// Each frame of a window transition: advances its value toward its end (and
+// at the end turns the windows off, or moves to the next mode), then builds
+// the next page of window edges, WININ and WINOUT first and then a
+// (left << 8 | right) pair for each of the 160 lines. Bit 5 of the value says
+// whether the transition opens or closes; its low 5 bits are its progress.
+// Modes: 0 random bars, 1 a shape from gDisplayTransition_Shapes, 2 random
+// horizontal noise, 3 a circle at the screen's centre, 4 vertical blinds,
+// 7 and 9 an ellipse around the party leader (7 flickers), 8 a wobbling
+// ellipse around a point, 77 a flatter ellipse around the leader.
 void DisplayTransition_UpdateScanlineTable(void) {
   struct DisplayTransitionState *state;
   struct TransitionSpan *span;
@@ -4782,6 +4791,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
   state->page ^= 1;
 }
 
+// Starts window transition mode at value 0, with no duration: the caller
+// moves it.
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
       Runtime_AllocateBlock(31, sizeof(*state));
@@ -4795,11 +4806,13 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
 }
 
+// Turns the window transition's two callbacks back on.
 void BattleFx_EnableTwoCallbacks(void) {
   Scheduler_EnableCallbacks(&DisplayTransition_UpdateScanlineTable);
   Scheduler_EnableCallbacks(&BattleFx_StartWindowHBlankDma);
 }
 
+// Allocates the display transition state (heap block 31) and clears it.
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   struct DisplayTransitionState *state;
 
@@ -4808,6 +4821,10 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   return state;
 }
 
+// Fades the screen in over frames frames. mode's high byte chooses how: 0
+// from black, 1 from the backdrop colour, 2 a window transition (its low
+// byte the mode), 3 a dissolve, 4 opening from the centre line (low byte 1
+// flickers).
 void DisplayTransition_Start(s32 mode, s32 frames) {
   struct DisplayTransitionWindow *display;
   s32 value;
@@ -4894,6 +4911,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
                       0x20000);
 }
 
+// Fades the screen out over frames frames, as DisplayTransition_Start fades
+// it in.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 value;
   s32 kind;
@@ -4962,6 +4981,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   }
 }
 
+// Clears the map's display-control bits for backgrounds 3, 2 and 1
+// (0x0800, 0x0400 and 0x0200) for each argument that is set.
 void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
   struct DisplayTransitionWindow *state;
 
@@ -4979,6 +5000,8 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
   }
 }
 
+// Each frame of the centre-line transition: moves the value toward its end
+// and sets the two lines where the screen switches between shown and blank.
 void DisplayTransition_Update(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *display =
@@ -5014,6 +5037,7 @@ void DisplayTransition_Update(void) {
   }
 }
 
+// As DisplayTransition_Update, but the lines flicker every other frame.
 void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *window =
@@ -5052,6 +5076,9 @@ void DisplayTransition_UpdateFromCentre(void) {
   }
 }
 
+// The VCount interrupt of the centre-line transition: switches the display
+// to mode 2 (nothing shown) at the first line and back to mode 0 at the
+// second.
 void DisplayTransition_UpdateScanline(void) {
   u32 line;
   struct DisplayTransitionWindow *state;
@@ -5094,6 +5121,9 @@ again:
   }
 }
 
+// Each frame of the dissolve: moves the value toward its end and sets two
+// more of the solid tile's 64 pixels, in the order of
+// gDisplayTransition_DitherTable, to colour 15 (or 0 when closing).
 void DisplayTransition_UpdateFrame(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   s32 value;
@@ -5140,6 +5170,8 @@ void DisplayTransition_UpdateFrame(void) {
 
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
+// Fills background screen block 4 with tile 0 in palette 15 and, unless color
+// is -1, makes tile 0 solid color.
 void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
   struct DisplayTransitionState *work = gDisplayTransition;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
@@ -5156,6 +5188,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
   }
 }
 
+// Starts a dissolve of the given mode and waits 120 frames.
 void DisplayTransition_InitializeState(s32 value) {
   struct DisplayTransitionState *state;
 
@@ -5168,6 +5201,8 @@ void DisplayTransition_InitializeState(s32 value) {
   WaitFrames(0x78);
 }
 
+// Sets each of the 0x540 colour channels of step to the amount to add each
+// frame for source to reach target in frames frames.
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames) {
   s32 index;
@@ -5188,6 +5223,9 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   }
 }
 
+// Each frame (unless flag 0x152 is set): moves the colour buffer one step
+// toward its target, packs it into RGB555 and queues it for the BG and OBJ
+// palettes.
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
   u16 *add = work->delta;
@@ -5233,27 +5271,26 @@ void BattlePalette_UpdateBlend(void) {
 }
 
 //--------------------------------------------------------------------------
-// bufcolor.c
-// エナジー演出：パレットの色変え (目標の色を作り、少しずつ近づける)
+// The colour buffer: palette colour changes for Psynergy and transitions,
+// building target colours and moving the palettes toward them.
 //--------------------------------------------------------------------------
 
-#define HEAP_SLOT_PALBUF 32 // 色のバッファ (gPaletteBufferWork)
+#define HEAP_SLOT_PALBUF 32 // the colour buffer (gPaletteBufferWork)
 
-#define COLOR_MAX 448 // BG 224 色 + OBJ 224 色
+#define COLOR_MAX 448 // 224 BG colours and 224 OBJ colours
 #define COLOR_HALF 224
 
-// 5 ビットの値を、バッファの 10 ビット上げた値に写す表
+// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
 extern u16 gBattlePalette_ChannelCurve[];
 extern u16 gBattlePalette_ChannelCurveLight[];
 extern u16 gBattlePalette_ChannelCurveContrast[];
 
-//--------------------------------------------------------------------------
-// 元の色 src から、色変えの目標 dst を作る
-// dst は一色に B, G, R の三つを、5 ビットを 10 ビット上げた値で持つ
-// mode : 0x8000 未満 = その色一色、0x8000 = 背景色一色、
-//        PALETTE_TRANSFORM_* = 色の変換、それ以外 = 作ってある表のアドレス
-// half : 0 = すべて、1 = BG の 224 色、2 = OBJ の 224 色
-//--------------------------------------------------------------------------
+// Builds colours for the colour buffer from the palette src into dst, which
+// holds each colour as B, G and R channels shifted up 10 bits. mode below
+// 0x8000 is one colour for all; PALETTE_TRANSFORM_FROM_SOURCE the backdrop
+// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
+// other value is the address of a ready buffer to copy. half: 0 for all 448
+// colours, 1 for the BG's 224, 2 for the OBJ's 224.
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 cnt = COLOR_MAX;
@@ -5272,7 +5309,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     cnt = COLOR_HALF;
   }
 
-  // 一色：最初の一色を書き、DMA で後ろへ広げる
+  // One colour: write it once, then let DMA copy it over the rest.
   if (mode < PALETTE_TRANSFORM_FROM_SOURCE) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
@@ -5280,7 +5317,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
   } else if (mode < PALETTE_TRANSFORM_FLAGS) {
     switch (mode) {
-    case PALETTE_TRANSFORM_GREY: // 明るさ (2R + 4G + B) / 7 の灰色
+    case PALETTE_TRANSFORM_GREY: // grey of brightness (2R + 4G + B) / 7
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = ((c << 11) & 0xf800);
@@ -5292,7 +5329,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = c;
       }
       break;
-    case PALETTE_TRANSFORM_SEPIA: // 明るさから R を強めた色、8-28 に収める
+    case PALETTE_TRANSFORM_SEPIA: // the brightness, red stronger, within 8 to
+                                  // 28
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = c & 31;
@@ -5317,8 +5355,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gBattlePalette_ChannelCurveLight[r];
       }
       break;
-    case PALETTE_TRANSFORM_WARM: // R を半分 +10、G を 2/3 +8、B を -7
-                                 // (黒はそのまま)
+    case PALETTE_TRANSFORM_WARM: // half R + 10, two thirds G + 8, B - 7 (black
+                                 // stays black)
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = c & 31;
@@ -5339,7 +5377,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gBattlePalette_ChannelCurve[r];
       }
       break;
-    case PALETTE_TRANSFORM_MUTED: // 範囲を狭め、G と B を +2
+    case PALETTE_TRANSFORM_MUTED: // narrow the range, G and B + 2
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = c & 31;
@@ -5367,7 +5405,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gBattlePalette_ChannelCurve[r];
       }
       break;
-    case PALETTE_TRANSFORM_PALE: // 半分にして平均を足す
+    case PALETTE_TRANSFORM_PALE: // half of each, plus the mean
       for (i = 0; i < cnt; i++) {
         s32 mean;
 
@@ -5388,7 +5426,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TRANSFORM_RED: // G と B の 1/8 を R へ、G と B は 2/3
+    case PALETTE_TRANSFORM_RED: // an eighth of G and B added to R; G and B two
+                                // thirds
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = c & 31;
@@ -5404,7 +5443,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TRANSFORM_WARM2: // R を半分 +6、G を 2/3 +4、B を -6
+    case PALETTE_TRANSFORM_WARM2: // half R + 6, two thirds G + 4, B - 6
       for (i = 0; i < cnt; i++) {
         c = *src++;
         r = c & 31;
@@ -5424,7 +5463,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    default: // そのまま
+    default: // unchanged
       for (i = 0; i < cnt; i++) {
         c = *src++;
         dst[i * 3 + 0] = c & 0x7c00;
@@ -5434,7 +5473,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       break;
     }
   } else if (mode & PALETTE_TRANSFORM_TINT) {
-    // 明るさ (2R + 4G + B) に、mode の色をかける
+    // The brightness (2R + 4G + B) times the colour in mode.
     u32 tr;
     u32 tg;
     u32 tb;
@@ -5462,7 +5501,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       dst += 3;
     }
   } else if (mode & PALETTE_TRANSFORM_BLEND) {
-    // 明るさ R + G + B を、mode の色の比で配り直す
+    // The brightness R + G + B shared out in the proportions of mode's colour.
     u32 tr;
     u32 tg;
     u32 tb;
@@ -5496,7 +5535,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       dst[i * 3 + 2] = (c & 0x001f) << 10;
     }
   } else {
-    // 作ってある表を写す
+    // Copy a ready buffer.
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst,
@@ -5504,9 +5543,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 色のバッファを用意し、今の BG と OBJ のパレットを写す
-//--------------------------------------------------------------------------
+// Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
+// starts updating the palettes from it each frame.
 void BattleEffect_InitializeBuffers(void) {
   struct BattleEffectBuffers *buf;
 
@@ -5521,17 +5559,13 @@ void BattleEffect_InitializeBuffers(void) {
                                 0xc8f);
 }
 
-//--------------------------------------------------------------------------
-// 色変えをやめ、バッファを返す
-//--------------------------------------------------------------------------
+// Stops the colour buffer and frees it.
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void) {
   Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALBUF);
 }
 
-//--------------------------------------------------------------------------
-// 目標の色を作る
-//--------------------------------------------------------------------------
+// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
@@ -5540,9 +5574,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 今の色を作る
-//--------------------------------------------------------------------------
+// Sets the colours the buffer shows now (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
@@ -5551,9 +5583,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 元の背景色を変える
-//--------------------------------------------------------------------------
+// Sets the buffer's source backdrop colour.
 void BattleFx_SetPrimaryBufferValue(u32 col) {
   struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
@@ -5562,9 +5592,7 @@ void BattleFx_SetPrimaryBufferValue(u32 col) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 今の色から目標の色へ、frames フレームで変え始める
-//--------------------------------------------------------------------------
+// Starts moving the shown colours to the target colours over frames frames.
 void BattleFx_StartBufferInterpolation(s32 frames) {
   struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
@@ -5575,9 +5603,7 @@ void BattleFx_StartBufferInterpolation(s32 frames) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 5 ビットの色の値を 0-31 に収める
-//--------------------------------------------------------------------------
+// Clamps a 5-bit colour channel to 0 to 31.
 s32 BattleFx_ClampRgb555Channel(s32 value) {
   if (value > 31)
     return 31;
@@ -5586,9 +5612,7 @@ s32 BattleFx_ClampRgb555Channel(s32 value) {
   return value;
 }
 
-//--------------------------------------------------------------------------
-// 10 ビット上げた色の値を 31 << 10 までに収める
-//--------------------------------------------------------------------------
+// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
 s32 BattleFx_ClampRgb555Component(s32 value) {
   if (value > 31744)
     value = 31744;
@@ -5616,7 +5640,11 @@ struct FadeView {
   s16 camera[4];
 };
 
-void Object_EffectSpawnCallback(void) {
+// Each frame of the fade overlay: on each of the two cells beside the actor
+// (left and right of it), where the ground one or two cells south rises above
+// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
+// at the height of that ground.
+void FadeOverlay_DrawMarks(void) {
   struct FadeWork *work = WORK_SLOT(36);
   s16 *camera = ((struct FadeView *)WORK_SLOT(8))->camera;
   s32 cameraX = camera[1];
@@ -5678,6 +5706,8 @@ void Object_EffectSpawnCallback(void) {
   }
 }
 
+// Starts the fade overlay on object (the party leader when NULL): loads its
+// solid tiles, sets the blending and draws it each frame.
 void BattleFx_StartFadeOverlay(void *object) {
   u32 *work;
   u8 *tiles;
@@ -5688,7 +5718,7 @@ void BattleFx_StartFadeOverlay(void *object) {
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramBlock_LoadCached(94, 0x200, tiles);
   Runtime_ReleaseHeapBlock(14);
-  Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
+  Scheduler_AddOrUpdateCallback(FadeOverlay_DrawMarks, 0xc80);
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(16, &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
@@ -5698,14 +5728,18 @@ void BattleFx_StartFadeOverlay(void *object) {
   work[6] = (u32)object;
 }
 
+// Turns the fade overlay back on.
 void Object_EnableEffectSpawnCallback(void) {
-  Scheduler_EnableCallbacks(Object_EffectSpawnCallback);
+  Scheduler_EnableCallbacks(FadeOverlay_DrawMarks);
 }
 
+// Turns the fade overlay off.
 void Object_DisableEffectSpawnCallback(void) {
-  Scheduler_DisableCallbacks(Object_EffectSpawnCallback);
+  Scheduler_DisableCallbacks(FadeOverlay_DrawMarks);
 }
 
+// Returns the speaker definition of sprite id from gBattleFx_DefinitionTable,
+// or its last entry when there is none.
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
   struct BattleEffectEntry *entry = gBattleFx_DefinitionTable;
   u32 index = 0;
@@ -5721,6 +5755,7 @@ struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
   return entry;
 }
 
+// Returns the sprite of actor id, or 0 when it has no animated sprite.
 s32 BattleFx_GetAnimationValue(s32 id) {
   struct BattleRenderObject *object = ObjectTable_Get(id);
 
@@ -5731,6 +5766,9 @@ s32 BattleFx_GetAnimationValue(s32 id) {
   return *object->animation->value28;
 }
 
+// Returns the portrait shown beside the messages of sprite id (0x100 plus
+// its definition's value), or 0 with no portrait or with gGameState.speech
+// off.
 s32 BattleFx_GetResourceId(u32 id) {
   u8 value;
 
@@ -5741,6 +5779,8 @@ s32 BattleFx_GetResourceId(u32 id) {
   return value + 0x100;
 }
 
+// Returns the definition flags of actor id's sprite, which choose its line
+// when it has nothing to say.
 s32 BattleFx_GetFlags(s32 id) {
   return BattleFx_FindDefinition(BattleFx_GetAnimationValue(id))->flags;
 }

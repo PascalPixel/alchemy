@@ -4319,8 +4319,8 @@ Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a398, 0x000000b0
 	.section .rom.0011a4da, "ax"
 	.incbin "baserom.gba", 0x0011a4da, 0x0000011e
-	.section .rom.0011a670, "ax"
-	.incbin "baserom.gba", 0x0011a670, 0x00000138
+	.section .rom.0011a71c, "ax"
+	.incbin "baserom.gba", 0x0011a71c, 0x0000008c
 	.section .rom.0011a7a8, "ax"
 	.global BtlObjMake
 	.type BtlObjMake, %function
@@ -4561,7 +4561,31 @@ EnmCntDec:
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001281e6, "ax"
-	.incbin "baserom.gba", 0x001281e6, 0x0000065a
+	.incbin "baserom.gba", 0x001281e6, 0x000005ea
+	.global Data_081287d4
+Data_081287d4:
+	.incbin "baserom.gba", 0x001287d0, 0x0000000e
+	.global Data_081287e2
+Data_081287e2:
+	.incbin "baserom.gba", 0x001287de, 0x0000000e
+	.global Data_081287f0
+Data_081287f0:
+	.incbin "baserom.gba", 0x001287ec, 0x0000000e
+	.global Data_081287fe
+Data_081287fe:
+	.incbin "baserom.gba", 0x001287fa, 0x0000000e
+	.global Data_0812880c
+Data_0812880c:
+	.incbin "baserom.gba", 0x00128808, 0x0000000e
+	.global Data_0812881a
+Data_0812881a:
+	.incbin "baserom.gba", 0x00128816, 0x0000000e
+	.global Data_08128828
+Data_08128828:
+	.incbin "baserom.gba", 0x00128824, 0x0000000e
+	.global Data_08128836
+Data_08128836:
+	.incbin "baserom.gba", 0x00128832, 0x0000000e
 	.section .rom.00128840, "ax"
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:

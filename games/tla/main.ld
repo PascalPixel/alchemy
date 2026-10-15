@@ -1706,7 +1706,7 @@ SECTIONS
     "*/games/tla/src/battle/summon/class_is_valid.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011a4da)
     "*/games/tla/src/battle/presentation/find_free_slot.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0011a670)
+    "*/recon/tla/ja/rom.o"(.rom.0011a71c)
     "*/recon/tla/ja/rom.o"(.rom.0011a7a8)
     "*/games/tla/src/battle/party/get_step_pair.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011b17c)

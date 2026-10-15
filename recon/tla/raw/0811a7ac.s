@@ -860,7 +860,7 @@ BtlObjMake:
 	str r3, [r7, #16]
 	str r2, [r7, #20]
 	strh r1, [r7, #4]
-	bl Func_0811a674
+	bl BattleUnit_LookupWeaponValueByClass
 	movs r5, #0
 	ldr r6, .L_0811b0f4
 	strh r5, [r7, #8]

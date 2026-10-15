@@ -1727,7 +1727,6 @@ SECTIONS
         "*/recon/tla/raw/0811a4de.o"(.text)
         "*/recon/tla/raw/0811a4e0.o"(.text)
         "*/games/tla/src/battle/presentation/find_free_slot.o"(.text)
-        "*/recon/tla/raw/0811a674.o"(.text)
         "*/recon/tla/raw/0811a720.o"(.text)
         "*/recon/tla/raw/0811a7ac.o"(.text)
         "*/games/tla/src/battle/party/get_step_pair.o"(.text)

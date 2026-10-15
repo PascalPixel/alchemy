@@ -1937,7 +1937,6 @@ SECTIONS
         "*/games/tla/src/battle/effect/canvas_clear.o"(.text)
         "*/recon/tla/raw/0814355c.o"(.text)
         "*/recon/tla/raw/081435e0.o"(.text)
-        "*/recon/tla/raw/08143840.o"(.text)
         "*/games/tla/src/battle/effect/canvas.o"(.text)
         "*/recon/tla/raw/08143d04.o"(.text)
         "*/recon/tla/raw/08143d80.o"(.text)

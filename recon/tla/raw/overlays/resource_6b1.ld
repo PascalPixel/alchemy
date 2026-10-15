@@ -16,7 +16,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b1/events_b.o"(.text)
         "*/resource_6b1_overlay.o"(.text.x02008588)
         "*/games/tla/src/field/overlay_6b1/events_c.o"(.text)
-        "*/resource_6b1_overlay.o"(.text.x02008740)
         "*/games/tla/src/field/overlay_6b1/prepare.o"(.text)
         "*/resource_6b1_overlay.o"(.text.x02008858)
         "*/games/tla/src/field/overlay_6b1/light.o"(.text)

@@ -55,7 +55,8 @@ struct PartyState {
   u8 savedByte;
   s16 pausedObject; // the object field Psynergy has stopped, -1 for none
   s8 pendingThird;
-  u8 unk26d[3];
+  s8 cloaked; // Cloak: the leader is hidden
+  u8 unk26e[2];
   u32 savedCallback;
   u8 counter274;
   u8 unk275;

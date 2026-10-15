@@ -2,6 +2,7 @@
 
 void Func_020044d4(void)
 {
+    /* FAKEMATCH: a temporary set just before its call builds the angle ahead of the other arguments (one reordered row as a plain argument). */
     s32 angle;
 
     Func_020051c0();

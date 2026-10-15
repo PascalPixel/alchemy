@@ -206,7 +206,7 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunHomingEmbers,           // 12
     BattleFx_RunFirePillars,            // 13
     BattleFx_RunParticleFieldMode0,     // 14
-    BattleFx_RunTwoModeBMode0,          // 15
+    BattleFx_RunSparkBursts,            // 15
     BattleFx_RunLightningBolts,         // 16
     BattleFx_RunClosingBolts,           // 17
     BattleFx_RunLightningPillars,       // 18
@@ -216,7 +216,7 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunSeriesAMode0,           // 22
     BattleFx_RunSeriesAMode1,           // 23
     BattleFx_RunSeriesAMode3Or4,        // 24
-    BattleFx_RunTwoModeAMode0,          // 25
+    BattleFx_RunVenusDjinnBeams,        // 25
     BattleFx_RunSeriesBMode0,           // 26
     BattleFx_RunPaletteRampMode0,       // 27
     BattleFx_RunSeriesBMode1,           // 28
@@ -225,13 +225,13 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunPaletteRampMode2,       // 31
     BattleFx_RenderMode0Or1,            // 32
     BattleFx_RenderMode2,               // 33
-    BattleFx_RunMemberOrbit,            // 34
+    BattleFx_RunOrbitingSpirals,        // 34
     BattleFx_RenderMode4,               // 35
     BattleFx_RenderMode3,               // 36
     BattleFx_RunBouncingSheep,          // 37
     BattleFx_RunSpinningTriangle,       // 38
     BattleFx_RunClosingSkulls,          // 39
-    BattleFx_RunCounterReveal,          // 40
+    BattleFx_RunShatteringPanel,        // 40
     BattleFx_RunTargetMarkers,          // 41
     BattleFx_RunGatheringMotes,         // 42
     BattleFx_RunIceShardBursts,         // 43
@@ -241,7 +241,7 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunPaletteRampMode1,       // 47
     NULL,                               // 48
     BattleEffect_RunDualParticleStream, // 49
-    BattleFx_RunMemberBurstMode0,       // 50
+    BattleFx_RunPinkGatheringLights,    // 50
     BattleFx_RunFireSwirlCharge,        // 51
     BattleFx_RunRevealColumnMode1,      // 52
     BattleFx_RunFlippingBurst,          // 53
@@ -392,7 +392,7 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,
     NULL,                               // 197-199
     BattleFx_RunSeriesBMode3,           // 200
-    BattleFx_RunTwoModeAMode0,          // 201
+    BattleFx_RunVenusDjinnBeams,        // 201
     BattleEffect_RunRisingColumns,      // 202
     BattleFx_RunVenusDjinnRockToss,     // 203
     BattleFx_RunSeriesAMode0,           // 204
@@ -400,7 +400,7 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunSeriesAMode1,           // 206
     BattleFx_RunParticleReveal,         // 207
     BattleFx_RunSeriesAMode5,           // 208
-    BattleFx_RunTwoModeAMode1,          // 209
+    BattleFx_RunMercuryDjinnBeams,      // 209
     BattleFx_RunSeriesBMode0,           // 210
     BattleFx_RunSeriesBMode1,           // 211
     BattleFx_RunSeriesAMode6,           // 212
@@ -491,60 +491,60 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,
     NULL,
     NULL,                                  // 294-299
-    BattleFx_RunFiveModeMode0,             // 300
-    BattleFx_RunFiveModeMode1,             // 301
-    BattleFx_RunFiveModeMode2,             // 302
+    BattleFx_RunEmberStreaks,              // 300
+    BattleFx_RunLimeStreaks,               // 301
+    BattleFx_RunVioletStreaks,             // 302
     BattleFx_RunMode2,                     // 303
-    BattleFx_RunFiveModeMode4,             // 304
-    BattleFx_RunFiveModeMode3,             // 305
+    BattleFx_RunCyanStreaks,               // 304
+    BattleFx_RunRedStreaks,                // 305
     BattleFx_RunMode4,                     // 306
     BattleFx_RunMode3,                     // 307
-    BattleFx_RunMemberBurstMode1,          // 308
-    BattleFx_RunSevenModeMode0,            // 309
+    BattleFx_RunMarsGatheringLights,       // 308
+    BattleFx_RunBlueShells,                // 309
     EffectStep_RunAnimationMode6Or7Or8,    // 310
     BattleFx_RunParticleFieldVariant0,     // 311
     BattleFx_RenderMode5,                  // 312
-    BattleFx_RunTwelveModeMode6,           // 313
+    BattleFx_RunLightningGlintSlash,       // 313
     BattleFx_RunParticleFieldVariant1,     // 314
-    BattleFx_RunSevenModeMode1,            // 315
-    BattleFx_RunTwelveModeMode3,           // 316
+    BattleFx_RunWebShells,                 // 315
+    BattleFx_RunEmberDrainColumns,         // 316
     EffectStep_RunAnimationMode0,          // 317
-    BattleFx_RunTwelveModeMode1,           // 318
+    BattleFx_RunLimeSmokeColumn,           // 318
     EffectStep_RunAnimationMode3Or4Or5,    // 319
     BattleFx_RunRisingBurst,               // 320
     EffectStep_RunAnimationMode0Alternate, // 321
-    BattleFx_RunSevenModeMode2,            // 322
-    BattleFx_RunTwelveModeMode1,           // 323
-    BattleFx_RunTwelveModeMode5,           // 324
-    BattleFx_RunTwelveModeMode9,           // 325
+    BattleFx_RunLimeShells,                // 322
+    BattleFx_RunLimeSmokeColumn,           // 323
+    BattleFx_RunLightningGlintColumns,     // 324
+    BattleFx_RunLimeSmokeSlash,            // 325
     BattleFx_RunParticleFieldVariant2,     // 326
-    BattleFx_RunTwelveModeMode4,           // 327
+    BattleFx_RunMarsDrainColumns,          // 327
     EffectStep_RunAnimationMode1,          // 328
     EffectStep_RunAnimationMode3Or4Or5,    // 329
-    BattleFx_RunSevenModeMode3,            // 330
+    BattleFx_RunGreenShardShells,          // 330
     NULL,                                  // 331
-    BattleFx_RunTwelveModeMode0,           // 332
-    BattleFx_RunTwelveModeMode8,           // 333
+    BattleFx_RunBlueSparkColumns,          // 332
+    BattleFx_RunHeavyMarsSlash,            // 333
     EffectStep_RunAnimationMode2,          // 334
-    BattleFx_RunTwelveModeMode7,           // 335
-    BattleFx_RunTwelveModeMode10,          // 336
-    BattleFx_RunTwelveModeMode2,           // 337
-    BattleFx_RunTwoModeBMode1,             // 338
+    BattleFx_RunLightningSparkSlashes,     // 335
+    BattleFx_RunMarsSmokeColumn,           // 336
+    BattleFx_RunPinkSmokeColumns,          // 337
+    BattleFx_RunOrangeSparkBursts,         // 338
     BattleFx_RunParticleFieldVariant3,     // 339
-    BattleFx_RunSevenModeMode6,            // 340
+    BattleFx_RunMarsShells,                // 340
     NULL,                                  // 341
     EffectStep_RunAnimationMode0,          // 342
     EffectStep_RunAnimationMode0Alternate, // 343
-    BattleFx_RunParticlePoolMode0,         // 344
+    BattleFx_RunHealingMoteFountain,       // 344
     BattleFx_RunSpiderWeb,                 // 345
     BattleFx_RenderMode4,                  // 346
-    BattleFx_RunSevenModeMode4,            // 347
-    BattleFx_RunFortyEightFrameMode0,      // 348
-    BattleFx_RunParticlePoolMode1,         // 349
-    BattleFx_RunSevenModeMode5,            // 350
-    BattleFx_RunMemberBurstMode2,          // 351
+    BattleFx_RunGoldShardShells,           // 347
+    BattleFx_RunShakingWall,               // 348
+    BattleFx_RunDriftingMoteFountain,      // 349
+    BattleFx_RunGreenShells,               // 350
+    BattleFx_RunMercuryGatheringLights,    // 351
     BattleFx_RunSeriesAMode2,              // 352
-    BattleFx_RunFortyEightFrameMode1,      // 353
+    BattleFx_RunWideWall,                  // 353
     BattleFx_RunTargetMarkers,             // 354
     NULL,
     NULL,
@@ -573,14 +573,14 @@ const BattleFxHandler gBattleFx_ModeHandlers[] = {
     NULL,                              // 379
     BattleFx_RunParticleFieldMode1,    // 380
     BattleFx_RunMode11,                // 381
-    BattleFx_RunTwoResourceMode0,      // 382
-    BattleFx_RunTwoResourceMode1,      // 383
+    BattleFx_RunLimeSwipe,             // 382
+    BattleFx_RunLaunchingSwipe,        // 383
     BattleFx_InitializeMode1,          // 384
-    BattleFx_RenderAnimationMode1,     // 385
-    BattleFx_RunTwelveModeMode11,      // 386
+    BattleFx_RunSideEmbers,            // 385
+    BattleFx_RunLargeDrainColumns,     // 386
     BattleFx_RunSparkApproachVariant3, // 387
     BattleFx_RunSparkApproachVariant4, // 388
-    BattleFx_RunFortyEightFrameMode2,  // 389
+    BattleFx_RunWallOfFire,            // 389
     NULL,
     NULL,
     NULL,

@@ -578,33 +578,33 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
 #define STREAK_MAX 3 // streaks fired at each target
 
 // Battle effect 300: ember streaks.
-void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 0);
+void BattleFx_RunEmberStreaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 0);
 }
 
 // Battle effect 301: lime streaks.
-void BattleFx_RunFiveModeMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 1);
+void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 1);
 }
 
 // Battle effect 302: violet streaks.
-void BattleFx_RunFiveModeMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 2);
+void BattleFx_RunVioletStreaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 2);
 }
 
 // Battle effect 304: cyan streaks.
-void BattleFx_RunFiveModeMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 4);
+void BattleFx_RunCyanStreaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 4);
 }
 
 // Battle effect 305: red streaks.
-void BattleFx_RunFiveModeMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 3);
+void BattleFx_RunRedStreaks(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 3);
 }
 
 // Lime streaks again; no effect table entry points here.
-UNUSED void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect) {
-  BattleFx_RunFiveMode(effect, 1);
+UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
+  BattleFx_RunStreakVolley(effect, 1);
 }
 
 // Fires STREAK_MAX streaks at each target from 20 pixels above the user,
@@ -614,7 +614,7 @@ UNUSED void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect) {
 // streak that wavers from side to side and leaves a fading trail.
 // mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
 //        cyan) and the row of gFiveMode_Records that says how a hit looks.
-void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   void **slots;
   void **cursor;
@@ -799,13 +799,13 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 // Battle effect 349: rising motes that drift onto the targets and strike.
-void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticlePool(effect, 1);
+void BattleFx_RunDriftingMoteFountain(struct BattleEffectArgument *effect) {
+  BattleFx_RunMoteFountain(effect, 1);
 }
 
 // Battle effect 344: rising healing motes.
-void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticlePool(effect, 0);
+void BattleFx_RunHealingMoteFountain(struct BattleEffectArgument *effect) {
+  BattleFx_RunMoteFountain(effect, 0);
 }
 
 // Motes burst out of the user in every direction and float upwards,
@@ -815,7 +815,7 @@ void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect) {
 //         recovery sound and glows (a healing effect).
 // mode 1: motes on the earth palette that drift across towards the far side
 //         of the field; each target flinches (an attack).
-void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   s32 point[3];
   struct EffectPosition position;
   struct BattleEffectWork *work;
@@ -969,71 +969,71 @@ enum {
 #define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
 
 // Battle effect 313: one slash with glints, lightning colours.
-void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 6);
+void BattleFx_RunLightningGlintSlash(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 6);
 }
 
 // Battle effect 316: three ember columns that drain the target into the user.
-void BattleFx_RunTwelveModeMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 3);
+void BattleFx_RunEmberDrainColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 3);
 }
 
 // Battle effects 318 and 323: one lime column with smoke.
-void BattleFx_RunTwelveModeMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 1);
+void BattleFx_RunLimeSmokeColumn(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 1);
 }
 
 // Battle effect 336: one column with smoke, Mars Djinn colours.
-void BattleFx_RunTwelveModeMode10(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 0xA);
+void BattleFx_RunMarsSmokeColumn(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 0xA);
 }
 
 // Battle effect 324: three lightning columns with glints.
-void BattleFx_RunTwelveModeMode5(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 5);
+void BattleFx_RunLightningGlintColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 5);
 }
 
 // Battle effect 325: one lime slash with smoke.
-void BattleFx_RunTwelveModeMode9(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 9);
+void BattleFx_RunLimeSmokeSlash(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 9);
 }
 
 // Battle effect 327: three columns that drain the target, Mars Djinn colours.
-void BattleFx_RunTwelveModeMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 4);
+void BattleFx_RunMarsDrainColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 4);
 }
 
 // Battle effect 332: two blue columns with sparks.
-void BattleFx_RunTwelveModeMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 0);
+void BattleFx_RunBlueSparkColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 0);
 }
 
 // Battle effect 333: one heavy slash with sparks, Mars Djinn colours.
-void BattleFx_RunTwelveModeMode8(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 8);
+void BattleFx_RunHeavyMarsSlash(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 8);
 }
 
 // Battle effect 335: two slashes with sparks, lightning colours.
-void BattleFx_RunTwelveModeMode7(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 7);
+void BattleFx_RunLightningSparkSlashes(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 7);
 }
 
 // Battle effect 337: three pink columns with smoke.
-void BattleFx_RunTwelveModeMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 2);
+void BattleFx_RunPinkSmokeColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 2);
 }
 
 // Battle effect 386: three additive columns that drain the target with large
 // motes, Mars Djinn colours.
-void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwelveMode(effect, 0xB);
+void BattleFx_RunLargeDrainColumns(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetStrike(effect, 0xB);
 }
 
 // Strikes the first target STRIKE_HITS times with a sideways slash or a
 // column of light, with the extras its flags choose, and lets the battle
 // show the damage on the hits.
 // mode : the style, 0 to 11, a row of gTwelveMode_Records.
-void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
   struct EffectPosition alternate;
@@ -2515,13 +2515,13 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void) {
 }
 
 // Battle effect 382: a lime swipe that knocks the target back.
-void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwoResource(effect, 0);
+void BattleFx_RunLimeSwipe(struct BattleEffectArgument *effect) {
+  BattleFx_RunSwirlSwipe(effect, 0);
 }
 
 // Battle effect 383: a magenta swipe that throws the target into the air.
-void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunTwoResource(effect, 1);
+void BattleFx_RunLaunchingSwipe(struct BattleEffectArgument *effect) {
+  BattleFx_RunSwirlSwipe(effect, 1);
 }
 
 // A swirling swipe across the first target, six images four frames each,
@@ -2531,7 +2531,7 @@ void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *effect) {
 //          recoils. 48 frames.
 // mode 1 : the target flashes, is thrown up on frame 13 and the battle shows
 //          the damage as it lands on frame 65. 74 frames.
-void BattleFx_RunTwoResource(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   struct MotionObject *object;
@@ -3629,7 +3629,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
 // target plays animation 5 halfway through. The effect layer ripples
 // throughout.
 //--------------------------------------------------------------------------
-void BattleFx_RunMemberOrbit(void *effect) {
+void BattleFx_RunOrbitingSpirals(void *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -3747,18 +3747,18 @@ void BattleFx_RunMemberOrbit(void *effect) {
 //--------------------------------------------------------------------------
 
 // Battle effect 50: pink lights.
-void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunMemberBurst(effect, 0);
+void BattleFx_RunPinkGatheringLights(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 0);
 }
 
 // Battle effect 308: lights in Mars Djinn colours.
-void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunMemberBurst(effect, 1);
+void BattleFx_RunMarsGatheringLights(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 1);
 }
 
 // Battle effect 351: lights in Mercury Djinn colours.
-void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunMemberBurst(effect, 2);
+void BattleFx_RunMercuryGatheringLights(struct BattleEffectArgument *effect) {
+  BattleFx_RunGatheringLights(effect, 2);
 }
 
 // For each target in turn, 20 frames apart, lights burst out of the user;
@@ -3768,7 +3768,8 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect) {
 // damage at frame 80. The effect layer ripples throughout.
 // mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
 //        gMemberBurst_Counts: lights per target and frames.
-void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
+                                 s32 mode) {
   struct EffectPosition pos;
   BlitterPair draw;
   void **slots;
@@ -3928,19 +3929,19 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 }
 
 // Battle effect 353: the wall rises wide and shakes the screen hard.
-void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunFortyEightFrameEffect(effect, 1);
+void BattleFx_RunWideWall(struct BattleEffectArgument *effect) {
+  BattleFx_RunMirroredWall(effect, 1);
 }
 
 // Battle effect 348: the wall rises with a long gentle shake and the
 // recovery sound.
-void BattleFx_RunFortyEightFrameMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunFortyEightFrameEffect(effect, 0);
+void BattleFx_RunShakingWall(struct BattleEffectArgument *effect) {
+  BattleFx_RunMirroredWall(effect, 0);
 }
 
 // Battle effect 389: a wide wall of fire, without a shake.
-void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunFortyEightFrameEffect(effect, 2);
+void BattleFx_RunWallOfFire(struct BattleEffectArgument *effect) {
+  BattleFx_RunMirroredWall(effect, 2);
 }
 
 // Raises a symmetrical wall (the EarthWall images) at the first target's
@@ -3949,8 +3950,7 @@ void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect) {
 // mode : 0 actual size, a gentle shake for 32 frames
 //        1 1.25 times as wide, a hard shake for 8 frames
 //        2 1.25 times as wide, no shake, in the Fireball colours
-void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
-                                       s32 mode) {
+void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -4071,13 +4071,13 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect,
 #define PIC_DJINN 0x65c0 // the Djinni (40x40)
 
 // Battle effects 25 and 201: with a Venus Djinni.
-void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunMemberBeam(effect, 0);
+void BattleFx_RunVenusDjinnBeams(struct BattleEffectArgument *effect) {
+  BattleFx_RunDjinnBeams(effect, 0);
 }
 
 // Battle effect 209: with a Mercury Djinni.
-void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunMemberBeam(effect, 1);
+void BattleFx_RunMercuryDjinnBeams(struct BattleEffectArgument *effect) {
+  BattleFx_RunDjinnBeams(effect, 1);
 }
 
 // When effect->prelude is 1, a Djinni appears, sways and then rises out of
@@ -4085,7 +4085,7 @@ void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect) {
 // and from 72 frames after its turn starts a column of light falls on it
 // and narrows away; the battle shows the result on frame 80.
 // mode : 0 a Venus Djinni, 1 a Mercury Djinni.
-void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition one;
   struct EffectPosition pos;
   s32 ground[3];
@@ -4286,39 +4286,39 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode) {
 //--------------------------------------------------------------------------
 
 // Battle effect 347: gold shells that burst into shards.
-void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 4);
+void BattleFx_RunGoldShardShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 4);
 }
 
 // Battle effect 350: green shells that burst into smoke.
-void BattleFx_RunSevenModeMode5(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 5);
+void BattleFx_RunGreenShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 5);
 }
 
 // Battle effect 309: blue shells that burst into smoke.
-void BattleFx_RunSevenModeMode0(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 0);
+void BattleFx_RunBlueShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 0);
 }
 
 // Battle effect 315: shells in the spider web's colours that burst into
 // smoke.
-void BattleFx_RunSevenModeMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 1);
+void BattleFx_RunWebShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 1);
 }
 
 // Battle effect 340: shells in Mars Djinn colours that burst into smoke.
-void BattleFx_RunSevenModeMode6(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 6);
+void BattleFx_RunMarsShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 6);
 }
 
 // Battle effect 322: lime shells that burst into smoke.
-void BattleFx_RunSevenModeMode2(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 2);
+void BattleFx_RunLimeShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 2);
 }
 
 // Battle effect 330: green shells that burst into shards.
-void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunSevenMode(effect, 3);
+void BattleFx_RunGreenShardShells(struct BattleEffectArgument *effect) {
+  BattleFx_RunLobbedShells(effect, 3);
 }
 
 // gSevenMode_Records has two entries per style; the first is nonzero when
@@ -4336,7 +4336,7 @@ extern u16 gSevenMode_ShardOffsets[];
 // flashes and the battle shows the damage; the shell bursts into 4 smoke
 // puffs that drift up or 16 shards that fly up and fall.
 // mode : the style, 0 to 6: the colours and the row of gSevenMode_Records.
-void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
+void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   BlitterPair draw;
   void **slots;
@@ -4584,7 +4584,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode) {
 // target; on frame 88 it shatters in a white flash into a burst of larger
 // pieces and the target is knocked back, bouncing on frame 120. The effect
 // layer ripples throughout. 132 frames.
-void BattleFx_RunCounterReveal(struct BattleEffectArgument *object) {
+void BattleFx_RunShatteringPanel(struct BattleEffectArgument *object) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -6069,13 +6069,13 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
 // Battle effect 385: the rising embers from the user's side, in the
 // LightningBolt colours.
-void BattleFx_RenderAnimationMode1(s32 effect) {
+void BattleFx_RunSideEmbers(s32 effect) {
   BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 1);
 }
 
 // Large battle effect 7 (BattleFx_InitializeMode): the rising embers with a
 // formation of eight objects that sweeps in and explodes at the end.
-void BattleFx_RenderAnimationMode0(s32 effect) {
+void BattleFx_RunFormationEmbers(s32 effect) {
   BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 0);
 }
 
@@ -7348,13 +7348,11 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
 
 // Battle effect 15: bursts at (60, 48), the canvas behind the battle's
 // first layer (priority 1).
-void BattleFx_RunTwoModeBMode0(s32 effect) {
-  BattleFx_RunSparkGroups(effect, 0);
-}
+void BattleFx_RunSparkBursts(s32 effect) { BattleFx_RunSparkGroups(effect, 0); }
 
 // Battle effect 338: orange bursts at (60, 64), the canvas in front
 // (priority 0).
-void BattleFx_RunTwoModeBMode1(s32 effect) {
+void BattleFx_RunOrangeSparkBursts(s32 effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
 
@@ -8257,7 +8255,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect) {
 // for each target in turn, 8 frames apart, sparkles spiral in on it with
 // the recovery sound and a glow, while the Djinni sways and finally flies
 // off. No effect table entry points here.
-UNUSED void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect) {
+UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -8558,7 +8556,7 @@ void BattleFx_InitializeMode(s32 *arg) {
       BattleFx_InitializeMode6(arg);
       break;
     case 7:
-      BattleFx_RenderAnimationMode0(arg);
+      BattleFx_RunFormationEmbers(arg);
       break;
     case 8:
       BattleFx_RunWhirlwindComets((struct BattleEffectArgument *)arg);

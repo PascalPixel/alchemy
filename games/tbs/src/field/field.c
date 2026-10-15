@@ -1135,42 +1135,42 @@ typedef char
 // VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
 // no room or the id has no image.
 struct ResourceObject *ResourceObject_Create(s32 id) {
-  struct AnimationMetadata *meta;
-  struct AnimationObject *obj;
-  struct AnimationObject *found;
-  u32 *word;
+  struct AnimationMetadata *metadata;
+  struct AnimationObject *sprite;
+  struct AnimationObject *freeSprite;
+  u32 *attribute;
   s32 slot;
   s32 tile;
   s32 i;
   u32 shape;
 
-  found = NULL;
-  meta = Resource_GetMetadataRecordFar(id);
+  freeSprite = NULL;
+  metadata = Resource_GetMetadataRecordFar(id);
   slot = Resource_FindFreeEntry();
-  obj = gSpriteObjects;
-  if (meta->width == 0)
+  sprite = gSpriteObjects;
+  if (metadata->width == 0)
     return NULL;
   // A width of 0 marks a free sprite.
-  for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) {
-      found = obj;
+  for (i = 0; i <= 63; i++, sprite++) {
+    if (sprite->width == 0) {
+      freeSprite = sprite;
       break;
     }
   }
-  if (found == NULL)
+  if (freeSprite == NULL)
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
   tile = VramBlock_LoadCached(slot, 0, 0);
   if (tile == 0)
     return NULL;
-  found->slot = slot;
-  found->rotation = 0;
-  found->flags = 1;
+  freeSprite->slot = slot;
+  freeSprite->rotation = 0;
+  freeSprite->flags = 1;
 
   // The OAM shape and size bits (attributes 0 and 1) for the image's width
   // and height in pixels.
-  switch ((u32)((meta->width << 8) + meta->height)) {
+  switch ((u32)((metadata->width << 8) + metadata->height)) {
   case 0x0808: // 8x8
     shape = 0;
     break;
@@ -1208,65 +1208,67 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
   // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
   // 16x8, 256-colour sprite of the shadow tiles (VRAM cache 93), priority 2.
-  word = (u32 *)found->part;
-  *word++ = 0;
-  *word++ = shape | 0x2000;
-  *word++ = tile | 0x800;
-  *word++ = 0;
-  *word++ = 0x6000;
-  *word = (gVramBlockCache[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register(obj, id) == -1) {
+  attribute = (u32 *)freeSprite->part;
+  *attribute++ = 0;
+  *attribute++ = shape | 0x2000;
+  *attribute++ = tile | 0x800;
+  *attribute++ = 0;
+  *attribute++ = 0x6000;
+  *attribute = (gVramBlockCache[93].offset >> 5) | 0x800;
+  if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH: native dead -1 after Register (movs/negs); empty arm
        after a same-byte reload keeps the carrier (differ 32 -> 0). */
-    found->dirty = found->dirty;
+    freeSprite->dirty = freeSprite->dirty;
   }
-  return (struct ResourceObject *)found;
+  return (struct ResourceObject *)freeSprite;
 }
 
 // Releases a sprite: its VRAM cache entry (unless bit 0 of flags is set),
 // its four animation layers, and then zeroes its 56 bytes.
-void ResourceObject_Release(struct ResourceObjectWork *work) {
-  s32 n;
-  void **child;
+void ResourceObject_Release(struct ResourceObjectWork *sprite) {
+  s32 remaining;
+  void **layer;
 
-  if (work) {
-    if (!(work->flags & 1))
-      Resource_ResetEntry(work->resource);
-    child = work->children;
-    n = 3;
+  if (sprite) {
+    if (!(sprite->flags & 1))
+      Resource_ResetEntry(sprite->resource);
+    layer = sprite->children;
+    remaining = 3;
     do {
-      ResourceMetadata_ClearRecord(*child++);
-    } while (--n >= 0);
-    Dma_Fill32(0, work, sizeof(*work));
+      ResourceMetadata_ClearRecord(*layer++);
+    } while (--remaining >= 0);
+    Dma_Fill32(0, sprite, sizeof(*sprite));
   }
 }
 
-// Returns how long the first cnt frames of animation no of id last: the sum
-// of the arguments of its frame, wait and blank commands, up to cnt of them
-// or the first play, hold, jump or end command.
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
-  struct AnimationMetadata *info;
-  u8 *p;
-  u8 op;
-  u8 val;
+// Returns how long the first frameCount frames of animation number animation
+// of id last: the sum of the arguments of its frame, wait and blank commands,
+// up to frameCount of them or the first play, hold, jump or end command.
+s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
+  struct AnimationMetadata *metadata;
+  u8 *script;
+  u8 command;
+  u8 arg;
   s32 sum = 0;
 
-  info = Resource_GetMetadataRecordFar(id);
-  if (no >= info->animationCount) {
+  metadata = Resource_GetMetadataRecordFar(id);
+  if (animation >= metadata->animationCount) {
     return 0;
   }
-  p = ((u8 **)info->animation)[no];
+  script = ((u8 **)metadata->animation)[animation];
   for (;;) {
-    op = p[0];
-    val = p[1];
-    p += 2;
-    if (op == 254 || op == 241 || op == 253 || op == 239) {
+    command = script[0];
+    arg = script[1];
+    script += 2;
+    if (command == ANIM_CMD_PLAY || command == ANIM_CMD_HOLD ||
+        command == ANIM_CMD_JUMP || command == ANIM_CMD_END) {
       break;
     }
-    if (op == 245 || op == 255 || op <= 238) {
-      sum += val;
-      cnt--;
-      if (cnt == 0) {
+    if (command == ANIM_CMD_WAIT || command == ANIM_CMD_BLANK ||
+        command < ANIM_CMD_END) {
+      sum += arg;
+      frameCount--;
+      if (frameCount == 0) {
         break;
       }
     }
@@ -1278,113 +1280,113 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
 
 // One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
 // colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
-// tile runs one step behind the last, and only tiles whose step is 64-127
+// tile runs one step ahead of the last, and only tiles whose step is 64-127
 // clear a pixel. obj is the sprite (struct AnimationObject), pos the step
 // (0-127).
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
-  u16 *dst;
-  s32 cnt;
-  u32 n;
-  u8 *table;
+  u16 *tile;
+  s32 tileCount;
+  u32 i;
+  u8 *order;
   u32 highMask;
   u32 indexMask;
   u8 offsetMask;
 
-  struct AnimationObject *spr = (struct AnimationObject *)obj;
+  struct AnimationObject *sprite = (struct AnimationObject *)obj;
 
   // The sprite's tiles in OBJ VRAM.
-  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset);
-  cnt = (spr->width * spr->height) / 64;
-  n = 0;
+  tile = (u16 *)(0x06010000 + gVramBlockCache[sprite->slot].offset);
+  tileCount = (sprite->width * sprite->height) / 64;
+  i = 0;
 
-  if (n < cnt) {
-    table = gMap_TileDissolveOrder;
+  if (i < tileCount) {
+    order = gMap_TileDissolveOrder;
     highMask = 0xff00;
     indexMask = 0x3f;
     offsetMask = 0x3e;
 
-    for (; n < cnt; n++, dst += 32, pos++) {
+    for (; i < tileCount; i++, tile += 32, pos++) {
       if ((pos - 64) <= 63) {
-        u8 dot;
-        u16 *cell;
-        u32 odd;
+        u8 pixel;
+        u16 *pixelPair;
+        u32 isOdd;
 
         // VRAM takes no byte writes: rewrite the pixel pair, clearing one.
-        dot = table[(pos + n * 16) & indexMask];
-        cell = (u16 *)((u8 *)dst + (dot & offsetMask));
-        odd = 1;
-        odd &= dot;
-        if (odd != 0)
-          *cell = *(u8 *)cell;
+        pixel = order[(pos + i * 16) & indexMask];
+        pixelPair = (u16 *)((u8 *)tile + (pixel & offsetMask));
+        isOdd = 1;
+        isOdd &= pixel;
+        if (isOdd != 0)
+          *pixelPair = *(u8 *)pixelPair;
         else
-          *cell &= highMask;
+          *pixelPair &= highMask;
       }
     }
   }
 }
 
 // Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
-void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
-  u32 pos;
+void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
+  u32 step;
 
-  pos = 0;
+  step = 0;
   do {
-    Map_RenderAnimatedTileFrame(obj, pos);
-    Map_RenderAnimatedTileFrame(obj, pos + 1);
-    Map_RenderAnimatedTileFrame(obj, pos + 2);
-    Map_RenderAnimatedTileFrame(obj, pos + 3);
-    pos += 4;
+    Map_RenderAnimatedTileFrame(sprite, step);
+    Map_RenderAnimatedTileFrame(sprite, step + 1);
+    Map_RenderAnimatedTileFrame(sprite, step + 2);
+    Map_RenderAnimatedTileFrame(sprite, step + 3);
+    step += 4;
     WaitFrames(1);
-  } while (pos <= 127);
+  } while (step <= 127);
 }
 
-// Dissolves cnt sprites together, pixel by pixel, over 32 frames.
-void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
-  u8 **top;
-  u8 **p;
-  s32 n;
-  u32 pos;
-  u32 pos1;
-  u32 pos2;
-  u32 pos3;
+// Dissolves count sprites together, pixel by pixel, over 32 frames.
+void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
+  u8 **first;
+  u8 **sprite;
+  s32 remaining;
+  u32 step;
+  u32 step1;
+  u32 step2;
+  u32 step3;
 
-  top = table;
-  pos = 0;
+  first = sprites;
+  step = 0;
   do {
-    if (cnt > 0) {
-      pos1 = pos + 1;
-      pos2 = pos + 2;
-      p = top;
-      pos3 = pos + 3;
-      n = cnt;
+    if (count > 0) {
+      step1 = step + 1;
+      step2 = step + 2;
+      sprite = first;
+      step3 = step + 3;
+      remaining = count;
       do {
-        Map_RenderAnimatedTileFrame(*p, pos);
-        Map_RenderAnimatedTileFrame(*p, pos1);
-        Map_RenderAnimatedTileFrame(*p, pos2);
-        n -= 1;
-        Map_RenderAnimatedTileFrame(*p++, pos3);
-      } while (n != 0);
+        Map_RenderAnimatedTileFrame(*sprite, step);
+        Map_RenderAnimatedTileFrame(*sprite, step1);
+        Map_RenderAnimatedTileFrame(*sprite, step2);
+        remaining -= 1;
+        Map_RenderAnimatedTileFrame(*sprite++, step3);
+      } while (remaining != 0);
     }
     WaitFrames(1U);
-    pos += 4;
-  } while (pos <= 0x7fU);
+    step += 4;
+  } while (step <= 0x7fU);
 }
 
 // Writes obj's position on the screen, in pixels, to out[0] and out[1] and
 // returns 0 when it is on or near the screen; otherwise writes 0, 0 and
 // returns -1.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
-  struct MapScrollWork *map = gMapWork[0];
-  s32 *org = &map->viewX;
-  s32 ox;
-  s32 oz;
+  struct MapScrollWork *mapWork = gMapWork[0];
+  s32 *view = &mapWork->viewX;
+  s32 viewX;
+  s32 viewZ;
   s32 x;
   s32 y;
 
-  ox = org[0] & 0xffff0000;
-  oz = org[1] & 0xffff0000;
-  x = obj->x - ox;
-  y = obj->z - oz;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  x = obj->x - viewX;
+  y = obj->z - viewZ;
   if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
     *out++ = x >> 16;
     *out = y >> 16;
@@ -1399,15 +1401,15 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
 // registers the per-frame updates. Mode 4 moves objects with
 // Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
 void ObjectSystem_Initialize(s32 mode) {
-  struct ObjectSystemWork *sys;
-  struct ObjectRuntime *objs;
+  struct ObjectSystemWork *system;
+  struct ObjectRuntime *objects;
   volatile u32 fill;
 
-  sys = Runtime_AllocateBlock(6, sizeof(*sys));
-  objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
+  system = Runtime_AllocateBlock(6, sizeof(*system));
+  objects = Runtime_AllocateBlock(5, 64 * sizeof(*objects));
   ObjectSystem_Configure(mode);
-  Dma_Fill32Cell(fill, 0, objs, 64 * sizeof(*objs));
-  Dma_Fill32Cell(fill, 0, sys, sizeof(*sys));
+  Dma_Fill32Cell(fill, 0, objects, 64 * sizeof(*objects));
+  Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   if (mode == 4)
     Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
   else
@@ -1419,8 +1421,8 @@ void ObjectSystem_Initialize(s32 mode) {
     gIwram_Data2 = 0;
     gIwram_Data1 = 0;
   }
-  sys->edge = 15;
-  sys->fill = 0;
+  system->edge = 15;
+  system->fill = 0;
 }
 
 // Does nothing.
@@ -1432,24 +1434,24 @@ void ResourceTable_ReservedNoOp2(void) {}
 // Returns the first of the 64 objects not in use (with no script), or 0.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *obj = gObjectSlots;
-  void *ret = 0;
-  s32 n = 0;
+  void *found = 0;
+  s32 i = 0;
 
-  while (n <= 63) {
+  while (i <= 63) {
     if (obj->script == 0) {
-      ret = obj;
+      found = obj;
       break;
     }
-    n++;
+    i++;
     obj++;
   }
-  return ret;
+  return found;
 }
 
 // Releases an object's sprites and zeroes it, freeing it.
 void ObjectDispatch_Release(struct DispatchObject *obj) {
-  s32 n;
-  struct ResourceObjectWork **child;
+  s32 remaining;
+  struct ResourceObjectWork **spriteList;
 
   if (obj) {
     switch (obj->kind & 15) {
@@ -1457,13 +1459,13 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
       ResourceObject_Release(obj->target.child);
       break;
     case 2: // up to four sprites
-      child = (struct ResourceObjectWork **)obj->target.children;
-      n = 3;
+      spriteList = (struct ResourceObjectWork **)obj->target.children;
+      remaining = 3;
       do {
-        struct ResourceObjectWork *res = *child++;
-        if (res)
-          ResourceObject_Release(res);
-      } while (--n >= 0);
+        struct ResourceObjectWork *sprite = *spriteList++;
+        if (sprite)
+          ResourceObject_Release(sprite);
+      } while (--remaining >= 0);
       break;
     }
     Dma_Fill32(0, obj, sizeof(struct ObjectRuntime));
@@ -1475,67 +1477,67 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
 // and id + 1) and the low 12 bits the sprite's animation id.
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *obj;
-  struct FieldActor *act;
-  struct ScriptMotionObject *mot;
-  struct ScriptObjectRuntime *sc;
-  void *spr;
+  struct FieldActor *actor;
+  struct ScriptMotionObject *motion;
+  struct ScriptObjectRuntime *scripted;
+  void *sprite;
   s32 kind;
-  void **ent;
+  void **spriteList;
 
   ObjectDispatch_FindFreeObject();
   kind = id / 4096;
   id &= 0xfff;
   obj = ObjectDispatch_FindFreeObject();
   if (obj != NULL) {
-    act = (struct FieldActor *)obj;
-    act->radius = 16;
+    actor = (struct FieldActor *)obj;
+    actor->radius = 16;
     switch (kind) {
     case 0:
-      spr = ResourceObject_Create(id);
-      if (spr != NULL) {
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
         obj->animationKind = 1;
-        obj->animation = spr;
-        act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        obj->animation = sprite;
+        actor->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
       } else {
         obj->animationKind = 0;
       }
       break;
     case 2:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
-      ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
+      spriteList = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
       obj->animationKind = kind;
-      obj->animation = ent;
-      Dma_Fill32(0, ent, 0x10);
-      spr = ResourceObject_Create(id);
-      if (spr != NULL) {
-        act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
-        *ent++ = spr;
+      obj->animation = spriteList;
+      Dma_Fill32(0, spriteList, 0x10);
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
+        actor->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        *spriteList++ = sprite;
       }
-      spr = ResourceObject_Create(id + 1);
-      if (spr != NULL)
-        *ent = spr;
+      sprite = ResourceObject_Create(id + 1);
+      if (sprite != NULL)
+        *spriteList = sprite;
       break;
     }
   }
   if (obj != NULL) {
-    mot = (struct ScriptMotionObject *)obj;
-    sc = (struct ScriptObjectRuntime *)obj;
+    motion = (struct ScriptMotionObject *)obj;
+    scripted = (struct ScriptObjectRuntime *)obj;
     Object_SetPositionAndResetMotion(obj, x, y, z);
     obj->script = (s32 *)gObjectDispatch_DefaultScript;
     obj->speedLimit = 0x20000;
     obj->step = 0;
-    act->scaleX = 0x10000;
-    act->scaleY = 0x10000;
+    actor->scaleX = 0x10000;
+    actor->scaleY = 0x10000;
     obj->acceleration = 0x10000;
     obj->flags = 3;
-    mot->gravity = 0x10000;
-    mot->vertical.bounce = 0x4000;
+    motion->gravity = 0x10000;
+    motion->vertical.bounce = 0x4000;
     obj->unk59 = 0;
     obj->actionFlags = 1;
-    act->riseBaseY = 0;
+    actor->riseBaseY = 0;
     obj->angle = 0x4000;
-    sc->homeX = x / 65536; // its home position, in pixels
-    sc->homeZ = z / 65536;
+    scripted->homeX = x / 65536; // its home position, in pixels
+    scripted->homeZ = z / 65536;
   }
   return obj;
 }

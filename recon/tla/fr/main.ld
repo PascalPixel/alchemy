@@ -826,7 +826,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000b47ac)
     "*/games/tla/src/game/character/level_hook.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b491c)
-    "*/recon/tla/fr/rom.o"(.rom.000b4b80)
     "*/games/tla/src/game/advance_owner_count_to_target.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b4bec)
     "*/games/tla/src/game/party/count_active_owners.o"(.text)

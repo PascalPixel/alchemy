@@ -799,7 +799,6 @@ SECTIONS
         "*/recon/tla/raw/080af7ac.o"(.text)
         "*/games/tla/src/game/character/level_hook.o"(.text)
         "*/recon/tla/raw/080af91c.o"(.text)
-        "*/recon/tla/raw/080afb80.o"(.text)
         "*/games/tla/src/game/advance_owner_count_to_target.o"(.text)
         "*/recon/tla/raw/080afbec.o"(.text .rodata .data .padding)
         "*/games/tla/src/game/party/count_active_owners.o"(.text)

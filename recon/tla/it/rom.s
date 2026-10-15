@@ -1971,12 +1971,6 @@ Owner_UpdateClassActions:
 	.thumb_func
 Owner_LevelUp:
 	.incbin "baserom.gba", 0x000af928, 0x00000264
-	.section .rom.000afb8c, "ax"
-	.global Func_080afb80
-	.type Func_080afb80, %function
-	.thumb_func
-Func_080afb80:
-	.incbin "baserom.gba", 0x000afb8c, 0x00000034
 	.section .rom.000afbf8, "ax"
 	.incbin "baserom.gba", 0x000afbf8, 0x000001d0
 	.section .rom.000aff34, "ax"

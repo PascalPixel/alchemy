@@ -808,7 +808,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000aa7a8)
     "*/games/tla/src/game/character/level_hook.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa918)
-    "*/recon/tla/ja/rom.o"(.rom.000aab7c)
     "*/games/tla/src/game/advance_owner_count_to_target.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aabe8)
     "*/games/tla/src/game/party/count_active_owners.o"(.text)

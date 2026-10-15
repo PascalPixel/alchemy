@@ -1553,12 +1553,6 @@ Func_080af7ac:
 	.thumb_func
 Owner_LevelUp:
 	.incbin "baserom.gba", 0x000bc91c, 0x00000264
-	.section .rom.000bcb80, "ax"
-	.global Func_080afb80
-	.type Func_080afb80, %function
-	.thumb_func
-Func_080afb80:
-	.incbin "baserom.gba", 0x000bcb80, 0x00000034
 	.section .rom.000bcbec, "ax"
 	.global Func_080afbec
 	.type Func_080afbec, %function

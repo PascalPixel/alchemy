@@ -3787,6 +3787,59 @@ Func_02003184:
 	bl Func_02003104
 	pop {r5, pc}
 	.2byte 0x0000
+	.section .text.x0200b24c,"ax",%progbits
+	.balign 4
+	.global Func_0200324c
+	.thumb_func
+Func_0200324c:
+	push {r5, r6, r7, lr}
+	movs r7, #0
+.L_0200b250:
+	adds r6, r7, #0
+	adds r6, #15
+	adds r0, r6, #0
+	bl Object_GetById
+	adds r5, r0, #0
+	adds r5, #85
+	adds r0, r6, #0
+	adds r7, #1
+	movs r6, #0
+	bl Func_020031f0
+	strb r6, [r5]
+	cmp r7, #1
+	bls .L_0200b250
+	movs r0, #15
+	bl Object_GetById
+	movs r3, #128
+	lsls r3, r3, #14
+	str r3, [r0, #12]
+	movs r0, #16
+	bl Object_GetById
+	str r6, [r0, #12]
+	bl Func_02003220
+	pop {r5, r6, r7, pc}
+	.section .text.x0200b288,"ax",%progbits
+	.global Func_02003288
+	.thumb_func
+Func_02003288:
+	push {r5, r6, r7, lr}
+	movs r7, #0
+.L_0200b28c:
+	adds r6, r7, #0
+	adds r6, #26
+	adds r0, r6, #0
+	bl Object_GetById
+	adds r5, r0, #0
+	adds r0, r6, #0
+	bl Func_020031f0
+	adds r5, #85
+	movs r3, #0
+	adds r7, #1
+	strb r3, [r5]
+	cmp r7, #1
+	bls .L_0200b28c
+	bl Func_02003220
+	pop {r5, r6, r7, pc}
 	.section .text.x0200b308,"ax",%progbits
 	.balign 4
 	.global Func_02003308

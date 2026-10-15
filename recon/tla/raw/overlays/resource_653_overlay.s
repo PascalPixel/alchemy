@@ -7984,64 +7984,6 @@ Func_0200482c:
 .L_0200cfb0:
 	.4byte 0x00019999
 	.endif
-	.section .text.x0200cfb4,"ax",%progbits
-	.global Func_02004fb4
-	.thumb_func
-Func_02004fb4:
-	push {r5, r6, r7, lr}
-	movs r0, #234
-	movs r1, #204
-	movs r2, #160
-	movs r3, #172
-	adds r0, #255
-	lsls r1, r1, #17
-	lsls r2, r2, #14
-	lsls r3, r3, #17
-	ldr r5, .L_0200d024
-	bl Func_02005140
-	movs r7, #0
-	str r0, [r5]
-	cmp r0, #0
-	beq .L_0200d022
-	ldr r6, [r0, #80]
-	movs r3, #33
-	ldrb r2, [r6, #5]
-	negs r3, r3
-	ands r3, r2
-	ldrb r2, [r6, #9]
-	strb r3, [r6, #5]
-	movs r3, #15
-	ands r3, r2
-	strb r3, [r6, #9]
-	adds r3, r0, #0
-	adds r3, #85
-	adds r2, r0, #0
-	adds r2, #92
-	strb r7, [r3]
-	movs r1, #193
-	movs r3, #1
-	strb r3, [r2]
-	lsls r1, r1, #3
-	strb r7, [r6, #26]
-	strb r7, [r6, #27]
-	movs r0, #68
-	bl Runtime_AllocateHeapBlockFar
-	adds r5, r0, #0
-	movs r0, #198
-	bl Func_020051b0
-	movs r3, #128
-	lsls r3, r3, #3
-	adds r5, r5, r3
-	ldrb r0, [r6, #16]
-	movs r1, #128
-	adds r2, r5, #0
-	bl VramBlock_LoadCached
-	movs r0, #68
-	bl Runtime_ReleaseHeapBlock
-.L_0200d022:
-	pop {r5, r6, r7, pc}
-.L_0200d024:
-	.4byte Data_020062ac
 	.section .bss,"aw",%nobits
 	.global Data_02006294
 Data_02006294:

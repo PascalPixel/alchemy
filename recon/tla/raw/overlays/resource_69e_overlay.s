@@ -1,53 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008148,"ax",%progbits
-	.balign 4
-	.global Func_02000148
-	.thumb_func
-Func_02000148:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	adds r5, r0, #0
-	movs r0, #23
-	bl Object_GetById
-	adds r6, r5, #0
-	adds r6, #100
-	ldrh r1, [r6]
-	mov r10, r0
-	mov r8, r1
-	mov r0, r8
-	bl Math_Cosine
-	ldr r3, [r5, #48]
-	mov r1, r10
-	adds r3, #3
-	adds r2, r3, #0
-	muls r2, r0
-	ldr r3, [r1, #8]
-	mov r0, r8
-	adds r3, r3, r2
-	str r3, [r5, #8]
-	bl Math_Sine
-	mov r2, r10
-	ldr r3, [r2, #16]
-	ldr r2, [r5, #8]
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	str r3, [r5, #16]
-	str r2, [r5, #56]
-	str r3, [r5, #64]
-	ldr r1, .L_020081a0
-	ldrh r3, [r6]
-	adds r3, r3, r1
-	strh r3, [r6]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020081a0:
-	.4byte 0xfffff800
 	.section .text.x020081a4,"ax",%progbits
 	.global Func_020001a4
 	.thumb_func

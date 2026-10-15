@@ -3438,6 +3438,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.088e41ab)
         "*/games/common/src/graphics/battle_fx/light_fan.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088e4749)
+        "*/games/tla/src/graphics/battle_fx/sheet_181.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.088e494f)
         "*/games/common/src/graphics/battle_fx/dust_puff.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088e4c89)
         "*/games/common/src/graphics/battle_fx/gold_shell.o"(.rodata)

@@ -2555,7 +2555,7 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.006b0fc7)
     "*/games/tla/src/graphics/title/picture_024.o"(.rodata)
     "*/games/tla/src/graphics/title/tsuzuku.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.006cd208)
+    "*/games/tla/src/graphics/ui/headings.o"(.rodata)
     "*/games/tla/src/graphics/backdrop/purple_moon.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.006d0b02)
     "*/games/common/src/graphics/backdrop/suhara_gate.o"(.rodata)

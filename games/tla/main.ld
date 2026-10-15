@@ -2639,7 +2639,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.006b1e13)
     "*/games/tla/src/graphics/title/picture_024.o"(.rodata)
     "*/games/tla/src/graphics/title/tsuzuku.o"(.rodata)
-    "*/recon/tla/ja/rom.o"(.rom.006ce054)
+    "*/games/tla/src/graphics/ui/headings.o"(.rodata)
     "*/games/tla/src/graphics/backdrop/purple_moon.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.006d194e)
     "*/games/common/src/graphics/backdrop/suhara_gate.o"(.rodata)

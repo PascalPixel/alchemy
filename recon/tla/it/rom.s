@@ -5926,10 +5926,6 @@ Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x006a99e3, 0x00000001
 	.section .rom.006b0fff, "ax"
 	.incbin "baserom.gba", 0x006b0fff, 0x00000001
-	.section .rom.006cd240, "ax"
-	.global Resource_Data026
-Resource_Data026:
-	.incbin "baserom.gba", 0x006cd240, 0x00000f0c
 	.section .rom.006d0b3a, "ax"
 	.incbin "baserom.gba", 0x006d0b3a, 0x00000002
 	.section .rom.006d4f7e, "ax"

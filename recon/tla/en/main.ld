@@ -2867,7 +2867,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.086b1687)
         "*/games/tla/src/graphics/title/picture_024.o"(.rodata)
         "*/games/tla/src/graphics/title/tsuzuku.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.086cd8c8)
+        "*/games/tla/src/graphics/ui/headings.o"(.rodata)
         "*/games/tla/src/graphics/backdrop/purple_moon.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.086d11c2)
         "*/games/common/src/graphics/backdrop/suhara_gate.o"(.rodata)

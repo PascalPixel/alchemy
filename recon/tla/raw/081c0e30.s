@@ -49,7 +49,7 @@ Func_081c0e70:
 .L_081c0e7c:
 	.4byte gMusicRestoreDelay
 .L_081c0e80:
-	.4byte Data_02006a10
+	.4byte gMusicPlayerFanfare
 .L_081c0e84:
 	.4byte gMusicVolumeTarget
 .L_081c0e88:

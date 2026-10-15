@@ -26,8 +26,8 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 #define WAIT_DMA() WaitDma(DMA3)
 
 extern u16 (*Flash_Handler0)(u16 sector, u8 *source);
-extern const u8 Data_08017d08[];
-extern const u8 Data_08017d10[];
+extern const u8 Save_Signature[];
+extern const u8 Save_HeaderTemplate[];
 
 u32 Random16(void);
 s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
@@ -56,7 +56,7 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
         return 1;
     START_DMA(source, work->slot + 16, 0x84000bfc);
     WAIT_DMA();
-    START_DMA(Data_08017d10, &header, 0x84000002);
+    START_DMA(Save_HeaderTemplate, &header, 0x84000002);
     WAIT_DMA();
     header.record_id = record_id;
     header.checksum = SaveState_ChecksumWorkspace();

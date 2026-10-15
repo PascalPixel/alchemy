@@ -24,8 +24,8 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 #define WAIT_DMA() WaitDma(DMA3)
 
 extern u16 (*Flash_Handler0)(u16 sector, u8 *source);
-extern const u8 Data_08017d08[];
-extern const u8 Data_08017d10[];
+extern const u8 Save_Signature[];
+extern const u8 Save_HeaderTemplate[];
 
 u32 Random16(void);
 s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);

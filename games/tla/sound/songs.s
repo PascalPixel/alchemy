@@ -810,9 +810,3 @@ Sound_SongTable:
 
 Sound_EmptySong:
 	.byte 0, 0, 0, 0
-
-@ プレイヤー数 (Sound_PlayerSlots の 8 行) とミキサーの最大ライン数 0
-	.global Sound_PlayerCount
-	.equ Sound_PlayerCount, 8
-	.global Sound_MaxLines
-	.equ Sound_MaxLines, 0

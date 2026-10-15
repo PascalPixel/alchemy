@@ -30,7 +30,7 @@ main	rom_main_00	games/tbs/src/runtime/mathtbl	.rodata
 main	rom_main_00	games/tbs/src/system/syspal	.rodata
 main	rom_main_00	games/tbs/src/runtime/numtext	.rodata
 main	rom_main_00	games/tbs/src/runtime/q16_dot_product
-main	rom_main_00	games/tbs/src/runtime/savedata	.rodata
+main	rom_main_00	games/common/src/system/save/savedata	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/flash	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata
@@ -158,7 +158,7 @@ main	rom_tail_00	games/tbs/src/sound/sound	.rodata
 main	rom_tail_00	games/common/src/sound/tables	.rodata
 main	rom_tail_00	games/tbs/sound/voices	.rodata
 main	rom_tail_00	games/tbs/sound/cgb_waves	.rodata
-main	rom_tail_00	games/tbs/sound/players	.rodata
+main	rom_tail_00	games/common/sound/players	.rodata
 main	rom_tail_00	games/tbs/sound/songs	.rodata
 main	rom_tail_00	games/tbs/sound/samples	.rodata
 main	rom_tail_00	games/tbs/sound/sequence/bgm_000	.rodata

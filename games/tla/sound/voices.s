@@ -281,3 +281,13 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_Wave69, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_Wave70, 128, 0, 255, 226
+
+@ What look like two keysplit tables, unused: keys 0-35 take 0 and 36-71
+@ take 1, twice over. No voice refers to them; The Broken Seal has the
+@ same tables in the same place.
+	.global Sound_UnusedKeySplitTables
+Sound_UnusedKeySplitTables:
+	.fill 36, 1, 0
+	.fill 36, 1, 1
+	.fill 36, 1, 0
+	.fill 36, 1, 1

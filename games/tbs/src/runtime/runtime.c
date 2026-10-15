@@ -48,7 +48,7 @@
 #include "audio_engine_symbols.h"
 #include "unit/runtime/mathtbl.h"
 #include "unit/runtime/numtext.h"
-#include "unit/runtime/savedata.h"
+#include "savedata.h"
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)

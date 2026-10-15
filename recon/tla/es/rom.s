@@ -244,42 +244,9 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dfc, 0x00000028
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
-	.section .rom.000178e0, "ax"
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178e0, 0x00000038
-	.section .rom.00017cfc, "ax"
-	.global Data_08017cd0
-Data_08017cd0:
-	.incbin "baserom.gba", 0x00017cfc, 0x00000018
-	.section .rom.00017d34, "ax"
-	.incbin "baserom.gba", 0x00017d34, 0x00000008
-	.section .rom.00017d3c, "ax"
-	.global Data_08017d10
-Data_08017d10:
-	.incbin "baserom.gba", 0x00017d3c, 0x00000054
-	.section .rom.00017d90, "ax"
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00017d90, 0x00000014
-	.section .rom.00017e28, "ax"
-	.incbin "baserom.gba", 0x00017e28, 0x00000018
-	.section .rom.00017e40, "ax"
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00017e40, 0x00000058
-	.section .rom.00017ec0, "ax"
-	.incbin "baserom.gba", 0x00017ec0, 0x00000088
-	.section .rom.00017f50, "ax"
-	.incbin "baserom.gba", 0x00017f50, 0x00000018
-	.section .rom.00017f68, "ax"
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .rom.00017f94, "ax"
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00017f94, 0x0000002c
+	.section .rom.00017d10, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00017d10, 0x00000004
 	.section .rom.00020010, "ax"
 	.global Render_ApplyProjectedPlacementFar
 Render_ApplyProjectedPlacementFar:
@@ -5906,52 +5873,6 @@ Func_081c2328:
 	.thumb_func
 Audio_EmptyCallback:
 	.incbin "baserom.gba", 0x001c342c, 0x00000010
-	.section .rom.001c343c, "ax"
-	.global Sound_CommandTableTemplate
-Sound_CommandTableTemplate:
-	.incbin "baserom.gba", 0x001c343c, 0x00000090
-	.section .rom.001c34cc, "ax"
-	.global Sound_PcmPitchCodes
-Sound_PcmPitchCodes:
-	.incbin "baserom.gba", 0x001c34cc, 0x000000b4
-	.section .rom.001c3580, "ax"
-	.global Sound_PcmFrequencySteps
-Sound_PcmFrequencySteps:
-	.incbin "baserom.gba", 0x001c3580, 0x00000030
-	.section .rom.001c35b0, "ax"
-	.global Sound_FrameLengths
-Sound_FrameLengths:
-	.incbin "baserom.gba", 0x001c35b0, 0x00000018
-	.section .rom.001c35c8, "ax"
-	.global Sound_CgbPitchCodes
-Sound_CgbPitchCodes:
-	.incbin "baserom.gba", 0x001c35c8, 0x00000084
-	.section .rom.001c364c, "ax"
-	.global Sound_CgbFrequencySteps
-Sound_CgbFrequencySteps:
-	.incbin "baserom.gba", 0x001c364c, 0x00000018
-	.section .rom.001c3664, "ax"
-	.global Sound_NoisePitchCodes
-Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x001c3664, 0x0000003c
-	.section .rom.001c36a0, "ax"
-	.global Sound_Cgb3LevelCodes
-Sound_Cgb3LevelCodes:
-	.incbin "baserom.gba", 0x001c36a0, 0x00000010
-	.section .rom.001c36b0, "ax"
-	.global Sound_ClockLengths
-Sound_ClockLengths:
-	.incbin "baserom.gba", 0x001c36b0, 0x00000034
-	.section .rom.001c36e4, "ax"
-	.global Sound_ExtendedCommandTable
-Sound_ExtendedCommandTable:
-	.incbin "baserom.gba", 0x001c36e4, 0x00000030
-	.section .rom.001c43b0, "ax"
-	.incbin "baserom.gba", 0x001c43b0, 0x00000090
-	.section .rom.001c44d0, "ax"
-	.global Sound_PlayerSlots
-Sound_PlayerSlots:
-	.incbin "baserom.gba", 0x001c44d0, 0x00000060
 	.section .rom.006a5a6e, "ax"
 	.incbin "baserom.gba", 0x006a5a6e, 0x00000002
 	.section .rom.00859579, "ax"

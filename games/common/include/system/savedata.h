@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_RUNTIME_SAVEDATA_H
-#define ALCHEMY_UNIT_RUNTIME_SAVEDATA_H
+#ifndef GUARD_SAVEDATA_H
+#define GUARD_SAVEDATA_H
 
 #include "types.h"
 

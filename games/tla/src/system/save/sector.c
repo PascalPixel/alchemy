@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
+#include "savedata.h"
 #include "dma.h"
 #include "flash.h"
 
@@ -18,10 +19,6 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 #define WAIT_DMA() WaitDma(DMA3)
 
 extern u16 (*Flash_Handler0)(u16 sector, u8 *source);
-
-extern const u8 Data_08017d08[];
-
-extern const u8 Data_08017d10[];
 
 u32 Random16(void);
 

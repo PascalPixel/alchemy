@@ -1909,67 +1909,6 @@ Func_020010f4:
 	.4byte gPartyState
 .L_020091bc:
 	.4byte gMapCellBuffer
-	.section .text.x020091c0,"ax",%progbits
-	.global Func_020011c0
-	.thumb_func
-Func_020011c0:
-	push {r5, r6, lr}
-	ldr r5, .L_02009248
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	bl Object_GetById
-	adds r6, r0, #0
-	bl Func_02002e44
-	movs r0, #0
-	bl Func_02002edc
-	ldr r0, [r5]
-	movs r1, #0
-	bl Object_SetModeById
-	movs r1, #129
-	ldr r0, [r5]
-	lsls r1, r1, #1
-	bl Func_02002e9c
-	adds r2, r6, #0
-	movs r3, #0
-	adds r6, #90
-	adds r2, #85
-	strb r3, [r2]
-	strb r3, [r6]
-	movs r1, #0
-	ldr r0, [r5]
-	movs r2, #8
-	bl ObjectMotion_OffsetPositionAndResetMotion
-	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #0
-	ldr r0, [r5]
-	bl Func_02002e94
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #1
-	movs r1, #1
-	movs r2, #1
-	negs r2, r2
-	movs r3, #0
-	negs r1, r1
-	negs r0, r0
-	bl Motion_CamBounds
-	movs r0, #204
-	bl Func_02002eec
-	ldr r0, [r5]
-	movs r1, #188
-	bl Func_02000b30
-	movs r3, #1
-	strb r3, [r6]
-	bl Func_02002e4c
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02009248:
-	.4byte gPartyState
 	.section .text.x02009264,"ax",%progbits
 	.balign 4
 	.global Func_02001264

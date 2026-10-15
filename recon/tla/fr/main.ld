@@ -847,8 +847,6 @@ SECTIONS
     "*/games/tla/src/game/djinn/weakness.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b575c)
     "*/games/tla/src/game/djinn/management.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b5bb6)
-    "*/recon/tla/fr/rom.o"(.rom.000b5bb8)
     "*/games/tla/src/game/djinn/activate.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b5d58)
     "*/games/tla/src/game/djinn/trade.o"(.text)

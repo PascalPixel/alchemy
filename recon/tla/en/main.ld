@@ -820,8 +820,6 @@ SECTIONS
         "*/games/tla/src/game/djinn/weakness.o"(.text)
         "*/recon/tla/raw/080b075c.o"(.text)
         "*/games/tla/src/game/djinn/management.o"(.text)
-        "*/recon/tla/raw/080b0bb6.o"(.text)
-        "*/recon/tla/raw/080b0bb8.o"(.text)
         "*/games/tla/src/game/djinn/activate.o"(.text)
         "*/recon/tla/raw/080b0d58.o"(.text)
         "*/games/tla/src/game/djinn/trade.o"(.text)

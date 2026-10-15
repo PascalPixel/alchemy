@@ -1861,14 +1861,6 @@ Owner_DetermineClass:
 	.section .rom.000ab758, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000ab758, 0x00000338
-	.section .rom.000abbb2, "ax"
-	.incbin "baserom.gba", 0x000abbb2, 0x00000002
-	.section .rom.000abbb4, "ax"
-	.global Trade_CanOfferDjinn
-	.type Trade_CanOfferDjinn, %function
-	.thumb_func
-Trade_CanOfferDjinn:
-	.incbin "baserom.gba", 0x000abbb4, 0x000000c0
 	.section .rom.000abd54, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function

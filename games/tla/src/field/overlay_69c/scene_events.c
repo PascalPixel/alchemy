@@ -1,5 +1,39 @@
 #include "local.h"
 
+// Sets flag 0xa04 or 0xa05 when the object stands on cell (20, 36) or
+// (32, 36), then waits up to 30 frames for it to land and lifts it there.
+void Func_02000134(s32 unused, s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    s32 placed = 0;
+    s32 i;
+    /* FAKEMATCH: the mode pinned to r2 and set before an empty asm barrier builds it right after the motion flag store, before the position loads, as the native has it (plain, through Lift_ too: differ 2, built after both loads; a one-pass block on the store or the pin alone: differ 2). */
+    register s32 mode asm("r2");
+
+    if (object->x >> 20 == 20 && object->z >> 20 == 36) {
+        GameFlag_SetBit_(0xa04);
+        placed = 1;
+    }
+    /* FAKEMATCH: the volatile x read stops PRE keeping x in r2 across the first test and reloading it after the call (plain: differ 22). */
+    if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36) {
+        GameFlag_SetBit_(0xa05);
+        placed = 1;
+    }
+    if (placed) {
+        WaitFrames_(10);
+        Func_02002470(134);
+        for (i = 0; i < 30; i++) {
+            if (object->y <= object->terrain_height && object->velocity_y == 0)
+                break;
+            WaitFrames(1);
+        }
+        object->motion_flags = 0;
+        mode = 0;
+        __asm__("");
+        Func_02002368(object->x, object->z, mode, 0);
+    }
+}
+
 void Func_020001c0(void)
 {
     Func_020023f8(12);

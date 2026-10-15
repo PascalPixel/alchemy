@@ -591,7 +591,7 @@ msgctxt "message"
 msgid "00145"
 msgstr "Überhaupt nicht!"
 
-msgctxt "message"
+msgctxt "MsgItemPlainName"
 msgid "00146"
 msgstr "?"
 
@@ -14507,19 +14507,19 @@ msgctxt "message"
 msgid "03624"
 msgstr "Myst. Frau"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "03625"
 msgstr "{argument_actor_name:1} erscheint!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "03626"
 msgstr "{argument_actor_name:1} erscheint!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "03627"
 msgstr "{protagonist_name}{possessive_suffix} Team greift zuerst an!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "03628"
 msgstr "{protagonist_name}{possessive_suffix} Team wurde überrascht!"
 
@@ -20699,7 +20699,7 @@ msgctxt "message"
 msgid "05172"
 msgstr "Du hast {argument_signed_number}"
 
-msgctxt "message"
+msgctxt "MsgNoItems"
 msgid "05173"
 msgstr "Keine Items"
 
@@ -20827,7 +20827,7 @@ msgctxt "message"
 msgid "05204"
 msgstr "Tut mir Leid, aber das{line_break}können wir nicht kaufen.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "05205"
 msgstr "Wie viele verkaufen?{end_now}"
 
@@ -21335,11 +21335,11 @@ msgctxt "message"
 msgid "05331"
 msgstr "{argument_actor_name:1} ist wieder{line_break}kampfbereit!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "05332"
 msgstr "Wiederbeleben für {argument_signed_number} {control:13}{end_wait}."
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "05333"
 msgstr "Dein Freund bedarf keiner Heilung."
 

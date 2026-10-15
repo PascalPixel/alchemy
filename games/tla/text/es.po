@@ -591,7 +591,7 @@ msgctxt "message"
 msgid "00145"
 msgstr "No"
 
-msgctxt "message"
+msgctxt "MsgItemPlainName"
 msgid "00146"
 msgstr "?"
 
@@ -14507,19 +14507,19 @@ msgctxt "message"
 msgid "03624"
 msgstr "Desconocida"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "03625"
 msgstr "¡{argument_actor_name:1} apareció!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "03626"
 msgstr "¡{argument_actor_name:1} apareció!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "03627"
 msgstr "¡El equipo de {protagonist_name} ataca primero!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "03628"
 msgstr "¡Equipo {protagonist_name} fue sorprendido!"
 
@@ -20555,7 +20555,7 @@ msgctxt "message"
 msgid "05136"
 msgstr "Tiene {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgNoItems"
 msgid "05137"
 msgstr "No tiene."
 
@@ -20683,7 +20683,7 @@ msgctxt "message"
 msgid "05168"
 msgstr "Lo siento, pero no{line_break}compramos de eso.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "05169"
 msgstr "¿Qué cantidad vendes?{end_now}"
 
@@ -21191,11 +21191,11 @@ msgctxt "message"
 msgid "05295"
 msgstr "¡{argument_actor_name:1} resucitó!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "05296"
 msgstr "Cuesta {argument_signed_number} moneda{control:13}."
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "05297"
 msgstr "No necesita cura."
 

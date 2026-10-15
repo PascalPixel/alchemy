@@ -77,3 +77,65 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s3
         RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
     }
 }
+
+// Creates the stat change arrow from the up or down arrow resource the
+// menu loaded. The Broken Seal's UiIcon_CreateStatChangeArrow.
+s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
+{
+    struct RenderOutput *object;
+    u32 resource;
+    s32 v = variant;
+    struct RenderInput *w = window;
+    s32 xx = x;
+    struct ItemMenuBlocks *data = Ram_HeapSlots->menu_runtime;
+
+    if (v == 0)
+        resource = (u16)data->resource_slots[0];
+    else
+        resource = (u16)data->resource_slots[1];
+    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    if (object == 0) {
+        /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes through CSE, as in The Broken Seal; a plain return -1 gives other registers (differ 20). */
+        if (variant || xx)
+            return -1;
+        else
+            return -1;
+    }
+    object->kind = 0;
+    object->anim_step = 0;
+    object->active = 1;
+    return 1;
+}
+
+// As UiIcon_CreateStatChangeArrow, with the arrow raised three pixels for
+// the first variant and four for the second. The Broken Seal's
+// UiIcon_DrawVariantWithTileOffset.
+s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant)
+{
+    struct RenderOutput *object;
+    u32 resource;
+    s32 v = variant;
+    struct RenderInput *w = window;
+    s32 xx = x;
+    struct ItemMenuBlocks *data = Ram_HeapSlots->menu_runtime;
+
+    if (v == 0) {
+        resource = (u16)data->resource_slots[0];
+        y -= 3;
+    } else {
+        resource = (u16)data->resource_slots[1];
+        y -= 4;
+    }
+    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    if (object == 0) {
+        /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes through CSE, as in The Broken Seal; a plain return -1 gives other registers (differ 26). */
+        if (v || x)
+            return -1;
+        else
+            return -1;
+    }
+    object->kind = 0;
+    object->anim_step = 0;
+    object->active = 1;
+    return 1;
+}

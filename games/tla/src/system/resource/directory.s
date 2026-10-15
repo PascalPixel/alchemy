@@ -517,11 +517,11 @@ Resource_DirectoryTable:
 	resource , Field_GreenPanel
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA
-	resource , Resource_Data1FB
+	resource ShopGemTiles, Resource_Data1FB
 	resource MenuSmallDownArrowTiles, Resource_Data1FC
 	resource MenuArrowTiles, Resource_Data1FD
-	resource , Resource_Data1FE
-	resource , Resource_Data1FF
+	resource ShopUpArrowTiles, Resource_Data1FE
+	resource ShopDownArrowTiles, Resource_Data1FF
 	resource ItemMenuTilesA, Resource_Data200
 	resource ItemMenuTilesB, Resource_Data201
 	resource UiFixedBlockATiles, Resource_Data202

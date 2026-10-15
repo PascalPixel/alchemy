@@ -1,29 +1,43 @@
+/* Draft, differ 2 of 83 (2026-10-15), ported from The Broken Seal's Menu_RunPairedEntryAction with
+ * the first owner of each pair read into a temporary (each fixes one reordered load; differ 6
+ * without). The native reloads the saved zero (ldr r4, [sp, #20]) between the two halves of the
+ * pair's offset 0x25c; here the offset is finished first. Three minutes of alchemy permute found
+ * nothing better. */
 #include "types.h"
-extern u8 Data_03001f2c[];
+#include "ram_buffer.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+struct DjinnMenuWork {
+    u8 unknown_000[0x28];
+    s32 window;
+    u8 unknown_02c[0x0c];
+    s32 second_window;
+    u8 unknown_03c[0x216 - 0x3c];
+    u8 shown_owner[2];
+    u8 unknown_218[0x25c - 0x218];
+    u8 pair_owner[2];
+};
 
-#if defined(TBS_EDITION_JA)
+void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c, s32 param, s32 d);
+
 #define ALT_PARAM 4
-#else
-#define ALT_PARAM 2
-#endif
 
-s32 DjinnMenu_DrawStatPreview(s32, s32, s32, u8, s32, s32, s32, s32, s32);
-
-s32 Menu_RunPairedEntryAction(s32 mode, s32 param)
+s32 Func_08103168(s32 mode, s32 param)
 {
     s32 sp14;
-    void *state;
+    u8 first;
+    u8 owner;
+    struct DjinnMenuWork *menu;
 
-    state = *(void **)((u32)&Data_03001f2c);
+    menu = Ram_HeapSlots->menu_runtime;
     if (mode == 0) {
         sp14 = mode;
-        DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32 *, 0x34), 0, 0, FIELD_AT_OFFSET(state, u8 *, 0x259), 1, mode, 2, param, 1);
-        DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32 *, 0x24), 0, 0, FIELD_AT_OFFSET(state, u8 *, 0x258), mode, 1, 2, param, mode);
+        first = menu->pair_owner[1];
+        Func_08103218(menu->second_window, 0, 0, first, 1, mode, 2, param, 1);
+        Func_08103218(menu->window, 0, 0, menu->pair_owner[0], mode, 1, 2, param, mode);
     } else {
-        DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32 *, 0x34), 0, 0, FIELD_AT_OFFSET(state, u8 *, 0x21B), 1, 0, ALT_PARAM, param, 1);
-        DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32 *, 0x24), 0, 0, FIELD_AT_OFFSET(state, u8 *, 0x21A), 0, 0, 1, param, 0);
+        owner = menu->shown_owner[1];
+        Func_08103218(menu->second_window, 0, 0, owner, 1, 0, ALT_PARAM, param, 1);
+        Func_08103218(menu->window, 0, 0, menu->shown_owner[0], 0, 0, 1, param, 0);
     }
     return 1;
 }

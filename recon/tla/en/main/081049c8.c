@@ -1,50 +1,46 @@
+/* Draft, differ 2 of 71 (2026-10-15), ported from The Broken Seal's Djinn_CountTurns: at the end
+ * of the owner loop the native loads the owner count (ldrb r3) before it builds the 1 for the
+ * high-register increment (movs r2, #1; add r8, r2); here the 1 comes first. The increment is
+ * ahead of the test in RTL, so a barrier cannot order them. */
 #include "types.h"
-#include "scene.h"
-extern u8 Data_03001f2c[];
-s32 Djinn_CheckTurnBalance(s32, s32);
-void Djinn_CountTurns(u8 *);
+#include "ram_buffer.h"
 
-void Djinn_CountTurns(u8 *counts)
+struct DjinnMenuWork {
+    u8 unknown_000[0x204];
+    u16 owners[8];
+    u8 unknown_214[1];
+    u8 owner_count;
+};
+
+struct DjinnUnit {
+    u8 unknown_000[0xf8];
+    u32 djinn_available[4];
+    u32 djinn_active[4];
+};
+
+struct DjinnUnit *UnitGet(s32 unit_id);
+
+void Func_081049c8(u8 *counts)
 {
-    u8 *work;
-    u16 *owner_ids;
-    u8 *owner;
-    u32 *row;
+    struct DjinnMenuWork *work;
+    struct DjinnUnit *unit;
     s32 owner_index;
-    s32 row_index;
+    s32 element;
     s32 bit;
-    s32 active;
     s32 count;
-    u32 mask;
-    u32 one;
 
-    work = gMenuWork;
-    owner_index = 0;
-    if (owner_index < work[0x219]) {
-        one = 1;
-        owner_ids = (u16 *)(work + 0x208);
-        do {
-            owner = UnitGetFar(*owner_ids);
-            row_index = 0;
-            count = 0;
-            row = (u32 *)(owner + 0xf8);
-            do {
-                active = row[4];
-                bit = 0;
-                do {
-                    mask = one << bit;
-                    if (active & mask)
-                        count++;
-                    else if (row[0] & mask)
-                        count++;
-                    bit++;
-                } while (bit <= 19);
-                row_index++;
-                row++;
-            } while (row_index <= 3);
-            counts[owner_index] = count;
-            owner_index++;
-            owner_ids++;
-        } while (owner_index < work[0x219]);
+    work = Ram_HeapSlots->menu_runtime;
+    for (owner_index = 0; owner_index < work->owner_count; owner_index++) {
+        unit = UnitGet(work->owners[owner_index]);
+        count = 0;
+        for (element = 0; element <= 3; element++) {
+            for (bit = 0; bit <= 19; bit++) {
+                if (unit->djinn_active[element] & (1 << bit))
+                    count++;
+                else if (unit->djinn_available[element] & (1 << bit))
+                    count++;
+            }
+        }
+        counts[owner_index] = count;
     }
 }

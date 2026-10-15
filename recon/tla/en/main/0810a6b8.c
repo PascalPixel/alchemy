@@ -1,24 +1,24 @@
+/* Draft, differ 4 of 28 (2026-10-15), ported from The Broken Seal's EventTable_CopyRowHeader over
+ * this game's Data_0810c3f4: the native copies output to r5 and loads the table between the two
+ * halves of row * 33 (lsls r3, r0, #5; adds r5, r1, #0; ldr r1, =table; adds r3, r3, r0); here the
+ * add comes right after the shift. rowtype.c and 0810a670 show the same order. Three minutes of
+ * alchemy permute found nothing better. */
 #include "types.h"
 
-extern s16 EventTable_AbilityLoadouts[][33];
-s32 GameFlag_TestFar(s32);
-s32 GameFlag_SetBitFar(s32);
-void Ability_GetMaximum(s32, s32);
+extern const s16 Data_0810c3f4[][33];
 
-s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
+s32 Func_0810a6b8(s32 row_no, s16 *output)
 {
-    s16 *src;
+    const s16 *src;
     s16 *dst;
     s32 count;
 
     count = 0;
-    if (EventTable_AbilityLoadouts[row_no][0] != 0) {
+    if (Data_0810c3f4[row_no][0] != 0) {
         dst = output;
-        src = EventTable_AbilityLoadouts[row_no];
+        src = Data_0810c3f4[row_no];
         do {
-            /* FAKEMATCH: only the copy read is volatile, so its lifetime
-               stays separate from the signed sentinel read. */
-            *dst = *(volatile s16 *)src;
+            *dst = *(const volatile s16 *)src;
             count++;
             src++;
             dst++;

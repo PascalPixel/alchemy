@@ -591,7 +591,7 @@ msgctxt "message"
 msgid "00145"
 msgstr "Pas du tout"
 
-msgctxt "message"
+msgctxt "MsgItemPlainName"
 msgid "00146"
 msgstr "?"
 
@@ -14507,19 +14507,19 @@ msgctxt "message"
 msgid "03624"
 msgstr "Inconnue"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "03625"
 msgstr "{argument_actor_name:1} apparaît!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "03626"
 msgstr "{argument_actor_name:1} apparaît!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "03627"
 msgstr "Le groupe de {protagonist_name} a l'initiative!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "03628"
 msgstr "{protagonist_name} et son groupe ont été surpris!"
 
@@ -20655,7 +20655,7 @@ msgctxt "message"
 msgid "05161"
 msgstr "Mille excuses, mais nous{line_break}n'achetons pas cela.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "05162"
 msgstr "Combien en vendez-vous?{end_now}"
 
@@ -21163,11 +21163,11 @@ msgctxt "message"
 msgid "05288"
 msgstr "{argument_actor_name:1} revient{line_break}à la vie!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "05289"
 msgstr "Ressusciter: {argument_signed_number} pièce{control:13}"
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "05290"
 msgstr "Cet allié va bien."
 

@@ -12,6 +12,28 @@
 #include "ram_buffer.h"
 #include "item.h"
 
+struct EntryIconMenu {
+    u8 unknown_000[0x4c];
+    struct RenderOutput *entry_icons[32];
+};
+
+// Places each of the 32 entry icons on the grid. The Broken Seal's
+// Menu_PlaceEntryObjectsInGrid.
+void Func_081005e4(s32 origin_x, s32 origin_y, s32 phase)
+{
+    s32 i;
+    struct RenderOutput *obj;
+    struct RenderOutput **tbl;
+
+    i = 0;
+    tbl = ((struct EntryIconMenu *)Ram_HeapSlots->menu_runtime)->entry_icons;
+    do {
+        obj = *tbl++;
+        if (obj != NULL)
+            Menu_PlaceEntryObjectInGrid(obj, i, origin_x, origin_y, phase);
+        i += 1;
+    } while (i <= 0x1F);
+}
 
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {

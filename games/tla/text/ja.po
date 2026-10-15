@@ -49891,7 +49891,7 @@ msgctxt "message"
 msgid "12470"
 msgstr "その時 また あおう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene682No52"
 msgid "12471"
 msgstr "{actor_name:1}!{end_wait}"
 

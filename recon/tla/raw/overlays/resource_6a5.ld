@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x02009bc4)
         "*/resource_6a5_overlay.o"(.text.x0200aae4)
         "*/games/tla/src/field/overlay_6a5/scene_events.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x0200ba28)
+        "*/games/tla/src/field/overlay_6a5/s3a28.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200ba6c)
         "*/resource_6a5_overlay.o"(.text.x0200bc58)
         "*/games/tla/src/field/overlay_6a5/s3d9c.o"(.text)

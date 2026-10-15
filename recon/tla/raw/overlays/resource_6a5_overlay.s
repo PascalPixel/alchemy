@@ -5828,47 +5828,8 @@ Func_02002ae4:
 	.4byte Data_02005ff8
 .L_0200ba1c:
 	.4byte Data_02006088
-	.section .text.x0200ba28,"ax",%progbits
-	.global Func_02003a28
-	.thumb_func
-Func_02003a28:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r4, r1, #0
-	ldr r1, [r3, #108]
-	asrs r2, r4, #20
-	movs r3, #64
-	adds r5, r0, #0
-	subs r4, r3, r2
-	movs r0, #0
-	adds r1, #20
-.L_0200ba3e:
-	ldmia r1!, {r2}
-	cmp r2, #0
-	beq .L_0200ba62
-	ldr r3, [r2, #8]
-	ldr r2, [r2, #16]
-	asrs r3, r3, #20
-	subs r3, #4
-	asrs r2, r2, #20
-	cmp r3, #4
-	bhi .L_0200ba62
-	adds r3, r4, #0
-	adds r3, #8
-	cmp r3, r2
-	bgt .L_0200ba62
-	adds r3, #3
-	cmp r2, r3
-	bge .L_0200ba62
-	stmia r5!, {r0}
-.L_0200ba62:
-	adds r0, #1
-	cmp r0, #63
-	bls .L_0200ba3e
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200ba6c,"ax",%progbits
+	.balign 4
 	.global Func_02003a6c
 	.thumb_func
 Func_02003a6c:

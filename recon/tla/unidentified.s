@@ -2472,17 +2472,6 @@ Data_0819a140:
 	.global Data_0819a160
 Data_0819a160:
 	.incbin "baserom.gba", 0x0019a160, 0x00000048
-	.section .unidentified.081a1928,"a"
-	.incbin "baserom.gba", 0x001a1928, 0x00000080
-	.global Data_081a19a8
-Data_081a19a8:
-	.incbin "baserom.gba", 0x001a19a8, 0x000006b1
-	.global Data_081a2059
-Data_081a2059:
-	.incbin "baserom.gba", 0x001a2059, 0x00000063
-	.global DisplayScroll_LineTable
-DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x001a20bc, 0x00000344
 	.section .unidentified.081a8288,"a"
 	.global Data_081a8288
 Data_081a8288:

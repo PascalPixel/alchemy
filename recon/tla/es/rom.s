@@ -5570,12 +5570,6 @@ Func_081a15dc:
 	.incbin "baserom.gba", 0x001a15dc, 0x000001f4
 	.section .rom.001a1830, "ax"
 	.incbin "baserom.gba", 0x001a1830, 0x000000c8
-	.section .rom.001a1928, "ax"
-	.incbin "baserom.gba", 0x001a1928, 0x0000085c
-	.section .rom.001a2184, "ax"
-	.global DisplayScroll_LineTable
-DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x001a2184, 0x000006a4
 	.section .rom.001a6030, "ax"
 	.incbin "baserom.gba", 0x001a6030, 0x00000064
 	.section .rom.001a6154, "ax"

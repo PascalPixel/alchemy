@@ -1939,8 +1939,8 @@ SECTIONS
     "*/games/tla/src/graphics/display/scrlwait.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001a1830)
     "*/games/tla/src/graphics/display/scrlfade.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.001a1928)
-    "*/recon/tla/de/rom.o"(.rom.001a218c)
+    "*/games/tla/src/graphics/display/slides.o"(.rodata)
+    "*/games/tla/src/graphics/display/slides.o"(.data)
     "*/games/tla/src/graphics/display/staffrol.o"(.rodata)
     . = ABSOLUTE(0x081a6000);
     "*/games/tla/src/system/far_call/resource_b.o"(.text)

@@ -2268,7 +2268,8 @@ SECTIONS
         "*/games/tla/src/graphics/display/scrlwait.o"(.text)
         "*/recon/tla/raw/081a1830.o"(.text)
         "*/games/tla/src/graphics/display/scrlfade.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.081a1928)
+        "*/games/tla/src/graphics/display/slides.o"(.rodata)
+        "*/games/tla/src/graphics/display/slides.o"(.data)
         "*/games/tla/src/graphics/display/staffrol.o"(.rodata)
         . = ABSOLUTE(0x081a6000);
         "*/games/tla/src/system/far_call/resource_b.o"(.text)

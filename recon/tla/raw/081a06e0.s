@@ -230,7 +230,7 @@ Func_081a06e0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081a08ac:
-	.4byte Data_081a19a8
+	.4byte DisplayScroll_SlideResources
 .L_081a08b0:
 	.4byte gInput
 .L_081a08b4:

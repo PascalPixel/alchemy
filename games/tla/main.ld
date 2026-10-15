@@ -2054,8 +2054,8 @@ SECTIONS
     "*/games/tla/src/graphics/display/scrlwait.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a181c)
     "*/games/tla/src/graphics/display/scrlfade.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.001a1914)
-    "*/recon/tla/ja/rom.o"(.rom.001a2254)
+    "*/games/tla/src/graphics/display/slides.o"(.rodata)
+    "*/games/tla/src/graphics/display/slides.o"(.data)
     "*/games/tla/src/graphics/display/staffrol.o"(.rodata)
     . = ABSOLUTE(0x081a6000);
     "*/games/tla/src/system/far_call/resource_b.o"(.text)

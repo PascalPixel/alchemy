@@ -42,7 +42,7 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x0200c294)
         "*/resource_670_overlay.o"(.text.x0200c424)
         "*/resource_670_overlay.o"(.text.x0200c524)
-        "*/resource_670_overlay.o"(.text.x0200c5d0)
+        "*/games/tla/src/field/overlay_670/s45d0.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200c7e4)
         "*/games/tla/src/field/overlay_670/s489c.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200ca28)

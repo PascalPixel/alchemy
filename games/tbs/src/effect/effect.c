@@ -2717,6 +2717,11 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Wipes the whole canvas to one colour with a ragged edge: each row (or
+// column) lags a random 0 to 63 pixels behind the front, which speeds up as
+// it goes. Returns when the wipe is done, a frame at a time.
+// mode  : 1 sweeps left to right; anything else sweeps top to bottom.
+// value : 0 wipes to colour 1, 1 wipes to colour 0 (clears the canvas).
 void BattleEffect_WipeCanvas(s32 mode, s32 value) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -2730,6 +2735,8 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 
+  // The canvas is 16x16 tiles of 8x8 pixels; (x, y) is byte
+  // ((y / 8 * 16 + x / 8) * 8 + y % 8) * 8 + x % 8.
   if (mode == 1) {
     s32 front;
     s32 speed;
@@ -2777,24 +2784,28 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
   }
 }
 
+// Scheduler callback of nearly every effect: when the effect has finished
+// drawing a frame (transferPending), copies the 128x128 canvas into BG2's
+// character block 1 the way transferMode says, and counts the frames since
+// the last copy.
 void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
-  void **heapCache = gBattleFxWork;
-  struct BattleEffectWork *work = heapCache[0];
+  void **slots = gBattleFxWork;
+  struct BattleEffectWork *work = slots[0];
   void *source;
   s32 *counter;
   s32 nextCounter;
 
   if (work->transferPending == 1) {
-    source = heapCache[1];
+    source = slots[1];
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)0x06004000, source, 0x4000);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)0x06004000, source, 0x4000);
       Iwram_FillWords(source, 0x4000, work->transferValue);
       break;
-    case 2:
+    case CANVAS_COPY_AND_FADE:
       if (work->transferValue == 50) {
         ColorBuffer_BackupAndHalve(source, (void *)0x06004000, 0x4000);
       } else {
@@ -2802,11 +2813,11 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
                                                 0x4000);
       }
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_BackupAndDarken(source, work->transferValue,
                                   (void *)0x06004000, 0x4000);
       break;
-    case 4:
+    case CANVAS_COPY_AND_BRIGHTEN:
       ColorBuffer_BackupAndBrighten(source, work->transferValue,
                                     (void *)0x06004000, 0x4000);
       break;
@@ -2821,28 +2832,31 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
+// The same for the effects that draw a full-screen picture in
+// gMapCellBuffer instead of the canvas: copies its 0x7800 bytes to VRAM
+// 0x06008000 the way transferMode says (modes 0 to 3).
 void BattleFx_FlushPendingGraphicsTransfer(void) {
-  void **heapCache;
+  void **slots;
   struct BattleEffectWork *work;
   void *source;
   s32 transferMode;
 
-  heapCache = gBattleFxWork;
-  work = heapCache[0];
+  slots = gBattleFxWork;
+  work = slots[0];
   source = Ram_MapCellBuffer;
   if (work->transferPending != 1)
     return;
 
   transferMode = work->transferMode;
   switch (transferMode) {
-  case 0:
+  case CANVAS_COPY:
     Iwram_CopyWords((void *)0x06008000, source, 0x7800);
     break;
-  case 1:
+  case CANVAS_COPY_AND_CLEAR:
     Iwram_CopyWords((void *)0x06008000, source, 0x7800);
     Iwram_FillWords(source, 0x7800, work->transferValue);
     break;
-  case 2:
+  case CANVAS_COPY_AND_FADE:
     if (work->transferValue == 50) {
       ColorBuffer_BackupAndHalve(source, (void *)0x06008000, 0x7800);
     } else {
@@ -2850,7 +2864,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
                                               0x7800);
     }
     break;
-  case 3:
+  case CANVAS_COPY_AND_DARKEN:
     ColorBuffer_BackupAndDarken(source, work->transferValue, (void *)0x06008000,
                                 0x7800);
     break;
@@ -2859,8 +2873,12 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
   work->transferPending = 0;
 }
 
+// One step of the background palette fade, in 1/65536ths of full
+// brightness: 24 steps take it from full to 60%.
 #define FADE_STEP 1092
 
+// Writes the window, display and blend registers the effect keeps in its
+// work, all at once.
 void Graphics_ApplyWindowBlendRegisters(void) {
   struct BattleEffectWork *work = gBattleFxWork[0];
 
@@ -2875,6 +2893,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
   REG_BLDALPHA = work->bldalpha;
 }
 
+// Writes the effect's background 2 reference point to the hardware.
 void Display_ApplyBg2Reference(void) {
   struct BattleEffectWork *work = gBattleFxWork[0];
 
@@ -2882,6 +2901,9 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
+// Scheduler callback while the canvas is open: for fadeFrames frames,
+// darkens the battle backdrop's colours one FADE_STEP more each frame into
+// background palettes 6 to 13, so the effect stands out.
 void Palette_StepFadeTransfer(void) {
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
@@ -2896,12 +2918,15 @@ void Palette_StepFadeTransfer(void) {
   }
 }
 
+// Clears every target's flash timer.
 void BattleFx_ClearActorTimers(void) {
   Iwram_ClearWords(
       (*(struct BattleEffectWork **)gBattleFxWork)->actorTimers,
       sizeof((*(struct BattleEffectWork **)gBattleFxWork)->actorTimers));
 }
 
+// Counts down each target's flash timer, which ObjectGroup_UpdateMembers
+// starts; when one runs out, the target gets its own palette back.
 void ObjectGroup_TickMemberTimers(void) {
   struct BattleEffectWork *work;
   s32 i;
@@ -2919,25 +2944,23 @@ void ObjectGroup_TickMemberTimers(void) {
 }
 
 //--------------------------------------------------------------------------
-// canvas.c
-// バトル演出：BG2 のキャンバス面を開く・閉じる
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// キャンバスは 128x128 の 8bpp（0x4000 バイト）で、BG2 のアフィン面に
-// キャラクタブロック 1 から並べる。横は 2 倍に伸ばして 256 ドットで見せる
+// The canvas layer: BG2 shows the effect's 128x128 8bpp canvas (0x4000
+// bytes), its tiles from character block 1, stretched to twice the width
+// so it spans 256 pixels.
 //
-// REG_DISPCNT（モード 1・OBJ 1 次元）
-//   0x7741 : BG0〜2・OBJ・WIN0/1
-//   0x7341 : BG0・BG1・OBJ・WIN0/1（BG2 を消す）
-//   0x7541 : BG0・BG2・OBJ・WIN0/1（BG1 を消す）
-//   0x1741 : BG0〜2・OBJ
-//   0x1341 : BG0・BG1・OBJ
-//   0x1541 : BG0・BG2・OBJ
+// REG_DISPCNT values used here (mode 1, 1D sprites):
+//   0x7741 : BG0 to BG2, sprites, windows 0 and 1
+//   0x7341 : BG0, BG1, sprites, windows 0 and 1 (BG2 hidden)
+//   0x7541 : BG0, BG2, sprites, windows 0 and 1 (BG1 hidden)
+//   0x1741 : BG0 to BG2, sprites
+//   0x1341 : BG0, BG1, sprites
+//   0x1541 : BG0, BG2, sprites
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// キャンバス面を開く（背景パレットをフェードさせ、BG2 をキャンバスにする）
-// bg_control : REG_BG2CNT に足す値
-//--------------------------------------------------------------------------
+
+// Opens the canvas layer: starts the background palette fade, makes BG2 the
+// canvas, alpha-blended over the battle, inside the effect windows, and
+// clears the canvas.
+// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleFx_BeginCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -2956,13 +2979,13 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   WaitFrames(1);
 
-  // 背景パレットのフェードを始める
+  // Start the background palette fade.
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
 
-  // BG2 を消している間に設定を変える
+  // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   WaitFrames(1);
   REG_BG2CNT = bgControl | 0x784;
@@ -2971,24 +2994,24 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   display->secondMode = 0;
   WaitFrames(1);
 
-  REG_BLDCNT = 0x3f44;   // BG2 を半透明にして下の面と重ねる
+  REG_BLDCNT = 0x3f44;   // alpha-blend BG2 over everything
   REG_BLDALPHA = 0x100e; // 14:16
   REG_BG2X = 0;
-  REG_BG2Y = -0x1000; // 16 ライン下げる
-  REG_BG2PA = 0x80;   // 横 2 倍
+  REG_BG2Y = -0x1000; // 16 lines down
+  REG_BG2PA = 0x80;   // twice the width
   REG_BG2PB = 0;
   REG_BG2PC = 0;
   REG_BG2PD = 0x100;
-  REG_WIN0H = 0xf0;   // 0〜240
-  REG_WIN0V = 0x1088; // 16〜136
+  REG_WIN0H = 0xf0;   // 0 to 240
+  REG_WIN0V = 0x1088; // 16 to 136
   REG_WIN1H = 0xf0;
   REG_WIN1V = 0x1088;
   REG_WININ = 0x3537;
   REG_WINOUT = 0x3f21;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 
-  // スクリーン：16x16 キャラクタを順に並べる（1 キャラ 1 バイトなので 2
-  // 個ずつ書く）
+  // The screen map: the 16x16 tiles in order. An affine map has one byte
+  // per tile, so they are written two at a time.
   offset = 0;
   for (row = 0; row != 16; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
@@ -3009,10 +3032,10 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 }
 
-//--------------------------------------------------------------------------
-// キャンバス面を開く（ウインドウなしで始め、fadeFrames を 24 にする版）
-// bg_control : REG_BG2CNT に足す値
-//--------------------------------------------------------------------------
+// Opens the canvas layer as BattleFx_BeginCanvasLayer does, but with the
+// windows off until the end, the backdrop palette starting half faded, and
+// a 24-frame fade.
+// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleFx_OpenCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -3076,11 +3099,10 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 }
 
-//--------------------------------------------------------------------------
-// キャンバス面を開き、BG2 を 256x256 の折り返しありにする
-// スクリーンの各行は 16 キャラのキャンバスと、16 キャラの 0 番
-// bg_control : REG_BG2CNT に足す値
-//--------------------------------------------------------------------------
+// Opens the canvas layer with BG2 a wrapping 256x256 map: each row of the
+// map is the canvas's 16 tiles followed by 16 of tile 0, so the canvas
+// repeats across the screen with gaps.
+// bg_control : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleFx_BeginTiledCanvas(s32 bg_control) {
   s32 row;
   s32 col;
@@ -3104,9 +3126,10 @@ void BattleFx_BeginTiledCanvas(s32 bg_control) {
   }
 }
 
-//--------------------------------------------------------------------------
-// キャンバス面を閉じ、背景パレットのレベルを 8 フレームで 21 から 0 へ戻す
-//--------------------------------------------------------------------------
+// Closes the canvas layer: plays the closing sound, restores BG1's scroll
+// and the projection centre, clears the canvas tiles, stops the palette
+// fade and brings the backdrop's palette back from level 21 to 0 over 8
+// frames, then shows BG2 again and hides BG1.
 void BattleFx_EndCanvasLayer(void) {
   struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -3136,9 +3159,7 @@ void BattleFx_EndCanvasLayer(void) {
   WaitFrames(1);
 }
 
-//--------------------------------------------------------------------------
-// BG1 とウインドウを消して、背景パレットのフェードを設定する
-//--------------------------------------------------------------------------
+// Hides BG1 and the windows and starts bringing the backdrop's palette back.
 void BattleFx_SetTransitionFlagAndDisplay(void) {
   struct BattleWork *battle;
   s32 *flag;
@@ -3154,6 +3175,10 @@ void BattleFx_SetTransitionFlagAndDisplay(void) {
   WaitFrames(1);
 }
 
+// Sets up BG1, instead of BG2, as a 256-colour picture layer for the
+// effects that draw full screen into gMapCellBuffer: a 16-row map of tiles
+// 0x100 onwards beside blank tiles, BG1 blended over the rest, and the
+// effect windows. Also clears the canvas.
 void BattleFx_SetupCanvasTileMap(void) {
   u8 **cells = (u8 **)&gBattleWork;
   void *canvas = cells[31];
@@ -3179,8 +3204,8 @@ void BattleFx_SetupCanvasTileMap(void) {
     }
   }
   REG_DISPCNT = 0x7741;
-  REG_BG1CNT = 0x1f81;
-  REG_BLDCNT = 0x3f42;
+  REG_BG1CNT = 0x1f81; // 256 colours, map at block 31
+  REG_BLDCNT = 0x3f42; // alpha-blend BG1 over everything
   REG_WIN0H = 0xf0;
   REG_WIN0V = 0x1088;
   REG_WIN1H = 0xf0;
@@ -3193,24 +3218,18 @@ void BattleFx_SetupCanvasTileMap(void) {
   WaitFrames(1);
 }
 
-//--------------------------------------------------------------------------
-// canvas_draw_clipped_line.c
-// バトル演出：キャンバスへ線を引く（y をキャンバス内に収める）
-//--------------------------------------------------------------------------
-
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-//--------------------------------------------------------------------------
-// 128x128 の 8bpp キャンバス（横 16 タイル）に線を引く
-// 既にある色番号より大きいときだけ書き込む
-// x0, y0 : 始点（ドット）
-// x1, y1 : 終点（ドット）
-// color  : 色番号
-//--------------------------------------------------------------------------
+// Draws a line on the 128x128 8bpp canvas (16 tiles across), keeping the
+// brighter colour where it crosses what is already drawn. The ends' y is
+// kept on the canvas; x is not.
+// x0, y0 : the start, in pixels
+// x1, y1 : the end, in pixels
+// color  : the colour index
 void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
-  s32 frac = 0x80; // 8bit 小数の 0.5
+  s32 frac = 0x80; // 0.5 in 8-bit fixed point
   u8 *canvas = ((u8 **)gBattleFxWork)[1];
   s32 step;
   s32 i;
@@ -3229,7 +3248,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
     y1 = 127;
 
   if (ABS(dx) < ABS(dy)) {
-    // 縦長：y を 1 ドットずつ進め、x は小数で追う
+    // Steep: step y a pixel at a time and follow x in fixed point.
     if (dy < 0) {
       tmp = x0;
       x0 = x1;
@@ -3257,7 +3276,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       }
     }
   } else {
-    // 横長：x を 1 ドットずつ進め、y は小数で追う
+    // Shallow: step x a pixel at a time and follow y in fixed point.
     if (dx < 0) {
       tmp = x0;
       x0 = x1;
@@ -3288,30 +3307,31 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 }
 
 //--------------------------------------------------------------------------
-// 炎になって落ちる跳躍
+// The leap that falls as a ball of fire.
 //--------------------------------------------------------------------------
-// 破片 1 つ。PARTICLES と同じ 28 バイトの置き場で、速さの位置が struct
-// EffectStep と違う
+
+// One chip of the impact, laid over the same 28-byte records as PARTICLES
+// but with its velocities in other places than struct EffectStep's.
 struct Chip {
-  s32 x; // 画面座標 (16.16 固定小数)
+  s32 x; // canvas position, 16.16 fixed point
   s32 y;
   s32 velocityX;
   s32 unused0c;
   s32 velocityY;
   s32 unused14;
-  s32 life; // 残りフレーム
+  s32 life; // frames left
 };
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-//--------------------------------------------------------------------------
-// 使い手が光って跳び上がり、炎の玉になって最初の対象へ落ち、破片を散らす
-// effect : side が落ちる向きを、actors[0] が落ちる先を決める
-//--------------------------------------------------------------------------
+// Battle effect 60: the user flashes and leaps into the air, turns into a
+// ball of fire, falls onto the first target and bursts into chips that
+// bounce on the ground. 88 frames.
+// effect->side says which way the ball falls; actors[0] is where it lands.
 void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   BlitterPair draw;
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -3323,24 +3343,26 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
+  // A sheet resource is its palette followed by its packed images.
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-  draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
-  work->transferMode = 2;
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -3349,6 +3371,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
     gChips[i].life = 0;
   actor = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // The ball falls 15 pixels a frame towards the middle of the field.
   if (actor->x > 0)
     dx = -(15 << 16);
   else
@@ -3364,7 +3387,8 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
       pos.x /= 2;
     }
 
-    // 光 : 2〜3 は使い手の上に、4〜15 は 16 方向へ広がる
+    // The flash: frames 2 and 3 on the user, frames 4 to 15 spreading in
+    // 16 directions.
     if (frame >= 2 && frame <= 3)
       draw[0](canvas, work, pos.x - 16, pos.y - 64, 32, 64);
     if (frame >= 4 && frame <= 15) {
@@ -3376,7 +3400,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
                 32, 64);
       }
     }
-    // 跳び上がる
+    // Frame 4: the user leaps, heading out past its own position.
     if (frame == 4) {
       actor->velocityY = 20 << 16;
       actor->acceleration = 1 << 16;
@@ -3389,7 +3413,8 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
       work->shakeFrames = frame;
       AudioCommand_PlayFar(136);
     }
-    // 炎の玉の絵に切りかえ、対象と同じ奥行きにそろえる
+    // Frame 16: switch to the fireball images and line the user up with
+    // the target's depth.
     if (frame == 16) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -3401,7 +3426,9 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
       actor->z = target->z;
       ObjectDispatch_InitFromTable6Far(actor);
     }
-    // 1 フレームに横へ 15、下へ 8 ドット落ち、地面に着いたら破片を 256 個散らす
+    // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
+    // the ground, throw out 256 chips, and the target recoils and flashes
+    // as the battle shows the damage.
     if (frame > 17) {
       if (actor->y > 0) {
         actor->x += dx;
@@ -3437,7 +3464,8 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 破片 : 1 フレームに 56/64 へ減速して落ち、y = 112 で跳ね返る
+    // Chips: slow to 56/64 of their speed each frame, fall, and bounce at
+    // half speed off y 112; only those on the canvas are drawn.
     for (i = 0; i != 256; i++) {
       struct Chip *chip = &gChips[i];
       s32 y;
@@ -3472,18 +3500,18 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Closing skulls.
 //--------------------------------------------------------------------------
-// 集まるどくろ
-//--------------------------------------------------------------------------
-// PARTICLES : 対象ひとりに 64 個
-//--------------------------------------------------------------------------
-// 対象ごとに 32 フレームずつずらして、まわり 64 ドットに散ったどくろを
-// 4 フレームおきに 8 つ出し、回りながら対象へ寄せる
-//--------------------------------------------------------------------------
+
+// Battle effect 39: around each target in turn, 32 frames apart, eight
+// skulls appear one every 4 frames, scattered up to 64 pixels away, and
+// close in on a point 20 pixels above the target while the group spins; the
+// effect layer ripples throughout. PARTICLES holds 64 skulls per target, of
+// which the first 8 are used.
 void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   s32 point[3];
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -3494,8 +3522,8 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
@@ -3506,13 +3534,14 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-  draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
+                        COMPOSITE_ADDITIVE);
+  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
+  work->transferMode = CANVAS_COPY_AND_DARKEN;
+  work->transferValue = 0x04040404; // 4 off every pixel each frame
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -3527,10 +3556,10 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
     s32 *row;
 
     camera = gCameraWork;
-    if (frame == 96)
+    if (frame == 96) // the battle shows the damage
       BattleEventRuntime_BeginPhaseFar(0);
 
-    // 背景を走査線ごとに横へ波打たせる
+    // Ripple the canvas sideways, line by line.
     row = work->bg2X;
     if (work->effect->side == 0) {
       for (i = 0; i != 160; i++)
@@ -3544,7 +3573,8 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
       struct MotionObject *target =
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
-      // 対象の 20 ドット上を中心に、毎フレーム回す
+      // Centre on the point 20 pixels above the target and spin the group
+      // about it.
       Render_ResetTransformState();
       Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
       point[0] = target->x;
@@ -3556,7 +3586,8 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
         if (frame == k * 32 + 32)
           ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 32);
 
-        // どくろは中心までの距離の 1/距離ずつ寄る
+        // Each skull steps one pixel nearer the centre a frame; skulls take
+        // one of three images in turn.
         for (i = 0; i != 8; i++) {
           struct EffectStep *skull = &PARTICLES[k * 64 + i];
 
@@ -3593,11 +3624,13 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect) {
 }
 
 //--------------------------------------------------------------------------
-// 回る渦 : 対象ごとに 16 フレームずつずらして、40 ドット上で
-// 半径 16 ドットの渦を 4 つ回す (60 フレーム)
+// Battle effect 34: four spirals circle 40 pixels above each target in turn,
+// 16 frames apart, for 60 frames each, 16 pixels out from the centre; each
+// target plays animation 5 halfway through. The effect layer ripples
+// throughout.
 //--------------------------------------------------------------------------
 void BattleFx_RunMemberOrbit(void *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -3609,25 +3642,27 @@ void BattleFx_RunMemberOrbit(void *effect) {
   s32 offsetX;
   s32 frame;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = 0x100; // unscaled
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01((u8 *)palette + 128, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
-  draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  // On the party's side the canvas is scrolled 104 pixels left.
   if (work->effect->side == 1) {
     REG_BG2X = -0x6800;
     offsetX = -112;
@@ -3639,7 +3674,7 @@ void BattleFx_RunMemberOrbit(void *effect) {
     s32 *row;
     s32 i;
 
-    // 背景を走査線ごとに横へ波打たせる
+    // Ripple the canvas sideways, line by line.
     camera = gCameraWork;
     row = work->bg2X;
     if (work->effect->side == 0) {
@@ -3678,7 +3713,8 @@ void BattleFx_RunMemberOrbit(void *effect) {
           point[2] = obj->z;
           EffectPosition_ApplyBaseAndYOffset(point, &screen);
 
-          // 渦 (32×32) : 4 コマ、16 フレームごとに描画関数を入れかえる
+          // The spirals (32x32) a quarter turn apart, through four images,
+          // turned upside down every other 16 frames.
           for (i = 0; i != 4; i++) {
             s32 x;
             s32 y;
@@ -3707,29 +3743,35 @@ void BattleFx_RunMemberOrbit(void *effect) {
 }
 
 //--------------------------------------------------------------------------
-// 散って集まる光 (mode が色を決める)
+// Lights that scatter from the user and gather into each target.
 //--------------------------------------------------------------------------
+
+// Battle effect 50: pink lights.
 void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunMemberBurst(effect, 0);
 }
 
+// Battle effect 308: lights in Mars Djinn colours.
 void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunMemberBurst(effect, 1);
 }
 
+// Battle effect 351: lights in Mercury Djinn colours.
 void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect) {
   BattleFx_RunMemberBurst(effect, 2);
 }
 
-//--------------------------------------------------------------------------
-// 対象ごとに光の粒を使い手から散らし、30 フレームのちから対象の体の中ほどへ
-// 引き寄せ、32 ドット以内に入ったら消す
-// mode : 0 は PinkBurstSheet、1 は MarsDjinnSheet、2 は MercuryDjinnSheet の色
-//--------------------------------------------------------------------------
+// For each target in turn, 20 frames apart, lights burst out of the user;
+// 30 frames after each one appears it is pulled towards the middle of the
+// target's body and goes out when it is within 32 pixels across. Each
+// target is struck 70 frames after its turn starts, and the battle shows the
+// damage at frame 80. The effect layer ripples throughout.
+// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
+//        gMemberBurst_Counts: lights per target and frames.
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition pos;
   BlitterPair draw;
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -3739,11 +3781,11 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
   s32 pal;
   s32 i;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = heap[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   Resource_DecodeType01(
@@ -3757,7 +3799,8 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(pal), 128);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
 
-  // 粒 : 使い手の体の高さから、どの向きにも 2 ドットまでの速さで散る
+  // The lights start at the top of the user's body and fly off in any
+  // direction at up to 2 pixels a frame.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   for (k = 0; k != work->effect->count; k++) {
@@ -3779,7 +3822,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -3792,14 +3835,14 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
 
     if (frame == 80) {
       if (mode == 0)
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
       else
         BattleEventRuntime_BeginPhaseFar(133);
     }
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
-    // 背景を走査線ごとに横へ波打たせる
+    // Ripple the canvas sideways, line by line.
     row = work->bg2X;
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
@@ -3811,7 +3854,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
-          AudioCommand_PlayFar(134);
+          AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
         else
           AudioCommand_PlayFar(133);
       }
@@ -3856,14 +3899,12 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 //--------------------------------------------------------------------------
-// earthwal.c
-// バトル演出：キャンバス描画ルーチンの準備と、48 フレームの壁の演出
+// The canvas blitters, and the 48-frame wall effects.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 128×128 のキャンバスへ描く 2 つのルーチンを組み立てる
-// flip : 0 以外なら左右反転して描く
-// out  : [0] 比較合成 (大きい色番号を残す)、[1] 加算合成 (63 で飽和)
-//--------------------------------------------------------------------------
+
+// Builds the two usual routines that draw onto the 128x128 canvas.
+// flip : nonzero draws mirrored.
+// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,

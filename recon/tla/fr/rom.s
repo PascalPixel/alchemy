@@ -4126,7 +4126,10 @@ Func_081638d0:
 	.incbin "baserom.gba", 0x001638d0, 0x00000330
 	.section .rom.00163c2c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00163c2c, 0x00000fc8
+	.incbin "baserom.gba", 0x00163c2c, 0x0000015c
+	.section .rom.00163e14, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00163e14, 0x00000da0
 	.section .rom.00164c0a, "ax"
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.section .rom.00164cc4, "ax"
@@ -4164,7 +4167,8 @@ Func_0816729c:
 	.type Func_08168a40, %function
 	.thumb_func
 Func_08168a40:
-	.incbin "baserom.gba", 0x00168a40, 0x00000990
+	.incbin "baserom.gba", 0x00168a40, 0x00000970
+	.section .rom.001693d0, "ax"
 	.global Func_081693d0
 	.type Func_081693d0, %function
 	.thumb_func

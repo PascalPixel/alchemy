@@ -1,23 +1,38 @@
-//--------------------------------------------------------------------------
-// particle_stream_modes.c
-// 戦闘エフェクト：粒子の流れのモード 0・1 の入口
-//--------------------------------------------------------------------------
-
 #include "types.h"
+#include "ram_buffer.h"
+#include "dma.h"
+#include "io_reg.h"
 #include "battle_efx.h"
 
-//--------------------------------------------------------------------------
-// 粒子の流れをモード 0 で走らせる
-//--------------------------------------------------------------------------
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *efx)
+// The Broken Seal's BattleFx_ArmPaletteHBlankDma: stops DMA 0, then arms it
+// to copy one palette line from the battle effect work into the BG palette
+// at each horizontal blank.
+void Func_08164bb4(void)
 {
-	BattleEffect_RunParticleStreams(efx, 0);
+    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    volatile u16 *channel = REG_DMA0;
+    u32 palette;
+
+    /* FAKEMATCH: the one-pass block reads the control word back before its mask is started (one reordered row, differ 2 without it). */
+    do {
+        channel[5] &= 0xc5ff;
+        channel[5] &= 0x7fff;
+    } while (0);
+    palette = 0xa0;
+    /* FAKEMATCH: the empty asm holds the palette address's first half, so it is started before the control word is read and shifted after, as the native does; as a plain constant both halves follow the source offset (one reordered row, differ 2 without it). */
+    __asm__("" : "+l"(palette));
+    (void)channel[5];
+    Dma_Set(work + 0x7640, (void *)(palette << 19), 0xa2600001, (volatile u32 *)channel);
 }
 
-//--------------------------------------------------------------------------
-// 粒子の流れをモード 1 で走らせる
-//--------------------------------------------------------------------------
+// The particle streams in mode 0.
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *efx)
+{
+    BattleEffect_RunParticleStreams(efx, 0);
+}
+
+// The particle streams in mode 1.
 void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
 {
-	BattleEffect_RunParticleStreams(efx, 1);
+    BattleEffect_RunParticleStreams(efx, 1);
 }

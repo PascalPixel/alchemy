@@ -3132,6 +3132,8 @@ SECTIONS
         "*/games/tla/src/graphics/battle_fx/sheet_0c8.o"(.rodata)
         "*/games/tla/src/graphics/battle_fx/sheet_0c9.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0888b789)
+        "*/games/tla/src/graphics/battle_fx/sheet_0ca.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0888b7b6)
         "*/games/tla/src/graphics/battle_fx/sheet_0cb.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0888bf75)
         "*/games/tla/src/graphics/battle_fx/cloud_swirl.o"(.rodata)

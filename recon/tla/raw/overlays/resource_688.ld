@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_688_overlay.o"(.text.x02008190)
         "*/games/tla/src/field/overlay_688/prepare.o"(.text)
         "*/resource_688_overlay.o"(.text.x02008310)
-        "*/resource_688_overlay.o"(.text.x020083cc)
+        "*/games/tla/src/field/overlay_688/s03cc.o"(.text)
         "*/games/tla/src/field/overlay_688/import.o"(.text)
         "*/games/tla/src/field/overlay_688/data.o"(.data)
     }

@@ -2137,7 +2137,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/variant_i.o"(.text)
         "*/recon/tla/raw/08173aac.o"(.text)
         "*/recon/tla/raw/08175f74.o"(.text)
-        "*/recon/tla/raw/08178680.o"(.text)
+        "*/games/tla/src/battle/effect/strip_quads.o"(.text)
         "*/recon/tla/raw/08178710.o"(.text)
         "*/recon/tla/raw/08178ee4.o"(.text)
         "*/recon/tla/raw/08179394.o"(.text)

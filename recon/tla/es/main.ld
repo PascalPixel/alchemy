@@ -2050,6 +2050,8 @@ SECTIONS
         "*/recon/tla/es/rom.o"(.rom.00173588)
         "*/games/tla/src/battle/effect/variant_i.o"(.text)
         "*/recon/tla/es/rom.o"(.rom.00173aac)
+        "*/games/tla/src/battle/effect/strip_quads.o"(.text)
+        "*/recon/tla/es/rom.o"(.rom.00178710)
         "*/games/tla/src/battle/effect/f17b5d4.o"(.text)
         "*/recon/tla/es/rom.o"(.rom.0017b66c)
         "*/games/tla/src/battle/effect/set_record_priority.o"(.text)

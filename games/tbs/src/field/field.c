@@ -124,90 +124,117 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   return start;
 }
 
+// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
+// run from RAM) and uploads a finished buffer to sprite VRAM
+// (Tile_CopyStrided).
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
+// Animation script commands. A script is pairs of bytes, a command and its
+// argument; a command below 239 shows that frame for `arg` frames at normal
+// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
+enum AnimationCommand {
+  ANIM_CMD_END = 239,      // blank the layer and stop its script
+  ANIM_CMD_SET_KIND = 240, // use facing table `arg`
+  ANIM_CMD_HOLD = 241,     // stay on this command and frame for good
+  ANIM_CMD_WAIT = 245,     // keep the current frame `arg` frames longer
+  ANIM_CMD_JUMP = 253,     // continue at script position `arg`
+  ANIM_CMD_PLAY = 254,     // switch to animation `arg`
+  ANIM_CMD_BLANK = 255     // show nothing for `arg`
+};
+
+// Advances a sprite's animation layers by one frame, picks each layer's frame
+// for the facing dir, and when any frame changed redraws the sprite: the
+// layers composed by priority into one pixel buffer, an optional outline,
+// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
+// 0's frame for this facing is drawn mirrored.
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
-  s32 changed;
+  s32 mirrored;
   u32 size;
-  struct ObjectSystemWork *ctx;
-  DrawFn draw;
-  s32 held;
-  struct AnimationEntry *e;
-  void *block;
-  u8 *buf;
-  u8 *tmp;
+  struct ObjectSystemWork *system;
+  DrawFn decodeFrame;
+  s32 decoderWasLoaded;
+  struct AnimationEntry *layer;
+  void *code;
+  u8 *pixels;
+  u8 *unpacked;
   void *decoded;
-  u16 order[4];
+  u16 drawOrder[4];
   s32 i;
   s32 k;
-  s32 n;
+  s32 drawCount;
   u32 key;
   s32 arg;
-  s32 base;
-  u32 attr;
+  s32 frame;
+  u32 facing;
   s32 tile;
 
-  changed = 0;
-  ctx = (*(void *(*)[]) & gMenuCtrlWork)[0];
-  held = 1;
-  draw =
+  // The object system's work and the frame decoder sit in the heap slot
+  // table; load the decoder into RAM for this call if no one else has.
+  mirrored = 0;
+  system = (*(void *(*)[]) & gMenuCtrlWork)[0];
+  decoderWasLoaded = 1;
+  decodeFrame =
       (DrawFn)(*(void *(*)[]) &
                gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
-  if (draw == 0) {
-    block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER,
-                                      (s32)Render_DecodeFrameCodeSize);
-    Dma_Set(Render_DecodeFrame, block,
+  if (decodeFrame == 0) {
+    code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER,
+                                     (s32)Render_DecodeFrameCodeSize);
+    Dma_Set(Render_DecodeFrame, code,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE32 | DMA_32BIT),
             REG_DMA3);
-    draw = (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER -
-                                                    HEAP_SLOT_MENU_CONTROL];
-    held = 0;
+    decodeFrame =
+        (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER -
+                                                 HEAP_SLOT_MENU_CONTROL];
+    decoderWasLoaded = 0;
   }
 
+  // Step each layer's script: read commands until one shows a frame for a
+  // while, else count the current frame's time down.
   for (i = 0; i < obj->count; i++) {
-    e = obj->entries[i];
-    if (e == 0) {
+    layer = obj->entries[i];
+    if (layer == 0) {
       continue;
     }
-    if (e->script == 0) {
+    if (layer->script == 0) {
       continue;
     }
     /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command
      * back-edges and the decoded frame value separate from the hold reload. */
   read_command:
-    if ((s16)e->timer <= 0) {
-      base = e->script[e->pos++];
-      arg = e->script[e->pos++];
-      switch (base) {
-      case 254:
-        Animation_SetWorkEntry(e, arg);
+    if ((s16)layer->timer <= 0) {
+      frame = layer->script[layer->pos++];
+      arg = layer->script[layer->pos++];
+      switch (frame) {
+      case ANIM_CMD_PLAY:
+        Animation_SetWorkEntry(layer, arg);
         obj->lastNo = arg;
         break;
-      case 253:
-        e->pos = arg;
+      case ANIM_CMD_JUMP:
+        layer->pos = arg;
         break;
-      case 245:
-        e->timer += arg << 4;
+      case ANIM_CMD_WAIT:
+        layer->timer += arg << 4;
         break;
-      case 241:
-        e->pos -= 2;
+      case ANIM_CMD_HOLD:
+        layer->pos -= 2;
         goto framed;
-      case 240:
-        e->kind = arg;
+      case ANIM_CMD_SET_KIND:
+        layer->kind = arg;
         break;
-      case 255:
-        e->frameBase = 255;
-        base = 255;
-        e->timer += arg << 4;
+      case ANIM_CMD_BLANK:
+        layer->frameBase = 255;
+        frame = 255;
+        layer->timer += arg << 4;
         goto select_direction;
-      case 239:
-        e->frameBase = 255;
-        e->script = 0;
-        base = 255;
+      case ANIM_CMD_END:
+        layer->frameBase = 255;
+        layer->script = 0;
+        frame = 255;
         obj->count--;
         goto select_direction;
+      // Unused commands, skipped. 251 is not among them: it shows as a frame.
       case 242:
       case 243:
       case 244:
@@ -219,123 +246,135 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       case 252:
         break;
       default:
-        e->frameBase = base;
-        e->timer += arg << 4;
+        layer->frameBase = frame;
+        layer->timer += arg << 4;
         goto select_direction;
       }
       goto read_command;
     }
-    e->timer = e->timer - e->step;
+    layer->timer = layer->timer - layer->step;
   framed:
-    base = e->frameBase;
+    frame = layer->frameBase;
   select_direction:
-    switch (e->kind) {
+    // The facing table of the layer's kind gives an offset from the base
+    // frame (low three bits) and whether to mirror it (bit 7).
+    switch (layer->kind) {
     case 1:
-      attr = gAnimationFacing_Kind1[dir >> 13];
+      facing = gAnimationFacing_Kind1[dir >> 13];
       break;
     case 2:
     case 20:
-      attr = gAnimationFacing_Kind2[dir >> 13];
+      facing = gAnimationFacing_Kind2[dir >> 13];
       break;
     case 22:
-      attr = gAnimationFacing_Kind22[dir >> 13];
+      facing = gAnimationFacing_Kind22[dir >> 13];
       break;
     case 3:
-      attr = gAnimationFacing_Kind3[dir >> 12];
+      facing = gAnimationFacing_Kind3[dir >> 12];
       break;
     case 4:
-      attr = gAnimationFacing_Kind4[dir >> 10];
+      facing = gAnimationFacing_Kind4[dir >> 10];
       break;
     case 5:
-      attr = gAnimationFacing_Kind5[dir >> 12];
+      facing = gAnimationFacing_Kind5[dir >> 12];
       break;
     case 6:
-      attr = gAnimationFacing_Kind6[dir >> 10];
+      facing = gAnimationFacing_Kind6[dir >> 10];
       break;
     case 8:
-      attr = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+      facing = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
     case 88:
-      attr = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+      facing = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
     default:
-      attr = 0;
+      facing = 0;
       break;
     }
-    base += attr & 7;
-    if (i == 0 && (attr >> 7) != 0) {
-      changed = 1;
+    frame += facing & 7;
+    if (i == 0 && (facing >> 7) != 0) {
+      mirrored = 1;
     }
-    if (e->frame != base) {
-      e->frame = base;
+    if (layer->frame != frame) {
+      layer->frame = frame;
       obj->dirty = 1;
     }
   }
 
   if (obj->dirty != 0) {
     size = obj->width * obj->height;
-    buf = MemAlloc(size);
-    Iwram_ClearWords(buf, size);
+    pixels = MemAlloc(size);
+    Iwram_ClearWords(pixels, size);
 
-    n = -1;
+    // Sort the visible layers by priority (0-3), then by index, with an
+    // insertion sort on keys of (priority << 8) | index.
+    drawCount = -1;
     for (i = obj->count - 1; i >= 0; i--) {
-      e = obj->entries[i];
-      if (e == 0) {
+      layer = obj->entries[i];
+      if (layer == 0) {
         continue;
       }
-      if (e->frames == 0) {
+      if (layer->frames == 0) {
         continue;
       }
-      if (e->frame == 255) {
+      if (layer->frame == 255) {
         continue;
       }
-      key = e->priority;
+      key = layer->priority;
       if (key > 3) {
         continue;
       }
       key = (key << 8) | i;
       /* FAKEMATCH: needed to match: the first shift written apart and the scan
        * left by goto keep the scan unrotated, with its step at the top. */
-      k = n;
-      if (k >= 0 && order[k] > key) {
-        order[k + 1] = order[k];
+      k = drawCount;
+      if (k >= 0 && drawOrder[k] > key) {
+        drawOrder[k + 1] = drawOrder[k];
         for (;;) {
           k--;
           if (k < 0)
             goto insert;
-          if (order[k] <= key)
+          if (drawOrder[k] <= key)
             goto insert;
-          order[k + 1] = order[k];
+          drawOrder[k + 1] = drawOrder[k];
         }
       }
     insert:
-      order[k + 1] = key;
-      n++;
+      drawOrder[k + 1] = key;
+      drawCount++;
     }
-    n++;
+    drawCount++;
 
-    for (i = 0; i < n; i++) {
-      e = obj->entries[*(u8 *)&order[i]];
-      if (e->mode == 1) {
-        Resource_DecodeType01(e->frames[e->frame], buf);
-      } else if (e->mode == 3) {
-        if (e->param != 0) {
-          tmp = MemAlloc(0x400);
-          draw(Resource_DecompressLz(e->frames[e->frame], tmp), buf, e->param);
-          MemFree(tmp);
+    // Draw the layers in that order. A layer's frames are stored by its
+    // codec: 1 is the type-01 format, 3 LZ (unpacked first, or drawn
+    // through a scratch buffer when the layer has a draw parameter), and
+    // anything else raw for the decoder.
+    for (i = 0; i < drawCount; i++) {
+      layer = obj->entries[*(u8 *)&drawOrder[i]];
+      if (layer->mode == 1) {
+        Resource_DecodeType01(layer->frames[layer->frame], pixels);
+      } else if (layer->mode == 3) {
+        if (layer->param != 0) {
+          unpacked = MemAlloc(0x400);
+          decodeFrame(
+              Resource_DecompressLz(layer->frames[layer->frame], unpacked),
+              pixels, layer->param);
+          MemFree(unpacked);
         } else {
-          decoded = Iwram_Decompress(e->frames[e->frame], buf);
+          decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
           if (decoded != 0) {
-            draw(decoded, buf, 0);
+            decodeFrame(decoded, pixels, 0);
           }
         }
       } else {
-        draw(e->frames[e->frame], buf, e->param);
+        decodeFrame(layer->frames[layer->frame], pixels, layer->param);
       }
     }
 
+    // Outline: a pixel whose four neighbours are all drawn becomes the fill
+    // colour, and any other drawn pixel the edge colour.
     if ((obj->flags & 2) != 0) {
-      u8 *mask;
+      u8 *inside;
       u8 edge;
       u8 fill;
       u32 w;
@@ -343,14 +382,14 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       u8 *src;
       u8 *dst;
 
-      mask = MemAlloc(size);
+      inside = MemAlloc(size);
       w = obj->width;
       h = obj->height;
-      edge = ctx->edge;
-      fill = ctx->fill;
-      Iwram_ClearWords(mask, size);
-      src = buf + w + 1;
-      dst = mask + w + 1;
+      edge = system->edge;
+      fill = system->fill;
+      Iwram_ClearWords(inside, size);
+      src = pixels + w + 1;
+      dst = inside + w + 1;
       for (i = 1; i < h - 1; i++) {
         for (k = 1; k < w - 1; k++) {
           if (src[-1] != 0 && src[1] != 0 && *(src - w) != 0 && src[w] != 0) {
@@ -362,8 +401,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         dst += 2;
         src += 2;
       }
-      src = buf;
-      dst = mask;
+      src = pixels;
+      dst = inside;
       for (i = 0; i < size; i++) {
         if (*dst != 0) {
           *src = fill;
@@ -373,25 +412,26 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         dst++;
         src++;
       }
-      MemFree(mask);
+      MemFree(inside);
     }
 
+    // Upload the pixels to the sprite's tiles in VRAM.
     tile = VramBlock_LoadCached(obj->slot, size, 0);
     {
       void *vram = (void *)(0x06010000 + (tile << 5));
-      ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width,
+      ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
                                                       obj->height, vram);
     }
     obj->part[0].tile = tile;
     obj->dirty = 0;
-    ctx->used += size;
-    MemFree(buf);
+    system->used += size;
+    MemFree(pixels);
   }
 
-  if (held == 0) {
-    Runtime_ReleaseHeapBlock(52);
+  if (decoderWasLoaded == 0) {
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_DECODER);
   }
-  return changed;
+  return mirrored;
 }
 
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
@@ -1023,32 +1063,21 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   return object;
 }
 
-//--------------------------------------------------------------------------
-// object.c
-// リソース：アニメの記録を消す
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// AnimationEntry 1 つ分を 0 で埋める（NULL なら何もしない）
-//--------------------------------------------------------------------------
+// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
 void ResourceMetadata_ClearRecord(void *dst) {
   if (dst != 0) {
     Dma_Fill32(0, dst, sizeof(struct AnimationEntry));
   }
 }
 
-//--------------------------------------------------------------------------
-// resource_obj.c
-// リソース：アニメのスプライトオブジェクトの作成・解放と、コマの長さ
-//--------------------------------------------------------------------------
+// Creating and releasing animated sprites, and measuring animation lengths.
 
 typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-//--------------------------------------------------------------------------
-// アニメ id のスプライトオブジェクトを作る
-// あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
-// 戻り値 : オブジェクト（作れなければ NULL）
-//--------------------------------------------------------------------------
+// Creates a sprite for animation id, taking one of the 64 free sprites and a
+// VRAM cache entry for its tiles.
+// Returns the sprite, or NULL when there is no room or the id has no image.
 struct ResourceObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *meta;
   struct AnimationObject *obj;
@@ -1066,7 +1095,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   if (meta->width == 0)
     return NULL;
   for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) // 幅 0 はあき
+    if (obj->width == 0) // a width of 0 marks a free sprite
     {
       found = obj;
       break;
@@ -1083,7 +1112,8 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   found->rotation = 0;
   found->flags = 1;
 
-  // 幅・高さ（ドット）から OBJ の形とサイズのビット（属性 0・1）
+  // The OAM shape and size bits (attributes 0 and 1) for the image's width
+  // and height in pixels.
   switch ((u32)((meta->width << 8) + meta->height)) {
   case 0x0808: // 8x8
     shape = 0;
@@ -1120,8 +1150,8 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     break;
   }
 
-  // パーツ 0：256 色、優先度 2
-  // パーツ 1：16x8・256 色、VRAM キャッシュ 93 のタイル、優先度 2
+  // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
+  // 16x8, 256-colour sprite of the shadow tiles (VRAM cache 93), priority 2.
   word = (u32 *)found->part;
   *word++ = 0;
   *word++ = shape | 0x2000;
@@ -1137,11 +1167,8 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   return (struct ResourceObject *)found;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトを解放する
-// VRAM キャッシュ（flags のビット 0 が立っていなければ）と 4 つの子を
-// 返し、ワーク 56 バイトを 0 で埋める
-//--------------------------------------------------------------------------
+// Releases a sprite: its VRAM cache entry (unless bit 0 of flags is set),
+// its four animation layers, and then zeroes its 56 bytes.
 void ResourceObject_Release(struct ResourceObjectWork *work) {
   s32 n;
   void **child;
@@ -1158,11 +1185,9 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
   }
 }
 
-//--------------------------------------------------------------------------
-// アニメ id の no 番の、はじめの cnt コマの長さを足す
-// コマンドは 2 バイト（コマンド・値）で、254・241・253・239 で終わる。
-// 245・255・238 以下のコマンドの値を足す
-//--------------------------------------------------------------------------
+// Returns how long the first cnt frames of animation no of id last: the sum
+// of the arguments of its frame, wait and blank commands, up to cnt of them
+// or the first play, hold, jump or end command.
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   struct AnimationMetadata *info;
   u8 *p;
@@ -1193,17 +1218,13 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   return sum;
 }
 
-//--------------------------------------------------------------------------
-// object.c
-// オブジェクト：フィールドのオブジェクトの作成・解放と、毎フレームの表示
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す処理の 1 回分
-// 8×8 ドット（256 色）のキャラごとに、消す順の表にしたがって 1 ドット消す
-// キャラごとに pos を 1 ずつずらし、pos が 64 から 127 のキャラだけ消す
-// obj : 絵（AnimationObject）
-// pos : 何回目か（0 から 127）
-//--------------------------------------------------------------------------
+// Field objects: creating and releasing them, and drawing them each frame.
+
+// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
+// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
+// tile runs one step behind the last, and only tiles whose step is 64-127
+// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
+// (0-127).
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *dst;
   s32 cnt;
@@ -1215,7 +1236,8 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 
   struct AnimationObject *spr = (struct AnimationObject *)obj;
 
-  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ の VRAM
+  // The sprite's tiles in OBJ VRAM.
+  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset);
   cnt = (spr->width * spr->height) / 64;
   n = 0;
 
@@ -1231,7 +1253,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
         u16 *cell;
         u32 odd;
 
-        // VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
+        // VRAM takes no byte writes: rewrite the pixel pair, clearing one.
         dot = table[(pos + n * 16) & indexMask];
         cell = (u16 *)((u8 *)dst + (dot & offsetMask));
         odd = 1;
@@ -1245,10 +1267,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す。1 フレームに 4 回分、32 フレームで消え終わる
-// obj : 絵（AnimationObject）
-//--------------------------------------------------------------------------
+// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
 void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
   u32 pos;
 
@@ -1263,11 +1282,7 @@ void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
   } while (pos <= 127);
 }
 
-//--------------------------------------------------------------------------
-// いくつもの絵を、いっしょに 1 ドットずつ消す（32 フレーム）
-// table : 絵の並び
-// cnt : 絵の数
-//--------------------------------------------------------------------------
+// Dissolves cnt sprites together, pixel by pixel, over 32 frames.
 void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
   u8 **top;
   u8 **p;
@@ -1299,12 +1314,9 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
   } while (pos <= 0x7fU);
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトの画面上の位置（ドット）を out[0], out[1] に返す
-// 画面のまわりの範囲にいれば 0、外なら 0, 0 として -1
-// obj : オブジェクト
-// out : x と y
-//--------------------------------------------------------------------------
+// Writes obj's position on the screen, in pixels, to out[0] and out[1] and
+// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
+// returns -1.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
   struct MapScrollWork *map = gMapWork[0];
   s32 *org = &map->viewX;
@@ -1327,11 +1339,9 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
   return -1;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトのしくみを用意する
-// 64 個のオブジェクトの領域をとって 0 でうめ、毎フレームの処理を登録する
-// mode : 4 なら動きの処理を Object_UpdateAllMotion で、3 と 4 は固定カメラ
-//--------------------------------------------------------------------------
+// Sets up the object system: allocates and zeroes the 64 objects and
+// registers the per-frame updates. Mode 4 moves objects with
+// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
 void ObjectSystem_Initialize(s32 mode) {
   struct ObjectSystemWork *sys;
   struct ObjectRuntime *objs;
@@ -1357,20 +1367,13 @@ void ObjectSystem_Initialize(s32 mode) {
   sys->fill = 0;
 }
 
-//--------------------------------------------------------------------------
-// 何もしない
-//--------------------------------------------------------------------------
+// Does nothing.
 void ResourceTable_ReservedNoOpC0C4(void) {}
 
-//--------------------------------------------------------------------------
-// 何もしない
-//--------------------------------------------------------------------------
+// Does nothing.
 void ResourceTable_ReservedNoOp2(void) {}
 
-//--------------------------------------------------------------------------
-// 64 個のうち、使われていない（スクリプトのない）オブジェクトを返す
-// 空きがなければ 0
-//--------------------------------------------------------------------------
+// Returns the first of the 64 objects not in use (with no script), or 0.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *obj = gObjectSlots;
   void *ret = 0;
@@ -1387,20 +1390,17 @@ void *ObjectDispatch_FindFreeObject(void) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトの絵を解放し、オブジェクトを 0 でうめて空きにする
-// obj : オブジェクト
-//--------------------------------------------------------------------------
+// Releases an object's sprites and zeroes it, freeing it.
 void ObjectDispatch_Release(struct DispatchObject *obj) {
   s32 n;
   struct ResourceObjectWork **child;
 
   if (obj) {
     switch (obj->kind & 15) {
-    case 1: // 絵がひとつ
+    case 1: // one sprite
       ResourceObject_Release(obj->target.child);
       break;
-    case 2: // 絵が 4 つまで
+    case 2: // up to four sprites
       child = (struct ResourceObjectWork **)obj->target.children;
       n = 3;
       do {
@@ -1414,11 +1414,9 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// フィールドのオブジェクトを作る。空きがなければ 0
-// id      : 4096 で割った商が種類（0 絵ひとつ、2 絵ふたつ）、下の 12 ビットが絵
-// x, y, z : 位置（16.16 固定小数）
-//--------------------------------------------------------------------------
+// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
+// none is free. id / 4096 is the kind (0: one sprite, 2: two sprites, id
+// and id + 1) and the low 12 bits the sprite's animation id.
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *obj;
   struct FieldActor *act;
@@ -1447,7 +1445,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
       }
       break;
     case 2:
-      // 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
+      // Take a zeroed list of four sprites, and fill it with id and id + 1.
       ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
       obj->animationKind = kind;
       obj->animation = ent;
@@ -1480,17 +1478,13 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
     obj->actionFlags = 1;
     act->riseBaseY = 0;
     obj->angle = 0x4000;
-    sc->homeX = x / 65536; // もとの位置（ドット）
+    sc->homeX = x / 65536; // its home position, in pixels
     sc->homeZ = z / 65536;
   }
   return obj;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクトにスクリプトを与え、はじめから動かす
-// obj    : オブジェクト
-// script : スクリプト
-//--------------------------------------------------------------------------
+// Gives an object a script and starts it from the top.
 void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
   if (obj != 0) {
     obj->value04 = 0;
@@ -1501,9 +1495,8 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつならその絵に、絵の組ならある絵すべてに apply(絵, value) を呼ぶ
-//--------------------------------------------------------------------------
+// Defines name(object, value), which calls apply(sprite, value) on an
+// object's one sprite, or on each sprite of its group.
 #define DEFINE_APPLY_TO_CHILDREN(name, object_type, apply)                     \
   void name(object_type raw, s32 value) {                                      \
     struct DispatchObject *obj;                                                \
@@ -1531,18 +1524,16 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
     }                                                                          \
   }
 
-// オブジェクトの絵（すべて）のアニメを no にする
+// Switches all of an object's sprites to animation value.
 DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
                          AnimationObjects_SelectAnimation)
 
-// オブジェクトの絵（すべて）の AnimationObjects_SetActiveTimerSteps を呼ぶ
+// Sets the animation speed (timer step) of all of an object's sprites.
 DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren,
                          struct DispatchObject *,
                          AnimationObjects_SetActiveTimerSteps)
 
-//--------------------------------------------------------------------------
-// 上のふたつをいっしょに：アニメを no にし、steps をわたす
-//--------------------------------------------------------------------------
+// Both of the above: switches all of an object's sprites to animation no
 void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
                                         s32 steps) {
   void **list;
@@ -1569,18 +1560,15 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の回転を設定する
-//--------------------------------------------------------------------------
+// Sets the rotation of an object's sprite, when it has just one.
 void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot) {
   if (obj != 0 && (obj->kind & 0xf) == 1)
     ((struct FieldSprite *)obj->target.child)->rotation = rot;
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、アニメ番号を no にして初めから動かす
-// no が負ならなにもしない
-//--------------------------------------------------------------------------
+// Gives a one-sprite object's first layer animation id no and restarts
+// its layers.
+// A negative no does nothing.
 void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
   struct DispatchObject *obj = raw;
   struct AnimationObject *spr;
@@ -1594,10 +1582,8 @@ void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、その絵に no の情報を登録する
-// no が負ならなにもしない
-//--------------------------------------------------------------------------
+// Adds a layer of animation id no to a one-sprite object's sprite.
+// A negative no does nothing.
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
   if (obj != 0 && (obj->kind & 0xf) == 1) {
     struct AnimationObject *spr = obj->target.child;
@@ -1606,9 +1592,7 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 決まったスクリプトでオブジェクトを動かしはじめる
-//--------------------------------------------------------------------------
+// Starts an object on one of the engine's own scripts (object_script.c).
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
@@ -1646,9 +1630,7 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
   }
 }
 
-//--------------------------------------------------------------------------
-// スクリプトが命令 0x10 に来るまで待つ（300 フレームまで）
-//--------------------------------------------------------------------------
+// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
 void ObjectDispatch_WaitForValue16(void *raw) {
   struct ScriptInterpreter *sc = raw;
   s32 cnt;
@@ -1664,9 +1646,7 @@ void ObjectDispatch_WaitForValue16(void *raw) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の flags を設定する
-//--------------------------------------------------------------------------
+// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
   if (obj != NULL) {
     if ((obj->kind & 0xf) == 1)
@@ -1674,9 +1654,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の半透明のしかたを設定する
-//--------------------------------------------------------------------------
+// Sets the OAM blend mode of a one-sprite object's sprite.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
   if (obj != 0 && obj->kind == 1) {
     struct FieldSprite *spr = obj->target.child;
@@ -1684,9 +1662,7 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の displayFlags の bit1 を設定する
-//--------------------------------------------------------------------------
+// Sets bit 1 of a one-sprite object's displayFlags: keep its scale fixed
 void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
   if (obj != 0 && obj->kind == 1) {
     struct FieldSprite *spr = obj->target.child;
@@ -1694,17 +1670,13 @@ void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、ObjectGroup_SetChildValueUnlessFifteen を呼ぶ
-//--------------------------------------------------------------------------
+// Sets the draw parameter of a one-sprite object's layers
 void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
   if (obj != NULL && obj->kind == 1)
     ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, val);
 }
 
-//--------------------------------------------------------------------------
-// カメラの処理を動かし、BG1-3 を消して OBJ を出す
-//--------------------------------------------------------------------------
+// Resumes the object camera updates, fades the palette in, and shows
 void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
   Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
@@ -1714,9 +1686,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   REG_DISPCNT = (REG_DISPCNT & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
-//--------------------------------------------------------------------------
-// カメラの処理を止め、BG1-3 と OBJ を消す
-//--------------------------------------------------------------------------
+// Stops the object camera updates and hides BG1-3 and the sprites.
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
   Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
@@ -1725,15 +1695,15 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
 
 s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
-// マップのセル
+// A map cell's word, as the camera reads it.
 struct CameraTile {
   u32 unk00 : 12;
-  u32 layer : 2;    // 0 でなければ、上にいるオブジェクトのレイヤー + 1
-  u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
+  u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
+  u32 priority : 2; // if not 0, the priority of an object standing on it
   u32 unk10 : 16;
 };
 
-// オブジェクトの絵（OAM の属性をふくむ）
+// An object's sprite, with its OAM attributes, as the camera reads it.
 struct CameraSprite {
   u8 unk00[4];
   u16 y : 8;
@@ -1755,13 +1725,13 @@ struct CameraSprite {
   u16 secondPalette : 4;
   u8 unk16[2];
   s32 scale;
-  u8 resource; // VRAM ブロックの番号
+  u8 resource; // its VRAM cache entry
   u8 flags1d;
   u8 unk1e[7];
   u8 activated;
 };
 
-// オブジェクト
+// A field object, as the camera reads it.
 struct CameraObject {
   u32 active;
   u16 unk04;
@@ -1777,7 +1747,7 @@ struct CameraObject {
   u8 flags;
   u8 unk24[0x2c];
   void *sprite;
-  u8 kind; // 1 絵ひとつ、2 絵が 4 つまで
+  u8 kind; // 1: one sprite, 2: up to four
   u8 unk55[7];
   u8 held;
   u8 unk5d[0x13];
@@ -1788,10 +1758,10 @@ struct CameraLayer {
   u8 unk04[44];
 };
 
-// マップ
+// The map work, as the camera reads it.
 struct CameraState {
   u8 unk000[0xe4];
-  s32 x; // 見ている位置
+  s32 x; // the view's position
   s32 z;
   u8 unk0ec[0x44];
   struct CameraLayer layers[1];
@@ -1803,19 +1773,17 @@ struct CameraPoint {
   s32 z;
 };
 
-// 固定カメラ
+// The fixed camera.
 struct FixedCamera {
   struct CameraPoint eye;
   struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    // あればこちらの視点を使う
-  struct CameraPoint *targetOverride; // あればこちらの注視点を使う
+  struct CameraPoint *eyeOverride;    // when set, used as the eye
+  struct CameraPoint *targetOverride; // when set, used as the target
 };
 
-//--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
-// 画面のまわりにいるオブジェクトは、足もとのセルからレイヤーと優先度を決めて
-// 置く。外にいれば絵の VRAM ブロックを手放す
-//--------------------------------------------------------------------------
+// Each frame, with the scrolling camera: places every object's sprite on the
+// screen. An object on or near the screen takes its layer and priority from
+// the cell under it; one off screen gives up its VRAM cache entry.
 void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH: frame local: unused; the native frame keeps room for
      three points above the position. Measured (2026-10-13): without it
@@ -1844,7 +1812,7 @@ void ObjectSystem_UpdateCamera(void) {
   camX = cam[0] & 0xffff0000;
   camZ = cam[1] & 0xffff0000;
   sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
-  // 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
+  // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
   sync->used = 0;
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
@@ -1870,7 +1838,7 @@ void ObjectSystem_UpdateCamera(void) {
       spr = obj->sprite;
       if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 &&
           top < 0xe00000) {
-        // 足もとのセルの情報
+        // The cell under the object.
         tile = &map->layers[obj->layer]
                     .tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
         if (obj->flags & 1) {
@@ -1890,12 +1858,12 @@ void ObjectSystem_UpdateCamera(void) {
         pos[2] = dz;
         pos[3] = obj->height;
         if (obj->flags & 2) {
-          pos[1] += 0xfec00000; // -20 ドット
+          pos[1] += 0xfec00000; // -20 pixels
           pos[2] += 0xfec00000;
           pos[3] += 0xfec00000;
         }
         if (obj->flags & 4) {
-          pos[1] += 0x1400000; // +20 ドット
+          pos[1] += 0x1400000; // +20 pixels
           pos[2] += 0x1400000;
           pos[3] += 0x1400000;
         }
@@ -1924,12 +1892,10 @@ void ObjectSystem_UpdateCamera(void) {
 
 s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
-//--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（固定カメラ）
-// 視点と注視点から向きを決め、64 番目のオブジェクトから順に置く
-// コマンドを選んでいるあいだ（フラグ 363）は、決まった向きの行列を使い
-// 大きさを 1 倍にする
-//--------------------------------------------------------------------------
+// Each frame, with the fixed camera: places every object's sprite, from the
+// 64th object down, facing them by the angle from the eye to the target.
+// While battle commands are chosen (flag 363, set by
+// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0 scale.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 cnt;
   struct FixedCamera *cam;
@@ -2012,36 +1978,27 @@ void ObjectSystem_UpdateCameraFixed(void) {
   Runtime_ReleaseHeapBlock(52);
 }
 
-//--------------------------------------------------------------------------
-// script.c
-// オブジェクトスクリプト：位置の移動と byte54 の命令
-//--------------------------------------------------------------------------
+// Object script commands that move the cursor and set byte54.
 
-//--------------------------------------------------------------------------
-// スクリプトの読む位置を移し、1 を返して次の命令を続けて実行する
-//--------------------------------------------------------------------------
+// SC_BASE: restarts the script at the next word, and returns 1 to run on.
 s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc) {
   s32 zero;
 
-  // 命令の次の語を新しい先頭にする
+  // The word after the command becomes the script's start.
   sc->script = sc->script + sc->cursor + 1;
   zero = 0;
   sc->cursor = zero;
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// byte54 を 0 にして、次の命令へ
-//--------------------------------------------------------------------------
+// SC_B54_OFF: clears byte54 and moves on to the next command.
 s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
   sc->byte54 = 0;
   sc->cursor++;
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// byte54 を 1 にして、次の命令へ
-//--------------------------------------------------------------------------
+// SC_B54_ON: sets byte54 and moves on to the next command.
 s32 Script_SetByte54(struct ScriptInterpreter *sc) {
   sc->byte54 = 1;
   sc->cursor++;
@@ -2374,19 +2331,12 @@ void Object_UpdateAllThumb(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// motion_set_position_and_reset_motion.c
-// オブジェクト：位置の設定と移動の取り消し
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 位置を置き、移動先を「なし」に、速度を 0 にする
-// obj     : オブジェクト
-// x, y, z : 位置（16.16 固定小数）
-//--------------------------------------------------------------------------
+// Places obj at (x, y, z), in 16.16 pixels, clears its movement target and
+// stops it.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
                                       s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // 移動先なし
+  obj->targetX = 0x80000000; // no target
   obj->targetY = 0x80000000;
   obj->targetZ = 0x80000000;
   obj->x = x;
@@ -2730,7 +2680,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// フラグの今の値を conditionResult に入れてから、change でフラグを書き換える
+// Defines a flag command: stores the flag's current value in conditionResult,
+// then changes the flag with change.
 #define DEFINE_FLAG_AND_TEST(name, change)                                     \
   s32 name(struct ScriptInterpreter *interpreter) {                            \
     s32 value;                                                                 \
@@ -2822,7 +2773,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
   return NULL;
 }
 
-// 命令語の次の 3 語を座標として place にわたす
+// Passes the three words after the command to place as a position.
 static __inline__ s32 ApplyPosition(struct ScriptInterpreter *interpreter,
                                     void (*place)(struct ObjectRuntime *object,
                                                   s32 x, s32 y, s32 z)) {
@@ -2944,8 +2895,8 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
       obj->y = y;
       obj->z = z;
     } else {
-      // XZ 平面の距離: dy は Object_SetMoveTarget
-      // と同じ形で求めるが距離には使わない
+      // The distance in the XZ plane: dy is computed as in
+      // Object_SetMoveTarget but not used for the distance.
       dx = (x - obj->x) / 0x10000;
       /* FAKEMATCH: dead code: this dy is overwritten below and the compiler
        * drops it, but its references rank y above the bounds in global
@@ -3209,8 +3160,8 @@ typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 
 extern OperandFunc gScript_OperandHandlerTable[];
 
-// 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は
-// comparisonResult) 32 ビットの項目
+// Defines the handler for a 32-bit work value: set it, add to it, or compare
+// it (into comparisonResult).
 #define DEFINE_OPERAND_WORD(name, field)                                       \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3224,7 +3175,7 @@ extern OperandFunc gScript_OperandHandlerTable[];
     state->comparisonResult = state->field == value;                           \
   }
 
-// アドレスの項目: 加算は value の 4 倍 (4 バイト単位)
+// The same for an address: an add steps by value words (value * 4 bytes).
 #define DEFINE_OPERAND_ADDRESS(name, field)                                    \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3238,7 +3189,7 @@ extern OperandFunc gScript_OperandHandlerTable[];
     state->comparisonResult = state->field == value;                           \
   }
 
-// 8 ビット、16 ビットの項目: 比較は項目の型に切り詰めた値と行う
+// The same for an 8- or 16-bit value: a compare narrows value to its type.
 #define DEFINE_OPERAND_NARROW(name, field, type)                               \
   void name(struct ScriptOperands *state, s32 operation, s32 value) {          \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -3329,7 +3280,8 @@ DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
 
-// 命令語の次の 2 語 (項目の番号と値) を読み、項目の関数に operation をわたす
+// Reads the two words after the command (a work value number and a value)
+// and passes operation to that value's handler.
 static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation) {
   s16 index = work->cursor;
   const s32 *command = (const s32 *)work->scriptAddress + index + 1;
@@ -4169,17 +4121,14 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt) {
   }
 }
 
-//--------------------------------------------------------------------------
-// decode_staged_buffer.c
-// マップ：展開したブロックのデータを gMapBlocks にほどく
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
-// size : 方式のバイトを含む長さ（偶数ならデータなし）
-//   方式 0 : そのまま写す
-//   方式 1 : 上位バイトの列のあとに下位バイトの列。前の値と XOR して戻す
-//   方式 2 : 前の値と XOR して戻す
-//--------------------------------------------------------------------------
+// Unpacks the staged block data into gMapBlocks. Byte 1 of the staged buffer
+// (Ram_MapCellBuffer) is the method, and the
+// 16-bit data follows from byte 2. size counts the method byte too (an even
+// size means no data). Methods:
+//   0: copy as it is
+//   1: all the high bytes, then all the low bytes; each value is XORed with
+//      the one before
+//   2: each value is XORed with the one before
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
@@ -4676,7 +4625,7 @@ void Map_SetCameraCenter(s32 x, s32 y) {
   }
 }
 
-// レイヤーの表示範囲の左上（セル）
+// The top left of a layer's visible area, in cells.
 struct TilePos {
   s32 x, y;
 };
@@ -4823,23 +4772,16 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
   }
 }
 
-//--------------------------------------------------------------------------
-// mapcopy.c
-// マップ：セルの矩形の写し
-//--------------------------------------------------------------------------
+// Map: copying rectangles of cells.
 
 #define MAP_CELLS ((u32 *)gMapCellBuffer)
-#define MAP_CELL_TILE_MASK 0x00000fff      // ブロック番号
-#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // 属性
+#define MAP_CELL_TILE_MASK 0x00000fff      // the block (metatile) number
+#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // the cell's attributes
 
-//--------------------------------------------------------------------------
-// セル（16×16 ドット）の矩形をそのまま写す
-// 写した先が BG レイヤーの表示範囲（16×12 セル）にあれば、
-// VRAM の BG マップにもブロックの 2×2 キャラを書く
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies a rectangle of cells (16x16 pixels each) as they are, from
+// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
+// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
+// that layer's BG map in VRAM too.
 void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
@@ -4851,7 +4793,7 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   struct TilePos *pos = view;
   s32 x;
 
-  // 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
+  // The three layers' visible areas: their scroll positions in cells.
   i = 2;
   while (i >= 0) {
     s32 tmp5;
@@ -4893,12 +4835,13 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         i = 0;
         tmp6 = tmp13;
         offset = tmp6;
-        // 表示中のレイヤーなら、VRAM の BG マップ（レイヤーごとに 0x800）へ
+        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // bytes per layer).
         for (; i < 3; i += 1) {
           if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y &&
               pos->y + 12 > y) {
-            // ブロック（8 バイト）の上の段の 2 キャラと、下の段（0x40 先）の 2
-            // キャラ
+            // The block's (8 bytes) top two tiles, and its bottom two 0x40
+            // bytes further on.
             u32 *tmp;
             u32 tmp2;
             u32 tmp4;
@@ -4944,7 +4887,7 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
             *dest = tmp2;
             break;
           }
-          n = 0x800; // つぎのレイヤーの BG マップ
+          n = 0x800; // the next layer's BG map
           offset += n;
           pos++;
         }
@@ -4956,12 +4899,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-//--------------------------------------------------------------------------
-// セルの矩形の属性だけを写す。写す先のブロック番号はそのまま
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
+// (dstX, dstY), width by height cells, keeping each destination cell's
+// block number.
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *dst = MAP_CELLS;
@@ -4984,13 +4924,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-//--------------------------------------------------------------------------
-// セルの矩形のブロック番号だけを写す。写す先の属性はそのまま
-// 表示範囲にあれば VRAM の BG マップも書きかえる
-// srcX, srcY  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
+// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
+// to (dstX, dstY), width by height cells, keeping each destination cell's
+// attributes; cells in a visible area update the BG maps too.
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY) {
   /* FAKEMATCH: needed to match: word/index temporaries preserve register
@@ -5008,7 +4944,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   struct TilePos *pos = view;
   s32 x;
 
-  // 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
+  // The three layers' visible areas: their scroll positions in cells.
   i = 2;
   while (i >= 0) {
     s32 tmp5;
@@ -5049,12 +4985,13 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         tmp13 = n * 4;
         tmp6 = tmp13;
         offset = tmp6;
-        // 表示中のレイヤーなら、VRAM の BG マップ（レイヤーごとに 0x800）へ
+        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // bytes per layer).
         for (; i < 3; i += 1) {
           if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y &&
               pos->y + 12 > y) {
-            // ブロック（8 バイト）の上の段の 2 キャラと、下の段（0x40 先）の 2
-            // キャラ
+            // The block's (8 bytes) top two tiles, and its bottom two 0x40
+            // bytes further on.
             u32 scr, blk;
             u8 *dest, *tiles;
 
@@ -5076,7 +5013,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
             *(u32 *)dest = *(u32 *)tiles;
             break;
           }
-          n = 0x800; // つぎのレイヤーの BG マップ
+          n = 0x800; // the next layer's BG map
           offset += n;
           pos++;
         }
@@ -6950,8 +6887,8 @@ struct Vec2 {
   s32 y;
 };
 
-// gSpriteObjects の 10 個それぞれについて、slot 番のエントリの field を value
-// にする
+// Defines name(slot, value), which sets field of entry slot (0-3) in each of
+// the first ten sprites to value.
 #define DEFINE_SET_GRID_COLUMN(name, field)                                    \
   void name(s32 slot, s32 value) {                                             \
     struct AnimationObject *object = gSpriteObjects;                           \

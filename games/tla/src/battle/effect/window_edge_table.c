@@ -1,7 +1,43 @@
+#include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
+#include "mem.h"
 
+struct FxRunWork {
+    u8 unknown_0000[0x78e4];
+    s32 active;
+    u8 unknown_78e8[8];
+    s32 *script;
+};
+
+extern void (*Data_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
+
+// Runs one battle effect script: takes the effect's three work blocks, calls
+// the handler its first word selects, then gives the blocks back.
+void Func_0814cb60(s32 *script)
+{
+    struct FxRunWork *work;
+
+    Runtime_AllocateHeapBlock(100, 0x302);
+    Runtime_AllocateHeapBlock(92, 0x7b7c);
+    Runtime_AllocateHeapBlock(96, 0x4000);
+    /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0 offset is started (differ 2 without it). */
+    do
+    {
+        work = (struct FxRunWork *)Ram_HeapSlots->battle_fx_work[0];
+    } while (0);
+    work->script = script;
+    work->active = 1;
+    /* FAKEMATCH: the one-pass block loads the handler table before the script's first word and sets the argument after the index (differ 2 without it). */
+    do
+    {
+        Data_08197aa0[*script - 1](script);
+    } while (0);
+    Runtime_ReleaseHeapBlock(96);
+    Runtime_ReleaseHeapBlock(92);
+    Runtime_ReleaseHeapBlock(100);
+}
 
 void BattleFx_BuildWindowEdgeTable(void)
 {

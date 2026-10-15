@@ -1897,7 +1897,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/run_no_effect_frames.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0014c992)
     "*/recon/tla/ja/rom.o"(.rom.0014c994)
-    "*/recon/tla/ja/rom.o"(.rom.0014cb60)
     "*/games/tla/src/battle/effect/window_edge_table.o"(.text)
     "*/games/tla/src/battle/effect/spawn_living.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0014cca8)
@@ -2024,6 +2023,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00197694)
     "*/games/tla/src/battle/effect/d0197834.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00197868)
+    "*/recon/tla/ja/rom.o"(.rom.00197aa4)
     "*/games/tla/src/battle/effect/d0198566.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.001985aa)
     . = ABSOLUTE(0x081a0000);

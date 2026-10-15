@@ -59,7 +59,7 @@ main	rom_main_01	games/tbs/src/field/operand
 main	rom_main_01	games/tbs/src/field/layered
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
-main	rom_main_02	games/tbs/src/window/moji	.text
+main	rom_main_02	games/tbs/src/window/glyph_arm	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
 main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque

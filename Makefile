@@ -148,7 +148,7 @@ CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$
 SOUND_C := games/common/src/sound/sound.c games/common/src/sound/tables.c games/tbs/src/sound/engine.c \
            $(wildcard games/tla/src/sound/engine.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
 FLASH_C := $(addprefix games/common/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
-ARM_C   := games/tbs/src/window/moji.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
+ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
            games/tla/src/graphics/tile/metatile.c
 
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork

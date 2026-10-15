@@ -10,7 +10,7 @@
 #include "unit/window/btlcmd.h"
 #include "unit/object/object.h"
 #include "unit/object/psyfx.h"
-#include "unit/window/moji.h"
+#include "unit/window/glyph_arm.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "edition.h"

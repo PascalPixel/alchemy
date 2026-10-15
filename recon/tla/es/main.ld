@@ -93,7 +93,6 @@ SECTIONS
     "*/games/tla/src/system/io.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00013e10)
     "*/games/tla/src/graphics/display/blend.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00014048)
     "*/games/tla/src/graphics/render/oambuck.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000141a0)
     "*/games/tla/src/system/resource/clear_slot_references.o"(.text)

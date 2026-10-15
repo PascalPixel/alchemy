@@ -105,12 +105,6 @@ Input_UpdateKeyRepeatAndDirection:
 	.thumb_func
 Func_08013de4:
 	.incbin "baserom.gba", 0x00013e10, 0x0000008c
-	.section .rom.00014048, "ax"
-	.global AffineMatrix_BuildForEffect
-	.type AffineMatrix_BuildForEffect, %function
-	.thumb_func
-AffineMatrix_BuildForEffect:
-	.incbin "baserom.gba", 0x00014048, 0x000000bc
 	.section .rom.000141a0, "ax"
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function

@@ -86,7 +86,6 @@ SECTIONS
         "*/games/tla/src/system/io.o"(.text)
         "*/recon/tla/raw/08013de4.o"(.text)
         "*/games/tla/src/graphics/display/blend.o"(.text)
-        "*/recon/tla/raw/0801401c.o"(.text)
         "*/games/tla/src/graphics/render/oambuck.o"(.text)
         "*/recon/tla/raw/08014174.o"(.text)
         "*/games/tla/src/system/resource/clear_slot_references.o"(.text)

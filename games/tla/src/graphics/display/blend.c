@@ -122,3 +122,72 @@ void Graphics_ResetFrameState(void)
     gObjAffineCount = 0;
     Iwram_ClearWords(gOamBucketMasks, 32);
 }
+
+struct AffineTransform
+{
+    u16 scale_x;
+    u16 scale_y;
+    u16 angle;
+    u16 unknown_06;
+};
+
+union AffineMatrix
+{
+    s16 coefficients[4];
+    u32 rows[2];
+};
+
+extern union AffineMatrix gObjAffineMatrices[];
+
+// Takes the next of the 32 sprite affine matrices and fills it with the
+// rotation and scale of source; returns its index, or 31 when all are taken.
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
+{
+    union AffineMatrix *matrix;
+    s16 *coefficient;
+    s32 x_scale;
+    s32 y_scale;
+    s32 angle;
+    u8 index;
+
+    x_scale = (s16)source->scale_x;
+    angle = source->angle;
+    y_scale = (s16)source->scale_y;
+    index = gObjAffineCount;
+    if (index > 31)
+        return 31;
+
+    matrix = &gObjAffineMatrices[index];
+    coefficient = matrix->coefficients;
+    gObjAffineCount = index + 1;
+    if ((x_scale == y_scale || x_scale == -y_scale) && angle == 0)
+    {
+        s32 reciprocal;
+        s32 x_reciprocal;
+
+        reciprocal = Iwram_SignedDivide(0x10000, y_scale);
+        x_reciprocal = reciprocal;
+        if (x_scale == -y_scale)
+            x_reciprocal = -reciprocal;
+
+        matrix->rows[0] = (u16)x_reciprocal;
+        matrix->rows[1] = reciprocal << 16;
+    }
+    else
+    {
+        s32 sine;
+        s32 cosine;
+
+        sine = Trig_Sin(angle);
+        cosine = Trig_Cos(angle);
+        *coefficient = cosine / x_scale;
+        coefficient++;
+        *coefficient = sine / x_scale;
+        coefficient++;
+        *coefficient = (-sine) / y_scale;
+        coefficient++;
+        *coefficient = cosine / y_scale;
+    }
+
+    return index;
+}

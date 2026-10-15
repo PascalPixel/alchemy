@@ -1954,6 +1954,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0015f16c)
     "*/games/tla/src/battle/effect/m8163c00.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00163c2c)
+    "*/games/tla/src/battle/effect/m8163d88.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.00163e14)
     "*/games/tla/src/battle/effect/particle_stream_modes.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00164c0a)
     "*/recon/tla/ja/rom.o"(.rom.00164cc4)

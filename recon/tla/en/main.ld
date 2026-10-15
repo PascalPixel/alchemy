@@ -2075,7 +2075,7 @@ SECTIONS
         "*/recon/tla/raw/081638d0.o"(.text)
         "*/games/tla/src/battle/effect/m8163c00.o"(.text)
         "*/recon/tla/raw/08163c2c.o"(.text)
-        "*/recon/tla/raw/08163d88.o"(.text)
+        "*/games/tla/src/battle/effect/m8163d88.o"(.text)
         "*/recon/tla/raw/08163e14.o"(.text)
         "*/recon/tla/raw/0816442c.o"(.text)
         "*/recon/tla/raw/0816467c.o"(.text)

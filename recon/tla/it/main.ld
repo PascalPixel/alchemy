@@ -1747,10 +1747,8 @@ SECTIONS
     "*/games/tla/src/menu/shop/itemico2.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010beb0)
     "*/games/tla/src/menu/shop/itemico3.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0010bffc)
-    "*/recon/tla/it/rom.o"(.rom.0010c13c)
+    "*/games/tla/src/menu/shop/shopspr.o"(.rodata)
     "*/games/tla/src/menu/shop/selofs.o"(.rodata)
-    "*/recon/tla/it/rom.o"(.rom.0010c378)
     "*/games/tla/src/menu/shop/d010c38e.o"(.rodata)
     "*/games/tla/src/menu/shop/shopdata.o"(.rodata)
     . = ABSOLUTE(0x08118000);

@@ -1669,9 +1669,8 @@ SECTIONS
         "*/games/tla/src/menu/shop/itemico2.o"(.text)
         "*/recon/tla/raw/0810bebc.o"(.text)
         "*/games/tla/src/menu/shop/itemico3.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.0810c008)
+        "*/games/tla/src/menu/shop/shopspr.o"(.rodata)
         "*/games/tla/src/menu/shop/selofs.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0810c384)
         "*/games/tla/src/menu/shop/d010c38e.o"(.rodata)
         "*/games/tla/src/menu/shop/shopdata.o"(.rodata)
         . = ABSOLUTE(0x08118000);

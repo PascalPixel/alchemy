@@ -648,20 +648,6 @@ Data_08105a40:
 	.global Data_08105a50
 Data_08105a50:
 	.incbin "baserom.gba", 0x00105a50, 0x0000000c
-	.section .unidentified.0810c008,"a"
-	.global Shop_GlyphBytes
-Shop_GlyphBytes:
-	.incbin "baserom.gba", 0x0010c008, 0x00000140
-	.global Shop_PriceTiles
-Shop_PriceTiles:
-	.incbin "baserom.gba", 0x0010c148, 0x00000100
-	.global Data_0810c248
-Data_0810c248:
-	.incbin "baserom.gba", 0x0010c248, 0x00000100
-	.section .unidentified.0810c384,"a"
-	.global Shop_GlyphRowOffsets
-Shop_GlyphRowOffsets:
-	.incbin "baserom.gba", 0x0010c384, 0x0000000a
 	.section .unidentified.081287c4,"a"
 	.incbin "baserom.gba", 0x001287c4, 0x00000004
 	.global Data_081287c8

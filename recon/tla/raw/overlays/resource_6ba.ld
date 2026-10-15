@@ -14,7 +14,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ba/djinn.o"(.text)
         "*/games/tla/src/field/overlay_6ba/give.o"(.text)
         "*/games/tla/src/field/overlay_6ba/scene_events.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x02008688)
         "*/games/tla/src/field/overlay_6ba/prepare.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008704)
         "*/games/tla/src/field/overlay_6ba/level.o"(.text)

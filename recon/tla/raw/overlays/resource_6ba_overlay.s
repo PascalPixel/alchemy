@@ -213,63 +213,6 @@ Func_02000520:
 	pop {r5, r6, r7, pc}
 .L_020085f8:
 	.4byte MsgTheBodyIs
-	.section .text.x02008688,"ax",%progbits
-	.balign 4
-	.global Func_02000688
-	.thumb_func
-Func_02000688:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r5, .L_020086fc
-	subs r2, #172
-	str r2, [r3]
-	movs r3, #139
-	lsls r3, r3, #2
-	adds r2, r5, r3
-	movs r3, #2
-	strb r3, [r2]
-	movs r0, #16
-	movs r1, #5
-	bl Object_SetModeById
-	movs r0, #17
-	movs r1, #5
-	bl Object_SetModeById
-	movs r0, #18
-	movs r1, #5
-	bl Object_SetModeById
-	movs r0, #19
-	movs r1, #5
-	bl Object_SetModeById
-	movs r0, #30
-	movs r1, #6
-	bl Object_SetModeById
-	movs r0, #31
-	movs r1, #6
-	bl Object_SetModeById
-	movs r0, #32
-	movs r1, #6
-	bl Object_SetModeById
-	movs r0, #33
-	movs r1, #6
-	bl Object_SetModeById
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #99
-	bne .L_020086f8
-	bl Func_02000db0
-.L_020086f8:
-	movs r0, #0
-	pop {r5, pc}
-.L_020086fc:
-	.4byte gPartyState
 	.section .text.x02008704,"ax",%progbits
 	.balign 4
 	.global Func_02000704

@@ -1678,48 +1678,6 @@ Func_02001dd4:
 	.4byte 0xfffffed8
 .L_02009eac:
 	.4byte Data_02005b44
-	.section .text.x02009eb0,"ax",%progbits
-	.balign 4
-	.global Func_02001eb0
-	.thumb_func
-Func_02001eb0:
-	push {r5, r6, lr}
-	movs r0, #123
-	bl GameFlag_Test
-	adds r6, r0, #0
-	cmp r6, #0
-	bne .L_02009ef6
-	movs r0, #8
-	bl Object_GetById
-	adds r5, r0, #0
-	movs r0, #162
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	adds r2, r5, #0
-	adds r2, #85
-	cmp r0, #0
-	bne .L_02009ee6
-	movs r3, #5
-	strb r3, [r2]
-	movs r2, #136
-	ldr r3, [r5, #12]
-	lsls r2, r2, #12
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	b .L_02009eec
-.L_02009ee6:
-	movs r3, #3
-	strb r3, [r2]
-	str r6, [r5, #12]
-.L_02009eec:
-	movs r1, #144
-	ldr r0, .L_02009ef8
-	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
-.L_02009ef6:
-	pop {r5, r6, pc}
-.L_02009ef8:
-	.4byte Func_02001dd4
 	.section .text.x02009f08,"ax",%progbits
 	.balign 4
 	.global Func_02001f08

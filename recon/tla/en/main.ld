@@ -1078,7 +1078,7 @@ SECTIONS
         "*/recon/tla/raw/080d64f0.o"(.text)
         "*/recon/tla/raw/080d6674.o"(.text)
         "*/recon/tla/raw/080d67e8.o"(.text)
-        "*/recon/tla/raw/080d690c.o"(.text)
+        "*/games/tla/src/field/common/effect/ground_particles.o"(.text)
         "*/recon/tla/raw/080d69f4.o"(.text)
         "*/recon/tla/raw/080d6b90.o"(.text)
         "*/recon/tla/raw/080d6c60.o"(.text)

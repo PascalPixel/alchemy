@@ -1,4 +1,7 @@
 	.section .rodata
+@ Word-aligned, as an array of structures is: the two bytes before it are
+@ the alignment's fill.
+	.balign 4
 @ Func_080d1e60 が番号で探す 243 行と、その後の 1 行
 	.global Data_080f0308
 Data_080f0308:

@@ -1,10 +1,12 @@
+/* Near miss: differ 6 of 139, The Broken Seal's ReelGame_InitTitle on this game's heap slots (the reel work at 0xb4, the effect work at 0x5c with its particles first). Three swaps remain, each a pool load the native issues one place earlier: the sparks' base before the work pointer's copy, the halfword zero before 155's shift, and the bet message before 0x4cc's shift. A greedy search over one-pass blocks, barriers, swaps and block temporaries (103 tries) found nothing better. The message is 3432 in the English edition, 3434 in the Japanese and 3893 in the others: adopting needs msgctxt "MsgSlotsBet" (☀️'s name) on those entries of the six catalogs. */
 #include "types.h"
+#include "io_reg.h"
 #include "fixed_math.h"
 #include "effect_step.h"
-#include "battle_effect_work.h"
 #include "ram_buffer.h"
 
-struct ReelWork {
+struct ReelWork
+{
     u8 unknown_000[0x8c];
     s32 state;
     s32 cursor;
@@ -15,14 +17,26 @@ struct ReelWork {
     u16 scanline_offsets[160];
 };
 
-extern u8 gBattleFxWork[];
-extern char MsgSlotsBet;
+struct ReelEffectWork
+{
+    struct EffectStep particles[8];
+    u8 unknown_00e0[0x7780 - 0xe0];
+    s32 transfer_mode;
+    s32 transfer_value;
+};
+
+extern char MsgSlotsBet[];
 extern const u8 ReelGame_TitleLetterWidths[];
+
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
 void ReelGame_InitTitle(void)
 {
     struct ReelWork *state;
-    struct BattleEffectWork *work;
+    struct ReelEffectWork *work;
     struct EffectStep *letter;
     const u8 *width;
     s32 left;
@@ -33,16 +47,17 @@ void ReelGame_InitTitle(void)
     s32 window;
     s32 message;
 
-    state = ((struct ReelWork **)gBattleFxWork)[6];
-    work = ((struct BattleEffectWork **)gBattleFxWork)[0];
+    state = (struct ReelWork *)Ram_HeapSlots->canvas_map;
+    work = (struct ReelEffectWork *)Ram_HeapSlots->battle_fx_work[0];
     left = 0;
     for (i = 0; i != 0x800; i++)
-        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
+        SPARKS[i].variant = 0;
 
     letter = work->particles;
     y = -0x200000;
     width = ReelGame_TitleLetterWidths;
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != 8; i++)
+    {
         letter[i].x = (left + 24) << 16;
         step = *width;
         width++;
@@ -56,7 +71,8 @@ void ReelGame_InitTitle(void)
     for (i = 0; i != 160; i++)
         state->scanline_offsets[i] = 0;
 
-    for (i = 0; i != 40; i++) {
+    for (i = 0; i != 40; i++)
+    {
         angle = i * 0x199;
         state->scanline_offsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
         state->scanline_offsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
@@ -67,10 +83,10 @@ void ReelGame_InitTitle(void)
     state->cursor = 0;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     window = UiWindow_CreateFar(18, 0, 12, 4, 6);
     state->sub_window = window;
-    message = (s32)&MsgSlotsBet;
+    message = (s32)MsgSlotsBet;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
     UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }

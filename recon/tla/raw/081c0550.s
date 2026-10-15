@@ -17,7 +17,7 @@ Func_081c0550:
 	ldr r2, [r1]
 	ldr r1, [r0]
 	adds r0, r2, #0
-	bl Func_081c0c84
+	bl Audio_InitializeRuntimeDefaults + 0x68
 	pop {r0}
 	bx r0
 .L_081c0574:

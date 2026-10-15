@@ -1,3 +1,4 @@
+/* Near miss: differ 4 of 279, The Broken Seal's DisplayScroll_DrawLine. Two scheduling swaps remain: the copy's buffer argument (adds r0, r4, #0) comes before 0x100's shift instead of after, and the font's pool load comes after -32's split instead of inside it. The two one-pass blocks (the buffer for the second fill, and the tile count) each fix one swap and were found by a greedy search over one-pass blocks, barriers and block temporaries; the buffer's block moved the copy's argument. Tried: inline wrappers for the fill, a glyph pointer without the font local, eleven permuter minutes. */
 #include "types.h"
 #include "mem.h"
 #include "iwram_call.h"
@@ -38,7 +39,10 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         GameFlag_SetBit(0x200);
     } else {
         DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
-        Iwram_FillWords(buf + 0x100, 0x800, 0);
+        do {
+            dst = buf;
+        } while (0);
+        Iwram_FillWords(dst + 0x100, 0x800, 0);
     }
 
     p = text;
@@ -79,7 +83,9 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         }
     }
 
-    tiles = width / 8;
+    do {
+        tiles = width / 8;
+    } while (0);
     p = buf;
     dst = buf;
     for (row = 0; row < 8; row++) {

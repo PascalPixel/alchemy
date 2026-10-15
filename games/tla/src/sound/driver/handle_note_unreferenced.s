@@ -184,7 +184,7 @@ MusicTrack_HandleNoteUnreferenced:
 	beq.n	.L_081c1dee
 .L_081c1d48:
 	adds	r0, r4, #0
-	bl	Func_081c2314
+	bl	AudioCommand_InvokeSlot34
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -200,7 +200,7 @@ MusicTrack_HandleNoteUnreferenced:
 	cmp	r0, r1
 	beq.n	.L_081c1d6e
 	adds	r1, r5, #0
-	bl	Func_081c1e48
+	bl	MusicTrack_ClearModulationState
 .L_081c1d6e:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0

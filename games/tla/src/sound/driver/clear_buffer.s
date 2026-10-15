@@ -14,3 +14,4 @@ SoundDriver_ClearBuffer:
 	stmia	r0!, {r1, r2, r3, r4}
 	mov	r4, ip
 	bx	lr
+	.2byte	0x0000

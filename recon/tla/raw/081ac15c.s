@@ -40,7 +40,7 @@ LuckyDice_Run:
 	str r0, [sp, #104]
 	ldr r0, .L_081ac2e4
 	bl Resource_ReservedNoOp
-	bl Func_081ac028
+	bl Camera_ResetSceneDefaults
 	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081ac2e8
 	movs r3, #0

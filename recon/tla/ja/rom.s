@@ -5040,7 +5040,7 @@ Func_08196404:
 	.section .rom.00196a80, "ax"
 	.incbin "baserom.gba", 0x00196a80, 0x0000035c
 	.section .rom.001a052c, "ax"
-	.incbin "baserom.gba", 0x001a052c, 0x00000188
+	.incbin "baserom.gba", 0x001a052c, 0x00000148
 	.section .rom.001a06e0, "ax"
 	.global Func_081a06e0
 	.type Func_081a06e0, %function
@@ -5083,8 +5083,6 @@ Func_081a15dc:
 	.incbin "baserom.gba", 0x001a15c8, 0x000001f4
 	.section .rom.001a181c, "ax"
 	.incbin "baserom.gba", 0x001a181c, 0x000000c8
-	.section .rom.001a6030, "ax"
-	.incbin "baserom.gba", 0x001a6030, 0x00000064
 	.section .rom.001a6154, "ax"
 	.incbin "baserom.gba", 0x001a6154, 0x00000960
 	.section .rom.001a6b50, "ax"
@@ -5137,28 +5135,22 @@ TitlePalette_UpdateFade:
 	.thumb_func
 Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x001a7a28, 0x00000724
-	.section .rom.001ac026, "ax"
-	.incbin "baserom.gba", 0x001ac026, 0x0000008a
 	.section .rom.001ac15c, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
-	.section .rom.001b2008, "ax"
-	.global Func_081b2008
-	.type Func_081b2008, %function
-	.thumb_func
-Func_081b2008:
-	.incbin "baserom.gba", 0x001b2008, 0x00000034
-	.section .rom.001b20a0, "ax"
-	.incbin "baserom.gba", 0x001b20a0, 0x000000b0
 	.section .rom.001b21ec, "ax"
-	.incbin "baserom.gba", 0x001b21ec, 0x00001b00
+	.incbin "baserom.gba", 0x001b21ec, 0x00001178
+	.section .rom.001b3364, "ax"
+	.global ReelGame_Run
+	.type ReelGame_Run, %function
+	.thumb_func
+ReelGame_Run:
+	.incbin "baserom.gba", 0x001b3364, 0x00000988
 	.section .rom.001b3d90, "ax"
 	.incbin "baserom.gba", 0x001b3d90, 0x000009b0
-	.section .rom.001b8020, "ax"
-	.incbin "baserom.gba", 0x001b8020, 0x00000088
 	.section .rom.001b810c, "ax"
 	.incbin "baserom.gba", 0x001b810c, 0x000002b8
 	.section .rom.001b83c4, "ax"
@@ -5179,8 +5171,6 @@ LeftoverSoundDriver_StaleCallTarget:
 	.thumb_func
 Func_081c0168:
 	.incbin "baserom.gba", 0x001c0168, 0x00000030
-	.section .rom.001c03fe, "ax"
-	.incbin "baserom.gba", 0x001c03fe, 0x00000002
 	.section .rom.001c0428, "ax"
 	.global Func_081c0428
 Func_081c0428:
@@ -5205,71 +5195,14 @@ Func_081c08a4:
 	.thumb_func
 MusicPlayer_Tick:
 	.incbin "baserom.gba", 0x001c09d0, 0x00000248
-	.section .rom.001c0c1c, "ax"
-	.balign 4
-	.global Func_081c0c1c
-	.type Func_081c0c1c, %function
-	.thumb_func
-Func_081c0c1c:
-	.incbin "baserom.gba", 0x001c0c1c, 0x00000090
-	.section .rom.001c0cb0, "ax"
-	.global Func_081c0cb0
-	.type Func_081c0cb0, %function
-	.thumb_func
-Func_081c0cb0:
-	.incbin "baserom.gba", 0x001c0cb0, 0x00000180
-	.section .rom.001c0e30, "ax"
-	.global Func_081c0e30
-	.type Func_081c0e30, %function
-	.thumb_func
-Func_081c0e30:
-	.incbin "baserom.gba", 0x001c0e30, 0x00000040
-	.section .rom.001c0e70, "ax"
-	.global Func_081c0e70
-	.type Func_081c0e70, %function
-	.thumb_func
-Func_081c0e70:
-	.incbin "baserom.gba", 0x001c0e70, 0x000000cc
-	.section .rom.001c1008, "ax"
-	.incbin "baserom.gba", 0x001c1008, 0x0000000c
+	.section .rom.001c1010, "ax"
+	.incbin "baserom.gba", 0x001c1010, 0x00000004
 	.section .rom.001c1014, "ax"
 	.global Func_081c1014
 	.type Func_081c1014, %function
 	.thumb_func
 Func_081c1014:
 	.incbin "baserom.gba", 0x001c1014, 0x00000144
-	.section .rom.001c11ec, "ax"
-	.incbin "baserom.gba", 0x001c11ec, 0x00000090
-	.section .rom.001c16ca, "ax"
-	.incbin "baserom.gba", 0x001c16ca, 0x00000002
-	.section .rom.001c1e48, "ax"
-	.global Func_081c1e48
-	.type Func_081c1e48, %function
-	.thumb_func
-Func_081c1e48:
-	.incbin "baserom.gba", 0x001c1e48, 0x0000001c
-	.section .rom.001c1e6e, "ax"
-	.incbin "baserom.gba", 0x001c1e6e, 0x00000002
-	.section .rom.001c2314, "ax"
-	.global Func_081c2314
-	.type Func_081c2314, %function
-	.thumb_func
-Func_081c2314:
-	.incbin "baserom.gba", 0x001c2314, 0x00000014
-AudioCommand_InvokeSlot35:
-	.section .rom.001c2328, "ax"
-	.global AudioCommand_InvokeSlot35
-	.global Func_081c2328
-	.type AudioCommand_InvokeSlot35, %function
-	.thumb_func
-Func_081c2328:
-	.incbin "baserom.gba", 0x001c2328, 0x00000014
-	.section .rom.001c339a, "ax"
-	.incbin "baserom.gba", 0x001c339a, 0x00000002
-	.section .rom.001c33ae, "ax"
-	.incbin "baserom.gba", 0x001c33ae, 0x00000002
-	.section .rom.001c3416, "ax"
-	.incbin "baserom.gba", 0x001c3416, 0x00000002
 	.section .rom.001c342a, "ax"
 	.incbin "baserom.gba", 0x001c342a, 0x00000002
 	.section .rom.001c342c, "ax"

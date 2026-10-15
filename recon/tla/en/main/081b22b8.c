@@ -1,4 +1,4 @@
-/* Near miss: differ 2 of 188. Ahead of the first loop the native loads the mask 0xfffffeff from the pool before it builds 0x100; both invariants have priority 3 and one dependent, and loop.c emits 0x100 first. Hand-hoisting the mask into a one-pass block after the entry test orders the pair but gives the mask lr and 0x100 r8, swapped (differ 12). */
+/* Near miss: differ 2 of 188. Ahead of the first loop the native loads the mask 0xfffffeff from the pool before it builds 0x100. loop.c hoists 7 and 0x100 in its first pass and the mask only in its second ("not desirable" at life 1), so the mask comes last in the preheader and sched2 breaks the priority-3 tie by insn order. Hand-hoisting the mask after the entry test orders the pair but gives the mask lr and 0x100 r8 (differ 12); hand-hoisting both, 0x100 first, gives the right registers in the wrong order (differ 4); pinning both (mask r8, 0x100 lr) and setting the mask first swaps their reload registers r3 and r7 (differ 10). Five permuter minutes found nothing better. */
 #include "types.h"
 
 #include "ram_buffer.h"

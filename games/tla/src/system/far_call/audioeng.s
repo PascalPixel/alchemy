@@ -10,11 +10,11 @@ AudioEngine_RunMixerFar:
 	.global Audio_InitializeRuntimeDefaultsFar
 	.thumb_func
 Audio_InitializeRuntimeDefaultsFar:
-	overlay_veneer Func_081c0c1c
+	overlay_veneer Audio_InitializeRuntimeDefaults
 	.global Audio_PlayCue
 	.thumb_func
 Audio_PlayCue:
-	overlay_veneer Func_081c0cb0
+	overlay_veneer AudioCommand_Play
 	.global Func_081c0018
 	.thumb_func
 Func_081c0018:

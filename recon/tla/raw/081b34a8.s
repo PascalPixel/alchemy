@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081b34a8
+	.global ReelGame_Run
 	.thumb_func
-Func_081b34a8:
+ReelGame_Run:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -1001,7 +1001,7 @@ Func_081b34a8:
 .L_081b3c70:
 	.4byte Func_081b3294
 .L_081b3c74:
-	.4byte Func_081b20a0
+	.4byte BattlePres_ProcessPendingTileTransfer
 .L_081b3c78:
 	.4byte 0x05000200
 .L_081b3c7c:
@@ -1213,7 +1213,7 @@ Func_081b34a8:
 .L_081b3e24:
 	.4byte 0x05000200
 .L_081b3e28:
-	.4byte Func_081b20a0
+	.4byte BattlePres_ProcessPendingTileTransfer
 .L_081b3e2c:
 	.4byte Func_081b243c
 .L_081b3e30:

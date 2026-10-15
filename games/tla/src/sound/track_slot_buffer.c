@@ -13,7 +13,8 @@ void AudioTrack_InsertSlotNode(s32 index)
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-    if (gFlash_Handler3->nodes[slot].prev != NULL) {
+    if (gFlash_Handler3->nodes[slot].prev != NULL)
+    {
         if (gFlash_Handler3->nodes[slot].next != NULL)
             gFlash_Handler3->nodes[slot].next->prev = gFlash_Handler3->nodes[slot].prev;
         gFlash_Handler3->nodes[slot].prev->next = gFlash_Handler3->nodes[slot].next;

@@ -10,18 +10,18 @@ struct SoundFrameState
     u8 unk03;
 };
 
-extern const struct SongEntry gSound_SongTable[];
-extern const struct PlayerSlot gSound_PlayerSlots[];
+extern const struct SongEntry          gSound_SongTable[];
+extern const struct PlayerSlot         gSound_PlayerSlots[];
 extern volatile struct SoundFrameState gData_03001138;
-extern u8 gData_02005814;
-extern u16 gData_02005820[8];
-extern u16 gData_02005830;
-extern struct SoundPlayer gSound_Player3;
-extern struct SoundPlayer gSound_Player5;
-extern u16 gData_02005834;
-extern u16 gData_0200583c;
-extern u16 gData_0200580c;
-extern struct SoundPlayer gMusicPlayerFanfare;
+extern u8                              gData_02005814;
+extern u16                             gData_02005820[8];
+extern u16                             gData_02005830;
+extern struct SoundPlayer              gSound_Player3;
+extern struct SoundPlayer              gSound_Player5;
+extern u16                             gData_02005834;
+extern u16                             gData_0200583c;
+extern u16                             gData_0200580c;
+extern struct SoundPlayer              gMusicPlayerFanfare;
 
 void SongFlag_Set(s32 cue);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);

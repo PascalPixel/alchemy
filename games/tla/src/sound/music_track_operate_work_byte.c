@@ -6,7 +6,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
 {
     u32 op;
     u8 *byte;
-    u8 value;
+    u8  value;
 
     op = *track->cursor;
     track->cursor++;
@@ -15,7 +15,8 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     value = *track->cursor;
     track->cursor++;
 
-    switch (op) {
+    switch (op)
+    {
     case SOUND_WORK_SET:
         *byte = value;
         return;

@@ -5,8 +5,8 @@ extern u16 gData_02005830;
 extern u16 gData_02005834;
 extern u16 gData_0200583c;
 extern u16 gData_0200580c;
-extern u8 gData_02005814;
-extern u8 gData_02005804;
+extern u8  gData_02005814;
+extern u8  gData_02005804;
 extern s16 gData_02005820[8];
 
 void Audio_Initialize(void);
@@ -22,7 +22,7 @@ void Func_081c0c18(void)
 void Audio_InitializeRuntimeDefaults(void)
 {
     s16 *playerVolume;
-    s32 remaining;
+    s32  remaining;
 
     Audio_Initialize();
     gData_02005830 = 0;

@@ -143,11 +143,11 @@ msgctxt "message"
 msgid "00033"
 msgstr "bouton d'alimentation."
 
-msgctxt "message"
+msgctxt "MsgCannotSaveHere"
 msgid "00034"
 msgstr "Impossible de sauvegarder ici!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoPlaceForThat"
 msgid "00035"
 msgstr "Il n'y a pas assez d'espace!{end_wait}"
 
@@ -19639,7 +19639,7 @@ msgctxt "message"
 msgid "04907"
 msgstr "Changer de héros"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "04908"
 msgstr "Pour quitter le mode veille,{line_break}appuyez sur Select et sur{line_break}les boutons L et R.{end_wait}"
 

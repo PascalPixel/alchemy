@@ -697,8 +697,6 @@ SECTIONS
         "*/recon/tla/raw/0804dea0.o"(.text)
         "*/games/tla/src/menu/flaggrid.o"(.text)
         "*/games/tla/src/game/djinn/set_found_flag_and_add.o"(.text)
-        "*/recon/tla/raw/0804e0ce.o"(.text)
-        "*/recon/tla/raw/0804e0d0.o"(.text)
         "*/games/tla/src/menu/flag_bit_rect.o"(.text)
         "*/recon/tla/raw/0804e1d8.o"(.text)
         "*/recon/tla/raw/0804e3f4.o"(.text)

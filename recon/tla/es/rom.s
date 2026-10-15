@@ -1043,7 +1043,13 @@ Func_0803f9c0:
 Func_080400e8:
 	.incbin "baserom.gba", 0x00040148, 0x000004c4
 	.section .rom.00040688, "ax"
-	.incbin "baserom.gba", 0x00040688, 0x00000364
+	.incbin "baserom.gba", 0x00040688, 0x00000170
+	.section .rom.000407f8, "ax"
+	.global Func_08040798
+	.type Func_08040798, %function
+	.thumb_func
+Func_08040798:
+	.incbin "baserom.gba", 0x000407f8, 0x000001f4
 	.section .rom.00040a50, "ax"
 	.incbin "baserom.gba", 0x00040a50, 0x00000270
 	.section .rom.00040dd0, "ax"
@@ -1336,14 +1342,6 @@ Menu_RunSelection:
 	.thumb_func
 Menu_DrawFlagBitTable:
 	.incbin "baserom.gba", 0x0004e094, 0x000000c4
-	.section .rom.0004e2c2, "ax"
-	.incbin "baserom.gba", 0x0004e2c2, 0x00000002
-	.section .rom.0004e2c4, "ax"
-	.global Func_0804e0d0
-	.type Func_0804e0d0, %function
-	.thumb_func
-Func_0804e0d0:
-	.incbin "baserom.gba", 0x0004e2c4, 0x0000007c
 	.section .rom.0004e3cc, "ax"
 	.global Func_0804e1d8
 	.type Func_0804e1d8, %function

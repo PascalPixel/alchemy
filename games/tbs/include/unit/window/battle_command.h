@@ -85,7 +85,7 @@ void Resource_CopyFixedBlockB(s32 slot);
 void Resource_CopyFixedBlockA(s32 slot);
 s32 UiText_SetRenderString(const u8 *str);
 void UiText_DrawPaddedLabel(s32 window, u8 *name);
-s32 NameEntry_EditOwnerName(s32 entry);
+s32 NameEntry_EditOwnerName(s32 member);
 s32 PartyTalkMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);

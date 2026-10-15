@@ -2227,6 +2227,12 @@ void Resource_CopyFixedBlockA(s32 slot) {
   VramBlock_LoadCached(slot, 0x80, gResource_FixedBlockATiles);
 }
 
+// The name entry screen: a keyboard window of letter keys, with a column of
+// command keys on its right (Delete and End, and in Japanese the keyboard
+// switch), the name above it and the character's portrait.
+#define NAME_COMMAND_COLUMN 18 // the keyboard column of the command keys
+#define NAME_MAX_LETTERS 5
+
 #if EDITION_INTERNATIONAL
 // Puts the string `str` into the UI's text entries and returns its width in
 // pixels.
@@ -2285,12 +2291,15 @@ void UiText_DrawPaddedLabel(s32 window, u8 *name) {
   UiText_DrawString(text, window, 0, -2);
 }
 
+// The width of the window showing the name, in tiles.
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 #define NAME_LABEL_WIDTH 9
 #else
 #define NAME_LABEL_WIDTH 8
 #endif
 
+// Whether the edition draws the Delete and End key labels as text over the
+// keyboard, and how wide its End key is, in tiles.
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR)
 #define NAME_KEY_LABELS 1
@@ -2303,42 +2312,48 @@ void UiText_DrawPaddedLabel(s32 window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-s32 NameEntry_EditOwnerName(s32 entry) {
+// The name entry screen for party member `member`: the player types a name
+// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
+// Start, which jumps there). A puts the key under the cursor into the name,
+// B or Delete removes the last letter, and B on an empty name cancels. Ending
+// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+s32 NameEntry_EditOwnerName(s32 member) {
   struct RenderInput *label;
   s32 result = 0;
   s32 originalLength = 0;
   s32 length = 0;
   u8 text[16];
   u8 *input = text + 1;
-  u8 *saved = (u8 *)UnitGetFar(entry);
-  u8 *work = gWindowWork[0];
+  u8 *name = (u8 *)UnitGetFar(member);
+  u8 *uiTilemap = gWindowWork[0];
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct RenderInput *window;
   union MenuCursor cursor;
   union MenuCursor caret;
-  s32 column, row, slot;
+  s32 column, row, vramSlot;
   struct RenderOutput *output;
   u8 *end;
-  u16 *pal;
+  u16 *palette;
 
+  // The keyboard, the name and the portrait.
   Ui_LoadWindowGraphics();
   window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
   label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
-  UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
+  UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
   UiText_DrawStringInWindow(gNameEntry_DeleteKeyLabel, window, 144, 32);
   UiText_DrawStringInWindow(gNameEntry_EndKeyLabel, window, 144, 40);
 #endif
   UiWindow_DrawDividerLine(window, 18, 0, 18, 7);
-  ((struct UiRenderWork *)work)->dirty = textDirty;
+  ((struct UiRenderWork *)uiTilemap)->dirty = textDirty;
   text[0] = result;
   {
     s32 i;
 
     for (i = 0; i < 14; i++) {
-      u32 c = saved[i];
+      u32 c = name[i];
 
       input[i] = c;
       if (c != 0) {
@@ -2348,40 +2363,43 @@ s32 NameEntry_EditOwnerName(s32 entry) {
     }
   }
   input[14] = 0;
-  UiText_DrawPaddedLabel((s32)label, saved);
-  slot = Resource_FindFreeEntry();
-  column = 18;
+  UiText_DrawPaddedLabel((s32)label, name);
+  vramSlot = Resource_FindFreeEntry();
+  column = NAME_COMMAND_COLUMN;
   row = 5;
-  if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
-    output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+  if (vramSlot <= 95) {
+    VramBlock_LoadCached(vramSlot, 128, gResource_FixedBlockBTiles);
+    output = RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, window, 0, 0);
     cursor.output = output;
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140,
                                        window->y * 8 + 52);
   }
-  slot = Resource_FindFreeEntry();
-  if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockATiles);
-    output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+  vramSlot = Resource_FindFreeEntry();
+  if (vramSlot <= 95) {
+    VramBlock_LoadCached(vramSlot, 128, gResource_FixedBlockATiles);
+    output = RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, window, 0, 0);
     caret.output = output;
     output->sentinel = 255;
     ((struct FieldSprite *)output->unk10)->priority = 0;
     ShopCursor_SetPositionImmediateFar(&caret.cursor,
                                        UiText_SetRenderString(input) + 70, 22);
   }
-  pal = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
-  pal[4] = 0x6318;
+  // The key under the cursor flashes between palette 15 and palette 14, a
+  // copy of it with colour 4 grey.
+  palette = (u16 *)0x050001c0;
+  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette[4] = 0x6318;
   end = (u8 *)(originalLength + (s32)input);
   while (1) {
     s32 width = 1;
 
-    if (column == 18) {
+    if (column == NAME_COMMAND_COLUMN) {
       if (row == 4)
         width = 3;
       if (row == 5)
         width = NAME_END_KEY_WIDTH;
     }
+    // Flash the key under the cursor, then move the cursor and the caret.
     UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
     WaitFrames(1);
     UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
@@ -2406,11 +2424,13 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       ((struct FieldSprite *)output->unk10)->y =
           output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
+    // The D-pad moves over the keys, skipping the gaps between groups and
+    // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       row--;
-      if (column != 18) {
+      if (column != NAME_COMMAND_COLUMN) {
         if (row == -1)
           row = 5;
       } else {
@@ -2419,10 +2439,10 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       row++;
-      if (column != 18) {
+      if (column != NAME_COMMAND_COLUMN) {
         if (row == 6)
           row = 0;
       } else {
@@ -2431,11 +2451,11 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       column--;
       if (column == -1) {
-        column = 18;
+        column = NAME_COMMAND_COLUMN;
         if (row < 4 || row > 5)
           column = 16;
       } else if (column == 5 || column == 11 || column == 17) {
@@ -2443,24 +2463,24 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       column++;
       if (column == 19)
         column = 0;
       else if (column == 5 || column == 11 || column == 17)
         column++;
-      if (column == 18 && (row < 4 || row > 5))
+      if (column == NAME_COMMAND_COLUMN && (row < 4 || row > 5))
         column = 0;
     }
     if (gKeyState & KEY_START) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
-      column = 18;
+      column = NAME_COMMAND_COLUMN;
       row = 5;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     remove_character:
       if (length != 0) {
         length--;
@@ -2473,18 +2493,19 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       result = -1;
       break;
     }
+    // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(112);
-    if (column == 18) {
+    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+    if (column == NAME_COMMAND_COLUMN) {
       if (row == 5) {
         if (length == 0) {
           caret.output->active = 13;
           RenderOutput_PrepareForRedraw(label);
-          UiText_DrawPaddedLabel((s32)label, saved);
+          UiText_DrawPaddedLabel((s32)label, name);
           WaitFrames(10);
         } else {
-          u8 *dst = saved;
+          u8 *dst = name;
           u8 *src = input;
           s32 i = 0;
           u8 *dstSave = dst;
@@ -2494,15 +2515,15 @@ s32 NameEntry_EditOwnerName(s32 entry) {
            * CSE blocks. They disappear, preserving destination/
            * source/index in r2/r1/r0; removing the barrier alone
            * changes them to r1/r0/r2 (14 instructions differ). A for loop
-           * copying saved[i] = input[i], or walking the pointers,
+           * copying name[i] = input[i], or walking the pointers,
            * differs 14; the while form with i declared first, 12. */
-          if (saved)
+          if (name)
             src = NULL;
-          if (saved)
+          if (name)
             src = srcSave;
-          if (saved)
+          if (name)
             dst = NULL;
-          if (saved)
+          if (name)
             dst = dstSave;
           while (i < 15) {
             *dst++ = *src++;
@@ -2518,17 +2539,17 @@ s32 NameEntry_EditOwnerName(s32 entry) {
     {
       u32 tx = window->x + column + 1;
       u32 cell;
-      u32 character;
+      u32 letter;
 
       cell = ((window->y + row + 1) << 5) + tx;
-      character = work[cell * 2];
-      if (length == 5)
+      letter = uiTilemap[cell * 2];
+      if (length == NAME_MAX_LETTERS)
         continue;
-      *end++ = character;
+      *end++ = letter;
       *end = 0;
       length++;
-      if (length == 5) {
-        column = 18;
+      if (length == NAME_MAX_LETTERS) {
+        column = NAME_COMMAND_COLUMN;
         row = 5;
         cursorDirty = 1;
       }
@@ -2539,13 +2560,18 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   }
   UiWork_Finalize((struct UiWindow *)window, 2);
   UiWork_Finalize((struct UiWindow *)label, 2);
-  UiWork_FinalizeEntityMatchingLocalizedId(entry);
+  UiWork_FinalizeEntityMatchingLocalizedId(member);
   WaitFrames(1);
   return result;
 }
 #else
 
-s32 NameEntry_EditOwnerName(s32 entry) {
+// The name entry screen for party member `member`: the player types a name
+// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
+// Start, which jumps there). A puts the key under the cursor into the name,
+// B or Delete removes the last letter, and B on an empty name cancels. Ending
+// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+s32 NameEntry_EditOwnerName(s32 member) {
   struct RenderInput *label;
   s32 result = 0;
   s32 keyboard = 0;
@@ -2553,70 +2579,73 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   s32 length = 0;
   u8 text[16];
   u8 *input = text + 1;
-  u8 *saved = (u8 *)UnitGetFar(entry);
-  u8 *work = gWindowWork[0];
+  u8 *name = (u8 *)UnitGetFar(member);
+  u8 *uiTilemap = gWindowWork[0];
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct RenderInput *window;
   union MenuCursor cursor;
   union MenuCursor caret;
-  s32 column, row, slot, x;
+  s32 column, row, vramSlot, x;
   struct RenderOutput *output;
-  u32 character;
-  u16 *pal;
+  u32 letter;
+  u16 *palette;
 
+  // The keyboard, the name and the portrait.
   Ui_LoadWindowGraphics();
   window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 13, 2);
   label = (struct RenderInput *)UiWindow_Create(8, 3, 8, 3, 2);
-  UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
+  UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
   UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
-  ((struct UiRenderWork *)work)->dirty = textDirty;
+  ((struct UiRenderWork *)uiTilemap)->dirty = textDirty;
   text[0] = result;
   {
     s32 i;
 
     for (i = 0; i < 14; i++) {
-      character = saved[i];
+      letter = name[i];
 
-      input[i] = character;
-      if (character != 0) {
+      input[i] = letter;
+      if (letter != 0) {
         bytes++;
         length++;
-        if ((u8)(character - 0xde) <= 1)
+        if ((u8)(letter - NAME_VOICED_MARK) <= 1)
           length--;
       }
     }
   }
   input[14] = 0;
-  UiText_DrawString(saved, (s32)label, 0, 0);
-  column = 18;
-  slot = Resource_FindFreeEntry();
+  UiText_DrawString(name, (s32)label, 0, 0);
+  column = NAME_COMMAND_COLUMN;
+  vramSlot = Resource_FindFreeEntry();
   row = 10;
-  if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
-    output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+  if (vramSlot <= 95) {
+    VramBlock_LoadCached(vramSlot, 128, gResource_FixedBlockBTiles);
+    output = RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, window, 0, 0);
     cursor.output = output;
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140,
                                        window->y * 8 + 92);
   }
-  slot = Resource_FindFreeEntry();
-  if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockATiles);
-    output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+  vramSlot = Resource_FindFreeEntry();
+  if (vramSlot <= 95) {
+    VramBlock_LoadCached(vramSlot, 128, gResource_FixedBlockATiles);
+    output = RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, window, 0, 0);
     caret.output = output;
     output->sentinel = 255;
     ((struct FieldSprite *)output->unk10)->priority = 0;
     x = 72 + NameEntry_CountLetters(input) * 10;
     ShopCursor_SetPositionImmediateFar(&caret.cursor, x, 22);
   }
-  pal = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
-  pal[4] = 0x6318;
+  // The key under the cursor flashes between palette 15 and palette 14, a
+  // copy of it with colour 4 grey.
+  palette = (u16 *)0x050001c0;
+  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette[4] = 0x6318;
   while (1) {
     s32 width = 1;
 
-    if (column == 18) {
+    if (column == NAME_COMMAND_COLUMN) {
       if (row == 0)
         width = 4;
       if (row == 8)
@@ -2624,6 +2653,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       if (row == 10)
         width = 3;
     }
+    // Flash the key under the cursor, then move the cursor and the caret.
     UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
     WaitFrames(1);
     UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
@@ -2648,11 +2678,13 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       ((struct FieldSprite *)output->unk10)->y =
           output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
+    // The D-pad moves over the keys, skipping the gaps between groups and
+    // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       row--;
-      if (column != 18) {
+      if (column != NAME_COMMAND_COLUMN) {
         if (row == -1)
           row = 10;
         else if (row == 5)
@@ -2667,10 +2699,10 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       row++;
-      if (column != 18) {
+      if (column != NAME_COMMAND_COLUMN) {
         if (row == 11)
           row = 0;
         if (row == 5)
@@ -2685,12 +2717,12 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       column--;
       if (column == -1) {
         if (row == 0 || row == 8 || row == 10)
-          column = 18;
+          column = NAME_COMMAND_COLUMN;
         else
           column = 16;
       } else if (column == 5 || column == 11 || column == 17) {
@@ -2698,28 +2730,28 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       column++;
       if (column == 19)
         column = 0;
       else if (column == 5 || column == 11 || column == 17)
         column++;
-      if (column == 18) {
+      if (column == NAME_COMMAND_COLUMN) {
         if (row == 0 || row == 8 || row == 10)
-          column = 18;
+          column = NAME_COMMAND_COLUMN;
         else
           column = 0;
       }
     }
     if (gKeyState & KEY_START) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       cursorDirty = 1;
-      column = 18;
+      column = NAME_COMMAND_COLUMN;
       row = 10;
     }
     if (gKeyState & KEY_SELECT) {
-      AudioCommand_PlayFar(111);
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
     change_keyboard:
       keyboard ^= 1;
       if (keyboard)
@@ -2727,18 +2759,18 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       else
         UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
       UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
-      ((struct UiRenderWork *)work)->dirty = 1;
+      ((struct UiRenderWork *)uiTilemap)->dirty = 1;
       continue;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     remove_character:
       if (length != 0) {
         length--;
         bytes--;
-        character = input[bytes];
+        letter = input[bytes];
         input[bytes] = 0;
-        if ((u8)(character - 0xde) <= 1) {
+        if ((u8)(letter - NAME_VOICED_MARK) <= 1) {
           bytes--;
           input[bytes] = 0;
         }
@@ -2751,15 +2783,16 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       textDirty = 1;
       continue;
     }
+    // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(112);
-    if (column == 18) {
+    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+    if (column == NAME_COMMAND_COLUMN) {
       if (row == 10) {
         if (length == 0) {
           caret.output->active = 13;
           RenderOutput_PrepareForRedraw(label);
-          UiText_DrawString(saved, (s32)label, 0, 0);
+          UiText_DrawString(name, (s32)label, 0, 0);
           WaitFrames(10);
         } else {
           u8 *dst;
@@ -2768,14 +2801,14 @@ s32 NameEntry_EditOwnerName(s32 entry) {
           u8 *dstSave;
           u8 *srcSave;
 
-          dst = saved;
+          dst = name;
           src = input;
           i = 0;
           /* FAKEMATCH: the split restores end the pointer setup's
            * CSE blocks. They disappear, preserving destination/
            * source/index in r1/r2/r0; removing the barrier alone
            * changes them to r2/r0/r1 (14 instructions differ). A for loop
-           * copying saved[i] = input[i] differs 18, one walking the
+           * copying name[i] = input[i] differs 18, one walking the
            * pointers 14; the while form with i declared first, 12. */
           dstSave = dst;
           srcSave = src;
@@ -2806,26 +2839,26 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       u8 *dst;
 
       cell = ((window->y + row + 1) << 5) + tx;
-      character = work[cell * 2];
-      if (character == 0xfe)
-        character = 0xde;
-      if (character == 0xff)
-        character = 0xdf;
-      if (length == 5 && (u8)(character - 0xde) > 1)
+      letter = uiTilemap[cell * 2];
+      if (letter == 0xfe) // the keyboard's dakuten key
+        letter = NAME_VOICED_MARK;
+      if (letter == 0xff) // the keyboard's handakuten key
+        letter = NAME_SEMIVOICED_MARK;
+      if (length == NAME_MAX_LETTERS && (u8)(letter - NAME_VOICED_MARK) > 1)
         continue;
       dst = input + bytes;
-      if (!NameEntry_AcceptsMark(character, input[bytes - 1])) {
-        AudioCommand_PlayFar(113);
+      if (!NameEntry_AcceptsMark(letter, input[bytes - 1])) {
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         continue;
       }
-      *dst = character;
+      *dst = letter;
       bytes++;
       input[bytes] = 0;
       length++;
-      if ((u8)(character - 0xde) <= 1)
+      if ((u8)(letter - NAME_VOICED_MARK) <= 1)
         length--;
-      if (length == 5) {
-        column = 18;
+      if (length == NAME_MAX_LETTERS) {
+        column = NAME_COMMAND_COLUMN;
         row = 10;
         cursorDirty = 1;
       }
@@ -2836,7 +2869,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   }
   UiWork_Finalize((struct UiWindow *)window, 2);
   UiWork_Finalize((struct UiWindow *)label, 2);
-  UiWork_FinalizeEntityMatchingLocalizedId(entry);
+  UiWork_FinalizeEntityMatchingLocalizedId(member);
   WaitFrames(1);
   return result;
 }
@@ -2878,6 +2911,8 @@ s32 PartyTalkMenu_Choose(s32 unused) {
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
   }
+  // The key under the cursor flashes between palette 15 and palette 14, a
+  // copy of it with colour 4 grey.
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;

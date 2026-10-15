@@ -8,8 +8,9 @@
  * sp+56, canvas sp+52, graphics sp+48, caster sp+44, transition sp+40, the
  * saved scroll sp+36, &from sp+32, &to sp+28, &texture sp+24, the flash
  * loop's 6k sp+20, the claw loop's frame * 10 - 240 - 160k sp+16, its
- * start sp+12 and 32k sp+8. Here the claw loop keeps fewer spills, so the
- * frame and the registers differ from there on.
+ * start sp+12 and 32k sp+8. Here the frame is 112 bytes: the claw and
+ * flash loops keep those values in registers, so every stack offset and
+ * most registers differ.
  * Not yet tried: the claw loop's three spilled values as the native's
  * locals (x from frame * 10 rather than age * 10). */
 #include "types.h"

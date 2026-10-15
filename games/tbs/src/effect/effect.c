@@ -12339,19 +12339,18 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// columns.c
-// バトル演出：地面から次々に伸びるつる・柱・とげと土けむり
-// 伸びる 1 本（struct EffectStep に重ねて使う）
+// Growing columns: vines or pillars spring from the ground one after
+// another, throwing up dust. PARTICLES holds the dust.
+// One growing column, laid over a struct EffectStep.
 struct DualColumn {
-  s32 x; // 根もと（キャンバスのドット）
+  s32 x; // the root, in canvas pixels
   s32 y;
-  u8 unk08[8];
-  s32 height; // 伸びきったときの長さ
-  u8 unk14[4];
-  s32 start; // 伸び始めるフレーム
+  s32 z; // the EffectStep's z and velocityX, unused here
+  s32 velocityX;
+  s32 height;    // the full length
+  s32 velocityZ; // the EffectStep's, unused here
+  s32 start;     // the frame it starts to grow
 };
-
-// PARTICLES : とげの土けむり
 
 void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunDualTable(effect, 0);
@@ -12361,10 +12360,13 @@ void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunDualTable(effect, 1);
 }
 
-// つる（mode 0）か緑の柱（mode 1）が、左右交互に 4 フレームおきに伸びる
-// 本数は gDualTable_ColumnCounts[variant]、根もとから土けむりが上がる
+// Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
+// alternately mirrored, each throwing up dust from its root.
+//
+// effect: the targets; variant picks the number of columns
+//         (gDualTable_ColumnCounts).
 void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -12381,7 +12383,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
 
   u8 *age;
 
-  struct DualColumn *seed;
+  struct DualColumn *setup;
   s32 x;
   s32 height;
   s32 limit;
@@ -12400,13 +12402,13 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
   s32 puffAge;
   s32 image;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // 横も等倍
+  REG_BG2PA = 0x100; // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
@@ -12415,7 +12417,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
   if (work->effect->side == 1) {
-    REG_BG2X = -0x7000; // 112 ドット右へ
+    REG_BG2X = -0x7000; // 112 pixels right
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
@@ -12434,7 +12436,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
 
   duration = gDualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
-  // 土けむりをすべて空きにする
+  // Mark all the dust free (variant -1).
   age = (u8 *)gMapCellBuffer + 0x18;
   i = 0;
   do {
@@ -12443,26 +12445,26 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
     age += sizeof(struct EffectStep);
   } while (i != 1024);
 
-  // 16 本の根もとと長さ
+  // The 16 columns' roots and lengths.
   i = 0;
-  seed = (struct DualColumn *)work->particles;
+  setup = (struct DualColumn *)work->particles;
   do {
     x = (gDualTable_ColumnX[i] + (7 & Random16())) - 4;
-    seed->y = i / 2 + 108;
-    seed->x = x;
+    setup->y = i / 2 + 108;
+    setup->x = x;
     height = (63 & Random16()) + 55;
-    seed->height = height;
+    setup->height = height;
     limit = gDualTable_HeightLimits[i % 3];
     if (limit < height) {
-      seed->height = limit;
+      setup->height = limit;
     }
     limit = i * 4 + 8;
-    seed->start = limit;
+    setup->start = limit;
     i++;
-    seed++;
+    setup++;
   } while (i != 16);
 
-  work->transferMode = 1; // 毎フレーム 0 で消す
+  work->transferMode = 1; // clear the canvas every frame
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -12477,7 +12479,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
         BattleEventRuntime_BeginPhaseFar(132);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
-        // 終わりの 16 フレームで薄くする
+        // Fade out over the last 16 frames.
         REG_BLDCNT = 0x3f44;
         REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
       }
@@ -12492,7 +12494,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
               work->shakeFrames = 2;
             }
 
-            // 1 フレームに 8 ドットずつ伸ばす（奇数番は左右反転）
+            // Grow 8 pixels a frame (odd columns mirrored).
             if (frame > start) {
               u32 shape = i % 3;
 
@@ -12526,7 +12528,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
               }
             }
 
-            // 伸び始めて 4 フレーム目に対象が反応する
+            // The targets react 4 frames after the column starts to grow.
             n = 0;
             if (work->effect->count != 0) {
               reactFrame = start + 4;
@@ -12544,7 +12546,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
               reactFrame = start + 4;
             }
 
-            // 4・8 フレーム目に、空きの土けむりをひとつ根もとに出す
+            // On frames 4 and 8, put a free puff of dust at the root.
             if ((frame == reactFrame) || (frame == (start + 8))) {
               /* FAKEMATCH: needed to match: the scan reuses length as its puff
                * pointer 2026-10-11: a block pointer of its own differs 48 (r5
@@ -12568,7 +12570,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
 
-      // 土けむり：7 コマを 2 フレームずつ、左右対称に描く
+      // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
       i = 0;
       puff = gMapCellBuffer;
       do {
@@ -12610,9 +12612,12 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
-// 対象の列のまん中から、緑のつるが 16 本、2 フレームおきに伸びて縮む
+// Rising vines: sixteen green vines grow from the middle of the row of
+// targets, 2 frames apart, and shrink back.
+//
+// effect: the targets.
 void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
-  u32 *cache, *entry;
+  u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -12621,19 +12626,20 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
   s32 i, frame, cell, height, offset, middle;
   struct EffectStep *column;
 
-  cache = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  entry = cache;
-  work = (struct BattleEffectWork *)*entry++;
-  canvas = (void *)*entry;
+  slots = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+  cursor = slots;
+  work = (struct BattleEffectWork *)*cursor++;
+  canvas = (void *)*cursor;
   work->effect = effect;
   BattleFx_PrepareCanvasEffect(effect, 4, effect->side, 4, &originX, &originY);
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // 横も等倍
+  REG_BG2PA = 0x100; // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
                              1);
 
-  // 最初と最後の対象のまん中を、キャンバスの x = 64 に合わせる
+  // Put the point halfway between the first and last targets at canvas x
+  // 64.
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
   EffectPosition_ApplyStepAndYOffset(
       work->effect->actors[work->effect->count - 1], &last);
@@ -12644,19 +12650,19 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                         COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)
-      cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   column = work->particles;
   i = 0;
   do {
     column[i].x = gRisingColumns_ColumnOffsets[i] + 64;
     i++;
   } while (i != 16);
-  work->transferMode = 1; // 毎フレーム 0 で消す
+  work->transferMode = 1; // clear the canvas every frame
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -12673,10 +12679,10 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
       if (frame == i * 4 + 5)
         work->shakeFrames = 2;
 
-      // 1 フレームに 4 ドット伸びて 32 で止まり、i * 2 + 32 フレーム目から縮む
+      // Grow 4 pixels a frame up to 32, and shrink from frame i * 2 + 32.
       offset = i * 2;
       if (frame > offset + 4) {
-        cell = (frame / 4 + i) % 5; // 32x32 を 5 コマ
+        cell = (frame / 4 + i) % 5; // five 32x32 pictures
         if (frame < offset + 32) {
           height = (frame - offset) * 4 - 16;
           if (height > 32)
@@ -12703,15 +12709,19 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// とげが 8 フレームおきに地面から突き出し、根もとから土けむりが上がる
-// 本数は gBattleFxPillar_Counts[variant]、向きと大きさは gBattleFxPillar_Kinds
+// Rising thorns: thorns burst from the ground one every 8 frames, throwing
+// up dust from their roots.
+//
+// effect: the targets; variant picks the number of thorns
+//         (gBattleFxPillar_Counts). gBattleFxPillar_Kinds gives each
+//         thorn's size and direction.
 void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
   DrawRectangle draw;
-  s32 total;
-  u32 *cache;
+  s32 frameCount;
+  u32 *slots;
   u32 *cursor;
   struct BattleEffectWork *work;
   s32 i;
@@ -12719,106 +12729,107 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
   s32 age;
   s32 start;
 
-  cache = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  cursor = cache;
+  slots = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+  cursor = slots;
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // 横も等倍
+  REG_BG2PA = 0x100; // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (work->effect->side == 1) {
-    REG_BG2X = -0x7000; // 112 ドット右へ
+    REG_BG2X = -0x7000; // 112 pixels right
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                         COMPOSITE_TRANSPARENT);
-  draw = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw = ((DrawRectangle *)slots)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
-  work->transferMode = 1; // 毎フレーム 0 で消す
+  work->transferMode = 1; // clear the canvas every frame
   work->transferValue = 0;
   drawFlip = ((DrawRectangle *)
-                  cache)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+                  slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  total = gBattleFxPillar_Counts[work->effect->variant] * 8 + 56;
+  frameCount = gBattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
   for (i = 0; i != 1024; i++) {
-    PARTICLES[i].variant = -1; // 空き
+    PARTICLES[i].variant = -1; // free
   }
 
-  for (frame = 0; frame != total; frame++) {
-    if (frame == total - 64) {
+  for (frame = 0; frame != frameCount; frame++) {
+    if (frame == frameCount - 64) {
       BattleEventRuntime_BeginPhaseFar(132);
     }
-    if (frame >= total - 16) {
-      // 終わりの 16 フレームで薄くする
+    if (frame >= frameCount - 16) {
+      // Fade out over the last 16 frames.
       REG_BLDCNT = 0x3f44;
-      REG_BLDALPHA = (total - frame - 1) | 0x1000;
+      REG_BLDALPHA = (frameCount - frame - 1) | 0x1000;
     }
 
     for (i = 0; i != gBattleFxPillar_Counts[work->effect->variant]; i++) {
       start = i * 8 + 8;
       age = frame - (i * 8 + 8);
       if (frame > start) {
-        s32 h;
-        s32 w;
+        s32 height;
+        s32 lean;
 
-        // 種類 0・1 は大きいとげ（48 幅）、2・3 は小さいとげ（32 幅）
-        // 奇数は左右反転で、伸びるにつれて横へずれる
+        // Kinds 0 and 1 are big thorns (48 wide), 2 and 3 small ones (32 wide);
+        // odd kinds are mirrored. A thorn leans sideways as it grows.
         if (gBattleFxPillar_Kinds[i] < 2) {
-          h = age * 16;
-          w = age * 6;
-          if (h > 80) {
-            h = 80;
+          height = age * 16;
+          lean = age * 6;
+          if (height > 80) {
+            height = 80;
           }
-          if (w > 30) {
-            w = 30;
+          if (lean > 30) {
+            lean = 30;
           }
           if (gBattleFxPillar_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet, gBattleFxPillar_X[i] - w, 108 - h, 48,
-                     h);
+            drawFlip(canvas, work->sheet, gBattleFxPillar_X[i] - lean,
+                     108 - height, 48, height);
           } else {
-            draw(canvas, work->sheet, gBattleFxPillar_X[i] + w, 108 - h, 48, h);
+            draw(canvas, work->sheet, gBattleFxPillar_X[i] + lean, 108 - height,
+                 48, height);
           }
         } else {
-          h = age * 8;
-          w = age;
-          if (h > 64) {
-            h = 64;
+          height = age * 8;
+          lean = age;
+          if (height > 64) {
+            height = 64;
           }
           if (age > 8) {
-            w = 8;
+            lean = 8;
           }
           if (gBattleFxPillar_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] - w,
-                     108 - h, 32, h);
+            drawFlip(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] - lean,
+                     108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] + w, 108 - h,
-                 32, h);
+            draw(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] + lean,
+                 108 - height, 32, height);
           }
         }
         if (frame == start + 1) {
           work->shakeFrames = 3;
         }
 
-        // 突き出して 2 フレームの間、毎フレーム土けむりをひとつ出す
+        // For 2 frames after the thorn appears, add a puff of dust each frame.
         if (frame < start + 3) {
           s32 y = (Random16() & 31) + 72;
-          struct EffectStep *p;
+          struct EffectStep *puff;
           for (j = 0; j != 64; j++) {
-            p = &PARTICLES[j];
-            if (p->variant == -1) {
-              p->x = gBattleFxPillar_X[i] + (Random16() & 31) + 32;
-              if (p->x > 96) {
-                p->x = 96;
+            puff = &PARTICLES[j];
+            if (puff->variant == -1) {
+              puff->x = gBattleFxPillar_X[i] + (Random16() & 31) + 32;
+              if (puff->x > 96) {
+                puff->x = 96;
               }
-              p->y = y;
-              p->variant = 0;
+              puff->y = y;
+              puff->variant = 0;
               break;
             }
           }
@@ -12832,18 +12843,20 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 土けむり：7 コマを 2 フレームずつ、左右対称に描く
+    // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
-        s32 n = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gBattleFxPillar_PuffCells[n],
-             PARTICLES[i].x - gBattleFxPillar_PuffWidths[n],
-             PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[n] / 2,
-             gBattleFxPillar_PuffWidths[n], (s8)gBattleFxPillar_PuffHeights[n]);
-        drawFlip(
-            canvas, work->sheet + gBattleFxPillar_PuffCells[n], PARTICLES[i].x,
-            PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[n] / 2,
-            gBattleFxPillar_PuffWidths[n], (s8)gBattleFxPillar_PuffHeights[n]);
+        s32 cel = PARTICLES[i].variant / 2;
+        draw(canvas, work->sheet + gBattleFxPillar_PuffCells[cel],
+             PARTICLES[i].x - gBattleFxPillar_PuffWidths[cel],
+             PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[cel] / 2,
+             gBattleFxPillar_PuffWidths[cel],
+             (s8)gBattleFxPillar_PuffHeights[cel]);
+        drawFlip(canvas, work->sheet + gBattleFxPillar_PuffCells[cel],
+                 PARTICLES[i].x,
+                 PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[cel] / 2,
+                 gBattleFxPillar_PuffWidths[cel],
+                 (s8)gBattleFxPillar_PuffHeights[cel]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }
@@ -12861,18 +12874,34 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// lightning_bolts.c
-// 戦闘エフェクト：対象ごとに落ちる稲妻と、火花・光
-// PARTICLES : 対象ひとりに 128 個
-// 光ごとに作りなおす 2 つめの描画関数
+// Lightning bolts: a bolt strikes each target, with sparks and glints.
+// PARTICLES holds the sparks, 128 for each target.
+// The second blitter, made anew for each glint.
 #define BLIT_ALT                                                               \
   ((DrawRectangle *)                                                           \
        gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
 
-// 対象ごとに 8 フレームずつずらして稲妻を落とす
-// effect : variant が稲妻の本数・火花の数・光の数と広がりを決める
+// The columns of a gLightningBolts_Counts row.
+enum {
+  BOLT_SPARKS,       // sparks thrown from each bolt's foot
+  BOLT_GLINTS,       // glints a frame around each target
+  BOLT_GLINT_SPREAD, // how high and wide the glints spread
+  BOLT_STRIKES       // bolts drawn over each other
+};
+
+// The value of one column of this effect's gLightningBolts_Counts row.
+#define BOLT_COUNT(field)                                                      \
+  (gLightningBolts_Counts[work->effect->variant * 4 + (field)])
+
+// The bolt pictures in the sheet, after the tornado.
+#define LIGHTNING_CELLS 0xc56
+
+// A bolt of lightning strikes each target in turn, 8 frames apart.
+//
+// effect: the targets; variant picks the row of gLightningBolts_Counts
+//         and the glints' blend.
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -12884,22 +12913,22 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
      only). */
   BlitterPair draw;
   u8 *sprites;
-  struct EffectPosition pos;
+  struct EffectPosition screen;
   s32 j;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + 0xc56, 1, 1);
+                             work->sheet + LIGHTNING_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
@@ -12921,8 +12950,8 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
       s32 start = i * 8;
 
       EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i],
-                                                  &pos);
-      pos.x /= 2;
+                                                  &screen);
+      screen.x /= 2;
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
@@ -12930,28 +12959,27 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
       }
 
-      // 稲妻 (幅 24) : 1 フレームに 64 ドット伸び、104 ドットで止まる
+      // The bolt (24 wide) grows 64 pixels a frame and stops at 104.
       if (frame >= start && frame < start + 16) {
         s32 height = (frame - start) << 6;
 
         if (height > 104)
           height = 104;
-        for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4 + 3];
-             j++) {
+        for (j = 0; j != BOLT_COUNT(BOLT_STRIKES); j++) {
           draw[0](canvas,
-                  work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
-                  pos.x - 12, 0, 24, height);
+                  work->sheet + (((i + frame + j) / 2) & 3) * BOLT_SIZE +
+                      LIGHTNING_CELLS,
+                  screen.x - 12, 0, 24, height);
         }
 
-        // 足もと (y = 104) から上向き ±90 度へ火花を散らす
+        // Throw sparks upwards, within 90 degrees, from the foot (y = 104).
         if (frame == start + 2) {
-          for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4];
-               j++) {
+          for (j = 0; j != BOLT_COUNT(BOLT_SPARKS); j++) {
             struct EffectStep *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - 0x4000;
 
-            spark->x = pos.x << 16;
+            spark->x = screen.x << 16;
             spark->y = 104 << 16;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
@@ -12960,21 +12988,17 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
         }
       }
 
-      // 光 : 足もとから上のでたらめな位置に、でたらめな向き (左右・上下反転)
-      // で描く
+      // Glints: at random spots above the foot, flipped at random.
       if (frame >= start + 2 && frame < start + 24) {
-        for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4 + 1];
-             j++) {
+        for (j = 0; j != BOLT_COUNT(BOLT_GLINTS); j++) {
           s32 kind = j & 3;
-          s32 drop = Random16() %
-                     gLightningBolts_Counts[work->effect->variant * 4 + 2];
-          s32 spread =
-              gLightningBolts_Counts[work->effect->variant * 4 + 2] - drop + 1;
-          s32 y = pos.y - drop - (gBattleFx_GlintCellHeights[kind] >> 1) + 8;
-          u32 r = Random16();
-          s32 x = pos.x;
+          s32 drop = Random16() % BOLT_COUNT(BOLT_GLINT_SPREAD);
+          s32 spread = BOLT_COUNT(BOLT_GLINT_SPREAD) - drop + 1;
+          s32 y = screen.y - drop - (gBattleFx_GlintCellHeights[kind] >> 1) + 8;
+          u32 random = Random16();
+          s32 x = screen.x;
 
-          x += r % spread;
+          x += random % spread;
           x -= spread / 2;
           x -= (gBattleFx_GlintCellWidths[kind] >> 1);
 
@@ -12991,7 +13015,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 火花 : 地面で半分の速さで跳ね返り、残りが少ないほど小さく描く
+    // Sparks bounce off the ground at half speed and shrink as they die out.
     for (j = 0; j != 1024; j++) {
       struct EffectStep *spark = &PARTICLES[j];
 
@@ -13020,58 +13044,71 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Djinni entrance: sparks swirl around a point that travels from the user
+// to the goal and gather into the djinni, which sways for 16 frames and
+// bursts into motes. Leaves the canvas cleared for the effect that
+// follows.
+//
+// effect: the user and the targets.
+// kind: the djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
+//       over 84 frames instead of 64.
+// side: 1 mirrors the pictures.
+// anchor: where the djinni appears: 0 over the first target, 1 at the
+//         first target's x at depth 0, 2 over the user, 3 at the user's x
+//         at depth 0, 4 in the centre of the field.
+// outX, outY: receive the djinni's last screen position.
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                                   s32 side, s32 anchor, s32 *outX, s32 *outY) {
-  s32 base[3];
+  s32 center[3];
   s32 goal[3];
   s32 step[3];
   s32 point[3];
   struct EffectPosition position;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
   u8 *sheet;
-  s32 total;
+  s32 frameCount;
   struct MotionObject *target;
-  struct MotionObject *actor;
+  struct MotionObject *user;
   u8 *palette;
-  s32 resource;
+  s32 sheetId;
   s32 frame;
   s32 i;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   if (kind > 3) {
     kind -= 4;
-    total = 84;
+    frameCount = 84;
   } else {
-    total = 64;
+    frameCount = 64;
   }
   switch (kind) {
   case 0:
-    resource = (s32)&ResourceId_VenusDjinnSmallSheet;
+    sheetId = (s32)&ResourceId_VenusDjinnSmallSheet;
     break;
   case 1:
-    resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
+    sheetId = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
   case 2:
-    resource = (s32)&ResourceId_MarsDjinnSmallSheet;
+    sheetId = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
-    resource = (s32)&ResourceId_JupiterDjinnSmallSheet;
+    sheetId = (s32)&ResourceId_JupiterDjinnSmallSheet;
     break;
   }
-  palette = Resource_GetTableEntry(resource);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  palette = Resource_GetTableEntry(sheetId);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Resource_DecodeType01(palette + 128, work);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (side == 1) {
@@ -13083,8 +13120,9 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-  actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+  user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // Sparks spread out flat from the centre, 20 to 51 pixels up.
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 angle = Random16() & 0xffff;
@@ -13102,9 +13140,11 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  base[0] = actor->x;
-  base[1] = 0;
-  base[2] = actor->z;
+  // The centre moves from the user to the goal, 60 pixels up, over frames
+  // 6 to 45.
+  center[0] = user->x;
+  center[1] = 0;
+  center[2] = user->z;
   switch (anchor) {
   case 0:
     goal[0] = target->x;
@@ -13117,12 +13157,12 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     goal[2] = 0;
     break;
   case 2:
-    goal[0] = actor->x;
+    goal[0] = user->x;
     goal[1] = 0x3c0000;
-    goal[2] = actor->z;
+    goal[2] = user->z;
     break;
   case 3:
-    goal[0] = actor->x;
+    goal[0] = user->x;
     goal[1] = 0x3c0000;
     goal[2] = 0;
     break;
@@ -13132,10 +13172,10 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     goal[2] = 0;
     break;
   }
-  step[0] = (goal[0] - base[0]) / 40;
-  step[1] = (goal[1] - base[1]) / 40;
-  step[2] = (goal[2] - base[2]) / 40;
-  for (frame = 0; frame != total; frame++) {
+  step[0] = (goal[0] - center[0]) / 40;
+  step[1] = (goal[1] - center[1]) / 40;
+  step[2] = (goal[2] - center[2]) / 40;
+  for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
     if (frame > 75)
@@ -13145,15 +13185,17 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {
-      base[0] += step[0];
-      base[1] += step[1];
-      base[2] += step[2];
+      center[0] += step[0];
+      center[1] += step[1];
+      center[2] += step[2];
     }
-    SceneTransform_ApplyPosition(base);
+    SceneTransform_ApplyPosition(center);
     if (frame == 0)
       ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
     if (frame == 24)
       ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+    // The sparks spin about the centre, each on its own axis; from 24
+    // frames after appearing they are pulled in and go out at the centre.
     for (i = 0; i != 32; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
@@ -13204,6 +13246,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         }
       }
     }
+    // The djinni sways at the centre on frames 54 to 69.
     if (frame >= 54 && frame <= 69) {
       point[0] = Trig_Sin(frame << 10) << 2;
       point[1] = 0;
@@ -13212,8 +13255,9 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
       *outX = position.x;
       *outY = position.y;
       position.x >>= 1;
-      draw[0](canvas, work, position.x - 10, position.y - 20, 20, 40);
+      draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
     }
+    // At frame 64 motes burst from the djinni.
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct EffectStep *mote = &work->particles[i];
@@ -13248,7 +13292,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Iwram_ClearWords(canvas, 0x4000);
   REG_BLDALPHA = 0x1010;
 }

@@ -313,8 +313,8 @@ menu_top:;
   v6 = SaveState_ScanRecordFlags();
   if (v6 < 0) {
     if (gDebugMode != 0) {
-      gGameState.savedOptions = 1;
-      gOptionMirror = 1;
+      gGameState.idleSleepEnabled = 1;
+      gIdleSleepEnabled = 1;
       UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
     }
   }
@@ -488,7 +488,7 @@ menu_top:;
         greeting[3] = 0x30;
       }
       for (;;) {
-        if ((gKeyState & KEY_B) != 0) {
+        if ((gKeysPressed & KEY_B) != 0) {
           Engine_AudioPlayCue(113);
           break;
         }
@@ -561,7 +561,7 @@ menu_top:;
         v5 = 1;
         do {
           Engine_TaskWait(1);
-        } while ((gKeyState & v5) == 0);
+        } while ((gKeysPressed & v5) == 0);
       }
       Engine_TaskWait(10);
       SerialRuntime_RemoveIrqHandlers();
@@ -632,7 +632,7 @@ menu_top:;
       RenderOutput_PrepareForRedraw(pageWindow);
       for (;;) {
         Link_DrawShiftedTilePair(0x6002500);
-        if ((gKeyState & KEY_B) != 0) {
+        if ((gKeysPressed & KEY_B) != 0) {
           Engine_AudioPlayCue(113);
           RenderOutput_PrepareForRedraw(pageWindow);
           UiWork_Finalize(pageWindow, 2);
@@ -640,7 +640,7 @@ menu_top:;
           UiWork_Finalize(headingWindow, 2);
           goto page_select;
         }
-        if ((gKeyState & KEY_A) != 0) {
+        if ((gKeysPressed & KEY_A) != 0) {
           page = (page + 1);
           v7 = 1;
           if (page == pageCount) {
@@ -654,11 +654,11 @@ menu_top:;
           }
           Engine_AudioPlayCue(111);
         } else {
-          if ((gKeyState & KEY_LEFT) != 0 && pageCount > 1) {
+          if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
             Engine_AudioPlayCue(111);
             rec5 = page + pageCount;
             rec5--;
-          } else if ((gKeyState & KEY_RIGHT) != 0 && pageCount > 1) {
+          } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
             Engine_AudioPlayCue(111);
             rec5 = page + pageCount;
             rec5++;

@@ -549,12 +549,12 @@ prompt:
   Task_Wait(5);
   Event_PlayCue(116);
   for (;;) {
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       Event_PlayCue(112);
       result = 0;
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Event_PlayCue(113);
       result = -1;
       break;
@@ -622,12 +622,12 @@ prompt:
     Task_Wait(5);
     Event_PlayCue(116);
     for (;;) {
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         Event_PlayCue(112);
         result = 0;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         Event_PlayCue(113);
         result = -1;
         break;

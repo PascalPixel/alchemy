@@ -1175,7 +1175,7 @@ static void EV11_TOUCH_1(void) {
   Engine_ActorSetAnimation(10, 3);
   AltinPeak_StartLeafGust(0x820000, 0, 0xa80000, 0);
   Engine_EventWait(60);
-  for (n = 0; n < 60 && gKeyState == 0; n++) {
+  for (n = 0; n < 60 && gKeysPressed == 0; n++) {
     Engine_EventWait(1);
   }
   actor = (union TimedActor *)Object_GetById(0);

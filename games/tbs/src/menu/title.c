@@ -65,12 +65,12 @@ s32 Title_Run(void) {
     Title_RevealScreen(0);
     Engine_TaskWait(120);
     wait = 0;
-    if (gKeyState == 0) {
+    if (gKeysPressed == 0) {
       do {
         Engine_TaskWait(1);
         if (++wait > 3599)
           break;
-      } while (gKeyState == 0);
+      } while (gKeysPressed == 0);
     }
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;

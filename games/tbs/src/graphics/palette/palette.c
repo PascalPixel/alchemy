@@ -292,7 +292,7 @@ s32 Title_ShowIntro(s32 prompt) {
     s32 tick;
 
     frame = work->frame;
-    if (frame > 20 && frame < 239 && (gKeyState & (KEY_A | KEY_START)) != 0) {
+    if (frame > 20 && frame < 239 && (gKeysPressed & (KEY_A | KEY_START)) != 0) {
       work->state = 1;
       work->frame = 239;
       frame = 239;
@@ -432,7 +432,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_BLDCNT = 0x2f50;
       REG_BLDALPHA = (16 - level) * 256 + level;
     }
-    if ((gKeyState & (KEY_A | KEY_START)) != 0) {
+    if ((gKeysPressed & (KEY_A | KEY_START)) != 0) {
       result = 1;
       break;
     }
@@ -494,7 +494,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
     Blend_SetDarkenTarget0(1);
     Blend_WaitForTransition();
     for (y = 0; y < 120; y++) {
-      if (gKeyState & (KEY_A | KEY_START)) {
+      if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
       }
@@ -503,7 +503,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
     return result;
   }
   for (y = 0; y < 60; y++) {
-    if (gKeyState & (KEY_A | KEY_START)) {
+    if (gKeysPressed & (KEY_A | KEY_START)) {
       result = -1;
       break;
     }
@@ -516,7 +516,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   Blend_WaitForTransition();
   if (result == 0) {
     for (y = 0; y < 180; y++) {
-      if (gKeyState & (KEY_A | KEY_START)) {
+      if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
       }
@@ -574,7 +574,7 @@ s32 Title_ShowAnimatedSplash(void) {
   for (i = 0; i < 120; i++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + buffer, BG_CHAR_BLOCK(1) + 0x100,
             DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
-    if (gKeyState & (KEY_A | KEY_START))
+    if (gKeysPressed & (KEY_A | KEY_START))
       break;
     WaitFrames(1);
   }

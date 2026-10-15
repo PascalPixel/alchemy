@@ -742,8 +742,8 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
     WaitFrames(1);
     do {
       WaitFrames(1);
-    } while (!(gKeyState & KEY_A) && !(gKeyState & KEY_B) &&
-             !(gKeyState & KEY_START));
+    } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
+             !(gKeysPressed & KEY_START));
 #if EDITION_INTERNATIONAL
     if (y == -1)
       RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
@@ -1092,7 +1092,7 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 }
 
 void Menu_CancelSoundTick(void) {
-  if (gKeyState & KEY_START) {
+  if (gKeysPressed & KEY_START) {
     AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     GameFlag_SetBitFar(0x150);
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
@@ -2059,7 +2059,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       menu->ownerY[selection] = 26;
     }
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (gKeysHeld & KEY_L) {
         sortMode = (sortMode + 4) % 4;
         InventoryMenu_SortByListOrder(owner->inventory, sortMode);
@@ -2074,12 +2074,12 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         AudioCommand_PlayFar(114);
       }
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
     }
-    if (gKeyState & KEY_R) {
+    if (gKeysPressed & KEY_R) {
       byCategory = 1;
       pending = 1;
     }
@@ -2212,7 +2212,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
         AudioCommand_PlayFar(114);
         continue;
@@ -2221,7 +2221,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       result = menu->ownerIds[selection];
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       result = 255;
       break;
@@ -2679,7 +2679,7 @@ s32 ItemMenu_ChooseCmd(void) {
 #endif
     WaitFrames(1);
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       if (commandStates[index] == -1) {
         AudioCommand_PlayFar(114);
       } else {
@@ -2706,7 +2706,7 @@ s32 ItemMenu_ChooseCmd(void) {
         break;
       }
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(113);
       index = -1;
       menu->listMode = index;
@@ -2954,9 +2954,9 @@ s32 Menu_SelectQuantity(s32 value) {
       ItemMenu_DrawItemDetails(window, value);
     }
 
-    if (gKeyState & 1)
+    if (gKeysPressed & 1)
       break;
-    if (gKeyState & 2) {
+    if (gKeysPressed & 2) {
       quantity = -1;
       break;
     }
@@ -3340,11 +3340,11 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
           UiText_DrawStringAtOffsetFar(UnitGetFar(menu->paneOwner[1])->name,
                                        window, 80, 16);
       }
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(112);
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         quantity = -1;
         AudioCommand_PlayFar(113);
         break;
@@ -3425,11 +3425,11 @@ s32 ItemMenu_ConfirmDrop(s32 a0) {
       changed = 0;
       selection = (selection + rows) % rows;
     }
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       AudioCommand_PlayFar(112);
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       selection = 1;
       break;
@@ -3495,11 +3495,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         changed = 0;
         selection = (selection + rows) % rows;
       }
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(175);
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         AudioCommand_PlayFar(113);
         selection = 1;
         break;
@@ -3767,13 +3767,13 @@ s32 ItemMenu_RunList(s32 pane) {
         changed = 0;
       }
 
-      if ((gKeyState & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
+      if ((gKeysPressed & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
         AudioCommand_PlayFar(173);
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
-      if ((gKeyState & KEY_B) != 0) {
+      if ((gKeysPressed & KEY_B) != 0) {
         AudioCommand_PlayFar(113);
         result = -1;
         done = 1;
@@ -4202,7 +4202,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
         AudioCommand_PlayFar(112);
         result = ownerIds[selection];
@@ -4210,9 +4210,9 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
       }
       AudioCommand_PlayFar(114);
     }
-    if ((gKeyState & KEY_L) || (gKeyState & KEY_R)) {
+    if ((gKeysPressed & KEY_L) || (gKeysPressed & KEY_R)) {
       result = ownerIds[selection];
-      if (gKeyState & KEY_L)
+      if (gKeysPressed & KEY_L)
         menu->mode = 1;
       else
         menu->mode = 2;
@@ -4229,7 +4229,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
         break;
       }
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
@@ -4327,12 +4327,12 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       AudioCommand_PlayFar(112);
       result = menu->ownerTable[selection];
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
@@ -4886,7 +4886,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
       }
 
       if (menu->mode == 0) {
-        if ((gKeyState & KEY_SELECT) != 0 && prompt == 0) {
+        if ((gKeysPressed & KEY_SELECT) != 0 && prompt == 0) {
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->type0c == 0) {
@@ -4908,7 +4908,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
       }
 
-      if ((gKeyState & KEY_A) != 0) {
+      if ((gKeysPressed & KEY_A) != 0) {
         if (menu->mode != 0) {
           AudioCommand_PlayFar(130);
           result = menu->psynergies[state.selectedIndex];
@@ -4934,7 +4934,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
       }
 
-      if ((gKeyState & KEY_B) != 0) {
+      if ((gKeysPressed & KEY_B) != 0) {
         AudioCommand_PlayFar(113);
         result = -1;
         done = 1;
@@ -4970,7 +4970,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         break;
       }
 
-      if ((gKeyState & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
+      if ((gKeysPressed & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
@@ -4988,7 +4988,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
         }
       }
 
-      if ((gKeyState & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
+      if ((gKeysPressed & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->type0c == 0) {
@@ -5276,7 +5276,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
     if (GameFlag_TestFar(0x150))
       break;
     WaitFrames(1);
-    if (gKeyState & (KEY_A | KEY_B | KEY_SELECT))
+    if (gKeysPressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
   }
   RenderOutput_RedrawSavedRectFar(menu->window);
@@ -5345,12 +5345,12 @@ s32 CharacterSelector_RunRearrange(void) {
     }
     UiMenu_PositionCursor(cursor * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       AudioCommand_PlayFar(0x70);
       result = 1;
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(0x71);
       result = -1;
       break;
@@ -5381,7 +5381,7 @@ s32 CharacterSelector_RunRearrange(void) {
         AudioCommand_PlayFar(0x72);
       }
       WaitFrames(1);
-    } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
+    } else if ((gKeysPressed & KEY_SELECT) && GameFlag_TestFar(48)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
@@ -5441,12 +5441,12 @@ s32 PsynergyMenu_SelectOwner(void) {
     }
     UiMenu_PositionCursor(selection * 24 - 10, 16);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       AudioCommand_PlayFar(112);
       result = 1;
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
@@ -5655,13 +5655,13 @@ s32 CharacterMenu_SelectCommand(void) {
       WaitFrames(1);
       if (gKeysRepeat & KEYS_DPAD)
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(112);
         done = 1;
         result = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         AudioCommand_PlayFar(113);
         done = 1;
         result = -1;
@@ -6361,13 +6361,13 @@ s32 PsynergyMenu_SelectAction(void) {
         redraw = 1;
       if (nav == -1)
         redraw = 0;
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(112);
         result = 1;
         done = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         AudioCommand_PlayFar(113);
         result = -1;
         done = 1;
@@ -6645,13 +6645,13 @@ s32 ItemMenu_SelectItem(void) {
       if (nav == -1)
         redraw = 0;
 
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         AudioCommand_PlayFar(0x70);
         result = 1;
         done = 1;
         break;
       }
-      if (gKeyState & KEY_B) {
+      if (gKeysPressed & KEY_B) {
         AudioCommand_PlayFar(0x71);
         result = -1;
         done = 1;
@@ -8021,15 +8021,15 @@ s32 DjinnMenu_ShowHelp(void) {
         selection = Menu_GetModuloOfSum(selection, 7);
         AudioCommand_PlayFar(111);
         break;
-      } else if (gKeyState & KEY_START) {
+      } else if (gKeysPressed & KEY_START) {
         AudioCommand_PlayFar(113);
         result = -2;
         break;
-      } else if (gKeyState & (KEY_B | KEY_SELECT)) {
+      } else if (gKeysPressed & (KEY_B | KEY_SELECT)) {
         AudioCommand_PlayFar(113);
         result = -1;
         break;
-      } else if (gKeyState & KEY_A) {
+      } else if (gKeysPressed & KEY_A) {
         if (UiWork_IsCompleteFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
@@ -8324,7 +8324,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       setAll = 0;
     }
     repeat = gKeysRepeat;
-    pressed = gKeyState;
+    pressed = gKeysPressed;
     step = lists->tutorialStep;
     if (step != 0) {
       pressed = 0;
@@ -8332,7 +8332,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       repeat = 0;
       switch (step) {
       case 28:
-        while (!(gKeyState & KEY_A)) {
+        while (!(gKeysPressed & KEY_A)) {
           UiMenu_PositionCursor(150, 26);
           WaitFrames(1);
         }
@@ -8434,7 +8434,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           UiMenu_SlideCursor(2, 146);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -8444,7 +8444,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           work = UiText_OpenMessageWindowFar(MsgDjinnTutorialUnleash, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -8455,7 +8455,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               UiText_OpenMessageWindowFar(MsgDjinnTutorialDemonstrate, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
-          while (!(gKeyState & KEY_A)) {
+          while (!(gKeysPressed & KEY_A)) {
             UiMenu_PositionCursor(2, 146);
             WaitFrames(1);
           }
@@ -9503,7 +9503,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
     render = (struct UiRenderWork *)gWindowWork[0];
     scene = state->backdrop;
-    inputEdge = gKeyState;
+    inputEdge = gKeysPressed;
     inputHeld = gKeysRepeat;
 
     if (scene->tutorialStep != 0) {
@@ -9876,7 +9876,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   side = 0;
   while (1) {
     render = (struct UiRenderWork *)gWindowWork[0];
-    keys = gKeyState;
+    keys = gKeysPressed;
     repeat = gKeysRepeat;
     if (pending) {
       render->menuBusy = 1;

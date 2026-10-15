@@ -592,11 +592,11 @@ void GameState_InitDefaults(void) {
   gGameState.paletteGlow[1] = 8;
   gGameState.buildStamp = 0;
   gGameState.startStamp = Runtime_GetBuildStampTime();
-  gLoadedStateWord = 0;
+  gPlayTimeFrames = 0;
   gGameState.playTime = 0;
-  gOptionMirror = 0;
-  gGameState.savedOptions = gOptionMirror;
-  gPostLoadCounter = 0;
+  gIdleSleepEnabled = 0;
+  gGameState.idleSleepEnabled = gIdleSleepEnabled;
+  gIdleFrames = 0;
   gSaveSlot = -1;
   gGameState.prizeWeights[0] = 4;
   gGameState.prizeWeights[1] = 4;

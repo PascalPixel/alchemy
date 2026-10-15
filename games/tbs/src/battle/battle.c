@@ -5393,7 +5393,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
     *(u8 *)&spr->attr0 = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                          (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(spr, 240);
-    if ((gKeysHeld & KEY_B) || (gKeyState & KEY_ADVANCE) ||
+    if ((gKeysHeld & KEY_B) || (gKeysPressed & KEY_ADVANCE) ||
         (frame > 15 && (gKeysHeld & KEY_ADVANCE)))
       break;
     WaitFrames(1);
@@ -5432,7 +5432,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
     spr->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
     spr->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
     Runtime_PushSlotEntry(spr, 240);
-    if (gKeyState & KEY_ADVANCE)
+    if (gKeysPressed & KEY_ADVANCE)
       break;
     WaitFrames(1);
   }
@@ -9357,7 +9357,7 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 ret) {
         battle->debugValue -= 100;
       if (gKeysRepeat & 0x80)
         battle->debugValue += 100;
-      if (gKeyState & KEY_A)
+      if (gKeysPressed & KEY_A)
         ret = battle->debugValue;
       else {
         WaitFrames(1);

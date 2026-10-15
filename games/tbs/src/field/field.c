@@ -154,15 +154,15 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   held = 1;
   draw =
       (DrawFn)(*(void *(*)[]) &
-               gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+               gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH - HEAP_SLOT_MENU_CONTROL];
   if (draw == 0) {
-    block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER,
+    block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
                                       (s32)Render_DecodeFrameCodeSize);
     Dma_Set(Render_DecodeFrame, block,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE32 | DMA_32BIT),
             REG_DMA3);
-    draw = (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER -
+    draw = (DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
                                                     HEAP_SLOT_MENU_CONTROL];
     held = 0;
   }
@@ -3367,7 +3367,7 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
 
 #if EDITION_INTERNATIONAL
 
-#define ASSIGNED_KEYS gKeyState
+#define ASSIGNED_KEYS gKeysPressed
 #else
 
 #define ASSIGNED_KEYS gKeysHeld
@@ -3406,18 +3406,18 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (gKeyState & gGameState.selectKeys) {
+  if (gKeysPressed & gGameState.selectKeys) {
     work->unk172[0] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.aKeys) {
+  } else if (gKeysPressed & gGameState.aKeys) {
     work->unk172[1] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.startKeys) {
+  } else if (gKeysPressed & gGameState.startKeys) {
     work->unk172[2] = 1;
     result = 1;
-  } else if (gKeyState & gGameState.firstShortcutKeys) {
+  } else if (gKeysPressed & gGameState.firstShortcutKeys) {
     result = Field_StoreAssignedKeyValue(gGameState.firstShortcut);
-  } else if (gKeyState & gGameState.secondShortcutKeys) {
+  } else if (gKeysPressed & gGameState.secondShortcutKeys) {
     result = Field_StoreAssignedKeyValue(gGameState.secondShortcut);
   }
   return result;
@@ -6668,7 +6668,7 @@ next:
       }
     }
 
-    if ((gKeyState & KEY_START) != 0) {
+    if ((gKeysPressed & KEY_START) != 0) {
       table = gSpriteObjects;
       flag ^= 1;
       for (i = 0; i <= 9; i++) {

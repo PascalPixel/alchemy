@@ -153,10 +153,10 @@ void Battle_UpdateModeFromShoulderButtons(void) {
   struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
   if (gDebugMode != 0) {
-    if (gKeyState & KEY_L) {
+    if (gKeysPressed & KEY_L) {
       runtime->mode1cc = 0;
     }
-    if (gKeyState & KEY_R) {
+    if (gKeysPressed & KEY_R) {
       runtime->mode1cc = -1;
     }
   }
@@ -460,7 +460,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom) {
   s32 useBottom = 1;
   s32 answer;
 
-  while (gKeyState != 0)
+  while (gKeysPressed != 0)
     WaitFrames(1);
 
   while (UiWork_IsCompleteFar() == 0)
@@ -1746,7 +1746,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 first_x, s32 first_y,
     WaitFrames(1);
 
   WaitFrames(1);
-  while ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
+  while ((gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
     WaitFrames(1);
 
   WaitFrames(1);
@@ -5672,7 +5672,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   target->terrainId = 2;
   for (;;) {
     WaitFrames(1);
-    keys = gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS);
+    keys = gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS);
     if (keys != 0)
       break;
 
@@ -7699,7 +7699,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   //------------------------------------------------------------------
   for (;;) {
     WaitFrames(1);
-    if ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
+    if ((gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
 
     // 方向キーなし : 持ち手を対象の左右に戻す

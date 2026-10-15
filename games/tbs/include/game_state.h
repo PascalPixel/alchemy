@@ -61,7 +61,7 @@ struct GameState {
   u16 secondShortcut;
   u8 perspectiveScene;
   u8 unk225[5];
-  u8 savedOptions;
+  u8 idleSleepEnabled;
   u8 battleStart;
   s16 hazardLimit;
   s16 hazardMode;
@@ -91,7 +91,7 @@ struct GameState {
 
 LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, buildStamp, 0);
 LAYOUT_OFFSET_GUARD(GameState_PlayTime, struct GameState, playTime, 4);
-LAYOUT_OFFSET_GUARD(GameState_SavedOptions, struct GameState, savedOptions,
+LAYOUT_OFFSET_GUARD(GameState_SavedOptions, struct GameState, idleSleepEnabled,
                     0x22a);
 LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
 LAYOUT_OFFSET_GUARD(GameState_ShopCredit, struct GameState, shopCredit, 0x118);

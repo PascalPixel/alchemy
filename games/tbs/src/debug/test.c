@@ -563,14 +563,14 @@ static void DebugMenu_SelectItem(void) {
         UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(item) == -1) {
         Engine_AudioPlayCue(113);
         break;
       }
       Engine_AudioPlayCue(175);
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(113);
       break;
     }

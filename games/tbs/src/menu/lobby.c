@@ -855,10 +855,10 @@ static s32 EV15_TALK(s32 id) {
     if (choice < 0) {
       choice = 0;
     }
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       choice = -1;
       break;
     }
@@ -1223,7 +1223,7 @@ s32 LinkLobby_RunRoundResult(void) {
     SerialRuntime_Initialize();
     Engine_GameFlagClear(0x172);
     FieldGameFlag_SetByte(0x3f8, -1);
-    if (gGameState.savedOptions != 0) {
+    if (gGameState.idleSleepEnabled != 0) {
       Engine_EventBegin();
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
@@ -1232,8 +1232,8 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_EventShowMessage(8, 0);
       Engine_EventEnd();
     }
-    gGameState.savedOptions = 0;
-    gOptionMirror = 0;
+    gGameState.idleSleepEnabled = 0;
+    gIdleSleepEnabled = 0;
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
   }

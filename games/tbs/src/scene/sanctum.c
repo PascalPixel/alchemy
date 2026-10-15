@@ -1434,7 +1434,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   FieldUiTextResource_Initialize(&cursor, &slot);
   FieldUiTextResource_SetPosition(&cursor, 72, 60);
   choice = 0;
-  while ((gKeyState & KEY_A) == 0) {
+  while ((gKeysPressed & KEY_A) == 0) {
     s32 x;
 
     if (gKeysRepeat & KEYS_VERTICAL) {

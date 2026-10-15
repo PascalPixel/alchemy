@@ -171,7 +171,7 @@ s32 DisplayScroll_RunSlideshow(void) {
   gOamCopyEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
-  gOptionMirror = 0;
+  gIdleSleepEnabled = 0;
   Scheduler_ResetTaskTable();
   Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
                                 0x480);

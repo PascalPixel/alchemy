@@ -118,8 +118,8 @@ gData_0300121c:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gSchedulerTaskCount
-gSchedulerTaskCount:
+	.global gSchedulerReady
+gSchedulerReady:
 	.space 0x00000004
 	.global gFrameCount
 gFrameCount:

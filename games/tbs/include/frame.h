@@ -34,23 +34,23 @@ extern volatile u8 gSleepDisabled;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it GameState_InitDefaults: differ 45 in tbs-en, 202 instructions
  * for 203. */
-extern volatile u8 gOptionMirror;
+extern volatile u8 gIdleSleepEnabled; // sleep after three idle minutes
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it WaitFrames: differ 26 in tbs-en, 403 instructions either way.
  */
-extern volatile u8 gSleepRequested;
+extern volatile u8 gSleepRequested; // 1: sleep this frame; more: count down
 extern u8 gDebugMode;
 extern u8 gDebugPaused;
 extern u8 gResetRequested;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it WaitFrames: differ 89 in tbs-en, 402 instructions for 403. */
-extern volatile u16 gPostLoadCounter;
+extern volatile u16 gIdleFrames; // frames since a key was last held
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it WaitFrames: differ 117 in tbs-en, 404 instructions for 403.
  */
 extern volatile u16 gSleepComboFrames;
 extern u32 gCartridgeResetMarker;
-extern u32 gLoadedStateWord;
+extern u32 gPlayTimeFrames; // the play time clock, in frames
 extern u32 gSavedStackSize;
 extern u8 gSavedStack[];
 

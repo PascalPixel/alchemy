@@ -9,7 +9,7 @@ void Scheduler_ResetTaskTable(void) {
   s32 remaining;
   u32 zero;
 
-  gSchedulerTaskCount = 0;
+  gSchedulerReady = 0;
   task = gSchedulerTaskTable;
   gSchedulerStatus = 0;
   zero = 0;
@@ -21,7 +21,7 @@ void Scheduler_ResetTaskTable(void) {
     task++;
     remaining--;
   } while (remaining >= 0);
-  gSchedulerTaskCount = 1;
+  gSchedulerReady = 1;
 }
 
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count) {
@@ -210,7 +210,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void) {
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerTaskCount;
+extern u8 gSchedulerReady;
 extern struct SchedulerTask gSchedulerTaskTable[24];
 
 s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask) {

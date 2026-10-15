@@ -4238,7 +4238,7 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
 
   if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
     cancel = 1;
-  key = gKeyState;
+  key = gKeysPressed;
   zero = 0;
   if (work->mode != zero)
     key = gKeysPressedLatch;
@@ -5374,11 +5374,11 @@ s32 Menu_SelectionLoop(s32 mode) {
         Menu_StepRight(screen);
       } else if (gKeysRepeat & KEY_LEFT) {
         Menu_StepLeft(screen);
-      } else if (gKeyState & KEY_A) {
+      } else if (gKeysPressed & KEY_A) {
         return Menu_ConfirmSelection(screen);
       }
     }
-    if (mode != 0 && (gKeyState & KEY_B)) {
+    if (mode != 0 && (gKeysPressed & KEY_B)) {
       return -1;
     }
   }
@@ -5403,7 +5403,7 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
         Menu_StepLeft(screen);
       }
 
-      if (gKeyState & KEY_A) {
+      if (gKeysPressed & KEY_A) {
         result = screen->top + screen->cursorIndex;
         if (screen->head->kind == NODE_KIND_YES_NO) {
           if (result == 0)
@@ -5417,7 +5417,7 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
       }
     }
 
-    if (mode != 0 && (gKeyState & KEY_B)) {
+    if (mode != 0 && (gKeysPressed & KEY_B)) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       return -1;
     }
@@ -6322,11 +6322,11 @@ void Debug_SelectAbilityPair(void) {
         row++;
         redraw = 1;
       }
-      if (gKeyState & KEY_A)
+      if (gKeysPressed & KEY_A)
         AudioCommand_PlayFar(112);
-      else if (gKeyState & KEY_B)
+      else if (gKeysPressed & KEY_B)
         AudioCommand_PlayFar(113);
-      else if (gKeyState & KEY_START)
+      else if (gKeysPressed & KEY_START)
         AudioCommand_PlayFar(113);
       else
         continue;
@@ -6704,7 +6704,7 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[2] = 3;
   work->option[3] = gGameState.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gGameState.savedOptions;
+  work->option[4] = gGameState.idleSleepEnabled;
   work->optionCount[4] = 2;
   Scheduler_AddOrUpdateCallback(
       GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
@@ -6925,7 +6925,7 @@ s32 Menu_RunWorkspaceOptions(void) {
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
 
-    if (gKeyState & KEY_SELECT) {
+    if (gKeysPressed & KEY_SELECT) {
       AudioCommand_PlayFar(112);
       work->preset++;
       redraw = 1;
@@ -6935,12 +6935,12 @@ s32 Menu_RunWorkspaceOptions(void) {
       *pB = gOptionMenu_SecondColorPresets[work->preset];
       continue;
     }
-    if (gKeyState & (KEY_A | KEY_START)) {
+    if (gKeysPressed & (KEY_A | KEY_START)) {
       result = 0;
       AudioCommand_PlayFar(112);
       break;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       result = -1;
       AudioCommand_PlayFar(113);
       break;
@@ -6974,8 +6974,8 @@ s32 Menu_RunWorkspaceOptions(void) {
     gGameState.paletteGlow[1] = work->option[1];
     gGameState.messageSpeed = work->option[2];
     gGameState.speech = work->option[3];
-    gGameState.savedOptions = work->option[4];
-    gOptionMirror = gGameState.savedOptions;
+    gGameState.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gGameState.idleSleepEnabled;
   } else {
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   }
@@ -7155,10 +7155,10 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     }
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       result = page;
       AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-    } else if (gKeyState & (KEY_B | KEY_START)) {
+    } else if (gKeysPressed & (KEY_B | KEY_START)) {
       result = -1;
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     } else {

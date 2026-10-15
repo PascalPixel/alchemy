@@ -145,7 +145,7 @@ s32 SaveState_InitializeWorkspace(void);
 u32 SaveState_SelectWriteSlot(s32 mode);
 u32 SaveState_WriteWorkspaceSlot(s32 sector);
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
-u16 SaveState_EraseSlotSector(u16 value);
+u16 SaveState_EraseSlotSector(u16 sector);
 s32 SaveState_WriteRecord(s32 recordId, void *source);
 u32 SaveState_ReadRecordPayload(s32 recordId, void *destination);
 u32 SaveState_DeleteRecord(s32 recordId);

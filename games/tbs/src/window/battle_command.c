@@ -753,12 +753,12 @@ u32 SaveState_BuildSummaryHeader(void) {
 
   summary = (struct SaveSummary *)(gSaveBuffer - 16);
   gGameState.buildStamp = Runtime_GetBuildStampTimeFar(0);
-  gGameState.playTime = gLoadedStateWord;
+  gGameState.playTime = gPlayTimeFrames;
   {
     u32 *copy = (u32 *)gSceneState;
-    copy[64] = gLoadedStateWord;
+    copy[64] = gPlayTimeFrames;
   }
-  gGameState.savedOptions = gOptionMirror;
+  gGameState.idleSleepEnabled = gIdleSleepEnabled;
   owner = UnitGetFar(gGameState.selectedActor);
   destination = summary->name;
   source = owner->name;
@@ -1510,11 +1510,11 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
                 (mode == 1 && (s8)save->summary[slot].sendFlag != 0) ||
                 (mode == 4 && (s8)save->summary[slot].flagCount == 0) ||
                 (mode == 5 && (s8)save->summary[slot].sendFlag == 0)));
-    } else if (gKeyState & 2) {
+    } else if (gKeysPressed & 2) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
-    } else if (gKeyState & 1) {
+    } else if (gKeysPressed & 1) {
       AudioCommand_PlayFar(112);
       result = slot;
       break;
@@ -1718,11 +1718,11 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
                 (mode == 1 && (s8)save->summary[slot].sendFlag != 0) ||
                 (mode == 4 && (s8)save->summary[slot].flagCount == 0) ||
                 (mode == 5 && (s8)save->summary[slot].sendFlag == 0)));
-    } else if (gKeyState & 2) {
+    } else if (gKeysPressed & 2) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
-    } else if (gKeyState & 1) {
+    } else if (gKeysPressed & 1) {
       AudioCommand_PlayFar(112);
       result = slot;
       break;
@@ -1819,9 +1819,9 @@ s32 SaveState_LoadRecordIntoWork(s32 arg) {
         UiText_ShowPositionedMessageAndWait(MsgLoadFailed, 1);
         ret = -2;
       } else {
-        gLoadedStateWord = gGameState.playTime;
-        gOptionMirror = gGameState.savedOptions;
-        gPostLoadCounter = 0;
+        gPlayTimeFrames = gGameState.playTime;
+        gIdleSleepEnabled = gGameState.idleSleepEnabled;
+        gIdleFrames = 0;
         gSaveSlot = value;
       }
     }
@@ -2167,7 +2167,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
       if (column == 18 && (row < 4 || row > 5))
         column = 0;
     }
-    if (gKeyState & KEY_START) {
+    if (gKeysPressed & KEY_START) {
       AudioCommand_PlayFar(111);
       cursorDirty = 1;
       column = 18;
@@ -2426,13 +2426,13 @@ s32 NameEntry_EditOwnerName(s32 entry) {
           column = 0;
       }
     }
-    if (gKeyState & KEY_START) {
+    if (gKeysPressed & KEY_START) {
       AudioCommand_PlayFar(111);
       cursorDirty = 1;
       column = 18;
       row = 10;
     }
-    if (gKeyState & KEY_SELECT) {
+    if (gKeysPressed & KEY_SELECT) {
       AudioCommand_PlayFar(111);
     change_keyboard:
       keyboard ^= 1;
@@ -2684,7 +2684,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn) {
       Runtime_PushSlotEntry(entry, 250);
       WaitFrames(1);
     } while (AudioCommand_GetStateByteFar() != 0 &&
-             (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+             (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     UiWork_Finalize(window, 2);
     WaitFrames(1);
@@ -2731,7 +2731,7 @@ void Party_ShowJoinedMessage(s32 member) {
       Runtime_PushSlotEntry(entry, 250);
       WaitFrames(1);
     } while (AudioCommand_GetStateByteFar() != 0 &&
-             (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+             (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
     UiWork_Finalize(window, 2);
     WaitFrames(1);
     Resource_ResetEntry(handle);
@@ -2795,7 +2795,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
       Runtime_PushSlotEntry(entry2, 250);
       WaitFrames(1);
     } while (AudioCommand_GetStateByteFar() != 0 &&
-             (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+             (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     UiWork_Finalize(window, 2);
     WaitFrames(1);
@@ -3454,7 +3454,7 @@ s32 Ui_RunSelectionScreen(s32 mode) {
         entry->sprite.oam.f.affine = 0;
       }
     }
-    keys = gKeyState;
+    keys = gKeysPressed;
     repeat = gKeysRepeat;
     runtime = gLinkCountdownWork;
     if (runtime->autoEnabled != 0) {
@@ -4682,7 +4682,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     if (gLinkCountdownWork->active == 0) {
       break;
     }
-    if ((gKeyState & KEY_B) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       break;
     }
 
@@ -5032,7 +5032,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       UiRender_MarkRow(ctx, listWin->y - 1);
     }
 
-    trig = gKeyState;
+    trig = gKeysPressed;
     rep = gKeysRepeat;
     opts = gKeysHeld;
     menu = gLinkCountdownWork;
@@ -5548,7 +5548,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     //------------------------------------------------------------------
     MenuCell_SetCursor(page, row, preferred);
     nav = gLinkCountdownWork;
-    pressed = gKeyState;
+    pressed = gKeysPressed;
     repeated = gKeysRepeat;
 
     // 自動入力中は 120 フレームごとに決定する
@@ -5849,7 +5849,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
     MenuCell_SetCursor(page, row, preferredRow);
     cell = gLinkCountdownWork;
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = page + row;
         Item_GetDirectFar(entries[result]);
@@ -5874,7 +5874,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         result = -1;
         break;
       }
-    } else if (cell->active == 0 || (gKeyState & KEY_B) != 0) {
+    } else if (cell->active == 0 || (gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
@@ -6138,7 +6138,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     MenuCell_SetCursor(page, row, preferredRow);
     nav = gLinkCountdownWork;
 
-    if ((gKeyState & KEY_A) != 0) {
+    if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = page + row;
         if ((BattleActGet(actions[result])->targetFlag &
@@ -6155,7 +6155,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         result = -1;
         break;
       }
-    } else if (nav->active == 0 || (gKeyState & KEY_B) != 0) {
+    } else if (nav->active == 0 || (gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(113);
       result = -1;
       break;
@@ -6886,7 +6886,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         Runtime_PushSlotEntry((s32 *)entry, 240);
       }
     }
-    pressed = gKeyState;
+    pressed = gKeysPressed;
     repeat = gKeysRepeat;
     if (gLinkCountdownWork->autoEnabled) {
       repeat = 0;
@@ -7094,7 +7094,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
     do {
       WaitFrames(1);
-    } while ((gKeyState & (KEY_A | KEY_B)) == 0 && COUNTDOWN->timer != 0);
+    } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 && COUNTDOWN->timer != 0);
     UiWork_Finalize(work, 1);
   }
   return result;
@@ -8073,15 +8073,15 @@ redraw:
   UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
   for (;;) {
     WaitFrames(1);
-    if (gKeyState & KEY_A) {
+    if (gKeysPressed & KEY_A) {
       AudioCommand_PlayFar(112);
       return work->selection;
     }
-    if (gKeyState & KEY_B) {
+    if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(113);
       return -1;
     }
-    if (gKeyState & KEY_START) {
+    if (gKeysPressed & KEY_START) {
       AudioCommand_PlayFar(113);
       return -1;
     }
@@ -8923,7 +8923,7 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
       GameFlag_SetBitFar(flag);
     return 1;
   }
-  if ((gKeyState & KEY_B) || (gKeysRepeat & KEY_SELECT))
+  if ((gKeysPressed & KEY_B) || (gKeysRepeat & KEY_SELECT))
     return -1;
   if (gKeysRepeat & KEY_UP) {
     if (--*row < 0)

@@ -50,7 +50,7 @@ void Scheduler_RunCallbacksByKey(s32 key) {
   s32 remaining;
 
   key >>= 8;
-  if (gSchedulerTaskCount == 1) {
+  if (gSchedulerReady == 1) {
     remaining = SCHEDULER_TLA_TASK_COUNT + 1;
     task--;
   next_task:
@@ -75,7 +75,7 @@ s32 Scheduler_CountCallbacksByKey(s32 key) {
   struct SchedulerTask *task;
   s32 count;
   s32 i;
-  u8 *status = &gSchedulerTaskCount;
+  u8 *status = &gSchedulerReady;
   u32 observed;
 
   count = 0;
@@ -111,7 +111,7 @@ void Scheduler_RunCallbacksBeforeBoundary(s32 key) {
   s32 remaining;
 
   key >>= 8;
-  if (gSchedulerTaskCount == 1) {
+  if (gSchedulerReady == 1) {
     remaining = SCHEDULER_TLA_TASK_COUNT + 1;
     task--;
   next_task:

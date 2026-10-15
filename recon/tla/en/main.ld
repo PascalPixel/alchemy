@@ -1069,7 +1069,7 @@ SECTIONS
         "*/recon/tla/raw/080d5930.o"(.text)
         "*/recon/tla/raw/080d59dc.o"(.text)
         "*/recon/tla/raw/080d5aa0.o"(.text)
-        "*/recon/tla/raw/080d5bec.o"(.text)
+        "*/games/tla/src/field/common/object/screen_position.o"(.text)
         "*/recon/tla/raw/080d5c70.o"(.text)
         "*/recon/tla/raw/080d5d70.o"(.text)
         "*/recon/tla/raw/080d5de0.o"(.text)

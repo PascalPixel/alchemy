@@ -1238,6 +1238,8 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000ddcfc)
     "*/recon/tla/es/rom.o"(.rom.000de0ec)
     "*/recon/tla/es/rom.o"(.rom.000de3ac)
+    "*/games/tla/src/field/common/object/screen_position.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000dec64)
     "*/recon/tla/es/rom.o"(.rom.000ded64)
     "*/recon/tla/es/rom.o"(.rom.000dedd4)
     "*/games/tla/src/field/common/object/ctxstart.o"(.text)

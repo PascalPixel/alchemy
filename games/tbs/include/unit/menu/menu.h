@@ -58,7 +58,7 @@ void Palette_LightenBankHighlight(s32 bank);
 void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 page_size,
                             s32 selected_page, s32 right_edge);
 void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 highlight);
+                               s32 width, s32 height, u32 palette);
 void Palette_CopyObjectBankToBackground14(void);
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void UiText_DrawWorkValueWithLabel(s32 work);
@@ -126,7 +126,8 @@ s32 ItemMenu_ConfirmDrop(s32 a0);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 void Resource_LoadPairedBlocks(void);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index);
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
+s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
+                                struct MenuResult *state);
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
                           const struct MenuResult *state);
 s32 InventoryMenu_ItemNamePageReturnTrue(void);

@@ -390,68 +390,6 @@ Func_02000230:
 	.4byte 0x006bffff
 .L_020083f0:
 	.4byte 0x008fffff
-	.section .text.x02008454,"ax",%progbits
-	.balign 4
-	.global Func_02000454
-	.thumb_func
-Func_02000454:
-	push {r5, r6, lr}
-	ldr r3, .L_020084cc
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r6, r3, r2
-	ldr r0, [r6]
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r3, [r5, #12]
-	movs r2, #128
-	lsls r2, r2, #14
-	cmp r3, r2
-	blt .L_020084ca
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r6]
-	lsls r2, r2, #9
-	lsls r1, r1, #10
-	bl ObjectMotion_SetSpeedParameters
-	ldr r0, [r6]
-	movs r1, #1
-	bl ObjectMotion_SetActionVariant
-	movs r2, #170
-	ldr r0, [r6]
-	lsls r2, r2, #2
-	movs r1, #216
-	bl ObjectMotion_ResetAndSetPositionInMode2
-	adds r0, r5, #0
-	movs r1, #64
-	bl ObjectDispatch_ApplyValueToChildren
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	movs r6, #109
-.L_020084a4:
-	ldr r3, [r5, #12]
-	movs r2, #192
-	lsls r2, r2, #10
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	ldrh r3, [r5, #6]
-	movs r2, #192
-	lsls r2, r2, #5
-	adds r3, r3, r2
-	strh r3, [r5, #6]
-	movs r0, #2
-	subs r6, #1
-	bl WaitFrames
-	cmp r6, #0
-	bge .L_020084a4
-	movs r0, #12
-	bl Func_020022bc
-.L_020084ca:
-	pop {r5, r6, pc}
-.L_020084cc:
-	.4byte gPartyState
 	.section .text.x02008500,"ax",%progbits
 	.global Func_02000500
 	.thumb_func

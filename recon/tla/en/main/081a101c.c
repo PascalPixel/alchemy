@@ -1,3 +1,4 @@
+/* Near miss: differ 6 of 279, The Broken Seal's DisplayScroll_DrawLine. Three scheduling swaps remain, each a load the native issues one place earlier: the buffer's reload ahead of 0x100 for the second fill, the font's pool load inside -32's split, and the buffer's reload ahead of 96 before the packing loop. A one-pass block around the reload fixes the first but moves the copy's argument (still differ 6); an inline wrapper for the fill, a glyph pointer without the font local and eleven permuter minutes found nothing better (the permuter's differ 4 gives the copy wrapper an unsigned short return). */
 #include "types.h"
 #include "mem.h"
 #include "iwram_call.h"

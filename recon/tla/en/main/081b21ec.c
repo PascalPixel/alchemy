@@ -1,35 +1,37 @@
-/* Near miss: differ 2 of 97 (one reordered row). After the DMA the native loads the halfword mask 0x1f from the pool (ldr r7) before i = 0 and the word 31 are built; the draft builds those two first. All three have priority 2 in sched2. The twin in The Broken Seal needs no device. Tried 2026-10-12: the target components read before the colour components (differ 66); a barrier between i = 0 and the loop moves only the zero copy (differ 4); three permuter minutes. */
-#include "resource.h"
+/* Near miss: differ 2 of 97, The Broken Seal's Palette_StepTowardResource. Ahead of the loop the native loads the halfword mask 0x1f from the pool before it sets the counter and 31; sched2 here takes the three priority-2 invariants in insn order, the counter first. The same C under ☀️'s options orders them as here (☀️'s ROM has this order); four permuter minutes found nothing better. */
+#include "types.h"
 #include "dma.h"
+#include "io_reg.h"
+#include "resource.h"
 
-void Palette_StepTowardResource(s32 resource_id)
+void Palette_StepTowardResource(s32 resource)
 {
-    u16 target[64];
-    u16 *color = (u16 *)0x05000000;
+    u16 dst[64];
+    u16 *col = (u16 *)BG_PLTT;
     s32 i;
 
-    Dma_Set(Resource_GetTableEntry(resource_id), target, 0x84000020, (volatile u32 *)0x040000d4);
-    for (i = 0; i != 64; i++, color++) {
-        s32 red = *color & 0x1f;
-        s32 green = (*color >> 5) & 0x1f;
-        s32 blue = (*color >> 10) & 0x1f;
-        s32 target_red = target[i] & 0x1f;
-        s32 target_green = (target[i] >> 5) & 0x1f;
-        s32 target_blue = (target[i] >> 10) & 0x1f;
+    Dma_Set(Resource_GetTableEntry(resource), dst, DMA_ENABLE32 | DMA_32BIT | 0x20, REG_DMA3);
+    for (i = 0; i != 64; i++, col++) {
+        s32 r = *col & 0x1f;
+        s32 g = (*col >> 5) & 0x1f;
+        s32 b = (*col >> 10) & 0x1f;
+        s32 dst_r = dst[i] & 0x1f;
+        s32 dst_g = (dst[i] >> 5) & 0x1f;
+        s32 dst_b = (dst[i] >> 10) & 0x1f;
 
-        if (red < target_red)
-            red++;
-        else if (red > target_red)
-            red--;
-        if (green < target_green)
-            green++;
-        else if (green > target_green)
-            green--;
-        if (blue < target_blue)
-            blue++;
-        else if (blue > target_blue)
-            blue--;
-        target[i] = (blue << 10) | (green << 5) | red;
+        if (r < dst_r)
+            r++;
+        else if (r > dst_r)
+            r--;
+        if (g < dst_g)
+            g++;
+        else if (g > dst_g)
+            g--;
+        if (b < dst_b)
+            b++;
+        else if (b > dst_b)
+            b--;
+        dst[i] = (b << 10) | (g << 5) | r;
     }
-    Dma_Set(target + 1, (void *)0x05000002, 0x8000003f, (volatile u32 *)0x040000d4);
+    Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_ENABLE32 | 63, REG_DMA3);
 }

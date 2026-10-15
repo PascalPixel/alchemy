@@ -1,4 +1,4 @@
-/* Near miss: differ 10 of 166, The Broken Seal's TitlePalette_UpdateFade on heap slot 0x80 (block_32), ported fresh. Every remaining difference is a scheduling swap where the native issues a load before a split constant (five spots); the greedy device search found nothing. A block temporary for the first queued write's address (found by a greedy device search) fixes two of the swaps. */
+/* Near miss: differ 10 of 166, The Broken Seal's TitlePalette_UpdateFade on heap slot 0x80 (block_32), ported fresh. Every remaining difference is a scheduling swap where the native issues a load before a split constant; a block temporary for the first queued write's address, found by a greedy search over one-pass blocks, barriers and block temporaries, fixes two of the five (differ 14 without it). */
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"

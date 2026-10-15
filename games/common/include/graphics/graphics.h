@@ -307,14 +307,14 @@ void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
 #endif
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x,
+void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
-void UiText_DrawString(u8 *text, s32 output, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
+void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 #ifndef OWN_UiText_DrawStringInWindowFar
-void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
+void UiText_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
+void UiText_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);

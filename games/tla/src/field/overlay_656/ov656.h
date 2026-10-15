@@ -251,6 +251,24 @@ static inline void Ov656_ObjCommit(s32 actor, s32 x, s32 z)
     ObjectMotion_SetPositionAndCommit(actor, x, z);
 }
 
+static inline void Ov656_CamSpeed(s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02002d58(speed, acceleration);
+}
+
+static inline void Ov656_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02002cd0(actor, x, z);
+}
+
+static inline void Ov656_CamSet(s32 a, s32 b, s32 c, s32 d)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02002d68(a, b, c, d);
+}
+
 // ---- this overlay
 
 void Func_02000d10(s32 id);

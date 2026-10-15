@@ -21991,11 +21991,11 @@ msgctxt "message"
 msgid "05495"
 msgstr "Si tienes demasiados{line_break}objetos, no podrás{line_break}llevar contigo lo que{page_break}ganes. ¿Vale?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgScene694No12"
 msgid "05496"
 msgstr "Entonces suelta{line_break}algunos objetos{line_break}y vuelve de nuevo.{end_wait}"
 
-msgctxt "MsgScene694No19"
+msgctxt "MsgScene694No13"
 msgid "05497"
 msgstr "Colócate frente a la{line_break}máquina y pásatelo bien.{end_wait}"
 
@@ -22023,15 +22023,15 @@ msgctxt "MsgScene694No14"
 msgid "05503"
 msgstr "¡Y ganaste{line_break}{argument_item_name:10}!{line_break}Aquí tienes.{end_wait}"
 
-msgctxt "MsgScene694No18"
+msgctxt "MsgScene694No17"
 msgid "05504"
 msgstr "¡Vuelve pronto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No18"
 msgid "05505"
 msgstr "Qué mal...{line_break}Vuelve cuando tengas{line_break}algún ticket.{end_wait}"
 
-msgctxt "MsgScene694No12"
+msgctxt "MsgScene694No19"
 msgid "05506"
 msgstr "¿Quieres utilizar{line_break}tus tickets para{line_break}seguir jugando?{end_now}"
 

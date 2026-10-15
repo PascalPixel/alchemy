@@ -1,0 +1,91 @@
+/* Draft, differ 4 of 170: the scene setup of overlay 669, written from the listing (its ☀️ twin
+ * by shape, haidia_heya.c's Scene_RunSupplementalSequenceOne, is a different scene). Left: two
+ * scheduling swaps. At the start the native loads gPartyState's address before it stores the
+ * screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the draft stores first. At
+ * the end the native builds the 0x100000 step before it loads object->y; the draft loads first.
+ * Measured: one-pass blocks around the y step or the priority bit (4), a party pointer (4), an
+ * "+l" barrier on the step (4), alchemy permute 3 minutes (4). */
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "call.h"
+
+struct EventWork1ac {
+    u8 unknown_000[0x1ac];
+    s32 screen_effect;
+};
+
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void Func_02003198();
+void Func_02003298(s32 actor, s32 value);
+void Func_02000c5c(void);
+
+static __inline__ void Ov669_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer, as cutscene.c's Call3. */
+    Call3((void (*)())Func_02003198, actor, x, z);
+}
+
+s32 Func_02000250(void)
+{
+    struct ObjectRuntime *object;
+
+    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    if (gPartyState.entrance == 99)
+    {
+        GameFlag_SetBit(0x8aa);
+        GameFlag_SetBit(0x8ab);
+        gPartyState.secondary = 3;
+        gPartyState.entrance = 3;
+        Func_02000c5c();
+    }
+    if (GameFlag_Test(0x8a7))
+    {
+        Ov669_ObjPlace(10, 0, 0);
+        Ov669_ObjPlace(11, 0, 0);
+        Ov669_ObjPlace(8, 0, 0);
+        Ov669_ObjPlace(9, 0, 0);
+    }
+    else if (GameFlag_Test(0x8ab))
+    {
+        Ov669_ObjPlace(8, 0, 0);
+        Ov669_ObjPlace(9, 0, 0);
+        if (!GameFlag_Test(0x8bd))
+        {
+            Ov669_ObjPlace(10, 0, 0);
+            Ov669_ObjPlace(11, 0, 0);
+        }
+    }
+    else
+    {
+        Ov669_ObjPlace(10, 0, 0);
+        Ov669_ObjPlace(11, 0, 0);
+    }
+    if (GameFlag_Test(0x900))
+        Ov669_ObjPlace(13, 0x1880000, 0x2880000);
+    Object_GetById(13)->priority_flags |= 32;
+    Func_02003298(15, 457);
+    if (!GameFlag_Test(0x901))
+    {
+        if (!GameFlag_Test(0x109))
+        {
+            Object_GetById(14)->priority_flags |= 128;
+            object = Object_GetById(15);
+            object->priority_flags |= 64;
+            object->y += 0x100000;
+            object->terrain_height += 0x100000;
+        }
+    }
+    else
+    {
+        Ov669_ObjPlace(14, 0x880000, 0x1db0000);
+        if (!GameFlag_Test(0x902))
+            Ov669_ObjPlace(15, 0x780000, 0x1d80000);
+        else
+            Ov669_ObjPlace(15, 0, 0);
+    }
+    return 0;
+}

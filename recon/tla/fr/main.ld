@@ -773,7 +773,6 @@ SECTIONS
     "*/games/tla/src/game/party/count_active_owners.o"(.text)
     "*/games/tla/src/game/party/list_active_owners.o"(.text)
     "*/games/tla/src/game/party/counters.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b4f28)
     "*/games/tla/src/game/djinn/get_definition.o"(.text)
     "*/games/tla/src/game/character/resist.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b5084)

@@ -1797,8 +1797,6 @@ Owner_LevelUp:
 	.incbin "baserom.gba", 0x000b491c, 0x00000264
 	.section .rom.000b4bec, "ax"
 	.incbin "baserom.gba", 0x000b4bec, 0x000001d0
-	.section .rom.000b4f28, "ax"
-	.incbin "baserom.gba", 0x000b4f28, 0x00000054
 	.section .rom.000b5084, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

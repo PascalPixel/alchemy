@@ -1391,12 +1391,6 @@ Owner_LevelUp:
 	.thumb_func
 Func_080afbec:
 	.incbin "baserom.gba", 0x000bcbec, 0x000001d0
-	.section .rom.000bcf28, "ax"
-	.global Trade_ListFlaggedEntries
-	.type Trade_ListFlaggedEntries, %function
-	.thumb_func
-Trade_ListFlaggedEntries:
-	.incbin "baserom.gba", 0x000bcf28, 0x00000054
 	.section .rom.000bd084, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

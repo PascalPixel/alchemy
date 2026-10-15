@@ -29,21 +29,14 @@ Slots_SmallDoubleUpBanner:
 	.endif
 	.endif
 	.endif
-	.ifdef TLA_EDITION_JA
+	.ifdef TLA_EDITION_EN
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.else
 	.ifdef TLA_EDITION_DE
 	.byte 0x5e, 0xe3, 0x09	@ PACKER: left in the buffer by Slots_GreenDigits+0x19d
 	.else
 	.ifdef TLA_EDITION_ES
 	.byte 0x1d, 0x98	@ PACKER: left in the buffer by Slots_GreenDigits+0x162
-	.else
-	.ifdef TLA_EDITION_FR
-	.else
-	.ifdef TLA_EDITION_IT
-	.else
-	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.endif
-	.endif
 	.endif
 	.endif
 	.endif

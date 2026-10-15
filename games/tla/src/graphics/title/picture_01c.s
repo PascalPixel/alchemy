@@ -77,12 +77,10 @@ Resource_Data01D:
 	.endif
 	.endif
 	.endif
-	.ifndef TLA_EDITION_JA
-	.ifndef TLA_EDITION_EN
-	.ifndef TLA_EDITION_DE
-	.ifndef TLA_EDITION_ES
+	.ifdef TLA_EDITION_FR
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.endif
-	.endif
+	.else
+	.ifdef TLA_EDITION_IT
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif
 	.endif

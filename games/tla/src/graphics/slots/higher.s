@@ -29,21 +29,14 @@ Slots_HigherBanner:
 	.endif
 	.endif
 	.endif
-	.ifdef TLA_EDITION_EN
+	.ifdef TLA_EDITION_JA
+	.byte 0xad, 0xcb, 0x71	@ PACKER: left in the buffer by Slots_YouLoseBanner+0x2ad
 	.else
 	.ifdef TLA_EDITION_DE
 	.byte 0x34, 0x2f	@ PACKER: left in the buffer by Slots_YouLoseBanner+0x27e
 	.else
-	.ifdef TLA_EDITION_ES
-	.else
 	.ifdef TLA_EDITION_FR
 	.byte 0xd8, 0xdd, 0x51	@ PACKER: left in the buffer by Slots_YouLoseBanner+0x299
-	.else
-	.ifdef TLA_EDITION_IT
-	.else
-	.byte 0xad, 0xcb, 0x71	@ PACKER: left in the buffer by Slots_YouLoseBanner+0x2ad
-	.endif
-	.endif
 	.endif
 	.endif
 	.endif

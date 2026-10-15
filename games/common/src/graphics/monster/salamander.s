@@ -3,8 +3,4 @@
 	.global Monster_SalamanderSprites
 Monster_SalamanderSprites:
 	.incbin "games/common/src/graphics/monster/salamander.frames.lz"
-	.ifeq GAME_TLA
 	.byte 0x62, 0x4f	@ PACKER: left in the buffer by Monster_WispGhostSprites+0xe16
-	.else
-	.byte 0x62, 0x4f	@ PACKER: left in the buffer by Monster_WispGhostSprites+0xe16
-	.endif

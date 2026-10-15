@@ -29,7 +29,8 @@ Slots_TwoPairBanner:
 	.endif
 	.endif
 	.endif
-	.ifdef TLA_EDITION_EN
+	.ifdef TLA_EDITION_JA
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.else
 	.ifdef TLA_EDITION_DE
 	.byte 0x04, 0xa6, 0xc6	@ PACKER: left in the buffer by Slots_GreenDigits+0x579
@@ -37,13 +38,8 @@ Slots_TwoPairBanner:
 	.ifdef TLA_EDITION_ES
 	.byte 0x4c, 0x01, 0x8f	@ PACKER: left in the buffer by Slots_GreenDigits+0x6e5
 	.else
-	.ifdef TLA_EDITION_FR
-	.else
 	.ifdef TLA_EDITION_IT
 	.byte 0x04	@ PACKER: left in the buffer by Slots_GreenDigits+0x5e3
-	.else
-	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.endif
 	.endif
 	.endif
 	.endif

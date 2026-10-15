@@ -29,21 +29,17 @@ Slots_PerfectBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_JA
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
 	.ifdef TLA_EDITION_EN
 	.byte 0xc3	@ PACKER: left in the buffer by Slots_GreenDigits+0x663
-	.else
-	.ifdef TLA_EDITION_DE
-	.else
-	.ifdef TLA_EDITION_ES
 	.else
 	.ifdef TLA_EDITION_FR
 	.byte 0x02	@ PACKER: left in the buffer by Resource_Data087+0x7ab
 	.else
 	.ifdef TLA_EDITION_IT
 	.byte 0xe2, 0x3c, 0x30	@ PACKER: left in the buffer by Slots_GreenDigits+0x64d
-	.else
-	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.endif
 	.endif
 	.endif
 	.endif

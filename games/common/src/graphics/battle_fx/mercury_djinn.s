@@ -4,8 +4,4 @@
 BattleFx_MercuryDjinnSheet:
 	.incbin "games/common/src/graphics/battle_fx/mercury_djinn.gbapal"
 	.incbin "games/common/src/graphics/battle_fx/mercury_djinn.bitmap.lz"
-	.ifeq GAME_TLA
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.else
-	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.endif

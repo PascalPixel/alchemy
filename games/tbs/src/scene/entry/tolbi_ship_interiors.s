@@ -3,6 +3,6 @@
 	overlay_veneer TolbiShipInteriors_ApplyEntryState
 	overlay_veneer TolbiShipInteriors_SelectEntrances
 	overlay_veneer TolbiShipInteriors_GetExits
-	overlay_veneer TolbiShipInteriors_GetStepScript
-	overlay_veneer SceneData_SelectTableBySceneIndexAndFlags
-	overlay_veneer SceneData_ReturnZero
+	overlay_veneer TolbiShipInteriors_SelectPlacements
+	overlay_veneer TolbiShipInteriors_SelectEvents
+	overlay_veneer TolbiShipInteriors_GetRegions

@@ -1,10 +1,12 @@
-/* Near miss, differ 22. What remains: the listing builds the zero inside the
- * actor loop (movs r3, #0 on every pass, work pointer in r6) where this draft
- * moves it out into r6 (a one-pass block around the store did not keep it
- * in); it decrements the choice after Func_020006f0 returns and loads the
- * table address before the shift; and Object_SetModeById loads its mode
- * before the owner id. One-pass blocks at the last two spots each move a
- * neighbouring instruction instead. */
+/* Near miss, differ 4 of 69, from ☀️'s SceneScript_SetupActors (torebi_machi.c)
+ * with its byte-pointer store. Devices so far: the zero pinned to r3 keeps
+ * it inside the actor loop (loop.c hoists it into r6 otherwise, differ 24);
+ * empty asms on each side of Func_020006f0 keep the decrement after the call
+ * (sched2 ranks it 46 against the call's 45). What remains: the native loads
+ * the table address before the shift (a "+l" asm on the table pointer
+ * re-allocates the whole call, differ 15), and Object_SetModeById's mode
+ * before the owner id (plain, inline and value-returning calls all load the
+ * owner first: both tie at priority 2 and RTL order puts r0 first). */
 #include "../../../../games/tla/src/field/overlay_65d/local.h"
 
 struct WarpEntry {
@@ -24,13 +26,11 @@ void Event_WaitTransitionFrames(void);
 
 static __inline__ void Func_02000610_(s32 map, s32 x, s32 z)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02000610(map, x, z);
 }
 
 static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column, s32 offset)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     ObjectMotion_CenterOnColumn(id, column, offset);
 }
 
@@ -44,19 +44,25 @@ void Func_0200009c(void)
     Func_02000648();
     Func_020006d0(0);
     for (id = 8; id <= 63; id++) {
-        struct ObjectRuntime *object = Object_GetById(id);
+        u8 *actor = (u8 *)Object_GetById(id);
 
-        if (object != NULL)
-            object->motion_flags = 0;
+        if (actor != NULL) {
+            u8 *flags = &actor[85];
+            register s32 zero asm("r3") = 0;
+
+            *flags = zero;
+        }
     }
     choice = (s16 *)(work + 340);
     index = *choice;
+    asm("");
     Func_020006f0(158);
+    asm("");
     index--;
     Func_02000610_(Data_0200073c[index].map, Data_0200073c[index].x, Data_0200073c[index].z);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
     Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_SetModeById_(gPartyState.current_owner, 2);
+    Object_SetModeById(gPartyState.current_owner, 2);
     if (index != 4) {
         ObjectMotion_CenterOnColumn_(gPartyState.current_owner, 2, -8);
         Battle_WaitMode0(10);

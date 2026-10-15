@@ -2197,8 +2197,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.001c09d0)
     "*/games/tla/src/sound/sndstub.o"(.text)
     "*/games/tla/src/sound/f1c0cac.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.001c0e30)
-    "*/recon/tla/es/rom.o"(.rom.001c0e70)
     "*/games/tla/src/sound/music_set_pitch.o"(.text)
     "*/games/tla/src/sound/music_set_volume.o"(.text)
     "*/games/tla/src/sound/wait_for_completion.o"(.text)

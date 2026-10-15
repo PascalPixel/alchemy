@@ -8,7 +8,7 @@ AudioEngine_SuspendDirectSoundFar:
 	.global Func_081c0088
 	.thumb_func
 Func_081c0088:
-	overlay_veneer Func_081c0e30
+	overlay_veneer MusicPlayer_StepVolumeAndPitchTowardTargets
 	.global SongFlag_TestFar
 	.thumb_func
 SongFlag_TestFar:

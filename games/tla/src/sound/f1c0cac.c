@@ -18,6 +18,10 @@ extern u16 Data_02005820[8];
 extern u16 Data_02005830;
 extern struct SoundPlayer Data_02006b60;
 extern struct SoundPlayer Data_02006990;
+extern u16 Data_02005834;
+extern u16 Data_0200583c;
+extern u16 Data_0200580c;
+extern struct SoundPlayer Data_02006a10;
 
 void SongFlag_Set(s32 cue);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
@@ -25,6 +29,8 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
 void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
 void Audio_PlaySound(u16 cue);
 void Sound_LoadPresetParameters(s32 preset);
+void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player, u16 scale);
+void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch);
 
 s32 Func_081c0cac(s32 cue)
 {
@@ -113,5 +119,52 @@ void AudioCommand_Play(s32 id)
         gMusicVolumeTarget = 0x100;
         gMusicVolumeStep = 4;
         Data_02005814 = 0;
+    }
+}
+
+// Steps the music volume toward its target and the pitch toward its target,
+// each by its step, after the jingle's restore delay runs out, as The Broken
+// Seal's without the DMA restart tick.
+void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
+{
+    s32 delta;
+
+    if (gMusicRestoreDelay != 0)
+    {
+        if (gMusicRestoreDelay == 1)
+        {
+            if ((u8)Data_02006a10.status == 0)
+            {
+                gMusicRestoreDelay = 0;
+                gMusicVolumeTarget = 0x100;
+            }
+        }
+        else
+        {
+            gMusicRestoreDelay -= 1;
+        }
+    }
+    if ((s16)gMusicVolumeTarget != (s16)gMusicVolume)
+    {
+        delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
+        if (delta > 0)
+            gMusicVolume += gMusicVolumeStep;
+        else
+            gMusicVolume -= gMusicVolumeStep;
+        if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0)
+            gMusicVolume = gMusicVolumeTarget;
+        MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
+    }
+    if ((s16)Data_02005834 != (s16)Data_0200583c)
+    {
+        delta = (s16)Data_02005834 - (s16)Data_0200583c;
+        if (delta > 0)
+            Data_0200583c += Data_0200580c;
+        else
+            Data_0200583c -= Data_0200580c;
+        if ((((s16)Data_02005834 - (s16)Data_0200583c) ^ delta) < 0)
+            Data_0200583c = Data_02005834;
+        MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, Data_0200583c);
+        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)Data_0200583c * 12 - 3072);
     }
 }

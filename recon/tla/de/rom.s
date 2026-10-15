@@ -4479,19 +4479,6 @@ Func_081c08a4:
 	.thumb_func
 MusicPlayer_Tick:
 	.incbin "baserom.gba", 0x001c09d0, 0x00000248
-	.section .rom.001c0e30, "ax"
-	.balign 4
-	.global Func_081c0e30
-	.type Func_081c0e30, %function
-	.thumb_func
-Func_081c0e30:
-	.incbin "baserom.gba", 0x001c0e30, 0x00000040
-	.section .rom.001c0e70, "ax"
-	.global Func_081c0e70
-	.type Func_081c0e70, %function
-	.thumb_func
-Func_081c0e70:
-	.incbin "baserom.gba", 0x001c0e70, 0x000000cc
 	.section .rom.001c1010, "ax"
 	.incbin "baserom.gba", 0x001c1010, 0x00000004
 	.section .rom.001c1014, "ax"

@@ -99,8 +99,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.000142a0)
     "*/games/tla/src/system/resource/activate_entry.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00014300)
-    "*/recon/tla/it/rom.o"(.rom.00014394)
-    "*/recon/tla/it/rom.o"(.rom.000143d8)
     "*/games/tla/src/system/resource/initialize.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00014422)
     "*/games/tla/src/system/resource/rescache.o"(.text)

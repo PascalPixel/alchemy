@@ -123,18 +123,6 @@ Resource_ResetEntry:
 	.thumb_func
 VramBlock_LoadCached:
 	.incbin "baserom.gba", 0x00014300, 0x00000094
-	.section .rom.00014394, "ax"
-	.global Func_08014368
-	.type Func_08014368, %function
-	.thumb_func
-Func_08014368:
-	.incbin "baserom.gba", 0x00014394, 0x00000044
-	.section .rom.000143d8, "ax"
-	.global Resource_FindFreeEntry
-	.type Resource_FindFreeEntry, %function
-	.thumb_func
-Resource_FindFreeEntry:
-	.incbin "baserom.gba", 0x000143d8, 0x00000034
 	.section .rom.00014422, "ax"
 	.incbin "baserom.gba", 0x00014422, 0x00000002
 	.section .rom.00014b9c, "ax"

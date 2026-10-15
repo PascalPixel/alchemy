@@ -21,7 +21,7 @@ extern u8 Data_03001110[];
 void Func_080132d0(void);
 void Ui_LoadWindowGraphics(void);
 void Func_08014b70(void);
-void Func_08014368(void);
+void Resource_InitializeTable(void);
 void Func_0801399c(void);
 void Audio_InitializeRuntimeDefaultsFar(void);
 void Game_ResetForNewGameFar(s32);
@@ -53,7 +53,7 @@ void System_Initialize(void)
 	Runtime_SetIrqHandler(13, 1, IwramHalt);
 	Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 	Audio_InitializeRuntimeDefaultsFar();
-	Func_08014368();
+	Resource_InitializeTable();
 	Scheduler_ResetTaskTable();
 	gCartridgeResetMarker = 0;
 	gRenderOamEnabled = 1;

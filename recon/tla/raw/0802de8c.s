@@ -109,7 +109,7 @@ Func_0802de8c:
 	movs r0, #36
 	bl Runtime_AllocateBlock
 	str r0, [sp, #4]
-	bl Func_08014368
+	bl Resource_InitializeTable
 	movs r0, #2
 	bl Func_080230e0
 	mov r0, r10

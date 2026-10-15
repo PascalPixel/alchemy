@@ -124,7 +124,7 @@ Resource_DecodeType01Far:
 	.global Resource_InitializeTableFar
 	.thumb_func
 Resource_InitializeTableFar:
-	overlay_veneer Func_08014368
+	overlay_veneer Resource_InitializeTable
 	.global Resource_ResetEntryFar
 	.thumb_func
 Resource_ResetEntryFar:

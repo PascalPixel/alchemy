@@ -2,6 +2,9 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "call.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
 s32 Func_02004464();
 s32 Func_020045ec();
 s32 Motion_CamBounds();
@@ -36,8 +39,21 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 GameFlag_ClearBit();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
-extern u8 gPartyState[];
 extern u8 MsgScene6A8No80[];
+
+#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
+
+static inline void Ov6a8_MesOpen(s32 actor, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; through Call2 the actor 0x4000 is finished after the flags (differ 4). */
+    UiText_OpenMessageAtObject(actor, flags);
+}
+
+static inline void Ov6a8_Jump(s32 actor, s32 height, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer, which sets the actor last as the native does (differ 38 through Call3). */
+    Func_0200455c(actor, height, frames);
+}
 
 void Func_02001cf0(void)
 {
@@ -46,20 +62,27 @@ void Func_02001cf0(void)
     s32 t159;
     s32 t202;
     s32 t207;
+    s32 angleC000;
+    s32 angleB000;
+    s32 angle3000;
 
     Func_02004464();
     Call1(Func_020045ec, 0);
     Call4(Motion_CamBounds, -1, -1, -1, 0);
     Call1(ObjectMotion_EnableActionAndResetMotion, 0x14);
     Call1(WaitFrames, 1);
-    Call3(Func_020044cc, FIELD_AT(gPartyState, s32, 532), 0xb80000, 0x1e40000);
-    Call3(Func_020044d4, 0, 0xa80000, 0x1e40000);
-    Func_020044d4(0x1b, 0xc80000, 0x1e40000, 0xb000);
-    Func_020044d4(0x11, 0x8a0000, 0x19c0000, 0x3000);
-    Call4(Func_020044d4, 0x14, 0xdc0000, 0x2580000, 0xb000);
+    Call3(Func_020044cc, gPartyState.current_owner, 0xb80000, 0x1e40000);
+    /* FAKEMATCH: the three facings are locals set before their first placement; as constants each placement rebuilds them and the later turns cannot share them (differ 76). */
+    angleC000 = 0xc000;
+    angleB000 = 0xb000;
+    Call4(Func_020044d4, 0, 0xa80000, 0x1e40000, angleC000);
+    Call4(Func_020044d4, 0x1b, 0xc80000, 0x1e40000, angleB000);
+    angle3000 = 0x3000;
+    Call4(Func_020044d4, 0x11, 0x8a0000, 0x19c0000, angle3000);
+    Call4(Func_020044d4, 0x14, 0xdc0000, 0x2580000, angleB000);
     Call3(Func_020044cc, 5, 0xb80000, 0x2ac0000);
     Call1(WaitFrames, 1);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
+    EVENT_WORK->screen_effect = 0x100;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Call2(Func_0200456c, 0xcccc, 0x1999);
@@ -70,16 +93,16 @@ void Func_02001cf0(void)
     Call2(Func_02004534, 0x1a, 0);
     Call2(Object_SetModeById, 0, 3);
     Call2(Object_SetModeById, 0x1b, 3);
-    Call2(Motion_SetModeAndWaitAnimation, FIELD_AT(gPartyState, s32, 532), 3);
+    Call2(Motion_SetModeAndWaitAnimation, gPartyState.current_owner, 3);
     Call3(ObjectMotion_ArmCallback, 0x1a, 0x5000, 0);
-    Call3(Func_0200455c, 0x1a, 0x108, 0x14);
+    Ov6a8_Jump(0x1a, 0x108, 0x14);
     Call2(Func_02004534, 0x1a, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x8000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0, 0x14);
-    Call3(Func_0200455c, FIELD_AT(gPartyState, s32, 532), 0x108, 0);
-    Call3(Func_0200455c, 0, 0x108, 0x28);
+    Ov6a8_Jump(gPartyState.current_owner, 0x108, 0);
+    Ov6a8_Jump(0, 0x108, 0x28);
     Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
-    Call2(Func_0200454c, FIELD_AT(gPartyState, s32, 532), 0xc000);
+    Call2(Func_0200454c, gPartyState.current_owner, 0xc000);
     Call2(Func_02004534, 0, 0);
     Call2(Func_02004564, 0x19, 0x102);
     Call1(Battle_WaitMode0, 0x14);
@@ -88,14 +111,14 @@ void Func_02001cf0(void)
     Call2(Func_02004534, 0x1b, 0);
     Call2(Object_SetModeById, 0x13, 4);
     Call2(Func_02004534, 0x4013, 0);
-    Call3(Func_0200455c, 0, 0x109, 0x14);
+    Ov6a8_Jump(0, 0x109, 0x14);
     Call2(Func_02004534, 0, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0x8000, 0x14);
-    Call3(Func_0200455c, 0x1b, 0x108, 0);
+    Ov6a8_Jump(0x1b, 0x108, 0);
     Call2(Func_02004534, 0x1b, 0);
     Call2(Func_02004534, 0x11, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0);
-    Call3(Func_0200455c, 0x1b, 0x109, 0x14);
+    Ov6a8_Jump(0x1b, 0x109, 0x14);
     Call2(Func_02004534, 0x1b, 0);
     Call2(Func_0200454c, 0x1a, 0x3000);
     Call2(Object_SetModeById, 0x1a, 4);
@@ -111,33 +134,33 @@ void Func_02001cf0(void)
     Call2(Func_02004564, 0x1a, 0x102);
     Call1(Battle_WaitMode0, 0x14);
     Call2(Func_02004534, 0x1a, 0);
-    Func_0200455c(0x1b, 0x109, 0x14);
+    Ov6a8_Jump(0x1b, 0x109, 0x14);
     Call2(Func_02004534, 0x1b, 0);
     Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
-    Func_0200455c(0x19, 0x103, 0x14);
+    Ov6a8_Jump(0x19, 0x103, 0x14);
     Call2(Func_02004534, 0x19, 0);
-    Call3(Func_0200455c, 0x1b, 0x100, 0x14);
+    Ov6a8_Jump(0x1b, 0x100, 0x14);
     Call2(Func_02004534, 0x1b, 0);
     Call3(ObjectMotion_ArmCallback, 0x1a, 0x3000, 0);
     Call2(Func_02004534, 0x1a, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
     Call2(Func_02004534, 0, 0);
     Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
-    Func_0200455c(0x19, 0x105, 0x14);
+    Ov6a8_Jump(0x19, 0x105, 0x14);
     Call2(Func_02004534, 0x19, 0);
     Call2(Object_SetModeById, 0x1a, 4);
     Call3(Func_0200452c, 0x1a, 0, 0x14);
     Call2(Func_0200454c, 0, 0);
-    Func_0200455c(0, 0x108, 0);
-    UiText_OpenMessageAtObject(0x4000, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x8000, 0);
-    t83 = Value2(Inventory_PromptAndSetObjectMode, FIELD_AT(gPartyState, s32, 532), 0);
+    Ov6a8_Jump(0, 0x108, 0);
+    Ov6a8_MesOpen(0x4000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
+    t83 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
     if (t83 == 0) {
         Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
         Call2(Func_02004534, 0x1a, 0);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        EVENT_WORK->message_id++;
     } else {
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        EVENT_WORK->message_id++;
         Call2(Motion_SetModeAndWaitAnimation, 0x1a, 4);
         Call2(Func_02004534, 0x1a, 0);
     }
@@ -145,59 +168,59 @@ void Func_02001cf0(void)
     Call2(Object_SetModeById, 0x1b, 4);
     Call2(Func_02004534, 0x1b, 0);
     Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
-    Call3(Func_0200455c, 0x19, 0x108, 0x14);
+    Ov6a8_Jump(0x19, 0x108, 0x14);
     Call2(Func_02004534, 0x19, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0x14);
     Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
     Call2(Func_0200454c, 0x1b, 0x8000);
     Call2(Func_02004534, 0x401b, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0, 0);
     Call2(Func_0200454c, 0, 0);
-    Call2(Object_SetModeById, FIELD_AT(gPartyState, s32, 532), 3);
+    Call2(Object_SetModeById, gPartyState.current_owner, 3);
     Call2(Motion_SetModeAndWaitAnimation, 0, 3);
     Call2(Func_02004534, 0x4000, 0);
     Call2(Func_02004564, 0x1a, 0x102);
     Call1(Battle_WaitMode0, 0x14);
     Call2(Func_02004534, 0x1a, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0xc000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0);
     Call2(Func_0200454c, 0x19, 0x8000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call2(Func_0200454c, 0x19, 0x5000);
     Call2(Func_02004534, 0x19, 0);
-    Call3(Func_0200455c, 0x1b, 0x109, 0x14);
+    Ov6a8_Jump(0x1b, 0x109, 0x14);
     Call2(Func_02004534, 0x1b, 0);
     Call2(Object_SetModeById, 0x1b, 4);
     Call2(Func_02004534, 0x1b, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0, 0);
     Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
-    Call3(Func_0200455c, FIELD_AT(gPartyState, s32, 532), 0x101, 0);
-    Call3(Func_0200455c, 0, 0x101, 0);
-    Call3(Func_0200455c, 0x1a, 0x101, 0);
-    Call3(Func_0200455c, 0x19, 0x101, 0x28);
+    Ov6a8_Jump(gPartyState.current_owner, 0x101, 0);
+    Ov6a8_Jump(0, 0x101, 0);
+    Ov6a8_Jump(0x1a, 0x101, 0);
+    Ov6a8_Jump(0x19, 0x101, 0x28);
     Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
     Call2(Func_02004534, 0x1b, 0);
     Call2(Object_SetModeById, 0, 3);
-    Call2(Object_SetModeById, FIELD_AT(gPartyState, s32, 532), 3);
+    Call2(Object_SetModeById, gPartyState.current_owner, 3);
     Call2(Object_SetModeById, 0x1a, 3);
     Call2(Object_SetModeById, 0x19, 3);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0x8000, 0);
-    Func_0200455c(0x1b, 0x108, 0x14);
+    Ov6a8_Jump(0x1b, 0x108, 0x14);
     Call2(Func_02004534, 0x1b, 0);
-    Call3(Func_0200455c, 0x1a, 0x109, 0x14);
+    Ov6a8_Jump(0x1a, 0x109, 0x14);
     Call3(Func_0200452c, 0x1a, 0, 0x14);
     Call2(Func_02004534, 5, 0);
     Call2(Func_02004564, 0x1b, 0x102);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x4000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0x4000, 0);
     Call2(Func_0200454c, 0x1b, 0x5000);
     Call2(Func_02004534, 0x401b, 0);
     Call2(Func_0200454c, 0, 0);
-    Call2(UiText_OpenMessageAtObject, 0x4000, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x8000, 0);
-    t144 = Value2(Inventory_PromptAndSetObjectMode, FIELD_AT(gPartyState, s32, 532), 0);
+    Ov6a8_MesOpen(0x4000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
+    t144 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
     if (t144 == 0) {
         Call2(Func_0200456c, 0x26666, 0x4ccc);
         Call4(Motion_CamBounds, 0xb80000, -1, 0x2000000, 1);
@@ -206,9 +229,9 @@ void Func_02001cf0(void)
         Call3(ObjectMotion_SetPositionAndReset, 0, 0xa8, 0x208);
         Call2(Func_02004534, 0x4000, 0);
         Call2(Func_02004534, 0x2005, 0);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 2);
+        EVENT_WORK->message_id += 2;
     } else {
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 2);
+        EVENT_WORK->message_id += 2;
         Call2(Func_0200456c, 0x26666, 0x4ccc);
         Call4(Motion_CamBounds, 0xb80000, -1, 0x2000000, 1);
         Call2(Func_0200454c, 0, 0x4000);
@@ -226,7 +249,7 @@ void Func_02001cf0(void)
     Call2(Func_0200456c, 0x13333, 0x2666);
     Call4(Motion_CamBounds, 0xac0000, -1, 0x2080000, 1);
     Call2(Object_LinkObjectAndSetCallback, 0, 0x11);
-    Call2(Object_LinkObjectAndSetCallback, FIELD_AT(gPartyState, s32, 532), 0x11);
+    Call2(Object_LinkObjectAndSetCallback, gPartyState.current_owner, 0x11);
     Call2(Object_LinkObjectAndSetCallback, 0x1b, 0x11);
     Call3(ObjectMotion_SetSpeedParameters, 0x11, 0x19999, 0xcccc);
     Call3(ObjectMotion_SetPositionAndReset, 0x11, 0x8c, 0x1de);
@@ -234,7 +257,7 @@ void Func_02001cf0(void)
     Call3(ObjectMotion_SetPositionAndReset, 0x11, 0xa0, 0x230);
     Call3(ObjectMotion_SetPositionAndReset, 0x11, 0xbe, 0x280);
     Call1(ObjectMotion_EnableActionAndResetMotion, 0);
-    Call1(ObjectMotion_EnableActionAndResetMotion, FIELD_AT(gPartyState, s32, 532));
+    Call1(ObjectMotion_EnableActionAndResetMotion, gPartyState.current_owner);
     Call1(ObjectMotion_EnableActionAndResetMotion, 0x1b);
     Call1(WaitFrames, 1);
     Call3(Func_020044cc, 0x11, 0, 0);
@@ -244,7 +267,7 @@ void Func_02001cf0(void)
     Call3(ObjectMotion_SetPositionAndReset, 0, 0xa8, 0x1e4);
     Call2(Func_0200454c, 0, 0);
     Call2(Func_02004534, 0x4000, 0);
-    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0x8000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
     Call2(Func_0200454c, 0x1b, 0x8000);
     Call2(Func_02004534, 0x401b, 0);
     Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
@@ -252,30 +275,34 @@ void Func_02001cf0(void)
     Call2(Func_02004534, 0x19, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xb000, 0);
-    Call2(Func_0200454c, FIELD_AT(gPartyState, s32, 532), 0xc000);
+    Call2(Func_0200454c, gPartyState.current_owner, 0xc000);
     Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
     Call2(Func_02004534, 0x1a, 0);
     Call2(Object_SetModeById, 0, 3);
-    Call2(Object_SetModeById, FIELD_AT(gPartyState, s32, 532), 3);
+    Call2(Object_SetModeById, gPartyState.current_owner, 3);
     Call2(Motion_SetModeAndWaitAnimation, 0x1b, 3);
     Call3(ObjectMotion_SetSpeedParameters, 0, 0x19999, 0xcccc);
     Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x19999, 0xcccc);
     Call2(Object_SetModeById, 0, 2);
-    t202 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+    t202 = Value1(Object_GetById, gPartyState.current_owner);
     if (t202 != 0) {
         Call3(ObjectMotion_ResetAndSetPosition, 0, FIELD_AT(t202, s16, 10), FIELD_AT(t202, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0);
     Call3(Func_020044cc, 0, 0, 0);
     Call2(Object_SetModeById, 0x1b, 2);
-    t207 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+    t207 = Value1(Object_GetById, gPartyState.current_owner);
     if (t207 != 0) {
         Call3(ObjectMotion_ResetAndSetPosition, 0x1b, FIELD_AT(t207, s16, 10), FIELD_AT(t207, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1b);
     Call3(Func_020044cc, 0x1b, 0, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x10;
+    {
+        struct EventWork *work = EVENT_WORK;
+
+        work->screen_effect = 0x209;
+        work->delay = 0x10;
+    }
     Call1(GameFlag_ClearBit, 0x12f);
     Call1(GameFlag_SetBit, 0x9c5);
     Func_0200446c();

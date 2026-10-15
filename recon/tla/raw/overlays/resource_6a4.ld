@@ -9,7 +9,6 @@ SECTIONS
         "*/resource_6a4_overlay.o"(.text.x0200832c)
         "*/games/tla/src/field/overlay_6a4/scene_events.o"(.text)
         "*/games/tla/src/field/overlay_6a4/s0538.o"(.text)
-        "*/resource_6a4_overlay.o"(.text.x02008604)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/games/tla/src/field/overlay_6a4/lighton.o"(.text)
         "*/resource_6a4_overlay.o"(.text.x0200879c)

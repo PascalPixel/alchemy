@@ -111,7 +111,7 @@ const s32 gBattleFx_ParticleScript[] = {
 };
 
 const s32 gBattleFx_MarkerParticleScript[] = {
-    SC_CALL(EffectRuntime_IsActive),
+    SC_CALL(Field_IsRevealActive),
     SC_FREE,
 };
 

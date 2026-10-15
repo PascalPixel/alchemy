@@ -1822,10 +1822,10 @@ struct FieldWork {
   s32 transitionFrames;
   u8 unk1cc[0xaea];
   u16 busy;
-  s16 effectActive;  // non-zero while an effect runs
-  s16 effectFrames;  // the frames it has left
-  s16 effectCenterX; // the effect's centre, in pixels
-  s16 effectCenterY;
+  s16 revealActive;  // non-zero while Reveal is active
+  s16 revealFrames;  // the frames Reveal has left
+  s16 revealCenterX; // where Reveal was cast, in pixels
+  s16 revealCenterY;
   s16 inMainMenu; // 0 while the main menu is open
   u8 unkcc2[4];
   s8 resolvingAction; // set while a Psynergy's effect plays
@@ -1891,7 +1891,7 @@ s32 Field_RunScene(s32 entrance) {
   } else {
     Map_ApplyWorkOriginAndSpanFar();
   }
-  Battle_PlaceMapMarkers();
+  Field_PlaceMapMarkers();
   BattleEffect_InitializeBuffers();
   BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
   work->transition = 0x100;
@@ -2912,16 +2912,16 @@ s32 Field_SearchTile(s32 tile) {
             allowed = 0;
           if (allowed != 0) {
             if ((event->control & 0x1ff) == 19)
-              EffectRuntime_SetMode4AndPlayCue(tile);
+              Marker_OpenChest(tile);
             type = event->value & 0xfff00000;
             if (type == 0x300000) {
               // A Psynergy stone: restores all PP.
               void *object;
 
               if ((event->control & 0x1ff) == 19)
-                EffectRuntime_SetMode2(tile);
-              object = EffectRuntime_GetCurrentObject(tile);
-              EffectRuntime_PrepareRisingObject(object);
+                Marker_ShowOpened(tile);
+              object = Marker_GetActor(tile);
+              ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
               UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
@@ -2936,7 +2936,7 @@ s32 Field_SearchTile(s32 tile) {
               Battle_WaitMode0(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
-              EffectRuntime_ClearCurrentFlags(tile);
+              Marker_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
             } else if (type == 0x500000) {
@@ -2944,7 +2944,7 @@ s32 Field_SearchTile(s32 tile) {
               struct EventRuntime *work = (struct EventRuntime *)gEventWork;
 
               if ((event->control & 0x1ff) == 19)
-                EffectRuntime_SetMode7AndLaunch(tile);
+                Marker_LaunchMimic(tile);
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
@@ -2962,8 +2962,8 @@ s32 Field_SearchTile(s32 tile) {
                   gGameState.selectedActor, 0);
               WaitFrames(30);
               if ((event->control & 0x1ff) == 19)
-                EffectRuntime_SetMode2(tile);
-              EffectRuntime_PrepareRisingObject(object);
+                Marker_ShowOpened(tile);
+              ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
               UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
@@ -2987,11 +2987,11 @@ s32 Field_SearchTile(s32 tile) {
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
                 if ((event->control & 0x1ff) == 19)
-                  EffectRuntime_SetMode5AndPlayCue(tile);
+                  Marker_CloseChest(tile);
               } else {
                 if ((event->control & 0x1ff) == 19)
-                  EffectRuntime_SetMode2(tile);
-                EffectRuntime_PrepareRisingObject(object);
+                  Marker_ShowOpened(tile);
+                ItemDisplay_RaiseAboveLeader(object);
                 AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & n, 2);
                 if (owner == gGameState.selectedActor) {
@@ -3266,8 +3266,8 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette) {
   }
 }
 
-// Clears the field's busy flag and, while a field Psynergy effect is active,
-// ends it (packed effect 0x2090).
+// Clears the field's busy flag and, while Reveal is active, ends it: 0x2090
+// is Reveal (144) with ACT_PACKED, which runs its ending events.
 void Battle_ResetEffectCounter(void) {
   struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
@@ -3690,9 +3690,7 @@ u32 BattleFx_HasTrigger(u16 item) {
   return (u32)((0 - ev) | ev) >> 31;
 }
 
-//--------------------------------------------------------------------------
-// 物体を地面の高さに合わせる
-//--------------------------------------------------------------------------
+// Puts an actor on the ground under it.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct ObjectRuntime *obj = object;
   s32 height;
@@ -3702,31 +3700,32 @@ void ObjectMotion_SnapToTerrain(void *object) {
   obj->terrainHeight = height;
 }
 
-// マップデータの先頭
+// The start of the map's work.
 struct MarkerMap {
   u8 unk00[0x10];
-  u8 *markers; // (列, 行, 番号) の並び、255, 255 で終わる
+  u8 *markers; // (column, row, id) triples, ended by 255, 255
 };
 
+// A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
   struct ScriptObjectRuntime *object;
-  u8 id; // イベントのトリガー番号
+  u8 id; // the trigger of its scene event
   u8 unk05;
-  u8 column; // 16 ドットのマス
+  u8 column; // its 16-pixel cell
   u8 row;
 };
 
-// イベントワークのうち、マーカーの記録
+// The markers' part of the event work.
 struct MarkerWork {
   u8 unk000[0x11c];
   struct MarkerSlot slots[MARKER_MAX];
 };
 
-//--------------------------------------------------------------------------
-// マーカーの位置に、対応するイベントの物体を置く
-// 番号 100-239 のマーカーだけを扱い、最大 10 個まで記録する
-//--------------------------------------------------------------------------
-void Battle_PlaceMapMarkers(void) {
+// Places an actor at each of the map's markers (ids 100 to 239) that the
+// scene has an event for, up to ten: a chest (actor 20) for a chest event,
+// shown open once its flag is set and gone once its mimic was beaten, and a
+// Psynergy stone (actor 28) for a search event giving one, until it is taken.
+void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MarkerMap *map = gMapWork[0];
   struct MarkerWork *work = gMapWork[HEAP_SLOT_EVENT - 8];
@@ -3752,7 +3751,7 @@ void Battle_PlaceMapMarkers(void) {
         if (event->trigger != id)
           continue;
         if ((event->control & 0x1ff) == 19) {
-          // マスの中心に物体 20 を置く
+          // A chest, at the centre of its cell.
           obj = (struct ScriptObjectRuntime *)Object_CreateFar(
               20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
           if (obj == NULL)
@@ -3779,8 +3778,8 @@ void Battle_PlaceMapMarkers(void) {
           count++;
           if (count >= MARKER_MAX)
             return;
-        } else if ((event->control & 0x1ff) == 3) {
-          // フラグが立っていなければ、物体 28 を置く
+        } else if ((event->control & 0x1ff) == EVENT_SEARCH) {
+          // A Psynergy stone not yet taken.
           if ((event->value & 0xfff00000) != 0x300000)
             continue;
           if (GameFlag_TestFar(event->condition))
@@ -3816,7 +3815,8 @@ void Battle_PlaceMapMarkers(void) {
   }
 }
 
-s32 EffectRuntime_FindSlotByObject(s32 id) {
+// Returns the marker slot (0 to 9) whose event trigger is id, or -1.
+s32 Marker_FindSlot(s32 id) {
   s32 index;
   s32 found;
   struct EffectRuntimeSlot *slot;
@@ -3832,38 +3832,40 @@ s32 EffectRuntime_FindSlotByObject(s32 id) {
   return found;
 }
 
+// Does nothing.
 void EffectRuntime_ReservedNoOp(void) {}
 
-// id のオブジェクトの絵のアニメを mode にし、音 cue を鳴らして 12 フレーム待つ
-static __inline__ void SetModeAndPlayCue(s32 id, s32 mode, s32 cue) {
+// Gives the actor of marker id animation, plays sound and waits 12 frames.
+static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
+                                                      s32 sound) {
   s32 slot;
-  struct EffectRuntimeSlot *slot_data;
+  struct EffectRuntimeSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = EffectRuntime_FindSlotByObject(id);
+  slot = Marker_FindSlot(id);
   if (slot != -1) {
-    slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-    object = slot_data->object;
+    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    object = marker->object;
     if (object != NULL)
-      ObjectDispatch_ApplyArgumentToChildrenFar(object, mode);
-    AudioCommand_PlayFar(cue);
+      ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
+    AudioCommand_PlayFar(sound);
     WaitFrames(0xc);
   }
 }
 
-void EffectRuntime_SetMode5AndPlayCue(s32 id) {
-  SetModeAndPlayCue(id, 5, 0x7d);
-}
+// Closes the chest of marker id again (its item could not be carried).
+void Marker_CloseChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 5, 0x7d); }
 
-void EffectRuntime_SetMode7AndLaunch(s32 id) {
+// Makes the chest of marker id jump up as a mimic.
+void Marker_LaunchMimic(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *slotData;
+  struct EffectRuntimeSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = EffectRuntime_FindSlotByObject(id);
+  slot = Marker_FindSlot(id);
   if (slot != -1) {
-    slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
-    object = slotData->object;
+    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    object = marker->object;
     WaitFrames(0x12);
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
@@ -3875,70 +3877,74 @@ void EffectRuntime_SetMode7AndLaunch(s32 id) {
   }
 }
 
-void EffectRuntime_SetMode4AndPlayCue(s32 id) {
-  SetModeAndPlayCue(id, 4, 0x7c);
-}
+// Opens the chest of marker id.
+void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, 0x7c); }
 
-void EffectRuntime_SetMode2(s32 id) {
+// Shows the chest of marker id open (animation 2).
+void Marker_ShowOpened(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *slot_data;
+  struct EffectRuntimeSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = EffectRuntime_FindSlotByObject(id);
+  slot = Marker_FindSlot(id);
   if (slot != -1) {
-    slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-    object = slot_data->object;
+    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    object = marker->object;
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
   }
 }
 
-struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id) {
-  s32 slot = EffectRuntime_FindSlotByObject(id);
-  struct EffectRuntimeSlot *slot_data;
+// Returns the actor of marker id, or NULL.
+struct ObjectRuntime *Marker_GetActor(s32 id) {
+  s32 slot = Marker_FindSlot(id);
+  struct EffectRuntimeSlot *marker;
 
   if (slot == -1)
     return NULL;
-  slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-  return slot_data->object;
+  marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+  return marker->object;
 }
 
-void EffectRuntime_ClearCurrentFlags(s32 id) {
+// Hides the actor of marker id.
+void Marker_Hide(s32 id) {
   s32 slot;
-  struct EffectRuntimeSlot *slotData;
+  struct EffectRuntimeSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = EffectRuntime_FindSlotByObject(id);
+  slot = Marker_FindSlot(id);
   if (slot != -1) {
-    slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
-    object = slotData->object;
+    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    object = marker->object;
     if (object != NULL)
       object->animationKind = 0;
   }
 }
 
-void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y) {
+// Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
+// of its cell on that axis.
+void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
   s32 slot;
   s32 height;
   s32 objectX;
-  s32 objectY;
-  struct EffectRuntimeSlot *slotData;
+  s32 objectZ;
+  struct EffectRuntimeSlot *marker;
   struct ObjectRuntime *object;
 
-  objectY = y;
+  objectZ = z;
   objectX = x;
-  slot = EffectRuntime_FindSlotByObject(id);
+  slot = Marker_FindSlot(id);
   if (slot != -1) {
-    slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
-    object = slotData->object;
+    marker = &((struct EffectRuntime *)gEventWork)->slots[slot];
+    object = marker->object;
     if (object != NULL) {
       if (objectX == -1)
-        objectX = (slotData->tileX << 20) + 0x80000;
-      if (objectY == -1)
-        objectY = (slotData->tileY << 20) + 0x80000;
+        objectX = (marker->tileX << 20) + 0x80000;
+      if (objectZ == -1)
+        objectZ = (marker->tileY << 20) + 0x80000;
       object->x = objectX;
-      object->z = objectY;
-      height = Map_GetTerrainHeightFar(0, objectX, objectY);
+      object->z = objectZ;
+      height = Map_GetTerrainHeightFar(0, objectX, objectZ);
       object->terrainHeight = height;
       object->y = height;
     }
@@ -3946,9 +3952,8 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y) {
 }
 
 //--------------------------------------------------------------------------
-// emitter.c
-// フィールド効果：手に入れたアイテムの表示ときらめき、近くの印、ウィンドウの
-// HBlank DMA
+// Field effects: showing a found item with its sparkles, Reveal's sparkles on
+// hidden things, and the windows' HBlank DMA.
 //--------------------------------------------------------------------------
 
 LAYOUT_OFFSET_GUARD(ParticleEmitter_travel_offset_offset, struct ObjectRuntime,
@@ -3958,8 +3963,9 @@ LAYOUT_OFFSET_GUARD(ParticleEmitter_active_offset, struct ObjectRuntime, flags,
 LAYOUT_OFFSET_GUARD(ParticleEffectObject_child_offset, struct ObjectRuntime,
                     animation, 0x50);
 
+// An actor as these effects see it.
 struct EffectObj {
-  s32 data; // スクリプト
+  s32 data; // its script
   u8 pad0[0x24];
   u32 travel;
   u8 pad1[0x1c];
@@ -3967,24 +3973,23 @@ struct EffectObj {
   u8 pad2[4];
   struct AnimationObject *vis;
   u8 pad3[24];
-  void (*proc)(void); // 毎フレームの処理
+  void (*proc)(void); // called each frame
 };
 
-// オブジェクト 64 個の表 (gEventWork の 88 バイト前)
+// The table of 64 actors, 88 bytes before gEventWork.
 #define EffectPool (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 
-// マップのイベント (flags が -1 で終わり)
+// One of the scene's events (ended by flags -1).
 struct MapEventEntry {
-  s32 flags; // 下位 4 ビットが種類
+  s32 flags; // the low 4 bits are the kind
   s16 id;
   s16 flag;
   s32 position;
 };
 
-//--------------------------------------------------------------------------
-// 操作キャラが印のマスの中心から 16 ドット以内にいれば、
-// 中心から操作キャラの向きへ 20 ドット離れた位置へ出す
-//--------------------------------------------------------------------------
+// Keeps the party leader off the markers: a leader within 16 pixels of a
+// marker cell's centre is moved 20 pixels from that centre, in the direction
+// it stood, and loses its move target.
 void BattleFx_EmitRandomParticle(void) {
   struct ObjectRuntime *actor = ObjectTable_Get(gGameState.selectedActor);
   struct MarkerSlot *cell = ((struct MarkerWork *)gEventWork)->slots;
@@ -4010,7 +4015,7 @@ void BattleFx_EmitRandomParticle(void) {
         actor->z = cz + (8 << 16);
         Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
                               (struct EffectVector *)&actor->x);
-        actor->targetX = ACTOR_NO_TARGET; // 移動先なし
+        actor->targetX = ACTOR_NO_TARGET;
         actor->targetY = ACTOR_NO_TARGET;
         actor->targetZ = ACTOR_NO_TARGET;
         return;
@@ -4023,11 +4028,9 @@ void BattleFx_EmitRandomParticle(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// アイテム表示の毎フレームの処理：1/10 の確率で、周り 16
-// ドット以内にきらめきを出す
-//--------------------------------------------------------------------------
-void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter) {
+// Each frame of a found item's picture: one time in ten, a sparkle appears
+// within 16 pixels of it.
+void ItemDisplay_EmitSparkles(struct ObjectRuntime *emitter) {
   struct EffectVector pos;
   struct ObjectRuntime *obj;
   u32 randomAngle;
@@ -4045,7 +4048,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter) {
   Vector_AddPolarOffset(randomAngle << 4, Random16(), &pos);
   obj = Object_Spawn(285, pos.x, pos.y, pos.z);
   if (obj != 0) {
-    // パーツ 0 の優先度を 1 にする
+    // Draw the sparkle at priority 1.
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_ParticleScript);
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
@@ -4053,16 +4056,14 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter) {
   }
 }
 
-//--------------------------------------------------------------------------
-// キャラ actor の 16 ドット前のマスの中心、高さ 16 ドットにアイテム item
-// の絵を出す 効果が動いていれば、先に残っているきらめきを消す
-// 戻り値：出したオブジェクト (出せなければ 0)
-//--------------------------------------------------------------------------
+// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
+// in front of character actor, 16 pixels up, with sparkles. While Reveal is
+// active, its sparkles are cleared first. Returns the picture's actor, or 0.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *obj;
 
   s32 work = (s32)gEventWork;
-  u32 off = (actor * 4) + 0x14; // EventWork の actors[actor]
+  u32 off = (actor * 4) + 0x14; // EventWork's actors[actor]
 
   s32 srcZ = (s32)*(struct FieldActor **)(work + off);
   struct EffectVector pos;
@@ -4076,17 +4077,16 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   pos.z = ((struct FieldActor *)srcZ)->z.fixed;
   Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing, &pos);
   x = (pos.x & 0xfff00000) + (8 << 16);
-  srcZ = (pos.z & 0xfff00000) + (8 << 16);
+  srcZ = (pos.z & 0xfff00000) + (8 << 16); // srcZ now holds the cell's z
 
-  if (((struct FieldWork *)work)->effectActive != 0) {
+  if (((struct FieldWork *)work)->revealActive != 0) {
     struct EffectObj *ent = EffectPool;
 
-    work = 63;
+    work = 63; // work now counts the actors left
 
     do {
       if (ent->data != 0) {
-        if (ent->proc ==
-            (void (*)(void))BattleFx_SpawnRandomParticleAtPosition) {
+        if (ent->proc == (void (*)(void))RevealMarker_EmitSparkles) {
           ObjectDispatch_ReleaseFar(ent);
         }
         if (ent->data == (s32)gBattleFx_ParticleScript) {
@@ -4118,29 +4118,29 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     obj->travel = 0x20000;
     obj->dy = 0x4000;
 
-    // アイテムの絵を作業領域 17 へ読み、VRAM のタイルへ送る
+    // Draw the item's icon into heap block 17, then send it to the sprite's
+    // tiles.
     buf = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
     vis->part[0].tile = VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
 
     Runtime_ReleaseHeapBlock(17);
-    obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
+    obj->proc = (void (*)(void))ItemDisplay_EmitSparkles;
   }
 
   return obj;
 }
 
+// Destroys object if there is one.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
     ObjectDispatch_ReleaseFar(object);
 }
 
-//--------------------------------------------------------------------------
-// アイテムの絵を操作キャラの 36 ドット上に置いて動かし、
-// 操作キャラに動作 28 をとらせて向きを 0x4000 (90°) にする
-//--------------------------------------------------------------------------
-void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object) {
+// Raises a found item's picture to 36 pixels above the party leader, who
+// holds it up (animation 28) facing the screen.
+void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   struct ObjectRuntime *actor;
 
   if (object == 0)
@@ -4158,10 +4158,9 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object) {
   actor->angle = 0x4000;
 }
 
-//--------------------------------------------------------------------------
-// flags の bit 0 できらめきを付け、bit 1 で EffectRuntime_PrepareRisingObject
-// 両方なら前後で 60 と 80 フレーム待つ。最後に操作キャラを動作 1 にする
-//--------------------------------------------------------------------------
+// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
+// above the leader, with waits of 60 and 80 frames around that when both are
+// set. The leader then returns to animation 1.
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
   void *actor;
 
@@ -4173,13 +4172,13 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
       ((struct EffectObj *)object)->travel = 0x20000;
       ((struct EffectObj *)object)->dy = 0x4000;
       ((struct EffectObj *)object)->proc =
-          (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
+          (void (*)(void))ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {
       WaitFrames(60);
     }
     if (flags & 2) {
-      EffectRuntime_PrepareRisingObject(object);
+      ItemDisplay_RaiseAboveLeader(object);
     }
     if (flags == 3) {
       WaitFrames(80);
@@ -4188,11 +4187,9 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 操作キャラの 36 ドット上にアイテム value の絵を 80 フレーム出す
-// flags の bit 0 できらめきを付け、bit 1 で EffectRuntime_PrepareRisingObject
-//--------------------------------------------------------------------------
-void BattleFx_StartEffectObject22(s32 value, s32 flags) {
+// Shows the picture of item 36 pixels above the party leader for 80 frames;
+// flags bit 0 adds sparkles and bit 1 raises it as a found item.
+void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *actor = ObjectTable_Get(gGameState.selectedActor);
   void *handle = Runtime_AllocateHeapBlock(17, 0x608);
   struct EffectObj *object = (struct EffectObj *)Object_CreateFar(
@@ -4207,14 +4204,14 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags) {
     visual->part[0].palette = 0;
     visual->part[0].priority = 1;
 
-    Ui_PrepareTransferForItemFar(value);
+    Ui_PrepareTransferForItemFar(item);
     VramBlock_LoadCached(visual->slot, 128, (u8 *)handle + 0x400);
     Runtime_ReleaseHeapBlock(17);
 
     if (flags & 1)
-      object->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
+      object->proc = (void (*)(void))ItemDisplay_EmitSparkles;
     if (flags & 2)
-      EffectRuntime_PrepareRisingObject((struct ObjectRuntime *)object);
+      ItemDisplay_RaiseAboveLeader((struct ObjectRuntime *)object);
 
     WaitFrames(80);
     ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
@@ -4222,7 +4219,8 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags) {
   }
 }
 
-// ドイツ語・スペイン語・フランス語・イタリア語版はメニューを開いている間きらめきを止める
+// The German, Spanish, French and Italian editions stop Reveal's sparkles
+// while a menu is open.
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 
@@ -4230,13 +4228,11 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags) {
 #endif
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-#define MENU_OPEN_OFFSET 0xcca // gEventWork：メニューを開いていれば 0 以外
+#define MENU_OPEN_OFFSET 0xcca // in gEventWork: non-zero while a menu is open
 
-//--------------------------------------------------------------------------
-// 効果が動いていれば、きらめきのオブジェクトをすべて消す
-//--------------------------------------------------------------------------
+// While Reveal is active, destroys all its sparkles.
 void BattleFx_ClearRandomParticles(void) {
-  if (((struct FieldWork *)gEventWork)->effectActive != 0) {
+  if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObj *ent = EffectPool;
     s32 n = 63;
 
@@ -4253,10 +4249,9 @@ void BattleFx_ClearRandomParticles(void) {
 
 #endif
 
-//--------------------------------------------------------------------------
-// 印の毎フレームの処理：1/10 の確率で、周り 16 ドット以内にきらめきを出す
-//--------------------------------------------------------------------------
-void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source) {
+// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
+// pixels of it.
+void RevealMarker_EmitSparkles(const struct FieldActor *source) {
   struct EffectVector pos;
   struct ObjectRuntime *obj;
   u32 random;
@@ -4282,27 +4277,24 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 効果が動いていれば 1、止まっていれば 0
-//--------------------------------------------------------------------------
-u32 EffectRuntime_IsActive(void) {
+// Returns 1 while Reveal is active, else 0.
+u32 Field_IsRevealActive(void) {
   s16 count;
   u32 active = 0;
   struct EffectRuntime *runtime = (struct EffectRuntime *)gEventWork;
 
   if (runtime != NULL) {
-    count = ((struct FieldWork *)runtime)->effectActive;
+    count = ((struct FieldWork *)runtime)->revealActive;
     active = (0 - count) | count;
     active >>= 31;
   }
   return active;
 }
 
-//--------------------------------------------------------------------------
-// 操作キャラから横 8 マス、縦 5 マス以内にある番号 100〜239 の場所のうち、
-// 種類 3 のイベントがあって、そのフラグが立っていないものに印を出す
-// (position の上位 12 ビットが 0〜3 か 5 のものだけ)
-//--------------------------------------------------------------------------
+// Reveal: marks with sparkles the hidden things within 8 cells across and 5
+// down of the leader: map places 100 to 239 with no marker actor, whose search
+// event (kind 3) gives an item, coins, a Psynergy stone or a mimic (types 0
+// to 3 and 5) and has not been found yet.
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *list;
   struct ObjectRuntime *actor;
@@ -4313,7 +4305,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   s32 z;
   s32 id;
 
-  // マップの場所の表：(x, z, 番号) の 3 バイトずつ、x と z が 0xff で終わり
+  // The map's places: (x, z, id) triples, ended by x and z 0xff.
   list = *(u8 **)(((u8 *)gMapWork[0]) + 16);
   actor = ObjectTable_Get(gGameState.selectedActor);
   actorX = actor->x >> 20;
@@ -4321,7 +4313,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   if (list != 0) {
     while (x = *list++, z = *list++, x != 0xff || z != 0xff) {
       id = *list++;
-      if (EffectRuntime_GetCurrentObject(id) != NULL)
+      if (Marker_GetActor(id) != NULL)
         continue;
       if (id < 100 || id > 239)
         continue;
@@ -4360,7 +4352,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                                              gBattleFx_MarkerParticleScript);
                 ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
                 ((struct EffectObj *)actor)->proc =
-                    (void (*)(void))BattleFx_SpawnRandomParticleAtPosition;
+                    (void (*)(void))RevealMarker_EmitSparkles;
               }
             }
             break;

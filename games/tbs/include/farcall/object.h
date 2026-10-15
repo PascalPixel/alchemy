@@ -207,13 +207,13 @@ FAR_CALL(EffectRuntime_RunRisingObjectSequenceFar,
          EffectRuntime_RunRisingObjectSequence, void, (void *object, s32 flags))
 FAR_CALL(BattleFx_StartEffectObject22Far, BattleFx_StartEffectObject22, void,
          (s32 value, s32 flags))
-FAR_SLOT(EffectRuntime_GetCurrentObject)
-FAR_SLOT(EffectRuntime_SetMode4AndPlayCue)
-FAR_SLOT(EffectRuntime_SetMode5AndPlayCue)
-FAR_SLOT(EffectRuntime_SetMode2)
+FAR_SLOT(Marker_GetActor)
+FAR_SLOT(Marker_OpenChest)
+FAR_SLOT(Marker_CloseChest)
+FAR_SLOT(Marker_ShowOpened)
 FAR_CALL(EffectRuntime_SetCurrentPositionFar, EffectRuntime_SetCurrentPosition,
          void, (s32 id, s32 x, s32 y))
-FAR_SLOT(EffectRuntime_ClearCurrentFlags)
+FAR_SLOT(Marker_Hide)
 FAR_CALL(BattleFx_EmitRandomParticleFar, BattleFx_EmitRandomParticle, void,
          (void))
 FAR_CALL(Battle_SetObjectFlag5bWhenMode3Far, Battle_SetObjectFlag5bWhenMode3,

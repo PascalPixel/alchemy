@@ -12,6 +12,13 @@ struct RenderInput;
 struct RenderOutput;
 struct UiWindow;
 
+// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+// type, ending with LIST_ORDER_END.
+#define LIST_ORDER_TYPE_MASK 0x7f
+#define LIST_ORDER_EQUIPPED 0x80
+#define LIST_ORDER_END 0xff
+
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 void UiWindow_InitializeWork(s32 unused);
@@ -20,8 +27,8 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode);
 void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y);
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win);
-void UiText_DrawStatComparison(const struct BattleUnit *alt,
-                               const struct BattleUnit *base, s32 work);
+void UiText_DrawStatComparison(const struct BattleUnit *after,
+                               const struct BattleUnit *before, s32 window);
 s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x,
                               s32 y);
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y);

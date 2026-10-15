@@ -62,13 +62,24 @@ extern u8 IwramCopyWords[];
 
 s32 _call_via_r3(void *, void *, s32, void *);
 
+// UiWindow_UpdateOrCreate: keep an existing window as it is, without redrawing
+// its saved rectangle. The low byte of the flags is the window style.
+#define WINDOW_KEEP_EXISTING 0x100
+#define WINDOW_STYLE_MASK 0xff
+
+// Pauses the field while a menu is open: stops the overlay's scheduler
+// callbacks and the map update, and clears game flags 0x166 and 0x152.
+// Returns nothing useful; callers ignore the value.
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
   Scheduler_DisableOverlayCallbacks();
   Map_DisableUpdateCallbackFar();
-  GameFlag_ClearBitFar(0x166);
-  GameFlag_ClearBitFar(0x152);
+  GameFlag_ClearBitFar(0x166); // meaning not known yet
+  GameFlag_ClearBitFar(0x152); // set, it stops BattlePalette_UpdateBlend
 }
 
+// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
+// sets flags 0x152 and 0x166 again and restarts the map update and the
+// overlay's scheduler callbacks. Returns the scheduler's result.
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
@@ -76,6 +87,8 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   return Scheduler_EnableUnmaskedOverlayCallbacks();
 }
 
+// Clears the whole menu work area (0x29c words) and sets its defaults: no
+// pane selected, one entry in each pane, and a 1x1 cursor grid.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
@@ -87,37 +100,32 @@ void UiWindow_InitializeWork(s32 unused) {
   work->rowCount = 1;
 }
 
-//--------------------------------------------------------------------------
-// lifecycle.c
-// ウィンドウ：ハンドルで持つウィンドウを開く・閉じる
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// *handle のウィンドウがなければ作って 1 を返す
-// すでにあれば 0 を返し、flags に 0x100 がなければ保存した矩形で描きなおす
-// flags : 下位 8 ビットがウィンドウの種類
-//--------------------------------------------------------------------------
+// Opens the window kept in *handle, or redraws it if it is already open.
+//
+// If *handle is empty, creates a window at (x, y), w by h tiles, in the style
+// given by the low byte of flags, stores it in *handle and returns 1. If the
+// window exists, redraws its saved rectangle (unless flags has
+// WINDOW_KEEP_EXISTING) and returns 0.
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
                             s32 flags) {
-  s32 cur;
+  s32 window;
   s32 style;
 
-  cur = *handle;
-  if (cur != 0) {
-    if (0x100 & flags) {
+  window = *handle;
+  if (window != 0) {
+    if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
-    RenderOutput_RedrawSavedRectFar((struct UiWindow *)cur);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     return 0;
   }
-  style = flags & 0xff;
+  style = flags & WINDOW_STYLE_MASK;
   *handle = UiWindow_CreateFar(x, y, w, h, style);
   return 1;
 }
 
-//--------------------------------------------------------------------------
-// *handle のウィンドウがあれば閉じて、ハンドルを NULL にする
-// style はそのまま UiWork_FinalizeFar に渡る
-//--------------------------------------------------------------------------
+// Closes the window kept in *handle, if any, and clears the handle. style is
+// passed on to UiWork_FinalizeFar and chooses how the window closes.
 void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   if (*handle != NULL) {
     UiWork_FinalizeFar(*handle, style);
@@ -125,16 +133,39 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   }
 }
 
+// The status panel's name and ailment column starts further left in the
+// international editions, whose ailment labels are longer.
 #if EDITION_INTERNATIONAL
 #define STATUS_X 32
 #else
 #define STATUS_X 40
 #endif
 
+// What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
+// byte of its mode.
+enum StatusPanelKind {
+  STATUS_PANEL_EXPERIENCE = 0, // class, HP, PP and experience
+  STATUS_PANEL_EQUIP = 2,      // stats if the item were equipped
+  STATUS_PANEL_LEARN = 4,      // the Psynergy a Psynergy item teaches
+  STATUS_PANEL_CLASS = 6,      // class, HP and PP
+  STATUS_PANEL_STATS = 8,      // Attack, Defense, Agility and Luck
+};
+#define STATUS_PANEL_KIND_MASK 0xff
+// Keeps the open window, the name and the ailments, and redraws only the
+// part below them.
+#define STATUS_PANEL_LOWER_ONLY 0x100
+
+// Copies one BattleUnit with the resident IWRAM word copy.
 static inline void Owner_Copy(void *dst, void *src) {
-  _call_via_r3(dst, src, 0x14c, IwramCopyWords);
+  _call_via_r3(dst, src, sizeof(struct BattleUnit), IwramCopyWords);
 }
 
+// Draws the item menu's status panel for the party member owner (window at
+// tile 0,5, 13 by 12): the name, up to two ailments or the level, and below
+// them what mode's panel kind asks for. slot is the inventory slot of the
+// item the panel is about, for the equipment and Psynergy item panels. The
+// first parameter, the status window, is not used: the window is the menu
+// work's.
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
@@ -142,48 +173,51 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
   struct InventoryMenuState *state;
   struct BattleUnit *unit;
   s32 window;
-  s32 cnt;
+  s32 ailmentRows;
   s32 value;
-  u8 avail[8];
+  u8 ailments[8];
 
   created = 0;
   state = gMenuWork;
   unit = UnitGetFar(owner);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
-  if (!(mode & 0x100))
-    created =
-        UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 258);
+  if (!(mode & STATUS_PANEL_LOWER_ONLY))
+    created = UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
+                                      WINDOW_KEEP_EXISTING | 2);
   window = (s32)state->statusWindow;
-  if (!(mode & 0x100)) {
+
+  // The name, then each ailment the member has, one row each; the level
+  // takes the third row when no more than one ailment is shown.
+  if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
     if (!created) {
       WaitFrames(1);
       UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_X, 0);
-    CharacterMenu_BuildAvailability(avail, 1, owner);
-    cnt = 0;
-    if (avail[CHARACTER_POISON]) {
+    CharacterMenu_BuildAvailability(ailments, 1, owner);
+    ailmentRows = 0;
+    if (ailments[CHARACTER_POISON]) {
       UiText_DrawCharacterAtOffsetFar(MsgPoisonLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_VENOM]) {
+    if (ailments[CHARACTER_VENOM]) {
       UiText_DrawCharacterAtOffsetFar(MsgVenomLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_CURSE]) {
+    if (ailments[CHARACTER_CURSE]) {
       UiText_DrawCharacterAtOffsetFar(MsgCurseLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (avail[CHARACTER_HAUNT]) {
+    if (ailments[CHARACTER_HAUNT]) {
       UiText_DrawCharacterAtOffsetFar(MsgHauntLabel, window, STATUS_X,
-                                      cnt * 8 + 8);
-      cnt++;
+                                      ailmentRows * 8 + 8);
+      ailmentRows++;
     }
-    if (cnt < 2) {
+    if (ailmentRows < 2) {
       value = unit->level;
 #if EDITION_INTERNATIONAL
       UiText_DrawStringAtOffsetFar(gUi_LvString, window, 40, 16);
@@ -193,15 +227,18 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
       UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
+
+  // Clear the lower part and redraw the member's portrait.
   if (!created) {
     WaitFrames(1);
     UiWindow_ClearInteriorTilesFar((void *)state->statusWindow, 0, 32, 88, 80);
   }
   RenderOutput_ClearListFar((void *)window);
-  if (!(mode & 0x100))
+  if (!(mode & STATUS_PANEL_LOWER_ONLY))
     state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
-  switch (mode & 0xff) {
-  case 0:
+
+  switch (mode & STATUS_PANEL_KIND_MASK) {
+  case STATUS_PANEL_EXPERIENCE:
     value = unit->classIndex + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
@@ -209,13 +246,13 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
     UiText_DrawCharacterAtOffsetFar(MsgExpLabel, window, 0, 64);
     UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
     break;
-  case 6:
+  case STATUS_PANEL_CLASS:
     value = unit->classIndex + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     break;
-  case 2:
-  case 3: {
+  case STATUS_PANEL_EQUIP:
+  case STATUS_PANEL_EQUIP + 1: { // draws the same panel
     void *backup;
 
     if (!Item_CanOwnerEquip(owner, item)) {
@@ -226,7 +263,10 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
 #endif
       break;
     }
-    backup = MemAlloc(0x14c);
+    // Equip (or, previewing a removal, unequip) the item on the real unit,
+    // recalculate its stats, show them against the saved copy, then put the
+    // unit back as it was.
+    backup = MemAlloc(sizeof(struct BattleUnit));
     Owner_Copy(backup, unit);
     if (state->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -238,49 +278,54 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
     MemFree(backup);
     break;
   }
-  case 4: {
-    s32 id = def->actionId;
-    s32 found = 0;
+  case STATUS_PANEL_LEARN: {
+    s32 psynergy = def->actionId;
+    s32 known = 0;
     s32 i;
 
     for (i = 0; i < 32; i++) {
-      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) == id) {
-        found = 1;
+      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) ==
+          psynergy) {
+        known = 1;
         break;
       }
     }
+    // The Psynergy's name and "Learned" or "Will learn"; Spanish puts the
+    // label above the name.
 #if defined(TBS_EDITION_ES)
-    if (found) {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 56);
+    if (known) {
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
       UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 48);
     } else {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 56);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
       UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 48);
     }
 #else
-    if (found) {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 48);
+    if (known) {
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
       UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 56);
     } else {
-      UiText_DrawCharacterAtOffsetFar(id + MsgAbilityName, window, 0, 48);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
       UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 56);
     }
 #endif
     break;
   }
-  case 8: {
-    s32 base = MsgPanelStatLabel;
+  case STATUS_PANEL_STATS: {
+    // The labels are consecutive messages: Attack, Defense, Status, Luck and
+    // Agility.
+    s32 labels = MsgPanelStatLabel;
 
-    UiText_DrawCharacterAtOffsetFar(base, window, 0, 40);
+    UiText_DrawCharacterAtOffsetFar(labels, window, 0, 40); // "Attack"
     value = unit->atk;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 40);
-    UiText_DrawCharacterAtOffsetFar(base + 1, window, 0, 48);
+    UiText_DrawCharacterAtOffsetFar(labels + 1, window, 0, 48); // "Defense"
     value = unit->def;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 48);
-    UiText_DrawCharacterAtOffsetFar(base + 4, window, 0, 56);
+    UiText_DrawCharacterAtOffsetFar(labels + 4, window, 0, 56); // "Agility"
     value = unit->agi;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 56);
-    UiText_DrawCharacterAtOffsetFar(base + 3, window, 0, 64);
+    UiText_DrawCharacterAtOffsetFar(labels + 3, window, 0, 64); // "Luck"
     value = unit->luck;
     UiText_DrawNumberInWindowFar(value, 3, window, 64, 64);
     break;
@@ -312,12 +357,17 @@ void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y) {
 }
 
 #endif
-//--------------------------------------------------------------------------
-// ウィンドウの y 40 に HP、y 48 に PP を書く
-// HP は最大の 1/4 未満なら色 4、0 なら色 2 で書く
-// unit : キャラクター
-// win  : 書き込み先のウィンドウ
-//--------------------------------------------------------------------------
+
+// Text colours of the status panel's numbers.
+#define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP 2  // HP 0
+#define TEXT_COLOR_NORMAL 15
+
+// Writes a party member's HP and PP rows into a status window: HP and its
+// maximum at y 40, PP and its maximum at y 48. Current HP takes the low-HP
+// colour under a quarter of the maximum and the no-HP colour at 0.
+// unit : the party member
+// win  : the window to write into
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   s16 val;
 
@@ -327,14 +377,15 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   val = unit->maxHp;
   UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
   val = unit->hp;
+  // A quarter of the maximum, computed as a halfword.
   if (val < ((u16)unit->maxHp << 16) >> 18) {
-    UiWork_SetParamNibbleFar(4);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (val == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringAtOffsetFar(gUi_PpString, win, 0, 48);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 48);
   val = unit->pp;
@@ -346,14 +397,15 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   val = unit->maxHp;
   UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
   val = unit->hp;
+  // A quarter of the maximum, computed as a halfword.
   if (val < ((u16)unit->maxHp << 16) >> 18) {
-    UiWork_SetParamNibbleFar(4);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (val == 0) {
-    UiWork_SetParamNibbleFar(2);
+    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
-  UiWork_SetParamNibbleFar(15);
+  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, win, 0, 48);
   val = unit->pp;
   UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
@@ -361,69 +413,92 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win) {
   UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
 #endif
 }
-void UiText_DrawStatComparison(const struct BattleUnit *alt,
-                               const struct BattleUnit *base, s32 work) {
-  UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, work, 0, 32);
-  UiText_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
-  if (alt->atk != base->atk) {
-    UiText_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
-    if (alt->atk > base->atk) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 36, 0);
+
+// The stat arrows: the up and down arrow sprites the menu loads into its two
+// resource slots (Resource_LoadPairedBlocks).
+enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
+
+// Writes Attack, Defense and Agility into a status window as they are now
+// (before), and beside each one that changes its new value (after) with an up
+// or down arrow: the equipment preview.
+void UiText_DrawStatComparison(const struct BattleUnit *after,
+                               const struct BattleUnit *before, s32 window) {
+  UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, window, 0, 32);
+  UiText_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
+  if (after->atk != before->atk) {
+    UiText_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
+    if (after->atk > before->atk) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 36, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
+                                   STAT_ARROW_DOWN);
     }
   }
-  UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, work, 0, 48);
-  UiText_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
-  if (alt->def != base->def) {
-    UiText_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
-    if (alt->def > base->def) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 52, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, window, 0, 48);
+  UiText_DrawNumberAtOffsetFar(before->def, 3, window, 16, 56);
+  if (after->def != before->def) {
+    UiText_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
+    if (after->def > before->def) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 52, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
+                                   STAT_ARROW_DOWN);
     }
   }
-  UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, work, 0, 64);
-  UiText_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
-  if (alt->agi != base->agi) {
-    UiText_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
-    if (alt->agi > base->agi) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 68, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, window, 0, 64);
+  UiText_DrawNumberAtOffsetFar(before->agi, 3, window, 16, 72);
+  if (after->agi != before->agi) {
+    UiText_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
+    if (after->agi > before->agi) {
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
+                                   STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)work, 44, 68, 1);
+      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
+                                   STAT_ARROW_DOWN);
     }
   }
 }
 
-s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x,
-                              s32 y) {
-  s32 entryId;
-  s32 result;
-  result = 0;
-  entryId = Resource_FindFreeEntry();
-  if (entryId != 0) {
-    VramBlock_LoadCached(entryId, 0x80, gUiIcon_ResourceTiles);
-    result = (s32)RenderOutput_CreateFar(entryId, 0x40000000, window, x, y);
-  }
-  return result;
-}
+// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons.
+#define ICON_SPRITE_16X16 0x40000000
+// Size of one 16x16 4bpp sprite tile block.
+#define ICON_TILE_BYTES 0x80
 
-s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
-  s32 slot;
-  unsigned char copyMode;
-  int resourceMode;
+// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
+// into a free VRAM block. Returns the sprite, or 0 when no block is free.
+// Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
+UNUSED s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused,
+                                     s32 x, s32 y) {
+  s32 block;
   s32 icon;
   icon = 0;
-  icon = 0;
-  slot = Resource_FindFreeEntry();
-  resourceMode = 0x80;
-  if (slot != 0) {
-    VramBlock_LoadCached(slot, copyMode = resourceMode, gUiIcon_ResourceTiles);
-    icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+  block = Resource_FindFreeEntry();
+  if (block != 0) {
+    VramBlock_LoadCached(block, ICON_TILE_BYTES, gUiIcon_ResourceTiles);
+    icon = (s32)RenderOutput_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
   }
   return icon;
 }
 
+// Creates the menu's hand cursor sprite in window at (x, y), loading the
+// hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
+// block is free.
+s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
+  s32 block;
+  s32 icon;
+
+  icon = 0;
+  block = Resource_FindFreeEntry();
+  if (block != 0) {
+    VramBlock_LoadCached(block, ICON_TILE_BYTES, gUiIcon_ResourceTiles);
+    icon = (s32)RenderOutput_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
+  }
+  return icon;
+}
+
+// Shows a menu icon at its stored position, without rotation or scaling.
 void UiIcon_PrepareObject(struct RenderOutput *object) {
   if (object != NULL) {
     object->active = 1;
@@ -436,141 +511,160 @@ void UiIcon_PrepareObject(struct RenderOutput *object) {
 
 //--------------------------------------------------------------------------
 // call_icon_routine.c
-// メニュー：えらんだキャラクターのグラフィックを読みなおす
+// Menu: reload the chosen character's graphics
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// キャラクターのグラフィックをスロット 0 に読む
-// menu : 呼び出し元のメニュー（使わない）
-// unit : キャラクター番号
-//--------------------------------------------------------------------------
+
+// Loads the graphics of character unit into menu entry slot 0. menu, the
+// calling menu, is not used.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }
 
+// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
+// in it, hidden for now. Selects no tab yet. Returns the window.
 s32 UiMenu_CreateCursor(void *source) {
   struct PsynergyMenuState *work = source;
-  s32 handle;
+  s32 window;
   s32 zero = 0;
-  s32 state;
-  struct RenderOutput *object;
+  s32 sentinel;
+  struct RenderOutput *cursor;
 
   work->auxiliaryWindow = zero;
   UiWindow_UpdateOrCreate(&work->auxiliaryWindow, zero, zero, 13, 5, 2);
-  handle = work->auxiliaryWindow;
-  object = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
-      (struct RenderInput *)handle, -8, 11);
-  object->active = 13;
+  window = work->auxiliaryWindow;
+  cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
+      (struct RenderInput *)window, -8, 11);
+  cursor->active = 13;
   work->tabIndex[0] = 255;
   work->tabIndex[1] = zero;
-  work->paneIcon[0] = object;
-  state = 254;
-  object->sentinel = state;
-  state -= 255;
-  work->paneIcon[1]->sentinel = state;
-  return handle;
+  work->paneIcon[0] = cursor;
+  sentinel = 254;
+  cursor->sentinel = sentinel;
+  sentinel -= 255;
+  work->paneIcon[1]->sentinel = sentinel; // -1
+  return window;
 }
 
+// Creates a walking figure for each active party member, side by side under
+// the window source: origin (originX, originY) in tiles from the window's
+// corner, each figure 16 + spacing pixels after the last, at full scale.
+// Clears the unused figure slots and starts the callback that places them
+// every frame.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
-  u16 entryIds[14];
-  struct PsynergyMenuState *entryState = gMenuWork;
+  u16 ownerIds[14];
+  struct PsynergyMenuState *menu = gMenuWork;
   struct RenderInput *window = source;
-  s32 entryCount = (u16)Party_ListActiveOwnersFar(entryIds);
+  s32 ownerCount = (u16)Party_ListActiveOwnersFar(ownerIds);
   s32 i;
 
-  entryState->tabCounts[0] = entryCount;
-  for (i = 0; i < entryCount; i++) {
-    struct AnimationObject *entryObject =
+  menu->tabCounts[0] = ownerCount;
+  for (i = 0; i < ownerCount; i++) {
+    struct AnimationObject *figure =
         (struct AnimationObject *)ResourceObject_CreateFar(
-            Party_RemapCharacterIdByFlagsFar(entryIds[i]));
-    if (entryObject != 0) {
-      s32 entryX;
-      s32 sourceX;
-      s32 positionX;
+            Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+    if (figure != 0) {
+      s32 offsetX;
+      s32 windowX;
+      s32 tileX;
 
-      entryState->tabObjects[i] = entryObject;
-      sourceX = window->x;
-      entryX = spacing + 16;
-      entryX *= i;
-      positionX = originX + sourceX;
-      entryState->tabX[i] = positionX * 8 + entryX;
-      entryState->rowPositions[i] = (originY + window->y) * 8 + 16;
-      entryState->ownerScale[i] = 0x10000;
-      ((struct FieldSprite *)entryObject)->priority = 0;
-      entryObject->flags = 0;
-      AnimationObjects_SelectAnimationFar(entryObject, 1);
+      menu->tabObjects[i] = figure;
+      windowX = window->x;
+      offsetX = spacing + 16;
+      offsetX *= i;
+      tileX = originX + windowX;
+      menu->tabX[i] = tileX * 8 + offsetX;
+      menu->rowPositions[i] = (originY + window->y) * 8 + 16;
+      menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
+      ((struct FieldSprite *)figure)->priority = 0;
+      figure->flags = 0;
+      AnimationObjects_SelectAnimationFar(figure, 1);
     }
   }
   for (; i < 8; i++) {
-    entryState->tabObjects[i] = 0;
+    menu->tabObjects[i] = 0;
   }
   {
-    s32 delayFrames = 200;
-    delayFrames <<= 4;
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms,
-                                  delayFrames);
+    s32 priority = 200;
+    priority <<= 4;
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
   }
 }
 
+// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
+// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
-  u32 buf[7];
-  struct PsynergyMenuState *base = gMenuWork;
+  u32 ownerIds[7];
+  struct PsynergyMenuState *menu = gMenuWork;
   s32 count;
-  void **p;
+  void **figures;
   s32 i;
 
-  count = (u16)Party_ListActiveOwnersFar(buf);
+  count = (u16)Party_ListActiveOwnersFar(ownerIds);
   if (count != 0) {
-    p = (void **)base->tabObjects;
+    figures = (void **)menu->tabObjects;
     i = count;
     do {
-      void *entry = *p++;
+      void *figure = *figures++;
 
-      if (entry != 0) {
-        ResourceObject_ReleaseFar(entry);
+      if (figure != 0) {
+        ResourceObject_ReleaseFar(figure);
       }
     } while (--i != 0);
   }
   Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
 }
 
+// Scheduler callback: each frame, places every party member sprite created by
+// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
+// the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct PsynergyMenuState *menu = gMenuWork;
-  s32 pos[2];
-  s32 trans[4];
+  s32 scale[2];
+  s32 position[4];
   s32 i;
-  s32 cnt;
+  s32 count;
 
-  cnt = (u16)Party_CountActiveOwnersFar();
-  for (i = 0; i < cnt; i++) {
-    struct AnimationObject *obj = menu->tabObjects[i];
-    s32 top = 0x01e20000 - (menu->rowPositions[i] << 16);
+  count = (u16)Party_CountActiveOwnersFar();
+  for (i = 0; i < count; i++) {
+    struct AnimationObject *figure = menu->tabObjects[i];
+    // 482 less the row's screen y, in 16.16.
+    s32 placeY = 0x01e20000 - (menu->rowPositions[i] << 16);
 
-    if (obj != 0) {
-      obj->part[0].priority = 0;
-      pos[0] = menu->ownerScale[i];
-      pos[1] = menu->ownerScale[i];
-      trans[0] = menu->tabX[i] << 16;
-      trans[1] = top;
-      trans[2] = (menu->rowPositions[i] << 16) + top;
-      trans[3] = 0;
-      Object_ApplyProjectedPlacementFar(obj, trans, pos, 0x4000);
+    if (figure != 0) {
+      figure->part[0].priority = 0;
+      scale[0] = menu->ownerScale[i];
+      scale[1] = menu->ownerScale[i];
+      position[0] = menu->tabX[i] << 16;
+      position[1] = placeY;
+      position[2] = (menu->rowPositions[i] << 16) + placeY; // always 482
+      position[3] = 0;
+      Object_ApplyProjectedPlacementFar(figure, position, scale, 0x4000);
     }
   }
 }
 
+// The cursor bobs through an 8-step table, one step every two frames.
+#define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
+
+// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
+// window, bobbing.
 void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuState *work = gMenuWork;
   struct RenderOutput *cursor = work->paneIcon[0];
 
   cursor->oam.x = cursor->x =
-      gUiMenu_CursorBobX[(gFrameCount >> 1) & 7] + xOffset +
+      gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
       ((struct RenderInput *)work->auxiliaryWindow)->x * 8 + 8;
   cursor->oam.y = cursor->y =
-      gUiMenu_CursorBobY[(gFrameCount >> 1) & 7] + yOffset +
+      gUiMenu_CursorBobY[CURSOR_BOB_STEP()] + yOffset +
       ((struct RenderInput *)work->auxiliaryWindow)->y * 8 + 8;
 }
 
+// Slides the hand cursor from where it is to (x, y) inside the menu's
+// top-left window over two frames, in 1/16 pixel steps. Positions carry a
+// 64-pixel bias while moving so that they stay positive. Does nothing, once,
+// after skipSlide is set.
 void UiMenu_SlideCursor(s32 x, s32 y) {
 
   struct PsynergyMenuState *work = gMenuWork;
@@ -578,10 +672,10 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   s32 steps;
   s32 startX;
   s32 startY;
-  s32 px;
-  s32 py;
-  s32 dx;
-  s32 dy;
+  s32 fineX;
+  s32 fineY;
+  s32 stepX;
+  s32 stepY;
 
   steps = 2;
   if (work->skipSlide != 0) {
@@ -590,35 +684,36 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   }
   cursor = work->paneIcon[0];
   {
-    s32 spriteX = cursor->oam.x + 64;
-    s32 spriteY = cursor->oam.y + 64;
+    s32 biasedX = cursor->oam.x + 64;
+    s32 biasedY = cursor->oam.y + 64;
 
-    cursor->x = spriteX;
-    cursor->y = spriteY;
+    cursor->x = biasedX;
+    cursor->y = biasedY;
   }
   x += 64;
   y += 64;
   if (cursor->x - 8 > 0)
     cursor->x -= 8;
-  py = cursor->y;
-  if (py - 8 > 0) {
+  fineY = cursor->y;
+  if (fineY - 8 > 0) {
     cursor->y -= 8;
-    py = cursor->y;
+    fineY = cursor->y;
   }
   startX = cursor->x << 4;
-  dx = ((x << 4) - startX + 1) / steps;
-  startY = py << 4;
-  dy = ((y << 4) - startY + 1) / steps;
-  px = startX;
-  py = startY;
+  stepX = ((x << 4) - startX + 1) / steps;
+  startY = fineY << 4;
+  stepY = ((y << 4) - startY + 1) / steps;
+  fineX = startX;
+  fineY = startY;
   do {
-    px += dx;
+    // 64 - 8 = 56: the bias less the window border.
+    fineX += stepX;
     cursor->oam.x = cursor->x =
-        (px >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->x << 3) -
+        (fineX >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->x << 3) -
         56;
-    py += dy;
+    fineY += stepY;
     cursor->oam.y = cursor->y =
-        (py >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->y << 3) -
+        (fineY >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->y << 3) -
         56;
     steps--;
     if (steps != 0)
@@ -626,12 +721,16 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_ReservedNoOp(void) {}
+// Does nothing; nothing calls it.
+UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
-void PsynergyMenu_RefreshOwnerEntriesDefault(void) {
-  PsynergyMenu_RefreshOwnerEntries(0x6C, 0x28, 8);
+// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
+UNUSED void PsynergyMenu_RefreshOwnerEntriesDefault(void) {
+  PsynergyMenu_RefreshOwnerEntries(108, 40, 8);
 }
 
+// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
+// columns wide, from (originX, originY); empty slots keep their place.
 void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
@@ -646,69 +745,78 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index <= 0x1F);
+  } while (index < 32);
 }
 
+// Places the icon in *slot at grid cell index (0 above 31) of a grid of
+// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
                                      s32 originX, s32 originY, s32 columns) {
-  struct RenderOutput *object;
+  struct RenderOutput *icon;
 
-  if (index > 0x1F) {
+  if (index > 31) {
     index = 0;
   }
-  object = *slot;
-  object->y = (index / columns) * 0x10 + originY;
-  object->x = (index % columns) * 0x10 + originX;
-  UiIcon_PrepareObject(object);
+  icon = *slot;
+  icon->y = (index / columns) * 16 + originY;
+  icon->x = (index % columns) * 16 + originX;
+  UiIcon_PrepareObject(icon);
 }
 
 //--------------------------------------------------------------------------
 // position_owner_entry.c
-// アイテムメニュー：持ち物のアイコンを格子の位置に置く
+// Item menu: place the inventory icons on their grid
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// i 番目（15 より大きければ 0）を、横 cols 個の格子（1 つ 24x16 ドット）の
-// 位置に置く
-// x0, y0 : 格子の左上
-//--------------------------------------------------------------------------
+
+// Places the item icon in *slot at grid cell i (0 above 15) of a grid of
+// 24x16 cells, cols wide, from (x0, y0), and shows it.
 void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
                        s32 cols) {
-  struct RenderOutput *obj;
+  struct RenderOutput *icon;
 
   if (i > 15)
     i = 0;
-  obj = *slot;
-  obj->y = i / cols * 16 + y0;
-  obj->x = i % cols * 24 + x0;
-  UiIcon_PrepareObject(obj);
+  icon = *slot;
+  icon->y = i / cols * 16 + y0;
+  icon->x = i % cols * 24 + x0;
+  UiIcon_PrepareObject(icon);
 }
 
+// Lays the inventory's 15 item icons out five to a row from (116, y): y is
+// 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
-  struct RenderOutput *object;
+  struct RenderOutput *icon;
   s32 index;
   s32 originY;
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
-  originY = 0x38;
+  originY = 56;
   if (layout != 1) {
-    originY = 0x28;
+    originY = 40;
   }
   slot = menu->entryIcons;
   index = 0;
   scan = slot;
   do {
-    object = *scan++;
-    if (object != NULL) {
-      ItemMenu_PosOwner(slot, index, 0x74, originY, 5);
+    icon = *scan++;
+    if (icon != NULL) {
+      ItemMenu_PosOwner(slot, index, 116, originY, 5);
     }
     index++;
     slot++;
-  } while (index <= 0xE);
+  } while (index < 15);
 }
 
+// Shows message in the item menu, with the hand cursor hidden meanwhile.
+//
+// With y == -1 the message goes into the info window; otherwise a modal
+// window sized to the message opens at (x, y). With x == -1 the message stays
+// up and game flag 0x151 records that the info window holds it (the next
+// selection keeps it instead of drawing the item name); otherwise it waits
+// for A, B or Start and clears it again.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 window;
@@ -721,7 +829,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   if (y != -1) {
     UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
     if (UiWindow_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
-                                0x102) == 0)
+                                WINDOW_KEEP_EXISTING | 2) == 0)
       UiWindow_SetBounds((struct RenderInput *)menu->modalWindow, x, y, width,
                          height);
     window = (s32)menu->modalWindow;
@@ -760,6 +868,10 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 #endif
 }
 
+// Sorts a party member's 15 inventory slots by the list order of mode (see
+// Menu_CopyListOrder): items are grouped by the order's item types and, within
+// a type, run from the highest item id down. Empty slots go to the end.
+// L + A in the item menu cycles through the modes. Returns 1.
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
@@ -769,12 +881,12 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   s32 i;
   s32 count;
   s32 best;
-  s32 best_slot;
-  s32 sorted_count;
+  s32 bestSlot;
+  s32 sortedCount;
   s32 value;
 
-  best_slot = 0;
-  sorted_count = 0;
+  bestSlot = 0;
+  sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
   for (i = 0; i < 15; i++)
@@ -789,29 +901,32 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   for (i = count; i < 15; i++)
     sorted[i] = 0;
 
+  // One pass for each entry of the order: move its items across, the highest
+  // id first, until none is left.
   pass = 0;
-  while (order[pass] != 0xff) {
+  while (order[pass] != LIST_ORDER_END) {
     for (;;) {
       best = 0;
       for (i = 0; i < count; i++) {
         if (items[i] == 0)
           continue;
         item = Item_GetDirectFar(items[i]);
-        if ((order[pass] & 0x7f) != item->type)
+        if ((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
+        if ((order[pass] & LIST_ORDER_EQUIPPED) &&
+            (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
         value = items[i] & ITEM_ID_MASK;
         if (best < value) {
-          best_slot = i;
+          bestSlot = i;
           best = value;
         }
       }
       if (best == 0)
         break;
-      sorted[sorted_count] = items[best_slot];
-      items[best_slot] = 0;
-      sorted_count++;
+      sorted[sortedCount] = items[bestSlot];
+      items[bestSlot] = 0;
+      sortedCount++;
     }
     pass++;
   }
@@ -823,12 +938,11 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
 
 //--------------------------------------------------------------------------
 // copy_list_order.c
-// メニュー：並べかえの順番の表を写す
+// Menu: copy a sort order table
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// mode 0〜2 の順番の表（それ以外は標準の表）を order に写す
-// 表は 0xff で終わる。写すのは 0xff を含めて 32 バイトまで
-//--------------------------------------------------------------------------
+
+// Copies the list order of mode 0 to 2 (any other mode: the default order)
+// into order, up to and including its LIST_ORDER_END and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
@@ -847,14 +961,14 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   }
   *order = *src;
   n = 0;
-  if (*order != 0xff) {
+  if (*order != LIST_ORDER_END) {
     do {
       if (++n > 31)
         break;
       src++;
       order++;
       *order = *src;
-    } while (*order != 0xff);
+    } while (*order != LIST_ORDER_END);
   }
 }
 

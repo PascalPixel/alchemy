@@ -1,8 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x020081f6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020081f8,"ax",%progbits
+	.balign 4
 	.global Func_020001f8
 	.thumb_func
 Func_020001f8:
@@ -391,52 +390,6 @@ Func_02000414:
 	.4byte Data_02005394
 .L_02008518:
 	.4byte IwramMulQ16
-	.section .text.x0200896c,"ax",%progbits
-	.balign 4
-	.global Func_0200096c
-	.thumb_func
-Func_0200096c:
-	push {r5, lr}
-	adds r0, r1, #0
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #11
-	bne .L_02008998
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #6
-	str r3, [r5, #52]
-	movs r1, #152
-	movs r3, #198
-	ldr r2, [r5, #12]
-	lsls r1, r1, #16
-	lsls r3, r3, #18
-	bl Func_02004bf8
-.L_02008998:
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #10
-	bne .L_020089bc
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #6
-	str r3, [r5, #52]
-	movs r1, #200
-	movs r3, #198
-	ldr r2, [r5, #12]
-	adds r0, r5, #0
-	lsls r1, r1, #16
-	lsls r3, r3, #18
-	bl Func_02004bf8
-.L_020089bc:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x02008d18,"ax",%progbits
 	.balign 4
 	.global Func_02000d18
@@ -2674,42 +2627,6 @@ Func_02001cbc:
 	.4byte gPartyState
 .L_02009e18:
 	.4byte Data_020023c4 + 0x188
-	.section .text.x02009e1c,"ax",%progbits
-	.global Func_02001e1c
-	.thumb_func
-Func_02001e1c:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r3, r5, #0
-	movs r6, #0
-	adds r3, #85
-	strb r6, [r3]
-	adds r3, #4
-	strb r6, [r3]
-	movs r3, #3
-	ldr r0, [r5, #80]
-	ands r1, r3
-	ldrb r2, [r0, #9]
-	movs r3, #13
-	negs r3, r3
-	ands r3, r2
-	lsls r1, r1, #2
-	orrs r3, r1
-	strb r3, [r0, #9]
-	movs r1, #0
-	adds r0, r5, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r1, .L_02009e5c
-	adds r0, r5, #0
-	bl Func_02004bd0
-	adds r3, r5, #0
-	adds r3, #100
-	strh r6, [r3]
-	str r6, [r5, #48]
-	str r6, [r5, #52]
-	pop {r5, r6, pc}
-.L_02009e5c:
-	.4byte Data_020056a0
 	.section .text.x0200a0ec,"ax",%progbits
 	.balign 4
 	.global Func_020020ec
@@ -6007,11 +5924,8 @@ Func_02003884:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200baf6,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200bb2e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200bb30,"ax",%progbits
+	.balign 4
 	.global Func_02003b30
 	.thumb_func
 Func_02003b30:
@@ -6899,9 +6813,8 @@ Func_02004160:
 	.4byte 0xffff6667
 .L_0200c29c:
 	.4byte gPartyState
-	.section .text.x0200c2f6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200c2f8,"ax",%progbits
+	.balign 4
 	.global Func_020042f8
 	.thumb_func
 Func_020042f8:

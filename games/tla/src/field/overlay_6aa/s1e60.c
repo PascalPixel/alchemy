@@ -6,6 +6,28 @@ void Func_02001ae0(void);
 void Func_02001cbc(void);
 void Func_02001f90(struct ObjectRuntime *object);
 
+// Stops the object and sets its sprite part, then restarts its script at
+// Data_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
+void Func_02001e1c(struct ObjectRuntime *object, s32 part)
+{
+    s32 zero = 0;
+
+    object->motion_flags = zero;
+    object->collision_flags = zero;
+    {
+        s32 three = 3;
+
+        /* FAKEMATCH: an empty asm holding a 3 builds the part mask before the sprite loads, as the native does; plain, sched2 ranks the sprite load above the mask (differ 4). The asm ends CSE's memory of constants, so the zero is a variable. */
+        asm volatile("" : : "r"(three));
+        ((struct SpriteParts *)object->animation)->part = part;
+    }
+    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Func_02004bd0(object, Data_020056a0);
+    object->action = zero;
+    object->speed_limit = zero;
+    object->acceleration = zero;
+}
+
 void Func_02001e60(s32 *position, s32 speed, s32 mode)
 {
     struct ObjectRuntime *object = Func_02004bd8_(366, position[0], position[1], position[2]);

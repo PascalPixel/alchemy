@@ -143,11 +143,11 @@ msgctxt "message"
 msgid "00033"
 msgstr "der Vorgang beendet ist."
 
-msgctxt "message"
+msgctxt "MsgCannotSaveHere"
 msgid "00034"
 msgstr "Speichern hier nicht möglich.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoPlaceForThat"
 msgid "00035"
 msgstr "Das ist nicht der rechte Ort!{end_wait}"
 
@@ -19655,7 +19655,7 @@ msgctxt "message"
 msgid "04911"
 msgstr "Held wechseln"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "04912"
 msgstr "Schlafmodus wird aktiviert.{line_break}Drücke Select und {button_icon:3}+{button_icon:4},{line_break}um fortzufahren.{end_wait}"
 

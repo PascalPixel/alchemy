@@ -50,3 +50,33 @@ struct RenderOutput *RenderResource_CreatePair(
     second->oam.index += 8;
     return first;
 }
+
+struct BobPairObject {
+    struct BobPairObject *next;
+    u8 unknown_04[4];
+    u8 base_y;
+    u8 unknown_09[11];
+    u8 y;
+};
+
+// The frame counter, advanced by the vblank interrupt.
+extern volatile u32 gFrameTick;
+extern const u8 Ui_PairBobOffsets[];
+
+// Bobs the object and the one after it by the same step of an eight-step
+// table, advanced every four frames.
+void Func_08045018(struct BobPairObject *object)
+{
+    s32 value;
+
+    value = object->base_y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    object->y = value;
+    /* FAKEMATCH: tying the object to an empty asm after the first store
+       loads the next object before the second tick is shifted, as the
+       native does; plain, the shift comes first (one reordered row,
+       differ 2). */
+    asm("" : "+r"(object));
+    object = object->next;
+    value = object->base_y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    object->y = value;
+}

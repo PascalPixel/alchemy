@@ -143,11 +143,11 @@ msgctxt "message"
 msgid "00033"
 msgstr "la consola."
 
-msgctxt "message"
+msgctxt "MsgCannotSaveHere"
 msgid "00034"
 msgstr "No puedes guardar aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoPlaceForThat"
 msgid "00035"
 msgstr "¡Aquí no puedes!{end_wait}"
 
@@ -19639,7 +19639,7 @@ msgctxt "message"
 msgid "04907"
 msgstr "Cambiar de personaje"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "04908"
 msgstr "Activando Salvapantallas.{line_break}Pulsa SELECT, el Botón L y{line_break}el Botón R para cancelarlo.{end_wait}"
 

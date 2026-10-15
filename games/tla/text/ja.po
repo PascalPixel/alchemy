@@ -143,11 +143,11 @@ msgctxt "message"
 msgid "00033"
 msgstr "きらないでください"
 
-msgctxt "message"
+msgctxt "MsgCannotSaveHere"
 msgid "00034"
 msgstr "ここでは きろくできません{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoPlaceForThat"
 msgid "00035"
 msgstr "そんなことしてるばあいじゃない!{end_wait}"
 
@@ -17779,7 +17779,7 @@ msgctxt "message"
 msgid "04442"
 msgstr "しゅじんこうチェンジ"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "04443"
 msgstr "いますぐスリープします{line_break}SELECT+L+Rで{line_break}もとのがめんに もどります{end_wait}"
 

@@ -143,11 +143,11 @@ msgctxt "message"
 msgid "00033"
 msgstr "off until process finishes."
 
-msgctxt "message"
+msgctxt "MsgCannotSaveHere"
 msgid "00034"
 msgstr "Cannot save here{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoPlaceForThat"
 msgid "00035"
 msgstr "This is no place for that!{end_wait}"
 
@@ -17799,7 +17799,7 @@ msgctxt "message"
 msgid "04447"
 msgstr "Change of hero"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "04448"
 msgstr "Activating Sleep Mode.{line_break}Press Select and the{line_break}L & R Buttons to exit.{end_wait}"
 

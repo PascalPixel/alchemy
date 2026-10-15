@@ -969,7 +969,13 @@ Func_0803f9c0:
 Func_080400e8:
 	.incbin "baserom.gba", 0x0004012c, 0x000004c4
 	.section .rom.0004066c, "ax"
-	.incbin "baserom.gba", 0x0004066c, 0x00000364
+	.incbin "baserom.gba", 0x0004066c, 0x00000170
+	.section .rom.000407dc, "ax"
+	.global Func_08040798
+	.type Func_08040798, %function
+	.thumb_func
+Func_08040798:
+	.incbin "baserom.gba", 0x000407dc, 0x000001f4
 	.section .rom.00040a34, "ax"
 	.incbin "baserom.gba", 0x00040a34, 0x00000270
 	.section .rom.00040db4, "ax"
@@ -1028,37 +1034,21 @@ UiText_DrawCharacterAtOffset:
 	.thumb_func
 UiText_DrawStringAtOffset:
 	.incbin "baserom.gba", 0x0004214c, 0x0000008c
-	.section .rom.00042234, "ax"
-	.global UiText_DrawNumber
-	.type UiText_DrawNumber, %function
+	.section .rom.000422c4, "ax"
+	.balign 4
+	.global UiText_DrawPrefixedNumberAtOffset
+	.type UiText_DrawPrefixedNumberAtOffset, %function
 	.thumb_func
-UiText_DrawNumber:
-	.incbin "baserom.gba", 0x00042234, 0x00000030
-	.section .rom.00042264, "ax"
-	.global UiText_DrawNumberAtOffset
-	.type UiText_DrawNumberAtOffset, %function
-	.thumb_func
-UiText_DrawNumberAtOffset:
-	.incbin "baserom.gba", 0x00042264, 0x00000030
-	.section .rom.00042294, "ax"
-	.global UiText_DrawNumberInWindow
-	.type UiText_DrawNumberInWindow, %function
-	.thumb_func
-UiText_DrawNumberInWindow:
-	.incbin "baserom.gba", 0x00042294, 0x000000d0
+UiText_DrawPrefixedNumberAtOffset:
+	.incbin "baserom.gba", 0x000422c4, 0x000000a0
 	.section .rom.00042364, "ax"
 	.global RenderOutput_Create
 	.type RenderOutput_Create, %function
 	.thumb_func
 RenderOutput_Create:
 	.incbin "baserom.gba", 0x00042364, 0x00000088
-	.section .rom.000424a0, "ax"
-	.global CreateSideObject
-	.type CreateSideObject, %function
-	.thumb_func
-CreateSideObject:
-	.incbin "baserom.gba", 0x000424a0, 0x000000b8
 	.section .rom.00042558, "ax"
+	.balign 4
 	.global Ui_LoadCharacterEntryForSlot
 	.type Ui_LoadCharacterEntryForSlot, %function
 	.thumb_func
@@ -1066,13 +1056,6 @@ Ui_LoadCharacterEntryForSlot:
 	.incbin "baserom.gba", 0x00042558, 0x00000064
 	.section .rom.000425ca, "ax"
 	.incbin "baserom.gba", 0x000425ca, 0x00000002
-	.section .rom.000425d8, "ax"
-	.balign 4
-	.global UiWindow_FillFromScene
-	.type UiWindow_FillFromScene, %function
-	.thumb_func
-UiWindow_FillFromScene:
-	.incbin "baserom.gba", 0x000425d8, 0x00000074
 	.section .rom.00042730, "ax"
 	.incbin "baserom.gba", 0x00042730, 0x0000029c
 	.section .rom.000429cc, "ax"
@@ -1180,9 +1163,6 @@ Func_08044c80:
 	.thumb_func
 Func_08044dc8:
 	.incbin "baserom.gba", 0x00044e50, 0x00000184
-	.section .rom.000450a0, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000450a0, 0x00000030
 	.section .rom.00045184, "ax"
 	.global Func_080450fc
 	.type Func_080450fc, %function
@@ -1201,8 +1181,6 @@ Graphics_MergeShiftedTileRows:
 	.incbin "baserom.gba", 0x00045344, 0x00000074
 	.section .rom.000455ae, "ax"
 	.incbin "baserom.gba", 0x000455ae, 0x00000002
-	.section .rom.000455ec, "ax"
-	.incbin "baserom.gba", 0x000455ec, 0x0000004c
 	.section .rom.00045780, "ax"
 	.incbin "baserom.gba", 0x00045780, 0x00000070
 	.section .rom.00045806, "ax"
@@ -1287,14 +1265,6 @@ Menu_RunSelection:
 	.thumb_func
 Menu_DrawFlagBitTable:
 	.incbin "baserom.gba", 0x0004e0c4, 0x000000c4
-	.section .rom.0004e2f2, "ax"
-	.incbin "baserom.gba", 0x0004e2f2, 0x00000002
-	.section .rom.0004e2f4, "ax"
-	.global Func_0804e0d0
-	.type Func_0804e0d0, %function
-	.thumb_func
-Func_0804e0d0:
-	.incbin "baserom.gba", 0x0004e2f4, 0x0000007c
 	.section .rom.0004e3fc, "ax"
 	.global Func_0804e1d8
 	.type Func_0804e1d8, %function
@@ -1827,12 +1797,6 @@ Owner_UpdateClassActions:
 	.thumb_func
 Owner_LevelUp:
 	.incbin "baserom.gba", 0x000b491c, 0x00000264
-	.section .rom.000b4b80, "ax"
-	.global Func_080afb80
-	.type Func_080afb80, %function
-	.thumb_func
-Func_080afb80:
-	.incbin "baserom.gba", 0x000b4b80, 0x00000034
 	.section .rom.000b4bec, "ax"
 	.incbin "baserom.gba", 0x000b4bec, 0x000001d0
 	.section .rom.000b4f28, "ax"

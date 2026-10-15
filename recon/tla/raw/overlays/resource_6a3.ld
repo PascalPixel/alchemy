@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a3/s039c.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x020083b8)
         "*/resource_6a3_overlay.o"(.text.x0200860c)
-        "*/resource_6a3_overlay.o"(.text.x020088c8)
+        "*/games/tla/src/field/overlay_6a3/s08c8.o"(.text)
         "*/games/tla/src/field/overlay_6a3/scene_events.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x02008970)
         "*/resource_6a3_overlay.o"(.text.x02008a78)

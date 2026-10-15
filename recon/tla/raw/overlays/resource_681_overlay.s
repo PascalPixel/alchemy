@@ -8258,61 +8258,6 @@ Func_020044f8:
 	.4byte Data_020023c4 + 0x288
 .L_0200c858:
 	.4byte gRandomState
-	.section .text.x0200c8a0,"ax",%progbits
-	.global Func_020048a0
-	.thumb_func
-Func_020048a0:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	ldr r3, .L_0200c8fc
-	sub sp, #8
-	ldr r1, [r3]
-	ldr r3, .L_0200c900
-	lsls r2, r1, #1
-	adds r2, r2, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	cmp r1, #1
-	ble .L_0200c8f4
-	movs r1, #0
-	ldrsb r1, [r2, r1]
-	movs r7, #1
-	ldrsb r7, [r2, r7]
-	movs r2, #132
-	lsls r2, r2, #1
-	mov r8, r1
-	adds r5, r3, r2
-	movs r6, #1
-.L_0200c8ce:
-	ldr r2, [r5, #8]
-	ldr r3, [r5, #12]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	mov r1, r8
-	adds r0, r1, r2
-	adds r1, r7, r3
-	adds r2, #1
-	adds r3, #1
-	str r2, [sp, #0]
-	str r3, [sp, #4]
-	movs r2, #15
-	movs r3, #10
-	subs r6, #1
-	bl Func_02004e0c
-	adds r5, #56
-	cmp r6, #0
-	bge .L_0200c8ce
-.L_0200c8f4:
-	add sp, #8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-.L_0200c8fc:
-	.4byte Data_020023c4 + 0x288
-.L_0200c900:
-	.4byte Data_020053fc
 	.section .text.x0200c904,"ax",%progbits
 	.global Func_02004904
 	.thumb_func

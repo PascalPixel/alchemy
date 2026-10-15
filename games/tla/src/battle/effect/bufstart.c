@@ -21,8 +21,6 @@ void BattleFx_StartBufferInterpolation(s32 mode)
 
 void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source, u16 *destination, s32 half);
 
-/* The Spanish and Italian far-call tables reach this function under another slot's name; those two editions keep it on their scaffold. */
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void BattleFx_LoadBufferPalette(const u16 *colours)
 {
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
@@ -35,4 +33,3 @@ void BattleFx_LoadBufferPalette(const u16 *colours)
         BattleFx_BuildBuffer(0x10000, buffers, buffers->target, 1);
     }
 }
-#endif

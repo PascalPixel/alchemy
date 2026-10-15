@@ -15,12 +15,6 @@ void Func_080d67e8(void);
 
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版の scaffold では、バッファを作る関数に別の名前が付いている
-void BattleFx_BuildColorBuffers(u32 mode, u16 *src, u16 *dst, s32 half);
-#define BattleFx_BuildBuffer BattleFx_BuildColorBuffers
-#endif
-
 #define Resource_DecodeByteLzInRam ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
 union DustWord {

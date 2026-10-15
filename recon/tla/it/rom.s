@@ -3003,10 +3003,10 @@ DisplayTransition_FillTilemapAndSolidTile:
 	.section .rom.000d0ca0, "ax"
 	.incbin "baserom.gba", 0x000d0ca0, 0x0000017c
 	.section .rom.000d0e1c, "ax"
-	.global BattleFx_BuildColorBuffers
-	.type BattleFx_BuildColorBuffers, %function
+	.global BattleFx_BuildBuffer
+	.type BattleFx_BuildBuffer, %function
 	.thumb_func
-BattleFx_BuildColorBuffers:
+BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x000d0e1c, 0x00000868
 	.section .rom.000d1684, "ax"
 	.global BattleEffect_InitializeBuffers
@@ -3044,12 +3044,6 @@ BattleFx_SetBufferWord:
 	.thumb_func
 Func_080d1760:
 	.incbin "baserom.gba", 0x000d1760, 0x0000004c
-	.section .rom.000d17e8, "ax"
-	.global BattleFx_LoadBufferPalette
-	.type BattleFx_LoadBufferPalette, %function
-	.thumb_func
-BattleFx_LoadBufferPalette:
-	.incbin "baserom.gba", 0x000d17e8, 0x00000034
 	.section .rom.000d183e, "ax"
 	.incbin "baserom.gba", 0x000d183e, 0x00000002
 	.section .rom.000d1840, "ax"

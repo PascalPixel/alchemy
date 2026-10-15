@@ -1077,7 +1077,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.000d174c)
     "*/recon/tla/it/rom.o"(.rom.000d1760)
     "*/games/tla/src/battle/effect/bufstart.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000d17e8)
     "*/games/tla/src/battle/effect/palette.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d183e)
     "*/recon/tla/it/rom.o"(.rom.000d1840)

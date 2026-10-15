@@ -22,3 +22,6 @@ AlignConsecutiveDeclarations: Consecutive
 AlignEscapedNewlines: Left
 PointerAlignment: Right
 BreakBeforeBinaryOperators: NonAssignment
+# Braced initializer lists keep a space inside each brace, { 1, 2 }, as C
+# tables are written here, rather than C++11's {1, 2}.
+Cpp11BracedListStyle: false

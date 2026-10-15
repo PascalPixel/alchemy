@@ -77,36 +77,6 @@ Func_02000170:
 .L_020081f0:
 	.4byte 0xfff80000
 	.endif
-	.section .text.x020082b8,"ax",%progbits
-	.balign 4
-	.global Func_020002b8
-	.thumb_func
-Func_020002b8:
-	push {r5, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	bl Object_GetById
-	ldr r3, .L_020082e8
-	lsls r5, r5, #1
-	ldr r2, [r0, #8]
-	subs r5, #36
-	adds r0, #100
-	ldrsh r1, [r3, r5]
-	ldrh r3, [r0]
-	asrs r2, r2, #20
-	lsls r3, r3, #16
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_020082e4
-	adds r0, r1, #0
-	movs r2, #0
-	movs r1, #0
-	bl Func_02005598
-.L_020082e4:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020082e8:
-	.4byte Data_02005b5c
 	.section .text.x020082ec,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.else

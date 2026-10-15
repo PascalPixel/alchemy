@@ -52,3 +52,21 @@ void Func_02000280(s32 unused, s32 id)
     } while (0);
     Func_02005598(kind, S16_AT(object, 100) << 16, (S16_AT(object, 102) << 16) - 0x80000);
 }
+
+void Func_020002b8(s32 unused, s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    const s16 *table;
+    s32 offset;
+    s32 x;
+    s32 kind;
+
+    table = Data_02005b5c;
+    /* FAKEMATCH: the barrier and the byte offset load the table's address first and let x's load fall between the offset's shift and subtraction; plainly the table read is scheduled whole before x (differ 6), and in a one-pass block it ends before x (differ 4). */
+    asm volatile("" : "+l"(table));
+    x = object->x;
+    offset = (id - 18) * 2;
+    kind = *(s16 *)((u8 *)table + offset);
+    if (x >> 20 == object->action >> 4)
+        Func_02005598(kind, 0, 0);
+}

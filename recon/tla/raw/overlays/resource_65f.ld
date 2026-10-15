@@ -26,7 +26,6 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x02008be4)
         "*/resource_65f_overlay.o"(.text.x02008d30)
         "*/games/tla/src/field/overlay_65f/lift_a.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x02008e78)
         "*/games/tla/src/field/overlay_65f/lift.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_65f_overlay.o"(.text.x020092a6)

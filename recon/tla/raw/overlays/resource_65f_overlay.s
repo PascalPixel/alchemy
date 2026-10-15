@@ -929,37 +929,6 @@ Func_02000d30:
 	.4byte 0x002048c9
 .L_02008dfc:
 	.4byte Func_020002a4
-	.section .text.x02008e78,"ax",%progbits
-	.balign 4
-	.global Func_02000e78
-	.thumb_func
-Func_02000e78:
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r7, r0, #0
-	movs r6, #16
-.L_02008e88:
-	ldr r3, [r5, #12]
-	ldr r2, .L_02008eac
-	movs r0, #1
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	subs r6, #1
-	bl Battle_WaitMode0
-	cmp r6, #0
-	bgt .L_02008e88
-	movs r0, #136
-	bl Func_02005394
-	adds r0, r7, #0
-	bl Func_020012a8
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008eac:
-	.4byte 0xfffe0000
 	.section .text.x020092a6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020092a8,"ax",%progbits

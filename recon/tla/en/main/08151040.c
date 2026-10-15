@@ -1,4 +1,4 @@
-/* Draft of Func_08151040, effect kind 12.
+/* Near miss of Func_08151040, effect kind 12.
  *
  * Twin: The Broken Seal's BattleFx_RunHomingEmbers (effect.c), call for
  * call. The Lost Age reads the effect from its argument, takes its heap
@@ -6,6 +6,16 @@
  * (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal has 3 and 2),
  * orders both callbacks 0xc80, and plays cue 134 for a landing ember in
  * variant 2 where The Broken Seal always plays 136.
+ *
+ * Near miss: differ 46 of 513 (draft 513), all order residue: about
+ * twenty pairs where the native issues a pool or stack load, or one call
+ * argument, one slot away from agscc's place (the camera before the
+ * effect's copy, r1 before r0 for both Func_081963ec calls, the particle
+ * buffer before its counter, the cell offset table before the size).
+ *
+ * Tried (2026-10-15):
+ *   - greedy declaration-order sweep, two passes: no gain.
+ *   - a separate counter for the frame loop's embers: no change.
  */
 #include "types.h"
 #include "battle_display.h"

@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x02008708)
         "*/games/tla/src/field/overlay_68f/events_a.o"(.text)
         "*/games/tla/src/field/overlay_68f/script2.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x02008964)
+        "*/games/tla/src/field/overlay_68f/s0964.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008a48)
         "*/games/tla/src/field/overlay_68f/script3.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008b3c)

@@ -77,4 +77,33 @@ extern const u8 Data_02003c90[];
 void Func_02000840(struct ObjectRuntime *object);
 void Func_02002ebc(void);
 
+void Func_02003000(s32 a, s32 b, s32 c);
+void Func_02003108(s32 color, s32 b);
+void Func_02003110(s32 color, s32 b);
+void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+
+static inline void Ov68f_FadeTo(s32 color, s32 b)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct calls their constants are shared in registers. */
+    Func_02003108(color, b);
+}
+
+static inline void Ov68f_FadeFrom(s32 color, s32 b)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct calls their constants are shared in registers. */
+    Func_02003110(color, b);
+}
+
+static inline void Ov68f_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; as a direct call the actor loads before the coordinates. */
+    ObjectMotion_ResetAndSetPosition(actor, x, z);
+}
+
+static inline void Ov68f_SetWork(s32 a, s32 b, s32 c)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct calls their constants are shared in registers. */
+    Func_02003000(a, b, c);
+}
+
 #endif

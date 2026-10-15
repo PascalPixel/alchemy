@@ -62,7 +62,12 @@ void Func_0200009c(void)
     Func_02000610_(Data_0200073c[index].map, Data_0200073c[index].x, Data_0200073c[index].z);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
     Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_SetModeById(gPartyState.current_owner, 2);
+    {
+        s32 mode = 2;
+
+        __asm__ ("" : "+l"(mode));
+        Object_SetModeById(gPartyState.current_owner, mode);
+    }
     if (index != 4) {
         ObjectMotion_CenterOnColumn_(gPartyState.current_owner, 2, -8);
         Battle_WaitMode0(10);

@@ -686,20 +686,6 @@ Func_0802b7e0:
 	.thumb_func
 Func_0802a650:
 	.incbin "baserom.gba", 0x0002de8c, 0x00000828
-	.section .rom.0002e91c, "ax"
-	.global ResourceSlot_NumberTable
-ResourceSlot_NumberTable:
-	.incbin "baserom.gba", 0x0002e91c, 0x00000230
-	.section .rom.0002eb4c, "ax"
-	.global Map_TileDissolveOrder
-Map_TileDissolveOrder:
-	.incbin "baserom.gba", 0x0002eb4c, 0x0000004c
-	.section .rom.0002ec48, "ax"
-	.global Script_MainScript
-Script_MainScript:
-	.incbin "baserom.gba", 0x0002ec48, 0x00000058
-	.section .rom.0002ece0, "ax"
-	.incbin "baserom.gba", 0x0002ece0, 0x000000e4
 	.section .rom.0002efc4, "ax"
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:

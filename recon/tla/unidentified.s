@@ -31,60 +31,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .unidentified.0802e91c,"a"
-	.global ResourceSlot_NumberTable
-ResourceSlot_NumberTable:
-	.incbin "baserom.gba", 0x0002e91c, 0x000001a8
-	.global Data_0802eac4
-Data_0802eac4:
-	.incbin "baserom.gba", 0x0002eac4, 0x00000010
-	.global Data_0802ead4
-Data_0802ead4:
-	.incbin "baserom.gba", 0x0002ead4, 0x00000008
-	.global Data_0802eadc
-Data_0802eadc:
-	.incbin "baserom.gba", 0x0002eadc, 0x00000008
-	.global Data_0802eae4
-Data_0802eae4:
-	.incbin "baserom.gba", 0x0002eae4, 0x00000020
-	.global Data_0802eb04
-Data_0802eb04:
-	.incbin "baserom.gba", 0x0002eb04, 0x00000040
-	.global Data_0802eb44
-Data_0802eb44:
-	.incbin "baserom.gba", 0x0002eb44, 0x00000008
-	.global Map_TileDissolveOrder
-Map_TileDissolveOrder:
-	.incbin "baserom.gba", 0x0002eb4c, 0x00000044
-	.global Data_0802eb90
-Data_0802eb90:
-	.incbin "baserom.gba", 0x0002eb90, 0x00000008
-	.section .unidentified.0802ec48,"a"
-	.global Script_MainScript
-Script_MainScript:
-	.incbin "baserom.gba", 0x0002ec48, 0x00000014
-	.global Data_0802ec5c
-Data_0802ec5c:
-	.incbin "baserom.gba", 0x0002ec5c, 0x00000020
-	.global Data_0802ec7c
-Data_0802ec7c:
-	.incbin "baserom.gba", 0x0002ec7c, 0x0000000c
-	.global Data_0802ec88
-Data_0802ec88:
-	.incbin "baserom.gba", 0x0002ec88, 0x0000000c
-	.global Data_0802ec94
-Data_0802ec94:
-	.incbin "baserom.gba", 0x0002ec94, 0x0000000c
-	.section .unidentified.0802ece0,"a"
-	.global Data_0802ece0
-Data_0802ece0:
-	.incbin "baserom.gba", 0x0002ece0, 0x00000048
-	.global Data_0802ed28
-Data_0802ed28:
-	.incbin "baserom.gba", 0x0002ed28, 0x0000000c
-	.global Data_0802ed34
-Data_0802ed34:
-	.incbin "baserom.gba", 0x0002ed34, 0x00000090
 	.section .unidentified.0802efc4,"a"
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:

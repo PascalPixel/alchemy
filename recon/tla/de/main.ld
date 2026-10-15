@@ -3272,7 +3272,7 @@ SECTIONS
     "*/games/tla/src/graphics/field_fx/pebbles.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.0096a86f)
     "*/games/tla/src/graphics/field_fx/golden_trident.o"(.rodata)
-    "*/recon/tla/de/rom.o"(.rom.0096a8d4)
+    "*/games/tla/src/graphics/field_fx/fire_column.o"(.rodata)
     "*/games/tla/src/graphics/field/green_panel.o"(.rodata)
     "*/games/tla/src/graphics/ui/menuspr.o"(.rodata)
     "*/games/tla/src/graphics/monster/blue_devil.o"(.rodata)

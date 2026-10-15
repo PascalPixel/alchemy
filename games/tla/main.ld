@@ -3387,7 +3387,7 @@ SECTIONS
     "*/games/tla/src/graphics/field_fx/pebbles.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0096a7f7)
     "*/games/tla/src/graphics/field_fx/golden_trident.o"(.rodata)
-    "*/recon/tla/ja/rom.o"(.rom.0096a85c)
+    "*/games/tla/src/graphics/field_fx/fire_column.o"(.rodata)
     "*/games/tla/src/graphics/field/green_panel.o"(.rodata)
     "*/games/tla/src/graphics/ui/menuspr.o"(.rodata)
     "*/games/tla/src/graphics/monster/blue_devil.o"(.rodata)

@@ -513,7 +513,7 @@ Resource_DirectoryTable:
 	resource , FieldFx_Runes
 	resource , FieldFx_Pebbles
 	resource , FieldFx_GoldenTrident
-	resource , Resource_Data1F7
+	resource , FieldFx_FireColumn
 	resource , Field_GreenPanel
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA

@@ -5,7 +5,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a2/entry.o"(.text)
         "*/games/tla/src/field/overlay_6a2/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_6a2/scene_events.o"(.text)
-        "*/resource_6a2_overlay.o"(.text.x02008290)
         "*/games/tla/src/field/overlay_6a2/prepare.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/games/tla/src/field/overlay_6a2/lightflag.o"(.text)

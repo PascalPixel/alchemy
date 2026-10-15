@@ -11,8 +11,9 @@
  * Left: order and one instruction. The native takes &pos as add r1, sp, #64
  * where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
  * in the native the address passes through a low register before r8, in the
- * draft r8's pseudo is reloaded); 0xc80 is built whole before the first call in the
- * native; the rest are single swaps of a load with its neighbour.
+ * draft r8's pseudo is reloaded); 0xc80 is built whole before the first
+ * call in the native; the rest are single swaps of a load with its
+ * neighbour.
  *
  * Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
  * temporary for target->z, a block, a moved statement); a greedy scan of

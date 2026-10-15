@@ -55,68 +55,6 @@ Func_020000f4:
 	.4byte Data_02002608
 .L_02008154:
 	.4byte 0x0500019e
-	.section .text.x02008158,"ax",%progbits
-	.global Func_02000158
-	.thumb_func
-Func_02000158:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #214
-	movs r2, #129
-	lsls r1, r1, #1
-	lsls r2, r2, #1
-	adds r3, r3, r1
-	adds r2, #255
-	movs r1, #200
-	str r2, [r3]
-	lsls r1, r1, #4
-	ldr r0, .L_020081cc
-	bl Scheduler_AddOrUpdateCallback
-	movs r1, #3
-	movs r0, #8
-	bl ObjectMotion_SetActionVariant
-	ldr r2, .L_020081d0
-	movs r1, #241
-	lsls r1, r1, #1
-	adds r3, r2, r1
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #6
-	bne .L_020081a6
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r2, r1
-	ldr r0, [r3]
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #32
-	orrs r3, r2
-	strb r3, [r0]
-.L_020081a6:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #106
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020081c8
-	movs r0, #7
-	movs r1, #0
-	movs r2, #0
-	bl Func_02002024
-	movs r0, #15
-	movs r1, #0
-	movs r2, #0
-	bl Func_02002024
-.L_020081c8:
-	movs r0, #0
-	pop {pc}
-.L_020081cc:
-	.4byte Func_020000f4
-.L_020081d0:
-	.4byte gPartyState
 	.section .text.x020081d8,"ax",%progbits
 	.balign 4
 	.global Func_020001d8

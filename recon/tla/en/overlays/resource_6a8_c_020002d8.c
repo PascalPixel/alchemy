@@ -1,3 +1,8 @@
+/* Draft, differ 4 of 107: the facing check of 6a8, written as ☀️'s SceneActor_CheckFacingAndRange
+ * (kuupuappu_range.h) with ⚓️'s early exit on unknown_63 and the event work's count over 120. The
+ * native loads the facing between the right and left angles (adds r1; ldrh; adds r4), this form after
+ * both. Tried: the four masks in eight other orders (14 to 86), three minutes of permute (nothing
+ * better); the paused pointer before the count test is what brought it from 20 to 4. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "eventwrk.h"
@@ -38,11 +43,14 @@ s32 Func_020002d8(struct FacingActor *actor, struct FacingActor *target, s32 ran
         u32 facing = actor->facing & 0xf000;
 
         if (forward == facing || right == facing || left == facing || force != 0) {
-            if (((struct EventWork *)Ram_HeapSlots->event_work)->unknown_184 > 120) {
-                actor->paused = 0;
+            s16 count = ((struct EventWork *)Ram_HeapSlots->event_work)->unknown_184;
+            u8 *paused = &actor->paused;
+
+            if (count > 120) {
+                *paused = 0;
                 Func_020043c4(actor, 2);
             } else {
-                actor->paused = 1;
+                *paused = 1;
                 Func_020043c4(actor, 1);
                 result = 1;
             }

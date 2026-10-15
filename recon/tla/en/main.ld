@@ -1979,8 +1979,6 @@ SECTIONS
         "*/recon/tla/raw/0814bee0.o"(.text)
         "*/games/tla/src/battle/effect/shake_step.o"(.text)
         "*/games/tla/src/battle/effect/run_no_effect_frames.o"(.text)
-        "*/recon/tla/raw/0814c992.o"(.text)
-        "*/recon/tla/raw/0814c994.o"(.text)
         "*/games/tla/src/battle/effect/window_edge_table.o"(.text)
         "*/games/tla/src/battle/effect/spawn_living.o"(.text)
         "*/recon/tla/raw/0814cca8.o"(.text)

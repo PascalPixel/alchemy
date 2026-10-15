@@ -10,8 +10,157 @@ struct FxRunWork {
     s32 *script;
 };
 
+struct BattleEffectArgument;
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
+void Func_08165ab4(s32 *arg);
+void Func_08148458(s32 *arg);
+void Func_08168a40(s32 *arg);
+void Func_08153ebc(s32 *arg);
+void Func_0814ce30(s32 *arg);
+void Func_081693d0(s32 *arg);
+void Func_08147ae0(s32 *arg);
+void Func_08146e00(s32 *arg);
+void Func_0816729c(s32 *arg);
+void Func_0814db04(s32 *arg);
+void Func_08158dc8(s32 *arg);
+void Func_0814bee0(s32 *arg);
+void Func_08170364(s32 *arg);
+void Func_08179f18(s32 *arg);
+void Func_08191d60(s32 *arg);
+void Func_0815b764(s32 *arg);
+void Func_08186dfc(s32 *arg);
+void Func_0814153c(s32 *arg);
+void Func_08182aa8(s32 *arg);
+void Func_0817ea58(s32 *arg);
+void Func_0815cde8(s32 *arg);
+void Func_081843fc(s32 *arg);
+void Func_08175f74(s32 *arg);
+void Func_08192c9c(s32 *arg);
+void Func_08180c94(s32 *arg);
+void Func_0818cb74(s32 *arg);
+void Func_0813fd84(s32 *arg);
+void Func_0818df5c(s32 *arg);
+
 extern void (*Data_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
+
+// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
+// with the effect's three work blocks taken.
+void Func_0814c994(s32 *arg)
+{
+    struct FxRunWork *work;
+
+    Runtime_AllocateHeapBlock(100, 0x302);
+    Runtime_AllocateHeapBlock(92, 0x7b7c);
+    Runtime_AllocateHeapBlock(96, 0x4000);
+    /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0 offset is started, as in Func_0814cb60 (differ 2 without it). */
+    do
+    {
+        work = (struct FxRunWork *)Ram_HeapSlots->battle_fx_work[0];
+    } while (0);
+    work->script = arg;
+    work->active = 1;
+    if (*arg == 0)
+    {
+        BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg);
+    }
+    else
+    {
+        switch (*arg)
+        {
+        case 1:
+            Func_08165ab4(arg);
+            break;
+        case 2:
+            Func_08148458(arg);
+            break;
+        case 3:
+            Func_08168a40(arg);
+            break;
+        case 4:
+            Func_08153ebc(arg);
+            break;
+        case 5:
+            Func_0814ce30(arg);
+            break;
+        case 6:
+            Func_081693d0(arg);
+            break;
+        case 7:
+            Func_08147ae0(arg);
+            break;
+        case 8:
+            Func_08146e00(arg);
+            break;
+        case 9:
+            Func_0816729c(arg);
+            break;
+        case 10:
+            Func_0814db04(arg);
+            break;
+        case 11:
+            BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg);
+            break;
+        case 12:
+            Func_08158dc8(arg);
+            break;
+        case 13:
+            Func_0814bee0(arg);
+            break;
+        case 14:
+            Func_08170364(arg);
+            break;
+        case 15:
+            Func_08179f18(arg);
+            break;
+        case 16:
+            Func_08191d60(arg);
+            break;
+        case 17:
+            Func_0815b764(arg);
+            break;
+        case 18:
+            Func_08186dfc(arg);
+            break;
+        case 19:
+            Func_0814153c(arg);
+            break;
+        case 20:
+            Func_08182aa8(arg);
+            break;
+        case 21:
+            Func_0817ea58(arg);
+            break;
+        case 22:
+            Func_0815cde8(arg);
+            break;
+        case 23:
+            Func_081843fc(arg);
+            break;
+        case 24:
+            Func_08175f74(arg);
+            break;
+        case 25:
+            Func_08192c9c(arg);
+            break;
+        case 26:
+            Func_08180c94(arg);
+            break;
+        case 27:
+            Func_0818cb74(arg);
+            break;
+        case 28:
+            Func_0813fd84(arg);
+            break;
+        case 29:
+            Func_0818df5c(arg);
+            break;
+        }
+    }
+    Runtime_ReleaseHeapBlock(96);
+    Runtime_ReleaseHeapBlock(92);
+    Runtime_ReleaseHeapBlock(100);
+}
 
 // Runs one battle effect script: takes the effect's three work blocks, calls
 // the handler its first word selects, then gives the blocks back.

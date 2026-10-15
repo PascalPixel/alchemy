@@ -1965,8 +1965,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.0014b9e8)
     "*/games/tla/src/battle/effect/shake_step.o"(.text)
     "*/games/tla/src/battle/effect/run_no_effect_frames.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0014c992)
-    "*/recon/tla/es/rom.o"(.rom.0014c994)
     "*/games/tla/src/battle/effect/window_edge_table.o"(.text)
     "*/games/tla/src/battle/effect/spawn_living.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0014cca8)

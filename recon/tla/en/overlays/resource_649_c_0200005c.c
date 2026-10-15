@@ -3,7 +3,12 @@
  * scenes.s (with ResourceId_FarCall00B in resource/directory.s). Left: the
  * native rebuilds the 3599 bound and reloads gInput in both wait loops (a for
  * loop hoists them; a goto loop keeps them but compares 3600), re-reads the
- * entrance with ldrsh before the third test and builds 0x226 from 0x225. */
+ * entrance with ldrsh before the third test and builds 0x226 from 0x225.
+ * Measured: in the for loop loop.c moves gInput's address (a move-insn,
+ * savings 1, against 8 real insns) and the 3599 stays because combine
+ * never sees it beside the compare; in the goto loop combine canonicalizes
+ * GT 3599 to GE 3600 (ARM's immediate rule). A one-pass block around the
+ * read rotates the loop (worse). */
 #include "types.h"
 #include "input.h"
 #include "object_runtime.h"

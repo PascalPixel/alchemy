@@ -1414,7 +1414,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/d00f0ab0.o"(.rodata)
         "*/games/tla/src/battle/effect/ground_offsets.o"(.rodata)
         "*/games/tla/src/battle/effect/d00f0b7c.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f0bfc)
+        "*/games/tla/src/battle/effect/particle.o"(.rodata)
         "*/games/tla/src/battle/effect/cyclepat.o"(.rodata)
         "*/games/tla/src/battle/effect/fxtables.o"(.rodata)
         "*/games/tla/src/battle/effect/d00f1100.o"(.rodata)

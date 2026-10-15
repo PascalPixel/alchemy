@@ -4263,26 +4263,6 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000eda00, 0x000000c0
 	.section .rom.000ef810, "ax"
 	.incbin "baserom.gba", 0x000ef810, 0x00000008
-	.section .rom.000f0bf0, "ax"
-	.global Data_080f0bfc
-Data_080f0bfc:
-	.incbin "baserom.gba", 0x000f0bf0, 0x00000008
-	.section .rom.000f0bf8, "ax"
-	.global Data_080f0c04
-Data_080f0c04:
-	.incbin "baserom.gba", 0x000f0bf8, 0x00000250
-	.section .rom.000f0e48, "ax"
-	.global BattleFx_CommonParticleScript
-BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x000f0e48, 0x00000024
-	.section .rom.000f0e6c, "ax"
-	.global Data_080f0e78
-Data_080f0e78:
-	.incbin "baserom.gba", 0x000f0e6c, 0x00000024
-	.section .rom.000f0e90, "ax"
-	.global Data_080f0e9c
-Data_080f0e9c:
-	.incbin "baserom.gba", 0x000f0e90, 0x00000008
 	.section .rom.000f21c4, "ax"
 	.incbin "baserom.gba", 0x000f21c4, 0x00000034
 	.section .rom.000f3210, "ax"

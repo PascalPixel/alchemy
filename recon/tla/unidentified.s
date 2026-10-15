@@ -390,49 +390,6 @@ Battle_Effect91Classes:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.section .unidentified.080f0bfc,"a"
-	.global Data_080f0bfc
-Data_080f0bfc:
-	.incbin "baserom.gba", 0x000f0bfc, 0x00000008
-	.global Data_080f0c04
-Data_080f0c04:
-	.incbin "baserom.gba", 0x000f0c04, 0x00000018
-	.global Data_080f0c1c
-Data_080f0c1c:
-	.incbin "baserom.gba", 0x000f0c1c, 0x00000047
-	.global Data_080f0c63
-Data_080f0c63:
-	.incbin "baserom.gba", 0x000f0c63, 0x00000055
-	.global Data_080f0cb8
-Data_080f0cb8:
-	.incbin "baserom.gba", 0x000f0cb8, 0x0000004f
-	.global Data_080f0d07
-Data_080f0d07:
-	.incbin "baserom.gba", 0x000f0d07, 0x00000057
-	.global Data_080f0d5e
-Data_080f0d5e:
-	.incbin "baserom.gba", 0x000f0d5e, 0x0000005d
-	.global Data_080f0dbb
-Data_080f0dbb:
-	.incbin "baserom.gba", 0x000f0dbb, 0x00000045
-	.global Data_080f0e00
-Data_080f0e00:
-	.incbin "baserom.gba", 0x000f0e00, 0x00000054
-	.global BattleFx_CommonParticleScript
-BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x000f0e54, 0x00000004
-	.global Data_080f0e58
-Data_080f0e58:
-	.incbin "baserom.gba", 0x000f0e58, 0x00000008
-	.global Data_080f0e60
-Data_080f0e60:
-	.incbin "baserom.gba", 0x000f0e60, 0x00000018
-	.global Data_080f0e78
-Data_080f0e78:
-	.incbin "baserom.gba", 0x000f0e78, 0x00000024
-	.global Data_080f0e9c
-Data_080f0e9c:
-	.incbin "baserom.gba", 0x000f0e9c, 0x00000008
 	.section .unidentified.080f21d0,"a"
 	.incbin "baserom.gba", 0x000f21d0, 0x00000004
 	.global Data_080f21d4

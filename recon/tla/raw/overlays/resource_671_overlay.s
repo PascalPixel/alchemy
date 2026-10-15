@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
 	.balign 4
 	.global Func_020000b8
@@ -2025,8 +2021,6 @@ Func_020020f0:
 	.4byte 0x00000079
 .L_0200a2cc:
 	.4byte 0x0000007b
-	.section .text.x0200a392,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200a394,"ax",%progbits
 	.balign 4
 	.global Func_02002394

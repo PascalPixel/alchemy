@@ -2128,11 +2128,8 @@ Func_02001388:
 	.4byte 0xc000a000
 .L_02009540:
 	.4byte Data_02002e32
-	.section .text.x0200974e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02009786,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009788,"ax",%progbits
+	.balign 4
 	.global Func_02001788
 	.thumb_func
 Func_02001788:
@@ -3021,9 +3018,8 @@ Func_02001db8:
 	.4byte 0xffff6667
 .L_02009ef4:
 	.4byte gPartyState
-	.section .text.x02009f4e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009f50,"ax",%progbits
+	.balign 4
 	.global Func_02001f50
 	.thumb_func
 Func_02001f50:

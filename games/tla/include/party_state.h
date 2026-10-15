@@ -47,7 +47,7 @@ struct PartyState {
     u8 unknown_24c[8];
     s16 pending_djinn_event;
     s16 unknown_256;
-    u8 unknown_258[4];
+    s32 encounter_steps;
     u16 tally_25c;
     u8 unknown_25e[6];
     s32 avoid_distance;
@@ -60,7 +60,10 @@ struct PartyState {
     u8 counter_274;
     u8 unknown_275;
     s16 owner_override;
-    u8 unknown_278[0x44];
+    s32 saved_x;
+    s32 saved_z;
+    s32 unknown_280;
+    u8 unknown_284[0x38];
     u16 forge_item;
     u8 unknown_2be[4];
     u8 unknown_2c2;

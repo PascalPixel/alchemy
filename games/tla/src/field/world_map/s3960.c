@@ -1,10 +1,23 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "ram_buffer.h"
+#include "animspr.h"
+#include "io_write_queue.h"
 
 extern u8 Data_02006c08[];
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020036a8(void);
+
+// While the object system runs, the world map's blend is queued for the
+// next frames.
+void Func_020038e4(void)
+{
+    if ((u16)Ram_HeapSlots->object_system->suspended == 0) {
+        IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
+        IO_WRITE_QUEUE_PUSH(0x4000054, 12, 0x20000);
+    }
+}
 
 static inline void ClearWords(void *destination, s32 size)
 {

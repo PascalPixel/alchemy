@@ -1053,53 +1053,6 @@ Func_02000fb8:
 	.4byte Func_02000540
 .L_0200904c:
 	.4byte 0x0000009c
-	.section .text.x02009054,"ax",%progbits
-	.global Func_02001054
-	.thumb_func
-Func_02001054:
-	push {r5, lr}
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_020090ac
-	bl Scheduler_AddOrUpdateCallback
-	bl Func_02001dfc
-	movs r1, #128
-	movs r2, #8
-	movs r3, #9
-	lsls r1, r1, #2
-	movs r0, #0
-	bl Func_02001e04
-	movs r0, #170
-	bl Func_02001dec
-	bl Func_02000f98
-	ldr r3, .L_020090b0
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r5, r3, r2
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #3
-	bne .L_02009090
-	bl Func_02001500
-.L_02009090:
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #4
-	bne .L_0200909c
-	bl Func_02001500
-.L_0200909c:
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #5
-	bne .L_020090a8
-	bl Func_02001500
-.L_020090a8:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020090ac:
-	.4byte Func_020003e8
-.L_020090b0:
-	.4byte gPartyState
 	.section .text.x020090d8,"ax",%progbits
 	.global Func_020010d8
 	.thumb_func

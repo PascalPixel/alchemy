@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_679/events_f.o"(.text)
         "*/resource_679_overlay.o"(.text.x02008fb8)
         "*/games/tla/src/field/overlay_679/prepare.o"(.text)
-        "*/resource_679_overlay.o"(.text.x02009054)
+        "*/games/tla/src/field/overlay_679/s1054.o"(.text)
         "*/games/tla/src/field/overlay_679/events_g.o"(.text)
         "*/resource_679_overlay.o"(.text.x020090d8)
         "*/games/tla/src/field/overlay_679/events_h.o"(.text)

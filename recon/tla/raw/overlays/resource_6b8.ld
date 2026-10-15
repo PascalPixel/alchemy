@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b8/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_6b8/exits.o"(.text)
         "*/games/tla/src/field/overlay_6b8/scene_events.o"(.text)
-        "*/resource_6b8_overlay.o"(.text.x0200879c)
+        "*/games/tla/src/field/overlay_6b8/s079c.o"(.text)
         "*/games/tla/src/field/overlay_6b8/prepare.o"(.text)
         "*/resource_6b8_overlay.o"(.text.x02008a10)
         "*/resource_6b8_overlay.o"(.text.x02008ad0)

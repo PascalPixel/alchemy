@@ -4,12 +4,11 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_69d/entry.o"(.text)
         "*/games/tla/src/field/overlay_69d/scene_tables.o"(.text)
-        "*/resource_69d_overlay.o"(.text.x02008054)
         "*/games/tla/src/field/overlay_69d/scene_events.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02008244)
         "*/resource_69d_overlay.o"(.text.x02008300)
         "*/resource_69d_overlay.o"(.text.x02008384)
-        "*/resource_69d_overlay.o"(.text.x020084fc)
+        "*/games/tla/src/field/overlay_69d/s04fc.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_69d_overlay.o"(.text.x020085d6)
         "*/games/tla/src/field/overlay_69d/s05d8.o"(.text)

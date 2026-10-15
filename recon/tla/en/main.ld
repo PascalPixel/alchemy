@@ -1423,7 +1423,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/placement.o"(.rodata)
         "*/games/tla/src/field/scnitem.o"(.rodata)
         "*/games/tla/src/field/common/object/d00f2e9c.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f321c)
+        "*/games/tla/src/field/common/object/scripts.o"(.rodata)
         "*/games/tla/src/field/common/object/d00f3798.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f385e)
         "*/games/tla/src/field/common/object/d00f38b2.o"(.rodata)

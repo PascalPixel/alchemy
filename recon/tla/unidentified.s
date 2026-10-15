@@ -366,68 +366,6 @@ Data_080f1120:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f1140, 0x00000668
-	.section .unidentified.080f321c,"a"
-	.incbin "baserom.gba", 0x000f321c, 0x0000000c
-	.global Data_080f3228
-Data_080f3228:
-	.incbin "baserom.gba", 0x000f3228, 0x00000008
-	.global Data_080f3230
-Data_080f3230:
-	.incbin "baserom.gba", 0x000f3230, 0x000000a0
-	.global Object_OffsetMotionScript
-Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f32d0, 0x00000010
-	.global Data_080f32e0
-Data_080f32e0:
-	.incbin "baserom.gba", 0x000f32e0, 0x00000020
-	.global ObjectMotion_StepAngleScript
-ObjectMotion_StepAngleScript:
-	.incbin "baserom.gba", 0x000f3300, 0x0000000c
-	.global Data_080f330c
-Data_080f330c:
-	.incbin "baserom.gba", 0x000f330c, 0x00000004
-	.global Data_080f3310
-Data_080f3310:
-	.incbin "baserom.gba", 0x000f3310, 0x0000010c
-	.global Data_080f341c
-Data_080f341c:
-	.incbin "baserom.gba", 0x000f341c, 0x0000000c
-	.global Data_080f3428
-Data_080f3428:
-	.incbin "baserom.gba", 0x000f3428, 0x000000bc
-	.global Data_080f34e4
-Data_080f34e4:
-	.incbin "baserom.gba", 0x000f34e4, 0x00000004
-	.global Data_080f34e8
-Data_080f34e8:
-	.incbin "baserom.gba", 0x000f34e8, 0x0000000c
-	.global Data_080f34f4
-Data_080f34f4:
-	.incbin "baserom.gba", 0x000f34f4, 0x0000000c
-	.global Data_080f3500
-Data_080f3500:
-	.incbin "baserom.gba", 0x000f3500, 0x0000000c
-	.global Data_080f350c
-Data_080f350c:
-	.incbin "baserom.gba", 0x000f350c, 0x000000bc
-	.global Data_080f35c8
-Data_080f35c8:
-	.incbin "baserom.gba", 0x000f35c8, 0x0000004c
-	.global Data_080f3614
-Data_080f3614:
-	.incbin "baserom.gba", 0x000f3614, 0x00000128
-	.global Data_080f373c
-Data_080f373c:
-	.incbin "baserom.gba", 0x000f373c, 0x00000014
-	.global Data_080f3750
-Data_080f3750:
-	.incbin "baserom.gba", 0x000f3750, 0x00000014
-	.global Data_080f3764
-Data_080f3764:
-	.incbin "baserom.gba", 0x000f3764, 0x0000001c
-	.global Object_LinkedMotionScript
-Object_LinkedMotionScript:
-	.incbin "baserom.gba", 0x000f3780, 0x00000018
 	.section .unidentified.080f385e,"a"
 	.global Data_080f385e
 Data_080f385e:

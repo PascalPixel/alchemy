@@ -3824,68 +3824,6 @@ BattleFx_RandomChildValues:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f104c, 0x00000668
-	.section .rom.000f3128, "ax"
-	.incbin "baserom.gba", 0x000f3128, 0x000000b4
-	.section .rom.000f31dc, "ax"
-	.global Object_OffsetMotionScript
-Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f31dc, 0x00000010
-	.section .rom.000f31ec, "ax"
-	.global Data_080f32e0
-Data_080f32e0:
-	.incbin "baserom.gba", 0x000f31ec, 0x00000020
-	.section .rom.000f320c, "ax"
-	.global ObjectMotion_StepAngleScript
-ObjectMotion_StepAngleScript:
-	.incbin "baserom.gba", 0x000f320c, 0x00000128
-	.section .rom.000f3334, "ax"
-	.global Data_080f3428
-Data_080f3428:
-	.incbin "baserom.gba", 0x000f3334, 0x000000bc
-	.section .rom.000f33f0, "ax"
-	.global Data_080f34e4
-Data_080f34e4:
-	.incbin "baserom.gba", 0x000f33f0, 0x00000004
-	.section .rom.000f33f4, "ax"
-	.global Data_080f34e8
-Data_080f34e8:
-	.incbin "baserom.gba", 0x000f33f4, 0x0000000c
-	.section .rom.000f3400, "ax"
-	.global Data_080f34f4
-Data_080f34f4:
-	.incbin "baserom.gba", 0x000f3400, 0x0000000c
-	.section .rom.000f340c, "ax"
-	.global Data_080f3500
-Data_080f3500:
-	.incbin "baserom.gba", 0x000f340c, 0x0000000c
-	.section .rom.000f3418, "ax"
-	.global Data_080f350c
-Data_080f350c:
-	.incbin "baserom.gba", 0x000f3418, 0x000000bc
-	.section .rom.000f34d4, "ax"
-	.global Data_080f35c8
-Data_080f35c8:
-	.incbin "baserom.gba", 0x000f34d4, 0x0000004c
-	.section .rom.000f3520, "ax"
-	.global Data_080f3614
-Data_080f3614:
-	.incbin "baserom.gba", 0x000f3520, 0x00000128
-	.section .rom.000f3648, "ax"
-	.global Data_080f373c
-Data_080f373c:
-	.incbin "baserom.gba", 0x000f3648, 0x00000014
-	.section .rom.000f365c, "ax"
-	.global Data_080f3750
-Data_080f3750:
-	.incbin "baserom.gba", 0x000f365c, 0x00000014
-	.section .rom.000f3670, "ax"
-	.global Data_080f3764
-Data_080f3764:
-	.incbin "baserom.gba", 0x000f3670, 0x0000001c
-	.section .rom.000f368c, "ax"
-	.global Object_LinkedMotionScript
-Object_LinkedMotionScript:
-	.incbin "baserom.gba", 0x000f368c, 0x00000018
 	.section .rom.000f376a, "ax"
 	.incbin "baserom.gba", 0x000f376a, 0x00000054
 	.section .rom.000f380d, "ax"

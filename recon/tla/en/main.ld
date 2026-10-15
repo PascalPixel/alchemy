@@ -222,7 +222,6 @@ SECTIONS
         "*/recon/tla/raw/080233a8.o"(.text)
         "*/games/tla/src/field/common/object/dispatch.o"(.text)
         "*/games/tla/src/field/common/object/dispinit.o"(.text)
-        "*/recon/tla/raw/08023524.o"(.text)
         "*/games/tla/src/field/common/object/child_state.o"(.text)
         "*/games/tla/src/field/common/object/command.o"(.text)
         "*/recon/tla/raw/0802367e.o"(.text)

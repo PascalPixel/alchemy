@@ -234,7 +234,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000233a8)
     "*/games/tla/src/field/common/object/dispatch.o"(.text)
     "*/games/tla/src/field/common/object/dispinit.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00023524)
     "*/games/tla/src/field/common/object/child_state.o"(.text)
     "*/games/tla/src/field/common/object/command.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0002367e)

@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ab/scene_events.o"(.text)
         "*/games/tla/src/field/overlay_6ab/dismiss.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x020082f4)
-        "*/resource_6ab_overlay.o"(.text.x0200855c)
+        "*/games/tla/src/field/overlay_6ab/s055c.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x020085b0)
         "*/resource_6ab_overlay.o"(.text.x02008714)
         "*/games/tla/src/field/overlay_6ab/s0ab4.o"(.text)

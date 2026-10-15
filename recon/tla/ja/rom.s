@@ -214,10 +214,9 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dd0, 0x00000028
 	.section .rom.00016e02, "ax"
 	.incbin "baserom.gba", 0x00016e02, 0x00000002
-	.section .rom.00017cd0, "ax"
-	.global Data_08017cd0
-Data_08017cd0:
-	.incbin "baserom.gba", 0x00017cd0, 0x00000018
+	.section .rom.00017ce4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00017ce4, 0x00000004
 	.section .rom.00017d08, "ax"
 	.incbin "baserom.gba", 0x00017d08, 0x00000008
 	.section .rom.00017d10, "ax"

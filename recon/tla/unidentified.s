@@ -1,7 +1,3 @@
-	.section .unidentified.08017cd0,"a"
-	.global Data_08017cd0
-Data_08017cd0:
-	.incbin "baserom.gba", 0x00017cd0, 0x00000014
 	.section .unidentified.08017d08,"a"
 	.global Data_08017d08
 Data_08017d08:

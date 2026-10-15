@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 gNumberTextBuffer[];
-extern const u8 Data_08017cd0[];
+extern const u8 Text_HexDigits[];
 extern u8 Data_03001110;
 extern u16 *Data_030011c4;
 
@@ -10,7 +10,7 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = gNumberTextBuffer;
-    const u8 *digits = Data_08017cd0;
+    const u8 *digits = Text_HexDigits;
     s32 index = 7;
 
     do {

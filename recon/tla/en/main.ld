@@ -166,7 +166,7 @@ SECTIONS
         "*/games/tla/src/lib/mathtan.o"(.rodata)
         "*/games/tla/src/system/memory/winpal.o"(.rodata)
         "*/games/tla/src/system/memory/syspal.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.08017cd0)
+        "*/games/tla/src/system/memory/numtext.o"(.rodata)
         "*/recon/tla/raw/08017ce4.o"(.text .rodata .data .padding)
         "*/games/tla/src/lib/q16_dot_product.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.08017d08)

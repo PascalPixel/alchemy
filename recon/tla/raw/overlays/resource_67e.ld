@@ -8,6 +8,8 @@ SECTIONS
         "*/games/tla/src/field/overlay_67e/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_67e/events.o"(.text)
         "*/games/tla/src/field/overlay_67e/s05b4.o"(.text)
+        "*/resource_67e_overlay.o"(.text.x0200860c)
+        "*/games/tla/src/field/overlay_67e/s06a4.o"(.text)
         "*/resource_67e_overlay.o"(.text.x02008814)
         "*/games/tla/src/field/overlay_67e/s0954.o"(.text)
         "*/resource_67e_overlay.o"(.text.x020089d0)

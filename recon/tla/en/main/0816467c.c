@@ -1,4 +1,5 @@
-/* Draft, differ 46 of 430: The Broken Seal's BattleEffect_RunImpactBurst
+/* Draft, differ 44 of 430 (2026-10-15; 46 before Func_081963ec returned its
+ * loader's s32, as nibble_pair.c now does): The Broken Seal's BattleEffect_RunImpactBurst
  * with The Lost Age's blitter loads (Func_081963ec(104, 19) and (188, 3),
  * read back from the heap slots at 0x68 and 0xbc), its resources (0x134,
  * 0x120, 0x121) and callback (Func_08143000 at 0xc80). Everything matches but reordered rows,
@@ -33,7 +34,7 @@ extern u8 gData_081989ea[];
 extern u16 gData_08197410[];
 
 void Func_08143000(void);
-void Func_081963ec(s32 slot, s32 kind);
+s32 Func_081963ec(s32 slot, s32 kind);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping, s32 gravity);
 void Audio_PlayCue(s32 cue);
 void Func_0816442c(s32 formation, s32 x, s32 y);

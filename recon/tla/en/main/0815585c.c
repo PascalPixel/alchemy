@@ -1,5 +1,5 @@
 /* Draft of Func_0815585c, The Broken Seal's BattleFx_PrepareCanvasEffect
- * (games/tbs/src/effect/effect.c): differ 169 of 818 (tla-en,
+ * (games/tbs/src/effect/effect.c): differ 165 of 818 (tla-en,
  * 2026-10-15). The Lost Age reworked it: the kind, the side and the anchor
  * come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
  * by jump table where The Broken Seal has five, anchor 6 keeps the effect
@@ -13,7 +13,8 @@
  * What moved it: the three heap slots read before the packed word is
  * unpacked (562 to 546), packed as unsigned (lsrs), and the fade step's
  * zero through a variable of its own in the long branch (546 to 169, found
- * by alchemy permute; tagged below).
+ * by alchemy permute; tagged below), and Func_081963ec
+ * returning its loader's s32, as nibble_pair.c now does (169 to 165).
  *
  * Left: allocation through the frame loop, from the prologue's first
  * spills (the native keeps anchor at sp+20 and reloads it for the test of
@@ -69,7 +70,7 @@ extern const u16 gData_08197410[];
 
 u8 *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
-void Func_081963ec(s32 slot, s32 modeAndFlags);
+s32 Func_081963ec(s32 slot, s32 modeAndFlags);
 struct BattleObj *GetBattleObjectSlotFar(s32 id);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);

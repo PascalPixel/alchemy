@@ -1,8 +1,9 @@
 /* Draft of Func_08127068, The Broken Seal's BattleFx_InitializeStarField
- * (games/tbs/src/battle/battle.c): differ 14 of 255 (tla-en, 2026-10-15),
+ * (games/tbs/src/battle/battle.c): differ 12 of 255 (tla-en, 2026-10-15),
  * ported with The Lost Age's heap slots (work 92, canvas 96, blitters 104
  * and 188) and packed blitter loader: Func_08138048(slot, mode << 4 | flags)
- * is BattleEffect_LoadWorkFar(slot, 7, 7, flags, 3 - mode). The twin's
+ * is BattleEffect_LoadWorkFar(slot, 7, 7, flags, 3 - mode), and returns its
+ * s32 as nibble_pair.c's Func_081963ec now does (14 to 12). The twin's
  * empty loop and unused Spark are not needed; its one-pass block for BG2X
  * stays. The callbacks are added at 0x480. The four resources are rows
  * 0x18c to 0x18f of the directory, read from the pool, so they need their
@@ -13,10 +14,9 @@
  * slot allocated after another 4 bytes that nothing uses; here mode is
  * the only slot (sub sp, #4; 4 rows with its two reloads). Then the
  * multiply entry's pool load comes two rows earlier in the native before
- * the ring loop, and the second blitter call sets r1 before r0. Tried for
- * the frame: an unused s32[1] or one-word struct (14, no slot), a u8[4]
- * (12, but it takes sp+4 and mode sp+0). alchemy permute 8 minutes from 89:
- * best 14 (the helper).
+ * the ring loop. Tried for the frame: an unused s32[1] or one-word struct
+ * (no slot), a u8[4] (it takes sp+4 and leaves mode sp+0). alchemy permute 8
+ * minutes from 89: best 14 (the helper).
  */
 #include "types.h"
 #include "dma.h"
@@ -62,7 +62,7 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void Func_08138048(s32 slot, s32 modeAndFlags);
+s32 Func_08138048(s32 slot, s32 modeAndFlags);
 s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
 s32 Func_08126e00(void);
 s32 Func_08127038(void);

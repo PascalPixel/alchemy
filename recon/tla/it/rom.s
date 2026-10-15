@@ -1381,10 +1381,6 @@ Func_0804e1d8:
 	.thumb_func
 Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e5c0, 0x00000190
-	.section .rom.0005c2e4, "ax"
-	.incbin "baserom.gba", 0x0005c2e4, 0x00000090
-	.section .rom.0005c3fc, "ax"
-	.incbin "baserom.gba", 0x0005c3fc, 0x00000010
 	.section .rom.000a3134, "ax"
 	.incbin "baserom.gba", 0x000a3134, 0x0000011a
 	.section .rom.000a328e, "ax"

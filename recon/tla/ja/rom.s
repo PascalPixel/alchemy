@@ -4097,18 +4097,6 @@ CharacterMenu_CursorWidths:
 	.global Data_08105a40
 Data_08105a40:
 	.incbin "baserom.gba", 0x00105a38, 0x0000001c
-	.section .rom.00108148, "ax"
-	.global Func_08108148
-	.type Func_08108148, %function
-	.thumb_func
-Func_08108148:
-	.incbin "baserom.gba", 0x00108148, 0x00000104
-	.section .rom.0010824c, "ax"
-	.global Func_0810824c
-	.type Func_0810824c, %function
-	.thumb_func
-Func_0810824c:
-	.incbin "baserom.gba", 0x0010824c, 0x00000078
 	.section .rom.001082c4, "ax"
 	.global Func_081082c4
 	.type Func_081082c4, %function
@@ -4231,6 +4219,10 @@ Func_0810b5c4:
 Func_0810b7b4:
 	.incbin "baserom.gba", 0x0010b7c4, 0x00000600
 	.section .rom.0010be08, "ax"
+	.global Func_0810bdf4
+	.type Func_0810bdf4, %function
+	.thumb_func
+Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010be08, 0x00000048
 	.section .rom.0010bed0, "ax"
 	.global Func_0810bebc

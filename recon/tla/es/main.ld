@@ -1666,8 +1666,6 @@ SECTIONS
     "*/games/tla/src/system/far_call/table_42.o"(.text .rodata .data .padding)
     "*/games/tla/src/menu/shop/list_items.o"(.text)
     "*/games/tla/src/menu/shop/open_work.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0010c148)
-    "*/recon/tla/es/rom.o"(.rom.0010c24c)
     "*/recon/tla/es/rom.o"(.rom.0010c2c4)
     "*/games/tla/src/menu/shop/preset.o"(.text)
     "*/games/tla/src/sound/command_wait_for_state_byte_clear.o"(.text)

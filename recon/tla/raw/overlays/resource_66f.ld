@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_66f/prepare.o"(.text)
         "*/games/tla/src/field/overlay_66f/s0960.o"(.text)
         "*/games/tla/src/field/overlay_66f/speed.o"(.text)
-        "*/resource_66f_overlay.o"(.text.x02008af0)
+        "*/games/tla/src/field/overlay_66f/s0af0.o"(.text)
         "*/games/tla/src/field/overlay_66f/s0d80.o"(.text)
         "*/games/tla/src/field/overlay_66f/triggers.o"(.text)
         "*/games/tla/src/field/overlay_66f/import.o"(.text)

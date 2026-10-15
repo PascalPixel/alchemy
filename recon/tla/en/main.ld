@@ -419,7 +419,7 @@ SECTIONS
         "*/recon/tla/raw/0803975c.o"(.text)
         "*/games/tla/src/graphics/window/process_channels.o"(.text)
         "*/recon/tla/raw/08039864.o"(.text)
-        "*/recon/tla/raw/08039ed0.o"(.text)
+        "*/games/tla/src/graphics/window/process_direct_work.o"(.text)
         "*/recon/tla/raw/08039f94.o"(.text)
         "*/games/tla/src/graphics/window/fill_halfwords_dma.o"(.text)
         "*/games/tla/src/graphics/window/draw_frame.o"(.text)

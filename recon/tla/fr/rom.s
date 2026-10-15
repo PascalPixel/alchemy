@@ -714,12 +714,12 @@ UiWindow_ClearInteriorTiles:
 	.thumb_func
 UiWork_ProcessRenderChannels:
 	.incbin "baserom.gba", 0x000397e0, 0x000006bc
-	.section .rom.00039e9c, "ax"
-	.global UiWork_ProcessDirectWork
-	.type UiWork_ProcessDirectWork, %function
+	.section .rom.00039f60, "ax"
+	.global Func_08039f94
+	.type Func_08039f94, %function
 	.thumb_func
-UiWork_ProcessDirectWork:
-	.incbin "baserom.gba", 0x00039e9c, 0x00000184
+Func_08039f94:
+	.incbin "baserom.gba", 0x00039f60, 0x000000c0
 	.section .rom.0003a27c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003a27c, 0x00000108

@@ -5,3 +5,4 @@
 Resource_Data0B0:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0b0_00.gbapal"
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0b0.parts.lz"
+	.byte 0x46, 0xcd	@ PACKER: left in the buffer by Summon_ChainedDemonTiles+0x1c4e

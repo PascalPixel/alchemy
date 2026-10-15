@@ -5,3 +5,4 @@
 	.global Resource_Data0CA
 Resource_Data0CA:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0ca.bitmap.lz"
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes

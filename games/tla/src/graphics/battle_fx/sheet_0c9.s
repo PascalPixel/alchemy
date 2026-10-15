@@ -5,3 +5,4 @@
 	.global Resource_Data0C9
 Resource_Data0C9:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0c9.bitmap.lz"
+	.byte 0x1e, 0x00, 0x84	@ PACKER: left in the buffer by Resource_Data0C8+0x29

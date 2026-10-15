@@ -5,3 +5,4 @@
 	.global Resource_Data181
 Resource_Data181:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_181.bitmap.lz"
+	.byte 0xf0	@ PACKER: left in the buffer by BattleFx_LightFanSheet+0x203

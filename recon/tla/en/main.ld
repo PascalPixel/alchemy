@@ -651,7 +651,6 @@ SECTIONS
         "*/recon/tla/raw/0804d28c.o"(.text)
         "*/games/tla/src/menu/resentry.o"(.text)
         "*/recon/tla/raw/0804d3e8.o"(.text)
-        "*/recon/tla/raw/0804d484.o"(.text)
         "*/games/tla/src/menu/selection.o"(.text)
         "*/recon/tla/raw/0804d5ac.o"(.text)
         "*/recon/tla/raw/0804d678.o"(.text)

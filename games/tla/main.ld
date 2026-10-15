@@ -593,7 +593,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0004d480)
     "*/games/tla/src/menu/resentry.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004d5dc)
-    "*/recon/tla/ja/rom.o"(.rom.0004d678)
     "*/games/tla/src/menu/selection.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004d764)
     "*/recon/tla/ja/rom.o"(.rom.0004d7ac)

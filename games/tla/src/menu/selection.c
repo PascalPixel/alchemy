@@ -11,11 +11,45 @@
 
 #include "types.h"
 #include "ram_buffer.h"
+#include "resmenu.h"
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
+struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 
 void Menu_CenterResourceEntries(s32, s32, s32);
+
+// Lays the entries out in a row three cells apart from x, on row y, and
+// opens the menu's window after them.
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
+{
+    struct ResourceMenuWork *work;
+    s32 i;
+    struct ResourceMenuEntry *entry;
+    s16 *widthp;
+
+    work = Ram_HeapSlots->menu_select_work;
+    widthp = &work->width;
+    *widthp = width + 2;
+    work->resource_base = resource_base;
+    work->row = y;
+    /* FAKEMATCH: the empty asm that reads the row back and passes the work
+       pointer on makes the count's address wait for the row's store, as the
+       native does; plainly the count's address (movs r7, #142) is started
+       first (one reordered pair, differ 2). The width is read back through
+       a pointer taken before it, which the asm leaves alone (differ 43
+       through the work pointer). Measured against it: operand-tied asms
+       with a memory clobber on x (differ 2), y (20) and the work pointer
+       (43). */
+    asm("" : "+r"(work) : "m"(work->row));
+    for (i = 0; i < work->count; i++) {
+        entry = &work->entries[i];
+        entry->y = y << 3;
+        entry->x = x << 3;
+        x += 3;
+    }
+    work->window = UiWindow_Create(x, y, *widthp, 3, 2);
+}
+
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {

@@ -1,49 +1,41 @@
-#include "inventory.h"
+/* Draft, differ 6 of 89 (2026-10-15), ported from The Broken Seal's BattleParty_CollectUnitList:
+ * the three halfword 0xff end markers load from the literal pool one or two rows earlier in the
+ * native than here (ldr r2, =0xff before lsls r3, r6, #1, and so on). */
+#include "types.h"
+#include "btlwork.h"
+#include "btlpty.h"
 
-extern u8 *BtlWk;
-extern s8 BattleParty_CenterOrderOffsets[];
+s32 BtlEnmList(s16 *unit_ids);
+extern const s8 Data_081287c8[];
 
-s32 BattleParty_PrepareActiveOwners(u16 *out);
-s32 BtlEnmList(u16 *out);
-
-void BattleParty_CollectUnitList(void)
+void Func_08118c68(void)
 {
     u16 buf[14];
-    u8 *state;
+    struct BtlWork *battle;
     s32 count;
     s32 i;
-    s32 offset;
     s32 index;
-    s32 last;
     s32 kind;
-    u16 *out;
 
-    state = BtlWk;
+    battle = Ram_HeapSlots->battle_work;
     count = BattleParty_PrepareActiveOwners(buf);
-    for (i = 0; i < count; i++) {
-        *(u16 *)(state + 88 + i * 2) = buf[i];
-    }
-    offset = count * 2 + 88;
-    *(u16 *)(state + offset) = 0xFF;
+    for (i = 0; i < count; i++)
+        battle->party_units[i] = buf[i];
+    battle->party_units[count] = 0xff;
 
     count = BtlEnmList(buf);
-    kind = state[66];
+    kind = battle->unknown_042;
     if (kind >= 0) {
         if (kind <= 1) {
-            for (i = 0; i < count; i++) {
-                out = (u16 *)(state + 2);
-                out[50 + i] = buf[i];
-            }
+            for (i = 0; i < count; i++)
+                battle->enm_no[i] = buf[i];
             goto done;
         }
     }
     for (i = 0; i < count; i++) {
-        index = (BattleParty_CenterOrderOffsets[i] + count / 2) * 2 + 100;
-        out = (u16 *)(state + 2);
-        *(u16 *)((u8 *)out + index) = buf[i];
+        index = Data_081287c8[i] + count / 2;
+        battle->enm_no[index] = buf[i];
     }
 done:
-    out = (u16 *)(state + 2);
-    last = count * 2 + 100;
-    *(u16 *)((u8 *)out + last) = 0xFF;
+    battle->enm_no[count] = 0xff;
 }

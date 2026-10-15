@@ -1601,7 +1601,6 @@ SECTIONS
     "*/games/tla/src/battle/presentation/tile_pattern.o"(.text)
     "*/games/tla/src/battle/party/reset_active_runtime_fields.o"(.text)
     "*/games/tla/src/battle/party/f118e64.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00118eb0)
     "*/recon/tla/fr/rom.o"(.rom.00118f6c)
     "*/games/tla/src/game/party/update_name_entries.o"(.text)
     "*/games/tla/src/graphics/text/copy_five_chars.o"(.text)

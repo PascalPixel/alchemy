@@ -4784,9 +4784,8 @@ DebugParty_LoadPreset:
 	.incbin "baserom.gba", 0x00118958, 0x00000274
 	.section .rom.00118c68, "ax"
 	.incbin "baserom.gba", 0x00118c68, 0x000000c4
-	.section .rom.00118eb0, "ax"
-	.incbin "baserom.gba", 0x00118eb0, 0x000000bc
 	.section .rom.00118f6c, "ax"
+	.balign 4
 	.global Func_08118f6c
 	.type Func_08118f6c, %function
 	.thumb_func

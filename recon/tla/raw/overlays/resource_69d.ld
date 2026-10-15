@@ -4,7 +4,6 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_69d/entry.o"(.text)
         "*/games/tla/src/field/overlay_69d/scene_tables.o"(.text)
-        "*/resource_69d_overlay.o"(.text.x02008054)
         "*/games/tla/src/field/overlay_69d/scene_events.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02008244)
         "*/resource_69d_overlay.o"(.text.x02008300)

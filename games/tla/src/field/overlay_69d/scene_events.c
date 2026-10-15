@@ -22,6 +22,8 @@ void Func_02000724();
 struct FieldActor *Object_GetById();
 void PartyInventory_Remove();
 void UiText_ShowPositionedMessageAndWait();
+u8 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
+s32 GameFlag_Test();
 
 struct EventWorkLock {
     u8 unknown_000[0x15a];
@@ -38,6 +40,24 @@ static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep the native registers */
     Func_02001df8(a, b, c, d, e, f);
+}
+
+static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value)
+{
+    /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's own constants (direct: differ 12) */
+    Func_02001ef0(x, z, layer, value);
+}
+
+void Func_02000054(void)
+{
+    MapCopy(17, 10, 1, 4, 19, 10);
+    MapCopyAttr(17, 10, 1, 1, 19, 10);
+    SetCollisionCode(0x1300000, 0xa00000, 0, 254);
+    Func_02001e70(14, 0x1f80000, 0xa80000);
+    if (GameFlag_Test(0xa00)) {
+        Func_02000724(14);
+        SetCollisionCode(0x1f00000, 0xa00000, 0, 254);
+    }
 }
 
 

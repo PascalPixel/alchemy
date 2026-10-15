@@ -1,57 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {r5, r6, lr}
-	sub sp, #8
-	movs r5, #19
-	movs r6, #10
-	movs r0, #17
-	movs r1, #10
-	movs r2, #1
-	movs r3, #4
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02001e00
-	movs r0, #17
-	movs r1, #10
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl Func_02001df8
-	movs r0, #152
-	movs r1, #160
-	lsls r1, r1, #16
-	movs r2, #0
-	movs r3, #254
-	lsls r0, r0, #17
-	bl Func_02001ef0
-	movs r1, #252
-	movs r2, #168
-	movs r0, #14
-	lsls r1, r1, #17
-	lsls r2, r2, #16
-	bl Func_02001e70
-	movs r0, #160
-	lsls r0, r0, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020080bc
-	movs r0, #14
-	bl Func_02000724
-	movs r0, #248
-	movs r1, #160
-	lsls r0, r0, #17
-	lsls r1, r1, #16
-	movs r2, #0
-	movs r3, #254
-	bl Func_02001ef0
-.L_020080bc:
-	add sp, #8
-	pop {r5, r6, pc}
 	.section .text.x02008244,"ax",%progbits
 	.global Func_02000244
 	.thumb_func

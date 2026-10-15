@@ -639,7 +639,6 @@ SECTIONS
         "*/recon/tla/raw/08045526.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/glyph/locentry.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/window/get_table_word_zero.o"(.text)
-        "*/recon/tla/raw/08045564.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/window/create_countdown_label_window.o"(.text)
         "*/games/tla/src/graphics/display/display.o"(.text)
         "*/recon/tla/raw/080456f8.o"(.text)

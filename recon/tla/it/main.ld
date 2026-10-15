@@ -611,7 +611,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.0004558a)
     "*/games/tla/src/graphics/glyph/locentry.o"(.text .rodata .data .padding)
     "*/games/tla/src/graphics/window/get_table_word_zero.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000455c8)
     "*/games/tla/src/graphics/window/create_countdown_label_window.o"(.text)
     "*/games/tla/src/graphics/display/display.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0004575c)

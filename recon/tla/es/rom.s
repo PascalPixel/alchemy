@@ -1252,8 +1252,6 @@ Graphics_MergeShiftedTileRows:
 	.incbin "baserom.gba", 0x00045348, 0x00000074
 	.section .rom.000455b2, "ax"
 	.incbin "baserom.gba", 0x000455b2, 0x00000002
-	.section .rom.000455f0, "ax"
-	.incbin "baserom.gba", 0x000455f0, 0x0000004c
 	.section .rom.00045784, "ax"
 	.incbin "baserom.gba", 0x00045784, 0x00000070
 	.section .rom.0004580a, "ax"

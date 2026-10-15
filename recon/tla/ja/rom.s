@@ -4521,7 +4521,7 @@ Func_08126944:
 	.type Func_08126978, %function
 	.thumb_func
 Func_08126978:
-	.incbin "baserom.gba", 0x00126974, 0x00000044
+	.incbin "baserom.gba", 0x00126974, 0x00000034
 	.section .rom.001269f4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001269f4, 0x000000ec

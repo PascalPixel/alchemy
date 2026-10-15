@@ -1843,7 +1843,6 @@ SECTIONS
         "*/recon/tla/raw/08126942.o"(.text)
         "*/recon/tla/raw/08126944.o"(.text)
         "*/recon/tla/raw/08126978.o"(.text)
-        "*/recon/tla/raw/081269ac.o"(.text)
         "*/games/tla/src/battle/mulq16.o"(.text)
         "*/games/tla/src/battle/presentation/init_transition_entries.o"(.text)
         "*/games/tla/src/battle/presentation/divide16.o"(.text)

@@ -1,12 +1,14 @@
-/* Near miss, differ 4 of 69, from ☀️'s SceneScript_SetupActors (torebi_machi.c)
- * with its byte-pointer store. Devices so far: the zero pinned to r3 keeps
- * it inside the actor loop (loop.c hoists it into r6 otherwise, differ 24);
- * empty asms on each side of Func_020006f0 keep the decrement after the call
- * (sched2 ranks it 46 against the call's 45). What remains: the native loads
- * the table address before the shift (a "+l" asm on the table pointer
- * re-allocates the whole call, differ 15), and Object_SetModeById's mode
- * before the owner id (plain, inline and value-returning calls all load the
- * owner first: both tie at priority 2 and RTL order puts r0 first). */
+/* Near miss, differ 2 of 69, from ☀️'s SceneScript_SetupActors (torebi_machi.c)
+ * and overlay 66d's Func_02000368 (adopted, the same function with other
+ * ids). Devices here: the zero pinned to r3 inside the actor loop (differ 24
+ * without), empty asms on each side of Func_020006f0 (the decrement after
+ * the call) and a "+l" asm on Object_SetModeById's mode (its mode before the
+ * owner id; overlay 66d needs none). What remains: the native loads the
+ * table address before the shift (ldr r0 then lsls r4); both tie at priority
+ * 45 in sched2 and the shift goes first. Index here stays live for the later
+ * compare, so the shift writes r4 rather than reusing r5 as in 66d. A "+l"
+ * asm on a table pointer and the &table[index], table + index and
+ * index[table] forms each re-address the call (differ 13 to 15). */
 #include "../../../../games/tla/src/field/overlay_65d/local.h"
 
 struct WarpEntry {

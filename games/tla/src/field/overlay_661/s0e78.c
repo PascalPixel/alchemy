@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "object_runtime.h"
 
 void Func_02000e78(void)
 {
@@ -18,4 +19,42 @@ void Func_02000e78(void)
     Battle_WaitMode0(20);
     GameFlag_SetBit(0x88b);
     Func_02004048();
+}
+
+extern u32 Data_020042b4[];
+extern u32 Data_02005828[];
+
+u32 Random16Far(void);
+struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
+void Func_02003fb8(struct ObjectRuntime *object, const void *script);
+
+// Spawns an object of kind 285 at each of the fifteen cells of
+// Data_020042b4, twice, each moved by -2 to +1 pixels at random.
+void Func_02000f24(void)
+{
+    u32 pass;
+    u32 i;
+
+    for (pass = 0; pass <= 1; pass++) {
+        u16 *cell;
+
+        /* FAKEMATCH: the one-pass block's loop-end note keeps the table address loaded before the counter's zero at the top of the outer loop (plainly the zero and its copy to r8 come first, differ 2; the pointer set in the for initializer, before or after the counter, does the same). */
+        do {
+            cell = (u16 *)Data_020042b4;
+        } while (0);
+        for (i = 0; i <= 14; i++) {
+            s32 x = *cell++ + ((Random16Far() << 2) >> 16);
+            s32 z = *cell++ + ((Random16Far() << 2) >> 16);
+            struct ObjectRuntime *object = Func_02003fc0(285, (x - 2) << 16, 0, (z - 2) << 16);
+
+            if (object != NULL) {
+                object->speed_limit = 0x12000;
+                object->acceleration = 0x8000;
+                ObjectDispatch_SetSingleChildFlags((struct FieldActor *)object, 0);
+                Func_02003fa8((struct FieldActor *)object, 1);
+                Func_02003fb8(object, Data_02005828);
+            }
+        }
+    }
+    Func_02003ff0(74, 71, 77, 9, 3, 3);
 }

@@ -29,7 +29,6 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x02008b84)
         "*/games/tla/src/field/overlay_661/s0c34.o"(.text)
         "*/games/tla/src/field/overlay_661/s0e78.o"(.text)
-        "*/resource_661_overlay.o"(.text.x02008f24)
         "*/resource_661_overlay.o"(.text.x02008fc8)
         "*/games/tla/src/field/overlay_661/s1288.o"(.text)
         "*/games/tla/src/field/overlay_661/s12d4.o"(.text)

@@ -3402,7 +3402,7 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.00953463)
     "*/games/tla/src/graphics/world_map/tiles_d6.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.009537b6)
-    "*/recon/tla/it/rom.o"(.rom.009537b8)
+    "*/games/tla/src/graphics/field/whirlwind_tiles.o"(.rodata)
     "*/games/tla/src/graphics/field/whirlwind_map.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00953b89)
     "*/recon/tla/it/rom.o"(.rom.00953b8c)

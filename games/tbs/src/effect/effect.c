@@ -10413,27 +10413,31 @@ s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
   return count;
 }
 
-// gRockWall_Timings[variant] の並び
+// The columns of a gRockWall_Timings row.
 enum {
-  TIMING_FRAMES,      // 全体のフレーム数
-  TIMING_RISE_FRAMES, // 柱が出ているフレーム数
-  TIMING_SHAKE        // 画面の揺れ幅
+  TIMING_FRAMES,      // frames in the whole effect
+  TIMING_RISE_FRAMES, // frames each pillar stands
+  TIMING_SHAKE        // how far the screen shakes
 };
 
 struct RockWallHeights {
-  s32 column[4]; // 柱ごとの高さ (ドット)
+  s32 column[4]; // each pillar's height in pixels
 };
 
-#define PILLAR_W 40        // 柱の幅 (ドット)
-#define ROCK_OFFSET 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
+#define PILLAR_W 40 // a pillar's width in pixels
+// The rock picture in the sheet; the sheet starts with the 40x16 strip of
+// ground cut from the background.
+#define ROCK_OFFSET 0x1e00
 
-// 横 32 キャラの 8bpp キャラ並びの中で、(x, y) のドットの位置
+// The offset of pixel (x, y) in 8bpp tiles laid out 32 tiles across.
 #define BG_DOT(x, y)                                                           \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
-// 岩の柱を左から 4 フレームおきに 3 本せり上げて沈め、上に乗った対象を
-// 打ち上げる。柱の頭には背景から切り出した帯をのせる
-// effect->variant で gRockWall_Timings の行を選ぶ
+// Rock wall: three rock pillars rise from the left, 4 frames apart, and
+// sink again, throwing the targets standing on them into the air. Each
+// pillar is capped with a strip of ground cut from the background.
+//
+// effect: the targets; variant picks the row of gRockWall_Timings.
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -10459,13 +10463,13 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100; // 横も等倍
-  REG_BLDCNT = 0;    // 半透明にしない
+  REG_BG2PA = 0x100; // the canvas at its own width
+  REG_BLDCNT = 0;    // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
-  // 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
-  // x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
+  // Copy the background tiles (0x8000 bytes from VRAM 0x06008000) and cut
+  // the strip at x 32 to 71, y 96 to 111 into the riseFrame of the sheet.
   Iwram_CopyWords((s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
@@ -10476,7 +10480,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
     }
   }
 
-  // 向こう側ならキャンバスを右へ 112 ドットずらし、対象の座標もそれに合わせる
+  // On side 1 the canvas moves 112 pixels right, and the targets' positions
+  // with it.
   if (work->effect->side == 1) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
@@ -10486,8 +10491,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   for (member = 0; member != work->effect->count; member++)
-    work->particles[member].variant = 0; // 着地したら 1
-  work->transferMode = 1;                // 転送のたびにキャンバスを 0 で消す
+    work->particles[member].variant = 0; // 1 once the target has landed
+  work->transferMode = 1;                // each transfer clears the canvas
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -10502,31 +10507,34 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
     if (frame == gRockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
       BattleEventRuntime_BeginPhaseFar(
-          133); // 終わりの 16 フレーム前に結果へ進む
+          133); // 16 frames before the end, move on to the results
 
-    // 柱は 16・20・24 フレーム目から出る
+    // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
-      s32 start = column * 4 + 16;
+      s32 riseFrame = column * 4 + 16;
 
-      if ((frame & 31) + 32 == start) // 左辺は 32 以上なので成り立たない
+      if ((frame & 31) + 32 ==
+          riseFrame) // never true: the left side is 32 or more
         heights.column[column] += 32;
-      if (frame >= start && frame < start +
-                                        gRockWall_Timings[work->effect->variant]
-                                                         [TIMING_RISE_FRAMES]) {
+      if (frame >= riseFrame &&
+          frame < riseFrame + gRockWall_Timings[work->effect->variant]
+                                               [TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
-        // 高さは sin で上がって下がる (1 フレームに 1/64 周)
+        // The height rises and falls along a sine, 1/64 of a turn a frame.
         height =
-            (heights.column[column] * Trig_Sin((frame - start) << 10)) >> 16;
+            (heights.column[column] * Trig_Sin((frame - riseFrame) << 10)) >>
+            16;
         if (height < 0)
           height = -height;
         top = 112 - height;
         draw(canvas, work->sheet + ROCK_OFFSET, column * PILLAR_W + 8, top,
              PILLAR_W, height);
-        draw(canvas, work, column * PILLAR_W + 8, 96 - height, PILLAR_W, 16);
+        draw(canvas, work->sheet, column * PILLAR_W + 8, 96 - height, PILLAR_W,
+             16);
 
-        // 柱の上にいる対象を打ち上げる
+        // Throw up the targets standing on the pillar.
         for (member = 0; member != work->effect->count; member++) {
           struct MotionObject *object;
 
@@ -10538,7 +10546,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
           screen.x += xOffset;
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
-            object->velocityY = 12 << 16; // 上へ 12 ドット/フレーム
+            object->velocityY = 12 << 16; // 12 pixels a frame upwards
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
@@ -10548,7 +10556,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 落ちてきて着地した対象を、パレット 7 にして 5 フレーム後に戻す
+    // A target that lands takes palette 7 for 5 frames.
     for (member = 0; member != work->effect->count; member++) {
       struct MotionObject *object;
       struct EffectStep *state;
@@ -10573,31 +10581,32 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// homing.c
-// バトル演出：使い手から飛び出した火の粉が対象を追って落ちる
-// 火の粉を 1 フレームに 2 個ずつ飛ばし、出てから 48
-// フレーム後に対象へ向かわせる 地面に落ちた火の粉は着弾の絵を 12 フレーム出す
-// effect : variant で火の粉の数 (gHomingEmbers_Counts) を選ぶ
+// Homing embers: embers burst from the user two a frame, turn towards the
+// targets 48 frames after they appear, and each one that hits the ground
+// shows an impact flare for 12 frames.
+//
+// effect: the targets; variant picks the number of embers
+//         (gHomingEmbers_Counts).
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
   u8 *sheet;
-  s32 top;
+  s32 bodyTop;
   struct EffectPosition screen;
   BlitterPair draw;
   struct MotionObject *user;
   s32 i;
 
-  heapCache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
+  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   if (effect->side == 1)
     BattleFx_BeginCanvasLayer(1);
@@ -10617,10 +10626,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = 0x1010;
 
-  // 使い手の体の上端から、水平は乱数の向きと速さ、縦は -16〜111 (1/64
-  // ドット単位) で飛び出す
+  // The embers leave the bodyTop of the user's body in a random direction and
+  // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  top = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
+  bodyTop = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
   for (i = 0; i != 64; i++) {
     struct EffectStep *ember = &PARTICLES[i];
     s32 angle;
@@ -10632,16 +10641,16 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
     ember->velocityY = (s32)(((Random16() & 127) - 16) << 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
     ember->x = user->x;
-    ember->y = top;
+    ember->y = bodyTop;
     ember->z = user->z;
-    ember->variant = -1; // -1 は飛行中、0 以上は着弾の絵の経過フレーム
+    ember->variant = -1; // -1 in flight, then the frames of the impact flare
   }
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
   work->transferMode = 2;
-  work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
+  work->transferValue = 75; // each transfer fades the canvas to 3/4
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
@@ -10658,19 +10667,17 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
-    //------------------------------------------------------------------
-    // 飛んでいる火の粉
-    //------------------------------------------------------------------
+    // The embers in flight.
     for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
-      s32 start;
+      s32 launchFrame;
 
-      start = i / 2;
-      if (frame > start && ember->variant == -1) {
+      launchFrame = i / 2;
+      if (frame > launchFrame && ember->variant == -1) {
         s32 size;
 
-        // 奥行き 160〜799 を大きさ 10〜1 に。最初の 48
-        // フレームは比較、後は加算合成
+        // Size 10 to 1 over depths 160 to 799; maximum blend for the first 48
+        // frames, additive after.
         EffectPosition_ApplyBaseAndYOffset((s32 *)ember, &screen);
         screen.x >>= 1;
         if (screen.depth < 160)
@@ -10678,7 +10685,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
         if (screen.depth > 799)
           screen.depth = 799;
         size = 10 - (screen.depth - 160) / 64;
-        draw[frame < start + 48 ? 1 : 0](
+        draw[frame < launchFrame + 48 ? 1 : 0](
             canvas, sheet + gParticleStreams_CellOffsets[size - 1],
             screen.x - size / 2, screen.y - size, size, size * 2);
         ember->x += ember->velocityX;
@@ -10686,9 +10693,9 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
         ember->z += ember->velocityZ;
       }
 
-      // 対象へ距離の 1/512 ずつ加速し、出てから 85 フレームまでは速度を 60/64
-      // に抑える
-      if (frame > start + 48 && ember->variant == -1) {
+      // Accelerate towards the target by 1/512 of the distance, damping the
+      // speed to 60/64 until 85 frames after the ember appeared.
+      if (frame > launchFrame + 48 && ember->variant == -1) {
         struct MotionObject *target;
         s32 vx;
         s32 vy;
@@ -10700,14 +10707,15 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
         vx = ember->velocityX += (target->x - ember->x) >> 9;
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
-        if (frame < start + 85) {
+        if (frame < launchFrame + 85) {
           ember->velocityX = vx * 60 / 64;
           ember->velocityY = vy * 60 / 64;
           ember->velocityZ = vz * 60 / 64;
         }
 
-        // 地面より下で着弾：画面位置を残して着弾の絵に切り替え、対象のパレットを
-        // 4 フレーム 10 番に替えてアニメ 5 にし、画面を 2 フレーム揺らす
+        // Below the ground it hits: keep its screen position for the impact
+        // flare, give the target palette 10 and animation 5 for 4 frames, and
+        // shake the screen for 2 frames.
         if (ember->y < 0) {
           ember->variant = 0;
           ember->x = screen.x;
@@ -10721,9 +10729,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
       }
     }
 
-    //------------------------------------------------------------------
-    // 着弾の絵 (2 フレームごとに進め、6 枚で終わる)
-    //------------------------------------------------------------------
+    // The impact flares: six pictures, 2 frames each.
     for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
 
@@ -10755,27 +10761,34 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// gRisingMotes_Timings の 1 組 (variant ごと)
+// One row of gRisingMotes_Timings, for each variant.
 enum {
-  RISE_MOTES,   // 昇る粒の数
-  RISE_COLUMNS, // 柱の数
-  RISE_FRAME    // はじけるフレーム
+  RISE_MOTES,   // the rising motes
+  RISE_COLUMNS, // the ice columns
+  RISE_FRAME    // the frame the motes burst
 };
 
-// 粒が渦を巻いて昇り、柱が 3 フレームおきに立ち並ぶ。
-// RISE_FRAME で粒は広がって落ち、破片が跳ね、煙が上がる
-// effect : variant が粒と柱の数、はじけるフレームを決める
+// The value of one column of this effect's gRisingMotes_Timings row.
+#define RISING_TIMING(field)                                                   \
+  (gRisingMotes_Timings[work->effect->variant * 3 + (field)])
+
+// Rising motes: motes spiral upwards while ice columns spring up one every
+// 3 frames; at the burst frame the motes spread and fall, chips fly and
+// smoke rises.
+//
+// effect: the targets; variant picks the number of motes and columns and
+//         the burst frame (gRisingMotes_Timings).
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *dots;
+  u8 *puffSheet;
   DrawRectangle *draw;
   s32 count;
-  s32 ymin;
-  s32 ymax;
+  s32 lowest;
+  s32 highest;
   s32 xyz[3];
   struct EffectPosition screen;
   s32 point[3];
@@ -10783,19 +10796,20 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
   struct EffectStep *mote;
   s32 i;
 
-  heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heap;
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  dots = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  puffSheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   BattleFx_FetchRectangleBlitters(0, draw = pair);
 
-  // 粒 : x が角度、z が半径 (56〜119)、y が高さ (-64〜-33 ドット)
+  // Motes: x holds the angle, z the radius (56 to 119), y the height (-64
+  // to -33 pixels).
   for (i = 0; i != 64; i++) {
     struct EffectStep *seed = &work->particles[i];
 
@@ -10811,14 +10825,10 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;
 
-  for (frame = 0;
-       frame !=
-       gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 75;
-       frame++) {
-    ymin = 120 << 16;
-    ymax = 0;
-    if (frame ==
-        gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 11)
+  for (frame = 0; frame != RISING_TIMING(RISE_FRAME) + 75; frame++) {
+    lowest = 120 << 16;
+    highest = 0;
+    if (frame == RISING_TIMING(RISE_FRAME) + 11)
       BattleEventRuntime_BeginPhaseFar(132);
     point[0] = 0;
     point[1] = 0;
@@ -10834,39 +10844,37 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], 9, 5, -1, 0);
     }
 
-    //------------------------------------------------------------------
-    // 粒 : はじけるまでは半径を縮め、5 ドットずつ 48 ドットまで昇りながら回る。
-    // はじけたあとは半径を広げて落ち、高さの上下限を求める
-    //------------------------------------------------------------------
-    if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
-      count = gRisingMotes_Timings[work->effect->variant * 3 + RISE_MOTES];
+    // Motes: until the burst they turn, closing in and rising 5 pixels a
+    // frame up to 48 pixels; after it they spread out and fall, and the range
+    // of their heights is kept.
+    if (frame < RISING_TIMING(RISE_FRAME))
+      count = RISING_TIMING(RISE_MOTES);
     else
       count = 16;
-    if (frame <
-        gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35) {
+    if (frame < RISING_TIMING(RISE_FRAME) + 35) {
       for (i = 0; i != count; i++) {
         if (frame > i) {
           s32 cel = i % 8;
 
           mote = &work->particles[i];
           if (mote->y < (48 - i / 2) << 16 && mote->y > -(48 << 16)) {
-            struct EffectPosition *pos;
+            struct EffectPosition *position;
             u32 width;
             u32 height;
 
             xyz[0] = mote->z * Trig_Sin(mote->x);
             xyz[1] = mote->y;
             xyz[2] = mote->z * Trig_Cos(mote->x);
-            EffectPosition_ApplyBaseAndYOffset(xyz, pos = &screen);
-            pos->x = (pos->x >> 17) + 64;
-            pos->y = HI(pos->y) + 60;
+            EffectPosition_ApplyBaseAndYOffset(xyz, position = &screen);
+            position->x = (position->x >> 17) + 64;
+            position->y = HI(position->y) + 60;
             draw[1](canvas, work->sheet + gRisingMotes_MoteCells[cel],
-                    pos->x - ((width = gRisingMotes_MoteWidths[cel]) >> 1),
-                    pos->y - ((height = gRisingMotes_MoteHeights[cel]) >> 1),
+                    position->x - ((width = gRisingMotes_MoteWidths[cel]) >> 1),
+                    position->y -
+                        ((height = gRisingMotes_MoteHeights[cel]) >> 1),
                     width, height);
           }
-          if (frame <
-              gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+          if (frame < RISING_TIMING(RISE_FRAME)) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
@@ -10877,29 +10885,25 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
           } else {
             mote->z += 8;
             mote->y -= (i % 5 + 2) << 16;
-            if (ymin > mote->y)
-              ymin = mote->y;
-            if (ymax < mote->y)
-              ymax = mote->y;
+            if (lowest > mote->y)
+              lowest = mote->y;
+            if (highest < mote->y)
+              highest = mote->y;
           }
         }
       }
     }
-    ymin += 64 << 16;
-    ymax += 64 << 16;
+    lowest += 64 << 16;
+    highest += 64 << 16;
 
-    // 柱 (幅 32) : 36 フレーム目から 3 フレームおきに 1 本ずつ立てる
-    if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
-      for (i = 0;
-           i != gRisingMotes_Timings[work->effect->variant * 3 + RISE_COLUMNS];
-           i++) {
+    // Columns (32 wide): one more every 3 frames from frame 36.
+    if (frame < RISING_TIMING(RISE_FRAME)) {
+      for (i = 0; i != RISING_TIMING(RISE_COLUMNS); i++) {
         if (i < (frame - 36) / 3) {
           s32 cel = i % 3;
           u32 height;
 
-          if (frame >=
-              gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] -
-                  7) {
+          if (frame >= RISING_TIMING(RISE_FRAME) - 7) {
             draw[1](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
                     gRisingMotes_ColumnSpots[i * 2],
                     gRisingMotes_ColumnSpots[i * 2 + 1] -
@@ -10916,8 +10920,8 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 破片 : はじけたとき、下の方から上へ 32 個を飛ばす (描くのは 24 個)
-    if (frame == gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+    // Chips: at the burst, 32 fly up from low down (24 of them are drawn).
+    if (frame == RISING_TIMING(RISE_FRAME)) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &PARTICLES[i];
 
@@ -10928,7 +10932,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (frame >= gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+    if (frame >= RISING_TIMING(RISE_FRAME)) {
       for (i = 0; i != 24; i++) {
         struct EffectStep *chip = &PARTICLES[i];
 
@@ -10942,35 +10946,33 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
           chip->y += chip->velocityY;
           chip->variant--;
         }
-        if (ymin > chip->y)
-          ymin = chip->y;
-        if (ymax < chip->y)
-          ymax = chip->y;
+        if (lowest > chip->y)
+          lowest = chip->y;
+        if (highest < chip->y)
+          highest = chip->y;
       }
     }
-    ymin >>= 16;
-    ymax >>= 16;
-    if (ymax <= ymin)
-      ymax = ymin + 1;
+    lowest >>= 16;
+    highest >>= 16;
+    if (highest <= lowest)
+      highest = lowest + 1;
 
-    // 煙 : 粒と破片の高さの範囲に出し、1 フレームに 1/2 ドット上がる
-    if (frame == gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
+    // Smoke: puffs appear over the heights of the motes and chips and rise
+    // half a pixel a frame.
+    if (frame == RISING_TIMING(RISE_FRAME)) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];
 
         puff->velocityX = (Random16() & 127) << 16;
-        if (ymax == ymin)
-          puff->velocityY = ymin << 16;
+        if (highest == lowest)
+          puff->velocityY = lowest << 16;
         else
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
         puff->variant = (Random16() & 15) + 20;
       }
     }
-    if (frame >= gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) {
-      s32 rise =
-          (frame -
-           gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) /
-          2;
+    if (frame >= RISING_TIMING(RISE_FRAME)) {
+      s32 rise = (frame - RISING_TIMING(RISE_FRAME)) / 2;
 
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];
@@ -10979,19 +10981,17 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
           s32 cel = (17 - puff->variant) / 2;
           u32 size;
 
-          draw[1](canvas, dots + gBattleFx_PuffCells[cel],
+          draw[1](canvas, puffSheet + gBattleFx_PuffCells[cel],
                   HI(puff->velocityX) -
                       ((size = gBattleFx_PuffSizes[cel]) >> 1),
                   HI(puff->velocityY) - (size >> 1) - rise, size, size);
         }
         puff->variant--;
         if ((puff->variant == -1 || puff->variant == 17) &&
-            frame <
-                gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] +
-                    35) {
+            frame < RISING_TIMING(RISE_FRAME) + 35) {
           puff->variant = 17;
           puff->velocityX = (Random16() & 127) << 16;
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
         }
       }
     }
@@ -11005,39 +11005,44 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// bolts.c
-// バトル効果：まわりから寄ってくる四本の稲妻と、飛び散る火花
+// Closing bolts: four lightning bolts that close in from around the
+// target, and the sparks they throw.
 
 #define SPARK_COUNT 1024
 
-#define BOLT_SHEET 0x60e // 稲妻の絵の置き場
-#define BOLT_SIZE 2880   // 24x120 の一枚
+#define BOLT_SHEET 0x60e // the bolt pictures in the sheet
+#define BOLT_SIZE 2880   // one 24x120 bolt
 #define BOLT_COUNT 4
 
-// 四本の稲妻が回りながら中心へ寄り、根元から火花を散らす
-// 16 フレーム描き、火花は 64 フレームまで動かす
+// Four bolts turn in towards the centre for 16 frames, scattering sparks
+// from their roots; the sparks fly on until frame 64.
+//
+// effect: the targets. variant 2 shows the canvas at double width;
+//         variant 0 draws every bolt with the maximum blend, the others
+//         alternate it with additive. The variant also sets the sparks
+//         each bolt throws a frame (gLightningBolts_Sparks).
 void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   u8 *sheet;
   s32 bolt;
-  s32 cnt;
+  s32 thrown;
   BlitterPair draw;
   s32 i;
 
-  // ワーク、キャンバス、BG2 の拡大と位置
-  heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heap;
+  // The work, the canvas, and BG2's scale and position.
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heap[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginTiledCanvas(1);
   if (work->effect->variant == 2)
-    REG_BG2PA = 0x80; // 横 2 倍
+    REG_BG2PA = 0x80; // double width
   else
     REG_BG2PA = 0x100;
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
@@ -11058,7 +11063,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x8000;
   }
 
-  // 火花の初期化
+  // Set up the sparks.
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 speed;
@@ -11081,9 +11086,9 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      BattleEventRuntime_BeginPhaseFar(133); // 結果の再生を始める
+      BattleEventRuntime_BeginPhaseFar(133); // start playing the results
     if (frame < 16) {
-      // 5 フレームごとにキャンバスを消す
+      // Clear the canvas every 5 frames.
       if (frame % 5 == 2)
         Iwram_FillWords(canvas, 0x4000, 0x10101010);
       for (bolt = 0; bolt != BOLT_COUNT; bolt++) {
@@ -11091,8 +11096,8 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
         s32 x;
         s32 y;
 
-        // 横の半径が 32 から 1 フレームに 1 ドットずつ縮む
-        cnt = 0;
+        // The radius across shrinks from 32 by a pixel a frame.
+        thrown = 0;
         angle = ((frame << 11) + 0x4000) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -((Trig_Cos(angle) << 3) >> 16) - 8;
@@ -11105,7 +11110,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
               canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
               x + (Random16() & 7) - 16, y, 24, 120);
 
-        // 根元から火花を出す
+        // Throw sparks from the bolt's root.
         for (i = 0; i != SPARK_COUNT; i++) {
           struct EffectStep *spark = &PARTICLES[i];
 
@@ -11120,8 +11125,8 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
-            cnt++;
-            if (cnt == gLightningBolts_Sparks[work->effect->variant][1])
+            thrown++;
+            if (thrown == gLightningBolts_Sparks[work->effect->variant][1])
               break;
           }
         }
@@ -11129,7 +11134,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
       work->shakeFrames = 1;
     }
 
-    // 火花を動かし、下 (y 120) ではね返す
+    // Move the sparks, bouncing them off the bottom (y 120).
     for (i = 0; i != SPARK_COUNT; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
@@ -11149,7 +11154,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 対象は 4 フレームずつ遅れて当たる
+    // The targets are hit 4 frames apart.
     if (frame >= 4 && frame < 96) {
       for (i = 0; i != work->effect->count; i++) {
         if (frame == i * 4 + 4)
@@ -11176,8 +11181,23 @@ void BattleFx_RunParticleFieldMode0(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleField(effect, 0);
 }
 
-enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
+// The columns of a gParticleField_Counts row.
+enum {
+  FIELD_MOTES, // motes thrown
+  FIELD_PUFFS, // puffs of smoke thrown
+  FIELD_FRAMES // frames in the whole effect
+};
 
+// The mote pictures in the sheet: two sets of sizes, 770 bytes apart.
+#define FIELD_MOTE_CELLS 0x3200
+
+// Eruption: a fountain of motes and puffs of smoke bursts up beside the
+// targets and falls back, hitting the targets one frame apart.
+//
+// effect: the targets.
+// mode: 0 burns (the fire streak palette, the effect's variant picks the
+//       counts, and the targets recoil); 1 is grey (a ramp of greys,
+//       variant 1's counts).
 void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -11212,6 +11232,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode) {
     variant = work->effect->variant;
   }
 
+  // The puffs and the motes start 50 pixels to the side and scatter up.
   for (i = 0; i != 32; i++) {
     struct EffectStep *puff = &work->particles[i];
 
@@ -11278,7 +11299,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode) {
         draw[0](canvas,
                 work->sheet +
                     (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
-                    0x3200,
+                    FIELD_MOTE_CELLS,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
       }
@@ -11333,6 +11354,12 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+// Creates the effect's animation objects in gBattleFxWork's objects.
+//
+// entryCount: how many objects to create.
+// kind: the resource object every one of them is made from.
+// variant: the sprite priority they take.
+// Object n plays animation n.
 void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   struct BattleEffectWork *work = gBattleFxWork[0];
   s32 entryIndex = 0;
@@ -11354,10 +11381,14 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   } while (entryIndex != entryCount);
 }
 
+// An effect that does nothing.
 void BattleFx_RunNoEffect(void) {}
 
+// The burst shower's second picture in the sheet, after the tornado.
 #define SHEET (work->sheet + 0xC56)
 
+// Arms DMA 0 to copy one word of gBattleFxWork's bg2X table into BG2X at
+// each horizontal blank, bending BG2 line by line.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = gBattleFxWork[0];
   volatile u16 *channel = REG_DMA0;

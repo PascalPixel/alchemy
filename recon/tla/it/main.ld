@@ -1356,6 +1356,8 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.000dd944)
     "*/games/tla/src/battle/effect/burst.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ddbcc)
+    "*/games/tla/src/battle/effect/item_break_mode3.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000de054)
     "*/games/tla/src/battle/effect/effect04_entry.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000de210)
     "*/games/tla/src/battle/effect/update_orbiting_particle_main.o"(.text)

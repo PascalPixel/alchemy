@@ -1214,7 +1214,7 @@ SECTIONS
         "*/recon/tla/raw/080ddbd8.o"(.text)
         "*/recon/tla/raw/080ddda0.o"(.text)
         "*/recon/tla/raw/080ddea8.o"(.text)
-        "*/recon/tla/raw/080ddfd4.o"(.text)
+        "*/games/tla/src/battle/effect/item_break_mode3.o"(.text)
         "*/recon/tla/raw/080de060.o"(.text)
         "*/recon/tla/raw/080de154.o"(.text)
         "*/games/tla/src/battle/effect/effect04_entry.o"(.text)

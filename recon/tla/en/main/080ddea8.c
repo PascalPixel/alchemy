@@ -24,7 +24,7 @@ extern const s32 Data_080f0e78[];
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct ObjectRuntime *Func_080ddfd4(s32 x, s32 y, s32 z, s32 angle);
+struct ObjectRuntime *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 
@@ -43,8 +43,8 @@ void Func_080ddea8(void)
     pos.x = work->x;
     pos.y = work->y + 0x100000;
     pos.z = work->z;
-    pair[0] = Func_080ddfd4(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-    pair[1] = Func_080ddfd4(pos.x - 0x200000, pos.y, pos.z, 0);
+    pair[0] = BattleFx_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+    pair[1] = BattleFx_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
 
     WaitFrames(15);
     walk = pair;

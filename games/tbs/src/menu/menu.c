@@ -310,20 +310,19 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
 // y:      the pixel row of the text, within the window
 void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   s32 rest = number;
-  s32 digits = 1;
+  s32 digits;
 
   // Count the digits: the units digit, one more for each division by ten
   // that leaves two digits or more, then the leading digit. Below 10 the
   // units digit is the leading digit and is counted twice, so those numbers
   // take two cells: a space, then the digit.
-  while (digits < DIGIT_COUNT_LIMIT) {
-    rest = rest / 10;
-    if (rest <= 9) {
+  for (digits = 1; digits < DIGIT_COUNT_LIMIT; digits++) {
+    rest /= 10;
+    if (rest < 10) {
       break;
     }
-    digits++;
   }
-  digits++;
+  digits++; // the leading digit
 
   // Step x back from the number's right edge to its left edge. The number
   // writer right-aligns the value in a field of that many characters.

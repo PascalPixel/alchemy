@@ -117,36 +117,6 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b70, 0x0000003c
-	.section .rom.00015024, "ax"
-	.global SceneTransform_ApplyPitch
-	.type SceneTransform_ApplyPitch, %function
-	.thumb_func
-SceneTransform_ApplyPitch:
-	.incbin "baserom.gba", 0x00015024, 0x00000044
-	.section .rom.00015068, "ax"
-	.global SceneTransform_ApplyYaw
-	.type SceneTransform_ApplyYaw, %function
-	.thumb_func
-SceneTransform_ApplyYaw:
-	.incbin "baserom.gba", 0x00015068, 0x0000007c
-	.section .rom.000150e4, "ax"
-	.global Func_080150e4
-	.type Func_080150e4, %function
-	.thumb_func
-Func_080150e4:
-	.incbin "baserom.gba", 0x000150e4, 0x00000044
-	.section .rom.00015128, "ax"
-	.global SceneTransform_ApplyPosition
-	.type SceneTransform_ApplyPosition, %function
-	.thumb_func
-SceneTransform_ApplyPosition:
-	.incbin "baserom.gba", 0x00015128, 0x00000070
-	.section .rom.000151ac, "ax"
-	.global Func_080151ac
-	.type Func_080151ac, %function
-	.thumb_func
-Func_080151ac:
-	.incbin "baserom.gba", 0x000151ac, 0x000000a0
 	.section .rom.00015510, "ax"
 	.global Graphics_PrepareTransfer
 	.type Graphics_PrepareTransfer, %function

@@ -5914,10 +5914,6 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x001c44d0, 0x00000060
-	.section .rom.00682000, "ax"
-	.global Resource_Data002
-Resource_Data002:
-	.incbin "baserom.gba", 0x00682000, 0x00000010
 	.section .rom.006848d0, "ax"
 	.global Resource_Data015
 Resource_Data015:

@@ -2502,7 +2502,6 @@ SECTIONS
     "*/games/tla/src/graphics/sprite/sprites.o"(.rodata)
     . = ABSOLUTE(0x08680000);
     "*/games/tla/src/system/resource/directory.o"(.rodata)
-    "*/recon/tla/de/rom.o"(.rom.00682000)
     "*/games/common/src/graphics/ui/window_tiles.o"(.rodata)
     "*/games/common/src/graphics/ui/small_font.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.006848d0)

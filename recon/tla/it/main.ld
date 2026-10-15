@@ -1364,6 +1364,8 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.000e8da4)
     "*/games/tla/src/battle/effect/shift_rows.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000e92a8)
+    "*/games/tla/src/battle/effect/view_sway.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000e9890)
     "*/games/tla/src/battle/effect/psynergy_effects_09.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000e9ae8)
     "*/recon/tla/it/rom.o"(.rom.000e9da8)

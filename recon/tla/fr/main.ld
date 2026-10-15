@@ -1197,6 +1197,8 @@ SECTIONS
     "*/games/tla/src/battle/effect/group_sync.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000edda4)
     "*/recon/tla/fr/rom.o"(.rom.000ee244)
+    "*/games/tla/src/battle/effect/view_sway.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.000ee890)
     "*/recon/tla/fr/rom.o"(.rom.000eeda8)
     "*/games/tla/src/battle/effect/chase.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000eef5c)

@@ -1352,6 +1352,8 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000f1da4)
     "*/games/tla/src/battle/effect/shift_rows.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000f22a8)
+    "*/games/tla/src/battle/effect/view_sway.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000f2890)
     "*/recon/tla/es/rom.o"(.rom.000f2da8)
     "*/games/tla/src/battle/effect/chase.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000f2f5c)

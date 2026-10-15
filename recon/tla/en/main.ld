@@ -1250,7 +1250,7 @@ SECTIONS
         "*/recon/tla/raw/080e9090.o"(.text)
         "*/games/tla/src/battle/effect/shift_rows.o"(.text)
         "*/recon/tla/raw/080e92b4.o"(.text)
-        "*/recon/tla/raw/080e97c8.o"(.text)
+        "*/games/tla/src/battle/effect/view_sway.o"(.text)
         "*/recon/tla/raw/080e989c.o"(.text)
         "*/recon/tla/raw/080e9940.o"(.text)
         "*/games/tla/src/battle/effect/psynergy_effects_09.o"(.text)

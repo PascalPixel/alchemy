@@ -5,8 +5,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_688/entry.o"(.text)
         "*/games/tla/src/field/overlay_688/events_a.o"(.text)
         "*/games/tla/src/field/overlay_688/scene_tables.o"(.text)
-        "*/resource_688_overlay.o"(.text.x02008060)
-        "*/resource_688_overlay.o"(.text.x020080b0)
         "*/games/tla/src/field/overlay_688/events_b.o"(.text)
         "*/games/tla/src/field/overlay_688/scene_events.o"(.text)
         "*/games/tla/src/field/overlay_688/s0120.o"(.text)

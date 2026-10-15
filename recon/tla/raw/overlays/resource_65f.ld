@@ -15,7 +15,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_65f/hide.o"(.text)
         "*/games/tla/src/field/overlay_65f/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_65f/s0440.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x020084cc)
         "*/games/tla/src/field/overlay_65f/talk.o"(.text)
         "*/games/tla/src/field/overlay_65f/s06ec.o"(.text)
         "*/games/tla/src/field/overlay_65f/s0808.o"(.text)

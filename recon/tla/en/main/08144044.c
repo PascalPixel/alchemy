@@ -11,13 +11,13 @@
  * Left: order and one instruction. The native takes &pos as add r1, sp, #64
  * where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
  * in the native the address passes through a low register before r8, in the
- * draft r8's pseudo is reloaded); the spill slots of camera + 12 and k * 8 are
- * swapped (16 and 20); 0xc80 is built whole before the first call in the
+ * draft r8's pseudo is reloaded); 0xc80 is built whole before the first call in the
  * native; the rest are single swaps of a load with its neighbour.
  *
  * Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
  * temporary for target->z, a block, a moved statement); a greedy scan of
- * the declaration order (k first, the point before pos) 75 -> 69.
+ * the declaration order (k first) 75 -> 69; pos before the point, which
+ * gives the native's slots (64 and 52), is 69 too and is kept.
  */
 #include "battle.h"
 #include "graphics.h"
@@ -64,8 +64,8 @@ extern char ResourceId_PinkBurstSheet;
 // turns; the background waves line by line throughout.
 void Func_08144044(struct BattleEffectArgument *effect) {
   s32 k;
-  s32 point[3];
   struct EffectPosition pos;
+  s32 point[3];
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

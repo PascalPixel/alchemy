@@ -470,7 +470,7 @@ Resource_DirectoryTable:
 	resource , Field_WalkPathH
 	resource , Field_WalkPathI
 	resource , Field_WalkPathJ
-	resource , Lettering_Banner
+	resource LetteringBanner, Lettering_Banner
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

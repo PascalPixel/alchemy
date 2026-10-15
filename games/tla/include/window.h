@@ -15,7 +15,8 @@ enum { UI_TEXT_ENTRY_COUNT = 256 };
 #endif
 
 struct UiRenderWork {
-    u8 unknown_00[3];
+    u16 tile_cursor;
+    u8 alt;
     u8 dirty;
     u8 mode;
     u8 menu_state;

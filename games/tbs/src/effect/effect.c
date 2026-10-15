@@ -15680,15 +15680,23 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// The shard pictures in the sheet, after the boulder.
+#define SHATTER_SHARD_CELLS 0x83c
+
+// Shattering rocks: boulders drop along the row of targets, centred on
+// it, and burst into tumbling shards, hitting every target as each lands.
+//
+// object: the targets; variant picks the number of boulders
+//         (gShatterRocks_RockCounts).
 void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
-  s32 rows;
+  s32 rockCount;
   struct EffectPosition first;
-  struct EffectPosition final;
+  struct EffectPosition last;
   struct EffectStep *rock;
   struct EffectStep *shard;
   s32 frame;
@@ -15698,8 +15706,8 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   u32 width;
   u32 height;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = object;
@@ -15708,39 +15716,41 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
-  blit = heapCache[7];
+  blit = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
   EffectPosition_ApplyStepAndYOffset(
-      work->effect->actors[work->effect->count - 1], &final);
-  first.x += (final.x - first.x) / 2;
+      work->effect->actors[work->effect->count - 1], &last);
+  first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  rows = gShatterRocks_RockCounts[work->effect->variant];
-  for (i = 0; i != rows; i++) {
+  rockCount = gShatterRocks_RockCounts[work->effect->variant];
+  for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
     rock->y = -0x400000;
     rock->velocityY = 0;
   }
-  for (i = 0; i != rows; i++) {
+  // Each rock breaks into 21 shards, thrown up from where it lands.
+  for (i = 0; i != rockCount; i++) {
     for (j = 0; j != 21; j++) {
-      struct EffectStep *seed = &PARTICLES[i * 21 + j];
+      struct EffectStep *shard = &PARTICLES[i * 21 + j];
 
-      seed->x = (gShatterRocks_ShardOffsets[j * 2] + gShatterRocks_RockX[i])
-                << 16;
-      seed->y = gShatterRocks_ShardOffsets[j * 2 + 1] << 16;
-      seed->velocityX = ((Random16() % 96) - 48) << 10;
-      seed->velocityY = -((Random16() & 127) + 32) << 11;
-      seed->z = 32;
-      seed->variant = 0;
+      shard->x = (gShatterRocks_ShardOffsets[j * 2] + gShatterRocks_RockX[i])
+                 << 16;
+      shard->y = gShatterRocks_ShardOffsets[j * 2 + 1] << 16;
+      shard->velocityX = ((Random16() % 96) - 48) << 10;
+      shard->velocityY = -((Random16() & 127) + 32) << 11;
+      shard->z = 32;
+      shard->variant = 0;
     }
   }
-  for (frame = 0; frame != gShatterRocks_DropFrames[rows - 1] + 80; frame++) {
-    if (frame == gShatterRocks_DropFrames[rows - 1] + 48)
+  for (frame = 0; frame != gShatterRocks_DropFrames[rockCount - 1] + 80;
+       frame++) {
+    if (frame == gShatterRocks_DropFrames[rockCount - 1] + 48)
       BattleEventRuntime_BeginPhaseFar(132);
-    for (i = 0; i != rows; i++) {
+    for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gShatterRocks_DropFrames[i] + 18) {
         AudioCommand_PlayFar(134);
@@ -15750,7 +15760,9 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
         for (j = 0; j != 21; j++) {
           shard = &PARTICLES[i * 21 + j];
           cell = (j % 5) * 3 + shard->variant / 96 % 3;
-          blit(canvas, work->sheet + gShatterRocks_ShardCells[cell] + 0x83c,
+          blit(canvas,
+               work->sheet + gShatterRocks_ShardCells[cell] +
+                   SHATTER_SHARD_CELLS,
                HI(shard->x) - ((width = gShatterRocks_ShardWidths[cell]) >> 1),
                HI(shard->y) -
                    ((height = gShatterRocks_ShardHeights[cell]) >> 1),
@@ -15761,9 +15773,11 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
             shard->z--;
         }
       }
+      // The rock falls from its drop frame and lands 18 frames later.
       if (frame < gShatterRocks_DropFrames[i] + 18) {
         if (frame >= gShatterRocks_DropFrames[i])
-          blit(canvas, work, gShatterRocks_RockX[i] + 47, HI(rock->y), 34, 62);
+          blit(canvas, work->sheet, gShatterRocks_RockX[i] + 47, HI(rock->y),
+               34, 62);
         rock->y += rock->velocityY;
         if (frame > gShatterRocks_DropFrames[i])
           rock->velocityY += 0x10000;
@@ -15785,10 +15799,9 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object) {
   BattleFx_EndCanvasLayer();
 }
 
-// animation_modes.c
-// 演出：バースト演出の入口
-// 演出ごとの入口。バーストの型を BattlePres_RunBurstScene に渡す
-// step : 演出の引数
+// The flurry's entries: each passes its kind of flurry to
+// BattlePres_RunBurstScene. step is the effect argument, read as an
+// EffectStep: its variant is the effect's variant.
 void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step) {
   if (step->variant == 0) {
     BattlePres_RunBurstScene(step, 6);
@@ -15829,22 +15842,37 @@ void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step) {
   BattlePres_RunBurstScene(step, 5);
 }
 
-// burst_scene.c
-// バトル演出：対象に重ねて弾ける連撃と、せり上がる岩の壁
-// 対象に何度も重ねて弾ける連撃
-// gBurstScene_Records は variant ごとに 7 バイト
-//   [0] 弧の絵（0 なら BlueArcSheetA、ほかは B。1 ならすべての回を弧で描く）
-//   [1] パレットを取るリソース（0〜3）
-//   [2] 回数
-//   [3] 1 回で飛ばす粒の数
-//   [4] 回と回の間（フレーム）
-//   [5] 全体のフレーム数
-//   [6] 1 なら当たるたびにキャンバスを塗りつぶす
+// Flurries of strikes, and the rising rock wall.
+// The bytes of a gBurstScene_Records row.
+enum BurstField {
+  BURST_ARC_SHEET, // 0: blue arc A, else B; 1 also draws every strike as an arc
+  BURST_PALETTE,   // the palette's resource (0 to 3)
+  BURST_STRIKES,   // the strikes
+  BURST_MOTES,     // motes thrown by each strike
+  BURST_INTERVAL,  // frames between strikes
+  BURST_FRAMES,    // frames in the whole effect
+  BURST_FLASH      // 1 fills the canvas on each hit
+};
+
+// The value of one field of this flurry's gBurstScene_Records row.
+#define BURST_RECORD(field) (gBurstScene_Records[variant * 7 + (field)])
+
+// The packed flash pictures and the waves.
+#define BURST_FLASH_CELLS 0x5100
+#define BURST_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
+
+// Flurry: the user closes on the first target and strikes it again and
+// again; each strike shows an arc (a wave for the third and fourth of
+// every four), flashes and throws motes, and the last one ends the attack.
+//
+// effect: the user and the targets; prelude 1 brings in a Jupiter djinni
+//         first.
+// variant: the row of gBurstScene_Records.
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
                               s32 variant) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
-  struct EffectPosition pos;
+  struct EffectPosition screen;
   s32 screenX;
   s32 screenY;
   BlitterPair draw;
@@ -15854,8 +15882,8 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
   u8 *sprites;
   struct BattleCamera *camera;
   struct MotionObject *target;
-  u8 *pltt;
-  s32 res;
+  u8 *palette;
+  s32 paletteId;
   s32 row;
   s32 col;
   s32 i;
@@ -15872,55 +15900,55 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
     BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screenX,
                                  &screenY);
 
-  //------------------------------------------------------------------
-  // 絵とパレット
-  //------------------------------------------------------------------
+  // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // 玉（40x288）を横半分に詰めて 0x5100 から置く（キャンバスは横 2 倍で見せる）
+  // Pack the flash (40x288) to half width at BURST_FLASH_CELLS, as the
+  // canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + 0x5100;
+      s32 dst = row * 20 + col / 2 + BURST_FLASH_CELLS;
 
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstScene_Records[variant * 7] == 0)
+  if (BURST_RECORD(BURST_ARC_SHEET) == 0)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet,
-                             Ram_MapCellBuffer + 0x5e00, 1, 0);
-  switch (gBurstScene_Records[variant * 7 + 1]) {
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_WAVE_CELLS, 1,
+                             0);
+  switch (BURST_RECORD(BURST_PALETTE)) {
   case 0:
-    res = (s32)&ResourceId_MarsDjinnSheet;
+    paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
   case 1:
-    res = (s32)&ResourceId_LimePalette;
+    paletteId = (s32)&ResourceId_LimePalette;
     break;
   case 2:
-    res = (s32)&ResourceId_BlueArcSheetB;
+    paletteId = (s32)&ResourceId_BlueArcSheetB;
     break;
   default:
-    res = (s32)&ResourceId_EmberStreakSheet;
+    paletteId = (s32)&ResourceId_EmberStreakSheet;
     break;
   }
-  pltt = Resource_GetTableEntry(res);
-  Iwram_CopyWords((void *)BG_PLTT, pltt, 128);
+  palette = Resource_GetTableEntry(paletteId);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   WaitFrames(1);
 
   EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &targetPos);
-  work->transferMode = 2; // 残像 3/4
+  work->transferMode = 2; // trails, fading to 3/4
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 粒：対象の 25 ドット上に用意しておく（x の速さは原点の側へ向ける）
+  // Motes wait 25 pixels above the target, set to fly towards the middle
+  // of the field.
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != 768; i++) {
     struct EffectStep *mote = &PARTICLES[i];
@@ -15933,18 +15961,18 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
     mote->velocityZ = ((Random16() & 255) - 127) << 12;
     if (mote->x > 0)
       mote->velocityX = -mote->velocityX;
-    mote->variant = -1; // 寿命（負なら出ていない）
+    mote->variant = -1; // frames left (negative: not out yet)
   }
   BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0],
                                  4, 0);
 
-  for (frame = 0; frame != gBurstScene_Records[variant * 7 + 5]; frame++) {
-    s32 bursts = gBurstScene_Records[variant * 7 + 2];
+  for (frame = 0; frame != BURST_RECORD(BURST_FRAMES); frame++) {
+    s32 bursts = BURST_RECORD(BURST_STRIKES);
 
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actorPos);
     actorPos.x /= 2;
 
-    // 弧と波：奇数回は上下反転で描く
+    // Arcs and waves; odd strikes are drawn flipped.
     if (work->effect->side == 0) {
       BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                             COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -15964,13 +15992,13 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * gBurstScene_Records[variant * 7 + 4];
+      s32 start = i * BURST_RECORD(BURST_INTERVAL);
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 || gBurstScene_Records[variant * 7] == 1) {
-          // 弧（48x72 を 6 コマ）
+        if ((i & 3) <= 1 || BURST_RECORD(BURST_ARC_SHEET) == 1) {
+          // The arc: six 48x72 frames.
           if (work->effect->side == 0)
             draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 16,
                         targetPos.y - 40, 48, 72);
@@ -15978,18 +16006,18 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
             draw[i & 1](canvas, work->sheet + step * 3456, targetPos.x / 2 - 32,
                         targetPos.y - 40, 48, 72);
         } else {
-          // 波（48x16 を 6 コマ）
+          // The wave: six 48x16 frames.
           if (work->effect->side == 0)
-            draw[i & 1](canvas, Ram_MapCellBuffer + 0x5e00 + step * 768,
+            draw[i & 1](canvas, BURST_WAVE_CELLS + step * 768,
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, Ram_MapCellBuffer + 0x5e00 + step * 768,
+            draw[i & 1](canvas, BURST_WAVE_CELLS + step * 768,
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
       if (frame == start + 2) {
-        // 当たり：最後の回で締める
-        if (gBurstScene_Records[variant * 7 + 6] == 1)
+        // The hit; the last strike ends the attack.
+        if (BURST_RECORD(BURST_FLASH) == 1)
           Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
         if (i == bursts - 1) {
@@ -16002,18 +16030,20 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
           work->shakeFrames = 4;
           AudioCommand_PlayFar(134);
         }
-        for (j = 0; j != gBurstScene_Records[variant * 7 + 3]; j++)
+        for (j = 0; j != BURST_RECORD(BURST_MOTES); j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
-      // 玉（20x48 を 6 コマ、2 フレームずつ）
+      // The flash: six 20x48 frames, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
-        draw[0](canvas, work->sheet + ((frame - start - 2) / 2) * 960 + 0x5100,
+        draw[0](canvas,
+                work->sheet + ((frame - start - 2) / 2) * 960 +
+                    BURST_FLASH_CELLS,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 
-    // 粒：寿命が尽きるまで描き、地面で跳ね返す
+    // Motes: drawn until they die out, bouncing off the ground.
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -16029,13 +16059,13 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
       s32 size = mote->variant;
 
       if (size > 0) {
-        EffectPosition_ApplyBaseAndYOffset(&mote->x, &pos);
-        pos.x /= 2;
+        EffectPosition_ApplyBaseAndYOffset(&mote->x, &screen);
+        screen.x /= 2;
         size >>= 3;
         size++;
         draw[(i / 2) & 1](canvas,
                           sprites + gParticleStreams_CellOffsets[size - 1],
-                          pos.x - size / 2, pos.y - size, size, size * 2);
+                          screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
         if (mote->y < 0x80000)
           mote->velocityY = -mote->velocityY / 2;
@@ -16055,12 +16085,20 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
 
 extern const struct Scale gRisingWall_UnitScale;
 
-// 地面が盛り上がり、岩の壁がせり上がって、しばらくして沈む
-// 壁は左右対称で、左半分を描いてから右半分を左右反転で描く
-// 壁の中心はキャンバスの x = 64 + wallX
-// 岩は 11 個のアニメーションオブジェクト（動きは particles[10〜20]）
+// The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
+// in the rebuilt sheet.
+#define WALL_TOP_CELLS 0x13c0
+#define WALL_FOOT_CELLS 0x25c0
+
+// Rising wall: the ground swells, a wall of rock rises from it, stands
+// while rocks tumble up its face and the targets are battered, and sinks
+// again. The wall is symmetric: its left half is drawn, then mirrored for
+// the right. Its centre is at canvas x 64 + wallX. The rocks are 11
+// animation objects, moved by particles[10] to particles[20].
+//
+// effect: the targets; variant 0 to 2 widens the wall.
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -16069,29 +16107,29 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
   s32 wallX;
   s32 rockX;
   struct Scale scale;
-  s32 pos[4];
+  s32 position[4];
   u8 *src;
-  u16 *col;
-  void *pltt = (void *)BG_PLTT;
-  s32 n;
+  u16 *color;
+  void *palette = (void *)BG_PLTT;
+  s32 sheetIndex;
   s32 frame;
   s32 i;
   s32 j;
   s32 k;
 
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = heap[2];
+  sprites = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // variant が大きいほど壁を横に広げる
+  // The higher the variant, the wider the wall.
   if (work->effect->variant == 0)
-    REG_BG2PA = 204; // 1.25 倍
+    REG_BG2PA = 204; // 1.25 times the width
   else if (work->effect->variant == 1)
-    REG_BG2PA = 170; // 1.5 倍
+    REG_BG2PA = 170; // 1.5 times the width
   if (work->effect->side == 1) {
     wallX = 8;
     if (work->effect->variant == 0)
@@ -16107,74 +16145,70 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
   REG_BG2X = gRisingWall_Bg2Shifts[work->effect->side][work->effect->variant]
              << 8;
 
-  //------------------------------------------------------------------
-  // パレット：BG の 1〜63 番を各成分 8 段暗くする
-  //------------------------------------------------------------------
+  // Palette: background colours 1 to 63, each channel 8 steps darker.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
                              1, 0);
-  Iwram_CopyWords(pltt, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA),
-                  128);
-  col = (u16 *)&BG_PLTT[1];
+  Iwram_CopyWords(palette,
+                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+  color = (u16 *)&BG_PLTT[1];
   for (i = 0; i != 63; i++) {
-    s32 c = *col;
-    s32 b = ((u16)c >> 10) & 31;
-    s32 g = ((u16)c >> 5) & 31;
-    s32 r = 31;
+    s32 entry = *color;
+    s32 blue = ((u16)entry >> 10) & 31;
+    s32 green = ((u16)entry >> 5) & 31;
+    s32 red = 31;
 
-    r &= c;
-    b -= 8;
-    g -= 8;
-    r -= 8;
+    red &= entry;
+    blue -= 8;
+    green -= 8;
+    red -= 8;
 
-    if (b < 0)
-      b = 0;
-    if (g < 0)
-      g = 0;
-    if (r < 0)
-      r = 0;
-    *col++ = (b << 10) | (g << 5) | r;
+    if (blue < 0)
+      blue = 0;
+    if (green < 0)
+      green = 0;
+    if (red < 0)
+      red = 0;
+    *color++ = (blue << 10) | (green << 5) | red;
   }
 
-  //------------------------------------------------------------------
-  // 絵を work->sheet に並べ直す
-  //   伸びていく壁   : 1 ライン × 9 段を、それぞれ 32 ラインに伸ばす
-  //   壁の上 0x13c0  : 48x32 を縦 3 倍にして 48x96
-  //   壁の下 0x25c0  : 48x21
-  //   盛り上がり     : 3 コマ
-  //------------------------------------------------------------------
+  // Rebuild the pictures in work->sheet:
+  //   the growing wall: nine one-line rows, each stretched to 32 lines;
+  //   the top of the wall (WALL_TOP_CELLS): 48x32 stretched to 48x96;
+  //   the foot of the wall (WALL_FOOT_CELLS): 48x21;
+  //   the swelling ground: three frames.
   src = Ram_MapCellBuffer;
-  n = 0;
+  sheetIndex = 0;
   for (j = 0; j != 9; j++) {
     for (i = 0; i != 32; i++) {
-      for (k = 0; k != gRisingWall_RowWidths[j]; k++, n++)
-        work->sheet[n] = src[k];
+      for (k = 0; k != gRisingWall_RowWidths[j]; k++, sheetIndex++)
+        work->sheet[sheetIndex] = src[k];
     }
     src += gRisingWall_RowWidths[j];
   }
   for (j = 0; j != 32; j++) {
     for (i = 0; i != 3; i++) {
-      for (k = 0; k != 48; k++, n++)
-        work->sheet[n] = src[k];
+      for (k = 0; k != 48; k++, sheetIndex++)
+        work->sheet[sheetIndex] = src[k];
     }
     src += 48;
   }
   for (i = 0; i != 1008; i++)
-    work->sheet[n++] = *src++;
+    work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
     for (k = 0; k != gRisingWall_MoundWidths[i] * gRisingWall_MoundHeights[i];
          k++)
-      work->sheet[n++] = *src++;
+      work->sheet[sheetIndex++] = *src++;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // 岩のオブジェクト
+  // The rock objects.
   for (i = 0; i != 11; i++) {
-    struct AnimationObject *obj = ResourceObject_CreateFar(390);
+    struct AnimationObject *rock = ResourceObject_CreateFar(390);
 
-    work->objects[i] = obj;
-    if (obj != 0) {
-      obj->flags = 0;
-      AnimationObjects_SelectAnimationFar(obj, i / 4);
+    work->objects[i] = rock;
+    if (rock != 0) {
+      rock->flags = 0;
+      AnimationObjects_SelectAnimationFar(rock, i / 4);
       ((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
     }
   }
@@ -16187,13 +16221,13 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;
-  work->transferMode = 2; // 残像 3/4
+  work->transferMode = 2; // trails, fading to 3/4
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 岩：x は列、y は 128 から z ずつ減らす数え、
-  // velocityX は 1〜12 を回る数え、variant は出るまでの待ち
+  // Rocks: x is the column, y counts down from 128 by z, velocityX cycles
+  // through 1 to 12, and variant is the wait before the rock appears.
   for (i = 0; i != 11; i++) {
     struct EffectStep *rock = &work->particles[10 + i];
 
@@ -16208,7 +16242,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
   for (i = 0; i != 6; i++)
     work->particles[16 + i].x = gRisingWall_LateRockColumns[i];
 
-  // 土ぼこり：壁の根もとから上へ昇る
+  // Dust rises from the foot of the wall.
   for (i = 0; i != 256; i++) {
     struct EffectStep *dust = &PARTICLES[i];
 
@@ -16229,7 +16263,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
     if (frame == 120)
       BattleEventRuntime_BeginPhaseFar(134);
 
-    // 盛り上がる地面（0〜81）
+    // The swelling ground (frames 0 to 81).
     if (frame <= 81) {
       s32 cell = frame / 4;
 
@@ -16244,7 +16278,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
               gRisingWall_MoundWidths[cell], gRisingWall_MoundHeights[cell]);
     }
 
-    // せり上がる壁（12〜87）
+    // The rising wall (frames 12 to 87).
     if (frame >= 12 && frame <= 87) {
       s32 row = (frame - 64) / 3;
 
@@ -16261,7 +16295,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 沈む壁（160〜183）
+    // The sinking wall (frames 160 to 183).
     if (frame >= 160 && frame <= 183) {
       s32 row = 7 - (frame - 160) / 3;
 
@@ -16278,17 +16312,18 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 立ち切った壁（88〜159）
+    // The standing wall (frames 88 to 159).
     if (frame >= 88 && frame <= 159) {
       s32 width = 48;
 
-      draw[0](canvas, &work->sheet[0x13c0], wallX + 16, 0, width, 96);
-      draw[1](canvas, &work->sheet[0x13c0], wallX + 64, 0, width, 96);
-      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, width, 21);
-      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, width, 21);
+      draw[0](canvas, &work->sheet[WALL_TOP_CELLS], wallX + 16, 0, width, 96);
+      draw[1](canvas, &work->sheet[WALL_TOP_CELLS], wallX + 64, 0, width, 96);
+      draw[0](canvas, &work->sheet[WALL_FOOT_CELLS], wallX + 16, 96, width, 21);
+      draw[1](canvas, &work->sheet[WALL_FOOT_CELLS], wallX + 64, 96, width, 21);
     }
 
-    // 土ぼこり（88〜）：上に抜けたら根もとへ戻す（159 まで）
+    // Dust (from frame 88): until frame 159, dust that leaves the top
+    // returns to the foot.
     if (frame > 87) {
       for (i = 0; i != 64; i++) {
         struct EffectStep *dust = &PARTICLES[i];
@@ -16307,7 +16342,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 岩（5〜）：72 フレーム目からは 11 個に増やし、大きくする
+    // Rocks (from frame 5): from frame 72 there are 11 of them, larger.
     if (frame > 4) {
       s32 rocks = 6;
 
@@ -16326,21 +16361,21 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
             scale.x = 0x8000;
           }
           scale.y = scale.x;
-          pos[3] = 0;
-          pos[0] = (rock->x + rockX * 2) << 16;
-          pos[1] = 0x2000000 - (rock->y << 16);
-          pos[2] = 0x2000000;
+          position[3] = 0;
+          position[0] = (rock->x + rockX * 2) << 16;
+          position[1] = 0x2000000 - (rock->y << 16);
+          position[2] = 0x2000000;
           slot = (frame / 2 + k) % 11;
           if (slot != -1)
-            Object_ApplyProjectedPlacementFar(work->objects[slot], pos, &scale,
-                                              0);
+            Object_ApplyProjectedPlacementFar(work->objects[slot], position,
+                                              &scale, 0);
           rock->y -= rock->z;
           rock->velocityX += rock->velocityY;
           if (rock->velocityX > 12)
             rock->velocityX -= 12;
           if (rock->y < 0) {
-            // y が 0 を切ったら 128 から出し直す（88
-            // フレーム目からは列と速さも選び直す）
+            // Below 0 the rock starts again at 128 (from frame 88 in a new
+            // column, at a new speed).
             if (frame > 159) {
               rock->variant = -1;
             } else {
@@ -16363,7 +16398,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 対象（86〜158）
+    // The targets (frames 86 to 158).
     if (frame <= 158) {
       for (i = 0; i != work->effect->count; i++) {
         if (frame > 85) {

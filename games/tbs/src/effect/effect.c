@@ -15114,20 +15114,30 @@ extern const s16 gMode12_Points[][2];
 extern u8 gMode12_Animations[];
 extern u8 gMode12_SmokeFlips[];
 
-// Ram_MapCellBuffer + 0xc58 から 910 個（その前には絵を読み込む）
+// 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
+// before them.
 #define MODE12_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
+
+// The violet mote in the second part's sheet.
+#define MODE12_MOTE_CELLS 0x6000
+
+// Storm summons: a circle of light forms in the dusk sky and sends down a
+// beam; then a pillar of lightning and a storm of violet bolts strike the
+// targets, pushing them back, and the effect ends in an impact burst.
+//
+// effect: the targets.
 
 void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   u8 ramp[32];
-  s32 vec[3];
-  struct EffectPosition pts[11];
-  s32 pos[3];
+  s32 point[3];
+  struct EffectPosition screen[11];
+  s32 position[3];
   s32 scale[3];
   void **slots;
-  s32 *ctrl;
+  struct BattleBackgroundView *view;
   struct BattleEffectWork *work;
-  void *dst;
-  u8 *aux;
+  void *canvas;
+  u8 *sprites;
   s32 frame;
   /* FAKEMATCH: frame local: only blit[0] is used; the unused second blitter
      word fills four bytes of the frame. Measured (2026-10-14): declared as one
@@ -15138,30 +15148,32 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   s32 count;
   s32 i;
   s32 j;
-  s32 n;
-  struct EffectStep *p;
-  DrawRectangle *cache;
-  s32 rings = 0x2710;
+  s32 dotCount;
+  struct EffectStep *spark;
+  DrawRectangle *blitters; // the work slots read as blitters
+  s32 rings = 10000;       // the darker copies of the dot pictures in the sheet
 
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
-  ctrl = slots[0];
+  view = slots[0];
   work = slots[-5];
-  dst = slots[-4];
-  aux = slots[-3];
+  canvas = slots[-4];
+  sprites = slots[-3];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
-  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
                              work->sheet + 0x1800, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
+  // Eight copies of the dot pictures, each with its colour levels capped 7
+  // lower than the one before.
   {
     s32 offset;
     for (i = 0, offset = 0; i != 8; i++) {
       u8 *src;
-      for (j = 0, src = aux; j != 0x302; j++) {
+      for (j = 0, src = sprites; j != 0x302; j++) {
         s32 v = *src++;
 
         if (v > 64 - i * 7) {
@@ -15178,13 +15190,13 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
 
   BattlePres_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)0x05000002 = 0; // background palette 0, colour 1
   REG_BG2CNT = 0x2784;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
   work->scrollStepX = 1;
   work->scrollStepY = 0;
-  ctrl[4] = 1;
+  view->busy = 1;
   Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
   Scheduler_AddOrUpdateCallback(
       (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -15195,8 +15207,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   BattleEffect_WipeCanvas(0, 1);
   REG_BG2PA = 0x80;
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-  cache = (DrawRectangle *)gWorkSlot;
-  blit[0] = cache[46];
+  blitters = (DrawRectangle *)gWorkSlot;
+  blit[0] = blitters[HEAP_SLOT_BLITTER];
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x100f;
@@ -15204,6 +15216,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
 
+  // One row of the beam: brightest in the middle, darker to each side.
   for (i = 0; i != 16; i++) {
     ramp[i] = i * 8 + 3;
     ramp[31 - i] = i * 8 + 3;
@@ -15216,6 +15229,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   }
   REG_BG2CNT = 0x784;
 
+  // First part, 170 frames (A or B skips it): sinkFrame circle of dots and
+  // three lines across it form and turn over dusk clouds, the circle shrinks
+  // into the sky, and sinkFrame beam of light falls from it.
   for (frame = 0; frame != 170; frame++) {
     size = 2;
     count = frame * 2;
@@ -15243,141 +15259,152 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
                                 0x7fff0000);
     Render_ResetTransformState();
     if (frame > 128) {
-      s32 a = frame - 128;
-      if (a > 22) {
-        a = 20;
+      s32 sinkFrame = frame - 128;
+      if (sinkFrame > 22) {
+        sinkFrame = 20;
       }
-      pos[0] = 0;
-      pos[1] = -a << 17;
-      pos[2] = 0x2000000;
-      size = (a >> 2) + 2;
+      position[0] = 0;
+      position[1] = -sinkFrame << 17;
+      position[2] = 0x2000000;
+      size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
       }
-      SceneTransform_ApplyPosition(pos);
+      SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
       SceneTransform_ApplyRoll(0x8000);
       SceneTransform_ApplyPitch(0x8000);
-      SceneTransform_ApplyYaw(a << 12);
+      SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         scale[0] = frame * 0x1800 - 0xd9400;
         scale[1] = scale[0];
         scale[2] = scale[0];
         size = 5;
       } else {
-        scale[0] = 0x10000 - a * 3 * 0x400;
+        scale[0] = 0x10000 - sinkFrame * 3 * 0x400;
         scale[1] = scale[0];
         scale[2] = scale[0];
       }
       SceneTransform_ApplyScale(scale);
     } else {
-      pos[0] = 0;
-      pos[1] = 0;
-      pos[2] = 0x1000000;
-      SceneTransform_ApplyPosition(pos);
+      position[0] = 0;
+      position[1] = 0;
+      position[2] = 0x1000000;
+      SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
       SceneTransform_ApplyRoll(frame << 8);
       SceneTransform_ApplyPitch(frame << 8);
     }
 
+    // The three lines, drawn dot by dot between pairs of gMode12_Points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        vec[0] = (gMode12_Points[i][0] - 96) << 16;
-        vec[1] = 0;
-        vec[2] = (gMode12_Points[i][1] - 96) << 16;
-        EffectPosition_ApplyBaseAndYOffset(vec, &pts[i]);
-        pts[i].x = (pts[i].x >> 17) + 64;
-        pts[i].y = (pts[i].y >> 16) + 60;
+        point[0] = (gMode12_Points[i][0] - 96) << 16;
+        point[1] = 0;
+        point[2] = (gMode12_Points[i][1] - 96) << 16;
+        EffectPosition_ApplyBaseAndYOffset(point, &screen[i]);
+        screen[i].x = (screen[i].x >> 17) + 64;
+        screen[i].y = (screen[i].y >> 16) + 60;
       }
       for (i = 0; i != 3; i++) {
-        n = count * 2 - i * 48 - 256;
-        if (n > 48) {
-          n = 48;
+        dotCount = count * 2 - i * 48 - 256;
+        if (dotCount > 48) {
+          dotCount = 48;
         }
-        if (n >= 0) {
-          for (j = 0; j != n; j++) {
-            s32 x = pts[i * 2].x +
-                    Iwram_MulQ16(j * (pts[i * 2 + 1].x - pts[i * 2].x), 0x555);
-            s32 y = pts[i * 2].y +
-                    Iwram_MulQ16(j * (pts[i * 2 + 1].y - pts[i * 2].y), 0x555);
-            blit[0](dst, aux + gParticleStreams_CellOffsets[size - 1],
+        if (dotCount >= 0) {
+          for (j = 0; j != dotCount; j++) {
+            s32 x = screen[i * 2].x +
+                    Iwram_MulQ16(j * (screen[i * 2 + 1].x - screen[i * 2].x),
+                                 0x555);
+            s32 y = screen[i * 2].y +
+                    Iwram_MulQ16(j * (screen[i * 2 + 1].y - screen[i * 2].y),
+                                 0x555);
+            blit[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
                     x - size / 2, y - size, size, size * 2);
           }
         }
       }
     }
 
+    // The circle of 128 dots, darkening once the beam has fallen.
     if (frame <= 179) {
-      DrawRectangle blit47;
-      s32 lvl = 0;
+      DrawRectangle drawAlt;
+      s32 level = 0;
 
       if (frame > 155) {
-        lvl = frame - 156;
+        level = frame - 156;
       }
-      if (lvl > 7) {
-        lvl = 7;
+      if (level > 7) {
+        level = 7;
       }
       if (frame <= 139) {
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-        blit47 = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
       } else {
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-        blit47 = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
       }
-      n = count;
-      if (n > 128) {
-        n = 128;
+      dotCount = count;
+      if (dotCount > 128) {
+        dotCount = 128;
       }
-      for (i = 0; i != n; i++) {
-        s32 s = size + 1;
-        vec[0] = Trig_Sin(i << 9) * 96;
-        vec[2] = -(Trig_Cos(i << 9) * 96);
-        EffectPosition_ApplyBaseAndYOffset(vec, &pts[0]);
-        pts[0].x = (pts[0].x >> 17) + 64;
-        pts[0].y = (pts[0].y >> 16) + 60;
-        blit47(dst,
-               work->sheet +
-                   (lvl * 0x302 + gParticleStreams_CellOffsets[s - 1]) + rings,
-               pts[0].x - s / 2, pts[0].y - s, s, s * 2);
+      for (i = 0; i != dotCount; i++) {
+        s32 dotSize = size + 1;
+        point[0] = Trig_Sin(i << 9) * 96;
+        point[2] = -(Trig_Cos(i << 9) * 96);
+        EffectPosition_ApplyBaseAndYOffset(point, &screen[0]);
+        screen[0].x = (screen[0].x >> 17) + 64;
+        screen[0].y = (screen[0].y >> 16) + 60;
+        drawAlt(
+            canvas,
+            work->sheet +
+                (level * 0x302 + gParticleStreams_CellOffsets[dotSize - 1]) +
+                rings,
+            screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
+            dotSize * 2);
       }
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
 
+    // The beam: rows of the ramp narrowing at its top, and the light fan
+    // falling down it.
     if ((u32)(frame - 151) <= 16) {
-      s32 w = 0;
-      s32 h = (frame - 151) * 20 + 44;
+      s32 inset = 0;
+      s32 beamHeight = (frame - 151) * 20 + 44;
       if (frame > 151) {
-        w = frame - 152;
+        inset = frame - 152;
       }
-      if (w > 15) {
-        w = 15;
+      if (inset > 15) {
+        inset = 15;
       }
       for (i = 1; i != 10; i++) {
-        if (w + i <= 15) {
-          blit[0](dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
+        if (inset + i <= 15) {
+          blit[0](canvas, &ramp[inset + i], inset + 48 + i, 16 - i,
+                  32 - inset * 2 - i * 2, 1);
         }
       }
-      for (i = 0; i != h; i++) {
-        s32 k = 32;
+      for (i = 0; i != beamHeight; i++) {
+        s32 fullWidth = 32;
         // loop.c matches this 32 with the smoke calls' 32 and hoists it out of
         // the frame loop, where it loses its register and later reloads rotate:
         // after an earlier move its threshold is 12, and savings 2 x life 19 x
-        // 12 = 456 reaches the loop's 448 insns.
-        /* FAKEMATCH: the barrier keeps k's 32 in this loop's preheader, as
-         * native, and its two codeless preheader insns lengthen i's life
-         * (1292), so n (28 refs/106) ranks before i (195 refs) and takes r9; a
-         * 96 local before the ramp loops also defeats the hoist (432 < 448) but
-         * lacks those insns, so i takes r9 and a slot appears at [sp, #60]
-         * (differ 699). */
-        asm("" : "+r"(k));
-        blit[0](dst, ramp + w, w + 48, i + 16, k - w * 2, 1);
+        // 12 = 456 reaches the loop'dotSize 448 insns.
+        /* FAKEMATCH: the barrier keeps fullWidth'dotSize 32 in this
+         * loop'dotSize preheader, as native, and its two codeless preheader
+         * insns lengthen i'dotSize life (1292), so dotCount (28 refs/106) ranks
+         * before i (195 refs) and takes r9; sinkFrame 96 local before the ramp
+         * loops also defeats the hoist (432 < 448) but lacks those insns, so i
+         * takes r9 and sinkFrame slot appears at [sp, #60] (differ 699). */
+        asm("" : "+r"(fullWidth));
+        blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
+                1);
       }
       BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work, 32,
+      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 32,
                                              (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work, 64,
+      gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas, work->sheet, 64,
                                              (frame - 151) * 20 - 12, 32, 96);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     }
@@ -15385,32 +15412,36 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  ctrl[4] = 0;
+  // Second part, 192 frames: sinkFrame pillar of lightning strikes the
+  // formation, throwing sparks, then violet bolts strike again and again while
+  // the formation is pushed back in smoke, ending in an impact burst.
+  view->busy = 0;
   Scheduler_RemoveCallback((u32)BattleFx_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 0x173, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
+                             1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
-                             work->sheet + 0x6000, 1, 0);
-  Iwram_CopyWords((void *)0x05000000,
+                             work->sheet + MODE12_MOTE_CELLS, 1, 0);
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, aux, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
   REG_BLDALPHA = 0x1010;
   {
-    s32 camX;
-    s32 camY;
-    s32 velX;
-    s32 velY;
-    s32 cx;
-    s32 cy;
+    s32 formationX;
+    s32 formationY;
+    s32 formationSpeedX;
+    s32 formationSpeedY;
+    s32 pillarX;
+    s32 pillarY;
 
-    camX = 0x500000;
-    camY = 0x400000;
-    velX = 0;
-    velY = 0;
+    formationX = 0x500000;
+    formationY = 0x400000;
+    formationSpeedX = 0;
+    formationSpeedY = 0;
     for (i = 0; i != 910; i++) {
       MODE12_PARTICLES[i].variant = 0;
     }
@@ -15422,17 +15453,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 50;
     AudioCommand_PlayFar(145);
-    cx = 60;
-    cy = 112;
+    pillarX = 60;
+    pillarY = 112;
 
     for (frame = 0; frame != 192; frame++) {
-      s32 d;
+      s32 stormFrame;
       if (frame == 20) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB, work,
                                    1, 0);
       }
-      d = frame - 80;
-      if ((u32)d <= 59 && !(frame & 7)) {
+      stormFrame = frame - 80;
+      if ((u32)stormFrame <= 59 && !(frame & 7)) {
         AudioCommand_PlayFar(134);
       }
       if (frame == 140) {
@@ -15442,26 +15473,26 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
           if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-            blit[0](dst, work->sheet, 36, 0, 48, cy);
+            blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](dst, work->sheet + 0x1500, 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            s32 n = 0;
-            for (i = 0, p = MODE12_PARTICLES; i != 910; i++, p++) {
-              if (p->variant == 0) {
+            s32 spawned = 0;
+            for (i = 0, spark = MODE12_PARTICLES; i != 910; i++, spark++) {
+              if (spark->variant == 0) {
                 s32 speed = 0x3ff;
                 s32 angle;
                 speed &= Random16();
                 angle = (Random16() & 0x7fff) - 0x4000;
-                p->x = cx << 16;
-                p->y = cy << 16;
+                spark->x = pillarX << 16;
+                spark->y = pillarY << 16;
                 speed += 32;
-                p->velocityX = (Trig_Sin(angle) * speed) >> 7;
-                p->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
-                p->variant = (Random16() & 7) + 32;
-                if (++n == 512) {
+                spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
+                spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
+                spark->variant = (Random16() & 7) + 32;
+                if (++spawned == 512) {
                   break;
                 }
               }
@@ -15476,40 +15507,42 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
           BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
         }
       }
-      if ((u32)d <= 63) {
-        s32 ox;
-        s32 oy;
-        s32 sx;
+      // Frames 80 to 143: thirty violet bolts, 2 frames apart, and the
+      // violet mote swaying in four mirrored copies.
+      if ((u32)stormFrame <= 63) {
+        s32 moteX;
+        s32 moteY;
+        s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWords(dst, 0x4000, 0x10101010);
+            Iwram_FillWords(canvas, 0x4000, 0x10101010);
           }
         }
         for (i = 0; i != 30; i++) {
           if (frame >= i * 2 + 80) {
             if (frame < i * 2 + 82) {
-              s32 rx = (Random16() & 3) - 3;
-              s32 ry = (Random16() & 3) + 32;
+              s32 boltX = (Random16() & 3) - 3;
+              s32 boltY = (Random16() & 3) + 32;
               BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
               gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-                  dst, work->sheet + i % 3 * 0x1440, rx, ry, 72, 72);
+                  canvas, work->sheet + i % 3 * 0x1440, boltX, boltY, 72, 72);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             if (frame == i * 2 + 80) {
-              s32 n = 0;
-              for (j = 0, p = MODE12_PARTICLES; j != 910; j++, p++) {
-                if (p->variant == 0) {
+              s32 spawned = 0;
+              for (j = 0, spark = MODE12_PARTICLES; j != 910; j++, spark++) {
+                if (spark->variant == 0) {
                   s32 speed = 0x3ff;
                   s32 angle;
                   speed &= Random16();
                   angle = Random16() & 0xffff;
-                  p->x = 0x100000;
-                  p->y = 0x500000;
+                  spark->x = 0x100000;
+                  spark->y = 0x500000;
                   speed += 32;
-                  p->velocityX = (Trig_Sin(angle) * speed) >> 7;
-                  p->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
-                  p->variant = (Random16() & 7) + 32;
-                  if (++n == 16) {
+                  spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
+                  spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
+                  spark->variant = (Random16() & 7) + 32;
+                  if (++spawned == 16) {
                     break;
                   }
                 }
@@ -15525,43 +15558,45 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
           }
         }
         {
-          s32 r = 7;
+          s32 radius = 7;
           s32 angle;
-          r &= Random16();
+          radius &= Random16();
           angle = Random16() & 0xffff;
-          ox = (Trig_Sin(angle) * (r + 8)) >> 16;
-          sx = ox + 72;
-          oy = 32 - ((Trig_Cos(angle) * (r + 8)) >> 16);
+          moteX = (Trig_Sin(angle) * (radius + 8)) >> 16;
+          mirrorX = moteX + 72;
+          moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work->sheet + 0x6000,
-                                               ox + 60, oy - 24, 12, 24);
+        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
+                                               work->sheet + MODE12_MOTE_CELLS,
+                                               moteX + 60, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work->sheet + 0x6000, sx,
-                                               oy - 24, 12, 24);
+        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
+                                               work->sheet + MODE12_MOTE_CELLS,
+                                               mirrorX, moteY - 24, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work->sheet + 0x6000,
-                                               ox + 60, oy, 12, 24);
+        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+            canvas, work->sheet + MODE12_MOTE_CELLS, moteX + 60, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
-        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst, work->sheet + 0x6000, sx,
-                                               oy, 12, 24);
+        gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
+            canvas, work->sheet + MODE12_MOTE_CELLS, mirrorX, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         j = 0;
-        for (i = 0, p = MODE12_PARTICLES; i != 910; i++, p++) {
-          if (p->variant == 0) {
+        for (i = 0, spark = MODE12_PARTICLES; i != 910; i++, spark++) {
+          if (spark->variant == 0) {
             s32 speed = 63;
             s32 angle;
             speed &= Random16();
             angle = Random16() & 0xffff;
-            p->x = sx << 16;
-            p->y = oy << 16;
+            spark->x = mirrorX << 16;
+            spark->y = moteY << 16;
             speed += 64;
-            p->velocityX = (Trig_Sin(angle) * speed) >> 7;
-            p->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
-            p->variant = (Random16() & 7) + 16;
+            spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
+            spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
+            spark->variant = (Random16() & 7) + 16;
             if (++j == 4) {
               break;
             }
@@ -15572,52 +15607,55 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
       BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
       {
         DrawRectangle draw = gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
-        struct EffectStep *q;
-        for (i = 0, q = MODE12_PARTICLES; i != 910; i++, q++) {
-          if (q->variant > 0) {
-            q->variant--;
-            EffectStep_AdvanceWithGravity2D(q, 60, 0);
-            if (q->y > 0x780000) {
-              q->velocityY = -q->velocityY / 2;
-            } else if ((u32)q->x <= 0x7effff && q->y >= 0) {
-              s32 x = q->x >> 16;
-              s32 y = q->y >> 16;
-              s32 s = q->variant / 16 + 1;
-              draw(dst, aux + gParticleStreams_CellOffsets[s - 1], x - s / 2,
-                   y - s, s, s * 2);
+        struct EffectStep *spark;
+        for (i = 0, spark = MODE12_PARTICLES; i != 910; i++, spark++) {
+          if (spark->variant > 0) {
+            spark->variant--;
+            EffectStep_AdvanceWithGravity2D(spark, 60, 0);
+            if (spark->y > 0x780000) {
+              spark->velocityY = -spark->velocityY / 2;
+            } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
+              s32 x = spark->x >> 16;
+              s32 y = spark->y >> 16;
+              s32 dotSize = spark->variant / 16 + 1;
+              draw(canvas, sprites + gParticleStreams_CellOffsets[dotSize - 1],
+                   x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
             }
           }
         }
       }
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 
+      // The formation is pushed back from frame 32.
       if (frame > 15) {
         if (frame == 32) {
-          velX = 0x40000;
-          velY = -0x4000;
+          formationSpeedX = 0x40000;
+          formationSpeedY = -0x4000;
         }
         if (frame > 31) {
-          camX += velX;
-          camY += velY;
-          velX = velX * 60 / 64;
-          velY = velY * 60 / 64;
+          formationX += formationSpeedX;
+          formationY += formationSpeedY;
+          formationSpeedX = formationSpeedX * 60 / 64;
+          formationSpeedY = formationSpeedY * 60 / 64;
         }
-        BattleFx_PlaceFormationObjects(0, camX, camY);
+        BattleFx_PlaceFormationObjects(0, formationX, formationY);
       }
+      // Smoke around the formation.
       if ((u32)(frame - 16) <= 127) {
-        s32 base;
-        for (i = 0, base = camX >> 17; i != 3; i++) {
-          s32 k = i & 3;
+        s32 formationScreenX;
+        for (i = 0, formationScreenX = formationX >> 17; i != 3; i++) {
+          s32 fullWidth = i & 3;
           s32 angle = Random16() & 0xffff;
-          s32 x = ((Trig_Sin(angle) << 3) >> 16) + base -
-                  (gBattleFx_GlintCellWidths[k] >> 1);
+          s32 x = ((Trig_Sin(angle) << 3) >> 16) + formationScreenX -
+                  (gBattleFx_GlintCellWidths[fullWidth] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
-                  (gBattleFx_GlintCellHeights[k] >> 1);
+                  (gBattleFx_GlintCellHeights[fullWidth] >> 1);
           BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                                 3 | gMode12_SmokeFlips[Random16() & 3], 2);
           gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](
-              dst, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[k], x, y + 56,
-              gBattleFx_GlintCellWidths[k], gBattleFx_GlintCellHeights[k]);
+              canvas, Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[fullWidth],
+              x, y + 56, gBattleFx_GlintCellWidths[fullWidth],
+              gBattleFx_GlintCellHeights[fullWidth]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }
       }
@@ -15634,7 +15672,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback(
         (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    BattleEffect_RunImpactBurst(0, camX, camY);
+    BattleEffect_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);

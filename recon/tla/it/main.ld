@@ -96,7 +96,6 @@ SECTIONS
     "*/games/tla/src/graphics/render/oambuck.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000141a0)
     "*/games/tla/src/system/resource/clear_slot_references.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000142a0)
     "*/games/tla/src/system/resource/activate_entry.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00014300)
     "*/games/tla/src/system/resource/initialize.o"(.text)

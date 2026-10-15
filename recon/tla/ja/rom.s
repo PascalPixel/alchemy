@@ -81,12 +81,6 @@ Func_08013de4:
 	.thumb_func
 ResourceTable_AllocateBlocks:
 	.incbin "baserom.gba", 0x00014174, 0x00000080
-	.section .rom.00014274, "ax"
-	.global Resource_ResetEntry
-	.type Resource_ResetEntry, %function
-	.thumb_func
-Resource_ResetEntry:
-	.incbin "baserom.gba", 0x00014274, 0x00000038
 	.section .rom.000142d4, "ax"
 	.global VramBlock_LoadCached
 	.type VramBlock_LoadCached, %function

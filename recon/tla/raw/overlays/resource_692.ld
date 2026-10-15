@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x0200815a)
         "*/resource_692_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_692/s033c.o"(.text)
-        "*/resource_692_overlay.o"(.text.x02008374)
+        "*/games/tla/src/field/common/object/find_in_cell.o"(.text)
         "*/resource_692_overlay.o"(.text.x020083b4)
         "*/games/tla/src/field/overlay_692/s0538.o"(.text)
         "*/games/tla/src/field/overlay_692/s0594.o"(.text)

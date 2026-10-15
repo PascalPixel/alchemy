@@ -2040,10 +2040,6 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000ba204, 0x00000084
-	.section .rom.000ba288, "ax"
-	.global Data_080b127c
-Data_080b127c:
-	.incbin "baserom.gba", 0x000ba288, 0x0000004c
 	.section .rom.000baf34, "ax"
 	.incbin "baserom.gba", 0x000baf34, 0x00000004
 	.section .rom.000cfb10, "ax"

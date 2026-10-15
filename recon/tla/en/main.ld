@@ -830,7 +830,6 @@ SECTIONS
         "*/games/tla/src/game/djinn/party.o"(.text)
         "*/recon/tla/raw/080b1088.o"(.text)
         "*/recon/tla/raw/080b11f8.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.080b127c)
         "*/games/tla/src/game/character/exptbl.o"(.rodata)
         "*/recon/tla/raw/080b1f28.o"(.text)
         "*/games/tla/src/game/inventory/cntidx.o"(.rodata)

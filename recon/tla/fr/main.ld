@@ -856,7 +856,6 @@ SECTIONS
     "*/games/tla/src/game/djinn/party.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b6088)
     "*/recon/tla/fr/rom.o"(.rom.000b61f8)
-    "*/recon/tla/fr/rom.o"(.rom.000b627c)
     "*/games/tla/src/game/character/exptbl.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.000b6f28)
     "*/games/tla/src/game/inventory/cntidx.o"(.rodata)

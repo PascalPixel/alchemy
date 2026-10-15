@@ -366,16 +366,6 @@ Data_080aa2d8:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x000aa3dc, 0x00000004
-	.section .unidentified.080b127c,"a"
-	.global Data_080b127c
-Data_080b127c:
-	.incbin "baserom.gba", 0x000b127c, 0x00000008
-	.global Data_080b1284
-Data_080b1284:
-	.incbin "baserom.gba", 0x000b1284, 0x0000000c
-	.global Data_080b1290
-Data_080b1290:
-	.incbin "baserom.gba", 0x000b1290, 0x00000038
 	.section .unidentified.080c6b04,"a"
 	.global Data_080c6b04
 Data_080c6b04:

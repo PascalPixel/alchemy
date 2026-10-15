@@ -3455,7 +3455,7 @@ SECTIONS
     "*/games/tla/src/graphics/field_fx/flaming_arrow.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/bow_draw.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00969356)
-    "*/recon/tla/it/rom.o"(.rom.00969358)
+    "*/games/tla/src/graphics/field_fx/explosion.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/r1e9.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00969686)
     "*/games/tla/src/graphics/field_fx/sparkle_fade.o"(.rodata)

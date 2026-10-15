@@ -498,7 +498,7 @@ Resource_DirectoryTable:
 	resource , FieldFx_GoldCrystal
 	resource , FieldFx_FlamingArrow
 	resource , FieldFx_BowDraw
-	resource , Resource_Data1E8
+	resource , FieldFx_Explosion
 	resource , Resource_Data1E9
 	resource , FieldFx_SparkleFade
 	resource , FieldFx_StarSparkleFade

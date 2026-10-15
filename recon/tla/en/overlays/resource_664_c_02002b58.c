@@ -4,15 +4,15 @@
    the counter in r6; this form, a goto loop, still takes the address and the
    height once before the loop (r5 and r10) and counts in r8. A for loop is
    differ 55. */
-#include "../../../../games/tla/src/field/overlay_664/ov664.h"
+#include "../../../../games/tla/src/scene/airs_rock_inside/airs_rock_inside.h"
 
-struct Ov664Vector {
+struct AirsRockInsideVector {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Ov664Spawn {
+struct AirsRockInsideSpawn {
     s32 mode;
     s32 unknown_04;
     s32 scale_x;
@@ -26,12 +26,12 @@ struct Ov664Spawn {
 };
 
 s32 Random16Far(void);
-void Func_020002f4(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct Ov664Spawn *spawn);
+void Func_020002f4(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct AirsRockInsideSpawn *spawn);
 
 void Func_02002b58(s32 x, s32 z)
 {
-    struct Ov664Spawn spawn;
-    struct Ov664Vector position;
+    struct AirsRockInsideSpawn spawn;
+    struct AirsRockInsideVector position;
     s32 i;
 
     spawn.kind = 0x2a0;

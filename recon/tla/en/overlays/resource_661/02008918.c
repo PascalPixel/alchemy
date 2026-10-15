@@ -1,7 +1,7 @@
 /* Near miss, differ 2 of 31: the native reads the id between the first two
    halves of 0xffff in the loop test (movs r2, #255; ldrh r3, [r5]; lsls r2,
    r2, #8); this draft shifts first. An id temporary is further away. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "map.h"
 
 void Func_02000918(u16 *list)

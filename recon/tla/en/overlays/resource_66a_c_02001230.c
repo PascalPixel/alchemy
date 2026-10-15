@@ -3,7 +3,7 @@
  * hoists the constant into r10. A goto loop leaves differ 10 (no hoisting,
  * pointer copy and one shift placed differently). while, for, do-while and
  * indexed forms were tried. */
-#include "../../../../games/tla/src/field/overlay_66a/local.h"
+#include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 
 void Func_02001230(const u16 *entry)
 {

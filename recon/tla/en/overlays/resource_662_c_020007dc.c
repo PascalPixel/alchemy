@@ -5,7 +5,7 @@
  * them as the native does, but the entry keeps the whole marker build and the body allocates green and the index the
  * other way round, with 0x05000000 kept in r7; u16 locals add shifts (63); the colour expression in other orders and
  * a memory barrier at the loop head do not help. */
-#include "../../../../games/tla/src/field/overlay_662/ov662.h"
+#include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "dma.h"
 #include "io_reg.h"
 

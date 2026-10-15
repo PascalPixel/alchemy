@@ -2,18 +2,18 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/field/overlay_66e/entry.o"(.text)
-        "*/games/tla/src/field/overlay_66e/scene_tables.o"(.text)
-        "*/games/tla/src/field/overlay_66e/script0.o"(.text)
-        "*/games/tla/src/field/overlay_66e/people.o"(.text)
-        "*/games/tla/src/field/overlay_66e/fortune.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/entry.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/scene_tables.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/script0.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/people.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/fortune.o"(.text)
         "*/resource_66e_overlay.o"(.text.x02008390)
-        "*/games/tla/src/field/overlay_66e/reading.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/reading.o"(.text)
         "*/resource_66e_overlay.o"(.text.x02008ba0)
         "*/resource_66e_overlay.o"(.text.x02008c04)
-        "*/games/tla/src/field/overlay_66e/prepare.o"(.text)
-        "*/games/tla/src/field/overlay_66e/import.o"(.text)
-        "*/games/tla/src/field/overlay_66e/data.o"(.data)
+        "*/games/tla/src/scene/naribwe_interiors/prepare.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/import.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

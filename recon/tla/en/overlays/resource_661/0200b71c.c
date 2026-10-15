@@ -4,7 +4,7 @@
    on a party pointer leaves it shared. The same source compiled without the
    global CSE pass (-fno-gcse, diagnosis only, not a build option) gives the
    native instructions up to the second test. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 
 void Func_02002ebc(void);
 void Func_02001bec(void);

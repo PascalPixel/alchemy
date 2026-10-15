@@ -2,7 +2,7 @@
    store (adds r5, #6; strb r2, [r3, #2]) and reads the id between the first
    two halves of 0xffff in the loop test; this draft stores first and shifts
    first. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "map.h"
 
 void Func_0200095c(u16 *list)

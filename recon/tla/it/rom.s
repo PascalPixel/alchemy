@@ -5733,8 +5733,6 @@ Graphics_TransformPaletteBuffer:
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x00001238
-	.section .rom.001b20a0, "ax"
-	.incbin "baserom.gba", 0x001b20a0, 0x000000b0
 	.section .rom.001b21ec, "ax"
 	.incbin "baserom.gba", 0x001b21ec, 0x000012bc
 	.section .rom.001b34a8, "ax"

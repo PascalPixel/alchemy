@@ -2011,7 +2011,6 @@ SECTIONS
     . = ABSOLUTE(0x081b2000);
     "*/games/tla/src/system/far_call/resource_e.o"(.text)
     "*/games/tla/src/graphics/palette/scale_rgb555.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.001b20a0)
     "*/games/tla/src/battle/effect/darken.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001b21ec)
     "*/recon/tla/fr/rom.o"(.rom.001b34a8)

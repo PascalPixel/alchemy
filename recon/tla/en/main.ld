@@ -2312,7 +2312,6 @@ SECTIONS
         . = ABSOLUTE(0x081b2000);
         "*/games/tla/src/system/far_call/resource_e.o"(.text)
         "*/games/tla/src/graphics/palette/scale_rgb555.o"(.text)
-        "*/recon/tla/raw/081b20a0.o"(.text)
         "*/games/tla/src/battle/effect/darken.o"(.text)
         "*/recon/tla/raw/081b21ec.o"(.text)
         "*/recon/tla/raw/081b22b8.o"(.text)

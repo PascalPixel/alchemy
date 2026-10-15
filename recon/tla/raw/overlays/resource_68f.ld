@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)
         "*/games/tla/src/field/common/map/cellget.o"(.text)
         "*/games/tla/src/field/common/map/cellset.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x02008338)
+        "*/games/tla/src/field/overlay_68f/s0338.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008404)
         "*/games/tla/src/field/overlay_68f/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_68f/exits.o"(.text)

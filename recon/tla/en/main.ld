@@ -3203,6 +3203,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.088a20ed)
         "*/games/tla/src/graphics/battle_fx/sheet_0f2.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088a27d1)
+        "*/games/tla/src/graphics/battle_fx/sheet_0f3.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.088a471f)
         "*/games/tla/src/graphics/battle_fx/smoke_band.o"(.rodata)
         "*/games/tla/src/graphics/battle_fx/sheet_0f5.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088a5e29)

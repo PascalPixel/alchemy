@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_66f/s05ec.o"(.text)
         "*/resource_66f_overlay.o"(.text.x0200863c)
         "*/games/tla/src/field/overlay_66f/prepare.o"(.text)
-        "*/resource_66f_overlay.o"(.text.x02008960)
+        "*/games/tla/src/field/overlay_66f/s0960.o"(.text)
         "*/games/tla/src/field/overlay_66f/speed.o"(.text)
         "*/resource_66f_overlay.o"(.text.x02008af0)
         "*/games/tla/src/field/overlay_66f/s0d80.o"(.text)

@@ -1,5 +1,6 @@
-@ 場所ごとの出現テーブル (BattleFx_SelectLocationRule)
-@ {シーン, 入口 (-1 はどれでも), フラグ (-1 は常に、立っていない間だけ有効), 1 番目を 0 番目へ移すか, 出現テーブル番号}
+@ The encounter zones of field scenes (Encounter_SelectSceneZones).
+@ {scene, entrance (-1 for any), flag (-1 for always, else the rule holds while
+@ the flag is clear), first zone on ground 0 rather than 1, first zone}
 	.macro location scene:req, entrance:req, flag:req, shift:req, zone:req
 	.2byte SceneId_\scene, \entrance
 	.2byte (\flag & 0x7fff) | (\shift << 15), \zone
@@ -207,4 +208,4 @@ gBattle_LocationRules:
 	location VenusLighthouse4, -1, -1, 1, 95
 	location VenusLighthouse5, -1, -1, 0, 96
 	location VenusLighthouse6, -1, -1, 0, 97
-	.2byte -1, -1, 0, 0	@ 終わり
+	.2byte -1, -1, 0, 0	@ end

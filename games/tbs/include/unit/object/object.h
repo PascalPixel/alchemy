@@ -26,26 +26,26 @@ struct SparkObject;
 struct UiWindow;
 union FieldObject;
 
-void MapGroupTable_SelectEntry(s32 kind);
-void Party_SetReturnPoint(s32 reason);
+void Scene_TakeExit(s32 exitKind);
+void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);
 void Game_ResetForNewGame(s32 mode);
-void BattleFx_LoadResourceGroup(s32 unused);
+void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Audio_PlayCueFromEventWork(void);
-void BattleFx_SelectLocationRule(s32 use_rules);
+void Encounter_SelectSceneZones(s32 useRules);
 s32 BattleFx_LookupResult(void *pos);
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
-s32 EffectRuntime_LookupByTableEntry(u32 terrain, s32 steps);
+s32 EffectRuntime_LookupByTableEntry(u32 ground, s32 steps);
 s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps);
 u16 BattleFx_GetWeightedResult(s32 zone, s32 slot);
-s16 BattleFx_GetPhaseResult(s32 no);
+s16 BattleFx_GetPhaseResult(s32 djinni);
 void Scene_ResolveInteractionResult(void);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-void Party_ResolveTablePair(void);
+void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
-void BattleFx_SetSpecialFromTable(void);
-void BattleFx_SelectResultPointer(s32 arg0);
+void Battle_SelectSceneBackdrop(void);
+void Battle_SelectTerrainBackdrop(s32 behavior);
 /* BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
  * in scope, as in object.c above its definition: in one file its definition
  * would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
@@ -86,8 +86,8 @@ struct EffectDescriptor {
 
 #define MODE_WORLD_MAP 3 // ワールドマップ
 
-s32 Party_RemapCharacterIdByFlags(s32 arg0);
-s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1);
+s32 Party_RemapCharacterIdByFlags(s32 character);
+s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 flag20);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 void ObjectTable_DestroyAtIndex(s32 index);
 void ObjectTable_ResetForObject(struct ScenePlacement *table);
@@ -96,15 +96,15 @@ void *ObjectTable_GetSlotAddress(u32 index);
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry);
 void BattleEffect_ClearOutOfBoundsObjects(void);
 void BattleEffect_ClearAllObjects(void);
-void ObjectTable_ClearBattleSlots(void);
+void ObjectTable_ClearAll(void);
 void *ObjectTable_Get(u32 index);
 void ObjectTable_Snapshot(void);
 void ObjectTable_Restore(void);
 
-void BattleFx_ResetCounters(void);
-s32 BattleFx_SumCounters(void);
-s32 GetFocusedObjectCollision(void);
-void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ);
+void Field_ClearRequests(void);
+s32 Field_CountRequests(void);
+s32 Field_GetCollisionAheadOfLeader(void);
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled);

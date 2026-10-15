@@ -4,6 +4,8 @@
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
+#include "input.h"
+#include "scene_ids.h"
 
 struct EventCounters {
     u8 unknown_000[0x1c4];
@@ -26,11 +28,41 @@ s32 Func_02004d08(s32 actor, s32 value, s32 frames);
 void Func_02004da8(void);
 void Func_02004db0(void);
 void Func_02004db8(s32 value);
+void WaitFrames(s32 frames);
+void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Func_02004d20(s32 a, s32 b);
+void Func_02004d38(s32 scene, s32 b);
 
 static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02004d08(actor, value, frames);
+}
+
+// The leader is hidden and released, the screen fades and the camera moves;
+// once a key is held the scene changes to SceneId_Ov667.
+void Func_02002e00(void)
+{
+    Object_GetById(gPartyState.current_owner)->scale_x = 0;
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Battle_WaitMode0(20);
+    Func_02004d20(0x40000, 0x8000);
+    {
+        /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y, before x loads, as in the native (plain: differ 2; the CameraMove inline of s3ca8.c, a value-returning or u8-mode prototype and a tied empty asm: no closer). */
+        register s32 mode asm("r3") = 1;
+
+        Motion_CamBounds(11890 << 16, -1, 10090 << 16, mode);
+    }
+    // Entered at its test: as a while loop the test is copied ahead of it and
+    // gInput hoisted (differ 17).
+    goto wait;
+    do {
+        WaitFrames(1);
+    wait:;
+    } while (gInput.held == 0);
+    Func_02004d38((s32)&SceneId_Ov667, 80);
 }
 
 void Func_02002e78(void)

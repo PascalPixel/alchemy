@@ -11,6 +11,8 @@ extern u8 Data_02006e0e[];
 extern u8 Data_02006e0c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+s32 GameFlag_Test(s32 flag);
+void Func_02004b50(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void GameFlag_ClearBit(s32 flag);
 u32 Random16Far(void);
@@ -55,5 +57,24 @@ s32 Func_02000388(struct ObjectRuntime *object)
 s32 Func_020003a8(struct ObjectRuntime *object)
 {
     ObjectDispatch_SetSingleChildFlags(object, 0);
+    return 0;
+}
+
+// With flag 0x200 set the object is released, takes acceleration and speed
+// limit 0x1000 and is sent to an offset of its position.
+s32 Func_020003b4(struct ObjectRuntime *object)
+{
+    s32 x, z;
+
+    if (!GameFlag_Test(0x200))
+        return 1;
+    ObjectDispatch_SetSingleChildFlags(object, 0);
+    x = object->x;
+    object->acceleration = 0x1000;
+    object->speed_limit = 0x1000;
+    z = object->z;
+    /* FAKEMATCH: the empty asm ties z to x, so z loads before x's offset is added, as in the native (plain: differ 2; a one-pass block before the call: 4; alchemy permute, 3 minutes: nothing closer). */
+    asm("" : "+r"(z) : "r"(x));
+    Func_02004b50(object, x - 0x1e0000, object->y, z + 0x80000);
     return 0;
 }

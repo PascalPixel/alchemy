@@ -975,84 +975,6 @@ Func_02000ef8:
 	.4byte 0x00003f42
 .L_02008f54:
 	.4byte Data_02002a9e
-	.section .text.x02008fb8,"ax",%progbits
-	.global Func_02000fb8
-	.thumb_func
-Func_02000fb8:
-	push {lr}
-	movs r0, #192
-	lsls r0, r0, #18
-	ldr r1, [r0, #32]
-	movs r3, #13
-	ldrb r2, [r1, #23]
-	negs r3, r3
-	ands r3, r2
-	movs r2, #4
-	orrs r3, r2
-	strb r3, [r1, #23]
-	ldr r3, [r0, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r0, r3, r2
-	movs r3, #128
-	lsls r3, r3, #2
-	adds r3, #2
-	ldr r1, .L_0200903c
-	str r3, [r0]
-	movs r4, #240
-	lsls r4, r4, #1
-	adds r3, r1, r4
-	movs r4, #0
-	ldrsh r2, [r3, r4]
-	ldr r3, .L_02009040
-	cmp r2, r3
-	bne .L_02008ff6
-	bl Func_02001054
-	b .L_02009038
-.L_02008ff6:
-	ldr r3, .L_02009044
-	cmp r2, r3
-	bne .L_0200901a
-	movs r1, #144
-	ldr r0, .L_02009048
-	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #94
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02009038
-	bl Func_02000974
-	b .L_02009038
-.L_0200901a:
-	ldr r3, .L_0200904c
-	cmp r2, r3
-	bne .L_02009038
-	movs r3, #128
-	lsls r3, r3, #1
-	str r3, [r0]
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r4, #0
-	ldrsh r3, [r3, r4]
-	cmp r3, #6
-	bne .L_02009038
-	bl Func_020010b4
-.L_02009038:
-	movs r0, #0
-	pop {pc}
-.L_0200903c:
-	.4byte gPartyState
-.L_02009040:
-	.4byte 0x0000009b
-.L_02009044:
-	.4byte 0x0000009a
-.L_02009048:
-	.4byte Func_02000540
-.L_0200904c:
-	.4byte 0x0000009c
 	.section .text.x020090d8,"ax",%progbits
 	.global Func_020010d8
 	.thumb_func
@@ -1586,37 +1508,6 @@ Func_020015f8:
 	.4byte 0x060101c0
 .L_020097b8:
 	.4byte 0x40000400
-	.section .text.x020097bc,"ax",%progbits
-	.global Func_020017bc
-	.thumb_func
-Func_020017bc:
-	push {r5, lr}
-	ldr r5, .L_020097ec
-	movs r1, #128
-	lsls r1, r1, #5
-	ldr r3, .L_020097f0
-	adds r1, #4
-	adds r0, r5, #0
-	mov lr, r3
-	.2byte 0xf800
-	bl Resource_FindFreeEntry
-	strh r0, [r5]
-	movs r1, #128
-	ldrh r0, [r5]
-	lsls r1, r1, #2
-	movs r2, #0
-	bl VramBlock_LoadCached
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_020097f4
-	bl Scheduler_AddOrUpdateCallback
-	pop {r5, pc}
-.L_020097ec:
-	.4byte Data_02002aa0
-.L_020097f0:
-	.4byte IwramClearWords
-.L_020097f4:
-	.4byte Func_020015f8
 	.section .text.x020097f8,"ax",%progbits
 	.global Func_020017f8
 	.thumb_func

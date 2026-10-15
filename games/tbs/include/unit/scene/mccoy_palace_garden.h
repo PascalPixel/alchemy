@@ -6,17 +6,18 @@
 
 struct SceneEvent;
 struct ScenePlacement;
+struct SceneRegion;
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern u16 gGarden_GateCells[];
-extern s32 gMcCoyPalaceGarden_GuardScript[];
-extern struct SceneEntrance gPlacement_Scripts[];
-extern u32 gPlacement_Messages[];
+extern u16 gPalaceGateOpenSteps[];
+extern s32 gGuardWatchesParty[];
+extern struct SceneEntrance gMcCoyPalaceGardenEntrances[];
+extern u32 gMcCoyPalaceGardenExits[];
 extern struct ScenePlacement gMcCoyPalaceGardenPlacementsOther[];
 extern struct ScenePlacement gMcCoyPalaceGardenPlacements[];
 extern struct SceneEvent gMcCoyPalaceGardenEventsOther[];

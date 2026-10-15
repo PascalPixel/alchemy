@@ -7,9 +7,10 @@ void Func_02001688(void)
     struct ObjectRuntime *c = Object_GetById(9);
     struct ObjectRuntime *d = Object_GetById(11);
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 value = (s16)a->unk66;
+    s32                   value = (s16)a->unk66;
 
-    switch (value) {
+    switch (value)
+    {
     case 1:
         BYTE_AT(a, 98) = 0;
         BYTE_AT(b, 98) = 0;

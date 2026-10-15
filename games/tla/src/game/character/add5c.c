@@ -21,7 +21,8 @@ s32 Func_080adc90(void)
 
     if (count == 0)
         return 0;
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         struct BattleUnit *unit = UnitGet(gPartyState.activeOwners[i]);
 
         pp += unit->pp;
@@ -41,10 +42,12 @@ s32 Func_080adcec(void)
 
     if (count == 0)
         return 0;
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         s32 ratio = Owner_GetPpRatio(gPartyState.activeOwners[i]);
 
-        if (ratio > best) {
+        if (ratio > best)
+        {
             best = ratio;
             bestOwner = gPartyState.activeOwners[i];
         }

@@ -11,18 +11,18 @@ extern u32 gData_020069e4[];
 extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
-s32 Math_Cosine(s32 angle);
+s32  Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-u32 Random16Far(void);
+u32  Random16Far(void);
 
 // On most frames, moves the object to a random spot: x 176 to 431 pixels, y and
 // z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
 // previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
+    struct FieldActor    *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *self = (struct ObjectRuntime *)object;
 
     if (Random16Far() & 0xff)
@@ -59,23 +59,31 @@ void Func_02000550(struct FieldActor *object)
     u8 *work = Ram_HeapSlots->eventWork;
 
     if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
-        || *(s16 *)(work + 360) != 0) {
+        || *(s16 *)(work + 360) != 0)
+    {
         ObjectDispatch_ApplyValueToChildren(object, 0);
         Map_EnableUpdateCallback();
         return;
     }
     ObjectDispatch_ApplyValueToChildren(object, 16);
     Map_DisableUpdateCallback();
-    if (BYTE_AT(object, 99) != 0) {
+    if (BYTE_AT(object, 99) != 0)
+    {
         if ((gFrameCount & 7) == 0)
             BYTE_AT(object, 99)--;
         return;
     }
     if (*(s16 *)((u8 *)object + 102) == 0)
         Func_020004d4(object);
-    do { } while (0); /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated plainly it is loaded before the test as well, 13 differ). */
+    /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated plainly it is loaded before the test as well, 13 differ). */
+    do
+    {
+    } while (0);
     (*(s16 *)((u8 *)object + 102))--;
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native stores the timer before it loads z (2 differ without it). */
+    /* FAKEMATCH: the loop note ends the scheduling block: the native stores the timer before it loads z (2 differ without it). */
+    do
+    {
+    } while (0);
     object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
     object->y += WORD_AT(object, 48);
 }

@@ -4,7 +4,8 @@ void Func_02001fcc(void)
 {
     s32 counter = Func_02003bcc();
 
-    switch (counter) {
+    switch (counter)
+    {
     case 0:
         Func_02003bb8(0, 1);
         Func_02003bb8(1, 1);

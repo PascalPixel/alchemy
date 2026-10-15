@@ -1,39 +1,44 @@
 #include "local.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
-s32 Func_02004464();
-s32 Func_020045ec();
-s32 Motion_CamBounds();
-s32 ObjectMotion_EnableActionAndResetMotion();
-s32 WaitFrames();
-s32 Func_020044cc();
-s32 Func_020044d4();
-s32 Event_StartScreenTransition();
-s32 Event_WaitTransitionFrames();
-s32 Func_0200456c();
-void Func_0200457c(void);
-s32 Battle_WaitMode0();
-s32 Func_0200451c();
-s32 Func_02004534();
-s32 Object_SetModeById();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_ArmCallback();
-s32 Func_0200454c();
-s32 Func_02004564();
-s32 Func_0200452c();
-s32 Inventory_PromptAndSetObjectMode();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Func_02004584();
-s32 ObjectMotion_Launch();
-s32 Object_LinkObjectAndSetCallback();
-s32 Object_GetById();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 GameFlag_ClearBit();
-s32 GameFlag_SetBit();
-s32 Func_0200446c();
+s32       Func_02004464();
+s32       Func_020045ec();
+s32       Motion_CamBounds();
+s32       ObjectMotion_EnableActionAndResetMotion();
+s32       WaitFrames();
+s32       Func_020044cc();
+s32       Func_020044d4();
+s32       Event_StartScreenTransition();
+s32       Event_WaitTransitionFrames();
+s32       Func_0200456c();
+void      Func_0200457c(void);
+s32       Battle_WaitMode0();
+s32       Func_0200451c();
+s32       Func_02004534();
+s32       Object_SetModeById();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_ArmCallback();
+s32       Func_0200454c();
+s32       Func_02004564();
+s32       Func_0200452c();
+s32       Inventory_PromptAndSetObjectMode();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_SetPositionAndReset();
+s32       Func_02004584();
+s32       ObjectMotion_Launch();
+s32       Object_LinkObjectAndSetCallback();
+s32       Object_GetById();
+s32       ObjectMotion_ResetAndSetPosition();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       GameFlag_ClearBit();
+s32       GameFlag_SetBit();
+s32       Func_0200446c();
 extern u8 MsgProx80[];
 
 void Func_02001cf0(void)
@@ -136,11 +141,14 @@ void Func_02001cf0(void)
     Prox_MessageOpen(0x4000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
     t83 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
-    if (t83 == 0) {
+    if (t83 == 0)
+    {
         Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
         Call2(Func_02004534, 0x1a, 0);
         EVENT_WORK->messageId++;
-    } else {
+    }
+    else
+    {
         EVENT_WORK->messageId++;
         Call2(Motion_SetModeAndWaitAnimation, 0x1a, 4);
         Call2(Func_02004534, 0x1a, 0);
@@ -202,7 +210,8 @@ void Func_02001cf0(void)
     Prox_MessageOpen(0x4000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
     t144 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
-    if (t144 == 0) {
+    if (t144 == 0)
+    {
         Call2(Func_0200456c, 0x26666, 0x4ccc);
         Call4(Motion_CamBounds, 0xb80000, -1, 0x2000000, 1);
         Call2(Func_0200454c, 0, 0x4000);
@@ -211,7 +220,9 @@ void Func_02001cf0(void)
         Call2(Func_02004534, 0x4000, 0);
         Call2(Func_02004534, 0x2005, 0);
         EVENT_WORK->messageId += 2;
-    } else {
+    }
+    else
+    {
         EVENT_WORK->messageId += 2;
         Call2(Func_0200456c, 0x26666, 0x4ccc);
         Call4(Motion_CamBounds, 0xb80000, -1, 0x2000000, 1);
@@ -266,15 +277,19 @@ void Func_02001cf0(void)
     Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x19999, 0xcccc);
     Call2(Object_SetModeById, 0, 2);
     t202 = Value1(Object_GetById, gPartyState.currentOwner);
-    if (t202 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 0, FIELD_AT(t202, s16, 10), FIELD_AT(t202, s16, 18));
+    if (t202 != 0)
+    {
+        Call3(
+            ObjectMotion_ResetAndSetPosition, 0, FIELD_AT(t202, s16, 10), FIELD_AT(t202, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0);
     Call3(Func_020044cc, 0, 0, 0);
     Call2(Object_SetModeById, 0x1b, 2);
     t207 = Value1(Object_GetById, gPartyState.currentOwner);
-    if (t207 != 0) {
-        Call3(ObjectMotion_ResetAndSetPosition, 0x1b, FIELD_AT(t207, s16, 10), FIELD_AT(t207, s16, 18));
+    if (t207 != 0)
+    {
+        Call3(ObjectMotion_ResetAndSetPosition, 0x1b, FIELD_AT(t207, s16, 10),
+            FIELD_AT(t207, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1b);
     Call3(Func_020044cc, 0x1b, 0, 0);
@@ -288,4 +303,3 @@ void Func_02001cf0(void)
     Call1(GameFlag_SetBit, 0x9c5);
     Func_0200446c();
 }
-

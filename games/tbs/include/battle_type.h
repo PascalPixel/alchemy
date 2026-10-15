@@ -6,27 +6,27 @@
 
 enum
 {
-	BATTLE_TARGET_CAPACITY = 14,
-	BATTLE_PLAN_SIZE = 0x64
+    BATTLE_TARGET_CAPACITY = 14,
+    BATTLE_PLAN_SIZE = 0x64
 };
 
 struct BattlePlan
 {
-	u8	aid;
-	s8	targetCount;
-	u8	targetIds[BATTLE_TARGET_CAPACITY];
-	s8	targetDist[BATTLE_TARGET_CAPACITY];
-	s8	targetAdj[BATTLE_TARGET_CAPACITY];
-	s8	targetCrit[BATTLE_TARGET_CAPACITY];
-	s8	targetHit[BATTLE_TARGET_CAPACITY];
-	s16 cmd;
-	u8	unk4a[2];
-	s32 abilityId;
-	s32 element;
-	s32 outcome;
-	u32 presentationFlags;
-	s32 failure;
-	u32 hauntDmg;
+    u8  aid;
+    s8  targetCount;
+    u8  targetIds[BATTLE_TARGET_CAPACITY];
+    s8  targetDist[BATTLE_TARGET_CAPACITY];
+    s8  targetAdj[BATTLE_TARGET_CAPACITY];
+    s8  targetCrit[BATTLE_TARGET_CAPACITY];
+    s8  targetHit[BATTLE_TARGET_CAPACITY];
+    s16 cmd;
+    u8  unk4a[2];
+    s32 abilityId;
+    s32 element;
+    s32 outcome;
+    u32 presentationFlags;
+    s32 failure;
+    u32 hauntDmg;
 };
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);

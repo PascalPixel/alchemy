@@ -3,7 +3,8 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-struct InventoryMenuState {
+struct InventoryMenuState
+{
     u8 unk000[0x1c];
     s8 paneIndex[2];
     s8 paneCount[2];

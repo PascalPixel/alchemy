@@ -15,19 +15,19 @@ extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-s32 GameFlag_Test();
-void GameFlag_SetBit();
+s32                   GameFlag_Test();
+void                  GameFlag_SetBit();
 struct ObjectRuntime *Object_GetById();
-void Func_02000fa4(void);
-void Func_02003f48(s32, s32, s32, s32);
-void Func_02004004(void);
-void Func_020040c0(void);
-void Func_02004868(void *, s32, s32);
-s32 Func_02004a34();
-s32 Func_02004a7c();
-s32 Func_02004c24();
-s32 Func_02004c7c();
-s32 Func_02004c8c();
+void                  Func_02000fa4(void);
+void                  Func_02003f48(s32, s32, s32, s32);
+void                  Func_02004004(void);
+void                  Func_020040c0(void);
+void                  Func_02004868(void *, s32, s32);
+s32                   Func_02004a34();
+s32                   Func_02004a7c();
+s32                   Func_02004c24();
+s32                   Func_02004c7c();
+s32                   Func_02004c8c();
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -55,7 +55,8 @@ void Func_0200006c(s32 mode, s32 id)
 {
     if (id == 0)
         Func_02004004();
-    if (mode == 1) {
+    if (mode == 1)
+    {
         GameFlag_SetBit(0x8a7);
         Func_02000fa4();
     }
@@ -71,10 +72,11 @@ void Func_020000c8(s32 mode, s32 arg)
 {
     struct ObjectRuntime *a;
     struct ObjectRuntime *b;
-    s32 i;
+    s32                   i;
 
     Func_02004868(gData_02004d0c, mode, arg);
-    if (mode == 1) {
+    if (mode == 1)
+    {
         a = Object_GetById(19);
         b = Object_GetById(21);
         a->speedLimit = 0x40000;
@@ -90,7 +92,8 @@ void Func_020000c8(s32 mode, s32 arg)
         Func_02004c8c(1);
         Func_02004c8c(2);
         i = 0;
-        do {
+        do
+        {
             Func_02004c24(1, 18, 19);
             Func_02004c24(2, 20, 21);
             WaitFrames(1);
@@ -107,14 +110,15 @@ void Func_02000190(s32 unused, s32 id)
 {
     struct ObjectRuntime *leader;
     struct ObjectRuntime *object;
-    s32 leaderX;
-    s32 x;
-    s32 z;
+    s32                   leaderX;
+    s32                   x;
+    s32                   z;
 
     leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
     object->motionFlags = 0;
-    if (id == 10) {
+    if (id == 10)
+    {
         leaderX = leader->x >> 20;
         x = object->x >> 20;
         z = object->z >> 20;

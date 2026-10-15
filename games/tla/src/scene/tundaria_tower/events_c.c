@@ -2,11 +2,13 @@
 
 void Func_02000fb8(s32 mode, s32 cue)
 {
-    if (cue == 0) {
+    if (cue == 0)
+    {
         Func_02002e00();
         Scheduler_RemoveCallbackFar(Func_0200137c);
     }
-    if (mode == 1) {
+    if (mode == 1)
+    {
         Func_02002fc0(13, 26, 13, 16, 3, 3);
         Call6((void (*)())Func_02002fe8, 13, 26, 3, 3, 13, 16);
         GameFlag_SetBit(0x948);

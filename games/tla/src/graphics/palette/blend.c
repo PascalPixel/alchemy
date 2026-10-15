@@ -27,10 +27,12 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
     s32 second;
     s32 (*divide)(s32, s32);
 
-    if (frames > 0) {
+    if (frames > 0)
+    {
         divide = Iwram_SignedDivide;
         index = 0x53F;
-        do {
+        do
+        {
             first = *source;
             second = *target;
             *step = divide(second - first, frames);

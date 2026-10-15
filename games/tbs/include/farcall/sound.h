@@ -5,9 +5,9 @@ FAR_CALL(Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults, vo
 FAR_CALL(AudioCommand_PlayFar, AudioCommand_Play, void, (s32 id))
 #endif
 FAR_CALL(MusicPlayer_StepVolumeAndPitchTowardTargetsFar,
-	MusicPlayer_StepVolumeAndPitchTowardTargets, void, (void))
+    MusicPlayer_StepVolumeAndPitchTowardTargets, void, (void))
 FAR_CALL(MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency, void,
-	(u16 value))
+    (u16 value))
 FAR_SLOT(MusicCommand_SetPitch)
 FAR_SLOT(Audio_SetWorkPairB)
 FAR_SLOT(MusicCommand_SetVolume)

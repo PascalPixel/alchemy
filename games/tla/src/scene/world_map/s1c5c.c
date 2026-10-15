@@ -7,26 +7,26 @@ extern const u8 gData_02004e58[];
 extern const u8 gData_02004e88[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndReset(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void ObjectMotion_EnableActionAndSetCallback(s32 actor, const u8 *action);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004c90(s32 actor, s32 x, s32 z, s32 angle);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 actor, s32 flags);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004db8(s32 value);
-void Func_02004df8(s32 value, s32 mode);
-void Func_02004e00(void);
+void                  Battle_WaitMode0(s32 frames);
+void                  Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void                  ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void                  ObjectMotion_OffsetPositionAndReset(s32 actor, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void                  ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void                  ObjectMotion_EnableActionAndSetCallback(s32 actor, const u8 *action);
+void                  Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_02004c20(void);
+void                  Func_02004c28(void);
+void                  Func_02004c90(s32 actor, s32 x, s32 z, s32 angle);
+void                  Func_02004cd8(s32 message);
+void                  Func_02004cf0(s32 actor, s32 flags);
+void                  Func_02004da8(void);
+void                  Func_02004db0(void);
+void                  Func_02004db8(s32 value);
+void                  Func_02004df8(s32 value, s32 mode);
+void                  Func_02004e00(void);
 
 static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed, s32 acceleration)
 {

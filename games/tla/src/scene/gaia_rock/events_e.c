@@ -6,7 +6,8 @@
 
 s32 Func_02000a68(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov680Room2 && (u16)(gPartyState.entrance - 3) <= 1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov680Room2 && (u16)(gPartyState.entrance - 3) <= 1)
+    {
         s32 *layer = (s32 *)&Ram_HeapSlots->mapWork->layers[1];
 
         layer[2] = -0x800000;

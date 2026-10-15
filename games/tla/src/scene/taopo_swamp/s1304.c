@@ -11,7 +11,8 @@ void Func_02001304(void)
 {
     s32 timer = Func_02002730();
 
-    switch (timer) {
+    switch (timer)
+    {
     case 0:
         Vent_SetActive(0, 1);
         Vent_SetActive(1, 1);
@@ -45,7 +46,8 @@ void Func_02001304(void)
         Func_02002978(-1);
         break;
     }
-    if ((u32)(timer - 251) <= 178 && GameFlag_Test(0xa6e) && !GameFlag_Test(59) && !GameFlag_Test(0x310))
+    if ((u32)(timer - 251) <= 178 && GameFlag_Test(0xa6e) && !GameFlag_Test(59)
+        && !GameFlag_Test(0x310))
         ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
     Func_0200273c(480);
 }
@@ -54,7 +56,8 @@ void Func_02001424(void)
 {
     s32 timer = Func_02002730();
 
-    switch (timer) {
+    switch (timer)
+    {
     case 0:
         Vent_SetActive(0, 1);
         Vent_SetActive(1, 1);
@@ -66,7 +69,8 @@ void Func_02001424(void)
         Func_02002978(-1);
         break;
     }
-    if ((u32)(timer - 11) <= 118) {
+    if ((u32)(timer - 11) <= 118)
+    {
         if (GameFlag_Test(0x221))
             Func_02000810(8);
         else if (GameFlag_Test(0x220))
@@ -79,7 +83,8 @@ void Func_020014a0(void)
 {
     s32 timer = Func_02002730();
 
-    switch (timer) {
+    switch (timer)
+    {
     case 0:
         Vent_SetActive(0, 1);
         Vent_SetActive(1, 1);
@@ -91,7 +96,8 @@ void Func_020014a0(void)
         Func_02002978(-1);
         break;
     }
-    if ((u32)(timer - 11) <= 118) {
+    if ((u32)(timer - 11) <= 118)
+    {
         if (GameFlag_Test(0x221))
             Func_020009c0(10);
         else if (GameFlag_Test(0x220))
@@ -102,7 +108,8 @@ void Func_020014a0(void)
 
 void Func_0200151c(void)
 {
-    switch (Func_02002730()) {
+    switch (Func_02002730())
+    {
     case 0:
         Vent_SetActive(0, 1);
         Vent_SetActive(1, 1);

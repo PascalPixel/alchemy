@@ -13,7 +13,8 @@ extern const u8 gData_02004a5c[];
 
 const struct SceneEvent *Func_020021e8(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {
+    if (gPartyState.scene == (s32)&SceneId_Ov691Room2)
+    {
         if (gPartyState.entrance <= 3)
             return (const struct SceneEvent *)gData_02004720;
         if (gPartyState.entrance <= 8)

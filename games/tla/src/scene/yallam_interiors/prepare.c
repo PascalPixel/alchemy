@@ -19,21 +19,26 @@ s32 Func_0200086c(void)
 
         scene = party->scene;
     }
-    if (scene == (s32)&SceneId_Ov677Room1) {
-        if (Flag_IsSet(0x301)) {
+    if (scene == (s32)&SceneId_Ov677Room1)
+    {
+        if (Flag_IsSet(0x301))
+        {
             Call3((void (*)())Func_020009f8, 14, 0x2580000, 0x1680000);
             Call3((void (*)())Func_020009f8, 16, 0x2780000, 0x15a0000);
             Call3((void (*)())ObjectMotion_ArmCallback, 16, 0x4000, 0);
 #if !defined(TLA_EDITION_JA)
             Call3((void (*)())Func_020009f8, 17, 0, 0);
 #endif
-        } else {
+        }
+        else
+        {
             Call2((void (*)())Func_02000a60, 14, 0);
         }
         ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
         Call2((void (*)())ObjectMotion_SetActionVariant, 11, 2);
     }
-    if (gPartyState.scene == (s32)&SceneId_Ov677Room2) {
+    if (gPartyState.scene == (s32)&SceneId_Ov677Room2)
+    {
         Call1((void (*)())Func_02000a48, 0);
         Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
         Object_GetById(12)->collisionFlags |= 4;

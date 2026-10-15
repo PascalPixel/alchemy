@@ -8,7 +8,6 @@
 #include "system.h"
 #include "types.h"
 
-
 s32 GameFlag_GetNibble(u32 flag)
 {
     u32 shifted = flag << 20;

@@ -11,31 +11,33 @@
 #include "mem.h"
 #include "types.h"
 
-
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
     s32 bank = 0;
     s32 palOffset = 0;
     s32 dstBank = 0;
 
-    do {
+    do
+    {
         s32 row = 0;
         s32 dstOffset = (dstBank + bank) << 6;
 
-        do {
+        do
+        {
             u16 *out = (u16 *)((u8 *)dst + dstOffset);
             u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
-            s32 col = 0;
+            s32  col = 0;
 
-            do {
+            do
+            {
                 u32 packed = *src++;
                 u32 dec = 0;
                 s32 nibble = 0;
 
-                do {
-                    u32 color = gGraphics_ExpandNibbleTable[
-                        (packed & 15) + palOffset
-                    ] << (nibble * 4);
+                do
+                {
+                    u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + palOffset]
+                                << (nibble * 4);
                     nibble++;
                     packed >>= 4;
                     dec |= color;
@@ -54,9 +56,6 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
         bank++;
     } while (bank <= 1);
 }
-
-
-
 
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 {

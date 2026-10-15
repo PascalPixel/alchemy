@@ -17,19 +17,24 @@ s32 Party_SumDjinnCounts(s32 index)
     s32 result = 0;
     s32 count = Party_ListActiveOwners((s16 *)owners);
 
-    if (result < count) {
+    if (result < count)
+    {
         u16 *owner = owners;
-        s32 remaining = count;
+        s32  remaining = count;
 
-        do {
+        do
+        {
             struct OwnerDjinnState *state = UnitGet(*owner++);
 
-            if (index == -1) {
+            if (index == -1)
+            {
                 result += state->counts.banks.owned[0];
                 result += state->counts.banks.owned[1];
                 result += state->counts.banks.owned[2];
                 result += state->counts.banks.owned[3];
-            } else {
+            }
+            else
+            {
                 result += state->counts.banks.owned[index];
             }
             remaining--;
@@ -37,7 +42,6 @@ s32 Party_SumDjinnCounts(s32 index)
     }
     return result;
 }
-
 
 void Djinn_ActivateOfferedForParty(void)
 {
@@ -48,10 +52,14 @@ void Djinn_ActivateOfferedForParty(void)
     s32 djinn;
 
     BattlePlacement_UpdateTimedEntriesTwentyTimesFar();
-    for (i = 0; i < count; i++) {
-        for (element = 0; element <= 3; element++) {
-            for (djinn = 0; djinn <= 19; djinn++) {
-                if (Trade_CanOfferDjinn(owners[i], element, djinn)) {
+    for (i = 0; i < count; i++)
+    {
+        for (element = 0; element <= 3; element++)
+        {
+            for (djinn = 0; djinn <= 19; djinn++)
+            {
+                if (Trade_CanOfferDjinn(owners[i], element, djinn))
+                {
                     Djinn_Activate(owners[i], element, djinn);
                     Trade_RemoveOffer(owners[i], element, djinn);
                 }
@@ -63,7 +71,8 @@ void Djinn_ActivateOfferedForParty(void)
 #if !defined(TLA_EDITION_JA) /* the Japanese copy differs and stays on its scaffold (S4) */
 s32 Func_080b106c(s32 id)
 {
-    switch (id & 0x1ff) {
+    switch (id & 0x1ff)
+    {
     case 191:
     case 192:
     case 193:

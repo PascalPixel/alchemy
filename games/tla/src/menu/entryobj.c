@@ -2,11 +2,12 @@
 #include "ram_buffer.h"
 #include "callback_scheduler.h"
 
-struct MenuEntryWork {
-    u8 unk000[0xf8];
+struct MenuEntryWork
+{
+    u8    unk000[0xf8];
     void *objects[8];
-    u8 unk118[0x50a - 0x118];
-    u8 hidden;
+    u8    unk118[0x50a - 0x118];
+    u8    hidden;
 };
 
 void ResourceObject_ReleaseFar(void *object);
@@ -15,10 +16,11 @@ void Menu_UpdateEntryObjectTransforms(void);
 void Menu_ReleaseEntryObjects(void)
 {
     struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
-    void **objects = menu->objects;
-    s32 i;
+    void                **objects = menu->objects;
+    s32                   i;
 
-    for (i = 7; i >= 0; i--) {
+    for (i = 7; i >= 0; i--)
+    {
         void *object = *objects++;
 
         if (object != NULL)

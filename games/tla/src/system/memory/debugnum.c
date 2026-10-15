@@ -22,15 +22,15 @@
 //--------------------------------------------------------------------------
 void Text_DrawHexRightAligned(u32 value, s32 digits)
 {
-	s32 n;
+    s32 n;
 
-	n = digits;
-	if ((n - 1) > 7U)
-	{
-		n = 8;
-	}
-	Text_FormatHexToWork(value);
-	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+    n = digits;
+    if ((n - 1) > 7U)
+    {
+        n = 8;
+    }
+    Text_FormatHexToWork(value);
+    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
 }
 
 //--------------------------------------------------------------------------
@@ -38,13 +38,13 @@ void Text_DrawHexRightAligned(u32 value, s32 digits)
 //--------------------------------------------------------------------------
 void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits)
 {
-	s32 n;
+    s32 n;
 
-	n = digits;
-	if ((n - 1) > 9U)
-	{
-		n = 10;
-	}
-	Text_FormatSignedDecimalToWork(value);
-	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+    n = digits;
+    if ((n - 1) > 9U)
+    {
+        n = 10;
+    }
+    Text_FormatSignedDecimalToWork(value);
+    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }

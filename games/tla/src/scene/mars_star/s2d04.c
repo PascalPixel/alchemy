@@ -5,7 +5,8 @@ void Func_02002d04(struct ObjectRuntime *object)
     s32 angle;
     s32 turn;
 
-    if (object->action != 0) {
+    if (object->action != 0)
+    {
         object->action--;
         return;
     }
@@ -14,7 +15,8 @@ void Func_02002d04(struct ObjectRuntime *object)
         angle = -1;
     else
         angle = gData_020047fc[(gInput >> 4) & 15];
-    if (angle == -1) {
+    if (angle == -1)
+    {
         Func_020041cc(object, 9);
         return;
     }
@@ -33,9 +35,11 @@ void Func_02002d90(void)
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
-    if (work->actionCounter != 0) {
+    if (work->actionCounter != 0)
+    {
         Call1((void (*)())GameFlag_SetBit, 0x106);
         Func_020043f4();
         Func_02004444();

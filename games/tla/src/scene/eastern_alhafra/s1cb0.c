@@ -15,56 +15,56 @@ extern u32 gData_02005620[];
 extern s32 gData_02005670[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
-void Func_02004b6c(s32 actor, s32 a, s32 b);
-void UiText_OpenMessageAtObject(s32 actor, s32 flags);
-void WaitFrames(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Func_02004a5c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Battle_WaitMode0();
-void Event_StartScreenTransition();
-void Func_02001bf4();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02004a94();
-void Func_02004a9c();
-void Func_02004b04();
-void Func_02004b3c();
-void Func_02004b4c();
-void Func_02004b5c();
-void Func_02004b74();
-void Func_02004b84();
-void Func_02004b94();
-void Func_02004ba4();
-void Func_02004bbc();
-void Func_02004bc4();
-void Func_02004be4();
-void Func_02004bec();
-void Func_02004c54();
-void Func_02004c9c();
-void GameFlag_SetBit();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_EnableActionAndResetMotion();
-void ObjectMotion_EnableActionAndSetCallback();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndReset();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_ResetAndSetPositionInMode2();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetVariantCallback();
-void ObjectMotion_SetActionVariant();
-void Object_AttachWorkTargetToObject();
-void Object_LinkObjectAndSetCallback();
-void Object_RefreshSelectorById();
-void Object_SetModeById();
-void Object_SetPositionAndResetMotion();
+s32                   GameFlag_Test();
+s32                   Inventory_PromptAndSetObjectMode();
+void                  Func_02004b6c(s32 actor, s32 a, s32 b);
+void                  UiText_OpenMessageAtObject(s32 actor, s32 flags);
+void                  WaitFrames(s32 frames);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Func_02004a5c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Battle_WaitMode0();
+void                  Event_StartScreenTransition();
+void                  Func_02001bf4();
+void                  Event_FinishScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Func_02004a94();
+void                  Func_02004a9c();
+void                  Func_02004b04();
+void                  Func_02004b3c();
+void                  Func_02004b4c();
+void                  Func_02004b5c();
+void                  Func_02004b74();
+void                  Func_02004b84();
+void                  Func_02004b94();
+void                  Func_02004ba4();
+void                  Func_02004bbc();
+void                  Func_02004bc4();
+void                  Func_02004be4();
+void                  Func_02004bec();
+void                  Func_02004c54();
+void                  Func_02004c9c();
+void                  GameFlag_SetBit();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_CommitPositionAndActivate();
+void                  ObjectMotion_EnableActionAndResetMotion();
+void                  ObjectMotion_EnableActionAndSetCallback();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_OffsetPositionAndReset();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_ResetAndSetPositionInMode2();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_SetVariantCallback();
+void                  ObjectMotion_SetActionVariant();
+void                  Object_AttachWorkTargetToObject();
+void                  Object_LinkObjectAndSetCallback();
+void                  Object_RefreshSelectorById();
+void                  Object_SetModeById();
+void                  Object_SetPositionAndResetMotion();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b)
 {
@@ -468,8 +468,8 @@ void Func_02002048(void)
 void Func_02002a08(void)
 {
     struct MapWork *map;
-    s32 i;
-    s32 step;
+    s32             i;
+    s32             step;
 
     if (Value1((s32 (*)())GameFlag_Test, 0x8a7) == 0)
         return;
@@ -513,7 +513,8 @@ void Func_02002a08(void)
     {
         struct ObjectRuntime *center = ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
 
-        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)center, center->x, center->y, center->z);
+        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)center, center->x, center->y,
+            center->z);
     }
     Call1((void (*)())Battle_WaitMode0, 0x32);
     Call2((void (*)())ObjectMotion_SetActionVariant, 0x16, 1);
@@ -724,7 +725,8 @@ void Func_02003274(void)
     {
         struct ObjectRuntime *center = ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
 
-        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)center, center->x, center->y, center->z);
+        Call4((void (*)())Object_SetPositionAndResetMotion, (s32)center, center->x, center->y,
+            center->z);
     }
     Call1((void (*)())Battle_WaitMode0, 0x1e);
     Call2((void (*)())Func_02004bbc, 0x10000, 0);
@@ -1029,7 +1031,8 @@ void Func_02003274(void)
         struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
         if (leader != NULL)
-            Call3((void (*)())ObjectMotion_ResetAndSetPosition, 0x1a, ((s16 *)leader)[5], ((s16 *)leader)[9]);
+            Call3((void (*)())ObjectMotion_ResetAndSetPosition, 0x1a, ((s16 *)leader)[5],
+                ((s16 *)leader)[9]);
     }
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 0x1a);
     Call3((void (*)())Func_02004b04, 0x1a, 0, 0);

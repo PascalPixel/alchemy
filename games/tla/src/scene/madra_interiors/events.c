@@ -7,38 +7,38 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0();
-void Func_02001d50();
-void Func_02001d58();
-void Func_02001db8();
-void Func_02001e18();
-void Func_02001e28();
-void Func_02001e40();
-void Func_02001e48();
-void Func_02001e50();
-void Func_02001eb8();
-void Func_02001ec8();
-void Func_02001ef8();
-void GameFlag_SetBit();
-void GameFlag_Test();
-void Inventory_PromptAndSetObjectMode();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndReset();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetVariantCallback();
+void                  Battle_WaitMode0();
+void                  Func_02001d50();
+void                  Func_02001d58();
+void                  Func_02001db8();
+void                  Func_02001e18();
+void                  Func_02001e28();
+void                  Func_02001e40();
+void                  Func_02001e48();
+void                  Func_02001e50();
+void                  Func_02001eb8();
+void                  Func_02001ec8();
+void                  Func_02001ef8();
+void                  GameFlag_SetBit();
+void                  GameFlag_Test();
+void                  Inventory_PromptAndSetObjectMode();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_OffsetPositionAndReset();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_SetAngleToward();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_SetVariantCallback();
 struct ObjectRuntime *Object_GetById();
-void Object_LinkPair();
-void Object_SetModeById();
-void UiText_OpenMessageAtObject();
-void Func_02001910(void);
-void Func_02001a20(void);
+void                  Object_LinkPair();
+void                  Object_SetModeById();
+void                  UiText_OpenMessageAtObject();
+void                  Func_02001910(void);
+void                  Func_02001a20(void);
 
 void Func_02001310(void)
 {
@@ -86,8 +86,8 @@ void Func_02001310(void)
 
 void Func_02001450(void)
 {
-    s32 result0;
-    s32 result1;
+    s32                   result0;
+    s32                   result1;
     struct ObjectRuntime *object2;
     struct ObjectRuntime *object3;
     struct ObjectRuntime *object4;
@@ -142,7 +142,8 @@ void Func_02001450(void)
     Value3((s32 (*)())Func_02001e48, 28, 0x102, 30);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 28, 0);
     result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result0 != 0) goto L_02009690;
+    if (result0 != 0)
+        goto L_02009690;
     Value3((s32 (*)())Func_02001e48, 27, 0x108, 30);
     Call3((void (*)())Func_02001e28, 27, 0, 10);
     Call2((void (*)())Func_02001e40, 7, 0x6000);
@@ -177,7 +178,8 @@ L_02009700:
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 31, 0, 10);
     result1 = Value1((s32 (*)())GameFlag_Test, 0x981);
-    if (result1 == 0) goto L_02009760;
+    if (result1 == 0)
+        goto L_02009760;
     ((void (*)())Func_02001910)();
     goto L_02009764;
 L_02009760:
@@ -204,32 +206,40 @@ L_02009764:
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 31, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 31, 2);
     object2 = Object_GetById(4);
-    if (object2 == 0) goto L_02009832;
-    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 31, *(s16 *)((u8 *)object2 + 10), *(s16 *)((u8 *)object2 + 18));
+    if (object2 == 0)
+        goto L_02009832;
+    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 31, *(s16 *)((u8 *)object2 + 10),
+        *(s16 *)((u8 *)object2 + 18));
 L_02009832:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 31);
     Call3((void (*)())Func_02001db8, 31, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
     object3 = Object_GetById(4);
-    if (object3 == 0) goto L_02009870;
-    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object3 + 10), *(s16 *)((u8 *)object3 + 18));
+    if (object3 == 0)
+        goto L_02009870;
+    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object3 + 10),
+        *(s16 *)((u8 *)object3 + 18));
 L_02009870:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 6);
     Call3((void (*)())Func_02001db8, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 7, 2);
     object4 = Object_GetById(4);
-    if (object4 == 0) goto L_020098ae;
-    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10), *(s16 *)((u8 *)object4 + 18));
+    if (object4 == 0)
+        goto L_020098ae;
+    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10),
+        *(s16 *)((u8 *)object4 + 18));
 L_020098ae:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 7);
     Call3((void (*)())Func_02001db8, 7, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
     object5 = Object_GetById(4);
-    if (object5 == 0) goto L_020098ec;
-    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10), *(s16 *)((u8 *)object5 + 18));
+    if (object5 == 0)
+        goto L_020098ec;
+    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10),
+        *(s16 *)((u8 *)object5 + 18));
 L_020098ec:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 5);
     Call3((void (*)())Func_02001db8, 5, 0, 0);

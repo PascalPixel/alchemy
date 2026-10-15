@@ -1,14 +1,16 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct MapLayer {
-    u8 unk00[0x30];
+struct MapLayer
+{
+    u8  unk00[0x30];
     u8 *cells;
-    u8 unk34[4];
+    u8  unk34[4];
 };
 
-struct MapLayers {
-    u8 unk000[0x108];
+struct MapLayers
+{
+    u8              unk000[0x108];
     struct MapLayer layers[3];
 };
 
@@ -18,7 +20,7 @@ extern u8 gMapCellBuffer[];
 s32 Map_FillLayerRectByte2(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value)
 {
     struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-    u8 *cells;
+    u8               *cells;
 
     if (map == NULL)
         return 0;
@@ -29,7 +31,8 @@ s32 Map_FillLayerRectByte2(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 v
     else
         cells = gMapCellBuffer;
     cells += (x + (y << 7)) << 2;
-    for (x = 0; x < height; x++) {
+    for (x = 0; x < height; x++)
+    {
         u8 *cell = cells + (x << 9);
 
         for (y = 0; y < width; y++, cell += 4)

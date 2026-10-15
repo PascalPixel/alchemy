@@ -14,7 +14,6 @@
 #include "battle_display.h"
 #include "text/msg_ids.h"
 
-
 s32 BattleEscape_PlayRun(void *action)
 {
     s16 party_members[14];
@@ -23,12 +22,15 @@ s32 BattleEscape_PlayRun(void *action)
     s32 member_slot;
 
     (void)action;
-    if (((u32)(Random16() << 4) >> 16) != 0) {
+    if (((u32)(Random16() << 4) >> 16) != 0)
+    {
         party_size = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, (u16 *)party_members);
         animated = 0;
-        if (party_size != 0) {
+        if (party_size != 0)
+        {
             member_slot = 0;
-            do {
+            do
+            {
                 BattleMotion_SetupEscapeObject(party_members[member_slot]);
                 animated++;
                 WaitFrames(8);
@@ -44,17 +46,19 @@ s32 BattleEscape_PlayRun(void *action)
 
 s32 BattlePres_ShowDefendMessage(s16 *script)
 {
-    s32 objectId;
-    s32 result;
+    s32                objectId;
+    s32                result;
     struct BattleUnit *unit;
 
     objectId = *script;
     unit = UnitGet(objectId);
-    if (BattleObject_IsValidId(objectId) < 0) {
+    if (BattleObject_IsValidId(objectId) < 0)
+    {
         return -1;
     }
     result = 0;
-    if (unit->hp <= 0) {
+    if (unit->hp <= 0)
+    {
         return result;
     }
     UiWork_ClearValueNameTablesFar();

@@ -1,28 +1,33 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_Test();
-s32 Func_02004464();
-s32 Func_020045ec();
-s32 Func_0200463c();
-s32 Func_02004404();
-s32 GameFlag_SetBit();
-s32 Battle_WaitMode0();
-s32 Func_020044d4();
-s32 Func_02004584();
-s32 Func_0200456c();
-s32 Motion_CamBounds();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
-s32 Func_0200454c();
-s32 Object_SetModeById();
-s32 Func_0200451c();
-s32 Func_02004534();
-s32 Func_0200455c();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Func_0200446c();
+s32       GameFlag_Test();
+s32       Func_02004464();
+s32       Func_020045ec();
+s32       Func_0200463c();
+s32       Func_02004404();
+s32       GameFlag_SetBit();
+s32       Battle_WaitMode0();
+s32       Func_020044d4();
+s32       Func_02004584();
+s32       Func_0200456c();
+s32       Motion_CamBounds();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_SetPositionAndReset();
+s32       ObjectMotion_ArmCallback();
+s32       Func_0200454c();
+s32       Object_SetModeById();
+s32       Func_0200451c();
+s32       Func_02004534();
+s32       Func_0200455c();
+s32       Motion_SetModeAndWaitAnimation();
+s32       Func_0200446c();
 extern u8 MsgProx47[];
 
 void Func_02000914(void)
@@ -31,8 +36,11 @@ void Func_02000914(void)
     s32 t8;
 
     t0 = Value1(GameFlag_Test, 0xa3d);
-    if (t0 != 0) {
-    } else {
+    if (t0 != 0)
+    {
+    }
+    else
+    {
         Func_02004464();
         Call1(Func_020045ec, 0);
         Call1(Func_0200463c, 0x9e);
@@ -80,4 +88,3 @@ void Func_02000914(void)
         Func_0200446c();
     }
 }
-

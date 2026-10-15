@@ -5,12 +5,13 @@
 void Func_02002980(void)
 {
     struct FieldActor *object = Object_GetById(Func_02005f84());
-    s32 x = object->x >> 20;
-    s32 y = object->y >> 20;
-    s32 z = object->z >> 20;
-    s32 key = (x << 16) + z;
+    s32                x = object->x >> 20;
+    s32                y = object->y >> 20;
+    s32                z = object->z >> 20;
+    s32                key = (x << 16) + z;
 
-    if (key != gData_02006c0c) {
+    if (key != gData_02006c0c)
+    {
         gData_02006c0c = key;
         gData_020073dc = 1;
         gData_020073e0 = 3;
@@ -25,12 +26,13 @@ void Func_02002980(void)
 void Func_02002a14(void)
 {
     struct FieldActor *object = Object_GetById(Func_02005f84());
-    s32 x = object->x >> 20;
-    s32 y = object->y >> 20;
-    s32 z = object->z >> 20;
-    s32 key = (x << 16) + z;
+    s32                x = object->x >> 20;
+    s32                y = object->y >> 20;
+    s32                z = object->z >> 20;
+    s32                key = (x << 16) + z;
 
-    if (key != gData_02006c0c) {
+    if (key != gData_02006c0c)
+    {
         gData_02006c0c = key;
         gData_020073dc = 1;
         gData_020073e0 = 3;

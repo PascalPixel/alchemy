@@ -15,8 +15,8 @@ void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32  UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32  Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Func_020014b8(void);
 void Func_020014c0(void);
 void Func_02001538(s32 message);
@@ -25,7 +25,7 @@ void Func_02001550(s32 id, s32 flags);
 void Func_02001560(s32 id, s32 a, s32 b);
 void Func_02001588(s32 scene, s32 entrance);
 void Func_020015b8(s32 a);
-s32 Func_020015e0(void);
+s32  Func_020015e0(void);
 
 void Func_0200006c(s32 actor)
 {
@@ -33,10 +33,13 @@ void Func_0200006c(s32 actor)
 
     Func_02001538(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02001538(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02001538(msg + 2);
     }
@@ -51,7 +54,8 @@ void Func_020000b8(s32 actor)
     Func_020015b8(0);
     Func_02001538(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0)
+    {
         Battle_WaitMode0(20);
         Object_LinkObjectAndSetCallback(actor, gPartyState.currentOwner);
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 760, 320);
@@ -59,7 +63,9 @@ void Func_020000b8(s32 actor)
         ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
         Battle_WaitMode0(10);
         Func_02001588((s32)&SceneId_WorldMap, 67);
-    } else {
+    }
+    else
+    {
         Func_02001538(msg + 2);
         Func_02001550(actor, 0);
     }
@@ -72,10 +78,13 @@ void Func_02000150(s32 actor)
 
     Func_02001538(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02001538(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02001538(msg + 2);
     }
@@ -144,7 +153,8 @@ void Func_02000370(void)
 {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    if (*(s16 *)((u8 *)work + 0x166) != 0) {
+    if (*(s16 *)((u8 *)work + 0x166) != 0)
+    {
         ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
         Battle_WaitMode0(10);
     }
@@ -177,11 +187,14 @@ void Func_02000370(void)
     Motion_SetVarCbAndRefresh(9, 2);
     Battle_WaitMode0(10);
     UiText_OpenMessageAtObject(9, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Battle_WaitMode0(20);
         Func_02001548(9, 0, 10);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(30);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Func_02001548(9, 0, 10);

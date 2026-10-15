@@ -4,38 +4,39 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-struct VenusActor {
-    u8 unk00[0xa];
+struct VenusActor
+{
+    u8  unk00[0xa];
     s16 xPixel;
-    u8 unk0c[6];
+    u8  unk0c[6];
     s16 zPixel;
 };
 
-void Func_02001c1c(s32 message);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
-void Func_02001c4c(void);
-void Engine_EventWait(s32 frames);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void Func_02001c34(s32 actor, s32 height, s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
-void Func_02001c24(s32 actor, s32 value);
-void Engine_AudioPlayCue(s32 cue);
-void Func_02001be4(s32 actor, s32 x, s32 z);
-void Func_02001cd4(s32 actor);
-void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
-void Object_LinkPair(s32 first, s32 second, s32 distance);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void               Func_02001c1c(s32 message);
+void               Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void               Func_02001c4c(void);
+void               Engine_EventWait(s32 frames);
+void               ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void               ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void               Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void               ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void               ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void               Func_02001c34(s32 actor, s32 height, s32 frames);
+void               Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void               Motion_SetVarCbAndRefresh(s32 actor, s32 value);
+void               Func_02001c24(s32 actor, s32 value);
+void               Engine_AudioPlayCue(s32 cue);
+void               Func_02001be4(s32 actor, s32 x, s32 z);
+void               Func_02001cd4(s32 actor);
+void               ObjectMotion_SetVariantCallback(s32 actor, s32 value);
+void               Object_LinkPair(s32 first, s32 second, s32 distance);
+void               ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void               Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void               ObjectMotion_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
+void               Engine_ActorSetAnimation(s32 actor, s32 animation);
 struct VenusActor *Engine_ActorGet(s32 id);
-void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Func_02001ccc(s32 actor, s32 value);
+void               ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void               Func_02001ccc(s32 actor, s32 value);
 void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void GameFlag_ClearBit(s32 flag);
 void Party_RemoveActiveOwner(s32 owner);
@@ -273,7 +274,7 @@ void Func_02000b2c(void)
 void Func_02000d30(void)
 {
     struct VenusActor *actor;
-    struct EventWork *work;
+    struct EventWork  *work;
 
     Venus_MessageSet((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
     Venus_ObjAttach(8, 1);
@@ -690,5 +691,4 @@ void Func_02000d30(void)
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Venus_Countdown(22);
-
 }

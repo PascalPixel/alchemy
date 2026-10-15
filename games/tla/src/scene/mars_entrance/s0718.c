@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char     SceneId_Ov6aaRoom1;
+extern char     SceneId_Ov6aaRoom2;
+extern char     SceneId_Ov6aaRoom3;
+extern char     SceneId_Ov6aaRoom4;
+extern char     SceneId_Ov6aaRoom5;
+extern char     SceneId_Ov6aaRoom6;
+extern char     SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -59,7 +59,8 @@ void Func_02000808(void)
 {
     struct ObjectRuntime *object = Object_GetById(20);
 
-    if (!Flag_IsSet(0xa47)) {
+    if (!Flag_IsSet(0xa47))
+    {
         Func_02004de0(0x23d);
         Flag_Set(0x231);
         object->x = S16_AT(object, 100) << 16;
@@ -71,7 +72,8 @@ void Func_02000808(void)
 
 void Func_0200085c(s32 state, s32 frame)
 {
-    if (state == 1) {
+    if (state == 1)
+    {
         Func_02004de0(0x23e);
         Func_02004d58(0x10000, 0);
         Func_02004d60(60);
@@ -82,7 +84,8 @@ void Func_0200085c(s32 state, s32 frame)
     }
     if (frame > 96 && frame < 272 && frame % 30 == 0)
         Func_02000414(20);
-    if (frame == 276) {
+    if (frame == 276)
+    {
         Func_02004d58(0x7fff, 0);
         Func_02004d60(20);
     }
@@ -90,10 +93,12 @@ void Func_0200085c(s32 state, s32 frame)
 
 void Func_020008f4(s32 unused, s32 id)
 {
-    if (id == 8) {
+    if (id == 8)
+    {
         struct ObjectRuntime *object = Object_GetById(8);
 
-        if (object->x >> 20 == 20) {
+        if (object->x >> 20 == 20)
+        {
             Battle_WaitMode0(5);
             object->z += 0x10000;
             BYTE_AT(object, 98) = 1;

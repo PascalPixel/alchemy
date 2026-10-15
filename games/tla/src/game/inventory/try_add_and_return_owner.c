@@ -17,9 +17,9 @@ s32 Inventory_AddItemFar(s32, s32);
 //--------------------------------------------------------------------------
 s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner)
 {
-	if (Inventory_AddItemFar(owner, item) >= 0)
-		return owner;
-	return -1;
+    if (Inventory_AddItemFar(owner, item) >= 0)
+        return owner;
+    return -1;
 }
 
 //--------------------------------------------------------------------------

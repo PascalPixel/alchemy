@@ -3,9 +3,9 @@
 void Func_02000e18(s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 speed;
-    s32 i;
-    u8 *flags;
+    s32                   speed;
+    s32                   i;
+    u8                   *flags;
 
     Func_02003d7c();
     Func_02003eac(0);
@@ -22,7 +22,8 @@ void Func_02000e18(s32 value)
     Animation_ApplyChildValues(object, 9);
     Func_02003cc4(object, 28);
     Func_02003ef4(0x236);
-    for (i = 0; i <= 59; i++) {
+    for (i = 0; i <= 59; i++)
+    {
         if (i == 30)
             Event_FinishScreenTransition();
         speed += 0x4000;

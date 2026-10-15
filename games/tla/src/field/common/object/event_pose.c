@@ -31,7 +31,8 @@ void ObjectEvent_Spring(u32 objectId)
     WaitFrames(18);
     Object_SetMode(object, 7);
     Audio_PlayCue(146);
-    if (object != 0) {
+    if (object != 0)
+    {
         object->velocityY = 0x80000;
         ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
     }
@@ -79,7 +80,8 @@ void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z)
         z = object->homeZ << 16;
     object->x = x;
     object->z = z;
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) \
+    || defined(TLA_EDITION_IT)
     object->y = object->terrainHeight = Func_08020190(0, x, z);
 #else
     object->y = object->terrainHeight = Map_GetTerrainHeightFar(0, x, z);

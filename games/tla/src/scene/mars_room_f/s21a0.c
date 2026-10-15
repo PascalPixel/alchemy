@@ -2,11 +2,12 @@
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-struct SpriteParts {
-    u8 unk00[9];
-    u8 unk09Low : 2;
-    u8 part : 2;
-    u8 unk0a[8];
+struct SpriteParts
+{
+    u8  unk00[9];
+    u8  unk09Low : 2;
+    u8  part : 2;
+    u8  unk0a[8];
     u16 unk12;
 };
 
@@ -20,7 +21,8 @@ void Func_020021a0(s32 *position, s32 speed, s32 mode)
 {
     struct ObjectRuntime *object = Func_02005498_(366, position[0], position[1], position[2]);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->bounce = 0;
         object->gravity = 0;
         object->unk4c = -speed;
@@ -36,7 +38,8 @@ void Func_020021e8(s32 *position, s32 speed, s32 mode)
 {
     struct ObjectRuntime *object = Func_02005498_(366, position[0], position[1], position[2]);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->bounce = 0;
         object->gravity = 0;
         object->unk4c = speed;
@@ -52,7 +55,8 @@ void Func_02002230(s32 *position, s32 speed, s32 mode)
 {
     struct ObjectRuntime *object = Func_02005498_(366, position[0], position[1], position[2]);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->bounce = 0;
         object->gravity = 0;
         object->unk4c = -speed;
@@ -68,7 +72,8 @@ s32 Func_02002278(struct ObjectRuntime *a, struct ObjectRuntime *b)
 {
     s32 dy;
 
-    if (ABS(a->x - b->x) < 0xc0000) {
+    if (ABS(a->x - b->x) < 0xc0000)
+    {
         dy = a->y - b->y;
         if (dy > 0 && dy < 0x100000 && ABS(a->z - b->z) < 0x80000)
             return 1;
@@ -79,11 +84,11 @@ s32 Func_02002278(struct ObjectRuntime *a, struct ObjectRuntime *b)
 void Func_020022d0(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s32 dx = object->bounce;
-    s32 dz;
-    struct SpriteParts *parts;
-    s32 rate;
-    s32 scale;
+    s32                   dx = object->bounce;
+    s32                   dz;
+    struct SpriteParts   *parts;
+    s32                   rate;
+    s32                   scale;
 
     object->x += dx;
     object->y += object->gravity;
@@ -101,7 +106,8 @@ void Func_020022d0(struct ObjectRuntime *object)
     /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action */
     asm volatile("");
     parts->unk12 += object->action;
-    if (leader->y == leader->terrainHeight && Func_02002278(object, leader)) {
+    if (leader->y == leader->terrainHeight && Func_02002278(object, leader))
+    {
         object->z -= object->unk4c;
         object->gravity += object->unk4c >> 2;
         object->unk4c = 0;
@@ -123,10 +129,12 @@ void Func_0200236c(struct ObjectRuntime *object, s32 unused)
 
 void Func_020023ac(s32 *position, s32 speed)
 {
-    struct ObjectRuntime *object = Func_02005498_(285, position[0], position[1], position[2] + 0xfffe0000);
+    struct ObjectRuntime *object =
+        Func_02005498_(285, position[0], position[1], position[2] + 0xfffe0000);
     s32 spin;
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);
         object->gravity = (u16)Random16Far();
         object->unk4c = (u16)(Random16Far() << 1) + speed;

@@ -3,10 +3,10 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_02003318(struct ObjectRuntime *object);
+void                  GameFlag_SetBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void                  Func_02003318(struct ObjectRuntime *object);
 void Func_02003328(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y, s32 width, s32 height);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 void Func_02003398(void);
@@ -26,8 +26,8 @@ static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY, s3
 void Func_02001a94(void)
 {
     struct ObjectRuntime *object;
-    s32 column;
-    s32 target[3];
+    s32                   column;
+    s32                   target[3];
 
     if (gPartyState.entrance == 1)
     {

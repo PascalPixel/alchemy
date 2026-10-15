@@ -2,17 +2,18 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-struct SceneWork {
-    u8 unk000[0x1ac];
+struct SceneWork
+{
+    u8  unk000[0x1ac];
     s32 unk1ac;
 };
 
-extern char SceneId_Ov65aRoom1;
-extern char SceneId_Ov65aRoom2;
-extern char SceneId_Ov65aRoom3;
-extern char SceneId_Ov65aRoom4;
-extern char SceneId_Ov65aRoom5;
-extern char SceneId_Ov65aRoom6;
+extern char     SceneId_Ov65aRoom1;
+extern char     SceneId_Ov65aRoom2;
+extern char     SceneId_Ov65aRoom3;
+extern char     SceneId_Ov65aRoom4;
+extern char     SceneId_Ov65aRoom5;
+extern char     SceneId_Ov65aRoom6;
 extern const u8 gData_020013d0[];
 extern const u8 gData_02001400[];
 extern const u8 gData_02001430[];

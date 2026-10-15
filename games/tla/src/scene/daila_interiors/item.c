@@ -5,32 +5,33 @@
 #include "text/msg_ids.h"
 #include "daila.h"
 
-struct DailaActor {
-    u8 unk00[0xc];
+struct DailaActor
+{
+    u8  unk00[0xc];
     s32 y;
-    u8 unk10[8];
+    u8  unk10[8];
     s32 speed18;
     s32 speed1c;
-    u8 unk20[8];
+    u8  unk20[8];
     s32 unk28;
-    u8 unk2c[0x1c];
+    u8  unk2c[0x1c];
     s32 unk48;
-    u8 unk4c[9];
-    u8 kind55;
-    u8 unk56[3];
-    u8 flags59;
-    u8 unk5a[0x12];
+    u8  unk4c[9];
+    u8  kind55;
+    u8  unk56[3];
+    u8  flags59;
+    u8  unk5a[0x12];
     s32 unk6c;
 };
 
 struct DailaActor *Object_GetById(s32 id);
-s32 PartyInventory_Add(s32 item);
-s32 Func_02000d14(s32 item);
-void Func_02000da4(struct DailaActor *object, s32 mode);
-void Func_02000dfc(s32 cue);
-void Func_02000ccc(s32 value, s32 slot);
-void Func_02000c9c(struct DailaActor *object);
-s32 Func_02000878(s32 item, s32 mode);
+s32                PartyInventory_Add(s32 item);
+s32                Func_02000d14(s32 item);
+void               Func_02000da4(struct DailaActor *object, s32 mode);
+void               Func_02000dfc(s32 cue);
+void               Func_02000ccc(s32 value, s32 slot);
+void               Func_02000c9c(struct DailaActor *object);
+s32                Func_02000878(s32 item, s32 mode);
 
 void Func_02000730(void)
 {
@@ -45,7 +46,8 @@ void Func_02000730(void)
     savedY = Object_GetById(9)->y;
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    if (Func_02000d14(item) >= 0) {
+    if (Func_02000d14(item) >= 0)
+    {
         Func_02000da4(Object_GetById(9), 3);
         Func_02000dfc(83);
         Func_02000ccc(item, 2);
@@ -54,14 +56,19 @@ void Func_02000730(void)
         Func_02000d4c(9, 0, 0);
         Func_02000d4c(13, 232 << 16, 194 << 16);
         GameFlag_SetBit(0xa20);
-    } else {
+    }
+    else
+    {
         Func_02000da4(Object_GetById(9), 3);
         Func_02000dfc(83);
-        if (Func_02000878(item, 0) != -1) {
+        if (Func_02000878(item, 0) != -1)
+        {
             Func_02000d4c(9, 0, 0);
             Func_02000d4c(13, 232 << 16, 196 << 16);
             GameFlag_SetBit(0xa20);
-        } else {
+        }
+        else
+        {
             Func_02000d4c(9, 0, 0);
             Battle_WaitMode0(1);
             Object_GetById(9)->unk28 = saved28;

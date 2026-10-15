@@ -10,7 +10,8 @@ void Func_02001f74(void)
     WaitFrames(1);
     object->motionFlags = 0;
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)object, 0x10c0000, 0x400000, 0x1860000);
+    Call4(
+        (void (*)())Object_SetPositionAndResetMotion, (s32)object, 0x10c0000, 0x400000, 0x1860000);
     WaitFrames(1);
     object->terrainHeight = 0x800000;
     WaitFrames(1);

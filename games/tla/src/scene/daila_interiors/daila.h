@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Battle_WaitMode0(s32 frames);

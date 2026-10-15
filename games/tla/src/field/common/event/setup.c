@@ -15,7 +15,6 @@
 #include "game_flags.h"
 #include "system.h"
 
-
 void EventRuntime_Wait(s32 frames)
 {
     struct EventWork *state = Ram_HeapSlots->eventWork;
@@ -25,8 +24,7 @@ void EventRuntime_Wait(s32 frames)
 
 void EventRuntime_PrepareCurrentObject(void)
 {
-    struct ObjectRuntime *object =
-        ObjectTable_Get(EventRuntime_GetControlledOwner());
+    struct ObjectRuntime *object = ObjectTable_Get(EventRuntime_GetControlledOwner());
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
     object->targetX = 0x80000000;

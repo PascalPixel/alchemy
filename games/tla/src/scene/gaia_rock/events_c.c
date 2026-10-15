@@ -8,22 +8,22 @@
 
 struct SceneEntrance;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
-void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
-void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000e74(void);
-void Func_02000e7c(void);
-void Func_02000e8c(s32 id, s32 x, s32 z);
-void Func_02000ea4(const u8 *message);
-void Func_02000eac(s32 id, s32 flags);
-s32 Func_02000eb4(s32 id, s32 flags);
-void Func_02000edc(s32 a);
-void Func_02000ef4(s32 a);
-void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void                  Battle_WaitMode0(s32 frames);
+void                  ObjectMotion_SetVariantCallback(s32 id, s32 variant);
+void                  UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+void                  Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000e74(void);
+void                  Func_02000e7c(void);
+void                  Func_02000e8c(s32 id, s32 x, s32 z);
+void                  Func_02000ea4(const u8 *message);
+void                  Func_02000eac(s32 id, s32 flags);
+s32                   Func_02000eb4(s32 id, s32 flags);
+void                  Func_02000edc(s32 a);
+void                  Func_02000ef4(s32 a);
+void                  Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 extern const u8 MsgCheckedTheAltar[];
 extern const u8 MsgIMSensing[];
@@ -55,12 +55,13 @@ void Func_020002a0(void)
 void Func_020002c0(void)
 {
     struct ObjectRuntime *object = Object_GetById(64);
-    s32 done;
+    s32                   done;
 
     if (object == NULL)
         return;
     done = GameFlag_Test(0xf74);
-    if (done == 0) {
+    if (done == 0)
+    {
         Call3((void (*)())Func_02000e8c, 64, 0x2910000, 0xf60000);
         object->motionFlags = done;
         object->y = 0x500000;
@@ -78,24 +79,31 @@ void Func_02000314(void)
     struct ObjectRuntime *object = Object_GetById(64);
 
     UiText_ShowPositionedMessageAndWait(MsgCheckedTheAltar, 1);
-    if (object != NULL && object->x != 0) {
+    if (object != NULL && object->x != 0)
+    {
         Func_02000edc(0x1040);
-    } else if (GameFlag_Test(0xf74) == 0) {
+    }
+    else if (GameFlag_Test(0xf74) == 0)
+    {
         struct EventWork *work = Ram_HeapSlots->eventWork;
 
         /* FAKEMATCH: a one-pass block keeps the work pointer load before the message arguments (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         UiText_ShowPositionedMessageAndWait(MsgIMSensing, 1);
         work->unk15a = 1;
-    } else {
+    }
+    else
+    {
         UiText_ShowPositionedMessageAndWait(MsgICanT, 1);
     }
 }
 
 void Func_02000378(void)
 {
-    if (GameFlag_Test(0x927)) {
+    if (GameFlag_Test(0x927))
+    {
         Func_02000e74();
         Func_02000ef4(0);
         Func_02000ea4(MsgYouReGoing);
@@ -109,10 +117,13 @@ void Func_02000378(void)
 
 void Func_020003c4(void)
 {
-    if (GameFlag_Test(0x9ab)) {
+    if (GameFlag_Test(0x9ab))
+    {
         Func_02000ea4(MsgYouReGoing);
         Func_02000eb4(20, 0);
-    } else {
+    }
+    else
+    {
         Func_02000ea4(MsgIfYouRe);
         Func_02000eac(20, 0);
     }
@@ -120,10 +131,13 @@ void Func_020003c4(void)
 
 void Func_020003fc(void)
 {
-    if (GameFlag_Test(0x9ab)) {
+    if (GameFlag_Test(0x9ab))
+    {
         Func_02000ea4(MsgKushinadaSSafe);
         Func_02000eac(20, 0);
-    } else {
+    }
+    else
+    {
         Func_02000ea4(MsgIReallyGot);
         Func_02000eac(20, 0);
     }

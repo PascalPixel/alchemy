@@ -53,7 +53,8 @@ s32 Func_080ca5a0(s32 owner)
 
     if (count > 4)
         count = 4;
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         if (gPartyState.activeOwners[i] == owner)
             return 1;
     }

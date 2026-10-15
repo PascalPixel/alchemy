@@ -17,10 +17,13 @@ void Func_02000438(void)
     s32 sound;
     s32 drop;
 
-    if (gPartyState.scene == (s32)&SceneId_Ov65dRoom1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov65dRoom1)
+    {
         sound = 12;
         drop = 17;
-    } else {
+    }
+    else
+    {
         sound = 3;
         drop = 9;
     }

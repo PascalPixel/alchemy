@@ -2,14 +2,16 @@
 
 // Two triangles of a strip: three vertex indices and a texture coordinate
 // pair for each corner.
-struct StripTriangle {
+struct StripTriangle
+{
     u8 vertex[3];
     u8 unk03;
     u8 uv[3][2];
     u8 unk0a[2];
 };
 
-struct StripQuad {
+struct StripQuad
+{
     struct StripTriangle upper;
     struct StripTriangle lower;
 };
@@ -20,7 +22,8 @@ void Func_08178680(struct StripQuad *quad, s32 width, s32 height, s32 count)
 {
     s32 i;
 
-    for (i = 0; i != count; i++) {
+    for (i = 0; i != count; i++)
+    {
         quad[i].upper.uv[0][1] = 1;
         quad[i].upper.uv[2][1] = 1;
         quad[i].lower.uv[2][1] = 1;

@@ -14,30 +14,32 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-struct ItemMenuBlocks {
-    u8 unk000[0x4ee];
+struct ItemMenuBlocks
+{
+    u8  unk000[0x4ee];
     s16 resourceSlots[2];
 };
 
 extern char ResourceId_ItemMenuTilesA;
 extern char ResourceId_ItemMenuTilesB;
 
-
 void Resource_LoadPairedBlocksIfAvailable(void)
 {
-    s32 firstSlot;
-    s32 secondSlot;
+    s32                    firstSlot;
+    s32                    secondSlot;
     struct ItemMenuBlocks *activeState;
 
     activeState = Ram_HeapSlots->menuRuntime;
     firstSlot = Resource_FindFreeEntry();
     activeState->resourceSlots[0] = (s16)firstSlot;
-    if (firstSlot != -1) {
+    if (firstSlot != -1)
+    {
         VramBlock_LoadResourceFar(firstSlot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
     }
     secondSlot = Resource_FindFreeEntry();
     activeState->resourceSlots[1] = (s16)secondSlot;
-    if (secondSlot != -1) {
+    if (secondSlot != -1)
+    {
         VramBlock_LoadResourceFar(secondSlot, 0x80, (s32)&ResourceId_ItemMenuTilesB);
     }
 }
@@ -72,7 +74,8 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s3
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    if (slot != 0x60) {
+    if (slot != 0x60)
+    {
         UiIcon_LoadResourceIntoSlot(resourceId, slot);
         RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
     }
@@ -82,11 +85,11 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s3
 // menu loaded. The Broken Seal's UiIcon_CreateStatChangeArrow.
 s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
-    struct RenderOutput *object;
-    u32 resource;
-    s32 v = variant;
-    struct RenderInput *w = window;
-    s32 xx = x;
+    struct RenderOutput   *object;
+    u32                    resource;
+    s32                    v = variant;
+    struct RenderInput    *w = window;
+    s32                    xx = x;
     struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
 
     if (v == 0)
@@ -94,7 +97,8 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     else
         resource = (u16)data->resourceSlots[1];
     object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
-    if (object == 0) {
+    if (object == 0)
+    {
         /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes through CSE, as in The Broken Seal; a plain return -1 gives other registers (differ 20). */
         if (variant || xx)
             return -1;
@@ -112,22 +116,26 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
 // UiIcon_DrawVariantWithTileOffset.
 s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
-    struct RenderOutput *object;
-    u32 resource;
-    s32 v = variant;
-    struct RenderInput *w = window;
-    s32 xx = x;
+    struct RenderOutput   *object;
+    u32                    resource;
+    s32                    v = variant;
+    struct RenderInput    *w = window;
+    s32                    xx = x;
     struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
 
-    if (v == 0) {
+    if (v == 0)
+    {
         resource = (u16)data->resourceSlots[0];
         y -= 3;
-    } else {
+    }
+    else
+    {
         resource = (u16)data->resourceSlots[1];
         y -= 4;
     }
     object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
-    if (object == 0) {
+    if (object == 0)
+    {
         /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes through CSE, as in The Broken Seal; a plain return -1 gives other registers (differ 26). */
         if (v || x)
             return -1;

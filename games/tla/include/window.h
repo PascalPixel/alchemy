@@ -6,49 +6,60 @@
 #include "uiflow.h"
 #include "layout_guard.h"
 
-enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
+enum
+{
+    UI_WINDOW_COUNT = 12,
+    UI_OUTPUT_COUNT = 64
+};
 
 #if EDITION_INTERNATIONAL
-enum { UI_TEXT_ENTRY_COUNT = 512 };
+enum
+{
+    UI_TEXT_ENTRY_COUNT = 512
+};
 #else
-enum { UI_TEXT_ENTRY_COUNT = 256 };
+enum
+{
+    UI_TEXT_ENTRY_COUNT = 256
+};
 #endif
 
-struct UiRenderWork {
-    u16 tileCursor;
-    u8 alt;
-    u8 dirty;
-    u8 mode;
-    u8 menuState;
-    u8 menuBusy;
-    u8 level;
-    u16 tilemap[20][32];
-    struct UiWindow windows[UI_WINDOW_COUNT];
-    struct UiChannelSlot channels[3];
-    struct RenderOutput outputs[UI_OUTPUT_COUNT];
+struct UiRenderWork
+{
+    u16                     tileCursor;
+    u8                      alt;
+    u8                      dirty;
+    u8                      mode;
+    u8                      menuState;
+    u8                      menuBusy;
+    u8                      level;
+    u16                     tilemap[20][32];
+    struct UiWindow         windows[UI_WINDOW_COUNT];
+    struct UiChannelSlot    channels[3];
+    struct RenderOutput     outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList freeOutputs;
-    u8 tileAttributes[0x100];
-    u16 lineSpacing;
-    u16 unknownAfterLineSpacing;
-    u16 outline;
-    u16 colour;
-    u16 entries[UI_TEXT_ENTRY_COUNT];
-    u16 glyphSpacing;
-    u16 count;
-    u16 unknownAfterCount;
-    u16 glyphResource;
-    u16 glyphTiles;
-    u8 unknownBeforeValues[2];
-    u32 values[8];
-    u16 names[8];
-    u16 resourceIds[2];
-    u16 outputIds[2];
-    u16 result[2];
-    u8 unk1388;
-    u8 busy;
-    u8 unk138a[2];
-    s8 textMode;
-    u8 unk138d[3];
+    u8                      tileAttributes[0x100];
+    u16                     lineSpacing;
+    u16                     unknownAfterLineSpacing;
+    u16                     outline;
+    u16                     colour;
+    u16                     entries[UI_TEXT_ENTRY_COUNT];
+    u16                     glyphSpacing;
+    u16                     count;
+    u16                     unknownAfterCount;
+    u16                     glyphResource;
+    u16                     glyphTiles;
+    u8                      unknownBeforeValues[2];
+    u32                     values[8];
+    u16                     names[8];
+    u16                     resourceIds[2];
+    u16                     outputIds[2];
+    u16                     result[2];
+    u8                      unk1388;
+    u8                      busy;
+    u8                      unk138a[2];
+    s8                      textMode;
+    u8                      unk138d[3];
 };
 
 LAYOUT_OFFSET_GUARD(UiRenderWork_Tilemap, struct UiRenderWork, tilemap, 8);

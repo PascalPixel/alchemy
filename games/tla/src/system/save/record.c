@@ -13,7 +13,9 @@
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 {
-    while ((channel->control & DMA3_BUSY) != 0) {}
+    while ((channel->control & DMA3_BUSY) != 0)
+    {
+    }
 }
 
 #define WAIT_DMA() WaitDma(DMA3)
@@ -35,7 +37,7 @@ s32 SaveState_InvalidateSlot(s32 index);
 u32 SaveState_ReadRecordPayload(s32 recordId, void *destination)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    u32 index;
+    u32                   index;
 
     index = SaveState_FindLatestSlot(recordId);
     if (index > 14)
@@ -49,8 +51,8 @@ u32 SaveState_ReadRecordPayload(s32 recordId, void *destination)
 u32 SaveState_DeleteRecord(s32 recordId)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    s32 index;
-    s32 result;
+    s32                   index;
+    s32                   result;
 
     index = SaveState_FindLatestSlot(recordId);
     if ((u32)index > 14)
@@ -64,14 +66,15 @@ u32 SaveState_DeleteRecord(s32 recordId)
 s32 SaveState_ChecksumWorkspace(void)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    u32 limit;
-    u32 offset;
-    s32 sum;
+    u32                   limit;
+    u32                   offset;
+    s32                   sum;
 
     sum = 0;
     offset = 0;
     limit = 0x2fef;
-    do {
+    do
+    {
         sum += work->slot[16 + offset + 0];
         sum += work->slot[16 + offset + 1];
         sum += work->slot[16 + offset + 2];
@@ -88,15 +91,18 @@ s32 SaveState_ChecksumWorkspace(void)
 u32 SaveState_FindLatestSlot(s32 recordId)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    u32 latestSequence;
-    u32 latestSlot;
-    u32 i;
+    u32                   latestSequence;
+    u32                   latestSlot;
+    u32                   i;
 
     latestSequence = 0;
     latestSlot = 15;
-    for (i = 0; i <= 14; i += 3) {
-        if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-            if (latestSequence < work->sequence[i]) {
+    for (i = 0; i <= 14; i += 3)
+    {
+        if (work->occupied[i] != 0 && recordId == work->recordId[i])
+        {
+            if (latestSequence < work->sequence[i])
+            {
                 latestSequence = work->sequence[i];
                 latestSlot = i;
             }
@@ -109,7 +115,7 @@ s32 SaveState_InvalidateSlot(s32 index)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     struct SaveSlotHeader header;
-    volatile u32 zero;
+    volatile u32          zero;
 
     zero = 0;
     START_DMA(&zero, &header, 0x85000004);

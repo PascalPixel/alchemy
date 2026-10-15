@@ -16,7 +16,7 @@ extern const u8 gData_020050bc[];
 
 void Func_020030bc(void)
 {
-    u8 *work = Ram_HeapSlots->effectWork;
+    u8                         *work = Ram_HeapSlots->effectWork;
     struct ShamanVillageObject *object = Object_GetById(16);
 
     s32 result;
@@ -243,11 +243,14 @@ void Func_020030bc(void)
     result = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
     done = &object->unk63;
     owner = gPartyState.currentOwner;
-    if (result == 0) {
+    if (result == 0)
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Motion_SetModeAndWaitAnimation(15, 4);
         ShamanVillage_MessagePut(15, 0);
-    } else {
+    }
+    else
+    {
         ObjectMotion_WaitForAnimationChange(owner);
         Motion_SetModeAndWaitAnimation(15, 4);
         EVENT_WORK->field1c4++;
@@ -268,7 +271,8 @@ void Func_020030bc(void)
     ObjectMotion_EnableActionAndSetCallback(17, gData_0200504c);
     ObjectMotion_EnableActionAndSetCallback(16, gData_0200504c);
     Engine_AudioPlayCue(78);
-    do {
+    do
+    {
         WaitFrames(1);
     } while (*done == 0);
     ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);

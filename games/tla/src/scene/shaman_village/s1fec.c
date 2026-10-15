@@ -1,14 +1,14 @@
 #include "shaman_village.h"
 
-u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+u8  *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32  VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Func_02004884(s32 resource);
 
 struct ShamanVillageObject *Func_02001fec(void)
 {
     struct ShamanVillageObject *object = Engine_ObjectCreate(489, 0x780000, 0x400000, 0x1080000);
-    u8 *buffer = NULL;
+    u8                         *buffer = NULL;
 
     if (object == NULL)
         return NULL;

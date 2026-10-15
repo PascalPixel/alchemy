@@ -27,7 +27,8 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners)
     if (Ram_HeapSlots->battleWork->twoSided != 0)
         count = 0;
 
-    for (index = 0; index < count; index++) {
+    for (index = 0; index < count; index++)
+    {
         s32 owner = gPartyState.activeOwners[index + 4];
 
         if (owners != 0)

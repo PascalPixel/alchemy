@@ -16,14 +16,15 @@ typedef unsigned long long u64;
 // the modern build places code and data where its own compiler puts them:
 // a fixed address is the linked name, called through a register as at a
 // fixed address, so that code copied into RAM still reaches it
-#define FIXED_LINKED(linked) \
-    ({ extern char modern_##linked[] __asm__(#linked); \
-       void *modern_address = modern_##linked; \
-       __asm__("" : "+r"(modern_address)); \
-       modern_address; })
+#define FIXED_LINKED(linked)                            \
+    ({                                                  \
+        extern char modern_##linked[] __asm__(#linked); \
+        void       *modern_address = modern_##linked;   \
+        __asm__("" : "+r"(modern_address));             \
+        modern_address;                                 \
+    })
 #define FIXED_ADDRESS(type, address, linked) (type FIXED_LINKED(linked))
-#define FIXED_OFFSET(value, linked, from) \
-    ((u32)FIXED_LINKED(linked) - (u32)FIXED_LINKED(from))
+#define FIXED_OFFSET(value, linked, from) ((u32)FIXED_LINKED(linked) - (u32)FIXED_LINKED(from))
 #else
 #define FIXED_ADDRESS(type, address, linked) (type address)
 #define FIXED_OFFSET(value, linked, from) value

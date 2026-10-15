@@ -2,7 +2,8 @@
 #include "text/msg_ids.h"
 
 /* The byte at 0x5a of an actor, as the field its bit 0 is set through. */
-struct ActorSolid {
+struct ActorSolid
+{
     u8 unk00[0x5a];
     u8 solid : 8;
 };
@@ -96,7 +97,8 @@ void Func_02003900(void)
     Func_020059e8(0);
     Func_020058e0_(gPartyState.currentOwner, 0, 0x3f80000);
     Func_020058e0_(8, 0x3f80000, 0x3f80000);
-    for (i = 9; i < 80; i++) {
+    for (i = 9; i < 80; i++)
+    {
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object->x != 0)

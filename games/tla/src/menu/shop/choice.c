@@ -17,28 +17,30 @@
 #include "input.h"
 #include "text/msg_ids.h"
 
-struct ShopRuntime {
-    u8 unk000[0x4dc];
+struct ShopRuntime
+{
+    u8                   unk000[0x4dc];
     struct RenderOutput *anchor;
-    u8 unk4e0[0x1a];
-    u16 keeperResource;
-    u8 unk4fc[0xa];
-    s8 shopType;
+    u8                   unk4e0[0x1a];
+    u16                  keeperResource;
+    u8                   unk4fc[0xa];
+    s8                   shopType;
 };
 
-struct Record_080b06c0 {
+struct Record_080b06c0
+{
     u8 filler0[4];
     u8 values[21];
 };
-s32 UiWork_IsCompleteFar(void);
+s32  UiWork_IsCompleteFar(void);
 void UiWork_FinalizePendingCoreFar(void);
 
 void Func_081084f4(s32 first)
 {
     struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
-    s32 message;
-    s32 value;
-    s8 mode;
+    s32                 message;
+    s32                 value;
+    s8                  mode;
 
     /* FAKEMATCH: the native loads the shop work before it builds the keeper offset, and saves the message after; the barrier and the copy after it give that order (differ 2 without them). */
     asm volatile("");
@@ -60,15 +62,16 @@ void Func_081084f4(s32 first)
 
 void Func_0810857c(s32 messageId)
 {
-    s32 variant;
-    s32 no;
-    s8 mode;
-    u8 saved;
-    struct ShopRuntime *state;
+    s32                   variant;
+    s32                   no;
+    s8                    mode;
+    u8                    saved;
+    struct ShopRuntime   *state;
     struct RenderOutput **slot;
 
     /* FAKEMATCH: the one-pass block loads the shop work before the anchor offset is built (differ 2 without it). */
-    do {
+    do
+    {
         state = Ram_HeapSlots->menuRuntime;
     } while (0);
     slot = &state->anchor;
@@ -94,7 +97,7 @@ void Func_0810857c(s32 messageId)
 s32 Func_08108630(s32 arg0)
 {
     struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
-    u8 saved = (*slot)->active;
+    u8                    saved = (*slot)->active;
 
     UiIcon_PrepareObjectFar(*slot);
 #if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
@@ -109,7 +112,7 @@ s32 Func_08108630(s32 arg0)
 s32 Func_08108660(s32 arg0)
 {
     struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
-    u8 saved = (*slot)->active;
+    u8                    saved = (*slot)->active;
 
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);

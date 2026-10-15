@@ -2,9 +2,9 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 Func_0200129c(s32 id, s32 x, s32 z);
-s32 Func_02001234(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+s32                   GameFlag_Test(s32 flag);
+s32                   Func_0200129c(s32 id, s32 x, s32 z);
+s32                   Func_02001234(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Func_02001234_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
@@ -18,7 +18,8 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         if (GameFlag_Test(flag))
             Func_0200129c(id, x << 16, z << 16);
         ObjectMotion_SetActionVariant(id, 3);
@@ -40,7 +41,8 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused, s32 flag)
     /* FAKEMATCH: b pinned to r8, where ⚓️ keeps it; without the pin the copy below takes a's register (differ 5). */
     register s32 b asm("r8") = bArg;
 
-    if (Object_GetById(id) != 0) {
+    if (Object_GetById(id) != 0)
+    {
         ObjectMotion_SetActionVariant(id, 3);
         if (GameFlag_Test(flag))
             Func_0200129c(id, x << 16, z << 16);

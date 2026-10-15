@@ -12,16 +12,17 @@
 #include "battle_party.h"
 #include "b5_context.h"
 
-struct PlacementList {
+struct PlacementList
+{
     struct DjinnRecoveryEntry entries[72];
-    s32 count;
+    s32                       count;
 };
 
-struct PlacementTable {
-    u8 padding[8];
+struct PlacementTable
+{
+    u8                   padding[8];
     struct PlacementList list;
 };
-
 
 extern char MsgHpRecover;
 extern char MsgHpFull;
@@ -31,9 +32,10 @@ u32 BattleEventRuntime_Reset(void);
 s32 sub_08124af8(s32 id)
 {
     struct BattleUnit *unit = UnitGet(id);
-    u8 *count = &unit->refrain;
+    u8                *count = &unit->refrain;
 
-    if (*count != 0) {
+    if (*count != 0)
+    {
         s32 max;
         s32 before;
         s32 hp;
@@ -47,11 +49,15 @@ s32 sub_08124af8(s32 id)
         if (hp > max)
             hp = max;
         gain = hp - before;
-        if (gain != 0) {
+        if (gain != 0)
+        {
             BattleEvPush(0, id);
-            if (hp == unit->maxHp) {
+            if (hp == unit->maxHp)
+            {
                 BattleEvPush(4, (u32)&MsgHpFull);
-            } else {
+            }
+            else
+            {
                 {
                     u32 opcode = 1;
 
@@ -74,9 +80,11 @@ s32 sub_08124af8(s32 id)
 s32 BattleUnit_TickReflect(s32 id)
 {
     u8 *value = (u8 *)&((struct BattleUnit *)UnitGet(id))->reflect;
-    if (*value != 0) {
+    if (*value != 0)
+    {
         (*value)--;
-        if (*value == 0) {
+        if (*value == 0)
+        {
             return 1;
         }
     }
@@ -86,10 +94,12 @@ s32 BattleUnit_TickReflect(s32 id)
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
     struct BattleUnit *unit = UnitGet(id);
-    u8 *value = &unit->agiCnt;
-    if (*value != 0) {
+    u8                *value = &unit->agiCnt;
+    if (*value != 0)
+    {
         (*value)--;
-        if (*value == 0) {
+        if (*value == 0)
+        {
             unit->agiLv = 0;
             return 1;
         }
@@ -99,22 +109,25 @@ s32 BattleUnit_TickAgilityModifier(s32 id)
 
 s32 BattlePlacement_UpdateTimedEntries(void)
 {
-    struct PlacementList *list;
+    struct PlacementList      *list;
     struct DjinnRecoveryEntry *timedEntry;
     struct DjinnRecoveryEntry *expiredEntry;
-    s32 index;
-    s32 removed;
-    s32 initialCount;
+    s32                        index;
+    s32                        removed;
+    s32                        initialCount;
 
     list = &Trade_GetOfferStateFar(0)->list;
     initialCount = list->count;
     index = 0;
     removed = 0;
-    if (index < initialCount) {
+    if (index < initialCount)
+    {
         timedEntry = list->entries;
-        do {
-            if (timedEntry->turns > 0 &&
-                ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+        do
+        {
+            if (timedEntry->turns > 0
+                && ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0)
+            {
                 timedEntry->turns--;
             }
             index++;
@@ -122,17 +135,22 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         } while (index < list->count);
     }
     index = 0;
-    if (index < list->count) {
+    if (index < list->count)
+    {
         expiredEntry = list->entries;
-        do {
-            if (expiredEntry->turns == 0) {
+        do
+        {
+            if (expiredEntry->turns == 0)
+            {
                 u8 id = expiredEntry->unitId;
 
                 Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
                 Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
                 UnitCalcFar(id);
                 removed = 1;
-            } else {
+            }
+            else
+            {
                 expiredEntry++;
                 index++;
             }
@@ -146,7 +164,8 @@ s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
     s32 turns;
 
     turns = 19;
-    do {
+    do
+    {
         turns--;
         BattlePlacement_UpdateTimedEntries();
     } while (turns >= 0);

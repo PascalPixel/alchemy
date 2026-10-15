@@ -28,7 +28,8 @@ s32 Func_02000988(void)
         Func_02000860();
     /* FAKEMATCH: the native reads the scene again at each test; without the barrier the read is moved up both paths (differ 56 over the four tests). */
     __asm__("" : : : "memory");
-    if (gPartyState.scene == (s32)&SceneId_Ov690Room9) {
+    if (gPartyState.scene == (s32)&SceneId_Ov690Room9)
+    {
         Func_02002140(0);
         Func_02002188(gData_0200226c);
         if (GameFlag_Test(0x206))
@@ -41,7 +42,8 @@ s32 Func_02000988(void)
             Object_SetModeById(10, 2);
         Func_02000e04();
 #if !defined(TLA_EDITION_JA)
-        if (GameFlag_Test(0x204)) {
+        if (GameFlag_Test(0x204))
+        {
             Func_020020c0(9, 0, 0);
             Place(21, 0xb80000, 0xb80000);
             Object_GetById(21)->motionFlags = 0;
@@ -49,12 +51,15 @@ s32 Func_02000988(void)
         }
 #endif
     }
-    if (gPartyState.scene == (s32)&SceneId_Ov690Room4) {
-        if (GameFlag_Test(0x230)) {
+    if (gPartyState.scene == (s32)&SceneId_Ov690Room4)
+    {
+        if (GameFlag_Test(0x230))
+        {
             CopyCells2(0, 3, 1, 1, 3, 15);
             Object_SetModeById(9, 4);
         }
-        if (GameFlag_Test(0x109) && Flag_Test(0x220)) {
+        if (GameFlag_Test(0x109) && Flag_Test(0x220))
+        {
             Flag_Clear(0x220);
             Func_0200125c();
         }

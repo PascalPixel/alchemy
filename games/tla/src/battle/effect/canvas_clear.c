@@ -17,13 +17,14 @@ void Func_081434f8(void)
 
     base = Ram_HeapSlots->battleFxWork[0];
     i = 0;
-    do {
-        if (base[0x78dc + i] != 0) {
-            if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
+    do
+    {
+        if (base[0x78dc + i] != 0)
+        {
+            if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0)
+            {
                 index = i * 2 + 36;
-                Func_0814cd48(
-                    *(s16 *)(*(u8 **)(base + 0x78f0) + index),
-                    0, -1, -1, 0);
+                Func_0814cd48(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0, -1, -1, 0);
             }
         }
         i += 1;

@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-
 const struct SceneEvent *Scene_GetEvents(void)
 {
     return gSceneEvents;

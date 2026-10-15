@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char     SceneId_Ov6aaRoom1;
+extern char     SceneId_Ov6aaRoom2;
+extern char     SceneId_Ov6aaRoom3;
+extern char     SceneId_Ov6aaRoom4;
+extern char     SceneId_Ov6aaRoom5;
+extern char     SceneId_Ov6aaRoom6;
+extern char     SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -30,7 +30,8 @@ void BattleFx_PrepareBufferInterpolation(void);
 
 void Func_02000590(void)
 {
-    if (!Flag_IsSet(0xa36)) {
+    if (!Flag_IsSet(0xa36))
+    {
         Func_020046b4();
         Func_02004ca8();
         Func_02004da0(0);
@@ -47,14 +48,17 @@ void Func_02000590(void)
         WaitFrames(10);
         Func_02004cb0();
         Flag_Set(0xa36);
-    } else {
+    }
+    else
+    {
         Func_020046b4();
         Func_02004dd0();
         {
             u8 *party = (u8 *)&gPartyState;
 
             /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-            do {
+            do
+            {
             } while (0);
             party[0x2c2] = 2;
         }
@@ -72,7 +76,8 @@ void Func_02000648(void)
         u8 *party = (u8 *)&gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party[0x2c2] = 2;
     }
@@ -83,7 +88,8 @@ void Func_02000648(void)
 
 void Func_02000678(s32 state, s32 frame)
 {
-    if (state == 1) {
+    if (state == 1)
+    {
         Func_02004de0(0x23e);
         Func_02004d58(0x10000, 0);
         Func_02004d60(60);
@@ -94,7 +100,8 @@ void Func_02000678(s32 state, s32 frame)
     }
     if (frame > 96 && frame < 272 && frame % 30 == 0)
         Func_02000414(18);
-    if (frame == 276) {
+    if (frame == 276)
+    {
         Func_02004d58(0x7fff, 0);
         Func_02004d60(20);
     }

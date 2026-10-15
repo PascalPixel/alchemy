@@ -12,18 +12,18 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 
-struct BattleFxScene {
+struct BattleFxScene
+{
     u8 unk00[16];
     void *volatile mainObject;
 };
 
-
 void BattleFx_RunItemBreakSequence(void)
 {
     /* FAKEMATCH: an unused 12-byte local explains the native 12-byte frame. */
-    s32 work[3];
+    s32                   work[3];
     struct BattleFxScene *scene;
-    void *object;
+    void                 *object;
 
     scene = Ram_HeapSlots->effectWork;
     object = scene->mainObject;
@@ -31,7 +31,8 @@ void BattleFx_RunItemBreakSequence(void)
     BattleEffect_InitializeSharedScene();
     object = BattleFx_StartItemBreak(object);
     BattleFx_SnapScaleToFull(object);
-    if (object != 0) {
+    if (object != 0)
+    {
         Object_SetMode(object, 4);
         WaitFrames(30);
     }

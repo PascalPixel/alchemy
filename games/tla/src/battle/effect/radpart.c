@@ -4,15 +4,17 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-struct BattleFxScene {
-    u8 unk00[0x50];
+struct BattleFxScene
+{
+    u8                unk00[0x50];
     struct EffectSlot slots[24];
-    u8 unk710[0xe4];
+    u8                unk710[0xe4];
 };
 
-struct EffectVector {
+struct EffectVector
+{
     s32 x;
     s32 y;
     s32 z;
@@ -22,34 +24,34 @@ extern u32 gFrameTick;
 extern u32 gData_080f0bfc[];
 
 void *Object_GetById(s32 id);
-void BattleFx_InitializeSlots(void);
-void Shop_RestoreSceneTilesFar(s32 value);
-void Audio_PlayCue(s32 cue);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void WaitFrames(s32 frames);
-void BattleFx_AdvanceSpinAngle();
-void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
-void Camera_WorldToScreen(struct EffectVector *position);
-void Object_Destroy(void *object);
-void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
-void Func_080d7b04(struct EffectSlot *slot);
-void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
-u32 Random16(void);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void Object_SetMode(void *object, s32 mode);
-void Shop_InitEffectFar(void);
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void  BattleFx_InitializeSlots(void);
+void  Shop_RestoreSceneTilesFar(s32 value);
+void  Audio_PlayCue(s32 cue);
+void  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void  WaitFrames(s32 frames);
+void  BattleFx_AdvanceSpinAngle();
+void  ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
+void  Camera_WorldToScreen(struct EffectVector *position);
+void  Object_Destroy(void *object);
+void  EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
+void  Func_080d7b04(struct EffectSlot *slot);
+void  Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
+u32   Random16(void);
+void  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void  Object_SetMode(void *object, s32 mode);
+void  Shop_InitEffectFar(void);
+void  BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 // Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 // circle and then close on the current owner, which turns and takes mode 28.
 void Func_080d7c04(s32 id)
 {
-    struct EffectVector position;
-    struct MotionObject *object;
+    struct EffectVector   position;
+    struct MotionObject  *object;
     struct BattleFxScene *scene;
-    struct EffectSlot *slot;
-    s32 scale;
-    s32 count;
+    struct EffectSlot    *slot;
+    s32                   scale;
+    s32                   count;
 
     object = Object_GetById(id);
     if (object == NULL)
@@ -81,7 +83,8 @@ void Func_080d7c04(s32 id)
     Audio_PlayCue(164);
     slot = scene->slots;
     count = 23;
-    do {
+    do
+    {
         EffectSlot_Initialize(slot, 672, position.x, position.z);
         EffectSlot_SetCallback(slot, Func_080d7b04);
         EffectSlot_SetObjectMode(slot, 7);
@@ -110,14 +113,15 @@ void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
     u32 *tick = &gFrameTick;
     u32 *table;
-    u32 index;
-    u32 value;
+    u32  index;
+    u32  value;
 
     asm volatile("" : "+l"(tick)); /* FAKEMATCH: load the tick address before the table. */
     table = gData_080f0bfc;
     /* FAKEMATCH: keep the tick extraction in its own block; without this
      * boundary the table address loads after the tick (two reordered rows). */
-    do {
+    do
+    {
         index = (*tick >> 2) & 1;
     } while (0);
     value = index[table];
@@ -131,7 +135,8 @@ void BattleFx_SpinUpAngle(void *obj)
 
     step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
     FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);
-    if (step < 0x1000U) {
+    if (step < 0x1000U)
+    {
         FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
     }
 }

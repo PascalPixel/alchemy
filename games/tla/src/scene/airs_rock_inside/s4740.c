@@ -7,12 +7,15 @@ void Func_02004534(void);
 
 void Func_02004740(void)
 {
-    if (GameFlag_Test(0x8d4)) {
+    if (GameFlag_Test(0x8d4))
+    {
         Func_02005e14();
         Func_02005f2c(0);
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 107);
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
@@ -24,12 +27,15 @@ void Func_02004740(void)
 
 void Func_020047b0(void)
 {
-    if (GameFlag_Test(0x8d4)) {
+    if (GameFlag_Test(0x8d4))
+    {
         Func_02005e14();
         Func_02005f2c(0);
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
         ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
@@ -40,12 +46,15 @@ void Func_020047b0(void)
 
 void Func_02004818(void)
 {
-    if (GameFlag_Test(0x8d4)) {
+    if (GameFlag_Test(0x8d4))
+    {
         Func_02005e14();
         Func_02005f2c(0);
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
-    } else {
+    }
+    else
+    {
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
         ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
         ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);

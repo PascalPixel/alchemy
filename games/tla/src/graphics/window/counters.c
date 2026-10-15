@@ -40,17 +40,19 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
         Scheduler_AddOrUpdateCallback(UiWork_ProcessAllOrChannels, 0x480);
 }
 
-struct UiMessageSlot {
+struct UiMessageSlot
+{
     struct UiWindow *window;
-    s32 result;
-    s32 cursor;
+    s32              result;
+    s32              cursor;
 };
 
 void UiMessage_Close(void)
 {
     struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
 
-    if (slot->window != NULL) {
+    if (slot->window != NULL)
+    {
         UiWork_Finalize(slot->window, 1);
         slot->window = NULL;
     }

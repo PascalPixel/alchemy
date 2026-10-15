@@ -11,11 +11,11 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_02001460(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 saved = object->motionFlags;
-    s32 i;
-    s32 angle;
-    s32 up;
-    struct PartyState *state;
+    s32                   saved = object->motionFlags;
+    s32                   i;
+    s32                   angle;
+    s32                   up;
+    struct PartyState    *state;
 
     Func_02002a70(612);
     Func_02002998();
@@ -25,7 +25,8 @@ void Func_02001460(void)
     object->motionFlags = 0;
     object->y = -0x100000;
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
-    for (i = 15; i >= 0; i--) {
+    for (i = 15; i >= 0; i--)
+    {
         object->y += 0x10000;
         angle = object->angle;
         /* FAKEMATCH: keeps the angle load before its step is built (differ 2 without) */

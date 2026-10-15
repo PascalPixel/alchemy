@@ -14,16 +14,17 @@
 #include "owner_state.h"
 
 struct BattleObj *BattleObjGet(s32 arg0);
-s32 ActivateBattleObjectSlot(s32 arg0);
+s32               ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
     /* FAKEMATCH: the shared discard-only result type preserves the epilogue register choice. */
     struct BattleUnit *creature;
-    struct BattleObj *runtime;
+    struct BattleObj  *runtime;
 
     creature = UnitGet(arg0);
-    if (creature->side == 1) {
+    if (creature->side == 1)
+    {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
@@ -34,8 +35,9 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
     }
 }
 
-struct BattleEventFlagWork {
-    u8 unk00[0x16c];
+struct BattleEventFlagWork
+{
+    u8  unk00[0x16c];
     u32 flags;
 };
 

@@ -1,11 +1,12 @@
 #include "local.h"
 
-struct MagmaRockInsideWork {
-    s32 unk00;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unk10;
+struct MagmaRockInsideWork
+{
+    s32                   unk00;
+    s32                   x;
+    s32                   y;
+    s32                   z;
+    s32                   unk10;
     struct ObjectRuntime *target;
 };
 
@@ -21,7 +22,7 @@ void Func_02004e90(s32 value);
 void Func_02001148(void)
 {
     struct MagmaRockInsideWork *work = Ram_HeapSlots->effectWork;
-    struct ObjectRuntime *object;
+    struct ObjectRuntime       *object;
 
     Func_02004d40();
     Func_02004e90(0);
@@ -42,12 +43,14 @@ void Func_02001190(s32 mode, s32 cue)
 
     if (cue == 0)
         Func_02004b18();
-    if (mode == 2) {
+    if (mode == 2)
+    {
         struct ObjectRuntime *object = work->target;
 
         Func_02004a5c(object->x, object->y + 0xf0000, object->z, 1);
     }
-    if (mode == 3) {
+    if (mode == 3)
+    {
         struct ObjectRuntime *object = work->target;
         struct ObjectRuntime *target;
 

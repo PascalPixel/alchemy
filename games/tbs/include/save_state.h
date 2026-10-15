@@ -12,49 +12,49 @@
 
 struct SaveSlotHeader
 {
-	u8	signature[7];
-	u8	recordId;
-	u16 checksum;
-	u16 sequence;
-	u8	reserved[4];
+    u8  signature[7];
+    u8  recordId;
+    u16 checksum;
+    u16 sequence;
+    u8  reserved[4];
 };
 
 struct SaveSummary
 {
-	u8	slotHeader[16];
-	u8	name[12];
-	u8	level;
-	u8	classId;
-	u16 area;
-	u32 playTime;
-	u32 coins;
-	u8	djinn[4];
-	s8	party[5];
-	s8	sendFlag;
-	s8	flagCount;
-	u8	hasFlag20;
-	u16 paletteGlow : 8;
-	u16 paletteGlowSub : 8;
-	u16 frames;
-	u8	unk38[4];
-	u32 checksum;
+    u8  slotHeader[16];
+    u8  name[12];
+    u8  level;
+    u8  classId;
+    u16 area;
+    u32 playTime;
+    u32 coins;
+    u8  djinn[4];
+    s8  party[5];
+    s8  sendFlag;
+    s8  flagCount;
+    u8  hasFlag20;
+    u16 paletteGlow : 8;
+    u16 paletteGlowSub : 8;
+    u16 frames;
+    u8  unk38[4];
+    u32 checksum;
 };
 
 struct SaveWorkspace
 {
-	u8	occupied[16];
-	u8	recordId[16];
-	u16 sequence[16];
-	union
-	{
-		struct
-		{
-			struct SaveSlotHeader header;
-			u8					  payload[0xff0];
-		} record;
-		u8 bytes[0x1000];
-	} slot;
-	struct SaveSummary summary[3];
+    u8  occupied[16];
+    u8  recordId[16];
+    u16 sequence[16];
+    union
+    {
+        struct
+        {
+            struct SaveSlotHeader header;
+            u8                    payload[0xff0];
+        } record;
+        u8 bytes[0x1000];
+    } slot;
+    struct SaveSummary summary[3];
 };
 
 LAYOUT_SIZE_GUARD(SaveSummary_Size, struct SaveSummary, 64);
@@ -77,13 +77,13 @@ extern struct SaveWorkspace *gSaveWorkspace;
 #define DMA3_BUSY 0x80000000
 
 #define START_DMA(source_, destination_, control_) \
-	Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
+    Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 {
-	while ((channel->control & DMA3_BUSY) != 0)
-	{
-	}
+    while ((channel->control & DMA3_BUSY) != 0)
+    {
+    }
 }
 
 #define WAIT_DMA() WaitDma(DMA3)

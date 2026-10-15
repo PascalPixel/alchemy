@@ -11,20 +11,24 @@ void Func_020009ec(void)
     Func_020027ac(1, 65);
     Func_020027ac(0, 65);
     Flag_Clear(0x350);
-    if (Object_GetById(10)->z >> 20 != 15 && Object_GetById(9)->z >> 20 != 15) {
+    if (Object_GetById(10)->z >> 20 != 15 && Object_GetById(9)->z >> 20 != 15)
+    {
         Func_020027ac(1, 33);
         return;
     }
-    if (Object_GetById(9)->z >> 20 != 13) {
+    if (Object_GetById(9)->z >> 20 != 13)
+    {
         Func_020027ac(0, 17);
         return;
     }
-    if (Object_GetById(8)->x >> 20 != 37) {
+    if (Object_GetById(8)->x >> 20 != 37)
+    {
         Func_020027ac(2, 49);
         return;
     }
     Flag_Set(0x350);
-    if (!Flag_IsSet(0x351)) {
+    if (!Flag_IsSet(0x351))
+    {
         Func_020055d0(0x20000, 0x4000);
         Camera_SetBounds(0x2680000, -1, 0x180000, 1);
         Battle_WaitMode0(60);
@@ -62,10 +66,12 @@ void Func_02000b40(void)
 {
     struct Box box;
 
-    if (Func_02004a8c(&box)) {
+    if (Func_02004a8c(&box))
+    {
         Func_02004d10(box);
         Func_020009ec();
-        if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
+        if (Func_020027dc(0) != 64 && Flag_IsSet(0x221))
+        {
             struct ObjectRuntime *object = Object_GetById(12);
 
             object->update = NULL;
@@ -74,7 +80,8 @@ void Func_02000b40(void)
             Flag_Clear(0x221);
             Func_02000cb8(12);
         }
-        if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {
+        if (Func_020027dc(2) != 64 && Flag_IsSet(0x220))
+        {
             struct ObjectRuntime *object = Object_GetById(11);
 
             object->update = NULL;
@@ -83,10 +90,12 @@ void Func_02000b40(void)
             Flag_Clear(0x220);
             Func_02000cb8(11);
         }
-    } else {
-        s32 angle;
+    }
+    else
+    {
+        s32        angle;
         const s16 *table;
-        u32 *keys;
+        u32       *keys;
 
         Object_GetById(gPartyState.currentOwner);
         keys = &gInput.held;
@@ -94,13 +103,14 @@ void Func_02000b40(void)
         /* FAKEMATCH: the barrier loads the table's address before the direction mask's 15, where plainly sched2 builds the 15 first (differ 4); reading through a byte offset keeps the table as the base register (indexed plainly, differ 2). */
         asm volatile("" : "+l"(table));
         angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
-        if (angle != -1) {
-            struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+        if (angle != -1)
+        {
+            struct MapLayers     *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
             struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-            s32 position[3];
-            s32 x;
-            s32 z;
-            u8 *cells;
+            s32                   position[3];
+            s32                   x;
+            s32                   z;
+            u8                   *cells;
 
             position[0] = (leader->x & 0xfff00000) + 0x80000;
             position[1] = leader->y;

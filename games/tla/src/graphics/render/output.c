@@ -13,21 +13,20 @@
 #include "resource.h"
 #include "window.h"
 
-s32 Localization_LookupEntryId(s32 key);
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse);
+s32  Localization_LookupEntryId(s32 key);
+void UiGlyph_LoadEntryWithPalette(
+    u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse);
 
 struct RenderOutput *RenderOutput_CreateWithTransform(
-    s32 arg0,
-    struct RenderInput *arg1,
-    s32 arg2,
-    s32 arg3)
+    s32 arg0, struct RenderInput *arg1, s32 arg2, s32 arg3)
 {
-    s32 count;
-    s32 unused;
+    s32                  count;
+    s32                  unused;
     struct RenderOutput *result;
 
     count = Resource_FindFreeEntry();
-    if (count == 0x60) {
+    if (count == 0x60)
+    {
         return NULL;
     }
     Ui_BuildPairedPatternsToSlot(arg0, 1, &count, &unused, 1);
@@ -36,24 +35,25 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
     return result;
 }
 
-
 // Loads the character entry for the key into the given side, or into a free
 // one (resource id 999) when the side is 2 or more, and creates its output
 // with that side's palette (14 + side).
-struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
+struct RenderOutput *CreateSideObject(
+    s32 objectKind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
     struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     struct RenderOutput *object = 0;
-    s32 first;
-    s32 second;
-    s32 id;
-    s32 slot;
+    s32                  first;
+    s32                  second;
+    s32                  id;
+    s32                  slot;
 
     id = Localization_LookupEntryId(objectKind);
     if (id == -1)
         return object;
 
-    if ((u32)side > 1) {
+    if ((u32)side > 1)
+    {
         u32 current;
 
         current = state->resourceIds[1];
@@ -62,7 +62,8 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side, s3
            row, differ 2). */
         asm("");
         side = 1;
-        if (current != 999) {
+        if (current != 999)
+        {
             side = 0;
             if (state->resourceIds[0] != 999)
                 return object;
@@ -72,7 +73,8 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side, s3
     slot = 14 + side;
     UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
     object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3, arg4, arg5);
-    if (object != 0) {
+    if (object != 0)
+    {
         object->oam.palette = slot;
         object->kind = 2;
     }

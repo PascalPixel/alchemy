@@ -2,8 +2,8 @@
 
 void Func_02002118(void)
 {
-    struct MarsRoomMRideWork *work = (struct MarsRoomMRideWork *)(gData_020023c4 + 0x188);
-    struct ObjectRuntime *object;
+    struct MarsRoomMRideWork  *work = (struct MarsRoomMRideWork *)(gData_020023c4 + 0x188);
+    struct ObjectRuntime      *object;
     struct MarsRoomMAnimation *animation;
 
     if (!GameFlag_Test(0x109))

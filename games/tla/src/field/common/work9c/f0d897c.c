@@ -12,7 +12,7 @@ void Func_080d8c10(void);
 void Func_080d897c(void)
 {
     struct Work9c *work = Runtime_AllocateBlock(156, sizeof(struct Work9c));
-    void *buffer = MemAlloc(0x100);
+    void          *buffer = MemAlloc(0x100);
 
     Dma_Fill32(0, work, sizeof(struct Work9c));
     work->vramEntry = Resource_FindFreeEntry();

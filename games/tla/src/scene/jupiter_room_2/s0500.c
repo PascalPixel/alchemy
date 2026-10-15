@@ -2,12 +2,12 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-void GameFlag_SetBit(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+s32                   Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_0200227c(s32 id, s32 x, s32 z);
@@ -26,13 +26,14 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 dest
 void Func_02000500(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct PartyState *party;
-    s32 i;
+    struct PartyState    *party;
+    s32                   i;
 
     object->motionFlags = 3;
     Object_GetById(id)->priorityFlags |= 1;
     /* FAKEMATCH: the one-pass block loads gPartyState's address before the owner's offset is built (one reordered row without it). */
-    do {
+    do
+    {
         party = &gPartyState;
     } while (0);
     Object_GetById(party->currentOwner)->priorityFlags |= 1;
@@ -40,13 +41,15 @@ void Func_02000500(s32 unused, s32 id)
         ObjectMotion_SetActionVariant(id, 3);
     /* FAKEMATCH: the memory barrier reads the position again for the terrain height, as the native does (differ 18 without). */
     asm("" ::: "memory");
-    if (object->terrainHeight != Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
+    if (object->terrainHeight != Map_GetTerrainHeight(object->terrainId, object->x, object->z))
+    {
         WaitFrames(2);
         for (i = 0; i <= 29 && (object->y > object->terrainHeight || object->velocityY != 0); i++)
             WaitFrames(1);
         Func_0200232c(188);
     }
-    if (object->x >> 20 == 20 && object->z >> 20 == 39) {
+    if (object->x >> 20 == 20 && object->z >> 20 == 39)
+    {
         GameFlag_SetBit(0xa02);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
         ObjectMotion_SetActionVariant(id, 3);

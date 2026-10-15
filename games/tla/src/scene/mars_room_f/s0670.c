@@ -20,7 +20,8 @@ void Func_02000670(void)
 
 void Func_020006f4(s32 burst)
 {
-    if (!Flag_IsSet(0xa46)) {
+    if (!Flag_IsSet(0xa46))
+    {
         Func_020054e0_(29, 60, 3, 4, 14, 50);
         Func_020054f0_(93, 60, 3, 4, 78, 50);
         if (burst && !Flag_IsSet(0xa43))
@@ -98,9 +99,12 @@ void Func_020007f0(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->x >> 20 == 13) {
+    if (object->x >> 20 == 13)
+    {
         object->motionFlags = 3;
-        if (object->terrainHeight != Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
+        if (object->terrainHeight
+            != Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z))
+        {
             s32 frames;
 
             WaitFrames(2);
@@ -140,8 +144,8 @@ void Func_02000900(void)
 void Func_02000944(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 frame;
-    s32 delta;
+    s32                   frame;
+    s32                   delta;
 
     /* FAKEMATCH: taking the object's address keeps the motion flags' address inside the loop; without it GCSE hoists it out (differ 24). */
     (void)&object;
@@ -164,7 +168,8 @@ step:
     if (++frame <= 39)
         goto step;
     /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots' address; plainly sched2 builds the address first (differ 2). */
-    do {
+    do
+    {
         Object_GetById(gPartyState.currentOwner)->animationKind = 0;
     } while (0);
     SCENE_WORK->unk1ac = 521;

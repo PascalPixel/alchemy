@@ -2,14 +2,15 @@
 
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 {
-    u8 buffer[5];
+    u8  buffer[5];
     u8 *base = buffer;
     u32 fill = '_';
     u8 *p = base;
     u8 *dst = p;
     s32 count = 3;
 
-    do {
+    do
+    {
         u32 value = *source;
 
         source++;

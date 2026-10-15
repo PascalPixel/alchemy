@@ -1,9 +1,9 @@
 #include "trial_road.h"
 
-extern const u8 gData_0200646c[];
-extern const u8 gData_02006ea4[];
-extern const u8 gData_02006ed4[];
-extern const u8 gData_02006f04[];
+extern const u8        gData_0200646c[];
+extern const u8        gData_02006ea4[];
+extern const u8        gData_02006ed4[];
+extern const u8        gData_02006f04[];
 extern const u8 *const gData_02007024[];
 
 s32 Func_02000058(struct ObjectRuntime *object)

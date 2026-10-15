@@ -4,33 +4,36 @@
 
 #define SLOT_MAX 24
 
-struct SpinObject {
-    u8 unk00[8];
+struct SpinObject
+{
+    u8  unk00[8];
     s32 x;
     s32 y;
     s32 z;
     s32 floor;
     s32 fall;
-    u8 unk1c[0x1c];
+    u8  unk1c[0x1c];
     s32 targetX;
-    u8 unk3c[0x19];
-    u8 motionFlags;
-    u8 unk56[0xe];
+    u8  unk3c[0x19];
+    u8  motionFlags;
+    u8  unk56[0xe];
     s16 timer;
-    u8 unk66[6];
+    u8  unk66[6];
     void (*update)(struct SpinObject *);
 };
 
-struct SpinScene {
-    u8 unk00[0x10];
+struct SpinScene
+{
+    u8                 unk00[0x10];
     struct SpinObject *mainObject;
-    u8 unk14[4];
-    s16 firstObjectId;
-    u8 unk1a[0x36];
-    struct EffectSlot slots[SLOT_MAX];
+    u8                 unk14[4];
+    s16                firstObjectId;
+    u8                 unk1a[0x36];
+    struct EffectSlot  slots[SLOT_MAX];
 };
 
-struct SpinVector {
+struct SpinVector
+{
     s32 x;
     s32 y;
     s32 z;
@@ -48,7 +51,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 flags);
 void Camera_WorldToScreen(struct SpinVector *position);
 void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
-u32 Random16(void);
+u32  Random16(void);
 void BattleFx_PrepareBufferInterpolation(void);
 void ObjectGroup_ApplyRandomChildValues(struct SpinObject *owner);
 void BattleFx_AdvanceAngleWithRamp(struct SpinObject *object);
@@ -57,13 +60,13 @@ void Func_080e0cec(struct EffectSlot *slot);
 
 void BattleFx_RunEffect15(void)
 {
-    struct SpinScene *scene = Ram_HeapSlots->effectWork;
+    struct SpinScene  *scene = Ram_HeapSlots->effectWork;
     struct SpinObject *obj = scene->mainObject;
-    struct SpinVector pos;
+    struct SpinVector  pos;
     struct EffectSlot *slot;
     struct EffectSlot *slots;
-    u8 last;
-    u32 i;
+    u8                 last;
+    u32                i;
 
     EventRuntime_Begin();
     Motion_CamBounds(-1, -1, -1, 0);
@@ -94,7 +97,8 @@ void BattleFx_RunEffect15(void)
     i = 0;
     slot = scene->slots;
     slots = slot;
-    do {
+    do
+    {
         s32 scale;
 
         EffectSlot_Initialize(slot, 0x2a0, pos.x, pos.z);
@@ -113,7 +117,8 @@ void BattleFx_RunEffect15(void)
     i = 0;
     last = 2;
     slot = slots;
-    do {
+    do
+    {
         if (slot->active != 0)
             slot->state = last;
         i++;

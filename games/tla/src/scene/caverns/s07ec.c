@@ -11,7 +11,8 @@ void Func_020007ec(struct ObjectRuntime *object)
     object->scaleX += object->speedLimit;
     object->scaleY += object->acceleration;
     /* FAKEMATCH: a one-pass block keeps the sprite load after the scaleY store (differ 6 without it). */
-    do {
+    do
+    {
     } while (0);
     ((struct FieldSprite *)object->animation)->rotation += object->action;
 }

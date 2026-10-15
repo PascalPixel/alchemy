@@ -20,50 +20,50 @@ extern u8 gMapCellBuffer[];
 //--------------------------------------------------------------------------
 void Tilemap_DecodeStagedBuffer(s32 size)
 {
-	u16 *dst;
-	u16 *src;
-	s32	 n;
-	s32	 i;
+    u16 *dst;
+    u16 *src;
+    s32  n;
+    s32  i;
 
-	src = (u16 *)(Ram_MapCellBuffer + 2);
-	dst = (u16 *)gMapBlocks;
-	n = (size - 1) / 2;
-	if (size & 1)
-	{
-		switch (((u8 *)gMapCellBuffer)[1])
-		{
-		case 0:
-			for (i = 0; i < n; i++)
-				*dst++ = *src++;
-			break;
-		case 1:
-		{
-			u32 prev = 0;
-			u8 *hi = Ram_MapCellBuffer + 2;
-			u8 *lo = hi + n;
+    src = (u16 *)(Ram_MapCellBuffer + 2);
+    dst = (u16 *)gMapBlocks;
+    n = (size - 1) / 2;
+    if (size & 1)
+    {
+        switch (((u8 *)gMapCellBuffer)[1])
+        {
+        case 0:
+            for (i = 0; i < n; i++)
+                *dst++ = *src++;
+            break;
+        case 1:
+        {
+            u32 prev = 0;
+            u8 *hi = Ram_MapCellBuffer + 2;
+            u8 *lo = hi + n;
 
-			for (i = 0; i < n; i++)
-			{
-				u32 v = ((*hi++ << 8) | *lo++) ^ prev;
-				*dst++ = v;
-				prev = v;
-			}
-			break;
-		}
-		case 2:
-		{
-			s32 prev = 0;
+            for (i = 0; i < n; i++)
+            {
+                u32 v = ((*hi++ << 8) | *lo++) ^ prev;
+                *dst++ = v;
+                prev = v;
+            }
+            break;
+        }
+        case 2:
+        {
+            s32 prev = 0;
 
-			for (i = 0; i < n; i++)
-			{
-				s32 v = *src++ ^ prev;
-				*dst++ = v;
-				prev = v;
-			}
-			break;
-		}
-		}
-	}
+            for (i = 0; i < n; i++)
+            {
+                s32 v = *src++ ^ prev;
+                *dst++ = v;
+                prev = v;
+            }
+            break;
+        }
+        }
+    }
 }
 
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
@@ -81,9 +81,9 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size)
 // to RAM, keeping a copy of the buffer for it to read.
 void Tilemap_ConvertBuffer(void)
 {
-    u8 *saved;
+    u8       *saved;
     ConvertFn routine;
-    u32 size;
+    u32       size;
 
     size = 0x8000;
     saved = Runtime_BumpAllocateAlternatePool(size);

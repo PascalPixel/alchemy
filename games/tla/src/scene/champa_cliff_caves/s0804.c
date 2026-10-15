@@ -1,7 +1,8 @@
 #include "scene.h"
 
-struct EventCounters {
-    u8 unk000[0x1c4];
+struct EventCounters
+{
+    u8  unk000[0x1c4];
     u16 count;
 };
 
@@ -9,7 +10,7 @@ void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_020005e8(s32 actor);
 void Func_0200067c(s32 value);
-s32 Func_02003544(s32 actor, s32 value, s32 frames);
+s32  Func_02003544(s32 actor, s32 value, s32 frames);
 void Func_0200351c(s32 actor, s32 value, s32 frames);
 
 void Func_02000804(s32 actor)
@@ -46,11 +47,14 @@ void Func_02000804(s32 actor)
     Func_02003544(8, 258, 30);
     /* FAKEMATCH: called as returning a value, which the native's argument order shows (r1 before r0); scene_call.h declares it void for the scenes that match so. */
     ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(8, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Battle_WaitMode0(20);
         Func_0200351c(8, 0, 5);
         ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(35);
         ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
         Func_0200351c(8, 0, 5);

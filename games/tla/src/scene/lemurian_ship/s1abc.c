@@ -14,8 +14,10 @@ s32 Func_02001abc(void)
     ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     if (GameFlag_Test(0x9b4))
         GameFlag_SetBit(0x144);
-    if (gPartyState.scene == (s32)&SceneId_Ov656Room1) {
-        switch (gPartyState.entrance) {
+    if (gPartyState.scene == (s32)&SceneId_Ov656Room1)
+    {
+        switch (gPartyState.entrance)
+        {
         case 3:
         case 4:
         case 5:
@@ -43,8 +45,11 @@ s32 Func_02001abc(void)
             Func_02002498();
             break;
         }
-    } else if (gPartyState.scene == (s32)&SceneId_Ov656Room2) {
-        switch (gPartyState.entrance) {
+    }
+    else if (gPartyState.scene == (s32)&SceneId_Ov656Room2)
+    {
+        switch (gPartyState.entrance)
+        {
         case 1:
         case 2:
         case 3:

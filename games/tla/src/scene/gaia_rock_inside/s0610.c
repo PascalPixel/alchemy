@@ -4,11 +4,11 @@
 
 extern const u8 gData_020050d0[];
 
-u32 Random16Far(void);
+u32                   Random16Far(void);
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Func_02004dac(struct ObjectRuntime *object, const u8 *script);
 
 s32 Func_02000610(void)
 {
@@ -53,8 +53,8 @@ s32 Func_02000678(void)
 {
     struct ObjectRuntime *source = Object_GetById(9);
     struct ObjectRuntime *object;
-    struct FieldSprite *sprite;
-    s32 x = source->x;
+    struct FieldSprite   *sprite;
+    s32                   x = source->x;
 
     /* FAKEMATCH: the native loads the source x before it starts the offset 0x80000; without the barrier the offset is started first (one reordered pair, differ 2). */
     __asm__ volatile("" : "+r"(x));

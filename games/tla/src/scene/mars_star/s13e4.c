@@ -1,8 +1,9 @@
 #include "types.h"
 #include "object_runtime.h"
 
-struct RiseTimer {
-    u8 unk00[0x68];
+struct RiseTimer
+{
+    u8  unk00[0x68];
     s32 frames;
 };
 
@@ -15,7 +16,8 @@ void Func_020013e4(struct ObjectRuntime *object)
     s32 growth;
 
     /* FAKEMATCH: a one-pass block and one growth value for both scales keep the y step ahead of the scale loads (alchemy permute). */
-    do {
+    do
+    {
         object->y += 0x8000;
     } while (0);
     growth = 0x51e;

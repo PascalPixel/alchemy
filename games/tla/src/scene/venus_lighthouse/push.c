@@ -5,14 +5,15 @@
 void SceneState_RunActor13AtColumn42Setup(void)
 {
     struct FieldActor *obj;
-    s32 val;
-    s32 a;
-    s32 b;
+    s32                val;
+    s32                a;
+    s32                b;
 
     obj = Engine_ActorGet(10);
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    if (obj->x >> 20 == 42) {
+    if (obj->x >> 20 == 42)
+    {
         Engine_EventWait(30);
         Engine_AudioPlayCue(188);
         obj->motionFlags = 0;
@@ -26,7 +27,6 @@ void SceneState_RunActor13AtColumn42Setup(void)
     }
     Engine_EventEnd();
 }
-
 
 void VenusLighthouse_ReadRelief(void)
 {
@@ -45,4 +45,3 @@ void VenusLighthouse_ReadTrueHeart(void)
     Engine_MessageShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
     Engine_EventEnd();
 }
-

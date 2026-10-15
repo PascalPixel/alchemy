@@ -6,56 +6,56 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
+extern s32      gData_020024b4;
+extern s32      gData_020024b0;
 extern const u8 gData_0200218c[];
 extern const u8 gData_020021e8[];
 extern const u8 gData_0200221c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void GameFlag_SetBit(s32 flag);
-void Object_LinkPair(s32 id, s32 partner, s32 flags);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
-void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000188(void);
-void Func_020001cc(void);
-void Func_02000258(void);
-void Func_02000288(void);
-void Func_020002cc(void);
-void Func_020006e4(void);
-void Func_02001f1c(void);
-void Func_02001f2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001f5c(void);
-void Func_02001fc4(s32 id, s32 x, s32 z);
-void Func_02001fcc(s32 id, s32 x, s32 z, s32 angle);
-void Func_0200201c(const void *message);
-void Func_0200202c(s32 id, s32 a, s32 b);
-void Func_02002034(s32 id, s32 flags);
-void Func_02002044(s32 id, s32 angle);
-s32 Func_0200204c(s32 id, s32 emote, s32 frames);
-void Func_02002054(s32 id, s32 a);
-void Func_0200205c(s32 speed, s32 acceleration);
-void Func_0200206c(void);
+s32                   Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
+void                  GameFlag_SetBit(s32 flag);
+void                  Object_LinkPair(s32 id, s32 partner, s32 flags);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void                  ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void                  ObjectMotion_EnableActionAndResetMotion(s32 id);
+void                  ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
+void                  UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Event_StartScreenTransition(void);
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_02000188(void);
+void                  Func_020001cc(void);
+void                  Func_02000258(void);
+void                  Func_02000288(void);
+void                  Func_020002cc(void);
+void                  Func_020006e4(void);
+void                  Func_02001f1c(void);
+void                  Func_02001f2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02001f5c(void);
+void                  Func_02001fc4(s32 id, s32 x, s32 z);
+void                  Func_02001fcc(s32 id, s32 x, s32 z, s32 angle);
+void                  Func_0200201c(const void *message);
+void                  Func_0200202c(s32 id, s32 a, s32 b);
+void                  Func_02002034(s32 id, s32 flags);
+void                  Func_02002044(s32 id, s32 angle);
+s32                   Func_0200204c(s32 id, s32 emote, s32 frames);
+void                  Func_02002054(s32 id, s32 a);
+void                  Func_0200205c(s32 speed, s32 acceleration);
+void                  Func_0200206c(void);
 struct ObjectRuntime *Func_02002074(void);
-void Func_0200207c(s32 countdown);
-void Func_020020ac(s32 skip);
-void Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
+void                  Func_0200207c(s32 countdown);
+void                  Func_020020ac(s32 skip);
+void                  Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
 
 static __inline__ void AddCallback(void (*callback)(void), s32 priority)
 {
@@ -121,12 +121,15 @@ void Func_020002cc(void)
     Value3(Func_0200204c, 5, 0x108, 20);
     Call2((void (*)())Func_02002034, 5, 0);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+    {
         Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
         Value3(Func_0200204c, 9, 0x109, 20);
         Call2((void (*)())Func_02002034, 9, 0);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    } else {
+    }
+    else
+    {
         Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
         Value3(Func_0200204c, 9, 0x109, 20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -313,7 +316,10 @@ void Func_02000b84(void)
     AddCallback(Func_020001cc, 0x480);
     if (gPartyState.entrance == 10)
         Func_020002cc();
-    do { } while (0); /* FAKEMATCH: the one-pass block keeps the second entrance test a load of its own (ldrsh, cmp #20); without it the two tests share a halfword load and compare shifted (differ 33). */
+    /* FAKEMATCH: the one-pass block keeps the second entrance test a load of its own (ldrsh, cmp #20); without it the two tests share a halfword load and compare shifted (differ 33). */
+    do
+    {
+    } while (0);
     if (gPartyState.entrance == 20)
         Func_020006e4();
 }

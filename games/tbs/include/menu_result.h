@@ -6,13 +6,13 @@
 
 struct MenuResult
 {
-	s32 ownerState;
-	s32 unused04;
-	s32 page;
-	s32 pageCount;
-	s32 row;
-	s32 entryCount;
-	s32 selectedIndex;
+    s32 ownerState;
+    s32 unused04;
+    s32 page;
+    s32 pageCount;
+    s32 row;
+    s32 entryCount;
+    s32 selectedIndex;
 };
 
 #endif

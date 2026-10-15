@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-extern u32 gInput;
+extern u32       gInput;
 extern const s16 gData_02005758[];
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
 void Func_02004bc0(struct ObjectRuntime *object, s32 mode);
 
@@ -14,7 +14,8 @@ void Func_020031f8(struct ObjectRuntime *object)
     s32 angle;
     s32 turn;
 
-    if (object->action != 0) {
+    if (object->action != 0)
+    {
         object->action--;
         return;
     }
@@ -23,7 +24,8 @@ void Func_020031f8(struct ObjectRuntime *object)
         angle = -1;
     else
         angle = gData_02005758[(gInput >> 4) & 15];
-    if (angle == -1) {
+    if (angle == -1)
+    {
         Func_02004bc0(object, 9);
         return;
     }

@@ -5,10 +5,10 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_02001f04(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    u8 *flags = &object->motionFlags;
-    s32 saved = *flags;
-    s32 speed;
-    s32 i;
+    u8                   *flags = &object->motionFlags;
+    s32                   saved = *flags;
+    s32                   speed;
+    s32                   i;
 
     Func_02003d7c();
     Func_02003eac(0);

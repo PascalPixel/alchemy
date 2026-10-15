@@ -16,7 +16,7 @@
 //--------------------------------------------------------------------------
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
-	Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
-	Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
+    Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
+    Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 #endif

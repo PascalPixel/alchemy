@@ -10,7 +10,7 @@ s32 Func_0200033c(struct SeaOfTimeObject *object)
 s32 Func_0200034c(u32 layer, s32 x, s32 y)
 {
     struct SeaOfTimeMapWork *map = (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
-    u8 *cell;
+    u8                      *cell;
 
     if (map == NULL)
         return 0;
@@ -25,8 +25,8 @@ s32 Func_0200034c(u32 layer, s32 x, s32 y)
 s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value)
 {
     struct SeaOfTimeMapWork *map = (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
-    u8 *cell;
-    s32 old;
+    u8                      *cell;
+    s32                      old;
 
     if (map == NULL)
         return 0;

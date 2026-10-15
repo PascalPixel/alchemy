@@ -1,15 +1,16 @@
 #include "types.h"
 
-struct RisingObject {
-    u8 unk00[8];
+struct RisingObject
+{
+    u8  unk00[8];
     s32 x;
     s32 y;
-    u8 unk10[8];
+    u8  unk10[8];
     s32 scaleX;
     s32 scaleY;
-    u8 unk20[0x44];
+    u8  unk20[0x44];
     s16 drift;
-    u8 unk66[2];
+    u8  unk66[2];
     s32 life;
 };
 

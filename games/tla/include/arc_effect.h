@@ -3,8 +3,9 @@
 
 #include "types.h"
 
-struct ArcEffectWork {
-    u8 objects[2][80];
+struct ArcEffectWork
+{
+    u8  objects[2][80];
     s16 age[2];
     s16 resource;
     s16 group;

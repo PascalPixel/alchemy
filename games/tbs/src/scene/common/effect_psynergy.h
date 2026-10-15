@@ -3,10 +3,10 @@
 
 void SceneState_SetValue140Mode0(void)
 {
-	Engine_PsynergyBegin(140, 0);
+    Engine_PsynergyBegin(140, 0);
 }
 
 void SceneEffect_CleanupSceneObjects(void)
 {
-	BattleEffect_CleanupSceneObjects();
+    BattleEffect_CleanupSceneObjects();
 }

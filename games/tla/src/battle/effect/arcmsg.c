@@ -14,55 +14,62 @@ void FieldEvent_ShowStatusMessage(void)
 {
     gPartyState.avoidDistance = 0;
     Func_080cb82c();
-    if (gPartyState.avoidByItem == 0) {
+    if (gPartyState.avoidByItem == 0)
+    {
         UiText_DrawQuantity(150, 4);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
-    } else {
+    }
+    else
+    {
         UiText_DrawQuantity(236, 2);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemWoreOff, 1);
     }
     Func_080cb8a4();
 }
 
-struct ArcEntry {
+struct ArcEntry
+{
     u8 unk00[5];
     u8 param;
 };
 
-struct ArcGroup {
-    u8 unk00[25];
-    u8 dirty;
-    u8 flags;
-    u8 unk1b[13];
+struct ArcGroup
+{
+    u8               unk00[25];
+    u8               dirty;
+    u8               flags;
+    u8               unk1b[13];
     struct ArcEntry *entries[1];
 };
 
-struct ArcEffectObject {
-    u8 unk00[6];
-    u16 angle;
-    u8 unk08[0x48];
+struct ArcEffectObject
+{
+    u8               unk00[6];
+    u16              angle;
+    u8               unk08[0x48];
     struct ArcGroup *records;
-    u8 unk54[0x10];
-    s16 phase;
-    u16 step;
-    u8 unk68[4];
+    u8               unk54[0x10];
+    s16              phase;
+    u16              step;
+    u8               unk68[4];
     void (*callback)(struct ArcEffectObject *);
 };
 
-struct ArcScene {
-    u8 unk00[0x10];
+struct ArcScene
+{
+    u8                      unk00[0x10];
     struct ArcEffectObject *mainObject;
-    u8 unk14[0x6fc];
-    s16 arcTileSlot;
+    u8                      unk14[0x6fc];
+    s16                     arcTileSlot;
 };
 
 extern const u8 gData_080ed90c[];
-extern char MsgMonstersAttackLess;
+extern char     MsgMonstersAttackLess;
 
-s32 Resource_FindFreeEntry(void);
-s32 Resource_ResetEntry(u32 entry);
+s32  Resource_FindFreeEntry(void);
+s32  Resource_ResetEntry(u32 entry);
 void VramBlock_LoadCached(s32 slot, s32 size, const u8 *tiles);
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
@@ -71,23 +78,25 @@ void Func_080e1154(struct ArcEffectObject *obj);
 // エナジー演出 16：使う者が回りながら弧の粒を降らせ、点滅して終わる
 void BattleFx_RunEffect16(void)
 {
-    struct ArcScene *scene;
+    struct ArcScene        *scene;
     struct ArcEffectObject *object;
-    struct ArcGroup *group;
-    struct ArcEntry *entry;
-    u32 angle;
-    s32 flags;
-    s32 slot;
-    s32 count;
-    s32 phase;
-    s32 zero;
+    struct ArcGroup        *group;
+    struct ArcEntry        *entry;
+    u32                     angle;
+    s32                     flags;
+    s32                     slot;
+    s32                     count;
+    s32                     phase;
+    s32                     zero;
 
     scene = Ram_HeapSlots->effectWork;
     /* FAKEMATCH: forced temporary, as The Broken Seal's twin: the zero the two
      * counters take lives in r6 from here; the one-pass block keeps its set
      * before the object load (one reordered row without it). */
     zero = 0;
-    do { } while (0);
+    do
+    {
+    } while (0);
     object = scene->mainObject;
     group = object->records;
     entry = group->entries[0];
@@ -100,10 +109,12 @@ void BattleFx_RunEffect16(void)
          * the two shifts of the slot's sign extension (one reordered row each
          * without them). */
         struct ArcScene *work = scene;
-        const u8 *tiles;
-        s32 id;
+        const u8        *tiles;
+        s32              id;
 
-        do { } while (0);
+        do
+        {
+        } while (0);
         work->arcTileSlot = slot;
         id = slot << 16;
         tiles = gData_080ed90c;
@@ -119,7 +130,8 @@ void BattleFx_RunEffect16(void)
     WaitFrames(15);
     object->phase = 1;
     WaitFrames(10);
-    for (count = 0; count < 20; count++) {
+    for (count = 0; count < 20; count++)
+    {
         entry->param = 7;
         group->dirty = 1;
         WaitFrames(2);
@@ -132,12 +144,16 @@ void BattleFx_RunEffect16(void)
     object->angle = angle;
 
     // 70 フレーム、5 フレームの周期で flags に 2 を立てては戻す
-    for (count = 0; count < 70; count++) {
+    for (count = 0; count < 70; count++)
+    {
         phase = count % 5;
-        if (phase == 0) {
+        if (phase == 0)
+        {
             group->dirty = 1;
             group->flags = flags | 2;
-        } else if (phase == 2) {
+        }
+        else if (phase == 2)
+        {
             group->dirty = 1;
             group->flags = flags;
             entry->param = 0;
@@ -158,9 +174,13 @@ void BattleFx_RunEffect16(void)
     }
     group->dirty = 1;
     entry->param = 0;
-    do { } while (0);
+    do
+    {
+    } while (0);
     WaitFrames(1);
-    do { } while (0);
+    do
+    {
+    } while (0);
     Resource_ResetEntry(scene->arcTileSlot);
     UiText_ShowPositionedMessageAndWaitFar((s32)&MsgMonstersAttackLess, 1);
 }

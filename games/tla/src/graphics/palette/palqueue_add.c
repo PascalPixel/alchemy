@@ -3,10 +3,10 @@
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 {
     struct PaletteSnapshotWork *work;
-    struct PaletteSnapshot *entry;
-    u16 *source;
-    u32 slot;
-    u16 size;
+    struct PaletteSnapshot     *entry;
+    u16                        *source;
+    u32                         slot;
+    u16                         size;
 
     work = gPaletteWork;
     slot = work->count;

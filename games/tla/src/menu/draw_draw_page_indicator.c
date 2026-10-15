@@ -11,13 +11,12 @@
 #include "dma.h"
 #include "io_reg.h"
 
-
 void Palette_LightenBankHighlight(s32 bank)
 {
     u16 *palette = (u16 *)(0x05000000 + (bank << 5));
-    u32 red;
-    u32 green;
-    u32 blue;
+    u32  red;
+    u32  green;
+    u32  blue;
 
     Dma_Set((const void *)0x050001e0, palette, 0x80000010, REG_DMA3);
     Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -41,12 +40,7 @@ void Palette_LightenBankHighlight(s32 bank)
 #define PAGE_CAP_RIGHT 0xf129
 
 void Menu_DrawPageIndicator(
-    s32 window,
-    s32 itemCount,
-    s32 pageSize,
-    s32 selectedPage,
-    s32 rightEdge
-)
+    s32 window, s32 itemCount, s32 pageSize, s32 selectedPage, s32 rightEdge)
 {
     s32 pageCount;
     s32 page;
@@ -60,10 +54,12 @@ void Menu_DrawPageIndicator(
         pageCount++;
 
     x -= pageCount;
-    if (pageCount > 1) {
+    if (pageCount > 1)
+    {
         UiWindow_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
 
-        for (page = 0; page < pageCount; page++) {
+        for (page = 0; page < pageCount; page++)
+        {
             if (page == selectedPage)
                 UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
             else

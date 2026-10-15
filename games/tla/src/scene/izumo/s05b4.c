@@ -13,18 +13,24 @@ void Func_020004bc(s32 actor)
 {
     Func_02000d00();
     Func_02000dd0(0);
-    if (GameFlag_Test_(0x924)) {
+    if (GameFlag_Test_(0x924))
+    {
         Func_02000d60(MsgCanYouImagine);
         Func_02000d70(actor, 0);
-    } else {
+    }
+    else
+    {
         const u8 *message = MsgSeeThisRing;
 
         Func_02000d60(message);
         UiText_OpenMessageAtObject(actor, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02000d60(message + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02000d60(message + 2);
         }
@@ -37,18 +43,24 @@ void Func_02000538(s32 actor)
 {
     Func_02000d00();
     Func_02000dd0(0);
-    if (GameFlag_Test_(0x924)) {
+    if (GameFlag_Test_(0x924))
+    {
         Func_02000d60(MsgButItS);
         Func_02000d70(actor, 0);
-    } else {
+    }
+    else
+    {
         const u8 *message = MsgSeeThisRingOf;
 
         Func_02000d60(message);
         UiText_OpenMessageAtObject(actor, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0)
+        {
             Battle_WaitMode0(10);
             Func_02000d60(message + 1);
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             Func_02000d60(message + 2);
         }
@@ -66,10 +78,13 @@ void Func_020005b4(s32 actor)
     message = MsgLadyUzumeAnd;
     Func_02000d60(message);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02000e00(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000d60(message + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000d60(message + 2);
     }
@@ -81,11 +96,12 @@ void Func_020005b4(s32 actor)
 void Func_0200060c(void)
 {
     volatile u16 *palette;
-    s16 saved;
-    s32 index;
+    s16           saved;
+    s32           index;
 
     /* FAKEMATCH: the three rotations are goto loops: the native's loops are not touched by loop.c (the palette base rebuilt each pass, nothing strength-reduced, the index counted down to 1 and compared), as only loops without loop notes compile; as do-while, while or for loops (the last over a PLTT index) each differs by 90. */
-    if ((gFrameCount & 3) == 0) {
+    if ((gFrameCount & 3) == 0)
+    {
         saved = *(volatile u16 *)0x0500007c;
         index = 14;
     first:

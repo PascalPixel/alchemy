@@ -5,10 +5,11 @@
 s32 ObjectTable_FindLastActiveId(void)
 {
     struct EventWork *work = Ram_HeapSlots->eventWork;
-    s32 last = 7;
-    s32 i;
+    s32               last = 7;
+    s32               i;
 
-    for (i = 8; i <= 63; i++) {
+    for (i = 8; i <= 63; i++)
+    {
         if (work->objects[i] != NULL)
             last = i;
     }

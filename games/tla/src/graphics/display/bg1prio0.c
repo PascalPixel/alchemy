@@ -14,11 +14,13 @@ void Func_08045780(void)
 
 void Func_08045794(void)
 {
-    u32 zero = 0; /* FAKEMATCH: a named zero is built with movs; as a literal the halfword store loads it from the pool (differ 13). */
+    /* FAKEMATCH: a named zero is built with movs; as a literal the halfword store loads it from the pool (differ 13). */
+    u32 zero = 0;
 
     REG_BG0VOFS = zero;
     /* FAKEMATCH: a one-pass block loads the handler before the interrupt number is built; called straight the two rows trade places (differ 2). */
-    do {
+    do
+    {
         Runtime_SetIrqHandler(2, 136, Func_08045780);
     } while (0);
 }

@@ -4,8 +4,8 @@
 void Func_02003ac8(void)
 {
     struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
-    s32 x = leader->x >> 20;
-    s32 z = leader->z >> 20;
+    s32                   x = leader->x >> 20;
+    s32                   z = leader->z >> 20;
 
     if (x == 42 && z == 23 && (gInput.held & 64) == 0)
         return;
@@ -17,15 +17,18 @@ void Func_02003ac8(void)
 void Func_02003b20(void)
 {
     struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
-    s32 x = leader->x >> 20;
-    s32 z = leader->z >> 20;
+    s32                   x = leader->x >> 20;
+    s32                   z = leader->z >> 20;
 
-    if (z == 38) {
+    if (z == 38)
+    {
         if (x == 23 && (gInput.held & 16) == 0)
             return;
         if (x == 25 && (gInput.held & 32) == 0)
             return;
-    } else if (x == 24 && z == 39 && (gInput.held & 64) == 0) {
+    }
+    else if (x == 24 && z == 39 && (gInput.held & 64) == 0)
+    {
         return;
     }
     Func_02003a08(392, 608);
@@ -34,15 +37,18 @@ void Func_02003b20(void)
 void Func_02003b88(void)
 {
     struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
-    s32 x = leader->x >> 20;
-    s32 z = leader->z >> 20;
+    s32                   x = leader->x >> 20;
+    s32                   z = leader->z >> 20;
 
-    if (z == 54) {
+    if (z == 54)
+    {
         if (x == 42 && (gInput.held & 16) == 0)
             return;
         if (x == 44 && (gInput.held & 32) == 0)
             return;
-    } else if (x == 43 && z == 55 && (gInput.held & 64) == 0) {
+    }
+    else if (x == 43 && z == 55 && (gInput.held & 64) == 0)
+    {
         return;
     }
     Func_02003a08(696, 864);

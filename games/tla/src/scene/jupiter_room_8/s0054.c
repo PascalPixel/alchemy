@@ -1,12 +1,13 @@
 #include "types.h"
 
-struct Probe {
+struct Probe
+{
     s32 unk00[6];
 };
 
-s32 Func_02001f60(void);
+s32  Func_02001f60(void);
 void Func_02002270(s32 value);
-s32 Func_02000c44(struct Probe *probe);
+s32  Func_02000c44(struct Probe *probe);
 void Func_02000ec8(struct Probe probe);
 
 void Func_02000054(void)

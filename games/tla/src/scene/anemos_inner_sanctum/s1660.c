@@ -1,16 +1,21 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Func_02003398();
-s32 Func_02003488();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Battle_WaitMode0();
-s32 Func_02003328();
-s32 Func_020033e0();
-s32 Func_020034b8();
-s32 GameFlag_SetBit();
-s32 Func_020033a0();
+s32       Func_02003398();
+s32       Func_02003488();
+s32       ObjectMotion_SetPositionAndReset();
+s32       Battle_WaitMode0();
+s32       Func_02003328();
+s32       Func_020033e0();
+s32       Func_020034b8();
+s32       GameFlag_SetBit();
+s32       Func_020033a0();
 extern u8 gPartyState[];
 
 void Func_02001660(void)
@@ -31,4 +36,3 @@ void Func_02001660(void)
     Call1(GameFlag_SetBit, 0x200);
     Func_020033a0();
 }
-

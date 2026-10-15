@@ -13,9 +13,11 @@ s32 Func_02001928(struct ObjectRuntime *a, struct ObjectRuntime *b)
 {
     s32 height;
 
-    if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000) {
+    if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000)
+    {
         height = a->y - b->y;
-        if (height > -0x80000 && height < 0x180000) {
+        if (height > -0x80000 && height < 0x180000)
+        {
             if ((a->z - b->z >= 0 ? a->z - b->z : b->z - a->z) < 0xc0000)
                 return 1;
         }

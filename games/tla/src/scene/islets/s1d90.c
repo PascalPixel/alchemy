@@ -21,13 +21,14 @@ void Func_02001db0(void)
     struct ObjectRuntime *object = Object_GetById(19);
     struct ObjectRuntime *leader;
     struct ObjectRuntime *item;
-    s32 z;
+    s32                   z;
 
     if (object->x < 0xe40000 || object->x > 0xec0000)
         return;
     z = object->z;
     /* FAKEMATCH: the one-pass block loads z before 0xa40000 is built; plain, the ARM9TDMI schedule starts the constant first (differ 2), and z's two tests stay apart as the native's are (one range test differs by 71). */
-    do {
+    do
+    {
     } while (0);
     if (z < 0xa40000)
         return;
@@ -58,7 +59,8 @@ void Func_02001db0(void)
     item = Object_GetById(20);
     item->motionFlags = 0;
     Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
-    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)item, leader->x, leader->y + 0x180000, leader->z);
+    Call4((void (*)())Object_SetPositionAndResetMotion, (s32)item, leader->x, leader->y + 0x180000,
+        leader->z);
     Call1((void (*)())Battle_WaitMode0, 20);
     ((void (*)())Func_02003fc4)();
     Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);

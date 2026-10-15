@@ -3,8 +3,9 @@
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
-struct EventWork15a {
-    u8 unk000[0x15a];
+struct EventWork15a
+{
+    u8  unk000[0x15a];
     u16 value;
 };
 
@@ -20,12 +21,15 @@ void Func_020005b4(s32 id)
         flag = 0x285;
     else
         flag = 0x286;
-    if (!GameFlag_Test(flag)) {
+    if (!GameFlag_Test(flag))
+    {
         Func_02005880();
         Func_020059e8(0);
         UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadChestBlocked, 1);
         Func_02005888();
-    } else {
+    }
+    else
+    {
         UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadPlaceItemPrompt, 13);
         if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 1) == 0)
             ((struct EventWork15a *)Ram_HeapSlots->eventWork)->value = 1;
@@ -39,9 +43,10 @@ void Func_02000628(void)
 void Func_0200062c(s32 id)
 {
     struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct ObjectRuntime    *object = Object_GetById(id);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         u8 *cells = map->layers[0].cells;
         u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
@@ -53,9 +58,10 @@ void Func_0200062c(s32 id)
 void Func_02000660(s32 id)
 {
     struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
-    struct ObjectRuntime *object = Object_GetById(id);
+    struct ObjectRuntime    *object = Object_GetById(id);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         u8 *cells = map->layers[0].cells;
         u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
 
@@ -81,14 +87,18 @@ void Func_020006b4(s32 id)
     struct ObjectRuntime *owner = Object_GetById(id);
     struct ObjectRuntime *object;
 
-    if (owner != NULL) {
+    if (owner != NULL)
+    {
         object = Object_Create(489, owner->x, owner->y, owner->z);
-        if (object != NULL) {
+        if (object != NULL)
+        {
             ObjectDispatch_SetSingleChildFlags(object, 0);
             Func_020057d0(object, gData_02005a7c);
             object->linkedObject = owner;
             /* FAKEMATCH: stores the owner link before it copies the object for the priority flags (differ 2 without it; an explicit flag pointer is differ 27). */
-            do { } while (0);
+            do
+            {
+            } while (0);
             object->priorityFlags |= 0x80;
             object->motionFlags = 0;
             object->collisionFlags = 0;

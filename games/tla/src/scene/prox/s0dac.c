@@ -2,32 +2,32 @@
 #include "input.h"
 #include "object_runtime.h"
 
-s32 Func_02004464();
-s32 Func_020045ec();
-s32 Motion_CamBounds();
-s32 Func_0200456c();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Func_0200454c();
-s32 Func_0200451c();
-s32 Func_02004534();
-s32 ObjectMotion_ArmCallback();
-s32 Func_020044dc();
-s32 WaitFrames();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 Object_SetActionCallbackAndRefreshById();
+s32                   Func_02004464();
+s32                   Func_020045ec();
+s32                   Motion_CamBounds();
+s32                   Func_0200456c();
+s32                   ObjectMotion_SetSpeedParameters();
+s32                   ObjectMotion_SetPositionAndReset();
+s32                   Func_0200454c();
+s32                   Func_0200451c();
+s32                   Func_02004534();
+s32                   ObjectMotion_ArmCallback();
+s32                   Func_020044dc();
+s32                   WaitFrames();
+s32                   ObjectMotion_EnableActionAndSetCallback();
+s32                   Object_SetActionCallbackAndRefreshById();
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Battle_WaitMode0();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Motion_SetVarCbAndRefresh();
-s32 Inventory_PromptAndSetObjectMode();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 GameFlag_SetBit();
-s32 Func_0200446c();
-extern u8 MsgProx75[];
-extern u8 gData_020049c4[];
-extern u8 gData_02004980[];
-extern u8 gData_02004a08[];
+s32                   Battle_WaitMode0();
+s32                   Motion_SetModeAndWaitAnimation();
+s32                   Motion_SetVarCbAndRefresh();
+s32                   Inventory_PromptAndSetObjectMode();
+s32                   ObjectMotion_CommitCurrentPositionAndActivate();
+s32                   GameFlag_SetBit();
+s32                   Func_0200446c();
+extern u8             MsgProx75[];
+extern u8             gData_020049c4[];
+extern u8             gData_02004980[];
+extern u8             gData_02004a08[];
 
 void Func_02000dac(void)
 {
@@ -120,10 +120,11 @@ void Func_02000dac(void)
     // Waits up to 80 frames, or until a key is held.
     i = 0;
     goto test_wait;
-    next_wait:
+next_wait:
     i++;
-    test_wait:
-    if (i < 80) {
+test_wait:
+    if (i < 80)
+    {
         Call1(WaitFrames, 1);
         if (gInput.held == 0)
             goto next_wait;
@@ -180,11 +181,14 @@ void Func_02000dac(void)
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
     result = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
     owner = gPartyState.currentOwner;
-    if (result == 0) {
+    if (result == 0)
+    {
         Call1(ObjectMotion_WaitForAnimationChange, owner);
         Call2(Func_02004534, 0xa000, 0);
         EVENT_WORK->messageId++;
-    } else {
+    }
+    else
+    {
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, owner);
         EVENT_WORK->messageId++;
         Call2(Func_02004534, 0xa000, 0);

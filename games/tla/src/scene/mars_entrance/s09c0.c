@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char     SceneId_Ov6aaRoom1;
+extern char     SceneId_Ov6aaRoom2;
+extern char     SceneId_Ov6aaRoom3;
+extern char     SceneId_Ov6aaRoom4;
+extern char     SceneId_Ov6aaRoom5;
+extern char     SceneId_Ov6aaRoom6;
+extern char     SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -51,7 +51,8 @@ void Func_02000a24(void)
 {
     struct ObjectRuntime *object = Object_GetById(12);
 
-    if (!Flag_IsSet(0xa4d)) {
+    if (!Flag_IsSet(0xa4d))
+    {
         Func_02004de0(0x23d);
         Flag_Set(0x232);
         object->x = S16_AT(object, 100) << 16;

@@ -24,15 +24,24 @@ void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 void UiWork_FinalizePendingCore();
 
-#define EVENT_MESSAGE (((struct { u8 unk000[0x1c4]; s16 message; } *)Ram_HeapSlots->eventWork)->message)
+#define EVENT_MESSAGE             \
+    (((struct {                   \
+        u8  unk000[0x1c4];        \
+        s16 message;              \
+    } *)Ram_HeapSlots->eventWork) \
+            ->message)
 
-#define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames) \
-    { \
-        /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Through an inline the actor comes one row early wherever the emote takes two instructions, and an empty asm barrier at each call moves the literal pools of a long scene. */ \
-        register s32 emote_ __asm__("r1") = (emote); \
-        /* FAKEMATCH: the frames, pinned with the emote above. */ \
-        register s32 frames_ __asm__("r2") = (frames); \
-        Func_02001160((actor), emote_, frames_); \
+#define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames)                                          \
+    {                                                                                            \
+        /* FAKEMATCH: the native loads the emote and the frames before the actor at every */     \
+        /* emote of this overlay; pinned to their argument registers they are loaded first, */   \
+        /* as there. Through an inline the actor comes one row early wherever the emote takes */ \
+        /* two instructions, and an empty asm barrier at each call moves the literal pools of */ \
+        /* a long scene. */                                                                      \
+        register s32 emote_ __asm__("r1") = (emote);                                             \
+        /* FAKEMATCH: the frames, pinned with the emote above. */                                \
+        register s32 frames_ __asm__("r2") = (frames);                                           \
+        Func_02001160((actor), emote_, frames_);                                                 \
     }
 
 // The JA edition has its own form of this function; it stays on its listing in recon/tla/raw/overlays (S4).
@@ -48,7 +57,8 @@ void Func_0200087c(void)
     Call4(Func_020010f0, 4, 0xb80000, 0xe50000, angle);
     Call4(Func_020010f0, 0, 0xc80000, 0xdd0000, angle);
     {
-        s32 turn = 0xc000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+        /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+        s32 turn = 0xc000;
 
         Call4(Func_020010f0, 18, 0xda0000, 0x1400000, turn);
     }
@@ -64,11 +74,14 @@ void Func_0200087c(void)
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_CAVE_EMOTE. */
     SHAMAN_VILLAGE_CAVE_EMOTE(19, 263, 30)
     Call2(UiText_OpenMessageAtObject, 19, 0);
-    if (Value1((s32 (*)())Func_020011e8, 1) == 0) {
+    if (Value1((s32 (*)())Func_020011e8, 1) == 0)
+    {
         UiWork_FinalizePendingCore();
         Call3(Func_02001148, 20, 0, 5);
         EVENT_MESSAGE++;
-    } else {
+    }
+    else
+    {
         UiWork_FinalizePendingCore();
         EVENT_MESSAGE++;
         Call3(Func_02001148, 20, 0, 5);
@@ -86,6 +99,10 @@ void Func_0200087c(void)
     Call1(Battle_WaitMode0, 20);
     Call2(Func_02001190, (s16)gPartyState.savedScene, (s16)gPartyState.savedEntrance);
     Call2(Func_02001208, gPartyState.scene, gPartyState.entrance);
-    ((struct { u8 unk000[0x1ac]; s32 value; } *)Ram_HeapSlots->eventWork)->value = 0;
+    ((struct {
+        u8  unk000[0x1ac];
+        s32 value;
+    } *)Ram_HeapSlots->eventWork)
+        ->value = 0;
 }
 #endif

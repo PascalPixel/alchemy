@@ -4,15 +4,15 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_02004c20(void);
-void Func_02004c28(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02004c90(s32 id, s32 x, s32 z, s32 a);
-void Func_02004db8(s32 value);
-void Func_02004e18(s32 id, s32 a);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  Func_02004c20(void);
+void                  Func_02004c28(void);
+s32                   Func_02004c38(s32 a, s32 b, s32 c);
+void                  Func_02004c90(s32 id, s32 x, s32 z, s32 a);
+void                  Func_02004db8(s32 value);
+void                  Func_02004e18(s32 id, s32 a);
 
 void Func_02000d1c(void)
 {
@@ -26,8 +26,8 @@ void Func_02000d1c(void)
 void Func_02000d4c(void)
 {
     struct ObjectRuntime *object;
-    u8 *animation;
-    s32 a, id;
+    u8                   *animation;
+    s32                   a, id;
 
     Func_02004e18(19, 0x198);
     object = Object_GetById(19);

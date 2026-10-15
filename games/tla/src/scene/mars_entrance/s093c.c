@@ -1,12 +1,12 @@
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char     SceneId_Ov6aaRoom1;
+extern char     SceneId_Ov6aaRoom2;
+extern char     SceneId_Ov6aaRoom3;
+extern char     SceneId_Ov6aaRoom4;
+extern char     SceneId_Ov6aaRoom5;
+extern char     SceneId_Ov6aaRoom6;
+extern char     SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -36,7 +36,8 @@ void Func_0200093c(void)
         u8 *party = (u8 *)&gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party[0x2c2] = 2;
     }
@@ -51,7 +52,8 @@ void Func_0200096c(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->x >> 20 == 11) {
+    if (object->x >> 20 == 11)
+    {
         s32 y;
 
         object->speedLimit = 0x4000;
@@ -60,7 +62,8 @@ void Func_0200096c(s32 unused, s32 id)
         Func_02004bf8(object, 0x980000, y, 0x3180000);
     }
     /* FAKEMATCH: a volatile read of x, the y loads ahead of each call and the second call's object and constants pinned to r0, r1 and r3 give the native's reload of x on both paths and its argument order; plainly GCSE keeps x across the first branch and sched2 builds the constants before loading y (differ 14). */
-    if (*(volatile s32 *)&object->x >> 20 == 10) {
+    if (*(volatile s32 *)&object->x >> 20 == 10)
+    {
         s32 y;
 
         object->speedLimit = 0x4000;
@@ -68,8 +71,8 @@ void Func_0200096c(s32 unused, s32 id)
         y = object->y;
         {
             register struct ObjectRuntime *self asm("r0") = object;
-            register s32 x asm("r1") = 0xc80000;
-            register s32 z asm("r3") = 0x3180000;
+            register s32                   x asm("r1") = 0xc80000;
+            register s32                   z asm("r3") = 0x3180000;
 
             Func_02004bf8(self, x, y, z);
         }

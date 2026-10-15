@@ -4,20 +4,21 @@
 #include "flag_call.h"
 #include "call.h"
 
-struct JupiterRoom5EventWork1ac {
-    u8 unk000[0x1ac];
+struct JupiterRoom5EventWork1ac
+{
+    u8  unk000[0x1ac];
     s32 value;
 };
 
 extern u8 gData_02002fb8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
-void Func_020029c8(void *data);
-void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_020001a4(void);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
+void                  Func_020029c8(void *data);
+void                  Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+s32                   Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void                  Func_020001a4(void);
 
 // Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
 // is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
@@ -25,12 +26,13 @@ void Func_020001a4(void);
 s32 Func_02000ae8(void)
 {
     struct ObjectRuntime *object;
-    s32 angle;
+    s32                   angle;
 
     ((struct JupiterRoom5EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
     if (Flag_IsSet(0xa23))
         Flag_Clear(0xa22);
-    if (Flag_IsSet(0xa22)) {
+    if (Flag_IsSet(0xa22))
+    {
         angle = 0x4000;
         Call4((void (*)())Func_02002900, 22, 0x400000, 0xe10000, angle);
     }
@@ -50,7 +52,8 @@ s32 Func_02000ae8(void)
     object->y = 0x400000;
     object->z = 0x2440000;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(24), 0);
-    if (Flag_IsSet(0xa00)) {
+    if (Flag_IsSet(0xa00))
+    {
         Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
         Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);
         Scheduler_AddOrUpdateCallback(Func_020001a4, 0x480);

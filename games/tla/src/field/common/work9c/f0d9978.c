@@ -26,30 +26,38 @@ s32 Func_080d99b8(s32 firstId, s32 secondId)
     struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *first = Object_GetById(firstId);
     struct ObjectRuntime *second = Object_GetById(secondId);
-    s32 x = owner->x >> 20;
-    s32 y = owner->y >> 20;
-    s32 z = owner->z >> 20;
-    s32 firstX = first->x >> 20;
-    s32 firstY = first->y >> 20;
-    s32 firstZ = first->z >> 20;
-    s32 secondX = second->x >> 20;
-    s32 secondY = second->y >> 20;
-    s32 secondZ = second->z >> 20;
+    s32                   x = owner->x >> 20;
+    s32                   y = owner->y >> 20;
+    s32                   z = owner->z >> 20;
+    s32                   firstX = first->x >> 20;
+    s32                   firstY = first->y >> 20;
+    s32                   firstZ = first->z >> 20;
+    s32                   secondX = second->x >> 20;
+    s32                   secondY = second->y >> 20;
+    s32                   secondZ = second->z >> 20;
 
-    if (y == firstY) {
-        if (x == firstX) {
+    if (y == firstY)
+    {
+        if (x == firstX)
+        {
             if (z == firstZ - 1 || z == firstZ + 1 || z == firstZ)
                 return 1;
-        } else if (z == firstZ) {
+        }
+        else if (z == firstZ)
+        {
             if (x == firstX - 1 || x == firstX + 1 || x == firstX)
                 return 1;
         }
     }
-    if (y == secondY) {
-        if (x == secondX) {
+    if (y == secondY)
+    {
+        if (x == secondX)
+        {
             if (z == secondZ - 1 || z == secondZ + 1 || z == secondZ)
                 return 1;
-        } else if (z == secondZ) {
+        }
+        else if (z == secondZ)
+        {
             if (x == secondX - 1 || x == secondX + 1 || x == secondX)
                 return 1;
         }

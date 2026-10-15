@@ -8,17 +8,22 @@ void Func_020043c8(void);
 void Func_02004394(void);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 
-struct IoReg16 {
+struct IoReg16
+{
     u16 value;
 };
 
 void Func_020043f8(void)
 {
-    if (!GameFlag_Test(0x109)) {
-        if (GameFlag_Test(0x9fe)) {
+    if (!GameFlag_Test(0x109))
+    {
+        if (GameFlag_Test(0x9fe))
+        {
             ShamanVillage_ObjPlace(16, 0x680000, 0xc80000);
             ShamanVillage_ObjPlace(17, 0x880000, 0xc80000);
-        } else if (GameFlag_Test(0x94f) && !GameFlag_Test(0x9e1)) {
+        }
+        else if (GameFlag_Test(0x94f) && !GameFlag_Test(0x9e1))
+        {
             ShamanVillage_ObjPlace(15, 0x780000, 0xd00000);
             ShamanVillage_ObjPlace(16, 0x680000, 0xd40000);
             ShamanVillage_ObjPlace(17, 0x880000, 0xd40000);
@@ -27,7 +32,8 @@ void Func_020043f8(void)
     }
     if (GameFlag_Test(0x202))
         ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
-    if (GameFlag_Test(0x94d)) {
+    if (GameFlag_Test(0x94d))
+    {
         s32 width = 1;
         s32 height = 2;
 
@@ -67,17 +73,22 @@ void Func_02004534(void)
 
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
     Object_GetById(12)->collisionFlags = 8;
-    if (GameFlag_Test(0x9fe)) {
-        s32 angle = 0x3000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has; as a plain argument it is started third (one reordered row). */
+    if (GameFlag_Test(0x9fe))
+    {
+        /* FAKEMATCH: the local starts the facing before the other arguments, as the native has; as a plain argument it is started third (one reordered row). */
+        s32 angle = 0x3000;
 
         ShamanVillage_ObjPut(8, 0x580000, 0x5c0000, angle);
         ShamanVillage_ObjPlace(11, 0x9c0000, 0x480000);
-    } else {
+    }
+    else
+    {
         Func_02004934(17, 0, 0);
         Func_02004934(18, 0, 0);
         Func_02004934(19, 0, 0);
     }
-    if ((gPartyState.entrance == 30 || gPartyState.entrance == 31) && !GameFlag_Test(0x109)) {
+    if ((gPartyState.entrance == 30 || gPartyState.entrance == 31) && !GameFlag_Test(0x109))
+    {
         Func_020048ac(1);
         Func_020048c4();
         Func_02004a24(0);
@@ -92,7 +103,8 @@ void Func_02004534(void)
     next_stand:
         i++;
     test_stand:
-        if (i < 60) {
+        if (i < 60)
+        {
             WaitFrames(1);
             if (gInput.held == 0)
                 goto next_stand;
@@ -104,7 +116,8 @@ void Func_02004534(void)
     next_turn:
         i++;
     test_turn:
-        if (i < 30) {
+        if (i < 30)
+        {
             WaitFrames(1);
             if (gInput.held == 0)
                 goto next_turn;
@@ -115,7 +128,8 @@ void Func_02004534(void)
         ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 813, 120);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 1);
         Func_020048cc();
-        if (gPartyState.entrance == 30) {
+        if (gPartyState.entrance == 30)
+        {
             GameFlag_SetBit(0x9fe);
             GameFlag_SetBit(0x94d);
         }

@@ -1,23 +1,28 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-void GameFlag_SetBit(s32 a);
-void Func_02000a94(void);
-void Func_02000b8c(s32 a);
-void Func_02000b24(s32 a);
-void Func_02000b84(s32 a, s32 b);
-void ObjectMotion_SetPositionAndReset(s32 a, s32 b, s32 c);
-void ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
-void Func_02000b7c(void);
-void Battle_WaitMode0(s32 a);
-void Func_02000b34(s32 a, s32 b, s32 c);
-void ObjectMotion_SetVariantCallback(s32 a, s32 b);
-void Func_02000b64(s32 a, s32 b);
-void Motion_SetModeAndWaitAnimation(s32 a, s32 b);
-void Motion_SetVarCbAndRefresh(s32 a, s32 b);
-void Object_AttachWorkTargetToObject(s32 a, s32 b);
-void Func_02000a9c(void);
+void      GameFlag_SetBit(s32 a);
+void      Func_02000a94(void);
+void      Func_02000b8c(s32 a);
+void      Func_02000b24(s32 a);
+void      Func_02000b84(s32 a, s32 b);
+void      ObjectMotion_SetPositionAndReset(s32 a, s32 b, s32 c);
+void      ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
+void      Func_02000b7c(void);
+void      Battle_WaitMode0(s32 a);
+void      Func_02000b34(s32 a, s32 b, s32 c);
+void      ObjectMotion_SetVariantCallback(s32 a, s32 b);
+void      Func_02000b64(s32 a, s32 b);
+void      Motion_SetModeAndWaitAnimation(s32 a, s32 b);
+void      Motion_SetVarCbAndRefresh(s32 a, s32 b);
+void      Object_AttachWorkTargetToObject(s32 a, s32 b);
+void      Func_02000a9c(void);
 extern u8 MsgAlhafraInteriors31[];
 extern u8 gPartyState[];
 
@@ -56,4 +61,3 @@ void Func_02000084(void)
     Func_02000b7c();
     Func_02000a9c();
 }
-

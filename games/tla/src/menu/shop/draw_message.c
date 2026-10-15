@@ -29,15 +29,15 @@ void RenderOutput_ClearListFar();
 //--------------------------------------------------------------------------
 void Shop_DrawMsg(s32 win, s32 message)
 {
-	if (win != 0)
-	{
+    if (win != 0)
+    {
 #if EDITION_INTERNATIONAL
-		RenderOutput_RedrawSavedRectFar(win);
-		UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
+        RenderOutput_RedrawSavedRectFar(win);
+        UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
-		RenderOutput_ClearListFar(win);
-		WaitFrames(1);
-		UiText_DrawResourceFar(message, win, 0, 0);
+        RenderOutput_ClearListFar(win);
+        WaitFrames(1);
+        UiText_DrawResourceFar(message, win, 0, 0);
 #endif
-	}
+    }
 }

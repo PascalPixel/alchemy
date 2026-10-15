@@ -43,9 +43,11 @@ void Func_02003d30(void)
     ShamanVillage_MessagePut(0x200f, 0);
     Object_SetModeById(15, 3);
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+    {
         ShamanVillage_MessageOpen(0x200f, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+        {
             Motion_SetModeAndWaitAnimation(15, 3);
             Engine_AudioPlayCue(76);
             ShamanVillage_MessagePut(0x200f, 0);
@@ -54,14 +56,19 @@ void Func_02003d30(void)
             return;
         }
         EVENT_WORK->field1c4++;
-    } else {
+    }
+    else
+    {
         EVENT_WORK->field1c4 += 2;
     }
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
+    {
         ShamanVillage_MessagePut(0x200f, 0);
         Func_0200289c();
-    } else {
+    }
+    else
+    {
         EVENT_WORK->field1c4++;
         ShamanVillage_MessagePut(0x200f, 0);
         Func_0200290c();

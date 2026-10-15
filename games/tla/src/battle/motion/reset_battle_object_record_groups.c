@@ -14,29 +14,31 @@
 #include "ram_buffer.h"
 #include "fixed_point_position.h"
 
-#define Object_Destroy ((void (*)(void*))Object_Destroy)
-
-
+#define Object_Destroy ((void (*)(void *))Object_Destroy)
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {
-    s32 storageKind;
-    s32 remaining;
+    s32    storageKind;
+    s32    remaining;
     void **recordGroups;
-    void *recordGroup;
+    void  *recordGroup;
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         storageKind = object->recordStorageKind & 0xF;
-        switch (storageKind) {
+        switch (storageKind)
+        {
         case 1:
             ResetMotionRecordGroup(object->records);
             return;
         case 2:
             recordGroups = object->records;
             remaining = 3;
-            do {
+            do
+            {
                 recordGroup = *recordGroups++;
-                if (recordGroup != NULL) {
+                if (recordGroup != NULL)
+                {
                     ResetMotionRecordGroup(recordGroup);
                 }
                 remaining -= 1;
@@ -48,7 +50,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
-    u8 *work = (u8 *)Ram_HeapSlots->battleWork;
+    u8               *work = (u8 *)Ram_HeapSlots->battleWork;
     struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)
@@ -71,18 +73,21 @@ s32 ActivateBattleObjectSlot(s32 objectId)
 
 void BattleMotion_DestroyAllSlotObjects(void)
 {
-    s32 no;
-    s32 i;
+    s32               no;
+    s32               i;
     struct BattleObj *slot;
 
     i = 0;
-    do {
+    do
+    {
         no = i + 0x78;
-        if (i <= 7) {
+        if (i <= 7)
+        {
             no = i;
         }
         slot = BattleObject_FindSlot(no);
-        if ((slot != NULL) && (slot->active != 0)) {
+        if ((slot != NULL) && (slot->active != 0))
+        {
             Object_Destroy(slot->object);
             slot->object = NULL;
             slot->active = 0;

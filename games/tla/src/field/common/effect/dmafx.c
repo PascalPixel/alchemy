@@ -7,10 +7,11 @@
 void Func_080d5ff8(void);
 void Func_080d607c(void);
 
-struct DmaFxWork {
-    u8 unk000[0xf01];
-    u8 kind;
-    u8 unkf02[6];
+struct DmaFxWork
+{
+    u8  unk000[0xf01];
+    u8  kind;
+    u8  unkf02[6];
     s32 unkf08;
     s32 unkf0c;
     s32 unkf10;
@@ -21,13 +22,15 @@ struct DmaFxWork {
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 {
-    while ((channel->control & 0x80000000) != 0) {}
+    while ((channel->control & 0x80000000) != 0)
+    {
+    }
 }
 
 void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f)
 {
     struct DmaFxWork *work = Runtime_AllocateBlock(136, sizeof(struct DmaFxWork));
-    volatile u32 zero;
+    volatile u32      zero;
 
     zero = 0;
     Dma_Set((void *)&zero, work, 0x850003c8, REG_DMA3);
@@ -53,11 +56,12 @@ void Func_080d64b8(void)
         u16 control;
 
         /* FAKEMATCH: the one-pass block reads the control word before its mask is built (one reordered pair, differ 2 without it). */
-        do {
+        do
+        {
             control = dma[5];
         } while (0);
         dma[5] = control & 0xc5ff; // 開始タイミングとリピートを消す
-        dma[5] &= 0x7fff; // 止める
+        dma[5] &= 0x7fff;          // 止める
         (void)dma[5];
     }
 }

@@ -2,10 +2,12 @@
 
 void Func_02001f14(struct MarsRoomMVector *position, s32 value)
 {
-    struct ObjectRuntime *object = (struct ObjectRuntime *)Value4((s32 (*)())Func_02003128, 285, position->x, position->y, position->z + 0xfffe0000);
+    struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+        (s32 (*)())Func_02003128, 285, position->x, position->y, position->z + 0xfffe0000);
     s32 angle;
 
-    if (object != 0) {
+    if (object != 0)
+    {
         object->bounce = Math_Cosine(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
         object->gravity = (u16)Random16Far();
         object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;

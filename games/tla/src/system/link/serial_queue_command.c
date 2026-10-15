@@ -1,8 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct SerialWork {
-    u8 unk0000[0x313c];
+struct SerialWork
+{
+    u8  unk0000[0x313c];
     u32 command;
     u16 progress;
     u16 state;

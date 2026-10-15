@@ -17,11 +17,11 @@ void Func_02000d70(void)
 
 s32 Func_02000df8(s32 x, s32 z)
 {
-    struct ObjectRuntime *object = Object_GetById(15);
+    struct ObjectRuntime    *object = Object_GetById(15);
     struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
-    u8 *cells;
-    u8 *cell;
-    s32 value;
+    u8                      *cells;
+    u8                      *cell;
+    s32                      value;
 
     if (object->x >> 20 == x && object->z >> 20 == z)
         return 1;

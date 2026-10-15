@@ -17,7 +17,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
     struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
-    u8 *delay = &interpreter->delay;
+    u8                   *delay = &interpreter->delay;
 
     if (*delay > 59)
     {

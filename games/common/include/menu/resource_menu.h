@@ -7,28 +7,28 @@
 
 struct ResourceMenuEntry
 {
-	u32 link;
-	u32 attr01;
-	u32 attr2;
-	s16 x;
-	s16 y;
-	u16 unk10;
-	u16 slot;
+    u32 link;
+    u32 attr01;
+    u32 attr2;
+    s16 x;
+    s16 y;
+    u16 unk10;
+    u16 slot;
 };
 
 struct ResourceMenuWork
 {
-	struct ResourceMenuEntry entries[6];
-	struct UiWindow			*window;
-	struct UiWindow			*lowerWindow;
-	struct UiWindow			*upperWindow;
-	u8						 resourceIds[8];
-	s16						 selection;
-	s16						 count;
-	s16						 width;
-	s16						 resourceBase;
-	s16						 row;
-	s16						 previousMode;
+    struct ResourceMenuEntry entries[6];
+    struct UiWindow         *window;
+    struct UiWindow         *lowerWindow;
+    struct UiWindow         *upperWindow;
+    u8                       resourceIds[8];
+    s16                      selection;
+    s16                      count;
+    s16                      width;
+    s16                      resourceBase;
+    s16                      row;
+    s16                      previousMode;
 };
 
 LAYOUT_SIZE_GUARD(ResourceMenuEntry_Size, struct ResourceMenuEntry, 0x14);

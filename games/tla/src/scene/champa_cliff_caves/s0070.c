@@ -18,7 +18,8 @@ u32 *Func_02000070(void)
 {
     s32 scene;
 
-    if (GameFlag_Test(0x97e)) {
+    if (GameFlag_Test(0x97e))
+    {
         scene = gPartyState.scene;
         if (scene == (s32)&SceneId_Ov685Room1)
             return gData_02003aec;
@@ -28,13 +29,16 @@ u32 *Func_02000070(void)
             return gData_02003c0c;
         if (scene == (s32)&SceneId_Ov685Room4)
             return gData_02003c84;
-    } else {
+    }
+    else
+    {
         /* FAKEMATCH: the native loads the party state and the first scene id once, before it tests the second flag, and both branches use them; read inside each branch they are loaded twice (differ 76). */
-        s32 second = GameFlag_Test(0x97f);
+        s32                second = GameFlag_Test(0x97f);
         struct PartyState *party = &gPartyState;
-        s32 first = (s32)&SceneId_Ov685Room1;
+        s32                first = (s32)&SceneId_Ov685Room1;
 
-        if (second) {
+        if (second)
+        {
             scene = party->scene;
             if (scene == first)
                 return gData_020038ac;
@@ -44,7 +48,9 @@ u32 *Func_02000070(void)
                 return gData_02003984;
             if (scene == (s32)&SceneId_Ov685Room4)
                 return gData_020039cc;
-        } else {
+        }
+        else
+        {
             scene = party->scene;
             if (scene == first)
                 return gData_0200375c;

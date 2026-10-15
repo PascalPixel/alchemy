@@ -24,12 +24,14 @@ void Func_02005594(void)
     gData_02007948[2] = BG_PLTT[6];
     gData_02007948[3] = BG_PLTT[76];
     Func_0200538c();
-    if (GameFlag_Test(0x8fb)) {
+    if (GameFlag_Test(0x8fb))
+    {
         Func_02003640(1, 1);
         Func_020036e0(1, 4);
     }
     WaitFrames(1);
-    switch (gPartyState.entrance) {
+    switch (gPartyState.entrance)
+    {
     case 10:
         Func_020040cc();
         return;
@@ -59,46 +61,59 @@ void Func_02005594(void)
     ObjectMotion_SetActionVariant(6, 2);
     if (GameFlag_Test(0x92e))
         Func_02005b0c(7, 0, 0);
-    else if (GameFlag_Test(0x92f)) {
+    else if (GameFlag_Test(0x92f))
+    {
         /* FAKEMATCH: the temporary builds the angle before the position, as the native does (differ 4 without it). */
         s32 angle = 0x2000;
 
         Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
     }
-    if (GameFlag_Test(0x8fd)) {
+    if (GameFlag_Test(0x8fd))
+    {
         Func_020036e0(1, 6);
         Func_02005b0c(17, 0, 0);
     }
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Scheduler_AddOrUpdateCallback(Func_02002ccc, 0x480);
-    for (i = 0; i <= 7; i++) {
+    for (i = 0; i <= 7; i++)
+    {
         u8 *field = &Object_GetById(i + 18)->field5c;
         /* FAKEMATCH: the pin keeps the 2 in the loop, built after the field's address as the native does; as a constant loop.c hoists it into r6 (differ 10). */
         register s32 value asm("r3") = 2;
 
         *field = value;
     }
-    if (GameFlag_Test(0x8f1)) {
+    if (GameFlag_Test(0x8f1))
+    {
         if (!GameFlag_Test(0x8fd))
             Func_020032b0();
-    } else if (gPartyState.entrance == 5) {
+    }
+    else if (gPartyState.entrance == 5)
+    {
         Func_02003dec();
     }
     Func_02005aa4();
-    if (gPartyState.entrance == 99) {
+    if (gPartyState.entrance == 99)
+    {
         Func_02003640(0, 0);
         Func_020036e0(0, 0);
         Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-    } else if (gPartyState.entrance == 98) {
+    }
+    else if (gPartyState.entrance == 98)
+    {
         Func_02003640(1, 1);
         Func_020036e0(1, 0);
         Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-    } else if (gPartyState.entrance == 97) {
+    }
+    else if (gPartyState.entrance == 97)
+    {
         Func_02003640(1, 1);
         Func_020036e0(1, 4);
         Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-    } else if (gPartyState.entrance == 96) {
+    }
+    else if (gPartyState.entrance == 96)
+    {
         Func_02003640(1, 1);
         Func_020036e0(1, 4);
         Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);

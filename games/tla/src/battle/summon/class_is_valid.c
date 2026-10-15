@@ -12,27 +12,28 @@
 #include "ram_buffer.h"
 #include "motobj.h"
 
-
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
     return BattleObjGet(id)->palette;
 }
 
-struct Layout {
-    u8 pad[4];
+struct Layout
+{
+    u8  pad[4];
     s16 field[6];
 };
 
 s32 EnemyCheck(s32 arg0)
 {
-    s32 retval;
-    s32 i;
+    s32            retval;
+    s32            i;
     struct Layout *ptr;
 
     retval = Summon_IsEntryFlagged(arg0);
     ptr = (struct Layout *)Ram_HeapSlots->battleWork;
     i = 0;
-    for (; i < 6; i++) {
+    for (; i < 6; i++)
+    {
         if (ptr->field[i] != 0)
             continue;
         if (retval != 0)

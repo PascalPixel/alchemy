@@ -9,13 +9,14 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 struct ObjectRuntime *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
 {
     struct ObjectRuntime *object;
-    s32 scale;
+    s32                   scale;
     /* FAKEMATCH: the limit's first byte is pinned to the r2 the native builds it in; as a free temporary it takes r3 and the scale r2 (differ 30). */
     register s32 limit asm("r2");
 
     Audio_PlayCue(138);
     object = Object_Spawn(278, x, y, z);
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->scaleY = 0x4000;
         object->scaleX = 0x4000;
         object->speedLimit = 0x30000;
@@ -25,8 +26,10 @@ struct ObjectRuntime *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angl
         scale = object->scaleX;
         /* FAKEMATCH: the barrier loads the scale before the 0x10000 limit is started; without it the limit is started first (one reordered pair, differ 2). */
         asm volatile("");
-        if (scale < 0x10000) {
-            do {
+        if (scale < 0x10000)
+        {
+            do
+            {
                 scale += 0x800;
                 object->scaleY = scale;
                 object->scaleX = scale;

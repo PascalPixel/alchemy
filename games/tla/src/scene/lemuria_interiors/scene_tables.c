@@ -57,14 +57,16 @@ void Func_02000058(s32 arg0)
     s32 result3;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0x966);
-    if (result0 == 0) goto L_02008082;
+    if (result0 == 0)
+        goto L_02008082;
     Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors11);
     Call2((void (*)())Func_020028c4, arg0, 0);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 10, 4);
     goto L_020080f6;
 L_02008082:
     result1 = Value1((s32 (*)())GameFlag_Test, 0x965);
-    if (result1 == 0) goto L_020080ba;
+    if (result1 == 0)
+        goto L_020080ba;
     ((void (*)())Func_0200282c)();
     Call1((void (*)())Func_020028fc, 0);
     Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors08);
@@ -77,7 +79,8 @@ L_020080ba:
     Value2((s32 (*)())UiText_OpenMessageAtObject, arg0, 0);
     result2 = Value0((s32 (*)())Func_0200291c);
     result3 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result2, 0);
-    if (result3 != 0) goto L_020080dc;
+    if (result3 != 0)
+        goto L_020080dc;
     ((void (*)())Func_0200031c)();
     goto L_020080f6;
 L_020080dc:

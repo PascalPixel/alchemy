@@ -17,33 +17,37 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 
 #define Resource_DecodeByteLzInRam ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
-union DustWord {
-    u32 value;
+union DustWord
+{
+    u32   value;
     void *link;
 };
 
-struct DustParticle {
+struct DustParticle
+{
     union DustWord link;
-    u32 attr01;
-    u32 attr2;
-    s32 posX;
-    s32 posY;
-    s32 posZ;
-    u8 pad18[4];
-    u16 timer;
-    u8 pad1e[2];
+    u32            attr01;
+    u32            attr2;
+    s32            posX;
+    s32            posY;
+    s32            posZ;
+    u8             pad18[4];
+    u16            timer;
+    u8             pad1e[2];
 };
 
-struct DustWork {
-    s32 vramEntry;
-    s32 tileBase;
+struct DustWork
+{
+    s32                 vramEntry;
+    s32                 tileBase;
     struct DustParticle particles[64];
-    u8 pad808[12];
+    u8                  pad808[12];
 };
 
 extern const u8 gData_080f38b2[];
-void Func_080d7034(void);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+void            Func_080d7034(void);
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) \
+    || defined(TLA_EDITION_IT)
 // 欧州版の far call 表では、地形の高さへ届く口の名前が違う
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
@@ -53,14 +57,14 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 void FieldEffect_InitSparkles(void)
 {
-    u32 size = sizeof(struct DustWork);
-    struct DustWork *work = Runtime_AllocateBlock(116, size);
+    u32                  size = sizeof(struct DustWork);
+    struct DustWork     *work = Runtime_AllocateBlock(116, size);
     struct DustParticle *p = work->particles;
-    u8 *buf;
-    u32 i;
-    s32 clear;
-    volatile u32 zero;
-    struct HeapSlots *slots;
+    u8                  *buf;
+    u32                  i;
+    s32                  clear;
+    volatile u32         zero;
+    struct HeapSlots    *slots;
 
     /* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. */
     size = 0;
@@ -78,7 +82,7 @@ void FieldEffect_InitSparkles(void)
 loop:
     {
         struct MapWork *view = slots->mapWork;
-        s32 *leader;
+        s32            *leader;
         /* FAKEMATCH: needed to match: an integer field cursor keeps the view load order; reusing it for the height x argument keeps the leader in r2. Separate temporaries differ by 14 instructions. */
         u32 attr;
         s32 z;
@@ -110,9 +114,9 @@ loop:
 
 void BattleFx_StartTwelveFrameBlend(void)
 {
-    struct FieldBlendWork *work;
+    struct FieldBlendWork      *work;
     struct BattleEffectBuffers *buffers;
-    volatile u32 zero;
+    volatile u32                zero;
 
     work = Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
     buffers = Ram_HeapSlots->block32;
@@ -150,10 +154,10 @@ void BattleFx_SetBlock30Values128One(void)
 
 void BattleFx_StartBufferBlend(s32 from, s32 to)
 {
-    struct FieldBlendWork *work;
+    struct FieldBlendWork      *work;
     struct BattleEffectBuffers *buffers;
-    volatile u32 zero;
-    s16 *target;
+    volatile u32                zero;
+    s16                        *target;
 
     work = Runtime_AllocateBlock(120, sizeof(struct FieldBlendWork));
     buffers = Ram_HeapSlots->block32;

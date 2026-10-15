@@ -2,7 +2,8 @@
 #include "text/msg_ids.h"
 
 /* The byte at 0x5a of an actor, as the field its bit 0 is set through. */
-struct ActorSolid {
+struct ActorSolid
+{
     u8 unk00[0x5a];
     u8 solid : 8;
 };
@@ -20,16 +21,16 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Object_LinkPair(s32 a, s32 b, s32 c);
-s32 PartyInventory_GiveItem(s32 item, s32 flags);
+s32  PartyInventory_GiveItem(s32 item, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02005880(void);
 void Func_020059e8(s32 value);
 void Func_02002d78(s32 actor, s32 x, s32 z, s32 angle);
-s32 Func_02002d20(s32 value);
-s32 Func_02002d50(s32 value);
+s32  Func_02002d20(s32 value);
+s32  Func_02002d50(s32 value);
 void Func_02005938(s32 message);
-s32 Func_02005960(s32 actor, s32 value, s32 frames);
+s32  Func_02005960(s32 actor, s32 value, s32 frames);
 void Func_02005940(s32 actor, s32 flags);
 void Func_02005950(s32 actor, s32 angle);
 void Func_02005860(s32 cue);

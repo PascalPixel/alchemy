@@ -16,7 +16,8 @@ void Func_02001f7c(void)
     ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x10000, 0x8000);
     ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 400, 648);
     Func_020052b0(gPartyState.currentOwner, 0xc000);
-    if (GameFlag_Test(0x212) == 0) {
+    if (GameFlag_Test(0x212) == 0)
+    {
         Func_020053d8(188);
         Func_02001f3c();
     }
@@ -33,7 +34,7 @@ void Func_02001f7c(void)
 void Func_02002014(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    u32 i;
+    u32                   i;
 
     Func_020051c0();
     Func_02005370(0);
@@ -43,12 +44,14 @@ void Func_02002014(void)
     leader->motionFlags = 0;
     ObjectMotion_SetActionVariantValue(gPartyState.currentOwner, 1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
         leader->z += 0x10000;
         WaitFrames(1);
     }
     Object_SetModeById(gPartyState.currentOwner, 13);
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
         leader->y -= 0x10000;
         WaitFrames(1);
     }
@@ -86,8 +89,8 @@ void Func_02002120(void)
 void Func_02002154(void)
 {
     struct ObjectRuntime *object = Object_GetById(8);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32                   x = object->x >> 20;
+    s32                   z = object->z >> 20;
 
     Func_020053c8();
     if (x == 13 && z == 13)
@@ -114,11 +117,14 @@ void Func_020021dc(void)
     s32 x = Object_GetById(8)->x >> 20;
 
     Func_020053c8();
-    if (x == 19) {
+    if (x == 19)
+    {
         GameFlag_SetBit(0x302);
         GameFlag_SetBit(0x304);
         Func_02005178(0, 0, 3, 3, x, 28);
-    } else if (x == 21) {
+    }
+    else if (x == 21)
+    {
         GameFlag_SetBit(0x303);
         GameFlag_SetBit(0x304);
         Func_02005178_(0, 4, 3, 3, 19, 28);
@@ -177,7 +183,8 @@ void Func_02002314(void)
     Object_SetModeById(14, 2);
     object = Object_GetById(4);
     if (object)
-        ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)object + 10), *(s16 *)((u8 *)object + 18));
+        ObjectMotion_ResetAndSetPosition(
+            14, *(s16 *)((u8 *)object + 10), *(s16 *)((u8 *)object + 18));
     ObjectMotion_CommitCurrentPositionAndActivate(14);
     Func_02005230(14, 0, 0);
     Func_020051c8();

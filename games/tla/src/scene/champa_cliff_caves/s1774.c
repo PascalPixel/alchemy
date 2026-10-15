@@ -1,9 +1,10 @@
 #include "scene.h"
 
-struct EventTransition {
-    u8 unk000[0x1ac];
+struct EventTransition
+{
+    u8  unk000[0x1ac];
     s32 type;
-    u8 unk1b0[4];
+    u8  unk1b0[4];
     s32 frames;
 };
 
@@ -11,7 +12,7 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Object_AttachWorkTargetToObject(s32 actor, s32 target);
 void Event_StartScreenTransition(void);
 void Func_020034d4(s32 actor, s32 x, s32 z);
-s32 Func_02003544(s32 actor, s32 value, s32 frames);
+s32  Func_02003544(s32 actor, s32 value, s32 frames);
 void Func_0200351c(s32 actor, s32 value, s32 frames);
 void Func_0200356c(s32 scene, s32 entrance);
 

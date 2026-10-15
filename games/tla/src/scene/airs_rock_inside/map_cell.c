@@ -13,8 +13,8 @@ void Func_0200061c(void)
 s32 Func_0200062c(u32 layer, s32 x, s32 y, s32 value)
 {
     struct AirsRockInsideMapWork *map = (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
-    u8 *cell;
-    s32 old;
+    u8                           *cell;
+    s32                           old;
 
     if (map == NULL)
         return 0;

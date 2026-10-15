@@ -1,46 +1,51 @@
 #include "types.h"
 #include "call.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
-s32 Battle_WaitMode0();
-s32 Func_02001344();
-s32 Func_02001418();
-s32 Func_02001454();
-s32 Func_020051ac();
-s32 Func_020051b4();
-s32 Func_0200520c();
-s32 Func_0200524c();
-s32 Func_0200525c();
-s32 Func_0200528c();
-s32 Func_02005294();
-s32 Func_020052a4();
-s32 Func_020052b4();
-s32 Func_020052bc();
-s32 Func_020052c4();
-s32 Func_02005324();
-s32 Func_02005334();
-s32 GameFlag_SetBit();
-s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
-s32 Motion_CamBounds();
-s32 Motion_SetVarCbAndRefresh();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_EnableActionAndResetMotion();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 ObjectMotion_ResetAndSetPosition();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetVariantCallback();
-s32 Object_AttachWorkTargetToObject();
-s32 Object_GetById();
-s32 Object_LinkObjectAndSetCallback();
-s32 Object_SetModeById();
-s32 UiText_OpenMessageAtObject();
+s32       Battle_WaitMode0();
+s32       Func_02001344();
+s32       Func_02001418();
+s32       Func_02001454();
+s32       Func_020051ac();
+s32       Func_020051b4();
+s32       Func_0200520c();
+s32       Func_0200524c();
+s32       Func_0200525c();
+s32       Func_0200528c();
+s32       Func_02005294();
+s32       Func_020052a4();
+s32       Func_020052b4();
+s32       Func_020052bc();
+s32       Func_020052c4();
+s32       Func_02005324();
+s32       Func_02005334();
+s32       GameFlag_SetBit();
+s32       GameFlag_Test();
+s32       Inventory_PromptAndSetObjectMode();
+s32       Motion_CamBounds();
+s32       Motion_SetVarCbAndRefresh();
+s32       ObjectDispatch_SetSingleChildFlags();
+s32       ObjectMotion_ArmCallback();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       ObjectMotion_CommitPositionAndActivate();
+s32       ObjectMotion_EnableActionAndResetMotion();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_OffsetPositionAndReset();
+s32       ObjectMotion_ResetAndSetPosition();
+s32       ObjectMotion_SetPositionAndReset();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_SetVariantCallback();
+s32       Object_AttachWorkTargetToObject();
+s32       Object_GetById();
+s32       Object_LinkObjectAndSetCallback();
+s32       Object_SetModeById();
+s32       UiText_OpenMessageAtObject();
 extern u8 MsgGaroh14[];
 extern u8 gPartyState[];
 
@@ -124,12 +129,14 @@ void Func_02002694(void)
     Call1(Battle_WaitMode0, 20);
     Func_0200528c(9, 0x109, 30);
     Call3(Func_0200525c, 9, 0, 0);
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     goto L_0200a846;
 L_0200a818:;
     Call1(Battle_WaitMode0, 30);
     Func_0200528c(9, 0x109, 30);
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     Call3(Func_0200525c, 9, 0, 0);
 L_0200a846:;
     Call3(Func_0200525c, 8, 0, 0);
@@ -323,13 +330,15 @@ L_0200ac86:;
         asm volatile("" : "+l"(a0));
         Func_0200525c(a0, 0, 0);
     }
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     goto L_0200ad16;
 L_0200ace6:;
     Call1(Battle_WaitMode0, 30);
     Call2(Motion_SetVarCbAndRefresh, 10, 2);
     Call1(Battle_WaitMode0, 10);
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     Call3(Func_0200525c, 10, 0, 0);
 L_0200ad16:;
     Call2(Motion_SetVarCbAndRefresh, 8, 2);
@@ -428,7 +437,8 @@ L_0200ae8e:;
     Call2(Motion_SetVarCbAndRefresh, 5, 2);
     Call1(Battle_WaitMode0, 20);
     Call3(Func_0200525c, 5, 0, 0);
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     goto L_0200af08;
 L_0200aed2:;
     Call1(Battle_WaitMode0, 30);
@@ -440,7 +450,8 @@ L_0200aed2:;
     }
     Call1(Battle_WaitMode0, 20);
     Call1(Battle_WaitMode0, 20);
-    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) = (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+    *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
+        (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
     Call3(Func_0200525c, 5, 0, 0);
 L_0200af08:;
     Call3(ObjectMotion_ArmCallback, 10, 0xe000, 0);

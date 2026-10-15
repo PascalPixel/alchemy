@@ -45,243 +45,243 @@ typedef void (*SoundCommand)(struct SoundPlayer *player, struct SoundTrack *trac
 
 struct SoundVoice
 {
-	u8			kind;
-	u8			baseKey;
-	u8			length;
-	u8			panOrSweep;
-	const void *target;
-	u8			attack;
-	u8			decay;
-	u8			sustain;
-	u8			release;
+    u8          kind;
+    u8          baseKey;
+    u8          length;
+    u8          panOrSweep;
+    const void *target;
+    u8          attack;
+    u8          decay;
+    u8          sustain;
+    u8          release;
 };
 
 struct SoundNote
 {
-	u8				   state;
-	u8				   kind;
-	u8				   outRight;
-	u8				   outLeft;
-	u8				   unk04[2];
-	u8				   sustain;
-	u8				   unk07[3];
-	u8				   peak;
-	u8				   unk0b[0x0e];
-	u8				   sustainLevel;
-	u8				   unk1a;
-	u8				   panBits;
-	u8				   channelBits;
-	u8				   unk1d[0x0f];
-	struct SoundTrack *track;
-	struct SoundNote  *prev;
-	struct SoundNote  *next;
-	u8				   unk38[8];
+    u8                 state;
+    u8                 kind;
+    u8                 outRight;
+    u8                 outLeft;
+    u8                 unk04[2];
+    u8                 sustain;
+    u8                 unk07[3];
+    u8                 peak;
+    u8                 unk0b[0x0e];
+    u8                 sustainLevel;
+    u8                 unk1a;
+    u8                 panBits;
+    u8                 channelBits;
+    u8                 unk1d[0x0f];
+    struct SoundTrack *track;
+    struct SoundNote  *prev;
+    struct SoundNote  *next;
+    u8                 unk38[8];
 };
 
 struct CgbNote
 {
-	u8	 state;
-	u8	 kind;
-	u8	 outRight;
-	u8	 outLeft;
-	u8	 attack;
-	u8	 decay;
-	u8	 sustain;
-	u8	 release;
-	u8	 key;
-	u8	 level;
-	u8	 peak;
-	u8	 counter;
-	u8	 echoLevel;
-	u8	 echoLength;
-	u8	 unk0e[0x0b];
-	u8	 sustainLevel;
-	u8	 trigger;
-	u8	 panBits;
-	u8	 channelBits;
-	u8	 modified;
-	u8	 length;
-	u8	 sweep;
-	u32	 frequency;
-	u32 *wave;
-	u32 *loadedWave;
-	u8	 unk2c[0x14];
+    u8   state;
+    u8   kind;
+    u8   outRight;
+    u8   outLeft;
+    u8   attack;
+    u8   decay;
+    u8   sustain;
+    u8   release;
+    u8   key;
+    u8   level;
+    u8   peak;
+    u8   counter;
+    u8   echoLevel;
+    u8   echoLength;
+    u8   unk0e[0x0b];
+    u8   sustainLevel;
+    u8   trigger;
+    u8   panBits;
+    u8   channelBits;
+    u8   modified;
+    u8   length;
+    u8   sweep;
+    u32  frequency;
+    u32 *wave;
+    u32 *loadedWave;
+    u8   unk2c[0x14];
 };
 
 enum CgbNoteState
 {
-	CGB_NOTE_PHASE = 0x03,
-	CGB_NOTE_ECHO = 0x04,
-	CGB_NOTE_STOP = 0x40,
-	CGB_NOTE_START = 0x80,
-	CGB_NOTE_ON = CGB_NOTE_START | CGB_NOTE_STOP | CGB_NOTE_ECHO | CGB_NOTE_PHASE
+    CGB_NOTE_PHASE = 0x03,
+    CGB_NOTE_ECHO = 0x04,
+    CGB_NOTE_STOP = 0x40,
+    CGB_NOTE_START = 0x80,
+    CGB_NOTE_ON = CGB_NOTE_START | CGB_NOTE_STOP | CGB_NOTE_ECHO | CGB_NOTE_PHASE
 };
 
 enum CgbNotePhase
 {
-	CGB_PHASE_RELEASE,
-	CGB_PHASE_SUSTAIN,
-	CGB_PHASE_DECAY,
-	CGB_PHASE_ATTACK
+    CGB_PHASE_RELEASE,
+    CGB_PHASE_SUSTAIN,
+    CGB_PHASE_DECAY,
+    CGB_PHASE_ATTACK
 };
 
 enum CgbNoteModified
 {
-	CGB_NOTE_VOLUME_DIRTY = 1,
-	CGB_NOTE_PITCH_DIRTY = 2
+    CGB_NOTE_VOLUME_DIRTY = 1,
+    CGB_NOTE_PITCH_DIRTY = 2
 };
 
 enum SoundTrackFlag
 {
-	SOUND_TRACK_VOLUME_DIRTY = 1,
-	SOUND_TRACK_UPDATE_VOLUME = 3,
-	SOUND_TRACK_PITCH_DIRTY = 4,
-	SOUND_TRACK_UPDATE_PITCH = 12,
-	SOUND_TRACK_RESET = 0x40,
-	SOUND_TRACK_ACTIVE = 0x80
+    SOUND_TRACK_VOLUME_DIRTY = 1,
+    SOUND_TRACK_UPDATE_VOLUME = 3,
+    SOUND_TRACK_PITCH_DIRTY = 4,
+    SOUND_TRACK_UPDATE_PITCH = 12,
+    SOUND_TRACK_RESET = 0x40,
+    SOUND_TRACK_ACTIVE = 0x80
 };
 
 enum SoundPlayerFlag
 {
-	SOUND_PLAYER_PAUSED = 0x80000000
+    SOUND_PLAYER_PAUSED = 0x80000000
 };
 
 enum SoundTrackWorkOperation
 {
-	SOUND_WORK_SET = 0,
-	SOUND_WORK_ADD,
-	SOUND_WORK_SUBTRACT,
-	SOUND_WORK_COPY,
-	SOUND_WORK_ADD_BYTE,
-	SOUND_WORK_SUBTRACT_BYTE,
-	SOUND_WORK_EQUAL,
-	SOUND_WORK_NOT_EQUAL,
-	SOUND_WORK_GREATER,
-	SOUND_WORK_GREATER_EQUAL,
-	SOUND_WORK_LESS_EQUAL,
-	SOUND_WORK_LESS,
-	SOUND_WORK_EQUAL_BYTE,
-	SOUND_WORK_NOT_EQUAL_BYTE,
-	SOUND_WORK_GREATER_BYTE,
-	SOUND_WORK_GREATER_EQUAL_BYTE,
-	SOUND_WORK_LESS_EQUAL_BYTE,
-	SOUND_WORK_LESS_BYTE
+    SOUND_WORK_SET = 0,
+    SOUND_WORK_ADD,
+    SOUND_WORK_SUBTRACT,
+    SOUND_WORK_COPY,
+    SOUND_WORK_ADD_BYTE,
+    SOUND_WORK_SUBTRACT_BYTE,
+    SOUND_WORK_EQUAL,
+    SOUND_WORK_NOT_EQUAL,
+    SOUND_WORK_GREATER,
+    SOUND_WORK_GREATER_EQUAL,
+    SOUND_WORK_LESS_EQUAL,
+    SOUND_WORK_LESS,
+    SOUND_WORK_EQUAL_BYTE,
+    SOUND_WORK_NOT_EQUAL_BYTE,
+    SOUND_WORK_GREATER_BYTE,
+    SOUND_WORK_GREATER_EQUAL_BYTE,
+    SOUND_WORK_LESS_EQUAL_BYTE,
+    SOUND_WORK_LESS_BYTE
 };
 
 struct SoundTrack
 {
-	u8				  flags;
-	u8				  unk01[7];
-	u8				  pitchHi;
-	u8				  pitchLo;
-	s8				  keyOffsetA;
-	s8				  keyOffsetB;
-	s8				  tune;
-	u8				  fine;
-	s8				  bend;
-	u8				  bendRange;
-	u8				  outVolumeA;
-	u8				  outVolumeB;
-	u8				  volume;
-	u8				  volumeScale;
-	s8				  pan;
-	s8				  panOffset;
-	s8				  modAmount;
-	u8				  modDepth;
-	u8				  modTarget;
-	u8				  lfoSpeed;
-	u8				  lfoPhase;
-	u8				  unk1b[3];
-	u8				  tailLevel;
-	u8				  tailLength;
-	struct SoundNote *notes;
-	struct SoundVoice voice;
-	u8				  unk30[0x10];
-	const u8		 *cursor;
-	u8				  unk44[0x0c];
+    u8                flags;
+    u8                unk01[7];
+    u8                pitchHi;
+    u8                pitchLo;
+    s8                keyOffsetA;
+    s8                keyOffsetB;
+    s8                tune;
+    u8                fine;
+    s8                bend;
+    u8                bendRange;
+    u8                outVolumeA;
+    u8                outVolumeB;
+    u8                volume;
+    u8                volumeScale;
+    s8                pan;
+    s8                panOffset;
+    s8                modAmount;
+    u8                modDepth;
+    u8                modTarget;
+    u8                lfoSpeed;
+    u8                lfoPhase;
+    u8                unk1b[3];
+    u8                tailLevel;
+    u8                tailLength;
+    struct SoundNote *notes;
+    struct SoundVoice voice;
+    u8                unk30[0x10];
+    const u8         *cursor;
+    u8                unk44[0x0c];
 };
 
 struct SequenceHeader
 {
-	u8						 trackCount;
-	u8						 unk01;
-	u8						 priority;
-	u8						 mode;
-	const struct SoundVoice *voices;
-	const u8				*tracks[1];
+    u8                       trackCount;
+    u8                       unk01;
+    u8                       priority;
+    u8                       mode;
+    const struct SoundVoice *voices;
+    const u8                *tracks[1];
 };
 
 struct SoundPlayer
 {
-	const struct SequenceHeader *header;
-	u32							 status;
-	u8							 trackCount;
-	u8							 priority;
-	u8							 unk0a;
-	u8							 checkPriority;
-	u32							 ticks;
-	u8							 unk10[8];
-	u8							*workBytes;
-	u16							 tempo;
-	u16							 tempoScale;
-	u16							 tempoStep;
-	u16							 tempoCount;
-	u16							 fadePeriod;
-	u16							 fadeCounter;
-	u16							 fadeVolume;
-	u8							 unk2a[2];
-	struct SoundTrack			*tracks;
-	const struct SoundVoice		*voices;
-	u32							 lock;
-	void (*nextTick)(struct SoundPlayer *player);
-	struct SoundPlayer *nextTickPlayer;
+    const struct SequenceHeader *header;
+    u32                          status;
+    u8                           trackCount;
+    u8                           priority;
+    u8                           unk0a;
+    u8                           checkPriority;
+    u32                          ticks;
+    u8                           unk10[8];
+    u8                          *workBytes;
+    u16                          tempo;
+    u16                          tempoScale;
+    u16                          tempoStep;
+    u16                          tempoCount;
+    u16                          fadePeriod;
+    u16                          fadeCounter;
+    u16                          fadeVolume;
+    u8                           unk2a[2];
+    struct SoundTrack           *tracks;
+    const struct SoundVoice     *voices;
+    u32                          lock;
+    void (*nextTick)(struct SoundPlayer *player);
+    struct SoundPlayer *nextTickPlayer;
 };
 
 struct SoundWork
 {
-	u32				lock;
-	/* FAKEMATCH: volatile steers library C only: without it AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23. */
-	volatile u8		transferCountdown;
-	u8				reverb;
-	u8				pcmNoteCount;
-	u8				volume;
-	u8				rate;
-	u8				unk09;
-	u8				cgbTick;
-	u8				transferPeriod;
-	u8				maxLines;
-	u8				unk0d[3];
-	u32				frameSamples;
-	u32				outputRate;
-	u32				rateStep;
-	struct CgbNote *cgbNotes;
-	void (*tick)(struct SoundPlayer *player);
-	struct SoundPlayer *tickPlayer;
-	void (*cgbUpdate)(void);
-	void (*cgbMute)(u8 channel);
-	s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine);
-	SoundCommand *commands;
-	void (*noteOn)(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
-	void (*unk3c)(void);
-	u8				 unk40[0x10];
-	struct SoundNote pcmNotes[12];
-	s8				 buffers[2][0x630];
+    u32 lock;
+    /* FAKEMATCH: volatile steers library C only: without it AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23. */
+    volatile u8     transferCountdown;
+    u8              reverb;
+    u8              pcmNoteCount;
+    u8              volume;
+    u8              rate;
+    u8              unk09;
+    u8              cgbTick;
+    u8              transferPeriod;
+    u8              maxLines;
+    u8              unk0d[3];
+    u32             frameSamples;
+    u32             outputRate;
+    u32             rateStep;
+    struct CgbNote *cgbNotes;
+    void (*tick)(struct SoundPlayer *player);
+    struct SoundPlayer *tickPlayer;
+    void (*cgbUpdate)(void);
+    void (*cgbMute)(u8 channel);
+    s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine);
+    SoundCommand *commands;
+    void (*noteOn)(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
+    void (*unk3c)(void);
+    u8               unk40[0x10];
+    struct SoundNote pcmNotes[12];
+    s8               buffers[2][0x630];
 };
 
 struct PlayerSlot
 {
-	struct SoundPlayer *player;
-	struct SoundTrack  *tracks;
-	u8					trackCount;
-	u8					unk09;
-	u16					checkPriority;
+    struct SoundPlayer *player;
+    struct SoundTrack  *tracks;
+    u8                  trackCount;
+    u8                  unk09;
+    u16                 checkPriority;
 };
 
 struct SongEntry
 {
-	const struct SequenceHeader *header;
-	u16							 slot;
-	u16							 unk06;
+    const struct SequenceHeader *header;
+    u16                          slot;
+    u16                          unk06;
 };
 
 LAYOUT_SIZE_GUARD(SoundVoice_Size, struct SoundVoice, 12);
@@ -315,7 +315,7 @@ void MusicTrack_ClearModulation(struct SoundTrack *track);
 
 extern const struct PlayerSlot gSound_PlayerSlots[];
 extern const struct SongEntry  gSound_SongTable[];
-extern SoundCommand			   gSound_CommandTable[36];
-extern const SoundCommand	   gSound_ExtendedCommandTable[];
+extern SoundCommand            gSound_CommandTable[36];
+extern const SoundCommand      gSound_ExtendedCommandTable[];
 
 #endif

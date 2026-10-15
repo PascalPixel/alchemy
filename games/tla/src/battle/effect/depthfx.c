@@ -2,30 +2,34 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-struct DepthPart {
+struct DepthPart
+{
     u8 unk00[9];
     u8 unk09_0 : 2;
     u8 priority : 2;
     u8 unk09_4 : 4;
 };
 
-struct DepthMapBase {
-    u8 unk00[4];
+struct DepthMapBase
+{
+    u8  unk00[4];
     s32 base;
 };
 
-struct DepthScroll {
+struct DepthScroll
+{
     s32 unk00;
     s32 offset;
 };
 
-struct DepthMap {
+struct DepthMap
+{
     struct DepthMapBase *base;
-    u8 unk04[0xe0];
-    struct DepthScroll scroll;
+    u8                   unk04[0xe0];
+    struct DepthScroll   scroll;
 };
 
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32  Render_ProjectPoint(s32 *point, s32 *screen);
 void Func_080eb01c(void *work);
 
 void Func_080dba44(void)

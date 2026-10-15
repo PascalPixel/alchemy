@@ -2,7 +2,8 @@
 #include "dma.h"
 #include "io_reg.h"
 
-struct OamEntry {
+struct OamEntry
+{
     u32 y : 8;
     u32 affine : 2;
     u32 mode : 2;

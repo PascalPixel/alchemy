@@ -3,13 +3,13 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_020056b4(struct ObjectRuntime *object);
-void Func_020056bc(void);
-void Func_0200580c(s32 value);
-void Func_02005854(s32 sound);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void Battle_WaitMode0(s32 frames);
+void                  Func_020056b4(struct ObjectRuntime *object);
+void                  Func_020056bc(void);
+void                  Func_0200580c(s32 value);
+void                  Func_02005854(s32 sound);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void                  Battle_WaitMode0(s32 frames);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration)
 {
@@ -36,7 +36,7 @@ void Func_02001728(struct ObjectRuntime *actor)
 void Func_0200176c(void)
 {
     struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
-    s32 speed;
+    s32                   speed;
 
     Func_020056b4(actor);
     Func_0200580c(0);

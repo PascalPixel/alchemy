@@ -19,7 +19,8 @@ void Func_02001fb4(s32 *position, s32 speed, s32 mode)
 {
     struct ObjectRuntime *object = Func_02005498_(366, position[0], position[1], position[2]);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->bounce = 0;
         object->gravity = 0;
         object->unk4c = speed;

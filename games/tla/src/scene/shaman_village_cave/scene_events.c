@@ -36,7 +36,8 @@ void Func_0200039c(void)
     ((void (*)())Func_02001080)();
     Call1((void (*)())Func_020011e0, 0);
     result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
-    if (result0 != 0) goto L_020083c4;
+    if (result0 != 0)
+        goto L_020083c4;
     Call1((void (*)())GameFlag_ClearBit, 0xa73);
 L_020083c4:
     ((void (*)())Func_02001088)();

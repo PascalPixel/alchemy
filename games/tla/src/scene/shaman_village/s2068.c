@@ -1,8 +1,8 @@
 #include "shaman_village.h"
 
 struct ShamanVillageObject *Func_02001fec(void);
-void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void                        DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
+void                        Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 
 extern const u8 gData_02004cfc[];
 extern const u8 gData_02004d40[];
@@ -17,7 +17,7 @@ void Func_02002068(void)
 {
     struct ShamanVillageObject *rod;
     struct ShamanVillageObject *object;
-    s32 angle;
+    s32                         angle;
 
     Func_020048c4();
     Func_02004a24(0);
@@ -152,22 +152,22 @@ void Func_02002068(void)
         Battle_WaitMode0(10);
         DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
         Battle_WaitMode0(30);
-    /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
-    SHAMAN_VILLAGE_EMOTE(16, 262, 20)
-    ShamanVillage_ObjTurn(16, 0);
-    ShamanVillage_MessagePut(16, 0);
-    ShamanVillage_ObjTurn(17, 0x8000);
-    Motion_SetModeAndWaitAnimation(17, 3);
-    /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
-    SHAMAN_VILLAGE_EMOTE(15, 264, 40)
-    Motion_SetModeAndWaitAnimation(15, 3);
-    ShamanVillage_ObjArm(17, 0x4000, 0);
-    ShamanVillage_ObjArm(16, 0x4000, 0);
-    ShamanVillage_ObjTurn(15, 0x4000);
-    ShamanVillage_MessagePut(15, 0);
-    Object_SetModeById(15, 3);
-    ShamanVillage_MessagePut(15, 0);
-    ShamanVillage_CamSpeed(0x6666, 0xccc);
+        /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
+        SHAMAN_VILLAGE_EMOTE(16, 262, 20)
+        ShamanVillage_ObjTurn(16, 0);
+        ShamanVillage_MessagePut(16, 0);
+        ShamanVillage_ObjTurn(17, 0x8000);
+        Motion_SetModeAndWaitAnimation(17, 3);
+        /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
+        SHAMAN_VILLAGE_EMOTE(15, 264, 40)
+        Motion_SetModeAndWaitAnimation(15, 3);
+        ShamanVillage_ObjArm(17, 0x4000, 0);
+        ShamanVillage_ObjArm(16, 0x4000, 0);
+        ShamanVillage_ObjTurn(15, 0x4000);
+        ShamanVillage_MessagePut(15, 0);
+        Object_SetModeById(15, 3);
+        ShamanVillage_MessagePut(15, 0);
+        ShamanVillage_CamSpeed(0x6666, 0xccc);
         ShamanVillage_CamMove(0xb40000, 0x200000, z, 1);
     }
     object = Object_GetById(16);
@@ -185,7 +185,8 @@ void Func_02002068(void)
     ObjectMotion_EnableActionAndSetCallback(17, gData_02004e5c);
     ObjectMotion_EnableActionAndSetCallback(16, gData_02004eac);
     Engine_AudioPlayCue(78);
-    do {
+    do
+    {
         WaitFrames(1);
     } while (object->unk63 == 0);
     ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);

@@ -11,7 +11,8 @@ void Func_020032c4(void)
 void Func_020032f4(void)
 {
     Func_02003820(gData_0200478e);
-    if (GameFlag_Test(0x20b)) {
+    if (GameFlag_Test(0x20b))
+    {
         Func_020006ac();
         WaitFrames(10);
     }

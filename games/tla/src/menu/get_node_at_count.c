@@ -11,12 +11,12 @@
 //--------------------------------------------------------------------------
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st)
 {
-	struct NodeChainNode *node = st->node;
-	s32					  i;
+    struct NodeChainNode *node = st->node;
+    s32                   i;
 
-	for (i = 0; i != st->count; ++i)
-	{
-		node = node->next;
-	}
-	return node;
+    for (i = 0; i != st->count; ++i)
+    {
+        node = node->next;
+    }
+    return node;
 }

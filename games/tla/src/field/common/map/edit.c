@@ -9,8 +9,8 @@
 void Map_SetWorkFlagBits9To11(u32 v)
 {
     struct MapWork *state = Ram_HeapSlots->mapWork;
-    u32 mask = v & 0xe00;
-    u32 flags = state->flags;
+    u32             mask = v & 0xe00;
+    u32             flags = state->flags;
 
     flags = (flags & 0xf1ff) | mask;
     state->flags = flags;
@@ -18,7 +18,7 @@ void Map_SetWorkFlagBits9To11(u32 v)
 
 extern u8 gData_0202e000[];
 extern u8 gData_0202e002[];
-u32 Map_ReadEditU16(u8 **cursor);
+u32       Map_ReadEditU16(u8 **cursor);
 
 void Map_ApplySetFlagEdits(void)
 {
@@ -31,7 +31,8 @@ next:
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
         return;
-    if (GameFlag_Test(entry & 0xfff) != 0) {
+    if (GameFlag_Test(entry & 0xfff) != 0)
+    {
         srcX = *cursor++;
         srcY = *cursor++;
         dstX = *cursor++;
@@ -42,7 +43,9 @@ next:
             Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
         else
             Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
-    } else {
+    }
+    else
+    {
         cursor += 6;
     }
     goto next;
@@ -76,7 +79,7 @@ void Map_SetFlagAndApplyAttributeEdits(s32 flag)
 
 extern u8 gData_0202e000[];
 extern u8 gData_0202e002[];
-u32 Map_ReadEditU16(u8 **cursor);
+u32       Map_ReadEditU16(u8 **cursor);
 
 void Map_ApplyFlagEdits(s32 flag, s32 attributes)
 {
@@ -89,7 +92,8 @@ next:
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
         return;
-    if ((entry & 0xfff) == flag) {
+    if ((entry & 0xfff) == flag)
+    {
         srcX = *cursor++;
         srcY = *cursor++;
         dstX = *cursor++;
@@ -100,14 +104,16 @@ next:
             Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
         else
             Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
-    } else {
+    }
+    else
+    {
         cursor += 6;
     }
     goto next;
 }
 
 extern const u16 gData_0802f380[][6];
-extern char ResourceId_Map000;
+extern char      ResourceId_Map000;
 
 void Map_GetHeaderSize(s32 map, s32 *size)
 {
@@ -128,17 +134,18 @@ void Map_GetHeaderSize(s32 map, s32 *size)
         size[3] = header[3];
 }
 
-struct MapHeader {
-    u8 unk00[44];
+struct MapHeader
+{
+    u8  unk00[44];
     s32 cells;
     s32 shapes;
 };
 extern u8 gMapShapeGrid[];
-void Tilemap_ConvertBuffer(void);
+void      Tilemap_ConvertBuffer(void);
 
 void Map_LoadCellsAndShapes(void)
 {
-    u8 *source;
+    u8               *source;
     struct MapHeader *header = Resource_GetTableEntry(
         *(const u16 *)(gPartyState.map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
 

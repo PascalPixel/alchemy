@@ -8,10 +8,11 @@
 #include "system.h"
 #include "io_reg.h"
 
-struct BattleFxScene {
-    u8 unk00[0x50];
+struct BattleFxScene
+{
+    u8                unk00[0x50];
     struct EffectSlot slots[24];
-    u8 unk710[0xe4];
+    u8                unk710[0xe4];
 };
 
 #define BATTLE_FX_SLOT 224
@@ -19,13 +20,14 @@ struct BattleFxScene {
 void BattleFx_UpdateAllSlots(void)
 {
     struct BattleFxScene *scene;
-    struct EffectSlot *slot;
-    s32 remainingSlots;
+    struct EffectSlot    *slot;
+    s32                   remainingSlots;
 
     scene = Ram_HeapSlots->effectWork;
     remainingSlots = 0x17;
     slot = scene->slots;
-    do {
+    do
+    {
         remainingSlots -= 1;
         EffectSlot_Update(slot);
         slot++;
@@ -46,11 +48,12 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
     struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-    struct EffectSlot *slot;
-    s32 i;
+    struct EffectSlot    *slot;
+    s32                   i;
 
     Scheduler_RemoveCallback((u32)BattleFx_UpdateAllSlots);
-    for (i = 0; i < 24; i++) {
+    for (i = 0; i < 24; i++)
+    {
         slot = &scene->slots[i];
         if (slot->active != 0)
             BattleFx_ClearOwnedSlot(slot);

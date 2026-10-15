@@ -10,7 +10,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-s32 GameFlag_Test(s32);
+s32  GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index)
@@ -18,7 +18,8 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
     s32 entry;
 
     entry = 0;
-    if (group <= 3 && index <= 19) {
+    if (group <= 3 && index <= 19)
+    {
         entry = group * 20 + index;
     }
     return gDjinn_Definitions[entry];
@@ -37,27 +38,32 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         return -1;
 
     result = Party_CountActiveOwners();
-    if (bestNo < result) {
+    if (bestNo < result)
+    {
         struct PartyState *party = &gPartyState;
 
         owners = party->activeOwners;
         count = result;
-        do {
+        do
+        {
             struct OwnerDjinnState *state = UnitGet(*owners);
 
-            if (state->counts.banks.owned[index] <= 9) {
+            if (state->counts.banks.owned[index] <= 9)
+            {
                 u8 *p = state->counts.banks.owned;
                 s32 value = 0;
                 s32 i = 3;
 
-                do {
+                do
+                {
                     u8 byte = *p;
                     p++;
                     value += byte;
                     i--;
                 } while (i >= 0);
 
-                if (bestVal > value) {
+                if (bestVal > value)
+                {
                     bestVal = value;
                     bestNo = *owners;
                 }
@@ -79,7 +85,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state = UnitGet(owner);
-    u32 owned;
+    u32                     owned;
 
     if (state->counts.slots[index] > 9)
         return -1;

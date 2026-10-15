@@ -2,24 +2,25 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-extern char SceneId_Ov6A6Room2;
-extern char MsgLoho23;
-extern char MsgLoho27;
+extern char     SceneId_Ov6A6Room2;
+extern char     MsgLoho23;
+extern char     MsgLoho27;
 extern const u8 gData_02001900[];
 extern const u8 gData_02001a80[];
 
 void Battle_WaitMode0(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+s32  Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 void Func_020012b0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020012b8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02001380(s32 message);
 void Func_02001390(s32 id, s32 flags);
-s32 Func_02001420(void);
+s32  Func_02001420(void);
 
-struct EventWork15a {
-    u8 unk000[0x15a];
+struct EventWork15a
+{
+    u8  unk000[0x15a];
     u16 flag;
 };
 
@@ -46,10 +47,13 @@ void Func_0200012c(s32 actor)
 
     Func_02001380(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02001420(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02001420(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02001380(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02001380(msg + 2);
     }

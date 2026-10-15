@@ -9,12 +9,12 @@
 #include "system.h"
 #include "types.h"
 
-struct UiPanel {
-    u8 unk00[0xc];
+struct UiPanel
+{
+    u8  unk00[0xc];
     s16 x;
     s16 y;
 };
-
 
 void DjinnMenu_DrawFirstPage(struct UiPanel *panel)
 {

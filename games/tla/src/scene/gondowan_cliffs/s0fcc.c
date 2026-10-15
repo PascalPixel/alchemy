@@ -3,32 +3,33 @@
 #include "call.h"
 #include "object_runtime.h"
 
-struct GondowanCliffsWork {
-    s16 entry;
-    u16 value;
-    u8 unk004[0x1c0];
+struct GondowanCliffsWork
+{
+    s16   entry;
+    u16   value;
+    u8    unk004[0x1c0];
     void *block;
 };
 
-extern u8 gData_020023c4[];
+extern u8       gData_020023c4[];
 extern const u8 gField_Tiles64D[];
 
-s32 GameFlag_Test(s32 flag);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Func_02001184(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
-void MemFree(void *block);
-void Scheduler_AddOrUpdateCallback();
-void Func_02000be4(void);
-void Func_02000dac(void);
-s32 Func_02001314(void);
+s32                   GameFlag_Test(s32 flag);
+void                 *Runtime_BumpAllocateAlternatePool(s32 size);
+void                  Func_02001184(const void *source, void *destination);
+s32                   Resource_FindFreeEntry(void);
+void                  VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void                  MemFree(void *block);
+void                  Scheduler_AddOrUpdateCallback();
+void                  Func_02000be4(void);
+void                  Func_02000dac(void);
+s32                   Func_02001314(void);
 struct ObjectRuntime *Object_GetById(s32 id);
 
 void Func_02000fcc(s32 unused, s32 value)
 {
     struct GondowanCliffsWork *work = (struct GondowanCliffsWork *)(gData_020023c4 + 0x188);
-    void *buffer;
+    void                      *buffer;
 
     if (!GameFlag_Test(0x109))
         Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);

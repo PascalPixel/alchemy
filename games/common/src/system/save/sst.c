@@ -11,13 +11,11 @@ s32 _call_via_r3(s32, u8 *, u8, s32);
 
 u16 EraseFlashChip(void)
 {
-    u8 savedCode[64];
-    u16 result;
+    u8   savedCode[64];
+    u16  result;
     s32 *status;
 
-    REG_WAITCNT =
-        (REG_WAITCNT & 0xFFFC) |
-        gFlash->wait[0];
+    REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;
@@ -31,25 +29,25 @@ u16 EraseFlashChip(void)
     status = (s32 *)&gFlash_Handler3;
     result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
 
-    REG_WAITCNT =
-        (REG_WAITCNT & 0xFFFC) | 3;
+    REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
     return result;
 }
 
 u16 EraseFlashSector(u16 sector)
 {
-    u8 savedCode[64];
-    u16 result;
-    u16 setting;
-    s32 *status;
+    u8                      savedCode[64];
+    u16                     result;
+    u16                     setting;
+    s32                    *status;
     const struct FlashType *chip;
-    volatile u16 *waitcnt;
-    volatile u8 *command;
-    volatile u8 *unlock;
-    volatile u8 *target;
+    volatile u16           *waitcnt;
+    volatile u8            *command;
+    volatile u8            *unlock;
+    volatile u8            *target;
 
-    if (sector > 15) {
+    if (sector > 15)
+    {
         return 0x80FF;
     }
 
@@ -95,32 +93,32 @@ extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 {
-    u8 ramCode[96];
-    u16 status;
-    u16 remaining;
-    u16 *sourceCode;
-    u16 *destinationCode;
-    u16 *counter;
-    u8 attempt;
-    u8 index;
-    u8 rounds;
+    u8                      ramCode[96];
+    u16                     status;
+    u16                     remaining;
+    u16                    *sourceCode;
+    u16                    *destinationCode;
+    u16                    *counter;
+    u8                      attempt;
+    u8                      index;
+    u8                      rounds;
     const struct FlashType *chip;
-    volatile u16 *waitcnt;
-    u16 setting;
-    u8 *destination;
+    volatile u16           *waitcnt;
+    u16                     setting;
+    u8                     *destination;
 
-    if (sector > 15) {
+    if (sector > 15)
+    {
         return 0x80FF;
     }
 
-    destination = (u8 *)((sector << gFlash->sector.shift)
-                         + 0x0E000000);
+    destination = (u8 *)((sector << gFlash->sector.shift) + 0x0E000000);
 
     sourceCode = (u16 *)((s32)CountRemainingErasedFlashBytes ^ 1);
     destinationCode = (u16 *)ramCode;
-    remaining = (u16)((s32)RunFlashEraseVerifier -
-                      (s32)CountRemainingErasedFlashBytes);
-    while (remaining != 0) {
+    remaining = (u16)((s32)RunFlashEraseVerifier - (s32)CountRemainingErasedFlashBytes);
+    while (remaining != 0)
+    {
         *destinationCode = *sourceCode;
         sourceCode++;
         destinationCode++;
@@ -128,26 +126,32 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
     }
 
     attempt = 0;
-    for (;;) {
+    for (;;)
+    {
         status = EraseFlashSector(sector);
-        if (status == 0) {
+        if (status == 0)
+        {
             status = RunFlashEraseVerifier(destination, ramCode + 1);
-            if (status == 0) {
+            if (status == 0)
+            {
                 break;
             }
         }
         attempt = attempt + 1;
-        if (attempt == 81) {
+        if (attempt == 81)
+        {
             return status;
         }
     }
 
     rounds = 1;
-    if (attempt != 0) {
+    if (attempt != 0)
+    {
         rounds = 6;
     }
     index = 1;
-    while (index <= rounds) {
+    while (index <= rounds)
+    {
         EraseFlashSector(sector);
         index = index + 1;
     }
@@ -161,9 +165,11 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 
     gFlashNumRemainingBytes = chip->sector.size;
     counter = &gFlashNumRemainingBytes;
-    while (*counter != 0) {
+    while (*counter != 0)
+    {
         status = ProgramFlashByte(source, destination);
-        if (status != 0) {
+        if (status != 0)
+        {
             break;
         }
         *counter = *counter - 1;
@@ -171,8 +177,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
         destination++;
     }
 
-    REG_WAITCNT =
-        (REG_WAITCNT & 0xFFFC) | 3;
+    REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
     return status;
 }
@@ -181,7 +186,8 @@ s32 CountRemainingErasedFlashBytes(u8 *ptr)
 {
     s32 remaining;
 
-    for (remaining = gFlash->sector.size; remaining != 0; remaining--) {
+    for (remaining = gFlash->sector.size; remaining != 0; remaining--)
+    {
         if (*ptr++ != 0xff)
             break;
     }

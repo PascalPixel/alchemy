@@ -3,17 +3,18 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct JupiterRoom8EventWork {
-    u8 unk000[0x1ac];
+struct JupiterRoom8EventWork
+{
+    u8  unk000[0x1ac];
     s32 screenEffect;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Func_02002248(s32 id);
-void Func_02000af0(s32 id);
-void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
-void Func_02002010(s32 x, s32 z, s32 a);
+void                  ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void                  Func_02002248(s32 id);
+void                  Func_02000af0(s32 id);
+void                  Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
+void                  Func_02002010(s32 x, s32 z, s32 a);
 
 s32 Func_02000110(void)
 {

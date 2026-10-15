@@ -9,7 +9,6 @@
 #include "types.h"
 #include "script.h"
 
-
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
     s32 result;

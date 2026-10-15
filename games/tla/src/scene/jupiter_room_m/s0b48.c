@@ -11,7 +11,7 @@ void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-s32 Func_02000a78(void);
+s32  Func_02000a78(void);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle)
 {
@@ -26,9 +26,9 @@ static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration)
 }
 
 /* FAKEMATCH: the angle passes through a block temporary: the native holds each run of equal angles in r5 (0x2000, then 0xc000), building the second while the third call is set up (a plain argument: differ 31 of 57). */
-#define PLACE(id, x, z, angle) \
-    { \
-        s32 angle_ = (angle); \
+#define PLACE(id, x, z, angle)                      \
+    {                                               \
+        s32 angle_ = (angle);                       \
         ObjPlace(id, (x) << 16, (z) << 16, angle_); \
     }
 

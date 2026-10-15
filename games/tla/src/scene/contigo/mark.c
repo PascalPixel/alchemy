@@ -1,6 +1,7 @@
 #include "types.h"
 
-struct ContigoObject {
+struct ContigoObject
+{
     u8 unk00[0x62];
     u8 unk62;
 };

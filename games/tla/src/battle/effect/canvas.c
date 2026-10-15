@@ -12,14 +12,14 @@
 // The battle effect work, as far as the canvas layer reads it.
 struct CanvasWork
 {
-    u8 unk0000[0x77a0];
+    u8  unk0000[0x77a0];
     s32 savedBg1X;
     s32 savedBg1Y;
     s32 shakeFrames;
-    u8 unk77ac[8];
+    u8  unk77ac[8];
     s32 fadeFrames;
     s32 fadeStep;
-    u8 unk77bc[0x12c];
+    u8  unk77bc[0x12c];
     s32 unk78e8;
 };
 
@@ -45,10 +45,11 @@ static __inline__ s32 ClearWords_(void *destination, s32 size)
 // starts fading.
 void BattleFx_OpenCanvasLayer(s32 bgControl)
 {
-    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
-    struct BattleWork *battle = Ram_HeapSlots->battleWork;
-    void *canvas = Ram_HeapSlots->battleFxWork[1];
-    struct BattleBackgroundView *display = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
+    struct CanvasWork           *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+    struct BattleWork           *battle = Ram_HeapSlots->battleWork;
+    void                        *canvas = Ram_HeapSlots->battleFxWork[1];
+    struct BattleBackgroundView *display =
+        (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
     s32 row;
     s32 col;
     s32 offset;
@@ -58,11 +59,11 @@ void BattleFx_OpenCanvasLayer(s32 bgControl)
     WaitFrames(1);
     {
         /* FAKEMATCH: the native loads the zero from the pool before it starts the register address, as in Func_08143bb8: pinned to the r3 it takes behind a barrier that holds r2. The plain store starts the address first (differ 2), as does the pin without its barrier. */
-        register u16 zero asm("r3") = 0;
+        register u16         zero asm("r3") = 0;
         struct IoWriteQueue *q;
-        u32 saved;
-        s32 count;
-        u16 *count_;
+        u32                  saved;
+        s32                  count;
+        u16                 *count_;
 
         /* FAKEMATCH: the barrier of the pin above. */
         __asm__("" : "+l"(zero) : : "r2");
@@ -140,8 +141,10 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
     BattleFx_BeginCanvasLayer(bg_control);
     REG_BG2CNT = bg_control | 0x4784;
     offset = 0;
-    for (row = 0; row != 16; row++) {
-        for (col = 0; col != 8; col++, offset += 2) {
+    for (row = 0; row != 16; row++)
+    {
+        for (col = 0; col != 8; col++, offset += 2)
+        {
             s32 tile;
             s16 pair;
 
@@ -149,7 +152,8 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
             pair = ((tile + 1) << 8) | tile;
             *(volatile s16 *)(0x06003800 + offset) = pair;
         }
-        for (col = 0; col != 8; col++, offset += 2) {
+        for (col = 0; col != 8; col++, offset += 2)
+        {
             *(volatile u16 *)(0x06003800 + offset) = 0;
         }
     }
@@ -164,8 +168,10 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
     BattleFx_BeginCanvasLayer(bg_control);
     REG_BG2CNT = bg_control | 0x4784;
     offset = 0;
-    for (row = 0; row != 16; row++) {
-        for (col = 0; col != 8; col++, offset += 2) {
+    for (row = 0; row != 16; row++)
+    {
+        for (col = 0; col != 8; col++, offset += 2)
+        {
             s32 tile;
             s16 pair;
 
@@ -173,7 +179,8 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
             pair = ((tile + 1) << 8) | tile;
             *(volatile s16 *)(0x06003800 + offset) = pair;
         }
-        for (col = 0; col != 8; col++, offset += 2) {
+        for (col = 0; col != 8; col++, offset += 2)
+        {
             *(volatile u16 *)(0x06003800 + offset) = 0xf0f;
         }
     }
@@ -185,7 +192,7 @@ void Func_08143bb8(void)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
-    s32 i;
+    s32                i;
 
     Audio_PlayCue(390);
     gBgScroll[1].x = work->savedBg1X;
@@ -226,7 +233,7 @@ void Func_08143bb8(void)
 void Func_08143d04(void)
 {
     struct BattleWork *battle;
-    s32 *flag;
+    s32               *flag;
 
     flag = &((struct BattleBackgroundView *)Ram_HeapSlots->transitionWork)->secondMode;
     battle = Ram_HeapSlots->battleWork;

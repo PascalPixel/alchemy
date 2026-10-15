@@ -1,28 +1,33 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Func_020028b4();
-s32 Func_020029cc();
-s32 Func_0200293c();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_ArmCallback();
-s32 Battle_WaitMode0();
-s32 Func_0200294c();
-s32 Object_SetModeById();
-s32 Func_02002964();
-s32 ObjectMotion_Launch();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 Party_SetFields1eeAnd1f0();
-s32 Party_SetFields1f2And1f4();
-s32 Func_020029a4();
-void Func_020028bc(void);
-extern u8 MsgWhyDoI[];
+s32         Func_020028b4();
+s32         Func_020029cc();
+s32         Func_0200293c();
+s32         ObjectMotion_SetPositionAndReset();
+s32         ObjectMotion_ArmCallback();
+s32         Battle_WaitMode0();
+s32         Func_0200294c();
+s32         Object_SetModeById();
+s32         Func_02002964();
+s32         ObjectMotion_Launch();
+s32         Motion_SetModeAndWaitAnimation();
+s32         ObjectMotion_SetSpeedParameters();
+s32         ObjectMotion_CommitPositionAndActivate();
+s32         ObjectMotion_OffsetPositionAndReset();
+s32         Party_SetFields1eeAnd1f0();
+s32         Party_SetFields1f2And1f4();
+s32         Func_020029a4();
+void        Func_020028bc(void);
+extern u8   MsgWhyDoI[];
 extern char SceneId_VenusEntrance;
-extern u8 gPartyState[];
+extern u8   gPartyState[];
 
 void Func_02001a2c(void)
 {

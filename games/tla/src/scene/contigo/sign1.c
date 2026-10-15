@@ -4,7 +4,7 @@
 void Func_0200406c(void);
 void Func_02004204(s32 a0);
 void Func_0200412c(s32 a0);
-s32 Func_0200414c(s32 a0, s32 a1);
+s32  Func_0200414c(s32 a0, s32 a1);
 void Func_02004074(void);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 

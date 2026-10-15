@@ -11,7 +11,8 @@ void ObjectDispatch_SetSpritePriority(struct DispatchObject *object, s32 priorit
 {
     struct FieldSprite *sprite;
 
-    if (object == NULL || object->kind != 1) {
+    if (object == NULL || object->kind != 1)
+    {
         return;
     }
     sprite = object->target.sprite;

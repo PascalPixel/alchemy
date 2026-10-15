@@ -12,9 +12,12 @@ s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1)
     multiplier = right;
     product = left;
     product *= multiplier;
-    if (product >= 0) {
+    if (product >= 0)
+    {
         adjusted = product;
-    } else {
+    }
+    else
+    {
         adjusted = product + 255;
     }
     return (s16)(adjusted >> 8);

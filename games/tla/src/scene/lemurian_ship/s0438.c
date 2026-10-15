@@ -4,14 +4,18 @@ extern const u8 gData_02002de8[];
 
 void Func_02000438(void)
 {
-    if (GameFlag_Test(0x982)) {
+    if (GameFlag_Test(0x982))
+    {
         struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
-        struct PartyState *party = &gPartyState;
-        struct LemurianShipObject *leader;
-        s32 x;
-        s32 cell;
+        struct PartyState            *party = &gPartyState;
+        struct LemurianShipObject    *leader;
+        s32                           x;
+        s32                           cell;
 
-        do { } while (0); /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+        do
+        {
+        } while (0);
         leader = Object_GetById(party->currentOwner);
         Func_02002c68();
         Func_02002da8(0);

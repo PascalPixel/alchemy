@@ -13,17 +13,17 @@
 extern u8 gData_020017b0[];
 extern u8 gData_02001860[];
 
-void Func_02000f14(s32, s32, s32);
-void Func_02000ebc(s32, s32);
-void Func_02000dac(s32, s32, s32, s32, s32, s32);
-void Func_02000e5c(s32, s32, s32);
-void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
-void Func_02000950(s32, s32, s32, s32);
-void Func_020009c0(s32, s32, s32, s32);
-void Func_02000a10(s32, s32, s32, s32, s32);
-void Func_02000c4c(struct ObjectRuntime *, void *);
-void Func_02000d4c(struct ObjectRuntime *);
-void GameFlag_SetBit(s32);
+void                  Func_02000f14(s32, s32, s32);
+void                  Func_02000ebc(s32, s32);
+void                  Func_02000dac(s32, s32, s32, s32, s32, s32);
+void                  Func_02000e5c(s32, s32, s32);
+void                  Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
+void                  Func_02000950(s32, s32, s32, s32);
+void                  Func_020009c0(s32, s32, s32, s32);
+void                  Func_02000a10(s32, s32, s32, s32, s32);
+void                  Func_02000c4c(struct ObjectRuntime *, void *);
+void                  Func_02000d4c(struct ObjectRuntime *);
+void                  GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 
 void Func_02000660(void)

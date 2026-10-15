@@ -1,17 +1,17 @@
 #include "kibombo.h"
 
-extern u8 gData_02006510[];
-extern u8 gData_020066d8[];
-extern u8 gData_020069a8[];
-extern u8 gData_02006a98[];
-extern u8 gData_02006cd8[];
-extern u8 gData_020064f8[];
-extern u8 gData_02006ef4[];
-extern u8 gData_020070d4[];
-extern u8 gData_02007434[];
-extern u8 gData_020074dc[];
-extern u8 gData_02007698[];
-extern u8 gData_02006ee8[];
+extern u8       gData_02006510[];
+extern u8       gData_020066d8[];
+extern u8       gData_020069a8[];
+extern u8       gData_02006a98[];
+extern u8       gData_02006cd8[];
+extern u8       gData_020064f8[];
+extern u8       gData_02006ef4[];
+extern u8       gData_020070d4[];
+extern u8       gData_02007434[];
+extern u8       gData_020074dc[];
+extern u8       gData_02007698[];
+extern u8       gData_02006ee8[];
 extern const u8 gData_02006324[];
 
 u8 *Func_0200012c(void)
@@ -26,7 +26,8 @@ u8 *Func_0200012c(void)
         return gData_020069a8;
     if (scene == (s32)&SceneId_Kibombo5)
         return gData_02006a98;
-    if (scene == (s32)&SceneId_Kibombo3) {
+    if (scene == (s32)&SceneId_Kibombo3)
+    {
         if (GameFlag_Test(0x8ee))
             gData_02006cd8[22] = 0;
         return gData_02006cd8;
@@ -105,9 +106,12 @@ s32 Func_020002e8(void)
 
 void Func_02000318(void)
 {
-    if (Func_020002e8()) {
+    if (Func_020002e8())
+    {
         Func_02005c84(17, 20);
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgTheWeaponsI);
@@ -118,9 +122,12 @@ void Func_02000318(void)
 
 void Func_02000350(void)
 {
-    if (Func_020002e8()) {
+    if (Func_020002e8())
+    {
         Func_02005c84(18, 21);
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgTheOnlyDefenses);
@@ -131,9 +138,12 @@ void Func_02000350(void)
 
 void Func_02000388(void)
 {
-    if (Func_020002e8()) {
+    if (Func_020002e8())
+    {
         Func_02005c84(19, 22);
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgIMSorryBut);
@@ -144,9 +154,12 @@ void Func_02000388(void)
 
 void Func_020003c0(void)
 {
-    if (Func_020002e8()) {
+    if (Func_020002e8())
+    {
         Func_02005c94(6, 23);
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgDonTWorryAbout);
@@ -157,9 +170,12 @@ void Func_020003c0(void)
 
 void Func_020003f8(void)
 {
-    if (Func_020002e8()) {
+    if (Func_020002e8())
+    {
         Func_02005c8c(25);
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgKibomboSPeace);
@@ -170,7 +186,8 @@ void Func_020003f8(void)
 
 void Func_0200042c(void)
 {
-    if (Kibombo_FlagCheck(0x9df)) {
+    if (Kibombo_FlagCheck(0x9df))
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         ObjectMotion_SetAngleToward(36, gPartyState.currentOwner, 0);
@@ -178,7 +195,9 @@ void Func_0200042c(void)
         Func_02005c8c(36);
         Kibombo_ObjArm(36, 0xb000, 0);
         Func_02005aa4();
-    } else {
+    }
+    else
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Func_02005b4c((s32)MsgOhOhMy);
@@ -237,7 +256,8 @@ void Func_02000590(s32 show, s32 first, u32 count)
 {
     u32 i;
 
-    for (i = 0; i < count;) {
+    for (i = 0; i < count;)
+    {
         u8 *flags = &Object_GetById(first + i)->priorityFlags;
         u32 next = i + 1;
 
@@ -324,7 +344,8 @@ void Func_02000734(void)
 {
     struct KibomboObject *object = Object_GetById(11);
 
-    if (object->x >> 20 == 6 && object->z >> 20 == 18) {
+    if (object->x >> 20 == 6 && object->z >> 20 == 18)
+    {
         Func_02005a9c();
         Func_02005c3c(0);
         Object_GetById(11)->motionFlags = 3;
@@ -392,12 +413,15 @@ void Func_02000978(void)
     Kibombo_ObjArm(gPartyState.currentOwner, 0x8000, 20);
     Func_02005b4c((s32)MsgItLooksLikeHas);
     UiText_OpenMessageAtObject(6, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+    {
         Kibombo_ObjArm(5, 0x4000, 10);
         Object_SetModeById(5, 3);
         Func_02005b64(5, 0);
         ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
-    } else {
+    }
+    else
+    {
         Kibombo_ObjArm(5, 0x4000, 10);
         Object_SetModeById(5, 4);
         ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;

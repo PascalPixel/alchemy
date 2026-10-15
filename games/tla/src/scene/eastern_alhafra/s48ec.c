@@ -3,27 +3,29 @@
 #include "field_event.h"
 
 struct FieldActor *Object_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 Func_02004c34(struct FieldActor *object);
-void Func_02004a0c(struct FieldActor *object, s32 mode);
+s32                GameFlag_Test(s32 flag);
+s32                Func_02004c34(struct FieldActor *object);
+void               Func_02004a0c(struct FieldActor *object, s32 mode);
 #include "map.h"
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer)
 {
     struct FieldActor *object = Object_GetById(id);
-    struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+    struct MapCell    *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
     cell += Func_02004c34(object);
-    if (GameFlag_Test(flag)) {
+    if (GameFlag_Test(flag))
+    {
         /* FAKEMATCH: the flags are read before the cell store and ORed into the register that holds 2, as the native does; as one |= the 0 for the cell is built before the read */
-        u8 flags = object->priorityFlags;
+        u8  flags = object->priorityFlags;
         s32 bits;
 
         cell->collisionCode = 0;
         bits = 2;
         bits |= flags;
         object->priorityFlags = bits;
-        switch (kind) {
+        switch (kind)
+        {
         case 0:
             Func_02004a0c(object, 2);
             break;
@@ -34,9 +36,12 @@ void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer)
             Func_02004a0c(object, 6);
             break;
         }
-    } else {
+    }
+    else
+    {
         cell->collisionCode = 255;
-        switch (kind) {
+        switch (kind)
+        {
         case 0:
             Func_02004a0c(object, 1);
             break;

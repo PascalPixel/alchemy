@@ -15,17 +15,20 @@ void Func_02000544(void)
 
 void Func_02000584(void)
 {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8                   *event = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(9);
-    s16 angle = object->angle;
+    s16                   angle = object->angle;
 
     Func_02002488();
     Func_02002590(0);
     BYTE_AT(object, 99) = 1;
-    if (*(s16 *)(event + 358) == 0) {
+    if (*(s16 *)(event + 358) == 0)
+    {
         ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
         Func_02002520(MsgRunningAroundIn);
-    } else {
+    }
+    else
+    {
         Func_02002520(MsgThereSALot);
     }
     Func_02002538(9, 0);
@@ -37,17 +40,20 @@ void Func_02000584(void)
 
 void Func_02000614(void)
 {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8                   *event = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(10);
-    s16 angle = object->angle;
+    s16                   angle = object->angle;
 
     Func_02002488();
     Func_02002590(0);
     BYTE_AT(object, 99) = 1;
-    if (*(s16 *)(event + 358) == 0) {
+    if (*(s16 *)(event + 358) == 0)
+    {
         ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
         Func_02002520(MsgThereSAGame);
-    } else {
+    }
+    else
+    {
         Func_02002520(MsgIOnceHeard);
     }
     Func_02002538(10, 0);

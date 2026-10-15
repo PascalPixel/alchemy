@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gSceneEntrances;
@@ -31,7 +30,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 extern u8 gData_02002fb8[];
-void Func_020029d0();
+void      Func_020029d0();
 
 void Func_02000054(void)
 {

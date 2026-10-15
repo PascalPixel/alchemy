@@ -6,21 +6,21 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02003e64();
-void Func_02003f7c();
-void Func_02003fa4();
-void Func_02003ffc();
-void ObjectDispatch_SetSingleChildFlags();
+void                  Battle_WaitMode0();
+void                  Event_FinishScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Func_02003e64();
+void                  Func_02003f7c();
+void                  Func_02003fa4();
+void                  Func_02003ffc();
+void                  ObjectDispatch_SetSingleChildFlags();
 struct ObjectRuntime *Object_GetById();
-void Object_SetModeById();
-void Func_02003f84();
+void                  Object_SetModeById();
+void                  Func_02003f84();
 
 void Func_02003620(void)
 {
-    s32 v5;
+    s32                   v5;
     struct ObjectRuntime *object0;
 
     ((void (*)())Func_02003e64)();

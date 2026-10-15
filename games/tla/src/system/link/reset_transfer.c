@@ -17,14 +17,15 @@ s32 SerialRuntime_GetActiveTransfers(void)
 void BattleLink_ResetTransferState(void)
 {
     struct SerialTransferState *state;
-    volatile u16 *ime;
-    u32 saved;
-    u32 zero;
+    volatile u16               *ime;
+    u32                         saved;
+    u32                         zero;
 
     state = &gSerialTransfer;
     ime = &REG_IME;
     /* FAKEMATCH: the one-pass block keeps the IME exchange before the zero and status constants. */
-    do {
+    do
+    {
         saved = *ime;
         *ime = (u16)ime;
     } while (0);

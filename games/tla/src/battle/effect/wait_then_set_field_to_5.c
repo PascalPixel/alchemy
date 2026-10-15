@@ -11,7 +11,6 @@
 #include "types.h"
 #include "battle_effect_work.h"
 
-
 void BattleFx_LongApproachThenSpark(struct BattleEffectArgument *effect)
 {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18, 0xc3333);

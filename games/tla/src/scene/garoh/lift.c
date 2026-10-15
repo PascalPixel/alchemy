@@ -3,7 +3,8 @@
 
 extern struct PartyState gPartyState;
 
-struct GarohEventWork {
+struct GarohEventWork
+{
     u8 unk000[0xca4];
     s8 fadeLock;
 };
@@ -19,7 +20,8 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object)
         register s32 arg asm("r0") = id;
         saved = arg;
     }
-    for (i = 16; i > 0; i--) {
+    for (i = 16; i > 0; i--)
+    {
         object->y -= 0x20000;
         Battle_WaitMode0(1);
     }
@@ -30,10 +32,10 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object)
 void Func_02000eb0(void)
 {
     struct ObjectRuntime *object = Object_GetById(8);
-    s32 x = object->x >> 20;
-    s32 raw;
-    s32 z;
-    s32 flag = 129;
+    s32                   x = object->x >> 20;
+    s32                   raw;
+    s32                   z;
+    s32                   flag = 129;
 
     raw = object->z;
     /* FAKEMATCH: the native starts the flag id 0x201, loads z and then finishes the id; without the barrier and the id built in two steps the id is shifted before the load (one reordered pair, differ 2). */
@@ -41,7 +43,8 @@ void Func_02000eb0(void)
     z = raw >> 20;
     flag <<= 1;
     flag += 255;
-    if (!Flag_IsSet(flag) && x == 10 && z == 29) {
+    if (!Flag_IsSet(flag) && x == 10 && z == 29)
+    {
         Func_02000e78(8, object);
         Flag_Set(0x201);
     }
@@ -50,10 +53,10 @@ void Func_02000eb0(void)
 void Func_02000eec(void)
 {
     struct ObjectRuntime *object = Object_GetById(9);
-    s32 x = object->x >> 20;
-    s32 raw;
-    s32 z;
-    s32 flag = 128;
+    s32                   x = object->x >> 20;
+    s32                   raw;
+    s32                   z;
+    s32                   flag = 128;
 
     raw = object->z;
     /* FAKEMATCH: the native starts the flag id 0x202, loads z and then finishes the id; without the barrier and the id built in two steps the id is shifted before the load (one reordered pair, differ 2). */
@@ -61,7 +64,8 @@ void Func_02000eec(void)
     z = raw >> 20;
     flag <<= 2;
     flag += 2;
-    if (!Flag_IsSet(flag) && x == 15 && z == 28) {
+    if (!Flag_IsSet(flag) && x == 15 && z == 28)
+    {
         Func_02000e78(9, object);
         Flag_Set(0x202);
     }
@@ -76,10 +80,11 @@ void Func_02000f28(void)
 void Func_02000f3c(void)
 {
     struct ObjectRuntime *object = Object_GetById(11);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32                   x = object->x >> 20;
+    s32                   z = object->z >> 20;
 
-    if (!Flag_IsSet(0x204) && x == 15 && z == 25) {
+    if (!Flag_IsSet(0x204) && x == 15 && z == 25)
+    {
         Func_02000e78(11, object);
         Flag_Set(0x204);
     }
@@ -162,7 +167,8 @@ s32 Func_0200108c(void)
 
 void Func_02001098(void)
 {
-    if (Flag_IsSet(0x310)) {
+    if (Flag_IsSet(0x310))
+    {
         if (Flag_IsSet(0x318))
             Func_020052cc(0x10003, 1);
         else
@@ -188,13 +194,17 @@ void Func_02001144(void)
 {
     struct GarohEventWork *work;
 
-    if (!Flag_IsSet(0x91b)) {
+    if (!Flag_IsSet(0x91b))
+    {
         Flag_Set(0x210);
-        if (gPartyState.entrance == 1) {
+        if (gPartyState.entrance == 1)
+        {
             Func_020052cc(0x10003, 1);
             Flag_Set(0x310);
             Flag_Set(0x318);
-        } else {
+        }
+        else
+        {
             Func_020052cc(0x10000, 1);
             Flag_Clear(0x310);
             Flag_Clear(0x318);
@@ -211,13 +221,17 @@ void Func_020011c8(void)
 {
     struct GarohEventWork *work;
 
-    if (!Flag_IsSet(0x91b)) {
+    if (!Flag_IsSet(0x91b))
+    {
         Flag_Set(0x211);
-        if (gPartyState.entrance == 2) {
+        if (gPartyState.entrance == 2)
+        {
             Func_020052cc(0x10003, 1);
             Flag_Set(0x310);
             Flag_Set(0x318);
-        } else {
+        }
+        else
+        {
             Func_020052cc(0x10007, 1);
             Flag_Set(0x310);
             Flag_Clear(0x318);

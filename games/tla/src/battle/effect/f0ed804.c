@@ -13,14 +13,16 @@ void Func_080ed788(void)
 {
     struct PartyState *party;
 
-    if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
+    if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3)
+    {
         EventRuntime_PrepareCurrentObject();
         Func_080d46a4(0x9d89, 6);
         while (gInput.held & 0x200)
             WaitFrames(1);
         party = &gPartyState;
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         if (party->ownerOverride != 0)
             Func_080d46a4(0x10000, 6);

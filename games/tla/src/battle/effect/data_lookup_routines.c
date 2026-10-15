@@ -30,7 +30,7 @@ s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 {
     u16 *table;
-    s32 row;
+    s32  row;
 
     row = arg0 * 14;
     table = gEncounter_EnemyGroupTable;
@@ -51,7 +51,8 @@ u16 BattleFx_GetPhaseResult(s32 phase)
 
 s32 GameFlag_Test(s32 flag);
 
-struct SceneCueRule {
+struct SceneCueRule
+{
     s16 id;
     s16 entrance : 15;
     u16 byScene : 1;
@@ -59,17 +60,18 @@ struct SceneCueRule {
     s16 cue;
 };
 
-
 void Scene_ResolveInteractionResult(void)
 {
-    s16 cue = 79;
-    s16 scene = gPartyState.scene;
-    s16 entrance = gPartyState.entrance;
-    s16 group = gPartyState.sceneGroup;
+    s16                        cue = 79;
+    s16                        scene = gPartyState.scene;
+    s16                        entrance = gPartyState.entrance;
+    s16                        group = gPartyState.sceneGroup;
     const struct SceneCueRule *rule = gScene_CueRuleTable;
 
-    for (; rule->id != -1; rule++) {
-        if (rule->byScene) {
+    for (; rule->id != -1; rule++)
+    {
+        if (rule->byScene)
+        {
             if (rule->id != scene)
                 continue;
             if (rule->entrance != -1 && rule->entrance != entrance)
@@ -78,7 +80,9 @@ void Scene_ResolveInteractionResult(void)
                 continue;
             cue = rule->cue;
             break;
-        } else {
+        }
+        else
+        {
             if (rule->id != group)
                 continue;
             if (rule->entrance != -1 && rule->entrance != entrance)
@@ -93,7 +97,8 @@ void Scene_ResolveInteractionResult(void)
     gPartyState.cue = cue;
 }
 
-struct SceneAreaNameRule {
+struct SceneAreaNameRule
+{
     s16 id;
     s16 entrance : 15;
     u16 useSceneId : 1;
@@ -102,25 +107,31 @@ struct SceneAreaNameRule {
 
 extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
-
-
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
     const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
-    s32 areaNameIndex = 0;
-    s32 group = BattleFx_GetResourceGroup(scene);
+    s32                             areaNameIndex = 0;
+    s32                             group = BattleFx_GetResourceGroup(scene);
 
-    while (entry->id != -1) {
-        if (entry->useSceneId) {
-            if (entry->id == scene) {
-                if (entry->entrance == -1 || entry->entrance == entrance) {
+    while (entry->id != -1)
+    {
+        if (entry->useSceneId)
+        {
+            if (entry->id == scene)
+            {
+                if (entry->entrance == -1 || entry->entrance == entrance)
+                {
                     areaNameIndex = entry->areaNameIndex;
                     break;
                 }
             }
-        } else {
-            if (entry->id == group) {
-                if (entry->entrance == -1 || entry->entrance == entrance) {
+        }
+        else
+        {
+            if (entry->id == group)
+            {
+                if (entry->entrance == -1 || entry->entrance == entrance)
+                {
                     areaNameIndex = entry->areaNameIndex;
                     break;
                 }

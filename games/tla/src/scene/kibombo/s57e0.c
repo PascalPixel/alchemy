@@ -13,15 +13,20 @@ void Func_020057e0(void)
     gData_02007948[0] = PALETTE_WORD(169);
     gData_02007948[1] = PALETTE_WORD(167);
     gData_02007948[2] = PALETTE_WORD(166);
-    if (gPartyState.entrance == 10) {
+    if (gPartyState.entrance == 10)
+    {
         ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
         Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
         Func_02003c84();
-    } else if (gPartyState.entrance == 11) {
+    }
+    else if (gPartyState.entrance == 11)
+    {
         ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
         Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
         Func_02003c14();
-    } else {
+    }
+    else
+    {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         KIBOMBO_TASK_ADD(Func_02002d64, 1152);

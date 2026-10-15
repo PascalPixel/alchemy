@@ -15,10 +15,11 @@ extern s32 gData_0200611c[];
 extern s32 gData_020061d0[];
 extern s32 gData_02006278[];
 
-struct EventWork {
-    u8 unk000[0x154];
+struct EventWork
+{
+    u8  unk000[0x154];
     s16 unk154;
-    u8 unk156[0x56];
+    u8  unk156[0x56];
     s32 unk1ac;
 };
 
@@ -48,10 +49,13 @@ void Func_02000960(void)
 
 void Func_020009a4(void)
 {
-    if (!Flag_IsSet(0x91b)) {
+    if (!Flag_IsSet(0x91b))
+    {
         if (!Flag_IsSet(0x91e))
             Func_02002694();
-    } else {
+    }
+    else
+    {
         if (!Flag_IsSet(0x91f))
             Func_02003878();
     }
@@ -62,7 +66,8 @@ const void *Func_020009dc(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Ov65FRoom1) {
+    if (scene == (s32)&SceneId_Ov65FRoom1)
+    {
         if (Flag_IsSet(0x91b))
             return gData_02005f78;
         return gData_02005e34;

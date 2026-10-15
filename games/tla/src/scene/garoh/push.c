@@ -20,9 +20,9 @@ void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer);
 void Func_020013b0(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 x = object->x;
-    s32 dx;
-    s32 y;
+    s32                   x = object->x;
+    s32                   dx;
+    s32                   y;
 
     /* FAKEMATCH: the native loads x, builds the x offset, loads y and then adds the offset; without these three barriers y is loaded after the add (one reordered pair, differ 2). */
     __asm__ volatile("" : "+r"(x));

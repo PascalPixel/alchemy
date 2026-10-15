@@ -19,24 +19,26 @@ void *AffineEffect_InitializeWork(void)
     return work;
 }
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 void UiWork_Finalize(struct Work *work, s32 release);
 
 void Menu_EndResourceSelection(void)
 {
     struct Work *child;
-    s32 i;
-    u16 *entry;
-    void *work;
+    s32          i;
+    u16         *entry;
+    void        *work;
 
     work = Ram_HeapSlots->menuSelectWork;
     Scheduler_RemoveCallback(Func_0804cda8);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
-    if (child != 0) {
+    if (child != 0)
+    {
         UiWork_Finalize(child, 2);
     }
     i = 0;
-    while (i < (s32)FIELD_AT_OFFSET(work, s16, 0x8E)) {
+    while (i < (s32)FIELD_AT_OFFSET(work, s16, 0x8E))
+    {
         entry = (u16 *)((u8 *)work + 0x12) + i * 10;
         Resource_ResetEntry(*entry);
         i += 1;

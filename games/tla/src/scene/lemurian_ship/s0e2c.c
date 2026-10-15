@@ -6,10 +6,10 @@ void Func_02000e2c(void)
 {
     struct LemurianShipObject *object;
     struct LemurianShipObject *leader;
-    s32 column;
-    s32 row;
-    u32 i;
-    s32 done;
+    s32                        column;
+    s32                        row;
+    u32                        i;
+    s32                        done;
 
     done = GameFlag_Test(0x202);
     if (!done && GameFlag_Test(0x204))

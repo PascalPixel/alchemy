@@ -12,8 +12,8 @@
 #include "motobj.h"
 #include "field_event.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(struct FieldActor*,s32))ObjectDispatch_ApplyValueToChildrenFar)
-
+#define ObjectDispatch_ApplyValueToChildrenFar \
+    ((s32 (*)(struct FieldActor *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 void BattleFx_RunMode0(struct BattleEffectArgument *effect)
 {

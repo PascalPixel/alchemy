@@ -6,19 +6,19 @@
 
 struct PreviewSprite
 {
-	u32 unknown;
-	union
-	{
-		u32 word;
-		struct
-		{
-			unsigned y : 8;
-			unsigned flags : 8;
-			unsigned x : 9;
-			unsigned high : 7;
-		} bits;
-	} attributes;
-	union RenderTableValue tile;
+    u32 unknown;
+    union
+    {
+        u32 word;
+        struct
+        {
+            unsigned y : 8;
+            unsigned flags : 8;
+            unsigned x : 9;
+            unsigned high : 7;
+        } bits;
+    } attributes;
+    union RenderTableValue tile;
 };
 
 extern u8 gDjinnMenu_ArrowUpTiles[];

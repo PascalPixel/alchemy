@@ -15,23 +15,24 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-struct Record_080b06c0 {
+struct Record_080b06c0
+{
     u8 filler0[4];
     u8 values[21];
 };
 
-
-
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
-    u32 shifted = selector << 4;
+    u32  shifted = selector << 4;
     u16 *offset;
 
     selector = shifted + 1;
 
-    if (count > 0) {
+    if (count > 0)
+    {
         offset = gShop_SelectorOffsets;
-        do {
+        do
+        {
             struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
             record->values[0] = selector;
             record->values[4] = selector;
@@ -50,14 +51,19 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
     u8 *dst = tiles + gShop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
 
-    do {
-        if (*src != 0) {
+    do
+    {
+        if (*src != 0)
+        {
             dst[0] = *src++;
-            if (*src != 0) {
+            if (*src != 0)
+            {
                 dst[1] = *src++;
-                if (*src != 0) {
+                if (*src != 0)
+                {
                     dst[30] = *src++;
-                    if (*src != 0) dst[31] = *src++;
+                    if (*src != 0)
+                        dst[31] = *src++;
                 }
             }
         }
@@ -70,8 +76,8 @@ extern const u8 gShop_PriceTiles[];
 
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 {
-    u8 *buf;
-    s32 slot;
+    u8                  *buf;
+    s32                  slot;
     struct RenderOutput *sprite;
 
     buf = Runtime_AllocateBlock(56, 0x400);
@@ -79,13 +85,16 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, buf, 0);
     value = value / 10;
-    if (value != 0) {
+    if (value != 0)
+    {
         Shop_CopyGlyphs(value % 10, buf, 1);
         value = value / 10;
-        if (value != 0) {
+        if (value != 0)
+        {
             Shop_CopyGlyphs(value % 10, buf, 2);
             value = value / 10;
-            if (value != 0) {
+            if (value != 0)
+            {
                 s32 last;
 
                 Shop_CopyGlyphs(value % 10, buf, 3);
@@ -96,7 +105,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
         }
     }
     slot = Resource_FindFreeEntry();
-    if (slot != 96) {
+    if (slot != 96)
+    {
         VramBlock_LoadCached(slot, 0x100, buf);
         sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
     }

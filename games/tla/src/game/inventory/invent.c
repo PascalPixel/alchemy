@@ -10,13 +10,16 @@ void Object_WaitUntilChildValueDiffers(s32 objectId, s32 value)
 {
     struct ObjectRuntime *obj = ObjectTable_Get(objectId);
 
-    if (obj != 0 && obj->animationKind == 1) {
+    if (obj != 0 && obj->animationKind == 1)
+    {
         s32 cnt = 0;
         u8 *anim = (u8 *)obj->animation;
 
-        while (cnt <= 89) {
+        while (cnt <= 89)
+        {
             WaitFrames(1);
-            if (value != anim[0x18]) {
+            if (value != anim[0x18])
+            {
                 break;
             }
             cnt++;

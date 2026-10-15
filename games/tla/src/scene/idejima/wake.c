@@ -7,24 +7,24 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Motion_CamBounds();
-void Motion_SetVarCbAndRefresh();
-void Motion_SetModeAndWaitAnimation();
-void ObjectMotion_Launch();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_WaitForAnimationChange();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
-void Battle_WaitMode0();
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void GameFlag_SetBit();
-void GameFlag_ClearBit();
-void Func_02003180();
-void Func_02003228();
-void Func_02003310();
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Motion_CamBounds();
+void                  Motion_SetVarCbAndRefresh();
+void                  Motion_SetModeAndWaitAnimation();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_WaitForAnimationChange();
+s32                   UiText_OpenMessageAtObject();
+s32                   Inventory_PromptAndSetObjectMode();
+void                  Battle_WaitMode0();
+void                  Event_StartScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  GameFlag_SetBit();
+void                  GameFlag_ClearBit();
+void                  Func_02003180();
+void                  Func_02003228();
+void                  Func_02003310();
 
 void FelixWake_BeginStep(void)
 {
@@ -40,9 +40,11 @@ void FelixWake_WaitForButton(void)
 
     FelixWake_BeginStep();
 wait:
-    if (--frames != -1) {
+    if (--frames != -1)
+    {
         Task_Wait(1);
-        if (gInput.pressed == 0) {
+        if (gInput.pressed == 0)
+        {
             goto wait;
         }
     }
@@ -97,7 +99,8 @@ void Func_02002c64(void)
     Task_Wait(1);
     answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
     leader = gPartyState.currentOwner;
-    if (answer == 0) {
+    if (answer == 0)
+    {
         ObjectMotion_WaitForAnimationChange(leader);
         Engine_ActorSetAnimation(gPartyState.currentOwner, 45);
         Task_Wait(1);
@@ -128,7 +131,9 @@ void Func_02002c64(void)
         Engine_EventShowMessage(11, 0);
         Task_Wait(1);
         Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
-    } else {
+    }
+    else
+    {
         ObjectMotion_WaitForAnimationChange(leader);
         *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
         ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x6666, 0x3333);

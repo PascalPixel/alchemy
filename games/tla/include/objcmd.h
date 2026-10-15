@@ -15,9 +15,9 @@
 #define SC_TOP 0                                  // jump to the first word
 #define SC_FOREVER 0xffff
 
-#define SC_WAIT(n) 0x00, (n)                    // wait n frames
-#define SC_SYNC 0x01                            // wait to arrive
-#define SC_POS(x, y, z) 0x02, (x), (y), (z)     // place at a position
+#define SC_WAIT(n) 0x00, (n)                // wait n frames
+#define SC_SYNC 0x01                        // wait to arrive
+#define SC_POS(x, y, z) 0x02, (x), (y), (z) // place at a position
 #define SC_CMD_03 0x03
 #define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    // move to a target
 #define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) // move by an offset

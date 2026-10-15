@@ -11,12 +11,12 @@ struct EffectStep;
 
 typedef struct
 {
-	s32 reserved00[3];
-	s32 currentValue;
-	s32 indexRadius;
-	s32 entryLimit;
-	s32 reserved18[3];
-	s16 values[1];
+    s32 reserved00[3];
+    s32 currentValue;
+    s32 indexRadius;
+    s32 entryLimit;
+    s32 reserved18[3];
+    s16 values[1];
 } BattleEffectIndexWindow;
 
 void BattlePres_ConfigureEffectDisplay(void);
@@ -60,17 +60,17 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 
 struct Placement
 {
-	s32 x;
-	s32 y;
-	s32 z;
-	s32 unk0c;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 unk0c;
 };
 
 // 2 次元の組 {x, y}（位置や速さ）
 struct Point2D
 {
-	s32 x;
-	s32 y;
+    s32 x;
+    s32 y;
 };
 
 // 演出の描画ルーチンの組：[0] は HEAP_SLOT_BLITTER、[1] は HEAP_SLOT_BLITTER_ALTERNATE に
@@ -170,7 +170,8 @@ void BattleFx_DispatchMode(s32 *arg);
 void BattleFx_BuildWindowEdgeTable(void);
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg);
 void BattleEffect_SetupBlendedDisplay(void);
-void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
+void ObjectGroup_UpdateMembers(
+    s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
 void BattleFx_InitTilemapAndFlushQueue(void);
 
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
@@ -198,7 +199,7 @@ void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunPuffArc(struct BattleEffectArgument *effect);
-s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out);
+s32  BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out);
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect);
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect);
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect);
@@ -228,7 +229,8 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect);
 void BattleFx_RaisePillars(struct BattleEffectArgument *effect);
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect);
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
+void BattleFx_PrepareCanvasEffect(
+    struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void BattleFx_RunMode0(void *effect);
 void BattleFx_RunMode1(void *effect);
 void BattleFx_RunMode2(void *effect);
@@ -271,11 +273,11 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
+s32  EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
 void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position);
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
+s32  BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 void BattleFx_ProbeKeysForExtendedActor(void);
 
 void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect);
@@ -310,7 +312,7 @@ void BattleFx_RunRevealColumnMode1(s32 arg);
 void BattleFx_RunRevealColumnMode2(s32 arg);
 void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
 void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect);
-s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
+s32  BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 
 extern const s32 gRockWall_Heights[4];
 extern const s32 gFormation_NormalScale[2];

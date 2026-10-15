@@ -30,7 +30,7 @@ void Func_02000958(void)
     u32 i;
     /* FAKEMATCH: the native keeps the counter in r5 and the actor in r6; unpinned the two swap (14 differ), and a do-while or a counter-derived actor measured 14 to 29. */
     register s32 actor __asm__("r6");
-    s32 target;
+    s32          target;
 
     MadraCatacombs_ObjPlace(14, 136 << 16, 258 << 16);
     MadraCatacombs_ObjPlace(19, 184 << 16, 258 << 16);

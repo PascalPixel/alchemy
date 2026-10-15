@@ -20,9 +20,11 @@ void BattleEventRuntime_BeginPhase(s32 cue)
     struct BattleEventState *ev;
 
     ev = &Ram_HeapSlots->battleWork->events;
-    if (ev->phase == BATTLE_PLAYBACK_IDLE) {
+    if (ev->phase == BATTLE_PLAYBACK_IDLE)
+    {
         ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
-        if (cue != 0) {
+        if (cue != 0)
+        {
             if (ev->unk16a == 0)
                 ev->pendingCue = cue;
         }
@@ -31,11 +33,12 @@ void BattleEventRuntime_BeginPhase(s32 cue)
 
 s32 BattleEventRuntime_SchedulePhase(s32 frames)
 {
-    struct BattleWork *work;
+    struct BattleWork       *work;
     struct BattleEventState *ev;
 
     /* FAKEMATCH: the one-pass block loads the battle work before the events offset is built (differ 2 without it), as in BattleEventRuntime_Reset. */
-    do {
+    do
+    {
         work = Ram_HeapSlots->battleWork;
     } while (0);
     ev = &work->events;

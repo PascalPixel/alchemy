@@ -15,10 +15,11 @@ extern s32 gData_02005a54[];
 extern u32 gData_02005b5c[];
 extern s32 gData_02005c1c[];
 
-struct GarohPicture {
+struct GarohPicture
+{
     const void *data;
-    u16 a;
-    u16 b;
+    u16         a;
+    u16         b;
 };
 
 extern const struct GarohPicture gData_02005de0[];
@@ -35,7 +36,8 @@ const void *Func_02000440(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Ov65FRoom1) {
+    if (scene == (s32)&SceneId_Ov65FRoom1)
+    {
         if (Flag_IsSet(0x91b))
             return gData_02005874;
         return gData_020056f4;
@@ -95,7 +97,8 @@ loop:
         goto loop;
     index = *(s16 *)(work + 0x154);
     /* FAKEMATCH: a one-pass block keeps the index's decrement after the sound call, where plainly sched2 ranks it above the call (differ 4 with the forwarding inlines). */
-    do {
+    do
+    {
         Func_02005394(158);
         index--;
     } while (0);

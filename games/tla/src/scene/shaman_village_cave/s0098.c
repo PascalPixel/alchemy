@@ -3,10 +3,11 @@
 void Func_02000098(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 frames = 60;
+    s32                   frames = 60;
 
     object->motionFlags = 3;
-    while (frames != 0) {
+    while (frames != 0)
+    {
         WaitFrames(1);
         if (object->velocityY == 0)
             break;

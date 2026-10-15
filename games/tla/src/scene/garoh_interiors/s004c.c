@@ -18,12 +18,16 @@ void Func_0200009c(s32 actor)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
-    do {
+    do
+    {
         u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-        if (facing == 0xc000 && GameFlag_Test(0x91b)) {
+        if (facing == 0xc000 && GameFlag_Test(0x91b))
+        {
             Func_0200089c(10, actor);
-        } else {
+        }
+        else
+        {
             if (GameFlag_Test(0x91b))
                 Func_02000844((s32)MsgGarohInteriors52);
             else
@@ -38,12 +42,16 @@ void Func_02000114(s32 actor)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
-    do {
+    do
+    {
         u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-        if (facing == 0xc000 && GameFlag_Test(0x91b)) {
+        if (facing == 0xc000 && GameFlag_Test(0x91b))
+        {
             Func_0200089c(11, actor);
-        } else {
+        }
+        else
+        {
             if (GameFlag_Test(0x91b))
                 Func_02000844((s32)MsgGarohInteriors54);
             else
@@ -58,23 +66,32 @@ void Func_0200018c(s32 actor)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
-    do {
+    do
+    {
         u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-        if (facing == 0xc000) {
+        if (facing == 0xc000)
+        {
             Func_0200089c(12, actor);
-        } else if (GameFlag_Test(0x91b)) {
+        }
+        else if (GameFlag_Test(0x91b))
+        {
             Func_02000844((s32)MsgGarohInteriors56);
             Func_0200085c(actor, 0);
-        } else {
+        }
+        else
+        {
             s32 message = (s32)MsgGarohInteriors21;
 
             Func_02000844(message);
             UiText_OpenMessageAtObject(actor, 0);
-            if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0) {
+            if (Inventory_PromptAndSetObjectMode(Func_0200088c(), 0) == 0)
+            {
                 Battle_WaitMode0(10);
                 Func_02000844(message + 1);
-            } else {
+            }
+            else
+            {
                 Battle_WaitMode0(20);
                 Func_02000844(message + 2);
             }
@@ -88,12 +105,16 @@ void Func_02000230(s32 actor)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
-    do {
+    do
+    {
         u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-        if (facing == 0xc000) {
+        if (facing == 0xc000)
+        {
             Func_020008ac(3, actor);
-        } else {
+        }
+        else
+        {
             if (GameFlag_Test(0x91b))
                 Func_02000844((s32)MsgGarohInteriors58);
             else
@@ -112,19 +133,23 @@ static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames)
 void Func_02000298(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-    s16 facing;
+    s16                   facing;
 
     u16 angle;
 
     /* FAKEMATCH: the one-pass block loads the angle before the quarter turn is built. */
-    do {
+    do
+    {
         angle = leader->angle;
     } while (0);
     facing = (angle + 0x2000) & ~0x3fff;
     ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
-    if ((u16)facing == 0xc000) {
+    if ((u16)facing == 0xc000)
+    {
         Func_020008a4(8);
-    } else {
+    }
+    else
+    {
         if (GameFlag_Test(0x91b))
             Func_02000844((s32)MsgGarohInteriors66);
         else

@@ -19,7 +19,8 @@ void Func_020003b8(void)
 
     UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
     gPartyState.coins = 777777;
-    for (i = 9; i >= 0; i--) {
+    for (i = 9; i >= 0; i--)
+    {
         Inventory_AddItem(4, 228);
         Inventory_AddItem(4, 229);
     }

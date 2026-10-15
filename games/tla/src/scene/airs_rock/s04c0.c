@@ -3,9 +3,9 @@
 
 extern char SceneId_Ov663Room1;
 extern char SceneId_Ov663Room2;
-extern s16 gData_02003e84[];
-extern s16 gData_02003ec4[];
-extern s16 gData_02003f44[];
+extern s16  gData_02003e84[];
+extern s16  gData_02003ec4[];
+extern s16  gData_02003f44[];
 
 s16 *Func_020004c0(void)
 {

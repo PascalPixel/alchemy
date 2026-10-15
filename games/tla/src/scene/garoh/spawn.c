@@ -1,19 +1,20 @@
 #include "garoh.h"
 #include "field_sprite.h"
 
-struct SpawnObject {
-    u8 unk00[0x50];
+struct SpawnObject
+{
+    u8                  unk00[0x50];
     struct FieldSprite *sprite;
-    u8 unk54;
-    u8 motionFlags;
-    u8 unk56[8];
-    u16 unk5e;
+    u8                  unk54;
+    u8                  motionFlags;
+    u8                  unk56[8];
+    u16                 unk5e;
 };
 
 extern u8 gData_02006330[];
 
-void Func_02005164(struct SpawnObject *object, s32 mode);
-void Func_0200516c(struct SpawnObject *object, const void *script);
+void                Func_02005164(struct SpawnObject *object, s32 mode);
+void                Func_0200516c(struct SpawnObject *object, const void *script);
 struct SpawnObject *Func_02005174(s32 type, s32 x, s32 y, s32 z);
 
 void Func_0200132c(void)
@@ -40,7 +41,8 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer)
     struct FieldSprite *sprite;
 
     object = Func_02005174(0x1e8, x, y, z);
-    if (object != 0) {
+    if (object != 0)
+    {
         sprite = object->sprite;
         Func_02005164(object, 1);
         Func_0200516c(object, gData_02006330);

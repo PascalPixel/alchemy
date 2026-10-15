@@ -1,30 +1,31 @@
 #include "contigo.h"
 
-struct ContigoGlow {
-    u8 unk00[0x0c];
+struct ContigoGlow
+{
+    u8  unk00[0x0c];
     s32 y;
-    u8 unk10[8];
+    u8  unk10[8];
     s32 scaleX;
     s32 scaleY;
-    u8 unk20[0x35];
-    u8 motionFlags;
+    u8  unk20[0x35];
+    u8  motionFlags;
 };
 
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void Func_020041cc(s32 color, s32 b);
-void Func_020041d4(s32 color, s32 b);
-void Func_020041dc(s32 frames);
-void Func_02004264(void);
-void Func_0200426c(void);
-void Func_02004274(void);
-void Func_0200427c(struct ContigoObject *object, s32 mode);
+void                UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void                Func_020041cc(s32 color, s32 b);
+void                Func_020041d4(s32 color, s32 b);
+void                Func_020041dc(s32 frames);
+void                Func_02004264(void);
+void                Func_0200426c(void);
+void                Func_02004274(void);
+void                Func_0200427c(struct ContigoObject *object, s32 mode);
 struct ContigoGlow *Func_02003fec(s32 type, s32 x, s32 y, s32 z);
-void Func_02003fdc(struct ContigoGlow *object, s32 mode);
-void Func_02003ff4(struct ContigoGlow *object);
-void ObjectDispatch_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Func_02000a80(void);
+void                Func_02003fdc(struct ContigoGlow *object, s32 mode);
+void                Func_02003ff4(struct ContigoGlow *object);
+void                ObjectDispatch_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
+void                Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void                Scheduler_RemoveCallbackFar(void (*callback)(void));
+void                Func_02000a80(void);
 
 static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y, s32 z)
 {
@@ -36,7 +37,7 @@ static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y, s32 z)
 void Func_02000af4(void)
 {
     struct ContigoGlow *effect;
-    u32 i;
+    u32                 i;
 
     Func_0200406c();
     Func_02004204(0);
@@ -65,7 +66,8 @@ void Func_02000af4(void)
 
             /* FAKEMATCH: the one-pass block keeps the scale load ahead of the 0x666 step, as the
              * native has it (differ 2 without). */
-            do {
+            do
+            {
                 x = effect->scaleX;
             } while (0);
             effect->scaleX = x + 0x666;

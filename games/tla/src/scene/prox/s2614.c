@@ -4,12 +4,13 @@
 #include "scene_ids.h"
 #include "io_reg.h"
 
-struct EventWork1ac {
-    u8 unk000[0x1ac];
+struct EventWork1ac
+{
+    u8  unk000[0x1ac];
     s32 screenEffect;
 };
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
@@ -36,38 +37,51 @@ s32 Func_02002614(void)
 {
     s32 scene;
 
-    if (Flag_Test(0xa3d)) {
+    if (Flag_Test(0xa3d))
+    {
         GameFlag_SetBit(0x17c);
         GameFlag_SetBit(0x144);
     }
     scene = gPartyState.scene;
-    if (scene == (s32)&SceneId_Ov6a8Room4) {
+    if (scene == (s32)&SceneId_Ov6a8Room4)
+    {
         ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
         Func_020029c8();
-    } else if (scene == (s32)&SceneId_Ov6a8Room5) {
+    }
+    else if (scene == (s32)&SceneId_Ov6a8Room5)
+    {
         ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
         Func_02002a38();
-    } else if (scene == (s32)&SceneId_Ov6a8Room6) {
+    }
+    else if (scene == (s32)&SceneId_Ov6a8Room6)
+    {
         s32 *effect = &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
         /* FAKEMATCH: the native loads the call's argument before the store; the plain order stores first (one reordered pair, differ 2). The argument is pinned to the r0 it is passed in. */
         register s32 skip __asm__("r0");
-        s32 value = 0x209;
+        s32          value = 0x209;
 
         skip = 0;
         *effect = value;
         Func_020045dc(skip);
-    } else {
+    }
+    else
+    {
         if (!Flag_Test(0xa3d))
             GameFlag_SetBit(0x201);
-        if (Flag_Test(0x201)) {
+        if (Flag_Test(0x201))
+        {
             Func_0200461c(1);
-        } else {
+        }
+        else
+        {
             {
                 /* FAKEMATCH: the native loads the blend value from the pool before it starts the register address; the plain store starts the address first (one reordered row). Only a halfword register loads from the pool and a u16 local is widened, so the value is pinned to the r3 it already takes, as in overlay 696's s43f8.c. */
                 register u16 alpha __asm__("r3") = 0xc08;
 
                 /* FAKEMATCH: the one-pass block's loop note holds the address until the pinned value is loaded; the empty asm of s43f8.c would move the literal pool here (it counts four estimated bytes). */
-                do { } while (0);
+                do
+                {
+                } while (0);
                 REG_BLDALPHA = alpha;
             }
             REG_BLDCNT = 0x3f10;
@@ -81,14 +95,18 @@ s32 Func_02002614(void)
             Func_0200440c(6);
         }
         scene = gPartyState.scene;
-        if (scene == (s32)&SceneId_Ov6a8Room2) {
+        if (scene == (s32)&SceneId_Ov6a8Room2)
+        {
             if (!Flag_Test(0x300))
                 Object_SetWideSprite(64, 1);
             Func_020027e4();
-        } else if (scene == (s32)&SceneId_Ov6a8Room3) {
+        }
+        else if (scene == (s32)&SceneId_Ov6a8Room3)
+        {
             Func_02002878();
         }
-        if (Flag_Test(0x201)) {
+        if (Flag_Test(0x201))
+        {
             Func_0200459c(0x10004, 1);
             Func_020045a4(16);
             WaitFrames(16);

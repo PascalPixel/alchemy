@@ -8,28 +8,30 @@
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
-struct WarpTarget {
+struct WarpTarget
+{
     s32 scene;
     u16 x;
     u16 z;
 };
 
-struct RiseObject {
-    u8 unk00[0x18];
+struct RiseObject
+{
+    u8  unk00[0x18];
     s32 scale;
     s32 scaleCopy;
-    u8 unk20[0x4c];
+    u8  unk20[0x4c];
     s32 update;
 };
 
 extern const struct WarpTarget gData_02003d10;
 
 struct FieldActor *Object_GetById(s32 id);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
+void               ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void               ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void               ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void               Event_FinishScreenTransition(void);
+void               Event_WaitTransitionFrames(void);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
 void Func_02003414(s32 scene, s32 x, s32 z);
@@ -43,7 +45,7 @@ void Func_02003524(s32 speaker, s32 flags);
 void Func_02003534(s32 actor, s32 angle);
 void Func_02003574(s32 door);
 void Func_020035b4(s32 skip);
-s32 Func_020035f4(void);
+s32  Func_020035f4(void);
 void Func_02003624(struct FieldActor *object, struct FieldActor *target);
 void Func_0200362c(s32 cue);
 

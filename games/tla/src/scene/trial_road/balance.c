@@ -20,7 +20,8 @@ void TrialRoad_WaitForBalanceState(void)
 {
     s16 *state = (s16 *)gSceneState;
 
-    while (*state != 9) {
+    while (*state != 9)
+    {
         Task_Wait(1);
     }
 }

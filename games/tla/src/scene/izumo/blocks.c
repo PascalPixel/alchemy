@@ -3,16 +3,19 @@
 void Func_02000b08(void)
 {
     struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32                x = object->x >> 20;
+    s32                z = object->z >> 20;
 
     GameFlag_SetBit(769);
-    if (GameFlag_Test(592)) {
+    if (GameFlag_Test(592))
+    {
         Call6((void (*)())Func_02000ce0, 36, 12, 22, 8, 3, 3);
         Call6((void (*)())Func_02000ce8, 36, 12, 3, 3, 22, 8);
         if (x == 23 && z == 9)
             Func_02000d40(gPartyState.currentOwner, 0x1780000, 0x880000);
-    } else {
+    }
+    else
+    {
         Call6((void (*)())Func_02000ce0, 36, 8, 22, 8, 3, 3);
         Call6((void (*)())Func_02000ce8, 36, 8, 3, 3, 22, 8);
     }

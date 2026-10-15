@@ -14,8 +14,6 @@
 #include "ram_buffer.h"
 #include "arc_effect.h"
 
-
-
 void BattleFx_StartArcEffect(void)
 {
     struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));

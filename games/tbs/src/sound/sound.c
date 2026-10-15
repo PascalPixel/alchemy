@@ -24,20 +24,27 @@ void AudioCommand_Play(s32 id)
     flags = id & AUDIO_CUE_FLAGS_MASK;
     id &= AUDIO_CUE_ID_MASK;
 
-    if (id == AUDIO_CUE_FADE_BGM) {
+    if (id == AUDIO_CUE_FADE_BGM)
+    {
         if (gMusicFadeRequested != 0)
             return;
         MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
         gMusicFadeRequested++;
         gAudioSecondaryState = 19;
-    } else if (id == AUDIO_CUE_FADE_SLOT3) {
+    }
+    else if (id == AUDIO_CUE_FADE_SLOT3)
+    {
         gMusicPlayerVolumes[3] = 0;
         MusicPlayer_FadeOut(&gSound_Player3, 3);
-    } else if (id >= AUDIO_SONG_FIRST) {
+    }
+    else if (id >= AUDIO_SONG_FIRST)
+    {
         player = gSound_SongTable[id].slot;
-        if (player == 7) {
+        if (player == 7)
+        {
         next:
-            if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
+            if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0)
+            {
                 player--;
                 if (player > 3)
                     goto next;
@@ -46,13 +53,17 @@ void AudioCommand_Play(s32 id)
         }
         MusicPlayer_StartSong(gSound_PlayerSlots[player].player, gSound_SongTable[id].header);
         gMusicPlayerVolumes[player] = id;
-    } else if (id >= AUDIO_JINGLE_FIRST) {
+    }
+    else if (id >= AUDIO_JINGLE_FIRST)
+    {
         MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
         gMusicVolumeTarget = 0;
         gMusicVolume = 0;
         Audio_PlaySound(id);
         gMusicRestoreDelay = 10;
-    } else {
+    }
+    else
+    {
         if (id == AUDIO_CUE_KEEP_BGM)
             return;
         if (id == gAudioSecondaryState)
@@ -74,36 +85,51 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
     s32 delta;
 
-    if (gMusicRestoreDelay != 0) {
-        if (gMusicRestoreDelay == 1) {
-            if ((u8)gMusicPlayerFanfare.status == 0) {
+    if (gMusicRestoreDelay != 0)
+    {
+        if (gMusicRestoreDelay == 1)
+        {
+            if ((u8)gMusicPlayerFanfare.status == 0)
+            {
                 gMusicRestoreDelay = 0;
                 gMusicVolumeTarget = 0x100;
             }
-        } else {
+        }
+        else
+        {
             gMusicRestoreDelay -= 1;
         }
     }
-    if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
+    if ((s16)gMusicVolumeTarget != (s16)gMusicVolume)
+    {
         delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
-        if (delta > 0) {
+        if (delta > 0)
+        {
             gMusicVolume += gMusicVolumeStep;
-        } else {
+        }
+        else
+        {
             gMusicVolume -= gMusicVolumeStep;
         }
-        if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
+        if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0)
+        {
             gMusicVolume = gMusicVolumeTarget;
         }
         MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
     }
-    if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
+    if ((s16)gMusicPitchTarget != (s16)gMusicPitch)
+    {
         delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
-        if (delta > 0) {
+        if (delta > 0)
+        {
             gMusicPitch += gMusicPitchStep;
-        } else {
+        }
+        else
+        {
             gMusicPitch -= gMusicPitchStep;
         }
-        if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
+        if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0)
+        {
             gMusicPitch = gMusicPitchTarget;
         }
         MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
@@ -112,10 +138,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     Sound_TickDmaRestartTimer();
 }
 
-
 void AudioTest_RunParameterController(void)
 {
-    s32 cues[3] = {0, 80, 100};
+    s32 cues[3] = { 0, 80, 100 };
     s32 preset;
     s32 row;
     s32 timer;
@@ -123,21 +148,25 @@ void AudioTest_RunParameterController(void)
     row = 0;
     preset = 2;
     /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. Plain store: differ 8 or more in nine statement orders. */
-    do {
+    do
+    {
         gIwramHi_Data1 = 0;
     } while (0);
     timer = 20;
 
-    for (;;) {
+    for (;;)
+    {
         if (timer != 0)
             timer--;
 
-        if (gSoundClipFlag != 0) {
+        if (gSoundClipFlag != 0)
+        {
             gSoundClipFlag = 0;
             timer = 20;
         }
 
-        if (gKeysRepeat & KEY_SELECT) {
+        if (gKeysRepeat & KEY_SELECT)
+        {
             preset = (preset + 1) % 5;
             Sound_LoadPresetParameters(preset);
         }
@@ -149,11 +178,13 @@ void AudioTest_RunParameterController(void)
             cues[row] += 1;
         if (gKeysRepeat & KEY_LEFT)
             cues[row] -= 1;
-        if (gKeysRepeat & KEY_UP) {
+        if (gKeysRepeat & KEY_UP)
+        {
             if (row > 0)
                 row--;
         }
-        if (gKeysRepeat & KEY_DOWN) {
+        if (gKeysRepeat & KEY_DOWN)
+        {
             if (row <= 1)
                 row++;
         }
@@ -173,7 +204,7 @@ void AudioTest_RunParameterController(void)
 void Audio_InitializeRuntimeDefaults(void)
 {
     s16 *playerVolume;
-    s32 remaining;
+    s32  remaining;
 
     Audio_Initialize();
     gAudioSecondaryState = 0xff;
@@ -189,7 +220,8 @@ void Audio_InitializeRuntimeDefaults(void)
     playerVolume = gMusicPlayerVolumes;
     gEwram_Data1 = 0;
     remaining = 7;
-    do {
+    do
+    {
         remaining--;
         *playerVolume = 0;
         playerVolume += 1;
@@ -260,7 +292,8 @@ void AudioCommand_WaitForCompletion(void)
 {
     s32 wait_count = 0;
 
-    do {
+    do
+    {
         if (gMusicRestoreDelay == 0)
             break;
         WaitFrames(1);

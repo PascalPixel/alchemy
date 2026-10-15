@@ -7,7 +7,7 @@ void Battle_WaitMode0(s32 frames);
 void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_02002594(void);
 void Func_02002640(s32 a, s32 b, s32 c, s32 d);
 void Func_02003d44(s32 value);

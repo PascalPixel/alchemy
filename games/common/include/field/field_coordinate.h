@@ -6,12 +6,12 @@
 
 union FieldCoordinate
 {
-	s32 fixed;
-	struct
-	{
-		u16 fraction;
-		s16 pixel;
-	} part;
+    s32 fixed;
+    struct
+    {
+        u16 fraction;
+        s16 pixel;
+    } part;
 };
 
 LAYOUT_SIZE_GUARD(FieldCoordinate_Size, union FieldCoordinate, 4);

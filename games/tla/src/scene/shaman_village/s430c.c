@@ -6,7 +6,8 @@ void Func_0200430c(s32 x, s32 y, s32 z)
 {
     struct ShamanVillageObject *object = Engine_ObjectCreate(285, x, y, z);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->field5c = 2;
         object->motionFlags = 0;
         object->field64 = 0;

@@ -12,7 +12,8 @@
 #include "field_event.h"
 #include "battle_session.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+    ((void (*)(s32, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 s32 *BattleObjGet(s32);
 
@@ -30,7 +31,7 @@ struct StatusIconEntry
     u8 priority;
 };
 
-s32 ResourceMetadata_RegisterFar(struct StatusIconRecord *record, s32 animation);
+s32  ResourceMetadata_RegisterFar(struct StatusIconRecord *record, s32 animation);
 void ResourceMetadata_UnregisterFar(struct StatusIconRecord *record, s32 entry);
 void Animation_SetWorkEntryFar(struct StatusIconEntry *entry, s32 index);
 
@@ -42,19 +43,20 @@ void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 // switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObj *slot)
 {
-    struct StatusIconEntry *icon;
+    struct StatusIconEntry  *icon;
     struct StatusIconRecord *rec;
-    struct MotionObject *owner;
-    s32 anim;
-    s32 handle;
-    s32 prev;
-    s32 changed = 0;
+    struct MotionObject     *owner;
+    s32                      anim;
+    s32                      handle;
+    s32                      prev;
+    s32                      changed = 0;
 
     if (slot->cycleTimer >= 0)
         slot->cycleTimer--;
 
     if (((s16)slot->activeConditions != 0 && slot->animationEntry == 0)
-        || (slot->animationEntry != 0 && (((s16)slot->activeConditions >> slot->selectedCondition) & 1) == 0)
+        || (slot->animationEntry != 0
+            && (((s16)slot->activeConditions >> slot->selectedCondition) & 1) == 0)
         || slot->cycleTimer == 0)
     {
         anim = -1;
@@ -129,14 +131,17 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot)
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
     struct BattleUnit *state;
-    s32 value;
+    s32                value;
 
     state = UnitGet(id);
     value = 1;
-    if (state->hp != 0) {
+    if (state->hp != 0)
+    {
         if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
             value = (state->side != 1) * 4;
-    } else {
+    }
+    else
+    {
         s32 changed = state->side ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
@@ -145,4 +150,3 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
     Object_SetMode(*BattleObjGet(id), value);
     ObjectDispatch_ApplyValueToChildrenFar(*BattleObjGet(id), (id & 3) + 14);
 }
-

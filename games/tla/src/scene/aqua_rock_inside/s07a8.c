@@ -2,7 +2,7 @@
 
 void Func_020007a8(void)
 {
-    struct ObjectRuntime *object;
+    struct ObjectRuntime    *object;
     struct FieldSpriteFlags *sprite;
 
     Func_02003eec(10, 0x1c8);

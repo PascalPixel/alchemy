@@ -10,13 +10,18 @@ void Func_020028c4(s32 id, s32 flags);
 
 void Func_02000104(s32 unused, s32 id)
 {
-    if (GameFlag_Test(0x966)) {
+    if (GameFlag_Test(0x966))
+    {
         Func_020028ac((s32)MsgLemuriaInteriors12);
         Func_020028c4(id, 0);
-    } else if (GameFlag_Test(0x965)) {
+    }
+    else if (GameFlag_Test(0x965))
+    {
         Func_020028ac((s32)MsgLemuriaInteriors09);
         Func_020028c4(id, 0);
-    } else {
+    }
+    else
+    {
         Func_020028ac((s32)MsgLemuriaInteriors06);
         Func_020028c4(id, 0);
     }

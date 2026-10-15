@@ -2,10 +2,10 @@
 
 void Func_02001e38(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *target = Object_GetById(gPartyState.currentOwner);
-    s32 vx;
-    s32 vz;
-    s32 rate;
+    struct ObjectRuntime      *target = Object_GetById(gPartyState.currentOwner);
+    s32                        vx;
+    s32                        vz;
+    s32                        rate;
     struct MarsRoomMAnimation *animation;
 
     vx = object->bounce;
@@ -24,7 +24,8 @@ void Func_02001e38(struct ObjectRuntime *object)
     /* FAKEMATCH: and would address the spin before storing the Y scale. */
     __asm__("");
     animation->angle += object->action;
-    if (target->y == target->terrainHeight && Func_02001de0(object, target)) {
+    if (target->y == target->terrainHeight && Func_02001de0(object, target))
+    {
         object->z -= object->unk4c;
         object->gravity += object->unk4c >> 2;
         object->unk4c = 0;

@@ -11,7 +11,8 @@ void Func_02000fbc(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->z >> 20 == 21) {
+    if (object->z >> 20 == 21)
+    {
         Object_SetModeById(id, 3);
         object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
@@ -34,7 +35,8 @@ void Func_02001038(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (object->x >> 20 == 31) {
+    if (object->x >> 20 == 31)
+    {
         Object_SetModeById(id, 3);
         object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */

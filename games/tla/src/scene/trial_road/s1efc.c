@@ -9,12 +9,14 @@ void Func_02001dd4(void);
 // Func_02001dd4.
 void Func_02001eb0(void)
 {
-    if (!GameFlag_Test(123)) {
+    if (!GameFlag_Test(123))
+    {
         struct ObjectRuntime *object = Object_GetById(8);
-        s32 started = GameFlag_Test(0x288);
-        u8 *flags = &object->motionFlags;
+        s32                   started = GameFlag_Test(0x288);
+        u8                   *flags = &object->motionFlags;
 
-        if (!started) {
+        if (!started)
+        {
             *flags = 5;
             {
                 s32 y = object->y;
@@ -23,7 +25,9 @@ void Func_02001eb0(void)
                 asm("" : "+l"(y));
                 object->y = y + 0x88000;
             }
-        } else {
+        }
+        else
+        {
             *flags = 3;
             object->y = 0;
         }

@@ -9,11 +9,12 @@ void Func_08108030(void *panel);
 
 void Func_080450fc(s32 value);
 
-struct ScreenWork {
-    u8 unk000[0x574];
+struct ScreenWork
+{
+    u8  unk000[0x574];
     u16 page;
-    u8 unk576[0x2e];
-    u8 panel[0x6c];
+    u8  unk576[0x2e];
+    u8  panel[0x6c];
     s32 values[1];
 };
 
@@ -21,7 +22,8 @@ void Func_080405ac(void)
 {
     struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
-    asm volatile("" : "+l"(work)); /* FAKEMATCH: ⚓️ loads the screen work before it builds the panel offset */
+    /* FAKEMATCH: ⚓️ loads the screen work before it builds the panel offset */
+    asm volatile("" : "+l"(work));
     Func_08108030(work->panel);
     Func_080450fc(work->values[work->page]);
 }

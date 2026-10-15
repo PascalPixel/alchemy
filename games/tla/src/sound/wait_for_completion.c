@@ -6,7 +6,8 @@ void AudioCommand_WaitForCompletion(void)
 {
     s32 wait_count = 0;
 
-    do {
+    do
+    {
         if (gMusicRestoreDelay == 0)
             break;
         WaitFrames(1);

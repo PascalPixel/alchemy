@@ -18,11 +18,12 @@ void SerialRuntime_RemoveIrqHandlers(void)
     Runtime_SetIrqHandler(6, 0, 0);
 }
 
-
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {
-    if ((mask & gLinkStatus) != mask) {
-        do {
+    if ((mask & gLinkStatus) != mask)
+    {
+        do
+        {
             WaitFrames(1);
         } while ((mask & gLinkStatus) != mask);
     }
@@ -32,7 +33,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
 s32 SerialRuntime_BeginTransferA(void *source, s32 size)
 {
     struct SerialTransferState *state = &gSerialTransfer;
-    u32 saved;
+    u32                         saved;
 
     if (gSerialSendSource != 0)
         return -1;
@@ -49,7 +50,7 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 size)
 s32 SerialRuntime_BeginTransferB(void *destination)
 {
     struct SerialTransferState *state = &gSerialTransfer;
-    u32 saved;
+    u32                         saved;
 
     if (gSerialReceiveDest != 0)
         return -1;

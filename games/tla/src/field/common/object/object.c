@@ -43,8 +43,8 @@ extern struct ObjectRuntime *gObjectSlots;
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-s32	 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
-s32	 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
+s32  AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
+s32  ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
@@ -58,47 +58,47 @@ s32 BattleFx_StartBufferInterpolationFar(s32);
 //--------------------------------------------------------------------------
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 {
-	u16 *dst;
-	s32	 cnt;
-	u32	 n;
-	u8	*table;
-	u32	 highMask;
-	u32	 indexMask;
-	u8	 offsetMask;
+    u16 *dst;
+    s32  cnt;
+    u32  n;
+    u8  *table;
+    u32  highMask;
+    u32  indexMask;
+    u8   offsetMask;
 
-	struct AnimationObject *spr = (struct AnimationObject *)obj;
+    struct AnimationObject *spr = (struct AnimationObject *)obj;
 
-	dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ の VRAM
-	cnt = (spr->width * spr->height) / 64;
-	n = 0;
+    dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ の VRAM
+    cnt = (spr->width * spr->height) / 64;
+    n = 0;
 
-	if (n < cnt)
-	{
-		table = gMap_TileDissolveOrder;
-		highMask = 0xff00;
-		indexMask = 0x3f;
-		offsetMask = 0x3e;
+    if (n < cnt)
+    {
+        table = gMap_TileDissolveOrder;
+        highMask = 0xff00;
+        indexMask = 0x3f;
+        offsetMask = 0x3e;
 
-		for (; n < cnt; n++, dst += 32, pos++)
-		{
-			if ((pos - 64) <= 63)
-			{
-				u8	 dot;
-				u16 *cell;
-				u32	 odd;
+        for (; n < cnt; n++, dst += 32, pos++)
+        {
+            if ((pos - 64) <= 63)
+            {
+                u8   dot;
+                u16 *cell;
+                u32  odd;
 
-				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = table[(pos + n * 16) & indexMask];
-				cell = (u16 *)((u8 *)dst + (dot & offsetMask));
-				odd = 1;
-				odd &= dot;
-				if (odd != 0)
-					*cell = *(u8 *)cell;
-				else
-					*cell &= highMask;
-			}
-		}
-	}
+                // VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
+                dot = table[(pos + n * 16) & indexMask];
+                cell = (u16 *)((u8 *)dst + (dot & offsetMask));
+                odd = 1;
+                odd &= dot;
+                if (odd != 0)
+                    *cell = *(u8 *)cell;
+                else
+                    *cell &= highMask;
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -107,18 +107,18 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 //--------------------------------------------------------------------------
 void Map_RenderAnimatedTileFramesForObject(u8 *obj)
 {
-	u32 pos;
+    u32 pos;
 
-	pos = 0;
-	do
-	{
-		Map_RenderAnimatedTileFrame(obj, pos);
-		Map_RenderAnimatedTileFrame(obj, pos + 1);
-		Map_RenderAnimatedTileFrame(obj, pos + 2);
-		Map_RenderAnimatedTileFrame(obj, pos + 3);
-		pos += 4;
-		WaitFrames(1);
-	} while (pos <= 127);
+    pos = 0;
+    do
+    {
+        Map_RenderAnimatedTileFrame(obj, pos);
+        Map_RenderAnimatedTileFrame(obj, pos + 1);
+        Map_RenderAnimatedTileFrame(obj, pos + 2);
+        Map_RenderAnimatedTileFrame(obj, pos + 3);
+        pos += 4;
+        WaitFrames(1);
+    } while (pos <= 127);
 }
 
 //--------------------------------------------------------------------------
@@ -128,37 +128,37 @@ void Map_RenderAnimatedTileFramesForObject(u8 *obj)
 //--------------------------------------------------------------------------
 void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 {
-	u8 **top;
-	u8 **p;
-	s32	 n;
-	u32	 pos;
-	u32	 pos1;
-	u32	 pos2;
-	u32	 pos3;
+    u8 **top;
+    u8 **p;
+    s32  n;
+    u32  pos;
+    u32  pos1;
+    u32  pos2;
+    u32  pos3;
 
-	top = table;
-	pos = 0;
-	do
-	{
-		if (cnt > 0)
-		{
-			pos1 = pos + 1;
-			pos2 = pos + 2;
-			p = top;
-			pos3 = pos + 3;
-			n = cnt;
-			do
-			{
-				Map_RenderAnimatedTileFrame(*p, pos);
-				Map_RenderAnimatedTileFrame(*p, pos1);
-				Map_RenderAnimatedTileFrame(*p, pos2);
-				n -= 1;
-				Map_RenderAnimatedTileFrame(*p++, pos3);
-			} while (n != 0);
-		}
-		WaitFrames(1U);
-		pos += 4;
-	} while (pos <= 0x7fU);
+    top = table;
+    pos = 0;
+    do
+    {
+        if (cnt > 0)
+        {
+            pos1 = pos + 1;
+            pos2 = pos + 2;
+            p = top;
+            pos3 = pos + 3;
+            n = cnt;
+            do
+            {
+                Map_RenderAnimatedTileFrame(*p, pos);
+                Map_RenderAnimatedTileFrame(*p, pos1);
+                Map_RenderAnimatedTileFrame(*p, pos2);
+                n -= 1;
+                Map_RenderAnimatedTileFrame(*p++, pos3);
+            } while (n != 0);
+        }
+        WaitFrames(1U);
+        pos += 4;
+    } while (pos <= 0x7fU);
 }
 
 //--------------------------------------------------------------------------
@@ -169,26 +169,26 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 //--------------------------------------------------------------------------
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
 {
-	struct MapScrollWork *map = gMapWork[0];
-	s32					 *org = &map->viewX;
-	s32					  ox;
-	s32					  oz;
-	s32					  x;
-	s32					  y;
+    struct MapScrollWork *map = gMapWork[0];
+    s32                  *org = &map->viewX;
+    s32                   ox;
+    s32                   oz;
+    s32                   x;
+    s32                   y;
 
-	ox = org[0] & 0xffff0000;
-	oz = org[1] & 0xffff0000;
-	x = obj->x - ox;
-	y = obj->z - oz;
-	if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000)
-	{
-		*out++ = x >> 16;
-		*out = y >> 16;
-		return 0;
-	}
-	*out++ = 0;
-	*out = 0;
-	return -1;
+    ox = org[0] & 0xffff0000;
+    oz = org[1] & 0xffff0000;
+    x = obj->x - ox;
+    y = obj->z - oz;
+    if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000)
+    {
+        *out++ = x >> 16;
+        *out = y >> 16;
+        return 0;
+    }
+    *out++ = 0;
+    *out = 0;
+    return -1;
 }
 
 //--------------------------------------------------------------------------
@@ -198,33 +198,33 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
 //--------------------------------------------------------------------------
 void ObjectSystem_Initialize(s32 mode)
 {
-	struct ObjectSystemWork *sys;
-	struct ObjectRuntime	*objs;
-	volatile u32			 fill;
+    struct ObjectSystemWork *sys;
+    struct ObjectRuntime    *objs;
+    volatile u32             fill;
 
-	sys = Runtime_AllocateBlock(6, sizeof(*sys));
-	objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
-	ObjectSystem_Configure(mode);
-	fill = 0;
-	Dma_Set((const void *)&fill, objs, 0x85000700, REG_DMA3); // 32 ビットでうめる
-	fill = 0;
-	Dma_Set((const void *)&fill, sys, 0x85000017, REG_DMA3);
-	if (mode == 4)
-		Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
-	else
-		Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
-	if (mode >= 3 && mode <= 4)
-	{
-		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
-	}
-	else
-	{
-		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		gIwram_Data2 = 0;
-		gIwram_Data1 = 0;
-	}
-	sys->edge = 15;
-	sys->fill = 0;
+    sys = Runtime_AllocateBlock(6, sizeof(*sys));
+    objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
+    ObjectSystem_Configure(mode);
+    fill = 0;
+    Dma_Set((const void *)&fill, objs, 0x85000700, REG_DMA3); // 32 ビットでうめる
+    fill = 0;
+    Dma_Set((const void *)&fill, sys, 0x85000017, REG_DMA3);
+    if (mode == 4)
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
+    else
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
+    if (mode >= 3 && mode <= 4)
+    {
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
+    }
+    else
+    {
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+        gIwram_Data2 = 0;
+        gIwram_Data1 = 0;
+    }
+    sys->edge = 15;
+    sys->fill = 0;
 }
 
 //--------------------------------------------------------------------------
@@ -250,24 +250,24 @@ void ResourceTable_ReservedNoOp2(void)
 void *ObjectDispatch_FindFreeObject(void)
 {
 #if GAME_TLA
-	struct ObjectRuntime *obj = Ram_HeapSlots->scriptObjects;
+    struct ObjectRuntime *obj = Ram_HeapSlots->scriptObjects;
 #else
-	struct ObjectRuntime *obj = gObjectSlots;
+    struct ObjectRuntime *obj = gObjectSlots;
 #endif
-	void *ret = 0;
-	s32	  n = 0;
+    void *ret = 0;
+    s32   n = 0;
 
-	while (n <= 63)
-	{
-		if (obj->script == 0)
-		{
-			ret = obj;
-			break;
-		}
-		n++;
-		obj++;
-	}
-	return ret;
+    while (n <= 63)
+    {
+        if (obj->script == 0)
+        {
+            ret = obj;
+            break;
+        }
+        n++;
+        obj++;
+    }
+    return ret;
 }
 
 //--------------------------------------------------------------------------
@@ -276,33 +276,33 @@ void *ObjectDispatch_FindFreeObject(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj)
 {
-	volatile u32				zero;
-	volatile u32			   *src;
-	s32							n;
-	struct ResourceObjectWork **child;
+    volatile u32                zero;
+    volatile u32               *src;
+    s32                         n;
+    struct ResourceObjectWork **child;
 
-	if (obj)
-	{
-		switch (obj->kind & 15)
-		{
-		case 1: // 絵がひとつ
-			ResourceObject_Release((struct ResourceObjectWork *)obj->target.child);
-			break;
-		case 2: // 絵が 4 つまで
-			child = (struct ResourceObjectWork **)obj->target.children;
-			n = 3;
-			do
-			{
-				struct ResourceObjectWork *res = *child++;
-				if (res)
-					ResourceObject_Release(res);
-			} while (--n >= 0);
-			break;
-		}
-		src = &zero;
-		*src = 0;
-		Dma_Set(src, obj, 0x85000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
-	}
+    if (obj)
+    {
+        switch (obj->kind & 15)
+        {
+        case 1: // 絵がひとつ
+            ResourceObject_Release((struct ResourceObjectWork *)obj->target.child);
+            break;
+        case 2: // 絵が 4 つまで
+            child = (struct ResourceObjectWork **)obj->target.children;
+            n = 3;
+            do
+            {
+                struct ResourceObjectWork *res = *child++;
+                if (res)
+                    ResourceObject_Release(res);
+            } while (--n >= 0);
+            break;
+        }
+        src = &zero;
+        *src = 0;
+        Dma_Set(src, obj, 0x85000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
+    }
 }
 
 #if !GAME_TLA
@@ -313,79 +313,79 @@ void ObjectDispatch_Release(struct DispatchObject *obj)
 //--------------------------------------------------------------------------
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
-	struct ObjectRuntime	   *obj;
-	struct FieldActor		   *act;
-	struct ScriptMotionObject  *mot;
-	struct ScriptObjectRuntime *sc;
-	void					   *spr;
-	s32							kind;
-	void					  **ent;
-	volatile u32				zero;
+    struct ObjectRuntime       *obj;
+    struct FieldActor          *act;
+    struct ScriptMotionObject  *mot;
+    struct ScriptObjectRuntime *sc;
+    void                       *spr;
+    s32                         kind;
+    void                      **ent;
+    volatile u32                zero;
 
-	ObjectDispatch_FindFreeObject();
-	kind = id / 4096;
-	id &= 0xfff;
-	obj = ObjectDispatch_FindFreeObject();
-	if (obj != NULL)
-	{
-		act = (struct FieldActor *)obj;
-		act->radius = 16;
-		switch (kind)
-		{
-		case 0:
-			spr = ResourceObject_Create(id);
-			if (spr != NULL)
-			{
-				obj->animationKind = 1;
-				obj->animation = spr;
-				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
-			}
-			else
-			{
-				obj->animationKind = 0;
-			}
-			break;
-		case 2:
-			// 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
-			ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
-			obj->animationKind = kind;
-			zero = 0;
-			obj->animation = ent;
-			Dma_Set(&zero, ent, 0x85000004, REG_DMA3);
-			spr = ResourceObject_Create(id);
-			if (spr != NULL)
-			{
-				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
-				*ent++ = spr;
-			}
-			spr = ResourceObject_Create(id + 1);
-			if (spr != NULL)
-				*ent = spr;
-			break;
-		}
-	}
-	if (obj != NULL)
-	{
-		mot = (struct ScriptMotionObject *)obj;
-		sc = (struct ScriptObjectRuntime *)obj;
-		Object_SetPositionAndResetMotion(obj, x, y, z);
-		obj->script = (s32 *)gObjectDispatch_DefaultScript;
-		obj->speedLimit = 0x20000;
-		obj->step = 0;
-		act->scaleX = 0x10000;
-		act->scaleY = 0x10000;
-		obj->acceleration = 0x10000;
-		obj->flags = 3;
-		mot->gravity = 0x10000;
-		mot->vertical.bounce = 0x4000;
-		obj->unk59 = 0;
-		obj->actionFlags = 1;
-		act->riseBaseY = 0;
-		obj->angle = 0x4000;
-		sc->homeX = x / 65536; // もとの位置（ドット）
-		sc->homeZ = z / 65536;
-	}
-	return obj;
+    ObjectDispatch_FindFreeObject();
+    kind = id / 4096;
+    id &= 0xfff;
+    obj = ObjectDispatch_FindFreeObject();
+    if (obj != NULL)
+    {
+        act = (struct FieldActor *)obj;
+        act->radius = 16;
+        switch (kind)
+        {
+        case 0:
+            spr = ResourceObject_Create(id);
+            if (spr != NULL)
+            {
+                obj->animationKind = 1;
+                obj->animation = spr;
+                act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+            }
+            else
+            {
+                obj->animationKind = 0;
+            }
+            break;
+        case 2:
+            // 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
+            ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
+            obj->animationKind = kind;
+            zero = 0;
+            obj->animation = ent;
+            Dma_Set(&zero, ent, 0x85000004, REG_DMA3);
+            spr = ResourceObject_Create(id);
+            if (spr != NULL)
+            {
+                act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+                *ent++ = spr;
+            }
+            spr = ResourceObject_Create(id + 1);
+            if (spr != NULL)
+                *ent = spr;
+            break;
+        }
+    }
+    if (obj != NULL)
+    {
+        mot = (struct ScriptMotionObject *)obj;
+        sc = (struct ScriptObjectRuntime *)obj;
+        Object_SetPositionAndResetMotion(obj, x, y, z);
+        obj->script = (s32 *)gObjectDispatch_DefaultScript;
+        obj->speedLimit = 0x20000;
+        obj->step = 0;
+        act->scaleX = 0x10000;
+        act->scaleY = 0x10000;
+        obj->acceleration = 0x10000;
+        obj->flags = 3;
+        mot->gravity = 0x10000;
+        mot->vertical.bounce = 0x4000;
+        obj->unk59 = 0;
+        obj->actionFlags = 1;
+        act->riseBaseY = 0;
+        obj->angle = 0x4000;
+        sc->homeX = x / 65536; // もとの位置（ドット）
+        sc->homeZ = z / 65536;
+    }
+    return obj;
 }
 
 //--------------------------------------------------------------------------
@@ -395,14 +395,14 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 {
-	if (obj != 0)
-	{
-		obj->value04 = 0;
-		obj->value00 = (u32)script;
-		obj->value5b = 0;
-		obj->value5d = 0;
-		obj->value57 = 0;
-	}
+    if (obj != 0)
+    {
+        obj->value04 = 0;
+        obj->value00 = (u32)script;
+        obj->value5b = 0;
+        obj->value5d = 0;
+        obj->value57 = 0;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -410,32 +410,32 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no)
 {
-	struct DispatchObject *obj;
-	void				 **list;
-	s32					   n;
-	void				  *spr;
+    struct DispatchObject *obj;
+    void                 **list;
+    s32                    n;
+    void                  *spr;
 
-	obj = raw;
-	if (obj != 0)
-	{
-		switch (obj->kind & 0xf)
-		{
-		case 1:
-			AnimationObjects_SelectAnimation(obj->target.child, no);
-			break;
-		case 2:
-			list = obj->target.children;
-			n = 3;
-			do
-			{
-				spr = *list++;
-				if (spr != 0)
-					AnimationObjects_SelectAnimation(spr, no);
-				n--;
-			} while (n >= 0);
-			break;
-		}
-	}
+    obj = raw;
+    if (obj != 0)
+    {
+        switch (obj->kind & 0xf)
+        {
+        case 1:
+            AnimationObjects_SelectAnimation(obj->target.child, no);
+            break;
+        case 2:
+            list = obj->target.children;
+            n = 3;
+            do
+            {
+                spr = *list++;
+                if (spr != 0)
+                    AnimationObjects_SelectAnimation(spr, no);
+                n--;
+            } while (n >= 0);
+            break;
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -443,30 +443,30 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val)
 {
-	s32	   n;
-	void  *spr;
-	void **list;
+    s32    n;
+    void  *spr;
+    void **list;
 
-	if (obj != 0)
-	{
-		switch (obj->kind & 0xf)
-		{
-		case 1:
-			AnimationObjects_SetActiveTimerSteps(obj->target.child, val);
-			return;
-		case 2:
-			list = obj->target.children;
-			n = 3;
-			do
-			{
-				spr = *list++;
-				if (spr != 0)
-					AnimationObjects_SetActiveTimerSteps(spr, val);
-				n--;
-			} while (n >= 0);
-			break;
-		}
-	}
+    if (obj != 0)
+    {
+        switch (obj->kind & 0xf)
+        {
+        case 1:
+            AnimationObjects_SetActiveTimerSteps(obj->target.child, val);
+            return;
+        case 2:
+            list = obj->target.children;
+            n = 3;
+            do
+            {
+                spr = *list++;
+                if (spr != 0)
+                    AnimationObjects_SetActiveTimerSteps(spr, val);
+                n--;
+            } while (n >= 0);
+            break;
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -474,32 +474,32 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val)
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no, s32 steps)
 {
-	void **list;
-	void  *spr;
-	s32	   n;
+    void **list;
+    void  *spr;
+    s32    n;
 
-	if (obj != 0)
-	{
-		switch (obj->kind & 15)
-		{
-		case 1:
-			AnimationObjects_SelectAnimation(obj->target.child, no);
-			AnimationObjects_SetActiveTimerSteps(obj->target.child, steps);
-			break;
-		case 2:
-			list = obj->target.children;
-			for (n = 3; n >= 0; n--)
-			{
-				spr = *list++;
-				if (spr != 0)
-				{
-					AnimationObjects_SelectAnimation(spr, no);
-					AnimationObjects_SetActiveTimerSteps(spr, steps);
-				}
-			}
-			break;
-		}
-	}
+    if (obj != 0)
+    {
+        switch (obj->kind & 15)
+        {
+        case 1:
+            AnimationObjects_SelectAnimation(obj->target.child, no);
+            AnimationObjects_SetActiveTimerSteps(obj->target.child, steps);
+            break;
+        case 2:
+            list = obj->target.children;
+            for (n = 3; n >= 0; n--)
+            {
+                spr = *list++;
+                if (spr != 0)
+                {
+                    AnimationObjects_SelectAnimation(spr, no);
+                    AnimationObjects_SetActiveTimerSteps(spr, steps);
+                }
+            }
+            break;
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -507,8 +507,8 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no, s32 
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot)
 {
-	if (obj != 0 && (obj->kind & 0xf) == 1)
-		((struct FieldSprite *)obj->target.child)->rotation = rot;
+    if (obj != 0 && (obj->kind & 0xf) == 1)
+        ((struct FieldSprite *)obj->target.child)->rotation = rot;
 }
 
 //--------------------------------------------------------------------------
@@ -517,18 +517,18 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot)
 //--------------------------------------------------------------------------
 void Animation_SetIndexAndInitObjects(void *raw, s32 no)
 {
-	struct DispatchObject  *obj = raw;
-	struct AnimationObject *spr;
+    struct DispatchObject  *obj = raw;
+    struct AnimationObject *spr;
 
-	if (obj != NULL && (obj->kind & 0xf) == 1)
-	{
-		spr = obj->target.child;
-		if (no >= 0)
-		{
-			spr->entries[0]->animId = no;
-			Animation_InitializeObjects(spr);
-		}
-	}
+    if (obj != NULL && (obj->kind & 0xf) == 1)
+    {
+        spr = obj->target.child;
+        if (no >= 0)
+        {
+            spr->entries[0]->animId = no;
+            Animation_InitializeObjects(spr);
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -537,12 +537,12 @@ void Animation_SetIndexAndInitObjects(void *raw, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 {
-	if (obj != 0 && (obj->kind & 0xf) == 1)
-	{
-		struct AnimationObject *spr = obj->target.child;
-		if (no >= 0)
-			ResourceMetadata_Register(spr, no);
-	}
+    if (obj != 0 && (obj->kind & 0xf) == 1)
+    {
+        struct AnimationObject *spr = obj->target.child;
+        if (no >= 0)
+            ResourceMetadata_Register(spr, no);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -550,45 +550,45 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
-	obj->argument = arg;
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
+    obj->argument = arg;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
-	if (arg != 0)
-	{
-		obj->value34 = 0x8000;
-		obj->value30 = 0x40000;
-		obj->argument = arg;
-		obj->value64 = 0;
-	}
+    ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
+    if (arg != 0)
+    {
+        obj->value34 = 0x8000;
+        obj->value30 = 0x40000;
+        obj->argument = arg;
+        obj->value64 = 0;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -596,20 +596,20 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 a
 //--------------------------------------------------------------------------
 void ObjectDispatch_WaitForValue16(void *raw)
 {
-	struct ScriptInterpreter *sc = raw;
-	s32						  cnt;
+    struct ScriptInterpreter *sc = raw;
+    s32                       cnt;
 
-	cnt = 0;
-	if (sc->script[sc->cursor] != 0x10)
-	{
-		do
-		{
-			WaitFrames(1);
-			cnt++;
-			if (cnt > 299)
-				break;
-		} while (sc->script[sc->cursor] != 0x10);
-	}
+    cnt = 0;
+    if (sc->script[sc->cursor] != 0x10)
+    {
+        do
+        {
+            WaitFrames(1);
+            cnt++;
+            if (cnt > 299)
+                break;
+        } while (sc->script[sc->cursor] != 0x10);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -617,11 +617,11 @@ void ObjectDispatch_WaitForValue16(void *raw)
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags)
 {
-	if (obj != NULL)
-	{
-		if ((obj->kind & 0xf) == 1)
-			((struct AnimationObject *)obj->target.child)->flags = flags;
-	}
+    if (obj != NULL)
+    {
+        if ((obj->kind & 0xf) == 1)
+            ((struct AnimationObject *)obj->target.child)->flags = flags;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -629,11 +629,11 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags)
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode)
 {
-	if (obj != 0 && obj->kind == 1)
-	{
-		struct FieldSprite *spr = obj->target.child;
-		spr->blendMode = mode;
-	}
+    if (obj != 0 && obj->kind == 1)
+    {
+        struct FieldSprite *spr = obj->target.child;
+        spr->blendMode = mode;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -641,11 +641,11 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode)
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 {
-	if (obj != 0 && obj->kind == 1)
-	{
-		struct FieldSprite *spr = obj->target.child;
-		spr->unk1d1 = on;
-	}
+    if (obj != 0 && obj->kind == 1)
+    {
+        struct FieldSprite *spr = obj->target.child;
+        spr->unk1d1 = on;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -653,8 +653,8 @@ void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 //--------------------------------------------------------------------------
 void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val)
 {
-	if (obj != NULL && obj->kind == 1)
-		ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, val);
+    if (obj != NULL && obj->kind == 1)
+        ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, val);
 }
 
 //--------------------------------------------------------------------------
@@ -662,12 +662,12 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val)
 //--------------------------------------------------------------------------
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-	Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
-	Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
-	BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
-	BattleFx_StartBufferInterpolationFar(1);
-	WaitFrames(1);
-	REG_DISPCNT = (REG_DISPCNT & 0xf1ff) | DISPCNT_OBJ_ON;
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
+    BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
+    BattleFx_StartBufferInterpolationFar(1);
+    WaitFrames(1);
+    REG_DISPCNT = (REG_DISPCNT & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
 //--------------------------------------------------------------------------
@@ -675,119 +675,119 @@ void Graphics_EnableObjLayerAndCallbacks(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-	Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
-	Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
-	REG_DISPCNT &= 0xe1ff;
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
+    REG_DISPCNT &= 0xe1ff;
 }
 
 s32 ObjectDispatch_ReturnTrue(void)
 {
-	return 1;
+    return 1;
 }
 
 // マップのセル
 struct CameraTile
 {
-	u32 unk00 : 12;
-	u32 layer : 2;	  // 0 でなければ、上にいるオブジェクトのレイヤー + 1
-	u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
-	u32 unk10 : 16;
+    u32 unk00 : 12;
+    u32 layer : 2;    // 0 でなければ、上にいるオブジェクトのレイヤー + 1
+    u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
+    u32 unk10 : 16;
 };
 
 // オブジェクトの絵（OAM の属性をふくむ）
 struct CameraSprite
 {
-	u8	unk00[4];
-	u16 y : 8;
-	u16 affine : 2;
-	u16 blendMode : 2;
-	u16 mosaic : 1;
-	u16 fullColor : 1;
-	u16 shape : 2;
-	u16 x : 9;
-	u16 affineIndex : 5;
-	u16 flipX : 1;
-	u16 flipY : 1;
-	u16 tile : 10;
-	u16 priority : 2;
-	u16 palette : 4;
-	u8	unk0a[0x0a];
-	u16 secondTile : 10;
-	u16 secondPriority : 2;
-	u16 secondPalette : 4;
-	u8	unk16[2];
-	s32 scale;
-	u8	resource; // VRAM ブロックの番号
-	u8	flags1d;
-	u8	unk1e[7];
-	u8	activated;
+    u8  unk00[4];
+    u16 y : 8;
+    u16 affine : 2;
+    u16 blendMode : 2;
+    u16 mosaic : 1;
+    u16 fullColor : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affineIndex : 5;
+    u16 flipX : 1;
+    u16 flipY : 1;
+    u16 tile : 10;
+    u16 priority : 2;
+    u16 palette : 4;
+    u8  unk0a[0x0a];
+    u16 secondTile : 10;
+    u16 secondPriority : 2;
+    u16 secondPalette : 4;
+    u8  unk16[2];
+    s32 scale;
+    u8  resource; // VRAM ブロックの番号
+    u8  flags1d;
+    u8  unk1e[7];
+    u8  activated;
 };
 
 // オブジェクト
 struct CameraObject
 {
-	u32	  active;
-	u16	  unk04;
-	u16	  angle;
-	s32	  x;
-	s32	  y;
-	s32	  z;
-	s32	  height;
-	s32	  scaleX;
-	s32	  scaleY;
-	u8	  unk20[2];
-	u8	  layer;
-	u8	  flags;
-	u8	  unk24[0x2c];
-	void *sprite;
-	u8	  kind; // 1 絵ひとつ、2 絵が 4 つまで
-	u8	  unk55[7];
-	u8	  held;
-	u8	  unk5d[0x13];
+    u32   active;
+    u16   unk04;
+    u16   angle;
+    s32   x;
+    s32   y;
+    s32   z;
+    s32   height;
+    s32   scaleX;
+    s32   scaleY;
+    u8    unk20[2];
+    u8    layer;
+    u8    flags;
+    u8    unk24[0x2c];
+    void *sprite;
+    u8    kind; // 1 絵ひとつ、2 絵が 4 つまで
+    u8    unk55[7];
+    u8    held;
+    u8    unk5d[0x13];
 };
 
 struct CameraLayer
 {
-	struct CameraTile *tiles;
-	u8				   unk04[44];
+    struct CameraTile *tiles;
+    u8                 unk04[44];
 };
 
 // マップ
 struct CameraState
 {
-	u8				   unk000[0xe4];
-	s32				   x; // 見ている位置
-	s32				   z;
-	u8				   unk0ec[0x44];
-	struct CameraLayer layers[1];
+    u8                 unk000[0xe4];
+    s32                x; // 見ている位置
+    s32                z;
+    u8                 unk0ec[0x44];
+    struct CameraLayer layers[1];
 };
 
 struct CameraSync
 {
-	s16 count;
-	s16 unk02;
-	s16 frozen;
+    s16 count;
+    s16 unk02;
+    s16 frozen;
 };
 
 struct CameraPoint
 {
-	s32 x;
-	s32 y;
-	s32 z;
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
 // 固定カメラ
 struct FixedCamera
 {
-	struct CameraPoint	eye;
-	struct CameraPoint	target;
-	struct CameraPoint *eyeOverride;	 // あればこちらの視点を使う
-	struct CameraPoint *targetOverride; // あればこちらの注視点を使う
+    struct CameraPoint  eye;
+    struct CameraPoint  target;
+    struct CameraPoint *eyeOverride;    // あればこちらの視点を使う
+    struct CameraPoint *targetOverride; // あればこちらの注視点を使う
 };
 
 extern u8 Render_DecodeFrame[];
 
-s32	 ArcTan2(s32 x, s32 y);
+s32  ArcTan2(s32 x, s32 y);
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
 
@@ -798,126 +798,126 @@ void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 an
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCamera(void)
 {
-	/* FAKEMATCH: needed to match: unused; the native frame keeps room for three points above the position. */
-	struct CameraPoint	 spare[3];
-	s32					 cnt;
-	struct CameraState	*map;
-	s32					 camX;
-	s32					 camZ;
-	struct CameraSync	*sync;
-	struct CameraObject *obj;
-	struct CameraSprite *spr;
-	s32					*cam;
-	u32					 kind;
-	s32					 dx;
-	s32					 dz;
-	s32					 top;
-	struct CameraTile	*tile;
-	u32					 bits;
-	s32					 scale[2];
-	s32					 pos[4];
-	s32					 y;
-	s32					 height;
-	u32					 bitsVal;
+    /* FAKEMATCH: needed to match: unused; the native frame keeps room for three points above the position. */
+    struct CameraPoint   spare[3];
+    s32                  cnt;
+    struct CameraState  *map;
+    s32                  camX;
+    s32                  camZ;
+    struct CameraSync   *sync;
+    struct CameraObject *obj;
+    struct CameraSprite *spr;
+    s32                 *cam;
+    u32                  kind;
+    s32                  dx;
+    s32                  dz;
+    s32                  top;
+    struct CameraTile   *tile;
+    u32                  bits;
+    s32                  scale[2];
+    s32                  pos[4];
+    s32                  y;
+    s32                  height;
+    u32                  bitsVal;
 
-	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
-	cam = &map->x;
-	camX = cam[0] & 0xffff0000;
-	camZ = cam[1] & 0xffff0000;
-	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
-	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
-	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-	sync->count = 0;
-	obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
-	for (cnt = 0; cnt < 64; cnt++, obj++)
-	{
-		if (obj->active == 0)
-			continue;
-		if (obj->x != 0 || obj->z != 0)
-		{
-			kind = obj->kind & 15;
-			if (kind == 0)
-				continue;
-			if (kind != 1)
-				continue;
-			if (sync->frozen != 0 && obj->held == 0)
-			{
-				struct CameraSprite *frozen = obj->sprite;
+    map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
+    cam = &map->x;
+    camX = cam[0] & 0xffff0000;
+    camZ = cam[1] & 0xffff0000;
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
+    // 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
+    RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
+    sync->count = 0;
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
+    for (cnt = 0; cnt < 64; cnt++, obj++)
+    {
+        if (obj->active == 0)
+            continue;
+        if (obj->x != 0 || obj->z != 0)
+        {
+            kind = obj->kind & 15;
+            if (kind == 0)
+                continue;
+            if (kind != 1)
+                continue;
+            if (sync->frozen != 0 && obj->held == 0)
+            {
+                struct CameraSprite *frozen = obj->sprite;
 
-				Resource_ActivateEntry(frozen->resource);
-				frozen->activated = kind;
-				continue;
-			}
-			dx = obj->x - camX;
-			dz = obj->z - camZ;
-			top = dz - obj->y;
-			spr = obj->sprite;
-			if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
-			{
-				// 足もとのセルの情報
-				tile = &map->layers[obj->layer].tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
-				if (obj->flags & 1)
-				{
-					bits = tile->priority;
-					if (bits != 0)
-					{
-						spr->priority = bits;
-						spr->secondPriority = bits;
-					}
-				}
-				bitsVal = tile->layer;
-				if (bitsVal != 0)
-					obj->layer = bitsVal - 1;
-				scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
-				scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
-				pos[0] = dx;
-				pos[1] = obj->y;
-				pos[2] = dz;
-				pos[3] = obj->height;
-				if (obj->flags & 2)
-				{
-					pos[1] += 0xfec00000; // -20 ドット
-					pos[2] += 0xfec00000;
-					pos[3] += 0xfec00000;
-				}
-				if (obj->flags & 4)
-				{
-					pos[1] += 0x1400000; // +20 ドット
-					pos[2] += 0x1400000;
-					pos[3] += 0x1400000;
-				}
-				Render_ApplyProjectedPlacement(spr, pos, scale, obj->angle);
-				continue;
-			}
-			if (obj->held == 0)
-			{
-				if (!(spr->flags1d & 1))
-				{
-					Resource_ActivateEntry(spr->resource);
-					spr->activated = 1;
-				}
-			}
-		}
-		else
-		{
-			kind = obj->kind & 15;
-			if (kind == 1)
-			{
-				spr = obj->sprite;
-				if (obj->held == 0 && !(spr->flags1d & 1))
-				{
-					Resource_ActivateEntry(spr->resource);
-					spr->activated = kind;
-				}
-			}
-		}
-	}
-	Runtime_ReleaseHeapBlock(52);
+                Resource_ActivateEntry(frozen->resource);
+                frozen->activated = kind;
+                continue;
+            }
+            dx = obj->x - camX;
+            dz = obj->z - camZ;
+            top = dz - obj->y;
+            spr = obj->sprite;
+            if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
+            {
+                // 足もとのセルの情報
+                tile = &map->layers[obj->layer].tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
+                if (obj->flags & 1)
+                {
+                    bits = tile->priority;
+                    if (bits != 0)
+                    {
+                        spr->priority = bits;
+                        spr->secondPriority = bits;
+                    }
+                }
+                bitsVal = tile->layer;
+                if (bitsVal != 0)
+                    obj->layer = bitsVal - 1;
+                scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
+                scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
+                pos[0] = dx;
+                pos[1] = obj->y;
+                pos[2] = dz;
+                pos[3] = obj->height;
+                if (obj->flags & 2)
+                {
+                    pos[1] += 0xfec00000; // -20 ドット
+                    pos[2] += 0xfec00000;
+                    pos[3] += 0xfec00000;
+                }
+                if (obj->flags & 4)
+                {
+                    pos[1] += 0x1400000; // +20 ドット
+                    pos[2] += 0x1400000;
+                    pos[3] += 0x1400000;
+                }
+                Render_ApplyProjectedPlacement(spr, pos, scale, obj->angle);
+                continue;
+            }
+            if (obj->held == 0)
+            {
+                if (!(spr->flags1d & 1))
+                {
+                    Resource_ActivateEntry(spr->resource);
+                    spr->activated = 1;
+                }
+            }
+        }
+        else
+        {
+            kind = obj->kind & 15;
+            if (kind == 1)
+            {
+                spr = obj->sprite;
+                if (obj->held == 0 && !(spr->flags1d & 1))
+                {
+                    Resource_ActivateEntry(spr->resource);
+                    spr->activated = kind;
+                }
+            }
+        }
+    }
+    Runtime_ReleaseHeapBlock(52);
 }
 
 s32 ObjectCamera_ReturnTrue(void)
 {
-	return 1;
+    return 1;
 }
 
 //--------------------------------------------------------------------------
@@ -928,90 +928,90 @@ s32 ObjectCamera_ReturnTrue(void)
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCameraFixed(void)
 {
-	s32					 cnt;
-	struct FixedCamera	*cam;
-	struct CameraSync	*sync;
-	struct CameraPoint	*eye;
-	struct CameraPoint	*target;
-	struct CameraObject *obj;
-	s32					 angle;
-	s32					 part;
-	s32					 kind;
-	s32					*pos;
-	s32					 one;
-	void			   **parts;
-	void				*spr;
-	s32					 scale2[2];
-	s32					 scale[2];
-	/* FAKEMATCH: needed to match: unused; the native frame keeps room for two points above the scales. */
-	struct CameraPoint spare[2];
+    s32                  cnt;
+    struct FixedCamera  *cam;
+    struct CameraSync   *sync;
+    struct CameraPoint  *eye;
+    struct CameraPoint  *target;
+    struct CameraObject *obj;
+    s32                  angle;
+    s32                  part;
+    s32                  kind;
+    s32                 *pos;
+    s32                  one;
+    void               **parts;
+    void                *spr;
+    s32                  scale2[2];
+    s32                  scale[2];
+    /* FAKEMATCH: needed to match: unused; the native frame keeps room for two points above the scales. */
+    struct CameraPoint spare[2];
 
-	cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
-	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
-	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-	eye = &cam->eye;
-	target = &cam->target;
-	if (cam->eyeOverride != NULL)
-		eye = cam->eyeOverride;
-	if (cam->targetOverride != NULL)
-		target = cam->targetOverride;
-	angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
-	sync->count = 0;
-	Render_ResetTransformState();
-	if (GameFlag_TestFar(363))
-	{
-		angle += 0xffffe000;
-		Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-		Graphics_PrepareTransferAndRun(eye, target);
-	}
-	else
-	{
-		Graphics_PrepareTransferInIwramWork(eye, target);
-	}
-	obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
-	obj += 63;
-	one = 0x10000;
-	for (cnt = 63; cnt >= 0; cnt--, obj--)
-	{
-		if (obj->active == 0)
-			continue;
-		kind = obj->kind & 15;
-		switch (kind)
-		{
-		case 1:
-			pos = &obj->x;
-			scale[0] = obj->scaleX;
-			scale[1] = obj->scaleY;
-			spr = obj->sprite;
-			if (GameFlag_TestFar(363))
-			{
-				scale[0] = one;
-				scale[1] = one;
-			}
-			Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle, obj->layer);
-			break;
-		case 2:
-			scale2[0] = obj->scaleX;
-			scale2[1] = obj->scaleY;
-			if (GameFlag_TestFar(363))
-			{
-				scale2[0] = one;
-				scale2[1] = one;
-			}
-			parts = obj->sprite;
-			for (part = 3; part >= 0; part--)
-			{
-				spr = *parts++;
-				if (spr != NULL)
-					Render_PlaceProjectedSprite(
-						spr, &obj->x, scale2, obj->angle + angle, obj->layer);
-			}
-			break;
-		case 0:
-			break;
-		}
-	}
-	Runtime_ReleaseHeapBlock(52);
+    cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
+    RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
+    eye = &cam->eye;
+    target = &cam->target;
+    if (cam->eyeOverride != NULL)
+        eye = cam->eyeOverride;
+    if (cam->targetOverride != NULL)
+        target = cam->targetOverride;
+    angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
+    sync->count = 0;
+    Render_ResetTransformState();
+    if (GameFlag_TestFar(363))
+    {
+        angle += 0xffffe000;
+        Iwram_TransformMatrix(gCamera_FixedViewMatrix);
+        Graphics_PrepareTransferAndRun(eye, target);
+    }
+    else
+    {
+        Graphics_PrepareTransferInIwramWork(eye, target);
+    }
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
+    obj += 63;
+    one = 0x10000;
+    for (cnt = 63; cnt >= 0; cnt--, obj--)
+    {
+        if (obj->active == 0)
+            continue;
+        kind = obj->kind & 15;
+        switch (kind)
+        {
+        case 1:
+            pos = &obj->x;
+            scale[0] = obj->scaleX;
+            scale[1] = obj->scaleY;
+            spr = obj->sprite;
+            if (GameFlag_TestFar(363))
+            {
+                scale[0] = one;
+                scale[1] = one;
+            }
+            Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle, obj->layer);
+            break;
+        case 2:
+            scale2[0] = obj->scaleX;
+            scale2[1] = obj->scaleY;
+            if (GameFlag_TestFar(363))
+            {
+                scale2[0] = one;
+                scale2[1] = one;
+            }
+            parts = obj->sprite;
+            for (part = 3; part >= 0; part--)
+            {
+                spr = *parts++;
+                if (spr != NULL)
+                    Render_PlaceProjectedSprite(
+                        spr, &obj->x, scale2, obj->angle + angle, obj->layer);
+            }
+            break;
+        case 0:
+            break;
+        }
+    }
+    Runtime_ReleaseHeapBlock(52);
 }
 
 #endif

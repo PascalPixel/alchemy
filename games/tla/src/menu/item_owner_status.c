@@ -2,36 +2,38 @@
 #include "ram_buffer.h"
 #include "battle_unit.h"
 
-struct ItemMenuCursor {
+struct ItemMenuCursor
+{
     u8 unk00[5];
     u8 state;
 };
 
-struct ItemMenuState {
-    u8 unk000[0x170];
+struct ItemMenuState
+{
+    u8                     unk000[0x170];
     struct ItemMenuCursor *cursor;
 };
 
-extern u8 MsgExpLabel[];
-extern u8 MsgClassName[];
+extern u8       MsgExpLabel[];
+extern u8       MsgClassName[];
 extern const u8 gMenu_LvString[];
 extern const u8 gMenu_SlashString[];
 extern const u8 gMenu_HpString[];
 extern const u8 gMenu_PpString[];
 
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
-void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void UiWork_SetParamNibbleFar(s32 color);
+void               UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void               UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void               UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
+void               UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
+void               UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
+void               UiWork_SetParamNibbleFar(s32 color);
 struct BattleUnit *UnitGet(s32 owner);
-void WaitFrames(s32 frames);
+void               WaitFrames(s32 frames);
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct ItemMenuState *menu;
-    struct BattleUnit *unit;
+    struct BattleUnit    *unit;
 
     menu = Ram_HeapSlots->menuRuntime;
     unit = UnitGet(owner);
@@ -54,7 +56,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 8, window, 80, 8);
-    if (flags == 0) {
+    if (flags == 0)
+    {
         WaitFrames(1);
         UiWindow_ClearInteriorTilesFar(window, 144, 0, 224, 40);
     }

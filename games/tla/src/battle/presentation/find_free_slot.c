@@ -11,28 +11,27 @@
 #include "owner_state.h"
 #include "character_ids.h"
 
-
 struct BattleSpriteSlots
 {
-	s32 enemyGroup;
-	s16 spriteSlots[6];
+    s32 enemyGroup;
+    s16 spriteSlots[6];
 };
 
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 void BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-	struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
-	s32					   index;
+    struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
+    s32                       index;
 
-	for (index = 0; index <= 5; index++)
-	{
-		if (work->spriteSlots[index] == value)
-		{
-			ResourceSlot_LoadFar(index, 0, 0, 0);
-			work->spriteSlots[index] = 0;
-		}
-	}
+    for (index = 0; index <= 5; index++)
+    {
+        if (work->spriteSlots[index] == value)
+        {
+            ResourceSlot_LoadFar(index, 0, 0, 0);
+            work->spriteSlots[index] = 0;
+        }
+    }
 }
 
 s32 Resource_FindFreeSlot(s32 key)
@@ -42,11 +41,13 @@ s32 Resource_FindFreeSlot(s32 key)
     s32 result;
     u32 value;
 
-    for (index = 0;; index++) {
+    for (index = 0;; index++)
+    {
         entry = gResource_SlotAssignments[index];
         /* FAKEMATCH: the plain order builds the 0x1ff mask before the load. */
         __asm__("");
-        if (key == (entry & 0x1ff)) {
+        if (key == (entry & 0x1ff))
+        {
 #ifdef MODERN
             value = gResource_SlotAssignments[index];
 #else
@@ -79,14 +80,14 @@ s32 Inventory_FindEquippedFar(s32 owner, s32 kind);
 s32 BattleUnit_LookupWeaponValueByClass(s32 owner)
 {
     struct OwnerInventoryState *unit = UnitGet(owner);
-    s32 slot = Inventory_FindEquippedFar(owner, 1);
-    s32 result = 0;
+    s32                         slot = Inventory_FindEquippedFar(owner, 1);
+    s32                         result = 0;
 
     if (slot >= 0)
     {
         /* FAKEMATCH: the native loads the equipped item before it starts the id mask 0x1ff; plainly the mask is started first (one reordered row, differ 2). The item is pinned to the r3 it takes there and the barrier holds the mask until it is loaded; the barrier alone gives the item r0 and the mask r3 (differ 8), as does a one-pass block, and the pin alone or with an operand barrier differs 2 and 4. */
         register u32 item __asm__("r3") = unit->inventory[slot];
-        s32 index;
+        s32          index;
 
         /* FAKEMATCH: the barrier of the pin above. */
         __asm__ volatile("");

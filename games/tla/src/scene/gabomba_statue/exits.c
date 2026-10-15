@@ -16,13 +16,15 @@ const u32 *Scene_GetExits(void)
     return gSceneExits;
 }
 
-struct FieldPartBytes {
+struct FieldPartBytes
+{
     u8 unk00[5];
     u8 frame;
 };
 
-struct FieldAnimation {
-    u8 unk00[40];
+struct FieldAnimation
+{
+    u8                     unk00[40];
     struct FieldPartBytes *part;
 };
 

@@ -19,17 +19,17 @@ extern char ResourceId_WindowTiles;
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
-            REG_DMA3);
-    Dma_Set((const void *)gUi_WindowPalette, (void *)0x050001e0, 0x80000010,
-            REG_DMA3);
+        REG_DMA3);
+    Dma_Set((const void *)gUi_WindowPalette, (void *)0x050001e0, 0x80000010, REG_DMA3);
     /* FAKEMATCH: the do-while keeps the backdrop store's value before its address. */
-    do {
+    do
+    {
         s32 black = 0;
         PLTT_BACKDROP = black;
     } while (0);
     {
         volatile u16 *pal;
-        s32 color;
+        s32           color;
 
         color = 0x4180;
         pal = (volatile u16 *)0x050001e8;
@@ -53,8 +53,7 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     }
-    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0,
-            REG_DMA3);
+    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
@@ -90,24 +89,27 @@ s32 Runtime_GetRemainingEwram(void)
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
     u32 *allocator_state;
-    s32 kind_offset;
-    s32 aligned_size;
-    u32 address;
-    u32 next_address;
-    u32 next;
-    u32 cached_address;
+    s32  kind_offset;
+    s32  aligned_size;
+    u32  address;
+    u32  next_address;
+    u32  next;
+    u32  cached_address;
 
     allocator_state = (u32 *)Ram_HeapSlots;
     kind_offset = kind;
     cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
-    if (cached_address == 0) {
+    if (cached_address == 0)
+    {
         cached_address = allocator_state[1];
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = cached_address + aligned_size;
-        if (next >= (u32)Ram_IwramHeapEnd) {
+        if (next >= (u32)Ram_IwramHeapEnd)
+        {
             address = allocator_state[0];
             next_address = address + aligned_size;
-            if (next_address >= 0x02040000U) {
+            if (next_address >= 0x02040000U)
+            {
                 return NULL;
             }
             allocator_state[0] = next_address;
@@ -124,27 +126,30 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 void *Runtime_AllocateBlock(s32 kind, s32 size)
 {
     u32 *allocator_state;
-    s32 kind_offset;
-    u32 aligned_size;
-    u32 next;
-    u32 address;
-    u32 next_address;
-    u32 cached_address;
+    s32  kind_offset;
+    u32  aligned_size;
+    u32  next;
+    u32  address;
+    u32  next_address;
+    u32  cached_address;
 
     allocator_state = (u32 *)Ram_HeapSlots;
     kind_offset = kind;
     cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
-    if (cached_address == 0) {
+    if (cached_address == 0)
+    {
         aligned_size = (u32)size + 3;
         address = allocator_state[0];
         /* FAKEMATCH: load the heap head before shifting the alignment value. */
         __asm__("" : : "r"(address), "r"(aligned_size));
         aligned_size = (aligned_size >> 2) * 4;
         next = address + aligned_size;
-        if (next >= 0x02040000U) {
+        if (next >= 0x02040000U)
+        {
             address = allocator_state[1];
             next_address = address + aligned_size;
-            if (next_address > (u32)(Ram_IwramHeapEnd - 1)) {
+            if (next_address > (u32)(Ram_IwramHeapEnd - 1))
+            {
                 return 0;
             }
             allocator_state[1] = next_address;
@@ -161,7 +166,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
 void Runtime_FillFreeHeapWords(u32 value)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
-    u32 address;
+    u32  address;
 
     address = state[1];
     Iwram_FillWords((void *)address, (u32)Ram_IwramHeapEnd - address, value);
@@ -172,11 +177,11 @@ void Runtime_FillFreeHeapWords(u32 value)
 void *MemAlloc(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
-    u32 other;
-    u32 next;
-    u32 address;
-    u32 words;
-    u32 limit;
+    u32  other;
+    u32  next;
+    u32  address;
+    u32  words;
+    u32  limit;
     /* FAKEMATCH: the r4 bound capture preserves the heap/head registers. 2026-10-11: plain forms (any statement order, >> 2 << 2 or & ~3, a limit local anywhere) have the registers right and differ 6 in scheduling; a one-pass block around `words = size + 3; address = state[1];` reaches differ 2 (ldr r4, =0x3006fbf and lsls r0 swapped). Without the pin the asm output takes r1 and state moves to r4 (22 rows). */
     register u32 held asm("r4");
 
@@ -190,10 +195,12 @@ void *MemAlloc(s32 size)
     limit = held;
     size = (s32)(words << 2);
     next = address + (u32)size;
-    if (next > limit) {
+    if (next > limit)
+    {
         address = state[0];
         other = address + (u32)size;
-        if (other >= 0x02040000U) {
+        if (other >= 0x02040000U)
+        {
             return NULL;
         }
         state[0] = other;
@@ -207,22 +214,25 @@ finish:
 void *Runtime_BumpAllocateAlternatePool(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
-    u32 other;
-    u32 next;
-    u32 address;
-    u32 words;
+    u32  other;
+    u32  next;
+    u32  address;
+    u32  words;
 
     /* FAKEMATCH: the one-pass block keeps the heap-head load between the size's add and its shifts; as plain statements the ARM9TDMI schedule lifts both shifts above the load (differ 4). */
-    do {
+    do
+    {
         words = (u32)size + 3;
         address = state[0];
     } while (0);
     size = (s32)((words >> 2) << 2);
     next = address + (u32)size;
-    if (next >= 0x02040000U) {
+    if (next >= 0x02040000U)
+    {
         address = state[1];
         other = address + (u32)size;
-        if (other > (u32)(Ram_IwramHeapEnd - 1)) {
+        if (other > (u32)(Ram_IwramHeapEnd - 1))
+        {
             return NULL;
         }
         state[1] = other;

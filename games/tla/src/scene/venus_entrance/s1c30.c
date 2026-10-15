@@ -1,33 +1,38 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Func_020028b4();
-s32 Func_020029cc();
-s32 Func_0200290c();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_SetActionVariant();
-s32 Func_020029fc();
-s32 Object_GetById();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Func_02002994();
-s32 Event_StartScreenTransition();
-s32 Event_WaitTransitionFrames();
-s32 Battle_WaitMode0();
-s32 Func_0200293c();
-s32 Func_02002964();
-s32 Func_0200294c();
-s32 Motion_SetVarCbAndRefresh();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_SetSpeedParameters();
-s32 Object_SetModeById();
-s32 Object_LinkObjectAndSetCallback();
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 ObjectMotion_ResetAndSetPosition();
-void Func_020028bc(void);
+s32       Func_020028b4();
+s32       Func_020029cc();
+s32       Func_0200290c();
+s32       ObjectMotion_ArmCallback();
+s32       ObjectMotion_SetActionVariant();
+s32       Func_020029fc();
+s32       Object_GetById();
+s32       ObjectDispatch_SetSingleChildFlags();
+s32       Func_02002994();
+s32       Event_StartScreenTransition();
+s32       Event_WaitTransitionFrames();
+s32       Battle_WaitMode0();
+s32       Func_0200293c();
+s32       Func_02002964();
+s32       Func_0200294c();
+s32       Motion_SetVarCbAndRefresh();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_CommitPositionAndActivate();
+s32       ObjectMotion_SetSpeedParameters();
+s32       Object_SetModeById();
+s32       Object_LinkObjectAndSetCallback();
+s32       ObjectMotion_OffsetPositionAndReset();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       ObjectMotion_ResetAndSetPosition();
+void      Func_020028bc(void);
 extern u8 MsgAreAreYou[];
 
 void Func_02001c30(void)
@@ -130,7 +135,8 @@ void Func_02001c30(void)
     Call3(ObjectMotion_SetSpeedParameters, 8, 0x13333, 0x9999);
     Call2(Object_SetModeById, 8, 2);
     t96 = Value1(Object_GetById, 5);
-    if (t96 != 0) {
+    if (t96 != 0)
+    {
         Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t96, s16, 10), FIELD_AT(t96, s16, 18));
     }
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
@@ -138,4 +144,3 @@ void Func_02001c30(void)
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 8;
     Func_020028bc();
 }
-

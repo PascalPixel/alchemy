@@ -2,18 +2,21 @@
 
 void Func_020022ac(void)
 {
-    struct SceneState *state = &gSceneState;
+    struct SceneState    *state = &gSceneState;
     struct ObjectRuntime *object;
-    struct SpriteWork *sprite;
+    struct SpriteWork    *sprite;
 
-    if (state->mode != 2) {
+    if (state->mode != 2)
+    {
         object = Object_GetById(Func_02002998());
         sprite = object->animation;
         Func_02002898();
         Func_02002968(0);
-        Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y, (object->z & 0xfff00000) + 0x80000);
+        Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
+            (object->z & 0xfff00000) + 0x80000);
         Func_02002820(object);
-        while (sprite->level != 0) {
+        while (sprite->level != 0)
+        {
             sprite->level--;
             sprite->dirty = 1;
             WaitFrames(1);
@@ -32,7 +35,8 @@ void Func_02002334(void)
     struct SpriteWork *sprite;
 
     Func_0200237c();
-    if (state->mode != 0) {
+    if (state->mode != 0)
+    {
         sprite = Object_GetById(Func_02002998())->animation;
         if (sprite->child)
             sprite->child[6] = 9;
@@ -46,7 +50,7 @@ void Func_02002334(void)
 
 void Func_0200237c(void)
 {
-    struct SceneState *state = &gSceneState;
+    struct SceneState    *state = &gSceneState;
     struct ObjectRuntime *object = Object_GetById(Func_02002998());
 
     state->x = (object->x & 0xfff00000) + 0x80000;

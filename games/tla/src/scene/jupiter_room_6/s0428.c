@@ -11,8 +11,8 @@ extern s32 gData_020023bc;
 extern s32 gData_020023c0;
 extern u16 gData_020023e8[];
 
-s32 __modsi3();
-s32 Map_GetTerrainHeight();
+s32  __modsi3();
+s32  Map_GetTerrainHeight();
 void Func_02001b34();
 void Func_02001be4();
 void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
@@ -21,10 +21,11 @@ void Func_0200196c(s32 a, s32 b, s32 c);
 void Func_02000428(s32 id)
 {
     struct JupiterRoom6Object *object;
-    s32 height;
+    s32                        height;
 
     /* FAKEMATCH: the one-pass block loads the ground height before the word is cleared; as plain statements the ARM9TDMI schedule clears it first (differ 2). */
-    do {
+    do
+    {
         object = Object_GetById(id);
         object->motionFlags = 4;
         height = object->height;

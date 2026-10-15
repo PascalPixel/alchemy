@@ -7,13 +7,13 @@
 
 struct MapRenderWork
 {
-	u8	unk000[0xfc];
-	s8	active;
-	u8	unk0fd[3];
-	s16 first;
-	s16 second;
-	u8	unk104[0x16];
-	u16 rotation;
+    u8  unk000[0xfc];
+    s8  active;
+    u8  unk0fd[3];
+    s16 first;
+    s16 second;
+    u8  unk104[0x16];
+    u16 rotation;
 };
 
 LAYOUT_OFFSET_GUARD(MapRenderWork_Active, struct MapRenderWork, active, 0xfc);

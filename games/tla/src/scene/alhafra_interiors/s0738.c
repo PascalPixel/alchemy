@@ -1,36 +1,41 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
-s32 Func_02000a94();
-s32 Func_02000b8c();
-s32 Func_02000b24();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Func_02000b4c();
-s32 Motion_CamBounds();
-s32 Func_02000b7c();
-s32 Battle_WaitMode0();
-s32 Motion_SetVarCbAndRefresh();
-s32 Func_02000b34();
-s32 Func_02000b5c();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_AttachWorkTargetToObject();
-s32 ObjectMotion_ResetAndSetPositionInMode2();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Object_SetModeById();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 Object_LinkObjectAndSetCallback();
-s32 Object_RefreshSelectorById();
-s32 ObjectMotion_EnableActionAndResetMotion();
-s32 Func_02000aec();
-s32 Func_02000bdc();
-s32 Func_02000a9c();
+s32       GameFlag_Test();
+s32       GameFlag_SetBit();
+s32       Func_02000a94();
+s32       Func_02000b8c();
+s32       Func_02000b24();
+s32       ObjectMotion_SetPositionAndReset();
+s32       Func_02000b4c();
+s32       Motion_CamBounds();
+s32       Func_02000b7c();
+s32       Battle_WaitMode0();
+s32       Motion_SetVarCbAndRefresh();
+s32       Func_02000b34();
+s32       Func_02000b5c();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_SetActionVariant();
+s32       Object_AttachWorkTargetToObject();
+s32       ObjectMotion_ResetAndSetPositionInMode2();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Object_SetModeById();
+s32       ObjectMotion_CommitPositionAndActivate();
+s32       ObjectMotion_EnableActionAndSetCallback();
+s32       Object_LinkObjectAndSetCallback();
+s32       Object_RefreshSelectorById();
+s32       ObjectMotion_EnableActionAndResetMotion();
+s32       Func_02000aec();
+s32       Func_02000bdc();
+s32       Func_02000a9c();
 extern u8 MsgAlhafraInteriors120[];
 extern u8 gData_02000be4[];
 
@@ -40,12 +45,17 @@ void Func_02000738(void)
     s32 t1;
 
     t0 = Value1(GameFlag_Test, 0x903);
-    if (t0 != 0) {
-    } else {
+    if (t0 != 0)
+    {
+    }
+    else
+    {
 #if !defined(TLA_EDITION_JA) /* 日本版は 0x200 を見ない */
         t1 = Value1(GameFlag_Test, 0x200);
-        if (t1 == 0) {
-        } else
+        if (t1 == 0)
+        {
+        }
+        else
 #endif
         {
             Call1(GameFlag_SetBit, 0x903);
@@ -146,4 +156,3 @@ void Func_02000738(void)
         }
     }
 }
-

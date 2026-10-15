@@ -15,7 +15,6 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 
-
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
@@ -43,14 +42,13 @@ void UiWork_InitializeWithResourceCounters(void)
 void UiWork_Initialize(s32 kind)
 {
     struct UiRenderWork *work;
-    s32 i;
-    s32 UiWork_CopyTileTail(u32 src, u32 dst)
+    s32                  i;
+    s32                  UiWork_CopyTileTail(u32 src, u32 dst)
     {
         src &= 0x3ff;
         dst &= 0x3ff;
-        Dma_Set((void *)(0x06000010 + src * 32),
-                (void *)(0x06000000 + dst * 32),
-                0x80000008, REG_DMA3);
+        Dma_Set(
+            (void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32), 0x80000008, REG_DMA3);
         return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 

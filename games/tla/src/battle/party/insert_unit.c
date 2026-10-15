@@ -13,11 +13,11 @@ s32 BattleUnit_KeepsOneHp(s32 unitId)
 
 void BattleParty_InsertUnitCentered(u16 *list, s32 unit)
 {
-    s32 counts[2] = {0, 0};
-    s32 side;
-    s32 slot;
-    s32 divider;
-    s32 i;
+    s32  counts[2] = { 0, 0 };
+    s32  side;
+    s32  slot;
+    s32  divider;
+    s32  i;
     u16 *entry;
 
     slot = -1;
@@ -25,21 +25,27 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit)
     divider = slot;
     i = 0;
     entry = list;
-    do {
+    do
+    {
         u32 value = *entry++;
 
-        if (value == 254) {
-            if (divider >= 0 && slot >= 0) {
+        if (value == 254)
+        {
+            if (divider >= 0 && slot >= 0)
+            {
                 s32 distance = i - divider;
 
                 if (distance < 0)
                     distance = divider - i;
                 /* FAKEMATCH: the native compares the distances in this order. */
                 __asm__("");
-                if (slot - divider >= 0) {
+                if (slot - divider >= 0)
+                {
                     if (distance >= slot - divider)
                         goto next;
-                } else if (distance >= divider - slot) {
+                }
+                else if (distance >= divider - slot)
+                {
                     goto next;
                 }
             }
@@ -47,10 +53,13 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit)
             /* FAKEMATCH: the native branches to the loop step from here. */
             __asm__("");
         next:;
-        } else {
+        }
+        else
+        {
             if (value == 255)
                 break;
-            if (value == 128) {
+            if (value == 128)
+            {
                 side ^= 1;
                 divider = i;
             }
@@ -58,9 +67,12 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit)
         }
         i++;
     } while (i <= 5);
-    if (slot >= 0) {
+    if (slot >= 0)
+    {
         list[slot] = unit;
-    } else {
+    }
+    else
+    {
         list[i] = unit;
         list[i + 1] = 255;
     }

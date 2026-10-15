@@ -3,51 +3,51 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_LinkPair(s32 a, s32 b, s32 c);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void ObjectMotion_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void Func_02002b28(void);
-void Func_02002b30(void);
-void Func_02002b88(s32 id, s32 a, s32 b);
-void Func_02002bd0(const u8 *message);
-void Func_02002be0(s32 id, s32 a, s32 b);
-void Func_02002bf8(s32 id, s32 a);
+void                  Object_LinkPair(s32 a, s32 b, s32 c);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void                  ObjectMotion_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void                  Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void                  Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+s32                   UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32                   Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void                  Func_02002b28(void);
+void                  Func_02002b30(void);
+void                  Func_02002b88(s32 id, s32 a, s32 b);
+void                  Func_02002bd0(const u8 *message);
+void                  Func_02002be0(s32 id, s32 a, s32 b);
+void                  Func_02002bf8(s32 id, s32 a);
 struct ObjectRuntime *Func_02002c08(s32 id, s32 emote, s32 frames);
-void Func_02002c10(s32 id, s32 a);
-void Func_02002c28(void);
-void Func_02002c58(s32 a);
-void Func_02002be8(s32 id, s32 a);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void Func_02002c68(s32 id, s32 a, s32 b, s32 c);
-s32 Func_02002ae8(const void *sequence, s32 a, s32 b);
-void Func_02002b90(s32 id, s32 x, s32 z, s32 angle);
-void Func_02002b10(s32 item, s32 a);
-s32 Func_02002b18(s32 item);
-void Func_02002c50(s32 item, s32 a);
-void Func_02002c60(void);
-void Func_02002c90(s32 cue);
-s32 PartyInventory_GiveItem(s32 item, s32 count);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void                  Func_02002c10(s32 id, s32 a);
+void                  Func_02002c28(void);
+void                  Func_02002c58(s32 a);
+void                  Func_02002be8(s32 id, s32 a);
+void                  ObjectMotion_Launch(s32 id, s32 a, s32 b);
+void                  Func_02002c68(s32 id, s32 a, s32 b, s32 c);
+s32                   Func_02002ae8(const void *sequence, s32 a, s32 b);
+void                  Func_02002b90(s32 id, s32 x, s32 z, s32 angle);
+void                  Func_02002b10(s32 item, s32 a);
+s32                   Func_02002b18(s32 item);
+void                  Func_02002c50(s32 item, s32 a);
+void                  Func_02002c60(void);
+void                  Func_02002c90(s32 cue);
+s32                   PartyInventory_GiveItem(s32 item, s32 count);
+void                  UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void                  Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
 extern const u8 MsgYouThereHold[];
 extern const u8 MsgHasEscaped2[];
@@ -382,10 +382,13 @@ void Func_02000f80(void)
     Battle_WaitMode0(20);
     Emote(33, 262, 30);
     UiText_OpenMessageAtObject(33, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Func_02002be0(33, 0, 10);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
+    }
+    else
+    {
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(33, 0, 10);
     }
@@ -477,12 +480,15 @@ void Func_020014fc(void)
     Battle_WaitMode0(10);
     UiText_OpenMessageAtObject(25, 0);
     ArmCallbackAndRefresh(4, 0xb000);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Battle_WaitMode0(25);
         ArmCallback(32, 0xb000, 0);
         Func_02002be0(25, 0, 10);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(25);
         ArmCallback(32, 0xd000, 0);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -497,18 +503,22 @@ void Func_020014fc(void)
     Motion_SetVarCbAndRefresh(24, 2);
     Battle_WaitMode0(20);
     Func_02002be0(24, 0, 10);
-    if (GameFlag_Test(0x98f)) {
+    if (GameFlag_Test(0x98f))
+    {
         Func_02002bd0(MsgItWasThem);
         ArmCallback(32, 0x8000, 0);
         Battle_WaitMode0(20);
         UiText_OpenMessageAtObject(32, 0);
         ArmCallback(4, 0, 0);
-        if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+        {
             Battle_WaitMode0(20);
             Motion_SetModeAndWaitAnimation(32, 3);
             Func_02002be8(32, 0);
             (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-        } else {
+        }
+        else
+        {
             Battle_WaitMode0(20);
             (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
             Motion_SetModeAndWaitAnimation(32, 4);
@@ -569,18 +579,20 @@ void Func_020014fc(void)
 
 // A metatile copy sequence and where it applies (Func_02002ae8 forwards
 // to Map_PlayMetatileCopySequence).
-struct MetatileCopyEntry {
+struct MetatileCopyEntry
+{
     const s16 *sequence;
-    u16 unk04;
-    u16 unk06;
+    u16        unk04;
+    u16        unk06;
 };
 
 extern const struct MetatileCopyEntry gData_02003308[];
 
 /* FAKEMATCH: a one-pass block around each mode change, so it starts its own scheduling region (as plain calls Func_020019d8 loads arguments in other orders, differ 88 of 1565; four mode changes stay plain calls, where the native has no such break). */
-#define SET_MODE(id, mode)              \
-    do {                                \
-        Object_SetModeById(id, mode);   \
+#define SET_MODE(id, mode)            \
+    do                                \
+    {                                 \
+        Object_SetModeById(id, mode); \
     } while (0)
 
 // "Wait": actor 34 questions 4 and the others; the answers are counted in
@@ -590,8 +602,8 @@ extern const struct MetatileCopyEntry gData_02003308[];
 void Func_020019d8(void)
 {
     struct ObjectRuntime *object;
-    s32 x;
-    s32 z;
+    s32                   x;
+    s32                   z;
 
     /* FAKEMATCH: x and z are set first, as forced temporaries; passed as constants, the place call builds x after the actor id (differ 4 of 1565; with z alone, 2). */
     x = 153 << 16;
@@ -617,7 +629,8 @@ void Func_020019d8(void)
     CommitPos(34, 0, 4);
     SET_MODE(34, 3);
     /* FAKEMATCH: a one-pass block, so this wait starts its own scheduling region (as a plain call the message call loads its arguments in the other order, differ 2 of 1565). */
-    do {
+    do
+    {
         Battle_WaitMode0(20);
     } while (0);
     UiText_OpenMessageAtObject(34, 0);
@@ -627,7 +640,8 @@ void Func_020019d8(void)
     ObjectMotion_SetAngleToward(6, 4, 0);
     ObjectMotion_ArmCallback(34, 0x4000, 0);
     Battle_WaitMode0(20);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         ArmCallback(32, 0xc000, 0);
         ArmCallback(5, 0xc000, 0);
         ArmCallback(7, 0xc000, 0);
@@ -639,7 +653,9 @@ void Func_020019d8(void)
         Battle_WaitMode0(20);
         Func_02002be8(34, 0);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
+    }
+    else
+    {
         ArmCallback(32, 0xc000, 0);
         ArmCallback(5, 0xc000, 0);
         ArmCallback(7, 0xc000, 0);
@@ -673,23 +689,28 @@ void Func_020019d8(void)
     Func_02002be0(34, 0, 0);
     CommitPos(34, 16, 8);
     ArmCallback(34, 0x4000, 0);
-    if (Func_02002b18(210) >= 0) {
+    if (Func_02002b18(210) >= 0)
+    {
         Func_02002c50(210, 3);
         PartyInventory_GiveItem(210, 0);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         ArmCallback(4, 0xc000, 0);
         GameFlag_SetBit(0x918);
-    } else {
+    }
+    else
+    {
         s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
         Func_02002bd0(MsgTheMayorTried);
         Func_02002b10(210, 2);
-        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
+        UiText_ShowPositionedMessageAndWait(
+            (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
         Motion_SetVarCbAndRefresh(34, 2);
         Func_02002be8(34, 0);
         CommitPos(34, 16, 0);
         Func_02002b10(210, 2);
-        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
+        UiText_ShowPositionedMessageAndWait(
+            (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
         CommitPos(34, -16, 0);
         ArmCallbackAndRefresh(34, 0x4000);
         SetHorizontalPos(66, 0xc00000, 0x1000000);
@@ -766,7 +787,8 @@ void Func_020019d8(void)
     ObjectMotion_SetAngleToward(33, 4, 0);
     Battle_WaitMode0(20);
     UiText_OpenMessageAtObject(33, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) != 0)
+    {
         Func_02002be8(33, 0);
         Emote(4, 0x102, 30);
         Battle_WaitMode0(40);
@@ -785,7 +807,9 @@ void Func_020019d8(void)
         Battle_WaitMode0(20);
         Emote(33, 0x109, 30);
         Func_02002be8(33, 0);
-    } else {
+    }
+    else
+    {
         Func_02002bd0(MsgICanTBelieveIt);
         Func_02002be8(33, 0);
         Object_LinkPair(6, 5, 0);
@@ -888,11 +912,14 @@ void Func_020019d8(void)
     Battle_WaitMode0(20);
     Battle_WaitMode0(20);
     UiText_OpenMessageAtObject(33, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Emote(33, 0x108, 30);
         Func_02002be0(33, 0, 0);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
+    }
+    else
+    {
         Emote(33, 0x103, 30);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(33, 0, 0);
@@ -1029,7 +1056,8 @@ void Func_020019d8(void)
     Battle_WaitMode0(20);
     SET_MODE(32, 3);
     /* FAKEMATCH: a one-pass block, so this wait starts its own scheduling region (as a plain call the speed call loads its arguments in the other order, differ 2 of 1565). */
-    do {
+    do
+    {
         Battle_WaitMode0(20);
     } while (0);
     Speed(32, 0x00013333, 0x9999);

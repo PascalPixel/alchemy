@@ -4,7 +4,7 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void Func_0200153c(void);
 void Func_02001558(void);
 void Func_020015a0(void);
@@ -29,20 +29,22 @@ s32 Func_02002ec8(void)
 
         entrance = party->entrance;
     }
-    switch (entrance) {
+    switch (entrance)
+    {
     case 2:
         if (GameFlag_Test(0x109) == 0)
             Func_020031a8(1);
     case 4:
-        {
-            struct PartyState *party = &gPartyState;
+    {
+        struct PartyState *party = &gPartyState;
 
-            /* FAKEMATCH: a one-pass block after the party address: the native loads the scene id before it builds the saved scene's offset; without it the offset's first half comes first (differ 2, also with the id in a local). */
-            do {
-            } while (0);
-            party->savedScene = (s32)&SceneId_DailaInteriors2;
-            party->savedEntrance = 1;
-        }
+        /* FAKEMATCH: a one-pass block after the party address: the native loads the scene id before it builds the saved scene's offset; without it the offset's first half comes first (differ 2, also with the id in a local). */
+        do
+        {
+        } while (0);
+        party->savedScene = (s32)&SceneId_DailaInteriors2;
+        party->savedEntrance = 1;
+    }
         Func_02002fd4();
         break;
     case 11:

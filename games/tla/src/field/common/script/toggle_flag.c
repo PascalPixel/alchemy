@@ -1,6 +1,6 @@
 #include "script.h"
 
-s32 GameFlag_Test(s32);
+s32  GameFlag_Test(s32);
 void GameFlag_ClearBit(s32);
 void GameFlag_SetBit(s32);
 
@@ -23,8 +23,8 @@ void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 a
 
 s32 Script_ApplyArgumentToChildren(struct ScriptInterpreter *interpreter)
 {
-    ObjectDispatch_ApplyArgumentToChildren((struct DispatchObject *)interpreter,
-                                           interpreter->script[interpreter->cursor + 1]);
+    ObjectDispatch_ApplyArgumentToChildren(
+        (struct DispatchObject *)interpreter, interpreter->script[interpreter->cursor + 1]);
     interpreter->cursor += 2;
     return 1;
 }

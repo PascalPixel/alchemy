@@ -9,7 +9,6 @@
 #include "system.h"
 #include "effect_step.h"
 
-
 void EffectStep_RunAnimationMode9(struct EffectStep *step)
 {
     BattlePres_RunBurstScene(step, 9);
@@ -32,11 +31,13 @@ void EffectStep_RunAnimationMode11(struct EffectStep *step)
 
 void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step)
 {
-    if (step->variant == 0) {
+    if (step->variant == 0)
+    {
         BattlePres_RunBurstScene(step, 6);
         return;
     }
-    if (step->variant == 1) {
+    if (step->variant == 1)
+    {
         BattlePres_RunBurstScene(step, 7);
         return;
     }

@@ -9,15 +9,15 @@
 enum
 {
 
-	ITEM_DRAGONS_EYE = 230
+    ITEM_DRAGONS_EYE = 230
 };
 
 extern void *gWorkSlot[];
 
 struct TrackingWork
 {
-	u8				   unk00[24];
-	struct FieldActor *actor;
+    u8                 unk00[24];
+    struct FieldActor *actor;
 };
 
 #endif

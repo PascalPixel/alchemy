@@ -9,20 +9,20 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-void *UnitGet(s32 owner);
-void UiWork_ClearValueNameTablesFar(void);
+void     *UnitGet(s32 owner);
+void      UiWork_ClearValueNameTablesFar(void);
 extern u8 gData_03001ae8[];
-s32 BattlePres_ShowDefendMessage(s16 *);
-s32 Func_0811ca54(s16 *);
-s32 Func_0811c710(struct BattleActionRecord *);
-void BattleMotion_SetupEscapeObject(s32);
+s32       BattlePres_ShowDefendMessage(s16 *);
+s32       Func_0811ca54(s16 *);
+s32       Func_0811c710(struct BattleActionRecord *);
+void      BattleMotion_SetupEscapeObject(s32);
 
 s32 BattlePres_RunAction(s16 *action)
 {
     struct BattlePresentationTransition *transition;
-    s32 actorId;
-    s32 battleMode;
-    u8 *actor;
+    s32                                  actorId;
+    s32                                  battleMode;
+    u8                                  *actor;
 
     actorId = action[0];
     actor = UnitGet(actorId);
@@ -39,10 +39,11 @@ s32 BattlePres_RunAction(s16 *action)
     transition->frames = 60;
     UiWork_ClearValueNameTablesFar();
 
-    switch (action[3]) {
+    switch (action[3])
+    {
     case 99:
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
-        if (BattleEscape_PlayRun((struct BattleActionRecord *)action)!= 0)
+        if (BattleEscape_PlayRun((struct BattleActionRecord *)action) != 0)
             return 1;
         break;
     case 3:
@@ -54,7 +55,8 @@ s32 BattlePres_RunAction(s16 *action)
         Func_0811ca54(action);
         break;
     case 0:
-    default: {
+    default:
+    {
         struct BattlePresentationTransition *tr = Ram_HeapSlots->transitionWork;
         tr->flag = 0;
         Func_0811ca54(action);
@@ -72,10 +74,12 @@ s32 BattlePres_RunAction(s16 *action)
 
 s32 BattleObject_IsValidId(u32 objectId)
 {
-    if (objectId <= 7) {
+    if (objectId <= 7)
+    {
         return 0;
     }
-    if (objectId - 128 <= 5) {
+    if (objectId - 128 <= 5)
+    {
         return 0;
     }
     return -1;

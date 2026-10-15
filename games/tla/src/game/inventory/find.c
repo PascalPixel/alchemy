@@ -3,10 +3,12 @@
 s32 Inventory_Find(s32 owner, s32 item_id)
 {
     struct OwnerInventoryState *inv = UnitGet(owner);
-    s32 slot;
+    s32                         slot;
 
-    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-        if ((inv->inventory[slot] & ITEM_ID_MASK) == item_id) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++)
+    {
+        if ((inv->inventory[slot] & ITEM_ID_MASK) == item_id)
+        {
             return slot;
         }
     }
@@ -15,19 +17,21 @@ s32 Inventory_Find(s32 owner, s32 item_id)
 
 s32 PartyInventory_FindOwner(s32 itemId)
 {
-    s16 owners[10];
-    s32 ownerCount;
-    s32 ownerIndex;
+    s16  owners[10];
+    s32  ownerCount;
+    s32  ownerIndex;
     s16 *ownerCursor;
-    s16 owner;
+    s16  owner;
 
     if (Inventory_Find(gPartyState.currentOwner, itemId) != -1)
         return gPartyState.currentOwner;
     ownerCount = Party_ListActiveOwners(owners);
     ownerCursor = owners;
     ownerIndex = 0;
-    if (ownerIndex < ownerCount) {
-        do {
+    if (ownerIndex < ownerCount)
+    {
+        do
+        {
             owner = *ownerCursor++;
             if (Inventory_Find(owner, itemId) != -1)
                 return owner;

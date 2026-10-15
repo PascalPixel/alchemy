@@ -22,16 +22,18 @@ static inline s32 WaveScroll_LowestLineOffset(void)
 
 void WAVE_SCROLL(void)
 {
-    s16 *line = WAVE_SCROLL_LINES;
-    s32 i;
-    s16 *source;
+    s16          *line = WAVE_SCROLL_LINES;
+    s32           i;
+    s16          *source;
     volatile u16 *scroll;
     volatile u16 *dma;
 
-    for (i = 0; i != 160; i++, line++) {
+    for (i = 0; i != 160; i++, line++)
+    {
         s32 range = (160 - i) >> 2;
 
-        *line = (Iwram_MulQ16(Math_Sine((i + *(u8 *)&gFrameCount) << 8), (144 - i) << 10) >> 11) - 4;
+        *line =
+            (Iwram_MulQ16(Math_Sine((i + *(u8 *)&gFrameCount) << 8), (144 - i) << 10) >> 11) - 4;
         *line += Random16Far() % (range * 2) - range;
         if (*line > 56)
             *line -= 56;
@@ -43,7 +45,8 @@ void WAVE_SCROLL(void)
     *scroll = *line;
     dma = REG_DMA0;
     /* FAKEMATCH: the one-pass block reads the control before its mask is built, as in overlay 674's Func_02001cac (differ 4 without it) */
-    do {
+    do
+    {
         dma[5] &= 0xc5ff; // stop the start timing and the repeat
         dma[5] &= 0x7fff; // stop the channel
     } while (0);

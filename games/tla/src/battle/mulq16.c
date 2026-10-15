@@ -14,5 +14,5 @@ void Func_081269ac(void)
 
 s32 Func_081269bc(s32 a, s32 b)
 {
-	return Iwram_MulQ16(a, b);
+    return Iwram_MulQ16(a, b);
 }

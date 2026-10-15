@@ -10,14 +10,16 @@
 #include "scene_ids.h"
 #include "frame.h"
 
-struct MapLayer {
-    u8 unk00[0x30];
+struct MapLayer
+{
+    u8  unk00[0x30];
     u8 *cells;
-    u8 unk34[4];
+    u8  unk34[4];
 };
 
-struct MapLayers {
-    u8 unk000[0x108];
+struct MapLayers
+{
+    u8              unk000[0x108];
     struct MapLayer layers[3];
 };
 
@@ -32,19 +34,19 @@ extern char SceneId_Ov692Room6;
 extern char SceneId_Ov692Room7;
 extern char SceneId_Ov692Room8;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void                  Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void                  Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void                  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void                  Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 extern const u8 gData_02005534[];
 

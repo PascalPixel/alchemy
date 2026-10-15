@@ -11,7 +11,11 @@ static __inline__ void Blend_WriteAlpha(s32 value)
 }
 
 /* FAKEMATCH: each alpha write is a one-pass block; with the plain inline the fades differ 4 and 2. */
-#define BLEND_SET_ALPHA(value) do { Blend_WriteAlpha(value); } while (0)
+#define BLEND_SET_ALPHA(value)   \
+    do                           \
+    {                            \
+        Blend_WriteAlpha(value); \
+    } while (0)
 
 // Fades the second target out and the first in over 16 steps of four frames.
 void Func_02000510(void)

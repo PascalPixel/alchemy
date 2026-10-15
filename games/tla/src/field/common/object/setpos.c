@@ -4,7 +4,8 @@ void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->linkedObject = Object_GetById(linkedObjectId);
         Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
     }
@@ -22,7 +23,8 @@ void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         s32 value = 1;
         value |= object->actionFlags;
         object->actionFlags = value;
@@ -35,7 +37,8 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->movementState = 0;
         Object_ResetMotion(object);
         Object_SetPosition(object, x << 16, object->y, z << 16);
@@ -46,7 +49,8 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->movementState = 0;
         Object_ResetMotion(object);
         Object_SetPosition(object, x << 16, object->y, z << 16);
@@ -58,7 +62,8 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->movementState = 0;
         Object_ResetMotion(object);
         Object_SetMode(object, 2);
@@ -70,7 +75,8 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         object->movementState = 0;
         Object_ResetMotion(object);
         Object_SetMode(object, 2);

@@ -10,10 +10,10 @@
 #include "types.h"
 #include "object_runtime.h"
 
-#define Object_SetPositionAndResetMotionFar ((s32 (*)(void*,s32,s32,s32))Object_SetPositionAndResetMotionFar)
+#define Object_SetPositionAndResetMotionFar \
+    ((s32 (*)(void *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
 
 s32 RunBattleEffect14();
-
 
 void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object)
 {
@@ -22,7 +22,8 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object)
     scale = object->scaleX - 0x80;
     object->scaleY = scale;
     object->scaleX = scale;
-    if (scale < 0x8000) {
+    if (scale < 0x8000)
+    {
         Object_SetPositionAndResetMotionFar(object, 0, 0, 0);
         object->update = 0;
     }

@@ -5,17 +5,18 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void Object_LinkPair(s32 a, s32 b, s32 c);
-void Func_0200129c(s32 id, s32 x, s32 z);
+void                  ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void                  ObjectMotion_EnableActionAndResetMotion(s32 id);
+void                  Object_LinkPair(s32 a, s32 b, s32 c);
+void                  Func_0200129c(s32 id, s32 x, s32 z);
 
 void Func_0200115c(void)
 {
-    if (!Flag_IsSet(0x230)) {
+    if (!Flag_IsSet(0x230))
+    {
         struct ObjectRuntime *object = Object_GetById(9);
         struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
-        s32 other;
+        s32                   other;
 
         Flag_Set(0x230);
         Call3((void (*)())Func_0200129c, 9, 296 << 16, 160 << 16);

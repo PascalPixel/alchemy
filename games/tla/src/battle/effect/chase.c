@@ -2,18 +2,20 @@
 #include "iwram_call.h"
 #include "field_event.h"
 
-struct SpriteFrames {
+struct SpriteFrames
+{
     u8 unk00[5];
     u8 frame;
 };
 
-struct AnimatedSprite {
-    u8 unk00[0x12];
-    s16 rotation;
-    u8 unk14[5];
-    u8 frame;
-    u8 nextFrame;
-    u8 unk1b[0xd];
+struct AnimatedSprite
+{
+    u8                   unk00[0x12];
+    s16                  rotation;
+    u8                   unk14[5];
+    u8                   frame;
+    u8                   nextFrame;
+    u8                   unk1b[0xd];
     struct SpriteFrames *frames;
 };
 
@@ -23,9 +25,10 @@ struct AnimatedSprite {
 void Func_080e9e8c(struct FieldActor *object)
 {
     struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-    struct SpriteFrames *frames = sprite->frames;
+    struct SpriteFrames   *frames = sprite->frames;
 
-    switch (object->timer & 3) {
+    switch (object->timer & 3)
+    {
     case 0:
         frames->frame = 7;
         sprite->frame = 1;
@@ -48,7 +51,8 @@ void Func_080e9e8c(struct FieldActor *object)
     object->timer++;
 }
 
-struct Chase {
+struct Chase
+{
     s32 x;
     s32 z;
     s32 unk08;

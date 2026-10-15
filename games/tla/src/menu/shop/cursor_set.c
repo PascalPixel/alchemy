@@ -2,24 +2,27 @@
 #include "render_input.h"
 #include "ram_buffer.h"
 
-struct ShopCursor {
+struct ShopCursor
+{
     struct RenderOutput *anchor;
-    u16 x;
-    u16 y;
-    s16 targetX;
-    s16 targetY;
-    s8 active;
-    s8 kind;
+    u16                  x;
+    u16                  y;
+    s16                  targetX;
+    s16                  targetY;
+    s8                   active;
+    s8                   kind;
 };
 
-struct ShopRuntime {
-    u8 unk000[0x4dc];
+struct ShopRuntime
+{
+    u8                unk000[0x4dc];
     struct ShopCursor cursor;
-    u8 unk4ec[0x19];
-    u8 mode;
+    u8                unk4ec[0x19];
+    u8                mode;
 };
 
-struct SpriteAttr {
+struct SpriteAttr
+{
     unsigned y : 8;
     unsigned affine : 2;
     unsigned blendMode : 2;
@@ -31,7 +34,8 @@ struct SpriteAttr {
     unsigned size : 2;
 };
 
-struct SpriteAttr2 {
+struct SpriteAttr2
+{
     u16 y : 8;
     u16 affine : 2;
     u16 blendMode : 2;
@@ -43,13 +47,14 @@ struct SpriteAttr2 {
     u16 size : 2;
 };
 
-struct ShopCursorSprite3 {
+struct ShopCursorSprite3
+{
     struct RenderOutput *next;
-    u8 unk04[2];
-    u16 x;
-    u16 y;
-    u8 unk0a[0x0a];
-    struct SpriteAttr2 oam;
+    u8                   unk04[2];
+    u16                  x;
+    u16                  y;
+    u8                   unk0a[0x0a];
+    struct SpriteAttr2   oam;
 };
 
 void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind);
@@ -59,27 +64,33 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind
 void Func_081089e4(struct ShopCursor *cursor)
 {
     struct ShopCursorSprite3 *sprite;
-    s32 delta;
-    s32 step;
-    u32 mask;
+    s32                       delta;
+    s32                       step;
+    u32                       mask;
 
     sprite = (struct ShopCursorSprite3 *)cursor->anchor;
-    if (sprite != NULL) {
+    if (sprite != NULL)
+    {
         delta = sprite->x - cursor->targetX;
         step = delta / 4;
         if (step < 0)
             step = -step;
-        if (delta > 0) {
+        if (delta > 0)
+        {
             if (step != 0)
                 sprite->x = sprite->x - step;
             else
                 sprite->x = sprite->x - 1;
-        } else if (delta < 0) {
+        }
+        else if (delta < 0)
+        {
             if (step != 0)
                 sprite->x = sprite->x + step;
             else
                 sprite->x = sprite->x + 1;
-        } else {
+        }
+        else
+        {
             // Neither move: skip the shared sprite update.
             goto y_axis;
         }
@@ -98,13 +109,16 @@ void Func_081089e4(struct ShopCursor *cursor)
         step = delta / 4;
         if (step < 0)
             step = -step;
-        if (delta > 0) {
+        if (delta > 0)
+        {
             if (step != 0)
                 sprite->y = sprite->y - step;
             else
                 sprite->y = sprite->y - 1;
             sprite->oam.y = sprite->y;
-        } else if (delta < 0) {
+        }
+        else if (delta < 0)
+        {
             if (step != 0)
                 sprite->y = sprite->y + step;
             else
@@ -114,11 +128,7 @@ void Func_081089e4(struct ShopCursor *cursor)
     }
 }
 
-void Shop_SetCursor(
-    struct ShopCursor *cursor,
-    s32 targetX,
-    s32 targetY,
-    s8 kind)
+void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind)
 {
     struct RenderOutput *anchor = cursor->anchor;
 

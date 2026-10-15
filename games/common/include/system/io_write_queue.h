@@ -7,9 +7,9 @@
 
 struct IoWriteQueue
 {
-	u16 count;
-	u16 pad;
-	u32 entries[32][3];
+    u16 count;
+    u16 pad;
+    u32 entries[32][3];
 };
 
 extern struct IoWriteQueue gIoWriteQueue;
@@ -31,50 +31,50 @@ void IoWriteQueue_FlushPending(void);
 // address : 書き込み先、value : 値、control : 遅延フレーム << 16、または DMA の制御語
 /* FAKEMATCH: the count is read and stored through count_, a u16 pointer to q->count held in a local; written as q->count, 15 linked sections of tbs-en differ (measured 2026-10-13: the nine QueueIoWriteDelay writers, 18 functions with inline pushes in 12 objects, and the overlays). It replaces the earlier tagged cast store *(u16 *)&q->count, so it is the same device in another form. The body is braces alone, not do { } while (0): an outer one-pass block changes 8 linked sections of tbs-en (the QueueIoWriteDelay writers, six objects with inline pushes and the overlays; ⚓️ unchanged; measured 2026-10-13). */
 #define IO_WRITE_QUEUE_PUSH(address, value, control) \
-	{                                                \
-		struct IoWriteQueue *q = &gIoWriteQueue;     \
-		u32					 saved;                  \
-		s32					 count;                  \
-		u16					*count_ = &q->count;     \
+    {                                                \
+        struct IoWriteQueue *q = &gIoWriteQueue;     \
+        u32                  saved;                  \
+        s32                  count;                  \
+        u16                 *count_ = &q->count;     \
                                                      \
-		IRQ_LOCK(saved);                             \
-		count = *count_;                             \
-		if (count <= 31)                             \
-		{                                            \
-			u32 *entry = q->entries[count];          \
+        IRQ_LOCK(saved);                             \
+        count = *count_;                             \
+        if (count <= 31)                             \
+        {                                            \
+            u32 *entry = q->entries[count];          \
                                                      \
-			*count_ = count + 1;                     \
-			*entry++ = (value);                      \
-			*entry++ = (address);                    \
-			*entry = (control);                      \
-		}                                            \
-		IRQ_UNLOCK(saved);                           \
-	}
+            *count_ = count + 1;                     \
+            *entry++ = (value);                      \
+            *entry++ = (address);                    \
+            *entry = (control);                      \
+        }                                            \
+        IRQ_UNLOCK(saved);                           \
+    }
 
 // IO_WRITE_QUEUE_PUSH と同じだが、IME のアドレスを呼び出し側の ime に持ったまま止める・戻す
 /* FAKEMATCH: the count goes through count_ as in IO_WRITE_QUEUE_PUSH (see its tag): written as q->count, BattleFx_PlayUnitElementEffect and BattleEffect_RunShockwaveScene, its users, are among the sections that differ. */
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control) \
-	{                                                         \
-		struct IoWriteQueue *q;                               \
-		u32					 saved;                           \
-		s32					 count;                           \
-		u16					*count_;                          \
+    {                                                         \
+        struct IoWriteQueue *q;                               \
+        u32                  saved;                           \
+        s32                  count;                           \
+        u16                 *count_;                          \
                                                               \
-		q = &gIoWriteQueue;                                   \
-		count_ = &q->count;                                   \
-		IME_SAVE(ime, saved);                                 \
-		IME_DISABLE(ime);                                     \
-		count = *count_;                                      \
-		if (count <= 31)                                      \
-		{                                                     \
-			u32 *entry = q->entries[count];                   \
+        q = &gIoWriteQueue;                                   \
+        count_ = &q->count;                                   \
+        IME_SAVE(ime, saved);                                 \
+        IME_DISABLE(ime);                                     \
+        count = *count_;                                      \
+        if (count <= 31)                                      \
+        {                                                     \
+            u32 *entry = q->entries[count];                   \
                                                               \
-			*count_ = count + 1;                              \
-			*entry++ = (value);                               \
-			*entry++ = (address);                             \
-			*entry = (control);                               \
-		}                                                     \
-		IME_RESTORE(ime, saved);                              \
-	}
+            *count_ = count + 1;                              \
+            *entry++ = (value);                               \
+            *entry++ = (address);                             \
+            *entry = (control);                               \
+        }                                                     \
+        IME_RESTORE(ime, saved);                              \
+    }
 
 #endif

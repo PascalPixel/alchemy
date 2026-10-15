@@ -12,9 +12,8 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
-void Battle_WaitMode0(s32 frames);
-void Engine_AudioPlayCue(s32 cue);
-
+void                  Battle_WaitMode0(s32 frames);
+void                  Engine_AudioPlayCue(s32 cue);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -55,4 +54,3 @@ void VenusEntrance_UpdateSparkTrail(struct ObjectRuntime *object)
     if (++object->action % 8 == 0)
         Engine_AudioPlayCue(125);
 }
-

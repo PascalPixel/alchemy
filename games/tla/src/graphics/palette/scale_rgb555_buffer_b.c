@@ -11,12 +11,14 @@ s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale, s32 co
     u32 green;
     u32 blue;
 
-    if (count > 0) {
+    if (count > 0)
+    {
         mask_red = 0x1f;
         mask_green = 0x3e0;
         mask_blue = 0x7c00;
         remaining = count;
-        do {
+        do
+        {
             pixel = *source;
             red = pixel & mask_red;
             green = pixel & mask_green;

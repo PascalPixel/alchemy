@@ -2,27 +2,28 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-struct EventWork15a {
-    u8 unk000[0x15a];
+struct EventWork15a
+{
+    u8  unk000[0x15a];
     u16 flag;
 };
 
-extern u8 MsgFieldDoorWontBudge;
+extern u8       MsgFieldDoorWontBudge;
 extern const u8 gData_020013c0[];
 extern const u8 gData_020013c4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void Func_0200110c(void);
-void Func_020011ac(s32 skip);
-void Func_02001114(void);
-void Func_02001214(s32 cue);
-void Func_020010dc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020011e4(const void *data);
-void Func_020011cc(const void *data);
-void Func_020011ec(void);
+void                  GameFlag_SetBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
+void                  Func_0200110c(void);
+void                  Func_020011ac(s32 skip);
+void                  Func_02001114(void);
+void                  Func_02001214(s32 cue);
+void                  Func_020010dc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_020011e4(const void *data);
+void                  Func_020011cc(const void *data);
+void                  Func_020011ec(void);
 
 void Func_02000474(void)
 {
@@ -40,7 +41,8 @@ void Func_020004a4(struct ObjectRuntime *object)
     u8 *flags = &object->motionFlags;
 
     *flags = 3;
-    do {
+    do
+    {
         WaitFrames(1);
     } while (object->velocityY != 0);
     Func_02001214(188);
@@ -51,11 +53,13 @@ void Func_020004a4(struct ObjectRuntime *object)
 void Func_020004cc(void)
 {
     struct ObjectRuntime *object = Object_GetById(11);
-    s32 z;
+    s32                   z;
 
-    if ((object->x >> 20) == 40) {
+    if ((object->x >> 20) == 40)
+    {
         z = object->z >> 20;
-        if (z == 13) {
+        if (z == 13)
+        {
             Func_0200110c();
             Func_020011ac(0);
             Func_020004a4(object);
@@ -89,20 +93,20 @@ extern const u8 gData_02001264[];
 extern const u8 gData_020012f4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
-void PartyInventory_Remove(s32 item);
-void Func_0200110c(void);
-void Func_020011ac(s32 skip);
-void Func_02001114(void);
-void Func_02001214(s32 cue);
-void Func_02001134(s32 id, s32 x, s32 z);
-void Func_02001164(s32 speed, s32 acceleration);
-void Func_02001174(void);
-void Func_02000958(void);
+void                  GameFlag_SetBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
+void                  Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void                  ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void                  PartyInventory_Remove(s32 item);
+void                  Func_0200110c(void);
+void                  Func_020011ac(s32 skip);
+void                  Func_02001114(void);
+void                  Func_02001214(s32 cue);
+void                  Func_02001134(s32 id, s32 x, s32 z);
+void                  Func_02001164(s32 speed, s32 acceleration);
+void                  Func_02001174(void);
+void                  Func_02000958(void);
 
 static __inline__ void Actor_Place(s32 id, s32 x, s32 z)
 {
@@ -126,12 +130,13 @@ void Func_02000568(void)
 {
     struct ObjectRuntime *left = Object_GetById(8);
     struct ObjectRuntime *right = Object_GetById(9);
-    u32 i;
+    u32                   i;
 
     Func_0200110c();
     Func_020011ac(0);
     Func_02001214(183);
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < 120; i++)
+    {
         /* FAKEMATCH: the native keeps the counter in r5 and the right door in r6; global.c ranks them 14/24 against 10/17 without the barrier and gives the door r5. */
         __asm__("" : : "r"(i));
         left->x += -0x1999;

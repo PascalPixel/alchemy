@@ -8,19 +8,19 @@ extern const u8 MsgGuardsAnIntruder[];
 extern const u8 MsgGrrrrrRrrruffRrufff[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_ResetTargetsAndVelocity(s32 id);
-void ObjectMotion_EnableActionAndResetMotion(s32 id);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
-void Func_02001084(void);
-void Func_0200108c(void);
-void Func_02001104(const u8 *message);
-void Func_0200110c(s32 id, s32 flags);
-void Func_0200111c(s32 id, s32 a, s32 b);
-void Func_02001124(s32 id, s32 a);
-void Func_0200113c(s32 scene, s32 entrance);
-void Func_02001164(s32 a);
+s32                   GameFlag_Test(s32 flag);
+void                  Battle_WaitMode0(s32 frames);
+void                  ObjectMotion_ResetTargetsAndVelocity(s32 id);
+void                  ObjectMotion_EnableActionAndResetMotion(s32 id);
+void                  ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
+void                  Func_02001084(void);
+void                  Func_0200108c(void);
+void                  Func_02001104(const u8 *message);
+void                  Func_0200110c(s32 id, s32 flags);
+void                  Func_0200111c(s32 id, s32 a, s32 b);
+void                  Func_02001124(s32 id, s32 a);
+void                  Func_0200113c(s32 scene, s32 entrance);
+void                  Func_02001164(s32 a);
 
 void Func_02000d80(void)
 {
@@ -78,7 +78,8 @@ void Func_02000ea8(void)
     struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *guard = Object_GetById(14);
 
-    if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000 && guard->x > owner->x)
+    if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000
+        && guard->x > owner->x)
         return;
     Func_02000da8(10);
 }
@@ -88,7 +89,8 @@ void Func_02000ef4(void)
     struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *guard = Object_GetById(15);
 
-    if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000 && guard->x < owner->x)
+    if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000
+        && guard->x < owner->x)
         return;
     Func_02000da8(10);
 }

@@ -8,7 +8,7 @@ void Func_02001ec8(s32 frames);
 
 void Func_02000100(void)
 {
-    volatile u16 *color = (volatile u16 *)0x0500021e;
+    volatile u16                         *color = (volatile u16 *)0x0500021e;
     struct GabombaStatueChamberEventWork *work;
 
     Object_SetModeById(8, 2);

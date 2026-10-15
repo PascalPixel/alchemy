@@ -8,7 +8,7 @@ void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Func_02003b08(void)
 {
     u8 *flags;
-    u8 bit;
+    u8  bit;
 
     if (((s16 *)&Object_GetById(gPartyState.currentOwner)->z)[1] > 653)
         return;

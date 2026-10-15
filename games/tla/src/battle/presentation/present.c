@@ -11,14 +11,14 @@
 
 struct ActorSpritePart
 {
-    u8 unk00[4];
+    u8  unk00[4];
     u16 y : 8;
     u16 affine : 2;
     u16 objectMode : 2;
     u16 mosaic : 1;
     u16 fullColor : 1;
     u16 shape : 2;
-    u8 unk06[0x16];
+    u8  unk06[0x16];
 };
 
 struct ActorSpriteRecord
@@ -29,11 +29,11 @@ struct ActorSpriteRecord
 // Sets the OBJ mode of both sprite parts of each of the actor's records.
 void BattlePres_SetActorRecordMode(s32 actorId, s32 mode)
 {
-    struct BattleObj *slot = BattleObjGet(actorId);
-    struct MotionObject *object;
-    struct ActorSpriteRecord *record;
+    struct BattleObj          *slot = BattleObjGet(actorId);
+    struct MotionObject       *object;
+    struct ActorSpriteRecord  *record;
     struct ActorSpriteRecord **records;
-    s32 i;
+    s32                        i;
 
     if (slot == 0)
         return;
@@ -77,15 +77,15 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode)
 //--------------------------------------------------------------------------
 void BattlePres_SetOtherActorRecordModes(s32 except)
 {
-	s16 list[14];
-	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-	s32 i;
+    s16 list[14];
+    s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+    s32 i;
 
-	for (i = 0; i < cnt; i++)
-	{
-		if (list[i] != except)
-			BattlePres_SetActorRecordMode(list[i], 1);
-	}
+    for (i = 0; i < cnt; i++)
+    {
+        if (list[i] != except)
+            BattlePres_SetActorRecordMode(list[i], 1);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -93,10 +93,10 @@ void BattlePres_SetOtherActorRecordModes(s32 except)
 //--------------------------------------------------------------------------
 void BattlePres_ClearAllActorRecordModes(void)
 {
-	s16 list[14];
-	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-	s32 i;
+    s16 list[14];
+    s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+    s32 i;
 
-	for (i = 0; i < cnt; i++)
-		BattlePres_SetActorRecordMode(list[i], 0);
+    for (i = 0; i < cnt; i++)
+        BattlePres_SetActorRecordMode(list[i], 0);
 }

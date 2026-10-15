@@ -18,7 +18,8 @@ s32 Object_ClearChildFlags(struct ObjectRuntime *obj)
     return 0;
 }
 
-struct ObjectFlags23 {
+struct ObjectFlags23
+{
     u8 unk00[0x23];
     u8 flags23;
 };
@@ -32,16 +33,17 @@ s32 Object_SetPriorityBit5(struct ObjectFlags23 *obj)
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *target;
-    s32 deltaX;
-    s32 deltaY;
-    s32 cellX;
-    s32 cellY;
-    s32 newX;
-    s32 distance;
-    s32 step;
+    s32                   deltaX;
+    s32                   deltaY;
+    s32                   cellX;
+    s32                   cellY;
+    s32                   newX;
+    s32                   distance;
+    s32                   step;
 
     target = object->linkedObject;
-    if (target != 0) {
+    if (target != 0)
+    {
         deltaX = target->x - object->x;
         if (deltaX < 0)
             deltaX += 0xffff;
@@ -52,12 +54,14 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
         cellY = deltaY >> 16;
         distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
         step = object->action;
-        if (distance >= step) {
+        if (distance >= step)
+        {
             newX = object->x + __divsi3(cellX << 20, step);
-            Object_SetPosition(object, newX, object->y,
-                object->z + __divsi3(cellY << 20, step));
+            Object_SetPosition(object, newX, object->y, object->z + __divsi3(cellY << 20, step));
             Object_SetMode(object, 2);
-        } else {
+        }
+        else
+        {
             Object_SetMode(object, 1);
         }
     }

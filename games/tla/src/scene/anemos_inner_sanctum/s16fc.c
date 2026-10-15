@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 s32 Object_GetById();
@@ -33,4 +38,3 @@ void Func_020016fc(void)
     Call1(GameFlag_ClearBit, 0x200);
     Func_020033a0();
 }
-

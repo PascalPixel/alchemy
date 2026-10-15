@@ -12,15 +12,15 @@
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
 #endif
 {
-	s32 zero;
+    s32 zero;
 
 #if GAME_TLA
-	// 命令の次の語が指すスクリプトへ飛ぶ
-	sc->script = (const s32 *)sc->script[sc->cursor + 1];
+    // 命令の次の語が指すスクリプトへ飛ぶ
+    sc->script = (const s32 *)sc->script[sc->cursor + 1];
 #endif
-	zero = 0;
-	sc->cursor = zero;
-	return 1;
+    zero = 0;
+    sc->cursor = zero;
+    return 1;
 }
 
 //--------------------------------------------------------------------------
@@ -28,9 +28,9 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
 //--------------------------------------------------------------------------
 s32 Script_ClearByte54(struct ScriptInterpreter *sc)
 {
-	sc->byte54 = 0;
-	sc->cursor++;
-	return 1;
+    sc->byte54 = 0;
+    sc->cursor++;
+    return 1;
 }
 
 //--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ s32 Script_ClearByte54(struct ScriptInterpreter *sc)
 //--------------------------------------------------------------------------
 s32 Script_SetByte54(struct ScriptInterpreter *sc)
 {
-	sc->byte54 = 1;
-	sc->cursor++;
-	return 1;
+    sc->byte54 = 1;
+    sc->cursor++;
+    return 1;
 }

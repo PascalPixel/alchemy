@@ -14,7 +14,7 @@ void Func_02000264(void);
 s32 Func_0200028c(void)
 {
     struct EventWork *work;
-    s16 scene;
+    s16               scene;
 
     work = Ram_HeapSlots->eventWork;
     work->screenEffect = 256;

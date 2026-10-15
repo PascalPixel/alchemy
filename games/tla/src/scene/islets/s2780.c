@@ -3,12 +3,13 @@
 void Func_02002780(void)
 {
     struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
-    struct PartyState *party = &gPartyState;
-    struct ObjectRuntime *object;
+    struct PartyState      *party = &gPartyState;
+    struct ObjectRuntime   *object;
 
     s32 cell;
 
-    asm volatile("" : "+l"(party)); /* FAKEMATCH: the listing loads the party state address before it builds the owner offset */
+    /* FAKEMATCH: the listing loads the party state address before it builds the owner offset */
+    asm volatile("" : "+l"(party));
     object = Object_GetById(party->currentOwner);
     Func_02003e64();
     Func_02003fa4(0);

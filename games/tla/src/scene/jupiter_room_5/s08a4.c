@@ -4,35 +4,36 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-struct JupiterRoom5EventWork {
-    u8 unk000[0x1c4];
+struct JupiterRoom5EventWork
+{
+    u8  unk000[0x1c4];
     u16 message;
 };
 
 #define EVENT_WORK ((struct JupiterRoom5EventWork *)Ram_HeapSlots->eventWork)
 
-void Func_020028a0(s32 value);
-void Func_020028b0(void);
-void Func_020028b8(void);
-void Func_020029a8(s32 value);
-void Func_02002928(void *message);
-void Func_02002938(s32 actor, s32 a, s32 b);
-void Func_02002940(s32 actor, s32 angle);
-void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
-s32 Func_02002950(s32 actor, s32 a, s32 b);
-void Func_02000734(void);
-void Func_02000810(s32 actor, s32 target);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Battle_WaitMode0(s32 frames);
+void  Func_020028a0(s32 value);
+void  Func_020028b0(void);
+void  Func_020028b8(void);
+void  Func_020029a8(s32 value);
+void  Func_02002928(void *message);
+void  Func_02002938(s32 actor, s32 a, s32 b);
+void  Func_02002940(s32 actor, s32 angle);
+void  Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
+s32   Func_02002950(s32 actor, s32 a, s32 b);
+void  Func_02000734(void);
+void  Func_02000810(s32 actor, s32 target);
+void  ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void  Battle_WaitMode0(s32 frames);
 void *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(void *object, s32 flags);
-void Object_SetPartAttribute(void *object, s32 value);
-void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
-s32 UiText_OpenMessageAtObject(s32 actor, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void  ObjectDispatch_SetSingleChildFlags(void *object, s32 flags);
+void  Object_SetPartAttribute(void *object, s32 value);
+void  Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
+s32   UiText_OpenMessageAtObject(s32 actor, s32 flags);
+s32   Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+void  Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void  ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void  UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
 // Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 // about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -70,11 +71,14 @@ void Func_020008a4(void)
     Battle_WaitMode0(40);
     Motion_CamBounds(0x440000, -1, 0xf00000, 1);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 22, 0);
-    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0)
+    {
         Motion_SetModeAndWaitAnimation(22, 4);
         Func_02002938(22, 0, 5);
         EVENT_WORK->message++;
-    } else {
+    }
+    else
+    {
         Motion_SetModeAndWaitAnimation(22, 3);
         Battle_WaitMode0(10);
         EVENT_WORK->message++;

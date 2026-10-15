@@ -15,9 +15,9 @@ extern u8 MsgDoNotTurnThePower;
 extern const u8 gUi_ProgressBarTiles[];
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
-void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
-void Audio_PlayCue(s32 cue);
+void             UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
+void             Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
+void             Audio_PlayCue(s32 cue);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 // スペイン語版とイタリア語版の far call 表では、同じ処理へ届く口の名前が違う
 void Func_080c8688(void);
@@ -28,11 +28,11 @@ void Func_080c8698(void);
 
 // 見出しの x: フランス語版だけ違う
 #if defined(TLA_EDITION_FR)
-#define SAVING_X  40
+#define SAVING_X 40
 #define ERASING_X 48
 #define COPYING_X 48
 #else
-#define SAVING_X  76
+#define SAVING_X 76
 #define ERASING_X 92
 #define COPYING_X 84
 #endif
@@ -41,14 +41,15 @@ void Func_080c8698(void);
 struct UiWindow *SaveProgress_Open(u32 kind)
 {
     struct UiWindow *window;
-    void *tiles;
-    s32 message;
+    void            *tiles;
+    s32              message;
 
     window = UiWindow_Create(0, 0, 30, 20, 0);
     tiles = Runtime_BumpAllocateAlternatePool(0x100);
     Resource_DecodeType01(gUi_ProgressBarTiles, tiles);
     Dma_Set(tiles, (void *)0x06001000, 0x84000040, REG_DMA3);
-    switch (kind) {
+    switch (kind)
+    {
     case 0:
         UiText_DrawResource((s32)&MsgSaving, window, SAVING_X, 40);
         break;

@@ -4,10 +4,11 @@
 void Func_02000f58(void)
 {
     struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
-    s16 y = layer->y >> 16;
+    s16              y = layer->y >> 16;
 
     /* FAKEMATCH: a one-pass block builds the store's address before 1448 (one reordered row). */
-    do {
+    do
+    {
         gData_02002a98 = 1448 - y;
     } while (0);
     gData_02002a9c = layer->x >> 16;

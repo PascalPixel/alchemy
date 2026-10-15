@@ -23,20 +23,20 @@
 //--------------------------------------------------------------------------
 void UiWork_ClearValueNameTables(void)
 {
-	s32					 no;
-	struct UiRenderWork *work;
+    s32                  no;
+    struct UiRenderWork *work;
 
-	work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-	/* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
-	__asm__("");
-	no = 0;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+    /* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
+    __asm__("");
+    no = 0;
 
-	do
-	{
-		work->values[no] = 0;
-		work->names[no] = 0;
-		no++;
-	} while (no != 8);
+    do
+    {
+        work->values[no] = 0;
+        work->names[no] = 0;
+        no++;
+    } while (no != 8);
 }
 
 //--------------------------------------------------------------------------
@@ -45,18 +45,18 @@ void UiWork_ClearValueNameTables(void)
 //--------------------------------------------------------------------------
 void UiWork_PushValueSlot(u32 value, u32 kind)
 {
-	struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-	u32 no = 0;
-	u32 limit = 8;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+    u32                  no = 0;
+    u32                  limit = 8;
 
-	do
-	{
-		if (work->names[no] == 0)
-		{
-			work->values[no] = value;
-			work->names[no] = kind;
-			break;
-		}
-		no++;
-	} while (no != limit);
+    do
+    {
+        if (work->names[no] == 0)
+        {
+            work->values[no] = value;
+            work->names[no] = kind;
+            break;
+        }
+        no++;
+    } while (no != limit);
 }

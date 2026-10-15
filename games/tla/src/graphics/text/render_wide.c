@@ -10,8 +10,8 @@ s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y)
 {
     struct UiRenderWork *work;
-    u16 c;
-    s16 start;
+    u16                  c;
+    s16                  start;
 
     work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     start = x;

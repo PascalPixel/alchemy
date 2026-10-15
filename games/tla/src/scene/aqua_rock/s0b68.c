@@ -15,7 +15,7 @@ void Func_02000b58(struct ObjectRuntime *object);
 void Func_02000b68(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 i;
+    s32                   i;
 
     Func_02002998();
     Func_02002a48(0);
@@ -25,7 +25,8 @@ void Func_02000b68(s32 unused, s32 id)
         Func_02002834(26);
     else
         Func_02002834(0);
-    for (i = 3; i >= 0; i--) {
+    for (i = 3; i >= 0; i--)
+    {
         Func_02002a20(Random16Far() & 0x7fff, 0);
         Func_02002a28(15);
         WaitFrames(10);
@@ -36,7 +37,8 @@ void Func_02000b68(s32 unused, s32 id)
     Func_02002a20(0x7fff, 0);
     Func_02002a28(20);
     Battle_WaitMode0(20);
-    if (GameFlag_Test_(0xa68) == 0) {
+    if (GameFlag_Test_(0xa68) == 0)
+    {
         GameFlag_SetBit(0xa68);
         Func_02002958_(64, 64, 1, 2, 51, 82);
         Func_02002958_(66, 64, 1, 2, 115, 18);
@@ -46,7 +48,9 @@ void Func_02000b68(s32 unused, s32 id)
         Func_02002940(8);
         object->update = (void (*)(void))Func_02000b58;
         Func_020025a8(26);
-    } else {
+    }
+    else
+    {
         GameFlag_ClearBit(0xa68);
         Func_02002958_(65, 64, 1, 2, 51, 82);
         Func_02002958_(67, 64, 1, 2, 115, 18);

@@ -26,13 +26,13 @@ void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 //--------------------------------------------------------------------------
 s32 Link_CreateCountdownLabelWindow(void)
 {
-	s32 win = UiWindow_Create(0, 0, 6, 4, 6);
+    s32 win = UiWindow_Create(0, 0, 6, 4, 6);
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TLA_EDITION_ES) \
-	|| defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-	UiText_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
+    || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    UiText_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
 #else
-	UiText_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
+    UiText_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
 #endif
-	return win;
+    return win;
 }

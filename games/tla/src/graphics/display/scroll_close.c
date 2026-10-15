@@ -2,15 +2,15 @@
 #include "dma.h"
 
 extern const void *gDisplayScroll_LineTable[];
-extern u32 *gDisplayScroll_Objects;
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_081a0cac(void);
-void Func_081a0d78(void);
+extern u32        *gDisplayScroll_Objects;
+s32                DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
+s32                Scheduler_RemoveCallback(void (*callback)(void));
+void               Func_081a0cac(void);
+void               Func_081a0d78(void);
 
 void Func_081a0fb8(void)
 {
-    s32 i;
+    s32  i;
     u32 *objects;
 
     for (i = 0; i < 32; i++)

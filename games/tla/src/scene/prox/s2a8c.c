@@ -1,37 +1,37 @@
 #include "local.h"
 #include "input.h"
 
-s32 Battle_WaitMode0();
-s32 Func_02004414();
-s32 Func_020044dc();
-s32 Func_0200451c();
-s32 Func_0200452c();
-s32 Func_02004534();
-s32 Func_0200454c();
-s32 Func_02004564();
-s32 Func_0200456c();
-s32 Func_0200458c();
-s32 Func_0200459c();
-s32 Func_020045a4();
-s32 Func_020045ec();
-s32 Func_0200463c();
-s32 GameFlag_SetBit();
-s32 GameFlag_Test();
-s32 Inventory_PromptAndSetObjectMode();
-s32 Motion_CamBounds();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_ArmCallback();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_SetActionVariant();
-s32 ObjectMotion_SetPositionAndReset();
-s32 ObjectMotion_SetSpeedParameters();
-s32 Object_RefreshSelectorById();
-s32 Object_SetActionCallbackAndRefreshById();
-s32 Object_SetModeById();
-s32 WaitFrames();
-s32 Func_02004464();
-void Func_0200457c(void);
+s32       Battle_WaitMode0();
+s32       Func_02004414();
+s32       Func_020044dc();
+s32       Func_0200451c();
+s32       Func_0200452c();
+s32       Func_02004534();
+s32       Func_0200454c();
+s32       Func_02004564();
+s32       Func_0200456c();
+s32       Func_0200458c();
+s32       Func_0200459c();
+s32       Func_020045a4();
+s32       Func_020045ec();
+s32       Func_0200463c();
+s32       GameFlag_SetBit();
+s32       GameFlag_Test();
+s32       Inventory_PromptAndSetObjectMode();
+s32       Motion_CamBounds();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_ArmCallback();
+s32       ObjectMotion_EnableActionAndSetCallback();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_SetActionVariant();
+s32       ObjectMotion_SetPositionAndReset();
+s32       ObjectMotion_SetSpeedParameters();
+s32       Object_RefreshSelectorById();
+s32       Object_SetActionCallbackAndRefreshById();
+s32       Object_SetModeById();
+s32       WaitFrames();
+s32       Func_02004464();
+void      Func_0200457c(void);
 extern u8 gData_02005ee8[];
 extern u8 gData_02005f2c[];
 extern u8 gData_02005f70[];
@@ -51,7 +51,8 @@ void Func_02002a8c(void)
 {
     u32 i;
 
-    if (Value1(GameFlag_Test, 0x9c5) != 0) {
+    if (Value1(GameFlag_Test, 0x9c5) != 0)
+    {
         Func_02004464();
         Call1(Func_020045ec, 0);
         Call1(Func_0200463c, 0x4e);
@@ -108,14 +109,17 @@ void Func_02002a8c(void)
         Call3(Func_0200452c, 0x8000, 0, 0xa);
         Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0x14);
         Call3(Func_0200452c, 0x4008, 0, 0x14);
-        if (Value1(GameFlag_Test, 0x824) != 0) {
+        if (Value1(GameFlag_Test, 0x824) != 0)
+        {
             Call2(Func_0200454c, 0, 0x4000);
             Call2(Object_SetModeById, 0, 4);
             Call2(Func_02004534, 0, 0);
             Call2(Func_0200454c, 8, 0xd000);
             Call2(Func_02004534, 8, 0);
             EVENT_WORK->messageId++;
-        } else {
+        }
+        else
+        {
             EVENT_WORK->messageId += 2;
             Call2(Func_0200454c, 8, 0xd000);
             Call2(Func_02004534, 8, 0);
@@ -141,11 +145,14 @@ void Func_02002a8c(void)
         Call2(Object_SetModeById, 0, 3);
         Prox_MessageOpen(0x8000, 0);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+        {
             Call2(Motion_SetModeAndWaitAnimation, 0, 3);
             Call2(Func_02004534, 0x8000, 0);
             EVENT_WORK->messageId++;
-        } else {
+        }
+        else
+        {
             EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0, 4);
             Call2(Func_02004534, 0x8000, 0);
@@ -207,7 +214,8 @@ void Func_02002a8c(void)
         Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_020060cc);
         Call1(Battle_WaitMode0, 0x14);
         Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_020060fc);
-        Call2(ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner, (s32)gData_0200617c);
+        Call2(
+            ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner, (s32)gData_0200617c);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)gData_020061fc);
         Prox_Jump(0xb, 0x101, 0x14);
@@ -220,11 +228,14 @@ void Func_02002a8c(void)
         Prox_Jump(0xb, 0x108, 0x28);
         Prox_MessageOpen(0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+        {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
             EVENT_WORK->messageId++;
-        } else {
+        }
+        else
+        {
             EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
@@ -256,11 +267,14 @@ void Func_02002a8c(void)
         Call2(Func_0200454c, 0xb, 0xb000);
         Prox_Jump(0xb, 0x103, 0);
         Prox_MessageOpen(0xa00b, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+        {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
             EVENT_WORK->messageId++;
-        } else {
+        }
+        else
+        {
             EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
@@ -321,11 +335,14 @@ void Func_02002a8c(void)
         Prox_Jump(0xb, 0x109, 0x28);
         Prox_MessageOpen(0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
+        {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
             EVENT_WORK->messageId++;
-        } else {
+        }
+        else
+        {
             EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
@@ -392,10 +409,11 @@ void Func_02002a8c(void)
         // Waits up to 120 frames, or until a key is held.
         i = 0;
         goto test_wait;
-        next_wait:
+    next_wait:
         i++;
-        test_wait:
-        if (i < 120) {
+    test_wait:
+        if (i < 120)
+        {
             Call1(WaitFrames, 1);
             if (gInput.held == 0)
                 goto next_wait;

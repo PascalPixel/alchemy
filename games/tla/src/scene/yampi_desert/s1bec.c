@@ -12,7 +12,8 @@ void Func_02001bec(void)
     Object_SetModeById(gPartyState.currentOwner, 28);
     object = Func_02001b70();
     PartyInventory_GiveItem(209, 0);
-    if (object != 0) {
+    if (object != 0)
+    {
         Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, 0, 0, 0);
         WaitFrames(1);
         Func_02003fc8(object);

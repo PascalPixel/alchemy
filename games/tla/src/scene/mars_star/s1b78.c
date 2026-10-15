@@ -2,10 +2,12 @@
 
 void Func_02001b78(s32 *position, s32 base)
 {
-    struct ObjectRuntime *object = ObjectCreate_(0x11d, position[0], position[1], position[2] - 0x20000);
+    struct ObjectRuntime *object =
+        ObjectCreate_(0x11d, position[0], position[1], position[2] - 0x20000);
     s32 angle;
 
-    if (object != 0) {
+    if (object != 0)
+    {
         object->bounce = Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
         object->gravity = (u16)Random16Far();
         object->unk4c = (u16)(Random16Far() << 1) + base;

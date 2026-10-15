@@ -19,17 +19,19 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
     struct ObjectRuntime *obj;
     struct ObjectRuntime *target;
-    struct EventWork *work;
-    struct MapWork *map;
+    struct EventWork     *work;
+    struct MapWork       *map;
 
     obj = ObjectTable_Get(id);
     work = Ram_HeapSlots->eventWork;
     target = work->viewCenter;
     map = Ram_HeapSlots->mapWork;
-    if (obj != 0) {
+    if (obj != 0)
+    {
         map->origin = &target->x;
         ObjectDispatch_InitFromTable4WithArgumentFar(target, obj);
-        if (flag == 0) {
+        if (flag == 0)
+        {
             target->x = obj->x;
             target->y = obj->y;
             target->z = obj->z;

@@ -10,26 +10,26 @@
 
 // ヒープに場所を取って写す。使い終わったら MemFree
 #define RamCode_Load(to, code, bytes)                                             \
-	do                                                                            \
-	{                                                                             \
-		u32 size_;                                                                \
+    do                                                                            \
+    {                                                                             \
+        u32 size_;                                                                \
                                                                                   \
-		size_ = (u32)(bytes);                                                     \
+        size_ = (u32)(bytes);                                                     \
                                                                                   \
-		(to) = MemAlloc(size_);                                                   \
-		Dma_Set((const void *)(code), (to), 0x84000000 | (size_ >> 2), REG_DMA3); \
-	} while (0)
+        (to) = MemAlloc(size_);                                                   \
+        Dma_Set((const void *)(code), (to), 0x84000000 | (size_ >> 2), REG_DMA3); \
+    } while (0)
 
 // 作業スロットに場所を取って写す。使い終わったら Runtime_ReleaseHeapBlock
 #define RamCode_LoadSlot(slot, code, bytes)                                     \
-	do                                                                          \
-	{                                                                           \
-		u32 size_;                                                              \
+    do                                                                          \
+    {                                                                           \
+        u32 size_;                                                              \
                                                                                 \
-		size_ = (u32)(bytes);                                                   \
+        size_ = (u32)(bytes);                                                   \
                                                                                 \
-		Dma_Set((const void *)(code), Runtime_AllocateHeapBlock((slot), size_), \
-			0x84000000 | (size_ >> 2), REG_DMA3);                               \
-	} while (0)
+        Dma_Set((const void *)(code), Runtime_AllocateHeapBlock((slot), size_), \
+            0x84000000 | (size_ >> 2), REG_DMA3);                               \
+    } while (0)
 
 #endif

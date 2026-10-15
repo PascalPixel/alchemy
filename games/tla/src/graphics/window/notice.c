@@ -6,17 +6,18 @@
 #include "party_state.h"
 #include "scene.h"
 
-struct TimedNoticeWork {
-    u8 unk000[0x21c];
+struct TimedNoticeWork
+{
+    u8               unk000[0x21c];
     struct UiWindow *window;
-    u16 countdown;
+    u16              countdown;
 };
 
 #define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
-void UiTimedNotice_Tick(void);
+void             UiTimedNotice_Tick(void);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-extern u8 MsgDebugEntryName;
+extern u8        MsgDebugEntryName;
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 // スペイン語版とイタリア語版の far call 表では、Scene_GetAreaNameIndex へ届く口の名前が違う
@@ -29,13 +30,13 @@ void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 void UiTimedNotice_Create(void)
 {
     struct TimedNoticeWork *work;
-    s32 height;
-    s32 width;
-    s32 y;
-    s32 x;
-    s32 resource;
-    struct UiWindow *window;
-    struct PartyState *state;
+    s32                     height;
+    s32                     width;
+    s32                     y;
+    s32                     x;
+    s32                     resource;
+    struct UiWindow        *window;
+    struct PartyState      *state;
 
     work = TIMED_NOTICE_WORK;
     state = &gPartyState;
@@ -59,8 +60,8 @@ void UiTimedNotice_Create(void)
 void UiTimedNotice_Tick(void)
 {
     struct TimedNoticeWork *work;
-    u16 *countdown;
-    s32 count;
+    u16                    *countdown;
+    s32                     count;
 
     work = TIMED_NOTICE_WORK;
     countdown = &work->countdown;
@@ -69,7 +70,8 @@ void UiTimedNotice_Tick(void)
     __asm__("" : : "r"(count));
     count += 0xffff;
     *countdown = count;
-    if ((count << 16) == 0) {
+    if ((count << 16) == 0)
+    {
         UiWork_Finalize(work->window, 2);
         Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }
@@ -80,7 +82,8 @@ void UiTimedNotice_CloseIfActive(void)
     struct UiWindow *window;
 
     window = TIMED_NOTICE_WORK->window;
-    if (window != NULL && window->flags != 0) {
+    if (window != NULL && window->flags != 0)
+    {
         UiWork_Finalize(window, 2);
         Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }

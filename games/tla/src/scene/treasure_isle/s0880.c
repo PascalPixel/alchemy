@@ -1,7 +1,8 @@
 #include "types.h"
 #include "call.h"
 
-struct TreasureIsleCell {
+struct TreasureIsleCell
+{
     s32 x;
     s32 z;
     s32 unk08;
@@ -20,18 +21,26 @@ void Func_02000880(s32 unused, s32 frame, s32 id)
 {
     struct TreasureIsleCell *cells;
 
-    if (id < 50) {
+    if (id < 50)
+    {
         cells = gData_0200117c;
         id -= 40;
-    } else {
+    }
+    else
+    {
         cells = gData_020011cc;
         id -= 50;
     }
-    if (frame == 15) {
+    if (frame == 15)
+    {
         Call6(Func_02000f9c, 3, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-    } else if (frame == 30) {
+    }
+    else if (frame == 30)
+    {
         Call6(Func_02000f9c, 6, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-    } else if (frame == 45) {
+    }
+    else if (frame == 45)
+    {
         Call6(Func_02000f9c, 9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
         Call6(Func_02000f94, 0, 0, 1, 1, cells[id].x, cells[id].z);
         GameFlag_ClearBit(cells[id].flag);

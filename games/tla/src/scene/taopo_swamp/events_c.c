@@ -13,14 +13,19 @@ void Func_02000464(s32 a, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    if (id == 9) {
-        if (object->x >> 20 == 17) {
+    if (id == 9)
+    {
+        if (object->x >> 20 == 17)
+        {
             object->z += 0x10000;
             Func_02002764_(2, 0x80000);
             GameFlag_SetBit_(0xa6d);
         }
-    } else if (id == 10) {
-        if (object->x >> 20 == 29) {
+    }
+    else if (id == 10)
+    {
+        if (object->x >> 20 == 29)
+        {
             object->z += 0x10000;
             Func_02002764_(8, 0x80000);
             GameFlag_SetBit_(0xa6e);

@@ -8,85 +8,88 @@
 #include "text/msg_ids.h"
 #include "field_sprite.h"
 
-struct GabombaStatueChamberObject {
-    u8 unk00[6];
-    u16 facing;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 height;
-    s32 scaleX;
-    s32 scaleY;
-    u8 unk20[3];
-    u8 priorityFlags;
-    s32 velocityX;
-    s32 velocityY;
-    u8 unk2c[0x18];
-    s32 field44;
-    s32 field48;
-    u8 unk4c[4];
+struct GabombaStatueChamberObject
+{
+    u8                  unk00[6];
+    u16                 facing;
+    s32                 x;
+    s32                 y;
+    s32                 z;
+    s32                 height;
+    s32                 scaleX;
+    s32                 scaleY;
+    u8                  unk20[3];
+    u8                  priorityFlags;
+    s32                 velocityX;
+    s32                 velocityY;
+    u8                  unk2c[0x18];
+    s32                 field44;
+    s32                 field48;
+    u8                  unk4c[4];
     struct FieldSprite *sprite;
-    u8 unk54;
-    u8 motionFlags;
-    u8 unk56[3];
-    u8 collisionFlags;
-    u8 unk5a[2];
-    u8 field5c;
-    u8 unk5d[5];
-    u8 timer;
-    u8 unk63;
-    s16 field64;
-    s16 field66;
-    s32 field68;
-    void *update;
+    u8                  unk54;
+    u8                  motionFlags;
+    u8                  unk56[3];
+    u8                  collisionFlags;
+    u8                  unk5a[2];
+    u8                  field5c;
+    u8                  unk5d[5];
+    u8                  timer;
+    u8                  unk63;
+    s16                 field64;
+    s16                 field66;
+    s32                 field68;
+    void               *update;
 };
 
-struct GabombaStatueChamberEventWork {
-    u8 unk000[0x154];
+struct GabombaStatueChamberEventWork
+{
+    u8  unk000[0x154];
     s16 exit;
-    u8 unk156[4];
+    u8  unk156[4];
     s16 field15a;
-    u8 unk15c[2];
+    u8  unk15c[2];
     s16 field15e;
-    u8 unk160[6];
+    u8  unk160[6];
     s16 field166;
-    u8 unk168[0x44];
+    u8  unk168[0x44];
     s32 screenEffect;
-    u8 unk1b0[4];
+    u8  unk1b0[4];
     s32 field1b4;
-    u8 unk1b8[0x0c];
+    u8  unk1b8[0x0c];
     u16 field1c4;
 };
 
 extern s32 gFrameCount;
 
-u32 Random16Far(void);
-void WaitFrames(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+u32                                Random16Far(void);
+void                               WaitFrames(s32 frames);
+s32                                GameFlag_Test(s32 flag);
+void                               GameFlag_SetBit(s32 flag);
+void                               GameFlag_ClearBit(s32 flag);
+void                               Battle_WaitMode0(s32 frames);
 struct GabombaStatueChamberObject *Object_GetById(s32 id);
-void Object_SetPositionAndResetMotion(struct GabombaStatueChamberObject *object, s32 x, s32 y, s32 z);
+void                               Object_SetPositionAndResetMotion(
+    struct GabombaStatueChamberObject *object, s32 x, s32 y, s32 z);
 void Object_SetPartAttribute(struct GabombaStatueChamberObject *object, s32 value);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void ObjectMotion_SetActionVariant(s32 actor, s32 variant);
 
-void Func_02001d58(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001d68(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001da0(void);
-void Func_02001da8(void);
-void Func_02001e48(s32 message);
-void Func_02001e58(s32 actor, s32 a, s32 b);
-void Func_02001e60(s32 speaker, s32 flags);
-void Func_02001e70(s32 actor, s32 angle);
-void Func_02001e80(s32 actor);
-void Func_02001ee8(s32 skip);
-void Func_02001f10(s32 cue);
-void Func_02001e10(s32 actor, s32 x, s32 z);
+void                               Func_02001d58(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                               Func_02001d68(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                               Func_02001da0(void);
+void                               Func_02001da8(void);
+void                               Func_02001e48(s32 message);
+void                               Func_02001e58(s32 actor, s32 a, s32 b);
+void                               Func_02001e60(s32 speaker, s32 flags);
+void                               Func_02001e70(s32 actor, s32 angle);
+void                               Func_02001e80(s32 actor);
+void                               Func_02001ee8(s32 skip);
+void                               Func_02001f10(s32 cue);
+void                               Func_02001e10(s32 actor, s32 x, s32 z);
 struct GabombaStatueChamberObject *Func_02001d28(s32 type, s32 x, s32 y, s32 z);
-void Func_02001d30(struct GabombaStatueChamberObject *object);
+void                               Func_02001d30(struct GabombaStatueChamberObject *object);
 void ObjectDispatch_SetSingleChildFlags(struct GabombaStatueChamberObject *object, u32 value);
 void Animation_SetStateFlags(struct GabombaStatueChamberObject *object, s32 flags);
 void Object_SetModeById(s32 actor, s32 mode);
@@ -132,7 +135,8 @@ static inline void GabombaStatueChamber_ObjArm(s32 actor, s32 angle, s32 frames)
     ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
-static inline void GabombaStatueChamber_ObjSetPos(struct GabombaStatueChamberObject *object, s32 x, s32 y, s32 z)
+static inline void GabombaStatueChamber_ObjSetPos(
+    struct GabombaStatueChamberObject *object, s32 x, s32 y, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Object_SetPositionAndResetMotion(object, x, y, z);
@@ -145,8 +149,8 @@ void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02001e20(s32 actor, s32 target);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
-s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+s32  UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32  Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
 void Func_02001e88(s32 actor, s32 emote, s32 frames);
 void Func_02001e90(s32 actor, s32 emote);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
@@ -203,11 +207,11 @@ static inline void GabombaStatueChamber_WaitFrames(s32 frames)
     WaitFrames(frames);
 }
 
-#define GABOMBA_STATUE_CHAMBER_TASK_ADD(callback, priority) \
-    { \
+#define GABOMBA_STATUE_CHAMBER_TASK_ADD(callback, priority)                                  \
+    {                                                                                        \
         /* FAKEMATCH: a temporary keeps the priority constant ahead of the callback load. */ \
-        s32 priority_ = (priority); \
-        Scheduler_AddOrUpdateCallback((callback), priority_); \
+        s32 priority_ = (priority);                                                          \
+        Scheduler_AddOrUpdateCallback((callback), priority_);                                \
     }
 
 static inline void GabombaStatueChamber_ObjEmoteWait(s32 actor, s32 emote)

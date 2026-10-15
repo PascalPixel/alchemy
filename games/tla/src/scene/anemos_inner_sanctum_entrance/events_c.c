@@ -10,8 +10,9 @@ const u8 *Func_02000714(void)
     return gData_02001c1c;
 }
 
-struct AnemosInnerSanctumEntranceEventWork {
-    u8 unk000[0x1ac];
+struct AnemosInnerSanctumEntranceEventWork
+{
+    u8  unk000[0x1ac];
     s32 route;
 };
 
@@ -48,7 +49,8 @@ static __inline__ void SetObjectValue(s32 id, s32 value)
 s32 Func_02000740(void)
 {
     ((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)->route = 0x204;
-    if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1)
+    {
         Func_02000b18();
         Func_02000bd4(2);
         SetObjectValue(9, 0);
@@ -64,12 +66,14 @@ s32 Func_02000740(void)
         Object_GetById(12)->priorityFlags |= 0x80;
         Object_GetById(13)->priorityFlags |= 0x80;
         Object_GetById(14)->priorityFlags |= 0x80;
-        if (Flag_Test(0x200)) {
+        if (Flag_Test(0x200))
+        {
             Func_02000be0(1);
             Func_02000494();
         }
     }
-    if (Flag_Test(0x201)) {
+    if (Flag_Test(0x201))
+    {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Func_02000408();

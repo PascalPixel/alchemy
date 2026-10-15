@@ -13,7 +13,8 @@ s32 Func_02001dc0(struct ObjectRuntime *a, struct ObjectRuntime *b)
 {
     s32 dy;
 
-    if (ABS(a->x - b->x) < 0xc0000) {
+    if (ABS(a->x - b->x) < 0xc0000)
+    {
         dy = a->y - b->y;
         if (dy > -0x80000 && dy < 0x180000 && ABS(a->z - b->z) < 0xc0000)
             return 1;

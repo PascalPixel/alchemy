@@ -3,8 +3,9 @@
 #include "resource.h"
 #include "mem.h"
 
-struct MagmaRockSparkWork {
-    u8 unk0000[0x1604];
+struct MagmaRockSparkWork
+{
+    u8  unk0000[0x1604];
     s16 resource;
 };
 

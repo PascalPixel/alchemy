@@ -9,7 +9,6 @@
 #include "system.h"
 #include "types.h"
 
-
 void SummonFx_RunCanvasMode0(void *action)
 {
     SummonFx_RunCanvasEffect(action, 0);

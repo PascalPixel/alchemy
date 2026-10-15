@@ -4,17 +4,21 @@ void Func_0200006c(void)
 {
     struct PartyState *party = &gPartyState;
 
-    if (party->entrance == 2) {
+    if (party->entrance == 2)
+    {
         Func_0200046c();
         Func_02000524(0);
-        if (Object_GetById(8)->x == 0) {
+        if (Object_GetById(8)->x == 0)
+        {
             ObjectMotion_CommitPositionAndActivate_(4, 0, -16);
             Func_0200052c_(8, 0, -16, 0x3000);
             ObjectMotion_CommitCurrentPositionAndActivate(8);
             ObjectMotion_SetSpeedParameters_(8, 0x13333, 0x9999);
             ObjectMotion_SetPositionAndReset_(8, 472, 392);
             Func_020004f4_(8, 0x5000);
-        } else {
+        }
+        else
+        {
             struct ObjectRuntime *leader;
 
             ObjectMotion_CommitPositionAndActivate_(4, 0, 16);
@@ -35,17 +39,19 @@ void Func_0200006c(void)
 void Func_02000158(void)
 {
     struct PartyState *party;
-    s32 id;
-    s32 limit;
-    s32 z;
+    s32                id;
+    s32                limit;
+    s32                z;
 
-    if (SCENE_WORK->unk166 != 0) {
+    if (SCENE_WORK->unk166 != 0)
+    {
         ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
         Func_02000504_(8, 0x100, 30);
     }
     Func_020004dc((s32)MsgAreWeSetting);
     UiText_OpenMessageAtObject(8, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_0200053c(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_0200053c(), 0) == 0)
+    {
         Battle_WaitMode0(15);
         Func_020004ec(8, 0);
         Battle_WaitMode0(5);
@@ -71,12 +77,15 @@ void Func_02000158(void)
             struct PartyState *state = &gPartyState;
 
             /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-            do {
+            do
+            {
             } while (0);
             state->ownerOverride = 1;
         }
         Func_0200050c(1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         SCENE_WORK->unk1c4++;
         Func_020004ec(8, 0);

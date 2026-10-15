@@ -6,10 +6,10 @@
 
 struct BattleFxTransferWork
 {
-    u8 unk0000[0x7780];
+    u8  unk0000[0x7780];
     s32 transferMode;
     s32 transferValue;
-    u8 unk7788[0x78e4 - 0x7788];
+    u8  unk7788[0x78e4 - 0x7788];
     s32 framesSinceTransfer;
     s32 transferPending;
 };
@@ -28,7 +28,7 @@ static __inline__ s32 BattlePres_FillWords(void *destination, s32 size, u32 valu
 void BattlePres_ProcessPendingTileTransfer(void)
 {
     struct BattleFxTransferWork *work;
-    u8 *buf;
+    u8                          *buf;
 
     /* FAKEMATCH: the one-pass block loads the effect work before the pending offset is started; assigned directly the offset is started first (differ 2). */
     do
@@ -64,10 +64,11 @@ void BattlePres_ProcessPendingTileTransfer(void)
 void Palette_DarkenSceneStep(void)
 {
     u16 *color;
-    s32 i;
+    s32  i;
 
     color = (u16 *)0x05000140;
-    for (i = 0; i != 16; i++) {
+    for (i = 0; i != 16; i++)
+    {
         s32 blue = (*color >> 10) & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
         s32 red = *color & 0x1f;
@@ -85,7 +86,8 @@ void Palette_DarkenSceneStep(void)
         *color++ = (blue << 10) | (green << 5) | red;
     }
     color = (u16 *)0x05000202;
-    for (i = 0; i != 239; i++) {
+    for (i = 0; i != 239; i++)
+    {
         s32 blue = (*color >> 10) & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
         s32 red = *color & 0x1f;

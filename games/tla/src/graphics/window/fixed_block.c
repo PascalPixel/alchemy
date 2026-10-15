@@ -12,7 +12,6 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-
 s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
 
 void UiWindow_SetTilemapFlagRect(
@@ -23,25 +22,32 @@ void UiWindow_SetTilemapFlagRect(
     x += (s16)object->x + 1;
     y += (s16)object->y + 1;
     field <<= 12;
-    if (x < 0) {
+    if (x < 0)
+    {
         width += x;
         x = 0;
     }
-    if (x + width > 29) {
+    if (x + width > 29)
+    {
         width = 30 - x;
     }
-    if (y < 0) {
+    if (y < 0)
+    {
         height += y;
         y = 0;
     }
-    if (y + height > 29) {
+    if (y + height > 29)
+    {
         height = 20 - y;
     }
-    if (width > 0 && height > 0) {
-        do {
+    if (width > 0 && height > 0)
+    {
+        do
+        {
             u16 *pixel = &work->tilemap[y][x];
-            s32 remaining = width;
-            while (remaining != 0) {
+            s32  remaining = width;
+            while (remaining != 0)
+            {
                 u32 value = *pixel;
                 value &= 0xFFFFEFFF;
                 value |= field;
@@ -79,16 +85,18 @@ void Resource_CopyFixedBlockA(s32 slot)
 s32 UiText_SetRenderString(const u8 *str)
 {
     struct UiRenderWork *work;
-    u16 *dst;
-    s32 count;
-    u32 width;
-    u32 height;
+    u16                 *dst;
+    s32                  count;
+    u32                  width;
+    u32                  height;
 
     work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     count = 0;
-    if (*str != 0) {
+    if (*str != 0)
+    {
         dst = work->entries;
-        do {
+        do
+        {
             *dst = *str;
             str++;
             /* FAKEMATCH: the ARM9TDMI load schedule moves the count step after the next character's load and the entry step; native counts right after the store. */
@@ -106,11 +114,13 @@ s32 UiText_SetRenderString(const u8 *str)
 
 void UiText_DrawPaddedLabel(s32 output, u8 *input)
 {
-    u8 text[20];
+    u8  text[20];
     s32 length = 0;
 
-    if (*input != 0) {
-        do {
+    if (*input != 0)
+    {
+        do
+        {
             text[length] = *input;
             input++;
             length++;
@@ -120,7 +130,8 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
     text[length++] = 8;
     text[length++] = 2;
 
-    while (length <= 6) {
+    while (length <= 6)
+    {
         text[length++] = 95;
     }
 

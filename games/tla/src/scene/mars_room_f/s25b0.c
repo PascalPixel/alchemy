@@ -2,16 +2,18 @@
 #include "call.h"
 #include "iwram_call.h"
 
-struct MarsRoomFAnimation {
+struct MarsRoomFAnimation
+{
     u8 unk00[0x10];
     u8 value10;
     u8 flag11 : 1;
 };
 
-struct MarsRoomFRideWork {
-    u8 unk00[0x0c];
-    u16 value0c;
-    u8 unk0e[0x62];
+struct MarsRoomFRideWork
+{
+    u8                    unk00[0x0c];
+    u16                   value0c;
+    u8                    unk0e[0x62];
     struct ObjectRuntime *handle;
 };
 
@@ -21,8 +23,8 @@ s32 GameFlag_Test(s32 flag);
 
 void Func_020025b0(void)
 {
-    struct MarsRoomFRideWork *work = (struct MarsRoomFRideWork *)(gData_020023c4 + 0x188);
-    struct ObjectRuntime *object;
+    struct MarsRoomFRideWork  *work = (struct MarsRoomFRideWork *)(gData_020023c4 + 0x188);
+    struct ObjectRuntime      *object;
     struct MarsRoomFAnimation *animation;
 
     if (!GameFlag_Test(0x109))

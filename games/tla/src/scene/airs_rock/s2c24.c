@@ -4,16 +4,17 @@
 #include "flag_call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 WaitFrames(s32 frames);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-s32 Object_AttachWorkTargetToObject(s32 id, s32 a);
-s32 Func_02003b50(void);
+s32                   WaitFrames(s32 frames);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+s32                   Object_AttachWorkTargetToObject(s32 id, s32 a);
+s32                   Func_02003b50(void);
 
 void Func_02002c24(s32 height)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
 
-    if (!Flag_IsSet(0x109)) {
+    if (!Flag_IsSet(0x109))
+    {
         object->motionFlags = 0;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         object->y += height;

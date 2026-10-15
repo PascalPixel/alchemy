@@ -3,21 +3,21 @@
 #include "field_event.h"
 #include "callback_scheduler.h"
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesD[];
-extern s16 gData_02001cdc;
-extern s16 gData_02001cde;
+extern u8                 gField_CachedTilesA[];
+extern u8                 gField_CachedTilesD[];
+extern s16                gData_02001cdc;
+extern s16                gData_02001cde;
 extern struct FieldActor *gData_02001ce0[];
-extern s16 gData_02001de0;
-extern s16 gData_02001de2;
-extern s16 gData_02001de4;
+extern s16                gData_02001de0;
+extern s16                gData_02001de2;
+extern s16                gData_02001de4;
 
 void *MemAlloc(s32 size);
-void Func_02000c24(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
-void MemFree(void *block);
-void Func_02000858(void);
+void  Func_02000c24(const void *source, void *destination);
+s32   Resource_FindFreeEntry(void);
+void  VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void  MemFree(void *block);
+void  Func_02000858(void);
 
 static inline void *BumpAlloc(s32 size)
 {

@@ -13,9 +13,11 @@ void Func_02001aec(struct ObjectRuntime *object)
 
 void Func_02001b1c(struct MarsRoomMVector *position, s32 value, s32 flag)
 {
-    struct ObjectRuntime *object = (struct ObjectRuntime *)Value4((s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
+    struct ObjectRuntime *object = (struct ObjectRuntime *)Value4(
+        (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
 
-    if (object != 0) {
+    if (object != 0)
+    {
         object->bounce = 0;
         object->gravity = 0;
         object->unk4c = value;

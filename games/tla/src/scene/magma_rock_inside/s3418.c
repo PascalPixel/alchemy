@@ -23,7 +23,8 @@ u8 *Func_02003418(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene != (s32)&SceneId_Ov692Room1) {
+    if (scene != (s32)&SceneId_Ov692Room1)
+    {
         if (scene == (s32)&SceneId_Ov692Room2)
             return gData_02005fe4;
         if (scene == (s32)&SceneId_Ov692Room3)

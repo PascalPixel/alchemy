@@ -11,10 +11,11 @@
 #include "ram_buffer.h"
 #include "battle_work.h"
 
-struct WindowTiles {
-    u8 unk00[3];
-    u8 dirty;
-    u8 unk04[4];
+struct WindowTiles
+{
+    u8  unk00[3];
+    u8  dirty;
+    u8  unk04[4];
     u16 cells[32][32];
 };
 
@@ -25,28 +26,36 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     alt &= 1;
     alt <<= 12;
 
-    if (x < 0) {
+    if (x < 0)
+    {
         width += x;
         x = 0;
     }
-    if (x + width > 29) {
+    if (x + width > 29)
+    {
         width = 30 - x;
     }
-    if (y < 0) {
+    if (y < 0)
+    {
         height += y;
         y = 0;
     }
-    if (y + height > 29) {
+    if (y + height > 29)
+    {
         height = 20 - y;
     }
 
-    if (width > 0 && height > 0) {
-        do {
+    if (width > 0 && height > 0)
+    {
+        do
+        {
             u16 *p = &tiles->cells[y][x];
-            s32 col = width;
+            s32  col = width;
 
-            if (col != 0) {
-                do {
+            if (col != 0)
+            {
+                do
+                {
                     u32 tile = *p;
                     col--;
                     tile = (tile & ~0x1000) | alt;
@@ -63,21 +72,23 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     }
 }
 
-
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
-    s32 count;
-    s32 i;
-    s32 j;
+    s32                count;
+    s32                i;
+    s32                j;
 
     count = BattleParty_ListActorIdsFar(1, 0);
     Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
     i = 0;
-    if (ids[0] != 0xff) {
+    if (ids[0] != 0xff)
+    {
     next_id:
-        for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
-            if (battle->partyUnits[j] == 0xff) {
+        for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++)
+        {
+            if (battle->partyUnits[j] == 0xff)
+            {
                 j = 4;
                 break;
             }

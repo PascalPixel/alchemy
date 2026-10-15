@@ -30,41 +30,45 @@ void ItemMenu_Close(void)
     UiWindow_CloseIfOpen(menu + 0x44, 1);
 }
 
-struct ItemMenuWork {
-    u8 unk000[0x14];
+struct ItemMenuWork
+{
+    u8    unk000[0x14];
     void *paneIcons[2];
-    s8 paneIndex[2];
-    u8 paneCount[2];
-    u8 unk020[0x10];
+    s8    paneIndex[2];
+    u8    paneCount[2];
+    u8    unk020[0x10];
     void *infoWindow;
-    u8 unk034[0x190];
-    u16 items[32];
-    u16 ownerIds[8];
-    u8 itemCount;
-    u8 partyCount;
+    u8    unk034[0x190];
+    u16   items[32];
+    u16   ownerIds[8];
+    u8    itemCount;
+    u8    partyCount;
 };
 
-void RenderOutput_ClearListFar(void *window);
-void Func_080f8ab4(s32 x, s32 y);
+void  RenderOutput_ClearListFar(void *window);
+void  Func_080f8ab4(s32 x, s32 y);
 void *UnitGet(s32 unitId);
-s32 ItemMenu_Collect(void *owner, u16 *items, s32 mode);
-s32 Func_080fa5a4(u16 *ownerIds, u16 *items);
-void UiIcon_PrepareObject(void *icon);
+s32   ItemMenu_Collect(void *owner, u16 *items, s32 mode);
+s32   Func_080fa5a4(u16 *ownerIds, u16 *items);
+void  UiIcon_PrepareObject(void *icon);
 
 s32 ItemMenu_PrepOwner(s32 pane)
 {
     struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
-    s32 result = 0;
-    s32 index;
-    void *owner;
+    s32                  result = 0;
+    s32                  index;
+    void                *owner;
 
     index = menu->paneIndex[pane];
     RenderOutput_ClearListFar(menu->infoWindow);
     menu->paneCount[pane] = menu->partyCount;
-    if (index == -1) {
+    if (index == -1)
+    {
         menu->paneIndex[pane] = result;
         index = 0;
-    } else {
+    }
+    else
+    {
         Func_080f8ab4(index * 24 - 10, 16);
     }
     owner = UnitGet(menu->ownerIds[index]);

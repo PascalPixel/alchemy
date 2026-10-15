@@ -3,13 +3,14 @@
 void Func_0200267c(void)
 {
     struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
-    struct PartyState *party = &gPartyState;
-    struct ObjectRuntime *object;
-    s16 *exit;
-    s32 index;
-    s32 cell;
+    struct PartyState      *party = &gPartyState;
+    struct ObjectRuntime   *object;
+    s16                    *exit;
+    s32                     index;
+    s32                     cell;
 
-    asm volatile("" : "+l"(party)); /* FAKEMATCH: the listing loads the party state address before it builds the owner offset */
+    /* FAKEMATCH: the listing loads the party state address before it builds the owner offset */
+    asm volatile("" : "+l"(party));
     object = Object_GetById(party->currentOwner);
     Func_02003e64();
     Func_02003fa4(0);
@@ -22,11 +23,14 @@ void Func_0200267c(void)
     object->angle = 0xc000;
     exit = &work->exit;
     index = *exit;
-    asm volatile("" : "+l"(index)); /* FAKEMATCH: the listing loads the exit before it builds the cue number */
+    /* FAKEMATCH: the listing loads the exit before it builds the cue number */
+    asm volatile("" : "+l"(index));
     Call1((void (*)())Func_02003ffc, 158);
-    asm volatile("" : "+l"(index)); /* FAKEMATCH: the listing subtracts one after the call, not before it */
+    /* FAKEMATCH: the listing subtracts one after the call, not before it */
+    asm volatile("" : "+l"(index));
     index--;
-    Call3((void (*)())Func_02003e1c, gData_020046bc[index].value, gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
+    Call3((void (*)())Func_02003e1c, gData_020046bc[index].value, gData_020046bc[index].pair.first,
+        gData_020046bc[index].pair.second);
     ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02004028);
     WaitFrames(12);
     Func_02003ffc(123);

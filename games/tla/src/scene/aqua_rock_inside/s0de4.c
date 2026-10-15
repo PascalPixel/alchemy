@@ -6,7 +6,8 @@ void Func_02000de4(void)
 
     Func_02003628();
     Func_02003688(44, 0, 34, 2);
-    for (i = 4; i >= 0; i--) {
+    for (i = 4; i >= 0; i--)
+    {
         Func_020036b8(33, 55);
         WaitFrames(15);
     }

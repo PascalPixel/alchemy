@@ -1,14 +1,15 @@
 #include "types.h"
 
-struct DescriptorEntry {
+struct DescriptorEntry
+{
     s16 id;
-    u8 unk02[2];
+    u8  unk02[2];
     s16 range;
-    u8 unk06[2];
+    u8  unk06[2];
 };
 
 struct DescriptorEntry *Func_080cda58(s32 id);
-s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
+s32                     Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

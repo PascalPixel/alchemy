@@ -28,11 +28,14 @@ void Func_02000db8(s32 id)
     __asm__("");
     object->priorityFlags |= 2;
     object->collisionFlags = 0;
-    if (id == 13) {
+    if (id == 13)
+    {
         Func_0200432c_(13, 175 << 18, 224 << 16);
         Object_SetModeById(13, 10);
         Func_0200423c_(39, 22, 2, 1, 43, id);
-    } else {
+    }
+    else
+    {
         Func_0200432c_(14, 165 << 18, 216 << 16);
         Object_SetModeById(14, 9);
         Func_0200423c_(31, 21, 2, 2, 40, 12);

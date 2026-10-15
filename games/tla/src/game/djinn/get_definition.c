@@ -9,7 +9,6 @@
 #include "battle_summon.h"
 #include "types.h"
 
-
 // The summons in the order the menus list them.
 extern u8 gSummon_OrderList[29];
 
@@ -27,7 +26,8 @@ s32 Trade_ListFlaggedEntries(u8 *output)
        word pinned below, it is built in the loop (differ 18). */
     u32 one = 1;
 
-    do {
+    do
+    {
         u8 value = *source;
         /* FAKEMATCH: the word is pinned to the r3 it takes in the native, so
            the and keeps its result there; in a plain local the word and the
@@ -41,7 +41,8 @@ s32 Trade_ListFlaggedEntries(u8 *output)
         asm("");
         source++;
         flags &= one << value;
-        if (flags != 0) {
+        if (flags != 0)
+        {
             *output++ = value;
             count++;
         }
@@ -57,7 +58,6 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId)
     return &gSummon_DefinitionTable[summonId];
 }
 
-
 void Func_080aff94(s32 bit)
 {
     u32 *state = Trade_GetOfferState(0);
@@ -65,7 +65,9 @@ void Func_080aff94(s32 bit)
     register u32 flags __asm__("r3") = *state;
 
     /* FAKEMATCH: the one-pass block's loop note holds the bit until the pinned word is loaded. */
-    do { } while (0);
+    do
+    {
+    } while (0);
     flags |= 1 << bit;
     *state = flags;
 }

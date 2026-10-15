@@ -10,7 +10,7 @@ void Func_02001598(s32 actor, s32 value);
 void Func_020015e0(s32 value);
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 void Func_02001220(void);
-s32 Func_02000258(void);
+s32  Func_02000258(void);
 void Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 priority);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void Event_StartScreenTransition(void);
@@ -25,7 +25,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Func_0200051c(void)
 {
     /* FAKEMATCH: the data address is loaded before Func_020015e0 and kept across it, as the native does (differ 31 loaded at its call). */
-    const void *data;
+    const void                   *data;
     struct AlhafranCaveEventWork *work;
 
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
@@ -35,10 +35,12 @@ void Func_0200051c(void)
     Func_020015e0(0);
     Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
     Scheduler_AddOrUpdateCallback(Func_02000258, 0x480);
-    if ((u16)(gPartyState.entrance - 8) <= 1) {
+    if ((u16)(gPartyState.entrance - 8) <= 1)
+    {
         work = Ram_HeapSlots->eventWork;
         /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         work->valueD4c = 3;
     }
@@ -60,7 +62,8 @@ void Func_0200051c(void)
     Animation_ApplyChildValues(Object_GetById(12), 6);
     Animation_ApplyChildValues(Object_GetById(13), 6);
     Animation_ApplyChildValues(Object_GetById(14), 6);
-    if (GameFlag_Test(0x8a7)) {
+    if (GameFlag_Test(0x8a7))
+    {
         Func_02001488(15, 0, 0);
         Func_02001488(18, 0, 0);
         Func_02001488(16, 0, 0);
@@ -71,21 +74,28 @@ void Func_0200051c(void)
         Func_02001488(22, 0, 0);
         Func_02001488(24, 0, 0);
         Object_GetById(23)->update = Func_02001220;
-    } else if (GameFlag_Test(0x8ab)) {
+    }
+    else if (GameFlag_Test(0x8ab))
+    {
         Func_02001488(23, 0, 0);
         ObjectMotion_SetActionVariant(18, 2);
         ObjectMotion_SetActionVariant(16, 2);
         ObjectMotion_SetActionVariant(17, 2);
         ObjectMotion_SetActionVariant(19, 2);
         ObjectMotion_SetActionVariant(20, 2);
-        if (!GameFlag_Test(0x8bd)) {
+        if (!GameFlag_Test(0x8bd))
+        {
             Call3((void (*)())Func_02001488, 17, 0x2c80000, 0xd80000);
             Call3((void (*)())Func_02001488, 19, 0x2e80000, 0xd80000);
-        } else {
+        }
+        else
+        {
             Func_02001488(22, 0, 0);
             Func_02001488(21, 0, 0);
         }
-    } else {
+    }
+    else
+    {
         Func_02001488(18, 0, 0);
         Func_02001488(16, 0, 0);
         Func_02001488(17, 0, 0);
@@ -96,7 +106,8 @@ void Func_0200051c(void)
         Func_02001488(24, 0, 0);
         Object_GetById(23)->update = Func_02001220;
     }
-    if (gPartyState.entrance == 9 && !GameFlag_Test(0x109)) {
+    if (gPartyState.entrance == 9 && !GameFlag_Test(0x109))
+    {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x4ccc, 0x2666);
@@ -107,7 +118,8 @@ void Func_0200051c(void)
 
 s32 Func_020007a4(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov66aRoom2 && GameFlag_Test(0x8a7)) {
+    if (gPartyState.scene == (s32)&SceneId_Ov66aRoom2 && GameFlag_Test(0x8a7))
+    {
         Func_02001408_(23, 46, 4, 5, 21, 14);
         Func_02001408_(86, 44, 5, 6, 84, 12);
         Func_02001400_(22, 45, 5, 6, 20, 13);

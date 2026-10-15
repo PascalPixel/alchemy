@@ -3,10 +3,11 @@
 void Func_0200104c(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32                   x = object->x >> 20;
+    s32                   z = object->z >> 20;
 
-    if (id == 10 && x == 15 && z == 24) {
+    if (id == 10 && x == 15 && z == 24)
+    {
         ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
         object->y -= 0x20000;
         Battle_WaitMode0(1);

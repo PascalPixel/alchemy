@@ -10,26 +10,30 @@
 #include "object_runtime.h"
 #include "ram_buffer.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+    ((void (*)(struct ObjectRuntime *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
 
-struct SpawnScene {
-    u8 unk00[0x10];
+struct SpawnScene
+{
+    u8                    unk00[0x10];
     struct ObjectRuntime *mainObject;
 };
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
-    struct SpawnScene *scene = Ram_HeapSlots->effectWork;
+    struct SpawnScene    *scene = Ram_HeapSlots->effectWork;
     struct ObjectRuntime *object;
-    u8 *part;
-    s32 mask;
+    u8                   *part;
+    s32                   mask;
 
     object = Func_080200c0(kind, x, y, z);
-    if (object != NULL) {
-        if (object->animationKind == 0) {
+    if (object != NULL)
+    {
+        if (object->animationKind == 0)
+        {
             Object_Destroy((struct DispatchObject *)object);
             return NULL;
         }
@@ -47,18 +51,19 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
     return object;
 }
 
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
-                                  s32 groupMode, s32 action)
+void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject, s32 groupMode, s32 action)
 {
-    s16 *activeObjectId;
+    s16                  *activeObjectId;
     struct ObjectRuntime *object;
-    s32 objectId;
+    s32                   objectId;
 
     objectId = 0;
     activeObjectId = (s16 *)gPlayerObjectId;
-    do {
+    do
+    {
         object = ObjectTable_Get(objectId);
-        if (objectId != *activeObjectId && object != NULL && object != excludedObject) {
+        if (objectId != *activeObjectId && object != NULL && object != excludedObject)
+        {
             object->movementState = groupMode;
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }

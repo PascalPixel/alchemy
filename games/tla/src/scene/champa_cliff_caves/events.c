@@ -9,10 +9,13 @@ void Func_02000304(s32 actor)
 
     Func_0200350c(msg);
     UiText_OpenMessageAtObject(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020035f4(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020035f4(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_0200350c(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_0200350c(msg + 2);
     }
@@ -46,8 +49,8 @@ void Func_020003bc(void)
 void Func_020003ec(void)
 {
     struct FieldActor *object;
-    s32 x;
-    s32 z;
+    s32                x;
+    s32                z;
 
     Func_02003424(50, 97, 1, 4, 41, 77);
     Func_0200341c(46, 33, 1, 4, 41, 13);

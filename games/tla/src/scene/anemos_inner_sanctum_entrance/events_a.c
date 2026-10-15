@@ -5,7 +5,7 @@ extern const u8 gData_020019f4[];
 extern const u8 gData_02000e20[];
 extern const u8 gData_02000e5c[];
 extern const u8 gData_02000ea4[];
-extern u8 MsgIAmTheShadow;
+extern u8       MsgIAmTheShadow;
 
 const u8 *Func_0200035c(void)
 {

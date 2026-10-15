@@ -2,7 +2,7 @@
 #include "field_scene.h"
 #include "gabomba_statue_chamber.h"
 
-s32 Func_02001f00(void);
+s32  Func_02001f00(void);
 void Func_02001b14(void);
 void Func_02001ba8(void);
 void Func_02001c44(void);
@@ -10,8 +10,8 @@ void Func_02001c44(void);
 s32 Func_02001aa4(void)
 {
     struct GabombaStatueChamberEventWork *work;
-    struct PartyState *party;
-    s16 scene;
+    struct PartyState                    *party;
+    s16                                   scene;
 
     work = Ram_HeapSlots->eventWork;
     work->screenEffect = 521;

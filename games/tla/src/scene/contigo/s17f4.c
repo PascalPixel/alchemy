@@ -2,8 +2,8 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, u32 value);
-void Func_020017bc(s32 id);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, u32 value);
+void                  Func_020017bc(s32 id);
 
 // Sets up actors 19 to 33: their modes, Func_020017bc for 19 to 26, and child and collision flags for 27 to 33.
 void Func_020017f4(void)

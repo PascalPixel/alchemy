@@ -10,15 +10,14 @@
 #include "types.h"
 #include "owner_state.h"
 
-
 s32 GameFlag_Test(s32 group);
-
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
     UnitGet(event_id);
     Party_AddActiveOwnerFar(event_id);
-    if (value != 0) {
+    if (value != 0)
+    {
         Party_ShowJoinedMessageFar(event_id, value);
     }
 }

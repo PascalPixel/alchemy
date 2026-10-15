@@ -6,44 +6,44 @@
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Engine_EventBegin(void);
-void Engine_EventEnd();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_ActorSetAnimation();
-void Engine_AudioPlayCue(s32 cue);
-s32 Engine_ActorShowEmote();
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_PrepareObjectAndApplyValue();
-void Battle_WaitMode0();
-void Motion_SetVarCbAndRefresh();
-void Motion_SetModeAndWaitAnimation();
-void Object_LinkPair();
-void ObjectMotion_Launch();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Func_02003190();
-void Func_02003228();
-void Func_02003298();
-void Func_02003310(s32 skip);
-void Func_020032e8(s32 countdown);
-void Engine_ActorSetAttachedEffect();
-void Engine_CameraSetSpeed();
-void Motion_CamBounds();
-void ObjectMotion_EnableActionAndSetCallback();
-void Object_RefreshSelectorById();
-void Object_SetActionCallbackAndRefreshById();
-void UiText_ShowPositionedMessageAndWait();
-void Task_Wait();
-void Func_02000098();
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  Engine_EventBegin(void);
+void                  Engine_EventEnd();
+void                  Engine_EventSetMessage();
+void                  Engine_EventShowMessage();
+void                  Engine_ActorSetAnimation();
+void                  Engine_AudioPlayCue(s32 cue);
+s32                   Engine_ActorShowEmote();
+void                  Event_FinishScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Event_PrepareObjectAndApplyValue();
+void                  Battle_WaitMode0();
+void                  Motion_SetVarCbAndRefresh();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Object_LinkPair();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_SetAngleToward();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void                  Func_02003190();
+void                  Func_02003228();
+void                  Func_02003298();
+void                  Func_02003310(s32 skip);
+void                  Func_020032e8(s32 countdown);
+void                  Engine_ActorSetAttachedEffect();
+void                  Engine_CameraSetSpeed();
+void                  Motion_CamBounds();
+void                  ObjectMotion_EnableActionAndSetCallback();
+void                  Object_RefreshSelectorById();
+void                  Object_SetActionCallbackAndRefreshById();
+void                  UiText_ShowPositionedMessageAndWait();
+void                  Task_Wait();
+void                  Func_02000098();
 
 extern const u8 gData_02003650[];
 extern const u8 gData_02003734[];
@@ -129,7 +129,8 @@ void Func_02000640(void)
 
 void Func_02000664(void)
 {
-    if (!FlagCheck(0x200)) {
+    if (!FlagCheck(0x200))
+    {
         ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
         ActorPlace(gPartyState.currentOwner, 152, 756);
         FlagSet(0x200);
@@ -142,7 +143,8 @@ void Func_020006a8(void)
 {
     struct ObjectRuntime *leader;
 
-    if (FlagCheck(0x863) == 0) {
+    if (FlagCheck(0x863) == 0)
+    {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();
@@ -190,7 +192,8 @@ void Func_020006a8(void)
         FlagSet(0x863);
         Engine_EventEnd();
     }
-    if (FlagCheck(0x864) == 0) {
+    if (FlagCheck(0x864) == 0)
+    {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();
@@ -244,7 +247,8 @@ void Func_020006a8(void)
         FlagSet(0x864);
         Engine_EventEnd();
     }
-    if (FlagCheck(0x865) == 0) {
+    if (FlagCheck(0x865) == 0)
+    {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();

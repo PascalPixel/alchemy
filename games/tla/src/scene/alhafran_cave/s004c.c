@@ -28,10 +28,13 @@ void Func_020000a0(s32 id)
 {
     Func_020014b8((s32)&MsgOhStoppedBy);
     UiText_OpenMessageAtObject(id, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_02001590(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_02001590(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_020014b8((s32)(&MsgOhStoppedBy + 1));
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_020014b8((s32)(&MsgOhStoppedBy + 2));
     }
@@ -70,7 +73,8 @@ void Func_020001d4(void)
     struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     work->valueD4a = 2;
 }
@@ -91,7 +95,8 @@ void Func_02000220(void)
     s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
     /* FAKEMATCH: a one-pass block loads the height before the threshold is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     if (y < 0x80000)
         ((u8 *)&gPartyState)[0x2c3] = 0;
@@ -119,10 +124,13 @@ s32 Func_0200027c(void)
 #else
     s32 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Ov66aRoom1) {
+    if (scene == (s32)&SceneId_Ov66aRoom1)
+    {
         ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
         Func_020002f8();
-    } else if (scene == (s32)&SceneId_Ov66aRoom2) {
+    }
+    else if (scene == (s32)&SceneId_Ov66aRoom2)
+    {
         if (gPartyState.entrance == 8 || gPartyState.entrance == 9)
             ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
         else

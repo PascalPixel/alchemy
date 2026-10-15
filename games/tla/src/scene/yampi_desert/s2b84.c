@@ -11,8 +11,8 @@ void Func_02002b84(void)
 {
     struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(21);
     struct ObjectRuntime *object;
-    struct FieldActor **followed;
-    s32 angle;
+    struct FieldActor   **followed;
+    s32                   angle;
 
     /* FAKEMATCH: through the pointer, taken here, gData_0200480c's address loads before the call that fetches actor 22, as in the native (differ 2 naming the global at each use). */
     followed = &gData_0200480c;
@@ -29,12 +29,16 @@ void Func_02002b84(void)
     ObjectMotion_SetActionVariant(21, 3);
     Func_020040f8(21);
     Object_GetById(21)->motionFlags = 3;
-    if (GameFlag_Test(0x88b)) {
+    if (GameFlag_Test(0x88b))
+    {
         angle = 0x4000;
         Scene_Call4098(21, 232 << 16, 168 << 16, angle);
-    } else {
+    }
+    else
+    {
         Scene_TaskAdd(Func_02002180, 0x480);
-        if (!GameFlag_Test(0x109)) {
+        if (!GameFlag_Test(0x109))
+        {
             Scene_Call4098(21, 200 << 16, 264 << 16, 0);
             *((u8 *)leader + 98) = 0;
             leader->update = Func_02002764;

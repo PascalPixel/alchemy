@@ -2,38 +2,40 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern s32 gData_02005af0;
+extern s32            gData_02005af0;
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_02000624(struct ObjectRuntime *origin, s32 id);
-void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
-s32 Func_0200584c(void);
-void Func_020056b4(struct ObjectRuntime *object);
-void Func_020056bc(void);
-void Func_0200580c(s32 value);
-void Func_020057a4(s32 speed, s32 acceleration);
-void Func_02005714(s32 id, s32 x, s32 z);
-void Func_0200578c(s32 id, s32 a, s32 b);
-void Func_02005854(s32 sound);
-void Battle_WaitMode0(s32 frames);
-void GameFlag_SetBit(s32 flag);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void Object_AttachWorkTargetToObject(s32 actor, s32 value);
+void                  Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
+s32                   Func_0200584c(void);
+void                  Func_020056b4(struct ObjectRuntime *object);
+void                  Func_020056bc(void);
+void                  Func_0200580c(s32 value);
+void                  Func_020057a4(s32 speed, s32 acceleration);
+void                  Func_02005714(s32 id, s32 x, s32 z);
+void                  Func_0200578c(s32 id, s32 a, s32 b);
+void                  Func_02005854(s32 sound);
+void                  Battle_WaitMode0(s32 frames);
+void                  GameFlag_SetBit(s32 flag);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void                  ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void                  Object_LinkObjectAndSetCallback(s32 actor, s32 target);
+void                  Object_AttachWorkTargetToObject(s32 actor, s32 value);
 
 void Func_02000c38(void)
 {
     s32 *speed = &gData_02005af0;
 
-    if (*speed != 0) {
+    if (*speed != 0)
+    {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
         struct ObjectRuntime *found = Func_02000624(actor, 359);
-        s32 dx = *speed << 20;
+        s32                   dx = *speed << 20;
 
-        if (found != NULL) {
+        if (found != NULL)
+        {
             u16 facing = *(u16 *)((u8 *)found + 6);
 
             /* FAKEMATCH: ⚓️ reads the facing before it builds the half turn */
@@ -51,13 +53,15 @@ void Func_02000c8c(void)
 {
     s32 *speed = &gData_02005af0;
 
-    if (*speed != 0) {
+    if (*speed != 0)
+    {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
         struct ObjectRuntime *found = Func_02000624(actor, 360);
-        s32 dz = *speed << 20;
-        u16 facing;
+        s32                   dz = *speed << 20;
+        u16                   facing;
 
-        if (found == NULL) {
+        if (found == NULL)
+        {
             found = Func_02000624(actor, 361);
             dz = -dz;
             if (found == NULL)

@@ -6,17 +6,17 @@
 
 struct EffectRuntimeSlot
 {
-	void *object;
-	u8	  active;
-	u8	  padding5;
-	u8	  tileX;
-	u8	  tileY;
+    void *object;
+    u8    active;
+    u8    padding5;
+    u8    tileX;
+    u8    tileY;
 };
 
 struct EffectRuntime
 {
-	u8						 padding0[0x11C];
-	struct EffectRuntimeSlot slots[10];
+    u8                       padding0[0x11C];
+    struct EffectRuntimeSlot slots[10];
 };
 
 #endif

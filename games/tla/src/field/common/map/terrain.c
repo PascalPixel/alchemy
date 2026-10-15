@@ -19,14 +19,14 @@ extern u32 gMapBlocks[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrainKind)
 {
-    s32 selector = GetWorldMapCollision(position);
-    s32 x = position->x;
-    s32 y;
-    s32 flag = 0;
-    u32 tileX;
-    u32 index;
+    s32  selector = GetWorldMapCollision(position);
+    s32  x = position->x;
+    s32  y;
+    s32  flag = 0;
+    u32  tileX;
+    u32  index;
     u32 *tile;
-    u32 kind;
+    u32  kind;
 
     if (x < 0)
         x += 0x1fffff;
@@ -57,38 +57,45 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
     struct MapWork *work;
 
     work = Ram_HeapSlots->mapWork;
-    if (value0 >= 0) {
+    if (value0 >= 0)
+    {
         work->shakeX = value0;
     }
-    if (value1 >= 0) {
+    if (value1 >= 0)
+    {
         work->shakeY = value1;
     }
-    if (value2 >= 0) {
+    if (value2 >= 0)
+    {
         work->shakeDecay = value2;
     }
 }
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 void Map_WaitWorkValuesBelow256(void)
 {
     s32 *work;
-    s32 cnt;
+    s32  cnt;
 
     work = (s32 *)Ram_HeapSlots->mapWork;
     cnt = 0;
-    if (work[1] > 255 || work[2] > 255) {
+    if (work[1] > 255 || work[2] > 255)
+    {
         goto body;
-body:
+    body:
         WaitFrames(1);
         ++cnt;
-        if (cnt >= 300) {
+        if (cnt >= 300)
+        {
             goto done;
         }
-        if (work[1] > 255) {
+        if (work[1] > 255)
+        {
             goto body;
         }
-        if (work[2] > 255) {
+        if (work[2] > 255)
+        {
             goto body;
         }
     }
@@ -97,9 +104,9 @@ done:
 }
 
 extern const u8 Render_DrawMapCode[];
-extern u8 Render_DrawMapCodeSize[];
-extern u8 gData_0201c000[];
-extern u8 gData_0203c000[];
+extern u8       Render_DrawMapCodeSize[];
+extern u8       gData_0201c000[];
+extern u8       gData_0203c000[];
 
 void Func_0802dd08(s32 arg0, s32 arg1)
 {

@@ -1,6 +1,7 @@
 #include "local.h"
 
-struct WarpEntry {
+struct WarpEntry
+{
     s32 map;
     u16 x;
     u16 z;
@@ -29,17 +30,19 @@ static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column, s32 offs
 
 void Func_0200009c(void)
 {
-    u8 *work = Ram_HeapSlots->eventWork;
-    u32 id;
+    u8  *work = Ram_HeapSlots->eventWork;
+    u32  id;
     s16 *choice;
-    s32 index;
+    s32  index;
 
     Func_02000648();
     Func_020006d0(0);
-    for (id = 8; id <= 63; id++) {
+    for (id = 8; id <= 63; id++)
+    {
         u8 *actor = (u8 *)Object_GetById(id);
 
-        if (actor != NULL) {
+        if (actor != NULL)
+        {
             u8 *flags = &actor[85];
             /* FAKEMATCH: the zero pinned to r3 is rebuilt on every pass as the native does; loop.c hoists a plain zero out of the loop into a saved register (differ 24). */
             register s32 zero asm("r3") = 0;
@@ -66,7 +69,8 @@ void Func_0200009c(void)
         __asm__("" : "+l"(mode));
         Object_SetModeById(gPartyState.currentOwner, mode);
     }
-    if (index != 4) {
+    if (index != 4)
+    {
         ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -8);
         Battle_WaitMode0(10);
     }
@@ -75,7 +79,6 @@ void Func_0200009c(void)
     Event_WaitTransitionFrames();
     Func_02000650();
 }
-
 
 void Func_0200014c(void)
 {

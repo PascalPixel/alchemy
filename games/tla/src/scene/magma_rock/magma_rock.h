@@ -5,12 +5,13 @@
 
 struct ObjectRuntime;
 
-struct MagmaRockWork {
-    s32 unk00;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unk10;
+struct MagmaRockWork
+{
+    s32                   unk00;
+    s32                   x;
+    s32                   y;
+    s32                   z;
+    s32                   unk10;
     struct ObjectRuntime *target;
 };
 

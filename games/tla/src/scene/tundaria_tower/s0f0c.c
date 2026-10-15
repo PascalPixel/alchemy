@@ -4,7 +4,8 @@ void Func_02000f0c(s32 step)
 {
     struct TundariaTowerPosition position;
 
-    switch (step) {
+    switch (step)
+    {
     case 1:
         Func_02002fc0(18, 97, 6, 97, 3, 4);
         Func_02002fc0(82, 34, 70, 34, 3, 2);

@@ -9,7 +9,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-
 const u32 *Scene_GetExits(void)
 {
     return gSceneExits;
@@ -26,7 +25,8 @@ extern const u8 gData_020045c4[];
 
 const struct SceneEvent *Func_020008d4(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {
+    if (gPartyState.scene == (s32)&SceneId_Ov691Room2)
+    {
         if (gPartyState.entrance <= 3)
             return (const struct SceneEvent *)gData_020041a4;
         if (gPartyState.entrance <= 8)

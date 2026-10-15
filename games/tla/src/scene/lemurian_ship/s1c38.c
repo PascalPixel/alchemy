@@ -6,11 +6,16 @@ s32 Func_02001c38(void)
 
     i = 0;
 next:
-    if (GameFlag_Test(i + 0x300)) {
+    if (GameFlag_Test(i + 0x300))
+    {
         struct PartyState *party = &gPartyState;
 
-        do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state's address before it builds the field's offset (2 differ without it). */
-        if (party->unk256 == 1) {
+        /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state's address before it builds the field's offset (2 differ without it). */
+        do
+        {
+        } while (0);
+        if (party->unk256 == 1)
+        {
             GameFlag_SetBit(i + 0x930);
             GameFlag_SetBit(i + 0x220);
         }

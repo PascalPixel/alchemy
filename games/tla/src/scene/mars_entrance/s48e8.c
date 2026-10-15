@@ -3,8 +3,9 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct MarsEntranceEventWork {
-    u8 unk000[0x1ac];
+struct MarsEntranceEventWork
+{
+    u8  unk000[0x1ac];
     s32 value1ac;
 };
 
@@ -26,10 +27,11 @@ static __inline__ void Func_02004d58_(s32 a, s32 b)
 void Func_020048e8(void)
 {
     struct MarsEntranceEventWork *work = Ram_HeapSlots->eventWork;
-    s32 saved;
+    s32                           saved;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     saved = work->value1ac;
     Func_02004d58_(0x202108, 1);
@@ -48,7 +50,8 @@ void Func_020048e8(void)
         struct PartyState *party = &gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party->unk2c2 = 0;
     }

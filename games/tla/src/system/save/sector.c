@@ -13,7 +13,9 @@
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 {
-    while ((channel->control & DMA3_BUSY) != 0) {}
+    while ((channel->control & DMA3_BUSY) != 0)
+    {
+    }
 }
 
 #define WAIT_DMA() WaitDma(DMA3)
@@ -39,15 +41,18 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector)
 
     if (progress != 0)
         progress(0);
-    if (gFlash_Handler0(sector, work->slot) != 0 || Flash_VerifySector(sector, (s32)work->slot) != 0)
+    if (gFlash_Handler0(sector, work->slot) != 0
+        || Flash_VerifySector(sector, (s32)work->slot) != 0)
         return 1;
     if (progress != 0)
         progress(1);
-    if (gFlash_Handler0(sector + 1, work->slot + 0x1000) != 0 || Flash_VerifySector(sector + 1, (s32)(work->slot + 0x1000)) != 0)
+    if (gFlash_Handler0(sector + 1, work->slot + 0x1000) != 0
+        || Flash_VerifySector(sector + 1, (s32)(work->slot + 0x1000)) != 0)
         return 1;
     if (progress != 0)
         progress(1);
-    if (gFlash_Handler0(sector + 2, work->slot + 0x2000) != 0 || Flash_VerifySector(sector + 2, (s32)(work->slot + 0x2000)) != 0)
+    if (gFlash_Handler0(sector + 2, work->slot + 0x2000) != 0
+        || Flash_VerifySector(sector + 2, (s32)(work->slot + 0x2000)) != 0)
         return 1;
     if (progress != 0)
         progress(1);

@@ -11,7 +11,7 @@ void Func_02001abc(s32 value);
 void Func_02000044(void)
 {
     volatile u16 *ime = &REG_IME;
-    u32 saved = *ime;
+    u32           saved = *ime;
 
     *ime = (u16)(u32)ime;
     Func_0200191c();

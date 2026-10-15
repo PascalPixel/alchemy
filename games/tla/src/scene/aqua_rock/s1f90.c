@@ -10,8 +10,8 @@ void Func_02001d30(struct ObjectRuntime *object);
 void Func_02001f90(s32 arg0)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 i;
-    s32 angle;
+    s32                   i;
+    s32                   angle;
 
     Func_02002998();
     Func_02002a48(0);
@@ -23,7 +23,8 @@ void Func_02001f90(s32 arg0)
     Func_02002a70(215);
     Func_02002910(object, 18);
     Func_02002a70(612);
-    for (i = 0; i < 60; i++) {
+    for (i = 0; i < 60; i++)
+    {
         if (i == 30)
             Event_FinishScreenTransition();
         object->y -= 0x4000;

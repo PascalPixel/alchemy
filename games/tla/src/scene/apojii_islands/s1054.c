@@ -1,7 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020003e8(void);
 void Func_02000f98(void);
 void Func_02001500(void);
@@ -19,11 +19,13 @@ void Func_02001054(void)
     Func_02000f98();
     if (gPartyState.entrance == 3)
         Func_02001500();
-    do {
+    do
+    {
     } while (0);
     if (gPartyState.entrance == 4)
         Func_02001500();
-    do {
+    do
+    {
     } while (0);
     if (gPartyState.entrance == 5)
         Func_02001500();

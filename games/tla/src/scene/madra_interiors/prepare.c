@@ -9,55 +9,55 @@
 #include "text/msg_ids.h"
 #include "madra_interiors.h"
 
-extern u8 gData_0200349c[];
-extern u8 gData_02003418[];
-extern u8 gData_020033c8[];
-void Battle_WaitMode0();
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Field_DispatchTypeHandler();
-void Func_02001d50();
-void Func_02001d58();
-void Func_02001db8();
-void Func_02001e08();
-void Func_02001e18();
-void Func_02001e28();
-void Func_02001e40();
-void Func_02001e48();
-void Func_02001e68();
-void Func_02001e90();
-void Func_02001e98();
-void Func_02001ea0();
-void Func_02001ea8();
-void Func_02001eb0();
-void Func_02001eb8();
-void Func_02001ec8();
-void Func_02001ef0();
-void Func_02001f10();
-void GameFlag_SetBit();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectDispatch_SetSingleChildFlags();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_EnableActionAndResetMotion();
-void ObjectMotion_EnableActionAndSetCallback();
-void ObjectMotion_Launch();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_SetAngleToward();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_WaitForAnimationChange();
-void Object_AttachWorkTargetToObject();
+extern u8             gData_0200349c[];
+extern u8             gData_02003418[];
+extern u8             gData_020033c8[];
+void                  Battle_WaitMode0();
+void                  Event_StartScreenTransition();
+void                  Event_WaitTransitionFrames();
+void                  Field_DispatchTypeHandler();
+void                  Func_02001d50();
+void                  Func_02001d58();
+void                  Func_02001db8();
+void                  Func_02001e08();
+void                  Func_02001e18();
+void                  Func_02001e28();
+void                  Func_02001e40();
+void                  Func_02001e48();
+void                  Func_02001e68();
+void                  Func_02001e90();
+void                  Func_02001e98();
+void                  Func_02001ea0();
+void                  Func_02001ea8();
+void                  Func_02001eb0();
+void                  Func_02001eb8();
+void                  Func_02001ec8();
+void                  Func_02001ef0();
+void                  Func_02001f10();
+void                  GameFlag_SetBit();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectDispatch_SetSingleChildFlags();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_CommitPositionAndActivate();
+void                  ObjectMotion_EnableActionAndResetMotion();
+void                  ObjectMotion_EnableActionAndSetCallback();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_OffsetPositionAndResetMotion();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_SetAngleToward();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_WaitForAnimationChange();
+void                  Object_AttachWorkTargetToObject();
 struct ObjectRuntime *Object_GetById();
-void Object_LinkObjectAndSetCallback();
-void Object_LinkPair();
-void Object_RefreshSelectorById();
-void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void                  Object_LinkObjectAndSetCallback();
+void                  Object_LinkPair();
+void                  Object_RefreshSelectorById();
+void                  Object_SetModeById();
+void                  UiText_OpenMessageAtObject();
 
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02001e80(s32 value);
@@ -71,35 +71,45 @@ void Func_02000570(void);
 s32 Func_02000624(void)
 {
     struct FieldSprite *sprite;
-    void *event;
+    void               *event;
 
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     Func_02001e80(0);
-    if (gPartyState.scene == (s32)&SceneId_Ov659Room1) {
+    if (gPartyState.scene == (s32)&SceneId_Ov659Room1)
+    {
         /* FAKEMATCH: the one-pass block ends the scheduling block: ⚓️ loads the event work before it builds the offset 0xd4c (differ 2 without it; through a plain pointer 20). */
-        do {
+        do
+        {
             event = Ram_HeapSlots->eventWork;
         } while (0);
         FIELD_AT(event, u16, 0xd4c) = 3;
-        if (!FlagCheck(0x821)) {
+        if (!FlagCheck(0x821))
+        {
             ActorPlace(29, 0, 0);
             ActorPlace(30, 0, 0);
-        } else {
+        }
+        else
+        {
             Object_SetPartAttribute(Object_GetById(29), 3);
             Object_SetPartAttribute(Object_GetById(30), 5);
         }
-        if (FlagCheck(0x8ab)) {
+        if (FlagCheck(0x8ab))
+        {
             Func_02001d28(2, 110, 16, 10, 16, 64);
             Func_02001d20(2, 46, 16, 10, 16, 0);
         }
     }
     if (gPartyState.entrance == 20)
         Func_02000570();
-    if (gPartyState.scene == (s32)&SceneId_Ov659Room2) {
-        if (FlagCheck(0x8ab)) {
+    if (gPartyState.scene == (s32)&SceneId_Ov659Room2)
+    {
+        if (FlagCheck(0x8ab))
+        {
             ActorPlace(10, 0, 0);
-        } else {
+        }
+        else
+        {
             Func_02001ef0(10, 0xc000);
             ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
             ((struct FieldSprite *)Object_GetById(10)->animation)->nextFrame |= 8;
@@ -143,7 +153,7 @@ s32 Func_020007c8(struct ObjectRuntime *object)
 
 void Func_020007dc(void)
 {
-    s32 i;
+    s32                   i;
     struct ObjectRuntime *object0;
     struct ObjectRuntime *object1;
     struct ObjectRuntime *object2;
@@ -157,7 +167,7 @@ void Func_020007dc(void)
     struct ObjectRuntime *object10;
     struct ObjectRuntime *object11;
     struct ObjectRuntime *object12;
-    s32 result13;
+    s32                   result13;
     struct ObjectRuntime *object14;
 
     ((void (*)())Func_02001d50)();
@@ -199,7 +209,8 @@ void Func_020007dc(void)
     Value3((s32 (*)())Func_02001e48, 9, 0x103, 0);
     object0 = Object_GetById(9);
     object0->actionFlags &= 254;
-    for (i = 2; i >= 0; i--) {
+    for (i = 2; i >= 0; i--)
+    {
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, 0, -8);
         Call1((void (*)())Func_02001f10, 134);
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, 0, 8);
@@ -347,7 +358,8 @@ void Func_020007dc(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 11, 0);
     result13 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result13 != 0) goto L_02008e40;
+    if (result13 != 0)
+        goto L_02008e40;
     Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
     Call3((void (*)())Func_02001e28, 11, 0, 10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -365,8 +377,10 @@ L_02008e64:
     Call1((void (*)())Battle_WaitMode0, 10);
     Call2((void (*)())Object_SetModeById, 11, 2);
     object14 = Object_GetById(4);
-    if (object14 == 0) goto L_02008eb2;
-    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 11, *(s16 *)((u8 *)object14 + 10), *(s16 *)((u8 *)object14 + 18));
+    if (object14 == 0)
+        goto L_02008eb2;
+    Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 11, *(s16 *)((u8 *)object14 + 10),
+        *(s16 *)((u8 *)object14 + 18));
 L_02008eb2:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 11);
     Call3((void (*)())Func_02001db8, 11, 0, 0);

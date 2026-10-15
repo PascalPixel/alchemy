@@ -5,10 +5,10 @@
 
 struct BattleFormationRecord
 {
-	u8 battleType;
-	u8 memberIds[5];
-	u8 minimumCounts[5];
-	u8 maximumCounts[5];
+    u8 battleType;
+    u8 memberIds[5];
+    u8 minimumCounts[5];
+    u8 maximumCounts[5];
 };
 
 extern struct BattleFormationRecord gBattleFormation_Records[];

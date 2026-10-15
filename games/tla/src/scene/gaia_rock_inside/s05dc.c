@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 s32 Object_GetById();
@@ -15,4 +20,3 @@ s32 Func_020005dc(void)
     Call2(ObjectDispatch_ApplyValueToChildren, t0, 0);
     return 0;
 }
-

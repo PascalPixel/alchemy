@@ -5,11 +5,13 @@ void Func_0200061c(struct ObjectRuntime *object);
 void Func_02000644(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 x;
+    s32                   x;
 
-    if (id == 9) {
+    if (id == 9)
+    {
         x = object->x >> 20;
-        if (x == 39) {
+        if (x == 39)
+        {
 #if defined(TLA_EDITION_JA)
             object->motionFlags = 3;
             WaitFrames(15);

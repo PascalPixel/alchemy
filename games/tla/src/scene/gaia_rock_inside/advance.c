@@ -4,9 +4,9 @@
 void Effect_AdvanceMotionLocal(union FieldObject *object)
 {
     struct FieldEffect *effect = &object->effect;
-    s32 velocityX;
-    s32 velocityZ;
-    s32 scaleRateX;
+    s32                 velocityX;
+    s32                 velocityZ;
+    s32                 scaleRateX;
     struct FieldSprite *sprite;
 
     velocityX = effect->velocityX;

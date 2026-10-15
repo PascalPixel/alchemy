@@ -12,10 +12,11 @@
 
 void UiWork_UpdateListTail(struct RenderOutputList *list)
 {
-    struct RenderOutput *node = list->head;
+    struct RenderOutput  *node = list->head;
     struct RenderOutput **tail = &list->head;
 
-    while (node != NULL) {
+    while (node != NULL)
+    {
         tail = &node->next;
         node = node->next;
     }
@@ -25,7 +26,8 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
     /* FAKEMATCH: the first-word tail pointer access preserves the two-store order. */
-    if (list != NULL) {
+    if (list != NULL)
+    {
         *list->tailLink = node;
         *(struct RenderOutput **)&list->tailLink = node;
     }
@@ -34,9 +36,11 @@ void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutpu
 void RenderOutput_Release(struct RenderOutput *entry)
 {
     RenderOutput_ReleaseFree(entry);
-    if ((u8)entry->kind != 0) {
+    if ((u8)entry->kind != 0)
+    {
         Resource_ResetEntry((u8)entry->index);
-        if ((u8)entry->kind == 2) {
+        if ((u8)entry->kind == 2)
+        {
             u8 *dst = (u8 *)Ram_HeapSlots->windowTiles;
             s32 idx = entry->oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
             *(u16 *)(dst + idx) = 0x3E7;

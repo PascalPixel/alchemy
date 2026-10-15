@@ -9,7 +9,7 @@ void Func_02005be4(s32 frames);
 void Func_02004cf4(void)
 {
     struct KibomboEventWork *work;
-    struct KibomboObject *leader;
+    struct KibomboObject    *leader;
 
     Func_02005a9c();
     Func_02005c3c(0);

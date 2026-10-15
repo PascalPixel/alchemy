@@ -8,7 +8,8 @@
 #include "system.h"
 #include "text/msg_ids.h"
 
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor, s32 initialVelocityY);
+void BattleMotion_ApproachTarget(
+    s32 actorId, s32 targetId, s32 travelDivisor, s32 initialVelocityY);
 void Func_08138008(struct BattlePresentationWork *work);
 
 // The actor announces its attack, walks up to its target and plays the
@@ -42,7 +43,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
     UiText_DrawQuantity(work.actor, 1);
     UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
     BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-    ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(
+        (struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
     BattleObjGet(work.actors[0]);
 
     work.count = 1;

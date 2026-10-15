@@ -13,14 +13,17 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
     struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
 
-    if (state->classIndex != 0) {
-        if (level <= 0) {
+    if (state->classIndex != 0)
+    {
+        if (level <= 0)
+        {
             return 0;
         }
-        if (level <= 99 && state->enemyId <= 7) {
+        if (level <= 99 && state->enemyId <= 7)
+        {
             u32 *table = gOwner_ExperienceThresholds;
-            s32 row = state->enemyId * 99 + level;
-            s32 offset;
+            s32  row = state->enemyId * 99 + level;
+            s32  offset;
 
             /* FAKEMATCH: ⚓️ loads the table's address after the level is added to the row and before the sum is scaled; written as gOwner_ExperienceThresholds[state->enemyId * 99 + level - 1] the load's priority is one below the add's and it comes after it (one reordered pair, differ 2). The table and the sum are forced temporaries held at the barrier, and the offset is spelled out because a table in a register is indexed as (table + sum * 4) - 4 (differ 29). */
             asm volatile("" : "+l"(table));

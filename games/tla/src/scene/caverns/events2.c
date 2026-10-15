@@ -16,7 +16,8 @@ void Func_02000d10(void)
     s32 result0;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0x9af);
-    if (result0 == 0) goto L_02008d24;
+    if (result0 == 0)
+        goto L_02008d24;
     ((void (*)())Func_02000d28)();
 L_02008d24:
     return;

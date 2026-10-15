@@ -12,21 +12,22 @@
 #include "field_event.h"
 #include "text/msg_ids.h"
 
-void Func_02001e00();
-void Func_02001df8();
-void Func_02001e70();
-void Func_02001eb0();
-void Func_02001f08();
-void GameFlag_SetBit();
-void Func_02000724();
+void               Func_02001e00();
+void               Func_02001df8();
+void               Func_02001e70();
+void               Func_02001eb0();
+void               Func_02001f08();
+void               GameFlag_SetBit();
+void               Func_02000724();
 struct FieldActor *Object_GetById();
-void PartyInventory_Remove();
-void UiText_ShowPositionedMessageAndWait();
-u8 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
-s32 GameFlag_Test();
+void               PartyInventory_Remove();
+void               UiText_ShowPositionedMessageAndWait();
+u8                 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
+s32                GameFlag_Test();
 
-struct EventWorkLock {
-    u8 unk000[0x15a];
+struct EventWorkLock
+{
+    u8  unk000[0x15a];
     u16 locked;
 };
 
@@ -54,12 +55,12 @@ void Func_02000054(void)
     MapCopyAttr(17, 10, 1, 1, 19, 10);
     SetCollisionCode(0x1300000, 0xa00000, 0, 254);
     Func_02001e70(14, 0x1f80000, 0xa80000);
-    if (GameFlag_Test(0xa00)) {
+    if (GameFlag_Test(0xa00))
+    {
         Func_02000724(14);
         SetCollisionCode(0x1f00000, 0xa00000, 0, 254);
     }
 }
-
 
 void Func_020000c0(void)
 {
@@ -77,12 +78,14 @@ void Func_02000108(s32 unused, s32 id)
 void Func_02000114(s32 unused, s32 id)
 {
     struct FieldActor *object;
-    s32 i;
+    s32                i;
 
     object = Object_GetById(id);
-    if (object->x >> 20 == 10 && object->z >> 20 == 32) {
+    if (object->x >> 20 == 10 && object->z >> 20 == 32)
+    {
         object->motionFlags = 0;
-        for (i = 15; i >= 0; i--) {
+        for (i = 15; i >= 0; i--)
+        {
             object->y += 0x20000;
             WaitFrames(1);
         }

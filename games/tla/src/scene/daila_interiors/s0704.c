@@ -8,9 +8,9 @@ void Func_02000dcc(const u8 *script);
 
 void Func_02000704(void)
 {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8                   *event = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
-    s32 flags;
+    s32                   flags;
 
     Func_02000dcc(gData_02000e04);
     object = *(struct ObjectRuntime **)(event + 0xcbc);

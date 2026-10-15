@@ -12,7 +12,7 @@
 
 enum
 {
-	ITEM_HARD_NUT = 194
+    ITEM_HARD_NUT = 194
 };
 
 #endif

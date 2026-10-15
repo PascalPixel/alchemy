@@ -3,27 +3,27 @@
 
 extern const u8 MsgIMSorry[];
 
-void Func_020047d4(void);
-void Func_0200494c(s32 a);
-void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200488c(const u8 *message);
-void Func_0200489c(s32 actor, s32 a, s32 b);
+void                  Func_020047d4(void);
+void                  Func_0200494c(s32 a);
+void                  Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
+void                  Event_StartScreenTransition(void);
+void                  Event_WaitTransitionFrames(void);
+void                  Func_0200488c(const u8 *message);
+void                  Func_0200489c(s32 actor, s32 a, s32 b);
 struct ObjectRuntime *Func_020048cc(s32 actor, s32 emote, s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
-void Func_020048f4(void);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void Func_020048b4(s32 actor, s32 a);
-void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Party_RemoveActiveOwner(s32 owner);
-s32 Party_AddActiveOwner(s32 owner);
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta);
-void UnitCalc(s32 owner);
-s32 UnitPpAdd(s32 owner, s32 delta);
-void Func_02004904(s32 a, s32 b);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
+void                  Func_020048f4(void);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Func_020048b4(s32 actor, s32 a);
+void                  ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
+void                  Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void                  Party_SetFields1f2And1f4(s32 scene, s32 entrance);
+void                  Party_RemoveActiveOwner(s32 owner);
+s32                   Party_AddActiveOwner(s32 owner);
+s32                   Owner_AdjustFirstValue(s32 owner, s32 delta);
+void                  UnitCalc(s32 owner);
+s32                   UnitPpAdd(s32 owner, s32 delta);
+void                  Func_02004904(s32 a, s32 b);
 
 static __inline__ void JupiterRoomM_AdjustFirstValue(s32 owner, s32 delta)
 {
@@ -50,9 +50,9 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle)
 }
 
 /* FAKEMATCH: the angle passes through a block temporary, so it is built before x and z, as the native does (a plain argument: differ 12 of 160). */
-#define PLACE(id, x, z, angle) \
-    { \
-        s32 angle_ = (angle); \
+#define PLACE(id, x, z, angle)                      \
+    {                                               \
+        s32 angle_ = (angle);                       \
         ObjPlace(id, (x) << 16, (z) << 16, angle_); \
     }
 
@@ -87,7 +87,8 @@ void Func_02001c7c(void)
     Func_0200489c(26, 0, 5);
     ObjectMotion_OffsetPositionAndReset(26, 24, 0);
     Battle_WaitMode0(20);
-    do {
+    do
+    {
         /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead zero is not kept in r8 for the store of the owner below (without: differ 31 of 160). */
         gPartyState.battleRule24b = 6;
     } while (0);

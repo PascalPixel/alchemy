@@ -1,10 +1,10 @@
 #include "types.h"
 #include "object_runtime.h"
 
-s32 GameFlag_Test(s32 flag);
-void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
-void Func_020043c4(struct ObjectRuntime *object, s32 mode);
-extern u32 gInput;
+s32              GameFlag_Test(s32 flag);
+void             ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
+void             Func_020043c4(struct ObjectRuntime *object, s32 mode);
+extern u32       gInput;
 extern const s16 gData_02004740[];
 
 void Func_0200385c(struct ObjectRuntime *object)
@@ -12,7 +12,8 @@ void Func_0200385c(struct ObjectRuntime *object)
     s32 angle;
     s32 turn;
 
-    if (object->action != 0) {
+    if (object->action != 0)
+    {
         object->action--;
         return;
     }
@@ -21,7 +22,8 @@ void Func_0200385c(struct ObjectRuntime *object)
         angle = -1;
     else
         angle = gData_02004740[(gInput >> 4) & 15];
-    if (angle == -1) {
+    if (angle == -1)
+    {
         Func_020043c4(object, 9);
         return;
     }

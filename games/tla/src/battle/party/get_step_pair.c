@@ -8,7 +8,6 @@
 #include "system.h"
 #include "types.h"
 
-
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;

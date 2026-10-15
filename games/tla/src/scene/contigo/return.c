@@ -5,7 +5,8 @@ extern const u8 gData_02004b18[];
 
 void Func_02002e18(void)
 {
-    if (GameFlag_Test(0x9b2)) {
+    if (GameFlag_Test(0x9b2))
+    {
         Func_0200406c();
         Func_02004204(0);
         Contigo_CamSpeed(0xcccc, 0x1999);
@@ -142,12 +143,15 @@ void Func_02002e18(void)
         Contigo_MessageOpen(9, 0);
         Contigo_Jump(2, 257, 0);
         Contigo_ObjTurn(2, 0xa000, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+        {
             Contigo_ObjFace(2, 0xe000);
             Contigo_ObjMode(2, 3);
             Contigo_MessagePut(0x1002, 0);
             ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-        } else {
+        }
+        else
+        {
             Contigo_ObjFace(2, 0xe000);
             ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
             Contigo_ObjMode(2, 4);
@@ -158,12 +162,15 @@ void Func_02002e18(void)
         Contigo_MessageOpen(9, 0);
         Contigo_Jump(0, 257, 0);
         Contigo_ObjTurn(0, 0xa000, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
+        {
             Contigo_ObjFace(0, 0xe000);
             Contigo_ObjMode(0, 3);
             Contigo_MessagePut(0x1000, 0);
             ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-        } else {
+        }
+        else
+        {
             Contigo_ObjFace(0, 0xe000);
             ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
             Contigo_ObjMode(0, 4);

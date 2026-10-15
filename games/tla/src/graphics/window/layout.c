@@ -22,14 +22,17 @@ void UiWindow_FillFromScene(void *dst)
 {
     u8 *scene = Ram_HeapSlots->windowTiles;
 
-    if (scene == 0) {
+    if (scene == 0)
+    {
         /* FAKEMATCH: the fill value is pinned to the r3 it takes, which loads it from
            the pool before the buffer's address is formed; a plain Dma_Fill16 forms
            the address first (one reordered pair, differ 2). */
         register u16 value asm("r3") = 0xe0e0;
 
         Dma_Fill16(value, dst, 0x140);
-    } else {
+    }
+    else
+    {
         void (*code)(void *, void *);
 
         RamCode_Load(code, Tile_BuildMetatilesCode, Tile_BuildMetatilesCodeSize);
@@ -41,17 +44,20 @@ void UiWindow_FillFromScene(void *dst)
     }
 }
 
-void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
-                   s32 value)
+void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height, s32 value)
 {
-    u32 row = 0;
+    u32  row = 0;
     s16 *dst = (s16 *)0x06002000;
 
-    if (row < height) {
-        do {
+    if (row < height)
+    {
+        do
+        {
             u32 column = 0;
-            if (column < width) {
-                do {
+            if (column < width)
+            {
+                do
+                {
                     column++;
                     *dst = value;
                     dst++;
@@ -63,7 +69,8 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 heigh
     }
 }
 
-struct UiWindowBounds {
+struct UiWindowBounds
+{
     s32 handle;
     u16 left;
     u16 top;
@@ -77,16 +84,19 @@ s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
     struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
-    u8 *base = Ram_HeapSlots->windowTiles;
-    s32 height = 4;
-    s32 n;
-    s32 right;
-    s32 left;
+    u8                    *base = Ram_HeapSlots->windowTiles;
+    s32                    height = 4;
+    s32                    n;
+    s32                    right;
+    s32                    left;
 
-    if (base[5] != 0) {
+    if (base[5] != 0)
+    {
         n = BattleParty_PrepareActiveOwnersFar(0);
         height = 3;
-    } else {
+    }
+    else
+    {
         n = Party_CountActiveOwnersFar();
         if ((u32)n > 4)
             n = 4;
@@ -112,17 +122,16 @@ void UiWindow_BuildLayoutBounds(s32 flags)
 
 void UiWindow_CreateWithLayoutBounds(s32 flags)
 {
-    s32 zero;
+    s32                    zero;
     struct UiWindowBounds *window;
-    u8 *tiles;
+    u8                    *tiles;
 
     window = Runtime_AllocateBlock(64, sizeof(struct UiWindowBounds));
     tiles = Ram_HeapSlots->windowTiles;
     zero = 0;
     tiles[6] = 1;
     UiWindow_BuildLayoutBounds(flags);
-    window->handle = UiWindow_Create(
-        window->left, window->top, window->right, window->height, 6);
+    window->handle = UiWindow_Create(window->left, window->top, window->right, window->height, 6);
     PartyStatusDraw(flags);
     tiles[6] = zero;
 }

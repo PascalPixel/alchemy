@@ -1,18 +1,18 @@
 #include "local.h"
 #include "io_reg.h"
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_02005398(void);
-s32 Func_020053a0(s32 a, s32 b, s32 c);
-void Func_020053b8(const void *data);
-void Func_02000b78(s32 id);
-void Func_02000bac(s32 id);
-void Func_02000c74(void);
-void Func_02001634(void);
-void Func_02001804(void);
-void Func_02001b50(void);
-void Func_02003684(void);
-void Func_020037e0(void);
+s32        Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void       Func_02005398(void);
+s32        Func_020053a0(s32 a, s32 b, s32 c);
+void       Func_020053b8(const void *data);
+void       Func_02000b78(s32 id);
+void       Func_02000bac(s32 id);
+void       Func_02000c74(void);
+void       Func_02001634(void);
+void       Func_02001804(void);
+void       Func_02001b50(void);
+void       Func_02003684(void);
+void       Func_020037e0(void);
 extern s32 gData_020062a0;
 extern s32 gData_020062a4;
 extern u16 gData_020062a8;
@@ -33,7 +33,9 @@ void Func_0200290c(void)
         register u16 alpha __asm__("r3") = 0xc08;
 
         /* FAKEMATCH: the one-pass block's loop note holds the address until the pinned value is loaded; the empty asm of overlay 696's s43f8.c with r2 clobbered is differ 10 here. */
-        do { } while (0);
+        do
+        {
+        } while (0);
         REG_BLDALPHA = alpha;
     }
     REG_BLDCNT = 0x3f10;
@@ -51,7 +53,8 @@ void Func_0200290c(void)
     gData_020062a4 = 0;
     gData_020062a8 = 0;
     gData_020062aa = 0;
-    if (GameFlag_Test(0x109) == 0) {
+    if (GameFlag_Test(0x109) == 0)
+    {
         if (gPartyState.entrance == 5)
             Func_02003684();
         else if (gPartyState.entrance == 6)

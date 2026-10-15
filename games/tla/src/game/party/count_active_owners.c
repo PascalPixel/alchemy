@@ -10,14 +10,15 @@ s32 Party_CountActiveOwners(void)
     s32 i;
 
     count = 0;
-    for (i = 0; i <= 7; i++) {
+    for (i = 0; i <= 7; i++)
+    {
         if (GameFlag_Test(i))
             count++;
     }
     return count;
 }
 
-s32 GameFlag_SetBit(s32);
+s32  GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);
 
 s32 Party_AddActiveOwner(s32 value)
@@ -27,7 +28,8 @@ s32 Party_AddActiveOwner(s32 value)
 
     GameFlag_SetBit(value);
     index = 0;
-    while (index < count) {
+    while (index < count)
+    {
         if (gPartyState.activeOwners[index] == value)
             return count;
         index++;

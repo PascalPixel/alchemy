@@ -10,7 +10,6 @@
 #include "types.h"
 #include "motobj.h"
 
-
 void BattleFx_SpinObject(struct MotionObject *object)
 {
     object->angle += 0x1000;

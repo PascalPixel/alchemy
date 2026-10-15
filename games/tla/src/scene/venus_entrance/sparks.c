@@ -12,10 +12,11 @@
 #include "resource.h"
 #include "mem.h"
 
-struct SparkWork {
-    u8 unk0000[0x2102];
+struct SparkWork
+{
+    u8  unk0000[0x2102];
     u16 tileBase;
-    u8 unk2104[0x80];
+    u8  unk2104[0x80];
     s16 resource;
 };
 

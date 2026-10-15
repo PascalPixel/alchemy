@@ -3,24 +3,26 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct EventWork154 {
-    u8 unk000[0x154];
+struct EventWork154
+{
+    u8  unk000[0x154];
     s16 value;
 };
 
-void Battle_WaitMode0(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void Func_020012a8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020012e8(void);
 void Func_02001348(s32 id, s32 x, s32 z);
 void Func_020013d0(s32 value);
 void Func_02001448(s32 cue);
 
-static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
+static __inline__ void Func_020012a8_(
+    s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_020012a8(srcX, srcY, width, height, destX, destY);

@@ -24,18 +24,20 @@ void Scheduler_ScheduleCallbackBAfterFrames(void)
 void PaletteQueue_StepCycles(void)
 {
     struct PaletteSnapshotWork *work = gPaletteWork;
-    u8 i;
-    u16 count = work->count & 3;
-    u16 buf[16];
+    u8                          i;
+    u16                         count = work->count & 3;
+    u16                         buf[16];
 
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         struct PaletteSnapshot *cycle = &work->entries[i];
-        if (cycle->timer == 0) {
-            u16 start = cycle->position;
-            u16 len = cycle->count;
+        if (cycle->timer == 0)
+        {
+            u16   start = cycle->position;
+            u16   len = cycle->count;
             void *dest = cycle->source;
-            u16 *src = cycle->colors;
-            u8 j;
+            u16  *src = cycle->colors;
+            u8    j;
             for (j = len - start; j < len; j++)
                 buf[j] = *src++;
             for (j = 0; j < len - start; j++)
@@ -46,7 +48,9 @@ void PaletteQueue_StepCycles(void)
                 start = 0;
             cycle->position = start;
             cycle->timer = cycle->delay;
-        } else {
+        }
+        else
+        {
             cycle->timer--;
         }
     }

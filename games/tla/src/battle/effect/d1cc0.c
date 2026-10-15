@@ -2,17 +2,17 @@
 #include "dma.h"
 #include "party_state.h"
 
-u8 *Runtime_AllocateBlock();
+u8   *Runtime_AllocateBlock();
 void *Runtime_AllocateHeapBlock();
-void Runtime_ReleaseHeapBlock();
-s32 VramBlock_LoadCached(s32 slot, s32 size, void *data);
-void Scheduler_AddOrUpdateCallback();
-s32 ObjectTable_Get();
-void Func_080d1ae4();
+void  Runtime_ReleaseHeapBlock();
+s32   VramBlock_LoadCached(s32 slot, s32 size, void *data);
+void  Scheduler_AddOrUpdateCallback();
+s32   ObjectTable_Get();
+void  Func_080d1ae4();
 
 void Func_080d1cc0(s32 object)
 {
-    u8 *work = Runtime_AllocateBlock(144, 28);
+    u8   *work = Runtime_AllocateBlock(144, 28);
     void *buffer = Runtime_AllocateHeapBlock(56, 0x400);
 
     Dma_Fill32(0, buffer, 0x200);

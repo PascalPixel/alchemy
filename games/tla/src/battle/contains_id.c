@@ -12,19 +12,19 @@
 //--------------------------------------------------------------------------
 s32 BattlePlacement_ContainsId(s16 *list, s32 no)
 {
-	u32 i;
+    u32 i;
 
-	if (no > 7)
-		no += 120; // 敵のユニット番号は 128 から
-	i = 0;
-	do
-	{
-		u16 id = *list++;
+    if (no > 7)
+        no += 120; // 敵のユニット番号は 128 から
+    i = 0;
+    do
+    {
+        u16 id = *list++;
 
-		if (id == 0xff)
-			break;
-		if (id == no)
-			return 1;
-	} while (++i < 14);
-	return 0;
+        if (id == 0xff)
+            break;
+        if (id == no)
+            return 1;
+    } while (++i < 14);
+    return 0;
 }

@@ -4,7 +4,8 @@ void Func_020007dc(s32 step)
 {
     struct TundariaTowerPosition position;
 
-    switch (step) {
+    switch (step)
+    {
     case 1:
         break;
     case 2:
@@ -26,11 +27,12 @@ void Func_020007dc(s32 step)
 void Func_02000840(struct ObjectRuntime *object)
 {
     struct TundariaTowerEffectParams params;
-    u32 phase = gFrameCount & 7;
-    s32 dx;
-    s32 dy;
+    u32                              phase = gFrameCount & 7;
+    s32                              dx;
+    s32                              dy;
 
-    if (phase == 0) {
+    if (phase == 0)
+    {
         {
             /* FAKEMATCH: the native builds the mask before the random draw. */
             s32 mask = 15;
@@ -40,7 +42,7 @@ void Func_02000840(struct ObjectRuntime *object)
         dy = Random16Far() & 7;
         params.kind = 673;
         Func_020000b8(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16), object->z, 0,
-                      0x8000, phase, 0x100000, &params);
+            0x8000, phase, 0x100000, &params);
     }
 }
 
@@ -66,7 +68,8 @@ void Func_02000920(void)
     Func_02003048();
     Func_02003148(0);
     UiText_ShowPositionedMessageAndWait(MsgThereSSomething, 1);
-    if (GameFlag_Test(0x949)) {
+    if (GameFlag_Test(0x949))
+    {
         struct EventWork *work = Ram_HeapSlots->eventWork;
 
         work->unk15a = 1;

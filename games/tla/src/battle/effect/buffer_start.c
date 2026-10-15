@@ -9,13 +9,12 @@ void BattleFx_StartBufferInterpolation(s32 mode)
 {
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
-    if (buffers != NULL) {
+    if (buffers != NULL)
+    {
         buffers->duration = mode;
         buffers->step = 0;
-        BattleFx_InterpolateBuffers((s16 *)buffers->current,
-                                    (s16 *)buffers->target,
-                                    (s16 *)buffers->delta,
-                                    mode);
+        BattleFx_InterpolateBuffers(
+            (s16 *)buffers->current, (s16 *)buffers->target, (s16 *)buffers->delta, mode);
     }
 }
 
@@ -25,7 +24,8 @@ void BattleFx_LoadBufferPalette(const u16 *colours)
 {
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
-    if (buffers != NULL) {
+    if (buffers != NULL)
+    {
         /* FAKEMATCH: the entry held in a local loads its address after the size is started, as the native does; called directly the address loads first (differ 2). */
         s32 (*copy)(void *destination, const void *source, s32 size) = Iwram_CopyWords;
 

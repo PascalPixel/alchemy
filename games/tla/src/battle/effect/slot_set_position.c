@@ -22,7 +22,8 @@ void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
     effect->callback = callback;
     effect->callbackDelay = 0;
     /* FAKEMATCH: a one-pass block loads the state's zero before the halfword zero is built; stored straight the two rows trade places (differ 2). */
-    do {
+    do
+    {
         effect->age = 0;
         effect->state = 0;
     } while (0);

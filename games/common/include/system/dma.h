@@ -6,24 +6,24 @@
 // DMA チャンネルのレジスタ (DMAxSAD, DMAxDAD, DMAxCNT)
 struct DmaRegisters
 {
-	u32 source;
-	u32 destination;
-	u32 control;
+    u32 source;
+    u32 destination;
+    u32 control;
 };
 
 #define Dma_Fill16(value, destination, size)                                    \
-	{                                                                           \
-		volatile u16 fill_ = (value);                                           \
-		Dma_Set((const void *)&fill_, (destination), 0x81000000 | ((size) / 2), \
-			(volatile u32 *)0x040000d4);                                        \
-	}
+    {                                                                           \
+        volatile u16 fill_ = (value);                                           \
+        Dma_Set((const void *)&fill_, (destination), 0x81000000 | ((size) / 2), \
+            (volatile u32 *)0x040000d4);                                        \
+    }
 
 #define Dma_Fill32(value, destination, size)                                    \
-	{                                                                           \
-		volatile u32 fill_ = (value);                                           \
-		Dma_Set((const void *)&fill_, (destination), 0x85000000 | ((size) / 4), \
-			(volatile u32 *)0x040000d4);                                        \
-	}
+    {                                                                           \
+        volatile u32 fill_ = (value);                                           \
+        Dma_Set((const void *)&fill_, (destination), 0x85000000 | ((size) / 4), \
+            (volatile u32 *)0x040000d4);                                        \
+    }
 
 // Dma_Fill32 with the caller's word, a volatile local the function declares
 // at its own scope: the word takes that place in the frame (in
@@ -32,18 +32,18 @@ struct DmaRegisters
 // all of them and forms its address once.
 // 語は関数の局所変数。何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
 #define Dma_Fill32Cell(cell, value, destination, size)                           \
-	{                                                                            \
-		(cell) = (value);                                                        \
-		Dma_Set((const void *)&(cell), (destination), 0x85000000 | ((size) / 4), \
-			(volatile u32 *)0x040000d4);                                         \
-	}
+    {                                                                            \
+        (cell) = (value);                                                        \
+        Dma_Set((const void *)&(cell), (destination), 0x85000000 | ((size) / 4), \
+            (volatile u32 *)0x040000d4);                                         \
+    }
 
 // pret の CpuFill32: BIOS の CpuSet で同じ語を埋める
 #define Cpu_Fill32(value, destination, size)                                         \
-	{                                                                                \
-		volatile u32 fill_ = (value);                                                \
-		Bios_CpuSet((const void *)&fill_, (destination), 0x05000000 | ((size) / 4)); \
-	}
+    {                                                                                \
+        volatile u32 fill_ = (value);                                                \
+        Bios_CpuSet((const void *)&fill_, (destination), 0x05000000 | ((size) / 4)); \
+    }
 
 /* Unpinning trials: an ordinary input-only channel stays in r4 across
  * adjacent transfers. A read/write early-clobber channel instead reloads
@@ -55,16 +55,16 @@ struct DmaRegisters
  * the partial return-and-chain change is not adopted. */
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc pattern emits")
 static __inline__ void Dma_Set(
-	const void *source, void *destination, u32 control, volatile u32 *channel)
+    const void *source, void *destination, u32 control, volatile u32 *channel)
 {
-	register volatile u32 *dma __asm__("r3") = channel;
-	register u32 src __asm__("r0") = (u32)source;
-	register u32 dst __asm__("r1") = (u32)destination;
-	register u32 cnt __asm__("r2") = control;
-	__asm__ volatile("stmia %2!, {%0, %3, %1}\n\tsub %2, #12"
-		: "+r"(src), "+r"(cnt)
-		: "r"(dma), "r"(dst)
-		: "memory", "cc");
+    register volatile u32 *dma __asm__("r3") = channel;
+    register u32           src __asm__("r0") = (u32)source;
+    register u32           dst __asm__("r1") = (u32)destination;
+    register u32           cnt __asm__("r2") = control;
+    __asm__ volatile("stmia %2!, {%0, %3, %1}\n\tsub %2, #12"
+        : "+r"(src), "+r"(cnt)
+        : "r"(dma), "r"(dst)
+        : "memory", "cc");
 }
 
 #endif

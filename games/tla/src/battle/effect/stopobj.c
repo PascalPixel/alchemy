@@ -3,8 +3,9 @@
 #include "object_dispatch.h"
 #include "ram_buffer.h"
 
-struct EffectSceneWork {
-    u8 reserved00[16];
+struct EffectSceneWork
+{
+    u8                     reserved00[16];
     struct DispatchObject *mainObject;
 };
 

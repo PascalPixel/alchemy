@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "party_state.h"
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void Func_0200191c(void);
 void Func_02001914(void);
 void Func_02001a14(void);
@@ -22,9 +22,9 @@ void Func_02000f50(s32 value)
 // while flag 370 is clear; an 0xff entry ends the list.
 s32 Func_02000f6c(s32 owner)
 {
-    s32 count = Party_CountActiveOwners();
-    s32 limit = 3;
-    s32 i;
+    s32                count = Party_CountActiveOwners();
+    s32                limit = 3;
+    s32                i;
     struct PartyState *party;
 
     if (!GameFlag_Test(370))

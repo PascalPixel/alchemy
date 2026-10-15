@@ -6,7 +6,7 @@
 
 void BattleFx_InitializeRisingObject(s32 slot)
 {
-    struct BattleObj *context = GetBattleObjectSlotFar(slot);
+    struct BattleObj     *context = GetBattleObjectSlotFar(slot);
     struct ObjectRuntime *object = context->object;
 
     object->acceleration = 0x20000;
@@ -26,21 +26,21 @@ void BattleFx_InitializeRisingObject(s32 slot)
 // moves 80 percent).
 void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate)
 {
-    struct BattleObj *slot = GetBattleObjectSlotFar(id);
-    struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
+    struct BattleObj     *slot = GetBattleObjectSlotFar(id);
+    struct BattleObj     *targetSlot = GetBattleObjectSlotFar(targetId);
     struct ObjectRuntime *obj = (struct ObjectRuntime *)slot->object;
     struct ObjectRuntime *target = (struct ObjectRuntime *)targetSlot->object;
-    s32 diffX = target->x - obj->x;
-    s32 startX = obj->x;
-    s32 dx = rate * diffX / 100;
-    s32 diffZ = target->z - obj->z;
-    s32 startZ = obj->z;
-    s32 dz = rate * diffZ / 100;
-    s32 x = startX + dx;
-    s32 z = startZ + dz;
-    s32 sx = dx >> 8; // the distance in 1/256 pixels
-    s32 sz = dz >> 8;
-    s32 dist;
+    s32                   diffX = target->x - obj->x;
+    s32                   startX = obj->x;
+    s32                   dx = rate * diffX / 100;
+    s32                   diffZ = target->z - obj->z;
+    s32                   startZ = obj->z;
+    s32                   dz = rate * diffZ / 100;
+    s32                   x = startX + dx;
+    s32                   z = startZ + dz;
+    s32                   sx = dx >> 8; // the distance in 1/256 pixels
+    s32                   sz = dz >> 8;
+    s32                   dist;
 
     dist = Iwram_Sqrt(sx * sx + sz * sz);
     dist = (dist << 8) / frames;

@@ -5,11 +5,11 @@ extern const u8 MsgFixingThisWill[];
 extern const u8 MsgFortuneTeller2[];
 extern const u8 MsgConfirmGraphic2[];
 extern const u8 MsgPiers2[];
-void Func_020006e4(void);
-void Func_020006ec(void);
-void Func_0200072c(s32 value);
-void Func_02000714(s32 message);
-void Func_0200071c(s32 index, s32 flags);
+void            Func_020006e4(void);
+void            Func_020006ec(void);
+void            Func_0200072c(s32 value);
+void            Func_02000714(s32 message);
+void            Func_0200071c(s32 index, s32 flags);
 
 void Func_02000098(s32 index)
 {

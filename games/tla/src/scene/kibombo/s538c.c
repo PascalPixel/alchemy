@@ -16,7 +16,8 @@ void Func_0200538c(void)
     ObjectMotion_SetActionVariant(8, 2);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
     Object_GetById(11)->motionFlags = 0;
-    if (GameFlag_Test(0x9ea)) {
+    if (GameFlag_Test(0x9ea))
+    {
         Kibombo_ObjSetPos(Object_GetById(11), 208 << 15, 0, 148 << 17);
         Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
         WaitFrames(10);

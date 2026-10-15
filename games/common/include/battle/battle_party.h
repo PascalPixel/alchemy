@@ -6,44 +6,44 @@
 
 enum BattleUnitPresence
 {
-	BATTLE_UNIT_ABSENT = 0,
-	BATTLE_UNIT_ENEMY = 1,
-	BATTLE_UNIT_PARTY = 2
+    BATTLE_UNIT_ABSENT = 0,
+    BATTLE_UNIT_ENEMY = 1,
+    BATTLE_UNIT_PARTY = 2
 };
 
 enum BattleUnitListMark
 {
-	BATTLE_UNIT_REMOVED = 0xfe,
-	BATTLE_UNIT_LIST_END = 0xff
+    BATTLE_UNIT_REMOVED = 0xfe,
+    BATTLE_UNIT_LIST_END = 0xff
 };
 
 enum BattleSideMask
 {
-	BATTLE_SIDE_PARTY = 1,
-	BATTLE_SIDE_ENEMIES = 2,
-	BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
+    BATTLE_SIDE_PARTY = 1,
+    BATTLE_SIDE_ENEMIES = 2,
+    BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
 struct DjinnRecoveryEntry
 {
-	u8 element;
-	u8 index;
-	u8 unitId;
-	s8 turns;
+    u8 element;
+    u8 index;
+    u8 unitId;
+    s8 turns;
 };
 
 LAYOUT_SIZE_GUARD(DjinnRecoveryEntry_Size, struct DjinnRecoveryEntry, 4);
 
 struct DjinnRecoveryList
 {
-	struct DjinnRecoveryEntry entries[64];
-	s32						  count;
+    struct DjinnRecoveryEntry entries[64];
+    s32                       count;
 };
 
 struct DjinnRecoveryTable
 {
-	u8						 unk00[8];
-	struct DjinnRecoveryList list;
+    u8                       unk00[8];
+    struct DjinnRecoveryList list;
 };
 
 #if GAME_TLA

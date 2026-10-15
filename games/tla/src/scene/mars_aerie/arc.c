@@ -9,11 +9,11 @@ s32 Math_Sine(s32 angle);
 void Func_020005a0(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *parent;
-    u16 *pangle = (u16 *)&object->action;
-    u16 angle;
-    struct FieldSprite *sprite;
-    s32 sine;
-    s32 x;
+    u16                  *pangle = (u16 *)&object->action;
+    u16                   angle;
+    struct FieldSprite   *sprite;
+    s32                   sine;
+    s32                   x;
 
     angle = *pangle;
     parent = object->linkedObject;

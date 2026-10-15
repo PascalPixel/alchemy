@@ -1,7 +1,8 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct MenuIconWork {
+struct MenuIconWork
+{
     u8 unk000[0xc12];
     s8 active;
 };

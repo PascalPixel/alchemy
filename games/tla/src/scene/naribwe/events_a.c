@@ -2,9 +2,9 @@
 
 void Func_02000088(void)
 {
-    u8 *work = Ram_HeapSlots->eventWork;
+    u8                *work = Ram_HeapSlots->eventWork;
     struct PartyState *party;
-    u8 *flag;
+    u8                *flag;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the flag's offset; without the barrier the offset's first half is scheduled ahead of the load (differ 2). */
     asm volatile("");
@@ -28,18 +28,24 @@ void Func_020000d8(void)
 {
     s32 msg;
 
-    if (GameFlag_Test_(0x85d) == 0) {
+    if (GameFlag_Test_(0x85d) == 0)
+    {
         msg = (s32)&MsgNaribwe02;
         Func_02000584(msg);
         UiText_OpenMessageAtObject(14, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0)
+        {
             Func_02000584(msg + 1);
             GameFlag_SetBit_(0x85d);
-        } else {
+        }
+        else
+        {
             Func_02000584(msg + 2);
         }
         Func_02000594(14, 0);
-    } else {
+    }
+    else
+    {
         Func_02000584((s32)&MsgNaribwe03);
         Func_02000594(14, 0);
     }
@@ -49,18 +55,24 @@ void Func_02000140(void)
 {
     s32 msg;
 
-    if (GameFlag_Test(0x85e) == 0) {
+    if (GameFlag_Test(0x85e) == 0)
+    {
         msg = (s32)&MsgNaribwe07;
         Func_02000584(msg);
         UiText_OpenMessageAtObject(18, 0);
-        if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0)
+        {
             Func_02000584(msg + 1);
             GameFlag_SetBit(0x85d);
-        } else {
+        }
+        else
+        {
             Func_02000584(msg + 2);
         }
         Func_02000594(18, 0);
-    } else {
+    }
+    else
+    {
         Func_02000584((s32)&MsgNaribwe08);
         Func_02000594(14, 0);
     }
@@ -72,10 +84,13 @@ void Func_020001a8(void)
 
     Func_02000584(msg);
     UiText_OpenMessageAtObject(19, 0);
-    if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0)
+    {
         Battle_WaitMode0(10);
         Func_02000584(msg + 1);
-    } else {
+    }
+    else
+    {
         Battle_WaitMode0(20);
         Func_02000584(msg + 2);
     }
@@ -88,7 +103,8 @@ void Func_020001f0(s32 actor)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0x8000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0x8000)
+    {
         Func_020005e4(16, actor);
         return;
     }
@@ -105,7 +121,8 @@ void Func_02000250(s32 actor)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0x8000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0x8000)
+    {
         Func_020005e4(16, actor);
         return;
     }
@@ -122,7 +139,8 @@ void Func_020002b0(s32 actor)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000)
+    {
         Func_020005ec(actor);
         return;
     }
@@ -139,7 +157,8 @@ void Func_0200030c(s32 actor)
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
-    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+    if ((u16)((angle + 0x2000) & 0xc000) == 0xc000)
+    {
         Func_020005ec(actor);
         return;
     }
@@ -164,10 +183,12 @@ void Func_02000368(void)
 
     Func_0200054c();
     Func_020005c4(0);
-    for (id = 8; id <= 63; id++) {
+    for (id = 8; id <= 63; id++)
+    {
         u8 *actor = (u8 *)Object_GetById(id);
 
-        if (actor != NULL) {
+        if (actor != NULL)
+        {
             u8 *flags = &actor[85];
             /* FAKEMATCH: the zero pinned to r3 is rebuilt on every pass as the native does; loop.c hoists a plain zero out of the loop into a saved register (differ 16). */
             register s32 zero asm("r3") = 0;

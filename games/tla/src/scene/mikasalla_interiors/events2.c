@@ -26,7 +26,8 @@ void Func_020004b0(void)
     s32 result0;
 
     result0 = Value1((s32 (*)())GameFlag_Test, 0xa39);
-    if (result0 != 0) goto L_020084c6;
+    if (result0 != 0)
+        goto L_020084c6;
     ((void (*)())Func_020004dc)();
     goto L_020084d4;
 L_020084c6:
@@ -53,7 +54,8 @@ void Func_020004dc(void)
     Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 18, 0);
     result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
-    if (result0 != 0) goto L_02008568;
+    if (result0 != 0)
+        goto L_02008568;
     Call2((void (*)())Func_02000614, 18, 0);
     Call1((void (*)())GameFlag_SetBit, 0x340);
     goto L_02008582;

@@ -13,8 +13,8 @@
 #include "serial_runtime.h"
 #include "text/msg_ids.h"
 
-s32 Func_02000f6c(s32 id);
-s32 Func_02000fbc(s32 actor);
+s32  Func_02000f6c(s32 id);
+s32  Func_02000fbc(s32 actor);
 void Func_0200191c(void);
 void Func_0200197c(void);
 void Func_02001984(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
@@ -25,7 +25,7 @@ void Func_02001a1c(void);
 void Func_02001a64(s32 message);
 void Func_02001a74(s32 actor, s32 flags);
 void Func_02001a7c(s32 actor, s32 animation, s32 flags);
-s32 Func_02001a84(s32 scene, s32 entrance);
+s32  Func_02001a84(s32 scene, s32 entrance);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
@@ -45,29 +45,38 @@ s32 Func_02001130(s32 actor)
     Func_02001a14();
     Func_02001ab4(0);
     ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
-    if (GameFlag_Test(0x304)) {
+    if (GameFlag_Test(0x304))
+    {
         Flag_Test(0x2f4);
         base = GameFlag_Test(actor + 0x2f0);
-        if (GameFlag_Test(0x305)) {
+        if (GameFlag_Test(0x305))
+        {
             if (base)
                 base = (s32)MsgEverybodyDeservesA;
             else
                 base = (s32)MsgEverybodyDidGreat;
-        } else {
+        }
+        else
+        {
             if (base)
                 base = (s32)MsgDonTBlame;
             else
                 base = (s32)MsgYouWinSome;
         }
-    } else if (lead != 0) {
+    }
+    else if (lead != 0)
+    {
         if (own == 0)
             base = (s32)MsgOkWeRe;
-    } else {
+    }
+    else
+    {
         base = (s32)MsgILlFight;
     }
     Func_02001a64(base + actor);
     Func_02001a74(actor, 0);
-    if (base == (s32)MsgILlFight && actor == 5) {
+    if (base == (s32)MsgILlFight && actor == 5)
+    {
         Func_02001a7c(5, 263, 0);
         Battle_WaitMode0(10);
     }
@@ -79,7 +88,8 @@ s32 Func_02001210(void)
     Func_0200191c();
     Sound_LoadPresetParameters(2);
     /* FAKEMATCH: the do/while loads the scene number before the 1. */
-    do {
+    do
+    {
         return Func_02001a84((s32)&SceneId_Ov64a, 1);
     } while (0);
 }
@@ -88,14 +98,17 @@ s32 Func_0200122c(s32 actor)
 {
     s32 message;
 
-    if (actor == 14 && (gInput.held & 0x300)) {
+    if (actor == 14 && (gInput.held & 0x300))
+    {
         Func_02000fbc(14);
         return;
     }
     Func_02001a14();
     Func_02001ab4(0);
-    if (GameFlag_Test(0x206)) {
-        switch (actor) {
+    if (GameFlag_Test(0x206))
+    {
+        switch (actor)
+        {
         case 13:
             message = (s32)MsgILlBe;
             break;
@@ -106,8 +119,11 @@ s32 Func_0200122c(s32 actor)
             message = (s32)MsgSometimesYourClass;
             break;
         }
-    } else {
-        switch (actor) {
+    }
+    else
+    {
+        switch (actor)
+        {
         case 13:
             message = (s32)MsgYouLookA;
             break;
@@ -123,7 +139,8 @@ s32 Func_0200122c(s32 actor)
     Func_02001a64(message);
     UiText_OpenMessageAtObject(actor, 0);
     Battle_WaitMode0(1);
-    if (message == (s32)MsgYouLookA) {
+    if (message == (s32)MsgYouLookA)
+    {
         ObjectMotion_SetVariantCallback(14, 1);
         Object_SetModeById(14, 4);
         Battle_WaitMode0(15);
@@ -141,7 +158,8 @@ s32 Func_02001304(s32 actor)
     Func_02001a14();
     Func_02001ab4(0);
     ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
-    if (!Flag_Test(0x204)) {
+    if (!Flag_Test(0x204))
+    {
         if (Party_CountActiveOwners() == 8)
             message = (s32)MsgUpToThree;
         else if (Party_CountActiveOwners() <= 3)
@@ -149,7 +167,9 @@ s32 Func_02001304(s32 actor)
         else
             message = (s32)MsgUpToThreeAlliesCan;
         GameFlag_SetBit(0x204);
-    } else {
+    }
+    else
+    {
         message = (s32)MsgYouCanChange;
         GameFlag_ClearBit(0x204);
     }
@@ -166,10 +186,13 @@ s32 Func_02001388(s32 id)
     Func_02001ab4(0);
     gs = &gPartyState;
     ObjectMotion_SetAngleToward(id, gs->currentOwner, 0);
-    if (gs->linkTallies[2] != 0) {
+    if (gs->linkTallies[2] != 0)
+    {
         Func_020019e4(gs->linkTallies[2], 5);
         Func_02001a64((s32)MsgYouVeWon);
-    } else {
+    }
+    else
+    {
         Func_02001a64((s32)MsgICanTWaitTo);
     }
     UiText_OpenMessageAtObject(id, 0);

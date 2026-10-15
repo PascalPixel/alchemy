@@ -16,11 +16,13 @@ u8 *Func_020010b0(void)
 void Func_020010f0(s32 aArg, s32 b)
 {
     struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
-    struct PartyState *party = &gPartyState;
-    s16 scene;
+    struct PartyState           *party = &gPartyState;
+    s16                          scene;
 
     /* FAKEMATCH: the loop note makes the scene offset's first instruction a barrier: ⚓️ loads the party state's address before it copies b (plain, the copy comes first: differ 2). */
-    do { } while (0);
+    do
+    {
+    } while (0);
     scene = party->scene;
     {
         /* FAKEMATCH: the first argument pinned to r5 after the scene read stays after it, as in ⚓️; as the parameter it is copied above the barrier (differ 2). */

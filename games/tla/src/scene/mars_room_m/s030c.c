@@ -10,7 +10,8 @@ void Func_0200030c(void)
     Func_02003258(30);
     Battle_WaitMode0(30);
     Func_020032b8(190);
-    switch (gPartyState.entrance) {
+    switch (gPartyState.entrance)
+    {
     case 1:
         GameFlag_SetBit(0xa32);
         break;

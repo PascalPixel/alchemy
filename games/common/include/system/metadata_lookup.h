@@ -10,19 +10,19 @@
 
 struct AnimationMetadata
 {
-	u8	   width;
-	u8	   height;
-	u16	   scale;
-	u8	   drawKind;
-	u8	   animationCount;
-	s8	   adjustX;
-	s8	   adjustY;
-	u8	   boxX;
-	u8	   boxY;
-	u8	   frameCodec;
-	u8	   reserved0b;
-	void **frames;
-	u8	 **animation;
+    u8     width;
+    u8     height;
+    u16    scale;
+    u8     drawKind;
+    u8     animationCount;
+    s8     adjustX;
+    s8     adjustY;
+    u8     boxX;
+    u8     boxY;
+    u8     frameCodec;
+    u8     reserved0b;
+    void **frames;
+    u8   **animation;
 };
 
 LAYOUT_SIZE_GUARD(AnimationMetadata_Size, struct AnimationMetadata, 0x14);

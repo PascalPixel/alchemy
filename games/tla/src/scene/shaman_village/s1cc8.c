@@ -4,11 +4,13 @@ void Func_02001cc8(void)
 {
     struct ShamanVillageObject *object = Object_GetById(14);
 
-    if (object->x >> 20 == 32 && object->z >> 20 == 11) {
+    if (object->x >> 20 == 32 && object->z >> 20 == 11)
+    {
         Func_020048c4();
         Func_02004a24(0);
         object->motionFlags = 3;
-        do {
+        do
+        {
             WaitFrames(1);
             /* FAKEMATCH: one more use of the object inside the loop ranks it ahead of the speed it reads, so the object takes r5 and the speed r6 as the native has; plain, the two trade registers (differ 14, with or without a named speed and a flags pointer). */
             __asm__("" : : "l"(object));

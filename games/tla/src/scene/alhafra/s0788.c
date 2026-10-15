@@ -9,7 +9,8 @@ s32 GameFlag_Test(s32 flag);
 
 const u8 *Func_02000788(void)
 {
-    if (GameFlag_Test(0x8a7)) {
+    if (GameFlag_Test(0x8a7))
+    {
         if (GameFlag_Test(0x90f) == 0)
             return gData_02003154;
         return gData_02002e48;

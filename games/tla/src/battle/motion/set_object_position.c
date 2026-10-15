@@ -33,8 +33,8 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot)
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
 {
-    u32 scaledX;
-    struct BattleObj *slot;
+    u32                  scaledX;
+    struct BattleObj    *slot;
     struct MotionObject *object;
 
     slot = BattleObjGet(objectId);
@@ -52,7 +52,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
 
 void Func_0811c01c(s32 objectId)
 {
-    struct BattleObj *slot;
+    struct BattleObj    *slot;
     struct MotionObject *object;
 
     slot = BattleObjGet(objectId);

@@ -1,20 +1,25 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 Object_GetById();
-s32 Func_02004464();
-s32 Func_020045ec();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Object_SetPositionAndResetMotion();
-s32 WaitFrames();
-s32 Event_StartScreenTransition();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_OffsetPositionAndResetMotion();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Object_SetModeById();
-s32 Func_0200446c();
+s32       Object_GetById();
+s32       Func_02004464();
+s32       Func_020045ec();
+s32       ObjectDispatch_SetSingleChildFlags();
+s32       Object_SetPositionAndResetMotion();
+s32       WaitFrames();
+s32       Event_StartScreenTransition();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_OffsetPositionAndResetMotion();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Object_SetModeById();
+s32       Func_0200446c();
 extern u8 gPartyState[];
 
 void Func_02001c24(s32 a0)
@@ -24,23 +29,29 @@ void Func_02001c24(s32 a0)
     t0 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
     Func_02004464();
     Call1(Func_020045ec, 0);
-    if (a0 != 0) {
-        Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532)), 0);
-        Call4(Object_SetPositionAndResetMotion, t0, (FIELD_AT(t0, s32, 8) + -65536), FIELD_AT(t0, s32, 12), (FIELD_AT(t0, s32, 16) + -393216));
+    if (a0 != 0)
+    {
+        Call2(ObjectDispatch_SetSingleChildFlags,
+            Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532)), 0);
+        Call4(Object_SetPositionAndResetMotion, t0, (FIELD_AT(t0, s32, 8) + -65536),
+            FIELD_AT(t0, s32, 12), (FIELD_AT(t0, s32, 16) + -393216));
         Call1(WaitFrames, 1);
         Event_StartScreenTransition();
         Call2(Motion_SetModeAndWaitAnimation, FIELD_AT(gPartyState, s32, 532), 0x17);
-    } else {
-        Call4(Object_SetPositionAndResetMotion, t0, (FIELD_AT(t0, s32, 8) + 0x10000), FIELD_AT(t0, s32, 12), (FIELD_AT(t0, s32, 16) + -393216));
+    }
+    else
+    {
+        Call4(Object_SetPositionAndResetMotion, t0, (FIELD_AT(t0, s32, 8) + 0x10000),
+            FIELD_AT(t0, s32, 12), (FIELD_AT(t0, s32, 16) + -393216));
         Call1(WaitFrames, 1);
         Event_StartScreenTransition();
         Call2(Motion_SetModeAndWaitAnimation, FIELD_AT(gPartyState, s32, 532), 0x18);
     }
-    Call2(ObjectDispatch_SetSingleChildFlags, Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532)), 1);
+    Call2(ObjectDispatch_SetSingleChildFlags,
+        Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532)), 1);
     Call3(ObjectMotion_SetSpeedParameters, FIELD_AT(gPartyState, s32, 532), 0x8000, 0x4000);
     Call3(ObjectMotion_OffsetPositionAndResetMotion, FIELD_AT(gPartyState, s32, 532), 0, 8);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, FIELD_AT(gPartyState, s32, 532));
     Call2(Object_SetModeById, FIELD_AT(gPartyState, s32, 532), 1);
     Func_0200446c();
 }
-

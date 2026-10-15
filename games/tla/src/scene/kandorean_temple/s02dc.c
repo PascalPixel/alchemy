@@ -4,14 +4,16 @@ u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_020002dc(struct ObjectRuntime *object)
 {
-    switch (object->action) {
+    switch (object->action)
+    {
     case 6:
         object->scaleX -= 0x4000;
         {
             s32 scale = object->scaleY;
 
             /* FAKEMATCH: a one-pass block loads the scale before the step is built (one reordered row). */
-            do {
+            do
+            {
             } while (0);
             object->scaleY = scale + 0x2000;
         }
@@ -40,7 +42,8 @@ s32 Func_0200035c(struct ObjectRuntime *object)
     object->scaleX = 0xcccc;
     object->scaleY = 0xcccc;
     /* FAKEMATCH: the loop note ends the scheduling block after the scale stores; without it the collision flags are addressed before them (one reordered row). */
-    do {
+    do
+    {
     } while (0);
     object->collisionFlags |= 8;
     ObjectDispatch_SetSingleChildFlags(object, 0);

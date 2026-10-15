@@ -6,47 +6,48 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct EventWork1c4 {
-    u8 unk000[0x1c4];
+struct EventWork1c4
+{
+    u8  unk000[0x1c4];
     u16 count;
 };
 
 struct ObjectRuntime *Object_GetById();
-void Animation_SetIndexAndInitObjects();
-void Battle_WaitMode0();
-void Func_020001bc();
-void Func_02001bcc();
-void Func_02001bd4();
-void Func_02001c2c();
-void Func_02001c6c();
-void Func_02001c7c();
-void Func_02001ca4();
-void Func_02001cac();
-void Func_02001cc4();
-void Func_02001d04();
-void Func_02001d0c();
-void GameFlag_SetBit();
-void Inventory_PromptAndSetObjectMode();
-void Motion_CamBounds();
-void Motion_SetModeAndWaitAnimation();
-void Motion_SetVarCbAndRefresh();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_CommitPositionAndActivate();
-void ObjectMotion_Launch();
-void ObjectMotion_SetActionVariant();
-void ObjectMotion_SetPositionAndReset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_SetVariantCallback();
-void Object_AttachWorkTargetToObject();
-void Object_LinkObjectAndSetCallback();
-void Object_SetModeById();
-void UiText_OpenMessageAtObject();
+void                  Animation_SetIndexAndInitObjects();
+void                  Battle_WaitMode0();
+void                  Func_020001bc();
+void                  Func_02001bcc();
+void                  Func_02001bd4();
+void                  Func_02001c2c();
+void                  Func_02001c6c();
+void                  Func_02001c7c();
+void                  Func_02001ca4();
+void                  Func_02001cac();
+void                  Func_02001cc4();
+void                  Func_02001d04();
+void                  Func_02001d0c();
+void                  GameFlag_SetBit();
+void                  Inventory_PromptAndSetObjectMode();
+void                  Motion_CamBounds();
+void                  Motion_SetModeAndWaitAnimation();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_CommitPositionAndActivate();
+void                  ObjectMotion_Launch();
+void                  ObjectMotion_SetActionVariant();
+void                  ObjectMotion_SetPositionAndReset();
+void                  ObjectMotion_SetSpeedParameters();
+void                  ObjectMotion_SetVariantCallback();
+void                  Object_AttachWorkTargetToObject();
+void                  Object_LinkObjectAndSetCallback();
+void                  Object_SetModeById();
+void                  UiText_OpenMessageAtObject();
 
 void Func_02001160(void)
 {
     struct ObjectRuntime *leader;
-    s32 result;
+    s32                   result;
 
     Call1((void (*)())GameFlag_SetBit, 0x964);
     Func_02001bcc();
@@ -204,12 +205,15 @@ void Func_02001160(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
     result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
-    if (result == 0) {
+    if (result == 0)
+    {
         Call1((void (*)())Battle_WaitMode0, 30);
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
         Call3((void (*)())Func_02001c7c, 7, 0, 10);
         ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
-    } else {
+    }
+    else
+    {
         Call1((void (*)())Battle_WaitMode0, 40);
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
         Call1((void (*)())Battle_WaitMode0, 10);

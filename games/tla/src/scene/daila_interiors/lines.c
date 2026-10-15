@@ -13,13 +13,16 @@ void Func_020000ac(s32 unused, s32 actor)
     Daila_ObjLaunch(actor, 6, 15);
     Daila_ObjLaunch(actor, 6, 15);
     Daila_Wait(10);
-    if (!Daila_FlagCheck(0x200)) {
+    if (!Daila_FlagCheck(0x200))
+    {
         Daila_MessageSet((s32)MsgDailaInteriorsGah);
         Daila_MessagePut(actor, 0);
         Daila_ObjWalk(actor, 360, 72);
         Daila_ObjTurn(actor, 0x4000, 0);
         Daila_FlagSet(0x200);
-    } else {
+    }
+    else
+    {
         Daila_MessageSet((s32)MsgDailaInteriorsYarg);
         Daila_MessagePut(actor, 0);
         Daila_ObjWalk(actor, 392, 104);
@@ -76,11 +79,12 @@ extern const u8 gData_02001c18[];
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    s32 flag = GameFlag_Test(0x873);
+    s32                flag = GameFlag_Test(0x873);
     struct PartyState *party = &gPartyState;
-    s32 id = (s32)&SceneId_DailaInteriors2;
+    s32                id = (s32)&SceneId_DailaInteriors2;
 
-    if (flag) {
+    if (flag)
+    {
         if (party->scene == id)
             return (const struct SceneEvent *)gData_02001c18;
         return (const struct SceneEvent *)gData_02001990;

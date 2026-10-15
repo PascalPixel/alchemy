@@ -25,13 +25,13 @@ void Func_0803dd98(u32);
 void Func_0803e7ac(void);
 void Menu_OpenSelectionWindow(u32, u32);
 void Func_0803df00(void);
-u32 Menu_WaitForSelectionInput(u32);
+u32  Menu_WaitForSelectionInput(u32);
 void Resource_ResetOwnerEntries(void);
 
 u32 Menu_RunSelectionForValue(u32 value)
 {
     struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-    u32 result;
+    u32                     result;
 
     /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
     asm volatile("" : "+l"(state));

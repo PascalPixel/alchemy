@@ -7,8 +7,8 @@
 
 struct OamUsage
 {
-	u16 used;
-	u16 limit;
+    u16 used;
+    u16 limit;
 };
 
 LAYOUT_SIZE_GUARD(OamUsage_Size, struct OamUsage, 4);

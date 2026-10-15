@@ -3,7 +3,7 @@
 void Func_02002550(void)
 {
     struct AquaRockWork *work = &gData_020034f0;
-    void *buffer;
+    void                *buffer;
 
     Iwram_ClearWords(work, 0x70c);
     buffer = MemAlloc_(0x100);

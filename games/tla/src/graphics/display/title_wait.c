@@ -9,7 +9,7 @@
 #include "bg_scroll.h"
 
 extern char ResourceId_Data018;
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
+s32         Resource_DecodeByteLzInRam(const void *source, void *destination);
 
 #if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 #define DATA018_TILE_BYTES 0xa000
@@ -35,14 +35,16 @@ void Func_081a6030(void)
         cells = Ram_MapCellBuffer;
     } while (0);
     Resource_DecodeByteLzInRam(source + 0x200, cells);
-    Dma_Set(cells, (void *)0x06000000, DMA_ENABLE32 | DMA_32BIT | (DATA018_TILE_BYTES / 4), REG_DMA3);
+    Dma_Set(
+        cells, (void *)0x06000000, DMA_ENABLE32 | DMA_32BIT | (DATA018_TILE_BYTES / 4), REG_DMA3);
 }
 
 s32 Title_WaitFramesOrPress(u32 frames)
 {
     u32 i;
 
-    for (i = 0; i < frames; i++) {
+    for (i = 0; i < frames; i++)
+    {
         WaitFrames(1);
         Random16();
         if (gInput.pressed != 0)
@@ -51,7 +53,8 @@ s32 Title_WaitFramesOrPress(u32 frames)
     return 0;
 }
 
-struct TitleScrollStep {
+struct TitleScrollStep
+{
     s32 frames;
     s32 speed[4];
     u32 mask[4];
@@ -61,7 +64,8 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step)
 {
     s32 i;
 
-    for (i = 0; i < step->frames; i++) {
+    for (i = 0; i < step->frames; i++)
+    {
         if (step->mask[0] == 0 || (gFrameCount & step->mask[0]) == 0)
             gBgScroll[1].y += step->speed[0];
         if (step->mask[1] == 0 || (gFrameCount & step->mask[1]) == 0)

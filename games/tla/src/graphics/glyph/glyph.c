@@ -28,12 +28,13 @@ void Ui_PrepareTransferFromTableEntry(u32 index)
     UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
+void UiGlyph_LoadEntryWithPalette(
+    u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {
     GlyphTransfer *work;
-    u16 *table;
-    u8 *entry;
-    u32 index;
+    u16           *table;
+    u8            *entry;
+    u32            index;
 
     work = Runtime_AllocateHeapBlock(68, 0x608);
     table = Resource_GetTableEntry((s32)&ResourceId_Icons);
@@ -72,7 +73,8 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         u32 size;
 
         /* FAKEMATCH: retain the size load after saving both arguments. */
-        do {
+        do
+        {
             size = (u32)Tile_Decompress4bppCodeSize;
         } while (0);
         code = MemAlloc(size);
@@ -81,14 +83,17 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
     }
     ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
     MemFree(code);
-    if (outlined) {
+    if (outlined)
+    {
         u32 size;
 
         size = (u32)Tile_ExpandMaskedCodeSize;
         code = MemAlloc(size);
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandMaskedCode, code, 0x84000000 | size, REG_DMA3);
-    } else {
+    }
+    else
+    {
         u32 size;
 
         size = (u32)Tile_ExpandOpaqueCodeSize;
@@ -96,6 +101,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandOpaqueCode, code, 0x84000000 | size, REG_DMA3);
     }
-    ((void (*)(u8 *, u8 *, u32, u32))code)(glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
+    ((void (*)(u8 *, u8 *, u32, u32))code)(
+        glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
     MemFree(code);
 }

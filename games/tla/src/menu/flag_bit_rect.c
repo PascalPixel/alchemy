@@ -20,21 +20,28 @@ again:
     selection = Func_08040798(selection);
     if (selection == -1)
         return -1;
-    if (selection == 0) {
-        if (GameFlag_Test(0x17c)) {
+    if (selection == 0)
+    {
+        if (GameFlag_Test(0x17c))
+        {
             UiText_ShowPositionedMessageAndWait((s32)MsgCannotSaveHere, 1);
             goto again;
         }
-        if (GameFlag_Test(0x17d)) {
+        if (GameFlag_Test(0x17d))
+        {
             UiText_ShowPositionedMessageAndWait((s32)MsgNoPlaceForThat, 1);
             goto again;
         }
         if (Func_08043690() == -1)
             goto again;
-    } else if (selection == 1) {
+    }
+    else if (selection == 1)
+    {
         UiText_ShowPositionedMessageAndWait((s32)MsgSleepMode, 1);
         gSleepRequested = selection;
-    } else if (selection == 2) {
+    }
+    else if (selection == 2)
+    {
         if (Func_080400e8() == -1)
             goto again;
     }
@@ -50,25 +57,32 @@ void Render_SetTilemapFlagBitRect(
     y += (s16)object->y + 1;
     field &= 1;
     field <<= 12;
-    if (x < 0) {
+    if (x < 0)
+    {
         width += x;
         x = 0;
     }
-    if (x + width > 29) {
+    if (x + width > 29)
+    {
         width = 30 - x;
     }
-    if (y < 0) {
+    if (y < 0)
+    {
         height += y;
         y = 0;
     }
-    if (y + height > 29) {
+    if (y + height > 29)
+    {
         height = 20 - y;
     }
-    if (width > 0 && height > 0) {
-        do {
+    if (width > 0 && height > 0)
+    {
+        do
+        {
             u16 *pixel = &work->tilemap[y][x];
-            s32 remaining = width;
-            while (remaining != 0) {
+            s32  remaining = width;
+            while (remaining != 0)
+            {
                 u32 value = *pixel;
                 value &= 0xFFFFEFFF;
                 value |= field;

@@ -20,8 +20,10 @@ u8 *Func_020007cc(void)
         return gData_02004c88;
     if (scene == (s32)&SceneId_Ov694Room4)
         return gData_02004d90;
-    if (scene == (s32)&SceneId_Ov694Room2) {
-        if (gPartyState.entrance == 4) {
+    if (scene == (s32)&SceneId_Ov694Room2)
+    {
+        if (gPartyState.entrance == 4)
+        {
             if (GameFlag_Test(0x9b2) != 0)
                 return gData_02005318;
             if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)

@@ -9,12 +9,13 @@
 #include "iwram_call.h"
 #include "dma.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
+extern const struct SceneEntrance  gSceneEntrances[];
+extern const u32                   gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
+extern const struct SceneEvent     gSceneEvents[];
 
-struct PushedBlock {
+struct PushedBlock
+{
     s32 a;
     s32 b;
     s32 c;
@@ -23,36 +24,36 @@ struct PushedBlock {
     s32 f;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
+void                  GameFlag_ClearBit(s32 flag);
+void                  WaitFrames(s32 frames);
+void                  Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Object_SetModeById(u32 id, s32 mode);
-void ObjectMotion_SetActionVariant(u32 id, s32 variant);
-void Scene_SetArrivalFlags(s32 a);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_02002360(struct ObjectRuntime *object, s32 a);
-void Func_02002368();
-void Func_020023b0(s32 id, s32 x, s32 z);
-void Func_020023d0(s32 id);
-void Func_020023f8(s32 id);
-void Func_02002400(void);
-void Func_02002440(s32 id, s32 a);
-void Func_02002458(s32 x, s32 z, s32 a, s32 b);
-void Func_02002460(s32 x, s32 z, s32 a, s32 b);
-void Func_02002468(s32 id);
-void Func_02002470(s32 cue);
-void Func_02000054(struct ObjectRuntime *object);
-void Func_02000404(void);
-void Func_02000c78(s32 id);
-s32 Func_02000dcc(struct PushedBlock *block);
-void Func_02001050(struct PushedBlock block);
+void                  Object_SetModeById(u32 id, s32 mode);
+void                  ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void                  Scene_SetArrivalFlags(s32 a);
+s32                   Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void                  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void                  Func_02002360(struct ObjectRuntime *object, s32 a);
+void                  Func_02002368();
+void                  Func_020023b0(s32 id, s32 x, s32 z);
+void                  Func_020023d0(s32 id);
+void                  Func_020023f8(s32 id);
+void                  Func_02002400(void);
+void                  Func_02002440(s32 id, s32 a);
+void                  Func_02002458(s32 x, s32 z, s32 a, s32 b);
+void                  Func_02002460(s32 x, s32 z, s32 a, s32 b);
+void                  Func_02002468(s32 id);
+void                  Func_02002470(s32 cue);
+void                  Func_02000054(struct ObjectRuntime *object);
+void                  Func_02000404(void);
+void                  Func_02000c78(s32 id);
+s32                   Func_02000dcc(struct PushedBlock *block);
+void                  Func_02001050(struct PushedBlock block);
 
-extern s32 gData_02002cc0;
-extern s32 gData_02002cc4;
+extern s32       gData_02002cc0;
+extern s32       gData_02002cc4;
 extern const u16 gData_02002cec[];
 extern const u16 gData_02002d0c[];
 extern const u16 gData_02002d10[];
@@ -93,7 +94,7 @@ static __inline__ void Battle_WaitMode0_(s32 frames)
     Battle_WaitMode0(frames);
 }
 
-static __inline__ struct ObjectRuntime * Object_GetById_(s32 id)
+static __inline__ struct ObjectRuntime *Object_GetById_(s32 id)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return Object_GetById(id);

@@ -15,7 +15,6 @@
 #include "iwram_call.h"
 #include "field_event.h"
 
-
 typedef s32 (*CopyFn)(void *, const void *, s32);
 typedef s32 (*FillFn)(void *, s32, u32);
 
@@ -43,13 +42,14 @@ s32 Audio_PlayCueReturnOne(s32 cue)
 
 void Menu_CancelSoundTick(void)
 {
-    u32 frame;
-    u32 *wait;
+    u32                frame;
+    u32               *wait;
     struct InputState *input;
-    u32 mask;
+    u32                mask;
 
     frame = gFrameCount;
-    if ((frame & 3) == 0) {
+    if ((frame & 3) == 0)
+    {
         if (frame & 4)
             CopyWords(gData_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
         else
@@ -57,7 +57,8 @@ void Menu_CancelSoundTick(void)
     }
     input = &gInput;
     mask = 8;
-    if (input->pressed & mask) {
+    if (input->pressed & mask)
+    {
         Audio_PlayCue(113);
         GameFlag_SetBit(0x150);
         Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
@@ -75,7 +76,8 @@ void Menu_CancelSoundReset(void)
 
 void Menu_EnsureCancelSound(void)
 {
-    if (GameFlag_Test(0x150) == 0) {
+    if (GameFlag_Test(0x150) == 0)
+    {
         Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
 }

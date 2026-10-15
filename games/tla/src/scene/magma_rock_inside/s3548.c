@@ -13,7 +13,8 @@ void Func_02003548(void)
     /* FAKEMATCH: forwarding the first flag call through call.h keeps 0x302 from being shared with the
      * script calls, which build it again after the scene test (a direct call: differ 56). */
     Call1((void (*)())GameFlag_SetBit, 0x302);
-    if (gPartyState.scene == (s32)&SceneId_Ov692Room4) {
+    if (gPartyState.scene == (s32)&SceneId_Ov692Room4)
+    {
         s16 *script = gData_0200525c;
 
         /* FAKEMATCH: the native loads the first script before it builds 0x302; sched2 puts the
@@ -27,7 +28,8 @@ void Func_02003548(void)
         Func_02000800(20, gData_0200531c, 0x302);
         Func_02000800(21, gData_0200537c, 0x302);
         Func_02000800(22, gData_0200537c, 0x302);
-        if (Object_GetById(16)->step == 0) {
+        if (Object_GetById(16)->step == 0)
+        {
             Object_GetById(16)->step = 10;
             Object_GetById(18)->step = 10;
             Object_GetById(20)->step = 10;
@@ -47,10 +49,10 @@ void Func_02003630(struct ObjectRuntime *arg)
      * entry copy of a plain parameter ties with that load and comes first; pinned and assigned
      * after the barrier, the copy follows it (differ 2 with either device alone). */
     register struct ObjectRuntime *object asm("r5");
-    struct ObjectRuntime *owner;
-    s16 ownerY;
-    s16 y;
-    u8 *flags;
+    struct ObjectRuntime          *owner;
+    s16                            ownerY;
+    s16                            y;
+    u8                            *flags;
 
     asm("");
     object = arg;
@@ -59,9 +61,12 @@ void Func_02003630(struct ObjectRuntime *arg)
     y = object->y >> 16;
     flags = &object->priorityFlags;
 
-    if (ownerY != y || (s16)(owner->z >> 16) < (s16)(object->z >> 16)) {
+    if (ownerY != y || (s16)(owner->z >> 16) < (s16)(object->z >> 16))
+    {
         *flags = 1;
-    } else {
+    }
+    else
+    {
         *flags = 0;
         Object_SetSpritePriority(object, 3);
     }

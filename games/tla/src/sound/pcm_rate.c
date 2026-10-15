@@ -4,7 +4,7 @@
 
 extern u8 gData_02003a90[];
 
-s32 __divsi3(s32 numerator, s32 denominator);
+s32  __divsi3(s32 numerator, s32 denominator);
 void AudioEngine_ResumeDirectSound(void);
 
 static __inline__ s32 Sound_ClearWords(void *destination, s32 size)
@@ -18,10 +18,10 @@ static __inline__ s32 Sound_ClearWords(void *destination, s32 size)
 void AudioEngine_SetFixedPcmRate(u32 mode)
 {
     struct SoundWork *work = SOUND_WORK;
-    u32 frame;
-    u8 *buffer;
-    u32 control;
-    volatile u8 *vcount;
+    u32               frame;
+    u8               *buffer;
+    u32               control;
+    volatile u8      *vcount;
 
     mode = (mode >> 16) & 15;
     work->transferPeriod = 3;

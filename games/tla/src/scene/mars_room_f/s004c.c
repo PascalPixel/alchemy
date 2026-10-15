@@ -1,9 +1,9 @@
 #include "room.h"
 
-extern char SceneId_Ov6adRoom1;
-extern char SceneId_Ov6adRoom2;
-extern char SceneId_Ov6adRoom3;
-extern char SceneId_Ov6adRoom4;
+extern char     SceneId_Ov6adRoom1;
+extern char     SceneId_Ov6adRoom2;
+extern char     SceneId_Ov6adRoom3;
+extern char     SceneId_Ov6adRoom4;
 extern const u8 gData_02006518[];
 extern const u8 gData_02006530[];
 extern const u8 gData_02006710[];
@@ -41,9 +41,10 @@ void Func_020000bc(void)
 void Func_020000d0(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    u32 facing = object->angle;
+    u32                   facing = object->angle;
 
-    if (facing == 0 || facing == 0x8000) {
+    if (facing == 0 || facing == 0x8000)
+    {
         s32 x = object->x >> 20;
         s32 z = object->z >> 20;
 
@@ -52,11 +53,14 @@ void Func_020000d0(void)
         else
             x++;
         object = Object_GetById(10);
-        if (object->x >> 20 != x || object->z >> 20 != z) {
+        if (object->x >> 20 != x || object->z >> 20 != z)
+        {
             object = Object_GetById(11);
-            if (object->x >> 20 != x || object->z >> 20 != z) {
+            if (object->x >> 20 != x || object->z >> 20 != z)
+            {
                 object = Object_GetById(12);
-                if (object->x >> 20 != x || object->z >> 20 != z) {
+                if (object->x >> 20 != x || object->z >> 20 != z)
+                {
                     Func_02005600();
                     return;
                 }

@@ -13,9 +13,9 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle)
 }
 
 /* FAKEMATCH: the angle passes through a block temporary: the native shares the first two angles in r5 and builds the later ones before z (a plain argument: differ 24, one function-wide angle local: differ 10-16). */
-#define PLACE(id, x, z, angle) \
-    { \
-        s32 angle_ = (angle); \
+#define PLACE(id, x, z, angle)                      \
+    {                                               \
+        s32 angle_ = (angle);                       \
         ObjPlace(id, (x) << 16, (z) << 16, angle_); \
     }
 

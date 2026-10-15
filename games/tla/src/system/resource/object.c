@@ -12,13 +12,13 @@
 //--------------------------------------------------------------------------
 void ResourceMetadata_ClearRecord(void *dst)
 {
-	if (dst != 0)
-	{
-		volatile u32 zero;
+    if (dst != 0)
+    {
+        volatile u32 zero;
 
-		zero = 0;
-		Dma_Set(&zero, dst,
-			(DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) | (sizeof(struct AnimationEntry) / 4),
-			REG_DMA3);
-	}
+        zero = 0;
+        Dma_Set(&zero, dst,
+            (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) | (sizeof(struct AnimationEntry) / 4),
+            REG_DMA3);
+    }
 }

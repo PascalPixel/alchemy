@@ -5,21 +5,26 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void Func_02001d7c(s32 value);
-void Func_02001bb4(s32 value);
+void                  UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void                  Func_02001d7c(s32 value);
+void                  Func_02001bb4(s32 value);
 
-s32 GameFlag_Test();
+s32  GameFlag_Test();
 void GameFlag_SetBit();
 void Battle_WaitMode0();
 void ObjectMotion_SetAngleToward();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_SetSpeedParameters();
-s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32  UiText_OpenMessageAtObject();
+s32  Inventory_PromptAndSetObjectMode();
 void Motion_SetModeAndWaitAnimation();
 void Func_02001bcc(void);
 void Func_02001bd4(void);
@@ -27,19 +32,25 @@ void Func_02001c6c();
 void Func_02001c7c();
 void Func_02001c84();
 void Func_02001c94();
-s32 Func_02001ca4();
+s32  Func_02001ca4();
 void Func_02001d04();
 
 void Func_020008e8(void)
 {
     s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
-    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the owner's y before it builds the limit (2 differ without it). */
-    if (y < 0x5a0000) {
+    /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the owner's y before it builds the limit (2 differ without it). */
+    do
+    {
+    } while (0);
+    if (y < 0x5a0000)
+    {
         UiText_ShowPositionedMessageAndWait((s32)MsgAndTheOthers, 1);
         Func_02001d7c(126);
         Func_02001bb4(1);
-    } else {
+    }
+    else
+    {
         FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
     }
 }
@@ -48,7 +59,8 @@ void Func_020008e8(void)
 // records that the party took it.
 void Func_02000934(void)
 {
-    if (Value1(GameFlag_Test, 0x908)) {
+    if (Value1(GameFlag_Test, 0x908))
+    {
         Call3(ObjectMotion_SetAngleToward, 30, gPartyState.currentOwner, 0);
         Call1((void (*)())Object_RefreshSelectorById, 30);
         Call1(Func_02001c6c, (s32)MsgYouLookLike);
@@ -64,10 +76,13 @@ void Func_02000934(void)
     Call1((void (*)())Object_RefreshSelectorById, 30);
     Call1(Battle_WaitMode0, 5);
     Value2(UiText_OpenMessageAtObject, 30, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, 4, 0)) {
+    if (Value2(Inventory_PromptAndSetObjectMode, 4, 0))
+    {
         Call1(Battle_WaitMode0, 30);
         Call3(Func_02001c7c, 30, 0, 0);
-    } else {
+    }
+    else
+    {
         Call1(Battle_WaitMode0, 20);
         Call2(Motion_SetModeAndWaitAnimation, 30, 3);
         (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;

@@ -18,18 +18,19 @@
 
 s32 ArcTan2(s32, s32);
 
-
 struct BattleObj *BattleObjGet(s32 objectId)
 {
     struct BattleWork *work = Ram_HeapSlots->battleWork;
-    struct BattleObj *slots = work->slots;
-    s32 index;
+    struct BattleObj  *slots = work->slots;
+    s32                index;
 
-    if (objectId > 7) {
+    if (objectId > 7)
+    {
         objectId -= 0x78;
     }
     index = objectId;
-    if (work->placement[index] == 0xFF) {
+    if (work->placement[index] == 0xFF)
+    {
         return NULL;
     }
     return &slots[work->placement[index]];
@@ -37,9 +38,9 @@ struct BattleObj *BattleObjGet(s32 objectId)
 
 void ObjMotRst(s32 slotId)
 {
-    s32 z;
-    s32 zero;
-    struct BattleObj *slot;
+    s32                  z;
+    s32                  zero;
+    struct BattleObj    *slot;
     struct MotionObject *object;
 
     slot = BattleObjGet(slotId);
@@ -57,13 +58,12 @@ void ObjMotRst(s32 slotId)
     z = slot->anchorZ;
     if (z < 0)
         z += 7;
-    object->angle =
-        (s16)(ArcTan2(z >> 3, slot->anchorX) - 0x8000);
+    object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - 0x8000);
 }
 
 void BattleMotion_SetupEscapeObject(s32 objectId)
 {
-    struct BattleObj *slot;
+    struct BattleObj    *slot;
     struct MotionObject *object;
 
     slot = BattleObjGet(objectId);

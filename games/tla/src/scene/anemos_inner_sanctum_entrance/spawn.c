@@ -1,8 +1,8 @@
 #include "anemos_inner_sanctum_entrance.h"
 
 struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void                  Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+void                  ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 
 static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y, s32 z)
 {
@@ -14,7 +14,8 @@ struct ObjectRuntime *Func_020000d0(s32 x, s32 y, s32 z, s32 type)
 {
     struct ObjectRuntime *object = Object_Create(type, x, y, z);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         Object_SetSpritePriority(object, 1);
         object->motionFlags = 0;
         object->collisionFlags = 8;

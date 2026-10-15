@@ -1,5 +1,10 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
 s32 Engine_ObjectCreate();
@@ -19,4 +24,3 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2)
     Call2(Func_020032e0, t0, 7);
     Call2(ObjectDispatch_SetSingleChildFlags, t0, 0);
 }
-

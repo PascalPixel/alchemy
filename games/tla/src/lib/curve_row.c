@@ -8,7 +8,7 @@ s32 Func_0802d3c4(const s8 *samples, u32 row, u32 position)
 s32 Func_0802d3d8(const s8 *samples, u32 row, u32 position)
 {
     const u8 *table = gCurve_SampleIndexTable;
-    u32 index;
+    u32       index;
 
     /* FAKEMATCH: ⚓️ loads the index table before scaling the row */
     asm volatile("");

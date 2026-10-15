@@ -14,15 +14,17 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void Func_08152404(s32 entryCount, s32 kind, u32 variant)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    s32 entryIndex = 0;
+    s32                      entryIndex = 0;
 
     if (entryCount == 0)
         return;
-    do {
+    do
+    {
         struct FieldSprite *object = (struct FieldSprite *)ResourceObject_CreateFar(kind);
 
         work->objects[entryIndex] = object;
-        if (object != NULL) {
+        if (object != NULL)
+        {
             object->nextFrame = 0;
             Animation_ApplyChildArgumentFar(object, entryIndex);
             ((struct FieldSprite *)work->objects[entryIndex])->priority = variant;
@@ -41,15 +43,17 @@ void BattleFx_RunNoEffect(void)
 void Func_08152474(void)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    volatile u16 *channel = REG_DMA0;
-    u16 control = channel[5];
-    u32 io;
+    volatile u16            *channel = REG_DMA0;
+    u16                      control = channel[5];
+    u32                      io;
 
-    asm volatile(""); /* FAKEMATCH: ⚓️ reads the control word before it starts the mask; written as channel[5] &= 0xc5ff the mask is started first (differ 2) */
+    /* FAKEMATCH: ⚓️ reads the control word before it starts the mask; written as channel[5] &= 0xc5ff the mask is started first (differ 2) */
+    asm volatile("");
     channel[5] = control & 0xc5ff;
     channel[5] &= 0x7fff;
     io = 0x80;
-    asm volatile("" : "+l"(io)); /* FAKEMATCH: ⚓️ starts the I/O base (0x80 << 19) before the dummy read of the control word and finishes the address after it; as the plain constant 0x04000028, or a local or register pin holding it, the dummy read comes first (differ 2) */
+    /* FAKEMATCH: ⚓️ starts the I/O base (0x80 << 19) before the dummy read of the control word and finishes the address after it; as the plain constant 0x04000028, or a local or register pin holding it, the dummy read comes first (differ 2) */
+    asm volatile("" : "+l"(io));
     (void)channel[5];
     Dma_Set(work->bg2X, (void *)((io << 19) + 0x28), 0xa6600001, (volatile u32 *)channel);
 }
@@ -58,15 +62,17 @@ void Func_08152474(void)
 void Func_081524b4(void)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    volatile u16 *channel = REG_DMA0;
-    u16 control = channel[5];
-    u32 io;
+    volatile u16            *channel = REG_DMA0;
+    u16                      control = channel[5];
+    u32                      io;
 
-    asm volatile(""); /* FAKEMATCH: ⚓️ reads the control word before it starts the mask, as in Func_08152474 (differ 2 without) */
+    /* FAKEMATCH: ⚓️ reads the control word before it starts the mask, as in Func_08152474 (differ 2 without) */
+    asm volatile("");
     channel[5] = control & 0xc5ff;
     channel[5] &= 0x7fff;
     io = 0x80;
-    asm volatile("" : "+l"(io)); /* FAKEMATCH: ⚓️ starts the I/O base before the dummy read, as in Func_08152474 (differ 2 without) */
+    /* FAKEMATCH: ⚓️ starts the I/O base before the dummy read, as in Func_08152474 (differ 2 without) */
+    asm volatile("" : "+l"(io));
     (void)channel[5];
     Dma_Set(work->bg2X, (void *)((io << 19) + 0x14), 0xa6600001, (volatile u32 *)channel);
 }

@@ -11,14 +11,15 @@
 s32 Resource_ResetEntry(u32 resourceIndex)
 {
     struct VramBlockCacheEntry *entry = &gResourceTableEntries[resourceIndex];
-    u32 offset;
+    u32                         offset;
 
     if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
     offset = entry->offset;
     /* FAKEMATCH: ⚓️ reads the offset between the first two instructions of the split constant 0xffff; plainly the shift comes first (differ 2), as sched2 ranks the two equal and the shift has more dependents. An empty asm that reads the offset gives the load a second dependent, and it is taken first. */
     asm("" : "+l"(entry) : "l"(offset));
-    if (offset != VRAM_CACHE_OFFSET_FREE) {
+    if (offset != VRAM_CACHE_OFFSET_FREE)
+    {
         Resource_ClearSlotReferences(resourceIndex);
         entry->offset |= VRAM_CACHE_OFFSET_FREE;
         entry->size = 0;
@@ -32,7 +33,8 @@ s32 Resource_ActivateEntry(u32 resourceIndex)
 
     if (resourceIndex > 95)
         return -1;
-    if (*entry > 16) {
+    if (*entry > 16)
+    {
         s32 value;
 
         Resource_ClearSlotReferences(resourceIndex);
@@ -48,8 +50,8 @@ s32 Resource_ActivateEntry(u32 resourceIndex)
 s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 {
     struct VramBlockCacheEntry *entry;
-    s32 offset;
-    void *dst;
+    s32                         offset;
+    void                       *dst;
 
     {
         struct VramBlockCacheEntry *table = gResourceTableEntries;
@@ -64,22 +66,30 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
         return 0;
     if (size > 8192)
         return 0;
-    if (entry->size > 16) {
-        if (entry->size != size) {
+    if (entry->size > 16)
+    {
+        if (entry->size != size)
+        {
             Resource_ResetEntry(no);
             offset = ResourceTable_AllocateBlocks(no, size);
-        } else {
+        }
+        else
+        {
             offset = entry->offset;
         }
-    } else {
+    }
+    else
+    {
         offset = ResourceTable_AllocateBlocks(no, size);
     }
 
-    if (offset != -1) {
+    if (offset != -1)
+    {
         dst = (void *)(0x06010000 + offset);
         entry->size = size;
         entry->offset = offset;
-        if (src != 0) {
+        if (src != 0)
+        {
             if (src == (const void *)-1)
                 Iwram_ClearWords(dst, size);
             else

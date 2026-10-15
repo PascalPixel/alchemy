@@ -2,11 +2,12 @@
 
 void Func_020002f8(void)
 {
-    if ((gFrameCount & 7) == 0) {
+    if ((gFrameCount & 7) == 0)
+    {
         volatile u16 *palette;
         volatile u16 *slot;
-        s16 saved;
-        s32 index;
+        s16           saved;
+        s32           index;
 
         saved = *(volatile u16 *)0x05000172;
         index = 9;
@@ -48,7 +49,8 @@ s32 Func_02000360(void)
 
 s32 Func_020003cc(void)
 {
-    if (!Flag_IsSet(0x8df)) {
+    if (!Flag_IsSet(0x8df))
+    {
         Func_0200045c(57, 52, 64, 15, 1, 1);
         Func_0200045c(60, 53, 67, 16, 6, 3);
         Func_0200045c(50, 52, 16, 16, 6, 3);

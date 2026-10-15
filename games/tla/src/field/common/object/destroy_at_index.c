@@ -9,10 +9,11 @@ void Object_Destroy(struct ObjectRuntime *object);
 // empties the slot.
 void Func_080caa2c(u32 objectId)
 {
-    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct EventWork     *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         Object_Destroy(object);
         work->objects[objectId] = NULL;
     }

@@ -5,10 +5,10 @@
 
 struct TitleSprite
 {
-	u32 attr[3];
+    u32 attr[3];
 };
 
-extern s16				  gTitleRevealFrame;
+extern s16                gTitleRevealFrame;
 extern struct TitleSprite gTitleSprites[];
 
 #endif

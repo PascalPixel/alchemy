@@ -5,7 +5,7 @@ extern char MsgLoho36;
 extern char MsgLoho55;
 extern char MsgLoho56;
 
-s32 GameFlag_Test(s32 flag);
+s32  GameFlag_Test(s32 flag);
 void Func_02001380(s32 message);
 void Func_02001390(s32 id, s32 flags);
 

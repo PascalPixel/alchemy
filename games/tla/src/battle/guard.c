@@ -14,7 +14,6 @@
 
 #define UnitCalcFar ((void (*)(u16))UnitCalcFar)
 
-
 void BattleUnit_ResetGuardLevels(void)
 {
     u16 ids[14];
@@ -22,7 +21,8 @@ void BattleUnit_ResetGuardLevels(void)
     s32 index;
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
-    for (index = 0; index < count; index++) {
+    for (index = 0; index < count; index++)
+    {
         struct BattleUnit *actor;
 
         actor = UnitGet(ids[index]);

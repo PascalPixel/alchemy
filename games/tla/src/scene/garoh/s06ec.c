@@ -17,9 +17,12 @@ void Func_020006ec(void)
     Object_SetModeById(13, 1);
     Battle_WaitMode0(10);
     ObjectMotion_SetAngleToward(13, 4, 0);
-    if (GameFlag_Test(0x301)) {
+    if (GameFlag_Test(0x301))
+    {
         Func_0200524c((s32)MsgGaroh21);
-    } else {
+    }
+    else
+    {
         Func_0200524c((s32)MsgGaroh20);
         Func_0200525c(13, 0, 10);
         {

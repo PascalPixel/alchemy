@@ -29,12 +29,13 @@ void Func_08023510(struct DispatchObject *object, s32 argument)
 // frame first in mode 9.
 void Func_08023524(struct DispatchObject *object)
 {
-    const s32 *script;
+    const s32         *script;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset 0x212 in r2; the empty asm holds r2 until the address is loaded. Plainly the offset is started first (differ 2). */
     asm("" : "+l"(party) : : "r2");
-    switch (party->renderMode) {
+    switch (party->renderMode)
+    {
     case 0:
         script = gData_0802f140;
         break;

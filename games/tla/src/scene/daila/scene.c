@@ -23,9 +23,9 @@ void Func_02000d58(s16 *data);
 
 void Func_02000a9c(void)
 {
-    u8 *event = Ram_HeapSlots->eventWork;
+    u8                   *event = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
-    s32 flags;
+    s32                   flags;
 
     Func_02000d58(gData_02000d80);
     object = *(struct ObjectRuntime **)(event + 0xcbc);
@@ -50,7 +50,8 @@ s32 Func_02000ac8(void)
 
 s32 Func_02000b44(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_Daila2) {
+    if (gPartyState.scene == (s32)&SceneId_Daila2)
+    {
         if (Engine_GameFlagIsSet(0x210))
             MapCopyAttr(10, 19, 1, 1, 11, 19);
         if (Engine_GameFlagIsSet(0x211))

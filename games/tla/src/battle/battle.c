@@ -14,10 +14,10 @@
 //--------------------------------------------------------------------------
 void BattleObjPut(void)
 {
-	s16 list[14];
+    s16 list[14];
 
-	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-	BattleActor_SpawnObjectsForList(list, 1);
+    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+    BattleActor_SpawnObjectsForList(list, 1);
 }
 
 //--------------------------------------------------------------------------
@@ -33,8 +33,8 @@ void BattleObjPut(void)
 //--------------------------------------------------------------------------
 void BattleParty_ListAllUnitsAndSubmit(void)
 {
-	s16 list[14];
+    s16 list[14];
 
-	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-	BattleActor_SpawnObjectsForList(list, 0);
+    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+    BattleActor_SpawnObjectsForList(list, 0);
 }

@@ -6,24 +6,24 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0();
-void Func_020032a8();
-void GameFlag_SetBit();
-void ObjectMotion_ArmCallback();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_ResetAndSetPositionInMode2();
-void ObjectMotion_SetPositionAndCommit();
-void ObjectMotion_SetSpeedParameters();
+void                  Battle_WaitMode0();
+void                  Func_020032a8();
+void                  GameFlag_SetBit();
+void                  ObjectMotion_ArmCallback();
+void                  ObjectMotion_CommitCurrentPositionAndActivate();
+void                  ObjectMotion_ResetAndSetPosition();
+void                  ObjectMotion_ResetAndSetPositionInMode2();
+void                  ObjectMotion_SetPositionAndCommit();
+void                  ObjectMotion_SetSpeedParameters();
 struct ObjectRuntime *Object_GetById();
-void Object_SetModeById();
-void Func_02003148();
+void                  Object_SetModeById();
+void                  Func_02003148();
 
 void Func_0200008c(void)
 {
-    s32 v5;
+    s32                   v5;
     struct ObjectRuntime *object0;
-    s32 v6;
+    s32                   v6;
     struct ObjectRuntime *object1;
 
     Call1((void (*)())GameFlag_SetBit, 0x901);
@@ -56,31 +56,31 @@ void Func_02000128(s32 arg0)
     return;
 }
 
-void Battle_WaitMode0();
-void Field_BeginPaletteTransition();
-void Func_02003130();
-void Func_02003138();
-void Func_020031c8();
-void Func_020031d8();
-void Func_020031e0();
-void Func_02003240();
-void Func_02003268();
-void Func_02003278();
-void Func_02003280();
-void Func_02003288();
-void Func_02003290();
-void Func_020032a8();
-s32 GameFlag_Test();
-void GameFlag_SetBit();
-void Motion_SetVarCbAndRefresh();
-void ObjectMotion_ArmCallback();
+void                  Battle_WaitMode0();
+void                  Field_BeginPaletteTransition();
+void                  Func_02003130();
+void                  Func_02003138();
+void                  Func_020031c8();
+void                  Func_020031d8();
+void                  Func_020031e0();
+void                  Func_02003240();
+void                  Func_02003268();
+void                  Func_02003278();
+void                  Func_02003280();
+void                  Func_02003288();
+void                  Func_02003290();
+void                  Func_020032a8();
+s32                   GameFlag_Test();
+void                  GameFlag_SetBit();
+void                  Motion_SetVarCbAndRefresh();
+void                  ObjectMotion_ArmCallback();
 struct ObjectRuntime *Object_GetById();
 
 void Func_0200013c(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(12);
-    u8 *flags;
-    s32 i;
+    u8                   *flags;
+    s32                   i;
 
     Func_02003130();
     Call1((void (*)())Func_02003240, 0);
@@ -93,7 +93,8 @@ void Func_0200013c(s32 id)
     Call1((void (*)())Battle_WaitMode0, 30);
     flags = &object->motionFlags;
     *flags = 4;
-    for (i = 39; i >= 0; i--) {
+    for (i = 39; i >= 0; i--)
+    {
         s32 y = object->y;
 
         /* FAKEMATCH: the native loads y before it builds the step (differ 2 without the barrier). */
@@ -110,7 +111,8 @@ void Func_0200013c(s32 id)
     object->gravity = 0x8000;
     Call1((void (*)())Battle_WaitMode0, 5);
     Call1((void (*)())Func_020032a8, 132);
-    if (Value1((s32 (*)())GameFlag_Test, 0x8ae) == 0) {
+    if (Value1((s32 (*)())GameFlag_Test, 0x8ae) == 0)
+    {
         Call1((void (*)())GameFlag_SetBit, 0x8ae);
         Call1((void (*)())Battle_WaitMode0, 30);
         Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x3000, 0);

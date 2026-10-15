@@ -14,7 +14,6 @@ extern const u8 gData_02003df4[];
 extern const u8 gData_02003e14[];
 extern const u8 gData_02003e44[];
 
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gSceneEntrances;

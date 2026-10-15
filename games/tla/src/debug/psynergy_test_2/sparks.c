@@ -1,47 +1,50 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct Spark {
+struct Spark
+{
     s32 position[3];
     s32 velocity[3];
     s32 timer;
 };
 
-struct SparkSprite {
-    u8 unk00[5];
-    u8 unk05;
-    u8 unk06[2];
+struct SparkSprite
+{
+    u8  unk00[5];
+    u8  unk05;
+    u8  unk06[2];
     u16 tile : 10;
     u16 unk08_10 : 2;
     u16 unk08_12 : 4;
-    u8 unk0a[0x14];
+    u8  unk0a[0x14];
     u16 unk1e;
-    u8 unk20[8];
+    u8  unk20[8];
 };
 
-struct SparkWork {
-    u8 unk0000[0x500];
-    struct Spark sparks[64];
+struct SparkWork
+{
+    u8                 unk0000[0x500];
+    struct Spark       sparks[64];
     struct SparkSprite sprites[64];
-    s16 next;
-    u16 tileBase;
-    s16 resource;
+    s16                next;
+    u16                tileBase;
+    s16                resource;
 };
 
-s32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+s32   Random16Far(void);
+void  Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void  Runtime_ReleaseHeapBlock(s32 slot);
 void *Resource_GetTableEntry(s32 id);
-s32 Resource_FindFreeEntry(void);
-void Resource_ResetEntry(s32 entry);
-s32 VramBlock_LoadCached(s32 entry, s32 size, void *data);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Func_02000560(void *resource, void *destination);
-void Func_020005f0(struct SparkSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
-void Func_020005f8(struct SparkSprite *sprite, struct Spark *spark);
-void Func_02000600(struct Spark *spark, s32 a, s32 b);
+s32   Resource_FindFreeEntry(void);
+void  Resource_ResetEntry(s32 entry);
+s32   VramBlock_LoadCached(s32 entry, s32 size, void *data);
+void  Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void  Scheduler_RemoveCallbackFar(void (*callback)(void));
+void  Func_02000560(void *resource, void *destination);
+void  Func_020005f0(struct SparkSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
+void  Func_020005f8(struct SparkSprite *sprite, struct Spark *spark);
+void  Func_02000600(struct Spark *spark, s32 a, s32 b);
 
 void Func_0200015c(void);
 

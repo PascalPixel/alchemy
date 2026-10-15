@@ -4,10 +4,12 @@ void Func_020024f8(struct ObjectRuntime *object, s32 priority);
 
 void Func_02002554(s32 *position, s32 base)
 {
-    struct ObjectRuntime *object = Func_02002808_(0x11d, position[0], position[1], position[2] - 0x20000);
+    struct ObjectRuntime *object =
+        Func_02002808_(0x11d, position[0], position[1], position[2] - 0x20000);
     s32 angle;
 
-    if (object != 0) {
+    if (object != 0)
+    {
         object->bounce = Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
         object->gravity = (u16)Random16Far();
         object->unk4c = (u16)(Random16Far() << 1) + base;
@@ -22,17 +24,22 @@ void Func_02002554(s32 *position, s32 base)
 
 void Func_020025d4(void)
 {
-    struct VentWork *work = VENT_WORK;
+    struct VentWork  *work = VENT_WORK;
     struct VentEntry *entry = work->entries;
-    s32 i;
+    s32               i;
 
     work->hook();
-    for (i = 15; i >= 0; i--, entry++) {
-        if (entry->active != 0) {
-            if (entry->timer <= 0) {
+    for (i = 15; i >= 0; i--, entry++)
+    {
+        if (entry->active != 0)
+        {
+            if (entry->timer <= 0)
+            {
                 Func_02002554(&entry->x, entry->value);
                 entry->timer = 9;
-            } else {
+            }
+            else
+            {
                 entry->timer--;
             }
         }

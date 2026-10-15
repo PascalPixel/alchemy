@@ -12,12 +12,12 @@ void MusicCommand_SetPitch(u16 pitch);
 void Audio_SetWorkPairB(u16 primary, u16 secondary);
 void MusicCommand_SetVolume(s16 volume);
 void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary);
-s32 AudioCommand_GetStateByte(void);
+s32  AudioCommand_GetStateByte(void);
 void AudioCommand_StopAllPlayers(void);
 void AudioCommand_ResumeAllPlayers(void);
 void AudioCommand_UpdateToggleMask(u32 command);
-s32 AudioCommand_GetSecondaryStateByte(void);
+s32  AudioCommand_GetSecondaryStateByte(void);
 void AudioCommand_WaitForCompletion(void);
-s32 AudioCommand_GetWidth(s32 command);
+s32  AudioCommand_GetWidth(s32 command);
 
 #endif

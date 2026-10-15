@@ -1,37 +1,42 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#define FIELD_AT(base, type, off) \
+    (((struct {                   \
+        u8   pad[off];            \
+        type v;                   \
+    } *)(base))                   \
+            ->v)
 
 #include "call.h"
-s32 GameFlag_SetBit();
-s32 Func_02001be4();
-s32 Func_02001cfc();
-s32 Func_02001c74();
-s32 ObjectMotion_SetSpeedParameters();
-s32 ObjectMotion_CommitPositionAndActivate();
-s32 Func_02001c3c();
-s32 Func_02001c84();
-s32 ObjectMotion_ArmCallback();
-s32 Battle_WaitMode0();
-s32 Motion_CamBounds();
-void Func_02001ccc(void);
-s32 ObjectMotion_OffsetPositionAndReset();
-s32 Object_SetModeById();
-s32 ObjectMotion_CommitCurrentPositionAndActivate();
-s32 Motion_SetVarCbAndRefresh();
-s32 Func_02001ca4();
-s32 Motion_SetModeAndWaitAnimation();
-s32 ObjectMotion_SetActionVariant();
-s32 Object_LinkObjectAndSetCallback();
-s32 ObjectMotion_Launch();
-s32 ObjectMotion_EnableActionAndSetCallback();
-s32 ObjectMotion_EnableActionAndResetMotion();
-s32 Object_AttachWorkTargetToObject();
-s32 ObjectMotion_SetPositionAndReset();
-s32 Func_02001cbc();
-s32 ObjectMotion_SetVariantCallback();
-s32 Func_02001cac();
-s32 Object_RefreshSelectorById();
-s32 Func_02001bec();
+s32       GameFlag_SetBit();
+s32       Func_02001be4();
+s32       Func_02001cfc();
+s32       Func_02001c74();
+s32       ObjectMotion_SetSpeedParameters();
+s32       ObjectMotion_CommitPositionAndActivate();
+s32       Func_02001c3c();
+s32       Func_02001c84();
+s32       ObjectMotion_ArmCallback();
+s32       Battle_WaitMode0();
+s32       Motion_CamBounds();
+void      Func_02001ccc(void);
+s32       ObjectMotion_OffsetPositionAndReset();
+s32       Object_SetModeById();
+s32       ObjectMotion_CommitCurrentPositionAndActivate();
+s32       Motion_SetVarCbAndRefresh();
+s32       Func_02001ca4();
+s32       Motion_SetModeAndWaitAnimation();
+s32       ObjectMotion_SetActionVariant();
+s32       Object_LinkObjectAndSetCallback();
+s32       ObjectMotion_Launch();
+s32       ObjectMotion_EnableActionAndSetCallback();
+s32       ObjectMotion_EnableActionAndResetMotion();
+s32       Object_AttachWorkTargetToObject();
+s32       ObjectMotion_SetPositionAndReset();
+s32       Func_02001cbc();
+s32       ObjectMotion_SetVariantCallback();
+s32       Func_02001cac();
+s32       Object_RefreshSelectorById();
+s32       Func_02001bec();
 extern u8 MsgAlhafra10[];
 extern u8 gData_020033a0[];
 extern u8 gData_020033f8[];
@@ -68,15 +73,19 @@ void Func_02000aa0(s32 a0)
     Call3(ObjectMotion_SetSpeedParameters, 0x23, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 0x11, 0x8000, 0x4000);
     Call3(ObjectMotion_SetSpeedParameters, 0xe, 0x8000, 0x4000);
-    if (a0 == 0x14) {
+    if (a0 == 0x14)
+    {
         Call3(ObjectMotion_CommitPositionAndActivate, 4, 0, -8);
     }
     Call3(Func_02001c3c, 0x1f, 0x1980000, 0x3680000);
     Call3(Func_02001c3c, 0x20, 0x1880000, 0x3780000);
     Call3(Func_02001c84, 0x1f, 0, 0xa);
-    if (a0 == 0x14) {
+    if (a0 == 0x14)
+    {
         Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
-    } else {
+    }
+    else
+    {
         Call3(ObjectMotion_ArmCallback, 4, 0, 0);
     }
     Call1(Battle_WaitMode0, 0x14);
@@ -339,7 +348,8 @@ void Func_02000aa0(s32 a0)
     Call3(ObjectMotion_SetSpeedParameters, 0x11, 0x8000, 0x4000);
     Call2(Object_AttachWorkTargetToObject, 0x1e, 1);
     Func_02001ccc();
-    if (a0 == 0x15) {
+    if (a0 == 0x15)
+    {
         Call2(ObjectMotion_SetActionVariant, 0x1e, 2);
         Call2(Object_LinkObjectAndSetCallback, 0x1f, 0x1d);
         Call2(Object_LinkObjectAndSetCallback, 0x20, 0x1d);
@@ -365,7 +375,9 @@ void Func_02000aa0(s32 a0)
         Call2(ObjectMotion_EnableActionAndSetCallback, 0x22, (s32)gData_020036c8);
         Call1(Battle_WaitMode0, 0x3c);
         Call2(ObjectMotion_EnableActionAndSetCallback, 0x23, (s32)gData_020037f8);
-    } else {
+    }
+    else
+    {
         Call2(ObjectMotion_SetActionVariant, 0x1e, 2);
         Call2(Object_LinkObjectAndSetCallback, 0x1e, 0x11);
         Call2(Object_LinkObjectAndSetCallback, 0x1f, 0x1e);

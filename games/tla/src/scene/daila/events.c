@@ -1,7 +1,6 @@
 #include "types.h"
 #include "field_event.h"
 
-
 void Func_02000c48();
 void Func_02000ca8(s32 actor, s32 x, s32 z);
 

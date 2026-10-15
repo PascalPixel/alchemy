@@ -46,7 +46,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_694/scale.o"(.text)
         "*/resource_694_overlay.o"(.text.x02009c5c)
         "*/games/tla/src/field/overlay_694/event7.o"(.text)
-        "*/resource_694_overlay.o"(.text.x02009d50)
+        "*/games/tla/src/field/overlay_694/s1d50.o"(.text)
         "*/games/tla/src/field/overlay_694/return.o"(.text)
         "*/games/tla/src/field/overlay_694/prepare.o"(.text)
         "*/resource_694_overlay.o"(.text.x0200b720)

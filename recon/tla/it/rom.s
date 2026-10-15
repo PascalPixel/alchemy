@@ -3322,7 +3322,11 @@ Func_080d7034:
 Func_080c9dc8:
 	.incbin "baserom.gba", 0x000d777c, 0x000002d0
 	.section .rom.000d7af8, "ax"
-	.incbin "baserom.gba", 0x000d7af8, 0x00000244
+	.global Func_080d7b04
+	.type Func_080d7b04, %function
+	.thumb_func
+Func_080d7b04:
+	.incbin "baserom.gba", 0x000d7af8, 0x00000100
 	.section .rom.000d7d84, "ax"
 	.incbin "baserom.gba", 0x000d7d84, 0x0000097c
 	.section .rom.000d8734, "ax"

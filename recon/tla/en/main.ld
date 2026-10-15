@@ -1042,7 +1042,6 @@ SECTIONS
         "*/recon/tla/raw/080d793c.o"(.text)
         "*/games/tla/src/battle/effect/slots.o"(.text)
         "*/recon/tla/raw/080d7b04.o"(.text)
-        "*/recon/tla/raw/080d7c04.o"(.text)
         "*/games/tla/src/battle/effect/radpart.o"(.text)
         "*/recon/tla/raw/080d7d90.o"(.text)
         "*/recon/tla/raw/080d7dbc.o"(.text)

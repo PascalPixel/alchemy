@@ -2010,7 +2010,11 @@ Func_080d7034:
 Func_080d7788:
 	.incbin "baserom.gba", 0x000e4788, 0x000002d0
 	.section .rom.000e4b04, "ax"
-	.incbin "baserom.gba", 0x000e4b04, 0x00000244
+	.global Func_080d7b04
+	.type Func_080d7b04, %function
+	.thumb_func
+Func_080d7b04:
+	.incbin "baserom.gba", 0x000e4b04, 0x00000100
 	.section .rom.000e4d90, "ax"
 	.incbin "baserom.gba", 0x000e4d90, 0x0000097c
 	.section .rom.000e5740, "ax"

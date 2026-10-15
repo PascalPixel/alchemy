@@ -21,7 +21,7 @@ void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
 
   if (resourceIndex <= 0x5F) {
     Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
-    VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
+    VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     Runtime_ReleaseHeapBlock(56);
   }
 }

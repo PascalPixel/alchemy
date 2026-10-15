@@ -17,7 +17,7 @@ struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02004030(s32 item);
 u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 
 struct ObjectRuntime *Func_02001b70(void) {
   struct ObjectRuntime *object =
@@ -53,7 +53,7 @@ struct ObjectRuntime *Func_02001b70(void) {
     visual->value1b = 0;
     buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02004030(209);
-    VramBlock_LoadCached(visual->tileSlot, 128, buffer + 0x400);
+    VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
   return object;

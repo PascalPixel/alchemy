@@ -25,7 +25,7 @@ Func_08046414:
 	strb r3, [r6, #5]
 	strb r3, [r6, #4]
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r3, #240
 	strb r3, [r6, #15]
 	movs r3, #120
@@ -74,7 +74,7 @@ Func_08046414:
 .L_080464a0:
 	ldr r1, .L_080464c4
 .L_080464a2:
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_080464c0
 	ldrh r2, [r7, #8]
 	ands r0, r3

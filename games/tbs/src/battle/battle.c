@@ -276,10 +276,10 @@ void DebugBattle_RunMenu(void) {
   GameState_InitDefaultsFar();
 restart:
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   Scheduler_ResetTaskTable();
   Runtime_InitializeHeap();
-  Resource_InitializeTable();
+  VramCache_Reset();
   GameFlag_SetBitFar(362);
   encounter = 257;
   if (gKeysHeld & KEY_DOWN) {
@@ -328,10 +328,10 @@ restart:
       GameFlag_SetBitFar(354);
       Battle_RunEncounter(encounter);
       Ui_LoadWindowGraphics();
-      Bg0_ClearTilemap();
+      DebugText_Clear();
       Scheduler_ResetTaskTable();
       Runtime_InitializeHeap();
-      Resource_InitializeTable();
+      VramCache_Reset();
     }
   }
   GameFlag_SetBitFar(354);
@@ -693,10 +693,10 @@ s32 UpdateNameEntries(void) {
   index = 0;
   while (index <= 2) {
     name_entry = UnitGetFar(index + 128);
-    if (SerialRuntime_BeginTransferB(name_entry) == -1) {
+    if (SerialRuntime_BeginReceive(name_entry) == -1) {
       break;
     }
-    SerialRuntime_WaitForTransferB();
+    SerialRuntime_WaitForReceive();
     if (name_entry->side != 0) {
       named_count += 1;
     }
@@ -727,8 +727,8 @@ s32 UpdateNameEntries(void) {
   }
   MemFree(buffer);
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
-  if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
-    SerialRuntime_WaitForTransferB();
+  if (SerialRuntime_BeginReceive(Trade_GetOfferStateFar(1)) != -1) {
+    SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
   MemFree(buffer);
@@ -757,16 +757,16 @@ s32 LinkBattle_SendParty(void) {
     Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
     ((struct BattleUnit *)buffer)->side = 2;
     work->ownerSlots[owners[i]] = i - 128;
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForTransferA();
+    SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
   for (; i <= 2; i++) {
     ((struct BattleUnit *)buffer)->side = 0;
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForTransferA();
+    SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
   size = LINK_PARTY_OFFER_BYTES;
@@ -784,8 +784,8 @@ s32 LinkBattle_SendParty(void) {
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
     list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
-  if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
-    SerialRuntime_WaitForTransferA();
+  if (SerialRuntime_BeginSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+    SerialRuntime_WaitForSend();
     WaitFrames(1);
     WaitFrames(2);
   }
@@ -1133,7 +1133,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
   Summon_ClearWorkFields();
-  battle->promptSlot = Resource_LoadIntoFreeSlot(128);
+  battle->promptSlot = VramCache_AllocEntry(128);
   battle->encounterMode = 0;
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
     battle->encounterMode = 1;
@@ -1170,7 +1170,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     } else {
       count = BattlePresentation_BuildSortedUnitEntries(battle->actions);
     }
-    battle->promptSlot = Resource_LoadIntoFreeSlot(128);
+    battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatusDrawFar(battle->partyStatus);
     if (count < 0)
       goto aborted;
@@ -1242,14 +1242,14 @@ resolved:
     Battle_AwardSpoils();
   }
   AudioCommand_PlayFar(17);
-  Blend_SetDarkenTarget16(30);
-  Blend_WaitForTransition();
+  Fade_ToBlack(30);
+  Fade_Wait();
   result = battle->spoils.defeated;
   goto finished;
 
 aborted:
   Battle_ClearSerialTransferPayload();
-  Scheduler_EnableCallbacks(0);
+  Scheduler_SuspendTasks(0);
   REG_DISPCNT = 1;
   result = battle->spoils.defeated;
   GameFlag_SetBitFar(0x3e8);
@@ -1266,15 +1266,15 @@ party_lost:
     UiText_ShowMessageAndWaitCoreFar(MsgPartyDefeated);
   BattlePresentation_WaitForAdvance();
   AudioCommand_PlayFar(17);
-  Blend_SetDarkenTarget16(30);
+  Fade_ToBlack(30);
   result = -1;
-  Blend_WaitForTransition();
+  Fade_Wait();
   goto finished;
 
 interrupted:
   AudioCommand_PlayFar(17);
-  Blend_SetDarkenTarget16(30);
-  Blend_WaitForTransition();
+  Fade_ToBlack(30);
+  Fade_Wait();
   result = 0x3e7;
 
 finished:
@@ -2508,9 +2508,9 @@ s32 Camera_ApplyTransformByFlag(void) {
   Render_ResetTransformState();
   if (GameFlag_TestFar(0x16B) != 0) {
     Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
-    Graphics_PrepareTransferAndRun(state->eye, state->pos);
+    Transform_ApplyLookAt(state->eye, state->pos);
   } else {
-    Graphics_PrepareTransferInIwramWork(state->eye, state->pos);
+    Transform_SetLookAt(state->eye, state->pos);
   }
 }
 
@@ -3412,7 +3412,7 @@ void Camera_ConfigureScene(s32 pos) {
   Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
-  Camera_StoreSceneParameters(0, result, 0x07920000);
+  Projection_Set(0, result, 0x07920000);
 
   gProjection.centerY = pos + 120;
   secondary->active = 1;
@@ -3648,7 +3648,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 BattleLink_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginTransferA(state, 20);
+    s32 status = SerialRuntime_BeginSend(state, 20);
 
     disconnected = 0;
     timeout = 300;
@@ -3666,7 +3666,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_BeginTransferA(actions, allocationSize);
+      status = SerialRuntime_BeginSend(actions, allocationSize);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -3690,7 +3690,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
      * differ 116, 129 instructions for 131. */
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginTransferB(state);
+    s32 status = SerialRuntime_BeginReceive(state);
 
     disconnected = 0;
     timeout = 300;
@@ -3713,7 +3713,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_BeginTransferB(actions + count);
+      status = SerialRuntime_BeginReceive(actions + count);
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
@@ -4000,9 +4000,8 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   battle->brightness = 0x10000;
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-  Camera_StoreSceneParameters(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000),
-                              0x7fff0000);
+  Transform_SetLookAt(camera->eye, camera->pos);
+  Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
     view->targetYaw = 0x2000;
     WaitFrames(delay);
@@ -5371,7 +5370,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
   while (!UiWork_IsCompleteFar())
     WaitFrames(1);
   spr = &sprite;
-  slot = Resource_LoadIntoFreeSlot(128);
+  slot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
     // 4 フレームごとに 8 枚のパターンを回す
     pat = ((gFrameCount >> 2) & 7) * 128 + (s32)gBattlePres_AdvanceArrowTiles;
@@ -5382,7 +5381,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
     Io_Write16(16, &REG_BLDALPHA);
     *(u32 *)&spr->attr0 = 0xa400;
     *(u32 *)&spr->attr2 = 0;
-    tile = Resource_GetBuffer(slot, pat) & 0x3ff;
+    tile = VramCache_Reload(slot, pat) & 0x3ff;
     attr2 = spr->attr2;
     spr->attr2 = (attr2 & ~0x3ff) | tile;
     // ウィンドウの位置はキャラ単位、オフセットは 1/256 ドット
@@ -5420,14 +5419,14 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   while (!UiWork_IsCompleteFar())
     WaitFrames(1);
   spr = &sprite;
-  slot = Resource_LoadIntoFreeSlot(128);
+  slot = VramCache_AllocEntry(128);
   while (1) {
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
     Io_Write16(16, &REG_BLDALPHA);
     ((s32 *)spr)[1] = MENU_SPRITE_SIZE_16;
     ((s32 *)spr)[2] = 0;
-    spr->tile = Resource_GetBuffer(slot, pat);
+    spr->tile = VramCache_Reload(slot, pat);
     // 4 フレームごとに右上へゆらす
     spr->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
     spr->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
@@ -7153,7 +7152,7 @@ void BattleEvent_Playback(void) {
       QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
       ((u32 *)spr)[1] = 0xa000;
       ((u32 *)spr)[2] = x;
-      spr->tile = Resource_GetBuffer(ev->displaySource, pat);
+      spr->tile = VramCache_Reload(ev->displaySource, pat);
       x = window->x * 8 + (offset->x >> 8) + 4;
       spr->x = x;
       spr->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
@@ -8648,7 +8647,7 @@ s32 BattlePres_RunMosaicFadeOut(void) {
   reg += 0x21;
   *reg = 0x3eee;
 
-  Blend_SetDarkenTarget16(16);
+  Fade_ToBlack(16);
   for (i = 0; i <= 15; i++) {
     Random16();
     Random16();
@@ -9207,7 +9206,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
-  Camera_StoreSceneParameters(span, result, span * 2);
+  Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(pos);
   SceneTransform_ApplyYaw((s16)scene->yaw);
@@ -9219,7 +9218,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(scene->eye, pos);
+  Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
@@ -9227,7 +9226,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
-  Camera_StoreSceneParameters(width, result, half * 4);
+  Projection_Set(width, result, half * 4);
 }
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
@@ -9252,7 +9251,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
-  Camera_StoreSceneParameters(span, result, span * 2);
+  Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(pos);
   SceneTransform_ApplyYaw((s16)scene->yaw);
@@ -9264,7 +9263,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(scene->eye, pos);
+  Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
@@ -9272,7 +9271,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
-  Camera_StoreSceneParameters(width, result, half * 4);
+  Projection_Set(width, result, half * 4);
 }
 
 //--------------------------------------------------------------------------

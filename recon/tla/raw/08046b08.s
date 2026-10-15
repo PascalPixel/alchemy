@@ -53,7 +53,7 @@ Func_08046b08:
 	bl BattleActor_SpawnObjectsForListFar
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	str r0, [sp, #108]
 	adds r5, #228
 	ldr r5, [r5]
@@ -84,7 +84,7 @@ Func_08046b08:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r4, #168
 	str r0, [sp, #120]
 	movs r0, #165
@@ -102,7 +102,7 @@ Func_08046b08:
 	movs r6, #10
 .L_08046bd4:
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	subs r6, #1
 	mov r2, r8
 	strb r2, [r5]
@@ -117,11 +117,11 @@ Func_08046b08:
 	movs r6, #3
 .L_08046bf2:
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r1, #1
 	stmia r7!, {r0}
 	negs r1, r1
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08046c2c
 	mov r4, r8
 	ands r0, r3
@@ -1099,7 +1099,7 @@ Func_08046b08:
 	str r3, [r0, #8]
 	ldr r0, [sp, #120]
 	ldr r1, .L_080473a4
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08047390
 	b .L_080473a8
 	.2byte 0x0000
@@ -1520,7 +1520,7 @@ Func_08046b08:
 	movs r1, #1
 	ldmia r6!, {r0}
 	negs r1, r1
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_080476e8
 	movs r2, #1
 	ands r0, r3
@@ -1959,7 +1959,7 @@ Func_08046b08:
 	movs r1, #1
 	ldmia r6!, {r0}
 	negs r1, r1
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08047a50
 	ands r0, r3
 	ldrh r3, [r5]

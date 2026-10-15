@@ -41,7 +41,7 @@ extern struct SchedulerTask gSchedulerTaskTable[];
 #if GAME_TLA
 void Runtime_PushSlotEntry(void *entry, s32 priority);
 
-void Runtime_InvokeCallbacksByKey(s32 key);
+void Scheduler_RunPass(s32 key);
 #endif
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
 #if GAME_TLA
@@ -55,11 +55,11 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
 void Scheduler_Idle(void);
 void Scheduler_EmptyCallback(void);
 s32 Scheduler_RemoveCallback(SchedulerCallback callback);
-s32 Scheduler_EnableCallbacks(SchedulerCallback callback);
-s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
-s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask);
-s32 Scheduler_DisableCallbacks(SchedulerCallback callback);
-s32 Scheduler_DisableOverlayCallbacks(void);
+s32 Scheduler_SuspendTasks(SchedulerCallback callback);
+s32 Scheduler_SuspendOverlayTasks(void);
+s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask);
+s32 Scheduler_ResumeTasks(SchedulerCallback callback);
+s32 Scheduler_ResumeOverlayTasks(void);
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 #endif

@@ -14,7 +14,7 @@ void Func_020017bc(void) {
    * the native (plain: differ 2; a block pointer, a struct with the entry
    * first, a size temporary or the VramBlock_LoadCached_ inline: no closer). */
   asm("");
-  VramBlock_LoadCached(gData_02002aa0[0], 0x200, 0);
+  VramCache_Load(gData_02002aa0[0], 0x200, 0);
   /* FAKEMATCH: held in a local, the priority is built before the callback's
    * address loads, as in the native and events_f.c (as a literal: differ 2). */
   priority = 0x480;

@@ -214,7 +214,7 @@ void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
-void Graphics_PrepareTransferInIwramWork(void *, void *);
+void Transform_SetLookAt(void *, void *);
 void Func_08020090(struct BattleObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
 s32 Battle_GetObjectTableValueFar(s32);
@@ -566,7 +566,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         }
         if (kind <= 37 && count < 64) {
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
+            Transform_SetLookAt(bg, (u8 *)bg + 12);
             EffectPosition_ApplyBaseAndYOffset(origin, pos);
             pos[0] = pos[0] / 2;
             drawFuncs.draw[0](screen, EWRAM_BUF + 0x3c56, pos[0] - 10, pos[1] - 4, 20, 40);
@@ -882,7 +882,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 drawFuncs.draw[1](screen, work->frames + 0x5100 + ((frame - 4) / 2) * 0x3c0, target[0] / 2 - 8,
                                   base[1] - 24, 20, 48);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
+            Transform_SetLookAt(bg, (u8 *)bg + 12);
             if (frame > 3) {
                 if (kind == 79) {
                     p = work->particle;

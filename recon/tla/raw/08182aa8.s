@@ -2807,7 +2807,7 @@ Func_08182aa8:
 	mov r4, r8
 	cmp r4, #12
 	bne .L_08184040
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

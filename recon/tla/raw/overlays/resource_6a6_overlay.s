@@ -215,7 +215,7 @@ Func_02000198:
 	adds r2, r5, #0
 	lsls r1, r1, #3
 	mov r8, r0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	mov r10, r0
 	adds r0, r5, #0
 	bl MemFree

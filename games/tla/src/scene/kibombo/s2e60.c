@@ -3,7 +3,7 @@
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_02005a84(s32 resource);
-void VramBlock_LoadCached(s32 handle, s32 size, void *source);
+void VramCache_Load(s32 handle, s32 size, void *source);
 
 void Func_02002de0(void) {
   struct KibomboObject **slot = &gData_02007950;
@@ -27,7 +27,7 @@ void Func_02002de0(void) {
     sprite->unk1b[0] = zero;
     buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02005a84(242);
-    VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
 }

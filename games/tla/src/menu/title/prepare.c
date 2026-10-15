@@ -26,8 +26,8 @@ extern u32 gFrameCount;
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
-void Blend_SetDarkenTarget16(s32 frames);
-void Blend_WaitForTransition(void);
+void Fade_ToBlack(s32 frames);
+void Fade_Wait(void);
 void Func_0200031c(s32 unused);
 void Func_020005ac(struct TitleSprite *sprite, s32 priority);
 void Func_020005bc(s32 resource);
@@ -80,8 +80,8 @@ s32 Func_0200005c(void) {
     Func_02000644(68);
     Func_0200061c(1);
     Func_02000644(78);
-    Blend_SetDarkenTarget16(60);
-    Blend_WaitForTransition();
+    Fade_ToBlack(60);
+    Fade_Wait();
     Battle_WaitMode0(240);
     Func_02000644(0);
     Func_02000604((s32)&SceneId_Title, 2);
@@ -98,8 +98,8 @@ s32 Func_0200005c(void) {
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
           Func_02000644(78);
-          Blend_SetDarkenTarget16(30);
-          Blend_WaitForTransition();
+          Fade_ToBlack(30);
+          Fade_Wait();
           /* FAKEMATCH: an empty asm keeps the counter's zero after the wait
            * call, where plainly sched2 fills the call's stall with it (differ
            * 2). */
@@ -142,8 +142,8 @@ s32 Func_0200005c(void) {
     }
   }
   Func_02000644(78);
-  Blend_SetDarkenTarget16(30);
-  Blend_WaitForTransition();
+  Fade_ToBlack(30);
+  Fade_Wait();
   Battle_WaitMode0(60);
   Func_02000644(0);
   return 0;
@@ -161,7 +161,7 @@ void Title_LoadSprites(s32 unused) {
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
                         buffer);
   Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
-  VramBlock_LoadCached(gTitleVramBlock, 0x500, buffer + 32);
+  VramCache_Load(gTitleVramBlock, 0x500, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
   while (dma[2] < 0)
     ;

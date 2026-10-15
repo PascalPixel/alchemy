@@ -36,13 +36,13 @@ void SerialTest_Run(void) {
   Cpu_Fill32(0, gMapCellBuffer, 0x400);
   SerialRuntime_WaitForStatusMask(3);
 restart:
-  SerialRuntime_BeginTransferB(gMapCellBuffer);
+  SerialRuntime_BeginReceive(gMapCellBuffer);
   held = &gInput.held;
   for (;;) {
     if (*held & 1)
-      SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
+      SerialRuntime_BeginSend((void *)Cart_Restart, 0x280);
     if (*held & 2)
-      SerialRuntime_BeginTransferA((void *)(Cartridge_Restart + 0x1000), 0x280);
+      SerialRuntime_BeginSend((void *)(Cartridge_Restart + 0x1000), 0x280);
     if (*held & 8) {
       tick = 9999;
       do {

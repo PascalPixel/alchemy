@@ -315,7 +315,7 @@ next:
   }
   rec = UnitGet(slot + 128);
   tries = 0;
-  if ((ret = SerialRuntime_BeginTransferB(rec)) == -1) {
+  if ((ret = SerialRuntime_BeginReceive(rec)) == -1) {
     goto failed;
   }
   goto test1;
@@ -347,7 +347,7 @@ second:
   size = 0x140;
   heap = (s32)Runtime_BumpAllocateAlternatePool(size);
   tries = 0;
-  if ((ret = SerialRuntime_BeginTransferB(Trade_GetOfferState(1))) != -1) {
+  if ((ret = SerialRuntime_BeginReceive(Trade_GetOfferState(1))) != -1) {
     goto test2;
   }
 failed:
@@ -428,7 +428,7 @@ static s32 LinkLobby_SendPartyRecords(void) {
       Iwram_CopyWords(heap, UnitGet(owners[i]), size);
       heap[0x12a] = 2;
       table[owners[i]] = i - 128;
-      ret = SerialRuntime_BeginTransferA(heap, size);
+      ret = SerialRuntime_BeginSend(heap, size);
       tries = 0;
       if (ret == -1) {
         result = ret;
@@ -470,7 +470,7 @@ test:
 next:
   if (i <= 2) {
     heap[0x12a] = tries = 0;
-    if ((ret = SerialRuntime_BeginTransferA(heap, size)) != -1) {
+    if ((ret = SerialRuntime_BeginSend(heap, size)) != -1) {
       goto test;
     }
     result = ret;
@@ -502,7 +502,7 @@ next:
         j--;
       }
     }
-    if ((ret = SerialRuntime_BeginTransferA(heap, size)) == -1) {
+    if ((ret = SerialRuntime_BeginSend(heap, size)) == -1) {
       result = ret;
       goto done;
     }
@@ -661,7 +661,7 @@ static s32 EV10_TOUCH(void) {
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
         FieldScheduler_AddCallback(LinkLobby_PollPeerReady, 0xc80);
-        Scheduler_SetCallbackMask(LinkLobby_PollPeerReady, 1);
+        Scheduler_SetTaskFlags(LinkLobby_PollPeerReady, 1);
         Engine_GameFlagClear(0x201);
         Engine_GameFlagClear(0x202);
         Engine_GameFlagClear(0x303);
@@ -1239,7 +1239,7 @@ s32 LinkLobby_RunRoundResult(void) {
   }
   callback = LinkLobby_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
-  Scheduler_SetCallbackMask(callback, 1);
+  Scheduler_SetTaskFlags(callback, 1);
   if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
     Owner_RefreshActiveRatios(1);
     BattlePlacement_UpdateTimedEntriesTwentyTimes();

@@ -169,7 +169,7 @@ void Func_081434f8(void);
 void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
 s32 Func_080143e0(s32);
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void Func_08152404(s32, s32, s32);
 void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
@@ -928,7 +928,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     for (i = 0; i != 57; i++)
         ResourceObject_ReleaseFar(work->sprites[i]);
     bank[21] = Func_080143e0(128);
-    PaletteDma_LoadBlock();
+    Palette_LoadBasicObjColors();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (vu32 *)0x040000d4);
     *(u16 *)0x050001bc = *(u16 *)0x050001e8;
     work->transferMode = 2;

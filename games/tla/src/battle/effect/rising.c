@@ -47,7 +47,7 @@ struct EffectVisual {
 };
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_08038248(s32 item);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Object_Destroy(struct ObjectRuntime *object);
 
 void Func_080cf424(s32 item, s32 flags) {
@@ -78,7 +78,7 @@ void Func_080cf424(s32 item, s32 flags) {
     visual->flags09 = mask;
 
     Func_08038248(item);
-    VramBlock_LoadCached(visual->tileSlot, 128, buffer + 0x400);
+    VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     Runtime_ReleaseHeapBlock(68);
 
     if (flags & 1)

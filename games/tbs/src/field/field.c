@@ -377,7 +377,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       MemFree(mask);
     }
 
-    tile = VramBlock_LoadCached(obj->slot, size, 0);
+    tile = VramCache_Load(obj->slot, size, 0);
     {
       void *vram = (void *)(0x06010000 + (tile << 5));
       ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width,
@@ -605,7 +605,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
     }
   }
   if (!(sprite->displayFlags & 1)) {
-    Resource_ActivateEntry(sprite->slot);
+    VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
   }
 }
@@ -970,12 +970,12 @@ void ObjectSystem_Configure(s32 mode) {
     states = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
                                               sizeof(struct AnimationEntry));
   }
-  PaletteDma_LoadBlock();
+  Palette_LoadBasicObjColors();
   Dma_Fill32Cell(zero, 0, objects,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, states,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-  VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
+  VramCache_Load(93, 128, gObject_ShadowTiles);
   RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
@@ -1077,7 +1077,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
-  tile = VramBlock_LoadCached(slot, 0, 0);
+  tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;
   found->slot = slot;
@@ -1707,8 +1707,8 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
 // カメラの処理を動かし、BG1-3 を消して OBJ を出す
 //--------------------------------------------------------------------------
 void Graphics_EnableObjLayerAndCallbacks(void) {
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
   BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleFx_StartBufferInterpolationFar(1);
   WaitFrames(1);
@@ -1719,8 +1719,8 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 // カメラの処理を止め、BG1-3 と OBJ を消す
 //--------------------------------------------------------------------------
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
   REG_DISPCNT &= 0xe1ff;
 }
 
@@ -1861,7 +1861,7 @@ void ObjectSystem_UpdateCamera(void) {
       if (sync->suspended != 0 && obj->held == 0) {
         struct CameraSprite *frozen = obj->sprite;
 
-        Resource_ActivateEntry(frozen->resource);
+        VramCache_ReleaseVram(frozen->resource);
         frozen->activated = kind;
         continue;
       }
@@ -1905,7 +1905,7 @@ void ObjectSystem_UpdateCamera(void) {
       }
       if (obj->held == 0) {
         if (!(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
+          VramCache_ReleaseVram(spr->resource);
           spr->activated = 1;
         }
       }
@@ -1914,7 +1914,7 @@ void ObjectSystem_UpdateCamera(void) {
       if (kind == 1) {
         spr = obj->sprite;
         if (obj->held == 0 && !(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
+          VramCache_ReleaseVram(spr->resource);
           spr->activated = kind;
         }
       }
@@ -1967,9 +1967,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
   if (GameFlag_TestFar(363)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-    Graphics_PrepareTransferAndRun(eye, target);
+    Transform_ApplyLookAt(eye, target);
   } else {
-    Graphics_PrepareTransferInIwramWork(eye, target);
+    Transform_SetLookAt(eye, target);
   }
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
   obj += 63;
@@ -4336,7 +4336,7 @@ s32 Map_LoadLayeredScene(s32 index) {
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Blend_SetDarkenTarget0(0);
+  Fade_FromBlack(0);
   entry = &gMap_LayeredScenes[index];
   work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
@@ -5188,7 +5188,7 @@ s32 Map_InitializePerspectiveScene(void) {
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Blend_SetDarkenTarget0(0);
+  Fade_FromBlack(0);
   work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
   Dma_Fill32Cell(fill, 0, work, sizeof(struct PerspectiveWork));
   work->viewX = 0;
@@ -5252,7 +5252,7 @@ s32 Map_InitializePerspectiveScene(void) {
   *turn = 0;
   gProjection.centerX = 120;
   gProjection.centerY = 96;
-  Camera_StoreSceneParameters(farPlane, farPlane >> 1, farPlane << 1);
+  Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   position[0] = 0;
   position[1] = 0;
   position[2] = 0;
@@ -5267,7 +5267,7 @@ s32 Map_InitializePerspectiveScene(void) {
   vector.z = farPlane;
   Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(camera->eye, position);
+  Transform_SetLookAt(camera->eye, position);
   RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
   WorldMap_BuildScanlineTable(
       Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), position,
@@ -5554,7 +5554,7 @@ void WorldMap_UpdateView(void) {
   }
   gProjection.centerX = 120;
   gProjection.centerY = 96;
-  Camera_StoreSceneParameters(distance, height / 2, height * 2);
+  Projection_Set(distance, height / 2, height * 2);
   pos[0] = *target++;
   pos[1] = 0;
   pos[2] = target[1];
@@ -5567,7 +5567,7 @@ void WorldMap_UpdateView(void) {
   local.z = height + 0x10000;
   Iwram_TransformVector((s32 *)&local, (s32 *)cam);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(cam, pos);
+  Transform_SetLookAt(cam, pos);
   if (gScanlinePitch != view->pitch) {
     s32 c = Trig_Cos(view->pitch);
     s32 s = Trig_Sin(view->pitch);
@@ -5655,7 +5655,7 @@ void MapAnimation_Start(void) {
   s32 one = 1;
 
   work->animationActive = one;
-  Scheduler_EnableCallbacks(MapAnimation_Update);
+  Scheduler_SuspendTasks(MapAnimation_Update);
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800,
           REG_DMA3);
   WaitFrames(1);
@@ -5699,7 +5699,7 @@ void Map_LoadAreaGraphics(void) {
       Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
   Map_UpdateCurrentTileBlock();
   state->animationActive = 0;
-  Scheduler_DisableCallbacks(MapAnimation_Update);
+  Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }
 
@@ -5712,7 +5712,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
   Map_UpdateCurrentTileBlock();
-  Scheduler_DisableCallbacks(MapAnimation_Update);
+  Scheduler_ResumeTasks(MapAnimation_Update);
   WaitFrames(1);
 }
 
@@ -5818,12 +5818,12 @@ void MapAnimation_StartChannels(const u16 *script) {
 
 void Map_EnableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_EnableCallbacks(MapAnimation_Update);
+    Scheduler_SuspendTasks(MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_DisableCallbacks(MapAnimation_Update);
+    Scheduler_ResumeTasks(MapAnimation_Update);
 }
 
 void DisplayBlend_RunScript(void) {
@@ -5899,11 +5899,11 @@ void DisplayBlend_StartScript(u16 *script) {
 }
 
 void DisplayBlend_EnableRunScript(void) {
-  Scheduler_EnableCallbacks(DisplayBlend_RunScript);
+  Scheduler_SuspendTasks(DisplayBlend_RunScript);
 }
 
 void DisplayBlend_DisableRunScript(void) {
-  Scheduler_DisableCallbacks(DisplayBlend_RunScript);
+  Scheduler_ResumeTasks(DisplayBlend_RunScript);
 }
 
 void Runtime_AllocateAndClearQueue(void) {
@@ -6585,13 +6585,13 @@ void Ui_RunIconMonitor(void) {
   REG_BLDCNT = 0x3F42;
   PLTT_BACKDROP = 0x01E0;
   REG_DISPCNT = 0x1140;
-  Blend_SetDarkenTarget0(1);
+  Fade_FromBlack(1);
 
 restart:
   Runtime_InitializeHeap();
   Scheduler_ResetTaskTable();
   work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
-  Resource_InitializeTable();
+  VramCache_Reset();
   ObjectSystem_Initialize(2);
   ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
   metadata = Resource_GetMetadataRecordFar(ent[0].no);

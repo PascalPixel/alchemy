@@ -21,7 +21,7 @@ void Func_02004fb4(void) {
     sprite->unk1b[0] = zero;
     buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_020051b0(198);
-    VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     Runtime_ReleaseHeapBlock(68);
   }
 }

@@ -36,7 +36,7 @@ void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
     s32 value = Resource_FindFreeEntry();
 
     *slot = value;
-    object->oam.f.tile = VramBlock_LoadCached(value, 0x80, data);
+    object->oam.f.tile = VramCache_Load(value, 0x80, data);
     object->oam.f.mode = 0;
     object->oam.f.mosaic = 0;
     object->oam.f.colors = 1;

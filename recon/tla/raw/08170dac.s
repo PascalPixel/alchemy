@@ -329,7 +329,7 @@ Func_08170dac:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #16]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [sp, #76]
 	ldr r0, [r3, #8]
 	bl GetBattleObjectSlotFar

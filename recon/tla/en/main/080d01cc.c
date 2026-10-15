@@ -28,8 +28,8 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     value = mode & 0xff;
     switch (kind) {
     case 0:
-        Blend_SetDarkenTarget16(0);
-        Blend_SetDarkenTarget0(frames);
+        Fade_ToBlack(0);
+        Fade_FromBlack(frames);
         WaitFrames(1);
         break;
     case 1:

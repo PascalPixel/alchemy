@@ -19,7 +19,7 @@ Func_080457d0:
 	str r0, [sp, #48]
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r2, #0
 	movs r1, #1
 	str r2, [sp, #40]

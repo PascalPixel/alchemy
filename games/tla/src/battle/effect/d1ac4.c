@@ -21,7 +21,7 @@ void Func_080d1a18(void *object) {
   work = Runtime_AllocateBlock(144, 28);
   tiles = Runtime_AllocateHeapBlock(56, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
-  VramBlock_LoadCached(94, 0x200, tiles);
+  VramCache_Load(94, 0x200, tiles);
   Runtime_ReleaseHeapBlock(56);
   Scheduler_AddOrUpdateCallback(Func_080d1840, 0x480);
   Io_Write16(0x3f9e, &REG_BLDCNT);
@@ -33,6 +33,6 @@ void Func_080d1a18(void *object) {
   work[6] = (u32)object;
 }
 
-void Func_080d1ac4(void) { Scheduler_EnableCallbacks(Func_080d1840); }
+void Func_080d1ac4(void) { Scheduler_SuspendTasks(Func_080d1840); }
 
-void Func_080d1ad4(void) { Scheduler_DisableCallbacks(Func_080d1840); }
+void Func_080d1ad4(void) { Scheduler_ResumeTasks(Func_080d1840); }

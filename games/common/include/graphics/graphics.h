@@ -14,15 +14,15 @@ struct UiWindow;
 extern u8 gBlendBrighten;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it five functions of tbs's runtime.c differ in tbs-en:
- * Blend_ConfigureTransition (31), Blend_SetDarkenTarget0 (19),
- * Blend_SetBrightenTarget0, Blend_SetBrightenTarget16 and
- * Blend_SetDarkenTarget16 (7 each). */
+ * Fade_Start (31), Fade_FromBlack (19),
+ * Fade_FromWhite, Fade_ToWhite and
+ * Fade_ToBlack (7 each). */
 extern volatile u8 gBlendDuration;
 extern u8 gBlendFramesLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it BlendTransition_Update: differ 29 in tbs-en, 45 instructions
+ * own; without it Fade_Update: differ 29 in tbs-en, 45 instructions
  * for 46. */
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
@@ -298,7 +298,7 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #endif
 s32 Resource_LoadByMode(s32 mode, s32 value);
 void Runtime_RemapBytesByTableFar(void *buffer, s32 size);
-void Text_FormatSignedDecimalToWork(s32);
+void NumberText_FormatDecimal(s32);
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                   s32 arg4);
 #ifndef OWN_UiIcon_BuildAbilityIconTiles

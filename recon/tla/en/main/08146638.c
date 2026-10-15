@@ -69,14 +69,14 @@ void Func_080150e4(s32 angle);
 void Func_080151ac(struct Vector3 *scale);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(void *position);
-void Graphics_SaveTransferWorkOnce(void);
-void Graphics_RestoreTransferWork(void);
+void Transform_Push(void);
+void Transform_Pop(void);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *object, s32 value);
 void Audio_PlayCue(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_08146638(struct BattleEffectArgument *effect)
 {
@@ -162,14 +162,14 @@ void Func_08146638(struct BattleEffectArgument *effect)
                 if (size > 10)
                     size = 10;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+                Transform_SetLookAt(camera, camera + 3);
                 SceneTransform_ApplyPosition(step);
                 peak = 0;
                 for (j = 0; j != 10; j++)
                 {
                     s32 depth;
 
-                    Graphics_SaveTransferWorkOnce();
+                    Transform_Push();
                     Func_080150e4((frame - start) << 10);
                     SceneTransform_ApplyYaw(0x4000);
                     scale.x = ((frame - start) << 12) + 0x1000;
@@ -187,7 +187,7 @@ void Func_08146638(struct BattleEffectArgument *effect)
                     trails[i * 10 + j].velocityY = pos.y + base.y;
                     trails[i * 10 + j].velocityX = pos.x;
                     trails[i * 10 + j].velocityY = pos.y;
-                    Graphics_RestoreTransferWork();
+                    Transform_Pop();
                 }
                 if (peak <= 399999)
                 {

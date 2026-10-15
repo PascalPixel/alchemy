@@ -22,7 +22,7 @@ Func_0804868c:
 	movs r0, #128
 	str r1, [sp, #68]
 	str r2, [sp, #64]
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	str r0, [sp, #60]
 	movs r0, #168
 	lsls r0, r0, #1
@@ -1086,7 +1086,7 @@ Func_0804868c:
 	beq .L_08048f2a
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	ldr r2, [sp, #52]
 	mov r3, r11
 	adds r3, #5
@@ -1124,7 +1124,7 @@ Func_0804868c:
 	beq .L_08048f82
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	mov r3, r11
 	cmp r3, #0
 	beq .L_08048f5c
@@ -1184,7 +1184,7 @@ Func_0804868c:
 	str r3, [r2, #8]
 	ldr r0, [sp, #60]
 	ldr r1, .L_08048ff8
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08048fe8
 	ldr r1, [sp, #4]
 	ands r0, r3

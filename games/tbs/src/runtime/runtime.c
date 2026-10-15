@@ -76,9 +76,9 @@ void System_Initialize(void) {
   gDebugTextEnabled = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
-  Resource_LoadWorkHeader();
+  System_CopyBuildStamp();
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   REG_DISPCNT = 0x140;
   Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
 #if defined(HALT_ON_GAMEPAK_IRQ)
@@ -86,7 +86,7 @@ void System_Initialize(void) {
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Audio_InitializeRuntimeDefaultsFar();
-  Resource_InitializeTable();
+  VramCache_Reset();
   Scheduler_ResetTaskTable();
   gCartridgeResetMarker = 0;
   gOamCopyEnabled = 1;
@@ -154,7 +154,7 @@ struct BuildStampCopy {
 };
 
 // Copies the build stamp resource into high IWRAM at power-on.
-void Resource_LoadWorkHeader(void) {
+void System_CopyBuildStamp(void) {
   const void *stamp;
   struct BuildStampCopy *copy;
 
@@ -179,7 +179,7 @@ void *Resource_GetTableEntry(s32 index) {
 // Each pair's offset is reduced by the pair's own position in the block, which
 // turns it into the pc-relative offset the CPU expects. `byteLength` is the
 // code size.
-void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byteLength) {
+void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   s32 entryCount;
   s32 entryIndex;
 
@@ -227,7 +227,7 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byteLength) {
 
 // Loads the compressed code resource `index` to `destination` and resolves
 // its long branches there, with a RAM copy of the ARM routine that does what
-// PackedTable_AdjustMarkedOffsets does.
+// Code_ResolveLongBranches does.
 void Resource_LoadCode(u32 index, void *destination) {
   void (*routine)(void *, s32);
   s32 size;
@@ -367,7 +367,7 @@ void WaitFrames(s32 frames) {
   for (i = 0; i < frames; i++) {
     // Run the main-loop tasks and build this frame's sprites
     gSchedulerStatus = 1;
-    Runtime_InvokeCallbacksByKey(SCHEDULER_KEY_MAIN_LOOP);
+    Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP);
     gSchedulerStatus = 0;
     Render_BuildOamList(
         Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH, 0x400));
@@ -445,7 +445,7 @@ void WaitFrames(s32 frames) {
     CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
-    Graphics_ResetFrameState();
+    Render_ResetFrame();
     gFrameCount++;
     gPlayTimeFrames++;
     Input_UpdateKeyRepeatAndDirection();
@@ -537,7 +537,7 @@ void WaitFrames(s32 frames) {
 #define KEY_REPEAT_NEXT 6
 
 // Restarts the key repeat delay, so held keys wait the full delay again.
-void Runtime_SetMainState19(void) { gKeyRepeatTimer = KEY_REPEAT_FIRST; }
+void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = KEY_REPEAT_FIRST; }
 
 // Runs once a frame after VBlank. When the repeat timer has run out, the held
 // keys repeat into gKeysRepeat. gKeysRepeatDirected is the same keys with at
@@ -638,7 +638,7 @@ void System_VBlankHandler(void) {
     SerialRuntime_StepBlockTransfer();
   }
   MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
-  BlendTransition_Update();
+  Fade_Update();
   if (gFrameRenderPending != 0) {
     if (gOamCopyEnabled != 0)
       Dma_Set(((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_FRAME_SCRATCH],
@@ -653,7 +653,7 @@ void System_VBlankHandler(void) {
     gVBlankHook = 0;
     hook();
   }
-  Runtime_InvokeCallbacksByKey(SCHEDULER_KEY_VBLANK);
+  Scheduler_RunPass(SCHEDULER_KEY_VBLANK);
 
   // Read the keypad (its bits are 0 while pressed). A newly held key restarts
   // the repeat at once; letting go of all keys restarts the full delay.
@@ -761,7 +761,7 @@ void IoWriteQueue_FlushPending(void) {
 // Steps the screen fade once a frame from VBlank: sets BLDCNT to brighten or
 // darken the chosen layers and moves BLDY one step from the start level to
 // the target level.
-void BlendTransition_Update(void) {
+void Fade_Update(void) {
   if (gBlendDuration != 0) {
     {
       volatile u16 *blendControl;
@@ -801,7 +801,7 @@ void BlendTransition_Update(void) {
   }
 }
 
-// Screen fades. BlendTransition_Update moves the fade one step each VBlank.
+// Screen fades. Fade_Update moves the fade one step each VBlank.
 // The brightness (BLDY) runs from 0, the picture as drawn, to 16, all white
 // or all black.
 //   gBlendBrighten   : 0 fades toward black, 1 toward white
@@ -821,16 +821,16 @@ void BlendTransition_Update(void) {
   }
 
 // Fades out to black.
-DEFINE_BLEND_FADE(Blend_SetDarkenTarget16, 0, 16)
+DEFINE_BLEND_FADE(Fade_ToBlack, 0, 16)
 
 // Fades in from black.
-DEFINE_BLEND_FADE(Blend_SetDarkenTarget0, 0, 0)
+DEFINE_BLEND_FADE(Fade_FromBlack, 0, 0)
 
 // Fades out to white.
-DEFINE_BLEND_FADE(Blend_SetBrightenTarget16, 1, 16)
+DEFINE_BLEND_FADE(Fade_ToWhite, 1, 16)
 
 // Fades in from white.
-DEFINE_BLEND_FADE(Blend_SetBrightenTarget0, 1, 0)
+DEFINE_BLEND_FADE(Fade_FromWhite, 1, 0)
 
 // Starts a fade of any layers.
 //   bright : 0 toward black, 1 toward white
@@ -838,8 +838,7 @@ DEFINE_BLEND_FADE(Blend_SetBrightenTarget0, 1, 0)
 //   start  : the starting brightness; above 16, the current target
 //   target : the brightness to end at
 //   frames : how long the fade takes
-void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target,
-                               s32 frames) {
+void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
   gBlendLayers = layer & 0x3f;
   if (start > 16U) {
@@ -852,7 +851,7 @@ void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target,
 }
 
 // Waits until the running fade has finished.
-void Blend_WaitForTransition(void) {
+void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {
       WaitFrames(1);
@@ -866,7 +865,7 @@ s32 _call_via_r3(s32, s32, s32, s32);
 
 // Starts a new frame of sprites: frees the affine matrices and empties the
 // 256 depth slots sprites are linked into.
-void Graphics_ResetFrameState(void) {
+void Render_ResetFrame(void) {
   gObjAffineCount = 0;
   _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount),
                (u32)IwramClearWords);
@@ -960,7 +959,7 @@ void Render_BuildOamList(void *work) {
 // Finds the first run of free blocks that holds `size` bytes and gives it to
 // entry `id`. Returns its byte offset in sprite VRAM, or -1 when no run is
 // long enough.
-s32 ResourceTable_AllocateBlocks(u32 id, u32 size) {
+s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
   s32 ret;
   s32 pos;
@@ -1000,7 +999,7 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size) {
 }
 
 // Returns the length, in blocks, of the longest run of free blocks.
-s32 ResourceTable_GetLongestFreeBlockRun(void) {
+s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
   u8 *p = gResourceBlockOwners;
   s32 max = 0;
@@ -1021,7 +1020,7 @@ s32 ResourceTable_GetLongestFreeBlockRun(void) {
 
 // Frees every block entry `id` owns. Returns -1 when it freed any (or `id` is
 // out of range) and 0 when the entry owned none.
-s32 Resource_ClearSlotReferences(s32 id) {
+s32 VramCache_FreeBlocks(s32 id) {
   s32 cleared = 0;
   s32 n;
   u8 *p;
@@ -1052,7 +1051,7 @@ s32 Resource_ResetEntry(u32 no) {
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
-    Resource_ClearSlotReferences(no);
+    VramCache_FreeBlocks(no);
     entry->offset |= VRAM_CACHE_OFFSET_FREE;
     entry->size = 0;
   }
@@ -1060,7 +1059,7 @@ s32 Resource_ResetEntry(u32 no) {
 }
 
 // Gives back entry `no`'s blocks but keeps the entry taken, with size 1.
-s32 Resource_ActivateEntry(u32 no) {
+s32 VramCache_ReleaseVram(u32 no) {
   struct VramBlockCacheEntry *entry = &gVramBlockCache[no];
 
   if (no >= VRAM_CACHE_ENTRY_COUNT)
@@ -1068,7 +1067,7 @@ s32 Resource_ActivateEntry(u32 no) {
   if (entry->size > 16) {
     s32 one;
 
-    Resource_ClearSlotReferences(no);
+    VramCache_FreeBlocks(no);
     one = 1;
     entry->size = one;
   }
@@ -1079,7 +1078,7 @@ s32 Resource_ActivateEntry(u32 no) {
 // An entry that already holds VRAM of the same size keeps it. A null `src`
 // copies nothing and (void *)-1 clears the memory. Returns the first sprite
 // tile number (32-byte units), or 0 when there was no room.
-s32 VramBlock_LoadCached(u32 no, u32 size, const void *src) {
+s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramBlockCacheEntry *entry;
   s32 offset;
   void *dst;
@@ -1092,12 +1091,12 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src) {
   if (entry->size > 16) {
     if (entry->size != size) {
       Resource_ResetEntry(no);
-      offset = ResourceTable_AllocateBlocks(no, size);
+      offset = VramCache_AllocateBlocks(no, size);
     } else {
       offset = entry->offset;
     }
   } else {
-    offset = ResourceTable_AllocateBlocks(no, size);
+    offset = VramCache_AllocateBlocks(no, size);
   }
 
   if (offset != -1) {
@@ -1117,7 +1116,7 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src) {
 }
 
 // Frees every block and every cache entry.
-void Resource_InitializeTable(void) {
+void VramCache_Reset(void) {
   u32 limit = VRAM_BLOCK_COUNT - 1;
   u8 *p = gResourceBlockOwners;
   u32 n = 0;
@@ -1159,18 +1158,18 @@ s32 Resource_FindFreeEntry(void) {
 
 // Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
 // its number.
-s32 Resource_LoadIntoFreeSlot(s32 size) {
+s32 VramCache_AllocEntry(s32 size) {
   s32 no;
 
   no = Resource_FindFreeEntry();
-  VramBlock_LoadCached(no, size, 0);
+  VramCache_Load(no, size, 0);
   return no;
 }
 
 // Copies `src` again into entry `no`'s VRAM, keeping its size. Returns the
 // first sprite tile number.
-s32 Resource_GetBuffer(s32 no, s32 src) {
-  return VramBlock_LoadCached(no, gVramBlockCache[no].size, (const void *)src);
+s32 VramCache_Reload(s32 no, s32 src) {
+  return VramCache_Load(no, gVramBlockCache[no].size, (const void *)src);
 }
 
 typedef s32 (*KeyCallbackFn)(void);
@@ -1317,7 +1316,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
 // Suspends the task running `callback`, or every task when `callback` is null,
 // by making the high byte of its order odd. Returns the last index changed,
 // or -1.
-s32 Scheduler_EnableCallbacks(SchedulerCallback callback) {
+s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -1341,7 +1340,7 @@ s32 Scheduler_EnableCallbacks(SchedulerCallback callback) {
 // Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
 // unless the task is marked to keep running (flag bit 0). The menus do this
 // while they are open. Returns the last index changed, or -1.
-s32 Scheduler_EnableUnmaskedOverlayCallbacks(void) {
+s32 Scheduler_SuspendOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -1362,7 +1361,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void) {
 
 // Sets the flags of the task running `callback`; bit 0 keeps it running while
 // the overlay tasks are suspended. Returns its index, or -1.
-s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask) {
+s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -1384,7 +1383,7 @@ s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask) {
 
 // Resumes the task running `callback`, or every task when `callback` is null.
 // Returns the last index changed, or -1.
-s32 Scheduler_DisableCallbacks(SchedulerCallback callback) {
+s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -1405,7 +1404,7 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback) {
 
 // Resumes every task whose routine is in an overlay. Returns the last index
 // changed, or -1.
-s32 Scheduler_DisableOverlayCallbacks(void) {
+s32 Scheduler_ResumeOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -1427,7 +1426,7 @@ s32 Scheduler_DisableOverlayCallbacks(void) {
 // Runs one pass of the scheduler: every task whose order's high byte matches
 // `key`'s (SCHEDULER_KEY_MAIN_LOOP or SCHEDULER_KEY_VBLANK), in table order.
 // Nothing runs until Scheduler_ResetTaskTable has set the table up.
-void Runtime_InvokeCallbacksByKey(s32 key) {
+void Scheduler_RunPass(s32 key) {
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 remaining;
 
@@ -1573,13 +1572,13 @@ s32 Math_IntegerSqrt(s32 value) {
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
 // Returns the address of the basic sprite palettes.
-s32 Runtime_GetLowTableAddress(void) { return (s32)gSystem_BasicColorPalette; }
+s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }
 
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
 // from gDebugTextCursor onwards; characters are tile numbers in palette 15.
 
 // Writes `value` as eight hexadecimal digits to the number buffer.
-void Text_FormatHexToWork(u32 value) {
+void NumberText_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
   const u8 *digits = gText_HexDigits;
   s32 index = 7;
@@ -1598,7 +1597,7 @@ void Text_FormatHexToWork(u32 value) {
 
 // Writes `number` to the number buffer as eleven characters: spaces, a sign
 // (a space or '-') and its decimal digits, right-aligned.
-void Text_FormatSignedDecimalToWork(s32 number) {
+void NumberText_FormatDecimal(s32 number) {
   u32 *table;
   s8 *out;
   s32 count;
@@ -1645,7 +1644,7 @@ void Text_FormatSignedDecimalToWork(s32 number) {
 }
 
 // Writes `count` blank characters at the debug text cursor.
-void Graphics_FillWordStreamWithF000(u32 count) {
+void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 index;
 
@@ -1669,7 +1668,7 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 
 // Prints the string `src` (at most 32 characters) at the debug text cursor,
 // wrapping from the end of the screen to its start, when debug text is on.
-void Runtime_WriteDebugTextTiles(const u8 *src) {
+void DebugText_Print(const u8 *src) {
   if (gDebugTextEnabled != 0) {
     u32 addr = ((u32)&gDebugTextCursor);
     u32 c = *src;
@@ -1697,32 +1696,32 @@ void Runtime_WriteDebugTextTiles(const u8 *src) {
 
 // Prints the last `digits` hexadecimal digits of `value` (1 to 8; anything
 // else prints all 8).
-void Text_DrawHexRightAligned(u32 value, s32 digits) {
+void DebugText_PrintHex(u32 value, s32 digits) {
   s32 n;
 
   n = digits;
   if ((n - 1) > 7U) {
     n = 8;
   }
-  Text_FormatHexToWork(value);
-  Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+  NumberText_FormatHex(value);
+  DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - n));
 }
 
 // Prints the last `digits` characters of `value` in signed decimal (1 to 10;
 // anything else prints 10).
-void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits) {
+void DebugText_PrintDecimal(s32 value, s32 digits) {
   s32 n;
 
   n = digits;
   if ((n - 1) > 9U) {
     n = 10;
   }
-  Text_FormatSignedDecimalToWork(value);
-  Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+  NumberText_FormatDecimal(value);
+  DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
 
 // Blanks the debug text screen, homes the cursor and points BG0 at it.
-void Bg0_ClearTilemap(void) {
+void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(0x400, &REG_BG0CNT);
@@ -1748,7 +1747,7 @@ void Ui_LoadWindowGraphics(void) {
 }
 
 // Loads the basic sprite palettes (palettes 0 to 13).
-void PaletteDma_LoadBlock(void) {
+void Palette_LoadBasicObjColors(void) {
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
 }
 
@@ -1914,7 +1913,7 @@ void Render_ResetTransformState(void) {
 }
 
 // Saves the transform (one level deep; a second save is ignored).
-void Graphics_SaveTransferWorkOnce(void) {
+void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
     Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
     gTransformStackDepth++;
@@ -1923,17 +1922,15 @@ void Graphics_SaveTransferWorkOnce(void) {
 }
 
 // Copies the transform to `dst`.
-void Graphics_SaveTransferWork(void *dst) {
-  Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3);
-}
+void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
 // Makes the matrix at `src` the transform.
-void Graphics_LoadTransferWork(const void *src) {
+void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
 }
 
 // Restores the saved transform.
-void Graphics_RestoreTransferWork(void) {
+void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
     gTransformStackTop -= sizeof(gTransform);
@@ -2106,7 +2103,7 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
 
 // Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 // The camera's sideways axis is kept level (no Y component).
-void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out) {
+void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;
   s32 ux;
@@ -2181,22 +2178,22 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out) {
 }
 
 // Makes the camera at `eye` looking at `target` the whole transform.
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target) {
-  Graphics_PrepareTransfer(eye, target, gTransform);
+void Transform_SetLookAt(s32 *eye, s32 *target) {
+  Transform_BuildLookAt(eye, target, gTransform);
 }
 
 // Multiplies the camera at `eye` looking at `target` into the transform.
-void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target) {
+void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   s32 work[12];
 
-  Graphics_PrepareTransfer(eye, target, work);
+  Transform_BuildLookAt(eye, target, work);
   Iwram_TransformMatrix(work);
 }
 
 // Sets the perspective projection from a vertical field of view: the focal
 // length is 80 (half the screen height) over the tangent of half the angle.
 // Points nearer than `nearDepth` or farther than `farDepth` are not drawn.
-void Camera_SetAngleParameters(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
+void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   s32 halfAngle;
   s32 sine;
   s32 focal;
@@ -2210,7 +2207,7 @@ void Camera_SetAngleParameters(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
 }
 
 // Sets the perspective projection's focal length and depth range directly.
-void Camera_StoreSceneParameters(u32 focal, u32 nearDepth, u32 farDepth) {
+void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   struct Projection *projection = &gProjection;
 
   projection->focal = focal;
@@ -3119,7 +3116,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 
 // Starts sending `size` bytes from `source` to the partner in 20-byte blocks.
 // Returns -1 when a send is already running, 0 otherwise.
-s32 SerialRuntime_BeginTransferA(void *source, s32 size) {
+s32 SerialRuntime_BeginSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
@@ -3137,7 +3134,7 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 size) {
 
 // Starts receiving the partner's blocks into `destination`. Returns -1 when
 // a receive is already running, 0 otherwise.
-s32 SerialRuntime_BeginTransferB(void *destination) {
+s32 SerialRuntime_BeginReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 saved_interrupt_master;
 
@@ -3167,8 +3164,8 @@ s32 SerialRuntime_BeginTransferB(void *destination) {
     }                                                                          \
   }
 
-DEFINE_SERIAL_WAIT(SerialRuntime_WaitForTransferA, gSerialSendSource)
-DEFINE_SERIAL_WAIT(SerialRuntime_WaitForTransferB, gSerialReceiveDest)
+DEFINE_SERIAL_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
+DEFINE_SERIAL_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
 
 // Waits until both the send and the receive have finished, giving up after
 // 600000 frames.
@@ -3343,12 +3340,12 @@ void SerialTest_Run(void) {
   Cpu_Fill32(0, gMapCellBuffer, 0x400);
   SerialRuntime_WaitForStatusMask(3);
 restart:
-  SerialRuntime_BeginTransferB(gMapCellBuffer);
+  SerialRuntime_BeginReceive(gMapCellBuffer);
   for (;;) {
     if (gKeysHeld & KEY_A)
-      SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
+      SerialRuntime_BeginSend((void *)Cart_Restart, 0x280);
     if (gKeysHeld & KEY_B)
-      SerialRuntime_BeginTransferA((void *)(Rom_Start + 0x1000), 0x280);
+      SerialRuntime_BeginSend((void *)(Rom_Start + 0x1000), 0x280);
     if (gKeysHeld & KEY_START) {
       tick = 9999;
       do {

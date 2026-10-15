@@ -317,7 +317,7 @@ Func_02000c4c:
 	lsls r1, r1, #1
 	ldr r2, .L_02008cac
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r3, r7, #0
 	movs r2, #186
 	movs r5, #0

@@ -31,10 +31,10 @@ s32 UpdateNameEntries(void) {
   index = 0;
   while (index <= 2) {
     name_entry = UnitGet(index + 128);
-    if (SerialRuntime_BeginTransferB(name_entry) == -1) {
+    if (SerialRuntime_BeginReceive(name_entry) == -1) {
       break;
     }
-    SerialRuntime_WaitForTransferB();
+    SerialRuntime_WaitForReceive();
     if (name_entry[298] != 0) {
       named_count += 1;
     }
@@ -67,8 +67,8 @@ s32 UpdateNameEntries(void) {
   }
   MemFree(buffer);
   buffer = Runtime_BumpAllocateAlternatePool(340);
-  if (SerialRuntime_BeginTransferB(Resource_FarCall005(1)) != -1) {
-    SerialRuntime_WaitForTransferB();
+  if (SerialRuntime_BeginReceive(Resource_FarCall005(1)) != -1) {
+    SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
   MemFree(buffer);
@@ -123,16 +123,16 @@ s32 LinkBattle_SendParty(void) {
     Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
     ((struct LinkUnit *)buffer)->side = 2;
     work->ownerSlots[owners[i]] = i - 128;
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForTransferA();
+    SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
   for (; i <= 2; i++) {
     ((struct LinkUnit *)buffer)->side = 0;
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (SerialRuntime_BeginSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForTransferA();
+    SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
   size = LINK_PARTY_OFFER_BYTES;
@@ -154,8 +154,8 @@ s32 LinkBattle_SendParty(void) {
     do {
     } while (0);
   }
-  if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
-    SerialRuntime_WaitForTransferA();
+  if (SerialRuntime_BeginSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+    SerialRuntime_WaitForSend();
     WaitFrames(1);
     WaitFrames(2);
   }

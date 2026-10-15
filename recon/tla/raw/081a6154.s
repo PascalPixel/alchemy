@@ -615,7 +615,7 @@ Func_081a6154:
 	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a6624
-	bl Blend_WaitForTransition
+	bl Fade_Wait
 	b .L_081a6562
 .L_081a6624:
 	movs r0, #1

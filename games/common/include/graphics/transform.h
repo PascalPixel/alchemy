@@ -11,12 +11,12 @@ extern u8 *gTransformStackTop;
 
 void SceneTransform_RewindStack(void);
 #if GAME_TLA
-void Graphics_SaveTransferWorkOnce(void);
-void Graphics_SaveTransferWork(void *destination);
-void Graphics_LoadTransferWork(const void *source);
-void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
-void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target);
+void Transform_Push(void);
+void Transform_Store(void *destination);
+void Transform_Load(const void *source);
+void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out);
+void Transform_SetLookAt(s32 *eye, s32 *target);
+void Transform_ApplyLookAt(s32 *eye, s32 *target);
 #endif
 
 static __inline__ void Transform_SetIdentity(void *matrix) {

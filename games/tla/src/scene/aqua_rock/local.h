@@ -51,7 +51,7 @@ void Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void Scheduler_RemoveCallbackFar(void *callback);
 s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 entry, s32 size, void *data);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -331,7 +331,7 @@ static __inline__ void *MemAlloc_(s32 size) {
 static __inline__ s32 VramBlock_LoadCached_(s32 entry, s32 size, void *data) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  return VramBlock_LoadCached(entry, size, data);
+  return VramCache_Load(entry, size, data);
 }
 
 static __inline__ void Scheduler_AddOrUpdateCallback_(void *callback,

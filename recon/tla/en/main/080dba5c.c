@@ -59,7 +59,7 @@ void Func_080dba5c(void)
         buffer = MemAlloc(0x200);
         Iwram_FillWords(buffer, 0x200, 0);
         slot = Resource_FindFreeEntry();
-        tiles = VramBlock_LoadCached(slot, 0x200, buffer);
+        tiles = VramCache_Load(slot, 0x200, buffer);
         /* FAKEMATCH: ⚓️ forms the frame zero here, apart from the fill value */
         asm("" : "=l"(zero) : "0"(0));
         scene->vramSlot = slot;

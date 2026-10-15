@@ -26,7 +26,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       Runtime_RemapBytesByTableFar(buffer, 768);
-    VramBlock_LoadCached(value, size, buffer);
+    VramCache_Load(value, size, buffer);
     Runtime_ReleaseHeapBlock(56);
   }
 }

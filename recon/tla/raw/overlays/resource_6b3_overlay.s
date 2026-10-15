@@ -35,7 +35,7 @@ Func_02000098:
 	str r0, [r5]
 	lsls r1, r1, #4
 	ldr r5, .L_02008144
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #192
 	str r0, [r5]
 	movs r1, #0

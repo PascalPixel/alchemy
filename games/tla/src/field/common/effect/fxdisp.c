@@ -17,7 +17,7 @@ struct BattleFxWorkTail {
 u8 *GetMotionRecordFar(s32 *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
+void Transform_SetLookAt(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
 /* The Japanese, French and Italian far-call tables do not reach
@@ -36,7 +36,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   Render_ResetTransformState();
-  Graphics_PrepareTransferInIwramWork(camera, camera + 12);
+  Transform_SetLookAt(camera, camera + 12);
   scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
                        *(s32 *)(info + 12));
   screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);

@@ -808,7 +808,7 @@ static void LamakanDesert_RunSandstorm(void) {
   }
   counter = gLamakanDesert_SandCounter;
   if (counter == 0) {
-    Resource_ActivateEntry((*(s16 *)&gLamakanDesert_SandVramSlot));
+    VramCache_ReleaseVram((*(s16 *)&gLamakanDesert_SandVramSlot));
     return;
   }
   display = *Ram_DisplayWork;

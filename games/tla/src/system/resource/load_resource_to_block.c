@@ -23,6 +23,6 @@ void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
   source = Resource_GetTableEntry(resourceId);
   buffer = MemAlloc(size);
   Resource_DecodeByteLzInRam(source, buffer);
-  VramBlock_LoadCached(entryId, size, buffer);
+  VramCache_Load(entryId, size, buffer);
   MemFree(buffer);
 }

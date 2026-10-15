@@ -198,7 +198,7 @@ Func_08146638:
 	ldr r0, [sp, #48]
 	adds r1, r0, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r0, [sp, #20]
 	bl SceneTransform_ApplyPosition
 	movs r2, #0
@@ -223,7 +223,7 @@ Func_08146638:
 	adds r5, r3, r0
 .L_081467f6:
 	str r4, [sp, #12]
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	ldr r1, [sp, #40]
 	lsls r0, r1, #10
 	bl Func_080150e4
@@ -284,7 +284,7 @@ Func_08146638:
 	str r3, [r5, #12]
 	ldr r3, [r6, #4]
 	str r3, [r5, #16]
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	ldr r4, [sp, #12]
 	adds r5, #28
 	adds r4, #1

@@ -59,7 +59,7 @@ void Audio_PlayCue(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_08146a6c(struct BattleEffectArgument *effect)
 {
@@ -122,7 +122,7 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
             if (frame >= step->variant)
             {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+                Transform_SetLookAt(camera, camera + 3);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
                 pos.x >>= 1;
                 if (pos.x >= -8 && pos.x <= 127)

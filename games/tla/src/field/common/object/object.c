@@ -592,8 +592,8 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
 // カメラの処理を動かし、BG1-3 を消して OBJ を出す
 //--------------------------------------------------------------------------
 void Graphics_EnableObjLayerAndCallbacks(void) {
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
   BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleFx_StartBufferInterpolationFar(1);
   WaitFrames(1);
@@ -604,8 +604,8 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 // カメラの処理を止め、BG1-3 と OBJ を消す
 //--------------------------------------------------------------------------
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
-  Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
   REG_DISPCNT &= 0xe1ff;
 }
 
@@ -761,7 +761,7 @@ void ObjectSystem_UpdateCamera(void) {
       if (sync->frozen != 0 && obj->held == 0) {
         struct CameraSprite *frozen = obj->sprite;
 
-        Resource_ActivateEntry(frozen->resource);
+        VramCache_ReleaseVram(frozen->resource);
         frozen->activated = kind;
         continue;
       }
@@ -805,7 +805,7 @@ void ObjectSystem_UpdateCamera(void) {
       }
       if (obj->held == 0) {
         if (!(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
+          VramCache_ReleaseVram(spr->resource);
           spr->activated = 1;
         }
       }
@@ -814,7 +814,7 @@ void ObjectSystem_UpdateCamera(void) {
       if (kind == 1) {
         spr = obj->sprite;
         if (obj->held == 0 && !(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
+          VramCache_ReleaseVram(spr->resource);
           spr->activated = kind;
         }
       }
@@ -866,9 +866,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
   if (GameFlag_TestFar(363)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-    Graphics_PrepareTransferAndRun(eye, target);
+    Transform_ApplyLookAt(eye, target);
   } else {
-    Graphics_PrepareTransferInIwramWork(eye, target);
+    Transform_SetLookAt(eye, target);
   }
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
   obj += 63;

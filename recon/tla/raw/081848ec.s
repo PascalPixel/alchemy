@@ -2103,7 +2103,7 @@ Func_081848ec:
 	adds r5, r5, r4
 	adds r6, #170
 .L_081858f0:
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	adds r0, r6, #0
 	bl Func_080150e4
 	adds r0, r5, #0
@@ -2142,7 +2142,7 @@ Func_081848ec:
 	bl Func_08196958
 	mov r0, r8
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	movs r3, #170
 	movs r4, #1
 	lsls r3, r3, #7
@@ -2474,7 +2474,7 @@ Func_08185b9c:
 	bne .L_08185bd6
 	bl Func_08020388
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r3, [sp, #140]
 	movs r5, #240
 	str r0, [r3, #84]
@@ -2516,7 +2516,7 @@ Func_08185b9c:
 	cmp r9, r3
 	bne .L_08185c16
 .L_08185c44:
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	bl Func_0814cca8
 	ldr r2, .L_08185cd4
 	movs r3, #240
@@ -3144,7 +3144,7 @@ Func_08185b9c:
 	asrs r5, r5, #16
 	adds r5, r1, r5
 	subs r5, #16
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	mov r0, r8
 	bl Func_080150e4
 	movs r0, #0
@@ -3176,7 +3176,7 @@ Func_08185b9c:
 	adds r0, r7, #0
 	bl Func_08196a7c
 	movs r5, #170
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	movs r0, #1
 	lsls r5, r5, #7
 	add r9, r0
@@ -4328,7 +4328,7 @@ Func_08185b9c:
 	lsls r0, r0, #8
 	adds r0, #240
 	bl Func_0801521c
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	movs r0, #128
 	lsls r0, r0, #7
 	bl Func_080150e4
@@ -4340,7 +4340,7 @@ Func_08185b9c:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	ldr r3, .L_08186dc8
 	ldr r2, [sp, #60]
 	movs r1, #6

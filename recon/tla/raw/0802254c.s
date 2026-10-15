@@ -302,7 +302,7 @@ Func_0802254c:
 	cmp r3, #0
 	bne .L_08022790
 	ldrb r0, [r7, #16]
-	bl Resource_ActivateEntry
+	bl VramCache_ReleaseVram
 	strb r5, [r7, #25]
 .L_08022790:
 	add sp, #40

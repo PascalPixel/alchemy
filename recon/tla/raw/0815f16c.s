@@ -1095,7 +1095,7 @@ Func_0815f16c:
 	mov r5, r8
 	adds r1, r0, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	add r1, sp, #228
 	adds r0, r1, #0
 	mov r1, r8
@@ -2680,7 +2680,7 @@ Func_0815f16c:
 	ldr r1, [sp, #108]
 	ldr r0, [sp, #108]
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r1, [sp, #112]
 	cmp r1, #3
 	bgt .L_08160754

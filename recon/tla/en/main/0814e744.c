@@ -57,7 +57,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Battle_GetObjectTableValueFar(s32 id);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_0814e744(struct BattleEffectArgument *effect)
 {
@@ -86,7 +86,7 @@ void Func_0814e744(struct BattleEffectArgument *effect)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+    Transform_SetLookAt(camera, camera + 3);
 
     for (member = 0; member != effect->count; member++)
     {

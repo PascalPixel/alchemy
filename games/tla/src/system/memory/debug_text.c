@@ -7,7 +7,7 @@ extern u16 *gData_030011c4;
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
-void Text_FormatHexToWork(u32 value) {
+void NumberText_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
   const u8 *digits = gText_HexDigits;
   s32 index = 7;
@@ -24,7 +24,7 @@ void Text_FormatHexToWork(u32 value) {
   }
 }
 
-void Text_FormatSignedDecimalToWork(s32 value) {
+void NumberText_FormatDecimal(s32 value) {
   s32 negative;
   s32 i;
   s32 q;
@@ -64,7 +64,7 @@ void Func_08014aa8(u32 count) {
   }
 }
 
-void Runtime_WriteDebugTextTiles(const u8 *src) {
+void DebugText_Print(const u8 *src) {
   if (gData_03001110 != 0) {
     u32 addr = ((u32)&gData_030011c4);
     u32 c = *src;

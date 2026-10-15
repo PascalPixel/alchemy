@@ -80,22 +80,22 @@ void Shop_InitializeCursorWork(void) {
   work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
   slot = Resource_FindFreeEntry();
   work->cursorIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_HandTiles);
+  VramCache_Load(slot, 128, gShop_HandTiles);
   slot = Resource_FindFreeEntry();
   work->previousPageIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_UpArrowTiles);
+  VramCache_Load(slot, 128, gShop_UpArrowTiles);
   slot = Resource_FindFreeEntry();
   work->nextPageIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_DownArrowTiles);
+  VramCache_Load(slot, 128, gShop_DownArrowTiles);
   slot = Resource_FindFreeEntry();
   work->gemIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_GemTiles);
+  VramCache_Load(slot, 128, gShop_GemTiles);
   slot = Resource_FindFreeEntry();
   work->statDownIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_SmallDownArrowTiles);
+  VramCache_Load(slot, 128, gShop_SmallDownArrowTiles);
   slot = Resource_FindFreeEntry();
   work->statUpIcon = slot;
-  VramBlock_LoadCached(slot, 128, gShop_SmallUpArrowTiles);
+  VramCache_Load(slot, 128, gShop_SmallUpArrowTiles);
   Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
@@ -393,7 +393,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   }
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
-    VramBlock_LoadCached(slot, 0x100, buf);
+    VramCache_Load(slot, 0x100, buf);
     sprite = RenderOutput_CreateFar(slot, 0x80008000,
                                     (struct RenderInput *)window, x, y);
   }
@@ -1119,7 +1119,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   if (window != 0) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
-      VramBlock_LoadCached(slot, 0x100, 0);
+      VramCache_Load(slot, 0x100, 0);
       RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0,
                              0);
       sprite = RenderOutput_CreateFar(slot, 0x40004000,
@@ -1154,7 +1154,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Shop_FillSelector(minimum + maximum, 0, buffer);
           Shop_FillSelector(minimum + count + 1, 10, buffer);
           Shop_FillSelector(minimum, 2, buffer);
-          VramBlock_LoadCached(slot, 0x100, buffer);
+          VramCache_Load(slot, 0x100, buffer);
           result = count + 1;
 #if EDITION_INTERNATIONAL
           UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);

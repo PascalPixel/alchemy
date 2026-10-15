@@ -57,7 +57,7 @@ void Ui_LoadWindowGraphics(void) {
           0x800000e0, REG_DMA3);
 }
 
-void PaletteDma_LoadBlock(void) {
+void Palette_LoadBasicObjColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200,
           0x800000e0, REG_DMA3);
 }

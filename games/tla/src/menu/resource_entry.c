@@ -26,7 +26,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index) {
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
-  VramBlock_LoadCached(slot, size, buffer);
+  VramCache_Load(slot, size, buffer);
   MemFree(buffer);
 }
 

@@ -570,7 +570,7 @@ Func_0803df24:
 	add r2, r11
 	ldrh r0, [r4, #12]
 	lsls r1, r1, #1
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_0803e3a4
 	ldr r1, [sp, #8]
 	ands r0, r3

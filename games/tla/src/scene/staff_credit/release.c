@@ -14,7 +14,7 @@ void Func_02001d90(void);
 void Func_02001e58(void) {
   Func_02001f54(gWorldMapPackedTilesC, gData_020040d8);
   gData_02003fc6 = Resource_FindFreeEntry();
-  VramBlock_LoadCached(gData_02003fc6, 0x100, 0);
+  VramCache_Load(gData_02003fc6, 0x100, 0);
   gData_02003fc4 = -1;
   gData_02003fc8 = 10;
   Scheduler_AddOrUpdateCallback(Func_02001d90, 0x476);

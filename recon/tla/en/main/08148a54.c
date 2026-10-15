@@ -64,7 +64,7 @@ void Audio_PlayCue(s32 cue);
 s32 Battle_GetObjectTableValueFar(s32 id);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_08148a54(struct BattleEffectArgument *effect)
 {
@@ -133,7 +133,7 @@ void Func_08148a54(struct BattleEffectArgument *effect)
         if (frame == gData_081979a8[effect->variant * 2 + 1] - 16)
             Func_081180e8(133);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         for (i = 0; i != gData_081979a8[effect->variant * 2]; i++)
         {
             point = &work->particles[i];

@@ -16,7 +16,7 @@ struct ClearWork {
 extern char ResourceId_LogoOnBlack;
 extern u16 gData_020024f4[];
 
-void Blend_SetDarkenTarget16(s32 frames);
+void Fade_ToBlack(s32 frames);
 void Func_020021f8(void *source, void *destination);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
@@ -44,7 +44,7 @@ void Func_0200005c(void) {
   s32 blank;
 
   id = (s32)&ResourceId_LogoOnBlack;
-  Blend_SetDarkenTarget16(0);
+  Fade_ToBlack(0);
   {
     /* FAKEMATCH: the control value is pinned to r3 as a halfword, and a
      * one-pass block keeps it ahead of the register's address: the native loads

@@ -5,7 +5,7 @@
  * Remaining: on the left side the native loads baseX before it builds
  * 0xfff7 and stores the x before it copies the left tiles to r11; when the
  * entry is first set up it builds the size 128 before it reloads the slot
- * for VramBlock_LoadCached. A barrier inside the call's arguments or a size
+ * for VramCache_Load. A barrier inside the call's arguments or a size
  * temporary did not help.
  */
 #include "types.h"
@@ -43,7 +43,7 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index)
     }
     if (state->records[index].y == 0) {
         state->records[index].slot = Resource_FindFreeEntry();
-        state->records[index].tile = VramBlock_LoadCached(state->records[index].slot, 128, frames);
+        state->records[index].tile = VramCache_Load(state->records[index].slot, 128, frames);
         state->records[index].y = state->baseY;
         state->records[index].base = 0;
         entry->mode = 0;

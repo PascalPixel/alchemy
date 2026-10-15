@@ -26,7 +26,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
   return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-s32 SerialRuntime_BeginTransferA(void *source, s32 size) {
+s32 SerialRuntime_BeginSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 saved;
 
@@ -42,7 +42,7 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 size) {
   return 0;
 }
 
-s32 SerialRuntime_BeginTransferB(void *destination) {
+s32 SerialRuntime_BeginReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 saved;
 

@@ -1,4 +1,4 @@
-/* Draft, differ 199 of 228: The Broken Seal's Graphics_PrepareTransfer (games/common render.c)
+/* Draft, differ 199 of 228: The Broken Seal's Transform_BuildLookAt (games/common render.c)
  * for The Lost Age: the dot-product routine copied to the stack is eight words here
  * (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its fixed entry
  * shifted left 8, and the native holds three routines in registers for the whole function,
@@ -24,7 +24,7 @@ extern const u32 Math_DotProductQ16Code[];
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
-void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
+void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out)
 {
 	u32 code[8];
 	s32 dx, dy, dz;

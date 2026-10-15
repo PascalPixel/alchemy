@@ -26,7 +26,7 @@ void Func_081a1830(void)
     u32 i;
 
     gData_0200752c = Runtime_BumpAllocateAlternatePool(0x120);
-    tile = VramBlock_LoadCached(slot, 0x200, 0);
+    tile = VramCache_Load(slot, 0x200, 0);
     Dma_Fill32(0x11111111, (void *)(0x06010000 + tile * 32), 0x200);
     entry = gData_0200752c;
     for (i = 0; i < 8; i++) {

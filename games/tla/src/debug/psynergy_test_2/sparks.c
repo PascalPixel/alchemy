@@ -35,7 +35,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);
-s32 VramBlock_LoadCached(s32 entry, s32 size, void *data);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_02000560(void *resource, void *destination);

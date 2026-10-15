@@ -128,7 +128,7 @@ Func_0803fd28:
 	lsls r1, r1, #1
 	ldr r2, .L_080400d0
 	adds r0, r6, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_080400d4
 	movs r7, #0
 	mov r8, r3
@@ -217,7 +217,7 @@ Func_0803fd28:
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #128
 	movs r3, #0
 	lsls r1, r1, #23
@@ -276,7 +276,7 @@ Func_0803fd28:
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #128
 	movs r3, #0
 	lsls r1, r1, #23

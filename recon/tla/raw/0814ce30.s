@@ -294,7 +294,7 @@ Func_0814ce30:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r1, [sp, #56]
 	cmp r1, #31
 	bne .L_0814d0c4

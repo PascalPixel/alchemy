@@ -158,7 +158,7 @@ Func_0200039c:
 	adds r0, #128
 	bl UnitGet
 	adds r6, r0, #0
-	bl SerialRuntime_BeginTransferB
+	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -219,7 +219,7 @@ Func_0200039c:
 	mov r9, r0
 	movs r0, #1
 	bl Trade_GetOfferState
-	bl SerialRuntime_BeginTransferB
+	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -371,7 +371,7 @@ Func_0200039c:
 	adds r0, #128
 	bl UnitGet
 	adds r6, r0, #0
-	bl SerialRuntime_BeginTransferB
+	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -432,7 +432,7 @@ Func_0200039c:
 	mov r9, r0
 	movs r0, #1
 	bl Trade_GetOfferState
-	bl SerialRuntime_BeginTransferB
+	bl SerialRuntime_BeginReceive
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0

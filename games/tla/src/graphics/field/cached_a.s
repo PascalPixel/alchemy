@@ -1,4 +1,4 @@
-@ Tiles the field overlays unpack and hand to VramBlock_LoadCached.
+@ Tiles the field overlays unpack and hand to VramCache_Load.
 	.section .rodata
 	.global gField_CachedTilesA
 gField_CachedTilesA:

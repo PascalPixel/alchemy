@@ -211,7 +211,7 @@ Func_08151ff0:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	mov r1, r9
 	cmp r1, #2
 	bne .L_081521a0

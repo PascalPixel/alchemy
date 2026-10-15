@@ -434,7 +434,7 @@ Func_0816dc50:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #16]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #24]
 	ldr r3, [r0, #8]
@@ -948,7 +948,7 @@ Func_0816dc50:
 	movs r1, #62
 	lsls r2, r2, #3
 	bl BattleFxKernels_IntegrateVector3
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	ldr r1, [r5, #4]
 	ldr r2, [r5, #8]
 	ldr r0, [r5]
@@ -966,7 +966,7 @@ Func_0816dc50:
 	bl Func_081969ac
 	mov r0, r9
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 .L_0816e3f8:
 	movs r0, #1
 	movs r4, #128
@@ -1026,7 +1026,7 @@ Func_0816dc50:
 	ands r3, r2
 	negs r3, r3
 	strb r3, [r0, #25]
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	ldr r5, [sp, #52]
 	movs r2, #0
 	cmp r5, #31
@@ -1080,7 +1080,7 @@ Func_0816dc50:
 	str r3, [r1, #4]
 	mov r0, r9
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 	ldr r4, .L_0816e624
 	movs r2, #7
 	strb r2, [r6]
@@ -1135,7 +1135,7 @@ Func_0816dc50:
 	negs r1, r1
 	cmp r5, r1
 	ble .L_0816e58c
-	bl Graphics_SaveTransferWorkOnce
+	bl Transform_Push
 	mov r2, r9
 	str r5, [r2, #20]
 	ldr r3, [sp, #36]
@@ -1163,7 +1163,7 @@ Func_0816dc50:
 	bl Func_081969ac
 	mov r0, r9
 	bl Func_08196a7c
-	bl Graphics_RestoreTransferWork
+	bl Transform_Pop
 .L_0816e58c:
 	movs r1, #1
 	add r8, r1

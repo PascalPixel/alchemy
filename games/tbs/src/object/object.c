@@ -268,7 +268,7 @@ void Game_ResetForNewGame(s32 mode) {
     gGameState.entrance = 2;
   }
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
-  Resource_InitializeTable();
+  VramCache_Reset();
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
@@ -289,8 +289,8 @@ void Game_ResetForNewGame(s32 mode) {
     Runtime_SetIrqHandler(1, 0, 0);
     Runtime_SetIrqHandler(2, 0, 0);
     Runtime_InitializeHeap();
-    Bg0_ClearTilemap();
-    Resource_InitializeTable();
+    DebugText_Clear();
+    VramCache_Reset();
     if (gGameState.scene >= SCENE_BLANK) {
       switch (gGameState.scene) {
       case SCENE_BATTLE:
@@ -2276,7 +2276,7 @@ redraw:
     WaitFrames(1);
   }
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
 }
 
 struct ActionDescriptorTables {
@@ -3926,7 +3926,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     buf = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
-    vis->part[0].tile = VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
+    vis->part[0].tile = VramCache_Load(vis->slot, 128, (u8 *)buf + 0x400);
 
     Runtime_ReleaseHeapBlock(17);
     obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
@@ -4012,7 +4012,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags) {
     visual->part[0].priority = 1;
 
     Ui_PrepareTransferForItemFar(value);
-    VramBlock_LoadCached(visual->slot, 128, (u8 *)handle + 0x400);
+    VramCache_Load(visual->slot, 128, (u8 *)handle + 0x400);
     Runtime_ReleaseHeapBlock(17);
 
     if (flags & 1)
@@ -4608,8 +4608,8 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
 }
 
 void BattleFx_EnableTwoCallbacks(void) {
-  Scheduler_EnableCallbacks(&DisplayTransition_UpdateScanlineTable);
-  Scheduler_EnableCallbacks(&BattleFx_StartWindowHBlankDma);
+  Scheduler_SuspendTasks(&DisplayTransition_UpdateScanlineTable);
+  Scheduler_SuspendTasks(&BattleFx_StartWindowHBlankDma);
 }
 
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
@@ -4630,8 +4630,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   value = mode & 0xff;
   switch (kind) {
   case 0:
-    Blend_SetDarkenTarget16(0);
-    Blend_SetDarkenTarget0(frames);
+    Fade_ToBlack(0);
+    Fade_FromBlack(frames);
     WaitFrames(1);
     break;
   case 1:
@@ -4714,8 +4714,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   value = mode & 0xff;
   switch (kind) {
   case 0:
-    Blend_SetDarkenTarget0(0);
-    Blend_SetDarkenTarget16(frames);
+    Fade_FromBlack(0);
+    Fade_ToBlack(frames);
     break;
   case 1:
     BattleFx_ApplyColorToTargetBuffer(0x8000, 0);
@@ -5498,7 +5498,7 @@ void BattleFx_StartFadeOverlay(void *object) {
   work = Runtime_AllocateBlock(36, 28);
   tiles = Runtime_AllocateHeapBlock(14, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
-  VramBlock_LoadCached(94, 0x200, tiles);
+  VramCache_Load(94, 0x200, tiles);
   Runtime_ReleaseHeapBlock(14);
   Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
   Io_Write16(0x3f9e, &REG_BLDCNT);
@@ -5511,11 +5511,11 @@ void BattleFx_StartFadeOverlay(void *object) {
 }
 
 void Object_EnableEffectSpawnCallback(void) {
-  Scheduler_EnableCallbacks(Object_EffectSpawnCallback);
+  Scheduler_SuspendTasks(Object_EffectSpawnCallback);
 }
 
 void Object_DisableEffectSpawnCallback(void) {
-  Scheduler_DisableCallbacks(Object_EffectSpawnCallback);
+  Scheduler_ResumeTasks(Object_EffectSpawnCallback);
 }
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {

@@ -19,7 +19,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2);
+void Projection_Set(u32 value0, u32 value1, u32 value2);
 
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -73,5 +73,5 @@ void Camera_ResetSceneDefaults(void) {
 
   param = 250;
   param <<= 16;
-  Camera_StoreSceneParameters(param, ratio, 0x7fff0000);
+  Projection_Set(param, ratio, 0x7fff0000);
 }

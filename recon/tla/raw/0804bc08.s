@@ -24,11 +24,11 @@ Func_0804bc08:
 	str r3, [sp, #96]
 	str r6, [sp, #60]
 	str r6, [sp, #56]
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	str r0, [sp, #52]
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r1, #136
 	str r0, [sp, #48]
 	lsls r1, r1, #1
@@ -923,7 +923,7 @@ Func_0804bc08:
 	movs r0, #128
 	mov r8, r2
 	ldr r5, [r3]
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r7, [r3, #60]
@@ -1168,7 +1168,7 @@ Func_0804bc08:
 	bl BattleActGet
 	mov r10, r0
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r2, [sp, #60]
 	str r0, [sp, #40]
 	str r2, [sp, #0]
@@ -1817,7 +1817,7 @@ Func_0804bc08:
 	mov r10, r4
 	ldr r5, [r0]
 	movs r0, #128
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	movs r3, #6
 	str r3, [sp, #0]
 	mov r9, r0

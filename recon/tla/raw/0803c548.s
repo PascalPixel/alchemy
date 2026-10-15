@@ -84,7 +84,7 @@ UiWork_AnimateSpriteSlots:
 	adds r2, r2, r3
 	ldrh r0, [r1]
 	movs r1, #128
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r3, .L_0803c640
 	ldrh r2, [r7, #8]
 	ands r0, r3

@@ -371,7 +371,7 @@ Func_08158dc8:
 	movs r0, #255
 	lsls r0, r0, #17
 	ldr r2, .L_081592d0
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	bl Render_ResetTransformState
 	ldr r6, [sp, #100]
 	cmp r6, #128

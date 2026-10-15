@@ -40,7 +40,7 @@ Func_080d6f34:
 	adds r2, r6, #0
 	str r0, [r5]
 	lsls r1, r1, #2
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	str r0, [r5, #4]
 	movs r0, #56
 	bl Runtime_ReleaseHeapBlock

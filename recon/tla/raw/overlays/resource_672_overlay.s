@@ -1439,7 +1439,7 @@ Func_020010d4:
 	ldrb r0, [r6, #16]
 	movs r1, #128
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_020091d4:

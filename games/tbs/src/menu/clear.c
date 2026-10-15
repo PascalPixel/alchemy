@@ -536,7 +536,7 @@ menu_top:;
 
       UiText_DrawResource(MsgClearSendingData, v6, 0, 4);
       Engine_TaskWait(10);
-      SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
+      SerialRuntime_BeginSend((s32)gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
       v5 = 0;
       v1 = 3;

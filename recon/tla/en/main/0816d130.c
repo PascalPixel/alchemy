@@ -42,7 +42,7 @@ void Func_081963ec(s32 slot, s32 kind);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Graphics_RestoreTransferWork(void);
+void Transform_Pop(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32 angle);
@@ -95,7 +95,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
         if (frame == 64)
             Func_081180e8(134);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
+        Transform_SetLookAt(view->eye, view->pos);
         if (frame == 72)
             Func_0814cd48(effect->actor, 7, -1, -1, 0);
         if (frame == 79)
@@ -109,7 +109,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
                 s32 point[3];
                 struct EffectPosition out;
 
-                Graphics_SaveTransferWorkOnce();
+                Transform_Push();
                 Func_08015160(orb->x, orb->y, orb->z);
                 if (i <= 11)
                     SceneTransform_ApplyPitch(frame << 9);
@@ -122,7 +122,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
                 point[2] = 0;
                 EffectPosition_ApplyBaseAndYOffset(point, &out);
                 out.x >>= 1;
-                Graphics_RestoreTransferWork();
+                Transform_Pop();
                 blit(canvas, sheet + gData_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
             }
             BattleFxKernels_IntegrateVector3(orb, 62, 0);

@@ -25,7 +25,7 @@ Func_08120060:
 	beq .L_0812007c
 	movs r0, #128
 	add r5, sp, #8
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	mov r3, sp
 	ldrh r3, [r3]
 	movs r7, #128
@@ -52,7 +52,7 @@ Func_08120060:
 	str r3, [r5, #8]
 	mov r1, r10
 	adds r0, r6, #0
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_08120100
 	ldr r2, .L_08120104
 	ands r0, r3

@@ -93,7 +93,7 @@ Func_080e09c0:
 	adds r1, r5, #0
 	mov r2, r10
 	str r0, [sp, #8]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #132
 	lsls r3, r3, #6
 	mov r11, r0
@@ -109,7 +109,7 @@ Func_080e09c0:
 	adds r1, r5, #0
 	mov r2, r10
 	str r0, [sp, #4]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #132
 	lsls r3, r3, #6
 	adds r3, #14

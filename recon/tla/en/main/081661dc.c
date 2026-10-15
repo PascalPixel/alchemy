@@ -137,7 +137,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
         if (frame == 8)
             Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
+        Transform_SetLookAt(view->eye, view->pos);
         if (frame > 3) {
             Func_08144aac(effect->side, routine);
             for (i = 0; i != 64; i++) {

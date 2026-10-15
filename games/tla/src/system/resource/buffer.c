@@ -58,7 +58,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 
   work = Runtime_AllocateBlock(0x44, 0x608);
   Ui_PrepareTransferFromTableEntry(resource);
-  result = Resource_GetBuffer(index, (s32)(work + 0x400));
+  result = VramCache_Reload(index, (s32)(work + 0x400));
   Runtime_ReleaseHeapBlock(0x44);
   return result;
 }
@@ -69,7 +69,7 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index) {
 
   work = Runtime_AllocateBlock(0x44, 0x608);
   ItemIcon_Compose(resource, 0x1a);
-  result = Resource_GetBuffer(index, (s32)(work + 0x400));
+  result = VramCache_Reload(index, (s32)(work + 0x400));
   Runtime_ReleaseHeapBlock(0x44);
   return result;
 }
@@ -83,7 +83,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   work = Runtime_AllocateBlock(0x44, 0x608);
   cur = index;
   Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-  ret = Resource_GetBuffer(index, (s32)(work + 0x400));
+  ret = VramCache_Reload(index, (s32)(work + 0x400));
   Runtime_ReleaseHeapBlock(0x44);
   return ret;
 }

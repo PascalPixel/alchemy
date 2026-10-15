@@ -156,7 +156,7 @@ Func_08144368:
 	mov r1, r10
 	adds r1, #12
 	mov r0, r10
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r3, #0
 	str r3, [sp, #24]
 	mov r1, r9

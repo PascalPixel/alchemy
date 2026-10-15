@@ -1350,7 +1350,7 @@ BattleEffect_RunParticleStreams:
 	adds r1, #12
 	adds r0, r5, #0
 	ldr r7, .L_08165968
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r1, #0
 	movs r2, #63
 	mov r8, r1

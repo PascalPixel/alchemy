@@ -49,7 +49,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price)
     if (window != 0) {
         slot = Resource_FindFreeEntry();
         if (slot != 96) {
-            VramBlock_LoadCached(slot, 0x100, 0);
+            VramCache_Load(slot, 0x100, 0);
             RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0, 0);
             sprite = (struct UiSprite *)RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->tile += 4;
@@ -82,7 +82,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price)
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);
                     Shop_FillSelector(minimum, 2, buffer);
-                    VramBlock_LoadCached(slot, 0x100, buffer);
+                    VramCache_Load(slot, 0x100, buffer);
                     result = count + 1;
                     UiText_DrawNumberInWindowFar(result, 2, window, 72, 0);
                     UiText_DrawNumberInWindowFar(price * result, 6, window, 88, 0);

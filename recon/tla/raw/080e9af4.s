@@ -48,7 +48,7 @@ Func_080e9af4:
 	lsls r1, r1, #4
 	mov r2, r8
 	adds r5, r0, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #44

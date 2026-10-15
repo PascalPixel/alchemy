@@ -5393,7 +5393,7 @@ Func_02005090:
 	ldr r0, [r1]
 	movs r1, #160
 	lsls r1, r1, #1
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	add r5, sp, #12
 	ldr r3, [r5, #4]
 	ldr r2, .L_0200d20c

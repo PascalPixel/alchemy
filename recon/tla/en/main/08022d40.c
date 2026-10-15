@@ -63,7 +63,7 @@ struct ResourceObject *ResourceObject_Create(s32 id)
         return NULL;
     if (resource == 96)
         return NULL;
-    tile = VramBlock_LoadCached(resource, 0, 0);
+    tile = VramCache_Load(resource, 0, 0);
     if (tile == 0)
         return NULL;
     found->slot = resource;

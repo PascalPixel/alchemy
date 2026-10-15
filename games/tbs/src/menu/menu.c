@@ -63,7 +63,7 @@ extern u8 IwramCopyWords[];
 s32 _call_via_r3(void *, void *, s32, void *);
 
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
-  Scheduler_DisableOverlayCallbacks();
+  Scheduler_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
   GameFlag_ClearBitFar(0x166);
   GameFlag_ClearBitFar(0x152);
@@ -73,7 +73,7 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
   Map_EnableUpdateCallbackFar();
-  return Scheduler_EnableUnmaskedOverlayCallbacks();
+  return Scheduler_SuspendOverlayTasks();
 }
 
 void UiWindow_InitializeWork(s32 unused) {
@@ -402,7 +402,7 @@ s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x,
   result = 0;
   entryId = Resource_FindFreeEntry();
   if (entryId != 0) {
-    VramBlock_LoadCached(entryId, 0x80, gUiIcon_ResourceTiles);
+    VramCache_Load(entryId, 0x80, gUiIcon_ResourceTiles);
     result = (s32)RenderOutput_CreateFar(entryId, 0x40000000, window, x, y);
   }
   return result;
@@ -418,7 +418,7 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
   slot = Resource_FindFreeEntry();
   resourceMode = 0x80;
   if (slot != 0) {
-    VramBlock_LoadCached(slot, copyMode = resourceMode, gUiIcon_ResourceTiles);
+    VramCache_Load(slot, copyMode = resourceMode, gUiIcon_ResourceTiles);
     icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
   }
   return icon;
@@ -897,7 +897,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
       if (*cursor > per_page - 1)
         *cursor = per_page - 1;
     }
-    Runtime_SetMainState19();
+    Input_ResetKeyRepeat();
     result = 1;
     return result;
   }
@@ -910,7 +910,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
       if (*cursor > per_page - 1)
         *cursor = per_page - 1;
     }
-    Runtime_SetMainState19();
+    Input_ResetKeyRepeat();
     result = 1;
     return result;
   }
@@ -3297,7 +3297,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
                                         menu->selectedItems[0] & ITEM_ID_MASK);
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
-    VramBlock_LoadCached(slot, 256, 0);
+    VramCache_Load(slot, 256, 0);
     RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 48,
                            32);
     object = RenderOutput_CreateFar(slot, 0x40004000,
@@ -3316,7 +3316,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
         Shop_FillSelectorFar(range + base, 0, tiles);
         Shop_FillSelectorFar(base + quantity + 1, 10, tiles);
         Shop_FillSelectorFar(base, 2, tiles);
-        VramBlock_LoadCached(slot, 256, tiles);
+        VramCache_Load(slot, 256, tiles);
         UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
         UiText_DrawCharacterAtOffsetFar(
             (menu->selectedItems[0] & ITEM_ID_MASK) + MsgItemName, window, 16,
@@ -3542,10 +3542,10 @@ void Resource_LoadPairedBlocks(void) {
   s32 value = Resource_FindFreeEntry();
 
   state->resourceSlots[0] = value;
-  VramBlock_LoadCached(value, 128, gMenu_ArrowTiles);
+  VramCache_Load(value, 128, gMenu_ArrowTiles);
   value = Resource_FindFreeEntry();
   state->resourceSlots[1] = value;
-  VramBlock_LoadCached(value, 128, gMenu_SmallDownArrowTiles);
+  VramCache_Load(value, 128, gMenu_SmallDownArrowTiles);
 }
 
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
@@ -3767,7 +3767,8 @@ s32 ItemMenu_RunList(s32 pane) {
         changed = 0;
       }
 
-      if ((gKeysPressed & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
+      if ((gKeysPressed & KEY_A) != 0 &&
+          menu->items[state.selectedIndex] != 0) {
         AudioCommand_PlayFar(173);
         result = menu->items[state.selectedIndex];
         done = 1;
@@ -7763,8 +7764,8 @@ s32 Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0),
-          0x80000010, REG_DMA3);
+  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
+          REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           0x80000010, REG_DMA3);
@@ -9779,13 +9780,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         cursor[page]--;
         cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         dirty = 1;
       }
     } else if ((inputHeld & 16) != 0) {
       if (page <= 1) {
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         cursor[page]++;
         dirty = 1;
         cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
@@ -9935,12 +9936,12 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
       cursor[side]--;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
       AudioCommand_PlayFar(111);
-      Runtime_SetMainState19();
+      Input_ResetKeyRepeat();
       pending = 1;
     } else if (repeat & KEY_RIGHT) {
       cursor[side]++;
       AudioCommand_PlayFar(111);
-      Runtime_SetMainState19();
+      Input_ResetKeyRepeat();
       pending = 1;
       cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
     }
@@ -10054,12 +10055,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = Resource_FindFreeEntry();
   activeState->resourceSlots[0] = firstSlot;
   if (firstSlot != -1) {
-    VramBlock_LoadCached(firstSlot, 0x80, gMenu_PairSpriteATiles);
+    VramCache_Load(firstSlot, 0x80, gMenu_PairSpriteATiles);
   }
   secondSlot = Resource_FindFreeEntry();
   activeState->resourceSlots[1] = secondSlot;
   if (secondSlot != -1) {
-    VramBlock_LoadCached(secondSlot, 0x80, gMenu_PairSpriteBTiles);
+    VramCache_Load(secondSlot, 0x80, gMenu_PairSpriteBTiles);
   }
 }
 
@@ -10080,7 +10081,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   allocation = (s32)Runtime_AllocateBlock(0x11, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
-  buffer = Resource_GetBuffer(slot, allocation + 0x400);
+  buffer = VramCache_Reload(slot, allocation + 0x400);
   Runtime_ReleaseHeapBlock(0x11);
   return buffer;
 }

@@ -30,7 +30,7 @@ Func_08022bd8:
 	bl Runtime_AllocateHeapBlock
 .L_08022c0e:
 	adds r6, r0, #0
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r3, #128
 	mov r4, sp
 	movs r5, #0
@@ -51,7 +51,7 @@ Func_08022bd8:
 	ldr r2, .L_08022c6c
 	movs r1, #128
 	movs r0, #93
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r5, .L_08022c70
 	movs r0, #84
 	adds r1, r5, #0

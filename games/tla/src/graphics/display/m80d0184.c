@@ -30,8 +30,8 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
 #endif
 
 void Func_080d0184(void) {
-  Scheduler_EnableCallbacks(Func_080cf78c);
-  Scheduler_EnableCallbacks(Func_080cf6fc);
+  Scheduler_SuspendTasks(Func_080cf78c);
+  Scheduler_SuspendTasks(Func_080cf6fc);
 }
 
 void *Func_080d019c(void) {

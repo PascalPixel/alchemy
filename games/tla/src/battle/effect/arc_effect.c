@@ -18,7 +18,7 @@ void BattleFx_StartArcEffect(void) {
   struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));
 
   work->resource = Resource_FindFreeEntry();
-  VramBlock_LoadCached(work->resource, 0x100, gBattleFx_ArcTiles);
+  VramCache_Load(work->resource, 0x100, gBattleFx_ArcTiles);
   work->group = 0;
   work->age[0] = 999;
   work->age[1] = 999;

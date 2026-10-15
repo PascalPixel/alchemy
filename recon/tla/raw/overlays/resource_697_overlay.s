@@ -6231,7 +6231,7 @@ Func_020051a0:
 	ldrsh r0, [r7, r2]
 	lsls r1, r1, #2
 	adds r2, r5, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 .L_0200d26a:
@@ -6245,7 +6245,7 @@ Func_020051a0:
 	adds r3, #216
 	movs r7, #0
 	ldrsh r0, [r3, r7]
-	bl Resource_ActivateEntry
+	bl VramCache_ReleaseVram
 	b .L_0200d5b2
 .L_0200d284:
 	movs r0, #0
@@ -6751,7 +6751,7 @@ Func_020055c4:
 	adds r2, r7, #0
 	lsls r1, r1, #2
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #118

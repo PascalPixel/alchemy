@@ -50,10 +50,10 @@ Func_02004aa8:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -61,7 +61,7 @@ Resource_FindFreeEntry:
 	.global Func_02004ac8
 	.thumb_func
 Func_02004ac8:
-	overlay_veneer Bg0_ClearTilemapFar
+	overlay_veneer DebugText_ClearFar
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:

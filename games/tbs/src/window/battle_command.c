@@ -419,7 +419,7 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
   u32 result;
 
   if (canvas->menuState == 0) {
-    Dma_Set((const void *)Runtime_GetLowTableAddress(),
+    Dma_Set((const void *)Palette_GetBasicObjColors(),
             (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }
@@ -1635,7 +1635,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
   UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
   tile = Resource_FindFreeEntry();
   if (tile < 96) {
-    VramBlock_LoadCached(tile, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(tile, 128, gResource_FixedBlockBTiles);
     x = -12;
     y = slot * 16 + 4;
     anchor =
@@ -1834,7 +1834,7 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
-  VramBlock_LoadCached(slot, 0x80, gResource_FixedBlockBTiles);
+  VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
   return slot;
 }
 
@@ -1943,11 +1943,11 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
 }
 
 void Resource_CopyFixedBlockB(s32 arg0) {
-  VramBlock_LoadCached(arg0, 0x80, gResource_FixedBlockBTiles);
+  VramCache_Load(arg0, 0x80, gResource_FixedBlockBTiles);
 }
 
 void Resource_CopyFixedBlockA(s32 arg0) {
-  VramBlock_LoadCached(arg0, 0x80, gResource_FixedBlockATiles);
+  VramCache_Load(arg0, 0x80, gResource_FixedBlockATiles);
 }
 
 #if EDITION_INTERNATIONAL
@@ -2067,7 +2067,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   column = 18;
   row = 5;
   if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
     output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
     cursor.output = output;
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140,
@@ -2075,7 +2075,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   }
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockATiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockATiles);
     output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
     caret.output = output;
     output->sentinel = 255;
@@ -2308,7 +2308,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   slot = Resource_FindFreeEntry();
   row = 10;
   if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
     output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
     cursor.output = output;
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140,
@@ -2316,7 +2316,7 @@ s32 NameEntry_EditOwnerName(s32 entry) {
   }
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockATiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockATiles);
     output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
     caret.output = output;
     output->sentinel = 255;
@@ -2587,7 +2587,7 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   slot = Resource_FindFreeEntry();
   row = 0;
   if (slot < 96) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
     cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
     ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
@@ -2810,7 +2810,7 @@ void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
 
   if (resourceIndex <= 0x5F) {
     Resource_DecodeByteLz(resource, stagingBuffer);
-    VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
+    VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     Runtime_ReleaseHeapBlock(14);
   }
 }
@@ -2857,7 +2857,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       Runtime_RemapBytesByTableFar(buffer, 768);
-    VramBlock_LoadCached(value, size, buffer);
+    VramCache_Load(value, size, buffer);
     Runtime_ReleaseHeapBlock(14);
   }
 }
@@ -3051,7 +3051,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 
   work = Runtime_AllocateBlock(17, sizeof(*work));
   Ui_PrepareTransferFromTableEntry(resource);
-  result = Resource_GetBuffer(index, (s32)work->tiles);
+  result = VramCache_Reload(index, (s32)work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return result;
 }
@@ -3062,7 +3062,7 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index) {
 
   work = Runtime_AllocateBlock(17, sizeof(*work));
   ItemIcon_Compose(resource, 0x1a);
-  result = Resource_GetBuffer(index, (s32)work->tiles);
+  result = VramCache_Reload(index, (s32)work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return result;
 }
@@ -3076,7 +3076,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   work = Runtime_AllocateBlock(17, sizeof(*work));
   cur = index;
   Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-  ret = Resource_GetBuffer(index, (s32)work->tiles);
+  ret = VramCache_Reload(index, (s32)work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return ret;
 }
@@ -3156,7 +3156,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
 
   *slot = target;
   Resource_DecodeByteLz(target, buffer);
-  ret = Resource_GetBuffer(arg0, (s32)buffer);
+  ret = VramCache_Reload(arg0, (s32)buffer);
   Runtime_ReleaseHeapBlock(0x11);
   return ret;
 }
@@ -3279,7 +3279,7 @@ s32 Ui_RunSelectionScreen(s32 mode) {
   s32 i, num;
 
   render = UI_WORK;
-  slot = Resource_LoadIntoFreeSlot(0x400);
+  slot = VramCache_AllocEntry(0x400);
   rebuild = 1;
   tradeCount = 0;
   work = Runtime_BumpAllocateAlternatePool(sizeof(*work));
@@ -3632,7 +3632,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
   u8 *src;
 
   dst = out;
-  Text_FormatSignedDecimalToWork(value);
+  NumberText_FormatDecimal(value);
   src = (u8 *)((u32)&gNumberTextBuffer);
   n = 0xD;
   do {
@@ -3751,7 +3751,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
          differ 2, 2 and 4; all three plain differ 2 (the entry copy moves
          after the x and y stores), with entry set first or after the
          sentinel still 2, after x or y 38. */
-      *(s8 *)&output->index = Resource_LoadIntoFreeSlot(128);
+      *(s8 *)&output->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)((u8 *)output + 16);
       output->sentinel = 240;
       output->x = 120;
@@ -3772,7 +3772,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
        * changes and two extra instructions remain (80 -> 82, 22 rows). */
       win++;
       win--;
-      entry->tile.bits.index = Resource_GetBuffer(
+      entry->tile.bits.index = VramCache_Reload(
           (u8)output->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
       RenderOutput_AppendToList((struct RenderOutputList *)win, output);
@@ -4058,7 +4058,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   base = UI_WORK;
   redraw = 1;
   idx = -1;
-  handleFrame = Resource_LoadIntoFreeSlot(0x200);
+  handleFrame = VramCache_AllocEntry(0x200);
   cnt = 0;
   extended = Party_SumDjinnCountsFar(-1);
 
@@ -4077,9 +4077,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   cur.lastEntry = 0;
   cur.mode = 0;
 
-  handleCursor = Resource_LoadIntoFreeSlot(0x80);
+  handleCursor = VramCache_AllocEntry(0x80);
   for (i = 0; i <= 10; i++) {
-    table[i] = Resource_LoadIntoFreeSlot(0x80);
+    table[i] = VramCache_AllocEntry(0x80);
     selection[i] = -1;
   }
 
@@ -4294,7 +4294,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
      * both asms are scheduling barriers only (differ 8 without them). */
     asm("");
     objCursor.oam.f.tile =
-        Resource_GetBuffer(handleCursor, (s32)gResource_FixedBlockBTiles);
+        VramCache_Reload(handleCursor, (s32)gResource_FixedBlockBTiles);
     objCursor.oam.f.x =
         (pix.x + winMain->x * 8 - ((gFrameCount & 4) >> 2)) + 16;
     objCursor.oam.f.y =
@@ -4819,7 +4819,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   ctx = UI_WORK;
   detailWin = 0;
   prevRow = -1;
-  res = Resource_LoadIntoFreeSlot(0x80);
+  res = VramCache_AllocEntry(0x80);
   table = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
   cnt = 0;
   prevPage = -1;
@@ -5153,7 +5153,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         redraw = 1;
       } else if (rep & 16) {
         AudioCommand_PlayFar(0x6f);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page + 5 >= cnt) {
           if (page != 0) {
             page = 0;
@@ -5171,7 +5171,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         }
       } else if (rep & 32) {
         AudioCommand_PlayFar(0x6f);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page != 0) {
           page -= 5;
           row = savedRow;
@@ -5211,7 +5211,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     curSpr = &slot;
     ((u32 *)curSpr)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)curSpr)[2] = 0;
-    curSpr->tile = Resource_GetBuffer(res, (s32)gResource_FixedBlockBTiles);
+    curSpr->tile = VramCache_Reload(res, (s32)gResource_FixedBlockBTiles);
     curSpr->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     curSpr->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (cnt != 0) {
@@ -5316,7 +5316,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   render = UI_WORK;
   drawnRow = -1;
   drawnPage = -1;
-  cursorHandle = (s16)Resource_LoadIntoFreeSlot(128); // 16x16 スプライト 1 枚分
+  cursorHandle = (s16)VramCache_AllocEntry(128); // 16x16 スプライト 1 枚分
   description = UiWindow_Create(0, 4, 30, 4, 42);
   counts = UiWindow_Create(20, 8, 10, 3, 6);
   mask = 0;
@@ -5337,9 +5337,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     sprite->oam.f.y = (y + window->y) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
-    s32 slot = Resource_LoadIntoFreeSlot(128);
+    s32 slot = VramCache_AllocEntry(128);
     handles[index] = slot;
-    sprites[index].oam.f.tile = Resource_GetBuffer(slot, -1);
+    sprites[index].oam.f.tile = VramCache_Reload(slot, -1);
   }
 
   // 今のスタンバイ数で呼べる召喚を後ろから順に先頭へ、残りをもとの順で後ろへ
@@ -5502,7 +5502,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)cur)[2] = 0;
     cur->tile =
-        Resource_GetBuffer((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
+        VramCache_Reload((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     /* FAKEMATCH: register choice and order: the cursor is pushed through
@@ -5591,7 +5591,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     } else if (repeated & KEY_RIGHT) {
       // 次のページ（最後からは先頭へ）
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      Runtime_SetMainState19();
+      Input_ResetKeyRepeat();
       if (page + 4 >= count) {
         if (page != 0) {
           page = 0;
@@ -5609,7 +5609,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     } else if (repeated & KEY_LEFT) {
       // 前のページ（先頭からは最後へ）
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      Runtime_SetMainState19();
+      Input_ResetKeyRepeat();
       if (page != 0) {
         page -= 4;
         row = preferred;
@@ -5705,7 +5705,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   render = UI_WORK;
   drawnPage = -1;
   drawnRow = -1;
-  cursorHandle = Resource_LoadIntoFreeSlot(128);
+  cursorHandle = VramCache_AllocEntry(128);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = 0;
   MenuCell_GetCursor(page, row, preferredRow);
@@ -5721,8 +5721,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   }
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-    handles[i] = Resource_LoadIntoFreeSlot(128);
-    sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
+    handles[i] = VramCache_AllocEntry(128);
+    sprites[i].oam.f.tile = VramCache_Reload(handles[i], -1);
   }
 
   Vram_CopyTile(0xf018, 0x200);
@@ -5838,8 +5838,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
     cur = &cursor;
     ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)cur)[2] = 0;
-    cur->tile =
-        Resource_GetBuffer(cursorHandle, (s32)gResource_FixedBlockBTiles);
+    cur->tile = VramCache_Reload(cursorHandle, (s32)gResource_FixedBlockBTiles);
     cur->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
@@ -5901,7 +5900,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         preferredRow = row;
       } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page + BATTLE_LIST_ROWS >= count) {
           if (page != 0) {
             page = 0;
@@ -5919,7 +5918,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         }
       } else if ((gKeysRepeat & KEY_LEFT) != 0) {
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page != 0) {
           page -= BATTLE_LIST_ROWS;
           row = preferredRow;
@@ -5979,7 +5978,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   render = UI_WORK;
   drawnRow = -1;
   drawnPage = -1;
-  cursorHandle = Resource_LoadIntoFreeSlot(128);
+  cursorHandle = VramCache_AllocEntry(128);
   unit = UnitGetFar(unitId);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = BATTLE_LIST_ROWS;
@@ -5996,8 +5995,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   }
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-    handles[i] = Resource_LoadIntoFreeSlot(128);
-    sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
+    handles[i] = VramCache_AllocEntry(128);
+    sprites[i].oam.f.tile = VramCache_Reload(handles[i], -1);
   }
 
   Vram_CopyTile(0xf018, 0x200);
@@ -6128,7 +6127,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     ((u32 *)spr)[1] = 0x40000000;
     ((u32 *)spr)[2] = 0;
     spr->oam.f.tile =
-        Resource_GetBuffer(cursorHandle, (s32)gResource_FixedBlockBTiles);
+        VramCache_Reload(cursorHandle, (s32)gResource_FixedBlockBTiles);
     spr->oam.f.x = pos.x + ((gFrameCount & 4) >> 1) - 4;
     spr->oam.f.y = pos.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
@@ -6182,7 +6181,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         preferredRow = row;
       } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page + BATTLE_LIST_ROWS >= count) {
           if (page != 0) {
             page = 0;
@@ -6200,7 +6199,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         }
       } else if ((gKeysRepeat & KEY_LEFT) != 0) {
         AudioCommand_PlayFar(111);
-        Runtime_SetMainState19();
+        Input_ResetKeyRepeat();
         if (page != 0) {
           row = preferredRow;
           page -= BATTLE_LIST_ROWS;
@@ -6298,7 +6297,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   runtime = gBattleWork;
   cnt = 0;
   redraw = 0xFFFF;
-  slotId = Resource_LoadIntoFreeSlot(256);
+  slotId = VramCache_AllocEntry(256);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
   /* FAKEMATCH: register choice only: this value-preserving null
    * initializer is needed to match infoWin in r10; a direct zero swaps
@@ -6419,8 +6418,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     ((s32 *)head)[1] = 0x40002000;
     ((s32 *)head)[2] = 0;
-    head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) +
-                                                (s32)gMenu_AnimatedCursorTiles);
+    head->tile = VramCache_Reload(slotId, (((gFrameCount >> 2) & 31) << 8) +
+                                              (s32)gMenu_AnimatedCursorTiles);
     pos.y += Trig_Sin(gFrameCount << 12) / 32768;
     y = pos.y;
     if (table[0].flags & 1) {
@@ -7169,8 +7168,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
   aux = 256;
   kind = 0;
   param = 0;
-  res1024 = Resource_LoadIntoFreeSlot(1024);
-  res512 = Resource_LoadIntoFreeSlot(512);
+  res1024 = VramCache_AllocEntry(1024);
+  res512 = VramCache_AllocEntry(512);
   state = Runtime_AllocateBlock(57, 260);
   Resource_LoadIndexedIntoBuffer(res1024, 0);
   Graphics_ExpandVramTilesByColorTable(0x06006000);
@@ -7451,7 +7450,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         ability = BattleActGet(param);
         cost = ability->range;
         slot = &state->entries[1];
-        handle = Resource_LoadIntoFreeSlot(128);
+        handle = VramCache_AllocEntry(128);
         ui = UI_WORK;
         win = UiWindow_Create(8, 17, 18, 3, 6);
         state->entries[0].oam.f.x = 40;
@@ -7538,7 +7537,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         slot = &state->entries[1];
         djinn = SummonDefinition_Get(mode);
         ability = BattleActGet(djinn->nameMessageId);
-        handle = Resource_LoadIntoFreeSlot(128);
+        handle = VramCache_AllocEntry(128);
 #if EDITION_INTERNATIONAL
         win = UiWindow_Create(10, 17, 17, 3, 6);
 #else
@@ -7750,7 +7749,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
             Item_GetDirectFar(actor->inventory[selection])->actionId);
         cost = ability->range;
         slot = &state->entries[1];
-        handle = Resource_LoadIntoFreeSlot(128);
+        handle = VramCache_AllocEntry(128);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         win = UiWindow_Create(9, 17, 16, 3, 6);
@@ -8163,7 +8162,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index) {
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
-  VramBlock_LoadCached(slot, size, buffer);
+  VramCache_Load(slot, size, buffer);
   MemFree(buffer);
 }
 

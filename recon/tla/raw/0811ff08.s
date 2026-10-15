@@ -21,7 +21,7 @@ BattlePresentation_WaitForAdvance:
 	beq .L_0811ff1a
 	movs r0, #128
 	add r7, sp, #4
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	mov r11, r0
 	movs r0, #0
 .L_0811ff34:
@@ -64,7 +64,7 @@ BattlePresentation_WaitForAdvance:
 	str r3, [r7, #8]
 	adds r1, r5, #0
 	mov r0, r11
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_0811ffbc
 	ldr r2, .L_0811ffc0
 	ands r0, r3

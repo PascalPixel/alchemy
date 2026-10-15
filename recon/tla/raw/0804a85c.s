@@ -27,7 +27,7 @@ Func_0804a85c:
 	lsls r0, r0, #1
 	str r3, [sp, #76]
 	str r1, [sp, #56]
-	bl Resource_LoadIntoFreeSlot
+	bl VramCache_AllocEntry
 	ldr r3, [sp, #84]
 	movs r2, #0
 	str r0, [sp, #52]
@@ -465,7 +465,7 @@ Func_0804a85c:
 	ldr r3, .L_0804ac04
 	lsls r1, r1, #8
 	adds r1, r1, r3
-	bl Resource_GetBuffer
+	bl VramCache_Reload
 	ldr r3, .L_0804abf8
 	ldr r6, [sp, #24]
 	ands r0, r3

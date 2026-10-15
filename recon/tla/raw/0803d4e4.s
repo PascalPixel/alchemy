@@ -70,7 +70,7 @@ Ui_BuildPairedPatternsToSlot:
 	lsls r3, r3, #3
 	adds r2, r7, r3
 	movs r1, #128
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r2, [sp, #0]
 	str r0, [r2]
 	movs r0, #68

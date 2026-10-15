@@ -16,10 +16,10 @@ struct BgScroll { u16 x, y; };
 extern struct BgScroll gBgScroll[];
 extern char ResourceId_CamelotLogo;
 
-void Blend_SetDarkenTarget16(s32 frames);
-void Blend_SetBrightenTarget0(s32 frames);
-void Blend_WaitForTransition(void);
-void Bg0_ClearTilemap(void);
+void Fade_ToBlack(s32 frames);
+void Fade_FromWhite(s32 frames);
+void Fade_Wait(void);
+void DebugText_Clear(void);
 void Ui_LoadWindowGraphics(void);
 
 s32 Title_ShowAnimatedSplash(void)
@@ -34,8 +34,8 @@ s32 Title_ShowAnimatedSplash(void)
     gRenderOamEnabled = 1;
     resource = (s32)&ResourceId_CamelotLogo;
     Scheduler_ResetTaskTable();
-    Blend_SetDarkenTarget16(1);
-    Bg0_ClearTilemap();
+    Fade_ToBlack(1);
+    DebugText_Clear();
     WaitFrames(1);
     REG_BG2CNT = 0x685;
     REG_DISPCNT = 0x1440;
@@ -55,9 +55,9 @@ s32 Title_ShowAnimatedSplash(void)
     }
     Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
     Ui_LoadWindowGraphics();
-    Bg0_ClearTilemap();
-    Blend_SetBrightenTarget0(1);
-    Blend_WaitForTransition();
+    DebugText_Clear();
+    Fade_FromWhite(1);
+    Fade_Wait();
     REG_DISPCNT = 0x1540;
     for (i = 0; i < 120; i++) {
         /* FAKEMATCH: the unsigned address sum retains the DMA source operand order. */

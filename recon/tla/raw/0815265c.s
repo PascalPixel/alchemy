@@ -2404,7 +2404,7 @@ BattleFx_RunProjectileVolleyB:
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r5, .L_081539b8
 	movs r0, #12
 	mov r9, r6

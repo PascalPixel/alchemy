@@ -15,7 +15,7 @@
 
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-s32 Runtime_GetLowTableAddress(void);
+s32 Palette_GetBasicObjColors(void);
 
 s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
@@ -31,7 +31,7 @@ s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value)
     u32 result;
 
     if (canvas->menuState == 0) {
-        Dma_Set((const void *)Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(14, 0),
+        Dma_Set((const void *)Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(14, 0),
             0x80000010, REG_DMA3);
         BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
     }

@@ -13,7 +13,7 @@ extern u8 IwramSoundMixWorkspace[];
 extern char ResourceId_WindowTiles;
 void *Resource_GetTableEntry(s32);
 
-void Bg0_ClearTilemap(void)
+void DebugText_Clear(void)
 {
     volatile u32 fill;
 

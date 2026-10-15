@@ -101,7 +101,7 @@ Func_0802de8c:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #1
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 .L_0802df54:
 	bl Runtime_InitializeHeap
 	bl Scheduler_ResetTaskTable
@@ -109,7 +109,7 @@ Func_0802de8c:
 	movs r0, #36
 	bl Runtime_AllocateBlock
 	str r0, [sp, #4]
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	movs r0, #2
 	bl Func_080230e0
 	mov r0, r10

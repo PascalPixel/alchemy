@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Graphics_PrepareTransfer
+	.global Transform_BuildLookAt
 	.thumb_func
-Graphics_PrepareTransfer:
+Transform_BuildLookAt:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

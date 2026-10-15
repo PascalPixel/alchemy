@@ -60,7 +60,7 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
             entry->x = entry->x - state->nodes[0].offset;
     }
     tmp = frames + frame * 128;
-    entry->tile = VramBlock_LoadCached(state->nodes[index].handle, 128, tmp);
+    entry->tile = VramCache_Load(state->nodes[index].handle, 128, tmp);
     if (GameFlag_IsSet(0x103)) {
         if (state->mode == 1)
             entry->mode = 1;

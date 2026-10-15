@@ -223,7 +223,7 @@ void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
 void Func_08013560(s32);
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void Func_08144aac(s32, DrawRectangleFn *);
@@ -331,7 +331,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     REG_WININ = 0x2737;
     REG_WIN0H = 240;
     Func_08013560(1);
-    PaletteDma_LoadBlock();
+    Palette_LoadBasicObjColors();
     scene->unk867 = 1;
     BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
     Func_08164b2c(0, -20, -20);
@@ -1247,7 +1247,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     }
     Func_0801314c(188);
     Func_0801314c(104);
-    PaletteDma_LoadBlock();
+    Palette_LoadBasicObjColors();
     REG_DISPCNT = 0x141;
     Func_08013560(1);
     scene->unk867 = 0;

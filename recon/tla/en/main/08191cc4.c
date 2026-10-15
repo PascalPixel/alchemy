@@ -23,7 +23,7 @@ struct SummonTransition {
 extern u32 gCameraSceneParameters[];
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void Func_08118088(s32 actor, s32 mode);
-void PaletteDma_LoadBlock(void);
+void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 mode);
 
 void Func_08191cc4(void)
@@ -45,6 +45,6 @@ void Func_08191cc4(void)
     transition->active = 0;
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    PaletteDma_LoadBlock();
+    Palette_LoadBasicObjColors();
     BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
 }

@@ -30,10 +30,10 @@ Func_02001248:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -49,11 +49,11 @@ Resource_GetTableEntry:
 	.global Func_02001278
 	.thumb_func
 Func_02001278:
-	overlay_veneer Blend_SetBrightenTarget16Far
+	overlay_veneer Fade_ToWhiteFar
 	.global Func_02001280
 	.thumb_func
 Func_02001280:
-	overlay_veneer Blend_SetBrightenTarget0Far
+	overlay_veneer Fade_FromWhiteFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

@@ -15,10 +15,10 @@ extern volatile u32 gKeyState;
 
 void Audio_PlayCue(s32 cue);
 void Scheduler_ResetTaskTable(void);
-void Blend_SetDarkenTarget16(s32 frames);
-void Blend_SetDarkenTarget0(s32 frames);
-void Blend_WaitForTransition(void);
-void Bg0_ClearTilemap(void);
+void Fade_ToBlack(s32 frames);
+void Fade_FromBlack(s32 frames);
+void Fade_Wait(void);
+void DebugText_Clear(void);
 void Ui_LoadWindowGraphics(void);
 
 s32 Title_ShowSplashScreen(s32 mode)
@@ -37,8 +37,8 @@ s32 Title_ShowSplashScreen(s32 mode)
     resource = (s32)&ResourceId_NintendoLogo;
     blank = 0x1ff;
     Scheduler_ResetTaskTable();
-    Blend_SetDarkenTarget16(1);
-    Bg0_ClearTilemap();
+    Fade_ToBlack(1);
+    DebugText_Clear();
     WaitFrames(1);
     *(volatile u16 *)0x0400000c = 0x681;
     *(volatile u16 *)0x04000000 = 0x1440;
@@ -75,11 +75,11 @@ row:
     }
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
     Ui_LoadWindowGraphics();
-    Bg0_ClearTilemap();
+    DebugText_Clear();
     *(volatile u16 *)0x04000000 = 0x1540;
     if (mode == 0) {
-        Blend_SetDarkenTarget0(1);
-        Blend_WaitForTransition();
+        Fade_FromBlack(1);
+        Fade_Wait();
         for (y = 0; y < 120; y++) {
             if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
@@ -97,10 +97,10 @@ row:
         WaitFrames(1);
     }
     if (result != 0)
-        Blend_SetDarkenTarget0(8);
+        Fade_FromBlack(8);
     else
-        Blend_SetDarkenTarget0(60);
-    Blend_WaitForTransition();
+        Fade_FromBlack(60);
+    Fade_Wait();
     if (result == 0) {
         for (y = 0; y < 180; y++) {
             if (gKeyState & (KEY_A | KEY_START)) {
@@ -111,9 +111,9 @@ row:
         }
     }
     if (result != 0)
-        Blend_SetDarkenTarget16(8);
+        Fade_ToBlack(8);
     else
-        Blend_SetDarkenTarget16(60);
-    Blend_WaitForTransition();
+        Fade_ToBlack(60);
+    Fade_Wait();
     return result;
 }

@@ -13,7 +13,7 @@
 	.set import.Engine_BlendSetDarkenTarget16, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
-	.set import.SerialRuntime_BeginTransferA, 1
+	.set import.SerialRuntime_BeginSend, 1
 	.set import.UiWindow_Create, 1
 	.set import.UiWork_Finalize, 1
 	.set import.UiText_ShowPositionedMessageAndWait, 1

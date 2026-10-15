@@ -634,7 +634,7 @@ Func_0200065c:
 	adds r2, r3, r2
 	movs r1, #128
 	str r2, [sp, #0]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 .L_020087f4:
@@ -8028,7 +8028,7 @@ Func_02004ec8:
 	adds r2, r5, #0
 	lsls r1, r1, #1
 	asrs r0, r0, #16
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r0, r5, #0
 	bl MemFree
 	movs r1, #144

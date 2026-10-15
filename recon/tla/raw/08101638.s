@@ -75,7 +75,7 @@ Func_08101638:
 	ldr r0, .L_081017e0
 	mov lr, r9
 	.2byte 0xf800
-	bl Runtime_GetLowTableAddress
+	bl Palette_GetBasicObjColors
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

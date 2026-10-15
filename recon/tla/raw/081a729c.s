@@ -24,9 +24,9 @@ Func_081a729c:
 	mov r11, r0
 	bl Scheduler_ResetTaskTable
 	movs r0, #1
-	bl Blend_SetBrightenTarget16
+	bl Fade_ToWhite
 	bl Func_08014b70
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, .L_081a7310
@@ -151,7 +151,7 @@ Func_081a729c:
 	lsrs r2, r2, #1
 	adds r2, r6, r2
 	movs r1, #128
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	adds r2, r5, #0
 	movs r3, #0
 	stmia r2!, {r3}
@@ -166,8 +166,8 @@ Func_081a729c:
 	bl Runtime_ReleaseHeapBlock
 .L_081a73f2:
 	movs r0, #30
-	bl Blend_SetBrightenTarget0
-	bl Blend_WaitForTransition
+	bl Fade_FromWhite
+	bl Fade_Wait
 	ldr r3, .L_081a7420
 	movs r2, #128
 	lsls r2, r2, #19

@@ -273,8 +273,8 @@ s32 Title_ShowIntro(s32 prompt) {
   blank = 0x1ff;
   saved = gCpuLoadDisplayEnabled;
   work = Runtime_AllocateHeapBlock(43, 224);
-  Bg0_ClearTilemap();
-  Resource_InitializeTable();
+  DebugText_Clear();
+  VramCache_Reset();
   WaitFrames(1);
   Scheduler_ResetTaskTable();
   gOamCopyEnabled = result;
@@ -292,7 +292,8 @@ s32 Title_ShowIntro(s32 prompt) {
     s32 tick;
 
     frame = work->frame;
-    if (frame > 20 && frame < 239 && (gKeysPressed & (KEY_A | KEY_START)) != 0) {
+    if (frame > 20 && frame < 239 &&
+        (gKeysPressed & (KEY_A | KEY_START)) != 0) {
       work->state = 1;
       work->frame = 239;
       frame = 239;
@@ -347,7 +348,7 @@ s32 Title_ShowIntro(s32 prompt) {
     } else if (next == 289) {
       work->state = 0;
     } else if (next == 280) {
-      Blend_SetBrightenTarget16(1);
+      Fade_ToWhite(1);
       Scheduler_RemoveCallback(Title_PlaceIntroSprites);
       gOamCopyEnabled = 1;
       WaitFrames(1);
@@ -375,15 +376,15 @@ s32 Title_ShowIntro(s32 prompt) {
   }
 
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = Runtime_AllocateBlock(14, 0x400);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
     Resource_DecodeByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
-      s32 block = VramBlock_LoadCached(Resource_FindFreeEntry(), 128,
-                                       buffer + (i << 8) / 2);
+      s32 block =
+          VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
       u32 *out = (u32 *)sprite;
 
       *out++ = 0;
@@ -393,8 +394,8 @@ s32 Title_ShowIntro(s32 prompt) {
     }
     Runtime_ReleaseHeapBlock(14);
   }
-  Blend_SetBrightenTarget0(30);
-  Blend_WaitForTransition();
+  Fade_FromWhite(30);
+  Fade_Wait();
   REG_DISPCNT = 0x1540;
   if (prompt != 0)
     limit = 3600;
@@ -463,8 +464,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   resource = (s32)&ResourceId_NintendoLogo;
   blank = 0x1ff;
   Scheduler_ResetTaskTable();
-  Blend_SetDarkenTarget16(1);
-  Bg0_ClearTilemap();
+  Fade_ToBlack(1);
+  DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = 0x681;
   REG_DISPCNT = 0x1440;
@@ -488,11 +489,11 @@ s32 Title_ShowSplashScreen(s32 mode) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
+  DebugText_Clear();
   REG_DISPCNT = 0x1540;
   if (mode == 0) {
-    Blend_SetDarkenTarget0(1);
-    Blend_WaitForTransition();
+    Fade_FromBlack(1);
+    Fade_Wait();
     for (y = 0; y < 120; y++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
@@ -510,10 +511,10 @@ s32 Title_ShowSplashScreen(s32 mode) {
     WaitFrames(1);
   }
   if (result != 0)
-    Blend_SetDarkenTarget0(8);
+    Fade_FromBlack(8);
   else
-    Blend_SetDarkenTarget0(60);
-  Blend_WaitForTransition();
+    Fade_FromBlack(60);
+  Fade_Wait();
   if (result == 0) {
     for (y = 0; y < 180; y++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
@@ -524,10 +525,10 @@ s32 Title_ShowSplashScreen(s32 mode) {
     }
   }
   if (result != 0)
-    Blend_SetDarkenTarget16(8);
+    Fade_ToBlack(8);
   else
-    Blend_SetDarkenTarget16(60);
-  Blend_WaitForTransition();
+    Fade_ToBlack(60);
+  Fade_Wait();
   return result;
 }
 
@@ -541,8 +542,8 @@ s32 Title_ShowAnimatedSplash(void) {
   result = 0;
   resource = (s32)&ResourceId_CamelotLogo;
   Scheduler_ResetTaskTable();
-  Blend_SetDarkenTarget16(1);
-  Bg0_ClearTilemap();
+  Fade_ToBlack(1);
+  DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
@@ -567,9 +568,9 @@ s32 Title_ShowAnimatedSplash(void) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
   Ui_LoadWindowGraphics();
-  Bg0_ClearTilemap();
-  Blend_SetBrightenTarget0(1);
-  Blend_WaitForTransition();
+  DebugText_Clear();
+  Fade_FromWhite(1);
+  Fade_Wait();
   REG_DISPCNT = 0x1540;
   for (i = 0; i < 120; i++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + buffer, BG_CHAR_BLOCK(1) + 0x100,

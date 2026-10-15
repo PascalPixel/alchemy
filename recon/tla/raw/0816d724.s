@@ -496,7 +496,7 @@ Func_0816d724:
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r0, #48
 	movs r4, #0
 	add r0, sp

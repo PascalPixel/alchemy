@@ -6017,7 +6017,7 @@ Func_020038dc:
 	lsls r1, r1, #3
 	adds r2, r6, #0
 	adds r5, r0, #0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r1, #176
 	lsls r1, r1, #5
 	adds r1, #2

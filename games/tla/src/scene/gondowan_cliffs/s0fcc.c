@@ -17,7 +17,7 @@ s32 GameFlag_Test(s32 flag);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Func_02001184(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void VramCache_Load(s32 entry, s32 size, void *source);
 void MemFree(void *block);
 void Scheduler_AddOrUpdateCallback();
 void Func_02000be4(void);
@@ -35,7 +35,7 @@ void Func_02000fcc(s32 unused, s32 value) {
   buffer = (void *)Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x800);
   Func_02001184(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
-  Call3((void (*)())VramBlock_LoadCached, work->entry, 0x800, (s32)buffer);
+  Call3((void (*)())VramCache_Load, work->entry, 0x800, (s32)buffer);
   MemFree(buffer);
   work->block = Runtime_BumpAllocateAlternatePool(0x3c0);
   work->value = value;

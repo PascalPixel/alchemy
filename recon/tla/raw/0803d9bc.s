@@ -79,7 +79,7 @@ UiIcon_BuildAbilityIconTiles:
 	ldr r0, [r1]
 	adds r2, r5, r3
 	movs r1, #128
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	mov r1, r9
 	str r0, [r1]
 	movs r0, #68

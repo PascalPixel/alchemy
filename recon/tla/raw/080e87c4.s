@@ -82,7 +82,7 @@ Func_080e87c4:
 	lsls r1, r1, #1
 	mov r2, r10
 	str r0, [sp, #4]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r6, #208
 	movs r7, #128
 	lsls r6, r6, #5

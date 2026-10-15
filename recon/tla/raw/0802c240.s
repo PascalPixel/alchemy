@@ -227,7 +227,7 @@ Func_0802c240:
 	adds r1, r2, r1
 	asrs r1, r1, #1
 	lsls r2, r2, #1
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	bl Render_ResetTransformState
 	mov r0, r9
 	bl SceneTransform_ApplyPosition
@@ -267,7 +267,7 @@ Func_0802c240:
 	bl Render_ResetTransformState
 	mov r1, r9
 	ldr r0, [sp, #32]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r7, .L_0802c4c8
 	ldrh r0, [r6]
 	ldr r3, [r7]

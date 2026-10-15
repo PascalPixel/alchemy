@@ -1264,7 +1264,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   struct UiRenderWork *state = UI_WORK;
   s32 size;
 
-  state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->unknownBeforeCount = 9;
   state->lineSpacing = 10;
   state->outline = 0;
@@ -1280,7 +1280,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize) {
   s32 size;
 
   if (initialize != 0)
-    state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+    state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->unknownBeforeCount = 9;
   state->lineSpacing = 10;
   state->outline = 0;
@@ -3831,7 +3831,7 @@ void UiWork_AnimateSpriteSlots(void) {
         if (work->glyphResource != 0x60) {
           const u8 *tiles = &gUiSprite_CursorFrameTiles[phase * 128];
 
-          sprite->tile = VramBlock_LoadCached(work->glyphResource, 128, tiles);
+          sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
           output->index = sprite->tile;
           sprite->mode = 0;
           sprite->mosaic = 0;
@@ -4538,7 +4538,7 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
   if (flag == 0) {
     *slot = Resource_FindFreeEntry();
   }
-  *ret = VramBlock_LoadCached(*slot, 0x80, work->tiles);
+  *ret = VramCache_Load(*slot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
@@ -4575,7 +4575,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
   if (reuse == 0)
     *src = Resource_FindFreeEntry();
 
-  *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
+  *dst = VramCache_Load(*src, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
@@ -4662,7 +4662,7 @@ s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   ItemIcon_Compose(arg0, arg1);
-  VramBlock_LoadCached(arg2, 0x80, work->tiles);
+  VramCache_Load(arg2, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return 1;
 }
@@ -4672,7 +4672,7 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot) {
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   Ui_PrepareTransferFromTableEntry(icon);
-  VramBlock_LoadCached(slot, 0x80, work->tiles);
+  VramCache_Load(slot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return 1;
 }
@@ -4701,7 +4701,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
     source = gRenderResource_PairSourceTable;
     break;
   }
-  VramBlock_LoadCached(slot, 32, source);
+  VramCache_Load(slot, 32, source);
   return 1;
 }
 
@@ -4754,7 +4754,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
   if (reuse == 0)
     *src = Resource_FindFreeEntry();
 
-  *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
+  *dst = VramCache_Load(*src, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
@@ -4787,7 +4787,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   UiGlyph_DecodeWithHeapRoutines(work, 0);
   if (reuse == 0)
     *slot = Resource_FindFreeEntry();
-  *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
+  *tile = VramCache_Load(*slot, 0x200, work->tiles);
   Runtime_ReleaseHeapBlock(17);
   Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(palette, 0), 0x80000010, REG_DMA3);
 }
@@ -4855,8 +4855,7 @@ void UiGlyph_ResetWorkState(void) {
   work->records[1].y = 0;
   table = gMenu_AnimatedCursorTiles;
   work->records[14].slot = Resource_FindFreeEntry();
-  work->records[14].tile =
-      VramBlock_LoadCached(work->records[14].slot, 256, table);
+  work->records[14].tile = VramCache_Load(work->records[14].slot, 256, table);
   work->records[14].kind = 0;
   work->records[14].scale = 0;
   work->records[15].kind = 0;
@@ -5120,7 +5119,7 @@ void MenuSelection_DrawFrame(void) {
     {
       void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
-      cursorEntry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+      cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
     }
     if (cursor->targetX != cursor->x) {
       tmp = (cursor->targetX - cursor->x) >> 1;
@@ -5173,7 +5172,7 @@ void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index) {
       entry->x = entry->x - state->records[0].base;
   }
   tmp = frames + frame * 128;
-  entry->tile = VramBlock_LoadCached(state->records[index].slot, 128, tmp);
+  entry->tile = VramCache_Load(state->records[index].slot, 128, tmp);
   if (GameFlag_TestFar(0x103)) {
     if (state->records[14].kind == 1)
       entry->mode = 1;
@@ -5319,7 +5318,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index) {
   if (state->records[index].y == 0) {
     state->records[index].slot = Resource_FindFreeEntry();
     state->records[index].tile =
-        VramBlock_LoadCached(state->records[index].slot, 128, frames);
+        VramCache_Load(state->records[index].slot, 128, frames);
     state->records[index].y = state->baseY;
     state->records[index].base = 0;
     entry->mode = 0;
@@ -5981,7 +5980,7 @@ void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot) {
   s32 value = Resource_FindFreeEntry();
 
   *slot = value;
-  object->oam.f.tile = VramBlock_LoadCached(value, 0x80, data);
+  object->oam.f.tile = VramCache_Load(value, 0x80, data);
   object->oam.f.mode = 0;
   object->oam.f.mosaic = 0;
   object->oam.f.colors = 1;
@@ -6025,7 +6024,7 @@ void Menu_LoadSelectedResource(void) {
 
   if (transfer->kind == 0)
     transfer->slot = Resource_FindFreeEntry();
-  transfer->tile = VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+  transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = 1;
   transfer->base = no;
   transfer->scale = 40;
@@ -6253,7 +6252,7 @@ void Debug_SelectAbilityPair(void) {
     info = UiWindow_Create(4, 14, 20, 5, 2);
     slot = Resource_FindFreeEntry();
     if (slot != 0) {
-      VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
+      VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
       cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
     }
     /* FAKEMATCH: needed to match: the title message reuses the slot variable.
@@ -6674,16 +6673,16 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   } else {
     src0 = (s32)&ResourceId_ShopCursorFrames;
   }
-  VramBlock_LoadCached((u8)work->marker[0].output->index, 0x100,
-                       Resource_GetTableEntry(src0));
+  VramCache_Load((u8)work->marker[0].output->index, 0x100,
+                 Resource_GetTableEntry(src0));
 
   if (selection == 1) {
     src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
   } else {
     src1 = (s32)&ResourceId_ShopCursorFrames;
   }
-  VramBlock_LoadCached((u8)work->marker[1].output->index, 0x100,
-                       Resource_GetTableEntry(src1));
+  VramCache_Load((u8)work->marker[1].output->index, 0x100,
+                 Resource_GetTableEntry(src1));
 
   if (selection > 1)
     Ui_ApplyTableScaleToObject(
@@ -6751,7 +6750,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    VramBlock_LoadCached(x, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(x, 128, gResource_FixedBlockBTiles);
     out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
     work->cursor.output = out;
     x = win->x * 8;
@@ -6763,7 +6762,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   if (x < RESOURCE_SLOTS) {
     Dma_Set(gWorkspaceOptions_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
-    VramBlock_LoadCached(x, 256, gWorkspaceOptions_SliderTiles);
+    VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
     y = 0;
     out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
     out->oam.palette = SLIDER_PALETTE;
@@ -6780,7 +6779,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    VramBlock_LoadCached(x, 256, 0);
+    VramCache_Load(x, 256, 0);
     out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
     out->oam.palette256 = 1;
     work->marker[0].output = out;
@@ -6792,7 +6791,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    VramBlock_LoadCached(x, 256, 0);
+    VramCache_Load(x, 256, 0);
     out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
     out->oam.palette256 = 1;
     work->marker[1].output = out;
@@ -7065,7 +7064,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void) {
   }
   slot = Resource_FindFreeEntry();
   if (slot < RESOURCE_SLOTS) {
-    VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
     work->cursor.output = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
     x = win->x * 8;
     y = win->y * 8 + 16;

@@ -28,12 +28,12 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *eye, void *pos);
+void Transform_SetLookAt(void *eye, void *pos);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Graphics_SaveTransferWorkOnce(void);
-void Graphics_RestoreTransferWork(void);
+void Transform_Push(void);
+void Transform_Pop(void);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping, s32 gravity);
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -75,14 +75,14 @@ void Func_081539d0(struct BattleEffectArgument *effect)
 
         camera = Ram_HeapSlots->cameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         SceneTransform_ApplyPosition(record);
         star = PARTICLES;
         for (i = 0; i != 64; i++, star++) {
             if (frame > i / 4 && star->variant == 0) {
                 s32 size;
 
-                Graphics_SaveTransferWorkOnce();
+                Transform_Push();
                 switch (i & 3) {
                 case 0:
                     SceneTransform_ApplyYaw(frame * (i + 32) * 8);
@@ -100,7 +100,7 @@ void Func_081539d0(struct BattleEffectArgument *effect)
                 }
                 EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
                 pos.x >>= 1;
-                Graphics_RestoreTransferWork();
+                Transform_Pop();
                 if (pos.depth < 250)
                     pos.depth = 250;
                 if (pos.depth > 0x27a)

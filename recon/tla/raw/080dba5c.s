@@ -41,7 +41,7 @@ Func_080dba5c:
 	adds r1, r5, #0
 	adds r2, r6, #0
 	mov r8, r0
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	movs r2, #254
 	lsls r2, r2, #3
 	adds r3, r7, r2

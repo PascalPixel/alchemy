@@ -784,7 +784,7 @@ BattlePres_RunBurstScene:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #20]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r1, #3
 	movs r0, #104
 	bl Func_081963ec

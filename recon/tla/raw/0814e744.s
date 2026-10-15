@@ -60,7 +60,7 @@ Func_0814e744:
 	adds r1, r6, #0
 	adds r1, #12
 	adds r0, r6, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r0, #0
 	str r0, [sp, #20]
 	mov r1, r11

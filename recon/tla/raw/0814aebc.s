@@ -162,7 +162,7 @@ Func_0814aebc:
 	bl Render_ResetTransformState
 	mov r0, r10
 	mov r1, r9
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	str r3, [r6]

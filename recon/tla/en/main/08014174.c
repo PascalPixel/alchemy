@@ -1,7 +1,7 @@
 #include "resource.h"
 #include "vram_tab.h"
 
-s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
+s32 VramCache_AllocateBlocks(u32 id, u32 size)
 {
     u32 blocks;
     s32 result;

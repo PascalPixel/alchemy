@@ -15,7 +15,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
   u8 *src;
 
   dst = out;
-  Text_FormatSignedDecimalToWork(value);
+  NumberText_FormatDecimal(value);
   src = gNumberTextBuffer;
   n = 0xD;
   do {

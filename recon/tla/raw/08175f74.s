@@ -99,7 +99,7 @@ Func_08175f74:
 	strh r5, [r3]
 	movs r0, #1
 	bl WaitFrames
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	movs r7, #237
 	ldr r5, [sp, #68]
 	lsls r7, r7, #3
@@ -3417,7 +3417,7 @@ Func_08175f74:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	ldr r3, .L_08177a08
 	movs r2, #128
 	lsls r2, r2, #19

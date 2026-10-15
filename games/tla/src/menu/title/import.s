@@ -22,10 +22,10 @@ MemFree:
 	.thumb_func
 Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -42,14 +42,14 @@ Resource_GetTableEntry:
 	.thumb_func
 Func_020005bc:
 	overlay_veneer Resource_ReservedNoOpFar
-	.global Blend_SetDarkenTarget16
+	.global Fade_ToBlack
 	.thumb_func
-Blend_SetDarkenTarget16:
-	overlay_veneer Blend_SetDarkenTarget16Far
-	.global Blend_WaitForTransition
+Fade_ToBlack:
+	overlay_veneer Fade_ToBlackFar
+	.global Fade_Wait
 	.thumb_func
-Blend_WaitForTransition:
-	overlay_veneer Blend_WaitForTransitionFar
+Fade_Wait:
+	overlay_veneer Fade_WaitFar
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:

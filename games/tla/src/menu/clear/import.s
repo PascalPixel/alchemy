@@ -46,10 +46,10 @@ Func_02002208:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Blend_SetDarkenTarget16
+	.global Fade_ToBlack
 	.thumb_func
-Blend_SetDarkenTarget16:
-	overlay_veneer Blend_SetDarkenTarget16Far
+Fade_ToBlack:
+	overlay_veneer Fade_ToBlackFar
 	.global Func_02002220
 	.thumb_func
 Func_02002220:
@@ -58,9 +58,9 @@ Func_02002220:
 	.thumb_func
 Func_02002228:
 	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global SerialRuntime_BeginTransferB
+	.global SerialRuntime_BeginReceive
 	.thumb_func
-SerialRuntime_BeginTransferB:
+SerialRuntime_BeginReceive:
 	overlay_veneer Party_CheckFar
 	.global UnitGet
 	.thumb_func

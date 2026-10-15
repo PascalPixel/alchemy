@@ -42,10 +42,10 @@ Runtime_AllocateHeapBlockFar:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global VramBlock_LoadCached
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

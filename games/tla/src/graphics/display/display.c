@@ -21,7 +21,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
 
   *slot = target;
   Resource_DecodeByteLzInRam(target, buffer);
-  ret = Resource_GetBuffer(arg0, (s32)buffer);
+  ret = VramCache_Reload(arg0, (s32)buffer);
   Runtime_ReleaseHeapBlock(68);
   return ret;
 }

@@ -2940,7 +2940,7 @@ void FieldFx_StartGroundParticles(void) {
   words = Runtime_AllocateBlock(14, 0x400);
   Resource_DecodeByteLz(gFieldFx_GroundParticleTiles, words);
   work->entry = Resource_FindFreeEntry();
-  work->tileBase = VramBlock_LoadCached(work->entry, 0x300, words);
+  work->tileBase = VramCache_Load(work->entry, 0x300, words);
   Runtime_ReleaseHeapBlock(14);
   for (i = 0; i < 32; i++) {
     s32 x;
@@ -3052,7 +3052,7 @@ void FieldMotes_Start(void) {
   tiles = Runtime_AllocateBlock(14, 0x400);
   Resource_DecodeByteLz(gFieldFx_MoteTiles, tiles);
   work->entry = Resource_FindFreeEntry();
-  work->tileBase = VramBlock_LoadCached(work->entry, 0x300, tiles);
+  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   Runtime_ReleaseHeapBlock(14);
   for (i = 0; i < 32; i++) {
     s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
@@ -3186,7 +3186,7 @@ void FieldEffect_InitSparkles(void) {
   buf = Runtime_AllocateBlock(14, 0x400);
   Resource_DecodeByteLz(gFieldFx_SparkleTiles, buf);
   work->entry = Resource_FindFreeEntry();
-  work->tileBase = VramBlock_LoadCached(work->entry, 0x200, buf);
+  work->tileBase = VramCache_Load(work->entry, 0x200, buf);
   Runtime_ReleaseHeapBlock(14);
   i = 0;
   clear = 0;
@@ -4982,7 +4982,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   if (work->animation != 8)
     ev->unkcc0 = running;
   work->tileSlot = Resource_FindFreeEntry();
-  VramBlock_LoadCached((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
+  VramCache_Load((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
@@ -8800,7 +8800,7 @@ void RunBattleEffect16(void) {
     s32 zero = 0;
 
     *tileSlot = slot;
-    VramBlock_LoadCached((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
+    VramCache_Load((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
     gGameState.avoidByItem = GameFlag_TestFar(0x145);
     Animation_ApplyChildValuesFar(object, zero);
@@ -9038,7 +9038,7 @@ void BattleFx_SetupResourcesAndWindow(void) {
   pal[26] = 0x1ffff;
   pal[27] = 0x11ff0;
   pal[28] = 0x1100;
-  attr = VramBlock_LoadCached(work->vramBlock, 128, pal) | 0x400;
+  attr = VramCache_Load(work->vramBlock, 128, pal) | 0x400;
   for (i = 0; i < 66; i++) {
     *oam++ = 0;
     *oam++ = 0;
@@ -9419,7 +9419,7 @@ void BattleFx_RunVisibilityTransition(void) {
   struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
 
   if (field->mode == 3) {
-    Scheduler_EnableUnmaskedOverlayCallbacks();
+    Scheduler_SuspendOverlayTasks();
     BattleFx_UpdateObjectVisibilityBounds();
     Battle_InitializeRenderObject();
     BattleFx_ScheduleRatioTransition(0x9d89, 6);
@@ -9429,6 +9429,6 @@ void BattleFx_RunVisibilityTransition(void) {
       } while (gKeysHeld & KEY_L);
     }
     BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Scheduler_DisableOverlayCallbacks();
+    Scheduler_ResumeOverlayTasks();
   }
 }

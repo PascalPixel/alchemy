@@ -12,10 +12,10 @@
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.Sound_LoadPresetParameters, 1
-	.set import.SerialRuntime_BeginTransferA, 1
-	.set import.SerialRuntime_BeginTransferB, 1
+	.set import.SerialRuntime_BeginSend, 1
+	.set import.SerialRuntime_BeginReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
-	.set import.Scheduler_SetCallbackMask, 1
+	.set import.Scheduler_SetTaskFlags, 1
 	.set import.Engine_MapRedraw, 1
 	.set import.Engine_MapCopyCellsTo, 1
 	.set import.Map_ClearLayerEntryFlag, 1

@@ -620,7 +620,7 @@ Func_0802386c:
 	cmp r3, #0
 	bne .L_08023d44
 	ldrb r0, [r0, #16]
-	bl Resource_ActivateEntry
+	bl VramCache_ReleaseVram
 	ldr r1, [sp, #48]
 	strb r5, [r1, #25]
 	b .L_08023d44
@@ -643,7 +643,7 @@ Func_0802386c:
 	bne .L_08023d44
 .L_08023d3c:
 	ldrb r0, [r5, #16]
-	bl Resource_ActivateEntry
+	bl VramCache_ReleaseVram
 	strb r6, [r5, #25]
 .L_08023d44:
 	ldr r4, [sp, #80]

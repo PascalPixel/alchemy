@@ -7,7 +7,7 @@
 // キー付きコールバックは値を返す（呼び出し先アドレスが r0 に載る）
 typedef s32 (*KeyCallbackFn)(void);
 
-s32 Scheduler_DisableCallbacks(SchedulerCallback callback) {
+s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -26,7 +26,7 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback) {
   return result;
 }
 
-s32 Scheduler_DisableOverlayCallbacks(void) {
+s32 Scheduler_ResumeOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 saved_interrupt_master;
   s32 result;

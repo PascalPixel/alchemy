@@ -11,7 +11,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   struct UiRenderWork *state =
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
-  state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = 10;
   state->outline = 0;
@@ -28,7 +28,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize) {
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
   if (initialize != 0)
-    state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+    state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = 10;
   state->outline = 0;

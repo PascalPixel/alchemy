@@ -3,7 +3,7 @@
 #include "types.h"
 #include "system.h"
 
-void Blend_SetDarkenTarget16(s32 arg0);
+void Fade_ToBlack(s32 arg0);
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {
@@ -27,7 +27,7 @@ s32 BattlePres_RunMosaicFadeOut(void)
     reg += 0x21;
     *reg = 0x3eee;
 
-    Blend_SetDarkenTarget16(16);
+    Fade_ToBlack(16);
     for (i = 0; i <= 15; i++) {
         Random16();
         Random16();

@@ -76,10 +76,10 @@ Input_UpdateKeyRepeatAndDirection:
 Func_08013de4:
 	.incbin "baserom.gba", 0x00013de4, 0x0000008c
 	.section .rom.00014174, "ax"
-	.global ResourceTable_AllocateBlocks
-	.type ResourceTable_AllocateBlocks, %function
+	.global VramCache_AllocateBlocks
+	.type VramCache_AllocateBlocks, %function
 	.thumb_func
-ResourceTable_AllocateBlocks:
+VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x00014174, 0x00000080
 	.section .rom.000143f6, "ax"
 	.incbin "baserom.gba", 0x000143f6, 0x00000002
@@ -90,10 +90,10 @@ ResourceTable_AllocateBlocks:
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b70, 0x0000003c
 	.section .rom.00015510, "ax"
-	.global Graphics_PrepareTransfer
-	.type Graphics_PrepareTransfer, %function
+	.global Transform_BuildLookAt
+	.type Transform_BuildLookAt, %function
 	.thumb_func
-Graphics_PrepareTransfer:
+Transform_BuildLookAt:
 	.incbin "baserom.gba", 0x00015510, 0x000001d8
 	.section .rom.00015778, "ax"
 	.global Render_ProjectPoint

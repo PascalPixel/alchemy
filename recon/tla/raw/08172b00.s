@@ -341,7 +341,7 @@ Func_08172b00:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #72]
 	ldr r1, [sp, #16]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r2, [sp, #92]
 	cmp r2, #0
 	beq .L_08172dba

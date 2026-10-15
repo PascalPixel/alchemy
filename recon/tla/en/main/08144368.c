@@ -49,7 +49,7 @@ void Func_081963ec(s32 slot, s32 flags);
 void Func_0814cd48(s32 id, s32 objectValue, s32 groupValue, s32 stateSlot, s32 stateValue);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_08144368(struct BattleEffectArgument *effect)
 {
@@ -115,7 +115,7 @@ void Func_08144368(struct BattleEffectArgument *effect)
             }
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera + 3);
+        Transform_SetLookAt(camera, camera + 3);
         member = 0;
         if (effect->count != 0)
         {

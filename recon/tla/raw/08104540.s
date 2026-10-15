@@ -380,7 +380,7 @@ Func_08104540:
 	str r0, [r1]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	movs r2, #1
 	str r2, [sp, #60]
 	b .L_08104880
@@ -401,7 +401,7 @@ Func_08104540:
 	str r0, [r3]
 	movs r0, #111
 	bl Audio_PlayCue
-	bl Runtime_SetMainState19
+	bl Input_ResetKeyRepeat
 	movs r0, #1
 	str r0, [sp, #60]
 .L_08104880:

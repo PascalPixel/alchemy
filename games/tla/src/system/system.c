@@ -129,7 +129,7 @@ void WaitFrames(s32 frames) {
     gLagFrameCount = 0;
     System_WaitForFrameInterrupt();
     Runtime_ReleaseHeapBlock(80);
-    Graphics_ResetFrameState();
+    Render_ResetFrame();
     gFrameCount++;
     gFrameWaitCount++;
     Input_UpdateKeyRepeatAndDirection();
@@ -182,4 +182,4 @@ void WaitFrames(s32 frames) {
   }
 }
 
-void Runtime_SetMainState19(void) { gInput.repeatTimer = 19; }
+void Input_ResetKeyRepeat(void) { gInput.repeatTimer = 19; }

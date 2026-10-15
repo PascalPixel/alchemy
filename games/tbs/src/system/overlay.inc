@@ -64,8 +64,8 @@
 	import Resource_DecodeByteLz, Resource_DecodeByteLzFar
 	import Resource_DecodeType01, Resource_DecodeType01Far
 	import Resource_ResetEntry, Resource_ResetEntryFar
-	import Resource_ActivateEntry, Resource_ActivateEntryFar
-	import Engine_VramLoad, VramBlock_LoadCachedFar
+	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
+	import Engine_VramLoad, VramCache_LoadFar
 	import Resource_FindFreeEntry, Resource_FindFreeEntryFar
 	import AffineMatrix_BuildForEffect, AffineMatrix_BuildForEffectFar
 	import Runtime_PushSlotEntry, Runtime_PushSlotEntryFar
@@ -73,19 +73,19 @@
 	import Engine_ResourceGetTableEntry, Resource_GetTableEntryFar
 	import Resource_GetTableEntry, Resource_GetTableEntryFar
 	import RuntimeDispatch_NoOpHook, RuntimeDispatch_NoOpHookFar
-	import Blend_SetDarkenTarget16, Blend_SetDarkenTarget16Far
-	import Engine_BlendSetDarkenTarget16, Blend_SetDarkenTarget16Far
-	import Blend_WaitForTransition, Blend_WaitForTransitionFar
+	import Fade_ToBlack, Fade_ToBlackFar
+	import Engine_BlendSetDarkenTarget16, Fade_ToBlackFar
+	import Fade_Wait, Fade_WaitFar
 	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
 	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
 	import QueueIoWriteDelay2, QueueIoWriteDelay2Far
 	import QueueIoWriteDelay3, QueueIoWriteDelay3Far
 	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
 	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
-	import SerialRuntime_BeginTransferA, SerialRuntime_BeginTransferAFar
-	import SerialRuntime_BeginTransferB, SerialRuntime_BeginTransferBFar
+	import SerialRuntime_BeginSend, SerialRuntime_BeginSendFar
+	import SerialRuntime_BeginReceive, SerialRuntime_BeginReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
-	import Scheduler_SetCallbackMask, Scheduler_SetCallbackMaskFar
+	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
 @ farcall/field.h
 	import AnimationObjects_SelectAnimation, AnimationObjects_SelectAnimationFar
 	import Object_InitializeMode, AnimationObjects_SelectAnimationFar

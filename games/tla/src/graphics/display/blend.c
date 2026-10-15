@@ -18,7 +18,7 @@
 #include "iwram_call.h"
 #include "affine.h"
 
-// フェードは VBlank ごとに BlendTransition_Update が進める。
+// フェードは VBlank ごとに Fade_Update が進める。
 // 明るさ（BLDY）は 0 で元のまま、16 で真っ白または真っ黒。
 //   gBlendBrighten   : 0 黒へ / 1 白へ
 //   gBlendLayers     : BLDCNT の対象レイヤー（下の 4 つは 0x3e で
@@ -28,7 +28,7 @@
 // 黒へフェードアウト
 // frames : かけるフレーム数
 //--------------------------------------------------------------------------
-void Blend_SetDarkenTarget16(s32 frames) {
+void Fade_ToBlack(s32 frames) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -40,7 +40,7 @@ void Blend_SetDarkenTarget16(s32 frames) {
 //--------------------------------------------------------------------------
 // 黒からフェードイン
 //--------------------------------------------------------------------------
-void Blend_SetDarkenTarget0(s32 frames) {
+void Fade_FromBlack(s32 frames) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -52,7 +52,7 @@ void Blend_SetDarkenTarget0(s32 frames) {
 //--------------------------------------------------------------------------
 // 白へフェードアウト
 //--------------------------------------------------------------------------
-void Blend_SetBrightenTarget16(s32 frames) {
+void Fade_ToWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -64,7 +64,7 @@ void Blend_SetBrightenTarget16(s32 frames) {
 //--------------------------------------------------------------------------
 // 白からフェードイン
 //--------------------------------------------------------------------------
-void Blend_SetBrightenTarget0(s32 frames) {
+void Fade_FromWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -81,8 +81,7 @@ void Blend_SetBrightenTarget0(s32 frames) {
 // target : 目標の明るさ
 // frames : かけるフレーム数
 //--------------------------------------------------------------------------
-void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target,
-                               s32 frames) {
+void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
   gBlendLayers = layer & 0x3f;
   if (start > 16U) {
@@ -97,7 +96,7 @@ void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target,
 //--------------------------------------------------------------------------
 // フェードが終わるまで待つ
 //--------------------------------------------------------------------------
-void Blend_WaitForTransition(void) {
+void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {
       WaitFrames(1);
@@ -107,7 +106,7 @@ void Blend_WaitForTransition(void) {
 
 extern u8 gOamBucketMasks[];
 
-void Graphics_ResetFrameState(void) {
+void Render_ResetFrame(void) {
   gObjAffineCount = 0;
   Iwram_ClearWords(gOamBucketMasks, 32);
 }

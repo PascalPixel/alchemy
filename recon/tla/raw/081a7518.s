@@ -15,7 +15,7 @@ Func_081a7518:
 	ldr r5, .L_081a7584
 	bl Scheduler_ResetTaskTable
 	movs r0, #1
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 	bl Func_08014b70
 	movs r0, #1
 	bl WaitFrames
@@ -130,8 +130,8 @@ Func_081a7518:
 	cmp r3, #0
 	bne .L_081a766e
 	movs r0, #1
-	bl Blend_SetDarkenTarget0
-	bl Blend_WaitForTransition
+	bl Fade_FromBlack
+	bl Fade_Wait
 	ldr r3, .L_081a764c
 	movs r2, #9
 	ldr r3, [r3, #4]
@@ -193,13 +193,13 @@ Func_081a7518:
 	cmp r6, #0
 	beq .L_081a76a0
 	movs r0, #8
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 	b .L_081a76a6
 .L_081a76a0:
 	movs r0, #60
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 .L_081a76a6:
-	bl Blend_WaitForTransition
+	bl Fade_Wait
 	cmp r6, #0
 	bne .L_081a76d8
 	ldr r3, .L_081a76f4
@@ -227,13 +227,13 @@ Func_081a7518:
 	beq .L_081a76e0
 .L_081a76d8:
 	movs r0, #8
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 	b .L_081a76e6
 .L_081a76e0:
 	movs r0, #60
-	bl Blend_SetDarkenTarget16
+	bl Fade_ToBlack
 .L_081a76e6:
-	bl Blend_WaitForTransition
+	bl Fade_Wait
 .L_081a76ea:
 	adds r0, r6, #0
 	pop {r3}

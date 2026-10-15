@@ -32,7 +32,7 @@ extern u8 gMapCellBuffer[];
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void VramCache_Load(s32 entry, s32 size, void *source);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Func_02000d18(void);

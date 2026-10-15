@@ -32,7 +32,7 @@ extern char ResourceId_Data1F7;
 void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 entry, s32 size, void *source);
+s32 VramCache_Load(s32 entry, s32 size, void *source);
 void Func_020035fc(struct FieldSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram);
 
 void Func_02002d34(void)
@@ -49,7 +49,7 @@ void Func_02002d34(void)
             work->tiles[i] = (work->tiles[i] & 0xf) + 0x60;
     }
     entry = Resource_FindFreeEntry();
-    vram = VramBlock_LoadCached(entry, 0x800, work);
+    vram = VramCache_Load(entry, 0x800, work);
     work->entryB = entry;
     work->vramB = vram;
     sprite = &work->spriteB;

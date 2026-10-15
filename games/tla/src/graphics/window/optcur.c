@@ -56,16 +56,16 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   } else {
     src0 = (s32)&ResourceId_ShopCursorFrames;
   }
-  VramBlock_LoadCached((u8)work->marker[0].output->index, 0x100,
-                       Resource_GetTableEntry(src0));
+  VramCache_Load((u8)work->marker[0].output->index, 0x100,
+                 Resource_GetTableEntry(src0));
 
   if (selection == 1) {
     src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
   } else {
     src1 = (s32)&ResourceId_ShopCursorFrames;
   }
-  VramBlock_LoadCached((u8)work->marker[1].output->index, 0x100,
-                       Resource_GetTableEntry(src1));
+  VramCache_Load((u8)work->marker[1].output->index, 0x100,
+                 Resource_GetTableEntry(src1));
 
   if (selection > 1)
     Func_080450fc(work->frame[selection - 2][work->option[selection]]);

@@ -363,7 +363,7 @@ Func_08192c9c:
 	adds r6, #240
 	ldr r0, [r3, r6]
 	bl Func_0814cc4c
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	ldr r3, [r5]
 	movs r0, #0
 	ldr r3, [r3, r6]
@@ -1679,7 +1679,7 @@ Func_08192c9c:
 	adds r6, #240
 	ldr r0, [r3, r6]
 	bl Func_0814cc4c
-	bl PaletteDma_LoadBlock
+	bl Palette_LoadBasicObjColors
 	ldr r0, [sp, #64]
 	movs r5, #0
 	ldr r3, [r0]

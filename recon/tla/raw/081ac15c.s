@@ -422,7 +422,7 @@ LuckyDice_Run:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #104]
 	ldr r1, [sp, #40]
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r3, .L_081ac728
 	ldr r5, [sp, #108]
 	movs r2, #196

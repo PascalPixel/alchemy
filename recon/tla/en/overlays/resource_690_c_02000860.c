@@ -55,7 +55,7 @@ void Func_02002058(s32 item);
 void Func_02002170(void);
 u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_020007d8(void);
 s32 Func_020007fc(s32 *p);
 
@@ -106,7 +106,7 @@ void Func_02000860(void)
     transfer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02002058(193);
     transfer += 0x400;
-    VramBlock_LoadCached(sprite->palette, 128, transfer);
+    VramCache_Load(sprite->palette, 128, transfer);
     Runtime_ReleaseHeapBlock(68);
     actor->orbitCenterX = actor->x;
     actor->orbitAngle = 0;

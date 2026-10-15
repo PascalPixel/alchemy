@@ -68,7 +68,7 @@ Func_0801319c:
 	adds r2, #15
 	strh r2, [r3]
 	bl Audio_InitializeRuntimeDefaultsFar
-	bl Resource_InitializeTable
+	bl VramCache_Reset
 	bl Scheduler_ResetTaskTable
 	ldr r3, .L_08013268
 	ldr r2, .L_0801326c

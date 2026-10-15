@@ -316,7 +316,7 @@ Func_020003a0:
 	str r0, [r5]
 	lsls r1, r1, #5
 	ldr r5, .L_020084bc
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r6, .L_020084c0
 	movs r3, #192
 	str r0, [r5]
@@ -360,7 +360,7 @@ Func_020003a0:
 	str r0, [r6]
 	lsls r1, r1, #5
 	ldr r6, .L_020084cc
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	str r0, [r6]
 	ldr r6, .L_020084d0
 	movs r3, #192

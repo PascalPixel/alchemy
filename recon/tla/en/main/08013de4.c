@@ -1,4 +1,4 @@
-/* Draft, differ 6 of 48: The Broken Seal's BlendTransition_Update as it is.
+/* Draft, differ 6 of 48: The Broken Seal's Fade_Update as it is.
  * Three schedules differ: the native loads &gBlendFramesLeft after the BLDCNT
  * store and &gBlendTargetLevel after the frame count's store, where this
  * hoists both, and finishes BLDY's address after adding the quotient. Barriers
@@ -26,7 +26,7 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 s32 __divsi3(s32, s32);
-void BlendTransition_Update(void)
+void Fade_Update(void)
 {
 	if (gBlendDuration != 0)
 	{

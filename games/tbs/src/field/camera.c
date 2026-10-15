@@ -62,7 +62,7 @@ void Camera_ResetSceneDefaults(void) {
 
   param1 = 250;
   param1 <<= 16;
-  Camera_StoreSceneParameters(param1, result, 0x7fff0000);
+  Projection_Set(param1, result, 0x7fff0000);
 }
 
 s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
@@ -357,7 +357,7 @@ void LuckyDice_Run(void) {
       Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, frame << 12, 256);
     }
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(render->eye, render->pos);
+    Transform_SetLookAt(render->eye, render->pos);
 
     count = 0;
     sprites->obj[count].attr01 = 0xc0006000;

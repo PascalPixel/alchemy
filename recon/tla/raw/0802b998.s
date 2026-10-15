@@ -22,7 +22,7 @@ Func_0802b998:
 	strh r3, [r2]
 	movs r0, #0
 	sub sp, #36
-	bl Blend_SetDarkenTarget0
+	bl Fade_FromBlack
 	movs r1, #144
 	lsls r1, r1, #4
 	adds r1, #120
@@ -191,7 +191,7 @@ Func_0802b998:
 	adds r0, r5, #0
 	lsls r2, r5, #1
 	mov r6, r10
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	adds r6, #12
 	mov r2, r9
 	str r2, [r6]
@@ -226,7 +226,7 @@ Func_0802b998:
 	bl Render_ResetTransformState
 	mov r0, r10
 	adds r1, r6, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	ldr r5, .L_0802bce4
 	movs r0, #104
 	adds r1, r5, #0

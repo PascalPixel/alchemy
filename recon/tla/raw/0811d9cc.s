@@ -71,7 +71,7 @@ Func_0811d9cc:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Graphics_PrepareTransferInIwramWork
+	bl Transform_SetLookAt
 	movs r0, #255
 	movs r1, #192
 	lsls r1, r1, #8
@@ -83,7 +83,7 @@ Func_0811d9cc:
 	movs r0, #255
 	lsls r0, r0, #17
 	ldr r2, .L_0811ddc4
-	bl Camera_StoreSceneParameters
+	bl Projection_Set
 	cmp r7, #0
 	beq .L_0811da82
 	movs r3, #128

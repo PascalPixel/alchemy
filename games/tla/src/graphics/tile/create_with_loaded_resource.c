@@ -59,7 +59,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   allocation = Runtime_AllocateBlock(0x44, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
-  buffer = Resource_GetBuffer(slot, (s32)(allocation + 0x400));
+  buffer = VramCache_Reload(slot, (s32)(allocation + 0x400));
   Runtime_ReleaseHeapBlock(0x44);
   return buffer;
 }

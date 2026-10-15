@@ -673,7 +673,7 @@ Func_08021a84:
 	ldr r1, [sp, #20]
 	movs r2, #0
 	ldrb r0, [r7, #16]
-	bl VramBlock_LoadCached
+	bl VramCache_Load
 	ldr r4, .L_08021ff8
 	adds r5, r0, #0
 	movs r0, #192

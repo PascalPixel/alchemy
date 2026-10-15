@@ -58,14 +58,14 @@ MemFree:
 	.thumb_func
 Func_02005770:
 	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ActivateEntry
+	.global VramCache_ReleaseVram
 	.thumb_func
-Resource_ActivateEntry:
-	overlay_veneer Resource_ActivateEntryFar
-	.global VramBlock_LoadCached
+VramCache_ReleaseVram:
+	overlay_veneer VramCache_ReleaseVramFar
+	.global VramCache_Load
 	.thumb_func
-VramBlock_LoadCached:
-	overlay_veneer VramBlock_LoadCachedFar
+VramCache_Load:
+	overlay_veneer VramCache_LoadFar
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:

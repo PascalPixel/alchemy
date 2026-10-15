@@ -4717,6 +4717,11 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
   }
 }
 
+// Each frame on a layered map: centres the view on the point the map follows
+// (origin), clamped to the map's bounds and shaken by any decaying screen
+// shake; then scrolls each of the three layers by its parallax scale and
+// automatic scroll (wrapping at its period), draws the block column or row
+// that scrolls into view, and sets its BG scroll.
 void Map_UpdateLayerScroll(void) {
   struct MapScrollWork *work;
   struct MapLayerScroll *layer;
@@ -4804,6 +4809,8 @@ void Map_UpdateLayerScroll(void) {
   }
 }
 
+// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
+// and redraws every enabled layer's BG map around it.
 void Map_SetCameraCenter(s32 x, s32 y) {
   u32 no;
   u8 *dest;
@@ -4869,6 +4876,9 @@ struct TilePos {
   s32 x, y;
 };
 
+// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
+// (dstX, dstY), width by height cells, keeping each destination's
+// attributes, and redraws the copied cells that are on screen.
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH: needed to match: temporary sharing preserves register allocation
@@ -4963,6 +4973,10 @@ struct MapCopyCommand {
 } __attribute__((packed, aligned(2)));
 typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 
+// Plays a map edit sequence (struct MapCopyCommand records, ended by a
+// source of 0xffff): copies each record's rectangle of block numbers to
+// (destination_x, destination_y) and waits its delay in frames. Doors and
+// other changing scenery are drawn this way.
 void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
                                   u32 destination_y) {
   struct MapCopyCommand *record = (struct MapCopyCommand *)command;
@@ -5264,6 +5278,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
+// Sets bits 9-11 of the map's flags from v, keeping the others.
 void Map_SetWorkFlagBits9To11(u32 v) {
   struct MapState *state = gMapWork[0];
   u32 mask = v & 0xe00;
@@ -5273,8 +5288,10 @@ void Map_SetWorkFlagBits9To11(u32 v) {
   state->flags = flags;
 }
 
+// Writes a halfword register (value first).
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
 
+// Writes a halfword register (register first).
 static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
@@ -5291,6 +5308,10 @@ struct WorldCell {
 
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
+// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's block
+// buffer, decompressing it from the area's graphics, and with update set
+// also draws it into the layer's BG map. Returns 0 when that quarter already
+// shows the tile (and update is 0), else 1.
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveWork *work = gMapWork[0];
   u32 *graphics = work->tiles;
@@ -5342,6 +5363,10 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
+// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
+// camera work, the projection, the per-scanline ground plane routine in RAM
+// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+// HBlank updates.
 s32 Map_InitializePerspectiveScene(void) {
   struct PerspectiveWork *work;
   struct BattleCamera *camera;
@@ -5481,6 +5506,8 @@ s32 Map_InitializePerspectiveScene(void) {
     work->tileIds[i] = i;
 }
 
+// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
+// tile id grid, and draws it at once when it is next to the view.
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct PerspectiveWork *window;
   s32 *position;
@@ -5512,6 +5539,9 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   }
 }
 
+// Loads the world map's palette and tiles for the area at (x, z): the second
+// set where the ground there is terrain kind 21. Fills the BG maps, and for
+// the second set swaps in its own tiles at ids 10-12 and 26-28.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct PerspectiveWork *state;
   u32 *resources;
@@ -5574,6 +5604,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   MemFree(buffer);
 }
 
+// HBlank setup each frame on the world map: copies the first scanline's BG2
+// and BG3 affine parameters, starts the HBlank DMA for the rest, and turns
+// the window on or off for the window's top and bottom.
 void MapAnimation_ApplyAffineFrame(void) {
   struct MapAffinePair(*lines)[160] =
       ((struct MapFrameWork *)WORK_SLOT(7))->pages;
@@ -5621,6 +5654,7 @@ void MapAnimation_ApplyAffineFrame(void) {
   work->windowPending = 0;
 }
 
+// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void CopyEntry(u8 *map, u8 *destination) {
   u32 palette = *(u16 *)map;
   u16 *colors = (u16 *)Ram_MapCellBuffer;
@@ -5630,6 +5664,8 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination) {
   *(u16 *)(destination + 64) = *colors;
 }
 
+// Draws world map row `value` (in tiles) into the BG map: 32 cells, then 32
+// more a screen block on.
 void Map_RenderPaletteMappedRow(u32 value) {
   u8 *map;
   u8 *destination;
@@ -5656,6 +5692,7 @@ void Map_RenderPaletteMappedRow(u32 value) {
   } while (counter <= 31);
 }
 
+// Draws world map column `value` (in tiles) into the BG map: 64 cells down.
 void Map_RenderPaletteMappedColumn(u32 value) {
   u8 *map;
   u8 *destination;
@@ -5672,6 +5709,9 @@ void Map_RenderPaletteMappedColumn(u32 value) {
   } while (counter <= 63);
 }
 
+// Each frame on the world map: loads tiles as the view moves, shakes and
+// follows the player, draws the BG row or column that scrolls into view,
+// moves the camera, and builds the ground plane's scanline table.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);
   struct MapFrameWork *map = WORK_SLOT(7);
@@ -5755,6 +5795,7 @@ void WorldMap_UpdateView(void) {
       cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
+// Loads and draws the 2x2 world map tiles around the player in both layers.
 void Map_UpdateCurrentTileBlock(void) {
   struct PerspectiveWork *window = gMapWork[0];
   s32 x0 = 0;
@@ -5788,6 +5829,8 @@ void Map_UpdateCurrentTileBlock(void) {
   }
 }
 
+// Loads the first of the 2x2 world map tiles around the player that is not
+// shown yet (at most one a frame), without drawing it.
 void Map_UpdateCurrentTileBlockUntilBlocked(void) {
   struct PerspectiveWork *window = gMapWork[0];
   s32 x0 = 0;
@@ -5818,12 +5861,15 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void) {
   }
 }
 
+// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM.
 void MapAnimation_PresentFrame(void) {
   Io_Write16(0x682, &REG_BG1CNT);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
           DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
+// Starts a full-screen BG1 animation on the world map: saves BG1's tiles,
+// decodes the first frame and hands the window and VBlank to it.
 void MapAnimation_Start(void) {
   struct MapFrameWork *pages = WORK_SLOT(7);
   struct PerspectiveWork *work = WORK_SLOT(8);
@@ -5841,11 +5887,14 @@ void MapAnimation_Start(void) {
   gVBlankHook = MapAnimation_PresentFrame;
 }
 
+// VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void Map_ShowBg1FromBuffer(void) {
   Io_Write16(0x501, &REG_BG1CNT);
   Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
 }
 
+// Reloads the world map area's palette and tiles after a BG1 animation, puts
+// the default cells back and stops the animation.
 void Map_LoadAreaGraphics(void) {
   struct PerspectiveWork *state;
   u32 *resources;
@@ -5878,6 +5927,7 @@ void Map_LoadAreaGraphics(void) {
   WaitFrames(1);
 }
 
+// Puts the default world map cells back after a BG1 animation and stops it.
 void Map_LoadDefaultCellsAndUpdateBlock(void) {
   struct PerspectiveWork *work = gMapWork[0];
   gVBlankHook = Map_ShowBg1FromBuffer;
@@ -5891,6 +5941,10 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   WaitFrames(1);
 }
 
+// Each frame: runs the 16 tile animation channels. A channel script is
+// groups of four halfwords (source tile, count, destination tile, frames to
+// wait) that copy tiles into VRAM; 0xfeNN jumps to group NN, 0xfeff stops,
+// and 0xffff loops to the start.
 void MapAnimation_Update(void) {
   /* FAKEMATCH: each channel is written (state->anim + i), not through a channel
    * pointer: a pointer anim = state->anim + i (or &state->anim[i], declared in
@@ -5948,6 +6002,7 @@ void MapAnimation_Update(void) {
   }
 }
 
+// Resumes tile animation channel no.
 void Map_ClearLayerEntryFlag(u32 no) {
   struct MapState *state = gMapWork[0];
   struct MapAnimation *anim = &state->anim[no];
@@ -5955,6 +6010,7 @@ void Map_ClearLayerEntryFlag(u32 no) {
   anim->paused = 0;
 }
 
+// Pauses tile animation channel no.
 void Map_SetLayerEntryFlag(u32 no) {
   struct MapState *state = gMapWork[0];
   struct MapAnimation *anim = &state->anim[no];
@@ -5962,6 +6018,8 @@ void Map_SetLayerEntryFlag(u32 no) {
   anim->paused = 1;
 }
 
+// Starts the tile animation channels a map's animation script lists: each
+// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
 void MapAnimation_StartChannels(const u16 *script) {
   struct MapState *state;
   s32 count;
@@ -5991,16 +6049,21 @@ void MapAnimation_StartChannels(const u16 *script) {
     Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
+// Resumes the tile animations, unless a BG1 animation is running.
 void Map_EnableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_EnableCallbacks(MapAnimation_Update);
 }
 
+// Stops the tile animations, unless a BG1 animation is running.
 void Map_DisableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_DisableCallbacks(MapAnimation_Update);
 }
 
+// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
+// any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
+// halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
 void DisplayBlend_RunScript(void) {
   struct MapState *work = gMapWork[0];
   struct BlendScriptState *state;
@@ -6053,6 +6116,7 @@ again:
   state->delay = value + 0xffff;
 }
 
+// Starts a map's blend script, unless it is empty.
 void DisplayBlend_StartScript(u16 *script) {
   struct BlendScriptState *state;
   s32 started;
@@ -6073,10 +6137,12 @@ void DisplayBlend_StartScript(u16 *script) {
     Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
 }
 
+// Resumes the blend script.
 void DisplayBlend_EnableRunScript(void) {
   Scheduler_EnableCallbacks(DisplayBlend_RunScript);
 }
 
+// Stops the blend script.
 void DisplayBlend_DisableRunScript(void) {
   Scheduler_DisableCallbacks(DisplayBlend_RunScript);
 }

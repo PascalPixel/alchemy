@@ -3547,6 +3547,9 @@ void FieldEffect_InitSparkles(void) {
   Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
 }
 
+// Starts the storm's lightning (BattleFx_UpdateStormFlash): builds the dark
+// (0x10003) and lit (0x10005) palettes and their 12-step fade, and arms the
+// first flash in 600 frames, repeating.
 void BattleFx_StartTwelveFrameBlend(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
@@ -3563,6 +3566,7 @@ void BattleFx_StartTwelveFrameBlend(void) {
   Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }
 
+// Stops the lightning: no flash for 0x7fff frames, and none after.
 void BattleFx_SetBlock30ValuesMaxZero(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -3570,6 +3574,7 @@ void BattleFx_SetBlock30ValuesMaxZero(void) {
   state->enabled = 0;
 }
 
+// One last flash of lightning in 12 frames, then no more.
 void BattleFx_SetBlock30Values12Zero(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -3577,6 +3582,7 @@ void BattleFx_SetBlock30Values12Zero(void) {
   state->enabled = 0;
 }
 
+// Restarts the lightning: the next flash in 128 frames, repeating.
 void BattleFx_SetBlock30Values128One(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -3584,6 +3590,8 @@ void BattleFx_SetBlock30Values128One(void) {
   state->enabled = 1;
 }
 
+// Flashes the palette once, 120 frames from now, from palette from to palette
+// to (BattleFx_BuildBuffer modes), with the storm's flash callback.
 void BattleFx_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
@@ -3603,15 +3611,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to) {
 }
 
 //--------------------------------------------------------------------------
-// motion_move_halfway_toward_target.c
-// オブジェクト：つながった相手への追従
+// Objects that follow the object they are linked to.
 //--------------------------------------------------------------------------
 
-// ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
-
-// このファイルの関数 (定義より前で使うもの)
-
-// FieldActor と同じ物体。位置をひとつのベクトルとして渡すための見え方
+// A FieldActor seen with its position as one vector, to pass it whole. The
+// gaps are FieldActor fields this view does not use.
 struct Object {
   u8 pad0[6];
   u16 angle;
@@ -3622,10 +3626,8 @@ struct Object {
   struct AnimationObject *sprite;
 };
 
-//--------------------------------------------------------------------------
-// つながったオブジェクトとの距離を、x・y・z とも半分つめる
-// obj : 動かすオブジェクト
-//--------------------------------------------------------------------------
+// Per-frame update of an afterimage: closes half the distance to the object
+// it is linked to, on all three axes.
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
   struct ObjectRuntime *target = obj->linkedObject;
 
@@ -3635,25 +3637,16 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
 }
 
 //--------------------------------------------------------------------------
-// hop.c
-// 跳ねて分身を引く演出、ジン加入の演出、シーンのオブジェクトの再配置
+// A Djinni's hop before its battle, a Djinni joining the party, and putting
+// a Djinni's actor back after its battle.
 //--------------------------------------------------------------------------
 
-struct ActorDescriptor {
-  s16 action;
-  s16 scene; // 配置先のシーン番号 - 252
-  u8 pad4[4];
-  s32 x; // 配置座標 (16.16 固定小数)
-  s32 y;
-  s32 z;
-};
+#define CLONE_MAX 8      // afterimages of the leaping Djinni
+#define FLAG_DJINNI_0 48 // the flag of Djinni 0, set once it is caught
 
-#define CLONE_MAX 8 // 分身の数
-
-//--------------------------------------------------------------------------
-// 後ろへ 3 回跳ね、分身を引いて前へ跳ぶ
-// id : 跳ねるオブジェクト
-//--------------------------------------------------------------------------
+// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
+// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
+// party trailing eight afterimages tinted for its element.
 void EventActor_RunHopAndLeapSequence(s32 id) {
   struct FieldActor *actor;
   struct FieldActor *copy;
@@ -3662,12 +3655,12 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
   s32 dir;
   s32 back;
   s32 dist;
-  s32 kind;
-  s32 value;
+  s32 sprite;
+  s32 tint;
   s32 i;
   struct FieldActor *copies[CLONE_MAX];
 
-  // 選択中のオブジェクトの向きを 90 度単位に丸める
+  // The way the leader faces, to the nearest quarter turn.
   actor = Object_GetById(id);
   dir = (Object_GetById(gGameState.selectedActor)->facing + 0x2000) & 0xc000;
   Battle_Reset();
@@ -3685,7 +3678,7 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
   Object_GetById(id)->steeringFlags &= ~1;
   actor->motionFlags = 2;
 
-  // 向いた方の逆へ 16 ドットずつ 3 回跳ねる
+  // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
                                              dist, dir);
@@ -3704,20 +3697,21 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
   Script_WaitForEventTimeoutFar(actor);
   WaitFrames(20);
 
-  // 同じスプライトの分身を作り、ひとつ前を追いかけるようにつなぐ
-  kind = ((struct AnimationObject *)actor->sprite)->entries[0]->animId;
-  value = 9;
-  if (kind == 90)
-    value = 2;
-  if (kind == 92)
-    value = 10;
-  if (kind == 91)
-    value = 9;
+  // Afterimages of the same sprite, each chasing the one before it, tinted
+  // by the Djinni's sprite (90, 91 and 92).
+  sprite = ((struct AnimationObject *)actor->sprite)->entries[0]->animId;
+  tint = 9;
+  if (sprite == 90)
+    tint = 2;
+  if (sprite == 92)
+    tint = 10;
+  if (sprite == 91)
+    tint = 9;
   res = NULL;
   prev = actor;
   for (i = 0; i < CLONE_MAX; i++) {
     copy = (struct FieldActor *)Object_CreateFar(
-        kind, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+        sprite, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -3728,7 +3722,7 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
       copy->update = (void *)ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = actor->facing;
       copy->sprite->priority = 0;
-      Animation_ApplyChildValuesFar(copy, value);
+      Animation_ApplyChildValuesFar(copy, tint);
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
       res = Object_ReplaceResourceEntry(copy->sprite, res);
@@ -3737,7 +3731,7 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
     }
   }
 
-  // 向いた方へ 64 ドット跳び、動きを止める
+  // Leap 64 pixels at the leader and stop there.
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
                                              64 << 16, dir + 0x8000);
   AudioCommand_PlayFar(136);
@@ -3755,21 +3749,19 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
   BattleFx_FinishAction();
 }
 
-//--------------------------------------------------------------------------
-// ジンを仲間に加え、属性ごとの演出のあとに加入メッセージを出す
-// slot  : 演出の対象 (-1 で演出なし)
-// element   : ジンの属性
-// djinn : 属性内のジン番号
-//--------------------------------------------------------------------------
+// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
+// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_TUTORIAL
+// is set. Unless slot is -1, the Djinni's actor slot first plays its
+// element's capture effect and is freed. Ends with "<Djinni> joined
+// <member>.".
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 element, void *djinn) {
   struct FieldWork *work;
   s32 owner;
 
-  // 持ち主を決める (フラグ 366 のときは 0 番にし、入手フラグだけ立てる)
   work = (struct FieldWork *)gEventWork;
-  if (GameFlag_TestFar(366) != 0) {
+  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
     owner = 0;
-    GameFlag_SetBitFar((u8 *)djinn + element * 20 + 48); // ジン入手フラグ
+    GameFlag_SetBitFar((u8 *)djinn + element * 20 + FLAG_DJINNI_0);
   } else {
     owner = Djinn_AddToLeastLoadedOwnerFar(element, djinn);
   }
@@ -3781,13 +3773,13 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 element, void *djinn) {
       if (work->mode == 3)
         BattleEffect_ClearOutOfBoundsObjects();
 
-      if (element == 0) // ヴィーナス
+      if (element == 0) // Venus
         BattleFx_RunVenusDjinnCapture(slot);
-      else if (element == 1) // マーキュリー
+      else if (element == 1) // Mercury
         BattleFx_RunMercuryDjinnCapture(slot);
-      else if (element == 2)
+      else if (element == 2) // Mars
         BattleEffect_RunPhasedRadialParticleSequence(slot);
-      else if (element == 3)
+      else if (element == 3) // Jupiter
         BattleFx_FinishHeavyImpact(slot);
 
       work->actors[slot] = 0;
@@ -3801,25 +3793,25 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 element, void *djinn) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 保留中のジンイベントのシーン (300〜380) に属するオブジェクトを置きなおす
-// 0x800 が立っていれば、選択中のオブジェクトから z を 32 ドット引いた位置へ
-//--------------------------------------------------------------------------
+// Puts a Djinni's actor back where its battle started from: for a pending
+// Djinni battle (pendingDjinnEvent 300 to 380, FLAG_KEEP_PARTY_POSITION set,
+// the battle over) the scene actor placed for that Djinni (condition = its
+// flag) goes back to its placement, or 32 pixels north of the leader when the
+// event has 0x800 set.
 void FieldObject_PlaceSceneActors(void) {
   s32 flags = gGameState.pendingDjinnEvent & 0xf000;
-  u32 scene = gGameState.pendingDjinnEvent & 0xfff;
+  u32 event = gGameState.pendingDjinnEvent & 0xfff;
   s32 id;
 
-  if (GameFlag_TestFar(0x109) != 0 && flags == 0) {
-    flags = scene & 0x800;
-    scene &= 0x7ff;
-    if (scene - 300 <= 80 && gGameState.sceneChangeReason > 0) {
+  if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
+    flags = event & 0x800;
+    event &= 0x7ff;
+    if (event - DJINNI_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
-        struct ActorDescriptor *desc =
-            (struct ActorDescriptor *)BattleAction_FindDescriptor(id);
+        struct ActionDescriptor *desc = BattleAction_FindDescriptor(id);
         struct ObjectRuntime *obj;
 
-        if (desc == NULL || desc->scene - 48 != scene - 300)
+        if (desc == NULL || desc->condition - FLAG_DJINNI_0 != event - DJINNI_0)
           continue;
         obj = ObjectTable_Get(id);
         if (obj == NULL)
@@ -3829,11 +3821,11 @@ void FieldObject_PlaceSceneActors(void) {
           obj->flags = 3;
           Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {
-          struct ObjectRuntime *selection =
+          struct ObjectRuntime *leader =
               ObjectTable_Get(gGameState.selectedActor);
 
-          Object_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
-                                              selection->z - (32 << 16));
+          Object_SetPositionAndResetMotionFar(obj, leader->x, leader->y,
+                                              leader->z - (32 << 16));
         }
         ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
       }
@@ -3841,21 +3833,22 @@ void FieldObject_PlaceSceneActors(void) {
   }
 }
 
-struct MapActor {
-  s16 id;
-  s16 event;
-};
-
-void Djinn_ResolvePendingEvent(s32 capture) {
+// Settles a pending Djinni battle as a scene loads. The field calls it with
+// shown 0 while it builds the scene and with shown nonzero once the scene is
+// on screen. After a won battle (sceneChangeReason above 0) the second call
+// makes the Djinni join the party (BattleFx_RunPageEffectForSlot); otherwise
+// the first call sets flag 128 + the Djinni's number and drops the event. An
+// event of kind 0x1000 instead sets its flag when sceneChangeReason is 1.
+void Djinn_ResolvePendingEvent(s32 shown) {
   struct GameState *st = &gGameState;
   s16 *pending = &st->pendingDjinnEvent;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
 
-  if (capture == 0) {
+  if (shown == 0) {
     if (kind == 0) {
       flag &= 0x7ff;
-      if (flag < 300 || flag > 380)
+      if (flag < DJINNI_0 || flag > DJINNI_0 + 80)
         return;
       if (st->sceneChangeReason > 0 && st->sceneChangeReason != 999)
         return;
@@ -3864,24 +3857,24 @@ void Djinn_ResolvePendingEvent(s32 capture) {
     } else if (kind == 0x1000) {
       if (st->sceneChangeReason == 1)
         GameFlag_SetBitFar(flag);
-      *pending = capture;
+      *pending = shown;
     }
     return;
   }
   if (kind == 0) {
     flag &= 0x7ff;
-    if (flag >= 300 && flag <= 380) {
+    if (flag >= DJINNI_0 && flag <= DJINNI_0 + 80) {
       flag &= 0x7ff;
       if (st->sceneChangeReason > 0) {
-        s32 djinn = flag - 300;
-        s32 element = djinn / 20;
-        s32 index = djinn % 20;
+        s32 djinni = flag - DJINNI_0;
+        s32 element = djinni / 20;
+        s32 index = djinni % 20;
         s32 actor;
 
         for (actor = 8; actor <= 65; actor++) {
-          struct MapActor *found =
-              (struct MapActor *)BattleAction_FindDescriptor(actor);
-          if (found != 0 && found->event - 48 == flag - 300) {
+          struct ActionDescriptor *found = BattleAction_FindDescriptor(actor);
+          if (found != 0 &&
+              found->condition - FLAG_DJINNI_0 == flag - DJINNI_0) {
             WaitFrames(40);
             BattleFx_RunPageEffectForSlot(actor, element, (void *)index);
             break;
@@ -3893,7 +3886,7 @@ void Djinn_ResolvePendingEvent(s32 capture) {
   gGameState.pendingDjinnEvent = 0;
 }
 
-// 演出スロット 24 個を動かす
+// Runs the update of each of the 24 effect slots.
 static __inline__ void UpdateAllEffectSlots(void) {
   struct EffectSlot *slot;
   s32 n;
@@ -3907,8 +3900,11 @@ static __inline__ void UpdateAllEffectSlots(void) {
   } while (n >= 0);
 }
 
+// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllSlots(void) { UpdateAllEffectSlots(); }
 
+// Allocates and clears the effect slots (heap block 56) and starts their
+// update callback.
 void BattleFx_InitializeSlots(void) {
   void *work;
 
@@ -3917,6 +3913,8 @@ void BattleFx_InitializeSlots(void) {
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 
+// Stops the effect slots: removes their callback, frees every slot still in
+// use and releases their heap block.
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectSlot *slot;
@@ -3932,10 +3930,14 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   WaitFrames(1);
 }
 
+// Per-frame update: spins an object 1/8 turn a frame.
 void BattleFx_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += 0x2000;
 }
 
+// Effect slot callback of a Jupiter Djinni's light particles: each circles
+// its centre while it widens for 60 frames, circles 40, drifts toward a point
+// 20 pixels over the leader for 40, closes in for 60 and is freed.
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor) {
   struct MotionObject *target;
   struct EffectVector pos;
@@ -3984,14 +3986,9 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor) {
   actor->z = pos.z;
 }
 
-//--------------------------------------------------------------------------
-// heavy_impact_finish.c
-// フィールド効果：ジンが仲間になる演出 (属性3)
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// ジンが跳ねて光の粒になり、操作キャラへ集まる
-// djinni_id : ジンのオブジェクト番号
-//--------------------------------------------------------------------------
+// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
+// of sight and bursts into 24 light particles that circle and close in on
+// the leader, who turns to the camera and plays animation 28.
 void BattleFx_FinishHeavyImpact(s32 djinniId) {
   struct EffectVector pos;
   struct MotionObject *djinni;
@@ -4014,14 +4011,14 @@ void BattleFx_FinishHeavyImpact(s32 djinniId) {
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
-  // 回転してから高く跳ねる
+  // Spin, then leap high.
   AudioCommand_PlayFar(140);
   djinni->update = BattleFx_AdvanceSpinAngle;
   WaitFrames(40);
   AudioCommand_PlayFar(153);
   ObjectMotion_Launch(djinniId, 12, 22);
 
-  // ジンの画面位置から光の粒を 24 個出す
+  // 24 light particles from where the Djinni is on screen.
   pos.x = djinni->x;
   pos.y = djinni->y;
   pos.z = djinni->z;
@@ -4032,12 +4029,11 @@ void BattleFx_FinishHeavyImpact(s32 djinniId) {
   cnt = 23;
   do {
     EffectSlot_Initialize(slot, 284, pos.x, pos.z);
-    EffectSlot_SetCallback(
-        slot, BattleFx_RunAngledApproachPhases); // 回ってから操作キャラへ
+    EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               (Random16() * 7) >> 16);
-    scale = Random16() / 3 + 0x10000; // 1.0〜1.33 倍
+    scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;
     cnt--;
@@ -4045,7 +4041,7 @@ void BattleFx_FinishHeavyImpact(s32 djinniId) {
     slot++;
   } while (cnt >= 0);
 
-  // 操作キャラを 0x4000 (90°) の向きへ回し、動作 28 にする
+  // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
   WaitFrames(20);
@@ -4058,8 +4054,8 @@ void BattleFx_FinishHeavyImpact(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// FieldActor と同じ物体。0x64 を符号なし、0x66 を符号つきで読む (FieldActor
-// の型ではバイトが変わる)
+// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
+// signed, as the bytes read them (FieldActor's own types change the code).
 struct DescendingOrbitObject {
   u8 unk00[8];
   s32 x;
@@ -4070,7 +4066,8 @@ struct DescendingOrbitObject {
   s16 angle;
 };
 
-// FieldActor と同じ物体。FieldActor に欄のない 0x5e (lifetime) を使う
+// A FieldActor seen with the halfword at 0x5e (lifetime), which FieldActor
+// does not name.
 struct CaptureObject {
   u8 unk00[8];
   s32 x;
@@ -4096,6 +4093,17 @@ struct CaptureObject {
   void *callback;
 };
 
+// A spinning object: its angle, and at 0x64 the frames its spin has been
+// speeding up for (BattleFx_AdvanceAngleWithRamp), read signed.
+struct RampedSpinObject {
+  u8 unk00[6];
+  u16 angle;
+  u8 unk08[0x5c];
+  s16 rampFrames;
+};
+
+// Per-frame update: makes an object pulse, switching its scale between the
+// two values of gBattleFx_PulseScales every 4 frames.
 void BattleFx_SetObjectAlternatingWords(u8 *object) {
   u32 *table = gBattleFx_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
@@ -4104,19 +4112,22 @@ void BattleFx_SetObjectAlternatingWords(u8 *object) {
   ((struct MotionObject *)object)->scaleY = value;
 }
 
+// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
+// 1/8.
 void BattleFx_AdvanceAngleWithRamp(void *obj) {
+  struct RampedSpinObject *spin = obj;
   u32 step;
 
-  step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
-  ((struct MotionObject *)obj)->angle =
-      ((struct MotionObject *)obj)->angle + step + 0x1000;
+  step = spin->rampFrames * 0x50;
+  spin->angle = spin->angle + step + 0x1000;
   if (step < 0x1000U) {
-    FIELD_AT_OFFSET(obj, s16 *, 0x64) = FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1;
+    spin->rampFrames = spin->rampFrames + 1;
   }
 }
 
-// 毎フレームの更新 : 45 度ずつ回しながら拡大率に step を足し、0x3000
-// を下回ったら消す
+// Defines a per-frame update that spins an object 1/8 turn a frame while its
+// scale changes by step, releasing the object once the scale falls below
+// 0x3000.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(void *obj) {                                                       \
     s32 scale;                                                                 \
@@ -4134,6 +4145,11 @@ void BattleFx_AdvanceAngleWithRamp(void *obj) {
 
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
+// Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
+// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
+// origin and starts over. Set to 2, it stops where it arrives; 40 frames
+// later, states 3 and 4 swarm it round a point 20 pixels over the leader.
+// Set to 5, it is freed once it arrives.
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;
@@ -4204,15 +4220,19 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   }
 }
 
+// A Mars Djinni joins the party: it turns to the camera, bounces three times,
+// spins ever faster and shrinks away in a fountain of 24 sparks
+// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
+// and plays animation 28, the sparks swarm the leader, who pulses for 100
+// frames, and the sparks vanish.
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
-  s8 *objectPointer;
   struct EffectVector position;
   s32 value;
   s32 remaining;
   struct FieldActor *sourceObject;
   void *effectSlots;
   struct FieldActor *targetObject;
-  void *slot;
+  struct EffectSlot *slot;
   s8 *slotState;
 
   sourceObject = Object_GetById(arg);
@@ -4240,27 +4260,26 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   sourceObject->update = (void *)BattleFx_ShrinkObjectAndDestroySlow;
   ObjectDispatch_ApplyArgumentToChildrenFar(sourceObject, 3);
 
+  // The sparks start where the Djinni is on screen.
   position.x = sourceObject->x.fixed;
   position.y = sourceObject->y.fixed;
   position.z = sourceObject->z.fixed;
   Camera_WorldToScreen(&position);
 
-  slot = (u8 *)effectSlots + 88;
+  slot = ((struct BattleFxScene *)effectSlots)->slots;
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, 284, position.x, position.z);
     EffectSlot_SetCallback(slot,
                            (void *)BattleEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
-    objectPointer = slot;
-    value = *(s32 *)objectPointer;
-    ObjectGroup_SetChildValueUnlessFifteenFar((void *)value, 10);
-    value = Random16() / 3 + 0x10000;
-    ((struct EffectSlot *)slot)->scaleY = value;
-    ((struct EffectSlot *)slot)->scaleX = value;
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 10);
+    value = Random16() / 3 + 0x10000; // 1.0 to 1.33
+    slot->scaleY = value;
+    slot->scaleX = value;
     remaining--;
     WaitFrames(1);
-    slot = (u8 *)slot + 72;
+    slot++;
   } while (remaining >= 0);
 
   WaitFrames(60);
@@ -4268,19 +4287,21 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   WaitFrames(20);
   ObjectDispatch_ApplyArgumentToChildrenFar(
       Object_GetById(gGameState.selectedActor), 28);
+
+  // Every spark still in use stops its fountain (state 2). The cursor walks
+  // the slots' state bytes; a slot's active flag is 5 bytes after its state.
   {
     s32 nextState;
 
     WaitFrames(20);
     nextState = 2;
-    slotState = effectSlots;
-    slotState += 152;
+    slotState = &((struct BattleFxScene *)effectSlots)->slots[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += 72;
+      slotState += sizeof(struct EffectSlot);
     } while (remaining >= 0);
   }
 
@@ -4288,6 +4309,9 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   targetObject->update = (void *)BattleFx_SetObjectAlternatingWords;
   WaitFrames(100);
 
+  // Every spark still in use goes (state 5). This loop's cursor starts as
+  // the scene plus 152, the first slot's state: written as above, the
+  // cursor's two loads swap (differ 22).
   {
     s32 nextState;
 
@@ -4299,13 +4323,15 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += 72;
+      slotState += sizeof(struct EffectSlot);
     } while (remaining >= 0);
   }
 
+  // The leader stops pulsing. Storing NULL through the cleared slot cursor,
+  // as the bytes do: a plain NULL store differs by 9.
   WaitFrames(10);
   slot = NULL;
-  targetObject->update = slot;
+  targetObject->update = (void *)slot;
   targetObject->scaleX = 0x10000;
   targetObject->scaleY = 0x10000;
   WaitFrames(30);
@@ -4315,29 +4341,36 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
 
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
+// Per-frame update of a Venus Djinni's falling motes: each circles the
+// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
+// pixel a frame, and is released 20 pixels above the leader's feet.
 void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg) {
   struct EffectVector local;
-  struct DescendingOrbitObject *other;
+  struct DescendingOrbitObject *leader;
   s32 raw;
   s16 value;
   s32 y;
 
-  other =
+  leader =
       (struct DescendingOrbitObject *)Object_GetById(gGameState.selectedActor);
   raw = arg->timer - 1;
   arg->timer = raw;
   value = arg->timer;
-  local.x = other->x;
-  local.z = other->z;
+  local.x = leader->x;
+  local.z = leader->z;
   Vector_AddPolarOffset(value * 0x6666, (value << 11) + arg->angle, &local);
   arg->x = local.x;
   arg->z = local.z;
   y = arg->y + 0xFFFF0000;
   arg->y = y;
-  if (y < other->y + 0x140000)
+  if (y < leader->y + 0x140000)
     ObjectDispatch_ReleaseFar(arg);
 }
 
+// Effect slot callback of a Venus Djinni's particles: each starts on screen
+// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
+// the screen, over and over (states 0 and 1); set to 2, it is freed once it
+// arrives.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;

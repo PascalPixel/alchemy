@@ -172,8 +172,8 @@ void BattleFx_DispatchMode(s32 *arg);
 void BattleFx_BuildWindowEdgeTable(void);
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg);
 void BattleEffect_SetupBlendedDisplay(void);
-void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
-                               s32 state_slot, s32 state_value);
+void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
+                               s32 timerSlot, s32 timerFrames);
 void BattleFx_InitTilemapAndFlushQueue(void);
 
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
@@ -201,7 +201,8 @@ void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunPuffArc(struct BattleEffectArgument *effect);
-s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out);
+s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
+                                    s16 *output);
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect);
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect);
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect);

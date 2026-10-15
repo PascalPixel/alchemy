@@ -1,25 +1,37 @@
 #include "types.h"
 #include "party_state.h"
 #include "object_runtime.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
 extern s32 Data_020024b4;
 extern s32 Data_020024b0;
+extern const u8 Data_0200218c[];
+extern const u8 Data_020021e8[];
+extern const u8 Data_0200221c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
+void GameFlag_SetBit(s32 flag);
 void Object_LinkPair(s32 id, s32 partner, s32 flags);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
+void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000188(void);
 void Func_020001cc(void);
@@ -34,8 +46,12 @@ void Func_02001fc4(s32 id, s32 x, s32 z);
 void Func_02001fcc(s32 id, s32 x, s32 z, s32 angle);
 void Func_0200201c(const void *message);
 void Func_0200202c(s32 id, s32 a, s32 b);
+void Func_02002034(s32 id, s32 flags);
 void Func_02002044(s32 id, s32 angle);
 s32 Func_0200204c(s32 id, s32 emote, s32 frames);
+void Func_02002054(s32 id, s32 a);
+void Func_0200205c(s32 speed, s32 acceleration);
+void Func_0200206c(void);
 struct ObjectRuntime *Func_02002074(void);
 void Func_0200207c(s32 countdown);
 void Func_020020ac(s32 skip);
@@ -45,6 +61,118 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the arguments up in their own order and keeps each call's constants; a direct call builds the costly constant first or shares it (differ 2 or more). */
     Scheduler_AddOrUpdateCallback(callback, priority);
+}
+
+// The scene run from entrance 10: the crew takes its places on deck and the
+// leader is asked to take the tiller; it ends by setting flag 0x8de.
+void Func_020002cc(void)
+{
+    s32 angle;
+    s32 turn;
+
+    Func_02001f5c();
+    Call1((void (*)())Func_020020ac, 0);
+    Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
+    Func_02002074()->motion_flags = 0;
+    Call4((void (*)())Motion_CamBounds, 0x1560000, 0x300000, 0x1980000, 0);
+    Call1((void (*)())WaitFrames, 1);
+    Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
+    Call4((void (*)())Func_02001fcc, gPartyState.current_owner, 0x2280000, 0x1780000, 0);
+    /* FAKEMATCH: an angle that takes two instructions is set before its call: the native builds it ahead of the position arguments, which it does after them as a constant argument (differ 4 each). The 0x2000 stays in r8 for actor 9's later turn, so that call is direct. */
+    angle = 0xd000;
+    Call4((void (*)())Func_02001fcc, 9, 0x22e0000, 0x1590000, angle);
+    Call4((void (*)())Func_02001fcc, 7, 0x2160000, 0x1940000, 0);
+    turn = 0x2000;
+    Call4((void (*)())Func_02001fcc, 6, 0x2380000, 0x1980000, turn);
+    angle = 0x4000;
+    Call4((void (*)())Func_02001fcc, 5, 0x2220000, 0x1b80000, angle);
+    Func_02001f1c();
+    Call1((void (*)())WaitFrames, 1);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, (s32)Data_0200218c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, (s32)Data_020021e8);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)Data_0200221c);
+    Event_StartScreenTransition();
+    Data_020024b4 = 0;
+    Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000258, 0x480);
+    Data_020024b0 = 0;
+    Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000288, 0x480);
+    Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
+    Call4((void (*)())Motion_CamBounds, 0x21e0000, 0x2c0000, 0x18c0000, 1);
+    Func_0200206c();
+    Call1((void (*)())Battle_WaitMode0, 80);
+    Call2((void (*)())Func_02002044, 7, 0xe000);
+    Call1((void (*)())Func_0200201c, (s32)MsgTakeTheTiller);
+    Call2((void (*)())Func_02002034, 7, 0);
+    Value3(Func_0200204c, gPartyState.current_owner, 0x100, 0);
+    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+    Value3((s32 (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x6000, 20);
+    Call2((void (*)())Func_02002034, 7, 0);
+    Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 5);
+    Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 9);
+    Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 6);
+    Call1((void (*)())WaitFrames, 1);
+    Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xc000, 0);
+    Value3(Func_0200204c, 6, 0x101, 20);
+    Call2((void (*)())Func_02002034, 6, 0);
+    Func_02002044(9, turn);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Value3(Func_0200204c, 5, 0x108, 20);
+    Call2((void (*)())Func_02002034, 5, 0);
+    Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+        Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
+        Value3(Func_0200204c, 9, 0x109, 20);
+        Call2((void (*)())Func_02002034, 9, 0);
+        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+    } else {
+        Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
+        Value3(Func_0200204c, 9, 0x109, 20);
+        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        Call2((void (*)())Func_02002034, 9, 0);
+    }
+    Value3(Func_0200204c, 7, 0x100, 0);
+    Call2((void (*)())Func_02002034, 7, 0);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Value3(Func_0200204c, 6, 0x101, 20);
+    Call2((void (*)())Func_02002034, 6, 0);
+    Call2((void (*)())Func_02002044, 9, 0x3000);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Value3(Func_0200204c, 5, 0x100, 20);
+    Call2((void (*)())Func_02002034, 5, 0);
+    Call2((void (*)())Func_02002044, 9, 0x5000);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Call2((void (*)())Func_02002034, 6, 0);
+    Value3(Func_0200204c, 5, 0x108, 0);
+    Call2((void (*)())Func_02002044, 5, 0xe000);
+    Call2((void (*)())Func_02002034, 5, 0);
+    Call2((void (*)())Func_02002054, 6, 0x102);
+    Call2((void (*)())Func_02002044, 6, 0x6000);
+    Call2((void (*)())Func_02002034, 0x4006, 0);
+    Call2((void (*)())Func_02002034, 5, 0);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xc000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 0);
+    Value3(Func_0200204c, 7, 0x101, 20);
+    Call2((void (*)())Func_02002034, 7, 0);
+    Value3(Func_0200204c, 9, 0x108, 20);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Call3((void (*)())ObjectMotion_Launch, 6, 4, 10);
+    Call2((void (*)())Func_02002034, 6, 0);
+    Call3((void (*)())ObjectMotion_Launch, 5, 2, 10);
+    Call3((void (*)())ObjectMotion_Launch, 5, 4, 10);
+    Call2((void (*)())Func_02002034, 5, 0);
+    Call2((void (*)())Func_02002034, 7, 0);
+    Call2((void (*)())Object_SetModeById, 9, 3);
+    Call2((void (*)())Func_02002034, 9, 0);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    gPartyState.render_mode = 7;
+    gPartyState.owner_override = 1;
+    Call1((void (*)())GameFlag_SetBit, 0x8de);
+    Call1((void (*)())Func_0200207c, 10);
 }
 
 // Sends actor id to actor 4's spot at a run.

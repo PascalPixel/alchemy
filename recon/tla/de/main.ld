@@ -665,7 +665,7 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.0004e3e4)
     "*/recon/tla/de/rom.o"(.rom.0004e600)
     "*/games/tla/src/menu/d004e584.o"(.rodata)
-    "*/recon/tla/de/rom.o"(.rom.0004e890)
+    "*/games/common/src/graphics/ui/marks.o"(.rodata)
     "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.00059a00)
     "*/games/tla/src/graphics/window/d0059878.o"(.rodata)

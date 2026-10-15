@@ -155,19 +155,6 @@ Data_0802f204:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x000000a4
-	.section .unidentified.0804e684,"a"
-	.global UiIcon_BaseGlyphPointers
-UiIcon_BaseGlyphPointers:
-	.incbin "baserom.gba", 0x0004e684, 0x000000bc
-	.global Data_0804e740
-Data_0804e740:
-	.incbin "baserom.gba", 0x0004e740, 0x0000009c
-	.global Data_0804e7dc
-Data_0804e7dc:
-	.incbin "baserom.gba", 0x0004e7dc, 0x00000298
-	.global UiIcon_OverlayPointerTable
-UiIcon_OverlayPointerTable:
-	.incbin "baserom.gba", 0x0004ea74, 0x000000e4
 	.section .unidentified.080597f4,"a"
 	.incbin "baserom.gba", 0x000597f4, 0x00000004
 	.global Data_080597f8

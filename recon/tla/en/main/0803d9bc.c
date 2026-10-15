@@ -16,7 +16,7 @@ typedef struct {
 
 extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 
-extern s32 UiIcon_BaseGlyphPointers[];
+extern s32 UiIcon_FramePointerTable[];
 extern s32 UiIcon_PsynergyIconPointers[];
 
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
@@ -32,7 +32,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
         glyph = 0;
 
     if (with_base != 0) {
-        work->f604 = UiIcon_BaseGlyphPointers[2];
+        work->f604 = UiIcon_FramePointerTable[2];
         work->f600 = 2;
         work->f602 = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);

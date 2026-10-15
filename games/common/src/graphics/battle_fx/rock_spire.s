@@ -1,4 +1,3 @@
-	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.global BattleFx_RockSpireSheet
 BattleFx_RockSpireSheet:

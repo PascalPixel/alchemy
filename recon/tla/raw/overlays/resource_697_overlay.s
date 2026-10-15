@@ -1373,64 +1373,6 @@ Func_020014e4:
 	.4byte 0xffff0000
 .L_020095a4:
 	.4byte 0xffff8000
-	.section .text.x02009bec,"ax",%progbits
-	.balign 4
-	.global Func_02001bec
-	.thumb_func
-Func_02001bec:
-	push {r5, r6, lr}
-	sub sp, #8
-	movs r3, #11
-	str r3, [sp, #0]
-	movs r5, #64
-	movs r0, #11
-	movs r1, #22
-	movs r2, #11
-	movs r3, #8
-	str r5, [sp, #4]
-	bl Func_02005818
-	movs r3, #79
-	str r3, [sp, #0]
-	movs r1, #22
-	movs r2, #11
-	movs r3, #8
-	movs r0, #79
-	str r5, [sp, #4]
-	bl Func_02005818
-	movs r0, #16
-	bl Object_GetById
-	movs r5, #1
-	adds r0, #98
-	strb r5, [r0]
-	movs r0, #17
-	bl Object_GetById
-	adds r0, #98
-	strb r5, [r0]
-	movs r0, #18
-	bl Object_GetById
-	adds r0, #98
-	strb r5, [r0]
-	movs r0, #16
-	bl Object_GetById
-	movs r6, #0
-	adds r0, #89
-	strb r6, [r0]
-	movs r0, #17
-	bl Object_GetById
-	adds r0, #89
-	strb r6, [r0]
-	movs r0, #18
-	bl Object_GetById
-	adds r0, #89
-	strb r6, [r0]
-	bl Func_02000d70
-	movs r0, #15
-	bl Func_020006b4
-	movs r0, #15
-	bl Func_0200062c
-	add sp, #8
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02009c6c,"ax",%progbits
 	.balign 4
 	.global Func_02001c6c

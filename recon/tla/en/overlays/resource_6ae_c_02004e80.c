@@ -1,7 +1,11 @@
-/* Near miss: differ 2 of 27 (one reordered row): the draft builds the saved-byte offset before it loads
- * the party state address. Tried: an asm barrier on the party pointer (the
- * object's copy to r8 then moves up), a u8 pointer with a one-pass block
- * (the zero leaves r5). */
+/* Near miss: differ 2 of 27 (one reordered row): sched2 builds the saved-byte
+ * offset (movs r1, #181, priority 74) before it loads the party state address
+ * (priority 73); the native loads the address first. Copying the object from
+ * a block-local found after the first store puts mov r8, r0 where the native
+ * has it, with no device. Tried: an empty asm barrier or a one-pass block
+ * before the stores (the copy to r8 then joins the call's return and moves
+ * up: differ 2 to 4), an asm input operand on the party pointer, the party
+ * pointer pinned to r3, the stores straight through gPartyState. */
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -15,14 +19,13 @@ struct ObjectRuntime *Object_GetById(s32 id);
 
 void Func_02004e80(s32 from, s32 to)
 {
-    struct ObjectRuntime *object = Object_GetById(from);
+    struct ObjectRuntime *found = Object_GetById(from);
+    struct ObjectRuntime *object;
     struct ObjectRuntime *target;
     struct PartyState *party = &gPartyState;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
-    } while (0);
     party->saved_byte = 0;
+    object = found;
     ((struct Ov6aeParty *)party)->held = to;
     target = Object_GetById(to);
     target->update = object->update;

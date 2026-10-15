@@ -1,7 +1,5 @@
 #include "ov664.h"
 
-extern s32 Data_02006c0c;
-
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_020026c0(void);
 

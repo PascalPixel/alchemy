@@ -56,4 +56,20 @@ void Func_02005f2c(s32 value);
 void Func_02005f34(s32 a, s32 b);
 void Func_02005f94(s32 value);
 
+// The cell stampers keep their last cell and the block they copy.
+extern s32 Data_02006c0c;
+extern s32 Data_020073dc;
+extern s32 Data_020073e0;
+extern s32 Data_020073e4;
+extern s32 Data_020073e8;
+
+s32 Func_02005f84(void);
+void Func_02005db4(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z);
+
+static inline void CopyCells(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z)
+{
+    /* FAKEMATCH: forwarding through the inline puts every argument in a register before the stack arguments are stored, as the native does; called directly, the two stack constants share r3 and the second call loads its last argument first (differ 24 in Func_02002980; six instructions move in Func_02003d40). */
+    Func_02005db4(src_x, src_z, width, height, dest_x, dest_z);
+}
+
 #endif

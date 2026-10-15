@@ -1212,54 +1212,8 @@ Func_02000da0:
 	.4byte MsgItLooksLikeThisIsYour
 .L_02008e48:
 	.4byte MsgIWillTellYou
-	.section .text.x02008f6c,"ax",%progbits
-	.balign 4
-	.global Func_02000f6c
-	.thumb_func
-Func_02000f6c:
-	push {r5, r6, r7, lr}
-	adds r7, r0, #0
-	bl Party_CountActiveOwners
-	adds r5, r0, #0
-	movs r0, #185
-	lsls r0, r0, #1
-	movs r6, #3
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008f86
-	movs r6, #4
-.L_02008f86:
-	cmp r5, r6
-	ble .L_02008f8c
-	adds r5, r6, #0
-.L_02008f8c:
-	movs r1, #0
-	cmp r1, r5
-	bge .L_02008fae
-.L_02008f92:
-	ldr r0, .L_02008fb4
-	movs r3, #134
-	lsls r3, r3, #2
-	adds r2, r1, r3
-	ldrb r3, [r0, r2]
-	cmp r3, #255
-	beq .L_02008fae
-	ldrb r3, [r0, r2]
-	movs r0, #1
-	cmp r3, r7
-	beq .L_02008fb0
-	adds r1, #1
-	cmp r1, r5
-	blt .L_02008f92
-.L_02008fae:
-	movs r0, #0
-.L_02008fb0:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008fb4:
-	.4byte gPartyState
-	.4byte 0x00004770
 	.section .text.x02008fbc,"ax",%progbits
+	.balign 4
 	.global Func_02000fbc
 	.thumb_func
 Func_02000fbc:

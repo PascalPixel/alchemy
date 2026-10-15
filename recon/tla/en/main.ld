@@ -2013,7 +2013,6 @@ SECTIONS
         "*/recon/tla/raw/08151b48.o"(.text)
         "*/games/tla/src/battle/effect/series_g.o"(.text)
         "*/recon/tla/raw/08151ff0.o"(.text)
-        "*/recon/tla/raw/08152404.o"(.text)
         "*/games/tla/src/battle/effect/noeffect.o"(.text)
         "*/recon/tla/raw/08152474.o"(.text)
         "*/recon/tla/raw/081524b4.o"(.text)

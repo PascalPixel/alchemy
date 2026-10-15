@@ -4297,7 +4297,7 @@ SummonFx_RunCanvasEffect:
 	.type Func_08151ff0, %function
 	.thumb_func
 Func_08151ff0:
-	.incbin "baserom.gba", 0x00151ff0, 0x00000480
+	.incbin "baserom.gba", 0x00151ff0, 0x00000414
 	.section .rom.00152474, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00152474, 0x00000080

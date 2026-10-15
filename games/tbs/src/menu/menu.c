@@ -324,8 +324,9 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   }
   digits++; // the leading digit
 
-  // Step x back from the number's right edge to its left edge. The number
-  // writer right-aligns the value in a field of that many characters.
+  // Step x back from the number's right edge to its left edge; the number
+  // writer right-aligns the value in a field of that many characters. x
+  // changes in place: a separate left-edge local changes the registers.
   x -= digits * TEXT_CELL_WIDTH;
   UiText_DrawNumberAtOffsetFar(number, digits, window, x, y);
 }

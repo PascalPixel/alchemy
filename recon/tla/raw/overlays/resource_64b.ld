@@ -3,12 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/field/world_map/entry.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x02008038)
-        "*/resource_64b_overlay.o"(.text.x0200809c)
-        "*/resource_64b_overlay.o"(.text.x02008100)
-        "*/resource_64b_overlay.o"(.text.x02008164)
-        "*/resource_64b_overlay.o"(.text.x020081c8)
-        "*/resource_64b_overlay.o"(.text.x0200822c)
+        "*/games/tla/src/field/world_map/encounter.o"(.text)
         "*/games/tla/src/field/world_map/scene_tables.o"(.text)
         "*/games/tla/src/field/world_map/tile_sprite.o"(.text)
         "*/resource_64b_overlay.o"(.text.x020082c4)

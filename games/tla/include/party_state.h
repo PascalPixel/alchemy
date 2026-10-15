@@ -44,7 +44,7 @@ struct PartyState {
     u8 battle_rule_24b;
     u8 unknown_24c[0xa];
     s16 unknown_256;
-    u8 unknown_258[4];
+    s32 encounter_steps;
     u16 tally_25c;
     u8 unknown_25e[6];
     s32 avoid_distance;

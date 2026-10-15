@@ -1,22 +1,33 @@
+/* Near miss, differ 6 of 111 (two reordered rows, 15 before): The Broken
+ * Seal's BattlePres_SetupTransitionScene with the camera from its heap slot.
+ * The native stores pos[1] and pos[2] before it loads Iwram_RatioMulQ14's entry
+ * and stores pos[0] after it; this draft stores pos[0] between them. Later the
+ * native copies the camera to r1 (mov r1, r8) before the three render bound
+ * stores, this draft after them. Measured: the position stores reordered
+ * (differ 12 and 16), the bounds unchanged. */
 #include "types.h"
-#include "iwram_call.h"
-#include "scene.h"
 #include "btldisp.h"
+#include "graphics.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+#include "transform.h"
 
-extern u8 gProjection[];
-void Graphics_PrepareTransferInIwramWork();
+extern u32 gCameraSceneParameters[];
+void Camera_StoreSceneParameters(s32 span, u32 depth, s32 range);
+void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyYaw(s32 yaw);
+void SceneTransform_ApplyPitch(s32 pitch);
+s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
-void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
+void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
-    struct BattleCamera *scene = gCameraWork;
+    struct BattleCamera *scene = Ram_HeapSlots->camera_work;
     s32 *pos = scene->pos;
-    s32 *hud = (s32 *)gProjection;
-    s32 scale = __divsi3(mode << 16, 100);
-    s32 render_bounds[3];
-    s32 measured_bounds[3];
-    s32 source_bounds[3];
+    s32 scale = (zoom << 16) / 100;
+    s32 renderBounds[3];
+    s32 measuredBounds[3];
+    s32 sourceBounds[3];
     s32 span = 0x01fe0000;
-    s32 (*blend)(s32, s32);
     s32 alpha;
     s32 half;
     s32 width;
@@ -25,36 +36,31 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     pos[0] = x;
     pos[1] = depth;
     pos[2] = y;
-    source_bounds[0] = 0;
+    sourceBounds[0] = 0;
     alpha = 0xc000;
-    source_bounds[1] = 0;
-    source_bounds[2] = 0;
+    sourceBounds[1] = 0;
+    sourceBounds[2] = 0;
 
-    blend = Iwram_RatioMulQ14;
-    result = blend(span, alpha);
+    result = Iwram_RatioMulQ14(span, alpha);
     Camera_StoreSceneParameters(span, result, span * 2);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(pos);
     SceneTransform_ApplyYaw((s16)scene->yaw);
     SceneTransform_ApplyPitch((s16)scene->pitch);
-    render_bounds[0] = 0;
-    render_bounds[1] = 0;
-    render_bounds[2] = span;
-    Iwram_TransformVector(render_bounds, (s32 *)scene);
-    hud[3] = 120;
-    hud[4] = 120;
+    renderBounds[0] = 0;
+    renderBounds[1] = 0;
+    renderBounds[2] = span;
+    Iwram_TransformVector(renderBounds, (s32 *)scene);
+    gCameraSceneParameters[3] = 120;
+    gCameraSceneParameters[4] = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(scene, pos);
-    Render_ProjectPoint(source_bounds, measured_bounds);
+    Graphics_PrepareTransferInIwramWork(scene->eye, pos);
+    Render_ProjectPoint(sourceBounds, measuredBounds);
 
-    BattleCamera_SetRange(
-        0x780000,
-        0x780000,
-        (120 - measured_bounds[0]) << 8,
-        (120 - measured_bounds[1]) << 8,
-        scale);
+    BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+        (120 - measuredBounds[1]) << 8, scale);
     half = scale * 0xff;
     width = half * 2;
-    result = blend(width, alpha);
+    result = Iwram_RatioMulQ14(width, alpha);
     Camera_StoreSceneParameters(width, result, half * 4);
 }

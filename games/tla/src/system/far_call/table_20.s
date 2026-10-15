@@ -8,7 +8,7 @@ Ui_GetTableWordZeroFar:
 	.global Func_080383d8
 	.thumb_func
 Func_080383d8:
-	overlay_veneer Func_0803a60c
+	overlay_veneer UiText_OpenEntryMessage
 	.global Func_080383e0
 	.thumb_func
 Func_080383e0:

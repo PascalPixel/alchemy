@@ -15,7 +15,7 @@ Func_080432a4:
 	mov r8, r1
 	cmp r0, #0
 	bne .L_0804333a
-	bl Func_08016054
+	bl SaveState_LoadSummaryRecords
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #204

@@ -190,7 +190,7 @@ Func_08039864:
 	str r1, [r3, #28]
 .L_080399fa:
 	adds r0, r6, #0
-	bl Func_0803cdb4
+	bl UiWork_CheckCancelByModeInput
 	cmp r0, #0
 	bne .L_08039a40
 	ldr r0, [r6]
@@ -436,7 +436,7 @@ Func_08039864:
 	str r1, [r3, #28]
 .L_08039bde:
 	adds r0, r6, #0
-	bl Func_0803cdb4
+	bl UiWork_CheckCancelByModeInput
 	cmp r0, #0
 	bne .L_08039bea
 	b .L_08039cf0
@@ -464,7 +464,7 @@ Func_08039864:
 	movs r3, #0
 	strh r3, [r2]
 	adds r0, r6, #0
-	bl Func_0803cd5c
+	bl UiWork_CheckCancelByInput
 	b .L_08039cf0
 .L_08039c16:
 	ldrh r3, [r6, #20]

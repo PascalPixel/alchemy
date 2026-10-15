@@ -21,7 +21,7 @@ extern u8 Data_02000000[];
 extern s16 Data_020036d0;
 
 s32 Func_0801596c(void);
-s32 Func_08016054(void);
+s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
@@ -37,7 +37,7 @@ s32 SaveState_SelectAndLoad(s32 mode)
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
-        Func_08016054();
+        SaveState_LoadSummaryRecords();
         slot = Func_08043cd8(Data_020036d0, mode);
         if (slot == -1) {
             result = slot;
@@ -73,7 +73,7 @@ s32 SaveState_CopySlot(void)
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
-        Func_08016054();
+        SaveState_LoadSummaryRecords();
         value = Func_08043cd8(0, 2);
         if (value == -1) {
             result = value;
@@ -132,7 +132,7 @@ s32 SaveState_DeleteSelectedSlot(void)
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
-        Func_08016054();
+        SaveState_LoadSummaryRecords();
         value = Func_08043cd8(0, 3);
         if (value == -1) {
             result = value;

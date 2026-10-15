@@ -11,7 +11,7 @@ extern u8 Data_02000504[];
 extern s16 Data_020036d0;
 
 s32 Func_0801596c(void);
-s32 Func_08016054(void);
+s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
 s32 SaveProgress_Open(s32 arg0);

@@ -14,7 +14,7 @@ Func_08043690:
 	subs r7, #9
 	b .L_08043752
 .L_080436a8:
-	bl Func_08016054
+	bl SaveState_LoadSummaryRecords
 	ldr r3, .L_08043760
 	movs r1, #0
 	ldrsh r0, [r3, r1]

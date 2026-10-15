@@ -13,7 +13,7 @@ extern u8 Data_02000000[];
 extern s16 Data_020036d0;
 
 s32 Func_0801596c(void);
-s32 Func_08016054(void);
+s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 s32 SaveState_BuildSummaryHeader(void);
 s32 Func_08042f10(s32 slot, void *buffer);
@@ -41,7 +41,7 @@ s32 SaveState_SaveToSlot(u32 slot)
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
-        Func_08016054();
+        SaveState_LoadSummaryRecords();
         Data_020036d0 = slot;
         Audio_PlayCue(85);
         UiText_ShowPositionedMessageAndWait((s32)&MsgSaving, 13);

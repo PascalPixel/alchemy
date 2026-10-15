@@ -12,7 +12,7 @@ extern u16 Data_020036d8;
 extern u16 Data_02005350;
 
 s32 Func_0801596c(void);
-s32 Func_08016054(void);
+s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 
 #define SUMMARY_TAIL(field) ((u32)&((struct SaveSummary *)0)->field - (u32)&((struct SaveSummary *)0)->party[4])
@@ -31,7 +31,7 @@ s32 SaveState_ScanRecordFlags(void)
         s8 *flags;
         struct SaveWorkspace *work;
 
-        ret = Func_08016054();
+        ret = SaveState_LoadSummaryRecords();
         work = Ram_HeapSlots->serial_work;
         flags = &work->summary[0].party[4];
         Data_02003860 = 0;

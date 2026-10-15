@@ -26,7 +26,7 @@ Func_081a729c:
 	movs r0, #1
 	bl Blend_SetBrightenTarget16
 	bl Func_08014b70
-	bl Func_08014368
+	bl Resource_InitializeTable
 	movs r0, #1
 	bl WaitFrames
 	ldr r3, .L_081a7310

@@ -11,7 +11,7 @@ Func_081a71c8:
 	adds r6, #3
 	strb r3, [r6]
 	bl Func_08014b70
-	bl Func_08014368
+	bl Resource_InitializeTable
 	movs r0, #1
 	bl WaitFrames
 	bl Scheduler_ResetTaskTable

@@ -56,7 +56,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
         UiWork_Finalize(window, 1);
         return NULL;
     }
-    work->unknown_1388[2] = 0;
-    work->unknown_1388[3] = 0;
+    work->unknown_138a[0] = 0;
+    work->unknown_138a[1] = 0;
     return window;
 }

@@ -5648,7 +5648,9 @@ s32 BattleEffectDeadCheck(s32 effect) {
 // healing, then its added effect (a status, a stat change, a revival...).
 // Nothing is shown here: each step queues battle events (the names and
 // numbers a message needs, the message, the target's reactions) that
-// BattleEvent_Playback then plays in order.
+// BattleEvent_Playback then plays in order. The units themselves change at
+// once: UnitCalcFar recalculates a unit's stats from its stages, and
+// UnitRatioFar its HP and PP gauges after either changes.
 //
 // plan : the action under way: the actor, the ability, its element and its
 //        targets, each with its distance from the aimed position, damage

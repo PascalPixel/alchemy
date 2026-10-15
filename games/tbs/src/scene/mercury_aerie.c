@@ -1506,10 +1506,9 @@ static void MercuryAerie_RiseActorPair(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-// 旧形式の定義: MercuryAerie_LowerCollectedActors は三つ目の引数も渡す
-static void MercuryAerie_CollectBandSlots(out, y)
-s32 *out;
-s32 y;
+// MercuryAerie_LowerCollectedActors passes its lift as a third argument,
+// which this function does not take.
+static void MercuryAerie_CollectBandSlots(s32 *out, s32 y)
 {
 	struct ActorTable *table;
 	u32				   slot;
@@ -1546,7 +1545,8 @@ static void MercuryAerie_LowerCollectedActors(void)
 	n = 0;
 	for (i = 0; i <= 4; i++)
 		ids[i] = 66;
-	MercuryAerie_CollectBandSlots(ids, lift->offsetY, lift);
+	// the lift goes as a third argument, as the bytes show: the cast keeps it
+	((void (*)())MercuryAerie_CollectBandSlots)(ids, lift->offsetY, lift);
 	for (i = 0; i <= 4; i++)
 	{
 		if (ids[i] == 66)

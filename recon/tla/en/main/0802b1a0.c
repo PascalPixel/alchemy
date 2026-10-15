@@ -17,12 +17,12 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY,
     /* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
     u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
     u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
-    register struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
+    struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
     struct TilePos tile[3];
     s32 i;
     struct TilePos *pos = tile;
     u32 y;
-    register u32 x;
+    u32 x;
 
     for (i = 2; i >= 0; i--) {
         pos->x = layer->x >> 20;

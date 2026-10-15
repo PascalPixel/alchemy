@@ -1727,7 +1727,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011bf14)
     "*/games/tla/src/battle/motion/set_object_position.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011c070)
-    "*/recon/tla/ja/rom.o"(.rom.0011c11c)
     "*/games/tla/src/battle/motion/reset_slot_object_mode2.o"(.text)
     "*/games/tla/src/battle/motion/summon_scale.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011c3b8)

@@ -8,7 +8,7 @@ Battle_GetObjectTableValueFar:
 	.global BattleMotion_ApproachTargetFar
 	.thumb_func
 BattleMotion_ApproachTargetFar:
-	overlay_veneer Func_0811c120
+	overlay_veneer BattleMotion_ApproachTarget
 	.global Func_08118080
 	.thumb_func
 Func_08118080:

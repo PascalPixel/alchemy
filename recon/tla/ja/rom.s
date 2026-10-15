@@ -5140,7 +5140,7 @@ Func_081b2008:
 	.type Func_081b83c4, %function
 	.thumb_func
 Func_081b83c4:
-	.incbin "baserom.gba", 0x001b83c4, 0x00001f5c
+	.incbin "baserom.gba", 0x001b83c4, 0x00001f48
 	.section .rom.001c00b0, "ax"
 	.incbin "baserom.gba", 0x001c00b0, 0x00000064
 	.section .rom.001c0114, "ax"

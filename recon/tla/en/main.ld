@@ -2338,7 +2338,7 @@ SECTIONS
         "*/recon/tla/raw/081b8274.o"(.text)
         "*/recon/tla/raw/081b834c.o"(.text)
         "*/recon/tla/raw/081b83c4.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.081ba30c)
+        "*/games/tla/src/graphics/lucky_dice/dice_game.o"(.rodata)
         . = ABSOLUTE(0x081c0000);
         "*/games/tla/src/system/far_call/audioeng.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/table_48.o"(.text .rodata .data .padding)

@@ -2472,10 +2472,6 @@ Data_0819a140:
 	.global Data_0819a160
 Data_0819a160:
 	.incbin "baserom.gba", 0x0019a160, 0x00000048
-	.section .unidentified.081ba30c,"a"
-	.global Data_081ba30c
-Data_081ba30c:
-	.incbin "baserom.gba", 0x001ba30c, 0x00000014
 	.section .unidentified.081c3430,"a"
 	.global Data_081c3430
 Data_081c3430:

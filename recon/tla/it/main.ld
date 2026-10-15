@@ -2205,6 +2205,7 @@ SECTIONS
     "*/games/tla/src/graphics/palette/scale_rgb555_buffer_b.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001b810c)
     "*/recon/tla/it/rom.o"(.rom.001b83c4)
+    "*/games/tla/src/graphics/lucky_dice/dice_game.o"(.rodata)
     . = ABSOLUTE(0x081c0000);
     "*/games/tla/src/system/far_call/audioeng.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/far_call/table_48.o"(.text .rodata .data .padding)

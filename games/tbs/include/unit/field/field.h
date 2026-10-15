@@ -235,8 +235,8 @@ void Graphics_RenumberFillerEntries(void);
 void Tilemap_ConvertBuffer(void);
 s32 Map_LoadLayeredScene(s32 index);
 void Map_ApplyWorkOriginAndSpan(void);
-void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2);
-void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2);
+void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
+void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);
 void Map_UpdateLayerScroll(void);
 void Map_SetCameraCenter(s32 x, s32 y);
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,

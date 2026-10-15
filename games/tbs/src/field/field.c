@@ -2121,6 +2121,7 @@ typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn gScriptObject_CommandTable[];
 
+// value squared.
 static __inline__ s32 Square(s32 value) { return value * value; }
 
 // Advances all 64 field objects by one frame, as Object_UpdateAll does for
@@ -2819,6 +2820,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
     return 1;                                                                  \
   }
 
+// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
 DEFINE_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
 DEFINE_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
@@ -3365,6 +3367,9 @@ extern OperandFunc gScript_OperandHandlerTable[];
     }                                                                          \
   }
 
+// The work value handlers, one for each entry of enum ScriptWork (see
+// gScript_OperandHandlerTable in operand.c); each names the object field it
+// sets, adds to or compares.
 DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
 // Work value SW_CURSOR: sets, adds to or compares the script cursor.
@@ -3475,6 +3480,7 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_COMPARE);
 }
 
+// Stores value as a halfword.
 static __inline__ void StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
@@ -4385,27 +4391,31 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
+// Gives each map cell whose block number is 0xfff (a placeholder) a number
+// of its own, counting up from 0 in map order.
 void Graphics_RenumberFillerEntries(void) {
-  u32 *p = (u32 *)gMapCellBuffer;
-  u32 cnt = 128 << 7;
+  u32 *cell = (u32 *)gMapCellBuffer;
+  u32 remaining = 128 << 7;
   u32 mask = 0xfff;
-  s32 no = -1;
+  s32 number = -1;
 
   do {
-    u32 value = *p++;
-    u32 idx = value & mask;
+    u32 value = *cell++;
+    u32 block = value & mask;
 
-    if (idx == mask) {
-      if (no != idx) {
-        no++;
+    if (block == mask) {
+      if (number != block) {
+        number++;
       }
-      value = value + no - idx;
-      p[-1] = value;
+      value = value + number - block;
+      cell[-1] = value;
     }
-    cnt--;
-  } while (cnt != 0);
+    remaining--;
+  } while (remaining != 0);
 }
 
+// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
+// a saved copy of the staged buffer.
 void Tilemap_ConvertBuffer(void) {
   u8 *saved;
   ConvertFn routine;
@@ -4420,21 +4430,25 @@ void Tilemap_ConvertBuffer(void) {
   MemFree(saved);
 }
 
+// Copies one tile column of a block (metatile) into a BG map: its top and
+// bottom tile entries, left or right by parity.
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod,
                                  u32 parity) {
-  u16 *colors;
+  u16 *entry;
   u8 *destination;
   u32 index = ((*map << 20) >> 18) + parity;
 
-  colors = (u16 *)Ram_MapBlocks;
-  colors += index;
+  entry = (u16 *)Ram_MapBlocks;
+  entry += index;
   destination = base + (rowmod + colmod + parity) * 2;
-  *(u16 *)destination = *colors;
-  colors = (u16 *)(Ram_MapBlocks + 4);
-  colors += index;
-  *(u16 *)(destination + 64) = *colors;
+  *(u16 *)destination = *entry;
+  entry = (u16 *)(Ram_MapBlocks + 4);
+  entry += index;
+  *(u16 *)(destination + 64) = *entry;
 }
 
+// Copies a whole block (metatile) into a BG map: its top two tile entries
+// and its bottom two, a map row (64 bytes) below.
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod,
                                       u32 colmod) {
   u32 *tiles;
@@ -4481,6 +4495,11 @@ struct SceneHeader {
   s32 script;
 };
 
+// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
+// cells, tile animations, blend script and event script; sets up the three
+// background layers' origins, parallax and wrap from the scene header; loads
+// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
+// loaded; and starts the layer scrolling. Returns 2.
 s32 Map_LoadLayeredScene(s32 index) {
   struct SceneEntry *entry;
   struct MapScrollWork *work;
@@ -4623,6 +4642,8 @@ s32 Map_LoadLayeredScene(s32 index) {
   return 2;
 }
 
+// Centres the camera on the point the map follows (origin: x, height, z),
+// or on (0, 0) when there is none, and scrolls the layers there.
 void Map_ApplyWorkOriginAndSpan(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 x;
@@ -4643,15 +4664,18 @@ void Map_ApplyWorkOriginAndSpan(void) {
   Map_UpdateLayerScroll();
 }
 
-void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2) {
-  u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
-  u32 row = ((a2 / 2) & 0x7F) << 7;
-  u32 rowmod = (a2 & 30) << 5;
-  u32 col = (a1 / 2) & 0x7F;
-  u32 colmod = a1 & 30;
-  u32 counter;
+// Draws a row of 16 blocks (32 tiles) of a layer's cells into its BG map
+// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
+// wraps every 32 tiles.
+void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
+  u8 *dest = BG_SCREEN_BLOCK(5) + (layer << 11);
+  u32 row = ((tileY / 2) & 0x7F) << 7;
+  u32 rowmod = (tileY & 30) << 5;
+  u32 col = (tileX / 2) & 0x7F;
+  u32 colmod = tileX & 30;
+  u32 i;
 
-  for (counter = 0; counter <= 15; counter++) {
+  for (i = 0; i <= 15; i++) {
     u32 *map = (u32 *)Ram_MapCellBuffer;
     u32 *tiles;
     u8 *cell;
@@ -4671,16 +4695,18 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2) {
   }
 }
 
-void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2) {
-  u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
-  u32 row = ((a2 / 2) & 0x7F) << 7;
-  u32 rowmod = (a2 & 30) << 5;
-  u32 col = (a1 / 2) & 0x7F;
-  u32 colmod = a1 & 30;
-  u32 parity = a1 & 1;
-  u32 counter;
+// Draws a column of 11 blocks of a layer's cells, one tile wide, into its BG
+// map, starting at tile (tileX, tileY).
+void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
+  u8 *destination = BG_SCREEN_BLOCK(5) + (layer << 11);
+  u32 row = ((tileY / 2) & 0x7F) << 7;
+  u32 rowmod = (tileY & 30) << 5;
+  u32 col = (tileX / 2) & 0x7F;
+  u32 colmod = tileX & 30;
+  u32 parity = tileX & 1;
+  u32 i;
 
-  for (counter = 0; counter <= 10; counter++) {
+  for (i = 0; i <= 10; i++) {
     u32 *map = (u32 *)Ram_MapCellBuffer;
 
     map += row + col;
@@ -4761,9 +4787,9 @@ void Map_UpdateLayerScroll(void) {
     y = baseY / 0x80000;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        Map_RenderPaletteMappedBlock(i, x + 30, y);
+        Map_RenderMetatileColumn(i, x + 30, y);
       else
-        Map_RenderPaletteMappedBlock(i, x, y);
+        Map_RenderMetatileColumn(i, x, y);
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)

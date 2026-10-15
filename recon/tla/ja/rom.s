@@ -5111,10 +5111,6 @@ TitlePalette_UpdateFade:
 	.thumb_func
 Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x001a7a28, 0x00000724
-	.section .rom.001a8286, "ax"
-	.incbin "baserom.gba", 0x001a8286, 0x000004b8
-	.section .rom.001a883a, "ax"
-	.incbin "baserom.gba", 0x001a883a, 0x00000002
 	.section .rom.001ac026, "ax"
 	.incbin "baserom.gba", 0x001ac026, 0x0000008a
 	.section .rom.001ac15c, "ax"

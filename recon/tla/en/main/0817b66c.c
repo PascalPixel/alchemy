@@ -1,28 +1,29 @@
-/* Draft (tla-en): listing 326 instructions, draft 326, common 317, differ 18.
- * The shape matches; what is left is the arm9tdmi scheduling leftover:
- * - after EffectPosition_ApplyAlternateStepAndYOffset the native loads
- *   BG2PA's 0x100 from the pool before it starts the register address.
- *   f18284c.c's device (a u16 pinned to r3 behind an empty asm that holds
- *   r2) fixes the row, but the asm counts four estimated bytes and the
- *   halfword pool (range 64) is then placed before the loop with a jump
- *   around it. s2614.c's one-pass block instead fixes the row and changes
- *   sched2's tie-breaks of the first block (its barrier depends on the
- *   early insns): "add r1, r10" comes before the resource id's pool load;
- *   another one-pass block around or before that call only moves the swap
- *   (to the pool load or to "mov r10, r3").
+/* Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
+ * The shape matches; what is left is the arm9tdmi scheduling leftover.
+ * In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
+ * s2614.c), so it loads from the pool before the register address as the
+ * native does, and the frame-80 block's "drift" temporary (alchemy
+ * permute's), which puts velocity_x's store after velocity_y's.
+ * Left:
+ * - the one-pass block's barrier depends on every earlier use of r10, so
+ *   sched2 now prefers "add r1, r10" to the resource id's pool load before
+ *   Resource_LoadAndDecompress (a one-pass block around or before that
+ *   call only moves the swap). f18284c.c's empty asm instead keeps the
+ *   start but counts four estimated bytes, and the halfword pool (range
+ *   64) is then placed before the loop with a jump around it.
  * - frame's 0 is set between "mov r3, sp" and "adds r3, #12"; the native
  *   stores &sprite at sp+8 first. Through a "source" local set before the
- *   loop the order is right but &sprite takes r2 and the 0 r3 (differ 24).
+ *   loop the order is right but &sprite takes r2 and the 0 r3.
  * - the frame-0 block's setup (y, i, the zero and step) is in another
- *   order; the sprite mask's pool load and the stack load of sprite.bits
- *   are swapped; the pool load of the step mask comes one row late; one
- *   store of the frame-80 block moves by one row.
+ *   order; the sprite mask's pool load comes after the stack load of
+ *   sprite.bits (the native loads the pool word first, as if the load
+ *   after model->unknown_14's store waited a cycle more); the step mask's
+ *   pool load comes one row late.
  * The sprite source word is two byte fields written with masks: as u32
  *   bitfields the compiler stores bytes (differ 57).
  * Resource 313 (BattleFx_CrossedDaggersSheet) needs its name in
  *   system/resource/directory.s when this is adopted.
- * alchemy permute (16 minutes over two runs): differ 18 at best, by
- *   writing &sprite at its uses as here.
+ * alchemy permute (22 minutes over three runs): differ 16 at best.
  */
 #include "types.h"
 #include "io_reg.h"
@@ -107,7 +108,12 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
     GetBattleObjectSlotFar(effect->actors[0]);
     EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
-    REG_BG2PA = 0x100;
+    {
+        register u16 scale __asm__("r3") = 0x100;
+
+        do { } while (0);
+        REG_BG2PA = scale;
+    }
     REG_BG2X = (64 - pos.x) << 8;
     for (frame = 0; frame != 96; frame++) {
         if (frame == 0) {
@@ -155,13 +161,15 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
         for (i = 0, step = work->steps; i != 8; i++, step++) {
             if (frame == 80) {
                 s32 speed;
+                s32 drift;
 
                 step->y = 0xffd00000;
                 speed = (i << 10) + (Random16() & 0x3ff) - 0x1200;
                 step->x = (speed << 10) + 0x400000;
                 step->z = speed;
+                drift = -speed << 5;
                 step->velocity_y = 0xc0000;
-                step->velocity_x = -speed << 5;
+                step->velocity_x = drift;
                 step->velocity_z = 0;
             }
             Render_ResetTransformState();

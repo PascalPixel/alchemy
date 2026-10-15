@@ -266,72 +266,6 @@ Func_020000b8:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
 	.4byte 0xffff0000
-	.section .text.x02008488,"ax",%progbits
-	.balign 4
-	.global Func_02000488
-	.thumb_func
-Func_02000488:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	adds r5, r0, #0
-	ldr r6, [r5, #12]
-	ldr r0, [r5, #48]
-	movs r3, #192
-	lsls r3, r3, #12
-	asrs r6, r6, #2
-	adds r6, r6, r3
-	movs r3, #255
-	ands r0, r3
-	lsls r0, r0, #11
-	mov r8, r3
-	bl Math_Cosine
-	ldr r3, .L_02008500
-	adds r1, r6, #0
-	mov r10, r3
-	mov lr, r10
-	.2byte 0xf800
-	ldr r3, [r5, #68]
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r0, [r5, #48]
-	str r3, [r5, #8]
-	mov r3, r8
-	ands r0, r3
-	lsls r0, r0, #11
-	bl Math_Sine
-	adds r1, r6, #0
-	mov lr, r10
-	.2byte 0xf800
-	ldr r3, [r5, #76]
-	ldr r2, [r5, #72]
-	adds r3, r3, r0
-	str r3, [r5, #16]
-	ldr r3, [r5, #12]
-	adds r0, r5, #0
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	ldr r3, [r5, #48]
-	movs r2, #2
-	adds r3, #1
-	str r3, [r5, #48]
-	ldr r3, .L_02008504
-	ldr r3, [r3]
-	ands r3, r2
-	lsrs r3, r3, #1
-	lsls r1, r3, #3
-	adds r1, r1, r3
-	bl Object_SetPartAttribute
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02008500:
-	.4byte IwramMulQ16
-.L_02008504:
-	.4byte gFrameCount
 	.section .text.x0200857c,"ax",%progbits
 	.global Func_0200057c
 	.thumb_func
@@ -665,7 +599,7 @@ Func_0200057c:
 .L_0200883c:
 	.4byte Data_02004ae0
 .L_02008840:
-	.4byte Func_02000488
+	.4byte Effect_CircleAndBlink
 .L_02008844:
 	.4byte gPartyState
 .L_02008848:

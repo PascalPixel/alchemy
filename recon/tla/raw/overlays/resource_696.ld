@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_696/s0378.o"(.text)
         "*/games/tla/src/field/overlay_696/s0420.o"(.text)
         "*/games/tla/src/field/overlay_696/s0458.o"(.text)
-        "*/resource_696_overlay.o"(.text.x02008488)
+        "*/games/tla/src/field/common/effect/circle_blink.o"(.text)
         "*/games/tla/src/field/overlay_696/s0508.o"(.text)
         "*/resource_696_overlay.o"(.text.x0200857c)
         "*/games/tla/src/field/overlay_696/s0c80.o"(.text)

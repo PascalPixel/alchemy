@@ -1,12 +1,20 @@
-/* Near miss, differ 26: the listing loads 0x02000000 from the literal pool
- * (this draft builds it as 128 << 18) and builds the 0xd4c offset after the
- * event work load. The rest of the function matches. */
+/* Near miss, differ 24 of 72: the listing loads x = 0x02000000 for actor 9 from the
+ * literal pool in both branches, where this draft builds it as 128 << 18 (the
+ * split constant; 0x1d80000 for actor 10 is built in both). No compiled ⚓️ code
+ * pools 0x2000000. Measured: x and z in locals, 512 << 16, a direct call, a
+ * pixel-coordinate inline that shifts (all 24 to 26). The 0xd4c store matches
+ * through the one-pass block that Func_02000624 also takes. */
 #include "../../../../games/tla/src/field/overlay_659/ov659.h"
 
 void Func_02000570(void)
 {
+    void *event;
+
     if (!FlagChk(0x8ab)) {
-        FIELD_AT(Ram_HeapSlots->event_work, u16, 0xd4c) = 3;
+        do {
+            event = Ram_HeapSlots->event_work;
+        } while (0);
+        FIELD_AT(event, u16, 0xd4c) = 3;
         if (!FlagChk(0x911)) {
             Func_020007dc();
         } else {

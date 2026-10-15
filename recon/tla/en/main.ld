@@ -545,7 +545,6 @@ SECTIONS
         "*/recon/tla/raw/08041abc.o"(.text)
         "*/recon/tla/raw/08041b68.o"(.text)
         "*/games/tla/src/graphics/text/altflag.o"(.text)
-        "*/recon/tla/raw/08041c54.o"(.text)
         "*/recon/tla/raw/08041f70.o"(.text)
         "*/games/tla/src/graphics/text/tileword.o"(.text)
         "*/recon/tla/raw/08041fa4.o"(.text)

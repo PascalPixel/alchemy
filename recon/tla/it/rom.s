@@ -1019,13 +1019,6 @@ UiWindow_ClearTileAttributesInRect:
 	.thumb_func
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041bcc, 0x000000a4
-	.section .rom.00041cb8, "ax"
-	.balign 4
-	.global UiWindow_DrawDividerLine
-	.type UiWindow_DrawDividerLine, %function
-	.thumb_func
-UiWindow_DrawDividerLine:
-	.incbin "baserom.gba", 0x00041cb8, 0x0000031c
 	.section .rom.00041fd4, "ax"
 	.global Func_08041f70
 	.type Func_08041f70, %function

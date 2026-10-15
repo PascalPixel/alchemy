@@ -518,7 +518,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.00041b28)
     "*/recon/tla/es/rom.o"(.rom.00041bd4)
     "*/games/tla/src/graphics/text/altflag.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00041cc0)
     "*/recon/tla/es/rom.o"(.rom.00041fdc)
     "*/games/tla/src/graphics/text/tileword.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00042010)

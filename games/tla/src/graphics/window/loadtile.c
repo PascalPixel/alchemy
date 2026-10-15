@@ -4,13 +4,13 @@
 
 struct Rect_0803cba8 { u8 unknown_00[8]; u16 width; u16 height; s16 x; s16 y; u8 unknown_10[2]; u16 state; };
 
-extern char ResourceId_Data1D5;
+extern char ResourceId_WindowFrameFlash;
 
 void Func_0803a1c0(s32 x, s32 y, s32 width, s32 height);
 
 void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset)
 {
-    u8 *source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data1D5) + offset;
+    u8 *source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowFrameFlash) + offset;
     struct Rect_0803cba8 *rect = *window;
     s32 x = rect->x;
     s32 y = rect->y;
@@ -45,7 +45,7 @@ void Func_0803cbf8(struct Window_0803cbf8 *window)
         }
         window->timer--;
         if (window->timer == 0) {
-            Dma_Set(Resource_GetTableEntry((s32)&ResourceId_Data1D5), (void *)0x06000100, 0x84000040, (volatile u32 *)0x040000d4);
+            Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowFrameFlash), (void *)0x06000100, 0x84000040, (volatile u32 *)0x040000d4);
             window->rect->state = 0;
         }
     }

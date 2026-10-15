@@ -12,7 +12,7 @@
 Resource_DirectoryTable:
 	resource , Cartridge_Restart
 	resource , Resource_DirectoryTable
-	resource BuildStamp, Resource_Data002
+	resource BuildStamp, Resource_BuildStamp
 	resource , Resource_FarCall003
 	resource , Resource_FarCall004
 	resource , Resource_FarCall005
@@ -31,7 +31,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data012
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
-	resource Data015, Resource_Data015
+	resource ClockDigits, Field_ClockDigits
 	resource , Title_ScreenPicture
 	resource , Title_IntroGraphicsC
 	resource , Resource_Data018
@@ -48,7 +48,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data023
 	resource , Resource_Data024
 	resource IntroTilesB, Resource_Data025
-	resource , Resource_Data026
+	resource , Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
 	resource , Battle_SuharaGateBackdrop
 	resource , Battle_TakaraShimaBackdrop
@@ -456,9 +456,9 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesD4
 	resource , WorldMap_TilesD5
 	resource , WorldMap_TilesD6
-	resource , Resource_Data1BE
+	resource , Field_WhirlwindTiles
 	resource , Field_WhirlwindMap
-	resource , Resource_Data1C0
+	resource , Field_LightningTiles
 	resource , Field_LightningMap
 	resource , Field_WalkPathA
 	resource , Field_WalkPathB
@@ -479,13 +479,13 @@ Resource_DirectoryTable:
 	resource , Shop_CursorFrameF
 	resource , Shop_CursorFrameG
 	resource , Shop_CursorFrameH
-	resource Data1D5, Resource_Data1D5
+	resource WindowFrameFlash, Ui_WindowFrameFlash
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
-	resource , Resource_Data1D8
-	resource , Resource_Data1D9
-	resource , Resource_Data1DA
-	resource , Resource_Data1DB
+	resource , Ui_Flags
+	resource , FieldFx_GlowDisc
+	resource , FieldFx_RingOrb
+	resource , FieldFx_RingArcs
 	resource , FieldFx_RedFlameBurst
 	resource , FieldFx_VioletFlameBurst
 	resource , FieldFx_YellowFlameBurst
@@ -498,7 +498,7 @@ Resource_DirectoryTable:
 	resource , FieldFx_GoldCrystal
 	resource , FieldFx_FlamingArrow
 	resource , FieldFx_BowDraw
-	resource , Resource_Data1E8
+	resource , FieldFx_Explosion
 	resource , Resource_Data1E9
 	resource , FieldFx_SparkleFade
 	resource , FieldFx_StarSparkleFade
@@ -513,8 +513,8 @@ Resource_DirectoryTable:
 	resource , FieldFx_Runes
 	resource , FieldFx_Pebbles
 	resource , FieldFx_GoldenTrident
-	resource , Resource_Data1F7
-	resource , Resource_Data1F8
+	resource , FieldFx_FireColumn
+	resource , Field_GreenPanel
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA
 	resource , Resource_Data1FB
@@ -2058,3 +2058,27 @@ Resource_DirectoryTable:
 	resource , 0
 	resource , 0
 	resource , 0
+
+@ The time of each edition's build: year, month, day, hour, minute and second,
+@ two digits each. Runtime_GetBuildStampTime reads its digits.
+	.global Resource_BuildStamp
+Resource_BuildStamp:
+	.ifdef TLA_EDITION_JA
+	.asciz "020610172024\n"
+	.endif
+	.ifdef TLA_EDITION_EN
+	.asciz "030205144838\n"
+	.endif
+	.ifdef TLA_EDITION_DE
+	.asciz "030623214832\n"
+	.endif
+	.ifdef TLA_EDITION_FR
+	.asciz "030624204924\n"
+	.endif
+	.ifdef TLA_EDITION_ES
+	.asciz "030707212715\n"
+	.endif
+	.ifdef TLA_EDITION_IT
+	.asciz "030708203047\n"
+	.endif
+	.balign 4

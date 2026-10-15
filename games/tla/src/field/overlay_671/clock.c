@@ -28,7 +28,7 @@ void Func_020055cc(const void *data, void *buffer);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32 handle, s32 size, void *source);
 s32 GameFlag_Test(s32 flag);
-extern char ResourceId_Data015;
+extern char ResourceId_ClockDigits;
 
 void Func_020052a4(s32 mode)
 {
@@ -41,7 +41,7 @@ void Func_020052a4(s32 mode)
         clock->ringing = 1;
     }
     tiles = Runtime_BumpAllocateAlternatePool(0x400);
-    Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_Data015), tiles);
+    Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
     clock->tiles = tiles;
     clock->digits = tiles + 0x2c0;
     clock->tile_entry = Resource_FindFreeEntry();

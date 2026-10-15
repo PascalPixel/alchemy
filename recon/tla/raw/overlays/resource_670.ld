@@ -9,8 +9,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_670/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_670/exits.o"(.text)
         "*/games/tla/src/field/overlay_670/events_a.o"(.text)
-        "*/resource_670_overlay.o"(.text.x02008978)
-        "*/resource_670_overlay.o"(.text.x02008b2c)
         "*/games/tla/src/field/overlay_670/s0c90.o"(.text)
         "*/resource_670_overlay.o"(.text.x02008d74)
         "*/resource_670_overlay.o"(.text.x02009218)

@@ -164,7 +164,7 @@ void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
-void Func_02005b94(s32 actor, s32 emote, s32 frames);
+struct Ov670Object *Func_02005b94(s32 actor, s32 emote, s32 frames);
 void Func_02005b9c(s32 actor, s32 emote);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -220,6 +220,12 @@ static inline void Ov670_WaitFrames(s32 frames)
         s32 priority_ = (priority); \
         Scheduler_AddOrUpdateCallback((callback), priority_); \
     }
+
+static inline void Ov670_ObjEmote(s32 actor, s32 emote, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b94(actor, emote, frames);
+}
 
 static inline void Ov670_ObjEmoteWait(s32 actor, s32 emote)
 {

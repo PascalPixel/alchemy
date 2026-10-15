@@ -7,7 +7,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_69e/s0064.o"(.text)
         "*/games/tla/src/field/overlay_69e/animate.o"(.text)
         "*/games/tla/src/field/overlay_69e/s0148.o"(.text)
-        "*/resource_69e_overlay.o"(.text.x020081a4)
         "*/games/tla/src/field/overlay_69e/cue.o"(.text)
         "*/resource_69e_overlay.o"(.text.x020082b8)
         "*/games/tla/src/field/overlay_69e/s06ac.o"(.text)

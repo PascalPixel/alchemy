@@ -2345,7 +2345,6 @@ SECTIONS
         "*/games/tla/src/sound/driver/leftover_release_key.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_clear_modulation.o"(.text)
         "*/games/tla/src/sound/driver/leftover_command_byte_reader.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/081c03fe.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_command_byte_setters.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c0428.o"(.text)
         "*/recon/tla/raw/081c048c.o"(.text)
@@ -2387,7 +2386,6 @@ SECTIONS
     .rom_tail :
     {
         "*/games/tla/src/sound/driver/clear_buffer.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/081c16ca.o"(.text)
         "*/games/tla/src/sound/driver/clear_chain.o"(.text)
         "*/games/tla/src/sound/driver/sequence_commands.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/update.o"(.text .rodata .data .padding)

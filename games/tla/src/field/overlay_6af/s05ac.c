@@ -1,5 +1,8 @@
 #include "types.h"
 #include "flag_call.h"
+#include "party_state.h"
+#include "scene_ids.h"
+#include "field_event.h"
 
 // Import stubs: the event runtime's begin and end, and the pending
 // actions' resolution.
@@ -94,5 +97,42 @@ void Func_02000728(void)
         Func_0200043c(Data_0200117c, 4);
         Flag_Set(0x307);
         Func_02000fd4();
+    }
+}
+
+struct FieldActor *Object_GetById(s32 id);
+
+// Called through the scene table with an object id: in each of the first
+// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
+// a given x and z in the second room runs Func_02000728 instead.
+void Func_02000760(s32 unused, s32 id)
+{
+    struct FieldActor *object = Object_GetById(id);
+
+    if (gPartyState.scene == (s32)&SceneId_Ov6afRoom1) {
+        if (id == 8 && object->x >> 20 == 16)
+            GameFlag_SetBit(0x300);
+        if (id == 9 && object->x >> 20 == 20)
+            GameFlag_SetBit(0x301);
+        if (id == 10 && object->x >> 20 == 27)
+            GameFlag_SetBit(0x302);
+    }
+    /* FAKEMATCH: the memory barriers before the second, third and fourth room tests keep GCSE's PRE from moving their party state loads onto the edges after the calls, so each test loads it again as the native does (with any two of the three: differ 29). */
+    __asm__ volatile("" : : : "memory");
+    if (gPartyState.scene == (s32)&SceneId_Ov6afRoom2) {
+        if (id == 10 && object->x >> 19 == 33)
+            GameFlag_SetBit(0x308);
+        if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
+            Func_02000728();
+    }
+    __asm__ volatile("" : : : "memory");
+    if (gPartyState.scene == (s32)&SceneId_Ov6afRoom3) {
+        if (id == 10 && object->x >> 19 == 83)
+            GameFlag_SetBit(0x309);
+    }
+    __asm__ volatile("" : : : "memory");
+    if (gPartyState.scene == (s32)&SceneId_Ov6afRoom4) {
+        if (id == 8 && object->x >> 19 == 87)
+            GameFlag_SetBit(0x30d);
     }
 }

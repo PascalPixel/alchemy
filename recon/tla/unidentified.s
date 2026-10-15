@@ -160,13 +160,6 @@ Script_OperandHandlerTable:
 	.global Data_080597f8
 Data_080597f8:
 	.incbin "baserom.gba", 0x000597f8, 0x00000080
-	.section .unidentified.08059978,"a"
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x00059978, 0x00000768
-	.global Data_0805a0e0
-Data_0805a0e0:
-	.incbin "baserom.gba", 0x0005a0e0, 0x00000400
 	.section .unidentified.0805c0e0,"a"
 	.incbin "baserom.gba", 0x0005c0e0, 0x0000002c
 	.global Data_0805c10c

@@ -226,4 +226,4 @@ Func_0803a8fc:
 .L_0803aa9c:
 	.4byte IwramFillWords + 0xb4
 .L_0803aaa0:
-	.4byte Data_0805a0e0
+	.4byte UiText_Glyphs - 0x400

@@ -671,7 +671,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000599e4)
     "*/games/tla/src/graphics/window/d0059878.o"(.rodata)
     "*/games/tla/src/graphics/window/d00598f8.o"(.rodata)
-    "*/recon/tla/es/rom.o"(.rom.00059b68)
+    "*/games/tla/src/graphics/render/labels.o"(.rodata)
     "*/games/common/src/graphics/font/text.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.0005c360)
     "*/games/tla/src/graphics/window/d005c12c.o"(.rodata)

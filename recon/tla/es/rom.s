@@ -1383,10 +1383,6 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e5e8, 0x00000190
 	.section .rom.000599e4, "ax"
 	.incbin "baserom.gba", 0x000599e4, 0x00000084
-	.section .rom.00059b68, "ax"
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x00059b68, 0x00000bf8
 	.section .rom.0005c360, "ax"
 	.incbin "baserom.gba", 0x0005c360, 0x0000007c
 	.section .rom.0005c464, "ax"

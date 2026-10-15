@@ -713,7 +713,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.080597f4)
         "*/games/tla/src/graphics/window/d0059878.o"(.rodata)
         "*/games/tla/src/graphics/window/d00598f8.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.08059978)
+        "*/games/tla/src/graphics/render/labels.o"(.rodata)
         "*/games/common/src/graphics/font/text.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
         "*/games/tla/src/graphics/window/d005c12c.o"(.rodata)

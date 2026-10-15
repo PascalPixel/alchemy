@@ -2,7 +2,7 @@
  * native copies sp to r7 inside each pass (between the modulo arguments and the call) and
  * keeps the offset in r6; the draft copies sp once before the loop into r6. Indexing the array
  * directly gives the same code as a pointer set inside the loop. */
-#include "../../../../games/tla/src/field/overlay_69f/ov69f.h"
+#include "../../../../games/tla/src/scene/jupiter_room_6/jupiter_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

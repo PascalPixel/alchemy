@@ -3,7 +3,7 @@
  * returned actor into r7; the draft copies it first, the same row as Func_020028ac's draft. Tried
  * for that: i = 0 before the store (15), Value4 for the prepare call (2), the store through a u8
  * pointer (2), an empty asm after the store (12). */
-#include "../../../../games/tla/src/field/overlay_692/local.h"
+#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 #include "io_reg.h"
 #include "call.h"
 

@@ -8,7 +8,7 @@
  * the inline layer (all the same).
  * Func_02002198: differ 59 of 81: the native keeps dx in r9 and dz in r11, x in r7 and the object in r6, and adds
  * x + dx before z + dz though it stores z first; adding in place or into dx first is worse (85, 83). */
-#include "../../../../games/tla/src/field/overlay_69c/local.h"
+#include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
 
 struct PushEntry {
     s16 x;

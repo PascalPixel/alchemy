@@ -29,7 +29,7 @@ static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z)
 
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames)
 {
-    /* FAKEMATCH: the native loads the actor after the height and frames, as overlay 694's Ov694_Jump. */
+    /* FAKEMATCH: the native loads the actor after the height and frames, as overlay 694's Contigo_Jump. */
     register s32 h __asm__("r1") = height;
     /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
     register s32 f __asm__("r2") = frames;

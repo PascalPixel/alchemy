@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-struct Ov691EventWork {
+struct MagmaRockEventWork {
     u8 unknown_000[0x15a];
     s16 value_15a;
     u8 unknown_15c[2];
@@ -19,7 +19,7 @@ void Func_02001738(void);
 
 void Func_02000ff4(struct ObjectRuntime *object)
 {
-    struct Ov691EventWork *work = Ram_HeapSlots->event_work;
+    struct MagmaRockEventWork *work = Ram_HeapSlots->event_work;
     s32 mask;
     u16 timer = object->action;
 

@@ -1,5 +1,5 @@
 /* differ 14: the native builds the end marker 0xffff again for the test at the bottom of the loop; here the two tests share one register, which the loop pass then keeps in ip (the shared constant lives across the whole loop, so moving it pays). Tried: return or break after the found entry, the increment in the then-branch, continue. */
-#include "../../../../../games/tla/src/field/overlay_697/ov697.h"
+#include "../../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrapEntry {
     u16 actor;

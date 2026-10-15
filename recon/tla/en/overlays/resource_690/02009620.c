@@ -5,15 +5,15 @@
    object in r10. Measured: a for loop, a goto loop, the cosine in a local and
    the velocity through a pointer set inside the loop all give the same code.
    Func_0200156c, which spawns through the same record, matches (s156c.c). */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 
-struct Ov690Vector {
+struct SettlementsVector {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Ov690Spawn {
+struct SettlementsSpawn {
     s32 unknown_00;
     s32 unknown_04;
     s32 scale_x;
@@ -28,12 +28,12 @@ struct Ov690Spawn {
 
 s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotion(void);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct Ov690Spawn *spawn);
+void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct SettlementsSpawn *spawn);
 
 void Func_02001620(s32 id)
 {
-    struct Ov690Vector velocity;
-    struct Ov690Spawn spawn;
+    struct SettlementsVector velocity;
+    struct SettlementsSpawn spawn;
     struct ObjectRuntime *object = Object_GetById(id);
     u32 i;
 
@@ -42,7 +42,7 @@ void Func_02001620(s32 id)
 loop:
     {
         s32 c = Math_Cosine(i << 12);
-        struct Ov690Vector *v = &velocity;
+        struct SettlementsVector *v = &velocity;
 
         v->x = c;
         v->y = 0;

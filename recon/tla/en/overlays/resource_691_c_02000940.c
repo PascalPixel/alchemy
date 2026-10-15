@@ -8,7 +8,7 @@
  * link lowers the load's priority), the effect work read first (23), alchemy
  * permute for 4 minutes (2). The three single calls go through Call6, as
  * copy.c's do; the first two share 78 in r5 as direct calls. */
-#include "../../../../games/tla/src/field/overlay_691/ov691.h"
+#include "../../../../games/tla/src/scene/magma_rock/magma_rock.h"
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "scene_ids.h"
@@ -28,7 +28,7 @@ void Func_0200074c(struct ObjectRuntime *object);
 void Func_02000940(void)
 {
     u8 *event = Ram_HeapSlots->event_work;
-    struct Ov691Work *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room1) {
         Func_02003aa4(98, 18, 4, 3, 78, 21);

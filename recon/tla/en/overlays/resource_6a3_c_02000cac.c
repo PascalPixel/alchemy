@@ -7,7 +7,7 @@
  * call after Func_0200489c(2, 0, 5) sets r0 before r1 and r2 (the native sets r0 last).
  * Tried: that call direct or with 0x2000, its neighbours with and without one-pass blocks,
  * an empty block before Func_0200489c(2, 0, 5) (2 to 6), 4 minutes of alchemy permute. */
-#include "../../../../games/tla/src/field/overlay_6a3/s0b48.c"
+#include "../../../../games/tla/src/scene/jupiter_room_m/s0b48.c"
 
 extern const u8 MsgAhhhh2[];
 extern u32 Data_020056ec[];

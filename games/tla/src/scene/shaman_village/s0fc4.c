@@ -1,0 +1,50 @@
+#include "shaman_village.h"
+
+u32 Func_02004a8c(s32 shop);
+void Func_02004a94(u32 price);
+void Func_0200487c(u32 value, s32 digits);
+
+void Func_02000fc4(void)
+{
+    if (GameFlag_Test(0x9fe)) {
+        if (Func_02000f94()) {
+            Func_02004a84(11, 13);
+        } else {
+            Func_020048c4();
+            Func_02004a24(0);
+            Func_0200498c((s32)MsgShamanVisitorsHaveTraveledFar);
+            Func_020049ac(13, 0);
+            Func_020048cc();
+        }
+    } else {
+        Func_020048c4();
+        Func_02004a24(0);
+        if (Func_02000f94()) {
+            u32 price = Func_02004a8c(11);
+
+            Object_SetModeById(13, 5);
+            Battle_WaitMode0(30);
+            Func_0200498c((s32)MsgShamanInnPaymentPrompt);
+            Func_0200487c(price, 5);
+            Func_0200487c(price, 5);
+            UiText_OpenMessageAtObject(12, 0);
+            if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+                if ((u32)gPartyState.coins < price) {
+                    Object_SetModeById(13, 6);
+                    Battle_WaitMode0(20);
+                    Object_SetModeById(13, 5);
+                    Battle_WaitMode0(30);
+                    Func_0200498c((s32)MsgShamanInnPaymentPrompt + 3);
+                    Func_020049a4(12, 0);
+                } else {
+                    Func_02004a94(price);
+                }
+            }
+            Object_SetModeById(13, 6);
+        } else {
+            Func_0200498c((s32)MsgShamanSilentVillager);
+            Func_020049a4(13, 0);
+        }
+        Func_020048cc();
+    }
+}

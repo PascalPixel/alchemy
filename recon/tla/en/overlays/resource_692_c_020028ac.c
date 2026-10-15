@@ -4,7 +4,7 @@
  * Value4 for the prepare call (2), the store through a u8 pointer (2), an empty asm after the
  * store (12), four minutes of alchemy permute (nothing better). Func_020021c0 is the same scene
  * behind the 0x303 and 0x304 flags and misses by the same row. */
-#include "../../../../games/tla/src/field/overlay_692/local.h"
+#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 #include "io_reg.h"
 #include "call.h"
 

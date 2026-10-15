@@ -7,7 +7,7 @@
  * down; the native counts up to 4 and hoists neither. */
 #include "types.h"
 
-struct Ov691EffectConfig {
+struct MagmaRockEffectConfig {
     s32 kind;
     s32 variant;
     s32 unknown_08;
@@ -23,12 +23,12 @@ extern u32 Data_02003d50[];
 
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct Ov691EffectConfig *config);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config);
 
 void Func_02002024(s32 x, s32 z)
 {
-    struct Ov691EffectConfig config;
-    struct Ov691EffectConfig *cfg = &config;
+    struct MagmaRockEffectConfig config;
+    struct MagmaRockEffectConfig *cfg = &config;
     s32 position[3];
     s32 i;
 

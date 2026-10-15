@@ -6,7 +6,7 @@
    with the 0x205 flag shared; the loop as an inline function with a for loop,
    differ 94 (the object first of the three). The 0x205 pair goes through the
    flag forwarders so that each call builds its own constant. */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 
 extern const u8 Data_0200232c[];
 

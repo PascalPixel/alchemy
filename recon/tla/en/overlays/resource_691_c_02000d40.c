@@ -9,7 +9,7 @@
 #include "frame.h"
 #include "object_runtime.h"
 
-struct Ov691EffectConfig {
+struct MagmaRockEffectConfig {
     s32 kind;
     s32 variant;
     u8 unknown_08[16];
@@ -24,14 +24,14 @@ extern u32 Data_02003d50[];
 s32 GameFlag_Test(s32 flag);
 u32 Random16Far(void);
 void Func_02003c4c(struct ObjectRuntime *object, s32 value);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct Ov691EffectConfig *config);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config);
 
 void Func_02000d40(struct ObjectRuntime *object)
 {
     u32 frame = gFrameCount;
 
     if ((frame & 3) == 0) {
-        struct Ov691EffectConfig config;
+        struct MagmaRockEffectConfig config;
         s32 dz;
         s32 velocityZ;
 

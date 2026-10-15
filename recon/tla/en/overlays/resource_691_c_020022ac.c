@@ -8,7 +8,7 @@
 #include "object_runtime.h"
 #include "call.h"
 
-struct Ov691EffectOptions {
+struct MagmaRockEffectOptions {
     s32 kind;
     s32 palette;
     s32 scale_x;
@@ -21,7 +21,7 @@ struct Ov691EffectOptions {
     void (*update)();
 };
 
-struct Ov691EventWork {
+struct MagmaRockEventWork {
     u8 unknown_000[0x1ac];
     s32 field_1ac;
 };
@@ -44,12 +44,12 @@ void Func_02003b44(s32 actor, s32 value);
 void Func_02003ac4(s32 a, s32 b, s32 c);
 void Func_02003acc(void);
 void Func_02003af4(void);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct Ov691EffectOptions *options);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectOptions *options);
 
 void Func_020022ac(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    struct Ov691EffectOptions options;
+    struct MagmaRockEffectOptions options;
     u32 i;
     s32 angle;
     s32 velocity[3];
@@ -63,7 +63,7 @@ void Func_020022ac(void)
     leader->gravity = 0x8000;
     leader->bounce = 0;
     leader->motion_flags = 0;
-    ((struct Ov691EventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x100;
+    ((struct MagmaRockEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x100;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02003c54(204);
@@ -95,6 +95,6 @@ loop:
     Func_02003b44(gPartyState.current_owner, 0x100);
     leader->gravity = 0x10000;
     leader->bounce = 0x4000;
-    ((struct Ov691EventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x204;
+    ((struct MagmaRockEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x204;
     Func_02003af4();
 }

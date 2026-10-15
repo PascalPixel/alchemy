@@ -2,7 +2,7 @@
  * native rebuilds 0xffff on every pass; loop.c hoists it here. Goto loops keep it inside but change the
  * layout or the registers: an if/goto loop (13), the while layout spelled with gotos (25 with the
  * result set before the cell call, 15 after). The result is set before the cell call so it takes r7. */
-#include "../../../../games/tla/src/field/overlay_692/local.h"
+#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 
 struct CellWatch {
     u8 unknown_00[4];

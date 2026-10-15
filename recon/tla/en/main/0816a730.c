@@ -22,7 +22,7 @@
  * Tried (differ): the three heap reads in each order (20 to 102), const heap
  * reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store
  * (16, 14: either moves other rows), alchemy permute 6 minutes on the earlier
- * draft (18). */
+ * draft (18), and 5 minutes, 2 jobs, on this one (no candidate beat it). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

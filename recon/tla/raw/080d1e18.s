@@ -38,4 +38,4 @@ Func_080d1e18:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080d1e5c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries

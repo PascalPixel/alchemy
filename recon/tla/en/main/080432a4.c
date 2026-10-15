@@ -7,9 +7,9 @@
 #include "ram_buffer.h"
 #include "save_state.h"
 
-extern u16 Data_02003860;
-extern u16 Data_020036d8;
-extern u16 Data_02005350;
+extern u16 gData_02003860;
+extern u16 gData_020036d8;
+extern u16 gData_02005350;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -32,21 +32,21 @@ s32 SaveState_ScanRecordFlags(void)
         struct SaveWorkspace *work;
 
         ret = SaveState_LoadSummaryRecords();
-        work = Ram_HeapSlots->serial_work;
+        work = Ram_HeapSlots->serialWork;
         flags = &work->summary[0].party[4];
-        Data_02003860 = 0;
-        Data_020036d8 = 0;
-        Data_02005350 = 0;
+        gData_02003860 = 0;
+        gData_020036d8 = 0;
+        gData_02005350 = 0;
         for (i = 0; i < 3; i++) {
-            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(send_flag)] != 0) {
-                Data_02003860 = 1;
+            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(sendFlag)] != 0) {
+                gData_02003860 = 1;
                 cnt++;
             }
-            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(flag_count)] != 0)
-                Data_020036d8 = 1;
+            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(flagCount)] != 0)
+                gData_020036d8 = 1;
             if (work->summary[i].level != 0
-                && flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(has_flag_34)] == 0)
-                Data_02005350 = 1;
+                && flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(hasFlag34)] == 0)
+                gData_02005350 = 1;
         }
     }
     SaveState_ReleaseWorkspace();

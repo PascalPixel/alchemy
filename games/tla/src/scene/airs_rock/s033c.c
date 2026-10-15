@@ -14,13 +14,13 @@ s32 Func_0200033c(s32 a0)
 #include "ram_buffer.h"
 
 struct AirsRockMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct AirsRockMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct AirsRockMapLayer layers[3];
 };
 
@@ -28,7 +28,7 @@ extern u8 gMapCellBuffer[];
 
 s32 Func_02000348(u32 layer, s32 x, s32 y)
 {
-    struct AirsRockMapWork *map = (struct AirsRockMapWork *)Ram_HeapSlots->map_work;
+    struct AirsRockMapWork *map = (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
     u8 *cell;
 
     if (map == NULL)
@@ -43,7 +43,7 @@ s32 Func_02000348(u32 layer, s32 x, s32 y)
 
 s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value)
 {
-    struct AirsRockMapWork *map = (struct AirsRockMapWork *)Ram_HeapSlots->map_work;
+    struct AirsRockMapWork *map = (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
     u8 *cell;
     s32 old;
 

@@ -58,7 +58,7 @@ struct EffectParams
 
 struct ActorTable
 {
-	u8				   unknown_00[0x14];
+	u8				   unk00[0x14];
 	struct FieldActor *actors[66];
 };
 
@@ -102,7 +102,7 @@ s32 Scene_Initialize(void)
 	struct FieldActor *obj;
 
 	Engine_GameFlagSet(0x111);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_MercuryAerie1)
 	{
 		Engine_GameFlagSet(0x144);
@@ -126,22 +126,22 @@ s32 Scene_Initialize(void)
 		for (i = 14; i < 20; i++)
 		{
 			Engine_ActorSetSpritePriority(i, 1);
-			Object_GetById(i)->motion_flags = 4;
-			Object_GetById(i)->priority_flags |= 2;
+			Object_GetById(i)->motionFlags = 4;
+			Object_GetById(i)->priorityFlags |= 2;
 			Object_GetById(i)->y.fixed = -0x328000;
 		}
 		if (Engine_GameFlagIsSet(0x109) && (actor = SceneActor_FindNearestSlotOfKindF2()) != 0
 			&& (obj = Object_GetById(actor)) != NULL)
 		{
-			obj->motion_flags = 0;
+			obj->motionFlags = 0;
 		}
 		Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
-		Object_GetById(12)->scale_x = -0x10000;
-		Object_GetById(13)->scale_x = -0x10000;
+		Object_GetById(12)->scaleX = -0x10000;
+		Object_GetById(13)->scaleX = -0x10000;
 		if (gGameState.entrance == 1)
 		{
 			if (!Engine_GameFlagIsSet(0x109))
@@ -156,7 +156,7 @@ s32 Scene_Initialize(void)
 				{
 					struct MapLayerScroll *lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
 
-					lift->offset_y = 0x4000000;
+					lift->offsetY = 0x4000000;
 				}
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
@@ -194,12 +194,12 @@ static void FieldScene_RunFourActorPresentation(void)
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
 	Event_PlayCue(0x121);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_MapRenderWaitForValues();
 	Engine_EventWait(30);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x2000000, -0x180000, 0xa00000, 1);
 	Engine_CameraWaitForMove();
@@ -284,7 +284,7 @@ static void SceneActor_InitializeMotion(void)
 
 	actor = Object_GetById(ACTOR_PARTY_LEADER);
 	angle = (actor->facing + 0x1000) & 0xe000;
-	flags = actor->motion_flags;
+	flags = actor->motionFlags;
 	position[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
 	position[1] = actor->y.fixed;
 	position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
@@ -299,13 +299,13 @@ static void SceneActor_InitializeMotion(void)
 		Object_SetMode(actor, 7);
 		actor->speed = 0x30000;
 		actor->acceleration = 0x20000;
-		actor->velocity_y = 0x40000;
-		actor->motion_flags &= 0x7e;
+		actor->velocityY = 0x40000;
+		actor->motionFlags &= 0x7e;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position[0] >> 16, position[2] >> 16);
 		Object_SetMode(actor, 6);
 		Engine_ActorSetSpriteFlags(actor, 1);
-		actor->motion_flags = flags;
+		actor->motionFlags = flags;
 	}
 }
 
@@ -318,45 +318,45 @@ static void EV10_TOUCH(void)
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
 	id = SceneActor_FindNearestSlotOfKindF2();
-	MercuryAerie_NearestActor = id;
+	gMercuryAerie_NearestActor = id;
 	if (id != 0)
 	{
 		Engine_GameFlagSet(0x250);
-		actor = Object_GetById(MercuryAerie_NearestActor);
-		actor->motion_flags = 0;
-		leader->motion_flags &= 0xfe;
+		actor = Object_GetById(gMercuryAerie_NearestActor);
+		actor->motionFlags = 0;
+		leader->motionFlags &= 0xfe;
 		actor->y.fixed -= 0x30000;
 		leader->y.fixed -= 0x30000;
-		leader->terrain_height -= 0x30000;
+		leader->terrainHeight -= 0x30000;
 		Engine_TaskWait(2);
 		actor->y.fixed -= 0x20000;
 		leader->y.fixed -= 0x20000;
-		leader->terrain_height -= 0x20000;
+		leader->terrainHeight -= 0x20000;
 		Engine_TaskWait(10);
 		actor->y.fixed += 0x20000;
 		leader->y.fixed += 0x20000;
-		leader->terrain_height += 0x20000;
+		leader->terrainHeight += 0x20000;
 		Engine_TaskWait(4);
 		actor->y.fixed += 0x20000;
 		leader->y.fixed += 0x20000;
-		leader->terrain_height += 0x20000;
+		leader->terrainHeight += 0x20000;
 		Engine_TaskWait(4);
 		actor->y.fixed += 0x10000;
 		leader->y.fixed += 0x10000;
-		leader->terrain_height += 0x10000;
+		leader->terrainHeight += 0x10000;
 	}
 	Engine_EventEnd();
 }
 
 static void EV11_TOUCH(void)
 {
-	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
-	Object_GetById(14)->motion_flags = 4;
-	Object_GetById(15)->motion_flags = 4;
-	Object_GetById(16)->motion_flags = 4;
-	Object_GetById(17)->motion_flags = 4;
-	Object_GetById(18)->motion_flags = 4;
-	Object_GetById(19)->motion_flags = 4;
+	Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
+	Object_GetById(14)->motionFlags = 4;
+	Object_GetById(15)->motionFlags = 4;
+	Object_GetById(16)->motionFlags = 4;
+	Object_GetById(17)->motionFlags = 4;
+	Object_GetById(18)->motionFlags = 4;
+	Object_GetById(19)->motionFlags = 4;
 }
 
 static void EV05_TOUCH(void)
@@ -364,7 +364,7 @@ static void EV05_TOUCH(void)
 	struct FieldActor *actor;
 
 	Engine_EventBegin();
-	Actor_Get(0x11)->motion_flags &= 0xfa;
+	Actor_Get(0x11)->motionFlags &= 0xfa;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x0000cccc, 0x00006666);
 	Actor_SetSpeed(GARET, 0x0000cccc, 0x00006666);
 	Actor_SetSpeed(IVAN, 0x0000cccc, 0x00006666);
@@ -402,7 +402,7 @@ static void EV05_TOUCH(void)
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x18000, 0x3000);
 	Camera_MoveTo(PIXELS(0x148), PIXELS(0x28), PIXELS(0xB0), 1);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Actor_SetSpeed(GARET, 0x18000, 0xC000);
 	Actor_WalkToAndWait(GARET, 0x148, 0xD8);
 	Engine_CameraWaitForMove();
@@ -609,12 +609,12 @@ static void EV05_TOUCH(void)
 	Engine_EventWait(30);
 	Event_ShowMessage(0x16, 0);
 	Engine_EventWait(20);
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkTo(GARET, 0x148, 0xE0);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x158, 0xE0);
 	Actor_WalkTo(IVAN, 0x158, 0xE8);
 	Engine_ActorWaitForMove(GARET);
-	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(GARET, FACING_NORTH, 0);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -677,22 +677,22 @@ static void EV05_TOUCH(void)
 	Engine_ActorWaitForMove(5);
 	Actor_FaceDirection(JENNA, FACING_EAST, 20);
 	Actor_FaceDirection(0x15, 0x3000, 20);
-	Object_GetById(0x15)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0x15)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(0x15, 0x58, 0x98);
-	Actor_Get(0x15)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(0x15)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(0x17, 0xB000, 20);
 	Engine_ActorSetAnimation(0x17, 3);
 	Engine_ActorSetAnimationAndWait(0x15, 3);
 	Engine_EventWait(40);
 	Actor_SetSpeed(0x17, 0x30000, 0x20000);
-	Actor_Get(0x17)->velocity_y = 0x40000;
+	Actor_Get(0x17)->velocityY = 0x40000;
 	Event_PlayCue(0x98);
-	Actor_Get(0x17)->motion_flags &= 0x7e;
+	Actor_Get(0x17)->motionFlags &= 0x7e;
 	Engine_ActorSetSpriteFlags(Object_GetById(0x17), 0);
-	Object_GetById(0x11)->motion_flags = 4;
+	Object_GetById(0x11)->motionFlags = 4;
 	Engine_ActorMoveToAndWait(0x17, 0x68, 0xA8);
 	Engine_ActorSetSpriteFlags(Object_GetById(0x17), 1);
-	Actor_Get(0x17)->motion_flags = 3;
+	Actor_Get(0x17)->motionFlags = 3;
 	Actor_FaceDirection(0x17, FACING_EAST, 30);
 	Actor_FaceDirection(0x15, FACING_EAST, 10);
 	Event_ShowMessageAndWait(0x15, 0, 20);
@@ -731,10 +731,10 @@ static void EV05_TOUCH(void)
 	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_ShowEmote(GARET, 0x100, 60);
 	Actor_SetSpeed(GARET, 0x20000, 0x10000);
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(GARET, 0x148, 0xE0);
 	Engine_EventWait(1);
-	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_ActorStartRepeatedMotion(GARET, 1);
 	Engine_ActorStartRepeatedMotion(IVAN, 1);
@@ -777,10 +777,10 @@ static void EV05_TOUCH(void)
 	Actor_WalkToAndWait(0x16, 0x148, 0xC8);
 	Engine_ActorRunRepeatedMotion(0x16, 2);
 	Actor_FaceDirection(0x16, 0xB000, 20);
-	Actor_Get(0x16)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(0x16)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(0x16, 0x150, 0xD0);
 	Engine_EventWait(1);
-	Object_GetById(0x16)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0x16)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_ShowEmote(0x16, 0x102, 60);
 	Actor_ShowEmote(MIA, 0x00000101, 60);
 	Event_ShowMessageAndWait(MIA, 0, 20);
@@ -800,7 +800,7 @@ static void RunScene59Sequence(void)
 {
 
 	Engine_EventBegin();
-	Actor_Get(9)->motion_flags = 0;
+	Actor_Get(9)->motionFlags = 0;
 	Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(0x158), PIXELS(0xE0));
 	Actor_SetPosition(GARET, PIXELS(0x148), PIXELS(0xE0));
 	Actor_SetPosition(IVAN, PIXELS(0x158), PIXELS(0xE8));
@@ -817,7 +817,7 @@ static void RunScene59Sequence(void)
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
@@ -846,7 +846,7 @@ static void RunScene59Sequence(void)
 	Event_ShowMessageAndWait(MIA, 0, 30);
 	Event_PlayCue(0x1D);
 	Camera_SetSpeed(0x0000cccc, 0x00001999);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xA8), 1);
 	Engine_EventWait(20);
 	Actor_SetSpeed(0x18, 0x0000cccc, 0x00006666);
@@ -1059,7 +1059,7 @@ static void RunScene59Sequence(void)
 	Actor_FaceDirection(GARET, FACING_NORTHWEST, 5);
 	Actor_FaceDirection(IVAN, FACING_WEST, 5);
 	Actor_FaceDirection(MIA, FACING_EAST, 5);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Camera_MoveTo(PIXELS(0x118), -1, PIXELS(0xE8), 1);
 	Engine_CameraWaitForMove();
 	Actor_SetChildValue(0x16, 0xF);
@@ -1102,14 +1102,14 @@ static void RunScene59Sequence(void)
 		void				 **cells;
 		Camera_MoveTo(PIXELS(0x98), -1, PIXELS(0xD8), 1);
 		lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-		lift->offset_y = 0x3800000;
+		lift->offsetY = 0x3800000;
 		cells = gMapWork;
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
-		Actor_Get(9)->motion_flags = 0;
+		Actor_Get(9)->motionFlags = 0;
 		Actor_SetPosition(9, PIXELS(0x68), PIXELS(0x108));
 		Actor_Get(9)->y.fixed = -0x200000;
-		Object_GetById(9)->target_y = -0x200000;
+		Object_GetById(9)->targetY = -0x200000;
 		Map_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
 		Engine_ActorSetSpritePriority(0x11, 0);
 		Engine_ActorSetSpritePriority(0x12, 0);
@@ -1234,7 +1234,7 @@ static void RunScene59Sequence(void)
 	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_FaceDirection(MIA, FACING_WEST, 20);
 	Engine_ActorSetAnimation(MIA, 0x10);
-	Actor_Get(MIA)->scale_x = -0x10000;
+	Actor_Get(MIA)->scaleX = -0x10000;
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(MIA, 0, 40);
 	Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1244,7 +1244,7 @@ static void RunScene59Sequence(void)
 	Engine_EventWait(20);
 	Engine_EventOpenMessage(2, 0);
 	Engine_ActorSetAnimation(MIA, 1);
-	Actor_Get(MIA)->scale_x = 0x10000;
+	Actor_Get(MIA)->scaleX = 0x10000;
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
 	Actor_FaceDirection(MIA, FACING_NORTH, 20);
@@ -1284,7 +1284,7 @@ static void RunScene59Sequence(void)
 	Actor_SetSpeed(GARET, 0x0000cccc, 0x00006666);
 	Actor_WalkToAndWait(MIA, 0x148, 0xD8);
 	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkTo(GARET, 0x138, 0xC8);
 	Actor_WalkTo(MIA, 0x118, 0xD8);
 	Engine_ActorWaitForMove(GARET);
@@ -1346,7 +1346,7 @@ static void RunScene59Sequence(void)
 	{
 		struct MapLayerScroll *lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
 
-		lift->offset_y = 0x4000000;
+		lift->offsetY = 0x4000000;
 	}
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
@@ -1362,14 +1362,14 @@ static void EV06_TOUCH(void)
 
 	lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
 	Engine_EventBegin();
-	lift->offset_y = 0x3800000;
+	lift->offsetY = 0x3800000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	Object_GetById(9)->motion_flags = 0;
+	Object_GetById(9)->motionFlags = 0;
 	Engine_ActorSetPosition(9, PIXELS(0x68), PIXELS(0x108));
 	Object_GetById(9)->y.fixed = -0x200000;
-	Object_GetById(9)->target_y = -0x200000;
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Object_GetById(9)->targetY = -0x200000;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Engine_CameraSetSpeed(0xcccc, 0x1999);
 	Engine_CameraMoveTo(PIXELS(0x80), -1, PIXELS(0xB8), 1);
 	Engine_CameraWaitForMove();
@@ -1506,10 +1506,9 @@ static void MercuryAerie_RiseActorPair(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-// 旧形式の定義: MercuryAerie_LowerCollectedActors は三つ目の引数も渡す
-static void MercuryAerie_CollectBandSlots(out, y)
-s32 *out;
-s32 y;
+// MercuryAerie_LowerCollectedActors passes its lift as a third argument,
+// which this function does not take.
+static void MercuryAerie_CollectBandSlots(s32 *out, s32 y)
 {
 	struct ActorTable *table;
 	u32				   slot;
@@ -1546,23 +1545,24 @@ static void MercuryAerie_LowerCollectedActors(void)
 	n = 0;
 	for (i = 0; i <= 4; i++)
 		ids[i] = 66;
-	MercuryAerie_CollectBandSlots(ids, lift->offset_y, lift);
+	// the lift goes as a third argument, as the bytes show: the cast keeps it
+	((void (*)())MercuryAerie_CollectBandSlots)(ids, lift->offsetY, lift);
 	for (i = 0; i <= 4; i++)
 	{
 		if (ids[i] == 66)
 			break;
-		Object_GetById(ids[i])->motion_flags = 0;
+		Object_GetById(ids[i])->motionFlags = 0;
 		n++;
 	}
 	Engine_AudioPlayCue(223);
 	for (i = 0; i <= 227; i++)
 	{
-		lift->offset_y -= speed;
+		lift->offsetY -= speed;
 		for (j = 0; j < n; j++)
 		{
 			Object_GetById(ids[j])->z.fixed += speed;
 			actor = Object_GetById(ids[j]);
-			actor->target_z = Object_GetById(ids[j])->z.fixed;
+			actor->targetZ = Object_GetById(ids[j])->z.fixed;
 		}
 		if ((i & 3) == 3)
 			speed += 0x1999;
@@ -1571,7 +1571,7 @@ static void MercuryAerie_LowerCollectedActors(void)
 		Engine_TaskWait(1);
 	}
 	for (i = 0; i < n; i++)
-		Object_GetById(ids[i])->motion_flags = 0;
+		Object_GetById(ids[i])->motionFlags = 0;
 }
 
 static void MercuryAerie_RaiseCollectedActors(void)
@@ -1589,23 +1589,23 @@ static void MercuryAerie_RaiseCollectedActors(void)
 	n = 0;
 	for (i = 0; i <= 4; i++)
 		ids[i] = 66;
-	MercuryAerie_CollectBandSlots(ids, lift->offset_y);
+	MercuryAerie_CollectBandSlots(ids, lift->offsetY);
 	for (i = 0; i <= 4; i++)
 	{
 		if (ids[i] == 66)
 			break;
-		Object_GetById(ids[i])->motion_flags = 0;
+		Object_GetById(ids[i])->motionFlags = 0;
 		n++;
 	}
 	Engine_AudioPlayCue(223);
 	for (i = 0; i <= 85; i++)
 	{
-		lift->offset_y += speed;
+		lift->offsetY += speed;
 		for (j = 0; j < n; j++)
 		{
 			Object_GetById(ids[j])->z.fixed -= speed;
 			actor = Object_GetById(ids[j]);
-			actor->target_z = Object_GetById(ids[j])->z.fixed;
+			actor->targetZ = Object_GetById(ids[j])->z.fixed;
 		}
 		if ((i & 3) == 3 && i > 75)
 			speed += -0x3333;
@@ -1613,7 +1613,7 @@ static void MercuryAerie_RaiseCollectedActors(void)
 			speed = 0xccc;
 		Engine_TaskWait(1);
 	}
-	lift->offset_y = 0x4000000;
+	lift->offsetY = 0x4000000;
 	Engine_MapRedraw();
 	Engine_TaskWait(2);
 }
@@ -1633,24 +1633,24 @@ static void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
 	struct OverlayObject *parent;
 	u16					  angle;
 
-	parent = object->linked_object;
-	angle = object->angle_64;
-	object->coordinate_08 = parent->coordinate_08 + Engine_MathCos(angle) * (object->field_30 + 28);
-	object->coordinate_10 = (Engine_MathSin(angle) << 4) + 0x900000;
-	object->coordinate_38 = object->coordinate_08;
-	object->coordinate_40 = object->coordinate_10;
-	object->angle_64 -= 0x200;
+	parent = object->linkedObject;
+	angle = object->angle64;
+	object->coordinate08 = parent->coordinate08 + Engine_MathCos(angle) * (object->field30 + 28);
+	object->coordinate10 = (Engine_MathSin(angle) << 4) + 0x900000;
+	object->coordinate38 = object->coordinate08;
+	object->coordinate40 = object->coordinate10;
+	object->angle64 -= 0x200;
 }
 
 struct LampSpark
 {
-	u8					unknown_00[0x30];
+	u8					unk00[0x30];
 	s32					swing;
-	u8					unknown_34[0x1c];
+	u8					unk34[0x1c];
 	struct FieldSprite *sprite;
-	u8					unknown_54;
-	u8					motion_flags;
-	u8					unknown_56[0x0e];
+	u8					unk54;
+	u8					motionFlags;
+	u8					unk56[0x0e];
 	u16					angle;
 	u16					turn;
 	struct FieldActor  *source;
@@ -1671,21 +1671,21 @@ static void MercuryAerie_FlickerActorEight(void)
 	lamp = Object_GetById(8);
 	map = gMapWork[0];
 	height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
-	if (((union FieldCoordinate *)&map->view_y)->part.pixel <= 129)
+	if (((union FieldCoordinate *)&map->viewY)->part.pixel <= 129)
 	{
 		if (gFrameCount & 1)
 		{
 			Engine_ActorSetPosition(8, 0x1300000, 0x900000);
 			scale = 0x10000;
-			Object_GetById(8)->scale_x = scale;
+			Object_GetById(8)->scaleX = scale;
 		}
 		else
 		{
 			Engine_ActorSetPosition(8, 0x1300000, 0x970000);
 			scale = 0x14ccc;
-			Object_GetById(8)->scale_x = scale;
+			Object_GetById(8)->scaleX = scale;
 		}
-		Object_GetById(8)->scale_y = scale;
+		Object_GetById(8)->scaleY = scale;
 	}
 	else
 	{
@@ -1709,9 +1709,9 @@ static void MercuryAerie_FlickerActorEight(void)
 		return;
 	}
 	sprite = spark->sprite;
-	Engine_ObjectSetScript((struct FieldActor *)spark, MercuryAerie_SparkScript);
+	Engine_ObjectSetScript((struct FieldActor *)spark, gMercuryAerie_SparkScript);
 	ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
-	spark->motion_flags = tick;
+	spark->motionFlags = tick;
 	angle = Engine_RandomNext() & 0x0ffff000;
 	spark->angle = angle;
 	spark->turn = tick;
@@ -1829,9 +1829,9 @@ struct SceneEvent gMercuryAerieEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 MercuryAerie_NearestActor = 0;
+s32 gMercuryAerie_NearestActor = 0;
 
-s32 MercuryAerie_SparkScript[] = {
+s32 gMercuryAerie_SparkScript[] = {
 	SC_SET(SW_SCALE_Y, 0x16666),
 	SC_SET(SW_SCALE_X, 0x16666),
 	SC_ARG(4),

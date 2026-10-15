@@ -10,12 +10,12 @@ u8 *SceneData_GetMessageTable(void);
 u8 *SceneData_GetActorTable(void);
 u8 *SceneData_GetExtraTable(void);
 s32 FieldScene_SetupEntryActors8To11(void);
-extern s32 StagedActor_DirectionSteps[];
-extern u32 StagedActor_FootprintKinds[];
-extern s32 StagedActor_FootprintBounds[];
-extern struct SceneEntrance KolimaForestClearing_Scripts[];
-extern u32 KolimaForestClearing_Messages[];
-extern struct ScenePlacement KolimaForestClearing_Actors[];
-extern struct SceneEvent KolimaForestClearing_Extras[];
+extern s32 gStagedActor_DirectionSteps[];
+extern u32 gStagedActor_FootprintKinds[];
+extern s32 gStagedActor_FootprintBounds[];
+extern struct SceneEntrance gKolimaForestClearing_Scripts[];
+extern u32 gKolimaForestClearing_Messages[];
+extern struct ScenePlacement gKolimaForestClearing_Actors[];
+extern struct SceneEvent gKolimaForestClearing_Extras[];
 
 #endif

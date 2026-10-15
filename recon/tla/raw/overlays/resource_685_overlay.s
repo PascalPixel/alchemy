@@ -105,11 +105,11 @@ Func_02000208:
 .L_020082f4:
 	.4byte gPartyState
 .L_020082f8:
-	.4byte Data_02003d10
+	.4byte gData_02003d10
 .L_020082fc:
 	.4byte MsgHasMyGrandson
 .L_02008300:
-	.4byte Data_02003d18
+	.4byte gData_02003d18
 	.section .text.x020084d4,"ax",%progbits
 	.global Func_020004d4
 	.thumb_func
@@ -910,7 +910,7 @@ Func_02000a34:
 .L_02008f3c:
 	.4byte gPartyState
 .L_02008f40:
-	.4byte Data_02003634
+	.4byte gData_02003634
 .L_02008f44:
 	.4byte Func_02000038
 	.section .text.x02008f48,"ax",%progbits
@@ -2539,13 +2539,13 @@ Func_02001868:
 .L_02009f90:
 	.4byte 0x00036666
 .L_02009f94:
-	.4byte Data_020041e8
+	.4byte gData_020041e8
 .L_02009f98:
-	.4byte Data_02004254
+	.4byte gData_02004254
 .L_02009f9c:
-	.4byte Data_0200432c
+	.4byte gData_0200432c
 .L_02009fa0:
-	.4byte Data_020042d4
+	.4byte gData_020042d4
 .L_02009fa4:
 	bl Func_0200351c
 	movs r0, #4
@@ -3607,7 +3607,7 @@ Func_02001868:
 	mov r10, r5
 	pop {r5, r6, pc}
 .L_0200a9ec:
-	.4byte Data_020041e8
+	.4byte gData_020041e8
 .L_0200a9f0:
 	.4byte 0x00013333
 .L_0200a9f4:

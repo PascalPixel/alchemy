@@ -11,11 +11,11 @@ s32 Party_RemoveActiveOwner(s32 value)
 
     GameFlag_ClearBit(value);
     for (i = 0; i < count; i++) {
-        if (gPartyState.active_owners[i] == value)
+        if (gPartyState.activeOwners[i] == value)
             break;
     }
     for (j = i; j < count - 1; j++)
-        gPartyState.active_owners[j] = gPartyState.active_owners[j + 1];
+        gPartyState.activeOwners[j] = gPartyState.activeOwners[j + 1];
     return Party_CountActiveOwners();
 }
 
@@ -30,7 +30,7 @@ s32 Party_ListActiveOwners(s16 *owners)
         index = 0;
         if (count != 0) {
             do {
-                *owners++ = gPartyState.active_owners[index];
+                *owners++ = gPartyState.activeOwners[index];
                 index++;
             } while (index != count);
         }

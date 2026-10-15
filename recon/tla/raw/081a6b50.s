@@ -139,9 +139,9 @@ Func_081a6b50:
 .L_081a6c54:
 	.4byte 0x85000100
 .L_081a6c58:
-	.4byte Data_081a8378
+	.4byte gData_081a8378
 .L_081a6c5c:
-	.4byte Data_081a84e6
+	.4byte gData_081a84e6
 .L_081a6c60:
 	.4byte 0x0000001b
 .L_081a6c64:
@@ -245,7 +245,7 @@ Func_081a6b50:
 .L_081a6d20:
 	.4byte 0x000001ff
 .L_081a6d24:
-	.4byte Data_081a8378
+	.4byte gData_081a8378
 .L_081a6d28:
 	.4byte 0xfffffc00
 .L_081a6d2c:

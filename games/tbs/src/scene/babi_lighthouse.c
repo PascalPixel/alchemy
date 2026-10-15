@@ -73,18 +73,18 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	Object_GetById(0)->y.fixed = 0x820000;
 	Object_GetById(0)->gravity = 0x8000;
 	Object_GetById(0)->bounce = 0;
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(204);
-	Object_GetById(0)->motion_flags = 3;
+	Object_GetById(0)->motionFlags = 3;
 	Engine_EventWait(24);
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	options.palette = 7;
 	options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
-	options.start_scale_x = 0xcccc;
-	options.start_scale_y = 0xcccc;
+	options.startScaleX = 0xcccc;
+	options.startScaleY = 0xcccc;
 	for (i = 0; i < 17; i++)
 	{
 		vec[0] = Engine_MathCos(i << 12);
@@ -120,15 +120,15 @@ static void FieldScene_RunScene3c5SequenceA(s32 exit)
 	leader->gravity = 0x4000;
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	leader->bounce = 0;
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(10);
 	Engine_AudioPlayCue(204);
-	Object_GetById(0)->motion_flags = 3;
+	Object_GetById(0)->motionFlags = 3;
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
-	leader->velocity_y = -0x50000;
+	leader->velocityY = -0x50000;
 	OverlayObject_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_EventRequestExit(exit);
@@ -195,8 +195,8 @@ static void BabiLighthouse_JumpFromLedge(void)
 	Engine_EventBegin();
 	if (((rec7->x.fixed >> 20) == 6 || (rec7->x.fixed >> 20) == 18) && (rec7->z.fixed >> 20) == 20)
 	{
-		rec7->target_x = -0x80000000;
-		rec7->target_z = -0x80000000;
+		rec7->targetX = -0x80000000;
+		rec7->targetZ = -0x80000000;
 		Actor_ShowEmote(0, 0x100, 20);
 		Actor_SetSpeed(0, 0x20000, 0x10000);
 		Engine_ActorJump(0, 4, 0);
@@ -982,7 +982,7 @@ static struct StagedActor *BabiLighthouse_FindActorAhead(struct StagedActor *act
 {
 	s32	 pos[3];
 	s32 *p = pos;
-	s32	 step = StagedActor_DirectionSteps[actor->direction_and_kind >> 12];
+	s32	 step = gStagedActor_DirectionSteps[actor->directionAndKind >> 12];
 
 	{
 		s32 x = actor->x.value;
@@ -993,13 +993,13 @@ static struct StagedActor *BabiLighthouse_FindActorAhead(struct StagedActor *act
 		p[0] = x;
 		p[2] = z;
 	}
-	p[1] = Map_GetTerrainHeight(actor->transition_mode, p[0], p[2]);
+	p[1] = Map_GetTerrainHeight(actor->transitionMode, p[0], p[2]);
 	return StagedActor_FindAtTile(p, actor);
 }
 
 static void EV12_SCRIPT(void)
 {
-	((struct BattleFxScene *)gEffectWork)->child_option = 1;
+	((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
 static void EV12_PSYNERGY(void)
@@ -1013,9 +1013,9 @@ static void EV12_PSYNERGY(void)
 
 		if (b == 12)
 		{
-			p->motion_flags = 2;
-			p->terrain_height = 0x300000;
-			p->priority_flags = 2;
+			p->motionFlags = 2;
+			p->terrainHeight = 0x300000;
+			p->priorityFlags = 2;
 			{
 				s32 k5 = a, k6 = b;
 
@@ -1061,10 +1061,10 @@ static void EV51_SCRIPT(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
 	struct StagedActor *ahead = BabiLighthouse_FindActorAhead(p);
-	s32					m = (p->direction_and_kind + 0x2000) & 0xc000;
+	s32					m = (p->directionAndKind + 0x2000) & 0xc000;
 	s32					r = -1;
 
-	if (gGameState.movement_mode == 1 || ahead == 0)
+	if (gGameState.movementMode == 1 || ahead == 0)
 	{
 		if (m == 0xc000)
 		{
@@ -1077,7 +1077,7 @@ static void EV51_SCRIPT(void)
 	}
 	if (r != 0)
 	{
-		if (gGameState.movement_mode != 1)
+		if (gGameState.movementMode != 1)
 		{
 			EV50_SCRIPT();
 		}
@@ -1159,7 +1159,7 @@ static void BabiLighthouse_MatchLeaderPriority(void)
 		if (priority != 1)
 			priority--;
 		Engine_ActorSetSpritePriority(8, priority);
-		Object_GetById(8)->priority_flags |= 1;
+		Object_GetById(8)->priorityFlags |= 1;
 	}
 	actor = Object_GetById(9);
 	if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed)
@@ -1172,24 +1172,24 @@ static void BabiLighthouse_MatchLeaderPriority(void)
 		if (priority != 1)
 			priority--;
 		Engine_ActorSetSpritePriority(9, priority);
-		Object_GetById(9)->priority_flags |= 1;
+		Object_GetById(9)->priorityFlags |= 1;
 	}
 }
 #endif
 
 struct RowActor
 {
-	u8					  unknown_00[8];
+	u8					  unk00[8];
 	union FieldCoordinate x;
 	union FieldCoordinate y;
 	union FieldCoordinate z;
-	u8					  unknown_14[0x0f];
-	u8					  priority_flags;
-	u8					  unknown_24[0x2c];
+	u8					  unk14[0x0f];
+	u8					  priorityFlags;
+	u8					  unk24[0x2c];
 	struct FieldSprite	 *sprite;
-	u8					  unknown_54[5];
-	u8					  collision_flags;
-	u8					  unknown_5a[4];
+	u8					  unk54[5];
+	u8					  collisionFlags;
+	u8					  unk5a[4];
 	u16					  delay;
 };
 
@@ -1205,13 +1205,13 @@ s32 BabiLighthouse_SetupScene(void)
 	u8				   zero;
 
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	state = &gGameState;
 	scene = state->scene;
 	if (scene != (s32)&SceneId_BabiLighthouse4)
 	{
-		state->retreat_entrance = 1;
-		state->retreat_scene = (s32)&SceneId_BabiLighthouse3;
+		state->retreatEntrance = 1;
+		state->retreatScene = (s32)&SceneId_BabiLighthouse3;
 		copy = state->scene;
 	}
 	if (scene == (s32)&SceneId_BabiLighthouse4)
@@ -1244,16 +1244,16 @@ s32 BabiLighthouse_SetupScene(void)
 		}
 		SceneState_ApplyRectsAtActors8And9();
 		actor = Object_GetById(9);
-		actor->y.fixed = Object_GetById(9)->terrain_height;
+		actor->y.fixed = Object_GetById(9)->terrainHeight;
 		if (GameFlag_IsSet(0x300) != 0)
 		{
 			Engine_ActorSetAnimation(10, 4);
-			Object_GetById(10)->collision_flags = 0xfe;
+			Object_GetById(10)->collisionFlags = 0xfe;
 			EV10_PSYNERGY();
 		}
 		row = (struct RowActor *)Object_GetById(11);
-		row->collision_flags = 0;
-		row->priority_flags = 0;
+		row->collisionFlags = 0;
+		row->priorityFlags = 0;
 		row->delay = 0;
 		((u8 *)row->sprite)[9] |= 12;
 		zero = 0;
@@ -1261,24 +1261,24 @@ s32 BabiLighthouse_SetupScene(void)
 		row->sprite->rotation = 0xc000;
 		Engine_ActorSetAnimation(11, 0);
 		row = (struct RowActor *)Object_GetById(12);
-		row->collision_flags = zero;
-		row->priority_flags = zero;
+		row->collisionFlags = zero;
+		row->priorityFlags = zero;
 		row->delay = 30;
 		((u8 *)row->sprite)[9] |= 12;
 		((u8 *)row->sprite)[38] = zero;
 		row->sprite->rotation = 0x4000;
 		Engine_ActorSetAnimation(12, 0);
 		row = (struct RowActor *)Object_GetById(13);
-		row->collision_flags = zero;
-		row->priority_flags = zero;
+		row->collisionFlags = zero;
+		row->priorityFlags = zero;
 		row->delay = 60;
 		((u8 *)row->sprite)[9] |= 12;
 		((u8 *)row->sprite)[38] = zero;
 		row->sprite->rotation = 0x8000;
 		Engine_ActorSetAnimation(13, 0);
 		row = (struct RowActor *)Object_GetById(14);
-		row->collision_flags = zero;
-		row->priority_flags = zero;
+		row->collisionFlags = zero;
+		row->priorityFlags = zero;
 		row->delay = 90;
 		((u8 *)row->sprite)[9] |= 12;
 		((u8 *)row->sprite)[38] = zero;
@@ -1325,8 +1325,8 @@ s32 BabiLighthouse_SetupScene(void)
 	}
 	else if (scene == (s32)&SceneId_BabiLighthouse1)
 	{
-		Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
-		Object_GetById(9)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_SetSpeed(8, 0x10000, 0x8000);
 		Actor_SetSpeed(9, 0x10000, 0x8000);
 		if (GameFlag_IsSet(0x109) == 0)
@@ -1389,7 +1389,7 @@ s32 BabiLighthouse_SetupScene(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1408,7 +1408,7 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207,
 	205,
 	228,
@@ -1417,7 +1417,7 @@ u32 StagedActor_FootprintKinds[] = {
 	297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32,
 	-8,
 	32,

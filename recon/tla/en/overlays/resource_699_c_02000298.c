@@ -9,12 +9,12 @@
 #include "field_sprite.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
 struct CellTarget {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -55,9 +55,9 @@ void Func_02000298(void)
 next:
         object = Func_02001c04(0x2a0, 0, 0, 0);
 
-        object->motion_flags = 0;
-        object->priority_flags = 0;
-        object->speed_limit = (i << 12) + 0x8000;
+        object->motionFlags = 0;
+        object->priorityFlags = 0;
+        object->speedLimit = (i << 12) + 0x8000;
         object->acceleration = (i << 12) + 0x8000;
         object->update = (void (*)(void))Func_020001d8;
         OBJECT_BYTE(object, 99) = i << 3;
@@ -66,7 +66,7 @@ next:
         ((struct FieldSprite *)object->animation)->priority = 1;
         Animation_SetStateFlags(object, 1);
         action = &object->action;
-        timer = (s16 *)&object->unknown_66;
+        timer = (s16 *)&object->unk66;
         if (i & 1) {
             *action = 212;
             *timer = 0;

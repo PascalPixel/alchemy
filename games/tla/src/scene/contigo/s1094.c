@@ -17,7 +17,7 @@ void Func_02004204(s32 skip);
 
 void Func_02001094(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(14);
     s16 angle = object->angle;
 
@@ -25,7 +25,7 @@ void Func_02001094(void)
     Func_02004204(0);
     BYTE_AT(object, 99) = 1;
     if (*(s16 *)(event + 358) == 0) {
-        ObjectMotion_SetAngleToward(14, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
         if (GameFlag_Test(0x9b2) != 0)
             Func_0200412c((s32)MsgContigo203);
         else if (GameFlag_Test(0xa21) != 0)

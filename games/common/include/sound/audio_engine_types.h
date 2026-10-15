@@ -46,9 +46,9 @@ typedef void (*SoundCommand)(struct SoundPlayer *player, struct SoundTrack *trac
 struct SoundVoice
 {
 	u8			kind;
-	u8			base_key;
+	u8			baseKey;
 	u8			length;
-	u8			pan_or_sweep;
+	u8			panOrSweep;
 	const void *target;
 	u8			attack;
 	u8			decay;
@@ -60,17 +60,17 @@ struct SoundNote
 {
 	u8				   state;
 	u8				   kind;
-	u8				   out_right;
-	u8				   out_left;
+	u8				   outRight;
+	u8				   outLeft;
 	u8				   unk04[2];
 	u8				   sustain;
 	u8				   unk07[3];
 	u8				   peak;
 	u8				   unk0b[0x0e];
-	u8				   sustain_level;
+	u8				   sustainLevel;
 	u8				   unk1a;
-	u8				   pan_bits;
-	u8				   channel_bits;
+	u8				   panBits;
+	u8				   channelBits;
 	u8				   unk1d[0x0f];
 	struct SoundTrack *track;
 	struct SoundNote  *prev;
@@ -82,8 +82,8 @@ struct CgbNote
 {
 	u8	 state;
 	u8	 kind;
-	u8	 out_right;
-	u8	 out_left;
+	u8	 outRight;
+	u8	 outLeft;
 	u8	 attack;
 	u8	 decay;
 	u8	 sustain;
@@ -92,19 +92,19 @@ struct CgbNote
 	u8	 level;
 	u8	 peak;
 	u8	 counter;
-	u8	 echo_level;
-	u8	 echo_length;
+	u8	 echoLevel;
+	u8	 echoLength;
 	u8	 unk0e[0x0b];
-	u8	 sustain_level;
+	u8	 sustainLevel;
 	u8	 trigger;
-	u8	 pan_bits;
-	u8	 channel_bits;
+	u8	 panBits;
+	u8	 channelBits;
 	u8	 modified;
 	u8	 length;
 	u8	 sweep;
 	u32	 frequency;
 	u32 *wave;
-	u32 *loaded_wave;
+	u32 *loadedWave;
 	u8	 unk2c[0x14];
 };
 
@@ -172,28 +172,28 @@ struct SoundTrack
 {
 	u8				  flags;
 	u8				  unk01[7];
-	u8				  pitch_hi;
-	u8				  pitch_lo;
-	s8				  key_offset_a;
-	s8				  key_offset_b;
+	u8				  pitchHi;
+	u8				  pitchLo;
+	s8				  keyOffsetA;
+	s8				  keyOffsetB;
 	s8				  tune;
 	u8				  fine;
 	s8				  bend;
-	u8				  bend_range;
-	u8				  out_volume_a;
-	u8				  out_volume_b;
+	u8				  bendRange;
+	u8				  outVolumeA;
+	u8				  outVolumeB;
 	u8				  volume;
-	u8				  volume_scale;
+	u8				  volumeScale;
 	s8				  pan;
-	s8				  pan_offset;
-	s8				  mod_amount;
-	u8				  mod_depth;
-	u8				  mod_target;
-	u8				  lfo_speed;
-	u8				  lfo_phase;
+	s8				  panOffset;
+	s8				  modAmount;
+	u8				  modDepth;
+	u8				  modTarget;
+	u8				  lfoSpeed;
+	u8				  lfoPhase;
 	u8				  unk1b[3];
-	u8				  tail_level;
-	u8				  tail_length;
+	u8				  tailLevel;
+	u8				  tailLength;
 	struct SoundNote *notes;
 	struct SoundVoice voice;
 	u8				  unk30[0x10];
@@ -203,7 +203,7 @@ struct SoundTrack
 
 struct SequenceHeader
 {
-	u8						 track_count;
+	u8						 trackCount;
 	u8						 unk01;
 	u8						 priority;
 	u8						 mode;
@@ -215,56 +215,56 @@ struct SoundPlayer
 {
 	const struct SequenceHeader *header;
 	u32							 status;
-	u8							 track_count;
+	u8							 trackCount;
 	u8							 priority;
 	u8							 unk0a;
-	u8							 check_priority;
+	u8							 checkPriority;
 	u32							 ticks;
 	u8							 unk10[8];
-	u8							*work_bytes;
+	u8							*workBytes;
 	u16							 tempo;
-	u16							 tempo_scale;
-	u16							 tempo_step;
-	u16							 tempo_count;
-	u16							 fade_period;
-	u16							 fade_counter;
-	u16							 fade_volume;
+	u16							 tempoScale;
+	u16							 tempoStep;
+	u16							 tempoCount;
+	u16							 fadePeriod;
+	u16							 fadeCounter;
+	u16							 fadeVolume;
 	u8							 unk2a[2];
 	struct SoundTrack			*tracks;
 	const struct SoundVoice		*voices;
 	u32							 lock;
-	void (*next_tick)(struct SoundPlayer *player);
-	struct SoundPlayer *next_tick_player;
+	void (*nextTick)(struct SoundPlayer *player);
+	struct SoundPlayer *nextTickPlayer;
 };
 
 struct SoundWork
 {
 	u32				lock;
 	/* FAKEMATCH: volatile steers library C only: without it AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23. */
-	volatile u8		transfer_countdown;
+	volatile u8		transferCountdown;
 	u8				reverb;
-	u8				pcm_note_count;
+	u8				pcmNoteCount;
 	u8				volume;
 	u8				rate;
 	u8				unk09;
-	u8				cgb_tick;
-	u8				transfer_period;
-	u8				max_lines;
+	u8				cgbTick;
+	u8				transferPeriod;
+	u8				maxLines;
 	u8				unk0d[3];
-	u32				frame_samples;
-	u32				output_rate;
-	u32				rate_step;
-	struct CgbNote *cgb_notes;
+	u32				frameSamples;
+	u32				outputRate;
+	u32				rateStep;
+	struct CgbNote *cgbNotes;
 	void (*tick)(struct SoundPlayer *player);
-	struct SoundPlayer *tick_player;
-	void (*cgb_update)(void);
-	void (*cgb_mute)(u8 channel);
-	s32 (*cgb_frequency)(u8 kind, u8 key, u8 fine);
+	struct SoundPlayer *tickPlayer;
+	void (*cgbUpdate)(void);
+	void (*cgbMute)(u8 channel);
+	s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine);
 	SoundCommand *commands;
-	void (*note_on)(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
+	void (*noteOn)(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
 	void (*unk3c)(void);
 	u8				 unk40[0x10];
-	struct SoundNote pcm_notes[12];
+	struct SoundNote pcmNotes[12];
 	s8				 buffers[2][0x630];
 };
 
@@ -272,9 +272,9 @@ struct PlayerSlot
 {
 	struct SoundPlayer *player;
 	struct SoundTrack  *tracks;
-	u8					track_count;
+	u8					trackCount;
 	u8					unk09;
-	u16					check_priority;
+	u16					checkPriority;
 };
 
 struct SongEntry
@@ -293,7 +293,7 @@ LAYOUT_SIZE_GUARD(SoundTrack_Size, struct SoundTrack, 80);
 LAYOUT_OFFSET_GUARD(SoundTrack_Voice, struct SoundTrack, voice, 0x24);
 LAYOUT_OFFSET_GUARD(SoundTrack_Cursor, struct SoundTrack, cursor, 0x40);
 LAYOUT_SIZE_GUARD(SoundPlayer_Size, struct SoundPlayer, 64);
-LAYOUT_OFFSET_GUARD(SoundWork_CgbNotes, struct SoundWork, cgb_notes, 0x1c);
+LAYOUT_OFFSET_GUARD(SoundWork_CgbNotes, struct SoundWork, cgbNotes, 0x1c);
 LAYOUT_SIZE_GUARD(SoundWork_Size, struct SoundWork, 0xfb0);
 
 void CgbAudio_Initialize(struct CgbNote *notes);
@@ -313,9 +313,9 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask, s32 va
 void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 mask, u32 value);
 void MusicTrack_ClearModulation(struct SoundTrack *track);
 
-extern const struct PlayerSlot Sound_PlayerSlots[];
-extern const struct SongEntry  Sound_SongTable[];
-extern SoundCommand			   Sound_CommandTable[36];
-extern const SoundCommand	   Sound_ExtendedCommandTable[];
+extern const struct PlayerSlot gSound_PlayerSlots[];
+extern const struct SongEntry  gSound_SongTable[];
+extern SoundCommand			   gSound_CommandTable[36];
+extern const SoundCommand	   gSound_ExtendedCommandTable[];
 
 #endif

@@ -1,6 +1,6 @@
 /* Near miss, differ 4 of 130 (2026-10-15), ported from ☀️'s RunBattleEffect07
  * (DEFINE_ITEM_BREAK_EFFECT) with ⚓️'s fragment object 673 and its script
- * Data_080f0e78. In the fragment loop the listing starts the 0x100000 lift before it
+ * gData_080f0e78. In the fragment loop the listing starts the 0x100000 lift before it
  * loads work->y and starts the object id (movs r0, #209) before it loads work->z;
  * this loads both first. A block-local lift, a split y and every single barrier
  * position measured the same or worse. The lift forced through an empty asm and pinned
@@ -21,7 +21,7 @@ struct ScatterPosition {
     s32 z;
 };
 
-extern const s32 Data_080f0e78[];
+extern const s32 gData_080f0e78[];
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -40,7 +40,7 @@ void Func_080ddea8(void)
     s32 n;
     s32 dist;
 
-    work = Ram_HeapSlots->effect_work;
+    work = Ram_HeapSlots->effectWork;
     BattleEffect_InitializeSharedScene();
     pos.x = work->x;
     pos.y = work->y + 0x100000;
@@ -64,10 +64,10 @@ void Func_080ddea8(void)
         pos.z = work->z;
         obj = Object_Spawn(673, pos.x, pos.y, pos.z);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, Data_080f0e78);
-            obj->speed_limit = Random16() + 0x20000;
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gData_080f0e78);
+            obj->speedLimit = Random16() + 0x20000;
             obj->acceleration = 0x20000;
-            obj->motion_flags = 0;
+            obj->motionFlags = 0;
             dist = Random16() * 24 + 0x80000;
             Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
         }

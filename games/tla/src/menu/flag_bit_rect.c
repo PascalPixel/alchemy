@@ -44,7 +44,7 @@ again:
 void Render_SetTilemapFlagBitRect(
     const struct UiWindow *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     x += (s16)object->x + 1;
     y += (s16)object->y + 1;

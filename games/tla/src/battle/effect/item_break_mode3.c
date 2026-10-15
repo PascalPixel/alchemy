@@ -17,24 +17,24 @@ struct ObjectRuntime *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angl
     Audio_PlayCue(138);
     object = Object_Spawn(278, x, y, z);
     if (object != NULL) {
-        object->scale_x = object->scale_y = 0x4000;
-        object->acceleration = object->speed_limit = 0x30000;
+        object->scaleX = object->scaleY = 0x4000;
+        object->acceleration = object->speedLimit = 0x30000;
         /* FAKEMATCH: ⚓️ stores both speeds before it loads the sprite; without the barrier the load is scheduled between them. */
         asm volatile("");
         ((struct FieldSprite *)object->animation)->priority = 0;
         Object_SetMode(object, 3);
-        scale = object->scale_x;
+        scale = object->scaleX;
         /* FAKEMATCH: ⚓️ loads the scale before it builds the limit; the plain test starts the constant first (one pair of instructions swapped). */
         asm volatile("");
         if (scale < 0x10000) {
             do {
                 scale += 0x800;
-                object->scale_y = scale;
-                object->scale_x = scale;
+                object->scaleY = scale;
+                object->scaleX = scale;
                 object->angle += 0x2000;
                 WaitFrames(1);
                 limit = 255;
-                scale = object->scale_x;
+                scale = object->scaleX;
                 /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then finishes the limit; as a constant the load comes after its shift (differ 2). */
                 asm volatile("" : "+l"(limit));
             } while (scale <= (limit << 8) + 255);

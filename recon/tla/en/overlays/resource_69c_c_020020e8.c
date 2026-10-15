@@ -14,23 +14,23 @@ struct PushEntry {
     s16 x;
     s16 z;
     s16 flag;
-    s16 unknown_06;
+    s16 unk06;
 };
 
 struct PushWork {
-    s16 unknown_00;
+    s16 unk00;
     s16 flag;
-    s16 unknown_04;
+    s16 unk04;
     s16 x;
     s16 z;
     s16 count;
     s16 current;
     u16 busy;
-    u8 unknown_10[16];
+    u8 unk10[16];
     struct PushEntry entries[1];
 };
 
-extern struct PushWork Data_02002e34;
+extern struct PushWork gData_02002e34;
 
 void Func_02001d48(struct PushWork *work, struct PushEntry *entry);
 void Func_02001db8(struct PushWork *work, struct PushEntry *entry);
@@ -46,8 +46,8 @@ static __inline__ void SetByte(s32 flag, s32 value)
 
 s32 Func_020020e8(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    struct PushWork *work = &Data_02002e34;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    struct PushWork *work = &gData_02002e34;
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct PushEntry *entry;
@@ -75,9 +75,9 @@ s32 Func_020020e8(void)
 
 void Func_02002198(s32 dx, s32 dz, s32 route)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    struct PushWork *work = &Data_02002e34;
-    u8 *event_work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    struct PushWork *work = &gData_02002e34;
+    u8 *eventWork = Ram_HeapSlots->eventWork;
     s32 x = GameFlag_GetByte(work->flag);
     s32 z = GameFlag_GetByte(work->flag + 8);
 
@@ -89,11 +89,11 @@ void Func_02002198(s32 dx, s32 dz, s32 route)
         dx += x;
         object->z = ((z + dz) << 20) + 0x80000;
         object->x = (dx << 20) + 0x80000;
-        other = *(struct ObjectRuntime **)(event_work + 0x1cc);
+        other = *(struct ObjectRuntime **)(eventWork + 0x1cc);
         other->x = object->x;
         other->z = object->z;
         Func_02002308();
         Func_02001f50();
-        *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = route;
+        *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = route;
     }
 }

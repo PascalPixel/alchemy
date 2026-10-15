@@ -8,7 +8,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 // followed by more.
 void Func_02001040(void)
 {
-    Object_GetById(gPartyState.current_owner)->terrain_id = 2;
+    Object_GetById(gPartyState.currentOwner)->terrainId = 2;
     if (gPartyState.scene == (s32)&SceneId_Ov662Room1) {
         YampiDesertCave_Call1848(55, 71, 4, 1, 43, 70);
         YampiDesertCave_Call1848(43, 71, 4, 1, 55, 71);
@@ -27,7 +27,7 @@ void Func_02001040(void)
 
 void Func_02001120(void)
 {
-    Object_GetById(gPartyState.current_owner)->terrain_id = 0;
+    Object_GetById(gPartyState.currentOwner)->terrainId = 0;
     if (gPartyState.scene == (s32)&SceneId_Ov662Room1)
         YampiDesertCave_Call1848(43, 70, 4, 1, 55, 71);
     /* FAKEMATCH: the native reads the scene again here; without the barrier the read is moved up both paths (differ 18) */

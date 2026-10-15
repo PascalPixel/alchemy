@@ -14,7 +14,7 @@ s32 Func_020004fc(void)
 {
     Scene_SetArrivalFlags(0);
     Func_020006a0(0);
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x40;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x40;
     if (GameFlag_Test(0xa00)) {
         Func_02000724(8);
         Func_02000724(9);

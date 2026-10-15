@@ -52,7 +52,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -117,7 +117,7 @@ static void HammetPalace_LeaveThroughDoor(void)
 	p5 = gEventWork;
 	Engine_EventBegin();
 	Engine_EventWait(10);
-	if (p5->touched_trigger == 4)
+	if (p5->touchedTrigger == 4)
 	{
 		Event_PlayCue(188);
 	}
@@ -130,7 +130,7 @@ static void HammetPalace_LeaveThroughDoor(void)
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-	if (p5->touched_trigger == 4)
+	if (p5->touchedTrigger == 4)
 	{
 		Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	}
@@ -139,7 +139,7 @@ static void HammetPalace_LeaveThroughDoor(void)
 		Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	}
 	Engine_EventWait(16);
-	Engine_EventRequestExit(p5->touched_trigger);
+	Engine_EventRequestExit(p5->touchedTrigger);
 	Map_SetLayerEntryFlag(1);
 	Map_SetLayerEntryFlag(2);
 	Engine_EventEnd();
@@ -147,7 +147,7 @@ static void HammetPalace_LeaveThroughDoor(void)
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	if (gGameState.scene == (u32)&SceneId_HammetPalace)
 	{
 		FieldScene_DispatchSceneByIndex();
@@ -233,8 +233,8 @@ static void RunEventScript01(void)
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
 	work = gEventWork;
-	work->transition_frames = 24;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	work->transitionFrames = 24;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Actor_SetPosition(8, 0x3580000, 0x1b80000);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3580000, 0x1e60000);
 	Actor_SetPosition(GARET, 0x3500000, 0x1f60000);
@@ -678,13 +678,13 @@ static void RunEventScript01(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	table = (s32)HammetPalace_PartyActions;
+	table = (s32)gHammetPalace_PartyActions;
 	Engine_ActorEnableActionCallback(GARET, table);
 	Engine_ActorEnableActionCallback(2, table);
 	Object_SetActionCallbackAndRefreshById(3, table);
 	work = gEventWork;
-	work->transition_frames = 16;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	work->transitionFrames = 16;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	GameFlag_Set(0x912);
 	Engine_EventEnd();
@@ -729,8 +729,8 @@ static void Scene_RunPartySequence(void)
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
-	gEventWork->start_transition = v5 = 0x100;
-	gEventWork->transition_frames = 40;
+	gEventWork->startTransition = v5 = 0x100;
+	gEventWork->transitionFrames = 40;
 	Engine_EventOpenScreen();
 	Camera_SetSpeed(0x6666, 0xccc);
 	Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);
@@ -878,19 +878,19 @@ static void Scene_RunPartySequence(void)
 	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	table = (s32)HammetPalace_PartyActions;
+	table = (s32)gHammetPalace_PartyActions;
 	Engine_ActorEnableActionCallback(GARET, table);
 	Engine_ActorEnableActionCallback(2, table);
 	Object_SetActionCallbackAndRefreshById(3, table);
 	work = gEventWork;
-	work->transition_frames = 16;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	work->transitionFrames = 16;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	GameFlag_Set(0x914);
 	Engine_EventEnd();
 }
 
-s32 HammetPalace_PartyActions[] = {
+s32 gHammetPalace_PartyActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(856), 0, PIXELS(486)),
 	SC_SYNC,
@@ -925,7 +925,7 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(103),
 	SCENE_EXIT(1, 102, 2),
 	SCENE_EXIT(2, 103, 6),

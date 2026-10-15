@@ -10,9 +10,9 @@ u8 *SceneData_GetSecondaryTable(void);
 s32 BilibinInteriors_PreparePlacements(void);
 u8 *SceneData_GetTertiaryTable(void);
 s32 FieldScene_SetupActor27OnEntry(void);
-extern struct SceneEntrance BilibinInteriors_PrimaryTable[];
-extern u32 BilibinInteriors_SecondaryTable[];
+extern struct SceneEntrance gBilibinInteriors_PrimaryTable[];
+extern u32 gBilibinInteriors_SecondaryTable[];
 extern struct ScenePlacement gBilibinInteriorsPlacements[];
-extern struct SceneEvent BilibinInteriors_TertiaryTable[];
+extern struct SceneEvent gBilibinInteriors_TertiaryTable[];
 
 #endif

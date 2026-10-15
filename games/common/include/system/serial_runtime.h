@@ -12,18 +12,18 @@
 struct SerialPacket
 {
 	u8	sequence;
-	u8	missing_mask;
+	u8	missingMask;
 	u16 checksum;
 	u8	payload[24];
-	u8	reserved_tail[4];
+	u8	reservedTail[4];
 };
 
 LAYOUT_SIZE_GUARD(SerialPacket_Size, struct SerialPacket, 32);
 LAYOUT_OFFSET_GUARD(SerialPacket_Sequence, struct SerialPacket, sequence, 0);
-LAYOUT_OFFSET_GUARD(SerialPacket_MissingMask, struct SerialPacket, missing_mask, 1);
+LAYOUT_OFFSET_GUARD(SerialPacket_MissingMask, struct SerialPacket, missingMask, 1);
 LAYOUT_OFFSET_GUARD(SerialPacket_Checksum, struct SerialPacket, checksum, 2);
 LAYOUT_OFFSET_GUARD(SerialPacket_Payload, struct SerialPacket, payload, 4);
-LAYOUT_OFFSET_GUARD(SerialPacket_ReservedTail, struct SerialPacket, reserved_tail, 28);
+LAYOUT_OFFSET_GUARD(SerialPacket_ReservedTail, struct SerialPacket, reservedTail, 28);
 
 union SerialDataRegisters
 {
@@ -35,28 +35,28 @@ struct SerialRuntime
 {
 	u8	 mode;
 	u8	 phase;
-	u8	 received_mask;
-	u8	 current_mask;
-	u8	 channel_flags[4];
-	u8	 transfer_enabled;
-	u8	 is_parent;
-	u8	 reserved_0a;
+	u8	 receivedMask;
+	u8	 currentMask;
+	u8	 channelFlags[4];
+	u8	 transferEnabled;
+	u8	 isParent;
+	u8	 reserved0a;
 	u8	 sequence;
-	u8	 reserved_0c[8];
-	s32	 send_index;
-	s32	 receive_index[2];
-	u8	 reserved_20[8];
-	u16 *send_buffer[2];
-	u16 *incoming_buffer[4];
-	u16 *ready_buffer[4];
-	u16 *pending_buffer[4];
+	u8	 reserved0c[8];
+	s32	 sendIndex;
+	s32	 receiveIndex[2];
+	u8	 reserved20[8];
+	u16 *sendBuffer[2];
+	u16 *incomingBuffer[4];
+	u16 *readyBuffer[4];
+	u16 *pendingBuffer[4];
 	u8	 storage[0x100];
 };
 
 LAYOUT_SIZE_GUARD(SerialRuntime_Size, struct SerialRuntime, 0x160);
 LAYOUT_OFFSET_GUARD(SerialRuntime_Mode, struct SerialRuntime, mode, 0);
-LAYOUT_OFFSET_GUARD(SerialRuntime_TransferEnabled, struct SerialRuntime, transfer_enabled, 8);
-LAYOUT_OFFSET_GUARD(SerialRuntime_SendIndex, struct SerialRuntime, send_index, 0x14);
+LAYOUT_OFFSET_GUARD(SerialRuntime_TransferEnabled, struct SerialRuntime, transferEnabled, 8);
+LAYOUT_OFFSET_GUARD(SerialRuntime_SendIndex, struct SerialRuntime, sendIndex, 0x14);
 LAYOUT_OFFSET_GUARD(SerialRuntime_Storage, struct SerialRuntime, storage, 0x60);
 
 struct SerialTransferState
@@ -64,7 +64,7 @@ struct SerialTransferState
 	u8 active;
 	u8 status;
 	u8 flags;
-	u8 peer_flags;
+	u8 peerFlags;
 	u8 payload[20];
 };
 
@@ -72,7 +72,7 @@ LAYOUT_SIZE_GUARD(SerialTransferState_Size, struct SerialTransferState, 24);
 LAYOUT_OFFSET_GUARD(SerialTransferState_Active, struct SerialTransferState, active, 0);
 LAYOUT_OFFSET_GUARD(SerialTransferState_Status, struct SerialTransferState, status, 1);
 LAYOUT_OFFSET_GUARD(SerialTransferState_Flags, struct SerialTransferState, flags, 2);
-LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState, peer_flags, 3);
+LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState, peerFlags, 3);
 LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, payload, 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
@@ -124,7 +124,7 @@ extern volatile u16				  gLinkStatus;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {
-	if (gSerialRuntime.is_parent != 0)
+	if (gSerialRuntime.isParent != 0)
 		status |= 0x1000;
 	return status;
 }
@@ -156,7 +156,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
 	gSerialSendSource = zero;
 	gSerialSendSize = zero;
 	gSerialReceiveDest = zero;
-	*(u8 *)&state->peer_flags = zero;
+	*(u8 *)&state->peerFlags = zero;
 	*(u8 *)&state->flags = zero;
 	gSerialReceivedSize = zero;
 	*ime = saved;

@@ -1,12 +1,12 @@
 #include "airs_rock_inside.h"
 
-extern s16 Data_02006050[];
-extern s16 Data_02006054[];
-extern s16 Data_0200605a[];
-extern s16 Data_02006064[];
-extern s16 Data_02006068[];
-extern s16 Data_02006072[];
-extern s16 Data_0200607e[];
+extern s16 gData_02006050[];
+extern s16 gData_02006054[];
+extern s16 gData_0200605a[];
+extern s16 gData_02006064[];
+extern s16 gData_02006068[];
+extern s16 gData_02006072[];
+extern s16 gData_0200607e[];
 
 void Func_02005df4(s32 x, s32 z, s32 layer, s32 value);
 void Func_02005f74(const s16 *list);
@@ -24,21 +24,21 @@ void Func_02003254(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov664Room1) {
-        Func_02005f74(Data_02006050);
+        Func_02005f74(gData_02006050);
     } else if (scene == (s32)&SceneId_Ov664Room2) {
-        Func_02005f74(Data_02006054);
+        Func_02005f74(gData_02006054);
     } else if (scene == (s32)&SceneId_Ov664Room3) {
-        Func_02005f74(Data_0200605a);
+        Func_02005f74(gData_0200605a);
     } else if (scene == (s32)&SceneId_Ov664Room4) {
-        Func_02005f74(Data_02006064);
+        Func_02005f74(gData_02006064);
     } else if (scene == (s32)&SceneId_Ov664Room7) {
         ClearLayer2Shape(0x2600000, 0x1500000);
         ClearLayer2Shape(0x2700000, 0x1500000);
-        Func_02005f74(Data_02006068);
+        Func_02005f74(gData_02006068);
     } else if (scene == (s32)&SceneId_Ov664Room8) {
-        Func_02005f74(Data_02006072);
+        Func_02005f74(gData_02006072);
     } else if (scene == (s32)&SceneId_Ov664Room9) {
         Object_GetById(10)->timer = 0;
-        Func_02005f74(Data_0200607e);
+        Func_02005f74(gData_0200607e);
     }
 }

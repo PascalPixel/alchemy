@@ -224,4 +224,4 @@ Func_080ddbd8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080ddd9c:
-	.4byte Data_080f0e58
+	.4byte gData_080f0e58

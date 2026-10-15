@@ -4,25 +4,25 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
-extern const u8 Data_020013ca[];
-extern const u8 Data_0200121c[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
+extern const u8 gData_020013ca[];
+extern const u8 gData_0200121c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -123,7 +123,7 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d)
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
 {
-    struct EventWork154 *work = Ram_HeapSlots->event_work;
+    struct EventWork154 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     s32 cell;
 
@@ -135,20 +135,20 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
         Cue(158);
     Map_CopyCells(a, b, c, d, mode, f);
     Battle_WaitMode0(20);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     if (mode == 1) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         cell = object->x >> 16;
         Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z);
         Func_020010c4(object);
         object->angle = 0xc000;
     }
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_0200121c);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_0200121c);
     Wait(12);
     Cue(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Func_0200117c(work->return_entrance);
+    Func_0200117c(work->returnEntrance);
 }
 
 void Func_02000c24(void)
@@ -176,8 +176,8 @@ void Func_02000c94(void)
     Func_0200110c();
     Func_020011ac(0);
     Camera_SetBounds(-1, -1, -1, 0);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     Wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -190,8 +190,8 @@ void Func_02000cf4(void)
     Func_0200110c();
     Func_020011ac(0);
     Camera_SetBounds(-1, -1, -1, 0);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     Wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();

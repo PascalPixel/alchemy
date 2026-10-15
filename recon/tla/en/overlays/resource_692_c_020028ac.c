@@ -27,12 +27,12 @@ void Func_020028ac(void)
     struct ObjectRuntime *other;
     s32 i;
 
-    object = Object_GetById(((s8 *)Ram_HeapSlots->event_work)[0xd30]);
+    object = Object_GetById(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
     Object_SetPartAttribute(object, 0);
     Func_02004f30(136);
     i = 0;
     do {
-        object->scale_y = object->scale_x += 0x1000;
+        object->scaleY = object->scaleX += 0x1000;
         WaitFrames(5);
         i++;
     } while (i != 16);
@@ -54,8 +54,8 @@ void Func_020028ac(void)
         REG_BLDALPHA = alpha;
     }
     REG_BLDCNT = 0x3f10;
-    actor = OverlayObject_PrepareObject(other->x, other->terrain_height, other->z + 0x300000, 312);
-    other->motion_flags = 0;
+    actor = OverlayObject_PrepareObject(other->x, other->terrainHeight, other->z + 0x300000, 312);
+    other->motionFlags = 0;
     i = 0;
     do {
         other->y -= 0x10000;

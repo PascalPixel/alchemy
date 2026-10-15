@@ -4,11 +4,11 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 
-extern u8 Data_02006c08[];
+extern u8 gData_02006c08[];
 extern const u8 gWorldMapPackedTilesC[];
-extern u8 Data_02006f20[];
-extern u8 Data_02006e0e[];
-extern u8 Data_02006e0c[];
+extern u8 gData_02006f20[];
+extern u8 gData_02006e0e[];
+extern u8 gData_02006e0c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 s32 GameFlag_Test(s32 flag);
@@ -38,15 +38,15 @@ void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
-    u8 unknown_14[6];
+    u8 unk14[6];
     u8 frame;
 };
 
 s32 Func_02000388(struct ObjectRuntime *object)
 {
-    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->map_work + 286);
+    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
     struct TileSprite *sprite = object->animation;
 
     sprite->tile = *tile;
@@ -71,7 +71,7 @@ s32 Func_020003b4(struct ObjectRuntime *object)
     ObjectDispatch_SetSingleChildFlags(object, 0);
     x = object->x;
     object->acceleration = 0x1000;
-    object->speed_limit = 0x1000;
+    object->speedLimit = 0x1000;
     z = object->z;
     /* FAKEMATCH: the empty asm ties z to x, so z loads before x's offset is added, as in the native (plain: differ 2; a one-pass block before the call: 4; alchemy permute, 3 minutes: nothing closer). */
     asm("" : "+r"(z) : "r"(x));

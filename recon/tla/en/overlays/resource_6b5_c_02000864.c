@@ -27,8 +27,8 @@
 #include "text/msg_ids.h"
 
 struct LobbyEventWork {
-    u8 unknown_000[0x16a];
-    s16 raised_trigger;
+    u8 unk000[0x16a];
+    s16 raisedTrigger;
 };
 
 struct UiWindow;
@@ -80,7 +80,7 @@ s32 Func_02000864(void)
 
     failed = 0;
     window = 0;
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     cnt = 0;
     if (Flag_IsSet(0x173)) {
         Func_02001a14();
@@ -110,7 +110,7 @@ s32 Func_02000864(void)
                 cnt = 0;
             }
             if (stop) {
-                work->raised_trigger = 2;
+                work->raisedTrigger = 2;
                 Flag_Set(0x205);
                 Flag_Clear(0x201);
                 Flag_Clear(0x202);
@@ -131,7 +131,7 @@ s32 Func_02000864(void)
         WaitFrames(8);
         Func_02001994(5);
         if (Flag_IsSet(0x173)) {
-            ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+            ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
             Func_02001a64((s32)MsgGoodLuck2);
             UiText_OpenMessageAtObject(8, 0);
             WaitFrames(45);
@@ -163,7 +163,7 @@ s32 Func_02000864(void)
                 Flag_Clear(0x303);
                 Flag_Clear(0x203);
                 Flag_Clear(0x200);
-                work->raised_trigger = 2;
+                work->raisedTrigger = 2;
                 Func_02001a1c();
                 return;
             }
@@ -184,7 +184,7 @@ s32 Func_02000864(void)
 
             do {
             } while (0);
-            party->battle_rule_24b = 4;
+            party->battleRule24b = 4;
         }
         Func_02001a8c(1, 1);
         table = (u16 *)gSerialTransfer.payload;

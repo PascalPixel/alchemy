@@ -321,13 +321,13 @@ Func_08186dfc:
 .L_0818707c:
 	.4byte 0xc0002000
 .L_08187080:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08187084:
 	.4byte 0x06010000
 .L_08187088:
 	.4byte 0x000000f7
 .L_0818708c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08187090:
 	.4byte 0x00000178
 .L_08187094:
@@ -1082,9 +1082,9 @@ Func_08186dfc:
 .L_08187668:
 	.4byte 0xffff00ff
 .L_0818766c:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08187670:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08187674:
 	.4byte Data_08199244
 .L_08187678:
@@ -1579,13 +1579,13 @@ Func_08186dfc:
 .L_08187a4c:
 	.4byte 0xffffc000
 .L_08187a50:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_08187a54:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_08187a58:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_08187a5c:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_08187a60:
 	.4byte 0xfffe6b10
 .L_08187a64:
@@ -1603,9 +1603,9 @@ Func_08186dfc:
 .L_08187a7c:
 	.4byte 0xffff00ff
 .L_08187a80:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08187a84:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08187a88:
 	.4byte 0xfffc0000
 .L_08187a8c:
@@ -2611,9 +2611,9 @@ Func_08186dfc:
 .L_0818826c:
 	.4byte 0xfff80000
 .L_08188270:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08188274:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08188278:
 	.4byte 0xffff8000
 .L_0818827c:

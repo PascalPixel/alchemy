@@ -1,6 +1,6 @@
 #include "audio_engine.h"
 
-extern SoundCommand Sound_JumpCommand;
+extern SoundCommand gSound_JumpCommand;
 
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track)
 {
@@ -10,7 +10,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
 
     op = *track->cursor;
     track->cursor++;
-    byte = player->work_bytes + *track->cursor;
+    byte = player->workBytes + *track->cursor;
     track->cursor++;
     value = *track->cursor;
     track->cursor++;
@@ -26,13 +26,13 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
         *byte -= value;
         return;
     case SOUND_WORK_COPY:
-        *byte = player->work_bytes[value];
+        *byte = player->workBytes[value];
         return;
     case SOUND_WORK_ADD_BYTE:
-        *byte += player->work_bytes[value];
+        *byte += player->workBytes[value];
         return;
     case SOUND_WORK_SUBTRACT_BYTE:
-        *byte -= player->work_bytes[value];
+        *byte -= player->workBytes[value];
         return;
     case SOUND_WORK_EQUAL:
         if (*byte == value)
@@ -59,27 +59,27 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
             goto jump;
         goto skip;
     case SOUND_WORK_EQUAL_BYTE:
-        if (*byte == player->work_bytes[value])
+        if (*byte == player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_NOT_EQUAL_BYTE:
-        if (*byte != player->work_bytes[value])
+        if (*byte != player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_GREATER_BYTE:
-        if (*byte > player->work_bytes[value])
+        if (*byte > player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_GREATER_EQUAL_BYTE:
-        if (*byte >= player->work_bytes[value])
+        if (*byte >= player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_LESS_EQUAL_BYTE:
-        if (*byte <= player->work_bytes[value])
+        if (*byte <= player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_LESS_BYTE:
-        if (*byte < player->work_bytes[value])
+        if (*byte < player->workBytes[value])
             goto jump;
         goto skip;
     default:
@@ -87,7 +87,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     }
 
 jump:
-    Sound_JumpCommand(player, track);
+    gSound_JumpCommand(player, track);
     return;
 skip:
     track->cursor += 4;

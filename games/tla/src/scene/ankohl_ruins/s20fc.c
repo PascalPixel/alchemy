@@ -17,7 +17,7 @@ void Func_020020fc(void)
             Func_02002eb4();
             Scheduler_AddOrUpdateCallback(Func_02001f7c, 0x480);
             Battle_WaitMode0(40);
-            Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+            Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
             Func_02002eb4();
             AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
             AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);

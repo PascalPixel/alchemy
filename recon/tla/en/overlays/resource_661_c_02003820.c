@@ -14,9 +14,9 @@ loop:
         s32 kind = (s16)entry[1];
         s32 flag = (s16)entry[2];
 
-        object->collision_flags &= 0xfe;
+        object->collisionFlags &= 0xfe;
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        Func_02003910(id, (u16)kind, (u16)flag, object->unknown_18[10]);
+        Func_02003910(id, (u16)kind, (u16)flag, object->unk18[10]);
         entry += 3;
     }
     if (entry[0] != 0xffff)

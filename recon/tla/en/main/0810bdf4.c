@@ -6,7 +6,7 @@
 
 void Func_0810bdf4(void)
 {
-    struct IconWork *work = Ram_HeapSlots->menu_runtime;
+    struct IconWork *work = Ram_HeapSlots->menuRuntime;
     s32 i;
 
     for (i = ICON_COUNT - 1; i >= 0; i--)

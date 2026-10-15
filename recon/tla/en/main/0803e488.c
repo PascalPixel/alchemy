@@ -18,24 +18,24 @@ struct SlotEntry {
     u16 pal : 4;
 };
 struct MenuNode {
-    s32 unknown_00;
+    s32 unk00;
     struct MenuNode *next;
     u16 offset;
     u16 active;
     u16 handle;
-    u16 tile_id;
-    s16 x, y, dx, dy, x_end, y_end;
-    u8 unknown_1c[6];
-    s16 scale, scale_step, scale_end;
+    u16 tileId;
+    s16 x, y, dx, dy, xEnd, yEnd;
+    u8 unk1c[6];
+    s16 scale, scaleStep, scaleEnd;
     struct SlotEntry entry;
 };
 struct MenuSelection {
     struct MenuNode nodes[2];
-    u8 unknown_68[0x27a];
+    u8 unk68[0x27a];
     u16 mode;
 };
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
+extern u8 gMenu_CursorObjectTiles[], gMenu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 
 void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
@@ -51,11 +51,11 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
     entry->x = state->nodes[index].x;
     entry->y = state->nodes[index].y;
     if (index != 0) {
-        frames = Menu_CursorObjectTiles;
+        frames = gMenu_CursorObjectTiles;
         if (state->nodes[1].offset != 0)
             entry->x = entry->x + state->nodes[1].offset;
     } else {
-        frames = Menu_CursorLeftObjectTiles;
+        frames = gMenu_CursorLeftObjectTiles;
         if (state->nodes[0].offset != 0)
             entry->x = entry->x - state->nodes[0].offset;
     }

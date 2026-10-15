@@ -18,12 +18,12 @@ void DisplayScroll_RenderEnteringLine(void)
     u32 current;
     s32 line;
 
-    if (DisplayScroll_Busy == 0) {
-        current = DisplayScroll_Position;
-        if ((s16)DisplayScroll_Position / 16 != DisplayScroll_LastPosition / 16) {
-            DisplayScroll_LastPosition = current;
-            line = (s16)((s16)DisplayScroll_Position / 8);
-            DisplayScroll_Busy = DisplayScroll_DrawMessageLine(line / 2 + first - 1, ((line + 16) & 31) * 24, 1);
+    if (gDisplayScroll_Busy == 0) {
+        current = gDisplayScroll_Position;
+        if ((s16)gDisplayScroll_Position / 16 != gDisplayScroll_LastPosition / 16) {
+            gDisplayScroll_LastPosition = current;
+            line = (s16)((s16)gDisplayScroll_Position / 8);
+            gDisplayScroll_Busy = DisplayScroll_DrawMessageLine(line / 2 + first - 1, ((line + 16) & 31) * 24, 1);
         }
     }
 }

@@ -9,7 +9,7 @@ s32 Func_02004d9c();
 s32 ObjectDispatch_SetSingleChildFlags();
 s32 Animation_SetStateFlags();
 s32 Func_02004dac();
-extern u8 Data_02005208[];
+extern u8 gData_02005208[];
 
 void Func_02001314(s32 a0)
 {
@@ -24,6 +24,6 @@ void Func_02001314(s32 a0)
     Call2(Func_02004d9c, t0, 1);
     Call2(ObjectDispatch_SetSingleChildFlags, t0, 0);
     Call2(Animation_SetStateFlags, t0, 1);
-    Call2(Func_02004dac, t0, (s32)Data_02005208);
+    Call2(Func_02004dac, t0, (s32)gData_02005208);
 }
 

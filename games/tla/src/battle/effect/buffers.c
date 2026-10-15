@@ -39,7 +39,7 @@ void Runtime_ScheduleCallbackAndReleaseBlock32B(void)
 
 void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
     if (buffers != NULL) {
         BattleFx_BuildBuffer(value, buffers, buffers->target, mode);
@@ -48,7 +48,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
 
 void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
     if (buffers != NULL) {
         BattleFx_BuildBuffer(value, buffers, buffers->current, mode);
@@ -57,7 +57,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
 
 void BattleFx_SetPrimaryBufferValue(u32 value)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
     if (buffers != NULL) {
         buffers->palette[0] = value;

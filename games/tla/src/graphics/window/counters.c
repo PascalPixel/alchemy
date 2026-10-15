@@ -9,11 +9,11 @@ void UiWork_ProcessAll(void);
 
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
-    state->glyph_tiles = VramBlock_LoadCached(95, 128 << 6, 0);
-    state->glyph_spacing = 9;
-    state->line_spacing = 10;
+    state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+    state->glyphSpacing = 9;
+    state->lineSpacing = 10;
     state->outline = 0;
     state->colour = 15;
     state->count = 0;
@@ -25,12 +25,12 @@ void UiWork_ProcessAllOrChannels(void);
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     if (initialize != 0)
-        state->glyph_tiles = VramBlock_LoadCached(95, 128 << 6, 0);
-    state->glyph_spacing = 9;
-    state->line_spacing = 10;
+        state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+    state->glyphSpacing = 9;
+    state->lineSpacing = 10;
     state->outline = 0;
     state->colour = 15;
     state->count = 0;
@@ -48,7 +48,7 @@ struct UiMessageSlot {
 
 void UiMessage_Close(void)
 {
-    struct UiMessageSlot *slot = Ram_HeapSlots->unknown_84[4];
+    struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
 
     if (slot->window != NULL) {
         UiWork_Finalize(slot->window, 1);

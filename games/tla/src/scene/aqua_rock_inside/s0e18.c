@@ -2,20 +2,20 @@
 
 void Func_02000e18(s32 value)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 speed;
     s32 i;
     u8 *flags;
 
     Func_02003d7c();
     Func_02003eac(0);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
-    flags = &object->motion_flags;
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+    flags = &object->motionFlags;
     speed = 0;
     *flags = 0;
     /* FAKEMATCH: the native stores the motion flags before it starts the priority address; without the barrier the copy for that address comes first (differ 2), and with it the zero comes before the flags address unless that address is taken first, into flags (differ 2). */
     __asm__("");
-    object->priority_flags |= 0x20;
+    object->priorityFlags |= 0x20;
     Func_02003cc4(object, 18);
     Func_02003ef4(215);
     WaitFrames(13);

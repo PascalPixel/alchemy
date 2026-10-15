@@ -20,7 +20,7 @@ extern u8 MsgProx119[];
 
 void Func_02000764(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(16);
     s16 angle = object->angle;
 
@@ -28,7 +28,7 @@ void Func_02000764(void)
     Func_020045ec(0);
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
-        ObjectMotion_SetAngleToward(16, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(16, gPartyState.currentOwner, 0);
         Func_0200451c((s32)MsgProx113);
     } else {
         Func_0200451c((s32)MsgProx117);
@@ -42,7 +42,7 @@ void Func_02000764(void)
 
 void Func_020007f4(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(17);
     s16 angle = object->angle;
 
@@ -50,7 +50,7 @@ void Func_020007f4(void)
     Func_020045ec(0);
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
-        ObjectMotion_SetAngleToward(17, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(17, gPartyState.currentOwner, 0);
         Func_0200451c((s32)MsgProx114);
     } else {
         Func_0200451c((s32)MsgProx118);
@@ -64,7 +64,7 @@ void Func_020007f4(void)
 
 void Func_02000884(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(18);
     s16 angle = object->angle;
 
@@ -72,7 +72,7 @@ void Func_02000884(void)
     Func_020045ec(0);
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
-        ObjectMotion_SetAngleToward(18, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(18, gPartyState.currentOwner, 0);
         Func_0200451c((s32)MsgProx115);
     } else {
         Func_0200451c((s32)MsgProx119);

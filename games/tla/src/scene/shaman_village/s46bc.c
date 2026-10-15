@@ -2,7 +2,7 @@
 
 void Func_020046bc(void)
 {
-    s32 variant = Object_GetById(gPartyState.current_owner)->sprite->priority;
+    s32 variant = Object_GetById(gPartyState.currentOwner)->sprite->priority;
 
     ObjectMotion_SetActionVariant(9, variant);
     ObjectMotion_SetActionVariant(10, variant);

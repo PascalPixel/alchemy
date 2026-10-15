@@ -11,7 +11,7 @@ void Func_02001250(void)
     Func_020000f4();
     Func_0200428c();
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (2 differ without it; an inline accessor and an inline setter the same or worse). */
-    gPartyState.unknown_2c2 = 2;
+    gPartyState.unk2c2 = 2;
     Func_020041ac((s32)&SceneId_Ov6B0Room1, 99);
     Battle_WaitMode0(40);
     Func_02000158();

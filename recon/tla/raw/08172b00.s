@@ -1082,7 +1082,7 @@ Func_08172b00:
 .L_08173354:
 	.4byte Data_08198c18
 .L_08173358:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817335c:
 	.4byte 0xfffffc00
 .L_08173360:
@@ -1328,7 +1328,7 @@ Func_08172b00:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08173554:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08173558:
 	.4byte gMapCellBuffer
 .L_0817355c:

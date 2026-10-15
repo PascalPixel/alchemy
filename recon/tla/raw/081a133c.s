@@ -236,7 +236,7 @@ Func_081a133c:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_081a14e4:
-	.4byte Data_0200751c
+	.4byte gData_0200751c
 .L_081a14e8:
 	.4byte Data_02007516
 .L_081a14ec:
@@ -244,7 +244,7 @@ Func_081a133c:
 .L_081a14f0:
 	.4byte gScrollTarget
 .L_081a14f4:
-	.4byte Data_02007520
+	.4byte gData_02007520
 .L_081a14f8:
 	.4byte Data_02007524
 .L_081a14fc:

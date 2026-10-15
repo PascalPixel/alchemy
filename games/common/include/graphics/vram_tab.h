@@ -14,7 +14,7 @@ enum VramBlockLimits
 	VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
-extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];
+extern u8 gResourceBlockOwners[VRAM_BLOCK_COUNT];
 
 struct VramBlockCacheEntry
 {
@@ -27,7 +27,7 @@ LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry, offs
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) \
 	|| defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-extern struct VramBlockCacheEntry ResourceTableEntries[];
+extern struct VramBlockCacheEntry gResourceTableEntries[];
 #else
 extern struct VramBlockCacheEntry gVramBlockCache[];
 #endif

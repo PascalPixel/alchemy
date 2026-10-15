@@ -39,10 +39,10 @@ void Func_02000070(void)
     if (object->x >> 20 == 16 && object->z >> 20 == 12 && GameFlag_Test_(0x200) == 0) {
         GameFlag_SetBit_(0x200);
         ObjectMotion_SetActionVariant(10, 3);
-        object->motion_flags = 3;
+        object->motionFlags = 3;
         WaitFrames(5);
         Func_02002470(134);
-        object->motion_flags = 2;
+        object->motionFlags = 2;
         for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
             Lift_(0x1000000, x, 0, 0);
             Func_02002458_(0x1000000, x, 0, 0);

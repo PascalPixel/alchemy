@@ -165,7 +165,7 @@ void Func_02000430(void)
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 19);
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
     do {
-        gPartyState.battle_rule_24b = 2;
+        gPartyState.battleRule24b = 2;
     } while (0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov695, 20);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov695, 21);

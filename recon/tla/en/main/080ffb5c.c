@@ -16,18 +16,18 @@ s32 PsynergyMenu_DrawListPage(
 
     (void)unused;
 
-    owner = UnitGetFar(menu->owner_ids[0]);
+    owner = UnitGetFar(menu->ownerIds[0]);
 
     UiWindow_Commit(window);
 
     first = res->page * 5;
-    rows = (u8)(res->entry_count - first);
+    rows = (u8)(res->entryCount - first);
     if (rows > 5) {
         rows = 5;
     }
 
     Menu_SetPageIcons(5, first, window, 80, 58);
-    Menu_DrawPageIndicator(window, res->entry_count, 5, res->page, 28);
+    Menu_DrawPageIndicator(window, res->entryCount, 5, res->page, 28);
 
     UiText_DrawAt((s32)&MsgPsynergyPp, window, 176, 0);
 
@@ -46,7 +46,7 @@ s32 PsynergyMenu_DrawListPage(
             y = row * 16 + 16;
 
             UiText_DrawAt(msg, window, 88, y);
-            UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, 176, y);
+            UiText_DrawNumberAtOffsetFar(act->ppCost, 2, window, 176, y);
 
             range = act->range;
             if (range == 0xff) {
@@ -61,14 +61,14 @@ s32 PsynergyMenu_DrawListPage(
         } while (rows > row);
     }
 
-    if (menu->psynergy_count == 0) {
+    if (menu->psynergyCount == 0) {
         UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, 17);
     }
 
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFFSET] + (s32)&MsgClassName, window, 0, 32);
-    UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
+    UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
     UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFFSET], 2, window, 24, 48);
 
     return 1;

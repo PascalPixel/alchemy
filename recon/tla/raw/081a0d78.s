@@ -61,13 +61,13 @@ Func_081a0d78:
 .L_081a0de0:
 	.4byte 0x00000001
 .L_081a0de4:
-	.4byte DisplayScroll_Position
+	.4byte gDisplayScroll_Position
 .L_081a0de8:
-	.4byte DisplayScroll_Busy
+	.4byte gDisplayScroll_Busy
 .L_081a0dec:
-	.4byte DisplayScroll_LineTable
+	.4byte gDisplayScroll_LineTable
 .L_081a0df0:
-	.4byte DisplayScroll_LastPosition
+	.4byte gDisplayScroll_LastPosition
 .L_081a0df4:
 	adds r3, r4, #0
 	movs r2, #31

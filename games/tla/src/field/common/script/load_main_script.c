@@ -14,7 +14,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
     s32 result;
 
-    interpreter->script = Script_MainScript;
+    interpreter->script = gScript_MainScript;
     interpreter->cursor = (result = 0);
     return result;
 }

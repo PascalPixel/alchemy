@@ -31,7 +31,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
     u32 index;
 
     livingCount = 0;
-    actorId = action->unit_id;
+    actorId = action->unitId;
     if (BattleObject_IsValidId(actorId) < 0)
         return -1;
     targetId = action->target;
@@ -39,8 +39,8 @@ s32 Func_0811c710(struct BattleActionRecord *action)
         return -1;
 
     {
-        struct BattlePresentationTransition *transition = Ram_HeapSlots->transition_work;
-        transition->target_yaw = action->unit_id > 4 ? 0x5000 : 0x2000;
+        struct BattlePresentationTransition *transition = Ram_HeapSlots->transitionWork;
+        transition->targetYaw = action->unitId > 4 ? 0x5000 : 0x2000;
         transition->frames = 60;
     }
     WaitFrames(10);

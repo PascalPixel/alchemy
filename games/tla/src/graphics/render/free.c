@@ -28,7 +28,7 @@ void Ui_FillVramBlockPattern(void)
 void UiWork_ResetFreeChannel(void)
 {
     struct UiChannelSlot *slot =
-        ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
+        ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
     struct UiChannelSlot *selection = 0;
     s32 i;
 
@@ -47,6 +47,6 @@ void UiWork_ResetFreeChannel(void)
         selection->countdown = 0;
         selection->colour = 0xF;
         selection->outline = 0;
-        selection->line_spacing = 0xA;
+        selection->lineSpacing = 0xA;
     }
 }

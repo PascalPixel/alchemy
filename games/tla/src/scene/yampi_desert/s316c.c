@@ -2,7 +2,7 @@
 
 void Func_0200316c(void)
 {
-    Func_02003820(Data_02004768);
+    Func_02003820(gData_02004768);
     Func_02004180(0);
     if (gPartyState.entrance == 1) {
         GameFlag_SetBit(0xa29);

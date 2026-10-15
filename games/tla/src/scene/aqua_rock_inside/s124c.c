@@ -10,7 +10,7 @@ static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c)
 
 void Func_0200124c(void)
 {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x140);
+    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
     s32 i;
 
     Func_02003d7c();

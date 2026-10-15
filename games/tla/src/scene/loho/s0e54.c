@@ -4,7 +4,7 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 value;
 };
 
@@ -14,7 +14,7 @@ struct LohoPicture {
     u16 b;
 };
 
-extern const struct LohoPicture Data_02001f14;
+extern const struct LohoPicture gData_02001f14;
 
 void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -26,7 +26,7 @@ void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020012a0(const void *data, s32 a, s32 b);
-void Func_020012a8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_020012a8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020012e0(void);
 void Func_020012e8(void);
 void Func_02001348(s32 id, s32 x, s32 z);
@@ -40,10 +40,10 @@ static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b)
     Func_020012a0(data, a, b);
 }
 
-static __inline__ void Func_020012a8_(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_020012a8(src_x, src_y, width, height, dest_x, dest_y);
+    Func_020012a8(srcX, srcY, width, height, destX, destY);
 }
 
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z)
@@ -60,7 +60,7 @@ static __inline__ void Offset_(s32 id, s32 dx, s32 dz)
 
 void Func_02000e54(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     s32 i;
 
     Func_020012e0();
@@ -72,17 +72,17 @@ loop:
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != NULL)
-            object->motion_flags = 0;
+            object->motionFlags = 0;
     }
     i++;
     if ((u32)i <= 63)
         goto loop;
     work = (u8 *)&((struct EventWork154 *)work)->value;
     Func_02001448(158);
-    Func_020012a0_(Data_02001f14.data, Data_02001f14.a, Data_02001f14.b);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Offset_(gPartyState.current_owner, 0, -4);
+    Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Offset_(gPartyState.currentOwner, 0, -4);
     Func_02001448(123);
     Battle_WaitMode0(6);
     Func_020013d0(*(s16 *)work);

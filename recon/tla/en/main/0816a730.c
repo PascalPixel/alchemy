@@ -30,8 +30,8 @@
 extern char ResourceId_Data134;
 extern char ResourceId_LimeColumnSheet;
 extern char ResourceId_BlastSheet;
-extern const u16 Data_08198afc[];
-extern const u16 Data_08198b0a[];
+extern const u16 gData_08198afc[];
+extern const u16 gData_08198b0a[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -67,9 +67,9 @@ void Func_0816a730(struct BattleEffectArgument *effect)
     s32 size;
 
     __asm__("");
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sprites = Ram_HeapSlots->unknown_64[0];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sprites = Ram_HeapSlots->unk64[0];
     BattleFx_BeginCanvasLayer(0);
     {
         register u16 value __asm__("r3");
@@ -82,8 +82,8 @@ void Func_0816a730(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 0x460, 1, 0);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
@@ -94,15 +94,15 @@ void Func_0816a730(struct BattleEffectArgument *effect)
         angle = Random16() & 0xffff;
         spark->x = 0x400000;
         spark->y = 0x700000;
-        spark->velocity_x = (Trig_Sin(angle) * speed) >> 8;
-        spark->velocity_y = (Trig_Cos(angle) * speed) >> 9;
+        spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
+        spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
         spark->variant = Random16() & 7;
         spark++;
     }
-    work->shake_frames = 8;
+    work->shakeFrames = 8;
     for (frame = 0; frame != 54; frame++) {
         if (frame == 10) {
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
             Func_081180e8(212);
             Func_08118088(effect->actors[0], 0);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -125,7 +125,7 @@ void Func_0816a730(struct BattleEffectArgument *effect)
                         Func_08196404(104, 7, 7, 3, mode);
                     else
                         Func_08196404(104, 7, 7, 7, mode);
-                    (draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1])(canvas, work->sheet, x, 112 - height, 14, height);
+                    (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, 112 - height, 14, height);
                     Runtime_ReleaseHeapBlock(104);
                 }
             }
@@ -142,8 +142,8 @@ void Func_0816a730(struct BattleEffectArgument *effect)
                 py = HI(p->y);
                 if (cell > 6)
                     cell = 6;
-                src = work->sheet + Data_08198afc[cell] + 0x460;
-                size = Data_08198b0a[cell];
+                src = work->sheet + gData_08198afc[cell] + 0x460;
+                size = gData_08198b0a[cell];
                 draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
                 p->variant++;
                 BattleFxKernels_IntegrateVector2(p, 62, -0x2000);
@@ -157,7 +157,7 @@ void Func_0816a730(struct BattleEffectArgument *effect)
         else
             Func_08158ce0(16, 16);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback(Func_08143000);

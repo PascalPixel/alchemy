@@ -83,12 +83,12 @@ s32 Forge_PartyHasMaterial(void)
 
 void Forge_SetItem(s32 item)
 {
-    gPartyState.forge_item = item & 0x1ff;
+    gPartyState.forgeItem = item & 0x1ff;
 }
 
 s32 Forge_GetItem(void)
 {
-    u32 item = gPartyState.forge_item;
+    u32 item = gPartyState.forgeItem;
     u32 mask;
 
     /* FAKEMATCH: ⚓️ loads the item before it builds the mask */

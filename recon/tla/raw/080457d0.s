@@ -428,7 +428,7 @@ Func_080457d0:
 .L_08045b04:
 	.4byte gFrameCount
 .L_08045b08:
-	.4byte Ui_BounceScales
+	.4byte gUi_BounceScales
 .L_08045b0c:
 	.4byte 0xffffff00
 .L_08045b10:

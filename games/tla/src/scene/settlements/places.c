@@ -6,9 +6,9 @@ const u8 *Func_02000318(void)
     const u8 *placements;
 
     if (scene == (s32)&SceneId_Ov690Room5)
-        return Data_02002380;
+        return gData_02002380;
     placements = 0;
     if (scene == (s32)&SceneId_Ov690Room3)
-        placements = Data_020023a0;
+        placements = gData_020023a0;
     return placements;
 }

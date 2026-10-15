@@ -17,7 +17,7 @@ struct IsletCaveEntry {
     u16 position[2];
 };
 
-extern const struct IsletCaveEntry Data_020019ec[];
+extern const struct IsletCaveEntry gData_020019ec[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001254(void);
@@ -34,7 +34,7 @@ void Event_WaitTransitionFrames(void);
 
 void Func_020005fc(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     u32 i;
     u32 index;
 
@@ -47,7 +47,7 @@ loop:
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != 0)
-            object->motion_flags = 0;
+            object->motionFlags = 0;
     }
     i++;
     if (i <= 63)
@@ -55,10 +55,10 @@ loop:
     index = *(s16 *)(work + 0x154) - 1;
     Func_02001344(158);
     index >>= 1;
-    Call3((void (*)())Func_0200122c, Data_020019ec[index].value, Data_020019ec[index].position[0], Data_020019ec[index].position[1]);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.current_owner, 0, -4);
+    Call3((void (*)())Func_0200122c, gData_020019ec[index].value, gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.currentOwner, 0, -4);
     Battle_WaitMode0(6);
     Func_020012cc(*(s16 *)(work + 0x154));
     Event_FinishScreenTransition();

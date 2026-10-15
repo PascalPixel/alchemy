@@ -13,12 +13,12 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-extern const u8 Data_020045a4[];
-extern const u8 Data_020045f0[];
+extern const u8 gData_020045a4[];
+extern const u8 gData_020045f0[];
 
 void Func_02001a68(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *object = Object_GetById(9);
     s32 result;
     u8 *done;
@@ -27,7 +27,7 @@ void Func_02001a68(void)
 
     Call1((void (*)())Func_02003fa4, 0);
 
-    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner, 0);
 
     Call1((void (*)())Battle_WaitMode0, 10);
 
@@ -37,21 +37,21 @@ void Func_02001a68(void)
 
     ((void (*)())Func_02003fc4)();
 
-    result = Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0);
+    result = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
     if (result == 0) {
         ((void (*)())Func_02003fbc)();
 
         Call2((void (*)())Func_02003f2c, 9, 0);
 
         ((struct { u8 pad[0x295]; u8 v; } *)Runtime_AllocateBlock(88, 0x298))->v = 99;
-        Call3((void (*)())ObjectMotion_Launch, gPartyState.current_owner, 6, 0);
+        Call3((void (*)())ObjectMotion_Launch, gPartyState.currentOwner, 6, 0);
 
-        Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0x19999, 0xcccc);
+        Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0x19999, 0xcccc);
 
-        Call3((void (*)())ObjectMotion_SetPositionAndCommit, gPartyState.current_owner, 152, 0x300);
+        Call3((void (*)())ObjectMotion_SetPositionAndCommit, gPartyState.currentOwner, 152, 0x300);
 
         leader->update = Func_02001278;
-        Call2((void (*)())Object_SetPartAttribute, Object_GetById(gPartyState.current_owner), 15);
+        Call2((void (*)())Object_SetPartAttribute, Object_GetById(gPartyState.currentOwner), 15);
 
         Call2((void (*)())Object_SetModeById, 9, 3);
 
@@ -66,12 +66,12 @@ void Func_02001a68(void)
         done = (u8 *)object + 99;
         *done = 0;
         object->update = Func_02000df8;
-        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)Data_020045a4);
+        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)gData_020045a4);
 
         Call1((void (*)())Battle_WaitMode0, 30);
 
         Object_GetById(10)->update = Func_02000df8;
-        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)Data_020045f0);
+        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)gData_020045f0);
 
         do {
             Call1((void (*)())WaitFrames, 1);
@@ -81,7 +81,7 @@ void Func_02001a68(void)
 
         Call1((void (*)())WaitFrames, 1);
 
-        ((struct IsletsEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x201;
+        ((struct IsletsEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x201;
         ((void (*)())Event_FinishScreenTransition)();
 
         ((void (*)())Event_WaitTransitionFrames)();

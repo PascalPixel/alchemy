@@ -18,7 +18,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 
 #define WAIT_DMA() WaitDma(DMA3)
 
-extern u16 (*Flash_Handler0)(u16 sector, u8 *source);
+extern u16 (*gFlash_Handler0)(u16 sector, u8 *source);
 
 u32 Random16(void);
 
@@ -34,20 +34,20 @@ s32 SaveState_InvalidateSlot(s32 index);
 
 u32 SaveState_WriteWorkspaceSlot(s32 sector)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     void (*progress)(s32) = work->progress;
 
     if (progress != 0)
         progress(0);
-    if (Flash_Handler0(sector, work->slot) != 0 || Flash_VerifySector(sector, (s32)work->slot) != 0)
+    if (gFlash_Handler0(sector, work->slot) != 0 || Flash_VerifySector(sector, (s32)work->slot) != 0)
         return 1;
     if (progress != 0)
         progress(1);
-    if (Flash_Handler0(sector + 1, work->slot + 0x1000) != 0 || Flash_VerifySector(sector + 1, (s32)(work->slot + 0x1000)) != 0)
+    if (gFlash_Handler0(sector + 1, work->slot + 0x1000) != 0 || Flash_VerifySector(sector + 1, (s32)(work->slot + 0x1000)) != 0)
         return 1;
     if (progress != 0)
         progress(1);
-    if (Flash_Handler0(sector + 2, work->slot + 0x2000) != 0 || Flash_VerifySector(sector + 2, (s32)(work->slot + 0x2000)) != 0)
+    if (gFlash_Handler0(sector + 2, work->slot + 0x2000) != 0 || Flash_VerifySector(sector + 2, (s32)(work->slot + 0x2000)) != 0)
         return 1;
     if (progress != 0)
         progress(1);
@@ -56,7 +56,7 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector)
 
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     struct SaveSlotHeader header;
 
     ReadFlash(index, 0, work->slot, 0x1000);

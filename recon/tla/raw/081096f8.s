@@ -215,6 +215,6 @@ Func_081096f8:
 .L_081098b4:
 	.4byte gInput
 .L_081098b8:
-	.4byte Shop_QuantityTiles
+	.4byte gShop_QuantityTiles
 .L_081098bc:
 	.4byte 0x00001235

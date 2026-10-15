@@ -47,7 +47,7 @@ void Func_0200014c(s32 actor)
     struct ObjectRuntime *leader;
     u16 facing;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
     __asm__ volatile("" : "+l"(leader));
     facing = (leader->angle + 0x2000) & 0xc000;
@@ -64,7 +64,7 @@ void Func_0200019c(s32 actor)
     struct ObjectRuntime *leader;
     u16 facing;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
     __asm__ volatile("" : "+l"(leader));
     facing = (leader->angle + 0x2000) & 0xc000;
@@ -84,7 +84,7 @@ void Func_020001fc(s32 actor)
     struct ObjectRuntime *leader;
     u16 facing;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
     __asm__ volatile("" : "+l"(leader));
     facing = (leader->angle + 0x2000) & 0xc000;
@@ -112,7 +112,7 @@ void Func_02000288(s32 actor)
     struct ObjectRuntime *leader;
     u16 facing;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
     __asm__ volatile("" : "+l"(leader));
     facing = (leader->angle + 0x2000) & 0xc000;
@@ -132,7 +132,7 @@ void Func_020002e4(s32 actor)
     struct ObjectRuntime *leader;
     u16 facing;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
     __asm__ volatile("" : "+l"(leader));
     facing = (leader->angle + 0x2000) & 0xc000;

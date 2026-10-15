@@ -229,7 +229,7 @@ Func_02000150:
 .L_02008304:
 	.4byte gPartyState
 .L_02008308:
-	.4byte Data_02001dcc
+	.4byte gData_02001dcc
 .L_0200830c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008310:
@@ -420,7 +420,7 @@ Func_0200038c:
 .L_02008504:
 	.4byte gPartyState
 .L_02008508:
-	.4byte Data_02001d8c
+	.4byte gData_02001d8c
 .L_0200850c:
 	.4byte 0xffff0000
 	.section .text.x020085a8,"ax",%progbits

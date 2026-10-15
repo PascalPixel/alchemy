@@ -5,16 +5,16 @@
 
 struct WaveFxScroll {
     u16 lines[2][162];
-    u8 unknown_288[2];
+    u8 unk288[2];
     u8 page;
-    u8 unknown_28b[9];
+    u8 unk28b[9];
     u8 delay;
 };
 
 // BG0 の走査線スクロールを HBlank DMA に掛ける
 void Func_080dcdc8(void)
 {
-    struct WaveFxScroll *work = Ram_HeapSlots->unknown_4c[3];
+    struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
     if (!work->delay) {
         /* FAKEMATCH: ⚓️ stores the stopped control word before it starts the destination address and before the line offset's last shift; written as work->lines[work->page] the address is started ahead of the store (differ 2), and with the barrier alone the whole offset is (differ 2). The temporary holds the page's offset in words until the barrier. */
@@ -49,7 +49,7 @@ s32 Func_080dce20(s16 hue)
 }
 
 struct WaveFxWork {
-    u8 unknown_000[0x28b];
+    u8 unk000[0x28b];
     u8 red;
     u8 green;
     u8 blue;
@@ -59,7 +59,7 @@ struct WaveFxWork {
 // 色相を 4 度すすめ、その色を求める
 void Func_080dce60(void)
 {
-    struct WaveFxWork *work = Ram_HeapSlots->unknown_4c[3];
+    struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
     s16 r;
     s16 g;
     s16 b;

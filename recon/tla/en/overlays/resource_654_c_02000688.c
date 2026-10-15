@@ -27,7 +27,7 @@ void Func_02000688(void)
     Func_020039d8();
     Func_02003b08(0);
     Func_020039a0();
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
     ShrineOfTheSeaGod_CamMove(248 << 16, -1, 168 << 16, 1);
     Func_02003ac8();
     Func_02003b48(244);
@@ -41,8 +41,8 @@ void Func_02000688(void)
     WaitFrames(10);
     Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
     ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
     ObjectMotion_SetActionVariant(8, 1);
     ObjectMotion_SetActionVariant(9, 1);
     ObjectMotion_SetActionVariant(10, 1);
@@ -77,7 +77,7 @@ void Func_02000688(void)
         Func_02000618();
     for (i = 0; i < 24; i++)
         Func_02000568();
-    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02003ad8(3);

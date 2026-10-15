@@ -4,11 +4,11 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 
-extern u8 Data_02006c08[];
+extern u8 gData_02006c08[];
 extern const u8 gWorldMapPackedTilesC[];
-extern u8 Data_02006f20[];
-extern u8 Data_02006e0e[];
-extern u8 Data_02006e0c[];
+extern u8 gData_02006f20[];
+extern u8 gData_02006e0e[];
+extern u8 gData_02006e0c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
@@ -36,15 +36,15 @@ void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
-    u8 unknown_14[6];
+    u8 unk14[6];
     u8 frame;
 };
 
 s32 Func_020002a4(struct ObjectRuntime *object)
 {
-    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->map_work + 286);
+    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
     struct TileSprite *sprite = object->animation;
 
     sprite->tile = *tile;

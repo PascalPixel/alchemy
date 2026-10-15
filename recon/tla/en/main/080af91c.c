@@ -16,26 +16,26 @@
 #include "types.h"
 
 struct OwnerLevelState {
-    u8 unknown_000[0x0f];
+    u8 unk000[0x0f];
     u8 level;
-    u16 base_hp;
-    u16 base_pp;
-    u8 unknown_014[4];
-    u16 base_attack;
-    u16 base_defense;
-    u16 base_agility;
-    u8 base_luck;
-    u8 base_turns;
-    u8 base_20;
-    u8 base_21;
-    u8 unknown_022[0x102];
+    u16 baseHp;
+    u16 basePp;
+    u8 unk014[4];
+    u16 baseAttack;
+    u16 baseDefense;
+    u16 baseAgility;
+    u8 baseLuck;
+    u8 baseTurns;
+    u8 base20;
+    u8 base21;
+    u8 unk022[0x102];
     u32 experience;
     u8 character;
-    u8 class_id;
+    u8 classId;
 };
 
 struct OwnerGrowth {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     s16 hp[6];
     s16 pp[6];
     u16 atk[6];
@@ -56,10 +56,10 @@ struct LevelUpResult {
 };
 
 struct LevelUpWork {
-    s32 class_id;
+    s32 classId;
     s32 level;
     struct OwnerGrowth *growth;
-    u8 unused_0c[0x20];
+    u8 unused0c[0x20];
 };
 
 void MemFree(void *buffer);
@@ -82,7 +82,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 
     st = UnitGet(owner);
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
-    work->class_id = st->class_id;
+    work->classId = st->classId;
     level = st->level;
     work->level = level;
     res->level = level;
@@ -125,15 +125,15 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         res->agi += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
         res->luck += __udivsi3((Random16() * 20 >> 16) + diff, 20);
-        st->base_hp += res->hp;
-        st->base_pp += res->pp;
-        st->base_attack += res->atk;
-        st->base_defense += res->def;
-        st->base_agility += res->agi;
-        st->base_luck += res->luck;
-        st->base_turns = 1;
-        st->base_20 = 0;
-        st->base_21 = 0;
+        st->baseHp += res->hp;
+        st->basePp += res->pp;
+        st->baseAttack += res->atk;
+        st->baseDefense += res->def;
+        st->baseAgility += res->agi;
+        st->baseLuck += res->luck;
+        st->baseTurns = 1;
+        st->base20 = 0;
+        st->base21 = 0;
         Owner_RefreshClassActions(owner);
         UnitCalc(owner);
     }

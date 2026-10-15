@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
-    struct DisplayTransitionState *work = Ram_HeapSlots->display_transition;
+    struct DisplayTransitionState *work = Ram_HeapSlots->displayTransition;
     volatile u32 fill = 0xf000f000;
     Dma_Set(&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
     if (color != -1) {
@@ -21,8 +21,8 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
         s32 cnt;
         u32 *tile;
         for (cnt = 7; cnt >= 0; --cnt) pattern = (pattern << 4) | color;
-        tile = work->solid_tile;
+        tile = work->solidTile;
         for (cnt = 7; cnt >= 0; --cnt) *tile++ = pattern;
-        Dma_Set(work->solid_tile, (void *)0x06000000, 0x84000008, (volatile u32 *)0x040000d4);
+        Dma_Set(work->solidTile, (void *)0x06000000, 0x84000008, (volatile u32 *)0x040000d4);
     }
 }

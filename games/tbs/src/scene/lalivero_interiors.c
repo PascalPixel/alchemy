@@ -264,7 +264,7 @@ static void EV12_TALK(void)
 static void LaliveroInteriors_RequestTouchedExitAndPlayCue(void)
 {
 	struct EventWork *work = gEventWork;
-	s16				 *p = (s16 *)&work->touched_trigger;
+	s16				 *p = (s16 *)&work->touchedTrigger;
 
 	Engine_EventRequestExit(*p);
 	Engine_AudioPlayCue(0x7B);
@@ -702,35 +702,35 @@ s32 Scene_Initialize(void)
 	{
 		Engine_GameFlagSet(FLAG_AERIE_EVENTS_DONE);
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	scene = gGameState.scene;
 	if (scene == (s32)&SceneId_LaliveroInteriors1)
 	{
 		actor = Object_GetById(ACTOR_SANCTUM_FIRST);
-		actor->priority_flags = 0;
-		actor->collision_flags |= 4;
+		actor->priorityFlags = 0;
+		actor->collisionFlags |= 4;
 		actor->sprite->priority = 2;
 		actor = Object_GetById(ACTOR_SANCTUM_SECOND);
-		actor->priority_flags = 0;
-		actor->collision_flags |= 4;
+		actor->priorityFlags = 0;
+		actor->collisionFlags |= 4;
 		actor->sprite->priority = 2;
 		actor = Object_GetById(ACTOR_SANCTUM_THIRD);
-		actor->collision_flags |= 4;
-		actor->priority_flags = 0;
+		actor->collisionFlags |= 4;
+		actor->priorityFlags = 0;
 		actor->sprite->priority = 2;
 		Engine_ActorSetAnimation(15, 6);
 		entrance = gGameState.entrance;
 		if (entrance == ENTRANCE_SANCTUM_RETURN)
 		{
-			gGameState.saved_scene = scene;
-			gGameState.saved_entrance = entrance;
+			gGameState.savedScene = scene;
+			gGameState.savedEntrance = entrance;
 		}
 	}
 	if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
 	{
 		actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
-		actor->collision_flags |= 4;
-		actor->priority_flags = 0;
+		actor->collisionFlags |= 4;
+		actor->priorityFlags = 0;
 		actor->sprite->priority = 2;
 		if (Engine_GameFlagIsSet(0x300) != 0)
 		{

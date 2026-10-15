@@ -13,36 +13,36 @@ struct ObjectRuntime
 	s32					  x;
 	s32					  y;
 	s32					  z;
-	s32					  terrain_height;
-	u8					  unknown_18[0x08];
+	s32					  terrainHeight;
+	u8					  unk18[0x08];
 	u16					  radius;
-	u8					  terrain_id;
-	u8					  unknown_23;
-	s32					  velocity_x;
-	s32					  velocity_y;
-	s32					  velocity_z;
-	s32					  speed_limit;
+	u8					  terrainId;
+	u8					  unk23;
+	s32					  velocityX;
+	s32					  velocityY;
+	s32					  velocityZ;
+	s32					  speedLimit;
 	s32					  acceleration;
-	s32					  target_x;
-	s32					  target_y;
-	s32					  target_z;
-	u8					  unknown_44[0x0c];
+	s32					  targetX;
+	s32					  targetY;
+	s32					  targetZ;
+	u8					  unk44[0x0c];
 	void				 *animation;
-	u8					  animation_kind;
+	u8					  animationKind;
 	u8					  flags;
-	u8					  arrival_axis;
-	u8					  unknown_57;
-	u8					  snap_to_target;
-	u8					  unknown_59;
-	u8					  action_flags;
-	u8					  movement_state;
-	u8					  unknown_5c[0x02];
-	u16					  unknown_5e;
+	u8					  arrivalAxis;
+	u8					  unk57;
+	u8					  snapToTarget;
+	u8					  unk59;
+	u8					  actionFlags;
+	u8					  movementState;
+	u8					  unk5c[0x02];
+	u16					  unk5e;
 	void				 *callback;
 	s16					  action;
-	s16					  unknown_66;
-	struct ObjectRuntime *linked_object;
-	u8					  unknown_6c[0x04];
+	s16					  unk66;
+	struct ObjectRuntime *linkedObject;
+	u8					  unk6c[0x04];
 };
 
 extern struct ObjectRuntime gObjectSnapshots[32];
@@ -50,8 +50,8 @@ extern struct ObjectRuntime gObjectSnapshots[32];
 typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x70 ? 1 : -1];
 
 typedef char ObjectRuntime_arrival_axis_offset
-	[(u32) & (((struct ObjectRuntime *)0)->arrival_axis) == 0x56 ? 1 : -1];
+	[(u32) & (((struct ObjectRuntime *)0)->arrivalAxis) == 0x56 ? 1 : -1];
 typedef char ObjectRuntime_snap_to_target_offset
-	[(u32) & (((struct ObjectRuntime *)0)->snap_to_target) == 0x58 ? 1 : -1];
+	[(u32) & (((struct ObjectRuntime *)0)->snapToTarget) == 0x58 ? 1 : -1];
 
 #endif

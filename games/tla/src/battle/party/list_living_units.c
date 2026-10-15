@@ -34,52 +34,52 @@ s32 BattleEnemyList(s16 *unit_ids)
     return count;
 }
 
-s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
+s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds)
 {
-    u16 active_members[8];
+    u16 activeMembers[8];
     u16 *base;
     s32 remaining;
-    s32 enemy_limit;
+    s32 enemyLimit;
     u16 *output;
-    s32 living_count;
-    s32 enemy_capacity;
+    s32 livingCount;
+    s32 enemyCapacity;
     u16 *member;
-    s32 unit_id;
+    s32 unitId;
     s16 hp;
-    s32 active_count;
+    s32 activeCount;
     struct BattleUnit *unit;
 
-    output = unit_ids;
-    living_count = 0;
-    enemy_capacity = 6;
+    output = unitIds;
+    livingCount = 0;
+    enemyCapacity = 6;
     if (GameFlag_Test(0x16C) != 0) {
-        enemy_capacity = 3;
+        enemyCapacity = 3;
     }
-    if (side_mask & BATTLE_SIDE_PARTY) {
-        base = active_members;
-        active_count = BattleParty_PrepareActiveOwners(base);
-        if (living_count < active_count) {
+    if (sideMask & BATTLE_SIDE_PARTY) {
+        base = activeMembers;
+        activeCount = BattleParty_PrepareActiveOwners(base);
+        if (livingCount < activeCount) {
             member = base;
-            remaining = active_count;
+            remaining = activeCount;
             do {
-                unit_id = *member;
+                unitId = *member;
                 member += 1;
-                hp = ((struct BattleUnit *)UnitGet(unit_id))->hp;
+                hp = ((struct BattleUnit *)UnitGet(unitId))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
-                        *output = unit_id;
+                        *output = unitId;
                         output += 1;
                     }
-                    living_count += 1;
+                    livingCount += 1;
                 }
                 remaining -= 1;
             } while (remaining != 0);
         }
     }
-    if (side_mask & BATTLE_SIDE_ENEMIES) {
+    if (sideMask & BATTLE_SIDE_ENEMIES) {
         remaining = 0x80;
-        enemy_limit = enemy_capacity + 0x80;
-        if (remaining < enemy_limit) {
+        enemyLimit = enemyCapacity + 0x80;
+        if (remaining < enemyLimit) {
             do {
                 unit = UnitGet(remaining);
                 if (unit->side != 0 && unit->hp > 0) {
@@ -87,69 +87,69 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
                         *output = remaining;
                         output += 1;
                     }
-                    living_count += 1;
+                    livingCount += 1;
                 }
                 remaining += 1;
-            } while (remaining < enemy_limit);
+            } while (remaining < enemyLimit);
         }
     }
     if (output != NULL) {
         *output = 0xFF;
     }
-    return living_count;
+    return livingCount;
 }
 
 s32 BattleParty_PrepareReserveOwners(u16 *owners);
 
 // As BattleParty_ListLivingUnits, with the reserve owners listed after the
 // active ones.
-s32 Func_0811a24c(s32 side_mask, u16 *unit_ids)
+s32 Func_0811a24c(s32 sideMask, u16 *unitIds)
 {
     u16 members[10];
     u16 *base;
     s32 remaining;
-    s32 enemy_limit;
+    s32 enemyLimit;
     u16 *output;
-    s32 living_count;
-    s32 enemy_capacity;
+    s32 livingCount;
+    s32 enemyCapacity;
     u16 *member;
-    s32 unit_id;
+    s32 unitId;
     s16 hp;
     s32 count;
     struct BattleUnit *unit;
 
-    output = unit_ids;
-    living_count = 0;
-    enemy_capacity = 6;
+    output = unitIds;
+    livingCount = 0;
+    enemyCapacity = 6;
     if (GameFlag_Test(0x16C) != 0) {
-        enemy_capacity = 3;
+        enemyCapacity = 3;
     }
-    if (side_mask & BATTLE_SIDE_PARTY) {
+    if (sideMask & BATTLE_SIDE_PARTY) {
         base = members;
         count = BattleParty_PrepareActiveOwners(base);
         count += BattleParty_PrepareReserveOwners(base + count);
-        if (living_count < count) {
+        if (livingCount < count) {
             member = base;
             remaining = count;
             do {
-                unit_id = *member;
+                unitId = *member;
                 member += 1;
-                hp = ((struct BattleUnit *)UnitGet(unit_id))->hp;
+                hp = ((struct BattleUnit *)UnitGet(unitId))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
-                        *output = unit_id;
+                        *output = unitId;
                         output += 1;
                     }
-                    living_count += 1;
+                    livingCount += 1;
                 }
                 remaining -= 1;
             } while (remaining != 0);
         }
     }
-    if (side_mask & BATTLE_SIDE_ENEMIES) {
+    if (sideMask & BATTLE_SIDE_ENEMIES) {
         remaining = 0x80;
-        enemy_limit = enemy_capacity + 0x80;
-        if (remaining < enemy_limit) {
+        enemyLimit = enemyCapacity + 0x80;
+        if (remaining < enemyLimit) {
             do {
                 unit = UnitGet(remaining);
                 if (unit->side != 0 && unit->hp > 0) {
@@ -157,14 +157,14 @@ s32 Func_0811a24c(s32 side_mask, u16 *unit_ids)
                         *output = remaining;
                         output += 1;
                     }
-                    living_count += 1;
+                    livingCount += 1;
                 }
                 remaining += 1;
-            } while (remaining < enemy_limit);
+            } while (remaining < enemyLimit);
         }
     }
     if (output != NULL) {
         *output = 0xFF;
     }
-    return living_count;
+    return livingCount;
 }

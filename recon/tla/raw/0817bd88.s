@@ -606,7 +606,7 @@ Func_0817bd88:
 .L_0817c26c:
 	.4byte 0xffd60000
 .L_0817c270:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0817c274:
 	.4byte Data_081991e0
 .L_0817c278:

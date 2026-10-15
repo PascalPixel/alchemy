@@ -2,8 +2,8 @@
 #include "ram_buffer.h"
 
 struct DjinnMenuWork {
-    u8 unknown_000[0x215];
-    u8 owner_count;
+    u8 unk000[0x215];
+    u8 ownerCount;
 };
 
 s32 Func_0810498c(s32 self, s32 other);
@@ -18,10 +18,10 @@ s32 Func_08104928(s8 *table, s32 self)
     s8 *p;
     struct DjinnMenuWork *state;
 
-    state = Ram_HeapSlots->menu_runtime;
+    state = Ram_HeapSlots->menuRuntime;
     cnt = 0;
     i = 0;
-    if (cnt < state->owner_count) {
+    if (cnt < state->ownerCount) {
         p = table;
         do {
             *p = 0;
@@ -33,7 +33,7 @@ s32 Func_08104928(s8 *table, s32 self)
             }
             i += 1;
             p += 1;
-        } while (i < state->owner_count);
+        } while (i < state->ownerCount);
     }
     return cnt;
 }

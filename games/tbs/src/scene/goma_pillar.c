@@ -38,17 +38,17 @@ struct ScriptTable
 // 柱の破片が struct FieldActor を読む見方（speed と acceleration は面ごとの速さ、work は符号付きの面番号）
 struct PillarEffect
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	unknown_14[0x1c];
-	s32 rate_first;
-	s32 rate_second;
-	s32 target_x;
-	s32 target_y;
-	s32 target_z;
-	u8	unknown_44[0x22];
+	u8	unk14[0x1c];
+	s32 rateFirst;
+	s32 rateSecond;
+	s32 targetX;
+	s32 targetY;
+	s32 targetZ;
+	u8	unk44[0x22];
 	s16 plane;
 };
 
@@ -76,22 +76,22 @@ static void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
 	switch (plane)
 	{
 	case PLANE_XY:
-		effect->x += effect->rate_first;
-		effect->target_x = effect->x;
-		effect->y += effect->rate_second;
-		effect->target_y = effect->y;
+		effect->x += effect->rateFirst;
+		effect->targetX = effect->x;
+		effect->y += effect->rateSecond;
+		effect->targetY = effect->y;
 		break;
 	case PLANE_XZ:
-		effect->x += effect->rate_first;
-		effect->target_x = effect->x;
-		effect->z += effect->rate_second;
-		effect->target_z = effect->z;
+		effect->x += effect->rateFirst;
+		effect->targetX = effect->x;
+		effect->z += effect->rateSecond;
+		effect->targetZ = effect->z;
 		break;
 	case PLANE_YZ:
-		effect->y += effect->rate_first;
-		effect->target_y = effect->y;
-		effect->z += effect->rate_second;
-		effect->target_z = effect->z;
+		effect->y += effect->rateFirst;
+		effect->targetY = effect->y;
+		effect->z += effect->rateSecond;
+		effect->targetZ = effect->z;
 		break;
 	}
 }
@@ -111,7 +111,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	u32					selection;
 
 	leader = Object_GetById(0);
-	table = *(struct ScriptTable *)GomaPillar_PillarScripts;
+	table = *(struct ScriptTable *)gGomaPillar_PillarScripts;
 	obj = Engine_ObjectCreate(222, x, y, z);
 	if (obj == 0)
 		return;
@@ -119,7 +119,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	Object_SetMode(obj, (flags + 1) & 15);
 	Engine_ObjectSetScript(obj, table.script[flags & 15]);
 	ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 	spr->flags = 0;
 	obj->update = (void (*)(union FieldObject *))SceneEffect_AdvancePositionByAxisMode;
 	obj->speed = a3;
@@ -135,7 +135,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	case 1:
 	case 2:
 	case 3:
-		obj->priority_flags &= 0xfe;
+		obj->priorityFlags &= 0xfe;
 		((struct FieldSpritePriority *)spr)->priority = selection;
 		break;
 	}
@@ -143,7 +143,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return GomaPillar_Scripts;
+	return gGomaPillar_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -153,12 +153,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return GomaPillar_Messages;
+	return gGomaPillar_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return GomaPillar_Actors;
+	return gGomaPillar_Actors;
 }
 
 static void EV08_PSYNERGY(void)
@@ -248,7 +248,7 @@ static void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-s32 GomaPillar_Actor13Frames;
+s32 gGomaPillar_Actor13Frames;
 
 static void EV09_PSYNERGY(void)
 {
@@ -273,7 +273,7 @@ static void EV09_PSYNERGY(void)
 	{
 		p0 = Object_GetById(11);
 		zero = 0;
-		p0->terrain_id = 1;
+		p0->terrainId = 1;
 		r2 = (s32)Object_GetById(11);
 		Engine_ActorSetSpriteFlags(r2, 0);
 		Engine_ActorSetChildValue(11, 14);
@@ -343,7 +343,7 @@ static void FieldScene_RunPillarBurst(void)
 	if (x == 38 && z == 14)
 	{
 		Object_GetById(10)->y.fixed = -0x20000;
-		Object_GetById(10)->target_y = Object_GetById(10)->y.fixed;
+		Object_GetById(10)->targetY = Object_GetById(10)->y.fixed;
 		Engine_AudioPlayCue(188);
 		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, 0x8000, 0, 0, 1);
@@ -388,7 +388,7 @@ static void EV20_TOUCH(void)
 	u8						   saved;
 
 	obj = Object_GetById(0);
-	flags = &obj->motion_flags;
+	flags = &obj->motionFlags;
 	saved = *flags;
 	target.x = Object_GetById(0)->x.fixed - 0x200000;
 	pos = &target;
@@ -403,7 +403,7 @@ static void EV20_TOUCH(void)
 		Object_SetMode(obj, 7);
 		obj->speed = 0x30000;
 		obj->acceleration = 0x20000;
-		obj->velocity_y = 0x40000;
+		obj->velocityY = 0x40000;
 		*flags &= 0x7e;
 		Engine_ActorSetSpriteFlags(obj, 0);
 		Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
@@ -417,7 +417,7 @@ static void EV20_TOUCH(void)
 
 u8 *SceneData_GetExtraTable(void)
 {
-	return GomaPillar_Extras;
+	return gGomaPillar_Extras;
 }
 
 static void GomaPillar_DriveActor13Idle(void)
@@ -426,7 +426,7 @@ static void GomaPillar_DriveActor13Idle(void)
 	s32				  t;
 
 	work = gEventWork;
-	t = ++GomaPillar_Actor13Frames;
+	t = ++gGomaPillar_Actor13Frames;
 	switch (t)
 	{
 	case 60:
@@ -444,8 +444,8 @@ static void GomaPillar_DriveActor13Idle(void)
 		Engine_ActorSetAnimation(13, 4);
 		break;
 	}
-	if (gGameState.pending_djinn_event == 0)
-		work->raised_trigger = 99;
+	if (gGameState.pendingDjinnEvent == 0)
+		work->raisedTrigger = 99;
 }
 
 static void EV99_RAISED(void)
@@ -459,13 +459,13 @@ static void EV99_RAISED(void)
 	Event_ShowMessage(13, 0);
 	Engine_ActorSetAnimationAndWait(13, 3);
 	Engine_EventWait(30);
-	Object_GetById(10)->priority_flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(10)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 	Actor_SetSpeed(13, 0x20000, 0x10000);
 	Actor_WalkToAndWait(13, 0x258, 216);
 	Actor_WalkToAndWait(13, 0x258, 248);
 	Actor_WalkToAndWait(13, 0x238, 0x128);
 	Actor_SetPosition(13, 0, 0);
-	Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	GameFlag_Set(0x869);
 	Engine_EventEnd();
 }
@@ -476,9 +476,9 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 	struct EventWork  *work;
 
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	work->transition_frames = 24;
-	Object_GetById(9)->collision_flags |= 16;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	work->transitionFrames = 24;
+	Object_GetById(9)->collisionFlags |= 16;
 	if (GameFlag_IsSet(0x302) != 0)
 	{
 		Actor_SetPosition(8, 0x1580000, 0x680000);
@@ -498,10 +498,10 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 		Actor_SetPosition(10, 0x2680000, 0xe80000);
 		if (gGameState.entrance == 2 || gGameState.entrance == 3)
 		{
-			Object_GetById(10)->terrain_id = 2;
+			Object_GetById(10)->terrainId = 2;
 			actor = Object_GetById(10);
 			actor->y.fixed--;
-			Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			Map_CopyCellAttributes(36, 48, 5, 1, 36, 14);
 		}
 	}
@@ -511,14 +511,14 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 		Engine_EventWaitForScreen();
 		Actor_SetPosition(9, 0x1800000, 0xc00000);
 		Engine_EventWait(60);
-		Object_GetById(9)->terrain_id = 2;
+		Object_GetById(9)->terrainId = 2;
 		Actor_MoveToAndWait(9, 0x198, 192);
 		Engine_EventWait(60);
 		EV09_PSYNERGY();
 	}
-	if (gGameState.pending_djinn_event != 0)
+	if (gGameState.pendingDjinnEvent != 0)
 	{
-		GomaPillar_Actor13Frames = 0;
+		gGomaPillar_Actor13Frames = 0;
 		Task_AddCallback(GomaPillar_DriveActor13Idle, 0xc80);
 	}
 	return 0;
@@ -527,7 +527,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -546,11 +546,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -559,13 +559,13 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 *GomaPillar_PillarScripts[] = {
-	GomaPillar_PillarScript0,
-	GomaPillar_PillarScript1,
-	GomaPillar_PillarScript2,
+s32 *gGomaPillar_PillarScripts[] = {
+	gGomaPillar_PillarScript0,
+	gGomaPillar_PillarScript1,
+	gGomaPillar_PillarScript2,
 };
 
-s32 GomaPillar_PillarScript0[] = {
+s32 gGomaPillar_PillarScript0[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -573,7 +573,7 @@ s32 GomaPillar_PillarScript0[] = {
 	SC_FREE,
 };
 
-s32 GomaPillar_PillarScript1[] = {
+s32 gGomaPillar_PillarScript1[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -581,7 +581,7 @@ s32 GomaPillar_PillarScript1[] = {
 	SC_FREE,
 };
 
-s32 GomaPillar_PillarScript2[] = {
+s32 gGomaPillar_PillarScript2[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -589,7 +589,7 @@ s32 GomaPillar_PillarScript2[] = {
 	SC_FREE,
 };
 
-struct SceneEntrance GomaPillar_Scripts[] = {
+struct SceneEntrance gGomaPillar_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
 	{ 2, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
@@ -600,7 +600,7 @@ struct SceneEntrance GomaPillar_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaPillar_Messages[] = {
+u32 gGomaPillar_Messages[] = {
 	SCENE_EXITS(27),
 	SCENE_EXIT(1, 28, 2),
 	SCENE_EXIT(2, 26, 1),
@@ -610,7 +610,7 @@ u32 GomaPillar_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct SceneEntrance GomaPillar_Actors[] = {
+struct SceneEntrance gGomaPillar_Actors[] = {
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x148, 0, 0, 0, 104, 16384, 2 },
 	{ 212, CONDITION_ALWAYS, 1, 0, 0, 0x180, 0, 0, 0, 192, 16384, 2 },
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x248, 0, 0, 0, 280, 16384, 2 },
@@ -620,7 +620,7 @@ struct SceneEntrance GomaPillar_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent GomaPillar_Extras[] = {
+struct SceneEvent gGomaPillar_Extras[] = {
 	{ 0x21, 5, CONDITION_ALWAYS, 1 },
 	{ 0x31, 6, CONDITION_ALWAYS, 2 },
 	{ 0x31, 7, CONDITION_ALWAYS, 3 },

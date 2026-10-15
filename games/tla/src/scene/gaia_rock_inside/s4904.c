@@ -2,9 +2,9 @@
 
 struct GaiaRockInsideNode
 {
-    u8 unknown_0[2];
+    u8 unk0[2];
     u8 next[4];
-    u8 unknown_6[2];
+    u8 unk6[2];
 };
 
 struct GaiaRockInsidePath
@@ -13,9 +13,9 @@ struct GaiaRockInsidePath
     struct GaiaRockInsideNode nodes[1];
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
-#define GAIA_ROCK_INSIDE_PATH ((struct GaiaRockInsidePath *)(Data_020023c4 + 0x288))
+#define GAIA_ROCK_INSIDE_PATH ((struct GaiaRockInsidePath *)(gData_020023c4 + 0x288))
 
 // The direction from the current node whose link is 251 or the next node:
 // 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.

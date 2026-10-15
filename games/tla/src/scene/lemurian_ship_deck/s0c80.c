@@ -96,14 +96,14 @@ void Func_02000ce0(void)
     Value3(Func_0200204c, 9, 0x101, 0);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x2000, 0);
-    answer = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
-    owner = gPartyState.current_owner;
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 0);
+    answer = Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
+    owner = gPartyState.currentOwner;
     if (answer == 0) {
         ObjectMotion_WaitForAnimationChange(owner);
         Call2((void (*)())Object_SetModeById, 9, 3);
         Call2((void (*)())Func_02002034, 9, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         ObjectMotion_WaitForAnimationChange(owner);
         Func_0200201c(MsgLookItS + 5); // the fifth message after it
@@ -117,10 +117,10 @@ void Func_02000ce0(void)
     Call2((void (*)())Object_SetModeById, 9, 4);
     Call2((void (*)())Func_02002034, 9, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
-    Object_GetById(9)->action_flags &= ~1;
+    Object_GetById(9)->actionFlags &= ~1;
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 288, 144);
     Call1((void (*)())Battle_WaitMode0, 1);
-    Object_GetById(9)->action_flags |= 1;
+    Object_GetById(9)->actionFlags |= 1;
     Call2((void (*)())Func_02002034, 0x2009, 0);
     Call2((void (*)())Object_SetModeById, 6, 3);
     Call2((void (*)())Object_SetModeById, 5, 3);

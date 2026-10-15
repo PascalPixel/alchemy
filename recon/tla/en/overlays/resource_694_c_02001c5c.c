@@ -5,7 +5,7 @@
 #include "types.h"
 #include "party_state.h"
 
-extern const u8 Data_0200466c[];
+extern const u8 gData_0200466c[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
@@ -13,7 +13,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
-void Func_02004004(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02004004(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_0200406c(void);
 void Func_02004204(s32 skip);
 void Func_020042b4(s32 cue);
@@ -26,8 +26,8 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d)
     Func_02004004(a, b, c, d, 1, 2);
     Func_02004004(a, b + 2, c + 1, d, 1, 2);
     Battle_WaitMode0(20);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_0200466c);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_0200466c);
     WaitFrames(12);
     Func_020042b4(123);
     Event_FinishScreenTransition();

@@ -235,7 +235,7 @@ Func_080df8e0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080dfaa8:
-	.4byte Data_080f3978
+	.4byte gData_080f3978
 .L_080dfaac:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_080dfab0:

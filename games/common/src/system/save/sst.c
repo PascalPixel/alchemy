@@ -5,7 +5,7 @@
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));
 
-extern FlashWaitProc Flash_Handler3;
+extern FlashWaitProc gFlash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);
 
@@ -28,7 +28,7 @@ u16 EraseFlashChip(void)
 
     CopyFlashReadRoutineToRam(savedCode);
 
-    status = (s32 *)&Flash_Handler3;
+    status = (s32 *)&gFlash_Handler3;
     result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
 
     REG_WAITCNT =
@@ -71,7 +71,7 @@ u16 EraseFlashSector(u16 sector)
 
     CopyFlashReadRoutineToRam(savedCode);
 
-    status = (s32 *)&Flash_Handler3;
+    status = (s32 *)&gFlash_Handler3;
     result = _call_via_r3(2, (u8 *)target, 255, *status);
 
     *waitcnt = (*waitcnt & 0xFFFC) | 3;
@@ -87,7 +87,7 @@ u16 ProgramFlashByte(u8 *source, u8 *destination)
     *(volatile u8 *)0x0e002aaa = 0x55;
     *(volatile u8 *)0x0e005555 = 0xa0;
     *destination = *source;
-    wait = &Flash_Handler3;
+    wait = &gFlash_Handler3;
     return (*wait)(1, destination, *source);
 }
 

@@ -7,7 +7,7 @@ void Func_020010d0(struct ObjectRuntime *object)
     while (frames != 0) {
         WaitFrames(1);
         frames--;
-        if (object->velocity_y == 0)
+        if (object->velocityY == 0)
             break;
     }
 }

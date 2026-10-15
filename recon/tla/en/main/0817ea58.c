@@ -29,67 +29,67 @@ typedef struct Vec2 {
 } Vec2;
 
 typedef struct Sprite {
-    u8 unk_00[8];
+    u8 unk00[8];
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unk_0a[6];
+    u8 unk0a[6];
     u8 vram;
-    u8 unk_11;
+    u8 unk11;
     u16 rotation;
-    u8 unk_14[2];
-    u8 unk_16;
-    u8 unk_17;
+    u8 unk14[2];
+    u8 unk16;
+    u8 unk17;
 } Sprite;
 
 typedef struct VramSlot {
-    u16 unk_0;
+    u16 unk0;
     u16 offset;
 } VramSlot;
 
 typedef struct Bitmap {
     u32 width : 8;
     u32 height : 8;
-    u32 unk_2 : 16;
+    u32 unk2 : 16;
     void *data;
 } Bitmap;
 
 struct SummonWork {
     Particle particles[48];
-    u8 unk_0540[0x1c0];
+    u8 unk0540[0x1c0];
     u8 frames[0x7080];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unk_7788[8];
-    s32 unk_7790;
-    s32 unk_7794;
-    s32 unk_7798;
-    s32 unk_779c;
-    u8 unk_77a0[8];
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[8];
+    s32 unk7790;
+    s32 unk7794;
+    s32 unk7798;
+    s32 unk779c;
+    u8 unk77a0[8];
     s32 shake;
-    u8 unk_77ac[0x30];
+    u8 unk77ac[0x30];
     Sprite *sprites[57];
-    u8 unk_78c0[0x28];
-    s32 transfer_pending;
+    u8 unk78c0[0x28];
+    s32 transferPending;
 };
 
 struct SummonArgument {
     s32 kind;
     s32 side;
     s32 actor;
-    s32 unk_0c;
-    s32 unk_10;
+    s32 unk0c;
+    s32 unk10;
     s32 count;
     s32 variant;
-    s32 unk_1c;
-    s32 unk_20;
+    s32 unk1c;
+    s32 unk20;
     s16 actors[8];
 };
 
 struct Keys {
     u32 held;
-    u32 unk_4;
-    u32 unk_8;
+    u32 unk4;
+    u32 unk8;
     u32 pressed;
 };
 
@@ -98,14 +98,14 @@ typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
 struct SystemWork {
-    u8 unk_00[0x24];
+    u8 unk00[0x24];
     s32 *bank;
-    u8 unk_28[0x34];
+    u8 unk28[0x34];
     struct SummonWork *summon;
     u8 *canvas;
     u8 *map;
     void *blit;
-    u8 unk_6c[0x44];
+    u8 unk6c[0x44];
     s32 *control;
 };
 
@@ -117,23 +117,23 @@ struct SystemWork {
 #define PARTICLES ((Particle *)0x02014000)
 #define KEYS ((struct Keys *)0x03001150)
 
-extern const u16 Ulysses_MapOffsets[];
-extern const Vec2 Ulysses_ScaleA;
-extern const Vec2 Ulysses_ScaleB;
-extern const Vec2 Ulysses_ScaleC;
-extern const s8 Ulysses_Shake[];
-extern const u8 Ulysses_FishFrames[];
-extern const u8 Ulysses_FishStart[][2];
-extern const s32 Ulysses_FishVelocity[][2];
-extern const u8 Ulysses_FishDelay[];
-extern const u16 Ulysses_WaveCueFrames[];
-extern const u16 Ulysses_SprayFrames[];
-extern const s8 Ulysses_SprayOffsets[];
-extern const u8 Ulysses_ShipParts[][2];
-extern const u8 Ulysses_Foam[][6][2];
-extern const u16 Ulysses_DropFrames[];
-extern const u8 Ulysses_BeamPalette[];
-extern const u8 Ulysses_BeamSprite[];
+extern const u16 gUlysses_MapOffsets[];
+extern const Vec2 gUlysses_ScaleA;
+extern const Vec2 gUlysses_ScaleB;
+extern const Vec2 gUlysses_ScaleC;
+extern const s8 gUlysses_Shake[];
+extern const u8 gUlysses_FishFrames[];
+extern const u8 gUlysses_FishStart[][2];
+extern const s32 gUlysses_FishVelocity[][2];
+extern const u8 gUlysses_FishDelay[];
+extern const u16 gUlysses_WaveCueFrames[];
+extern const u16 gUlysses_SprayFrames[];
+extern const s8 gUlysses_SprayOffsets[];
+extern const u8 gUlysses_ShipParts[][2];
+extern const u8 gUlysses_Foam[][6][2];
+extern const u16 gUlysses_DropFrames[];
+extern const u8 gUlysses_BeamPalette[];
+extern const u8 gUlysses_BeamSprite[];
 
 void BattleFx_BeginCanvasLayer(s32);
 void Func_0813ba50(void);
@@ -198,19 +198,19 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     s32 *ctl;
     s32 *bank;
     s32 camera;
-    s32 prev_camera;
-    s32 wave_x;
-    s32 wave_scroll;
-    s32 ship_y;
-    s32 wave_phase;
-    u16 saved_y;
-    s32 bg_x;
+    s32 prevCamera;
+    s32 waveX;
+    s32 waveScroll;
+    s32 shipY;
+    s32 wavePhase;
+    u16 savedY;
+    s32 bgX;
     struct SummonWork *work;
     u16 *pal;
-    s32 sway_x;
-    s32 sway_y;
-    s32 bob_x;
-    s32 bob_y;
+    s32 swayX;
+    s32 swayY;
+    s32 bobX;
+    s32 bobY;
     s32 i;
     s32 j;
     s32 k;
@@ -237,14 +237,14 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     Func_08179e6c();
     Func_081963ec(104, 3);
     blit[0] = SYSTEM->blit;
-    work->transfer_mode = 0;
+    work->transferMode = 0;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     camera = 0;
-    wave_scroll = 0;
-    ship_y = -0x1d0000;
-    wave_phase = 0;
-    saved_y = *(u16 *)0x03001124;
-    bg_x = -80;
+    waveScroll = 0;
+    shipY = -0x1d0000;
+    wavePhase = 0;
+    savedY = *(u16 *)0x03001124;
+    bgX = -80;
 
     for (frame = 0; frame != 52; frame++) {
         if (frame == 27) {
@@ -272,16 +272,16 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                     b = 31;
                 *pal = (b << 10) | (r << 5) | g;
             }
-            work->unk_7790 = 0;
-            work->unk_7794 = 5;
-            work->unk_7798 = -1;
-            work->unk_779c = 0;
+            work->unk7790 = 0;
+            work->unk7794 = 5;
+            work->unk7798 = -1;
+            work->unk779c = 0;
             Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
             ctl[4] = 1;
             Resource_LoadAndDecompress(0x134, work->frames, 0, 0);
             for (i = 0; i != 10; i++) {
                 for (j = 0; j != 32; j++) {
-                    v = work->frames[Ulysses_MapOffsets[3] + j];
+                    v = work->frames[gUlysses_MapOffsets[3] + j];
                     if (v != 0) {
                         v = v - i * 4 - 40;
                         if (v <= 0)
@@ -337,27 +337,27 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
         }
         if (frame > 27) {
-            scale = Ulysses_ScaleA;
+            scale = gUlysses_ScaleA;
             pos.w = 0;
             pos.y = 0xff0000;
-            wave_scroll += 0x8000;
-            wave_x = wave_scroll + camera;
-            if (wave_x >= 0x200000) {
-                wave_phase = (wave_phase + 7) % 8;
-                wave_x -= 0x200000;
-                wave_scroll -= 0x200000;
+            waveScroll += 0x8000;
+            waveX = waveScroll + camera;
+            if (waveX >= 0x200000) {
+                wavePhase = (wavePhase + 7) % 8;
+                waveX -= 0x200000;
+                waveScroll -= 0x200000;
             }
             z = 0x670000;
             for (row = 0; row != 2; row++) {
                 for (k = 0; k != 9; k++) {
-                    pos.x = (k << 21) + wave_x;
+                    pos.x = (k << 21) + waveX;
                     pos.z = z;
                     if (k == 8) {
                         obj = work->sprites[row * 9 + 8];
-                        v = (wave_phase + 71) % 8;
+                        v = (wavePhase + 71) % 8;
                     } else {
                         obj = work->sprites[row * 9 + k];
-                        v = (wave_phase + 64 + k) % 8;
+                        v = (wavePhase + 64 + k) % 8;
                     }
                     obj->tile = work->particles[row * 9 + v].timer;
                     if (pos.x > 0xffffff)
@@ -367,9 +367,9 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 z += 0x200000;
             }
         }
-        bg_x += 4;
-        *(s32 *)0x04000028 = bg_x << 8;
-        work->transfer_pending = 1;
+        bgX += 4;
+        *(s32 *)0x04000028 = bgX << 8;
+        work->transferPending = 1;
         Func_08013560(1);
     }
 
@@ -380,18 +380,18 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     *(vu16 *)0x04000020 = 0x80;
     *(s32 *)0x04000028 = 0;
     Func_08144aac(0, blit);
-    work->unk_7790 = 0;
-    work->unk_7794 = 5;
-    work->unk_7798 = -1;
-    work->unk_779c = 0;
+    work->unk7790 = 0;
+    work->unk7794 = 5;
+    work->unk7798 = -1;
+    work->unk779c = 0;
     ctl[4] = 1;
     Resource_LoadAndDecompress(0xba, work->frames, 0, 0);
     Resource_LoadAndDecompress(0x13e, work->frames + 0x6c0, 1, 0);
     Resource_LoadAndDecompress(0xbb, work->frames + 0x36c0, 0, 0);
     Resource_LoadAndDecompress(0xc2, DECODE_BUFFER, 0, 0);
     Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry(0x161), 128);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     *(vu16 *)0x04000052 = 0x1010;
     *(vu16 *)0x04000050 = 0x3f44;
     for (i = 0; i < 224; i++) {
@@ -406,7 +406,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         if (frame == 0) {
             *(vu16 *)0x04000020 = 0x100;
             *pal = 0x190b;
-            ship_y = -0x1d0000;
+            shipY = -0x1d0000;
             camera = 0;
             work->sprites[39]->rotation = 0xc000;
             work->sprites[38]->rotation = 0;
@@ -448,7 +448,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->timer = 0;
             }
         }
-        prev_camera = camera;
+        prevCamera = camera;
         if (frame >= 542 && frame < 558) {
             color = *pal;
             r = color & 0x1f;
@@ -491,30 +491,30 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         if (frame == 489) {
             *(vu16 *)0x04000020 = 0x80;
             *(vu16 *)0x0400000c = 0x784;
-            work->unk_7798 = 0;
+            work->unk7798 = 0;
         }
         if (frame == 528) {
             *(vu16 *)0x04000020 = 0x80;
             *(vu16 *)0x0400000c = 0x785;
         }
         if (frame == 0) {
-            work->transfer_mode = 1;
-            work->transfer_value = 0;
-            work->transfer_mode = 2;
-            work->transfer_value = 50;
+            work->transferMode = 1;
+            work->transferValue = 0;
+            work->transferMode = 2;
+            work->transferValue = 50;
             for (i = 0; i != 10; i++) {
                 p = &PARTICLES[502 + i];
-                p->x = Ulysses_FishStart[i][0] << 16;
-                p->y = Ulysses_FishStart[i][1] << 16;
-                p->vx = Ulysses_FishVelocity[i][0];
-                p->vy = Ulysses_FishVelocity[i][1];
+                p->x = gUlysses_FishStart[i][0] << 16;
+                p->y = gUlysses_FishStart[i][1] << 16;
+                p->vx = gUlysses_FishVelocity[i][0];
+                p->vy = gUlysses_FishVelocity[i][1];
                 p->timer = Random16() & 127;
             }
         }
         for (i = 0; i != 10; i++) {
             p = &PARTICLES[502 + i];
-            if (frame >= Ulysses_FishDelay[i]) {
-                ((BlitFunc)blit[0])(dest, work->frames + 0x36c0 + (Ulysses_FishFrames[(p->timer / 4) % 12] << 8),
+            if (frame >= gUlysses_FishDelay[i]) {
+                ((BlitFunc)blit[0])(dest, work->frames + 0x36c0 + (gUlysses_FishFrames[(p->timer / 4) % 12] << 8),
                     p->x >> 16, p->y >> 16, 16, 16);
                 p->x += p->vx;
                 p->y += p->vy;
@@ -522,42 +522,42 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
         }
         if (frame <= 473)
-            wave_scroll += 0x8000;
-        wave_x = wave_scroll + camera;
-        if (wave_x >= 0x200000) {
-            wave_phase = (wave_phase + 7) % 8;
-            wave_scroll -= 0x200000;
-            wave_x -= 0x200000;
+            waveScroll += 0x8000;
+        waveX = waveScroll + camera;
+        if (waveX >= 0x200000) {
+            wavePhase = (wavePhase + 7) % 8;
+            waveScroll -= 0x200000;
+            waveX -= 0x200000;
         }
-        if (ship_y < 0)
-            ship_y += 0x2000;
-        scale2 = Ulysses_ScaleB;
-        bob_x = 0;
-        bob_y = 0;
+        if (shipY < 0)
+            shipY += 0x2000;
+        scale2 = gUlysses_ScaleB;
+        bobX = 0;
+        bobY = 0;
         if (frame > 537) {
-            sway_x = Func_08002090(0x21a00) << 2;
-            sway_y = Func_08002096(0x21a00) << 2;
+            swayX = Func_08002090(0x21a00) << 2;
+            swayY = Func_08002096(0x21a00) << 2;
             if (frame >= 542 && frame < 558) {
                 v = (frame << 11) - 0x10f000;
-                bob_x = Func_08002096(v) * 3;
-                bob_y = Func_08002096(v) * 2;
+                bobX = Func_08002096(v) * 3;
+                bobY = Func_08002096(v) * 2;
             }
             if (frame >= 560 && frame < 576) {
                 v = (frame << 11) - 0x118000;
-                bob_x = Func_08002096(v) * 2;
-                bob_y = Func_08002096(v) * 3;
+                bobX = Func_08002096(v) * 2;
+                bobY = Func_08002096(v) * 3;
             }
         } else {
-            sway_x = Func_08002090(frame << 8) << 2;
-            sway_y = Func_08002096(frame << 8) << 2;
+            swayX = Func_08002090(frame << 8) << 2;
+            swayY = Func_08002096(frame << 8) << 2;
         }
-        if (sway_y > 0)
-            sway_y = -sway_y;
-        sway_y -= ship_y * 2;
+        if (swayY > 0)
+            swayY = -swayY;
+        swayY -= shipY * 2;
         pos2.w = 0;
         pos2.y = 0xff0000;
         for (i = 0; i != 5; i++) {
-            if (frame == Ulysses_WaveCueFrames[i]) {
+            if (frame == gUlysses_WaveCueFrames[i]) {
                 work->shake = 23;
                 Func_081c0010(144);
             }
@@ -592,8 +592,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             if (work->particles[20].timer == (i & 7) * 6 + 10) {
                 Func_081c0010(138);
                 p->timer = 1;
-                p->x += sway_x;
-                p->y += sway_y - (Ulysses_Shake[work->shake] << 16);
+                p->x += swayX;
+                p->y += swayY - (gUlysses_Shake[work->shake] << 16);
                 p->vy = (Random16() & 0xffff) - 0x8000;
                 p->ay = (Random16() & 0x3fff) - 0x2000;
             }
@@ -608,15 +608,15 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
         }
         if (frame == 578) {
-            work->unk_7794 = 1;
-            work->unk_7790 = 0;
+            work->unk7794 = 1;
+            work->unk7790 = 0;
         }
         if (frame >= 578 && frame < 594)
-            work->unk_7798 = ~((frame - 578) / 8);
-        v = camera - sway_x + bob_x + 0x780000;
+            work->unk7798 = ~((frame - 578) / 8);
+        v = camera - swayX + bobX + 0x780000;
         for (i = 0; i != 2; i++) {
             pos2.x = v;
-            pos2.z = (((i << 5) - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x640000;
+            pos2.z = (((i << 5) - gUlysses_Shake[work->shake]) << 16) + swayY + bobY + 0x640000;
             Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2, &scale2, 0);
         }
         if (frame <= 316) {
@@ -630,27 +630,27 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->vy = p->vy * 63 / 64;
                 work->sprites[38]->rotation += 0x200;
             }
-            pos2.x = p->x - sway_x + camera + 0x780000;
-            pos2.z = ((99 - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y;
+            pos2.x = p->x - swayX + camera + 0x780000;
+            pos2.z = ((99 - gUlysses_Shake[work->shake]) << 16) + swayY + p->y;
             Render_ApplyProjectedPlacementFar(work->sprites[38], &pos2, &scale2, 0);
         }
-        v = camera + bob_x;
+        v = camera + bobX;
         pos2.x = v + 0x8e0000;
-        pos2.z = ((72 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[18], &pos2, &scale2, 0);
         pos2.x = v + 0xae0000;
-        pos2.z = ((72 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[19], &pos2, &scale2, 0);
         v += 0x800000;
         pos2.x = v;
-        pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
         if (frame > 602)
             Func_0815f0a0(0x148);
         p = &work->particles[22];
         if (frame == 570) {
             p->x = 0x980000;
-            p->y = ((92 - Ulysses_Shake[work->shake]) << 16) + sway_y;
+            p->y = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY;
             p->timer = 1;
             p->vx = -0x40000;
             p->vy = -0x5000;
@@ -684,7 +684,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 q->x = 0x580000;
                 q->y = 0x800000;
             }
-            prev_camera = camera;
+            prevCamera = camera;
             if (p->timer > 229)
                 camera += (0x980000 - (p->x + ((p->timer - 230) << 17)) - camera) / 4;
             else if (p->timer > 0)
@@ -740,15 +740,15 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         scale2.x = 0x103ff;
         scale2.y = 0x103ff;
         if (p->timer == 0) {
-            pos2.x = camera + bob_x + 0x980000;
-            pos2.z = ((92 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+            pos2.x = camera + bobX + 0x980000;
+            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         } else {
             pos2.x = p->x + camera;
             pos2.z = p->y;
         }
         Render_ApplyProjectedPlacementFar(work->sprites[39], &pos2, &scale2, 0);
-        work->sprites[39]->unk_16 = 0;
-        work->sprites[39]->unk_17 = 32;
+        work->sprites[39]->unk16 = 0;
+        work->sprites[39]->unk17 = 32;
         if (frame >= 568) {
             s32 *beam;
             void *buffer;
@@ -760,7 +760,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             bitmap.data = DECODE_BUFFER;
             beam[4] = (s32)&bitmap;
             beam[1] = 0;
-            beam[2] = (s32)Ulysses_BeamSprite;
+            beam[2] = (s32)gUlysses_BeamSprite;
             beam[0] = 7;
             beam[3] = (s32)buffer;
             v = frame - 568;
@@ -774,7 +774,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 Func_080150e4(0x4300);
                 SceneTransform_ApplyPitch(-0x800);
                 Func_0801521c((v << 14) + 0x4180);
-                Func_08196958(Ulysses_BeamPalette, buffer, 4);
+                Func_08196958(gUlysses_BeamPalette, buffer, 4);
                 Func_08196a7c(beam);
             }
             Func_08013164(beam);
@@ -786,17 +786,17 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         }
         p = &work->particles[30];
         for (i = 0; i != 1; i++) {
-            if (frame >= Ulysses_SprayFrames[i] && frame < Ulysses_SprayFrames[i] + 26) {
+            if (frame >= gUlysses_SprayFrames[i] && frame < gUlysses_SprayFrames[i] + 26) {
                 s32 radius;
                 s32 n;
 
-                n = (frame - Ulysses_SprayFrames[i]) / 2;
+                n = (frame - gUlysses_SprayFrames[i]) / 2;
                 radius = p->x >> 16;
                 p->x += p->vx;
                 p->vx = p->vx * 48 / 64;
                 if (n <= 5) {
                     for (j = 0; j != 32; j++) {
-                        v = (radius * Func_08002096(j << 11) / 2 >> 16) + Ulysses_SprayOffsets[i];
+                        v = (radius * Func_08002096(j << 11) / 2 >> 16) + gUlysses_SprayOffsets[i];
                         ((BlitFunc)blit[0])(dest, work->frames + n * 288, v - 6,
                             (radius * Func_08002090(j << 11) * 2 >> 16) + 60, 12, 24);
                     }
@@ -809,26 +809,26 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         work->sprites[22]->priority = 2;
         work->sprites[23]->priority = 2;
         work->sprites[24]->priority = 2;
-        v = prev_camera + bob_x;
+        v = prevCamera + bobX;
         pos2.x = v + 0xa00000;
-        pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[21], &pos2, &scale2, 0);
         pos2.x = v + 0x800000;
-        pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[22], &pos2, &scale2, 0);
         pos2.x = v + 0xa00000;
-        pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[23], &pos2, &scale2, 0);
         pos2.x = v + 0xc00000;
-        pos2.z = ((136 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[24], &pos2, &scale2, 0);
         work->sprites[25]->priority = 2;
         pos2.x = v + 0x800000;
-        pos2.z = ((104 - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[25], &pos2, &scale2, 0);
         for (i = 0; i != 5; i++) {
-            pos2.x = (Ulysses_ShipParts[i][0] << 16) + sway_x + prev_camera + bob_x + 0xb00000;
-            pos2.z = ((Ulysses_ShipParts[i][1] - Ulysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x540000;
+            pos2.x = (gUlysses_ShipParts[i][0] << 16) + swayX + prevCamera + bobX + 0xb00000;
+            pos2.z = ((gUlysses_ShipParts[i][1] - gUlysses_Shake[work->shake]) << 16) + swayY + bobY + 0x540000;
             work->sprites[26 + i]->priority = 2;
             Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &pos2, &scale2, 0);
         }
@@ -852,7 +852,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
             for (i = 0; i != 4; i++) {
                 pos2.x = ((i & 1) << 21) + p->x + camera + 0x800000;
-                pos2.z = ((((i / 2) << 5) - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y + 0x680000;
+                pos2.z = ((((i / 2) << 5) - gUlysses_Shake[work->shake]) << 16) + swayY + p->y + 0x680000;
                 work->sprites[34 + i]->priority = 1;
                 Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &pos2, &scale2, 0);
             }
@@ -868,21 +868,21 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->vy = p->vy * 63 / 64;
                 work->sprites[31]->rotation += 0x100;
             }
-            pos2.x = sway_x + p->x + camera + 0xb80000;
-            pos2.z = ((92 - Ulysses_Shake[work->shake]) << 16) + sway_y + p->y;
+            pos2.x = swayX + p->x + camera + 0xb80000;
+            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY + p->y;
             work->sprites[31]->priority = 1;
             Render_ApplyProjectedPlacementFar(work->sprites[31], &pos2, &scale2, 0);
         }
         for (row = 0; row != 2; row++) {
             for (k = 0; k != 9; k++) {
-                pos2.x = (k << 21) + wave_x;
-                pos2.z = (((row << 5) - Ulysses_Shake[work->shake]) << 16) + ship_y + 0x840000;
+                pos2.x = (k << 21) + waveX;
+                pos2.z = (((row << 5) - gUlysses_Shake[work->shake]) << 16) + shipY + 0x840000;
                 if (k == 8) {
                     obj = work->sprites[row * 9 + 8];
-                    v = (wave_phase + 71) % 8;
+                    v = (wavePhase + 71) % 8;
                 } else {
                     obj = work->sprites[row * 9 + k];
-                    v = (wave_phase + 64 + k) % 8;
+                    v = (wavePhase + 64 + k) % 8;
                 }
                 obj->tile = work->particles[row * 9 + v].timer;
                 if (pos2.x > 0xffffff)
@@ -894,8 +894,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             for (j = 0; j != 6; j++) {
                 if (frame >= j * 2 + 490 && frame < j * 2 + 502) {
                     ((BlitFunc)blit[0])(dest, work->frames + (frame - (j * 2 + 490)) / 2 * 288,
-                        Ulysses_Foam[i][j][0] - 6,
-                        Ulysses_Foam[i][j][1] + (sway_y >> 16) - Ulysses_Shake[work->shake] - 12, 12, 24);
+                        gUlysses_Foam[i][j][0] - 6,
+                        gUlysses_Foam[i][j][1] + (swayY >> 16) - gUlysses_Shake[work->shake] - 12, 12, 24);
                 }
             }
         }
@@ -911,18 +911,18 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 }
             }
         }
-        v = Ulysses_Shake[work->shake];
+        v = gUlysses_Shake[work->shake];
         *(u16 *)0x03001126 = v + 32;
         *(s32 *)0x030011f0 = 120 - v;
         if (work->shake > 0)
             work->shake--;
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         Func_08013560(1);
     }
 
     Scheduler_RemoveCallback(Func_0813baec);
-    *(u16 *)0x03001124 = saved_y;
+    *(u16 *)0x03001124 = savedY;
     ctl[4] = 0;
     Func_0814cca8();
     for (i = 0; i != 57; i++)
@@ -931,8 +931,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     PaletteDma_LoadBlock();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (vu32 *)0x040000d4);
     *(u16 *)0x050001bc = *(u16 *)0x050001e8;
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     *(s32 *)0x04000028 = 0;
     *(vu16 *)0x04000050 = 0x3f44;
     *(vu16 *)0x04000020 = 0x80;
@@ -944,8 +944,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     for (i = 0; i != 15; i++) {
         work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
         Iwram_Copy(work->sprites[1 + i], work->sprites[0], 24);
-        work->sprites[1 + i]->unk_16 = 32;
-        work->sprites[1 + i]->unk_17 = 8;
+        work->sprites[1 + i]->unk16 = 32;
+        work->sprites[1 + i]->unk17 = 8;
     }
     Resource_LoadAndDecompress(0x13e, work->frames, 1, 0);
     Resource_LoadAndDecompress(0xba, work->frames + 0x3000, 0, 0);
@@ -965,19 +965,19 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;
                 p->y = (((Random16() & 7) + 96) << 16) - p->vy * 24;
                 work->sprites[i]->rotation = p->z;
-                work->sprites[i]->unk_16 = 0;
-                work->sprites[i]->unk_17 = 8;
+                work->sprites[i]->unk16 = 0;
+                work->sprites[i]->unk17 = 8;
                 z -= 0x100;
             }
             for (i = 0; i != 512; i++)
                 PARTICLES[i].timer = -1;
         }
-        scale3 = Ulysses_ScaleC;
+        scale3 = gUlysses_ScaleC;
         pos3.w = 0;
         pos3.y = 0xff0000;
         for (i = 0; i != 16; i++) {
             p = &work->particles[i];
-            if (frame >= Ulysses_DropFrames[i] && p->timer == 0) {
+            if (frame >= gUlysses_DropFrames[i] && p->timer == 0) {
                 pos3.x = p->x;
                 pos3.z = p->y;
                 if (p->y > 0 && p->y < 0x800000)
@@ -1005,7 +1005,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                         work->shake = 4;
                     }
                 } else {
-                    q = &PARTICLES[256 + i * 16 + (frame - Ulysses_DropFrames[i]) % 16];
+                    q = &PARTICLES[256 + i * 16 + (frame - gUlysses_DropFrames[i]) % 16];
                     q->x = p->x / 2;
                     q->y = p->y - 0x100000;
                     q->vx = 0;
@@ -1038,7 +1038,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         Func_08013560(1);
     }
     for (i = 0; i != 16; i++)

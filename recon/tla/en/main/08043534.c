@@ -10,9 +10,9 @@ extern u8 MsgOverwriteConfirm;
 extern u8 MsgGameSaved;
 extern u8 MsgSaving;
 
-extern u8 Data_02000000[];
-extern u8 Data_02000504[];
-extern s16 Data_020036d0;
+extern u8 gData_02000000[];
+extern u8 gData_02000504[];
+extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -35,7 +35,7 @@ s32 SaveState_ProcessSelectedSlot(void)
 
     result = 0;
     buffer = Runtime_BumpAllocateAlternatePool(0x3000);
-    value = Data_020036d0;
+    value = gData_020036d0;
     if (value != -1) {
         found = Func_0801596c();
         if (found != 0) {
@@ -45,16 +45,16 @@ s32 SaveState_ProcessSelectedSlot(void)
         } else {
             u8 *dst;
 
-            found = SaveState_ReadRecordPayload(Data_020036d0, buffer);
+            found = SaveState_ReadRecordPayload(gData_020036d0, buffer);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
                 result = -2;
             }
-            dst = (u8 *)buffer + (s32)Data_02000504;
-            dst -= (s32)Data_02000000;
-            Iwram_CopyWords(dst, Data_02000504, 16);
+            dst = (u8 *)buffer + (s32)gData_02000504;
+            dst -= (s32)gData_02000000;
+            Iwram_CopyWords(dst, gData_02000504, 16);
             token = SaveProgress_Open(0);
-            found = Func_08042f10(Data_020036d0, buffer);
+            found = Func_08042f10(gData_020036d0, buffer);
             SaveProgress_Close(token);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);

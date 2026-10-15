@@ -14,24 +14,24 @@
 #include "ram_buffer.h"
 
 struct SparkObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[24];
-    s32 anchor_x;
-    u8 unknown_3c[12];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[24];
+    s32 anchorX;
+    u8 unk3c[12];
     s32 gravity;
-    u8 unknown_4c[9];
-    u8 motion_flags;
-    u8 unknown_56[8];
-    u16 unknown_5e;
-    u8 unknown_60[4];
+    u8 unk4c[9];
+    u8 motionFlags;
+    u8 unk56[8];
+    u16 unk5e;
+    u8 unk60[4];
     s16 phase;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void (*update)(struct SparkObject *);
 };
 
@@ -47,7 +47,7 @@ void Func_080de8d0(struct SparkObject *obj)
     struct SparkObject *spark;
     s32 pos[3];
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     phase = &obj->phase;
     if (*phase != -1) {
         s32 amplitude = 6 << 16;
@@ -66,14 +66,14 @@ void Func_080de8d0(struct SparkObject *obj)
         spark = Object_Spawn(673, pos[0], pos[1], pos[2]);
         if (spark != 0) {
             spark->update = Func_080de818;
-            spark->scale_x = spark->scale_y = 0x9999;
-            spark->motion_flags = 2;
+            spark->scaleX = spark->scaleY = 0x9999;
+            spark->motionFlags = 2;
             spark->gravity = 458;
             spark->phase = Random16() >> 9;
-            spark->anchor_x = spark->x;
+            spark->anchorX = spark->x;
             Animation_ApplyChildValuesFar(spark, 9);
-            spark->unknown_5e = 72;
-            ObjectDispatch_InitializeFar((struct DispatchObject *)spark, BattleFx_CommonParticleScript);
+            spark->unk5e = 72;
+            ObjectDispatch_InitializeFar((struct DispatchObject *)spark, gBattleFx_CommonParticleScript);
         }
     }
 }

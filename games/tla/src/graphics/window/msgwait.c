@@ -21,7 +21,7 @@ void UiMessage_ShowAndWait(s32 message)
 // returns 0 when the message is empty or there is no window.
 s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 entry;
     s32 result = 0;
     /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two outgoing arguments, exactly these four slots; without them the frame is 8 bytes, not 16 (differ 4). */

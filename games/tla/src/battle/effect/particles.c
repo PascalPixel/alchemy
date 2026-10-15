@@ -13,7 +13,7 @@ struct FallVector {
 };
 
 struct ParticleTimer {
-    u8 unknown_00[0x5e];
+    u8 unk00[0x5e];
     u16 timer;
 };
 
@@ -29,7 +29,7 @@ void Func_080df174(void)
     struct ObjectRuntime *obj;
     u32 dist;
 
-    src = ((struct BattleFxScene *)Ram_HeapSlots->effect_work)->child;
+    src = ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->child;
     pos.x = src->x;
     pos.y = src->y - Random16() * 16 + (24 << 16);
     pos.z = src->z;
@@ -39,10 +39,10 @@ void Func_080df174(void)
 
     obj = Object_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-        obj->motion_flags = 2;
+        obj->motionFlags = 2;
         obj->gravity = 0x1999;
         Object_SetMode(obj, 0);
         ((struct ParticleTimer *)obj)->timer = 12;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
     }
 }

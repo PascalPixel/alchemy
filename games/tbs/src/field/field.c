@@ -167,7 +167,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	{
 		block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
 		Dma_Set(Render_DecodeFrame, block,
-			(((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
+			(((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
 				| (DMA_ENABLE32 | DMA_32BIT),
 			REG_DMA3);
 		draw = (DrawFn)(*(void *(*)[])
@@ -196,7 +196,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 			{
 			case 254:
 				Animation_SetWorkEntry(e, arg);
-				obj->last_no = arg;
+				obj->lastNo = arg;
 				break;
 			case 253:
 				e->pos = arg;
@@ -211,12 +211,12 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 				e->kind = arg;
 				break;
 			case 255:
-				e->frame_base = 255;
+				e->frameBase = 255;
 				base = 255;
 				e->timer += arg << 4;
 				goto select_direction;
 			case 239:
-				e->frame_base = 255;
+				e->frameBase = 255;
 				e->script = 0;
 				base = 255;
 				obj->count--;
@@ -232,7 +232,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 			case 252:
 				break;
 			default:
-				e->frame_base = base;
+				e->frameBase = base;
 				e->timer += arg << 4;
 				goto select_direction;
 			}
@@ -240,37 +240,37 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 		}
 		e->timer = e->timer - e->step;
 	framed:
-		base = e->frame_base;
+		base = e->frameBase;
 	select_direction:
 		switch (e->kind)
 		{
 		case 1:
-			attr = AnimationFacing_Kind1[dir >> 13];
+			attr = gAnimationFacing_Kind1[dir >> 13];
 			break;
 		case 2:
 		case 20:
-			attr = AnimationFacing_Kind2[dir >> 13];
+			attr = gAnimationFacing_Kind2[dir >> 13];
 			break;
 		case 22:
-			attr = AnimationFacing_Kind22[dir >> 13];
+			attr = gAnimationFacing_Kind22[dir >> 13];
 			break;
 		case 3:
-			attr = AnimationFacing_Kind3[dir >> 12];
+			attr = gAnimationFacing_Kind3[dir >> 12];
 			break;
 		case 4:
-			attr = AnimationFacing_Kind4[dir >> 10];
+			attr = gAnimationFacing_Kind4[dir >> 10];
 			break;
 		case 5:
-			attr = AnimationFacing_Kind5[dir >> 12];
+			attr = gAnimationFacing_Kind5[dir >> 12];
 			break;
 		case 6:
-			attr = AnimationFacing_Kind6[dir >> 10];
+			attr = gAnimationFacing_Kind6[dir >> 10];
 			break;
 		case 8:
-			attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+			attr = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
 			break;
 		case 88:
-			attr = AnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+			attr = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
 			break;
 		default:
 			attr = 0;
@@ -435,36 +435,36 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	return changed;
 }
 
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s32 height,
-	s32 screen_y, s32 ground_height, s32 *scale)
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX, s32 height,
+	s32 screenY, s32 groundHeight, s32 *scale)
 {
-	u32							half_width = sprite->width >> 1;
-	u32							half_height = sprite->height >> 1;
-	s32							margin_x = 8;
-	s32							margin_y = 4;
+	u32							halfWidth = sprite->width >> 1;
+	u32							halfHeight = sprite->height >> 1;
+	s32							marginX = 8;
+	s32							marginY = 4;
 	s32							affine = 1;
-	s32							scale_x = *scale++;
-	s32							scale_y = *scale;
+	s32							scaleX = *scale++;
+	s32							scaleY = *scale;
 	s32							x;
 	s32							y;
 	struct AnimationSpritePart *shadow;
 
-	if (scale_x > 0x10000 || scale_y > 0x10000)
+	if (scaleX > 0x10000 || scaleY > 0x10000)
 	{
 		affine = 3;
-		margin_x = 16;
-		margin_y = 8;
-		half_width <<= 1;
-		half_height <<= 1;
+		marginX = 16;
+		marginY = 8;
+		halfWidth <<= 1;
+		halfHeight <<= 1;
 	}
-	x = (screen_x >> 16) - half_width;
-	y = ((screen_y - height) >> 16) - half_height
-		- ((((sprite->height >> 1) - sprite->offset_y) * scale_y + 0xffff) >> 16);
+	x = (screenX >> 16) - halfWidth;
+	y = ((screenY - height) >> 16) - halfHeight
+		- ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
 	sprite->part[0].affine = affine;
 	sprite->part[0].x = x;
 	sprite->part[0].y = y;
-	x = (screen_x >> 16) - margin_x;
-	y = ((screen_y - ground_height) >> 16) - margin_y;
+	x = (screenX >> 16) - marginX;
+	y = ((screenY - groundHeight) >> 16) - marginY;
 	shadow = &sprite->part[1];
 	shadow->affine = affine;
 	shadow->x = x;
@@ -474,14 +474,14 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s3
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
 	s32 matrix;
-	u32 half_width = sprite->width >> 1;
-	u32 half_height = sprite->height >> 1;
+	u32 halfWidth = sprite->width >> 1;
+	u32 halfHeight = sprite->height >> 1;
 	s32 size = 8;
-	s32 size_half = 4;
+	s32 sizeHalf = 4;
 	s32 affine;
-	s32 scale_x = *scale++;
+	s32 scaleX = *scale++;
 	s32 px = *pos++;
-	s32 scale_y = *scale;
+	s32 scaleY = *scale;
 	s32 py = *pos++;
 	s32 pz = *pos++;
 	s32 pw = *pos;
@@ -497,7 +497,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 	struct AnimationSpritePart *part;
 
 	flip = Sprite_ComposeAnimationFrame(sprite, mode);
-	if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0)
+	if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX && sprite->rotation == 0)
 	{
 		affine = 0;
 		matrix = 0;
@@ -506,19 +506,19 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 	{
 		affine = 1;
 		effect.angle = sprite->rotation;
-		effect.scale_x = scale_x >> 8;
-		effect.scale_y = scale_y >> 8;
+		effect.scaleX = scaleX >> 8;
+		effect.scaleY = scaleY >> 8;
 		if (flip != 0)
-			effect.scale_x = -effect.scale_x;
+			effect.scaleX = -effect.scaleX;
 		matrix = AffineMatrix_BuildForEffect(&effect);
 	}
-	if (scale_x > 0x10000 || scale_y > 0x10000)
+	if (scaleX > 0x10000 || scaleY > 0x10000)
 	{
 		affine = 3;
-		half_width <<= 1;
-		half_height <<= 1;
+		halfWidth <<= 1;
+		halfHeight <<= 1;
 		size = 16;
-		size_half = 8;
+		sizeHalf = 8;
 	}
 	if (py <= -0x640000)
 	{
@@ -530,29 +530,29 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 		slot = (pz >> 17) + 10;
 		depth = 2;
 	}
-	y = ((pz - pw) >> 16) - size_half;
+	y = ((pz - pw) >> 16) - sizeHalf;
 	if (sprite->flags & 1)
 	{
 		if (y < 160)
 		{
 			part = &sprite->part[1];
 			part->affine = affine;
-			part->affine_index = matrix;
+			part->affineIndex = matrix;
 			part->x = (px >> 16) - size;
 			part->y = y;
 			Runtime_PushSlotEntry(part, depth);
 		}
 	}
-	x = (px >> 16) - half_width + ((sprite->offset_x * scale_x + 0xffff) >> 16);
-	y = ((pz - py) >> 16) - half_height
-		- ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
+	x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+	y = ((pz - py) >> 16) - halfHeight
+		- ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
 	if (x < 240 && y < 160)
 	{
 		part = &sprite->part[0];
 		part->x = x;
 		part->y = y;
 		part->affine = affine;
-		part->affine_index = matrix;
+		part->affineIndex = matrix;
 		Runtime_PushSlotEntry(part, slot);
 	}
 }
@@ -561,19 +561,19 @@ void Render_PlaceProjectedSprite(
 	struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {
 	s32					   flip;
-	u32					   half_height;
+	u32					   halfHeight;
 	u32					   size;
 	s32					   affine;
-	s32					   half_width;
+	s32					   halfWidth;
 	s32					   ground[3];
 	s32					   screen[3];
 	struct AffineTransform effect;
 	s32					   z;
 	s32					   base;
-	s32					   scale_x;
-	s32					   scale_y;
-	s32					   offset_x;
-	s32					   offset_y;
+	s32					   scaleX;
+	s32					   scaleY;
+	s32					   offsetX;
+	s32					   offsetY;
 	s32					   slot;
 
 	affine = 1;
@@ -583,59 +583,59 @@ void Render_PlaceProjectedSprite(
 		if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 && screen[1] >= -32
 			&& screen[1] <= 208)
 		{
-			if (sprite->display_flags & 2)
+			if (sprite->displayFlags & 2)
 				z = sprite->scale;
 			else
 				z = Iwram_MulQ16(z, sprite->scale);
-			half_width = sprite->width >> 1;
-			half_height = sprite->height >> 1;
+			halfWidth = sprite->width >> 1;
+			halfHeight = sprite->height >> 1;
 			size = 8;
 			flip = Sprite_ComposeAnimationFrame(sprite, mode);
 			base = (z + 0x400) & -0x800;
-			scale_x = Iwram_MulQ16(base, *scale++);
-			scale_y = Iwram_MulQ16(base, *scale);
-			if (scale_x > 0x1f7ff)
-				scale_x = 0x1f800;
-			if (scale_y > 0x1f7ff)
-				scale_y = 0x1f800;
-			offset_x = Iwram_MulQ16(sprite->offset_x, scale_x);
-			offset_y = -Iwram_MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
-			if (scale_x > 0x10000 || scale_y > 0x10000)
+			scaleX = Iwram_MulQ16(base, *scale++);
+			scaleY = Iwram_MulQ16(base, *scale);
+			if (scaleX > 0x1f7ff)
+				scaleX = 0x1f800;
+			if (scaleY > 0x1f7ff)
+				scaleY = 0x1f800;
+			offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
+			offsetY = -Iwram_MulQ16((sprite->height >> 1) - sprite->offsetY, scaleY);
+			if (scaleX > 0x10000 || scaleY > 0x10000)
 			{
 				affine = 3;
-				half_width <<= 1;
-				half_height <<= 1;
+				halfWidth <<= 1;
+				halfHeight <<= 1;
 				size = 16;
 			}
-			else if (scale_x == 0x10000 && sprite->rotation == 0 && scale_y == scale_x)
+			else if (scaleX == 0x10000 && sprite->rotation == 0 && scaleY == scaleX)
 			{
 				affine = 0;
 			}
 			if (affine != 0)
 			{
 				effect.angle = sprite->rotation;
-				effect.scale_x = scale_x >> 8;
+				effect.scaleX = scaleX >> 8;
 				if (flip != 0)
 				{
-					effect.scale_x = -effect.scale_x;
-					offset_x = -offset_x;
+					effect.scaleX = -effect.scaleX;
+					offsetX = -offsetX;
 				}
-				effect.scale_y = scale_y >> 8;
+				effect.scaleY = scaleY >> 8;
 				z = AffineMatrix_BuildForEffect(&effect);
 			}
 			else if (flip != 0)
 			{
 				z = 8;
-				offset_x = -offset_x;
+				offsetX = -offsetX;
 			}
 			else
 			{
 				z = 0;
 			}
-			sprite->part[0].x = screen[0] - half_width + offset_x;
-			sprite->part->y = screen[1] - half_height + offset_y;
+			sprite->part[0].x = screen[0] - halfWidth + offsetX;
+			sprite->part->y = screen[1] - halfHeight + offsetY;
 			sprite->part[0].affine = affine;
-			sprite->part[0].affine_index = z;
+			sprite->part[0].affineIndex = z;
 			if (depth == 0)
 			{
 				slot = (0x200 - screen[2]) / 2 + 128;
@@ -659,7 +659,7 @@ void Render_PlaceProjectedSprite(
 				shadow->x = screen[0] - size;
 				shadow->y = screen[1] - (size >> 1) + 2;
 				shadow->affine = affine;
-				shadow->affine_index = z;
+				shadow->affineIndex = z;
 				if (depth == 0)
 					Runtime_PushSlotEntry(shadow, 0);
 				else
@@ -668,7 +668,7 @@ void Render_PlaceProjectedSprite(
 			return;
 		}
 	}
-	if (!(sprite->display_flags & 1))
+	if (!(sprite->displayFlags & 1))
 	{
 		Resource_ActivateEntry(sprite->slot);
 		sprite->dirty = 1;
@@ -710,7 +710,7 @@ enum
 	ANIMATION_OBJECT_COUNT = 64
 };
 
-extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
+extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
@@ -725,7 +725,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 	u32						   size;
 	u32						   count;
 	u32						   index;
-	u16						   entry_number;
+	u16						   entryNumber;
 	s32						   resource;
 
 	if (slot >= RESOURCE_SLOT_COUNT)
@@ -736,17 +736,17 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 	record->tag = (slot << 12) | number;
 	record->buffer = buffer;
 
-	entry = ResourceSlot_NumberTable;
+	entry = gResourceSlot_NumberTable;
 	for (count = 0; count < 256; count++)
 	{
 		s16 *numbers = &entry->number;
 
 		resource = entry->resource;
-		entry_number = *numbers;
+		entryNumber = *numbers;
 		entry++;
-		if (entry_number == 0)
+		if (entryNumber == 0)
 			return 0;
-		if (entry_number == number)
+		if (entryNumber == number)
 			break;
 	}
 	size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
@@ -766,7 +766,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 		end = (u8 *)buffer + size;
 		if (index > 4)
 			index = 0;
-		table = ResourceSlot_ConversionTables[index];
+		table = gResourceSlot_ConversionTables[index];
 		for (; text < end; text++)
 		{
 			u32 c = *text;
@@ -801,7 +801,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
 	for (index = 0; index < state->count; index++)
 	{
 		struct AnimationEntry	 *object = state->entries[index];
-		struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
+		struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->animId);
 		void					**frames;
 
 		if (metadata->width == 0)
@@ -812,18 +812,18 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
 			state->width = metadata->width;
 			state->height = metadata->height;
 			state->scale = metadata->scale << 8;
-			state->offset_y = metadata->adjust_y;
-			state->offset_x = metadata->adjust_x;
+			state->offsetY = metadata->adjustY;
+			state->offsetX = metadata->adjustX;
 		}
 
 		frames = metadata->frames;
 		if (frames == 0)
-			frames = (void **)Animation_LookupValueByKey(object->anim_id);
+			frames = (void **)Animation_LookupValueByKey(object->animId);
 
-		object->kind = metadata->draw_kind;
+		object->kind = metadata->drawKind;
 		object->frames = frames;
 		object->scripts = metadata->animation;
-		object->mode = metadata->frame_codec;
+		object->mode = metadata->frameCodec;
 		object->frame = 0xff;
 		object->script = 0;
 		object->pos = 0;
@@ -840,16 +840,16 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 
 	if (work != NULL)
 	{
-		info = Resource_GetMetadataRecordFar(work->anim_id);
+		info = Resource_GetMetadataRecordFar(work->animId);
 		if (info->width != 0)
 		{
 			value = info->frames;
 			if (value == 0)
-				value = (void **)Animation_LookupValueByKey(work->anim_id);
-			work->kind = info->draw_kind;
+				value = (void **)Animation_LookupValueByKey(work->animId);
+			work->kind = info->drawKind;
 			work->scripts = info->animation;
 			work->frames = value;
-			work->mode = info->frame_codec;
+			work->mode = info->frameCodec;
 			z = 0;
 			work->frame = 0xff;
 			work->script = (u8 *)z;
@@ -889,8 +889,8 @@ s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id)
 		state->width = metadata->width;
 		state->height = metadata->height;
 		state->scale = metadata->scale << 8;
-		state->offset_y = metadata->adjust_y;
-		state->offset_x = metadata->adjust_x;
+		state->offsetY = metadata->adjustY;
+		state->offsetX = metadata->adjustX;
 	}
 	if (index == state->count)
 		state->count = index + 1;
@@ -960,11 +960,11 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 	hi = 0x80 & no;
 	if (work->scripts != 0)
 	{
-		info = Resource_GetMetadataRecordFar(work->anim_id);
-		if (no < info->animation_count)
+		info = Resource_GetMetadataRecordFar(work->animId);
+		if (no < info->animationCount)
 		{
 			value = (s32)work->scripts[no];
-			work->kind = info->draw_kind;
+			work->kind = info->drawKind;
 			work->script = (u8 *)value;
 			work->step = 0x10;
 			if (hi == 0)
@@ -978,17 +978,17 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 {
-	s32 high_bit;
+	s32 highBit;
 	s32 index;
 
-	high_bit = flags & 0x80;
+	highBit = flags & 0x80;
 	flags &= 0x7f;
 
 	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
 	 * entry cursor and uses 12 bytes. 2026-10-13: for (index = 0; index <
 	 * state->count; index++) strength-reduces entries[index] into that cursor
 	 * (82 instructions for 76, differ 30). */
-	if (state->last_no != flags)
+	if (state->lastNo != flags)
 	{
 		index = 0;
 		goto test_entry;
@@ -996,26 +996,26 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 		{
 			struct AnimationEntry	 *entry = state->entries[index];
 			struct AnimationMetadata *metadata;
-			s32						  selected_animation;
+			s32						  selectedAnimation;
 
 			if (entry != 0 && entry->scripts != 0)
 			{
-				metadata = Resource_GetMetadataRecordFar(entry->anim_id);
-				if (flags < metadata->animation_count)
+				metadata = Resource_GetMetadataRecordFar(entry->animId);
+				if (flags < metadata->animationCount)
 				{
-					selected_animation = (s32)entry->scripts[flags];
-					entry->kind = metadata->draw_kind;
-					entry->script = (u8 *)selected_animation;
+					selectedAnimation = (s32)entry->scripts[flags];
+					entry->kind = metadata->drawKind;
+					entry->script = (u8 *)selectedAnimation;
 					entry->step = 0x10;
-					if (high_bit == 0)
+					if (highBit == 0)
 					{
 						entry->pos = 0;
 						entry->timer = 0;
 					}
 					if (index == 0)
 					{
-						state->offset_y = metadata->adjust_y;
-						state->offset_x = metadata->adjust_x;
+						state->offsetY = metadata->adjustY;
+						state->offsetX = metadata->adjustX;
 					}
 				}
 			}
@@ -1024,7 +1024,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 	test_entry:
 		if (index < state->count)
 			goto entry_loop;
-		state->last_no = flags;
+		state->lastNo = flags;
 	}
 	return 0;
 }
@@ -1089,7 +1089,7 @@ void ObjectSystem_Configure(s32 mode)
 	PaletteDma_LoadBlock();
 	Dma_Fill32Cell(zero, 0, objects, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
 	Dma_Fill32Cell(zero, 0, states, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-	VramBlock_LoadCached(93, 128, Object_ShadowTiles);
+	VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
 	RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
@@ -1120,21 +1120,21 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
 		}
 		if (found != NULL)
 		{
-			/* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the anim_id store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
+			/* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the animId store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
 			frames = (void **)*(s32 *)&metadata->frames;
 			object = found;
-			object->anim_id = id;
+			object->animId = id;
 			if (frames == 0)
 				frames = (void **)Animation_LookupValueByKey(id);
 
 			animation = metadata->animation;
 			object->scripts = animation;
 			object->frames = frames;
-			object->mode = metadata->frame_codec;
+			object->mode = metadata->frameCodec;
 			object->frame = 0xff;
 			object->script = animation[0];
 			object->pos = 0;
-			object->kind = metadata->draw_kind;
+			object->kind = metadata->drawKind;
 			object->param = 0;
 		}
 	}
@@ -1298,7 +1298,7 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 	s32						  sum = 0;
 
 	info = Resource_GetMetadataRecordFar(id);
-	if (no >= info->animation_count)
+	if (no >= info->animationCount)
 	{
 		return 0;
 	}
@@ -1342,9 +1342,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	s32	 cnt;
 	u32	 n;
 	u8	*table;
-	u32	 high_mask;
-	u32	 index_mask;
-	u8	 offset_mask;
+	u32	 highMask;
+	u32	 indexMask;
+	u8	 offsetMask;
 
 	struct AnimationObject *spr = (struct AnimationObject *)obj;
 
@@ -1354,10 +1354,10 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 
 	if (n < cnt)
 	{
-		table = Map_TileDissolveOrder;
-		high_mask = 0xff00;
-		index_mask = 0x3f;
-		offset_mask = 0x3e;
+		table = gMap_TileDissolveOrder;
+		highMask = 0xff00;
+		indexMask = 0x3f;
+		offsetMask = 0x3e;
 
 		for (; n < cnt; n++, dst += 32, pos++)
 		{
@@ -1368,14 +1368,14 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 				u32	 odd;
 
 				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = table[(pos + n * 16) & index_mask];
-				cell = (u16 *)((u8 *)dst + (dot & offset_mask));
+				dot = table[(pos + n * 16) & indexMask];
+				cell = (u16 *)((u8 *)dst + (dot & offsetMask));
 				odd = 1;
 				odd &= dot;
 				if (odd != 0)
 					*cell = *(u8 *)cell;
 				else
-					*cell &= high_mask;
+					*cell &= highMask;
 			}
 		}
 	}
@@ -1450,7 +1450,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
 {
 	struct MapScrollWork *map = gMapWork[0];
-	s32					 *org = &map->view_x;
+	s32					 *org = &map->viewX;
 	s32					  ox;
 	s32					  oz;
 	s32					  x;
@@ -1498,8 +1498,8 @@ void ObjectSystem_Initialize(s32 mode)
 	else
 	{
 		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		Iwram_Data2 = 0;
-		Iwram_Data1 = 0;
+		gIwram_Data2 = 0;
+		gIwram_Data1 = 0;
 	}
 	sys->edge = 15;
 	sys->fill = 0;
@@ -1602,25 +1602,25 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 			spr = ResourceObject_Create(id);
 			if (spr != NULL)
 			{
-				obj->animation_kind = 1;
+				obj->animationKind = 1;
 				obj->animation = spr;
-				act->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
 			}
 			else
 			{
-				obj->animation_kind = 0;
+				obj->animationKind = 0;
 			}
 			break;
 		case 2:
 			// 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
 			ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
-			obj->animation_kind = kind;
+			obj->animationKind = kind;
 			obj->animation = ent;
 			Dma_Fill32(0, ent, 0x10);
 			spr = ResourceObject_Create(id);
 			if (spr != NULL)
 			{
-				act->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
 				*ent++ = spr;
 			}
 			spr = ResourceObject_Create(id + 1);
@@ -1634,21 +1634,21 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 		mot = (struct ScriptMotionObject *)obj;
 		sc = (struct ScriptObjectRuntime *)obj;
 		Object_SetPositionAndResetMotion(obj, x, y, z);
-		obj->script = (s32 *)ObjectDispatch_DefaultScript;
-		obj->speed_limit = 0x20000;
+		obj->script = (s32 *)gObjectDispatch_DefaultScript;
+		obj->speedLimit = 0x20000;
 		obj->step = 0;
-		act->scale_x = 0x10000;
-		act->scale_y = 0x10000;
+		act->scaleX = 0x10000;
+		act->scaleY = 0x10000;
 		obj->acceleration = 0x10000;
 		obj->flags = 3;
 		mot->gravity = 0x10000;
 		mot->vertical.bounce = 0x4000;
-		obj->unknown_59 = 0;
-		obj->action_flags = 1;
-		act->rise_base_y = 0;
+		obj->unk59 = 0;
+		obj->actionFlags = 1;
+		act->riseBaseY = 0;
 		obj->angle = 0x4000;
-		sc->home_x = x / 65536; // もとの位置（ドット）
-		sc->home_z = z / 65536;
+		sc->homeX = x / 65536; // もとの位置（ドット）
+		sc->homeZ = z / 65536;
 	}
 	return obj;
 }
@@ -1662,11 +1662,11 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 {
 	if (obj != 0)
 	{
-		obj->value_04 = 0;
-		obj->value_00 = (u32)script;
-		obj->value_5b = 0;
-		obj->value_5d = 0;
-		obj->value_57 = 0;
+		obj->value04 = 0;
+		obj->value00 = (u32)script;
+		obj->value5b = 0;
+		obj->value5d = 0;
+		obj->value57 = 0;
 	}
 }
 
@@ -1768,7 +1768,7 @@ void Animation_SetIndexAndInitObjects(void *raw, s32 no)
 		spr = obj->target.child;
 		if (no >= 0)
 		{
-			spr->entries[0]->anim_id = no;
+			spr->entries[0]->animId = no;
 			Animation_InitializeObjects(spr);
 		}
 	}
@@ -1793,44 +1793,44 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table5Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
 	obj->argument = arg;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table0Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table1Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table2Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table3Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table6Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table4Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
 	if (arg != 0)
 	{
-		obj->value_34 = 0x8000;
-		obj->value_30 = 0x40000;
+		obj->value34 = 0x8000;
+		obj->value30 = 0x40000;
 		obj->argument = arg;
-		obj->value_64 = 0;
+		obj->value64 = 0;
 	}
 }
 
@@ -1875,19 +1875,19 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode)
 	if (obj != 0 && obj->kind == 1)
 	{
 		struct FieldSprite *spr = obj->target.child;
-		spr->blend_mode = mode;
+		spr->blendMode = mode;
 	}
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の display_flags の bit1 を設定する
+// 絵がひとつのオブジェクトなら、絵の displayFlags の bit1 を設定する
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 {
 	if (obj != 0 && obj->kind == 1)
 	{
 		struct FieldSprite *spr = obj->target.child;
-		spr->unknown_1d_1 = on;
+		spr->unk1d1 = on;
 	}
 }
 
@@ -1931,38 +1931,38 @@ s32 ObjectDispatch_ReturnTrue(void)
 // マップのセル
 struct CameraTile
 {
-	u32 unk_00 : 12;
+	u32 unk00 : 12;
 	u32 layer : 2;	  // 0 でなければ、上にいるオブジェクトのレイヤー + 1
 	u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
-	u32 unk_10 : 16;
+	u32 unk10 : 16;
 };
 
 // オブジェクトの絵（OAM の属性をふくむ）
 struct CameraSprite
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 y : 8;
 	u16 affine : 2;
-	u16 blend_mode : 2;
+	u16 blendMode : 2;
 	u16 mosaic : 1;
-	u16 full_color : 1;
+	u16 fullColor : 1;
 	u16 shape : 2;
 	u16 x : 9;
-	u16 affine_index : 5;
-	u16 flip_x : 1;
-	u16 flip_y : 1;
+	u16 affineIndex : 5;
+	u16 flipX : 1;
+	u16 flipY : 1;
 	u16 tile : 10;
 	u16 priority : 2;
 	u16 palette : 4;
-	u8	unknown_0a[0x0a];
-	u16 second_tile : 10;
-	u16 second_priority : 2;
-	u16 second_palette : 4;
-	u8	unknown_16[2];
+	u8	unk0a[0x0a];
+	u16 secondTile : 10;
+	u16 secondPriority : 2;
+	u16 secondPalette : 4;
+	u8	unk16[2];
 	s32 scale;
 	u8	resource; // VRAM ブロックの番号
-	u8	flags_1d;
-	u8	unk_1e[7];
+	u8	flags1d;
+	u8	unk1e[7];
 	u8	activated;
 };
 
@@ -1970,38 +1970,38 @@ struct CameraSprite
 struct CameraObject
 {
 	u32	  active;
-	u16	  unk_04;
+	u16	  unk04;
 	u16	  angle;
 	s32	  x;
 	s32	  y;
 	s32	  z;
 	s32	  height;
-	s32	  scale_x;
-	s32	  scale_y;
-	u8	  unk_20[2];
+	s32	  scaleX;
+	s32	  scaleY;
+	u8	  unk20[2];
 	u8	  layer;
 	u8	  flags;
-	u8	  unk_24[0x2c];
+	u8	  unk24[0x2c];
 	void *sprite;
 	u8	  kind; // 1 絵ひとつ、2 絵が 4 つまで
-	u8	  unk_55[7];
+	u8	  unk55[7];
 	u8	  held;
-	u8	  unk_5d[0x13];
+	u8	  unk5d[0x13];
 };
 
 struct CameraLayer
 {
 	struct CameraTile *tiles;
-	u8				   unk_04[44];
+	u8				   unk04[44];
 };
 
 // マップ
 struct CameraState
 {
-	u8				   unk_000[0xe4];
+	u8				   unk000[0xe4];
 	s32				   x; // 見ている位置
 	s32				   z;
-	u8				   unk_0ec[0x44];
+	u8				   unk0ec[0x44];
 	struct CameraLayer layers[1];
 };
 
@@ -2017,8 +2017,8 @@ struct FixedCamera
 {
 	struct CameraPoint	eye;
 	struct CameraPoint	target;
-	struct CameraPoint *eye_override;	 // あればこちらの視点を使う
-	struct CameraPoint *target_override; // あればこちらの注視点を使う
+	struct CameraPoint *eyeOverride;	 // あればこちらの視点を使う
+	struct CameraPoint *targetOverride; // あればこちらの注視点を使う
 };
 
 //--------------------------------------------------------------------------
@@ -2034,8 +2034,8 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraPoint		 spare[3];
 	s32						 cnt;
 	struct CameraState		*map;
-	s32						 cam_x;
-	s32						 cam_z;
+	s32						 camX;
+	s32						 camZ;
 	struct ObjectSystemWork *sync;
 	struct CameraObject		*obj;
 	struct CameraSprite		*spr;
@@ -2048,12 +2048,12 @@ void ObjectSystem_UpdateCamera(void)
 	u32						 bits;
 	s32						 scale[2];
 	s32						 pos[4];
-	u32						 bits_val;
+	u32						 bitsVal;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
-	cam_x = cam[0] & 0xffff0000;
-	cam_z = cam[1] & 0xffff0000;
+	camX = cam[0] & 0xffff0000;
+	camZ = cam[1] & 0xffff0000;
 	sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
@@ -2078,8 +2078,8 @@ void ObjectSystem_UpdateCamera(void)
 				frozen->activated = kind;
 				continue;
 			}
-			dx = obj->x - cam_x;
-			dz = obj->z - cam_z;
+			dx = obj->x - camX;
+			dz = obj->z - camZ;
 			top = dz - obj->y;
 			spr = obj->sprite;
 			if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
@@ -2092,14 +2092,14 @@ void ObjectSystem_UpdateCamera(void)
 					if (bits != 0)
 					{
 						spr->priority = bits;
-						spr->second_priority = bits;
+						spr->secondPriority = bits;
 					}
 				}
-				bits_val = tile->layer;
-				if (bits_val != 0)
-					obj->layer = bits_val - 1;
-				scale[0] = Iwram_MulQ16(obj->scale_x, spr->scale);
-				scale[1] = Iwram_MulQ16(obj->scale_y, spr->scale);
+				bitsVal = tile->layer;
+				if (bitsVal != 0)
+					obj->layer = bitsVal - 1;
+				scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
+				scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
 				pos[0] = dx;
 				pos[1] = obj->y;
 				pos[2] = dz;
@@ -2121,7 +2121,7 @@ void ObjectSystem_UpdateCamera(void)
 			}
 			if (obj->held == 0)
 			{
-				if (!(spr->flags_1d & 1))
+				if (!(spr->flags1d & 1))
 				{
 					Resource_ActivateEntry(spr->resource);
 					spr->activated = 1;
@@ -2134,7 +2134,7 @@ void ObjectSystem_UpdateCamera(void)
 			if (kind == 1)
 			{
 				spr = obj->sprite;
-				if (obj->held == 0 && !(spr->flags_1d & 1))
+				if (obj->held == 0 && !(spr->flags1d & 1))
 				{
 					Resource_ActivateEntry(spr->resource);
 					spr->activated = kind;
@@ -2183,17 +2183,17 @@ void ObjectSystem_UpdateCameraFixed(void)
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	eye = &cam->eye;
 	target = &cam->target;
-	if (cam->eye_override != NULL)
-		eye = cam->eye_override;
-	if (cam->target_override != NULL)
-		target = cam->target_override;
+	if (cam->eyeOverride != NULL)
+		eye = cam->eyeOverride;
+	if (cam->targetOverride != NULL)
+		target = cam->targetOverride;
 	angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
 	sync->used = 0;
 	Render_ResetTransformState();
 	if (GameFlag_TestFar(363))
 	{
 		angle += 0xffffe000;
-		Iwram_TransformMatrix(Camera_FixedViewMatrix);
+		Iwram_TransformMatrix(gCamera_FixedViewMatrix);
 		Graphics_PrepareTransferAndRun(eye, target);
 	}
 	else
@@ -2212,8 +2212,8 @@ void ObjectSystem_UpdateCameraFixed(void)
 		{
 		case 1:
 			pos = &obj->x;
-			scale[0] = obj->scale_x;
-			scale[1] = obj->scale_y;
+			scale[0] = obj->scaleX;
+			scale[1] = obj->scaleY;
 			spr = obj->sprite;
 			if (GameFlag_TestFar(363))
 			{
@@ -2223,8 +2223,8 @@ void ObjectSystem_UpdateCameraFixed(void)
 			Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle, obj->layer);
 			break;
 		case 2:
-			scale2[0] = obj->scale_x;
-			scale2[1] = obj->scale_y;
+			scale2[0] = obj->scaleX;
+			scale2[1] = obj->scaleY;
 			if (GameFlag_TestFar(363))
 			{
 				scale2[0] = one;
@@ -2248,7 +2248,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 
 //--------------------------------------------------------------------------
 // script.c
-// オブジェクトスクリプト：位置の移動と byte_54 の命令
+// オブジェクトスクリプト：位置の移動と byte54 の命令
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
@@ -2266,21 +2266,21 @@ s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc)
 }
 
 //--------------------------------------------------------------------------
-// byte_54 を 0 にして、次の命令へ
+// byte54 を 0 にして、次の命令へ
 //--------------------------------------------------------------------------
 s32 Script_ClearByte54(struct ScriptInterpreter *sc)
 {
-	sc->byte_54 = 0;
+	sc->byte54 = 0;
 	sc->cursor++;
 	return 1;
 }
 
 //--------------------------------------------------------------------------
-// byte_54 を 1 にして、次の命令へ
+// byte54 を 1 にして、次の命令へ
 //--------------------------------------------------------------------------
 s32 Script_SetByte54(struct ScriptInterpreter *sc)
 {
-	sc->byte_54 = 1;
+	sc->byte54 = 1;
 	sc->cursor++;
 	return 1;
 }
@@ -2304,17 +2304,17 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 
 	if (object->flags == 0)
 	{
-		second = object->target_x;
+		second = object->targetX;
 		if (second != 0x80000000)
 			return 0;
-		first = object->target_y;
+		first = object->targetY;
 	}
 	else
 	{
-		first = object->target_x;
+		first = object->targetX;
 		second = 0x80000000;
 	}
-	if (first != second || object->target_z != first)
+	if (first != second || object->targetZ != first)
 		return 0;
 	return 1;
 }
@@ -2323,7 +2323,7 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
-extern ScriptCommandFn ScriptObject_CommandTable[];
+extern ScriptCommandFn gScriptObject_CommandTable[];
 
 static __inline__ s32 Square(s32 value)
 {
@@ -2383,15 +2383,15 @@ void Object_UpdateAllThumb(void)
 		{
 			for (;;)
 			{
-				cmd = script->word[(s16)obj->script_cursor];
+				cmd = script->word[(s16)obj->scriptCursor];
 				if (cmd <= 63)
 				{
-					if (ScriptObject_CommandTable[cmd](obj) == 0)
+					if (gScriptObject_CommandTable[cmd](obj) == 0)
 						break;
 				}
 				else
 				{
-					obj->script_cursor++;
+					obj->scriptCursor++;
 				}
 				script = obj->script;
 			}
@@ -2405,45 +2405,45 @@ void Object_UpdateAllThumb(void)
 
 		if (obj->frozen == 0)
 		{
-			if (obj->motion_flags == 0)
+			if (obj->motionFlags == 0)
 			{
-				if (obj->target_x != TARGET_UNSET)
+				if (obj->targetX != TARGET_UNSET)
 				{
-					dx = (obj->target_x - px) / 65536;
-					dy = (obj->target_y - py) / 65536;
-					dz = (obj->target_z - pz) / 65536;
+					dx = (obj->targetX - px) / 65536;
+					dy = (obj->targetY - py) / 65536;
+					dz = (obj->targetZ - pz) / 65536;
 					dist = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
 					if (dist == 0)
 					{
-						px = obj->target_x;
-						py = obj->target_y;
-						pz = obj->target_z;
+						px = obj->targetX;
+						py = obj->targetY;
+						pz = obj->targetZ;
 					}
 					else
 					{
 						ratio = Iwram_RatioMulQ14(dist << 16, obj->acceleration);
-						obj->velocity_x += dx * ratio;
-						obj->velocity_y += dy * ratio;
-						obj->velocity_z += dz * ratio;
-						vx = obj->velocity_x;
-						vy = obj->velocity_y;
-						vz = obj->velocity_z;
+						obj->velocityX += dx * ratio;
+						obj->velocityY += dy * ratio;
+						obj->velocityZ += dz * ratio;
+						vx = obj->velocityX;
+						vy = obj->velocityY;
+						vz = obj->velocityZ;
 						len = FixedSqrt(
 							Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) + Iwram_MulQ16(vz, vz));
-						if (len > obj->speed_limit)
+						if (len > obj->speedLimit)
 						{
-							ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
-							obj->velocity_x = Iwram_MulQ16(vx, ratio);
-							obj->velocity_y = Iwram_MulQ16(vy, ratio);
-							obj->velocity_z = Iwram_MulQ16(vz, ratio);
+							ratio = Iwram_RatioMulQ14(len, obj->speedLimit);
+							obj->velocityX = Iwram_MulQ16(vx, ratio);
+							obj->velocityY = Iwram_MulQ16(vy, ratio);
+							obj->velocityZ = Iwram_MulQ16(vz, ratio);
 						}
 					}
 				}
 				else
 				{
-					dx = obj->velocity_x;
-					dy = obj->velocity_y;
-					dz = obj->velocity_z;
+					dx = obj->velocityX;
+					dy = obj->velocityY;
+					dz = obj->velocityZ;
 					len = FixedSqrt(
 						Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz));
 					if (len != 0)
@@ -2452,56 +2452,56 @@ void Object_UpdateAllThumb(void)
 						if (rem < 0)
 							rem = 0;
 						ratio = Iwram_RatioMulQ14(len, rem);
-						obj->velocity_x = Iwram_MulQ16(dx, ratio);
-						obj->velocity_y = Iwram_MulQ16(dy, ratio);
-						obj->velocity_z = Iwram_MulQ16(dz, ratio);
+						obj->velocityX = Iwram_MulQ16(dx, ratio);
+						obj->velocityY = Iwram_MulQ16(dy, ratio);
+						obj->velocityZ = Iwram_MulQ16(dz, ratio);
 					}
 					else
 					{
-						obj->velocity_x = 0;
-						obj->velocity_y = 0;
-						obj->velocity_z = 0;
+						obj->velocityX = 0;
+						obj->velocityY = 0;
+						obj->velocityZ = 0;
 					}
 				}
 			}
 			else
 			{
-				if (obj->target_x != TARGET_UNSET)
+				if (obj->targetX != TARGET_UNSET)
 				{
-					dx = (obj->target_x - px) / 65536;
-					dz = (obj->target_z - pz) / 65536;
+					dx = (obj->targetX - px) / 65536;
+					dz = (obj->targetZ - pz) / 65536;
 					dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
 					if (dist <= 0x00ffffff)
 					{
-						dx = obj->target_x - px;
-						dz = obj->target_z - pz;
+						dx = obj->targetX - px;
+						dz = obj->targetZ - pz;
 						dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
 					}
 					if (dist == 0)
 					{
-						px = obj->target_x;
-						pz = obj->target_z;
+						px = obj->targetX;
+						pz = obj->targetZ;
 					}
 					else
 					{
 						ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
-						obj->velocity_x += Iwram_MulQ16(dx, ratio);
-						obj->velocity_z += Iwram_MulQ16(dz, ratio);
-						vx = obj->velocity_x;
-						vz = obj->velocity_z;
+						obj->velocityX += Iwram_MulQ16(dx, ratio);
+						obj->velocityZ += Iwram_MulQ16(dz, ratio);
+						vx = obj->velocityX;
+						vz = obj->velocityZ;
 						len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vz, vz));
-						if (len > obj->speed_limit)
+						if (len > obj->speedLimit)
 						{
-							ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
-							obj->velocity_x = Iwram_MulQ16(vx, ratio);
-							obj->velocity_z = Iwram_MulQ16(vz, ratio);
+							ratio = Iwram_RatioMulQ14(len, obj->speedLimit);
+							obj->velocityX = Iwram_MulQ16(vx, ratio);
+							obj->velocityZ = Iwram_MulQ16(vz, ratio);
 						}
 					}
 				}
 				else
 				{
-					dx = obj->velocity_x;
-					dz = obj->velocity_z;
+					dx = obj->velocityX;
+					dz = obj->velocityZ;
 					len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
 					if (len != 0)
 					{
@@ -2509,22 +2509,22 @@ void Object_UpdateAllThumb(void)
 						if (rem < 0)
 							rem = 0;
 						ratio = Iwram_RatioMulQ14(len, rem);
-						obj->velocity_x = Iwram_MulQ16(dx, ratio);
-						obj->velocity_z = Iwram_MulQ16(dz, ratio);
+						obj->velocityX = Iwram_MulQ16(dx, ratio);
+						obj->velocityZ = Iwram_MulQ16(dz, ratio);
 					}
 					else
 					{
-						obj->velocity_x = 0;
-						obj->velocity_z = 0;
+						obj->velocityX = 0;
+						obj->velocityZ = 0;
 					}
 				}
 
-				if ((obj->motion_flags & 1) != 0)
+				if ((obj->motionFlags & 1) != 0)
 				{
-					vx = px + obj->velocity_x;
-					vz = pz + obj->velocity_z;
-					ground = Map_GetTerrainHeight(obj->terrain_id, vx, vz);
-					vy = ground - obj->terrain_height;
+					vx = px + obj->velocityX;
+					vz = pz + obj->velocityZ;
+					ground = Map_GetTerrainHeight(obj->terrainId, vx, vz);
+					vy = ground - obj->terrainHeight;
 					if (ground - py > -0x40000)
 						py += vy;
 					if (vy < 0)
@@ -2533,11 +2533,11 @@ void Object_UpdateAllThumb(void)
 					if (vy > half)
 						vy = half;
 					vy *= 3;
-					if (vy != 0 && (obj->motion_flags & 0x10) == 0)
+					if (vy != 0 && (obj->motionFlags & 0x10) == 0)
 					{
-						dx = obj->velocity_x;
-						dy = obj->velocity_y;
-						dz = obj->velocity_z;
+						dx = obj->velocityX;
+						dy = obj->velocityY;
+						dz = obj->velocityZ;
 						len = FixedSqrt(
 							Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz));
 						if (len != 0)
@@ -2546,48 +2546,48 @@ void Object_UpdateAllThumb(void)
 							if (rem < 0)
 								rem = 0;
 							ratio = Iwram_RatioMulQ14(len, rem);
-							obj->velocity_x = Iwram_MulQ16(dx, ratio);
-							obj->velocity_y = Iwram_MulQ16(dy, ratio);
-							obj->velocity_z = Iwram_MulQ16(dz, ratio);
+							obj->velocityX = Iwram_MulQ16(dx, ratio);
+							obj->velocityY = Iwram_MulQ16(dy, ratio);
+							obj->velocityZ = Iwram_MulQ16(dz, ratio);
 						}
 					}
-					obj->terrain_height = ground;
+					obj->terrainHeight = ground;
 				}
 
-				if ((obj->motion_flags & 2) != 0)
+				if ((obj->motionFlags & 2) != 0)
 				{
-					ground = obj->terrain_height;
+					ground = obj->terrainHeight;
 					if (py > ground)
 					{
-						obj->velocity_y -= obj->gravity;
+						obj->velocityY -= obj->gravity;
 					}
-					else if (obj->velocity_y < 0)
+					else if (obj->velocityY < 0)
 					{
 						py = ground;
-						obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
-						if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y)
+						obj->velocityY = -Iwram_MulQ16(obj->velocityY, obj->vertical.bounce);
+						if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY)
 							<= obj->gravity)
-							obj->velocity_y = 0;
+							obj->velocityY = 0;
 					}
 				}
 
-				if ((obj->motion_flags & 4) != 0)
+				if ((obj->motionFlags & 4) != 0)
 				{
 					phase = (obj->vertical.phase & 0x3f);
-					if ((obj->motion_flags & 8) != 0)
-						obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
+					if ((obj->motionFlags & 8) != 0)
+						obj->velocityY = gScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
 					else
-						obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
+						obj->velocityY = gScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
 					obj->vertical.phase++;
 				}
 			}
 		}
 
-		px += obj->velocity_x;
-		py += obj->velocity_y;
-		pz += obj->velocity_z;
+		px += obj->velocityX;
+		py += obj->velocityY;
+		pz += obj->velocityZ;
 
-		if ((obj->collision_flags & 0x80) != 0)
+		if ((obj->collisionFlags & 0x80) != 0)
 		{
 			pos[0] = px;
 			pos[1] = py;
@@ -2600,18 +2600,18 @@ void Object_UpdateAllThumb(void)
 			obj->refused = 0;
 		}
 
-		switch (obj->arrival_axis)
+		switch (obj->arrivalAxis)
 		{
 		case 16:
-			if (px == obj->target_x || ((obj->x - obj->target_x) ^ (px - obj->target_x)) < 0)
+			if (px == obj->targetX || ((obj->x - obj->targetX) ^ (px - obj->targetX)) < 0)
 				reached = 1;
 			break;
 		case 17:
-			if (py == obj->target_y || ((obj->y - obj->target_y) ^ (py - obj->target_y)) < 0)
+			if (py == obj->targetY || ((obj->y - obj->targetY) ^ (py - obj->targetY)) < 0)
 				reached = 1;
 			break;
 		case 18:
-			if (pz == obj->target_z || ((obj->z - obj->target_z) ^ (pz - obj->target_z)) < 0)
+			if (pz == obj->targetZ || ((obj->z - obj->targetZ) ^ (pz - obj->targetZ)) < 0)
 				reached = 1;
 			break;
 		default:
@@ -2620,32 +2620,32 @@ void Object_UpdateAllThumb(void)
 
 		if (reached != 0)
 		{
-			if (obj->snap_to_target != 0)
+			if (obj->snapToTarget != 0)
 			{
-				px = obj->target_x;
-				obj->velocity_x = 0;
-				pz = obj->target_z;
-				obj->velocity_z = 0;
-				if (obj->motion_flags == 0)
+				px = obj->targetX;
+				obj->velocityX = 0;
+				pz = obj->targetZ;
+				obj->velocityZ = 0;
+				if (obj->motionFlags == 0)
 				{
-					py = obj->target_y;
-					obj->velocity_y = 0;
+					py = obj->targetY;
+					obj->velocityY = 0;
 				}
 			}
-			obj->target_x = TARGET_UNSET;
-			obj->target_y = TARGET_UNSET;
-			obj->target_z = TARGET_UNSET;
-			obj->arrival_axis = 0;
+			obj->targetX = TARGET_UNSET;
+			obj->targetY = TARGET_UNSET;
+			obj->targetZ = TARGET_UNSET;
+			obj->arrivalAxis = 0;
 		}
 
 		obj->x = px;
 		obj->y = py;
 		obj->z = pz;
 
-		if ((obj->steering_flags & 1) != 0)
+		if ((obj->steeringFlags & 1) != 0)
 		{
-			px = obj->velocity_x;
-			pz = obj->velocity_z;
+			px = obj->velocityX;
+			pz = obj->velocityZ;
 			if (px != 0 || pz != 0)
 			{
 				s32 limit;
@@ -2675,14 +2675,14 @@ void Object_UpdateAllThumb(void)
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y, s32 z)
 {
 	obj->z = z;
-	obj->target_x = 0x80000000; // 移動先なし
-	obj->target_y = 0x80000000;
-	obj->target_z = 0x80000000;
+	obj->targetX = 0x80000000; // 移動先なし
+	obj->targetY = 0x80000000;
+	obj->targetZ = 0x80000000;
 	obj->x = x;
 	obj->y = y;
-	obj->velocity_x = 0;
-	obj->velocity_y = 0;
-	obj->velocity_z = 0;
+	obj->velocityX = 0;
+	obj->velocityY = 0;
+	obj->velocityZ = 0;
 }
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
@@ -2710,17 +2710,17 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 		object->x = x;
 		object->y = y;
 		object->z = z;
-		object->target_x = 0x80000000;
-		object->target_y = 0x80000000;
-		object->target_z = 0x80000000;
+		object->targetX = 0x80000000;
+		object->targetY = 0x80000000;
+		object->targetZ = 0x80000000;
 		return;
 	}
-	if (object->snap_to_target == 0)
+	if (object->snapToTarget == 0)
 	{
 		s32 brake;
 
 		brake = Iwram_RatioMulQ14(
-			object->acceleration, Iwram_MulQ16(object->speed_limit, object->speed_limit));
+			object->acceleration, Iwram_MulQ16(object->speedLimit, object->speedLimit));
 		if (dist > brake)
 			brake = dist - brake / 2;
 		else
@@ -2730,13 +2730,13 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 		y = object->y + Iwram_MulQ16(y - object->y, dist);
 		z = object->z + Iwram_MulQ16(z - object->z, dist);
 	}
-	object->target_x = x;
-	object->target_y = y;
-	object->target_z = z;
+	object->targetX = x;
+	object->targetY = y;
+	object->targetZ = z;
 	dx = x - object->x;
 	dist = y - object->y;
 	dz = z - object->z;
-	axis = &object->arrival_axis;
+	axis = &object->arrivalAxis;
 	*axis = 16;
 	if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz))
 	{
@@ -2787,42 +2787,42 @@ void Object_UpdateAllMotion(void)
 		if (obj->frozen == 0)
 		{
 			arrived = 0;
-			if (obj->target_x != TARGET_UNSET)
+			if (obj->targetX != TARGET_UNSET)
 			{
-				dx = (obj->target_x - x) / 65536;
-				dz = (obj->target_z - z) / 65536;
+				dx = (obj->targetX - x) / 65536;
+				dz = (obj->targetZ - z) / 65536;
 				dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
 				if (dist <= 0xffffff)
 				{
-					dx = obj->target_x - x;
-					dz = obj->target_z - z;
+					dx = obj->targetX - x;
+					dz = obj->targetZ - z;
 					dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
 				}
 				if (dist == 0)
 				{
-					x = obj->target_x;
-					z = obj->target_z;
+					x = obj->targetX;
+					z = obj->targetZ;
 				}
 				else
 				{
 					ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
-					vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
-					obj->velocity_x = vx;
-					dx = obj->velocity_z + Iwram_MulQ16(dz, ratio);
-					obj->velocity_z = dx;
+					vx = obj->velocityX + Iwram_MulQ16(dx, ratio);
+					obj->velocityX = vx;
+					dx = obj->velocityZ + Iwram_MulQ16(dz, ratio);
+					obj->velocityZ = dx;
 					dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
-					if (dist > obj->speed_limit)
+					if (dist > obj->speedLimit)
 					{
-						ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
-						obj->velocity_x = Iwram_MulQ16(vx, ratio);
-						obj->velocity_z = Iwram_MulQ16(dx, ratio);
+						ratio = Iwram_RatioMulQ14(dist, obj->speedLimit);
+						obj->velocityX = Iwram_MulQ16(vx, ratio);
+						obj->velocityZ = Iwram_MulQ16(dx, ratio);
 					}
 				}
 			}
 			else
 			{
-				dx = obj->velocity_x;
-				dz = obj->velocity_z;
+				dx = obj->velocityX;
+				dz = obj->velocityZ;
 				if ((dx | dz) != 0)
 				{
 					dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
@@ -2830,83 +2830,83 @@ void Object_UpdateAllMotion(void)
 					{
 						if (dist - obj->acceleration < 0)
 						{
-							obj->velocity_x = 0;
-							obj->velocity_z = 0;
+							obj->velocityX = 0;
+							obj->velocityZ = 0;
 						}
 						else
 						{
 							ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
-							obj->velocity_x = Iwram_MulQ16(dx, ratio);
-							obj->velocity_z = Iwram_MulQ16(dz, ratio);
+							obj->velocityX = Iwram_MulQ16(dx, ratio);
+							obj->velocityZ = Iwram_MulQ16(dz, ratio);
 						}
 					}
 					else
 					{
-						obj->velocity_x = 0;
-						obj->velocity_z = 0;
+						obj->velocityX = 0;
+						obj->velocityZ = 0;
 					}
 				}
 			}
-			if (obj->motion_flags & 2)
+			if (obj->motionFlags & 2)
 			{
-				if (y > obj->terrain_height)
+				if (y > obj->terrainHeight)
 				{
-					obj->velocity_y -= obj->gravity;
+					obj->velocityY -= obj->gravity;
 				}
-				else if (obj->velocity_y < 0)
+				else if (obj->velocityY < 0)
 				{
-					y = obj->terrain_height;
-					obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
-					if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
-						obj->velocity_y = 0;
+					y = obj->terrainHeight;
+					obj->velocityY = -Iwram_MulQ16(obj->velocityY, obj->vertical.bounce);
+					if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY) <= obj->gravity)
+						obj->velocityY = 0;
 				}
 			}
 		}
-		x += obj->velocity_x;
-		y += obj->velocity_y;
-		z += obj->velocity_z;
-		if (obj->arrival_axis != 0)
-			switch (obj->arrival_axis)
+		x += obj->velocityX;
+		y += obj->velocityY;
+		z += obj->velocityZ;
+		if (obj->arrivalAxis != 0)
+			switch (obj->arrivalAxis)
 			{
 			case 16:
-				if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
+				if (x == obj->targetX || ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
 					arrived = 1;
 				break;
 			case 17:
-				if (y == obj->target_y || ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
+				if (y == obj->targetY || ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
 					arrived = 1;
 				break;
 			case 18:
-				if (z == obj->target_z || ((obj->z - obj->target_z) ^ (z - obj->target_z)) < 0)
+				if (z == obj->targetZ || ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
 					arrived = 1;
 				break;
 			}
 		if (arrived)
 		{
-			if (obj->snap_to_target)
+			if (obj->snapToTarget)
 			{
-				obj->velocity_x = 0;
-				obj->velocity_z = 0;
-				x = obj->target_x;
-				z = obj->target_z;
-				if (obj->motion_flags == 0)
+				obj->velocityX = 0;
+				obj->velocityZ = 0;
+				x = obj->targetX;
+				z = obj->targetZ;
+				if (obj->motionFlags == 0)
 				{
-					y = obj->target_y;
-					obj->velocity_y = 0;
+					y = obj->targetY;
+					obj->velocityY = 0;
 				}
 			}
-			obj->target_x = TARGET_UNSET;
-			obj->target_y = TARGET_UNSET;
-			obj->target_z = TARGET_UNSET;
-			obj->arrival_axis = 0;
+			obj->targetX = TARGET_UNSET;
+			obj->targetY = TARGET_UNSET;
+			obj->targetZ = TARGET_UNSET;
+			obj->arrivalAxis = 0;
 		}
 		obj->x = x;
 		obj->y = y;
 		obj->z = z;
-		if (obj->steering_flags & 1)
+		if (obj->steeringFlags & 1)
 		{
-			x = obj->velocity_x;
-			z = obj->velocity_z;
+			x = obj->velocityX;
+			z = obj->velocityZ;
 			if (x != 0 || z != 0)
 			{
 				turn = (s16)(ArcTan2(z, x) - obj->facing);
@@ -2924,7 +2924,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 {
 	s16 cursor = interpreter->cursor;
 
-	interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
+	interpreter->lookupResult = interpreter->script[cursor + 1] - 1;
 	interpreter->cursor += 2;
 	return 0;
 }
@@ -2961,7 +2961,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 {
 	u32 *entries;
 	s32	 index;
-	s16 *field = &interpreter->lookup_result;
+	s16 *field = &interpreter->lookupResult;
 	s32	 zero = 0;
 
 	*field = zero;
@@ -2987,30 +2987,30 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
 {
 	const s32 *arguments;
-	s32		   repeat_limit;
-	s32		   jump_key;
-	u8		  *repeat_count;
-	s32		   next_count;
+	s32		   repeatLimit;
+	s32		   jumpKey;
+	u8		  *repeatCount;
+	s32		   nextCount;
 
 	arguments = &interpreter->script[interpreter->cursor + 1];
-	repeat_limit = *arguments++;
-	jump_key = *arguments;
-	if (repeat_limit == 0xFFFF)
+	repeatLimit = *arguments++;
+	jumpKey = *arguments;
+	if (repeatLimit == 0xFFFF)
 	{
-		interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+		interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
 	}
 	else
 	{
-		repeat_count = &interpreter->repeat_count;
-		next_count = *repeat_count + 1;
-		*repeat_count = next_count;
-		if ((u8)next_count < (s16)repeat_limit)
+		repeatCount = &interpreter->repeatCount;
+		nextCount = *repeatCount + 1;
+		*repeatCount = nextCount;
+		if ((u8)nextCount < (s16)repeatLimit)
 		{
-			interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+			interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
 		}
 		else
 		{
-			*repeat_count = 0;
+			*repeatCount = 0;
 			interpreter->cursor += 3;
 		}
 	}
@@ -3030,7 +3030,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
 	const s32 *table = interpreter->script;
 	u32		   value = table[index + 1];
 
-	if (interpreter->condition_result != 0)
+	if (interpreter->conditionResult != 0)
 	{
 		interpreter->cursor = Script_FindLabel(interpreter, value);
 	}
@@ -3047,7 +3047,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
 	const s32 *table = interpreter->script;
 	u32		   value = table[index + 1];
 
-	if (interpreter->condition_result == 0)
+	if (interpreter->conditionResult == 0)
 	{
 		interpreter->cursor = Script_FindLabel(interpreter, value);
 	}
@@ -3062,26 +3062,26 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
 	s32 result;
 
-	interpreter->script = Script_MainScript;
+	interpreter->script = gScript_MainScript;
 	interpreter->cursor = (result = 0);
 	return result;
 }
 
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
-	interpreter->condition_result = GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
+	interpreter->conditionResult = GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
 	interpreter->cursor += 2;
 	return 1;
 }
 
-// フラグの今の値を condition_result に入れてから、change でフラグを書き換える
+// フラグの今の値を conditionResult に入れてから、change でフラグを書き換える
 #define DEFINE_FLAG_AND_TEST(name, change)                       \
 	s32 name(struct ScriptInterpreter *interpreter)              \
 	{                                                            \
 		s32 value;                                               \
                                                                  \
 		value = interpreter->script[interpreter->cursor + 1];    \
-		interpreter->condition_result = GameFlag_TestFar(value); \
+		interpreter->conditionResult = GameFlag_TestFar(value); \
 		change(value);                                           \
 		interpreter->cursor += 2;                                \
 		return 1;                                                \
@@ -3097,7 +3097,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 
 	value = interpreter->script[interpreter->cursor + 1];
 	result = GameFlag_TestFar(value);
-	interpreter->condition_result = result;
+	interpreter->conditionResult = result;
 	if ((result << 0x18) == 0x01000000)
 	{
 		GameFlag_ClearBitFar(value);
@@ -3143,7 +3143,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 	u8					 *flags;
 	struct ObjectRuntime *entry = gObjectSlots;
 
-	flags = &entry->unknown_59;
+	flags = &entry->unk59;
 	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
 	{
 		if (entry->script != NULL && (1 & *flags) && entry != (struct ObjectRuntime *)object)
@@ -3164,7 +3164,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
 	u8					 *flags;
 	struct ObjectRuntime *entry = gObjectSlots;
 
-	flags = &entry->unknown_59;
+	flags = &entry->unk59;
 	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
 	{
 		if (entry->script != NULL && (1 & *flags) && entry != (struct ObjectRuntime *)object)
@@ -3211,7 +3211,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
 
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 {
-	u8	*entry = (u8 *)(object->script + (s16)object->script_cursor);
+	u8	*entry = (u8 *)(object->script + (s16)object->scriptCursor);
 	s32 *cursor = (s32 *)(entry + 4);
 	s32	 first = *cursor++;
 	s32	 second = *cursor++;
@@ -3219,7 +3219,7 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 
 	Object_SetMoveTarget(
 		(struct ObjectRuntime *)object, object->x + first, object->y + second, object->z + third);
-	object->script_cursor += 4;
+	object->scriptCursor += 4;
 	return 1;
 }
 
@@ -3227,9 +3227,9 @@ s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object)
 {
 	struct ScriptObjectRuntime *target;
 
-	target = object->linked_object;
-	object->script_value = ArcTan2((target->z - object->z), (target->x - object->x));
-	object->script_cursor++;
+	target = object->linkedObject;
+	object->scriptValue = ArcTan2((target->z - object->z), (target->x - object->x));
+	object->scriptCursor++;
 	return 1;
 }
 
@@ -3237,9 +3237,9 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 {
 	struct ScriptObjectRuntime *target;
 
-	target = object->linked_object;
+	target = object->linkedObject;
 	Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y, target->z);
-	object->script_cursor++;
+	object->scriptCursor++;
 	return 1;
 }
 
@@ -3249,13 +3249,13 @@ s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object)
 
 	Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + offset[0],
 		object->y + offset[1], object->z + offset[2]);
-	object->script_cursor += 3;
+	object->scriptCursor += 3;
 	return 1;
 }
 
 struct MapScrollBounds
 {
-	u8	unknown_00[0xec];
+	u8	unk00[0xec];
 	s32 left;
 	s32 top;
 	s32 right;
@@ -3266,10 +3266,10 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 {
 	struct ObjectRuntime   *leader;
 	struct MapScrollBounds *bounds;
-	s32						min_x;
-	s32						min_z;
-	s32						max_x;
-	s32						max_z;
+	s32						minX;
+	s32						minZ;
+	s32						maxX;
+	s32						maxZ;
 	s32						x;
 	s32						y;
 	s32						z;
@@ -3280,28 +3280,28 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 	s32						step;
 
 	bounds = gMapWork[0];
-	leader = obj->linked_object;
-	min_x = bounds->left + 0x780000;
-	min_z = bounds->top + leader->y + 0x600000;
-	max_x = bounds->right - 0x780000;
-	max_z = bounds->bottom + leader->y - 0x400000;
+	leader = obj->linkedObject;
+	minX = bounds->left + 0x780000;
+	minZ = bounds->top + leader->y + 0x600000;
+	maxX = bounds->right - 0x780000;
+	maxZ = bounds->bottom + leader->y - 0x400000;
 	obj->flags = 0;
 	if (leader != NULL && leader->script != NULL)
 	{
 		x = leader->x;
 		y = leader->y;
 		z = leader->z;
-		obj->target_x = TARGET_UNSET;
-		obj->target_y = TARGET_UNSET;
-		obj->target_z = TARGET_UNSET;
-		if (x < min_x)
-			x = min_x;
-		if (z < min_z)
-			z = min_z;
-		if (x > max_x)
-			x = max_x;
-		if (z > max_z)
-			z = max_z;
+		obj->targetX = TARGET_UNSET;
+		obj->targetY = TARGET_UNSET;
+		obj->targetZ = TARGET_UNSET;
+		if (x < minX)
+			x = minX;
+		if (z < minZ)
+			z = minZ;
+		if (x > maxX)
+			x = maxX;
+		if (z > maxZ)
+			z = maxZ;
 		if (obj->action != 0)
 		{
 			obj->x = x;
@@ -3321,8 +3321,8 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 			dz = z - obj->z;
 			if (dist < 0x400000)
 				dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-			if ((step = dist / 8) > obj->speed_limit)
-				step = obj->speed_limit;
+			if ((step = dist / 8) > obj->speedLimit)
+				step = obj->speedLimit;
 			if (dist < 0x4000)
 			{
 				obj->x = x;
@@ -3363,8 +3363,8 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 	s32					  dx2;
 	struct ObjectRuntime *link;
 
-	link = object->linked_object;
-	object->speed_limit = link->speed_limit;
+	link = object->linkedObject;
+	object->speedLimit = link->speedLimit;
 	object->acceleration = link->acceleration;
 	dx = link->x - object->x;
 	dz = link->z - object->z;
@@ -3400,7 +3400,7 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
 	s32					 dx;
 	s32					 dz;
 
-	args = &object->script[(s16)object->script_cursor + 1];
+	args = &object->script[(s16)object->scriptCursor + 1];
 	base = *args++;
 	range = *args++;
 	limit = *args / 0x10000;
@@ -3414,7 +3414,7 @@ retry:
 		pos.y = object->y;
 		pos.z = object->z;
 		radius = base + Iwram_MulQ16(Random16(), range);
-		heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
+		heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
 		Vector_AddPolarOffset(radius, heading, &pos);
 		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0
 			|| Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
@@ -3439,20 +3439,20 @@ retry:
 		/* FAKEMATCH: one-pass block: it ends cse2's block, so the division works on the loaded pos.x and the copy outlives it into the move target call. As plain statements cse2 swaps them (differ 16), also with dx/dz split or casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos and &probe, which the native recomputes each try (differ 128). */
 		do
 		{
-			dx = pos.x / 0x10000 - object->home_x;
-			dz = pos.z / 0x10000 - object->home_z;
+			dx = pos.x / 0x10000 - object->homeX;
+			dz = pos.z / 0x10000 - object->homeZ;
 		} while (0);
 		if (dx * dx + dz * dz > limit)
 			goto retry;
 	}
 	else
 	{
-		object->script_value += 0x8000;
-		object->turned_back = 1;
+		object->scriptValue += 0x8000;
+		object->turnedBack = 1;
 		return 0;
 	}
 	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-	object->script_cursor += 4;
+	object->scriptCursor += 4;
 	return 1;
 }
 
@@ -3471,15 +3471,15 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 	s32					 dx;
 	s32					 dz;
 
-	args = &object->script[(s16)object->script_cursor + 1];
+	args = &object->script[(s16)object->scriptCursor + 1];
 	base = *args++;
 	range = *args++;
 	limit = *args / 0x10000;
-	angle = object->script_value;
+	angle = object->scriptValue;
 	limit *= limit;
 	tries = 0;
-	dx = object->x / 0x10000 - object->home_x;
-	dz = object->z / 0x10000 - object->home_z;
+	dx = object->x / 0x10000 - object->homeX;
+	dz = object->z / 0x10000 - object->homeZ;
 	if (dx * dx + dz * dz <= limit)
 	{
 	roam:
@@ -3531,11 +3531,11 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 			Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
 			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
 				goto roam;
-			dx = pos.x / 0x10000 - object->home_x;
-			dz = pos.z / 0x10000 - object->home_z;
+			dx = pos.x / 0x10000 - object->homeX;
+			dz = pos.z / 0x10000 - object->homeZ;
 			if (dx * dx + dz * dz > limit)
 				goto roam;
-			object->flags_59 |= 2;
+			object->flags59 |= 2;
 			Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
 			goto done;
 		}
@@ -3560,11 +3560,11 @@ back:
 		Vector_AddPolarOffset(radius, heading, &pos);
 		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
 			goto back;
-		object->flags_59 &= ~2;
+		object->flags59 &= ~2;
 		Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
 	}
 done:
-	object->script_cursor += 4;
+	object->scriptCursor += 4;
 	return 1;
 }
 
@@ -3577,9 +3577,9 @@ enum ScriptOperandOperation
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 
-extern OperandFunc Script_OperandHandlerTable[];
+extern OperandFunc gScript_OperandHandlerTable[];
 
-// 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は comparison_result)
+// 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は comparisonResult)
 // 32 ビットの項目
 #define DEFINE_OPERAND_WORD(name, field)                              \
 	void name(struct ScriptOperands *state, s32 operation, s32 value) \
@@ -3594,7 +3594,7 @@ extern OperandFunc Script_OperandHandlerTable[];
 			state->field += value;                                    \
 			return;                                                   \
 		}                                                             \
-		state->comparison_result = state->field == value;             \
+		state->comparisonResult = state->field == value;             \
 	}
 
 // アドレスの項目: 加算は value の 4 倍 (4 バイト単位)
@@ -3611,7 +3611,7 @@ extern OperandFunc Script_OperandHandlerTable[];
 			state->field += value * 4;                                \
 			return;                                                   \
 		}                                                             \
-		state->comparison_result = state->field == value;             \
+		state->comparisonResult = state->field == value;             \
 	}
 
 // 8 ビット、16 ビットの項目: 比較は項目の型に切り詰めた値と行う
@@ -3628,11 +3628,11 @@ extern OperandFunc Script_OperandHandlerTable[];
 		}                                                             \
 		else                                                          \
 		{                                                             \
-			state->comparison_result = state->field == (type)value;   \
+			state->comparisonResult = state->field == (type)value;   \
 		}                                                             \
 	}
 
-DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, script_address)
+DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -3646,83 +3646,83 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
 	}
 	else
 	{
-		state->comparison_result = (s16)state->cursor == (s16)value;
+		state->comparisonResult = (s16)state->cursor == (s16)value;
 	}
 }
 
-DEFINE_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsigned_halfword, u16)
-DEFINE_OPERAND_WORD(Script_SetOrCompareX, word_08)
-DEFINE_OPERAND_WORD(Script_SetOrCompareY, word_0c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word_10)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsignedHalfword, u16)
+DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
+DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
 
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
 	if (operation == SCRIPT_OPERAND_SET)
 	{
-		state->halfword_20 = value;
+		state->halfword20 = value;
 		return;
 	}
 	if (operation == SCRIPT_OPERAND_ADD)
 	{
-		state->halfword_20 = (state->halfword_20 + value);
+		state->halfword20 = (state->halfword20 + value);
 		return;
 	}
-	state->comparison_result = state->halfword_20 == (s16)value;
+	state->comparisonResult = state->halfword20 == (s16)value;
 }
 
-DEFINE_OPERAND_WORD(Script_SetOrCompareScaleX, word_18)
-DEFINE_OPERAND_WORD(Script_SetOrCompareScaleY, word_1c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityX, word_24)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityY, word_28)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityZ, word_2c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word_30)
-DEFINE_OPERAND_WORD(Script_SetOrCompareAcceleration, word_34)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetX, word_38)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetY, word_3c)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTargetZ, word_40)
-DEFINE_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word_44)
-DEFINE_OPERAND_WORD(Script_SetOrCompareGravity, word_48)
-DEFINE_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word_14)
-DEFINE_OPERAND_WORD(Script_SetOrCompareWord4c, word_4c)
-DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address_50)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte54, byte_54, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte_55, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte_56, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparison_result, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte_58, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte_59, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte_5a, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte_5b, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte_5d, u8)
+DEFINE_OPERAND_WORD(Script_SetOrCompareScaleX, word18)
+DEFINE_OPERAND_WORD(Script_SetOrCompareScaleY, word1c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityX, word24)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityY, word28)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityZ, word2c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word30)
+DEFINE_OPERAND_WORD(Script_SetOrCompareAcceleration, word34)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetX, word38)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetY, word3c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetZ, word40)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word44)
+DEFINE_OPERAND_WORD(Script_SetOrCompareGravity, word48)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word14)
+DEFINE_OPERAND_WORD(Script_SetOrCompareWord4c, word4c)
+DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address50)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte54, byte54, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte55, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte56, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparisonResult, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte58, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte59, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
 
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value)
 {
 	if (operation == SCRIPT_OPERAND_SET)
 	{
-		work->halfword_5e = value;
+		work->halfword5e = value;
 		return;
 	}
 	if (operation == SCRIPT_OPERAND_ADD)
 	{
-		work->halfword_5e += value;
+		work->halfword5e += value;
 		return;
 	}
-	work->comparison_result = (s16)work->halfword_5e == (s16)value;
+	work->comparisonResult = (s16)work->halfword5e == (s16)value;
 }
 
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signed_halfword_64, s16)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signed_halfword_66, s16)
-DEFINE_OPERAND_WORD(Script_SetOrCompareWord68, word_68)
-DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word_6c)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte_62, u8)
-DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte_63, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signedHalfword64, s16)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signedHalfword66, s16)
+DEFINE_OPERAND_WORD(Script_SetOrCompareWord68, word68)
+DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
 
 // 命令語の次の 2 語 (項目の番号と値) を読み、項目の関数に operation をわたす
 static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation)
 {
 	s16			index = work->cursor;
-	const s32  *command = (const s32 *)work->script_address + index + 1;
-	OperandFunc handler = Script_OperandHandlerTable[command[0]];
+	const s32  *command = (const s32 *)work->scriptAddress + index + 1;
+	OperandFunc handler = gScript_OperandHandlerTable[command[0]];
 
 	if (handler != 0)
 		handler(work, operation, command[1]);
@@ -3755,7 +3755,7 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
 	struct ObjectRuntime *object = raw;
 
 	if (object != NULL)
-		*(s32 *)object->unknown_6c = value;
+		*(s32 *)object->unk6c = value;
 }
 
 #if EDITION_INTERNATIONAL
@@ -3774,17 +3774,17 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 
 	if (GameFlag_TestFar(0x107) != 0)
 	{
-		StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
+		StoreHalfword((s16 *)&work->raisedTrigger, 0xFA);
 	}
 	else if (work->mode == 3)
 	{
 		if (ASSIGNED_KEYS & 0x100)
 		{
-			StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
+			StoreHalfword((s16 *)&work->raisedTrigger, 0xFC88);
 		}
 		else if (ASSIGNED_KEYS & 0x200)
 		{
-			StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
+			StoreHalfword((s16 *)&work->raisedTrigger, 0xFC87);
 		}
 	}
 	else
@@ -3792,10 +3792,10 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 		switch (selector)
 		{
 		case 0:
-			StoreHalfword(&work->psynergy_request, request);
+			StoreHalfword(&work->psynergyRequest, request);
 			break;
 		case 1:
-			StoreHalfword((s16 *)work->unknown_180, request);
+			StoreHalfword((s16 *)work->unk180, request);
 			break;
 		}
 	}
@@ -3810,28 +3810,28 @@ s32 Field_CheckConfiguredKeys(void)
 
 	if (work == NULL)
 		return 0;
-	if (gKeyState & gGameState.select_keys)
+	if (gKeyState & gGameState.selectKeys)
 	{
-		work->unknown_172[0] = 1;
+		work->unk172[0] = 1;
 		result = 1;
 	}
-	else if (gKeyState & gGameState.a_keys)
+	else if (gKeyState & gGameState.aKeys)
 	{
-		work->unknown_172[1] = 1;
+		work->unk172[1] = 1;
 		result = 1;
 	}
-	else if (gKeyState & gGameState.start_keys)
+	else if (gKeyState & gGameState.startKeys)
 	{
-		work->unknown_172[2] = 1;
+		work->unk172[2] = 1;
 		result = 1;
 	}
-	else if (gKeyState & gGameState.first_shortcut_keys)
+	else if (gKeyState & gGameState.firstShortcutKeys)
 	{
-		result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);
+		result = Field_StoreAssignedKeyValue(gGameState.firstShortcut);
 	}
-	else if (gKeyState & gGameState.second_shortcut_keys)
+	else if (gKeyState & gGameState.secondShortcutKeys)
 	{
-		result = Field_StoreAssignedKeyValue(gGameState.second_shortcut);
+		result = Field_StoreAssignedKeyValue(gGameState.secondShortcut);
 	}
 	return result;
 }
@@ -3855,16 +3855,16 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 struct WorldMapSprite
 {
 	struct FieldSprite sprite;
-	u8				   unknown_28[4];
+	u8				   unk28[4];
 	u8				  *shadow;
 };
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
 	struct FieldPosition  position;
-	struct FieldPosition  test_position;
+	struct FieldPosition  testPosition;
 	struct FieldPosition  contact;
-	s16					  angle_offsets[22];
+	s16					  angleOffsets[22];
 	s32					  collision;
 	s32					  pushed;
 	s16					  heading;
@@ -3872,7 +3872,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 	s32					  mode;
 	u16					  direction;
 	s32					  rotation;
-	s32					  angle_index;
+	s32					  angleIndex;
 	s32					  count;
 	struct ObjectRuntime *other;
 
@@ -3886,7 +3886,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		free = 0;
 		for (block = 0; block < 512; block++)
 		{
-			if (ResourceBlockOwners[block] == 0xff)
+			if (gResourceBlockOwners[block] == 0xff)
 				free++;
 		}
 		if (free - 136 < 0)
@@ -3924,26 +3924,26 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				goto wait_d;
 		}
 	}
-	if (gKeysHeld & gGameState.dash_keys)
+	if (gKeysHeld & gGameState.dashKeys)
 	{
-		object->speed_limit = 0x18000;
+		object->speedLimit = 0x18000;
 		object->acceleration = 0x4000;
 		mode = 5;
 	}
 	else
 	{
-		object->speed_limit = 0x10000;
+		object->speedLimit = 0x10000;
 		object->acceleration = 0x4000;
 		mode = 2;
 	}
 	if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B))
 	{
-		object->speed_limit = 0x40000;
+		object->speedLimit = 0x40000;
 		object->acceleration = 0x10000;
 		mode = 5;
 	}
 
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	if ((u16)angle == 0xffff)
 	{
 		collision |= 4;
@@ -3963,29 +3963,29 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		{
 			if (Map_CheckObjectStep(object, &position) == 0)
 			{
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) == 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) == 0)
 				{
-					test_position.x = object->x;
-					test_position.y = object->y;
-					test_position.z = object->z;
-					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-					if (Map_CheckObjectStep(object, &test_position) == 0)
+					testPosition.x = object->x;
+					testPosition.y = object->y;
+					testPosition.z = object->z;
+					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
+					if (Map_CheckObjectStep(object, &testPosition) == 0)
 					{
-						test_position.x = object->x;
-						test_position.y = object->y;
-						test_position.z = object->z;
-						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-						if (Map_CheckObjectStep(object, &test_position) == 0)
+						testPosition.x = object->x;
+						testPosition.y = object->y;
+						testPosition.z = object->z;
+						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
+						if (Map_CheckObjectStep(object, &testPosition) == 0)
 						{
-							test_position.x = object->x;
-							test_position.y = object->y;
-							test_position.z = object->z;
-							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-							if (Map_CheckObjectStep(object, &test_position) == 0)
+							testPosition.x = object->x;
+							testPosition.y = object->y;
+							testPosition.z = object->z;
+							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
+							if (Map_CheckObjectStep(object, &testPosition) == 0)
 							{
 								heading = angle;
 								goto push_objects;
@@ -3996,44 +3996,44 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			}
 			direction = angle;
 			count = 0;
-			angle_offsets[count++] = direction + 0x1000;
-			angle_offsets[count++] = direction - 0x1000;
-			angle_offsets[count++] = direction + 0x2000;
-			angle_offsets[count++] = direction - 0x2000;
-			angle_offsets[count++] = direction + 0x3000;
-			angle_offsets[count++] = direction - 0x3000;
-			for (angle_index = 0; angle_index < count; angle_index++)
+			angleOffsets[count++] = direction + 0x1000;
+			angleOffsets[count++] = direction - 0x1000;
+			angleOffsets[count++] = direction + 0x2000;
+			angleOffsets[count++] = direction - 0x2000;
+			angleOffsets[count++] = direction + 0x3000;
+			angleOffsets[count++] = direction - 0x3000;
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
 			{
-				heading = angle_offsets[angle_index];
+				heading = angleOffsets[angleIndex];
 				position.x = object->x;
 				position.y = object->y;
 				position.z = object->z;
 				Vector_AddPolarOffset(0x80000, (u16)heading, &position);
 				if (Map_CheckObjectStep(object, &position) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) == 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) == 0)
 					goto push_objects;
 			}
 			position.x = object->x;
@@ -4047,55 +4047,55 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			contact.z = object->z;
 			Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
 			other = gObjectSlots;
-			for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++)
+			for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++)
 			{
 				s32 radius;
 
 				radius = object->radius - 2;
 				if (other->script == 0)
 					continue;
-				if ((other->unknown_59 & 1) == 0)
+				if ((other->unk59 & 1) == 0)
 					continue;
 				if (other == object)
 					continue;
 				if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2)
 					< 0)
 					continue;
-				if ((other->unknown_59 & 2) != 0 && other->movement_state == 0)
+				if ((other->unk59 & 2) != 0 && other->movementState == 0)
 				{
 					direction = ArcTan2(other->z - object->z, other->x - object->x);
-					test_position.x = other->x;
-					test_position.y = other->y;
-					test_position.z = other->z;
+					testPosition.x = other->x;
+					testPosition.y = other->y;
+					testPosition.z = other->z;
 					heading = direction;
-					Vector_AddPolarOffset(0x4000, direction, &test_position);
+					Vector_AddPolarOffset(0x4000, direction, &testPosition);
 					if (!ScriptObject_CheckOverlap(
-							(struct ScriptObjectEntry *)other, (s32 *)&test_position))
+							(struct ScriptObjectEntry *)other, (s32 *)&testPosition))
 					{
-						test_position.x = other->x;
-						test_position.y = other->y;
-						test_position.z = other->z;
-						Vector_AddPolarOffset(0xa0000, direction, &test_position);
-						if (Map_CheckObjectStep(other, &test_position) == 0)
+						testPosition.x = other->x;
+						testPosition.y = other->y;
+						testPosition.z = other->z;
+						Vector_AddPolarOffset(0xa0000, direction, &testPosition);
+						if (Map_CheckObjectStep(other, &testPosition) == 0)
 						{
-							test_position.x = other->x;
-							test_position.y = other->y;
-							test_position.z = other->z;
-							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-							if (Map_CheckObjectStep(other, &test_position) == 0
-								&& Map_CheckObjectStep(other, &test_position) == 0)
+							testPosition.x = other->x;
+							testPosition.y = other->y;
+							testPosition.z = other->z;
+							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
+							if (Map_CheckObjectStep(other, &testPosition) == 0
+								&& Map_CheckObjectStep(other, &testPosition) == 0)
 							{
-								test_position.x = other->x;
-								test_position.y = other->y;
-								test_position.z = other->z;
-								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-								if (Map_CheckObjectStep(other, &test_position) == 0)
+								testPosition.x = other->x;
+								testPosition.y = other->y;
+								testPosition.z = other->z;
+								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &testPosition);
+								if (Map_CheckObjectStep(other, &testPosition) == 0)
 								{
 									Vector_AddPolarOffset(
 										0x4000, direction, (struct FieldPosition *)&other->x);
-									other->target_x = -0x80000000;
-									other->target_y = -0x80000000;
-									other->target_z = -0x80000000;
+									other->targetX = -0x80000000;
+									other->targetY = -0x80000000;
+									other->targetZ = -0x80000000;
 									pushed |= 1;
 									continue;
 								}
@@ -4107,7 +4107,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			}
 			if (collision == 0 && pushed != 0)
 			{
-				object->speed_limit = 0x4000;
+				object->speedLimit = 0x4000;
 				object->acceleration = 0x2000;
 			}
 		}
@@ -4115,9 +4115,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 	if (gEventWork != NULL)
 	{
 		if (collision & 3)
-			gEventWork->blocked_steps++;
+			gEventWork->blockedSteps++;
 		else
-			gEventWork->blocked_steps = 0;
+			gEventWork->blockedSteps = 0;
 	}
 	if (pushed != 0)
 	{
@@ -4128,7 +4128,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		s32 action;
 
 		action = 9;
-		if (UnitGetFar(gGameState.selected_actor)->hp == 0)
+		if (UnitGetFar(gGameState.selectedActor)->hp == 0)
 			action = 22;
 		ObjectDispatch_ApplyArgumentToChildren(object, action);
 	}
@@ -4139,11 +4139,11 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 
 	if (collision != 0)
 	{
-		object->target_x = -0x80000000;
-		object->target_y = -0x80000000;
-		object->target_z = -0x80000000;
-		object->velocity_x = 0;
-		object->velocity_z = 0;
+		object->targetX = -0x80000000;
+		object->targetY = -0x80000000;
+		object->targetZ = -0x80000000;
+		object->velocityX = 0;
+		object->velocityZ = 0;
 		if (collision & 3)
 		{
 			s32 difference;
@@ -4157,18 +4157,18 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			object->angle += difference;
 		}
 		object->action = 0;
-		object->unknown_66 = 2;
+		object->unk66 = 2;
 	}
 	else
 	{
 		s32 square;
 
 		Object_SetMoveTarget(object, position.x, position.y, position.z);
-		square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
-						   + Iwram_MulQ16(object->velocity_z, object->velocity_z));
-		object->velocity_x = 0;
-		object->velocity_z = 0;
-		Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocity_x);
+		square = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX)
+						   + Iwram_MulQ16(object->velocityZ, object->velocityZ));
+		object->velocityX = 0;
+		object->velocityZ = 0;
+		Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocityX);
 		if (object->action != 0)
 			object->action--;
 	}
@@ -4184,11 +4184,11 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		{
 			struct FieldSprite *animation;
 
-			effect->terrain_height = object->terrain_height;
+			effect->terrainHeight = object->terrainHeight;
 			animation = effect->animation;
 			ObjectDispatch_Initialize(
-				(struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
-			effect->unknown_23 = 2;
+				(struct DispatchObject *)effect, (u32)gWorldMap_FootprintActions);
+			effect->unk23 = 2;
 			effect->flags = collision;
 			if (animation != 0)
 			{
@@ -4197,18 +4197,18 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				animation->rotation = rotation + 0x4000;
 				animation->priority = 3;
 			}
-			if (object->unknown_66 == 2)
+			if (object->unk66 == 2)
 			{
 				AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 2);
-				object->unknown_66 = collision;
+				object->unk66 = collision;
 			}
-			if (object->unknown_66 != 0)
+			if (object->unk66 != 0)
 				effect->angle = 0x8000;
 			if (mode == 5)
 				object->action = 12;
 			else
 				object->action = 18;
-			object->unknown_66 ^= 1;
+			object->unk66 ^= 1;
 		}
 	}
 	Field_CheckConfiguredKeys();
@@ -4226,21 +4226,21 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 {
 	struct FieldPosition position;
 #if EDITION_INTERNATIONAL
-	struct FieldPosition test_position;
-	s16					 angle_offsets[28];
+	struct FieldPosition testPosition;
+	s16					 angleOffsets[28];
 #else
-	struct FieldPosition left_position;
-	struct FieldPosition right_position;
-	s16					 angle_offsets[22];
+	struct FieldPosition leftPosition;
+	struct FieldPosition rightPosition;
+	s16					 angleOffsets[22];
 #endif
 	s32						collision;
 	s32						angle;
 	u16						direction;
-	s32						angle_index;
+	s32						angleIndex;
 	s32						mode;
 	s32						count;
 	s32						difference;
-	s32						collision_kind;
+	s32						collisionKind;
 	s32						square;
 	s32						rate;
 	struct PerspectiveWork *work;
@@ -4254,21 +4254,21 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 #if !EDITION_INTERNATIONAL
 	count = 0;
 #endif
-	if (gKeysHeld & gGameState.dash_keys)
+	if (gKeysHeld & gGameState.dashKeys)
 	{
-		object->speed_limit = 0x10000;
+		object->speedLimit = 0x10000;
 		object->acceleration = 0x14000;
 		mode = 5;
 	}
 	else
 	{
-		object->speed_limit = 0x8000;
+		object->speedLimit = 0x8000;
 		object->acceleration = 0x4000;
 	}
 	if ((gKeysRepeat & KEY_L) != 0)
-		object->speed_limit = 0x40000;
+		object->speedLimit = 0x40000;
 
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	direction = angle;
 	if (direction == 0xffff)
 	{
@@ -4286,37 +4286,37 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 #if EDITION_INTERNATIONAL
 			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) == 0)
 			{
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					== 0)
 				{
-					test_position.x = object->x;
-					test_position.y = object->y;
-					test_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+					testPosition.x = object->x;
+					testPosition.y = object->y;
+					testPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &testPosition);
 					if (CheckWorldMapCollisionRange(
-							(s32)object, (struct WorldPosition *)&test_position)
+							(s32)object, (struct WorldPosition *)&testPosition)
 						== 0)
 					{
-						test_position.x = object->x;
-						test_position.y = object->y;
-						test_position.z = object->z;
+						testPosition.x = object->x;
+						testPosition.y = object->y;
+						testPosition.z = object->z;
 						Vector_AddPolarOffset(
-							WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+							WORLD_PROBE_RADIUS, direction + 0x2000, &testPosition);
 						if (CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&test_position)
+								(s32)object, (struct WorldPosition *)&testPosition)
 							== 0)
 						{
-							test_position.x = object->x;
-							test_position.y = object->y;
-							test_position.z = object->z;
+							testPosition.x = object->x;
+							testPosition.y = object->y;
+							testPosition.z = object->z;
 							Vector_AddPolarOffset(
-								WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+								WORLD_PROBE_RADIUS, direction - 0x2000, &testPosition);
 							if (CheckWorldMapCollisionRange(
-									(s32)object, (struct WorldPosition *)&test_position)
+									(s32)object, (struct WorldPosition *)&testPosition)
 								== 0)
 								goto update_object;
 						}
@@ -4324,17 +4324,17 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 				}
 			}
 			count = 0;
-			angle_offsets[count++] = direction + 0x1000;
-			angle_offsets[count++] = direction - 0x1000;
-			angle_offsets[count++] = direction + 0x2000;
-			angle_offsets[count++] = direction - 0x2000;
-			angle_offsets[count++] = direction + 0x3000;
-			angle_offsets[count++] = direction - 0x3000;
-			angle_offsets[count++] = direction + 0x4000;
-			angle_offsets[count++] = direction - 0x4000;
-			for (angle_index = 0; angle_index < count; angle_index++)
+			angleOffsets[count++] = direction + 0x1000;
+			angleOffsets[count++] = direction - 0x1000;
+			angleOffsets[count++] = direction + 0x2000;
+			angleOffsets[count++] = direction - 0x2000;
+			angleOffsets[count++] = direction + 0x3000;
+			angleOffsets[count++] = direction - 0x3000;
+			angleOffsets[count++] = direction + 0x4000;
+			angleOffsets[count++] = direction - 0x4000;
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
 			{
-				direction = angle_offsets[angle_index];
+				direction = angleOffsets[angleIndex];
 				position.x = object->x;
 				position.y = object->y;
 				position.z = object->z;
@@ -4342,32 +4342,32 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
 				angle = (s16)direction;
@@ -4376,47 +4376,47 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 			collision |= 1;
 
 #else
-			left_position.x = object->x;
-			left_position.y = object->y;
-			left_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-			right_position.x = object->x;
-			right_position.y = object->y;
-			right_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+			leftPosition.x = object->x;
+			leftPosition.y = object->y;
+			leftPosition.z = object->z;
+			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &leftPosition);
+			rightPosition.x = object->x;
+			rightPosition.y = object->y;
+			rightPosition.z = object->z;
+			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &rightPosition);
 			if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 					| CheckWorldMapCollisionRange(
-						(s32)object, (struct WorldPosition *)&left_position)
+						(s32)object, (struct WorldPosition *)&leftPosition)
 					| CheckWorldMapCollisionRange(
-						(s32)object, (struct WorldPosition *)&right_position))
+						(s32)object, (struct WorldPosition *)&rightPosition))
 				!= 0)
 			{
-				angle_offsets[count++] = direction + 0x1000;
-				angle_offsets[count++] = direction - 0x1000;
-				angle_offsets[count++] = direction + 0x2000;
-				angle_offsets[count++] = direction - 0x2000;
-				angle_offsets[count++] = direction + 0x3000;
-				angle_offsets[count++] = direction - 0x3000;
-				for (angle_index = 0; angle_index < count; angle_index++)
+				angleOffsets[count++] = direction + 0x1000;
+				angleOffsets[count++] = direction - 0x1000;
+				angleOffsets[count++] = direction + 0x2000;
+				angleOffsets[count++] = direction - 0x2000;
+				angleOffsets[count++] = direction + 0x3000;
+				angleOffsets[count++] = direction - 0x3000;
+				for (angleIndex = 0; angleIndex < count; angleIndex++)
 				{
-					direction = angle_offsets[angle_index];
+					direction = angleOffsets[angleIndex];
 					position.x = object->x;
 					position.y = object->y;
 					position.z = object->z;
 					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
-					left_position.x = object->x;
-					left_position.y = object->y;
-					left_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-					right_position.x = object->x;
-					right_position.y = object->y;
-					right_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+					leftPosition.x = object->x;
+					leftPosition.y = object->y;
+					leftPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &leftPosition);
+					rightPosition.x = object->x;
+					rightPosition.y = object->y;
+					rightPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &rightPosition);
 					if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 							| CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&left_position)
+								(s32)object, (struct WorldPosition *)&leftPosition)
 							| CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&right_position))
+								(s32)object, (struct WorldPosition *)&rightPosition))
 						!= 0)
 						continue;
 					angle = (s16)direction;
@@ -4432,9 +4432,9 @@ update_object:
 	if (gEventWork != NULL)
 	{
 		if ((collision & 3) != 0)
-			gEventWork->blocked_steps++;
+			gEventWork->blockedSteps++;
 		else
-			gEventWork->blocked_steps = 0;
+			gEventWork->blockedSteps = 0;
 	}
 	if (collision != 0)
 		ObjectDispatch_ApplyArgumentToChildren(object, 9);
@@ -4443,11 +4443,11 @@ update_object:
 
 	if (collision != 0)
 	{
-		object->target_x = -0x80000000;
-		object->target_y = -0x80000000;
-		object->target_z = -0x80000000;
-		object->velocity_x = 0;
-		object->velocity_z = 0;
+		object->targetX = -0x80000000;
+		object->targetY = -0x80000000;
+		object->targetZ = -0x80000000;
+		object->velocityX = 0;
+		object->velocityZ = 0;
 		if ((collision & 3) != 0)
 		{
 			direction = angle;
@@ -4459,22 +4459,22 @@ update_object:
 			object->angle += difference;
 		}
 		object->action = 0;
-		object->unknown_66 = 2;
+		object->unk66 = 2;
 	}
 	else
 	{
 		Object_SetMoveTarget(object, position.x, position.y, position.z);
-		square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
-						   + Iwram_MulQ16(object->velocity_z, object->velocity_z));
-		object->velocity_x = collision;
-		object->velocity_z = collision;
-		Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocity_x);
+		square = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX)
+						   + Iwram_MulQ16(object->velocityZ, object->velocityZ));
+		object->velocityX = collision;
+		object->velocityZ = collision;
+		Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocityX);
 		if (object->action != 0)
 			object->action--;
 	}
 
 	work = gMapWork[0];
-	rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+	rate = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
 	step = (s16)(rate - work->yaw) / 8;
 	if (step > 0x200)
 		step = 0x200;
@@ -4484,11 +4484,11 @@ update_object:
 		step = rate - work->yaw;
 	work->yaw += step;
 
-	if (object->animation_kind == 1)
+	if (object->animationKind == 1)
 	{
 		sprite = object->animation;
-		collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
-		if (collision_kind == 9)
+		collisionKind = GetWorldMapCollision((struct WorldPosition *)&object->x);
+		if (collisionKind == 9)
 		{
 			((struct WorldMapSprite *)sprite)->shadow[6] = 1;
 			sprite->flags = 0;
@@ -4498,21 +4498,21 @@ update_object:
 			((struct WorldMapSprite *)sprite)->shadow[6] = 9;
 			sprite->flags = 1;
 		}
-		if (collision_kind == 6 && object->action == 0 && collision == 0)
+		if (collisionKind == 6 && object->action == 0 && collision == 0)
 		{
 			effect = FieldObject_Create(24, object->x, object->y, object->z);
 			if (effect != 0)
 			{
 				animation = effect->animation;
 				ObjectDispatch_Initialize(
-					(struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
+					(struct DispatchObject *)effect, (u32)(gWorldMap_FootprintActions + 12));
 				effect->flags = collision;
-				effect->terrain_id = 1;
+				effect->terrainId = 1;
 				if (animation != 0)
 				{
 					AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
 					animation->flags = collision;
-					animation->blend_mode = 1;
+					animation->blendMode = 1;
 					animation->priority = 2;
 				}
 				object->action = 10;
@@ -4536,20 +4536,20 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
 	struct FieldPosition pos;
-	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches. Without it the frame is 12 bytes, not 80 (differ 8: the sp adjustments and pos's address). 68 bytes is exactly the probe locals of the sibling Object_MoveOnWorldMap (test_position and angle_offsets[28] internationally, left_position, right_position and angle_offsets[22] in Japan); declared here instead, they also match tbs-en and tbs-ja (2026-10-13). */
+	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches. Without it the frame is 12 bytes, not 80 (differ 8: the sp adjustments and pos's address). 68 bytes is exactly the probe locals of the sibling Object_MoveOnWorldMap (testPosition and angleOffsets[28] internationally, leftPosition, rightPosition and angleOffsets[22] in Japan); declared here instead, they also match tbs-en and tbs-ja (2026-10-13). */
 	u8					 unused[68];
 	struct MapCell		*from;
 	struct MapCell		*to;
 	u16					 angle;
 	s32					 motion;
 	s32					 blocked;
-	s32					 delta_z;
+	s32					 deltaZ;
 	s32					 height;
 
-	object->speed_limit = 0x8000;
+	object->speedLimit = 0x8000;
 	object->acceleration = 0x4000;
 	motion = 12;
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	if (angle == 0xffff)
 	{
 		blocked = 4;
@@ -4569,10 +4569,10 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 		pos.z = 0;
 		Vector_AddPolarOffset(0x80000, angle, &pos);
 		pos.x += object->x;
-		delta_z = pos.z;
-		if (delta_z < 0)
+		deltaZ = pos.z;
+		if (deltaZ < 0)
 			object->angle = 0xc000;
-		if (delta_z > 0)
+		if (deltaZ > 0)
 			object->angle = 0x4000;
 		pos.y = object->y - pos.z;
 		pos.z = object->z;
@@ -4580,20 +4580,20 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 			&((struct MapCell *)Ram_MapCellBuffer)[object->x / 0x100000 + (pos.z / 0x100000) * 128];
 		to = &((struct MapCell *)Ram_MapCellBuffer)[pos.x / 0x100000 + (pos.z / 0x100000) * 128];
 		if (CheckMapPositionCellOccupied((struct WorldPosition *)&pos) != 0
-			|| from->collision_code != to->collision_code)
+			|| from->collisionCode != to->collisionCode)
 		{
 			blocked = 4;
 			motion = 12;
 		}
 		else if (gKeysHeld & KEY_UP)
 		{
-			height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z - 0x100000);
+			height = Map_GetTerrainHeight(object->terrainId, pos.x, pos.z - 0x100000);
 			if (height - object->y < 0x100000)
 				goto refused;
 		}
 		else if (gKeysHeld & KEY_DOWN)
 		{
-			height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z);
+			height = Map_GetTerrainHeight(object->terrainId, pos.x, pos.z);
 			if (height - object->y > -0x80000)
 			{
 			refused:
@@ -4605,19 +4605,19 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 	if (gEventWork != NULL)
 	{
 		if (blocked & 3)
-			gEventWork->blocked_steps++;
+			gEventWork->blockedSteps++;
 		else
-			gEventWork->blocked_steps = 0;
+			gEventWork->blockedSteps = 0;
 	}
 	ObjectDispatch_ApplyArgumentToChildren(object, motion);
 	if (blocked != 0)
 	{
-		object->target_x = 0x80000000;
-		object->target_y = 0x80000000;
-		object->target_z = 0x80000000;
-		object->velocity_x = 0;
-		object->velocity_y = 0;
-		object->velocity_z = 0;
+		object->targetX = 0x80000000;
+		object->targetY = 0x80000000;
+		object->targetZ = 0x80000000;
+		object->velocityX = 0;
+		object->velocityY = 0;
+		object->velocityZ = 0;
 	}
 	else
 	{
@@ -4634,7 +4634,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 	u8 *table;
 
 	p = buf;
-	table = Runtime_ByteRemapTable;
+	table = gRuntime_ByteRemapTable;
 	n = cnt - 1;
 	if (n != -1)
 	{
@@ -4783,26 +4783,26 @@ struct SceneEntry
 	u16 resources[6];
 };
 
-extern struct SceneEntry Map_LayeredScenes[];
+extern struct SceneEntry gMap_LayeredScenes[];
 
 struct SceneLayerSource
 {
 	u8 x;
 	u8 y;
-	s8 scroll_x;
-	s8 scroll_y;
-	s8 speed_x;
-	s8 speed_y;
-	u8 period_x;
-	u8 period_y;
+	s8 scrollX;
+	s8 scrollY;
+	s8 speedX;
+	s8 speedY;
+	u8 periodX;
+	u8 periodY;
 };
 
 struct SceneHeader
 {
 	u8						origin[4];
 	u8						priority[3];
-	u8						char_base[3];
-	u16						unknown_0a;
+	u8						charBase[3];
+	u16						unk0a;
 	struct SceneLayerSource layers[3];
 	s32						tiles;
 	s32						collision;
@@ -4819,8 +4819,8 @@ s32 Map_LoadLayeredScene(s32 index)
 	struct SceneHeader		*header;
 	struct MapLayerScroll	*layer;
 	struct SceneLayerSource *source;
-	s32						*scale_x;
-	s32						*scale_y;
+	s32						*scaleX;
+	s32						*scaleY;
 	s32						 i;
 	u8						*buf;
 	s32						 backdrop;
@@ -4830,7 +4830,7 @@ s32 Map_LoadLayeredScene(s32 index)
 	REG_DISPCNT &=
 		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 	Blend_SetDarkenTarget0(0);
-	entry = &Map_LayeredScenes[index];
+	entry = &gMap_LayeredScenes[index];
 	work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
 	Iwram_ClearWords(work, sizeof(struct MapScrollWork));
 	header =
@@ -4855,14 +4855,14 @@ s32 Map_LoadLayeredScene(s32 index)
 		DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
 	}
 	work->script = (u8 *)header + header->script;
-	work->min_x = header->origin[0] << 19;
-	work->min_y = header->origin[1] << 19;
-	work->max_x = header->origin[2] << 19;
-	work->max_y = header->origin[3] << 19;
-	scale_x = &work->view_x;
-	*scale_x = 0;
-	scale_y = &work->view_y;
-	*scale_y = 0;
+	work->minX = header->origin[0] << 19;
+	work->minY = header->origin[1] << 19;
+	work->maxX = header->origin[2] << 19;
+	work->maxY = header->origin[3] << 19;
+	scaleX = &work->viewX;
+	*scaleX = 0;
+	scaleY = &work->viewY;
+	*scaleY = 0;
 	work->enabled[0] = header->priority[0];
 	work->enabled[1] = header->priority[1];
 	work->enabled[2] = header->priority[2];
@@ -4872,26 +4872,26 @@ s32 Map_LoadLayeredScene(s32 index)
 	{
 		u32 x = source->x;
 		u32 y = source->y;
-		s32 scroll_x;
-		s32 scroll_y;
-		s32 base_x;
-		s32 base_y;
+		s32 scrollX;
+		s32 scrollY;
+		s32 baseX;
+		s32 baseY;
 
-		layer->offset_x = base_x = x << 19;
-		layer->offset_y = base_y = y << 19;
-		scroll_x = source->scroll_x << 12;
-		scroll_y = source->scroll_y << 12;
-		layer->scale_x = scroll_x;
-		layer->scale_y = scroll_y;
-		layer->speed_x = source->speed_x << 12;
-		layer->speed_y = source->speed_y << 12;
-		layer->mask_x = source->period_x;
-		layer->mask_y = source->period_y;
-		layer->phase_x = 0;
-		layer->phase_y = 0;
+		layer->offsetX = baseX = x << 19;
+		layer->offsetY = baseY = y << 19;
+		scrollX = source->scrollX << 12;
+		scrollY = source->scrollY << 12;
+		layer->scaleX = scrollX;
+		layer->scaleY = scrollY;
+		layer->speedX = source->speedX << 12;
+		layer->speedY = source->speedY << 12;
+		layer->maskX = source->periodX;
+		layer->maskY = source->periodY;
+		layer->phaseX = 0;
+		layer->phaseY = 0;
 		layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
-		layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
-		layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+		layer->x = Iwram_MulQ16(*scaleX, scrollX) + baseX;
+		layer->y = Iwram_MulQ16(*scaleY, scrollY) + baseY;
 		source++;
 		layer++;
 	}
@@ -4902,11 +4902,11 @@ s32 Map_LoadLayeredScene(s32 index)
 		work->flags |= DISPCNT_BG2_ON;
 	if (work->enabled[2] != 0)
 		work->flags |= DISPCNT_BG1_ON;
-	cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
+	cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->charBase[0]) | BGCNT_SCREEN_BASE(5);
 	REG_BG3CNT = cnt;
-	Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6),
+	Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(header->charBase[1]) | BGCNT_SCREEN_BASE(6),
 		&REG_BG2CNT);
-	Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7),
+	Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(header->charBase[2]) | BGCNT_SCREEN_BASE(7),
 		&REG_BG1CNT);
 	if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0)
 	{
@@ -5028,8 +5028,8 @@ void Map_UpdateLayerScroll(void)
 	struct MapLayerScroll *layer;
 	s32					  *origin;
 	s32					   x, y;
-	s32					   min_x, min_y, max_x, max_y;
-	s32					   base_x, base_y;
+	s32					   minX, minY, maxX, maxY;
+	s32					   baseX, baseY;
 	u32					   i;
 
 	work = gMapWork[0];
@@ -5038,82 +5038,82 @@ void Map_UpdateLayerScroll(void)
 	if (origin == 0)
 		return;
 
-	base_x = *origin++ - 0x780000;
+	baseX = *origin++ - 0x780000;
 	{
 		s32 height = *origin++;
-		base_y = *origin - height - 0x600000;
+		baseY = *origin - height - 0x600000;
 	}
-	min_x = work->min_x + work->shake_x;
-	max_x = work->max_x - work->shake_x - 0xf00000;
-	min_y = work->min_y + work->shake_y;
-	max_y = work->max_y - work->shake_y - 0xa00000;
-	if (min_x > max_x)
-		max_x = min_x;
-	if (min_y > max_y)
-		max_y = min_y;
-	if (base_x < min_x)
-		base_x = min_x;
-	if (base_x > max_x)
-		base_x = max_x;
-	if (base_y < min_y)
-		base_y = min_y;
-	if (base_y > max_y)
-		base_y = max_y;
+	minX = work->minX + work->shakeX;
+	maxX = work->maxX - work->shakeX - 0xf00000;
+	minY = work->minY + work->shakeY;
+	maxY = work->maxY - work->shakeY - 0xa00000;
+	if (minX > maxX)
+		maxX = minX;
+	if (minY > maxY)
+		maxY = minY;
+	if (baseX < minX)
+		baseX = minX;
+	if (baseX > maxX)
+		baseX = maxX;
+	if (baseY < minY)
+		baseY = minY;
+	if (baseY > maxY)
+		baseY = maxY;
 
-	if (work->shake_x != 0)
+	if (work->shakeX != 0)
 	{
 		s32 first = Random16();
 		s32 second = Random16();
-		s32 amplitude = work->shake_x;
-		base_x += Iwram_MulQ16(amplitude, first - second);
-		work->shake_x = Iwram_MulQ16(amplitude, work->shake_decay);
+		s32 amplitude = work->shakeX;
+		baseX += Iwram_MulQ16(amplitude, first - second);
+		work->shakeX = Iwram_MulQ16(amplitude, work->shakeDecay);
 	}
-	if (work->shake_y != 0)
+	if (work->shakeY != 0)
 	{
 		s32 first = Random16();
 		s32 second = Random16();
-		s32 amplitude = work->shake_y;
-		base_y += Iwram_MulQ16(amplitude, first - second);
-		work->shake_y = Iwram_MulQ16(amplitude, work->shake_decay);
+		s32 amplitude = work->shakeY;
+		baseY += Iwram_MulQ16(amplitude, first - second);
+		work->shakeY = Iwram_MulQ16(amplitude, work->shakeDecay);
 	}
-	work->view_x = base_x;
-	work->view_y = base_y;
+	work->viewX = baseX;
+	work->viewY = baseY;
 	for (i = 0; i < 3; i++, layer++)
 	{
-		base_x = Iwram_MulQ16(work->view_x, layer->scale_x);
-		base_y = Iwram_MulQ16(work->view_y, layer->scale_y);
-		if (layer->speed_x != 0)
+		baseX = Iwram_MulQ16(work->viewX, layer->scaleX);
+		baseY = Iwram_MulQ16(work->viewY, layer->scaleY);
+		if (layer->speedX != 0)
 		{
-			layer->phase_x += layer->speed_x;
-			base_x = (base_x + layer->phase_x) & ((layer->mask_x << 19) | 0x7ffff);
+			layer->phaseX += layer->speedX;
+			baseX = (baseX + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
 		}
-		if (layer->speed_y != 0)
+		if (layer->speedY != 0)
 		{
-			layer->phase_y += layer->speed_y;
-			base_y = (base_y + layer->phase_y) & ((layer->mask_y << 19) | 0x7ffff);
+			layer->phaseY += layer->speedY;
+			baseY = (baseY + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
 		}
-		base_x += layer->offset_x;
-		base_y += layer->offset_y;
-		x = base_x / 0x80000;
-		y = base_y / 0x80000;
-		if ((layer->x ^ base_x) & 0x80000)
+		baseX += layer->offsetX;
+		baseY += layer->offsetY;
+		x = baseX / 0x80000;
+		y = baseY / 0x80000;
+		if ((layer->x ^ baseX) & 0x80000)
 		{
-			if (layer->x < base_x)
+			if (layer->x < baseX)
 				Map_RenderPaletteMappedBlock(i, x + 30, y);
 			else
 				Map_RenderPaletteMappedBlock(i, x, y);
 		}
-		if ((layer->y ^ base_y) & 0x100000)
+		if ((layer->y ^ baseY) & 0x100000)
 		{
-			if (layer->y < base_y)
+			if (layer->y < baseY)
 				Map_RenderMetatileRow(i, x, y + 20);
 			else
 				Map_RenderMetatileRow(i, x, y);
 		}
-		gBgScroll[3 - i].x = base_x >> 16;
-		gBgScroll[3 - i].y = base_y >> 16;
-		layer->x = base_x;
-		layer->y = base_y;
+		gBgScroll[3 - i].x = baseX >> 16;
+		gBgScroll[3 - i].y = baseY >> 16;
+		layer->x = baseX;
+		layer->y = baseY;
 	}
 }
 
@@ -5126,16 +5126,16 @@ void Map_SetCameraCenter(s32 x, s32 y)
 
 	x -= 0x780000;
 	y -= 0x600000;
-	if (x < work->min_x)
-		x = work->min_x;
-	if (x > work->max_x - 0xf00000)
-		x = work->max_x - 0xf00000;
-	if (y < work->min_y)
-		y = work->min_y;
-	if (y > work->max_y - 0xa00000)
-		y = work->max_y - 0xa00000;
-	work->view_x = x;
-	work->view_y = y;
+	if (x < work->minX)
+		x = work->minX;
+	if (x > work->maxX - 0xf00000)
+		x = work->maxX - 0xf00000;
+	if (y < work->minY)
+		y = work->minY;
+	if (y > work->maxY - 0xa00000)
+		y = work->maxY - 0xa00000;
+	work->viewX = x;
+	work->viewY = y;
 
 	for (no = 0; no < 3; no++)
 	{
@@ -5144,21 +5144,21 @@ void Map_SetCameraCenter(s32 x, s32 y)
 			u32 rows = 22;
 			u32 row, col, rowmod, colmod, i, j;
 
-			x = Iwram_MulQ16(work->view_x, layer->scale_x);
-			y = Iwram_MulQ16(work->view_y, layer->scale_y);
-			if (layer->speed_x)
+			x = Iwram_MulQ16(work->viewX, layer->scaleX);
+			y = Iwram_MulQ16(work->viewY, layer->scaleY);
+			if (layer->speedX)
 			{
-				layer->phase_x += layer->speed_x;
-				x = (x + layer->phase_x) & ((layer->mask_x << 19) | 0x7ffff);
+				layer->phaseX += layer->speedX;
+				x = (x + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
 			}
-			if (layer->speed_y)
+			if (layer->speedY)
 			{
-				layer->phase_y += layer->speed_y;
-				y = (y + layer->phase_y) & ((layer->mask_y << 19) | 0x7ffff);
+				layer->phaseY += layer->speedY;
+				y = (y + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
 				rows = 32;
 			}
-			x += layer->offset_x;
-			y += layer->offset_y;
+			x += layer->offsetX;
+			y += layer->offsetY;
 			layer++;
 			x /= 0x80000;
 			y /= 0x80000;
@@ -5190,11 +5190,11 @@ struct TilePos
 	s32 x, y;
 };
 
-void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height)
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY, u32 width, u32 height)
 {
 	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after the offset differs 59, at the top of the body 32; a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the first destination, 4; address expressions without scr and blk, 113-153. A plain body differs 214. */
-	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-	u32					  *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+	u32					  *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
 	struct TilePos		   tile[3];
 	s32					   i;
@@ -5209,9 +5209,9 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32
 		pos++;
 		layer++;
 	}
-	for (y = dst_y; y < dst_y + height; y++)
+	for (y = dstY; y < dstY + height; y++)
 	{
-		for (x = dst_x; x < dst_x + width; x++)
+		for (x = dstX; x < dstX + width; x++)
 		{
 			u32 val = *src++;
 			u32 cell = val & 0xfff;
@@ -5343,15 +5343,15 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 // セル（16×16 ドット）の矩形をそのまま写す
 // 写した先が BG レイヤーの表示範囲（16×12 セル）にあれば、
 // VRAM の BG マップにもブロックの 2×2 キャラを書く
-// src_x, src_y  : 写すもとの左上（セル）
+// srcX, srcY  : 写すもとの左上（セル）
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
-	s32					   y = dst_y;
-	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
+	s32					   y = dstY;
+	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
 	struct TilePos		   view[3];
 	s32					   i;
@@ -5372,11 +5372,11 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 		layer++;
 		i--;
 	}
-	if (y < dst_y + height)
+	if (y < dstY + height)
 	{
 		do
 		{
-			for (x = dst_x; x < dst_x + width; x++)
+			for (x = dstX; x < dstX + width; x++)
 			{
 				u32	 val = *src++;
 				u32	 cell;
@@ -5463,35 +5463,35 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 			src += (128 - width);
 			dst = 128 - width + dst;
 			y++;
-		} while (y < dst_y + height);
+		} while (y < dstY + height);
 	}
 }
 
 //--------------------------------------------------------------------------
 // セルの矩形の属性だけを写す。写す先のブロック番号はそのまま
-// src_x, src_y  : 写すもとの左上（セル）
+// srcX, srcY  : 写すもとの左上（セル）
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
 	u32 *dst = MAP_CELLS;
 	u32 *src = dst;
 	u16	 row;
 	u16	 col;
 
-	dst += (dst_y << 7) + dst_x;
-	src += (src_y << 7) + src_x;
+	dst += (dstY << 7) + dstX;
+	src += (srcY << 7) + srcX;
 
 	for (row = 0; row < height; row++)
 	{
-		u32 *dst_cell = dst + (row << 7);
-		u32 *src_cell = src + (row << 7);
+		u32 *dstCell = dst + (row << 7);
+		u32 *srcCell = src + (row << 7);
 
 		for (col = 0; col < width; col++)
 		{
-			*dst_cell = (*dst_cell & MAP_CELL_TILE_MASK) | (*src_cell++ & MAP_CELL_ATTRIBUTE_MASK);
-			dst_cell++;
+			*dstCell = (*dstCell & MAP_CELL_TILE_MASK) | (*srcCell++ & MAP_CELL_ATTRIBUTE_MASK);
+			dstCell++;
 		}
 	}
 }
@@ -5499,16 +5499,16 @@ void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 //--------------------------------------------------------------------------
 // セルの矩形のブロック番号だけを写す。写す先の属性はそのまま
 // 表示範囲にあれば VRAM の BG マップも書きかえる
-// src_x, src_y  : 写すもとの左上（セル）
+// srcX, srcY  : 写すもとの左上（セル）
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
 	/* FAKEMATCH: needed to match: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after pos = view differs 38; the scale into n, 52; the scale before the first destination, 54. A plain body differs 204. */
 	s32					   y;
-	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
+	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
 	struct TilePos		   view[3];
 	s32					   i;
@@ -5529,12 +5529,12 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 		layer++;
 		i--;
 	}
-	y = dst_y;
-	if (y < dst_y + height)
+	y = dstY;
+	if (y < dstY + height)
 	{
 		do
 		{
-			for (x = dst_x; x < dst_x + width; x++)
+			for (x = dstX; x < dstX + width; x++)
 			{
 				u32 val = *src++;
 				u32 cell;
@@ -5595,7 +5595,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 			src = src + (128 - width);
 			dst = 128 - width + dst;
 			y++;
-		} while (y < dst_y + height);
+		} while (y < dstY + height);
 	}
 }
 
@@ -5649,7 +5649,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 
 	x &= 1;
 	y &= 1;
-	shown = &work->quarter_tiles[(layer * 2 + y) * 2 + x];
+	shown = &work->quarterTiles[(layer * 2 + y) * 2 + x];
 	if (update == 0 && tile == *shown)
 		return 0;
 	*shown = tile;
@@ -5704,7 +5704,7 @@ s32 Map_InitializePerspectiveScene(void)
 	/* FAKEMATCH: the fill word is this function's own volatile local, filled by Dma_Fill32Cell, so it takes the native's frame slot at sp+28; plain Dma_Fill32's inner word lands at sp+16 and the slots after it shift (differ 4 in all six editions, measured 2026-10-13). */
 	volatile u32			  fill;
 	struct FixedPointPosition vector;
-	s32						  far_plane;
+	s32						  farPlane;
 	s32						  i;
 
 	REG_DISPCNT &=
@@ -5712,12 +5712,12 @@ s32 Map_InitializePerspectiveScene(void)
 	Blend_SetDarkenTarget0(0);
 	work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
 	Dma_Fill32Cell(fill, 0, work, sizeof(struct PerspectiveWork));
-	work->view_x = 0;
-	work->view_y = 0;
-	work->scale_x = 0x200000;
-	work->scale_y = 0x400000;
-	work->limit_x = 0x1fe00000;
-	work->limit_y = 0x1fe00000;
+	work->viewX = 0;
+	work->viewY = 0;
+	work->scaleX = 0x200000;
+	work->scaleY = 0x400000;
+	work->limitX = 0x1fe00000;
+	work->limitY = 0x1fe00000;
 	work->script = NULL;
 	work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
 	Resource_DecodeType01(
@@ -5731,7 +5731,7 @@ s32 Map_InitializePerspectiveScene(void)
 	Resource_DecodeType01(
 		Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
 	work->fade = 0x1f00;
-	work->fade_step = 0x80;
+	work->fadeStep = 0x80;
 	Io_Set16(0xa80a, &REG_BG3CNT);
 	Io_Set16(0xaa0e, &REG_BG2CNT);
 	Io_Set16(0x0501, &REG_BG1CNT);
@@ -5756,18 +5756,18 @@ s32 Map_InitializePerspectiveScene(void)
 	tiles = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
 	position = camera->pos;
 	lines = tiles->pages;
-	far_plane = 0x1fe0000;
-	work->far_plane = far_plane;
+	farPlane = 0x1fe0000;
+	work->farPlane = farPlane;
 	distance = &work->distance;
-	*distance = far_plane;
+	*distance = farPlane;
 	work->zoom = 0x10000;
-	turn = &work->zoom_transition_frames;
-	camera->unknown_18 = 0;
-	camera->follow_pos = 0;
+	turn = &work->zoomTransitionFrames;
+	camera->unk18 = 0;
+	camera->followPos = 0;
 	*turn = 0;
-	gProjection.center_x = 120;
-	gProjection.center_y = 96;
-	Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
+	gProjection.centerX = 120;
+	gProjection.centerY = 96;
+	Camera_StoreSceneParameters(farPlane, farPlane >> 1, farPlane << 1);
 	position[0] = 0;
 	position[1] = 0;
 	position[2] = 0;
@@ -5779,7 +5779,7 @@ s32 Map_InitializePerspectiveScene(void)
 	SceneTransform_ApplyPitch(*pitch);
 	vector.x = 0;
 	vector.y = 0;
-	vector.z = far_plane;
+	vector.z = farPlane;
 	Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
 	Render_ResetTransformState();
 	Graphics_PrepareTransferInIwramWork(camera->eye, position);
@@ -5811,42 +5811,42 @@ s32 Map_InitializePerspectiveScene(void)
 	gBgScroll[2].y = 0;
 	gBgScroll[3].x = 0;
 	gBgScroll[3].y = 0;
-	work->window_top = 0;
-	work->window_bottom = 159;
+	work->windowTop = 0;
+	work->windowBottom = 159;
 	Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
 	Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
 	for (i = 255; i >= 0; i--)
-		work->tile_ids[i] = i;
+		work->tileIds[i] = i;
 }
 
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
 {
 	struct PerspectiveWork *window;
 	s32					   *position;
-	s32						origin_x;
-	s32						origin_y;
+	s32						originX;
+	s32						originY;
 	s32						tile;
 
 	window = gMapWork[0];
-	origin_x = 0;
-	origin_y = 0;
+	originX = 0;
+	originY = 0;
 	position = window->origin;
 	if (position != 0)
 	{
-		origin_x = *position++;
-		origin_y = position[1];
+		originX = *position++;
+		originY = position[1];
 	}
 
-	origin_x >>= 24;
-	origin_y >>= 24;
+	originX >>= 24;
+	originY >>= 24;
 	x >>= 4;
 	y >>= 4;
 	px >>= 3;
 	py >>= 3;
 	tile = (y << 4) + x;
-	window->tile_ids[(((py / 2) & 15) << 4) + ((px / 2) & 15)] = tile;
+	window->tileIds[(((py / 2) & 15) << 4) + ((px / 2) & 15)] = tile;
 
-	if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1)
+	if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1)
 	{
 		Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
 		Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
@@ -5871,7 +5871,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	state = gMapWork[0];
 	if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
 		variant = 1;
-	resources = WorldMap_GraphicsResources[variant];
+	resources = gWorldMap_GraphicsResources[variant];
 	state->resources = resources;
 	value = BG_PALETTE[0];
 	Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
@@ -5904,12 +5904,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	}
 	if (variant == 1)
 	{
-		state->tile_ids[10] = 0x10a;
-		state->tile_ids[11] = 0x10b;
-		state->tile_ids[12] = 0x10c;
-		state->tile_ids[26] = 0x11a;
-		state->tile_ids[27] = 0x11b;
-		state->tile_ids[28] = 0x11c;
+		state->tileIds[10] = 0x10a;
+		state->tileIds[11] = 0x10b;
+		state->tileIds[12] = 0x10c;
+		state->tileIds[26] = 0x11a;
+		state->tileIds[27] = 0x11b;
+		state->tileIds[28] = 0x11c;
 		Map_UpdateCurrentTileBlock();
 	}
 	MemFree(buffer);
@@ -5943,13 +5943,13 @@ void MapAnimation_ApplyAffineFrame(void)
 		*dst = *src++;
 		Dma_Set(src, (void *)&REG_BG2PA, 0xa6600008, (volatile u32 *)channel);
 	}
-	work->shown_top = work->window_top;
-	work->shown_bottom = work->window_bottom;
-	top = work->shown_top;
+	work->shownTop = work->windowTop;
+	work->shownBottom = work->windowBottom;
+	top = work->shownTop;
 	mode = 0;
 	if (top < 200)
 	{
-		u16 bottom = work->shown_bottom;
+		u16 bottom = work->shownBottom;
 
 		mode = (bottom != 0) << 1;
 		if (top <= bottom)
@@ -5962,7 +5962,7 @@ void MapAnimation_ApplyAffineFrame(void)
 	dispcnt |= mode;
 	control = (u16)dispcnt;
 	REG_DISPCNT = control;
-	work->window_pending = 0;
+	work->windowPending = 0;
 }
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
@@ -6030,7 +6030,7 @@ void WorldMap_UpdateView(void)
 	s32					   *pos = cam->pos;
 	s32					   *target = view->origin;
 	struct MapAffinePair(*buffer)[160] = map->pages;
-	s32						  distance = view->far_plane;
+	s32						  distance = view->farPlane;
 	s32						  height = view->distance;
 	struct FixedPointPosition local;
 
@@ -6044,47 +6044,47 @@ void WorldMap_UpdateView(void)
 
 		y = target[2];
 		x = target[0];
-		if (view->shake_x != 0)
+		if (view->shakeX != 0)
 		{
 			s32 r = Random16();
 			s32 amp;
 
 			r -= Random16();
-			amp = view->shake_x;
+			amp = view->shakeX;
 			x += Iwram_MulQ16(amp, r);
-			view->shake_x = Iwram_MulQ16(amp, view->shake_decay);
+			view->shakeX = Iwram_MulQ16(amp, view->shakeDecay);
 		}
-		if (view->shake_y != 0)
+		if (view->shakeY != 0)
 		{
 			s32 r = Random16();
 			s32 amp;
 
 			r -= Random16();
-			amp = view->shake_y;
+			amp = view->shakeY;
 			y += Iwram_MulQ16(amp, r);
-			view->shake_y = Iwram_MulQ16(amp, view->shake_decay);
+			view->shakeY = Iwram_MulQ16(amp, view->shakeDecay);
 		}
 		col = x / 0x100000;
 		row = y / 0x100000;
-		if ((view->view_x ^ x) & 0x100000)
+		if ((view->viewX ^ x) & 0x100000)
 		{
-			if (view->view_x < x)
+			if (view->viewX < x)
 				Map_RenderPaletteMappedColumn(col + 16);
 			else
 				Map_RenderPaletteMappedColumn(col - 16);
 		}
-		if ((view->view_y ^ y) & 0x100000)
+		if ((view->viewY ^ y) & 0x100000)
 		{
-			if (view->view_y < y)
+			if (view->viewY < y)
 				Map_RenderPaletteMappedRow(row + 12);
 			else
 				Map_RenderPaletteMappedRow(row - 18);
 		}
-		view->view_x = x;
-		view->view_y = y;
+		view->viewX = x;
+		view->viewY = y;
 	}
-	gProjection.center_x = 120;
-	gProjection.center_y = 96;
+	gProjection.centerX = 120;
+	gProjection.centerY = 96;
 	Camera_StoreSceneParameters(distance, height / 2, height * 2);
 	pos[0] = *target++;
 	pos[1] = 0;
@@ -6141,7 +6141,7 @@ void Map_UpdateCurrentTileBlock(void)
 			for (col = 0; col < 2; col++)
 			{
 				tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-				tile = window->tile_ids[tile];
+				tile = window->tileIds[tile];
 				tile += bias;
 				Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
 			}
@@ -6176,7 +6176,7 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void)
 			for (col = 0; col < 2; col++)
 			{
 				tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-				tile = window->tile_ids[tile];
+				tile = window->tileIds[tile];
 				tile += layer * 320;
 				if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
 					return;
@@ -6197,13 +6197,13 @@ void MapAnimation_Start(void)
 	struct PerspectiveWork *work = WORK_SLOT(8);
 	s32						one = 1;
 
-	work->animation_active = one;
+	work->animationActive = one;
 	Scheduler_EnableCallbacks(MapAnimation_Update);
 	Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
 	WaitFrames(1);
 	Resource_RunCopiedDecoder((s32)pages->pages[gFrameCount & one], (s32)gMapCellBuffer);
-	work->window_top = 200;
-	work->window_bottom = 255;
+	work->windowTop = 200;
+	work->windowBottom = 255;
 	gVBlankHook = MapAnimation_PresentFrame;
 }
 
@@ -6232,12 +6232,12 @@ void Map_LoadAreaGraphics(void)
 	Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
 	Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
 	gVBlankHook = Map_ShowBg1FromBuffer;
-	state->window_top = 0;
-	state->window_bottom = 159;
+	state->windowTop = 0;
+	state->windowBottom = 159;
 	WaitFrames(1);
 	Resource_DecodeType01(Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
 	Map_UpdateCurrentTileBlock();
-	state->animation_active = 0;
+	state->animationActive = 0;
 	Scheduler_DisableCallbacks(MapAnimation_Update);
 	WaitFrames(1);
 }
@@ -6246,8 +6246,8 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
 	struct PerspectiveWork *work = gMapWork[0];
 	gVBlankHook = Map_ShowBg1FromBuffer;
-	work->window_top = 0;
-	work->window_bottom = 0x9f;
+	work->windowTop = 0;
+	work->windowBottom = 0x9f;
 	WaitFrames(1);
 	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
 	Map_UpdateCurrentTileBlock();
@@ -6290,7 +6290,7 @@ void MapAnimation_Update(void)
 			count = *script++;
 			dst = script[0];
 			(state->anim + i)->timer = script[1];
-			if (state->wide_tiles == 0)
+			if (state->wideTiles == 0)
 			{
 				if (op >= 0x600)
 					Dma_Set(Ram_DecodeBuffer + op * 32, BG_CHAR_BLOCK(1) + dst * 32,
@@ -6368,13 +6368,13 @@ void MapAnimation_StartChannels(const u16 *script)
 
 void Map_EnableUpdateCallback(void)
 {
-	if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
+	if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
 		Scheduler_EnableCallbacks(MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
-	if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
+	if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
 		Scheduler_DisableCallbacks(MapAnimation_Update);
 }
 
@@ -6419,12 +6419,12 @@ again:
 		if ((command & 0xf000) == 0x3000)
 		{
 			REG_BLDCNT = command;
-			work->blend_control = command;
+			work->blendControl = command;
 			state->cursor++;
 			goto again;
 		}
 
-		if ((work->blend_control & 0xc0) == 0x40)
+		if ((work->blendControl & 0xc0) == 0x40)
 			REG_BLDALPHA = command;
 		else
 			REG_BLDY = command;
@@ -6718,7 +6718,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
 	start = samples[0] << CURVE_VALUE_SHIFT;
 	return start
 		   + (((samples[1] << CURVE_VALUE_SHIFT) - start)
-			   * Curve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+			   * gCurve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
 }
 
 s32 Curve_StepAtHalf(const s8 *samples, u32 position)
@@ -6809,12 +6809,12 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
-	return samples[Curve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
+	return samples[gCurve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {
-	return samples[Curve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+	return samples[gCurve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
 		   << CURVE_VALUE_SHIFT;
 }
 
@@ -6830,7 +6830,7 @@ s32 Curve_GetFirstSampleC(const s8 *samples)
 
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
-extern TerrainHeightFn Map_TerrainHeightFunctions[16];
+extern TerrainHeightFn gMap_TerrainHeightFunctions[16];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 {
@@ -6846,8 +6846,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 		cells = work->layers[layer & 3].cells;
 	}
 	cells += x / 16 + (y / 16 << 7);
-	attributes = Ram_MapCollision + cells->attribute_b * 4;
-	return Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
+	attributes = Ram_MapCollision + cells->attributeB * 4;
+	return gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
 }
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
@@ -6868,7 +6868,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 	col = x / 16;
 	row = y / 16;
 	map += col + (row << 7);
-	attr = map->attribute_b;
+	attr = map->attributeB;
 	return *(Ram_MapCollision + attr * 4) & 15;
 }
 
@@ -6886,10 +6886,10 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y)
 		cells = state->layers[layer & 3].cells;
 	}
 	cells += x + (y << 7);
-	return cells->collision_code;
+	return cells->collisionCode;
 }
 
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
+void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode)
 {
 	struct MapState *state = gMapWork[0];
 
@@ -6900,17 +6900,17 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 		struct MapCell *cells = state->layers[layer & 3].cells;
 
 		cells += x + (y << 7);
-		cells->collision_code = collision_code;
+		cells->collisionCode = collisionCode;
 	}
 }
 
 s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
-	s32				tile_x = x / 16;
-	s32				tile_y = y / 16;
-	struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
+	s32				tileX = x / 16;
+	s32				tileY = y / 16;
+	struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tileX + tileY * 128);
 
-	return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
+	return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position)
@@ -6928,16 +6928,16 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *posi
 	state = gMapWork[0];
 	if (state == NULL)
 		return 0;
-	if (object->terrain_id <= 2)
-		cell = state->layers[object->terrain_id].cells;
+	if (object->terrainId <= 2)
+		cell = state->layers[object->terrainId].cells;
 	else
 		cell = (struct MapCell *)Ram_MapCellBuffer;
 	cell += x / 16 + (z / 16 << 7);
-	if (cell->collision_code == 0xff)
+	if (cell->collisionCode == 0xff)
 		return 2;
-	attributes = Ram_MapCollision + cell->attribute_b * 4;
-	height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
-	delta = height - object->terrain_height;
+	attributes = Ram_MapCollision + cell->attributeB * 4;
+	height = gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
+	delta = height - object->terrainHeight;
 	if (delta > 0x80000)
 		return 1;
 	if (delta < -0xc0000)
@@ -6949,8 +6949,8 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 {
 	s32				 x;
 	s32				 y;
-	s32				 tile_x;
-	s32				 tile_y;
+	s32				 tileX;
+	s32				 tileY;
 	struct MapState *work;
 	struct MapCell	*cell;
 
@@ -6960,10 +6960,10 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 	if (work == NULL)
 		return 0;
 	cell = work->layers[2].cells;
-	tile_x = x / 16;
-	tile_y = y / 16;
-	cell += tile_x + tile_y * 128;
-	return (cell->collision_code != 0xff) - 1;
+	tileX = x / 16;
+	tileY = y / 16;
+	cell += tileX + tileY * 128;
+	return (cell->collisionCode != 0xff) - 1;
 }
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
@@ -7016,33 +7016,33 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 	return -1;
 }
 
-s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
+s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrainKind)
 {
 	s32	 selector = GetWorldMapCollision(position);
 	s32	 x = position->x;
 	s32	 y;
 	s32	 flag = 0;
-	u32	 tile_x;
+	u32	 tileX;
 	u32	 index;
 	u32 *tile;
 
 	if (x < 0)
 		x += 0x1fffff;
-	tile_x = (x >> 21) & 31;
+	tileX = (x >> 21) & 31;
 	y = position->y;
 	if (y < 0)
 		y += 0x1fffff;
 
-	index = tile_x + (((y >> 21) & 31) << 5);
+	index = tileX + (((y >> 21) & 31) << 5);
 	tile = gMapBlocks + index;
 	if (((u8 *)tile)[3] & 0x80)
 		flag = 0x10;
 
-	*terrain_kind = (*tile << 1) >> 25;
-	if (*terrain_kind == 21)
+	*terrainKind = (*tile << 1) >> 25;
+	if (*terrainKind == 21)
 		flag = 0x20;
 
-	return WorldMap_TerrainBehaviorTable[flag + selector];
+	return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
@@ -7052,15 +7052,15 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 	work = gMapWork[0];
 	if (value0 >= 0)
 	{
-		work->shake_x = value0;
+		work->shakeX = value0;
 	}
 	if (value1 >= 0)
 	{
-		work->shake_y = value1;
+		work->shakeY = value1;
 	}
 	if (value2 >= 0)
 	{
-		work->shake_decay = value2;
+		work->shakeDecay = value2;
 	}
 }
 
@@ -7071,14 +7071,14 @@ void Map_WaitWorkValuesBelow256(void)
 
 	work = gMapWork[0];
 	cnt = 0;
-	if (work->shake_x > 255 || work->shake_y > 255)
+	if (work->shakeX > 255 || work->shakeY > 255)
 	{
 	wait:
 		WaitFrames(1);
-		if (++cnt < 300 && (work->shake_x > 255 || work->shake_y > 255))
+		if (++cnt < 300 && (work->shakeX > 255 || work->shakeY > 255))
 			goto wait;
 	}
-	work->shake_decay = 0;
+	work->shakeDecay = 0;
 }
 
 void Resource_RunCopiedDecoder(s32 a, s32 b)
@@ -7124,7 +7124,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *r
 	focus = -gProjection.focal;
 	for (line = 0; line < 160; line++)
 	{
-		distance = Iwram_RatioMulQ14(focus, (gProjection.center_y - line) << 16);
+		distance = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) << 16);
 		difference = distance - depth;
 		if (difference == 0)
 			difference = 1;
@@ -7148,8 +7148,8 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *r
 			row->scale = 0;
 			row->depth = 0;
 		}
-		row->offset_x = 0;
-		row->offset_y = 0;
+		row->offsetX = 0;
+		row->offsetY = 0;
 		row++;
 	}
 }
@@ -7217,7 +7217,7 @@ restart:
 	ObjectSystem_Initialize(2);
 	ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
 	metadata = Resource_GetMetadataRecordFar(ent[0].no);
-	if (metadata->draw_kind == 20)
+	if (metadata->drawKind == 20)
 	{
 		ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, ent[0].no + 1, 0);
 	}
@@ -7226,7 +7226,7 @@ restart:
 	{
 		metadata = Resource_GetMetadataRecordFar(ent[0].no);
 		alt = 0;
-		if (metadata->draw_kind == 20 && (i & 1) != 0)
+		if (metadata->drawKind == 20 && (i & 1) != 0)
 		{
 			alt = 1;
 		}
@@ -7670,18 +7670,18 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 
 		if (entry->scripts != 0)
 		{
-			metadata = Resource_GetMetadataRecordFar(entry->anim_id);
-			if (value < metadata->animation_count)
+			metadata = Resource_GetMetadataRecordFar(entry->animId);
+			if (value < metadata->animationCount)
 			{
-				entry->kind = metadata->draw_kind;
+				entry->kind = metadata->drawKind;
 				entry->script = entry->scripts[value];
 				entry->timer = count * 0x10;
 				entry->step = 0x10;
 				entry->pos = index;
-				entry->frame_base = index;
+				entry->frameBase = index;
 				entry->frame = 0xff;
 			}
-			object->offset_y = metadata->adjust_y;
+			object->offsetY = metadata->adjustY;
 			object->rotation = index;
 		}
 		count++;
@@ -7700,7 +7700,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no)
 	{
 		struct AnimationEntry *entry = object->entries[slot];
 
-		entry->anim_id = no;
+		entry->animId = no;
 		Animation_InitWorkFromMetadata(entry);
 		object++;
 	}
@@ -7718,7 +7718,7 @@ void Battle_PlaceActorsByFormationKind(void)
 	u32						  count;
 	u32						  i;
 
-	scale = (*(struct Vec2 *)&Battle_FormationPlacementScale);
+	scale = (*(struct Vec2 *)&gBattle_FormationPlacementScale);
 	table = WORK_SLOT(HEAP_SLOT_BATTLE);
 
 	switch (kind)

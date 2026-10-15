@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 
-u32 Data_02000a98[] = {
+u32 gData_02000a98[] = {
 	22, 30, 131, 22, 16, 0x1999,
 	22, 15, 0x4ccc, 0x80010000, 39, 2,
 	4, 0x780000, 0, 0x680000, 1, 4,
@@ -38,17 +38,17 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-u32 Data_02000c8c[] = {
+u32 gData_02000c8c[] = {
 	0xffff, 0, 0, 0, 0, 0,
 };
 
-struct ScenePlacement Data_02000ca4[] = {
+struct ScenePlacement gData_02000ca4[] = {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN)
 	{115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_SOUTHWEST, 1, 0},
 #else
 	{115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(140), FACING_SOUTHWEST, 1, 0},
 #endif
-	{116, CONDITION_ALWAYS, (s32)Data_02000a98, PIXELS(88), 0, PIXELS(104), FACING_EAST, 0, 0},
+	{116, CONDITION_ALWAYS, (s32)gData_02000a98, PIXELS(88), 0, PIXELS(104), FACING_EAST, 0, 0},
 	{114, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(88), FACING_SOUTHEAST, 1, 0},
 	{128, CONDITION_ALWAYS, 1, PIXELS(454), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
 	{134, CONDITION_ALWAYS, 1, PIXELS(294), 0, PIXELS(408), FACING_SOUTH, 1, 0},

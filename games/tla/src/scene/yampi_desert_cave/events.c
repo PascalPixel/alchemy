@@ -3,10 +3,10 @@
 u32 *Func_02000d44(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov662Room2)
-        return (u32 *)Data_02001bd0;
+        return (u32 *)gData_02001bd0;
     if (gPartyState.scene == (s32)&SceneId_Ov662Room3)
-        return (u32 *)Data_02001c18;
-    return Data_02001b58;
+        return (u32 *)gData_02001c18;
+    return gData_02001b58;
 }
 
 void Func_02000d84(void)

@@ -12,7 +12,7 @@ void Func_02000570(void)
 
     if (!FlagCheck(0x8ab)) {
         do {
-            event = Ram_HeapSlots->event_work;
+            event = Ram_HeapSlots->eventWork;
         } while (0);
         FIELD_AT(event, u16, 0xd4c) = 3;
         if (!FlagCheck(0x911)) {

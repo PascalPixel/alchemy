@@ -2,7 +2,7 @@
 
 void Func_02000c28(s32 unused, s32 id)
 {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x140);
+    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
     s32 i;
 
     Object_SetPartAttribute(Object_GetById(9), 5);
@@ -25,6 +25,6 @@ void Func_02000c28(s32 unused, s32 id)
 
 void Func_02000ca8(void)
 {
-    Func_02003df4(gPartyState.current_owner, 6, 0);
+    Func_02003df4(gPartyState.currentOwner, 6, 0);
     Func_02003d84();
 }

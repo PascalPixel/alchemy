@@ -8,11 +8,11 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_0200703c;
-extern s32 Data_02007040;
-extern u16 Data_02007068[];
-extern u16 Data_02007088[];
-extern u16 Data_0200708c[];
+extern s32 gData_0200703c;
+extern s32 gData_02007040;
+extern u16 gData_02007068[];
+extern u16 gData_02007088[];
+extern u16 gData_0200708c[];
 
 s32 GameFlag_Test();
 void Scheduler_AddOrUpdateCallback();
@@ -28,13 +28,13 @@ void Func_02001628(s32 id)
     s32 height;
 
     object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
+    object->motionFlags = 4;
+    height = object->terrainHeight;
     asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

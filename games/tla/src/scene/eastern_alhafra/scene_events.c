@@ -20,7 +20,7 @@ struct DoorStep {
     u16 z;
 };
 
-extern struct DoorStep Data_02005290[];
+extern struct DoorStep gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
@@ -63,7 +63,7 @@ void Func_020006ec(s32 mode)
 {
     s32 tile;
 
-    tile = Func_02004bb4(gPartyState.current_owner);
+    tile = Func_02004bb4(gPartyState.currentOwner);
     if (tile == 16) {
         Func_02000394(mode, 16);
         if (Func_02004c44() != 0)
@@ -81,7 +81,7 @@ void Func_02000730(void)
     Func_02004be4(0);
     Func_02004b3c(MsgWhatSYour);
     Func_02004b6c(22, 0x101, 40);
-    ObjectMotion_SetAngleToward(22, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(22, gPartyState.currentOwner, 0);
     Battle_WaitMode0(20);
     Call3((void (*)())Func_02004b4c, 22, 0, 10);
     Motion_SetVarCbAndRefresh(22, 2);
@@ -92,21 +92,21 @@ void Func_02000730(void)
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
     } else {
         Battle_WaitMode0(20);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         UiText_OpenMessageAtObject(22, 0);
         if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
             Battle_WaitMode0(30);
             Call3((void (*)())Func_02004b4c, 22, 0, 0);
         } else {
             Battle_WaitMode0(20);
-            ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+            ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
             UiText_OpenMessageAtObject(22, 0);
             if (Inventory_PromptAndSetObjectMode(4, 0) != 0) {
                 Battle_WaitMode0(30);
                 Call3((void (*)())Func_02004b4c, 22, 0, 0);
             } else {
                 Battle_WaitMode0(20);
-                ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+                ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
                 Call3((void (*)())Func_02004b4c, 22, 0, 0);
             }
         }
@@ -139,10 +139,10 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused)
     Func_02004be4(0);
     Func_02004c9c(158);
     Func_02004a44(step->script, step->x, step->z);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 2;
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.current_owner, 2, -8);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2, -8);
     Battle_WaitMode0(10);
     Func_02004bac(countdown);
     Event_FinishScreenTransition();
@@ -152,7 +152,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused)
 
 void Func_02000940(s32 countdown)
 {
-    Func_020008cc(Data_02005290, countdown, 0);
+    Func_020008cc(gData_02005290, countdown, 0);
 }
 
 void Func_02000954(void)
@@ -182,7 +182,7 @@ run:
     Func_02004b3c(MsgIDonTKnowWhatWe);
     Call3((void (*)())Func_02004b4c, 5, 0, 5);
     Object_SetModeById(5, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
         ObjectMotion_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
     ObjectMotion_CommitCurrentPositionAndActivate(5);

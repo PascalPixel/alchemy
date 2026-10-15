@@ -32,7 +32,7 @@ void Func_02003620(void)
     Call2((void (*)())ObjectDispatch_SetSingleChildFlags, (s32)object0, 0);
     Call2((void (*)())Object_SetModeById, *(s32 *)((u8 *)v5 + 0), 18);
     Call1((void (*)())Battle_WaitMode0, 40);
-    *(s32 *)((u8 *)((s32)Ram_HeapSlots->event_work + 0x1ac) + 0) = 0x209;
+    *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
     ((void (*)())Event_FinishScreenTransition)();
     ((void (*)())Event_WaitTransitionFrames)();
     Value1((s32 (*)())Func_02003f7c, 3);

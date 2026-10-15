@@ -11,9 +11,9 @@
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020023bc;
-extern s32 Data_020023c0;
-extern u16 Data_020023e8[];
+extern s32 gData_020023bc;
+extern s32 gData_020023c0;
+extern u16 gData_020023e8[];
 
 s32 __modsi3();
 s32 Map_GetTerrainHeight();
@@ -29,9 +29,9 @@ void Func_020002e8(void)
     s32 i;
     s32 offset;
 
-    phase = (Data_020023bc / 4) % 5;
-    if (Data_020023c0 != 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+    phase = (gData_020023bc / 4) % 5;
+    if (gData_020023c0 != 0) {
+        u8 *work = Ram_HeapSlots->eventWork;
 
         if (*(s16 *)(work + 358) != 0 && (HALF_AT(work, 358) & 0x3ff) != 153)
             return;
@@ -43,11 +43,11 @@ void Func_020002e8(void)
     i = 0;
     offset = 4;
 next:
-    colors[(phase + i) % 5] = *(u16 *)((u8 *)Data_020023e8 + offset);
+    colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_020023e8 + offset);
     i++;
     offset += 2;
     if (i <= 4)
         goto next;
     Dma_Set(colors, (void *)0x05000184, 0x84000002, REG_DMA3);
-    Data_020023bc++;
+    gData_020023bc++;
 }

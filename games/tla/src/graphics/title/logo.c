@@ -6,7 +6,7 @@
 // Rows of five: a first tile, a count of columns, a duration in frames and
 // an x and y offset. The animation steps a row at a time and stops at the
 // row whose first value is -1.
-const s16 Data_081a8378[] = {
+const s16 gData_081a8378[] = {
        0, 3, 3,  0,  0,
       24, 4, 3,  0, -4,
       56, 4, 3,  0,  1,
@@ -48,7 +48,7 @@ const s16 Data_081a8378[] = {
 
 // Rows of three: an x and y position and a duration in frames, ending in a
 // row of -1.
-const s16 Data_081a84e6[] = {
+const s16 gData_081a84e6[] = {
     101, 150, 1,
     103, 150, 1,
     105, 149, 1,

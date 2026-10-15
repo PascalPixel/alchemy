@@ -10,11 +10,11 @@
 void Func_0200079c(void)
 {
     u16 colors[16];
-    s32 phase = (Data_02003314 / 4) % 5;
+    s32 phase = (gData_02003314 / 4) % 5;
     s32 i;
 
-    if (Data_02003318 != 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+    if (gData_02003318 != 0) {
+        u8 *work = Ram_HeapSlots->eventWork;
         s16 *state = (s16 *)(work + 358);
 
         if (*state != 0 && (*state & 0x3ff) != 153)
@@ -25,7 +25,7 @@ void Func_0200079c(void)
             return;
     }
     for (i = 0; i <= 4; i++)
-        colors[(phase + i) % 5] = Data_02003340[i + 2];
+        colors[(phase + i) % 5] = gData_02003340[i + 2];
     Dma_Set(colors, (void *)0x05000184, 0x84000002, REG_DMA3);
-    Data_02003314++;
+    gData_02003314++;
 }

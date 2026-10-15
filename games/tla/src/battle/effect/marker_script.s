@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's BattleFx_MarkerParticleScript, in this game's command
+@ The Broken Seal's gBattleFx_MarkerParticleScript, in this game's command
 @ numbers: call Func_080cf158 (The Broken Seal's EffectRuntime_IsActive),
 @ then free the object.
 	.global Data_080f01b8

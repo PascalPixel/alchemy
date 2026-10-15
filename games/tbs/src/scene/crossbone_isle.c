@@ -119,21 +119,21 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_advance.h"
 
-static void SpawnRadialEffectBurst(s32 object_id)
+static void SpawnRadialEffectBurst(s32 objectId)
 {
 	struct FieldActor	*object;
 	struct Vec			 vec;
 	struct EffectOptions params;
-	u32					 angle_step;
+	u32					 angleStep;
 	s32					 angle;
 	s32					 x;
 	s32					 z;
 
-	object = Object_GetById(object_id);
+	object = Object_GetById(objectId);
 	params.update = Effect_AdvanceMotion;
-	for (angle_step = 0; angle_step <= 16; angle_step += 2)
+	for (angleStep = 0; angleStep <= 16; angleStep += 2)
 	{
-		angle = angle_step << 12;
+		angle = angleStep << 12;
 		vec.x = Engine_MathCos(angle);
 		vec.y = 0;
 		z = Engine_MathSin(angle);
@@ -203,7 +203,7 @@ s32 Scene_Initialize(void)
 	s32				   current;
 	s32				   first;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	scene = gGameState.scene;
 	if (scene == (s32)&SceneId_CrossboneIsle3)
 	{
@@ -237,7 +237,7 @@ s32 Scene_Initialize(void)
 	if (current == (s32)&SceneId_CrossboneIsle1)
 	{
 		CrossboneIsle_RestoreRoomActors();
-		Actor_Get(8)->target_x = 0x810000;
+		Actor_Get(8)->targetX = 0x810000;
 		FieldScene_RedrawActorFootprint(9);
 		FieldScene_RedrawActorFootprint(10);
 		if (GameFlag_IsSet(0x240) != 0)
@@ -245,7 +245,7 @@ s32 Scene_Initialize(void)
 			actor = Actor_Get(11);
 			if (actor != 0)
 			{
-				actor->collision_flags = 0;
+				actor->collisionFlags = 0;
 				Object_SetMode(actor, 4);
 				Engine_ActorSetSpriteFlags(actor, 0);
 			}
@@ -256,7 +256,7 @@ s32 Scene_Initialize(void)
 			actor = Actor_Get(12);
 			if (actor != 0)
 			{
-				actor->collision_flags = 0;
+				actor->collisionFlags = 0;
 				Object_SetMode(actor, 4);
 				Engine_ActorSetSpriteFlags(actor, 0);
 			}
@@ -267,7 +267,7 @@ s32 Scene_Initialize(void)
 			actor = Actor_Get(13);
 			if (actor != 0)
 			{
-				actor->collision_flags = 0;
+				actor->collisionFlags = 0;
 				Object_SetMode(actor, 4);
 				Engine_ActorSetSpriteFlags(actor, 0);
 			}
@@ -278,7 +278,7 @@ s32 Scene_Initialize(void)
 			actor = Actor_Get(14);
 			if (actor != 0)
 			{
-				actor->collision_flags = 0;
+				actor->collisionFlags = 0;
 				Object_SetMode(actor, 4);
 				Engine_ActorSetSpriteFlags(actor, 0);
 			}
@@ -330,13 +330,13 @@ static void FieldScene_RunScene3b2SequenceA(void)
 		actor->y.fixed = -0x200000;
 		Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
 		Engine_ActorSetSpritePriority(8, 3);
-		actor->motion_flags = 0;
-		actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
 	}
 	else
 	{
-		Object_GetById(8)->motion_flags = cleared;
+		Object_GetById(8)->motionFlags = cleared;
 	}
 }
 
@@ -364,7 +364,7 @@ static void EV08_PSYNERGY(void)
 	}
 #endif
 
-	entity->motion_flags = 3;
+	entity->motionFlags = 3;
 
 	Engine_EventWait(8);
 	SpawnRadialEffectBurst(8);
@@ -374,8 +374,8 @@ static void EV08_PSYNERGY(void)
 	Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), 0);
 	Engine_ActorSetSpritePriority(8, 3);
 
-	entity->motion_flags = 0;
-	entity->priority_flags |= 2;
+	entity->motionFlags = 0;
+	entity->priorityFlags |= 2;
 
 	Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
@@ -398,7 +398,7 @@ static void EV20_SCRIPT(void)
 
 static void EV04_TOUCH(void)
 {
-	Engine_MapAnimateCells(CrossboneIsle_EntranceCells, 37, 7);
+	Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
 	Engine_AudioPlayCue(183);
 	Engine_EventRequestExit(4);
 }
@@ -444,7 +444,7 @@ static void EV03_TOUCH(void)
 	}
 	else
 	{
-		Engine_MapAnimateCells((s32)CrossboneIsle_EntranceCells, 44, 7);
+		Engine_MapAnimateCells((s32)gCrossboneIsle_EntranceCells, 44, 7);
 		Engine_AudioPlayCue(183);
 		Engine_EventRequestExit(3);
 	}
@@ -459,13 +459,13 @@ static void CrossboneIsle_LeaveClearedRoom(void)
 	GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0]
 				  + (0x8c8 - (s32)&SceneId_CrossboneIsle6)));
 	Engine_EventWait(30);
-	Map_AnimateCells(CrossboneIsle_EntranceCells, 44, 7);
+	Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();
 }
 
-static void EV11_PSYNERGY(s32 actor_id)
+static void EV11_PSYNERGY(s32 actorId)
 {
 	s32				   a = 0x1300000;
 	s32				   b = 0x1700000;
@@ -473,14 +473,14 @@ static void EV11_PSYNERGY(s32 actor_id)
 
 	if (p != 0)
 	{
-		p->collision_flags = 0;
+		p->collisionFlags = 0;
 	}
-	Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
 	SetMapCellCollision(0, a, b, 253);
 	Engine_GameFlagSet(576);
 }
 
-static void EV12_PSYNERGY(s32 actor_id)
+static void EV12_PSYNERGY(s32 actorId)
 {
 	s32				   a = 0x500000;
 	s32				   b = 0x1700000;
@@ -488,14 +488,14 @@ static void EV12_PSYNERGY(s32 actor_id)
 
 	if (p != 0)
 	{
-		p->collision_flags = 0;
+		p->collisionFlags = 0;
 	}
-	Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
 	SetMapCellCollision(0, a, b, 253);
 	Engine_GameFlagSet(577);
 }
 
-static void EV13_PSYNERGY(s32 actor_id)
+static void EV13_PSYNERGY(s32 actorId)
 {
 	s32				   a = 0x600000;
 	s32				   b = 0x1500000;
@@ -503,14 +503,14 @@ static void EV13_PSYNERGY(s32 actor_id)
 
 	if (p != 0)
 	{
-		p->collision_flags = 0;
+		p->collisionFlags = 0;
 	}
-	Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
 	SetMapCellCollision(0, a, b, 253);
 	Engine_GameFlagSet(578);
 }
 
-static void EV14_PSYNERGY(s32 actor_id)
+static void EV14_PSYNERGY(s32 actorId)
 {
 	s32				   a = 0x900000;
 	s32				   b = 0x1400000;
@@ -520,9 +520,9 @@ static void EV14_PSYNERGY(s32 actor_id)
 
 	if (p != 0)
 	{
-		p->collision_flags = 0;
+		p->collisionFlags = 0;
 	}
-	Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
 	SetMapCellCollision(0, a, b, 253);
 	SetMapCellCollision(0, c, d, 253);
 	Engine_GameFlagSet(579);
@@ -564,7 +564,7 @@ static void CrossboneIsle_RestoreRoomActors(void)
 	else
 	{
 		record = Actor_Get(15);
-		record->scale_y = 0x19999;
+		record->scaleY = 0x19999;
 	}
 	if (GameFlag_IsSet(0x8c5) != 0)
 	{
@@ -573,7 +573,7 @@ static void CrossboneIsle_RestoreRoomActors(void)
 	else
 	{
 		record = Actor_Get(16);
-		record->scale_y = 0x19999;
+		record->scaleY = 0x19999;
 	}
 	if (GameFlag_IsSet(0x8c6) != 0)
 	{
@@ -582,7 +582,7 @@ static void CrossboneIsle_RestoreRoomActors(void)
 	else
 	{
 		record = Actor_Get(17);
-		record->scale_y = 0x19999;
+		record->scaleY = 0x19999;
 	}
 	if (GameFlag_IsSet(0x8c7) != 0)
 	{
@@ -591,7 +591,7 @@ static void CrossboneIsle_RestoreRoomActors(void)
 	else
 	{
 		record = Actor_Get(18);
-		record->scale_y = 0x19999;
+		record->scaleY = 0x19999;
 	}
 }
 
@@ -607,19 +607,19 @@ static void RunSceneVectorTransition(void)
 	Engine_EventEnd();
 }
 
-static void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
+static void PositionSceneActorPair(s32 actorId, s32 xOffset, s32 zOffset)
 {
 	struct FieldActor *p;
 	struct FieldActor *q;
 	s32				   x;
 	s32				   y;
 
-	p = Object_GetById(gGameState.selected_actor);
-	q = Object_GetById(actor_id);
+	p = Object_GetById(gGameState.selectedActor);
+	q = Object_GetById(actorId);
 	Engine_EventBegin();
 	{
-		x = ((p->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((p->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((p->x.fixed + (xOffset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((p->z.fixed + (zOffset << 16)) & 0xFFF00000) + 0x80000;
 
 		p->speed = 0x10000;
 		p->acceleration = 0x8000;
@@ -627,14 +627,14 @@ static void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 	}
 	Object_SetMode(p, 27);
 	{
-		x = ((q->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((q->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((q->x.fixed + (xOffset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((q->z.fixed + (zOffset << 16)) & 0xFFF00000) + 0x80000;
 
 		q->speed = 0x10000;
 		q->acceleration = 0x8000;
 		Engine_ObjectSetPosition(q, x, q->y.fixed, y);
 	}
-	if (x_offset < 0 || z_offset < 0)
+	if (xOffset < 0 || zOffset < 0)
 	{
 		Object_SetMode(q, 4);
 	}
@@ -690,10 +690,10 @@ static void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_att
 	}
 }
 
-static void SetSceneActorModes(int actor_id)
+static void SetSceneActorModes(int actorId)
 {
-	Engine_ActorSetAnimation(actor_id, 1);
-	Engine_ActorSetAnimation(actor_id, 2);
+	Engine_ActorSetAnimation(actorId, 1);
+	Engine_ActorSetAnimation(actorId, 2);
 }
 
 static void InitializeEscapeSceneActors(void)
@@ -774,8 +774,8 @@ static void ActivateSceneActor16(void)
 
 static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *requested)
 {
-	u8 *state = &actor->motion_flags;
-	s32 saved_state = *state;
+	u8 *state = &actor->motionFlags;
+	s32 savedState = *state;
 #if EDITION_INTERNATIONAL
 	struct Vec destination;
 
@@ -802,7 +802,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *reque
 		Object_SetMode(actor, 7);
 		actor->speed = 0x30000;
 		actor->acceleration = 0x20000;
-		actor->velocity_y = 0x40000;
+		actor->velocityY = 0x40000;
 		t = 126;
 		t &= *state;
 		*state = (u8)t;
@@ -818,7 +818,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *reque
 		}
 		Object_SetMode(actor, 6);
 		Engine_ActorSetSpriteFlags(actor, 1);
-		*state = (u8)saved_state;
+		*state = (u8)savedState;
 		Engine_EventEnd();
 		return 1;
 	}
@@ -871,18 +871,18 @@ static s32 CheckActorPathEast(void)
 
 static void UpdateEscapeRouteForActorPositions(void)
 {
-	s32 actor_x = Object_GetById(8)->x.fixed >> 20;
-	s32 actor_z = Object_GetById(8)->z.fixed >> 20;
-	s32 actor_12_x = Object_GetById(12)->x.fixed >> 20;
-	s32 actor_15_x = Object_GetById(15)->x.fixed >> 20;
+	s32 actorX = Object_GetById(8)->x.fixed >> 20;
+	s32 actorZ = Object_GetById(8)->z.fixed >> 20;
+	s32 actor12X = Object_GetById(12)->x.fixed >> 20;
+	s32 actor15X = Object_GetById(15)->x.fixed >> 20;
 
-	if (actor_z == 19)
+	if (actorZ == 19)
 	{
-		if (actor_12_x == 24)
+		if (actor12X == 24)
 		{
 			PositionSceneActorPair(8, 0, -80);
 		}
-		else if (actor_15_x == 24)
+		else if (actor15X == 24)
 		{
 			PositionSceneActorPair(8, 0, -112);
 			PositionSceneActorPair(8, 0, -32);
@@ -893,13 +893,13 @@ static void UpdateEscapeRouteForActorPositions(void)
 			PositionSceneActorPair(8, 0, -112);
 		}
 	}
-	else if (actor_z == 14)
+	else if (actorZ == 14)
 	{
-		if (actor_12_x == 24)
+		if (actor12X == 24)
 		{
 			return;
 		}
-		if (actor_15_x == 24)
+		if (actor15X == 24)
 		{
 			PositionSceneActorPair(8, 0, -64);
 		}
@@ -908,9 +908,9 @@ static void UpdateEscapeRouteForActorPositions(void)
 			PositionSceneActorPair(8, 0, -112);
 		}
 	}
-	else if (actor_z == 10)
+	else if (actorZ == 10)
 	{
-		if (actor_15_x == 24)
+		if (actor15X == 24)
 		{
 			return;
 		}
@@ -923,12 +923,12 @@ static void UpdateEscapeRouteForActorPositions(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 route_end_z = Object_GetById(8)->z.fixed >> 20;
-		s32 route_x = actor_x - 1;
+		s32 routeEndZ = Object_GetById(8)->z.fixed >> 20;
+		s32 routeX = actorX - 1;
 
-		Map_CopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
+		Map_CopyCellAttributes(routeX, actorZ, 3, 1, routeX, routeEndZ);
 	}
-	Map_CopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
+	Map_CopyCellAttributes(0, 0, 3, 1, actorX - 1, actorZ);
 }
 
 static void UpdateActor8ReturnRoute(void)
@@ -1506,18 +1506,18 @@ static void UpdateActor17NorthRoute(void)
 
 static void CrossboneIsle_SettlePushedBlockNorth(void)
 {
-	s32 cell_x;
-	s32 cell_z;
+	s32 cellX;
+	s32 cellZ;
 	s32 x19;
 	s32 x14;
 	s32 x16;
 
-	cell_x = Object_GetById(18)->x.fixed >> 20;
-	cell_z = Object_GetById(18)->z.fixed >> 20;
+	cellX = Object_GetById(18)->x.fixed >> 20;
+	cellZ = Object_GetById(18)->z.fixed >> 20;
 	x19 = Object_GetById(19)->x.fixed >> 20;
 	x14 = Object_GetById(14)->x.fixed >> 20;
 	x16 = Object_GetById(16)->x.fixed >> 20;
-	if (cell_z == 19)
+	if (cellZ == 19)
 	{
 		if (IN_COLUMNS(x19))
 		{
@@ -1537,7 +1537,7 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 			PositionSceneActorPair(18, 0, -96);
 		}
 	}
-	else if (cell_z == 18)
+	else if (cellZ == 18)
 	{
 		if (IN_COLUMNS(x19))
 		{
@@ -1556,7 +1556,7 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 			PositionSceneActorPair(18, 0, -144);
 		}
 	}
-	else if (cell_z == 15)
+	else if (cellZ == 15)
 	{
 		if (IN_COLUMNS(x14))
 		{
@@ -1571,7 +1571,7 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 			PositionSceneActorPair(18, 0, -96);
 		}
 	}
-	else if (cell_z == 14)
+	else if (cellZ == 14)
 	{
 		if (IN_COLUMNS(x14))
 		{
@@ -1586,7 +1586,7 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 			PositionSceneActorPair(18, 0, -80);
 		}
 	}
-	else if (cell_z == 12)
+	else if (cellZ == 12)
 	{
 		if (IN_COLUMNS(x16))
 		{
@@ -1594,7 +1594,7 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 		}
 		PositionSceneActorPair(18, 0, -48);
 	}
-	else if (cell_z == 11)
+	else if (cellZ == 11)
 	{
 		if (IN_COLUMNS(x16))
 		{
@@ -1602,14 +1602,14 @@ static void CrossboneIsle_SettlePushedBlockNorth(void)
 		}
 		PositionSceneActorPair(18, 0, -32);
 	}
-	else if (cell_z == 9)
+	else if (cellZ == 9)
 	{
 		return;
 	}
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
-		cell_x - 1, cell_z, 3, 1, cell_x - 1, Object_GetById(18)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
+		cellX - 1, cellZ, 3, 1, cellX - 1, Object_GetById(18)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, cellX - 1, cellZ);
 }
 
 #undef IN_COLUMNS
@@ -1701,18 +1701,18 @@ static void AdvanceActor18AlongEscapeRoute(void)
 
 static void CrossboneIsle_SettleSecondBlockNorth(void)
 {
-	s32 cell_x;
-	s32 cell_z;
+	s32 cellX;
+	s32 cellZ;
 	s32 x19;
 	s32 x14;
 	s32 x16;
 
-	cell_x = Object_GetById(9)->x.fixed >> 20;
-	cell_z = Object_GetById(9)->z.fixed >> 20;
+	cellX = Object_GetById(9)->x.fixed >> 20;
+	cellZ = Object_GetById(9)->z.fixed >> 20;
 	x19 = Object_GetById(19)->x.fixed >> 20;
 	x14 = Object_GetById(14)->x.fixed >> 20;
 	x16 = Object_GetById(16)->x.fixed >> 20;
-	if (cell_z == 19)
+	if (cellZ == 19)
 	{
 		if (IN_COLUMNS(x19))
 		{
@@ -1732,7 +1732,7 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 			PositionSceneActorPair(9, 0, -96);
 		}
 	}
-	else if (cell_z == 18)
+	else if (cellZ == 18)
 	{
 		if (IN_COLUMNS(x19))
 		{
@@ -1752,7 +1752,7 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 			PositionSceneActorPair(9, 0, -64);
 		}
 	}
-	else if (cell_z == 15)
+	else if (cellZ == 15)
 	{
 		if (IN_COLUMNS(x14))
 		{
@@ -1767,7 +1767,7 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 			PositionSceneActorPair(9, 0, -112);
 		}
 	}
-	else if (cell_z == 14)
+	else if (cellZ == 14)
 	{
 		if (IN_COLUMNS(x14))
 		{
@@ -1782,7 +1782,7 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 			PositionSceneActorPair(9, 0, -96);
 		}
 	}
-	else if (cell_z == 12)
+	else if (cellZ == 12)
 	{
 		if (IN_COLUMNS(x16))
 		{
@@ -1790,7 +1790,7 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 		}
 		PositionSceneActorPair(9, 0, -64);
 	}
-	else if (cell_z == 11)
+	else if (cellZ == 11)
 	{
 		if (IN_COLUMNS(x16))
 		{
@@ -1798,14 +1798,14 @@ static void CrossboneIsle_SettleSecondBlockNorth(void)
 		}
 		PositionSceneActorPair(9, 0, -48);
 	}
-	else if ((u32)cell_z <= 9)
+	else if ((u32)cellZ <= 9)
 	{
 		return;
 	}
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
-		cell_x - 1, cell_z, 3, 1, cell_x - 1, Object_GetById(9)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
+		cellX - 1, cellZ, 3, 1, cellX - 1, Object_GetById(9)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, cellX - 1, cellZ);
 }
 
 #undef IN_COLUMNS
@@ -1899,22 +1899,22 @@ static void AdvanceActor9AlongEscapeRoute(void)
 
 static void CrossboneIsle_SettlePushedBlockWest(void)
 {
-	s32 cell_x;
-	s32 cell_z;
+	s32 cellX;
+	s32 cellZ;
 	s32 z17;
 	s32 z18;
 	s32 z9;
 
-	cell_x = Object_GetById(19)->x.fixed >> 20;
-	cell_z = Object_GetById(19)->z.fixed >> 20;
+	cellX = Object_GetById(19)->x.fixed >> 20;
+	cellZ = Object_GetById(19)->z.fixed >> 20;
 	z17 = Object_GetById(17)->z.fixed >> 20;
 	z18 = Object_GetById(18)->z.fixed >> 20;
 	z9 = Object_GetById(9)->z.fixed >> 20;
-	if (cell_x == 3)
+	if (cellX == 3)
 	{
 		return;
 	}
-	if (cell_x == 13)
+	if (cellX == 13)
 	{
 		if (z9 == 15)
 		{
@@ -1934,7 +1934,7 @@ static void CrossboneIsle_SettlePushedBlockWest(void)
 			PositionSceneActorPair(19, -48, 0);
 		}
 	}
-	else if (cell_x == 6)
+	else if (cellX == 6)
 	{
 		if (z17 == 15)
 		{
@@ -1942,11 +1942,11 @@ static void CrossboneIsle_SettlePushedBlockWest(void)
 		}
 		PositionSceneActorPair(19, -48, 0);
 	}
-	else if (cell_x == 5)
+	else if (cellX == 5)
 	{
 		PositionSceneActorPair(19, -32, 0);
 	}
-	else if (cell_x == 8)
+	else if (cellX == 8)
 	{
 		if (z18 == 15)
 		{
@@ -1961,7 +1961,7 @@ static void CrossboneIsle_SettlePushedBlockWest(void)
 			PositionSceneActorPair(19, -80, 0);
 		}
 	}
-	else if (cell_x == 9)
+	else if (cellX == 9)
 	{
 		if (z18 == 15)
 		{
@@ -1976,7 +1976,7 @@ static void CrossboneIsle_SettlePushedBlockWest(void)
 			PositionSceneActorPair(19, -96, 0);
 		}
 	}
-	else if (cell_x == 12)
+	else if (cellX == 12)
 	{
 		if (z9 == 15)
 		{
@@ -1997,22 +1997,22 @@ static void CrossboneIsle_SettlePushedBlockWest(void)
 	}
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
-		cell_x, cell_z - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cell_z - 1);
-	Map_CopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
+		cellX, cellZ - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cellZ - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, cellX, cellZ - 1);
 }
 
 static void CrossboneIsle_SettlePushedBlock(void)
 {
-	s32 cell_x;
-	s32 cell_z;
+	s32 cellX;
+	s32 cellZ;
 	s32 z18;
 	s32 z9;
 
-	cell_x = Object_GetById(19)->x.fixed >> 20;
-	cell_z = Object_GetById(19)->z.fixed >> 20;
+	cellX = Object_GetById(19)->x.fixed >> 20;
+	cellZ = Object_GetById(19)->z.fixed >> 20;
 	z18 = Object_GetById(18)->z.fixed >> 20;
 	z9 = Object_GetById(9)->z.fixed >> 20;
-	if (cell_x == 3)
+	if (cellX == 3)
 	{
 		if (z18 == 15)
 		{
@@ -2028,7 +2028,7 @@ static void CrossboneIsle_SettlePushedBlock(void)
 			PositionSceneActorPair(19, 48, 0);
 		}
 	}
-	else if (cell_x == 5)
+	else if (cellX == 5)
 	{
 		if (z18 == 15)
 		{
@@ -2043,7 +2043,7 @@ static void CrossboneIsle_SettlePushedBlock(void)
 			PositionSceneActorPair(19, 128, 0);
 		}
 	}
-	else if (cell_x == 6)
+	else if (cellX == 6)
 	{
 		if (z9 == 15)
 		{
@@ -2054,7 +2054,7 @@ static void CrossboneIsle_SettlePushedBlock(void)
 			PositionSceneActorPair(19, 112, 0);
 		}
 	}
-	else if (cell_x == 8)
+	else if (cellX == 8)
 	{
 		if (z9 == 15)
 		{
@@ -2062,18 +2062,18 @@ static void CrossboneIsle_SettlePushedBlock(void)
 		}
 		PositionSceneActorPair(19, 80, 0);
 	}
-	else if (cell_x == 9)
+	else if (cellX == 9)
 	{
 		PositionSceneActorPair(19, 64, 0);
 	}
-	else if (cell_x == 12)
+	else if (cellX == 12)
 	{
 		PositionSceneActorPair(19, 16, 0);
 	}
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
-		cell_x, cell_z - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cell_z - 1);
-	Map_CopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
+		cellX, cellZ - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cellZ - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, cellX, cellZ - 1);
 }
 
 static void RetreatActor14AlongEscapeRoute(void)
@@ -2328,7 +2328,7 @@ static void AdvanceActor16AlongEscapeRoute(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2347,11 +2347,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -2387,7 +2387,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u16 CrossboneIsle_EntranceCells[] = {
+u16 gCrossboneIsle_EntranceCells[] = {
 	MAP_CELL_STEP(58, 23, 1, 2, 5), MAP_CELL_STEP(59, 23, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 

@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct CanvasJob {
-    s32 unknown_00;
+    s32 unk00;
     s32 side;
 };
 

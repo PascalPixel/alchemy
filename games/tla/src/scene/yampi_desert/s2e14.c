@@ -7,7 +7,7 @@ void Func_02002e14(void)
     s32 z;
 
     if (GameFlag_Test(0x88d)) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         x = object->x >> 20;
         z = object->z >> 20;
         if (x == 8) {

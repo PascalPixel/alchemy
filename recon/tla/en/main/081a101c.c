@@ -6,8 +6,8 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 
-extern const u8 DisplayScroll_GlyphWidths[];
-extern const u8 DisplayScroll_Font[];
+extern const u8 gDisplayScroll_GlyphWidths[];
+extern const u8 gDisplayScroll_Font[];
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
 {
     Iwram_CopyWords(destination, source, size);
@@ -18,7 +18,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
     s32 x = 0;
     s32 width = 192;
-    const u8 *font = DisplayScroll_Font;
+    const u8 *font = gDisplayScroll_Font;
     s32 tiles;
     s32 pos;
     const u8 *p;
@@ -49,7 +49,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     pos = 0;
     while ((c = *p++) != 0) {
         if (c > 31)
-            pos += DisplayScroll_GlyphWidths[c - 32];
+            pos += gDisplayScroll_GlyphWidths[c - 32];
     }
     if (align == 2)
         x = width - pos;
@@ -78,7 +78,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
             }
             w = 1;
             if (c > 31)
-                w = DisplayScroll_GlyphWidths[glyph];
+                w = gDisplayScroll_GlyphWidths[glyph];
             pos += w;
         }
     }

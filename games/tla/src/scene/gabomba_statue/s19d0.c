@@ -26,7 +26,7 @@ void Func_020019d0(void)
 
     Func_020056b4(actor);
     Func_0200580c(0);
-    Func_020057bc()->motion_flags = 0;
+    Func_020057bc()->motionFlags = 0;
     Func_020057a4(0x9999, 0x1333);
     Camera_SetBounds(180 << 17, 0, 248 << 17, 1);
     Func_020057b4();
@@ -34,7 +34,7 @@ void Func_020019d0(void)
     Func_020020f0(0);
     Battle_WaitMode0(40);
     Func_02005854(582);
-    actor->motion_flags = 0;
+    actor->motionFlags = 0;
     actor->y = 0x80000;
     Battle_WaitMode0(10);
     actor->y = 0;

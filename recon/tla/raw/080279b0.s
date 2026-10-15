@@ -448,7 +448,7 @@ Func_080279b0:
 .L_08027d1c:
 	.4byte gInput
 .L_08027d20:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08027d24:
 	.4byte gDebugMode
 .L_08027d28:
@@ -462,7 +462,7 @@ Func_080279b0:
 .L_08027d38:
 	.4byte IwramMulQ16
 .L_08027d3c:
-	.4byte Data_0802eca0
+	.4byte gData_0802eca0
 .L_08027d40:
 	.4byte 0xfffffe00
 .L_08027d44:
@@ -561,7 +561,7 @@ Func_080279b0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08027e00:
-	.4byte Data_0802ec94
+	.4byte gData_0802ec94
 .L_08027e04:
 	.4byte gPartyState
 .L_08027e08:

@@ -6,7 +6,7 @@
 #include "text/msg_ids.h"
 
 struct EventDestination {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 scene;
 };
 
@@ -41,7 +41,7 @@ static __inline__ void Actor_JoinLeader(s32 actor)
     struct ObjectRuntime *leader;
 
     Object_SetModeById(actor, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(actor);
@@ -87,7 +87,7 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 // Back to the map: actor 8's position is kept in the party state.
 void Func_02000918(void)
 {
-    struct EventDestination *work = Ram_HeapSlots->event_work;
+    struct EventDestination *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *leader = Object_GetById(8);
 
     Func_02004c20();
@@ -95,17 +95,17 @@ void Func_02000918(void)
     do {
         /* FAKEMATCH: the loop note keeps gPartyState's load ahead of the 0x212 offset, as in the native (differ 4 without). */
     } while (0);
-    if (gPartyState.render_mode == 8)
+    if (gPartyState.renderMode == 8)
         Func_0200050c();
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     do {
         /* FAKEMATCH: inside a one-pass block the z offset starts before z is loaded, as in the native (alchemy permute; differ 2 without). */
-        gPartyState.saved_x = leader->x;
-        gPartyState.saved_z = leader->z;
+        gPartyState.savedX = leader->x;
+        gPartyState.savedZ = leader->z;
     } while (0);
-    gPartyState.unknown_280 = 0;
-    gPartyState.owner_override = 0;
+    gPartyState.unk280 = 0;
+    gPartyState.ownerOverride = 0;
     GameFlag_ClearBit(0x176);
     Func_02004e30(123);
     Func_02004d40(work->scene);
@@ -119,7 +119,7 @@ void Func_02000994(void)
     s32 seen;
 
     if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         x = object->x;
         z = object->z;
         Func_02004c20();
@@ -131,35 +131,35 @@ void Func_02000994(void)
         z <<= 4;
         if (seen) {
             Func_02004df8_(0x16666, 6);
-            Func_02004c98(5, gPartyState.current_owner);
+            Func_02004c98(5, gPartyState.currentOwner);
             WaitFrames(1);
             ObjectMotion_SetPositionAndReset_(5, x + 24, z - 12);
             ObjectMotion_ArmCallback_(5, 0x6000, 0);
-            Func_02004d00_(gPartyState.current_owner, 0xe000);
+            Func_02004d00_(gPartyState.currentOwner, 0xe000);
             Func_02004da8();
             Func_02004cd8((s32)MsgWeShouldnT);
             Func_02004cf0(5, 0);
             Func_02004db0();
             Actor_JoinLeader(5);
             WaitFrames(1);
-            ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 7312, 0x2000);
+            ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
             Func_02004df8_(0x10000, 6);
         } else {
             Func_02004df8_(0x16666, 6);
-            Func_02004c98(5, gPartyState.current_owner);
+            Func_02004c98(5, gPartyState.currentOwner);
             WaitFrames(1);
             z -= 12;
             ObjectMotion_SetPositionAndReset_(5, x + 24, z);
             ObjectMotion_ArmCallback_(5, 0x6000, 0);
-            Func_02004d00_(gPartyState.current_owner, 0xe000);
+            Func_02004d00_(gPartyState.currentOwner, 0xe000);
             Func_02004da8();
             Func_02004cd8((s32)MsgYouReNot);
             Func_02004cf0(5, 0);
             Func_02004db0();
             ObjectMotion_ArmCallback_(5, 0x8000, 0);
-            Func_02004d10_(gPartyState.current_owner, 258);
-            ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, x + 12, z);
-            Func_02004d00_(gPartyState.current_owner, 0);
+            Func_02004d10_(gPartyState.currentOwner, 258);
+            ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, x + 12, z);
+            Func_02004d00_(gPartyState.currentOwner, 0);
             Object_SetModeById(5, 4);
             Func_02004da8();
             Func_02004cf0(5, 0);
@@ -170,14 +170,14 @@ void Func_02000994(void)
             Func_02004db0();
             Actor_JoinLeader(5);
             WaitFrames(1);
-            ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 7312, 0x2000);
+            ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
             Flag_Set(0x9b3);
             Func_02004df8_(0x10000, 6);
         }
         WaitFrames(8);
         Func_02004c28();
     } else {
-        struct EventDestination *work = Ram_HeapSlots->event_work;
+        struct EventDestination *work = Ram_HeapSlots->eventWork;
 
         Func_02004c20();
         Func_02004db8(0);

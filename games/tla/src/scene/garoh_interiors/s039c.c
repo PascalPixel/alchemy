@@ -12,13 +12,13 @@ void Func_02000318(s32 actor)
     message = (s32)MsgGarohInteriors01;
     Func_02000844(message);
     Message_Open(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Func_02000844(message + 2);
         Message_Open(actor, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
             Func_0200085c(actor, 0);
         } else {
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
             Func_0200085c(actor, 0);
         }
     } else {
@@ -104,20 +104,20 @@ const u8 *Func_020004f0(void)
     if (moved) {
         scene = party->scene;
         if (scene == room1)
-            return Data_02000e44;
+            return gData_02000e44;
         if (scene == (s32)&SceneId_Ov660Room2)
-            return Data_02000fe8;
+            return gData_02000fe8;
     } else {
         scene = party->scene;
         if (scene == room1) {
             if (party->entrance == 99)
-                return Data_02000e44;
-            return Data_02000b80;
+                return gData_02000e44;
+            return gData_02000b80;
         }
         if (scene == (s32)&SceneId_Ov660Room2)
-            return Data_02000d18;
+            return gData_02000d18;
     }
     if (scene == (s32)&SceneId_Ov660Room3)
-        return Data_02000de4;
-    return Data_02000b5c;
+        return gData_02000de4;
+    return gData_02000b5c;
 }

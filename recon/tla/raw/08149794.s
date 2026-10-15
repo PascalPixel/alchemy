@@ -520,4 +520,4 @@ Func_08149794:
 .L_08149b8c:
 	.4byte Data_081979c0
 .L_08149b90:
-	.4byte Data_08197410
+	.4byte gData_08197410

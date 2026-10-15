@@ -69,8 +69,8 @@ static void EV09_PSYNERGY(void)
 	puddle = Actor_Get(ACTOR_SOUTH_PUDDLE);
 	if (puddle != NULL)
 	{
-		puddle->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
-		puddle->motion_flags = 0;
+		puddle->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		puddle->motionFlags = 0;
 	}
 	Map_CopyCellAttributes(7, 32, 1, 1, 8, 32);
 	GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
@@ -85,7 +85,7 @@ static void Gate_DrawPropped(void)
 	if (pillar != NULL)
 	{
 		Engine_ActorSetSpriteFlags(pillar, 0);
-		pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	Map_CopyCells(41, 87, 2, 5, 21, 59);
 	Engine_TaskWait(4);
@@ -110,7 +110,7 @@ static void EV10_PSYNERGY(void)
 	if (pillar != NULL)
 	{
 		Engine_ActorSetSpriteFlags(pillar, 0);
-		pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0)
 	{
@@ -966,14 +966,14 @@ static void Party_RidesWagon(void)
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_WestLunpaCave)
 	{
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_HIDDEN_PUDDLE), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTH_PUDDLE), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GATE_PUDDLE), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_NORTH_PUDDLE), 0);
-		Object_GetById(ACTOR_NORTH_PUDDLE)->scale_y = 0xf333;
+		Object_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 0xf333;
 		if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_LOWERED) != 0)
 		{
 			Gate_Lower();

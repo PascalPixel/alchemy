@@ -18,7 +18,7 @@ s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
 void UiWindow_SetTilemapFlagRect(
     const struct UiWindow *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     x += (s16)object->x + 1;
     y += (s16)object->y + 1;
@@ -84,7 +84,7 @@ s32 UiText_SetRenderString(const u8 *str)
     u32 width;
     u32 height;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     count = 0;
     if (*str != 0) {
         dst = work->entries;

@@ -127,9 +127,9 @@ Func_020005b8:
 	movs r0, #0
 	pop {r5, pc}
 .L_ja_020086cc:
-	.4byte Data_02001c90
+	.4byte gData_02001c90
 .L_ja_020086d0:
-	.4byte Data_02001c60
+	.4byte gData_02001c60
 .L_ja_020086d4:
 	.4byte Func_02000578
 .L_ja_020086d8:
@@ -298,9 +298,9 @@ Func_020005b8:
 	movs r0, #0
 	pop {r5, pc}
 .L_02008720:
-	.4byte Data_02001c90
+	.4byte gData_02001c90
 .L_02008724:
-	.4byte Data_02001c60
+	.4byte gData_02001c60
 .L_02008728:
 	.4byte Func_02000578
 .L_0200872c:
@@ -310,8 +310,8 @@ Func_020005b8:
 	.endif
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_02001c60
-Data_02001c60:
+	.global gData_02001c60
+gData_02001c60:
 	.space 0x00000030
-	.global Data_02001c90
-Data_02001c90:
+	.global gData_02001c90
+gData_02001c90:

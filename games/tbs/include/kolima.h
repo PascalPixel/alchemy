@@ -7,8 +7,8 @@ extern s32 gFallingEffectOffset;
 extern s32 gFallingEffectWidth;
 extern u32 gFallingEffectState;
 
-extern s32 Kolima_PendingPose;
-extern s32 Kolima_LayoutFlag;
-extern s32 Kolima_EffectActive;
+extern s32 gKolima_PendingPose;
+extern s32 gKolima_LayoutFlag;
+extern s32 gKolima_EffectActive;
 
 #endif

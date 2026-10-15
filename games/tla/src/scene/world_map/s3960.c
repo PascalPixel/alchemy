@@ -4,7 +4,7 @@
 #include "animspr.h"
 #include "io_write_queue.h"
 
-extern u8 Data_02006c08[];
+extern u8 gData_02006c08[];
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020036a8(void);
@@ -13,7 +13,7 @@ void Func_020036a8(void);
 // next frames.
 void Func_020038e4(void)
 {
-    if ((u16)Ram_HeapSlots->object_system->suspended == 0) {
+    if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
         IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
         IO_WRITE_QUEUE_PUSH(0x4000054, 12, 0x20000);
     }
@@ -27,6 +27,6 @@ static inline void ClearWords(void *destination, s32 size)
 
 void Func_02003960(void)
 {
-    ClearWords(Data_02006c08, 0x200);
+    ClearWords(gData_02006c08, 0x200);
     Scheduler_AddOrUpdateCallback(Func_020036a8, 0x480);
 }

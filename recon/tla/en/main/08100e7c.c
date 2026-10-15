@@ -4,38 +4,38 @@
 #include "iwram_call.h"
 
 struct ItemMenuModeState {
-    u8 reserved_000[0x20c];
+    u8 reserved000[0x20c];
     u8 mode;
 };
 
 struct ItemMenuDisplayState {
-    u16 reserved_00[2];
+    u16 reserved00[2];
     u16 busy;
 };
 
 struct ItemMenuSavedGraphics {
-    u8 reserved_000[0xa8];
+    u8 reserved000[0xa8];
     u8 tiles[0x2000];
     u16 palette[64];
-    void *reserved_2128;
+    void *reserved2128;
     s32 variant;
 };
 
 struct ItemMenuWork {
-    u8 reserved_000[0x1c];
+    u8 reserved000[0x1c];
     u8 selection;
     u8 target;
-    u8 reserved_01e[0xee];
+    u8 reserved01e[0xee];
     s32 window;
-    u8 reserved_110[0x64];
+    u8 reserved110[0x64];
     u16 slot;
-    u16 target_slot;
+    u16 targetSlot;
     u16 item;
-    u8 reserved_17a[10];
+    u8 reserved17a[10];
     struct ItemMenuSavedGraphics *saved;
-    u8 reserved_188[0x80];
+    u8 reserved188[0x80];
     u16 owners[8];
-    u8 reserved_218;
+    u8 reserved218;
     u8 count;
 };
 
@@ -66,13 +66,13 @@ void Event_ClearInvalidPackedValuesFar(void);
 s32 ItemMenu_Run(void)
 {
     struct ItemMenuWork *menu;
-    u32 old_mode;
+    u32 oldMode;
     s32 state;
     struct ItemMenuSavedGraphics *saved;
     s32 zero;
 
     menu = Runtime_AllocateHeapBlock(55, 0xa70);
-    old_mode = gGameState.mode;
+    oldMode = gGameState.mode;
     gGameState.mode = 2;
     state = gMenuCtrlWork->busy = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -80,7 +80,7 @@ s32 ItemMenu_Run(void)
     UiWindow_InitializeWork(0);
     saved = Runtime_BumpAllocateAlternatePool(0x2130);
     menu->saved = saved;
-    saved->reserved_2128 = 0;
+    saved->reserved2128 = 0;
     saved->variant = 0;
     if (GameFlag_TestFar(0x16e)) {
         if (!GameFlag_TestFar(0x16f)) {
@@ -109,7 +109,7 @@ s32 ItemMenu_Run(void)
     menu->selection = zero;
     menu->target = zero;
     menu->slot = 0;
-    menu->target_slot = 0;
+    menu->targetSlot = 0;
     FourObjectMotion_InitializeBottomRow(menu->window, 0);
     DjinnMenu_RunScreen();
     FourObjectMotion_ClearSlotsAndScheduleAlt();
@@ -128,6 +128,6 @@ s32 ItemMenu_Run(void)
     MemFree(menu->saved);
     Runtime_ReleaseHeapBlock(55);
     Event_ClearInvalidPackedValuesFar();
-    gGameState.mode = old_mode;
+    gGameState.mode = oldMode;
     return 1;
 }

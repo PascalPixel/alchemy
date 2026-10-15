@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const u8 Text_HexDigits[];
-extern const s32 Text_PowersOfTen[9];
+extern const u8 gText_HexDigits[];
+extern const s32 gText_PowersOfTen[9];
 
 #endif

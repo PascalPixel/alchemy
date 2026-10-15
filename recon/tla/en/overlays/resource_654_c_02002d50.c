@@ -29,7 +29,7 @@ void Func_02002d50(void)
         return;
     if (GameFlag_Test(115))
         return;
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     state = &Object_GetById(14)->state;
     switch (work->exit) {
     case 13:

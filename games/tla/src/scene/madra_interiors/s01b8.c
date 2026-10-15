@@ -2,7 +2,7 @@
 
 void Func_020001b8(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -52,7 +52,7 @@ void Func_0200028c(void)
             Func_02001e18((s32)MsgMadraInteriors106);
             Func_02001e30(10, 0);
         }
-        FIELD_AT(Ram_HeapSlots->event_work, u16, 346) = 1;
+        FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
     }
 }
 
@@ -148,14 +148,14 @@ void Func_02000428(void)
 const u8 *Func_020004c4(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov659Room2)
-        return Data_02002c9c;
+        return gData_02002c9c;
     if (gPartyState.entrance == 20)
-        return Data_02002bb8;
+        return gData_02002bb8;
     if (FlagCheck(0x8ff))
-        return Data_0200308c;
+        return gData_0200308c;
     if (FlagCheck(0x8ab))
-        return Data_02002da4;
-    return Data_020028a0;
+        return gData_02002da4;
+    return gData_020028a0;
 }
 
 void Func_02000534(void)

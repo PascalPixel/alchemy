@@ -462,15 +462,15 @@ Func_0815806c:
 .L_0815840c:
 	.4byte 0x00000178
 .L_08158410:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_08158414:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_08158418:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_0815841c:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_08158420:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08158424:
 	.4byte 0xffffe000
 .L_08158428:

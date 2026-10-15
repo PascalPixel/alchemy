@@ -379,7 +379,7 @@ Event_SpawnObjectTable:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080ca9c0:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080ca9c4:
 	.4byte gPartyState
 .L_080ca9c8:

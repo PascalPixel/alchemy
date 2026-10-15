@@ -16,25 +16,25 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
         {
             u32                        slot = base + current;
             struct AudioTrackSlotWork *state;
-            u32                        read_offset;
-            u32                        next_offset;
+            u32                        readOffset;
+            u32                        nextOffset;
             u8                         value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = Flash_Handler3;
-            read_offset = state->input_cursor;
+            state = gFlash_Handler3;
+            readOffset = state->inputCursor;
             do {
-                value = input[read_offset];
+                value = input[readOffset];
             } while (0);
-            next_offset = read_offset + 1;
-            state->input_cursor = next_offset;
-            if (next_offset == state->input_limit)
+            nextOffset = readOffset + 1;
+            state->inputCursor = nextOffset;
+            if (nextOffset == state->inputLimit)
             {
-                state->bucket_by_slot[slot & mask] = -1;
+                state->bucketBySlot[slot & mask] = -1;
                 break;
             }
 
-            state->bucket_by_slot[slot & mask] = value;
+            state->bucketBySlot[slot & mask] = value;
             current++;
             AudioTrack_InsertSlotNode(slot & mask);
             removal++;
@@ -45,7 +45,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     if (current < limit)
     {
         u32                         mask = 0x3ff;
-        struct AudioTrackSlotWork **root = &Flash_Handler3;
+        struct AudioTrackSlotWork **root = &gFlash_Handler3;
         s32                         empty = -1;
 
         do
@@ -58,7 +58,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             } while (0);
             state = *root;
             current++;
-            state->bucket_by_slot[slot] = empty;
+            state->bucketBySlot[slot] = empty;
         } while (current < limit);
     }
 }

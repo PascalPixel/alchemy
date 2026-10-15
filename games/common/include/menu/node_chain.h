@@ -7,15 +7,15 @@
 
 struct NodeChainNode
 {
-	u8					  padding_00[4];
+	u8					  padding00[4];
 	struct NodeChainNode *next;
 };
 
 struct NodeChainState
 {
-	u8					  padding_000[840];
+	u8					  padding000[840];
 	struct NodeChainNode *node;
-	u8					  padding_34c[82];
+	u8					  padding34c[82];
 	u16					  count;
 };
 

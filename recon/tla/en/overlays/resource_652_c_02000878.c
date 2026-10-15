@@ -14,7 +14,7 @@
 #include "text/msg_ids.h"
 
 struct DailaEventWork {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     s16 message;
 };
 
@@ -44,7 +44,7 @@ s32 Func_02000878(s32 item, s32 unused)
     s32 member;
     s32 slot;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     saved = work->message;
     owner = PartyInventory_Add(item);
     if (owner == -1) {
@@ -85,7 +85,7 @@ s32 Func_02000878(s32 item, s32 unused)
             UnitCalc(member);
             owner = PartyInventory_Add(item);
             Func_02000dfc(83);
-            if (owner == gPartyState.current_owner) {
+            if (owner == gPartyState.currentOwner) {
                 Func_02000ccc(item, 2);
                 UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 3);
             } else {
@@ -100,7 +100,7 @@ s32 Func_02000878(s32 item, s32 unused)
         Func_02000dfc(83);
         Func_02000ccc(item, 2);
         UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived, 3);
-        if (owner != gPartyState.current_owner) {
+        if (owner != gPartyState.currentOwner) {
             Func_02000ccc(item, 2);
             Func_02000ccc(owner, 1);
             UiText_ShowPositionedMessageAndWait((s32)MsgItemReceived + 1, 1);

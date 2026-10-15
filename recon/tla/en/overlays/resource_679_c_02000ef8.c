@@ -18,11 +18,11 @@
 
 void Func_02000ef8(void)
 {
-    if (REG_VCOUNT < Data_02002a98) {
-        REG_BG1HOFS = Data_02002a9c;
+    if (REG_VCOUNT < gData_02002a98) {
+        REG_BG1HOFS = gData_02002a9c;
         REG_BLDCNT = 0;
     } else {
-        REG_BG1HOFS = Data_02002a9e;
+        REG_BG1HOFS = gData_02002a9e;
         REG_BLDALPHA = 0x100c;
         REG_BLDCNT = 0x3f42;
     }
@@ -30,13 +30,13 @@ void Func_02000ef8(void)
 
 void Func_02000f58(void)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s16 *scroll = (s16 *)&map->layers[2];
     s32 hofs;
 
-    Data_02002a98 = 0x5a8 - scroll[3];
-    Data_02002a9c = hofs = scroll[1];
-    Data_02002a9e = hofs - (gFrameCount >> 2);
+    gData_02002a98 = 0x5a8 - scroll[3];
+    gData_02002a9c = hofs = scroll[1];
+    gData_02002a9e = hofs - (gFrameCount >> 2);
 }
 
 void Func_02001054(void)
@@ -68,18 +68,18 @@ void Func_02001054(void)
 void Func_020010d8(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *child = Engine_ObjectCreate(14, object->x, object->y + 0x40000, object->z + 0x40000);
-    struct FieldSprite *parent_sprite = object->animation;
+    struct FieldSprite *parentSprite = object->animation;
 
     if (child != 0) {
         struct FieldSprite *sprite = child->animation;
 
-        child->terrain_height = object->terrain_height;
-        Func_02001c74_(child, Data_02001ee8);
-        child->motion_flags = 0;
+        child->terrainHeight = object->terrainHeight;
+        Func_02001c74_(child, gData_02001ee8);
+        child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
-            sprite->priority = parent_sprite->priority;
+            sprite->nextFrame = 0;
+            sprite->priority = parentSprite->priority;
         }
     }
 }
@@ -88,7 +88,7 @@ void Func_020017bc(void)
 {
     s32 priority;
 
-    u16 *work = Data_02002aa0;
+    u16 *work = gData_02002aa0;
 
     Iwram_ClearWords(work, 0x1004);
     *work = Resource_FindFreeEntry();

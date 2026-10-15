@@ -43,10 +43,10 @@ void Camera_ResetSceneDefaults(void)
 	state->pos[1] = 0;
 	state->pos[2] = 0;
 	state->yaw = 0;
-	state->follow_pos = 0;
-	gProjection.center_x = 0;
-	gProjection.center_y = 0;
-	state->unknown_18 = 0;
+	state->followPos = 0;
+	gProjection.centerX = 0;
+	gProjection.centerY = 0;
+	state->unk18 = 0;
 
 	Render_ResetTransformState();
 	SceneTransform_ApplyPosition(&state->pos[0]);
@@ -165,9 +165,9 @@ struct LuckyDiceSprites
 {
 	u8				 filler[200];
 	struct OamShadow obj[128];
-	s32				 coins_window;
-	s32				 winnings_window;
-	s32				 help_window;
+	s32				 coinsWindow;
+	s32				 winningsWindow;
+	s32				 helpWindow;
 };
 
 #include "keystate.h"
@@ -223,16 +223,16 @@ void LuckyDice_Run(void)
 	/* FAKEMATCH: unused local; the native frame keeps 32 unused bytes at sp+168..200, between proj and the affine halfwords (without it 42) */
 	s32 unused[8];
 	/* FAKEMATCH: volatile restores the form the bytes prove, four halfwords stored to sp+166..160 and each reloaded with ldrh (without it 902) */
-	volatile u16			 affine_a;
-	volatile u16			 affine_b;
-	volatile u16			 affine_c;
-	volatile u16			 affine_d;
+	volatile u16			 affineA;
+	volatile u16			 affineB;
+	volatile u16			 affineC;
+	volatile u16			 affineD;
 	s32						 spin[2];
 	s32						 flash[2];
 	s32						 faces[2];
 	s32						 order[2];
 	s32						 matches[2];
-	u16						*obj_palette;
+	u16						*objPalette;
 	struct BattleEffectWork *work;
 	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 1702. */
 	struct LuckyDiceSprites *sprites;
@@ -272,7 +272,7 @@ void LuckyDice_Run(void)
 	s16						 value;
 
 	Runtime_AllocateHeapBlock(41, 0x60e);
-	obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
+	objPalette = Runtime_AllocateHeapBlock(40, 0x200);
 	work = Runtime_AllocateBlock(39, 0x782c);
 	sprites = Runtime_AllocateBlock(45, 0x618);
 	render = Runtime_AllocateBlock(12, 76);
@@ -298,12 +298,12 @@ void LuckyDice_Run(void)
 	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-	Dma_Set((void *)base, obj_palette, 0x84000080, REG_DMA3);
+	Dma_Set((void *)base, objPalette, 0x84000080, REG_DMA3);
 	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, REG_DMA3);
 	base += 0x200;
 	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
-	Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
+	Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, 0, 256);
 	Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 
 	REG_BG1CNT = 0x0686;
@@ -333,9 +333,9 @@ void LuckyDice_Run(void)
 		work->particles[i].x = ((Random16() & 127) - 64) << 16;
 		work->particles[i].y = (Random16() & 31) << 16;
 		work->particles[i].z = ((Random16() & 127) - 64) << 16;
-		work->particles[i].velocity_x = ((Random16() & 127) - 64) << 14;
-		work->particles[i].velocity_y = ((Random16() & 31) + 32) << 12;
-		work->particles[i].velocity_z = ((Random16() & 127) - 64) << 14;
+		work->particles[i].velocityX = ((Random16() & 127) - 64) << 14;
+		work->particles[i].velocityY = ((Random16() & 31) + 32) << 12;
+		work->particles[i].velocityZ = ((Random16() & 127) - 64) << 14;
 		work->particles[i].variant = 0;
 		spin[i] = 300;
 	}
@@ -355,13 +355,13 @@ void LuckyDice_Run(void)
 
 	UiWork_InitializeWithResourceCountersFar();
 	window = UiWindow_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
-	sprites->coins_window = window;
+	sprites->coinsWindow = window;
 	UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
-	UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
+	UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 	window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
-	sprites->help_window = window;
+	sprites->helpWindow = window;
 	UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins + 10, window, 0, 0);
-	UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
+	UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins + 11, sprites->helpWindow, 0, 8);
 
 	frame = 0;
 	for (;;)
@@ -369,7 +369,7 @@ void LuckyDice_Run(void)
 		reset = 0;
 		if (frame <= 16)
 		{
-			Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, frame << 12, 256);
+			Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, frame << 12, 256);
 			Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, frame << 12, 256);
 		}
 		Render_ResetTransformState();
@@ -415,15 +415,15 @@ void LuckyDice_Run(void)
 			}
 			if (timer > 19 && kind >= 0)
 			{
-				for (i = 0; i != LuckyDice_LabelCounts[kind]; i++)
+				for (i = 0; i != gLuckyDice_LabelCounts[kind]; i++)
 				{
 					s32 kx;
 					s32 ky;
 
-					kx = DICE_KIND_X - LuckyDice_LabelCounts[kind] * 16 + i * 32;
+					kx = DICE_KIND_X - gLuckyDice_LabelCounts[kind] * 16 + i * 32;
 					ky = 96;
 					sprites->obj[count].attr01 = (((kx & 0x1ff) << 16) | ky) | 0x80002000;
-					sprites->obj[count].attr2 = LuckyDice_LabelTiles[kind] * 8 + 152 + i * 32;
+					sprites->obj[count].attr2 = gLuckyDice_LabelTiles[kind] * 8 + 152 + i * 32;
 					count++;
 				}
 			}
@@ -455,12 +455,12 @@ void LuckyDice_Run(void)
 					digits = 5;
 				}
 				window = UiWindow_CreateFar(DICE_WIN_X - digits / 2, 16, digits + DICE_WIN_W, 3, 6);
-				sprites->winnings_window = window;
+				sprites->winningsWindow = window;
 				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings, window, 0, 0);
-				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings - 1, sprites->winnings_window,
+				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings - 1, sprites->winningsWindow,
 					digits * 8 + DICE_WIN_LABEL_X, 0);
 				UiText_DrawNumberInWindowFar(
-					winnings, digits, sprites->winnings_window, DICE_WIN_NUM_X, 0);
+					winnings, digits, sprites->winningsWindow, DICE_WIN_NUM_X, 0);
 			}
 			if (counter > 0)
 			{
@@ -480,10 +480,10 @@ void LuckyDice_Run(void)
 					state = 0;
 #if EDITION_INTERNATIONAL
 					window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
-					sprites->help_window = window;
+					sprites->helpWindow = window;
 					UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);
 					UiText_DrawCharacterAtOffsetFar(
-						MsgLuckyDiceThrow + 1, sprites->help_window, 0, 8);
+						MsgLuckyDiceThrow + 1, sprites->helpWindow, 0, 8);
 #endif
 				}
 			}
@@ -494,17 +494,17 @@ void LuckyDice_Run(void)
 			if (counter == 0)
 			{
 				winnings = 0;
-				UiText_DrawNumberInWindowFar(0, digits, sprites->winnings_window, 40, 0);
-				UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
+				UiText_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
+				UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 			}
 			if (counter == 15)
 			{
 				state = 0;
-				UiWork_FinalizeFar(sprites->winnings_window, 1);
+				UiWork_FinalizeFar(sprites->winningsWindow, 1);
 				window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
-				sprites->help_window = window;
+				sprites->helpWindow = window;
 				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);
-				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow + 1, sprites->help_window, 0, 8);
+				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow + 1, sprites->helpWindow, 0, 8);
 				reset = 1;
 			}
 			counter++;
@@ -542,19 +542,19 @@ void LuckyDice_Run(void)
 			}
 			if (gGameState.coins < (u32)(Party_GetAverageLevelFar() * 10))
 			{
-				UiWork_FinalizeFar(sprites->help_window, 1);
+				UiWork_FinalizeFar(sprites->helpWindow, 1);
 				break;
 			}
 			if (gKeysRepeat & KEY_B)
 			{
 				AudioCommand_PlayFar(113);
-				UiWork_FinalizeFar(sprites->help_window, 1);
+				UiWork_FinalizeFar(sprites->helpWindow, 1);
 				break;
 			}
 			if (gKeysRepeat & KEY_A)
 			{
 				AudioCommand_PlayFar(0x12e);
-				UiWork_FinalizeFar(sprites->help_window, 1);
+				UiWork_FinalizeFar(sprites->helpWindow, 1);
 				state = 1;
 				bet = Party_GetAverageLevelFar() * 10;
 				if ((u32)bet > gGameState.coins)
@@ -562,7 +562,7 @@ void LuckyDice_Run(void)
 					bet = gGameState.coins;
 				}
 				Party_AdjustCoinsFar(-bet);
-				UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
+				UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 				for (i = 0; i != 2; i++)
 				{
 					die = &work->particles[i];
@@ -571,9 +571,9 @@ void LuckyDice_Run(void)
 						die->z = -0xb40000;
 						die->y = 0x600000;
 					}
-					die->velocity_x = ((Random16() & 127) - 64) << 12;
-					die->velocity_y = ((Random16() & 15) + 48) << 13;
-					die->velocity_z = (((Random16() & 63) + 140) << 12) + die->y / 6;
+					die->velocityX = ((Random16() & 127) - 64) << 12;
+					die->velocityY = ((Random16() & 15) + 48) << 13;
+					die->velocityZ = (((Random16() & 63) + 140) << 12) + die->y / 6;
 					die->variant = Random16() % 0x4800;
 					spin[i] = 300;
 				}
@@ -633,7 +633,7 @@ void LuckyDice_Run(void)
 				sprites->obj[count].attr01 =
 					((order[i] << 25) | (((px + 0x278) & 0x1ff) << 16) | ((py + 0x160) & 255))
 					| 0x40002300;
-				sprites->obj[count].attr2 = (LuckyDice_FaceTiles[die->variant / 1024] << 3) | 0x400;
+				sprites->obj[count].attr2 = (gLuckyDice_FaceTiles[die->variant / 1024] << 3) | 0x400;
 				count++;
 			}
 		}
@@ -694,9 +694,9 @@ void LuckyDice_Run(void)
 			for (i = 0; i != 2; i++)
 			{
 				die = &work->particles[i];
-				die->x += die->velocity_x;
-				die->y += die->velocity_y;
-				die->z += die->velocity_z;
+				die->x += die->velocityX;
+				die->y += die->velocityY;
+				die->z += die->velocityZ;
 				for (j = 0; j != 2; j++)
 				{
 					other = &work->particles[j];
@@ -708,67 +708,67 @@ void LuckyDice_Run(void)
 						if (dx * dx + dy * dy + dz * dz <= 0x9c3)
 						{
 							dist = Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
-							die->velocity_x += (dx << 15) / dist;
-							die->velocity_y += (dy << 15) / dist;
-							die->velocity_z += (dz << 15) / dist;
+							die->velocityX += (dx << 15) / dist;
+							die->velocityY += (dy << 15) / dist;
+							die->velocityZ += (dz << 15) / dist;
 						}
 					}
 				}
 				if (die->x < -0xc80000)
 				{
 					die->x = -0xc80000;
-					die->velocity_x = -die->velocity_x * 48 / 64;
+					die->velocityX = -die->velocityX * 48 / 64;
 				}
 				if (die->x > 0xc80000)
 				{
 					die->x = 0xc80000;
-					die->velocity_x = -die->velocity_x * 48 / 64;
+					die->velocityX = -die->velocityX * 48 / 64;
 				}
 				if (die->z < -0x960000)
 				{
 					die->z = -0x960000;
-					die->velocity_z = -die->velocity_z * 48 / 64;
+					die->velocityZ = -die->velocityZ * 48 / 64;
 				}
 				if (die->z > die->y + 0xb40000)
 				{
 					die->z = die->y + 0xb40000;
-					if (die->velocity_z > 0)
+					if (die->velocityZ > 0)
 					{
-						die->velocity_y += die->velocity_z / 2;
-						die->velocity_z = -die->velocity_z * 48 / 64;
+						die->velocityY += die->velocityZ / 2;
+						die->velocityZ = -die->velocityZ * 48 / 64;
 					}
 				}
-				die->velocity_y += -0x8000;
+				die->velocityY += -0x8000;
 				if (die->y <= 0)
 				{
 					die->y = 0;
-					die->velocity_y = -die->velocity_y * 48 / 64;
+					die->velocityY = -die->velocityY * 48 / 64;
 					if ((Random16() & 3) == 0)
 					{
 						s32 vx;
 						s32 vz;
 
-						vx = die->velocity_x >> 8;
-						vz = die->velocity_z >> 8;
+						vx = die->velocityX >> 8;
+						vz = die->velocityZ >> 8;
 						speed = Iwram_Sqrt(vx * vx + vz * vz) * 56 / 64;
 						angle = Random16() & 0xffff;
-						die->velocity_x = Trig_Sin(angle) * speed >> 8;
-						die->velocity_z = Trig_Cos(angle) * speed >> 8;
+						die->velocityX = Trig_Sin(angle) * speed >> 8;
+						die->velocityZ = Trig_Cos(angle) * speed >> 8;
 					}
 					else
 					{
-						die->velocity_x = die->velocity_x * 56 / 64;
-						die->velocity_z = die->velocity_z * 56 / 64;
+						die->velocityX = die->velocityX * 56 / 64;
+						die->velocityZ = die->velocityZ * 56 / 64;
 					}
 					if (spin[i] > 19)
 					{
 						spin[i] -= 20;
 					}
-					if (die->velocity_y < 0x30000)
+					if (die->velocityY < 0x30000)
 					{
-						die->velocity_x = 0;
-						die->velocity_y = 0;
-						die->velocity_z = 0;
+						die->velocityX = 0;
+						die->velocityY = 0;
+						die->velocityZ = 0;
 						spin[i] = 0;
 						n = die->variant;
 						e = n / 1024 % 3;
@@ -782,9 +782,9 @@ void LuckyDice_Run(void)
 						}
 					}
 				}
-				die->velocity_x = die->velocity_x * 63 / 64;
-				die->velocity_y = die->velocity_y * 63 / 64;
-				die->velocity_z = die->velocity_z * 63 / 64;
+				die->velocityX = die->velocityX * 63 / 64;
+				die->velocityY = die->velocityY * 63 / 64;
+				die->velocityZ = die->velocityZ * 63 / 64;
 				die->variant += spin[i];
 				if (die->variant > 0x47ff)
 				{
@@ -794,13 +794,13 @@ void LuckyDice_Run(void)
 				{
 					spin[i]--;
 				}
-				if (die->velocity_x == 0 && die->velocity_y == 0 && die->velocity_z == 0
+				if (die->velocityX == 0 && die->velocityY == 0 && die->velocityZ == 0
 					&& die->y == 0)
 				{
 					results[i] = die->variant / 0xc00;
 					for (j = 0; j != 6; j++)
 					{
-						if (die->z > LuckyDice_FaceHeights[j] << 16)
+						if (die->z > gLuckyDice_FaceHeights[j] << 16)
 						{
 							results[i + 2] = j;
 							break;
@@ -834,7 +834,7 @@ void LuckyDice_Run(void)
 					{
 						winnings = bet * 5;
 					}
-					UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
+					UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 					AudioCommand_PlayFar(93);
 				}
 				else
@@ -855,14 +855,14 @@ void LuckyDice_Run(void)
 					{
 						winnings = bet;
 						UiText_DrawNumberInWindowFar(
-							gGameState.coins, 6, sprites->coins_window, 0, 0);
+							gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 						kind = 3;
 					}
 					if (pairs == 2)
 					{
 						winnings = bet * 2;
 						UiText_DrawNumberInWindowFar(
-							gGameState.coins, 6, sprites->coins_window, 0, 0);
+							gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 						flash[Random16() & 1] = 60;
 						kind = 2;
 						AudioCommand_PlayFar(91);
@@ -871,7 +871,7 @@ void LuckyDice_Run(void)
 					{
 						winnings = bet * 3;
 						UiText_DrawNumberInWindowFar(
-							gGameState.coins, 6, sprites->coins_window, 0, 0);
+							gGameState.coins, 6, sprites->coinsWindow, 0, 0);
 						flash[Random16() & 1] = 60;
 						kind = 1;
 						AudioCommand_PlayFar(92);
@@ -889,14 +889,14 @@ void LuckyDice_Run(void)
 		for (i = 0; i != 4; i++)
 		{
 			value = depth[i] / 2 + 128;
-			affine_a = value;
-			affine_b = 0;
-			affine_c = 0;
-			affine_d = value;
-			sprites->obj[i * 4 + 0].attr2 |= affine_a << 16;
-			sprites->obj[i * 4 + 1].attr2 |= affine_b << 16;
-			sprites->obj[i * 4 + 2].attr2 |= affine_c << 16;
-			sprites->obj[i * 4 + 3].attr2 |= affine_d << 16;
+			affineA = value;
+			affineB = 0;
+			affineC = 0;
+			affineD = value;
+			sprites->obj[i * 4 + 0].attr2 |= affineA << 16;
+			sprites->obj[i * 4 + 1].attr2 |= affineB << 16;
+			sprites->obj[i * 4 + 2].attr2 |= affineC << 16;
+			sprites->obj[i * 4 + 3].attr2 |= affineD << 16;
 		}
 
 		Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, REG_DMA3);
@@ -907,7 +907,7 @@ void LuckyDice_Run(void)
 	for (i = 0; i != 17; i++)
 	{
 		scale = 0x10000 - (i << 12);
-		Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, scale, 256);
+		Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, scale, 256);
 		Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, scale, 256);
 		WaitFrames(1);
 	}

@@ -14,29 +14,29 @@ struct JupiterAerieSpark {
 };
 
 struct JupiterAerieWork {
-    u8 unknown_00[2];
+    u8 unk00[2];
     s16 flag;
-    u8 unknown_04[2];
+    u8 unk04[2];
     s16 x;
     s16 z;
     s16 count;
     s16 current;
-    u8 unknown_0e[18];
+    u8 unk0e[18];
 };
 
 struct JupiterAerieEntry {
     s16 x;
     s16 z;
     s16 flag;
-    u8 unknown_06[2];
+    u8 unk06[2];
 };
 
 extern u8 gDecodeFillByte;
 extern s32 gFrameCount;
-extern s32 Data_02003314;
-extern s32 Data_02003318;
-extern u16 Data_02003340[];
-extern u8 Data_02003488[];
+extern s32 gData_02003314;
+extern s32 gData_02003318;
+extern u16 gData_02003340[];
+extern u8 gData_02003488[];
 
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 struct ObjectRuntime *Object_GetById(s32 id);

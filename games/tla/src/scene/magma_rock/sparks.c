@@ -4,7 +4,7 @@
 #include "mem.h"
 
 struct MagmaRockSparkWork {
-    u8 unknown_0000[0x1604];
+    u8 unk0000[0x1604];
     s16 resource;
 };
 
@@ -13,7 +13,7 @@ void Func_0200379c(void);
 
 void Func_02003998(void)
 {
-    struct MagmaRockSparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
 
     Scheduler_RemoveCallbackFar(Func_0200379c);
     Resource_ResetEntry(work->resource);

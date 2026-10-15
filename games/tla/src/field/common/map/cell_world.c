@@ -7,7 +7,7 @@ struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     s32 column = x;
 
     /* FAKEMATCH: reuse the dead x parameter for the mode constant; an ordinary
@@ -24,5 +24,5 @@ s32 Func_080dbd5c(s32 x, s32 z, s32 layer)
         collision = GetWorldMapCollisionFar(position);
         return (u32)(collision - 2) <= 2;
     }
-    return (u8)(Func_080dbb78(column, z, layer)->attribute_b & 16);
+    return (u8)(Func_080dbb78(column, z, layer)->attributeB & 16);
 }

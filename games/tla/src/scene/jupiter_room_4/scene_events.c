@@ -26,7 +26,7 @@ u8 Func_02001ef0(s32 x, s32 z, s32 layer, s32 value);
 s32 GameFlag_Test();
 
 struct EventWorkLock {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 locked;
 };
 
@@ -81,7 +81,7 @@ void Func_02000114(s32 unused, s32 id)
 
     object = Object_GetById(id);
     if (object->x >> 20 == 10 && object->z >> 20 == 32) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         for (i = 15; i >= 0; i--) {
             object->y += 0x20000;
             WaitFrames(1);
@@ -131,7 +131,7 @@ void Func_020001fc(s32 item)
 
 void Func_0200021c(void)
 {
-    ((struct EventWorkLock *)Ram_HeapSlots->event_work)->locked = 1;
+    ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
     UiText_ShowPositionedMessageAndWait(MsgFieldDoorLocked, 1);
 }
 

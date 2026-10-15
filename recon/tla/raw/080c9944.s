@@ -100,7 +100,7 @@ Game_ResetForNewGame:
 .L_080c9a00:
 	.4byte gDebugMode
 .L_080c9a04:
-	.4byte Field_SceneTable
+	.4byte gField_SceneTable
 .L_080c9a08:
 	.4byte gPartyState
 .L_080c9a0c:

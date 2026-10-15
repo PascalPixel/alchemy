@@ -19,17 +19,17 @@ struct DispatchObject;
 struct EffectPosition;
 
 #if GAME_TLA
-extern const s32 Camera_FixedViewMatrix[];
+extern const s32 gCamera_FixedViewMatrix[];
 #endif
-extern s32 Iwram_Data1;
-extern s32 Iwram_Data2;
+extern s32 gIwram_Data1;
+extern s32 gIwram_Data2;
 #if GAME_TLA
-extern u8 Map_TileDissolveOrder[];
+extern u8 gMap_TileDissolveOrder[];
 #endif
-extern const s32 ObjectDispatch_DefaultScript[];
-extern const u8	 WorldMap_TerrainBehaviorTable[];
+extern const s32 gObjectDispatch_DefaultScript[];
+extern const u8	 gWorldMap_TerrainBehaviorTable[];
 extern u8		 Render_DecodeFrameCodeSize[];
-extern u8		 Runtime_ByteRemapTable[];
+extern u8		 gRuntime_ByteRemapTable[];
 #if GAME_TLA
 s32	 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32	 Event_ValidatePackedId(u32 packed_id);
@@ -100,7 +100,7 @@ struct FacingStateActor
 	u8	reserved00[6];
 	u16 facing;
 	u8	reserved08[92];
-	u16 state_flags;
+	u16 stateFlags;
 };
 struct AcceptActor11
 {
@@ -150,7 +150,7 @@ struct FieldObjectRecord
 struct OverlayActorPosition
 {
 	u8	pad00[8];
-	s32 depth_fixed;
+	s32 depthFixed;
 };
 struct OverlayActorState
 {
@@ -164,11 +164,11 @@ struct OverlayEffectMotion
 	s32 y;
 	s32 z;
 	u8	pad14[28];
-	s32 horizontal_rate;
-	s32 vertical_rate;
-	s32 shadow_x;
-	s32 shadow_y;
-	s32 shadow_z;
+	s32 horizontalRate;
+	s32 verticalRate;
+	s32 shadowX;
+	s32 shadowY;
+	s32 shadowZ;
 	u8	pad44[32];
 	s16 mode;
 };
@@ -182,12 +182,12 @@ struct PathRecorder
 };
 struct Presentation
 {
-	u8 reserved_00[9];
+	u8 reserved00[9];
 	u8 flags;
 };
 struct PresentationB
 {
-	u8 unk_00[9];
+	u8 unk00[9];
 	u8 flags;
 };
 struct GridMarkActor
@@ -202,38 +202,38 @@ struct GridMarkActor
 };
 struct PresentedActor
 {
-	u8					 reserved_00[35];
-	u8					 state_23;
-	u8					 reserved_24[44];
+	u8					 reserved00[35];
+	u8					 state23;
+	u8					 reserved24[44];
 	struct Presentation *presentation;
 };
 struct PresentedActorB
 {
-	u8					  unk_00[35];
-	u8					  state_23;
-	u8					  unk_24[44];
+	u8					  unk00[35];
+	u8					  state23;
+	u8					  unk24[44];
 	struct PresentationB *presentation;
 };
 struct PresentedActorC
 {
-	u8					 reserved_00[35];
-	u8					 state_23;
-	u8					 reserved_24[44];
+	u8					 reserved00[35];
+	u8					 state23;
+	u8					 reserved24[44];
 	struct Presentation *presentation;
 };
 struct BranchCounterWork
 {
 	u8	reserved000[472];
-	u16 branch_counter;
+	u16 branchCounter;
 };
 struct Actor18MarkerWork
 {
 	u8	reserved000[370];
-	u16 actor18_marker;
+	u16 actor18Marker;
 };
 struct ScrollLayer
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 };
 struct Slot
@@ -251,7 +251,7 @@ struct SwitchCell
 struct SwitchEffect
 {
 	s32 active;
-	u8	unknown_04[0x5f];
+	u8	unk04[0x5f];
 	u8	finished;
 };
 struct T
@@ -284,8 +284,8 @@ struct WorldMapVramBlock
 };
 #ifndef OWN_AltinPeak_ActorScript
 #endif
-extern s16 AltinPeak_PaletteHold;
-extern s16 AltinPeak_PaletteStep;
+extern s16 gAltinPeak_PaletteHold;
+extern s16 gAltinPeak_PaletteStep;
 #ifndef OWN_LemurianShip_CountTicks
 #endif
 #ifndef OWN_LemurianShip_DriftActive
@@ -300,15 +300,15 @@ extern s16 AltinPeak_PaletteStep;
 #endif
 #ifndef OWN_LemurianShip_SwellLayerSixY
 #endif
-extern const u8 BattleFx_BurstParticleScriptA[];
-extern const u8 BattleFx_BurstParticleScriptB[];
-extern u32		WorldMap_GraphicsResources[][6];
-extern const u8 ObjectMotion_WaitScript[];
-extern const u8 FieldFx_SparkleTiles[];
-extern const u8 Field_TileMessageOffsets[];
-extern const u8 FieldFx_MoteTiles[];
-extern s32		FourObjectMotion_ResourceIds[];
-extern s32		TolbiShipInteriors_CueTimer;
+extern const u8 gBattleFx_BurstParticleScriptA[];
+extern const u8 gBattleFx_BurstParticleScriptB[];
+extern u32		gWorldMap_GraphicsResources[][6];
+extern const u8 gObjectMotion_WaitScript[];
+extern const u8 gFieldFx_SparkleTiles[];
+extern const u8 gField_TileMessageOffsets[];
+extern const u8 gFieldFx_MoteTiles[];
+extern s32		gFourObjectMotion_ResourceIds[];
+extern s32		gTolbiShipInteriors_CueTimer;
 #ifndef OWN_TolbiShipInteriors_TurnSteps
 #endif
 extern s16 *gKolimaForestBendLayout;
@@ -325,63 +325,63 @@ extern struct SceneEvent gBabiPalaceEvents2AfterColosso[];
 extern const u8			 gWorldMapPackedFrames[];
 extern const u8			 gWorldMapPackedTiles[];
 extern const u8			 gWorldMapPalettes[];
-extern s32				 Kalay_DanceStep;
-extern u32				 KolimaForestBend_ShakeChance;
-extern u32				 KolimaForestBend_ShakeScroll[];
-extern u8				 KolimaPalette_First[];
-extern u8				 KolimaPalette_Second[];
-extern s32				 Colosso_CompetitorStartAngle;
-extern s32				 Colosso_CompetitorStartX;
-extern s32				 Colosso_CompetitorStartZ;
-extern u16				 Colosso_GaugePalette[];
-extern s32				 Colosso_MarkerOam[3];
-extern s16				 Colosso_ModeBlendDuration;
-extern s16				 Colosso_ModeBlendStart;
-extern s16				 Colosso_ModeBlendStep;
-extern s16				 Colosso_ModeBlendTarget;
-extern s16				 Colosso_ModeMoveStart;
-extern s16				 Colosso_ModeMoveStep;
-extern s16				 Colosso_ModeScaleDuration;
-extern s16				 Colosso_ModeScaleStart;
-extern s16				 Colosso_ModeScaleStep;
-extern s16				 Colosso_ModeScaleTarget;
-extern u32				 Colosso_ModeTaskSprites[];
+extern s32				 gKalay_DanceStep;
+extern u32				 gKolimaForestBend_ShakeChance;
+extern u32				 gKolimaForestBend_ShakeScroll[];
+extern u8				 gKolimaPalette_First[];
+extern u8				 gKolimaPalette_Second[];
+extern s32				 gColosso_CompetitorStartAngle;
+extern s32				 gColosso_CompetitorStartX;
+extern s32				 gColosso_CompetitorStartZ;
+extern u16				 gColosso_GaugePalette[];
+extern s32				 gColosso_MarkerOam[3];
+extern s16				 gColosso_ModeBlendDuration;
+extern s16				 gColosso_ModeBlendStart;
+extern s16				 gColosso_ModeBlendStep;
+extern s16				 gColosso_ModeBlendTarget;
+extern s16				 gColosso_ModeMoveStart;
+extern s16				 gColosso_ModeMoveStep;
+extern s16				 gColosso_ModeScaleDuration;
+extern s16				 gColosso_ModeScaleStart;
+extern s16				 gColosso_ModeScaleStep;
+extern s16				 gColosso_ModeScaleTarget;
+extern u32				 gColosso_ModeTaskSprites[];
 #ifndef OWN_VaultInteriors_PairScriptP
 #endif
 #ifndef OWN_VaultInteriors_PairScriptR
 #endif
-extern u16 VaultInteriors_StopTimer;
+extern u16 gVaultInteriors_StopTimer;
 #ifndef OWN_Mercury_PillarScript
 #endif
 extern u8		Object_UpdateAllCodeSize[];
-extern u8		ObjectGroup_BlinkChildValues[];
-extern const u8 ObjectMotion_ActionKind1Script[];
-extern const u8 ObjectMotion_ActionKind2Script[];
-extern const u8 ObjectMotion_ActionKind3Script[];
-extern const u8 ObjectMotion_ActionKind4Script[];
-extern u8		ObjectMotion_LaunchScript;
-extern const u8 ObjectMotion_MoveTowardTargetScript[];
-extern const u8 ObjectMotion_ResetActionScript[];
-extern const u8 ObjectMotion_StepAngleScript[];
-extern const u8 ObjectMotion_TurnTowardLinkedScript[];
-extern const u8 ObjectMotion_VariantScripts[];
+extern u8		gObjectGroup_BlinkChildValues[];
+extern const u8 gObjectMotion_ActionKind1Script[];
+extern const u8 gObjectMotion_ActionKind2Script[];
+extern const u8 gObjectMotion_ActionKind3Script[];
+extern const u8 gObjectMotion_ActionKind4Script[];
+extern u8		gObjectMotion_LaunchScript;
+extern const u8 gObjectMotion_MoveTowardTargetScript[];
+extern const u8 gObjectMotion_ResetActionScript[];
+extern const u8 gObjectMotion_StepAngleScript[];
+extern const u8 gObjectMotion_TurnTowardLinkedScript[];
+extern const u8 gObjectMotion_VariantScripts[];
 #ifndef OWN_LamakanDesert_SandCounter
 #endif
-extern u8		 LamakanDesert_SandEffectTiles[];
-extern const u16 LamakanDesert_SandPalette[16];
+extern u8		 gLamakanDesert_SandEffectTiles[];
+extern const u16 gLamakanDesert_SandPalette[16];
 #ifndef OWN_LamakanDesert_SandPhase
-extern u16 LamakanDesert_SandPhase;
+extern u16 gLamakanDesert_SandPhase;
 #endif
-extern u8 LamakanDesert_SandTileBuffer[];
+extern u8 gLamakanDesert_SandTileBuffer[];
 #ifndef OWN_LamakanDesert_SandVramSlot
-extern u16 LamakanDesert_SandVramSlot;
+extern u16 gLamakanDesert_SandVramSlot;
 #endif
-extern struct MenuSprite LamakanDesert_SandWork[];
+extern struct MenuSprite gLamakanDesert_SandWork[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
-extern u8		SolStatue_SpriteRowsGfx[];
-extern u32		StagedActor_FootprintKinds[];
+extern u8		gSolStatue_SpriteRowsGfx[];
+extern u32		gStagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8		TileMap_DrawRowsCodeSize[];
 extern u8		Transform_UpdateVerticesSize;
@@ -389,8 +389,8 @@ extern u8		Transform_UpdateVerticesSize;
 #endif
 #ifndef OWN_VenusAerie_ScaleStepAction
 #endif
-extern const u8	 WorldMap_FootprintActions[];
-extern const s16 WorldMap_KeyHeadings[16];
+extern const u8	 gWorldMap_FootprintActions[];
+extern const s16 gWorldMap_KeyHeadings[16];
 s32				 CalculateFacingAngle(s32, s32);
 #ifndef OWN_Camera_ApplyShake
 #endif
@@ -489,7 +489,7 @@ struct ScenePlacement;
 struct SceneRegion;
 struct ScriptInterpreter;
 
-extern const u8					   DriftScene_SpawnScript[];
+extern const u8					   gDriftScene_SpawnScript[];
 extern const struct SceneEntrance  gDailaEntrances[];
 extern const struct SceneEntrance  gIdejimaEntrances[];
 extern const struct SceneEvent	   gIdejimaEvents[];
@@ -504,12 +504,12 @@ extern const struct ScenePlacement gScenePlacements[];
 extern const struct ScenePlacement gScenePlacementsEntrance99[];
 extern const struct SceneRegion	   gSceneRegions[];
 extern struct ObjectRuntime		   gSnapshotObjects[];
-extern const u8					   Idejima_ActorDepartureScript[];
-extern u8						   LinkLobby_SlotColumns[];
-extern const s32				   LinkLobby_SlotValues[];
-extern const u8					   ObjectGroup_BlinkChildValues[4];
-extern const u8					   ObjectMotion_StepAngleScript[];
-extern u16						   Script_MainScript[];
+extern const u8					   gIdejima_ActorDepartureScript[];
+extern u8						   gLinkLobby_SlotColumns[];
+extern const s32				   gLinkLobby_SlotValues[];
+extern const u8					   gObjectGroup_BlinkChildValues[4];
+extern const u8					   gObjectMotion_StepAngleScript[];
+extern u16						   gScript_MainScript[];
 s32								   Animation_InitializeObjects(struct AnimationObject *);
 void							   Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);
@@ -546,14 +546,14 @@ void Func_02002a4c(void);
 void Func_02002a54(void);
 void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
 s32	 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
-void Func_080caa2c(u32 object_id);
-void Object_SetSquareSprite(u32 object_id);
-void Func_080e70f8(u32 object_id);
+void Func_080caa2c(u32 objectId);
+void Object_SetSquareSprite(u32 objectId);
+void Func_080e70f8(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_ApplyWorkOriginAndSpanFar(void);
 s32	 Map_GetTerrainHeightFar(u8, s32, s32);
-void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32	 Object_IsTargetUnset(void *arg0);
 #ifndef OWN_Object_SetPartAttribute
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
@@ -562,13 +562,13 @@ void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);
-void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset);
-void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset);
-void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset);
-void ObjectMotion_ResetAndSetPosition(u32 object_id, s32 x, s32 z);
-void ObjectMotion_SetPositionAndCommit(u32 object_id, s32 x, s32 z);
-void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z);
-void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant);
+void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
+void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
+void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
+void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant);
 void ObjectSystem_Configure(s32 mode);
 s32	 Party_AddActiveOwnerFar(s32 event_id);
 void Party_RemoveActiveOwnerFar(s32 owner);

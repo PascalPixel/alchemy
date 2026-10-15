@@ -50,7 +50,7 @@ void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player, struct SoundTrack
 void Runtime_CallWorkEntryWithArgs();
 
 // プレイヤーごとにコピーするシーケンスコマンドとドライバの入口
-const SoundFunc Sound_CommandTableTemplate[] = {
+const SoundFunc gSound_CommandTableTemplate[] = {
 	MusicTrack_FinishSequence,
 	MusicTrack_Goto,
 	MusicTrack_CallPattern,
@@ -90,7 +90,7 @@ const SoundFunc Sound_CommandTableTemplate[] = {
 };
 
 // PCM の音階：上 4 ビットがオクターブ、下 4 ビットが音名
-const u8 Sound_PcmPitchCodes[] = {
+const u8 gSound_PcmPitchCodes[] = {
 	0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb,
 	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb,
 	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb,
@@ -109,19 +109,19 @@ const u8 Sound_PcmPitchCodes[] = {
 };
 
 // 音名ごとの周波数（オクターブ 0、32 ビット固定小数点）
-const u32 Sound_PcmFrequencySteps[] = {
+const u32 gSound_PcmFrequencySteps[] = {
 	0x80000000, 0x879c7c97, 0x8facd61e, 0x9837f052,
 	0xa14517cc, 0xaadc0848, 0xb504f334, 0xbfc886bb,
 	0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
 // 再生周波数の設定ごとの 1 フレームのサンプル数
-const u16 Sound_FrameLengths[] = {
+const u16 gSound_FrameLengths[] = {
 	96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
 
 // CGB チャンネルの音階
-const u8 Sound_CgbPitchCodes[] = {
+const u8 gSound_CgbPitchCodes[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b,
 	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b,
@@ -136,12 +136,12 @@ const u8 Sound_CgbPitchCodes[] = {
 };
 
 // CGB チャンネルの音名ごとの周波数
-const s16 Sound_CgbFrequencySteps[] = {
+const s16 gSound_CgbFrequencySteps[] = {
 	-2004, -1891, -1785, -1685, -1591, -1501, -1417, -1337, -1262, -1192, -1125, -1062
 };
 
 // ノイズチャンネルの音階
-const u8 Sound_NoisePitchCodes[] = {
+const u8 gSound_NoisePitchCodes[] = {
 	0xd7, 0xd6, 0xd5, 0xd4, 0xc7, 0xc6, 0xc5, 0xc4, 0xb7, 0xb6, 0xb5, 0xb4,
 	0xa7, 0xa6, 0xa5, 0xa4, 0x97, 0x96, 0x95, 0x94, 0x87, 0x86, 0x85, 0x84,
 	0x77, 0x76, 0x75, 0x74, 0x67, 0x66, 0x65, 0x64, 0x57, 0x56, 0x55, 0x54,
@@ -150,12 +150,12 @@ const u8 Sound_NoisePitchCodes[] = {
 };
 
 // CGB チャンネル 3（波形）の音量
-const u8 Sound_Cgb3LevelCodes[] = {
+const u8 gSound_Cgb3LevelCodes[] = {
 	0x00, 0x00, 0x60, 0x60, 0x60, 0x60, 0x40, 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x20, 0x20
 };
 
 // 音符の長さ（クロック数）
-const u8 Sound_ClockLengths[] = {
+const u8 gSound_ClockLengths[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 30, 32, 36, 40, 42, 44,
 	48, 52, 54, 56, 60, 64, 66, 68, 72, 76, 78, 80, 84, 88, 90, 92,
@@ -163,7 +163,7 @@ const u8 Sound_ClockLengths[] = {
 };
 
 // 拡張コマンド（0 と 3 は何もしない）
-const SoundCommand Sound_ExtendedCommandTable[] = {
+const SoundCommand gSound_ExtendedCommandTable[] = {
 	(SoundCommand)Runtime_CallWorkEntryWithArgs,
 	MusicTrack_ReadVoiceTarget,
 	MusicTrack_SetVoiceKind,

@@ -47,11 +47,11 @@ typedef struct
 	s16 unk12;
 } EntB;
 
-extern u16 SolLunaRooms_Light1Timer;
-extern s32 SolLunaRooms_FlashState;
-extern u16 SolLunaRooms_Light2Timer;
-extern u16 SolLunaRooms_Light3Timer;
-extern u16 SolLunaRooms_Light4Timer;
+extern u16 gSolLunaRooms_Light1Timer;
+extern s32 gSolLunaRooms_FlashState;
+extern u16 gSolLunaRooms_Light2Timer;
+extern u16 gSolLunaRooms_Light3Timer;
+extern u16 gSolLunaRooms_Light4Timer;
 
 #include "types.h"
 

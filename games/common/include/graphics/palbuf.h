@@ -15,7 +15,7 @@ struct TitlePaletteWork
 	u8	page;
 	s8	duration;
 	u8	step;
-	u8	padding_3003;
+	u8	padding3003;
 };
 
 LAYOUT_SIZE_GUARD(TitlePaletteWork_Size, struct TitlePaletteWork, 0x3004);
@@ -35,7 +35,7 @@ struct BattleEffectBuffers
 	u8	page;
 	s8	duration;
 	s8	step;
-	u8	padding_2a03;
+	u8	padding2a03;
 };
 
 LAYOUT_SIZE_GUARD(BattleEffectBuffers_Size, struct BattleEffectBuffers, 0x2a04);
@@ -45,9 +45,9 @@ LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers, delta
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers, packed, 0x2300);
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page, 0x2a00);
 
-extern u16 Palette_ChannelCurve[32];
-extern u16 Palette_ChannelCurveLight[32];
-extern u16 Palette_ChannelCurveContrast[32];
+extern u16 gPalette_ChannelCurve[32];
+extern u16 gPalette_ChannelCurveLight[32];
+extern u16 gPalette_ChannelCurveContrast[32];
 
 enum PaletteTransform
 {

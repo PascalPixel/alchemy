@@ -19,17 +19,17 @@ struct PuzzleCell {
 
 struct SceneState {
     struct PuzzleCell cells[88];
-    u8 unknown_160[4];
-    s16 first_id;
-    s16 end_id;
-    u16 tile_entry;
-    s8 redraw_a;
-    s8 redraw_b;
-    s16 origin_x;
-    s16 origin_z;
-    s16 statues_ready;
-    u8 unknown_172[2];
-    s32 statue_offset;
+    u8 unk160[4];
+    s16 firstId;
+    s16 endId;
+    u16 tileEntry;
+    s8 redrawA;
+    s8 redrawB;
+    s16 originX;
+    s16 originZ;
+    s16 statuesReady;
+    u8 unk172[2];
+    s32 statueOffset;
 };
 
 extern struct SceneState gSceneState;
@@ -54,22 +54,22 @@ void Func_02004530(void)
     struct SceneState *state = &gSceneState;
     s32 i;
 
-    if (state->redraw_a == 0) {
-        Map_Copy(1, 13, 1, 1, state->origin_x + 3, state->origin_z - 2);
-        if (state->statues_ready != 0) {
+    if (state->redrawA == 0) {
+        Map_Copy(1, 13, 1, 1, state->originX + 3, state->originZ - 2);
+        if (state->statuesReady != 0) {
             Func_02005854(248);
             Func_020056b4();
             Func_0200580c(0);
             Func_020044b4(3);
             for (i = 19; i >= 0; i--) {
-                state->statue_offset -= 0x333;
+                state->statueOffset -= 0x333;
                 WaitFrames(1);
             }
             Func_020044d0(0);
             Func_020056bc();
-            state->statue_offset = 0;
+            state->statueOffset = 0;
         }
-        state->redraw_a = 1;
+        state->redrawA = 1;
     }
 }
 
@@ -78,21 +78,21 @@ void Func_02004620(void)
     struct SceneState *state = &gSceneState;
     s32 i;
 
-    if (state->redraw_b == 0) {
-        Map_Copy(0, 13, 1, 1, state->origin_x + 7, state->origin_z - 2);
-        if (state->statues_ready != 0) {
+    if (state->redrawB == 0) {
+        Map_Copy(0, 13, 1, 1, state->originX + 7, state->originZ - 2);
+        if (state->statuesReady != 0) {
             Func_02005854(248);
             Func_020056b4();
             Func_0200580c(0);
             Func_020044b4(2);
             for (i = 19; i >= 0; i--) {
-                state->statue_offset += 0x333;
+                state->statueOffset += 0x333;
                 WaitFrames(1);
             }
             Func_020044d0(1);
             Func_020056bc();
-            state->statue_offset = 0;
+            state->statueOffset = 0;
         }
-        state->redraw_b = 1;
+        state->redrawB = 1;
     }
 }

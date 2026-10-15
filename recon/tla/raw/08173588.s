@@ -543,10 +543,10 @@ Func_08173588:
 .L_081739d8:
 	.4byte 0xffff00ff
 .L_081739dc:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_081739e0:
 	.4byte 0xffffc000
 .L_081739e4:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_081739e8:
 	.4byte Func_08143000

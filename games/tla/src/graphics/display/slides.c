@@ -38,7 +38,7 @@ extern char ResourceId_DuskCloudsBackdrop;
 
 // The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
 // reads this list.
-const u32 DisplayScroll_UnusedSlideResources[] = {
+const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,
     (u32)&ResourceId_SolSanctumBackdrop,
     (u32)&ResourceId_GrasslandBackdrop,
@@ -75,7 +75,7 @@ const u32 DisplayScroll_UnusedSlideResources[] = {
 
 // The backdrops the slideshow fades between, in turn; 0 ends the list,
 // and the table has room for 25.
-const u32 DisplayScroll_SlideResources[25] = {
+const u32 gDisplayScroll_SlideResources[25] = {
     (u32)&ResourceId_ValeStormBackdrop,
     (u32)&ResourceId_SolSanctumBackdrop,
     (u32)&ResourceId_InteriorBackdrop,
@@ -124,7 +124,7 @@ static const u8 sBlankLine[] = "";
 #endif
 
 // The staff credits, one line each, ending in 0.
-const void *DisplayScroll_LineTable[] = {
+const void *gDisplayScroll_LineTable[] = {
     sBlankLine,
 #if !EDITION_INTERNATIONAL
     "OUGON NO TAIYO STAFF",

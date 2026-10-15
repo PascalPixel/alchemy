@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_event.h"
 
-extern const u8 Data_02003620[];
+extern const u8 gData_02003620[];
 
 struct FieldActor *Func_020029ec(s32 type, s32 x, s32 y, s32 z);
 void Func_020029dc(struct FieldActor *object, s32 mode);
@@ -12,10 +12,10 @@ void Battle_WaitMode0(s32 frames);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames);
 
-void Func_02000c90(s32 first_id, s32 second_id)
+void Func_02000c90(s32 firstId, s32 secondId)
 {
-    struct FieldActor *first = Object_GetById(first_id);
-    struct FieldActor *second = Object_GetById(second_id);
+    struct FieldActor *first = Object_GetById(firstId);
+    struct FieldActor *second = Object_GetById(secondId);
     s32 rise = 0x1c0000;
     s32 y;
 

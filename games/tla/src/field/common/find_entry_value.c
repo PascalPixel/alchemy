@@ -3,10 +3,10 @@
 struct FlagEntry {
     u8 flag;
     u8 value;
-    u8 unknown_02[10];
+    u8 unk02[10];
     s16 id;
     s16 variant;
-    u8 unknown_10[4];
+    u8 unk10[4];
 };
 
 struct FlagEntry *Func_080ed804(void);

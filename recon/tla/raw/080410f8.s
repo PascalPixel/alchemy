@@ -131,4 +131,4 @@ Func_080410f8:
 .L_080411fc:
 	.4byte gInput
 .L_08041200:
-	.4byte DebugWarp_Presets
+	.4byte gDebugWarp_Presets

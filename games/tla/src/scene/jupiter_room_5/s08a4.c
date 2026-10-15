@@ -5,11 +5,11 @@
 #include "text/msg_ids.h"
 
 struct JupiterRoom5EventWork {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 message;
 };
 
-#define EVENT_WORK ((struct JupiterRoom5EventWork *)Ram_HeapSlots->event_work)
+#define EVENT_WORK ((struct JupiterRoom5EventWork *)Ram_HeapSlots->eventWork)
 
 void Func_020028a0(s32 value);
 void Func_020028b0(void);

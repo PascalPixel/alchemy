@@ -3,18 +3,18 @@
 
 // どうぐメニューの作業領域（わかっている欄だけ）
 struct InventoryMenuState {
-    u8 unknown_000[0x24];
-    s32 item_window;
-    u8 unknown_028[8];
-    s32 info_window;
-    u8 unknown_034[0x190];
+    u8 unk000[0x24];
+    s32 itemWindow;
+    u8 unk028[8];
+    s32 infoWindow;
+    u8 unk034[0x190];
     u16 items[32];
-    u8 unknown_204[0x12];
-    u8 pane_owner[2];
-    u8 unknown_218[0x4c];
-    s8 selected_index_by_owner[8];
-    u8 unknown_26c[0x282];
-    s16 resource_slots[2];
+    u8 unk204[0x12];
+    u8 paneOwner[2];
+    u8 unk218[0x4c];
+    s8 selectedIndexByOwner[8];
+    u8 unk26c[0x282];
+    s16 resourceSlots[2];
 };
 
 extern char ResourceId_MenuArrowTiles;
@@ -26,24 +26,24 @@ void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
 // ページ送りの矢印 2 枚を空いているタイルの枠に読む
 void Resource_LoadPairedBlocks(void)
 {
-    struct InventoryMenuState *state = Ram_HeapSlots->menu_runtime;
+    struct InventoryMenuState *state = Ram_HeapSlots->menuRuntime;
     s32 value = Resource_FindFreeEntry();
 
-    state->resource_slots[0] = value;
+    state->resourceSlots[0] = value;
     VramBlock_LoadResourceFar(value, 128, (s32)&ResourceId_MenuArrowTiles);
     value = Resource_FindFreeEntry();
-    state->resource_slots[1] = value;
+    state->resourceSlots[1] = value;
     VramBlock_LoadResourceFar(value, 128, (s32)&ResourceId_MenuSmallDownArrowTiles);
 }
 
 struct MenuResult {
-    s32 owner_state;
-    s32 unknown_04;
+    s32 ownerState;
+    s32 unk04;
     s32 page;
-    s32 page_count;
+    s32 pageCount;
     s32 row;
-    s32 entry_count;
-    s32 selected_index;
+    s32 entryCount;
+    s32 selectedIndex;
 };
 
 s32 UnitGet(s32 owner);
@@ -53,16 +53,16 @@ s32 ItemMenu_Count(s32 owner);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    struct InventoryMenuState *menu = Ram_HeapSlots->menu_runtime;
+    struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
     s32 limit;
     s32 remainder;
     s32 quotient;
     s32 groups;
     s32 value;
 
-    limit = ItemMenu_Count(menu->pane_owner[index]);
-    encoded = UnitGet(menu->pane_owner[index]);
-    value = menu->selected_index_by_owner[menu->pane_owner[index]];
+    limit = ItemMenu_Count(menu->paneOwner[index]);
+    encoded = UnitGet(menu->paneOwner[index]);
+    value = menu->selectedIndexByOwner[menu->paneOwner[index]];
     if ((value + 1) > limit) {
         value = limit - 1;
     }
@@ -72,11 +72,11 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     if (limit % 5 != 0) {
         groups++;
     }
-    result->owner_state = encoded;
+    result->ownerState = encoded;
     result->page = quotient;
-    result->page_count = groups;
+    result->pageCount = groups;
     result->row = remainder;
-    result->entry_count = limit;
-    result->selected_index = value;
+    result->entryCount = limit;
+    result->selectedIndex = value;
     return 1;
 }

@@ -45,7 +45,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *KalayInteriors_GetExits(void)
 {
-	return KalayInteriors_Exits;
+	return gKalayInteriors_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -192,11 +192,11 @@ static void FieldScene_RunArrivalPlacement(void)
 
 		if (rec != 0)
 		{
-			rec->motion_flags = 0;
+			rec->motionFlags = 0;
 		}
 	}
 
-	switch (work->touched_trigger)
+	switch (work->touchedTrigger)
 	{
 	case 12:
 		idx = 0;
@@ -217,22 +217,22 @@ static void FieldScene_RunArrivalPlacement(void)
 	Engine_AudioPlayCue(158);
 
 	{
-		u32 x = KalayInteriors_ArrivalPlacements[idx].x;
-		u32 y = KalayInteriors_ArrivalPlacements[idx].y;
+		u32 x = gKalayInteriors_ArrivalPlacements[idx].x;
+		u32 y = gKalayInteriors_ArrivalPlacements[idx].y;
 
-		Engine_MapAnimateCells(KalayInteriors_ArrivalPlacements[idx].steps, x, y);
+		Engine_MapAnimateCells(gKalayInteriors_ArrivalPlacements[idx].steps, x, y);
 	}
 
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
 	p = Object_GetById(0);
-	p->motion_flags = 0;
+	p->motionFlags = 0;
 
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
 	Engine_EventWait(10);
 
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -240,7 +240,7 @@ static void FieldScene_RunArrivalPlacement(void)
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	if (gGameState.scene == (s32)&SceneId_KalayInteriors1)
 	{
 		SceneState_ClearSlotsBySubState();
@@ -331,7 +331,7 @@ struct SceneEntrance gKalayInteriorsEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 KalayInteriors_Exits[] = {
+u32 gKalayInteriors_Exits[] = {
 	SCENE_EXITS(100),
 	SCENE_EXIT(1, 99, 1),
 	SCENE_EXIT(2, 99, 2),
@@ -534,13 +534,13 @@ struct SceneEvent gKalayInteriorsEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 KalayInteriors_ArrivalPlacementData[] = {
+u16 gKalayInteriors_ArrivalPlacementData[] = {
 	MAP_CELL_STEP(7, 125, 1, 2, 5), MAP_CELL_STEP(8, 125, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim KalayInteriors_ArrivalPlacements[] = {
-	{ KalayInteriors_ArrivalPlacementData, 34, 98 },
-	{ KalayInteriors_ArrivalPlacementData, 39, 98 },
-	{ KalayInteriors_ArrivalPlacementData, 50, 96 },
-	{ KalayInteriors_ArrivalPlacementData, 52, 107 },
+struct MapCellAnim gKalayInteriors_ArrivalPlacements[] = {
+	{ gKalayInteriors_ArrivalPlacementData, 34, 98 },
+	{ gKalayInteriors_ArrivalPlacementData, 39, 98 },
+	{ gKalayInteriors_ArrivalPlacementData, 50, 96 },
+	{ gKalayInteriors_ArrivalPlacementData, 52, 107 },
 };

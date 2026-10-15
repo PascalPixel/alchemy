@@ -54,7 +54,7 @@ Func_081a06e0:
 .L_081a074c:
 	.4byte Data_02007500
 .L_081a0750:
-	.4byte Data_03001110
+	.4byte gData_03001110
 .L_081a0754:
 	.4byte gAutoSleepEnabled
 .L_081a0758:
@@ -230,7 +230,7 @@ Func_081a06e0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081a08ac:
-	.4byte DisplayScroll_SlideResources
+	.4byte gDisplayScroll_SlideResources
 .L_081a08b0:
 	.4byte gInput
 .L_081a08b4:
@@ -238,6 +238,6 @@ Func_081a06e0:
 .L_081a08b8:
 	.4byte Data_02007500
 .L_081a08bc:
-	.4byte DisplayScroll_Busy
+	.4byte gDisplayScroll_Busy
 .L_081a08c0:
 	.4byte gRenderOamEnabled

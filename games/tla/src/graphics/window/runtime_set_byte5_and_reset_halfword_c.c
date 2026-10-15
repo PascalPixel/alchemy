@@ -7,7 +7,7 @@
 #include "render_input.h"
 
 //--------------------------------------------------------------------------
-// active を mode にして、アニメの段（anim_step）を 0 に戻す
+// active を mode にして、アニメの段（animStep）を 0 に戻す
 // out : スプライト出力（NULL なら何もしない）
 //--------------------------------------------------------------------------
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode)
@@ -15,6 +15,6 @@ void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode)
 	if (out != NULL)
 	{
 		out->active = mode;
-		out->anim_step = 0;
+		out->animStep = 0;
 	}
 }

@@ -55,7 +55,7 @@ void Func_0200051c(void)
         Func_02002b28();
         Func_02002c58(0);
         PLACE(26, 744 << 16, 0x01010000, 0x4000);
-        Object_GetById(4)->velocity_y = 0x50000;
+        Object_GetById(4)->velocityY = 0x50000;
         ObjSpeed(4, 0x20000, 0x10000);
         ObjSetPos(4, 720, 244);
         ObjCall2bf8(4, 0x2000);
@@ -72,7 +72,7 @@ void Func_020005b8(void)
         Func_02002b28();
         Func_02002c58(0);
         PLACE(26, 744 << 16, 256 << 16, 0x4000);
-        Object_GetById(4)->velocity_y = 0x50000;
+        Object_GetById(4)->velocityY = 0x50000;
         ObjSpeed(4, 0x20000, 0x10000);
         ObjSetPos(4, 720, 244);
         ObjCall2bf8(4, 0x2000);

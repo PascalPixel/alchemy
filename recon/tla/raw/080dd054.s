@@ -466,7 +466,7 @@ Func_080dd054:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080dd424:
-	.4byte Data_080f0e60
+	.4byte gData_080f0e60
 .L_080dd428:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080dd42c:

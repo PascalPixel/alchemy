@@ -22,18 +22,18 @@ void Func_02000fb8(s32 mode, s32 cue)
 const struct SceneEvent *Func_02001044(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom1)
-        return (const struct SceneEvent *)Data_020037f8;
+        return (const struct SceneEvent *)gData_020037f8;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom2)
-        return (const struct SceneEvent *)Data_0200381c;
+        return (const struct SceneEvent *)gData_0200381c;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom3)
-        return (const struct SceneEvent *)Data_0200393c;
+        return (const struct SceneEvent *)gData_0200393c;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom4)
-        return (const struct SceneEvent *)Data_020039e4;
+        return (const struct SceneEvent *)gData_020039e4;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom5)
-        return (const struct SceneEvent *)Data_02003a5c;
+        return (const struct SceneEvent *)gData_02003a5c;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom6)
-        return (const struct SceneEvent *)Data_02003b28;
+        return (const struct SceneEvent *)gData_02003b28;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom7)
-        return (const struct SceneEvent *)Data_02003c90;
-    return (const struct SceneEvent *)Data_0200381c;
+        return (const struct SceneEvent *)gData_02003c90;
+    return (const struct SceneEvent *)gData_0200381c;
 }

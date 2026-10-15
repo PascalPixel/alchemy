@@ -23,7 +23,7 @@ void Func_020000c8(s32 actor)
 
     Func_020026f4();
     object->update = VenusEntrance_UpdateSparkTrail;
-    object->priority_flags = 0;
+    object->priorityFlags = 0;
     {
         /* FAKEMATCH: the pin keeps this -96 out of a pseudo the second call would share (differ 23 without it). */
         register s32 dz asm("r2") = -96;
@@ -32,7 +32,7 @@ void Func_020000c8(s32 actor)
     }
     ObjectMotion_CommitPositionAndActivate(actor, -96, 96);
     object->update = 0;
-    object->priority_flags = 1;
+    object->priorityFlags = 1;
     Battle_WaitMode0(30);
     VenusEntrance_StopSparks();
 }

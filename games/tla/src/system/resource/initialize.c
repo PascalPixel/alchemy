@@ -8,7 +8,7 @@ void Resource_InitializeTable(void)
     u32 count;
     /* FAKEMATCH: ⚓️ loads the block owners' address between the first two instructions of the split limit 511; plainly the shift comes first (differ 2), since sched2 ranks the load and the shift equal and takes the shift. The limit's first part is pinned to the r0 the native builds it in, and a barrier holds it until the address is loaded; as a free temporary the limit takes r3 and the address r2 (differ 16). */
     register u32 limit asm("r0") = 128;
-    u8 *marker = ResourceBlockOwners;
+    u8 *marker = gResourceBlockOwners;
 
     /* FAKEMATCH: the barrier of the pin above. */
     asm volatile("" : "+l"(limit));
@@ -17,7 +17,7 @@ void Resource_InitializeTable(void)
     for (; count <= limit; count++)
         *marker++ = VRAM_BLOCK_OWNER_FREE;
     {
-        struct VramBlockCacheEntry *entry = ResourceTableEntries;
+        struct VramBlockCacheEntry *entry = gResourceTableEntries;
 
         count = 0;
         do {
@@ -35,7 +35,7 @@ s32 Resource_FindFreeEntry(void)
 {
     s32 ret = VRAM_CACHE_ENTRY_COUNT;
     s32 no;
-    struct VramBlockCacheEntry *entry = ResourceTableEntries;
+    struct VramBlockCacheEntry *entry = gResourceTableEntries;
 
     for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++) {
         u32 offset = entry->offset;

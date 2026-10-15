@@ -106,4 +106,4 @@ UpdateRisingParticleBurst:
 .L_080dd740:
 	.4byte 0xfffff800
 .L_080dd744:
-	.4byte Data_080f0e78
+	.4byte gData_080f0e78

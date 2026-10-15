@@ -25,16 +25,16 @@ static __inline__ struct ObjectRuntime *Object_GetById_(s32 id)
 
 s32 Func_020006d0(struct ObjectRuntime *object)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     u8 *seen;
     u32 mode;
 
-    Func_0200402c(object, Func_02004254(Object_GetById(gPartyState.current_owner)));
+    Func_0200402c(object, Func_02004254(Object_GetById(gPartyState.currentOwner)));
     mode = *(u16 *)(event + 358) & 0x3ff;
     seen = &BYTE_AT(object, 91);
-    if ((mode != 141 || *(s8 *)((u8 *)Ram_HeapSlots->effect_work + 0x713) == 0)
+    if ((mode != 141 || *(s8 *)((u8 *)Ram_HeapSlots->effectWork + 0x713) == 0)
         && BYTE_AT(object, 99) != 1) {
-        if (Func_02000620(&object->x, &Object_GetById(gPartyState.current_owner)->x) > 11) {
+        if (Func_02000620(&object->x, &Object_GetById(gPartyState.currentOwner)->x) > 11) {
             s32 id;
 
             if (BYTE_AT(object, 98) == 1)
@@ -43,7 +43,7 @@ s32 Func_020006d0(struct ObjectRuntime *object)
                 id = 14;
             if (Func_02000658(object, Object_GetById(id), 18) != 0)
                 goto on;
-            if (Func_02000658(object, Object_GetById_(gPartyState.current_owner), 26) != 0)
+            if (Func_02000658(object, Object_GetById_(gPartyState.currentOwner), 26) != 0)
                 goto on;
         }
         *seen = 0;

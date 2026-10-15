@@ -7,18 +7,18 @@
 #include "ram_buffer.h"
 
 struct MenuOwnerWork {
-    u8 unknown_000[0x214];
+    u8 unk000[0x214];
     u8 count;
-    u8 unknown_215;
+    u8 unk215;
     u8 owners[0x264 - 0x216];
     s8 selected[8];
 };
 
 struct MenuPageResult {
     void *owner;
-    s32 unknown_04;
+    s32 unk04;
     s32 page;
-    s32 page_count;
+    s32 pageCount;
     s32 row;
     s32 count;
     s32 selected;
@@ -28,7 +28,7 @@ void *UnitGet(s32 owner);
 
 s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index)
 {
-    struct MenuOwnerWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuOwnerWork *menu = Ram_HeapSlots->menuRuntime;
     void *owner;
     s32 count;
     s32 value;
@@ -51,7 +51,7 @@ s32 Menu_BuildPageResult(struct MenuPageResult *result, s32 index)
         pages++;
     result->owner = owner;
     result->page = page;
-    result->page_count = pages;
+    result->pageCount = pages;
     result->row = row;
     result->count = count;
     result->selected = value;

@@ -4,24 +4,24 @@
 #include "party_state.h"
 
 struct EventWorkRoute {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 route;
-    u8 unknown_1b0[4];
+    u8 unk1b0[4];
     s32 countdown;
 };
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     s16 message;
 };
 
 struct AnimationRecord26 {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 frame;
 };
 
 extern u8 MsgFieldAddressCompanion;
-extern const u8 Data_020005e4[];
+extern const u8 gData_020005e4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -70,16 +70,16 @@ void Func_02000120(void)
             /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
             do {
             } while (0);
-            state->render_mode = 6;
-            state->owner_override = 1;
+            state->renderMode = 6;
+            state->ownerOverride = 1;
         }
         Object_SetModeById(8, 7);
         Func_02000564();
     } else {
         struct PartyState *party = &gPartyState;
 
-        party->current_owner = 4;
-        party->render_mode = 0;
-        party->owner_override = 0;
+        party->currentOwner = 4;
+        party->renderMode = 0;
+        party->ownerOverride = 0;
     }
 }

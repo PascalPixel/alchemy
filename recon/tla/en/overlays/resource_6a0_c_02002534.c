@@ -7,7 +7,7 @@
 
 void Func_02002534(struct JupiterRoom7Cell *cell)
 {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     s32 x = (owner->x >> 20) | (s16)(cell->x & 0x40);
     s32 z = (owner->z >> 20) | (s16)(cell->z & 0x40);
 

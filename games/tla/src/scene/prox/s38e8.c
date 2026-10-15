@@ -22,7 +22,7 @@ static inline void FlagClr(s32 flag)
 
 void Func_020038e8(void)
 {
-    void *work = Ram_HeapSlots->event_work;
+    void *work = Ram_HeapSlots->eventWork;
 
     asm volatile(""); /* FAKEMATCH: ⚓️ loads the event work pointer before it builds the 0xca2 offset; without the barrier the offset's first half is scheduled before the load */
     if (FIELD_AT(work, s16, 0xca2) != 0) {

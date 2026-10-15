@@ -11,29 +11,29 @@
 #include "battle_unit.h"
 
 struct BattleSummonState *Trade_GetOfferStateFar(s32 owner);
-struct BattleUnit *UnitGet(s32 unit_id);
+struct BattleUnit *UnitGet(s32 unitId);
 
 void Func_08118f6c(void)
 {
     u8 totals[4];
-    u16 party_members[10];
-    s32 party_size;
+    u16 partyMembers[10];
+    s32 partySize;
     s32 element;
-    u32 available_mask;
+    u32 availableMask;
 
-    party_size = BattleParty_PrepareActiveOwners(party_members);
-    available_mask = Trade_GetOfferStateFar(0)->available_mask & 0xffff0000;
+    partySize = BattleParty_PrepareActiveOwners(partyMembers);
+    availableMask = Trade_GetOfferStateFar(0)->availableMask & 0xffff0000;
 
     element = 0;
     do {
         totals[element] = 0;
         {
-            s32 party_slot;
+            s32 partySlot;
 
-            for (party_slot = 0; party_slot < party_size; party_slot++) {
-                struct BattleUnit *member = UnitGet(party_members[party_slot]);
+            for (partySlot = 0; partySlot < partySize; partySlot++) {
+                struct BattleUnit *member = UnitGet(partyMembers[partySlot]);
 
-                totals[element] += member->djinn_owned_counts[element];
+                totals[element] += member->djinnOwnedCounts[element];
             }
         }
         element++;
@@ -42,29 +42,29 @@ void Func_08118f6c(void)
     element = 0;
     do {
         const struct SummonDefinition *summon = SummonDefinition_Get(element);
-        s32 elements_met;
+        s32 elementsMet;
 
         if (summon != 0) {
-            const u8 *required = summon->djinn_required;
+            const u8 *required = summon->djinnRequired;
 
-            elements_met = 0;
+            elementsMet = 0;
             if (totals[0] >= required[0]) {
                 u8 *total = totals;
 
                 do {
-                    elements_met++;
-                    if (elements_met > 3)
+                    elementsMet++;
+                    if (elementsMet > 3)
                         break;
                     total++;
                     required++;
                 } while (*total >= *required);
             }
 
-            if (elements_met == 4)
-                available_mask |= 1u << element;
+            if (elementsMet == 4)
+                availableMask |= 1u << element;
         }
         element++;
     } while (element <= 15);
 
-    Trade_GetOfferStateFar(0)->available_mask = available_mask;
+    Trade_GetOfferStateFar(0)->availableMask = availableMask;
 }

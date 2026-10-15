@@ -21,11 +21,11 @@ extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
 
-extern const u16 Data_081986d4[];
-extern const u8 Data_081986e0[];
-extern const u8 Data_081986c8[];
-extern const s8 Data_081986ec[];
-extern const u8 Data_081986ce[];
+extern const u16 gData_081986d4[];
+extern const u8 gData_081986e0[];
+extern const u8 gData_081986c8[];
+extern const s8 gData_081986ec[];
+extern const u8 gData_081986ce[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -57,16 +57,16 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode)
     s32 cell;
 
     slots = Ram_HeapSlots;
-    work = (struct BattleEffectWork *)slots->battle_fx_work[0];
-    canvas = slots->battle_fx_work[1];
+    work = (struct BattleEffectWork *)slots->battleFxWork[0];
+    canvas = slots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     if (effect->side == 1) {
         Func_081963ec(104, 35);
-        draw = (DrawRectangle)slots->unknown_64[1];
+        draw = (DrawRectangle)slots->unk64[1];
     } else {
         Func_081963ec(104, 39);
-        draw = (DrawRectangle)slots->unknown_64[1];
+        draw = (DrawRectangle)slots->unk64[1];
     }
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
@@ -74,8 +74,8 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode)
         void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
         Iwram_CopyWords((void *)0x05000000, palette, 128);
     }
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     object = GetBattleObjectSlotFar(effect->actors[0])->object;
     EffectPosition_ApplyStepAndYOffset(effect->actors[0], &position);
@@ -90,15 +90,15 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode)
         cell = frame / 4;
         if (cell <= 5) {
             if (cell <= 3)
-                draw(canvas, work->sheet + Data_081986d4[cell],
-                    Data_081986e0[cell + effect->side * 6],
-                    Data_081986ec[cell] + 32, Data_081986c8[cell],
-                    Data_081986ce[cell]);
+                draw(canvas, work->sheet + gData_081986d4[cell],
+                    gData_081986e0[cell + effect->side * 6],
+                    gData_081986ec[cell] + 32, gData_081986c8[cell],
+                    gData_081986ce[cell]);
             else
-                draw(canvas, Ram_MapCellBuffer + Data_081986d4[cell],
-                    Data_081986e0[cell + effect->side * 6],
-                    Data_081986ec[cell] + 32, Data_081986c8[cell],
-                    Data_081986ce[cell]);
+                draw(canvas, Ram_MapCellBuffer + gData_081986d4[cell],
+                    gData_081986e0[cell + effect->side * 6],
+                    gData_081986ec[cell] + 32, gData_081986c8[cell],
+                    gData_081986ce[cell]);
         }
         if (frame == 8) {
             if (mode == 0) {
@@ -108,22 +108,22 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode)
                 Audio_PlayCue(0x86);
                 Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
             }
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
         }
         if (mode == 1) {
             if (frame == 13) {
-                object->velocity_y = 0xc0000;
-                object->vertical_motion_strength = 0x7851;
-                object->vertical_motion_phase = 0x4000;
+                object->velocityY = 0xc0000;
+                object->verticalMotionStrength = 0x7851;
+                object->verticalMotionPhase = 0x4000;
             }
             if (frame == 65) {
-                work->shake_frames = 4;
+                work->shakeFrames = 4;
                 Func_081180e8(0x86);
             }
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback(Func_08143000);

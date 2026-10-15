@@ -9,13 +9,13 @@
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 struct CompositeAnimation {
-    u8 unknown_00[0x11];
-    u8 display_flags;
-    u8 unknown_12[7];
+    u8 unk00[0x11];
+    u8 displayFlags;
+    u8 unk12[7];
     u8 dirty;
-    u8 unknown_1a;
+    u8 unk1a;
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unk1c[0x0c];
     struct AnimationEntry *entries[4];
 };
 
@@ -28,15 +28,15 @@ void Func_080e87c4(void);
 
 void Func_080dca50(void);
 
-// party_state.h の unknown_26a
+// party_state.h の unk26a
 struct PartyPauseView {
-    u8 unknown_000[0x26a];
-    s16 paused_object;
+    u8 unk000[0x26a];
+    s16 pausedObject;
 };
 
 void BattleFx_ClearChildValueOnMismatch(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
     if (scene->animation == 2) {
         struct PartyPauseView *party;
@@ -44,15 +44,15 @@ void BattleFx_ClearChildValueOnMismatch(void)
         Func_080dca50();
         party = (struct PartyPauseView *)&gPartyState;
         asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2) */
-        if (party->paused_object != scene->second_object_id)
-            ((struct ObjectRuntime *)scene->child)->movement_state = 0;
+        if (party->pausedObject != scene->secondObjectId)
+            ((struct ObjectRuntime *)scene->child)->movementState = 0;
     }
 }
 
 // 種類ごとの追加処理
 void FieldEvent_RunTypeHandler(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
     switch (scene->animation) {
     case 8:
@@ -80,22 +80,22 @@ void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner)
 {
     s32 state;
     struct CompositeAnimation *target;
-    s32 initial_count;
+    s32 initialCount;
     s32 count;
     struct AnimationEntry **entry;
     struct AnimationEntry *current;
     u32 frame;
     s32 value;
 
-    state = owner->animation_kind;
+    state = owner->animationKind;
     if (state == 1) {
         target = owner->animation;
-        if (target != 0 && (target->display_flags & state) == 0) {
-            initial_count = target->count;
-            if (initial_count != 0) {
+        if (target != 0 && (target->displayFlags & state) == 0) {
+            initialCount = target->count;
+            if (initialCount != 0) {
                 entry = target->entries;
                 frame = gFrameCount;
-                count = initial_count;
+                count = initialCount;
                 do {
                     current = *entry++;
                     value = frame % 6;

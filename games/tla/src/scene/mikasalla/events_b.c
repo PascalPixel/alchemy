@@ -49,7 +49,7 @@ void Func_02000218(void)
 
 s32 Func_020002f8(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     return 0;
 }
 
@@ -60,14 +60,14 @@ s32 Func_0200030c(void)
     u8 flags;
 
     object = Object_GetById(16);
-    flags = object->priority_flags & ~1;
+    flags = object->priorityFlags & ~1;
     party = &gPartyState;
     /* FAKEMATCH: the empty asm holds the store below gPartyState's address load, which sched2 otherwise puts above the ands (differ 2 with the plain statement). */
     asm("");
-    object->priority_flags = flags;
-    /* FAKEMATCH: the loop note keeps current_owner's offset after the store; without it the offset's movs and lsls move above the strb (differ 2). */
+    object->priorityFlags = flags;
+    /* FAKEMATCH: the loop note keeps currentOwner's offset after the store; without it the offset's movs and lsls move above the strb (differ 2). */
     do { } while (0);
-    Object_GetById(party->current_owner)->priority_flags |= 0x20;
+    Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
     if (party->scene == (s32)&SceneId_Ov65dRoom2) {
         if (GameFlag_Test(0x200)) {
             Func_02000620(0);

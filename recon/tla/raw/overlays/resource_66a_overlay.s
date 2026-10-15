@@ -235,7 +235,7 @@ Func_020002f8:
 .L_02008514:
 	.4byte Func_02000220
 .L_02008518:
-	.4byte Data_02001608
+	.4byte gData_02001608
 	.section .text.x02008818,"ax",%progbits
 	.balign 4
 	.global Func_02000818
@@ -709,7 +709,7 @@ Func_02000818:
 .L_02008c9c:
 	.4byte MsgYouHereTo
 .L_02008ca0:
-	.4byte Data_02001610
+	.4byte gData_02001610
 .L_02008ca4:
 	.4byte Func_02001228
 .L_02008ca8:
@@ -1263,11 +1263,11 @@ Func_02000818:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009210:
-	.4byte Data_02001c08
+	.4byte gData_02001c08
 .L_02009214:
 	.4byte Func_02000814
 .L_02009218:
-	.4byte Data_02001674
+	.4byte gData_02001674
 .L_0200921c:
 	.4byte gPartyState
 	.section .text.x02009230,"ax",%progbits
@@ -1401,8 +1401,8 @@ Func_0200129c:
 	.4byte 0xffffe100
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_02001be0
-Data_02001be0:
+	.global gData_02001be0
+gData_02001be0:
 	.space 0x00000028
-	.global Data_02001c08
-Data_02001c08:
+	.global gData_02001c08
+gData_02001c08:

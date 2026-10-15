@@ -9,7 +9,7 @@
 #include "call.h"
 
 struct ContigoPrizes {
-    u8 unknown_000[0x14c];
+    u8 unk000[0x14c];
     s8 list[8];
 };
 
@@ -29,7 +29,7 @@ void Func_02003a8c(void)
     s8 *prize;
     s32 item;
 
-    ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Func_02001c44(13);
     Func_02001c44(16);
     Func_02001c44(17);

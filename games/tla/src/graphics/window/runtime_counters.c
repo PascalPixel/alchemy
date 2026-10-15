@@ -13,11 +13,11 @@ s32 UiWork_IsIdle(struct UiWindow *window)
 
 void UiWork_ResetCounters(void)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     state->colour = 15;
-    state->line_spacing = 10;
-    state->glyph_spacing = 9;
+    state->lineSpacing = 10;
+    state->glyphSpacing = 9;
     state->outline = 0;
-    state->unknown_after_line_spacing = 1;
+    state->unknownAfterLineSpacing = 1;
 }

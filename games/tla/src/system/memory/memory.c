@@ -20,7 +20,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+    Dma_Set((const void *)gUi_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
     /* FAKEMATCH: the do-while keeps the backdrop store's value before its address. */
     do {
@@ -53,13 +53,13 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     }
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
+    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
@@ -67,8 +67,8 @@ void Runtime_InitializeHeap(void)
     struct HeapSlots *work = Ram_HeapSlots;
 
     Dma_Fill32(0, work, sizeof(struct HeapSlots));
-    Ram_HeapSlots->next_iwram = gIwramHeap;
-    Ram_HeapSlots->next_ewram = gEwramHeap;
+    Ram_HeapSlots->nextIwram = gIwramHeap;
+    Ram_HeapSlots->nextEwram = gEwramHeap;
 }
 
 extern u8 IwramSoundMixWorkspace[];
@@ -77,14 +77,14 @@ s32 Runtime_GetRemainingIwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
 
-    return (s32)IwramSoundMixWorkspace - (s32)work->next_iwram;
+    return (s32)IwramSoundMixWorkspace - (s32)work->nextIwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
 
-    return 0x02040000 - (s32)work->next_ewram;
+    return 0x02040000 - (s32)work->nextEwram;
 }
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)

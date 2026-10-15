@@ -2,45 +2,45 @@
 #include "types.h"
 
 // 向きごとのフレーム番号 (0x80 = 左右反転)
-const u8 AnimationFacing_Kind1[16] =
+const u8 gAnimationFacing_Kind1[16] =
 {
 	0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
 	0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
 };
 
-const u8 AnimationFacing_Kind22[8] =
+const u8 gAnimationFacing_Kind22[8] =
 {
 	0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
 };
 
-const u8 AnimationFacing_Kind2[8] =
+const u8 gAnimationFacing_Kind2[8] =
 {
 	0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
 };
 
-const u8 AnimationFacing_Kind3[16] =
+const u8 gAnimationFacing_Kind3[16] =
 {
 	0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
 	0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
 };
 
-const u8 AnimationFacing_Kind5[16] =
+const u8 gAnimationFacing_Kind5[16] =
 {
 	0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
 	0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
 };
 
-const u8 AnimationFacing_Kind8[8] =
+const u8 gAnimationFacing_Kind8[8] =
 {
 	0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
 };
 
-const u8 AnimationFacing_Kind88[8] =
+const u8 gAnimationFacing_Kind88[8] =
 {
 	0x01, 0x00, 0x03, 0x85, 0x86, 0x87, 0x04, 0x02,
 };
 
-const u8 AnimationFacing_Kind4[64] =
+const u8 gAnimationFacing_Kind4[64] =
 {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -52,7 +52,7 @@ const u8 AnimationFacing_Kind4[64] =
 	0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
 };
 
-const u8 AnimationFacing_Kind6[64] =
+const u8 gAnimationFacing_Kind6[64] =
 {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04,
@@ -65,7 +65,7 @@ const u8 AnimationFacing_Kind6[64] =
 };
 
 // タイル消去の画素順
-const u8 Map_TileDissolveOrder[64] =
+const u8 gMap_TileDissolveOrder[64] =
 {
 	4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
 	50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
@@ -73,10 +73,10 @@ const u8 Map_TileDissolveOrder[64] =
 	6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
-const u16 Map_TileDissolveTail = 0x01ff;
+const u16 gMap_TileDissolveTail = 0x01ff;
 
 // 固定カメラの行列 (Q16)
-const s32 Camera_FixedViewMatrix[12] =
+const s32 gCamera_FixedViewMatrix[12] =
 {
 	0x10000, 0, 0,
 	-0xcccc, 0x10000, 0,
@@ -85,7 +85,7 @@ const s32 Camera_FixedViewMatrix[12] =
 };
 
 // 三角波
-const s32 ScriptObject_CycleTable[32] =
+const s32 gScriptObject_CycleTable[32] =
 {
 	1, 2, 3, 4, 5, 6, 7, 8,
 	7, 6, 5, 4, 3, 2, 1, 0,
@@ -94,32 +94,32 @@ const s32 ScriptObject_CycleTable[32] =
 };
 
 // 待機スクリプト
-const s32 Script_MainScript[1] =
+const s32 gScript_MainScript[1] =
 {
 	16,
 };
 
-const s16 Script_MainScriptTail[8] =
+const s16 gScript_MainScriptTail[8] =
 {
 	0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 
 // 十字キー入力ごとの向き (0xffff = 入力なし)
-const u16 WorldMap_KeyHeadings[16] =
+const u16 gWorldMap_KeyHeadings[16] =
 {
 	0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
 	0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };
 
 // 足跡のスクリプト
-const s32 WorldMap_FootprintActions[6] =
+const s32 gWorldMap_FootprintActions[6] =
 {
 	0, 120, 27,
 	0, 30, 27,
 };
 
 // 十字キー入力ごとの旋回量
-const s32 WorldMap_KeyYaws[16] =
+const s32 gWorldMap_KeyYaws[16] =
 {
 	0, -512, 512, 0,
 	0, -384, 384, 0,

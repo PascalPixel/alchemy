@@ -1,6 +1,6 @@
 #include "airs_rock_inside.h"
 
-extern const u8 Data_02006084[];
+extern const u8 gData_02006084[];
 
 void Func_02003dd4(void)
 {
@@ -24,11 +24,11 @@ void Func_02003e7c(struct FieldActor *source)
 
     WORD_AT(object, 28) = 0x6666;
     WORD_AT(object, 24) = 0x6666;
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Object_SetPartAttribute(object, 2);
     Object_SetSpritePriority(object, 1);
     Func_02005d5c(object, 1);
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
-    Func_02005d6c(object, Data_02006084);
+    Func_02005d6c(object, gData_02006084);
 }

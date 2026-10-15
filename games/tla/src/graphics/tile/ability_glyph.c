@@ -10,7 +10,7 @@
 #include "types.h"
 
 struct BattleActionGlyph {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 icon;
 };
 

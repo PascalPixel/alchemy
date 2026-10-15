@@ -7,7 +7,7 @@ void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = (u8 *)Ram_HeapSlots->menu_runtime;
+    u8 *base = (u8 *)Ram_HeapSlots->menuRuntime;
     s32 offset;
     s32 zero;
     s32 count;

@@ -23,9 +23,9 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     struct MapWork *map;
 
     obj = ObjectTable_Get(id);
-    work = Ram_HeapSlots->event_work;
-    target = work->view_center;
-    map = Ram_HeapSlots->map_work;
+    work = Ram_HeapSlots->eventWork;
+    target = work->viewCenter;
+    map = Ram_HeapSlots->mapWork;
     if (obj != 0) {
         map->origin = &target->x;
         ObjectDispatch_InitFromTable4WithArgumentFar(target, obj);
@@ -34,7 +34,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
             target->y = obj->y;
             target->z = obj->z;
             WaitFrames(1);
-            if (work->control_mode != 3)
+            if (work->controlMode != 3)
                 Map_ApplyWorkOriginAndSpanFar();
         }
     }
@@ -44,6 +44,6 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 {
     struct EventWork *work = Runtime_AllocateBlock(108, 0xd50);
 
-    work->view_center->speed_limit = first;
-    work->view_center->acceleration = second;
+    work->viewCenter->speedLimit = first;
+    work->viewCenter->acceleration = second;
 }

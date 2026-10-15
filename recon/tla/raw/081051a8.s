@@ -94,7 +94,7 @@ Func_081051a8:
 .L_08105258:
 	.4byte 0x00004000
 .L_0810525c:
-	.4byte FourObjectMotion_ResourceIds
+	.4byte gFourObjectMotion_ResourceIds
 .L_08105260:
 	.4byte MenuIcon_UpdateTransforms
 .L_08105264:

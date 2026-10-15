@@ -19,8 +19,8 @@ void Func_020017dc(struct ObjectRuntime *actor)
     acceleration = 0x19999;
     /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately */
     asm("" : "+l"(acceleration));
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x19999, acceleration);
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 376, 200);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, acceleration);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 376, 200);
     Func_020056bc();
 }
 
@@ -34,8 +34,8 @@ void Func_02001820(struct ObjectRuntime *actor)
     acceleration = 0x19999;
     /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately */
     asm("" : "+l"(acceleration));
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x19999, acceleration);
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 376, 136);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, acceleration);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 376, 136);
     Func_020056bc();
 }
 
@@ -49,8 +49,8 @@ void Func_02001864(struct ObjectRuntime *actor)
     acceleration = 0x19999;
     /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately */
     asm("" : "+l"(acceleration));
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x19999, acceleration);
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 440, 248);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, acceleration);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 440, 248);
     Func_020056bc();
 }
 
@@ -64,7 +64,7 @@ void Func_020018a8(struct ObjectRuntime *actor)
     acceleration = 0x19999;
     /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately */
     asm("" : "+l"(acceleration));
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x19999, acceleration);
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 440, 184);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, acceleration);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 440, 184);
     Func_020056bc();
 }

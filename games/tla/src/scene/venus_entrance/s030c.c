@@ -16,7 +16,7 @@ s32 Func_02002864();
 s32 Battle_WaitMode0();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Func_0200298c();
-extern u8 Data_0200b000[];
+extern u8 gData_0200b000[];
 
 void Func_0200030c(void)
 {
@@ -46,13 +46,13 @@ void Func_0200030c(void)
     Call2(Object_SetModeById, 0xa, 4);
     Call1(Engine_AudioPlayCue, 0xa5);
     Call4(Func_02002884, t9, 0x1600000, 0x80000, 0xb00000);
-    Call2(Func_02002864, t9, (s32)Data_0200b000);
+    Call2(Func_02002864, t9, (s32)gData_0200b000);
     Call1(Battle_WaitMode0, 0x19);
     Call4(Motion_CamBounds, 0x1780000, -1, 0x680000, 1);
     t16 = Value1(Object_GetById, 0xb);
     Call2(Object_SetModeById, 0xb, 4);
     Call4(Func_02002884, t16, 0x1a00000, 0x80000, 0x980000);
-    Call2(Func_02002864, t16, (s32)Data_0200b000);
+    Call2(Func_02002864, t16, (s32)gData_0200b000);
     Call1(Battle_WaitMode0, 0x3c);
     Call1(Engine_AudioPlayCue, 0xa5);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0xa);

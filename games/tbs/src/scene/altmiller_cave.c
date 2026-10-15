@@ -52,13 +52,13 @@ struct ActorWheel
 {
 	s16 phase;
 	s16 ticks;
-	s16 unknown_04;
+	s16 unk04;
 	u16 angle;
 	u16 speed;
 	u16 travel;
 };
 
-#define AltmillerCave_Wheel ((struct ActorWheel *)AltmillerCave_ClearTarget)
+#define AltmillerCave_Wheel ((struct ActorWheel *)gAltmillerCave_ClearTarget)
 
 struct RockPuzzle
 {
@@ -80,7 +80,7 @@ static void EV13_TALK(void)
 
 u8 *AltmillerCave_GetEntrances(void)
 {
-	return AltmillerCave_SceneTableA;
+	return gAltmillerCave_SceneTableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -90,7 +90,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *AltmillerCave_GetExits(void)
 {
-	return AltmillerCave_SceneTableB;
+	return gAltmillerCave_SceneTableB;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -317,9 +317,9 @@ static void EV12_PSYNERGY(void)
 
 	if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20)
 	{
-		actor->motion_flags = 2;
-		actor->terrain_height = 0;
-		actor->priority_flags = 2;
+		actor->motionFlags = 2;
+		actor->terrainHeight = 0;
+		actor->priorityFlags = 2;
 		Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if EDITION_INTERNATIONAL
 		Engine_GameFlagSet(0x212);
@@ -364,8 +364,8 @@ static void EV11_PSYNERGY(void)
 		if (p != 0)
 		{
 			s32 c = 2;
-			p->motion_flags = c;
-			p->priority_flags = t;
+			p->motionFlags = c;
+			p->priorityFlags = t;
 		}
 		Engine_GameFlagSet(0x211);
 	}
@@ -373,8 +373,8 @@ static void EV11_PSYNERGY(void)
 
 static void AltmillerCave_HopSelectedActor(void)
 {
-	struct FieldActor	  *actor = Object_GetById(gGameState.selected_actor);
-	s32					   flags = actor->motion_flags;
+	struct FieldActor	  *actor = Object_GetById(gGameState.selectedActor);
+	s32					   flags = actor->motionFlags;
 	union FieldCoordinate  pos[3];
 	union FieldCoordinate *p = pos;
 
@@ -395,13 +395,13 @@ static void AltmillerCave_HopSelectedActor(void)
 		Object_SetMode(actor, 7);
 		actor->speed = 0x30000;
 		actor->acceleration = 0x20000;
-		actor->velocity_y = 0x40000;
-		actor->motion_flags &= 126;
+		actor->velocityY = 0x40000;
+		actor->motionFlags &= 126;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Engine_ObjectMotionSetPositionAndCommit(0, p[0].part.pixel, p[2].part.pixel);
 		Object_SetMode(actor, 6);
 		Engine_ActorSetSpriteFlags(actor, 1);
-		actor->motion_flags = flags;
+		actor->motionFlags = flags;
 		Engine_EventEnd();
 	}
 }
@@ -420,10 +420,10 @@ static void FieldScene_RunGuardedSixWordStep(void)
 
 static void AltmillerCave_UpdateScalePulse(struct FieldActor *obj)
 {
-	s32 v = AltmillerCave_PulseScales[(obj->timer >> 2) & 3];
+	s32 v = gAltmillerCave_PulseScales[(obj->timer >> 2) & 3];
 
-	obj->scale_x = v;
-	obj->scale_y = v;
+	obj->scaleX = v;
+	obj->scaleY = v;
 	obj->timer++;
 	obj->timer &= 15;
 }
@@ -540,8 +540,8 @@ static void AltmillerCave_TurnRock(s32 action)
 	{
 		actor = Actor_Get(i + 11);
 		actor->update = NULL;
-		actor->scale_x = 0x10000;
-		actor->scale_y = 0x10000;
+		actor->scaleX = 0x10000;
+		actor->scaleY = 0x10000;
 	}
 	{
 		struct ActorWheel *wheel;
@@ -582,15 +582,15 @@ static void AltmillerCave_TurnRock(s32 action)
 				SceneActor_SetPositionFromTransformedBase(i + 11, 0x180000, angle);
 				Event_PlayCue(151);
 				actor = Actor_Get(i + 11);
-				actor->scale_x = 0;
+				actor->scaleX = 0;
 				size = 0x6666;
 				do
 				{
-					actor->scale_y = size;
-					actor->scale_x = size;
+					actor->scaleY = size;
+					actor->scaleX = size;
 					Task_Wait(1);
 					size += 0xc00;
-				} while (actor->scale_x <= 0xffff);
+				} while (actor->scaleX <= 0xffff);
 				angle -= 0x3333;
 			}
 			Task_Wait(30);
@@ -613,10 +613,10 @@ static void AltmillerCave_TurnRock(s32 action)
 			{
 				actor = Actor_Get(i + 11);
 				Event_PlayCue(151);
-				for (size = actor->scale_x; actor->scale_x > 0x6666; size -= 0xc00)
+				for (size = actor->scaleX; actor->scaleX > 0x6666; size -= 0xc00)
 				{
-					actor->scale_y = size;
-					actor->scale_x = size;
+					actor->scaleY = size;
+					actor->scaleX = size;
 					Task_Wait(1);
 				}
 				Actor_SetPosition(i + 11, 0, 0);
@@ -671,8 +671,8 @@ static void AltmillerCave_TurnRock(s32 action)
 				for (i = 0; i <= 4; i++)
 				{
 					actor = Actor_Get(i + 11);
-					actor->scale_x -= 16;
-					actor->scale_y -= 16;
+					actor->scaleX -= 16;
+					actor->scaleY -= 16;
 					SceneActor_SetPositionFromTransformedBase(i + 11, reach, angle);
 					angle -= 0x3333;
 				}
@@ -766,18 +766,18 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_WalkByAndWait(9, 32, 32);
 	Actor_FaceDirection(9, FACING_SOUTH, 0);
 	Engine_EventWait(20);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(MIA)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(IVAN)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkBy(ACTOR_PARTY_LEADER, 0, 16);
 	Actor_WalkBy(GARET, 0, 16);
 	Actor_WalkBy(MIA, 0, 16);
 	Actor_WalkByAndWait(IVAN, 0, 16);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(MIA)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(IVAN)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(MIA)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	Engine_ActorSetAnimation(GARET, ANIM_STAND);
 	Engine_ActorSetAnimation(MIA, ANIM_STAND);
@@ -1843,7 +1843,7 @@ static void AltmillerCave_MatchLeaderPriority(struct FieldActor *actor)
 {
 	if (actor != NULL)
 	{
-		actor->priority_flags = 0;
+		actor->priorityFlags = 0;
 		actor->sprite->priority = Object_GetById(0)->sprite->priority;
 	}
 }
@@ -1925,7 +1925,7 @@ s32 AltmillerCave_ApplyEntryState(void)
 		}
 		else
 		{
-			Object_GetById(11)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Object_GetById(11)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		}
 		Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 #if EDITION_INTERNATIONAL
@@ -1947,7 +1947,7 @@ s32 AltmillerCave_ApplyEntryState(void)
 		*(s32 *)&Object_GetById(10)->update = (s32)AltmillerCave_MatchLeaderPriority;
 		if (gGameState.entrance == 52)
 		{
-			Dma_Fill32(0, AltmillerCave_ClearTarget, 12);
+			Dma_Fill32(0, gAltmillerCave_ClearTarget, 12);
 			if (!Engine_GameFlagIsSet(0x109))
 			{
 				u8 *race = gSceneState;
@@ -1970,10 +1970,10 @@ s32 AltmillerCave_ApplyEntryState(void)
 		for (i = 0; i < 5; i++)
 		{
 			actor = Object_GetById(i + 11);
-			actor->motion_flags = 0;
-			actor->collision_flags = 0;
-			actor->scale_x = 0x10000;
-			actor->scale_y = 0x10000;
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
+			actor->scaleX = 0x10000;
+			actor->scaleY = 0x10000;
 			Engine_ActorSetSpriteFlags(Object_GetById(i + 11), 0);
 			Engine_ActorSetAnimation(i + 11, i + 1);
 		}
@@ -1989,8 +1989,8 @@ s32 AltmillerCave_ApplyEntryState(void)
 		Engine_ActorSetChildValue(20, 6);
 		Object_GetById(16)->sprite->priority = 3;
 		Object_GetById(20)->sprite->priority = 3;
-		Object_GetById(16)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-		Object_GetById(20)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		Object_GetById(16)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		Object_GetById(20)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(20), 0);
 	}
@@ -2000,8 +2000,8 @@ s32 AltmillerCave_ApplyEntryState(void)
 	}
 	else
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-		gEventWork->transition_frames = 24;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+		gEventWork->transitionFrames = 24;
 	}
 	return 0;
 }
@@ -2018,17 +2018,17 @@ static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 	state = *(s8 *)p;
 	if (state == 0)
 	{
-		z = obj->origin_z;
-		x = obj->origin_x;
+		z = obj->originZ;
+		x = obj->originX;
 		obj->z = z;
 		position[2] = z;
 		obj->x = x;
 		position[0] = x;
 		Vector_AddPolarOffset(0x780000, Engine_RandomNext(), position);
-		obj->target_x = position[0];
-		obj->target_z = position[2];
+		obj->targetX = position[0];
+		obj->targetZ = position[2];
 		obj->acceleration = 0x50000;
-		obj->max_speed = 0x50000;
+		obj->maxSpeed = 0x50000;
 		obj->flag42 = state;
 		(*p)++;
 		if ((gFrameTick & 3) == 0)
@@ -2077,8 +2077,8 @@ static void AltmillerCave_ReleaseWallBurst(void)
 		ObjectGroup_SetChildValueUnlessFifteen(
 			object->object, (u32)(Engine_RandomNext() * 7) >> 16);
 		speed = Math_DivideUnsigned(Engine_RandomNext(), 3) + 0x18000;
-		object->scale_y = speed;
-		object->scale_x = speed;
+		object->scaleY = speed;
+		object->scaleX = speed;
 		Engine_TaskWait(1);
 		object++;
 	}
@@ -2109,7 +2109,7 @@ static void AltmillerCave_ReleaseWallBurst(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2128,7 +2128,7 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207,
 	205,
 	228,
@@ -2137,7 +2137,7 @@ u32 StagedActor_FootprintKinds[] = {
 	297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32,
 	-8,
 	32,
@@ -2164,9 +2164,9 @@ s32 StagedActor_FootprintBounds[] = {
 	32,
 };
 
-u16 *AltmillerCave_ClearTarget = gAltmillerActorWheelWork;
+u16 *gAltmillerCave_ClearTarget = gAltmillerActorWheelWork;
 
-struct SceneEntrance AltmillerCave_SceneTableA[] = {
+struct SceneEntrance gAltmillerCave_SceneTableA[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0},
 	{2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
@@ -2188,7 +2188,7 @@ struct SceneEntrance AltmillerCave_SceneTableA[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 AltmillerCave_SceneTableB[] = {
+u32 gAltmillerCave_SceneTableB[] = {
 	SCENE_EXITS(146),
 	SCENE_EXIT(1, 2, 24),
 	SCENE_EXIT(2, 146, 3),
@@ -2273,7 +2273,7 @@ struct ScenePlacement gAltmillerCavePlacements6[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 AltmillerCave_PulseScales[] = {
+u32 gAltmillerCave_PulseScales[] = {
 	0x10000,
 	0x11999,
 	0x13333,

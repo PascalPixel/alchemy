@@ -6,7 +6,7 @@ extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEf
 extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[];
 extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[];
 extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
-extern u8 Data_080af21c[], Data_080af220[];
+extern u8 gData_080af21c[], gData_080af220[];
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
@@ -30,9 +30,9 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
     if (def->type != 0) {
         found = 0;
         /* FAKEMATCH: the two bonus fields are tested as one masked word. */
-        if ((*(u32 *)&def->primary_bonus & 0xffffff) == 0) {
+        if ((*(u32 *)&def->primaryBonus & 0xffffff) == 0) {
             for (i = 0; i < 4; i++) {
-                if (def->effects[i].kind != 0 || def->use_type == 3) {
+                if (def->effects[i].kind != 0 || def->useType == 3) {
                     found = 1;
                     break;
                 }
@@ -44,15 +44,15 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
             UiText_DrawCharacterAtOffsetFar((s32)MsgEquipEffectHeading, window, 16, 0);
             row = 1;
         }
-        if (def->primary_bonus != 0) {
+        if (def->primaryBonus != 0) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel, window, 0, row * 8);
-            amount = def->primary_bonus;
+            amount = def->primaryBonus;
             ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
             row++;
         }
-        if (def->secondary_bonus != 0) {
+        if (def->secondaryBonus != 0) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgDefenseLabel, window, 0, row * 8);
-            amount = def->secondary_bonus;
+            amount = def->secondaryBonus;
             ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
             row++;
         }
@@ -95,14 +95,14 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         case 13:
         case 14:
             UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
-            UiText_DrawStringInWindowFar(Data_080af21c, window, 64, row * 8);
+            UiText_DrawStringInWindowFar(gData_080af21c, window, 64, row * 8);
             if (amount > 9) {
                 UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
-                UiText_DrawStringInWindowFar(Data_080af220, window, 80, row * 8);
+                UiText_DrawStringInWindowFar(gData_080af220, window, 80, row * 8);
                 UiText_DrawNumberInWindowFar(amount - 10, 1, window, 88, row * 8);
             } else {
                 UiText_DrawNumberInWindowFar(0, 1, window, 72, row * 8);
-                UiText_DrawStringInWindowFar(Data_080af220, window, 80, row * 8);
+                UiText_DrawStringInWindowFar(gData_080af220, window, 80, row * 8);
                 UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
             }
             break;
@@ -118,17 +118,17 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         UiText_DrawCharacterAtOffsetFar((s32)MsgItemCursed, window, 0, row * 8);
         row++;
     }
-    if (def->use_type == 3) {
+    if (def->useType == 3) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgBestowsPsynergy, window, 0, row * 8);
         consumable = 1;
         row++;
     }
-    if (def->use_type != 4 && def->use_type != 0) {
+    if (def->useType != 4 && def->useType != 0) {
         if (!consumable) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgUsesHeading, window, 16, row * 8);
             row++;
         }
-        switch (def->use_type) {
+        switch (def->useType) {
         case 0:
             break;
         case 1:

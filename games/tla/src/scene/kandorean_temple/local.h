@@ -63,13 +63,13 @@ void Func_02005368(void);
 void Field_DispatchTypeHandler(s32 type);
 void Func_0200098c(s32 *position, s32 value);
 void Func_02000adc(void);
-extern s32 Data_02006298;
-extern s32 Data_0200629c;
-extern s32 Data_02006294;
+extern s32 gData_02006298;
+extern s32 gData_0200629c;
+extern s32 gData_02006294;
 extern u32 gFrameCount;
-extern const u8 Data_02005494[];
-extern const u8 Data_020054e4[];
-extern const u8 Data_020054f0[];
+extern const u8 gData_02005494[];
+extern const u8 gData_020054e4[];
+extern const u8 gData_020054f0[];
 
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
@@ -131,12 +131,12 @@ void Event_StartScreenTransition(void);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void VramBlock_LoadCached(s32 block, s32 count, const void *data);
 void Runtime_ReleaseHeapBlock(s32 slot);
-extern struct ObjectRuntime *Data_020062ac;
-extern s32 Data_02005548[];
-extern s32 Data_02005550[];
+extern struct ObjectRuntime *gData_020062ac;
+extern s32 gData_02005548[];
+extern s32 gData_02005550[];
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
@@ -149,9 +149,9 @@ extern u8 MsgKandoreanTemple02;
 extern u8 MsgKandoreanTemple03;
 extern u8 MsgKandoreanTemple09;
 extern u8 MsgKandoreanTemple10;
-extern u32 Data_02005514[];
-extern s16 Data_020054dc[];
-extern s16 Data_020054e0[];
+extern u32 gData_02005514[];
+extern s16 gData_020054dc[];
+extern s16 gData_020054e0[];
 
 static __inline__ s32 GameFlag_Test_(s32 flag)
 {
@@ -343,9 +343,9 @@ static __inline__ void Func_020052d0_(s32 id, s32 value)
 #define ObjectMotion_SetActionVariantValue(id, variant) \
     (((s32 (*)(u32, s32))ObjectMotion_SetActionVariant)((id), (variant)))
 
-/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias the party state's words, so its lvalue is not a char: a whole-byte bit-field has the struct's alias set. As u8 priority_flags the next load is scheduled one step early. */
+/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias the party state's words, so its lvalue is not a char: a whole-byte bit-field has the struct's alias set. As u8 priorityFlags the next load is scheduled one step early. */
 struct ObjectFlags23 {
-    u8 unknown_00[0x23];
+    u8 unk00[0x23];
     u8 flags : 8;
 };
 

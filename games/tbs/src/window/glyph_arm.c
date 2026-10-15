@@ -59,17 +59,17 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 			u32		  bits;
 
 #if defined(TBS_EDITION_JA)
-			u32 font_width;
+			u32 fontWidth;
 
 			color = 0x1111;
-			font_width = 8;
+			fontWidth = 8;
 			x++;
 			if (character - 222 <= 1)
 			{
 				character += 32;
 				x -= 2;
 				y--;
-				font_width = 2;
+				fontWidth = 2;
 			}
 			character -= 32;
 			source = font + character * 10;
@@ -77,8 +77,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 			bits = *source++;
 			while (y + row <= 31)
 			{
-				u32 tile_y;
-				u32 row_line;
+				u32 tileY;
+				u32 rowLine;
 				u8 *vram;
 
 				col = 0;
@@ -88,13 +88,13 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 				else
 				{
 					rownext = row + 1;
-					tile_y = (y + row) >> 3;
+					tileY = (y + row) >> 3;
 					vram = (u8 *)0x06002500;
-					row_line = ((y + row) & 7) << 1;
+					rowLine = ((y + row) & 7) << 1;
 					do
 					{
 						if (bits & 1)
-							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+							GlyphDot(stride, x + col, tileY, rowLine, vram, color);
 						col++;
 						bits >>= 1;
 					} while (bits != 0);
@@ -107,16 +107,16 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 #else
 			u32 color1;
 			u32 color3;
-			u32 font_width;
+			u32 fontWidth;
 
 			source = font + character * 32;
 			color1 = 0x1111;
 			color3 = 0x3333;
 			row = 0;
 #if defined(TBS_EDITION_EN)
-			font_width = UiText_GlyphWidths[index];
+			fontWidth = gUiText_GlyphWidths[index];
 #else
-			font_width = UiText_GlyphWidths[character - 32];
+			fontWidth = gUiText_GlyphWidths[character - 32];
 #endif
 			if (y <= 31)
 			{
@@ -125,13 +125,13 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 				vram = (u8 *)0x06002500;
 				while (1)
 				{
-					u32 tile_y;
-					u32 row_line;
+					u32 tileY;
+					u32 rowLine;
 
 					col = 0;
 					rownext = row + 1;
-					tile_y = (y + row) >> 3;
-					row_line = ((y + row) & 7) << 1;
+					tileY = (y + row) >> 3;
+					rowLine = ((y + row) & 7) << 1;
 					while (1)
 					{
 						if ((col & 1) != 0)
@@ -144,7 +144,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 							if ((bits & 15) == 1)
 								color = color1;
 							if (((x + col) >> 3) <= 29)
-								GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+								GlyphDot(stride, x + col, tileY, rowLine, vram, color);
 						}
 						col++;
 						if (col > 7)
@@ -156,18 +156,18 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 				}
 			}
 #endif
-			return font_width;
+			return fontWidth;
 		}
-		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
+		rows = (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 26);
 		width = *rows++;
 	}
 	else
 	{
 #if defined(TBS_EDITION_JA)
 		width = 10;
-		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
+		rows = (const u16 *)(gUiText_KanjiGlyphs + (character - 256) * 24);
 #else
-		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
+		rows = (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 32);
 		width = *rows;
 		rows += 4;
 #endif
@@ -220,17 +220,17 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 			vram = (u8 *)0x06002500;
 			while (1)
 			{
-				u32 tile_y;
-				u32 row_line;
+				u32 tileY;
+				u32 rowLine;
 
 				col = 0;
 				rownext = row + 1;
-				tile_y = (y + row) >> 3;
-				row_line = ((y + row) & 7) << 1;
+				tileY = (y + row) >> 3;
+				rowLine = ((y + row) & 7) << 1;
 				while (1)
 				{
 					if ((s32)bits < 0)
-						GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+						GlyphDot(stride, x + col, tileY, rowLine, vram, color);
 					bits <<= 1;
 					if (bits == 0)
 						break;

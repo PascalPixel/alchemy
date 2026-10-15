@@ -12,5 +12,5 @@ void Func_020022c4(void)
 
 void Func_020022d8(s16 value)
 {
-    RIDE_WORK->value_0e = value;
+    RIDE_WORK->value0e = value;
 }

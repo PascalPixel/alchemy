@@ -7,19 +7,19 @@
 #include "field_scene.h"
 #include "field_effect.h"
 
-extern const u8 BattleFx_CommonParticleScript[];
+extern const u8 gBattleFx_CommonParticleScript[];
 
 struct OrbitEffect {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[20];
+    u8 unk14[20];
     s32 scale;
-    u8 unknown_2c[28];
+    u8 unk2c[28];
     s32 speed;
-    u8 unknown_4c[24];
+    u8 unk4c[24];
     u16 timer;
     s16 pause;
     struct OrbitEffect *anchor;
@@ -27,7 +27,7 @@ struct OrbitEffect {
 };
 
 void Effect_AdvanceMotion(struct FieldEffect *effect);
-void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
+void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,
 	u32 flags, const struct EffectOptions *options);
 
 void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
@@ -40,8 +40,8 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
 
     options.palette = 0;
     options.update = Effect_AdvanceMotion;
-    options.start_scale_x = 0xCCCC;
-    options.start_scale_y = 0xCCCC;
+    options.startScaleX = 0xCCCC;
+    options.startScaleY = 0xCCCC;
     i = 0;
     do {
         angle = i << 12;
@@ -79,5 +79,5 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)gBattleFx_CommonParticleScript);
 }

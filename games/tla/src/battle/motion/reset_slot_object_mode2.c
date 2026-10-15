@@ -51,14 +51,14 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor, s
         dist = 0;
     dist = dist / travelDivisor;
     object->acceleration = dist;
-    object->speed_limit = dist;
-    object->snap_to_target = 1;
+    object->speedLimit = dist;
+    object->snapToTarget = 1;
 
-    if (object->motion_flags & 4)
-        object->velocity_y = initialVelocityY;
-    object->velocity_y = initialVelocityY;
-    object->vertical_motion_strength = 0xab85;
-    object->auto_face_motion = 1;
+    if (object->motionFlags & 4)
+        object->velocityY = initialVelocityY;
+    object->velocityY = initialVelocityY;
+    object->verticalMotionStrength = 0xab85;
+    object->autoFaceMotion = 1;
     Object_ResetMotion(object);
     if (dist != 0)
         Object_SetPosition(object, x, 0, z);
@@ -80,9 +80,9 @@ void BattleMotion_NoOp(void *position, s32 speed)
 
 void BattleMotion_NoOp(void *, s32);
 
-void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
+void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId)
 {
-    struct BattleObj *second_slot;
+    struct BattleObj *secondSlot;
     struct MotionObject *first;
     struct MotionObject *second;
     s32 x1;
@@ -95,26 +95,26 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
         s32 z;
     } pos;
 
-    first = BattleObjGet(first_id)->object;
-    second_slot = BattleObjGet(second_id);
+    first = BattleObjGet(firstId)->object;
+    secondSlot = BattleObjGet(secondId);
 
 
-    x1 = first->target_x;
+    x1 = first->targetX;
     /* FAKEMATCH: ⚓️ loads the first target before it builds the unset marker */
     __asm__ volatile("" : "+l"(x1));
-    second = second_slot->object;
+    second = secondSlot->object;
     if (x1 == (s32)0x80000000) {
         x1 = first->x;
     }
-    z1 = first->target_z;
+    z1 = first->targetZ;
     if (z1 == (s32)0x80000000) {
         z1 = first->z;
     }
-    x2 = second->target_x;
+    x2 = second->targetX;
     if (x2 == (s32)0x80000000) {
         x2 = second->x;
     }
-    z2 = second->target_z;
+    z2 = second->targetZ;
     if (z2 == (s32)0x80000000) {
         z2 = second->z;
     }
@@ -127,7 +127,7 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 }
 
 struct SlotEffectObject {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     s32 resource;
     u8 kind;
 };
@@ -158,7 +158,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot)
 }
 
 struct SlotMotionRecord {
-    u8 unknown_00[12];
+    u8 unk00[12];
     s32 height;
 };
 

@@ -285,7 +285,7 @@ Func_0802a6b8:
 .L_0802a8f4:
 	.4byte 0x00000200
 .L_0802a8f8:
-	.4byte Data_0802f380
+	.4byte gData_0802f380
 .L_0802a8fc:
 	.4byte IwramClearWords
 .L_0802a900:
@@ -305,7 +305,7 @@ Func_0802a6b8:
 .L_0802a91c:
 	.4byte Data_0202de00
 .L_0802a920:
-	.4byte Data_0202e000
+	.4byte gData_0202e000
 .L_0802a924:
 	.4byte IwramMulQ16
 .L_0802a928:
@@ -459,6 +459,6 @@ Func_0802a6b8:
 .L_0802aa68:
 	.4byte 0x0600c000
 .L_0802aa6c:
-	.4byte Data_02028000
+	.4byte gData_02028000
 .L_0802aa70:
 	.4byte Func_0802ad84

@@ -17,7 +17,7 @@ void Func_020003bc(void);
 void Func_02000524(void);
 void Func_0200077c(void);
 
-u32 Data_02000dac[] = {
+u32 gData_02000dac[] = {
 	0xffff0070, 1, 0x900000, 0, 0xbc0000, 0x10000,
 	0xffff0071, 1, 0xb80000, 0, 0x980000, 0x14000,
 	0xffff006c, 1, 0xc80000, 0, 0x1950000, 0x14000,
@@ -29,12 +29,12 @@ u32 Data_02000dac[] = {
 	0xffff, 0, 0, 0, 0, 0,
 };
 
-s32 Data_02000e84[] = {
+s32 gData_02000e84[] = {
 	1, (s32)0xffff000a, 10, 1, (s32)0xffff000b, 11,
 	-1, 0, 0,
 };
 
-s32 Data_02000ea8[] = {
+s32 gData_02000ea8[] = {
 	1,
 	(s32)0xffff0001,
 	1,
@@ -115,7 +115,7 @@ s32 Data_02000ea8[] = {
 	0,
 };
 
-s32 Data_02000fe0[] = {
+s32 gData_02000fe0[] = {
 	1,
 	(s32)0xffff0001,
 	1,

@@ -13,32 +13,32 @@
 #include "scene_ids.h"
 #include "object_runtime.h"
 
-extern s16 Data_02003d9e[];
-extern s16 Data_02003db2[];
-extern s16 Data_02003dc4[];
-extern s16 Data_02003dd6[];
-extern s16 Data_02003dee[];
-extern s16 Data_02003e02[];
+extern s16 gData_02003d9e[];
+extern s16 gData_02003db2[];
+extern s16 gData_02003dc4[];
+extern s16 gData_02003dd6[];
+extern s16 gData_02003dee[];
+extern s16 gData_02003e02[];
 
 s32 Func_02001084(s16 *table);
 void Func_02000fcc(struct ObjectRuntime *object);
 
 void Func_02001110(s32 mode)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
-    s16 *table = Data_02003d9e;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+    s16 *table = gData_02003d9e;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {
         if (gPartyState.entrance <= 3)
-            table = Data_02003db2;
+            table = gData_02003db2;
         else if (gPartyState.entrance <= 8)
-            table = Data_02003dc4;
+            table = gData_02003dc4;
         else if (gPartyState.entrance <= 12)
-            table = Data_02003dd6;
+            table = gData_02003dd6;
         else
-            table = Data_02003dee;
+            table = gData_02003dee;
     } else if (gPartyState.scene == (s32)&SceneId_Ov691Room3) {
-        table = Data_02003e02;
+        table = gData_02003e02;
     }
     if (mode == 2) {
         struct ObjectRuntime *target;

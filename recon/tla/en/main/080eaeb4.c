@@ -12,7 +12,7 @@ struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y);
 
 struct ObjectRuntime *Func_080eaeb4(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 position[3];
     s32 angle = ((leader->angle >> 12) + 2) & 12;
     struct ObjectRuntime *found;

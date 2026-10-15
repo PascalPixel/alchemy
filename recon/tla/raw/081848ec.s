@@ -775,7 +775,7 @@ Func_081848ec:
 .L_08184e8c:
 	.4byte 0xfffffdd6
 .L_08184e90:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08184e94:
 	.4byte IwramCopyWords
 .L_08184e98:
@@ -1242,7 +1242,7 @@ Func_081848ec:
 	b .L_0818529e
 	.2byte 0x0000
 .L_08185224:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08185228:
 	.4byte IwramCopyWords
 .L_0818522c:
@@ -1284,7 +1284,7 @@ Func_081848ec:
 .L_08185274:
 	.4byte Data_081991e0
 .L_08185278:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818527c:
 	.4byte Data_0819983a
 .L_08185280:
@@ -1485,7 +1485,7 @@ Func_081848ec:
 	b .L_08185420
 	.2byte 0x0000
 .L_081853f0:
-	.4byte Data_08199268
+	.4byte gData_08199268
 .L_081853f4:
 	.4byte 0xfffffe17
 .L_081853f8:
@@ -1505,7 +1505,7 @@ Func_081848ec:
 .L_08185414:
 	.4byte Data_081999a6
 .L_08185418:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818541c:
 	movs r0, #222
 	str r4, [sp, #8]
@@ -2374,7 +2374,7 @@ Func_081848ec:
 .L_08185b24:
 	.4byte 0x00022538
 .L_08185b28:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08185b2c:
 	.4byte 0xfff10000
 .L_08185b30:
@@ -2384,13 +2384,13 @@ Func_081848ec:
 .L_08185b38:
 	.4byte 0xfff64ce0
 .L_08185b3c:
-	.4byte Data_081991f0
+	.4byte gData_081991f0
 .L_08185b40:
 	.4byte 0xff9c6e28
 .L_08185b44:
 	.4byte 0xfff32ec0
 .L_08185b48:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08185b4c:
 	.4byte 0xfffffdd6
 .L_08185b50:
@@ -3231,13 +3231,13 @@ Func_08185b9c:
 .L_081861e8:
 	.4byte 0x00017530
 .L_081861ec:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_081861f0:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_081861f4:
 	.4byte Data_081999ee
 .L_081861f8:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_081861fc:
 	.4byte 0xffff0e20
 .L_08186200:
@@ -3247,7 +3247,7 @@ Func_08185b9c:
 .L_08186208:
 	.4byte 0xffff00ff
 .L_0818620c:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08186210:
 	.4byte Data_02011000
 .L_08186214:
@@ -3261,7 +3261,7 @@ Func_08185b9c:
 .L_08186224:
 	.4byte 0xfff00000
 .L_08186228:
-	.4byte Data_081991f0
+	.4byte gData_081991f0
 .L_0818622c:
 	.4byte 0xfff11e00
 .L_08186230:
@@ -3588,7 +3588,7 @@ Func_08185b9c:
 	b .L_08186504
 	.2byte 0x0000
 .L_081864c8:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_081864cc:
 	.4byte Data_02012000
 .L_081864d0:
@@ -3598,13 +3598,13 @@ Func_08185b9c:
 .L_081864d8:
 	.4byte 0xfffe8300
 .L_081864dc:
-	.4byte Data_08199268
+	.4byte gData_08199268
 .L_081864e0:
 	.4byte Data_081999f2
 .L_081864e4:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_081864e8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081864ec:
 	.4byte gBgScroll
 .L_081864f0:
@@ -3764,7 +3764,7 @@ Func_08185b9c:
 .L_08186630:
 	.4byte 0x00000134
 .L_08186634:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08186638:
 	.4byte 0x0000013e
 .L_0818663c:
@@ -4714,7 +4714,7 @@ Func_08185b9c:
 .L_08186dc4:
 	.4byte gMapCellBuffer
 .L_08186dc8:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08186dcc:
 	.4byte 0xfffa0000
 .L_08186dd0:
@@ -4730,9 +4730,9 @@ Func_08185b9c:
 .L_08186de4:
 	.4byte Data_02017400
 .L_08186de8:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08186dec:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08186df0:
 	.4byte gCameraSceneParameters
 .L_08186df4:

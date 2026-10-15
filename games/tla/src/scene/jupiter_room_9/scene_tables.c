@@ -33,7 +33,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gScenePlacements;
 }
 
-extern s32 Data_02002618;
+extern s32 gData_02002618;
 
 struct ObjectRuntime *Object_GetById();
 void ObjectMotion_SetActionVariant();
@@ -50,7 +50,7 @@ void Func_02000054(void)
     party = &gPartyState;
     /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset. */
     __asm__ volatile("" : "+l"(party));
-    if (party->render_mode == 10)
+    if (party->renderMode == 10)
         Value4(Func_02001c90, 0x2200000, 0x1100000, 0, 255);
 }
 
@@ -63,7 +63,7 @@ void Func_02000090(s32 id)
 {
     struct ObjectRuntime *object;
 
-    if (Data_02002618 == 0) {
+    if (gData_02002618 == 0) {
         object = Object_GetById(8);
         if (id == 30) {
             Value3(Func_02001c10, 8, 0x1280000, 0x2580000);
@@ -75,7 +75,7 @@ void Func_02000090(s32 id)
             object->angle = 0;
         }
         Func_02000910(object);
-        Data_02002618 = 1;
+        gData_02002618 = 1;
     }
 }
 
@@ -84,7 +84,7 @@ void Func_020000e8(s32 id)
     struct ObjectRuntime *object;
     struct ObjectRuntime *motion;
 
-    if (Data_02002618 == 0 && Object_GetById(gPartyState.current_owner)->y > 0) {
+    if (gData_02002618 == 0 && Object_GetById(gPartyState.currentOwner)->y > 0) {
         object = Object_GetById(8);
         if (id == 50) {
             Value3(Func_02001c10, 8, 0x1e80000, 0x1180000);
@@ -105,14 +105,14 @@ void Func_020000e8(s32 id)
         }
         motion = Func_02000910(object);
         if (motion != NULL)
-            motion->speed_limit = 0x10000;
-        Data_02002618 = 1;
+            motion->speedLimit = 0x10000;
+        gData_02002618 = 1;
     }
 }
 
 void Func_0200018c(s32 arg)
 {
-    if (Object_GetById(gPartyState.current_owner)->y == 0 && Func_02001978(arg) != 0)
+    if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_02001978(arg) != 0)
         Func_02001c50(13);
 }
 
@@ -122,14 +122,14 @@ void Func_020001bc(s32 arg)
     s32 x;
     s32 z;
 
-    if (Object_GetById(gPartyState.current_owner)->y == 0) {
-        leader = Object_GetById(gPartyState.current_owner);
+    if (Object_GetById(gPartyState.currentOwner)->y == 0) {
+        leader = Object_GetById(gPartyState.currentOwner);
         x = leader->x >> 20;
         z = leader->z >> 20;
         if (x == 18 && z == 34)
-            ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
+            ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
         if (x == 8 && z == 39)
-            ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
+            ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
         if (Func_02001978(arg) != 0)
             Func_02001c50(14);
     }
@@ -141,7 +141,7 @@ void Func_02000228(s32 arg)
     s32 x;
     s32 z;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader->y <= 0) {
         Func_0200018c(arg);
     } else {

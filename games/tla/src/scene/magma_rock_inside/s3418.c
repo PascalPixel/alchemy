@@ -10,14 +10,14 @@ extern char SceneId_Ov692Room6;
 extern char SceneId_Ov692Room7;
 extern char SceneId_Ov692Room8;
 
-extern u8 Data_02005f60[];
-extern u8 Data_02005fe4[];
-extern u8 Data_020060bc[];
-extern u8 Data_020061c4[];
-extern u8 Data_020063a4[];
-extern u8 Data_02006458[];
-extern u8 Data_0200659c[];
-extern u8 Data_02006714[];
+extern u8 gData_02005f60[];
+extern u8 gData_02005fe4[];
+extern u8 gData_020060bc[];
+extern u8 gData_020061c4[];
+extern u8 gData_020063a4[];
+extern u8 gData_02006458[];
+extern u8 gData_0200659c[];
+extern u8 gData_02006714[];
 
 u8 *Func_02003418(void)
 {
@@ -25,19 +25,19 @@ u8 *Func_02003418(void)
 
     if (scene != (s32)&SceneId_Ov692Room1) {
         if (scene == (s32)&SceneId_Ov692Room2)
-            return Data_02005fe4;
+            return gData_02005fe4;
         if (scene == (s32)&SceneId_Ov692Room3)
-            return Data_020060bc;
+            return gData_020060bc;
         if (scene == (s32)&SceneId_Ov692Room4)
-            return Data_020061c4;
+            return gData_020061c4;
         if (scene == (s32)&SceneId_Ov692Room5)
-            return Data_020063a4;
+            return gData_020063a4;
         if (scene == (s32)&SceneId_Ov692Room6)
-            return Data_02006458;
+            return gData_02006458;
         if (scene == (s32)&SceneId_Ov692Room7)
-            return Data_0200659c;
+            return gData_0200659c;
         if (scene == (s32)&SceneId_Ov692Room8)
-            return Data_02006714;
+            return gData_02006714;
     }
-    return Data_02005f60;
+    return gData_02005f60;
 }

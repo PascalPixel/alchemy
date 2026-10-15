@@ -2,31 +2,31 @@
 
 struct Object_0801c0dc {
     u8 filler0[5];
-    u8 field_50 : 2;
-    u8 field_52 : 2;
-    u8 field_54 : 1;
-    u8 field_55 : 1;
-    u8 field_56 : 2;
+    u8 field50 : 2;
+    u8 field52 : 2;
+    u8 field54 : 1;
+    u8 field55 : 1;
+    u8 field56 : 2;
     u8 filler6;
-    u8 field_70 : 1;
-    u8 field_71 : 5;
-    u8 field_76 : 2;
-    u16 field_80 : 10;
-    u16 field_8a : 2;
-    u16 field_8c : 4;
+    u8 field70 : 1;
+    u8 field71 : 5;
+    u8 field76 : 2;
+    u16 field80 : 10;
+    u16 field8a : 2;
+    u16 field8c : 4;
 };
 
 struct ListNode {
-    u8 unk_00[8];
+    u8 unk00[8];
     s16 base;
     s16 kind;
     u16 src;
     s16 tile;
-    u8 unk_10[16];
+    u8 unk10[16];
     s16 end;
-    s16 field_22;
-    u8 unk_24[2];
-    s16 field_26;
+    s16 field22;
+    u8 unk24[2];
+    s16 field26;
     struct Object_0801c0dc obj;
 };
 
@@ -71,16 +71,16 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reu
     node->src = src;
     node->tile = tile;
     node->kind = kind;
-    node->field_22 = 0x100;
-    node->field_26 = 0x100;
+    node->field22 = 0x100;
+    node->field26 = 0x100;
 
     obj = &node->obj;
-    obj->field_52 = 0;
-    obj->field_55 = 0;
-    obj->field_54 = 0;
-    obj->field_76 = 1;
-    obj->field_56 = 0;
-    obj->field_8c = 0;
-    obj->field_80 = tile;
-    obj->field_8a = 0;
+    obj->field52 = 0;
+    obj->field55 = 0;
+    obj->field54 = 0;
+    obj->field76 = 1;
+    obj->field56 = 0;
+    obj->field8c = 0;
+    obj->field80 = tile;
+    obj->field8a = 0;
 }

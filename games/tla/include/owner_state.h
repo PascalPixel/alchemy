@@ -6,15 +6,15 @@
 #include "layout_guard.h"
 
 struct OwnerInventoryState {
-    u8 unknown_000[0xd8];
+    u8 unk000[0xd8];
     u16 inventory[15];
-    u8 unknown_0f6[0x54];
-    u16 class_id;
+    u8 unk0f6[0x54];
+    u16 classId;
 };
 
 struct OwnerActionState {
-    u8 unknown_000[0x58];
-    struct OwnerActionSlot action_slots[32];
+    u8 unk000[0x58];
+    struct OwnerActionSlot actionSlots[32];
 };
 
 union OwnerDjinnFlags {
@@ -34,7 +34,7 @@ union OwnerDjinnCounts {
 };
 
 struct OwnerDjinnState {
-    u8 unknown_000[0xf8];
+    u8 unk000[0xf8];
     union OwnerDjinnFlags flags;
     union OwnerDjinnCounts counts;
 };
@@ -51,17 +51,17 @@ struct TradeOffer {
 };
 
 struct TradeOfferState {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct TradeOffer offers[72];
     u32 count;
 };
 
 struct ClassDefinition {
-    u8 unknown_00[0x50];
-    u8 weak_effects[4];
+    u8 unk00[0x50];
+    u8 weakEffects[4];
 };
 
-extern struct ClassDefinition Class_DefinitionTable[];
+extern struct ClassDefinition gClass_DefinitionTable[];
 
 LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(OwnerDjinn_Owned, struct OwnerDjinnState, flags.banks.owned, 0xf8);
@@ -74,7 +74,7 @@ LAYOUT_OFFSET_GUARD(TradeOfferState_Count, struct TradeOfferState, count, 0x128)
 
 void *UnitGet(s32 owner);
 void Owner_RefreshDerivedData(s32 owner);
-struct ClassDefinition *Owner_GetRecordStride84(s32 class_id);
+struct ClassDefinition *Owner_GetRecordStride84(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
 const u16 *Djinn_GetDefinition(u32 element, u32 djinn);

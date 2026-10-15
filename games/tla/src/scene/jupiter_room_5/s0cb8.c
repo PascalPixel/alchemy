@@ -1,8 +1,8 @@
 #include "types.h"
 
-extern s32 Data_020033dc;
+extern s32 gData_020033dc;
 
 void Func_02000cb8(s32 value)
 {
-    Data_020033dc = value;
+    gData_020033dc = value;
 }

@@ -2,7 +2,7 @@
 #include "dma.h"
 #include "resource.h"
 
-struct Rect_0803cba8 { u8 unknown_00[8]; u16 width; u16 height; s16 x; s16 y; u8 unknown_10[2]; u16 state; };
+struct Rect_0803cba8 { u8 unk00[8]; u16 width; u16 height; s16 x; s16 y; u8 unk10[2]; u16 state; };
 
 extern char ResourceId_WindowFrameFlash;
 
@@ -21,7 +21,7 @@ void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset)
     Func_0803a1c0(x, y, width, height);
 }
 
-struct Window_0803cbf8 { struct Rect_0803cba8 *rect; u8 unknown_04[16]; u16 timer; };
+struct Window_0803cbf8 { struct Rect_0803cba8 *rect; u8 unk04[16]; u16 timer; };
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 

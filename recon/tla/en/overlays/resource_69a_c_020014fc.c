@@ -11,7 +11,7 @@
 #include "call.h"
 
 struct LightSwitch {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -24,7 +24,7 @@ void Battle_WaitMode0();
 
 void Func_020014fc(struct LightSwitch *light)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
     s32 x = (object->x >> 20) | (s16)(0x40 & light->x);
     s32 z = (object->z >> 20) | (s16)(0x40 & light->z);
 

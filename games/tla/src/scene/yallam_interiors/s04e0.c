@@ -63,12 +63,12 @@ void Func_02000524(void)
             YallamInteriors_MessagePut(14, 0);
             Call2((void (*)())Func_02000a60, 14, 0xc000);
             ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 1);
-            Call3((void (*)())ObjectMotion_ResetAndSetPosition, gPartyState.current_owner, 488, 408);
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
-            YallamInteriors_ObjArm(gPartyState.current_owner, 0, 0);
+            Call3((void (*)())ObjectMotion_ResetAndSetPosition, gPartyState.currentOwner, 488, 408);
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+            YallamInteriors_ObjArm(gPartyState.currentOwner, 0, 0);
             Call3((void (*)())ObjectMotion_ResetAndSetPosition, 14, 504, 408);
             ObjectMotion_CommitCurrentPositionAndActivate(14);
-            ObjectMotion_SetAngleToward(14, gPartyState.current_owner, 0);
+            ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
             Func_02000a80(14);
             if (Func_02000a90()) {
                 YallamInteriors_ObjSpeed(14, 0x6666, 0x3333);
@@ -83,10 +83,10 @@ void Func_02000524(void)
                 ObjectMotion_CommitCurrentPositionAndActivate(14);
                 Object_SetModeById(14, 0);
                 YallamInteriors_ObjArm(14, 0x4000, 0);
-                Object_GetById(14)->collision_flags = 129;
-                Object_GetById(14)->priority_flags = 1;
+                Object_GetById(14)->collisionFlags = 129;
+                Object_GetById(14)->priorityFlags = 1;
                 ObjectMotion_SetActionVariant(14, 1);
-                Object_GetById(14)->priority_flags |= 1;
+                Object_GetById(14)->priorityFlags |= 1;
 #ifndef TLA_EDITION_JA
                 Func_020009f8(17, 0, 0);
 #endif

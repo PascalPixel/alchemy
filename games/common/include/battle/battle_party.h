@@ -28,7 +28,7 @@ struct DjinnRecoveryEntry
 {
 	u8 element;
 	u8 index;
-	u8 unit_id;
+	u8 unitId;
 	s8 turns;
 };
 
@@ -42,7 +42,7 @@ struct DjinnRecoveryList
 
 struct DjinnRecoveryTable
 {
-	u8						 unknown_00[8];
+	u8						 unk00[8];
 	struct DjinnRecoveryList list;
 };
 
@@ -53,18 +53,18 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 s32 BattleParty_AssignMemberSlots(void);
 s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
 
-s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias);
-s32 BattleUnit_TickAttackModifier(s32 unit_id);
-s32 BattleUnit_TickDefenseModifier(s32 unit_id);
-s32 BattleUnit_TickResistanceModifier(s32 unit_id);
-s32 BattleUnit_TickDelusion(s32 unit_id);
-s32 BattleUnit_TickConfusion(s32 unit_id);
-s32 BattleUnit_TickCharm(s32 unit_id);
-s32 BattleUnit_TickStun(s32 unit_id);
-s32 BattleUnit_TickSleep(s32 unit_id);
-s32 Battle_AdvanceCounterAndCheckChance(s32 unit_id);
-s32 BattleUnit_TickReflect(s32 unit_id);
-s32 BattleUnit_TickAgilityModifier(s32 unit_id);
+s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
+s32 BattleUnit_TickAttackModifier(s32 unitId);
+s32 BattleUnit_TickDefenseModifier(s32 unitId);
+s32 BattleUnit_TickResistanceModifier(s32 unitId);
+s32 BattleUnit_TickDelusion(s32 unitId);
+s32 BattleUnit_TickConfusion(s32 unitId);
+s32 BattleUnit_TickCharm(s32 unitId);
+s32 BattleUnit_TickStun(s32 unitId);
+s32 BattleUnit_TickSleep(s32 unitId);
+s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
+s32 BattleUnit_TickReflect(s32 unitId);
+s32 BattleUnit_TickAgilityModifier(s32 unitId);
 s32 BattlePlacement_UpdateTimedEntries(void);
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 #endif

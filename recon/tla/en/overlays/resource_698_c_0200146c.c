@@ -4,7 +4,7 @@
 #include "party_state.h"
 
 struct Tile {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -17,12 +17,12 @@ void Func_02001a44(s32 x, s32 z, s32 width, s32 height, s32 from_x, s32 from_z);
 
 void Func_0200146c(struct Tile *tile)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    s32 from_x = (leader->x >> 20) | (s16)(tile->x & 64);
-    s32 from_z = (leader->z >> 20) | (s16)(tile->z & 64);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    s32 fromX = (leader->x >> 20) | (s16)(tile->x & 64);
+    s32 fromZ = (leader->z >> 20) | (s16)(tile->z & 64);
 
     Func_020013e4();
     Func_02001b44(161);
-    Func_02001a44(tile->x, tile->z + 1, 1, 1, from_x, from_z);
+    Func_02001a44(tile->x, tile->z + 1, 1, 1, fromX, fromZ);
     Battle_WaitMode0(12);
 }

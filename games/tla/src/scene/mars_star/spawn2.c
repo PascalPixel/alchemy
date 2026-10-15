@@ -15,11 +15,11 @@ void Func_0200196c(s32 *position, s32 speed, s32 flag)
     if (object != NULL) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = -speed;
+        object->unk4c = -speed;
         Func_02001928(object, 3);
         object->update = Func_020015ec;
         if (flag != 0)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_020041cc(object, 2);
     }
 }

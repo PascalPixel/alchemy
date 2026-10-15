@@ -17,24 +17,24 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void ResourceMetadata_ClearRecordFar(void *record);
 
 struct ObjectSprite {
-    u8 unknown_00[5];
-    u8 attr0_high;
-    u8 unknown_06[2];
+    u8 unk00[5];
+    u8 attr0High;
+    u8 unk06[2];
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[6];
-    u8 vram_block;
-    u8 unknown_11;
+    u8 unk0a[6];
+    u8 vramBlock;
+    u8 unk11;
     u16 rotation;
-    u8 unknown_14[2];
-    s8 offset_x;
-    s8 offset_y;
+    u8 unk14[2];
+    s8 offsetX;
+    s8 offsetY;
     u8 frame;
-    u8 frame_timer;
-    u8 next_frame;
-    u8 unknown_1b;
-    u8 unknown_1c[0xc];
+    u8 frameTimer;
+    u8 nextFrame;
+    u8 unk1b;
+    u8 unk1c[0xc];
     void *record;
 };
 
@@ -49,28 +49,28 @@ void Func_080d3940(u32 id, u32 angle)
         angle = (angle + 0x2000) & 0xc000;
         position[0] = object->x;
         position[2] = object->z;
-        SetMapCellCollisionFar(object->terrain_id, position[0], position[2], 255);
+        SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
         Vector_AddPolarOffset(0x100000, angle, position);
-        SetMapCellCollisionFar(object->terrain_id, position[0], position[2], 255);
+        SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
         switch (angle) {
         case 0:
-            sprite->offset_x -= 3;
-            sprite->offset_y += 5;
+            sprite->offsetX -= 3;
+            sprite->offsetY += 5;
             break;
         case 0x8000:
-            sprite->offset_x += 2;
-            sprite->offset_y += 4;
+            sprite->offsetX += 2;
+            sprite->offsetY += 4;
             break;
         case 0xc000:
-            sprite->offset_y += 1;
+            sprite->offsetY += 1;
             break;
         case 0x4000:
-            sprite->offset_y += 5;
+            sprite->offsetY += 5;
             break;
         }
-        object->collision_flags = 0;
-        object->priority_flags |= 2;
-        sprite->next_frame = 0;
+        object->collisionFlags = 0;
+        object->priorityFlags |= 2;
+        sprite->nextFrame = 0;
         sprite->rotation = angle + 0x4000;
     }
 }
@@ -87,33 +87,33 @@ void Func_080d3a10(u32 id, u32 angle, s32 mode)
         position[0] = object->x;
         angle = (angle + 0x2000) & 0xc000;
         position[2] = object->z;
-        SetMapCellCollisionFar(object->terrain_id, position[0], position[2], 255);
+        SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
         Vector_AddPolarOffset(0x100000, angle, position);
-        SetMapCellCollisionFar(object->terrain_id, position[0], position[2], 255);
+        SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
         switch (angle) {
         case 0:
             object->x += 0x80000;
             object->z += 0x10000;
-            sprite->offset_x -= 4;
-            sprite->offset_y += 15;
+            sprite->offsetX -= 4;
+            sprite->offsetY += 15;
             break;
         case 0x8000:
             object->x += -0x80000;
             object->z += 0x10000;
-            sprite->offset_x += 3;
-            sprite->offset_y += 16;
+            sprite->offsetX += 3;
+            sprite->offsetY += 16;
             break;
         case 0xc000:
-            sprite->offset_y += 1;
+            sprite->offsetY += 1;
             break;
         case 0x4000:
             object->z += 0x80000;
-            sprite->offset_y += 13;
+            sprite->offsetY += 13;
             break;
         }
-        object->collision_flags = 0;
-        object->priority_flags |= 2;
-        sprite->next_frame = 0;
+        object->collisionFlags = 0;
+        object->priorityFlags |= 2;
+        sprite->nextFrame = 0;
         sprite->rotation = angle + 0x4000;
     }
 }
@@ -127,7 +127,7 @@ void Func_080d3b28(u32 id, s32 resource)
     u8 kind;
 
     if (object != NULL) {
-        kind = object->animation_kind;
+        kind = object->animationKind;
         if (kind == 1) {
             sprite = object->animation;
             if (resource & 0x8000)
@@ -135,16 +135,16 @@ void Func_080d3b28(u32 id, s32 resource)
             buffer = Runtime_AllocateHeapBlock(68, 0x608) + 0x400;
             Dma_Fill32(0, buffer, 0x80);
             Func_08038248(resource, buffer);
-            tile = VramBlock_LoadCached(sprite->vram_block, 0x80, buffer);
+            tile = VramBlock_LoadCached(sprite->vramBlock, 0x80, buffer);
             Runtime_ReleaseHeapBlock(68);
-            object->unknown_5c[0] = kind;
+            object->unk5c[0] = kind;
             ResourceMetadata_ClearRecordFar(sprite->record);
             sprite->record = NULL;
-            sprite->unknown_1b = 0;
-            sprite->attr0_high &= ~0x20;
+            sprite->unk1b = 0;
+            sprite->attr0High &= ~0x20;
             sprite->tile = tile;
-            sprite->frame_timer = 0;
-            sprite->next_frame = 0;
+            sprite->frameTimer = 0;
+            sprite->nextFrame = 0;
         }
     }
 }

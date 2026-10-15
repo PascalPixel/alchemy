@@ -7,7 +7,7 @@ struct BurstParticleVector {
     s32 values[3];
 };
 
-extern u8 Data_080f0ee8[];
+extern u8 gData_080f0ee8[];
 
 void Func_080ddbd8(void);
 void Audio_PlayCue(s32 no);
@@ -18,32 +18,32 @@ void BattleFx_PrepareBufferInterpolation(void);
 
 void Func_080ddb3c(void)
 {
-    u8 *state = Ram_HeapSlots->effect_work;
+    u8 *state = Ram_HeapSlots->effectWork;
     struct BurstParticleVector position;
     struct BurstParticleVector *p;
-    s32 entry_count;
+    s32 entryCount;
 
     Func_080ddbd8();
     Audio_PlayCue(134);
     p = &position;
-    entry_count = 4;
+    entryCount = 4;
     do {
         void *object;
-        s32 random_value;
+        s32 randomValue;
 
         p->values[0] = *(s32 *)(state + 4);
         p->values[2] = *(s32 *)(state + 12);
-        random_value = (Random16() * 6) + 0x40000;
-        Vector_AddPolarOffset(random_value, Random16(), p);
+        randomValue = (Random16() * 6) + 0x40000;
+        Vector_AddPolarOffset(randomValue, Random16(), p);
         p->values[1] = *(s32 *)(state + 8);
         object = Object_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, (u32)Data_080f0ee8);
+            ObjectDispatch_InitializeFar(object, (u32)gData_080f0ee8);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Random16() * 2) >> 16) + 2);
-        entry_count--;
-    } while (entry_count >= 0);
+        entryCount--;
+    } while (entryCount >= 0);
     WaitFrames(30);
     BattleFx_PrepareBufferInterpolation();
 }

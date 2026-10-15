@@ -17,12 +17,12 @@ const u32 *Scene_GetExits(void)
 }
 
 struct FieldPartBytes {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 frame;
 };
 
 struct FieldAnimation {
-    u8 unknown_00[40];
+    u8 unk00[40];
     struct FieldPartBytes *part;
 };
 

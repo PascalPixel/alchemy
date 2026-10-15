@@ -47,4 +47,4 @@ Func_080cf350:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_080cf3b0:
-	.4byte Data_080f0074
+	.4byte gData_080f0074

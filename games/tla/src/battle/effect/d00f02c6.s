@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's BattlePalette_ChannelCurveContrast, byte for byte
+@ The Broken Seal's gBattlePalette_ChannelCurveContrast, byte for byte
 	.global Data_080f02c6
 Data_080f02c6:
 	.2byte 0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a

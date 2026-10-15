@@ -1,6 +1,6 @@
 #include "trial_road.h"
 
-extern const s8 Data_02005a88[];
+extern const s8 gData_02005a88[];
 
 void Func_020009ac(s32 a, s32 b)
 {
@@ -13,7 +13,7 @@ next:
         struct ObjectRuntime *object = Object_GetById(id);
         s32 x = object->x >> 20;
         s32 z = object->z >> 20;
-        u8 *covered = &OBJECT_BYTE(Object_GetById(Data_02005a88[(id - 18) & 3]), 99);
+        u8 *covered = &OBJECT_BYTE(Object_GetById(gData_02005a88[(id - 18) & 3]), 99);
         s32 other;
 
         other = 15;

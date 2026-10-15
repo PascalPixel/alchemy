@@ -13,17 +13,17 @@ void Func_02001f7c(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    ObjectMotion_SetSpeedParameters_(gPartyState.current_owner, 0x10000, 0x8000);
-    ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 400, 648);
-    Func_020052b0(gPartyState.current_owner, 0xc000);
+    ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x10000, 0x8000);
+    ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 400, 648);
+    Func_020052b0(gPartyState.currentOwner, 0xc000);
     if (GameFlag_Test(0x212) == 0) {
         Func_020053d8(188);
         Func_02001f3c();
     }
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters_(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
-    ObjectMotion_ResetAndSetPositionInMode2_(gPartyState.current_owner, 400, 640);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
+    ObjectMotion_ResetAndSetPositionInMode2_(gPartyState.currentOwner, 400, 640);
     Func_020053d8(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -32,22 +32,22 @@ void Func_02001f7c(void)
 
 void Func_02002014(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     u32 i;
 
     Func_020051c0();
     Func_02005370(0);
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 416, 288);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 10);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0xc000, 0);
-    leader->motion_flags = 0;
-    ObjectMotion_SetActionVariantValue(gPartyState.current_owner, 1);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 416, 288);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 10);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
+    leader->motionFlags = 0;
+    ObjectMotion_SetActionVariantValue(gPartyState.currentOwner, 1);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     for (i = 0; i < 8; i++) {
         leader->z += 0x10000;
         WaitFrames(1);
     }
-    Object_SetModeById(gPartyState.current_owner, 13);
+    Object_SetModeById(gPartyState.currentOwner, 13);
     for (i = 0; i < 8; i++) {
         leader->y -= 0x10000;
         WaitFrames(1);
@@ -59,7 +59,7 @@ void Func_02002014(void)
 
 void Func_020020c8(void)
 {
-    Func_020053c0(Data_020054dc);
+    Func_020053c0(gData_020054dc);
 }
 
 void Func_020020d8(void)
@@ -80,7 +80,7 @@ void Func_02002120(void)
     if ((u32)((Object_GetById(8)->x >> 20) - 15) > 6)
         GameFlag_SetBit(0x20a);
     GameFlag_SetBit(0x20b);
-    Func_020053c0(Data_020054e0);
+    Func_020053c0(gData_020054e0);
 }
 
 void Func_02002154(void)
@@ -106,7 +106,7 @@ void Func_020021b8(void)
 {
     GameFlag_ClearBit(0x302);
     GameFlag_ClearBit(0x303);
-    Func_020053c0(Data_020054e0);
+    Func_020053c0(gData_020054e0);
 }
 
 void Func_020021dc(void)
@@ -127,18 +127,18 @@ void Func_020021dc(void)
 
 void Func_02002248(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_020051c0();
     Func_02005370(0);
-    Func_020052c8(gPartyState.current_owner, 0x100, 20);
+    Func_020052c8(gPartyState.currentOwner, 0x100, 20);
     Func_020053d8(132);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 10);
-    leader->velocity_y = 0x60000;
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 10);
+    leader->velocityY = 0x60000;
     WaitFrames(20);
-    while (leader->velocity_y != 0)
+    while (leader->velocityY != 0)
         WaitFrames(1);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 0);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 0);
     Func_020051c8();
 }
 

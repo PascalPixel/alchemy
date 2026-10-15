@@ -22,12 +22,12 @@ void Func_020000e4(struct ObjectRuntime *object)
     s32 across;
 
     cosine = Math_Cosine(angle);
-    along = anchor->x + cosine * (object->speed_limit + object->unknown_5c[6] + 6);
+    along = anchor->x + cosine * (object->speedLimit + object->unk5c[6] + 6);
     object->x = along;
     sine = Math_Sine(angle);
-    across = anchor->z + sine * (object->unknown_5c[6] + 4);
+    across = anchor->z + sine * (object->unk5c[6] + 4);
     object->z = across;
-    object->target_x = object->x;
-    object->target_z = across;
+    object->targetX = object->x;
+    object->targetZ = across;
     *pangle -= 0x800;
 }

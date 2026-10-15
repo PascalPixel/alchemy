@@ -9,7 +9,7 @@
 
 // パレットとタイル 5 枚。読み込む位置のセルの種類が 21 なら 2 組目を使う。
 // 読む側が u32 * で持つので const にしない。
-u32 WorldMap_GraphicsResources[2][6] =
+u32 gWorldMap_GraphicsResources[2][6] =
 {
 	{
 		(u32)&ResourceId_WorldMapPaletteA,

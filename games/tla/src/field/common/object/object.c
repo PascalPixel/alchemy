@@ -62,9 +62,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	s32	 cnt;
 	u32	 n;
 	u8	*table;
-	u32	 high_mask;
-	u32	 index_mask;
-	u8	 offset_mask;
+	u32	 highMask;
+	u32	 indexMask;
+	u8	 offsetMask;
 
 	struct AnimationObject *spr = (struct AnimationObject *)obj;
 
@@ -74,10 +74,10 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 
 	if (n < cnt)
 	{
-		table = Map_TileDissolveOrder;
-		high_mask = 0xff00;
-		index_mask = 0x3f;
-		offset_mask = 0x3e;
+		table = gMap_TileDissolveOrder;
+		highMask = 0xff00;
+		indexMask = 0x3f;
+		offsetMask = 0x3e;
 
 		for (; n < cnt; n++, dst += 32, pos++)
 		{
@@ -88,14 +88,14 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 				u32	 odd;
 
 				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = table[(pos + n * 16) & index_mask];
-				cell = (u16 *)((u8 *)dst + (dot & offset_mask));
+				dot = table[(pos + n * 16) & indexMask];
+				cell = (u16 *)((u8 *)dst + (dot & offsetMask));
 				odd = 1;
 				odd &= dot;
 				if (odd != 0)
 					*cell = *(u8 *)cell;
 				else
-					*cell &= high_mask;
+					*cell &= highMask;
 			}
 		}
 	}
@@ -170,7 +170,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
 {
 	struct MapScrollWork *map = gMapWork[0];
-	s32					 *org = &map->view_x;
+	s32					 *org = &map->viewX;
 	s32					  ox;
 	s32					  oz;
 	s32					  x;
@@ -220,8 +220,8 @@ void ObjectSystem_Initialize(s32 mode)
 	else
 	{
 		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		Iwram_Data2 = 0;
-		Iwram_Data1 = 0;
+		gIwram_Data2 = 0;
+		gIwram_Data1 = 0;
 	}
 	sys->edge = 15;
 	sys->fill = 0;
@@ -250,7 +250,7 @@ void ResourceTable_ReservedNoOp2(void)
 void *ObjectDispatch_FindFreeObject(void)
 {
 #if GAME_TLA
-	struct ObjectRuntime *obj = Ram_HeapSlots->script_objects;
+	struct ObjectRuntime *obj = Ram_HeapSlots->scriptObjects;
 #else
 	struct ObjectRuntime *obj = gObjectSlots;
 #endif
@@ -336,26 +336,26 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 			spr = ResourceObject_Create(id);
 			if (spr != NULL)
 			{
-				obj->animation_kind = 1;
+				obj->animationKind = 1;
 				obj->animation = spr;
-				act->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
 			}
 			else
 			{
-				obj->animation_kind = 0;
+				obj->animationKind = 0;
 			}
 			break;
 		case 2:
 			// 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
 			ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
-			obj->animation_kind = kind;
+			obj->animationKind = kind;
 			zero = 0;
 			obj->animation = ent;
 			Dma_Set(&zero, ent, 0x85000004, REG_DMA3);
 			spr = ResourceObject_Create(id);
 			if (spr != NULL)
 			{
-				act->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+				act->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
 				*ent++ = spr;
 			}
 			spr = ResourceObject_Create(id + 1);
@@ -369,21 +369,21 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 		mot = (struct ScriptMotionObject *)obj;
 		sc = (struct ScriptObjectRuntime *)obj;
 		Object_SetPositionAndResetMotion(obj, x, y, z);
-		obj->script = (s32 *)ObjectDispatch_DefaultScript;
-		obj->speed_limit = 0x20000;
+		obj->script = (s32 *)gObjectDispatch_DefaultScript;
+		obj->speedLimit = 0x20000;
 		obj->step = 0;
-		act->scale_x = 0x10000;
-		act->scale_y = 0x10000;
+		act->scaleX = 0x10000;
+		act->scaleY = 0x10000;
 		obj->acceleration = 0x10000;
 		obj->flags = 3;
 		mot->gravity = 0x10000;
 		mot->vertical.bounce = 0x4000;
-		obj->unknown_59 = 0;
-		obj->action_flags = 1;
-		act->rise_base_y = 0;
+		obj->unk59 = 0;
+		obj->actionFlags = 1;
+		act->riseBaseY = 0;
 		obj->angle = 0x4000;
-		sc->home_x = x / 65536; // もとの位置（ドット）
-		sc->home_z = z / 65536;
+		sc->homeX = x / 65536; // もとの位置（ドット）
+		sc->homeZ = z / 65536;
 	}
 	return obj;
 }
@@ -397,11 +397,11 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 {
 	if (obj != 0)
 	{
-		obj->value_04 = 0;
-		obj->value_00 = (u32)script;
-		obj->value_5b = 0;
-		obj->value_5d = 0;
-		obj->value_57 = 0;
+		obj->value04 = 0;
+		obj->value00 = (u32)script;
+		obj->value5b = 0;
+		obj->value5d = 0;
+		obj->value57 = 0;
 	}
 }
 
@@ -525,7 +525,7 @@ void Animation_SetIndexAndInitObjects(void *raw, s32 no)
 		spr = obj->target.child;
 		if (no >= 0)
 		{
-			spr->entries[0]->anim_id = no;
+			spr->entries[0]->animId = no;
 			Animation_InitializeObjects(spr);
 		}
 	}
@@ -550,44 +550,44 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table5Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
 	obj->argument = arg;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table0Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table1Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table2Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table3Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table6Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table4Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
 	if (arg != 0)
 	{
-		obj->value_34 = 0x8000;
-		obj->value_30 = 0x40000;
+		obj->value34 = 0x8000;
+		obj->value30 = 0x40000;
 		obj->argument = arg;
-		obj->value_64 = 0;
+		obj->value64 = 0;
 	}
 }
 
@@ -632,19 +632,19 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode)
 	if (obj != 0 && obj->kind == 1)
 	{
 		struct FieldSprite *spr = obj->target.child;
-		spr->blend_mode = mode;
+		spr->blendMode = mode;
 	}
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の display_flags の bit1 を設定する
+// 絵がひとつのオブジェクトなら、絵の displayFlags の bit1 を設定する
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 {
 	if (obj != 0 && obj->kind == 1)
 	{
 		struct FieldSprite *spr = obj->target.child;
-		spr->unknown_1d_1 = on;
+		spr->unk1d1 = on;
 	}
 }
 
@@ -688,38 +688,38 @@ s32 ObjectDispatch_ReturnTrue(void)
 // マップのセル
 struct CameraTile
 {
-	u32 unk_00 : 12;
+	u32 unk00 : 12;
 	u32 layer : 2;	  // 0 でなければ、上にいるオブジェクトのレイヤー + 1
 	u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
-	u32 unk_10 : 16;
+	u32 unk10 : 16;
 };
 
 // オブジェクトの絵（OAM の属性をふくむ）
 struct CameraSprite
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 y : 8;
 	u16 affine : 2;
-	u16 blend_mode : 2;
+	u16 blendMode : 2;
 	u16 mosaic : 1;
-	u16 full_color : 1;
+	u16 fullColor : 1;
 	u16 shape : 2;
 	u16 x : 9;
-	u16 affine_index : 5;
-	u16 flip_x : 1;
-	u16 flip_y : 1;
+	u16 affineIndex : 5;
+	u16 flipX : 1;
+	u16 flipY : 1;
 	u16 tile : 10;
 	u16 priority : 2;
 	u16 palette : 4;
-	u8	unknown_0a[0x0a];
-	u16 second_tile : 10;
-	u16 second_priority : 2;
-	u16 second_palette : 4;
-	u8	unknown_16[2];
+	u8	unk0a[0x0a];
+	u16 secondTile : 10;
+	u16 secondPriority : 2;
+	u16 secondPalette : 4;
+	u8	unk16[2];
 	s32 scale;
 	u8	resource; // VRAM ブロックの番号
-	u8	flags_1d;
-	u8	unk_1e[7];
+	u8	flags1d;
+	u8	unk1e[7];
 	u8	activated;
 };
 
@@ -727,45 +727,45 @@ struct CameraSprite
 struct CameraObject
 {
 	u32	  active;
-	u16	  unk_04;
+	u16	  unk04;
 	u16	  angle;
 	s32	  x;
 	s32	  y;
 	s32	  z;
 	s32	  height;
-	s32	  scale_x;
-	s32	  scale_y;
-	u8	  unk_20[2];
+	s32	  scaleX;
+	s32	  scaleY;
+	u8	  unk20[2];
 	u8	  layer;
 	u8	  flags;
-	u8	  unk_24[0x2c];
+	u8	  unk24[0x2c];
 	void *sprite;
 	u8	  kind; // 1 絵ひとつ、2 絵が 4 つまで
-	u8	  unk_55[7];
+	u8	  unk55[7];
 	u8	  held;
-	u8	  unk_5d[0x13];
+	u8	  unk5d[0x13];
 };
 
 struct CameraLayer
 {
 	struct CameraTile *tiles;
-	u8				   unk_04[44];
+	u8				   unk04[44];
 };
 
 // マップ
 struct CameraState
 {
-	u8				   unk_000[0xe4];
+	u8				   unk000[0xe4];
 	s32				   x; // 見ている位置
 	s32				   z;
-	u8				   unk_0ec[0x44];
+	u8				   unk0ec[0x44];
 	struct CameraLayer layers[1];
 };
 
 struct CameraSync
 {
 	s16 count;
-	s16 unk_02;
+	s16 unk02;
 	s16 frozen;
 };
 
@@ -781,8 +781,8 @@ struct FixedCamera
 {
 	struct CameraPoint	eye;
 	struct CameraPoint	target;
-	struct CameraPoint *eye_override;	 // あればこちらの視点を使う
-	struct CameraPoint *target_override; // あればこちらの注視点を使う
+	struct CameraPoint *eyeOverride;	 // あればこちらの視点を使う
+	struct CameraPoint *targetOverride; // あればこちらの注視点を使う
 };
 
 extern u8 Render_DecodeFrame[];
@@ -802,8 +802,8 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraPoint	 spare[3];
 	s32					 cnt;
 	struct CameraState	*map;
-	s32					 cam_x;
-	s32					 cam_z;
+	s32					 camX;
+	s32					 camZ;
 	struct CameraSync	*sync;
 	struct CameraObject *obj;
 	struct CameraSprite *spr;
@@ -818,12 +818,12 @@ void ObjectSystem_UpdateCamera(void)
 	s32					 pos[4];
 	s32					 y;
 	s32					 height;
-	u32					 bits_val;
+	u32					 bitsVal;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
-	cam_x = cam[0] & 0xffff0000;
-	cam_z = cam[1] & 0xffff0000;
+	camX = cam[0] & 0xffff0000;
+	camZ = cam[1] & 0xffff0000;
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
@@ -848,8 +848,8 @@ void ObjectSystem_UpdateCamera(void)
 				frozen->activated = kind;
 				continue;
 			}
-			dx = obj->x - cam_x;
-			dz = obj->z - cam_z;
+			dx = obj->x - camX;
+			dz = obj->z - camZ;
 			top = dz - obj->y;
 			spr = obj->sprite;
 			if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
@@ -862,14 +862,14 @@ void ObjectSystem_UpdateCamera(void)
 					if (bits != 0)
 					{
 						spr->priority = bits;
-						spr->second_priority = bits;
+						spr->secondPriority = bits;
 					}
 				}
-				bits_val = tile->layer;
-				if (bits_val != 0)
-					obj->layer = bits_val - 1;
-				scale[0] = Iwram_MulQ16(obj->scale_x, spr->scale);
-				scale[1] = Iwram_MulQ16(obj->scale_y, spr->scale);
+				bitsVal = tile->layer;
+				if (bitsVal != 0)
+					obj->layer = bitsVal - 1;
+				scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
+				scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
 				pos[0] = dx;
 				pos[1] = obj->y;
 				pos[2] = dz;
@@ -891,7 +891,7 @@ void ObjectSystem_UpdateCamera(void)
 			}
 			if (obj->held == 0)
 			{
-				if (!(spr->flags_1d & 1))
+				if (!(spr->flags1d & 1))
 				{
 					Resource_ActivateEntry(spr->resource);
 					spr->activated = 1;
@@ -904,7 +904,7 @@ void ObjectSystem_UpdateCamera(void)
 			if (kind == 1)
 			{
 				spr = obj->sprite;
-				if (obj->held == 0 && !(spr->flags_1d & 1))
+				if (obj->held == 0 && !(spr->flags1d & 1))
 				{
 					Resource_ActivateEntry(spr->resource);
 					spr->activated = kind;
@@ -951,17 +951,17 @@ void ObjectSystem_UpdateCameraFixed(void)
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	eye = &cam->eye;
 	target = &cam->target;
-	if (cam->eye_override != NULL)
-		eye = cam->eye_override;
-	if (cam->target_override != NULL)
-		target = cam->target_override;
+	if (cam->eyeOverride != NULL)
+		eye = cam->eyeOverride;
+	if (cam->targetOverride != NULL)
+		target = cam->targetOverride;
 	angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
 	sync->count = 0;
 	Render_ResetTransformState();
 	if (GameFlag_TestFar(363))
 	{
 		angle += 0xffffe000;
-		Iwram_TransformMatrix(Camera_FixedViewMatrix);
+		Iwram_TransformMatrix(gCamera_FixedViewMatrix);
 		Graphics_PrepareTransferAndRun(eye, target);
 	}
 	else
@@ -980,8 +980,8 @@ void ObjectSystem_UpdateCameraFixed(void)
 		{
 		case 1:
 			pos = &obj->x;
-			scale[0] = obj->scale_x;
-			scale[1] = obj->scale_y;
+			scale[0] = obj->scaleX;
+			scale[1] = obj->scaleY;
 			spr = obj->sprite;
 			if (GameFlag_TestFar(363))
 			{
@@ -991,8 +991,8 @@ void ObjectSystem_UpdateCameraFixed(void)
 			Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle, obj->layer);
 			break;
 		case 2:
-			scale2[0] = obj->scale_x;
-			scale2[1] = obj->scale_y;
+			scale2[0] = obj->scaleX;
+			scale2[1] = obj->scaleY;
 			if (GameFlag_TestFar(363))
 			{
 				scale2[0] = one;

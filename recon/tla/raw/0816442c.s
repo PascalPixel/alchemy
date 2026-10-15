@@ -272,32 +272,32 @@ Func_0816442c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08164640:
-	.4byte Data_08196e5c
+	.4byte gData_08196e5c
 .L_08164644:
-	.4byte Data_08196e64
+	.4byte gData_08196e64
 .L_08164648:
 	.4byte .L_08164470
 .L_0816464c:
-	.4byte Data_08198984
+	.4byte gData_08198984
 .L_08164650:
 	.4byte 0xfff00000
 .L_08164654:
-	.4byte Data_08198990
+	.4byte gData_08198990
 .L_08164658:
 	.4byte 0xffe00000
 .L_0816465c:
-	.4byte Data_0819899c
+	.4byte gData_0819899c
 .L_08164660:
-	.4byte Data_081989a4
+	.4byte gData_081989a4
 .L_08164664:
-	.4byte Data_081989ac
+	.4byte gData_081989ac
 .L_08164668:
-	.4byte Data_081989b4
+	.4byte gData_081989b4
 .L_0816466c:
-	.4byte Data_081989bc
+	.4byte gData_081989bc
 .L_08164670:
-	.4byte Data_081989c4
+	.4byte gData_081989c4
 .L_08164674:
-	.4byte Data_081989cc
+	.4byte gData_081989cc
 .L_08164678:
-	.4byte Data_081989d7
+	.4byte gData_081989d7

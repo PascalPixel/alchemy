@@ -10,7 +10,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 a);
 
 void Func_020024c8(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     /* FAKEMATCH: one zero for the velocity store and, through a 64-bit copy, the call's argument clears r1 after the owner's load (one reordered pair; alchemy permute). */
     u32 zero = 0;
 
@@ -18,15 +18,15 @@ void Func_020024c8(void)
         s32 height;
 
         WaitFrames(1);
-        height = Map_GetTerrainHeight(object->terrain_id, object->x, object->z);
-        object->velocity_y = zero;
-        object->terrain_height = height;
+        height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+        object->velocityY = zero;
+        object->terrainHeight = height;
         object->y = height;
-        object->target_y = 0x80000000;
+        object->targetY = 0x80000000;
         {
             s64 flags = zero;
 
-            Object_AttachWorkTargetToObject(gPartyState.current_owner, flags);
+            Object_AttachWorkTargetToObject(gPartyState.currentOwner, flags);
         }
     }
 }

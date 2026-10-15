@@ -6,12 +6,12 @@
 
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-extern const u8 Data_02002b40[];
-extern const u8 Data_02002cf0[];
-extern const u8 Data_02002d80[];
-extern const u8 Data_02002f78[];
-extern const u8 Data_02003164[];
-extern const u8 Data_0200323c[];
+extern const u8 gData_02002b40[];
+extern const u8 gData_02002cf0[];
+extern const u8 gData_02002d80[];
+extern const u8 gData_02002f78[];
+extern const u8 gData_02003164[];
+extern const u8 gData_0200323c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -64,30 +64,30 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames)
 static inline void LeaderAnimate(s32 animation, s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer; called as value-returning, the animation and frames are set before the owner is loaded (differ 4 as a void call). */
-    ((s32 (*)(s32, s32, s32))Func_0200226c)(gPartyState.current_owner, animation, frames);
+    ((s32 (*)(s32, s32, s32))Func_0200226c)(gPartyState.currentOwner, animation, frames);
 }
 
 const u8 *Func_020000b4(void)
 {
     if (FlagCheck(0x927))
-        return Data_02002d80;
+        return gData_02002d80;
     if (gPartyState.entrance == 7)
-        return Data_02002cf0;
-    return Data_02002b40;
+        return gData_02002cf0;
+    return gData_02002b40;
 }
 
 const u8 *Func_020000f0(void)
 {
     if (FlagCheck(0x927))
-        return Data_0200323c;
+        return gData_0200323c;
     if (gPartyState.entrance == 7)
-        return Data_02003164;
-    return Data_02002f78;
+        return gData_02003164;
+    return gData_02002f78;
 }
 
 void Func_0200012c(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -110,7 +110,7 @@ void Func_0200012c(s32 actor)
 
 void Func_020001a8(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -131,7 +131,7 @@ void Func_020001a8(s32 actor)
 
 void Func_02000220(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -188,11 +188,11 @@ void Func_02000358(void)
 
 void Func_02000378(void)
 {
-    void *work = Ram_HeapSlots->event_work;
+    void *work = Ram_HeapSlots->eventWork;
 
     Func_020021c4();
     Func_020022bc(0);
-    ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(15, gPartyState.currentOwner, 0);
     if (FlagCheck(0x92c)) {
         Func_02002244((s32)MsgWithThisDancing);
         Func_02002254(15, 0);
@@ -230,7 +230,7 @@ void Func_02000458(void)
 {
     Func_020021c4();
     Func_020022bc(0);
-    ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(15, gPartyState.currentOwner, 0);
     if (FlagCheck(0x92b)) {
         Func_02002244((s32)MsgTryingAgainWhat);
         Func_02002254(15, 0);

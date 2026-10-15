@@ -3,34 +3,34 @@
 #include "party_state.h"
 
 struct Orbiter {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[15];
-    u8 flags_23;
-    u8 unknown_24[44];
+    u8 unk14[15];
+    u8 flags23;
+    u8 unk24[44];
     void **animation;
     u8 kind;
-    u8 unknown_55[13];
+    u8 unk55[13];
     u8 phase;
-    u8 unknown_63;
-    s16 center_x;
-    s16 center_z;
+    u8 unk63;
+    s16 centerX;
+    s16 centerZ;
     void *link;
 };
 
-extern s32 Data_02005af0;
-extern const s8 Data_02006b38[];
-extern const u8 Data_02006b20[];
-extern const u8 Data_02005fd4[];
-extern const u8 Data_02006004[];
-extern const u8 Data_02006244[];
-extern const u8 Data_020064cc[];
-extern const u8 Data_020067e4[];
-extern const u8 Data_02006898[];
-extern const u8 Data_02006a90[];
+extern s32 gData_02005af0;
+extern const s8 gData_02006b38[];
+extern const u8 gData_02006b20[];
+extern const u8 gData_02005fd4[];
+extern const u8 gData_02006004[];
+extern const u8 gData_02006244[];
+extern const u8 gData_020064cc[];
+extern const u8 gData_020067e4[];
+extern const u8 gData_02006898[];
+extern const u8 gData_02006a90[];
 struct Orbiter *Object_GetById(s32 id);
 s32 Func_02005834(s32 value);
 void Func_020020f0(s32 value);
@@ -49,14 +49,14 @@ void Func_02000550(void)
     /* FAKEMATCH: taking actor's address keeps GCSE from hoisting the phase's address out of the loop, which the native rebuilds on every pass (differ 25 without it). */
     (void)&actor;
     if (Func_02005834(0) == 1) {
-        direction = Data_02005af0;
+        direction = gData_02005af0;
         Func_020020f0(0);
         GameFlag_SetBit(515);
         /* FAKEMATCH: a u16 local stores its 0 from a register (movs, strh); the constant would load from the pool (differ 11). */
-        *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x166) = zero;
+        *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
         i = 0;
     loop:
-        actor->phase += Data_02006b38[i] * direction;
+        actor->phase += gData_02006b38[i] * direction;
         WaitFrames(1);
         if (++i <= 24)
             goto loop;

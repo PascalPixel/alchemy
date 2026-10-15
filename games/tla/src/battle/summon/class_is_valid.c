@@ -30,7 +30,7 @@ s32 EnemyCheck(s32 arg0)
     struct Layout *ptr;
 
     retval = Summon_IsEntryFlagged(arg0);
-    ptr = (struct Layout *)Ram_HeapSlots->battle_work;
+    ptr = (struct Layout *)Ram_HeapSlots->battleWork;
     i = 0;
     for (; i < 6; i++) {
         if (ptr->field[i] != 0)

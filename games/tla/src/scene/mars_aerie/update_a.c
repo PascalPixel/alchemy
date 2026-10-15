@@ -2,7 +2,7 @@
 
 void Func_02000038(struct ObjectRuntime *object)
 {
-    u8 *timer = &object->unknown_5c[6];
+    u8 *timer = &object->unk5c[6];
 
     if (*timer != 0) {
         (*timer)--;
@@ -25,16 +25,16 @@ void Func_02000068(struct ObjectRuntime *object)
 void Func_0200008c(struct ObjectRuntime *object)
 {
     u8 *timer;
-    s32 scale = object->scale_x;
+    s32 scale = object->scaleX;
 
     /* FAKEMATCH: a one-pass block loads the scale before the bound is built (one reordered row). */
     do {
     } while (0);
     if (scale > 0x10000) {
-        object->scale_x = scale - 0x800;
-        object->scale_y -= 0x400;
+        object->scaleX = scale - 0x800;
+        object->scaleY -= 0x400;
     }
-    timer = &object->unknown_5c[6];
+    timer = &object->unk5c[6];
     if (*timer != 0) {
         (*timer)--;
     } else {
@@ -47,7 +47,7 @@ void Func_0200008c(struct ObjectRuntime *object)
             t = *timer;
         } while (0);
         *timer = t + (((r4 + r) * 16) >> 16) + 40;
-        object->scale_x = 0x12000;
-        object->scale_y = 0x11000;
+        object->scaleX = 0x12000;
+        object->scaleY = 0x11000;
     }
 }

@@ -219,7 +219,7 @@ Func_080d9b80:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080d9d24:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080d9d28:
 	.4byte 0xffff0000
 .L_080d9d2c:

@@ -40,9 +40,9 @@ s32 Func_02000fc0(void)
         GameFlag_ClearBit(0xa1a);
     else
         GameFlag_SetBit(0xa1a);
-    Object_GetById(18)->motion_flags = 0;
-    Object_GetById(19)->motion_flags = 0;
-    Object_GetById(20)->motion_flags = 0;
+    Object_GetById(18)->motionFlags = 0;
+    Object_GetById(19)->motionFlags = 0;
+    Object_GetById(20)->motionFlags = 0;
     Func_020002f0();
     if (!GameFlag_Test(0xa1a)) {
         object = Object_GetById(20);

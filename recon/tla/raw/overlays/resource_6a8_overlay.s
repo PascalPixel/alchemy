@@ -231,7 +231,7 @@ Func_020000b8:
 .L_02008270:
 	.4byte gPartyState
 .L_02008274:
-	.4byte Data_020047a0
+	.4byte gData_020047a0
 .L_02008278:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
@@ -642,35 +642,35 @@ Func_0200048c:
 .L_02008548:
 	.4byte 0x0000010d
 .L_0200854c:
-	.4byte Data_02004b2c
+	.4byte gData_02004b2c
 .L_02008550:
 	.4byte 0x0000010e
 .L_02008554:
-	.4byte Data_02004c4c
+	.4byte gData_02004c4c
 .L_02008558:
 	.4byte 0x0000010f
 .L_0200855c:
-	.4byte Data_02004f04
+	.4byte gData_02004f04
 .L_02008560:
-	.4byte Data_02004d9c
+	.4byte gData_02004d9c
 .L_02008564:
 	.4byte 0x00000110
 .L_02008568:
-	.4byte Data_0200521c
+	.4byte gData_0200521c
 .L_0200856c:
-	.4byte Data_0200506c
+	.4byte gData_0200506c
 .L_02008570:
 	.4byte 0x00000111
 .L_02008574:
-	.4byte Data_020054a4
+	.4byte gData_020054a4
 .L_02008578:
-	.4byte Data_02005444
+	.4byte gData_02005444
 .L_0200857c:
 	.4byte 0x00000112
 .L_02008580:
-	.4byte Data_0200551c
+	.4byte gData_0200551c
 .L_02008584:
-	.4byte Data_02004b14
+	.4byte gData_02004b14
 	.section .text.x020095d0,"ax",%progbits
 	.global Func_020015d0
 	.thumb_func
@@ -1040,7 +1040,7 @@ Func_0200391c:
 .L_0200b9e8:
 	.4byte gInput
 .L_0200b9ec:
-	.4byte Data_02004780
+	.4byte gData_02004780
 .L_0200b9f0:
 	.4byte 0xffff0000
 .L_0200b9f4:
@@ -1324,7 +1324,7 @@ Func_02003bc8:
 .L_ja_0200bc00:
 	.4byte gPartyState
 .L_ja_0200bc04:
-	.4byte Data_020062a4
+	.4byte gData_020062a4
 .L_ja_0200bc08:
 	.4byte 0xfff00000
 .L_ja_0200bc0c:
@@ -1386,7 +1386,7 @@ Func_02003bc8:
 .L_ja_0200bc7c:
 	.4byte gInput
 .L_ja_0200bc80:
-	.4byte Data_02004780
+	.4byte gData_02004780
 .L_ja_0200bc84:
 	.4byte 0xffff0000
 .L_ja_0200bc88:
@@ -1644,7 +1644,7 @@ Func_02003bc8:
 .L_ja_0200be8c:
 	.4byte Func_0200385c
 .L_ja_0200be90:
-	.4byte Data_020062a4
+	.4byte gData_020062a4
 	.else
 	.global Func_02003bc8
 	.thumb_func
@@ -1699,7 +1699,7 @@ Func_02003bc8:
 .L_0200bc28:
 	.4byte gPartyState
 .L_0200bc2c:
-	.4byte Data_020062a4
+	.4byte gData_020062a4
 .L_0200bc30:
 	.4byte 0xfff00000
 .L_0200bc34:
@@ -1761,7 +1761,7 @@ Func_02003bc8:
 .L_0200bca4:
 	.4byte gInput
 .L_0200bca8:
-	.4byte Data_02004780
+	.4byte gData_02004780
 .L_0200bcac:
 	.4byte 0xffff0000
 .L_0200bcb0:
@@ -2035,7 +2035,7 @@ Func_02003bc8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200bed4:
-	.4byte Data_020062a4
+	.4byte gData_020062a4
 .L_0200bed8:
 	.4byte Func_0200385c
 	.endif
@@ -2570,5 +2570,5 @@ Func_02004254:
 .L_0200c30c:
 	.4byte Func_02004114
 	.section .bss,"aw",%nobits
-	.global Data_020062a4
-Data_020062a4:
+	.global gData_020062a4
+gData_020062a4:

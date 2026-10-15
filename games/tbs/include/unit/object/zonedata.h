@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const s16 BattleFx_ResultRules[132];
-extern const u16 Encounter_AreaEntryTable[160];
+extern const s16 gBattleFx_ResultRules[132];
+extern const u16 gEncounter_AreaEntryTable[160];
 
 #endif

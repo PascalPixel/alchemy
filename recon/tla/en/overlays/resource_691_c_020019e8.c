@@ -21,7 +21,7 @@ void Func_02003c54(s32 a);
 
 void Func_020019e8(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
@@ -37,7 +37,7 @@ void Func_020019e8(s32 mode, s32 cue)
 
 void Func_02001a38(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */

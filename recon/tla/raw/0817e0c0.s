@@ -520,7 +520,7 @@ Func_0817e0c0:
 .L_0817e4e8:
 	.4byte Func_08143000
 .L_0817e4ec:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0817e4f0:
 	.4byte 0xfff80000
 .L_0817e4f4:
@@ -536,7 +536,7 @@ Func_0817e0c0:
 .L_0817e508:
 	.4byte gMapCellBuffer
 .L_0817e50c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0817e510:
 	movs r0, #134
 	bl Func_081180e8
@@ -698,9 +698,9 @@ Func_0817e0c0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0817e658:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0817e65c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817e660:
 	.4byte 0xfffffe00
 .L_0817e664:

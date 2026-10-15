@@ -199,7 +199,7 @@ Func_08148e9c:
 .L_08149020:
 	.4byte 0xffe00000
 .L_08149024:
-	.4byte Data_081979ae
+	.4byte gData_081979ae
 .L_08149028:
 	mov r9, r1
 	cmp r3, #0
@@ -477,12 +477,12 @@ Func_08148e9c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08149254:
-	.4byte Data_081979ae
+	.4byte gData_081979ae
 .L_08149258:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_0814925c:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08149260:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08149264:
 	.4byte Func_08143000

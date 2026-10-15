@@ -128,4 +128,4 @@ Func_08192648:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08192738:
-	.4byte Data_08197410
+	.4byte gData_08197410

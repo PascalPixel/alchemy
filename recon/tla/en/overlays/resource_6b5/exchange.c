@@ -25,7 +25,7 @@ s32 Func_02000538(u16 *dest)
     if (cnt > 3)
         cnt = 3;
     for (i = 0; i < cnt; i++) {
-        u8 c = gPartyState.active_owners[i];
+        u8 c = gPartyState.activeOwners[i];
 
         if (dest != 0) {
             *dest = c;

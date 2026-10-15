@@ -5,7 +5,7 @@ void Func_02000610(s32 id)
     struct ObjectRuntime *object = Object_GetById(id);
 
     ObjectMotion_EnableActionAndResetMotion(id);
-    object->unknown_5c[6] = (((u32)Random16Far() * 40) >> 16) + 20;
+    object->unk5c[6] = (((u32)Random16Far() * 40) >> 16) + 20;
     object->update = (void (*)(void))Func_02000038;
 }
 

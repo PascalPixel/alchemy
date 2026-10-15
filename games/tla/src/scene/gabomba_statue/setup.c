@@ -77,8 +77,8 @@ void Func_02000fc0(void)
     Func_020057dc(0x7fff, 0);
     Func_020057ec(40);
     WaitFrames(80);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     Func_02000f6c();
     WaitFrames(1);
     Func_020057dc(0x10000, 0);
@@ -94,7 +94,7 @@ void Func_02000fc0(void)
     Func_02005854(11);
     result = Func_02004d48(11, 1);
     Func_0200581c();
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x201;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     switch (result) {

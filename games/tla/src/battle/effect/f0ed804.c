@@ -3,7 +3,7 @@
 #include "input.h"
 #include "party_state.h"
 
-extern const u8 Data_080f1140[];
+extern const u8 gData_080f1140[];
 
 void EventRuntime_PrepareCurrentObject(void);
 void WaitFrames(s32 frames);
@@ -13,7 +13,7 @@ void Func_080ed788(void)
 {
     struct PartyState *party;
 
-    if (*(s8 *)((u8 *)Ram_HeapSlots->event_work + 394) == 3) {
+    if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
         EventRuntime_PrepareCurrentObject();
         Func_080d46a4(0x9d89, 6);
         while (gInput.held & 0x200)
@@ -22,7 +22,7 @@ void Func_080ed788(void)
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
         do {
         } while (0);
-        if (party->owner_override != 0)
+        if (party->ownerOverride != 0)
             Func_080d46a4(0x10000, 6);
         else
             Func_080d46a4(0x10000, 6);
@@ -31,5 +31,5 @@ void Func_080ed788(void)
 
 const u8 *Func_080ed804(void)
 {
-    return Data_080f1140;
+    return gData_080f1140;
 }

@@ -7,12 +7,12 @@ s32 Party_RemoveActiveOwner(s32 owner);
 
 void Party_SetLeaderJenna(void)
 {
-    gPartyState.current_owner = 5;
+    gPartyState.currentOwner = 5;
 }
 
 void Party_SetLeaderFelix(void)
 {
-    gPartyState.current_owner = 4;
+    gPartyState.currentOwner = 4;
     Party_AddActiveOwner(4);
     Party_RemoveActiveOwner(5);
     Party_RemoveActiveOwner(6);
@@ -35,5 +35,5 @@ void Func_080ae118(void)
     Func_080ae358(0);
     count = Party_CountActiveOwners();
     for (i = 0; i < count; i++)
-        UnitCalc(gPartyState.active_owners[i]);
+        UnitCalc(gPartyState.activeOwners[i]);
 }

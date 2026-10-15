@@ -824,6 +824,6 @@ Func_080ccec8:
 .L_080cd578:
 	.4byte gPartyState
 .L_080cd57c:
-	.4byte Object_LinkedMotionScript
+	.4byte gObject_LinkedMotionScript
 .L_080cd580:
-	.4byte ObjectMotion_StepAngleScript
+	.4byte gObjectMotion_StepAngleScript

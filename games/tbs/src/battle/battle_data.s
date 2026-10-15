@@ -2,28 +2,28 @@
 	.balign 4
 	.4byte 16
 @ 中央からの並び
-	.global BattleParty_CenterOrderOffsets
-BattleParty_CenterOrderOffsets:
+	.global gBattleParty_CenterOrderOffsets
+gBattleParty_CenterOrderOffsets:
 	.byte 0, -1, 1, -2, 2, -3, 3, -4, 4
 	.balign 4
 @ クラスごとの武器の動作
-	.global BattleUnit_WeaponAnimsClass0
-BattleUnit_WeaponAnimsClass0:
+	.global gBattleUnit_WeaponAnimsClass0
+gBattleUnit_WeaponAnimsClass0:
 	.2byte 0x140, 0x14e, 0x146, 0x147, 0x140, 0x140, 0x140
-	.global BattleUnit_WeaponAnimsClass1
-BattleUnit_WeaponAnimsClass1:
+	.global gBattleUnit_WeaponAnimsClass1
+gBattleUnit_WeaponAnimsClass1:
 	.2byte 0x149, 0x149, 0x148, 0x141, 0x141, 0x141, 0x141
-	.global BattleUnit_WeaponAnimsClass2
-BattleUnit_WeaponAnimsClass2:
+	.global gBattleUnit_WeaponAnimsClass2
+gBattleUnit_WeaponAnimsClass2:
 	.2byte 0x14b, 0x14b, 0x14b, 0x14b, 0x142, 0x14a, 0x142
-	.global BattleUnit_WeaponAnimsClass3
-BattleUnit_WeaponAnimsClass3:
+	.global gBattleUnit_WeaponAnimsClass3
+gBattleUnit_WeaponAnimsClass3:
 	.2byte 0x143, 0x143, 0x14d, 0x14d, 0x14c, 0x143, 0x143
-	.global BattleUnit_WeaponAnimsClass5
-BattleUnit_WeaponAnimsClass5:
+	.global gBattleUnit_WeaponAnimsClass5
+gBattleUnit_WeaponAnimsClass5:
 	.2byte 0x150, 0x150, 0x145, 0x145, 0x145, 0x145, 0x145
-	.global BattlePlacement_StepPairs
-BattlePlacement_StepPairs:
+	.global gBattlePlacement_StepPairs
+gBattlePlacement_StepPairs:
 	.byte 80, 48
 	.byte 80, 16
 	.byte 80, -16
@@ -38,44 +38,44 @@ BattlePlacement_StepPairs:
 	.byte 0, 0
 	.byte 0, 0
 	.balign 4
-	.global Camera_FlagTransformWork
-Camera_FlagTransformWork:
+	.global gCamera_FlagTransformWork
+gCamera_FlagTransformWork:
 	.4byte 0x10000, 0x0, 0x0, -0xcccc
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x500000, 0x0, 0x0
 	.include "games/common/src/battle/battle_calc.s"
-	.global BattleCommand_SelectionWeights
-BattleCommand_SelectionWeights:
+	.global gBattleCommand_SelectionWeights
+gBattleCommand_SelectionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32
 	.byte 53, 47, 41, 35, 29, 23, 17, 11
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
 @ 技ごとの結果の状態
-	.global Battle_ActionStatus
-Battle_ActionStatus:
+	.global gBattle_ActionStatus
+gBattle_ActionStatus:
 	.incbin "games/tbs/src/battle/actstat.table"
 	.balign 4, 0
 @ 技ごとの演出 (効果番号と段階, フラグ)
-	.global Battle_ActionFlags
-Battle_ActionFlags:
+	.global gBattle_ActionFlags
+gBattle_ActionFlags:
 	.incbin "games/tbs/src/battle/actflags.table"
-	.global BattleParty_RoundEndGroupOrder
-BattleParty_RoundEndGroupOrder:
+	.global gBattleParty_RoundEndGroupOrder
+gBattleParty_RoundEndGroupOrder:
 	.4byte 1, 2
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 @ 星の作業領域の位置
-	.global BattleFx_StarWorkOffsets
-BattleFx_StarWorkOffsets:
+	.global gBattleFx_StarWorkOffsets
+gBattleFx_StarWorkOffsets:
 	.4byte 0, 1, 5, 14, 30, 46, 62
-	.global BattleFx_StarSizes
-BattleFx_StarSizes:
+	.global gBattleFx_StarSizes
+gBattleFx_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4
 	.balign 4
-	.global BattleFx_RingFrameOffsets
-BattleFx_RingFrameOffsets:
+	.global gBattleFx_RingFrameOffsets
+gBattleFx_RingFrameOffsets:
 	.4byte 0x4e, 0x44e, 0x84e, 0xc4e
 	.4byte 0, 10, 20, 0
 	.global BattleFx_CharacterIdMapCopy

@@ -20,7 +20,7 @@ extern u8 Tile_BuildMetatilesCodeSize[];
 // window tiles' map through the metatile routine copied to RAM.
 void UiWindow_FillFromScene(void *dst)
 {
-    u8 *scene = Ram_HeapSlots->window_tiles;
+    u8 *scene = Ram_HeapSlots->windowTiles;
 
     if (scene == 0) {
         /* FAKEMATCH: the fill value is pinned to the r3 it takes, which loads it from
@@ -76,8 +76,8 @@ s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
-    struct UiWindowBounds *state = Ram_HeapSlots->window_layout;
-    u8 *base = Ram_HeapSlots->window_tiles;
+    struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
+    u8 *base = Ram_HeapSlots->windowTiles;
     s32 height = 4;
     s32 n;
     s32 right;
@@ -117,7 +117,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     u8 *tiles;
 
     window = Runtime_AllocateBlock(64, sizeof(struct UiWindowBounds));
-    tiles = Ram_HeapSlots->window_tiles;
+    tiles = Ram_HeapSlots->windowTiles;
     zero = 0;
     tiles[6] = 1;
     UiWindow_BuildLayoutBounds(flags);

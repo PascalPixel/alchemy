@@ -1,15 +1,15 @@
 #include "airs_rock_inside.h"
 
-extern u32 Data_0200654c[];
-extern u32 Data_02006564[];
-extern u32 Data_0200663c[];
-extern u32 Data_020066b4[];
-extern u32 Data_0200675c[];
-extern u32 Data_020068ac[];
-extern u32 Data_020068f4[];
-extern u32 Data_020069e4[];
-extern u32 Data_02006aec[];
-extern u32 Data_02006bac[];
+extern u32 gData_0200654c[];
+extern u32 gData_02006564[];
+extern u32 gData_0200663c[];
+extern u32 gData_020066b4[];
+extern u32 gData_0200675c[];
+extern u32 gData_020068ac[];
+extern u32 gData_020068f4[];
+extern u32 gData_020069e4[];
+extern u32 gData_02006aec[];
+extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);
@@ -20,22 +20,22 @@ void Func_020004d4(struct FieldActor *object);
 u32 *Func_02002604(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov664Room1)
-        return Data_02006564;
+        return gData_02006564;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room2)
-        return Data_0200663c;
+        return gData_0200663c;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room3)
-        return Data_020066b4;
+        return gData_020066b4;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room4)
-        return Data_0200675c;
+        return gData_0200675c;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room5)
-        return Data_020068ac;
+        return gData_020068ac;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room6)
-        return Data_020068f4;
+        return gData_020068f4;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room7)
-        return Data_020069e4;
+        return gData_020069e4;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room8)
-        return Data_02006aec;
+        return gData_02006aec;
     if (gPartyState.scene == (s32)&SceneId_Ov664Room9)
-        return Data_02006bac;
-    return Data_0200654c;
+        return gData_02006bac;
+    return gData_0200654c;
 }

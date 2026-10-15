@@ -3,7 +3,7 @@
 
 s32 GameFlag_Test(s32 flag);
 extern u32 gInput;
-extern s16 Data_02003272[];
+extern s16 gData_02003272[];
 void Func_02002f80(struct ObjectRuntime *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
 
@@ -20,7 +20,7 @@ void Func_020017dc(struct ObjectRuntime *object)
     if (GameFlag_Test(0x106))
         angle = -1;
     else
-        angle = Data_02003272[(gInput >> 4) & 15];
+        angle = gData_02003272[(gInput >> 4) & 15];
     if (angle == -1) {
         Func_02002f80(object, 9);
         return;

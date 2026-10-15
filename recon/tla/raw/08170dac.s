@@ -609,7 +609,7 @@ Func_08170dac:
 .L_08171250:
 	.4byte IwramMulQ16
 .L_08171254:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08171258:
 	.4byte 0xffe00000
 .L_0817125c:

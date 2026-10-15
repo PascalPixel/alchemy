@@ -373,14 +373,14 @@ Func_020002cc:
 .L_02008554:
 	.4byte 0x050001e8
 .L_02008558:
-	.4byte Data_02000748
+	.4byte gData_02000748
 .L_0200855c:
-	.4byte Data_02000754
+	.4byte gData_02000754
 .L_02008560:
 	.4byte 0x0000025f
 .L_02008564:
 	.4byte 0x00000092
 .L_02008568:
-	.4byte Data_0200076c
+	.4byte gData_0200076c
 .L_0200856c:
 	.4byte gInput

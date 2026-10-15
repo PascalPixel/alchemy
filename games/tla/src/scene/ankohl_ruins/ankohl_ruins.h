@@ -18,11 +18,11 @@ void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 s32 Random16Far(void);
 
 
-extern s16 Data_02003780;
-extern s16 Data_02003782;
-extern s16 Data_02003784;
-extern s32 Data_02003788;
-extern s32 Data_0200378c;
+extern s16 gData_02003780;
+extern s16 gData_02003782;
+extern s16 gData_02003784;
+extern s32 gData_02003788;
+extern s32 gData_0200378c;
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Battle_WaitMode0(s32 frames);

@@ -19,7 +19,7 @@ void RenderOutput_ClearList(void *work)
     next = NULL;
     if (list != NULL) {
         node = list->head;
-        list->tail_link = &list->head;
+        list->tailLink = &list->head;
         list->head = next;
         while (node != NULL) {
             next = node->next;

@@ -2,16 +2,16 @@
 #include "ram_buffer.h"
 
 struct BattleAct {
-    u8 target_mode;
-    u8 unknown_01[5];
+    u8 targetMode;
+    u8 unk01[5];
     u8 type;
-    u8 unknown_07;
+    u8 unk07;
     u8 range;
 };
 
 struct PsynergyMenuState {
-    u8 unknown_000[0x16c];
-    u16 pane_action[2];
+    u8 unk000[0x16c];
+    u16 paneAction[2];
 };
 
 struct BattleAct *BattleActGet(s32 action);
@@ -35,8 +35,8 @@ s32 Func_080fcf14(void)
     /* FAKEMATCH: the barrier keeps the action's load ahead of the 0x3fff mask, and the action pinned to r3 keeps its register, as native; plain, the mask starts first (differ 2), the barrier alone loads into r0 (differ 8), and the pin alone changes nothing (differ 2). */
     register u32 action asm("r3");
 
-    menu = Ram_HeapSlots->menu_runtime;
-    action = menu->pane_action[0];
+    menu = Ram_HeapSlots->menuRuntime;
+    action = menu->paneAction[0];
     asm volatile("");
     psynergy = BattleActGet(0x3fff & action);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
@@ -47,7 +47,7 @@ s32 Func_080fcf14(void)
         return 0;
     ret = 2;
     if (psynergy->range != 0xff) {
-        u8 kind = psynergy->target_mode;
+        u8 kind = psynergy->targetMode;
 
         diff = kind ^ 2;
         ret = (0 - diff) | diff;

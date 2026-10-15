@@ -6,19 +6,19 @@ void Func_020004e4(void);
 void Func_02000534(void);
 void Func_02000588(void);
 
-extern u8 Data_02000d6c[];
-extern u8 Data_02000da8[];
-extern u8 Data_02000de4[];
+extern u8 gData_02000d6c[];
+extern u8 gData_02000da8[];
+extern u8 gData_02000de4[];
 
-extern s32 Data_02001970[];
+extern s32 gData_02001970[];
 
-s32 Data_02001964[] = {
-	(s32)Data_02000d6c,
-	(s32)Data_02000da8,
-	(s32)Data_02000de4,
+s32 gData_02001964[] = {
+	(s32)gData_02000d6c,
+	(s32)gData_02000da8,
+	(s32)gData_02000de4,
 };
 
-s32 Data_02001970[] = {
+s32 gData_02001970[] = {
 	46,
 	(s32)Func_0200033c,
 	17,
@@ -39,11 +39,11 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-u32 Data_020019dc[] = {
+u32 gData_020019dc[] = {
 	0xffff, 0, 0, 0, 0, 0,
 };
 
-s32 Data_020019f4[] = {
+s32 gData_020019f4[] = {
 	0xa9f00b4,
 	1,
 	0xc80000,
@@ -93,85 +93,85 @@ s32 Data_020019f4[] = {
 	0,
 	0x24000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x980000,
 	0,
 	0xa80000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x980000,
 	0,
 	0xd80000,
 	0x1018000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0xf80000,
 	0,
 	0xa80000,
 	0x1010000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0xf80000,
 	0,
 	0xd80000,
 	0x1010000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x2b80000,
 	0,
 	0xf00000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x2e80000,
 	0,
 	0xf00000,
 	0x10000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1a80000,
 	0,
 	0xe80000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1a80000,
 	0,
 	0x1200000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1f80000,
 	0,
 	0xe80000,
 	0x10000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1f80000,
 	0,
 	0x1200000,
 	0x10000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1a80000,
 	0,
 	0x2c80000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1a80000,
 	0,
 	0x3000000,
 	0x18000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1f80000,
 	0,
 	0x2c80000,
 	0x10000,
 	(s32)0xffff01ad,
-	(s32)Data_02001970,
+	(s32)gData_02001970,
 	0x1f80000,
 	0,
 	0x3000000,
@@ -184,11 +184,11 @@ s32 Data_020019f4[] = {
 	0,
 };
 
-s32 Data_02001c1c[] = {
+s32 gData_02001c1c[] = {
 	-1, 0, 0,
 };
 
-s32 Data_02001c28[] = {
+s32 gData_02001c28[] = {
 	1,
 	(s32)0xffff0001,
 	1,

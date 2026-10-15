@@ -17,8 +17,8 @@
 
 void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 8;
+    object->motionFlags = 0;
+    object->collisionFlags = 8;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Object_SetPartAttribute(object, parameter);
 }
@@ -44,7 +44,7 @@ struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
     if (object != 0) {
         Object_SetSpritePriority(object, 1);
         ConfigureOverlayObject(object, 15);
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         return object;
     }
     return 0;

@@ -13,14 +13,14 @@ gSchedulerStatus:
 	.global gBlendFramesLeft
 gBlendFramesLeft:
 	.space 0x00000004
-	.global Data_03001110
-Data_03001110:
+	.global gData_03001110
+gData_03001110:
 	.space 0x00000010
 	.global gBgScroll
 gBgScroll:
 	.space 0x00000018
-	.global Data_03001138
-Data_03001138:
+	.global gData_03001138
+gData_03001138:
 	.space 0x00000004
 	.global gBlendStartLevel
 gBlendStartLevel:
@@ -28,8 +28,8 @@ gBlendStartLevel:
 	.global gCpuLoadTimer
 gCpuLoadTimer:
 	.space 0x00000004
-	.global Data_03001144
-Data_03001144:
+	.global gData_03001144
+gData_03001144:
 	.space 0x0000000c
 	.global gInput
 gInput:
@@ -64,8 +64,8 @@ gRandomState:
 	.global gResetRequested
 gResetRequested:
 	.space 0x00000004
-	.global Data_030011c4
-Data_030011c4:
+	.global gData_030011c4
+gData_030011c4:
 	.space 0x00000008
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -94,8 +94,8 @@ Data_030011f0:
 	.global gBlendLayers
 gBlendLayers:
 	.space 0x00000004
-	.global Data_030011f8
-Data_030011f8:
+	.global gData_030011f8
+gData_030011f8:
 	.space 0x00000004
 	.global gObjAffineCount
 gObjAffineCount:
@@ -112,8 +112,8 @@ gDebugPaused:
 	.global gIdleFrameCount
 gIdleFrameCount:
 	.space 0x00000004
-	.global Data_0300121c
-Data_0300121c:
+	.global gData_0300121c
+gData_0300121c:
 	.space 0x00000004
 	.global gTransformStackTop
 gTransformStackTop:

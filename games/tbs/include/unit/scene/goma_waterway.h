@@ -11,13 +11,13 @@ struct SceneRegion;
 
 typedef struct
 {
-	u8	pad_to_angle[30];
+	u8	padToAngle[30];
 	u16 angle;
 } RotatingEffectRecord;
 
 typedef struct
 {
-	u8					   pad_to_record[80];
+	u8					   padToRecord[80];
 	RotatingEffectRecord *record;
 } RotatingEffectWork;
 
@@ -33,7 +33,7 @@ extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
 extern struct SceneEntrance gGomaWaterwayEntrancesOther[];
 extern struct SceneEntrance gGomaWaterwayEntrances2[];
-extern u32 GomaWaterway_Exits[];
+extern u32 gGomaWaterway_Exits[];
 extern struct ScenePlacement gGomaWaterwayPlacementsOther[];
 extern struct ScenePlacement gGomaWaterwayPlacements2[];
 extern struct SceneEvent gGomaWaterwayEventsOther[];

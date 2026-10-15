@@ -3995,7 +3995,7 @@ Func_081b83c4:
 .L_081ba2f4:
 	.4byte 0x40002300
 .L_081ba2f8:
-	.4byte Data_081ba30c
+	.4byte gData_081ba30c
 .L_081ba2fc:
 	.4byte 0x40f02000
 .L_081ba300:

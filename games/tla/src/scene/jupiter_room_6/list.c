@@ -3,10 +3,10 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern s32 Data_020023c0;
-extern s16 Data_0200242a;
-extern struct ObjectRuntime *Data_0200242c[];
-extern u16 Data_0200252e;
+extern s32 gData_020023c0;
+extern s16 gData_0200242a;
+extern struct ObjectRuntime *gData_0200242c[];
+extern u16 gData_0200252e;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -28,12 +28,12 @@ void Func_02000ea0(s32 id, s32 value)
         object->action = value;
         /* FAKEMATCH: ⚓️ stores the action before it addresses the list */
         asm volatile("");
-        Data_0200242c[Data_0200242a] = object;
-        Data_0200242a++;
+        gData_0200242c[gData_0200242a] = object;
+        gData_0200242a++;
     }
 }
 
 void Func_02000ed0(u16 value)
 {
-    Data_0200252e = value;
+    gData_0200252e = value;
 }

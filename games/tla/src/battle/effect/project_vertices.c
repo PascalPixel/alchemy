@@ -44,7 +44,7 @@ void Func_081969ac(s8 *vertices, s16 *screen, s32 count)
 struct PoolEntry {
     s32 head;
     s32 next;
-    u8 unknown_08[16];
+    u8 unk08[16];
     s32 tail;
 };
 
@@ -64,9 +64,9 @@ struct PoolEntry *Func_081969f8(s32 count)
 }
 
 struct Texture {
-    u8 log_width;
-    u8 log_height;
-    u16 unknown_02;
+    u8 logWidth;
+    u8 logHeight;
+    u16 unk02;
     u32 pixels;
 };
 
@@ -75,7 +75,7 @@ void *MemAlloc(s32 size);
 
 s32 Func_08196a28(struct Texture *source, struct Texture *copy)
 {
-    s32 size = (1 << source->log_width) << source->log_height;
+    s32 size = (1 << source->logWidth) << source->logHeight;
     u32 pixels;
     s32 misalign;
     s32 mask;

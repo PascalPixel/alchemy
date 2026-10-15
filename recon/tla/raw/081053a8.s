@@ -63,9 +63,9 @@ Func_081053a8:
 .L_0810541c:
 	.4byte 0xfffffc00
 .L_08105420:
-	.4byte Data_08105a50
+	.4byte gData_08105a50
 .L_08105424:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08105428:
 	movs r2, #1
 	negs r2, r2

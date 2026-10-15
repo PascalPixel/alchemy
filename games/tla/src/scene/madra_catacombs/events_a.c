@@ -3,13 +3,13 @@
 #include "object_runtime.h"
 
 struct EventWork15a {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 flag;
 };
 
 extern u8 MsgFieldDoorWontBudge;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -26,7 +26,7 @@ void Func_020011ec(void);
 
 void Func_02000474(void)
 {
-    struct EventWork15a *work = Ram_HeapSlots->event_work;
+    struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
     Func_0200110c();
     Func_020011ac(0);
@@ -37,12 +37,12 @@ void Func_02000474(void)
 
 void Func_020004a4(struct ObjectRuntime *object)
 {
-    u8 *flags = &object->motion_flags;
+    u8 *flags = &object->motionFlags;
 
     *flags = 3;
     do {
         WaitFrames(1);
-    } while (object->velocity_y != 0);
+    } while (object->velocityY != 0);
     Func_02001214(188);
     WaitFrames(10);
     *flags = 0;
@@ -68,7 +68,7 @@ void Func_020004cc(void)
 
 void Func_0200051c(void)
 {
-    Func_020011e4(Data_020013c0);
+    Func_020011e4(gData_020013c0);
 }
 
 void Func_0200052c(void)
@@ -82,11 +82,11 @@ void Func_0200052c(void)
 
 void Func_02000558(void)
 {
-    Func_020011cc(Data_020013c4);
+    Func_020011cc(gData_020013c4);
 }
 
-extern const u8 Data_02001264[];
-extern const u8 Data_020012f4[];
+extern const u8 gData_02001264[];
+extern const u8 gData_020012f4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -146,30 +146,30 @@ void Func_02000568(void)
     Func_02001214(168);
     Actor_Place(14, 136 << 16, 258 << 16);
     Actor_Place(19, 184 << 16, 258 << 16);
-    ObjectMotion_EnableActionAndSetCallback(14, Data_02001264);
-    ObjectMotion_EnableActionAndSetCallback(19, Data_02001264);
+    ObjectMotion_EnableActionAndSetCallback(14, gData_02001264);
+    ObjectMotion_EnableActionAndSetCallback(19, gData_02001264);
     Battle_WaitMode0(40);
     Func_02001214(168);
     Actor_Place(13, 120 << 16, 226 << 16);
     Actor_Place(18, 200 << 16, 226 << 16);
-    ObjectMotion_EnableActionAndSetCallback(13, Data_02001264);
-    ObjectMotion_EnableActionAndSetCallback(18, Data_02001264);
+    ObjectMotion_EnableActionAndSetCallback(13, gData_02001264);
+    ObjectMotion_EnableActionAndSetCallback(18, gData_02001264);
     Battle_WaitMode0(40);
     Func_02001214(168);
     Actor_Place(12, 120 << 16, 194 << 16);
     Actor_Place(17, 200 << 16, 194 << 16);
-    ObjectMotion_EnableActionAndSetCallback(12, Data_02001264);
-    ObjectMotion_EnableActionAndSetCallback(17, Data_02001264);
+    ObjectMotion_EnableActionAndSetCallback(12, gData_02001264);
+    ObjectMotion_EnableActionAndSetCallback(17, gData_02001264);
     Battle_WaitMode0(60);
     Func_02001214(229);
     Actor_Place(11, 136 << 16, 162 << 16);
     Actor_Place(16, 184 << 16, 162 << 16);
     Actor_Place(10, 136 << 16, 138 << 16);
     Actor_Place(15, 184 << 16, 138 << 16);
-    ObjectMotion_EnableActionAndSetCallback(11, Data_020012f4);
-    ObjectMotion_EnableActionAndSetCallback(16, Data_020012f4);
-    ObjectMotion_EnableActionAndSetCallback(10, Data_020012f4);
-    ObjectMotion_EnableActionAndSetCallback(15, Data_020012f4);
+    ObjectMotion_EnableActionAndSetCallback(11, gData_020012f4);
+    ObjectMotion_EnableActionAndSetCallback(16, gData_020012f4);
+    ObjectMotion_EnableActionAndSetCallback(10, gData_020012f4);
+    ObjectMotion_EnableActionAndSetCallback(15, gData_020012f4);
     Battle_WaitMode0(80);
     Func_02000958();
     PartyInventory_Remove(459);

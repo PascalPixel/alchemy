@@ -656,15 +656,15 @@ Func_08189b14:
 	b .L_0818a072
 	.2byte 0x0000
 .L_0818a040:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0818a044:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818a048:
 	.4byte 0xffffff00
 .L_0818a04c:
 	.4byte 0xffff00ff
 .L_0818a050:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0818a054:
 	.4byte 0xfffe0000
 .L_0818a058:

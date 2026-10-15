@@ -6,8 +6,8 @@ void Func_02001688(void)
     struct ObjectRuntime *b = Object_GetById(10);
     struct ObjectRuntime *c = Object_GetById(9);
     struct ObjectRuntime *d = Object_GetById(11);
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    s32 value = (s16)a->unknown_66;
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    s32 value = (s16)a->unk66;
 
     switch (value) {
     case 1:
@@ -32,12 +32,12 @@ void Func_02001688(void)
         BYTE_AT(leader, 98) = 3;
         break;
     }
-    a->unknown_66 = 0;
+    a->unk66 = 0;
     Func_020006bc(8);
     Func_020006bc(10);
     Func_020006bc(9);
     Func_020006bc(11);
-    Func_020006bc(gPartyState.current_owner);
+    Func_020006bc(gPartyState.currentOwner);
 }
 
 void Func_02001730(void)
@@ -45,29 +45,29 @@ void Func_02001730(void)
     struct ObjectRuntime *object;
 
     object = Object_GetById(8);
-    Data_02002fc0[0].action = object->action;
-    Data_02002fc0[0].mode = (s16)object->unknown_66;
-    Data_02002fc0[0].byte_98 = BYTE_AT(object, 98);
-    Data_02002fc0[0].byte_99 = BYTE_AT(object, 99);
+    gData_02002fc0[0].action = object->action;
+    gData_02002fc0[0].mode = (s16)object->unk66;
+    gData_02002fc0[0].byte98 = BYTE_AT(object, 98);
+    gData_02002fc0[0].byte99 = BYTE_AT(object, 99);
     object = Object_GetById(10);
-    Data_02002fc0[1].action = object->action;
-    Data_02002fc0[1].mode = (s16)object->unknown_66;
-    Data_02002fc0[1].byte_98 = BYTE_AT(object, 98);
-    Data_02002fc0[1].byte_99 = BYTE_AT(object, 99);
+    gData_02002fc0[1].action = object->action;
+    gData_02002fc0[1].mode = (s16)object->unk66;
+    gData_02002fc0[1].byte98 = BYTE_AT(object, 98);
+    gData_02002fc0[1].byte99 = BYTE_AT(object, 99);
     object = Object_GetById(9);
-    Data_02002fc0[2].action = object->action;
-    Data_02002fc0[2].mode = (s16)object->unknown_66;
-    Data_02002fc0[2].byte_98 = BYTE_AT(object, 98);
-    Data_02002fc0[2].byte_99 = BYTE_AT(object, 99);
+    gData_02002fc0[2].action = object->action;
+    gData_02002fc0[2].mode = (s16)object->unk66;
+    gData_02002fc0[2].byte98 = BYTE_AT(object, 98);
+    gData_02002fc0[2].byte99 = BYTE_AT(object, 99);
     object = Object_GetById(11);
-    Data_02002fc0[3].action = object->action;
-    Data_02002fc0[3].mode = (s16)object->unknown_66;
-    Data_02002fc0[3].byte_98 = BYTE_AT(object, 98);
-    Data_02002fc0[3].byte_99 = BYTE_AT(object, 99);
-    object = Object_GetById(gPartyState.current_owner);
-    Data_02002fc0[4].action = object->action;
-    Data_02002fc0[4].mode = (s16)object->unknown_66;
-    Data_02002fc0[4].byte_98 = BYTE_AT(object, 98);
-    Data_02002fc0[4].byte_99 = BYTE_AT(object, 99);
+    gData_02002fc0[3].action = object->action;
+    gData_02002fc0[3].mode = (s16)object->unk66;
+    gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
+    gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
+    object = Object_GetById(gPartyState.currentOwner);
+    gData_02002fc0[4].action = object->action;
+    gData_02002fc0[4].mode = (s16)object->unk66;
+    gData_02002fc0[4].byte98 = BYTE_AT(object, 98);
+    gData_02002fc0[4].byte99 = BYTE_AT(object, 99);
     Scheduler_RemoveCallbackFar(Func_02001688);
 }

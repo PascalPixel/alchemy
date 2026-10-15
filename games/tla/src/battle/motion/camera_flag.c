@@ -14,20 +14,20 @@ s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
 s32 Render_ProjectPoint(const s32 *, s32 *);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
-extern const s32 Data_08128868[];
+extern const s32 gData_08128868[];
 
 struct MotionRecordScale {
-    u8 unknown_00[0xc];
+    u8 unk00[0xc];
     s32 scale;
 };
 
 s32 Camera_ApplyTransformByFlag(void)
 {
-    struct BattleCamera *state = Ram_HeapSlots->camera_work;
+    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
     Render_ResetTransformState();
     if (GameFlag_Test(0x16B) != 0) {
-        Iwram_TransformMatrix(Data_08128868);
+        Iwram_TransformMatrix(gData_08128868);
         return Graphics_PrepareTransferAndRun(state, state->pos);
     } else {
         return Graphics_PrepareTransferInIwramWork(state, state->pos);
@@ -37,7 +37,7 @@ s32 Camera_ApplyTransformByFlag(void)
 // BattleObjGet, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
-    u8 *work = (u8 *)Ram_HeapSlots->battle_work;
+    u8 *work = (u8 *)Ram_HeapSlots->battleWork;
     struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)

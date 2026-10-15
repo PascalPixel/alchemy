@@ -11,12 +11,12 @@
 #include "text/msg_ids.h"
 
 struct IsletsEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[4];
-    s16 field_15a;
-    u8 unknown_15c[0x50];
-    s32 field_1ac;
+    u8 unk156[4];
+    s16 field15a;
+    u8 unk15c[0x50];
+    s32 field1ac;
 };
 
 extern u32 gFrameCount;
@@ -52,13 +52,13 @@ void Func_020034ec(void);
 void Func_02001cac(void);
 void Func_02001cfc(void);
 
-extern const u8 Data_020044f0[];
-extern const u8 Data_02004b14[];
-extern const u8 Data_02004b20[];
-extern const u8 Data_02004bb0[];
-extern const u8 Data_02004ca0[];
-extern const u8 Data_02004d84[];
-extern const u8 Data_02004e5c[];
+extern const u8 gData_020044f0[];
+extern const u8 gData_02004b14[];
+extern const u8 gData_02004b20[];
+extern const u8 gData_02004bb0[];
+extern const u8 gData_02004ca0[];
+extern const u8 gData_02004d84[];
+extern const u8 gData_02004e5c[];
 extern u16 gSceneState[];
 extern char SceneId_Ov674Room1;
 extern char SceneId_Ov674Room2;
@@ -74,7 +74,7 @@ void Func_0200329c(void);
 void Func_02003e3c(struct ObjectRuntime *object, s32 value);
 
 struct IsletsMapFlags {
-    u8 unknown_00[0x17];
+    u8 unk00[0x17];
     u8 unused : 2;
     u8 mode : 2;
 };
@@ -106,19 +106,19 @@ struct IsletsTarget {
     struct IsletsPair pair;
 };
 
-extern u8 Data_02004754[];
-extern u8 Data_0200476c[];
-extern u8 Data_020047e4[];
-extern u8 Data_0200494c[];
-extern u8 Data_020049c4[];
-extern u8 Data_02004a84[];
-extern s32 Data_02005190;
-extern s32 Data_02005194;
-extern s32 Data_02005198;
-extern s32 Data_0200519c;
-extern const u8 Data_02004028[];
-extern const struct IsletsExit Data_020046bc[];
-extern const u16 Data_02004070[];
+extern u8 gData_02004754[];
+extern u8 gData_0200476c[];
+extern u8 gData_020047e4[];
+extern u8 gData_0200494c[];
+extern u8 gData_020049c4[];
+extern u8 gData_02004a84[];
+extern s32 gData_02005190;
+extern s32 gData_02005194;
+extern s32 gData_02005198;
+extern s32 gData_0200519c;
+extern const u8 gData_02004028[];
+extern const struct IsletsExit gData_020046bc[];
+extern const u16 gData_02004070[];
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
 void Func_020021d0(void);

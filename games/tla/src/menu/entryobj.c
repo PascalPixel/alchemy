@@ -3,9 +3,9 @@
 #include "callback_scheduler.h"
 
 struct MenuEntryWork {
-    u8 unknown_000[0xf8];
+    u8 unk000[0xf8];
     void *objects[8];
-    u8 unknown_118[0x50a - 0x118];
+    u8 unk118[0x50a - 0x118];
     u8 hidden;
 };
 
@@ -14,7 +14,7 @@ void Menu_UpdateEntryObjectTransforms(void);
 
 void Menu_ReleaseEntryObjects(void)
 {
-    struct MenuEntryWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
     void **objects = menu->objects;
     s32 i;
 
@@ -29,7 +29,7 @@ void Menu_ReleaseEntryObjects(void)
 
 void Menu_SetEntryObjectsHidden(s32 hidden)
 {
-    struct MenuEntryWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
 
     /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
     __asm__ volatile("" : "+l"(menu));

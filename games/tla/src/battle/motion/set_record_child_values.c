@@ -3,17 +3,17 @@
 
 struct RecordChild
 {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 param;
-    u8 unknown_06[0x10];
+    u8 unk06[0x10];
     u8 frame;
 };
 
 struct ChildRecord
 {
-    u8 unknown_00[0x1b];
+    u8 unk00[0x1b];
     u8 count;
-    u8 unknown_1c[0xc];
+    u8 unk1c[0xc];
     struct RecordChild *entries[4];
 };
 

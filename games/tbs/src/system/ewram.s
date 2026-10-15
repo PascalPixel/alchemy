@@ -2,8 +2,8 @@
 	.global gSaveBuffer
 gSaveBuffer:
 	.space 0x00000040
-	.global GameFlagBytes
-GameFlagBytes:
+	.global gGameFlagBytes
+gGameFlagBytes:
 	.space 0x00000200
 	.global gGameState
 gGameState:
@@ -83,8 +83,8 @@ gSavedStack:
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:
 	.space 0x00000004
-	.global Ewram_Data1
-Ewram_Data1:
+	.global gEwram_Data1
+gEwram_Data1:
 	.space 0x00000004
 	.global gMusicVolume
 gMusicVolume:
@@ -113,20 +113,20 @@ gMusicPitch:
 	.global gAudioSecondaryState
 gAudioSecondaryState:
 	.space 0x00000004
-	.global Audio_CommandMask
-Audio_CommandMask:
+	.global gAudio_CommandMask
+gAudio_CommandMask:
 	.space 0x00000010
-	.global Sound_Work
-Sound_Work:
+	.global gSound_Work
+gSound_Work:
 	.space 0x00000fb0
-	.global Sound_CommandTable
-Sound_CommandTable:
+	.global gSound_CommandTable
+gSound_CommandTable:
 	.space 0x00000090
-	.global Sound_CgbNotes
-Sound_CgbNotes:
+	.global gSound_CgbNotes
+gSound_CgbNotes:
 	.space 0x00000100
-	.global Sound_Player5
-Sound_Player5:
+	.global gSound_Player5
+gSound_Player5:
 	.space 0x00000040
 	.global Sound_Player6
 Sound_Player6:
@@ -146,11 +146,11 @@ Sound_Player2:
 	.global Sound_Player4
 Sound_Player4:
 	.space 0x00000040
-	.global Sound_WorkBytes
-Sound_WorkBytes:
+	.global gSound_WorkBytes
+gSound_WorkBytes:
 	.space 0x00000010
-	.global Sound_Player3
-Sound_Player3:
+	.global gSound_Player3
+gSound_Player3:
 	.space 0x00000040
 	.global Sound_Tracks0
 Sound_Tracks0:
@@ -177,11 +177,11 @@ Sound_Tracks6:
 Sound_Tracks7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global Flash_Handler3
-Flash_Handler3:
+	.global gFlash_Handler3
+gFlash_Handler3:
 	.space 0x00000004
-	.global Flash_Handler0
-Flash_Handler0:
+	.global gFlash_Handler0
+gFlash_Handler0:
 	.space 0x00000004
 	.global gFlash
 gFlash:
@@ -189,14 +189,14 @@ gFlash:
 	.global gFlashNumRemainingBytes
 gFlashNumRemainingBytes:
 	.space 0x00000004
-	.global Flash_Handler1
-Flash_Handler1:
+	.global gFlash_Handler1
+gFlash_Handler1:
 	.space 0x00000004
 	.global gEraseFlashSector
 gEraseFlashSector:
 	.space 0x00000004
-	.global Flash_Handler4
-Flash_Handler4:
+	.global gFlash_Handler4
+gFlash_Handler4:
 	.space 0x00000004
 	.global gFlashReadRoutine
 gFlashReadRoutine:

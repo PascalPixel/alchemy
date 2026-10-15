@@ -13,36 +13,36 @@
 #include "map.h"
 
 struct GroundParticle {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 y : 8;
     u16 affine : 2;
-    u16 blend_mode : 2;
+    u16 blendMode : 2;
     u16 mosaic : 1;
-    u16 full_color : 1;
+    u16 fullColor : 1;
     u16 shape : 2;
     u16 x : 9;
-    u16 affine_index : 5;
+    u16 affineIndex : 5;
     u16 size : 2;
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[2];
-    s32 pos_x;
-    s32 pos_y;
-    s32 pos_z;
+    u8 unk0a[2];
+    s32 posX;
+    s32 posY;
+    s32 posZ;
     s32 delay;
     u16 timer;
-    u8 unknown_1e[2];
+    u8 unk1e[2];
 };
 
 struct GroundParticleWork {
     s32 entry;
-    s32 tile_base;
+    s32 tileBase;
     struct GroundParticle particles[64];
     s32 *leader;
 };
 
-extern s16 Data_02001f18[];
+extern s16 gData_02001f18[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
@@ -51,11 +51,11 @@ void Func_02001c3c(void *entry, s32 slot);
 
 void Func_02001940(void)
 {
-    struct MapWork *view = Ram_HeapSlots->map_work;
-    struct GroundParticleWork *work = Ram_HeapSlots->unknown_70[1];
-    s32 *camera = &view->view_x;
-    s32 camera_x = camera[0];
-    s32 camera_z = camera[1];
+    struct MapWork *view = Ram_HeapSlots->mapWork;
+    struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
+    s32 *camera = &view->viewX;
+    s32 cameraX = camera[0];
+    s32 cameraZ = camera[1];
     struct GroundParticle *particle = work->particles;
     u32 i;
 
@@ -70,14 +70,14 @@ loop:
             goto next;
         if (GameFlag_Test(0x166))
             particle->timer++;
-        frame = &Data_02001f18[5 * particle->timer];
-        x = (particle->pos_x - camera_x) / 0x10000 + *frame++;
-        y = (particle->pos_z - particle->pos_y - camera_z) / 0x10000 + *frame++;
+        frame = &gData_02001f18[5 * particle->timer];
+        x = (particle->posX - cameraX) / 0x10000 + *frame++;
+        y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
         if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
             particle->priority = 1;
             particle->x = x;
             particle->y = y;
-            particle->tile = work->tile_base + *(u16 *)frame;
+            particle->tile = work->tileBase + *(u16 *)frame;
             frame++;
             particle->shape = *(u8 *)frame;
             particle->size = *(u8 *)(frame + 1);
@@ -89,13 +89,13 @@ loop:
             if (leader != NULL) {
                 x = leader[0] + Random16Far() * 240 - 0x780000;
                 y = leader[2] + Random16Far() * 160 - 0x500000;
-                particle->pos_x = x;
-                particle->pos_z = y;
-                particle->pos_y = Map_GetTerrainHeight(0, x, y);
+                particle->posX = x;
+                particle->posZ = y;
+                particle->posY = Map_GetTerrainHeight(0, x, y);
             } else {
-                particle->pos_x = 0;
-                particle->pos_z = 0;
-                particle->pos_y = 0;
+                particle->posX = 0;
+                particle->posZ = 0;
+                particle->posY = 0;
             }
             particle->timer = 16;
         }

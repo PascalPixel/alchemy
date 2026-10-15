@@ -245,7 +245,7 @@ Func_0200015c:
 .L_0200832c:
 	.4byte gPartyState
 .L_02008330:
-	.4byte Data_02003da0
+	.4byte gData_02003da0
 .L_02008334:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
@@ -981,7 +981,7 @@ Func_0200095c:
 .L_02008cd8:
 	.4byte gFrameCount
 .L_02008cdc:
-	.4byte Data_02003d1c
+	.4byte gData_02003d1c
 .L_02008ce0:
 	.4byte Func_02000840
 .L_02008ce4:
@@ -1228,7 +1228,7 @@ Func_0200095c:
 .L_02008ee0:
 	.4byte gFrameCount
 .L_02008ee4:
-	.4byte Data_02004674
+	.4byte gData_02004674
 .L_02008ee8:
 	.4byte 0xffffd99a
 .L_02008eec:
@@ -1559,7 +1559,7 @@ Func_02001010:
 .L_020092c4:
 	.4byte gFrameCount
 .L_020092c8:
-	.4byte Data_02003d1c
+	.4byte gData_02003d1c
 .L_020092cc:
 	.4byte Func_020008ac
 .L_020092d0:
@@ -2388,9 +2388,9 @@ Func_02001908:
 .L_020099fc:
 	.4byte gPartyState
 .L_02009a00:
-	.4byte Data_02003de0
+	.4byte gData_02003de0
 .L_02009a04:
-	.4byte Data_02003dcc
+	.4byte gData_02003dcc
 .L_02009a08:
 	bl Func_020018ac
 	cmp r0, #8
@@ -2838,7 +2838,7 @@ Func_02001cc8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009da4:
-	.4byte Data_02003d94
+	.4byte gData_02003d94
 	.section .text.x02009dc4,"ax",%progbits
 	.global Func_02001dc4
 	.thumb_func
@@ -3047,7 +3047,7 @@ Func_02001dc4:
 .L_02009f70:
 	.4byte 0xffd00000
 .L_02009f74:
-	.4byte Data_02003dfc
+	.4byte gData_02003dfc
 .L_02009f78:
 	.4byte IwramMulQ16
 	.section .text.x02009f7c,"ax",%progbits
@@ -3332,7 +3332,7 @@ Func_02001f7c:
 .L_0200a1e8:
 	.4byte gFrameCount
 .L_0200a1ec:
-	.4byte Data_02003d1c
+	.4byte gData_02003d1c
 .L_0200a1f0:
 	.4byte Func_020008ac
 .L_0200a1f4:
@@ -3686,13 +3686,13 @@ Func_020024b0:
 .L_0200a4f4:
 	.4byte 0x00001000
 .L_0200a4f8:
-	.4byte Data_02004694
+	.4byte gData_02004694
 .L_0200a4fc:
 	.4byte gFrameCount
 .L_0200a500:
-	.4byte Data_020046a0
+	.4byte gData_020046a0
 .L_0200a504:
-	.4byte Data_02004694 + 0x1
+	.4byte gData_02004694 + 0x1
 .L_0200a508:
 	cmp r3, #4
 	bne .L_0200a514
@@ -3751,7 +3751,7 @@ Func_020024b0:
 .L_0200a570:
 	.4byte gFrameCount
 .L_0200a574:
-	.4byte Data_020046a0
+	.4byte gData_020046a0
 .L_0200a578:
 	.4byte 0xa2600001
 	.section .text.x0200a57c,"ax",%progbits
@@ -3805,7 +3805,7 @@ Func_0200257c:
 	subs r3, #56
 	b .L_0200a5f4
 .L_0200a5dc:
-	.4byte Data_020046a0
+	.4byte gData_020046a0
 .L_0200a5e0:
 	.4byte gFrameCount
 .L_0200a5e4:
@@ -3850,7 +3850,7 @@ Func_0200257c:
 .L_0200a62c:
 	.4byte 0x00001000
 .L_0200a630:
-	.4byte Data_02004696
+	.4byte gData_02004696
 .L_0200a634:
 	strh r3, [r1]
 	ldr r3, .L_0200a6a8
@@ -3915,9 +3915,9 @@ Func_0200257c:
 .L_0200a6a8:
 	.4byte gFrameCount
 .L_0200a6ac:
-	.4byte Data_02004696 + 0x1
+	.4byte gData_02004696 + 0x1
 .L_0200a6b0:
-	.4byte Data_020046a0
+	.4byte gData_020046a0
 .L_0200a6b4:
 	.4byte 0xa2600003
 	.section .text.x0200a6b8,"ax",%progbits
@@ -4240,7 +4240,7 @@ Func_020026b8:
 .L_0200a974:
 	.4byte gFrameCount
 .L_0200a978:
-	.4byte Data_02003d1c
+	.4byte gData_02003d1c
 .L_0200a97c:
 	.4byte Func_020008ac
 .L_0200a980:
@@ -4561,7 +4561,7 @@ Func_02002b88:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200ac20:
-	.4byte Data_02004698
+	.4byte gData_02004698
 	.section .text.x0200aca0,"ax",%progbits
 	.global Func_02002ca0
 	.thumb_func
@@ -5155,9 +5155,9 @@ Func_02002ca0:
 .L_0200b1b4:
 	.4byte Func_02001b54
 .L_0200b1b8:
-	.4byte Data_02003d94
+	.4byte gData_02003d94
 .L_0200b1bc:
-	.4byte Data_02003e4c
+	.4byte gData_02003e4c
 .L_0200b1c0:
 	movs r0, #10
 	adds r0, #255
@@ -5272,7 +5272,7 @@ Func_02002ca0:
 .L_0200b2bc:
 	.4byte 0xffc80000
 .L_0200b2c0:
-	.4byte Data_02003d94
+	.4byte gData_02003d94
 .L_0200b2c4:
 	.4byte Func_02001b54
 .L_0200b2c8:
@@ -6089,5 +6089,5 @@ Func_02002ca0:
 	.4byte 0xffd00000
 	.section .bss,"aw",%nobits
 	.space 0x00000004
-	.global Data_020046a0
-Data_020046a0:
+	.global gData_020046a0
+gData_020046a0:

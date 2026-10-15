@@ -17,7 +17,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
 s32 EffectRuntime_LookupByTableEntry(u32 index, s32 steps)
 {
-    u8 *table = (u8 *)Ram_HeapSlots->event_work + 0x18c;
+    u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
 
     return Encounter_SelectEnemyGroup(table[index], steps);
 }
@@ -33,7 +33,7 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
     s32 row;
 
     row = arg0 * 14;
-    table = Encounter_EnemyGroupTable;
+    table = gEncounter_EnemyGroupTable;
     /* FAKEMATCH: ⚓️ loads the table between the row and the column */
     asm volatile("" : "+l"(table), "+l"(row));
     row += arg1;
@@ -44,7 +44,7 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 
 u16 BattleFx_GetPhaseResult(s32 phase)
 {
-    u16 *entry = (u16 *)(Encounter_AreaEntryTable + phase * 4);
+    u16 *entry = (u16 *)(gEncounter_AreaEntryTable + phase * 4);
 
     BattleFx_GetWeightedResult(entry[0], entry[1]);
 }
@@ -54,7 +54,7 @@ s32 GameFlag_Test(s32 flag);
 struct SceneCueRule {
     s16 id;
     s16 entrance : 15;
-    u16 by_scene : 1;
+    u16 byScene : 1;
     s16 flag;
     s16 cue;
 };
@@ -65,11 +65,11 @@ void Scene_ResolveInteractionResult(void)
     s16 cue = 79;
     s16 scene = gPartyState.scene;
     s16 entrance = gPartyState.entrance;
-    s16 group = gPartyState.scene_group;
-    const struct SceneCueRule *rule = Scene_CueRuleTable;
+    s16 group = gPartyState.sceneGroup;
+    const struct SceneCueRule *rule = gScene_CueRuleTable;
 
     for (; rule->id != -1; rule++) {
-        if (rule->by_scene) {
+        if (rule->byScene) {
             if (rule->id != scene)
                 continue;
             if (rule->entrance != -1 && rule->entrance != entrance)
@@ -96,37 +96,37 @@ void Scene_ResolveInteractionResult(void)
 struct SceneAreaNameRule {
     s16 id;
     s16 entrance : 15;
-    u16 use_scene_id : 1;
-    s32 area_name_index;
+    u16 useSceneId : 1;
+    s32 areaNameIndex;
 };
 
-extern const struct SceneAreaNameRule Scene_AreaNameRules[];
+extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-    const struct SceneAreaNameRule *entry = Scene_AreaNameRules;
-    s32 area_name_index = 0;
+    const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
+    s32 areaNameIndex = 0;
     s32 group = BattleFx_GetResourceGroup(scene);
 
     while (entry->id != -1) {
-        if (entry->use_scene_id) {
+        if (entry->useSceneId) {
             if (entry->id == scene) {
                 if (entry->entrance == -1 || entry->entrance == entrance) {
-                    area_name_index = entry->area_name_index;
+                    areaNameIndex = entry->areaNameIndex;
                     break;
                 }
             }
         } else {
             if (entry->id == group) {
                 if (entry->entrance == -1 || entry->entrance == entrance) {
-                    area_name_index = entry->area_name_index;
+                    areaNameIndex = entry->areaNameIndex;
                     break;
                 }
             }
         }
         entry++;
     }
-    return area_name_index;
+    return areaNameIndex;
 }

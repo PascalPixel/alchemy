@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJCMD_H
 
 // Field object scripts: one s32 command word, then its operands, as
-// ScriptObject_CommandTable runs them. Each macro expands to the words of
+// gScriptObject_CommandTable runs them. Each macro expands to the words of
 // one command. Coordinates are 16.16 fixed point (PIXELS).
 
 #include "types.h"

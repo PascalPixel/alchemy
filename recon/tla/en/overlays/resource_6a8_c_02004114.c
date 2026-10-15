@@ -2,7 +2,7 @@
  * 57), Func_02004198 (spawn, differ 9 of 88) and Func_02004254 (start, differ
  * 83 of 83); diff each with --symbol. The work is overlay 6B9's SparkWork
  * (sparks.c): 0x500 bytes of tiles, 64 particles of 28 bytes, 64 sprites of
- * 40, then next, tile_base and resource.
+ * 40, then next, tileBase and resource.
  * The native rebuilds every offset and mask inside each loop and counts in
  * r8 (add r8, r3 with -1 in r3); for loops hoist them (differ 60, 48, 84),
  * so the loops are goto loops here.
@@ -24,15 +24,15 @@ struct Rock {
 };
 
 struct RockSprite {
-    u8 unknown_00[5];
-    u8 unknown_05;
-    u8 unknown_06[2];
+    u8 unk00[5];
+    u8 unk05;
+    u8 unk06[2];
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[0x14];
-    u16 unknown_1e;
-    u8 unknown_20[8];
+    u8 unk0a[0x14];
+    u16 unk1e;
+    u8 unk20[8];
 };
 
 struct RockWork {
@@ -40,7 +40,7 @@ struct RockWork {
     struct Rock rocks[64];
     struct RockSprite sprites[64];
     s16 next;
-    u16 tile_base;
+    u16 tileBase;
     s16 resource;
 };
 
@@ -66,7 +66,7 @@ static __inline__ s32 VramLoad(s32 entry, s32 size, void *data)
 
 void Func_02004114(void)
 {
-    struct RockWork *work = Ram_HeapSlots->menu_runtime;
+    struct RockWork *work = Ram_HeapSlots->menuRuntime;
     struct Rock *rock = work->rocks;
     struct RockSprite *sprite = work->sprites;
     s32 i;
@@ -78,7 +78,7 @@ loop:
         s32 timer = rock->timer;
 
         if ((u32)timer <= 19) {
-            sprite->tile = work->tile_base + ((timer >> 2) & 7) * 8;
+            sprite->tile = work->tileBase + ((timer >> 2) & 7) * 8;
             Func_0200460c(sprite, rock);
             Func_02004614(rock, 63, -0x8000);
             rock->timer++;
@@ -93,7 +93,7 @@ loop:
 
 void Func_02004198(s32 x, s32 y, s32 z, s32 count)
 {
-    struct RockWork *work = Ram_HeapSlots->menu_runtime;
+    struct RockWork *work = Ram_HeapSlots->menuRuntime;
     s32 i;
 
     /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes rebuild the offsets on every pass, and a for loop hoists them. */
@@ -133,7 +133,7 @@ void Func_02004254(void)
     Func_02004384(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
     entry = Resource_FindFreeEntry();
     tile = VramLoad(entry, 0x500, work);
-    work->tile_base = tile;
+    work->tileBase = tile;
     work->resource = entry;
     rock = work->rocks;
     sprite = work->sprites;
@@ -142,10 +142,10 @@ void Func_02004254(void)
 loop:
     {
         Func_02004604(sprite, 8, 8, 0x40000000, tile);
-        sprite->unknown_05 |= 0x20;
+        sprite->unk05 |= 0x20;
         sprite->palette = 0;
         sprite->priority = 0;
-        sprite->unknown_1e = 240;
+        sprite->unk1e = 240;
         i += -1;
         rock->timer = -1;
         sprite++;

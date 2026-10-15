@@ -16,6 +16,6 @@ void ObjectDispatch_SetSpritePriority(struct DispatchObject *object, s32 priorit
     }
     sprite = object->target.sprite;
     sprite->priority = priority;
-    sprite->part_priority = priority;
-    object->priority_flags &= ~1;
+    sprite->partPriority = priority;
+    object->priorityFlags &= ~1;
 }

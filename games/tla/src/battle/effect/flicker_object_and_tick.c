@@ -6,7 +6,7 @@
 
 void BattleFx_WaitForArcGroups(void)
 {
-    struct ArcEffectWork *work = Ram_HeapSlots->block_62;
+    struct ArcEffectWork *work = Ram_HeapSlots->block62;
     s32 i = 0;
 
     while (work->age[0] <= 31 || work->age[1] <= 31) {

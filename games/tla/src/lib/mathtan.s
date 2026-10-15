@@ -1,8 +1,8 @@
 	.section .rodata
 @ 正接 256 倍: [i] = tan(i * 45 / 128 度), [128] = tan 45 度
-@ The Broken Seal's Math_TanTable, byte for byte; ArcTan2 は [127] から二分探索
-	.global Math_TanTable
-Math_TanTable:
+@ The Broken Seal's gMath_TanTable, byte for byte; ArcTan2 は [127] から二分探索
+	.global gMath_TanTable
+gMath_TanTable:
 	.2byte 0, 1, 3, 4, 6, 7, 9, 11
 	.2byte 12, 14, 15, 17, 18, 20, 22, 23
 	.2byte 25, 26, 28, 30, 31, 33, 34, 36
@@ -19,8 +19,8 @@ Math_TanTable:
 	.2byte 190, 192, 195, 197, 200, 202, 205, 207
 	.2byte 210, 213, 215, 218, 221, 224, 226, 229
 	.2byte 232, 235, 238, 241, 244, 247, 250
-	.global Math_ArcTanTable
-Math_ArcTanTable:
+	.global gMath_ArcTanTable
+gMath_ArcTanTable:
 	.2byte 253, 256, 259, 262, 266, 269, 272, 276
 	.2byte 279, 283, 286, 290, 293, 297, 301, 304
 	.2byte 308, 312, 316, 320, 324, 328, 333, 337

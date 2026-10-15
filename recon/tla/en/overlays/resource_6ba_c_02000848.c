@@ -10,14 +10,14 @@
 #include "dma.h"
 #include "io_reg.h"
 
-extern const u8 Data_02000e84[];
-extern const u8 Data_02000e90[];
-extern const u8 Data_02000ea8[];
+extern const u8 gData_02000e84[];
+extern const u8 gData_02000e90[];
+extern const u8 gData_02000ea8[];
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
 
 struct ItemSummary {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 icon;
 };
 
@@ -61,18 +61,18 @@ loop:
             redraw = 0;
             RenderOutput_PrepareForRedraw(window);
             RenderOutput_PrepareForRedraw(details);
-            UiText_DrawStringInWindow(Data_02000e84, window, 0, 0);
+            UiText_DrawStringInWindow(gData_02000e84, window, 0, 0);
             UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
             if (PartyInventory_HasSpace())
             {
-                UiText_DrawStringInWindow(Data_02000e90, window, 0, 32);
+                UiText_DrawStringInWindow(gData_02000e90, window, 0, 32);
                 UiText_DrawCharacterAtOffset((s32)(item + MsgItemName), window, 120, 0);
                 UiText_DrawResource((s32)(item + MsgItemPlainName), window, 0, 16);
                 ItemMenu_DrawItemDetails(details, item);
             }
             else
             {
-                UiText_DrawStringInWindow(Data_02000ea8, window, 0, 32);
+                UiText_DrawStringInWindow(gData_02000ea8, window, 0, 32);
             }
         }
         WaitFrames(1);

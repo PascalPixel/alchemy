@@ -7,10 +7,10 @@
  * is differ 51; an early return on the unchanged line is differ 52. */
 #include "types.h"
 
-extern u16 DisplayScroll_Position;
-extern s16 DisplayScroll_LastPosition;
-extern s16 DisplayScroll_Busy;
-extern const u8 *DisplayScroll_LineTable[];
+extern u16 gDisplayScroll_Position;
+extern s16 gDisplayScroll_LastPosition;
+extern s16 gDisplayScroll_Busy;
+extern const u8 *gDisplayScroll_LineTable[];
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
@@ -21,25 +21,25 @@ void Func_081a0d78(void)
 	s32		  line;
 	const u8 *text;
 
-	current = DisplayScroll_Position;
-	line = (s16)DisplayScroll_Position / 8;
-	if (DisplayScroll_Busy != 0)
+	current = gDisplayScroll_Position;
+	line = (s16)gDisplayScroll_Position / 8;
+	if (gDisplayScroll_Busy != 0)
 	{
-		DisplayScroll_Busy++;
-		DisplayScroll_DrawLine(DisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
+		gDisplayScroll_Busy++;
+		DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
 	}
-	else if (line != DisplayScroll_LastPosition / 8)
+	else if (line != gDisplayScroll_LastPosition / 8)
 	{
-		DisplayScroll_LastPosition = current;
-		text = DisplayScroll_LineTable[line];
+		gDisplayScroll_LastPosition = current;
+		text = gDisplayScroll_LineTable[line];
 		if (text == (const u8 *)255)
 		{
-			DisplayScroll_Busy = 1;
-			DisplayScroll_DrawLine(DisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
+			gDisplayScroll_Busy = 1;
+			DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
 		}
 		else
 		{
-			DisplayScroll_Busy = DisplayScroll_DrawLine(text, ((line + 16) & 31) * 24, 1);
+			gDisplayScroll_Busy = DisplayScroll_DrawLine(text, ((line + 16) & 31) * 24, 1);
 		}
 	}
 }

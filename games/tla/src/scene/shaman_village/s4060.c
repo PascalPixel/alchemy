@@ -51,7 +51,7 @@ void Func_020041b8(void)
     Object_SetModeById(11, 2);
     Object_SetModeById(12, 2);
     Object_SetModeById(13, 2);
-    Object_GetById(14)->motion_flags = 0;
+    Object_GetById(14)->motionFlags = 0;
     if (GameFlag_Test(0x94e)) {
         Object_SetPositionAndResetMotion(Object_GetById(14), 0x2080000, 0x200000, 0xb80000);
         WaitFrames(1);
@@ -67,8 +67,8 @@ void Func_020041b8(void)
     else
         Func_02004934(17, 0, 0);
     object = Object_GetById(16);
-    object->collision_flags = 8;
-    object->scale_x = 0xcccc;
-    object->scale_y = 0xcccc;
+    object->collisionFlags = 8;
+    object->scaleX = 0xcccc;
+    object->scaleY = 0xcccc;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(16), 0);
 }

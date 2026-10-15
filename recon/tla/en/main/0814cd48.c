@@ -12,34 +12,34 @@
 
 struct FxGroupEntry
 {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 param;
-    u8 unknown_06[16];
+    u8 unk06[16];
     u8 frame;
 };
 
 struct FxGroup
 {
-    u8 unknown_00[27];
+    u8 unk00[27];
     u8 count;
-    u8 unknown_1c[12];
+    u8 unk1c[12];
     struct FxGroupEntry *entries[4];
 };
 
 struct FxSlot
 {
     void *object;
-    u8 unknown_04[28];
-    struct FxGroupEntry *animation_entry;
-    struct FxGroupEntry *effect_entry;
-    u8 unknown_28[2];
+    u8 unk04[28];
+    struct FxGroupEntry *animationEntry;
+    struct FxGroupEntry *effectEntry;
+    u8 unk28[2];
     u8 fading;
 };
 
 struct FxTimerWork
 {
-    u8 unknown_0000[0x78dc];
-    u8 actor_timers[8];
+    u8 unk0000[0x78dc];
+    u8 actorTimers[8];
 };
 
 struct FxSlot *GetBattleObjectSlotFar(s32 id);
@@ -52,28 +52,28 @@ static __inline__ u8 GroupCount(struct FxGroup *group)
     return group->count;
 }
 
-void Func_0814cd48(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value)
+void Func_0814cd48(s32 setId, s32 objectValue, s32 groupValue, s32 stateSlot, s32 stateValue)
 {
     struct FxSlot *set;
     struct FxGroup *group;
     struct FxTimerWork *state;
-    s32 group_index;
+    s32 groupIndex;
 
-    set = GetBattleObjectSlotFar(set_id);
-    state = (struct FxTimerWork *)Ram_HeapSlots->battle_fx_work[0];
-    group_index = 0;
+    set = GetBattleObjectSlotFar(setId);
+    state = (struct FxTimerWork *)Ram_HeapSlots->battleFxWork[0];
+    groupIndex = 0;
 
-    while ((group = GetMotionRecordFar(set->object, group_index)) != NULL)
+    while ((group = GetMotionRecordFar(set->object, groupIndex)) != NULL)
     {
-        if (state_slot != -1)
-            state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
+        if (stateSlot != -1)
+            state->actorTimers[stateSlot] = ((u8 *)&stateValue)[0];
         if (set->fading == 0)
         {
-            if (object_value != -1)
+            if (objectValue != -1)
             {
-                s32 object_index;
+                s32 objectIndex;
 
-                object_index = 0;
+                objectIndex = 0;
                 if (GroupCount(group) != 0)
                 {
                     struct FxGroupEntry **objects;
@@ -84,25 +84,25 @@ void Func_0814cd48(s32 set_id, s32 object_value, s32 group_value, s32 state_slot
                         struct FxGroupEntry *object;
 
                         object = *objects++;
-                        if (object != NULL && object != set->effect_entry
-                            && object != set->animation_entry)
+                        if (object != NULL && object != set->effectEntry
+                            && object != set->animationEntry)
                         {
                             u8 old = object->param;
 
-                            if (object_value == 0)
-                                object->param = BattleMotion_GetSlotPaletteFar(set_id);
+                            if (objectValue == 0)
+                                object->param = BattleMotion_GetSlotPaletteFar(setId);
                             else
-                                object->param = object_value;
+                                object->param = objectValue;
                             if (object->param != old)
                                 object->frame = 0xff;
                         }
-                        object_index++;
-                    } while (object_index != GroupCount(group));
+                        objectIndex++;
+                    } while (objectIndex != GroupCount(group));
                 }
             }
-            if (group_value != -1)
-                Animation_ApplyChildArgumentFar(group, group_value);
+            if (groupValue != -1)
+                Animation_ApplyChildArgumentFar(group, groupValue);
         }
-        group_index++;
+        groupIndex++;
     }
 }

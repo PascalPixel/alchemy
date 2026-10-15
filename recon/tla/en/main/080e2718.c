@@ -3,13 +3,13 @@
  * counts before the second stack argument; a struct with an indexed array gives 37 differ. */
 #include "types.h"
 
-extern u8 Data_02001000[];
+extern u8 gData_02001000[];
 void Func_080201f0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u8 *Func_080dbb78(s32 x, s32 z, s32 mode);
 
 void Func_080e2718(void)
 {
-    u8 *base = Data_02001000;
+    u8 *base = gData_02001000;
     s8 *count = (s8 *)(base + 0x194c);
     s32 i = 0;
 

@@ -31,7 +31,7 @@ static void Scene_RunTransitionCue(void);
 static void Scene_RunActorFormation(s32 a0);
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
-s32 SolEntrance_CueTimer __attribute__((section(".bss")));
+s32 gSolEntrance_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
@@ -57,7 +57,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return SolEntrance_Exits;
+	return gSolEntrance_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -165,7 +165,7 @@ static void EV20_SEARCH(void)
 		Engine_MessageShowCentered(MsgSolMinotaurReliefOneEye, 1);
 		if (Engine_GameFlagIsSet(0xf01) != 0)
 		{
-			u16 *p = &gEventWork->unknown_172;
+			u16 *p = &gEventWork->unk172;
 			u16	 val = 1;
 			*p = val;
 		}
@@ -244,7 +244,7 @@ static void EV21_SEARCH(void)
 		Engine_MessageShowCentered(MsgSolMinotaurReliefOneEye, 1);
 		{
 
-			u16 *frame = &work->unknown_172;
+			u16 *frame = &work->unk172;
 			s32	 one = 1;
 			*frame = one;
 		}
@@ -496,7 +496,7 @@ static void SolEntrance_PushFacedBlock(void)
 	if (block != NULL)
 	{
 		zero = 0;
-		block->terrain_id = 2;
+		block->terrainId = 2;
 		p = pos;
 		step = gSolPushSteps[dir];
 		p[0].fixed = block->x.fixed + (step & -0x10000);
@@ -516,8 +516,8 @@ static void SolEntrance_PushFacedBlock(void)
 			Engine_ObjectCommitPosition(block);
 			block->x.fixed = p[0].fixed;
 			block->z.fixed = p[2].fixed;
-			block->velocity_x = zero;
-			block->velocity_z = zero;
+			block->velocityX = zero;
+			block->velocityZ = zero;
 			Object_SetMode(leader, 1);
 			switch (gGameState.entrance)
 			{
@@ -560,10 +560,10 @@ s32 Scene_Initialize(void)
 static void SolEntrance_ApplyEntryState(void)
 {
 	GameFlag_Set(0x144);
-	gEventWork->start_transition = 0x100;
+	gEventWork->startTransition = 0x100;
 	if (GameFlag_IsSet(0x814) != 0)
 	{
-		SolEntrance_CueTimer = 0;
+		gSolEntrance_CueTimer = 0;
 		Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);
 	}
 	if (GameFlag_IsSet(0x879) != 0)
@@ -585,7 +585,7 @@ static void SolEntrance_ApplyEntryState(void)
 static void FieldScene_RunSceneEntryHook(void)
 {
 	s32 entrance;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x814) != 0)
 	{
 		BattleFx_SetQueuedSoundAndPlay(141);
@@ -613,8 +613,8 @@ static void FieldScene_RunSceneEntryHook(void)
 		break;
 
 	case 8:
-		gGameState.retreat_scene = (s32)&SceneId_SolEntrance1;
-		gGameState.retreat_entrance = 8;
+		gGameState.retreatScene = (s32)&SceneId_SolEntrance1;
+		gGameState.retreatEntrance = 8;
 		if (GameFlag_IsSet(0x802) == 0)
 			Scene_EnterSolSanctum();
 		break;
@@ -674,7 +674,7 @@ static void Scene_EnterSolSanctum(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
 	Engine_ActorSetAnimation(0, 0);
 	Engine_EventWait(4);
@@ -750,7 +750,7 @@ static void Scene_EnterSolSanctum(void)
 	Engine_ActorSetAnimation(JENNA, 1);
 	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 	GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	Engine_EventEnd();
 }
@@ -959,7 +959,7 @@ static void Scene_RunTransitionCue(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -1145,7 +1145,7 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	s32 *timer;
 	s32	 v3;
 
-	timer = &SolEntrance_CueTimer;
+	timer = &gSolEntrance_CueTimer;
 	if (*timer != 0)
 	{
 		v3 = (*timer - 1);
@@ -1200,7 +1200,7 @@ struct SceneEntrance gSolEntranceEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SolEntrance_Exits[] = {
+u32 gSolEntrance_Exits[] = {
 	SCENE_EXITS(19),
 	SCENE_EXIT_IF(1, 4, 2, 0x814),
 	SCENE_EXIT_IF(1, 10, 15, 0x815),

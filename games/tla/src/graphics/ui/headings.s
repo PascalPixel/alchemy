@@ -5,7 +5,7 @@
 @ Takara Jima, Takara Doukutsu and Kaizoku Ship; the other eleven are the
 @ rule alone. No loader of the resource was found, so the palette is a
 @ reconstruction choice: the pictures carry the window palette
-@ (Ui_WindowPalette), white on window blue.
+@ (gUi_WindowPalette), white on window blue.
 	.section .rodata
 	.global Ui_Headings
 Ui_Headings:

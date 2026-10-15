@@ -15,11 +15,11 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
         u8 mode;
 
         if (mask30 == 0 && (mode = control & 0x88) == 8) {
-            u8 serial_error = control & 4;
+            u8 serialError = control & 4;
             s32 index;
 
-            if (serial_error == 0) {
-            index = gSerialRuntime.send_index;
+            if (serialError == 0) {
+            index = gSerialRuntime.sendIndex;
             /* FAKEMATCH: keeps the send-index load ahead of the -1, as in SerialRuntime_PollStatus; without the barrier the -1 is started first (differ 2). */
             asm("");
             if (index == -1) {
@@ -28,7 +28,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
                 /* FAKEMATCH: the do/while blocks and the separate enable
                  * variable are meaningless, as in SerialRuntime_PollStatus. */
                 do {
-                    REG_IME = serial_error;
+                    REG_IME = serialError;
                 } while (0);
                 ie = REG_IE;
                 do {
@@ -58,7 +58,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
     }
 
     gSerialRuntime.sequence++;
-    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
     if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);
@@ -80,10 +80,10 @@ s32 SerialRuntime_PollStatus(void)
         u8 mode = control & 0x88;
 
         if (mode == 8) {
-            u8 serial_error = control & 4;
+            u8 serialError = control & 4;
 
-            if (serial_error == 0) {
-                s32 index = gSerialRuntime.send_index;
+            if (serialError == 0) {
+                s32 index = gSerialRuntime.sendIndex;
 
                 /* FAKEMATCH: keeps the send-index load ahead of the -1. */
                 asm("");
@@ -92,7 +92,7 @@ s32 SerialRuntime_PollStatus(void)
 
                     /* FAKEMATCH: one-pass blocks preserve IE/IME load order; the enable local derives the mask from r3. */
                     do {
-                        REG_IME = serial_error;
+                        REG_IME = serialError;
                     } while (0);
                     ie = REG_IE;
                     do {
@@ -115,7 +115,7 @@ s32 SerialRuntime_PollStatus(void)
         gSerialRuntime.sequence++;
     }
 
-    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
     if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);

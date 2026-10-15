@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 struct RiseTimer {
-    u8 unknown_00[0x68];
+    u8 unk00[0x68];
     s32 frames;
 };
 
@@ -19,8 +19,8 @@ void Func_020013e4(struct ObjectRuntime *object)
         object->y += 0x8000;
     } while (0);
     growth = 0x51e;
-    object->scale_x += growth;
-    object->scale_y += growth;
+    object->scaleX += growth;
+    object->scaleY += growth;
     timer->frames--;
     if (timer->frames == 1)
         Object_SetPositionAndResetMotion(object, 0, 0, 0);

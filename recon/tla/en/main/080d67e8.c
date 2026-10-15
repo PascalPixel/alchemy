@@ -23,8 +23,8 @@ void Audio_PlayCue(s32 cue);
 // 稲光: 残り時間に合わせてパレットを切り替える
 void BattleFx_UpdateStormFlash(void)
 {
-    struct FieldBlendWork *work = Ram_HeapSlots->unknown_70[2];
-    struct BattleEffectBuffers *target = Ram_HeapSlots->block_32;
+    struct FieldBlendWork *work = Ram_HeapSlots->unk70[2];
+    struct BattleEffectBuffers *target = Ram_HeapSlots->block32;
     s16 *timer = &work->timer;
 
     if (*timer < 0)

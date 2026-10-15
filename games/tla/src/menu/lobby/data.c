@@ -17,7 +17,7 @@ void Func_02001304(void);
 void Func_02001388(void);
 
 // 通信相手と照合する値。版ごとに異なる (each word is four ASCII characters)
-u32 LinkLobby_SlotValues[] = {
+u32 gLinkLobby_SlotValues[] = {
 #if defined(TLA_EDITION_JA)
 	0x32674d43, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
 #elif defined(TLA_EDITION_DE)
@@ -33,11 +33,11 @@ u32 LinkLobby_SlotValues[] = {
 #endif
 };
 
-u16 LinkLobby_SlotColumns[] = {
+u16 gLinkLobby_SlotColumns[] = {
 	256, 257, 1,
 };
 
-u16 Data_02001b02[] = {
+u16 gData_02001b02[] = {
 	709, 68, 74, 727, 1, 2, 3, 4,
 	5, 6, 7, 8, 9, 10, 11, 12,
 	13, 14, 15, 16, 17, 18, 20, 21,
@@ -96,7 +96,7 @@ struct ScenePlacement gScenePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 Data_02001ee0[] = {
+u32 gData_02001ee0[] = {
 	0xffff00be, 1, 0x980000, 0, 0xcc0000, 0x1004000,
 	0xffff00bb, 1, 0x1180000, 0, 0xcc0000, 0x14000,
 	0xffff00c9, 1, 0x1300000, 0, 0xa80000, 0x10000,

@@ -8,11 +8,11 @@ void Func_020017bc(void)
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
     s32 priority;
 
-    clear(Data_02002aa0, 0x1004);
-    Data_02002aa0[0] = Resource_FindFreeEntry();
+    clear(gData_02002aa0, 0x1004);
+    gData_02002aa0[0] = Resource_FindFreeEntry();
     /* FAKEMATCH: the empty asm keeps the entry's store ahead of the size, as in the native (plain: differ 2; a block pointer, a struct with the entry first, a size temporary or the VramBlock_LoadCached_ inline: no closer). */
     asm("");
-    VramBlock_LoadCached(Data_02002aa0[0], 0x200, 0);
+    VramBlock_LoadCached(gData_02002aa0[0], 0x200, 0);
     /* FAKEMATCH: held in a local, the priority is built before the callback's address loads, as in the native and events_f.c (as a literal: differ 2). */
     priority = 0x480;
     Scheduler_AddOrUpdateCallback(Func_020015f8, priority);

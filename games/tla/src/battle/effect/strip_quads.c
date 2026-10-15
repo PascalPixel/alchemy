@@ -4,9 +4,9 @@
 // pair for each corner.
 struct StripTriangle {
     u8 vertex[3];
-    u8 unknown_03;
+    u8 unk03;
     u8 uv[3][2];
-    u8 unknown_0a[2];
+    u8 unk0a[2];
 };
 
 struct StripQuad {

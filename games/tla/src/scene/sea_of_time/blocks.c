@@ -3,9 +3,9 @@
 #include "field_scene.h"
 #include "scene_ids.h"
 
-extern const u8 Data_020022d0[];
-extern const u8 Data_0200242c[];
-extern const u8 Data_0200251c[];
+extern const u8 gData_020022d0[];
+extern const u8 gData_0200242c[];
+extern const u8 gData_0200251c[];
 
 void Func_0200141c(s32 x, s32 z, s32 actor)
 {
@@ -114,8 +114,8 @@ void Func_020015ec(void)
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov687Room1)
-        return (const struct SceneEvent *)Data_020022d0;
+        return (const struct SceneEvent *)gData_020022d0;
     if (gPartyState.entrance <= 4)
-        return (const struct SceneEvent *)Data_0200242c;
-    return (const struct SceneEvent *)Data_0200251c;
+        return (const struct SceneEvent *)gData_0200242c;
+    return (const struct SceneEvent *)gData_0200251c;
 }

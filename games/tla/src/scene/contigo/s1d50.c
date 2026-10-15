@@ -1,11 +1,11 @@
 #include "contigo.h"
 
-extern const u8 Data_020048a0[];
-extern const u8 Data_020048f8[];
-extern const u8 Data_0200493c[];
-extern const u8 Data_02004980[];
-extern const u8 Data_020049c4[];
-extern const u8 Data_02006030[];
+extern const u8 gData_020048a0[];
+extern const u8 gData_020048f8[];
+extern const u8 gData_0200493c[];
+extern const u8 gData_02004980[];
+extern const u8 gData_020049c4[];
+extern const u8 gData_02006030[];
 
 // The reunion scene that opens with "Glad you kept your promise".
 void Func_02001d50(void)
@@ -22,29 +22,29 @@ void Func_02001d50(void)
     Contigo_Se(78);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Contigo_ObjFollow(0, gPartyState.current_owner);
-    Contigo_ObjFollow(1, gPartyState.current_owner);
-    Contigo_ObjFollow(3, gPartyState.current_owner);
-    Contigo_ObjFollow(2, gPartyState.current_owner);
-    Contigo_ObjFollow(8, gPartyState.current_owner);
+    Contigo_ObjFollow(0, gPartyState.currentOwner);
+    Contigo_ObjFollow(1, gPartyState.currentOwner);
+    Contigo_ObjFollow(3, gPartyState.currentOwner);
+    Contigo_ObjFollow(2, gPartyState.currentOwner);
+    Contigo_ObjFollow(8, gPartyState.currentOwner);
     Contigo_Wait(10);
-    Contigo_ObjSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
-    Contigo_ObjWalk(gPartyState.current_owner, 160, 382);
-    Contigo_ObjTurn(gPartyState.current_owner, 0x8000, 0);
-    Contigo_ObjMoveTo(5, gPartyState.current_owner);
-    Contigo_ObjMoveTo(7, gPartyState.current_owner);
-    Contigo_ObjMoveTo(6, gPartyState.current_owner);
-    Contigo_ObjMoveTo(9, gPartyState.current_owner);
+    Contigo_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
+    Contigo_ObjWalk(gPartyState.currentOwner, 160, 382);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0x8000, 0);
+    Contigo_ObjMoveTo(5, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(7, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(6, gPartyState.currentOwner);
+    Contigo_ObjMoveTo(9, gPartyState.currentOwner);
     WaitFrames(1);
     Contigo_ObjSpeed(5, 0xcccc, 0x6666);
     Contigo_ObjSpeed(7, 0xcccc, 0x6666);
     Contigo_ObjSpeed(9, 0xcccc, 0x6666);
     Contigo_ObjSpeed(6, 0xcccc, 0x6666);
-    Contigo_ObjAction(5, Data_020048a0);
-    Contigo_ObjAction(9, Data_02004980);
-    Contigo_ObjAction(6, Data_0200493c);
-    Contigo_ObjActionRefresh(7, Data_020048f8);
-    Contigo_ObjReset(gPartyState.current_owner);
+    Contigo_ObjAction(5, gData_020048a0);
+    Contigo_ObjAction(9, gData_02004980);
+    Contigo_ObjAction(6, gData_0200493c);
+    Contigo_ObjActionRefresh(7, gData_020048f8);
+    Contigo_ObjReset(gPartyState.currentOwner);
     Contigo_ObjReset(1);
     Contigo_ObjReset(3);
     Contigo_ObjReset(2);
@@ -145,23 +145,23 @@ void Func_02001d50(void)
     Contigo_ObjTurn(5, 0x4000, 0);
     Contigo_ObjTurn(7, 0x6000, 0);
     Contigo_ObjTurn(9, 0x3000, 0);
-    answer = Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0);
-    owner = gPartyState.current_owner;
+    answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+    owner = gPartyState.currentOwner;
     if (answer == 0) {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_ObjMode(2, 3);
         Contigo_MessagePut(2, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         ObjectMotion_WaitForAnimationChange(owner);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Contigo_ObjMode(2, 4);
         Contigo_MessagePut(2, 0);
     }
     Contigo_ObjFace(9, 0x5000);
     Contigo_ObjModeWait(9, 4);
     Contigo_MessagePut(9, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0x8000, 0);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0x8000, 0);
     Contigo_ObjTurn(5, 0xa000, 0);
     Contigo_ObjTurn(7, 0x8000, 0);
     Contigo_ObjTurn(3, 0, 0);
@@ -205,20 +205,20 @@ void Func_02001d50(void)
     Contigo_MessagePut(9, 0);
     Contigo_ObjFace(1, 0x2000);
     Contigo_MessageOpen(0x4001, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0xa000, 0);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0xa000, 0);
     Contigo_ObjTurn(5, 0x4000, 0);
     Contigo_ObjTurn(9, 0x3000, 0);
-    answer = Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0);
-    owner = gPartyState.current_owner;
+    answer = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+    owner = gPartyState.currentOwner;
     if (answer == 0) {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_ObjEmote(1, 258);
         Contigo_MessagePut(0x4001, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         ObjectMotion_WaitForAnimationChange(owner);
         Contigo_Jump(1, 264, 20);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Contigo_MessagePut(0x4001, 0);
     }
     Contigo_ObjTurn(5, 0x8000, 0);
@@ -238,7 +238,7 @@ void Func_02001d50(void)
     Func_020040dc(8, 0xa00000, 0x1d20000, angle);
     WaitFrames(1);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjFollow(gPartyState.current_owner, 8);
+    Contigo_ObjFollow(gPartyState.currentOwner, 8);
     Contigo_ObjFollow(5, 8);
     Contigo_ObjFollow(7, 8);
     Contigo_ObjFollow(6, 8);
@@ -256,7 +256,7 @@ void Func_02001d50(void)
     Contigo_ObjWalk(8, 146, 406);
     Contigo_Jump(3, 264, 20);
     Contigo_MessagePut(3, 0);
-    Contigo_ObjReset(gPartyState.current_owner);
+    Contigo_ObjReset(gPartyState.currentOwner);
     Contigo_ObjReset(5);
     Contigo_ObjReset(7);
     Contigo_ObjReset(6);
@@ -267,7 +267,7 @@ void Func_02001d50(void)
     Contigo_Se(705);
     Contigo_ObjModeWait(8, 3);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjMode(gPartyState.current_owner, 3);
+    Contigo_ObjMode(gPartyState.currentOwner, 3);
     Contigo_ObjMode(5, 3);
     Contigo_ObjMode(7, 3);
     Contigo_ObjMode(6, 3);
@@ -287,7 +287,7 @@ void Func_02001d50(void)
     Contigo_PairShow(0, 5, 5, 8, 10, 8, 9, 20, 18, 10, 10);
 #endif
     Contigo_ObjTurn(0, 0x2000, 0);
-    Contigo_Jump(gPartyState.current_owner, 256, 0);
+    Contigo_Jump(gPartyState.currentOwner, 256, 0);
     Contigo_Jump(5, 256, 0);
     Contigo_Jump(7, 256, 0);
     Contigo_Jump(6, 256, 0);
@@ -318,7 +318,7 @@ void Func_02001d50(void)
     Contigo_ObjTurn(0, 0xe000, 0);
     Contigo_ObjTurn(1, 0xa000, 0);
     Contigo_ObjTurn(3, 0, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0xc000, 0);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
     Contigo_ObjTurn(5, 0x4000, 0);
     Contigo_ObjTurn(7, 0x4000, 0);
     Contigo_ObjTurn(6, 0xc000, 40);
@@ -327,21 +327,21 @@ void Func_02001d50(void)
     Contigo_ObjTurn(0, 0x2000, 0);
     Contigo_ObjTurn(1, 0x2000, 0);
     Contigo_ObjTurn(3, 0x2000, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0x6000, 0);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0x6000, 0);
     Contigo_ObjTurn(5, 0x4000, 0);
     Contigo_ObjTurn(7, 0x6000, 0);
     Contigo_ObjTurn(6, 0x6000, 0);
     Contigo_ObjMode(8, 4);
     Contigo_MessagePut(8, 0);
     Contigo_ObjShake(5, 0, 10);
-    Func_02003e54(object, Data_02006030);
+    Func_02003e54(object, gData_02006030);
     Contigo_Wait(80);
     Func_02003f54(object);
     Contigo_ObjModeWait(8, 4);
     Contigo_MessagePut(8, 0);
     Contigo_ObjEmote(7, 258);
     Contigo_ObjShake(7, 0, 10);
-    Func_02003e54(object, Data_02006030);
+    Func_02003e54(object, gData_02006030);
     Contigo_Wait(80);
     Func_02003f54(object);
     Contigo_ObjFace(8, 0xd000);
@@ -350,7 +350,7 @@ void Func_02001d50(void)
     Contigo_ObjEmote(0, 258);
     Contigo_ObjEmote(1, 258);
     Contigo_ObjEmote(3, 258);
-    Contigo_ObjEmote(gPartyState.current_owner, 258);
+    Contigo_ObjEmote(gPartyState.currentOwner, 258);
     Contigo_ObjEmote(5, 258);
     Contigo_ObjEmote(7, 258);
     Contigo_ObjEmote(6, 258);
@@ -363,7 +363,7 @@ void Func_02001d50(void)
     Contigo_ObjTurn(1, 0, 0);
     Contigo_ObjTurn(3, 0, 0);
     Contigo_ObjTurn(2, 0xe000, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0x8000, 0);
+    Contigo_ObjTurn(gPartyState.currentOwner, 0x8000, 0);
     Contigo_ObjTurn(5, 0x8000, 0);
     Contigo_ObjTurn(6, 0x8000, 0);
     Contigo_ObjTurn(7, 0x8000, 0);
@@ -373,7 +373,7 @@ void Func_02001d50(void)
     Contigo_ObjMode(1, 3);
     Contigo_ObjMode(3, 3);
     Contigo_ObjMode(2, 3);
-    Contigo_ObjMode(gPartyState.current_owner, 3);
+    Contigo_ObjMode(gPartyState.currentOwner, 3);
     Contigo_ObjMode(5, 3);
     Contigo_ObjMode(6, 3);
     Contigo_ObjMode(7, 3);
@@ -419,15 +419,15 @@ void Func_02001d50(void)
     Contigo_Jump(5, 264, 0);
     Contigo_ObjTurn(5, 0x4000, 20);
     Contigo_MessageOpen(5, 0);
-    Contigo_ObjTurn(gPartyState.current_owner, 0xc000, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    Contigo_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Contigo_ObjFace(9, 0x3000);
         Contigo_ObjMode(9, 3);
         Contigo_MessagePut(0x1009, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         Contigo_ObjFace(9, 0x3000);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Contigo_ObjMode(9, 4);
         Contigo_MessagePut(0x1009, 0);
     }
@@ -440,18 +440,18 @@ void Func_02001d50(void)
     Contigo_ObjMode(1, 3);
     Contigo_ObjMode(3, 3);
     Contigo_ObjMode(2, 3);
-    Contigo_ObjMode(gPartyState.current_owner, 3);
+    Contigo_ObjMode(gPartyState.currentOwner, 3);
     Contigo_ObjMode(5, 3);
     Contigo_ObjMode(6, 3);
     Contigo_ObjModeWait(7, 3);
-    Contigo_ObjAction(0, Data_020049c4);
-    Contigo_ObjAction(1, Data_020049c4);
-    Contigo_ObjAction(3, Data_020049c4);
-    Contigo_ObjAction(2, Data_020049c4);
-    Contigo_ObjAction(9, Data_020049c4);
-    Contigo_ObjAction(5, Data_020049c4);
-    Contigo_ObjAction(6, Data_020049c4);
-    Contigo_ObjActionRefresh(7, Data_020049c4);
+    Contigo_ObjAction(0, gData_020049c4);
+    Contigo_ObjAction(1, gData_020049c4);
+    Contigo_ObjAction(3, gData_020049c4);
+    Contigo_ObjAction(2, gData_020049c4);
+    Contigo_ObjAction(9, gData_020049c4);
+    Contigo_ObjAction(5, gData_020049c4);
+    Contigo_ObjAction(6, gData_020049c4);
+    Contigo_ObjActionRefresh(7, gData_020049c4);
     Func_02004044();
     GameFlag_SetBit(2512);
     Func_02004074();

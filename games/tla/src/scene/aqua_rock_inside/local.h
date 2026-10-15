@@ -70,11 +70,11 @@ struct PillarEntry {
     s16 kind;
     s16 state;
     s32 *position;
-    u8 unknown_18[24];
+    u8 unk18[24];
 };
 
 struct PillarWork {
-    u16 vram_entry;
+    u16 vramEntry;
     u16 count;
     struct PillarEntry entries[32];
 };
@@ -83,13 +83,13 @@ struct BeamEntry {
     s32 x;
     s32 y;
     s32 z;
-    s16 unknown_0c;
+    s16 unk0c;
     s16 kind;
 };
 
 struct BeamWork {
-    u16 vram_entry;
-    u16 unknown_02;
+    u16 vramEntry;
+    u16 unk02;
     struct BeamEntry entries[2];
 };
 
@@ -109,11 +109,11 @@ struct VentWork {
     u16 ids[4];
 };
 
-extern u8 Data_020023c4[];
-#define VENT_WORK ((struct VentWork *)(Data_020023c4 + 0x188))
+extern u8 gData_020023c4[];
+#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
 
 struct VentRow {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s16 active;
     s16 timer;
     s32 x;
@@ -125,15 +125,15 @@ struct VentRow {
 #define VENT_ROW(index) ((struct VentRow *)((u8 *)VENT_WORK + (index) * 20))
 
 struct SceneEventWork {
-    u8 unknown_000[0x15a];
-    s16 value_15a;
-    u8 unknown_15c[0xe];
-    s16 value_16a;
+    u8 unk000[0x15a];
+    s16 value15a;
+    u8 unk15c[0xe];
+    s16 value16a;
 };
 
 struct FieldSpriteFlags {
-    u8 unknown_00[0x11];
-    u8 flag_0 : 1;
+    u8 unk00[0x11];
+    u8 flag0 : 1;
 };
 
 s32 Math_Sine(s32 angle);
@@ -189,16 +189,16 @@ s32 Func_02003bb8(s32 index, s32 value);
 s32 Func_02003bcc(void);
 s32 Func_02003bd8(s32 limit);
 
-extern s32 Data_02004d84;
-extern struct PillarWork Data_0200536c;
-extern struct BeamWork Data_02005970;
-extern const u8 Data_02003fd8[];
-extern const u8 Data_020040dc[];
-extern const u8 Data_0200411c[];
-extern const u8 Data_02004128[];
-extern const u8 Data_0200414c[];
-extern const u8 Data_02004351[];
-extern const u8 Data_020044c8[];
+extern s32 gData_02004d84;
+extern struct PillarWork gData_0200536c;
+extern struct BeamWork gData_02005970;
+extern const u8 gData_02003fd8[];
+extern const u8 gData_020040dc[];
+extern const u8 gData_0200411c[];
+extern const u8 gData_02004128[];
+extern const u8 gData_0200414c[];
+extern const u8 gData_02004351[];
+extern const u8 gData_020044c8[];
 
 extern const u8 MsgCheckedTheColumn[];
 extern const u8 MsgCheckedThePsynergy[];

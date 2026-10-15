@@ -324,4 +324,4 @@ Func_0816d130:
 .L_0816d3d0:
 	.4byte Func_08143000
 .L_0816d3d4:
-	.4byte Data_08197410
+	.4byte gData_08197410

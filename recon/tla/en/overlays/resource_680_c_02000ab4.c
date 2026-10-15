@@ -14,13 +14,13 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 void Func_02000ab4(void)
 {
-    if (gPartyState.render_mode == 2) {
-        struct EventWork *work = Ram_HeapSlots->event_work;
-        struct MapWork *map = Ram_HeapSlots->map_work;
-        struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    if (gPartyState.renderMode == 2) {
+        struct EventWork *work = Ram_HeapSlots->eventWork;
+        struct MapWork *map = Ram_HeapSlots->mapWork;
+        struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
         s32 x = object->x / 0x100000;
         s32 z = (object->z - object->y + 0x7fff) / 0x100000;
-        s32 code = map->layers[2].cells[x + z * 128].collision_code;
+        s32 code = map->layers[2].cells[x + z * 128].collisionCode;
 
         if ((u32)(code - 1) <= 229)
             work->exit = code;
@@ -30,15 +30,15 @@ void Func_02000ab4(void)
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct MapCell *cells = Ram_HeapSlots->map_work->layers[2].cells;
-    s32 cell_x = x / 0x100000;
-    s32 cell_z = (z - y + 0x7fff) / 0x100000;
+    struct MapCell *cells = Ram_HeapSlots->mapWork->layers[2].cells;
+    s32 cellX = x / 0x100000;
+    s32 cellZ = (z - y + 0x7fff) / 0x100000;
 
-    cells[cell_x + cell_z * 128].collision_code = 255;
+    cells[cellX + cellZ * 128].collisionCode = 255;
     object->x = (x & 0xfff00000) + 0x80000;
     object->z = (z & 0xfff00000) + 0x80000;
-    object->y = object->z - (cell_z << 20);
-    object->motion_flags = 0;
-    object->priority_flags |= 2;
+    object->y = object->z - (cellZ << 20);
+    object->motionFlags = 0;
+    object->priorityFlags |= 2;
     ObjectDispatch_SetSingleChildFlags(object, 0);
 }

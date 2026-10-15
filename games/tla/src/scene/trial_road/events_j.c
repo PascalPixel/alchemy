@@ -36,7 +36,7 @@ void Func_020010d8(void)
 
     /* FAKEMATCH: loads the party base before it builds the render-mode offset (differ 2 without it). */
     do { } while (0);
-    if (party->render_mode == 2)
+    if (party->renderMode == 2)
         Func_020059c8();
     else
         Func_02000e40(18, 0, 1, 1);

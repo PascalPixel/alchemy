@@ -23,22 +23,22 @@ void Func_02001cd4(s32 countdown);
 void Func_02001cfc(s32 a);
 void Func_02001d4c(s32 a);
 
-extern const u8 Data_02001e48[];
-extern const u8 Data_02002100[];
-extern const u8 Data_02002358[];
-extern const u8 Data_020025b0[];
-extern struct DoorStep Data_0200277c[];
+extern const u8 gData_02001e48[];
+extern const u8 gData_02002100[];
+extern const u8 gData_02002358[];
+extern const u8 gData_020025b0[];
+extern struct DoorStep gData_0200277c[];
 
 const u8 *Func_0200004c(void)
 {
     if (GameFlag_Test(0x8a7)) {
         if (GameFlag_Test(0x90f) == 0)
-            return Data_020025b0;
-        return Data_02002358;
+            return gData_020025b0;
+        return gData_02002358;
     }
     if (GameFlag_Test(0x8ab))
-        return Data_02002100;
-    return Data_02001e48;
+        return gData_02002100;
+    return gData_02001e48;
 }
 
 void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused)
@@ -47,10 +47,10 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused)
     Func_02001cfc(0);
     Func_02001d4c(158);
     Func_02001bc4(step->script, step->x, step->z);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 2;
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.current_owner, 2, -8);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2, -8);
     Battle_WaitMode0(10);
     Func_02001cd4(countdown);
     Event_FinishScreenTransition();
@@ -60,7 +60,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused)
 
 void Func_0200010c(s32 index)
 {
-    struct DoorStep *table = Data_0200277c;
+    struct DoorStep *table = gData_0200277c;
 
     /* FAKEMATCH: a one-pass block loads the table address before the index copy (two reordered rows). */
     do {

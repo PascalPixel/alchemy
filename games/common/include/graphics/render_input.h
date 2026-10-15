@@ -10,7 +10,7 @@
 
 struct RenderInput
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	u16 width;
 	u16 height;
 	u16 x;
@@ -49,10 +49,10 @@ union RenderTableValue
 struct RenderOam
 {
 	u16 y : 8;
-	u16 affine_mode : 2;
-	u16 object_mode : 2;
+	u16 affineMode : 2;
+	u16 objectMode : 2;
 	u16 mosaic : 1;
-	u16 palette_256 : 1;
+	u16 palette256 : 1;
 	u16 shape : 2;
 	u16 x : 9;
 	u16 matrix : 5;
@@ -70,26 +70,26 @@ struct RenderOutput
 	s8					 active;
 	u16					 x;
 	u16					 y;
-	u16					 unknown_0a;
-	u16					 anim_step;
+	u16					 unk0a;
+	u16					 animStep;
 	s8					 index;
 	u8					 sentinel;
-	u8					 unknown_10[4];
+	u8					 unk10[4];
 	struct RenderOam	 oam;
 };
 
 struct RenderOutputList
 {
 	struct RenderOutput	 *head;
-	struct RenderOutput **tail_link;
+	struct RenderOutput **tailLink;
 };
 
 LAYOUT_SIZE_GUARD(RenderOutputList_Size, struct RenderOutputList, 8);
-LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tail_link, 4);
+LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tailLink, 4);
 
 #if GAME_TLA
 struct RenderOutput *RenderOutput_Create(
-	s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+	s32 no, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
 #endif
 
 #if GAME_TLA
@@ -97,7 +97,7 @@ struct RenderOutput *RenderOutput_CreateFar(
 	s32 resource, s32 flags, struct RenderInput *window, s32 x, s32 y);
 #endif
 
-LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, anim_step, 0x0c);
+LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, animStep, 0x0c);
 
 #define RENDER_OUTPUT_OFFSET(field) ((u32) & (((struct RenderOutput *)0)->field))
 

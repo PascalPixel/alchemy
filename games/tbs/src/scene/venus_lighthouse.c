@@ -72,16 +72,16 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 
 struct EventWorkState
 {
-	u8	unknown_000[0xcb6];
-	u16 field_cb6;
-	u8	unknown_cb8[2];
-	u16 field_cba;
+	u8	unk000[0xcb6];
+	u16 fieldCb6;
+	u8	unkcb8[2];
+	u16 fieldCba;
 };
 
 static void ConfigureOverlayObject(struct FieldActor *object, s32 palette)
 {
-	object->motion_flags = 0;
-	object->collision_flags = 8;
+	object->motionFlags = 0;
+	object->collisionFlags = 8;
 	Engine_ActorSetSpriteFlags(object, 0);
 	ObjectGroup_SetChildValue(object, palette);
 }
@@ -110,7 +110,7 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 	{
 		((struct FieldSpritePriority *)object->sprite)->priority = 1;
 		ConfigureOverlayObject(object, 15);
-		object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		return object;
 	}
 	return 0;
@@ -127,75 +127,75 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 
 static void RunStagedActorTransition(void)
 {
-	s32					target_position[3];
+	s32					targetPosition[3];
 	struct StagedActor *leader;
 	struct StagedActor *actor;
-	struct StagedActor *blocking_actor;
-	s32					direction_index;
-	u32					packed_step;
-	s32					move_rate;
-	s32					transition_busy;
+	struct StagedActor *blockingActor;
+	s32					directionIndex;
+	u32					packedStep;
+	s32					moveRate;
+	s32					transitionBusy;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	direction_index = leader->direction_and_kind >> 12;
-	packed_step = StagedActor_DirectionSteps[direction_index];
-	target_position[0] = leader->x.value + (packed_step & 0xffff0000);
-	target_position[1] = leader->y;
-	packed_step <<= 16;
-	target_position[2] = leader->z.value + packed_step;
-	actor = SceneData_FindSlotAtPosition(target_position, leader);
+	directionIndex = leader->directionAndKind >> 12;
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = leader->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = leader->y;
+	packedStep <<= 16;
+	targetPosition[2] = leader->z.value + packedStep;
+	actor = SceneData_FindSlotAtPosition(targetPosition, leader);
 	if (actor == 0)
 		return;
 
-	packed_step = StagedActor_DirectionSteps[direction_index];
-	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
-	target_position[1] = actor->y;
-	packed_step <<= 16;
-	target_position[2] = actor->z.value + packed_step;
-	blocking_actor = SceneData_FindSlotAtPosition(target_position, actor);
-	if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0)
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = actor->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = actor->y;
+	packedStep <<= 16;
+	targetPosition[2] = actor->z.value + packedStep;
+	blockingActor = SceneData_FindSlotAtPosition(targetPosition, actor);
+	if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
 		return;
 
-	target_position[0] = actor->x.value;
-	target_position[1] = actor->y + 0x100000;
-	target_position[2] = actor->z.value;
-	blocking_actor = SceneData_FindSlotAtPosition(target_position, actor);
-	if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0)
+	targetPosition[0] = actor->x.value;
+	targetPosition[1] = actor->y + 0x100000;
+	targetPosition[2] = actor->z.value;
+	blockingActor = SceneData_FindSlotAtPosition(targetPosition, actor);
+	if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
 		return;
 
-	actor->transition_mode = 2;
-	packed_step = StagedActor_DirectionSteps[direction_index];
-	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
-	target_position[1] = actor->y;
-	packed_step <<= 16;
-	target_position[2] = actor->z.value + packed_step;
-	if (FieldObject_CheckMovementCollision(actor, target_position) > 0)
+	actor->transitionMode = 2;
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = actor->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = actor->y;
+	packedStep <<= 16;
+	targetPosition[2] = actor->z.value + packedStep;
+	if (FieldObject_CheckMovementCollision(actor, targetPosition) > 0)
 		return;
 
-	transition_busy = actor->transition_busy;
-	if (transition_busy != 0)
+	transitionBusy = actor->transitionBusy;
+	if (transitionBusy != 0)
 		return;
 
 	Object_SetMode(leader, 8);
-	move_rate = 0x3333;
+	moveRate = 0x3333;
 	Engine_TaskWait(15);
 	Engine_AudioPlayCue(185);
-	actor->move_rate_x = move_rate;
-	actor->move_rate_z = move_rate;
-	Engine_ObjectSetPosition(actor, target_position[0], target_position[1], target_position[2]);
-	leader->move_rate_x = move_rate;
-	leader->move_rate_z = move_rate;
-	Engine_ObjectSetPosition(leader, target_position[0], target_position[1], target_position[2]);
+	actor->moveRateX = moveRate;
+	actor->moveRateZ = moveRate;
+	Engine_ObjectSetPosition(actor, targetPosition[0], targetPosition[1], targetPosition[2]);
+	leader->moveRateX = moveRate;
+	leader->moveRateZ = moveRate;
+	Engine_ObjectSetPosition(leader, targetPosition[0], targetPosition[1], targetPosition[2]);
 	Engine_ObjectCommitPosition(actor);
 	BattleFx_PlayQueuedSound();
-	actor->x.value = target_position[0];
-	actor->z.value = target_position[2];
-	actor->velocity_x = transition_busy;
-	actor->velocity_z = transition_busy;
-	leader->target_x = ACTOR_NO_TARGET;
-	leader->target_z = ACTOR_NO_TARGET;
-	leader->velocity_x = transition_busy;
-	leader->velocity_z = transition_busy;
+	actor->x.value = targetPosition[0];
+	actor->z.value = targetPosition[2];
+	actor->velocityX = transitionBusy;
+	actor->velocityZ = transitionBusy;
+	leader->targetX = ACTOR_NO_TARGET;
+	leader->targetZ = ACTOR_NO_TARGET;
+	leader->velocityX = transitionBusy;
+	leader->velocityZ = transitionBusy;
 	leader->x.value = leader->x.parts.cell << 16;
 	leader->z.value = leader->z.parts.cell << 16;
 	Object_SetMode(leader, 1);
@@ -226,7 +226,7 @@ static s32 StagedActor_FillGridAttributeRectangle(
 
 			for (column = 0; column < width; column++)
 			{
-				cell->collision_code = value;
+				cell->collisionCode = value;
 				cell++;
 			}
 		}
@@ -236,7 +236,7 @@ static s32 StagedActor_FillGridAttributeRectangle(
 
 static void SceneActor_ApplySlotsMatchingKind212(void)
 {
-	struct FieldActor **actors = gEventWork->placed_actors;
+	struct FieldActor **actors = gEventWork->placedActors;
 	struct FieldActor  *actor;
 	u32					i;
 
@@ -274,8 +274,8 @@ static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object)
 	if (phase == 0)
 	{
 		params.priority = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
-		params.start_scale_x = 0x6666;
-		params.start_scale_y = 0x6666;
+		params.startScaleX = 0x6666;
+		params.startScaleY = 0x6666;
 		params.palette = 14;
 		x = object->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
 		y = object->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
@@ -297,8 +297,8 @@ static s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 	s32					 speed;
 	s32					 phase;
 
-	params.start_scale_x = 0x0000cccc;
-	params.start_scale_y = 0x0000cccc;
+	params.startScaleX = 0x0000cccc;
+	params.startScaleY = 0x0000cccc;
 	params.priority = 0;
 
 	speed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
@@ -310,8 +310,8 @@ static s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 	phase = gFrameCount & 15;
 	if (phase == 0)
 	{
-		params.start_scale_x = 0x00008000;
-		params.start_scale_y = 0x00008000;
+		params.startScaleX = 0x00008000;
+		params.startScaleY = 0x00008000;
 		Effect_Spawn(obj->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
 			obj->y.fixed, obj->z.fixed, 0, 0, 0, 0x000a0000, &params);
 	}
@@ -339,7 +339,7 @@ static void SceneEffect_RunObjectZeroColorSequence(void)
 	Engine_EventWait(30);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
-	Engine_EventRequestExit(state->touched_trigger);
+	Engine_EventRequestExit(state->touchedTrigger);
 	Engine_EventEnd();
 }
 
@@ -352,7 +352,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	{
 		Engine_EventBegin();
 		Camera_MoveTo(-1, -1, -1, 0);
-		leader->motion_flags = 0;
+		leader->motionFlags = 0;
 		Actor_SetPosition(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
 			(leader->z.part.pixel << 16) - 0x100000);
 		Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -366,7 +366,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 		Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 		Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
 		Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-		leader->motion_flags = 3;
+		leader->motionFlags = 3;
 		leader->update = 0;
 		BattleFx_PlayQueuedSound();
 		Engine_EventEnd();
@@ -402,17 +402,17 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	actor->y.fixed = 0x820000;
 	actor->gravity = 0x8000;
 	actor->bounce = 0;
-	actor->motion_flags = 0;
+	actor->motionFlags = 0;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
 	Event_PlayCue(204);
-	actor->motion_flags = 3;
+	actor->motionFlags = 3;
 	Engine_EventWait(24);
 	options.palette = 7;
 	options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
-	options.start_scale_x = 0xcccc;
-	options.start_scale_y = 0xcccc;
+	options.startScaleX = 0xcccc;
+	options.startScaleY = 0xcccc;
 	for (i = 0; i <= 16; i++)
 	{
 		s32 angle;
@@ -456,17 +456,17 @@ static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor 
 	}
 	if ((u32)(Engine_RandomNext() * 6) >> 16 == 0)
 	{
-		if (obj->target_x != ACTOR_NO_TARGET || obj->target_z != ACTOR_NO_TARGET)
+		if (obj->targetX != ACTOR_NO_TARGET || obj->targetZ != ACTOR_NO_TARGET)
 		{
 			Engine_AudioPlayCue(246);
 		}
 	}
 	y = 0;
 	params.type = 286;
-	params.start_scale_x = 0x10000;
-	params.start_scale_y = 0x10000;
-	params.target_scale_x = -327;
-	params.target_scale_y = -327;
+	params.startScaleX = 0x10000;
+	params.startScaleY = 0x10000;
+	params.targetScaleX = -327;
+	params.targetScaleY = -327;
 	random = Engine_RandomNext();
 	a = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
 	random = Engine_RandomNext();
@@ -492,12 +492,12 @@ static struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg
 	obj->acceleration = 0x10000;
 	Engine_ActorSetSpriteFlags(obj, 0);
 	Object_SetMode(obj, 7);
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 	obj->y.fixed = 0;
-	obj->collision_flags = 0;
-	obj->priority_flags = 2;
+	obj->collisionFlags = 0;
+	obj->priorityFlags = 2;
 	obj->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
-	obj->rise_enabled = 0;
+	obj->riseEnabled = 0;
 	Engine_ObjectSetScript(obj, arg2);
 	return obj;
 }
@@ -514,7 +514,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 #endif
 
 	obj = Object_GetById(ACTOR_PARTY_LEADER);
-	state = &obj->motion_flags;
+	state = &obj->motionFlags;
 	old = *state;
 #if EDITION_INTERNATIONAL
 	vec.x = (obj->x.fixed & 0xfff00000) + 0x80000;
@@ -524,7 +524,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 	Vector_AddPolarOffset(0x100000, m, &vec);
 #else
 	m = obj->facing >> 12;
-	step = StagedActor_DirectionSteps[m];
+	step = gStagedActor_DirectionSteps[m];
 	vec.x = obj->x.fixed + (step & 0xffff0000);
 	vec.y = obj->y.fixed;
 	step <<= 16;
@@ -539,7 +539,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 		vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
 		Vector_AddPolarOffset(0x200000, (obj->facing + 0x2000) & 0xc000, &vec);
 #else
-		step = StagedActor_DirectionSteps[m];
+		step = gStagedActor_DirectionSteps[m];
 		vec.x = obj->x.fixed + ((step & 0xffff0000) << 1);
 		vec.y = obj->y.fixed;
 		step <<= 17;
@@ -555,7 +555,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 			Object_SetMode(obj, 7);
 			obj->speed = 0x30000;
 			obj->acceleration = 0x20000;
-			obj->velocity_y = 0x40000;
+			obj->velocityY = 0x40000;
 			*state &= 0x7e;
 			Engine_ActorSetSpriteFlags(obj, 0);
 			Engine_ActorMoveToAndWait(
@@ -722,7 +722,7 @@ static void SceneDialogue_ReadRelief(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_MessageShowCentered(
-		work->facing_trigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35, 1);
+		work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35, 1);
 	Engine_EventEnd();
 #endif
 }
@@ -777,21 +777,21 @@ static void EV45_TOUCH(void)
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gVenusLeaderApproachScript);
 	Object_RefreshSelectorById(0);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
-	actor->velocity_y = 0x40000;
+	actor->velocityY = 0x40000;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
 	if (actor->z.fixed >> 20 <= 54)
 	{
-		Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		z = 210;
 	}
 	else
 	{
-		Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		z = 238;
 	}
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, actor->x.part.pixel, z << 2);
 	Engine_EventWait(1);
-	SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steering_flags, 1);
+	SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags, 1);
 	Engine_EventWait(20);
 	actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
@@ -807,8 +807,8 @@ static void EV41_SEARCH(void)
 	struct EventWorkState *work;
 
 	work = (struct EventWorkState *)gEventWork;
-	work->field_cba = 0;
-	work->field_cb6 = 1;
+	work->fieldCba = 0;
+	work->fieldCb6 = 1;
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
@@ -879,7 +879,7 @@ static void EV41_SEARCH(void)
 	Camera_MoveTo(0x1c80000, -1, 0x1a70000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventEnd();
-	work->field_cb6 = 0;
+	work->fieldCb6 = 0;
 }
 
 static void FieldScene_RunFlag986ActorOneScene(void)
@@ -963,9 +963,9 @@ static void EV13_PSYNERGY(void)
 	{
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(188);
-		obj->motion_flags = 0;
+		obj->motionFlags = 0;
 		val = 0xfffe0000;
-		obj->terrain_height = val;
+		obj->terrainHeight = val;
 		obj->y.fixed = val;
 		Engine_GameFlagSet(0x200);
 		Map_CopyCellsTo(44, 117, 41, 117, 3, 5);
@@ -984,8 +984,8 @@ static void EV46_TOUCH(void)
 		Map_CopyCellsTo(53, 50, 42, 49, 1, 1);
 		Map_CopyCellsTo(55, 117, 41, 117, 3, 5);
 		GameFlag_Clear(0x201);
-		leader->motion_flags |= 1;
-		leader->terrain_height = 0;
+		leader->motionFlags |= 1;
+		leader->terrainHeight = 0;
 		leader->y.fixed = 0;
 	}
 	else if (!GameFlag_IsSet(0x201))
@@ -996,8 +996,8 @@ static void EV46_TOUCH(void)
 		Map_CopyCellsTo(52, 117, 41, 117, 3, 5);
 		GameFlag_Set(0x201);
 		Engine_AudioPlayCue(161);
-		leader->motion_flags &= ~1;
-		leader->terrain_height = -0x20000;
+		leader->motionFlags &= ~1;
+		leader->terrainHeight = -0x20000;
 		leader->y.fixed = -0x20000;
 		Engine_EventEnd();
 	}
@@ -1008,8 +1008,8 @@ static void EV10_TALK(void)
 	struct EventWorkState *work;
 
 	work = (struct EventWorkState *)gEventWork;
-	work->field_cba = 0;
-	work->field_cb6 = 1;
+	work->fieldCba = 0;
+	work->fieldCb6 = 1;
 	Engine_EventBegin();
 	Engine_EventSetMessage(MsgVenusThoughtIdExploreAfterDoor);
 	Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
@@ -1038,7 +1038,7 @@ static void EV35_TOUCH_3(void)
 	rec7 = Object_GetById(0);
 	Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-	state = (u8 *)&rec7->motion_flags;
+	state = (u8 *)&rec7->motionFlags;
 	zero = 0;
 	*state = zero;
 #endif
@@ -1177,8 +1177,8 @@ static void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
 	s32 x;
 	s32 z;
 
-	obj->priority_flags |= 2;
-	obj->motion_flags = 0;
+	obj->priorityFlags |= 2;
+	obj->motionFlags = 0;
 	x = obj->x.fixed >> 20;
 	z = obj->z.fixed >> 20;
 	Map_CopyCellAttributes(9, 24, 1, 1, x, z);
@@ -1247,7 +1247,7 @@ static void SceneActor_UpdateSlots11And12ByTile(void)
 
 struct MapWork
 {
-	u8				   unknown_00[0x164];
+	u8				   unk00[0x164];
 	struct ScrollLayer layer;
 };
 
@@ -1260,7 +1260,7 @@ static void EV35_TOUCH_4(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1280,22 +1280,22 @@ static void EV35_TOUCH_4(void)
 			Engine_AudioPlayCue(239);
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_EventWait(20);
-			dust_x = 0x1200000;
+			dustX = 0x1200000;
 			x = 29;
 			countdown = 40;
 			for (i = 0; i <= 479; i++, countdown--)
 			{
 				layer->x += 0x3333;
-				dust_x += -0x3333;
+				dustX += -0x3333;
 				options.priority = 2;
-				options.start_scale_x = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
-				options.start_scale_y = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+				options.startScaleX = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+				options.startScaleY = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 				options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-				Effect_Spawn(dust_x, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
+				Effect_Spawn(dustX, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
 					&options);
 				if (i == 240)
 				{
-					dust_x += -0x300000;
+					dustX += -0x300000;
 				}
 				if (countdown == 0)
 				{
@@ -1321,7 +1321,7 @@ static void EV35_TOUCH_4(void)
 			Engine_AudioPlayCue(188);
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 			Engine_MapRenderWaitForValues();
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 			Engine_EventRequestExit(11);
 			Engine_EventEnd();
 		}
@@ -1344,8 +1344,8 @@ static void EV09_PSYNERGY(void)
 	leader = Object_GetById(0);
 	Engine_EventBegin();
 	Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
-	flags = &block->priority_flags;
-	if ((2 & block->priority_flags) != 0)
+	flags = &block->priorityFlags;
+	if ((2 & block->priorityFlags) != 0)
 	{
 		Map_CopyCellAttributes(45, 45, 1, 1, 46, 45);
 	}
@@ -1378,14 +1378,14 @@ static void EV09_PSYNERGY(void)
 				}
 				actor = Object_GetById(9);
 				Engine_ActorSetSpriteFlags(actor, 0);
-				block->terrain_id = set;
-				block->motion_flags = 3;
+				block->terrainId = set;
+				block->motionFlags = 3;
 				block->gravity = 0x1999;
 				block->bounce = set;
 				Map_CopyCellAttributes(43, 45, 1, 1, x, z);
 				OverlayObject_WaitUntilIdle(block);
 				Engine_AudioPlayCue(188);
-				block->motion_flags = set;
+				block->motionFlags = set;
 				block->y.fixed = -0x100000;
 				Engine_ActorSetSpritePriority(9, 3);
 				{
@@ -1394,12 +1394,12 @@ static void EV09_PSYNERGY(void)
 					*flags = two;
 				}
 				Map_CopyCellAttributes(45, 45, 1, 1, x, z);
-				Object_GetById(0)->priority_flags |= 1;
+				Object_GetById(0)->priorityFlags |= 1;
 				Engine_ObjectDispatchRelease(marker);
-				block->collision_flags = set;
+				block->collisionFlags = set;
 				*flags |= 2;
-				Object_GetById(10)->collision_flags = set;
-				Object_GetById(10)->priority_flags |= 2;
+				Object_GetById(10)->collisionFlags = set;
+				Object_GetById(10)->priorityFlags |= 2;
 				Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
 				Engine_ActorEnableActionCallback(10, gVenusPushScript);
 				Object_RefreshSelectorById(10);
@@ -1446,7 +1446,7 @@ static void VenusLighthouse_SettlePushedBlocks(void)
 	for (id = 9; id <= 11; id++)
 	{
 		block = Object_GetById(id);
-		flags = &block->priority_flags;
+		flags = &block->priorityFlags;
 		if (*flags != 2)
 		{
 			Map_CopyCellAttributes(47, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
@@ -1491,16 +1491,16 @@ static void VenusLighthouse_SettlePushedBlocks(void)
 			Engine_ActorSetSpritePriority(0, 3);
 		}
 		Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
-		block->terrain_id = 0;
-		block->motion_flags = 3;
+		block->terrainId = 0;
+		block->motionFlags = 3;
 		block->bounce = 0;
 		block->gravity = 0x1999;
 		Map_CopyCellAttributes(
 			42, 41, 1, 1, gVenusSwitchCells[slot].x, gVenusSwitchCells[slot].z);
 		OverlayObject_WaitUntilIdle(block);
 		Engine_AudioPlayCue(188);
-		block->collision_flags = 0;
-		block->motion_flags = 0;
+		block->collisionFlags = 0;
+		block->motionFlags = 0;
 		block->y.fixed = -0x100000;
 		Engine_ActorSetSpritePriority(id, 3);
 		{
@@ -1511,7 +1511,7 @@ static void VenusLighthouse_SettlePushedBlocks(void)
 		Map_CopyCellAttributes(
 			46, 39, 1, 1, gVenusSwitchCells[slot].x, gVenusSwitchCells[slot].z);
 		Engine_ActorSetSpritePriority(0, priority);
-		Object_GetById(0)->priority_flags |= 1;
+		Object_GetById(0)->priorityFlags |= 1;
 		if (marker != 0)
 		{
 			Engine_ObjectDispatchRelease(marker);
@@ -1521,8 +1521,8 @@ static void VenusLighthouse_SettlePushedBlocks(void)
 			Engine_EventEnd();
 			return;
 		}
-		if ((Object_GetById(9)->priority_flags & Object_GetById(10)->priority_flags
-				& Object_GetById(11)->priority_flags & 2)
+		if ((Object_GetById(9)->priorityFlags & Object_GetById(10)->priorityFlags
+				& Object_GetById(11)->priorityFlags & 2)
 			== 0)
 		{
 			continue;
@@ -1657,10 +1657,10 @@ static void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
 static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
 {
-	block->target_y = ACTOR_NO_TARGET;
-	block->terrain_height = value;
-	block->velocity_y = value;
-	block->motion_flags = value;
+	block->targetY = ACTOR_NO_TARGET;
+	block->terrainHeight = value;
+	block->velocityY = value;
+	block->motionFlags = value;
 	block->timer = value;
 }
 
@@ -1693,9 +1693,9 @@ static void VenusLighthouse_ResolveFloatingBlock(void)
 		{
 			OverlayObject_WaitUntilIdle(block);
 			GameFlag_Set(0x200 + i);
-			block->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-			block->collision_flags = 0;
-			block->motion_flags = 0;
+			block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+			block->collisionFlags = 0;
+			block->motionFlags = 0;
 			Map_CopyCellAttributes(4, 19, 1, 1, x, z);
 			break;
 		}
@@ -1736,7 +1736,7 @@ static void VenusLighthouse_ResolveFloatingBlock(void)
 			other = Object_GetById(slot + 10);
 			FloatingBlock_Settle(other, 0);
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			Battle_GetWorkObject1e0()->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motionFlags = 0;
 			Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
@@ -1753,7 +1753,7 @@ static void VenusLighthouse_ResolveFloatingBlock(void)
 			Object_GetById(slot + 10)->update =
 				(void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
 			VenusLighthouse_LowerFloatingBlocks(40);
-			Object_GetById(slot + 10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Object_GetById(slot + 10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			GameFlag_Set(slot + 0x200);
 			break;
 		}
@@ -1778,7 +1778,7 @@ static void EV40_TOUCH(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1798,22 +1798,22 @@ static void EV40_TOUCH(void)
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_AudioPlayCue(239);
 			Engine_EventWait(20);
-			dust_x = 0x2680000;
+			dustX = 0x2680000;
 			x = 0;
 			countdown = 60;
 			for (i = 0; i <= 319; i++, countdown--)
 			{
 				layer->x += 0x3333;
-				if (dust_x >= 0x2400000 && i > 40)
+				if (dustX >= 0x2400000 && i > 40)
 				{
-					dust_x += -0x3333;
+					dustX += -0x3333;
 					options.priority = 2;
-					options.start_scale_x =
+					options.startScaleX =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
-					options.start_scale_y =
+					options.startScaleY =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 					options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-					Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
+					Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
 						0x8a0000, &options);
 					if (countdown == 0)
 					{
@@ -1830,7 +1830,7 @@ static void EV40_TOUCH(void)
 			Engine_AudioPlayCue(188);
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 			Engine_MapRenderWaitForValues();
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 			Engine_EventRequestExit(18);
 			Engine_EventEnd();
 		}
@@ -1846,7 +1846,7 @@ static void EV41_TOUCH(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1865,22 +1865,22 @@ static void EV41_TOUCH(void)
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_AudioPlayCue(239);
 			Engine_EventWait(20);
-			dust_x = 0x2c00000;
+			dustX = 0x2c00000;
 			x = 61;
 			countdown = 60;
 			for (i = 0; i <= 319; i++, countdown--)
 			{
 				layer->x += -0x3333;
-				dust_x += 0x3333;
-				if (dust_x >= 0x2c80000 && dust_x < 0x2f00000)
+				dustX += 0x3333;
+				if (dustX >= 0x2c80000 && dustX < 0x2f00000)
 				{
 					options.priority = 2;
-					options.start_scale_x =
+					options.startScaleX =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
-					options.start_scale_y =
+					options.startScaleY =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 					options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-					Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
+					Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
 						0x8a0000, &options);
 					if (countdown == 0)
 					{
@@ -1897,7 +1897,7 @@ static void EV41_TOUCH(void)
 			Engine_AudioPlayCue(188);
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 			Engine_MapRenderWaitForValues();
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 			Engine_EventRequestExit(19);
 			Engine_EventEnd();
 		}
@@ -1932,7 +1932,7 @@ static void Scene_RunScene3c8SequenceA(void)
 	for (id = 15; id <= 18; id++)
 	{
 		actor = Object_GetById(id);
-		flags = &actor->priority_flags;
+		flags = &actor->priorityFlags;
 		if (*flags != 2)
 			Map_CopyCellAttributes(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 		else
@@ -1978,15 +1978,15 @@ static void Scene_RunScene3c8SequenceA(void)
 				Actor_SetSpritePriority(i, 3);
 		}
 		Actor_SetSpriteFlags(Object_GetById(id), 0);
-		actor->terrain_id = 0;
-		motion = &actor->motion_flags;
+		actor->terrainId = 0;
+		motion = &actor->motionFlags;
 		*motion = 3;
-		((union FieldObject *)actor)->effect.velocity_y = 0x1999;
-		((union FieldObject *)actor)->effect.velocity_x = 0;
+		((union FieldObject *)actor)->effect.velocityY = 0x1999;
+		((union FieldObject *)actor)->effect.velocityX = 0;
 		Map_CopyCellAttributes(6, 44, 1, 1, gVenusPillarCells[slot].x, gVenusPillarCells[slot].z);
 		OverlayObject_WaitUntilIdle(actor);
 		Event_PlayCue(188);
-		actor->collision_flags = 0;
+		actor->collisionFlags = 0;
 		*motion = 0;
 		actor->y.fixed = -0x100000;
 		Actor_SetSpritePriority(id, 3);
@@ -1994,7 +1994,7 @@ static void Scene_RunScene3c8SequenceA(void)
 		Map_CopyCellAttributes(
 			73, 48, 1, 1, gVenusPillarCells[slot].x, gVenusPillarCells[slot].z);
 		Actor_SetSpritePriority(0, priority);
-		Object_GetById(0)->priority_flags |= 1;
+		Object_GetById(0)->priorityFlags |= 1;
 		for (i = 15; i <= 18; i++)
 		{
 			other = Object_GetById(i);
@@ -2002,7 +2002,7 @@ static void Scene_RunScene3c8SequenceA(void)
 				&& (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
 			{
 				Actor_SetSpritePriority(i, 1);
-				Object_GetById(i)->priority_flags |= 1;
+				Object_GetById(i)->priorityFlags |= 1;
 			}
 		}
 		Engine_ObjectDispatchRelease(effect);
@@ -2015,7 +2015,7 @@ static void Scene_RunScene3c8SequenceA(void)
 		b = Actor_Get(16);
 		c = Actor_Get(17);
 		d = Object_GetById(18);
-		if ((a->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2)
+		if ((a->priorityFlags & b->priorityFlags & c->priorityFlags & d->priorityFlags) & 2)
 		{
 			struct SwitchEffect *first;
 			struct SwitchEffect *second;
@@ -2117,17 +2117,17 @@ static void SceneActor_ClearActorModeAndSetState5(s32 no)
 	s32				   mask;
 
 	p = Object_GetById(no);
-	p->motion_flags = 0;
+	p->motionFlags = 0;
 	mask = 252;
-	mask &= p->collision_flags;
-	p->collision_flags = mask;
+	mask &= p->collisionFlags;
+	p->collisionFlags = mask;
 	Engine_ActorSetSpriteFlags(p, 0);
 	Object_SetMode(p, 5);
 	Engine_ActorSetSpritePriority(no, 3);
 	{
 		s32 v = 2;
-		v |= p->priority_flags;
-		p->priority_flags = v;
+		v |= p->priorityFlags;
+		p->priorityFlags = v;
 	}
 }
 
@@ -2155,11 +2155,11 @@ s32 Scene_RunEntrySetup(void)
 	if (Engine_GameFlagIsSet(0x109))
 		SceneActor_ApplySlotsMatchingKind212();
 	Engine_GameFlagSet(0x110);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	area = gGameState.scene;
 	if (area == (s32)&SceneId_VenusLighthouse1)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		if (!Engine_GameFlagIsSet(0x981))
 			SceneActor_ClearActorModeAndSetState5(8);
 		else
@@ -2241,7 +2241,7 @@ s32 Scene_RunEntrySetup(void)
 				Actor_SetPosition(12, 218 << 18, 176 << 15);
 				actor = Object_GetById(12);
 				actor->y.fixed = -0x180000;
-				actor->target_y = ACTOR_NO_TARGET;
+				actor->targetY = ACTOR_NO_TARGET;
 			}
 			break;
 		}
@@ -2278,13 +2278,13 @@ s32 Scene_RunEntrySetup(void)
 			BattleFx_StartFadeOverlay(0);
 			Engine_TaskWait(2);
 			actor = Object_GetById(8);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->update = SceneActor_SetFlagBitByRelativeDepth;
 			actor = Object_GetById(9);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->update = SceneActor_SetFlagBitByRelativeDepth;
 			actor = Object_GetById(10);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->update = SceneActor_SetFlagBitByRelativeDepth;
 			FieldScene_PlaceAndPinSlots8To10();
 			break;
@@ -2330,27 +2330,27 @@ s32 Scene_RunEntrySetup(void)
 		case 9:
 		case 10:
 			actor = Object_GetById(8);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->y.fixed = 0;
 			actor = Object_GetById(9);
-			actor->motion_flags = 0;
-			actor->collision_flags = 0;
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
 			if (Engine_GameFlagIsSet(0x301))
 			{
 				Engine_TaskWait(1);
 				Map_CopyCellsTo(124, 41, 110, 41, 1, 2);
 				Map_CopyCellAttributes(46, 41, 1, 1, 46, 42);
 				Actor_SetPosition(9, 186 << 18, 182 << 18);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->y.fixed = -0x100000;
 				Engine_ActorSetSpritePriority(9, 3);
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Map_CopyCellAttributes(45, 45, 1, 1, 46, 45);
 				Engine_ActorSetAnimation(10, 7);
 				Engine_ActorSetSpritePriority(10, 1);
 				actor = Object_GetById(10);
-				actor->collision_flags = 0;
-				actor->priority_flags = 2;
+				actor->collisionFlags = 0;
+				actor->priorityFlags = 2;
 				Actor_SetPosition(10, 0x2e70000, 174 << 18);
 				actor->update = (void (*)(
 					union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
@@ -2358,7 +2358,7 @@ s32 Scene_RunEntrySetup(void)
 			EV09_PSYNERGY();
 			break;
 		case 11:
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 			Object_GetById(0)->y.fixed = -0x20000;
 		case 7:
 		case 8:
@@ -2389,7 +2389,7 @@ s32 Scene_RunEntrySetup(void)
 				break;
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 			break;
 		case 1:
 			BattleFx_SetQueuedSoundAndPlay(170);
@@ -2439,11 +2439,11 @@ s32 Scene_RunEntrySetup(void)
 		case 15:
 		case 16:
 			actor = Object_GetById(8);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->y.fixed = 0;
-			Object_GetById(9)->motion_flags = 0;
-			Object_GetById(10)->motion_flags = 0;
-			Object_GetById(11)->motion_flags = 0;
+			Object_GetById(9)->motionFlags = 0;
+			Object_GetById(10)->motionFlags = 0;
+			Object_GetById(11)->motionFlags = 0;
 			if (Engine_GameFlagIsSet(0x304))
 			{
 				Engine_TaskWait(1);
@@ -2464,21 +2464,21 @@ s32 Scene_RunEntrySetup(void)
 				Engine_ActorSetSpritePriority(9, 3);
 				actor = Object_GetById(9);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(10, 3);
 				actor = Object_GetById(10);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(11, 3);
 				actor = Object_GetById(11);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetAnimation(12, 7);
 				Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
 				Engine_ActorSetSpritePriority(12, 1);
 				actor = Object_GetById(12);
-				actor->collision_flags = 0;
-				actor->priority_flags = 2;
+				actor->collisionFlags = 0;
+				actor->priorityFlags = 2;
 				Actor_SetPosition(12, 0x2d70000, 158 << 18);
 				actor->update = (void (*)(
 					union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
@@ -2509,9 +2509,9 @@ s32 Scene_RunEntrySetup(void)
 						z = actor->z.fixed >> 20;
 						if (z == 7 && Engine_GameFlagIsSet(i + 0x200))
 						{
-							actor->priority_flags |= 2;
-							actor->collision_flags = 0;
-							actor->motion_flags = 0;
+							actor->priorityFlags |= 2;
+							actor->collisionFlags = 0;
+							actor->motionFlags = 0;
 							Map_CopyCellAttributes(4, 19, 1, 1, x, z);
 							break;
 						}
@@ -2521,33 +2521,33 @@ s32 Scene_RunEntrySetup(void)
 			else
 			{
 				actor = Object_GetById(8);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->y.fixed = -0x300000;
-				actor->priority_flags |= 2;
-				actor->collision_flags &= 0xfe;
+				actor->priorityFlags |= 2;
+				actor->collisionFlags &= 0xfe;
 				actor->timer = 3;
 				Engine_ActorSetSpritePriority(8, 1);
 				actor = Object_GetById(9);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->y.fixed = -0x300000;
-				actor->priority_flags |= 2;
-				actor->collision_flags &= 0xfe;
+				actor->priorityFlags |= 2;
+				actor->collisionFlags &= 0xfe;
 				actor->timer = 3;
 				Engine_ActorSetSpritePriority(9, 1);
 				actor = Object_GetById(10);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->timer = 0;
 				Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 				actor = Object_GetById(11);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->timer = 0;
 				Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 				actor = Object_GetById(12);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->timer = 0;
 				Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
 				actor = Object_GetById(13);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->timer = 0;
 				Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
 			}
@@ -2558,7 +2558,7 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		case 18:
 		case 19:
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 			Object_GetById(0)->y.fixed = -0x20000;
 		case 3:
 		case 4:
@@ -2571,8 +2571,8 @@ s32 Scene_RunEntrySetup(void)
 		case 11:
 		case 12:
 		case 20:
-			Object_GetById(20)->motion_flags = 4;
-			Object_GetById(20)->priority_flags |= 2;
+			Object_GetById(20)->motionFlags = 4;
+			Object_GetById(20)->priorityFlags |= 2;
 			Object_GetById(20)->y.fixed = -0x108000;
 			DisplayBlend_EnableRunScript();
 			Io_Write16(0, &REG_BLDCNT);
@@ -2599,7 +2599,7 @@ s32 Scene_RunEntrySetup(void)
 			{
 				Engine_EventOpenScreen();
 				Engine_EventWaitForScreen();
-				gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+				gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 			}
 			if (gGameState.entrance == 20)
 				FieldScene_RunLeaderDropSequence();
@@ -2609,12 +2609,12 @@ s32 Scene_RunEntrySetup(void)
 			Engine_TaskWait(1);
 			FieldScheduler_AddCallback(SceneState_ApplyStepToSlots15To18, 0xc80);
 			actor = Object_GetById(14);
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 			actor->y.fixed = 0;
-			Object_GetById(15)->motion_flags = 0;
-			Object_GetById(16)->motion_flags = 0;
-			Object_GetById(17)->motion_flags = 0;
-			Object_GetById(18)->motion_flags = 0;
+			Object_GetById(15)->motionFlags = 0;
+			Object_GetById(16)->motionFlags = 0;
+			Object_GetById(17)->motionFlags = 0;
+			Object_GetById(18)->motionFlags = 0;
 			if (Engine_GameFlagIsSet(0x308))
 			{
 				Engine_TaskWait(1);
@@ -2623,29 +2623,29 @@ s32 Scene_RunEntrySetup(void)
 				Engine_ActorSetPosition(15, 132 << 17, 186 << 18);
 				actor = Object_GetById(15);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(15, 3);
 				Actor_SetPosition(16, 184 << 16, 158 << 18);
 				actor = Object_GetById(16);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(16, 3);
 				Engine_ActorSetPosition(17, 232 << 16, 174 << 18);
 				actor = Object_GetById(17);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(17, 3);
 				Engine_ActorSetPosition(18, 184 << 16, 166 << 18);
 				actor = Object_GetById(18);
 				actor->y.fixed = -0x100000;
-				actor->priority_flags = 2;
+				actor->priorityFlags = 2;
 				Engine_ActorSetSpritePriority(18, 3);
 				Engine_ActorSetAnimation(19, 7);
 				Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
 				Engine_ActorSetSpritePriority(19, 1);
 				actor = Object_GetById(19);
-				actor->collision_flags = 0;
-				actor->priority_flags = 2;
+				actor->collisionFlags = 0;
+				actor->priorityFlags = 2;
 				Actor_SetPosition(19, 215 << 16, 150 << 18);
 				actor->update = (void (*)(
 					union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
@@ -2707,8 +2707,8 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir)
 	{
 		struct EventWork *event = gEventWork;
 
-		id = gGameState.selected_actor;
-		center = event->view_center;
+		id = gGameState.selectedActor;
+		center = event->viewCenter;
 	}
 	actor = Object_GetById(id);
 	pos[0] = actor->x.fixed + ((dir->x * 3) << 15);
@@ -2733,7 +2733,7 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir)
 		do
 		{
 			Engine_TaskWait(1);
-		} while (actor->y.fixed != actor->terrain_height);
+		} while (actor->y.fixed != actor->terrainHeight);
 		Object_SetMode(actor, 6);
 		Engine_TaskWait(3);
 		return;
@@ -2774,8 +2774,8 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir)
 
 static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 {
-	opts->start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
-	opts->start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+	opts->startScaleX = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+	opts->startScaleY = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 	opts->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 }
 
@@ -2786,7 +2786,7 @@ static void Scene_RunPairedParticleWaveSequence(void)
 	u32					 row;
 	u32					 i;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventBegin();
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetChildValue(0, 15);
@@ -2798,8 +2798,8 @@ static void Scene_RunPairedParticleWaveSequence(void)
 	repeat = 0;
 	for (row = 0; row < 10; row++)
 	{
-		options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
-		options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleX = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleY = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 		options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		for (;;)
 		{
@@ -2842,8 +2842,8 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z)
 {
 	struct EffectOptions options;
 
-	options.start_scale_x = 0xb333;
-	options.start_scale_y = 0xb333;
+	options.startScaleX = 0xb333;
+	options.startScaleY = 0xb333;
 	options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 	if ((gFrameCount & 3) == 0)
 	{
@@ -2882,7 +2882,7 @@ static void Scene_RunParticleWaveSequence(void)
 	u32					  i;
 	struct EffectOptions *opts;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventBegin();
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetChildValue(0, 15);
@@ -2899,8 +2899,8 @@ static void Scene_RunParticleWaveSequence(void)
 	offset = 0;
 	do
 	{
-		options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
-		options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleX = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleY = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 		options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 	again:
 		z = 0xc00000;
@@ -2945,7 +2945,7 @@ static void Scene_RunEastParticleWaveSequence(void)
 	u32					  i;
 	struct EffectOptions *opts;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventBegin();
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetChildValue(0, 15);
@@ -2962,8 +2962,8 @@ static void Scene_RunEastParticleWaveSequence(void)
 	offset = 0;
 	do
 	{
-		options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
-		options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleX = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+		options.startScaleY = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 		options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 	again:
 		z = 0xc00000;
@@ -3035,37 +3035,37 @@ static void FieldScene_RunLeaderDropSequence(void)
 	leader->y.fixed = 130 << 16;
 	leader->gravity = 0x8000;
 	leader->bounce = 0;
-	leader->motion_flags = 0;
+	leader->motionFlags = 0;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Event_PlayCue(204);
 	Engine_EventWait(30);
-	leader->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	Engine_EventWait(24);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-	leader->motion_flags &= ~ACTOR_FOLLOWS_TERRAIN;
+	leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
 	spray->y.fixed += -3 << 16;
 	leader->y.fixed += -3 << 16;
-	leader->terrain_height += -3 << 16;
+	leader->terrainHeight += -3 << 16;
 	Engine_TaskWait(2);
 	spray->y.fixed += -2 << 16;
 	leader->y.fixed += -2 << 16;
-	leader->terrain_height += -2 << 16;
+	leader->terrainHeight += -2 << 16;
 	Engine_TaskWait(10);
 	spray->y.fixed += 2 << 16;
 	leader->y.fixed += 2 << 16;
-	leader->terrain_height += 2 << 16;
+	leader->terrainHeight += 2 << 16;
 	Engine_TaskWait(4);
 	spray->y.fixed += 2 << 16;
 	leader->y.fixed += 2 << 16;
-	leader->terrain_height += 2 << 16;
+	leader->terrainHeight += 2 << 16;
 	Engine_TaskWait(4);
 	spray->y.fixed += 1 << 16;
 	leader->y.fixed += 1 << 16;
-	leader->terrain_height += 1 << 16;
-	leader->motion_flags = 0;
-	spray->motion_flags = 0;
+	leader->terrainHeight += 1 << 16;
+	leader->motionFlags = 0;
+	spray->motionFlags = 0;
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(40);
@@ -3079,7 +3079,7 @@ static void FieldScene_RunLeaderDropSequence(void)
 	for (i = 0; i < 128; i++)
 	{
 		leader->y.fixed += 1 << 16;
-		leader->terrain_height += 1 << 16;
+		leader->terrainHeight += 1 << 16;
 		spray->y.fixed += 1 << 16;
 		Engine_TaskWait(1);
 	}
@@ -3093,9 +3093,9 @@ struct TrackAnimation
 
 struct TrackSprite
 {
-	u8					   unknown_00[0x24];
+	u8					   unk00[0x24];
 	u8					   shape;
-	u8					   unknown_25[3];
+	u8					   unk25[3];
 	struct TrackAnimation *animations[4];
 };
 
@@ -3117,9 +3117,9 @@ static s32 VenusLighthouse_DispatchPushScript(struct FieldActor *actor)
 	sprite = (struct TrackSprite *)piece->sprite;
 	if (sprite->animations[0]->id == 0x100)
 	{
-		s32 vx = actor->velocity_x;
+		s32 vx = actor->velocityX;
 		s32 ax = vx < 0 ? -vx : vx;
-		s32 vz = actor->velocity_z;
+		s32 vz = actor->velocityZ;
 		s32 az = vz < 0 ? -vz : vz;
 
 		if (ax > az)
@@ -3244,7 +3244,7 @@ s32 gEffectScript2[] = {
 // 向き (16 方向) ごとの一歩: 上位 16 ビットが x、下位 16 ビットが z
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-u32 StagedActor_DirectionSteps[] = {
+u32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),

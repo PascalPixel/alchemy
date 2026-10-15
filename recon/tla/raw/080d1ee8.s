@@ -24,4 +24,4 @@ Func_080d1ee8:
 	pop {pc}
 	.2byte 0x0000
 .L_080d1f08:
-	.4byte Data_080f3228
+	.4byte gData_080f3228

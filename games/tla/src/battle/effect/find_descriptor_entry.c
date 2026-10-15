@@ -6,12 +6,12 @@
 #include "io_reg.h"
 
 struct MenuFlagWork {
-    u8 unknown_000[0x506];
+    u8 unk000[0x506];
     u8 busy;
 };
 
 struct FxGroup {
-    u8 unknown_00[32];
+    u8 unk00[32];
     struct ObjectRuntime *objects[8];
     u16 values[8];
     s32 count;
@@ -19,11 +19,11 @@ struct FxGroup {
 
 struct DescriptorEntry {
     s16 id;
-    u8 unknown_02[6];
+    u8 unk02[6];
 };
 
 extern void *gOverlayArea[];
-extern struct DescriptorEntry Data_080eff28[];
+extern struct DescriptorEntry gData_080eff28[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
 void Func_08143bb8(void);
@@ -50,7 +50,7 @@ s32 Func_080cd91c(s32 id)
     struct ObjectRuntime *src;
     struct ObjectRuntime *obj;
     s32 best;
-    s32 best_dist;
+    s32 bestDist;
     s32 i;
     s32 dx;
     s32 dy;
@@ -63,7 +63,7 @@ s32 Func_080cd91c(s32 id)
     s32 angle;
 
     best = -1;
-    best_dist = 32;
+    bestDist = 32;
     src = ObjectTable_Get(id);
     if (src != 0) {
         for (i = 0; i <= 80; i++) {
@@ -71,7 +71,7 @@ s32 Func_080cd91c(s32 id)
                 continue;
 
             obj = ObjectTable_Get(i);
-            if (obj == 0 || (obj->collision_flags & 8) != 0)
+            if (obj == 0 || (obj->collisionFlags & 8) != 0)
                 continue;
 
             if (obj->y - src->y >= 0) {
@@ -92,9 +92,9 @@ s32 Func_080cd91c(s32 id)
             dist = Iwram_Sqrt(sq);
             if (i > 63)
                 dist <<= 1;
-            if ((obj->collision_flags & 4) != 0)
+            if ((obj->collisionFlags & 4) != 0)
                 dist = dist * 10 / 13;
-            if (dist >= best_dist)
+            if (dist >= bestDist)
                 continue;
 
             angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
@@ -108,7 +108,7 @@ s32 Func_080cd91c(s32 id)
             }
 
             best = i;
-            best_dist = dist;
+            bestDist = dist;
         }
     }
     return best;
@@ -117,7 +117,7 @@ s32 Func_080cd91c(s32 id)
 
 struct DescriptorEntry *Func_080cda58(s32 id)
 {
-    struct DescriptorEntry *entry = Data_080eff28;
+    struct DescriptorEntry *entry = gData_080eff28;
 
     while (entry->id != -1 && id != entry->id)
         entry++;

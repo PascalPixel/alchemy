@@ -4,14 +4,14 @@
 
 void AudioCommand_InvokeSlot34(struct SoundNote *note)
 {
-    void (*func)(struct SoundNote *) = (void (*)(struct SoundNote *))*(&Sound_CommandTable[34]);
+    void (*func)(struct SoundNote *) = (void (*)(struct SoundNote *))*(&gSound_CommandTable[34]);
 
     func(note);
 }
 
 void AudioCommand_InvokeSlot35(void *block)
 {
-    void (*func)(void *) = (void (*)(void *))*(&Sound_CommandTable[35]);
+    void (*func)(void *) = (void (*)(void *))*(&gSound_CommandTable[35]);
 
     func(block);
 }
@@ -23,8 +23,8 @@ void Audio_EmptyCallback(void);
 void AudioEngine_SetPcmRate(u32 mode);
 void AudioEngine_SuspendDirectSound(void);
 void AudioEngine_ResumeDirectSound(void);
-extern const u16 Sound_FrameLengths[];
-extern SoundCommand Sound_CommandTable[36];
+extern const u16 gSound_FrameLengths[];
+extern SoundCommand gSound_CommandTable[36];
 
 void MusicPlayer_Tick(struct SoundPlayer *player);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
@@ -32,13 +32,13 @@ void AudioEngine_SetMode(u32 mode);
 
 struct SoundPlayer;
 
-extern const u8 Sound_CgbPitchCodes[];
-extern const s16 Sound_CgbFrequencySteps[];
-extern const u8 Sound_NoisePitchCodes[];
+extern const u8 gSound_CgbPitchCodes[];
+extern const s16 gSound_CgbFrequencySteps[];
+extern const u8 gSound_NoisePitchCodes[];
 
 void CgbChannel_Mute(u8 channel);
 
-extern const u8 Sound_Cgb3LevelCodes[];
+extern const u8 gSound_Cgb3LevelCodes[];
 
 void AudioEngine_Initialize(struct SoundWork *work)
 {
@@ -61,15 +61,15 @@ void AudioEngine_Initialize(struct SoundWork *work)
     SOUND_WORK = work;
     zero = 0;
     Bios_CpuSet(&zero, work, 0x050003EC);
-    work->pcm_note_count = 8;
+    work->pcmNoteCount = 8;
     work->volume = 15;
-    work->note_on = MusicTrack_HandleNote;
-    work->cgb_update = Audio_EmptyCallback;
-    work->cgb_mute = (void (*)(u8))Audio_EmptyCallback;
-    work->cgb_frequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
+    work->noteOn = MusicTrack_HandleNote;
+    work->cgbUpdate = Audio_EmptyCallback;
+    work->cgbMute = (void (*)(u8))Audio_EmptyCallback;
+    work->cgbFrequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
     work->unk3c = Audio_EmptyCallback;
-    Sound_LoadCommandTable(Sound_CommandTable);
-    work->commands = Sound_CommandTable;
+    Sound_LoadCommandTable(gSound_CommandTable);
+    work->commands = gSound_CommandTable;
     AudioEngine_SetPcmRate(0x40000);
     work->lock = SOUND_LOCK;
 }
@@ -82,11 +82,11 @@ void AudioEngine_SetPcmRate(u32 mode)
 
     mode = (mode & 0xF0000) >> 16;
     work->rate = mode;
-    frame = Sound_FrameLengths[mode - 1];
-    work->frame_samples = frame;
-    work->transfer_period = __divsi3(0x630, frame);
-    work->output_rate = __divsi3(0x91D1B * frame + 5000, 10000);
-    work->rate_step = (__divsi3(0x1000000, work->output_rate) + 1) >> 1;
+    frame = gSound_FrameLengths[mode - 1];
+    work->frameSamples = frame;
+    work->transferPeriod = __divsi3(0x630, frame);
+    work->outputRate = __divsi3(0x91D1B * frame + 5000, 10000);
+    work->rateStep = (__divsi3(0x1000000, work->outputRate) + 1) >> 1;
     REG_TM0CNT_H = 0;
     timer = &REG_TM0CNT_L;
     *timer = -__divsi3(0x44940, frame);
@@ -113,9 +113,9 @@ void AudioEngine_SetMode(u32 mode)
         work->reverb = value & 0x7F;
     value = mode & 0xF00;
     if (value != 0) {
-        work->pcm_note_count = value >> 8;
+        work->pcmNoteCount = value >> 8;
         value = 12;
-        note = work->pcm_notes;
+        note = work->pcmNotes;
         do {
             note->state = 0;
             value--;
@@ -149,17 +149,17 @@ void AudioEngine_StopAllChannels(void)
     work->lock++;
 
     i = 12;
-    channel = work->pcm_notes;
+    channel = work->pcmNotes;
     while (i > 0) {
         ((struct SoundNote *)channel)->state = 0;
         i--;
         channel = (void *)((s32)channel + sizeof(struct SoundNote));
     }
-    channel = work->cgb_notes;
+    channel = work->cgbNotes;
     if (channel != NULL) {
         i = 1;
         while (i <= 4) {
-            work->cgb_mute(i);
+            work->cgbMute(i);
             ((struct CgbNote *)channel)->state = 0;
             i++;
             channel = (void *)((s32)channel + sizeof(struct CgbNote));
@@ -195,7 +195,7 @@ void AudioEngine_ResumeDirectSound(void)
         return;
     REG_DMA1CNT_H = 0xB600;
     REG_DMA2CNT_H = 0xB600;
-    work->transfer_countdown = 0;
+    work->transferCountdown = 0;
     work->lock = lock - 10;
 }
 
@@ -214,7 +214,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *track
 
     AudioCommand_InvokeSlot35(player);
     player->tracks = tracks;
-    player->track_count = count;
+    player->trackCount = count;
     player->status = SOUND_PLAYER_PAUSED;
     while (count != 0) {
         tracks->flags = 0;
@@ -222,11 +222,11 @@ void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *track
         tracks++;
     }
     if (work->tick != NULL) {
-        player->next_tick = work->tick;
-        player->next_tick_player = work->tick_player;
+        player->nextTick = work->tick;
+        player->nextTickPlayer = work->tickPlayer;
         work->tick = NULL;
     }
-    work->tick_player = player;
+    work->tickPlayer = player;
     work->tick = MusicPlayer_Tick;
     work->lock = SOUND_LOCK;
     player->lock = SOUND_LOCK;
@@ -240,7 +240,7 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
     if (player->lock != SOUND_LOCK)
         return;
 
-    if (player->check_priority != 0) {
+    if (player->checkPriority != 0) {
         if (player->header == NULL || !(player->tracks[0].flags & SOUND_TRACK_RESET)) {
             if ((player->status & 0xFFFF) == 0 || (player->status & SOUND_PLAYER_PAUSED))
                 goto start;
@@ -256,14 +256,14 @@ start:
     player->priority = header->priority;
     player->ticks = 0;
     player->tempo = 150;
-    player->tempo_step = 150;
-    player->tempo_scale = 256;
-    player->tempo_count = 0;
-    player->fade_period = 0;
+    player->tempoStep = 150;
+    player->tempoScale = 256;
+    player->tempoCount = 0;
+    player->fadePeriod = 0;
 
     i = 0;
     track = player->tracks;
-    while (i < header->track_count && i < player->track_count) {
+    while (i < header->trackCount && i < player->trackCount) {
         MusicTrack_Stop(player, track);
         track->flags = SOUND_TRACK_ACTIVE | SOUND_TRACK_RESET;
         track->notes = NULL;
@@ -271,7 +271,7 @@ start:
         i++;
         track++;
     }
-    while (i < player->track_count) {
+    while (i < player->trackCount) {
         MusicTrack_Stop(player, track);
         track->flags = 0;
         i++;
@@ -291,7 +291,7 @@ void MusicPlayer_Stop(struct SoundPlayer *player)
         return;
     player->lock++;
     player->status |= SOUND_PLAYER_PAUSED;
-    i = player->track_count;
+    i = player->trackCount;
     track = player->tracks;
     while (i > 0) {
         MusicTrack_Stop(player, track);
@@ -306,42 +306,42 @@ void MusicPlayer_StepFade(struct SoundPlayer *player)
     s32 count;
     struct SoundTrack *track;
 
-    if (player->fade_period == 0)
+    if (player->fadePeriod == 0)
         return;
-    if (--player->fade_counter != 0)
+    if (--player->fadeCounter != 0)
         return;
-    player->fade_counter = player->fade_period;
+    player->fadeCounter = player->fadePeriod;
 
-    if (player->fade_volume & 2) {
-        if ((player->fade_volume += 16) >= 256) {
-            player->fade_volume = 256;
-            player->fade_period = 0;
+    if (player->fadeVolume & 2) {
+        if ((player->fadeVolume += 16) >= 256) {
+            player->fadeVolume = 256;
+            player->fadePeriod = 0;
         }
     } else {
-        if ((s16)(player->fade_volume -= 16) <= 0) {
-            count = player->track_count;
+        if ((s16)(player->fadeVolume -= 16) <= 0) {
+            count = player->trackCount;
             track = player->tracks;
             while (count > 0) {
                 MusicTrack_Stop(player, track);
-                if (!(player->fade_volume & 1))
+                if (!(player->fadeVolume & 1))
                     track->flags = 0;
                 count--;
                 track++;
             }
-            if (player->fade_volume & 1)
+            if (player->fadeVolume & 1)
                 player->status |= SOUND_PLAYER_PAUSED;
             else
                 player->status = SOUND_PLAYER_PAUSED;
-            player->fade_period = 0;
+            player->fadePeriod = 0;
             return;
         }
     }
 
-    count = player->track_count;
+    count = player->trackCount;
     track = player->tracks;
     while (count > 0) {
         if (track->flags & SOUND_TRACK_ACTIVE) {
-            track->volume_scale = player->fade_volume >> 2;
+            track->volumeScale = player->fadeVolume >> 2;
             track->flags |= SOUND_TRACK_UPDATE_VOLUME;
         }
         count--;
@@ -357,28 +357,28 @@ void MusicTrack_CalcOutput(struct SoundPlayer *player, struct SoundTrack *track)
     s32 bend;
 
     if (track->flags & SOUND_TRACK_VOLUME_DIRTY) {
-        volume = (u32)(track->volume * track->volume_scale) >> 5;
-        if (track->mod_target == 1)
-            volume = ((track->mod_amount + 128) * volume) >> 7;
-        pan = track->pan * 2 + track->pan_offset;
-        if (track->mod_target == 2)
-            pan += track->mod_amount;
+        volume = (u32)(track->volume * track->volumeScale) >> 5;
+        if (track->modTarget == 1)
+            volume = ((track->modAmount + 128) * volume) >> 7;
+        pan = track->pan * 2 + track->panOffset;
+        if (track->modTarget == 2)
+            pan += track->modAmount;
         if (pan < -128)
             pan = -128;
         else if (pan > 127)
             pan = 127;
-        track->out_volume_a = ((pan + 128) * volume) >> 8;
-        track->out_volume_b = ((127 - pan) * volume) >> 8;
+        track->outVolumeA = ((pan + 128) * volume) >> 8;
+        track->outVolumeB = ((127 - pan) * volume) >> 8;
     }
     if (track->flags & SOUND_TRACK_PITCH_DIRTY) {
-        bend = track->bend * track->bend_range;
+        bend = track->bend * track->bendRange;
         pitch = (track->tune + bend) * 4
-            + (track->key_offset_a << 8) + (track->key_offset_b << 8)
+            + (track->keyOffsetA << 8) + (track->keyOffsetB << 8)
             + track->fine;
-        if (track->mod_target == 0)
-            pitch += track->mod_amount << 4;
-        track->pitch_hi = pitch >> 8;
-        track->pitch_lo = pitch;
+        if (track->modTarget == 0)
+            pitch += track->modAmount << 4;
+        track->pitchHi = pitch >> 8;
+        track->pitchLo = pitch;
     }
     track->flags &= ~(SOUND_TRACK_VOLUME_DIRTY | SOUND_TRACK_PITCH_DIRTY);
 }
@@ -396,7 +396,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine)
             if (key > 59)
                 key = 59;
         }
-        return Sound_NoisePitchCodes[key];
+        return gSound_NoisePitchCodes[key];
     }
 
     if (key <= 35) {
@@ -409,10 +409,10 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine)
             fine = 255;
         }
     }
-    low = Sound_CgbPitchCodes[key];
-    low = Sound_CgbFrequencySteps[low & 15] >> (low >> 4);
-    high = Sound_CgbPitchCodes[key + 1];
-    high = Sound_CgbFrequencySteps[high & 15] >> (high >> 4);
+    low = gSound_CgbPitchCodes[key];
+    low = gSound_CgbFrequencySteps[low & 15] >> (low >> 4);
+    high = gSound_CgbPitchCodes[key + 1];
+    high = gSound_CgbFrequencySteps[high & 15] >> (high >> 4);
     return low + ((fine * (high - low)) >> 8) + 2048;
 }
 
@@ -439,28 +439,28 @@ void CgbChannel_Mute(u8 channel)
 
 void CgbNote_UpdatePanEnvelope(struct CgbNote *note)
 {
-    u32 right = note->out_right;
-    u32 left = note->out_left;
+    u32 right = note->outRight;
+    u32 left = note->outLeft;
 
     if ((u8)right >= (u8)left) {
         if ((u8)right / 2 >= (u8)left) {
-            note->pan_bits = 0x0F;
+            note->panBits = 0x0F;
             goto one_side;
         }
     } else if ((u8)left / 2 >= (u8)right) {
-        note->pan_bits = 0xF0;
+        note->panBits = 0xF0;
         goto one_side;
     }
-    note->pan_bits = 0xFF;
-    note->peak = (u32)(note->out_right + note->out_left) >> 4;
+    note->panBits = 0xFF;
+    note->peak = (u32)(note->outRight + note->outLeft) >> 4;
     goto scale;
 one_side:
-    note->peak = (u32)(note->out_right + note->out_left) >> 4;
+    note->peak = (u32)(note->outRight + note->outLeft) >> 4;
     if (note->peak > 15)
         note->peak = 15;
 scale:
-    note->sustain_level = (note->peak * note->sustain + 15) >> 4;
-    note->pan_bits &= note->channel_bits;
+    note->sustainLevel = (note->peak * note->sustain + 15) >> 4;
+    note->panBits &= note->channelBits;
 }
 
 void Cgb_UpdateChannels(void)
@@ -475,14 +475,14 @@ void Cgb_UpdateChannels(void)
     volatile u8 *reg3;
     volatile u8 *reg4;
     s32 envelope;
-    u32 byte_mask = 0xff;
+    u32 byteMask = 0xff;
 
-    if (work->cgb_tick)
-        work->cgb_tick--;
+    if (work->cgbTick)
+        work->cgbTick--;
     else
-        work->cgb_tick = 14;
+        work->cgbTick = 14;
 
-    for (channel = 1, note = work->cgb_notes; channel <= 4; channel++, note++) {
+    for (channel = 1, note = work->cgbNotes; channel <= 4; channel++, note++) {
         if (!(note->state & CGB_NOTE_ON))
             continue;
 
@@ -517,7 +517,7 @@ void Cgb_UpdateChannels(void)
             break;
         }
 
-        tick = work->cgb_tick;
+        tick = work->cgbTick;
         envelope = *reg2;
 
         if (note->state & CGB_NOTE_START) {
@@ -532,13 +532,13 @@ void Cgb_UpdateChannels(void)
                     *reg1 = ((u32)note->wave << 6) + note->length;
                     goto init_envelope;
                 case 3:
-                    if (note->wave != note->loaded_wave) {
+                    if (note->wave != note->loadedWave) {
                         *reg0 = 0x40;
                         REG_WAVE_RAM[0] = note->wave[0];
                         REG_WAVE_RAM[1] = note->wave[1];
                         REG_WAVE_RAM[2] = note->wave[2];
                         REG_WAVE_RAM[3] = note->wave[3];
-                        note->loaded_wave = note->wave;
+                        note->loadedWave = note->wave;
                     }
                     *reg0 = 0;
                     *reg1 = note->length;
@@ -559,7 +559,7 @@ void Cgb_UpdateChannels(void)
                     break;
                 }
                 note->counter = note->attack;
-                if ((s8)(note->counter & byte_mask)) {
+                if ((s8)(note->counter & byteMask)) {
                     note->level = 0;
                     goto count_down;
                 }
@@ -567,8 +567,8 @@ void Cgb_UpdateChannels(void)
             }
             goto off;
         } else if (note->state & CGB_NOTE_ECHO) {
-            note->echo_length--;
-            if ((s8)(note->echo_length & byte_mask) > 0)
+            note->echoLength--;
+            if ((s8)(note->echoLength & byteMask) > 0)
                 goto write;
         off:
             CgbChannel_Mute(channel);
@@ -577,7 +577,7 @@ void Cgb_UpdateChannels(void)
         } else if ((note->state & CGB_NOTE_STOP) && (note->state & CGB_NOTE_PHASE)) {
             note->state &= ~CGB_NOTE_PHASE;
             note->counter = note->release;
-            if ((s8)(note->counter & byte_mask)) {
+            if ((s8)(note->counter & byteMask)) {
                 note->modified |= CGB_NOTE_VOLUME_DIRTY;
                 if (channel != 3)
                     envelope = note->release;
@@ -592,9 +592,9 @@ void Cgb_UpdateChannels(void)
                 CgbNote_UpdatePanEnvelope(note);
                 if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
                     note->level--;
-                    if ((s8)(note->level & byte_mask) <= 0) {
+                    if ((s8)(note->level & byteMask) <= 0) {
                     echo:
-                        note->level = ((note->peak * note->echo_level) + 0xff) >> 8;
+                        note->level = ((note->peak * note->echoLevel) + 0xff) >> 8;
                         if (note->level) {
                             note->state |= CGB_NOTE_ECHO;
                             note->modified |= CGB_NOTE_VOLUME_DIRTY;
@@ -607,11 +607,11 @@ void Cgb_UpdateChannels(void)
                     note->counter = note->release;
                 } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_SUSTAIN) {
                 sustain:
-                    note->level = note->sustain_level;
+                    note->level = note->sustainLevel;
                     note->counter = 7;
                 } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_DECAY) {
                     note->level--;
-                    if ((s8)(note->level & byte_mask) <= (s8)note->sustain_level) {
+                    if ((s8)(note->level & byteMask) <= (s8)note->sustainLevel) {
                     sustain_or_release:
                         if (note->sustain == 0) {
                             note->state &= ~CGB_NOTE_PHASE;
@@ -626,11 +626,11 @@ void Cgb_UpdateChannels(void)
                     note->counter = note->decay;
                 } else {
                     note->level++;
-                    if ((u8)(note->level & byte_mask) >= note->peak) {
+                    if ((u8)(note->level & byteMask) >= note->peak) {
                     decay:
                         note->state--;
                         note->counter = note->decay;
-                        if ((s8)(note->counter & byte_mask) == 0)
+                        if ((s8)(note->counter & byteMask) == 0)
                             goto sustain_or_release;
                         note->modified |= CGB_NOTE_VOLUME_DIRTY;
                         note->level = note->peak;
@@ -664,13 +664,13 @@ void Cgb_UpdateChannels(void)
             else
                 *reg3 = (*reg3 & 8) | note->frequency;
             note->trigger = (note->trigger & 0xc0) + *((u8 *)&note->frequency + 1);
-            *reg4 = (s8)(note->trigger & byte_mask);
+            *reg4 = (s8)(note->trigger & byteMask);
         }
 
         if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
-            REG_NR51 = (REG_NR51 & ~note->channel_bits) | note->pan_bits;
+            REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
             if (channel == 3) {
-                *reg2 = Sound_Cgb3LevelCodes[note->level];
+                *reg2 = gSound_Cgb3LevelCodes[note->level];
                 if (note->trigger & 0x80) {
                     *reg0 = 0x80;
                     *reg4 = note->trigger;
@@ -694,8 +694,8 @@ void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player, u16 scal
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->tempo_scale = scale;
-        player->tempo_step = (player->tempo * player->tempo_scale) >> 8;
+        player->tempoScale = scale;
+        player->tempoStep = (player->tempo * player->tempoScale) >> 8;
         player->lock = SOUND_LOCK;
     }
 }
@@ -709,13 +709,13 @@ void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume)
     if (player->lock != SOUND_LOCK)
         return;
     player->lock++;
-    i = player->track_count;
+    i = player->trackCount;
     track = player->tracks;
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
             if (track->flags & SOUND_TRACK_ACTIVE) {
-                track->volume_scale = volume >> 2;
+                track->volumeScale = volume >> 2;
                 track->flags |= SOUND_TRACK_UPDATE_VOLUME;
             }
         }
@@ -735,13 +735,13 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch)
     if (player->lock != SOUND_LOCK)
         return;
     player->lock++;
-    i = player->track_count;
+    i = player->trackCount;
     track = player->tracks;
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
             if (track->flags & SOUND_TRACK_ACTIVE) {
-                track->key_offset_b = pitch >> 8;
+                track->keyOffsetB = pitch >> 8;
                 track->fine = pitch;
                 track->flags |= SOUND_TRACK_UPDATE_PITCH;
             }
@@ -762,13 +762,13 @@ void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan)
     if (player->lock != SOUND_LOCK)
         return;
     player->lock++;
-    i = player->track_count;
+    i = player->trackCount;
     track = player->tracks;
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
             if (track->flags & SOUND_TRACK_ACTIVE) {
-                track->pan_offset = pan;
+                track->panOffset = pan;
                 track->flags |= SOUND_TRACK_UPDATE_VOLUME;
             }
         }
@@ -781,18 +781,18 @@ void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan)
 
 void MusicTrack_ClearModulation(struct SoundTrack *track)
 {
-    track->lfo_phase = 0;
-    track->mod_amount = 0;
-    if (track->mod_target == 0)
+    track->lfoPhase = 0;
+    track->modAmount = 0;
+    if (track->modTarget == 0)
         track->flags |= SOUND_TRACK_UPDATE_PITCH;
     else
         track->flags |= SOUND_TRACK_UPDATE_VOLUME;
 }
 
-void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s32 value_arg)
+void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 maskArg, s32 valueArg)
 {
-    u16 mask = mask_arg;
-    u8 value = value_arg;
+    u16 mask = maskArg;
+    u8 value = valueArg;
     s32 count;
     struct SoundTrack *track;
     u32 bit;
@@ -801,14 +801,14 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s3
         return;
 
     player->lock++;
-    count = player->track_count;
+    count = player->trackCount;
     track = player->tracks;
     bit = 1;
     while (count > 0) {
         if (mask & bit) {
             if (track->flags & SOUND_TRACK_ACTIVE) {
-                track->mod_depth = value;
-                if (!track->mod_depth)
+                track->modDepth = value;
+                if (!track->modDepth)
                     MusicTrack_ClearModulation(track);
             }
         }
@@ -831,14 +831,14 @@ void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected, u32 value
         return;
 
     player->lock++;
-    count = player->track_count;
+    count = player->trackCount;
     track = player->tracks;
     bit = 1;
     while (count > 0) {
         if (mask & bit) {
             if (track->flags & SOUND_TRACK_ACTIVE) {
-                track->lfo_speed = speed;
-                if (!track->lfo_speed)
+                track->lfoSpeed = speed;
+                if (!track->lfoSpeed)
                     MusicTrack_ClearModulation(track);
             }
         }
@@ -857,7 +857,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
 
     op = *track->cursor;
     track->cursor++;
-    byte = player->work_bytes + *track->cursor;
+    byte = player->workBytes + *track->cursor;
     track->cursor++;
     value = *track->cursor;
     track->cursor++;
@@ -873,13 +873,13 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
         *byte -= value;
         return;
     case SOUND_WORK_COPY:
-        *byte = player->work_bytes[value];
+        *byte = player->workBytes[value];
         return;
     case SOUND_WORK_ADD_BYTE:
-        *byte += player->work_bytes[value];
+        *byte += player->workBytes[value];
         return;
     case SOUND_WORK_SUBTRACT_BYTE:
-        *byte -= player->work_bytes[value];
+        *byte -= player->workBytes[value];
         return;
     case SOUND_WORK_EQUAL:
         if (*byte == value)
@@ -906,27 +906,27 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
             goto jump;
         goto skip;
     case SOUND_WORK_EQUAL_BYTE:
-        if (*byte == player->work_bytes[value])
+        if (*byte == player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_NOT_EQUAL_BYTE:
-        if (*byte != player->work_bytes[value])
+        if (*byte != player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_GREATER_BYTE:
-        if (*byte > player->work_bytes[value])
+        if (*byte > player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_GREATER_EQUAL_BYTE:
-        if (*byte >= player->work_bytes[value])
+        if (*byte >= player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_LESS_EQUAL_BYTE:
-        if (*byte <= player->work_bytes[value])
+        if (*byte <= player->workBytes[value])
             goto jump;
         goto skip;
     case SOUND_WORK_LESS_BYTE:
-        if (*byte < player->work_bytes[value])
+        if (*byte < player->workBytes[value])
             goto jump;
         goto skip;
     default:
@@ -934,7 +934,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     }
 
 jump:
-    (*(&Sound_CommandTable[1]))(player, track);
+    (*(&gSound_CommandTable[1]))(player, track);
     return;
 skip:
     track->cursor += 4;
@@ -946,7 +946,7 @@ void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTr
 
     command = *track->cursor;
     track->cursor++;
-    Sound_ExtendedCommandTable[command](player, track);
+    gSound_ExtendedCommandTable[command](player, track);
 }
 
 union PackedWord {
@@ -961,7 +961,7 @@ union PackedWord {
 
 void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    SoundCommand func = *(&Sound_CommandTable[0]);
+    SoundCommand func = *(&gSound_CommandTable[0]);
 
     func(player, track);
 }
@@ -1011,13 +1011,13 @@ void MusicTrack_SetVoiceRelease(struct SoundPlayer *player, struct SoundTrack *t
 
 void MusicTrack_SetTailLevel(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    track->tail_level = *track->cursor;
+    track->tailLevel = *track->cursor;
     track->cursor++;
 }
 
 void MusicTrack_SetTailLength(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    track->tail_length = *track->cursor;
+    track->tailLength = *track->cursor;
     track->cursor++;
 }
 
@@ -1029,6 +1029,6 @@ void MusicTrack_SetVoiceLength(struct SoundPlayer *player, struct SoundTrack *tr
 
 void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    track->voice.pan_or_sweep = *track->cursor;
+    track->voice.panOrSweep = *track->cursor;
     track->cursor++;
 }

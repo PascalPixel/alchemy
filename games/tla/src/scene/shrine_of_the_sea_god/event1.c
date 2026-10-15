@@ -1,11 +1,11 @@
 #include "shrine_of_the_sea_god.h"
 
-extern const u8 Data_02003cbc[];
+extern const u8 gData_02003cbc[];
 
 void Func_02000f18(s32 actor)
 {
     Func_02003aa0(actor);
-    Object_GetById(actor)->priority_flags |= 0x20;
+    Object_GetById(actor)->priorityFlags |= 0x20;
 }
 
 void Func_02000f34(void)
@@ -28,7 +28,7 @@ void Func_02000f80(void)
 
 void Func_02000fa8(void)
 {
-    Func_02003b38(Data_02003cbc);
+    Func_02003b38(gData_02003cbc);
 }
 
 void Func_02000fb8(void)
@@ -54,13 +54,13 @@ void Func_02000fec(void)
 
 void Func_02001010(struct ShrineOfTheSeaGodObject *object)
 {
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     do {
         WaitFrames(1);
     } while (object->speed != 0);
     Func_02003b48(188);
     WaitFrames(10);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
 }
 
 void Func_02001038(void)
@@ -81,11 +81,11 @@ void Func_02001038(void)
 
 void Func_02001088(void)
 {
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     u32 id;
 
     for (id = 9; id <= 13;) {
-        u8 *flags = &Object_GetById(id)->priority_flags;
+        u8 *flags = &Object_GetById(id)->priorityFlags;
         u32 next = id + 1;
 
         if (leader->y > 0x100000) {
@@ -102,7 +102,7 @@ void Func_02001088(void)
 
 void Func_020010e8(void)
 {
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 y;
 
     Func_02003b28();
@@ -117,7 +117,7 @@ void Func_020010e8(void)
 
 void Func_02001128(void)
 {
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 y;
     s32 z;
 
@@ -156,10 +156,10 @@ void Func_020011a0(void)
 
 void Func_020011c0(void)
 {
-    Object_GetById(gPartyState.current_owner)->priority_flags &= ~0x20;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags &= ~0x20;
 }
 
 void Func_020011e0(void)
 {
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
 }

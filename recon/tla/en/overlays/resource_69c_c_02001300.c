@@ -1,10 +1,10 @@
 /* Draft of overlay 69C Func_02001300 (first written 2026-10-12): differ 42 of 61. The native rereads
- * other->animation->value_28 and reloads the table address on every pass with the index in r4, and
+ * other->animation->value28 and reloads the table address on every pass with the index in r4, and
  * builds the angle through two registers before it copies the position; the draft hoists all three in
  * a for loop, a goto loop and with a one-pass block around the test. */
 #include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
 
-extern const u16 Data_02002478[];
+extern const u16 gData_02002478[];
 
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 struct ObjectRuntime *Func_02002438(s32 *position, s32 mode);
@@ -28,7 +28,7 @@ void Func_02001300(struct ObjectRuntime *object)
     if (other != NULL) {
         i = 0;
     next:
-        if (*((struct BattleAnimationState *)other->animation)->value_28 == Data_02002478[i])
+        if (*((struct BattleAnimationState *)other->animation)->value28 == gData_02002478[i])
             return;
         i++;
         if (i < 6)

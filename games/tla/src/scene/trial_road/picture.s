@@ -4,8 +4,8 @@
 	.global Data_020062b4
 Data_020062b4:
 	.incbin "games/tla/src/scene/trial_road/picture.gbapal"
-	.global Data_020062d4
-Data_020062d4:
+	.global gData_020062d4
+gData_020062d4:
 	.ifdef TLA_EDITION_ES
 	.incbin "games/tla/src/scene/trial_road/pictr_es.4bpp.lz"
 	.else

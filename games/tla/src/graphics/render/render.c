@@ -56,7 +56,7 @@ void Render_ResetTransformState(void)
 //--------------------------------------------------------------------------
 void SceneTransform_RewindStack(void)
 {
-	gTransformStackTop = Ram_HeapSlots->transform_stack;
+	gTransformStackTop = Ram_HeapSlots->transformStack;
 	gTransformStackDepth = 0;
 }
 

@@ -1112,7 +1112,7 @@ Func_081b243c:
 .L_081b2cb0:
 	.4byte 0x00000d6d
 .L_081b2cb4:
-	.4byte ReelGame_SymbolPrizes
+	.4byte gReelGame_SymbolPrizes
 .L_081b2cb8:
 	.4byte Data_0200024c
 .L_081b2cbc:
@@ -1617,11 +1617,11 @@ Func_081b243c:
 .L_081b305c:
 	.4byte 0x80002000
 .L_081b3060:
-	.4byte ReelGame_TitleLetterTiles
+	.4byte gReelGame_TitleLetterTiles
 .L_081b3064:
-	.4byte ReelGame_FrameSpriteY
+	.4byte gReelGame_FrameSpriteY
 .L_081b3068:
-	.4byte ReelGame_FrameSpriteX
+	.4byte gReelGame_FrameSpriteX
 .L_081b306c:
 	.4byte 0x8000207c
 .L_081b3070:

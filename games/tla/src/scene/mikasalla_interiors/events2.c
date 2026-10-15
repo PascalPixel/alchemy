@@ -44,21 +44,21 @@ void Func_020004dc(void)
     Call1((void (*)())Func_0200062c, 0);
     Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors19);
     Value3((s32 (*)())Func_02000624, 18, 0x100, 60);
-    Call3((void (*)())ObjectMotion_SetAngleToward, 18, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 18, gPartyState.currentOwner, 0);
     Call2((void (*)())Func_02000614, 18, 0);
-    Value3((s32 (*)())Func_02000624, gPartyState.current_owner, 0x100, 60);
+    Value3((s32 (*)())Func_02000624, gPartyState.currentOwner, 0x100, 60);
     Call2((void (*)())Object_SetModeById, 18, 4);
     Call1((void (*)())Battle_WaitMode0, 15);
     Call2((void (*)())Func_02000614, 18, 0);
     Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 18, 0);
-    result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
+    result0 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0);
     if (result0 != 0) goto L_02008568;
     Call2((void (*)())Func_02000614, 18, 0);
     Call1((void (*)())GameFlag_SetBit, 0x340);
     goto L_02008582;
 L_02008568:
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call2((void (*)())Func_02000614, 18, 0);
 L_02008582:
     Call1((void (*)())GameFlag_SetBit, 0xa39);

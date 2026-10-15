@@ -1,5 +1,5 @@
 /* Near miss, differ 2 of 88 (2026-10-15): object 79 at the anchor, fetched
- * or spawned (kind 489), takes a random item id from Data_080f0fc0's
+ * or spawned (kind 489), takes a random item id from gData_080f0fc0's
  * sixteen (0x8001 when PartyInventory_FindRoomFar finds no room) or, past
  * 0xc000 of the roll, a 0x8000-flagged value scaled by the unit's level,
  * and is handed to Func_080e70f8. One pair: the native loads gPartyState's
@@ -15,12 +15,12 @@
 #include "battle_unit.h"
 
 struct AnchorWork {
-    u8 unknown_0000[0x1930];
+    u8 unk0000[0x1930];
     struct ObjectRuntime *anchor;
 };
 
 struct DropEvent {
-    u8 unknown_000[0xd34];
+    u8 unk000[0xd34];
     u16 item;
 };
 
@@ -31,11 +31,11 @@ s32 PartyInventory_FindRoomFar(s32 item);
 void Func_080d3b28(s32 id, s32 item);
 void Func_080e70f8(s32 id);
 u32 Random16(void);
-extern const u16 Data_080f0fc0[];
+extern const u16 gData_080f0fc0[];
 
 void Func_080e716c(void)
 {
-    struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
     struct ObjectRuntime *anchor;
     struct EventWork *event;
     struct BattleUnit *unit;
@@ -45,8 +45,8 @@ void Func_080e716c(void)
 
     asm("");
     anchor = work->anchor;
-    event = Ram_HeapSlots->event_work;
-    unit = UnitGet(gPartyState.current_owner);
+    event = Ram_HeapSlots->eventWork;
+    unit = UnitGet(gPartyState.currentOwner);
 
     object = Object_GetById(id);
     if (object == NULL) {
@@ -56,7 +56,7 @@ void Func_080e716c(void)
         event->objects[id] = object;
     }
     if (Random16() < 0xc000) {
-        item = Data_080f0fc0[(Random16() * 16) >> 16];
+        item = gData_080f0fc0[(Random16() * 16) >> 16];
         if (PartyInventory_FindRoomFar(item) == -1)
             item = 0x8001;
     } else {

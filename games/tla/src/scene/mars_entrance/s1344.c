@@ -9,24 +9,24 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 Data_0200503c[];
-extern const u8 Data_0200547c[];
-extern const u8 Data_020054cc[];
-extern const u8 Data_02005528[];
-extern const u8 Data_02005578[];
-extern const u8 Data_020055d4[];
-extern const u8 Data_02005644[];
-extern const u8 Data_0200610c[];
-extern const u8 Data_02006118[];
-extern const u8 Data_0200613c[];
-extern const u8 Data_02006250[];
-extern const u8 Data_020063b8[];
-extern const u8 Data_020064fc[];
-extern const u8 Data_02006628[];
-extern const u8 Data_02006778[];
-extern s16 Data_02006868;
-extern s16 Data_020068a0;
-extern u16 Data_020068a2;
+extern const u8 gData_0200503c[];
+extern const u8 gData_0200547c[];
+extern const u8 gData_020054cc[];
+extern const u8 gData_02005528[];
+extern const u8 gData_02005578[];
+extern const u8 gData_020055d4[];
+extern const u8 gData_02005644[];
+extern const u8 gData_0200610c[];
+extern const u8 gData_02006118[];
+extern const u8 gData_0200613c[];
+extern const u8 gData_02006250[];
+extern const u8 gData_020063b8[];
+extern const u8 gData_020064fc[];
+extern const u8 gData_02006628[];
+extern const u8 gData_02006778[];
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+extern u16 gData_020068a2;
 extern u8 gMapCellBuffer[];
 
 void *MemAlloc(s32 size);
@@ -45,7 +45,7 @@ void Func_02004d98(void);
 
 void Func_02001344(struct ObjectRuntime *object)
 {
-    if (ABS(object->x - object->linked_object->x) > 0x200000)
+    if (ABS(object->x - object->linkedObject->x) > 0x200000)
         return;
     object->action = 0;
     object->update = (void (*)(void))Func_020012e4;

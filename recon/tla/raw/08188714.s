@@ -689,12 +689,12 @@ Func_08188714:
 .L_08188c98:
 	.4byte 0xffff00ff
 .L_08188c9c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08188ca0:
 	.4byte gMapCellBuffer
 .L_08188ca4:
 	.4byte 0xfffff000
 .L_08188ca8:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08188cac:
 	.4byte Func_08143000

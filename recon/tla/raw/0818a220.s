@@ -724,11 +724,11 @@ Func_0818a220:
 .L_0818a79c:
 	.4byte 0x00000148
 .L_0818a7a0:
-	.4byte Data_08197834
+	.4byte gData_08197834
 .L_0818a7a4:
-	.4byte Data_0819781a
+	.4byte gData_0819781a
 .L_0818a7a8:
-	.4byte Data_08197826
+	.4byte gData_08197826
 .L_0818a7ac:
 	movs r0, #133
 	bl Audio_PlayCue
@@ -1213,7 +1213,7 @@ Func_0818a220:
 	bl Func_080151e4
 	b .L_0818abbe
 .L_0818ab8c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0818ab90:
 	.4byte 0xffffff00
 .L_0818ab94:
@@ -1227,7 +1227,7 @@ Func_0818a220:
 .L_0818aba4:
 	.4byte Data_081991e0
 .L_0818aba8:
-	.4byte Data_08199268
+	.4byte gData_08199268
 .L_0818abac:
 	.4byte 0xfffa0000
 .L_0818abb0:
@@ -1396,11 +1396,11 @@ Func_0818a220:
 .L_0818acf8:
 	.4byte Data_081991c0
 .L_0818acfc:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0818ad00:
 	.4byte Data_08199d64
 .L_0818ad04:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818ad08:
 	.4byte Data_08199d60
 .L_0818ad0c:

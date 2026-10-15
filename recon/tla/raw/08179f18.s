@@ -230,7 +230,7 @@ Func_08179f18:
 .L_0817a0e8:
 	.4byte gBgScroll
 .L_0817a0ec:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0817a0f0:
 	.4byte Func_08143000
 .L_0817a0f4:
@@ -248,7 +248,7 @@ Func_08179f18:
 .L_0817a10c:
 	.4byte gMapCellBuffer
 .L_0817a110:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0817a114:
 	.4byte 0x06010000
 .L_0817a118:
@@ -446,7 +446,7 @@ Func_08179f18:
 .L_0817a298:
 	.4byte gMapCellBuffer
 .L_0817a29c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0817a2a0:
 	.4byte IwramCopyWords
 .L_0817a2a4:
@@ -458,7 +458,7 @@ Func_08179f18:
 .L_0817a2b0:
 	.4byte 0x00000134
 .L_0817a2b4:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817a2b8:
 	str r4, [sp, #132]
 	str r4, [sp, #124]
@@ -2218,7 +2218,7 @@ Func_08179f18:
 .L_0817b008:
 	.4byte 0xffff00ff
 .L_0817b00c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0817b010:
 	.4byte Data_0819942e
 .L_0817b014:
@@ -2230,11 +2230,11 @@ Func_08179f18:
 .L_0817b020:
 	.4byte Data_0819943e
 .L_0817b024:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0817b028:
 	.4byte 0xfffffcc0
 .L_0817b02c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817b030:
 	ldr r1, [sp, #100]
 	cmp r1, #36

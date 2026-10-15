@@ -7,8 +7,8 @@ struct RenderOutput *RenderOutput_Create(
     s32 slot,
     s32 flags,
     struct RenderInput *input,
-    s32 offset_x,
-    s32 offset_y)
+    s32 offsetX,
+    s32 offsetY)
 {
     s32 x;
     struct RenderOutput *output;
@@ -19,12 +19,12 @@ struct RenderOutput *RenderOutput_Create(
         Resource_ResetEntry((u32)slot);
         return NULL;
     }
-    x = offset_x + (s16)input->x * 8 + 8;
-    y = offset_y + (s16)input->y * 8 + 8;
+    x = offsetX + (s16)input->x * 8 + 8;
+    y = offsetY + (s16)input->y * 8 + 8;
     x &= 0x1ff;
     y &= 0xff;
     output->packed = (x << 16) | y | flags;
-    output->table.value = ResourceTableEntries[slot].offset >> 5;
+    output->table.value = gResourceTableEntries[slot].offset >> 5;
     output->sentinel = 254;
     output->x = x;
     output->y = (s16)y;

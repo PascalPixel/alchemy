@@ -8,13 +8,13 @@
 void Func_08108030(void *panel);
 
 struct ScreenWork {
-    u8 unknown_000[0x5a4];
+    u8 unk000[0x5a4];
     u8 panel[0x84];
 };
 
 void Func_08041204(void)
 {
-    struct ScreenWork *work = Ram_HeapSlots->unknown_d0[0];
+    struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
     Func_08108030(work->panel);
 }

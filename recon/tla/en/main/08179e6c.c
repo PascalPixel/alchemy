@@ -24,7 +24,7 @@ void Func_0815b410(void);
 
 void Func_08179e6c(void)
 {
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
     s32 y;
     s32 x;
 

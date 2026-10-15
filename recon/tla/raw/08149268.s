@@ -489,13 +489,13 @@ Func_08149268:
 .L_08149628:
 	.4byte gMapCellBuffer
 .L_0814962c:
-	.4byte Data_08197834
+	.4byte gData_08197834
 .L_08149630:
-	.4byte Data_0819781a
+	.4byte gData_0819781a
 .L_08149634:
-	.4byte Data_08197826
+	.4byte gData_08197826
 .L_08149638:
-	.4byte Data_081977f8
+	.4byte gData_081977f8
 .L_0814963c:
 	mov r7, r9
 	ldr r1, [r7, #24]

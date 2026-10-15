@@ -3,7 +3,7 @@
 #include "character_ids.h"
 
 // 拡大率 (256 = 1 倍)
-const u16 Ui_BounceScales[32] =
+const u16 gUi_BounceScales[32] =
 {
 	256, 256, 260, 266, 274, 284, 294, 306,
 	320, 332, 344, 354, 364, 372, 378, 382,
@@ -11,18 +11,18 @@ const u16 Ui_BounceScales[32] =
 	320, 306, 294, 284, 274, 266, 260, 256,
 };
 
-const s8 Ui_BounceScalesTail[8] =
+const s8 gUi_BounceScalesTail[8] =
 {
 	-15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-const s8 Menu_CursorBobOffsets[16] =
+const s8 gMenu_CursorBobOffsets[16] =
 {
 	0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
 // 光の明滅
-const u8 PaletteGlow_WaveTable[121] =
+const u8 gPaletteGlow_WaveTable[121] =
 {
 	31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
@@ -35,39 +35,39 @@ const u8 PaletteGlow_WaveTable[121] =
 };
 
 // 設定画面の絵番号
-const s8 OptionMenu_SpeedFrames[3] =
+const s8 gOptionMenu_SpeedFrames[3] =
 {
 	0x22, 0x23, 0x24,
 };
 
-const s8 OptionMenu_SpeechFrames[2] =
+const s8 gOptionMenu_SpeechFrames[2] =
 {
 	0x25, 0x26,
 };
 
-const s8 OptionMenu_SleepFrames[2] =
+const s8 gOptionMenu_SleepFrames[2] =
 {
 	0x27, 0x28,
 };
 
 // 窓の色の組
-const u8 OptionMenu_FirstColorPresets[6] =
+const u8 gOptionMenu_FirstColorPresets[6] =
 {
 	4, 16, 8, 21, 1, 13,
 };
 
-const u8 OptionMenu_SecondColorPresets[6] =
+const u8 gOptionMenu_SecondColorPresets[6] =
 {
 	0, 11, 13, 7, 14, 14,
 };
 
-const s8 Menu_WorkspaceIconFrames[8] =
+const s8 gMenu_WorkspaceIconFrames[8] =
 {
 	0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00,
 };
 
 // {絵の番号, 顔の番号} の組, -1 で終わり
-const s16 Portrait_CharacterMap[20] =
+const s16 gPortrait_CharacterMap[20] =
 {
 	ISAAC, ISAAC,			/* ロビン */
 	ISAAC_CHILD, FACE_ISAAC_CHILD,	/* ロビン(こ) */
@@ -81,7 +81,7 @@ const s16 Portrait_CharacterMap[20] =
 	-1, -1,
 };
 
-const s16 Portrait_SpriteMap[100] =
+const s16 gPortrait_SpriteMap[100] =
 {
 	93, 0,
 	90, 1,

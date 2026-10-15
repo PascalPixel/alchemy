@@ -2,8 +2,8 @@
 	.section .rodata
 	.balign 4
 @ 文字入りの 64x16 見出し (32x16 二枚)
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
+	.global gRenderResource_PairSourceTable
+gRenderResource_PairSourceTable:
 	.4byte UiLabel_Save, UiLabel_Continue, UiLabel_Copy, UiLabel_Erase
 	.4byte UiLabel_Battle, UiLabel_Link, UiLabel_Pause, UiLabel_Setup
 	.ifdef TBS_EDITION_JA

@@ -80,7 +80,7 @@ enum
 struct WorkPointers
 {
 	u8 *event;
-	u8 *unknown_04[7];
+	u8 *unk04[7];
 	u8 *scene;
 };
 
@@ -103,7 +103,7 @@ static void EV12_TALK(void)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 struct LeaderEffectWork
 {
-	u8				   unknown_00[24];
+	u8				   unk00[24];
 	struct FieldActor *target;
 };
 
@@ -112,7 +112,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void)
 	struct FieldActor		*actor = Object_GetById(0);
 	struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
 
-	if (actor->terrain_id == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
+	if (actor->terrainId == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
 		work->target = NULL;
 	else
 		work->target = actor;
@@ -149,7 +149,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *MercuryLighthouse_GetExits(void)
 {
-	return MercuryLighthouse_SceneTable;
+	return gMercuryLighthouse_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -226,17 +226,17 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void EV53_TOUCH(void)
 {
-	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
+	SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
 }
 
 static void EV63_TOUCH(void)
 {
-	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
+	SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
 }
 
 static void EV55_TOUCH(void)
 {
-	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
+	SceneActor_RunActorZeroHandledMotion(gEventWork->touchedTrigger - 50);
 }
 
 static void MercuryLighthouse_ExitWhenChannelsOpen(void)
@@ -248,7 +248,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void)
 		Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 		Engine_AudioPlayCue(141);
 		Engine_EventWait(60);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		Engine_AudioPlayCue(0x121);
@@ -270,10 +270,10 @@ static void EV25_SCRIPT(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		switch ((u32)probe.actor_slot)
+		switch ((u32)probe.actorSlot)
 		{
 		case 9:
-			if (probe.position_z >> 20 == 8)
+			if (probe.positionZ >> 20 == 8)
 			{
 				SceneActor_MoveAndRedraw(probe);
 				Engine_EventWait(20);
@@ -293,7 +293,7 @@ static void EV25_SCRIPT(void)
 			}
 			break;
 		case 10:
-			if (probe.position_z >> 20 == 12)
+			if (probe.positionZ >> 20 == 12)
 			{
 				SceneActor_MoveAndRedraw(probe);
 				Engine_EventWait(10);
@@ -319,7 +319,7 @@ static void EV25_SCRIPT(void)
 			}
 			break;
 		case 11:
-			x = probe.position_x;
+			x = probe.positionX;
 			if (x >> 20 == 40)
 			{
 				SceneActor_MoveAndRedraw(probe);
@@ -346,17 +346,17 @@ static void MercuryLighthouse_WalkLeaderIn(void)
 	FieldScheduler_AddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
 	Actor_SetSpeed(0, 0x28000, 0x14000);
 	Engine_ActorSetAnimation(0, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_AudioPlayCue(228);
-	if (work->touched_trigger == 2)
+	if (work->touchedTrigger == 2)
 	{
 		Actor_SetDestination(0, 232, 616);
 	}
-	else if (work->touched_trigger == 3)
+	else if (work->touchedTrigger == 3)
 	{
 		Actor_SetDestination(0, 360, 728);
 	}
-	else if (work->touched_trigger == 4)
+	else if (work->touchedTrigger == 4)
 	{
 		Actor_SetDestination(0, 248, 792);
 	}
@@ -373,7 +373,7 @@ static void MercuryLighthouse_WalkLeaderIn(void)
 #endif
 	}
 	Engine_ActorWaitForMove(0);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
 	Engine_EventEnd();
 }
@@ -399,10 +399,10 @@ static void EV11_PSYNERGY(void)
 	{
 		Object_GetById(11)->y.fixed += 0xfffe0000;
 		p = Object_GetById(11);
-		p->target_y = Object_GetById(11)->y.fixed;
+		p->targetY = Object_GetById(11)->y.fixed;
 		Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 		Engine_AudioPlayCue(0xd9);
-		Engine_MapAnimateCells(MercuryLighthouse_GateCells, 9, 7);
+		Engine_MapAnimateCells(gMercuryLighthouse_GateCells, 9, 7);
 		{
 			s32 s0 = 9;
 			s32 s1 = 10;
@@ -430,10 +430,10 @@ static void EV12_TOUCH_2(void)
 			Engine_EventWait(5);
 			Object_GetById(0)->y.fixed += -0x20000;
 			actor = Object_GetById(0);
-			actor->target_y = Object_GetById(0)->y.fixed;
+			actor->targetY = Object_GetById(0)->y.fixed;
 			Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 			Engine_AudioPlayCue(217);
-			Engine_MapAnimateCells((s32)MercuryLighthouse_GateCells, 9, 7);
+			Engine_MapAnimateCells((s32)gMercuryLighthouse_GateCells, 9, 7);
 			Engine_EventEnd();
 		}
 	}
@@ -449,11 +449,11 @@ static void MercuryLighthouse_CloseFloorSwitch(void)
 		GameFlag_Clear(0x256);
 		Actor_Get(0)->y.fixed += 0x20000;
 		actor = Actor_Get(0);
-		actor->target_y = Actor_Get(0)->y.fixed;
+		actor->targetY = Actor_Get(0)->y.fixed;
 		Engine_EventWait(5);
 		Map_CopyCellsTo(7, 2, 5, 11, 1, 1);
 		Engine_AudioPlayCue(217);
-		Map_AnimateCells(MercuryLighthouse_GateCloseCells, 9, 7);
+		Map_AnimateCells(gMercuryLighthouse_GateCloseCells, 9, 7);
 		Engine_EventEnd();
 	}
 }
@@ -655,10 +655,10 @@ static void MercuryLighthouse_RunSequenceE(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		kind = probe.actor_slot;
+		kind = probe.actorSlot;
 		if (kind == 8)
 		{
-			shape = probe.position_x;
+			shape = probe.positionX;
 			if ((shape >> 20) == 11)
 			{
 				SceneActor_MoveAndRedraw(probe);
@@ -690,7 +690,7 @@ static void MercuryLighthouse_RunSequenceE(void)
 		}
 		else if (kind == 10)
 		{
-			if ((probe.position_z >> 20) == 40)
+			if ((probe.positionZ >> 20) == 40)
 			{
 				SceneActor_MoveAndRedraw(probe);
 				if (GameFlag_IsSet(0x307) == 0)
@@ -708,7 +708,7 @@ static void MercuryLighthouse_RunSequenceE(void)
 				}
 				GameFlag_Set(0x306);
 			}
-			else if ((probe.position_z >> 20) == 42)
+			else if ((probe.positionZ >> 20) == 42)
 			{
 				probe.callback = MercuryLighthouse_RunSequenceF;
 				SceneActor_MoveAndRedraw(probe);
@@ -742,7 +742,7 @@ static void EV08_PSYNERGY_3(void)
 		p[15] = Object_GetById(8)->y.fixed;
 		Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 		Engine_AudioPlayCue(0xd9);
-		Engine_MapAnimateCells(MercuryLighthouse_FloorSwitchCells, 10, 18);
+		Engine_MapAnimateCells(gMercuryLighthouse_FloorSwitchCells, 10, 18);
 		Map_CopyCellAttributes(10, 16, 1, 1, x, 19);
 		Engine_GameFlagSet(0x878);
 	}
@@ -768,10 +768,10 @@ static void EV12_TOUCH_3(void)
 	Engine_GameFlagSet(0x256);
 	Engine_EventWait(5);
 	Object_GetById(0)->y.fixed -= 0x20000;
-	Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
+	Object_GetById(0)->targetY = Object_GetById(0)->y.fixed;
 	Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 	Engine_AudioPlayCue(217);
-	Engine_MapAnimateCells(MercuryLighthouse_FloorSwitchCells, 10, 18);
+	Engine_MapAnimateCells(gMercuryLighthouse_FloorSwitchCells, 10, 18);
 	Engine_EventEnd();
 }
 
@@ -785,11 +785,11 @@ static void EV10_TOUCH(void)
 		GameFlag_Clear(0x256);
 		Actor_Get(0)->y.fixed += 0x20000;
 		actor = Actor_Get(0);
-		actor->target_y = Actor_Get(0)->y.fixed;
+		actor->targetY = Actor_Get(0)->y.fixed;
 		Engine_EventWait(5);
 		Map_CopyCellsTo(8, 29, 10, 23, 1, 1);
 		Engine_AudioPlayCue(217);
-		Map_AnimateCells(MercuryLighthouse_FloorSwitchCloseCells, 10, 18);
+		Map_AnimateCells(gMercuryLighthouse_FloorSwitchCloseCells, 10, 18);
 		Engine_EventEnd();
 	}
 }
@@ -826,8 +826,8 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side)
 	}
 	p = &params;
 	p->palette = 7;
-	p->start_scale_x = 0x8000;
-	p->start_scale_y = 0x8000;
+	p->startScaleX = 0x8000;
+	p->startScaleY = 0x8000;
 	for (i = 0; i <= 1; i++)
 	{
 		for (j = 0; j <= 7; j++)
@@ -872,10 +872,10 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side)
 
 struct LiftLayer
 {
-	u8	unknown_00[12];
+	u8	unk00[12];
 	s32 offset;
-	u8	unknown_10[12];
-	s32 unknown_1c;
+	u8	unk10[12];
+	s32 unk1c;
 };
 
 static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
@@ -927,34 +927,34 @@ static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 
 static s32 MercuryLighthouse_StartPillarPush(void)
 {
-	s32 cell_x;
-	s32 cell_z;
+	s32 cellX;
+	s32 cellZ;
 
-	cell_x = Object_GetById(9)->x.fixed / 0x100000;
-	cell_z = Object_GetById(9)->z.fixed / 0x100000;
+	cellX = Object_GetById(9)->x.fixed / 0x100000;
+	cellZ = Object_GetById(9)->z.fixed / 0x100000;
 	Engine_CameraSetSpeed(0x50000, 0xa000);
 	Engine_CameraMoveTo(0x3300000, -1, 0x2c80000, 1);
 	Engine_CameraWaitForMove();
 	if (!Engine_GameFlagIsSet(0x877))
 	{
-		if (cell_x == 50 && Engine_GameFlagIsSet(0x319))
+		if (cellX == 50 && Engine_GameFlagIsSet(0x319))
 		{
-			Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptA);
+			Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptA);
 		}
-		else if (cell_x == 49)
+		else if (cellX == 49)
 		{
-			if (cell_z == 44 && !Engine_GameFlagIsSet(0x319) && !Engine_GameFlagIsSet(0x31a)
+			if (cellZ == 44 && !Engine_GameFlagIsSet(0x319) && !Engine_GameFlagIsSet(0x31a)
 				&& !Engine_GameFlagIsSet(0x31b))
 			{
-				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptB);
+				Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptB);
 			}
-			else if (cell_z == 44 && Engine_GameFlagIsSet(0x319))
+			else if (cellZ == 44 && Engine_GameFlagIsSet(0x319))
 			{
-				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptC);
+				Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptC);
 			}
-			else if (cell_z == 46 && Engine_GameFlagIsSet(0x31a))
+			else if (cellZ == 46 && Engine_GameFlagIsSet(0x31a))
 			{
-				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptD);
+				Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptD);
 				Engine_EventWait(30);
 				return 1;
 			}
@@ -998,11 +998,11 @@ static void EV40_SCRIPT(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		switch (probe.actor_slot)
+		switch (probe.actorSlot)
 		{
 		case 10:
 			SceneActor_MoveAndRedraw(probe);
-			if (probe.position_z >> 20 == 38)
+			if (probe.positionZ >> 20 == 38)
 				Engine_GameFlagSet(0x318);
 			else
 				Engine_GameFlagClear(0x318);
@@ -1010,7 +1010,7 @@ static void EV40_SCRIPT(void)
 		case 11:
 			start = Object_GetById(11)->x.fixed >> 20;
 			SceneActor_MoveAndRedraw(probe);
-			column = probe.position_x >> 20;
+			column = probe.positionX >> 20;
 			if (column == 47)
 			{
 				Engine_GameFlagSet(0x319);
@@ -1202,12 +1202,12 @@ static void FieldScene_RunActorThreeBranchSequence(void)
 	Actor_FaceDirection(3, FX16_0_5, 20);
 	Engine_ActorSetAnimation(3, 16);
 	record = Object_GetById(3);
-	record->scale_x = -FX16_1_0;
+	record->scaleX = -FX16_1_0;
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(3, 0, 20);
 	Engine_ActorSetAnimation(3, 1);
 	record = Object_GetById(3);
-	record->scale_x = FX16_1_0;
+	record->scaleX = FX16_1_0;
 	Engine_EventWait(20);
 	Actor_FaceDirection(3, FX16_0_25, 20);
 	Event_OpenMessage(3, 0);
@@ -1411,7 +1411,7 @@ static void EV10_PSYNERGY(void)
 		Engine_AudioPlayCue(209);
 		MercuryLighthouse_FadePaletteToWhite();
 		Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-		Engine_MapAnimateCells((s32)MercuryLighthouse_ColumnCells, 116, 35);
+		Engine_MapAnimateCells((s32)gMercuryLighthouse_ColumnCells, 116, 35);
 		Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(3, 3);
@@ -1525,7 +1525,7 @@ static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 	s32					  speed;
 
 	rec = Object_GetById(actor);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	Actor_SetChildValue(actor, 0x100);
 	Engine_AudioPlayCue(221);
@@ -1533,7 +1533,7 @@ static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 	p->priority = 1;
 	p->palette = 5;
 	p->type = 0x11e;
-	p->script = MercuryLighthouse_SparkBurstScript;
+	p->script = gMercuryLighthouse_SparkBurstScript;
 	for (i = 0; i <= 47; i++)
 	{
 		if (i <= 31)
@@ -1547,7 +1547,7 @@ static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 			Effect_Spawn(x, y, rec->z.fixed, 0, speed, 0, 0x330000, p);
 		}
 		rec->y.fixed += i * 0x1999;
-		rec->target_y = rec->y.fixed;
+		rec->targetY = rec->y.fixed;
 		Engine_TaskWait(2);
 	}
 }
@@ -1555,13 +1555,13 @@ static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 static void EV12_PSYNERGY(void)
 {
 	struct ConfiguredEffectOptions *effect;
-	s32								row_offset;
+	s32								rowOffset;
 	u32								value;
 	s32								zero;
 	s32								phase;
 	s32								particle;
 	s32								x;
-	s32								velocity_x;
+	s32								velocityX;
 	struct ConfiguredEffectOptions	options;
 
 	Engine_EventBegin();
@@ -1571,10 +1571,10 @@ static void EV12_PSYNERGY(void)
 	Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
 	Engine_EventWait(30);
 	effect = &options;
-	effect->mode_bits = 1;
+	effect->modeBits = 1;
 	effect->mode = 5;
 	effect->kind = 0x11e;
-	effect->callback_arg = (s32)MercuryLighthouse_SparkBurstScript;
+	effect->callbackArg = (s32)gMercuryLighthouse_SparkBurstScript;
 	zero = 0;
 	phase = zero;
 	do
@@ -1644,14 +1644,14 @@ static void EV12_PSYNERGY(void)
 
 		Map_CopyCellsTo(59, (12 - phase), 48, (12 - phase), 3, 1);
 		particle = 0;
-		row_offset = (phase << 4);
+		rowOffset = (phase << 4);
 		do
 		{
 			value = Engine_RandomNext();
 			x = ((((((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
-			velocity_x = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
+			velocityX = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
 			speed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-			Effect_Spawn(x, 0, ((-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x,
+			Effect_Spawn(x, 0, ((-((u32)particle >> 1) - rowOffset) << 16) + 0xc00000, velocityX,
 				0, speed, 0xd0001, effect);
 			particle = (particle + 1);
 			Engine_EventWait(2);
@@ -1834,7 +1834,7 @@ static void EV15_TOUCH(void)
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
 		Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 		Engine_EventWait(60);
 		Engine_EventRequestExit(8);
 	}
@@ -1887,8 +1887,8 @@ static void MercuryLighthouse_OpenThreeStepStair(void)
 	Map_CopyCellsTo(76, 61, 74, 38, 1, 1);
 	p = &params;
 	p->palette = 5;
-	p->start_scale_x = 0x8000;
-	p->start_scale_y = 0x8000;
+	p->startScaleX = 0x8000;
+	p->startScaleY = 0x8000;
 	for (i = 0; i <= 2; i++)
 	{
 		z = -0x20000;
@@ -2017,9 +2017,9 @@ s32 Scene_Initialize(void)
 	s32 set;
 
 	Engine_GameFlagSet(0x111);
-	gGameState.retreat_entrance = 11;
-	gGameState.retreat_scene = (s32)&SceneId_MercuryLighthouse4;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gGameState.retreatEntrance = 11;
+	gGameState.retreatScene = (s32)&SceneId_MercuryLighthouse4;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Io_Write16(0x3f40, &REG_BLDCNT);
 	{
 		s32 alpha = 0x1010;
@@ -2131,7 +2131,7 @@ s32 Scene_Initialize(void)
 			{
 				Engine_ActorSetPosition(11, 176 << 15, 216 << 16);
 				Object_GetById(11)->y.fixed += -0x20000;
-				Object_GetById(11)->target_y = Object_GetById(11)->y.fixed;
+				Object_GetById(11)->targetY = Object_GetById(11)->y.fixed;
 				Map_CopyCellsTo(9, 1, 9, 7, 1, 2);
 				Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 				Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
@@ -2212,7 +2212,7 @@ s32 Scene_Initialize(void)
 			if (Engine_GameFlagIsSet(0x109) && Engine_GameFlagIsSet(0x256))
 			{
 				Object_GetById(0)->y.fixed = -0x20000;
-				Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
+				Object_GetById(0)->targetY = Object_GetById(0)->y.fixed;
 				Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 				Map_CopyCellsTo(10, 28, 10, 18, 1, 2);
 			}
@@ -2220,7 +2220,7 @@ s32 Scene_Initialize(void)
 			{
 				Engine_ActorSetPosition(8, 168 << 16, 188 << 17);
 				Object_GetById(8)->y.fixed += -0x20000;
-				Object_GetById(8)->target_y = Object_GetById(8)->y.fixed;
+				Object_GetById(8)->targetY = Object_GetById(8)->y.fixed;
 				Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 				Map_CopyCellsTo(10, 28, 10, 18, 1, 2);
 				Map_CopyCellAttributes(10, 16, 1, 1, 10, 19);
@@ -2269,7 +2269,7 @@ s32 Scene_Initialize(void)
 				Engine_AudioPlayCue(211);
 			SetEffectRecordMode(Object_GetById(9), 1);
 			Engine_ActorSetSpritePriority(10, 2);
-			Object_GetById(10)->terrain_id = 2;
+			Object_GetById(10)->terrainId = 2;
 			SetEffectRecordMode(Object_GetById(11), 1);
 			SetEffectRecordMode(Object_GetById(12), 1);
 			SetEffectRecordMode(Object_GetById(13), 1);
@@ -2308,13 +2308,13 @@ s32 Scene_Initialize(void)
 			Engine_ActorSetChildValue(0, 15);
 			Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 			Object_GetById(8)->y.fixed = 144 << 16;
-			Object_GetById(8)->motion_flags = 0;
+			Object_GetById(8)->motionFlags = 0;
 			Object_GetById(8)->bounce = 0;
 			Object_GetById(8)->gravity = 0x4ccc;
-			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+			gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
-			Object_GetById(8)->motion_flags = 3;
+			Object_GetById(8)->motionFlags = 3;
 			Engine_AudioPlayCue(189);
 			Engine_EventWait(32);
 			Engine_AudioPlayCue(188);
@@ -2352,7 +2352,7 @@ s32 Scene_Initialize(void)
 			Engine_ActorSetPosition(3, 0, 0);
 			DisplayBlend_EnableRunScript();
 			Io_Write16(0, &REG_BLDCNT);
-			Object_GetById(9)->scale_x = -0x10000;
+			Object_GetById(9)->scaleX = -0x10000;
 			Engine_ActorSetSpritePriority(14, 1);
 			Engine_ActorSetSpritePriority(15, 1);
 			Engine_ActorSetSpritePriority(16, 1);
@@ -2365,11 +2365,11 @@ s32 Scene_Initialize(void)
 			}
 			Actor_SetPosition(10, 206 << 18, 150 << 18);
 			Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-			Object_GetById(10)->motion_flags = set;
+			Object_GetById(10)->motionFlags = set;
 			SetEffectRecordMode(Object_GetById(10), 1);
 			Engine_EventBegin();
 			Camera_MoveTo(-1, -1, -1, 0);
-			Engine_EventGetViewCenter()->motion_flags = set;
+			Engine_EventGetViewCenter()->motionFlags = set;
 			Engine_ActorSetSpritePriority(0, 1);
 			Engine_ActorSetSpritePriority(13, 1);
 			MercuryLighthouse_RideLift();
@@ -2395,7 +2395,7 @@ s32 Scene_Initialize(void)
 				Engine_ActorSetSpritePriority(15, 1);
 				Engine_ActorSetSpritePriority(16, 1);
 			}
-			Object_GetById(9)->scale_x = -0x10000;
+			Object_GetById(9)->scaleX = -0x10000;
 			if (!Engine_GameFlagIsSet(0x82b))
 			{
 				Engine_ActorSetPosition(3, 0, 0);
@@ -2427,10 +2427,10 @@ s32 Scene_Initialize(void)
 				Engine_ActorSetPosition(3, 0, 0);
 				Actor_SetPosition(10, 206 << 18, 150 << 18);
 				Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-				Object_GetById(10)->collision_flags = 254;
+				Object_GetById(10)->collisionFlags = 254;
 				Engine_EventWait(1);
 			}
-			Object_GetById(10)->motion_flags = 0;
+			Object_GetById(10)->motionFlags = 0;
 			SetEffectRecordMode(Object_GetById(10), 1);
 			break;
 		}
@@ -2543,14 +2543,14 @@ static void MercuryLighthouse_RideLift(void)
 	layer = (struct LiftLayer *)(((u8 *)gMapWork[0]) + 356);
 	speed = 0x9c28;
 	layer->offset = 0x04890000;
-	layer->unknown_1c = 0;
-	Actor_Get(0)->motion_flags = 0;
+	layer->unk1c = 0;
+	Actor_Get(0)->motionFlags = 0;
 	Actor_Get(0)->z.fixed += -0x890000;
-	Actor_Get(0)->target_z = Actor_Get(0)->z.fixed;
-	Actor_Get(13)->motion_flags = 0;
+	Actor_Get(0)->targetZ = Actor_Get(0)->z.fixed;
+	Actor_Get(13)->motionFlags = 0;
 	Actor_SetPosition(13, 170 << 18, 220 << 17);
 	Actor_Get(13)->z.fixed += -0x890000;
-	Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
+	Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	Engine_EventOpenScreen();
@@ -2562,9 +2562,9 @@ static void MercuryLighthouse_RideLift(void)
 	{
 		layer->offset -= speed;
 		Actor_Get(0)->z.fixed += speed;
-		Actor_Get(0)->target_z = Actor_Get(0)->z.fixed;
+		Actor_Get(0)->targetZ = Actor_Get(0)->z.fixed;
 		Actor_Get(13)->z.fixed += speed;
-		Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
+		Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
 		if (layer->offset > 0x04000000)
 		{
 			if ((gFrameCount & 15) == 0 && speed > 0xccb)
@@ -2577,9 +2577,9 @@ static void MercuryLighthouse_RideLift(void)
 	layer->offset = 0x04000000;
 	Engine_MapRedraw();
 	Engine_TaskWait(2);
-	Actor_Get(0)->motion_flags = 3;
+	Actor_Get(0)->motionFlags = 3;
 	Actor_Get(13)->z.fixed = 220 << 17;
-	Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
+	Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
 	Engine_EventWait(30);
 	Actor_WalkToAndWait(0, 704, 584);
 	Actor_Get(0)->bounce = 0;
@@ -2589,7 +2589,7 @@ static void MercuryLighthouse_RideLift(void)
 	Actor_Get(0)->speed = 0x30000;
 	Actor_Get(0)->acceleration = 0x20000;
 	Engine_AudioPlayCue(152);
-	Actor_Get(0)->velocity_y = 0x40000;
+	Actor_Get(0)->velocityY = 0x40000;
 	Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
 	Actor_SetDestination(0, 736, 584);
 	Engine_ActorWaitForMove(0);
@@ -2603,7 +2603,7 @@ static void MercuryLighthouse_RideLift(void)
 	{
 		layer->offset += speed;
 		Actor_Get(13)->z.fixed -= speed;
-		Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
+		Actor_Get(13)->targetZ = Actor_Get(13)->z.fixed;
 		if (layer->offset >= 0x04890000)
 			break;
 		if ((gFrameCount & 7) == 0 && speed <= 0xcccc)
@@ -2617,7 +2617,7 @@ static void MercuryLighthouse_RideLift(void)
 	Engine_TaskWait(2);
 	Actor_SetPosition(13, 0, 0);
 	Engine_EventWait(30);
-	Actor_Get(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(0)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
 static void MercuryLighthouse_CastPsynergyAtActor11(void)
@@ -2668,11 +2668,11 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 
 	sprite = obj->sprite;
-	Engine_ObjectSetScript(obj, MercuryLighthouse_RiseScript);
+	Engine_ObjectSetScript(obj, gMercuryLighthouse_RiseScript);
 
-	obj->motion_flags = 0;
-	obj->terrain_id = 1;
-	obj->priority_flags = 2;
+	obj->motionFlags = 0;
+	obj->terrainId = 1;
+	obj->priorityFlags = 2;
 
 	if (sprite != 0)
 	{
@@ -2715,7 +2715,7 @@ s32 gEffectScript2[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2734,11 +2734,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -2747,32 +2747,32 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 MercuryLighthouse_RiseScript[] = {
+s32 gMercuryLighthouse_RiseScript[] = {
 	SC_WAIT(30),
 	SC_FREE,
 };
 
-s32 MercuryLighthouse_SparkScript[] = {
+s32 gMercuryLighthouse_SparkScript[] = {
 	SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
 	SC_FREE,
 };
 
-s32 Mercury_RampScript[] = {
+s32 gMercury_RampScript[] = {
 	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
-s32 Mercury_ScaleCounterScript[] = {
+s32 gMercury_ScaleCounterScript[] = {
 	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
-s32 Mercury_PillarScript[] = {
+s32 gMercury_PillarScript[] = {
 	SC_CALL(Mercury_FollowLeader),
 	SC_END,
 };
 
-u16 Mercury_MoveAngles[] = {
+u16 gMercury_MoveAngles[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
 	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
@@ -2783,7 +2783,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 MercuryLighthouse_SparkBurstScript[] = {
+s32 gMercuryLighthouse_SparkBurstScript[] = {
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_WAIT(6),
@@ -2803,7 +2803,7 @@ s32 MercuryLighthouse_SparkBurstScript[] = {
 	SC_FREE,
 };
 
-s32 MercuryLighthouse_PushScriptA[] = {
+s32 gMercuryLighthouse_PushScriptA[] = {
 	SC_WAIT(45),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -2813,7 +2813,7 @@ s32 MercuryLighthouse_PushScriptA[] = {
 	SC_END,
 };
 
-s32 MercuryLighthouse_PushScriptB[] = {
+s32 gMercuryLighthouse_PushScriptB[] = {
 	SC_WAIT(60),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -2824,7 +2824,7 @@ s32 MercuryLighthouse_PushScriptB[] = {
 	SC_END,
 };
 
-s32 MercuryLighthouse_PushScriptD[] = {
+s32 gMercuryLighthouse_PushScriptD[] = {
 	SC_WAIT(60),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -2835,7 +2835,7 @@ s32 MercuryLighthouse_PushScriptD[] = {
 	SC_END,
 };
 
-s32 MercuryLighthouse_PushScriptC[] = {
+s32 gMercuryLighthouse_PushScriptC[] = {
 	SC_WAIT(45),
 	SC_CALL(MercuryLighthouse_StartActorNineParticles),
 	SC_END,
@@ -2847,23 +2847,23 @@ s32 gPaletteCycleGreen = 0;
 
 s32 gPaletteCycleBlue = 0;
 
-u16 MercuryLighthouse_GateCells[] = {
+u16 gMercuryLighthouse_GateCells[] = {
 	MAP_CELL_STEP(15, 1, 1, 2, 10), MAP_CELL_STEP(13, 1, 1, 2, 6), MAP_CELL_STEP(11, 1, 1, 2, 6), MAP_CELL_STEP(9, 1, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MercuryLighthouse_GateCloseCells[] = {
+u16 gMercuryLighthouse_GateCloseCells[] = {
 	MAP_CELL_STEP(9, 1, 1, 2, 10), MAP_CELL_STEP(11, 1, 1, 2, 6), MAP_CELL_STEP(13, 1, 1, 2, 6), MAP_CELL_STEP(15, 1, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MercuryLighthouse_FloorSwitchCells[] = {
+u16 gMercuryLighthouse_FloorSwitchCells[] = {
 	MAP_CELL_STEP(16, 28, 1, 2, 10), MAP_CELL_STEP(14, 28, 1, 2, 6), MAP_CELL_STEP(12, 28, 1, 2, 6), MAP_CELL_STEP(10, 28, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MercuryLighthouse_FloorSwitchCloseCells[] = {
+u16 gMercuryLighthouse_FloorSwitchCloseCells[] = {
 	MAP_CELL_STEP(10, 28, 1, 2, 10), MAP_CELL_STEP(12, 28, 1, 2, 6), MAP_CELL_STEP(14, 28, 1, 2, 6), MAP_CELL_STEP(16, 28, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MercuryLighthouse_ColumnCells[] = {
+u16 gMercuryLighthouse_ColumnCells[] = {
 	MAP_CELL_STEP(126, 35, 1, 2, 2), MAP_CELL_STEP(126, 38, 1, 2, 2), MAP_CELL_STEP(126, 41, 1, 2, 2), MAP_CELL_STEP(126, 44, 1, 2, 2), MAP_CELL_STEP(126, 47, 1, 2, 2), MAP_CELL_STEPS_END,
 };
 
@@ -2934,7 +2934,7 @@ struct SceneEntrance gMercuryLighthouseEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 MercuryLighthouse_SceneTable[] = {
+u32 gMercuryLighthouse_SceneTable[] = {
 	SCENE_EXITS(54),
 	SCENE_EXIT(1, 53, 11),
 	SCENE_EXIT(2, 53, 12),

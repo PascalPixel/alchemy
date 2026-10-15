@@ -87,6 +87,6 @@ Func_081a1294:
 .L_081a1330:
 	.4byte gScrollTarget
 .L_081a1334:
-	.4byte Data_02007520
+	.4byte gData_02007520
 .L_081a1338:
-	.4byte Data_0200751c
+	.4byte gData_0200751c

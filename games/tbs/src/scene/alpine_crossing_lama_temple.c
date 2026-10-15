@@ -30,9 +30,9 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
 {
-	object->actor.priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	object->actor.sprite->priority = 3;
-	object->actor.sprite->second_priority = 3;
+	object->actor.sprite->secondPriority = 3;
 	return 0;
 }
 
@@ -50,9 +50,9 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return AlpineCrossingLamaTemple_TempleEntrances;
+		return gAlpineCrossingLamaTemple_TempleEntrances;
 	}
-	return AlpineCrossingLamaTemple_Entrances;
+	return gAlpineCrossingLamaTemple_Entrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -62,16 +62,16 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return AlpineCrossingLamaTemple_Exits;
+	return gAlpineCrossingLamaTemple_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return AlpineCrossingLamaTemple_TemplePlacements;
+		return gAlpineCrossingLamaTemple_TemplePlacements;
 	}
-	return AlpineCrossingLamaTemple_Placements;
+	return gAlpineCrossingLamaTemple_Placements;
 }
 
 static void SceneDialogue_RunMessage1958Step(void)
@@ -117,10 +117,10 @@ static void EV13_TALK(void)
 static void EV02_TOUCH(void)
 {
 	Event_PlayCue(188);
-	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCells, 67, 6);
-	Object_GetById(0)->motion_flags = 0;
+	Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
+	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	Engine_EventWait(16);
@@ -142,7 +142,7 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Actor_FaceDirection(GARET, 0xa000, 0);
 	Actor_FaceDirection(IVAN, 0xc000, 0);
 	Actor_FaceDirection(MIA, 0xe000, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
@@ -229,12 +229,12 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Engine_EventWait(20);
 	Actor_FaceDirection(8, 0xc000, 30);
 	Event_PlayCue(188);
-	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCells, 67, 6);
+	Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCells, 67, 6);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(8, 136, 136);
 	Actor_SetPosition(8, 0, 0);
 	Event_PlayCue(188);
-	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
+	Map_AnimateCells(gAlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
 	Engine_EventWait(60);
 	BattleFx_PlayQueuedSound();
 	Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -385,7 +385,7 @@ static void EV10_TOUCH(void)
 		{
 			struct FieldActor *record = Object_GetById(10);
 
-			record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 		}
 		Engine_EventWait(10);
 		Actor_FaceDirection(10, 0x8000, 20);
@@ -394,13 +394,13 @@ static void EV10_TOUCH(void)
 		Actor_SetAttachedEffect(10, 0x102);
 		Engine_EventWait(60);
 		Event_ShowMessageAndWait(10, 0, 20);
-		Engine_ActorEnableActionCallback(10, AlpineCrossingLamaTemple_HsuAction);
+		Engine_ActorEnableActionCallback(10, gAlpineCrossingLamaTemple_HsuAction);
 		Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
 		GameFlag_Set(0x8b0);
 		Object_RefreshSelectorById(10);
 		Engine_CameraWaitForMove();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-		Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, AlpineCrossingLamaTemple_LeaderAction);
+		Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gAlpineCrossingLamaTemple_LeaderAction);
 		Object_RefreshSelectorById(0);
 		Engine_EventWait(10);
 		none = 0;
@@ -503,8 +503,8 @@ static void EV11_PSYNERGY(void)
 	Engine_EventWait(20);
 	mask = 254;
 	Event_ShowMessageAndWait(8, 0, 20);
-	Object_GetById(8)->steering_flags &= mask;
-	Object_GetById(10)->steering_flags &= mask;
+	Object_GetById(8)->steeringFlags &= mask;
+	Object_GetById(10)->steeringFlags &= mask;
 	Actor_SetSpeed(8, 0x3333, 0x1999);
 	Actor_SetSpeed(10, 0x3333, 0x1999);
 	Engine_ActorSetAnimation(8, 5);
@@ -566,7 +566,7 @@ static void EV11_PSYNERGY(void)
 	{
 		struct FieldActor *record = Object_GetById(10);
 
-		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+		record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 	}
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(10, 168, 0x128);
@@ -585,7 +585,7 @@ static void EV11_PSYNERGY(void)
 	Engine_EventWait(20);
 	Engine_EventEnd();
 	GameFlag_Set(0x8b2);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventRequestExit(6);
 }
 
@@ -635,11 +635,11 @@ static s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
 	if (Object_GetById(0)->y.fixed > actor->y.fixed)
 	{
-		actor->priority_flags |= 2;
+		actor->priorityFlags |= 2;
 	}
 	else
 	{
-		actor->priority_flags &= 0xFD;
+		actor->priorityFlags &= 0xFD;
 	}
 }
 
@@ -658,9 +658,9 @@ static void EV14_PSYNERGY(void)
 {
 	Engine_EventBegin();
 
-	Object_GetById(14)->priority_flags &= 0xfd;
-	Object_GetById(14)->collision_flags &= 0xfd;
-	Object_GetById(14)->motion_flags = 0;
+	Object_GetById(14)->priorityFlags &= 0xfd;
+	Object_GetById(14)->collisionFlags &= 0xfd;
+	Object_GetById(14)->motionFlags = 0;
 	Object_GetById(14)->update =
 		(void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 
@@ -680,7 +680,7 @@ static void EV15_PSYNERGY(void)
 
 		Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
 	}
-	Object_GetById(15)->collision_flags = 254;
+	Object_GetById(15)->collisionFlags = 254;
 	Engine_GameFlagSet(0x201);
 	Engine_EventEnd();
 }
@@ -689,16 +689,16 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return AlpineCrossingLamaTemple_TempleEvents;
+		return gAlpineCrossingLamaTemple_TempleEvents;
 	}
-	return AlpineCrossingLamaTemple_Events;
+	return gAlpineCrossingLamaTemple_Events;
 }
 
 s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 {
 	s32 entrance;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2)
 	{
 		BattleFx_SetQueuedSoundAndPlay(169);
@@ -725,7 +725,7 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 	else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
 		Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-		Object_GetById(14)->priority_flags |= 2;
+		Object_GetById(14)->priorityFlags |= 2;
 		if (Engine_GameFlagIsSet(0x200))
 		{
 			Engine_ActorSetAnimation(14, 5);
@@ -768,14 +768,14 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 			Actor_SetPosition(10, 0xb80000, 0x1300000);
 			Actor_FaceDirection(8, 0x5000, 0);
 			Actor_FaceDirection(10, 0xb000, 0);
-			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
-			Object_GetById(9)->scale_x = -0x10000;
+			Engine_ActorEnableActionCallback(9, gAlpineCrossingLamaTemple_ActorNineAction);
+			Object_GetById(9)->scaleX = -0x10000;
 		}
 		if (!GameFlag_IsSet(0x8b2))
 		{
 			Actor_SetPosition(9, 0xa40000, 0x1180000);
-			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
-			Object_GetById(9)->scale_x = -0x10000;
+			Engine_ActorEnableActionCallback(9, gAlpineCrossingLamaTemple_ActorNineAction);
+			Object_GetById(9)->scaleX = -0x10000;
 		}
 		if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109)
 			&& !Engine_GameFlagIsSet(0x8b2))
@@ -786,12 +786,12 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 	return 0;
 }
 
-s32 AlpineCrossingLamaTemple_TemplePlacement1[] = {
+s32 gAlpineCrossingLamaTemple_TemplePlacement1[] = {
 	SC_CALL(EventScript_PrepareActorRenderFlags),
 	SC_END,
 };
 
-s32 AlpineCrossingLamaTemple_HsuAction[] = {
+s32 gAlpineCrossingLamaTemple_HsuAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(392), 0, PIXELS(232)),
 	SC_SYNC,
@@ -809,7 +809,7 @@ s32 AlpineCrossingLamaTemple_HsuAction[] = {
 	SC_END,
 };
 
-s32 AlpineCrossingLamaTemple_LeaderAction[] = {
+s32 gAlpineCrossingLamaTemple_LeaderAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(392), 0, PIXELS(232)),
 	SC_SYNC,
@@ -825,7 +825,7 @@ s32 AlpineCrossingLamaTemple_LeaderAction[] = {
 	SC_END,
 };
 
-s32 AlpineCrossingLamaTemple_ActorNineAction[] = {
+s32 gAlpineCrossingLamaTemple_ActorNineAction[] = {
 	SC_ARG(1),
 	SC_ARG(5),
 	SC_WAIT(240),
@@ -839,15 +839,15 @@ s32 AlpineCrossingLamaTemple_ActorNineAction[] = {
 	SC_END,
 };
 
-u16 AlpineCrossingLamaTemple_BoulderCells[] = {
+u16 gAlpineCrossingLamaTemple_BoulderCells[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(63, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 AlpineCrossingLamaTemple_BoulderCellsBack[] = {
+u16 gAlpineCrossingLamaTemple_BoulderCellsBack[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(69, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance AlpineCrossingLamaTemple_Entrances[] = {
+struct SceneEntrance gAlpineCrossingLamaTemple_Entrances[] = {
 	{ 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -856,7 +856,7 @@ struct SceneEntrance AlpineCrossingLamaTemple_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance AlpineCrossingLamaTemple_TempleEntrances[] = {
+struct SceneEntrance gAlpineCrossingLamaTemple_TempleEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, 16, 32, 520, 416, 0 },
 	{ 2, CONDITION_ALWAYS, 384, 0, 72, FACING_SOUTH, 0, 16, 32, 520, 416, 0 },
@@ -866,7 +866,7 @@ struct SceneEntrance AlpineCrossingLamaTemple_TempleEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 AlpineCrossingLamaTemple_Exits[] = {
+u32 gAlpineCrossingLamaTemple_Exits[] = {
 	SCENE_EXITS(88),
 	SCENE_EXIT(1, 2, 17),
 	SCENE_EXIT(2, 61, 3),
@@ -880,7 +880,7 @@ u32 AlpineCrossingLamaTemple_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement AlpineCrossingLamaTemple_Placements[] = {
+struct ScenePlacement gAlpineCrossingLamaTemple_Placements[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -906,16 +906,16 @@ struct ScenePlacement AlpineCrossingLamaTemple_Placements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement AlpineCrossingLamaTemple_TemplePlacements[] = {
+struct ScenePlacement gAlpineCrossingLamaTemple_TemplePlacements[] = {
 	{ 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x29, CONDITION_ALWAYS, (s32)AlpineCrossingLamaTemple_ActorNineAction,
+	{ 0x29, CONDITION_ALWAYS, (s32)gAlpineCrossingLamaTemple_ActorNineAction,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x27, 0x8b2, ACTOR_STAND,
 		PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x127, 0x8b2, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x82, IF_FLAG_SET(0x895), (s32)AlpineCrossingLamaTemple_TemplePlacement1,
+	{ 0x82, IF_FLAG_SET(0x895), (s32)gAlpineCrossingLamaTemple_TemplePlacement1,
 		PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x83, IF_FLAG_SET(0x895), ACTOR_STAND,
 		PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -926,7 +926,7 @@ struct ScenePlacement AlpineCrossingLamaTemple_TemplePlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent AlpineCrossingLamaTemple_Events[] = {
+struct SceneEvent gAlpineCrossingLamaTemple_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 9, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
@@ -962,7 +962,7 @@ struct SceneEvent AlpineCrossingLamaTemple_Events[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent AlpineCrossingLamaTemple_TempleEvents[] = {
+struct SceneEvent gAlpineCrossingLamaTemple_TempleEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

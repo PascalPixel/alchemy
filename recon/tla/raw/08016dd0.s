@@ -22,4 +22,4 @@ Func_08016dd0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_08016df4:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes

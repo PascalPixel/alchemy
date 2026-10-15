@@ -17,7 +17,7 @@ s32 Func_02000f6c(s32 id);
 s32 Func_02000fbc(s32 actor);
 void Func_0200191c(void);
 void Func_0200197c(void);
-void Func_02001984(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02001984(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020019e4(s32 value, s32 digits);
 void Func_020019ec(void);
 void Func_02001a14(void);

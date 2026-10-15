@@ -1,9 +1,9 @@
 #include "types.h"
 
 struct MapBlock {
-    u8 unknown_0[2];
+    u8 unk0[2];
     u8 kind;
-    u8 unknown_3;
+    u8 unk3;
 };
 
 extern struct MapBlock gMapBlocks[];

@@ -9,11 +9,11 @@ struct DisplayScrollObject {
     u32 attr2;
 };
 
-extern u16 DisplayScroll_Position;
-extern s16 DisplayScroll_Busy;
-extern s16 DisplayScroll_LastPosition;
-extern struct DisplayScrollObject *DisplayScroll_Objects;
-extern const void *DisplayScroll_LineTable[];
+extern u16 gDisplayScroll_Position;
+extern s16 gDisplayScroll_Busy;
+extern s16 gDisplayScroll_LastPosition;
+extern struct DisplayScrollObject *gDisplayScroll_Objects;
+extern const void *gDisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
@@ -29,14 +29,14 @@ void DisplayScroll_InitObjectTable(void)
     u32 j;
 
     do {
-        *(void **)((u8 *)&DisplayScroll_Objects) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+        *(void **)((u8 *)&gDisplayScroll_Objects) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
     } while (0);
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
 
-    entry = *(u32 **)((u8 *)&DisplayScroll_Objects);
+    entry = *(u32 **)((u8 *)&gDisplayScroll_Objects);
     for (i = 0; i < 8; i++) {
         u32 *q = entry;
 
@@ -75,11 +75,11 @@ void DisplayScroll_InitObjectTable(void)
         *q = 0x300;
         entry += 2;
     }
-    DisplayScroll_Position = 0;
-    DisplayScroll_LastPosition = 0;
-    DisplayScroll_Busy = 0;
+    gDisplayScroll_Position = 0;
+    gDisplayScroll_LastPosition = 0;
+    gDisplayScroll_Busy = 0;
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0x480);
     for (i = 0; i < 32; i++)
-        DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
+        DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }

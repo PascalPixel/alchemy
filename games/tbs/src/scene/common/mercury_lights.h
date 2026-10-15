@@ -43,7 +43,7 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 		st->region = region;
 		return;
 	}
-	actor = Engine_ActorLookup(gGameState.selected_actor);
+	actor = Engine_ActorLookup(gGameState.selectedActor);
 	z = actor->z;
 	cell = (struct MapCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
 	if (st->lit != 0 && st->lower != 0)
@@ -51,11 +51,11 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 		obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
 		if (obj != 0)
 		{
-			obj->terrain_height = actor->terrain_height;
+			obj->terrainHeight = actor->terrainHeight;
 			anim = obj->sprite;
-			Engine_ObjectSetScript(obj, Mercury_PillarScript);
-			obj->linked_object = (struct FieldActor *)actor;
-			obj->motion_flags = 4;
+			Engine_ObjectSetScript(obj, gMercury_PillarScript);
+			obj->linkedObject = (struct FieldActor *)actor;
+			obj->motionFlags = 4;
 			obj->y.fixed += -0x8000;
 			if (anim != 0)
 			{
@@ -70,17 +70,17 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 	{
 		st->lower = 0;
 	}
-	if (cell->collision_code == region && st->upper != 0)
+	if (cell->collisionCode == region && st->upper != 0)
 	{
 		obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);
 		if (obj == 0)
 			return;
-		obj->terrain_height = actor->terrain_height;
+		obj->terrainHeight = actor->terrainHeight;
 		anim = obj->sprite;
-		Engine_ObjectSetScript(obj, Mercury_RampScript);
-		obj->motion_flags = 0;
+		Engine_ObjectSetScript(obj, gMercury_RampScript);
+		obj->motionFlags = 0;
 		obj->timer = 0;
-		obj->priority_flags = 2;
+		obj->priorityFlags = 2;
 		obj->speed = 0x40000;
 		if (anim != 0)
 		{

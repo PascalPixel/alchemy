@@ -23,8 +23,8 @@ s32 Func_020001d4(void)
     if (GameFlag_Test(0xa18)) {
         struct FieldActor *object = Object_GetById(10);
 
-        object->motion_flags = 0;
-        object->terrain_height = -0x200000;
+        object->motionFlags = 0;
+        object->terrainHeight = -0x200000;
         object->y = -0x200000;
         Func_02002228_(10, 0x680000, 0xe80000);
         Func_020021e0(object->x, object->z, 0, 0);

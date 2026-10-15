@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
+#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 s32 UiText_OpenMessageAtObject();
 s32 Func_0200455c();

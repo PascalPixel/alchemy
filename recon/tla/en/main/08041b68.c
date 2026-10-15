@@ -15,7 +15,7 @@
 
 void Func_08041b68(void)
 {
-    u8 *base = Ram_HeapSlots->window_tiles;
+    u8 *base = Ram_HeapSlots->windowTiles;
     u32 alternate = ((struct UiRenderWork *)base)->alt;
     u16 *cursor = ((struct UiRenderWork *)base)->tilemap[0];
     s32 width = 30;
@@ -29,13 +29,13 @@ void Func_08041b68(void)
             if ((tile - 0x80) <= 0x7f || (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
                 u32 index = ((tile & 0xff) ^ 0x80);
 
-                ((struct UiRenderWork *)base)->tile_attributes[index] |= 2;
+                ((struct UiRenderWork *)base)->tileAttributes[index] |= 2;
             }
         }
     }
 
     for (row = 0; row < 256; row++, base++) {
-        if (((struct UiRenderWork *)base)->tile_attributes[0] == 1)
-            ((struct UiRenderWork *)base)->tile_attributes[0] = 0;
+        if (((struct UiRenderWork *)base)->tileAttributes[0] == 1)
+            ((struct UiRenderWork *)base)->tileAttributes[0] = 0;
     }
 }

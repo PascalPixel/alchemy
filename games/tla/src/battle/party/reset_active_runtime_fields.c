@@ -32,34 +32,34 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
         do {
             unit = UnitGet(owners[i]);
             remaining = 3;
-            cursor = (u8 *)&unit->element_levels[3];
+            cursor = (u8 *)&unit->elementLevels[3];
 
             do {
                 remaining--;
                 *cursor-- = 0;
             } while (remaining >= 0);
 
-            unit->atk_cnt = 0;
-            unit->atk_lv = 0;
-            unit->def_cnt = 0;
-            unit->def_lv = 0;
-            unit->res_cnt = 0;
-            unit->res_lv = 0;
+            unit->atkCnt = 0;
+            unit->atkLv = 0;
+            unit->defCnt = 0;
+            unit->defLv = 0;
+            unit->resCnt = 0;
+            unit->resLv = 0;
             unit->delusion = 0;
             unit->confusion = 0;
             unit->charm = 0;
             unit->stun = 0;
             unit->sleep = 0;
-            unit->psy_seal = 0;
+            unit->psySeal = 0;
             unit->refrain = 0;
             unit->reflect = 0;
-            unit->grim_reaper = 0;
-            unit->unknown_142[0] = 0;
-            unit->unknown_142[1] = 0;
+            unit->grimReaper = 0;
+            unit->unk142[0] = 0;
+            unit->unk142[1] = 0;
             unit->ready = 0;
             unit->immobile = 0;
-            unit->agi_cnt = 0;
-            unit->agi_lv = 0;
+            unit->agiCnt = 0;
+            unit->agiLv = 0;
             unit->challenge = 0;
 
             BattleUnit_Recalculate(owners[i]);

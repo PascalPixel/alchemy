@@ -263,7 +263,7 @@ Func_080ea14c:
 .L_080ea378:
 	.4byte gFrameCount
 .L_080ea37c:
-	.4byte Data_080f3954
+	.4byte gData_080f3954
 .L_080ea380:
 	.4byte 0x000001f4
 .L_080ea384:
@@ -813,6 +813,6 @@ Func_080ea14c:
 .L_080ea7b4:
 	.4byte 0xfffe0000
 .L_080ea7b8:
-	.4byte Data_080f3614
+	.4byte gData_080f3614
 .L_080ea7bc:
 	.4byte Func_080e9f68

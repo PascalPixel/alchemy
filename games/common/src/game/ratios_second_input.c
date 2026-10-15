@@ -15,9 +15,9 @@ void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp)
 {
 	s32 cur;
 
-	if (pp > unit->max_pp)
+	if (pp > unit->maxPp)
 	{
-		cur = unit->max_pp;
+		cur = unit->maxPp;
 	}
 	else
 	{

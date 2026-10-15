@@ -11,8 +11,8 @@ struct BattleObj *BattleObjGet(s32 id);
 
 void EnemyUpdate(void)
 {
-    struct BattleWork *work = Ram_HeapSlots->battle_work;
-    u16 unit_ids[14];
+    struct BattleWork *work = Ram_HeapSlots->battleWork;
+    u16 unitIds[14];
     s32 x[6];
     s32 z[6];
     s32 last = -1;
@@ -20,26 +20,26 @@ void EnemyUpdate(void)
     s32 i;
     s32 total;
 
-    for (i = 0; i < 6 && work->enemy_ids[i] != 0xff; i++) {
-        if (work->enemy_ids[i] == 0xfe) {
+    for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++) {
+        if (work->enemyIds[i] == 0xfe) {
             if (count == 0)
                 continue;
         } else {
             last = count;
         }
-        unit_ids[count] = work->enemy_ids[i];
+        unitIds[count] = work->enemyIds[i];
         count++;
     }
     total = last + 1;
-    Func_0811b180(unit_ids, total, x, z);
+    Func_0811b180(unitIds, total, x, z);
     for (i = 0; i < total; i++) {
-        s32 id = unit_ids[i];
+        s32 id = unitIds[i];
 
         if (id != 0xfe) {
             struct BattleObj *object = BattleObjGet(id);
 
-            object->anchor_x = x[i] << 16;
-            object->anchor_z = z[i] << 16;
+            object->anchorX = x[i] << 16;
+            object->anchorZ = z[i] << 16;
         }
     }
 }

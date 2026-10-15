@@ -383,7 +383,7 @@ Func_08027064:
 .L_0802735c:
 	.4byte gPartyState
 .L_08027360:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08027364:
 	.4byte 0xffffc000
 .L_08027368:
@@ -1173,7 +1173,7 @@ Func_08027064:
 .L_08027974:
 	.4byte 0x00000000
 .L_08027978:
-	.4byte Data_0802ec7c
+	.4byte gData_0802ec7c
 .L_0802797c:
 	movs r3, #18
 	mov r0, r10

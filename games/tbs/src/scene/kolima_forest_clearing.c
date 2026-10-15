@@ -42,7 +42,7 @@ typedef struct
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return KolimaForestClearing_Scripts;
+	return gKolimaForestClearing_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -52,12 +52,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return KolimaForestClearing_Messages;
+	return gKolimaForestClearing_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return KolimaForestClearing_Actors;
+	return gKolimaForestClearing_Actors;
 }
 
 static void EV10_SCRIPT(void)
@@ -81,13 +81,13 @@ static void EV11_PSYNERGY(void)
 
 u8 *SceneData_GetExtraTable(void)
 {
-	return KolimaForestClearing_Extras;
+	return gKolimaForestClearing_Extras;
 }
 
 s32 FieldScene_SetupEntryActors8To11(void)
 {
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0xfd3) == 0)
 	{
 		InitializeStagedActorSceneOrbitingEffect(11);
@@ -109,7 +109,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -128,11 +128,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -141,21 +141,21 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-struct SceneEntrance KolimaForestClearing_Scripts[] = {
+struct SceneEntrance gKolimaForestClearing_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 KolimaForestClearing_Messages[] = {
+u32 gKolimaForestClearing_Messages[] = {
 	SCENE_EXITS(41),
 	SCENE_EXIT(1, 42, 1),
 	SCENE_EXIT(2, 40, 2),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement KolimaForestClearing_Actors[] = {
+struct ScenePlacement gKolimaForestClearing_Actors[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -172,7 +172,7 @@ struct ScenePlacement KolimaForestClearing_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent KolimaForestClearing_Extras[] = {
+struct SceneEvent gKolimaForestClearing_Extras[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
@@ -181,5 +181,5 @@ struct SceneEvent KolimaForestClearing_Extras[] = {
 };
 
 // .bss 内の並びは最初に宣言した順 (field.h の extern)
-u8 KolimaPalette_First[1792] __attribute__((section(".bss")));
-u8 KolimaPalette_Second[896] __attribute__((section(".bss")));
+u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
+u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));

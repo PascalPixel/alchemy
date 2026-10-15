@@ -4,7 +4,7 @@
 extern char SceneId_Ov694Room1;
 
 struct PartyState2c2 {
-    u8 unknown_000[0x2c2];
+    u8 unk000[0x2c2];
     u8 value;
 };
 

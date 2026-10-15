@@ -5,7 +5,7 @@
 void Func_020000c8(void);
 void Func_0200058c(void);
 
-extern s16 Data_0200233c[];
+extern s16 gData_0200233c[];
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 288, 0, 454, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -51,21 +51,21 @@ struct ScenePlacement gScenePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-s16 Data_0200233c[] = {
+s16 gData_0200233c[] = {
 	1, 52, 1, 2, 6, 2, 52, 1,
 	2, 6, -1, 2, 54, 2, 2, 6,
 	4, 54, 2, 2, 6, -1,
 };
 
-s32 Data_02002368[] = {
-	(s32)Data_0200233c,
+s32 gData_02002368[] = {
+	(s32)gData_0200233c,
 	0x170005,
-	(s32)Data_0200233c,
+	(s32)gData_0200233c,
 	0x17001e,
 };
 
-s32 Data_02002378[] = {
-	(s32)Data_0200233c,
+s32 gData_02002378[] = {
+	(s32)gData_0200233c,
 	0x40038,
 };
 
@@ -126,6 +126,6 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_02002608[] = {
+u32 gData_02002608[] = {
 	0x76c07b00, 0x6e407280, 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280,
 };

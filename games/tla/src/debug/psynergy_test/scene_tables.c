@@ -12,7 +12,7 @@
 #include "party_state.h"
 #include "text/msg_ids.h"
 
-extern u8 Data_02001300[];
+extern u8 gData_02001300[];
 
 void Func_02000f34(s32 *, s32 *);
 void Func_02000e04(s32);
@@ -58,7 +58,7 @@ const u32 *Scene_GetExits(void)
 
 void *Func_0200004c(void)
 {
-    return Data_02001300;
+    return gData_02001300;
 }
 
 void Func_02000054(void)
@@ -262,12 +262,12 @@ void Func_02000330(void)
 
 void Func_02000444(void)
 {
-    Object_GetById(4)->terrain_id = 2;
+    Object_GetById(4)->terrainId = 2;
 }
 
 void Func_02000454(void)
 {
-    Object_GetById(4)->terrain_id = 0;
+    Object_GetById(4)->terrainId = 0;
 }
 
 static __inline__ void Object_Emote(s32 actor, s32 emote, s32 frames)

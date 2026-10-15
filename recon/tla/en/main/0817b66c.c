@@ -3,7 +3,7 @@
  * In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
  * s2614.c), so it loads from the pool before the register address as the
  * native does, and the frame-80 block's "drift" temporary (alchemy
- * permute's), which puts velocity_x's store after velocity_y's.
+ * permute's), which puts velocityX's store after velocityY's.
  * Left:
  * - the one-pass block's barrier depends on every earlier use of r10, so
  *   sched2 now prefers "add r1, r10" to the resource id's pool load before
@@ -17,7 +17,7 @@
  * - the frame-0 block's setup (y, i, the zero and step) is in another
  *   order; the sprite mask's pool load comes after the stack load of
  *   sprite.bits (the native loads the pool word first, as if the load
- *   after model->unknown_14's store waited a cycle more); the step mask's
+ *   after model->unk14's store waited a cycle more); the step mask's
  *   pool load comes one row late.
  * The sprite source word is two byte fields written with masks: as u32
  *   bitfields the compiler stores bytes (differ 57).
@@ -33,13 +33,13 @@
 
 struct FxWork {
     struct EffectStep steps[32];
-    u8 unknown_0380[0x7780 - 0x380];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake_frames;
-    u8 unknown_77ac[0x78e8 - 0x77ac];
-    s32 transfer_pending;
+    u8 unk0380[0x7780 - 0x380];
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[0x20];
+    s32 shakeFrames;
+    u8 unk77ac[0x78e8 - 0x77ac];
+    s32 transferPending;
 };
 
 struct SpriteSource {
@@ -49,20 +49,20 @@ struct SpriteSource {
 
 struct RenderModel {
     s32 kind;
-    s32 unknown_04;
+    s32 unk04;
     const void *mesh;
     void *vertices;
     struct SpriteSource *source;
-    s32 unknown_14;
+    s32 unk14;
 };
 
 extern char ResourceId_CrossedDaggersSheet;
 extern s32 gCameraSceneParameters[];
-extern const u8 Data_08199450[];
-extern const u8 Data_08199474[];
+extern const u8 gData_08199450[];
+extern const u8 gData_08199474[];
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
-void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
+void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack, s32 wait);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void *GetBattleObjectSlotFar(s32 id);
@@ -72,7 +72,7 @@ void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 cue);
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration, s32 speed_limit, s32 velocity_y, s32 percent);
+void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration, s32 speedLimit, s32 velocityY, s32 percent);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct RenderModel *Func_081969f8(s32 kind);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -90,7 +90,7 @@ void Func_08143bb8(void);
 
 void Func_0817b66c(struct BattleEffectArgument *effect)
 {
-    struct FxWork *work = (struct FxWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct FxWork *work = (struct FxWork *)Ram_HeapSlots->battleFxWork[0];
     struct SpriteSource sprite;
     struct EffectPosition pos;
     struct EffectStep *step;
@@ -102,8 +102,8 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
 
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, (u8 *)work + 0x700, 1, 1);
-    work->transfer_mode = 1;
-    work->transfer_value = 0;
+    work->transferMode = 1;
+    work->transferValue = 0;
     REG_BLDCNT = 0;
     Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
     GetBattleObjectSlotFar(effect->actors[0]);
@@ -123,11 +123,11 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
                 step->x = ((Random16() & 63) + 32) << 16;
                 step->y = y;
                 step->z = Random16();
-                step->velocity_x = 0;
-                step->velocity_y = -((Random16() & 31) + 32) << 10;
-                step->velocity_z = (Random16() & 0x3ff) + 0x400;
+                step->velocityX = 0;
+                step->velocityY = -((Random16() & 31) + 32) << 10;
+                step->velocityZ = (Random16() & 0x3ff) + 0x400;
                 if (i & 1)
-                    step->velocity_z = -step->velocity_z;
+                    step->velocityZ = -step->velocityZ;
                 step->variant = 0;
                 y += 0x80000;
             }
@@ -136,27 +136,27 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
         gCameraSceneParameters[4] = 104;
         for (i = 0, cue = 20; i != 8; i++, cue += 6) {
             if (frame == cue) {
-                work->shake_frames = 4;
+                work->shakeFrames = 4;
                 Audio_PlayCue(133);
                 Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
                 BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0x30000, 100);
             }
         }
         if (frame == 90) {
-            work->shake_frames = 4;
+            work->shakeFrames = 4;
             Func_081180e8(134);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
             BattleFx_StartActorMotion(effect->actors[0], 1, 0, 0, 0x30000, 100);
         }
         vertices = Runtime_BumpAllocateAlternatePool(32);
         model = Func_081969f8(1);
-        model->unknown_14 = 0;
+        model->unk14 = 0;
         sprite.bits = (sprite.bits & ~0xff) | 5;
         sprite.bits = (sprite.bits & ~0xff00) | 0x500;
         model->source = &sprite;
         sprite.pixels = (u8 *)work + 0x700;
         model->kind = 9;
-        model->mesh = Data_08199450;
+        model->mesh = gData_08199450;
         model->vertices = vertices;
         for (i = 0, step = work->steps; i != 8; i++, step++) {
             if (frame == 80) {
@@ -168,15 +168,15 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
                 step->x = (speed << 10) + 0x400000;
                 step->z = speed;
                 drift = -speed << 5;
-                step->velocity_y = 0xc0000;
-                step->velocity_x = drift;
-                step->velocity_z = 0;
+                step->velocityY = 0xc0000;
+                step->velocityX = drift;
+                step->velocityZ = 0;
             }
             Render_ResetTransformState();
             Func_08015160(step->x - 0x400000, step->y - 0x400000, 0);
             Func_0801521c(0x8000);
             Func_080150e4(step->z);
-            Func_08196958(Data_08199474, vertices, 4);
+            Func_08196958(gData_08199474, vertices, 4);
             Func_08196a7c(model);
             if (frame > 79)
                 BattleFxKernels_IntegrateVector3(step, 64, 0);
@@ -189,7 +189,7 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
         gCameraSceneParameters[4] = 120;
         Func_08158ce0(4, 4);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((s32)Func_08143000);

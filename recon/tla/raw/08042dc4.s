@@ -42,7 +42,7 @@ Func_08042dc4:
 .L_08042e08:
 	.4byte 0x0000f080
 .L_08042e0c:
-	.4byte Ui_ProgressBarRows
+	.4byte gUi_ProgressBarRows
 .L_08042e10:
 	.4byte 0x06002252
 .L_08042e14:

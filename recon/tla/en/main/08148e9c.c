@@ -2,7 +2,7 @@
    it: the effect argument read directly, the tornado sheet (resource 0x192)
    unpacked after the particles, blitters from Func_081963ec(104, 0x13) and
    (188, 0x17), the callback at 0xc80, the shape, glint offset and size tables
-   as Data_081979ae, Data_08197486, Data_08197492 and Data_08197498 (not const),
+   as gData_081979ae, gData_08197486, gData_08197492 and gData_08197498 (not const),
    Func_081180e8(133) and Func_08118088 for the struck members, and the release
    before the callback is removed. Same frame and registers; what is left is
    order, each a load (pool word, work slot, argument) the native issues one
@@ -25,20 +25,20 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x20];
+    u8 unk7788[0x20];
     s32 shakeFrames;
-    u8 unknown_77ac[0x13c];
+    u8 unk77ac[0x13c];
     s32 transferPending;
 };
 
 extern char ResourceId_TornadoSheet;
-extern u8 Data_081979ae[];
-extern u16 Data_08197486[];
-extern u8 Data_08197492[];
-extern u8 Data_08197498[];
+extern u8 gData_081979ae[];
+extern u16 gData_08197486[];
+extern u8 gData_08197492[];
+extern u8 gData_08197498[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void);
@@ -66,15 +66,15 @@ void Func_08148e9c(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
     Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 0x17);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     for (j = 0; j != 16; j++)
     {
         point = &work->particles[j];
@@ -107,9 +107,9 @@ void Func_08148e9c(struct BattleEffectArgument *effect)
             REG_BLDALPHA = frame | 0x1000;
         if (frame > 63)
             REG_BLDALPHA = (0x4f - frame) | 0x1000;
-        for (i = 0; i != Data_081979ae[effect->variant * 3]; i++)
+        for (i = 0; i != gData_081979ae[effect->variant * 3]; i++)
         {
-            x = ((Data_081979ae[effect->variant * 3 + 1] * Trig_Sin((frame << 11) + i * 0x4000) + wave)
+            x = ((gData_081979ae[effect->variant * 3 + 1] * Trig_Sin((frame << 11) + i * 0x4000) + wave)
                     >> 16)
                 + 40;
             y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
@@ -123,8 +123,8 @@ void Func_08148e9c(struct BattleEffectArgument *effect)
                 if (point->variant >= 0)
                 {
                     cell = point->variant / 2 + (j / 2) * 3;
-                    draw[j & 1](canvas, work->sheet + Data_08197486[cell], point->x + x,
-                        point->y + y, Data_08197492[cell], Data_08197498[cell]);
+                    draw[j & 1](canvas, work->sheet + gData_08197486[cell], point->x + x,
+                        point->y + y, gData_08197492[cell], gData_08197498[cell]);
                 }
                 point->variant++;
                 if (point->variant == 6)
@@ -147,7 +147,7 @@ void Func_08148e9c(struct BattleEffectArgument *effect)
             }
         }
         work->shakeFrames = 1;
-        Func_08158ce0(Data_081979ae[effect->variant * 3 + 2], Data_081979ae[effect->variant * 3 + 2] * 2);
+        Func_08158ce0(gData_081979ae[effect->variant * 3 + 2], gData_081979ae[effect->variant * 3 + 2] * 2);
         Func_081434f8();
         work->transferPending = 1;
         WaitFrames(1);

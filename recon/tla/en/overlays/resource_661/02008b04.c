@@ -13,7 +13,7 @@
 void Func_02000b04(struct ObjectRuntime *object)
 {
     s32 vx = object->bounce;
-    s32 vz = object->unknown_4c;
+    s32 vz = object->unk4c;
     struct FieldSprite *sprite;
     s32 step;
     struct PartyState *party;
@@ -22,13 +22,13 @@ void Func_02000b04(struct ObjectRuntime *object)
     object->y += object->gravity;
     object->z += vz;
     object->bounce = vx - vx / 18;
-    object->unknown_4c = vz - vz / 16;
+    object->unk4c = vz - vz / 16;
     /* FAKEMATCH: the ARM9 scheduling would load the scale step before storing the Z velocity, as in Effect_AdvanceMotion. */
     __asm__("");
     sprite = object->animation;
-    step = object->speed_limit;
-    object->scale_x += step;
-    object->scale_y += object->acceleration;
+    step = object->speedLimit;
+    object->scaleX += step;
+    object->scaleY += object->acceleration;
     /* FAKEMATCH: and would address the spin before storing the Y scale. */
     __asm__("");
     sprite->rotation += object->action;
@@ -36,5 +36,5 @@ void Func_02000b04(struct ObjectRuntime *object)
     /* FAKEMATCH: the native loads the party state address before it starts the owner offset (differ 4 without the temporary and barrier). */
     __asm__("");
     ((struct FieldSprite *)object->animation)->priority =
-        Object_GetById(party->current_owner)->sprite->priority;
+        Object_GetById(party->currentOwner)->sprite->priority;
 }

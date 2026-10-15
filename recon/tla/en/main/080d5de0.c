@@ -7,12 +7,12 @@
 #include "party_state.h"
 
 struct ContextAnimation {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 flags;
 };
 
 struct ContextEffect {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 param;
 };
 
@@ -27,7 +27,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     struct ContextAnimation *context;
     struct ContextEffect *effect;
 
-    object = ObjectTable_Get(gPartyState.current_owner);
+    object = ObjectTable_Get(gPartyState.currentOwner);
     context = object->animation;
     effect = ResourceMetadata_RegisterFar(context, 267);
     zero = 0;
@@ -39,10 +39,10 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     effect->param = kind;
     object->x = (object->x & 0xFFF00000) + 0x80000;
     object->z = (object->z & 0xFFF00000) + 0x100000;
-    object->velocity_x = zero;
-    object->velocity_z = zero;
-    object->target_x = 0x80000000;
-    object->target_z = 0x80000000;
+    object->velocityX = zero;
+    object->velocityZ = zero;
+    object->targetX = 0x80000000;
+    object->targetZ = 0x80000000;
     Object_SetMode(object, value);
     WaitFrames(18);
 }

@@ -11,7 +11,7 @@
 //--------------------------------------------------------------------------
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
 {
-	struct ObjectRuntime *target = obj->linked_object;
+	struct ObjectRuntime *target = obj->linkedObject;
 
 	obj->x += (target->x - obj->x) / 2;
 	/* FAKEMATCH: separate CSE blocks retain each axis's own-position load and

@@ -422,7 +422,7 @@ Func_0802a124:
 .L_0802a460:
 	.4byte gInput
 .L_0802a464:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_0802a468:
 	.4byte gDebugMode
 .L_0802a46c:
@@ -436,7 +436,7 @@ Func_0802a124:
 .L_0802a47c:
 	.4byte IwramMulQ16
 .L_0802a480:
-	.4byte Data_0802eca0
+	.4byte gData_0802eca0
 .L_0802a484:
 	.4byte 0xfffffe00
 .L_0802a488:
@@ -520,4 +520,4 @@ Func_0802a124:
 .L_0802a524:
 	.4byte 0xfffe0000
 .L_0802a528:
-	.4byte Data_0802ece0
+	.4byte gData_0802ece0

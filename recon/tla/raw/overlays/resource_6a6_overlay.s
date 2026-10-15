@@ -788,11 +788,11 @@ Func_02000198:
 .L_020088e0:
 	.4byte 0x021e0000
 .L_020088e4:
-	.4byte Data_02001470
+	.4byte gData_02001470
 .L_020088e8:
-	.4byte Data_0200151c
+	.4byte gData_0200151c
 .L_020088ec:
-	.4byte Data_0200154c
+	.4byte gData_0200154c
 .L_020088f0:
 	movs r0, #18
 	movs r1, #3
@@ -1108,15 +1108,15 @@ Func_02000198:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008be0:
-	.4byte Data_0200158c
+	.4byte gData_0200158c
 .L_02008be4:
 	.4byte 0x021e0000
 .L_02008be8:
-	.4byte Data_020015e0
+	.4byte gData_020015e0
 .L_02008bec:
-	.4byte Data_02001638
+	.4byte gData_02001638
 .L_02008bf0:
-	.4byte Data_0200166c
+	.4byte gData_0200166c
 	.section .text.x020090c0,"ax",%progbits
 	.global Func_020010c0
 	.thumb_func

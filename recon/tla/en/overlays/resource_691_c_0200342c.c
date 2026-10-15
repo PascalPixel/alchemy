@@ -4,12 +4,12 @@
 #include "field_sprite.h"
 
 struct SpriteBits {
-    u8 unknown_0 : 2;
+    u8 unk0 : 2;
     u8 priority : 2;
 } __attribute__((packed));
 
 struct SpriteAttributes {
-    u8 unknown_00[9];
+    u8 unk00[9];
     struct SpriteBits bits;
 };
 
@@ -29,19 +29,19 @@ void Func_0200342c(struct ObjectRuntime *object)
 
     object->x += vx;
     object->y += object->gravity;
-    vz = object->unknown_4c;
+    vz = object->unk4c;
     object->z += vz;
     object->bounce = vx - vx / 18;
-    object->unknown_4c = vz - vz / 16;
-    object->scale_x += object->speed_limit;
-    object->scale_y += object->acceleration;
+    object->unk4c = vz - vz / 16;
+    object->scaleX += object->speedLimit;
+    object->scaleY += object->acceleration;
     sprite = object->animation;
     sprite->rotation += object->action;
 
     party = &gPartyState;
     do {
     } while (0);
-    owner = Object_GetById(party->current_owner);
+    owner = Object_GetById(party->currentOwner);
     to = (struct SpriteAttributes *)object->animation;
     from = (struct SpriteAttributes *)owner->animation;
     source = from->bits;

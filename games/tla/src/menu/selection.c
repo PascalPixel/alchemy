@@ -20,17 +20,17 @@ void Menu_CenterResourceEntries(s32, s32, s32);
 
 // Lays the entries out in a row three cells apart from x, on row y, and
 // opens the menu's window after them.
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase)
 {
     struct ResourceMenuWork *work;
     s32 i;
     struct ResourceMenuEntry *entry;
     s16 *widthp;
 
-    work = Ram_HeapSlots->menu_select_work;
+    work = Ram_HeapSlots->menuSelectWork;
     widthp = &work->width;
     *widthp = width + 2;
-    work->resource_base = resource_base;
+    work->resourceBase = resourceBase;
     work->row = y;
     /* FAKEMATCH: the empty asm that reads the row back and passes the work
        pointer on makes the count's address wait for the row's store, as the
@@ -69,7 +69,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     }
 
     triple = group * 3;
-    table = Menu_TopEntryPositionByCommand;
+    table = gMenu_TopEntryPositionByCommand;
     offset = triple << 1;
     selection = TableGet(table, selection + offset) - 1;
     if (selection < 0) {
@@ -88,7 +88,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
-        s8 *commands = Menu_TopEntryCommandByPosition;
+        s8 *commands = gMenu_TopEntryCommandByPosition;
         s32 index;
 
         /* FAKEMATCH: ⚓️ loads the table's address before forming the index */

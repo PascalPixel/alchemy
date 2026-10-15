@@ -13,10 +13,10 @@ void Func_02000fbc(s32 a, s32 id)
 
     if (object->z >> 20 == 21) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x339);
         GameFlag_SetBit(0x33a);
         Func_02002840(11, 19, 1, 1, 11, 21);
@@ -36,10 +36,10 @@ void Func_02001038(s32 a, s32 id)
 
     if (object->x >> 20 == 31) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x33c);
         GameFlag_SetBit(0x33d);
         ObjectMotion_SetSpeedParameters_(id, 0x8000, 0x4000);
@@ -84,44 +84,44 @@ void Func_02001138(void)
     Func_020029a0((s32)&MsgIThoughtI);
 }
 
-extern const u8 Data_0200302c[];
-extern const u8 Data_02003038[];
-extern const u8 Data_02003068[];
-extern const u8 Data_02003128[];
-extern const u8 Data_02003194[];
-extern const u8 Data_020031e8[];
-extern const u8 Data_02003314[];
-extern const u8 Data_02003338[];
-extern const u8 Data_020033e0[];
-extern const u8 Data_02003464[];
-extern const u8 Data_020034e8[];
-extern const u8 Data_02003560[];
+extern const u8 gData_0200302c[];
+extern const u8 gData_02003038[];
+extern const u8 gData_02003068[];
+extern const u8 gData_02003128[];
+extern const u8 gData_02003194[];
+extern const u8 gData_020031e8[];
+extern const u8 gData_02003314[];
+extern const u8 gData_02003338[];
+extern const u8 gData_020033e0[];
+extern const u8 gData_02003464[];
+extern const u8 gData_020034e8[];
+extern const u8 gData_02003560[];
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov678Room1)
-        return (const struct SceneEvent *)Data_02003038;
+        return (const struct SceneEvent *)gData_02003038;
     if (scene == (s32)&SceneId_Ov678Room2)
-        return (const struct SceneEvent *)Data_02003068;
+        return (const struct SceneEvent *)gData_02003068;
     if (scene == (s32)&SceneId_Ov678Room3)
-        return (const struct SceneEvent *)Data_02003128;
+        return (const struct SceneEvent *)gData_02003128;
     if (scene == (s32)&SceneId_Ov678Room4)
-        return (const struct SceneEvent *)Data_02003194;
+        return (const struct SceneEvent *)gData_02003194;
     if (scene == (s32)&SceneId_Ov678Room5)
-        return (const struct SceneEvent *)Data_020031e8;
+        return (const struct SceneEvent *)gData_020031e8;
     if (scene == (s32)&SceneId_Ov678Room6)
-        return (const struct SceneEvent *)Data_02003314;
+        return (const struct SceneEvent *)gData_02003314;
     if (scene == (s32)&SceneId_Ov678Room7)
-        return (const struct SceneEvent *)Data_02003338;
+        return (const struct SceneEvent *)gData_02003338;
     if (scene == (s32)&SceneId_Ov678Room8)
-        return (const struct SceneEvent *)Data_020033e0;
+        return (const struct SceneEvent *)gData_020033e0;
     if (scene == (s32)&SceneId_Ov678Room9)
-        return (const struct SceneEvent *)Data_020034e8;
+        return (const struct SceneEvent *)gData_020034e8;
     if (scene == (s32)&SceneId_Ov678Room10)
-        return (const struct SceneEvent *)Data_02003464;
+        return (const struct SceneEvent *)gData_02003464;
     if (scene == (s32)&SceneId_Ov678Room11)
-        return (const struct SceneEvent *)Data_02003560;
-    return (const struct SceneEvent *)Data_0200302c;
+        return (const struct SceneEvent *)gData_02003560;
+    return (const struct SceneEvent *)gData_0200302c;
 }

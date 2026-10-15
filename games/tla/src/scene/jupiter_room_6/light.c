@@ -3,14 +3,14 @@
 #include "field_event.h"
 #include "callback_scheduler.h"
 
-extern u8 Field_CachedTilesA[];
-extern u8 Field_CachedTilesB[];
-extern u8 Field_CachedTilesC[];
-extern s16 Data_02002428;
-extern s16 Data_0200242a;
-extern struct FieldActor *Data_0200242c[];
-extern s16 Data_0200252c;
-extern s16 Data_0200252e;
+extern u8 gField_CachedTilesA[];
+extern u8 gField_CachedTilesB[];
+extern u8 gField_CachedTilesC[];
+extern s16 gData_02002428;
+extern s16 gData_0200242a;
+extern struct FieldActor *gData_0200242c[];
+extern s16 gData_0200252c;
+extern s16 gData_0200252e;
 
 void *MemAlloc(s32 size);
 void Func_02001a6c(const void *source, void *destination);
@@ -35,43 +35,43 @@ void Func_02000d18(void)
 {
     u8 *buffer = BumpAlloc(0xc00);
 
-    Iwram_ClearWords(Data_0200242c, 64);
-    Func_02001a6c(Field_CachedTilesA, buffer);
-    Data_02002428 = Resource_FindFreeEntry();
-    VramLoad(Data_02002428, 0xc00, buffer);
+    Iwram_ClearWords(gData_0200242c, 64);
+    Func_02001a6c(gField_CachedTilesA, buffer);
+    gData_02002428 = Resource_FindFreeEntry();
+    VramLoad(gData_02002428, 0xc00, buffer);
     MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000b5c, 1152);
-    Data_0200242a = 0;
-    Data_0200252c = 0;
-    Data_0200252e = -1;
+    gData_0200242a = 0;
+    gData_0200252c = 0;
+    gData_0200252e = -1;
 }
 
 void Func_02000d98(void)
 {
     u8 *buffer = BumpAlloc(0xc00);
 
-    Iwram_ClearWords(Data_0200242c, 64);
-    Func_02001a6c(Field_CachedTilesB, buffer);
-    Data_02002428 = Resource_FindFreeEntry();
-    VramLoad(Data_02002428, 0x800, buffer);
+    Iwram_ClearWords(gData_0200242c, 64);
+    Func_02001a6c(gField_CachedTilesB, buffer);
+    gData_02002428 = Resource_FindFreeEntry();
+    VramLoad(gData_02002428, 0x800, buffer);
     MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000b5c, 1152);
-    Data_0200242a = 0;
-    Data_0200252c = 0;
-    Data_0200252e = -1;
+    gData_0200242a = 0;
+    gData_0200252c = 0;
+    gData_0200252e = -1;
 }
 
 void Func_02000e18(void)
 {
     u8 *buffer = BumpAlloc(0x800);
 
-    Iwram_ClearWords(Data_0200242c, 64);
-    Func_02001a6c(Field_CachedTilesC, buffer);
-    Data_02002428 = Resource_FindFreeEntry();
-    VramLoad(Data_02002428, 0x800, buffer);
+    Iwram_ClearWords(gData_0200242c, 64);
+    Func_02001a6c(gField_CachedTilesC, buffer);
+    gData_02002428 = Resource_FindFreeEntry();
+    VramLoad(gData_02002428, 0x800, buffer);
     MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000b5c, 1152);
-    Data_0200242a = 0;
-    Data_0200252c = 1;
-    Data_0200252e = -1;
+    gData_0200242a = 0;
+    gData_0200252c = 1;
+    gData_0200252e = -1;
 }

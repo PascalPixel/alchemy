@@ -112,7 +112,7 @@ s32 Item_GetEquippedElement(s32 id)
 	struct BattleUnit		  *unit;
 
 	unit = UnitGet(id);
-	if (unit->class_index == 0)
+	if (unit->classIndex == 0)
 		return Owner_GetDefaultElement(unit);
 	item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
 	if (item != NULL)

@@ -7,15 +7,15 @@
 #include "farcall.h"
 #endif
 
-extern u8  HitTable[];
-extern s32 PpLossTable[];
-extern s32 HpRecoveryTable[];
-extern s32 PpDmgTable[];
-extern s32 HpDmgTable5[];
-extern s32 HpDmgTable8[];
-extern s32 HpDmgTable6[];
-extern s32 PpRecoveryTable[];
-extern s32 HpDmgTable[];
+extern u8  gHitTable[];
+extern s32 gPpLossTable[];
+extern s32 gHpRecoveryTable[];
+extern s32 gPpDmgTable[];
+extern s32 gHpDmgTable5[];
+extern s32 gHpDmgTable8[];
+extern s32 gHpDmgTable6[];
+extern s32 gPpRecoveryTable[];
+extern s32 gHpDmgTable[];
 
 #if GAME_TLA
 s32 BattleHitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);

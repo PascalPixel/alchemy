@@ -4,7 +4,7 @@
 #include "flag_call.h"
 
 extern u32 gFrameCount;
-extern const u8 Data_020068b0[];
+extern const u8 gData_020068b0[];
 
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
@@ -55,15 +55,15 @@ void Func_020004c8(void)
     }
     if (effect != 0) {
         sprite = effect->animation;
-        Func_02005764(effect, Data_020068b0);
+        Func_02005764(effect, gData_020068b0);
         Object_SetPartAttribute(effect, 1);
-        effect->motion_flags = 0;
+        effect->motionFlags = 0;
         angle = Random16Far() & 0xffff000;
         effect->action = angle;
-        effect->unknown_66 = 0;
+        effect->unk66 = 0;
         effect->update = Func_02000090;
-        effect->speed_limit = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
-        sprite->next_frame = 0;
+        effect->speedLimit = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
+        sprite->nextFrame = 0;
         sprite->priority = 1;
     }
 }

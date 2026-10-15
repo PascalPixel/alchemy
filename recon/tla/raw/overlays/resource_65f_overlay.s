@@ -231,7 +231,7 @@ Func_020000b8:
 .L_02008270:
 	.4byte gPartyState
 .L_02008274:
-	.4byte Data_02005520
+	.4byte gData_02005520
 .L_02008278:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
@@ -402,7 +402,7 @@ Func_02000390:
 	bls .L_020083a6
 	pop {r5, r6, r7, pc}
 .L_020083d4:
-	.4byte Data_020054ee
+	.4byte gData_020054ee
 	.section .text.x020083d8,"ax",%progbits
 	.global Func_020003d8
 	.thumb_func
@@ -443,7 +443,7 @@ Func_020003d8:
 	bls .L_020083ee
 	pop {r5, r6, r7, pc}
 .L_0200841c:
-	.4byte Data_020054b8
+	.4byte gData_020054b8
 	.section .text.x02008aa8,"ax",%progbits
 	.balign 4
 	.global Func_02000aa8
@@ -1323,7 +1323,7 @@ Func_02001490:
 .L_02009820:
 	.4byte 0xfff00000
 .L_02009824:
-	.4byte Data_0200545c
+	.4byte gData_0200545c
 .L_02009828:
 	asrs r2, r2, #16
 	movs r0, #8

@@ -11,14 +11,14 @@
 
 struct ActorSpritePart
 {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 y : 8;
     u16 affine : 2;
-    u16 object_mode : 2;
+    u16 objectMode : 2;
     u16 mosaic : 1;
-    u16 full_color : 1;
+    u16 fullColor : 1;
     u16 shape : 2;
-    u8 unknown_06[0x16];
+    u8 unk06[0x16];
 };
 
 struct ActorSpriteRecord
@@ -27,9 +27,9 @@ struct ActorSpriteRecord
 };
 
 // Sets the OBJ mode of both sprite parts of each of the actor's records.
-void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
+void BattlePres_SetActorRecordMode(s32 actorId, s32 mode)
 {
-    struct BattleObj *slot = BattleObjGet(actor_id);
+    struct BattleObj *slot = BattleObjGet(actorId);
     struct MotionObject *object;
     struct ActorSpriteRecord *record;
     struct ActorSpriteRecord **records;
@@ -40,15 +40,15 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
     object = slot->object;
     if (object == 0)
         return;
-    switch (object->record_storage_kind & 15)
+    switch (object->recordStorageKind & 15)
     {
     case 1:
     {
         record = object->records;
-        record->part[0].object_mode = mode;
+        record->part[0].objectMode = mode;
         /* FAKEMATCH: the native stores the first part before it starts the second part's address; plainly the address comes first (one reordered row here and in the loop, differ 4). A one-pass block on the store moves only this one (differ 2). */
         __asm__ volatile("");
-        record->part[1].object_mode = mode;
+        record->part[1].objectMode = mode;
         break;
     }
     case 2:
@@ -60,10 +60,10 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
             record = *records++;
             if (record == 0)
                 break;
-            record->part[0].object_mode = mode;
+            record->part[0].objectMode = mode;
             /* FAKEMATCH: the barrier of the store above. */
             __asm__ volatile("");
-            record->part[1].object_mode = mode;
+            record->part[1].objectMode = mode;
             i++;
         } while (i <= 3);
         break;

@@ -180,11 +180,11 @@ Func_081a0e0c:
 .L_081a0f5c:
 	.4byte 0x00000000
 .L_081a0f60:
-	.4byte DisplayScroll_LineTable
+	.4byte gDisplayScroll_LineTable
 .L_081a0f64:
-	.4byte DisplayScroll_Position
+	.4byte gDisplayScroll_Position
 .L_081a0f68:
-	.4byte DisplayScroll_Objects
+	.4byte gDisplayScroll_Objects
 .L_081a0f6c:
 	.4byte 0x06010000
 .L_081a0f70:
@@ -202,9 +202,9 @@ Func_081a0e0c:
 .L_081a0f88:
 	.4byte 0x40004000
 .L_081a0f8c:
-	.4byte DisplayScroll_LastPosition
+	.4byte gDisplayScroll_LastPosition
 .L_081a0f90:
-	.4byte DisplayScroll_Busy
+	.4byte gDisplayScroll_Busy
 .L_081a0f94:
 	.4byte Func_081a0cac
 .L_081a0f98:

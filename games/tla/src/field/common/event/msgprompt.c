@@ -21,7 +21,7 @@ void Func_080d4330(s32 key);
 void Func_080d3fb0(s32 object, s32 message)
 {
     s32 masked;
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     void *window = UiText_OpenMessageAtObject(object, message);
     s32 id;
     u32 frames;
@@ -36,7 +36,7 @@ void Func_080d3fb0(s32 object, s32 message)
     }
     UiWork_FinalizeEntityMatchingLocalizedIdFar(id);
 
-    if (work->wait_mode == 0) {
+    if (work->waitMode == 0) {
         while (UiWork_IsIdleFar((s32)window) == 0) {
             WaitFrames(1);
             frames++;
@@ -78,9 +78,9 @@ s32 EventRuntime_PromptInventoryMessage(s32 object, s32 message)
     result = Inventory_PromptAndSetObjectMode(EventRuntime_GetControlledOwner(), 0);
     if (result == 0) {
         Func_080d3fb0(object, message);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Func_080d3fb0(object, message);
     }
     return result;
@@ -100,12 +100,12 @@ void Func_080d40dc(s32 speaker)
     struct {
         s32 x, y;
     } pos;
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     speaker &= 0xfff;
     ObjectTable_Get(speaker);
-    work->current_owner = speaker;
-    if (work->wait_mode == 0) {
+    work->currentOwner = speaker;
+    if (work->waitMode == 0) {
         s32 px = pos.x;
         s32 py = pos.y;
         s32 window;
@@ -120,10 +120,10 @@ void Func_080d40dc(s32 speaker)
         py = py < 20 ? 20 : py;
         if (py > 220)
             py = 220;
-        window = UiText_OpenMessageWindowFar((s16)work->message_id, px, py, 1);
-        work->object_status = window;
+        window = UiText_OpenMessageWindowFar((s16)work->messageId, px, py, 1);
+        work->objectStatus = window;
         while (UiWork_IsIdleFar(window) == 0)
             WaitFrames(1);
     }
-    work->message_id++;
+    work->messageId++;
 }

@@ -3,8 +3,8 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 
-extern s16 Data_02002bda;
-extern struct ObjectRuntime *Data_02002bdc[];
+extern s16 gData_02002bda;
+extern struct ObjectRuntime *gData_02002bdc[];
 
 void Func_020015a0(s32 id, s32 value)
 {
@@ -18,8 +18,8 @@ void Func_020015a0(s32 id, s32 value)
             /* FAKEMATCH: the loop note ends the scheduling block after the timer store; without it the count is addressed before the store (one reordered row). */
             do {
             } while (0);
-            count = &Data_02002bda;
-            Data_02002bdc[*count] = object;
+            count = &gData_02002bda;
+            gData_02002bdc[*count] = object;
             (*count)++;
         }
     }

@@ -20,7 +20,7 @@ struct EffectPosition;
 extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
-extern u8 Data_02014000[];
+extern u8 gData_02014000[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
 void Func_08196404(s32 slot, s32 a1, s32 a2, s32 a3, s32 a4);
@@ -42,8 +42,8 @@ void Func_08143000(void);
 
 void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
     u8 *cells = Ram_MapCellBuffer;
     /* The blitter pair, as a two-word array one DImode pseudo: it takes r6 and r7, the second
        unused, which is why the native pushes r7 and spills effect. */
@@ -66,7 +66,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
             kernel = 15;
     }
     Func_08196404(104, 7, 7, kernel, 1);
-    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unk64[1];
     Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work + 0x700, 1, 0);
     if (mode == 0)
@@ -123,7 +123,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                     blit[0](canvas, cells, x - 4, y, 128, 128);
                     break;
                 case 3:
-                    blit[0](canvas, Data_02014000, x - 4, y, 128, 128);
+                    blit[0](canvas, gData_02014000, x - 4, y, 128, 128);
                     break;
                 case 4:
                     blit[0](canvas, work + 0x3f40, x, y, 120, 120);
@@ -144,7 +144,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                     blit[0](canvas, cells, x - 4, y - 8, 128, 128);
                     break;
                 case 3:
-                    blit[0](canvas, Data_02014000, x - 4, y - 8, 128, 128);
+                    blit[0](canvas, gData_02014000, x - 4, y - 8, 128, 128);
                     break;
                 case 4:
                     blit[0](canvas, work + 0x3f40, x, y, 120, 120);

@@ -10,13 +10,13 @@
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 struct EventWork1cc {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct ObjectRuntime *focus;
 };
 
 void Func_02000778(struct ObjectRuntime *object, s32 dz)
 {
-    struct ObjectRuntime *focus = ((struct EventWork1cc *)Ram_HeapSlots->event_work)->focus;
+    struct ObjectRuntime *focus = ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
     s32 position[3];
 
     position[0] = object->x;

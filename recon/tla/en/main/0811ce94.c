@@ -9,54 +9,54 @@ s32 __divsi3(s32, s32);
 u32 Random16(void);
 
 struct BattleEscapeState {
-    u8 reserved_00[0x45];
+    u8 reserved00[0x45];
     u8 guaranteed;
-    u8 failed_attempts;
+    u8 failedAttempts;
 };
 
 s32 BattleEscape_CheckSuccess(void)
 {
     s32 escaped;
-    u8 *failed_attempts;
-    s16 living_units[14];
-    s32 living_count;
-    s32 level_total;
-    s32 unit_index;
+    u8 *failedAttempts;
+    s16 livingUnits[14];
+    s32 livingCount;
+    s32 levelTotal;
+    s32 unitIndex;
     s32 chance;
-    struct BattleEscapeState *escape_state;
+    struct BattleEscapeState *escapeState;
 
     escaped = 0;
-    escape_state = (struct BattleEscapeState *)Ram_HeapSlots->battle_work;
-    if (escape_state->guaranteed == 1) {
+    escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
+    if (escapeState->guaranteed == 1) {
         escaped = 1;
     } else {
-        failed_attempts = &escape_state->failed_attempts;
-        level_total = 0;
-        chance = 0x1388 + (escape_state->failed_attempts * 0x7D0);
-        living_count = BattleParty_ListLivingUnits(
+        failedAttempts = &escapeState->failedAttempts;
+        levelTotal = 0;
+        chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
-            living_units);
-        for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += ((u8 *)UnitGet(
-                (s32)living_units[unit_index]))[0x0f];
+            livingUnits);
+        for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
+            levelTotal += ((u8 *)UnitGet(
+                (s32)livingUnits[unitIndex]))[0x0f];
         }
-        chance += __divsi3(level_total * 0x1F4, living_count);
-        living_count = BattleParty_ListLivingUnits(
+        chance += __divsi3(levelTotal * 0x1F4, livingCount);
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
-            living_units);
-        level_total = 0;
-        for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += ((u8 *)UnitGet(
-                (s32)living_units[unit_index]))[0x0f];
+            livingUnits);
+        levelTotal = 0;
+        for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
+            levelTotal += ((u8 *)UnitGet(
+                (s32)livingUnits[unitIndex]))[0x0f];
         }
-        chance -= __divsi3(level_total * 0x1F4, living_count);
+        chance -= __divsi3(levelTotal * 0x1F4, livingCount);
         if ((chance > 0) &&
             ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
             escaped = 1;
         }
-        *failed_attempts += 1;
+        *failedAttempts += 1;
     }
-    if (gPartyState.battle_rule_24b == 2) {
+    if (gPartyState.battleRule24b == 2) {
         escaped = 0;
     }
     return escaped;

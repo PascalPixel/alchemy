@@ -59,12 +59,12 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
             object = Object_CreateFar(character, entry->x, entry->y, entry->z);
             if (entry->flags & 1) {
                 previous = ObjectTable_Get(index - 1);
-                if (previous->animation_kind == 1 && object->animation_kind == 1) {
+                if (previous->animationKind == 1 && object->animationKind == 1) {
                     sprite = (struct AnimationObject *)previous->animation;
-                    sprite->display_flags |= 1;
+                    sprite->displayFlags |= 1;
                     resource = sprite->slot;
                     sprite = (struct AnimationObject *)object->animation;
-                    sprite->display_flags |= 1;
+                    sprite->displayFlags |= 1;
                     Resource_ResetEntry(sprite->slot);
                     sprite->slot = resource;
                 }
@@ -76,14 +76,14 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
         }
         if (object) {
             Object_SetMode(object, 1);
-            if (object->animation_kind == 1 && (sprite = (struct AnimationObject *)object->animation) != 0)
-                sprite->last_no = __umodsi3(Random16(), 30);
+            if (object->animationKind == 1 && (sprite = (struct AnimationObject *)object->animation) != 0)
+                sprite->lastNo = __umodsi3(Random16(), 30);
             object->angle = entry->facing;
-            object->unknown_59 = 1;
+            object->unk59 = 1;
             ObjectMotion_SetActionCallback(object, entry->behavior);
             Object_SetMode(object, 1);
-            ((struct ScriptObjectRuntime *)object)->home_x = object->x / 0x10000;
-            ((struct ScriptObjectRuntime *)object)->home_z = object->z / 0x10000;
+            ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
+            ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
             if (object->y != 0) {
                 object->flags = 4;
                 object->y += 0x8000;
@@ -93,10 +93,10 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
                 if (!GameFlag_TestFar(33))
                     sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
             } else {
-                object->terrain_height = Map_GetTerrainHeightFar(0, object->x, object->z);
-                object->y += object->terrain_height;
+                object->terrainHeight = Map_GetTerrainHeightFar(0, object->x, object->z);
+                object->y += object->terrainHeight;
             }
-            object->unknown_23 = 1;
+            object->unk23 = 1;
         }
         work->actors[index] = object;
     }

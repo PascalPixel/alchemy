@@ -11,61 +11,61 @@
 //--------------------------------------------------------------------------
 
 // 何もせず本スクリプトへ戻る
-const s32 ObjectDispatch_DefaultScript[] =
+const s32 gObjectDispatch_DefaultScript[] =
 {
 	SC_END,
 };
 
 // 毎フレーム 1 つの命令を繰り返す
-const s32 ObjectDispatch_Table0Script[] =
+const s32 gObjectDispatch_Table0Script[] =
 {
 	SC_KEY_COUNT,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table1Script[] =
+const s32 gObjectDispatch_Table1Script[] =
 {
 	SC_KEYS,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table2Script[] =
+const s32 gObjectDispatch_Table2Script[] =
 {
 	SC_PLAYER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table3Script[] =
+const s32 gObjectDispatch_Table3Script[] =
 {
 	SC_WORLD,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table4Script[] =
+const s32 gObjectDispatch_Table4Script[] =
 {
 	SC_CAMERA,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table5Script[] =
+const s32 gObjectDispatch_Table5Script[] =
 {
 	SC_APPROACH_LINK,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table6Script[] =
+const s32 gObjectDispatch_Table6Script[] =
 {
 	SC_END,
 };
 
 // 命令の番号ごとの処理。0x24 から先は SC_END と同じ。
-const ScriptCommandFn ScriptObject_CommandTable[47] =
+const ScriptCommandFn gScriptObject_CommandTable[47] =
 {
 	Script_StoreLookupResult,				// 0x00 SC_WAIT
 	Script_WaitForEvent,					// 0x01 SC_SYNC

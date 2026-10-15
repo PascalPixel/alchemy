@@ -2,18 +2,18 @@
 #include "iwram_call.h"
 
 struct OrbitEffect {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[15];
-    u8 priority_flags;
-    u8 unknown_24[4];
+    u8 unk14[15];
+    u8 priorityFlags;
+    u8 unk24[4];
     s32 scale;
-    u8 unknown_2c[28];
+    u8 unk2c[28];
     s32 speed;
-    u8 unknown_4c[24];
+    u8 unk4c[24];
     u16 timer;
     s16 pause;
     struct OrbitEffect *anchor;
@@ -28,7 +28,7 @@ void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 struct OrbitEffect *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-extern u32 Data_020015c0[];
+extern u32 gData_020015c0[];
 
 void Func_02000474(struct OrbitEffect *effect)
 {
@@ -53,6 +53,6 @@ void Func_02000474(struct OrbitEffect *effect)
         effect->pause = ((Random16Far() << 4) >> 16) + 8;
     }
     if (++effect->timer == 71)
-        Func_02000e2c(effect, Data_020015c0);
+        Func_02000e2c(effect, gData_020015c0);
 }
 

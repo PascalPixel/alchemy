@@ -94,4 +94,4 @@ Func_0804128c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0804134c:
-	.4byte Data_080aa170
+	.4byte gData_080aa170

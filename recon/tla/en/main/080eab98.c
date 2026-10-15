@@ -5,7 +5,7 @@
 struct CellTag {
     u8 key;
     s8 value;
-    u8 unknown_02[2];
+    u8 unk02[2];
 };
 
 s32 Func_080eab98(s32 unused, s32 key, s8 value)

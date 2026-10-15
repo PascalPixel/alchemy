@@ -203,9 +203,9 @@ Func_0200055c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008664:
-	.4byte Data_02005b68
+	.4byte gData_02005b68
 .L_02008668:
-	.4byte Data_02005bac
+	.4byte gData_02005bac
 .L_0200866c:
 	.4byte IwramMulQ16
 	.section .text.x02008e7c,"ax",%progbits
@@ -605,21 +605,21 @@ Func_02000e7c:
 .L_ja_020090b0:
 	.4byte 0x00000124
 .L_ja_020090b4:
-	.4byte Data_02005bf0
+	.4byte gData_02005bf0
 .L_ja_020090b8:
-	.4byte Data_02005bf6
+	.4byte gData_02005bf6
 .L_ja_020090bc:
 	.4byte Func_02000514
 .L_ja_020090c0:
-	.4byte Data_02005c0e
+	.4byte gData_02005c0e
 .L_ja_020090c4:
-	.4byte Data_02005bfc
+	.4byte gData_02005bfc
 .L_ja_020090c8:
 	.4byte 0x00000125
 .L_ja_020090cc:
-	.4byte Data_02005c26
+	.4byte gData_02005c26
 .L_ja_020090d0:
-	.4byte Data_02005c14
+	.4byte gData_02005c14
 .L_ja_020090d4:
 	.4byte Func_02001468
 .L_ja_020090d8:
@@ -627,9 +627,9 @@ Func_02000e7c:
 .L_ja_020090dc:
 	.4byte 0x00000126
 .L_ja_020090e0:
-	.4byte Data_02005c32
+	.4byte gData_02005c32
 .L_ja_020090e4:
-	.4byte Data_02005c2c
+	.4byte gData_02005c2c
 .L_ja_020090e8:
 	.4byte Func_02001490
 .L_ja_020090ec:
@@ -846,21 +846,21 @@ Func_02000e7c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_ja_020092a0:
-	.4byte Data_02005c38
+	.4byte gData_02005c38
 .L_ja_020092a4:
-	.4byte Data_02005c46
+	.4byte gData_02005c46
 .L_ja_020092a8:
 	.4byte gPartyState
 .L_ja_020092ac:
 	.4byte 0x00000127
 .L_ja_020092b0:
-	.4byte Data_02005c4c
+	.4byte gData_02005c4c
 .L_ja_020092b4:
-	.4byte Data_02005c5a
+	.4byte gData_02005c5a
 .L_ja_020092b8:
-	.4byte Data_02005c60
+	.4byte gData_02005c60
 .L_ja_020092bc:
-	.4byte Data_02005c6e
+	.4byte gData_02005c6e
 	.else
 	.balign 4
 	.global Func_02000e7c
@@ -1257,21 +1257,21 @@ Func_02000e7c:
 .L_020091f8:
 	.4byte 0x00000124
 .L_020091fc:
-	.4byte Data_02005bf0
+	.4byte gData_02005bf0
 .L_02009200:
-	.4byte Data_02005bf6
+	.4byte gData_02005bf6
 .L_02009204:
 	.4byte Func_02000514
 .L_02009208:
-	.4byte Data_02005c0e
+	.4byte gData_02005c0e
 .L_0200920c:
-	.4byte Data_02005bfc
+	.4byte gData_02005bfc
 .L_02009210:
 	.4byte 0x00000125
 .L_02009214:
-	.4byte Data_02005c26
+	.4byte gData_02005c26
 .L_02009218:
-	.4byte Data_02005c14
+	.4byte gData_02005c14
 .L_0200921c:
 	.4byte Func_02001468
 .L_02009220:
@@ -1279,9 +1279,9 @@ Func_02000e7c:
 .L_02009224:
 	.4byte 0x00000126
 .L_02009228:
-	.4byte Data_02005c32
+	.4byte gData_02005c32
 .L_0200922c:
-	.4byte Data_02005c2c
+	.4byte gData_02005c2c
 .L_02009230:
 	.4byte Func_02001490
 .L_02009234:
@@ -1499,21 +1499,21 @@ Func_02000e7c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020093ec:
-	.4byte Data_02005c38
+	.4byte gData_02005c38
 .L_020093f0:
-	.4byte Data_02005c46
+	.4byte gData_02005c46
 .L_020093f4:
 	.4byte gPartyState
 .L_020093f8:
 	.4byte 0x00000127
 .L_020093fc:
-	.4byte Data_02005c5a
+	.4byte gData_02005c5a
 .L_02009400:
-	.4byte Data_02005c4c
+	.4byte gData_02005c4c
 .L_02009404:
-	.4byte Data_02005c60
+	.4byte gData_02005c60
 .L_02009408:
-	.4byte Data_02005c6e
+	.4byte gData_02005c6e
 	.endif
 	.section .text.x020094e8,"ax",%progbits
 	.balign 4
@@ -1610,11 +1610,11 @@ Func_020014e8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009594:
-	.4byte Data_0200703c
+	.4byte gData_0200703c
 .L_02009598:
-	.4byte Data_02007040
+	.4byte gData_02007040
 .L_0200959c:
-	.4byte Data_02007068
+	.4byte gData_02007068
 .L_020095a0:
 	.4byte 0x05000184
 	.section .text.x0200967c,"ax",%progbits
@@ -2082,7 +2082,7 @@ Func_02001894:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009a4c:
-	.4byte Data_02007044
+	.4byte gData_02007044
 .L_02009a50:
 	.4byte Data_02007064
 	.section .text.x02009a54,"ax",%progbits
@@ -2644,7 +2644,7 @@ Func_02001e20:
 .L_02009f7c:
 	.4byte gPartyState
 .L_02009f80:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 	.section .text.x02009ffc,"ax",%progbits
 	.balign 4
 	.global Func_02001ffc
@@ -2829,7 +2829,7 @@ Func_02001ffc:
 .L_0200a154:
 	.4byte gPartyState
 .L_0200a158:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 	.section .text.x0200a15c,"ax",%progbits
 	.global Func_0200215c
 	.thumb_func
@@ -2865,7 +2865,7 @@ Func_0200215c:
 	str r6, [r5, #52]
 	pop {r5, r6, pc}
 .L_0200a19c:
-	.4byte Data_02005d8c
+	.4byte gData_02005d8c
 	.section .text.x0200a42c,"ax",%progbits
 	.balign 4
 	.global Func_0200242c
@@ -3070,7 +3070,7 @@ Func_0200242c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a5a8:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200a5ac:
 	.4byte 0xffff0000
 	.section .text.x0200a624,"ax",%progbits
@@ -3231,7 +3231,7 @@ Func_02002624:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200a750:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200a754:
 	.4byte Func_0200242c
 	.section .text.x0200a800,"ax",%progbits
@@ -3563,7 +3563,7 @@ Func_0200297c:
 .L_ja_0200a9bc:
 	.4byte gPartyState
 .L_ja_0200a9c0:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_ja_0200a9c4:
 	.4byte Func_02002954
 .L_ja_0200a9c8:
@@ -3830,7 +3830,7 @@ Func_0200297c:
 .L_0200ab70:
 	.4byte gPartyState
 .L_0200ab74:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200ab78:
 	.4byte Func_02002954
 .L_0200ab7c:
@@ -3993,7 +3993,7 @@ Func_02002ba0:
 .L_0200acd0:
 	.4byte gPartyState
 .L_0200acd4:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200acd8:
 	.4byte Func_02002954
 .L_0200acdc:
@@ -4172,9 +4172,9 @@ Func_02002d08:
 .L_0200ae6c:
 	.4byte 0xfffffc00
 .L_0200ae70:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200ae74:
-	.4byte Data_02005dbc
+	.4byte gData_02005dbc
 .L_0200ae78:
 	.4byte IwramMulQ16
 .L_0200ae7c:
@@ -4291,7 +4291,7 @@ Func_02002e8c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200af64:
-	.4byte Data_02005e00
+	.4byte gData_02005e00
 .L_0200af68:
 	.4byte IwramMulQ16
 	.section .text.x0200af80,"ax",%progbits
@@ -4680,7 +4680,7 @@ Func_02002f80:
 .L_0200b278:
 	.4byte gPartyState
 .L_0200b27c:
-	.4byte Data_020023c4 + 0x188
+	.4byte gData_020023c4 + 0x188
 .L_0200b280:
 	.4byte 0x0007ffff
 .L_0200b284:
@@ -5017,7 +5017,7 @@ Func_020035b8:
 .L_0200b770:
 	.4byte gPartyState
 .L_0200b774:
-	.4byte Data_02007058
+	.4byte gData_02007058
 .L_0200b778:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200b77c:
@@ -5167,13 +5167,13 @@ Func_02003780:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b898:
-	.4byte Data_020070a8
+	.4byte gData_020070a8
 .L_0200b89c:
 	.4byte gPartyState
 .L_0200b8a0:
 	.4byte 0xffff0000
 .L_0200b8a4:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0200b8a8:
 	.4byte 0x80008800
 	.section .text.x0200b8ac,"ax",%progbits
@@ -5461,7 +5461,7 @@ Func_020038ac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200badc:
-	.4byte Data_020070a8
+	.4byte gData_020070a8
 .L_0200bae0:
 	.4byte IwramClearWords
 .L_0200bae4:
@@ -5952,7 +5952,7 @@ Func_02003f18:
 .L_0200bfc0:
 	.4byte gPartyState
 .L_0200bfc4:
-	.4byte Data_020070a8
+	.4byte gData_020070a8
 	.section .text.x0200bfc8,"ax",%progbits
 	.global Func_02003fc8
 	.thumb_func
@@ -6043,7 +6043,7 @@ Func_02003fc8:
 .L_0200c078:
 	.4byte gPartyState
 .L_0200c07c:
-	.4byte Data_020070a8
+	.4byte gData_020070a8
 	.section .text.x0200c140,"ax",%progbits
 	.balign 4
 	.global Func_02004140
@@ -6152,7 +6152,7 @@ Func_02004140:
 .L_0200c20c:
 	.4byte gInput
 .L_0200c210:
-	.4byte Data_02005f38
+	.4byte gData_02005f38
 .L_0200c214:
 	.4byte 0xffff0000
 .L_0200c218:
@@ -6436,7 +6436,7 @@ Func_020043ec:
 .L_ja_0200c298:
 	.4byte gPartyState
 .L_ja_0200c29c:
-	.4byte Data_020074c8
+	.4byte gData_020074c8
 .L_ja_0200c2a0:
 	.4byte 0xfff00000
 .L_ja_0200c2a4:
@@ -6498,7 +6498,7 @@ Func_020043ec:
 .L_ja_0200c314:
 	.4byte gInput
 .L_ja_0200c318:
-	.4byte Data_02005f38
+	.4byte gData_02005f38
 .L_ja_0200c31c:
 	.4byte 0xffff0000
 .L_ja_0200c320:
@@ -6756,7 +6756,7 @@ Func_020043ec:
 .L_ja_0200c524:
 	.4byte Func_02004080
 .L_ja_0200c528:
-	.4byte Data_020074c8
+	.4byte gData_020074c8
 	.else
 	.global Func_020043ec
 	.thumb_func
@@ -6811,7 +6811,7 @@ Func_020043ec:
 .L_0200c44c:
 	.4byte gPartyState
 .L_0200c450:
-	.4byte Data_020074c8
+	.4byte gData_020074c8
 .L_0200c454:
 	.4byte 0xfff00000
 .L_0200c458:
@@ -6873,7 +6873,7 @@ Func_020043ec:
 .L_0200c4c8:
 	.4byte gInput
 .L_0200c4cc:
-	.4byte Data_02005f38
+	.4byte gData_02005f38
 .L_0200c4d0:
 	.4byte 0xffff0000
 .L_0200c4d4:
@@ -7147,7 +7147,7 @@ Func_020043ec:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200c6f8:
-	.4byte Data_020074c8
+	.4byte gData_020074c8
 .L_0200c6fc:
 	.4byte Func_02004080
 	.endif
@@ -7564,9 +7564,9 @@ Func_02004938:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200ca3c:
-	.4byte Data_02005f58
+	.4byte gData_02005f58
 .L_0200ca40:
-	.4byte Data_02005f64
+	.4byte gData_02005f64
 	.section .text.x0200ca8c,"ax",%progbits
 	.balign 4
 	.global Func_02004a8c
@@ -7758,9 +7758,9 @@ Func_02004a8c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200cbe8:
-	.4byte Data_02005f64
+	.4byte gData_02005f64
 .L_0200cbec:
-	.4byte Data_02005f7c
+	.4byte gData_02005f7c
 .L_0200cbf0:
 	.4byte 0xffff0000
 	.section .text.x0200cbf4,"ax",%progbits
@@ -7908,11 +7908,11 @@ Func_02004bf4:
 .L_0200cd00:
 	.4byte gPartyState
 .L_0200cd04:
-	.4byte Data_02005f58
+	.4byte gData_02005f58
 .L_0200cd08:
-	.4byte Data_02005f7c
+	.4byte gData_02005f7c
 .L_0200cd0c:
-	.4byte Data_02005f64
+	.4byte gData_02005f64
 	.section .text.x0200cd10,"ax",%progbits
 	.global Func_02004d10
 	.thumb_func
@@ -8231,11 +8231,11 @@ Func_02004d10:
 .L_0200cfb0:
 	.4byte gPartyState
 .L_0200cfb4:
-	.4byte Data_02005f64
+	.4byte gData_02005f64
 .L_0200cfb8:
 	.4byte Func_02004fc0
 .L_0200cfbc:
-	.4byte Data_02005f7c
+	.4byte gData_02005f7c
 	.section .text.x0200cfc0,"ax",%progbits
 	.global Func_02004fc0
 	.thumb_func
@@ -8305,7 +8305,7 @@ Func_02004fc0:
 	add sp, #12
 	pop {r5, r6, pc}
 .L_0200d044:
-	.4byte Data_02005f58
+	.4byte gData_02005f58
 	.section .text.x0200d048,"ax",%progbits
 	.balign 4
 	.global Func_02005048
@@ -8523,56 +8523,56 @@ Func_02005048:
 .L_0200d1dc:
 	.4byte 0xffff0000
 .L_0200d1e0:
-	.4byte Data_020074cc
+	.4byte gData_020074cc
 .L_0200d1e4:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0200d1e8:
 	.4byte Data_0200f510
 .L_0200d1ec:
-	.4byte Data_020074ce
+	.4byte gData_020074ce
 .L_0200d1f0:
-	.4byte Data_020074d0
+	.4byte gData_020074d0
 .L_0200d1f4:
-	.4byte Data_020075d0
+	.4byte gData_020075d0
 .L_0200d1f8:
 	.4byte 0x40002000
 .L_0200d1fc:
 	.4byte 0xc000a000
 .L_0200d200:
-	.4byte Data_020075d2
+	.4byte gData_020075d2
 	.section .bss,"aw",%nobits
 	.global Data_02007064
 Data_02007064:
 	.space 0x00000004
-	.global Data_02007068
-Data_02007068:
+	.global gData_02007068
+gData_02007068:
 	.space 0x00000020
-	.global Data_02007088
-Data_02007088:
+	.global gData_02007088
+gData_02007088:
 	.space 0x00000004
-	.global Data_0200708c
-Data_0200708c:
+	.global gData_0200708c
+gData_0200708c:
 	.space 0x0000001c
-	.global Data_020070a8
-Data_020070a8:
+	.global gData_020070a8
+gData_020070a8:
 	.space 0x00000420
-	.global Data_020074c8
-Data_020074c8:
+	.global gData_020074c8
+gData_020074c8:
 	.space 0x00000004
-	.global Data_020074cc
-Data_020074cc:
+	.global gData_020074cc
+gData_020074cc:
 	.space 0x00000002
-	.global Data_020074ce
-Data_020074ce:
+	.global gData_020074ce
+gData_020074ce:
 	.space 0x00000002
-	.global Data_020074d0
-Data_020074d0:
+	.global gData_020074d0
+gData_020074d0:
 	.space 0x00000040
 	.global Data_0200f510
 Data_0200f510:
 	.space 0x000000c0
-	.global Data_020075d0
-Data_020075d0:
+	.global gData_020075d0
+gData_020075d0:
 	.space 0x00000002
-	.global Data_020075d2
-Data_020075d2:
+	.global gData_020075d2
+gData_020075d2:

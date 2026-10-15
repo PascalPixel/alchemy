@@ -7,7 +7,7 @@ void Func_02004da0(void)
 #if !defined(TLA_EDITION_JA)
     Func_02004d24(2);
 #endif
-    ObjectMotion_SetAngleToward(2, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(2, gPartyState.currentOwner, 0);
     Func_020056dc(MsgIUnderstandYour);
     Func_020056f4(2, 0);
 #if !defined(TLA_EDITION_JA)

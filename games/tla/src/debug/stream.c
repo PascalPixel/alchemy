@@ -31,13 +31,13 @@ s16 Stream_ReadS16(u8 **cursor)
 
 void BattleMap_ApplySceneEntranceView(void)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
     s32 done;
 
     /* FAKEMATCH: the native issues the event work load before the argument. */
     __asm__("");
     done = Func_080cc67c(1);
-    if (event->control_mode == 2 && done == 0)
+    if (event->controlMode == 2 && done == 0)
         done = Func_080cc7c4();
     if (done == 0)
         Func_080cc67c(0);

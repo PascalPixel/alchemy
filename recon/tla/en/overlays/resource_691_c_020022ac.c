@@ -11,19 +11,19 @@
 struct MagmaRockEffectOptions {
     s32 kind;
     s32 palette;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_10[8];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk10[8];
     u16 id;
-    u8 unknown_1a[2];
+    u8 unk1a[2];
     const void *data;
-    s32 unknown_20;
+    s32 unk20;
     void (*update)();
 };
 
 struct MagmaRockEventWork {
-    u8 unknown_000[0x1ac];
-    s32 field_1ac;
+    u8 unk000[0x1ac];
+    s32 field1ac;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -48,7 +48,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
 void Func_020022ac(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct MagmaRockEffectOptions options;
     u32 i;
     s32 angle;
@@ -62,17 +62,17 @@ void Func_020022ac(void)
     leader->y += 0x820000;
     leader->gravity = 0x8000;
     leader->bounce = 0;
-    leader->motion_flags = 0;
-    ((struct MagmaRockEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x100;
+    leader->motionFlags = 0;
+    ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02003c54(204);
-    leader->motion_flags = 3;
+    leader->motionFlags = 3;
     Battle_WaitMode0(24);
     options.palette = 7;
     options.update = Effect_AdvanceMotion;
-    options.scale_x = 0xcccc;
-    options.scale_y = 0xcccc;
+    options.scaleX = 0xcccc;
+    options.scaleY = 0xcccc;
     i = 0;
 loop:
     angle = i << 12;
@@ -87,14 +87,14 @@ loop:
     if (i <= 16)
         goto loop;
     Func_02003c54(188);
-    Func_02003b44(gPartyState.current_owner, 0x101);
-    Object_SetModeById(gPartyState.current_owner, 22);
+    Func_02003b44(gPartyState.currentOwner, 0x101);
+    Object_SetModeById(gPartyState.currentOwner, 22);
     Call3((void (*)())Func_02003ac4, 0x50000, 0x50000, 0x10000);
     Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
     Func_02003acc();
-    Func_02003b44(gPartyState.current_owner, 0x100);
+    Func_02003b44(gPartyState.currentOwner, 0x100);
     leader->gravity = 0x10000;
     leader->bounce = 0x4000;
-    ((struct MagmaRockEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x204;
+    ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
     Func_02003af4();
 }

@@ -10,125 +10,125 @@ struct Sprite {
 };
 
 struct ModeTransform {
-    u32 scale_x : 16;
-    u32 scale_y : 16;
+    u32 scaleX : 16;
+    u32 scaleY : 16;
     u32 angle : 16;
-    u32 unknown_06 : 16;
+    u32 unk06 : 16;
 };
 
-extern u32 Data_020064d0[];
-extern s16 Data_02005158[];
-extern s16 Data_020064bc;
-extern s16 *Data_020064c0;
-extern s32 Data_020064a0;
-extern s16 Data_02006504;
-extern s16 Data_0200649c;
-extern s16 Data_02006500;
-extern s16 Data_020064a8;
-extern s16 Data_020064a4;
-extern s16 Data_02006498;
-extern s16 Data_02006490;
-extern s16 Data_02006508;
-extern s16 Data_020064b4;
-extern s16 Data_020064b8;
-extern s16 Data_020064c4;
-extern s16 Data_020064ac;
-extern s16 Data_020064b0;
-extern s16 Data_02006494;
+extern u32 gData_020064d0[];
+extern s16 gData_02005158[];
+extern s16 gData_020064bc;
+extern s16 *gData_020064c0;
+extern s32 gData_020064a0;
+extern s16 gData_02006504;
+extern s16 gData_0200649c;
+extern s16 gData_02006500;
+extern s16 gData_020064a8;
+extern s16 gData_020064a4;
+extern s16 gData_02006498;
+extern s16 gData_02006490;
+extern s16 gData_02006508;
+extern s16 gData_020064b4;
+extern s16 gData_020064b8;
+extern s16 gData_020064c4;
+extern s16 gData_020064ac;
+extern s16 gData_020064b0;
+extern s16 gData_02006494;
 
 void Resource_ResetEntry(s32 entry);
 void Func_020047cc(void *entry, s32 slot);
 
 void Func_02002a20(void)
 {
-    u32 *write = Data_020064d0;
+    u32 *write = gData_020064d0;
     struct Sprite *sprite = (struct Sprite *)write;
-    s32 tile = ResourceTableEntries[Data_02005158[0]].offset >> 5;
+    s32 tile = gResourceTableEntries[gData_02005158[0]].offset >> 5;
     u32 flags;
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
     struct ModeTransform work;
 
 commands:
-    if (Data_020064bc == 0) {
-        switch (*Data_020064c0++) {
+    if (gData_020064bc == 0) {
+        switch (*gData_020064c0++) {
         case 0x4000:
-            Data_020064a0 = *Data_020064c0++ << 8;
-            Data_02006504 = *Data_020064c0++;
-            Data_0200649c = 0;
+            gData_020064a0 = *gData_020064c0++ << 8;
+            gData_02006504 = *gData_020064c0++;
+            gData_0200649c = 0;
             break;
         case 0x3000:
-            Data_02006500 = Data_02006504;
-            Data_02006504 = *Data_020064c0++;
-            Data_0200649c = *Data_020064c0++;
-            Data_020064a8 = 0;
+            gData_02006500 = gData_02006504;
+            gData_02006504 = *gData_020064c0++;
+            gData_0200649c = *gData_020064c0++;
+            gData_020064a8 = 0;
             break;
         case 0x1000:
-            Data_02006498 = Data_020064a4;
-            Data_020064a4 = *Data_020064c0++;
-            Data_02006490 = *Data_020064c0++;
-            Data_02006508 = 0;
+            gData_02006498 = gData_020064a4;
+            gData_020064a4 = *gData_020064c0++;
+            gData_02006490 = *gData_020064c0++;
+            gData_02006508 = 0;
             break;
         case 0x2000:
-            Data_020064b8 = Data_020064b4;
-            Data_020064b4 = *Data_020064c0++;
-            Data_020064c4 = *Data_020064c0++;
-            Data_020064ac = 0;
+            gData_020064b8 = gData_020064b4;
+            gData_020064b4 = *gData_020064c0++;
+            gData_020064c4 = *gData_020064c0++;
+            gData_020064ac = 0;
             break;
         case 0x7fff:
-            Data_020064bc = *Data_020064c0++;
+            gData_020064bc = *gData_020064c0++;
             break;
         case -1:
             Scheduler_RemoveCallbackFar(Func_02002a20);
-            Resource_ResetEntry(Data_02005158[0]);
+            Resource_ResetEntry(gData_02005158[0]);
             return;
         }
         goto commands;
     }
-    Data_020064bc--;
-    if (Data_02006490 == 0) {
-        scale = Data_020064a4;
+    gData_020064bc--;
+    if (gData_02006490 == 0) {
+        scale = gData_020064a4;
     } else {
         s32 duration, start, progress, target;
-        duration = Data_02006490;
-        start = Data_02006498;
-        target = Data_020064a4;
-        progress = ++Data_02006508;
+        duration = gData_02006490;
+        start = gData_02006498;
+        target = gData_020064a4;
+        progress = ++gData_02006508;
         scale = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_02006490 = 0;
+            gData_02006490 = 0;
     }
-    if (Data_020064c4 == 0) {
-        blend = Data_020064b4;
+    if (gData_020064c4 == 0) {
+        blend = gData_020064b4;
     } else {
         s32 duration, start, progress, target;
-        duration = Data_020064c4;
-        start = Data_020064b8;
-        target = Data_020064b4;
-        progress = ++Data_020064ac;
+        duration = gData_020064c4;
+        start = gData_020064b8;
+        target = gData_020064b4;
+        progress = ++gData_020064ac;
         blend = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_020064c4 = 0;
+            gData_020064c4 = 0;
     }
-    if (Data_0200649c == 0) {
-        pos = Data_02006504;
+    if (gData_0200649c == 0) {
+        pos = gData_02006504;
     } else {
         s32 duration, start, progress, target;
-        duration = Data_0200649c;
-        start = Data_02006500;
-        target = Data_02006504;
-        progress = ++Data_020064a8;
+        duration = gData_0200649c;
+        start = gData_02006500;
+        target = gData_02006504;
+        progress = ++gData_020064a8;
         pos = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_0200649c = 0;
+            gData_0200649c = 0;
     }
     work.angle = 0;
-    work.scale_x = scale;
-    work.scale_y = scale;
+    work.scaleX = scale;
+    work.scaleY = scale;
     matrix = (s16)AffineMatrix_BuildForEffect((struct AffineTransform *)&work);
-    Data_020064a0 += pos;
-    pos = Data_020064a0 / 256;
-    switch (Data_020064b0) {
+    gData_020064a0 += pos;
+    pos = gData_020064a0 / 256;
+    switch (gData_020064b0) {
     case 1:
     {
         u32 attr;
@@ -164,7 +164,7 @@ commands:
                 x = left & 511;
                 *write++ = 0;
                 *write++ = (x << 16) | y | flags | attr | 0x700;
-                *write++ = 0xf400 | (tile + Data_02006494);
+                *write++ = 0xf400 | (tile + gData_02006494);
                 Func_020047cc(sprite++, 236);
             }
             tile += 8;
@@ -186,7 +186,7 @@ commands:
                 x = left & 511;
                 *write++ = 0;
                 *write++ = (x << 16) | y | flags | attr | 0x700;
-                *write++ = 0xf400 | (tile + Data_02006494);
+                *write++ = 0xf400 | (tile + gData_02006494);
                 Func_020047cc(sprite++, 236);
             }
             tile += 8;
@@ -202,7 +202,7 @@ commands:
             x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-            *write++ = 0xf400 | (tile + Data_02006494);
+            *write++ = 0xf400 | (tile + gData_02006494);
             Func_020047cc(sprite, 236);
         }
         break;
@@ -215,7 +215,7 @@ commands:
             x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-            *write++ = 0xf400 | (tile + Data_02006494);
+            *write++ = 0xf400 | (tile + gData_02006494);
             Func_020047cc(sprite, 236);
         }
         break;

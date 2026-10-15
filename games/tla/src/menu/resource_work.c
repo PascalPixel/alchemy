@@ -29,7 +29,7 @@ void Menu_EndResourceSelection(void)
     u16 *entry;
     void *work;
 
-    work = Ram_HeapSlots->menu_select_work;
+    work = Ram_HeapSlots->menuSelectWork;
     Scheduler_RemoveCallback(Func_0804cda8);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {

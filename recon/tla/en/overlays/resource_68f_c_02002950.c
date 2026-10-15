@@ -2,11 +2,11 @@
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 struct TundariaTowerSprite {
-    u8 unknown_00[9];
-    u8 unknown_09_0 : 2;
+    u8 unk00[9];
+    u8 unk09_0 : 2;
     u8 priority : 2;
-    u8 unknown_09_4 : 4;
-    u8 unknown_0a[8];
+    u8 unk09_4 : 4;
+    u8 unk0a[8];
     u16 angle;
 };
 
@@ -19,15 +19,15 @@ void Func_02002950(struct ObjectRuntime *object)
 
     object->x += vx;
     object->y += object->gravity;
-    vz = object->unknown_4c;
+    vz = object->unk4c;
     object->z += vz;
     object->bounce = vx - vx / 18;
-    object->unknown_4c = vz - vz / 16;
+    object->unk4c = vz - vz / 16;
     sprite = object->animation;
-    object->scale_x += object->speed_limit;
-    object->scale_y += object->acceleration;
+    object->scaleX += object->speedLimit;
+    object->scaleY += object->acceleration;
     /* FAKEMATCH: the one-pass block stores the Y scale before it addresses the spin (differ 6 without it). */
     do { sprite->angle += object->action; } while (0);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     ((struct TundariaTowerSprite *)object->animation)->priority = ((struct TundariaTowerSprite *)leader->animation)->priority;
 }

@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -43,11 +43,11 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
@@ -81,7 +81,7 @@ static __inline__ void Wait(s32 frames)
 
 void Func_020012c8(void)
 {
-    Func_020002f8(Data_02003f44);
+    Func_020002f8(gData_02003f44);
 }
 
 void Func_020012d8(void)

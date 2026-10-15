@@ -181,4 +181,4 @@ UiText_RenderWideStringAtOffset:
 .L_0803ac58:
 	.4byte .L_0803ab4c
 .L_0803ac5c:
-	.4byte UiText_Glyphs
+	.4byte gUiText_Glyphs

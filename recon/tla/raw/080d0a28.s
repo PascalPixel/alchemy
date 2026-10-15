@@ -176,7 +176,7 @@ DisplayTransition_UpdateFrame:
 .L_080d0b6c:
 	.4byte IwramSignedDivide
 .L_080d0b70:
-	.4byte Data_080f0206
+	.4byte gData_080f0206
 .L_080d0b74:
 	.4byte gIoWriteQueue
 .L_080d0b78:

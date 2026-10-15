@@ -15,7 +15,7 @@
 #include "vram_tab.h"
 #include "callback_scheduler.h"
 
-extern const u16 Ui_BounceScales[];
+extern const u16 gUi_BounceScales[];
 
 struct WindowLine {
     u16 left;
@@ -23,7 +23,7 @@ struct WindowLine {
 };
 
 struct WindowBuffer {
-    u8 unknown_000[4];
+    u8 unk000[4];
     struct WindowLine lines[160];
 };
 
@@ -47,13 +47,13 @@ void AffineEffect_UpdateFrame(void)
     struct WindowBuffer *window;
     s32 span;
 
-    work = Ram_HeapSlots->menu_select_work;
-    buffers = Ram_HeapSlots->display_transition;
+    work = Ram_HeapSlots->menuSelectWork;
+    buffers = Ram_HeapSlots->displayTransition;
     sprite = work->entries;
-    scale = Ui_BounceScales[(gFrameCount * 2) & 31];
+    scale = gUi_BounceScales[(gFrameCount * 2) & 31];
     scale = (scale - 256) / 4 + 304;
-    effect.scale_x = scale;
-    effect.scale_y = scale;
+    effect.scaleX = scale;
+    effect.scaleY = scale;
     effect.angle = 0;
     matrix = AffineMatrix_BuildForEffect(&effect);
     for (i = 0; i < work->count; i++, sprite++) {
@@ -74,7 +74,7 @@ void AffineEffect_UpdateFrame(void)
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
-            *attr = ResourceTableEntries[sprite->slot].offset >> 5;
+            *attr = gResourceTableEntries[sprite->slot].offset >> 5;
             slot = 246;
         } else {
             u32 base;
@@ -84,7 +84,7 @@ void AffineEffect_UpdateFrame(void)
             y = sprite->y;
             *attr++ = 0;
             value = y | (px << 16) | 0x80002000;
-            base = ResourceTableEntries[sprite->slot].offset;
+            base = gResourceTableEntries[sprite->slot].offset;
             *attr++ = value;
             *attr = base >> 5;
             slot = 245;

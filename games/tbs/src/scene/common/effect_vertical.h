@@ -9,7 +9,7 @@ static void Effect_AnimateVerticalPositive(union FieldObject *object)
 	s32				   frame;
 	s32				   amplitude;
 
-	anchor = self->linked_object;
+	anchor = self->linkedObject;
 	self->timer = (self->timer + 1);
 	frame = self->timer;
 
@@ -20,8 +20,8 @@ static void Effect_AnimateVerticalPositive(union FieldObject *object)
 	}
 
 	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
+	self->scaleX = amplitude;
+	self->scaleY = amplitude;
 	self->x.fixed = anchor->x.fixed;
 	self->y.fixed += 0x10000;
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
@@ -34,7 +34,7 @@ static void Effect_AnimateVerticalNegative(union FieldObject *object)
 	s32				   frame;
 	s32				   amplitude;
 
-	anchor = self->linked_object;
+	anchor = self->linkedObject;
 	self->timer = (self->timer + 1);
 	frame = self->timer;
 
@@ -45,8 +45,8 @@ static void Effect_AnimateVerticalNegative(union FieldObject *object)
 	}
 
 	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = -amplitude;
+	self->scaleX = amplitude;
+	self->scaleY = -amplitude;
 	self->x.fixed = anchor->x.fixed;
 	self->y.fixed += 0x10000;
 	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;

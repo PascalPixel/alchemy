@@ -34,7 +34,7 @@ void InitializeSceneRecordBuffer(void);
 struct EventGlobals
 {
 	struct EventWork *event;
-	u8				  unknown_04[0x10];
+	u8				  unk04[0x10];
 	u8				 *field;
 };
 
@@ -544,7 +544,7 @@ static void UpdateStatueLight1(void)
 {
 	if ((Random_Next() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light1Timer)
+		switch (gSolLunaRooms_Light1Timer)
 		{
 		case 0:
 			Event_PlayCue(0xbb);
@@ -563,7 +563,7 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x25, 1, 5);
 			break;
@@ -571,23 +571,23 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x31, 30, 0x21, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light1Timer++;
-		if (SolLunaRooms_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
+		gSolLunaRooms_Light1Timer++;
+		if (gSolLunaRooms_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
 		{
-			SolLunaRooms_Light1Timer = 0;
+			gSolLunaRooms_Light1Timer = 0;
 		}
 	}
-	if (SolLunaRooms_FlashState != 0)
+	if (gSolLunaRooms_FlashState != 0)
 	{
-		if (SolLunaRooms_FlashState == 2)
+		if (gSolLunaRooms_FlashState == 2)
 		{
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 		}
-		else if (SolLunaRooms_FlashState == 1)
+		else if (gSolLunaRooms_FlashState == 1)
 		{
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 		}
-		SolLunaRooms_FlashState--;
+		gSolLunaRooms_FlashState--;
 	}
 }
 
@@ -595,7 +595,7 @@ static void UpdateStatueLight2(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light2Timer)
+		switch (gSolLunaRooms_Light2Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -614,7 +614,7 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x25, 1, 5);
 			break;
@@ -622,10 +622,10 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x31, 42, 0x21, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light2Timer++;
-		if (SolLunaRooms_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
+		gSolLunaRooms_Light2Timer++;
+		if (gSolLunaRooms_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
 		{
-			SolLunaRooms_Light2Timer = 0;
+			gSolLunaRooms_Light2Timer = 0;
 		}
 	}
 }
@@ -634,7 +634,7 @@ static void UpdateStatueLight3(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light3Timer)
+		switch (gSolLunaRooms_Light3Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -653,7 +653,7 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 1);
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x28, 1, 5);
 			break;
@@ -661,10 +661,10 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x31, 31, 0x24, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light3Timer++;
-		if (SolLunaRooms_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
+		gSolLunaRooms_Light3Timer++;
+		if (gSolLunaRooms_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
 		{
-			SolLunaRooms_Light3Timer = 0;
+			gSolLunaRooms_Light3Timer = 0;
 		}
 	}
 }
@@ -673,7 +673,7 @@ static void UpdateStatueLight4(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light4Timer)
+		switch (gSolLunaRooms_Light4Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -692,7 +692,7 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x28, 1, 5);
 			break;
@@ -700,10 +700,10 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x31, 41, 0x24, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light4Timer++;
-		if (SolLunaRooms_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
+		gSolLunaRooms_Light4Timer++;
+		if (gSolLunaRooms_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
 		{
-			SolLunaRooms_Light4Timer = 0;
+			gSolLunaRooms_Light4Timer = 0;
 		}
 	}
 }
@@ -725,8 +725,8 @@ static void FieldScene_PrepareStatueTransition(void)
 	GameFlag_Set(0x201);
 	GameFlag_Clear(0x200);
 	GameFlag_Clear(0x202);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -740,11 +740,11 @@ static void FieldScene_PrepareStatueTransition(void)
 
 static void Scene_SpringStatueTrap(void)
 {
-	s32 outer_pair;
-	s32 second_pair;
-	s32 middle_pair;
-	s32 fourth_pair;
-	s32 inner_pair;
+	s32 outerPair;
+	s32 secondPair;
+	s32 middlePair;
+	s32 fourthPair;
+	s32 innerPair;
 
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
@@ -756,7 +756,7 @@ static void Scene_SpringStatueTrap(void)
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
 	SetSolSanctumActorStep(32784, 20);
-	for (outer_pair = 0; outer_pair != 4; outer_pair++)
+	for (outerPair = 0; outerPair != 4; outerPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -765,7 +765,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(12);
 	}
-	for (second_pair = 0; second_pair != 6; second_pair++)
+	for (secondPair = 0; secondPair != 6; secondPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -774,7 +774,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(8);
 	}
-	for (middle_pair = 0; middle_pair != 8; middle_pair++)
+	for (middlePair = 0; middlePair != 8; middlePair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -783,7 +783,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(6);
 	}
-	for (fourth_pair = 0; fourth_pair != 10; fourth_pair++)
+	for (fourthPair = 0; fourthPair != 10; fourthPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -792,7 +792,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(4);
 	}
-	for (inner_pair = 0; inner_pair != 12; inner_pair++)
+	for (innerPair = 0; innerPair != 12; innerPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -806,8 +806,8 @@ static void Scene_SpringStatueTrap(void)
 	SetSolSanctumActorStep(32784, 6);
 	Actor_SetSpeed(ACTOR_KRADEN, 0x20000, 0x10000);
 	Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	GameFlag_Set(FLAG_STATUE_TRAP_SPRUNG);
@@ -819,10 +819,10 @@ static void FieldScene_RunClosingSequence(void)
 	s32 i;
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
-	SolLunaRooms_Light1Timer = 0;
-	SolLunaRooms_Light2Timer = 0;
-	SolLunaRooms_Light3Timer = 0;
-	SolLunaRooms_Light4Timer = 0;
+	gSolLunaRooms_Light1Timer = 0;
+	gSolLunaRooms_Light2Timer = 0;
+	gSolLunaRooms_Light3Timer = 0;
+	gSolLunaRooms_Light4Timer = 0;
 	Engine_EventSetMessage(MsgSolWhatsHappening);
 	Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
 	Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
@@ -841,11 +841,11 @@ static void FieldScene_RunClosingSequence(void)
 		Engine_EventWait(12);
 	}
 	SetSolSanctumActorStep(32784, 6);
-	SolLunaRooms_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_FlashState = 0;
+	gSolLunaRooms_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_FlashState = 0;
 	Task_AddCallback(UpdateStatueLight1, 3200);
 	Task_AddCallback(UpdateStatueLight2, 3200);
 	Task_AddCallback(UpdateStatueLight3, 3200);
@@ -895,8 +895,8 @@ static void FieldScene_RunClosingSequence(void)
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight2);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight3);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight4);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(4);
@@ -1010,8 +1010,8 @@ static void FieldScene_RunFlaggedSequence(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 		SetSolSanctumActorStep(base, 6);
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(5);
@@ -1182,14 +1182,14 @@ static void EV20_SEARCH(void)
 		Engine_EventWait(20);
 		Actor_FaceDirection(0, 0xc000, 20);
 		Actor_SetSpeed(0, 0x4ccc, 0x2666);
-		actor->steering_flags &= ~ACTOR_FACES_MOTION;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 		/* FAKEMATCH: register choice only: the zero goes through the sprite
 		   variable, whose pseudo has r7, as native. Plain forms measured
-		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4), also
+		   (2026-10-13): motionFlags = 0 puts the zero in r2 (differ 4), also
 		   with the actor held as union FieldObject and with FieldActor's
 		   coordinates as s32. */
 		sprite = 0;
-		actor->motion_flags = (u32)sprite;
+		actor->motionFlags = (u32)sprite;
 		Engine_AudioPlayCue(201);
 		Actor_SetChildValue(0, 0x100);
 		sprite = actor->sprite;
@@ -1224,14 +1224,14 @@ static void EV20_SEARCH(void)
 		   byte stores wait past the zero, as native. Plain forms measured
 		   (2026-10-13): &= ~ACTOR_FACES_MOTION with base5_0 = 0 and the
 		   store before, after or chained puts the flags in r3, stored at
-		   once (differ 10); motion_flags = 0 before base5_0 = 0, 23. */
+		   once (differ 10); motionFlags = 0 before base5_0 = 0, 23. */
 		{
 			s32 m = 254;
 
-			m &= actor->steering_flags;
+			m &= actor->steeringFlags;
 			base5_0 = 0;
-			actor->steering_flags = m;
-			actor->motion_flags = base5_0;
+			actor->steeringFlags = m;
+			actor->motionFlags = base5_0;
 		}
 		Engine_AudioPlayCue(201);
 		Actor_SetChildValue(16, 0x100);
@@ -1254,8 +1254,8 @@ static void EV20_SEARCH(void)
 		} while (base5_0 != 60);
 		Engine_ActorSetPosition(16, 0, 0);
 		Engine_EventWait(80);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
-		gEventWork->transition_frames = 24;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+		gEventWork->transitionFrames = 24;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		Engine_ColorBufferApplyTarget(0, 0);
@@ -1272,7 +1272,7 @@ s32 SolLunaRooms_RestoreEntryState(void)
 	s32 lit;
 
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	done = 0;
 	if (Engine_GameFlagIsSet(0x809) != 0 && Engine_GameFlagIsSet(0x814) == 0
 		&& Engine_GameFlagIsSet(0x819) == 0)
@@ -1476,7 +1476,7 @@ static void SolLunaRooms_RunLightScene(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(1, 0x1180000, 0x860000);
 	Actor_FaceDirection(1, 0xa000, 0);
-	((struct EventGlobals *)&gEventWork)->event->transition_frames = 1;
+	((struct EventGlobals *)&gEventWork)->event->transitionFrames = 1;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1513,16 +1513,16 @@ static void SolLunaRooms_RunLightScene(void)
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	Engine_EventWait(40);
 	InitializeSceneRecordBuffer();
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(0, 4, 0);
 	Engine_ActorJump(1, 4, 0);
 	Actor_SetDestination(0, 0x12c, 0x82);
 	Engine_ActorSetDestination(1, 0x10a, 0x90);
 	Engine_ActorWaitForMove(1);
 	Engine_EventWait(40);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	BattleFx_SetQueuedSoundAndPlay(141);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Engine_EventWait(40);
@@ -1547,9 +1547,9 @@ static void SolLunaRooms_RunLightScene(void)
 	field[0x2a02] = 1;
 	field[0x2a03] = 1;
 	Io_Write16(0, &PLTT_BACKDROP);
-	((struct EventGlobals *)&gEventWork)->event->start_transition =
+	((struct EventGlobals *)&gEventWork)->event->startTransition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	((struct EventGlobals *)&gEventWork)->event->transition_frames = 16;
+	((struct EventGlobals *)&gEventWork)->event->transitionFrames = 16;
 	Engine_EventEnd();
 }
 

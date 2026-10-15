@@ -19,7 +19,7 @@ struct ResourceSlotNumber {
     s16 number;
 };
 
-extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
+extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
@@ -34,27 +34,27 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
     u32 size;
     u32 count;
     u32 index;
-    u16 entry_number;
+    u16 entryNumber;
     s32 resource;
 
     if (slot >= RESOURCE_SLOT_COUNT)
         return 0;
-    work = Ram_HeapSlots->object_system;
+    work = Ram_HeapSlots->objectSystem;
     record = &work->slots[slot];
     metadata = Resource_GetMetadataRecordFar(number);
     record->tag = (slot << 12) | number;
     record->buffer = buffer;
 
-    entry = ResourceSlot_NumberTable;
+    entry = gResourceSlot_NumberTable;
     for (count = 0; count < 256; count++) {
         s16 *numbers = &entry->number;
 
         resource = entry->resource;
-        entry_number = *numbers;
+        entryNumber = *numbers;
         entry++;
-        if (entry_number == 0)
+        if (entryNumber == 0)
             return 0;
-        if (entry_number == number)
+        if (entryNumber == number)
             break;
     }
     size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
@@ -72,7 +72,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         end = (u8 *)buffer + size;
         if (index > 4)
             index = 0;
-        table = ResourceSlot_ConversionTables[index];
+        table = gResourceSlot_ConversionTables[index];
         for (; text < end; text++) {
             u32 c = *text;
 
@@ -87,7 +87,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 
 s32 Animation_LookupValueByKey(s32 key)
 {
-    struct ObjectSystemWork *work = Ram_HeapSlots->object_system;
+    struct ObjectSystemWork *work = Ram_HeapSlots->objectSystem;
     u32 no;
     struct ResourceSlot *p;
 

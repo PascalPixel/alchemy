@@ -3,7 +3,7 @@
 
 extern const u8 Func_08015430[];
 
-extern void *Data_03001e50[];
+extern void *gData_03001e50[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
@@ -14,7 +14,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
     u32 value;
     u16 delta;
 
-    original = Data_03001e50[50];
+    original = gData_03001e50[50];
     if (original == NULL) {
         u32 size;
         void *code;
@@ -24,7 +24,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
         Dma_Set((const void *)Func_08015430, code,
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     }
-    decode = (s32 (*)(struct TextReader *))Data_03001e50[50];
+    decode = (s32 (*)(struct TextReader *))gData_03001e50[50];
     UiText_LookupMessage(&reader, message);
     delta = 0xffff;
     while ((value = decode(&reader)) != 0) {

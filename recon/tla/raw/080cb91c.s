@@ -176,7 +176,7 @@ Func_080cb91c:
 	bl WorldMap_LoadGraphicsFar
 	b .L_080cbaaa
 .L_080cba90:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080cba94:
 	.4byte gOverlayArea
 .L_080cba98:
@@ -1391,7 +1391,7 @@ Func_080cb91c:
 .L_080cc458:
 	.4byte gInput
 .L_080cc45c:
-	.4byte ResourceBlockOwners
+	.4byte gResourceBlockOwners
 .L_080cc460:
 	ldr r0, .L_080cc540
 	movs r1, #1

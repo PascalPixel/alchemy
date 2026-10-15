@@ -11,7 +11,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags)
 void Task_Wait(s32 frames);
 
 struct ActorSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 rotation;
 };
 
@@ -25,8 +25,8 @@ void Func_02000098(s32 id)
     ((struct ActorSprite *)object->animation)->rotation = 0;
     Task_Wait(1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
-    object->velocity_y = 0x40000;
-    object->motion_flags = 3;
+    object->velocityY = 0x40000;
+    object->motionFlags = 3;
     Task_Wait(40);
 }
 
@@ -77,11 +77,11 @@ void Func_020000f0(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
     Task_Wait(1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
-    actor->velocity_y = 0x40000;
-    actor->motion_flags = 3;
+    actor->velocityY = 0x40000;
+    actor->motionFlags = 3;
     Task_Wait(40);
     Call2(Engine_EventShowMessage, 8, 0);
-    ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     Call2(Engine_ActorSetAttachedEffect, 8, 0x102);
     Call1(Battle_WaitMode0, 20);
     Call3(Func_02003298, 8, 0, 20);
@@ -94,16 +94,16 @@ void Func_020000f0(void)
     Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetPositionAndReset, 8, 0x1a0, 0x2a8);
     Call2(Engine_EventShowMessage, 8, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 20);
-    Call2(Engine_ActorSetAttachedEffect, gPartyState.current_owner, 0x102);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 20);
+    Call2(Engine_ActorSetAttachedEffect, gPartyState.currentOwner, 0x102);
     Call1(Battle_WaitMode0, 20);
     Call2(Engine_EventShowMessage, 8, 0);
-    ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     Call1(Battle_WaitMode0, 20);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 8, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
     Call2(Engine_EventShowMessage, 8, 0);
     Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(8);
@@ -135,8 +135,8 @@ void Func_020002b4(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
     Task_Wait(1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
-    actor->velocity_y = 0x40000;
-    actor->motion_flags = 3;
+    actor->velocityY = 0x40000;
+    actor->motionFlags = 3;
     Task_Wait(40);
     Engine_ActorShowEmote(5, 0x100, 20);
     Engine_EventShowMessage(5, 0);
@@ -145,25 +145,25 @@ void Func_020002b4(void)
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 40);
     ObjectMotion_Launch(5, 4, 20);
     Engine_EventShowMessage(5, 0);
-    ObjectMotion_SetAngleToward(5, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(5, gPartyState.currentOwner, 0);
     Battle_WaitMode0(20);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 5, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 5, 0);
     Engine_ActorShowEmote(5, 0x108, 0);
     Engine_EventShowMessage(5, 0);
-    Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
+    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
     Battle_WaitMode0(40);
     Value3(Engine_ActorShowEmote, 5, 0x101, 0);
     Value2(UiText_OpenMessageAtObject, 5, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Engine_ActorSetAnimation(5, 3);
         Engine_EventShowMessage(5, 0);
     } else {
-        *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4) += 2;
+        *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
         Engine_EventShowMessage(5, 0);
     }
     Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
     Engine_ActorSetAnimation(5, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(5);

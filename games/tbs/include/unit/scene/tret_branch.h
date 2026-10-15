@@ -10,10 +10,10 @@ u8 *TretBranch_GetExits(void);
 u8 *TretBranch_GetPlacements(void);
 u8 *TretBranch_GetEvents(void);
 s32 TretBranch_InitializeBackdropTransition(void);
-extern struct SceneEntrance TretBranch_SceneTable0[];
-extern u32 TretBranch_SceneTable1[];
-extern struct ScenePlacement TretBranch_SceneTable2[];
-extern struct SceneEvent TretBranch_SceneTable3[];
-extern u16 TretBranch_CellSteps[];
+extern struct SceneEntrance gTretBranch_SceneTable0[];
+extern u32 gTretBranch_SceneTable1[];
+extern struct ScenePlacement gTretBranch_SceneTable2[];
+extern struct SceneEvent gTretBranch_SceneTable3[];
+extern u16 gTretBranch_CellSteps[];
 
 #endif

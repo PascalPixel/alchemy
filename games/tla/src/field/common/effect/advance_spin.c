@@ -11,25 +11,25 @@ void *Object_GetById(s32 id);
 void Effect_AdvanceMotionAndSpin(union FieldObject *object)
 {
     struct FieldEffect *effect = &object->effect;
-    s32 velocity_x;
-    s32 velocity_z;
-    s32 scale_rate_x;
+    s32 velocityX;
+    s32 velocityZ;
+    s32 scaleRateX;
 
-    Object_GetById(gPartyState.current_owner);
-    velocity_x = effect->velocity_x;
-    effect->x += velocity_x;
-    effect->y += effect->velocity_y;
-    velocity_z = effect->velocity_z;
-    effect->z += velocity_z;
+    Object_GetById(gPartyState.currentOwner);
+    velocityX = effect->velocityX;
+    effect->x += velocityX;
+    effect->y += effect->velocityY;
+    velocityZ = effect->velocityZ;
+    effect->z += velocityZ;
 
-    effect->velocity_x = velocity_x - velocity_x / 18;
-    effect->velocity_z = velocity_z - velocity_z / 16;
+    effect->velocityX = velocityX - velocityX / 18;
+    effect->velocityZ = velocityZ - velocityZ / 16;
     /* FAKEMATCH: the ARM9 scheduling would load the scale rate before storing the Z velocity, as in Effect_AdvanceMotion. */
     __asm__("");
 
-    scale_rate_x = effect->scale_rate_x;
-    effect->scale_x += scale_rate_x;
+    scaleRateX = effect->scaleRateX;
+    effect->scaleX += scaleRateX;
     /* FAKEMATCH: the volatile Y scale store and sprite load keep the sprite's load after the store, as the native has it (plain: differ 2, the load moves above the store); a barrier there instead moves the building of 0x1000 after it (differ 4). */
-    *(volatile s32 *)&effect->scale_y += effect->scale_rate_y;
+    *(volatile s32 *)&effect->scaleY += effect->scaleRateY;
     (*(struct FieldSprite *volatile *)&effect->sprite)->rotation += 0x1000;
 }

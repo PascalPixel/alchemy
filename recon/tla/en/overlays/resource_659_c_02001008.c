@@ -40,12 +40,12 @@ void Object_LinkPair();
 void Object_RefreshSelectorById();
 void Object_SetModeById();
 void PartyInventory_Remove();
-extern u32 Data_02001f18[];
-extern u32 Data_02001f4c[];
-extern u32 Data_02001f90[];
-extern u32 Data_02001fc4[];
-extern u32 Data_02002054[];
-extern u32 Data_020020e4[];
+extern u32 gData_02001f18[];
+extern u32 gData_02001f4c[];
+extern u32 gData_02001f90[];
+extern u32 gData_02001fc4[];
+extern u32 gData_02002054[];
+extern u32 gData_020020e4[];
 
 void Func_02001008(void)
 {
@@ -104,17 +104,17 @@ void Func_02001008(void)
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x8000, 0x4000);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x8000, 0x4000);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 25, 0x8000, 0x4000);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11, (s32)Data_02001f18);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 4, (s32)Data_02001f4c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11, (s32)gData_02001f18);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 4, (s32)gData_02001f4c);
     Call1((void (*)())Battle_WaitMode0, 60);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)Data_02001f90);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)gData_02001f90);
     Call1((void (*)())Object_RefreshSelectorById, 10);
     Call1((void (*)())Battle_WaitMode0, 120);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11, (s32)Data_02001fc4);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 11, (s32)gData_02001fc4);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 4, 11);
     Call1((void (*)())Battle_WaitMode0, 60);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)Data_02002054);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 25, (s32)Data_020020e4);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)gData_02002054);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 25, (s32)gData_020020e4);
     Call1((void (*)())Object_RefreshSelectorById, 10);
     Call1((void (*)())Object_RefreshSelectorById, 11);
     Call1((void (*)())Object_RefreshSelectorById, 25);
@@ -122,7 +122,7 @@ void Func_02001008(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 11, 0, 10);
     Call3((void (*)())Func_02001ec0, 25, 2, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call2((void (*)())Object_SetModeById, 4, 1);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x4000, 0);
     Call1((void (*)())Battle_WaitMode0, 20);

@@ -30,7 +30,7 @@ void Func_080d1a18(void *object)
     Io_Write16(31, &REG_BLDY);
     Dma_Fill32Cell(fill, 0, work, 28);
     if (object == NULL)
-        object = ObjectTable_Get(gPartyState.current_owner);
+        object = ObjectTable_Get(gPartyState.currentOwner);
     work[6] = (u32)object;
 }
 

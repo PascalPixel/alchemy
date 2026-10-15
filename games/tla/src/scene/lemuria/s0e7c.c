@@ -90,13 +90,13 @@ void Func_02000e7c(s32 id)
     Call1((void (*)())Battle_WaitMode0, 10);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 12, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 12);
     Call3((void (*)())Func_02001c2c, 12, 0, 0);
     Call1((void (*)())Battle_WaitMode0, 10);
-    Object_GetById(4)->priority_flags |= 1;
+    Object_GetById(4)->priorityFlags |= 1;
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x1d0, 0x308);
     Func_020001bc();
     Func_02001bd4();
@@ -118,7 +118,7 @@ void Func_0200109c(void)
     Call3((void (*)())Func_02001c7c, 12, 0, 5);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 12, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 12);

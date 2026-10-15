@@ -13,7 +13,7 @@ void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 void Func_0200371c(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 521;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 521;
     GameFlag_SetBit(0x144);
     if (gPartyState.entrance == 1 && !Scene_FlagTest(0x88c))
         Func_02002ebc();

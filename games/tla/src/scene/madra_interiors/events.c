@@ -151,12 +151,12 @@ void Func_02001450(void)
     Call3((void (*)())Func_02001e28, 7, 0, 10);
     Value3((s32 (*)())Func_02001e48, 15, 0x108, 30);
     Call3((void (*)())Func_02001e28, 15, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 3;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
     goto L_02009700;
 L_02009690:
     Value3((s32 (*)())Func_02001e48, 15, 0x102, 30);
     ((void (*)())Func_02001ef8)();
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 3;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
     Call3((void (*)())Func_02001e28, 27, 0, 10);
     Call2((void (*)())Func_02001e40, 7, 0x6000);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);

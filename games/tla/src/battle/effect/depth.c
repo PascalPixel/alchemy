@@ -3,25 +3,25 @@
 #include "object_runtime.h"
 
 struct DepthPart {
-    u8 unknown_00[9];
-    u8 unknown_09_0 : 2;
+    u8 unk00[9];
+    u8 unk09_0 : 2;
     u8 priority : 2;
-    u8 unknown_09_4 : 4;
+    u8 unk09_4 : 4;
 };
 
 struct DepthMapBase {
-    u8 unknown_00[4];
+    u8 unk00[4];
     s32 base;
 };
 
 struct DepthScroll {
-    s32 unknown_00;
+    s32 unk00;
     s32 offset;
 };
 
 struct DepthMap {
     struct DepthMapBase *base;
-    u8 unknown_04[0xe0];
+    u8 unk04[0xe0];
     struct DepthScroll scroll;
 };
 
@@ -47,7 +47,7 @@ s32 Func_080db9cc(struct ObjectRuntime *object)
     s32 depth;
     s32 *out;
 
-    if (*((s8 *)Ram_HeapSlots->event_work + 394) == 3) {
+    if (*((s8 *)Ram_HeapSlots->eventWork + 394) == 3) {
         point[0] = object->x;
         out = screen;
         /* FAKEMATCH: ⚓️ addresses the screen point before it copies y */
@@ -59,7 +59,7 @@ s32 Func_080db9cc(struct ObjectRuntime *object)
         if (depth <= 0)
             depth = 1;
     } else {
-        struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->map_work;
+        struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->mapWork;
         struct DepthScroll *scroll = &map->scroll;
         s32 bias = scroll->offset & 0xffff0000;
         s32 base = map->base->base;

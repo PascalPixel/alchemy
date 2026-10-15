@@ -6,10 +6,10 @@
 #include "ram_buffer.h"
 
 struct ItemMenuIcons {
-    u8 unknown_000[0xf8];
-    void *owner_icons[8];
-    u8 unknown_118[0xfd];
-    u8 party_count;
+    u8 unk000[0xf8];
+    void *ownerIcons[8];
+    u8 unk118[0xfd];
+    u8 partyCount;
 };
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
@@ -18,12 +18,12 @@ void Func_080fabe0(void);
 
 void Func_080fac58(void)
 {
-    struct ItemMenuIcons *menu = Ram_HeapSlots->menu_runtime;
+    struct ItemMenuIcons *menu = Ram_HeapSlots->menuRuntime;
     s8 i;
 
     /* FAKEMATCH: the barrier loads the menu work before the party count offset is started; without it the offset is started first (one reordered pair, differ 2). */
     asm volatile("");
-    for (i = 0; i < menu->party_count; i++)
-        Animation_ApplyChildArgumentFar(menu->owner_icons[i], 1);
+    for (i = 0; i < menu->partyCount; i++)
+        Animation_ApplyChildArgumentFar(menu->ownerIcons[i], 1);
     Scheduler_RemoveCallback(Func_080fabe0);
 }

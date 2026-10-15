@@ -63,4 +63,4 @@ Func_080d9710:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d978c:
-	.4byte Data_080f3940
+	.4byte gData_080f3940

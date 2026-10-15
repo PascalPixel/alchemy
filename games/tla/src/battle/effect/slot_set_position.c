@@ -3,8 +3,8 @@
 
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z)
 {
-    effect->target_x = EFFECT_NO_TARGET;
-    effect->target_z = EFFECT_NO_TARGET;
+    effect->targetX = EFFECT_NO_TARGET;
+    effect->targetZ = EFFECT_NO_TARGET;
     effect->x = x;
     effect->z = z;
     effect->speed = 0;
@@ -20,7 +20,7 @@ void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode)
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
 {
     effect->callback = callback;
-    effect->callback_delay = 0;
+    effect->callbackDelay = 0;
     /* FAKEMATCH: a one-pass block loads the state's zero before the halfword zero is built; stored straight the two rows trade places (differ 2). */
     do {
         effect->age = 0;

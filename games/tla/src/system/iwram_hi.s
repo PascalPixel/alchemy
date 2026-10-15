@@ -9,11 +9,11 @@ IwramSoundMixWorkspace:
 	.global gCartridgeResetMarker
 gCartridgeResetMarker:
 	.space 0x00000004
-	.global IwramHi_Data1
-IwramHi_Data1:
+	.global gIwramHi_Data1
+gIwramHi_Data1:
 	.space 0x000007ec
-	.global Data_03007ff0
-Data_03007ff0:
+	.global gData_03007ff0
+gData_03007ff0:
 	.space 0x0000000c
 	.global gIrqVector
 gIrqVector:

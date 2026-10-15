@@ -14,9 +14,9 @@
 #define RenderOutput_CreateFromResourceFar ((void * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateFromResourceFar)
 
 struct IconMenuState {
-    u8 padding_000[0x24];
+    u8 padding000[0x24];
     s32 handle;
-    u8 padding_028[0x24];
+    u8 padding028[0x24];
     void *entries[32];
 };
 
@@ -58,14 +58,14 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
 
 void ItemMenu_HideAllIcons(void)
 {
-    s32 hidden_state = 13;
-    struct RenderOutput **icons = (struct RenderOutput **)((struct IconMenuState *)Ram_HeapSlots->menu_runtime)->entries;
+    s32 hiddenState = 13;
+    struct RenderOutput **icons = (struct RenderOutput **)((struct IconMenuState *)Ram_HeapSlots->menuRuntime)->entries;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {
         struct RenderOutput *icon = *icons++;
         if (icon != 0) {
-            icon->active = hidden_state;
+            icon->active = hiddenState;
         }
     }
 }

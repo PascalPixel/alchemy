@@ -3,11 +3,11 @@
  * inlines (MapCopy, Flag_IsSet/Flag_Set, the placement call) are needed: called directly the stack
  * arguments, the 0x96c flag and the placement's arguments come out in another order (differ 32).
  * In the loop the barrier after the angle store keeps the 0xffff limit from starting before it
- * (differ 11 without), and the memory barrier keeps the native's reload of scale_x at the join,
- * which GCSE otherwise takes from the branch (differ 20 without). Left: the native loads scale_x
+ * (differ 11 without), and the memory barrier keeps the native's reload of scaleX at the join,
+ * which GCSE otherwise takes from the branch (differ 20 without). Left: the native loads scaleX
  * (ldr r3, [r5, #24]) between movs r2, #255 and lsls r2, r2, #8; here the load and the shift tie
  * at priority 3 in sched2 and the shift wins on its two dependents. Tried: the limit as < 0x10000
- * or 0xffff >= scale, scale_x read into a local, an empty asm with scale as operand (its cost is 0,
+ * or 0xffff >= scale, scaleX read into a local, an empty asm with scale as operand (its cost is 0,
  * the load's priority drops to 2), braces, a one-pass block round the clamp (11), the loop as a
  * do-while (2) or a goto loop (21); permute 4 minutes found nothing. */
 #include "types.h"
@@ -25,11 +25,11 @@ void Battle_WaitMode0(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000048(void);
 void Func_0200195c(s32 id, s32 x, s32 z);
-void Func_02001a24(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer);
+void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
 
-static inline void MapCopy(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer)
+static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer)
 {
-    Func_02001a24(src_x, src_y, width, height, dest_x, dest_y, layer);
+    Func_02001a24(srcX, srcY, width, height, destX, destY, layer);
 }
 
 static inline void PlaceActor(s32 id, s32 x, s32 z)
@@ -58,32 +58,32 @@ void Func_02000110(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
     PlaceActor(12, 176 << 15, 216 << 16);
     ObjectMotion_Launch(12, 9, 0);
-    object->scale_y = 0x8000;
-    object->scale_x = 0x8000;
+    object->scaleY = 0x8000;
+    object->scaleX = 0x8000;
     for (i = 29; i >= 0; i--) {
         object->angle += 0x1000;
         /* FAKEMATCH: the barrier keeps the 0xffff limit from starting before the angle store (differ 11 without). */
         asm("");
-        if (object->scale_x <= 0xffff)
-            object->scale_x += 0xa00;
-        /* FAKEMATCH: the memory barrier keeps the native reload of scale_x at the join (differ 20 without). */
+        if (object->scaleX <= 0xffff)
+            object->scaleX += 0xa00;
+        /* FAKEMATCH: the memory barrier keeps the native reload of scaleX at the join (differ 20 without). */
         asm("" ::: "memory");
-        object->scale_y = object->scale_x;
+        object->scaleY = object->scaleX;
         WaitFrames(1);
     }
     object->angle = 0x3000;
-    object->scale_y = 0x10000;
-    object->scale_x = 0x10000;
+    object->scaleY = 0x10000;
+    object->scaleX = 0x10000;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 1);
     ObjectMotion_SetActionVariant(12, 1);
     Battle_WaitMode0(8);
     ObjectMotion_Launch(12, 9, 0);
     ObjectMotion_SetPositionAndReset(12, 120, 200);
-    Object_GetById(12)->priority_flags |= 1;
+    Object_GetById(12)->priorityFlags |= 1;
     ObjectMotion_SetPositionAndReset(12, 136, 200);
     Battle_WaitMode0(3);
-    Object_SetModeById(gPartyState.current_owner, 1);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0xe000, 0);
+    Object_SetModeById(gPartyState.currentOwner, 1);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xe000, 0);
     Hop(0, -16);
     Hop(16, 0);
     Hop(16, 0);
@@ -92,7 +92,7 @@ void Func_02000110(void)
     Hop(0, -16);
     Hop(16, 0);
     Hop(16, 0);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
     Hop(0, 16);
     Hop(16, 0);
     Hop(16, 0);

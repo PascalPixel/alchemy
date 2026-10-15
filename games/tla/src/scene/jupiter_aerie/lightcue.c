@@ -1,9 +1,9 @@
 #include "types.h"
 #include "field_event.h"
 
-extern s16 Data_02003382;
-extern struct FieldActor *Data_02003384[];
-extern s16 Data_02003486;
+extern s16 gData_02003382;
+extern struct FieldActor *gData_02003384[];
+extern s16 gData_02003486;
 
 struct FieldActor *Object_GetById(s32 id);
 
@@ -16,13 +16,13 @@ void Func_02001dbc(s32 id, s32 value)
 
         object->timer = value;
         asm volatile(""); /* FAKEMATCH: ⚓️ loads the list and its count after the timer store */
-        count = &Data_02003382;
-        Data_02003384[*count] = object;
+        count = &gData_02003382;
+        gData_02003384[*count] = object;
         (*count)++;
     }
 }
 
 void Func_02001dec(s32 value)
 {
-    Data_02003486 = value;
+    gData_02003486 = value;
 }

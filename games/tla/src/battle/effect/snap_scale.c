@@ -12,7 +12,7 @@ void BattleFx_SnapScaleToFull(struct ObjectRuntime *object)
 
     if (object != NULL) {
         limit = 0xff;
-        scale = object->scale_x;
+        scale = object->scaleX;
         /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then finishes the limit; as a constant the load comes after its shift (differ 2). */
         asm volatile("" : "+l"(limit));
         limit = (limit << 8) + 0xff;
@@ -28,8 +28,8 @@ void BattleFx_SnapScaleToFull(struct ObjectRuntime *object)
                 next = scale + step;
                 scale = next;
             } while (next <= bound);
-            object->scale_x = next;
-            object->scale_y = next;
+            object->scaleX = next;
+            object->scaleY = next;
         }
         Object_CommitPosition(object);
     }

@@ -7,7 +7,7 @@ void Func_02002770(void)
 {
     s32 value = -1;
 
-    Data_02006c0c = value;
+    gData_02006c0c = value;
     {
         /* FAKEMATCH: a temporary keeps the priority constant ahead of the callback load. */
         s32 priority = 0x480;

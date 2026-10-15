@@ -7,8 +7,8 @@
 
 	.section .rodata
 	.balign 4
-	.global Battle_LocationRules
-Battle_LocationRules:
+	.global gBattle_LocationRules
+gBattle_LocationRules:
 	location SolCorridor, -1, 0x814, 1, 1
 	location SolEntrance1, 1, 0x814, 0, 2
 	location SolEntrance1, 2, 0x814, 0, 2

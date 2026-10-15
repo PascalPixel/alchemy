@@ -14,77 +14,77 @@ struct BattleUnit;
 
 struct PsynergyMenuState
 {
-	u8						unknown_000[8];
-	s32						selected_owner;
-	u8						unknown_00c[4];
-	s32						auxiliary_window;
-	struct RenderOutput	   *pane_icon[2];
-	s8						tab_index[2];
-	s8						tab_counts[2];
-	s32						psynergy_window;
-	s32						status_window;
-	s32						shortcut_window;
-	struct UiWindow		   *info_window;
-	u8						unknown_030[4];
-	s32						list_window;
-	u8						unknown_038[0x0c];
-	struct RenderOutput	   *entry_grid_cursor;
-	struct RenderOutput	   *entry_icons[32];
-	u8						unknown_0c8[0x44];
-	s32						message_window;
-	u8						selected_column;
-	u8						selected_row;
-	u8						column_count;
-	u8						row_count;
-	struct AnimationObject *tab_objects[8];
-	s16						tab_x[8];
-	s16						row_positions[8];
-	s32						owner_scale[8];
-	u16						pane_row[2];
-	u16						pane_action[2];
-	u8						unknown_17c[0x4c];
+	u8						unk000[8];
+	s32						selectedOwner;
+	u8						unk00c[4];
+	s32						auxiliaryWindow;
+	struct RenderOutput	   *paneIcon[2];
+	s8						tabIndex[2];
+	s8						tabCounts[2];
+	s32						psynergyWindow;
+	s32						statusWindow;
+	s32						shortcutWindow;
+	struct UiWindow		   *infoWindow;
+	u8						unk030[4];
+	s32						listWindow;
+	u8						unk038[0x0c];
+	struct RenderOutput	   *entryGridCursor;
+	struct RenderOutput	   *entryIcons[32];
+	u8						unk0c8[0x44];
+	s32						messageWindow;
+	u8						selectedColumn;
+	u8						selectedRow;
+	u8						columnCount;
+	u8						rowCount;
+	struct AnimationObject *tabObjects[8];
+	s16						tabX[8];
+	s16						rowPositions[8];
+	s32						ownerScale[8];
+	u16						paneRow[2];
+	u16						paneAction[2];
+	u8						unk17c[0x4c];
 	u16						psynergies[32];
-	u16						owner_table[8];
-	u8						psynergy_count;
-	u8						owner_count;
-	u8						owner_ids[2];
-	struct RenderOutput	   *cursor_icon;
+	u16						ownerTable[8];
+	u8						psynergyCount;
+	u8						ownerCount;
+	u8						ownerIds[2];
+	struct RenderOutput	   *cursorIcon;
 	u16						flags;
-	u16						skip_slide;
-	u8						unknown_224[0x18];
-	s16						slot_y[4];
-	u8						unknown_244[0x16];
-	s16						use_result;
-	u8						unknown_25c[4];
-	s8						selected_index_by_owner[8];
+	u16						skipSlide;
+	u8						unk224[0x18];
+	s16						slotY[4];
+	u8						unk244[0x16];
+	s16						useResult;
+	u8						unk25c[4];
+	s8						selectedIndexByOwner[8];
 	u8						mode;
 };
 
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_AuxiliaryWindow, struct PsynergyMenuState, auxiliary_window, 0x010);
+	PsynergyMenuState_AuxiliaryWindow, struct PsynergyMenuState, auxiliaryWindow, 0x010);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_PsynergyWindow, struct PsynergyMenuState, psynergy_window, 0x020);
+	PsynergyMenuState_PsynergyWindow, struct PsynergyMenuState, psynergyWindow, 0x020);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_EntryGridCursor, struct PsynergyMenuState, entry_grid_cursor, 0x044);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_EntryIcons, struct PsynergyMenuState, entry_icons, 0x048);
+	PsynergyMenuState_EntryGridCursor, struct PsynergyMenuState, entryGridCursor, 0x044);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_EntryIcons, struct PsynergyMenuState, entryIcons, 0x048);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_MessageWindow, struct PsynergyMenuState, message_window, 0x10c);
+	PsynergyMenuState_MessageWindow, struct PsynergyMenuState, messageWindow, 0x10c);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_SelectedColumn, struct PsynergyMenuState, selected_column, 0x110);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedRow, struct PsynergyMenuState, selected_row, 0x111);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_ColumnCount, struct PsynergyMenuState, column_count, 0x112);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_RowCount, struct PsynergyMenuState, row_count, 0x113);
+	PsynergyMenuState_SelectedColumn, struct PsynergyMenuState, selectedColumn, 0x110);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedRow, struct PsynergyMenuState, selectedRow, 0x111);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_ColumnCount, struct PsynergyMenuState, columnCount, 0x112);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_RowCount, struct PsynergyMenuState, rowCount, 0x113);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_SelectedPsynergy, struct PsynergyMenuState, pane_action[0], 0x178);
+	PsynergyMenuState_SelectedPsynergy, struct PsynergyMenuState, paneAction[0], 0x178);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_Psynergies, struct PsynergyMenuState, psynergies, 0x1c8);
 LAYOUT_OFFSET_GUARD(
-	PsynergyMenuState_PsynergyCount, struct PsynergyMenuState, psynergy_count, 0x218);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerIds, struct PsynergyMenuState, owner_ids, 0x21a);
+	PsynergyMenuState_PsynergyCount, struct PsynergyMenuState, psynergyCount, 0x218);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerIds, struct PsynergyMenuState, ownerIds, 0x21a);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedIndexByOwner, struct PsynergyMenuState,
-	selected_index_by_owner, 0x260);
+	selectedIndexByOwner, 0x260);
 
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState, skip_slide, 0x222);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tab_objects, 0x114);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, owner_scale, 0x154);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState, skipSlide, 0x222);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tabObjects, 0x114);
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, ownerScale, 0x154);
 
 #endif

@@ -50,5 +50,5 @@ void Func_0200042c(s32 mode, s32 id)
         Motion_CamBounds(0x1500000, -1, 0x2300000, 1);
     Func_02000200(mode, id);
     if (open)
-        Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
 }

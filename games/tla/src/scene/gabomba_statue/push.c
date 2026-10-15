@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern s32 Data_02005af0;
+extern s32 gData_02005af0;
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_02000624(struct ObjectRuntime *origin, s32 id);
 void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
@@ -26,7 +26,7 @@ void Object_AttachWorkTargetToObject(s32 actor, s32 value);
 
 void Func_02000c38(void)
 {
-    s32 *speed = &Data_02005af0;
+    s32 *speed = &gData_02005af0;
 
     if (*speed != 0) {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
@@ -49,7 +49,7 @@ void Func_02000c38(void)
 
 void Func_02000c8c(void)
 {
-    s32 *speed = &Data_02005af0;
+    s32 *speed = &gData_02005af0;
 
     if (*speed != 0) {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
@@ -108,20 +108,20 @@ void Func_02000cf0(struct ObjectRuntime *object)
     Camera_SetSpeed(0x10000, 0x2000);
     Func_02005714(39, 164 << 17, 148 << 17);
     Battle_WaitMode0(30);
-    Actor_Turn(gPartyState.current_owner, 0x2000, 0);
+    Actor_Turn(gPartyState.currentOwner, 0x2000, 0);
     Battle_WaitMode0(15);
-    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 39);
-    Func_0200578c(gPartyState.current_owner, 257, 30);
+    Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 39);
+    Func_0200578c(gPartyState.currentOwner, 257, 30);
     Object_AttachWorkTargetToObject(39, 1);
     Battle_WaitMode0(30);
-    Object_GetById(39)->priority_flags |= 0x20;
+    Object_GetById(39)->priorityFlags |= 0x20;
     Object_SetModeById(39, 1);
     Actor_Walk(39, 320, 240);
     Actor_Walk(39, 304, 216);
     Actor_Walk(39, 280, 216);
     Actor_Walk(39, 280, 184);
     Battle_WaitMode0(20);
-    ObjectMotion_SetAngleToward(39, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(39, gPartyState.currentOwner, 0);
     Battle_WaitMode0(10);
     Func_02005854(262);
     {
@@ -137,11 +137,11 @@ void Func_02000cf0(struct ObjectRuntime *object)
     Actor_Turn(39, 0x8000, 0);
     Battle_WaitMode0(15);
     Func_02005854(152);
-    Object_GetById(39)->velocity_y = 0x40000;
+    Object_GetById(39)->velocityY = 0x40000;
     Actor_SetSpeed(39, 0x40000, 0x20000);
     Actor_Walk(39, 312, 200);
     Func_02005854(152);
-    Object_GetById(39)->velocity_y = 0x60000;
+    Object_GetById(39)->velocityY = 0x60000;
     Actor_SetSpeed(39, 0x40000, 0x20000);
     Actor_Walk(39, 312, 168);
     Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -149,12 +149,12 @@ void Func_02000cf0(struct ObjectRuntime *object)
     Camera_SetBounds(-1, -1, -1, 0);
     Battle_WaitMode0(15);
     Func_02005854(152);
-    Object_GetById(39)->velocity_y = 0x60000;
+    Object_GetById(39)->velocityY = 0x60000;
     Actor_SetSpeed(39, 0x40000, 0x20000);
     Actor_Walk(39, 360, 152);
     Battle_WaitMode0(15);
     Func_02005854(152);
-    Object_GetById(39)->velocity_y = 0x60000;
+    Object_GetById(39)->velocityY = 0x60000;
     Actor_SetSpeed(39, 0x20000, 0x10000);
     Actor_Walk(39, 360, 184);
     Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -163,7 +163,7 @@ void Func_02000cf0(struct ObjectRuntime *object)
     Actor_Walk(39, 408, 184);
     Battle_WaitMode0(15);
     Func_02005854(152);
-    Object_GetById(39)->velocity_y = 0x60000;
+    Object_GetById(39)->velocityY = 0x60000;
     Actor_SetSpeed(39, 0x40000, 0x20000);
     Actor_Walk(39, 440, 184);
     Func_02005714(39, 0, 0);

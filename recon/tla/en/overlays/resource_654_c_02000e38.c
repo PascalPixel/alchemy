@@ -22,9 +22,9 @@ static inline void ShrineOfTheSeaGod_Scale(s32 a, s32 b, s32 c)
 
 void Func_02000e38(void)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
     struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[1];
-    struct ShrineOfTheSeaGodObject *object = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(gPartyState.currentOwner);
     u32 i;
 
     Func_020039d8();
@@ -32,9 +32,9 @@ void Func_02000e38(void)
     ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
     ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
     ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0x4000, 20);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-    object->motion_flags = 0;
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x4000, 20);
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+    object->motionFlags = 0;
     Func_02003b48(245);
     ShrineOfTheSeaGod_Scale(0x10000, 0x10000, 0x10000);
     /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes reload the step on every pass, and a for loop hoists it (differ 30). */
@@ -46,7 +46,7 @@ loop:
         layer->y -= 0x8000;
         WaitFrames(2);
         if (i == 90) {
-            ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x203;
+            ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
             Event_FinishScreenTransition();
         }
     }

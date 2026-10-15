@@ -4,11 +4,11 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
-extern u32 Data_02005ccc[];
-extern u32 Data_02005d24[];
-extern u32 Data_02005d8c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
+extern u32 gData_02005ccc[];
+extern u32 gData_02005d24[];
+extern u32 gData_02005d8c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);
@@ -112,7 +112,7 @@ void Func_02002f70(void)
     Func_020056b4();
     Func_0200580c(0);
     Camera_SetBounds(-1, -1, -1, 0);
-    Func_020048a4(19, 11, Data_02005d8c[index], 16);
+    Func_020048a4(19, 11, gData_02005d8c[index], 16);
     Object_SetModeById(15, 5);
     Func_02005714(11, 0, 0);
     Func_02005714(12, 0, 0);
@@ -127,7 +127,7 @@ void Func_02002f70(void)
     Func_02005714(22, 0, 0);
     WaitFrames(1);
     Camera_SetBounds(220 << 17, -1, 182 << 16, 0);
-    Func_02005714(gPartyState.current_owner, 0, 0);
+    Func_02005714(gPartyState.currentOwner, 0, 0);
     fast = 0x4000;
     Actor_Slide(5, 236 << 17, 216 << 16, fast);
     slow = 0x3000;
@@ -135,15 +135,15 @@ void Func_02002f70(void)
     WaitFrames(1);
     Func_0200564c();
     WaitFrames(1);
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x202;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_020057a4(0x13333, 0x2666);
     Camera_SetBounds(220 << 17, -1, 156 << 17, 1);
     Actor_SetSpeed(5, 0x10000, 0x8000);
     Actor_SetSpeed(24, 0x10000, 0x8000);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005ccc);
-    Object_SetActionCallbackAndRefreshById(24, Data_02005d24);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005ccc);
+    Object_SetActionCallbackAndRefreshById(24, gData_02005d24);
     Func_02005754(MsgGabombaSawEnergyFlow);
     Func_02005764(5, 0);
     Actor_Turn(24, 0xb000, 0);
@@ -158,7 +158,7 @@ void Func_02002f70(void)
     x = (x << 20) + (156 << 17);
     z = (z << 20) + (184 << 16);
     spark = Func_0200563c(434, x, 0, z);
-    spark->motion_flags |= 4;
+    spark->motionFlags |= 4;
     ObjectDispatch_SetSingleChildFlags(spark, 0);
     Func_02005624(spark, 1);
     WaitFrames(1);
@@ -177,7 +177,7 @@ void Func_02002f70(void)
     Func_02005794(24, 258);
     Battle_WaitMode0(20);
     Func_02005764(24, 0);
-    Actor_Slide(gPartyState.current_owner, 236 << 17, 204 << 16, fast);
+    Actor_Slide(gPartyState.currentOwner, 236 << 17, 204 << 16, fast);
     Actor_Slide(7, 220 << 17, 204 << 16, fast);
     Actor_Slide(23, 228 << 17, 204 << 16, slow);
     Actor_Slide(6, 244 << 17, 204 << 16, fast);
@@ -206,7 +206,7 @@ void Func_02002f70(void)
 void Func_02003338(void)
 {
     Func_0200533c();
-    Func_02005724(23, gPartyState.current_owner);
+    Func_02005724(23, gPartyState.currentOwner);
     Object_SetPartAttribute(Object_GetById(23), 15);
     WaitFrames(10);
     Func_02005754(MsgGabombaChannelTiming);

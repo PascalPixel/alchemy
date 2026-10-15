@@ -491,7 +491,7 @@ Func_08028534:
 .L_08028904:
 	.4byte gInput
 .L_08028908:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_0802890c:
 	.4byte gDebugMode
 .L_08028910:
@@ -642,7 +642,7 @@ Func_08028534:
 .L_08028a28:
 	.4byte gInput
 .L_08028a2c:
-	.4byte Data_0802eca0
+	.4byte gData_0802eca0
 .L_08028a30:
 	.4byte 0xfffffe00
 .L_08028a34:
@@ -703,4 +703,4 @@ Func_08028534:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08028aa8:
-	.4byte Data_0802ec94
+	.4byte gData_0802ec94

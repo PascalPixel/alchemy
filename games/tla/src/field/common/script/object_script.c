@@ -105,118 +105,118 @@ void Script_SetOrCompareByte63(struct ScriptOperands *state, s32 operation, s32 
 
 // Each runs one control command every frame: the command, SC_WAIT(1),
 // SC_LOOP(SC_FOREVER, SC_TOP).
-const s32 Data_0802f098[] =
+const s32 gData_0802f098[] =
 {
     SC_CMD_25,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f0b0[] =
+const s32 gData_0802f0b0[] =
 {
     SC_CMD_1B,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f0c8[] =
+const s32 gData_0802f0c8[] =
 {
     SC_CMD_1C,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f0e0[] =
+const s32 gData_0802f0e0[] =
 {
     SC_CMD_1D,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f0f8[] =
+const s32 gData_0802f0f8[] =
 {
     SC_CMD_1E,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f110[] =
+const s32 gData_0802f110[] =
 {
     SC_CMD_23,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f128[] =
+const s32 gData_0802f128[] =
 {
     SC_CMD_24,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f140[] =
+const s32 gData_0802f140[] =
 {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f158[] =
+const s32 gData_0802f158[] =
 {
     SC_CMD_1A,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f170[] =
+const s32 gData_0802f170[] =
 {
     SC_CMD_1F,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f188[] =
+const s32 gData_0802f188[] =
 {
     SC_CMD_20,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f1a0[] =
+const s32 gData_0802f1a0[] =
 {
     SC_CMD_21,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f1b8[] =
+const s32 gData_0802f1b8[] =
 {
     SC_CMD_22,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table4[] =
+const s32 gObjectDispatch_Table4[] =
 {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 Data_0802f1e8[] =
+const s32 gData_0802f1e8[] =
 {
     SC_APPROACH_LINK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 ObjectDispatch_Table6[] =
+const s32 gObjectDispatch_Table6[] =
 {
     SC_END,
 };
 
 // The handler of each command. 0x31 to 0x35 repeat SC_END's.
-const ScriptCommandFn Data_0802f204[54] =
+const ScriptCommandFn gData_0802f204[54] =
 {
     Script_StoreLookupResult,                   // 0x00 SC_WAIT
     Script_WaitForEvent,                        // 0x01 SC_SYNC
@@ -275,7 +275,7 @@ const ScriptCommandFn Data_0802f204[54] =
 };
 
 // The handler of each work value (enum ScriptWork in objcmd.h).
-const OperandFunc Script_OperandHandlerTable[41] =
+const OperandFunc gScript_OperandHandlerTable[41] =
 {
     Script_SetOrCompareAddress,                 // 0x00 SW_SCRIPT
     Script_SetOrCompareCursor,                  // 0x01 SW_CURSOR

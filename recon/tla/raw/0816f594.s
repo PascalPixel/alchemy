@@ -429,6 +429,6 @@ Func_0816f594:
 .L_0816f91c:
 	.4byte 0xffff00ff
 .L_0816f920:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0816f924:
 	.4byte Data_081991e0

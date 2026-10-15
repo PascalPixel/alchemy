@@ -7,19 +7,19 @@
  * and moved here, where they stay until every edition of this game matches.
  * Then one source in games/common carries only the real differences under
  * GAME_TLA. Not real differences, to settle against ☀️'s form then: the
- * locals block (this one orders offset, action_id, range, scale and pass
+ * locals block (this one orders offset, actionId, range, scale and pass
  * differently, which steers registers, and declares apwr for the whole
- * function), target_id u8 or s32 (no change), and MsgSplitFailed where ☀️
+ * function), targetId u8 or s32 (no change), and MsgSplitFailed where ☀️
  * has MsgSplitFail (each game's PO name for the same message).
  * Scores: the old hand draft 806; ☀️'s source compiled for this game with
  * only its names resolved 3237. One power variable (apwr) for
  * every damage case moved it from differ 2590 to 779, the additive case's
- * own loop counter to 657, ⚓️'s unsigned guard_lv to 552, case 401 as a
+ * own loop counter to 657, ⚓️'s unsigned guardLv to 552, case 401 as a
  * case of its own in the rate switch (rate 12 set before the test, as the
  * listing does) to 510, the HP drain halving dealt in apwr (declared for
  * the whole function, so it keeps r7 as in the listing) to
  * 428, the PP restore reading action->effect directly (the listing loads
- * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
+ * it again) and adding maxPp / 10 before reading maxu in case 77 to 424
  * (draft 3454, common 3240). BattleEvPush declared void for
  * this game (its body here sets no result, and void calls load r0 before r1,
  * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287).
@@ -31,7 +31,7 @@
  * shifts logically: def / 2 and scale /= 2 give the same logical shift,
  * defense read through the function-level value 382. With the void
  * BattleEvPush, plain hp reads at the top of the heal still lose: signed
- * first 351, unsigned first 347, and plain max_hp reads in every branch too
+ * first 351, unsigned first 347, and plain maxHp reads in every branch too
  * 639. The listing reads maxu before
  * the division call and shares the add after it with 78 and 7%: reading
  * maxu first instead merges both loads (723); direct reads with maxv as
@@ -42,14 +42,14 @@
  * load takes. The summon's enemy reset as a for loop over saved[] keeps
  * 330 only with its (u16) read (377 without). Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
- * 716), while loops for the affinity scans, plain hp/max_hp reads in the
+ * 716), while loops for the affinity scans, plain hp/maxHp reads in the
  * heal (557: one ldrh shared by both; 445 with the signed read first),
  * the heal branches reading through stat_ptr (808), the HP drain's amount in a block-local amt or with the
  * new HP held in dmg (605 both), rate set to 0 in the switch's default
- * instead of before it (665). No change: target_id s32 instead of u8,
+ * instead of before it (665). No change: targetId s32 instead of u8,
  * case 401 last, apwr's place among the declarations, BattleEvPush
  * without a prototype, heal += dmg instead of heal += apwr (kept: one line
- * shared with ☀️), plain max_hp reads and value casts in place of the
+ * shared with ☀️), plain maxHp reads and value casts in place of the
  * heal and PP restore's pointer casts (kept: the same instructions).
  * The enemy-slot scan after a summon now matches. Still to bring over: the
  * rate switch's 409 test (the listing derives it from
@@ -64,7 +64,7 @@
  * labels (no change), 409 sharing 401's case (336: draft 3450, but rate 12
  * is no longer set before the 401 test), default last or with 393 last,
  * rate as u8 or s16 (no change), rate as the function's kind (509) or tmp
- * (660); in the heal, case 76 reading max_hp directly or maxu before maxv
+ * (660); in the heal, case 76 reading maxHp directly or maxu before maxv
  * (337 both), maxu before maxv in case 71 (648), 2 * maxv / 5 (no change);
  * in the PP restore, old
  * read before heal (332), the block's declaration order and pp read
@@ -113,7 +113,7 @@
  * In the same order as before, def / 2, scale /= 2 with or without
  * def, the field divided directly, def as u16, or half == 1 and
  * half == 2 tests all stay logical (226 or worse); def as s16 276.
- * Against 204, in the heal: case 76 (and 71) reading max_hp straight into
+ * Against 204, in the heal: case 76 (and 71) reading maxHp straight into
  * the product, or maxu read after the add, 239 to 241 (draft 3451).
  * The HP drain matches with the new HP in dmg and the amount in kind
  * (dmg = actor->hp; kind = apwr; dmg += kind; ...), 178 (common 3361):
@@ -121,7 +121,7 @@
  * variable, takes r6 with its copy from apwr in r7. The same with the
  * amount in tmp 393, count 406, power 439, value 2112; the new HP and
  * amount swapped in their old names (heal the amount) 379.
- * In the heal, case 76 reading max_hp into a local of its own (m), 174
+ * In the heal, case 76 reading maxHp into a local of its own (m), 174
  * (common 3363): the product then loads straight into r0 as in the
  * listing; its target copy and offset still take r3 and r2 where the
  * listing has r2 and r3, and a later tail is 2 bytes longer. The same
@@ -139,7 +139,7 @@
  * the halving in tmp 174, power 200, count 262, hp0 454, n 479; with the
  * halving in size, the amount in tmp 184, count 197, power or dealt 293,
  * hp0 547; halving in apwr with the amount in size, tmp, count, power,
- * dealt or hp0 389 to 691; switch (action_id) for the 312/316 test or
+ * dealt or hp0 389 to 691; switch (actionId) for the 312/316 test or
  * one if after the other no better (375, 294). The drain held the
  * halving in r0 there; halving dealt in place (if (...) dealt /= 2;
  * kind = dealt;) 142 (common 3379), with no other variable for it;
@@ -153,10 +153,10 @@
  * 235; the halving before dmg = actor->hp 265; kind halved and apwr the
  * amount 176; a FAKEMATCH register variable in r7 for the halving 170
  * (kind then joins it in r7 and the copy goes), and r6 for the amount
- * as well 168. In the heal, case 76 reading max_hp through stat_ptr
+ * as well 168. In the heal, case 76 reading maxHp through stat_ptr
  * (stat_ptr[-1], or stat_ptr-- first) 153; maxu read before the signed
  * read in 76 176, in 71 too 183 (one ldrh shared again); case 70's
- * halving through maxv = (s16)maxu 168, (s16)target->max_hp / 2 no
+ * halving through maxv = (s16)maxu 168, (s16)target->maxHp / 2 no
  * change. Where the listing reloads target from r8 for an ldrsh at 52
  * or 54 (cases 76, 71, 78 and the 7%), it takes the base into the
  * first register and the offset into the second (r2/r3, r4/r0, r2/r4,
@@ -166,7 +166,7 @@
  * order differs: the listing reloads the base before the offset
  * scratch, ours the scratch first. Where the base is inherited from an
  * ldrh before it (the 60/30 tails, 77) both agree. An s16 local or a
- * byte-offset read for case 76's max_hp changes nothing.
+ * byte-offset read for case 76's maxHp changes nothing.
  * The PP restore head matches exactly when it walks a pointer as the
  * heal does (u16 *stat_ptr; stat_ptr = (u16 *)&target->pp;
  * old = *stat_ptr--; heal = *(s16 *)(stat_ptr + 1);, tagged FAKEMATCH
@@ -193,7 +193,7 @@
  * into r3, and heal and maxu swap r5 and r6 (195); in maxv 208.
  * With it, the PP restore head's pointer walk (above), 118 (draft 3450,
  * common 3391): the head and the later (s16)old match.
- * Case 70 reading max_hp into a u16 local m (maxu = m; heal += (s16)m
+ * Case 70 reading maxHp into a u16 local m (maxu = m; heal += (s16)m
  * / 2;), 114 (draft 3452, common 3394): with (s16)maxu, gcse shares
  * maxu << 16 between case 70 and the clamp, so ours computes it before
  * the join in r1, where the listing computes it at the join in r3; m
@@ -201,13 +201,13 @@
  * with maxu rebuilt by lsrs (2 instructions longer). The same with m
  * as u16 read through a u16 pointer 114; maxu read first and m = maxu
  * 131; maxu = m after the halving 118; m as s16, read first 118 or
- * after maxu 118; m as s32 137; (s16)target->max_hp / 2 read before
+ * after maxu 118; m as s32 137; (s16)target->maxHp / 2 read before
  * maxu 125 (two ldrh, but the rest of 70 and the join match).
  * An asm "+r" barrier on maxu after case 70's halving instead, tagged
  * FAKEMATCH, 100 (draft 3450, common 3400): case 70 and the join match
  * with the listing's single ldrh. A plain asm("") after the halving
  * keeps gcse's sharing (118).
- * Tried against 100: case 76 reading max_hp and maxu through stat_ptr
+ * Tried against 100: case 76 reading maxHp and maxu through stat_ptr
  * (stat_ptr--; m = *(s16 *)stat_ptr; maxu = *stat_ptr;) 119; a local
  * copy of target for case 76's reads no change (copy-propagated); in
  * the drain, kind = dealt then kind = dealt / 2 in the if, 193.
@@ -279,15 +279,15 @@
  * load. Reload's round-robin registers in both games say the ROM's RTL
  * had the unsigned read first, yet kept two loads. Studied with a cc1
  * that has that reuse removed: plain reads (old = (u16)target->hp;
- * heal = target->hp; maxu = (u16)target->max_hp; maxv =
- * target->max_hp; the same for pp) and none of the two walks or four
+ * heal = target->hp; maxu = (u16)target->maxHp; maxv =
+ * target->maxHp; the same for pp) and none of the two walks or four
  * memory barriers score 60 (common 3420; the heal and PP restore match
  * outright), against 391 with the admitted cc1. But that cc1 breaks ☀️
  * English from System_Initialize on (2,406 linked sections differ), so
  * the reuse itself stays; what keeps it from firing here is still open.
  * In ☀️'s heal with the admitted cc1, plain reads with each signed read
  * first keep both loads (heal, old, maxv, maxu: 7 instructions differ;
- * maxv, heal, old, maxu: 5), but reload then gives old and max_hp's
+ * maxv, heal, old, maxu: 5), but reload then gives old and maxHp's
  * offset r0 and r4 where the ROM has r4 and r0, the order of an
  * unsigned-first RTL.
  * 2026-10-08, against 70 (trial scores below from a plain instruction
@@ -295,19 +295,19 @@
  * one asm("") after each statement in turn, kept the best and searched
  * again found three:
  * after hit = 0 before the unit scan (4), after the 7% branch's maxv
- * read (2), after work->unknown_858 = tid (2). By hand: a barrier
- * between cur = target->hp and round = 1 (2), and both enemy_id 369/373
+ * read (2), after work->unk858 = tid (2). By hand: a barrier
+ * between cur = target->hp and round = 1 (2), and both enemyId 369/373
  * tests read into a block-local s32 e with an asm volatile "+r" tie (2
  * each; with cur = 0 moved after the tie in case 5, otherwise movs r6,
  * #0 lands before the ldrh), 56 (common 3422). The tie as u16 117, in
  * tmp, value, size, cnt or kind 161 to 681; an asm input of
- * target->enemy_id instead 65. No further single asm(""), memory
+ * target->enemyId instead 65. No further single asm(""), memory
  * barrier, block-start barrier or "+r" tie after any assignment helps.
  * The rest are not reachable by a barrier: the ROM's loads (mostly
- * reloads of work from [sp, #64], also action, the ldrh/ldrsh of enemy_id,
- * max_hp and level, the pool load at 166 << 1 + 255) sit inside the
+ * reloads of work from [sp, #64], also action, the ldrh/ldrsh of enemyId,
+ * maxHp and level, the pool load at 166 << 1 + 255) sit inside the
  * statement whose constant chain ours issues first. At the summon's
- * queue_count the ROM's ldr has priority 6 against the chain's 7 in
+ * queueCount the ROM's ldr has priority 6 against the chain's 7 in
  * ours (sched2 dump), so it is not a tie but a cost the admitted model
  * does not give; at the 10000 clamp it is a tie (ldrsh and lsls both 3)
  * the ROM breaks for the load. Tried there: a block-local copy of work
@@ -397,7 +397,7 @@
 
 #define GUARD_CUT()                                                         \
     {                                                                         \
-        guard = target->guard_lv;                                          \
+        guard = target->guardLv;                                          \
         if (guard != 0) {                                                     \
             if (guard == 1)                                                   \
                 dmg /= 2;                                                     \
@@ -410,11 +410,11 @@
 
 #define RES_STEP(d, v, message)                                 \
 {                                                                              \
-    target->res_lv += (d);                                           \
-    STEP_LIM(target->res_lv);                                           \
+    target->resLv += (d);                                           \
+    STEP_LIM(target->resLv);                                           \
     BattleEvPush(BATTLE_EVENT_NUM, (v));                           \
     MESSAGE_PUSH(message);                                                            \
-    target->res_cnt = 7;                                            \
+    target->resCnt = 7;                                            \
 }
 
 #define STAT_SET(f, message)                                               \
@@ -426,7 +426,7 @@
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 {
     struct BattleAct *action;
-    s32 ability_id;
+    s32 abilityId;
     struct BattleUnit *actor;
     s32 aid;
     s32 element;
@@ -465,7 +465,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     bonus = 0;
     /* FAKEMATCH: barrier; sched2 otherwise hoists movs r3, #192 for Ram_HeapSlots above the stores of plan, slot and bonus, 72 without, 70 with. */
     asm("");
-    work = Ram_HeapSlots->battle_work;
+    work = Ram_HeapSlots->battleWork;
     half = 0;
     dealt = 0;
     crush = 0;
@@ -474,21 +474,21 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     size = sizeof(struct BattleUnit);
     bak = MemAlloc(size);
 
-    if (ability_id == 312 || ability_id == 316)
-        aid = plan->actor_id2;
+    if (abilityId == 312 || abilityId == 316)
+        aid = plan->actorId2;
     else
         aid = plan->aid;
-    tid = plan->target_ids[slot];
-    ability_id = plan->ability_id;
+    tid = plan->targetIds[slot];
+    abilityId = plan->abilityId;
     element = plan->element;
-    adj = plan->target_adj[slot];
-    crit = plan->target_crit[slot];
+    adj = plan->targetAdj[slot];
+    crit = plan->targetCrit[slot];
 
-    action = BattleActGet(ability_id);
+    action = BattleActGet(abilityId);
     actor = UnitGet(aid);
     target = UnitGet(tid);
     Iwram_CopyWords(bak, target, size);
-    switch (target->enemy_id) {
+    switch (target->enemyId) {
     case 221:
         if (plan->cmd == 1 && (u32)(aid ^ tid) >> 7 != 0) {
             BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
@@ -500,7 +500,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     case 101:
     case 102:
     case 103:
-        if (ability_id != 573 && work->unknown_868 != 0
+        if (abilityId != 573 && work->unk868 != 0
             && (u32)(aid ^ tid) >> 7 != 0) {
             BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
             BattleEvPush(BATTLE_EVENT_UNIT, tid);
@@ -509,7 +509,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
         }
         break;
     }
-    if (target->guard_lv == 4 && (u32)(aid ^ tid) >> 7 != 0) {
+    if (target->guardLv == 4 && (u32)(aid ^ tid) >> 7 != 0) {
         BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
         BattleEvPush(BATTLE_EVENT_UNIT, tid);
         MESSAGE_PUSH(MsgNoEffect);
@@ -517,7 +517,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     }
 
     if (action->range != 255) {
-        dist = plan->target_dist[slot];
+        dist = plan->targetDist[slot];
         if (dist < 0)
             dist = -dist;
     } else {
@@ -527,13 +527,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
     if (element != 4) {
         s32 i;
 
-        value = target->base_element[element].res;
-        for (i = 0; i < 4 && value >= target->base_element[i].res; i++)
+        value = target->baseElement[element].res;
+        for (i = 0; i < 4 && value >= target->baseElement[i].res; i++)
             ;
         if (i == 4)
             aff = -1;
 
-        for (i = 0; i < 4 && value <= target->base_element[i].res; i++)
+        for (i = 0; i < 4 && value <= target->baseElement[i].res; i++)
             ;
         if (i == 4)
             aff = 1;
@@ -560,21 +560,21 @@ power_end:
             BattleEvPush(BATTLE_EVENT_SCR, 5);
     }
 
-    if (ability_id == 686 || ability_id == 357)
+    if (abilityId == 686 || abilityId == 357)
         Battle_ApplyActionExtras(tid, 0, 0);
-    if (ability_id == 720 || ability_id == 721)
+    if (abilityId == 720 || abilityId == 721)
         Battle_ApplyActionExtras(tid, 1, 0);
-    if (ability_id == 728)
+    if (abilityId == 728)
         Battle_ApplyActionExtras(tid, 1, 1);
-    type = action->target_flag & 15;
+    type = action->targetFlag & 15;
     {
         s32 res;
 
-        res = plan->target_hit[slot];
+        res = plan->targetHit[slot];
         if (res == -1)
             hit = BattleHitCheck(
                 aid, tid, element, action->effect,
-                HitTable[dist]);
+                gHitTable[dist]);
         else
             hit = res;
     }
@@ -584,20 +584,20 @@ power_end:
         s32 ent;
         s32 chg;
 
-        cls = actor->enemy_id;
+        cls = actor->enemyId;
         chg = -1;
         ent = EnemySlotGet();
         if (action->effect == 51) {
-            cls = BattleGroupRandom(work->enemy_group);
+            cls = BattleGroupRandom(work->enemyGroup);
         } else if (action->effect == 86) {
-            if (actor->enemy_id == 164)
+            if (actor->enemyId == 164)
                 cls = (BattleRandomFar() & 3) + 378;
             else
                 cls = 81;
         } else if (action->effect == 87) {
-            if (work->queue_count != 0) {
-                cls = work->queued_summons[work->queue_head];
-                chg = work->queued_charges[work->queue_head];
+            if (work->queueCount != 0) {
+                cls = work->queuedSummons[work->queueHead];
+                chg = work->queuedCharges[work->queueHead];
             } else
                 hit = 0;
         }
@@ -609,23 +609,23 @@ power_end:
             }
             BattleUnitSetFar(ent, cls, chg & 0x7fff);
             if (action->effect == 87) {
-                work->queue_count--;
-                work->queue_head = (work->queue_head + 1) % 2;
+                work->queueCount--;
+                work->queueHead = (work->queueHead + 1) % 2;
             }
-            if (actor->enemy_id == 164)
-                BattleParty_InsertUnitCentered(work->enemy_ids, ent);
+            if (actor->enemyId == 164)
+                BattleParty_InsertUnitCentered(work->enemyIds, ent);
             else
             {
                 s32 i;
 
                 for (i = 0; i < 6; i++) {
-                    if (work->enemy_ids[i] == 254) {
-                        work->enemy_ids[i] = ent;
+                    if (work->enemyIds[i] == 254) {
+                        work->enemyIds[i] = ent;
                         break;
                     }
-                    if (work->enemy_ids[i] == 255) {
-                        work->enemy_ids[i] = ent;
-                        work->enemy_ids[i + 1] = 255;
+                    if (work->enemyIds[i] == 255) {
+                        work->enemyIds[i] = ent;
+                        work->enemyIds[i + 1] = 255;
                         break;
                     }
                 }
@@ -636,7 +636,7 @@ power_end:
 
                 obj = BattleObjGet(ent);
                 BattleObjMake(obj, ent,
-                    obj->anchor_x / 0x10000, obj->anchor_z / 0x10000);
+                    obj->anchorX / 0x10000, obj->anchorZ / 0x10000);
             }
             BattleObjPut();
             {
@@ -650,11 +650,11 @@ power_end:
             if (action->effect == 87)
                 MESSAGE_PUSH(MsgUpToFight);
             else
-            if (ability_id != 503)
+            if (abilityId != 503)
                 MESSAGE_PUSH(MsgAppears);
             else
                 MESSAGE_PUSH(MsgSplitOff);
-        } else if (ability_id == 503) {
+        } else if (abilityId == 503) {
             MESSAGE_PUSH(MsgSplitFailed);
         } else {
             MESSAGE_PUSH(MsgNoOneCame);
@@ -667,7 +667,7 @@ power_end:
             /* FAKEMATCH: barrier; sched2 otherwise issues movs r3, #187 for the scan's first address before the store of hit and the reload of work, where the ROM stores and reloads first, 4 instructions. */
             asm("");
             for (n = 0; n < 20; n++) {
-                if (work->actions[n].unit_id == tid) {
+                if (work->actions[n].unitId == tid) {
                     hit = 1;
                     break;
                 }
@@ -704,7 +704,7 @@ power_end:
         {
             s32 def;
 
-            if (target->guard_lv == 4)
+            if (target->guardLv == 4)
                 break;
             hp = target->hp;
             def = target->def;
@@ -729,10 +729,10 @@ power_end:
                     s32 atk;
 
                     atk = actor->atk;
-                    if (ability_id == 312 || ability_id == 316) {
+                    if (abilityId == 312 || abilityId == 316) {
                         atk = ((struct BattleUnit *)UnitGet(plan->aid))->atk;
-                        if (ability_id == 312)
-                            atk += ((struct BattleUnit *)UnitGet(plan->actor_id2))->atk / 4;
+                        if (abilityId == 312)
+                            atk += ((struct BattleUnit *)UnitGet(plan->actorId2))->atk / 4;
                     }
                     dmg = BattleAtkCalc(atk, scale, ap, bonus);
                 }
@@ -794,8 +794,8 @@ power_end:
                 {
                     s32 e;
 
-                    e = target->enemy_id;
-                    /* FAKEMATCH: tie; sched2 otherwise issues movs #114 for 369 before the ldrh of enemy_id, where the ROM loads first, 2 instructions. */
+                    e = target->enemyId;
+                    /* FAKEMATCH: tie; sched2 otherwise issues movs #114 for 369 before the ldrh of enemyId, where the ROM loads first, 2 instructions. */
                     asm volatile ("" : "+r" (e));
                     if (e != 369 && e != 373) {
                         BattleEvPush(BATTLE_EVENT_UNIT, tid);
@@ -812,7 +812,7 @@ power_end:
 
         case 10:
         {
-            if (target->guard_lv == 4)
+            if (target->guardLv == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -820,7 +820,7 @@ power_end:
             ELEMENT_BONUS();
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
-            dmg = dmg * PpLossTable[dist] / 100;
+            dmg = dmg * gPpLossTable[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
             if (action->effect == 32 && dmg > pp)
@@ -860,16 +860,16 @@ power_end:
 
             ap = action->power;
             dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-            dmg = dmg * HpRecoveryTable[dist] / 100;
+            dmg = dmg * gHpRecoveryTable[dist] / 100;
             dmg *= adj;
             dmg += BattleRandomFar() & 3;
             cur += dmg;
-            if (cur > target->max_hp) {
-                cur = target->max_hp;
+            if (cur > target->maxHp) {
+                cur = target->maxHp;
                 dmg = cur - target->hp;
             }
             BattleEvPush(BATTLE_EVENT_UNIT, tid);
-            if (cur == target->max_hp)
+            if (cur == target->maxHp)
                 MESSAGE_PUSH(MsgHpFull);
             else {
                 BattleEvPush(BATTLE_EVENT_NUM, dmg);
@@ -883,7 +883,7 @@ power_end:
 
         case -1:
         {
-            if (target->guard_lv == 4)
+            if (target->guardLv == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -891,7 +891,7 @@ power_end:
             ELEMENT_BONUS();
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
-            dmg = dmg * PpDmgTable[dist] / 100;
+            dmg = dmg * gPpDmgTable[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
             BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
@@ -921,7 +921,7 @@ power_end:
         {
             s32 round;
 
-            if (target->guard_lv == 4)
+            if (target->guardLv == 4)
                 break;
             if (action->power == 0)
                 break;
@@ -934,12 +934,12 @@ power_end:
                 if (round == 0)
                     bonus = 0;
                 ap = action->power;
-                if (ability_id == 683 || ability_id == 673 || ability_id == 724
+                if (abilityId == 683 || abilityId == 673 || abilityId == 724
                     || plan->cmd == 6 || plan->cmd == 10) {
                     s32 rate;
 
                     rate = 0;
-                    switch (ability_id) {
+                    switch (abilityId) {
                     default:
                     case 393:
                         break;
@@ -983,7 +983,7 @@ power_end:
                         rate = 40;
                         break;
                     }
-                    value = target->max_hp;
+                    value = target->maxHp;
                     if (value > 10000)
                         value = 10000;
                     ap += value * rate / 100;
@@ -992,18 +992,18 @@ power_end:
                 dmg *= adj;
                 switch (type & 15) {
                 case 5:
-                    dmg = HpDmgTable5[dist] * dmg / 100;
+                    dmg = gHpDmgTable5[dist] * dmg / 100;
                     break;
                 case 8:
-                    dmg = dmg * HpDmgTable8[dist] / 100;
+                    dmg = dmg * gHpDmgTable8[dist] / 100;
                     break;
                 case 6:
-                    dmg = dmg * HpDmgTable6[dist] / 100;
+                    dmg = dmg * gHpDmgTable6[dist] / 100;
                     break;
                 }
                 dmg += BattleRandomFar() & 3;
                 GUARD_CUT();
-                if ((gPartyState.battle_rule_24b == 6
+                if ((gPartyState.battleRule24b == 6
                         || (GameFlag_Test(366) != 0 && plan->cmd == 6))
                     && cur > dmg) {
                     dmg = cur;
@@ -1026,7 +1026,7 @@ power_end:
 
             if (cur <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
                 cur = 1;
-            if (gPartyState.battle_rule_24b == 6)
+            if (gPartyState.battleRule24b == 6)
                 cur = 0;
             if (cur <= 0) {
                 BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
@@ -1056,15 +1056,15 @@ power_end:
             pp = target->pp;
             ap = action->power;
             dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-            dmg = dmg * PpRecoveryTable[dist] / 100;
+            dmg = dmg * gPpRecoveryTable[dist] / 100;
             dmg *= adj;
             pp += dmg;
-            if (pp > target->max_pp) {
-                pp = target->max_pp;
+            if (pp > target->maxPp) {
+                pp = target->maxPp;
                 dmg = pp - target->pp;
             }
             BattleEvPush(BATTLE_EVENT_UNIT, tid);
-            if (pp == target->max_pp)
+            if (pp == target->maxPp)
                 MESSAGE_PUSH(MsgPpFull);
             else {
                 BattleEvPush(BATTLE_EVENT_NUM, dmg);
@@ -1081,7 +1081,7 @@ power_end:
             break;
 
         case 2:
-            if (target->guard_lv == 4)
+            if (target->guardLv == 4)
                 break;
             if (hit != 0) {
             if (action->power == 0)
@@ -1091,7 +1091,7 @@ power_end:
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
             dmg *= adj;
-            dmg = dmg * HpDmgTable[dist] / 100;
+            dmg = dmg * gHpDmgTable[dist] / 100;
             GUARD_CUT();
             BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
             BattleEvPush(BATTLE_EVENT_NUM, dmg);
@@ -1114,7 +1114,7 @@ power_end:
                 {
                     s32 e;
 
-                    e = target->enemy_id;
+                    e = target->enemyId;
                     /* FAKEMATCH: tie; as in case 3, and cur = 0 after it so movs r6, #0 follows the 369 as in the ROM, 2 instructions. */
                     asm volatile ("" : "+r" (e));
                     cur = 0;
@@ -1138,10 +1138,10 @@ power_end:
         }
     }
 
-    if (work->unknown_868 != 0 && ability_id == 573) {
+    if (work->unk868 != 0 && abilityId == 573) {
         BattleEvPush(BATTLE_EVENT_UNIT, tid);
         MESSAGE_PUSH(MsgFieldBroken);
-        work->unknown_868 = 0;
+        work->unk868 = 0;
     }
     BattleEvPush(BATTLE_EVENT_UNIT, tid);
     if ((action->effect != 75 || slot != 0)
@@ -1167,13 +1167,13 @@ power_end:
                 MESSAGE_PUSH(MsgWakes);
                 BattleEvPush(BATTLE_EVENT_UNIT, tid);
             }
-            if (target->psy_seal != 0) {
-                target->psy_seal = 0;
+            if (target->psySeal != 0) {
+                target->psySeal = 0;
                 MESSAGE_PUSH(MsgCureSeal);
                 BattleEvPush(BATTLE_EVENT_UNIT, tid);
             }
-            if (target->grim_reaper != 0) {
-                target->grim_reaper = 0;
+            if (target->grimReaper != 0) {
+                target->grimReaper = 0;
                 MESSAGE_PUSH(MsgCureCurse);
                 BattleEvPush(BATTLE_EVENT_UNIT, tid);
             }
@@ -1208,15 +1208,15 @@ power_end:
                 BattleEvPush(BATTLE_EVENT_UNIT, tid);
                 MESSAGE_PUSH(MsgWakes);
             }
-            if (target->psy_seal != 0) {
-                target->psy_seal = 0;
+            if (target->psySeal != 0) {
+                target->psySeal = 0;
                 BattleEvPush(BATTLE_EVENT_CLEAR, 0);
                 BattleEvPush(BATTLE_EVENT_UNIT, tid);
                 MESSAGE_PUSH(MsgCureSeal);
             }
-            if (target->grim_reaper == 0)
+            if (target->grimReaper == 0)
                 break;
-            target->grim_reaper = 0;
+            target->grimReaper = 0;
             BattleEvPush(BATTLE_EVENT_CLEAR, 0);
             BattleEvPush(BATTLE_EVENT_UNIT, tid);
             MESSAGE_PUSH(MsgCureCurse);
@@ -1234,26 +1234,26 @@ power_end:
             s32 heal;
             u16 *pt;
 
-            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
+            /* FAKEMATCH: walking a pointer down from hp to maxHp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
             pt = (u16 *)&target->hp;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
             if (action->effect == 76) {
                 s32 m;
 
-                maxu = (u16)target->max_hp;
+                maxu = (u16)target->maxHp;
                 /* FAKEMATCH: barrier; with maxu read first it keeps cse from sharing one load between the two reads, so reload takes the base before the offset as the ROM does (96 to 90); sched2 then keeps the ldrh first, where the ROM moves it after the ldrsh. */
                 asm("" ::: "memory");
-                m = target->max_hp;
+                m = target->maxHp;
                 heal += m * 2 / 5;
             } else if (action->effect == 71) {
-                maxu = (u16)target->max_hp;
+                maxu = (u16)target->maxHp;
                 /* FAKEMATCH: barrier; the same for case 71 (90 to 82). */
                 asm("" ::: "memory");
-                maxv = target->max_hp;
+                maxv = target->maxHp;
                 heal += maxv * 7 / 10;
             } else if (action->effect == 70) {
-                maxu = (u16)target->max_hp;
+                maxu = (u16)target->maxHp;
                 heal += (s16)maxu / 2;
                 /* FAKEMATCH: barrier; without it gcse shares maxu << 16 between this halving and the clamp, so ours shifts before the join in r1 where the ROM shifts at the join in r3, 118 without, 100 with. */
                 asm("" : "+r"(maxu));
@@ -1305,20 +1305,20 @@ power_end:
             old = *pt--;
             heal = *(s16 *)(pt + 1);
             if (action->effect == 77) {
-                maxv = target->max_pp;
-                maxu = (u16)target->max_pp;
+                maxv = target->maxPp;
+                maxu = (u16)target->maxPp;
                 heal += (s16)maxv / 10;
             } else if (action->effect == 78) {
-                maxu = (u16)target->max_pp;
+                maxu = (u16)target->maxPp;
                 /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
                 asm("" ::: "memory");
-                maxv = target->max_pp;
+                maxv = target->maxPp;
                 heal += maxv * 3 / 10;
             } else {
-                maxu = (u16)target->max_pp;
+                maxu = (u16)target->maxPp;
                 /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
                 asm("" ::: "memory");
-                maxv = target->max_pp;
+                maxv = target->maxPp;
                 /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #100 before the 7% product's shifts, where the ROM issues it last, as at 60 and 30, 2 instructions. */
                 asm("");
                 heal += maxv * 7 / 100;
@@ -1340,104 +1340,104 @@ power_end:
         }
 
         case 59:
-            target->agi_lv = 8;
-            target->agi_cnt = 5;
+            target->agiLv = 8;
+            target->agiCnt = 5;
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->agi - bak->agi);
             MESSAGE_PUSH(MsgAgiUp);
             break;
 
         case 58:
-            am = &target->agi_lv;
+            am = &target->agiLv;
         {
             u8 v;
 
             v = -4;
             *am = v;
         }
-            target->agi_cnt = 5;
+            target->agiCnt = 5;
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->agi - target->agi);
             MESSAGE_PUSH(MsgAgiDown);
             break;
 
         case 9:
-            target->atk_lv -= 1;
-            STEP_LIM(target->atk_lv);
+            target->atkLv -= 1;
+            STEP_LIM(target->atkLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
             MESSAGE_PUSH(MsgAtkDown);
-            target->atk_cnt = 7;
+            target->atkCnt = 7;
             break;
 
         case 8:
-            target->atk_lv -= 2;
-            STEP_LIM(target->atk_lv);
+            target->atkLv -= 2;
+            STEP_LIM(target->atkLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
             MESSAGE_PUSH(MsgAtkDown);
-            target->atk_cnt = 7;
+            target->atkCnt = 7;
             break;
 
         case 7:
-            target->atk_lv += 1;
-            STEP_LIM(target->atk_lv);
+            target->atkLv += 1;
+            STEP_LIM(target->atkLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
             MESSAGE_PUSH(MsgAtkUp);
-            target->atk_cnt = 7;
+            target->atkCnt = 7;
             break;
 
         case 6:
-            target->atk_lv += 2;
-            STEP_LIM(target->atk_lv);
+            target->atkLv += 2;
+            STEP_LIM(target->atkLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
             MESSAGE_PUSH(MsgAtkUp);
-            target->atk_cnt = 7;
+            target->atkCnt = 7;
             break;
 
         case 13:
-            target->def_lv -= 1;
-            STEP_LIM(target->def_lv);
+            target->defLv -= 1;
+            STEP_LIM(target->defLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
             MESSAGE_PUSH(MsgDefDown);
-            target->def_cnt = 7;
+            target->defCnt = 7;
             break;
 
         case 12:
-            target->def_lv -= 2;
-            STEP_LIM(target->def_lv);
+            target->defLv -= 2;
+            STEP_LIM(target->defLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
             MESSAGE_PUSH(MsgDefDown);
-            target->def_cnt = 7;
+            target->defCnt = 7;
             break;
 
         case 11:
-            target->def_lv += 1;
-            STEP_LIM(target->def_lv);
+            target->defLv += 1;
+            STEP_LIM(target->defLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
             MESSAGE_PUSH(MsgDefUp);
-            target->def_cnt = 7;
+            target->defCnt = 7;
             break;
 
         case 10:
-            target->def_lv += 2;
-            STEP_LIM(target->def_lv);
+            target->defLv += 2;
+            STEP_LIM(target->defLv);
             UnitCalcFar(tid);
             BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
             MESSAGE_PUSH(MsgDefUp);
-            target->def_cnt = 7;
+            target->defCnt = 7;
             break;
 
         case 5:
             if (target->hp != 0)
                 break;
             MESSAGE_PUSH(MsgRevived);
-            target->hp = target->max_hp;
+            target->hp = target->maxHp;
             UnitRatioFar(tid);
             break;
 
@@ -1445,7 +1445,7 @@ power_end:
             if (target->hp != 0)
                 break;
             MESSAGE_PUSH(MsgRevived);
-            target->hp = target->max_hp / 2;
+            target->hp = target->maxHp / 2;
             UnitRatioFar(tid);
             break;
 
@@ -1453,7 +1453,7 @@ power_end:
             if (target->hp != 0)
                 break;
             MESSAGE_PUSH(MsgRevived);
-            target->hp = target->max_hp * 8 / 10;
+            target->hp = target->maxHp * 8 / 10;
             UnitRatioFar(tid);
             break;
 
@@ -1461,7 +1461,7 @@ power_end:
             if (target->hp != 0)
                 break;
             MESSAGE_PUSH(MsgRevived);
-            target->hp = (s16)(target->max_hp * 6 / 10);
+            target->hp = (s16)(target->maxHp * 6 / 10);
             UnitRatioFar(tid);
             break;
 
@@ -1472,36 +1472,36 @@ power_end:
             break;
 
         case 17:
-            RES_STEP(-1, (bak->res_lv - target->res_lv) * 20, MsgResDown);
+            RES_STEP(-1, (bak->resLv - target->resLv) * 20, MsgResDown);
             break;
 
         case 16:
         {
-            target->res_lv -= 2;
-            if (-4 > target->res_lv)
-                target->res_lv = -4;
-            if (target->res_lv > 4)
-                target->res_lv = 4;
-            BattleEvPush(BATTLE_EVENT_NUM, (bak->res_lv - target->res_lv) * 20);
+            target->resLv -= 2;
+            if (-4 > target->resLv)
+                target->resLv = -4;
+            if (target->resLv > 4)
+                target->resLv = 4;
+            BattleEvPush(BATTLE_EVENT_NUM, (bak->resLv - target->resLv) * 20);
             MESSAGE_PUSH(MsgResDown);
-            target->res_cnt = 7;
+            target->resCnt = 7;
         }
             break;
 
         case 15:
-            RES_STEP(1, (target->res_lv - bak->res_lv) * 20, MsgResUp);
+            RES_STEP(1, (target->resLv - bak->resLv) * 20, MsgResUp);
             break;
 
         case 14:
         {
-            target->res_lv += 2;
-            if (*(rm = &target->res_lv) < -4)
-                target->res_lv = -4;
-            if (target->res_lv > 4)
-                target->res_lv = 4;
-            BattleEvPush(BATTLE_EVENT_NUM, (target->res_lv - bak->res_lv) * 20);
+            target->resLv += 2;
+            if (*(rm = &target->resLv) < -4)
+                target->resLv = -4;
+            if (target->resLv > 4)
+                target->resLv = 4;
+            BattleEvPush(BATTLE_EVENT_NUM, (target->resLv - bak->resLv) * 20);
             MESSAGE_PUSH(MsgResUp);
-            target->res_cnt = 7;
+            target->resCnt = 7;
         }
             break;
 
@@ -1543,12 +1543,12 @@ power_end:
 
         case 25:
             MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
-            target->psy_seal |= 7;
+            target->psySeal |= 7;
             break;
 
         case 67:
             MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
-            target->psy_seal |= 16;
+            target->psySeal |= 16;
             break;
 
         case 27:
@@ -1557,7 +1557,7 @@ power_end:
             BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
             if (target->side == ALLY)
                 MESSAGE_PUSH(MsgKoDown);
-            else if (ability_id == 219)
+            else if (abilityId == 219)
                 MESSAGE_PUSH(MsgSuffocate);
             else
                 MESSAGE_PUSH(MsgSpiritDrain);
@@ -1582,13 +1582,13 @@ power_end:
                 ap /= 2;
             kind = ap;
             dmg += kind;
-            if (dmg > actor->max_hp) {
-                dmg = actor->max_hp;
+            if (dmg > actor->maxHp) {
+                dmg = actor->maxHp;
                 kind = dmg - actor->hp;
             }
             BattleEvPush(BATTLE_EVENT_CLEAR, 0);
             BattleEvPush(BATTLE_EVENT_UNIT, aid);
-            if (dmg == actor->max_hp)
+            if (dmg == actor->maxHp)
                 MESSAGE_PUSH(MsgHpFull);
             else {
                 BattleEvPush(BATTLE_EVENT_NUM, kind);
@@ -1606,13 +1606,13 @@ power_end:
             heal = actor->pp;
             amt = dealt;
             heal += amt;
-            if (heal > actor->max_pp) {
-                heal = actor->max_pp;
+            if (heal > actor->maxPp) {
+                heal = actor->maxPp;
                 amt = heal - actor->pp;
             }
             BattleEvPush(BATTLE_EVENT_CLEAR, 0);
             BattleEvPush(BATTLE_EVENT_UNIT, aid);
-            if (heal == actor->max_pp)
+            if (heal == actor->maxPp)
                 MESSAGE_PUSH(MsgPpFull);
             else {
                 BattleEvPush(BATTLE_EVENT_NUM, amt);
@@ -1627,8 +1627,8 @@ power_end:
             dmg = dealt / 10;
             if (target->pp < dmg)
                 dmg = target->pp;
-            if (actor->pp + dmg > actor->max_pp)
-                dmg = actor->max_pp - actor->pp;
+            if (actor->pp + dmg > actor->maxPp)
+                dmg = actor->maxPp - actor->pp;
             if (dmg == 0)
                 break;
             BattleEvPush(BATTLE_EVENT_NUM, dmg);
@@ -1637,7 +1637,7 @@ power_end:
             break;
 
         case 84:
-            dmg = (s16)(target->max_pp / 10);
+            dmg = (s16)(target->maxPp / 10);
             if (target->pp < dmg)
                 dmg = target->pp;
             if (dmg == 0)
@@ -1648,24 +1648,24 @@ power_end:
             break;
 
         case 33:
-            if (target->atk_lv > 0) {
-                target->atk_lv = 0;
-                target->atk_cnt = 0;
+            if (target->atkLv > 0) {
+                target->atkLv = 0;
+                target->atkCnt = 0;
             }
-            if (target->def_lv > 0) {
-                target->def_lv = 0;
-                target->def_cnt = 0;
+            if (target->defLv > 0) {
+                target->defLv = 0;
+                target->defCnt = 0;
             }
-            if (target->res_lv > 0) {
-                target->res_lv = 0;
-                target->res_cnt = 0;
+            if (target->resLv > 0) {
+                target->resLv = 0;
+                target->resCnt = 0;
             }
-            if (target->agi_lv > 0)
-                target->agi_lv = 0;
-            target->element_levels[0] = 0;
-            target->element_levels[1] = 0;
-            target->element_levels[2] = 0;
-            target->element_levels[3] = 0;
+            if (target->agiLv > 0)
+                target->agiLv = 0;
+            target->elementLevels[0] = 0;
+            target->elementLevels[1] = 0;
+            target->elementLevels[2] = 0;
+            target->elementLevels[3] = 0;
             MESSAGE_PUSH(MsgBuffsReset);
             break;
 
@@ -1676,15 +1676,15 @@ power_end:
 
         case 28:
         case 80:
-            if (target->grim_reaper == 0) {
+            if (target->grimReaper == 0) {
                 MESSAGE_PUSH(MsgDeathCurse);
-                target->grim_reaper = 7;
+                target->grimReaper = 7;
                 break;
             }
-            if (target->grim_reaper <= 1)
+            if (target->grimReaper <= 1)
                 break;
-            target->grim_reaper -= 1;
-            BattleEvPush(BATTLE_EVENT_NUM, target->grim_reaper);
+            target->grimReaper -= 1;
+            BattleEvPush(BATTLE_EVENT_NUM, target->grimReaper);
             MESSAGE_PUSH(MsgDeathCount);
             break;
 
@@ -1697,7 +1697,7 @@ power_end:
             MESSAGE_PUSH(MsgChallenge);
             target->challenge = 1;
             if (ALLY_CHECK(tid))
-                work->challenge_flag |= 2;
+                work->challengeFlag |= 2;
             break;
 
         case 53:
@@ -1710,31 +1710,31 @@ power_end:
         case 46:
 
             MESSAGE_PUSH(MsgAura);
-            if (target->guard_lv > 0)
+            if (target->guardLv > 0)
                 break;
-            target->guard_lv = 1;
+            target->guardLv = 1;
             break;
 
         case 72:
             MESSAGE_PUSH(MsgAura);
-            if ((u32)target->guard_lv > 1)
+            if ((u32)target->guardLv > 1)
                 break;
-            target->guard_lv = 2;
+            target->guardLv = 2;
             break;
 
         case 47:
         case 88:
             MESSAGE_PUSH(MsgAura2);
-            if (target->guard_lv > 2)
+            if (target->guardLv > 2)
                 break;
-            target->guard_lv = 3;
+            target->guardLv = 3;
             break;
 
         case 79:
             MESSAGE_PUSH(MsgVanished);
-            if ((u32)target->guard_lv > 3)
+            if ((u32)target->guardLv > 3)
                 break;
-            target->guard_lv = 4;
+            target->guardLv = 4;
             break;
 
         case 45:
@@ -1743,7 +1743,7 @@ power_end:
 
         case 81:
             MESSAGE_PUSH(MsgAllResting);
-            work->unknown_046[1] = 1;
+            work->unk046[1] = 1;
             break;
 
         case 82:
@@ -1753,7 +1753,7 @@ power_end:
 
         case 74:
             MESSAGE_PUSH(MsgCounterReady);
-            target->unknown_142[1] = 1;
+            target->unk142[1] = 1;
             break;
 
         default:
@@ -1763,12 +1763,12 @@ power_end:
 
 done:
     BattleEvPush(BATTLE_EVENT_CLEAR, 0);
-    if (plan->cmd != 9 && (s8)target->unknown_142[1] != 0
-        && action->target_mode == 1 && target->hp != 0) {
-        work->unknown_858 = tid;
-        /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unknown_85c's address before the store to unknown_858, where the ROM stores first, 2 instructions. */
+    if (plan->cmd != 9 && (s8)target->unk142[1] != 0
+        && action->targetMode == 1 && target->hp != 0) {
+        work->unk858 = tid;
+        /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unk85c's address before the store to unk858, where the ROM stores first, 2 instructions. */
         asm("");
-        work->unknown_85c = aid;
+        work->unk85c = aid;
     }
 
     if (target->hp != 0) {
@@ -1782,16 +1782,16 @@ done:
     }
     MemFree(bak);
     UnitCalcFar(tid);
-    PartyStatusDrawFar(Ram_HeapSlots->battle_work->party_status);
+    PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
     if (target->hp != 0)
         BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
-    if (ability_id != 403 && actor->haunt != 0
+    if (abilityId != 403 && actor->haunt != 0
         && (BattleRandomFar() & 3) == 0 && dealt > 0) {
         s32 share;
 
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        plan->haunt_dmg += share;
+        plan->hauntDmg += share;
     }
 }

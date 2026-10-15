@@ -7,14 +7,14 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 Data_02005af4[];
-extern const u8 Data_02005b0c[];
-extern const u8 Data_02005b54[];
-extern const u8 Data_02005bcc[];
-extern const u8 Data_02005d4c[];
-extern const u8 Data_02005eb4[];
-extern const u8 Data_02005f74[];
-extern const u8 Data_020060c4[];
+extern const u8 gData_02005af4[];
+extern const u8 gData_02005b0c[];
+extern const u8 gData_02005b54[];
+extern const u8 gData_02005bcc[];
+extern const u8 gData_02005d4c[];
+extern const u8 gData_02005eb4[];
+extern const u8 gData_02005f74[];
+extern const u8 gData_020060c4[];
 
 void Func_02000414(s32 id);
 void Func_02000798(void);
@@ -54,7 +54,7 @@ void Func_0200096c(s32 unused, s32 id)
     if (object->x >> 20 == 11) {
         s32 y;
 
-        object->speed_limit = 0x4000;
+        object->speedLimit = 0x4000;
         object->acceleration = 0x2000;
         y = object->y;
         Func_02004bf8(object, 0x980000, y, 0x3180000);
@@ -63,7 +63,7 @@ void Func_0200096c(s32 unused, s32 id)
     if (*(volatile s32 *)&object->x >> 20 == 10) {
         s32 y;
 
-        object->speed_limit = 0x4000;
+        object->speedLimit = 0x4000;
         object->acceleration = 0x2000;
         y = object->y;
         {

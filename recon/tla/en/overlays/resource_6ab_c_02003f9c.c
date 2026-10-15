@@ -8,22 +8,22 @@ struct MarsStarStop {
     s16 column;
     s16 row;
     s16 flag;
-    s16 unknown_06;
+    s16 unk06;
 };
 
 struct MarsStarRoute {
-    s16 unknown_00;
-    s16 flag_base;
-    s16 unknown_04;
+    s16 unk00;
+    s16 flagBase;
+    s16 unk04;
     s16 column;
     s16 row;
     u16 count;
     s16 current;
-    u8 unknown_0e[18];
+    u8 unk0e[18];
     struct MarsStarStop stops[1];
 };
 
-extern struct MarsStarRoute Data_02004cf4;
+extern struct MarsStarRoute gData_02004cf4;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 s32 GameFlag_GetByte(s32 flag);
@@ -32,10 +32,10 @@ void Func_02003c6c(struct MarsStarRoute *route, struct MarsStarStop *stop);
 
 s32 Func_02003f9c(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 column = object->x >> 20;
     s32 row = object->z >> 20;
-    struct MarsStarRoute *route = &Data_02004cf4;
+    struct MarsStarRoute *route = &gData_02004cf4;
     struct MarsStarStop *stop = route->stops;
     s32 i;
 
@@ -51,8 +51,8 @@ s32 Func_02003f9c(void)
                 break;
             route->current = i;
             Func_02003c6c(route, stop);
-            GameFlag_SetByte(route->flag_base, column);
-            GameFlag_SetByte(route->flag_base + 8, row);
+            GameFlag_SetByte(route->flagBase, column);
+            GameFlag_SetByte(route->flagBase + 8, row);
             return 1;
         }
     }

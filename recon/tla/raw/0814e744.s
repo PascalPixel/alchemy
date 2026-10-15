@@ -367,6 +367,6 @@ Func_0814e744:
 .L_0814ea30:
 	.4byte Func_08143000
 .L_0814ea34:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814ea38:
-	.4byte Data_081982e4
+	.4byte gData_081982e4

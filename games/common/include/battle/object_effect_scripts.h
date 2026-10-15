@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const s32 BattleFx_CommonParticleScript[];
-extern const s32 BattleFx_FragmentScript[];
+extern const s32 gBattleFx_CommonParticleScript[];
+extern const s32 gBattleFx_FragmentScript[];
 
 #endif

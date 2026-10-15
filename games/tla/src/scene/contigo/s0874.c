@@ -2,27 +2,27 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-extern u8 Data_020054e0[];
-extern u8 Data_020054ec[];
-extern u8 Data_02005870[];
-extern u8 Data_02005a44[];
-extern u8 Data_02005e70[];
-extern u8 Data_02005ed0[];
+extern u8 gData_020054e0[];
+extern u8 gData_020054ec[];
+extern u8 gData_02005870[];
+extern u8 gData_02005a44[];
+extern u8 gData_02005e70[];
+extern u8 gData_02005ed0[];
 
 u8 *Func_02000874(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov694Room1)
-        return Data_020054ec;
+        return gData_020054ec;
     if (scene == (s32)&SceneId_Ov694Room4)
-        return Data_02005870;
+        return gData_02005870;
     if (scene == (s32)&SceneId_Ov694Room2) {
         if (gPartyState.entrance == 4)
-            return Data_02005e70;
-        return Data_02005a44;
+            return gData_02005e70;
+        return gData_02005a44;
     }
     if (scene == (s32)&SceneId_Ov694Room3)
-        return Data_02005ed0;
-    return Data_020054e0;
+        return gData_02005ed0;
+    return gData_020054e0;
 }

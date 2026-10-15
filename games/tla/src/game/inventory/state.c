@@ -26,10 +26,10 @@ s32 Inventory_Repair(s32 owner, s32 slot)
     return 0;
 }
 
-u8 Item_GetTargetMode(s32 item_id)
+u8 Item_GetTargetMode(s32 itemId)
 {
     return BattleAction_GetDirect(
-        Item_GetDirect(item_id)->action_id)->target_mode;
+        Item_GetDirect(itemId)->actionId)->targetMode;
 }
 
 s32 ItemCounter_Adjust(s32 index, s32 delta)

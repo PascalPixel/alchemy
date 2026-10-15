@@ -10,42 +10,42 @@
 #include "text/msg_ids.h"
 
 struct IzumoRuinsEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[0x56];
-    s32 field_1ac;
-    u8 unknown_1b0[0xb0c];
-    struct ObjectRuntime *object_cbc;
+    u8 unk156[0x56];
+    s32 field1ac;
+    u8 unk1b0[0xb0c];
+    struct ObjectRuntime *objectCbc;
 };
 
 struct IzumoRuinsAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[8];
+    u8 unk0a[8];
     u16 angle;
 };
 
 struct IzumoRuinsMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct IzumoRuinsMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct IzumoRuinsMapLayer layers[3];
 };
 
 struct IzumoRuinsPlacement {
     u16 id;
-    u16 unknown_02;
+    u16 unk02;
     s16 flag;
 };
 
 struct IzumoRuinsEffectWork {
-    u8 unknown_00[26];
-    s16 object_id;
+    u8 unk00[26];
+    s16 objectId;
 };
 
 extern u32 gFrameCount;
@@ -77,18 +77,18 @@ void Func_02001500(const void *data);
 void Func_02001518(const void *data);
 void Func_02001520(void);
 
-extern u8 Data_02001654[];
-extern u8 Data_02001658[];
-extern u8 Data_02001674[];
-extern u8 Data_02001688[];
-extern u8 Data_02001696[];
-extern u8 Data_020016d0[];
-extern u8 Data_020016f0[];
-extern u8 Data_02001754[];
-extern u8 Data_0200176c[];
-extern u8 Data_02001814[];
-extern u8 Data_020018ec[];
-extern u8 Data_020019ac[];
+extern u8 gData_02001654[];
+extern u8 gData_02001658[];
+extern u8 gData_02001674[];
+extern u8 gData_02001688[];
+extern u8 gData_02001696[];
+extern u8 gData_020016d0[];
+extern u8 gData_020016f0[];
+extern u8 gData_02001754[];
+extern u8 gData_0200176c[];
+extern u8 gData_02001814[];
+extern u8 gData_020018ec[];
+extern u8 gData_020019ac[];
 
 void Func_0200100c(u16 *list);
 void Func_02000974(s32 mode);

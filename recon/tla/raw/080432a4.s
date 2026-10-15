@@ -57,11 +57,11 @@ Func_080432a4:
 .L_08043308:
 	.4byte 0x00000001
 .L_0804330c:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_08043310:
-	.4byte Data_020036d8
+	.4byte gData_020036d8
 .L_08043314:
-	.4byte Data_02005350
+	.4byte gData_02005350
 .L_08043318:
 	movs r1, #192
 	lsls r1, r1, #6

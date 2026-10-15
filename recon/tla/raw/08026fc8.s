@@ -76,4 +76,4 @@ Func_08026fc8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08027060:
-	.4byte Data_0802ec88
+	.4byte gData_0802ec88

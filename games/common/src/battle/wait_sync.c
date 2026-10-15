@@ -19,20 +19,20 @@ extern u16 gLinkPeerSignatures[][12];
 s32 BattlePres_WaitSync(void)
 {
 #if GAME_TLA
-	struct BattleWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battleWork;
 #endif
 	u16 *peer;
 	u16 *sig;
 	s32	 lost = 0;
 	s32	 i;
 
-	if (work->two_sided != 0)
+	if (work->twoSided != 0)
 	{
-		u32 other = work->link_side ^ 1;
+		u32 other = work->linkSide ^ 1;
 
 		peer = (u16 *)(gSerialPeerPayloads[other] + 4);
 		sig = (u16 *)gSerialTransfer.payload;
-		if (work->link_paused == 0)
+		if (work->linkPaused == 0)
 		{
 			sig[0] = 'E';
 			sig[1] = 'X';
@@ -70,7 +70,7 @@ s32 BattlePres_WaitSync(void)
 s32 BattlePres_SyncTurn(void)
 {
 #if GAME_TLA
-	struct BattleWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battleWork;
 #endif
 	u16 *peer;
 	u16 *sig;
@@ -78,11 +78,11 @@ s32 BattlePres_SyncTurn(void)
 	/* FAKEMATCH: unused local, the native frame's twenty bytes that no instruction touches. Without it differ 16 on tla-ja, tla-en and tla-de: no sub sp, #20 and its add back, the movs r7, #0 scheduled earlier. */
 	u16 spare[10];
 
-	if (work->two_sided != 0)
+	if (work->twoSided != 0)
 	{
-		peer = gLinkPeerSignatures[work->link_side ^ 1];
+		peer = gLinkPeerSignatures[work->linkSide ^ 1];
 		sig = (u16 *)gSerialTransfer.payload;
-		if (work->link_paused != 0)
+		if (work->linkPaused != 0)
 			return -1;
 
 		// "ex" "TU"

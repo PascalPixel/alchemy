@@ -386,7 +386,7 @@ Func_080df1fc:
 	b .L_080df568
 	.2byte 0x0000
 .L_080df534:
-	.4byte Data_080f0e60
+	.4byte gData_080f0e60
 .L_080df538:
 	.4byte 0xffe00000
 .L_080df53c:
@@ -591,4 +591,4 @@ Func_080df1fc:
 .L_080df6ec:
 	.4byte Func_080df174
 .L_080df6f0:
-	.4byte Data_080f0e78
+	.4byte gData_080f0e78

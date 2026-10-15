@@ -9,16 +9,16 @@ void Func_02000a8c(void)
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov661Room4) {
         Object_AttachWorkTargetToObject(16, 1);
-        Object_LinkObjectAndSetCallback(gPartyState.current_owner, 16);
+        Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 16);
     } else if (scene == (s32)&SceneId_Ov661Room5) {
         Object_AttachWorkTargetToObject(21, 1);
-        Object_LinkObjectAndSetCallback(gPartyState.current_owner, 21);
+        Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 21);
     }
     /* FAKEMATCH: entering the loop at its test keeps the test single and the address load inside the loop; as a while loop the test is copied above it and the address kept in r5 */
     goto test;
     do {
         WaitFrames(1);
 test:;
-    } while (Data_02004808 == 210);
+    } while (gData_02004808 == 210);
     Func_02004048();
 }

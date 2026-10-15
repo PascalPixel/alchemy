@@ -16,8 +16,8 @@ void Func_02000638(void);
 void Func_02000e24(void);
 void Func_02000e30(void);
 
-extern s16 Data_020031e4[];
-extern s16 Data_020031e6[];
+extern s16 gData_020031e4[];
+extern s16 gData_020031e6[];
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 280, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -40,7 +40,7 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-s16 Data_02002c5c[] = {
+s16 gData_02002c5c[] = {
 	407, -1, 1, 0, 0, 200, 0, 0,
 	0, 408, 0x4000, 2, 407, -1, 1, 0,
 	0, 344, 0, 0, 0, 408, 0x4000, 258,
@@ -85,7 +85,7 @@ s16 Data_02002c5c[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-s16 Data_02002efc[] = {
+s16 gData_02002efc[] = {
 	407, -1, 1, 0, 0, 200, 0, 0,
 	0, 408, 0x4000, 2, 407, -1, 1, 0,
 	0, 344, 0, 0, 0, 408, 0x4000, 258,
@@ -135,23 +135,23 @@ s16 Data_02002efc[] = {
 	0, 0, 0, 0,
 };
 
-s16 Data_020031e4[] = {
+s16 gData_020031e4[] = {
 	-1,
 };
 
-s16 Data_020031e6[] = {
+s16 gData_020031e6[] = {
 	36, 2, 2, 2, 6, 36, 4, 2,
 	2, 6, -1,
 };
 
-s32 Data_020031fc[] = {
-	(s32)Data_020031e6,
+s32 gData_020031fc[] = {
+	(s32)gData_020031e6,
 	0x9001d,
-	(s32)Data_020031e4,
+	(s32)gData_020031e4,
 	0,
 };
 
-s32 Data_0200320c[] = {
+s32 gData_0200320c[] = {
 	0xc602,
 	(s32)0xffff0001,
 	(s32)Func_020000fc,
@@ -283,7 +283,7 @@ s32 Data_0200320c[] = {
 	0,
 };
 
-s32 Data_0200b410[] = {
+s32 gData_0200b410[] = {
 	0xc602,
 	(s32)0xffff0001,
 	(s32)Func_020000fc,
@@ -418,6 +418,6 @@ s32 Data_0200b410[] = {
 	0,
 };
 
-u32 Data_02003620[] = {
+u32 gData_02003620[] = {
 	38,
 };

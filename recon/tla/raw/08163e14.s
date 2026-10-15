@@ -527,7 +527,7 @@ Func_08163e14:
 .L_08164234:
 	.4byte 0xffffff00
 .L_08164238:
-	.4byte Data_0819896a
+	.4byte gData_0819896a
 .L_0816423c:
 	ldr r3, [r5, #24]
 	cmp r3, #0
@@ -777,10 +777,10 @@ Func_08163e14:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0816441c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08164420:
 	.4byte 0xffff8000
 .L_08164424:
-	.4byte Data_08198974
+	.4byte gData_08198974
 .L_08164428:
 	.4byte Func_08143000

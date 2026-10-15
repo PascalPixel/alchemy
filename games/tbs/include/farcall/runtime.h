@@ -96,7 +96,7 @@ FAR_SLOT(SerialRuntime_WaitForStatusMask)
 FAR_CALL(SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers, void, (void))
 FAR_CALL(Sound_LoadPresetParametersFar, Sound_LoadPresetParameters, s32, (s32 preset))
 FAR_CALL(SerialRuntime_BeginTransferAFar, SerialRuntime_BeginTransferA, s32,
-	(void *source, s32 transfer_value))
+	(void *source, s32 transferValue))
 FAR_CALL(SerialRuntime_BeginTransferBFar, SerialRuntime_BeginTransferB, s32, (void *destination))
 FAR_SLOT(SerialRuntime_WaitForTransferA)
 FAR_SLOT(SerialRuntime_WaitForTransferB)

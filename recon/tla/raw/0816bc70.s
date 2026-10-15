@@ -689,11 +689,11 @@ Func_0816bc70:
 .L_0816c1e4:
 	.4byte Data_02014e20
 .L_0816c1e8:
-	.4byte Data_08197834
+	.4byte gData_08197834
 .L_0816c1ec:
-	.4byte Data_0819781a
+	.4byte gData_0819781a
 .L_0816c1f0:
-	.4byte Data_08197826
+	.4byte gData_08197826
 .L_0816c1f4:
 	.4byte 0xffffff00
 .L_0816c1f8:
@@ -711,13 +711,13 @@ Func_0816bc70:
 .L_0816c210:
 	.4byte Data_08198cac
 .L_0816c214:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0816c218:
 	.4byte Data_08198b32
 .L_0816c21c:
 	.4byte Data_08198b42
 .L_0816c220:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0816c224:
 	movs r0, #4
 	movs r1, #4

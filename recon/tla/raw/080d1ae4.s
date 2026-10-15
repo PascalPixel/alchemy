@@ -137,7 +137,7 @@ Func_080d1ae4:
 .L_080d1be0:
 	.4byte 0x000001ff
 .L_080d1be4:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080d1be8:
 	.4byte 0xfffffc00
 .L_080d1bec:

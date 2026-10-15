@@ -1,5 +1,5 @@
 /* Draft, differ 2 of 113: The Broken Seal's UiText_ShowCenteredMessage with
- * the heap slot window_tiles. The native loads height (ldr r4, [sp, #8])
+ * the heap slot windowTiles. The native loads height (ldr r4, [sp, #8])
  * before it subtracts width from 30, this subtracts first. Measured: height
  * or both sizes in temporaries, signed casts (2), the subtractions split
  * from the shifts (31). */
@@ -8,7 +8,7 @@
 #include "uiwindow.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
 s32 UiText_BuildRenderEntries(s32 key, s32 mode);
 s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
@@ -18,7 +18,7 @@ s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void WaitFrames(s32 frames);
 
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
+void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset)
 {
     struct UiRenderWork *work;
     struct UiWindow *window;
@@ -36,7 +36,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     if (work->entries[entry] != 0) {
         UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width, (u32 *)&height);
         x = (30 - width) >> 1;
-        y = ((15 - height) >> 1) + y_offset;
+        y = ((15 - height) >> 1) + yOffset;
         if (mode != 0)
             window = UiWindow_Create(x, y, width, height, 0);
         else {

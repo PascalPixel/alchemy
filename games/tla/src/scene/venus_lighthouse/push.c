@@ -15,9 +15,9 @@ void SceneState_RunActor13AtColumn42Setup(void)
     if (obj->x >> 20 == 42) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(188);
-        obj->motion_flags = 0;
+        obj->motionFlags = 0;
         val = 0xfffe0000;
-        obj->terrain_height = val;
+        obj->terrainHeight = val;
         obj->y = val;
         Engine_GameFlagSet(0x200);
         a = 3;

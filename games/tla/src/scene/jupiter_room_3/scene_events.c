@@ -23,11 +23,11 @@ void Func_02000134(s32 unused, s32 id)
         WaitFrames_(10);
         Func_02002470(134);
         for (i = 0; i < 30; i++) {
-            if (object->y <= object->terrain_height && object->velocity_y == 0)
+            if (object->y <= object->terrainHeight && object->velocityY == 0)
                 break;
             WaitFrames(1);
         }
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         mode = 0;
         __asm__("");
         Func_02002368(object->x, object->z, mode, 0);
@@ -46,13 +46,13 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 s32 Func_020001d4(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x204;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
     Func_02002440(12, 1);
     Func_02002440(13, 1);
     if (GameFlag_Test(0x109) == 0 && gPartyState.entrance == 12)
-        Func_02002468(gPartyState.current_owner);
+        Func_02002468(gPartyState.currentOwner);
     if (GameFlag_Test(0x109) == 0 && gPartyState.entrance == 13)
-        Func_02002468(gPartyState.current_owner);
+        Func_02002468(gPartyState.currentOwner);
     return 0;
 }
 
@@ -65,29 +65,29 @@ s32 Func_02000250(void)
     Scene_SetArrivalFlags(0);
     if (GameFlag_Test(0xa04)) {
         object = Object_GetById(14);
-        object->motion_flags = 0;
-        object->terrain_height = -0x200000;
+        object->motionFlags = 0;
+        object->terrainHeight = -0x200000;
         object->y = -0x200000;
         Func_020023b0_(14, 0x1480000, 0x2480000);
         Func_02002368(object->x, object->z, 0, 0);
     }
     if (GameFlag_Test(0xa05)) {
         object = Object_GetById(15);
-        object->motion_flags = 0;
-        object->terrain_height = -0x200000;
+        object->motionFlags = 0;
+        object->terrainHeight = -0x200000;
         object->y = -0x200000;
         Func_020023b0_(15, 0x2080000, 0x2480000);
         Func_02002368(object->x, object->z, 0, 0);
     }
-    Object_GetById(8)->priority_flags |= 32;
-    Object_GetById(9)->priority_flags |= 32;
-    Object_GetById(10)->priority_flags |= 32;
-    Object_GetById(11)->priority_flags |= 32;
+    Object_GetById(8)->priorityFlags |= 32;
+    Object_GetById(9)->priorityFlags |= 32;
+    Object_GetById(10)->priorityFlags |= 32;
+    Object_GetById(11)->priorityFlags |= 32;
     ObjectMotion_SetActionVariant(8, 3);
     ObjectMotion_SetActionVariant(10, 3);
     ObjectMotion_SetActionVariant(9, 3);
     ObjectMotion_SetActionVariant(11, 3);
-    Object_GetById(10)->priority_flags |= 2;
+    Object_GetById(10)->priorityFlags |= 2;
     Func_020023d0(8);
     Func_020023d0(9);
     Func_020023d0(10);

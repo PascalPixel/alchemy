@@ -7,7 +7,7 @@ void VramBlock_LoadCached(s32 handle, s32 size, void *source);
 
 void Func_02002de0(void)
 {
-    struct KibomboObject **slot = &Data_02007950;
+    struct KibomboObject **slot = &gData_02007950;
     /* FAKEMATCH: the native keeps one zero in r7 for the three byte stores below; plain zeros are built in r2 where they are stored (differ 30). */
     s32 zero = 0;
     struct KibomboObject *object = Func_02005a34(0x1e9, 0x1090000, 0x240000, 0x1580000);
@@ -17,23 +17,23 @@ void Func_02002de0(void)
         struct FieldSprite *sprite = object->sprite;
         u8 *buffer;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 1;
-        object->motion_flags = zero;
-        object->field_5c = 1;
-        sprite->next_frame = zero;
-        sprite->unknown_1b[0] = zero;
+        object->motionFlags = zero;
+        object->field5c = 1;
+        sprite->nextFrame = zero;
+        sprite->unk1b[0] = zero;
         buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02005a84(242);
-        VramBlock_LoadCached(sprite->vram_block, 128, buffer + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
 }
 
 void Func_02002e60(void)
 {
-    struct KibomboObject *leader = Object_GetById(gPartyState.current_owner);
+    struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's height before it builds the limit (2 differ without it). */
     if (leader->y > 0x100000) {
@@ -47,9 +47,9 @@ void Func_02002e60(void)
 
 void Func_02002eb0(void)
 {
-    if (Data_02007950 != 0) {
+    if (gData_02007950 != 0) {
         struct KibomboObject *object = Object_GetById(27);
 
-        Object_SetPositionAndResetMotion(Data_02007950, object->x, object->y + 0xc0000, object->z);
+        Object_SetPositionAndResetMotion(gData_02007950, object->x, object->y + 0xc0000, object->z);
     }
 }

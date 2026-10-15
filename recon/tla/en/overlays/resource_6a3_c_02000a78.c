@@ -22,8 +22,8 @@ s32 Func_02000a78(void)
         if ((gFrameCount & 127) == 0)
             ObjEmote(29, 258);
         if (sprite != NULL) {
-            sprite->unknown_14[3] = 30;
-            sprite->unknown_14[2] = 252;
+            sprite->unk14[3] = 30;
+            sprite->unk14[2] = 252;
             sprite->rotation = Math_Sine(gFrameCount * 728) / 128 - 0x800;
         }
     }

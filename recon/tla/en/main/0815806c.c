@@ -18,11 +18,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
-extern u16 Data_08197410[];
-extern u8 Data_08197467[];
-extern u8 Data_0819746d[];
-extern u8 Data_08197473[];
-extern u16 Data_0819747a[];
+extern u16 gData_08197410[];
+extern u8 gData_08197467[];
+extern u8 gData_0819746d[];
+extern u8 gData_08197473[];
+extern u16 gData_0819747a[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
@@ -57,19 +57,19 @@ void Func_0815806c(struct BattleEffectArgument *effect)
     s32 member;
     s32 frame;
     s32 i;
-    s32 curtain_y;
+    s32 curtainY;
 
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    sheet = Ram_HeapSlots->unk64[0];
     BattleFx_BeginCanvasLayer(0);
     draw = callbacks;
     Func_08144aac(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     member = 0;
@@ -88,10 +88,10 @@ void Func_0815806c(struct BattleEffectArgument *effect)
             mote = &PARTICLES[member * 16 + i];
             mote->x = (((Random16() & 15) + step->x) - 8) << 16;
             mote->y = ((Random16() & 7) + 96) << 16;
-            mote->velocity_x = ((Random16() & 127) - 64) << 11;
-            mote->velocity_y = ((Random16() & 127) - 64) << 10;
+            mote->velocityX = ((Random16() & 127) - 64) << 11;
+            mote->velocityY = ((Random16() & 127) - 64) << 10;
             mote->z = Random16() & 0xffff;
-            mote->velocity_z = Random16() & 0xffff;
+            mote->velocityZ = Random16() & 0xffff;
         }
         step++;
         member++;
@@ -99,7 +99,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
 
     Audio_PlayCue(0x88);
     frame = 0;
-    curtain_y = -172;
+    curtainY = -172;
     do {
         if (frame == 56)
             Func_081180e8(0x85);
@@ -110,13 +110,13 @@ void Func_0815806c(struct BattleEffectArgument *effect)
                 (void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
         if (frame >= 20 && frame <= 31) {
             if (frame > 23)
-                draw[1](canvas, work->sheet, 146 - frame * 4, curtain_y, 20, 40);
+                draw[1](canvas, work->sheet, 146 - frame * 4, curtainY, 20, 40);
             else
                 callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
         }
         if (frame == 32) {
             Audio_PlayCue(0x91);
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
             Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
         }
         if (frame > 31) {
@@ -127,9 +127,9 @@ void Func_0815806c(struct BattleEffectArgument *effect)
                     s32 cell = step->variant / 8;
                     u32 width;
 
-                    callbacks[0](canvas, work->sheet + Data_0819747a[cell],
-                        step->x - ((width = Data_08197467[cell]) >> 1),
-                        step->y + Data_08197473[cell], width, Data_0819746d[cell]);
+                    callbacks[0](canvas, work->sheet + gData_0819747a[cell],
+                        step->x - ((width = gData_08197467[cell]) >> 1),
+                        step->y + gData_08197473[cell], width, gData_0819746d[cell]);
                 }
                 member++;
                 step->variant++;
@@ -146,7 +146,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
 
                 size = (member & 1) + 3;
                 x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-                draw[1](canvas, sheet + Data_08197410[size - 1], x - ((u32)size >> 1),
+                draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
                     HI(step->y) - size, size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 64, -0x2000);
                 angle = step->z;
@@ -166,9 +166,9 @@ void Func_0815806c(struct BattleEffectArgument *effect)
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
-        curtain_y += 8;
+        curtainY += 8;
         frame++;
     } while (frame != 112);
     Scheduler_RemoveCallback(Func_08143000);

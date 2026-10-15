@@ -1993,7 +1993,7 @@ Func_0815cde8:
 .L_0815dd18:
 	.4byte 0x0000016a
 .L_0815dd1c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0815dd20:
 	.4byte 0x000000ec
 .L_0815dd24:
@@ -2504,15 +2504,15 @@ Func_0815cde8:
 .L_0815e13c:
 	.4byte 0xffef0000
 .L_0815e140:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0815e144:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0815e148:
 	.4byte Data_081991e0
 .L_0815e14c:
 	.4byte 0xffed0000
 .L_0815e150:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0815e154:
 	.4byte 0xfff00000
 .L_0815e158:

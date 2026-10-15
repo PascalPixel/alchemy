@@ -30,9 +30,9 @@ s32 Object_LinkObjectAndSetCallback();
 s32 Object_SetActionCallbackAndRefreshById();
 s32 Object_SetModeById();
 s32 WaitFrames();
-extern u8 Data_0200468c[];
-extern u8 Data_020046dc[];
-extern u8 Data_02004718[];
+extern u8 gData_0200468c[];
+extern u8 gData_020046dc[];
+extern u8 gData_02004718[];
 extern u8 MsgHeyLookUp[];
 extern u8 gPartyState[];
 
@@ -88,7 +88,7 @@ void Func_02001690(void)
     Call2(Object_LinkObjectAndSetCallback, 12, 14);
     Call2(Object_LinkObjectAndSetCallback, 13, 14);
     Call3(ObjectMotion_SetSpeedParameters, 13, 0x10000, 0x8000);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 14, ((s32)Data_0200468c));
+    Call2(ObjectMotion_EnableActionAndSetCallback, 14, ((s32)gData_0200468c));
     Call2(Func_02004118, 0xcccc, 0x1999);
     Call4(Motion_CamBounds, 0xf00000, -1, 0x1040000, 1);
     Func_02004128();
@@ -140,7 +140,7 @@ void Func_02001690(void)
     Call3(ObjectMotion_SetSpeedParameters, 12, 0x19999, 0xcccc);
     Call3(ObjectMotion_SetSpeedParameters, 13, 0x19999, 0xcccc);
     Call2(Object_LinkObjectAndSetCallback, *(s32 *)(v6), 13);
-    v5 = ((s32)Data_020046dc);
+    v5 = ((s32)gData_020046dc);
     Call2(ObjectMotion_EnableActionAndSetCallback, 13, v5);
     Call1(Battle_WaitMode0, 10);
     Call2(ObjectMotion_EnableActionAndSetCallback, 12, v5);
@@ -149,7 +149,7 @@ void Func_02001690(void)
     Call2(ObjectMotion_EnableActionAndSetCallback, 8, v5);
     Call1(Battle_WaitMode0, 10);
     Call2(ObjectMotion_EnableActionAndSetCallback, 9, v5);
-    v5 = ((s32)Data_02004718);
+    v5 = ((s32)gData_02004718);
     Call2(ObjectMotion_EnableActionAndSetCallback, 10, v5);
     Call1(Battle_WaitMode0, 20);
     Call2(Object_SetActionCallbackAndRefreshById, 11, v5);

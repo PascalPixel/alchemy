@@ -1,10 +1,10 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern s16 Data_02001cde;
-extern struct ObjectRuntime *Data_02001ce0[];
-extern u16 Data_02001de2;
-extern u16 Data_02001de4;
+extern s16 gData_02001cde;
+extern struct ObjectRuntime *gData_02001ce0[];
+extern u16 gData_02001de2;
+extern u16 gData_02001de4;
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -28,7 +28,7 @@ void Func_02000494(void)
 
 void Func_020004b4(struct ObjectRuntime *object)
 {
-    if ((object->terrain_height = Map_GetTerrainHeight(0, object->x, object->z)) >= -0x200000)
+    if ((object->terrainHeight = Map_GetTerrainHeight(0, object->x, object->z)) >= -0x200000)
         ObjectDispatch_SetSingleChildFlags(object, 1);
     else
         ObjectDispatch_SetSingleChildFlags(object, 0);

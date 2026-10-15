@@ -2,8 +2,8 @@
 	.balign 4
 @ Each character's element group, as The Broken Seal has it: 0 for the
 @ Venus and Mars Adepts, 1 for the Jupiter and Mercury ones.
-	.global Character_ElementGroupTable
-Character_ElementGroupTable:
+	.global gCharacter_ElementGroupTable
+gCharacter_ElementGroupTable:
 	.byte 0, 0, 1, 1, 0, 0, 1, 1
 @ Six flags Func_080ae410 copies into game flags 0x820 to 0x825.
 	.global Data_080b1284
@@ -19,8 +19,8 @@ Data_080b1290:
 	.2byte 50, 50, 70, 50, 20, 70, 70
 	.balign 4
 @ レベルごとの経験値
-	.global Owner_ExperienceThresholds
-Owner_ExperienceThresholds:
+	.global gOwner_ExperienceThresholds
+gOwner_ExperienceThresholds:
 	.incbin "games/tla/src/game/character/level_experience_0.table"
 	.incbin "games/tla/src/game/character/level_experience_1.table"
 	.incbin "games/tla/src/game/character/level_experience_2.table"

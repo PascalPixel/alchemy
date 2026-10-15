@@ -14,7 +14,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_080f0206[];
+extern const u8 gData_080f0206[];
 
 void DisplayTransition_UpdateFrame(void)
 {
@@ -25,7 +25,7 @@ void DisplayTransition_UpdateFrame(void)
 
     /* FAKEMATCH: the one-pass block loads the transition state before the duration's offset is built (one reordered row, differ 2 without it). */
     do {
-        state = (struct DisplayTransitionFrame *)Ram_HeapSlots->display_transition;
+        state = (struct DisplayTransitionFrame *)Ram_HeapSlots->displayTransition;
     } while (0);
     if (state->duration != 0) {
         if (state->step >= state->duration) {
@@ -52,14 +52,14 @@ void DisplayTransition_UpdateFrame(void)
     }
 
     value = state->value - 1;
-    state->dither_toggle ^= 1;
+    state->ditherToggle ^= 1;
     blend = 0;
     if (value & 32)
         blend = 15;
     value = (value & 31) * 2;
     for (i = 0; i <= 1; i++) {
-        u8 entry = Data_080f0206[value & 63];
-        u8 *p = &state->palette_nibbles[entry >> 1];
+        u8 entry = gData_080f0206[value & 63];
+        u8 *p = &state->paletteNibbles[entry >> 1];
 
         if (entry & 1)
             *p = (*p & 0x0f) | (blend << 4);
@@ -68,5 +68,5 @@ void DisplayTransition_UpdateFrame(void)
         value++;
     }
 
-    IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->palette_nibbles, 0x84000008);
+    IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles, 0x84000008);
 }

@@ -426,11 +426,11 @@ Func_020001e4:
 .L_ja_020084ac:
 	.4byte gInput
 .L_ja_020084b0:
-	.4byte Data_0200173c
+	.4byte gData_0200173c
 .L_ja_020084b4:
 	.4byte 0x000013b1
 .L_ja_020084b8:
-	.4byte Data_02001700
+	.4byte gData_02001700
 	.else
 	push {r5, r6, r7, lr}
 	mov r7, r10
@@ -764,11 +764,11 @@ Func_020001e4:
 .L_0200848c:
 	.4byte gInput
 .L_02008490:
-	.4byte Data_0200173c
+	.4byte gData_0200173c
 .L_02008494:
 	.4byte MsgYouWonCoin
 .L_02008498:
-	.4byte Data_02001700
+	.4byte gData_02001700
 	.endif
 	.section .text.x02008884,"ax",%progbits
 	.global Func_02000884
@@ -1094,15 +1094,15 @@ Func_02000904:
 	b .L_02008b1e
 	.2byte 0x0000
 .L_02008b08:
-	.4byte Data_02001760
+	.4byte gData_02001760
 .L_02008b0c:
-	.4byte Data_020017b0
+	.4byte gData_020017b0
 .L_02008b10:
 	.4byte IwramFillWords + 0x74
 .L_02008b14:
-	.4byte Data_02001824
+	.4byte gData_02001824
 .L_02008b18:
-	.4byte Data_02001828
+	.4byte gData_02001828
 .L_02008b1c:
 	movs r3, #4
 .L_02008b1e:
@@ -1511,7 +1511,7 @@ Func_02000904:
 .L_02008e18:
 	.4byte 0xffffc000
 .L_02008e1c:
-	.4byte Data_020017c0
+	.4byte gData_020017c0
 .L_02008e20:
 	.4byte 0x00afffff
 .L_02008e24:
@@ -1857,27 +1857,27 @@ Func_02000904:
 .L_020090e4:
 	.4byte IwramFillWords + 0x74
 .L_020090e8:
-	.4byte Data_02001746
+	.4byte gData_02001746
 .L_020090ec:
-	.4byte Data_02001748 + 0x1
+	.4byte gData_02001748 + 0x1
 .L_020090f0:
-	.4byte Data_020017b0
+	.4byte gData_020017b0
 	.section .bss,"aw",%nobits
 	.space 0x00000004
-	.global Data_02001760
-Data_02001760:
+	.global gData_02001760
+gData_02001760:
 	.space 0x00000050
-	.global Data_020017b0
-Data_020017b0:
+	.global gData_020017b0
+gData_020017b0:
 	.space 0x00000010
-	.global Data_020017c0
-Data_020017c0:
+	.global gData_020017c0
+gData_020017c0:
 	.space 0x00000060
-	.global Data_02001820
-Data_02001820:
+	.global gData_02001820
+gData_02001820:
 	.space 0x00000004
-	.global Data_02001824
-Data_02001824:
+	.global gData_02001824
+gData_02001824:
 	.space 0x00000004
-	.global Data_02001828
-Data_02001828:
+	.global gData_02001828
+gData_02001828:

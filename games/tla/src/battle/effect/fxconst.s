@@ -24,11 +24,11 @@ Data_08196e0c:
 	.global Data_08196e14
 Data_08196e14:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's RockWall_Heights; read by Func_08150c74
+@ The Broken Seal's gRockWall_Heights; read by Func_08150c74
 	.global Data_08196e1c
 Data_08196e1c:
 	.4byte -32, -32, -32, -32
-@ The Broken Seal's Mode12_Points; read by Func_08158dc8
+@ The Broken Seal's gMode12_Points; read by Func_08158dc8
 	.global Data_08196e2c
 Data_08196e2c:
 	.2byte 8, 135, 184, 135, 128, 135, 96, 32
@@ -38,42 +38,42 @@ Data_08196e2c:
 Data_08196e44:
 	.4byte 0x10000, 0x10000
 @ read by Func_0815b68c
-	.global Data_08196e4c
-Data_08196e4c:
+	.global gData_08196e4c
+gData_08196e4c:
 	.4byte 0x10000, 0x10000
 @ read by Func_0815b764
 	.global Data_08196e54
 Data_08196e54:
 	.4byte 0x10000, 0x10000
 @ read by Func_0816442c
-	.global Data_08196e5c
-Data_08196e5c:
+	.global gData_08196e5c
+gData_08196e5c:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's Formation_SmallScale; read by Func_0816442c
-	.global Data_08196e64
-Data_08196e64:
+@ The Broken Seal's gFormation_SmallScale; read by Func_0816442c
+	.global gData_08196e64
+gData_08196e64:
 	.4byte 0x14000, 0x14000
 @ read by Func_08165ab4
-	.global Data_08196e6c
-Data_08196e6c:
+	.global gData_08196e6c
+gData_08196e6c:
 	.4byte 0x10000, 0x10000
 @ read by Func_0816729c
 	.global Data_08196e74
 Data_08196e74:
 	.4byte 0x10000, 0x10000
 @ read by Func_08168a40
-	.global Data_08196e7c
-Data_08196e7c:
+	.global gData_08196e7c
+gData_08196e7c:
 	.4byte 0x10000, 0x10000
 @ read by Func_08168a40
-	.global Data_08196e84
-Data_08196e84:
+	.global gData_08196e84
+gData_08196e84:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's BattleFx6_UnitScale; read by Func_081693d0
+@ The Broken Seal's gBattleFx6_UnitScale; read by Func_081693d0
 	.global Data_08196e8c
 Data_08196e8c:
 	.4byte 0x18000, 0x18000
-@ The Broken Seal's BattleFx6_UnitScale; read by Func_08170364
+@ The Broken Seal's gBattleFx6_UnitScale; read by Func_08170364
 	.global Data_08196e94
 Data_08196e94:
 	.4byte 0x18000, 0x18000

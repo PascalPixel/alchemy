@@ -10,7 +10,7 @@ s32 Func_020014bc(s32 a, s32 b);
 
 void Func_02001a38(s32 a, s32 b)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room1)
         work->target = Object_GetById(16);

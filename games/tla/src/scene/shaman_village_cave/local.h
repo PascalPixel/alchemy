@@ -8,8 +8,8 @@
 #include "field_sprite.h"
 
 struct ShamanVillageCaveEventWork {
-    u8 unknown_000[0x154];
-    s16 value_154;
+    u8 unk000[0x154];
+    s16 value154;
 };
 
 void WaitFrames(s32 frames);

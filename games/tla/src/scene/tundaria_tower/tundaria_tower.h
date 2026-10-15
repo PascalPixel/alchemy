@@ -16,13 +16,13 @@
 struct SceneEvent;
 
 struct TundariaTowerEffectParams {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u16 kind;
-    u8 unknown_1a[0xe];
+    u8 unk1a[0xe];
 };
 
 struct TundariaTowerSparkWork {
-    u8 unknown_0000[0x1604];
+    u8 unk0000[0x1604];
     s16 resource;
 };
 
@@ -58,21 +58,21 @@ void Func_02003148(s32 a);
 void Func_02003170(const u8 *script);
 
 extern const u8 MsgThereSSomething[];
-extern const u8 Data_02003264[];
-extern const u8 Data_0200326e[];
-extern u16 Data_02003cd0;
+extern const u8 gData_02003264[];
+extern const u8 gData_0200326e[];
+extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
 void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Func_0200137c(void);
-extern const u8 Data_020037f8[];
-extern const u8 Data_0200381c[];
-extern const u8 Data_0200393c[];
-extern const u8 Data_020039e4[];
-extern const u8 Data_02003a5c[];
-extern const u8 Data_02003b28[];
-extern const u8 Data_02003c90[];
+extern const u8 gData_020037f8[];
+extern const u8 gData_0200381c[];
+extern const u8 gData_0200393c[];
+extern const u8 gData_020039e4[];
+extern const u8 gData_02003a5c[];
+extern const u8 gData_02003b28[];
+extern const u8 gData_02003c90[];
 
 void Func_02000840(struct ObjectRuntime *object);
 void Func_02002ebc(void);

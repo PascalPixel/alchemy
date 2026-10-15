@@ -12,7 +12,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
 // by frame and cleared when its duration is reached.
 void UiWork_ProcessDirectWork(void)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     struct UiWindow *work = state->windows;
     s32 index = 0;
     u8 dirty;
@@ -35,8 +35,8 @@ void UiWork_ProcessDirectWork(void)
         {
             if ((s16)work->frame != work->duration)
             {
-                UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
-                    (s16)work->previous_width, (s16)work->previous_height);
+                UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+                    (s16)work->previousWidth, (s16)work->previousHeight);
                 Func_08039f94(work, 1);
                 work->frame++;
                 dirty = 1;
@@ -44,24 +44,24 @@ void UiWork_ProcessDirectWork(void)
             }
             else
             {
-                UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
-                    (s16)work->previous_width, (s16)work->previous_height);
+                UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+                    (s16)work->previousWidth, (s16)work->previousHeight);
                 work->output.head = NULL;
-                work->output.tail_link = NULL;
+                work->output.tailLink = NULL;
                 work->width = 0;
                 work->height = 0;
                 work->x = 0;
                 work->y = 0;
-                work->unknown_10 = 0;
+                work->unk10 = 0;
                 work->effect = 0;
                 work->state = 0;
                 work->flags = 0;
                 work->frame = 0;
                 work->duration = 0;
-                work->previous_x = 0;
-                work->previous_y = 0;
-                work->previous_width = 0;
-                work->previous_height = 0;
+                work->previousX = 0;
+                work->previousY = 0;
+                work->previousWidth = 0;
+                work->previousHeight = 0;
                 state->dirty = 1;
             }
         }

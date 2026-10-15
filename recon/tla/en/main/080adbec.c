@@ -6,10 +6,10 @@
 #include "party_state.h"
 
 struct ItemUses {
-    u8 unknown_00[24];
+    u8 unk00[24];
     struct {
         u8 kind;
-        u8 unknown_01[3];
+        u8 unk01[3];
     } use[4];
 };
 
@@ -27,7 +27,7 @@ void GameFlag_RefreshLureCap(void)
         struct OwnerInventoryState *owner;
         s32 i;
 
-        owner = UnitGet(gPartyState.active_owners[n]);
+        owner = UnitGet(gPartyState.activeOwners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & 0x200) {
                 struct ItemUses *uses;

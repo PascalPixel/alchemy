@@ -3,10 +3,10 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern s32 Data_020023c0;
-extern s16 Data_0200242a;
-extern struct ObjectRuntime *Data_0200242c[];
-extern u16 Data_0200252e;
+extern s32 gData_020023c0;
+extern s16 gData_0200242a;
+extern struct ObjectRuntime *gData_0200242c[];
+extern u16 gData_0200252e;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -22,12 +22,12 @@ void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value)
 {
-    if (Object_GetById(gPartyState.current_owner)->y == 0 && Func_020018bc(value))
+    if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
         Func_02001ba4(13);
 }
 
 void Func_02000084(s32 value)
 {
-    if (Object_GetById(gPartyState.current_owner)->y == 0 && Func_020018bc(value))
+    if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
         Func_02001ba4(14);
 }

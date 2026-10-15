@@ -4,9 +4,9 @@
 #include "irqlock.h"
 
 struct BattleFxFadeWork {
-    s32 unknown_00;
-    s32 halve_pending;
-    s32 frames_left;
+    s32 unk00;
+    s32 halvePending;
+    s32 framesLeft;
     s32 step;
 };
 
@@ -14,13 +14,13 @@ void ColorBuffer_Halve(void *source, void *destination, s32 size);
 
 void Func_0813f89c(void)
 {
-    struct BattleFxFadeWork *work = (struct BattleFxFadeWork *)Ram_HeapSlots->battle_fx_work[0];
-    void *buffer = Ram_HeapSlots->battle_fx_work[1];
+    struct BattleFxFadeWork *work = (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
+    void *buffer = Ram_HeapSlots->battleFxWork[1];
     u32 ime;
 
     IRQ_LOCK(ime);
-    if (work->halve_pending == 1) {
-        work->halve_pending = 0;
+    if (work->halvePending == 1) {
+        work->halvePending = 0;
         IRQ_UNLOCK(ime);
         {
             void *destination = (void *)0x06004000;

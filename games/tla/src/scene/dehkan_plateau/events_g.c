@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -45,11 +45,11 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
@@ -185,10 +185,10 @@ void Func_020021e8(void)
 {
     Func_02003c28();
     Func_02003d78(0);
-    Func_02003cf8()->motion_flags = 0;
+    Func_02003cf8()->motionFlags = 0;
     Camera_SetBounds(658 << 16, -1, 164 << 16, 1);
     Func_02003cf0();
-    Actor_FaceToward(24, gPartyState.current_owner, 0);
+    Actor_FaceToward(24, gPartyState.currentOwner, 0);
     Actor_SetTurn(24, 0x100, 40);
     Actor_SetSpeed(24, 0x19999, 0xcccc);
     Actor_MoveTo(24, 664, 136);
@@ -214,9 +214,9 @@ void Func_020022e0(void)
     Func_02003d78(0);
     Camera_SetBounds(245 << 18, -1, 168 << 16, 1);
     Func_02003cf0();
-    Actor_FaceToward(24, gPartyState.current_owner, 0);
+    Actor_FaceToward(24, gPartyState.currentOwner, 0);
     Actor_SetTurn(24, 0x100, 40);
-    Actor_Get(24)->motion_flags = 0;
+    Actor_Get(24)->motionFlags = 0;
     Actor_SetVariant(24, 1);
     Actor_SetSpeed(24, 0x19999, 0xcccc);
     Actor_MoveTo(24, 940, 168);
@@ -234,13 +234,13 @@ void Func_02002390(void)
     Func_02003d78(0);
     Camera_SetBounds(144 << 16, -1, 214 << 15, 1);
     Func_02003cf0();
-    Actor_FaceToward(25, gPartyState.current_owner, 0);
+    Actor_FaceToward(25, gPartyState.currentOwner, 0);
     Actor_SetTurn(25, 0x100, 40);
     Actor_SetSpeed(25, 0x19999, 0xcccc);
     Actor_MoveTo(25, 168, 104);
     Pause(10);
     Cue(153);
-    Actor_Get(25)->velocity_y = 0x80000;
+    Actor_Get(25)->velocityY = 0x80000;
     ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 0);
     Actor_MoveTo(25, 200, 104);
     ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 1);
@@ -254,11 +254,11 @@ void Func_02002458(void)
 {
     Func_02003c28();
     Func_02003d78(0);
-    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 25);
-    Func_02003cf8()->motion_flags = 0;
+    Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 25);
+    Func_02003cf8()->motionFlags = 0;
     Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
     Func_02003cf0();
-    Actor_FaceToward(25, gPartyState.current_owner, 0);
+    Actor_FaceToward(25, gPartyState.currentOwner, 0);
     Actor_SetTurn(25, 0x100, 20);
     Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
     Actor_SetSpeed(25, 0x19999, 0xcccc);

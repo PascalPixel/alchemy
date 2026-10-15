@@ -14,15 +14,15 @@
 #include "ram_buffer.h"
 
 struct AnimTrack {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     u8 *script;
     u8 index;
 };
 
 struct AnimObject {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u8 frame;
-    u8 unknown_19[0xf];
+    u8 unk19[0xf];
     struct AnimTrack *track;
 };
 
@@ -53,20 +53,20 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     s32 count;
     u32 row;
     u8 *table;
-    u32 high_mask;
-    u32 index_mask;
-    u8 offset_mask;
+    u32 highMask;
+    u32 indexMask;
+    u8 offsetMask;
 
     destination = (u16 *)(0x06010000
-        + ResourceTableEntries[object[0x10]].offset);
+        + gResourceTableEntries[object[0x10]].offset);
     count = (object[0x14] * object[0x15]) / 64;
     row = 0;
 
     if (row < (u32)count) {
-        table = Map_TileDissolveOrder;
-        high_mask = 0xFF00;
-        index_mask = 0x3F;
-        offset_mask = 0x3E;
+        table = gMap_TileDissolveOrder;
+        highMask = 0xFF00;
+        indexMask = 0x3F;
+        offsetMask = 0x3E;
 
         for (; row < (u32)count; row++, destination += 32, position++) {
             if ((u32)(position - 0x40) <= 0x3F) {
@@ -74,14 +74,14 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
                 u16 *cell;
                 u32 parity;
 
-                entry = table[(position + row * 16) & index_mask];
-                cell = (u16 *)((u8 *)destination + (entry & offset_mask));
+                entry = table[(position + row * 16) & indexMask];
+                cell = (u16 *)((u8 *)destination + (entry & offsetMask));
                 parity = 1;
                 parity &= entry;
                 if (parity != 0)
                     *cell = *(u8 *)cell;
                 else
-                    *cell &= high_mask;
+                    *cell &= highMask;
             }
         }
     }
@@ -145,7 +145,7 @@ struct Thing {
 
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 {
-    u8 *state = (u8 *)Ram_HeapSlots->map_work;
+    u8 *state = (u8 *)Ram_HeapSlots->mapWork;
     s32 *org = (s32 *)(state + 228);
     s32 a;
     s32 b;

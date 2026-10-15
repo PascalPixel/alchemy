@@ -16,18 +16,18 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	const u8 *tree;
 	const u8 *leaves;
 	const u8 *text;
-	s32		  text_bits;
-	s32		  tree_bits;
+	s32		  textBits;
+	s32		  treeBits;
 	s32		  rank;
 	s32		  depth;
 	s32		  bit;
 	u32		  index;
 	u32		  half;
 
-	code = reader->previous_code;
+	code = reader->previousCode;
 	text = (const u8 *)reader->words;
-	text_bits = reader->bits;
-	tree_bits = 1;
+	textBits = reader->bits;
+	treeBits = 1;
 	hi = code >> 8;
 	code &= 0xff;
 	base = Text_MessageContexts[hi][0];
@@ -37,36 +37,36 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	rank = 0;
 	for (;;)
 	{
-		bit = tree_bits & 1;
-		tree_bits >>= 1;
-		if (bit != 0 && tree_bits == 0)
+		bit = treeBits & 1;
+		treeBits >>= 1;
+		if (bit != 0 && treeBits == 0)
 		{
-			tree_bits = *tree++;
-			bit = tree_bits & 1;
-			tree_bits = (tree_bits >> 1) | 0x80;
+			treeBits = *tree++;
+			bit = treeBits & 1;
+			treeBits = (treeBits >> 1) | 0x80;
 		}
 		if (bit != 0)
 			break;
-		bit = text_bits & 1;
-		text_bits >>= 1;
-		if (bit != 0 && text_bits == 0)
+		bit = textBits & 1;
+		textBits >>= 1;
+		if (bit != 0 && textBits == 0)
 		{
-			text_bits = *text++;
-			bit = text_bits & 1;
-			text_bits = (text_bits >> 1) | 0x80;
+			textBits = *text++;
+			bit = textBits & 1;
+			textBits = (textBits >> 1) | 0x80;
 		}
 		if (bit == 0)
 			continue;
 		depth = 0;
 		do
 		{
-			bit = tree_bits & 1;
-			tree_bits >>= 1;
-			if (bit != 0 && tree_bits == 0)
+			bit = treeBits & 1;
+			treeBits >>= 1;
+			if (bit != 0 && treeBits == 0)
 			{
-				tree_bits = *tree++;
-				bit = tree_bits & 1;
-				tree_bits = (tree_bits >> 1) | 0x80;
+				treeBits = *tree++;
+				bit = treeBits & 1;
+				treeBits = (treeBits >> 1) | 0x80;
 			}
 			if (bit == 0)
 				depth++;
@@ -91,8 +91,8 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 		half &= 0xf;
 		code = leaves[-(index >> 1) - 1] | (half << 8);
 	}
-	reader->bits = text_bits;
-	reader->previous_code = code;
+	reader->bits = textBits;
+	reader->previousCode = code;
 	reader->words = (const u32 *)text;
 	return code;
 }

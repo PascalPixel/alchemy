@@ -16,7 +16,7 @@ s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
 s32 Func_020005cc(s32 layer, s32 x, s32 z, s32 height)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s32 shape = Func_02003adc(layer, x, z);
     u8 *out = gMapShapeGrid + (map->layers[layer].cells - (struct MapCell *)0x02010000) + (x + (z << 7));
 

@@ -9,12 +9,12 @@
 #include "field_sprite.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
 struct CellTarget {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -44,13 +44,13 @@ void Func_02001d4c(s32 cue);
 
 s32 Func_02000324(void)
 {
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 0x204;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
     if (gPartyState.scene == (s32)&SceneId_Ov699Room1) {
         Func_020004dc(1);
         if (!GameFlag_Test(0x109) && gPartyState.entrance == 4)
-            Func_02001d3c(gPartyState.current_owner);
+            Func_02001d3c(gPartyState.currentOwner);
         if (!GameFlag_Test(0x109) && gPartyState.entrance == 6)
-            Func_02001d3c(gPartyState.current_owner);
+            Func_02001d3c(gPartyState.currentOwner);
     }
     if (gPartyState.scene == (s32)&SceneId_Ov699Room2) {
         *(volatile u16 *)0x04000052 = 0x1008;

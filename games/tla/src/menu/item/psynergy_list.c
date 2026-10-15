@@ -2,11 +2,11 @@
 #include "ram_buffer.h"
 
 struct PsynergyMenuState {
-    u8 unknown_000[0x24];
-    s32 psynergy_window;
-    u8 unknown_028[0x19c];
+    u8 unk000[0x24];
+    s32 psynergyWindow;
+    u8 unk028[0x19c];
     u16 psynergies[40];
-    u8 psynergy_count;
+    u8 psynergyCount;
 };
 
 extern char MsgPsynergyMenuEmpty[];
@@ -19,20 +19,20 @@ void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 count);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 // 持ち主のエナジーを集めて一覧を描きなおす。ひとつもなければその旨を出す
-void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
+void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId)
 {
     u16 *psynergies;
     struct PsynergyMenuState *menu;
     void *owner;
 
-    menu = Ram_HeapSlots->menu_runtime;
-    owner = UnitGet(owner_id);
+    menu = Ram_HeapSlots->menuRuntime;
+    owner = UnitGet(ownerId);
     psynergies = menu->psynergies;
-    menu->psynergy_count = Func_080fd6f0(owner, psynergies, 2);
-    RenderOutput_RedrawSavedRectFar(menu->psynergy_window);
+    menu->psynergyCount = Func_080fd6f0(owner, psynergies, 2);
+    RenderOutput_RedrawSavedRectFar(menu->psynergyWindow);
     PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
     PsynergyMenu_DrawPsynergyIcons(psynergies);
-    if (menu->psynergy_count == 0) {
-        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyMenuEmpty, menu->psynergy_window, 0, 0x18);
+    if (menu->psynergyCount == 0) {
+        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow, 0, 0x18);
     }
 }

@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "text/msg_ids.h"
 
-extern const u8 Data_02001370[];
-extern const u8 Data_020014c0[];
+extern const u8 gData_02001370[];
+extern const u8 gData_020014c0[];
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -19,13 +19,13 @@ void Func_02001198(s32 slot, s32 actor);
 const u8 *Func_020000a4(void)
 {
     if (GameFlag_Test(0x8ff))
-        return Data_020014c0;
-    return Data_02001370;
+        return gData_020014c0;
+    return gData_02001370;
 }
 
 void Func_020000c4(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it; a quadrant temporary, inline helpers and step-by-step arithmetic measured the same). */
     do { } while (0);
@@ -43,7 +43,7 @@ void Func_020000c4(s32 actor)
 
 void Func_02000124(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
     do { } while (0);
@@ -61,7 +61,7 @@ void Func_02000124(s32 actor)
 
 void Func_02000184(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
     do { } while (0);
@@ -79,7 +79,7 @@ void Func_02000184(s32 actor)
 
 void Func_020001e4(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
     do { } while (0);
@@ -97,7 +97,7 @@ void Func_020001e4(s32 actor)
 
 void Func_02000244(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
     do { } while (0);
@@ -115,7 +115,7 @@ void Func_02000244(s32 actor)
 
 void Func_020002a4(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
     do { } while (0);

@@ -4,7 +4,7 @@
 #include "text/msg_ids.h"
 
 struct DailaActor {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
 };
 
@@ -17,7 +17,7 @@ void Func_02000de4(s32 actor);
 
 void Func_02000270(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -35,7 +35,7 @@ void Func_02000270(s32 actor)
 
 void Func_020002d0(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -53,7 +53,7 @@ void Func_020002d0(s32 actor)
 
 void Func_02000330(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -72,7 +72,7 @@ void Func_02000330(s32 actor)
 void Func_02000390(s32 actor)
 {
     s32 msg;
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -118,7 +118,7 @@ void Func_02000390(s32 actor)
 
 void Func_02000498(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -136,7 +136,7 @@ void Func_02000498(s32 actor)
 
 void Func_020004f4(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -154,7 +154,7 @@ void Func_020004f4(s32 actor)
 
 void Func_02000554(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");
@@ -172,7 +172,7 @@ void Func_02000554(s32 actor)
 
 void Func_020005b4(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load. */
     __asm__("");

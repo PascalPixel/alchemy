@@ -469,13 +469,13 @@ Func_0816467c:
 .L_08164a30:
 	.4byte gMapCellBuffer
 .L_08164a34:
-	.4byte Data_081989f2
+	.4byte gData_081989f2
 .L_08164a38:
-	.4byte Data_081989e2
+	.4byte gData_081989e2
 .L_08164a3c:
-	.4byte Data_081989ea
+	.4byte gData_081989ea
 .L_08164a40:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08164a44:
 	.4byte IwramClearWords
 .L_08164a48:

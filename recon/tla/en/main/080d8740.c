@@ -8,35 +8,35 @@ void BattleFx_HalveDistanceToTarget(void);
 void BattleFx_UpdateRandomTargetParticle(void);
 
 struct CaptureSprite {
-    u8 unknown_00[40];
+    u8 unk00[40];
     s16 *resource;
 };
 
 struct CaptureObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[3];
-    u8 priority_flags;
-    u8 unknown_24[44];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[3];
+    u8 priorityFlags;
+    u8 unk24[44];
     struct CaptureSprite *sprite;
-    u8 unknown_54;
+    u8 unk54;
     u8 mode;
-    u8 unknown_56[4];
-    u8 collision_flags;
+    u8 unk56[4];
+    u8 collisionFlags;
     u8 visible;
-    u8 unknown_5c[12];
+    u8 unk5c[12];
     struct CaptureObject *linked;
     void *callback;
 };
 
 struct CaptureResource {
-    u8 unknown_00[28];
+    u8 unk00[28];
     u8 id;
 };
 
@@ -67,14 +67,14 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     struct CaptureObject *copy;
     struct CaptureObject *previous;
     struct CaptureResource *resource;
-    void *effect_slots;
+    void *effectSlots;
     struct CaptureObject **cursor;
     struct CaptureObject **list;
     u8 *slot;
-    s8 *slot_state;
+    s8 *slotState;
     s32 kind;
     s32 remaining;
-    s32 resource_id;
+    s32 resourceId;
     struct CaptureObject *copies[8];
     struct {
         s32 x;
@@ -87,7 +87,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effectSlots = *(void **)gEffectWork;
     Shop_RestoreSceneTilesFar(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
@@ -112,11 +112,11 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         copy = Object_CreateFar(kind, djinni->x, djinni->y, djinni->z);
         *cursor++ = copy;
         if (copy != NULL) {
-            copy->scale_y = 0xf000;
-            copy->scale_x = 0xf000;
+            copy->scaleY = 0xf000;
+            copy->scaleX = 0xf000;
             copy->mode = 0;
-            copy->priority_flags = 2;
-            copy->collision_flags |= 1;
+            copy->priorityFlags = 2;
+            copy->collisionFlags |= 1;
             copy->callback = (void *)BattleFx_HalveDistanceToTarget;
             copy->facing = djinni->facing;
             Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
@@ -128,7 +128,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         }
     }
 
-    resource_id = resource->id;
+    resourceId = resource->id;
     Audio_PlayCue(153);
     djinni->mode = 0;
     for (remaining = 14; remaining >= 0; remaining--) {
@@ -139,8 +139,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     list = copies;
     for (remaining = 7; remaining >= 0; remaining--)
         Func_080090d0(*list++);
-    if (resource_id != 96)
-        Resource_ResetEntry(resource_id);
+    if (resourceId != 96)
+        Resource_ResetEntry(resourceId);
     WaitFrames(10);
     ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
     WaitFrames(20);
@@ -152,7 +152,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     position.z = djinni->z;
     Camera_WorldToScreen(&position.x);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = (u8 *)effectSlots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 240, position.x, position.z);
@@ -166,17 +166,17 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
 
     WaitFrames(120);
     {
-        s32 next_state;
+        s32 nextState;
 
-        next_state = 2;
-        slot_state = effect_slots;
-        slot_state += 152;
+        nextState = 2;
+        slotState = effectSlots;
+        slotState += 152;
         remaining = 23;
         do {
-            if (slot_state[5] != 0)
-                slot_state[0] = next_state;
+            if (slotState[5] != 0)
+                slotState[0] = nextState;
             remaining--;
-            slot_state += 72;
+            slotState += 72;
         } while (remaining >= 0);
     }
 

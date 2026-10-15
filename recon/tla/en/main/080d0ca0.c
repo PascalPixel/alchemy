@@ -34,7 +34,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 void BattlePalette_UpdateBlend(void)
 {
-    struct BattleEffectBuffers *work = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
     u16 *add = work->delta;
     volatile u16 *ime;
     struct IoWriteQueue *q;

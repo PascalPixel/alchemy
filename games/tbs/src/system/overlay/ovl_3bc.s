@@ -4,99 +4,99 @@
 	.global gColossoParticleCount
 gColossoParticleCount:
 	.space 16
-	.global Colosso_MarkerStep
-Colosso_MarkerStep:
+	.global gColosso_MarkerStep
+gColosso_MarkerStep:
 	.space 4
-	.global Colosso_ModeScaleDuration
-Colosso_ModeScaleDuration:
+	.global gColosso_ModeScaleDuration
+gColosso_ModeScaleDuration:
 	.space 4
-	.global Colosso_MarkerPriority
-Colosso_MarkerPriority:
+	.global gColosso_MarkerPriority
+gColosso_MarkerPriority:
 	.space 4
-	.global Colosso_CompetitorStartZ
-Colosso_CompetitorStartZ:
+	.global gColosso_CompetitorStartZ
+gColosso_CompetitorStartZ:
 	.space 4
-	.global Colosso_MarkerEndX
-Colosso_MarkerEndX:
+	.global gColosso_MarkerEndX
+gColosso_MarkerEndX:
 	.space 4
-	.global Colosso_ModeTaskParam
-Colosso_ModeTaskParam:
+	.global gColosso_ModeTaskParam
+gColosso_ModeTaskParam:
 	.space 4
-	.global Colosso_ModeScaleStart
-Colosso_ModeScaleStart:
+	.global gColosso_ModeScaleStart
+gColosso_ModeScaleStart:
 	.space 4
-	.global Colosso_ModeMoveDuration
-Colosso_ModeMoveDuration:
+	.global gColosso_ModeMoveDuration
+gColosso_ModeMoveDuration:
 	.space 4
-	.global Colosso_ModeTaskPosition
-Colosso_ModeTaskPosition:
+	.global gColosso_ModeTaskPosition
+gColosso_ModeTaskPosition:
 	.space 4
-	.global Colosso_MarkerBlink
-Colosso_MarkerBlink:
+	.global gColosso_MarkerBlink
+gColosso_MarkerBlink:
 	.space 4
-	.global Colosso_ModeScaleTarget
-Colosso_ModeScaleTarget:
+	.global gColosso_ModeScaleTarget
+gColosso_ModeScaleTarget:
 	.space 4
-	.global Colosso_ModeMoveStep
-Colosso_ModeMoveStep:
+	.global gColosso_ModeMoveStep
+gColosso_ModeMoveStep:
 	.space 4
-	.global Colosso_MarkerY
-Colosso_MarkerY:
+	.global gColosso_MarkerY
+gColosso_MarkerY:
 	.space 4
-	.global Colosso_ModeBlendStep
-Colosso_ModeBlendStep:
+	.global gColosso_ModeBlendStep
+gColosso_ModeBlendStep:
 	.space 4
-	.global Colosso_CompetitorStartAngle
-Colosso_CompetitorStartAngle:
+	.global gColosso_CompetitorStartAngle
+gColosso_CompetitorStartAngle:
 	.space 4
-	.global Colosso_MarkerSteps
-Colosso_MarkerSteps:
+	.global gColosso_MarkerSteps
+gColosso_MarkerSteps:
 	.space 4
-	.global Colosso_ModeTaskMode
-Colosso_ModeTaskMode:
+	.global gColosso_ModeTaskMode
+gColosso_ModeTaskMode:
 	.space 4
-	.global Colosso_ModeBlendTarget
-Colosso_ModeBlendTarget:
+	.global gColosso_ModeBlendTarget
+gColosso_ModeBlendTarget:
 	.space 4
-	.global Colosso_ModeBlendStart
-Colosso_ModeBlendStart:
+	.global gColosso_ModeBlendStart
+gColosso_ModeBlendStart:
 	.space 4
-	.global Colosso_ModeTaskTimer
-Colosso_ModeTaskTimer:
+	.global gColosso_ModeTaskTimer
+gColosso_ModeTaskTimer:
 	.space 4
-	.global Colosso_ModeTaskScript
-Colosso_ModeTaskScript:
+	.global gColosso_ModeTaskScript
+gColosso_ModeTaskScript:
 	.space 4
-	.global Colosso_MarkerStartX
-Colosso_MarkerStartX:
+	.global gColosso_MarkerStartX
+gColosso_MarkerStartX:
 	.space 4
-	.global Colosso_ModeBlendDuration
-Colosso_ModeBlendDuration:
+	.global gColosso_ModeBlendDuration
+gColosso_ModeBlendDuration:
 	.space 8
-	.global Colosso_MarkerOam
-Colosso_MarkerOam:
+	.global gColosso_MarkerOam
+gColosso_MarkerOam:
 	.space 12
-	.global Colosso_MarkerStartY
-Colosso_MarkerStartY:
+	.global gColosso_MarkerStartY
+gColosso_MarkerStartY:
 	.space 4
-	.global Colosso_ModeTaskSprites
-Colosso_ModeTaskSprites:
+	.global gColosso_ModeTaskSprites
+gColosso_ModeTaskSprites:
 	.space 48
-	.global Colosso_ModeMoveStart
-Colosso_ModeMoveStart:
+	.global gColosso_ModeMoveStart
+gColosso_ModeMoveStart:
 	.space 4
-	.global Colosso_MarkerX
-Colosso_MarkerX:
+	.global gColosso_MarkerX
+gColosso_MarkerX:
 	.space 4
-	.global Colosso_ModeMoveTarget
-Colosso_ModeMoveTarget:
+	.global gColosso_ModeMoveTarget
+gColosso_ModeMoveTarget:
 	.space 4
-	.global Colosso_ModeScaleStep
-Colosso_ModeScaleStep:
+	.global gColosso_ModeScaleStep
+gColosso_ModeScaleStep:
 	.space 4
-	.global Colosso_MarkerEndY
-Colosso_MarkerEndY:
+	.global gColosso_MarkerEndY
+gColosso_MarkerEndY:
 	.space 4
-	.global Colosso_CompetitorStartX
-Colosso_CompetitorStartX:
+	.global gColosso_CompetitorStartX
+gColosso_CompetitorStartX:
 	.space 4

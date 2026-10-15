@@ -9,14 +9,14 @@ void Input_UpdateKeyRepeatAndDirection(void)
     s32 timer;
 
     held = gInput.held;
-    timer = gInput.repeat_timer;
+    timer = gInput.repeatTimer;
     if (timer <= 0) {
         repeat = held;
         gInput.repeat = held;
         if (timer == 0)
-            gInput.repeat_timer = 6;
+            gInput.repeatTimer = 6;
         else
-            gInput.repeat_timer = 19;
+            gInput.repeatTimer = 19;
     } else {
         repeat = 0;
         gInput.repeat = 0;
@@ -30,30 +30,30 @@ void Input_UpdateKeyRepeatAndDirection(void)
         gInput.direction = repeat;
         switch (count) {
         case 0:
-            gInput.previous_direction = 0x30;
+            gInput.previousDirection = 0x30;
             break;
         case 1:
-            gInput.previous_direction = repeat & 0xf0;
+            gInput.previousDirection = repeat & 0xf0;
             break;
         case 2:
-            if ((gInput.previous_direction & gInput.direction) == 0)
-                gInput.previous_direction = 0x30;
-            gInput.direction &= gInput.previous_direction ^ 0xffff;
+            if ((gInput.previousDirection & gInput.direction) == 0)
+                gInput.previousDirection = 0x30;
+            gInput.direction &= gInput.previousDirection ^ 0xffff;
             break;
         case 3:
-            if (gInput.previous_direction & 0x30) mask = 0x30;
-            if (gInput.previous_direction & 0xc0) mask = 0xc0;
-            gInput.previous_direction = repeat & (mask ^ 0xffff);
+            if (gInput.previousDirection & 0x30) mask = 0x30;
+            if (gInput.previousDirection & 0xc0) mask = 0xc0;
+            gInput.previousDirection = repeat & (mask ^ 0xffff);
             gInput.direction &= mask ^ 0xffff;
             break;
         default:
-            gInput.previous_direction = 0x30;
+            gInput.previousDirection = 0x30;
             gInput.direction &= 0xff0f;
             break;
         }
     } else {
         gInput.direction = repeat;
     }
-    gInput.pressed = held & ~gInput.previous_held;
-    gInput.previous_held = held;
+    gInput.pressed = held & ~gInput.previousHeld;
+    gInput.previousHeld = held;
 }

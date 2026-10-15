@@ -43,8 +43,8 @@ enum ActorAnimation
 
 #define SPEAKER_WINDOW_ABOVE 0x4000
 
-#define MAP_CELL_STEP(src_x, src_y, width, height, frames) \
-	(src_x), (src_y), (width), (height), (frames)
+#define MAP_CELL_STEP(srcX, srcY, width, height, frames) \
+	(srcX), (srcY), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
 // セル書き換え: 手順と書き込み先のセル
@@ -97,9 +97,9 @@ void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
 void Engine_CameraMoveToActor(s32 actor, s32 pan);
 void Engine_CameraWaitForMove(void);
-void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Engine_MapCopyCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Engine_MapCopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+	s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void			   Engine_MapRedraw(void);
 void			   Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 s32				   Engine_GameFlagIsSet(s32 flag);
@@ -124,7 +124,7 @@ void			   Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
 void			   Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
-void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
+void Engine_MapAnimateCells(const u16 *steps, s32 destX, s32 destY);
 void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 void Engine_ItemLoadIcon(s32 item);
 void Engine_ItemShowFound(s32 item, s32 height);
@@ -147,9 +147,9 @@ void			   Engine_ActorSetChildValue(s32 actor, s32 value);
 void			   Engine_ActorEnableActionCallback(s32 actor, const s32 *table);
 void			   Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void			   Engine_ActorsRefresh(void);
-void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Engine_MapCopyCellsLayered(
-	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+	s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 void Engine_ColorBufferInterpolate(s32 frames);
@@ -157,7 +157,7 @@ void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 void Engine_ActorJump(s32 actor, s32 height, s32 frames);
 void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-	s32 other_speaker, s32 other_x, s32 other_y, s32 other_arg, s32 other_extra, s32 flags);
+	s32 other_speaker, s32 otherX, s32 other_y, s32 other_arg, s32 other_extra, s32 flags);
 void Engine_PartyAddMembers(s32 first, s32 second);
 void Engine_MapRenderWaitForValues(void);
 
@@ -267,22 +267,22 @@ static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
 }
 
 static inline void Map_CopyCells(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+	s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
-	Engine_MapCopyCells(src_x, src_y, width, height, dest_x, dest_y);
+	Engine_MapCopyCells(srcX, srcY, width, height, destX, destY);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Map_CopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+	s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
-	Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
+	Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
 #else
 static inline void Map_CopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+	s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
-	Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
+	Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
 #endif
 
@@ -354,9 +354,9 @@ enum ObjectBlendMode
 	OBJECT_BLEND_TRANSLUCENT = 1
 };
 
-static inline void Map_AnimateCells(const u16 *steps, s32 dest_x, s32 dest_y)
+static inline void Map_AnimateCells(const u16 *steps, s32 destX, s32 destY)
 {
-	Engine_MapAnimateCells(steps, dest_x, dest_y);
+	Engine_MapAnimateCells(steps, destX, destY);
 }
 
 static inline void MapObject_SetPosition(s32 object, s32 fixed_x, s32 fixed_z)
@@ -387,15 +387,15 @@ static inline void Actor_SetChildValue(s32 actor, s32 value)
 #define ACTION_TABLE_STOP ((const u8 *)1)
 
 static inline void Map_CopyCellsTo(
-	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+	s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height)
 {
-	Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
+	Engine_MapCopyCellsTo(srcX, srcY, destX, destY, width, height);
 }
 
 static inline void Map_CopyCellsLayered(
-	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+	s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height)
 {
-	Engine_MapCopyCellsLayered(src_x, src_y, dest_x, dest_y, width, height);
+	Engine_MapCopyCellsLayered(srcX, srcY, destX, destY, width, height);
 }
 
 static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)
@@ -424,10 +424,10 @@ static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
 }
 
 static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-	s32 other_speaker, s32 other_x, s32 other_y, s32 other_arg, s32 other_extra, s32 flags)
+	s32 otherSpeaker, s32 otherX, s32 otherY, s32 otherArg, s32 otherExtra, s32 flags)
 {
 	Engine_EventShowTwoMessagesAndWait(
-		speaker, x, y, arg, extra, other_speaker, other_x, other_y, other_arg, other_extra, flags);
+		speaker, x, y, arg, extra, otherSpeaker, otherX, otherY, otherArg, otherExtra, flags);
 }
 
 #endif

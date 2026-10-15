@@ -24,8 +24,8 @@ void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Func_02002ae8(const void *data, s32 a, s32 b);
-void Func_02002af0(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_02002af8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Func_02002b88(s32 id, s32 a, s32 b);
@@ -43,11 +43,11 @@ void Func_02002c90(s32 a);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
-extern const u8 Data_02002d38[];
-extern const u8 Data_02002ff0[];
-extern const u8 Data_02003358[];
-extern const u8 Data_0200367c[];
-extern const u8 Data_0200394c[];
+extern const u8 gData_02002d38[];
+extern const u8 gData_02002ff0[];
+extern const u8 gData_02003358[];
+extern const u8 gData_0200367c[];
+extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe;
 extern u8 MsgTheArmorerAnd;
@@ -290,9 +290,9 @@ void Func_02000a48(void)
     if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
         GameFlag_SetBit(0x301);
         Func_02002be8(11, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be8(11, 0);
     }
     Func_02002b30();

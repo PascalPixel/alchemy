@@ -261,7 +261,7 @@ Func_080d8a00:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d8bf4:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080d8bf8:
 	.4byte 0xffff0000
 .L_080d8bfc:

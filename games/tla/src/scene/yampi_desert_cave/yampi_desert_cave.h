@@ -13,19 +13,19 @@ struct YampiDesertCaveRect {
     s32 word[6];
 };
 
-extern u16 Data_02001fc8;
-extern u16 Data_02001fd0;
-extern u16 Data_02001fd4;
-extern u16 *Data_02001fd8;
-extern u16 Data_02001fe4;
-extern u16 Data_02001fe8;
-extern u32 Data_02001b58[];
-extern s32 Data_02001bd0[];
-extern s32 Data_02001c18[];
-extern const u8 Data_02001d20[];
-extern const u8 Data_02001d28[];
-extern const u8 Data_02001ddc[];
-extern const u8 Data_02001e78[];
+extern u16 gData_02001fc8;
+extern u16 gData_02001fd0;
+extern u16 gData_02001fd4;
+extern u16 *gData_02001fd8;
+extern u16 gData_02001fe4;
+extern u16 gData_02001fe8;
+extern u32 gData_02001b58[];
+extern s32 gData_02001bd0[];
+extern s32 gData_02001c18[];
+extern const u8 gData_02001d20[];
+extern const u8 gData_02001d28[];
+extern const u8 gData_02001ddc[];
+extern const u8 gData_02001e78[];
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Battle_WaitMode0(s32 frames);

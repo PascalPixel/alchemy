@@ -22,7 +22,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     s32 index;
 
     limit = 4;
-    if (Ram_HeapSlots->battle_work->two_sided != 0)
+    if (Ram_HeapSlots->battleWork->twoSided != 0)
         limit = 3;
 
     count = Party_CountActiveOwnersFar();
@@ -30,7 +30,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
         count = limit;
 
     for (index = 0; index < count; index++) {
-        s32 owner = gPartyState.active_owners[index];
+        s32 owner = gPartyState.activeOwners[index];
 
         if (owners != 0)
             *owners++ = owner;

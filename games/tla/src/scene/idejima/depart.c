@@ -45,32 +45,32 @@ void Idejima_RunAlexDeparture(void)
     Func_02003310(0);
     Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
     Call4(Motion_CamBounds, 0x6c0000, -1, 0x2d00000, 1);
-    Call3(ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0xcccc, 0x6666);
-    Call3(ObjectMotion_SetPositionAndReset, gPartyState.current_owner, 86, 0x2c8);
-    Engine_ActorPlaceAtActor(8, gPartyState.current_owner);
+    Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc, 0x6666);
+    Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 86, 0x2c8);
+    Engine_ActorPlaceAtActor(8, gPartyState.currentOwner);
     Task_Wait(1);
     Call3(ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetPositionAndReset, 8, 104, 0x2c8);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x8000, 20);
     Call1(Engine_EventSetMessage, (s32)MsgIdejimaWhereHasAlexGone);
     Call2(Engine_EventShowMessage, 0x2008, 0);
     ObjectMotion_ArmCallback(8, 0, 40);
     Call3(ObjectMotion_ArmCallback, 8, 0x5000, 20);
     ObjectMotion_ArmCallback(8, 0, 0);
-    Call3(ObjectMotion_SetPositionAndReset, gPartyState.current_owner, 104, 0x2d8);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 20);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x2000, 20);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+    Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 104, 0x2d8);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 20);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 20);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
     Engine_EventShowMessage(8, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 20);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 20);
     Engine_ActorSetAnimation(8, 3);
     Value2(Engine_EventChooseYesNo, 8, 0);
     Value3(Engine_ActorShowEmote, 8, 0x106, 40);
     Engine_EventShowMessage(8, 0);
-    Call2(Engine_ActorPlaceAtActor, 5, gPartyState.current_owner);
-    Engine_ActorPlaceAtActor(6, gPartyState.current_owner);
+    Call2(Engine_ActorPlaceAtActor, 5, gPartyState.currentOwner);
+    Engine_ActorPlaceAtActor(6, gPartyState.currentOwner);
     Task_Wait(1);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
@@ -81,20 +81,20 @@ void Idejima_RunAlexDeparture(void)
     Engine_ActorSetAnimation(5, 1);
     Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
     Engine_EventShowMessage(5, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
     ObjectMotion_ArmCallback(6, 0, 40);
     Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 0);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
     Engine_ActorSetAnimation(8, 4);
     Value2(UiText_OpenMessageAtObject, 0x2008, 0);
     ObjectMotion_ArmCallback(6, 0, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
         Motion_SetModeAndWaitAnimation(8, 4);
         Call2(Engine_EventShowMessage, 0x2008, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     } else {
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Motion_SetModeAndWaitAnimation(8, 3);
         Call2(Engine_EventShowMessage, 0x2008, 0);
     }
@@ -105,7 +105,7 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventShowMessage(6, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
     Call2(Engine_EventShowMessage, 0x2008, 0);
-    Call3(Engine_ActorShowEmote, gPartyState.current_owner, 0x101, 40);
+    Call3(Engine_ActorShowEmote, gPartyState.currentOwner, 0x101, 40);
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
     Engine_ActorSetAnimation(8, 4);
     Call2(Engine_EventShowMessage, 0x2008, 0);
@@ -122,9 +122,9 @@ void Idejima_RunAlexDeparture(void)
         Call3(ObjectMotion_ArmCallback, 8, 0x3000, 20);
         Motion_SetModeAndWaitAnimation(8, 3);
         Call2(Engine_EventShowMessage, 0x2008, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     } else {
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Value3(Engine_ActorShowEmote, 8, 0x103, 0);
         Call3(ObjectMotion_ArmCallback, 8, 0x4000, 20);
         Call2(Engine_EventShowMessage, 0x2008, 0);
@@ -141,15 +141,15 @@ void Idejima_RunAlexDeparture(void)
     Call3(ObjectMotion_ArmCallback, 5, 0x4000, 20);
     Engine_EventShowMessage(5, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 20);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 20);
     Value2(UiText_OpenMessageAtObject, 0x2008, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
         Value3(Engine_ActorShowEmote, 6, 0x103, 0);
         ObjectMotion_ArmCallback(6, 0, 20);
         Engine_EventShowMessage(6, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     } else {
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Value3(Engine_ActorShowEmote, 6, 0x108, 0);
         ObjectMotion_ArmCallback(6, 0, 20);
         Engine_EventShowMessage(6, 0);
@@ -161,7 +161,7 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventShowMessage(6, 0);
     Value3(Engine_ActorShowEmote, 5, 0x101, 40);
     Engine_EventShowMessage(5, 0);
-    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 6);
+    Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 6);
     Object_LinkObjectAndSetCallback(8, 6);
     Object_LinkObjectAndSetCallback(5, 6);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
@@ -169,7 +169,7 @@ void Idejima_RunAlexDeparture(void)
     Battle_WaitMode0(40);
     Value3(Engine_ActorShowEmote, 6, 0x109, 80);
     Call2(Engine_EventShowMessage, 0x2008, 0);
-    ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
     ObjectMotion_EnableActionAndResetMotion(8);
     ObjectMotion_EnableActionAndResetMotion(5);
     Motion_SetModeAndWaitAnimation(6, 3);
@@ -181,15 +181,15 @@ void Idejima_RunAlexDeparture(void)
     Engine_ActorSetAnimation(6, 4);
     Engine_EventShowMessage(6, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 40);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 40);
     Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
-    Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x6000, 20);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000, 20);
     Call2(Engine_EventShowMessage, 0x2008, 0);
     Motion_SetModeAndWaitAnimation(6, 3);
     Engine_EventShowMessage(6, 0);
     Engine_ActorSetAnimation(8, 3);
     Engine_ActorSetAnimation(5, 3);
-    Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
+    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
     Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
     Engine_EventShowMessage(6, 0);
     Call3(ObjectMotion_ArmCallback, 8, 0x3000, 0);
@@ -216,12 +216,12 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventShowMessage(5, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x2000, 0);
     Value2(UiText_OpenMessageAtObject, 5, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
         Engine_ActorSetAnimation(5, 3);
         Engine_EventShowMessage(5, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     } else {
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Engine_ActorSetAnimation(5, 4);
         Engine_EventShowMessage(5, 0);
     }
@@ -235,7 +235,7 @@ void Idejima_RunAlexDeparture(void)
     ObjectMotion_Launch(8, 4, 20);
     Call2(Engine_EventShowMessage, 0x2008, 0);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
-    script = Idejima_ActorDepartureScript;
+    script = gIdejima_ActorDepartureScript;
     ObjectMotion_EnableActionAndSetCallback(8, script);
     Call2(ObjectMotion_EnableActionAndSetCallback, 5, script);
     Object_SetActionCallbackAndRefreshById(6, script);
@@ -243,11 +243,11 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventEnd();
 }
 
-extern s16 Data_02003c14;
-extern s32 Data_02003c10;
+extern s16 gData_02003c14;
+extern s32 gData_02003c10;
 
 void Func_0200153c(void)
 {
-    Data_02003c14 = 0;
-    Data_02003c10 = 0;
+    gData_02003c14 = 0;
+    gData_02003c10 = 0;
 }

@@ -13,9 +13,9 @@ void Func_02001230(const u16 *entry)
         s16 kind = entry[1];
         s16 flag = entry[2];
 
-        object->collision_flags &= ~1;
+        object->collisionFlags &= ~1;
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        Func_02001320(id, (u16)kind, (u16)flag, object->terrain_id);
+        Func_02001320(id, (u16)kind, (u16)flag, object->terrainId);
         entry += 3;
     }
 }

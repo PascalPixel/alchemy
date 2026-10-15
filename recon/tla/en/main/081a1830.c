@@ -14,7 +14,7 @@ struct BucketEntry {
     s32 tile;
 };
 
-extern struct BucketEntry *Data_0200752c;
+extern struct BucketEntry *gData_0200752c;
 
 void Func_081a1810(void);
 
@@ -25,10 +25,10 @@ void Func_081a1830(void)
     s32 tile;
     u32 i;
 
-    Data_0200752c = Runtime_BumpAllocateAlternatePool(0x120);
+    gData_0200752c = Runtime_BumpAllocateAlternatePool(0x120);
     tile = VramBlock_LoadCached(slot, 0x200, 0);
     Dma_Fill32(0x11111111, (void *)(0x06010000 + tile * 32), 0x200);
-    entry = Data_0200752c;
+    entry = gData_0200752c;
     for (i = 0; i < 8; i++) {
         entry->next = 0;
         entry->attributes = (i << 21) | 0x80004078;

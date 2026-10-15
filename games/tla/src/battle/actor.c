@@ -32,14 +32,14 @@ s32 BattleActor_RemoveFromLists(s32 id)
 	s32				unit;
 
 	// 味方の並び
-	work = Ram_HeapSlots->battle_work;
+	work = Ram_HeapSlots->battleWork;
 	UnitGet(id)->side = BATTLE_UNIT_ABSENT;
 	for (i = 0;; i++)
 	{
-		unit = work->party_units[i];
+		unit = work->partyUnits[i];
 		if (unit == id)
 		{
-			work->party_units[i] = BATTLE_UNIT_REMOVED;
+			work->partyUnits[i] = BATTLE_UNIT_REMOVED;
 			goto removed;
 		}
 		if (unit == BATTLE_UNIT_LIST_END)
@@ -49,10 +49,10 @@ s32 BattleActor_RemoveFromLists(s32 id)
 	// 敵の並び
 	for (j = 0;; j++)
 	{
-		unit = work->enemy_ids[j];
+		unit = work->enemyIds[j];
 		if (unit == id)
 		{
-			work->enemy_ids[j] = BATTLE_UNIT_REMOVED;
+			work->enemyIds[j] = BATTLE_UNIT_REMOVED;
 			goto removed;
 		}
 		if (unit == BATTLE_UNIT_LIST_END)
@@ -64,8 +64,8 @@ removed:
 	EnemyCountRelease(id);
 	for (j = 0; j < 20; j++)
 	{
-		if (work->actions[j].unit_id == id)
-			work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
+		if (work->actions[j].unitId == id)
+			work->actions[j].unitId = BATTLE_UNIT_LIST_END;
 	}
 	return 0;
 }

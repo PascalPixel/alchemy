@@ -7,8 +7,8 @@
 #include "../../../../games/tla/src/scene/mars_room_f/room.h"
 #include "iwram_call.h"
 
-extern const u32 Data_02005b68[];
-extern const u32 Data_02005bac[];
+extern const u32 gData_02005b68[];
+extern const u32 gData_02005bac[];
 s32 Math_Sine(s32 angle);
 
 void Func_0200055c(s32 id)
@@ -30,20 +30,20 @@ loop:
             s32 scale = (Random16Far() >> 1) + 0x4000;
 
             if (Random16Far() <= 0x7fff)
-                Func_02005490(object, Data_02005b68);
+                Func_02005490(object, gData_02005b68);
             else
-                Func_02005490(object, Data_02005bac);
+                Func_02005490(object, gData_02005bac);
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            object->velocity_y = (angle << 2) + 0x20000;
-            object->velocity_z = Iwram_MulQ16(speed, Math_Cosine(angle));
+            object->velocityY = (angle << 2) + 0x20000;
+            object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
             {
                 s32 vx = Iwram_MulQ16(speed, Math_Sine(angle));
 
                 object->acceleration = 0;
-                object->scale_x = scale;
-                object->scale_y = scale;
+                object->scaleX = scale;
+                object->scaleY = scale;
                 object->gravity = 0x547a;
-                object->velocity_x = vx;
+                object->velocityX = vx;
                 object->bounce = 0x8000;
             }
             Animation_ApplyChildValues(object, 1);

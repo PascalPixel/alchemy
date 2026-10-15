@@ -14,31 +14,31 @@ struct ColossoGaugeSprite
 struct ColossoGaugeWork
 {
 	struct ColossoGaugeSprite sprites[18];
-	s16						   vram_block;
+	s16						   vramBlock;
 	s16						   level;
 	s16						   hold;
-	s16						   player_actor;
-	s16						   rival_actor;
-	u16						   finish_item_actor_a;
-	u16						   finish_item_actor_b;
+	s16						   playerActor;
+	s16						   rivalActor;
+	u16						   finishItemActorA;
+	u16						   finishItemActorB;
 	s16						   segments;
-	s32						   finish_x;
-	s32						   finish_z;
+	s32						   finishX;
+	s32						   finishZ;
 };
 
 LAYOUT_SIZE_GUARD(ColossoGaugeSprite_Size, struct ColossoGaugeSprite, 12);
 LAYOUT_SIZE_GUARD(ColossoGaugeWork_Size, struct ColossoGaugeWork, 240);
-LAYOUT_OFFSET_GUARD(ColossoGaugeWork_vram_block, struct ColossoGaugeWork, vram_block, 216);
+LAYOUT_OFFSET_GUARD(ColossoGaugeWork_vram_block, struct ColossoGaugeWork, vramBlock, 216);
 LAYOUT_OFFSET_GUARD(ColossoGaugeWork_level, struct ColossoGaugeWork, level, 218);
 LAYOUT_OFFSET_GUARD(ColossoGaugeWork_hold, struct ColossoGaugeWork, hold, 220);
-LAYOUT_OFFSET_GUARD(ColossoGaugeWork_player_actor, struct ColossoGaugeWork, player_actor, 222);
-LAYOUT_OFFSET_GUARD(ColossoGaugeWork_rival_actor, struct ColossoGaugeWork, rival_actor, 224);
+LAYOUT_OFFSET_GUARD(ColossoGaugeWork_player_actor, struct ColossoGaugeWork, playerActor, 222);
+LAYOUT_OFFSET_GUARD(ColossoGaugeWork_rival_actor, struct ColossoGaugeWork, rivalActor, 224);
 LAYOUT_OFFSET_GUARD(
-	ColossoGaugeWork_finish_item_actor_a, struct ColossoGaugeWork, finish_item_actor_a, 226);
+	ColossoGaugeWork_finish_item_actor_a, struct ColossoGaugeWork, finishItemActorA, 226);
 LAYOUT_OFFSET_GUARD(
-	ColossoGaugeWork_finish_item_actor_b, struct ColossoGaugeWork, finish_item_actor_b, 228);
+	ColossoGaugeWork_finish_item_actor_b, struct ColossoGaugeWork, finishItemActorB, 228);
 LAYOUT_OFFSET_GUARD(ColossoGaugeWork_segments, struct ColossoGaugeWork, segments, 230);
-LAYOUT_OFFSET_GUARD(ColossoGaugeWork_finish_x, struct ColossoGaugeWork, finish_x, 232);
-LAYOUT_OFFSET_GUARD(ColossoGaugeWork_finish_z, struct ColossoGaugeWork, finish_z, 236);
+LAYOUT_OFFSET_GUARD(ColossoGaugeWork_finish_x, struct ColossoGaugeWork, finishX, 232);
+LAYOUT_OFFSET_GUARD(ColossoGaugeWork_finish_z, struct ColossoGaugeWork, finishZ, 236);
 
 #endif

@@ -5,9 +5,9 @@
 void Func_0200045c(void);
 void Func_0200065c(void);
 
-extern u8 Data_02005e98[];
-extern u8 Data_02005ed4[];
-extern u8 Data_02005f10[];
+extern u8 gData_02005e98[];
+extern u8 gData_02005ed4[];
+extern u8 gData_02005f10[];
 
 struct SceneEvent gSceneEvents[] = {
 	{1, 1, CONDITION_ALWAYS, 11},
@@ -21,24 +21,24 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_020069dc[] = {
+u32 gData_020069dc[] = {
 	17, 18, 19, 20, 21, 22,
 };
 
-s32 Data_020069f4[] = {
+s32 gData_020069f4[] = {
 	-1,
 };
 
-u32 Data_020069f8[] = {
+u32 gData_020069f8[] = {
 	1,
 };
 
-u32 Data_020069fc[] = {
+u32 gData_020069fc[] = {
 	39, 5, 0, 12, 38,
 };
 
-s32 Data_0200ea10[] = {
-	(s32)Data_02005e98,
-	(s32)Data_02005ed4,
-	(s32)Data_02005f10,
+s32 gData_0200ea10[] = {
+	(s32)gData_02005e98,
+	(s32)gData_02005ed4,
+	(s32)gData_02005f10,
 };

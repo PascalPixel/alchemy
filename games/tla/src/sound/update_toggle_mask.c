@@ -6,7 +6,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
     command &= AUDIO_COMMAND_MASK;
     if (toggle != 0)
-        Audio_CommandMask ^= command;
+        gAudio_CommandMask ^= command;
     else
-        Audio_CommandMask = command;
+        gAudio_CommandMask = command;
 }

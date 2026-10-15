@@ -19,18 +19,18 @@ void Func_02002ce8(void);
 
 void Func_0200007c(void);
 
-extern u32 Data_0200485c[];
-extern u32 Data_02004898[];
-extern u32 Data_020048d4[];
-extern s32 Data_02004910[];
+extern u32 gData_0200485c[];
+extern u32 gData_02004898[];
+extern u32 gData_020048d4[];
+extern s32 gData_02004910[];
 
-u32 Data_02004474[] = {
+u32 gData_02004474[] = {
 	0, 40, 0x80010000, 22, 25, 0,
 	0, 1, 22, 25, 1, 0,
 	1, 13, 10, 0xc0010000, 38,
 };
 
-s32 Data_020044b8[] = {
+s32 gData_020044b8[] = {
 	46,
 	(s32)Func_02002c44,
 	4,
@@ -97,7 +97,7 @@ s32 Data_020044b8[] = {
 	17,
 };
 
-s32 Data_020045b8[] = {
+s32 gData_020045b8[] = {
 	46,
 	(s32)Func_02002c44,
 	4,
@@ -199,77 +199,77 @@ s32 Data_020045b8[] = {
 	17,
 };
 
-u32 Data_02004744[] = {
+u32 gData_02004744[] = {
 	0, 30, 22, 38, 0, 2,
 	0, 0, 0, 0, 1, 38,
 };
 
-u32 Data_02004774[] = {
+u32 gData_02004774[] = {
 	0, 20, 0x80010000, 22, 25, 0,
 	0, 1, 22, 25, 1, 0,
 	1, 13, 10, 0xc0010000, 38,
 };
 
-u32 Data_020047b8[] = {
+u32 gData_020047b8[] = {
 	0, 20, 0x80010000, 22, 25, 0,
 	0, 1, 22, 25, 1, 0,
 	1, 13, 10, 0xc0010000, 38,
 };
 
-s32 Data_020047fc[] = {
+s32 gData_020047fc[] = {
 	0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
 	0xffff, -0x8000, 0xffff, -0x8000, -0x4000, (s32)0xc000ffff,
 	-0xc000, 0x4000ffff, 0xffff, -0x8000,
 };
 
-s32 Data_0200483c[] = {
+s32 gData_0200483c[] = {
 	0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
 	0xffff, -0x8000,
 };
 
-u32 Data_0200485c[] = {
+u32 gData_0200485c[] = {
 	0, 1, 13, 22, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_02004898[] = {
+u32 gData_02004898[] = {
 	0, 1, 13, 44, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_020048d4[] = {
+u32 gData_020048d4[] = {
 	0, 1, 13, 126, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-s32 Data_02004910[] = {
+s32 gData_02004910[] = {
 	46,
 	(s32)Func_02000038,
 	17,
 };
 
-s32 Data_0200491c[] = {
+s32 gData_0200491c[] = {
 	23, 9, 0x400, 23, 10, 0x400,
 	23, 6, -0x4000, 0, 1, 13,
 	40, 0, 17,
 };
 
-s32 Data_02004958[] = {
+s32 gData_02004958[] = {
 	23, 9, -2048, 23, 10, -2048,
 	23, 6, 0x4000, 0, 1, 13,
 	24, 0, 3, 0, 1, 17,
 };
 
-s32 Data_020049a0[] = {
+s32 gData_020049a0[] = {
 	23, 9, -1024, 23, 10, -1024,
 	0, 1, 13, 40, 0, 3,
 	0, 1, 17,
 };
 
-s32 Data_020049dc[] = {
+s32 gData_020049dc[] = {
 	23, 9, 0x400, 23, 10, -1024,
 	0, 1, 13, 40, 0, 3,
 	0, 1, 17,
@@ -294,8 +294,8 @@ u32 gSceneExits[] = {
 };
 
 struct ScenePlacement gScenePlacements[] = {
-	{418, CONDITION_ALWAYS, (s32)Data_02004910, PIXELS(712), 0, PIXELS(264), FACING_SOUTH, 2, 0},
-	{419, CONDITION_ALWAYS, (s32)Data_02004910, PIXELS(648), 0, PIXELS(264), FACING_SOUTH, 2, 0},
+	{418, CONDITION_ALWAYS, (s32)gData_02004910, PIXELS(712), 0, PIXELS(264), FACING_SOUTH, 2, 0},
+	{419, CONDITION_ALWAYS, (s32)gData_02004910, PIXELS(648), 0, PIXELS(264), FACING_SOUTH, 2, 0},
 	{291, CONDITION_ALWAYS, 7, PIXELS(680), 0, PIXELS(240), FACING_SOUTH, 2, 0},
 	{181, 0xa30, 7, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, 2, 0},
 	{181, 0xa30, 7, PIXELS(696), 0, PIXELS(216), FACING_SOUTH, 2, 1},
@@ -337,8 +337,8 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 Data_02004ce0[] = {
-	(s32)Data_0200485c,
-	(s32)Data_02004898,
-	(s32)Data_020048d4,
+s32 gData_02004ce0[] = {
+	(s32)gData_0200485c,
+	(s32)gData_02004898,
+	(s32)gData_020048d4,
 };

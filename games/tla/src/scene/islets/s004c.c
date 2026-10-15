@@ -5,19 +5,19 @@ u8 *Func_0200004c(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov674Room1)
-        return Data_0200476c;
+        return gData_0200476c;
     if (scene == (s32)&SceneId_Ov674Room2)
-        return Data_020047e4;
+        return gData_020047e4;
     if (scene == (s32)&SceneId_Ov674Room3)
-        return Data_0200494c;
+        return gData_0200494c;
     if (scene == (s32)&SceneId_Ov674Room4)
-        return Data_020049c4;
+        return gData_020049c4;
     if (scene == (s32)&SceneId_Ov674Room5) {
         if (GameFlag_Test(0xaa5))
-            Data_02004a84[46] = 1;
-        return Data_02004a84;
+            gData_02004a84[46] = 1;
+        return gData_02004a84;
     }
-    return Data_02004754;
+    return gData_02004754;
 }
 
 void Func_020000d8(void)
@@ -34,11 +34,11 @@ void Func_020000d8(void)
         Battle_WaitMode0(22);
         Func_02003ffc(240);
         Object_SetModeById(10, 8);
-        object->priority_flags |= 2;
-        object->motion_flags = 0;
-        object->velocity_y = 0;
+        object->priorityFlags |= 2;
+        object->motionFlags = 0;
+        object->velocityY = 0;
         object->y = 0xfff80000;
-        object->terrain_height = 0xfff80000;
+        object->terrainHeight = 0xfff80000;
         Func_02003e24(9, 1, 4, 1, 9, 10);
         Func_02003e24(9, 8, 4, 1, 9, 9);
         Func_02003e24(9, 64, 4, 1, 9, 74);

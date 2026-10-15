@@ -314,15 +314,15 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	FieldScheduler_AddCallback((s32)FieldScene_RunStep20, 0xc80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
 	rec8 = Object_GetById(20);
-	v2 = rec8->motion_flags;
-	rec8->motion_flags = 0;
+	v2 = rec8->motionFlags;
+	rec8->motionFlags = 0;
 	p8 = v2;
 	for (i = 0; i < 40; i++)
 	{
 		rec8->y.fixed += 0x1800;
 		Engine_TaskWait(1);
 	}
-	rec8->motion_flags = p8;
+	rec8->motionFlags = p8;
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
 	Engine_TaskWait(1);
@@ -390,7 +390,7 @@ static void Scene_PsynergyStoneIsGone(void)
 	Engine_GameFlagSet(0x306);
 	Engine_ActorStop(21);
 	Engine_TaskWait(1);
-	Engine_ActorEnableActionCallback(21, ValeHome_Actor21Actions);
+	Engine_ActorEnableActionCallback(21, gValeHome_Actor21Actions);
 	Engine_EventEnd();
 }
 
@@ -400,7 +400,7 @@ static void Scene_PsynergyStoneIsGone(void)
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 44, 7);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 44, 7);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
 	Vale_RequestBackdropExit(1);
 }
@@ -421,7 +421,7 @@ static void EV02_TOUCH(void)
 static void EV03_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 43, 15);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 43, 15);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
 	Vale_RequestBackdropExit(3);
 }
@@ -429,7 +429,7 @@ static void EV03_TOUCH(void)
 static void EV04_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 52, 18);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 52, 18);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
 	Vale_RequestBackdropExit(4);
 }
@@ -437,7 +437,7 @@ static void EV04_TOUCH(void)
 static void EV05_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 41, 32);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 41, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
 	Vale_RequestBackdropExit(5);
 }
@@ -445,7 +445,7 @@ static void EV05_TOUCH(void)
 static void EV06_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 35, 36);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 35, 36);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
 	Vale_RequestBackdropExit(6);
 }
@@ -453,7 +453,7 @@ static void EV06_TOUCH(void)
 static void EV07_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&ValeHome_CellSteps, 51, 39);
+	Map_AnimateCells((s32)&gValeHome_CellSteps, 51, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
 	Vale_RequestBackdropExit(7);
 }
@@ -521,11 +521,11 @@ s32 ValeHome_RestoreEntryState(void)
 	}
 	v5 = 192;
 	record = Object_GetById(8);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	record = Object_GetById(9);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	record = Object_GetById(10);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
 		Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
@@ -545,7 +545,7 @@ s32 ValeHome_RestoreEntryState(void)
 			{
 				Engine_ActorSetPosition(17, 0, 0);
 				Engine_ActorSetPosition(18, 0, 0);
-				FieldObject_SetTargetAndCallback(19, 0x10000, ValeHome_FaceTargetActions);
+				FieldObject_SetTargetAndCallback(19, 0x10000, gValeHome_FaceTargetActions);
 			}
 		}
 		else
@@ -568,13 +568,13 @@ s32 ValeHome_RestoreEntryState(void)
 			if (Engine_GameFlagIsSet(0x834) != 0)
 			{
 				record = Object_GetById(20);
-				((struct FieldActor *)record)->scale_x = 0x4ccc;
-				((struct FieldActor *)record)->scale_y = 0x4ccc;
+				((struct FieldActor *)record)->scaleX = 0x4ccc;
+				((struct FieldActor *)record)->scaleY = 0x4ccc;
 				record = Object_GetById(20);
 				Engine_ActorSetSpriteFlags(record, 0);
 				record = Object_GetById(21);
-				((struct FieldActor *)record)->scale_x = 0x9999;
-				((struct FieldActor *)record)->scale_y = 0x9999;
+				((struct FieldActor *)record)->scaleX = 0x9999;
+				((struct FieldActor *)record)->scaleY = 0x9999;
 				Engine_ActorSetAnimation(13, 5);
 			}
 			else
@@ -619,7 +619,7 @@ s32 ValeHome_RestoreEntryState(void)
 static void EV20_TOUCH(void)
 {
 	struct FieldActor *leader;
-	s32				   skip_reply = 0;
+	s32				   skipReply = 0;
 	s32				   unk;
 
 	if (Engine_GameFlagIsSet(0x834) != 0 && Engine_GameFlagIsSet(0x840) == 0)
@@ -660,16 +660,16 @@ static void EV20_TOUCH(void)
 #endif
 		Actor_SetSpeed(17, 0x19999, 0xcccc);
 		Actor_SetSpeed(18, 0x19999, 0xcccc);
-		Engine_ActorEnableActionCallback(17, (s32)ValeHome_Actor17Actions);
+		Engine_ActorEnableActionCallback(17, (s32)gValeHome_Actor17Actions);
 		Engine_EventWait(20);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-		Object_GetById(18)->priority_flags |= 1;
+		Object_GetById(18)->priorityFlags |= 1;
 #endif
-		Engine_ActorEnableActionCallback(18, (s32)ValeHome_Actor17Actions);
+		Engine_ActorEnableActionCallback(18, (s32)gValeHome_Actor17Actions);
 		Actor_FaceDirection(0, 0xc000, 0);
 		Actor_FaceDirection(25, 0xc000, 60);
-		Engine_ActorEnableActionCallback(0, (s32)ValeHome_LeaderStepActions);
-		Object_SetActionCallbackAndRefreshById(25, (s32)ValeHome_Actor25StepActions);
+		Engine_ActorEnableActionCallback(0, (s32)gValeHome_LeaderStepActions);
+		Object_SetActionCallbackAndRefreshById(25, (s32)gValeHome_Actor25StepActions);
 		Engine_EventWait(20);
 		Engine_ActorFaceDirection(0, 0, 0);
 		Engine_ActorFaceDirection(25, 0, 10);
@@ -685,7 +685,7 @@ static void EV20_TOUCH(void)
 		Engine_EventOpenMessage(0x4013, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
-			skip_reply = 1;
+			skipReply = 1;
 			Engine_ActorSetAnimation(19, 4);
 		}
 		else
@@ -694,7 +694,7 @@ static void EV20_TOUCH(void)
 			gEventWork->message++;
 		}
 		Event_ShowMessage(0x4013, 0);
-		if (skip_reply != 0)
+		if (skipReply != 0)
 		{
 			gEventWork->message++;
 		}
@@ -714,7 +714,7 @@ static void EV20_TOUCH(void)
 		BattleFx_CommitObjectPositionAndWait();
 		Engine_CameraSetSpeed(0xcccc, 0x1999);
 		Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
-		Engine_ActorEnableActionCallback(22, (s32)ValeHome_Actor22Actions);
+		Engine_ActorEnableActionCallback(22, (s32)gValeHome_Actor22Actions);
 		Object_RefreshSelectorById(22);
 		ValeHome_TurnAndWaitValue(22, 0x2000, 60);
 		Engine_ActorRunRepeatedMotion(19, 2);
@@ -763,7 +763,7 @@ static void EV20_TOUCH(void)
 		}
 		Engine_ActorWaitForMove(22);
 		Engine_ActorSetPosition(22, 0, 0);
-		FieldObject_SetTargetAndCallback(19, 0x10000, ValeHome_FaceTargetActions);
+		FieldObject_SetTargetAndCallback(19, 0x10000, gValeHome_FaceTargetActions);
 		Engine_GameFlagSet(0x840);
 		Engine_EventEnd();
 	}
@@ -829,9 +829,9 @@ static void ValeHome_RunScriptScene(void)
 static void FieldScene_RunGroupChoreography(void)
 {
 	struct FieldActor *record;
-	s32				   walk_speed;
-	s32				   turn_speed;
-	s32				   approach_speed;
+	s32				   walkSpeed;
+	s32				   turnSpeed;
+	s32				   approachSpeed;
 
 	Engine_ActorSetChildValue(25, 15);
 	record = Object_GetById(25);
@@ -843,8 +843,8 @@ static void FieldScene_RunGroupChoreography(void)
 	Actor_ShowEmote(24, 0x100, 40);
 	Engine_ActorSetPosition(25, 0, 0);
 	Actor_FaceDirection(23, 0x5000, 0);
-	walk_speed = 0x5000;
-	SceneActor_SetPairZeroAndValue(24, walk_speed, 40);
+	walkSpeed = 0x5000;
+	SceneActor_SetPairZeroAndValue(24, walkSpeed, 40);
 	Engine_CameraSetSpeed(0x18000, 0x3000);
 	Engine_CameraMoveTo(0x590000, 0xb00000, 0x1390000, 1);
 	BattleFx_CommitObjectPositionAndWait();
@@ -860,10 +860,10 @@ static void FieldScene_RunGroupChoreography(void)
 	Engine_ActorWalkTo(24, 124, 0x149);
 	Engine_ActorWaitForMove(23);
 	Engine_ActorSetAnimation(23, 1);
-	Engine_ActorFaceDirection(23, walk_speed, 0);
+	Engine_ActorFaceDirection(23, walkSpeed, 0);
 	Engine_ActorWaitForMove(24);
 	Engine_ActorSetAnimation(24, 1);
-	Engine_ActorFaceDirection(24, walk_speed, 0);
+	Engine_ActorFaceDirection(24, walkSpeed, 0);
 	Engine_ActorSetChildValue(25, 0);
 	record = Object_GetById(25);
 	Engine_ActorSetSpriteFlags(record, 1);
@@ -874,29 +874,29 @@ static void FieldScene_RunGroupChoreography(void)
 	Engine_ActorSetAnimationAndWait(23, 3);
 	Engine_EventOpenMessage(23, 0);
 	Actor_ShowEmote(25, 0x101, 0);
-	approach_speed = 0xd000;
-	SceneActor_SetPairZeroAndValue(0, approach_speed, 10);
+	approachSpeed = 0xd000;
+	SceneActor_SetPairZeroAndValue(0, approachSpeed, 10);
 	Engine_EventChooseYesNo(0, 0);
 	Engine_EventWait(40);
 	Engine_ActorFaceDirection(23, 0, 0);
-	turn_speed = 0x8000;
-	SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
+	turnSpeed = 0x8000;
+	SceneActor_SetPairZeroAndValue(24, turnSpeed, 20);
 	Engine_ActorRunRepeatedMotion(25, 2);
 	Event_SayThenWait(0x1019, 10);
-	FieldObject_SetTargetAndCallback(0, 0x10019, ValeHome_FaceTargetActions);
+	FieldObject_SetTargetAndCallback(0, 0x10019, gValeHome_FaceTargetActions);
 	Actor_WalkToAndWait(25, 93, 0x169);
-	SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
+	SceneActor_SetPairZeroAndValue(25, approachSpeed, 40);
 	Event_SayThenWait(25, 20);
 	Engine_ActorStop(0);
 	Engine_ActorFaceDirection(23, 0, 0);
-	SceneActor_SetPairZeroAndValue(24, turn_speed, 15);
+	SceneActor_SetPairZeroAndValue(24, turnSpeed, 15);
 	Engine_ActorSetAnimation(23, 3);
 	Engine_ActorSetAnimationAndWait(24, 3);
-	Engine_ActorFaceDirection(23, walk_speed, 0);
-	SceneActor_SetPairZeroAndValue(24, walk_speed, 30);
+	Engine_ActorFaceDirection(23, walkSpeed, 0);
+	SceneActor_SetPairZeroAndValue(24, walkSpeed, 30);
 	Engine_ActorSetAnimationAndWait(24, 4);
 	Engine_EventShowMessage(0x2018, 0);
-	SceneActor_SetPairZeroAndValue(0, approach_speed, 30);
+	SceneActor_SetPairZeroAndValue(0, approachSpeed, 30);
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 40);
 	Engine_ActorRunRepeatedMotion(23, 2);
 	Engine_ActorSetAnimationAndWait(23, 3);
@@ -904,13 +904,13 @@ static void FieldScene_RunGroupChoreography(void)
 	Actor_SetAttachedEffect(0, 0x102);
 	Engine_ActorSetAttachedEffect(25, 0x102);
 	Engine_EventWait(80);
-	Engine_ActorEnableActionCallback(24, (s32)ValeHome_Actor24Actions);
+	Engine_ActorEnableActionCallback(24, (s32)gValeHome_Actor24Actions);
 	Engine_EventWait(6);
-	Engine_ActorEnableActionCallback(23, (s32)ValeHome_Actor23Actions);
+	Engine_ActorEnableActionCallback(23, (s32)gValeHome_Actor23Actions);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, (s32)ValeHome_LeaderActions);
+	Engine_ActorEnableActionCallback(0, (s32)gValeHome_LeaderActions);
 	Engine_EventWait(6);
-	Object_SetActionCallbackAndRefreshById(25, (s32)ValeHome_Actor25Actions);
+	Object_SetActionCallbackAndRefreshById(25, (s32)gValeHome_Actor25Actions);
 	Battle_SetStart(2);
 	{
 		const void *message = &SceneId_ValeHome;
@@ -942,7 +942,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	Actor_FaceDirection(24, 0x8000, 0);
 	Engine_ActorSetAnimation(0, 16);
 	record = Object_GetById(0);
-	record->scale_x = -0x10000;
+	record->scaleX = -0x10000;
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(25, 7);
@@ -953,7 +953,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	{
 		struct EventWork *work = gEventWork;
 
-		work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	}
 	Engine_EventOpenScreen();
 	BattleFx_SetBlock30Values128One();
@@ -973,13 +973,13 @@ static void ValeHome_RunActorPairEffectScene(void)
 	record = Object_GetById(23);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Engine_ActorEnableActionCallback(23, (s32)ValeHome_Actor23BounceActions);
+	Engine_ActorEnableActionCallback(23, (s32)gValeHome_Actor23BounceActions);
 	Engine_EventWait(24);
 	Engine_ActorSetSpeed(24, 0x26666, 0x13333);
 	record = Object_GetById(24);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Object_SetActionCallbackAndRefreshById(24, (s32)ValeHome_Actor24BounceActions);
+	Object_SetActionCallbackAndRefreshById(24, (s32)gValeHome_Actor24BounceActions);
 	Engine_EventWait(40);
 	BattleFx_SetBlock30ValuesMaxZero();
 	BattleFx_SetBlock30Values12Zero();
@@ -990,7 +990,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	Engine_TaskWait(20);
 	BattleFx_SetBlock30ValuesMaxZero();
 	Engine_EventWait(40);
-	gEventWork->transition_frames = 120;
+	gEventWork->transitionFrames = 120;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_GameFlagClear(0x834);
@@ -1003,10 +1003,10 @@ static void Scene_RunExtendedActorSequence(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   v5;
-	const u8		  *face_actions;
-	const u8		  *actor31_actions;
+	const u8		  *faceActions;
+	const u8		  *actor31Actions;
 	s32				   v6;
-	const u8		  *pair_actions;
+	const u8		  *pairActions;
 
 	Owner_RefreshActiveRatios(1);
 	Engine_EventBegin();
@@ -1064,11 +1064,11 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_SetPosition(30, 0x6e0000, 0x2e80000);
 	Engine_TaskWait(2);
 	Engine_ActorSetAnimation(30, 3);
-	Engine_ActorEnableActionCallback(30, (s32)ValeHome_Actor30Actions);
+	Engine_ActorEnableActionCallback(30, (s32)gValeHome_Actor30Actions);
 	Engine_EventWait(40);
-	face_actions = (const u8 *)ValeHome_FaceTargetActions;
-	FieldObject_SetTargetAndCallback(11, 0x1001e, face_actions);
-	FieldObject_SetTargetAndCallback(12, 0x1001e, face_actions);
+	faceActions = (const u8 *)gValeHome_FaceTargetActions;
+	FieldObject_SetTargetAndCallback(11, 0x1001e, faceActions);
+	FieldObject_SetTargetAndCallback(12, 0x1001e, faceActions);
 	Object_RefreshSelectorById(30);
 	Engine_ActorStop(11);
 	Engine_ActorStop(12);
@@ -1120,18 +1120,18 @@ static void Scene_RunExtendedActorSequence(void)
 	}
 	v5 = 254;
 	Engine_TaskWait(2);
-	Object_GetById(30)->priority_flags &= v5;
-	Object_GetById(31)->priority_flags &= v5;
+	Object_GetById(30)->priorityFlags &= v5;
+	Object_GetById(31)->priorityFlags &= v5;
 	Engine_ActorSetSpritePriority(30, 2);
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
 	Engine_ActorSetAnimation(31, 2);
-	actor31_actions = ValeHome_Actor31Actions;
-	Engine_ActorEnableActionCallback(31, actor31_actions);
+	actor31Actions = gValeHome_Actor31Actions;
+	Engine_ActorEnableActionCallback(31, actor31Actions);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(30, 3);
 	Actor_SetSpeed(30, 0x4cccc, 0x26666);
-	Object_SetActionCallbackAndRefreshById(30, actor31_actions);
+	Object_SetActionCallbackAndRefreshById(30, actor31Actions);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1147,14 +1147,14 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(20);
 	Actor_SetSpeed(11, 0x26666, 0x13333);
 	Actor_SetSpeed(12, 0x26666, 0x13333);
-	Engine_ActorEnableActionCallback(11, (s32)ValeHome_Actor11Actions);
+	Engine_ActorEnableActionCallback(11, (s32)gValeHome_Actor11Actions);
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
-	Battle_GetWorkObject1e0()->motion_flags = v6;
+	Battle_GetWorkObject1e0()->motionFlags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(12, (s32)ValeHome_Actor12Actions);
+	Engine_ActorEnableActionCallback(12, (s32)gValeHome_Actor12Actions);
 	Object_RefreshSelectorById(12);
 	SceneActor_SetPairZeroAndValue(12, 0x3000, 120);
 	Engine_ActorRunRepeatedMotion(13, 2);
@@ -1291,30 +1291,30 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_MessageShowCentered(MSGNO(MsgValeFarewell), 1);
 	v5 = 1;
 	Engine_EventWait(80);
-	Object_GetById(0)->priority_flags |= v5;
+	Object_GetById(0)->priorityFlags |= v5;
 	{
 		struct FieldActor *actor = Object_GetById(1);
-		u8				   value = (v5 | actor->priority_flags);
+		u8				   value = (v5 | actor->priorityFlags);
 
-		actor->priority_flags = value;
+		actor->priorityFlags = value;
 	}
 	Actor_ShowEmote(0, 0x102, 0);
 	Actor_ShowEmote(1, 0x102, 80);
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
-	pair_actions = ValeHome_Actor0And1Actions;
-	Engine_ActorEnableActionCallback(0, pair_actions);
+	pairActions = gValeHome_Actor0And1Actions;
+	Engine_ActorEnableActionCallback(0, pairActions);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x6666, 0xccc);
 	Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
 	Engine_EventWait(20);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(1, pair_actions);
+	Engine_ActorEnableActionCallback(1, pairActions);
 	Engine_EventWait(60);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 60;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 60;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorStop(0);
@@ -1395,7 +1395,7 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 		{
 			child->words[5] = parent->words[5];
 			part = (struct PairSprite *)child->object.actor.sprite;
-			child->object.actor.motion_flags = 0;
+			child->object.actor.motionFlags = 0;
 			child->object.effect.spin = 0;
 			child->link.parent = parent;
 			if (part != NULL)
@@ -1403,14 +1403,14 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 				sprite = &part->sprite;
 				AnimationObjects_SelectAnimation(sprite, 0);
 				sprite->flags = 0;
-				Resource_ResetEntry(sprite->vram_block);
-				sprite->vram_block = work->vram_block;
-				sprite->unknown_1d_0 = 1;
-				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-				sprite->full_color = 0;
+				Resource_ResetEntry(sprite->vramBlock);
+				sprite->vramBlock = work->vramBlock;
+				sprite->unk1d0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
+				sprite->fullColor = 0;
 				sprite->shape = 1;
 				((struct WorldMapOam *)sprite)->size = 2;
-				part->detail->field_16 = 0;
+				part->detail->field16 = 0;
 			}
 		}
 	}
@@ -1427,7 +1427,7 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 
 		sp->priority = 2;
 		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 }
 
@@ -1510,11 +1510,11 @@ static void SceneState_SetValues352_365_2116_2117_40(void)
 	Engine_EventRequestExit(40);
 }
 
-u32 ValeHome_Actor22ActionsHead[] = {
+u32 gValeHome_Actor22ActionsHead[] = {
 	0x1000000, 0x2020101, 0x3030302, 0x5040404, 0x6060505, 0x1000006, 0x3020201, 0x5040403,
 };
 
-s32 ValeHome_Actor22Actions[] = {
+s32 gValeHome_Actor22Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(214), 0, PIXELS(721)),
 	SC_SYNC,
@@ -1530,7 +1530,7 @@ s32 ValeHome_Actor22Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor24Actions[] = {
+s32 gValeHome_Actor24Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(153),
@@ -1542,7 +1542,7 @@ s32 ValeHome_Actor24Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor23Actions[] = {
+s32 gValeHome_Actor23Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(153),
@@ -1554,7 +1554,7 @@ s32 ValeHome_Actor23Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_LeaderActions[] = {
+s32 gValeHome_LeaderActions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(152),
@@ -1566,7 +1566,7 @@ s32 ValeHome_LeaderActions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor25Actions[] = {
+s32 gValeHome_Actor25Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(152),
@@ -1578,7 +1578,7 @@ s32 ValeHome_Actor25Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor23BounceActions[] = {
+s32 gValeHome_Actor23BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1606,7 +1606,7 @@ s32 ValeHome_Actor23BounceActions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor24BounceActions[] = {
+s32 gValeHome_Actor24BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1632,12 +1632,12 @@ s32 ValeHome_Actor24BounceActions[] = {
 	SC_END,
 };
 
-s32 ValeHome_FaceTargetActions[] = {
+s32 gValeHome_FaceTargetActions[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 ValeHome_Actor30Actions[] = {
+s32 gValeHome_Actor30Actions[] = {
 	SC_MOVE(PIXELS(132), 0, PIXELS(636)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(171), 0, PIXELS(629)),
@@ -1653,7 +1653,7 @@ s32 ValeHome_Actor30Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor31Actions[] = {
+s32 gValeHome_Actor31Actions[] = {
 	SC_MOVE(PIXELS(271), 0, PIXELS(571)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(187), 0, PIXELS(577)),
@@ -1667,7 +1667,7 @@ s32 ValeHome_Actor31Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor11Actions[] = {
+s32 gValeHome_Actor11Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1683,7 +1683,7 @@ s32 ValeHome_Actor11Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor12Actions[] = {
+s32 gValeHome_Actor12Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1699,7 +1699,7 @@ s32 ValeHome_Actor12Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor0And1Actions[] = {
+s32 gValeHome_Actor0And1Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(216), 0, PIXELS(854)),
 	SC_SYNC,
@@ -1709,7 +1709,7 @@ s32 ValeHome_Actor0And1Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor21Actions[] = {
+s32 gValeHome_Actor21Actions[] = {
 	SC_SET(SW_SPEED, 0x8000),
 	SC_SET(SW_ACCEL, 3276),
 	SC_SET(SW_COLLISION, 3),
@@ -1733,7 +1733,7 @@ s32 ValeHome_Actor21Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor17Actions[] = {
+s32 gValeHome_Actor17Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(148), 0, PIXELS(758)),
 	SC_SYNC,
@@ -1746,7 +1746,7 @@ s32 ValeHome_Actor17Actions[] = {
 	SC_END,
 };
 
-s32 ValeHome_LeaderStepActions[] = {
+s32 gValeHome_LeaderStepActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(196), 0, PIXELS(774)),
 	SC_SYNC,
@@ -1754,7 +1754,7 @@ s32 ValeHome_LeaderStepActions[] = {
 	SC_END,
 };
 
-s32 ValeHome_Actor25StepActions[] = {
+s32 gValeHome_Actor25StepActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(196), 0, PIXELS(790)),
 	SC_SYNC,
@@ -2127,6 +2127,6 @@ struct SceneEvent gValeHomeEventsFlag87a[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 ValeHome_CellSteps[] = {
+u16 gValeHome_CellSteps[] = {
 	MAP_CELL_STEP(0, 57, 2, 2, 1), MAP_CELL_STEP(0, 59, 2, 2, 1), MAP_CELL_STEP(2, 59, 2, 2, 1), MAP_CELL_STEPS_END,
 };

@@ -2,16 +2,16 @@
 	.section .rodata
 	.balign 4
 @ ジンの種類
-	.global Menu_PartySpriteResourceIds
-Menu_PartySpriteResourceIds:
+	.global gMenu_PartySpriteResourceIds
+gMenu_PartySpriteResourceIds:
 	.4byte 90, 91, 92, 93
 @ 名前入力の文字盤
-	.global NameEntry_KeyboardTilemap
-NameEntry_KeyboardTilemap:
+	.global gNameEntry_KeyboardTilemap
+gNameEntry_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA
 	.incbin "games/common/src/graphics/window/keyboard_ja.table.lz"
-	.global NameEntry_AlternateKeyboardTilemap
-NameEntry_AlternateKeyboardTilemap:
+	.global gNameEntry_AlternateKeyboardTilemap
+gNameEntry_AlternateKeyboardTilemap:
 	.incbin "games/common/src/graphics/window/keyboard_j2.table.lz"
 	.global NameEntry_KeyboardTilemap3
 NameEntry_KeyboardTilemap3:
@@ -24,6 +24,6 @@ NameEntry_KeyboardTilemap3:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.4byte Resource_FixedBlockBTiles
+	.global gUi_FixedTileBlocks
+gUi_FixedTileBlocks:
+	.4byte gResource_FixedBlockBTiles

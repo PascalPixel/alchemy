@@ -21,13 +21,13 @@ void Func_08038348(s32 first, s32 second);
 // 走査線スクロールを止め、BG パレット 15 を戻す
 void Func_080dcadc(void)
 {
-    u8 *work = Ram_HeapSlots->window_tiles;
+    u8 *work = Ram_HeapSlots->windowTiles;
 
     Scheduler_RemoveCallback((SchedulerCallback)Func_080dcdc8);
     BG_PLTT_COLOR(15, 1) = 0x7fff;  // 白
     BG_PLTT_COLOR(15, 3) = 0;       // 黒
     BG_PLTT_COLOR(15, 11) = 0x294a; // 灰 (10)
     BG_PLTT_COLOR(15, 12) = 0x5294; // 灰 (20)
-    Func_08038348(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
+    Func_08038348(gPartyState.unk220[5], gPartyState.unk220[6]);
     work[4] = 0;
 }

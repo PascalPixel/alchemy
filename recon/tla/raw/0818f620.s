@@ -881,7 +881,7 @@ Func_0818f620:
 .L_0818fcf8:
 	.4byte gMapCellBuffer
 .L_0818fcfc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818fd00:
 	.4byte Data_08199ec5
 .L_0818fd04:
@@ -996,7 +996,7 @@ Func_0818f620:
 	b .L_0818feee
 	.2byte 0x0000
 .L_0818fde4:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818fde8:
 	.4byte Func_08143000
 .L_0818fdec:

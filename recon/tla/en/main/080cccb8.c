@@ -15,7 +15,7 @@ struct ActionDescriptor {
     s32 y;
     s32 z;
     u16 facing;
-    u8 talk_facing;
+    u8 talkFacing;
     u8 flags;
 };
 
@@ -30,7 +30,7 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
     s32 group = 8;
 
     for (i = 0; i < 4; i++) {
-        entry = ((struct ActionDescriptorTables *)Ram_HeapSlots->event_work)->tables[i];
+        entry = ((struct ActionDescriptorTables *)Ram_HeapSlots->eventWork)->tables[i];
         if (entry == NULL)
             continue;
         if (id <= 7) {

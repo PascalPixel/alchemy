@@ -10,13 +10,13 @@
 #include "../../../../games/common/include/system/io_reg.h"
 
 struct GabombaStatueChamberLayer {
-    u8 unknown_00[12];
+    u8 unk00[12];
     s32 y;
-    u8 unknown_10[0x28];
+    u8 unk10[0x28];
 };
 
 struct GabombaStatueChamberMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct GabombaStatueChamberLayer layers[3];
 };
 
@@ -28,7 +28,7 @@ void Func_02001ba8(void)
 {
     if (GameFlag_Test(265)) {
         if (GameFlag_Test(519)) {
-            struct GabombaStatueChamberMapWork *map = (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->map_work;
+            struct GabombaStatueChamberMapWork *map = (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;
             struct GabombaStatueChamberLayer *front = &map->layers[0];
             struct GabombaStatueChamberLayer *back = &map->layers[2];
             s32 blend = 1;

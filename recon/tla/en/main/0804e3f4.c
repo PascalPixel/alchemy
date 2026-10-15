@@ -16,8 +16,8 @@
 #include "uiflow.h"
 #include "text_render_runtime.h"
 
-extern s16 Data_0805eb58[];
-extern s16 Data_0805eb7c[];
+extern s16 gData_0805eb58[];
+extern s16 gData_0805eb7c[];
 
 struct RenderInput *Func_0803d3c0(s32 x, s32 y, s32 width, s32 height);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -41,21 +41,21 @@ s32 Func_0804e3f4(void)
     s32 tile;
     s32 slot;
     s32 cancel;
-    u32 slot_offset;
+    u32 slotOffset;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     redraw = 1;
     portrait = Func_0803d3c0(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);
     index = 0;
-    for (i = 0; Data_0805eb58[i * 2] != -1; i++) {
+    for (i = 0; gData_0805eb58[i * 2] != -1; i++) {
     }
     count = i;
-    for (i = 0; Data_0805eb7c[i * 2] != -1; i++) {
+    for (i = 0; gData_0805eb7c[i * 2] != -1; i++) {
     }
     total = count + i;
     cancel = ((u32)(u16)count >> 16) | 2;
-    slot_offset = 0x1382;
+    slotOffset = 0x1382;
     while (1) {
         if (gInput.repeat & 0x20) {
             redraw = 1;
@@ -82,12 +82,12 @@ s32 Func_0804e3f4(void)
             index = (index + total) % total;
             RenderOutput_PrepareForRedraw(window);
             if (index < count)
-                glyph = Data_0805eb58[index * 2 + 1];
+                glyph = gData_0805eb58[index * 2 + 1];
             else
-                glyph = Data_0805eb7c[(index - count) * 2 + 1] + 128;
+                glyph = gData_0805eb7c[(index - count) * 2 + 1] + 128;
             {
                 s32 pal;
-                s32 loaded = *(u16 *)((u8 *)work + slot_offset);
+                s32 loaded = *(u16 *)((u8 *)work + slotOffset);
                 pal = 15;
                 slot = loaded;
                 UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);

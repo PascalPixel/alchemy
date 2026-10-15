@@ -25,9 +25,9 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id)
 
 	actor = (OrbitingSceneObject *)Object_GetById(id);
 	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
+	sprite->flags09Mode = 1;
+	sprite->flags05Bit5 = 0;
+	sprite->flags09High = 0;
 
 	zero = 0;
 	sprite->state = zero;
@@ -38,7 +38,7 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id)
 	if (Engine_GameFlagIsSet(0x109) == 0)
 		actor->y += 0x200000;
 
-	actor->flags_23 &= 0xfe;
+	actor->flags23 &= 0xfe;
 	actor->visible = 1;
 
 	transfer = Engine_HeapAllocate(17, 0x608);
@@ -47,9 +47,9 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id)
 	Engine_VramLoad(sprite->palette, 128, transfer);
 	Engine_HeapRelease(17);
 
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
+	actor->orbitCenterX = actor->x;
+	actor->orbitAngle = zero;
+	actor->orbitCenterY = actor->y;
 	actor->active = 1;
 	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
 	actor->state = zero;

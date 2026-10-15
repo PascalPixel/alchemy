@@ -9,10 +9,10 @@ void UiWork_DrainPending(void)
     struct UiWindow *direct;
     u32 done;
     struct UiWindow *work;
-    struct UiWindow *poll_work;
+    struct UiWindow *pollWork;
     s32 index;
 
-    state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     slot = state->channels;
     direct = state->windows;
     index = 0;
@@ -29,10 +29,10 @@ void UiWork_DrainPending(void)
         slot = state->channels;
         index = 0;
         do {
-            poll_work = slot->work;
-            if (poll_work != 0) {
-                if ((*(s32 *)&poll_work->frame) == 0) {
-                    if (poll_work->flags == 0)
+            pollWork = slot->work;
+            if (pollWork != 0) {
+                if ((*(s32 *)&pollWork->frame) == 0) {
+                    if (pollWork->flags == 0)
                         slot->work = NULL;
                     else
                         done = 0;

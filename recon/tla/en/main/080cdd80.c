@@ -18,7 +18,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s3
 void Func_080cdd80(void)
 {
     s32 position[3];
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *target;
     s32 terrain;
     s32 result;
@@ -36,22 +36,22 @@ void Func_080cdd80(void)
     position[1] = target->y;
     position[2] = target->z;
     Vector_AddPolarOffset(0x100000, angle, position);
-    terrain = target->terrain_id;
-    target->terrain_id = 2;
+    terrain = target->terrainId;
+    target->terrainId = 2;
     result = Func_08020210(target, position);
-    target->terrain_id = terrain;
+    target->terrainId = terrain;
     if (result <= 0) {
         Object_SetMode(owner, 8);
         WaitFrames(15);
         Audio_PlayCue(185);
-        target->speed_limit = 0x3333;
+        target->speedLimit = 0x3333;
         target->acceleration = 0x3333;
         Object_SetPosition(target, position[0], position[1], position[2]);
         WaitFrames(2);
         acceleration = owner->acceleration;
         owner->acceleration = 0x3333;
-        speed = owner->speed_limit;
-        owner->speed_limit = 0x3333;
+        speed = owner->speedLimit;
+        owner->speedLimit = 0x3333;
         Object_SetPosition(owner, position[0], position[1], position[2]);
         Object_CommitPosition(target);
         WaitFrames(1);
@@ -59,7 +59,7 @@ void Func_080cdd80(void)
         Object_SetPositionAndResetMotionFar(target, position[0], position[1], position[2]);
         Object_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16, owner->y, S16_AT(owner, 18) << 16);
         Object_SetMode(owner, 1);
-        owner->speed_limit = speed;
+        owner->speedLimit = speed;
         owner->acceleration = acceleration;
     }
 }

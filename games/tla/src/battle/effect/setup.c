@@ -6,13 +6,13 @@ struct BattleFxDefinition {
     u8 flags;
 };
 
-extern struct BattleFxDefinition Data_080f0308[];
+extern struct BattleFxDefinition gData_080f0308[];
 
 // Finds the battle effect definition of id among the first 243 entries; when
 // none matches it returns entry 243.
 struct BattleFxDefinition *Func_080d1e60(u32 id)
 {
-    struct BattleFxDefinition *entry = Data_080f0308;
+    struct BattleFxDefinition *entry = gData_080f0308;
     u32 index = 0;
 
     if (entry->id != id) {
@@ -27,20 +27,20 @@ struct BattleFxDefinition *Func_080d1e60(u32 id)
 }
 
 struct BattleRenderObject {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct BattleAnimationState *animation;
     u8 kind;
 };
 
-s32 BattleFx_GetAnimationValue(u32 object_id)
+s32 BattleFx_GetAnimationValue(u32 objectId)
 {
     struct BattleRenderObject *object =
-        (struct BattleRenderObject *)ObjectTable_Get(object_id);
+        (struct BattleRenderObject *)ObjectTable_Get(objectId);
 
     if (object->kind != 1 ||
         object->animation == NULL ||
-        object->animation->value_28 == NULL) {
+        object->animation->value28 == NULL) {
         return 0;
     }
-    return *object->animation->value_28;
+    return *object->animation->value28;
 }

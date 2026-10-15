@@ -28,7 +28,7 @@
 
 s32 XianInteriors_GetEntrances(void)
 {
-	return (s32)XianInteriors_SceneTable0;
+	return (s32)gXianInteriors_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -38,17 +38,17 @@ s32 SceneData_ReturnZero(void)
 
 s32 XianInteriors_GetExits(void)
 {
-	return (s32)XianInteriors_SceneTable1;
+	return (s32)gXianInteriors_SceneTable1;
 }
 
 s32 XianInteriors_SelectPlacements(void)
 {
 	if (gGameState.entrance == 8)
 	{
-		return (s32)XianInteriors_SceneTable2Entrance8;
+		return (s32)gXianInteriors_SceneTable2Entrance8;
 	}
-	SceneTable_Prepare(XianInteriors_SceneTable2);
-	return (s32)XianInteriors_SceneTable2;
+	SceneTable_Prepare(gXianInteriors_SceneTable2);
+	return (s32)gXianInteriors_SceneTable2;
 }
 
 static void EV14_TALK(void)
@@ -187,9 +187,9 @@ s32 XianInteriors_SelectEvents(void)
 {
 	if (gGameState.entrance == 8)
 	{
-		return (s32)XianInteriors_SceneTable3Entrance8;
+		return (s32)gXianInteriors_SceneTable3Entrance8;
 	}
-	return (s32)XianInteriors_SceneTable3;
+	return (s32)gXianInteriors_SceneTable3;
 }
 
 s32 XianInteriors_PrepareWindowTransition(void)
@@ -197,7 +197,7 @@ s32 XianInteriors_PrepareWindowTransition(void)
 
 	s16 scene;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	scene = gGameState.entrance;
 	if (scene == 4 || scene == 7)
 	{
@@ -249,7 +249,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance XianInteriors_SceneTable0[] = {
+struct SceneEntrance gXianInteriors_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0 },
 	{ 2, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0, 288, 8, 592, 224, 0 },
@@ -262,7 +262,7 @@ struct SceneEntrance XianInteriors_SceneTable0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 XianInteriors_SceneTable1[] = {
+u32 gXianInteriors_SceneTable1[] = {
 	SCENE_EXITS(73),
 	SCENE_EXIT(1, 72, 5),
 	SCENE_EXIT(2, 72, 6),
@@ -275,7 +275,7 @@ u32 XianInteriors_SceneTable1[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement XianInteriors_SceneTable2[] = {
+struct ScenePlacement gXianInteriors_SceneTable2[] = {
 	{ 0xa0, 0x0, ACTOR_STAND,
 		PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xa2, 0x0, ACTOR_STAND,
@@ -303,7 +303,7 @@ struct ScenePlacement XianInteriors_SceneTable2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement XianInteriors_SceneTable2Entrance8[] = {
+struct ScenePlacement gXianInteriors_SceneTable2Entrance8[] = {
 	{ 0x28, IF_FLAG_SET(0x895), ACTOR_STAND,
 		PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x27, IF_FLAG_SET(0x895), ACTOR_STAND,
@@ -313,7 +313,7 @@ struct ScenePlacement XianInteriors_SceneTable2Entrance8[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent XianInteriors_SceneTable3[] = {
+struct SceneEvent gXianInteriors_SceneTable3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -383,7 +383,7 @@ struct SceneEvent XianInteriors_SceneTable3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent XianInteriors_SceneTable3Entrance8[] = {
+struct SceneEvent gXianInteriors_SceneTable3Entrance8[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_TALK, 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
 	{ EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(EV09_TALK) },

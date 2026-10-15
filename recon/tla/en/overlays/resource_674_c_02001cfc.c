@@ -9,15 +9,15 @@
  * the pointers copied through an operand asm after it (52) were worse. */
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
-extern u8 Data_02004f04;
-extern s16 Data_02004f10[2][160];
+extern u8 gData_02004f04;
+extern s16 gData_02004f10[2][160];
 
 s32 Math_Sine(s32 angle);
 
 void Func_02001cfc(void)
 {
-    s16 *layer = (s16 *)&Ram_HeapSlots->map_work->layers[2];
-    s16 *lines = Data_02004f10[Data_02004f04 ^ 1];
+    s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
+    s16 *lines = gData_02004f10[gData_02004f04 ^ 1];
     s32 v[2];
     s32 *count = &v[1];
     s32 value;
@@ -33,5 +33,5 @@ void Func_02001cfc(void)
         value += *count % 3;
         *lines++ = value - 1;
     }
-    Data_02004f04 ^= 1;
+    gData_02004f04 ^= 1;
 }

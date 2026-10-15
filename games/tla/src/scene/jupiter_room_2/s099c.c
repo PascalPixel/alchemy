@@ -7,7 +7,7 @@
 #include "iowrite.h"
 #include "call.h"
 
-extern const u8 Data_02002b60[];
+extern const u8 gData_02002b60[];
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -16,8 +16,8 @@ void Func_020007d0(void);
 void Func_02000b28(s32 id);
 void Func_02001498(void);
 void Func_020015a0(s32 id, s32 value);
-void Func_0200220c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_02002214(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_0200227c(s32 id, s32 x, s32 z);
 void Func_02002304(s32 x, s32 z, s32 a2, s32 a3);
 void Func_02002314(s32 a);
@@ -30,15 +30,15 @@ s32 Func_02000aa4();
 // flags 0xa02, 0xa00 and 0xa03 and the entrance.
 s32 Func_02000854(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screen_effect = 0x204;
+    work->screenEffect = 0x204;
     ObjectMotion_SetActionVariant(13, 3);
     ObjectMotion_SetActionVariant(14, 3);
     Io_Write16(0x3f06, &REG_BLDCNT);
     Io_Write16(0x1000, &REG_BLDALPHA);
     Func_02002314(0);
-    Call4((void (*)())Func_02002324, (s32)Data_02002b60, 0, 0, 0x80000000);
+    Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
     Func_02000054();
     Func_020007d0();
     if (GameFlag_Test(0xa02)) {
@@ -52,7 +52,7 @@ s32 Func_02000854(void)
         Func_020015a0(17, 0);
     }
     if (gPartyState.entrance == 3 || gPartyState.entrance == 6 || gPartyState.entrance == 7)
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 64;
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
     if (GameFlag_Test(0xa00)) {
         Func_02000b28(8);
         Func_02000b28(9);

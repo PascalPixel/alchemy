@@ -6,9 +6,9 @@ void Func_02000060(void);
 void Func_020000b0(void);
 void Func_02000100(void);
 
-extern s32 Data_02000728[];
+extern s32 gData_02000728[];
 
-u32 Data_020005e4[] = {
+u32 gData_020005e4[] = {
 	4, 0x2d80000, 0, 0xa00000, 1, 4,
 	0x2600000, 0, 0x980000, 1, 4, 0x1e80000,
 	0, 0x980000, 1, 4, 0x1700000, 0,
@@ -25,7 +25,7 @@ u32 Data_020005e4[] = {
 	0x2280000, 1, 17,
 };
 
-s32 Data_02000728[] = {
+s32 gData_02000728[] = {
 	46,
 	(s32)Func_02000038,
 	39,
@@ -49,7 +49,7 @@ u32 gSceneExits[] = {
 };
 
 struct ScenePlacement gScenePlacements[] = {
-	{8, CONDITION_ALWAYS, (s32)Data_02000728, PIXELS(14), 0, PIXELS(4), FACING_NORTH, 2, 0},
+	{8, CONDITION_ALWAYS, (s32)gData_02000728, PIXELS(14), 0, PIXELS(4), FACING_NORTH, 2, 0},
 	{342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
 	{342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(112), FACING_EAST, 2, 1},
 	{342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(216), FACING_EAST, 2, 1},

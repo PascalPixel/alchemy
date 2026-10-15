@@ -14,7 +14,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct FieldActor *Object_GetById(s32 id);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_ResetAndSetPosition(u32 object_id, s32 x, s32 z);
+void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void WaitFrames(s32 frames);
 void Func_0200097c(void);
 void Func_02001010(void);
@@ -22,12 +22,12 @@ void Func_02001018(void);
 void Func_02001060(s32 id, s32 x, s32 z);
 void Func_020010b8(s32 id, s32 value);
 void Func_02001108(s32 value);
-void Func_02001120(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer);
+void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
 
-static inline void MapCopy(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer)
+static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each stack argument in its own register */
-    Func_02001120(src_x, src_y, width, height, dest_x, dest_y, layer);
+    Func_02001120(srcX, srcY, width, height, destX, destY, layer);
 }
 
 static inline void Place(s32 id, s32 x, s32 z)
@@ -49,13 +49,13 @@ void Func_020007ac(void)
 
     MapCopy(9, 23, 1, 1, 7, 23, 0);
     if (!GameFlag_Test(63)) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         Func_02001010();
         Func_02001108(0);
         moved = 0;
         if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
-            ObjectMotion_Launch(gPartyState.current_owner, 6, 0);
-            Place(gPartyState.current_owner, 104, 376);
+            ObjectMotion_Launch(gPartyState.currentOwner, 6, 0);
+            Place(gPartyState.currentOwner, 104, 376);
             moved = 1;
         }
         Func_02001060(14, 120 << 16, 376 << 16);
@@ -63,7 +63,7 @@ void Func_020007ac(void)
         ObjectMotion_Launch(14, 4, 10);
         GameFlag_SetBit(0x300);
         if (moved)
-            Func_020010b8(gPartyState.current_owner, 0);
+            Func_020010b8(gPartyState.currentOwner, 0);
         Func_02001018();
     }
 }

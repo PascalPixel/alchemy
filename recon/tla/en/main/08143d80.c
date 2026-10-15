@@ -31,17 +31,17 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value)
 
 void BattleFx_SetupCanvasTileMap(void)
 {
-    void *canvas = Ram_HeapSlots->battle_fx_work[1];
-    struct BattleWork *screen = Ram_HeapSlots->battle_work;
-    struct BattleBackgroundView *layer = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
+    void *canvas = Ram_HeapSlots->battleFxWork[1];
+    struct BattleWork *screen = Ram_HeapSlots->battleWork;
+    struct BattleBackgroundView *layer = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
     s32 row;
     s32 col;
     s32 off;
 
     Func_081434d8();
-    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)screen->unknown_670, 0);
+    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
     gBgScroll[1].y = 32;
-    layer->second_mode = 0;
+    layer->secondMode = 0;
     ClearWords_((void *)0x06003fc0, 64);
     FillWords_((void *)0x0600f900, 0x200, -1);
     off = 0;

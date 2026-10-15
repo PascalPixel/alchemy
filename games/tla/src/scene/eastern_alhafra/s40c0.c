@@ -4,7 +4,7 @@
 #include "mem.h"
 
 struct EasternAlhafraSparkWork {
-    u8 unknown_0000[0x1604];
+    u8 unk0000[0x1604];
     s16 resource;
 };
 
@@ -13,7 +13,7 @@ void Func_02003ec4(void);
 
 void Func_020040c0(void)
 {
-    struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
     Scheduler_RemoveCallbackFar(Func_02003ec4);
     Resource_ResetEntry(work->resource);

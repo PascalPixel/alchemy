@@ -11,5 +11,5 @@ s32 Func_080201d0(s32 layer, s32 x, s32 z);
 
 u8 Func_080dbd48(s32 x, s32 z, s32 layer)
 {
-    return Func_080dbb78(x, z, layer)->attribute_b & 0x40;
+    return Func_080dbb78(x, z, layer)->attributeB & 0x40;
 }

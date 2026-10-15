@@ -7,15 +7,15 @@
 
 struct MapCell
 {
-	u16 metatile_and_flags;
-	u8	collision_code;
-	u8	attribute_b;
+	u16 metatileAndFlags;
+	u8	collisionCode;
+	u8	attributeB;
 };
 
 struct MapLayer
 {
 	struct MapCell *cells;
-	u8				unknown04[0x2c];
+	u8				unk04[0x2c];
 };
 
 struct BlendScriptState
@@ -36,21 +36,21 @@ struct MapAnimation
 
 struct MapState
 {
-	u8						unknown000[0x14];
+	u8						unk000[0x14];
 	u16						flags;
-	u8						wide_tiles;
-	u8						unknown_17;
+	u8						wideTiles;
+	u8						unk17;
 	struct MapAnimation		anim[16];
 	struct BlendScriptState blend;
-	u8						unknown_e4[0x1f];
-	u8						blend_control;
-	u8						unknown_104[0x2c];
+	u8						unke4[0x1f];
+	u8						blendControl;
+	u8						unk104[0x2c];
 	struct MapLayer			layers[4];
 };
 
 LAYOUT_SIZE_GUARD(MapAnimation_Size, struct MapAnimation, 12);
 LAYOUT_OFFSET_GUARD(MapState_Flags, struct MapState, flags, 0x14);
-LAYOUT_OFFSET_GUARD(MapState_WideTiles, struct MapState, wide_tiles, 0x16);
+LAYOUT_OFFSET_GUARD(MapState_WideTiles, struct MapState, wideTiles, 0x16);
 LAYOUT_OFFSET_GUARD(MapState_Animation, struct MapState, anim, 0x18);
 LAYOUT_OFFSET_GUARD(MapState_Blend, struct MapState, blend, 0xd8);
 LAYOUT_OFFSET_GUARD(MapState_Cells, struct MapState, layers, 0x130);

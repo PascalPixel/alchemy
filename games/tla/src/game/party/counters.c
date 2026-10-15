@@ -19,13 +19,13 @@ s32 Party_AdjustSixDigitCounterB(s32 amount)
 {
     s32 value;
 
-    value = gPartyState.counter_b;
+    value = gPartyState.counterB;
     value += amount;
     if (value > 0xf423f)
         value = 0xf423f;
     if (value < 0)
         value = 0;
-    gPartyState.counter_b = value;
+    gPartyState.counterB = value;
     return value;
 }
 
@@ -33,12 +33,12 @@ s32 Party_AdjustCounterCappedAt28(s32 amount)
 {
     s32 value;
 
-    value = gPartyState.counter_c;
+    value = gPartyState.counterC;
     value += amount;
     if (value > 28)
         value = 28;
     if (value < 0)
         value = 0;
-    gPartyState.counter_c = value;
+    gPartyState.counterC = value;
     return value;
 }

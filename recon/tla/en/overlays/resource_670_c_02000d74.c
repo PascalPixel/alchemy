@@ -1,4 +1,4 @@
-// near miss: differ 20 (listing 470 instructions, draft 470); the wait loop: the native loads Data_02007950's address inside the loop; loop.c hoists it in the draft
+// near miss: differ 20 (listing 470 instructions, draft 470); the wait loop: the native loads gData_02007950's address inside the loop; loop.c hoists it in the draft
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 void Func_02005c7c(void);
@@ -15,7 +15,7 @@ void Func_02000d74(void)
     Func_02005c9c(0);
     Func_02005b64(17, 0);
     Kibombo_ObjArm(7, 0, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0, 0);
     Kibombo_ObjArm(26, 0, 0);
     Kibombo_ObjArm(5, 0, 0);
     Kibombo_ObjArm(6, 0, 10);
@@ -28,7 +28,7 @@ void Func_02000d74(void)
     Func_02005b64(0x4011, 0);
     Func_02005c9c(26);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
-    Object_GetById(27)->motion_flags = 0;
+    Object_GetById(27)->motionFlags = 0;
     Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 0x1580000);
     Func_02005ba4(0x6666, 0xccc);
     Kibombo_CamMove(0x1080000, -1, 0x1540000, 1);
@@ -59,10 +59,10 @@ void Func_02000d74(void)
     WaitFrames(1);
     Func_02005b0c(27, 0, 0);
     Kibombo_ObjArm(17, 0xd000, 0);
-    if (Data_02007950 != 0) {
-        while (Data_02007950->y > 0x240000) {
+    if (gData_02007950 != 0) {
+        while (gData_02007950->y > 0x240000) {
             Kibombo_ObjArm(17, 0xd000, 0);
-            Data_02007950->y += 0xffffc000;
+            gData_02007950->y += 0xffffc000;
             Kibombo_WaitFrames(1);
         }
     }
@@ -101,7 +101,7 @@ void Func_02000d74(void)
     Func_02005b64(0x2007, 0);
     Kibombo_ObjArm(5, 0x2000, 0);
     Func_02005b64(5, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0xe000, 40);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0xe000, 40);
     Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
     ObjectMotion_ResetAndSetPositionInMode2(26, 104, 0x170);
     Battle_WaitMode0(20);
@@ -112,16 +112,16 @@ void Func_02000d74(void)
     Kibombo_ObjArm(26, 0xd000, 40);
     Func_02005b94(26, 0x100, 20);
     Func_02005b64(26, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0xc000, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0xc000, 0);
     Kibombo_ObjArm(5, 0xc000, 0);
     Kibombo_ObjArm(6, 0xc000, 0);
     Kibombo_ObjArm(26, 0x5000, 20);
     Kibombo_MessageOpen(0x601a, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Kibombo_MessagePut(0x601a, 0);
-        ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+        ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     } else {
-        ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+        ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
         Kibombo_MessagePut(0x601a, 0);
         Func_02005c7c();
     }

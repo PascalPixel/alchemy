@@ -20,71 +20,71 @@ struct UiRenderWork
 	struct UiWindow			windows[WINDOW_COUNT];
 	struct UiChannelSlot	channels[3];
 	struct RenderOutput		outputs[UI_OUTPUT_COUNT];
-	struct RenderOutputList free_outputs;
-	u8						tile_attributes[256];
-	u16						tile_cursor;
+	struct RenderOutputList freeOutputs;
+	u8						tileAttributes[256];
+	u16						tileCursor;
 	u8						alt;
 	u8						dirty;
 	u8						mode;
-	u8						menu_state;
-	u8						menu_busy;
+	u8						menuState;
+	u8						menuBusy;
 	u8						level;
-	u16						line_spacing;
-	u16						unknown_after_line_spacing;
+	u16						lineSpacing;
+	u16						unknownAfterLineSpacing;
 	u16						outline;
 	u16						colour;
 	u16						entries[RENDER_ENTRY_MASK + 1];
-	u16						unknown_before_count;
+	u16						unknownBeforeCount;
 	u16						count;
-	u16						message_start;
-	u16						glyph_resource;
-	u16						glyph_tiles;
-	u8						unknown_before_values[RENDER_VALUE_TABLE_OFFSET - RENDER_COUNTER_OFFSET - 4];
+	u16						messageStart;
+	u16						glyphResource;
+	u16						glyphTiles;
+	u8						unknownBeforeValues[RENDER_VALUE_TABLE_OFFSET - RENDER_COUNTER_OFFSET - 4];
 	u32						values[8];
 	u16						names[8];
-	u16						resource_ids[2];
-	u16						output_ids[2];
+	u16						resourceIds[2];
+	u16						outputIds[2];
 	u16						result[2];
-	u8						page_arrow_shown;
+	u8						pageArrowShown;
 	u8						busy;
-	u8						spacing_before;
-	u8						spacing_after;
+	u8						spacingBefore;
+	u8						spacingAfter;
 };
 
 LAYOUT_OFFSET_GUARD(UiRenderWork_Windows, struct UiRenderWork, windows, 0x500);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Channels, struct UiRenderWork, channels, RENDER_CHANNEL_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs, RENDER_OUTPUT_TABLE_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_FreeHead, struct UiRenderWork, free_outputs.head, RENDER_FREE_HEAD_OFFSET);
+	UiRenderWork_FreeHead, struct UiRenderWork, freeOutputs.head, RENDER_FREE_HEAD_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_FreeTail, struct UiRenderWork, free_outputs.tail_link, RENDER_FREE_TAIL_OFFSET);
+	UiRenderWork_FreeTail, struct UiRenderWork, freeOutputs.tailLink, RENDER_FREE_TAIL_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_TileAttributes, struct UiRenderWork, tile_attributes, RENDER_TILE_ATTR_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_TileCursor, struct UiRenderWork, tile_cursor, RENDER_ALT_OFFSET - 2);
+	UiRenderWork_TileAttributes, struct UiRenderWork, tileAttributes, RENDER_TILE_ATTR_OFFSET);
+LAYOUT_OFFSET_GUARD(UiRenderWork_TileCursor, struct UiRenderWork, tileCursor, RENDER_ALT_OFFSET - 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Alt, struct UiRenderWork, alt, RENDER_ALT_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Dirty, struct UiRenderWork, dirty, RENDER_DIRTY_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, line_spacing, RENDER_WORD2_OFFSET);
+LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, lineSpacing, RENDER_WORD2_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Outline, struct UiRenderWork, outline, RENDER_WORD_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour, RENDER_PARAM_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, RENDER_ENTRY_TABLE_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_MessageStart, struct UiRenderWork, message_start, RENDER_ENTRY_COUNT_OFFSET + 2);
+	UiRenderWork_MessageStart, struct UiRenderWork, messageStart, RENDER_ENTRY_COUNT_OFFSET + 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, RENDER_ENTRY_COUNT_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_GlyphResource, struct UiRenderWork, glyph_resource, RENDER_COUNTER_OFFSET);
+	UiRenderWork_GlyphResource, struct UiRenderWork, glyphResource, RENDER_COUNTER_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_GlyphTiles, struct UiRenderWork, glyph_tiles, RENDER_COUNTER_OFFSET + 2);
+	UiRenderWork_GlyphTiles, struct UiRenderWork, glyphTiles, RENDER_COUNTER_OFFSET + 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, RENDER_VALUE_TABLE_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, RENDER_NAME_TABLE_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_ResourceIds, struct UiRenderWork, resource_ids, RENDER_SLOT_ID_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_OutputIds, struct UiRenderWork, output_ids, RENDER_SLOT_VALUE_OFFSET);
+	UiRenderWork_ResourceIds, struct UiRenderWork, resourceIds, RENDER_SLOT_ID_OFFSET);
+LAYOUT_OFFSET_GUARD(UiRenderWork_OutputIds, struct UiRenderWork, outputIds, RENDER_SLOT_VALUE_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Result, struct UiRenderWork, result, RENDER_RESULT_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy, RENDER_BUSY_OFFSET);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_SpacingBefore, struct UiRenderWork, spacing_before, RENDER_BUSY_OFFSET + 1);
+	UiRenderWork_SpacingBefore, struct UiRenderWork, spacingBefore, RENDER_BUSY_OFFSET + 1);
 LAYOUT_OFFSET_GUARD(
-	UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFFSET + 2);
+	UiRenderWork_SpacingAfter, struct UiRenderWork, spacingAfter, RENDER_BUSY_OFFSET + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
 
 extern u8 *gWindowWork[];

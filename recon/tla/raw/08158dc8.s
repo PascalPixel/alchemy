@@ -665,7 +665,7 @@ Func_08158dc8:
 .L_081592e4:
 	.4byte IwramMulQ16
 .L_081592e8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081592ec:
 	movs r1, #19
 	movs r0, #188
@@ -1031,7 +1031,7 @@ Func_08158dc8:
 .L_081595c8:
 	.4byte 0x00001010
 .L_081595cc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081595d0:
 	.4byte gInput
 .L_081595d4:
@@ -1887,17 +1887,17 @@ Func_08158dc8:
 .L_08159c88:
 	.4byte 0x007effff
 .L_08159c8c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08159c90:
 	.4byte 0xffffc000
 .L_08159c94:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08159c98:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08159c9c:
 	.4byte Data_08198562
 .L_08159ca0:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_08159ca4:
 	.4byte gMapCellBuffer
 .L_08159ca8:

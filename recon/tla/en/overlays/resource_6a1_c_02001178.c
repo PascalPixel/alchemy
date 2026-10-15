@@ -2,7 +2,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern const u16 Data_020022d0[];
+extern const u16 gData_020022d0[];
 
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
@@ -24,7 +24,7 @@ void Func_02001178(struct ObjectRuntime *object)
     if (other) {
         i = 0;
         do {
-            if (((*((struct BattleAnimationState *)other->animation)->value_28 == Data_020022d0[i])))
+            if (((*((struct BattleAnimationState *)other->animation)->value28 == gData_020022d0[i])))
                 return;
             i++;
         } while (i <= 5);

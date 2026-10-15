@@ -19,13 +19,13 @@ void Func_020005e8(void)
     struct ObjectRuntime *owner;
 
     ObjectMotion_Launch(8, 4, 0);
-    owner = Object_GetById(gPartyState.current_owner);
+    owner = Object_GetById(gPartyState.currentOwner);
     if (owner != NULL)
         ObjectMotion_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10), *(s16 *)((u8 *)owner + 18));
     Battle_WaitMode0(20);
     Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
     Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
-    gPartyState.battle_rule_24b = 2;
+    gPartyState.battleRule24b = 2;
     Func_02000a40(9, 3);
     Func_02000990();
 }

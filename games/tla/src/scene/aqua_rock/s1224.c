@@ -51,8 +51,8 @@ void Func_02001224(s32 unused, s32 id)
     Func_02002a10();
     Func_020029d8(15, 0x1080000, 0x3180000);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(15), 0);
-    Object_GetById(15)->collision_flags = 0;
-    Object_GetById(15)->priority_flags |= 2;
+    Object_GetById(15)->collisionFlags = 0;
+    Object_GetById(15)->priorityFlags |= 2;
     Object_GetById(15)->update = (void (*)(void))Func_02001d98;
     Battle_WaitMode0(30);
     for (i = 5; i >= 0; i--) {

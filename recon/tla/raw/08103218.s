@@ -504,9 +504,9 @@ Func_08103218:
 .L_0810362c:
 	.4byte IwramCopyWords
 .L_08103630:
-	.4byte DjinnMenu_TextSlash
+	.4byte gDjinnMenu_TextSlash
 .L_08103634:
-	.4byte DjinnMenu_TextLevel
+	.4byte gDjinnMenu_TextLevel
 .L_08103638:
 	.4byte 0x00000d0e
 .L_0810363c:

@@ -17,26 +17,26 @@ const u32 *Scene_GetExits(void)
 
 #include "scene_ids.h"
 
-extern const u8 Data_02003618[];
-extern const u8 Data_02003648[];
-extern const u8 Data_02003660[];
-extern const u8 Data_02003690[];
-extern const u8 Data_02003708[];
-extern const u8 Data_020037c8[];
+extern const u8 gData_02003618[];
+extern const u8 gData_02003648[];
+extern const u8 gData_02003660[];
+extern const u8 gData_02003690[];
+extern const u8 gData_02003708[];
+extern const u8 gData_020037c8[];
 
 const struct SceneEvent *Func_020004c8(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom2)
-        return (const struct SceneEvent *)Data_02003618;
+        return (const struct SceneEvent *)gData_02003618;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom3)
-        return (const struct SceneEvent *)Data_02003648;
+        return (const struct SceneEvent *)gData_02003648;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom4)
-        return (const struct SceneEvent *)Data_02003660;
+        return (const struct SceneEvent *)gData_02003660;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom5)
-        return (const struct SceneEvent *)Data_02003690;
+        return (const struct SceneEvent *)gData_02003690;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom6)
-        return (const struct SceneEvent *)Data_02003708;
+        return (const struct SceneEvent *)gData_02003708;
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom7)
-        return (const struct SceneEvent *)Data_020037c8;
-    return (const struct SceneEvent *)Data_02003618;
+        return (const struct SceneEvent *)gData_020037c8;
+    return (const struct SceneEvent *)gData_02003618;
 }

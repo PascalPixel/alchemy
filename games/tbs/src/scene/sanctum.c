@@ -53,9 +53,9 @@ static void SceneState_ApplyTwoRects(void);
 
 struct ShrineWork
 {
-	u8	unknown_0000[0xe5a];
+	u8	unk0000[0xe5a];
 	u16 colors[3];
-	u8	unknown_0e60[0x2a00 - 0xe60];
+	u8	unk0e60[0x2a00 - 0xe60];
 	u8	lamps[4];
 };
 
@@ -63,15 +63,15 @@ static s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
 	struct FacingObject *target;
 
-	target = Object_GetById(object->unknown_64);
+	target = Object_GetById(object->unk64);
 	object->facing = CalculateFacingAngle(
-		target->position_z - object->position_z, target->position_x - object->position_x);
+		target->positionZ - object->positionZ, target->positionX - object->positionX);
 	return 0;
 }
 
 void *Sanctum_GetEntrances(void)
 {
-	return &Sanctum_TableA;
+	return &gSanctum_TableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -81,7 +81,7 @@ s32 SceneData_ReturnZero(void)
 
 void *Sanctum_GetExits(void)
 {
-	return &Sanctum_TableB;
+	return &gSanctum_TableB;
 }
 
 void *SceneData_SelectPlacementTableBySubstate(void)
@@ -90,24 +90,24 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 	{
 	case 1:
 	case 2:
-		return Sanctum_PlacementB;
+		return gSanctum_PlacementB;
 
 	case 10:
 	case 11:
 	case 12:
 	case 35:
-		return Sanctum_PlacementC;
+		return gSanctum_PlacementC;
 
 	case 20:
 	case 21:
-		return Sanctum_PlacementD;
+		return gSanctum_PlacementD;
 
 	case 29:
 	case 32:
-		return Sanctum_PlacementE;
+		return gSanctum_PlacementE;
 
 	default:
-		return Sanctum_PlacementA;
+		return gSanctum_PlacementA;
 	}
 }
 
@@ -117,32 +117,32 @@ u8 *SceneData_SelectTableBySceneIdAndFlags(void)
 	{
 	case 10:
 	case 12:
-		return Sanctum_SceneTableB;
+		return gSanctum_SceneTableB;
 	case 11:
-		return Sanctum_SceneTableC;
+		return gSanctum_SceneTableC;
 	case 20:
 	case 21:
 	case 50:
-		return Sanctum_SceneTableD;
+		return gSanctum_SceneTableD;
 	case 32:
-		return Sanctum_SceneTableI;
+		return gSanctum_SceneTableI;
 	case 29:
-		return Sanctum_SceneTableG;
+		return gSanctum_SceneTableG;
 	case 35:
-		return Sanctum_SceneTableH;
+		return gSanctum_SceneTableH;
 	default:
 		break;
 	}
 
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return Sanctum_SceneTableF;
+		return gSanctum_SceneTableF;
 	}
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		return Sanctum_SceneTableE;
+		return gSanctum_SceneTableE;
 	}
-	return Sanctum_SceneTableA;
+	return gSanctum_SceneTableA;
 }
 
 static void FieldScene_RunActorNineFlagDialogueA(void)
@@ -223,10 +223,10 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 					Actor_SetSpeed(8, 0x8000, 0x4000);
 					Engine_ActorFaceDirection(8, 0, 0);
 					Engine_EventWait(10);
-					Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+					Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 					Engine_ActorWalkToAndWait(8, 152, 120);
 					Engine_EventWait(1);
-					Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
+					Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
 					Engine_EventWait(20);
 					Engine_ActorSetAnimationAndWait(8, 3);
 					Engine_EventWait(20);
@@ -262,7 +262,7 @@ static void FieldScene_RunScene378SequenceB(void)
 {
 	Engine_EventBegin();
 #if EDITION_INTERNATIONAL
-	Event_CallWithLastActiveObjectId((s32)Sanctum_PlacementSequenceB);
+	Event_CallWithLastActiveObjectId((s32)gSanctum_PlacementSequenceB);
 	Engine_TaskWait(1);
 #endif
 	Engine_EventSetMessage(MsgSanctumIsaacYourNewFriendsAdepts);
@@ -304,7 +304,7 @@ static void EV10_TALK(void)
 
 s32 Sanctum_ApplyEntryState(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_ColorBufferApplyTarget(0x10000, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_EventWait(1);
@@ -404,7 +404,7 @@ static void EV01_TOUCH(void)
 static s32 Sanctum_MatchLeaderPriority(struct FieldActor *actor)
 {
 	actor->sprite->priority = Object_GetById(0)->sprite->priority;
-	actor->sprite->second_priority = Object_GetById(0)->sprite->priority;
+	actor->sprite->secondPriority = Object_GetById(0)->sprite->priority;
 	return 0;
 }
 
@@ -423,8 +423,8 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_FaceActor(0xa, ACTOR_PARTY_LEADER, 0);
 		Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
 		Engine_CameraWaitForMove();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		gEventWork->transition_frames = 0x40;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->transitionFrames = 0x40;
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(0x78);
@@ -436,7 +436,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(1);
 		Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
 		Engine_CameraWaitForMove();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		FieldScene_RunPairedActorChoreography();
@@ -930,7 +930,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0x14);
-		Object_GetById(0xa)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(0xa)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		Object_GetById(0xa)->update =
 			(void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
 	}
@@ -1046,9 +1046,9 @@ static void FieldScene_RunActorUpdateSequence(void)
 		Sanctum_SpawnActorSpark(13);
 		Engine_EventWait(4);
 		record = Object_GetById(13);
-		record->scale_x += -0x28f;
+		record->scaleX += -0x28f;
 		record = Object_GetById(13);
-		record->scale_y += -0x28f;
+		record->scaleY += -0x28f;
 	}
 	Event_PlayCue(0x120);
 	Actor_SetChildValue(13, 0);
@@ -1382,7 +1382,7 @@ static void Sanctum_CopyActorPose(void)
 		}
 	}
 	p5->dirty = 1;
-	Object_GetById(14)->priority_flags &= 254;
+	Object_GetById(14)->priorityFlags &= 254;
 	((struct FieldSprite *)p5)->priority = 2;
 }
 
@@ -1398,29 +1398,29 @@ static void Sanctum_FollowLeaderOffset(struct FieldActor *actor)
 	struct FieldActor *leader;
 
 	leader = Object_GetById(8);
-	actor->target_x = actor->x.fixed = leader->x.fixed;
-	actor->target_y = actor->y.fixed = leader->y.fixed;
-	actor->target_z = actor->z.fixed = leader->z.fixed - 0x20000;
+	actor->targetX = actor->x.fixed = leader->x.fixed;
+	actor->targetY = actor->y.fixed = leader->y.fixed;
+	actor->targetZ = actor->z.fixed = leader->z.fixed - 0x20000;
 	switch (gFrameCount & 3)
 	{
 	case 0:
-		actor->target_x = actor->x.fixed = leader->x.fixed - 0x38000;
+		actor->targetX = actor->x.fixed = leader->x.fixed - 0x38000;
 		break;
 	case 1:
-		actor->target_x = actor->x.fixed = leader->x.fixed + 0x30000;
+		actor->targetX = actor->x.fixed = leader->x.fixed + 0x30000;
 		break;
 	case 2:
-		actor->target_y = actor->y.fixed = leader->y.fixed + 0x20000;
+		actor->targetY = actor->y.fixed = leader->y.fixed + 0x20000;
 		break;
 	case 3:
-		actor->target_z = actor->z.fixed = leader->z.fixed;
+		actor->targetZ = actor->z.fixed = leader->z.fixed;
 		break;
 	}
 }
 
 static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 {
-	struct FieldActor *anchor = obj->linked_object;
+	struct FieldActor *anchor = obj->linkedObject;
 	u16				  *angle = &obj->timer;
 	u16				   theta = *angle;
 	s32				   x;
@@ -1433,8 +1433,8 @@ static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 	z = anchor->z.fixed + Engine_MathSin(theta) * 10;
 	tmp = obj->x.fixed;
 	obj->z.fixed = z;
-	obj->target_z = z;
-	obj->target_x = tmp;
+	obj->targetZ = z;
+	obj->targetX = tmp;
 
 	*angle = (*angle + obj->work);
 }
@@ -1454,11 +1454,11 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1)
 		if (rec8 != 0)
 		{
 			p5 = rec8->sprite;
-			Engine_ObjectSetScript(rec8, Sanctum_OwnerEffectScript);
+			Engine_ObjectSetScript(rec8, gSanctum_OwnerEffectScript);
 			{
 				s32 zero = 0;
 
-				rec8->motion_flags = zero;
+				rec8->motionFlags = zero;
 				rec8->timer = zero;
 			}
 			rec8->work = p8;
@@ -1467,7 +1467,7 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1)
 				u16 v = 0;
 				p5->flags = v;
 			}
-			rec8->linked_object = rec;
+			rec8->linkedObject = rec;
 			p5->priority = rec->sprite->priority;
 		}
 	}
@@ -1523,7 +1523,7 @@ static s32 Sanctum_ChooseRestartOption(void)
 		{
 			choice ^= 1;
 		}
-		x = Sanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
+		x = gSanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
 		FieldUiTextResource_SetPosition(&cursor, x, (choice << 4) + 60);
 		Engine_EventWait(1);
 	}
@@ -1547,16 +1547,16 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_ActorStartRepeatedMotion(0, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkToAndWait(1, 200, 168);
 	Engine_EventWait(1);
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(GARET, 8, 0);
@@ -1706,8 +1706,8 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(0, Sanctum_LeaderCircleScript);
-	Engine_ActorEnableActionCallback(1, Sanctum_GaretCircleScript);
+	Engine_ActorEnableActionCallback(0, gSanctum_LeaderCircleScript);
+	Engine_ActorEnableActionCallback(1, gSanctum_GaretCircleScript);
 	Object_RefreshSelectorById(0);
 	Object_RefreshSelectorById(1);
 	Actor_SetSpeed(0, 0x18000, 0xc000);
@@ -1760,7 +1760,7 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(60);
 }
 
-static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
@@ -1768,29 +1768,29 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_
 	u32					i;
 	u8					zero;
 
-	obj = Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
+	obj = Engine_ObjectCreate(22, fixedX, fixedY, fixedZ);
 	zero = 0;
 	if (obj != 0)
 	{
-		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconGrowScript);
+		Engine_ObjectSetScript((s32)obj, (s32)gSanctum_ItemIconGrowScript);
 		spr = obj->sprite;
 		spr->flags = zero;
-		spr->part_count = zero;
-		spr->full_color = 0;
+		spr->partCount = zero;
+		spr->fullColor = 0;
 		spr->palette = 0;
-		obj->velocity_y = 0x20000;
+		obj->velocityY = 0x20000;
 		obj->gravity = 0x4000;
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
 		Ui_PrepareTransferForItem(item);
-		Engine_VramLoad(spr->vram_block, 128, buf + 0x400);
+		Engine_VramLoad(spr->vramBlock, 128, buf + 0x400);
 		Runtime_ReleaseHeapBlock(17);
 		for (i = 0; i < 60; i++)
 		{
-			if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-				obj->motion_flags = 0;
+			if ((u32)(obj->velocityY + 255) <= 0x1fe)
+				obj->motionFlags = 0;
 			Engine_TaskWait(1);
 		}
-		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconEndScript);
+		Engine_ObjectSetScript((s32)obj, (s32)gSanctum_ItemIconEndScript);
 	}
 }
 
@@ -1801,7 +1801,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object)
 	s32				   timer;
 
 	spark->y.fixed += spark->timer << 12;
-	spark->target_y = spark->y.fixed;
+	spark->targetY = spark->y.fixed;
 	scale = 0;
 	switch (((s16)spark->work >> 2) & 3)
 	{
@@ -1816,12 +1816,12 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object)
 		scale = 0x9999;
 		break;
 	}
-	spark->scale_x = scale;
-	spark->scale_y = scale;
+	spark->scaleX = scale;
+	spark->scaleY = scale;
 	timer = spark->work - 1;
 	spark->work = timer;
 	if ((s16)timer <= 0)
-		Engine_ObjectSetScript(spark, Sanctum_SparkEndScript);
+		Engine_ObjectSetScript(spark, gSanctum_SparkEndScript);
 }
 
 static void Sanctum_SpawnActorSpark(s32 id)
@@ -1844,7 +1844,7 @@ static void Sanctum_SpawnActorSpark(s32 id)
 	if (obj == 0)
 		return;
 	spr = obj->sprite;
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 	obj->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
 	obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
 	obj->update = Sanctum_UpdateRisingSpark;
@@ -1984,7 +1984,7 @@ static void SceneDialogue_RunActorEightDialogue(void)
 	Engine_EventEnd();
 }
 
-u32 Sanctum_LeaderCircleScript[] = {
+u32 gSanctum_LeaderCircleScript[] = {
 	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
 	0x80010000, 3, 0xcc0000, 0, 0xbc0000, 1, 3, 0xd80000,
 	0, 0xc00000, 1, 3, 0xec0000, 0, 0xbc0000, 1,
@@ -1994,7 +1994,7 @@ u32 Sanctum_LeaderCircleScript[] = {
 	1, 12, 4, 0x80010000, 28, 1, 16,
 };
 
-u32 Sanctum_GaretCircleScript[] = {
+u32 gSanctum_GaretCircleScript[] = {
 	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
 	0x80010000, 3, 0xcc0000, 0, 0x9c0000, 1, 3, 0xb80000,
 	0, 0x900000, 1, 3, 0xac0000, 0, 0x9c0000, 1,
@@ -2004,7 +2004,7 @@ u32 Sanctum_GaretCircleScript[] = {
 	1, 12, 4, 0x80010000, 28, 1, 16,
 };
 
-s32 Sanctum_ItemIconGrowScript[] = {
+s32 gSanctum_ItemIconGrowScript[] = {
 	SC_SET(SW_SCALE_X, 0x8000),
 	SC_SET(SW_SCALE_Y, 0x8000),
 	SC_WAIT(2),
@@ -2047,12 +2047,12 @@ s32 Sanctum_ItemIconGrowScript[] = {
 	SC_END,
 };
 
-s32 Sanctum_ItemIconEndScript[] = {
+s32 gSanctum_ItemIconEndScript[] = {
 	SC_WAIT(60),
 	SC_FREE,
 };
 
-struct SceneEntrance Sanctum_TableA[] = {
+struct SceneEntrance gSanctum_TableA[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
 	{ 2, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
@@ -2067,7 +2067,7 @@ struct SceneEntrance Sanctum_TableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Sanctum_TableB[] = {
+u32 gSanctum_TableB[] = {
 	SCENE_EXITS(9),
 	SCENE_EXIT(1, 4, 1),
 	SCENE_EXIT(10, 20, 11),
@@ -2081,11 +2081,11 @@ u32 Sanctum_TableB[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Sanctum_PlacementA[] = {
+struct ScenePlacement gSanctum_PlacementA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Sanctum_PlacementB[] = {
+struct ScenePlacement gSanctum_PlacementB[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2100,14 +2100,14 @@ struct ScenePlacement Sanctum_PlacementB[] = {
 };
 
 #if EDITION_INTERNATIONAL
-struct ScenePlacement Sanctum_PlacementSequenceB[] = {
+struct ScenePlacement gSanctum_PlacementSequenceB[] = {
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 #endif
 
-struct ScenePlacement Sanctum_PlacementC[] = {
+struct ScenePlacement gSanctum_PlacementC[] = {
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x7a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -2117,7 +2117,7 @@ struct ScenePlacement Sanctum_PlacementC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Sanctum_PlacementD[] = {
+struct ScenePlacement gSanctum_PlacementD[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2137,13 +2137,13 @@ struct ScenePlacement Sanctum_PlacementD[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Sanctum_PlacementE[] = {
+struct ScenePlacement gSanctum_PlacementE[] = {
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Sanctum_SceneTableA[] = {
+struct SceneEvent gSanctum_SceneTableA[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
@@ -2151,7 +2151,7 @@ struct SceneEvent Sanctum_SceneTableA[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableB[] = {
+struct SceneEvent gSanctum_SceneTableB[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
 	{ EVENT_TALK, 9, 0x855, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
@@ -2161,7 +2161,7 @@ struct SceneEvent Sanctum_SceneTableB[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableC[] = {
+struct SceneEvent gSanctum_SceneTableC[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
@@ -2170,7 +2170,7 @@ struct SceneEvent Sanctum_SceneTableC[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableD[] = {
+struct SceneEvent gSanctum_SceneTableD[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
 	{ EVENT_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
@@ -2182,7 +2182,7 @@ struct SceneEvent Sanctum_SceneTableD[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableE[] = {
+struct SceneEvent gSanctum_SceneTableE[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
@@ -2193,7 +2193,7 @@ struct SceneEvent Sanctum_SceneTableE[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableF[] = {
+struct SceneEvent gSanctum_SceneTableF[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene378SequenceB) },
@@ -2204,7 +2204,7 @@ struct SceneEvent Sanctum_SceneTableF[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableG[] = {
+struct SceneEvent gSanctum_SceneTableG[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 40 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
@@ -2213,7 +2213,7 @@ struct SceneEvent Sanctum_SceneTableG[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableH[] = {
+struct SceneEvent gSanctum_SceneTableH[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFlaggedDialogue) },
 	{ EVENT_TALK, 9, 0x845, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgSanctumWillITurnIntoATree) },
@@ -2225,14 +2225,14 @@ struct SceneEvent Sanctum_SceneTableH[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Sanctum_SceneTableI[] = {
+struct SceneEvent gSanctum_SceneTableI[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 42 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightDialogue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 Sanctum_CursorBob[] = {
+s32 gSanctum_CursorBob[] = {
 	SC_WAIT(0),
 	SC_WAIT(1),
 	SC_SYNC,
@@ -2243,7 +2243,7 @@ s32 Sanctum_CursorBob[] = {
 	SC_SYNC,
 };
 
-s32 Sanctum_OwnerEffectScript[] = {
+s32 gSanctum_OwnerEffectScript[] = {
 	SC_ADD(SW_Y, -0x8000),
 	SC_ADD(SW_TARGET_Y, -0x8000),
 	SC_WAIT(1),
@@ -2251,6 +2251,6 @@ s32 Sanctum_OwnerEffectScript[] = {
 	SC_FREE,
 };
 
-s32 Sanctum_SparkEndScript[] = {
+s32 gSanctum_SparkEndScript[] = {
 	SC_FREE,
 };

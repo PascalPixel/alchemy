@@ -13,12 +13,12 @@
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y, s32 z)
 {
 	obj->z = z;
-	obj->target_x = 0x80000000; // 移動先なし
-	obj->target_y = 0x80000000;
-	obj->target_z = 0x80000000;
+	obj->targetX = 0x80000000; // 移動先なし
+	obj->targetY = 0x80000000;
+	obj->targetZ = 0x80000000;
 	obj->x = x;
 	obj->y = y;
-	obj->velocity_x = 0;
-	obj->velocity_y = 0;
-	obj->velocity_z = 0;
+	obj->velocityX = 0;
+	obj->velocityY = 0;
+	obj->velocityZ = 0;
 }

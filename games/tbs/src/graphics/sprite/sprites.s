@@ -1,7 +1,7 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-	.global Character_DescriptorTable
-Character_DescriptorTable:
+	.global gCharacter_DescriptorTable
+gCharacter_DescriptorTable:
 	.ifeq EDITION_INTERNATIONAL
 	.include "games/tbs/src/graphics/sprite/spriteja.spriteblocks"
 	.else

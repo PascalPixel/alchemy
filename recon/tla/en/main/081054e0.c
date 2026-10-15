@@ -6,7 +6,7 @@
 #include "types.h"
 
 struct MenuPanel {
-    u8 unknown_00[12];
+    u8 unk00[12];
     s16 x;
     s16 y;
 };

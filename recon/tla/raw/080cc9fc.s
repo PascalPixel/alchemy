@@ -33,7 +33,7 @@ Func_080cc9fc:
 	mov r11, r2
 	b .L_080cca48
 .L_080cca34:
-	.4byte Debug_PaletteSwatchTiles
+	.4byte gDebug_PaletteSwatchTiles
 .L_080cca38:
 	.4byte 0x06001a00
 .L_080cca3c:

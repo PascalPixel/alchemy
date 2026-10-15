@@ -116,19 +116,19 @@ Func_0802c9c8:
 .L_0802cacc:
 	.4byte gMapCellBuffer
 .L_0802cad0:
-	.4byte Data_02038000
+	.4byte gData_02038000
 .L_0802cad4:
-	.4byte Data_0203a000
+	.4byte gData_0203a000
 .L_0802cad8:
-	.4byte Data_0203c000
+	.4byte gData_0203c000
 .L_0802cadc:
-	.4byte Data_0203e000
+	.4byte gData_0203e000
 .L_0802cae0:
-	.4byte Data_02028000
+	.4byte gData_02028000
 .L_0802cae4:
 	.4byte gWorldMapWork
 .L_0802cae8:
-	.4byte Data_030011f8
+	.4byte gData_030011f8
 .L_0802caec:
 	.4byte Map_ShowBg1FromBuffer
 .L_0802caf0:

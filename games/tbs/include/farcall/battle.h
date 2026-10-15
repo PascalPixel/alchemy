@@ -20,13 +20,13 @@ FAR_SLOT(Battle_GetSpriteFlagHighBits)
 FAR_SLOT(Summon_IsEntryFlagged)
 FAR_CALL(Battle_GetObjectTableValueFar, Battle_GetObjectTableValue, s32, (s32 id))
 FAR_CALL(BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget, void,
-	(s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y))
+	(s32 actorId, s32 targetId, s32 travel_divisor, s32 initial_velocity_y))
 FAR_SLOT(BattleMotion_InitializeObject)
 FAR_CALL(BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion, void,
 	(s32 id, s32 variant))
 FAR_CALL(BattleParty_ListActorIdsFar, BattleParty_ListActorIds, s32, (s32 groups, u16 *dst))
-FAR_CALL(GetBattleObjectSlotFar, BattleObjGet, struct BattleObj *, (s32 object_id))
-FAR_CALL(Battle_RunEncounterFar, Battle_RunEncounter, s32, (s32 enemy_group))
+FAR_CALL(GetBattleObjectSlotFar, BattleObjGet, struct BattleObj *, (s32 objectId))
+FAR_CALL(Battle_RunEncounterFar, Battle_RunEncounter, s32, (s32 enemyGroup))
 FAR_CALL(
 	BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition, s32, (s32 id, s32 *projected))
 FAR_CALL(BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition, s32,
@@ -52,4 +52,4 @@ FAR_SLOT(ReleaseBattleObjectRecords)
 FAR_CALL(
 	BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt, s32, (s32 x, s32 y))
 FAR_CALL(BattlePlacement_CountValidEntriesFar, BattlePlacement_CountValidEntries, s32,
-	(u32 unit_id, u8 *counts))
+	(u32 unitId, u8 *counts))

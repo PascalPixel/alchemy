@@ -21,7 +21,7 @@ void Func_02005898(void)
 {
     struct KibomboObject *object;
 
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
     Func_02003288();
     if (gPartyState.entrance == 9) {
         if (GameFlag_Test(0x8ef)) {
@@ -44,8 +44,8 @@ void Func_02005898(void)
     Func_02005c74(16, 0);
     object = Object_GetById(16);
     object->sprite->rotation = 0;
-    object->scale_x = 0x10000;
-    object->scale_y = 0x10000;
+    object->scaleX = 0x10000;
+    object->scaleY = 0x10000;
     object->x += 0xe0000;
     object->z += 0x80000;
     Object_SetModeById(16, 6);

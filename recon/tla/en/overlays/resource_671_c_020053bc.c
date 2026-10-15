@@ -18,7 +18,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
 
 struct EffectWork {
-    u8 unknown_00[26];
+    u8 unk00[26];
     s16 target;
 };
 
@@ -33,15 +33,15 @@ void Func_020053bc(const u16 *entry)
         s16 mode = *entry++;
         s16 flag = *entry++;
 
-        object->collision_flags &= 0xfe;
+        object->collisionFlags &= 0xfe;
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        Func_020054ac(id, (u16)mode, (u16)flag, object->terrain_id);
+        Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
     }
 }
 
 void Func_02005428(const u16 *entry, s32 set, s32 step)
 {
-    struct EffectWork *work = Ram_HeapSlots->effect_work;
+    struct EffectWork *work = Ram_HeapSlots->effectWork;
 
     s32 value;
 
@@ -54,11 +54,11 @@ void Func_02005428(const u16 *entry, s32 set, s32 step)
             s32 flag = entry[2];
 
             if (step <= 7)
-                object->scale_y -= 0x1f00;
+                object->scaleY -= 0x1f00;
             if (set == 1) {
                 GameFlag_SetBit(flag);
-                Func_020054ac(id, mode, flag, object->terrain_id);
-                object->scale_y = 0x10000;
+                Func_020054ac(id, mode, flag, object->terrainId);
+                object->scaleY = 0x10000;
             }
             return;
         }

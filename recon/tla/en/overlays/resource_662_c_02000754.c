@@ -8,7 +8,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern u16 Data_02001968[];
+extern u16 gData_02001968[];
 
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 struct ObjectRuntime *Func_02001948(s32 *position, s32 mode);
@@ -31,7 +31,7 @@ void Func_02000754(struct ObjectRuntime *object)
         i = 0;
     next:
         __asm__("" : : : "memory");
-        if (*((struct BattleAnimationState *)hit->animation)->value_28 == Data_02001968[i])
+        if (*((struct BattleAnimationState *)hit->animation)->value28 == gData_02001968[i])
             return;
         i++;
         if (i <= 5)

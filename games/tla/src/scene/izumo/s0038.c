@@ -3,7 +3,7 @@
 
 void Func_02000038(void)
 {
-    Func_02000de8(Data_02000e10);
+    Func_02000de8(gData_02000e10);
 }
 
 void Func_02000048(void)

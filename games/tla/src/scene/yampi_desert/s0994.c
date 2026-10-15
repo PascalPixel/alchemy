@@ -6,14 +6,14 @@ void Func_02000994(void)
 {
     s16 scene;
 
-    BYTE_AT(Object_GetById(gPartyState.current_owner), 34) = 2;
+    BYTE_AT(Object_GetById(gPartyState.currentOwner), 34) = 2;
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov661Room1)
-        Func_02000918((u16 *)Data_02004768);
+        Func_02000918((u16 *)gData_02004768);
     else if (scene == (s32)&SceneId_Ov661Room3)
-        Func_02000918((u16 *)Data_0200478e);
+        Func_02000918((u16 *)gData_0200478e);
     else if (scene == (s32)&SceneId_Ov661Room4)
-        Func_02000918((u16 *)Data_020047d2);
+        Func_02000918((u16 *)gData_020047d2);
     else if (scene == (s32)&SceneId_Ov661Room5)
-        Func_02000918((u16 *)Data_020047ec);
+        Func_02000918((u16 *)gData_020047ec);
 }

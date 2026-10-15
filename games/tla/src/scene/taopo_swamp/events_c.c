@@ -2,8 +2,8 @@
 
 void Func_02000428(s32 a)
 {
-    ObjectMotion_SetActionVariant_(gPartyState.current_owner, 3);
-    Func_020028e0_(gPartyState.current_owner, 6, 0x1000);
+    ObjectMotion_SetActionVariant_(gPartyState.currentOwner, 3);
+    Func_020028e0_(gPartyState.currentOwner, 6, 0x1000);
     Func_020029b0_(0x136);
     GameFlag_SetBit_(0x122);
     Func_02002930(a);

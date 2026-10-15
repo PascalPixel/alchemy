@@ -4,7 +4,7 @@
 #include "party_state.h"
 
 struct Cell {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -17,7 +17,7 @@ void Func_020022c8(s32 value);
 
 void Func_02001bc0(struct Cell *cell)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
     s32 x = (object->x >> 20) | (s16)(cell->x & 64);
     s32 z = (object->z >> 20) | (s16)(cell->z & 64);
 

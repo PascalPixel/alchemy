@@ -19,12 +19,12 @@ void Func_02003aa0(void);
 
 void Func_02002ff4(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     Func_02003c28();
     Func_02003d78(0);
     if (gPartyState.scene == (s32)&SceneId_Ov655Room1)
-        ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
+        ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
     Func_02003df8(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

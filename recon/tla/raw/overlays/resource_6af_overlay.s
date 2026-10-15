@@ -240,7 +240,7 @@ Func_0200015c:
 .L_0200832c:
 	.4byte gPartyState
 .L_02008330:
-	.4byte Data_02001170
+	.4byte gData_02001170
 .L_02008334:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
@@ -416,7 +416,7 @@ Func_0200043c:
 .L_020085a0:
 	.4byte 0x00013333
 .L_020085a4:
-	.4byte Data_02001128
+	.4byte gData_02001128
 .L_020085a8:
 	.4byte 0xfffe0000
 	.section .text.x02008ba0,"ax",%progbits
@@ -587,13 +587,13 @@ Func_02000ba0:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_02008cd0:
-	.4byte Data_02001aa4
+	.4byte gData_02001aa4
 .L_02008cd4:
 	.4byte Data_02001aa8
 .L_02008cd8:
 	.4byte IwramCopyWords
 .L_02008cdc:
-	.4byte Data_02001ac8
+	.4byte gData_02001ac8
 .L_02008ce0:
 	.4byte Data_02001ae8
 .L_02008ce4:
@@ -875,19 +875,19 @@ Func_02000cf4:
 .L_02008f34:
 	.4byte Func_02000ba0
 .L_02008f38:
-	.4byte Data_0200117c
+	.4byte gData_0200117c
 .L_02008f3c:
 	.4byte 0x0000012c
 .L_02008f40:
-	.4byte Data_020011cc
+	.4byte gData_020011cc
 .L_02008f44:
 	.4byte 0x0000012d
 	.section .bss,"aw",%nobits
 	.global Data_02001aa8
 Data_02001aa8:
 	.space 0x00000020
-	.global Data_02001ac8
-Data_02001ac8:
+	.global gData_02001ac8
+gData_02001ac8:
 	.space 0x00000020
 	.global Data_02001ae8
 Data_02001ae8:

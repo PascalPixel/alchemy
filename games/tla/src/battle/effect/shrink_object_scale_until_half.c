@@ -19,9 +19,9 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object)
 {
     s32 scale;
 
-    scale = object->scale_x - 0x80;
-    object->scale_y = scale;
-    object->scale_x = scale;
+    scale = object->scaleX - 0x80;
+    object->scaleY = scale;
+    object->scaleX = scale;
     if (scale < 0x8000) {
         Object_SetPositionAndResetMotionFar(object, 0, 0, 0);
         object->update = 0;

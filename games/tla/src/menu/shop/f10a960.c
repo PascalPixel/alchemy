@@ -13,7 +13,7 @@ s32 Shop_MsgByMode(s32 value)
 
     /* FAKEMATCH: the one-pass block ends the scheduling block: the native loads the shop work before it builds the offset of the service kind (one reordered row, differ 2 without). */
     do {
-        shop = Ram_HeapSlots->menu_runtime;
+        shop = Ram_HeapSlots->menuRuntime;
     } while (0);
     mode = shop[0x507];
     if (mode == 1) {
@@ -44,7 +44,7 @@ void Func_0810a9ac(s32 value)
     /* FAKEMATCH: the barrier keeps the shop work's load ahead of the keeper's offset 0x4fa, and the message pinned to r6 keeps its copy from the parameter below the barrier, as native; without both the offset starts first (differ 2), and the barrier alone lifts the copy to the top (differ 2). */
     register s32 message asm("r6");
 
-    shop = Ram_HeapSlots->menu_runtime;
+    shop = Ram_HeapSlots->menuRuntime;
     asm volatile("");
     message = value;
     portrait = BattleFx_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
@@ -57,10 +57,10 @@ void Func_0810a9ac(s32 value)
 }
 
 struct ShopRuntime {
-    u8 unknown_000[0x4dc];
-    u8 *cursor_anchor;
-    u8 unknown_4e0[0x1a];
-    u16 keeper_resource;
+    u8 unk000[0x4dc];
+    u8 *cursorAnchor;
+    u8 unk4e0[0x1a];
+    u16 keeperResource;
 };
 
 // As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
@@ -73,10 +73,10 @@ void Func_0810a9fc(s32 message)
     s32 portrait;
     u8 saved;
 
-    shop = Ram_HeapSlots->menu_runtime;
-    anchor = &shop->cursor_anchor;
+    shop = Ram_HeapSlots->menuRuntime;
+    anchor = &shop->cursorAnchor;
     saved = (*anchor)[5];
-    portrait = BattleFx_GetResourceIdFar(shop->keeper_resource);
+    portrait = BattleFx_GetResourceIdFar(shop->keeperResource);
     message = Shop_MsgByMode(message);
     (*anchor)[5] = 13;
     UiWork_FinalizePendingCoreFar();
@@ -84,5 +84,5 @@ void Func_0810a9fc(s32 message)
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);
-    shop->cursor_anchor[5] = saved;
+    shop->cursorAnchor[5] = saved;
 }

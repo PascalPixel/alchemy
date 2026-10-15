@@ -133,4 +133,4 @@ Func_0803dc1c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803dd20:
-	.4byte Data_0805c9c4
+	.4byte gData_0805c9c4

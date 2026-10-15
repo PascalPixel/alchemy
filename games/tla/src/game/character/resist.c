@@ -16,12 +16,12 @@
 struct ElementPreset {
     u32 element;
     u8 digits[4];
-    u8 unknown_08[16];
+    u8 unk08[16];
 };
 
 struct OwnerGrowthRecord;
 
-extern const struct ElementPreset Data_080c6684[];
+extern const struct ElementPreset gData_080c6684[];
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index);
 
@@ -38,7 +38,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
         index = Owner_GetRecord(record)[42];
         if (index > 47)
             index = 0;
-        table = Data_080c6684;
+        table = gData_080c6684;
         preset = &table[index];
         /* FAKEMATCH: the empty asm that takes the table beside the preset
            gives the table's load a second dependent, so sched2 takes it
@@ -70,7 +70,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
     s32 result = 0;
 
     if (index <= 3) {
-        Owner_GetDigitValues(state->class_id, (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned, values);
+        Owner_GetDigitValues(state->classId, (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned, values);
         result = values[index] / 10;
     }
     return result;
@@ -81,13 +81,13 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 s32 Owner_GetDefaultElement(void *state)
 {
     struct BattleUnit *unit = state;
-    u8 preset = Owner_GetRecord(unit->enemy_id)[42];
+    u8 preset = Owner_GetRecord(unit->enemyId)[42];
     const struct ElementPreset *table;
     u32 offset;
 
     if (preset > 47)
         preset = 0;
-    table = Data_080c6684;
+    table = gData_080c6684;
     /* FAKEMATCH: the barrier loads the table's address before the preset is
        scaled, as the native does; plainly the scaling is started first (one
        reordered pair, differ 2). Indexed as table[preset] the word is then

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 
-extern u8 Data_02003a90[];
+extern u8 gData_02003a90[];
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void AudioEngine_ResumeDirectSound(void);
@@ -24,12 +24,12 @@ void AudioEngine_SetFixedPcmRate(u32 mode)
     volatile u8 *vcount;
 
     mode = (mode >> 16) & 15;
-    work->transfer_period = 3;
-    work->output_rate = 31536;
+    work->transferPeriod = 3;
+    work->outputRate = 31536;
     work->rate = mode;
     frame = 528;
-    work->frame_samples = frame;
-    work->rate_step = 266;
+    work->frameSamples = frame;
+    work->rateStep = 266;
     /* FAKEMATCH: control holds both timer 0 control values, so 0 is built after the last work store into r2 and 0x80 by movs rather than as halfword pool constants (written directly, differ 22 with 0x80 and 2 with 0). */
     control = 0;
     /* FAKEMATCH: one-pass blocks around the timer stores and the second DMA source keep each store where the native has it among its neighbours' loads and constants (differ 8, 6 and 6 without each). */
@@ -41,7 +41,7 @@ void AudioEngine_SetFixedPcmRate(u32 mode)
     {
         REG_TM0CNT_L = __divsi3(-140448, frame);
     } while (0);
-    buffer = Data_02003a90;
+    buffer = gData_02003a90;
     /* FAKEMATCH: the clear goes through the inline wrapper Sound_ClearWords, as ☀️'s IWRAM call layer, so the entry's pool load comes after the size's shift (differ 2 called directly). */
     Sound_ClearWords(buffer, 0x18c0);
     AudioEngine_ResumeDirectSound();

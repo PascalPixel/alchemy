@@ -14,8 +14,8 @@
 #include "call.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
+    u8 unk000[0x1ac];
+    s32 screenEffect;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -35,7 +35,7 @@ s32 Func_02000250(void)
 {
     struct ObjectRuntime *object;
 
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     if (gPartyState.entrance == 99)
     {
         GameFlag_SetBit(0x8aa);
@@ -68,18 +68,18 @@ s32 Func_02000250(void)
     }
     if (GameFlag_Test(0x900))
         EasternAlhafraShip_ObjPlace(13, 0x1880000, 0x2880000);
-    Object_GetById(13)->priority_flags |= 32;
+    Object_GetById(13)->priorityFlags |= 32;
     Func_02003298(15, 457);
     if (!GameFlag_Test(0x901))
     {
         if (!GameFlag_Test(0x109))
         {
-            Object_GetById(14)->priority_flags |= 128;
+            Object_GetById(14)->priorityFlags |= 128;
             object = Object_GetById(15);
-            object->priority_flags |= 64;
+            object->priorityFlags |= 64;
             /* FAKEMATCH: as long, so the y load does not depend on the priority byte store. */
             *(long *)&object->y += 0x100000;
-            object->terrain_height += 0x100000;
+            object->terrainHeight += 0x100000;
         }
     }
     else

@@ -2,8 +2,8 @@
 	.section .rodata
 	.balign 4
 @ The three frames
-	.global UiIcon_FramePointerTable
-UiIcon_FramePointerTable:
+	.global gUiIcon_FramePointerTable
+gUiIcon_FramePointerTable:
 	.4byte UiIcon_Frame0, UiIcon_Frame1, UiIcon_Frame2
 	.4byte -1
 UiIcon_Frame0:
@@ -15,8 +15,8 @@ UiIcon_Frame2:
 	.balign 4, 0
 
 @ The equipped, cross and phi marks
-	.global UiIcon_MarkPointers
-UiIcon_MarkPointers:
+	.global gUiIcon_MarkPointers
+gUiIcon_MarkPointers:
 	.4byte UiIcon_MarkEquip, UiIcon_MarkCross, UiIcon_MarkPhi
 UiIcon_MarkEquip:
 	.ifdef TBS_EDITION_DE
@@ -43,8 +43,8 @@ UiIcon_MarkPhi:
 	.balign 4, 0
 
 @ The digits 0 to 9, then the tens 1 to 3
-	.global UiIcon_DigitPointers
-UiIcon_DigitPointers:
+	.global gUiIcon_DigitPointers
+gUiIcon_DigitPointers:
 	.4byte UiIcon_Digit0, UiIcon_Digit1, UiIcon_Digit2, UiIcon_Digit3, UiIcon_Digit4
 	.4byte UiIcon_Digit5, UiIcon_Digit6, UiIcon_Digit7, UiIcon_Digit8, UiIcon_Digit9
 	.4byte UiIcon_Tens1, UiIcon_Tens2, UiIcon_Tens3
@@ -77,8 +77,8 @@ UiIcon_Tens3:
 	.incbin "games/common/src/graphics/ui/marks/tens_3.icon4"
 	.balign 4, 0
 
-	.global UiIcon_OverlayPointerTable
-UiIcon_OverlayPointerTable:
+	.global gUiIcon_OverlayPointerTable
+gUiIcon_OverlayPointerTable:
 	.rept 43
 	.4byte UiIcon_Overlay
 	.endr

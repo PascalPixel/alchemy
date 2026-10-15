@@ -5,7 +5,7 @@
 
 struct SoundPlayer;
 struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *Flash_Handler3;
+extern struct AudioTrackSlotWork *gFlash_Handler3;
 extern struct SoundPlayer gMusicPlayerBgm;
 
 enum AudioCommandMask {
@@ -19,6 +19,6 @@ extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicVolumeStep;
 extern u8 gMusicRestoreDelay;
-extern u8 Audio_CommandMask;
+extern u8 gAudio_CommandMask;
 
 #endif

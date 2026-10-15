@@ -17,7 +17,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 {
     u32 *entries;
     s32 index;
-    s16 *field = &interpreter->lookup_result;
+    s16 *field = &interpreter->lookupResult;
     s32 zero = 0;
 
     *field = zero;
@@ -40,24 +40,24 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
 {
     const s32 *arguments;
-    s32 repeat_limit;
-    s32 jump_key;
-    u8 *repeat_count;
-    s32 next_count;
+    s32 repeatLimit;
+    s32 jumpKey;
+    u8 *repeatCount;
+    s32 nextCount;
 
     arguments = &interpreter->script[interpreter->cursor + 1];
-    repeat_limit = *arguments++;
-    jump_key = *arguments;
-    if (repeat_limit == 0xFFFF) {
-        interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+    repeatLimit = *arguments++;
+    jumpKey = *arguments;
+    if (repeatLimit == 0xFFFF) {
+        interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
     } else {
-        repeat_count = &interpreter->repeat_count;
-        next_count = *repeat_count + 1;
-        *repeat_count = next_count;
-        if ((s32)(u8)next_count < (s32)(s16)repeat_limit) {
-            interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+        repeatCount = &interpreter->repeatCount;
+        nextCount = *repeatCount + 1;
+        *repeatCount = nextCount;
+        if ((s32)(u8)nextCount < (s32)(s16)repeatLimit) {
+            interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
         } else {
-            *repeat_count = 0;
+            *repeatCount = 0;
             interpreter->cursor = interpreter->cursor + 3;
         }
     }

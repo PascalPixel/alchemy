@@ -26,7 +26,7 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 void Func_02000078(void)
 {
     if (Flag_IsSet(0x985)) {
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
         u32 i;
 
         Func_02001f5c();
@@ -38,7 +38,7 @@ loop:
             struct ObjectRuntime *object = Object_GetById(i);
 
             if (object != 0) {
-                object->motion_flags = 0;
+                object->motionFlags = 0;
                 object->y = 0x200000;
             }
         }
@@ -49,9 +49,9 @@ loop:
             Func_020020d4(158);
             Func_02001f2c_(51, 38, 70, 22, 1, 2);
         }
-        Object_SetModeById(gPartyState.current_owner, 2);
-        ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-        ObjectMotion_CenterOnColumn(gPartyState.current_owner, 2, -4);
+        Object_SetModeById(gPartyState.currentOwner, 2);
+        ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+        ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -4);
         Battle_WaitMode0(8);
         Func_020020d4(123);
         Func_0200207c(*(s16 *)(work + 0x154));

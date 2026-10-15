@@ -7,20 +7,20 @@ struct Spot {
     s16 x;
     s16 z;
     s16 flag;
-    s16 unknown_06;
+    s16 unk06;
 };
 
 struct SpotState {
-    u8 unknown_00[2];
-    s16 flag_byte;
-    u8 unknown_04[6];
+    u8 unk00[2];
+    s16 flagByte;
+    u8 unk04[6];
     s16 count;
     s16 current;
-    u8 unknown_0e[0x12];
+    u8 unk0e[0x12];
     struct Spot spots[1];
 };
 
-extern struct SpotState Data_02002308;
+extern struct SpotState gData_02002308;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -31,10 +31,10 @@ void Func_020014dc(struct SpotState *state, struct Spot *spot);
 
 s32 Func_0200180c(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
-    struct SpotState *state = &Data_02002308;
+    struct SpotState *state = &gData_02002308;
     struct Spot *spot = state->spots;
     s32 i;
     s16 count = state->count;
@@ -54,8 +54,8 @@ s32 Func_0200180c(void)
                 break;
             state->current = i;
             Func_020014dc(state, spot);
-            GameFlag_SetByte(state->flag_byte, x);
-            GameFlag_SetByte(state->flag_byte + 8, z);
+            GameFlag_SetByte(state->flagByte, x);
+            GameFlag_SetByte(state->flagByte + 8, z);
             return 1;
         }
     }

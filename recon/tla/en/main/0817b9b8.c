@@ -36,21 +36,21 @@
 
 struct FxWork {
     struct EffectStep steps[48];
-    u8 unknown_0540[0x700 - 0x540];
+    u8 unk0540[0x700 - 0x540];
     u8 sheet[0x7780 - 0x700];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake_frames;
-    u8 unknown_77ac[0x78e8 - 0x77ac];
-    s32 transfer_pending;
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[0x20];
+    s32 shakeFrames;
+    u8 unk77ac[0x78e8 - 0x77ac];
+    s32 transferPending;
 };
 
 extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SmokeSheet;
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
-void *Resource_GetTableEntry(s32 resource_id);
+void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -63,7 +63,7 @@ void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_081963ec(s32 slot, s32 value);
 void Func_0817b970(s32 id, s32 priority);
 void Func_08157530(s32 x, s32 y, s32 width, s32 height);
-void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration, s32 speed_limit, s32 velocity_y, s32 percent);
+void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration, s32 speedLimit, s32 velocityY, s32 percent);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping, s32 gravity);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08158ce0(s32 x, s32 y);
@@ -90,8 +90,8 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
     s32 i;
 
     do { } while (0);
-    work = (struct FxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct FxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     {
         register u16 alpha __asm__("r3") = 0x1010;
@@ -102,13 +102,13 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, work->sheet + 0x3e80, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
     Func_081963ec(104, 3);
-    draw = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    work->transferMode = 2;
+    work->transferValue = 50;
     Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
     target = GetBattleObjectSlotFar(effect->actors[0])->object;
     caster = GetBattleObjectSlotFar(effect->actor)->object;
-    battle = (u8 *)Ram_HeapSlots->battle_work;
+    battle = (u8 *)Ram_HeapSlots->battleWork;
     battle[0x866] = 1;
     sparks = &work->steps[32];
     for (frame = 0; frame != 60; frame++) {
@@ -124,8 +124,8 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
                 step->y = (pos.y - 8) << 16;
                 angle = Random16();
                 speed = (Random16() & 255) + 127;
-                step->velocity_x = (Trig_Sin(angle) * speed) >> 5;
-                step->velocity_y = (Trig_Cos(angle) * speed) >> 5;
+                step->velocityX = (Trig_Sin(angle) * speed) >> 5;
+                step->velocityY = (Trig_Cos(angle) * speed) >> 5;
             }
             Audio_PlayCue(136);
         }
@@ -146,7 +146,7 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
         }
         if (frame == 16) {
             Func_08157530(effect->actor, effect->actors[0], 16, 120);
-            caster->velocity_y = 0x70000;
+            caster->velocityY = 0x70000;
         }
         if (frame == 32) {
             Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet), 128);
@@ -164,10 +164,10 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
                 step->y = (burst.y - 8) << 16;
                 angle = (Random16() & 0x7fff) + 0x4000;
                 speed = (Random16() & 255) + 127;
-                step->velocity_x = (Trig_Sin(angle) * speed) >> 7;
-                step->velocity_y = (Trig_Cos(angle) * speed) >> 5;
+                step->velocityX = (Trig_Sin(angle) * speed) >> 7;
+                step->velocityY = (Trig_Cos(angle) * speed) >> 5;
             }
-            work->shake_frames = 4;
+            work->shakeFrames = 4;
             Func_081180e8(134);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
             BattleFx_StartActorMotion(effect->actors[0], 1, 0x80000, 0x140000, 0x60000, 10);
@@ -184,7 +184,7 @@ void Func_0817b9b8(struct BattleEffectArgument *effect)
         }
         Func_08158ce0(4, 4);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     battle[0x866] = 0;

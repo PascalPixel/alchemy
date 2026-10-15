@@ -41,7 +41,7 @@ void Func_08040e84(void)
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
         do {
         } while (0);
-        party->packed_events[1] = 141;
+        party->packedEvents[1] = 141;
     }
     Event_SetDestinationFar((s32)&SceneId_Ov665Room1, 1);
 }
@@ -61,7 +61,7 @@ void Func_08040ed4(void)
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
         do {
         } while (0);
-        party->packed_events[1] = 141;
+        party->packedEvents[1] = 141;
     }
     Event_SetDestinationFar((s32)&SceneId_Ov668Room1, 1);
 }
@@ -78,7 +78,7 @@ void Func_08040f14(void)
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
         do {
         } while (0);
-        party->packed_events[1] = 141;
+        party->packedEvents[1] = 141;
     }
     Event_SetDestinationFar((s32)&SceneId_Ov682Room1, 9);
 }

@@ -4,24 +4,24 @@
 #include "party_state.h"
 
 struct EventWorkRoute {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 route;
-    u8 unknown_1b0[4];
+    u8 unk1b0[4];
     s32 countdown;
 };
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     s16 message;
 };
 
 struct AnimationRecord26 {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 frame;
 };
 
 extern u8 MsgFieldAddressCompanion;
-extern const u8 Data_020005e4[];
+extern const u8 gData_020005e4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -85,14 +85,14 @@ void Func_02000060(s32 arg)
 
     asm("");
     countdown = arg;
-    party->owner_override = 0;
+    party->ownerOverride = 0;
     GameFlag_ClearBit(0x960);
     Func_020005dc(123);
-    party->current_owner = 8;
-    ((struct EventWorkRoute *)Ram_HeapSlots->event_work)->route = 0x209;
+    party->currentOwner = 8;
+    ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    party->current_owner = 4;
+    party->currentOwner = 4;
     Func_020005ac(countdown);
 }
 
@@ -105,14 +105,14 @@ void Func_020000b0(s32 arg)
 
     asm("");
     countdown = arg;
-    party->owner_override = 0;
+    party->ownerOverride = 0;
     GameFlag_SetBit(0x960);
     Func_020005dc(123);
-    party->current_owner = 8;
-    ((struct EventWorkRoute *)Ram_HeapSlots->event_work)->route = 0x209;
+    party->currentOwner = 8;
+    ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    party->current_owner = 4;
+    party->currentOwner = 4;
     Func_020005ac(countdown);
 }
 

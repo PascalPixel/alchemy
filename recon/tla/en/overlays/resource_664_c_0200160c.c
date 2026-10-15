@@ -18,7 +18,7 @@ void Func_0200160c(s32 x, s32 y, s32 z)
     Object_SetPartAttribute(object, 6);
     Animation_SetStateFlags(object, 1);
     object->timer = 27;
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     BYTE_AT(object, 90) = 0;
     WORD_AT(object, 24) = 0x8000;
     object->speed = 0x40000;

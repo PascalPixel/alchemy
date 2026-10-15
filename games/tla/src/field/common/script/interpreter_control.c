@@ -7,7 +7,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 {
     s16 cursor = interpreter->cursor;
 
-    interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
+    interpreter->lookupResult = interpreter->script[cursor + 1] - 1;
     interpreter->cursor += 2;
     return 0;
 }
@@ -25,10 +25,10 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
         u32 zero = 0;
 
         *delay = zero;
-        object->target_x = 0x80000000;
-        object->target_y = 0x80000000;
-        object->target_z = 0x80000000;
-        object->unknown_56 = zero;
+        object->targetX = 0x80000000;
+        object->targetY = 0x80000000;
+        object->targetZ = 0x80000000;
+        object->unk56 = zero;
         interpreter->cursor++;
         return 1;
     }

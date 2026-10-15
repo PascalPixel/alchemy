@@ -26,7 +26,7 @@ void Camera_WorldToScreen(struct EffectVector *position)
 {
     struct HeapSlots *slots = Ram_HeapSlots;
 
-    if (*(s8 *)((u8 *)slots->event_work + 0x18a) == 3) {
+    if (*(s8 *)((u8 *)slots->eventWork + 0x18a) == 3) {
         struct EffectVector result;
 
         Render_ProjectPoint(position, &result);
@@ -34,7 +34,7 @@ void Camera_WorldToScreen(struct EffectVector *position)
         position->z = result.y << 16;
         position->y = 0;
     } else {
-        u8 *state = (u8 *)slots->map_work;
+        u8 *state = (u8 *)slots->mapWork;
         s32 x = *(s32 *)(state + 228) & 0xffff0000;
         s32 z = *(s32 *)(state + 232) & 0xffff0000;
 
@@ -46,23 +46,23 @@ void Camera_WorldToScreen(struct EffectVector *position)
 }
 
 struct BattleFxScene {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct EffectSlot slots[24];
-    u8 unknown_710[0xe4];
+    u8 unk710[0xe4];
 };
 
 void Func_080dc3f0(void)
 {
     struct BattleFxScene *scene;
     struct EffectSlot *slot;
-    s32 remaining_slots;
+    s32 remainingSlots;
 
-    scene = Ram_HeapSlots->effect_work;
-    remaining_slots = 0x17;
+    scene = Ram_HeapSlots->effectWork;
+    remainingSlots = 0x17;
     slot = scene->slots;
     do {
-        remaining_slots -= 1;
+        remainingSlots -= 1;
         EffectSlot_Update(slot);
         slot++;
-    } while (remaining_slots >= 0);
+    } while (remainingSlots >= 0);
 }

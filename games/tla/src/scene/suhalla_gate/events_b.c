@@ -26,9 +26,9 @@ void Func_02000168(void)
         Func_02000a90(14, 0);
         Object_GetById(15)->angle = 0xc000;
         Func_02000a90(15, 0);
-        Object_GetById(13)->collision_flags = 1;
-        Object_GetById(14)->collision_flags = 1;
-        Object_GetById(15)->collision_flags = 1;
+        Object_GetById(13)->collisionFlags = 1;
+        Object_GetById(14)->collisionFlags = 1;
+        Object_GetById(15)->collisionFlags = 1;
     }
     Object_SetModeById(8, 4);
     Object_SetModeById(9, 4);

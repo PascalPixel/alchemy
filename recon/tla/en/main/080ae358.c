@@ -20,17 +20,17 @@ void Func_080ae358(void)
     s32 count = Party_CountActiveOwners();
 
     for (;;) {
-        s32 low_no = 0;
+        s32 lowNo = 0;
         s32 high = 0;
         s32 low = 999;
-        s32 high_no = 0;
+        s32 highNo = 0;
         s32 i;
         s32 sum;
         s32 element;
         s32 index;
 
         for (i = 0; i < count; i++) {
-            s32 owner = gPartyState.active_owners[i];
+            s32 owner = gPartyState.activeOwners[i];
             struct OwnerDjinnState *unit = UnitGet(owner);
             u8 *counts;
             s32 j;
@@ -46,18 +46,18 @@ void Func_080ae358(void)
             } while (j >= 0);
             if (sum > high) {
                 high = sum;
-                high_no = owner;
+                highNo = owner;
             }
             if (sum < low) {
                 low = sum;
-                low_no = owner;
+                lowNo = owner;
             }
         }
         if (high - low <= 1)
             break;
-        sum = Func_080ae2fc(high_no, &element, &index);
+        sum = Func_080ae2fc(highNo, &element, &index);
         if (sum != 0)
             break;
-        Djinn_Transfer(high_no, element, index, low_no);
+        Djinn_Transfer(highNo, element, index, lowNo);
     }
 }

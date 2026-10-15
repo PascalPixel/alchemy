@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct JupiterRoom8EventWork {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
+    u8 unk000[0x1ac];
+    s32 screenEffect;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -17,9 +17,9 @@ void Func_02002010(s32 x, s32 z, s32 a);
 
 s32 Func_02000110(void)
 {
-    ((struct JupiterRoom8EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x204;
-    Object_GetById(8)->scale_x = 0xc000;
-    Object_GetById(8)->scale_y = 0xc000;
+    ((struct JupiterRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+    Object_GetById(8)->scaleX = 0xc000;
+    Object_GetById(8)->scaleY = 0xc000;
     ObjectMotion_SetActionVariant(12, 3);
     ObjectMotion_SetActionVariant(14, 3);
     Func_02002248(11);

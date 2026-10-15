@@ -5,7 +5,7 @@
 #include "text/msg_ids.h"
 
 struct ContigoEventCount {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 refusals;
 };
 
@@ -41,7 +41,7 @@ void Func_02001abc(void)
     Func_0200412c((s32)MsgContigo01);
     Func_0200403c(price, 5);
     UiText_OpenMessageAtObject(14, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         /* FAKEMATCH: the native loads the scene state's address into r3 before the coins; stored plainly the two registers swap (6 differ), and with the coins in a temporary the two loads come in the other order (2 differ); pointer locals and one-pass blocks measured 2 or 6. */
         register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
@@ -54,7 +54,7 @@ void Func_02001abc(void)
         Field_SetDestination(0x1fd, 0);
         Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 19);
     } else {
-        ((struct ContigoEventCount *)Ram_HeapSlots->event_work)->refusals++;
+        ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
         Func_02004144(14, 0);
     }
     Func_02004074();
@@ -74,7 +74,7 @@ void Func_02001b84(void)
     }
     Func_0200412c((s32)MsgContigo23);
     UiText_OpenMessageAtObject(8, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         /* FAKEMATCH: the native loads the scene state's address into r3 before the coins; stored plainly the two registers swap (6 differ), and with the coins in a temporary the two loads come in the other order (2 differ); pointer locals and one-pass blocks measured 2 or 6. */
         register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
@@ -87,7 +87,7 @@ void Func_02001b84(void)
         Field_SetDestination(0x1fb, 0);
         Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 18);
     } else {
-        ((struct ContigoEventCount *)Ram_HeapSlots->event_work)->refusals++;
+        ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
         Func_02004144(8, 0);
     }
     Func_02004074();

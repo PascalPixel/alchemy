@@ -19,18 +19,18 @@ struct BattleFxScene;
 
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
-#define BattleFx_PulseScales Data_080f0bfc
-#define gEffectWork Ram_HeapSlots->effect_work
+#define gBattleFx_PulseScales gData_080f0bfc
+#define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
-extern u32 Data_080f0bfc[];
+extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
 struct EffectOwner {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct EffectVector position;
-    u8 unknown_14[0x3c];
+    u8 unk14[0x3c];
     struct AnimationObject *sprite;
 };
 
@@ -49,16 +49,16 @@ void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[68];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[68];
     u16 timer;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void *callback;
 };
 
@@ -69,11 +69,11 @@ struct OrbitPosition {
 };
 
 struct DescendingOrbitObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     u16 timer;
     s16 angle;
 };
@@ -86,30 +86,30 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 BattleFx_CommonParticleScript[];
+extern const s32 gBattleFx_CommonParticleScript[];
 
 struct CaptureObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    s32 base_y;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[8];
+    s32 baseY;
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[8];
     s32 gravity;
-    u8 unknown_2c[4];
+    u8 unk2c[4];
     s32 speed;
-    u8 unknown_34[33];
+    u8 unk34[33];
     u8 mode;
-    u8 unknown_56[5];
+    u8 unk56[5];
     u8 visible;
-    u8 unknown_5c[2];
+    u8 unk5c[2];
     u16 lifetime;
-    u8 unknown_60[4];
+    u8 unk60[4];
     u16 timer;
     u16 angle;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void *callback;
 };
 
@@ -143,18 +143,18 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
     struct MotionObject *o = obj;
     s32 scale;
-    s32 scale_y;
+    s32 scaleY;
     u32 angle;
 
-    scale_y = o->scale_y + 0xFFFFFC00;
-    scale = o->scale_x;
-    o->scale_y = scale_y;
+    scaleY = o->scaleY + 0xFFFFFC00;
+    scale = o->scaleX;
+    o->scaleY = scaleY;
     angle = o->angle;
     /* FAKEMATCH: the native adds the step to the second scale after it loads the angle; without the barrier the add comes before the first store (differ 4). */
     __asm__("");
     scale += 0xFFFFFC00;
     o->angle = angle + 0x2000;
-    o->scale_x = scale;
+    o->scaleX = scale;
     if (scale < 0x3000) {
         ObjectDispatch_ReleaseFar();
     }

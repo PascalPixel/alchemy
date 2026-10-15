@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct IsletCaveEventWork {
-    u8 unknown_000[0x1ac];
-    s32 value_1ac;
+    u8 unk000[0x1ac];
+    s32 value1ac;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -27,16 +27,16 @@ static __inline__ void Func_020012ec_(s32 a, s32 b)
 
 void Func_02000328(void)
 {
-    struct IsletCaveEventWork *work = Ram_HeapSlots->event_work;
+    struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
     s32 saved;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
     do {
     } while (0);
-    saved = work->value_1ac;
+    saved = work->value1ac;
     Func_020012ec_(0x202108, 1);
     Func_020012ec_(0x10000, 2);
-    ((struct IsletCaveEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x100;
+    ((struct IsletCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000178();
@@ -52,8 +52,8 @@ void Func_02000328(void)
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
         do {
         } while (0);
-        party->unknown_2c2 = 0;
+        party->unk2c2 = 0;
     }
-    work->value_1ac = saved;
+    work->value1ac = saved;
 }
 

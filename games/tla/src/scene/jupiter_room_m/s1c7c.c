@@ -15,7 +15,7 @@ void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Func_020048b4(s32 actor, s32 a);
-void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset);
+void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);
@@ -89,7 +89,7 @@ void Func_02001c7c(void)
     Battle_WaitMode0(20);
     do {
         /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead zero is not kept in r8 for the store of the owner below (without: differ 31 of 160). */
-        gPartyState.battle_rule_24b = 6;
+        gPartyState.battleRule24b = 6;
     } while (0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov6a3, 77);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov6a3, 77);
@@ -110,6 +110,6 @@ void Func_02001c7c(void)
     JupiterRoomM_AdjustFirstValue(0, 173);
     JupiterRoomM_PpAdd(2, -10000);
     JupiterRoomM_PpAdd(0, -10000);
-    gPartyState.current_owner = 0;
+    gPartyState.currentOwner = 0;
     Func_02004904(102, 4);
 }

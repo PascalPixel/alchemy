@@ -11,7 +11,7 @@ void ItemMenu_Close(void)
     u8 *menu;
     u8 *cursor;
 
-    menu = Ram_HeapSlots->menu_runtime;
+    menu = Ram_HeapSlots->menuRuntime;
     Menu_ReleaseEntryObjects();
     ItemMenu_HideAllIcons();
     WaitFrames(1);
@@ -31,46 +31,46 @@ void ItemMenu_Close(void)
 }
 
 struct ItemMenuWork {
-    u8 unknown_000[0x14];
-    void *pane_icons[2];
-    s8 pane_index[2];
-    u8 pane_count[2];
-    u8 unknown_020[0x10];
-    void *info_window;
-    u8 unknown_034[0x190];
+    u8 unk000[0x14];
+    void *paneIcons[2];
+    s8 paneIndex[2];
+    u8 paneCount[2];
+    u8 unk020[0x10];
+    void *infoWindow;
+    u8 unk034[0x190];
     u16 items[32];
-    u16 owner_ids[8];
-    u8 item_count;
-    u8 party_count;
+    u16 ownerIds[8];
+    u8 itemCount;
+    u8 partyCount;
 };
 
 void RenderOutput_ClearListFar(void *window);
 void Func_080f8ab4(s32 x, s32 y);
-void *UnitGet(s32 unit_id);
+void *UnitGet(s32 unitId);
 s32 ItemMenu_Collect(void *owner, u16 *items, s32 mode);
-s32 Func_080fa5a4(u16 *owner_ids, u16 *items);
+s32 Func_080fa5a4(u16 *ownerIds, u16 *items);
 void UiIcon_PrepareObject(void *icon);
 
 s32 ItemMenu_PrepOwner(s32 pane)
 {
-    struct ItemMenuWork *menu = Ram_HeapSlots->menu_runtime;
+    struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
     s32 result = 0;
     s32 index;
     void *owner;
 
-    index = menu->pane_index[pane];
-    RenderOutput_ClearListFar(menu->info_window);
-    menu->pane_count[pane] = menu->party_count;
+    index = menu->paneIndex[pane];
+    RenderOutput_ClearListFar(menu->infoWindow);
+    menu->paneCount[pane] = menu->partyCount;
     if (index == -1) {
-        menu->pane_index[pane] = result;
+        menu->paneIndex[pane] = result;
         index = 0;
     } else {
         Func_080f8ab4(index * 24 - 10, 16);
     }
-    owner = UnitGet(menu->owner_ids[index]);
-    menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
-    result = Func_080fa5a4(menu->owner_ids, menu->items);
-    UiIcon_PrepareObject(menu->pane_icons[pane]);
+    owner = UnitGet(menu->ownerIds[index]);
+    menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
+    result = Func_080fa5a4(menu->ownerIds, menu->items);
+    UiIcon_PrepareObject(menu->paneIcons[pane]);
     WaitFrames(1);
     return result;
 }

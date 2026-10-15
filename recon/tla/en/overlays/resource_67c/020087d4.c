@@ -8,7 +8,7 @@
    table address are hoisted (differ 38). */
 #include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
-extern const u8 Data_02003fb8[];
+extern const u8 gData_02003fb8[];
 
 void AudioCommand_WaitForCompletion(void);
 void Func_020007a8(void);
@@ -31,7 +31,7 @@ void Func_020007d4(void)
     __asm__ volatile("" : "+r"(priority));
     Func_02003d7c();
     Func_02003eac(0);
-    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xc000, 0);
+    ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
     Func_020007a8();
     Func_02003ef4(78);
     Battle_WaitMode0(60);
@@ -59,7 +59,7 @@ cell:
     {
         s32 index = (i + (1 & ~j)) * 2;
 
-        Func_02003d24_(Data_02003fb8[index], Data_02003fb8[index + 1], 7, 13, 80, 27);
+        Func_02003d24_(gData_02003fb8[index], gData_02003fb8[index + 1], 7, 13, 80, 27);
         WaitFrames(1);
     }
     j++;

@@ -1,17 +1,17 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-	.global UiText_Glyphs
-UiText_Glyphs:
+	.global gUiText_Glyphs
+gUiText_Glyphs:
 	.ifeq EDITION_INTERNATIONAL
 	.ifdef TLA_EDITION_JA
 	.incbin "games/common/src/graphics/font/text_tla_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
-	.global UiText_KanjiGlyphs
-UiText_KanjiGlyphs:
+	.global gUiText_KanjiGlyphs
+gUiText_KanjiGlyphs:
 	.incbin "games/common/src/graphics/font/text_tla_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.else
 	.incbin "games/common/src/graphics/font/text_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
-	.global UiText_KanjiGlyphs
-UiText_KanjiGlyphs:
+	.global gUiText_KanjiGlyphs
+gUiText_KanjiGlyphs:
 	.incbin "games/common/src/graphics/font/text_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.endif
 	.else

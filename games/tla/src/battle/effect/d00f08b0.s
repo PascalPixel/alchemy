@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's DisplayScroll_WaveSine, byte for byte
+@ The Broken Seal's gDisplayScroll_WaveSine, byte for byte
 	.global Data_080f08b0
 Data_080f08b0:
 	.2byte 0, 100, 200, 301, 401, 501, 601, 700

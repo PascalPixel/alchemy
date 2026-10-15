@@ -16,26 +16,26 @@ struct Work9cSlot {
     s16 id;
     s16 value;
     s16 depth;
-    u8 unknown_06[2];
+    u8 unk06[2];
     s16 flag;
     s16 state;
-    u8 unknown_0c[16];
+    u8 unk0c[16];
     struct Work9cNode *head;
 };
 
 struct Work9cItem {
-    u8 unknown_00[18];
+    u8 unk00[18];
     s8 used;
-    u8 unknown_13[13];
+    u8 unk13[13];
 };
 
 struct Work9c {
-    u8 unknown_000[8];
-    s32 vram_entry;
+    u8 unk000[8];
+    s32 vramEntry;
     struct Work9cSlot slots[8];
     struct Work9cItem items[128];
 };
 
-#define WORK_9C ((struct Work9c *)Ram_HeapSlots->unknown_84[6])
+#define WORK_9C ((struct Work9c *)Ram_HeapSlots->unk84[6])
 
 #endif

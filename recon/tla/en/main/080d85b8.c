@@ -23,18 +23,18 @@ struct BattleFxScene;
 
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
-#define BattleFx_PulseScales Data_080f0bfc
-#define gEffectWork Ram_HeapSlots->effect_work
+#define gBattleFx_PulseScales gData_080f0bfc
+#define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
-extern u32 Data_080f0bfc[];
+extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
 struct EffectOwner {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct EffectVector position;
-    u8 unknown_14[0x3c];
+    u8 unk14[0x3c];
     struct AnimationObject *sprite;
 };
 
@@ -53,16 +53,16 @@ void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[68];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[68];
     u16 timer;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void *callback;
 };
 
@@ -73,11 +73,11 @@ struct OrbitPosition {
 };
 
 struct DescendingOrbitObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     u16 timer;
     s16 angle;
 };
@@ -90,30 +90,30 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 BattleFx_CommonParticleScript[];
+extern const s32 gBattleFx_CommonParticleScript[];
 
 struct CaptureObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    s32 base_y;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[8];
+    s32 baseY;
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[8];
     s32 gravity;
-    u8 unknown_2c[4];
+    u8 unk2c[4];
     s32 speed;
-    u8 unknown_34[33];
+    u8 unk34[33];
     u8 mode;
-    u8 unknown_56[5];
+    u8 unk56[5];
     u8 visible;
-    u8 unknown_5c[2];
+    u8 unk5c[2];
     u16 lifetime;
-    u8 unknown_60[4];
+    u8 unk60[4];
     u16 timer;
     u16 angle;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void *callback;
 };
 
@@ -155,12 +155,12 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 {
     struct ObjectRuntime *source;
     struct EffectVector position;
-    s8 *state_pointer;
+    s8 *statePointer;
     s32 state;
 
-    source = Object_GetById(gPartyState.current_owner);
-    state_pointer = &effect->state;
-    state = *state_pointer;
+    source = Object_GetById(gPartyState.currentOwner);
+    statePointer = &effect->state;
+    state = *statePointer;
 
     if (state == 0) {
         position.x = source->x;
@@ -180,38 +180,38 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
         {
             s32 accel = 0x30000;
 
-            effect->target_x = position.x;
-            effect->target_z = position.z;
+            effect->targetX = position.x;
+            effect->targetZ = position.z;
             effect->x = position.x;
             effect->z = position.z - 0x640000;
             effect->acceleration = accel;
         }
-        effect->max_speed = Random16() * 3 + 0x30000;
-        effect->scale_x = 0x10000;
-        effect->scale_y = 0x10000;
+        effect->maxSpeed = Random16() * 3 + 0x30000;
+        effect->scaleX = 0x10000;
+        effect->scaleY = 0x10000;
         effect->flag42 = state;
-        effect->stop_at_target = 1;
-        (*state_pointer)++;
+        effect->stopAtTarget = 1;
+        (*statePointer)++;
     } else if ((u8)(effect->state - 1) <= 1) {
         if (BattleFx_HasReachedTarget(effect) == 0) {
             position.x = effect->x;
             position.z = effect->z;
             Vector_AddPolarOffset(0xc0000, Random16(), &position);
-            effect->target_x = position.x;
-            effect->target_z = position.z;
-            effect->stop_at_target = 0;
+            effect->targetX = position.x;
+            effect->targetZ = position.z;
+            effect->stopAtTarget = 0;
             effect->speed = 0x10000;
             effect->acceleration = 0;
-            effect->max_speed = Random16() + 0x23333;
-            effect->scale_x = 0x8000;
-            effect->scale_y = 0x8000;
+            effect->maxSpeed = Random16() + 0x23333;
+            effect->scaleX = 0x8000;
+            effect->scaleY = 0x8000;
             Audio_PlayCue(143);
 
-            if (*state_pointer == 1)
-                (*state_pointer)--;
+            if (*statePointer == 1)
+                (*statePointer)--;
             else
-                (*state_pointer)++;
-            effect->callback_delay = 6;
+                (*statePointer)++;
+            effect->callbackDelay = 6;
         }
     } else if (state == 3) {
         BattleFx_ClearOwnedSlot(effect);

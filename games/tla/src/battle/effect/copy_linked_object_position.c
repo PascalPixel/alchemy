@@ -17,14 +17,14 @@ s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *link;
 
-    link = object->linked_object;
+    link = object->linkedObject;
     if (link != NULL) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         object->x = link->x;
         object->y = link->y
-            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(object->unknown_66))->box_x << 16)
+            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(object->unk66))->boxX << 16)
             + 0x80000;
-        object->terrain_height = link->terrain_height;
+        object->terrainHeight = link->terrainHeight;
         object->z = link->z;
     }
     return 0;

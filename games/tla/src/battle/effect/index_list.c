@@ -1,33 +1,33 @@
 #include "types.h"
 
 typedef struct {
-    s32 reserved_00[3];
-    s32 current_value;
-    s32 index_radius;
-    s32 entry_limit;
-    s32 reserved_18[3];
+    s32 reserved00[3];
+    s32 currentValue;
+    s32 indexRadius;
+    s32 entryLimit;
+    s32 reserved18[3];
     s16 values[1];
 } BattleEffectIndexWindow;
 
 s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window, s16 *output)
 {
-    s32 length = window->index_radius * 2 + 1;
-    s32 entry_count = 0;
+    s32 length = window->indexRadius * 2 + 1;
+    s32 entryCount = 0;
     s32 center = 0;
-    s32 entry_index;
+    s32 entryIndex;
 
-    for (entry_index = 0; entry_index != length; entry_index++) {
-        if (window->current_value == window->values[entry_index]) {
-            center = entry_index;
+    for (entryIndex = 0; entryIndex != length; entryIndex++) {
+        if (window->currentValue == window->values[entryIndex]) {
+            center = entryIndex;
             break;
         }
     }
-    for (entry_index = 0; entry_index != length; entry_index++) {
-        s32 battle_value = center + entry_index - window->index_radius;
+    for (entryIndex = 0; entryIndex != length; entryIndex++) {
+        s32 battleValue = center + entryIndex - window->indexRadius;
 
-        if (battle_value >= 0 && battle_value < window->entry_limit) {
-            output[entry_count++] = battle_value;
+        if (battleValue >= 0 && battleValue < window->entryLimit) {
+            output[entryCount++] = battleValue;
         }
     }
-    return entry_count;
+    return entryCount;
 }

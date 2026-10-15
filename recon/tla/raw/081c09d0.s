@@ -134,7 +134,7 @@ Func_081c0a68:
 	strb r0, [r5, #1]
 	b .L_081c0ada
 .L_081c0ab8:
-	.4byte Sound_ClockLengths + 49
+	.4byte gSound_ClockLengths + 49
 .L_081c0abc:
 	subs r1, #177
 	bcc .L_081c0ab0
@@ -329,6 +329,6 @@ Func_081c0c0c:
 	pop {pc}
 	.2byte 0x4718
 .L_081c0c10:
-	.4byte Data_03007ff0
+	.4byte gData_03007ff0
 .L_081c0c14:
 	.4byte 0x68736d53

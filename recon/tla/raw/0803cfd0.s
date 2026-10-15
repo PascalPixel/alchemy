@@ -41,4 +41,4 @@ Func_0803cfd0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0803d01c:
-	.4byte UiText_Glyphs
+	.4byte gUiText_Glyphs

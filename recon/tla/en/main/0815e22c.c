@@ -12,10 +12,10 @@
 
 struct BattleFxWorkTail
 {
-	u8							 unknown_0000[0x78e4];
+	u8							 unk0000[0x78e4];
 	s32							 active;
-	s32							 unknown_78e8;
-	s32							 unknown_78ec;
+	s32							 unk78e8;
+	s32							 unk78ec;
 	struct BattleEffectArgument *effect;
 };
 
@@ -28,7 +28,7 @@ void Func_0815e22c(struct EffectPosition *position)
 	struct EffectPosition	 first;
 	struct EffectPosition	 last;
 
-	work = (struct BattleFxWorkTail *)Ram_HeapSlots->battle_fx_work[0];
+	work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
 	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &first);
 	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
 	position->x = first.x + (last.x - first.x) / 2;

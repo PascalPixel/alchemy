@@ -27,13 +27,13 @@ s32 Func_020002bc(struct ObjectRuntime *object)
     s32 step = *phase & 63;
     s16 *animation = object->animation;
 
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     if (step == 0)
-        object->velocity_y = 0x30000;
+        object->velocityY = 0x30000;
     if (step == 16)
-        object->velocity_y = 0x20000;
+        object->velocityY = 0x20000;
     if (step == 24)
-        object->velocity_y = 0x30000;
+        object->velocityY = 0x30000;
     animation[9] = Math_Cosine(step << 12) / 64;
     (*phase)++;
     return -1;

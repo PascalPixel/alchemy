@@ -5,11 +5,11 @@
 #include "call.h"
 
 struct JupiterRoom5EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
-extern u8 Data_02002fb8[];
+extern u8 gData_02002fb8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -27,25 +27,25 @@ s32 Func_02000ae8(void)
     struct ObjectRuntime *object;
     s32 angle;
 
-    ((struct JupiterRoom5EventWork1ac *)Ram_HeapSlots->event_work)->value = 0x204;
+    ((struct JupiterRoom5EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
     if (Flag_IsSet(0xa23))
         Flag_Clear(0xa22);
     if (Flag_IsSet(0xa22)) {
         angle = 0x4000;
         Call4((void (*)())Func_02002900, 22, 0x400000, 0xe10000, angle);
     }
-    Func_020029c8(Data_02002fb8);
+    Func_020029c8(gData_02002fb8);
     Object_SetActionCallback(Object_GetById(64), 9);
     object = Object_GetById(23);
-    object->scale_x = 0;
-    object->motion_flags = 0;
+    object->scaleX = 0;
+    object->motionFlags = 0;
     object->x = 0x2a80000;
     object->y = 0x200000;
     object->z = 0x2440000;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(23), 0);
     object = Object_GetById(24);
-    object->scale_x = 0;
-    object->motion_flags = 0;
+    object->scaleX = 0;
+    object->motionFlags = 0;
     object->x = 0x2a80000;
     object->y = 0x400000;
     object->z = 0x2440000;

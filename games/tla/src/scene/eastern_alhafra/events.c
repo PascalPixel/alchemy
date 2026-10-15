@@ -144,12 +144,12 @@ void Func_0200112c(void)
     Call3((void (*)())ObjectMotion_ArmCallback, 24, 0xc000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 25, 0xe000, 0);
     Call1((void (*)())Battle_WaitMode0, 20);
-    Value2((s32 (*)())Func_02004b9c, gPartyState.current_owner, 1);
+    Value2((s32 (*)())Func_02004b9c, gPartyState.currentOwner, 1);
     ((void (*)())Func_02004b94)();
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
-    object0 = Object_GetById(gPartyState.current_owner);
+    object0 = Object_GetById(gPartyState.currentOwner);
     if (object0 == 0) goto L_020094c6;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object0 + 10), *(s16 *)((u8 *)object0 + 18));
 L_020094c6:
@@ -157,7 +157,7 @@ L_020094c6:
     Call3((void (*)())Func_02004b04, 5, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
-    object1 = Object_GetById(gPartyState.current_owner);
+    object1 = Object_GetById(gPartyState.currentOwner);
     if (object1 == 0) goto L_02009504;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object1 + 10), *(s16 *)((u8 *)object1 + 18));
 L_02009504:
@@ -165,13 +165,13 @@ L_02009504:
     Call3((void (*)())Func_02004b04, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 26, 2);
-    object2 = Object_GetById(gPartyState.current_owner);
+    object2 = Object_GetById(gPartyState.currentOwner);
     if (object2 == 0) goto L_02009550;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26, *(s16 *)((u8 *)object2 + 10), *(s16 *)((u8 *)object2 + 18));
 L_02009550:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 26);
     Call3((void (*)())Func_02004b04, 26, 0, 0);
-    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.current_owner, 1);
+    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.currentOwner, 1);
     ((void (*)())Func_02004b94)();
     ((void (*)())Func_02004a9c)();
     return;
@@ -234,7 +234,7 @@ L_02009604:
     if (result3 == 0) goto L_02009716;
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 7, 2);
-    object4 = Object_GetById(gPartyState.current_owner);
+    object4 = Object_GetById(gPartyState.currentOwner);
     if (object4 == 0) goto L_02009706;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10), *(s16 *)((u8 *)object4 + 18));
 L_02009706:
@@ -243,7 +243,7 @@ L_02009706:
 L_02009716:
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
-    object5 = Object_GetById(gPartyState.current_owner);
+    object5 = Object_GetById(gPartyState.currentOwner);
     if (object5 == 0) goto L_0200974c;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10), *(s16 *)((u8 *)object5 + 18));
 L_0200974c:
@@ -251,7 +251,7 @@ L_0200974c:
     Call3((void (*)())Func_02004b04, 5, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
-    object6 = Object_GetById(gPartyState.current_owner);
+    object6 = Object_GetById(gPartyState.currentOwner);
     if (object6 == 0) goto L_0200978a;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object6 + 10), *(s16 *)((u8 *)object6 + 18));
 L_0200978a:
@@ -259,7 +259,7 @@ L_0200978a:
     Call3((void (*)())Func_02004b04, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 26, 2);
-    object7 = Object_GetById(gPartyState.current_owner);
+    object7 = Object_GetById(gPartyState.currentOwner);
     if (object7 == 0) goto L_020097c8;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26, *(s16 *)((u8 *)object7 + 10), *(s16 *)((u8 *)object7 + 18));
 L_020097c8:
@@ -308,10 +308,10 @@ L_02009850:
     Call1((void (*)())Battle_WaitMode0, 10);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
     Call3((void (*)())Func_02004b4c, 5, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     goto L_02009938;
 L_020098ea:
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     Call1((void (*)())Battle_WaitMode0, 40);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
     Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xe000, 0);
@@ -361,7 +361,7 @@ L_02009a2e:
     if (result3 == 0) goto L_02009ac2;
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 7, 2);
-    object4 = Object_GetById(gPartyState.current_owner);
+    object4 = Object_GetById(gPartyState.currentOwner);
     if (object4 == 0) goto L_02009ab2;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10), *(s16 *)((u8 *)object4 + 18));
 L_02009ab2:
@@ -370,7 +370,7 @@ L_02009ab2:
 L_02009ac2:
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
-    object5 = Object_GetById(gPartyState.current_owner);
+    object5 = Object_GetById(gPartyState.currentOwner);
     if (object5 == 0) goto L_02009af8;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10), *(s16 *)((u8 *)object5 + 18));
 L_02009af8:
@@ -378,7 +378,7 @@ L_02009af8:
     Call3((void (*)())Func_02004b04, 5, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
-    object6 = Object_GetById(gPartyState.current_owner);
+    object6 = Object_GetById(gPartyState.currentOwner);
     if (object6 == 0) goto L_02009b36;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object6 + 10), *(s16 *)((u8 *)object6 + 18));
 L_02009b36:
@@ -386,7 +386,7 @@ L_02009b36:
     Call3((void (*)())Func_02004b04, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 26, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 26, 2);
-    object7 = Object_GetById(gPartyState.current_owner);
+    object7 = Object_GetById(gPartyState.currentOwner);
     if (object7 == 0) goto L_02009b74;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 26, *(s16 *)((u8 *)object7 + 10), *(s16 *)((u8 *)object7 + 18));
 L_02009b74:
@@ -397,15 +397,15 @@ L_02009b74:
 }
 
 struct SpawnObject {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct FieldSprite *sprite;
-    u8 unknown_54;
-    u8 motion_flags;
-    u8 unknown_56[8];
-    u16 unknown_5e;
+    u8 unk54;
+    u8 motionFlags;
+    u8 unk56[8];
+    u16 unk5e;
 };
 
-extern const u8 Data_020056d4[];
+extern const u8 gData_020056d4[];
 
 struct SpawnObject *Func_02004a1c(s32 type, s32 x, s32 y, s32 z);
 void Func_02004a0c(struct SpawnObject *object, s32 mode);
@@ -423,16 +423,16 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer)
     if (object != 0) {
         sprite = object->sprite;
         Func_02004a0c(object, 1);
-        Func_02004a14(object, Data_020056d4);
+        Func_02004a14(object, gData_020056d4);
         Func_02004a74(object, 1);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         {
-            /* FAKEMATCH: the 64-bit copy loads the timer argument before the pooled zero for next_frame; stored directly the zero loads first (differ 2), and overlay 65f's barrier here swaps the next call's arguments (differ 4). */
+            /* FAKEMATCH: the 64-bit copy loads the timer argument before the pooled zero for nextFrame; stored directly the zero loads first (differ 2), and overlay 65f's barrier here swaps the next call's arguments (differ 4). */
             s64 wide = timer;
 
-            object->unknown_5e = wide;
+            object->unk5e = wide;
         }
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         sprite->rotation = value;
     }
 }

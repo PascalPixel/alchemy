@@ -23,7 +23,7 @@
 
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
 {
-    u8 *work = (u8 *)Ram_HeapSlots->window_tiles;
+    u8 *work = (u8 *)Ram_HeapSlots->windowTiles;
     struct UiChannelSlot *render = ((struct UiRenderWork *)work)->channels;
     struct UiChannelSlot *found = NULL;
     u32 i;
@@ -36,19 +36,19 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
     }
     if (found != NULL) {
         found->work = window;
-        found->start_x = x << 8;
+        found->startX = x << 8;
         found->x = x << 8;
         found->y = y << 8;
         found->entry = entry;
         found->colour = 15;
-        found->line_spacing = 10;
+        found->lineSpacing = 10;
         found->countdown = 0;
         found->outline = 0;
         found->ended = 0;
         found->flags = flags;
-        found->unknown_26 = 0;
+        found->unk26 = 0;
         if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
-            found->unknown_26 = spacing[3];
+            found->unk26 = spacing[3];
         if (spacing != NULL) {
             for (i = 0; i < 4; i++)
                 found->spacing[i] = *spacing++;

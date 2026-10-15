@@ -21,11 +21,11 @@ void FieldEffect_WatchLeaderDistance(void)
     s32 dz;
     struct PartyState *party;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     party = &gPartyState;
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset (one pair swapped). */
     asm volatile("" : "+l"(party));
-    actor = ObjectTable_Get(party->current_owner);
+    actor = ObjectTable_Get(party->currentOwner);
     if (*(s8 *)(work + 0xca5) != 0) {
         timer = (s16 *)(work + 0xca6);
         if (*timer != 0)

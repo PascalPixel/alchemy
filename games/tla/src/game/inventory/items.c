@@ -35,21 +35,21 @@ s32 Inventory_Count(s32 owner)
 s32 PartyInventory_HasSpace(void)
 {
     s16 owners[10];
-    s32 owner_count;
-    s32 owner_index;
-    s16 *owner_cursor;
+    s32 ownerCount;
+    s32 ownerIndex;
+    s16 *ownerCursor;
 
-    if (Inventory_Count(gPartyState.current_owner) != 15)
+    if (Inventory_Count(gPartyState.currentOwner) != 15)
         return 1;
-    owner_count = Party_ListActiveOwners(owners);
-    owner_cursor = owners;
-    owner_index = 0;
-    if (owner_index < owner_count) {
+    ownerCount = Party_ListActiveOwners(owners);
+    ownerCursor = owners;
+    ownerIndex = 0;
+    if (ownerIndex < ownerCount) {
         do {
-            if (Inventory_Count(*owner_cursor++) != 15)
+            if (Inventory_Count(*ownerCursor++) != 15)
                 return 1;
-            owner_index++;
-        } while (owner_index < owner_count);
+            ownerIndex++;
+        } while (ownerIndex < ownerCount);
     }
     return 0;
 }
@@ -57,15 +57,15 @@ s32 PartyInventory_HasSpace(void)
 s32 PartyInventory_CountFreeSlots(void)
 {
     s16 owners[10];
-    s32 owner_count = Party_ListActiveOwners(owners);
+    s32 ownerCount = Party_ListActiveOwners(owners);
     s32 cnt = 0;
-    s16 *owner_cursor = owners;
+    s16 *ownerCursor = owners;
 
-    if (cnt < owner_count) {
-        s32 n = owner_count;
+    if (cnt < ownerCount) {
+        s32 n = ownerCount;
 
         do {
-            cnt = cnt - Inventory_Count(*owner_cursor++) + 15;
+            cnt = cnt - Inventory_Count(*ownerCursor++) + 15;
             n--;
         } while (n != 0);
     }

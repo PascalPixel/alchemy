@@ -8,12 +8,12 @@
 #include "field_sprite.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
 struct CellTarget {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -43,7 +43,7 @@ void Func_02001d4c(s32 cue);
 
 void Func_020001d8(struct ObjectRuntime *object)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
         || *(s16 *)(work + 360) != 0) {
@@ -64,5 +64,5 @@ void Func_020001d8(struct ObjectRuntime *object)
     (*(s16 *)((u8 *)object + 102))--;
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native stores the timer before it loads z (2 differ without it). */
     object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
-    object->y += object->speed_limit;
+    object->y += object->speedLimit;
 }

@@ -4,15 +4,15 @@
  * (ldrh r3, [r6]); here the read comes first. The two are equal in priority, so the native's
  * RTL had the constant ahead of the read.
  * Measured:
- *  - the coordinates as plain s32 fields: the saved_x store sinks below the angle read
+ *  - the coordinates as plain s32 fields: the savedX store sinks below the angle read
  *    (differ 6); as the fixed/pixel union the stores alias the u16 read and stay in order;
- *  - as plain statements with the unions (z = center z + sine * 2; saved_x = x;
- *    saved_z = z; angle -= 0x800): differ 4, the x read comes after the shift of the sine
+ *  - as plain statements with the unions (z = center z + sine * 2; savedX = x;
+ *    savedZ = z; angle -= 0x800): differ 4, the x read comes after the shift of the sine
  *    where the native has it before; the forced temporaries and the loop note below put
  *    it there;
  *  - against the last pair: the step as a forced temporary with a loop note after it (no
  *    change, the constant is propagated back); the step behind an "l" asm barrier after
- *    the saves (the order is the native's, but the step takes r2 and saved_x is stored
+ *    the saves (the order is the native's, but the step takes r2 and savedX is stored
  *    before z, differ 6), and before the saves (differ 9);
  *  - the angle through the field and not a pointer: the same code without a loop note,
  *    the address formed twice with one.
@@ -30,17 +30,17 @@ union FieldCoordinate {
 };
 
 struct OrbitEffect {
-    u8 unknown_00[8];
+    u8 unk00[8];
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    u8 unknown_14[28];
+    u8 unk14[28];
     s32 radius;
-    u8 unknown_34[4];
-    union FieldCoordinate saved_x;
-    u8 unknown_3c[4];
-    union FieldCoordinate saved_z;
-    u8 unknown_44[32];
+    u8 unk34[4];
+    union FieldCoordinate savedX;
+    u8 unk3c[4];
+    union FieldCoordinate savedZ;
+    u8 unk44[32];
     u16 angle;
 };
 
@@ -64,7 +64,7 @@ void Func_02000148(struct OrbitEffect *effect)
     x = effect->x.fixed;
     do { } while (0);
     effect->z.fixed = z + (sine << 1);
-    effect->saved_x.fixed = x;
-    effect->saved_z.fixed = effect->z.fixed;
+    effect->savedX.fixed = x;
+    effect->savedZ.fixed = effect->z.fixed;
     *angle -= 0x800;
 }

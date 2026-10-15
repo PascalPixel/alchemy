@@ -2,7 +2,7 @@
 #include "types.h"
 
 // {種類, 地形 (-1 = 全て), フラグ, 結果}, -1 で終わり
-const s16 BattleFx_ResultRules[132] = {
+const s16 gBattleFx_ResultRules[132] = {
 	1,
 	4,
 	-1,
@@ -138,7 +138,7 @@ const s16 BattleFx_ResultRules[132] = {
 };
 
 // {確率, 区域}
-const u16 Encounter_AreaEntryTable[160] = {
+const u16 gEncounter_AreaEntryTable[160] = {
 	100,
 	0,
 	100,

@@ -13,13 +13,13 @@ s32 SaveState_LoadExtraSummary(void)
     struct SaveSummary *summary;
     u32 index;
 
-    work = Ram_HeapSlots->serial_work;
+    work = Ram_HeapSlots->serialWork;
     summary = &work->extra;
     Dma_Fill32(0, summary, sizeof(*summary));
     index = SaveState_FindLatestSlot(3);
     if (index <= 14) {
         ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
-        ReadFlash(index + 1, 0x110, work->extra.unknown_38, sizeof(work->extra.unknown_38));
+        ReadFlash(index + 1, 0x110, work->extra.unk38, sizeof(work->extra.unk38));
         return 1;
     }
     return 0;

@@ -10,12 +10,12 @@
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
 struct SceneWork {
-    u8 unknown_000[0x166];
-    s16 unknown_166;
-    u8 unknown_168[0x44];
-    s32 unknown_1ac;
-    u8 unknown_1b0[0x14];
-    u16 unknown_1c4;
+    u8 unk000[0x166];
+    s16 unk166;
+    u8 unk168[0x44];
+    s32 unk1ac;
+    u8 unk1b0[0x14];
+    u16 unk1c4;
 };
 
 struct WarpTarget {
@@ -24,13 +24,13 @@ struct WarpTarget {
     u16 z;
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->event_work)
+#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
 extern u32 gFrameCount;
 extern u8 MsgAreWeSetting[];
-extern const u8 Data_0200057c[];
-extern const u8 Data_0200059c[];
-extern const struct WarpTarget Data_02000610;
+extern const u8 gData_0200057c[];
+extern const u8 gData_0200059c[];
+extern const struct WarpTarget gData_02000610;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Battle_WaitMode0(s32 frames);

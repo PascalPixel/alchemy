@@ -8,21 +8,21 @@
 #include "ram_buffer.h"
 
 struct MenuResult {
-    s32 owner_state;
-    s32 unknown_04;
+    s32 ownerState;
+    s32 unk04;
     s32 page;
-    s32 page_count;
+    s32 pageCount;
     s32 row;
-    s32 entry_count;
-    s32 selected_index;
+    s32 entryCount;
+    s32 selectedIndex;
 };
 
 struct InventoryMenuState {
-    u8 unknown_000[0x24];
-    s32 item_window;
-    u8 unknown_028[8];
-    s32 info_window;
-    u8 unknown_034[0x190];
+    u8 unk000[0x24];
+    s32 itemWindow;
+    u8 unk028[8];
+    s32 infoWindow;
+    u8 unk034[0x190];
     u16 items[32];
 };
 
@@ -40,38 +40,38 @@ void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y)
 // どうぐ一覧の 1 ページ（5 行）の名前を描く
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state)
 {
-    struct InventoryMenuState *menu = Ram_HeapSlots->menu_runtime;
+    struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
     u32 page;
-    u32 first_entry;
-    u32 visible_count;
+    u32 firstEntry;
+    u32 visibleCount;
     u8 row;
-    const u16 *item_id;
+    const u16 *itemId;
 
     RenderOutput_RedrawSavedRectFar(window);
     UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
     page = state->page;
-    first_entry = page * 5;
-    visible_count = (u8)(state->entry_count - first_entry);
-    if (visible_count > 5) {
-        visible_count = 5;
+    firstEntry = page * 5;
+    visibleCount = (u8)(state->entryCount - firstEntry);
+    if (visibleCount > 5) {
+        visibleCount = 5;
     }
 
-    Menu_SetPageIcons(5, first_entry, window, PAGE_X, 34);
-    Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
+    Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 34);
+    Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
 
     row = 0;
-    if (visible_count > row) {
-        item_id = &menu->items[first_entry];
+    if (visibleCount > row) {
+        itemId = &menu->items[firstEntry];
         do {
             UiText_DrawCharacterAtOffsetFar(
-                (item_id[0] & 0x1ff) + (s32)MsgItemName,
-                menu->item_window,
+                (itemId[0] & 0x1ff) + (s32)MsgItemName,
+                menu->itemWindow,
                 ENTRY_X,
                 row * 16 + 8);
             row++;
-            item_id++;
-        } while (visible_count > row);
+            itemId++;
+        } while (visibleCount > row);
     }
 
     return 1;

@@ -19,17 +19,17 @@ s32 Func_02000070(struct ObjectRuntime *self, struct ObjectRuntime *other, s32 r
 
 s32 Func_020000e8(struct ObjectRuntime *self)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     u8 *state;
     u32 mode;
     s8 *effect;
     struct ObjectRuntime *other;
 
-    Func_02001ba4(self, Func_02001d54(Object_GetById(gPartyState.current_owner)));
+    Func_02001ba4(self, Func_02001d54(Object_GetById(gPartyState.currentOwner)));
     mode = 0x3ff & *(u16 *)(event + 0x166);
-    state = &self->movement_state;
+    state = &self->movementState;
     if (mode == 141) {
-        effect = Ram_HeapSlots->effect_work;
+        effect = Ram_HeapSlots->effectWork;
         /* FAKEMATCH: the barrier keeps the effect work load ahead of the 0x713 offset (differ 2 more without it). */
         asm volatile("");
         if (effect[0x713] != 0)
@@ -37,12 +37,12 @@ s32 Func_020000e8(struct ObjectRuntime *self)
     }
     if (self->action == 1)
         goto near;
-    other = Object_GetById(gPartyState.current_owner);
+    other = Object_GetById(gPartyState.currentOwner);
     if (Func_02000038(&self->x, &other->x) <= 11)
         goto far;
-    if (Func_02000070(self, self->linked_object, 18) != 0)
+    if (Func_02000070(self, self->linkedObject, 18) != 0)
         goto near;
-    if (Func_02000070(self, Object_GetById(gPartyState.current_owner), 26) != 0)
+    if (Func_02000070(self, Object_GetById(gPartyState.currentOwner), 26) != 0)
         goto near;
 far:
     *state = 0;

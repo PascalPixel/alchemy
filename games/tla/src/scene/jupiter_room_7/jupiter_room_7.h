@@ -10,13 +10,13 @@
 #include "text/msg_ids.h"
 
 struct JupiterRoom7Cell {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
 
 extern u32 gFrameCount;
-extern s16 Data_02002c64[];
+extern s16 gData_02002c64[];
 
 void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);

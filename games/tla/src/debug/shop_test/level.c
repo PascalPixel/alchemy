@@ -4,7 +4,7 @@
 #include "input.h"
 
 extern const u8 MsgRaiseEveryoneS[];
-extern const u8 Data_02000e80[];
+extern const u8 gData_02000e80[];
 
 void WaitFrames(s32 frames);
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
@@ -22,7 +22,7 @@ void Func_02000e78(s32 cue);
 // Select and 1 on A, and closes on B.
 void Func_02000748(void)
 {
-    u8 *unit = UnitGet(gPartyState.current_owner);
+    u8 *unit = UnitGet(gPartyState.currentOwner);
     void *window = UiWindow_Create(0, 0, 30, 9, 2);
     const u8 *message = MsgRaiseEveryoneS;
     s32 redraw;
@@ -35,7 +35,7 @@ void Func_02000748(void)
         if (redraw) {
             RenderOutput_RedrawSavedRect(window);
             UiText_DrawStringAtOffset(unit, window, 0, 48);
-            UiText_DrawStringInWindow(Data_02000e80, window, 48, 48);
+            UiText_DrawStringInWindow(gData_02000e80, window, 48, 48);
             redraw = 0;
             UiText_DrawNumberInWindow(unit[15], 0, window, 72, 48);
         }

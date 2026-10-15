@@ -5,11 +5,11 @@
 #include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 
 struct CellWatch {
-    u8 unknown_00[4];
+    u8 unk00[4];
     s32 x;
-    u8 unknown_08[4];
+    u8 unk08[4];
     s32 z;
-    u8 unknown_10[4];
+    u8 unk10[4];
     struct ObjectRuntime *object;
 };
 
@@ -17,7 +17,7 @@ s32 Func_02000658(u32 layer, s32 x, s32 y);
 
 s32 Func_02000dcc(u16 *table)
 {
-    struct CellWatch *watch = Ram_HeapSlots->effect_work;
+    struct CellWatch *watch = Ram_HeapSlots->effectWork;
     s32 result = 0;
     s32 cell = Func_02000658(0, watch->x >> 20, watch->z >> 20) >> 8;
     u32 id;

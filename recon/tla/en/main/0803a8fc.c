@@ -2,16 +2,16 @@
 #include "iwram_call.h"
 
 struct GlyphWork {
-    u8 unknown_000[0xea4];
-    u8 fixed_colour;
-    u8 unknown_ea5[7];
+    u8 unk000[0xea4];
+    u8 fixedColour;
+    u8 unkea5[7];
     u16 outlined;
     u16 colour;
 };
 
 extern struct GlyphWork *gWindowWork;
-extern u8 UiText_Glyphs[];
-extern u8 UiText_SecondGlyphs[];
+extern u8 gUiText_Glyphs[];
+extern u8 gUiText_SecondGlyphs[];
 
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {
@@ -21,8 +21,8 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     s32 length;
     s32 colour;
     s32 transparent;
-    s32 second_index;
-    s32 second_width;
+    s32 secondIndex;
+    s32 secondWidth;
     u8 *digits;
     s32 group;
     s32 row;
@@ -31,17 +31,17 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     u32 value;
 
     work = gWindowWork;
-    second_index = (s32)((u32)code << 8) >> 16;
+    secondIndex = (s32)((u32)code << 8) >> 16;
     code &= 255;
     Iwram_ClearWords(buf, 384);
-    if (work->fixed_colour != 0) {
+    if (work->fixedColour != 0) {
         transparent = 0;
         colour = 8;
     } else {
         transparent = 1;
         colour = work->colour;
     }
-    input = UiText_Glyphs + ((code - 32) << 5);
+    input = gUiText_Glyphs + ((code - 32) << 5);
     length = *(const u16 *)input;
     input += 2;
     if (work->outlined == 1) {
@@ -54,9 +54,9 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
     }
-    if ((u16)second_index != 0) {
-        input = UiText_SecondGlyphs + ((u16)second_index << 5);
-        second_width = *(const s16 *)input;
+    if ((u16)secondIndex != 0) {
+        input = gUiText_SecondGlyphs + ((u16)secondIndex << 5);
+        secondWidth = *(const s16 *)input;
         input += 2;
         if (work->outlined == 1) {
             u8 *dst = buf + length;
@@ -65,7 +65,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             Iwram_ExpandBitRuns(input, dst + 32, colour);
             Iwram_ExpandBitRuns(input, dst + 33, colour);
             /* FAKEMATCH: the signed halfword width grows through its shifted form. */
-            second_width = (s32)(((u32)second_width << 16) + 0x10000) >> 16;
+            secondWidth = (s32)(((u32)secondWidth << 16) + 0x10000) >> 16;
         } else {
             u8 *dst = buf + length;
             u8 *p;
@@ -74,7 +74,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             p = dst + 32;
             Iwram_ExpandBitRuns(input, p, colour);
         }
-        length += (u16)second_width;
+        length += (u16)secondWidth;
     }
 
     digits = buf + 7;

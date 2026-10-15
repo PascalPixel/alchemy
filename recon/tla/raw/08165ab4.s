@@ -617,15 +617,15 @@ Func_08165ab4:
 .L_08165f80:
 	.4byte gInput
 .L_08165f84:
-	.4byte Data_08196e6c
+	.4byte gData_08196e6c
 .L_08165f88:
 	.4byte 0xfffffefc
 .L_08165f8c:
 	.4byte 0xffe00000
 .L_08165f90:
-	.4byte Data_08198a64
+	.4byte gData_08198a64
 .L_08165f94:
-	.4byte Data_08198a6d
+	.4byte gData_08198a6d
 .L_08165f98:
 	.4byte 0xfffe0000
 .L_08165f9c:
@@ -897,15 +897,15 @@ Func_08165ab4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081661c0:
-	.4byte Data_08198a76
+	.4byte gData_08198a76
 .L_081661c4:
-	.4byte Data_08198a84
+	.4byte gData_08198a84
 .L_081661c8:
 	.4byte 0xffffc000
 .L_081661cc:
 	.4byte gMapCellBuffer
 .L_081661d0:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081661d4:
 	.4byte gInput
 .L_081661d8:

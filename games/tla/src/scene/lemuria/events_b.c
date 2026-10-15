@@ -45,13 +45,13 @@ s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
 void Func_02001d7c(s32 a);
 
-extern const struct WarpTarget Data_020021bc;
-extern const struct WarpTarget Data_020021c4;
-extern const struct WarpTarget Data_020021cc;
-extern const struct WarpTarget Data_020021d4;
-extern const struct WarpTarget Data_020021dc;
-extern const struct WarpTarget Data_020021e4;
-extern const struct WarpTarget Data_020021ec;
+extern const struct WarpTarget gData_020021bc;
+extern const struct WarpTarget gData_020021c4;
+extern const struct WarpTarget gData_020021cc;
+extern const struct WarpTarget gData_020021d4;
+extern const struct WarpTarget gData_020021dc;
+extern const struct WarpTarget gData_020021e4;
+extern const struct WarpTarget gData_020021ec;
 
 extern u8 MsgTheDoorIs;
 extern u8 MsgItHasBeen;

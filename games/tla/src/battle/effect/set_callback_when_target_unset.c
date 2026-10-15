@@ -17,18 +17,18 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
     s32 tx;
     s32 ty;
 
-    tx = target->target_x;
+    tx = target->targetX;
     /* FAKEMATCH: ⚓️ loads x before it builds the unset marker. */
     __asm__("");
     if (tx == 0x80000000) {
-        ty = target->target_y;
-        if ((ty == tx) && (target->target_z == ty)) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)BattleFx_UntargetedObjectScript);
+        ty = target->targetY;
+        if ((ty == tx) && (target->targetZ == ty)) {
+            ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)gBattleFx_UntargetedObjectScript);
         }
     }
 }
 
-extern u8 Data_080f0e9c[];
+extern u8 gData_080f0e9c[];
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 
 void BattleFx_ApplyFlickerValue(void *object, s32 value)
@@ -36,6 +36,6 @@ void BattleFx_ApplyFlickerValue(void *object, s32 value)
     s32 child = value - 1;
 
     if (value == 0)
-        child = Data_080f0e9c[(gFrameCount >> 1) & 7];
+        child = gData_080f0e9c[(gFrameCount >> 1) & 7];
     Animation_ApplyChildValuesFar(object, child);
 }

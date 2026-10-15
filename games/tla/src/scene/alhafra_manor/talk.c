@@ -53,10 +53,10 @@ void Func_020000b8(s32 actor)
     UiText_OpenMessageAtObject(actor, 0);
     if (Inventory_PromptAndSetObjectMode(Func_020015e0(), 0) == 0) {
         Battle_WaitMode0(20);
-        Object_LinkObjectAndSetCallback(actor, gPartyState.current_owner);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 760, 320);
+        Object_LinkObjectAndSetCallback(actor, gPartyState.currentOwner);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 760, 320);
         Call3((void (*)())ObjectMotion_ArmCallback, 14, 0x5000, 0);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
         Battle_WaitMode0(10);
         Func_02001588((s32)&SceneId_WorldMap, 67);
     } else {
@@ -84,7 +84,7 @@ void Func_02000150(s32 actor)
 
 void Func_0200019c(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     GameFlag_SetBit(0x8ba);
     Func_020014b8();
@@ -92,7 +92,7 @@ void Func_0200019c(void)
     Func_02001538((s32)&MsgAlhafraManor18);
     if (*(s16 *)((u8 *)work + 0x166) != 0)
         Call3((void (*)())Func_02001560, 18, 256, 60);
-    ObjectMotion_SetAngleToward(18, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(18, gPartyState.currentOwner, 0);
     Value3((s32 (*)())Func_02001560, 18, 263, 20);
     Func_02001548(18, 0, 10);
     Motion_SetVarCbAndRefresh(18, 2);
@@ -105,7 +105,7 @@ void Func_0200019c(void)
 
 void Func_02000238(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     GameFlag_SetBit(0x8bb);
     Func_020014b8();
@@ -113,10 +113,10 @@ void Func_02000238(void)
     Func_02001538((s32)&MsgAlhafraManor23);
     if (*(s16 *)((u8 *)work + 0x166) != 0)
         Call3((void (*)())Func_02001560, 8, 256, 30);
-    Object_LinkObjectAndSetCallback(8, gPartyState.current_owner);
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 304, 152);
+    Object_LinkObjectAndSetCallback(8, gPartyState.currentOwner);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 304, 152);
     ObjectMotion_ArmCallback(8, 0, 0);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x8000, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x8000, 0);
     Battle_WaitMode0(10);
     Motion_SetVarCbAndRefresh(8, 2);
     Battle_WaitMode0(10);
@@ -142,10 +142,10 @@ void Func_02000238(void)
 
 void Func_02000370(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     if (*(s16 *)((u8 *)work + 0x166) != 0) {
-        ObjectMotion_SetAngleToward(9, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
         Battle_WaitMode0(10);
     }
     GameFlag_SetBit(0x8bc);
@@ -162,7 +162,7 @@ void Func_02000370(void)
     ObjectMotion_ArmCallback(9, 0xd000, 0);
     Battle_WaitMode0(30);
     Func_02001548(9, 0, 10);
-    ObjectMotion_SetAngleToward(9, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
     Battle_WaitMode0(20);
     Func_02001548(9, 0, 10);
     Value3((s32 (*)())Func_02001560, 9, 258, 40);
@@ -180,10 +180,10 @@ void Func_02000370(void)
     if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
         Battle_WaitMode0(20);
         Func_02001548(9, 0, 10);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         Battle_WaitMode0(30);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Func_02001548(9, 0, 10);
     }
     Func_020014c0();

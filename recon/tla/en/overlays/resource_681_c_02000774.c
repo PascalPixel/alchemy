@@ -1,5 +1,5 @@
 /* Draft, differ 6 of 59 (three reordered pairs): the native copies the object
- * before the scale_y store, builds the party state offset after its pool load
+ * before the scaleY store, builds the party state offset after its pool load
  * and loads its own sprite byte before the mask 12. Tried: the sprite read
  * earlier or inline, a u16 action, the leader as a local (12), a minute of
  * alchemy permute (4, with a one-pass block). In 655 661 67f 68f 691 692 too. */
@@ -14,18 +14,18 @@ void Func_02000774(struct ObjectRuntime *object)
 {
     s32 dx = object->bounce;
     s32 dy = object->gravity;
-    s32 dz = object->unknown_4c;
+    s32 dz = object->unk4c;
     struct FieldSprite *sprite;
 
     object->x += dx;
     object->y += dy;
     object->z += dz;
     object->bounce = dx - dx / 18;
-    object->unknown_4c = dz - dz / 16;
-    object->scale_x += object->speed_limit;
-    object->scale_y += object->acceleration;
+    object->unk4c = dz - dz / 16;
+    object->scaleX += object->speedLimit;
+    object->scaleY += object->acceleration;
     sprite = object->animation;
     sprite->rotation += object->action;
     ((struct FieldSprite *)object->animation)->priority =
-        ((struct FieldSprite *)Object_GetById(gPartyState.current_owner)->animation)->priority;
+        ((struct FieldSprite *)Object_GetById(gPartyState.currentOwner)->animation)->priority;
 }

@@ -503,7 +503,7 @@ Func_08028aac:
 .L_08028e90:
 	.4byte gInput
 .L_08028e94:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08028e98:
 	.4byte gDebugMode
 .L_08028e9c:
@@ -666,7 +666,7 @@ Func_08028aac:
 .L_08028fc8:
 	.4byte gInput
 .L_08028fcc:
-	.4byte Data_0802eca0
+	.4byte gData_0802eca0
 .L_08028fd0:
 	movs r0, #14
 	adds r0, #255
@@ -809,7 +809,7 @@ Func_08028aac:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080290e0:
-	.4byte Data_0802ec94
+	.4byte gData_0802ec94
 .L_080290e4:
 	.4byte gFrameCount
 .L_080290e8:

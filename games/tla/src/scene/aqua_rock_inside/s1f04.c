@@ -4,8 +4,8 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001f04(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    u8 *flags = &object->motion_flags;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    u8 *flags = &object->motionFlags;
     s32 saved = *flags;
     s32 speed;
     s32 i;
@@ -32,10 +32,10 @@ fall:
         goto fall;
     Func_02002bd4(object);
     Animation_ApplyChildValues(object, 0);
-    ObjectMotion_SetSpeedParameters_(gPartyState.current_owner, 0x20000, 0x10000);
+    ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x20000, 0x10000);
     *flags = saved;
-    object->velocity_y = 0x80000;
+    object->velocityY = 0x80000;
     Func_02003ef4(215);
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 168, 200);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 168, 200);
     Func_02003d84();
 }

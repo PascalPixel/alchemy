@@ -2,7 +2,7 @@
 
 void Func_0200274c(void)
 {
-    struct IsletsEventWork *work = Ram_HeapSlots->event_work;
+    struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
 
     Func_02003e64();
     Func_02003fa4(0);

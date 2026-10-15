@@ -84,7 +84,7 @@ Func_0801319c:
 .L_0801324c:
 	.4byte gIoWriteQueue
 .L_08013250:
-	.4byte Data_03001110
+	.4byte gData_03001110
 .L_08013254:
 	.4byte gDebugMode
 .L_08013258:

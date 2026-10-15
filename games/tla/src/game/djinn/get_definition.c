@@ -11,7 +11,7 @@
 
 
 // The summons in the order the menus list them.
-extern u8 Summon_OrderList[29];
+extern u8 gSummon_OrderList[29];
 
 u32 *Trade_GetOfferState();
 
@@ -19,8 +19,8 @@ u32 *Trade_GetOfferState();
 // first word, ends the list with 32 and returns how many it listed.
 s32 Trade_ListFlaggedEntries(u8 *output)
 {
-    u8 *source = Summon_OrderList;
-    u8 *end = Summon_OrderList + 28;
+    u8 *source = gSummon_OrderList;
+    u8 *end = gSummon_OrderList + 28;
     s32 count = 0;
     /* FAKEMATCH: the one is kept in a register across the loop, as the
        native keeps it in r8; written as a constant in the shift, with the
@@ -50,11 +50,11 @@ s32 Trade_ListFlaggedEntries(u8 *output)
     return count;
 }
 
-const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId)
 {
-    if (summon_id > 28)
+    if (summonId > 28)
         return NULL;
-    return &Summon_DefinitionTable[summon_id];
+    return &gSummon_DefinitionTable[summonId];
 }
 
 

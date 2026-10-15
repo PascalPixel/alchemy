@@ -39,7 +39,7 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
     s32 dx;
     s32 dz;
 
-    args = &object->script[(s16)object->script_cursor + 1];
+    args = &object->script[(s16)object->scriptCursor + 1];
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
@@ -53,7 +53,7 @@ retry:
         pos.y = object->y;
         pos.z = object->z;
         radius = base + Iwram_MulQ16(Random16(), range);
-        heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
+        heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
         Vector_AddPolarOffset(radius, heading, &pos);
         if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
             goto retry;
@@ -77,18 +77,18 @@ retry:
         if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
             goto retry;
         do {
-            dx = pos.x / 0x10000 - object->home_x;
-            dz = pos.z / 0x10000 - object->home_z;
+            dx = pos.x / 0x10000 - object->homeX;
+            dz = pos.z / 0x10000 - object->homeZ;
         } while (0);
         if (dx * dx + dz * dz > limit)
             goto retry;
         goto found;
     }
-    object->script_value += 0x8000;
-    object->turned_back = 1;
+    object->scriptValue += 0x8000;
+    object->turnedBack = 1;
     return 0;
 found:
     Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-    object->script_cursor += 4;
+    object->scriptCursor += 4;
     return 1;
 }

@@ -70,8 +70,8 @@ static s32 LamakanDesert_EmitSandEffect(struct FieldActor *actor)
 	{
 		return 0;
 	}
-	params.start_scale_x = 0xcccc;
-	params.start_scale_y = 0xcccc;
+	params.startScaleX = 0xcccc;
+	params.startScaleY = 0xcccc;
 	params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 	Effect_Spawn(
 		actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase, 0x00880001, &params);
@@ -108,7 +108,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return LamakanDesert_Exits;
+	return gLamakanDesert_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -156,7 +156,7 @@ static void EV09_TOUCH(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return LamakanDesert_Events;
+	return gLamakanDesert_Events;
 }
 
 static s32 LamakanDesert_ApplyEntryState(void)
@@ -369,17 +369,17 @@ static void LamakanDesert_RaiseQuarterTriggers(void)
 	if (GameFlag_IsSet(0x300) == 0 && percent > 24)
 	{
 		GameFlag_Set(0x300);
-		work->raised_trigger = 1;
+		work->raisedTrigger = 1;
 	}
 	if (GameFlag_IsSet(0x301) == 0 && percent > 49)
 	{
 		GameFlag_Set(0x301);
-		work->raised_trigger = 2;
+		work->raisedTrigger = 2;
 	}
 	if (GameFlag_IsSet(0x302) == 0 && percent > 74)
 	{
 		GameFlag_Set(0x302);
-		work->raised_trigger = 3;
+		work->raisedTrigger = 3;
 	}
 }
 
@@ -436,17 +436,17 @@ static void EV20_TOUCH(void)
 	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
 		count = 3;
-		points = LamakanDesert_SafePoints1;
+		points = gLamakanDesert_SafePoints1;
 	}
 	else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
 		count = 5;
-		points = LamakanDesert_SafePoints2;
+		points = gLamakanDesert_SafePoints2;
 	}
 	else
 	{
 		count = 2;
-		points = LamakanDesert_SafePointsOther;
+		points = gLamakanDesert_SafePointsOther;
 	}
 	left = count;
 	point = points;
@@ -474,7 +474,7 @@ static void EV20_TOUCH(void)
 
 		FieldObject_SetPosition(actor, spot->x, 0, spot->z);
 	}
-	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
+	Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
 	Event_PlayCue(152);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	SceneActor_WaitObjectBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
@@ -483,17 +483,17 @@ static void EV20_TOUCH(void)
 		struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
 		options.type = 214;
-		options.start_scale_x = 0x8000;
-		options.start_scale_y = 0xcccc;
-		options.target_scale_x = 0x10000;
-		options.target_scale_y = 0x13333;
+		options.startScaleX = 0x8000;
+		options.startScaleY = 0xcccc;
+		options.targetScaleX = 0x10000;
+		options.targetScaleY = 0x13333;
 		Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &options);
 	}
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
 	hold = (u16 *)(work + 0xcba);
-	progress = &gGameState.hazard_steps;
+	progress = &gGameState.hazardSteps;
 	zero = 0;
 	do
 	{
@@ -519,16 +519,16 @@ static void EV20_TOUCH(void)
 		struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
 		puff.type = 214;
-		puff.start_scale_x = 0x8000;
-		puff.start_scale_y = 0xcccc;
-		puff.target_scale_x = 0x8000;
-		puff.target_scale_y = 0x13333;
+		puff.startScaleX = 0x8000;
+		puff.startScaleY = 0xcccc;
+		puff.targetScaleX = 0x8000;
+		puff.targetScaleY = 0x13333;
 		Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &puff);
 	}
 	Event_PlayCue(0x120);
 	Event_PlayCue(152);
-	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
+	Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
 	Event_Wait(10);
 	*(u16 *)(work + 0xcba) = frames;
@@ -543,14 +543,14 @@ static void LamakanDesert_UpdateTravelDust(void)
 	s32					 dx;
 	s32					 z;
 	s32					 phase;
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	event = gEventWork;
-	if (actor->target_x == 0x80000000)
+	if (actor->targetX == 0x80000000)
 	{
 		return;
 	}
-	gGameState.hazard_steps++;
-	if (event->touched_trigger == 30)
+	gGameState.hazardSteps++;
+	if (event->touchedTrigger == 30)
 	{
 		return;
 	}
@@ -560,8 +560,8 @@ static void LamakanDesert_UpdateTravelDust(void)
 		{
 			return;
 		}
-		params.start_scale_x = 0x8000;
-		params.start_scale_y = 0x8000;
+		params.startScaleX = 0x8000;
+		params.startScaleY = 0x8000;
 		dx = 0;
 		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		if (actor->facing != 0 && actor->facing != 0x8000)
@@ -584,8 +584,8 @@ static void LamakanDesert_UpdateTravelDust(void)
 		}
 		// フレームカウンタをもう一度読んで捨てる (ROM の読み出しそのまま)
 		gFrameCount;
-		params.start_scale_x = 0xcccc;
-		params.start_scale_y = 0xcccc;
+		params.startScaleX = 0xcccc;
+		params.startScaleY = 0xcccc;
 		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		Effect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
 			((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase, 0x880001, &params);
@@ -603,7 +603,7 @@ static void EV22_TOUCH(void)
 	s32				   dx;
 	s32				   dz;
 
-	target = Actor_Get(gGameState.selected_actor);
+	target = Actor_Get(gGameState.selectedActor);
 	best = 9;
 	GameFlag_Set(0x200);
 	min = 0x100000;
@@ -635,7 +635,7 @@ static void EV22_TOUCH(void)
 		}
 	}
 	Engine_ActorSetAnimation(0, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorFaceActor(0, best, 0);
 	Engine_EventWait(20);
 	Actor_SetAttachedEffect(0, 0x102);
@@ -659,7 +659,7 @@ static void EV22_TOUCH(void)
 	Actor_ShowEmote(best, 0x104, 0);
 	Engine_EventWait(60);
 	Actor_SetAttachedEffect(0, 0x100);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 	record = Object_GetById(0);
 	*(s32 *)((u8 *)record + 108) = 0;
 	BattleFx_SetWeightedResult(53, 4);
@@ -680,8 +680,8 @@ static void EV30_TOUCH(void)
 	{
 		struct EventWork *event = gEventWork;
 
-		id = gGameState.selected_actor;
-		center = event->view_center;
+		id = gGameState.selectedActor;
+		center = event->viewCenter;
 	}
 	actor = Object_GetById(id);
 	pos[0] = actor->x.fixed;
@@ -705,7 +705,7 @@ static void EV30_TOUCH(void)
 		do
 		{
 			Engine_TaskWait(1);
-		} while (actor->y.fixed != actor->terrain_height);
+		} while (actor->y.fixed != actor->terrainHeight);
 		Object_SetMode(actor, 6);
 		Engine_TaskWait(3);
 		return;
@@ -744,7 +744,7 @@ static void EV40_TOUCH(void)
 	struct FieldActor *record;
 	s32				   rect[3];
 	s32				   shown;
-	u16				  *shown_addr;
+	u16				  *shownAddr;
 	u8				  *p5;
 
 	p5 = (u8 *)gEventWork;
@@ -756,24 +756,24 @@ static void EV40_TOUCH(void)
 		{
 			GameFlag_Set(0x200);
 			LamakanDesert_SetSandPhase(1);
-			shown_addr = (u16 *)(p5 + 0xcba);
+			shownAddr = (u16 *)(p5 + 0xcba);
 			shown = 0x258;
-			*shown_addr = shown;
+			*shownAddr = shown;
 			record = Object_GetById(ACTOR_PARTY_LEADER);
-			record->velocity_x = rec8;
+			record->velocityX = rec8;
 			record = Object_GetById(ACTOR_PARTY_LEADER);
-			record->velocity_z = rec8;
+			record->velocityZ = rec8;
 			record = Actor_Get(ACTOR_PARTY_LEADER);
-			record->target_x = -0x80000000;
+			record->targetX = -0x80000000;
 			record = Actor_Get(ACTOR_PARTY_LEADER);
-			record->target_z = -0x80000000;
+			record->targetZ = -0x80000000;
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 			Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
 			Engine_EventWait(40);
 			Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 			Engine_EventWait(40);
-			Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			rect[0] = rec8;
 			rect[1] = rec8;
 			rect[2] = rec8;
@@ -784,7 +784,7 @@ static void EV40_TOUCH(void)
 			Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
 			Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 			Engine_EventWait(2);
-			Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 			Engine_EventWait(30);
 			Event_PlayCue(148);
 			Engine_ActorRunRepeatedMotion(8, 2);
@@ -793,7 +793,7 @@ static void EV40_TOUCH(void)
 			Actor_WalkToAndWait(8, 168, 104);
 			Actor_SetSpeed(8, 0x8000, 0x4000);
 			Actor_WalkToAndWait(8, 168, 92);
-			*shown_addr = shown;
+			*shownAddr = shown;
 			LamakanDesert_SetSandPhase(0);
 		}
 	}
@@ -803,15 +803,15 @@ s32 LamakanDesert_EnterArea(s32 a0, s32 a1)
 {
 	s32 v5;
 
-	gGameState.hazard_limit = 0x258;
-	gGameState.hazard_mode = 0;
-	gGameState.hazard_damage = 0x119;
+	gGameState.hazardLimit = 0x258;
+	gGameState.hazardMode = 0;
+	gGameState.hazardDamage = 0x119;
 	if (gGameState.scene == (s32)&SceneId_LamakanDesert4)
 	{
 	}
 	else
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		LamakanDesert_ClaimSandEffectVram();
 		FieldScheduler_AddCallback((s32)LamakanDesert_RaiseQuarterTriggers, 0xc80);
 		if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
@@ -885,29 +885,29 @@ static void LamakanDesert_RunSandstorm(void)
 	s32				   x;
 	u32				   offset;
 
-	tile = gVramBlockCache[(*(s16 *)&LamakanDesert_SandVramSlot)].offset >> 5;
-	if ((*(s16 *)&LamakanDesert_SandPhase) != 0)
+	tile = gVramBlockCache[(*(s16 *)&gLamakanDesert_SandVramSlot)].offset >> 5;
+	if ((*(s16 *)&gLamakanDesert_SandPhase) != 0)
 	{
-		LamakanDesert_SandCounter = 2;
+		gLamakanDesert_SandCounter = 2;
 	}
 	else if (Engine_GameFlagIsSet(0x104) != 0)
 	{
-		if (LamakanDesert_SandCounter > 0)
+		if (gLamakanDesert_SandCounter > 0)
 		{
-			LamakanDesert_SandCounter--;
+			gLamakanDesert_SandCounter--;
 		}
 	}
-	else if (LamakanDesert_SandCounter <= 1)
+	else if (gLamakanDesert_SandCounter <= 1)
 	{
-		if (++LamakanDesert_SandCounter == 1)
+		if (++gLamakanDesert_SandCounter == 1)
 		{
-			Dma_Set(LamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+			Dma_Set(gLamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
 		}
 	}
-	counter = LamakanDesert_SandCounter;
+	counter = gLamakanDesert_SandCounter;
 	if (counter == 0)
 	{
-		Resource_ActivateEntry((*(s16 *)&LamakanDesert_SandVramSlot));
+		Resource_ActivateEntry((*(s16 *)&gLamakanDesert_SandVramSlot));
 		return;
 	}
 	display = *Ram_DisplayWork;
@@ -925,7 +925,7 @@ static void LamakanDesert_RunSandstorm(void)
 	}
 
 	buffer = MemAlloc(0x900);
-	Dma_Set(LamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
+	Dma_Set(gLamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
 	colors = (s16 *)(buffer + 12);
 	color = colors;
 	for (i = 6; i < 12; i++)
@@ -935,7 +935,7 @@ static void LamakanDesert_RunSandstorm(void)
 		red = value & 31;
 		green = (value >> 5) & 31;
 		blue = ((value >> 10) & 31) - 20;
-		level = LamakanDesert_SandLevel;
+		level = gLamakanDesert_SandLevel;
 		red += level / 3;
 		blue = blue - level / 6 + 20;
 		if (level > 60 && (gFrameCount & 1))
@@ -962,27 +962,27 @@ static void LamakanDesert_RunSandstorm(void)
 	QueueIoWriteDelay3((u32)palette++, *word++);
 	QueueIoWriteDelay3((u32)palette++, *word++);
 
-	LamakanDesert_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
-	if (LamakanDesert_SandLevel > 118)
+	gLamakanDesert_SandLevel = gGameState.hazardSteps * 120 / gGameState.hazardLimit;
+	if (gLamakanDesert_SandLevel > 118)
 	{
-		LamakanDesert_SandFlash = 119;
+		gLamakanDesert_SandFlash = 119;
 	}
-	if (LamakanDesert_SandFlash != 0)
+	if (gLamakanDesert_SandFlash != 0)
 	{
-		LamakanDesert_SandLevel = LamakanDesert_SandFlash;
-		LamakanDesert_SandFlash -= 8;
-		if (LamakanDesert_SandFlash <= 0)
+		gLamakanDesert_SandLevel = gLamakanDesert_SandFlash;
+		gLamakanDesert_SandFlash -= 8;
+		if (gLamakanDesert_SandFlash <= 0)
 		{
-			LamakanDesert_SandFlash = 0;
+			gLamakanDesert_SandFlash = 0;
 		}
 	}
 
-	Dma_Set(LamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
-	if (LamakanDesert_SandFlash <= 118)
+	Dma_Set(gLamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
+	if (gLamakanDesert_SandFlash <= 118)
 	{
 		column = (u32 *)(buffer + 80);
 		fill = 0xeeeeeeee;
-		for (i = 12; i < 128 - LamakanDesert_SandLevel; i++)
+		for (i = 12; i < 128 - gLamakanDesert_SandLevel; i++)
 		{
 			column[8] = fill;
 			*column++ = fill;
@@ -1006,13 +1006,13 @@ static void LamakanDesert_RunSandstorm(void)
 		}
 		destination++;
 	}
-	Engine_VramLoad((*(s16 *)&LamakanDesert_SandVramSlot), 0x480, buffer);
+	Engine_VramLoad((*(s16 *)&gLamakanDesert_SandVramSlot), 0x480, buffer);
 
 	attributes = 0x80008000;
-	sprite = LamakanDesert_SandWork;
+	sprite = gLamakanDesert_SandWork;
 	for (i = 0, offset = 0, x = 8; i < 5; i++)
 	{
-		u32 y = (LamakanDesert_SandCounter * 8 - 16) & 0x1ff;
+		u32 y = (gLamakanDesert_SandCounter * 8 - 16) & 0x1ff;
 
 		if (i == 4)
 		{
@@ -1021,7 +1021,7 @@ static void LamakanDesert_RunSandstorm(void)
 		sprite->next = NULL;
 		sprite->oam.word.attr01 = (y << 16) | x | attributes;
 		sprite->oam.word.attr23 = 0xe400 | tile;
-		Runtime_PushSlotEntry(((u8 *)LamakanDesert_SandWork + offset), 255);
+		Runtime_PushSlotEntry(((u8 *)gLamakanDesert_SandWork + offset), 255);
 		sprite++;
 		tile += 8;
 		offset += 12;
@@ -1041,20 +1041,20 @@ void LamakanDesert_ClaimSandEffectVram(void)
 	u16		   *slotp;
 	struct Half zero;
 
-	FieldResource_DecodeType01(LamakanDesert_SandEffectTiles, LamakanDesert_SandTileBuffer);
-	slotp = &LamakanDesert_SandVramSlot;
+	FieldResource_DecodeType01(gLamakanDesert_SandEffectTiles, gLamakanDesert_SandTileBuffer);
+	slotp = &gLamakanDesert_SandVramSlot;
 	slot = Resource_FindFreeEntry();
 	*slotp = slot;
 	Engine_VramLoad((s16)slot, 0x480, 0);
 	zero.v = 0;
-	LamakanDesert_SandCounter = zero.v;
-	LamakanDesert_SandPhase = zero.v;
+	gLamakanDesert_SandCounter = zero.v;
+	gLamakanDesert_SandPhase = zero.v;
 	FieldScheduler_AddCallback(LamakanDesert_RunSandstorm, 0xc76);
 }
 
 static void LamakanDesert_SetSandPhase(u16 value)
 {
-	LamakanDesert_SandPhase = value;
+	gLamakanDesert_SandPhase = value;
 }
 
 const s32 gEffectScript0[] = {
@@ -1084,13 +1084,13 @@ const s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-const s32 LamakanDesert_SafePoints1[] = {
+const s32 gLamakanDesert_SafePoints1[] = {
 	PIXELS(384), PIXELS(128),
 	PIXELS(288), PIXELS(688),
 	PIXELS(608), PIXELS(720),
 };
 
-const s32 LamakanDesert_SafePoints2[] = {
+const s32 gLamakanDesert_SafePoints2[] = {
 	PIXELS(704), PIXELS(96),
 	PIXELS(448), PIXELS(464),
 	PIXELS(832), PIXELS(592),
@@ -1098,7 +1098,7 @@ const s32 LamakanDesert_SafePoints2[] = {
 	PIXELS(464), PIXELS(896),
 };
 
-const s32 LamakanDesert_SafePointsOther[] = {
+const s32 gLamakanDesert_SafePointsOther[] = {
 	PIXELS(192), PIXELS(224),
 	PIXELS(192), PIXELS(352),
 };
@@ -1148,7 +1148,7 @@ struct SceneEntrance gLamakanDesertEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 LamakanDesert_Exits[] = {
+u32 gLamakanDesert_Exits[] = {
 	SCENE_EXITS(89),
 	SCENE_EXIT(1, 2, 18),
 	SCENE_EXIT(2, 90, 1),
@@ -1204,7 +1204,7 @@ struct ScenePlacement gLamakanDesertPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent LamakanDesert_Events[] = {
+struct SceneEvent gLamakanDesert_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1244,8 +1244,8 @@ struct SceneEvent LamakanDesert_Events[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s16 LamakanDesert_SandLevel = 0;
+s16 gLamakanDesert_SandLevel = 0;
 
-s16 LamakanDesert_SandCounter = 0;
+s16 gLamakanDesert_SandCounter = 0;
 
-s16 LamakanDesert_SandFlash = 0;
+s16 gLamakanDesert_SandFlash = 0;

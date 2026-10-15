@@ -3,17 +3,17 @@
 
 void SerialRuntime_Initialize(void)
 {
-    u32 interrupt_enable;
+    u32 interruptEnable;
     /* FAKEMATCH: keep the fill word's address before its store. */
     volatile u32 zero;
     s32 index;
-    volatile u16 *ime_reg;
+    volatile u16 *imeReg;
     struct SerialRuntime *state;
 
-    interrupt_enable = REG_IME;
+    interruptEnable = REG_IME;
     /* FAKEMATCH: retain the reference's IME pointer lifetime. */
-    do { ime_reg = &REG_IME; } while (0);
-    *ime_reg = (u32)ime_reg;
+    do { imeReg = &REG_IME; } while (0);
+    *imeReg = (u32)imeReg;
     Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
     Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
     REG_IME = 0;
@@ -32,13 +32,13 @@ void SerialRuntime_Initialize(void)
     REG_IME = 1;
     zero = 0;
     Dma_Set(&zero, state, 0x85000058, (volatile u32 *)0x040000d4);
-    state->send_index = -1;
-    state->send_buffer[0] = (u16 *)(state->storage + 0);
-    state->send_buffer[1] = (u16 *)(state->storage + 32);
+    state->sendIndex = -1;
+    state->sendBuffer[0] = (u16 *)(state->storage + 0);
+    state->sendBuffer[1] = (u16 *)(state->storage + 32);
     for (index = 0; index <= 1; index++) {
-        state->incoming_buffer[index] = (u16 *)(state->storage + 64 + index * 96);
-        state->ready_buffer[index] = (u16 *)(state->storage + 96 + index * 96);
-        state->pending_buffer[index] = (u16 *)(state->storage + 128 + index * 96);
+        state->incomingBuffer[index] = (u16 *)(state->storage + 64 + index * 96);
+        state->readyBuffer[index] = (u16 *)(state->storage + 96 + index * 96);
+        state->pendingBuffer[index] = (u16 *)(state->storage + 128 + index * 96);
     }
     REG_IME = 0;
     REG_IE |= 0x80;
@@ -50,5 +50,5 @@ void SerialRuntime_Initialize(void)
     gSerialReceiveDest = 0;
     gSerialReceivedSize = 0;
     BattleLink_ResetTransferState();
-    REG_IME = interrupt_enable;
+    REG_IME = interruptEnable;
 }

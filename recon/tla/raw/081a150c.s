@@ -54,15 +54,15 @@ Func_081a150c:
 .L_081a1578:
 	.4byte gCpuLoadDisplayEnabled
 .L_081a157c:
-	.4byte Data_03001110
+	.4byte gData_03001110
 .L_081a1580:
 	.4byte gAutoSleepEnabled
 .L_081a1584:
 	.4byte Data_02007518
 .L_081a1588:
-	.4byte Data_0200751c
+	.4byte gData_0200751c
 .L_081a158c:
-	.4byte Data_02007520
+	.4byte gData_02007520
 .L_081a1590:
 	.4byte Data_02007528
 .L_081a1594:

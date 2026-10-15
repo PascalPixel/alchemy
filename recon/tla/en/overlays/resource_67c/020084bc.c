@@ -11,7 +11,7 @@ void Func_0200349c(s32 column, s32 value);
 
 void Func_020004bc(s32 unused, s32 id)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->map_work;
+    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
     s32 *layer;
     s32 i;
     s32 column;

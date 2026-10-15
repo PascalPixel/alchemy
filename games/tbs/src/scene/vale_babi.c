@@ -194,7 +194,7 @@ static void ValeBabi_CloseScreenAndExit(s32 object)
 	{
 		BattleFx_SetBlock30ValuesMaxZero();
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(object);
@@ -273,7 +273,7 @@ s32 ValeBabi_RestoreEntryState(void)
 	if (gGameState.entrance == 19)
 	{
 		Engine_GameFlagClear(0x12f);
-		((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
+		((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	}
 	else
@@ -336,7 +336,7 @@ s32 ValeBabi_RestoreEntryState(void)
 					}
 					else
 					{
-						((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
+						((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
 							SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 						if (Engine_GameFlagIsSet(0x834) != 0)
 						{
@@ -366,7 +366,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	s32					  base;
 	struct FieldSprite	 *sprite;
 	struct MapScrollWork *work;
-	struct FieldActor	 *scene_actor;
+	struct FieldActor	 *sceneActor;
 	struct EventWork	**control;
 
 	control = (struct EventWork **)Ram_EventWork;
@@ -378,7 +378,7 @@ static void FieldScene_RunComplexActorSequence(void)
 		struct EventWork *event = *control;
 
 		work = *(struct MapScrollWork **)Ram_MapWork;
-		scene_actor = event->view_center;
+		sceneActor = event->viewCenter;
 	}
 	sprite = Object_GetById(17)->sprite;
 	Engine_EventBegin();
@@ -391,7 +391,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetAnimation(0, 18);
 	sprite->rotation = 1365;
-	Object_GetById(17)->motion_flags = 0;
+	Object_GetById(17)->motionFlags = 0;
 	Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
 	Engine_ActorSetPosition(17, 37748736, 42598400);
 	Map_ClearLayerEntryFlag(7);
@@ -406,17 +406,17 @@ static void FieldScene_RunComplexActorSequence(void)
 	UiText_ShowCenteredMessage(base + 1, 1, 0);
 	ObjectDispatch_StopCallbacksAndHideLayers();
 	Engine_EventWait(40);
-	work->min_x = 0x01480000;
-	work->min_y = 0x02580000;
-	work->max_x = 0x02700000;
-	work->max_y = 0x03300000;
-	scene_actor->x.fixed = 0x02340000;
-	scene_actor->y.fixed = 0;
-	scene_actor->z.fixed = 0x02b30000;
+	work->minX = 0x01480000;
+	work->minY = 0x02580000;
+	work->maxX = 0x02700000;
+	work->maxY = 0x03300000;
+	sceneActor->x.fixed = 0x02340000;
+	sceneActor->y.fixed = 0;
+	sceneActor->z.fixed = 0x02b30000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	(*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	(*control)->transition_frames = 64;
+	(*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	(*control)->transitionFrames = 64;
 	BattleFx_StartTwelveFrameBlend();
 	(*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud = 1;
 	BattleFx_SetBlock30Values12Zero();
@@ -455,10 +455,10 @@ static void FieldScene_RunComplexActorSequence(void)
 	FieldScene_RunSixStepSequence17e4();
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Event_ShowMessageAndWait(36872, 0, 20);
-	Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(8, 542, 680);
 	Engine_EventWait(1);
-	Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	ObjectDispatch_RegisterChildMetadata(Object_GetById(0), 226);
@@ -468,15 +468,15 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_EventWait(10);
 	Engine_ActorSetChildValue(0, 0);
 	Engine_EventWait(20);
-	Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(8, 534, 688);
 	Engine_EventWait(1);
-	Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Actor_SetSpeed(8, 98304, 49152);
 	Actor_SetSpeed(0, 98304, 49152);
 	Engine_CameraFollowActor(8, 1);
-	Object_GetById(0)->priority_flags |= 0x1;
+	Object_GetById(0)->priorityFlags |= 0x1;
 	Engine_ActorEnableActionCallback(8, gValeBabiSharedAction);
 	Engine_EventWait(20);
 	Engine_ActorEnableActionCallback(0, gValeBabiSharedAction);
@@ -499,8 +499,8 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorEnableActionCallback(8, gValeBabiActorExitAction);
 	Engine_ActorEnableActionCallback(0, gValeBabiLeaderExitAction);
 	Engine_EventWait(20);
-	(*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	(*control)->transition_frames = 16;
+	(*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	(*control)->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(20);
@@ -522,15 +522,15 @@ union PairObject
 	s32				  words[28];
 	struct
 	{
-		u8				  unknown_00[0x68];
+		u8				  unk00[0x68];
 		union PairObject *parent;
 	} link;
 };
 
 struct PairWork
 {
-	u8	unknown_00[70];
-	u16 vram_block;
+	u8	unk00[70];
+	u16 vramBlock;
 };
 
 static void FieldScene_RunPaletteRampSequence(void)
@@ -552,11 +552,11 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Actor_SetPosition(8, PIXELS(431), PIXELS(391));
 	Engine_ActorSetPosition(10, PIXELS(463), PIXELS(404));
 	Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-	actor->priority_flags &= 0xfe;
-	actor->motion_flags = 0;
+	actor->priorityFlags &= 0xfe;
+	actor->motionFlags = 0;
 	sprite->priority = 1;
 	Engine_ActorEnableActionCallback(10, gValeBabiRampActor10Action);
-	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
+	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
 	Map_CopyCellsTo(90, 16, 90, 20, 5, 4);
@@ -642,9 +642,9 @@ ramp:
 	Engine_CameraFollowActor(8, 1);
 	Engine_ActorEnableActionCallback(8, gValeBabiRampFinalAction);
 	Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER, gValeBabiRampFinalAction);
-	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
+	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
 		SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transition_frames = 32;
+	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(21);
@@ -803,7 +803,7 @@ static void ValeBabi_RunSickbedVisit(void)
 	record = Object_GetById(0);
 	record->facing = 0;
 	Engine_TaskWait(1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(0, 0x22e, 0x184);
 	Actor_SetSpeed(8, 0x13333, 0x9999);
 	Engine_ActorSetAnimation(8, 14);
@@ -811,7 +811,7 @@ static void ValeBabi_RunSickbedVisit(void)
 	Engine_EventWait(40);
 	Actor_WalkToAndWait(8, 0x244, 0x17e);
 	Actor_FaceDirection(8, 0x8000, 40);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorFaceDirection(8, 0xc000, 8);
 	Engine_ActorFaceDirection(8, 0, 8);
 	Actor_FaceDirection(8, 0x4000, 8);
@@ -877,17 +877,17 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_CameraFollowActor(18, 1);
 	clear = 0;
 	actor = Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
-	actor->motion_flags = clear;
+	actor->motionFlags = clear;
 	sprite = actor->sprite;
 	actor->y.fixed = 0x50000;
-	sprite->part_count = clear;
-	sprite->full_color = 0;
+	sprite->partCount = clear;
+	sprite->fullColor = 0;
 	sprite->palette = 0;
 	glyph = Engine_HeapAllocate(17, sizeof(*glyph));
 	Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
-	Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
+	Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
 	Engine_HeapRelease(17);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(18, 0x10000, 0x8000);
 	Actor_WalkToAndWait(18, 0x1e0, 176);
@@ -967,7 +967,7 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object)
 		{
 			child->words[5] = parent->words[5];
 			part = (struct AnimationObject *)child->object.actor.sprite;
-			child->object.actor.motion_flags = 0;
+			child->object.actor.motionFlags = 0;
 			child->object.effect.spin = 0;
 			child->link.parent = parent;
 			if (part != NULL)
@@ -975,11 +975,11 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object)
 				sprite = (struct FieldSprite *)part;
 				Object_InitializeMode(part, 0);
 				sprite->flags = 0;
-				Resource_ResetEntry(sprite->vram_block);
-				sprite->vram_block = work->vram_block;
-				sprite->unknown_1d_0 = 1;
-				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-				sprite->full_color = 0;
+				Resource_ResetEntry(sprite->vramBlock);
+				sprite->vramBlock = work->vramBlock;
+				sprite->unk1d0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
+				sprite->fullColor = 0;
 				sprite->shape = 1;
 				part->part[0].size = 2;
 				part->entries[0]->frame = 0;
@@ -999,7 +999,7 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object)
 
 		sp->priority = 2;
 		p->update = Effect_AnimateVerticalPositive;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 }
 

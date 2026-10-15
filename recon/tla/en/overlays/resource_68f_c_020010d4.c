@@ -16,15 +16,15 @@
 #include "party_state.h"
 
 struct ReflectionSprite {
-    u8 unknown_00[2];
-    u16 unknown_02;
-    u8 unknown_04[12];
-    s32 unknown_10;
-    u8 unknown_14;
+    u8 unk00[2];
+    u16 unk02;
+    u8 unk04[12];
+    s32 unk10;
+    u8 unk14;
 };
 
 struct ReflectionAnimation {
-    u8 unknown_00[0x28];
+    u8 unk00[0x28];
     struct ReflectionSprite *sprite;
 };
 
@@ -33,11 +33,11 @@ s32 GameFlag_Test(s32 flag);
 
 void Func_020010d4(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ReflectionAnimation *leaderAnimation = leader->animation;
     struct ReflectionAnimation *animation = object->animation;
 
-    if (leader->z <= object->unknown_4c)
+    if (leader->z <= object->unk4c)
     {
         object->z = 0;
         object->x = 0;
@@ -60,12 +60,12 @@ void Func_020010d4(struct ObjectRuntime *object)
 
             object->x = leader->x;
             object->y = leader->y;
-            object->z = object->unknown_4c - (leader->z - object->unknown_4c);
+            object->z = object->unk4c - (leader->z - object->unk4c);
             object->angle = ~leader->angle;
             source = leaderAnimation->sprite;
-            sprite->unknown_10 = source->unknown_10;
-            sprite->unknown_02 = source->unknown_02;
-            sprite->unknown_14 = source->unknown_14;
+            sprite->unk10 = source->unk10;
+            sprite->unk02 = source->unk02;
+            sprite->unk14 = source->unk14;
         }
     }
 }

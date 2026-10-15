@@ -1,10 +1,10 @@
 #include "local.h"
 #include "call.h"
 
-extern s16 Data_0200525c[];
-extern s16 Data_020052bc[];
-extern s16 Data_0200531c[];
-extern s16 Data_0200537c[];
+extern s16 gData_0200525c[];
+extern s16 gData_020052bc[];
+extern s16 gData_0200531c[];
+extern s16 gData_0200537c[];
 
 void Func_02000800(s32 id, s16 *script, s32 flag);
 
@@ -14,19 +14,19 @@ void Func_02003548(void)
      * script calls, which build it again after the scene test (a direct call: differ 56). */
     Call1((void (*)())GameFlag_SetBit, 0x302);
     if (gPartyState.scene == (s32)&SceneId_Ov692Room4) {
-        s16 *script = Data_0200525c;
+        s16 *script = gData_0200525c;
 
         /* FAKEMATCH: the native loads the first script before it builds 0x302; sched2 puts the
          * constant's longer chain first without the barrier (differ 2). */
         asm("");
         Func_02000800(15, script, 0x302);
-        Func_02000800(16, Data_0200525c, 0x302);
-        Func_02000800(17, Data_020052bc, 0x302);
-        Func_02000800(18, Data_020052bc, 0x302);
-        Func_02000800(19, Data_0200531c, 0x302);
-        Func_02000800(20, Data_0200531c, 0x302);
-        Func_02000800(21, Data_0200537c, 0x302);
-        Func_02000800(22, Data_0200537c, 0x302);
+        Func_02000800(16, gData_0200525c, 0x302);
+        Func_02000800(17, gData_020052bc, 0x302);
+        Func_02000800(18, gData_020052bc, 0x302);
+        Func_02000800(19, gData_0200531c, 0x302);
+        Func_02000800(20, gData_0200531c, 0x302);
+        Func_02000800(21, gData_0200537c, 0x302);
+        Func_02000800(22, gData_0200537c, 0x302);
         if (Object_GetById(16)->step == 0) {
             Object_GetById(16)->step = 10;
             Object_GetById(18)->step = 10;
@@ -54,10 +54,10 @@ void Func_02003630(struct ObjectRuntime *arg)
 
     asm("");
     object = arg;
-    owner = Object_GetById(party->current_owner);
+    owner = Object_GetById(party->currentOwner);
     ownerY = owner->y >> 16;
     y = object->y >> 16;
-    flags = &object->priority_flags;
+    flags = &object->priorityFlags;
 
     if (ownerY != y || (s16)(owner->z >> 16) < (s16)(object->z >> 16)) {
         *flags = 1;

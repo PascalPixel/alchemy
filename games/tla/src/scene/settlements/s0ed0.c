@@ -3,15 +3,15 @@
 
 void Func_02000e90(void)
 {
-    struct MapLayer *layer = &Ram_HeapSlots->map_work->layers[2];
+    struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
     s16 y = layer->y >> 16;
 
     /* FAKEMATCH: a one-pass block builds the store's address before 1448 (one reordered row), as in overlay 679. */
     do {
-        Data_02002ce0 = 1448 - y;
+        gData_02002ce0 = 1448 - y;
     } while (0);
-    Data_02002ce4 = layer->x >> 16;
-    Data_02002ce6 = (s16)(layer->x >> 16) - (gFrameCount >> 2);
+    gData_02002ce4 = layer->x >> 16;
+    gData_02002ce6 = (s16)(layer->x >> 16) - (gFrameCount >> 2);
 }
 
 void Func_02000ed0(void)
@@ -25,11 +25,11 @@ void Func_02000ed0(void)
 
 void Func_02000ef0(void)
 {
-    Func_02002190(Data_0200226c);
+    Func_02002190(gData_0200226c);
 }
 
 void Func_02000f00(void)
 {
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 2;
-    Func_02002190(Data_0200226c);
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 2;
+    Func_02002190(gData_0200226c);
 }

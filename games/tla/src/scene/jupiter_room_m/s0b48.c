@@ -1,11 +1,11 @@
 #include "jupiter_room_m.h"
 
-extern u32 Data_02005524[];
-extern u32 Data_02005548[];
-extern u32 Data_0200558c[];
-extern u32 Data_020055ec[];
-extern u32 Data_02005644[];
-extern u32 Data_0200569c[];
+extern u32 gData_02005524[];
+extern u32 gData_02005548[];
+extern u32 gData_0200558c[];
+extern u32 gData_020055ec[];
+extern u32 gData_02005644[];
+extern u32 gData_0200569c[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -43,11 +43,11 @@ void Func_02000b48(void)
     PLACE(2, 731, 232, 0xc000);
     PLACE(27, 731, 213, 0x4000);
     PLACE(26, 737, 202, 0);
-    ObjectMotion_EnableActionAndSetCallback(0, Data_0200558c);
-    ObjectMotion_EnableActionAndSetCallback(2, Data_02005644);
-    ObjectMotion_EnableActionAndSetCallback(26, Data_020055ec);
-    ObjectMotion_EnableActionAndSetCallback(27, Data_0200569c);
-    ObjectMotion_EnableActionAndSetCallback(3, Data_02005548);
+    ObjectMotion_EnableActionAndSetCallback(0, gData_0200558c);
+    ObjectMotion_EnableActionAndSetCallback(2, gData_02005644);
+    ObjectMotion_EnableActionAndSetCallback(26, gData_020055ec);
+    ObjectMotion_EnableActionAndSetCallback(27, gData_0200569c);
+    ObjectMotion_EnableActionAndSetCallback(3, gData_02005548);
 }
 
 void Func_02000c08(void)
@@ -58,7 +58,7 @@ void Func_02000c08(void)
     PLACE(1, 824, 302, 0xc000);
     PLACE(29, 821, 302, 0xc000);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(1), 0);
-    ObjectMotion_EnableActionAndSetCallback(1, Data_02005524);
+    ObjectMotion_EnableActionAndSetCallback(1, gData_02005524);
     {
         /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is built before the callback's address is loaded (as an argument: differ 2 of 57; tried an unprototyped call, an s32 or u16 priority, a callback temporary and a forwarding inline). */
         s32 priority = 0x480;

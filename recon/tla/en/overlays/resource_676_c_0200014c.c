@@ -5,13 +5,13 @@
 
 s32 Func_0200014c(struct ObjectRuntime *object)
 {
-    u8 *tiles = Ram_HeapSlots->window_tiles;
-    u8 *event = Ram_HeapSlots->event_work;
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    u8 *tiles = Ram_HeapSlots->windowTiles;
+    u8 *event = Ram_HeapSlots->eventWork;
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 force = 0;
 
     if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
-        object->movement_state = force;
+        object->movementState = force;
         Func_02002448(object, 2);
     } else {
         struct ObjectRuntime *target;
@@ -22,7 +22,7 @@ s32 Func_0200014c(struct ObjectRuntime *object)
         else
             target = Object_GetById(9);
         if (Func_02000088(object, target, 24, 0) == 0) {
-            leader = Object_GetById(gPartyState.current_owner);
+            leader = Object_GetById(gPartyState.currentOwner);
             if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
                 force = 1;
             Func_02000088(object, leader, 24, force);

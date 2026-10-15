@@ -6,41 +6,41 @@
 #include "ram_buffer.h"
 
 struct DjinnMenuWork {
-    u8 unknown_000[0x204];
+    u8 unk000[0x204];
     u16 owners[8];
-    u8 unknown_214[1];
-    u8 owner_count;
+    u8 unk214[1];
+    u8 ownerCount;
 };
 
 struct DjinnUnit {
-    u8 unknown_000[0xf8];
-    u32 djinn_available[4];
-    u32 djinn_active[4];
+    u8 unk000[0xf8];
+    u32 djinnAvailable[4];
+    u32 djinnActive[4];
 };
 
-struct DjinnUnit *UnitGet(s32 unit_id);
+struct DjinnUnit *UnitGet(s32 unitId);
 
 void Func_081049c8(u8 *counts)
 {
     struct DjinnMenuWork *work;
     struct DjinnUnit *unit;
-    s32 owner_index;
+    s32 ownerIndex;
     s32 element;
     s32 bit;
     s32 count;
 
-    work = Ram_HeapSlots->menu_runtime;
-    for (owner_index = 0; owner_index < work->owner_count; owner_index++) {
-        unit = UnitGet(work->owners[owner_index]);
+    work = Ram_HeapSlots->menuRuntime;
+    for (ownerIndex = 0; ownerIndex < work->ownerCount; ownerIndex++) {
+        unit = UnitGet(work->owners[ownerIndex]);
         count = 0;
         for (element = 0; element <= 3; element++) {
             for (bit = 0; bit <= 19; bit++) {
-                if (unit->djinn_active[element] & (1 << bit))
+                if (unit->djinnActive[element] & (1 << bit))
                     count++;
-                else if (unit->djinn_available[element] & (1 << bit))
+                else if (unit->djinnAvailable[element] & (1 << bit))
                     count++;
             }
         }
-        counts[owner_index] = count;
+        counts[ownerIndex] = count;
     }
 }

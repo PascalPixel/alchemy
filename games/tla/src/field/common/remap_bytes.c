@@ -16,7 +16,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
     u8 *table;
 
     p = buf;
-    table = Runtime_ByteRemapTable;
+    table = gRuntime_ByteRemapTable;
     n = cnt - 1;
     if (n != -1) {
         do {

@@ -23,11 +23,11 @@ extern char ResourceId_Data123;
 extern char ResourceId_Data12E;
 extern char ResourceId_Data16D;
 extern char ResourceId_BlueFlameSheet;
-extern const u16 Data_08199d40[];
-extern const s8 Data_08199d4e[];
-extern const s8 Data_08199d55[];
-extern const u8 Data_08199d31[];
-extern const u8 Data_08199d38[];
+extern const u16 gData_08199d40[];
+extern const s8 gData_08199d4e[];
+extern const s8 gData_08199d55[];
+extern const u8 gData_08199d31[];
+extern const u8 gData_08199d38[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -53,8 +53,8 @@ void Func_08143000(void);
 
 void Func_08188cb0(struct BattleEffectArgument *effect)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    void *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    void *canvas = Ram_HeapSlots->battleFxWork[1];
     DrawRectangle draw[2];
     struct EffectPosition position;
     struct EffectStep *sparks;
@@ -126,16 +126,16 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                     cell = 6;
                 if (effect->side == 0)
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        Data_08199d4e[cell] + 30, Data_08199d55[cell] + position.y - 60,
-                        Data_08199d31[cell], Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        gData_08199d4e[cell] + 30, gData_08199d55[cell] + position.y - 60,
+                        gData_08199d31[cell], gData_08199d38[cell]);
                 }
                 else
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        -Data_08199d4e[cell] - Data_08199d31[cell] + 98,
-                        Data_08199d55[cell] + position.y - 60, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        -gData_08199d4e[cell] - gData_08199d31[cell] + 98,
+                        gData_08199d55[cell] + position.y - 60, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
             }
         }
@@ -150,17 +150,17 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                     cell = 6;
                 if (effect->side == 0)
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        position.x / 2 + Data_08199d4e[cell] - 16,
-                        Data_08199d55[cell] + position.y - 92, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        position.x / 2 + gData_08199d4e[cell] - 16,
+                        gData_08199d55[cell] + position.y - 92, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
                 else
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        position.x / 2 - Data_08199d4e[cell] - Data_08199d31[cell] + 16,
-                        Data_08199d55[cell] + position.y - 92, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        position.x / 2 - gData_08199d4e[cell] - gData_08199d31[cell] + 16,
+                        gData_08199d55[cell] + position.y - 92, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
             }
         }
@@ -182,8 +182,8 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                 else
                     spark->x = (position.x / 2) << 16;
                 spark->y = 0x500000;
-                spark->velocity_x = (Trig_Sin(angle) * force) >> 7;
-                spark->velocity_y = -(Trig_Cos(angle) * force) >> 6;
+                spark->velocityX = (Trig_Sin(angle) * force) >> 7;
+                spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
                 spark->variant = (Random16() & 15) + 16;
             }
         }
@@ -196,7 +196,7 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                 BattleFxKernels_IntegrateVector2(spark, 60, 0);
                 if (spark->y > 0x680000)
                 {
-                    spark->velocity_y = -spark->velocity_y / 2;
+                    spark->velocityY = -spark->velocityY / 2;
                 }
                 else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0)
                 {

@@ -7,9 +7,9 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct BattleFxScene {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct EffectSlot slots[24];
-    u8 unknown_710[0xe4];
+    u8 unk710[0xe4];
 };
 
 struct EffectVector {
@@ -19,7 +19,7 @@ struct EffectVector {
 };
 
 extern u32 gFrameTick;
-extern u32 Data_080f0bfc[];
+extern u32 gData_080f0bfc[];
 
 void *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
@@ -55,7 +55,7 @@ void Func_080d7c04(s32 id)
     if (object == NULL)
         return;
     BattleFx_InitializeSlots();
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     Shop_RestoreSceneTilesFar(0x20118c);
     Audio_PlayCue(173);
     Motion_SetVarCbAndRefresh(id, 1);
@@ -87,8 +87,8 @@ void Func_080d7c04(s32 id)
         EffectSlot_SetObjectMode(slot, 7);
         Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
         scale = Random16() / 3 + 0x10000;
-        slot->scale_y = scale;
-        slot->scale_x = scale;
+        slot->scaleY = scale;
+        slot->scaleX = scale;
         count--;
         WaitFrames(1);
         slot++;
@@ -96,9 +96,9 @@ void Func_080d7c04(s32 id)
 
     // The current owner turns to 0x4000 and takes mode 28.
     WaitFrames(60);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gPartyState.current_owner), 28);
+    Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
     WaitFrames(40);
     Audio_PlayCue(164);
     WaitFrames(100);
@@ -114,15 +114,15 @@ void BattleFx_SetObjectAlternatingWords(u8 *object)
     u32 value;
 
     asm volatile("" : "+l"(tick)); /* FAKEMATCH: load the tick address before the table. */
-    table = Data_080f0bfc;
+    table = gData_080f0bfc;
     /* FAKEMATCH: keep the tick extraction in its own block; without this
      * boundary the table address loads after the tick (two reordered rows). */
     do {
         index = (*tick >> 2) & 1;
     } while (0);
     value = index[table];
-    ((struct MotionObject *)object)->scale_x = value;
-    ((struct MotionObject *)object)->scale_y = value;
+    ((struct MotionObject *)object)->scaleX = value;
+    ((struct MotionObject *)object)->scaleY = value;
 }
 
 void BattleFx_SpinUpAngle(void *obj)

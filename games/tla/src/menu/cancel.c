@@ -51,7 +51,7 @@ void Menu_CancelSoundTick(void)
     frame = gFrameCount;
     if ((frame & 3) == 0) {
         if (frame & 4)
-            CopyWords(Data_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
+            CopyWords(gData_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
         else
             FillWords(Iwram_FillWords, (void *)0x06002540, 32, 0x44444444);
     }
@@ -62,7 +62,7 @@ void Menu_CancelSoundTick(void)
         GameFlag_SetBit(0x150);
         Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
-    wait = (u32 *)(Ram_HeapSlots->window_tiles + 0xE30);
+    wait = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
     while ((wait = (u32 *)*wait) != 0)
         ;
 }

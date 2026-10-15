@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-extern u8 Curve_LerpWeightTable[];
-extern u8 Curve_SampleIndexTable[];
+extern u8 gCurve_LerpWeightTable[];
+extern u8 gCurve_SampleIndexTable[];
 
 enum {
     CURVE_VALUE_SHIFT = 19,

@@ -21,18 +21,18 @@ struct BubbleParticle {
     s32 size;
     s32 velocityX;
     s32 velocityY;
-    s32 unk_14;
+    s32 unk14;
     s32 timer;
 };
 
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width, s32 height);
 
-extern struct BubbleParticle Data_02015000[];
+extern struct BubbleParticle gData_02015000[];
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_Data0FD;
-extern u8 Data_0819966f[];
-extern u8 Data_0819967e[];
-extern u16 Data_0819968e[];
+extern u8 gData_0819966f[];
+extern u8 gData_0819967e[];
+extern u16 gData_0819968e[];
 
 void Func_08143000(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -52,8 +52,8 @@ void Func_08143bb8(void);
 
 void Func_08182898(struct BattleEffectArgument *effect)
 {
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
     /* The blitter pair, of which this effect uses the first: as a two-word array it is one
        DImode pseudo, and its spill takes sp+12 and the unused sp+16 the native frame has. */
     CanvasBlitFunc blit[2];
@@ -65,14 +65,14 @@ void Func_08182898(struct BattleEffectArgument *effect)
     *(s32 *)(work + 0x7780) = 2;
     *(s32 *)(work + 0x7784) = 50;
     Func_081963ec(104, 19);
-    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unk64[1];
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work + 0x700, 0, 0);
     for (frame = 0; frame != 60; frame++)
     {
         if (frame == 0)
         {
-            struct BubbleParticle *spawn = Data_02015000;
+            struct BubbleParticle *spawn = gData_02015000;
 
             for (i = 0; i != 256; i++)
             {
@@ -85,7 +85,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
                 spawn++;
             }
         }
-        particle = Data_02015000;
+        particle = gData_02015000;
         for (i = 0; i != 256; i++)
         {
             if (particle->timer >= 0)
@@ -94,12 +94,12 @@ void Func_08182898(struct BattleEffectArgument *effect)
                 u32 width;
                 u32 height;
 
-                blit[0](canvas, work + Data_0819968e[size] + 0x700,
-                     *(s16 *)((u8 *)&particle->x + 2) - ((width = Data_0819966f[size]) >> 1),
-                     *(s16 *)((u8 *)&particle->y + 2) - ((height = Data_0819967e[size]) >> 1),
+                blit[0](canvas, work + gData_0819968e[size] + 0x700,
+                     *(s16 *)((u8 *)&particle->x + 2) - ((width = gData_0819966f[size]) >> 1),
+                     *(s16 *)((u8 *)&particle->y + 2) - ((height = gData_0819967e[size]) >> 1),
                      width, height);
                 BattleFxKernels_IntegrateVector2(particle, 63, -0x4000);
-                if (particle->y < -(Data_0819967e[size] << 16))
+                if (particle->y < -(gData_0819967e[size] << 16))
                     particle->timer = -1;
             }
             particle++;

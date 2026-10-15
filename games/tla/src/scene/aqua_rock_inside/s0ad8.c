@@ -10,15 +10,15 @@ void Func_02000ad8(void)
 
 s32 Func_02000b24(s32 id, s32 value)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     struct ObjectRuntime *object = Object_GetById(id);
 
     if (object != 0) {
         struct MapCell *cells = map->layers[0].cells;
         struct MapCell *cell = &cells[(object->x >> 20) + (object->z >> 20) * 128];
 
-        cell->collision_code = value;
-        cell->attribute_b |= 0x80;
+        cell->collisionCode = value;
+        cell->attributeB |= 0x80;
     }
 }
 

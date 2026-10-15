@@ -618,7 +618,7 @@ Func_0817c6ac:
 .L_0817cb78:
 	.4byte 0xffc00000
 .L_0817cb7c:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0817cb80:
 	strb r1, [r7, #1]
 	strb r2, [r6, #24]

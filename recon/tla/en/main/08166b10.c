@@ -35,9 +35,9 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlastSheet;
 extern char ResourceId_Data188;
-extern u8 Data_08198a9e[];
-extern s32 Data_08198aa4[];
-extern u16 Data_08197410[];
+extern u8 gData_08198a9e[];
+extern s32 gData_08198aa4[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -67,9 +67,9 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
     s32 origin;
     s32 i;
 
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
 
     BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
@@ -77,9 +77,9 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
     half = pos.x / 2;
 
     Func_081963ec(104, 19);
-    routine[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    routine[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 35);
-    routine[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    routine[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
     if (mode != 2)
         Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, work->sheet + 20000, 1, 1);
@@ -99,8 +99,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     i = 0;
@@ -133,8 +133,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
         ang = Random16() & 0xFFFF;
         spark->x = origin;
         spark->y = 176 << 15;
-        spark->velocity_x = (Trig_Sin(ang) * (mag + 32)) >> 5;
-        spark->velocity_y = -(Trig_Cos(ang) * (mag + 32)) >> 6;
+        spark->velocityX = (Trig_Sin(ang) * (mag + 32)) >> 5;
+        spark->velocityY = -(Trig_Cos(ang) * (mag + 32)) >> 6;
         spark->variant = (Random16() & 7) + 32;
         i++;
     } while (i != 170 << 1);
@@ -152,11 +152,11 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
         }
 
         if (frame == 8)
-            work->shake_frames = frame;
+            work->shakeFrames = frame;
         if (frame == 48)
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
         if (frame == 60)
-            work->shake_frames = 16;
+            work->shakeFrames = 16;
 
         if (frame == 4)
             Audio_PlayCue(212);
@@ -181,7 +181,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                 x = HI(flash->x) + half;
                 life = flash->variant;
                 if (life >= 0 && life <= 17)
-                    routine[0](canvas, work->sheet + (Data_08198a9e[life / 3] << 11) + (221 << 4), x - 16, y + 48, 32, 64);
+                    routine[0](canvas, work->sheet + (gData_08198a9e[life / 3] << 11) + (221 << 4), x - 16, y + 48, 32, 64);
                 life = flash->variant;
                 flash->variant = life > 0 ? life - 1 : -1;
                 i++;
@@ -201,8 +201,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                     ang = Random16() & 0xFFFF;
                     dust->x = ((Trig_Sin(ang) * mag) >> 3) + origin;
                     dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
-                    dust->velocity_x = ((Random16() & 63) - 32) << 14;
-                    dust->velocity_y = (-(Random16() & 63) - 8) << 13;
+                    dust->velocityX = ((Random16() & 63) - 32) << 14;
+                    dust->velocityY = (-(Random16() & 63) - 8) << 13;
                     dust->variant = 0;
                 }
                 i++;
@@ -226,8 +226,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                     ang = Random16() & 0xFFFF;
                     dust->x = ((Trig_Sin(ang) * mag) >> 3) + origin;
                     dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
-                    dust->velocity_x = ((Random16() & 63) - 32) << 14;
-                    dust->velocity_y = (-(Random16() & 63) - 8) << 13;
+                    dust->velocityX = ((Random16() & 63) - 32) << 14;
+                    dust->velocityY = (-(Random16() & 63) - 8) << 13;
                     dust->variant = 0;
                     cnt++;
                     if (cnt == 16)
@@ -259,7 +259,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                     s32 size;
 
                     size = i % 3 + 2;
-                    if (dust->velocity_y > 0)
+                    if (dust->velocityY > 0)
                         size += 2;
                     if (frame > 68 && size <= 5)
                         size = 6;
@@ -271,19 +271,19 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                         size = 9;
                     if (frame > 76)
                         size = 10;
-                    routine[0](canvas, sheet + Data_08197410[size - 1],
+                    routine[0](canvas, sheet + gData_08197410[size - 1],
                         HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 
-                    dust->x += dust->velocity_x;
-                    dust->y += dust->velocity_y;
+                    dust->x += dust->velocityX;
+                    dust->y += dust->velocityY;
                     if (frame > 80)
-                        dust->velocity_y += -32768;
+                        dust->velocityY += -32768;
                     else
-                        dust->velocity_y += Data_08198aa4[i & 3];
-                    dust->velocity_x = dust->velocity_x * 62 / 64;
-                    dust->velocity_y = dust->velocity_y * 62 / 64;
+                        dust->velocityY += gData_08198aa4[i & 3];
+                    dust->velocityX = dust->velocityX * 62 / 64;
+                    dust->velocityY = dust->velocityY * 62 / 64;
                     dust->variant++;
-                    if (dust->velocity_y > 0 && HI(dust->y) > 108)
+                    if (dust->velocityY > 0 && HI(dust->y) > 108)
                         dust->variant = -1;
                 }
                 i++;
@@ -325,14 +325,14 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                     y = spark->y;
                     spark->variant--;
                     if (y > (216 << 15)) {
-                        spark->velocity_y = -spark->velocity_y / 2;
+                        spark->velocityY = -spark->velocityY / 2;
                     } else {
                         x = spark->x;
                         if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                             u8 *cell;
 
                             size = spark->variant / 5 + 1;
-                            cell = sheet + Data_08197410[size - 1];
+                            cell = sheet + gData_08197410[size - 1];
                             x >>= 16;
                             y >>= 16;
                             x -= size / 2;
@@ -361,7 +361,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
 
         Func_08158ce0(16, 16);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 102);

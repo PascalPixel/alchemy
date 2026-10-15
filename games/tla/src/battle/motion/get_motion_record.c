@@ -6,19 +6,19 @@
 #include "battle_work.h"
 #include "battle_display.h"
 
-void *GetMotionRecord(struct MotionObject *object, s32 record_index)
+void *GetMotionRecord(struct MotionObject *object, s32 recordIndex)
 {
-    s32 storage_kind;
+    s32 storageKind;
 
     if (object == NULL)
         return NULL;
-    storage_kind = object->record_storage_kind & 0xF;
-    if (storage_kind == 1) {
-        if (record_index == 0) {
+    storageKind = object->recordStorageKind & 0xF;
+    if (storageKind == 1) {
+        if (recordIndex == 0) {
             return object->records;
         }
-    } else if (storage_kind == 2) {
-        return ((void **)object->records)[record_index];
+    } else if (storageKind == 2) {
+        return ((void **)object->records)[recordIndex];
     }
     return NULL;
 }
@@ -30,7 +30,7 @@ void SceneTransform_ApplyPitch(s32);
 
 void Camera_InitDefaultTransform(void)
 {
-    struct BattleCamera *state = Ram_HeapSlots->camera_work;
+    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
     struct FixedPointPosition transfer;
 
     state->yaw = 192 << 6;
@@ -39,8 +39,8 @@ void Camera_InitDefaultTransform(void)
     state->pos[0] = 0;
     state->pos[1] = 0;
     state->pos[2] = 0;
-    state->follow_pos = 0;
-    state->unknown_18 = 0;
+    state->followPos = 0;
+    state->unk18 = 0;
 
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(&state->pos[0]);

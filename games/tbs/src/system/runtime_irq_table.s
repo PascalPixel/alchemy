@@ -30,8 +30,8 @@ IwramHalt:
 
 	.section .rodata.irq_head,"a",%progbits
 	.balign 4
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
+	.global gRuntime_IrqHandlers
+gRuntime_IrqHandlers:
 	.rept 10
 	.4byte Runtime_IgnoreInterrupt
 	.endr

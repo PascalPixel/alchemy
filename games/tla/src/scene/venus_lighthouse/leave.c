@@ -5,10 +5,10 @@
 #include "text/msg_ids.h"
 
 struct VenusActor {
-    u8 unknown_00[0xa];
-    s16 x_pixel;
-    u8 unknown_0c[6];
-    s16 z_pixel;
+    u8 unk00[0xa];
+    s16 xPixel;
+    u8 unk0c[6];
+    s16 zPixel;
 };
 
 void Func_02001c1c(s32 message);
@@ -36,7 +36,7 @@ void Engine_ActorSetAnimation(s32 actor, s32 animation);
 struct VenusActor *Engine_ActorGet(s32 id);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Func_02001ccc(s32 actor, s32 value);
-void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void GameFlag_ClearBit(s32 flag);
 void Party_RemoveActiveOwner(s32 owner);
 void Event_FinishScreenTransition(void);
@@ -188,10 +188,10 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value)
     Func_02001ccc(actor, value);
 }
 
-static inline void Venus_CopyCells(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+static inline void Venus_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
+    Engine_MapCopyCellsTo(srcX, srcY, destX, destY, width, height);
 }
 
 static inline void Venus_FlagClr(s32 flag)
@@ -227,8 +227,8 @@ void Func_02000b2c(void)
     Venus_ObjSpeed(8, 0x10000, 0x8000);
     Venus_ObjSpeed(9, 0x10000, 0x8000);
     Venus_CamMove(0x2980000, -1, 0x3380000, 0);
-    work = Ram_HeapSlots->event_work;
-    work->screen_effect = 256;
+    work = Ram_HeapSlots->eventWork;
+    work->screenEffect = 256;
     work->delay = 60;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -652,14 +652,14 @@ void Func_02000d30(void)
     Venus_ObjAnim(8, 2);
     actor = Engine_ActorGet(5);
     if (actor != NULL)
-        ObjectMotion_ResetAndSetPosition(8, actor->x_pixel, actor->z_pixel);
+        ObjectMotion_ResetAndSetPosition(8, actor->xPixel, actor->zPixel);
     Venus_ObjCommitHere(8);
     Venus_ObjSetPos(8, 0, 0);
     Venus_ObjSpeed(9, 0x13333, 0x9999);
     Venus_ObjAnim(9, 2);
     actor = Engine_ActorGet(5);
     if (actor != NULL)
-        ObjectMotion_ResetAndSetPosition(9, actor->x_pixel, actor->z_pixel);
+        ObjectMotion_ResetAndSetPosition(9, actor->xPixel, actor->zPixel);
     Venus_ObjCommitHere(9);
     Venus_ObjSetPos(9, 0, 0);
     Venus_Wait(10);
@@ -681,12 +681,12 @@ void Func_02000d30(void)
     Venus_FlagClr(513);
     Venus_ObjSetPos(10, 0x2980000, 0x3180000);
     Venus_CamMove(-1, -1, -1, 0);
-    gPartyState.current_owner = 5;
+    gPartyState.currentOwner = 5;
     Venus_PartyRemove(4);
     Venus_Wait(50);
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     work->delay = 60;
-    work->screen_effect = 256;
+    work->screenEffect = 256;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Venus_Countdown(22);

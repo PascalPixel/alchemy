@@ -25,8 +25,8 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
     s32 dx2;
     struct ObjectRuntime *link;
 
-    link = object->linked_object;
-    object->speed_limit = link->speed_limit;
+    link = object->linkedObject;
+    object->speedLimit = link->speedLimit;
     object->acceleration = link->acceleration;
     dx = link->x - object->x;
     dz = link->z - object->z;

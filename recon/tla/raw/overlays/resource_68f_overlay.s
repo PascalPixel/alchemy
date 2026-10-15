@@ -231,7 +231,7 @@ Func_020000b8:
 .L_02008270:
 	.4byte gPartyState
 .L_02008274:
-	.4byte Data_02003334
+	.4byte gData_02003334
 .L_02008278:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
@@ -1533,15 +1533,15 @@ Func_020013b8:
 .L_02009750:
 	.4byte 0x000000d2
 .L_02009754:
-	.4byte Data_02003340
+	.4byte gData_02003340
 .L_02009758:
 	.4byte 0x000000d3
 .L_0200975c:
 	.4byte .L_020095ec
 .L_02009760:
-	.4byte Data_0200335a
+	.4byte gData_0200335a
 .L_02009764:
-	.4byte Data_02003264
+	.4byte gData_02003264
 .L_02009768:
 	.4byte Data_02003ccc
 .L_0200976c:
@@ -1595,7 +1595,7 @@ Func_020013b8:
 .L_020097d0:
 	.4byte Func_0200137c
 .L_020097d4:
-	.4byte Data_0200326e
+	.4byte gData_0200326e
 	.section .text.x0200989c,"ax",%progbits
 	.balign 4
 	.global Func_0200189c
@@ -1704,7 +1704,7 @@ Func_0200189c:
 .L_02009968:
 	.4byte gInput
 .L_0200996c:
-	.4byte Data_020032b2
+	.4byte gData_020032b2
 .L_02009970:
 	.4byte 0xffff0000
 .L_02009974:
@@ -1988,7 +1988,7 @@ Func_02001b48:
 .L_ja_02009ba8:
 	.4byte gPartyState
 .L_ja_02009bac:
-	.4byte Data_02003cd0
+	.4byte gData_02003cd0
 .L_ja_02009bb0:
 	.4byte 0xfff00000
 .L_ja_02009bb4:
@@ -2050,7 +2050,7 @@ Func_02001b48:
 .L_ja_02009c24:
 	.4byte gInput
 .L_ja_02009c28:
-	.4byte Data_020032b2
+	.4byte gData_020032b2
 .L_ja_02009c2c:
 	.4byte 0xffff0000
 .L_ja_02009c30:
@@ -2308,7 +2308,7 @@ Func_02001b48:
 .L_ja_02009e34:
 	.4byte Func_020017dc
 .L_ja_02009e38:
-	.4byte Data_02003cd0
+	.4byte gData_02003cd0
 	.else
 	push {r5, r6, r7, lr}
 	mov r7, r11
@@ -2360,7 +2360,7 @@ Func_02001b48:
 .L_02009ba8:
 	.4byte gPartyState
 .L_02009bac:
-	.4byte Data_02003cd0
+	.4byte gData_02003cd0
 .L_02009bb0:
 	.4byte 0xfff00000
 .L_02009bb4:
@@ -2422,7 +2422,7 @@ Func_02001b48:
 .L_02009c24:
 	.4byte gInput
 .L_02009c28:
-	.4byte Data_020032b2
+	.4byte gData_020032b2
 .L_02009c2c:
 	.4byte 0xffff0000
 .L_02009c30:
@@ -2696,7 +2696,7 @@ Func_02001b48:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009e54:
-	.4byte Data_02003cd0
+	.4byte gData_02003cd0
 .L_02009e58:
 	.4byte Func_020017dc
 	.endif
@@ -4097,7 +4097,7 @@ Func_020029d0:
 .L_0200aae4:
 	.4byte 0xfffe0000
 .L_0200aae8:
-	.4byte Data_020032d4
+	.4byte gData_020032d4
 .L_0200aaec:
 	.4byte IwramMulQ16
 .L_0200aaf0:
@@ -4237,7 +4237,7 @@ Func_02002b04:
 .L_0200ac04:
 	.4byte gPartyState
 .L_0200ac08:
-	.4byte Data_02003304
+	.4byte gData_02003304
 .L_0200ac0c:
 	.4byte 0xffffa000
 .L_0200ac10:
@@ -4580,5 +4580,5 @@ Func_02002e00:
 	.global Data_02003ccc
 Data_02003ccc:
 	.space 0x00000004
-	.global Data_02003cd0
-Data_02003cd0:
+	.global gData_02003cd0
+gData_02003cd0:

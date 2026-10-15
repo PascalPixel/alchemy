@@ -3,7 +3,7 @@
 #include "flag_call.h"
 
 struct SparkActor {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
@@ -14,18 +14,18 @@ struct EffectParams {
     s32 kind;
     s32 spread;
     s32 rise;
-    u8 unknown_10[8];
+    u8 unk10[8];
     u16 tile;
-    u16 unknown_1a;
-    u8 unknown_1c[12];
+    u16 unk1a;
+    u8 unk1c[12];
 };
 
 struct SparkWork {
-    u8 unknown_0000[0x1d9c];
+    u8 unk0000[0x1d9c];
     s16 resource;
 };
 
-extern s32 Data_020033dc;
+extern s32 gData_020033dc;
 extern u8 MsgFieldShowAnemosPower[];
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));

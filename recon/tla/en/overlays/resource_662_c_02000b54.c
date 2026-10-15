@@ -21,9 +21,9 @@ void Func_02000b54(struct YampiDesertCavePlacement *list)
         s32 column = list->column;
         s32 row = list->row;
 
-        object->collision_flags &= 0xfe;
+        object->collisionFlags &= 0xfe;
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        Func_02000c44(id, (u16)column, (u16)row, object->terrain_id);
+        Func_02000c44(id, (u16)column, (u16)row, object->terrainId);
         list++;
     }
 }

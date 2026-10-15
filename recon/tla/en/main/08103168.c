@@ -7,14 +7,14 @@
 #include "ram_buffer.h"
 
 struct DjinnMenuWork {
-    u8 unknown_000[0x28];
+    u8 unk000[0x28];
     s32 window;
-    u8 unknown_02c[0x0c];
-    s32 second_window;
-    u8 unknown_03c[0x216 - 0x3c];
-    u8 shown_owner[2];
-    u8 unknown_218[0x25c - 0x218];
-    u8 pair_owner[2];
+    u8 unk02c[0x0c];
+    s32 secondWindow;
+    u8 unk03c[0x216 - 0x3c];
+    u8 shownOwner[2];
+    u8 unk218[0x25c - 0x218];
+    u8 pairOwner[2];
 };
 
 void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c, s32 param, s32 d);
@@ -28,16 +28,16 @@ s32 Func_08103168(s32 mode, s32 param)
     u8 owner;
     struct DjinnMenuWork *menu;
 
-    menu = Ram_HeapSlots->menu_runtime;
+    menu = Ram_HeapSlots->menuRuntime;
     if (mode == 0) {
         sp14 = mode;
-        first = menu->pair_owner[1];
-        Func_08103218(menu->second_window, 0, 0, first, 1, mode, 2, param, 1);
-        Func_08103218(menu->window, 0, 0, menu->pair_owner[0], mode, 1, 2, param, mode);
+        first = menu->pairOwner[1];
+        Func_08103218(menu->secondWindow, 0, 0, first, 1, mode, 2, param, 1);
+        Func_08103218(menu->window, 0, 0, menu->pairOwner[0], mode, 1, 2, param, mode);
     } else {
-        owner = menu->shown_owner[1];
-        Func_08103218(menu->second_window, 0, 0, owner, 1, 0, ALT_PARAM, param, 1);
-        Func_08103218(menu->window, 0, 0, menu->shown_owner[0], 0, 0, 1, param, 0);
+        owner = menu->shownOwner[1];
+        Func_08103218(menu->secondWindow, 0, 0, owner, 1, 0, ALT_PARAM, param, 1);
+        Func_08103218(menu->window, 0, 0, menu->shownOwner[0], 0, 0, 1, param, 0);
     }
     return 1;
 }

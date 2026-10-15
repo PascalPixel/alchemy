@@ -1,6 +1,6 @@
 /* Draft, differ 2 of 50: The Broken Seal's UiText_RenderGlyphTileAtWorkOffset
  * with ⚓️'s changes: the window position is read signed and the string's
- * tiles take offset_x & 7 where ☀️ passes the VRAM base. The native loads the
+ * tiles take offsetX & 7 where ☀️ passes the VRAM base. The native loads the
  * entry mask 0x1ff (ldr r2) before it rereads the count after the entry
  * store (ldrh r3, [r1]); sched2 ranks the reread first (priority 5 to 4, the
  * store to load latency is 1). Measured: a counter pointer as in ☀️ (differ
@@ -13,9 +13,9 @@
 #include "text_render_runtime.h"
 
 void UiText_RenderGlyphTileAtWorkOffset(
-	u16 *buffer, const struct RenderInput *work, s32 offset_x, s32 offset_y)
+	u16 *buffer, const struct RenderInput *work, s32 offsetX, s32 offsetY)
 {
-	struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+	struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 	u32 cell;
 
 	if (buffer == NULL)
@@ -25,7 +25,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
 		canvas->count = (canvas->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
 	}
 
-	cell = (((s16)work->y + offset_y + 1) << 5) + ((s16)work->x + offset_x) + 1;
+	cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
 	if (cell < 0x280)
 	{
 		s32 src;
@@ -35,6 +35,6 @@ void UiText_RenderGlyphTileAtWorkOffset(
 		dst = 0x06002000 + cell;
 		src = (s32)canvas->tilemap + cell;
 
-		UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, offset_x & 7);
+		UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);
 	}
 }

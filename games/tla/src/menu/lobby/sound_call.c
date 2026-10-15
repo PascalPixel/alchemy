@@ -38,11 +38,11 @@ next:
     party = &gPartyState;
     /* FAKEMATCH: the party state address loads before the owner list's offset is built; without it the offset's movs comes first (differ 2) */
     __asm__ volatile("");
-    if (party->active_owners[i] == 0xff)
+    if (party->activeOwners[i] == 0xff)
         goto none;
     /* FAKEMATCH: the native reads the owner byte again for the second test (differ 8 without) */
     __asm__ volatile("" ::: "memory");
-    if (gPartyState.active_owners[i] == owner)
+    if (gPartyState.activeOwners[i] == owner)
         return 1;
     i++;
     if (i < count)

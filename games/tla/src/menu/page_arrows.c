@@ -2,21 +2,21 @@
 #include "ram_buffer.h"
 
 struct MenuArrow {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 mode;
-    u8 unknown_06[6];
+    u8 unk06[6];
     u16 timer;
 };
 
 struct MenuPageWork {
-    u8 unknown_000[0x178];
+    u8 unk000[0x178];
     struct MenuArrow *up;
     struct MenuArrow *down;
 };
 
 void Menu_SetPageArrowsA(s32 index, s32 count)
 {
-    struct MenuPageWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
     struct MenuArrow *arrow;
 
     if (index < 0)
@@ -38,7 +38,7 @@ void Menu_SetPageArrowsA(s32 index, s32 count)
 
 void Menu_SetPageArrowsB(s32 index, s32 count)
 {
-    struct MenuPageWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
     struct MenuArrow *arrow;
 
     if (index < 0)

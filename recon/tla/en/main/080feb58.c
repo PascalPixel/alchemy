@@ -12,22 +12,22 @@
 #include "input.h"
 
 struct OwnerPageState {
-    u8 unknown_000[8];
-    s32 selected_owner;
-    u8 unknown_00c[4];
-    void *owner_window;
-    u8 unknown_014[8];
-    s8 owner_index;
-    u8 unknown_01d;
-    s8 owner_count;
-    u8 unknown_01f[0xd1];
-    void *message_window;
-    u8 unknown_0f4[0xd0];
+    u8 unk000[8];
+    s32 selectedOwner;
+    u8 unk00c[4];
+    void *ownerWindow;
+    u8 unk014[8];
+    s8 ownerIndex;
+    u8 unk01d;
+    s8 ownerCount;
+    u8 unk01f[0xd1];
+    void *messageWindow;
+    u8 unk0f4[0xd0];
     u16 psynergies[32];
-    u16 owner_ids[8];
-    u8 psynergy_count;
-    u8 unknown_215;
-    u8 selected_ids[6];
+    u16 ownerIds[8];
+    u8 psynergyCount;
+    u8 unk215;
+    u8 selectedIds[6];
     u16 page;
 };
 
@@ -51,26 +51,26 @@ void Audio_PlayCue(s32 cue);
 
 s32 Func_080feb58(void)
 {
-    struct OwnerPageState *menu = (struct OwnerPageState *)Ram_HeapSlots->menu_runtime;
-    s32 selection = menu->owner_index;
-    s32 count = menu->owner_count;
+    struct OwnerPageState *menu = (struct OwnerPageState *)Ram_HeapSlots->menuRuntime;
+    s32 selection = menu->ownerIndex;
+    s32 count = menu->ownerCount;
     s32 pending = 2;
     s32 page = menu->page;
     s32 result;
 
-    UnitGet(menu->owner_ids[selection]);
-    RenderOutput_RedrawSavedRectFar(menu->message_window);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->message_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1, menu->message_window, 0, 16);
+    UnitGet(menu->ownerIds[selection]);
+    RenderOutput_RedrawSavedRectFar(menu->messageWindow);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->messageWindow, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1, menu->messageWindow, 0, 16);
     for (;;) {
         /* PERM */
         if (pending) {
             selection = (selection + count) % count;
-            UnitGet(menu->owner_ids[selection]);
+            UnitGet(menu->ownerIds[selection]);
             page = (page + 3) % 3;
-            Func_080fee40(menu->owner_ids[selection], page);
-            PsynergyMenu_CallIconRoutineWithValue(menu, menu->owner_ids[selection]);
-            menu->psynergy_count = Func_080fd6f0(UnitGet(menu->owner_ids[selection]), menu->psynergies, 0);
+            Func_080fee40(menu->ownerIds[selection], page);
+            PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
+            menu->psynergyCount = Func_080fd6f0(UnitGet(menu->ownerIds[selection]), menu->psynergies, 0);
             Func_080fd6b0(menu->psynergies);
             Func_081005e4(96, 96, 8);
             Func_080facd8(menu->psynergies);
@@ -78,7 +78,7 @@ s32 Func_080feb58(void)
                 Func_08104ef8(selection / 4 * 4);
                 WaitFrames(1);
             }
-            Func_08104d5c(menu->owner_window, selection, count);
+            Func_08104d5c(menu->ownerWindow, selection, count);
         }
         Func_080f8a44((selection % 4) * 24 - 10, 16);
         WaitFrames(1);
@@ -94,8 +94,8 @@ s32 Func_080feb58(void)
         }
         pending = Func_08104c00(&selection, count, 4);
     }
-    menu->owner_index = selection;
-    menu->selected_owner = menu->owner_ids[selection];
-    menu->selected_ids[0] = menu->owner_ids[selection];
+    menu->ownerIndex = selection;
+    menu->selectedOwner = menu->ownerIds[selection];
+    menu->selectedIds[0] = menu->ownerIds[selection];
     return result;
 }

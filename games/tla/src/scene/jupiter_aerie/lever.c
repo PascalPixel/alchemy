@@ -2,7 +2,7 @@
 #include "party_state.h"
 
 struct JupiterAerieObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
@@ -29,8 +29,8 @@ void Func_020001b4(void)
     GameFlag_SetBit(0xa0a);
     Func_02002a88();
     Func_02002b18(0);
-    Object_SetModeById(gPartyState.current_owner, 1);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+    Object_SetModeById(gPartyState.currentOwner, 1);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
     Func_020017a8(11, 9, 0);
     Battle_WaitMode0(40);
     if (GameFlag_Test(0xa0b) == 0) {
@@ -39,7 +39,7 @@ void Func_020001b4(void)
     } else {
         Func_02000054(2);
     }
-    Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
     Battle_WaitMode0(40);
     Func_02001070(Object_GetById(9));
     Func_02001070(Object_GetById(10));
@@ -54,8 +54,8 @@ void Func_02000264(void)
     GameFlag_SetBit(0xa0b);
     Func_02002a88();
     Func_02002b18(0);
-    Object_SetModeById(gPartyState.current_owner, 1);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x8000, 0);
+    Object_SetModeById(gPartyState.currentOwner, 1);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x8000, 0);
     Func_020017a8(12, 10, 1);
     Battle_WaitMode0(40);
     if (GameFlag_Test(0xa0a) == 0) {
@@ -64,7 +64,7 @@ void Func_02000264(void)
     } else {
         Func_02000054(3);
     }
-    Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
     Battle_WaitMode0(40);
     Func_02001070(Object_GetById(9));
     Func_02001070(Object_GetById(10));

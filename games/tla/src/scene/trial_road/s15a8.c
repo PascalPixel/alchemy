@@ -19,7 +19,7 @@ void Func_020015d8(void)
     if (!GameFlag_Test(0x9b9)) {
         Func_02005a60(249, 72, 152);
         ((struct PartyState254 *)&gPartyState)->value = 0x19b9;
-        gPartyState.battle_rule_24b = 2;
+        gPartyState.battleRule24b = 2;
         Func_02005998(106, 4);
     }
 }
@@ -81,7 +81,7 @@ void Func_020017e0(void)
     do {
         party = &gPartyState;
     } while (0);
-    party->battle_rule_24b = 2;
+    party->battleRule24b = 2;
     do { } while (0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov697Room2, 4);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
@@ -96,7 +96,7 @@ void Func_0200185c(s32 a, s32 id)
 
     if (object->x >> 20 == 8) {
         GameFlag_SetBit(0x9fc);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         {
             s32 step = -0x10000;
 

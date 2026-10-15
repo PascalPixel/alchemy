@@ -4,12 +4,12 @@
 #include "field_coordinate.h"
 
 struct BobbingMarker {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     s16 angle;
     s16 stopped;
 };
@@ -77,10 +77,10 @@ s32 StoryActor_Initialize(struct ObjectRuntime *actor)
         return 0;
     }
     actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;
-    actor->motion_flags = 0;
+    actor->motionFlags = 0;
     actor->action = 0;
-    actor->unknown_66 = 0;
-    actor->scale_x = 0x8000;
-    actor->scale_y = 0x8000;
+    actor->unk66 = 0;
+    actor->scaleX = 0x8000;
+    actor->scaleY = 0x8000;
     return 0;
 }

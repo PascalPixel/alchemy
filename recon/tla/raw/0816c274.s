@@ -127,7 +127,7 @@ Func_0816c274:
 .L_0816c374:
 	.4byte 0x000000fb
 .L_0816c378:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816c37c:
 	.4byte 0x00000157
 .L_0816c380:
@@ -542,9 +542,9 @@ Func_0816c274:
 .L_0816c6d8:
 	.4byte gCameraSceneParameters
 .L_0816c6dc:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0816c6e0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816c6e4:
 	.4byte 0xffff0000
 .L_0816c6e8:
@@ -552,6 +552,6 @@ Func_0816c274:
 .L_0816c6ec:
 	.4byte 0xfffff448
 .L_0816c6f0:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0816c6f4:
 	.4byte Func_08143000

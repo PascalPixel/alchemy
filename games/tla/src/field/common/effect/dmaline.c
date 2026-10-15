@@ -17,10 +17,10 @@ struct DmaFxPages {
 // 毎フレーム: 今のページの先頭を書き、残りを HBlank DMA に任せる
 void Func_080d5ff8(void)
 {
-    struct DmaFxPages *work = Ram_HeapSlots->unknown_84[1];
+    struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
     u32 *line = work->pages[work->page].lines;
     volatile u32 *dest = (volatile u32 *)0x04000014;
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     volatile u32 *target;
 
     if (event != NULL) {

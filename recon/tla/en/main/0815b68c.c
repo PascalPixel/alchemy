@@ -17,7 +17,7 @@ struct PlacementScale {
     s32 y;
 };
 
-extern const struct PlacementScale Data_08196e4c;
+extern const struct PlacementScale gData_08196e4c;
 
 s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
@@ -25,8 +25,8 @@ s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 // steps its animation.
 void Func_0815b68c(void)
 {
-    struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct PlacementScale scale = Data_08196e4c;
+    struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    struct PlacementScale scale = gData_08196e4c;
     s32 position[4];
 
     position[3] = 0;
@@ -34,14 +34,14 @@ void Func_0815b68c(void)
     position[0] = work->particles[63].x;
     position[2] = work->particles[63].y;
     Render_ApplyProjectedPlacementFar(work->objects[7], position, (s32 *)&scale, 0);
-    work->particles[63].x += work->particles[63].velocity_x;
-    work->particles[63].y += work->particles[63].velocity_y;
+    work->particles[63].x += work->particles[63].velocityX;
+    work->particles[63].y += work->particles[63].velocityY;
     if (work->frame <= 19)
-        work->particles[63].velocity_y += 0x1000;
+        work->particles[63].velocityY += 0x1000;
     else
-        work->particles[63].velocity_y -= 0x1000;
+        work->particles[63].velocityY -= 0x1000;
     if (work->frame > 11)
-        work->particles[63].velocity_x += 0x1000;
+        work->particles[63].velocityX += 0x1000;
     Animation_ApplyChildArgumentFar(work->objects[7], work->frame / 7 % 8 + 7);
     work->frame++;
 }

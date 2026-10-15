@@ -2,7 +2,7 @@
  * Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
  * a hint). A five-cell burst drawn on the actor's side for 30 frames;
  * at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
- * from frame 18 on with sizes from Data_08197410.
+ * from frame 18 on with sizes from gData_08197410.
  * Left:
  * - the native frame is 40 bytes with an unreferenced slot at sp+16
  *   between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
@@ -28,23 +28,23 @@
 #include "iwram_call.h"
 
 struct FxWork {
-    u8 unknown_0000[0x700];
+    u8 unk0000[0x700];
     u8 sheet[0x7780 - 0x700];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake_frames;
-    u8 unknown_77ac[0x78e8 - 0x77ac];
-    s32 transfer_pending;
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[0x20];
+    s32 shakeFrames;
+    u8 unk77ac[0x78e8 - 0x77ac];
+    s32 transferPending;
 };
 
 extern char ResourceId_Data134;
 extern char ResourceId_Data0F3;
 extern char ResourceId_EffectPalette02;
-extern const u16 Data_08197410[];
+extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
-void *Resource_GetTableEntry(s32 resource_id);
+void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -68,13 +68,13 @@ void Func_08143bb8(void);
 void Func_0817c27c(struct BattleEffectArgument *effect)
 {
     struct HeapSlots *heap = Ram_HeapSlots;
-    struct FxWork *work = (struct FxWork *)heap->battle_fx_work[0];
-    u8 *canvas = heap->battle_fx_work[1];
+    struct FxWork *work = (struct FxWork *)heap->battleFxWork[0];
+    u8 *canvas = heap->battleFxWork[1];
     struct EffectPosition pos;
     s32 frame;
     struct EffectStep *step;
     DrawRectangle draw;
-    u8 *sheet = heap->unknown_64[0];
+    u8 *sheet = heap->unk64[0];
     s32 i;
 
     BattleFx_BeginCanvasLayer(1);
@@ -82,12 +82,12 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
         Func_081963ec(104, 19);
     else
         Func_081963ec(104, 23);
-    draw = (DrawRectangle)heap->unknown_64[1];
+    draw = (DrawRectangle)heap->unk64[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
     for (frame = 0; frame != 52; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(effect->actor, &pos);
@@ -132,7 +132,7 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
             Func_08118088(effect->actors[0], 1);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
             Func_081180e8(134);
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
             for (i = 0; i != 256; i++) {
                 s32 angle;
                 s32 speed;
@@ -147,10 +147,10 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
                 angle = (Random16() & 0x7fff) + 0x4000;
                 speed = Random16() & 255;
                 if (effect->side == 0)
-                    step->velocity_x = ((Trig_Sin(angle) * speed) >> 4) - 0x80000;
+                    step->velocityX = ((Trig_Sin(angle) * speed) >> 4) - 0x80000;
                 else
-                    step->velocity_x = ((Trig_Sin(angle) * speed) >> 4) + 0x80000;
-                step->velocity_y = (Trig_Cos(angle) * (speed + 64)) >> 5;
+                    step->velocityX = ((Trig_Sin(angle) * speed) >> 4) + 0x80000;
+                step->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
                 step->variant = (Random16() & 15) + 16;
             }
         }
@@ -160,7 +160,7 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
                 if (step->variant >= 0) {
                     s32 size = (step->variant >> 3) + 1;
 
-                    draw(canvas, sheet + Data_08197410[size - 1], HI(step->x) - size / 2,
+                    draw(canvas, sheet + gData_08197410[size - 1], HI(step->x) - size / 2,
                         HI(step->y) - size, size, size * 2);
                     if (i & 1)
                         BattleFxKernels_IntegrateVector2(step, 60, -0x2000);
@@ -172,7 +172,7 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((s32)Func_08143000);

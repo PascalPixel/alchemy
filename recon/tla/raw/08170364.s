@@ -57,7 +57,7 @@ Func_08170364:
 .L_081703d4:
 	.4byte 0x00001010
 .L_081703d8:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_081703dc:
 	.4byte 0x0000013e
 .L_081703e0:
@@ -1273,19 +1273,19 @@ Func_08170364:
 .L_08170d64:
 	.4byte Data_02014c56
 .L_08170d68:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08170d6c:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08170d70:
 	.4byte Data_08198bf4
 .L_08170d74:
 	.4byte Data_08198bf8
 .L_08170d78:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_08170d7c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08170d80:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08170d84:
 	.4byte Func_08143000
 .L_08170d88:

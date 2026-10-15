@@ -1,6 +1,6 @@
 /* Near miss, differ 10 of 238 (five reordered pairs), 2026-10-15: The
- * Broken Seal's DebugMenu_BrowseIcons with twelve pages, Data_0805f8f0 to
- * Data_0805f910 for the labels and the object system's suspend flag.
+ * Broken Seal's DebugMenu_BrowseIcons with twelve pages, gData_0805f8f0 to
+ * gData_0805f910 for the labels and the object system's suspend flag.
  * Remaining: the native stores redraw (spilled to [sp, #4]) before it
  * builds the zero for page, mode and the window, and in the two decrement
  * cases builds redraw's 1, then the -1's 1, then stores redraw before it
@@ -13,11 +13,11 @@
 #include "animspr.h"
 #include "render_input.h"
 
-extern u8 Data_0805f8f0[];
-extern u8 Data_0805f8f8[];
-extern u8 Data_0805f900[];
-extern u8 Data_0805f908[];
-extern u8 Data_0805f910[];
+extern u8 gData_0805f8f0[];
+extern u8 gData_0805f8f8[];
+extern u8 gData_0805f900[];
+extern u8 gData_0805f908[];
+extern u8 gData_0805f910[];
 
 void WaitFrames(s32 frames);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
@@ -47,7 +47,7 @@ s32 Func_0804e1d8(void)
     page = 0;
     mode = 0;
     redraw = 1;
-    Ram_HeapSlots->object_system->suspended = redraw;
+    Ram_HeapSlots->objectSystem->suspended = redraw;
     WaitFrames(1);
 
     while (1) {
@@ -78,16 +78,16 @@ s32 Func_0804e1d8(void)
             UiWork_Finalize(window, 2);
             window = UiWindow_Create(10, 0, 18, 12, 2);
             if (mode == 0)
-                UiText_DrawStringInWindow(Data_0805f8f0, window, 0, 0);
+                UiText_DrawStringInWindow(gData_0805f8f0, window, 0, 0);
             else if (mode == 1)
-                UiText_DrawStringInWindow(Data_0805f8f8, window, 0, 0);
+                UiText_DrawStringInWindow(gData_0805f8f8, window, 0, 0);
             else
-                UiText_DrawStringInWindow(Data_0805f900, window, 0, 0);
-            UiText_DrawStringInWindow(Data_0805f908, window, 0, 8);
+                UiText_DrawStringInWindow(gData_0805f900, window, 0, 0);
+            UiText_DrawStringInWindow(gData_0805f908, window, 0, 8);
             UiText_DrawNumberInWindow(page, 0, window, 40, 8);
             base = page << 5;
             UiText_DrawNumberInWindow(base, 3, window, 64, 8);
-            UiText_DrawStringInWindow(Data_0805f910, window, 88, 8);
+            UiText_DrawStringInWindow(gData_0805f910, window, 88, 8);
             UiText_DrawNumberInWindow(base + 31, 3, window, 96, 8);
             for (i = 0; i <= 31; i++) {
                 slot = -1;
@@ -110,6 +110,6 @@ s32 Func_0804e1d8(void)
         WaitFrames(1);
     }
     UiWork_Finalize(window, 2);
-    Ram_HeapSlots->object_system->suspended = 0;
+    Ram_HeapSlots->objectSystem->suspended = 0;
     return 0;
 }

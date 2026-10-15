@@ -87,9 +87,9 @@ Func_020000f4:
 .L_020081a4:
 	.4byte gFrameCount
 .L_020081a8:
-	.4byte Data_02000618
+	.4byte gData_02000618
 .L_020081ac:
-	.4byte Data_020007e4
+	.4byte gData_020007e4
 	.section .text.x020081b0,"ax",%progbits
 	.global Func_020001b0
 	.thumb_func
@@ -401,7 +401,7 @@ Func_020001b0:
 .L_020084b0:
 	.4byte gPartyState
 .L_020084b4:
-	.4byte Data_020007e4
+	.4byte gData_020007e4
 .L_020084b8:
 	.4byte Func_020000f4
 .L_020084bc:
@@ -409,5 +409,5 @@ Func_020001b0:
 .L_020084c0:
 	.4byte Func_02000060
 	.section .bss,"aw",%nobits
-	.global Data_020007e4
-Data_020007e4:
+	.global gData_020007e4
+gData_020007e4:

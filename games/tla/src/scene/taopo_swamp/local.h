@@ -68,10 +68,10 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags)
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
-extern s32 Data_02003458;
-extern s32 Data_0200345c;
-extern s32 Data_02003460;
-extern const u8 Data_020029c8[];
+extern s32 gData_02003458;
+extern s32 gData_0200345c;
+extern s32 gData_02003460;
+extern const u8 gData_020029c8[];
 void Func_02002948(void);
 void Func_02002084(s32 a);
 void Func_020029a0(s32 message);
@@ -83,13 +83,13 @@ s32 Func_0200273c(s32 a);
 void Func_02002978(s32 a);
 
 struct SpriteWork {
-    u8 unknown_00[17];
+    u8 unk00[17];
     u8 layer : 2;
     u8 level : 6;
-    u8 unknown_12[7];
+    u8 unk12[7];
     u8 dirty;
     u8 mode;
-    u8 unknown_1b[17];
+    u8 unk1b[17];
     u8 *child;
 };
 
@@ -125,15 +125,15 @@ struct VentWork {
     u16 ids[4];
 };
 
-extern u8 Data_020023c4[];
-#define VENT_WORK ((struct VentWork *)(Data_020023c4 + 0x188))
+extern u8 gData_020023c4[];
+#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02002400(struct ObjectRuntime *object);
-extern const u8 Data_02002af4[];
-extern s32 Data_020035f0;
+extern const u8 gData_02002af4[];
+extern s32 gData_020035f0;
 extern u8 gMapShapeGrid[];
 void Func_02002848(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002810(void);
@@ -146,13 +146,13 @@ void Func_02001eb8(void);
 void Func_02001ff0(s32 x, s32 z);
 void Func_0200237c(void);
 void Func_02000920(s32 a, s32 id);
-extern const u8 Data_02002a60[];
-extern const u8 Data_02002a6c[];
+extern const u8 gData_02002a60[];
+extern const u8 gData_02002a6c[];
 void Func_02000810(s32 id);
 void Func_020008d8(s32 id);
 extern u32 gFrameCount;
-extern const u8 Data_02002a48[];
-extern const u8 Data_02002a54[];
+extern const u8 gData_02002a48[];
+extern const u8 gData_02002a54[];
 extern u8 MsgIThoughtI;
 void Func_02000c24(void);
 void Func_02000ca0(void);

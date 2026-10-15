@@ -95,7 +95,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 	s32				i;
 
 #if GAME_TLA
-	work = Ram_HeapSlots->battle_work;
+	work = Ram_HeapSlots->battleWork;
 #endif
 	{
 		struct BattleActionRecord *rec = work->actions;
@@ -103,7 +103,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 
 		for (n = 0; n < 20; n++)
 		{
-			rec[n].unit_id = BATTLE_UNIT_LIST_END;
+			rec[n].unitId = BATTLE_UNIT_LIST_END;
 			rec[n].priority = 0x8000; // いちばん低い優先度
 		}
 	}
@@ -114,7 +114,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 #if GAME_TLA
 	GameFlag_SetBit(363);
 #endif
-	mode = &work->encounter_mode;
+	mode = &work->encounterMode;
 	Camera_ConfigureScene(0);
 	UiWork_FinalizeSharedSlotFar();
 
@@ -135,7 +135,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 
 	// 通信対戦の相手か、敵の行動
 #if GAME_TLA
-	if (Ram_HeapSlots->battle_work->two_sided != 0)
+	if (Ram_HeapSlots->battleWork->twoSided != 0)
 	{
 #endif
 		add = BattlePresentation_AppendLinkedActions(acts, cnt);
@@ -168,8 +168,8 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 			if (act->command == 3 || act->command == 7)
 			{
 #if GAME_TLA
-				unit = UnitGet(act->unit_id);
-				unit->guard_lv = act->command == 3 ? 1 : 3;
+				unit = UnitGet(act->unitId);
+				unit->guardLv = act->command == 3 ? 1 : 3;
 #endif
 			}
 			act++;
@@ -183,7 +183,7 @@ finish:
 #endif
 	Camera_InitDefaultTransform();
 #if GAME_TLA
-	Ram_HeapSlots->transition_work->target_yaw = 0x2000;
+	Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
 #endif
 	return cnt;
 }
@@ -195,12 +195,12 @@ finish:
 s16 Battle_GetTaggedSlotValue(s32 slot)
 {
 #if GAME_TLA
-	struct BattleWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battleWork;
 #endif
 
 	if ((slot & 0x80) != 0)
-		return work->enemy_ids[slot & 0xf];
-	return work->party_units[slot & 0xf];
+		return work->enemyIds[slot & 0xf];
+	return work->partyUnits[slot & 0xf];
 }
 
 //--------------------------------------------------------------------------
@@ -211,7 +211,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 s32 Battle_FindTaggedSlotByValue(u32 id)
 {
 #if GAME_TLA
-	struct BattleWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battleWork;
 #endif
 	s32 i;
 	s16 unit;
@@ -220,7 +220,7 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 	{
 		for (i = 0;; i++)
 		{
-			unit = work->party_units[i];
+			unit = work->partyUnits[i];
 			if (unit == BATTLE_UNIT_LIST_END)
 				return -1;
 			if (unit != BATTLE_UNIT_REMOVED && unit == id)
@@ -229,7 +229,7 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 	}
 	for (i = 0;; i++)
 	{
-		unit = work->enemy_ids[i];
+		unit = work->enemyIds[i];
 		if (unit == BATTLE_UNIT_LIST_END)
 			return -1;
 		if (unit != BATTLE_UNIT_REMOVED && unit == id)

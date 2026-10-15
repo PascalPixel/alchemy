@@ -4,7 +4,7 @@
 
 struct OptionMarkerOutput
 {
-	u8 unknown_00[14];
+	u8 unk00[14];
 	u8 index;
 };
 
@@ -16,18 +16,18 @@ union OptionCursor
 
 struct OptionWork
 {
-	u8				   unknown_000[0x574];
+	u8				   unk000[0x574];
 	u16				   page;
 	u16				   tint[3];
-	u16				   cursor_frame;
+	u16				   cursorFrame;
 	u16				   preset;
-	u8				   unknown_580[0x14];
+	u8				   unk580[0x14];
 	s8				   option[5];
-	s8				   option_count[5];
-	u8				   unknown_59e[6];
+	s8				   optionCount[5];
+	u8				   unk59e[6];
 	union OptionCursor cursor;
 	union OptionCursor marker[2];
-	u8				   unknown_5d4[0x18];
+	u8				   unk5d4[0x18];
 	void			  *frame[3][3];
 };
 
@@ -47,7 +47,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 	/* FAKEMATCH: the one-pass block loads the option work before the page and cursor offsets are started; assigned directly both offsets are started first (differ 2). */
 	do
 	{
-		work = Ram_HeapSlots->unknown_d0[0];
+		work = Ram_HeapSlots->unkd0[0];
 	} while (0);
 	selection = work->page;
 	Func_08108030(&work->cursor);
@@ -56,7 +56,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection == 0)
 	{
-		src0 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
+		src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
 	else
 	{
@@ -66,7 +66,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection == 1)
 	{
-		src1 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
+		src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
 	else
 	{
@@ -76,5 +76,5 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection > 1)
 		Func_080450fc(work->frame[selection - 2][work->option[selection]]);
-	work->cursor_frame++;
+	work->cursorFrame++;
 }

@@ -10,20 +10,20 @@ struct DisplayScrollWork
 	u8				page;
 	u8				mode;
 	u16				frame;
-	u8				unknown_f04[4];
-	s32				freq_x;
-	s32				freq_y;
-	s32				step_x;
-	s32				step_y;
-	s32				amp_x;
-	s32				amp_y;
+	u8				unkf04[4];
+	s32				freqX;
+	s32				freqY;
+	s32				stepX;
+	s32				stepY;
+	s32				ampX;
+	s32				ampY;
 };
 
 LAYOUT_SIZE_GUARD(DisplayScrollWork_Size, struct DisplayScrollWork, 0xf20);
 LAYOUT_OFFSET_GUARD(DisplayScrollWork_Page, struct DisplayScrollWork, page, 0xf00);
-LAYOUT_OFFSET_GUARD(DisplayScrollWork_Frequency, struct DisplayScrollWork, freq_x, 0xf08);
+LAYOUT_OFFSET_GUARD(DisplayScrollWork_Frequency, struct DisplayScrollWork, freqX, 0xf08);
 
 extern struct DisplayScrollWork *gHBlankScrollWork;
-extern const s16				 DisplayScroll_WaveSine[];
+extern const s16				 gDisplayScroll_WaveSine[];
 
 #endif

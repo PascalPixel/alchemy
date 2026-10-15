@@ -11,37 +11,37 @@ void BattlePresentation_WaitForAdvance(void);
 
 // Announces each enemy that appears, then who strikes first. The Broken
 // Seal's BattleIntro_AnnounceEncounter.
-void Func_08118bcc(s32 enemy_count)
+void Func_08118bcc(s32 enemyCount)
 {
     s16 enemies[8];
     struct BattleWork *battle;
     s16 *enemy;
     s32 announced;
 
-    battle = Ram_HeapSlots->battle_work;
+    battle = Ram_HeapSlots->battleWork;
     UiWork_ClearValueNameTablesFar();
     BattleEnemyList(enemies);
 
     announced = 0;
-    if (enemy_count != 0) {
+    if (enemyCount != 0) {
         enemy = enemies;
         do {
             UiText_DrawQuantity((u16)*enemy++, 1);
-            if (announced == enemy_count - 1)
+            if (announced == enemyCount - 1)
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
             else
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
             announced++;
             BattlePresentation_WaitForAdvance();
-        } while (announced != enemy_count);
+        } while (announced != enemyCount);
     }
 
     UiWork_FinalizeSharedSlotFar();
-    if (battle->encounter_mode == 1) {
+    if (battle->encounterMode == 1) {
         UiWork_ClearValueNameTablesFar();
         UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
         BattlePresentation_WaitForAdvance();
-    } else if (battle->encounter_mode == 2) {
+    } else if (battle->encounterMode == 2) {
         UiWork_ClearValueNameTablesFar();
         UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
         BattlePresentation_WaitForAdvance();

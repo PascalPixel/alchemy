@@ -11,7 +11,7 @@
 #include "graphics.h"
 #include "uiwindow.h"
 
-#define BATTLE_OK 0x80 // target_flag：戦闘で使える
+#define BATTLE_OK 0x80 // targetFlag：戦闘で使える
 
 //--------------------------------------------------------------------------
 // 戦闘でアイテムを使えるか
@@ -32,11 +32,11 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	def = Item_Get(item);
 #endif
 	ret = 1;
-	if (def->use_type == 3) // エナジーを授ける装備
+	if (def->useType == 3) // エナジーを授ける装備
 	{
 		return ret;
 	}
-	if (def->action_id == 0)
+	if (def->actionId == 0)
 	{
 		return ret;
 	}
@@ -44,7 +44,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	{
 		return ret;
 	}
-	if ((BATTLE_OK & BattleActGet(def->action_id)->target_flag) == 0)
+	if ((BATTLE_OK & BattleActGet(def->actionId)->targetFlag) == 0)
 	{
 		return 2;
 	}

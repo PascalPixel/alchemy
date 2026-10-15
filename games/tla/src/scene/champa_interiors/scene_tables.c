@@ -29,11 +29,11 @@ const u32 *Scene_GetExits(void)
     return gSceneExits;
 }
 
-extern const u8 Data_02000228[];
-extern const u8 Data_020003a8[];
-extern const u8 Data_020003d8[];
-extern const u8 Data_020005ac[];
-extern const u8 Data_02000780[];
+extern const u8 gData_02000228[];
+extern const u8 gData_020003a8[];
+extern const u8 gData_020003d8[];
+extern const u8 gData_020005ac[];
+extern const u8 gData_02000780[];
 
 void Func_0200014c(void);
 void Func_02000178(s32 a, s32 b);
@@ -43,8 +43,8 @@ const struct ScenePlacement *Func_0200004c(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov683
         && (u16)(gPartyState.entrance - 8) <= 1)
-        return (const struct ScenePlacement *)Data_020003a8;
-    return (const struct ScenePlacement *)Data_02000228;
+        return (const struct ScenePlacement *)gData_020003a8;
+    return (const struct ScenePlacement *)gData_02000228;
 }
 
 void Func_0200008c(s32 value)
@@ -61,20 +61,20 @@ const struct SceneEvent *Func_020000a4(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov683
         && (u16)(gPartyState.entrance - 8) <= 1)
-        return (const struct SceneEvent *)Data_02000780;
+        return (const struct SceneEvent *)gData_02000780;
     if (GameFlag_Test(0x97f))
-        return (const struct SceneEvent *)Data_020005ac;
-    return (const struct SceneEvent *)Data_020003d8;
+        return (const struct SceneEvent *)gData_020005ac;
+    return (const struct SceneEvent *)gData_020003d8;
 }
 
 s32 Func_020000fc(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
 #ifdef TLA_EDITION_JA
-    work->screen_effect = 0x201;
+    work->screenEffect = 0x201;
 #else
-    work->screen_effect = 0x209;
+    work->screenEffect = 0x209;
 #endif
     if (gPartyState.scene == (s32)&SceneId_Ov683
         && (u16)(gPartyState.entrance - 8) <= 1)

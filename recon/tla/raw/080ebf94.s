@@ -215,7 +215,7 @@ Func_080ebf94:
 .L_080ec13c:
 	.4byte Data_0202a64c
 .L_080ec140:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080ec144:
 	.4byte Data_0202a62c
 .L_080ec148:

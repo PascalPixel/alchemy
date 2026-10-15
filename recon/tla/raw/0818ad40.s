@@ -1421,9 +1421,9 @@ Func_0818ad40:
 .L_0818b83c:
 	.4byte Data_08197500
 .L_0818b840:
-	.4byte Data_0819750c
+	.4byte gData_0819750c
 .L_0818b844:
-	.4byte Data_0819751a
+	.4byte gData_0819751a
 .L_0818b848:
 	.4byte IwramFillWords
 .L_0818b84c:

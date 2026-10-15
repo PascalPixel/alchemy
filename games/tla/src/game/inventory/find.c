@@ -13,26 +13,26 @@ s32 Inventory_Find(s32 owner, s32 item_id)
     return -1;
 }
 
-s32 PartyInventory_FindOwner(s32 item_id)
+s32 PartyInventory_FindOwner(s32 itemId)
 {
     s16 owners[10];
-    s32 owner_count;
-    s32 owner_index;
-    s16 *owner_cursor;
+    s32 ownerCount;
+    s32 ownerIndex;
+    s16 *ownerCursor;
     s16 owner;
 
-    if (Inventory_Find(gPartyState.current_owner, item_id) != -1)
-        return gPartyState.current_owner;
-    owner_count = Party_ListActiveOwners(owners);
-    owner_cursor = owners;
-    owner_index = 0;
-    if (owner_index < owner_count) {
+    if (Inventory_Find(gPartyState.currentOwner, itemId) != -1)
+        return gPartyState.currentOwner;
+    ownerCount = Party_ListActiveOwners(owners);
+    ownerCursor = owners;
+    ownerIndex = 0;
+    if (ownerIndex < ownerCount) {
         do {
-            owner = *owner_cursor++;
-            if (Inventory_Find(owner, item_id) != -1)
+            owner = *ownerCursor++;
+            if (Inventory_Find(owner, itemId) != -1)
                 return owner;
-            owner_index++;
-        } while (owner_index < owner_count);
+            ownerIndex++;
+        } while (ownerIndex < ownerCount);
     }
     return -1;
 }

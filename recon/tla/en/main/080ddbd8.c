@@ -13,13 +13,13 @@
 #include "ram_buffer.h"
 
 struct BurstParticleVisual {
-    u8 reserved_00[5];
-    u8 flags_a_low : 5;
+    u8 reserved00[5];
+    u8 flagsALow : 5;
     u8 flip : 1;
-    u8 flags_a_high : 2;
-    u8 reserved_06;
-    u8 flags_b_low : 6;
-    u8 flags_b_high : 2;
+    u8 flagsAHigh : 2;
+    u8 reserved06;
+    u8 flagsBLow : 6;
+    u8 flagsBHigh : 2;
     union {
         struct {
             u16 shape : 10;
@@ -27,7 +27,7 @@ struct BurstParticleVisual {
         } bits;
         struct {
             u8 lo;
-            u8 high_low : 4;
+            u8 highLow : 4;
             u8 palette : 4;
         } bytes;
     } attributes;
@@ -36,7 +36,7 @@ struct BurstParticleVisual {
 // ⚓️'s sprite keeps its second part 28 bytes in.
 struct BurstParticleVisualGroup {
     struct BurstParticleVisual primary;
-    u8 reserved_0c[16];
+    u8 reserved0c[16];
     struct BurstParticleVisual child;
 };
 
@@ -54,8 +54,8 @@ void Func_080ddbd8(void)
     s32 pos[3];
     s32 n;
 
-    work = Ram_HeapSlots->effect_work;
-    user = work->main_object;
+    work = Ram_HeapSlots->effectWork;
+    user = work->mainObject;
     BattleEffect_InitializeSharedScene();
 
     for (n = 0; n < 24; n++) {
@@ -83,8 +83,8 @@ void Func_080ddbd8(void)
         visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
         child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
         child->flip = visual->flip;
-        child->flags_a_high = visual->flags_a_high;
-        child->flags_b_high = visual->flags_b_high;
+        child->flagsAHigh = visual->flagsAHigh;
+        child->flagsBHigh = visual->flagsBHigh;
         child->attributes.bits.shape = visual->attributes.bits.shape;
         child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
@@ -93,10 +93,10 @@ void Func_080ddbd8(void)
             ((s32 *)obj)[6] = 0xb333;
             obj->acceleration = 0x18000;
             obj->speed = 0x18000;
-            obj->motion_flags = 0;
+            obj->motionFlags = 0;
             Animation_ApplyChildValuesFar(obj, 11);
             Object_SetMode(obj, 7);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript + 1);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript + 1);
             ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
 
             pos[0] = work->x;

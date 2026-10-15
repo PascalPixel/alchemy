@@ -283,8 +283,8 @@ Func_080ff370:
 .L_080ff5ac:
 	.4byte 0x0000102c
 .L_080ff5b0:
-	.4byte Menu_LvString
+	.4byte gMenu_LvString
 .L_080ff5b4:
 	.4byte 0x0000102d
 .L_080ff5b8:
-	.4byte Menu_SlashString
+	.4byte gMenu_SlashString

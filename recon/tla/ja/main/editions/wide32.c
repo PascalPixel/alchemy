@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern const u8 UiText_Glyphs[];
+extern const u8 gUiText_Glyphs[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -40,7 +40,7 @@ s32 UiText_GetWideStringWidth(u16 *text)
                 idx = c - 0xDE;
                 if (idx > 1U) {
                     idx += 0xBE;
-                    width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16, (s32)UiText_Glyphs);
+                    width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16, (s32)gUiText_Glyphs);
                 }
             } else {
                 width += 0xA;

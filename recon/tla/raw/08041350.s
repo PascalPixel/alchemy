@@ -289,6 +289,6 @@ Func_08041350:
 .L_08041594:
 	.4byte gInput
 .L_08041598:
-	.4byte Data_080aa170
+	.4byte gData_080aa170
 .L_0804159c:
 	.4byte gPartyState

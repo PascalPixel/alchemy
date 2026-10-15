@@ -7,9 +7,9 @@ void Func_02001104(s32 id, s32 a, s32 frame)
         s32 height;
 
         object->x = object->action << 16;
-        object->z = (s16)object->unknown_66 << 16;
+        object->z = (s16)object->unk66 << 16;
         height = Map_GetTerrainHeight(0, object->x, object->z);
-        object->terrain_height = height;
+        object->terrainHeight = height;
         object->y = height;
         Func_0200078c(id);
         GameFlag_SetBit(id + 0x353);
@@ -33,7 +33,7 @@ void Func_02001168(s32 a, s32 b)
 
 void Func_02001178(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *block = Object_GetById(15);
 
     if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {

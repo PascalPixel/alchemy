@@ -241,7 +241,7 @@ Func_0200015c:
 .L_0200832c:
 	.4byte gPartyState
 .L_02008330:
-	.4byte Data_02001964
+	.4byte gData_02001964
 .L_02008334:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
@@ -409,7 +409,7 @@ Func_02000588:
 .L_ja_020086e0:
 	.4byte gPartyState
 .L_ja_020086e4:
-	.4byte Data_02000eec
+	.4byte gData_02000eec
 .L_ja_020086e8:
 	.4byte 0xfff80000
 .L_ja_020086ec:
@@ -591,7 +591,7 @@ Func_02000588:
 .L_02008700:
 	.4byte 0xfff00000
 .L_02008704:
-	.4byte Data_02000eec
+	.4byte gData_02000eec
 .L_02008708:
 	.4byte 0xfff80000
 .L_0200870c:
@@ -880,45 +880,45 @@ Func_02000858:
 .L_02008a68:
 	.4byte 0xffff0000
 .L_02008a6c:
-	.4byte Data_02001cdc
+	.4byte gData_02001cdc
 .L_02008a70:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_02008a74:
-	.4byte Data_02001d20
+	.4byte gData_02001d20
 .L_02008a78:
-	.4byte Data_02001de4
+	.4byte gData_02001de4
 .L_02008a7c:
 	.4byte gFrameCount
 .L_02008a80:
-	.4byte Data_02001cde
+	.4byte gData_02001cde
 .L_02008a84:
-	.4byte Data_02001ce0
+	.4byte gData_02001ce0
 .L_02008a88:
-	.4byte Data_02001de0
+	.4byte gData_02001de0
 .L_02008a8c:
 	.4byte 0x40002000
 .L_02008a90:
-	.4byte Data_02001de2
+	.4byte gData_02001de2
 .L_02008a94:
 	.4byte 0xc000a000
 	.section .bss,"aw",%nobits
-	.global Data_02001cdc
-Data_02001cdc:
+	.global gData_02001cdc
+gData_02001cdc:
 	.space 0x00000002
-	.global Data_02001cde
-Data_02001cde:
+	.global gData_02001cde
+gData_02001cde:
 	.space 0x00000002
-	.global Data_02001ce0
-Data_02001ce0:
+	.global gData_02001ce0
+gData_02001ce0:
 	.space 0x00000040
-	.global Data_02001d20
-Data_02001d20:
+	.global gData_02001d20
+gData_02001d20:
 	.space 0x000000c0
-	.global Data_02001de0
-Data_02001de0:
+	.global gData_02001de0
+gData_02001de0:
 	.space 0x00000002
-	.global Data_02001de2
-Data_02001de2:
+	.global gData_02001de2
+gData_02001de2:
 	.space 0x00000002
-	.global Data_02001de4
-Data_02001de4:
+	.global gData_02001de4
+gData_02001de4:

@@ -4,25 +4,25 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
-extern const u8 Data_020013ca[];
-extern const u8 Data_0200121c[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
+extern const u8 gData_020013ca[];
+extern const u8 gData_0200121c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -131,7 +131,7 @@ void Func_02000a28(void)
     if (Flag_Test(0x204) != 0 && animation->frame == 0) {
         Cue(0x217);
         rock->x += -0x20000;
-        rock->velocity_y = 0x20000;
+        rock->velocityY = 0x20000;
         Flag_Clear(0x204);
     }
     if (animation->frame != 0)

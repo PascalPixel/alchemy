@@ -2,11 +2,11 @@
 #include "owner_state.h"
 #include "battle_type.h"
 
-s32 BattleUnit_KeepsOneHp(s32 unit_id)
+s32 BattleUnit_KeepsOneHp(s32 unitId)
 {
-    struct BattleUnit *unit = UnitGet(unit_id);
+    struct BattleUnit *unit = UnitGet(unitId);
 
-    if (unit->enemy_id == 110 || unit->enemy_id == 113)
+    if (unit->enemyId == 110 || unit->enemyId == 113)
         return 1;
     return 0;
 }

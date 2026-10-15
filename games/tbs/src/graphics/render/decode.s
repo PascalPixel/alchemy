@@ -145,8 +145,8 @@ AlchemyUncreditedEnd_render_decode_1:
 	.reloc .-4, R_ARM_ABS32_NOI, Map_CheckObjectStepFar
 	.4byte 0
 	.reloc .-4, R_ARM_ABS32_NOI, Map_CopyMetatileCellsRectFar
-	.global Render_DecodeFrameBuffer
-Render_DecodeFrameBuffer:
+	.global gRender_DecodeFrameBuffer
+gRender_DecodeFrameBuffer:
 	.space 224, 0
 .syntax unified
 	.section .text.draw_map,"ax",%progbits

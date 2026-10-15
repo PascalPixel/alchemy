@@ -449,11 +449,11 @@ Func_08146638:
 .L_081469bc:
 	.4byte gMapCellBuffer
 .L_081469c0:
-	.4byte Data_08197924
+	.4byte gData_08197924
 .L_081469c4:
 	.4byte 0x00061a7f
 .L_081469c8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081469cc:
 	.4byte 0xffd80000
 .L_081469d0:

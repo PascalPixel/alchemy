@@ -14,7 +14,7 @@ static __inline__ void WaitDma(volatile u32 *channel)
 }
 
 void DisplayScroll_InitializeHBlankDma(
-	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
+	s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY, s32 ampY)
 {
 	struct DisplayScrollWork *work;
 
@@ -22,12 +22,12 @@ void DisplayScroll_InitializeHBlankDma(
 	Dma_Fill32(0, work, 0xf20);
 	WaitDma(REG_DMA3);
 	work->mode = mode;
-	work->freq_x = freq_x;
-	work->freq_y = freq_y;
-	work->amp_x = amp_x;
-	work->amp_y = amp_y;
-	work->step_x = step_x;
-	work->step_y = step_y;
+	work->freqX = freqX;
+	work->freqY = freqY;
+	work->ampX = ampX;
+	work->ampY = ampY;
+	work->stepX = stepX;
+	work->stepY = stepY;
 	FieldScheduler_AddCallback(DisplayScroll_BuildAndSwapHBlankPage, 3200);
 	FieldScheduler_AddCallback(DisplayScroll_ArmHBlankDma, 1152);
 }

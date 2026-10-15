@@ -1,14 +1,14 @@
 #include "types.h"
-extern const u8 Menu_HexDigitsString[];
+extern const u8 gMenu_HexDigitsString[];
 
-extern const u8 Menu_ColonString[];
+extern const u8 gMenu_ColonString[];
 
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 void Text_FormatHex(s32 value, s32 width, s32 buf);
 s32 GameFlag_Test(s32 flag);
 
-void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
+void Menu_DrawFlagBitTable(s32 window, s32 startFlag)
 {
     s32 row;
     s32 y;
@@ -17,9 +17,9 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     char bits[17];
 
     RenderOutput_PrepareForRedraw();
-    UiText_DrawStringInWindow((s32)Menu_HexDigitsString, window, 48, 0);
+    UiText_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
 
-    flag = start_flag << 8;
+    flag = startFlag << 8;
     for (row = 0; row != 16; row++) {
         s32 i;
 
@@ -30,7 +30,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         }
         Text_FormatHex(flag, 3, (s32)label);
         UiText_DrawStringInWindow((s32)label, window, 0, y);
-        UiText_DrawStringInWindow((s32)Menu_ColonString, window, 32, y);
+        UiText_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
 
         for (i = 0; i < 16; i++) {
             s32 val = GameFlag_Test(flag);

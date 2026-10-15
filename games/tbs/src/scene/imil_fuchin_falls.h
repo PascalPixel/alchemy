@@ -16,7 +16,7 @@ extern void *gWorkSlot[];
 
 struct TrackingWork
 {
-	u8				   unknown_00[24];
+	u8				   unk00[24];
 	struct FieldActor *actor;
 };
 

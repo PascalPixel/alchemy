@@ -48,9 +48,9 @@ Func_081a08c4:
 .L_081a0914:
 	.4byte 0x0000001f
 .L_081a0918:
-	.4byte DisplayScroll_Position
+	.4byte gDisplayScroll_Position
 .L_081a091c:
-	.4byte DisplayScroll_Objects
+	.4byte gDisplayScroll_Objects
 .L_081a0920:
 	.4byte 0x40004000
 .L_081a0924:
@@ -119,11 +119,11 @@ Func_081a08c4:
 .L_081a099c:
 	.4byte 0x00000000
 .L_081a09a0:
-	.4byte DisplayScroll_Objects
+	.4byte gDisplayScroll_Objects
 .L_081a09a4:
 	.4byte 0x84000100
 .L_081a09a8:
-	.4byte DisplayScroll_Busy
+	.4byte gDisplayScroll_Busy
 .L_081a09ac:
 	.4byte gInput
 .L_081a09b0:
@@ -166,6 +166,6 @@ Func_081a08c4:
 .L_081a09f4:
 	.4byte gFrameTick
 .L_081a09f8:
-	.4byte DisplayScroll_Position
+	.4byte gDisplayScroll_Position
 .L_081a09fc:
 	.4byte gInput

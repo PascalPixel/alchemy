@@ -4,12 +4,12 @@
 
 void Func_081281ec(void)
 {
-    u8 *battle = (u8 *)Ram_HeapSlots->battle_work;
+    u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
     s32 *totals = (s32 *)(battle + 0x550);
     u16 *slots;
     s32 i;
 
-    gPartyState.tally_25c = 0;
+    gPartyState.tally25c = 0;
     totals[0] = 0;
     totals[1] = 0;
     totals[2] = 0;

@@ -10,12 +10,12 @@
 
 struct ClearWork
 {
-    u8  unknown_00[20];
+    u8  unk00[20];
     u16 mode;
 };
 
 extern char ResourceId_LogoOnBlack;
-extern u16  Data_020024f4[];
+extern u16  gData_020024f4[];
 
 void                  Blend_SetDarkenTarget16(s32 frames);
 void                  Func_020021f8(void *source, void *destination);
@@ -92,15 +92,15 @@ scroll_pair:
     if (y <= 3)
         goto scroll_pair;
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
-    ((struct ClearWork *)Ram_HeapSlots->map_work)->mode = 0x1400;
+    ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
     {
         struct ObjectRuntime *leader;
         /* FAKEMATCH: the flag's zero is pinned to r5 as a halfword: the native loads it from the pool after the call, where plainly it reuses the scroll loop's zero kept in r5 (differ 20 with a byte pin). */
         register u16 zero asm("r5");
 
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         zero = 0;
-        leader->motion_flags = zero;
+        leader->motionFlags = zero;
     }
 }
 
@@ -112,8 +112,8 @@ void Func_0200015c(void)
     s32 frame;
     u32 level;
 
-    frame = Data_020024f4[0] + 1;
-    Data_020024f4[0] = frame;
+    frame = gData_020024f4[0] + 1;
+    gData_020024f4[0] = frame;
     level = (u16)frame >> 1;
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
     IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level, 0x20000);

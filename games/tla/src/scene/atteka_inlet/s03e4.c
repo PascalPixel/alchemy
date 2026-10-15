@@ -42,7 +42,7 @@ void Func_020003e4(void)
         Call2(Func_020010a8, 23, 0);
         Call2(Func_020010b8, 23, 0xb000);
         Call2(Func_020010a8, 0x2017, 0);
-        Func_020010e8()->motion_flags = 0;
+        Func_020010e8()->motionFlags = 0;
         Call2(Func_020010d0, 0x4cccc, 0x9999);
         Call4(Motion_CamBounds, 0x1b80000, 0x200000, 0x1700000, 1);
         Func_020010e0();
@@ -70,7 +70,7 @@ void Func_020003e4(void)
         Call2(Func_020010a8, 23, 0);
         Call2(Object_SetModeById, 23, 4);
         Call2(Func_020010a8, 23, 0);
-        Value3(Func_020010c8, gPartyState.current_owner, 257, 40);
+        Value3(Func_020010c8, gPartyState.currentOwner, 257, 40);
         Value3(Func_020010c8, 23, 265, 20);
         Call2(Func_020010a8, 23, 0);
         Value3(Func_020010c8, 23, 264, 20);
@@ -78,10 +78,10 @@ void Func_020003e4(void)
         Call2(Motion_SetModeAndWaitAnimation, 23, 3);
         Call2(Func_020010a8, 23, 0);
         Call3(ObjectMotion_SetSpeedParameters, 23, 0xcccc, 0x6666);
-        Object_GetById(23)->action_flags &= ~1;
+        Object_GetById(23)->actionFlags &= ~1;
         Call3(ObjectMotion_SetPositionAndReset, 23, 504, 360);
         Call1(Battle_WaitMode0, 1);
-        Object_GetById(23)->action_flags |= 1;
+        Object_GetById(23)->actionFlags |= 1;
         Call2(Func_020010b8, 23, 0x3000);
         Call2(Motion_SetModeAndWaitAnimation, 23, 3);
         Call2(Func_020010a8, 23, 0);

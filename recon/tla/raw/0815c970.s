@@ -296,12 +296,12 @@ Func_0815c970:
 .L_0815cbb8:
 	.4byte Func_08143000
 .L_0815cbbc:
-	.4byte Data_081986d4
+	.4byte gData_081986d4
 .L_0815cbc0:
-	.4byte Data_081986e0
+	.4byte gData_081986e0
 .L_0815cbc4:
-	.4byte Data_081986c8
+	.4byte gData_081986c8
 .L_0815cbc8:
-	.4byte Data_081986ec
+	.4byte gData_081986ec
 .L_0815cbcc:
-	.4byte Data_081986ce
+	.4byte gData_081986ce

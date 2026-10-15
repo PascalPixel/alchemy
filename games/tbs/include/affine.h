@@ -7,10 +7,10 @@
 
 struct AffineTransform
 {
-	u16 scale_x;
-	u16 scale_y;
+	u16 scaleX;
+	u16 scaleY;
 	u16 angle;
-	u16 unknown_06;
+	u16 unk06;
 };
 
 union AffineMatrix
@@ -20,7 +20,7 @@ union AffineMatrix
 };
 
 LAYOUT_SIZE_GUARD(AffineTransform_Size, struct AffineTransform, 8);
-LAYOUT_OFFSET_GUARD(AffineTransform_ScaleY, struct AffineTransform, scale_y, 2);
+LAYOUT_OFFSET_GUARD(AffineTransform_ScaleY, struct AffineTransform, scaleY, 2);
 LAYOUT_OFFSET_GUARD(AffineTransform_Angle, struct AffineTransform, angle, 4);
 LAYOUT_SIZE_GUARD(AffineMatrix_Size, union AffineMatrix, 8);
 

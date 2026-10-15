@@ -4,9 +4,9 @@
 
 void Func_02000074(void);
 
-extern u32 Data_02000224[];
+extern u32 gData_02000224[];
 
-u32 Data_02000224[] = {
+u32 gData_02000224[] = {
 	39, 0, 17,
 };
 
@@ -21,9 +21,9 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-s32 Data_02000270[] = {
+s32 gData_02000270[] = {
 	(s32)0xffff019a,
-	(s32)Data_02000224,
+	(s32)gData_02000224,
 	0xd80000,
 	0,
 	0xb80000,
@@ -66,9 +66,9 @@ s32 Data_02000270[] = {
 	0,
 };
 
-s32 Data_02000318[] = {
+s32 gData_02000318[] = {
 	(s32)0xffff019a,
-	(s32)Data_02000224,
+	(s32)gData_02000224,
 	0xd80000,
 	0,
 	0xb80000,

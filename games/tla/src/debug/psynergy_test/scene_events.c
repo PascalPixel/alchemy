@@ -10,8 +10,8 @@
 #include "field_scene.h"
 #include "party_state.h"
 
-extern u8 Data_020017b0[];
-extern u8 Data_02001860[];
+extern u8 gData_020017b0[];
+extern u8 gData_02001860[];
 
 void Func_02000f14(s32, s32, s32);
 void Func_02000ebc(s32, s32);
@@ -34,7 +34,7 @@ void Func_02000660(void)
     party = &gPartyState;
     /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset. */
     __asm__ volatile("" : "+l"(party));
-    party->battle_rule_24b = 2;
+    party->battleRule24b = 2;
     Func_02000ebc(14, 0);
 }
 
@@ -87,11 +87,11 @@ void Func_02000744(void)
 
 void Func_02000748(s32 actor)
 {
-    Func_02000c4c(Object_GetById(actor), Data_02001860);
-    Func_02000c4c(Object_GetById(gPartyState.current_owner), Data_020017b0);
+    Func_02000c4c(Object_GetById(actor), gData_02001860);
+    Func_02000c4c(Object_GetById(gPartyState.currentOwner), gData_020017b0);
     WaitFrames(100);
     Func_02000d4c(Object_GetById(actor));
-    Func_02000d4c(Object_GetById(gPartyState.current_owner));
+    Func_02000d4c(Object_GetById(gPartyState.currentOwner));
 }
 
 const struct SceneEvent *Scene_GetEvents(void)

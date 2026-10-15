@@ -438,7 +438,7 @@ Func_0816fca8:
 .L_08170008:
 	.4byte Data_02014018
 .L_0817000c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08170010:
 	.4byte IwramFillWords
 .L_08170014:
@@ -835,27 +835,27 @@ Func_0816fca8:
 .L_0817032c:
 	.4byte gMapCellBuffer
 .L_08170330:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08170334:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08170338:
 	.4byte Data_08198bee
 .L_0817033c:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_08170340:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08170344:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08170348:
 	.4byte 0xffffff00
 .L_0817034c:
 	.4byte 0xffff00ff
 .L_08170350:
-	.4byte Data_08199268
+	.4byte gData_08199268
 .L_08170354:
 	.4byte 0xffc00000
 .L_08170358:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_0817035c:
 	.4byte Data_081991c0
 .L_08170360:

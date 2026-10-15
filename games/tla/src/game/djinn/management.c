@@ -21,14 +21,14 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
     if (group <= 3 && index <= 19) {
         entry = group * 20 + index;
     }
-    return Djinn_Definitions[entry];
+    return gDjinn_Definitions[entry];
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
 {
     s32 flag = bit + index * 20 + 48;
-    s32 best_no = 0;
-    s32 best_val = 999;
+    s32 bestNo = 0;
+    s32 bestVal = 999;
     s32 count;
     s32 result;
     u8 *owners;
@@ -37,10 +37,10 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         return -1;
 
     result = Party_CountActiveOwners();
-    if (best_no < result) {
+    if (bestNo < result) {
         struct PartyState *party = &gPartyState;
 
-        owners = party->active_owners;
+        owners = party->activeOwners;
         count = result;
         do {
             struct OwnerDjinnState *state = UnitGet(*owners);
@@ -57,9 +57,9 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
                     i--;
                 } while (i >= 0);
 
-                if (best_val > value) {
-                    best_val = value;
-                    best_no = *owners;
+                if (bestVal > value) {
+                    bestVal = value;
+                    bestNo = *owners;
                 }
             }
             count--;
@@ -67,13 +67,13 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         } while (count != 0);
     }
 
-    if (best_val == 999)
+    if (bestVal == 999)
         return -2;
 
-    Djinn_AddToOwner(best_no, index, bit);
-    Trade_AddOffer(best_no, index, bit);
+    Djinn_AddToOwner(bestNo, index, bit);
+    Trade_AddOffer(bestNo, index, bit);
     GameFlag_SetBit(flag);
-    return best_no;
+    return bestNo;
 }
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)

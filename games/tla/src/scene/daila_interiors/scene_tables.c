@@ -21,27 +21,27 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-extern const u8 Data_0200116c[];
-extern const u8 Data_020011b8[];
+extern const u8 gData_0200116c[];
+extern const u8 gData_020011b8[];
 
 const void *Scene_GetExits(void)
 {
     if (GameFlag_Test(0x873))
-        return Data_020011b8;
-    return Data_0200116c;
+        return gData_020011b8;
+    return gData_0200116c;
 }
 
-extern const u8 Data_02001204[];
-extern const u8 Data_020013fc[];
-extern const u8 Data_020014a4[];
+extern const u8 gData_02001204[];
+extern const u8 gData_020013fc[];
+extern const u8 gData_020014a4[];
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gPartyState.scene == (s32)&SceneId_DailaInteriors2)
-        return (const struct ScenePlacement *)Data_020013fc;
+        return (const struct ScenePlacement *)gData_020013fc;
     if (GameFlag_Test(0x873))
-        return (const struct ScenePlacement *)Data_020014a4;
-    return (const struct ScenePlacement *)Data_02001204;
+        return (const struct ScenePlacement *)gData_020014a4;
+    return (const struct ScenePlacement *)gData_02001204;
 }
 
 void DailaInteriors_EmptyHook(void)

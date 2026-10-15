@@ -7,19 +7,19 @@ struct RideSlot {
 };
 
 struct RideWork {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 landed;
     u16 blocked;
-    u8 unknown_08[2];
-    u16 value_0a;
-    u8 unknown_0c[0x48];
+    u8 unk08[2];
+    u16 value0a;
+    u8 unk0c[0x48];
     struct RideSlot slots[4];
-    u8 unknown_64[4];
-    u16 value_68;
+    u8 unk64[4];
+    u16 value68;
     u16 direction;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_02001a1c(struct ObjectRuntime *a, struct ObjectRuntime *b);
@@ -27,9 +27,9 @@ s32 Func_02001a80(struct ObjectRuntime *a, struct ObjectRuntime *b);
 
 void Func_02001ae0(struct ObjectRuntime *object)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    u8 *event = Ram_HeapSlots->event_work;
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    u8 *event = Ram_HeapSlots->eventWork;
     s32 dx = object->bounce;
     s32 dz;
     s32 i;
@@ -38,48 +38,48 @@ void Func_02001ae0(struct ObjectRuntime *object)
 
     object->x += dx;
     object->y += object->gravity;
-    dz = object->unknown_4c;
+    dz = object->unk4c;
     object->z += dz;
     object->bounce = dx - dx / 18;
-    object->unknown_4c = dz - dz / 16;
-    object->scale_x += object->speed_limit;
-    object->scale_y += object->acceleration;
-    ((struct SpriteParts *)object->animation)->unknown_12 += object->action;
-    if (leader->y == leader->terrain_height && Func_02001a1c(object, leader) && gPartyState.render_mode == 0) {
-        if (object->unknown_4c != 0) {
-            work->value_68 = 0;
+    object->unk4c = dz - dz / 16;
+    object->scaleX += object->speedLimit;
+    object->scaleY += object->acceleration;
+    ((struct SpriteParts *)object->animation)->unk12 += object->action;
+    if (leader->y == leader->terrainHeight && Func_02001a1c(object, leader) && gPartyState.renderMode == 0) {
+        if (object->unk4c != 0) {
+            work->value68 = 0;
             {
                 u16 *cell = &work->direction;
 
-                if (object->unknown_4c > 0)
+                if (object->unk4c > 0)
                     direction = 1;
                 else
                     direction = 0xffff;
                 *cell = direction;
             }
         }
-        object->priority_flags = 2;
+        object->priorityFlags = 2;
         {
-            s32 speed = object->unknown_4c;
+            s32 speed = object->unk4c;
 
-            object->unknown_4c = 0;
+            object->unk4c = 0;
             object->z -= speed;
             object->gravity += speed >> 2;
         }
         work->landed = 1;
-        *(u16 *)(event + 340) = work->value_0a;
+        *(u16 *)(event + 340) = work->value0a;
     }
     slot = work->slots;
     for (i = 0; i < 4 && slot->id != 0; i++, slot++) {
         struct ObjectRuntime *other = Object_GetById(slot->id);
 
-        if (other->y == other->terrain_height && Func_02001a80(object, other)) {
+        if (other->y == other->terrainHeight && Func_02001a80(object, other)) {
             if (slot->blocked == 0) {
                 s32 speed;
 
-                object->priority_flags = 2;
-                speed = object->unknown_4c;
-                object->unknown_4c = 0;
+                object->priorityFlags = 2;
+                speed = object->unk4c;
+                object->unk4c = 0;
                 object->z -= speed;
                 object->gravity += speed >> 2;
             } else {

@@ -20,28 +20,28 @@ void Func_020029f8(s32 id, s32 value);
 
 void Func_0200106c(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 saved = object->gravity;
     s32 i;
     struct PartyState *state;
 
     Func_02002998();
     Func_02002a48(0);
-    Func_020029f8(gPartyState.current_owner, 257);
+    Func_020029f8(gPartyState.currentOwner, 257);
     Func_02002910(object, 40);
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     for (i = 0; i < 180; i++) {
         WaitFrames(1);
-        if (object->y <= object->terrain_height)
+        if (object->y <= object->terrainHeight)
             break;
     }
     state = &gPartyState;
     object->gravity = saved;
     /* FAKEMATCH: keeps the gravity store before the owner offset is built (differ 2 without) */
     __asm__("");
-    Func_020029f8(state->current_owner, 0);
+    Func_020029f8(state->currentOwner, 0);
     ObjectDispatch_SetSingleChildFlags(object, 1);
     Func_02002910(object, 1);
-    state->render_mode = 0;
+    state->renderMode = 0;
     Func_020029a0();
 }

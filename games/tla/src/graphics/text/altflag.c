@@ -6,15 +6,15 @@
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 struct WindowTileWork {
-    u8 unknown_000[2];
+    u8 unk000[2];
     u8 alt;
-    u8 unknown_003[0xe35];
+    u8 unk003[0xe35];
     u8 table[256];
 };
 
 void UiWork_SetAltFlagAndClearTable(s32 alt)
 {
-    struct WindowTileWork *work = (struct WindowTileWork *)Ram_HeapSlots->window_tiles;
+    struct WindowTileWork *work = (struct WindowTileWork *)Ram_HeapSlots->windowTiles;
     s32 i;
     s32 fill;
     u8 *p;
@@ -40,7 +40,7 @@ void Func_08041c50(void)
 // joining it to the frame and divider tiles already on the tilemap.
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2, u32 y2)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *cursor;
     u32 pos;
     u32 tile;

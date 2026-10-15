@@ -19,21 +19,21 @@ struct WaveFxWork {
     s8 green;
     s8 blue;
     u16 hue;
-    u16 source_id;
-    u16 target_id;
+    u16 sourceId;
+    u16 targetId;
     u8 delay;
     u8 counter;
 };
 
 struct WaveFxSprite {
-    u32 unknown_00[2];
-    u8 unknown_08;
-    u32 unknown_09_0 : 2;
+    u32 unk00[2];
+    u8 unk08;
+    u32 unk09_0 : 2;
     u32 mode : 2;
-    u32 unknown_09_4 : 4;
-    u8 unknown_0a[8];
+    u32 unk09_4 : 4;
+    u8 unk0a[8];
     u16 orientation;
-    u8 unknown_14[6];
+    u8 unk14[6];
     u8 palette;
 };
 
@@ -48,8 +48,8 @@ struct WaveFxDescriptor {
 };
 
 struct WaveFxMetadata {
-    u8 unknown_00[8];
-    s8 box_x;
+    u8 unk00[8];
+    s8 boxX;
 };
 
 s32 Trig_Sin(s32 angle);
@@ -69,7 +69,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
 // its 61-frame cycle sends a particle from the target back to the user.
 void Func_080dcb44(void)
 {
-    struct WaveFxWork *work = Ram_HeapSlots->unknown_4c[3];
+    struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
     struct WaveFxVector from;
     struct WaveFxVector to;
     struct WaveFxDescriptor *descriptor;
@@ -96,22 +96,22 @@ void Func_080dcb44(void)
         BattleFx_ApplyColorToTargetBuffer((work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
         BattleFx_StartBufferInterpolation(1);
     }
-    BattleFx_ApplyFlickerValue(Object_GetById(work->source_id), 0);
+    BattleFx_ApplyFlickerValue(Object_GetById(work->sourceId), 0);
 
     if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
-        source = Object_GetById(work->source_id);
-        target = Object_GetById(work->target_id);
+        source = Object_GetById(work->sourceId);
+        target = Object_GetById(work->targetId);
         if (source != NULL && target != NULL) {
-            descriptor = BattleAction_FindDescriptor(work->source_id);
+            descriptor = BattleAction_FindDescriptor(work->sourceId);
             from.x = source->x;
             metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
-            from.y = source->y + (metadata->box_x << 16) - 0x20000;
+            from.y = source->y + (metadata->boxX << 16) - 0x20000;
             from.z = source->z;
             sprite = target->animation;
-            descriptor = BattleAction_FindDescriptor(work->target_id);
+            descriptor = BattleAction_FindDescriptor(work->targetId);
             to.x = target->x;
             metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
-            to.y = target->y + (metadata->box_x << 16) - 0x20000;
+            to.y = target->y + (metadata->boxX << 16) - 0x20000;
             to.z = target->z;
             if (sprite->orientation == 0x8000) {
                 to.y -= 0x180000;
@@ -125,8 +125,8 @@ void Func_080dcb44(void)
             object = Func_080200c0(677, to.x, to.y, to.z);
             if (object != NULL) {
                 sprite = object->animation;
-                object->motion_flags = 0;
-                object->speed_limit = 0xa3d7;
+                object->motionFlags = 0;
+                object->speedLimit = 0xa3d7;
                 object->acceleration = 0xa3d7;
                 object->angle = ArcTan2(from.z - to.z, from.x - to.x);
                 object->update = (void (*)(void))BattleFx_SetCallbackWhenTargetUnset;

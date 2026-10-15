@@ -22,11 +22,11 @@ void Func_02000054(void)
     Func_02000340(0);
     Func_02000300((s32)MsgMadraGoingToOsenia);
     UiText_OpenMessageAtObject(8, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Motion_SetModeAndWaitAnimation(8, 3);
         Func_02000310(8, 0, 2);
     } else {
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02000310(8, 0, 2);
     }
     Func_020002c0();

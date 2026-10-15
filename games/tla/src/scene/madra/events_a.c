@@ -23,8 +23,8 @@ void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Func_02002ae8(const void *data, s32 a, s32 b);
-void Func_02002af0(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_02002af8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Func_02002b88(s32 id, s32 a, s32 b);
@@ -42,11 +42,11 @@ void Func_02002c90(s32 a);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
-extern const u8 Data_02002d38[];
-extern const u8 Data_02002ff0[];
-extern const u8 Data_02003358[];
-extern const u8 Data_0200367c[];
-extern const u8 Data_0200394c[];
+extern const u8 gData_02002d38[];
+extern const u8 gData_02002ff0[];
+extern const u8 gData_02003358[];
+extern const u8 gData_0200367c[];
+extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe;
 extern u8 MsgTheArmorerAnd;
@@ -169,7 +169,7 @@ static __inline__ void Turn(s32 id, s32 a)
 
 void Func_02000108(s32 arg)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -188,7 +188,7 @@ void Func_02000108(s32 arg)
 
 void Func_0200018c(s32 arg)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -207,7 +207,7 @@ void Func_0200018c(s32 arg)
 
 void Func_02000210(s32 arg)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));

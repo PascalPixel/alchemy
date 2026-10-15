@@ -268,7 +268,7 @@ Func_08046b08:
 .L_08046d20:
 	.4byte 0x80000400
 .L_08046d24:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08046d28:
 	.4byte 0xfffffc00
 .L_08046d2c:
@@ -972,11 +972,11 @@ Func_08046b08:
 	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047280:
-	.4byte OwnerStatus_StatCursors
+	.4byte gOwnerStatus_StatCursors
 .L_08047284:
-	.4byte OwnerStatus_EquipmentCursors
+	.4byte gOwnerStatus_EquipmentCursors
 .L_08047288:
-	.4byte OwnerStatus_ConditionCursors
+	.4byte gOwnerStatus_ConditionCursors
 .L_0804728c:
 	mov r3, r8
 	movs r6, #4
@@ -1116,7 +1116,7 @@ Func_08046b08:
 .L_080473a0:
 	.4byte 0x40000400
 .L_080473a4:
-	.4byte Resource_FixedBlockBTiles
+	.4byte gResource_FixedBlockBTiles
 .L_080473a8:
 	ldr r1, [sp, #32]
 	ands r0, r3
@@ -2729,15 +2729,15 @@ Func_08046b08:
 .L_08048050:
 	.4byte 0x00000d1f
 .L_08048054:
-	.4byte OwnerStatus_LevelString
+	.4byte gOwnerStatus_LevelString
 .L_08048058:
 	.4byte 0x00000d1a
 .L_0804805c:
-	.4byte OwnerStatus_HpString
+	.4byte gOwnerStatus_HpString
 .L_08048060:
-	.4byte OwnerStatus_SlashString
+	.4byte gOwnerStatus_SlashString
 .L_08048064:
-	.4byte OwnerStatus_PpString
+	.4byte gOwnerStatus_PpString
 .L_08048068:
 	.4byte 0x00000b63
 .L_0804806c:
@@ -3329,7 +3329,7 @@ Func_08046b08:
 .L_080484c8:
 	.4byte 0x00000d21
 .L_080484cc:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080484d0:
 	.4byte 0x40000400
 .L_080484d4:
@@ -3388,7 +3388,7 @@ Func_08046b08:
 .L_08048538:
 	.4byte 0x00000018
 .L_0804853c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08048540:
 	.4byte 0x40000400
 .L_08048544:

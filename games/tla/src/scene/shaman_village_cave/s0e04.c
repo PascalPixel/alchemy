@@ -1,8 +1,8 @@
 #include "local.h"
 
 struct ShamanVillageCaveSceneWork {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
+    u8 unk000[0x1ac];
+    s32 screenEffect;
 };
 
 s32 GameFlag_Test(s32 flag);
@@ -23,7 +23,7 @@ s32 Func_02000e04(void)
 {
     struct ObjectRuntime *object;
 
-    ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->event_work)->screen_effect = 516;
+    ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
     if (GameFlag_Test(0x9a9))
         Func_020010e8(8, 0, 0);
     if (GameFlag_Test(0x9aa))
@@ -32,8 +32,8 @@ s32 Func_02000e04(void)
         GameFlag_SetBit(0x205);
     if (GameFlag_Test(0x9a8)) {
         object = Object_GetById(15);
-        object->motion_flags = 0;
-        object->priority_flags = 0;
+        object->motionFlags = 0;
+        object->priorityFlags = 0;
         object->x = 0x2680000;
         object->y = 0;
         ObjectDispatch_SetSingleChildFlags(object, 0);
@@ -45,8 +45,8 @@ s32 Func_02000e04(void)
         object = Object_GetById(16);
         Object_SetModeById(16, 5);
         Object_SetPartAttribute(Object_GetById(16), 0);
-        object->motion_flags = 0;
-        object->priority_flags = 0;
+        object->motionFlags = 0;
+        object->priorityFlags = 0;
         object->y = 0;
         Func_02001060_(8, 42, 1, 1, 6, 42);
     }

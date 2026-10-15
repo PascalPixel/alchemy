@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's WorldMap_MarkerBlendCycle, byte for byte
+@ The Broken Seal's gWorldMap_MarkerBlendCycle, byte for byte
 	.global Data_080f1100
 Data_080f1100:
 	.byte 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16

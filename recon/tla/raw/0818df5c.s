@@ -1590,7 +1590,7 @@ Func_0818df5c:
 .L_0818ebd0:
 	.4byte gMapCellBuffer
 .L_0818ebd4:
-	.4byte Data_081990d0
+	.4byte gData_081990d0
 .L_0818ebd8:
 	.4byte Data_08199e8c
 .L_0818ebdc:
@@ -1794,7 +1794,7 @@ Func_0818df5c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0818ed80:
-	.4byte Data_08199090
+	.4byte gData_08199090
 .L_0818ed84:
 	.4byte Data_08198ec4
 .L_0818ed88:
@@ -1806,7 +1806,7 @@ Func_0818df5c:
 .L_0818ed94:
 	.4byte Data_08198cac
 .L_0818ed98:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818ed9c:
 	.4byte gMapCellBuffer
 .L_0818eda0:

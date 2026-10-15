@@ -14,11 +14,11 @@
 #include "map.h"
 #include "callback_scheduler.h"
 
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003fc4[];
-extern const u8 Data_02003fc8[];
-extern s32 Data_02005678;
-extern s32 Data_0200567c;
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003fc4[];
+extern const u8 gData_02003fc8[];
+extern s32 gData_02005678;
+extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -30,7 +30,7 @@ void Func_0200172c(void);
 void Func_02001930(void);
 void Func_02001ee8(void);
 void Func_02001fc4(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
@@ -96,9 +96,9 @@ void Func_02003284(void)
     s32 zero;
 
     if (Flag_Test(265) == 0) {
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-        Actor_SetVariant(gPartyState.current_owner, 2);
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+        Actor_SetVariant(gPartyState.currentOwner, 2);
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
     }
     Actor_SetVariant(8, 1);
     Actor_SetVariant(9, 1);
@@ -111,31 +111,31 @@ void Func_02003284(void)
     Actor_SetVariant(13, 1);
     Func_02003d90();
     Func_02003da8(0, 520, 12, 13);
-    Func_02003db8(Data_02003fc4);
+    Func_02003db8(gData_02003fc4);
     if (Object_GetById(19)->y > (s32)0xfff80000)
         Actor_SetVariant(19, 1);
     else
         Actor_SetVariant(19, 2);
     Func_02003cc0(20);
-    Object_GetById(20)->priority_flags |= 32;
+    Object_GetById(20)->priorityFlags |= 32;
     Actor_SetVariant(20, 2);
     if (Flag_Test(0x841) != 0)
         Func_0200172c();
     else
         Map_CopyAttributes(38, 32, 1, 1, 38, 33);
-    Object_GetById(14)->priority_flags &= ~1;
-    Object_GetById(15)->priority_flags &= ~1;
-    Object_GetById(16)->priority_flags &= ~1;
-    Object_GetById(17)->priority_flags &= ~1;
-    Func_02000c64(Data_02003fc8);
+    Object_GetById(14)->priorityFlags &= ~1;
+    Object_GetById(15)->priorityFlags &= ~1;
+    Object_GetById(16)->priorityFlags &= ~1;
+    Object_GetById(17)->priorityFlags &= ~1;
+    Func_02000c64(gData_02003fc8);
     object = Object_GetById(17);
     zero = 0;
     if ((object->x >> 20) == 54) {
-        struct MapCell *cell = Ram_HeapSlots->map_work->layers[0].cells;
+        struct MapCell *cell = Ram_HeapSlots->mapWork->layers[0].cells;
 
         cell += Func_02003db0();
-        cell->attribute_b &= 0x7f;
-        cell->collision_code = 11;
+        cell->attributeB &= 0x7f;
+        cell->collisionCode = 11;
     }
     Actor_SetVariant(14, 1);
     Actor_SetVariant(15, 1);
@@ -154,7 +154,7 @@ void Func_02003284(void)
         object = Object_GetById(18);
         Map_CopyAttributes(27, 8, 1, 1, 27, 9);
         Object_SetModeById(18, 4);
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         *((u8 *)object + 89) &= ~1;
         Flag_Set(517);
         Flag_Set(577);
@@ -166,13 +166,13 @@ void Func_02003284(void)
         Flag_Set(534);
         Func_02003c68(25, 0, 0);
     }
-    Func_020001d0(Data_02003f80);
+    Func_020001d0(gData_02003f80);
     Func_020013b0();
     Func_02001fc4();
     object = Object_GetById(27);
     *((u8 *)object + 85) = zero;
     object->y = zero;
-    Data_0200567c = zero;
-    Data_02005678 = zero;
+    gData_0200567c = zero;
+    gData_02005678 = zero;
     Scheduler_AddOrUpdateCallback(Func_02001ee8, 0x480);
 }

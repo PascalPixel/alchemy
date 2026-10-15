@@ -125,4 +125,4 @@ Func_080dda30:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080ddb38:
-	.4byte Data_080f0ee8
+	.4byte gData_080f0ee8

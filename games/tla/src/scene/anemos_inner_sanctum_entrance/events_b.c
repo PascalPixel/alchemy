@@ -1,13 +1,13 @@
 #include "anemos_inner_sanctum_entrance.h"
 
-extern const s8 Data_02000ee0[];
+extern const s8 gData_02000ee0[];
 
 void Func_020004e4(s32 a, s32 b)
 {
     s32 i;
 
-    const s8 *x = Data_02000ee0;
-    const s8 *z = Data_02000ee0 + 1;
+    const s8 *x = gData_02000ee0;
+    const s8 *z = gData_02000ee0 + 1;
 
     for (i = 9; i <= 14; i++) {
         struct ObjectRuntime *object = Object_GetById(i);
@@ -15,11 +15,11 @@ void Func_020004e4(s32 a, s32 b)
         if (object->x >> 20 != *x)
             return;
         {
-            s32 cell_z = *z;
+            s32 cellZ = *z;
 
             z += 2;
             x += 2;
-            if (object->z >> 20 != cell_z)
+            if (object->z >> 20 != cellZ)
                 return;
         }
     }
@@ -36,12 +36,12 @@ void Func_02000534(s32 a)
 
     party = &gPartyState;
     if (held) {
-        if (Func_02000d0c(party->current_owner) != -1) {
+        if (Func_02000d0c(party->currentOwner) != -1) {
             Func_02000d54();
             Func_020004e4(0, a);
         }
     } else {
-        if (Object_GetById(party->current_owner)->y > -0x1c0000)
+        if (Object_GetById(party->currentOwner)->y > -0x1c0000)
             Func_02000d14();
     }
 }

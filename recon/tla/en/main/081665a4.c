@@ -26,9 +26,9 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlastSheet;
-extern u8 Data_08198a92[];
-extern u8 Data_08198a98[];
-extern u16 Data_08197410[];
+extern u8 gData_08198a92[];
+extern u8 gData_08198a98[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -55,13 +55,13 @@ void Func_081665a4(struct BattleEffectArgument *effect)
     struct MotionObject *user;
     DrawRectangle blit[2];
     struct EffectPosition pos;
-    s32 base_x;
+    s32 baseX;
     s32 frame;
     s32 i;
 
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
 
     user = GetBattleObjectSlotFar(effect->actor)->object;
     BattleFx_BeginCanvasLayer(1);
@@ -71,9 +71,9 @@ void Func_081665a4(struct BattleEffectArgument *effect)
     ObjectDispatch_ApplyValueToChildrenFar(user, 48);
     EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
     if (effect->side == 0)
-        base_x = pos.x / 2 - 24;
+        baseX = pos.x / 2 - 24;
     else
-        base_x = pos.x / 2 - 92;
+        baseX = pos.x / 2 - 92;
 
     Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet + FLASH_SHEET, 1, 0);
@@ -101,18 +101,18 @@ void Func_081665a4(struct BattleEffectArgument *effect)
 
             speed = (Random16() & 0x1ff) + 32;
             angle = Random16() & 0xffff;
-            spark->x = (Data_08198a92[col + effect->side * 3] + base_x) << 16;
+            spark->x = (gData_08198a92[col + effect->side * 3] + baseX) << 16;
             spark->y = 88 << 16;
-            spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
-            spark->velocity_y = -(Trig_Cos(angle) * speed * 2) >> 6;
+            spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
+            spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
             spark->variant = (Random16() & 7) + 32;
             i++;
         } while (i != 340);
         col++;
     } while (col != 3);
 
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     frame = 0;
@@ -120,7 +120,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
         if (frame == 4)
             Audio_PlayCue(212);
         if (frame == 8)
-            work->shake_frames = frame;
+            work->shakeFrames = frame;
         if (frame == 18)
             Audio_PlayCue(145);
         if (frame == 40)
@@ -158,7 +158,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
             if (top + 128 > 104)
                 height = height - top - 24;
             if (height > 0)
-                blit[0](canvas, work->sheet, x + base_x - 32, top, 64, height);
+                blit[0](canvas, work->sheet, x + baseX - 32, top, 64, height);
         }
 
         if (frame > 16)
@@ -169,10 +169,10 @@ void Func_081665a4(struct BattleEffectArgument *effect)
             s32 start = col * 8 + 16;
 
             if (frame == start)
-                work->shake_frames = 12;
+                work->shakeFrames = 12;
             if (frame >= start) {
                 if (frame < start + 2)
-                    blit[0](canvas, work->sheet + FLASH_SHEET, Data_08198a92[col + effect->side * 3] + base_x - 16, 56, 32, 64);
+                    blit[0](canvas, work->sheet + FLASH_SHEET, gData_08198a92[col + effect->side * 3] + baseX - 16, 56, 32, 64);
                 i = 0;
                 do {
                     struct EffectStep *flash = &work->particles[col * 16 + i];
@@ -181,10 +181,10 @@ void Func_081665a4(struct BattleEffectArgument *effect)
                     s32 y;
 
                     y = HI(flash->y);
-                    x = HI(flash->x) + Data_08198a92[col + effect->side * 3] + base_x;
+                    x = HI(flash->x) + gData_08198a92[col + effect->side * 3] + baseX;
                     life = flash->variant;
                     if (life >= 0 && life <= 17)
-                        blit[0](canvas, work->sheet + (Data_08198a98[life / 3] << 11) + FLASH_SHEET, x - 16, y + 56, 32, 64);
+                        blit[0](canvas, work->sheet + (gData_08198a98[life / 3] << 11) + FLASH_SHEET, x - 16, y + 56, 32, 64);
                     life = flash->variant;
                     flash->variant = life > 0 ? life - 1 : -1;
                     i++;
@@ -205,7 +205,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
                         spark->variant--;
                         y = spark->y;
                         if (y > (108 << 16)) {
-                            spark->velocity_y = -spark->velocity_y / 2;
+                            spark->velocityY = -spark->velocityY / 2;
                         } else {
                             x = spark->x;
                             if ((x >= 0 && x <= 0x7effff) && y >= 0) {
@@ -216,7 +216,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
 
                                 size = spark->variant / 5 + 1;
                                 lane = i & 1;
-                                cel = sheet + Data_08197410[size - 1];
+                                cel = sheet + gData_08197410[size - 1];
                                 px -= size / 2;
                                 py -= size;
                                 blit[lane](canvas, cel, px, py, size, size * 2);
@@ -240,7 +240,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
 
         Func_08158ce0(16, 16);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 80);

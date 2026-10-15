@@ -25,7 +25,7 @@ void Scheduler_ScheduleCallbackA(void)
 
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 sum;
 
     sum = x + (s16)window->x;
@@ -48,9 +48,9 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, 
         height = 20 - y;
 
     if (width > 0 && height > 0) {
-        s32 y_offset = y << 6;
-        s32 x_offset = x << 1;
-        s32 offset = y_offset + ((s32)work + x_offset);
+        s32 yOffset = y << 6;
+        s32 xOffset = x << 1;
+        s32 offset = yOffset + ((s32)work + xOffset);
         do {
             s32 remaining = width;
             u16 *cell = (u16 *)(offset + 8);

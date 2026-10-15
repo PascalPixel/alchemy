@@ -537,7 +537,7 @@ Func_0815f16c:
 .L_0815f55c:
 	.4byte 0x000000c1
 .L_0815f560:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0815f564:
 	.4byte IwramClearWords
 .L_0815f568:
@@ -1164,7 +1164,7 @@ Func_0815f16c:
 .L_0815fafc:
 	.4byte Func_08143000
 .L_0815fb00:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0815fb04:
 	.4byte Data_02013c56
 .L_0815fb08:
@@ -3136,7 +3136,7 @@ Func_0815f16c:
 	bne .L_08160a74
 	bl .L_0816342a
 .L_08160ad0:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08160ad4:
 	.4byte 0xfffff800
 .L_08160ad8:
@@ -3597,17 +3597,17 @@ Func_0815f16c:
 .L_08160e74:
 	.4byte Data_02010c56
 .L_08160e78:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08160e7c:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08160e80:
-	.4byte Data_0819887e
+	.4byte gData_0819887e
 .L_08160e84:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_08160e88:
 	.4byte gMapCellBuffer
 .L_08160e8c:
-	.4byte Data_08198882
+	.4byte gData_08198882
 .L_08160e90:
 	.4byte Data_02016000
 .L_08160e94:
@@ -4232,9 +4232,9 @@ Func_0815f16c:
 .L_08161364:
 	.4byte gMapCellBuffer
 .L_08161368:
-	.4byte Data_0819750c
+	.4byte gData_0819750c
 .L_0816136c:
-	.4byte Data_0819751a
+	.4byte gData_0819751a
 .L_08161370:
 	.4byte IwramFillWords
 .L_08161374:
@@ -4724,7 +4724,7 @@ Func_0815f16c:
 .L_08161734:
 	.4byte Data_02016cbd
 .L_08161738:
-	.4byte Data_08198886
+	.4byte gData_08198886
 .L_0816173c:
 	.4byte Data_02016000
 .L_08161740:
@@ -4950,15 +4950,15 @@ Func_0815f16c:
 .L_081618ec:
 	.4byte gMapCellBuffer
 .L_081618f0:
-	.4byte Data_0819888a
+	.4byte gData_0819888a
 .L_081618f4:
-	.4byte Data_081988c6
+	.4byte gData_081988c6
 .L_081618f8:
-	.4byte Data_0819889e
+	.4byte gData_0819889e
 .L_081618fc:
-	.4byte Data_081988da
+	.4byte gData_081988da
 .L_08161900:
-	.4byte Data_081988b2
+	.4byte gData_081988b2
 .L_08161904:
 	movs r0, #104
 	movs r1, #39
@@ -5196,25 +5196,25 @@ Func_0815f16c:
 .L_08161ac8:
 	.4byte 0x3f3f3f3f
 .L_08161acc:
-	.4byte Data_081988ee
+	.4byte gData_081988ee
 .L_08161ad0:
 	.4byte gMapCellBuffer
 .L_08161ad4:
-	.4byte Data_08198918
+	.4byte gData_08198918
 .L_08161ad8:
-	.4byte Data_081988fc
+	.4byte gData_081988fc
 .L_08161adc:
-	.4byte Data_08198926
+	.4byte gData_08198926
 .L_08161ae0:
-	.4byte Data_0819890a
+	.4byte gData_0819890a
 .L_08161ae4:
-	.4byte Data_08198934
+	.4byte gData_08198934
 .L_08161ae8:
-	.4byte Data_08198940
+	.4byte gData_08198940
 .L_08161aec:
-	.4byte Data_0819893d
+	.4byte gData_0819893d
 .L_08161af0:
-	.4byte Data_0819893a
+	.4byte gData_0819893a
 .L_08161af4:
 	ldr r5, [sp, #124]
 	cmp r5, #62
@@ -5744,19 +5744,19 @@ Func_0815f16c:
 .L_08161ee8:
 	.4byte Data_02015980
 .L_08161eec:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_08161ef0:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_08161ef4:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_08161ef8:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_08161efc:
 	.4byte Data_02016000
 .L_08161f00:
 	.4byte Data_020166e4
 .L_08161f04:
-	.4byte Data_08198946
+	.4byte gData_08198946
 .L_08161f08:
 	ldr r5, [sp, #112]
 	lsls r3, r5, #4
@@ -6238,15 +6238,15 @@ Func_0815f16c:
 .L_081622b0:
 	.4byte Data_02016000
 .L_081622b4:
-	.4byte Data_081977f8
+	.4byte gData_081977f8
 .L_081622b8:
-	.4byte Data_08197834
+	.4byte gData_08197834
 .L_081622bc:
 	.4byte Data_02010800
 .L_081622c0:
-	.4byte Data_0819781a
+	.4byte gData_0819781a
 .L_081622c4:
-	.4byte Data_08197826
+	.4byte gData_08197826
 .L_081622c8:
 	ldr r5, [sp, #124]
 	cmp r5, #94
@@ -6780,23 +6780,23 @@ Func_0815f16c:
 .L_08162710:
 	.4byte Data_02012000
 .L_08162714:
-	.4byte Data_0819749e
+	.4byte gData_0819749e
 .L_08162718:
-	.4byte Data_081974ad
+	.4byte gData_081974ad
 .L_0816271c:
-	.4byte Data_081974bc
+	.4byte gData_081974bc
 .L_08162720:
 	.4byte Data_0201083c
 .L_08162724:
 	.4byte Data_02016e00
 .L_08162728:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_0816272c:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08162730:
-	.4byte Data_0819894e
+	.4byte gData_0819894e
 .L_08162734:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_08162738:
 	.4byte gMapCellBuffer
 .L_0816273c:
@@ -6804,11 +6804,11 @@ Func_0815f16c:
 .L_08162740:
 	.4byte 0xffff00ff
 .L_08162744:
-	.4byte Data_08199268
+	.4byte gData_08199268
 .L_08162748:
 	.4byte Data_02010c56
 .L_0816274c:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_08162750:
 	ldr r3, [sp, #120]
 	movs r5, #238
@@ -7160,15 +7160,15 @@ Func_0815f16c:
 .L_08162a38:
 	.4byte 0xffff00ff
 .L_08162a3c:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08162a40:
 	.4byte 0xfffff800
 .L_08162a44:
 	.4byte 0xfffff000
 .L_08162a48:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08162a4c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08162a50:
 	cmp r5, #0
 	blt .L_08162ac0
@@ -7560,13 +7560,13 @@ Func_0815f16c:
 .L_08162d70:
 	.4byte 0xfffff000
 .L_08162d74:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08162d78:
 	.4byte 0xffff4000
 .L_08162d7c:
 	.4byte Data_02016000
 .L_08162d80:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08162d84:
 	.4byte 0xffffff00
 .L_08162d88:
@@ -7574,19 +7574,19 @@ Func_0815f16c:
 .L_08162d8c:
 	.4byte gMapCellBuffer
 .L_08162d90:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08162d94:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08162d98:
-	.4byte Data_08198d2c
+	.4byte gData_08198d2c
 .L_08162d9c:
-	.4byte Data_08198952
+	.4byte gData_08198952
 .L_08162da0:
-	.4byte Data_08198956
+	.4byte gData_08198956
 .L_08162da4:
-	.4byte Data_0819895a
+	.4byte gData_0819895a
 .L_08162da8:
-	.4byte Data_08198c6c
+	.4byte gData_08198c6c
 .L_08162dac:
 	ldr r0, [sp, #124]
 	cmp r0, #90
@@ -7989,15 +7989,15 @@ Func_0815f16c:
 .L_081630c4:
 	.4byte gMapCellBuffer
 .L_081630c8:
-	.4byte Data_081990d0
+	.4byte gData_081990d0
 .L_081630cc:
-	.4byte Data_0819895e
+	.4byte gData_0819895e
 .L_081630d0:
-	.4byte Data_08198962
+	.4byte gData_08198962
 .L_081630d4:
-	.4byte Data_08198966
+	.4byte gData_08198966
 .L_081630d8:
-	.4byte Data_08199090
+	.4byte gData_08199090
 .L_081630dc:
 	.4byte Data_02016000
 .L_081630e0:

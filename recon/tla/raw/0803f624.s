@@ -49,7 +49,7 @@ UiTextResource_Initialize:
 .L_0803f67c:
 	.4byte 0x000003ff
 .L_0803f680:
-	.4byte Data_0805c5c4
+	.4byte gData_0805c5c4
 .L_0803f684:
 	.4byte 0xfffffc00
 .L_0803f688:

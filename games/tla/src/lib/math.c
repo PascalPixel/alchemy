@@ -41,7 +41,7 @@ s32 ArcTan2(s32 x, s32 y)
         ratio = Iwram_UnsignedDivide(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
-            table = Math_ArcTanTable;
+            table = gMath_ArcTanTable;
             result = 0;
             bit = 0x2000;
 
@@ -135,5 +135,5 @@ s32 FixedSqrt(s32 value)
 
 s32 Runtime_GetLowTableAddress(void)
 {
-    return (s32)System_BasicColorPalette;
+    return (s32)gSystem_BasicColorPalette;
 }

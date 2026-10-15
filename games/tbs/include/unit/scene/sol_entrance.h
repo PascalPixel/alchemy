@@ -18,7 +18,7 @@ s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolEntranceEntrancesOther[];
 extern struct SceneEntrance gSolEntranceEntrances2[];
 extern struct SceneEntrance gSolEntranceEntrances1[];
-extern u32 SolEntrance_Exits[];
+extern u32 gSolEntrance_Exits[];
 extern struct ScenePlacement gSolEntrancePlacementsOther[];
 extern struct ScenePlacement gSolEntrancePlacements1[];
 extern struct ScenePlacement gSolEntrancePlacements1Entrances11To13[];

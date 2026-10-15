@@ -156,4 +156,4 @@ Func_0811b37c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0811b4a8:
-	.4byte BattlePlacement_StepPairs
+	.4byte gBattlePlacement_StepPairs

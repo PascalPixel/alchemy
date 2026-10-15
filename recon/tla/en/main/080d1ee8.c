@@ -1,10 +1,10 @@
 #include "types.h"
 
-extern const s32 Data_080f3228[];
+extern const s32 gData_080f3228[];
 
 s32 Func_080d1ee8(s32 key)
 {
-    const s32 *entry = Data_080f3228;
+    const s32 *entry = gData_080f3228;
     s32 value;
 
     for (;;) {

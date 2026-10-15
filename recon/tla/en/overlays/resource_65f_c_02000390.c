@@ -8,20 +8,20 @@
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
 #include "palbuf.h"
 
-extern const u16 Data_020054ee[];
-extern const u16 Data_020054b8[];
+extern const u16 gData_020054ee[];
+extern const u16 gData_020054b8[];
 
 #define BG_PLTT_COLOR(n) (*(volatile u16 *)(0x05000000 + (n) * 2))
 
 // BG パレット 1 の色 8〜15 を表から作る
 void Func_02000390(void)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
     u32 i;
     s32 j;
 
     for (i = 0, j = 0; i < 8; i++, j += 3) {
-        BG_PLTT_COLOR(24 + i) = Data_020054ee[j + 2] << 10 | Data_020054ee[j + 1] << 5 | Data_020054ee[j];
+        BG_PLTT_COLOR(24 + i) = gData_020054ee[j + 2] << 10 | gData_020054ee[j + 1] << 5 | gData_020054ee[j];
         buffers->palette[24 + i] = BG_PLTT_COLOR(24 + i);
     }
 }
@@ -29,12 +29,12 @@ void Func_02000390(void)
 // BG パレット 6 の色 1〜9 を表から作る
 void Func_020003d8(void)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
     u32 i;
     s32 j;
 
     for (i = 0, j = 0; i < 9; i++, j += 3) {
-        BG_PLTT_COLOR(97 + i) = Data_020054b8[j + 2] << 10 | Data_020054b8[j + 1] << 5 | Data_020054b8[j];
+        BG_PLTT_COLOR(97 + i) = gData_020054b8[j + 2] << 10 | gData_020054b8[j + 1] << 5 | gData_020054b8[j];
         buffers->palette[97 + i] = BG_PLTT_COLOR(97 + i);
     }
 }

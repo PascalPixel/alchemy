@@ -26,7 +26,7 @@ void Func_02000438(void)
     }
     ObjectMotion_ArmCallback(4, 0xc000, 0);
     Battle_WaitMode0(10);
-    Object_GetById(4)->action_flags &= ~1;
+    Object_GetById(4)->actionFlags &= ~1;
     Func_02000618_(96, 14, 72, 14, 2, 1);
     ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
     ObjectMotion_CommitCurrentPositionAndActivate(4);

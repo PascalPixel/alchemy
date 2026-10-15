@@ -10,7 +10,7 @@ static void Vale_RequestBackdropExit(s32 no)
 		BattleFx_SetBlock30ValuesMaxZero();
 	}
 	p = gEventWork;
-	p->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	p->transition_frames = 16;
+	p->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	p->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }

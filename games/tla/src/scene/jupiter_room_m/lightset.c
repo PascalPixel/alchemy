@@ -5,11 +5,11 @@
 #include "dma.h"
 #include "io_reg.h"
 
-extern s32 Data_02005a14;
-extern s32 Data_02005a18;
-extern u16 Data_02005a40[];
-extern u16 Data_02005a60[];
-extern u16 Data_02005a64[];
+extern s32 gData_02005a14;
+extern s32 gData_02005a18;
+extern u16 gData_02005a40[];
+extern u16 gData_02005a60[];
+extern u16 gData_02005a64[];
 
 s32 GameFlag_Test();
 void Scheduler_AddOrUpdateCallback();
@@ -24,18 +24,18 @@ void Func_020049b4();
 
 void Func_02002fc4(s32 mode)
 {
-    Data_02005a18 = 1;
+    gData_02005a18 = 1;
     if (mode != 2) {
-        Iwram_CopyWords(Data_02005a40, (void *)0x05000180, 32);
-        Iwram_CopyWords(Data_02005a60, (void *)0x050001a0, 32);
+        Iwram_CopyWords(gData_02005a40, (void *)0x05000180, 32);
+        Iwram_CopyWords(gData_02005a60, (void *)0x050001a0, 32);
     }
     if (GameFlag_Test(0xa00) || mode == 1) {
         s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address in r3 */
 
-        Data_02005a14 = zero;
+        gData_02005a14 = zero;
         Scheduler_AddOrUpdateCallback(Func_02002f08, 1152);
     } else {
-        Dma_Set(Data_02005a64, (void *)0x05000184, 0x84000002, REG_DMA3);
+        Dma_Set(gData_02005a64, (void *)0x05000184, 0x84000002, REG_DMA3);
     }
 }
 
@@ -45,13 +45,13 @@ void Func_02003048(s32 id)
     s32 height;
 
     object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
+    object->motionFlags = 4;
+    height = object->terrainHeight;
     asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word; without it the zero is stored first (2 differ), and storing it after the sum is worse (13) */
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

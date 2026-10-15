@@ -1,6 +1,6 @@
 #include "room.h"
 
-extern u16 Data_020068a2;
+extern u16 gData_020068a2;
 void *MemAlloc(s32 size);
 void MemFree(void *buffer);
 s32 Resource_FindFreeEntry(void);
@@ -22,10 +22,10 @@ fill:
     *word++ = 0x11111111;
     if (--count >= 0)
         goto fill;
-    Data_020068a2 = Resource_FindFreeEntry();
+    gData_020068a2 = Resource_FindFreeEntry();
     /* FAKEMATCH: the native stores the entry before it starts the size, as overlay 67c's Func_02003278 does; without the barrier the size's first half comes first. */
     __asm__("");
-    VramBlock_LoadCached(Data_020068a2, 0x100, buffer);
+    VramBlock_LoadCached(gData_020068a2, 0x100, buffer);
     MemFree(buffer);
     Scheduler_AddOrUpdateCallback(Func_02000d18, 0x480);
 }

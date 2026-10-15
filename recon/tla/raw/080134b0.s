@@ -85,14 +85,14 @@ System_WaitForFrameInterrupt:
 	pop {pc}
 	.2byte 0x0000
 .L_08013548:
-	.4byte Data_03001138
+	.4byte gData_03001138
 .L_0801354c:
-	.4byte Data_0300121c
+	.4byte gData_0300121c
 .L_08013550:
 	.4byte 0x04000208
 .L_08013554:
 	.4byte gFrameTick
 .L_08013558:
-	.4byte Data_03007ff0
+	.4byte gData_03007ff0
 .L_0801355c:
 	.4byte IwramSoundRenderFrame

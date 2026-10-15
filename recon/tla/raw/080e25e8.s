@@ -153,4 +153,4 @@ Func_080e25e8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e2714:
-	.4byte Data_02001000
+	.4byte gData_02001000

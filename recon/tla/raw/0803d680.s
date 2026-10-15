@@ -273,10 +273,10 @@ ItemIcon_Compose:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803d89c:
-	.4byte UiIcon_FramePointerTable
+	.4byte gUiIcon_FramePointerTable
 .L_0803d8a0:
-	.4byte UiIcon_ItemIconPointers
+	.4byte gUiIcon_ItemIconPointers
 .L_0803d8a4:
-	.4byte UiIcon_MarkPointers
+	.4byte gUiIcon_MarkPointers
 .L_0803d8a8:
-	.4byte UiIcon_DigitPointers
+	.4byte gUiIcon_DigitPointers

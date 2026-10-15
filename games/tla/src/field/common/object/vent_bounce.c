@@ -22,7 +22,7 @@ s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b)
 void VENT_BOUNCE(struct ObjectRuntime *object)
 {
     struct VentWork *work = VENT_WORK;
-    struct ObjectRuntime *other = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *other = Object_GetById(gPartyState.currentOwner);
     s32 dx = object->bounce;
     s32 dz;
     struct FieldSprite *sprite;
@@ -30,23 +30,23 @@ void VENT_BOUNCE(struct ObjectRuntime *object)
 
     object->x += dx;
     object->y += object->gravity;
-    dz = object->unknown_4c;
+    dz = object->unk4c;
     object->z += dz;
     object->bounce = dx - dx / 18;
-    object->unknown_4c = dz - dz / 16;
-    object->scale_x += object->speed_limit;
+    object->unk4c = dz - dz / 16;
+    object->scaleX += object->speedLimit;
     sprite = object->animation;
     /* FAKEMATCH: a one-pass block with the acceleration read first; without it sched2 copies the object for the spin's address before the scale store (differ 2). */
     do {
         s32 acceleration = object->acceleration;
 
-        object->scale_y += acceleration;
+        object->scaleY += acceleration;
     } while (0);
     sprite->rotation += object->action;
-    if (other->y == other->terrain_height && VENT_TOUCHING(object, other)) {
-        object->z -= object->unknown_4c;
-        object->gravity += object->unknown_4c >> 2;
-        object->unknown_4c = 0;
+    if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
+        object->z -= object->unk4c;
+        object->gravity += object->unk4c >> 2;
+        object->unk4c = 0;
     }
     for (i = 0; i < 4; i++) {
         s32 id = work->ids[i];
@@ -54,10 +54,10 @@ void VENT_BOUNCE(struct ObjectRuntime *object)
         if (id == 0)
             break;
         other = Object_GetById(id);
-        if (other->y == other->terrain_height && VENT_TOUCHING(object, other)) {
-            object->z -= object->unknown_4c;
-            object->gravity += object->unknown_4c >> 2;
-            object->unknown_4c = 0;
+        if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
+            object->z -= object->unk4c;
+            object->gravity += object->unk4c >> 2;
+            object->unk4c = 0;
         }
     }
 }

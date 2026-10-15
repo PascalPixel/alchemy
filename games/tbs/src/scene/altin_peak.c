@@ -71,8 +71,8 @@ enum
 	ITEM_FROST_JEWEL = 202
 };
 
-extern s32 AltinPeak_LeafMode;
-extern s32 AltinPeak_LeafOrigin[3];
+extern s32 gAltinPeak_LeafMode;
+extern s32 gAltinPeak_LeafOrigin[3];
 
 static void EV14_TALK(void)
 {
@@ -98,13 +98,13 @@ static s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
 	s32 rise;
 	s32 growth;
 
-	actor->x.fixed += actor->velocity_x;
-	rise = actor->velocity_y;
+	actor->x.fixed += actor->velocityX;
+	rise = actor->velocityY;
 	actor->y.fixed += rise;
-	growth = actor->velocity_z;
-	actor->scale_x += growth;
-	actor->scale_y += growth;
-	actor->velocity_y = rise - actor->gravity;
+	growth = actor->velocityZ;
+	actor->scaleX += growth;
+	actor->scaleY += growth;
+	actor->velocityY = rise - actor->gravity;
 	return 0;
 }
 
@@ -176,7 +176,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 u8 *AltinPeak_GetExits(void)
 {
-	return (u8 *)AltinPeak_StatueTable;
+	return (u8 *)gAltinPeak_StatueTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -235,7 +235,7 @@ static void EV08_TALK(s32 a0)
 	Engine_EventWait(10);
 	Engine_AudioPlayCue(152);
 	Engine_ActorSetSpeed(0, 0x33333, 0x19999);
-	rec8->velocity_y = ((ABS(rec7->y.fixed - rec8->y.fixed) >> 14) << 14) + 0x40000;
+	rec8->velocityY = ((ABS(rec7->y.fixed - rec8->y.fixed) >> 14) << 14) + 0x40000;
 	Engine_ActorSetAnimation(0, 7);
 	Engine_ObjectSetPosition(rec8, rec7->x.fixed, rec7->y.fixed, rec7->z.fixed);
 	Engine_TaskWait(10);
@@ -294,7 +294,7 @@ static void EV10_PSYNERGY(void)
 			Map_CopyCellAttributes(0, 0, 1, 1, 24, 26);
 		}
 		Engine_ActorSetSpriteFlags(a, 0);
-		a->motion_flags = 0;
+		a->motionFlags = 0;
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
 	}
@@ -311,7 +311,7 @@ static void EV08_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 		p->y.fixed += 0xffe00000;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x200);
 }
@@ -325,7 +325,7 @@ static void EV09_PSYNERGY(void)
 	Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
 	if (p != 0)
 	{
-		p->motion_flags = 2;
+		p->motionFlags = 2;
 	}
 	Engine_GameFlagSet(0x201);
 }
@@ -340,7 +340,7 @@ static void EV09_PSYNERGY_7(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 		p->y.fixed += 0xffe00000;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x200);
 }
@@ -355,7 +355,7 @@ static void EV09_PSYNERGY_5(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 		p->y.fixed += 0xffe00000;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x200);
 }
@@ -371,7 +371,7 @@ static void EV09_PSYNERGY_6(void)
 	{
 		Engine_ActorSetSpriteFlags(rec, 0);
 		rec->y.fixed += 0xffe00000;
-		rec->priority_flags = 2;
+		rec->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x200);
 }
@@ -386,7 +386,7 @@ static void EV11_PSYNERGY_7(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 		p->y.fixed += 0xffe00000;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x201);
 }
@@ -402,7 +402,7 @@ static void EV12_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 		p->y.fixed += 0xffe00000;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x204);
 }
@@ -411,16 +411,16 @@ static void SceneState_SetDispcntBit9ByThreshold(void)
 {
 #ifdef MODERN
 	// modern GCC holds one type for a name in a file
-	extern u16 AltinPeak_RiseTimer_modern __asm__("AltinPeak_RiseTimer");
-#define AltinPeak_RiseTimer AltinPeak_RiseTimer_modern
+	extern u16 gAltinPeak_RiseTimer_modern __asm__("gAltinPeak_RiseTimer");
+#define gAltinPeak_RiseTimer gAltinPeak_RiseTimer_modern
 #else
-	extern u16 AltinPeak_RiseTimer;
+	extern u16 gAltinPeak_RiseTimer;
 #endif
 
 	volatile u16 *reg = &REG_DISPCNT;
 	s16			  v = *reg & 0xfdff;
 
-	if ((u32)(Engine_RandomNext() * 100) >> 16 >= AltinPeak_RiseTimer)
+	if ((u32)(Engine_RandomNext() * 100) >> 16 >= gAltinPeak_RiseTimer)
 	{
 		s32 k = 0x200;
 
@@ -433,12 +433,12 @@ static void SceneState_SetDispcntBit9ByThreshold(void)
 	}
 }
 #ifdef MODERN
-#undef AltinPeak_RiseTimer
+#undef gAltinPeak_RiseTimer
 #endif
 
 static void FieldScene_RunEarlySequence(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	s32				   i;
 	struct FieldActor *record;
@@ -458,20 +458,20 @@ static void FieldScene_RunEarlySequence(void)
 		if (i == 8)
 		{
 			record = Object_GetById(8);
-			record->scale_x = 0x1999;
+			record->scaleX = 0x1999;
 			record = Actor_Get(8);
-			record->scale_y = 0x1999;
+			record->scaleY = 0x1999;
 			Actor_SetPosition(8, 0x980000, 0xd80000);
-			Engine_ActorEnableActionCallback(8, AltinPeak_EarlyActorScript);
+			Engine_ActorEnableActionCallback(8, gAltinPeak_EarlyActorScript);
 		}
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)AltinPeak_RiseTimer = 0;
+	*(u16 *)gAltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)AltinPeak_RiseTimer + 1;
-		*(u16 *)AltinPeak_RiseTimer = v;
+		v = *(u16 *)gAltinPeak_RiseTimer + 1;
+		*(u16 *)gAltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -484,7 +484,7 @@ static void FieldScene_RunEarlySequence(void)
 
 static void FieldScene_RunScene3a4SequenceH(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	s32 i;
 	u8 *p5;
@@ -503,12 +503,12 @@ static void FieldScene_RunScene3a4SequenceH(void)
 		Engine_TaskWait(4);
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)AltinPeak_RiseTimer = 0;
+	*(u16 *)gAltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)AltinPeak_RiseTimer + 1;
-		*(u16 *)AltinPeak_RiseTimer = v;
+		v = *(u16 *)gAltinPeak_RiseTimer + 1;
+		*(u16 *)gAltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -521,7 +521,7 @@ static void FieldScene_RunScene3a4SequenceH(void)
 
 static void FieldScene_RunScene3a4SequenceI(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	s32 i;
 	u8 *p8;
@@ -542,12 +542,12 @@ static void FieldScene_RunScene3a4SequenceI(void)
 		Engine_TaskWait(4);
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)AltinPeak_RiseTimer = 0;
+	*(u16 *)gAltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)AltinPeak_RiseTimer + 1;
-		*(u16 *)AltinPeak_RiseTimer = v;
+		v = *(u16 *)gAltinPeak_RiseTimer + 1;
+		*(u16 *)gAltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -560,7 +560,7 @@ static void FieldScene_RunScene3a4SequenceI(void)
 
 static void FieldScene_RunScene3a4SequenceB(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x323) != 0)
 	{
@@ -589,7 +589,7 @@ static void EV83_SEARCH(void)
 
 static void FieldScene_RunScene3a4SequenceA(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x325) != 0)
 	{
@@ -607,7 +607,7 @@ static void FieldScene_RunScene3a4SequenceA(void)
 
 static void EV50_SEARCH_5(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -620,7 +620,7 @@ static void EV50_SEARCH_5(void)
 
 static void EV50_SEARCH_6(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -644,7 +644,7 @@ static void EV50_SEARCH_6(void)
 
 static void EV50_SEARCH_7(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -669,25 +669,25 @@ static void EV50_SEARCH_7(void)
 static void EV10_TOUCH_7(void)
 {
 
-	Object_GetById(10)->priority_flags = 3;
+	Object_GetById(10)->priorityFlags = 3;
 }
 
 static void EV11_TOUCH_7(void)
 {
 
-	Object_GetById(10)->priority_flags = 1;
+	Object_GetById(10)->priorityFlags = 1;
 }
 
 static void EV12_TOUCH(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
 	Event_PlayCue(185);
 	Actor_SetSpeed(10, 0x3333, 0x1999);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
 	Actor_SetDestination(10, 0x198, 0x1a8);
@@ -805,17 +805,17 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Event_PlayCue(183);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_EventWait(20);
-	actor9->scale_x = 0x13333;
-	actor9->scale_y = 0x13333;
-	actor9->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+	actor9->scaleX = 0x13333;
+	actor9->scaleY = 0x13333;
+	actor9->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	actor9->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWithFixedY;
 	Engine_ActorSetAnimation(8, 4);
 	actor8->bounce = 0x8000;
 	actor8->x.fixed = 0x3120000;
 	actor8->y.fixed = 0x200000;
 	actor8->z.fixed = 0x5a0000;
-	actor8->scale_x = 0x20000;
-	actor8->scale_y = 0x20000;
+	actor8->scaleX = 0x20000;
+	actor8->scaleY = 0x20000;
 	Engine_EventWait(10);
 	Event_PlayCue(183);
 	Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
@@ -833,7 +833,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
 	actor0->timer = 0;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, AltinPeak_LeaderRideScript);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gAltinPeak_LeaderRideScript);
 	if (GameFlag_IsSet(0x205) != 0)
 	{
 		Actor_SetPosition(GARET, 0x36e0000, 0x2100000);
@@ -846,7 +846,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Engine_ActorSetSpritePriority(8, 1);
 	Actor_SetSpeed(8, 0x195c2, 0xcae1);
 	actor8->timer = 0;
-	Engine_ActorEnableActionCallback(8, AltinPeak_LogRideScript);
+	Engine_ActorEnableActionCallback(8, gAltinPeak_LogRideScript);
 	do
 	{
 		Engine_TaskWait(1);
@@ -857,7 +857,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 		Engine_TaskWait(1);
 	} while (actor8->timer == 0);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	Event_PlayCue(0x121);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	actor9->x.fixed = 0x3120000;
@@ -867,7 +867,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Actor_SetSpeed(8, 0x19999, 0xcccc);
 	actor8->bounce = 0x1999;
 	actor8->gravity = 0x3333;
-	actor8->velocity_y = 0x40000;
+	actor8->velocityY = 0x40000;
 	Actor_MoveToAndWait(8, 0x312, 0x25c);
 	Actor_SetSpeed(8, 0x33333, 0x19999);
 	Actor_SetDestination(8, 0x312, 0x284);
@@ -952,19 +952,19 @@ static void EV12_SEARCH(void)
 		Event_ShowMessageAndWait(GARET, 0, 10);
 		Engine_ActorJump(GARET, 6, 0);
 		Actor_SetSpeed(GARET, 0x19999, 0xcccc);
-		Object_GetById(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(GARET, 0x318, 110);
 		Engine_EventWait(1);
-		Object_GetById(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 		Event_PlayCue(161);
 		Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-		Object_GetById(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(GARET, 0x318, 120);
 		Engine_EventWait(1);
 		{
 			struct FieldActor *record = Actor_Get(GARET);
 
-			record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+			record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 		}
 		Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 		Engine_EventWait(80);
@@ -1013,7 +1013,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	{
 		if (Engine_GameFlagIsSet(0x8fd) != 0)
 		{
-			table = AltinPeak_OpenedAreaScript;
+			table = gAltinPeak_OpenedAreaScript;
 		}
 		else
 		{
@@ -1166,7 +1166,7 @@ static void EV10_TOUCH_1(void)
 	Engine_ActorFaceDirection(10, 0xd000, 40);
 	Engine_AudioPlayCue(153);
 	record = Object_GetById(10);
-	record->velocity_y = 0x40000;
+	record->velocityY = 0x40000;
 	Engine_ActorSetAnimation(10, 2);
 	Engine_ActorMoveToAndWait(10, 0x17c, 248);
 	Engine_EventWait(10);
@@ -1194,7 +1194,7 @@ static void EV10_TOUCH_1(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(40);
 	Engine_ActorFaceDirection(10, 0x8000, 40);
-	Object_GetById(9)->motion_flags = 0;
+	Object_GetById(9)->motionFlags = 0;
 	Map_CopyCellAttributes(3, 0, 1, 1, 17, 13);
 	Map_CopyCellAttributes(3, 0, 1, 1, 18, 13);
 	Map_CopyCellAttributes(3, 0, 1, 1, 19, 13);
@@ -1204,7 +1204,7 @@ static void EV10_TOUCH_1(void)
 	Engine_AudioPlayCue(153);
 	v6 = 160;
 	record = Object_GetById(10);
-	record->velocity_y = (v6 << 11);
+	record->velocityY = (v6 << 11);
 	Engine_ActorSetAnimation(10, 3);
 	Actor_MoveToAndWait(10, 0x127, 215);
 	Engine_ActorSetAnimation(10, 1);
@@ -1217,7 +1217,7 @@ static void EV10_TOUCH_1(void)
 	Engine_EventWait(40);
 	Engine_AudioPlayCue(153);
 	record = Object_GetById(10);
-	record->velocity_y = (v6 << 11);
+	record->velocityY = (v6 << 11);
 	Engine_ActorSetAnimation(10, 3);
 	Actor_MoveToAndWait(10, 0x104, 215);
 	Engine_ActorSetAnimation(10, 1);
@@ -1238,7 +1238,7 @@ static void EV10_TOUCH_1(void)
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	FieldObject_SetTargetAndCallback(10, 0x10000, AltinPeak_ActorScript);
+	FieldObject_SetTargetAndCallback(10, 0x10000, gAltinPeak_ActorScript);
 	Engine_GameFlagSet(0x904);
 	Engine_EventEnd();
 }
@@ -1281,13 +1281,13 @@ static void EV11_TOUCH_1(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(20);
 	Actor_FaceDirection(10, 0x5000, 40);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetSpeed(10, 0x13333, 0x9999);
 	record = Object_GetById(10);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_AudioPlayCue(153);
 	record = Object_GetById(10);
-	record->velocity_y = 0x40000;
+	record->velocityY = 0x40000;
 	Actor_SetAnimation(10, 3);
 	Engine_ActorMoveToAndWait(10, 86, 214);
 	Engine_ActorSetAnimation(10, 1);
@@ -1299,7 +1299,7 @@ static void EV11_TOUCH_1(void)
 	Engine_EventWait(8);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(40);
-	Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(10, 0x3000, 20);
 	Engine_ActorFaceDirection(10, 0, 40);
 	actor->motion.active = 0;
@@ -1338,7 +1338,7 @@ static void EV11_TOUCH_1(void)
 
 s32 AltinPeak_RunAreaScene(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_AltinPeak1)
 	{
 		AltinPeak_ApplyEntryState();
@@ -1402,14 +1402,14 @@ static void AltinPeak_ApplyEntryState(void)
 		actor = Object_GetById(8);
 		if (actor != 0)
 		{
-			actor->priority_flags = 2;
+			actor->priorityFlags = 2;
 			Engine_ActorSetSpriteFlags(actor, 0);
 		}
 	}
 	actor = Object_GetById(9);
 	if (actor != 0)
 	{
-		actor->priority_flags = 2;
+		actor->priorityFlags = 2;
 		Engine_ActorSetSpriteFlags(actor, 0);
 	}
 	opened = Engine_GameFlagIsSet(0x8fd);
@@ -1422,7 +1422,7 @@ static void AltinPeak_ApplyEntryState(void)
 			Engine_ActorSetAnimation(9, 0);
 			actor = Object_GetById(9);
 			actor->update = SceneState_ForwardByRuntimeSelector;
-			Object_GetById(9)->motion_flags = opened;
+			Object_GetById(9)->motionFlags = opened;
 			actor = Object_GetById(9);
 			actor->y.fixed = 0x200000;
 			Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
@@ -1440,12 +1440,12 @@ static void AltinPeak_ApplyEntryState(void)
 		Engine_ActorSetAnimation(9, 0);
 		actor = Object_GetById(9);
 		actor->update = SceneState_ForwardByRuntimeSelector;
-		Object_GetById(9)->motion_flags = flag;
+		Object_GetById(9)->motionFlags = flag;
 		actor = Object_GetById(9);
 		actor->y.fixed = 0x200000;
 		Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
 		Actor_SetPosition(10, 0x1040000, 0xd70000);
-		FieldObject_SetTargetAndCallback(10, 0x10000, AltinPeak_ActorScript);
+		FieldObject_SetTargetAndCallback(10, 0x10000, gAltinPeak_ActorScript);
 	}
 	else
 	{
@@ -1460,7 +1460,7 @@ static void AltinPeak_ApplyEntryState(void)
 			Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
 			actor = Object_GetById(8);
 			actor->y.fixed = 0;
-			actor->priority_flags |= 2;
+			actor->priorityFlags |= 2;
 		}
 		SceneActor_ClearCollisionFlagAndPlaceMarker(9);
 		if (Engine_GameFlagIsSet(0x201) != 0)
@@ -1469,7 +1469,7 @@ static void AltinPeak_ApplyEntryState(void)
 			Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
 			actor = Object_GetById(9);
 			actor->y.fixed = 0x200000;
-			actor->priority_flags |= 2;
+			actor->priorityFlags |= 2;
 		}
 	}
 }
@@ -1515,7 +1515,7 @@ static void AltinPeak_RestoreAreaThree(void)
 
 static void AltinPeak_RestoreAreaFour(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x8fe) != 0)
 	{
@@ -1536,7 +1536,7 @@ static void AltinPeak_RestoreAreaFour(void)
 
 static void AltinPeak_RestoreAreaFive(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1569,7 +1569,7 @@ static void AltinPeak_RestoreAreaFive(void)
 		Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
 		{
 			struct FieldActor *record = Actor_Get(9);
-			record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | record->priorityFlags;
 		}
 	}
 	if (GameFlag_IsSet(0x325) != 0)
@@ -1586,7 +1586,7 @@ static void AltinPeak_RestoreAreaFive(void)
 
 static void AltinPeak_RestoreAreaSix(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	struct FieldActor *rec7;
 
@@ -1604,7 +1604,7 @@ static void AltinPeak_RestoreAreaSix(void)
 		Engine_ActorSetAnimation(9, 5);
 		Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
 		{
-			rec7->priority_flags = ACTOR_PRIORITY_UNDERFOOT | rec7->priority_flags;
+			rec7->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | rec7->priorityFlags;
 		}
 	}
 	if (GameFlag_IsSet(0x907) != 0)
@@ -1625,7 +1625,7 @@ static void AltinPeak_RestoreAreaSix(void)
 
 static void AltinPeak_RestoreAreaSeven(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1639,7 +1639,7 @@ static void AltinPeak_RestoreAreaSeven(void)
 		Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
 		{
 			struct FieldActor *record = Actor_Get(9);
-			record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | record->priorityFlags;
 		}
 	}
 	SceneActor_ClearCollisionFlagAndPlaceMarker(11);
@@ -1649,7 +1649,7 @@ static void AltinPeak_RestoreAreaSeven(void)
 		Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
 		{
 			struct FieldActor *record = Actor_Get(11);
-			record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | record->priorityFlags;
 		}
 	}
 	SceneActor_ClearCollisionFlagAndPlaceMarker(12);
@@ -1659,7 +1659,7 @@ static void AltinPeak_RestoreAreaSeven(void)
 		Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
 		{
 			struct FieldActor *record = Actor_Get(12);
-			record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | record->priorityFlags;
 		}
 	}
 	FieldScheduler_AddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
@@ -1683,11 +1683,11 @@ static void AltinPeak_PlaceFlaggedActors(void)
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_ActorSetPosition(9, 0, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-	actor->motion_flags = 0;
-	actor->scale_x = 0xe666;
-	actor->scale_y = 0x9999;
+	actor->motionFlags = 0;
+	actor->scaleX = 0xe666;
+	actor->scaleY = 0x9999;
 	actor->sprite->rotation = 0x8000;
-	Object_GetById(12)->motion_flags = 0;
+	Object_GetById(12)->motionFlags = 0;
 	Object_GetById(12)->y.fixed = -0x1c0000;
 	if (GameFlag_IsSet(0x908))
 	{
@@ -1715,7 +1715,7 @@ static void AltinPeak_PlaceFlaggedActors(void)
 
 static void AltinPeak_RestoreAreaTen(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	s32				   rec7;
 	struct FieldActor *record;
@@ -1734,7 +1734,7 @@ static void AltinPeak_RestoreAreaTen(void)
 		Engine_ActorSetSpritePriority(9, 3);
 		record = Object_GetById(9);
 		Engine_ActorSetSpriteFlags(record, 0);
-		Object_GetById(9)->collision_flags = rec7;
+		Object_GetById(9)->collisionFlags = rec7;
 	}
 	flag = gGameState.entrance;
 	if (flag == 1 || flag == 98)
@@ -1758,7 +1758,7 @@ static void AltinPeak_RestoreAreaTen(void)
 
 static void AltinPeak_RestoreAreaEleven(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1772,19 +1772,19 @@ static void AltinPeak_RestoreAreaEleven(void)
 
 static void AltinPeak_InitLeaf(struct FieldActor *leaf)
 {
-	leaf->motion_flags = 0;
+	leaf->motionFlags = 0;
 	leaf->sprite->priority = 1;
 	ObjectGroup_SetChildValue(leaf, 3);
 	Engine_ActorSetSpriteFlags(leaf, 0);
-	leaf->scale_x = 0x4ccc;
-	leaf->scale_y = 0x4ccc;
+	leaf->scaleX = 0x4ccc;
+	leaf->scaleY = 0x4ccc;
 }
 
 static void AltinPeak_UpdateDriftingLeaf(union FieldObject *object)
 {
 	struct FieldActor *leaf = &object->actor;
 
-	switch (AltinPeak_LeafMode)
+	switch (gAltinPeak_LeafMode)
 	{
 	case 0:
 		leaf->x.fixed +=
@@ -1797,7 +1797,7 @@ static void AltinPeak_UpdateDriftingLeaf(union FieldObject *object)
 	}
 	if (leaf->timer <= 3)
 	{
-		switch (AltinPeak_LeafMode)
+		switch (gAltinPeak_LeafMode)
 		{
 		case 0:
 			leaf->x.fixed += 0x8000;
@@ -1806,14 +1806,14 @@ static void AltinPeak_UpdateDriftingLeaf(union FieldObject *object)
 			leaf->x.fixed -= 0x8000;
 			break;
 		}
-		leaf->scale_x += 0x1999;
-		leaf->scale_y -= 0xccc;
+		leaf->scaleX += 0x1999;
+		leaf->scaleY -= 0xccc;
 	}
 	else
 	{
 		leaf->z.fixed += 0x13333;
-		leaf->scale_x += 0x7ae;
-		leaf->scale_y += 0x7ae;
+		leaf->scaleX += 0x7ae;
+		leaf->scaleY += 0x7ae;
 	}
 	if ((u32)(leaf->timer * Engine_RandomNext()) >> 16 == 0)
 		ObjectGroup_SetChildValue(leaf, 7);
@@ -1832,7 +1832,7 @@ static void AltinPeak_SpawnLeaf(void)
 	if ((gFrameCount & 3) != 0)
 		return;
 	leaf = (union FieldObject *)Engine_ObjectCreate(
-		222, AltinPeak_LeafOrigin[0], AltinPeak_LeafOrigin[1], AltinPeak_LeafOrigin[2]);
+		222, gAltinPeak_LeafOrigin[0], gAltinPeak_LeafOrigin[1], gAltinPeak_LeafOrigin[2]);
 	if (leaf == NULL)
 		return;
 	leaf->actor.timer = 30;
@@ -1845,10 +1845,10 @@ static void AltinPeak_SpawnLeaf(void)
 
 static void AltinPeak_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 {
-	AltinPeak_LeafOrigin[0] = x;
-	AltinPeak_LeafOrigin[1] = y;
-	AltinPeak_LeafOrigin[2] = z;
-	AltinPeak_LeafMode = facing;
+	gAltinPeak_LeafOrigin[0] = x;
+	gAltinPeak_LeafOrigin[1] = y;
+	gAltinPeak_LeafOrigin[2] = z;
+	gAltinPeak_LeafMode = facing;
 
 	BattleFx_SetQueuedSoundAndPlay(170);
 	FieldScheduler_AddCallback(AltinPeak_SpawnLeaf, 0xc80);
@@ -1872,20 +1872,20 @@ static void FieldScene_RunScene3a4SequenceG(void)
 				else
 					Engine_AudioPlayCue(144);
 			}
-			spark->motion_flags = 0;
+			spark->motionFlags = 0;
 			scale = ((u32)(Engine_RandomNext() << 15) >> 16) + 0x4ccc;
 			spark->gravity = 0x6666;
-			spark->scale_y = scale;
-			spark->scale_x = scale;
-			spark->unknown_5d[4] = 1;
+			spark->scaleY = scale;
+			spark->scaleX = scale;
+			spark->unk5d[4] = 1;
 			Engine_ActorSetSpriteFlags(spark, 0);
-			spark->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			spark->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 			spark->sprite->priority = 1;
 			Object_SetMode(spark, 1);
-			Engine_ObjectSetScript(spark, AltinPeak_SparkScript);
-			spark->velocity_x = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
-			spark->velocity_y = 0x80000;
-			spark->velocity_z = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
+			Engine_ObjectSetScript(spark, gAltinPeak_SparkScript);
+			spark->velocityX = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
+			spark->velocityY = 0x80000;
+			spark->velocityZ = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
 		}
 	}
 }
@@ -1922,7 +1922,7 @@ static void FieldScene_RunActorTenFourStepSequence(void)
 
 static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	struct FieldActor *rec7;
 
@@ -1930,13 +1930,13 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventBegin();
 	Actor_SetPosition(10, 0, 0);
 	Actor_SetPosition(8, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
 	Engine_ItemShowFound(ITEM_FROST_JEWEL, 3);
 	Engine_PartyGiveItem(ITEM_FROST_JEWEL, 0);
-	Battle_GetWorkObject1e0()->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motionFlags = 0;
 	Camera_SetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0x640000, 0, 0xf90000, 1);
 	Engine_CameraWaitForMove();
@@ -1944,14 +1944,14 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	FieldScene_RunEarlySequence();
 	Camera_MoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	Event_LoadAreaScript(AltinPeak_OpenedAreaScript);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	Event_LoadAreaScript(gAltinPeak_OpenedAreaScript);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Engine_EventEnd();
 }
 
 static void FieldScene_RunScene3a4SequenceF(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_ActorSetPosition(9, 0, 0);
@@ -1960,17 +1960,17 @@ static void FieldScene_RunScene3a4SequenceF(void)
 	FieldScene_RunScene3a4SequenceB();
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	FieldScene_RunScene3a4SequenceH();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Engine_EventEnd();
 }
 
 static void FieldScene_RunScene3a4SequenceE(void)
 {
-	extern u8 AltinPeak_RiseTimer[];
+	extern u8 gAltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_ActorSetPosition(10, 0, 0);
@@ -1979,21 +1979,21 @@ static void FieldScene_RunScene3a4SequenceE(void)
 	FieldScene_RunScene3a4SequenceA();
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	FieldScene_RunScene3a4SequenceI();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Engine_EventEnd();
 }
 
 static void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
-	AltinPeak_CueTicks++;
-	if (AltinPeak_CueTicks == 60)
+	gAltinPeak_CueTicks++;
+	if (gAltinPeak_CueTicks == 60)
 	{
 		Engine_AudioPlayCue(183);
-		AltinPeak_CueTicks = 0;
+		gAltinPeak_CueTicks = 0;
 	}
 }
 
@@ -2047,8 +2047,8 @@ static void RunEventScript01(void)
 	Actor_SetPosition(9, 0x1480000, 0x580000);
 	Engine_ActorSetAnimation(8, 0);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 40;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 40;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -2070,9 +2070,9 @@ static void RunEventScript01(void)
 	Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
 	Actor_SetSpeed(IVAN, 0x9999, 0x4ccc);
 	Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
-	Engine_ActorEnableActionCallback(1, AltinPeak_GaretScript);
-	Engine_ActorEnableActionCallback(2, AltinPeak_IvanScript);
-	Object_SetActionCallbackAndRefreshById(3, AltinPeak_MiaScript);
+	Engine_ActorEnableActionCallback(1, gAltinPeak_GaretScript);
+	Engine_ActorEnableActionCallback(2, gAltinPeak_IvanScript);
+	Object_SetActionCallbackAndRefreshById(3, gAltinPeak_MiaScript);
 	Actor_FaceDirection(GARET, 0xc000, 0);
 	Actor_FaceDirection(IVAN, 0xc000, 0);
 	Actor_FaceDirection(MIA, 0xc000, 40);
@@ -2126,7 +2126,7 @@ static void RunEventScript01(void)
 	Event_PlayCue(103);
 	update = (s32)SceneActor_SetActor8ModeByCounterBit;
 	Task_AddCallback((void (*)(void))update, 0xc80);
-	celebrate = (s32)AltinPeak_CelebrateScript;
+	celebrate = (s32)gAltinPeak_CelebrateScript;
 	Engine_ActorEnableActionCallback(9, celebrate);
 	Object_SetActionCallbackAndRefreshById(8, celebrate);
 	Engine_TaskRemoveCallback(update);
@@ -2151,21 +2151,21 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	party = (s32)AltinPeak_PartyScript;
+	party = (s32)gAltinPeak_PartyScript;
 	Engine_ActorEnableActionCallback(GARET, party);
 	Engine_ActorEnableActionCallback(2, party);
 	Object_SetActionCallbackAndRefreshById(3, party);
 	Engine_EventWait(20);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	GameFlag_Set(0x909);
 	Engine_EventEnd();
 }
 
 static void AltinPeak_RequestPsynergy(void)
 {
-	gEventWork->psynergy_request = 0x1018;
+	gEventWork->psynergyRequest = 0x1018;
 }
 
 static void SceneActor_SetActor12ModeByActorZeroHeight(void)
@@ -2174,7 +2174,7 @@ static void SceneActor_SetActor12ModeByActorZeroHeight(void)
 	if (Object_GetById(0)->y.fixed > 0x00300000)
 	{
 		{
-			u8 *flag = &Object_GetById(11)->priority_flags;
+			u8 *flag = &Object_GetById(11)->priorityFlags;
 			s32 bit = 2;
 
 			bit |= *flag;
@@ -2193,7 +2193,7 @@ static void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 	struct FieldActor *record;
 
 	record = Object_GetById(no);
-	record->collision_flags &= 0xfe;
+	record->collisionFlags &= 0xfe;
 
 	SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
@@ -2202,40 +2202,40 @@ static void AltinPeak_SettleAndMountLeader(struct FieldActor *object)
 {
 	s32					x;
 	s32					z;
-	s32					center_z;
+	s32					centerZ;
 	struct FieldSprite *sprite;
 	struct FieldActor  *leader;
 
 	Engine_AudioPlayCue(288);
 	Engine_AudioPlayCue(232);
 	x = object->x.fixed & 0xfff00000;
-	center_z = 0x80000;
+	centerZ = 0x80000;
 	z = object->z.fixed & 0xfff00000;
 	object->acceleration = 0x20000;
-	x += center_z;
-	center_z += z;
-	Engine_ObjectSetPosition(object, x, object->y.fixed, center_z);
+	x += centerZ;
+	centerZ += z;
+	Engine_ObjectSetPosition(object, x, object->y.fixed, centerZ);
 	Engine_ObjectCommitPosition(object);
-	object->terrain_id = 0;
+	object->terrainId = 0;
 	object->x.fixed = x;
-	object->z.fixed = center_z;
-	object->velocity_x = 0;
-	object->velocity_z = 0;
+	object->z.fixed = centerZ;
+	object->velocityX = 0;
+	object->velocityZ = 0;
 	Object_SetMode(object, 2);
 	Engine_TaskWait(15);
 	Object_SetMode(object, 1);
 	Engine_TaskWait(30);
 	sprite = object->sprite;
-	sprite->part_count = 1;
+	sprite->partCount = 1;
 	ResourceMetadata_ClearRecord(*(s32 *)((u8 *)sprite + 44));
 	*(s32 *)((u8 *)sprite + 44) = 0;
 	((u8 *)sprite)[37] = 1;
-	leader = Engine_ActorLookup(gGameState.selected_actor);
+	leader = Engine_ActorLookup(gGameState.selectedActor);
 	Engine_AudioPlayCue(152);
 	leader->x.fixed = x;
-	leader->velocity_y = 0x60000;
+	leader->velocityY = 0x60000;
 	leader->gravity = 0x10000;
-	leader->z.fixed = center_z;
+	leader->z.fixed = centerZ;
 	leader->sprite->priority = 0;
 	Object_SetMode(leader, 7);
 	Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + 0x180000);
@@ -2344,7 +2344,7 @@ static void AltinPeak_AdvanceRollingObject(struct FieldActor *object)
 
 	angle &= object->facing;
 	radius = object->y.fixed / 0x10000;
-	radius = AltinPeak_RollRadii[object->timer - radius + 16];
+	radius = gAltinPeak_RollRadii[object->timer - radius + 16];
 	timer = (s16 *)&object->work;
 	if (*timer != 0)
 	{
@@ -2387,7 +2387,7 @@ static void AltinPeak_AdvanceRollingObject(struct FieldActor *object)
 static void AltinPeak_RunRollingObject(s32 id, s32 heading)
 {
 	struct FieldActor	 *object = Object_GetById(id);
-	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selected_actor);
+	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selectedActor);
 	union FieldCoordinate pos[3];
 	s32					  n;
 
@@ -2412,7 +2412,7 @@ static void AltinPeak_RunRollingObject(s32 id, s32 heading)
 	{
 		return;
 	}
-	object->terrain_id = 2;
+	object->terrainId = 2;
 	leader->x.fixed = 0;
 	leader->z.fixed = 0;
 	ResourceMetadata_Register(object->sprite, 16);
@@ -2460,32 +2460,32 @@ static void AltinPeak_StepPaletteAnim(void)
 {
 	u16 *palette = gPaletteBufferWork;
 
-	if (AltinPeak_PaletteHold <= 0)
+	if (gAltinPeak_PaletteHold <= 0)
 	{
 		s32 frame;
 
 	next:
-		frame = AltinPeak_PaletteScript[AltinPeak_PaletteStep++];
+		frame = gAltinPeak_PaletteScript[gAltinPeak_PaletteStep++];
 		if (frame == -1)
 		{
-			AltinPeak_PaletteStep = 0;
+			gAltinPeak_PaletteStep = 0;
 			goto next;
 		}
-		AltinPeak_PaletteHold = AltinPeak_PaletteScript[AltinPeak_PaletteStep++];
+		gAltinPeak_PaletteHold = gAltinPeak_PaletteScript[gAltinPeak_PaletteStep++];
 		palette += frame;
 		Dma_Set(palette, (void *)0x05000006, DMA_ENABLE32 | 9, REG_DMA3);
 	}
-	AltinPeak_PaletteHold--;
+	gAltinPeak_PaletteHold--;
 }
 
 static void AltinPeak_StartPaletteAnim(void)
 {
-	AltinPeak_PaletteStep = 0;
-	AltinPeak_PaletteHold = 0;
+	gAltinPeak_PaletteStep = 0;
+	gAltinPeak_PaletteHold = 0;
 	FieldScheduler_AddCallback((s32)&AltinPeak_StepPaletteAnim, 0xc80);
 }
 
-s8 AltinPeak_PaletteScript[] = {
+s8 gAltinPeak_PaletteScript[] = {
 	3, 16,
 	2, 32,
 	1, 64,
@@ -2493,12 +2493,12 @@ s8 AltinPeak_PaletteScript[] = {
 	-1,
 };
 
-s32 AltinPeak_ActorScript[] = {
+s32 gAltinPeak_ActorScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 AltinPeak_EarlyActorScript[] = {
+s32 gAltinPeak_EarlyActorScript[] = {
 	SC_ADD(SW_SCALE_X, 546),
 	SC_ADD(SW_SCALE_Y, 546),
 	SC_WAIT(1),
@@ -2506,7 +2506,7 @@ s32 AltinPeak_EarlyActorScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_LogRideScript[] = {
+s32 gAltinPeak_LogRideScript[] = {
 	SC_MOVE(PIXELS(786), 0, PIXELS(220)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(786), 0, PIXELS(326)),
@@ -2521,7 +2521,7 @@ s32 AltinPeak_LogRideScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_LeaderRideScript[] = {
+s32 gAltinPeak_LeaderRideScript[] = {
 	SC_ARG(5),
 	SC_MOVE(PIXELS(804), 0, PIXELS(140)),
 	SC_SYNC,
@@ -2581,7 +2581,7 @@ s32 AltinPeak_LeaderRideScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_SparkScript[] = {
+s32 gAltinPeak_SparkScript[] = {
 	SC_CALL(OverlayObject_IntegrateAndDamp),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -2590,7 +2590,7 @@ s32 AltinPeak_SparkScript[] = {
 	SC_FREE,
 };
 
-s32 AltinPeak_GaretScript[] = {
+s32 gAltinPeak_GaretScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(314), 0, PIXELS(126)),
 	SC_SYNC,
@@ -2599,7 +2599,7 @@ s32 AltinPeak_GaretScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_IvanScript[] = {
+s32 gAltinPeak_IvanScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(346), 0, PIXELS(126)),
 	SC_SYNC,
@@ -2608,7 +2608,7 @@ s32 AltinPeak_IvanScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_MiaScript[] = {
+s32 gAltinPeak_MiaScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(328), 0, PIXELS(138)),
 	SC_SYNC,
@@ -2617,7 +2617,7 @@ s32 AltinPeak_MiaScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_CelebrateScript[] = {
+s32 gAltinPeak_CelebrateScript[] = {
 	SC_ADD(SW_SCALE_X, 128),
 	SC_ADD(SW_SCALE_Y, -1024),
 	SC_WAIT(1),
@@ -2627,7 +2627,7 @@ s32 AltinPeak_CelebrateScript[] = {
 	SC_END,
 };
 
-s32 AltinPeak_PartyScript[] = {
+s32 gAltinPeak_PartyScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(328), 0, PIXELS(118)),
 	SC_SYNC,
@@ -2811,7 +2811,7 @@ s16 gAltinPeakRegions10[] = {
 	0,
 };
 
-u32 AltinPeak_StatueTable[] = {
+u32 gAltinPeak_StatueTable[] = {
 	SCENE_EXITS(77),
 	SCENE_EXIT(1, 75, 10),
 	SCENE_EXIT(0, 78, 0),
@@ -2974,7 +2974,7 @@ struct SceneEvent gAltinPeakEvents1[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent AltinPeak_OpenedAreaScript[] = {
+struct SceneEvent gAltinPeak_OpenedAreaScript[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200,
 		EVENT_SCRIPT(EV08_PSYNERGY)},
@@ -3104,9 +3104,9 @@ struct SceneEvent gAltinPeakEvents11[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 AltinPeak_CueTicks = 0;
+s32 gAltinPeak_CueTicks = 0;
 
-u32 AltinPeak_RollRadii[] = {
+u32 gAltinPeak_RollRadii[] = {
 	0x10000,
 	0x10b55,
 	0x1172b,

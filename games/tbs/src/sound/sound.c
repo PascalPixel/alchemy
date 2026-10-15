@@ -32,19 +32,19 @@ void AudioCommand_Play(s32 id)
         gAudioSecondaryState = 19;
     } else if (id == AUDIO_CUE_FADE_SLOT3) {
         gMusicPlayerVolumes[3] = 0;
-        MusicPlayer_FadeOut(&Sound_Player3, 3);
+        MusicPlayer_FadeOut(&gSound_Player3, 3);
     } else if (id >= AUDIO_SONG_FIRST) {
-        player = Sound_SongTable[id].slot;
+        player = gSound_SongTable[id].slot;
         if (player == 7) {
         next:
-            if (((u8 *)&Sound_PlayerSlots[player].player->status)[0] != 0) {
+            if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
                 player--;
                 if (player > 3)
                     goto next;
                 player = 7;
             }
         }
-        MusicPlayer_StartSong(Sound_PlayerSlots[player].player, Sound_SongTable[id].header);
+        MusicPlayer_StartSong(gSound_PlayerSlots[player].player, gSound_SongTable[id].header);
         gMusicPlayerVolumes[player] = id;
     } else if (id >= AUDIO_JINGLE_FIRST) {
         MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
@@ -124,7 +124,7 @@ void AudioTest_RunParameterController(void)
     preset = 2;
     /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. Plain store: differ 8 or more in nine statement orders. */
     do {
-        IwramHi_Data1 = 0;
+        gIwramHi_Data1 = 0;
     } while (0);
     timer = 20;
 
@@ -172,7 +172,7 @@ void AudioTest_RunParameterController(void)
 
 void Audio_InitializeRuntimeDefaults(void)
 {
-    s16 *player_volume;
+    s16 *playerVolume;
     s32 remaining;
 
     Audio_Initialize();
@@ -185,14 +185,14 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitch = 0x100;
     gMusicPitchStep = 4;
     gMusicFadeRequested = 0;
-    Audio_CommandMask = 0;
-    player_volume = gMusicPlayerVolumes;
-    Ewram_Data1 = 0;
+    gAudio_CommandMask = 0;
+    playerVolume = gMusicPlayerVolumes;
+    gEwram_Data1 = 0;
     remaining = 7;
     do {
         remaining--;
-        *player_volume = 0;
-        player_volume += 1;
+        *playerVolume = 0;
+        playerVolume += 1;
     } while (remaining >= 0);
 }
 
@@ -246,9 +246,9 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
     command &= AUDIO_COMMAND_MASK;
     if (toggle != 0)
-        Audio_CommandMask ^= command;
+        gAudio_CommandMask ^= command;
     else
-        Audio_CommandMask = command;
+        gAudio_CommandMask = command;
 }
 
 s32 AudioCommand_GetSecondaryStateByte(void)

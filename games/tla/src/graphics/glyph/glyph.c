@@ -20,9 +20,9 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 
 void Ui_PrepareTransferFromTableEntry(u32 index)
 {
-    GlyphTransfer *state = Ram_HeapSlots->glyph_work;
+    GlyphTransfer *state = Ram_HeapSlots->glyphWork;
 
-    state->encoded = UiIcon_MiscIconPointers[index];
+    state->encoded = gUiIcon_MiscIconPointers[index];
     state->width = 2;
     state->height = 2;
     UiGlyph_DecodeWithHeapRoutines(state, 0);

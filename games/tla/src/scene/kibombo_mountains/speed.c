@@ -18,5 +18,5 @@ void Func_02000ad4(s32 id)
 
     Func_0200103c(object, 1);
     object->acceleration = 0x4000;
-    object->speed_limit = 0x8000;
+    object->speedLimit = 0x8000;
 }

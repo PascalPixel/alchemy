@@ -2,7 +2,7 @@
 
 s32 Func_02000eac(u32 layer, s32 x, s32 y)
 {
-    struct IzumoRuinsMapWork *map = (struct IzumoRuinsMapWork *)Ram_HeapSlots->map_work;
+    struct IzumoRuinsMapWork *map = (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapWork;
     u8 *cell;
 
     if (map == NULL)
@@ -17,7 +17,7 @@ s32 Func_02000eac(u32 layer, s32 x, s32 y)
 
 s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value)
 {
-    struct IzumoRuinsMapWork *map = (struct IzumoRuinsMapWork *)Ram_HeapSlots->map_work;
+    struct IzumoRuinsMapWork *map = (struct IzumoRuinsMapWork *)Ram_HeapSlots->mapWork;
     u8 *cell;
     s32 old;
 

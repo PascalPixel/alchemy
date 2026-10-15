@@ -1,13 +1,13 @@
 #include "shrine_of_the_sea_god.h"
 
 struct ShrineOfTheSeaGodEffectParams {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u16 kind;
-    u8 unknown_1a[0xe];
+    u8 unk1a[0xe];
 };
 
 struct ShrineOfTheSeaGodPartyExtra {
-    u8 unknown_000[0x256];
+    u8 unk000[0x256];
     s16 value;
 };
 
@@ -63,14 +63,14 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object)
 void Func_0200380c(void)
 {
     struct ShrineOfTheSeaGodObject *object = Object_GetById(64);
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
     struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
 
     layer->x += 0x800000;
     Func_02003988();
     WaitFrames(1);
     if (object != NULL) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         object->y = 0x420000;
         object->update = Func_020037a4;
     }
@@ -82,10 +82,10 @@ void Func_02003854(s32 id)
 
     ObjectMotion_SetActionVariant(id, 3);
     Func_02003aa0(id);
-    object->priority_flags |= 2;
-    object->motion_flags = 0;
-    object->field_18 = 0xcccc;
-    object->field_1c = 0xe666;
+    object->priorityFlags |= 2;
+    object->motionFlags = 0;
+    object->field18 = 0xcccc;
+    object->field1c = 0xe666;
 }
 
 s32 Func_02003894(void)

@@ -55,7 +55,7 @@ void Func_02000534(void)
 		}
 		Call3(ObjectMotion_SetSpeedParameters, 11, 0x13333, 0x9999);
 		Object_SetModeById(11, 2);
-		object = Object_GetById(gPartyState.current_owner);
+		object = Object_GetById(gPartyState.currentOwner);
 		if (object != NULL)
 			ObjectMotion_ResetAndSetPosition(11, *(s16 *)((u8 *)object + 10), *(s16 *)((u8 *)object + 18));
 		ObjectMotion_CommitCurrentPositionAndActivate(11);

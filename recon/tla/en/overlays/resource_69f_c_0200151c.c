@@ -8,7 +8,7 @@
 #include "party_state.h"
 
 struct MapStep {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -21,11 +21,11 @@ void Func_02001afc(s32 x, s32 z, s32 width, s32 height, s32 to_x, s32 to_z);
 
 void Func_0200151c(struct MapStep *step)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    s16 layer_x = step->x & 0x40;
-    s32 x = (object->x >> 20) | layer_x;
-    s16 layer_z = step->z & 0x40;
-    s32 z = (object->z >> 20) | layer_z;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    s16 layerX = step->x & 0x40;
+    s32 x = (object->x >> 20) | layerX;
+    s16 layerZ = step->z & 0x40;
+    s32 z = (object->z >> 20) | layerZ;
 
     Func_02001494();
     Func_02001bec(161);

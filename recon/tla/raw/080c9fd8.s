@@ -197,7 +197,7 @@ Encounter_SelectEnemyGroup:
 .L_080ca154:
 	.4byte gPartyState
 .L_080ca158:
-	.4byte Encounter_EnemyGroupTable
+	.4byte gEncounter_EnemyGroupTable
 .L_080ca15c:
 	.4byte IwramRatioMulQ14
 .L_080ca160:

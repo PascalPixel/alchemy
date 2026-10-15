@@ -2,7 +2,7 @@
 
 void Func_020011d4(s32 unused, s32 id)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->map_work;
+    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
     s32 *layer;
     s32 i;
 

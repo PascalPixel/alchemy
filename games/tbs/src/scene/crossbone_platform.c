@@ -63,7 +63,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 		s32 fifth = column;
 		Map_CopyCellAttributes(61, 36, 1, 1, fifth, 42);
 	}
-	Object_GetById(8)->motion_flags = lowered;
+	Object_GetById(8)->motionFlags = lowered;
 	Object_GetById(8)->y.fixed = 0x200000;
 }
 
@@ -105,7 +105,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTable(void)
 {
-	return CrossbonePlatform_SceneTable;
+	return gCrossbonePlatform_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -157,7 +157,7 @@ static void EV20_TOUCH(void)
 		Actor_SetSpeed(15, 0x10000, 0x8000);
 		Event_PlayCue(152);
 		record = Object_GetById(15);
-		record->velocity_y = 0x80000;
+		record->velocityY = 0x80000;
 		Actor_WalkToAndWait(15, 0x248, 0x2a8);
 		Actor_FaceDirection(15, 0x4000, 20);
 		Engine_EventEnd();
@@ -187,7 +187,7 @@ static void EV21_TOUCH(void)
 			Actor_SetSpeed(15, 0x10000, 0x8000);
 			Event_PlayCue(152);
 			record = Object_GetById(15);
-			record->velocity_y = 0xa0000;
+			record->velocityY = 0xa0000;
 			Actor_WalkToAndWait(15, 0x248, 0x298);
 			Actor_FaceDirection(15, 0x4000, 20);
 			Actor_SetAttachedEffect(15, 0x102);
@@ -207,7 +207,7 @@ static void EV21_TOUCH(void)
 			rec7->sprite->rotation = 0xf800;
 			rec7->facing = 0;
 			ObjectDispatch_ApplyValueToChildren(rec7, 0);
-			Engine_ObjectSetScript(rec7, CrossbonePlatform_ActorFifteenMotionScript);
+			Engine_ObjectSetScript(rec7, gCrossbonePlatform_ActorFifteenMotionScript);
 			Engine_EventEnd();
 		}
 	}
@@ -226,7 +226,7 @@ static void EV22_TOUCH(void)
 		ObjectDispatch_ApplyValueToChildren(record, 16);
 		Event_PlayCue(152);
 		record = Object_GetById(15);
-		record->velocity_y = 0x80000;
+		record->velocityY = 0x80000;
 		Actor_FaceDirection(15, 0x8000, 30);
 		Actor_SetAttachedEffect(15, 0x102);
 		Engine_ActorRunRepeatedMotion(15, 2);
@@ -234,7 +234,7 @@ static void EV22_TOUCH(void)
 		Actor_SetSpeed(15, 0x10000, 0x8000);
 		Event_PlayCue(152);
 		record = Object_GetById(15);
-		record->velocity_y = 0x40000;
+		record->velocityY = 0x40000;
 		Actor_WalkToAndWait(15, 0x370, 0x2a8);
 		Engine_EventWait(10);
 		Actor_SetAttachedEffect(15, 0x101);
@@ -270,9 +270,9 @@ static void FieldScene_CopyActorPosition(void)
 	work = gEventWork;
 	if (Engine_GameFlagIsSet(0x9ca) != 0)
 	{
-		if (gGameState.paused_object != 15)
+		if (gGameState.pausedObject != 15)
 		{
-			idx = work->touched_trigger;
+			idx = work->touchedTrigger;
 			dst = Object_GetById(15);
 			src = Object_GetById(0);
 			dst->speed = src->speed;
@@ -280,7 +280,7 @@ static void FieldScene_CopyActorPosition(void)
 			src = Object_GetById(0);
 			dst->acceleration = src->speed;
 			idx -= 30;
-			table = (s32)CrossbonePlatform_ActorFifteenWalkTargets;
+			table = (s32)gCrossbonePlatform_ActorFifteenWalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
 			Engine_ActorWalkTo(15, *(s32 *)(table + idx), *(s32 *)(table + idx4));
@@ -415,7 +415,7 @@ static void EV53_TOUCH_1(void)
 	slot = Object_GetById(0);
 	if (slot->facing == 0x4000)
 	{
-		cnt = &gEventWork->blocked_steps;
+		cnt = &gEventWork->blockedSteps;
 		if (*cnt > 12)
 		{
 			Engine_LeaderCheckAhead();
@@ -435,7 +435,7 @@ static void EV54_TOUCH_1(void)
 	p = Object_GetById(0);
 	if (p->facing == 0x4000)
 	{
-		cnt = &gEventWork->blocked_steps;
+		cnt = &gEventWork->blockedSteps;
 		if (*cnt > 12)
 		{
 			Engine_LeaderCheckAhead();
@@ -515,11 +515,11 @@ static void CrossbonePlatform_RaiseTriggerOnStand(void)
 	s32				   z = leader->z.fixed / 0x100000;
 	struct EventWork  *event = gEventWork;
 
-	if (!GameFlag_IsSet(0x220) && gGameState.cloaked == 0 && gGameState.paused_object != 8
+	if (!GameFlag_IsSet(0x220) && gGameState.cloaked == 0 && gGameState.pausedObject != 8
 		&& (u32)(x - 21) <= 2 && z >= 10 && z <= 11)
 	{
 		Engine_GameFlagSet(0x220);
-		event->raised_trigger = 91;
+		event->raisedTrigger = 91;
 	}
 }
 
@@ -559,11 +559,11 @@ static void SceneState_TriggerColumnTen(void)
 	s32				   z = leader->z.fixed / 0x100000;
 	struct EventWork  *work = gEventWork;
 
-	if (GameFlag_IsSet(0x220) == 0 && gGameState.cloaked == 0 && gGameState.paused_object != 9
+	if (GameFlag_IsSet(0x220) == 0 && gGameState.cloaked == 0 && gGameState.pausedObject != 9
 		&& x == 10 && (u32)(z - 16) <= 2)
 	{
 		GameFlag_Set(0x220);
-		SceneState_StoreStep(&work->raised_trigger, 92);
+		SceneState_StoreStep(&work->raisedTrigger, 92);
 	}
 }
 
@@ -604,16 +604,16 @@ static void SceneActor_TrackOriginColumnForSlot(s32 no)
 	s32				   row = leader->z.fixed / 0x100000;
 	s32				   slot = no + 10;
 
-	if (gGameState.paused_object == slot)
+	if (gGameState.pausedObject == slot)
 		return;
-	if (col == CrossbonePlatform_SlotColumns[no])
+	if (col == gCrossbonePlatform_SlotColumns[no])
 		return;
 
 	Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
 	Engine_AudioPlayCue(188);
 	Engine_ActorSetDestination(slot, (col << 4) + 8, 360);
 
-	CrossbonePlatform_SlotColumns[no] = col;
+	gCrossbonePlatform_SlotColumns[no] = col;
 
 	if (row <= 22)
 	{
@@ -641,7 +641,7 @@ static void EV61_TOUCH(void)
 {
 	struct FieldActor *record;
 
-	if (gGameState.paused_object != 10)
+	if (gGameState.pausedObject != 10)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
@@ -674,7 +674,7 @@ static void EV62_TOUCH(void)
 	struct FieldActor *record;
 	s32				   v3;
 
-	if (gGameState.paused_object != 11)
+	if (gGameState.pausedObject != 11)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(0, 0x1b333, 0xd999);
@@ -721,11 +721,11 @@ static void SceneState_TriggerColumnNineteen(void)
 	struct EventWork  *work = gEventWork;
 	struct GameState  *state = &gGameState;
 
-	if (state->paused_object != 12 && GameFlag_IsSet(0x220) == 0 && state->cloaked == 0 && x == 19
+	if (state->pausedObject != 12 && GameFlag_IsSet(0x220) == 0 && state->cloaked == 0 && x == 19
 		&& (u32)(z - 15) <= 1)
 	{
 		GameFlag_Set(0x220);
-		SceneState_StoreStep(&work->raised_trigger, 96);
+		SceneState_StoreStep(&work->raisedTrigger, 96);
 	}
 }
 
@@ -831,8 +831,8 @@ static void EV13_PSYNERGY(void)
 	Map_CopyCellAttributes(40, 54, 1, 1, 40, 55);
 	if (slot != 0)
 	{
-		u8 *other = &Object_GetById(13)->motion_flags;
-		u8 *flags = &slot->priority_flags;
+		u8 *other = &Object_GetById(13)->motionFlags;
+		u8 *flags = &slot->priorityFlags;
 
 		*other = 0;
 		*flags = 2;
@@ -861,28 +861,28 @@ static void CrossbonePlatform_RestoreActorEightTerrain(void)
 	Map_CopyCellAttributes(58, 42, 1, 1, 42, 42);
 	Map_CopyCellAttributes(62, 37, 3, 1, 37, 42);
 
-	Object_GetById(8)->motion_flags = 1;
+	Object_GetById(8)->motionFlags = 1;
 }
 
 static void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 {
 
 	Map_CopyCellAttributes(58, 41, 1, 1, 42, 42);
-	Object_GetById(8)->priority_flags = 2;
+	Object_GetById(8)->priorityFlags = 2;
 }
 
 static void CrossbonePlatform_RestoreRightUnderfootCell(void)
 {
 
 	Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
-	Object_GetById(8)->priority_flags = 2;
+	Object_GetById(8)->priorityFlags = 2;
 }
 
 static void CrossbonePlatform_RestoreLeftUnderfootCell(void)
 {
 
 	Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
-	Object_GetById(8)->priority_flags = 2;
+	Object_GetById(8)->priorityFlags = 2;
 }
 
 static void EV08_PSYNERGY_3(void)
@@ -895,11 +895,11 @@ static void EV08_PSYNERGY_3(void)
 
 	if (height == 0)
 	{
-		Object_GetById(8)->priority_flags = 2;
+		Object_GetById(8)->priorityFlags = 2;
 	}
 	CrossbonePlatform_RestoreActorEightTerrain();
 	lowered = 0;
-	Object_GetById(8)->motion_flags = 3;
+	Object_GetById(8)->motionFlags = 3;
 	if (column == 40)
 	{
 		CrossbonePlatform_RestoreLeftUnderfootCell();
@@ -999,14 +999,14 @@ static void CrossbonePlatform_RestoreActorTenLeftCell(void)
 {
 
 	Map_CopyCellAttributes(40, 54, 1, 1, 38, 55);
-	Object_GetById(10)->motion_flags = 0;
+	Object_GetById(10)->motionFlags = 0;
 }
 
 static void CrossbonePlatform_RestoreActorTenRightCell(void)
 {
 
 	Map_CopyCellAttributes(40, 54, 1, 1, 42, 55);
-	Object_GetById(10)->motion_flags = 0;
+	Object_GetById(10)->motionFlags = 0;
 }
 
 static void EV10_PSYNERGY_3(void)
@@ -1132,10 +1132,10 @@ static void SceneActor_PublishMarkerBySlotZeroHeight(void)
 	if (leader->y.fixed > 0x100000)
 	{
 		priority = ACTOR_PRIORITY_UNDERFOOT;
-		Object_GetById(8)->priority_flags = priority;
+		Object_GetById(8)->priorityFlags = priority;
 		if (Object_GetById(10)->y.fixed == 0)
-			Object_GetById(10)->priority_flags = priority;
-		Object_GetById(11)->priority_flags = priority;
+			Object_GetById(10)->priorityFlags = priority;
+		Object_GetById(11)->priorityFlags = priority;
 	}
 	else
 	{
@@ -1146,17 +1146,17 @@ static void SceneActor_PublishMarkerBySlotZeroHeight(void)
 		else
 		{
 			Engine_ActorSetSpritePriority(10, 1);
-			Object_GetById(10)->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
+			Object_GetById(10)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 		}
 		priority = 0;
-		Object_GetById(11)->priority_flags = priority;
+		Object_GetById(11)->priorityFlags = priority;
 	}
-	Object_GetById(12)->priority_flags = priority;
+	Object_GetById(12)->priorityFlags = priority;
 }
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_CrossbonePlatform1)
 	{
 		CrossbonePlatform_InitializeScene1();
@@ -1174,11 +1174,11 @@ s32 Scene_Initialize(void)
 
 static void CrossbonePlatform_UpdateItemIcons(void)
 {
-	if (++CrossbonePlatform_IconTimer > 16)
+	if (++gCrossbonePlatform_IconTimer > 16)
 	{
-		CrossbonePlatform_IconTimer = 0;
+		gCrossbonePlatform_IconTimer = 0;
 	}
-	switch (CrossbonePlatform_IconTimer)
+	switch (gCrossbonePlatform_IconTimer)
 	{
 	case 12:
 		if (Engine_GameFlagIsSet(0xee7) == 0)
@@ -1267,15 +1267,15 @@ static void CrossbonePlatform_InitializeScene1(void)
 
 static void CrossbonePlatform_InitializeScene2(void)
 {
-	Object_GetById(8)->collision_flags = 1;
-	Object_GetById(9)->collision_flags = 1;
-	Object_GetById(10)->collision_flags = 1;
-	Object_GetById(11)->collision_flags = 1;
-	Object_GetById(8)->scale_x = 0xb333;
-	Object_GetById(9)->scale_x = 0xb333;
-	Object_GetById(10)->scale_x = 0xb333;
-	Object_GetById(11)->scale_x = 0xb333;
-	Object_GetById(12)->scale_x = 0xb333;
+	Object_GetById(8)->collisionFlags = 1;
+	Object_GetById(9)->collisionFlags = 1;
+	Object_GetById(10)->collisionFlags = 1;
+	Object_GetById(11)->collisionFlags = 1;
+	Object_GetById(8)->scaleX = 0xb333;
+	Object_GetById(9)->scaleX = 0xb333;
+	Object_GetById(10)->scaleX = 0xb333;
+	Object_GetById(11)->scaleX = 0xb333;
+	Object_GetById(12)->scaleX = 0xb333;
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnNineteen, 0xc80);
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnTen, 0xc80);
 	FieldScheduler_AddCallback((s32)CrossbonePlatform_RaiseTriggerOnStand, 0xc80);
@@ -1287,7 +1287,7 @@ static void CrossbonePlatform_InitializeScene3(void)
 {
 	s32 record;
 
-	Object_GetById(14)->motion_flags = 0;
+	Object_GetById(14)->motionFlags = 0;
 	FieldScheduler_AddOrUpdateCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
 	FieldScheduler_AddCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
 	MapObject_SetPosition(107, 0, 0);
@@ -1303,8 +1303,8 @@ static void CrossbonePlatform_InitializeScene3(void)
 #if EDITION_INTERNATIONAL
 	Engine_ActorSetSpritePriority(8, 3);
 #endif
-	Object_GetById(11)->motion_flags = 0;
-	Object_GetById(12)->motion_flags = 0;
+	Object_GetById(11)->motionFlags = 0;
+	Object_GetById(12)->motionFlags = 0;
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 	if (GameFlag_IsSet(0x200) != 0)
 	{
@@ -1340,7 +1340,7 @@ static void CrossbonePlatform_InitializeScene3(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1359,11 +1359,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -1372,7 +1372,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 CrossbonePlatform_ActorFifteenMotionScript[] = {
+s32 gCrossbonePlatform_ActorFifteenMotionScript[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1400,7 +1400,7 @@ s32 CrossbonePlatform_ActorFifteenMotionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 CrossbonePlatform_ActorFifteenWalkTargets[] = {
+s32 gCrossbonePlatform_ActorFifteenWalkTargets[] = {
 	0x378, 0x358,
 	0x368, 0x358,
 	0x358, 0x358,
@@ -1438,7 +1438,7 @@ struct SceneEntrance gCrossbonePlatformEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 CrossbonePlatform_SceneTable[] = {
+u32 gCrossbonePlatform_SceneTable[] = {
 	SCENE_EXITS(117),
 	SCENE_EXIT(1, 128, 3),
 	SCENE_EXIT(2, 128, 4),
@@ -1598,8 +1598,8 @@ struct SceneEvent gCrossbonePlatformEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 CrossbonePlatform_SlotColumns[] = {
+u32 gCrossbonePlatform_SlotColumns[] = {
 	16, 21, 0,
 };
 
-s32 CrossbonePlatform_IconTimer = 0;
+s32 gCrossbonePlatform_IconTimer = 0;

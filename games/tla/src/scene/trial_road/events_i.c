@@ -22,7 +22,7 @@ void Func_02000c70(void)
 
 void Func_02000c84(void)
 {
-    s32 y = Object_GetById(gPartyState.current_owner)->y;
+    s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
     /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it, as in Func_020007b4). */
     do { } while (0);

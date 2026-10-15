@@ -89,7 +89,7 @@ Func_081a1830:
 	add sp, #4
 	pop {r5, r6, r7, pc}
 .L_081a18dc:
-	.4byte Data_0200752c
+	.4byte gData_0200752c
 .L_081a18e0:
 	.4byte 0x11111111
 .L_081a18e4:

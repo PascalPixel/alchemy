@@ -220,7 +220,7 @@ Func_081b3ff4:
 	b .L_081b4260
 	.2byte 0x0000
 .L_081b419c:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3
 .L_081b41a0:
 	.4byte gMapCellBuffer
 .L_081b41a4:
@@ -487,7 +487,7 @@ Func_081b3ff4:
 	b .L_081b4458
 	.2byte 0x0000
 .L_081b4398:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3
 .L_081b439c:
 	cmp r6, #0
 	beq .L_081b4458
@@ -745,7 +745,7 @@ Func_081b3ff4:
 	bne .L_081b44c6
 	b .L_081b4644
 .L_081b4584:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3
 .L_081b4588:
 	cmp r6, #0
 	beq .L_081b4644
@@ -943,7 +943,7 @@ Func_081b3ff4:
 .L_081b46fc:
 	.4byte 0x00000f00
 .L_081b4700:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3
 .L_081b4704:
 	str r2, [r0]
 	b .L_081b479e
@@ -1141,4 +1141,4 @@ Func_081b3ff4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081b4884:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3

@@ -17,7 +17,7 @@ s32 Func_080cdc74(void)
 {
     s32 position[3];
     s32 above[3];
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *target;
     struct ObjectRuntime *hit;
     s32 id;
@@ -35,7 +35,7 @@ s32 Func_080cdc74(void)
         return 0;
     if (BYTE_AT(target, 98) != 0)
         return 0;
-    id = *(s16 *)gPartyState.unknown_26a;
+    id = *(s16 *)gPartyState.unk26a;
     if (id != 1 && target == Object_GetById(id))
         return 0;
     position[0] = target->x;
@@ -43,18 +43,18 @@ s32 Func_080cdc74(void)
     position[2] = target->z;
     Vector_AddPolarOffset(0x100000, angle, position);
     hit = Func_080eaf28(position, 1);
-    if (hit != 0 && (hit->collision_flags & 1))
+    if (hit != 0 && (hit->collisionFlags & 1))
         return 0;
     above[0] = target->x;
     above[1] = target->y + 0x100000;
     above[2] = target->z;
     hit = Func_080eaf28(above, 1);
-    if (hit != 0 && (hit->collision_flags & 1))
+    if (hit != 0 && (hit->collisionFlags & 1))
         return 0;
-    terrain = target->terrain_id;
-    target->terrain_id = 2;
+    terrain = target->terrainId;
+    target->terrainId = 2;
     result = Func_08020210(target, position);
-    target->terrain_id = terrain;
+    target->terrainId = terrain;
     if (result > 0)
         return 0;
     return 1;

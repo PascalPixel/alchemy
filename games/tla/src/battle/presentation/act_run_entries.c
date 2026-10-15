@@ -22,13 +22,13 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 	s32 i;
 
 	BattlePres_SetActorModes(0, 0);
-	if (plan->target_count == 0)
+	if (plan->targetCount == 0)
 	{
 		BattlePresentation_WaitForAdvance();
 	}
 	else
 	{
-		for (i = 0; i < plan->target_count; i++)
+		for (i = 0; i < plan->targetCount; i++)
 		{
 			BattleTargetExec(plan, i);
 			BattleEv_DispatchQueued();

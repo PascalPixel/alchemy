@@ -10,6 +10,6 @@ void UiIcon_PrepareObject(struct RenderOutput *object)
         object->oam.x = object->x;
         object->oam.y = object->y;
         object->oam.matrix = 0;
-        object->oam.affine_mode = 0;
+        object->oam.affineMode = 0;
     }
 }

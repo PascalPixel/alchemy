@@ -40,8 +40,8 @@ s32 Func_02002ec8(void)
             /* FAKEMATCH: a one-pass block after the party address: the native loads the scene id before it builds the saved scene's offset; without it the offset's first half comes first (differ 2, also with the id in a local). */
             do {
             } while (0);
-            party->saved_scene = (s32)&SceneId_DailaInteriors2;
-            party->saved_entrance = 1;
+            party->savedScene = (s32)&SceneId_DailaInteriors2;
+            party->savedEntrance = 1;
         }
         Func_02002fd4();
         break;

@@ -49,7 +49,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -59,17 +59,17 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	{
 		if (Engine_GameFlagIsSet(0x909))
 		{
-			gAltinPlacements1[5].talk_facing = TALK_FACE_PARTY;
-			gAltinPlacements1[6].talk_facing = TALK_FACE_PARTY;
+			gAltinPlacements1[5].talkFacing = TALK_FACE_PARTY;
+			gAltinPlacements1[6].talkFacing = TALK_FACE_PARTY;
 		}
 		return gAltinPlacements1;
 	}
 	if (id == (s32)&SceneId_Altin2)
 	{
 		if (Engine_GameFlagIsSet(0x8fd))
-			gAltinPlacements2[1].talk_facing = TALK_FACE_PARTY_AND_BACK;
+			gAltinPlacements2[1].talkFacing = TALK_FACE_PARTY_AND_BACK;
 		if (Engine_GameFlagIsSet(0x8fe) || Engine_GameFlagIsSet(0x907))
-			gAltinPlacements2[3].talk_facing = TALK_FACE_PARTY_AND_BACK;
+			gAltinPlacements2[3].talkFacing = TALK_FACE_PARTY_AND_BACK;
 		FieldScene_PrepareActors(gAltinPlacements2);
 		return gAltinPlacements2;
 	}
@@ -126,7 +126,7 @@ static void EV14_TALK_1(void)
 {
 
 	struct FieldActor *rec18;
-	u8				  *ready_flag;
+	u8				  *readyFlag;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -140,12 +140,12 @@ static void EV14_TALK_1(void)
 		Engine_ActorSetAnimation(14, 4);
 		Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
 		Event_ShowMessageAndWait(14, 0, 10);
-		ready_flag = GameFlag_IsSet(0x8ff);
-		if (ready_flag == 0)
+		readyFlag = GameFlag_IsSet(0x8ff);
+		if (readyFlag == 0)
 		{
 			rec18 = Object_GetById(18);
 
-			Battle_GetWorkObject1e0()->motion_flags = ready_flag;
+			Battle_GetWorkObject1e0()->motionFlags = readyFlag;
 			Camera_SetSpeed(0x10000, 0x2000);
 			Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1);
 			Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -349,11 +349,11 @@ static void FieldScene_RunEarlySequence(void)
 		record = Object_GetById(i);
 		if (record != 0)
 		{
-			record->motion_flags = 0;
+			record->motionFlags = 0;
 		}
 	}
-	table = (u8 *)Altin_TriggerTable;
-	idx = ((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
+	table = (u8 *)gAltin_TriggerTable;
+	idx = ((*(u16 *)&work->touchedTrigger - 2) << 16) >> 16;
 	off = idx << 3;
 	o4 = off + 4;
 	a = *(s16 *)(table + o4);
@@ -379,8 +379,8 @@ static void FieldScene_RunEarlySequence(void)
 		Map_AnimateCells(*(s32 *)(table + off), a, b);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	Object_GetById(0)->motion_flags = 0;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	if (idx == 6)
 	{
@@ -399,7 +399,7 @@ static void FieldScene_RunEarlySequence(void)
 		}
 	}
 	Engine_EventWait(10);
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -411,10 +411,10 @@ static void FieldScene_RunScene3a3SequenceB(void)
 
 	work = gEventWork;
 	Engine_EventBegin();
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Event_PlayCue(123);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -585,12 +585,12 @@ static void FieldScene_RunMiddleSequence(void)
 	Actor_SetChildValue(22, 15);
 	Engine_ActorSetChildValue(23, 15);
 	Actor_SetChildValue(24, 15);
-	Object_GetById(22)->collision_flags |= 8;
-	Object_GetById(23)->collision_flags |= 8;
-	Object_GetById(24)->collision_flags |= 8;
-	Object_GetById(22)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-	Object_GetById(23)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-	Object_GetById(24)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(22)->collisionFlags |= 8;
+	Object_GetById(23)->collisionFlags |= 8;
+	Object_GetById(24)->collisionFlags |= 8;
+	Object_GetById(22)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(23)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(24)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	Engine_ActorSetSpritePriority(22, 1);
 	Engine_ActorSetSpritePriority(23, 1);
 	Engine_ActorSetSpritePriority(24, 1);
@@ -636,18 +636,18 @@ static void FieldScene_RunScene3a3SequenceD(void)
 
 		actor = Object_GetById(15);
 		flags = 4;
-		flags |= actor->collision_flags;
-		actor->collision_flags = flags;
+		flags |= actor->collisionFlags;
+		actor->collisionFlags = flags;
 	}
 	actor = Object_GetById(17);
 	if (actor != 0)
 	{
-		actor->collision_flags = 4 | actor->collision_flags;
+		actor->collisionFlags = 4 | actor->collisionFlags;
 	}
 	actor = Object_GetById(16);
 	if (actor != 0)
 	{
-		actor->collision_flags = 4 | actor->collision_flags;
+		actor->collisionFlags = 4 | actor->collisionFlags;
 	}
 }
 
@@ -674,14 +674,14 @@ static void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 	if (work->timer <= 3)
 	{
 		work->z += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
-		work->scale_x += 0x2666;
-		work->scale_y += -0xa3d;
+		work->scaleX += 0x2666;
+		work->scaleY += -0xa3d;
 	}
 	else
 	{
 		work->z += 0x20000;
-		work->scale_x += 0x7ae;
-		work->scale_y += 0x7ae;
+		work->scaleX += 0x7ae;
+		work->scaleY += 0x7ae;
 	}
 	if (((u32)Engine_RandomNext() * work->timer) >> 16 == 0)
 		ObjectGroup_SetChildValue(work, 7);
@@ -816,7 +816,7 @@ struct SceneEntrance gAltinEntrances2[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(75),
 	SCENE_EXIT(1, 2, 16),
 	SCENE_EXIT(2, 76, 7),
@@ -1114,7 +1114,7 @@ struct SceneEvent gAltinEvents2[] = {
 	{SCENE_EVENTS_END},
 };
 
-u16 Altin_TriggerTable1[] = {
+u16 gAltin_TriggerTable1[] = {
 	MAP_CELL_STEP(42, 33, 2, 2, 0),
 	MAP_CELL_STEP(42, 35, 2, 2, 5),
 	MAP_CELL_STEP(40, 33, 2, 2, 0),
@@ -1122,49 +1122,49 @@ u16 Altin_TriggerTable1[] = {
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable0[] = {
+u16 gAltin_TriggerTable0[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 5),
 	MAP_CELL_STEP(33, 48, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable5[] = {
+u16 gAltin_TriggerTable5[] = {
 	MAP_CELL_STEP(35, 35, 2, 2, 5),
 	MAP_CELL_STEP(33, 35, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable6[] = {
+u16 gAltin_TriggerTable6[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 5),
 	MAP_CELL_STEP(33, 46, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable2[] = {
+u16 gAltin_TriggerTable2[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 5),
 	MAP_CELL_STEP(33, 50, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable3[] = {
+u16 gAltin_TriggerTable3[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 5),
 	MAP_CELL_STEP(33, 33, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable4[] = {
+u16 gAltin_TriggerTable4[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 5),
 	MAP_CELL_STEP(33, 52, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim Altin_TriggerTable[] = {
-	{Altin_TriggerTable0, 41, 5},
-	{Altin_TriggerTable1, 51, 6},
-	{Altin_TriggerTable2, 57, 17},
-	{Altin_TriggerTable3, 39, 17},
-	{Altin_TriggerTable4, 48, 25},
-	{Altin_TriggerTable5, 59, 9},
-	{Altin_TriggerTable6, 42, 23},
-	{Altin_TriggerTable3, 41, 27},
+struct MapCellAnim gAltin_TriggerTable[] = {
+	{gAltin_TriggerTable0, 41, 5},
+	{gAltin_TriggerTable1, 51, 6},
+	{gAltin_TriggerTable2, 57, 17},
+	{gAltin_TriggerTable3, 39, 17},
+	{gAltin_TriggerTable4, 48, 25},
+	{gAltin_TriggerTable5, 59, 9},
+	{gAltin_TriggerTable6, 42, 23},
+	{gAltin_TriggerTable3, 41, 27},
 };

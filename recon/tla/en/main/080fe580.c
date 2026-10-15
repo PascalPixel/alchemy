@@ -7,18 +7,18 @@
 #include "ram_buffer.h"
 
 struct OwnerCursor {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 active;
-    u8 unknown_06[6];
-    u16 anim_step;
+    u8 unk06[6];
+    u16 animStep;
 };
 
 struct OwnerMenuState {
-    u8 unknown_000[16];
-    void *owner_window;
-    struct OwnerCursor *owner_cursors[2];
-    s8 owner_index[2];
-    u8 unknown_01e[0x1fe];
+    u8 unk000[16];
+    void *ownerWindow;
+    struct OwnerCursor *ownerCursors[2];
+    s8 ownerIndex[2];
+    u8 unk01e[0x1fe];
     u16 page;
 };
 
@@ -38,25 +38,25 @@ s32 Func_080fe580(s32 slot)
     s32 result;
     s32 index;
 
-    menu = (struct OwnerMenuState *)Ram_HeapSlots->menu_runtime;
-    index = menu->owner_index[slot];
+    menu = (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+    index = menu->ownerIndex[slot];
     result = 0;
-    cursor = menu->owner_cursors[slot];
+    cursor = menu->ownerCursors[slot];
     cursor->active = 1;
-    cursor->anim_step = 0;
-    RenderOutput_RedrawSavedRectFar(menu->owner_window);
+    cursor->animStep = 0;
+    RenderOutput_RedrawSavedRectFar(menu->ownerWindow);
     if (GameFlag_Test(0x172))
-        UiWindow_DrawDividerLineFar(menu->owner_window, 9, 1, 9, 3);
-    UiWindow_DrawDividerLineFar(menu->owner_window, 0, 3, 12, 3);
+        UiWindow_DrawDividerLineFar(menu->ownerWindow, 9, 1, 9, 3);
+    UiWindow_DrawDividerLineFar(menu->ownerWindow, 0, 3, 12, 3);
     if (index == -1)
-        menu->owner_index[slot] = 0;
+        menu->ownerIndex[slot] = 0;
     else
         Func_080f8ab4(index * 24 - 10, 16);
     if (menu->page == 3)
         result = Func_080feb58();
     else
         result = Func_080fe894();
-    cursor = menu->owner_cursors[slot];
+    cursor = menu->ownerCursors[slot];
     UiIcon_PrepareObject(cursor);
     WaitFrames(1);
     return result;

@@ -12,10 +12,10 @@ void Func_0200102c(void)
     struct ObjectRuntime *left = Object_GetById(8);
     struct ObjectRuntime *right = Object_GetById(9);
 
-    left->scale_x = 0x14000;
-    right->scale_x = -0x14000;
-    left->motion_flags = 0;
-    right->motion_flags = 0;
+    left->scaleX = 0x14000;
+    right->scaleX = -0x14000;
+    left->motionFlags = 0;
+    right->motionFlags = 0;
     left->y = 0;
     right->y = 0;
     if (GameFlag_Test(0x8c9) != 0) {

@@ -17,13 +17,13 @@
 void LinkLobby_WriteSlotValue(s32 slot)
 {
     s32 *dst = (s32 *)gSerialTransfer.payload;
-    const s32 *src = &LinkLobby_SlotValues[slot];
-    dst[LinkLobby_SlotColumns[slot]] = *src;
+    const s32 *src = &gLinkLobby_SlotValues[slot];
+    dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
 struct LobbyEventWork {
-    u8 unknown_000[0x16a];
-    s16 raised_trigger;
+    u8 unk000[0x16a];
+    s16 raisedTrigger;
 };
 
 struct LinkPeerSignature {
@@ -31,7 +31,7 @@ struct LinkPeerSignature {
 };
 
 extern struct LinkPeerSignature gLinkPeerSignatures[];
-extern s32 Data_020022b8;
+extern s32 gData_020022b8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_0200006c(s32 slot);
@@ -49,7 +49,7 @@ s32 Func_02000134(void)
     s32 z;
     s32 *wait;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     result = 1;
     z = Object_GetById(4)->z;
     /* FAKEMATCH: the one-pass block loads z before the 0xe00000 bound is built; tested directly the bound comes first (differ 2). */
@@ -57,11 +57,11 @@ s32 Func_02000134(void)
     } while (0);
     if (z > 0xe00000)
         Flag_Clear(0x304);
-    if (work->raised_trigger != 2) {
+    if (work->raisedTrigger != 2) {
         Func_0200006c(0);
         /* FAKEMATCH: the wait counter's address taken once before the test, where the native loads it for both branches; written in each branch it is loaded in each (differ 11). */
         set = Flag_IsSet(0x303);
-        wait = &Data_020022b8;
+        wait = &gData_020022b8;
         if (!set) {
             if (++*wait > 25) {
                 s32 offset = 0;
@@ -74,17 +74,17 @@ s32 Func_02000134(void)
                 offset += 24;
                 if (i >= 0)
                     goto clear;
-                Data_020022b8 = 0;
+                gData_020022b8 = 0;
                 LinkLobby_WriteSlotValue(4);
             }
         } else {
             *wait = 0;
         }
-        if (Data_020022b8 == 0) {
+        if (gData_020022b8 == 0) {
             if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
                 Flag_Set(0x201);
                 if (Flag_IsSet(0x202))
-                    work->raised_trigger = 1;
+                    work->raisedTrigger = 1;
                 result = 1;
             } else {
                 Flag_Clear(0x201);
@@ -92,17 +92,17 @@ s32 Func_02000134(void)
             }
         }
         if (Flag_IsSet(0x201) && Flag_IsSet(0x202) && !Flag_IsSet(0x200))
-            work->raised_trigger = 1;
+            work->raisedTrigger = 1;
     }
     if ((Flag_IsSet(0x201) || Flag_IsSet(0x202)) && !Flag_IsSet(0x173)
-        && !Func_0200006c(0) && Data_020022b8 > 24) {
-        work->raised_trigger = 2;
+        && !Func_0200006c(0) && gData_020022b8 > 24) {
+        work->raisedTrigger = 2;
         Flag_Set(0x205);
         Flag_Clear(0x201);
         Flag_Clear(0x202);
         LinkLobby_WriteSlotValue(4);
     }
     if (Flag_IsSet(0x205))
-        work->raised_trigger = 2;
+        work->raisedTrigger = 2;
     return result;
 }

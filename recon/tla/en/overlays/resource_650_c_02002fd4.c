@@ -33,9 +33,9 @@ void Func_02002fd4(void)
         actor = Object_GetById(8);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
         actor->angle = 0x4000;
-        actor->motion_flags = 0;
+        actor->motionFlags = 0;
         actor->y = 0xc0000;
-        actor->collision_flags = 0;
+        actor->collisionFlags = 0;
         Engine_ActorSetAnimation(8, 5);
     }
     if (!GameFlag_Test(0x864)) {
@@ -46,9 +46,9 @@ void Func_02002fd4(void)
         actor = Object_GetById(5);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 0);
         actor->angle = 0x4000;
-        actor->motion_flags = 0;
+        actor->motionFlags = 0;
         actor->y = 0xc0000;
-        actor->collision_flags = 0;
+        actor->collisionFlags = 0;
         Engine_ActorSetAnimation(5, 18);
     }
     flag = GameFlag_Test(0x865);
@@ -60,7 +60,7 @@ void Func_02002fd4(void)
         Call6(Func_02003190, 38, 34, 2, 1, 14, 40);
         Engine_ActorSetAnimation(6, 19);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
-        actor->motion_flags = 0;
+        actor->motionFlags = 0;
         actor->y = 0xc0000;
     }
     Engine_MapCopyCellsTo(72, 42, 75, 40, 1, 1);

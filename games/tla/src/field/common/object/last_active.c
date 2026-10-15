@@ -4,7 +4,7 @@
 
 s32 ObjectTable_FindLastActiveId(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 last = 7;
     s32 i;
 

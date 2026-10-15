@@ -19,8 +19,8 @@ extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
 extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
-extern s16 Data_020006dc;
-extern struct TitleSprite Data_020006f0[];
+extern s16 gData_020006dc;
+extern struct TitleSprite gData_020006f0[];
 extern u32 gFrameCount;
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -52,7 +52,7 @@ s32 Func_0200005c(void)
     s32 limit;
 
     if (gPartyState.entrance == 10) {
-        Object_GetById(gPartyState.current_owner)->motion_flags = 0;
+        Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
         Func_02000644(75);
         Func_0200031c(0);
         WaitFrames(120);
@@ -121,7 +121,7 @@ s32 Func_0200005c(void)
         if (gPartyState.entrance == 2) {
             Func_02000644(40);
             Func_0200063c(0);
-            Func_020005dc(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
+            Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
             Func_020005e4();
             Func_02000604((s32)&SceneId_VenusLighthouse, 99);
         }
@@ -130,7 +130,7 @@ s32 Func_0200005c(void)
         if (gPartyState.entrance == 3) {
             Func_02000644(75);
             Func_02000624(0);
-            Func_020005dc(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
+            Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
             Func_020005ec();
             Func_02000604((s32)&SceneId_Ov650, 13);
         }
@@ -179,10 +179,10 @@ void Func_02000278(void)
     s32 y;
     s32 x;
 
-    p = Data_020006f0;
-    w = Data_020006f0[0].attr;
+    p = gData_020006f0;
+    w = gData_020006f0[0].attr;
     {
-        register u32 offset asm("r3") = ResourceTableEntries[gTitleVramBlock].offset;
+        register u32 offset asm("r3") = gResourceTableEntries[gTitleVramBlock].offset;
 
         tile = offset >> 5;
     }
@@ -195,7 +195,7 @@ void Func_02000278(void)
         *w++ = 0;
         *w++ = (x << 16) | n | 0x8400;
         *w++ = 0xf000 | tile;
-        n = Data_020006dc / 2 - i;
+        n = gData_020006dc / 2 - i;
         if (n < 0)
             n = 0;
         if (n <= 2 && (gFrameCount & 1))
@@ -204,5 +204,5 @@ void Func_02000278(void)
             Func_020005ac(p++, 255);
         tile += 2;
     } while (++i <= 17);
-    Data_020006dc++;
+    gData_020006dc++;
 }

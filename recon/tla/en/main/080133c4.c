@@ -24,7 +24,7 @@ void Runtime_InstallIwramAndIrqs(void)
     do {
         gIrqVector = IwramIrqMain;
     } while (0);
-    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    Dma_Set((const void *)gRuntime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
     REG_DISPSTAT = zero;
     value = 0xc3ff;
     REG_KEYCNT = value;

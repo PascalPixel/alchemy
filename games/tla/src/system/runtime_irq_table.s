@@ -10,8 +10,8 @@ gIrqHandlers:
 @ interrupt has one of its own.
 	.section .rodata.irq_handlers,"a",%progbits
 	.balign 4
-	.global Runtime_IrqHandlers
-Runtime_IrqHandlers:
+	.global gRuntime_IrqHandlers
+gRuntime_IrqHandlers:
 	.4byte Runtime_IgnoreInterrupt	@ VBlank
 	.4byte Runtime_IgnoreInterrupt	@ HBlank
 	.4byte Runtime_IgnoreInterrupt	@ VCount

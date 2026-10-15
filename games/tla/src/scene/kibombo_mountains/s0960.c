@@ -3,7 +3,7 @@
 #include "call.h"
 
 extern u8 MsgIsTheWay[];
-extern const u8 Data_020017f8[];
+extern const u8 gData_020017f8[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
@@ -59,13 +59,13 @@ void Func_02000960(void)
     Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 27, 360, 312);
     Motion_SetModeAndWaitAnimation(11, 3);
     Func_0200110c(11, 0);
-    Object_LinkObjectAndSetCallback(11, gPartyState.current_owner);
+    Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
     WaitFrames(30);
     Func_0200110c(11, 0);
     Motion_SetVarCbAndRefresh(11, 2);
     Battle_WaitMode0(60);
     Call3((void (*)())Func_020010d4, 27, 0, 0);
-    ObjectMotion_EnableActionAndSetCallback(11, Data_020017f8);
+    ObjectMotion_EnableActionAndSetCallback(11, gData_020017f8);
     Func_0200108c();
     GameFlag_SetBit(0x880);
 }

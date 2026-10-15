@@ -445,7 +445,7 @@ Func_0813cb34:
 .L_0813cea0:
 	.4byte 0xfffffec6
 .L_0813cea4:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0813cea8:
 	.4byte 0xffffe000
 .L_0813ceac:

@@ -45,7 +45,7 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void SceneActor_StepSubjectAlongHeading(void);
 
-s32 ImilFuchinFalls_TrackLeader;
+s32 gImilFuchinFalls_TrackLeader;
 
 struct CaveEffectScripts
 {
@@ -57,24 +57,24 @@ struct CaveDustOptions
 {
 	s32 priority;
 	s32 palette;
-	s32 start_scale_x;
-	s32 start_scale_y;
-	s32 target_scale_x;
-	s32 target_scale_y;
+	s32 startScaleX;
+	s32 startScaleY;
+	s32 targetScaleX;
+	s32 targetScaleY;
 };
 
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
 	(u32) & ((struct EffectOptions *)0)->priority);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
 	(u32) & ((struct EffectOptions *)0)->palette);
-LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, start_scale_x,
-	(u32) & ((struct EffectOptions *)0)->start_scale_x);
-LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, start_scale_y,
-	(u32) & ((struct EffectOptions *)0)->start_scale_y);
-LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scale_x,
-	(u32) & ((struct EffectOptions *)0)->target_scale_x);
-LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
-	(u32) & ((struct EffectOptions *)0)->target_scale_y);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, startScaleX,
+	(u32) & ((struct EffectOptions *)0)->startScaleX);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, startScaleY,
+	(u32) & ((struct EffectOptions *)0)->startScaleY);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, targetScaleX,
+	(u32) & ((struct EffectOptions *)0)->targetScaleX);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, targetScaleY,
+	(u32) & ((struct EffectOptions *)0)->targetScaleY);
 
 static void EV08_TALK(void)
 {
@@ -788,10 +788,10 @@ static struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c,
 	if (actor != 0)
 	{
 		actor->sprite->priority = 1;
-		actor->motion_flags = 0;
+		actor->motionFlags = 0;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		ObjectGroup_SetChildValue(actor, 15);
-		actor->priority_flags |= 2;
+		actor->priorityFlags |= 2;
 		return actor;
 	}
 	return 0;
@@ -850,17 +850,17 @@ static void EV10_TOUCH_1(void)
 	SceneActor_StepSubjectAlongHeading();
 }
 
-static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
+static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tileX, s32 tileZ)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
 	if (actor != NULL)
 	{
 		Engine_ActorSetSpritePriority(id, 3);
-		actor->terrain_id = 2;
-		actor->priority_flags |= 2;
-		actor->x.fixed = (tile_x << 20) + 0x80000;
-		actor->z.fixed = (tile_z << 20) + 0x80000;
+		actor->terrainId = 2;
+		actor->priorityFlags |= 2;
+		actor->x.fixed = (tileX << 20) + 0x80000;
+		actor->z.fixed = (tileZ << 20) + 0x80000;
 	}
 }
 
@@ -1237,7 +1237,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 
 static void EV15_TOUCH_7(void)
 {
-	if (ImilFuchinFalls_TrackLeader != 0)
+	if (gImilFuchinFalls_TrackLeader != 0)
 	{
 		struct TrackingWork *work = *(gWorkSlot + 36);
 
@@ -1247,7 +1247,7 @@ static void EV15_TOUCH_7(void)
 
 static void EV16_TOUCH_7(void)
 {
-	if (ImilFuchinFalls_TrackLeader != 0)
+	if (gImilFuchinFalls_TrackLeader != 0)
 	{
 		struct TrackingWork *work = *(gWorkSlot + 36);
 
@@ -1257,7 +1257,7 @@ static void EV16_TOUCH_7(void)
 
 s32 ImilFuchinFalls_ApplyEntryHook(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x109) == 0 && gGameState.scene == (s32)&SceneId_ImilFuchinFalls1)
 	{
 		Engine_GameFlagSet(0x144);
@@ -1306,8 +1306,8 @@ static void ImilFuchinFalls_ApplyEntrySetup(void)
 	{
 		value = 0;
 		actor = Actor_Get(8);
-		ImilFuchinFalls_TrackLeader = value;
-		actor->motion_flags = value;
+		gImilFuchinFalls_TrackLeader = value;
+		actor->motionFlags = value;
 		actor->y.fixed = value;
 		Engine_ActorSetSpritePriority(8, 1);
 		Actor_SetChildValue(8, 15);
@@ -1316,11 +1316,11 @@ static void ImilFuchinFalls_ApplyEntrySetup(void)
 		case 1:
 		case 2:
 			BattleFx_StartFadeOverlay(0);
-			ImilFuchinFalls_TrackLeader = 1;
+			gImilFuchinFalls_TrackLeader = 1;
 			break;
 		case 5:
 			BattleFx_StartFadeOverlay(0);
-			ImilFuchinFalls_TrackLeader = 1;
+			gImilFuchinFalls_TrackLeader = 1;
 			value = *(s32 *)(gWorkSlot + 36);
 			((struct TrackingWork *)value)->actor = NULL;
 			break;
@@ -1334,7 +1334,7 @@ static void ImilFuchinFalls_ApplyEntrySetup(void)
 			}
 			else
 			{
-				gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+				gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 				ColorBuffer_ApplySource(0x203108, 1);
 				ColorBuffer_ApplyTarget(0x203108, 1);
 				Engine_ColorBufferInterpolate(1);
@@ -1377,7 +1377,7 @@ static void ImilFuchinFalls_ApplyRoomLayout(void)
 
 static void ImilFuchinFalls_HopOnTrigger(void)
 {
-	s32 trigger = gEventWork->touched_trigger;
+	s32 trigger = gEventWork->touchedTrigger;
 
 	if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls3)
 	{
@@ -1431,14 +1431,14 @@ static void ImilFuchinFalls_PlaceDragonsEye(void)
 	{
 		sprite = actor->sprite;
 		sprite->flags = clear;
-		sprite->part_count = clear;
-		sprite->full_color = 0;
+		sprite->partCount = clear;
+		sprite->fullColor = 0;
 		sprite->palette = 0;
-		actor->motion_flags = clear;
-		actor->unknown_5c = 1;
+		actor->motionFlags = clear;
+		actor->unk5c = 1;
 		glyph = Engine_HeapAllocate(17, sizeof(*glyph));
 		Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
-		Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
+		Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
 		Engine_HeapRelease(17);
 		gImilFuchinFallsDragonsEye = actor;
 	}
@@ -1469,11 +1469,11 @@ static void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 {
 	struct FieldEffect *object = &raw->effect;
 
-	object->x += object->velocity_x;
-	object->y += object->velocity_y;
-	object->z += object->velocity_z;
-	object->scale_x += object->scale_rate_x;
-	object->scale_y += object->scale_rate_y;
+	object->x += object->velocityX;
+	object->y += object->velocityY;
+	object->z += object->velocityZ;
+	object->scaleX += object->scaleRateX;
+	object->scaleY += object->scaleRateY;
 }
 
 static s32 OverlayObject_ApplyValue15(s32 obj)
@@ -1482,7 +1482,7 @@ static s32 OverlayObject_ApplyValue15(s32 obj)
 	return 0;
 }
 
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
+void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
 	const struct EffectOptions *extra)
 {
 	struct FieldEffect *obj;
@@ -1497,14 +1497,14 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 	spr = obj->sprite;
 	Object_SetMode((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
 	Engine_ObjectSetScript((struct FieldActor *)obj, scripts.script[flags & EFFECT_SCRIPT_MASK]);
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 	spr->flags = 0;
 	obj->update = OverlayObject_AdvancePositionByDelta;
-	obj->velocity_x = velocity_x;
-	obj->velocity_y = velocity_y;
-	obj->velocity_z = velocity_z;
-	obj->scale_rate_x = 0;
-	obj->scale_rate_y = 0;
+	obj->velocityX = velocityX;
+	obj->velocityY = velocityY;
+	obj->velocityZ = velocityZ;
+	obj->scaleRateX = 0;
+	obj->scaleRateY = 0;
 	spr->priority = 1;
 	if ((flags & 0xffff0000) == 0 || extra == 0)
 		return;
@@ -1512,26 +1512,26 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 		ObjectGroup_SetChildValue((struct FieldActor *)obj, extra->palette);
 	if (flags & EFFECT_USE_PRIORITY)
 	{
-		obj->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		obj->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		spr->priority = extra->priority;
 	}
 	if (flags & EFFECT_USE_START_SCALE)
 	{
-		obj->scale_x = extra->start_scale_x;
-		obj->scale_y = extra->start_scale_y;
+		obj->scaleX = extra->startScaleX;
+		obj->scaleY = extra->startScaleY;
 	}
 	if (flags & EFFECT_SCALE_TO_TARGET)
 	{
 		script = scripts.script[flags & EFFECT_SCRIPT_MASK];
 		if (flags & EFFECT_USE_START_SCALE)
 		{
-			obj->scale_rate_x = (extra->target_scale_x - obj->scale_x) / script[3];
-			obj->scale_rate_y = (extra->target_scale_y - obj->scale_y) / script[3];
+			obj->scaleRateX = (extra->targetScaleX - obj->scaleX) / script[3];
+			obj->scaleRateY = (extra->targetScaleY - obj->scaleY) / script[3];
 		}
 		else
 		{
-			obj->scale_rate_x = (extra->target_scale_x - 0x10000) / script[3];
-			obj->scale_rate_y = (extra->target_scale_y - 0x10000) / script[3];
+			obj->scaleRateX = (extra->targetScaleX - 0x10000) / script[3];
+			obj->scaleRateY = (extra->targetScaleY - 0x10000) / script[3];
 		}
 	}
 }
@@ -1547,10 +1547,10 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void)
 	if (phase != 0)
 		return;
 	params.palette = 10;
-	params.start_scale_x = 0x8000;
-	params.start_scale_y = 0x8000;
-	params.target_scale_x = 0x1cccc;
-	params.target_scale_y = 0x1cccc;
+	params.startScaleX = 0x8000;
+	params.startScaleY = 0x8000;
+	params.targetScaleX = 0x1cccc;
+	params.targetScaleY = 0x1cccc;
 	if ((gFrameCount & 7) == 0)
 		Engine_AudioPlayCue(136);
 	dx = -0x10000 - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
@@ -1640,7 +1640,7 @@ static void EV20_SEARCH(void)
 		Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
 		if (PartyInventory_FindOwner(0xe6) != -1)
 		{
-			gEventWork->unknown_172 = 1;
+			gEventWork->unk172 = 1;
 		}
 	}
 	Engine_EventEnd();
@@ -1655,8 +1655,8 @@ static void EV00_PSYNERGY(void)
 	{
 		scene = *(gWorkSlot + 56);
 		transition = *(gWorkSlot + 31);
-		scene->child_option = 1;
-		transition->next_mode = 0;
+		scene->childOption = 1;
+		transition->nextMode = 0;
 		transition->duration = 1;
 		transition->step = 1;
 		Engine_ColorBufferApplySource(0, 1);
@@ -1679,7 +1679,7 @@ static void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 		actor->timer--;
 		return;
 	}
-	actor->steering_flags = 0;
+	actor->steeringFlags = 0;
 	direction = gImilFuchinFallsKeyHeadings[(gKeysHeld >> 4) & 15];
 	if (direction == -1)
 	{
@@ -1708,7 +1708,7 @@ static void SceneActor_StepSubjectAlongHeading(void)
 	s32					 z;
 	s32					 x;
 
-	subject = Engine_ActorLookup(gGameState.selected_actor);
+	subject = Engine_ActorLookup(gGameState.selectedActor);
 
 	for (;;)
 	{
@@ -1725,12 +1725,12 @@ static void SceneActor_StepSubjectAlongHeading(void)
 		probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
 		z = probe.z;
 		x = probe.x;
-		goal = GetMapCellCollision(subject->terrain_id, x, z);
+		goal = GetMapCellCollision(subject->terrainId, x, z);
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
 
-		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+		marker = GetMapCellCollision(subject->terrainId, probe.x, probe.z);
 		if (marker == 255
-			|| Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+			|| Map_GetTerrainHeight(subject->terrainId, probe.x, probe.z) - subject->y.fixed
 				   > 0x80000)
 		{
 			subject->facing = heading;
@@ -1752,12 +1752,12 @@ static void SceneActor_StepSubjectAlongHeading(void)
 		for (;;)
 		{
 			FieldVector_AddPolarOffset(0x100000, heading, &probe);
-			marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+			marker = GetMapCellCollision(subject->terrainId, probe.x, probe.z);
 			if (marker == 255)
 			{
 				break;
 			}
-			if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+			if (Map_GetTerrainHeight(subject->terrainId, probe.x, probe.z) - subject->y.fixed
 				> 0x80000)
 			{
 				break;
@@ -1783,7 +1783,7 @@ static void SceneActor_StepSubjectAlongHeading(void)
 
 blocked:
 	subject->update = NULL;
-	subject->steering_flags |= ACTOR_FACES_MOTION;
+	subject->steeringFlags |= ACTOR_FACES_MOTION;
 
 	subject->acceleration = 0x4000;
 

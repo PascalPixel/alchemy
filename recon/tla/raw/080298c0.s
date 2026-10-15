@@ -458,7 +458,7 @@ Func_080298c0:
 .L_08029c5c:
 	.4byte gInput
 .L_08029c60:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08029c64:
 	.4byte 0xfffff000
 .L_08029c68:
@@ -468,7 +468,7 @@ Func_080298c0:
 .L_08029c70:
 	.4byte gFrameCount
 .L_08029c74:
-	.4byte Data_0802ed28
+	.4byte gData_0802ed28
 .L_08029c78:
 	.4byte Func_08029810
 .L_08029c7c:
@@ -1051,4 +1051,4 @@ Func_080298c0:
 .L_0802a11c:
 	.4byte 0xfffe0000
 .L_0802a120:
-	.4byte Data_0802ece0
+	.4byte gData_0802ece0

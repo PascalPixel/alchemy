@@ -35,7 +35,7 @@ struct FontGlyph
 LAYOUT_OFFSET_GUARD(FontGlyph_Rows, struct FontGlyph, rows, 2);
 LAYOUT_SIZE_GUARD(FontGlyph_Size, struct FontGlyph, 2 + FONT_GLYPH_ROWS * 2);
 
-extern const struct FontGlyph UiText_Glyphs[];
+extern const struct FontGlyph gUiText_Glyphs[];
 
 typedef struct
 {

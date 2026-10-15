@@ -22,10 +22,10 @@ void Func_020023e8(void)
     Battle_WaitMode0(8);
     Func_02004cd8(75, 67, 15, 19, width, height);
     Battle_WaitMode0(15);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_GetById(gPartyState.current_owner)->speed_limit = Object_GetById(gPartyState.current_owner)->acceleration = 0x8000;
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    Object_GetById(gPartyState.currentOwner)->speedLimit = Object_GetById(gPartyState.currentOwner)->acceleration = 0x8000;
     Func_02004f30(123);
-    ObjectMotion_ResetAndSetPositionInMode2_(gPartyState.current_owner, 248, 328);
+    ObjectMotion_ResetAndSetPositionInMode2_(gPartyState.currentOwner, 248, 328);
     Battle_WaitMode0(5);
     Func_02004e28(1);
     Func_02004d48();

@@ -2,9 +2,9 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-extern const u8 Data_020017d8[];
-extern const u8 Data_020017a4[];
-extern const u8 Data_0200171c[];
+extern const u8 gData_020017d8[];
+extern const u8 gData_020017a4[];
+extern const u8 gData_0200171c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void GameFlag_SetBit(s32 flag);
@@ -22,18 +22,18 @@ void Func_02000f38(void);
 
 void Func_02000e0c(void)
 {
-    ObjectMotion_EnableActionAndSetCallback(8, Data_020017d8);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_020017d8);
     GameFlag_SetBit(800);
 }
 
 void Func_02000e24(void)
 {
-    ObjectMotion_EnableActionAndSetCallback(8, Data_020017a4);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_020017a4);
     GameFlag_SetBit(800);
 }
 
 void Func_02000e3c(void)
 {
     GameFlag_ClearBit(800);
-    ObjectMotion_EnableActionAndSetCallback(8, Data_0200171c);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_0200171c);
 }

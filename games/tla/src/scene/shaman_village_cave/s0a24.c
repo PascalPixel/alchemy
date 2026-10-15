@@ -34,10 +34,10 @@ void Object_LinkPair();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 
-#define EVENT_MESSAGE (((struct { u8 unknown_000[0x1c4]; s16 message; } *)Ram_HeapSlots->event_work)->message)
+#define EVENT_MESSAGE (((struct { u8 unk000[0x1c4]; s16 message; } *)Ram_HeapSlots->eventWork)->message)
 
-extern const u8 Data_020015e0[];
-extern const u8 Data_0200161c[];
+extern const u8 gData_020015e0[];
+extern const u8 gData_0200161c[];
 
 #define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames) \
     { \
@@ -136,11 +136,11 @@ void Func_02000a24(void)
     Call3(ObjectMotion_SetSpeedParameters, 19, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 20, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 21, 0x10000, 0x8000);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 19, Data_020015e0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 19, gData_020015e0);
     Call1(Battle_WaitMode0, 20);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 20, Data_0200161c);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 20, gData_0200161c);
     Call1(Battle_WaitMode0, 20);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 21, Data_0200161c);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 21, gData_0200161c);
     Call1(Battle_WaitMode0, 100);
     Call3(Object_LinkPair, 0, 4, 0);
     Call3(ObjectMotion_SetAngleToward, 18, 4, 0);

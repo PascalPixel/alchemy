@@ -36,7 +36,7 @@
 
 const void *SceneData_GetScriptTable(void)
 {
-	return VaultRevisit_Scripts;
+	return gVaultRevisit_Scripts;
 }
 
 int SceneData_ReturnZero(void)
@@ -46,12 +46,12 @@ int SceneData_ReturnZero(void)
 
 const void *SceneData_GetMessageTable(void)
 {
-	return VaultRevisit_Messages;
+	return gVaultRevisit_Messages;
 }
 
 const void *SceneData_GetActorTable(void)
 {
-	return VaultRevisit_Actors;
+	return gVaultRevisit_Actors;
 }
 
 static void ActorPresentation_RunActorModeOneThenZero(s32 actor)
@@ -155,7 +155,7 @@ static void EV16_TALK(void)
 	Engine_EventOpenMessage(16, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
-		((struct BranchCounterWork *)gEventWork)->branch_counter += 1;
+		((struct BranchCounterWork *)gEventWork)->branchCounter += 1;
 	}
 	Engine_EventShowMessage(16, 0);
 	Engine_GameFlagSet(0x308);
@@ -322,28 +322,28 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay)
 
 	Actor_SetSpeed(zero, 0x8000, 0x4000);
 	Actor_WalkTo(zero, x, y);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(delay);
 }
 
 static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene5Cells, 56, 19);
+	Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
 	SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
 static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene6Cells, 50, 18);
+	Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
 	SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
 static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene7Cells, 44, 17);
+	Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
 	SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
@@ -354,12 +354,12 @@ static void EV08_TOUCH(void)
 	u8							flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene8Cells, 54, 13);
+	Engine_MapAnimateCells(gVaultRevisit_Scene8Cells, 54, 13);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -373,12 +373,12 @@ static void EV09_TOUCH(void)
 	u8							flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene9Cells, 49, 10);
+	Engine_MapAnimateCells(gVaultRevisit_Scene9Cells, 49, 10);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -388,7 +388,7 @@ static void EV09_TOUCH(void)
 static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene10Cells, 38, 6);
+	Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
 	SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
@@ -405,12 +405,12 @@ static void EV12_TOUCH(void)
 	u8							  flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(VaultRevisit_Scene12Cells, 35, 9);
+	Engine_MapAnimateCells(gVaultRevisit_Scene12Cells, 35, 9);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -474,7 +474,7 @@ static void EV18_TALK(void)
 
 	if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0)
 	{
-		((struct Actor18MarkerWork *)gEventWork)->actor18_marker = 1;
+		((struct Actor18MarkerWork *)gEventWork)->actor18Marker = 1;
 	}
 
 	Engine_EventEnd();
@@ -490,7 +490,7 @@ static void EV90_SEARCH(void)
 
 const u8 *SceneData_GetExtraTable(void)
 {
-	return (const u8 *)VaultRevisit_Extras;
+	return (const u8 *)gVaultRevisit_Extras;
 }
 
 s32 SceneSetup_InitializeActorsAndFlags(void)
@@ -567,7 +567,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 VaultRevisit_Actor0[] = {
+s32 gVaultRevisit_Actor0[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -592,7 +592,7 @@ s32 VaultRevisit_Actor0[] = {
 	SC_END,
 };
 
-s32 VaultRevisit_Actor1[] = {
+s32 gVaultRevisit_Actor1[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -617,7 +617,7 @@ s32 VaultRevisit_Actor1[] = {
 	SC_END,
 };
 
-struct SceneEntrance VaultRevisit_Scripts[] = {
+struct SceneEntrance gVaultRevisit_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -634,7 +634,7 @@ struct SceneEntrance VaultRevisit_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 VaultRevisit_Messages[] = {
+u32 gVaultRevisit_Messages[] = {
 	SCENE_EXITS(23),
 	SCENE_EXIT(1, 2, 3),
 	SCENE_EXIT(2, 2, 44),
@@ -651,7 +651,7 @@ u32 VaultRevisit_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement VaultRevisit_Actors[] = {
+struct ScenePlacement gVaultRevisit_Actors[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -664,9 +664,9 @@ struct ScenePlacement VaultRevisit_Actors[] = {
 		PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, (s32)VaultRevisit_Actor0,
+	{ 0x6b, CONDITION_ALWAYS, (s32)gVaultRevisit_Actor0,
 		PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ 0x66, CONDITION_ALWAYS, (s32)VaultRevisit_Actor1,
+	{ 0x66, CONDITION_ALWAYS, (s32)gVaultRevisit_Actor1,
 		PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -683,35 +683,35 @@ struct ScenePlacement VaultRevisit_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-u16 VaultRevisit_Scene5Cells[] = {
+u16 gVaultRevisit_Scene5Cells[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 4), MAP_CELL_STEP(33, 52, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene6Cells[] = {
+u16 gVaultRevisit_Scene6Cells[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 4), MAP_CELL_STEP(33, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene7Cells[] = {
+u16 gVaultRevisit_Scene7Cells[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 4), MAP_CELL_STEP(33, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene8Cells[] = {
+u16 gVaultRevisit_Scene8Cells[] = {
 	MAP_CELL_STEP(42, 48, 2, 2, 4), MAP_CELL_STEP(40, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene9Cells[] = {
+u16 gVaultRevisit_Scene9Cells[] = {
 	MAP_CELL_STEP(42, 46, 2, 2, 4), MAP_CELL_STEP(40, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene10Cells[] = {
+u16 gVaultRevisit_Scene10Cells[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 4), MAP_CELL_STEP(33, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 VaultRevisit_Scene12Cells[] = {
+u16 gVaultRevisit_Scene12Cells[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 4), MAP_CELL_STEP(33, 33, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-struct SceneEvent VaultRevisit_Extras[] = {
+struct SceneEvent gVaultRevisit_Extras[] = {
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 40, CONDITION_ALWAYS, 13 },

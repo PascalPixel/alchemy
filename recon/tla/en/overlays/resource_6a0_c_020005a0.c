@@ -12,7 +12,7 @@ struct Cell {
 
 s32 Func_020005a0(struct ObjectRuntime *object)
 {
-    struct Cell *cells = (struct Cell *)Data_02002c64;
+    struct Cell *cells = (struct Cell *)gData_02002c64;
     s32 i;
 
     for (i = 0; cells[i].x != -1; i++) {

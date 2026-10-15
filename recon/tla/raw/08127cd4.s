@@ -349,9 +349,9 @@ Func_08127cd4:
 	b .L_08127f1a
 	.2byte 0x0000
 .L_08127f68:
-	.4byte BattleFormation_Records
+	.4byte gBattleFormation_Records
 .L_08127f6c:
-	.4byte BattleFormation_Records + 24
+	.4byte gBattleFormation_Records + 24
 .L_08127f70:
 	ldr r4, [sp, #12]
 	lsls r3, r7, #2

@@ -105,4 +105,4 @@ Func_08118c68:
 .L_08118d24:
 	.4byte 0x000000ff
 .L_08118d28:
-	.4byte Data_081287c8
+	.4byte gData_081287c8

@@ -15,13 +15,13 @@ struct PuzzleCell {
 struct SceneState {
     struct PuzzleCell cells[88];
     s32 count;
-    s16 first_id;
-    s16 end_id;
-    u16 tile_entry;
-    s8 redraw_a;
-    s8 redraw_b;
-    s16 origin_x;
-    s16 origin_z;
+    s16 firstId;
+    s16 endId;
+    u16 tileEntry;
+    s8 redrawA;
+    s8 redrawB;
+    s16 originX;
+    s16 originZ;
 };
 
 extern struct SceneState gSceneState;
@@ -47,11 +47,11 @@ cols:
             occupied = 1;
         }
         if (occupied == 2)
-            Func_0200566c(0, 11, 1, 1, state->origin_x + col, state->origin_z + row);
+            Func_0200566c(0, 11, 1, 1, state->originX + col, state->originZ + row);
         else if (occupied == 1)
-            Func_0200566c(1, state->cells[row * 11 + col].kind, 1, 1, state->origin_x + col, state->origin_z + row);
+            Func_0200566c(1, state->cells[row * 11 + col].kind, 1, 1, state->originX + col, state->originZ + row);
         else
-            Func_0200566c(occupied, state->cells[row * 11 + col].kind, 1, 1, state->origin_x + col, state->origin_z + row);
+            Func_0200566c(occupied, state->cells[row * 11 + col].kind, 1, 1, state->originX + col, state->originZ + row);
     }
     if (++col <= 10)
         goto cols;

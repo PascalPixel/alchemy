@@ -13,7 +13,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
     u8 *state;
     s32 i;
 
-    state = Ram_HeapSlots->menu_select_work;
+    state = Ram_HeapSlots->menuSelectWork;
 
     *(u16 *)(state + 144) = (u16)((u32)w + 2);
     *(u16 *)(state + 146) = (u16)h;
@@ -29,8 +29,8 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
         UiWindow_Create(x, y, *(s16 *)(state + 144), 3, 2);
 }
 
-extern s8 Menu_TopEntryPositionByCommand[];
-extern s8 Menu_TopEntryCommandByPosition[];
+extern s8 gMenu_TopEntryPositionByCommand[];
+extern s8 gMenu_TopEntryCommandByPosition[];
 
 s32 Party_SumDjinnCountsFar(s32);
 void *AffineEffect_InitializeWork(void);
@@ -57,7 +57,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     }
 
     triple = group * 3;
-    table = Menu_TopEntryPositionByCommand;
+    table = gMenu_TopEntryPositionByCommand;
     offset = triple << 1;
     selection = TableGet(table, selection + offset) - 1;
     if (selection < 0) {
@@ -76,7 +76,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
-        s8 *commands = Menu_TopEntryCommandByPosition;
+        s8 *commands = gMenu_TopEntryCommandByPosition;
         s32 index;
 
         asm volatile("" : "+l"(commands)); /* FAKEMATCH: ⚓️ loads the table's address before forming the index */

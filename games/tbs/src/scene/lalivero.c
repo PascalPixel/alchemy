@@ -60,7 +60,7 @@ static void EV23_TALK(void)
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -70,16 +70,16 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 s32 SceneData_SelectTableByFlag9a7(void)
 {
 	if (Engine_GameFlagIsSet(0x9A7) != 0)
 	{
-		return (s32)Placement_Actors9a7;
+		return (s32)gPlacement_Actors9a7;
 	}
-	return (s32)Placement_Actors;
+	return (s32)gPlacement_Actors;
 }
 
 static void EV10_TALK(s32 actor)
@@ -89,14 +89,14 @@ static void EV10_TALK(s32 actor)
 	struct FieldActor *object;
 
 	object = Actor_Get(actor);
-	object->scale_x = 0x10000;
+	object->scaleX = 0x10000;
 	object = Actor_Get(actor);
-	object->scale_y = 0x10000;
+	object->scaleY = 0x10000;
 	Engine_EventSetMessage(MsgLaliveroOhhTheyTookShebaHeaded);
 	Event_ShowMessage(actor, 0);
 	Actor_FaceDirection(actor, 0xc000, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(actor, Lalivero_LamentActions);
+	Engine_ActorEnableActionCallback(actor, gLalivero_LamentActions);
 }
 
 static void EV11_TALK(s32 obj)
@@ -130,34 +130,34 @@ static void SceneActor_SetupActor18Event(void)
 
 static void Scene_RunTableTransition(void)
 {
-	s32 no = gEventWork->touched_trigger;
-	s32 x = Lalivero_DoorCells[no][0];
-	s32 y = Lalivero_DoorCells[no][1];
+	s32 no = gEventWork->touchedTrigger;
+	s32 x = gLalivero_DoorCells[no][0];
+	s32 y = gLalivero_DoorCells[no][1];
 
-	Object_GetById(0)->motion_flags = 2;
+	Object_GetById(0)->motionFlags = 2;
 	Engine_AudioPlayCue(158);
 	if (no == 6)
 	{
-		Map_AnimateCells((s32)Lalivero_GateOpenSteps, (u16)x, (u16)y);
+		Map_AnimateCells((s32)gLalivero_GateOpenSteps, (u16)x, (u16)y);
 		Actor_WalkBy(0, 0, -16);
 	}
 	else
 	{
-		Map_AnimateCells((s32)Lalivero_DoorOpenSteps, (u16)x, (u16)y);
+		Map_AnimateCells((s32)gLalivero_DoorOpenSteps, (u16)x, (u16)y);
 		Actor_CenterAndWalk(0, 2, -16);
 	}
 	Engine_EventWait(10);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
 static void Lalivero_RequestTouchedExit(void)
 {
 	struct EventWork *work = gEventWork;
-	s16				 *p = (s16 *)&work->touched_trigger;
+	s16				 *p = (s16 *)&work->touchedTrigger;
 	s32				  n = *p;
 
-	work->transition_frames = 16;
+	work->transitionFrames = 16;
 	Engine_EventRequestExit(n);
 }
 
@@ -404,7 +404,7 @@ static void EV50_TOUCH(void)
 	Actor_FaceDirection(22, 0x4000, 0);
 	Engine_EventWait(80);
 	Actor_SetSpeed(22, 0xcccc, 0x6666);
-	Object_GetById(22)->motion_flags = 2;
+	Object_GetById(22)->motionFlags = 2;
 	Engine_ActorSetSpritePriority(22, 2);
 	Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
 	Event_PlayCue(158);
@@ -412,7 +412,7 @@ static void EV50_TOUCH(void)
 	Actor_SetPosition(22, 0x480000, 0x1380000);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-	Object_GetById(22)->target_z = ACTOR_NO_TARGET;
+	Object_GetById(22)->targetZ = ACTOR_NO_TARGET;
 	Actor_SetPosition(22, 0x480000, 0x1380000);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(22, 72, 328);
@@ -553,9 +553,9 @@ static void EV50_TOUCH(void)
 	gEventWork->message += 1;
 	Engine_PartyGiveItem(242, 0);
 	Engine_EventWait(10);
-	Actor_Get(22)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(22)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkByAndWait(22, 0, -16);
-	Actor_Get(22)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(22)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(22, 0x4100, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
@@ -691,9 +691,9 @@ s32 SceneData_SelectSecondaryTableByFlag9a7(void)
 {
 	if (Engine_GameFlagIsSet(0x9A7) != 0)
 	{
-		return (s32)Placement_Effects9a7;
+		return (s32)gPlacement_Effects9a7;
 	}
-	return (s32)Placement_Effects;
+	return (s32)gPlacement_Effects;
 }
 
 s32 Scene_Initialize(void)
@@ -711,37 +711,37 @@ s32 Scene_Initialize(void)
 	{
 		GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 24;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 24;
 
 	Engine_ActorSetAnimation(19, 3);
-	Actor_Get(19)->collision_flags = 0;
+	Actor_Get(19)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(19), 0);
 	Engine_ActorSetAnimation(20, 3);
-	Actor_Get(20)->collision_flags = 0;
+	Actor_Get(20)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(20), 0);
 	Engine_ActorSetAnimation(21, 3);
-	Actor_Get(21)->collision_flags = 0;
+	Actor_Get(21)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(21), 0);
 	Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_BLACK_ORB), 0);
 
 	object = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
-	object->actor.unknown_5c = 1;
-	object->actor.motion_flags = 0;
+	object->actor.unk5c = 1;
+	object->actor.motionFlags = 0;
 	sprite = object->actor.sprite;
 	object->actor.y.fixed = PIXELS(10);
-	sprite->part_count = 0;
-	sprite->full_color = 0;
+	sprite->partCount = 0;
+	sprite->fullColor = 0;
 	sprite->palette = 0;
 	icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
 	Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-	Engine_VramLoad(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
+	Engine_VramLoad(sprite->vramBlock, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
 	Engine_HeapRelease(HEAP_ITEM_ICON);
 
 	if (GameFlag_IsSet(FLAG_AERIE_EVENTS_DONE))
 	{
 		Engine_ActorSetSpriteFlags(Actor_Get(24), 0);
-		Actor_Get(24)->collision_flags = 0;
+		Actor_Get(24)->collisionFlags = 0;
 		Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
 		Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
 		Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
@@ -753,13 +753,13 @@ s32 Scene_Initialize(void)
 	else
 	{
 		object = (union FieldObject *)Actor_Get(8);
-		object->actor.collision_flags = 0;
-		object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		object->actor.collisionFlags = 0;
+		object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		object->actor.sprite->flags = 0;
 		object->actor.sprite->rotation = FACING_NORTH;
 		object = (union FieldObject *)Actor_Get(9);
-		object->actor.collision_flags = 0;
-		object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		object->actor.collisionFlags = 0;
+		object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		object->actor.sprite->flags = 0;
 		object->actor.sprite->rotation = FACING_SOUTH;
 		Map_CopyCellAttributes(20, 23, 1, 1, 13, 23);
@@ -786,7 +786,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-s32 Lalivero_LamentActions[] = {
+s32 gLalivero_LamentActions[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -816,7 +816,7 @@ s32 Lalivero_LamentActions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 72, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 152, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -834,7 +834,7 @@ struct SceneEntrance Placement_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(178),
 	SCENE_EXIT(1, 180, 30),
 	SCENE_EXIT(2, 179, 1),
@@ -852,12 +852,12 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Placement_Actors[] = {
+struct ScenePlacement gPlacement_Actors[] = {
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x6c, CONDITION_ALWAYS, (s32)Lalivero_LamentActions,
+	{ 0x6c, CONDITION_ALWAYS, (s32)gLalivero_LamentActions,
 		PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(312), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -888,7 +888,7 @@ struct ScenePlacement Placement_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Placement_Actors9a7[] = {
+struct ScenePlacement gPlacement_Actors9a7[] = {
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(216), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -934,20 +934,20 @@ struct ScenePlacement Placement_Actors9a7[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 Lalivero_DoorCells[][2] = {
+s16 gLalivero_DoorCells[][2] = {
 	{ 0, 0 }, { 4, 9 }, { 9, 11 }, { 12, 8 }, { 18, 8 }, { 22, 8 }, { 26, 7 }, { 4, 18 },
 	{ 0, 0 }, { 22, 15 }, { 27, 18 }, { 0, 0 },
 };
 
-u16 Lalivero_DoorOpenSteps[] = {
+u16 gLalivero_DoorOpenSteps[] = {
 	MAP_CELL_STEP(33, 0, 1, 2, 8), MAP_CELL_STEP(34, 0, 1, 2, 1), MAP_CELL_STEPS_END,
 };
 
-u16 Lalivero_GateOpenSteps[] = {
+u16 gLalivero_GateOpenSteps[] = {
 	MAP_CELL_STEP(34, 2, 2, 2, 8), MAP_CELL_STEP(36, 2, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 
-struct SceneEvent Placement_Effects[] = {
+struct SceneEvent gPlacement_Effects[] = {
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 21 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
@@ -990,7 +990,7 @@ struct SceneEvent Placement_Effects[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Placement_Effects9a7[] = {
+struct SceneEvent gPlacement_Effects9a7[] = {
 	{ EVENT_TOUCH, 50, 0x9ba, EVENT_SCRIPT(EV50_TOUCH) },
 	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },

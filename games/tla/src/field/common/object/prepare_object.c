@@ -21,8 +21,8 @@ struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 
     if (object != NULL) {
         Object_SetSpritePriority(object, 0);
-        object->motion_flags = 0;
-        object->collision_flags = 8;
+        object->motionFlags = 0;
+        object->collisionFlags = 8;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Object_SetPartAttribute(object, 14);
         Animation_SetStateFlags(object, 1);

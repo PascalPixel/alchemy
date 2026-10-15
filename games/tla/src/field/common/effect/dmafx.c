@@ -8,15 +8,15 @@ void Func_080d5ff8(void);
 void Func_080d607c(void);
 
 struct DmaFxWork {
-    u8 unknown_000[0xf01];
+    u8 unk000[0xf01];
     u8 kind;
-    u8 unknown_f02[6];
-    s32 unknown_f08;
-    s32 unknown_f0c;
-    s32 unknown_f10;
-    s32 unknown_f14;
-    s32 unknown_f18;
-    s32 unknown_f1c;
+    u8 unkf02[6];
+    s32 unkf08;
+    s32 unkf0c;
+    s32 unkf10;
+    s32 unkf14;
+    s32 unkf18;
+    s32 unkf1c;
 };
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
@@ -33,12 +33,12 @@ void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f)
     Dma_Set((void *)&zero, work, 0x850003c8, REG_DMA3);
     WaitDma((volatile struct DmaRegisters *)0x040000d4);
     work->kind = kind;
-    work->unknown_f08 = a;
-    work->unknown_f0c = b;
-    work->unknown_f18 = e;
-    work->unknown_f1c = f;
-    work->unknown_f10 = c;
-    work->unknown_f14 = d;
+    work->unkf08 = a;
+    work->unkf0c = b;
+    work->unkf18 = e;
+    work->unkf1c = f;
+    work->unkf10 = c;
+    work->unkf14 = d;
     Scheduler_AddOrUpdateCallback(Func_080d607c, 0x480);
     Scheduler_AddOrUpdateCallback(Func_080d5ff8, 0xc80);
 }

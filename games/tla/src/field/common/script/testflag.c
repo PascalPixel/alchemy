@@ -6,7 +6,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
     s32 done;
 
-    interpreter->condition_result =
+    interpreter->conditionResult =
         GameFlag_Test(interpreter->script[interpreter->cursor + 1]);
     done = 1;
     /* FAKEMATCH: ⚓️ sets the result before the cursor update */

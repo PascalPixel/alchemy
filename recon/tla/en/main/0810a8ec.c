@@ -6,7 +6,7 @@ s32 Shop_CanServe(s32 entry_id, s32 kind);
 
 s32 Shop_CountUnits(void)
 {
-    u8 *work = Ram_HeapSlots->menu_runtime;
+    u8 *work = Ram_HeapSlots->menuRuntime;
     u8 *base;
     s32 active = 0;
     s32 variant = (s8)work[0x507];

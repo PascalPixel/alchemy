@@ -18,7 +18,7 @@ struct EffectVector {
 
 // ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
 struct FallbackScene {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct EffectSlot slots[16];
 };
 
@@ -34,8 +34,8 @@ void Func_080e0020(struct EffectSlot *effect);
 
 void Func_080e0134(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
-    struct ObjectRuntime *user = scene->main_object;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+    struct ObjectRuntime *user = scene->mainObject;
     struct ObjectRuntime *obj;
     struct EffectSlot *slot;
     struct EffectVector pos;
@@ -66,8 +66,8 @@ void Func_080e0134(void)
         obj->y = from.y + (to.y - from.y) * step / 10;
         obj->z = from.z + (to.z - from.z) * step / 10;
         scale = BattleFx_Interpolate(0x10000, 0x4000, step);
-        obj->scale_x = scale;
-        obj->scale_y = scale;
+        obj->scaleX = scale;
+        obj->scaleY = scale;
         WaitFrames(1);
         step++;
         if (step >= steps)

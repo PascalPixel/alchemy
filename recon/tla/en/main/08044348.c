@@ -7,7 +7,7 @@
 
 void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s32 offset;
     u16 *map;

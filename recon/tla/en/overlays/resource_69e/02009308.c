@@ -4,7 +4,7 @@
 extern u32 gFrameCount;
 
 u32 Random16Far(void);
-void Func_02001c88(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
+void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,
     u32 flags, const struct EffectOptions *options);
 
 s32 Func_02001308(struct FieldActor *object)
@@ -16,8 +16,8 @@ s32 Func_02001308(struct FieldActor *object)
     if (phase != 0)
         goto done;
     options.priority = 3;
-    options.start_scale_x = 0xb333;
-    options.start_scale_y = 0xb333;
+    options.startScaleX = 0xb333;
+    options.startScaleY = 0xb333;
     options.palette = 14;
     x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);

@@ -14,11 +14,11 @@ extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern struct SceneEntrance XianInteriors_SceneTable0[];
-extern u32 XianInteriors_SceneTable1[];
-extern struct ScenePlacement XianInteriors_SceneTable2[];
-extern struct ScenePlacement XianInteriors_SceneTable2Entrance8[];
-extern struct SceneEvent XianInteriors_SceneTable3[];
-extern struct SceneEvent XianInteriors_SceneTable3Entrance8[];
+extern struct SceneEntrance gXianInteriors_SceneTable0[];
+extern u32 gXianInteriors_SceneTable1[];
+extern struct ScenePlacement gXianInteriors_SceneTable2[];
+extern struct ScenePlacement gXianInteriors_SceneTable2Entrance8[];
+extern struct SceneEvent gXianInteriors_SceneTable3[];
+extern struct SceneEvent gXianInteriors_SceneTable3Entrance8[];
 
 #endif

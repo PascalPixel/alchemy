@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const u16 BattleEffect_ColorBitOperands[];
-extern const u16 BattleEffect_BitOperands[];
+extern const u16 gBattleEffect_ColorBitOperands[];
+extern const u16 gBattleEffect_BitOperands[];
 
 #endif

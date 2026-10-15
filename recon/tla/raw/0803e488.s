@@ -59,7 +59,7 @@ Func_0803e488:
 .L_0803e4f0:
 	.4byte 0xfffffe00
 .L_0803e4f4:
-	.4byte Data_0805c5c4
+	.4byte gData_0805c5c4
 .L_0803e4f8:
 	ldrh r2, [r6, #8]
 	ldr r1, .L_0803e558
@@ -110,7 +110,7 @@ Func_0803e488:
 .L_0803e554:
 	.4byte 0x000003ff
 .L_0803e558:
-	.4byte Data_0805c1c4
+	.4byte gData_0805c1c4
 .L_0803e55c:
 	.4byte 0xfffffc00
 .L_0803e560:

@@ -30,9 +30,9 @@
 
 struct OwnerState
 {
-	u8	unknown_00[0x34];
-	u16 max_hp;
-	u16 max_pp;
+	u8	unk00[0x34];
+	u16 maxHp;
+	u16 maxPp;
 	u16 hp;
 	u16 pp;
 };
@@ -48,8 +48,8 @@ static __inline__ void Party_RestoreAll(void)
 	for (i = 0; i < cnt; i++)
 	{
 		state = UnitGet(owners[i]);
-		state->hp = state->max_hp;
-		state->pp = state->max_pp;
+		state->hp = state->maxHp;
+		state->pp = state->maxPp;
 		Engine_OwnerRecalculateRatios(owners[i]);
 	}
 	Party_AddActiveOwner(1);
@@ -69,12 +69,12 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 
 s32 BabiPalace_GetRegions(void)
 {
-	return (s32)BabiPalace_EmptyTable;
+	return (s32)gBabiPalace_EmptyTable;
 }
 
 s32 BabiPalace_GetExits(void)
 {
-	return (s32)BabiPalace_MessageTable;
+	return (s32)gBabiPalace_MessageTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -241,13 +241,13 @@ static void RunMiddleAuxiliarySequence(s32 a)
 
 	obj = Actor_Get(a);
 	Event_Begin();
-	q = (u8 *)BabiPalace_MiddleActionScript;
+	q = (u8 *)gBabiPalace_MiddleActionScript;
 	Actor_EnableActionCallback(a, q);
 	Event_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
 	Event_ShowMessage(a, 0);
 	Actor_Stop(a);
-	obj->scale_y = 0x10000;
-	obj->scale_x = 0x10000;
+	obj->scaleY = 0x10000;
+	obj->scaleX = 0x10000;
 	Event_Wait(30);
 	Actor_RunRepeatedMotion(a, 2);
 	Event_Wait(30);
@@ -266,8 +266,8 @@ static void RunMiddleAuxiliarySequence(s32 a)
 	Event_ShowMessage(a, 0);
 	Actor_FaceDirection(a, FACING_NORTHEAST, 0);
 	Event_Wait(10);
-	obj->scale_y = 0x10000;
-	obj->scale_x = 0x10000;
+	obj->scaleY = 0x10000;
+	obj->scaleX = 0x10000;
 	Actor_EnableActionCallback(a, q);
 	Event_End();
 }
@@ -380,11 +380,11 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	Actor_FaceDirection(1, FACING_EAST, 0);
 	Actor_FaceDirection(3, FACING_EAST, 0);
 	Actor_FaceDirection(2, FACING_NORTHEAST, 0);
-	gEventWork->transition_frames = 60;
+	gEventWork->transitionFrames = 60;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Event_Wait(20);
-	gEventWork->transition_frames = 24;
+	gEventWork->transitionFrames = 24;
 	Actor_SetSpeed(3, 0x10000, 0x8000);
 	Actor_WalkByAndWait(MIA, 16, 0);
 	Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
@@ -396,7 +396,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	record = Actor_Get(0);
 	record->z.fixed += -0x30000;
 	record = Actor_Get(0);
-	record->target_z += -0x30000;
+	record->targetZ += -0x30000;
 	Actor_SetAnimation(0, 32);
 	Event_Wait(40);
 	Actor_SetAnimationAndWait(0, 34);
@@ -968,8 +968,8 @@ static void FieldScene_RunBranchingActorSequence(void)
 	Actor_FaceDirection(MIA, FACING_EAST, 0);
 	Actor_FaceDirection(IVAN, FACING_WEST, 0);
 	event = (struct EventWork *)((u8 **)&gEventWork)[0];
-	event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	event->transition_frames = 12;
+	event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	event->transitionFrames = 12;
 	Task_Wait(1);
 	DisplayTransition_InitializeBattleEffectState(9);
 	work = ((u8 **)&gEventWork)[4];
@@ -993,8 +993,8 @@ static void FieldScene_RunBranchingActorSequence(void)
 	}
 	SetHalf((u16 *)(work + 0x536), 31);
 	event = (struct EventWork *)((u8 **)&gEventWork)[0];
-	event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	event->transition_frames = 24;
+	event->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	event->transitionFrames = 24;
 	Event_Wait(20);
 	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 50);
 	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);
@@ -1020,7 +1020,7 @@ static void FieldScene_RunBranchingActorSequence(void)
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	actor->z.fixed -= 0x30000;
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
-	actor->target_z -= 0x30000;
+	actor->targetZ -= 0x30000;
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 32);
 	Event_Wait(40);
 	Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
@@ -1305,9 +1305,9 @@ static void FieldScene_RunMainCutsceneSequence(void)
 		Actor_FaceDirection(20, FACING_SOUTH, 0);
 		Event_Wait(20);
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
-		Actor_Get(20)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Actor_Get(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkByAndWait(20, 0, -16);
-		Actor_Get(20)->steering_flags |= ACTOR_FACES_MOTION;
+		Actor_Get(20)->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_FaceDirection(14, FACING_SOUTH, 0);
 		Event_Wait(40);
 		Actor_SetSpeed(14, 0xcccc, 0x6666);
@@ -2181,7 +2181,7 @@ static void BabiPalace_LeaveThroughDoor(void)
 	Event_PlayCue(158);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-	if (work->touched_trigger == 32)
+	if (work->touchedTrigger == 32)
 	{
 		Map_ClearLayerEntryFlag(1);
 		Event_Wait(10);
@@ -2189,7 +2189,7 @@ static void BabiPalace_LeaveThroughDoor(void)
 	}
 	else
 	{
-		if (work->touched_trigger == 30)
+		if (work->touchedTrigger == 30)
 		{
 			Map_ClearLayerEntryFlag(4);
 			Event_Wait(10);
@@ -2203,7 +2203,7 @@ static void BabiPalace_LeaveThroughDoor(void)
 		}
 	}
 	Event_Wait(16);
-	Event_RequestExit(work->touched_trigger);
+	Event_RequestExit(work->touchedTrigger);
 	Map_SetLayerEntryFlag(1);
 	Map_SetLayerEntryFlag(2);
 	Map_SetLayerEntryFlag(4);
@@ -2215,7 +2215,7 @@ static void EV02_TOUCH(void)
 	Event_Begin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
 	Event_PlayCue(158);
-	Map_AnimateCells(BabiPalace_CellSteps, 36, 10);
+	Map_AnimateCells(gBabiPalace_CellSteps, 36, 10);
 	Actor_CenterAndWalk(0, 2, -16);
 	Event_Wait(16);
 	Event_RequestExit(2);
@@ -2372,16 +2372,16 @@ s32 BabiPalace_ApplyEntryState(void)
 			else
 			{
 				actor = Actor_Get(16);
-				actor->unknown_5c = 1;
-				actor->motion_flags = set;
+				actor->unk5c = 1;
+				actor->motionFlags = set;
 				sprite = actor->sprite;
 				actor->y.fixed = 0x40000;
-				sprite->part_count = set;
-				sprite->full_color = 0;
+				sprite->partCount = set;
+				sprite->fullColor = 0;
 				sprite->palette = 0;
 				buf = Heap_Allocate(17, 0x608);
 				Item_LoadIcon(205);
-				Vram_Load(sprite->vram_block, 128, buf + 0x400);
+				Vram_Load(sprite->vramBlock, 128, buf + 0x400);
 				Heap_Release(17);
 			}
 			if (gGameState.entrance == 33 && !GameFlag_IsSet(0x96f))
@@ -2397,8 +2397,8 @@ s32 BabiPalace_ApplyEntryState(void)
 		{
 			Actor_SetPosition(10, 0x780000, 0x480000);
 		}
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-		Actor_Get(9)->collision_flags |= 4;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		Actor_Get(9)->collisionFlags |= 4;
 		if (gGameState.entrance == 99)
 		{
 			Party_RestoreAll();
@@ -2419,11 +2419,11 @@ s32 BabiPalace_ApplyEntryState(void)
 	return 0;
 }
 
-u16 BabiPalace_CellSteps[] = {
+u16 gBabiPalace_CellSteps[] = {
 	MAP_CELL_STEP(25, 28, 1, 3, 5), MAP_CELL_STEP(26, 28, 1, 3, 5), MAP_CELL_STEP(27, 28, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-s32 BabiPalace_MiddleActionScript[] = {
+s32 gBabiPalace_MiddleActionScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -2494,11 +2494,11 @@ struct SceneEntrance gBabiPalaceEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 BabiPalace_EmptyTable[] = {
+s16 gBabiPalace_EmptyTable[] = {
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 BabiPalace_MessageTable[] = {
+u32 gBabiPalace_MessageTable[] = {
 	SCENE_EXITS(138),
 	SCENE_EXIT(1, 139, 2),
 	SCENE_EXIT(2, 138, 24),
@@ -2566,7 +2566,7 @@ struct ScenePlacement gBabiPalacePlacementsOther[] = {
 		PIXELS(56), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(392), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ 0x3e, CONDITION_ALWAYS, (s32)BabiPalace_MiddleActionScript,
+	{ 0x3e, CONDITION_ALWAYS, (s32)gBabiPalace_MiddleActionScript,
 		PIXELS(472), 0, PIXELS(136), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(88), 0, PIXELS(296), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },

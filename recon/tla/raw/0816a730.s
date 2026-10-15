@@ -352,8 +352,8 @@ Func_0816a730:
 .L_0816a9f8:
 	.4byte Func_08143000
 .L_0816a9fc:
-	.4byte Data_08198afc
+	.4byte gData_08198afc
 .L_0816aa00:
-	.4byte Data_08198b0a
+	.4byte gData_08198b0a
 .L_0816aa04:
 	.4byte 0xffffe000

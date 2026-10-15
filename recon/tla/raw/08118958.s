@@ -190,4 +190,4 @@ Func_08118958:
 .L_08118ad4:
 	.4byte gPartyState
 .L_08118ad8:
-	.4byte Data_03001110
+	.4byte gData_03001110

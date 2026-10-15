@@ -20,7 +20,7 @@
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Suhalla_Scripts;
+	return (u8 *)gSuhalla_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -30,16 +30,16 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Suhalla_Messages;
+	return (u8 *)gSuhalla_Messages;
 }
 
 s32 SceneData_SelectActorTableByFlag96f(void)
 {
 	if (Engine_GameFlagIsSet(0x96f) != 0)
 	{
-		return (s32)Suhalla_ActorsFlag96f;
+		return (s32)gSuhalla_ActorsFlag96f;
 	}
-	return (s32)Suhalla_Actors;
+	return (s32)gSuhalla_Actors;
 }
 
 static void EV09_TALK(s32 obj)
@@ -86,28 +86,28 @@ static void EV16_PSYNERGY(void)
 static void Suhalla_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  no = work->touched_trigger;
-	u16				  x = Suhalla_CellAnimationOrigins[no][0];
-	u16				  y = Suhalla_CellAnimationOrigins[no][1];
+	s32				  no = work->touchedTrigger;
+	u16				  x = gSuhalla_CellAnimationOrigins[no][0];
+	u16				  y = gSuhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
-	Map_AnimateCells(Suhalla_CellSteps0, x, y);
+	Map_AnimateCells(gSuhalla_CellSteps0, x, y);
 	Actor_WalkBy(0, 0, -16);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
 static void EV02_TOUCH(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  no = work->touched_trigger;
-	u16				  x = Suhalla_CellAnimationOrigins[no][0];
-	u16				  y = Suhalla_CellAnimationOrigins[no][1];
+	s32				  no = work->touchedTrigger;
+	u16				  x = gSuhalla_CellAnimationOrigins[no][0];
+	u16				  y = gSuhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
-	Map_AnimateCells(Suhalla_CellSteps1, x, y);
+	Map_AnimateCells(gSuhalla_CellSteps1, x, y);
 	Actor_WalkBy(0, 0, -16);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
@@ -115,9 +115,9 @@ s32 SceneData_SelectExtraTableByFlag96f(void)
 {
 	if (Engine_GameFlagIsSet(0x96F) != 0)
 	{
-		return (s32)Suhalla_ExtrasFlag96f;
+		return (s32)gSuhalla_ExtrasFlag96f;
 	}
-	return (s32)Suhalla_Extras;
+	return (s32)gSuhalla_Extras;
 }
 
 s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
@@ -130,8 +130,8 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 	}
 
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 24;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 24;
 
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
@@ -141,7 +141,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 	return 0;
 }
 
-struct SceneEntrance Suhalla_Scripts[] = {
+struct SceneEntrance gSuhalla_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -153,7 +153,7 @@ struct SceneEntrance Suhalla_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Suhalla_Messages[] = {
+u32 gSuhalla_Messages[] = {
 	SCENE_EXITS(167),
 	SCENE_EXIT(1, 168, 1),
 	SCENE_EXIT(2, 168, 2),
@@ -166,7 +166,7 @@ u32 Suhalla_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Suhalla_Actors[] = {
+struct ScenePlacement gSuhalla_Actors[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -188,7 +188,7 @@ struct ScenePlacement Suhalla_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Suhalla_ActorsFlag96f[] = {
+struct ScenePlacement gSuhalla_ActorsFlag96f[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -211,19 +211,19 @@ struct ScenePlacement Suhalla_ActorsFlag96f[] = {
 };
 
 // セルアニメの原点 (x, y)
-s16 Suhalla_CellAnimationOrigins[][2] = {
+s16 gSuhalla_CellAnimationOrigins[][2] = {
 	{ 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };
 
-u16 Suhalla_CellSteps0[] = {
+u16 gSuhalla_CellSteps0[] = {
 	MAP_CELL_STEP(25, 0, 1, 2, 8), MAP_CELL_STEP(26, 0, 1, 2, 1), MAP_CELL_STEPS_END,
 };
 
-u16 Suhalla_CellSteps1[] = {
+u16 gSuhalla_CellSteps1[] = {
 	MAP_CELL_STEP(26, 2, 2, 2, 8), MAP_CELL_STEP(28, 2, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 
-struct SceneEvent Suhalla_Extras[] = {
+struct SceneEvent gSuhalla_Extras[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
@@ -253,7 +253,7 @@ struct SceneEvent Suhalla_Extras[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Suhalla_ExtrasFlag96f[] = {
+struct SceneEvent gSuhalla_ExtrasFlag96f[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },

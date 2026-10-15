@@ -1,13 +1,13 @@
 #include "types.h"
 
 struct Wanderer {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
-    u8 unknown_08[90];
+    u8 unk08[90];
     u8 timer;
     u8 turned;
-    u16 facing_a;
-    u16 facing_b;
+    u16 facingA;
+    u16 facingB;
 };
 
 void Func_020057cc(s32 a, s32 b);
@@ -35,10 +35,10 @@ s32 Func_0200028c(struct Wanderer *actor)
             *turned = 0;
             /* FAKEMATCH: and clears the flag before it addresses the facing */
             asm volatile("");
-            facing = &actor->facing_a;
+            facing = &actor->facingA;
         } else {
             *turned = 1;
-            facing = &actor->facing_b;
+            facing = &actor->facingB;
         }
         actor->facing = *facing;
     }

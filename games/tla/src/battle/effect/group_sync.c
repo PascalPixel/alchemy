@@ -5,7 +5,7 @@
 #include "object_runtime.h"
 
 struct FxGroup {
-    u8 unknown_00[32];
+    u8 unk00[32];
     struct ObjectRuntime *objects[8];
     u16 values[8];
     s32 count;
@@ -23,9 +23,9 @@ s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 // one's sprite value.
 void Func_080e8cfc(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
-    struct EventWork *work = Ram_HeapSlots->event_work;
-    struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battle_fx_work[0];
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
+    struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
     struct ObjectRuntime **objects;
     struct ObjectRuntime *obj;
     s32 i;
@@ -36,9 +36,9 @@ void Func_080e8cfc(void)
     asm("");
     for (i = 0; i < 80; i++) {
         obj = *objects++;
-        if (obj == NULL || obj->script == NULL || obj == scene->main_object)
+        if (obj == NULL || obj->script == NULL || obj == scene->mainObject)
             continue;
-        if (Func_080cdac0((s16)(scene->animation | 0x100), scene->first_object_id, i) == -1)
+        if (Func_080cdac0((s16)(scene->animation | 0x100), scene->firstObjectId, i) == -1)
             continue;
         group->objects[group->count] = obj;
         group->values[group->count] = ((union FxSprite *)obj->animation)->halves[9];
@@ -49,7 +49,7 @@ void Func_080e8cfc(void)
 
 void Func_080e8d80(void)
 {
-    struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battle_fx_work[0];
+    struct FxGroup *group = (struct FxGroup *)Ram_HeapSlots->battleFxWork[0];
     s32 i;
 
     for (i = 0; i < group->count; i++)

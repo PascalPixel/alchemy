@@ -48,7 +48,7 @@ s32 Math_DivideUnsigned();
 
 u8 *LemurianShip_GetEntrances(void)
 {
-	return LemurianShip_SceneTableA;
+	return gLemurianShip_SceneTableA;
 }
 
 s32 LemurianShip_GetDefaultResult(void)
@@ -58,17 +58,17 @@ s32 LemurianShip_GetDefaultResult(void)
 
 u8 *LemurianShip_GetExits(void)
 {
-	return LemurianShip_SceneTableB;
+	return gLemurianShip_SceneTableB;
 }
 
 u8 *LemurianShip_GetPlacements(void)
 {
-	return LemurianShip_SceneTableC;
+	return gLemurianShip_SceneTableC;
 }
 
 static void EV01_TOUCH(void)
 {
-	Engine_EventRequestExit(gEventWork->touched_trigger);
+	Engine_EventRequestExit(gEventWork->touchedTrigger);
 	Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -84,7 +84,7 @@ static void FieldScene_ConfigureFixedPointValues(void)
 
 u8 *LemurianShip_GetEvents(void)
 {
-	return LemurianShip_SceneTableD;
+	return gLemurianShip_SceneTableD;
 }
 
 static void LemurianShip_CyclePalette(void)
@@ -92,9 +92,9 @@ static void LemurianShip_CyclePalette(void)
 	u16 *frame;
 	s32	 v;
 
-	frame = &LemurianShip_PaletteStep;
+	frame = &gLemurianShip_PaletteStep;
 	v = Math_DivideUnsigned(*frame, 6);
-	Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)LemurianShip_PaletteFrames),
+	Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)gLemurianShip_PaletteFrames),
 		(void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
 	(*frame)++;
 	if (*frame > 35)
@@ -126,35 +126,35 @@ static void LemurianShip_UpdateDriftingObject(u8 *obj)
 
 			*p = delay;
 		}
-		Engine_ObjectSetScript(obj, LemurianShip_DriftScript);
+		Engine_ObjectSetScript(obj, gLemurianShip_DriftScript);
 	}
 }
 
 static void SceneState_CountDownEveryFortyTicks(void)
 {
-	s32 n = LemurianShip_CountTicks + 1;
+	s32 n = gLemurianShip_CountTicks + 1;
 
-	LemurianShip_CountTicks = n;
+	gLemurianShip_CountTicks = n;
 	if (n == 40)
 	{
-		if (LemurianShip_Count > 4)
+		if (gLemurianShip_Count > 4)
 		{
-			LemurianShip_Count -= 1;
-			LemurianShip_CountTicks = 0;
+			gLemurianShip_Count -= 1;
+			gLemurianShip_CountTicks = 0;
 		}
 	}
 }
 
 struct WaveMapLayer
 {
-	s32 unknown_00[3];
+	s32 unk00[3];
 	s32 y;
-	s32 unknown_10[8];
+	s32 unk10[8];
 };
 
 struct WaveMap
 {
-	u8					unknown_00[20];
+	u8					unk00[20];
 	struct WaveMapLayer layers[8];
 };
 
@@ -170,52 +170,52 @@ static void LemurianShip_UpdateWaves(void)
 	s32						   x, z;
 
 	map = gMapWork[0];
-	if (LemurianShip_ShimmerActive != 0)
+	if (gLemurianShip_ShimmerActive != 0)
 	{
-		swell = Iwram_MulQ16(Engine_MathSin(LemurianShip_ShimmerPhase << 9), 3);
-		blend = LemurianShip_Count + ((swell + 8) << 8);
+		swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_ShimmerPhase << 9), 3);
+		blend = gLemurianShip_Count + ((swell + 8) << 8);
 		Io_Write16(blend, &REG_BLDALPHA);
-		LemurianShip_ShimmerPhase++;
+		gLemurianShip_ShimmerPhase++;
 	}
-	if (LemurianShip_SwellActive != 0)
+	if (gLemurianShip_SwellActive != 0)
 	{
-		swell = Iwram_MulQ16(Engine_MathSin(LemurianShip_SwellPhase << 9), 2) << 16;
-		map->layers[6].y = LemurianShip_SwellLayerSixY + swell;
-		map->layers[7].y = LemurianShip_SwellLayerSevenY + swell;
-		if (LemurianShip_StoredSlot0 != -0x10000)
+		swell = Iwram_MulQ16(Engine_MathSin(gLemurianShip_SwellPhase << 9), 2) << 16;
+		map->layers[6].y = gLemurianShip_SwellLayerSixY + swell;
+		map->layers[7].y = gLemurianShip_SwellLayerSevenY + swell;
+		if (gLemurianShip_StoredSlot0 != -0x10000)
 		{
 			actor = Object_GetById(0);
-			actor->y.fixed = LemurianShip_StoredSlot0 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->y.fixed = gLemurianShip_StoredSlot0 + swell;
+			actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
-		if (LemurianShip_StoredRecord1 != -0x10000)
+		if (gLemurianShip_StoredRecord1 != -0x10000)
 		{
 			actor = Object_GetById(1);
-			actor->y.fixed = LemurianShip_StoredRecord1 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->y.fixed = gLemurianShip_StoredRecord1 + swell;
+			actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
-		if (LemurianShip_StoredSlot3 != -0x10000)
+		if (gLemurianShip_StoredSlot3 != -0x10000)
 		{
 			actor = Object_GetById(3);
-			actor->y.fixed = LemurianShip_StoredSlot3 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->y.fixed = gLemurianShip_StoredSlot3 + swell;
+			actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
-		if (LemurianShip_StoredRecord2 != -0x10000)
+		if (gLemurianShip_StoredRecord2 != -0x10000)
 		{
 			actor = Object_GetById(2);
-			actor->y.fixed = LemurianShip_StoredRecord2 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->y.fixed = gLemurianShip_StoredRecord2 + swell;
+			actor->terrainHeight = gLemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
-		LemurianShip_SwellPhase++;
+		gLemurianShip_SwellPhase++;
 	}
-	if (LemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0)
+	if (gLemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0)
 	{
-		x = map->layers[4].unknown_10[0] & -0x10000;
-		z = map->layers[4].unknown_10[1] & -0x10000;
+		x = map->layers[4].unk10[0] & -0x10000;
+		z = map->layers[4].unk10[1] & -0x10000;
 		x += Random_Next() * 240;
 		pos = &place;
 		pos->x = x;
@@ -229,8 +229,8 @@ static void LemurianShip_UpdateWaves(void)
 			actor->update = (void (*)(union FieldObject *))LemurianShip_UpdateDriftingObject;
 			actor->timer = 60;
 			actor->work = 1;
-			actor->motion_flags = 0;
-			actor->priority_flags = 2;
+			actor->motionFlags = 0;
+			actor->priorityFlags = 2;
 			actor->sprite->priority = 2;
 			Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
 			Object_SetMode(actor, 0);
@@ -243,7 +243,7 @@ static s32 LemurianShip_StoreLeaderHeight(void)
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &LemurianShip_StoredSlot0;
+	d = &gLemurianShip_StoredSlot0;
 	p = Object_GetById(0);
 	*d = p->y.fixed;
 	return 0;
@@ -254,7 +254,7 @@ static s32 LemurianShip_StoreActorOneHeight(void)
 	s32				  *p;
 	struct FieldActor *rec;
 
-	p = &LemurianShip_StoredRecord1;
+	p = &gLemurianShip_StoredRecord1;
 	rec = Object_GetById(1);
 	*p = rec->y.fixed;
 	return 0;
@@ -265,7 +265,7 @@ static s32 LemurianShip_StoreActorThreeHeight(void)
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &LemurianShip_StoredSlot3;
+	d = &gLemurianShip_StoredSlot3;
 	p = Object_GetById(3);
 	*d = p->y.fixed;
 	return 0;
@@ -276,7 +276,7 @@ static s32 LemurianShip_StoreActorTwoHeight(void)
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &LemurianShip_StoredRecord2;
+	d = &gLemurianShip_StoredRecord2;
 	p = Object_GetById(2);
 	*d = p->y.fixed;
 	return 0;
@@ -447,12 +447,12 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Actor_SetSpeed(1, 78643, 39321);
 	Actor_SetSpeed(2, 78643, 39321);
 	Actor_SetSpeed(3, 78643, 39321);
-	Engine_ActorEnableActionCallback(0, LemurianShip_ActionScriptA);
+	Engine_ActorEnableActionCallback(0, gLemurianShip_ActionScriptA);
 	Engine_EventWait(50);
 	Camera_MoveTo(17301504, -1, 13107200, 1);
-	Engine_ActorEnableActionCallback(1, LemurianShip_ActionScriptB);
+	Engine_ActorEnableActionCallback(1, gLemurianShip_ActionScriptB);
 	Engine_EventWait(50);
-	Engine_ActorEnableActionCallback(2, LemurianShip_ActionScriptC);
+	Engine_ActorEnableActionCallback(2, gLemurianShip_ActionScriptC);
 	Object_RefreshSelectorById(2);
 	Actor_FaceDirection(0, 16384, 0);
 	Actor_FaceDirection(1, 16384, 0);
@@ -463,7 +463,7 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(60);
 	Actor_FaceDirection(3, 32768, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(3, LemurianShip_ActionScriptD);
+	Engine_ActorEnableActionCallback(3, gLemurianShip_ActionScriptD);
 	Object_RefreshSelectorById(3);
 	Engine_ActorFaceDirection(3, 49152, 0);
 	Engine_EventWait(20);
@@ -492,9 +492,9 @@ static void Scene_RunExtendedPresentationSequence(void)
 	ship = Object_GetById(8);
 	ship->acceleration = 131;
 	ship->speed = 0x20000;
-	scroll->layers[0].speed_x = -0x3000;
+	scroll->layers[0].speedX = -0x3000;
 	ObjectMotion_CommitPositionAndActivate(8, 60, 0);
-	scroll->layers[0].speed_x = -0x6000;
+	scroll->layers[0].speedX = -0x6000;
 	ObjectMotion_CommitPositionAndActivate(8, 60, 0);
 	Engine_EventWait(80);
 	Engine_EventWait(100);
@@ -502,9 +502,9 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_CameraMoveTo(52953088, -1, 11010048, 1);
 	Engine_EventWait(300);
 	event = gMapWork[19];
-	event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Io_Write16(0, &PLTT_BACKDROP);
-	event->transition_frames = 96;
+	event->transitionFrames = 96;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
@@ -521,7 +521,7 @@ union GameStateRows
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) \
-	((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
+	((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->secondPriority = 1))
 
 struct ScrollWork
 {
@@ -529,7 +529,7 @@ struct ScrollWork
 	u8	page;
 	u8	mode;
 	u16 phase;
-	u8	unknown_f04[4];
+	u8	unkf04[4];
 	s32 frequency[2];
 	s32 step[2];
 	s32 amplitude[2];
@@ -537,7 +537,7 @@ struct ScrollWork
 
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {
-	return (u16)(Iwram_MulQ16(LemurianShip_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
+	return (u16)(Iwram_MulQ16(gLemurianShip_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
 static void EV10_SCRIPT(void)
@@ -581,19 +581,19 @@ static void EV10_SCRIPT(void)
 			Event_Wait(65);
 		}
 	}
-	LemurianShip_ShimmerActive = 1;
-	LemurianShip_ShimmerPhase = 0;
+	gLemurianShip_ShimmerActive = 1;
+	gLemurianShip_ShimmerPhase = 0;
 	FieldScheduler_AddCallback(LemurianShip_UpdateWaves, TASK_PRIORITY_SCENE);
-	LemurianShip_DriftActive = 1;
+	gLemurianShip_DriftActive = 1;
 	Event_Wait(20);
 	Event_PlayCue(163);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Event_Wait(60);
-	LemurianShip_DriftActive = 1;
+	gLemurianShip_DriftActive = 1;
 	Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-	LemurianShip_CountTicks = 0;
+	gLemurianShip_CountTicks = 0;
 	FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
@@ -604,11 +604,11 @@ static void EV10_SCRIPT(void)
 		Task_Wait(1);
 	} while (sunk <= 0x59ffff);
 	Engine_TaskRemoveCallback(SceneState_CountDownEveryFortyTicks);
-	LemurianShip_DriftActive = 0;
+	gLemurianShip_DriftActive = 0;
 	REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 3;
 	REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
 	REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
-	LemurianShip_ShimmerActive = 0;
+	gLemurianShip_ShimmerActive = 0;
 	Event_PlayCue(288);
 	Task_Wait(1);
 	Event_PlayCue(145);
@@ -620,9 +620,9 @@ static void EV10_SCRIPT(void)
 	}
 	Event_Wait(40);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	LemurianShip_SwellLayerSixY = map->layers[6].y;
-	LemurianShip_SwellLayerSevenY = map->layers[7].y;
-	LemurianShip_SwellActive = 1;
+	gLemurianShip_SwellLayerSixY = map->layers[6].y;
+	gLemurianShip_SwellLayerSevenY = map->layers[7].y;
+	gLemurianShip_SwellActive = 1;
 	for (dark = 16; dark >= 0; dark--)
 	{
 		REG_BLDY = dark;
@@ -647,12 +647,12 @@ s32 LemurianShip_SetupScene(void)
 	{
 		Inventory_AddItem(0, 242);
 	}
-	((struct EventWork *)gMapWork[19])->start_transition =
+	((struct EventWork *)gMapWork[19])->startTransition =
 		SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	Object_GetById(8)->collision_flags = 0;
-	Object_GetById(8)->priority_flags = 2;
-	Object_GetById(9)->collision_flags = 0;
-	Object_GetById(9)->priority_flags = 2;
+	Object_GetById(8)->collisionFlags = 0;
+	Object_GetById(8)->priorityFlags = 2;
+	Object_GetById(9)->collisionFlags = 0;
+	Object_GetById(9)->priorityFlags = 2;
 	{
 		struct FieldActor *actor = Object_GetById(8);
 
@@ -784,9 +784,9 @@ struct FadeSprite
 	u32 tile;
 };
 
-static struct FadeSprite LemurianShip_FadeSprites[24];
-static s16				 LemurianShip_FadeStep;
-static s16				 LemurianShip_FadeSlot;
+static struct FadeSprite sFadeSprites[24];
+static s16				 sFadeStep;
+static s16				 sFadeSlot;
 
 static void LemurianShip_StepFade(void)
 {
@@ -796,15 +796,15 @@ static void LemurianShip_StepFade(void)
 	s32	 x;
 	u32	 i;
 
-	tile = gVramBlockCache[LemurianShip_FadeSlot].offset >> 5;
-	entry = (u32 *)LemurianShip_FadeSprites;
-	if (LemurianShip_FadeStep != 0)
-		LemurianShip_FadeStep--;
+	tile = gVramBlockCache[sFadeSlot].offset >> 5;
+	entry = (u32 *)sFadeSprites;
+	if (sFadeStep != 0)
+		sFadeStep--;
 	for (i = 0; i < 8; i++)
 	{
 		s32 left;
 
-		step = LemurianShip_FadeStep;
+		step = sFadeStep;
 		left = -step / 2;
 		*entry++ = 0;
 		*entry++ = (left & 0xff) | (i << 21) | 0x80004000;
@@ -818,7 +818,7 @@ static void LemurianShip_StepFade(void)
 		*entry++ = tile;
 	}
 	i = 0;
-	x = (LemurianShip_FadeStep / 2 + 152) & 0xff;
+	x = (sFadeStep / 2 + 152) & 0xff;
 	for (; i < 8; i++)
 	{
 		*entry++ = 0;
@@ -826,7 +826,7 @@ static void LemurianShip_StepFade(void)
 		*entry++ = tile;
 	}
 	for (i = 0; i < 24; i++)
-		Runtime_PushSlotEntry(&LemurianShip_FadeSprites[i], 255);
+		Runtime_PushSlotEntry(&sFadeSprites[i], 255);
 }
 
 static void LemurianShip_ScheduleFade(void)
@@ -834,24 +834,24 @@ static void LemurianShip_ScheduleFade(void)
 	u8 *buf;
 
 	buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-	LemurianShip_FadeSlot = Resource_FindFreeEntry();
+	sFadeSlot = Resource_FindFreeEntry();
 	Dma_Fill32(0x11111111, buf, 0x100);
-	Engine_VramLoad(LemurianShip_FadeSlot, 0x100, (s32)buf);
+	Engine_VramLoad(sFadeSlot, 0x100, (s32)buf);
 
-	LemurianShip_FadeStep = 0x30;
+	sFadeStep = 0x30;
 	FieldScheduler_AddCallback(LemurianShip_StepFade, 0xc80);
 }
 
-struct SceneEvent LemurianShip_PaletteFrames[] = {
+struct SceneEvent gLemurianShip_PaletteFrames[] = {
 	{0x69c05860, 0x7f20, 0x69c0, 0x48005860},
 	{0x69c05860, 0x7f20, 0x69c0, 0x5860},
 };
 
-s32 LemurianShip_DriftScript[] = {
+s32 gLemurianShip_DriftScript[] = {
 	SC_FREE,
 };
 
-s16 LemurianShip_WaveSine[256] = {
+s16 gLemurianShip_WaveSine[256] = {
 	0, 100, 200, 301, 401, 501, 601, 700,
 	799, 897, 995, 1092, 1189, 1284, 1379, 1474,
 	1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,
@@ -886,19 +886,19 @@ s16 LemurianShip_WaveSine[256] = {
 	-799, -700, -601, -501, -401, -301, -200, -100,
 };
 
-struct SceneEntrance LemurianShip_SceneTableA[] = {
+struct SceneEntrance gLemurianShip_SceneTableA[] = {
 	{0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 LemurianShip_SceneTableB[] = {
+u32 gLemurianShip_SceneTableB[] = {
 	SCENE_EXITS(188),
 	SCENE_EXIT(1, 180, 31),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement LemurianShip_SceneTableC[] = {
+struct ScenePlacement gLemurianShip_SceneTableC[] = {
 	{GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
 	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
 	{MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
@@ -909,7 +909,7 @@ struct ScenePlacement LemurianShip_SceneTableC[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent LemurianShip_SceneTableD[] = {
+struct SceneEvent gLemurianShip_SceneTableD[] = {
 	{EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(LemurianShip_LoadTablesAndStopDma)},
@@ -919,37 +919,37 @@ struct SceneEvent LemurianShip_SceneTableD[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 LemurianShip_ShimmerActive = 0;
+s32 gLemurianShip_ShimmerActive = 0;
 
-s32 LemurianShip_ShimmerPhase = 0;
+s32 gLemurianShip_ShimmerPhase = 0;
 
-s32 LemurianShip_Count = 16;
+s32 gLemurianShip_Count = 16;
 
-s32 LemurianShip_CountTicks = 0;
+s32 gLemurianShip_CountTicks = 0;
 
-s32 LemurianShip_DriftActive = 0;
+s32 gLemurianShip_DriftActive = 0;
 
-s32 LemurianShip_SwellActive = 0;
+s32 gLemurianShip_SwellActive = 0;
 
-s32 LemurianShip_SwellPhase = 0;
+s32 gLemurianShip_SwellPhase = 0;
 
-s32 LemurianShip_SwellLayerSixY = 0;
+s32 gLemurianShip_SwellLayerSixY = 0;
 
-s32 LemurianShip_SwellLayerSevenY = 0;
+s32 gLemurianShip_SwellLayerSevenY = 0;
 
-s32 LemurianShip_StoredSlot0 = -0x10000;
+s32 gLemurianShip_StoredSlot0 = -0x10000;
 
-s32 LemurianShip_StoredRecord1 = -0x10000;
+s32 gLemurianShip_StoredRecord1 = -0x10000;
 
-s32 LemurianShip_StoredSlot3 = -0x10000;
+s32 gLemurianShip_StoredSlot3 = -0x10000;
 
-s32 LemurianShip_StoredRecord2 = -0x10000;
+s32 gLemurianShip_StoredRecord2 = -0x10000;
 
-u32 LemurianShip_PaletteStep[] = {
+u32 gLemurianShip_PaletteStep[] = {
 	0,
 };
 
-s32 LemurianShip_ActionScriptA[] = {
+s32 gLemurianShip_ActionScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-8), 0, 0),
 	SC_SYNC,
@@ -973,7 +973,7 @@ s32 LemurianShip_ActionScriptA[] = {
 	SC_END,
 };
 
-s32 LemurianShip_ActionScriptB[] = {
+s32 gLemurianShip_ActionScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(0, 0, PIXELS(-32)),
 	SC_SYNC,
@@ -995,7 +995,7 @@ s32 LemurianShip_ActionScriptB[] = {
 	SC_END,
 };
 
-s32 LemurianShip_ActionScriptC[] = {
+s32 gLemurianShip_ActionScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-20), 0, 0),
 	SC_SYNC,
@@ -1019,7 +1019,7 @@ s32 LemurianShip_ActionScriptC[] = {
 	SC_END,
 };
 
-s32 LemurianShip_ActionScriptD[] = {
+s32 gLemurianShip_ActionScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-8), 0, 0),
 	SC_SYNC,

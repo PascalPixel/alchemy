@@ -14,7 +14,7 @@ s32 Resource_FindFreeTransferEntry(s32 kind)
     u16 *p;
     u32 v;
 
-    state = (s32)Ram_HeapSlots->menu_work;
+    state = (s32)Ram_HeapSlots->menuWork;
     if (kind != 0) {
         i = 0;
         p = &((struct SelectionScreen *)state)->records[9].kind;

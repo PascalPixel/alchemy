@@ -6,7 +6,7 @@
 
 void Func_080246b8(void)
 {
-    struct ObjectRuntime *object = Ram_HeapSlots->script_objects;
+    struct ObjectRuntime *object = Ram_HeapSlots->scriptObjects;
     s32 i;
 
     for (i = 63; i >= 0; i--, object++) {
@@ -15,16 +15,16 @@ void Func_080246b8(void)
             s32 y = object->y;
             s32 z = object->z;
 
-            if (object->priority_flags & 64) {
+            if (object->priorityFlags & 64) {
                 struct ObjectRuntime *carrier = (struct ObjectRuntime *)WORD_AT(object, 0x7c);
 
                 if (carrier != NULL) {
                     if (WORD_AT(carrier, 0x74) != 0) {
-                        if (y == object->terrain_height) {
-                            object->terrain_height = carrier->y + 0x100000;
-                            y = object->terrain_height;
+                        if (y == object->terrainHeight) {
+                            object->terrainHeight = carrier->y + 0x100000;
+                            y = object->terrainHeight;
                         } else {
-                            object->terrain_height += WORD_AT(carrier, 0x74);
+                            object->terrainHeight += WORD_AT(carrier, 0x74);
                             y += WORD_AT(carrier, 0x74);
                         }
                     }

@@ -15,14 +15,14 @@ struct WarpTarget {
 };
 
 struct RiseObject {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     s32 scale;
-    s32 scale_copy;
-    u8 unknown_20[0x4c];
+    s32 scaleCopy;
+    u8 unk20[0x4c];
     s32 update;
 };
 
-extern const struct WarpTarget Data_02003d10;
+extern const struct WarpTarget gData_02003d10;
 
 struct FieldActor *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);

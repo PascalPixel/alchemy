@@ -20,7 +20,7 @@ s32 UiWork_IsComplete(void)
 	s32					  i;
 
 #if GAME_TLA
-	ch = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
+	ch = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
 #endif
 	for (i = 0; i != 3; i++, ch++)
 	{

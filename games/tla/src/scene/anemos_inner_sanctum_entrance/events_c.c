@@ -1,17 +1,17 @@
 #include "anemos_inner_sanctum_entrance.h"
 
-extern const u8 Data_02001c1c[];
-extern const u8 Data_02001c28[];
+extern const u8 gData_02001c1c[];
+extern const u8 gData_02001c28[];
 
 const u8 *Func_02000714(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1)
-        return Data_02001c28;
-    return Data_02001c1c;
+        return gData_02001c28;
+    return gData_02001c1c;
 }
 
 struct AnemosInnerSanctumEntranceEventWork {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 route;
 };
 
@@ -47,7 +47,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value)
 // 0x201, runs a screen transition and Func_02000408, then clears the flag.
 s32 Func_02000740(void)
 {
-    ((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->event_work)->route = 0x204;
+    ((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)->route = 0x204;
     if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1) {
         Func_02000b18();
         Func_02000bd4(2);
@@ -57,13 +57,13 @@ s32 Func_02000740(void)
         SetObjectValue(12, 3);
         SetObjectValue(13, 128);
         SetObjectValue(14, 129);
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 0x40;
-        Object_GetById(9)->priority_flags |= 0xc0;
-        Object_GetById(10)->priority_flags |= 0x80;
-        Object_GetById(11)->priority_flags |= 0x80;
-        Object_GetById(12)->priority_flags |= 0x80;
-        Object_GetById(13)->priority_flags |= 0x80;
-        Object_GetById(14)->priority_flags |= 0x80;
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x40;
+        Object_GetById(9)->priorityFlags |= 0xc0;
+        Object_GetById(10)->priorityFlags |= 0x80;
+        Object_GetById(11)->priorityFlags |= 0x80;
+        Object_GetById(12)->priorityFlags |= 0x80;
+        Object_GetById(13)->priorityFlags |= 0x80;
+        Object_GetById(14)->priorityFlags |= 0x80;
         if (Flag_Test(0x200)) {
             Func_02000be0(1);
             Func_02000494();

@@ -12,21 +12,21 @@ extern u8 gMapShapeGrid[];
 
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 z);
 
-extern TerrainHeightFn Map_TerrainHeightHandlers[16];
+extern TerrainHeightFn gMap_TerrainHeightHandlers[16];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     u8 *grid;
     u8 *code;
 
     x >>= 16;
     z >>= 16;
     if (work != NULL)
-        grid = work->layers[layer & 3].terrain_ids;
+        grid = work->layers[layer & 3].terrainIds;
     else
         grid = gMapShapeGrid;
     grid += x / 16 + (z / 16 << 7);
     code = Ram_MapCollision + *grid * 4;
-    return Map_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15);
+    return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15);
 }

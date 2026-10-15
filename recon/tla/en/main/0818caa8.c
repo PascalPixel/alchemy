@@ -18,20 +18,20 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size)
 {
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
     s32 half;
 
     Func_081963ec(188, 19);
     half = size / 2;
-    ((CanvasBlitFunc)Ram_HeapSlots->unknown_b8[1])(canvas, source, x - half, y - size, half, size);
+    ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y - size, half, size);
     Runtime_ReleaseHeapBlock(188);
     Func_081963ec(188, 23);
-    ((CanvasBlitFunc)Ram_HeapSlots->unknown_b8[1])(canvas, source, x, y - size, half, size);
+    ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y - size, half, size);
     Runtime_ReleaseHeapBlock(188);
     Func_081963ec(188, 27);
-    ((CanvasBlitFunc)Ram_HeapSlots->unknown_b8[1])(canvas, source, x - half, y, half, size);
+    ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y, half, size);
     Runtime_ReleaseHeapBlock(188);
     Func_081963ec(188, 31);
-    ((CanvasBlitFunc)Ram_HeapSlots->unknown_b8[1])(canvas, source, x, y, half, size);
+    ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y, half, size);
     Runtime_ReleaseHeapBlock(188);
 }

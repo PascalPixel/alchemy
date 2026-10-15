@@ -11,18 +11,18 @@ extern u8 gMapBlocks[];
 
 struct TilePos { s32 x, y; };
 
-void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
-    u32 dst_x, u32 dst_y, u32 width, u32 height)
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY,
+    u32 dstX, u32 dstY, u32 width, u32 height)
 {
     /* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
-    u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
-    register struct MapLayer *layer = Ram_HeapSlots->map_work->layers;
+    u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
+    u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
+    struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
     struct TilePos tile[3];
     s32 i;
     struct TilePos *pos = tile;
     u32 y;
-    register u32 x;
+    u32 x;
 
     for (i = 2; i >= 0; i--) {
         pos->x = layer->x >> 20;
@@ -30,8 +30,8 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
         pos++;
         layer++;
     }
-    for (y = dst_y; y < dst_y + height; y++) {
-        for (x = dst_x; x < dst_x + width; x++) {
+    for (y = dstY; y < dstY + height; y++) {
+        for (x = dstX; x < dstX + width; x++) {
             u32 val = *src++;
             u32 cell = val & 0xfff;
             u32 offset;

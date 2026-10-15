@@ -10,11 +10,11 @@ void Func_0200328c(s32 id, s32 target, s32 kind, s32 a3, const void *script)
     Object_SetPositionAndResetMotion(object, source->x, source->y, source->z);
     Func_02005490(object, script);
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Func_02005480(object, 1);
-    object->linked_object = source;
+    object->linkedObject = source;
     object->action = 0;
-    object->unknown_66 = a3;
+    object->unk66 = a3;
     BYTE_AT(object, 98) = kind;
     object->update = Func_02002f6c;
 }

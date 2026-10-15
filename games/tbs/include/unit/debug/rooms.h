@@ -10,10 +10,10 @@ u8 *TestRooms_GetExits(void);
 u8 *TestRooms_GetPlacements(void);
 u8 *TestRooms_GetEvents(void);
 s32 Scene_RunEmptyScene(void);
-extern u32 TestRooms_EntrancesHead[];
-extern struct SceneEntrance TestRooms_Entrances[];
-extern u32 TestRooms_Exits[];
-extern struct ScenePlacement TestRooms_Placements[];
-extern struct SceneEvent TestRooms_Events[];
+extern u32 gTestRooms_EntrancesHead[];
+extern struct SceneEntrance gTestRooms_Entrances[];
+extern u32 gTestRooms_Exits[];
+extern struct ScenePlacement gTestRooms_Placements[];
+extern struct SceneEvent gTestRooms_Events[];
 
 #endif

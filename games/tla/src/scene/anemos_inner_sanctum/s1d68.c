@@ -28,12 +28,12 @@ void Func_02001d68(void)
     Object_SetModeById(9, 2);
     object->y = -0x400000;
     Func_020033e0_(9, 0x2d80000, 0x780000);
-    Func_020033e0_(gPartyState.current_owner, 0x2d80000, 0x780000);
-    Object_GetById(gPartyState.current_owner)->y = -0x300000;
+    Func_020033e0_(gPartyState.currentOwner, 0x2d80000, 0x780000);
+    Object_GetById(gPartyState.currentOwner)->y = -0x300000;
     Event_StartScreenTransition();
     y = object->y;
     object->acceleration = 0x10000;
-    object->speed_limit = 0x10000;
+    object->speedLimit = 0x10000;
     Func_02003310(object, object->x, y + 0x300000, object->z);
     Func_02003318(object);
     GameFlag_SetBit(0x300);
@@ -47,13 +47,13 @@ void Func_02001df4(void)
 
     Func_02003398();
     Func_02003488(0);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = -0x400000;
-    Object_GetById(gPartyState.current_owner)->y = -0x300000;
+    Object_GetById(gPartyState.currentOwner)->y = -0x300000;
     Event_StartScreenTransition();
     y = object->y;
     object->acceleration = 0x10000;
-    object->speed_limit = 0x10000;
+    object->speedLimit = 0x10000;
     Func_02003310(object, object->x, y + 0x300000, object->z);
     Func_02003318(object);
     GameFlag_SetBit(0x304);

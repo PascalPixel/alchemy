@@ -625,13 +625,13 @@ Func_0815b764:
 .L_0815bc34:
 	.4byte Data_08198674
 .L_0815bc38:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_0815bc3c:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_0815bc40:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_0815bc44:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_0815bc48:
 	.4byte 0xffff2800
 .L_0815bc4c:
@@ -1243,15 +1243,15 @@ Func_0815b764:
 .L_0815c0ec:
 	.4byte 0xffff00ff
 .L_0815c0f0:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0815c0f4:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_0815c0f8:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_0815c0fc:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_0815c100:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_0815c104:
 	.4byte Data_08198686
 .L_0815c108:
@@ -1640,7 +1640,7 @@ Func_0815b764:
 .L_0815c418:
 	.4byte gMapCellBuffer
 .L_0815c41c:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0815c420:
 	.4byte Data_08197424
 .L_0815c424:
@@ -1648,7 +1648,7 @@ Func_0815b764:
 .L_0815c428:
 	.4byte 0xffff00ff
 .L_0815c42c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0815c430:
 	.4byte 0xffff6800
 .L_0815c434:
@@ -1808,7 +1808,7 @@ Func_0815b764:
 .L_0815c56c:
 	.4byte 0x00000100
 .L_0815c570:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0815c574:
 	.4byte 0xffffe000
 .L_0815c578:
@@ -2006,13 +2006,13 @@ Func_0815b764:
 .L_0815c6fc:
 	.4byte 0x00001f83
 .L_0815c700:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_0815c704:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_0815c708:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_0815c70c:
-	.4byte Data_0819746d
+	.4byte gData_0819746d
 .L_0815c710:
 	.4byte Func_0815b68c
 .L_0815c714:

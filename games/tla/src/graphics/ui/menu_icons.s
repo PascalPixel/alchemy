@@ -1,7 +1,7 @@
 	.section .rodata
 	.balign 4
-	.global UiIcon_ItemIconPointers
-UiIcon_ItemIconPointers:
+	.global gUiIcon_ItemIconPointers
+gUiIcon_ItemIconPointers:
 	.4byte UiIcon_Item000
 	.4byte UiIcon_Item001
 	.4byte UiIcon_Item002
@@ -373,8 +373,8 @@ UiIcon_ItemIconPointers:
 	.4byte UiIcon_Item368
 	.4byte UiIcon_Item369
 	.4byte UiIcon_Item000
-	.global UiIcon_ItemIconPointersEnd
-UiIcon_ItemIconPointersEnd:
+	.global gUiIcon_ItemIconPointersEnd
+gUiIcon_ItemIconPointersEnd:
 	.4byte -1
 UiIcon_Item000:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_000.icon4"
@@ -1118,8 +1118,8 @@ UiIcon_Item369:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_369.icon4"
 	.balign 4, 0
 	.balign 4
-	.global UiIcon_PsynergyIconPointers
-UiIcon_PsynergyIconPointers:
+	.global gUiIcon_PsynergyIconPointers
+gUiIcon_PsynergyIconPointers:
 	.4byte UiIcon_Psynergy000
 	.4byte UiIcon_Psynergy001
 	.4byte UiIcon_Psynergy002
@@ -1380,8 +1380,8 @@ UiIcon_PsynergyIconPointers:
 	.4byte UiIcon_Psynergy257
 	.4byte UiIcon_Psynergy258
 	.4byte UiIcon_Psynergy259
-	.global UiIcon_PsynergyIconPointersEnd
-UiIcon_PsynergyIconPointersEnd:
+	.global gUiIcon_PsynergyIconPointersEnd
+gUiIcon_PsynergyIconPointersEnd:
 	.4byte -1
 UiIcon_Psynergy000:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_000.icon4"
@@ -1937,8 +1937,8 @@ UiIcon_Psynergy259:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_259.icon4"
 	.balign 4, 0
 	.balign 4
-	.global UiIcon_MiscIconPointers
-UiIcon_MiscIconPointers:
+	.global gUiIcon_MiscIconPointers
+gUiIcon_MiscIconPointers:
 	.4byte UiIcon_Misc000
 	.4byte UiIcon_Misc001
 	.4byte UiIcon_Misc002

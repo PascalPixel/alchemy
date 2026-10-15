@@ -27,10 +27,10 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x160];
+    u8 unk7788[0x160];
     s32 transferPending;
 };
 
@@ -59,18 +59,18 @@ void Func_08144368(struct BattleEffectArgument *effect)
     s32 point[3];
     struct EffectPosition screen;
     s32 member;
-    s32 offset_x;
+    s32 offsetX;
     s32 frame;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
     Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 0x1f);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
     work->transferMode = 2;
     work->transferValue = 50;
@@ -78,11 +78,11 @@ void Func_08144368(struct BattleEffectArgument *effect)
     if (effect->side == 1)
     {
         REG_BG2X = -0x6800;
-        offset_x = -112;
+        offsetX = -112;
     }
     else
     {
-        offset_x = 0;
+        offsetX = 0;
     }
     for (frame = 0; frame != (effect->count * 16) + 48; frame++)
     {
@@ -91,7 +91,7 @@ void Func_08144368(struct BattleEffectArgument *effect)
         s32 i;
 
         // The background waves sideways line by line.
-        camera = Ram_HeapSlots->camera_work;
+        camera = Ram_HeapSlots->cameraWork;
         row = work->bg2X;
         if (effect->side == 0)
         {
@@ -145,7 +145,7 @@ void Func_08144368(struct BattleEffectArgument *effect)
                         s32 half;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offset_x;
+                        x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offsetX;
                         y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
                         half = frame / 16;
                         draw[half & 1](canvas, work->sheet + (((frame / 4) - (half * 4)) << 10),

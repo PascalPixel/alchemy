@@ -11,6 +11,6 @@ s32 Func_0200032c(struct ObjectRuntime *object)
 {
     ObjectDispatch_SetSingleChildFlags(object, 0);
     ((struct FieldSprite *)object->animation)->priority = 2;
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     return 0;
 }

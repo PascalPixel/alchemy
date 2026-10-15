@@ -24,13 +24,13 @@ void Func_02000300(void)
     phase = 0;
     for (i = 0; i != 7; i++) {
         object = Func_02001dc0(672, 0, 0, 0);
-        object->motion_flags = 0;
-        object->priority_flags = 0;
-        object->speed_limit = (Random16Far() << 2) + 0x60000;
+        object->motionFlags = 0;
+        object->priorityFlags = 0;
+        object->speedLimit = (Random16Far() << 2) + 0x60000;
         object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
         object->update = (void (*)(void))Func_02000244;
         object->action = Random16Far();
-        object->unknown_66 = phase;
+        object->unk66 = phase;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Object_SetPartAttribute(object, 2);
         ((struct FieldSprite *)object->animation)->priority = 1;

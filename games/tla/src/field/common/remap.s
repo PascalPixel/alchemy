@@ -1,7 +1,7 @@
 	.section .rodata
-@ バイト置換表 256 個ずつ。前の四つは The Broken Seal の Runtime_ByteRemapTable と同じ
-	.global Runtime_ByteRemapTable
-Runtime_ByteRemapTable:
+@ バイト置換表 256 個ずつ。前の四つは The Broken Seal の gRuntime_ByteRemapTable と同じ
+	.global gRuntime_ByteRemapTable
+gRuntime_ByteRemapTable:
 	.incbin "games/common/src/field/common/remap0.table"
 	.global Data_080209a8
 Data_080209a8:

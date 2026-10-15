@@ -20,9 +20,9 @@ next:
         s32 x = (s16)entry[1];
         s32 z = (s16)entry[2];
 
-        object->collision_flags &= ~1;
+        object->collisionFlags &= ~1;
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        Func_02003910(id, x, z, object->terrain_id);
+        Func_02003910(id, x, z, object->terrainId);
         entry += 3;
     }
     if (entry[0] != 0xffff)

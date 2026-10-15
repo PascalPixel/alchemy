@@ -12,12 +12,12 @@
 #include "text/msg_ids.h"
 
 struct MarsRoomMEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[0x10];
-    s16 field_166;
-    u8 unknown_168[0x44];
-    s32 field_1ac;
+    u8 unk156[0x10];
+    s16 field166;
+    u8 unk168[0x44];
+    s32 field1ac;
 };
 
 struct MarsRoomMVector {
@@ -27,27 +27,27 @@ struct MarsRoomMVector {
 };
 
 struct MarsRoomMAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[6];
-    u8 value_10;
-    u8 flag_11 : 1;
+    u8 unk0a[6];
+    u8 value10;
+    u8 flag11 : 1;
     u16 angle;
 };
 
 struct MarsRoomMRideWork {
     s32 counter;
     s16 active;
-    u8 unknown_06[6];
-    u16 value_0c;
-    s16 value_0e;
-    u8 unknown_10[0x60];
+    u8 unk06[6];
+    u16 value0c;
+    s16 value0e;
+    u8 unk10[0x60];
     struct ObjectRuntime *handle;
 };
 
 extern u32 gFrameCount;
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 extern char SceneId_Ov6ACRoom1;
 extern char SceneId_Ov6ACRoom2;
 extern char SceneId_Ov6ACRoom3;
@@ -74,23 +74,23 @@ void Func_02001aec(struct ObjectRuntime *object);
 void Func_02001cc4(struct ObjectRuntime *object, s32 layer);
 void Func_02001b64(void);
 
-extern const u8 Data_020032d4[];
-extern const u8 Data_020034f0[];
-extern const u8 Data_02003508[];
-extern const u8 Data_02003598[];
+extern const u8 gData_020032d4[];
+extern const u8 gData_020034f0[];
+extern const u8 gData_02003508[];
+extern const u8 gData_02003598[];
 
-extern u16 Data_02003918;
-extern u16 Data_02003920;
-extern u16 Data_02003924;
-extern u16 *Data_02003928;
-extern u16 Data_02003934;
-extern u16 Data_02003938;
-extern const u8 Data_020036b8[];
-extern const u8 Data_020036c8[];
-extern const u8 Data_02003708[];
-extern const u8 Data_02003858[];
-extern const u8 Data_0200387c[];
-extern const u8 Data_02003900[];
+extern u16 gData_02003918;
+extern u16 gData_02003920;
+extern u16 gData_02003924;
+extern u16 *gData_02003928;
+extern u16 gData_02003934;
+extern u16 gData_02003938;
+extern const u8 gData_020036b8[];
+extern const u8 gData_020036c8[];
+extern const u8 gData_02003708[];
+extern const u8 gData_02003858[];
+extern const u8 gData_0200387c[];
+extern const u8 gData_02003900[];
 
 s32 Func_020016e8(u16 *list);
 void Func_0200170c(void);

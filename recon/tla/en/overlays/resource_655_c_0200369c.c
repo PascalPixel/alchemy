@@ -15,12 +15,12 @@ void Func_02001804(void);
 void Func_02001fdc(void);
 void Func_0200353c(void);
 void Func_02003764(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 
 void Func_0200369c(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x204;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     Func_02001fdc();
     if (GameFlag_Test(0x86c) != 0) {
         Func_02003be0(3, 8, 30, 33, 1, 1);

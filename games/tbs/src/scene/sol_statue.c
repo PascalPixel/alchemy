@@ -67,10 +67,10 @@ struct Cam
 
 struct CellCopy
 {
-	s32 src_x;
-	s32 src_y;
-	s32 dest_x;
-	s32 dest_y;
+	s32 srcX;
+	s32 srcY;
+	s32 destX;
+	s32 destY;
 	s32 width;
 	s32 height;
 };
@@ -78,18 +78,18 @@ struct CellCopy
 struct SealScene
 {
 	struct CellCopy open;
-	struct CellCopy pulse_a;
-	struct CellCopy pulse_b;
+	struct CellCopy pulseA;
+	struct CellCopy pulseB;
 	struct CellCopy opened;
 	s32				flag;
 	s32				facing;
-	s32				dest_x;
-	s32				dest_z;
+	s32				destX;
+	s32				destZ;
 	struct CellCopy stairs[3];
 	s32				actor;
-	s32				actor_x;
-	s32				actor_z;
-	s32				unknown_c4[3];
+	s32				actorX;
+	s32				actorZ;
+	s32				unkc4[3];
 };
 
 void InitializeSceneRecordBuffer();
@@ -112,12 +112,12 @@ struct FocusWork
 };
 
 // bss in this order: as commons of one object the linker would sort them itself
-static struct SealScene gSealScene;
-static struct Ent		SolStatue_SpriteRows[27];
+static struct SealScene sSealScene;
+static struct Ent		sSpriteRows[27];
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {
-	return (u8 *)SceneEventRuntime_ScriptData;
+	return (u8 *)gSceneEventRuntime_ScriptData;
 }
 
 s32 SceneEventRuntime_ReturnZero(void)
@@ -127,17 +127,17 @@ s32 SceneEventRuntime_ReturnZero(void)
 
 u8 *SceneEventRuntime_GetMessageData(void)
 {
-	return (u8 *)SceneEventRuntime_MessageData;
+	return (u8 *)gSceneEventRuntime_MessageData;
 }
 
 u8 *SceneEventRuntime_GetActorData(void)
 {
-	return (u8 *)SceneEventRuntime_ActorData;
+	return (u8 *)gSceneEventRuntime_ActorData;
 }
 
 u8 *SceneEventRuntime_GetEffectData(void)
 {
-	return (u8 *)SceneEventRuntime_EffectData;
+	return (u8 *)gSceneEventRuntime_EffectData;
 }
 
 static s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
@@ -190,8 +190,8 @@ static void FieldScene_SetupStagedActors(void)
 	struct FieldActor *leader;
 
 	Engine_EventBegin();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -230,8 +230,8 @@ static void FieldScene_SetupStagedActors(void)
 	Event_SayThenWait(ACTOR_KRADEN, 6);
 	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
 	Engine_EventWait(40);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0x11f0000, -1, 0xb00000, 0);
@@ -325,8 +325,8 @@ static void FieldScene_SetupStagedActors(void)
 	Engine_ActorWaitForMove(JENNA);
 	Actor_SetPosition(JENNA, 0, 0);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->transitionFrames = 16;
 	Engine_EventEnd();
 }
 
@@ -337,8 +337,8 @@ static void FieldScene_RunStagedActorScene(void)
 
 	Engine_EventBegin();
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 32;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -516,8 +516,8 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_ActorSetPosition(1, 0, 0);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	work->transition_frames = 16;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	work->transitionFrames = 16;
 	Engine_EventEnd();
 }
 
@@ -614,7 +614,7 @@ static void SolStatue_RunSealOpenedSequence(void)
 static void SceneEffect_UpdateScrollingSpriteRows(void)
 {
 	s32		   *cp = &((struct Cam *)gMapWork[0])->x;
-	struct Ent *e = SolStatue_SpriteRows;
+	struct Ent *e = sSpriteRows;
 	s32			sx = cp[0] / 65536;
 	s32			sy = 80 - cp[1] / 65536;
 	s32			v;
@@ -622,7 +622,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 
 	if ((u32)(sy + 16) <= 175)
 	{
-		v = (SolStatue_ScrollPhase >> 10) - sx;
+		v = (gSolStatue_ScrollPhase >> 10) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -634,7 +634,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SolStatue_ScrollPhase >> 9) - sx;
+		v = (gSolStatue_ScrollPhase >> 9) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -646,7 +646,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SolStatue_ScrollPhase >> 8) - sx;
+		v = (gSolStatue_ScrollPhase >> 8) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -663,7 +663,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 			}
 		}
 	}
-	SolStatue_ScrollPhase += 0x80;
+	gSolStatue_ScrollPhase += 0x80;
 }
 
 static void SceneState_RunWhenSlotZeroFacingC000(void)
@@ -700,18 +700,18 @@ s32 Scene_RunGuardSequenceB(void)
 {
 	struct FieldActor *record;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Scene_RunGuardSequenceC();
 	GameFlag_Set(0x144);
 	record = Object_GetById(18);
-	record->collision_flags = 0;
+	record->collisionFlags = 0;
 	{
-		u8 flags = record->priority_flags | 2;
+		u8 flags = record->priorityFlags | 2;
 
-		record->priority_flags = flags;
+		record->priorityFlags = flags;
 	}
 	Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
-	Object_GetById(18)->priority_flags &= 254;
+	Object_GetById(18)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(18, 1);
 	if ((u32)(((u16)gGameState.entrance - 3) << 16) > 0x10000)
 	{
@@ -827,9 +827,9 @@ static void Scene_RunGuardSequenceC(void)
 	s32 *p;
 	s32	 buf;
 
-	p = (s32 *)SolStatue_SpriteRows;
+	p = (s32 *)sSpriteRows;
 	buf = (s32)Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz((s32)SolStatue_SpriteRowsGfx, buf);
+	Resource_DecodeByteLz((s32)gSolStatue_SpriteRowsGfx, buf);
 	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
 	for (i = 0; i < 9; i++)
 	{
@@ -990,23 +990,23 @@ static void EV17_PSYNERGY(void)
 				Camera_SetSpeed(0x20000, 0x4000);
 				Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
 				Engine_CameraWaitForMove();
-				Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;
+				Object_GetById(17)->steeringFlags &= ~ACTOR_FACES_MOTION;
 				Actor_SetSpeed(17, 0x30000, 0x10000);
-				statue->motion_flags = 0;
+				statue->motionFlags = 0;
 				Engine_ActorSetSpritePriority(17, 3);
 				Engine_AudioPlayCue(189);
 				Engine_ActorSetDestination(17, 0x120, 178);
 				Engine_EventWait(8);
 				Actor_SetPosition(18, 0x1200000, 0xb20000);
-				statue->target_x = ACTOR_NO_TARGET;
-				statue->target_y = ACTOR_NO_TARGET;
-				statue->target_z = ACTOR_NO_TARGET;
+				statue->targetX = ACTOR_NO_TARGET;
+				statue->targetY = ACTOR_NO_TARGET;
+				statue->targetZ = ACTOR_NO_TARGET;
 				statue->x.fixed = 0;
 				statue->y.fixed = 0;
 				statue->z.fixed = 0;
-				statue->velocity_x = 0;
-				statue->velocity_y = 0;
-				statue->velocity_z = 0;
+				statue->velocityX = 0;
+				statue->velocityY = 0;
+				statue->velocityZ = 0;
 				Engine_ActorSetPosition(17, 0, 0);
 				Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 				Engine_EventWait(10);
@@ -1055,7 +1055,7 @@ static void EV32_TOUCH(void)
 			Event_PlayCue(185);
 			Actor_SetSpeed(17, 0x3333, 0x1999);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-			Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(17)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
 			record = Object_GetById(0);
 			Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, 136);
@@ -1164,7 +1164,7 @@ static void SolStatue_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 	Engine_AudioPlayCue(185);
 	Actor_SetSpeed(p9, 0x3333, 0x1999);
 	Engine_ActorSetSpeed(0, 0x3333, 0x1999);
-	Object_GetById(p9)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(p9)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimation(0, 8);
 	Engine_ActorSetDestination(0, ((a3 << 4) + 8), ((a4 << 4) + 8));
 	p8b = (p8 << 4);
@@ -1193,7 +1193,7 @@ static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
 
 static void SolStatue_OpenNorthwestSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 0;
 	p[1] = 55;
 	p[2] = 32;
@@ -1248,7 +1248,7 @@ static void SolStatue_OpenNorthwestSeal(void)
 
 static void SolStatue_OpenNortheastSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 4;
 	p[1] = 55;
 	p[2] = 36;
@@ -1303,7 +1303,7 @@ static void SolStatue_OpenNortheastSeal(void)
 
 static void SolStatue_OpenSouthwestSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 0;
 	p[1] = 58;
 	p[2] = 32;
@@ -1358,7 +1358,7 @@ static void SolStatue_OpenSouthwestSeal(void)
 
 static void SolStatue_OpenSoutheastSeal(void)
 {
-	s32 *p = (s32 *)&gSealScene;
+	s32 *p = (s32 *)&sSealScene;
 	p[0] = 4;
 	p[1] = 58;
 	p[2] = 36;
@@ -1412,7 +1412,7 @@ static void SolStatue_OpenSoutheastSeal(void)
 }
 
 #define COPY_CELLS(c) \
-	Map_CopyCellsTo((c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
+	Map_CopyCellsTo((c).srcX, (c).srcY, (c).destX, (c).destY, (c).width, (c).height)
 
 static void SolStatue_OpenSeal(void)
 {
@@ -1428,17 +1428,17 @@ static void SolStatue_OpenSeal(void)
 		Engine_CameraMoveTo(0x2400000, -1, 0xac0000, 1);
 		Engine_CameraWaitForMove();
 		Engine_AudioPlayCue(186);
-		COPY_CELLS(gSealScene.open);
+		COPY_CELLS(sSealScene.open);
 		for (i = 0; i != 20; i++)
 		{
 			Engine_AudioPlayCue(246);
-			COPY_CELLS(gSealScene.pulse_a);
+			COPY_CELLS(sSealScene.pulseA);
 			Engine_EventWait(4);
 			Engine_AudioPlayCue(246);
-			COPY_CELLS(gSealScene.pulse_b);
+			COPY_CELLS(sSealScene.pulseB);
 			Engine_EventWait(4);
 		}
-		scene = &gSealScene;
+		scene = &sSealScene;
 		COPY_CELLS(scene->opened);
 		Engine_GameFlagSet(scene->flag);
 		result = SceneEventRuntime_SelectInitialSceneByFlags();
@@ -1449,16 +1449,16 @@ static void SolStatue_OpenSeal(void)
 				Engine_CameraFollowActor(0, 1);
 				Object_GetById(0)->facing = scene->facing;
 				Actor_SetSpeed(0, 0x20000, 0x20000);
-				Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+				Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 				Engine_ActorJump(0, 4, 0);
-				Engine_ActorSetDestination(0, scene->dest_x, scene->dest_z);
+				Engine_ActorSetDestination(0, scene->destX, scene->destZ);
 				COPY_CELLS(scene->stairs[0]);
 				COPY_CELLS(scene->stairs[1]);
 				COPY_CELLS(scene->stairs[2]);
-				Object_GetById(scene->actor)->steering_flags &= ~ACTOR_FACES_MOTION;
+				Object_GetById(scene->actor)->steeringFlags &= ~ACTOR_FACES_MOTION;
 				Engine_ObjectMotionSetPositionAndCommit(
-					scene->actor, scene->actor_x, scene->actor_z);
-				Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+					scene->actor, scene->actorX, scene->actorZ);
+				Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 				Engine_GameFlagClear(scene->flag);
 			}
 		}
@@ -1550,7 +1550,7 @@ static void Event_SayThenWait(s32 speaker, s32 frames)
 	Engine_EventWait(frames);
 }
 
-struct SceneEntrance SceneEventRuntime_ScriptData[] = {
+struct SceneEntrance gSceneEventRuntime_ScriptData[] = {
 	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 647, 0, 470, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1562,7 +1562,7 @@ struct SceneEntrance SceneEventRuntime_ScriptData[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SceneEventRuntime_MessageData[] = {
+u32 gSceneEventRuntime_MessageData[] = {
 	SCENE_EXITS(12),
 	SCENE_EXIT(1, 11, 2),
 	SCENE_EXIT(2, 13, 1),
@@ -1574,7 +1574,7 @@ u32 SceneEventRuntime_MessageData[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement SceneEventRuntime_ActorData[] = {
+struct ScenePlacement gSceneEventRuntime_ActorData[] = {
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1604,7 +1604,7 @@ struct ScenePlacement SceneEventRuntime_ActorData[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent SceneEventRuntime_EffectData[] = {
+struct SceneEvent gSceneEventRuntime_EffectData[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunWhenSlotZeroFacingC000) },
@@ -1637,4 +1637,4 @@ struct SceneEvent SceneEventRuntime_EffectData[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 SolStatue_ScrollPhase = 0;
+s32 gSolStatue_ScrollPhase = 0;

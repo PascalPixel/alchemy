@@ -13,7 +13,7 @@
 struct ActorDescriptor {
     s16 action;
     s16 scene;
-    u8 unknown_04[4];
+    u8 unk04[4];
     s32 x;
     s32 y;
     s32 z;
@@ -27,15 +27,15 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s3
 void Func_080d784c(void)
 {
     struct PartyState *party = &gPartyState;
-    s32 flags = *(s16 *)&party->unknown_24c[8] & 0xf000;
-    u32 scene = *(s16 *)&party->unknown_24c[8] & 0xfff;
+    s32 flags = *(s16 *)&party->unk24c[8] & 0xf000;
+    u32 scene = *(s16 *)&party->unk24c[8] & 0xfff;
     s32 id;
-    s32 *owner = &party->current_owner;
+    s32 *owner = &party->currentOwner;
 
     if (GameFlag_Test(0x109) != 0 && flags == 0) {
         flags = scene & 0x800;
         scene &= 0x7ff;
-        if (scene - 300 <= 80 && party->unknown_256 > 0) {
+        if (scene - 300 <= 80 && party->unk256 > 0) {
             for (id = 8; id <= 79; id++) {
                 struct ActorDescriptor *desc = BattleAction_FindDescriptor(id);
                 struct ObjectRuntime *obj;
@@ -46,8 +46,8 @@ void Func_080d784c(void)
                 if (obj == NULL)
                     continue;
                 if (flags == 0) {
-                    obj->terrain_height = flags;
-                    obj->motion_flags = 3;
+                    obj->terrainHeight = flags;
+                    obj->motionFlags = 3;
                     Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
                 } else {
                     struct ObjectRuntime *selection = ObjectTable_Get(*owner);

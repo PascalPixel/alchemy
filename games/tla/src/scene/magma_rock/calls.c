@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003dba[];
+extern const u8 gData_02003dba[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02003bcc(s32 value);
 void Func_02002e30(const u8 *data);
@@ -16,7 +16,7 @@ void Func_02001ba4(void)
 
 void Func_02001bb0(void)
 {
-    Func_02002e30(Data_02003dba);
+    Func_02002e30(gData_02003dba);
 }
 
 #include "call.h"

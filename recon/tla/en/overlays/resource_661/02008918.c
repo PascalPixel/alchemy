@@ -6,7 +6,7 @@
 
 void Func_02000918(u16 *list)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
 
     /* FAKEMATCH: entering the loop at its test keeps the test single and 0xffff built on every pass */
     goto test;
@@ -18,7 +18,7 @@ void Func_02000918(u16 *list)
 
             struct MapCell *cell = map->layers[2].cells + index;
 
-            cell->collision_code = 255;
+            cell->collisionCode = 255;
         }
         list += 3;
 test:;

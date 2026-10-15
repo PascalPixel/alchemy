@@ -13,7 +13,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *counter = &canvas->count;
     s32 zero = 0;
 

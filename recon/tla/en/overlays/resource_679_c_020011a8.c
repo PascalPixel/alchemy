@@ -3,20 +3,20 @@
 #include "scene_ids.h"
 
 struct EventWork1cc {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct ObjectRuntime *object;
 };
 
 void Func_020011a8(void)
 {
-    struct EventWork1cc *work = Ram_HeapSlots->event_work;
-    s32 owner = gPartyState.current_owner;
+    struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+    s32 owner = gPartyState.currentOwner;
     struct ObjectRuntime *anchor = work->object;
     struct ObjectRuntime *leader = Object_GetById(owner);
     s32 position[3];
     s32 result;
 
-    if (gPartyState.scene != (s32)&SceneId_Ov67bRoom1 || leader->terrain_height != 0) {
+    if (gPartyState.scene != (s32)&SceneId_Ov67bRoom1 || leader->terrainHeight != 0) {
         position[0] = leader->x;
         position[1] = leader->y;
         position[2] = leader->z + 0x20000;
@@ -30,7 +30,7 @@ void Func_020011a8(void)
             Func_02001c8c(leader);
             do {
                 WaitFrames(1);
-            } while (leader->y != leader->terrain_height);
+            } while (leader->y != leader->terrainHeight);
             Func_020010d8(leader);
             Func_02001c6c(leader, 49);
             WaitFrames(3);

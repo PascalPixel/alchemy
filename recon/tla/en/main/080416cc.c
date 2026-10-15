@@ -18,8 +18,8 @@
 #include "iwram_call.h"
 
 extern char ResourceId_WindowTiles;
-extern const u8 UiText_ColourPens[];
-extern const u8 UiText_GlyphWidths[];
+extern const u8 gUiText_ColourPens[];
+extern const u8 gUiText_GlyphWidths[];
 void *Resource_GetTableEntry(s32 id);
 
 static inline s32 ClearWords(void *destination, s32 size)
@@ -51,13 +51,13 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
     s32 j;
     u32 bits;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     canvas = MemAlloc(0x800);
     glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     attr = work->level << 12;
     ClearWords(pens, 16);
     if (attr == 0xF000) {
-        pens[1] = UiText_ColourPens[work->colour & 15];
+        pens[1] = gUiText_ColourPens[work->colour & 15];
         pens[3] = 3;
         FillWords(canvas, 0x800, 0x04040404);
     } else {
@@ -75,16 +75,16 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
                 switch (c) {
                 case 8:
                     work->colour = *script++;
-                    pens[1] = UiText_ColourPens[work->colour & 15];
+                    pens[1] = gUiText_ColourPens[work->colour & 15];
                     break;
                 case 7:
                 case 9:
                 case 10:
                     work->colour = 15;
-                    pens[1] = UiText_ColourPens[work->colour];
+                    pens[1] = gUiText_ColourPens[work->colour];
                     break;
                 case 3:
-                    x += UiText_GlyphWidths[0];
+                    x += gUiText_GlyphWidths[0];
                     break;
                 case 14:
                 case 15:
@@ -124,7 +124,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
                     x += 3;
                 else {
                     if (c > 31)
-                        w = UiText_GlyphWidths[c - 32];
+                        w = gUiText_GlyphWidths[c - 32];
                     else
                         w = 1;
                     x += w;
@@ -163,11 +163,11 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
             mask = 255;
         tile = *tiles & 0x3FF;
         if ((tile < 0x80 || tile > 0xFF) && (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
-            tile = work->tile_cursor & mask;
-            for (j = 0; j <= mask && work->tile_attributes[tile] != 0; j++)
+            tile = work->tileCursor & mask;
+            for (j = 0; j <= mask && work->tileAttributes[tile] != 0; j++)
                 tile = (tile + 1) & mask;
-            work->tile_cursor = (tile + 1) & mask;
-            work->tile_attributes[tile] = 1;
+            work->tileCursor = (tile + 1) & mask;
+            work->tileAttributes[tile] = 1;
             if (tile > 127)
                 tile += 0x180;
             else

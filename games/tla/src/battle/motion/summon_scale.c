@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct SummonOwnerState {
-    u8 unknown_000[0x14a];
+    u8 unk000[0x14a];
     u16 summon;
 };
 

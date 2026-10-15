@@ -12,11 +12,11 @@ void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 void AudioCommand_InvokeSlot35(void *block);
-extern struct SoundWork Sound_Work;
-extern struct CgbNote Sound_CgbNotes[4];
-extern u8 Sound_WorkBytes[];
-extern const struct PlayerSlot Sound_PlayerSlots[];
-extern const struct SongEntry Sound_SongTable[];
+extern struct SoundWork gSound_Work;
+extern struct CgbNote gSound_CgbNotes[4];
+extern u8 gSound_WorkBytes[];
+extern const struct PlayerSlot gSound_PlayerSlots[];
+extern const struct SongEntry gSound_SongTable[];
 extern u8 Sound_PlayerCount;
 
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
@@ -31,7 +31,7 @@ void MusicTrack_CalcOutput(struct SoundPlayer *player, struct SoundTrack *track)
 void Cgb_UpdateChannels(void);
 void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
-extern SoundCommand Sound_CommandTable[36];
+extern SoundCommand gSound_CommandTable[36];
 extern u8 Sound_MaxLines;
 
 void Audio_ResumePlayer(struct SoundPlayer *player)

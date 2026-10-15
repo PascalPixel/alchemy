@@ -52,11 +52,11 @@ Func_080f8a44:
 .L_080f8aa0:
 	.4byte gFrameCount
 .L_080f8aa4:
-	.4byte UiMenu_CursorBobX
+	.4byte gUiMenu_CursorBobX
 .L_080f8aa8:
 	.4byte 0xfffffe00
 .L_080f8aac:
-	.4byte UiMenu_CursorBobY
+	.4byte gUiMenu_CursorBobY
 .L_080f8ab0:
 	pop {r5, r6, pc}
 	.2byte 0x0000

@@ -27,7 +27,7 @@
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
 extern char ResourceId_Data134;
-extern const u16 Data_08197410[];
+extern const u16 gData_08197410[];
 
 struct EffectCamera {
     s32 eye[3];
@@ -66,10 +66,10 @@ void Func_081661dc(struct BattleEffectArgument *effect)
     s32 size;
     u8 *burst;
 
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    cells = Ram_HeapSlots->unknown_64[0];
-    view = Ram_HeapSlots->camera_work;
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    cells = Ram_HeapSlots->unk64[0];
+    view = Ram_HeapSlots->cameraWork;
     burst = Ram_MapCellBuffer;
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1, 1);
@@ -86,19 +86,19 @@ void Func_081661dc(struct BattleEffectArgument *effect)
         seed->x = slot->x;
         seed->y = slot->y;
         seed->z = slot->z;
-        seed->velocity_x = (Random16() & 255) << 11;
-        seed->velocity_y = ((Random16() & 255) - 127) << 12;
-        seed->velocity_z = ((Random16() & 255) - 127) << 12;
+        seed->velocityX = (Random16() & 255) << 11;
+        seed->velocityY = ((Random16() & 255) - 127) << 12;
+        seed->velocityZ = ((Random16() & 255) - 127) << 12;
         if (seed->x > 0)
-            seed->velocity_x = -seed->velocity_x;
+            seed->velocityX = -seed->velocityX;
         seed->variant = i / 4 * 2 + 16;
         i++;
     } while (i != 64);
 
     EffectPosition_ApplyStepAndYOffset(effect->actors[0], &origin);
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
 
     for (frame = 0; frame != 64; frame++) {
         if (frame == 8)
@@ -111,7 +111,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
                 Func_081963ec(104, 3);
             else
                 Func_081963ec(104, 7);
-            routine[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+            routine[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
             if (effect->side == 0)
                 routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
             else
@@ -123,7 +123,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
             s32 strip;
 
             Func_081963ec(104, 19);
-            routine[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+            routine[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
             if (step > 2)
                 step = 2;
             if (effect->variant == 0)
@@ -150,7 +150,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
                     out.x >>= 1;
                     out.y = out.y + origin.y - 112;
                     size = (life >> 3) + 2;
-                    routine[(i / 2) & 1](canvas, cells + Data_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
+                    routine[(i / 2) & 1](canvas, cells + gData_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
                     BattleFxKernels_IntegrateVector3(shard, 60, -0x400);
                     shard->variant--;
                 }
@@ -160,7 +160,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
         }
         if (frame == 8) {
             Func_08118088(effect->actors[0], 4);
-            work->shake_frames = 4;
+            work->shakeFrames = 4;
         }
         if (frame == 6)
             Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
@@ -168,7 +168,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
             Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
         Func_08158ce0(16, 16);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback(Func_08143000);

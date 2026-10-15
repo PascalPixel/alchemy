@@ -13,11 +13,11 @@
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 s32 Func_080d1eac(s32 id);
-extern const u8 Data_080f330c[];
+extern const u8 gData_080f330c[];
 
 void Func_080d4330(s32 key)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u8 value;
     s32 id;
 
@@ -27,7 +27,7 @@ void Func_080d4330(s32 key)
     } else {
         do {
             id = Func_080d1eac(ObjectTable_ReadActiveValue(key));
-            value = Data_080f330c[gPartyState.event_mode];
+            value = gData_080f330c[gPartyState.eventMode];
             *(s16 *)&work->result[0] = id;
         } while (0);
         *(s16 *)&work->result[1] = value;

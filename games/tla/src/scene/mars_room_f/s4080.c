@@ -1,7 +1,7 @@
 #include "room.h"
 
 extern u32 gInput;
-extern const s16 Data_02005ef8[];
+extern const s16 gData_02005ef8[];
 
 s32 GameFlag_Test(s32 flag);
 void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
@@ -19,7 +19,7 @@ void Func_02004080(struct ObjectRuntime *object)
     if (GameFlag_Test(0x106))
         angle = -1;
     else
-        angle = Data_02005ef8[(gInput >> 4) & 15];
+        angle = gData_02005ef8[(gInput >> 4) & 15];
     if (angle == -1) {
         Func_02005480(object, 9);
         return;

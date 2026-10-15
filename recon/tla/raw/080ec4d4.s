@@ -371,7 +371,7 @@ Func_080ec4d4:
 .L_080ec794:
 	.4byte gWorldMapWork
 .L_080ec798:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080ec79c:
 	.4byte 0xffff0000
 .L_080ec7a0:
@@ -399,7 +399,7 @@ Func_080ec4d4:
 .L_080ec7cc:
 	.4byte Data_0202a64c
 .L_080ec7d0:
-	.4byte Data_0202a642
+	.4byte gData_0202a642
 .L_080ec7d4:
 	.4byte gPartyState
 .L_080ec7d8:

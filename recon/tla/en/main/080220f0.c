@@ -8,14 +8,14 @@
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;
-    u32 half_width = sprite->width >> 1;
-    u32 half_height = sprite->height >> 1;
+    u32 halfWidth = sprite->width >> 1;
+    u32 halfHeight = sprite->height >> 1;
     s32 size = 8;
-    s32 size_half = 4;
+    s32 sizeHalf = 4;
     s32 affine;
-    s32 scale_x = *scale++;
+    s32 scaleX = *scale++;
     s32 px = *pos++;
-    s32 scale_y = *scale;
+    s32 scaleY = *scale;
     s32 py = *pos++;
     s32 pz = *pos++;
     s32 pw = *pos;
@@ -33,24 +33,24 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
     struct AnimationSpritePart *part;
 
     flip = Sprite_ComposeAnimationFrame(sprite, mode);
-    if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
+    if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX && sprite->rotation == 0) {
         affine = 0;
         matrix = 0;
     } else {
         affine = 1;
         effect.angle = sprite->rotation;
-        effect.scale_x = scale_x >> 8;
-        effect.scale_y = scale_y >> 8;
+        effect.scaleX = scaleX >> 8;
+        effect.scaleY = scaleY >> 8;
         if (flip != 0)
-            effect.scale_x = -effect.scale_x;
+            effect.scaleX = -effect.scaleX;
         matrix = AffineMatrix_BuildForEffect(&effect);
     }
-    if (scale_x > 0x10000 || scale_y > 0x10000) {
+    if (scaleX > 0x10000 || scaleY > 0x10000) {
         affine = 3;
-        half_width <<= 1;
-        half_height <<= 1;
+        halfWidth <<= 1;
+        halfHeight <<= 1;
         size = 16;
-        size_half = 8;
+        sizeHalf = 8;
     }
     if (py <= -0x640000) {
         slot = 1;
@@ -59,26 +59,26 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
         slot = (pz >> 17) + 10;
         depth = 2;
     }
-    y = ((pz - pw) >> 16) - size_half;
+    y = ((pz - pw) >> 16) - sizeHalf;
     if (sprite->flags & 1) {
         if (y < 160) {
             part = &sprite->part[1];
             part->affine = affine;
-            part->affine_index = matrix;
+            part->affineIndex = matrix;
             part->x = (px >> 16) - size;
             part->y = y;
             Runtime_PushSlotEntry(part, depth);
         }
     }
-    x = (px >> 16) - half_width + ((sprite->offset_x * scale_x + 0xffff) >> 16);
-    y = ((pz - py) >> 16) - half_height
-        - ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
+    x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+    y = ((pz - py) >> 16) - halfHeight
+        - ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
     if (x < 240 && y < 160) {
         part = &sprite->part[0];
         part->x = x;
         part->y = y;
         part->affine = affine;
-        part->affine_index = matrix;
+        part->affineIndex = matrix;
         Runtime_PushSlotEntry(part, slot);
     }
 }

@@ -1,5 +1,5 @@
 /* Draft, differ 4 of 107: the facing check of 6a8, written as ☀️'s SceneActor_CheckFacingAndRange
- * (vault_range.h) with ⚓️'s early exit on unknown_63 and the event work's count over 120. The
+ * (vault_range.h) with ⚓️'s early exit on unk63 and the event work's count over 120. The
  * native loads the facing between the right and left angles (adds r1; ldrh; adds r4), this form after
  * both. Tried: the four masks in eight other orders (14 to 86), three minutes of permute (nothing
  * better); the paused pointer before the count test is what brought it from 20 to 4. Also tried: the right angle before the left, masked inline or after (12 to 55);
@@ -10,15 +10,15 @@
 #include "event_work.h"
 
 struct FacingActor {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x47];
+    u8 unk14[0x47];
     u8 paused;
-    u8 unknown_5c[7];
-    u8 unknown_63;
+    u8 unk5c[7];
+    u8 unk63;
 };
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
@@ -28,24 +28,24 @@ void Func_020043c4(struct FacingActor *actor, s32 mode);
 s32 Func_020002d8(struct FacingActor *actor, struct FacingActor *target, s32 range, s32 force)
 {
     s32 result = 0;
-    s32 *target_pos;
-    s32 *actor_pos;
+    s32 *targetPos;
+    s32 *actorPos;
 
-    if (actor->unknown_63 != 0) {
+    if (actor->unk63 != 0) {
         actor->paused = 1;
         return 1;
     }
-    target_pos = &target->x;
-    actor_pos = &actor->x;
-    if (SceneActor_CalculateFixedPointDistance(target_pos, actor_pos) < range || force != 0) {
-        u32 angle = (u16)ArcTan2(target->z - actor->z, *target_pos - *actor_pos);
+    targetPos = &target->x;
+    actorPos = &actor->x;
+    if (SceneActor_CalculateFixedPointDistance(targetPos, actorPos) < range || force != 0) {
+        u32 angle = (u16)ArcTan2(target->z - actor->z, *targetPos - *actorPos);
         u32 left = (angle - 0x1000) & 0xf000;
         u32 right = (angle + 0x1000) & 0xf000;
         u32 forward = angle & 0xf000;
         u32 facing = actor->facing & 0xf000;
 
         if (forward == facing || right == facing || left == facing || force != 0) {
-            s16 count = ((struct EventWork *)Ram_HeapSlots->event_work)->unknown_184;
+            s16 count = ((struct EventWork *)Ram_HeapSlots->eventWork)->unk184;
             u8 *paused = &actor->paused;
 
             if (count > 120) {

@@ -56,12 +56,12 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_02001938(s32 mode);
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
-void Func_02004004(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
-void Func_0200400c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02004004(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
+void Func_0200400c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020041a4(s32 a, s32 x, s32 y, s32 z);
 void Func_020041b4(s32 countdown);
 void Func_02004214(s32 a, s32 b, s32 c);
-void Func_0200423c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 mode);
+void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 mode);
 
 static inline void Contigo_ObjFollow(s32 actor, s32 target)
 {
@@ -231,16 +231,16 @@ static inline void Contigo_ObjVar(s32 actor, s32 value)
     Motion_SetVarCbAndRefresh(actor, value);
 }
 
-static inline void Contigo_CopyCells(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+static inline void Contigo_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_02004004(src_x, src_y, dest_x, dest_y, width, height);
+    Func_02004004(srcX, srcY, destX, destY, width, height);
 }
 
-static inline void Contigo_CopyAttrs(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+static inline void Contigo_CopyAttrs(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_0200400c(src_x, src_y, width, height, dest_x, dest_y);
+    Func_0200400c(srcX, srcY, width, height, destX, destY);
 }
 
 static inline void Contigo_CamSet(s32 a, s32 x, s32 y, s32 z)
@@ -249,10 +249,10 @@ static inline void Contigo_CamSet(s32 a, s32 x, s32 y, s32 z)
     Func_020041a4(a, x, y, z);
 }
 
-static inline void Contigo_Tiles(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 mode)
+static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 mode)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_0200423c(src_x, src_y, width, height, dest_x, dest_y, mode);
+    Func_0200423c(srcX, srcY, width, height, destX, destY, mode);
 }
 
 #endif

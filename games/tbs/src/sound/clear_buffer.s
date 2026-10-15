@@ -164,7 +164,7 @@ Sound_CheckReadAddress:
 	bx	lr
 	.align 2
 .Lcommand_table_source:
-	.4byte Sound_CommandTableTemplate
+	.4byte gSound_CommandTableTemplate
 
 	.global MusicTrack_ReadCheckedCommandByte
 	.thumb_func
@@ -830,7 +830,7 @@ SoundDriver_CallViaR3:
 AlchemyUncredited_clear_buffer_14:
 	.2byte	0x0000
 AlchemyUncreditedEnd_clear_buffer_14:
-	.4byte Sound_ClockLengths
+	.4byte gSound_ClockLengths
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
 .syntax unified
@@ -1190,7 +1190,7 @@ AlchemyUncredited_clear_buffer_16:
 	.2byte	0x0000
 AlchemyUncreditedEnd_clear_buffer_16:
 	.4byte	0x03007ff0
-	.4byte	Sound_ClockLengths
+	.4byte	gSound_ClockLengths
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKey

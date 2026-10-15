@@ -6,13 +6,13 @@
 #include "ram_buffer.h"
 
 struct Work080cf158 {
-    u8 unknown_000[0xca4];
+    u8 unk000[0xca4];
     s8 active;
 };
 
 s32 Func_080cf158(void)
 {
-    struct Work080cf158 *work = Ram_HeapSlots->event_work;
+    struct Work080cf158 *work = Ram_HeapSlots->eventWork;
 
     if (work == NULL)
         return 0;

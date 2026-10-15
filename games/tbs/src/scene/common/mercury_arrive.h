@@ -14,7 +14,7 @@ static void Mercury_ArriveWithSparks(void)
 	{
 		Engine_EventBegin();
 		Camera_MoveTo(-1, -1, -1, 0);
-		actor->motion_flags = 0;
+		actor->motionFlags = 0;
 		Engine_ActorSetPosition(
 			0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
 		Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -31,7 +31,7 @@ static void Mercury_ArriveWithSparks(void)
 		Engine_ActorSetSpriteFlags(record, 1);
 		actor->sprite->priority = 1;
 		Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
-		actor->motion_flags = 3;
+		actor->motionFlags = 3;
 		actor->update = NULL;
 		BattleFx_PlayQueuedSound();
 		Engine_EventEnd();

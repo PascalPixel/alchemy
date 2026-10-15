@@ -23,17 +23,17 @@ extern u8		   gRomShiftedTilePair[];
 extern const u32   RelocatedQ16DotProduct[];
 extern u8		   Resource_Decode2CodeSize[];
 extern u8		   Resource_DecodeByteLzCodeSize[];
-extern const u8	   Ui_PpRowString[];
-extern s32		   Ui_FixedTileBlocks[];
-extern const u8	   Ui_HpRowString[];
-extern const u8	   Ui_HpString[];
-extern const u8	   Ui_PpString[];
-extern const u8	   Ui_SlashString[];
-extern u8		  *UiIcon_ItemIconPointers[];
-extern u8		  *UiIcon_ItemIconPointersEnd[];
-extern u8		  *UiIcon_MiscIconPointers[];
-extern u8		  *UiIcon_PsynergyIconPointers[];
-extern u8		  *UiIcon_PsynergyIconPointersEnd[];
+extern const u8	   gUi_PpRowString[];
+extern s32		   gUi_FixedTileBlocks[];
+extern const u8	   gUi_HpRowString[];
+extern const u8	   gUi_HpString[];
+extern const u8	   gUi_PpString[];
+extern const u8	   gUi_SlashString[];
+extern u8		  *gUiIcon_ItemIconPointers[];
+extern u8		  *gUiIcon_ItemIconPointersEnd[];
+extern u8		  *gUiIcon_MiscIconPointers[];
+extern u8		  *gUiIcon_PsynergyIconPointers[];
+extern u8		  *gUiIcon_PsynergyIconPointersEnd[];
 #if GAME_TLA
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 #endif
@@ -113,41 +113,41 @@ extern void *gRenderSlotHeads[];
 #endif
 extern u8						 gPartyStatusWork[];
 extern u8						 gSelectionWorkspace[];
-extern const struct ArticleTable UiText_ArticleTable;
+extern const struct ArticleTable gUiText_ArticleTable;
 struct TileMask
 {
 	u32 word0;
 	u32 word1;
 };
-extern const struct TileMask	   Menu_BarPatternRows[];
-extern const u8					   DisplayScroll_Font[];
-extern const u8					   DisplayTransition_DitherTable[];
-extern s8						   DisplayTransition_EdgeOffsets[];
-extern u8						   DisplayTransition_NoiseWidths[];
+extern const struct TileMask	   gMenu_BarPatternRows[];
+extern const u8					   gDisplayScroll_Font[];
+extern const u8					   gDisplayTransition_DitherTable[];
+extern s8						   gDisplayTransition_EdgeOffsets[];
+extern u8						   gDisplayTransition_NoiseWidths[];
 extern const u8					   FarCall_ResourceTable[];
 extern u8						   gDecodeFillByte;
 extern struct PaletteSnapshotWork *gPaletteWork;
-extern u16						   Graphics_ExpandNibbleTable[];
+extern u16						   gGraphics_ExpandNibbleTable[];
 extern struct AnimationObject	  *gSpriteObjects;
 #ifndef OWN_Menu_CursorObjectTiles
-extern const u8 Menu_CursorObjectTiles[];
+extern const u8 gMenu_CursorObjectTiles[];
 #endif
-extern const u8					 NameEntry_AlternateKeyboardTilemap[];
-extern s8						 NameEntry_CaretWave[];
-extern const u8					 NameEntry_VoicedMarkRanges[];
-extern u8						 NameEntry_DeleteKeyLabel[];
-extern u8						 NameEntry_EndKeyLabel[];
-extern const u8					 NameEntry_SemivoicedMarkRanges[];
-extern const u8					 NameEntry_KeyboardTilemap[];
-extern const u8					 Render_DecodeFrameBuffer[];
+extern const u8					 gNameEntry_AlternateKeyboardTilemap[];
+extern s8						 gNameEntry_CaretWave[];
+extern const u8					 gNameEntry_VoicedMarkRanges[];
+extern u8						 gNameEntry_DeleteKeyLabel[];
+extern u8						 gNameEntry_EndKeyLabel[];
+extern const u8					 gNameEntry_SemivoicedMarkRanges[];
+extern const u8					 gNameEntry_KeyboardTilemap[];
+extern const u8					 gRender_DecodeFrameBuffer[];
 extern const u8					 Resource_Decode2[];
 extern const u8					 Resource_DecodeByteLzArm[];
 extern const u8					 Resource_DecodeHalfwordLz[];
 extern const u8					 Resource_DecodeType01Arm[];
 extern u8						 Resource_DecodeType01CodeSize[];
 extern u8						 Resource_DecompressHalfwordsCodeSize[];
-extern u8						 Resource_FixedBlockBTiles[];
-extern const u8					 Resource_FixedBlockATiles[];
+extern u8						 gResource_FixedBlockBTiles[];
+extern const u8					 gResource_FixedBlockATiles[];
 extern const u8					 BattleEffect_Expand[];
 extern u8						 BattleEffect_ExpandCodeSize[];
 extern const u8					 Text_DecodeSymbol[];
@@ -161,24 +161,24 @@ extern const u8					 Tile_ExpandMasked[];
 extern u8						 Tile_ExpandMaskedCodeSize[];
 extern const u8					 Tile_ExpandOpaque[];
 extern u8						 Tile_ExpandOpaqueCodeSize[];
-extern const u8					 Title_PromptTiles[];
-extern s32						 Ui_ObjectPulseScales[];
-extern const u8					 Ui_PairBobOffsets[];
-extern u8						*UiIcon_DigitPointers[];
-extern u8						*UiIcon_FramePointerTable[];
-extern u8						*UiIcon_MarkPointers[];
-extern u8						*UiIcon_OverlayPointerTable[];
-extern u8						 UiIcon_ResourceTiles[];
-extern const s8					 UiSprite_BounceOffsets[];
-extern const u8					 UiSprite_CursorFrameTiles[];
-extern const s8					 UiSprite_WobbleOffsets[][2];
-extern const u8					 UiText_ColourPens[];
+extern const u8					 gTitle_PromptTiles[];
+extern s32						 gUi_ObjectPulseScales[];
+extern const u8					 gUi_PairBobOffsets[];
+extern u8						*gUiIcon_DigitPointers[];
+extern u8						*gUiIcon_FramePointerTable[];
+extern u8						*gUiIcon_MarkPointers[];
+extern u8						*gUiIcon_OverlayPointerTable[];
+extern u8						 gUiIcon_ResourceTiles[];
+extern const s8					 gUiSprite_BounceOffsets[];
+extern const u8					 gUiSprite_CursorFrameTiles[];
+extern const s8					 gUiSprite_WobbleOffsets[][2];
+extern const u8					 gUiText_ColourPens[];
 extern u8						 UiText_DrawGlyphCodeSize[];
-extern const u8					 UiText_GlyphWidths[];
-extern const struct ArticleTable UiText_IndefiniteArticles;
+extern const u8					 gUiText_GlyphWidths[];
+extern const struct ArticleTable gUiText_IndefiniteArticles;
 extern const u8					 UiText_LookupMessageArm[];
 extern u8						 UiText_LookupMessageCodeSize[];
-extern const s8					 UiWindow_PartyColumnOffsets[];
+extern const s8					 gUiWindow_PartyColumnOffsets[];
 #ifndef OWN_BattleFx_PlayUnitElementEffect
 #endif
 #ifndef OWN_Camera_StoreSceneParameters
@@ -261,12 +261,12 @@ s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, 
 #if GAME_TLA
 struct RenderOutput;
 
-extern s16		DisplayScroll_Busy;
-extern s16		DisplayScroll_LastPosition;
-extern u16		DisplayScroll_Position;
+extern s16		gDisplayScroll_Busy;
+extern s16		gDisplayScroll_LastPosition;
+extern u16		gDisplayScroll_Position;
 extern u32		gCameraSceneParameters[3];
 extern u8		gNumberTextBuffer[];
-extern s32		RenderResource_PairSourceTable[];
+extern s32		gRenderResource_PairSourceTable[];
 extern const u8 Resource_Decode01Code[];
 extern u8		Resource_Decode01CodeSize[];
 extern const u8 Resource_Decode2Code[];
@@ -306,7 +306,7 @@ void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);
 void UiWork_InitCountersAndScheduleRefresh(s32 kind);
 s32	 UiWork_SetParamNibbleFar(s32 color);
-void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resource_id);
+void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 #endif
 
 #endif

@@ -66,11 +66,11 @@ void Func_0814fa8c(struct BattleEffectArgument *effect)
 
 void Func_0814fa98(struct BattleEffectArgument *effect)
 {
-    struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
     /* FAKEMATCH: ⚓️ loads the effect work before it builds the fade step's offset; the plain order starts the offset first (one pair of instructions swapped). */
     asm volatile("");
-    work->fade_step = 0;
+    work->fadeStep = 0;
     effect->prelude = 0;
     Func_0814fab8(effect, 10);
 }

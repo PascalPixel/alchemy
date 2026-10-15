@@ -2,7 +2,7 @@
 
 void Func_020010b4(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
     GameFlag_ClearBit(0x12f);
 }
 

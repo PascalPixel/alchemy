@@ -11,7 +11,7 @@ static void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 	while (cnt != 0)
 	{
 		Engine_TaskWait(1);
-		busy = obj->velocity_y;
+		busy = obj->velocityY;
 		cnt--;
 		if (busy == 0)
 			break;

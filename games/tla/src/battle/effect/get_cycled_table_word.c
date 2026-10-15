@@ -13,7 +13,7 @@
 u16 BattleFx_GetCycledTableWord(void)
 {
     struct InputState *input = &gInput;
-    u16 *words = BattleFx_CyclePatternWords;
+    u16 *words = gBattleFx_CyclePatternWords;
 
     /* FAKEMATCH: ⚓️ loads the table's address before reading the buttons */
     asm volatile("" : "+l"(words));
@@ -24,7 +24,7 @@ u16 BattleFx_GetCycledTableWord(void)
 u16 BattleFx_GetEightWayHeadingWord(void)
 {
     struct InputState *input = &gInput;
-    u16 *words = BattleFx_EightWayHeadingWords;
+    u16 *words = gBattleFx_EightWayHeadingWords;
 
     /* FAKEMATCH: ⚓️ loads the table's address before reading the buttons */
     asm volatile("" : "+l"(words));

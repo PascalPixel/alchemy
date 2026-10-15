@@ -1,31 +1,31 @@
 #include "types.h"
 
 struct ResourceSprite {
-    u8 unknown_00[0x10];
-    u8 vram_block;
+    u8 unk00[0x10];
+    u8 vramBlock;
     u8 flags;
 };
 
-extern u8 ResourceBlockOwners[];
+extern u8 gResourceBlockOwners[];
 void Resource_ResetEntry(s32 block);
 
 s32 ResourceTable_CountFreeBlocks(void)
 {
-    u8 *marker = ResourceBlockOwners;
-    s32 free_count;
+    u8 *marker = gResourceBlockOwners;
+    s32 freeCount;
     s32 remaining;
 
     /* FAKEMATCH: ⚓️ loads the owner table before counting */
     asm volatile("");
-    free_count = 0;
+    freeCount = 0;
     remaining = 0x200;
     do {
         if (*marker++ == 0xff) {
-            free_count++;
+            freeCount++;
         }
         remaining--;
     } while (remaining != 0);
-    return free_count;
+    return freeCount;
 }
 
 void *Object_ReplaceResourceEntry(void *src, void *alt)
@@ -39,8 +39,8 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
         if (alt == NULL) {
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
         } else {
-            Resource_ResetEntry(obj->vram_block);
-            obj->vram_block = ((struct ResourceSprite *)alt)->vram_block;
+            Resource_ResetEntry(obj->vramBlock);
+            obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
             obj = alt;
         }

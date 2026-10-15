@@ -19,10 +19,10 @@ void Func_02005594(void)
     Func_02005c3c(0);
     GameFlag_SetBit(0x869);
     GameFlag_SetBit(0x202);
-    Data_02007948[0] = BG_PLTT[9];
-    Data_02007948[1] = BG_PLTT[7];
-    Data_02007948[2] = BG_PLTT[6];
-    Data_02007948[3] = BG_PLTT[76];
+    gData_02007948[0] = BG_PLTT[9];
+    gData_02007948[1] = BG_PLTT[7];
+    gData_02007948[2] = BG_PLTT[6];
+    gData_02007948[3] = BG_PLTT[76];
     Func_0200538c();
     if (GameFlag_Test(0x8fb)) {
         Func_02003640(1, 1);
@@ -73,7 +73,7 @@ void Func_02005594(void)
     Event_WaitTransitionFrames();
     Scheduler_AddOrUpdateCallback(Func_02002ccc, 0x480);
     for (i = 0; i <= 7; i++) {
-        u8 *field = &Object_GetById(i + 18)->field_5c;
+        u8 *field = &Object_GetById(i + 18)->field5c;
         /* FAKEMATCH: the pin keeps the 2 in the loop, built after the field's address as the native does; as a constant loop.c hoists it into r6 (differ 10). */
         register s32 value asm("r3") = 2;
 
@@ -89,19 +89,19 @@ void Func_02005594(void)
     if (gPartyState.entrance == 99) {
         Func_02003640(0, 0);
         Func_020036e0(0, 0);
-        Object_SetPositionAndResetMotion(Data_02007950, 0, 0, 0);
+        Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
     } else if (gPartyState.entrance == 98) {
         Func_02003640(1, 1);
         Func_020036e0(1, 0);
-        Object_SetPositionAndResetMotion(Data_02007950, 0, 0, 0);
+        Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
     } else if (gPartyState.entrance == 97) {
         Func_02003640(1, 1);
         Func_020036e0(1, 4);
-        Object_SetPositionAndResetMotion(Data_02007950, 0, 0, 0);
+        Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
     } else if (gPartyState.entrance == 96) {
         Func_02003640(1, 1);
         Func_020036e0(1, 4);
-        Object_SetPositionAndResetMotion(Data_02007950, 0, 0, 0);
+        Object_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
         Object_SetModeById(14, 5);
     }
 }

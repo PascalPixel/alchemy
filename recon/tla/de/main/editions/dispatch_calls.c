@@ -4,44 +4,44 @@
 #include "types.h"
 
 struct DispatchChild {
-    u8 unknown_00[5];
-    u8 unknown_05_low : 2;
-    u8 state_flags : 2;
-    u8 unknown_05_high : 4;
-    u8 unknown_06[0x0b];
-    u8 unknown_11_low : 1;
-    u8 display_flag : 1;
-    u8 unknown_11_high : 6;
-    s16 value_12;
-    u8 unknown_14[6];
-    u8 value_1a;
-    u8 unknown_1b[0x0d];
-    s16 *animation_index;
+    u8 unk00[5];
+    u8 unk05Low : 2;
+    u8 stateFlags : 2;
+    u8 unk05High : 4;
+    u8 unk06[0x0b];
+    u8 unk11Low : 1;
+    u8 displayFlag : 1;
+    u8 unk11High : 6;
+    s16 value12;
+    u8 unk14[6];
+    u8 value1a;
+    u8 unk1b[0x0d];
+    s16 *animationIndex;
 };
 
 struct DispatchObject {
-    u32 value_00;
-    s16 value_04;
-    u8 unknown_06[0x2a];
-    s32 value_30;
-    s32 value_34;
-    u8 unknown_38[0x18];
+    u32 value00;
+    s16 value04;
+    u8 unk06[0x2a];
+    s32 value30;
+    s32 value34;
+    u8 unk38[0x18];
     union {
         struct DispatchChild *child;
         struct DispatchChild **children;
     } target;
     u8 kind;
-    u8 unknown_55[2];
-    u8 value_57;
-    u8 unknown_58[3];
-    u8 value_5b;
-    u8 unknown_5c;
-    u8 value_5d;
-    u8 unknown_5e[6];
-    s16 value_64;
-    u8 unknown_66[2];
+    u8 unk55[2];
+    u8 value57;
+    u8 unk58[3];
+    u8 value5b;
+    u8 unk5c;
+    u8 value5d;
+    u8 unk5e[6];
+    s16 value64;
+    u8 unk66[2];
     s32 argument;
-    u8 unknown_6c[4];
+    u8 unk6c[4];
 };
 
 s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);
@@ -51,8 +51,8 @@ s32 ResourceMetadata_Register(struct DispatchChild *);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
 s32 WaitFrames(s32);
 
-extern const s32 ObjectDispatch_Table4[];
-extern const s32 ObjectDispatch_Table6[];
+extern const s32 gObjectDispatch_Table4[];
+extern const s32 gObjectDispatch_Table6[];
 
 #endif
 
@@ -135,7 +135,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argum
 void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
-        object->target.child->value_12 = value;
+        object->target.child->value12 = value;
 }
 
 void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
@@ -145,7 +145,7 @@ void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
     if (object != NULL && (object->kind & 0xf) == 1) {
         child = object->target.child;
         if (index >= 0) {
-            *child->animation_index = index;
+            *child->animationIndex = index;
             InitializeAnimationObjects(child);
         }
     }

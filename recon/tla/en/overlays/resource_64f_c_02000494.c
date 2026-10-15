@@ -32,12 +32,12 @@ void Func_02000494(void)
     Func_02000988();
     Func_02000a70(0);
     Func_02000a00((s32)MsgHaThatWas);
-    ObjectMotion_CommitPositionAndActivate_(gPartyState.current_owner, 0, -4);
+    ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, -4);
     Battle_WaitMode0(30);
-    Object_GetById(gPartyState.current_owner)->action_flags &= 0xfe;
-    ObjectMotion_CommitPositionAndActivate_(gPartyState.current_owner, 0, 12);
+    Object_GetById(gPartyState.currentOwner)->actionFlags &= 0xfe;
+    ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 12);
     Battle_WaitMode0(10);
-    ObjectMotion_CommitPositionAndActivate_(gPartyState.current_owner, 0, 16);
+    ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
     Battle_WaitMode0(30);
     Func_020009d0_(13, 0x2680000, 0x3900000);
     ObjectMotion_SetPositionAndReset_(13, 600, 920);
@@ -59,7 +59,7 @@ void Func_02000494(void)
     Motion_SetModeAndWaitAnimation_(15, 3);
     Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate2, 99);
     Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
-    gPartyState.battle_rule_24b = 2;
+    gPartyState.battleRule24b = 2;
     Func_02000a40(9, 2);
     Func_02000990();
 }

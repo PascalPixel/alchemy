@@ -8,8 +8,8 @@ void Func_02002970(void)
 {
     struct LemurianShipObject *object;
 
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-    Func_02002dc8(Data_0200304e);
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+    Func_02002dc8(gData_0200304e);
     if (LemurianShip_FlagCheck(0x982))
     {
         LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);
@@ -22,7 +22,7 @@ void Func_02002970(void)
         object = Object_GetById(8);
         LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, 35, 9);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         LemurianShip_ObjSetPos(object, 0x2380000, 0xfff00000, 0x980000);
         ObjectMotion_SetActionVariant(8, 3);
         LemurianShip_FlagSet(0x204);
@@ -43,7 +43,7 @@ void Func_02002970(void)
         object = Object_GetById(9);
         LemurianShip_MapCopy(29, 68, 29, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, 29, 9);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         object->y = 0xfff00000;
         ObjectMotion_SetActionVariant(9, 3);
         LemurianShip_FlagSet(0x205);
@@ -57,7 +57,7 @@ void Func_02002970(void)
             Object_SetModeById(9, 2);
     }
     LemurianShip_WaitFrames(1);
-    Func_02002db8(Data_02003014);
+    Func_02002db8(gData_02003014);
     LemurianShip_TaskAdd(Func_02001464, 0x480);
     if (!LemurianShip_FlagCheck(0x210))
         Object_SetPartAttribute(Object_GetById(10), 15);

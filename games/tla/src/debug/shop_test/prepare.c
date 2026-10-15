@@ -12,14 +12,14 @@ void Func_02000db0(void);
 // Func_02000db0 when the party came in by entrance 99.
 s32 Func_02000688(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     /* FAKEMATCH: the effect's address pinned to r3 and an empty asm holding gPartyState's address load it before the screen effect is stored, as the native does; plain, sched2 ranks the store's value above the address load (differ 2). */
-    register s32 *effect asm("r3") = &work->screen_effect;
+    register s32 *effect asm("r3") = &work->screenEffect;
     struct PartyState *party = &gPartyState;
 
     asm volatile("" : "+r"(party));
     *effect = 256;
-    party->event_mode = 2;
+    party->eventMode = 2;
     Object_SetModeById(16, 5);
     Object_SetModeById(17, 5);
     Object_SetModeById(18, 5);

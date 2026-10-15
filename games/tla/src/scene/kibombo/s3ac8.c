@@ -3,7 +3,7 @@
 
 void Func_02003ac8(void)
 {
-    struct KibomboObject *leader = Object_GetById(gPartyState.current_owner);
+    struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -16,7 +16,7 @@ void Func_02003ac8(void)
 
 void Func_02003b20(void)
 {
-    struct KibomboObject *leader = Object_GetById(gPartyState.current_owner);
+    struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -33,7 +33,7 @@ void Func_02003b20(void)
 
 void Func_02003b88(void)
 {
-    struct KibomboObject *leader = Object_GetById(gPartyState.current_owner);
+    struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -81,7 +81,7 @@ test:
         goto next;
 done:
     Scheduler_RemoveCallbackFar(Func_02002d64);
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1b4 = 32;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 32;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02005bc4(11);

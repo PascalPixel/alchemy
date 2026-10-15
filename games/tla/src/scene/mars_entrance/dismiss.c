@@ -6,7 +6,7 @@ void Func_02001234(s32 id)
 
     if (object != NULL) {
         ObjectDispatch_SetSingleChildFlags(object, 0);
-        object->collision_flags = 0;
-        object->motion_flags = 0;
+        object->collisionFlags = 0;
+        object->motionFlags = 0;
     }
 }

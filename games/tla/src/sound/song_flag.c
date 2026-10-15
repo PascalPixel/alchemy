@@ -10,7 +10,7 @@
 
 u16 Audio_GetBackgroundCue(void)
 {
-    return Data_02005830;
+    return gData_02005830;
 }
 
 s32 SongFlag_Test(s32 song)

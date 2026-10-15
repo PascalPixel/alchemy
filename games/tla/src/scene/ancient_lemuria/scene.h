@@ -16,13 +16,13 @@ void Func_02000080(s32 id);
 void Func_02000838(void);
 void Func_020019f4(void);
 void Func_02001a04(s32 a, s32 b, s32 c);
-void Func_02001a24(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer);
+void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
 void Func_02001a2c(s32 cue);
 
-static inline void MapCopy(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 layer)
+static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each stack argument in its own register */
-    Func_02001a24(src_x, src_y, width, height, dest_x, dest_y, layer);
+    Func_02001a24(srcX, srcY, width, height, destX, destY, layer);
 }
 
 #endif

@@ -1,7 +1,7 @@
 #include "room.h"
 #include "input.h"
 
-extern s16 Data_02005f18[];
+extern s16 gData_02005f18[];
 
 void Func_02000cb8(s32 id);
 
@@ -42,12 +42,12 @@ void Func_02000aac(void)
 
 void Func_02000ad8(void)
 {
-    struct SceneWork *work = Ram_HeapSlots->event_work;
+    struct SceneWork *work = Ram_HeapSlots->eventWork;
 
     Flag_Set(0x106);
     Func_02005560();
     Func_02005648(0);
-    work->unknown_166 = 0;
+    work->unk166 = 0;
     Flag_Clear(0x106);
     Flag_Clear(0x104);
     Battle_WaitMode0(60);
@@ -88,15 +88,15 @@ void Func_02000b40(void)
         const s16 *table;
         u32 *keys;
 
-        Object_GetById(gPartyState.current_owner);
+        Object_GetById(gPartyState.currentOwner);
         keys = &gInput.held;
-        table = Data_02005f18;
+        table = gData_02005f18;
         /* FAKEMATCH: the barrier loads the table's address before the direction mask's 15, where plainly sched2 builds the 15 first (differ 4); reading through a byte offset keeps the table as the base register (indexed plainly, differ 2). */
         asm volatile("" : "+l"(table));
         angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
         if (angle != -1) {
-            struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
-            struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+            struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+            struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
             s32 position[3];
             s32 x;
             s32 z;

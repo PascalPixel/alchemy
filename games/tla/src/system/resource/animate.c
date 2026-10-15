@@ -20,13 +20,13 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
     struct AnimationMetadata *info;
 
     if (work != NULL) {
-        info = Resource_GetMetadataRecordFar(work->anim_id);
+        info = Resource_GetMetadataRecordFar(work->animId);
         if (info->width != 0) {
             value = info->frames;
             if (value == 0)
-                value = Animation_LookupValueByKey(work->anim_id);
+                value = Animation_LookupValueByKey(work->animId);
             z = 0;
-            work->kind = info->draw_kind;
+            work->kind = info->drawKind;
             work->script = (u8 *)z;
             /* FAKEMATCH: ⚓️ clears the script before storing the lists. */
             asm("");
@@ -36,23 +36,23 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             work->pos = z;
             /* FAKEMATCH: then the codec and the frame. */
             asm("");
-            work->mode = info->frame_codec;
+            work->mode = info->frameCodec;
             work->frame = 0xff;
         }
     }
 }
 
 struct MetadataSlotState {
-    u8 unknown_00[0x0c];
+    u8 unk00[0x0c];
     s32 scale;
-    u8 unknown_10[4];
+    u8 unk10[4];
     u8 width;
     u8 height;
-    s8 offset_x;
-    s8 offset_y;
-    u8 unknown_18[3];
+    s8 offsetX;
+    s8 offsetY;
+    u8 unk18[3];
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unk1c[0x0c];
     s32 slots[4];
 };
 
@@ -84,8 +84,8 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
         state->width = metadata->width;
         state->height = metadata->height;
         state->scale = metadata->scale << 8;
-        state->offset_y = metadata->adjust_y;
-        state->offset_x = metadata->adjust_x;
+        state->offsetY = metadata->adjustY;
+        state->offsetX = metadata->adjustX;
     }
     if (index == state->count)
         state->count = index + 1;
@@ -147,10 +147,10 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 
     hi = 0x80 & no;
     if (work->scripts != 0) {
-        info = Resource_GetMetadataRecordFar(work->anim_id);
-        if (no < info->animation_count) {
+        info = Resource_GetMetadataRecordFar(work->animId);
+        if (no < info->animationCount) {
             value = (s32)work->scripts[no];
-            work->kind = info->draw_kind;
+            work->kind = info->drawKind;
             work->script = (u8 *)value;
             work->step = 0x10;
             if (hi == 0) {
@@ -162,53 +162,53 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 }
 
 struct AnimationGroup {
-    u8 unknown_00[0x16];
-    s8 offset_x;
-    s8 offset_y;
-    u8 last_no;
-    u8 unknown_19[2];
+    u8 unk00[0x16];
+    s8 offsetX;
+    s8 offsetY;
+    u8 lastNo;
+    u8 unk19[2];
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unk1c[0x0c];
     struct AnimationEntry *entries[4];
 };
 
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags)
 {
-    s32 high_bit;
+    s32 highBit;
     s32 index;
 
-    high_bit = flags & 0x80;
+    highBit = flags & 0x80;
     flags &= 0x7f;
 
-    if (state->last_no != flags) {
+    if (state->lastNo != flags) {
         index = 0;
         goto test_entry;
 entry_loop:
         {
             struct AnimationEntry *entry = state->entries[index];
             struct AnimationMetadata *metadata;
-            s32 selected_animation;
+            s32 selectedAnimation;
 
             if (entry == 0)
                 goto next_entry;
             if (entry->scripts == 0)
                 goto next_entry;
 
-            metadata = Resource_GetMetadataRecordFar(entry->anim_id);
-            if (flags >= metadata->animation_count)
+            metadata = Resource_GetMetadataRecordFar(entry->animId);
+            if (flags >= metadata->animationCount)
                 goto next_entry;
 
-            selected_animation = (s32)entry->scripts[flags];
-            entry->kind = metadata->draw_kind;
-            entry->script = (u8 *)selected_animation;
+            selectedAnimation = (s32)entry->scripts[flags];
+            entry->kind = metadata->drawKind;
+            entry->script = (u8 *)selectedAnimation;
             entry->step = 0x10;
-            if (high_bit == 0) {
+            if (highBit == 0) {
                 entry->pos = 0;
                 entry->timer = 0;
             }
             if (index == 0) {
-                state->offset_y = metadata->adjust_y;
-                state->offset_x = metadata->adjust_x;
+                state->offsetY = metadata->adjustY;
+                state->offsetX = metadata->adjustX;
             }
             goto next_entry;
         }
@@ -217,7 +217,7 @@ next_entry:
 test_entry:
         if (index < state->count)
             goto entry_loop;
-        state->last_no = flags;
+        state->lastNo = flags;
     }
     return 0;
 }

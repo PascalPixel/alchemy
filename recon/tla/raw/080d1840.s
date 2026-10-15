@@ -118,7 +118,7 @@ Func_080d1840:
 .L_080d1920:
 	.4byte 0x000001ff
 .L_080d1924:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080d1928:
 	.4byte 0xfff80000
 .L_080d192c:

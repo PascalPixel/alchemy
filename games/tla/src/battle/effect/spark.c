@@ -4,7 +4,7 @@ void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const s32 *scrip
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 u32 Random16(void);
-extern const s32 Data_080f0e78[];
+extern const s32 gData_080f0e78[];
 
 struct ObjectRuntime *Func_080dc044(s32 x, s32 y, s32 z)
 {
@@ -12,14 +12,14 @@ struct ObjectRuntime *Func_080dc044(s32 x, s32 y, s32 z)
     s32 magnitude;
 
     if (object != NULL) {
-        ObjectDispatch_InitializeFar(object, Data_080f0e78);
-        object->speed_limit = Random16() + 0x10000;
+        ObjectDispatch_InitializeFar(object, gData_080f0e78);
+        object->speedLimit = Random16() + 0x10000;
         object->acceleration = 0x10000;
-        object->motion_flags = 2;
+        object->motionFlags = 2;
         object->gravity = 0xa3d;
         magnitude = Random16();
         magnitude -= Random16();
-        object->velocity_y = magnitude;
+        object->velocityY = magnitude;
         Motion_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + 0x80000, Random16());
     }
     return object;

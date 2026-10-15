@@ -5,28 +5,28 @@
 #define SLOT_MAX 24
 
 struct SpinObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
     s32 floor;
     s32 fall;
-    u8 unknown_1c[0x1c];
-    s32 target_x;
-    u8 unknown_3c[0x19];
-    u8 motion_flags;
-    u8 unknown_56[0xe];
+    u8 unk1c[0x1c];
+    s32 targetX;
+    u8 unk3c[0x19];
+    u8 motionFlags;
+    u8 unk56[0xe];
     s16 timer;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void (*update)(struct SpinObject *);
 };
 
 struct SpinScene {
-    u8 unknown_00[0x10];
-    struct SpinObject *main_object;
-    u8 unknown_14[4];
-    s16 first_object_id;
-    u8 unknown_1a[0x36];
+    u8 unk00[0x10];
+    struct SpinObject *mainObject;
+    u8 unk14[4];
+    s16 firstObjectId;
+    u8 unk1a[0x36];
     struct EffectSlot slots[SLOT_MAX];
 };
 
@@ -57,8 +57,8 @@ void Func_080e0cec(struct EffectSlot *slot);
 
 void BattleFx_RunEffect15(void)
 {
-    struct SpinScene *scene = Ram_HeapSlots->effect_work;
-    struct SpinObject *obj = scene->main_object;
+    struct SpinScene *scene = Ram_HeapSlots->effectWork;
+    struct SpinObject *obj = scene->mainObject;
     struct SpinVector pos;
     struct EffectSlot *slot;
     struct EffectSlot *slots;
@@ -69,7 +69,7 @@ void BattleFx_RunEffect15(void)
     Motion_CamBounds(-1, -1, -1, 0);
     BattleEffect_InitializeSharedScene();
     WaitFrames(10);
-    ObjectMotion_ArmCallback(scene->first_object_id, 0x4000, 0);
+    ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
     WaitFrames(30);
     obj->update = ObjectGroup_ApplyRandomChildValues;
     Audio_PlayCue(131);
@@ -84,9 +84,9 @@ void BattleFx_RunEffect15(void)
     WaitFrames(70);
 
     ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-    obj->motion_flags = 0;
+    obj->motionFlags = 0;
     obj->update = Func_080e0cac;
-    obj->target_x = EFFECT_NO_TARGET;
+    obj->targetX = EFFECT_NO_TARGET;
     pos.x = obj->x;
     pos.y = obj->y;
     pos.z = obj->z;
@@ -102,8 +102,8 @@ void BattleFx_RunEffect15(void)
         EffectSlot_SetObjectMode(slot, 7);
         Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
         scale = (Random16() >> 1) + 0x13333;
-        slot->scale_y = scale;
-        slot->scale_x = scale;
+        slot->scaleY = scale;
+        slot->scaleX = scale;
         WaitFrames(1);
         i++;
         slot++;

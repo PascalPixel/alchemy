@@ -17,8 +17,8 @@ void Func_020005e4(s32 id, s32 a, s32 b);
 
 s32 Func_02000340(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     if (gPartyState.scene == (s32)&SceneId_Ov65ERoom1) {
         if (gPartyState.entrance == 5)
             Func_02000454();
@@ -32,11 +32,11 @@ s32 Func_02000340(void)
         s32 entrance = gPartyState.entrance;
 
         if (entrance == 1) {
-            Object_GetById(8)->collision_flags |= 4;
+            Object_GetById(8)->collisionFlags |= 4;
             ObjectMotion_SetActionVariant(8, 2);
         } else if (entrance == 5) {
             GameFlag_ClearBit(0x12f);
-            Object_GetById(9)->collision_flags |= 4;
+            Object_GetById(9)->collisionFlags |= 4;
             ObjectMotion_SetActionVariant(9, 2);
         } else if (entrance == 4) {
             GameFlag_ClearBit(0x12f);
@@ -52,7 +52,7 @@ s32 Scene_PrepareMap(void)
 
 void Func_02000454(void)
 {
-    *(s32 *)((u8 *)((s32)Ram_HeapSlots->event_work + 0x1ac) + 0) = 0x209;
+    *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
     Call1((void (*)())GameFlag_ClearBit, 0x12f);
     return;
 }

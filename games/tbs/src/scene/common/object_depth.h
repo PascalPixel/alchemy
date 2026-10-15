@@ -7,7 +7,7 @@ static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 	u8				  *fp;
 	u8				   flag;
 	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->priority_flags;
+	fp = &actor->priorityFlags;
 	flag = *fp | 2;
 	*fp = flag;
 	if (ref->z.fixed < actor->z.fixed)

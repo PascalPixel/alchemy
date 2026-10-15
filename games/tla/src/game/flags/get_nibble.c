@@ -19,7 +19,7 @@ s32 GameFlag_GetNibble(u32 flag)
     shift = flag & 4;
     mask = 15;
     flag = shifted >> 23;
-    result = GameFlagBytes[flag];
+    result = gGameFlagBytes[flag];
     result &= mask << shift;
     return result >> shift;
 }

@@ -1,37 +1,37 @@
 #include "kibombo.h"
 
-extern u8 Data_02006510[];
-extern u8 Data_020066d8[];
-extern u8 Data_020069a8[];
-extern u8 Data_02006a98[];
-extern u8 Data_02006cd8[];
-extern u8 Data_020064f8[];
-extern u8 Data_02006ef4[];
-extern u8 Data_020070d4[];
-extern u8 Data_02007434[];
-extern u8 Data_020074dc[];
-extern u8 Data_02007698[];
-extern u8 Data_02006ee8[];
-extern const u8 Data_02006324[];
+extern u8 gData_02006510[];
+extern u8 gData_020066d8[];
+extern u8 gData_020069a8[];
+extern u8 gData_02006a98[];
+extern u8 gData_02006cd8[];
+extern u8 gData_020064f8[];
+extern u8 gData_02006ef4[];
+extern u8 gData_020070d4[];
+extern u8 gData_02007434[];
+extern u8 gData_020074dc[];
+extern u8 gData_02007698[];
+extern u8 gData_02006ee8[];
+extern const u8 gData_02006324[];
 
 u8 *Func_0200012c(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Kibombo1)
-        return Data_02006510;
+        return gData_02006510;
     if (scene == (s32)&SceneId_Kibombo4)
-        return Data_020066d8;
+        return gData_020066d8;
     if (scene == (s32)&SceneId_Kibombo2)
-        return Data_020069a8;
+        return gData_020069a8;
     if (scene == (s32)&SceneId_Kibombo5)
-        return Data_02006a98;
+        return gData_02006a98;
     if (scene == (s32)&SceneId_Kibombo3) {
         if (GameFlag_Test(0x8ee))
-            Data_02006cd8[22] = 0;
-        return Data_02006cd8;
+            gData_02006cd8[22] = 0;
+        return gData_02006cd8;
     }
-    return Data_020064f8;
+    return gData_020064f8;
 }
 
 u8 *Func_020001b4(void)
@@ -39,16 +39,16 @@ u8 *Func_020001b4(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Kibombo1)
-        return Data_02006ef4;
+        return gData_02006ef4;
     if (scene == (s32)&SceneId_Kibombo4)
-        return Data_020070d4;
+        return gData_020070d4;
     if (scene == (s32)&SceneId_Kibombo2)
-        return Data_02007434;
+        return gData_02007434;
     if (scene == (s32)&SceneId_Kibombo5)
-        return Data_020074dc;
+        return gData_020074dc;
     if (scene == (s32)&SceneId_Kibombo3)
-        return Data_02007698;
-    return Data_02006ee8;
+        return gData_02007698;
+    return gData_02006ee8;
 }
 
 void Func_02000228(void)
@@ -75,7 +75,7 @@ void Func_02000270(void)
     Func_02005c3c(0);
     Func_02005b4c((s32)MsgNowThatAkafubu);
     Func_02005b64(24, 0);
-    ObjectMotion_SetAngleToward(24, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(24, gPartyState.currentOwner, 0);
     Battle_WaitMode0(20);
     Func_02005b64(24, 0);
     Kibombo_ObjTurn(24, 0x3000);
@@ -96,7 +96,7 @@ s32 Func_020002e8(void)
     u16 turn;
     s32 facing;
 
-    turn = Object_GetById(gPartyState.current_owner)->facing + 0x5fff;
+    turn = Object_GetById(gPartyState.currentOwner)->facing + 0x5fff;
     facing = 1;
     if (turn >= 0x3fff)
         facing = 0;
@@ -173,7 +173,7 @@ void Func_0200042c(void)
     if (Kibombo_FlagCheck(0x9df)) {
         Func_02005a9c();
         Func_02005c3c(0);
-        ObjectMotion_SetAngleToward(36, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(36, gPartyState.currentOwner, 0);
         Battle_WaitMode0(10);
         Func_02005c8c(36);
         Kibombo_ObjArm(36, 0xb000, 0);
@@ -184,7 +184,7 @@ void Func_0200042c(void)
         Func_02005b4c((s32)MsgOhOhMy);
         Func_02005b5c(36, 0, 40);
         Func_02005b64(36, 0);
-        ObjectMotion_SetAngleToward(36, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(36, gPartyState.currentOwner, 0);
         Battle_WaitMode0(10);
         Func_02005c8c(36);
         Kibombo_ObjArm(36, 0xb000, 0);
@@ -238,7 +238,7 @@ void Func_02000590(s32 show, s32 first, u32 count)
     u32 i;
 
     for (i = 0; i < count;) {
-        u8 *flags = &Object_GetById(first + i)->priority_flags;
+        u8 *flags = &Object_GetById(first + i)->priorityFlags;
         u32 next = i + 1;
 
         if (show)
@@ -252,7 +252,7 @@ void Func_02000590(s32 show, s32 first, u32 count)
 
 void Func_020005d0(void)
 {
-    Func_02005c6c(Data_02006324);
+    Func_02005c6c(gData_02006324);
 }
 
 void Func_020005e0(void)
@@ -327,15 +327,15 @@ void Func_02000734(void)
     if (object->x >> 20 == 6 && object->z >> 20 == 18) {
         Func_02005a9c();
         Func_02005c3c(0);
-        Object_GetById(11)->motion_flags = 3;
-        object->motion_flags = 3;
+        Object_GetById(11)->motionFlags = 3;
+        object->motionFlags = 3;
         do
             WaitFrames(1);
-        while (object->velocity_y != 0);
+        while (object->velocityY != 0);
         Func_02005c9c(188);
         WaitFrames(10);
-        object->motion_flags = 0;
-        Object_GetById(11)->motion_flags = 0;
+        object->motionFlags = 0;
+        Object_GetById(11)->motionFlags = 0;
         Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
         GameFlag_SetBit(0x9ea);
         if (!GameFlag_Test(0x8f4))
@@ -349,18 +349,18 @@ void Func_020007c8(void)
     Func_02005a9c();
     Func_02005c3c(0);
     Kibombo_CamMove(-1, -1, -1, 0);
-    Func_02005bbc()->motion_flags = 0;
+    Func_02005bbc()->motionFlags = 0;
     Func_02005ba4(0x9999, 0x1333);
     Kibombo_CamMove(0x580000, -1, 0x1880000, 1);
-    Kibombo_ObjSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
-    Kibombo_ObjWalk(gPartyState.current_owner, 72, 392);
-    Kibombo_ObjWalk(gPartyState.current_owner, 88, 392);
+    Kibombo_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
+    Kibombo_ObjWalk(gPartyState.currentOwner, 72, 392);
+    Kibombo_ObjWalk(gPartyState.currentOwner, 88, 392);
     Kibombo_ObjArm(7, 0x6000, 10);
     Func_02005b4c((s32)MsgWhWhoAre);
     Func_02005b64(7, 0);
-    Func_02005b1c(26, gPartyState.current_owner);
-    Func_02005b1c(5, gPartyState.current_owner);
-    Func_02005b1c(6, gPartyState.current_owner);
+    Func_02005b1c(26, gPartyState.currentOwner);
+    Func_02005b1c(5, gPartyState.currentOwner);
+    Func_02005b1c(6, gPartyState.currentOwner);
     WaitFrames(1);
     ObjectMotion_SetActionVariant(26, 2);
     ObjectMotion_SetActionVariant(5, 2);
@@ -368,9 +368,9 @@ void Func_020007c8(void)
     Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
     Kibombo_ObjSpeed(5, 0xcccc, 0x6666);
     Kibombo_ObjSpeed(6, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(26, Data_02005d18);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005d5c);
-    Object_SetActionCallbackAndRefreshById(6, Data_02005da0);
+    ObjectMotion_EnableActionAndSetCallback(26, gData_02005d18);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005d5c);
+    Object_SetActionCallbackAndRefreshById(6, gData_02005da0);
     Func_02005b64(7, 0);
     if (GameFlag_Test(0x911))
         Func_02000978();
@@ -380,36 +380,36 @@ void Func_020007c8(void)
     Kibombo_ObjSpeed(26, 0x19999, 0xcccc);
     Kibombo_ObjSpeed(5, 0x19999, 0xcccc);
     Kibombo_ObjSpeed(6, 0x19999, 0xcccc);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005e54);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02005e54);
-    Object_SetActionCallbackAndRefreshById(26, Data_02005e54);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005e54);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02005e54);
+    Object_SetActionCallbackAndRefreshById(26, gData_02005e54);
     GameFlag_SetBit(0x8f3);
     Func_02005aa4();
 }
 
 void Func_02000978(void)
 {
-    Kibombo_ObjArm(gPartyState.current_owner, 0x8000, 20);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0x8000, 20);
     Func_02005b4c((s32)MsgItLooksLikeHas);
     UiText_OpenMessageAtObject(6, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Kibombo_ObjArm(5, 0x4000, 10);
         Object_SetModeById(5, 3);
         Func_02005b64(5, 0);
-        ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+        ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     } else {
         Kibombo_ObjArm(5, 0x4000, 10);
         Object_SetModeById(5, 4);
-        ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+        ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
         Func_02005b64(5, 0);
     }
     Kibombo_ObjEmote(7, 0x101, 20);
     Func_02005b64(7, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0x2000, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0x2000, 0);
     Kibombo_ObjArm(26, 0xb000, 0);
     Kibombo_ObjArm(5, 0x6000, 0);
     Kibombo_ObjArm(6, 0xe000, 40);
-    Kibombo_ObjArm(gPartyState.current_owner, 0xe000, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0xe000, 0);
     Kibombo_ObjArm(26, 0xd000, 0);
     Kibombo_ObjArm(5, 0, 0);
     Kibombo_ObjArm(6, 0xe000, 20);
@@ -441,11 +441,11 @@ void Func_02000b2c(void)
     Func_02005b64(5, 0);
     Kibombo_ObjEmote(7, 0x101, 20);
     Func_02005b64(7, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0x2000, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0x2000, 0);
     Kibombo_ObjArm(26, 0xb000, 0);
     Kibombo_ObjArm(5, 0x6000, 0);
     Kibombo_ObjArm(6, 0xe000, 40);
-    Kibombo_ObjArm(gPartyState.current_owner, 0xe000, 0);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0xe000, 0);
     Kibombo_ObjArm(26, 0xd000, 0);
     Kibombo_ObjArm(5, 0, 0);
     Kibombo_ObjArm(6, 0xe000, 0);

@@ -5,11 +5,11 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-extern u8 Data_02006338[];
-extern u8 Data_02006500[];
-extern u8 Data_02006598[];
-extern u8 Data_02006700[];
-extern u8 Data_02006790[];
+extern u8 gData_02006338[];
+extern u8 gData_02006500[];
+extern u8 gData_02006598[];
+extern u8 gData_02006700[];
+extern u8 gData_02006790[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -26,16 +26,16 @@ u8 *Func_020003f8(void)
 {
     switch (gPartyState.entrance) {
     case 64:
-        return Data_02006500;
+        return gData_02006500;
     case 65:
-        return Data_02006598;
+        return gData_02006598;
     case 68:
         if (!GameFlag_Test(0x8de))
-            return Data_02006700;
+            return gData_02006700;
     case 77:
-        return Data_02006790;
+        return gData_02006790;
     default:
-        return Data_02006338;
+        return gData_02006338;
     }
 }
 
@@ -43,11 +43,11 @@ u8 *Func_020003f8(void)
 // shown first, the event work's counters are cleared.
 void Func_02000458(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: an empty asm after the work load keeps it ahead of the 0x212 offset, which the native starts before it loads gPartyState's address (plain: differ 4; a one-pass block in its place: 2). */
     asm("");
-    gPartyState.render_mode = 8;
+    gPartyState.renderMode = 8;
     if (Flag_IsSet(0x147)) {
         Func_02004da8();
         Func_02004ba8(153, 4);

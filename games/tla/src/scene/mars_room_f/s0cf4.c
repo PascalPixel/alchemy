@@ -4,11 +4,11 @@ extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
-extern const u8 Data_02006b8c[];
-extern const u8 Data_02006b98[];
-extern const u8 Data_02006d78[];
-extern const u8 Data_02006e38[];
-extern const u8 Data_02006f64[];
+extern const u8 gData_02006b8c[];
+extern const u8 gData_02006b98[];
+extern const u8 gData_02006d78[];
+extern const u8 gData_02006e38[];
+extern const u8 gData_02006f64[];
 s32 Func_02002cfc(void);
 void Func_02002ce0(void);
 void Func_020043ec(void);
@@ -17,7 +17,7 @@ void Func_02004700(s32 a0);
 void Func_02000c80(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     s32 z = object->z >> 20;
     s32 x = object->x;
     u8 *cell = map->layers[2].cells;
@@ -28,13 +28,13 @@ void Func_02000c80(s32 id)
         cell += offset << 2;
         cell[2] = 255;
     } while (0);
-    Object_GetById(id)->priority_flags = 0;
+    Object_GetById(id)->priorityFlags = 0;
 }
 
 void Func_02000cb8(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     s32 z = object->z >> 20;
     s32 x = object->x;
     u8 *cell = map->layers[2].cells;
@@ -46,7 +46,7 @@ void Func_02000cb8(s32 id)
         cell[2] = 0;
     } while (0);
     {
-        u8 *flags = &Object_GetById(id)->priority_flags;
+        u8 *flags = &Object_GetById(id)->priorityFlags;
         s32 value = 2;
 
         value |= *flags;
@@ -103,14 +103,14 @@ void Func_02000df8(void)
 const u8 *Func_02000e04(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom4)
-        return Data_02006b98;
+        return gData_02006b98;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom2)
-        return Data_02006f64;
+        return gData_02006f64;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom1)
-        return Data_02006d78;
+        return gData_02006d78;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom3)
-        return Data_02006e38;
-    return Data_02006b8c;
+        return gData_02006e38;
+    return gData_02006b8c;
 }
 
 void Func_02000e68(void)

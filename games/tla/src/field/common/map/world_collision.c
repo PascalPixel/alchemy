@@ -57,7 +57,7 @@ s32 Func_0802db88(void *object, struct WorldPosition *position)
 {
     if (Func_0802da88(position) != 255) {
         s32 collision = GetWorldMapCollision(position);
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
         s32 mode;
 
         /* FAKEMATCH: the native loads the event work before it builds the mode offset; the plain read builds the offset first (one reordered pair, differ 2). */
@@ -78,7 +78,7 @@ s32 Func_0802db88(void *object, struct WorldPosition *position)
 }
 
 struct WorldMover {
-    u8 unknown_00[12];
+    u8 unk00[12];
     s32 height;
 };
 
@@ -86,7 +86,7 @@ s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position)
 {
     if (Func_0802da88(position) != 255) {
         s32 collision = GetWorldMapCollision(position);
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
 
         s32 height = mover->height;
 

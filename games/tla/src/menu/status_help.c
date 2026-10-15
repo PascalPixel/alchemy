@@ -2,9 +2,9 @@
 #include "ram_buffer.h"
 
 struct StatusOwner {
-    u8 unknown_000[15];
+    u8 unk000[15];
     u8 level;
-    u8 unknown_010[276];
+    u8 unk010[276];
     s32 experience;
 };
 
@@ -20,12 +20,12 @@ u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void *MemAlloc(s32 size);
 void MemFree(void *buffer);
-void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
+void UiText_CopyMessageStringFar(s32 messageId, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, void *destination, s32 offset, s32 terminator);
 
 void Func_080ff2e8(void *window, s32 help, s32 full)
 {
-    u8 *menu = Ram_HeapSlots->menu_runtime;
+    u8 *menu = Ram_HeapSlots->menuRuntime;
     u8 *buffer;
 
     if (full == 0 && help > 3)

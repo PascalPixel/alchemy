@@ -1,7 +1,7 @@
 	.section .rodata
-@ The Broken Seal's FieldFx_SparkleFrames, byte for byte
-	.global Data_080f0b7c
-Data_080f0b7c:
+@ The Broken Seal's gFieldFx_SparkleFrames, byte for byte
+	.global gData_080f0b7c
+gData_080f0b7c:
 	.2byte -2, 12
 	.2byte -4, 12
 	.2byte -6, 12

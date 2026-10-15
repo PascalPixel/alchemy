@@ -69,7 +69,7 @@ Func_0200006c:
 	bl Func_02002b30
 	pop {r5, r6, pc}
 .L_02008100:
-	.4byte Data_02003308
+	.4byte gData_02003308
 .L_02008104:
 	.4byte gPartyState
 	.section .text.x020086ac,"ax",%progbits

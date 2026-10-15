@@ -3,7 +3,7 @@
 void Func_02003420(s32 id, s32 kind, s32 height)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct PillarWork *work = &Data_0200536c;
+    struct PillarWork *work = &gData_0200536c;
     struct PillarEntry *entry = &work->entries[work->count];
 
     if (object != 0) {
@@ -20,7 +20,7 @@ void Func_02003420(s32 id, s32 kind, s32 height)
 
 void Func_02003460(s32 height)
 {
-    struct PillarWork *work = &Data_0200536c;
+    struct PillarWork *work = &gData_0200536c;
     struct PillarEntry *entry;
     s32 i;
 

@@ -21,20 +21,20 @@ void Camera_StoreSceneParameters(s32 span, u32 depth, s32 range);
 
 void Camera_ConfigureScene(s32 pos)
 {
-    struct BattleCamera *state = Ram_HeapSlots->camera_work;
-    struct BattlePresentationTransition *secondary = Ram_HeapSlots->transition_work;
+    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+    struct BattlePresentationTransition *secondary = Ram_HeapSlots->transitionWork;
     struct FixedPointPosition local;
     u32 result;
 
     state->pos[1] = 160 << 11;
     state->pos[0] = 0;
     state->pos[2] = 0;
-    secondary->target_yaw = 128 << 7;
+    secondary->targetYaw = 128 << 7;
     state->yaw = 128 << 7;
     state->pitch = 244 << 8;
-    state->follow_pos = 0;
+    state->followPos = 0;
     state->distance = 0x02ee0000;
-    state->unknown_18 = 0;
+    state->unk18 = 0;
 
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(&state->pos[0]);

@@ -44,13 +44,13 @@ s32 BattleEscape_PlayRun(void *action)
 
 s32 BattlePres_ShowDefendMessage(s16 *script)
 {
-    s32 object_id;
+    s32 objectId;
     s32 result;
     struct BattleUnit *unit;
 
-    object_id = *script;
-    unit = UnitGet(object_id);
-    if (BattleObject_IsValidId(object_id) < 0) {
+    objectId = *script;
+    unit = UnitGet(objectId);
+    if (BattleObject_IsValidId(objectId) < 0) {
         return -1;
     }
     result = 0;
@@ -58,7 +58,7 @@ s32 BattlePres_ShowDefendMessage(s16 *script)
         return result;
     }
     UiWork_ClearValueNameTablesFar();
-    UiText_DrawQuantity(object_id, 1);
+    UiText_DrawQuantity(objectId, 1);
     UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
     return 0;
 }

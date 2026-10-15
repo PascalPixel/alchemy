@@ -8,13 +8,13 @@
 void Func_08108030(void *panel);
 
 struct ScreenWork {
-    u8 unknown_000[0x5a4];
+    u8 unk000[0x5a4];
     u8 panel[0x84];
 };
 
 void Func_08040c60(void)
 {
-    struct ScreenWork *work = Ram_HeapSlots->unknown_d0[0];
+    struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
     Func_08108030(work->panel);
 }
@@ -45,7 +45,7 @@ s32 RenderOutput_Create(s32 resource, s32 flags, struct UiWindow *window, s32 x,
 
 struct UiWindow *Func_08040cc4(void)
 {
-    void *work = Ram_HeapSlots->unknown_d0[0];
+    void *work = Ram_HeapSlots->unkd0[0];
     struct UiWindow *window = UiWindow_Create(6, 2, 18, 16, 2);
     s32 i;
 

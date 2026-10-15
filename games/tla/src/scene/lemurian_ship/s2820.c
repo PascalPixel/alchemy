@@ -8,12 +8,12 @@ void Func_02002820(void)
 {
     struct LemurianShipObject *object;
 
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
     if (LemurianShip_FlagCheck(0x93f))
     {
         object = Object_GetById(64);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         LemurianShip_ObjSetPos(Object_GetById(64), 0x880000, 0xffe00000, 0x1880000);
         object->height = 0xfff00000;
         ObjectMotion_SetActionVariant(64, 3);
@@ -34,7 +34,7 @@ void Func_02002820(void)
         Object_SetPartAttribute(Object_GetById(64), 0);
         LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
         LemurianShip_CamSet(0x80000, 0x100000, 0xf80000, 0x1000000);
-        Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
         Func_02002c10();
         LemurianShip_WaitFrames(1);
     }

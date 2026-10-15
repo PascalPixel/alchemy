@@ -538,15 +538,15 @@ Func_02000848:
 .L_02008a90:
 	.4byte 0x050001e8
 .L_02008a94:
-	.4byte Data_02000e84
+	.4byte gData_02000e84
 .L_02008a98:
-	.4byte Data_02000e90
+	.4byte gData_02000e90
 .L_02008a9c:
 	.4byte 0x0000025f
 .L_02008aa0:
 	.4byte 0x00000092
 .L_02008aa4:
-	.4byte Data_02000ea8
+	.4byte gData_02000ea8
 .L_02008aa8:
 	.4byte gInput
 	.section .text.x02008ba0,"ax",%progbits

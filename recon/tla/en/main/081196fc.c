@@ -4,13 +4,13 @@
 #include "mem.h"
 
 struct SaveSlotRecord {
-    u8 unknown_00[0x1c];
+    u8 unk00[0x1c];
     u8 used;
-    u8 unknown_1d[0x23];
+    u8 unk1d[0x23];
 };
 
 struct SaveWork {
-    u8 unknown_0000[0x303c];
+    u8 unk0000[0x303c];
     struct SaveSlotRecord slots[3];
 };
 

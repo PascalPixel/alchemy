@@ -43,7 +43,7 @@ static void Title_LoadBackground(void);
 
 struct TitleWork
 {
-	u8	unknown_00[20];
+	u8	unk00[20];
 	u16 mode;
 };
 
@@ -78,7 +78,7 @@ s32 Title_Run(void)
 
 	if (gGameState.entrance == 10)
 	{
-		Object_GetById(gGameState.selected_actor)->motion_flags = 0;
+		Object_GetById(gGameState.selectedActor)->motionFlags = 0;
 		Engine_AudioPlayCue(75);
 		Title_RevealScreen(0);
 		Engine_TaskWait(120);
@@ -268,11 +268,11 @@ static void Title_RevealScreen(s32 unused)
 		IO_WRITE_QUEUE_PUSH(0x4000054, 16 - i, 0x20000);
 		Engine_TaskWait(3);
 	}
-	gEventWork->start_transition = 0;
-	gEventWork->transition_frames = 1;
+	gEventWork->startTransition = 0;
+	gEventWork->transitionFrames = 1;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	gEventWork->transition_frames = 60;
+	gEventWork->transitionFrames = 60;
 }
 
 static void Title_LoadBackground(void)

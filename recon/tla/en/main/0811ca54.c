@@ -27,37 +27,37 @@ void Func_08138020(struct BattlePresentationWork *work);
 s32 Func_0811ca54(struct BattleActionRecord *action)
 {
     struct BattlePresentationWork work;
-    struct BattlePresentationTransition *transition = Ram_HeapSlots->transition_work;
+    struct BattlePresentationTransition *transition = Ram_HeapSlots->transitionWork;
     struct MotionObject *object;
     s32 facing;
     s32 i;
 
-    if (action->unit_id > 4)
+    if (action->unitId > 4)
         facing = -0x2000;
     else
         facing = 0x2000;
-    if (transition->target_yaw == facing)
+    if (transition->targetYaw == facing)
     {
         transition->frames = 40;
         WaitFrames(40);
     }
     else
     {
-        transition->target_yaw = facing;
+        transition->targetYaw = facing;
         transition->frames = 40;
         WaitFrames(40);
     }
     work.kind = action->parameter;
-    work.initial_value = action->range;
-    work.actor = action->unit_id;
-    work.first_target = action->target;
+    work.initialValue = action->range;
+    work.actor = action->unitId;
+    work.firstTarget = action->target;
     if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
-    if (work.first_target > 127)
+    if (work.firstTarget > 127)
         work.count = BattleParty_ListLivingUnits(2, (u16 *)work.actors);
     else
         work.count = BattleParty_ListLivingUnits(1, (u16 *)work.actors);
-    PartyStatusDrawFar(Ram_HeapSlots->battle_work->party_status & ~1);
+    PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
     object = BattleObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);

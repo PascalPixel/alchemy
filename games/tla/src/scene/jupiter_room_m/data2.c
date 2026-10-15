@@ -13,30 +13,30 @@ void Func_02000ad0(void);
 void Func_02000b38(void);
 void Func_0200309c(void);
 
-extern u32 Data_02004fc4[];
-extern u32 Data_02005000[];
-extern u32 Data_0200503c[];
-extern s32 Data_02005078[];
+extern u32 gData_02004fc4[];
+extern u32 gData_02005000[];
+extern u32 gData_0200503c[];
+extern s32 gData_02005078[];
 
-u32 Data_02004fc4[] = {
+u32 gData_02004fc4[] = {
 	0, 1, 13, 22, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_02005000[] = {
+u32 gData_02005000[] = {
 	0, 1, 13, 44, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_0200503c[] = {
+u32 gData_0200503c[] = {
 	0, 1, 13, 126, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-s32 Data_02005078[] = {
+s32 gData_02005078[] = {
 	46,
 	(s32)Func_02000038,
 	17,
@@ -70,16 +70,16 @@ struct ScenePlacement gScenePlacements[] = {
 	{373, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(424), FACING_SOUTH, 2, 0},
 	{373, CONDITION_ALWAYS, 1, PIXELS(1464), 0, PIXELS(280), FACING_SOUTH, 2, 0},
 	{373, CONDITION_ALWAYS, 1, PIXELS(1608), 0, PIXELS(280), FACING_SOUTH, 2, 0},
-	{317, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(648), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-	{317, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(680), 0, PIXELS(312), FACING_SOUTH, 2, 1},
-	{317, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(936), 0, PIXELS(232), FACING_SOUTH, 2, 1},
-	{317, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(952), 0, PIXELS(312), FACING_SOUTH, 2, 1},
-	{428, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(968), 0, PIXELS(248), FACING_SOUTH, 2, 0},
-	{407, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(1144), 0, PIXELS(184), FACING_SOUTH, 2, 0},
-	{407, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(1064), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+	{317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(648), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+	{317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(680), 0, PIXELS(312), FACING_SOUTH, 2, 1},
+	{317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(936), 0, PIXELS(232), FACING_SOUTH, 2, 1},
+	{317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(952), 0, PIXELS(312), FACING_SOUTH, 2, 1},
+	{428, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(968), 0, PIXELS(248), FACING_SOUTH, 2, 0},
+	{407, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1144), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+	{407, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1064), 0, PIXELS(184), FACING_SOUTH, 2, 1},
 	{316, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(200), FACING_EAST, 2, 0},
-	{489, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(200), 0, PIXELS(152), FACING_EAST, 2, 0},
-	{489, CONDITION_ALWAYS, (s32)Data_02005078, PIXELS(1016), 0, PIXELS(168), FACING_EAST, 2, 0},
+	{489, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(200), 0, PIXELS(152), FACING_EAST, 2, 0},
+	{489, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1016), 0, PIXELS(168), FACING_EAST, 2, 0},
 	{0, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
 	{1, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
 	{2, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -91,7 +91,7 @@ struct ScenePlacement gScenePlacements[] = {
 	{33, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
 	{23, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
 	{56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-	{489, CONDITION_ALWAYS, (s32)Data_02005078, 0, 0, 0, FACING_NORTH, 2, 0},
+	{489, CONDITION_ALWAYS, (s32)gData_02005078, 0, 0, 0, FACING_NORTH, 2, 0},
 	{SCENE_TABLE_END},
 };
 
@@ -127,7 +127,7 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_02005524[] = {
+u32 gData_02005524[] = {
 #if defined(TLA_EDITION_JA)
 	39, 14, 22, 26, 0, 23,
 #else
@@ -136,13 +136,13 @@ u32 Data_02005524[] = {
 	6, 0xc0000, 17,
 };
 
-u32 Data_02005548[] = {
+u32 gData_02005548[] = {
 	22, 3, 0x2000, 39, 9, 0,
 	120, 39, 1, 22, 3, 0xa000,
 	0, 120, 13, 0xffff, 0,
 };
 
-s32 Data_0200558c[] = {
+s32 gData_0200558c[] = {
 	39,
 	2,
 	46,
@@ -169,7 +169,7 @@ s32 Data_0200558c[] = {
 	0,
 };
 
-s32 Data_020055ec[] = {
+s32 gData_020055ec[] = {
 	39,
 	2,
 	46,
@@ -194,7 +194,7 @@ s32 Data_020055ec[] = {
 	0,
 };
 
-s32 Data_02005644[] = {
+s32 gData_02005644[] = {
 	46,
 	(s32)Func_02000b38,
 	48,
@@ -219,7 +219,7 @@ s32 Data_02005644[] = {
 	0,
 };
 
-s32 Data_0200569c[] = {
+s32 gData_0200569c[] = {
 	39,
 	2,
 	46,
@@ -242,98 +242,98 @@ s32 Data_0200569c[] = {
 	0,
 };
 
-u32 Data_020056ec[] = {
+u32 gData_020056ec[] = {
 	22, 3, 0x4000, 0, 20, 22,
 	3, 0x6000, 0, 20, 22, 3,
 	0x4000, 0, 20, 22, 3, 0x2000,
 	0, 20, 13, 0xffff, 0,
 };
 
-u32 Data_02005748[] = {
+u32 gData_02005748[] = {
 	39, 5, 5, 0, 0, 0x200000,
 	1, 48, 0x2e80000, 0x1480000, 1, 39,
 	1, 22, 3, 0xd000, 17,
 };
 
-s32 Data_0200578c[] = {
+s32 gData_0200578c[] = {
 	39, 5, 5, -0x80000, 0, 0x200000,
 	1, 48, 0x3800000, 0x1480000, 1, 39,
 	1, 22, 3, 0xb000, 17,
 };
 
-u32 Data_020057d0[] = {
+u32 gData_020057d0[] = {
 	39, 2, 48, 0x2e40000, 0x1380000, 1,
 	39, 1, 22, 3, 0xd000, 17,
 };
 
-u32 Data_02005800[] = {
+u32 gData_02005800[] = {
 	39, 2, 48, 0x3840000, 0x1380000, 1,
 	39, 1, 22, 3, 0xb000, 17,
 };
 
-u32 Data_0200d830[] = {
+u32 gData_0200d830[] = {
 	39, 5, 48, 0x2d40000, 0x1380000, 1,
 	39, 1, 22, 3, 0xd000, 17,
 };
 
-u32 Data_02005860[] = {
+u32 gData_02005860[] = {
 	39, 5, 48, 0x3940000, 0x1380000, 1,
 	39, 1, 22, 3, 0xb000, 17,
 };
 
-u32 Data_02005890[] = {
+u32 gData_02005890[] = {
 	39, 5, 48, 0x2a50000, 0x11f0000, 1,
 	39, 5, 48, 0x2e40000, 0x1580000, 1,
 	39, 1, 22, 3, 0xd000, 17,
 };
 
-u32 Data_020058d8[] = {
+u32 gData_020058d8[] = {
 	39, 5, 48, 0x3b60000, 0x11f0000, 1,
 	39, 5, 48, 0x3840000, 0x1580000, 1,
 	39, 1, 22, 3, 0xb000, 17,
 };
 
-u32 Data_02005920[] = {
+u32 gData_02005920[] = {
 	39, 5, 48, 0x2c40000, 0x1480000, 1,
 	39, 1, 22, 3, 0xd000, 17,
 };
 
-s32 Data_02005950[] = {
+s32 gData_02005950[] = {
 	39, 5, 5, -0x80000, 0, 0,
 	1, 39, 5, 48, 0x39c0000, 0x1480000,
 	1, 39, 1, 22, 3, 0xb000,
 	17,
 };
 
-u32 Data_0200599c[] = {
+u32 gData_0200599c[] = {
 	1, 38,
 };
 
-u32 Data_020059a4[] = {
+u32 gData_020059a4[] = {
 	39, 2, 48, 0x2c20000, 0xac0000, 1,
 	48, 0x2aa0000, 0x970000, 1, 48, 0x2aa0000,
 	0x780000, 1, 48, 0x2980000, 0x6a0000, 1,
 	48, 0x2980000, 0x640000, 1, 17,
 };
 
-u32 Data_02005a00[] = {
+u32 gData_02005a00[] = {
 	48, 0x2980000, 0x500000, 1, 38,
 };
 
-s32 Data_02005a14[] = {
+s32 gData_02005a14[] = {
 	-1,
 };
 
-u32 Data_02005a18[] = {
+u32 gData_02005a18[] = {
 	1,
 };
 
-u32 Data_02005a1c[] = {
+u32 gData_02005a1c[] = {
 	39, 5, 0, 12, 38,
 };
 
-s32 Data_02005a30[] = {
-	(s32)Data_02004fc4,
-	(s32)Data_02005000,
-	(s32)Data_0200503c,
+s32 gData_02005a30[] = {
+	(s32)gData_02004fc4,
+	(s32)gData_02005000,
+	(s32)gData_0200503c,
 };

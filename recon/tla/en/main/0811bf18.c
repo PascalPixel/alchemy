@@ -16,11 +16,11 @@ void Func_0811bf18(struct ObjectRuntime **from, struct ObjectRuntime **to, s32 p
     z = object->z + (target->z - object->z) * percent / 100;
     *(volatile u16 *)0x04000050 = 0;
     object->acceleration = 0x20000;
-    object->speed_limit = 0x80000;
-    object->velocity_y = 0x40000;
+    object->speedLimit = 0x80000;
+    object->velocityY = 0x40000;
     object->gravity = 0xab85;
     object->bounce = 0;
-    object->action_flags = 1;
+    object->actionFlags = 1;
     Object_SetPosition(object, x, 0, z);
     Object_SetMode(object, 2);
 }

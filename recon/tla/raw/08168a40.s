@@ -486,7 +486,7 @@ Func_08168a40:
 .L_08168e00:
 	.4byte gBgScroll
 .L_08168e04:
-	.4byte Data_08196e7c
+	.4byte gData_08196e7c
 .L_08168e08:
 	.4byte 0xfffff980
 .L_08168e0c:
@@ -494,11 +494,11 @@ Func_08168a40:
 .L_08168e10:
 	.4byte 0xffff8000
 .L_08168e14:
-	.4byte Data_08198ada
+	.4byte gData_08198ada
 .L_08168e18:
-	.4byte Data_08198ae3
+	.4byte gData_08198ae3
 .L_08168e1c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08168e20:
 	adds r1, r7, r1
 	movs r7, #6
@@ -820,7 +820,7 @@ Func_08168a40:
 .L_08169084:
 	.4byte 0xfffffe20
 .L_08169088:
-	.4byte Data_08196e84
+	.4byte gData_08196e84
 .L_0816908c:
 	cmp r0, #8
 	bgt .L_081690ac
@@ -1216,12 +1216,12 @@ Func_08168a40:
 .L_08169398:
 	.4byte 0xffffc000
 .L_0816939c:
-	.4byte Data_08198ada
+	.4byte gData_08198ada
 .L_081693a0:
-	.4byte Data_08198ae3
+	.4byte gData_08198ae3
 .L_081693a4:
 	.4byte gMapCellBuffer
 .L_081693a8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081693ac:
 	.4byte Func_08143000

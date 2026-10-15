@@ -213,7 +213,7 @@ Func_020001a0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008364:
-	.4byte Data_02001404
+	.4byte gData_02001404
 .L_02008368:
 	.4byte IwramCopyWords
 	.section .text.x0200863c,"ax",%progbits

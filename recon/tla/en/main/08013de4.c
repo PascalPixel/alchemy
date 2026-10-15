@@ -5,7 +5,7 @@
  * after the two stores fix the first two but hoist the duration's address
  * instead (differ 12 to 18). Compiled without -mtune=arm9tdmi (analysis only,
  * not a route) the first two come out as the native's. Natural forms without
- * the blend_control pointer and the explicit __divsi3 are differ 41 to 58. */
+ * the blendControl pointer and the explicit __divsi3 are differ 41 to 58. */
 //--------------------------------------------------------------------------
 // blend.c
 // 表示：画面の明るさのフェード（白・黒）の設定と、終わるまでの待ち
@@ -31,20 +31,20 @@ void BlendTransition_Update(void)
 	if (gBlendDuration != 0)
 	{
 		{
-			volatile u16 *blend_control;
+			volatile u16 *blendControl;
 			u32			  control;
 
 			if (gBlendBrighten != 0)
 			{
 				control = gBlendLayers | 0x80;
-				blend_control = &REG_BLDCNT;
+				blendControl = &REG_BLDCNT;
 			}
 			else
 			{
 				control = gBlendLayers | 0xc0;
-				blend_control = &REG_BLDCNT;
+				blendControl = &REG_BLDCNT;
 			}
-			*blend_control = control;
+			*blendControl = control;
 		}
 		{
 			u8 *remaining = &gBlendFramesLeft;

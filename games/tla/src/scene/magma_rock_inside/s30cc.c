@@ -3,7 +3,7 @@
 #include "event_work.h"
 
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
+#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 extern const u8 MsgBlazeTabletInscription[];
 
@@ -44,23 +44,23 @@ void Func_020030cc(void)
         Func_02004d48();
     } else {
         Call1(Func_02004dd0, (s32)MsgBlazeTabletInscription);
-        EVENT_WORK->message_id++;
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0xb333, 0x5999);
+        EVENT_WORK->messageId++;
+        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xb333, 0x5999);
         Call3(ObjectMotion_SetSpeedParameters, 5, 0xb333, 0x5999);
-        Call2(Func_02004da8, 5, gPartyState.current_owner);
+        Call2(Func_02004da8, 5, gPartyState.currentOwner);
         Call1(Battle_WaitMode0, 1);
-        Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.current_owner, 0x100, 0x88);
+        Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.currentOwner, 0x100, 0x88);
         Call3(ObjectMotion_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
-        Call1(ObjectMotion_CommitCurrentPositionAndActivate, gPartyState.current_owner);
+        Call1(ObjectMotion_CommitCurrentPositionAndActivate, gPartyState.currentOwner);
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0, 0);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
         Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Func_02004de0, 5, 0);
-        Call2(Object_SetModeById, gPartyState.current_owner, 3);
+        Call2(Object_SetModeById, gPartyState.currentOwner, 3);
         Call1(Battle_WaitMode0, 0x1e);
-        Call3(ObjectMotion_SetPositionAndReset, gPartyState.current_owner, 0x100, 0x98);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 0);
+        Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x100, 0x98);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
         Call1(Battle_WaitMode0, 0x14);
         Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
         Call1(Battle_WaitMode0, 0x14);
@@ -82,14 +82,14 @@ void Func_020030cc(void)
         Call2(Func_02002cd0, 8, 5);
         Call2(UiText_DrawQuantityPairWithCue, 5, 0x9a);
         Call1(GameFlag_SetBit, 0x9fa);
-        Call3(Object_LinkPair, gPartyState.current_owner, 5, 0);
+        Call3(Object_LinkPair, gPartyState.currentOwner, 5, 0);
         Call1(Battle_WaitMode0, 0xa);
         Call2(Object_SetModeById, 5, 3);
-        Call2(Object_SetModeById, gPartyState.current_owner, 3);
+        Call2(Object_SetModeById, gPartyState.currentOwner, 3);
         Call1(Battle_WaitMode0, 0x14);
         Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
         Call2(Object_SetModeById, 5, 2);
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         if (object != 0)
             Call3(ObjectMotion_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10), FIELD_AT(object, s16, 18));
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);

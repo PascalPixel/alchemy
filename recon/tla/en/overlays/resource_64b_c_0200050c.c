@@ -16,7 +16,7 @@ void Func_0200050c(void)
     s32 pp;
     s32 i;
 
-    gPartyState.render_mode = 7;
+    gPartyState.renderMode = 7;
     Func_02003c3c();
     Func_02004a1c();
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
@@ -25,11 +25,11 @@ void Func_0200050c(void)
     i = 0;
     if (i < count) {
     loop:
-        pp += ((struct BattleUnit *)UnitGet(gPartyState.active_owners[i]))->pp;
+        pp += ((struct BattleUnit *)UnitGet(gPartyState.activeOwners[i]))->pp;
         i++;
         if (i < count)
             goto loop;
     }
     if (pp == 0)
-        UnitPpAdd(gPartyState.current_owner, 1);
+        UnitPpAdd(gPartyState.currentOwner, 1);
 }

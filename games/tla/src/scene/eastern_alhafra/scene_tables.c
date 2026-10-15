@@ -11,9 +11,9 @@
 #include "party_state.h"
 #include "call.h"
 
-extern u8 Data_02004d0c[];
-extern u8 Data_02004dbc[];
-extern u8 Data_02004fe4[];
+extern u8 gData_02004d0c[];
+extern u8 gData_02004dbc[];
+extern u8 gData_02004fe4[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
@@ -47,8 +47,8 @@ const u32 *Scene_GetExits(void)
 void *Func_0200004c(void)
 {
     if (GameFlag_Test(0x8ab))
-        return Data_02004fe4;
-    return Data_02004dbc;
+        return gData_02004fe4;
+    return gData_02004dbc;
 }
 
 void Func_0200006c(s32 mode, s32 id)
@@ -73,14 +73,14 @@ void Func_020000c8(s32 mode, s32 arg)
     struct ObjectRuntime *b;
     s32 i;
 
-    Func_02004868(Data_02004d0c, mode, arg);
+    Func_02004868(gData_02004d0c, mode, arg);
     if (mode == 1) {
         a = Object_GetById(19);
         b = Object_GetById(21);
-        a->speed_limit = 0x40000;
+        a->speedLimit = 0x40000;
         a->acceleration = 0x8000;
         b->acceleration = 0x8000;
-        b->speed_limit = 0x40000;
+        b->speedLimit = 0x40000;
         /* FAKEMATCH: ⚓️ finishes the second object's speed before it builds the first position. */
         __asm__ volatile("");
         Call4((void (*)())Object_SetPositionAndResetMotion, (s32)a, 0x1e80000, a->y, 0x1380000);
@@ -107,20 +107,20 @@ void Func_02000190(s32 unused, s32 id)
 {
     struct ObjectRuntime *leader;
     struct ObjectRuntime *object;
-    s32 leader_x;
+    s32 leaderX;
     s32 x;
     s32 z;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     if (id == 10) {
-        leader_x = leader->x >> 20;
+        leaderX = leader->x >> 20;
         x = object->x >> 20;
         z = object->z >> 20;
-        if (x == 34 && z == 32 && leader_x == 33)
+        if (x == 34 && z == 32 && leaderX == 33)
             Value4(Func_02004c7c, 0x2100000, 0x2000000, 2, 255);
-        if (x == 33 && z == 32 && leader_x == 32)
+        if (x == 33 && z == 32 && leaderX == 32)
             Value4(Func_02004c7c, 0x2000000, 0x2000000, 2, 255);
     }
 }

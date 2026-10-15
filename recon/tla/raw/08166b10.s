@@ -395,7 +395,7 @@ Func_08166b10:
 .L_08166e24:
 	.4byte IwramCopyWords
 .L_08166e28:
-	.4byte Data_08198a9e
+	.4byte gData_08198a9e
 .L_08166e2c:
 	movs r3, #1
 	negs r3, r3
@@ -822,11 +822,11 @@ Func_08166b10:
 .L_0816715c:
 	.4byte 0xffffff00
 .L_08167160:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08167164:
 	.4byte 0xffff8000
 .L_08167168:
-	.4byte Data_08198aa4
+	.4byte gData_08198aa4
 .L_0816716c:
 	.4byte 0xfffffe3e
 .L_08167170:
@@ -969,7 +969,7 @@ Func_08166b10:
 .L_08167288:
 	.4byte 0x007effff
 .L_0816728c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08167290:
 	.4byte IwramFillWords
 .L_08167294:

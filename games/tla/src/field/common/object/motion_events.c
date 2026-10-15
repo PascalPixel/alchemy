@@ -2,68 +2,68 @@
 #include "object_runtime.h"
 #include "objdisp.h"
 
-void Motion_SetModeAndWaitAnimation(u32 object_id, s32 action)
+void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action)
 {
-    Object_SetModeById(object_id, action);
-    ObjectMotion_WaitForAnimationChange(object_id);
+    Object_SetModeById(objectId, action);
+    ObjectMotion_WaitForAnimationChange(objectId);
 }
 
-void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
+void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId)
 {
     struct ObjectRuntime *object;
-    u8 *object_flags;
-    s32 updated_flags;
-    s32 vertical_velocity;
+    u8 *objectFlags;
+    s32 updatedFlags;
+    s32 verticalVelocity;
 
-    object = ObjectTable_Get(object_id);
+    object = ObjectTable_Get(objectId);
     if (object != NULL) {
-        object_flags = &object->motion_flags;
-        updated_flags = *object_flags | 2;
-        vertical_velocity = speed << 16;
-        *object_flags = updated_flags;
-        object->velocity_y = vertical_velocity;
+        objectFlags = &object->motionFlags;
+        updatedFlags = *objectFlags | 2;
+        verticalVelocity = speed << 16;
+        *objectFlags = updatedFlags;
+        object->velocityY = verticalVelocity;
         if (speed > 5) {
             Audio_PlayCue(0x99);
         } else {
             Audio_PlayCue(0x98);
         }
-        EventRuntime_Wait(event_id);
+        EventRuntime_Wait(eventId);
     }
 }
 
-void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
+void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant)
 {
     struct ObjectRuntime *object;
     const u8 *scripts;
 
-    object = ObjectTable_Get(object_id);
+    object = ObjectTable_Get(objectId);
     if (object != NULL && variant > 0) {
         if (variant > 3)
             variant = 3;
-        scripts = Object_VariantMotionScripts;
+        scripts = gObject_VariantMotionScripts;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
             (u32)(scripts + ((3 - variant) << 7)));
     }
 }
 
-void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant)
 {
-    ObjectMotion_SetVariantCallback(object_id, variant);
-    Object_RefreshSelectorById(object_id);
+    ObjectMotion_SetVariantCallback(objectId, variant);
+    Object_RefreshSelectorById(objectId);
 }
 
 void Object_DriftAndDamp(struct ObjectRuntime *object)
 {
-    s32 drift_x;
-    s32 drift_z;
+    s32 driftX;
+    s32 driftZ;
     s32 pos;
 
-    drift_x = object->speed_limit;
+    driftX = object->speedLimit;
     pos = object->x;
-    drift_z = object->acceleration;
-    object->x = pos + drift_x;
-    object->z += drift_z;
+    driftZ = object->acceleration;
+    object->x = pos + driftX;
+    object->z += driftZ;
     object->y += 0x400;
-    object->speed_limit = drift_x - drift_x / 18;
-    object->acceleration = drift_z - drift_z / 16;
+    object->speedLimit = driftX - driftX / 18;
+    object->acceleration = driftZ - driftZ / 16;
 }

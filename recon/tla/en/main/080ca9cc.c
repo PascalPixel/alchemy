@@ -5,13 +5,13 @@
  * (differ 37). */
 #include "types.h"
 
-extern u8 Data_0202e008[];
+extern u8 gData_0202e008[];
 
 u32 Stream_ReadU16(u8 **cursor);
 
 s32 Func_080ca9cc(s32 id, s32 *position)
 {
-    u8 *cursor = Data_0202e008;
+    u8 *cursor = gData_0202e008;
     s8 key = *cursor++;
 
     while (key != -1) {

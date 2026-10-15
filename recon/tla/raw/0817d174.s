@@ -591,7 +591,7 @@ Func_0817d174:
 .L_0817d618:
 	.4byte 0xfffff000
 .L_0817d61c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817d620:
 	ldr r0, [r5, #24]
 	cmp r0, #0

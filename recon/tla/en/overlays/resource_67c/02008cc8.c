@@ -31,7 +31,7 @@ void Func_02000cc8(s32 id)
             slide = 0;
     }
     if (slide) {
-        struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+        struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
         s32 position[3];
         s32 result;
 

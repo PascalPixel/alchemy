@@ -104,7 +104,7 @@ Func_081a052c:
 .L_081a05f0:
 	.4byte BattleEffect_ExpandCode
 .L_081a05f4:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3
 .L_081a05f8:
 	lsls r3, r1, #2
 	adds r3, r3, r1
@@ -171,4 +171,4 @@ Func_081a052c:
 .L_081a066c:
 	.4byte 0x04000208
 .L_081a0670:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3

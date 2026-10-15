@@ -2199,21 +2199,21 @@ BattleFx_RunProjectileVolleyB:
 	b .L_08153834
 	.2byte 0x0000
 .L_081536d8:
-	.4byte Data_0819749e
+	.4byte gData_0819749e
 .L_081536dc:
-	.4byte Data_081974ad
+	.4byte gData_081974ad
 .L_081536e0:
-	.4byte Data_081974bc
+	.4byte gData_081974bc
 .L_081536e4:
 	.4byte 0xffffc000
 .L_081536e8:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_081536ec:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_081536f0:
 	.4byte Data_081983c8
 .L_081536f4:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_081536f8:
 	mov r2, r11
 	cmp r2, #10
@@ -2570,7 +2570,7 @@ BattleFx_RunProjectileVolleyB:
 .L_081539b8:
 	.4byte gMapCellBuffer
 .L_081539bc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081539c0:
 	.4byte Func_08143000
 .L_081539c4:

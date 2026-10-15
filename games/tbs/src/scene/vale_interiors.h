@@ -21,15 +21,15 @@ enum
 
 typedef struct
 {
-	u8	pad_to_position[8];
+	u8	padToPosition[8];
 	s32 x;
 	s32 y;
-	u8	pad_to_scale[8];
-	s32 scale_x;
-	s32 scale_y;
-	u8	pad_to_velocity[0x44];
-	s16 velocity_x;
-	s16 velocity_y;
+	u8	padToScale[8];
+	s32 scaleX;
+	s32 scaleY;
+	u8	padToVelocity[0x44];
+	s16 velocityX;
+	s16 velocityY;
 } ScaledMotion;
 
 union SceneActor

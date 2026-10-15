@@ -21,28 +21,28 @@ struct EffectVector {
 };
 
 struct Effect05Sprite {
-    u32 unknown_00[2];
-    u8 unknown_08;
-    u32 unknown_09_0 : 2;
+    u32 unk00[2];
+    u8 unk08;
+    u32 unk09_0 : 2;
     u32 mode : 2;
-    u32 unknown_09_4 : 4;
+    u32 unk09_4 : 4;
 };
 
 struct Effect05State {
     u16 angle;
-    u8 unknown_02[2];
+    u8 unk02[2];
     s32 x;
     s32 y;
     s32 z;
     struct ObjectRuntime *target;
     struct ObjectRuntime *anchor;
-    s16 first_object_id;
-    s16 second_object_id;
-    u8 unknown_1c[4];
-    u8 high_arc;
-    u8 unknown_21[0x13];
+    s16 firstObjectId;
+    s16 secondObjectId;
+    u8 unk1c[4];
+    u8 highArc;
+    u8 unk21[0x13];
     u8 variant;
-    u8 unknown_35[0x0c];
+    u8 unk35[0x0c];
     u8 alternate;
 };
 
@@ -65,7 +65,7 @@ void RunBattleEffect05(void)
     struct EffectVector pos;
     struct EffectVector start;
     struct EffectVector end;
-    struct Effect05State *work = Ram_HeapSlots->effect_work;
+    struct Effect05State *work = Ram_HeapSlots->effectWork;
     struct ObjectRuntime *anchor = work->anchor;
     struct ObjectRuntime *target = work->target;
     struct ObjectRuntime *orb;
@@ -128,15 +128,15 @@ void RunBattleEffect05(void)
             orb->z = t;
         }
         scale = Lerp10(0x4000, 0x10000, i);
-        orb->scale_x = scale;
-        orb->scale_y = scale;
+        orb->scaleX = scale;
+        orb->scaleY = scale;
         WaitFrames(1);
     }
     WaitFrames(10);
 
     if ((s8)work->alternate == 0) {
         count = 10;
-        if ((s8)work->high_arc == 0)
+        if ((s8)work->highArc == 0)
             count = 24;
         for (n = 0; n < count; n++) {
             pos.x = orb->x;
@@ -153,27 +153,27 @@ void RunBattleEffect05(void)
             if (mote != 0) {
                 anchor = work->anchor;
                 if (anchor != 0) {
-                    mote->terrain_height = anchor->y;
+                    mote->terrainHeight = anchor->y;
                     if (raised == 1)
-                        mote->terrain_height = anchor->y + (32 << 16);
+                        mote->terrainHeight = anchor->y + (32 << 16);
                 } else {
-                    mote->terrain_height = pos.y - (32 << 16);
+                    mote->terrainHeight = pos.y - (32 << 16);
                 }
                 mote->update = (void (*)(void))BattleFx_LandFallingObject;
-                mote->motion_flags = 2;
-                mote->priority_flags = 5;
+                mote->motionFlags = 2;
+                mote->priorityFlags = 5;
             }
             Audio_PlayCue(132);
             WaitFrames(6);
             if (n == 12) {
                 ev = Func_080ce458(0x50000005, 5, Func_080ce31c(5));
                 if (ev != 0)
-                    EventRuntime_RunPendingEvent(ev, work->first_object_id, work->second_object_id);
+                    EventRuntime_RunPendingEvent(ev, work->firstObjectId, work->secondObjectId);
             }
         }
         WaitFrames(10);
     } else {
-        if ((s8)work->high_arc != 0)
+        if ((s8)work->highArc != 0)
             count = 10;
         else
             count = 30;
@@ -185,7 +185,7 @@ void RunBattleEffect05(void)
             mote = Object_Spawn(672, pos.x, pos.y, pos.z);
             if (mote != 0) {
                 mote->update = (void (*)(void))BattleFx_UpdateDriftingFallObject;
-                mote->motion_flags = 0;
+                mote->motionFlags = 0;
                 ((struct Effect05Sprite *)mote->animation)->mode = 2;
                 Object_SetMode(mote, 8);
                 Animation_ApplyChildValuesFar((struct DispatchObject *)mote, 7);
@@ -218,8 +218,8 @@ void RunBattleEffect05(void)
             orb->z = t;
         }
         scale = Lerp10(0x10000, 0x4000, i);
-        orb->scale_x = scale;
-        orb->scale_y = scale;
+        orb->scaleX = scale;
+        orb->scaleY = scale;
         WaitFrames(1);
         i++;
     } while (i < steps);

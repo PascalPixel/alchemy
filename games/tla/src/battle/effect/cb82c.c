@@ -1,20 +1,20 @@
 #include "types.h"
 
 struct FxSprite {
-    u8 unknown_00[91];
+    u8 unk00[91];
     u8 visible;
 };
 
 struct FxWork {
-    u8 unknown_000[394];
+    u8 unk000[394];
     u8 state;
     u8 busy;
-    u8 unknown_18c[64];
+    u8 unk18c[64];
     struct FxSprite *sprite;
 };
 
 struct FadeWork {
-    u8 unknown_000[0x53a];
+    u8 unk000[0x53a];
     u8 level;
     u8 step;
     u8 active;

@@ -1,13 +1,13 @@
 #include "ride.h"
 
 struct MapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct MapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct MapLayer layers[3];
 };
 
@@ -15,7 +15,7 @@ extern u8 gMapCellBuffer[];
 
 s32 Func_0200012c(u32 layer, s32 x, s32 y)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     u8 *cell;
 
     if (map == NULL)
@@ -30,7 +30,7 @@ s32 Func_0200012c(u32 layer, s32 x, s32 y)
 
 s32 Func_02000168(u32 layer, s32 x, s32 y, s32 value)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     u8 *cell;
     s32 old;
 

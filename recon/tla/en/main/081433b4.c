@@ -9,7 +9,7 @@
 #include "ram_buffer.h"
 
 struct DisplayWork {
-    u8 unknown_0000[0x77bc];
+    u8 unk0000[0x77bc];
     u16 win0h;
     u16 win0v;
     u16 win1h;
@@ -36,7 +36,7 @@ struct DisplayWork {
 
 void Func_081433b4(void)
 {
-    struct DisplayWork *work = (struct DisplayWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct DisplayWork *work = (struct DisplayWork *)Ram_HeapSlots->battleFxWork[0];
 
     /* FAKEMATCH: the native keeps every step in source order: it loads the work pointer before it starts the first offset, and steps the shared offset (adds r0, #2) only after each store. Without the barriers the scheduler starts each constant first (differ 18). */
     /* FAKEMATCH: keeps this store in source order, as above. */

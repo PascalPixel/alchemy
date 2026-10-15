@@ -1969,11 +1969,11 @@ BattleFx_RunProjectileVolley:
 .L_08157028:
 	.4byte Data_08198502
 .L_0815702c:
-	.4byte Data_08197834
+	.4byte gData_08197834
 .L_08157030:
-	.4byte Data_0819781a
+	.4byte gData_0819781a
 .L_08157034:
-	.4byte Data_08197826
+	.4byte gData_08197826
 .L_08157038:
 	ldr r2, [r6]
 	ldr r3, [r6, #4]
@@ -2410,7 +2410,7 @@ BattleFx_RunProjectileVolley:
 .L_08157384:
 	.4byte Data_02010af0
 .L_08157388:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0815738c:
 	.4byte Data_02013800
 .L_08157390:
@@ -2563,12 +2563,12 @@ BattleFx_RunProjectileVolley:
 .L_081574c8:
 	.4byte Data_02016900
 .L_081574cc:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_081574d0:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_081574d4:
 	.4byte Data_0819850a
 .L_081574d8:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_081574dc:
 	.4byte Func_08143000

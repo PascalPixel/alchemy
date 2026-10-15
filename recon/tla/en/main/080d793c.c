@@ -27,7 +27,7 @@ struct MapActor
 void Func_080d793c(s32 capture)
 {
     struct PartyState *st = &gPartyState;
-    s16 *pending = &st->pending_djinn_event;
+    s16 *pending = &st->pendingDjinnEvent;
     s32 kind = *pending & 0xf000;
     s32 flag = *pending & 0xfff;
 
@@ -38,7 +38,7 @@ void Func_080d793c(s32 capture)
             flag &= 0x7ff;
             if (flag < 300 || flag > 380)
                 return;
-            if (st->unknown_256 > 0 && st->unknown_256 != 999)
+            if (st->unk256 > 0 && st->unk256 != 999)
                 return;
             GameFlag_SetBit(flag - 172);
             *pending = kind;
@@ -46,7 +46,7 @@ void Func_080d793c(s32 capture)
         }
         else if (kind == 0x1000)
         {
-            if (st->unknown_256 > 0 && st->unknown_256 != 999)
+            if (st->unk256 > 0 && st->unk256 != 999)
                 GameFlag_SetBit(flag);
         }
         else
@@ -58,7 +58,7 @@ void Func_080d793c(s32 capture)
         if (flag >= 300 && flag <= 380)
         {
             flag &= 0x7ff;
-            if (st->unknown_256 > 0)
+            if (st->unk256 > 0)
             {
                 s32 djinn = flag - 300;
                 s32 element = djinn / 20;
@@ -78,5 +78,5 @@ void Func_080d793c(s32 capture)
             }
         }
     }
-    gPartyState.pending_djinn_event = 0;
+    gPartyState.pendingDjinnEvent = 0;
 }

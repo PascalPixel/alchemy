@@ -1,4 +1,4 @@
 	.section .rodata
-	.global Item_ArtifactSlotTable
-Item_ArtifactSlotTable:
+	.global gItem_ArtifactSlotTable
+gItem_ArtifactSlotTable:
 	.incbin "games/tbs/src/game/artifact_slots.table"

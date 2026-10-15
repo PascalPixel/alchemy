@@ -11,7 +11,7 @@ void ReelGame_Run(void);
 s32 Runtime_BlankDisplayLoadValueAndRun(void)
 {
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-    gRandomState = gPartyState.play_time;
+    gRandomState = gPartyState.playTime;
     Audio_PlayCue(709);
     ReelGame_Run();
     return 0;

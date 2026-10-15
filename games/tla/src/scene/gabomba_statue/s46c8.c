@@ -9,14 +9,14 @@ struct PuzzleCell {
 
 struct SceneState {
     struct PuzzleCell cells[88];
-    u8 unknown_160[4];
-    s16 first_id;
-    s16 end_id;
-    u16 tile_entry;
-    s8 redraw_a;
-    s8 redraw_b;
-    s16 origin_x;
-    s16 origin_z;
+    u8 unk160[4];
+    s16 firstId;
+    s16 endId;
+    u16 tileEntry;
+    s8 redrawA;
+    s8 redrawB;
+    s16 originX;
+    s16 originZ;
 };
 
 extern struct SceneState gSceneState;
@@ -31,8 +31,8 @@ static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 
 void Func_020046c8(void)
 {
-    if (gSceneState.redraw_b != 0) {
-        Map_Copy(0, 12, 1, 1, gSceneState.origin_x + 7, gSceneState.origin_z - 2);
-        gSceneState.redraw_b = 0;
+    if (gSceneState.redrawB != 0) {
+        Map_Copy(0, 12, 1, 1, gSceneState.originX + 7, gSceneState.originZ - 2);
+        gSceneState.redrawB = 0;
     }
 }

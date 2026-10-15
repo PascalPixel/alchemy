@@ -79,6 +79,6 @@ Func_0802d71c:
 .L_0802d7a4:
 	.4byte gMapCollision
 .L_0802d7a8:
-	.4byte Map_TerrainHeightHandlers
+	.4byte gMap_TerrainHeightHandlers
 .L_0802d7ac:
 	.4byte Data_0202c001

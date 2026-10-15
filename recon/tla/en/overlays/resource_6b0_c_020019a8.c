@@ -17,13 +17,13 @@ void Func_02003488(s32 a);
 void Func_020034b8(s32 cue);
 
 struct SpriteView {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 y : 8;
     u16 affine : 2;
     u16 mode : 2;
-    u16 unknown_4 : 4;
-    u8 unknown_06[14];
-    s32 unknown_14;
+    u16 unk4 : 4;
+    u8 unk06[14];
+    s32 unk14;
 };
 
 void Func_020019a8(void)
@@ -42,19 +42,19 @@ void Func_020019a8(void)
     position[0] = (object->x & 0xfff00000) + 0x80000;
     position[2] = (object->z & 0xfff00000) + 0x80000;
     object->acceleration = 0x10000;
-    object->speed_limit = 0x10000;
+    object->speedLimit = 0x10000;
     Func_02003398();
     Func_02003488(0);
     Func_02003310(object, position[0], 0, position[2]);
     effect = OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
-    effect->scale_x = 0x18000;
-    effect->scale_y = 0x18000;
+    effect->scaleX = 0x18000;
+    effect->scaleY = 0x18000;
     sprite = effect->animation;
     ((struct SpriteView *)sprite)->mode = 2;
     REG_WINOUT = 0x2f3f;
     REG_DISPCNT |= 0x8000;
     Func_020034b8(204);
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     object->x = 0;
     object->y = 0;

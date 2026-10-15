@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's Debug_PaletteSwatchTiles, byte for byte
-	.global Debug_PaletteSwatchTiles
-Debug_PaletteSwatchTiles:
+@ The Broken Seal's gDebug_PaletteSwatchTiles, byte for byte
+	.global gDebug_PaletteSwatchTiles
+gDebug_PaletteSwatchTiles:
 	.incbin "games/common/src/debug/swatch.4bpp.hlz"

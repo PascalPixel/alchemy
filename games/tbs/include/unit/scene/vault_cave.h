@@ -14,8 +14,8 @@ const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 VaultCave_ApplyEntryState(void);
-extern const s16 VaultCave_DirectionSteps[];
-extern const s32 VaultCave_PuffScript[];
+extern const s16 gVaultCave_DirectionSteps[];
+extern const s32 gVaultCave_PuffScript[];
 extern struct SceneEntrance gVaultCaveEntrancesOther[];
 extern struct SceneEntrance gVaultCaveEntrances1[];
 extern struct SceneEntrance gVaultCaveEntrances2[];
@@ -33,10 +33,10 @@ extern struct SceneEvent gVaultCaveEventsOther[];
 extern struct SceneEvent gVaultCaveEvents1[];
 extern struct SceneEvent gVaultCaveEvents2[];
 extern struct SceneEvent gVaultCaveEvents3[];
-extern u32 VaultCave_ScheduleFrames[];
-extern s32 VaultCave_ScheduleTimer;
-extern s32 VaultCave_ScheduleIndex;
-extern s32 VaultCave_TickCounter;
-extern s32 VaultCave_TickValue;
+extern u32 gVaultCave_ScheduleFrames[];
+extern s32 gVaultCave_ScheduleTimer;
+extern s32 gVaultCave_ScheduleIndex;
+extern s32 gVaultCave_TickCounter;
+extern s32 gVaultCave_TickValue;
 
 #endif

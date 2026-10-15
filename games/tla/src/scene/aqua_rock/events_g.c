@@ -10,13 +10,13 @@ void Func_02001d98(struct ObjectRuntime *object)
         if (child != 0) {
             struct FieldSprite *sprite = child->animation;
 
-            Func_02002918(child, Data_02002c50);
-            child->motion_flags = 0;
+            Func_02002918(child, gData_02002c50);
+            child->motionFlags = 0;
             child->y = -0x78000;
-            child->terrain_id = 1;
+            child->terrainId = 1;
             if (sprite != 0) {
                 Animation_ApplyChildArgument(sprite, 2);
-                sprite->next_frame = 0;
+                sprite->nextFrame = 0;
                 sprite->priority = 2;
             }
         }

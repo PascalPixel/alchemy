@@ -10,7 +10,7 @@ void MapAnimation_Update(void);
 
 void MapAnimation_StartChannels(const u16 *script)
 {
-    struct MapWork *state = Ram_HeapSlots->map_work;
+    struct MapWork *state = Ram_HeapSlots->mapWork;
     s32 count;
     u32 command;
 

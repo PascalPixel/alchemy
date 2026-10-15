@@ -14,10 +14,10 @@
 
 s32 ArcTan2(s32 y, s32 x);
 
-void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
+void Object_LinkPair(s32 firstId, s32 secondId, s32 wait)
 {
-    void *first = ObjectTable_Get(first_id);
-    void *second = ObjectTable_Get(second_id);
+    void *first = ObjectTable_Get(firstId);
+    void *second = ObjectTable_Get(secondId);
 
     if (first != NULL && second != NULL) {
         FacingObject_TurnPairToFaceEachOther(first, second);
@@ -35,8 +35,8 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct Fac
 
     if (first == NULL || second == NULL)
         return;
-    toward = (u16)ArcTan2(second->position_z - first->position_z,
-        second->position_x - first->position_x);
+    toward = (u16)ArcTan2(second->positionZ - first->positionZ,
+        second->positionX - first->positionX);
     away = toward + 0x8000;
     for (frame = 0; frame < 60; frame++) {
         delta = (s16)(toward - first->facing);
@@ -69,7 +69,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct Fac
 void ObjectTable_DestroyById(s32 id)
 {
     void *object = ObjectTable_Get(id);
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     if (object != NULL) {
         Object_Destroy(object);

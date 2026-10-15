@@ -10,10 +10,10 @@ void Func_02001618(void)
         s32 scale = 0x547a;
 
         if (object != NULL) {
-            object->scale_x = scale;
-            object->scale_y = scale;
+            object->scaleX = scale;
+            object->scaleY = scale;
             object->gravity = 0x7333;
-            Func_02002800(object, Data_02002a60);
+            Func_02002800(object, gData_02002a60);
             ObjectDispatch_SetSingleChildFlags(object, 0);
         }
     }

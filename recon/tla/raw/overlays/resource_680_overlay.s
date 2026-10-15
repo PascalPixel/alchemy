@@ -1200,8 +1200,8 @@ Func_02000bc0:
 .L_02008dc0:
 	.4byte gPartyState
 .L_02008dc4:
-	.4byte Data_020016cc
+	.4byte gData_020016cc
 .L_02008dc8:
-	.4byte Data_02001688
+	.4byte gData_02001688
 .L_02008dcc:
 	.4byte IwramMulQ16

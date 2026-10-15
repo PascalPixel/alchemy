@@ -1,12 +1,12 @@
 #include "types.h"
 
 struct SceneState {
-    u8 unknown_000[0x168];
-    u16 tile_entry;
+    u8 unk000[0x168];
+    u16 tileEntry;
 };
 
 extern struct SceneState gSceneState;
-extern const u8 Field_CachedTilesA[];
+extern const u8 gField_CachedTilesA[];
 
 void *MemAlloc(s32 size);
 void MemFree(void *block);
@@ -32,9 +32,9 @@ void Func_020038ac(void)
     void *buffer = Mem_Alloc(0xc00);
     s32 handle;
 
-    Func_020055cc(Field_CachedTilesA, buffer);
+    Func_020055cc(gField_CachedTilesA, buffer);
     handle = Resource_FindFreeEntry();
     Vram_Load(handle, 0xc00, buffer);
-    state->tile_entry = handle;
+    state->tileEntry = handle;
     MemFree(buffer);
 }

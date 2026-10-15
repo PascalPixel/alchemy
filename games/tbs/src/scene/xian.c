@@ -34,11 +34,11 @@ struct PeriodicEffectConfig
 {
 	s32 kind;
 	s32 variant;
-	u8	pad_08[16];
+	u8	pad08[16];
 	u16 id;
-	u8	pad_1a[2];
+	u8	pad1a[2];
 	u8 *data;
-	u8	pad_20[8];
+	u8	pad20[8];
 };
 
 void Effect_Spawn();
@@ -51,38 +51,38 @@ void Effect_Spawn();
 
 struct SceneState
 {
-	u8	unk_00[14];
-	s16 field_0e;
+	u8	unk00[14];
+	s16 field0e;
 };
 
 struct Actor
 {
-	u8 unk_00[35];
-	u8 presentation_flags;
+	u8 unk00[35];
+	u8 presentationFlags;
 };
 
 struct MapActor
 {
-	u8	reserved_00[6];
+	u8	reserved00[6];
 	u16 heading;
 	s32 x;
-	u8	reserved_0c[4];
+	u8	reserved0c[4];
 	s32 z;
-	u8	reserved_14[71];
-	u8	tracking_state;
-	u8	reserved_5c[8];
-	s16 tracking_mode;
+	u8	reserved14[71];
+	u8	trackingState;
+	u8	reserved5c[8];
+	s16 trackingMode;
 };
 
 struct SpawnParams
 {
 	s32 count;
-	u8	unknown_04[20];
+	u8	unk04[20];
 	u16 sprite;
-	u16 pad_1a;
+	u16 pad1a;
 	s32 callback;
 	u16 facing;
-	u8	unknown_22[6];
+	u8	unk22[6];
 };
 
 static void EV22_TALK(void)
@@ -93,13 +93,13 @@ static void EV22_TALK(void)
 static void Actor_UpdatePresentationFlag(void)
 {
 	struct SceneState *scene = (void *)Object_GetById(0);
-	if (scene->field_0e > 31)
+	if (scene->field0e > 31)
 	{
-		((struct Actor *)Object_GetById(20))->presentation_flags |= 2;
+		((struct Actor *)Object_GetById(20))->presentationFlags |= 2;
 	}
 	else
 	{
-		((struct Actor *)Object_GetById(20))->presentation_flags &= ~2;
+		((struct Actor *)Object_GetById(20))->presentationFlags &= ~2;
 	}
 }
 
@@ -120,7 +120,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 		config.kind = 1;
 		config.variant = 9;
 		config.id = 169;
-		config.data = Xian_EffectConfig;
+		config.data = gXian_EffectConfig;
 		Effect_Spawn(*(s32 *)(entity + 8), *(s32 *)(entity + 12), *(s32 *)(entity + 16) - 0x10000,
 			0, -0x10000, -0x10000, 0x330000, &config);
 	}
@@ -130,17 +130,17 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 #include "common/object_distance.h"
 
 static s32 SceneActor_UpdateTracking(
-	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)
+	struct MapActor *actor, struct MapActor *target, s32 distanceLimit, s32 forceTracking)
 {
 	s32 result = 0;
 
-	if (actor->tracking_state == 1 && actor->tracking_mode == 0)
+	if (actor->trackingState == 1 && actor->trackingMode == 0)
 	{
 		Object_SetMode(actor, 1);
 		return 1;
 	}
 
-	if (FixedPoint_Distance(&target->x, &actor->x) < distance_limit || force_tracking != 0)
+	if (FixedPoint_Distance(&target->x, &actor->x) < distanceLimit || forceTracking != 0)
 	{
 		u16 angle = ArcTan2(target->z - actor->z, target->x - actor->x);
 		s32 prev = (angle - 0x1000) & 0xf000;
@@ -148,25 +148,25 @@ static s32 SceneActor_UpdateTracking(
 		s32 facing = angle & 0xf000;
 		s32 heading = actor->heading & 0xf000;
 
-		if (facing == heading || next == heading || prev == heading || force_tracking != 0)
+		if (facing == heading || next == heading || prev == heading || forceTracking != 0)
 		{
-			actor->tracking_state = 1;
+			actor->trackingState = 1;
 			Object_SetMode(actor, 1);
 			result = 1;
-			actor->tracking_mode = result;
+			actor->trackingMode = result;
 		}
 		else
 		{
-			actor->tracking_state = 0;
+			actor->trackingState = 0;
 			Object_SetMode(actor, 2);
-			actor->tracking_mode = 0;
+			actor->trackingMode = 0;
 		}
 	}
 	else
 	{
-		actor->tracking_state = 0;
+		actor->trackingState = 0;
 		Object_SetMode(actor, 2);
-		actor->tracking_mode = 0;
+		actor->trackingMode = 0;
 	}
 
 	return result;
@@ -177,26 +177,26 @@ static s32 Xian_WatchGateTrigger(struct FieldActor *self)
 	struct FieldActor *leader;
 	s32				   near = 0;
 
-	if (self->target_x == ACTOR_NO_TARGET && self->target_z == ACTOR_NO_TARGET)
+	if (self->targetX == ACTOR_NO_TARGET && self->targetZ == ACTOR_NO_TARGET)
 		return 0;
 	leader = Object_GetById(0);
 	if ((u32)((leader->x.fixed >> 20) - 17) <= 1 && leader->z.fixed >> 20 == 14
-		&& self->x.fixed >> 20 <= 19 && self->velocity_x <= 0)
+		&& self->x.fixed >> 20 <= 19 && self->velocityX <= 0)
 	{
 		if (leader->x.fixed <= self->x.fixed)
 		{
-			self->rise_counter++;
+			self->riseCounter++;
 			near = 1;
 		}
 	}
 	else
 	{
-		self->rise_counter = 0;
+		self->riseCounter = 0;
 	}
-	if (near && self->rise_counter > 119)
+	if (near && self->riseCounter > 119)
 	{
-		gEventWork->raised_trigger = 200;
-		self->rise_counter = 0;
+		gEventWork->raisedTrigger = 200;
+		self->riseCounter = 0;
 	}
 	SceneActor_UpdateTracking(self, leader, 18, near);
 	return 0;
@@ -220,7 +220,7 @@ u8 *SceneEffect_GetSecondaryData(void)
 s32 SceneEffect_PrepareState(void)
 {
 	if (Engine_GameFlagIsSet(0x895) != 0)
-		gXianPlacements[7].talk_facing = 0;
+		gXianPlacements[7].talkFacing = 0;
 	return (s32)gXianPlacements;
 }
 
@@ -242,8 +242,8 @@ static void EV18_TALK(void)
 	s32				   x;
 	s32				   z;
 	s32				   column;
-	s32				   scale_y;
-	s32				   scale_x;
+	s32				   scaleY;
+	s32				   scaleX;
 
 	puddle = Object_GetById(20);
 	Engine_EventBegin();
@@ -286,32 +286,32 @@ static void EV18_TALK(void)
 		record = Actor_Get(18);
 		if (leader->x.fixed < record->x.fixed)
 		{
-			Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			record = Object_GetById(18);
 			Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) - 8, 232);
 			moved = 1;
 		}
 		else
 		{
-			Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			record = Object_GetById(18);
 			Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) + 24, 232);
 		}
 		Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	}
 	record = Actor_Get(18);
-	record->target_x = ACTOR_NO_TARGET;
+	record->targetX = ACTOR_NO_TARGET;
 	record = Object_GetById(18);
-	record->target_y = ACTOR_NO_TARGET;
+	record->targetY = ACTOR_NO_TARGET;
 	record = Actor_Get(18);
-	record->target_z = ACTOR_NO_TARGET;
+	record->targetZ = ACTOR_NO_TARGET;
 	Engine_ActorEnableActionCallback(18, 1);
 	Engine_ActorSetAnimation(18, 1);
 	Engine_ActorRunRepeatedMotion(18, 2);
 	Engine_EventWait(10);
 	Event_PlayCue(228);
-	puddle->scale_x = 0x4ccc;
-	puddle->scale_y = 0x4ccc;
+	puddle->scaleX = 0x4ccc;
+	puddle->scaleY = 0x4ccc;
 	record = Object_GetById(18);
 	x = record->x.fixed;
 	record = Object_GetById(18);
@@ -322,16 +322,16 @@ static void EV18_TALK(void)
 	record = Object_GetById(18);
 	Map_CopyCellAttributes(16, 16, 1, 1, column >> 20, record->z.fixed >> 20);
 	Engine_ActorSetSpritePriority(20, 2);
-	puddle->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+	puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	do
 	{
 		Engine_TaskWait(3);
-		scale_y = puddle->scale_y;
-		scale_x = puddle->scale_x;
-		puddle->scale_y = scale_y + 0x1999;
-		scale_x += 0x1999;
-		puddle->scale_x = scale_x;
-	} while (scale_x <= 0xffff);
+		scaleY = puddle->scaleY;
+		scaleX = puddle->scaleX;
+		puddle->scaleY = scaleY + 0x1999;
+		scaleX += 0x1999;
+		puddle->scaleX = scaleX;
+	} while (scaleX <= 0xffff);
 	Actor_ShowEmote(18, 0x105, 70);
 	Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(20);
@@ -350,7 +350,7 @@ static void EV18_TALK(void)
 	{
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
-		Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 		Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 		Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -365,7 +365,7 @@ static void EV18_TALK(void)
 	}
 	Actor_WalkToAndWait(18, 0x118, 232);
 	GameFlag_Set(FLAG_XIAN_WATER_SPILLED);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventEnd();
 }
 
@@ -383,9 +383,9 @@ static void EV20_PSYNERGY(void)
 	s32				   x;
 
 	Engine_EventBegin();
-	Object_GetById(20)->priority_flags &= 253;
+	Object_GetById(20)->priorityFlags &= 253;
 	v5 = 0;
-	Object_GetById(20)->motion_flags = v5;
+	Object_GetById(20)->motionFlags = v5;
 	record = Object_GetById(20);
 	x = record->x.fixed;
 	record = Object_GetById(20);
@@ -421,7 +421,7 @@ static void EV14_TALK(void)
 		Engine_EventSetMessage(MsgXianHooWhaaaHachaaa);
 		Engine_EventShowMessage(14, 0);
 		Engine_ActorRunRepeatedMotion(0, 2);
-		Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		pos[0] = flag;
 		pos[1] = flag;
 		pos[2] = flag;
@@ -430,7 +430,7 @@ static void EV14_TALK(void)
 		Engine_ActorSetAnimation(0, 2);
 		Engine_ActorSetDestinationOffset(0, pos[0] / 0x10000, pos[2] / 0x10000);
 		Engine_ActorWaitForMove(0);
-		Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 		Engine_EventWait(30);
 		Engine_ActorRunRepeatedMotion(14, 2);
 		params.count = 1;
@@ -439,17 +439,17 @@ static void EV14_TALK(void)
 		Engine_AudioPlayCue(132);
 		cb = (s32)SceneEffect_SpawnPeriodicEffect;
 		Task_AddCallback((void (*)(void))cb, 0xc80);
-		Object_GetById(14)->velocity_y = 0x60000;
+		Object_GetById(14)->velocityY = 0x60000;
 		Object_GetById(14)->gravity = 0x10000;
 		Object_GetById(14)->bounce = 0;
 		Actor_SetSpeed(14, 0x30000, 0x18000);
 		Actor_SetDestination(14, 168, 0x138);
 		Engine_ActorWaitForMove(14);
 		Engine_AudioPlayCue(134);
-		Engine_ActorEnableActionCallback(19, (s32)Xian_Actor19Motion);
+		Engine_ActorEnableActionCallback(19, (s32)gXian_Actor19Motion);
 		FieldScheduler_AddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
 		params.sprite = 0x11b;
-		params.callback = (s32)Xian_EffectScript;
+		params.callback = (s32)gXian_EffectScript;
 		params.facing = 0x4000;
 		Effect_Spawn(0xa80000, 0, 0x14c0000, 0, 0, 0, 0x720000, &params);
 		Actor_SetDestination(14, 146, 0x138);
@@ -495,7 +495,7 @@ static void Xian_HopLeaderAhead(void)
 	union FieldCoordinate *p;
 
 	leader = Object_GetById(0);
-	flags = leader->motion_flags;
+	flags = leader->motionFlags;
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
 		p = pos;
@@ -513,13 +513,13 @@ static void Xian_HopLeaderAhead(void)
 			Object_SetMode(leader, 7);
 			leader->speed = 0x30000;
 			leader->acceleration = 0x20000;
-			leader->velocity_y = 0x40000;
-			leader->motion_flags &= 126;
+			leader->velocityY = 0x40000;
+			leader->motionFlags &= 126;
 			Engine_ActorSetSpriteFlags(leader, 0);
 			Engine_ObjectMotionSetPositionAndCommit(0, p[0].part.pixel, p[2].part.pixel);
 			Object_SetMode(leader, 6);
 			Engine_ActorSetSpriteFlags(leader, 1);
-			leader->motion_flags = flags;
+			leader->motionFlags = flags;
 			Engine_EventEnd();
 		}
 	}
@@ -527,7 +527,7 @@ static void Xian_HopLeaderAhead(void)
 
 static void Xian_WalkThroughExit(s32 a0)
 {
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	if (a0 == 6)
 	{
@@ -538,7 +538,7 @@ static void Xian_WalkThroughExit(s32 a0)
 	{
 		Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(a0);
 }
 
@@ -552,31 +552,31 @@ static void SceneEffect_DispatchStep(void)
 	{
 	case 1:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps1, 81, 18);
+		Engine_MapAnimateCells(gXian_GateSteps1, 81, 18);
 		break;
 	case 2:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps2, 83, 11);
+		Engine_MapAnimateCells(gXian_GateSteps2, 83, 11);
 		break;
 	case 3:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps2, 86, 11);
+		Engine_MapAnimateCells(gXian_GateSteps2, 86, 11);
 		break;
 	case 4:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps3, 84, 24);
+		Engine_MapAnimateCells(gXian_GateSteps3, 84, 24);
 		break;
 	case 5:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps3, 72, 7);
+		Engine_MapAnimateCells(gXian_GateSteps3, 72, 7);
 		break;
 	case 6:
 		Engine_AudioPlayCue(188);
-		Engine_MapAnimateCells(Xian_GateSteps4, 69, 11);
+		Engine_MapAnimateCells(gXian_GateSteps4, 69, 11);
 		break;
 	case 7:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps5, 83, 7);
+		Engine_MapAnimateCells(gXian_GateSteps5, 83, 7);
 		break;
 	default:
 		break;
@@ -591,7 +591,7 @@ static void EV21_PSYNERGY(void)
 	s32 cb;
 
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(19, Xian_Actor19Motion);
+	Engine_ActorEnableActionCallback(19, gXian_Actor19Motion);
 	cb = (s32)SceneEffect_AdvanceRotatingSprite;
 	FieldScheduler_AddCallback((void (*)(void))cb, 0xc80);
 	Object_RefreshSelectorById(19);
@@ -647,7 +647,7 @@ static void EV200_RAISED(void)
 	Engine_ActorWaitForMove(18);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
-	Engine_ActorEnableActionCallback(18, Xian_ActionTable);
+	Engine_ActorEnableActionCallback(18, gXian_ActionTable);
 	record = Actor_Get(18);
 	*(s32 *)(record + 108) = (s32)Xian_WatchGateTrigger;
 	Engine_EventEnd();
@@ -663,7 +663,7 @@ s32 Xian_SetupScene(void)
 	struct FieldActor *actor;
 	u32				   n;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	BattleFx_SetQueuedSoundAndPlay(169);
 	if (gGameState.entrance > 9)
 	{
@@ -688,11 +688,11 @@ s32 Xian_SetupScene(void)
 		struct FieldActor *actor;
 		actor = Object_GetById(n + 23);
 		actor->sprite->priority = 1;
-		actor->motion_flags = 0;
-		actor->collision_flags = 8;
+		actor->motionFlags = 0;
+		actor->collisionFlags = 8;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		ObjectGroup_SetChildValue(actor, 15);
-		actor->priority_flags = (actor->priority_flags & 254) | 2;
+		actor->priorityFlags = (actor->priorityFlags & 254) | 2;
 	}
 	if (Engine_GameFlagIsSet(0x202))
 	{
@@ -712,16 +712,16 @@ s32 Xian_SetupScene(void)
 	Engine_ActorSetChildValue(18, 2);
 	Object_GetById(18)->update = Xian_WatchGateTrigger;
 	actor = Object_GetById(19);
-	actor->motion_flags = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = 0x100000;
-	actor->target_y = 0x100000;
-	actor->scale_x = 0x8ccc;
-	actor->scale_y = 0x6666;
+	actor->targetY = 0x100000;
+	actor->scaleX = 0x8ccc;
+	actor->scaleY = 0x6666;
 	actor->sprite->rotation = 0x8000;
 	Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
-	Object_GetById(21)->motion_flags = 0;
+	Object_GetById(21)->motionFlags = 0;
 	Object_GetById(21)->y.fixed = 0;
-	Object_GetById(21)->target_y = -0x80000000;
+	Object_GetById(21)->targetY = -0x80000000;
 	return 0;
 }
 
@@ -758,7 +758,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 Xian_ActionTable[] = {
+s32 gXian_ActionTable[] = {
 	SC_SET(SW_SPEED, 0x6666),
 	SC_SET(SW_ACCEL, 0x1999),
 	SC_WAIT(60),
@@ -788,7 +788,7 @@ s32 Xian_ActionTable[] = {
 	SC_END,
 };
 
-s32 Xian_Actor19Motion[] = {
+s32 gXian_Actor19Motion[] = {
 	SC_SET(SW_SNAP, 0),
 	SC_SET(SW_SPEED, 0x30000),
 	SC_SET(SW_ACCEL, 0x18000),
@@ -802,7 +802,7 @@ s32 Xian_Actor19Motion[] = {
 	SC_END,
 };
 
-s32 Xian_EffectScript[] = {
+s32 gXian_EffectScript[] = {
 	SC_WAIT(18),
 	SC_WAIT(1),
 	SC_POS(0, 0, 0),
@@ -810,7 +810,7 @@ s32 Xian_EffectScript[] = {
 	SC_FREE,
 };
 
-s32 Xian_EffectConfig[] = {
+s32 gXian_EffectConfig[] = {
 	SC_SET(SW_FACING, FACING_WEST),
 	SC_WAIT(16),
 	SC_WAIT(1),
@@ -819,23 +819,23 @@ s32 Xian_EffectConfig[] = {
 	SC_FREE,
 };
 
-u16 Xian_GateSteps1[] = {
+u16 gXian_GateSteps1[] = {
 	MAP_CELL_STEP(64, 48, 1, 2, 4), MAP_CELL_STEP(63, 48, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps2[] = {
+u16 gXian_GateSteps2[] = {
 	MAP_CELL_STEP(69, 50, 2, 2, 4), MAP_CELL_STEP(65, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps3[] = {
+u16 gXian_GateSteps3[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 4), MAP_CELL_STEP(63, 46, 3, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps4[] = {
+u16 gXian_GateSteps4[] = {
 	MAP_CELL_STEP(67, 50, 4, 2, 4), MAP_CELL_STEP(63, 50, 4, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps5[] = {
+u16 gXian_GateSteps5[] = {
 	MAP_CELL_STEP(66, 44, 3, 2, 4), MAP_CELL_STEP(63, 44, 3, 2, 4), MAP_CELL_STEPS_END,
 };
 
@@ -886,7 +886,7 @@ struct ScenePlacement gXianPlacements[] = {
 		PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x27, IF_FLAG_SET(0x89a), ACTOR_STAND,
 		PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
-	{ 0x9f, CONDITION_ALWAYS, (s32)Xian_ActionTable,
+	{ 0x9f, CONDITION_ALWAYS, (s32)gXian_ActionTable,
 		PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },

@@ -15,10 +15,10 @@ void  GameFlag_ClearBit(s32 flag);
 void  GameFlag_SetBit(s32 flag);
 void *ObjectTable_Get(s32 id);
 
-void Func_080ec1d0(s32 *screen_x, s32 *screen_y)
+void Func_080ec1d0(s32 *screenX, s32 *screenY)
 {
 	s32	 x = EventRuntime_GetControlledOwner();
-	u8	*state = Ram_HeapSlots->event_work;
+	u8	*state = Ram_HeapSlots->eventWork;
 	u8	*object;
 	s32	 z;
 	s32	 shift;
@@ -50,12 +50,12 @@ void Func_080ec1d0(s32 *screen_x, s32 *screen_y)
 			}
 			z += shift;
 		}
-		*screen_x = 853 * x / 16384 - 269;
-		*screen_y = z * 640 / 16384 - 112;
+		*screenX = 853 * x / 16384 - 269;
+		*screenY = z * 640 / 16384 - 112;
 	}
 	else
 	{
-		*screen_x = 264;
-		*screen_y = 16;
+		*screenX = 264;
+		*screenY = 16;
 	}
 }

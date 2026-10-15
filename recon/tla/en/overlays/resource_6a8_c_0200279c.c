@@ -2,10 +2,10 @@
 #include "types.h"
 
 struct Walker {
-    u8 unknown_00[0x63];
+    u8 unk00[0x63];
     u8 arrived;
     u16 frames;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void (*update)(void);
 };
 

@@ -7,7 +7,7 @@
 static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
 	struct StagedActorEffect *actor = (void *)Object_GetById(0);
-	u8						 *flags = &actor->motion_flags;
+	u8						 *flags = &actor->motionFlags;
 	u8						  saved = *flags;
 	s32						  ret = FieldObject_CheckMovementCollision(actor, request);
 
@@ -18,27 +18,27 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 		Engine_TaskWait(6);
 		Engine_AudioPlayCue(152);
 		Object_SetMode((struct FieldActor *)actor, 7);
-		actor->move_rate_x = 0x30000;
-		actor->move_rate_z = 0x20000;
-		actor->elevation_rate = 0x40000;
+		actor->moveRateX = 0x30000;
+		actor->moveRateZ = 0x20000;
+		actor->elevationRate = 0x40000;
 		*flags &= 0x7e;
 		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
-		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
+		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cellX, request->cellZ);
 		Object_SetMode((struct FieldActor *)actor, 6);
 		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
 		*flags = ret;
 		Engine_ActorSetAnimation(10, 7);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
+		actor->positionX += 0xffff0000;
+		actor->positionZ += 0xffff0000;
 		Engine_TaskWait(2);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
+		actor->positionX += 0xffff0000;
+		actor->positionZ += 0xffff0000;
 		Engine_TaskWait(10);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
+		actor->positionX += 0x10000;
+		actor->positionZ += 0x10000;
 		Engine_TaskWait(4);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
+		actor->positionX += 0x10000;
+		actor->positionZ += 0x10000;
 		*flags = saved;
 		Engine_EventEnd();
 		return 1;

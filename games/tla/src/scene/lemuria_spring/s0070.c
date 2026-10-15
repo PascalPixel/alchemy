@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-extern const u16 Data_02001678[];
+extern const u16 gData_02001678[];
 void Func_02001408(s32 cue);
 void WaitFrames(s32 frames);
 
@@ -14,7 +14,7 @@ static inline void RegSet(s32 value, s32 reg)
 
 void Func_02000070(void)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->map_work;
+    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
     s32 *layer;
     s32 i;
 
@@ -31,7 +31,7 @@ next:
     i = 0;
 next2:
         RegSet(0x3f42, 0x04000050);
-        RegSet(Data_02001678[i], 0x04000052);
+        RegSet(gData_02001678[i], 0x04000052);
         WaitFrames(8);
     i++;
     if (i <= 7)

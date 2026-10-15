@@ -11,7 +11,7 @@ s32 Func_080201d0(s32 layer, s32 x, s32 z);
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer)
 {
-    u8 code = Func_080dbb78(x, z, 2)->collision_code;
+    u8 code = Func_080dbb78(x, z, 2)->collisionCode;
 
     if (code == 233)
         return 1;
@@ -24,23 +24,23 @@ s32 Func_080dbda8(s32 x, s32 z, s32 layer)
 
 u8 Func_080dbdc8(s32 x, s32 z, s32 layer)
 {
-    return Func_080dbb78(x, z, layer)->collision_code;
+    return Func_080dbb78(x, z, layer)->collisionCode;
 }
 
 u8 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value)
 {
-    Func_080dbb78(x, z, layer)->collision_code = value;
+    Func_080dbb78(x, z, layer)->collisionCode = value;
     return value;
 }
 
 s32 Func_080dbde8(s32 x, s32 z, s32 layer)
 {
-    return Func_080dbb78(x, z, layer)->attribute_b;
+    return Func_080dbb78(x, z, layer)->attributeB;
 }
 
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value)
 {
-    Func_080dbb78(x, z, layer)->attribute_b = value;
+    Func_080dbb78(x, z, layer)->attributeB = value;
     return value;
 }
 

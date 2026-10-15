@@ -35,7 +35,7 @@ static __inline__ void Flag_Clear(s32 flag)
 
 void Func_0200053c(s32 level)
 {
-    u8 *work = *(u8 **)((u8 *)Ram_HeapSlots->event_work + 0xcbc);
+    u8 *work = *(u8 **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
     s32 offset = level << 3;
 
     if (HALF_AT(work, 14) > 31 || Flag_Test(0x213)) {

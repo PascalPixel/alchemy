@@ -14,8 +14,8 @@
 // starts off the map or its far edge passes cell 63.
 void Func_080eb4a0(const u8 *src, s32 x, s32 y, s32 width, s32 height)
 {
-    u16 *map = Ram_HeapSlots->canvas_map;
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u16 *map = Ram_HeapSlots->canvasMap;
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
     s32 row;
     s32 n;
 
@@ -33,7 +33,7 @@ void Func_080eb4a0(const u8 *src, s32 x, s32 y, s32 width, s32 height)
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count)
 {
     if (count > 0) {
-        const u8 *table = ColorBuffer_FadeStep1Map;
+        const u8 *table = gColorBuffer_FadeStep1Map;
 
         do {
             if (*buffer != 0)
@@ -47,7 +47,7 @@ void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count)
 void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count)
 {
     if (count > 0) {
-        const u8 *table = ColorBuffer_FadeStep2Map;
+        const u8 *table = gColorBuffer_FadeStep2Map;
 
         do {
             if (*buffer != 0)
@@ -61,7 +61,7 @@ void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count)
 void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count)
 {
     if (count > 0) {
-        const u8 *table = ColorBuffer_FadeStep3Map;
+        const u8 *table = gColorBuffer_FadeStep3Map;
 
         do {
             if (*buffer != 0)

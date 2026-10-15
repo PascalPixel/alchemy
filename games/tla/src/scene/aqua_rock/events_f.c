@@ -21,7 +21,7 @@ void Func_0200169c(void)
     Func_02002998();
     Func_02002a48(0);
     Motion_CamBounds_(-1, -1, -1, 0);
-    Func_020029d8(gPartyState.current_owner, 0, 0);
+    Func_020029d8(gPartyState.currentOwner, 0, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02002a70(184);
@@ -31,11 +31,11 @@ scatter:
     {
         struct ObjectRuntime *object = Object_GetById(i);
 
-        object->speed_limit = 0x4000;
+        object->speedLimit = 0x4000;
         object->acceleration = 0x400;
         object->update = (void (*)(void))Func_020015e8;
         object->action = Random16Far();
-        object->unknown_66 = 0;
+        object->unk66 = 0;
     }
     if (++i <= 21)
         goto scatter;

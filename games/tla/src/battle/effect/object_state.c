@@ -22,5 +22,5 @@ void ObjectMotion_SnapToTerrain(void *object)
     height = Map_GetTerrainHeightFar(0, state->x, state->z);
 #endif
     state->y = height;
-    state->terrain_height = height;
+    state->terrainHeight = height;
 }

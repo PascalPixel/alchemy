@@ -38,11 +38,11 @@ void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object)
     s32 scale;
 
     if (object != NULL) {
-        scale = object->scale_x - 0x1000;
-        object->scale_y -= 0x1000;
-        object->scale_x = scale;
+        scale = object->scaleX - 0x1000;
+        object->scaleY -= 0x1000;
+        object->scaleX = scale;
         if (scale <= 0x1000)
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_CommonParticleScript);
     }
 }
 
@@ -65,10 +65,10 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
         particle->action = count;
         life = count;
         if (life != 0) {
-            pos.x = particle->target_x;
-            pos.y = particle->target_y;
-            pos.z = particle->target_z;
-            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 + (life << 11), &pos);
+            pos.x = particle->targetX;
+            pos.y = particle->targetY;
+            pos.z = particle->targetZ;
+            Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11), &pos);
             particle->x = pos.x;
             particle->y = pos.y;
             particle->z = pos.z;
@@ -89,10 +89,10 @@ void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle)
         particle->action = count;
         life = count;
         if (life != 0) {
-            pos.x = particle->target_x;
-            pos.y = particle->target_y;
-            pos.z = particle->target_z;
-            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 - (life << 11), &pos);
+            pos.x = particle->targetX;
+            pos.y = particle->targetY;
+            pos.z = particle->targetZ;
+            Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11), &pos);
             particle->x = pos.x;
             particle->y = pos.y;
             particle->z = pos.z;
@@ -103,18 +103,18 @@ void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle)
 }
 
 struct OrbitingParticleChild {
-    u8 reserved_00[35];
+    u8 reserved00[35];
     u8 flags;
 };
 
 
 void BattleFx_StartOrbitingParticles(void)
 {
-    struct BattleFxScene *state = Ram_HeapSlots->effect_work;
+    struct BattleFxScene *state = Ram_HeapSlots->effectWork;
     struct OrbitingParticleChild *child = state->child;
 
     if (child != 0) {
-        if (state->child_mode != 0) {
+        if (state->childMode != 0) {
             state->enabled = 1;
         }
         child->flags |= 2;
@@ -137,7 +137,7 @@ void BattleFx_RunOrbitingParticles(void)
     struct PendingEvent *ev;
     s32 cnt;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     target = scene->child;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(115);
@@ -151,8 +151,8 @@ void BattleFx_RunOrbitingParticles(void)
             s32 dist;
 
             scale = (Random16() >> 1) + 0x8000;
-            particle->scale_y = scale;
-            particle->scale_x = scale;
+            particle->scaleY = scale;
+            particle->scaleX = scale;
             if ((Random16() & 1) != 0)
                 particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleLeft;
             else
@@ -160,7 +160,7 @@ void BattleFx_RunOrbitingParticles(void)
 
             particle->angle = Random16();
             particle->action = 60;
-            particle->unknown_66 = Random16();
+            particle->unk66 = Random16();
             Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
 
             p->x = scene->x;
@@ -168,9 +168,9 @@ void BattleFx_RunOrbitingParticles(void)
             p->z = scene->z;
             dist = (Random16() << 2) + (2 << 16);
             Vector_AddPolarOffset(dist, Random16(), p);
-            particle->target_x = p->x;
-            particle->target_y = p->y;
-            particle->target_z = p->z;
+            particle->targetX = p->x;
+            particle->targetY = p->y;
+            particle->targetZ = p->z;
         }
 
         WaitFrames(3);
@@ -193,7 +193,7 @@ void BattleFx_RunOrbitingParticles(void)
             cnt--;
         } while (cnt >= 0);
 
-        if (scene->child_option == 0) {
+        if (scene->childOption == 0) {
             Audio_PlayCue(220);
             Object_SetMode(target, 2);
         }
@@ -201,7 +201,7 @@ void BattleFx_RunOrbitingParticles(void)
         target->update = (void (*)(void))BattleFx_UpdateOrbitingParticleMain;
         ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
         if (ev != NULL)
-            EventRuntime_RunPendingEvent(ev, scene->first_object_id, scene->second_object_id);
+            EventRuntime_RunPendingEvent(ev, scene->firstObjectId, scene->secondObjectId);
         WaitFrames(20);
     }
 

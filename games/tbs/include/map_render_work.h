@@ -7,12 +7,12 @@
 
 struct MapRenderWork
 {
-	u8	unknown_000[0xfc];
+	u8	unk000[0xfc];
 	s8	active;
-	u8	unknown_0fd[3];
+	u8	unk0fd[3];
 	s16 first;
 	s16 second;
-	u8	unknown_104[0x16];
+	u8	unk104[0x16];
 	u16 rotation;
 };
 

@@ -1,7 +1,7 @@
 #include "types.h"
 
-extern s32 Data_0200320c[];
-extern s32 Data_0200b410[];
+extern s32 gData_0200320c[];
+extern s32 gData_0200b410[];
 s32 GameFlag_Test(s32 flag);
 
 extern u32 gFrameCount;
@@ -9,8 +9,8 @@ extern u32 gFrameCount;
 const s32 *Func_02000a60(void)
 {
     if (GameFlag_Test(0x97f))
-        return Data_0200b410;
-    return Data_0200320c;
+        return gData_0200b410;
+    return gData_0200320c;
 }
 
 void Func_02000a80(void)

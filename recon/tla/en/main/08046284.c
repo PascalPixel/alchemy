@@ -17,7 +17,7 @@ s32 DjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid, struct DjinnSlot *newG
     removed = 0;
     count = 0;
     for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
-        if (BattleActGet(newGrid[i].id)->target_flag & 0x80) {
+        if (BattleActGet(newGrid[i].id)->targetFlag & 0x80) {
             out[count] = newGrid[i].id & 0x3fff;
             count++;
             for (j = 0; j < 32; j++) {
@@ -31,7 +31,7 @@ s32 DjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid, struct DjinnSlot *newG
         }
     }
     for (i = 0; i < 32 && oldGrid[i].id != 0; i++) {
-        if (BattleActGet(oldGrid[i].id)->target_flag & 0x80) {
+        if (BattleActGet(oldGrid[i].id)->targetFlag & 0x80) {
             for (j = 0; j < 32; j++) {
                 if (((oldGrid[i].id ^ newGrid[j].id) & 0x3fff) == 0)
                     break;

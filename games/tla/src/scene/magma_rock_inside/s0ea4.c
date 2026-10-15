@@ -6,11 +6,11 @@ void Func_02000ea4(struct ObjectRuntime *object)
 
     object->x += dx = object->bounce;
     object->y += dy = object->gravity;
-    object->z += dz = object->unknown_4c;
+    object->z += dz = object->unk4c;
     dx -= dx >> 3;
     dy -= dy >> 3;
     dz -= dz >> 3;
     object->bounce = dx;
     object->gravity = dy;
-    object->unknown_4c = dz;
+    object->unk4c = dz;
 }

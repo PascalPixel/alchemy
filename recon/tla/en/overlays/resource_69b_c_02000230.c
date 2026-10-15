@@ -10,7 +10,7 @@
 #include "field_sprite.h"
 #include "party_state.h"
 
-extern s32 Data_02002b88[3];
+extern s32 gData_02002b88[3];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -30,7 +30,7 @@ void Func_020022dc(s32 a);
 
 void Func_02000230(s32 kind)
 {
-    s32 owner = gPartyState.current_owner;
+    s32 owner = gPartyState.currentOwner;
     struct ObjectRuntime *leader = Object_GetById(owner);
     struct ObjectRuntime *effect;
     s32 *target;
@@ -38,7 +38,7 @@ void Func_02000230(s32 kind)
 
     Func_0200224c();
     Func_020022dc(0);
-    target = Data_02002b88;
+    target = gData_02002b88;
     if (kind == 30) {
         target[0] = 136 << 16;
         target[1] = 144 << 16;
@@ -50,12 +50,12 @@ void Func_02000230(s32 kind)
     }
     Scheduler_AddOrUpdateCallback(Func_020000b4, 0x480);
     Object_AttachWorkTargetToObject(owner, 1);
-    leader->scale_x = 0x10000;
-    leader->scale_y = 0x10000;
+    leader->scaleX = 0x10000;
+    leader->scaleY = 0x10000;
     effect = Object_Spawn(280, leader->x, leader->y, leader->z);
     Func_020021b4(effect, 2);
-    effect->scale_x = 0x18000;
-    effect->scale_y = 0x10000;
+    effect->scaleX = 0x18000;
+    effect->scaleY = 0x10000;
     ((struct FieldSprite *)effect->animation)->priority = 1;
     while (leader->y < 0x6c0000) {
         leader->y += 0x10000;
@@ -65,30 +65,30 @@ void Func_02000230(s32 kind)
         effect->z = leader->z;
         WaitFrames(1);
     }
-    leader->scale_x = 0;
-    effect->scale_x = 0;
+    leader->scaleX = 0;
+    effect->scaleX = 0;
     while (leader->y < 0x900000) {
         leader->y += 0x10000;
         effect->y += 0x10000;
         WaitFrames(1);
     }
-    effect->scale_x = 0x8000;
-    effect->scale_y = 0xc000;
+    effect->scaleX = 0x8000;
+    effect->scaleY = 0xc000;
     for (i = 31; i >= 0; i--) {
-        effect->scale_x += 0x800;
-        effect->scale_y += 0x200;
+        effect->scaleX += 0x800;
+        effect->scaleY += 0x200;
         WaitFrames(1);
     }
-    effect->scale_x = 0x18000;
-    effect->scale_y = 0x10000;
+    effect->scaleX = 0x18000;
+    effect->scaleY = 0x10000;
     Func_020021b4(effect, 6);
-    leader->scale_x = 0x6000;
-    leader->scale_y = 0x6000;
+    leader->scaleX = 0x6000;
+    leader->scaleY = 0x6000;
     i = 19;
 spin:
     leader->angle += 0x2000;
-    leader->scale_x += 0x800;
-    leader->scale_y = leader->scale_x;
+    leader->scaleX += 0x800;
+    leader->scaleY = leader->scaleX;
     i--;
     WaitFrames(1);
     if (i >= 0)
@@ -96,10 +96,10 @@ spin:
     Func_020021d4(effect);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(owner), 1);
     leader->angle = 0x4000;
-    leader->terrain_id = 1;
-    leader->motion_flags = 3;
+    leader->terrainId = 1;
+    leader->motionFlags = 3;
     leader->y = 0x900000;
-    leader->terrain_height = 0x900000;
+    leader->terrainHeight = 0x900000;
     Scheduler_RemoveCallbackFar(Func_020000b4);
     Func_02000054();
     Func_02002254();

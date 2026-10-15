@@ -39,15 +39,15 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 struct ObjectRuntime *object;
 
                 GameFlag_ClearBit(flag);
-                id = gPartyState.current_owner;
+                id = gPartyState.currentOwner;
                 object = ObjectTable_Get(id);
                 object->y += 0x00a00000;
                 Motion_CamBounds(-1, -1, -1, 0);
-                while (object->y + object->velocity_y > object->terrain_height) {
+                while (object->y + object->velocityY > object->terrainHeight) {
                     WaitFrames(1);
                 }
                 Audio_PlayCue(159);
-                object->y = object->terrain_height;
+                object->y = object->terrainHeight;
                 Object_SetMode(object, 22);
                 EventRuntime_Wait(15);
                 Object_AttachWorkTargetToObject(id, 1);
@@ -62,7 +62,7 @@ u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080d5fd4(void)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(gPartyState.current_owner);
+    struct ObjectRuntime *object = ObjectTable_Get(gPartyState.currentOwner);
     u8 *metadata = ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 
     metadata[5] = 15;

@@ -13,9 +13,9 @@
 #include "mem.h"
 
 struct SparkWork {
-    u8 unknown_0000[0x2102];
-    u16 tile_base;
-    u8 unknown_2104[0x80];
+    u8 unk0000[0x2102];
+    u16 tileBase;
+    u8 unk2104[0x80];
     s16 resource;
 };
 
@@ -23,7 +23,7 @@ void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 void VenusEntrance_StopSparks(void)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
     Scheduler_RemoveCallbackFar(Func_0200258c);
     Resource_ResetEntry(work->resource);

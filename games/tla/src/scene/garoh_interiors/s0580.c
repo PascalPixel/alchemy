@@ -14,8 +14,8 @@ s32 Func_02000580(void)
 {
 	s32 turn;
 
-	*(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 521;
-	Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+	*(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+	Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
 	Func_0200087c(0);
 	if (gPartyState.scene == (s32)&SceneId_Ov660Room1)
 	{
@@ -49,13 +49,13 @@ s32 Func_02000580(void)
 			}
 			ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
 			ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
-			Object_GetById(17)->motion_flags = 0;
+			Object_GetById(17)->motionFlags = 0;
 			Object_GetById(17)->y = 0;
-			Object_GetById(18)->motion_flags = 0;
+			Object_GetById(18)->motionFlags = 0;
 			Object_GetById(18)->y = 0;
-			Object_GetById(19)->motion_flags = 0;
+			Object_GetById(19)->motionFlags = 0;
 			Object_GetById(19)->y = 0;
-			Object_GetById(20)->motion_flags = 0;
+			Object_GetById(20)->motionFlags = 0;
 			Object_GetById(20)->y = 0;
 			Func_02000894(17, 0xe000);
 			ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);

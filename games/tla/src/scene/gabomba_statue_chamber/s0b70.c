@@ -3,7 +3,7 @@
 
 void Func_02000b70(void)
 {
-    struct GabombaStatueChamberObject *leader = Object_GetById(gPartyState.current_owner);
+    struct GabombaStatueChamberObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 

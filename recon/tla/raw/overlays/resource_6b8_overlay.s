@@ -341,7 +341,7 @@ Func_02000c4c:
 .L_02008ca8:
 	.4byte 0x00000000
 .L_02008cac:
-	.4byte Data_02000f44
+	.4byte gData_02000f44
 .L_02008cb0:
 	strb r0, [r3]
 	ldr r3, .L_02008d40
@@ -418,13 +418,13 @@ Func_02000c4c:
 .L_02008d40:
 	.4byte Func_02000ad0
 .L_02008d44:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_02008d48:
 	.4byte 0x80004000
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_020017b0
-Data_020017b0:
+	.global gData_020017b0
+gData_020017b0:
 	.space 0x000000b0
-	.global Data_02001860
-Data_02001860:
+	.global gData_02001860
+gData_02001860:

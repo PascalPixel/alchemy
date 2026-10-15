@@ -327,7 +327,7 @@ Func_0802c240:
 .L_0802c4c4:
 	.4byte IwramTransformVector
 .L_0802c4c8:
-	.4byte Data_03001144
+	.4byte gData_03001144
 .L_0802c4cc:
 	.4byte IwramRatioMulQ14
 .L_0802c4d0:

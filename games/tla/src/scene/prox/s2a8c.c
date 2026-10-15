@@ -32,19 +32,19 @@ s32 Object_SetModeById();
 s32 WaitFrames();
 s32 Func_02004464();
 void Func_0200457c(void);
-extern u8 Data_02005ee8[];
-extern u8 Data_02005f2c[];
-extern u8 Data_02005f70[];
-extern u8 Data_02005fac[];
-extern u8 Data_02005fe8[];
-extern u8 Data_02006038[];
-extern u8 Data_02006088[];
-extern u8 Data_020060cc[];
-extern u8 Data_020060fc[];
-extern u8 Data_0200617c[];
-extern u8 Data_020061fc[];
-extern u8 Data_0200622c[];
-extern u8 Data_02006268[];
+extern u8 gData_02005ee8[];
+extern u8 gData_02005f2c[];
+extern u8 gData_02005f70[];
+extern u8 gData_02005fac[];
+extern u8 gData_02005fe8[];
+extern u8 gData_02006038[];
+extern u8 gData_02006088[];
+extern u8 gData_020060cc[];
+extern u8 gData_020060fc[];
+extern u8 gData_0200617c[];
+extern u8 gData_020061fc[];
+extern u8 gData_0200622c[];
+extern u8 gData_02006268[];
 extern u8 MsgProx153[];
 
 void Func_02002a8c(void)
@@ -65,16 +65,16 @@ void Func_02002a8c(void)
         Prox_Jump(0xa, 0x108, 0);
         Call2(Func_02004534, 0x200a, 0);
         Call1(Func_0200463c, 0x25);
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0xcccc, 0x6666);
-        Call3(ObjectMotion_SetPositionAndReset, gPartyState.current_owner, 0x88, 0xc4);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
-        Call2(Func_020044dc, 0, gPartyState.current_owner);
-        Call2(Func_020044dc, 0xb, gPartyState.current_owner);
+        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc, 0x6666);
+        Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x88, 0xc4);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
+        Call2(Func_020044dc, 0, gPartyState.currentOwner);
+        Call2(Func_020044dc, 0xb, gPartyState.currentOwner);
         Call1(WaitFrames, 1);
         Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
         Call3(ObjectMotion_SetSpeedParameters, 0xb, 0xcccc, 0x6666);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_02005ee8);
-        Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)Data_02005f2c);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_02005ee8);
+        Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)gData_02005f2c);
         Call2(Motion_SetModeAndWaitAnimation, 9, 3);
         Call2(Func_02004534, 9, 0);
         Call2(Func_0200454c, 5, 0x6000);
@@ -114,9 +114,9 @@ void Func_02002a8c(void)
             Call2(Func_02004534, 0, 0);
             Call2(Func_0200454c, 8, 0xd000);
             Call2(Func_02004534, 8, 0);
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
         } else {
-            EVENT_WORK->message_id += 2;
+            EVENT_WORK->messageId += 2;
             Call2(Func_0200454c, 8, 0xd000);
             Call2(Func_02004534, 8, 0);
         }
@@ -140,13 +140,13 @@ void Func_02002a8c(void)
         Call2(Func_0200454c, 0, 0);
         Call2(Object_SetModeById, 0, 3);
         Prox_MessageOpen(0x8000, 0);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
             Call2(Motion_SetModeAndWaitAnimation, 0, 3);
             Call2(Func_02004534, 0x8000, 0);
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
         } else {
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0, 4);
             Call2(Func_02004534, 0x8000, 0);
         }
@@ -155,7 +155,7 @@ void Func_02002a8c(void)
         Call3(ObjectMotion_Launch, 5, 4, 0xa);
         Call2(Func_02004534, 0x8005, 0);
         Call2(Object_SetModeById, 0, 3);
-        Call2(Object_SetModeById, gPartyState.current_owner, 3);
+        Call2(Object_SetModeById, gPartyState.currentOwner, 3);
         Call2(Object_SetModeById, 0xb, 3);
         Call2(Object_SetModeById, 5, 3);
         Call2(Object_SetModeById, 6, 3);
@@ -167,7 +167,7 @@ void Func_02002a8c(void)
         Call2(Object_SetModeById, 2, 3);
         Call2(Motion_SetModeAndWaitAnimation, 1, 3);
         Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0xcccc, 0x6666);
+        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc, 0x6666);
         Call3(ObjectMotion_SetSpeedParameters, 0xb, 0xcccc, 0x6666);
         Call3(ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
         Call3(ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
@@ -179,7 +179,7 @@ void Func_02002a8c(void)
         Call3(ObjectMotion_SetSpeedParameters, 2, 0xcccc, 0x6666);
         Call3(ObjectMotion_SetSpeedParameters, 1, 0xcccc, 0x6666);
         Call2(ObjectMotion_SetActionVariant, 0, 2);
-        Call2(ObjectMotion_SetActionVariant, gPartyState.current_owner, 2);
+        Call2(ObjectMotion_SetActionVariant, gPartyState.currentOwner, 2);
         Call2(ObjectMotion_SetActionVariant, 0xb, 2);
         Call2(ObjectMotion_SetActionVariant, 5, 2);
         Call2(ObjectMotion_SetActionVariant, 6, 2);
@@ -192,24 +192,24 @@ void Func_02002a8c(void)
         Call2(ObjectMotion_SetActionVariant, 1, 2);
         Call2(Func_0200456c, 0x6666, 0xccc);
         Call4(Motion_CamBounds, 0x900000, -1, 0xf60000, 1);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 9, (s32)Data_02005f70);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 0xa, (s32)Data_02005fac);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 9, (s32)gData_02005f70);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 0xa, (s32)gData_02005fac);
         Call1(Battle_WaitMode0, 0xa);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)Data_02005fe8);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 3, (s32)Data_02006038);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02005fe8);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 3, (s32)gData_02006038);
         Call1(Battle_WaitMode0, 0xa);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 6, (s32)Data_02005fe8);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 7, (s32)Data_02005fe8);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 6, (s32)gData_02005fe8);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 7, (s32)gData_02005fe8);
         Call1(Battle_WaitMode0, 0xa);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)Data_02006038);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)Data_02006088);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)gData_02006038);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)gData_02006088);
         Call1(Battle_WaitMode0, 0x1e);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)Data_020060cc);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_020060cc);
         Call1(Battle_WaitMode0, 0x14);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_020060fc);
-        Call2(ObjectMotion_EnableActionAndSetCallback, gPartyState.current_owner, (s32)Data_0200617c);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_020060fc);
+        Call2(ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner, (s32)gData_0200617c);
         Call1(Battle_WaitMode0, 0xa);
-        Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)Data_020061fc);
+        Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)gData_020061fc);
         Prox_Jump(0xb, 0x101, 0x14);
         Call3(ObjectMotion_ArmCallback, 0xb, 0xb000, 0);
         Call1(Object_RefreshSelectorById, 5);
@@ -220,12 +220,12 @@ void Func_02002a8c(void)
         Prox_Jump(0xb, 0x108, 0x28);
         Prox_MessageOpen(0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
         } else {
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
         }
@@ -235,7 +235,7 @@ void Func_02002a8c(void)
         Call2(Func_02004534, 0xa00b, 0);
         Call3(ObjectMotion_Launch, 1, 2, 0xa);
         Call2(Func_02004534, 1, 0);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0x2000, 0);
         Prox_Jump(0xb, 0x100, 0);
         Call3(ObjectMotion_ArmCallback, 0xb, 0x3000, 0x14);
@@ -249,19 +249,19 @@ void Func_02002a8c(void)
         Call2(Object_SetModeById, 0xb, 3);
         Call2(Func_02004534, 0xb, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0x28);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0x28);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
         Call2(Func_0200454c, 0, 0x2000);
         Call2(Func_02004534, 0, 0);
         Call2(Func_0200454c, 0xb, 0xb000);
         Prox_Jump(0xb, 0x103, 0);
         Prox_MessageOpen(0xa00b, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
         } else {
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
         }
@@ -276,7 +276,7 @@ void Func_02002a8c(void)
         Call2(Func_0200454c, 0xb, 0xb000);
         Call2(Object_SetModeById, 0xb, 3);
         Call2(Func_02004534, 0xa00b, 0);
-        Call2(Object_SetModeById, gPartyState.current_owner, 3);
+        Call2(Object_SetModeById, gPartyState.currentOwner, 3);
         Call2(Object_SetModeById, 0, 3);
         Call2(Object_SetModeById, 1, 3);
         Call2(Motion_SetModeAndWaitAnimation, 5, 3);
@@ -305,8 +305,8 @@ void Func_02002a8c(void)
         Call1(Battle_WaitMode0, 0xa);
         Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
         Call3(ObjectMotion_SetSpeedParameters, 1, 0x19999, 0xcccc);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)Data_0200622c);
-        Call2(Object_SetActionCallbackAndRefreshById, 1, (s32)Data_02006268);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_0200622c);
+        Call2(Object_SetActionCallbackAndRefreshById, 1, (s32)gData_02006268);
         Call1(Battle_WaitMode0, 0x14);
         Call2(Func_0200454c, 0xb, 0xb000);
         Call2(Object_SetModeById, 0xb, 3);
@@ -321,12 +321,12 @@ void Func_02002a8c(void)
         Prox_Jump(0xb, 0x109, 0x28);
         Prox_MessageOpen(0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+        if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
             Call2(Func_02004534, 0xa00b, 0);
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
         } else {
-            EVENT_WORK->message_id++;
+            EVENT_WORK->messageId++;
             Call2(Motion_SetModeAndWaitAnimation, 0xb, 4);
             Call2(Func_02004534, 0xa00b, 0);
         }
@@ -339,21 +339,21 @@ void Func_02002a8c(void)
         Call1(Battle_WaitMode0, 0x14);
         Call2(Func_02004534, 0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0x28);
-        Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0x28);
+        Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
         Call2(Func_0200454c, 0, 0x2000);
         Call2(Func_02004534, 0, 0);
         Call2(Object_SetModeById, 0xb, 4);
         Call2(Func_02004534, 0xa00b, 0);
         Prox_Jump(0, 0x101, 0);
-        Prox_Jump(gPartyState.current_owner, 0x101, 0x28);
+        Prox_Jump(gPartyState.currentOwner, 0x101, 0x28);
         Call2(Func_02004534, 0xa00b, 0);
         Call2(Object_SetModeById, 0, 3);
-        Call2(Motion_SetModeAndWaitAnimation, gPartyState.current_owner, 3);
+        Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
         Call2(Object_SetModeById, 0xb, 3);
         Call2(Func_02004534, 0xa00b, 0);
         Call2(Object_SetModeById, 0, 3);
-        Call2(Motion_SetModeAndWaitAnimation, gPartyState.current_owner, 3);
+        Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
         Call1(Battle_WaitMode0, 0x14);
         Prox_Jump(0xb, 0x100, 0);
         Call3(ObjectMotion_ArmCallback, 0xb, 0x3000, 0x14);
@@ -366,18 +366,18 @@ void Func_02002a8c(void)
         Call3(ObjectMotion_Launch, 0xb, 4, 0xa);
         Call2(Func_02004534, 0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0, 0);
-        Call2(Func_0200454c, gPartyState.current_owner, 0x8000);
+        Call2(Func_0200454c, gPartyState.currentOwner, 0x8000);
         Call2(Func_0200454c, 0xb, 0xb000);
         Call2(Func_02004534, 0xa00b, 0);
         Call3(ObjectMotion_ArmCallback, 0, 0x2000, 0);
-        Call2(Func_0200454c, gPartyState.current_owner, 0x4000);
+        Call2(Func_0200454c, gPartyState.currentOwner, 0x4000);
         Call2(Object_SetModeById, 0, 3);
-        Call2(Motion_SetModeAndWaitAnimation, gPartyState.current_owner, 3);
+        Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
         Prox_Jump(0xb, 0x108, 0);
         Call2(Func_0200454c, 0xb, 0x3000);
         Call2(Func_02004534, 0xa00b, 0);
         Call2(Object_SetModeById, 0xb, 9);
-        Call2(Object_SetModeById, gPartyState.current_owner, 0x21);
+        Call2(Object_SetModeById, gPartyState.currentOwner, 0x21);
         Call2(Object_SetModeById, 0, 0x28);
         Call1(Func_02004414, 2);
         Call1(Func_02004414, 3);

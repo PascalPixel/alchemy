@@ -3,8 +3,8 @@
 #include "render_input.h"
 
 struct ItemListMenu {
-    u8 unknown_000[0xf0];
-    struct RenderOutput *message_window;
+    u8 unk000[0xf0];
+    struct RenderOutput *messageWindow;
 };
 
 void RenderOutput_RedrawSavedRectFar(struct RenderOutput *window);
@@ -33,7 +33,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 {
     struct ItemListMenu *menu;
 
-    menu = Ram_HeapSlots->menu_runtime;
-    RenderOutput_RedrawSavedRectFar(menu->message_window);
-    UiText_DrawCharacterAtOffsetFar(message, (s32)menu->message_window, 0, 0);
+    menu = Ram_HeapSlots->menuRuntime;
+    RenderOutput_RedrawSavedRectFar(menu->messageWindow);
+    UiText_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
 }

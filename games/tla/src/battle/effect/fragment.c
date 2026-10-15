@@ -20,25 +20,25 @@ struct ItemBreakFragmentPosition
 
 struct ItemBreakFragmentSource
 {
-	u8								reserved_00[6];
+	u8								reserved00[6];
 	u16								angle; // 向き（0x10000 で 1 周）
 	s32								x;
 	s32								y;
 	s32								z;
-	u8								reserved_14[70];
-	u8								flag_5a;
-	u8								reserved_5b[13];
+	u8								reserved14[70];
+	u8								flag5a;
+	u8								reserved5b[13];
 	struct ItemBreakFragmentSource *target; // 向く相手
 };
 
 struct ItemBreakFragmentObject
 {
-	u8	reserved_00[72];
-	s32 field_48; // 重力（gravity と同じ位置）
-	u8	reserved_4c[9];
-	u8	mode_55; // motion_flags と同じ位置
-	u8	reserved_56[8];
-	u16 field_5e;
+	u8	reserved00[72];
+	s32 field48; // 重力（gravity と同じ位置）
+	u8	reserved4c[9];
+	u8	mode55; // motionFlags と同じ位置
+	u8	reserved56[8];
+	u16 field5e;
 };
 
 extern s32 ArcTan2(s32, s32);
@@ -82,7 +82,7 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 				turn = -0x1000;
 			src->angle += turn;
 		}
-		src->flag_5a = 0;
+		src->flag5a = 0;
 	}
 
 	// 粒は本体から y を 8〜24 ずらし、ランダムな向きに半径 0〜48 散らした位置に出す
@@ -98,12 +98,12 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 #endif
 	if (obj != 0)
 	{
-		obj->mode_55 = 2;
-		obj->field_48 = 0x1999;
+		obj->mode55 = 2;
+		obj->field48 = 0x1999;
 #if GAME_TLA
 		Object_SetMode(obj, 0);
 #endif
-		obj->field_5e = 12;
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		obj->field5e = 12;
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 	}
 }

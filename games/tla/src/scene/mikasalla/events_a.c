@@ -6,7 +6,7 @@ struct WarpEntry {
     u16 z;
 };
 
-extern struct WarpEntry Data_0200073c[];
+extern struct WarpEntry gData_0200073c[];
 
 void Func_02000610(s32 map, s32 x, s32 z);
 void Func_020006b8(s32 value);
@@ -29,7 +29,7 @@ static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column, s32 offs
 
 void Func_0200009c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     u32 id;
     s16 *choice;
     s32 index;
@@ -54,20 +54,20 @@ void Func_0200009c(void)
     Func_020006f0(158);
     asm("");
     index--;
-    Func_02000610_(Data_0200073c[index].map, Data_0200073c[index].x, Data_0200073c[index].z);
+    Func_02000610_(gData_0200073c[index].map, gData_0200073c[index].x, gData_0200073c[index].z);
     /* FAKEMATCH: the empty asm ends the shift's output dependences on the later calls (r4 is call-used), so sched2 takes the table address first as the native does (differ 2). */
     asm("");
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
     {
         s32 mode = 2;
 
         /* FAKEMATCH: the mode passes through an asm so that it is set before the owner id is loaded (differ 2 without it). */
         __asm__("" : "+l"(mode));
-        Object_SetModeById(gPartyState.current_owner, mode);
+        Object_SetModeById(gPartyState.currentOwner, mode);
     }
     if (index != 4) {
-        ObjectMotion_CenterOnColumn_(gPartyState.current_owner, 2, -8);
+        ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -8);
         Battle_WaitMode0(10);
     }
     Func_020006b8(*choice);
@@ -84,14 +84,14 @@ void Func_0200014c(void)
 
 #include "scene_ids.h"
 
-extern s32 Data_020012ac[];
-extern s32 Data_020010d8[];
+extern s32 gData_020012ac[];
+extern s32 gData_020010d8[];
 
 s32 *Func_0200015c(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov65dRoom2)
-        return Data_020012ac;
-    return Data_020010d8;
+        return gData_020012ac;
+    return gData_020010d8;
 }

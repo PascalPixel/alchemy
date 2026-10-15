@@ -10,9 +10,9 @@ u8 *SceneData_GetPrimaryTable37c(void);
 u8 *SceneData_GetSecondaryTable37c(void);
 u8 *SceneData_GetTertiaryTable37c(void);
 s32 Resource37c_Run(void);
-extern struct SceneEntrance SolPsynergyStone_SceneTable0[];
-extern u32 SolPsynergyStone_SceneTable1[];
-extern struct ScenePlacement SolPsynergyStone_SceneTable2[];
-extern struct SceneEvent SolPsynergyStone_SceneTable3[];
+extern struct SceneEntrance gSolPsynergyStone_SceneTable0[];
+extern u32 gSolPsynergyStone_SceneTable1[];
+extern struct ScenePlacement gSolPsynergyStone_SceneTable2[];
+extern struct SceneEvent gSolPsynergyStone_SceneTable3[];
 
 #endif

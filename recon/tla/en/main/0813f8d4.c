@@ -14,18 +14,18 @@
 struct StreakWork
 {
     s32 frame;
-    s32 transfer_pending;
+    s32 transferPending;
 };
 
 struct Streak
 {
     s32 head;
     s32 tail;
-    s32 unused_08;
+    s32 unused08;
     s32 pitch;
     s32 yaw;
     s32 roll;
-    s32 unused_18;
+    s32 unused18;
 };
 
 struct StreakPoint
@@ -44,7 +44,7 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 void Func_0813f8d4(void)
 {
-    struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleFxWork[0];
     s32 frame;
     s32 i;
     struct Streak *streak;
@@ -99,5 +99,5 @@ void Func_0813f8d4(void)
             Func_08143eb4(tail.x, tail.y, head.x, head.y, fade + 56);
         }
     }
-    work->transfer_pending = 1;
+    work->transferPending = 1;
 }

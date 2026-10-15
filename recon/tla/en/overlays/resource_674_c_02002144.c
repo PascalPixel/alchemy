@@ -5,8 +5,8 @@
 void Func_02002144(void)
 {
     struct ObjectRuntime *object;
-    s32 *x0 = &Data_0200519c;
-    s32 *z0 = &Data_02005194;
+    s32 *x0 = &gData_0200519c;
+    s32 *z0 = &gData_02005194;
     s32 x1;
     s32 z1;
 
@@ -14,11 +14,11 @@ void Func_02002144(void)
     *x0 = object->x;
     *z0 = object->z;
     object = Object_GetById(13);
-    Data_02005198 = x1 = object->x;
-    Data_02005190 = z1 = object->z;
+    gData_02005198 = x1 = object->x;
+    gData_02005190 = z1 = object->z;
     if (*x0 >> 20 == 7 && *z0 >> 20 == 29 && x1 >> 20 == 7 && z1 >> 20 == 28)
         Func_020020ec(*x0, *z0, 2, 0);
-    if (Data_0200519c >> 20 == 12 && Data_02005194 >> 20 == 25
-        && Data_02005198 >> 20 == 12 && Data_02005190 >> 20 == 26)
-        Func_020020ec(Data_02005198, Data_02005190, 2, 0);
+    if (gData_0200519c >> 20 == 12 && gData_02005194 >> 20 == 25
+        && gData_02005198 >> 20 == 12 && gData_02005190 >> 20 == 26)
+        Func_020020ec(gData_02005198, gData_02005190, 2, 0);
 }

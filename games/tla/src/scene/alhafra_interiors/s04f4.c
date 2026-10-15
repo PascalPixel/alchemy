@@ -19,8 +19,8 @@ void Func_020004f4(s32 actor)
 u8 *Func_02000540(void)
 {
     if (GameFlag_Test(0x8a7))
-        return Data_020019dc;
+        return gData_020019dc;
     if (GameFlag_Test(0x8ab))
-        return Data_02001730;
-    return Data_020013dc;
+        return gData_02001730;
+    return gData_020013dc;
 }

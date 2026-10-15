@@ -15,16 +15,16 @@
 #include "render_input.h"
 
 struct WorkspaceScreen {
-    u8 unknown_000[0x5a4];
+    u8 unk000[0x5a4];
     struct RenderOutput *cursor;
-    u8 unknown_5a8[0x68];
+    u8 unk5a8[0x68];
     struct RenderOutput *icons[6];
 };
 
 extern u8 MsgTestA[];
 extern u8 MsgTestB[];
 extern u8 MsgTestC[];
-extern const s8 Data_0805ea8f[];
+extern const s8 gData_0805ea8f[];
 
 s32 GameFlag_Test(s32 flag);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -38,7 +38,7 @@ struct RenderInput *Func_08040628(void)
     struct WorkspaceScreen *work;
     s32 rows;
     s32 first;
-    s32 settings_only;
+    s32 settingsOnly;
     s32 top;
     s32 height;
     struct RenderInput *win;
@@ -47,10 +47,10 @@ struct RenderInput *Func_08040628(void)
     s32 i;
 
     rows = 3;
-    work = Ram_HeapSlots->unknown_d0[0];
-    settings_only = GameFlag_Test(0x17e);
+    work = Ram_HeapSlots->unkd0[0];
+    settingsOnly = GameFlag_Test(0x17e);
     first = 0;
-    if (settings_only != 0) {
+    if (settingsOnly != 0) {
         rows = 1;
         first = 2;
     }
@@ -66,7 +66,7 @@ struct RenderInput *Func_08040628(void)
     for (i = 1; i < rows; i++)
         UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
     y = 4;
-    if (settings_only == 0) {
+    if (settingsOnly == 0) {
         msg = (s32)MsgTestA;
         UiText_DrawResource(msg, win, 48, 4);
         msg++;
@@ -87,7 +87,7 @@ struct RenderInput *Func_08040628(void)
     work->cursor = RenderOutput_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, win, 0, 0);
     y = -4;
     for (i = 0; i < rows; i++) {
-        work->icons[i] = RenderResource_CreateFrame(Data_0805ea8f[first + i], 0, win, 12, y);
+        work->icons[i] = RenderResource_CreateFrame(gData_0805ea8f[first + i], 0, win, 12, y);
         y += 24;
     }
     return win;

@@ -19,66 +19,66 @@ struct MapAnimation {
 };
 
 struct MapCell {
-    u16 metatile_and_flags;
-    u8 collision_code;
-    u8 attribute_b;
+    u16 metatileAndFlags;
+    u8 collisionCode;
+    u8 attributeB;
 };
 
 struct MapLayer {
     s32 x, y;
-    u8 unknown_08[0x28];
+    u8 unk08[0x28];
     struct MapCell *cells;
-    u8 *terrain_ids;
+    u8 *terrainIds;
 };
 
 struct MapWork {
     s32 *origin;
-    s32 shake_x, shake_y, shake_decay;
+    s32 shakeX, shakeY, shakeDecay;
     u8 *script;
     u16 flags;
-    u8 wide_tiles;
-    u8 unknown_017;
+    u8 wideTiles;
+    u8 unk017;
     struct MapAnimation anim[16];
     struct BlendScriptState blend;
-    s32 view_x;
-    s32 view_z;
-    s32 min_x;
-    s32 min_z;
-    s32 max_x;
-    s32 max_z;
-    u8 unknown_0fc[0xb];
-    u8 blend_control;
+    s32 viewX;
+    s32 viewZ;
+    s32 minX;
+    s32 minZ;
+    s32 maxX;
+    s32 maxZ;
+    u8 unk0fc[0xb];
+    u8 blendControl;
     struct MapLayer layers[4];
-    u8 unknown_1e8[0x774];
-    s32 far_plane;
+    u8 unk1e8[0x774];
+    s32 farPlane;
     s32 zoom;
-    s32 zoom_from;
-    s32 zoom_to;
-    s16 zoom_frames;
-    s16 zoom_step;
+    s32 zoomFrom;
+    s32 zoomTo;
+    s16 zoomFrames;
+    s16 zoomStep;
 };
 
 struct MapViewWork {
-    u8 unknown_000[0x100];
-    s8 animation_active;
-    u8 unknown_101[3];
-    u16 window_top;
-    u16 window_bottom;
-    u16 irq_first_line;
-    u16 irq_second_line;
-    u16 irq_phase;
-    u8 unknown_10e[0x12];
+    u8 unk000[0x100];
+    s8 animationActive;
+    u8 unk101[3];
+    u16 windowTop;
+    u16 windowBottom;
+    u16 irqFirstLine;
+    u16 irqSecondLine;
+    u16 irqPhase;
+    u8 unk10e[0x12];
     u32 *resources;
-    u8 unknown_124[0x84c];
-    s8 extra_tiles;
-    u8 frame_shown;
-    u8 frame_pending;
+    u8 unk124[0x84c];
+    s8 extraTiles;
+    u8 frameShown;
+    u8 framePending;
     s8 area;
 };
 
 struct WorldPosition {
     s32 x;
-    u8 unknown_04[4];
+    u8 unk04[4];
     s32 y;
 };
 
@@ -90,9 +90,9 @@ LAYOUT_OFFSET_GUARD(MapWork_Layers, struct MapWork, layers, 0x108);
 LAYOUT_SIZE_GUARD(MapAnimation_Size, struct MapAnimation, 12);
 LAYOUT_OFFSET_GUARD(MapWork_Animation, struct MapWork, anim, 0x18);
 LAYOUT_OFFSET_GUARD(MapWork_Blend, struct MapWork, blend, 0xd8);
-LAYOUT_OFFSET_GUARD(MapWork_BlendControl, struct MapWork, blend_control, 0x107);
-LAYOUT_OFFSET_GUARD(MapWork_MinX, struct MapWork, min_x, 0xec);
-LAYOUT_OFFSET_GUARD(MapWork_FarPlane, struct MapWork, far_plane, 0x95c);
-LAYOUT_OFFSET_GUARD(MapWork_ZoomStep, struct MapWork, zoom_step, 0x96e);
+LAYOUT_OFFSET_GUARD(MapWork_BlendControl, struct MapWork, blendControl, 0x107);
+LAYOUT_OFFSET_GUARD(MapWork_MinX, struct MapWork, minX, 0xec);
+LAYOUT_OFFSET_GUARD(MapWork_FarPlane, struct MapWork, farPlane, 0x95c);
+LAYOUT_OFFSET_GUARD(MapWork_ZoomStep, struct MapWork, zoomStep, 0x96e);
 
 #endif

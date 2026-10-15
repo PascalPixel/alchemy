@@ -16,26 +16,26 @@
 struct PendingEvent;
 
 struct ResourceEntry {
-    u8 unknown_00[0x10];
-    u8 vram_block;
+    u8 unk00[0x10];
+    u8 vramBlock;
 };
 
 struct Effect04Scene {
     u16 angle;
-    u8 unknown_02[2];
+    u8 unk02[2];
     s32 x;
     s32 y;
     s32 z;
-    struct ObjectRuntime *main_object;
+    struct ObjectRuntime *mainObject;
     struct ObjectRuntime *child;
-    s16 first_object_id;
-    s16 second_object_id;
-    u8 unknown_1c[4];
+    s16 firstObjectId;
+    s16 secondObjectId;
+    u8 unk1c[4];
     s8 enabled;
-    u8 unknown_21[0x13];
-    s8 child_option;
-    s8 child_mode;
-    u8 unknown_36[0x1a];
+    u8 unk21[0x13];
+    s8 childOption;
+    s8 childMode;
+    u8 unk36[0x1a];
     struct EffectSlot slots[24];
 };
 
@@ -63,8 +63,8 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 targe
 s32 Resource_ResetEntry(u32 entry);
 void Func_080de060(struct EffectSlot *slot);
 
-extern const u8 Data_080f0ef8[];
-extern const u8 Data_080f0e58[];
+extern const u8 gData_080f0ef8[];
+extern const u8 gData_080f0e58[];
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -85,14 +85,14 @@ void Func_080de21c(void)
     s32 i;
     u8 marker;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     target = scene->child;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(130);
     slot = scene->slots;
 
     for (i = 0; i <= 11; i++) {
-        source = scene->main_object;
+        source = scene->mainObject;
         pos.x = source->x;
         pos.y = source->y + 0x100000;
         pos.z = source->z;
@@ -101,13 +101,13 @@ void Func_080de21c(void)
         EffectSlot_SetCallback(slot, Func_080de060);
         EffectSlot_SetObjectMode(slot, 7);
         Animation_ApplyChildValuesToRecordFar(slot->object, 9);
-        slot->scale_y = 0xb333;
-        slot->scale_x = 0xb333;
+        slot->scaleY = 0xb333;
+        slot->scaleX = 0xb333;
         WaitFrames(2);
         slot++;
     }
 
-    source = scene->main_object;
+    source = scene->mainObject;
     pos.x = source->x;
     pos.y = source->y + 0x100000;
     pos.z = source->z;
@@ -117,22 +117,22 @@ void Func_080de21c(void)
         BattleFx_PrepareBufferInterpolation();
         return;
     }
-    object->scale_y = 0x4000;
-    object->scale_x = 0x4000;
+    object->scaleY = 0x4000;
+    object->scaleX = 0x4000;
     object->angle = scene->angle;
-    object->speed_limit = 0x40000;
+    object->speedLimit = 0x40000;
     object->acceleration = 0x40000;
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 3);
-    scale = object->scale_x;
+    scale = object->scaleX;
     if (scale < 0x10000) {
         do {
             scale += 0x500;
-            object->scale_y = scale;
-            object->scale_x = scale;
+            object->scaleY = scale;
+            object->scaleX = scale;
             WaitFrames(1);
-            scale = object->scale_x;
+            scale = object->scaleX;
         } while (scale <= 0xffff);
     }
     WaitFrames(3);
@@ -141,21 +141,21 @@ void Func_080de21c(void)
     for (i = 2; i >= 0; i--) {
         copy = copies[i] = Object_Spawn(278, object->x, object->y, object->z);
         if (copy != NULL) {
-            copy->scale_y = 0xf000;
-            copy->scale_x = 0xf000;
+            copy->scaleY = 0xf000;
+            copy->scaleX = 0xf000;
             copy->angle = scene->angle;
-            copy->speed_limit = 0x40000;
+            copy->speedLimit = 0x40000;
             copy->acceleration = 0x40000;
-            copy->motion_flags = 0;
+            copy->motionFlags = 0;
             Object_SetMode(copy, 5);
             Animation_ApplyChildValuesFar(copy, 2);
             resource = Object_ReplaceResourceEntry(copy->animation, resource);
         }
     }
-    marker = resource->vram_block;
+    marker = resource->vramBlock;
 
     if (scene->enabled != 0) {
-        source = scene->main_object;
+        source = scene->mainObject;
         pos.x = source->x;
         pos.y = source->y + 0x100000;
         pos.z = source->z;
@@ -166,36 +166,36 @@ void Func_080de21c(void)
         pos.z = scene->z;
     }
     Object_SetPosition(object, pos.x, pos.y, pos.z);
-    ObjectDispatch_InitializeFar(object, Data_080f0ef8);
+    ObjectDispatch_InitializeFar(object, gData_080f0ef8);
     for (i = 0; i < 3; i++) {
         copy = copies[i];
         if (copy != NULL) {
             WaitFrames(3);
             Object_SetPosition(copy, pos.x, pos.y, pos.z);
-            ObjectDispatch_InitializeFar(copy, Data_080f0e58);
+            ObjectDispatch_InitializeFar(copy, gData_080f0e58);
         }
     }
 
     for (i = 0; i <= 59 && object->script != NULL; i++)
         WaitFrames(1);
 
-    if (target != NULL && scene->child_mode == 0) {
-        if (scene->child_option != 0)
-            target->velocity_y = 0x80000;
+    if (target != NULL && scene->childMode == 0) {
+        if (scene->childOption != 0)
+            target->velocityY = 0x80000;
         pos.x = target->x;
         pos.y = target->y;
         pos.z = target->z;
         Vector_AddPolarOffset(0x100000, scene->angle, &pos);
         if (Func_08020210(target, &pos) == 0 && ScriptObject_CheckOverlapFar(target, &pos) == 0) {
             target->acceleration = 0x10000;
-            target->speed_limit = 0x10000;
+            target->speedLimit = 0x10000;
             Object_SetPosition(target, pos.x, pos.y, pos.z);
         }
     }
 
     event = Func_080ce458(0x50000005, 4, Func_080ce31c(4));
     if (event != NULL)
-        EventRuntime_RunPendingEvent(event, scene->first_object_id, scene->second_object_id);
+        EventRuntime_RunPendingEvent(event, scene->firstObjectId, scene->secondObjectId);
     WaitFrames(10);
     BattleFx_PrepareBufferInterpolation();
     WaitFrames(20);

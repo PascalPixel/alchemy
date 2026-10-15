@@ -29,11 +29,11 @@ FAR_CALL(
 	UiText_DrawResourceFar, UiText_DrawResource, void, (s32 arg0, s32 arg1, s32 arg2, s32 arg3))
 #ifndef OWN_UiText_DrawCharacterAtOffsetFar
 FAR_CALL(UiText_DrawCharacterAtOffsetFar, UiText_DrawCharacterAtOffset, void,
-	(s32 character, struct RenderInput *position, u32 offset_x, u32 offset_y))
+	(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY))
 #endif
 FAR_CALL(UiText_DrawStringFar, UiText_DrawString, void, (u8 * text, s32 arg1, s32 arg2, s32 arg3))
 FAR_CALL(UiText_DrawStringAtOffsetFar, UiText_DrawStringAtOffset, void,
-	(u8 * text, struct RenderInput *work, s32 offset_x, s32 offset_y))
+	(u8 * text, struct RenderInput *work, s32 offsetX, s32 offsetY))
 FAR_CALL(UiText_DrawStringInWindowFar, UiText_DrawStringInWindow, void,
 	(u8 * text, s32 arg1, u32 x, u32 y))
 FAR_CALL(UiText_DrawNumberFar, UiText_DrawNumber, void,
@@ -45,7 +45,7 @@ FAR_CALL(UiText_DrawNumberInWindowFar, UiText_DrawNumberInWindow, void,
 FAR_CALL(UiWork_SetParamNibbleFar, UiWork_SetParamNibble, void, (s32 param))
 FAR_SLOT(UiWork_SetRenderWord)
 FAR_CALL(RenderOutput_CreateFar, RenderOutput_Create, struct RenderOutput *,
-	(s32 slot, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y))
+	(s32 slot, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY))
 FAR_CALL(RenderOutput_CreateFromResourceFar, RenderOutput_CreateFromResource, struct RenderOutput *,
 	(s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y))
 FAR_CALL(SideObject_CreateFar, CreateSideObject, struct RenderOutput *,
@@ -95,7 +95,7 @@ FAR_CALL(Menu_SelectResourceLayoutFar, Menu_SelectResourceLayout, s32, (s32 mode
 FAR_CALL(UiTimedNotice_CreateFar, UiTimedNotice_Create, void, ())
 FAR_CALL(UiTimedNotice_CloseIfActiveFar, UiTimedNotice_CloseIfActive, void, (void))
 FAR_CALL(UiText_ShowCenteredMessageFar, UiText_ShowCenteredMessage, void,
-	(s32 message, s32 mode, s32 y_offset))
+	(s32 message, s32 mode, s32 yOffset))
 FAR_CALL(UiWork_FinalizeSharedSlotFar, UiWork_FinalizeSharedSlot, void, (void))
 FAR_CALL(UiWork_ResetFreeChannelFar, UiWork_ResetFreeChannel, void, (void))
 FAR_CALL(UiTextResource_InitializeFar, UiTextResource_Initialize, void,

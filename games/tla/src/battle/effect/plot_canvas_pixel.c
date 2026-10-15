@@ -3,19 +3,19 @@
 
 void BattleFx_PlotHalfCanvasPixel(s32 x, s32 y, s32 color)
 {
-    u16 *map = Ram_HeapSlots->canvas_map;
+    u16 *map = Ram_HeapSlots->canvasMap;
     u8 *canvas;
 
     /* FAKEMATCH: the barrier keeps the map's load ahead of the row shift; without it the shift comes first (one reordered pair, differ 2). */
     asm volatile("");
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     canvas[map[(y << 6) + x]] = color;
 }
 
 void BattleFx_PlotCanvasPixel(s32 x, s32 y, s32 color)
 {
-    u16 *map = Ram_HeapSlots->canvas_map;
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u16 *map = Ram_HeapSlots->canvasMap;
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
 
     if (x > 63) {
         canvas += 0x1000;

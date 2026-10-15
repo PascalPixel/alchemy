@@ -11,36 +11,36 @@ extern char SceneId_Ov66aRoom2;
 extern u8 MsgOhStoppedBy;
 
 struct AlhafranCaveMapCell {
-    u8 unknown_0[2];
+    u8 unk0[2];
     u8 state;
-    u8 unknown_3;
+    u8 unk3;
 };
 
 struct AlhafranCaveMapLayer {
     struct AlhafranCaveMapCell *cells;
-    u8 unknown_04[0x34];
+    u8 unk04[0x34];
 };
 
 struct AlhafranCaveMapWork {
-    u8 unknown_000[0x17];
-    u8 low_17 : 2;
-    u8 mode_17 : 2;
-    u8 high_17 : 4;
-    u8 unknown_018[0x120];
+    u8 unk000[0x17];
+    u8 low17 : 2;
+    u8 mode17 : 2;
+    u8 high17 : 4;
+    u8 unk018[0x120];
     struct AlhafranCaveMapLayer layers[1];
 };
 
 struct AlhafranCaveEventWork {
-    u8 unknown_000[0x1ac];
-    s32 value_1ac;
-    u8 unknown_1b0[0xb9a];
-    u16 value_d4a;
-    u16 value_d4c;
+    u8 unk000[0x1ac];
+    s32 value1ac;
+    u8 unk1b0[0xb9a];
+    u16 valueD4a;
+    u16 valueD4c;
 };
 
 struct AlhafranCaveEffectWork {
-    u8 unknown_00[0x1a];
-    s16 object_id;
+    u8 unk00[0x1a];
+    s16 objectId;
 };
 
 struct AlhafranCaveSwitch {
@@ -76,13 +76,13 @@ void Func_0200051c(void);
 void Func_0200129c(const u16 *entry, s32 mode, s32 frame);
 void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer);
 
-extern s16 Data_02001608[];
-extern const u16 Data_020016e4[];
-extern u8 Data_02001778[];
-extern u8 Data_02001868[];
-extern u8 Data_02001a18[];
-extern u8 Data_02001a90[];
-extern u8 Data_02001be0[];
+extern s16 gData_02001608[];
+extern const u16 gData_020016e4[];
+extern u8 gData_02001778[];
+extern u8 gData_02001868[];
+extern u8 gData_02001a18[];
+extern u8 gData_02001a90[];
+extern u8 gData_02001be0[];
 
 static __inline__ void Func_02001420_(s32 x, s32 z, s32 a, s32 b)
 {

@@ -16,7 +16,7 @@ void Func_02001438(s32 id);
 
 void Func_02000d4c(void)
 {
-    Object_GetById(gPartyState.current_owner);
+    Object_GetById(gPartyState.currentOwner);
     if (GameFlag_Test(800)) {
         Func_02001430(30, 8);
     } else {
@@ -30,7 +30,7 @@ void Func_02000d4c(void)
 
 void Func_02000da4(s32 actor)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
     do {

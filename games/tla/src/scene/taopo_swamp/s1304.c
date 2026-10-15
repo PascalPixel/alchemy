@@ -46,7 +46,7 @@ void Func_02001304(void)
         break;
     }
     if ((u32)(timer - 251) <= 178 && GameFlag_Test(0xa6e) && !GameFlag_Test(59) && !GameFlag_Test(0x310))
-        ((struct EventWork *)Ram_HeapSlots->event_work)->unknown_16a = 100;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
     Func_0200273c(480);
 }
 

@@ -9,12 +9,12 @@
 #include "object_runtime.h"
 
 struct ContextAnimation {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 flags;
 };
 
 struct ContextEffect {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 param;
 };
 
@@ -43,10 +43,10 @@ void Func_080d5d70(s32 id, s32 side)
     effect->param = kind;
     object->x = (object->x & 0xFFF00000) + 0x80000;
     object->z = (object->z & 0xFFF00000) + 0x100000;
-    object->velocity_x = zero;
-    object->velocity_z = zero;
-    object->target_x = 0x80000000;
-    object->target_z = 0x80000000;
+    object->velocityX = zero;
+    object->velocityZ = zero;
+    object->targetX = 0x80000000;
+    object->targetZ = 0x80000000;
     Object_SetMode(object, mode);
     WaitFrames(18);
 }

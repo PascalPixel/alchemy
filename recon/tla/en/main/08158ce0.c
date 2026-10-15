@@ -7,7 +7,7 @@
  * arm9tdmi's 2. Tried: the heap base read into a local held by
  * asm volatile("" : "+l"(slots)) before the work load (differ 2: lsls r3
  * then falls after the parameter copies), a one-pass block there (differ 4),
- * barriers or "+l" asms on work, shake_range or remaining_frames (differ
+ * barriers or "+l" asms on work, shake_range or remainingFrames (differ
  * 4 to 8), alchemy permute 4 minutes (no better). */
 #include "types.h"
 #include "battle_effect_work.h"
@@ -17,28 +17,28 @@
 extern u32 gCameraSceneParameters[];
 u32 Random16(void);
 
-void Func_08158ce0(s32 random_mask, u32 shake_range)
+void Func_08158ce0(s32 randomMask, u32 shakeRange)
 {
     struct BattleEffectWork *work;
-    s32 *remaining_frames;
+    s32 *remainingFrames;
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    remaining_frames = &work->shake_frames;
-    if (*remaining_frames > 0) {
-        s32 random_x = (random_mask - 1) & Random16();
-        s32 half_range = (s32)shake_range / 2;
-        s32 offset_y = ((shake_range - 1) & Random16()) - half_range;
-        s32 offset_x = random_x - half_range;
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    remainingFrames = &work->shakeFrames;
+    if (*remainingFrames > 0) {
+        s32 randomX = (randomMask - 1) & Random16();
+        s32 halfRange = (s32)shakeRange / 2;
+        s32 offsetY = ((shakeRange - 1) & Random16()) - halfRange;
+        s32 offsetX = randomX - halfRange;
 
-        gBgScroll[1].x = offset_x;
-        gBgScroll[1].y = offset_y + 32;
-        gCameraSceneParameters[3] = 120 - offset_x;
-        gCameraSceneParameters[4] = 120 - offset_y;
-        (*remaining_frames)--;
+        gBgScroll[1].x = offsetX;
+        gBgScroll[1].y = offsetY + 32;
+        gCameraSceneParameters[3] = 120 - offsetX;
+        gCameraSceneParameters[4] = 120 - offsetY;
+        (*remainingFrames)--;
         return;
     }
-    gBgScroll[1].x = work->saved_bg1_x;
-    gBgScroll[1].y = work->saved_bg1_y;
+    gBgScroll[1].x = work->savedBg1X;
+    gBgScroll[1].y = work->savedBg1Y;
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 }

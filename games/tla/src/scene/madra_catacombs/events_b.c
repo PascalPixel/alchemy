@@ -4,25 +4,25 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
-extern const u8 Data_020013ca[];
-extern const u8 Data_0200121c[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
+extern const u8 gData_020013ca[];
+extern const u8 gData_0200121c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -133,8 +133,8 @@ void Func_020008f4(void)
     struct ObjectRuntime *object;
 
     if (Func_020011fc() != 0) {
-        object = Object_GetById(Func_02001184(gPartyState.current_owner));
-        Func_0200014c(Data_020013ca);
+        object = Object_GetById(Func_02001184(gPartyState.currentOwner));
+        Func_0200014c(gData_020013ca);
         Func_02001204();
         Func_020008d0(object);
     }
@@ -142,5 +142,5 @@ void Func_020008f4(void)
 
 void Func_0200092c(void)
 {
-    Func_0200014c(Data_020013ca);
+    Func_0200014c(gData_020013ca);
 }

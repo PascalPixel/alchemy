@@ -7,13 +7,13 @@
 struct DebugPartyEntry {
     s8 owner;
     u8 level;
-    s8 djinn_counts[4];
+    s8 djinnCounts[4];
     u16 items[6];
     u16 actions[2];
-    u16 unknown_16;
+    u16 unk16;
 };
 
-extern struct DebugPartyEntry Data_0812a174[];
+extern struct DebugPartyEntry gData_0812a174[];
 
 void Party_RemoveActiveOwnerFar(s32 owner);
 struct TradeOfferState *Trade_GetOfferStateFar(s32 owner);
@@ -29,7 +29,7 @@ void Owner_RefreshDerivedDataFar(s32 owner);
 
 s32 DebugParty_LoadPreset(s32 preset)
 {
-    s32 next_djinn[4];
+    s32 nextDjinn[4];
     void *state;
     s32 owner;
     s32 done;
@@ -51,10 +51,10 @@ s32 DebugParty_LoadPreset(s32 preset)
 
     set = 0;
     for (i = 0; i < 4; i++)
-        next_djinn[i] = 0;
+        nextDjinn[i] = 0;
 
     for (row = 0;; row++) {
-        owner = Data_0812a174[row].owner;
+        owner = gData_0812a174[row].owner;
         if ((u32)row > 440) {
             done = 1;
             break;
@@ -73,7 +73,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             continue;
 
         Party_AddActiveOwnerFar(owner);
-        Party_AdvanceOwnerCountToTargetFar(owner, Data_0812a174[row].level);
+        Party_AdvanceOwnerCountToTargetFar(owner, gData_0812a174[row].level);
         state = UnitGet(owner);
         for (i = 0; i < 4; i++) {
             ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
@@ -83,23 +83,23 @@ s32 DebugParty_LoadPreset(s32 preset)
         }
         for (i = 0; i < 32; i++)
             /* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
-            *(u16 *)&((struct OwnerActionState *)state)->action_slots[i] = 0;
+            *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
         for (i = 0; i < 2; i++) {
-            if (Data_0812a174[row].actions[i] != 0)
-                OwnerAction_AddFar(owner, Data_0812a174[row].actions[i]);
+            if (gData_0812a174[row].actions[i] != 0)
+                OwnerAction_AddFar(owner, gData_0812a174[row].actions[i]);
         }
         for (i = 0; i < 4; i++) {
-            for (j = 0; j < Data_0812a174[row].djinn_counts[i]; j++) {
-                Djinn_AddToOwnerFar(owner, i, (next_djinn[i] + 7) % 18);
-                Djinn_ActivateFar(owner, i, (next_djinn[i] + 7) % 18);
-                next_djinn[i]++;
+            for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
+                Djinn_AddToOwnerFar(owner, i, (nextDjinn[i] + 7) % 18);
+                Djinn_ActivateFar(owner, i, (nextDjinn[i] + 7) % 18);
+                nextDjinn[i]++;
             }
         }
         for (i = 0; i < 16; i++)
             Inventory_RemoveFar(owner, 0);
         for (i = 0; i < 6; i++) {
-            if (Data_0812a174[row].items[i] != 0)
-                Inventory_EquipFar(owner, Inventory_AddItemFar(owner, Data_0812a174[row].items[i]));
+            if (gData_0812a174[row].items[i] != 0)
+                Inventory_EquipFar(owner, Inventory_AddItemFar(owner, gData_0812a174[row].items[i]));
         }
         Owner_RefreshDerivedDataFar(owner);
     }

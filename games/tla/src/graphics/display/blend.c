@@ -129,14 +129,14 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {
     union AffineMatrix *matrix;
     s16 *coefficient;
-    s32 x_scale;
-    s32 y_scale;
+    s32 xScale;
+    s32 yScale;
     s32 angle;
     u8 index;
 
-    x_scale = (s16)source->scale_x;
+    xScale = (s16)source->scaleX;
     angle = source->angle;
-    y_scale = (s16)source->scale_y;
+    yScale = (s16)source->scaleY;
     index = gObjAffineCount;
     if (index > 31)
         return 31;
@@ -144,17 +144,17 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
     matrix = &gObjAffineMatrices[index];
     coefficient = matrix->coefficients;
     gObjAffineCount = index + 1;
-    if ((x_scale == y_scale || x_scale == -y_scale) && angle == 0)
+    if ((xScale == yScale || xScale == -yScale) && angle == 0)
     {
         s32 reciprocal;
-        s32 x_reciprocal;
+        s32 xReciprocal;
 
-        reciprocal = Iwram_SignedDivide(0x10000, y_scale);
-        x_reciprocal = reciprocal;
-        if (x_scale == -y_scale)
-            x_reciprocal = -reciprocal;
+        reciprocal = Iwram_SignedDivide(0x10000, yScale);
+        xReciprocal = reciprocal;
+        if (xScale == -yScale)
+            xReciprocal = -reciprocal;
 
-        matrix->rows[0] = (u16)x_reciprocal;
+        matrix->rows[0] = (u16)xReciprocal;
         matrix->rows[1] = reciprocal << 16;
     }
     else
@@ -164,13 +164,13 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 
         sine = Trig_Sin(angle);
         cosine = Trig_Cos(angle);
-        *coefficient = cosine / x_scale;
+        *coefficient = cosine / xScale;
         coefficient++;
-        *coefficient = sine / x_scale;
+        *coefficient = sine / xScale;
         coefficient++;
-        *coefficient = (-sine) / y_scale;
+        *coefficient = (-sine) / yScale;
         coefficient++;
-        *coefficient = cosine / y_scale;
+        *coefficient = cosine / yScale;
     }
 
     return index;

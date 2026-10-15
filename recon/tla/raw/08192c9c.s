@@ -851,7 +851,7 @@ Func_08192c9c:
 .L_08193328:
 	.4byte Data_02012f94
 .L_0819332c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08193330:
 	.4byte 0xffff0000
 .L_08193334:
@@ -1255,7 +1255,7 @@ Func_08192c9c:
 .L_08193654:
 	.4byte Data_02010578
 .L_08193658:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0819365c:
 	.4byte 0x80002000
 .L_08193660:
@@ -2044,7 +2044,7 @@ Func_08192c9c:
 .L_08193c74:
 	.4byte 0x00000784
 .L_08193c78:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08193c7c:
 	mov r9, r3
 	mov r8, r4
@@ -2182,7 +2182,7 @@ Func_08192c9c:
 .L_08193d7c:
 	.4byte 0x00000000
 .L_08193d80:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08193d84:
 	.4byte 0x00000134
 .L_08193d88:
@@ -2567,7 +2567,7 @@ Func_08192c9c:
 .L_08194064:
 	.4byte Data_0819a040
 .L_08194068:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0819406c:
 	.4byte Data_0819a048
 .L_08194070:
@@ -2886,7 +2886,7 @@ Func_08192c9c:
 .L_081942d8:
 	.4byte IwramMulQ16
 .L_081942dc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081942e0:
 	.4byte Data_08199f48
 .L_081942e4:
@@ -3969,7 +3969,7 @@ Func_08192c9c:
 .L_08194b08:
 	.4byte 0xffff8400
 .L_08194b0c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08194b10:
 	.4byte 0xfffffe41
 .L_08194b14:
@@ -4803,7 +4803,7 @@ Func_08192c9c:
 .L_0819517c:
 	.4byte 0xfffffd82
 .L_08195180:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08195184:
 	.4byte 0xfffffd85
 .L_08195188:
@@ -5162,7 +5162,7 @@ Func_08192c9c:
 .L_08195464:
 	.4byte 0xfffffd0a
 .L_08195468:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0819546c:
 	.4byte 0xfffffd0d
 .L_08195470:

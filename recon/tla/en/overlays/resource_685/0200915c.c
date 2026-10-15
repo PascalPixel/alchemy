@@ -9,7 +9,7 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct EventCounters {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -117,9 +117,9 @@ void Func_0200115c(void)
         return;
     Func_0200345c();
     Func_020035b4(0);
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 584, 248);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 584, 248);
     if (Flag_IsSet(0x974)) {
-        Func_02003534_(gPartyState.current_owner, 0);
+        Func_02003534_(gPartyState.currentOwner, 0);
         Func_0200350c((s32)MsgBackForMore);
         Func_0200351c_(11, 0, 5);
         Func_0200362c(36);
@@ -135,7 +135,7 @@ void Func_0200115c(void)
         Func_0200350c((s32)MsgHoldItRight);
         Func_0200351c_(11, 0, 5);
         Func_0200362c(36);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
         Motion_CamBounds_(664 << 16, -1, 0x1000000, 1);
         Func_02003564();
         Battle_WaitMode0(5);
@@ -217,12 +217,12 @@ void Func_0200115c(void)
         Object_SetModeById(8, 1);
         Object_GetById(8)->facing = 0x8000;
         Func_0200351c_(0x2008, 0, 5);
-        ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
         ObjectMotion_CommitPositionAndActivate(4, -16, 0);
         Battle_WaitMode0(5);
     } else {
         Battle_WaitMode0(25);
-        ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
         Func_0200351c_(0x2008, 0, 5);
         Func_02003544_(8, 263, 30);
         Func_0200351c_(0x2008, 0, 5);
@@ -234,8 +234,8 @@ void Func_0200115c(void)
         /* FAKEMATCH: barrier, see the header. */
         __asm__("");
         WORD_AT(object, 72) = 0x4000;
-        object->motion_flags = 2;
-        object->terrain_height = 0xfc190000;
+        object->motionFlags = 2;
+        object->terrainHeight = 0xfc190000;
         ((s32 (*)(s32, s32, s32))ObjectMotion_Launch)(12, 10, 0);
         /* FAKEMATCH: barrier, see the header. */
         __asm__("");
@@ -277,8 +277,8 @@ void Func_0200115c(void)
         Func_0200362c(147);
         Func_020034d4_(13, 664 << 16, 248 << 16);
         WORD_AT(object, 72) = 0x10000;
-        object->motion_flags = 2;
-        object->terrain_height = 0;
+        object->motionFlags = 2;
+        object->terrainHeight = 0;
         object->y = 0x200000;
         WORD_AT(object, 24) = 0x4000;
         WORD_AT(object, 108) = (s32)Func_02001138;
@@ -294,7 +294,7 @@ void Func_0200115c(void)
         party = &gPartyState;
         /* FAKEMATCH: barrier, see the header. */
         __asm__("");
-        party->battle_rule_24b = 2;
+        party->battleRule24b = 2;
         Func_0200357c(12, 5);
     }
     Func_02003464();

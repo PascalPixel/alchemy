@@ -18,8 +18,8 @@ const u32 *Scene_GetExits(void)
 const u8 *Func_0200004c(void)
 {
     if (gPartyState.entrance == 10)
-        return Data_020008c4;
+        return gData_020008c4;
     if (GameFlag_Test(0x8ff))
-        return Data_02000954;
-    return Data_020006cc;
+        return gData_02000954;
+    return gData_020006cc;
 }

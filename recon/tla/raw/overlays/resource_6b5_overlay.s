@@ -1118,7 +1118,7 @@ Func_02000864:
 .L_02008b9c:
 	.4byte gPartyState
 .L_02008ba0:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_02008ba4:
 	.4byte Data_02018000
 .L_02008ba8:
@@ -1391,9 +1391,9 @@ Func_02000fbc:
 .L_02009120:
 	.4byte gInput
 .L_02009124:
-	.4byte Data_02001b02
+	.4byte gData_02001b02
 .L_02009128:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_0200912c:
 	.4byte MsgComeBackWhen
 	.section .text.x0200945c,"ax",%progbits
@@ -1482,11 +1482,11 @@ Func_0200145c:
 .L_0200950c:
 	.4byte gPartyState
 .L_02009510:
-	.4byte Data_020022bc
+	.4byte gData_020022bc
 .L_02009514:
-	.4byte Data_020022b8
+	.4byte gData_020022b8
 .L_02009518:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_0200951c:
 	adds r5, #1
 	cmp r5, #7
@@ -1899,8 +1899,8 @@ Func_0200145c:
 .L_020098c4:
 	.4byte gPartyState
 	.section .bss,"aw",%nobits
-	.global Data_020022b8
-Data_020022b8:
+	.global gData_020022b8
+gData_020022b8:
 	.space 0x00000004
-	.global Data_020022bc
-Data_020022bc:
+	.global gData_020022bc
+gData_020022bc:

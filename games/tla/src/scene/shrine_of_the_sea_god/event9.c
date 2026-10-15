@@ -2,7 +2,7 @@
 
 void Func_02000618(void)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
     struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
     layer->y += -0x10000;

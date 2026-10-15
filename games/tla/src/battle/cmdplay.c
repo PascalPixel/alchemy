@@ -19,12 +19,12 @@ void BattleEventRuntime_BeginPhase(s32 cue)
 {
     struct BattleEventState *ev;
 
-    ev = &Ram_HeapSlots->battle_work->events;
+    ev = &Ram_HeapSlots->battleWork->events;
     if (ev->phase == BATTLE_PLAYBACK_IDLE) {
         ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
         if (cue != 0) {
-            if (ev->unknown_16a == 0)
-                ev->pending_cue = cue;
+            if (ev->unk16a == 0)
+                ev->pendingCue = cue;
         }
     }
 }
@@ -36,13 +36,13 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 
     /* FAKEMATCH: the one-pass block loads the battle work before the events offset is built (differ 2 without it), as in BattleEventRuntime_Reset. */
     do {
-        work = Ram_HeapSlots->battle_work;
+        work = Ram_HeapSlots->battleWork;
     } while (0);
     ev = &work->events;
     ev->queue.count = 0;
-    ev->event_index = 0;
+    ev->eventIndex = 0;
     ev->timer = frames;
     ev->phase = BATTLE_PLAYBACK_DISPATCH;
-    work->unknown_670[0x0d] = 0;
+    work->unk670[0x0d] = 0;
     return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
 }

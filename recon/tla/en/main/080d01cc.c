@@ -74,8 +74,8 @@ void DisplayTransition_Start(s32 mode, s32 frames)
 
         display = (struct DisplayTransitionWindow *)*work;
         state = DisplayTransition_AllocateAndClearState();
-        display->first_line = 80;
-        display->second_line = 80;
+        display->firstLine = 80;
+        display->secondLine = 80;
         WaitFrames(1);
         if (value == 0) {
             Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);

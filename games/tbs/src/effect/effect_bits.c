@@ -15,5 +15,5 @@
 		IMM_BIT(14), IMM_BIT(15)
 
 // 同じ表が二つ並ぶ。最初のものはどこからも参照されない。
-const u16 BattleEffect_ColorBitOperands[] = {IMM_BITS};
-const u16 BattleEffect_BitOperands[] = {IMM_BITS};
+const u16 gBattleEffect_ColorBitOperands[] = {IMM_BITS};
+const u16 gBattleEffect_BitOperands[] = {IMM_BITS};

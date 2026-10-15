@@ -1,7 +1,7 @@
 #include "scene.h"
 
 struct EventCounters {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -49,10 +49,10 @@ void Func_02000804(s32 actor)
     if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
         Battle_WaitMode0(20);
         Func_0200351c(8, 0, 5);
-        ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     } else {
         Battle_WaitMode0(35);
-        ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
         Func_0200351c(8, 0, 5);
     }
     Motion_SetModeAndWaitAnimation(8, 3);

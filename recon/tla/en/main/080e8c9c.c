@@ -7,10 +7,10 @@ void Object_AttachWorkTargetToObject(s32 id, s32 mode);
 
 void Func_080e8c9c(void)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->map_work;
-    u8 *effect = Ram_HeapSlots->effect_work;
-    u8 *fx = Ram_HeapSlots->battle_fx_work[0];
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+    u8 *effect = Ram_HeapSlots->effectWork;
+    u8 *fx = Ram_HeapSlots->battleFxWork[0];
+    u8 *event = Ram_HeapSlots->eventWork;
 
     if (*(s32 *)(map + 252) != 0 || *(s8 *)(event + 394) == 3) {
         Runtime_SetWorkTripleIfNonNegativeFar(0, 0, 0);

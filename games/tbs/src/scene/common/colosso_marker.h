@@ -21,7 +21,7 @@
 
 struct CompetitorState
 {
-	u8 unknown_00[6];
+	u8 unk00[6];
 	u8 mode;
 	u8 stage;
 };
@@ -37,12 +37,12 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z)
 	actor = Object_GetById(id);
 	state->mode = 1;
 	state->stage = 4;
-	Colosso_CompetitorStartX = actor->x.fixed;
-	Colosso_CompetitorStartZ = actor->z.fixed;
+	gColosso_CompetitorStartX = actor->x.fixed;
+	gColosso_CompetitorStartZ = actor->z.fixed;
 	sprite = (struct AnimationObject *)actor->sprite;
-	Colosso_CompetitorStartAngle = actor->facing;
+	gColosso_CompetitorStartAngle = actor->facing;
 	Engine_ActorSetSpritePriority(id, 2);
-	actor->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	actor->facing = FACING_SOUTH;
 	Engine_ActorSetSpriteFlags(actor, 3);
 	Object_SetMode(actor, 0);
@@ -50,25 +50,25 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z)
 	Engine_ActorSetPosition(id, x << 16, z << 16);
 	Engine_ActorFaceActor(0, 0x4000, 0);
 	IO_WRITE_QUEUE_PUSH(0x4000050, 0xf00, 0x20000);
-	sprite->part[0].object_mode = 1;
-	sprite->part[1].object_mode = 1;
+	sprite->part[0].objectMode = 1;
+	sprite->part[1].objectMode = 1;
 	Engine_AudioPlayCue(252);
 	for (i = 0; i <= 15; i += 2)
 	{
-		actor->scale_x = (i << 12) + 0x1000;
-		actor->scale_y = 0x1f000 - (i << 12);
+		actor->scaleX = (i << 12) + 0x1000;
+		actor->scaleY = 0x1f000 - (i << 12);
 		IO_WRITE_QUEUE_PUSH(0x4000052, ((15 - i) << 8) | (i + 1), 0x20000);
 		Engine_TaskWait(1);
 	}
 	IO_WRITE_QUEUE_PUSH(0x4000052, 16, 0x20000);
-	actor->scale_x = 0x11000;
-	actor->scale_y = 0xf000;
+	actor->scaleX = 0x11000;
+	actor->scaleY = 0xf000;
 	Engine_EventWait(1);
-	actor->scale_x = 0x10000;
-	actor->scale_y = 0x10000;
+	actor->scaleX = 0x10000;
+	actor->scaleY = 0x10000;
 	Engine_EventWait(13);
-	sprite->part[0].object_mode = 0;
-	sprite->part[1].object_mode = 0;
+	sprite->part[0].objectMode = 0;
+	sprite->part[1].objectMode = 0;
 	Engine_ActorSetAnimationAndWait(id, 3);
 	Engine_EventWait(20);
 }
@@ -82,9 +82,9 @@ void Colosso_RestoreCompetitor(s32 id)
 
 	state = (struct CompetitorState *)gMenuCtrlWork;
 	actor = Object_GetById(id);
-	if (gGameState.movement_mode == 1)
+	if (gGameState.movementMode == 1)
 	{
-		gGameState.movement_mode = 0;
+		gGameState.movementMode = 0;
 		Engine_ActorSetAnimation(id, 1);
 	}
 	else
@@ -94,21 +94,21 @@ void Colosso_RestoreCompetitor(s32 id)
 		Engine_EventWait(30);
 	}
 	zero = 0;
-	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store at a varying address may pass the scalar load of Colosso_CompetitorStartX (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no struct reference. The actor held as union FieldObject with field stores: differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
+	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store at a varying address may pass the scalar load of gColosso_CompetitorStartX (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no struct reference. The actor held as union FieldObject with field stores: differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
 	control = (u8 *)state;
 	control[(u32) & ((struct CompetitorState *)0)->stage] = zero;
 	control[(u32) & ((struct CompetitorState *)0)->mode] = 15;
-	actor->x.fixed = Colosso_CompetitorStartX;
-	actor->z.fixed = Colosso_CompetitorStartZ;
-	actor->facing = Colosso_CompetitorStartAngle;
-	actor->target_x = ACTOR_NO_TARGET;
-	actor->target_z = ACTOR_NO_TARGET;
-	actor->velocity_x = zero;
-	actor->velocity_z = zero;
-	actor->motion_flags = 3;
-	actor->terrain_id = 0;
+	actor->x.fixed = gColosso_CompetitorStartX;
+	actor->z.fixed = gColosso_CompetitorStartZ;
+	actor->facing = gColosso_CompetitorStartAngle;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	actor->velocityX = zero;
+	actor->velocityZ = zero;
+	actor->motionFlags = 3;
+	actor->terrainId = 0;
 	actor->y.fixed = zero;
-	((struct ObjectRuntime *)actor)->terrain_height = zero;
+	((struct ObjectRuntime *)actor)->terrainHeight = zero;
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Object_SetMode(actor, 0);
 	Object_SetMode(actor, 1);
@@ -120,37 +120,37 @@ void OverlayObject_ResetMotionFields(s32 actor)
 	struct FieldActor *o = Object_GetById(actor);
 
 	ObjectDispatch_InitFromTable6(o);
-	o->velocity_x = 0;
-	o->velocity_z = 0;
-	o->target_x = ACTOR_NO_TARGET;
-	o->target_z = ACTOR_NO_TARGET;
+	o->velocityX = 0;
+	o->velocityZ = 0;
+	o->targetX = ACTOR_NO_TARGET;
+	o->targetZ = ACTOR_NO_TARGET;
 }
 
 static void Colosso_EnsureMarkerSlot(void)
 {
 
-	if (Colosso_MarkerSlot == -1)
+	if (gColosso_MarkerSlot == -1)
 	{
-		Colosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+		gColosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
 	}
 }
 
 union MarkerCoordinate
 {
-	s16 signed_value;
+	s16 signedValue;
 	u16 value;
 };
 
-extern s16					  Colosso_MarkerSteps;
-extern s16					  Colosso_MarkerStep;
-extern s16					  Colosso_MarkerX;
-extern union MarkerCoordinate Colosso_MarkerStartX;
-extern s16					  Colosso_MarkerEndX;
-extern s16					  Colosso_MarkerY;
-extern union MarkerCoordinate Colosso_MarkerStartY;
-extern s16					  Colosso_MarkerEndY;
-extern s16					  Colosso_MarkerBlink;
-extern s16					  Colosso_MarkerPriority;
+extern s16					  gColosso_MarkerSteps;
+extern s16					  gColosso_MarkerStep;
+extern s16					  gColosso_MarkerX;
+extern union MarkerCoordinate gColosso_MarkerStartX;
+extern s16					  gColosso_MarkerEndX;
+extern s16					  gColosso_MarkerY;
+extern union MarkerCoordinate gColosso_MarkerStartY;
+extern s16					  gColosso_MarkerEndY;
+extern s16					  gColosso_MarkerBlink;
+extern s16					  gColosso_MarkerPriority;
 
 static void Colosso_UpdateMarker(void)
 {
@@ -167,41 +167,41 @@ static void Colosso_UpdateMarker(void)
 	s16					   *py;
 	union MarkerCoordinate *sy;
 
-	oam = Colosso_MarkerOam;
-	tile = gVramBlockCache[Colosso_MarkerSlot].offset >> 5;
-	steps = &Colosso_MarkerSteps;
+	oam = gColosso_MarkerOam;
+	tile = gVramBlockCache[gColosso_MarkerSlot].offset >> 5;
+	steps = &gColosso_MarkerSteps;
 	total = *steps;
 	if (total != 0)
 	{
-		step = ++Colosso_MarkerStep;
-		py = &Colosso_MarkerX;
-		sy = &Colosso_MarkerStartX;
-		diff = Colosso_MarkerEndX - sy->signed_value;
+		step = ++gColosso_MarkerStep;
+		py = &gColosso_MarkerX;
+		sy = &gColosso_MarkerStartX;
+		diff = gColosso_MarkerEndX - sy->signedValue;
 		base = sy->value;
 		*py = base + diff * (s16)step / total;
-		Colosso_MarkerY =
-			Colosso_MarkerStartY.value
-			+ (Colosso_MarkerEndY - Colosso_MarkerStartY.signed_value) * (s16)step / total;
+		gColosso_MarkerY =
+			gColosso_MarkerStartY.value
+			+ (gColosso_MarkerEndY - gColosso_MarkerStartY.signedValue) * (s16)step / total;
 		if ((s16)step >= total)
 			*steps = 0;
-		Colosso_MarkerBlink = 0;
+		gColosso_MarkerBlink = 0;
 	}
-	if (++Colosso_MarkerBlink <= 13)
+	if (++gColosso_MarkerBlink <= 13)
 	{
 		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. As the literal 0x40000000 in the expression, in any of four operand orders: differ 6. */
 		s32 size = 0x40000000;
 
-		x = Colosso_MarkerX;
-		y = Colosso_MarkerY;
+		x = gColosso_MarkerX;
+		y = gColosso_MarkerY;
 		dst = oam;
 		*dst++ = 0;
-		*dst++ = (y - 8) | ((x - 8) << 16) | size | (Colosso_MarkerPriority << 28);
+		*dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerPriority << 28);
 		*dst = tile | 0x400;
 		Runtime_PushSlotEntry(oam, 255);
 	}
-	else if (Colosso_MarkerBlink > 19)
+	else if (gColosso_MarkerBlink > 19)
 	{
-		Colosso_MarkerBlink = 0;
+		gColosso_MarkerBlink = 0;
 	}
 }
 
@@ -209,23 +209,23 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
 	Colosso_EnsureMarkerSlot();
 
-	Colosso_MarkerX = x;
-	Colosso_MarkerY = y;
-	Colosso_MarkerPriority = (style & 3);
-	Colosso_MarkerBlink = 0;
-	Colosso_MarkerSteps = 0;
+	gColosso_MarkerX = x;
+	gColosso_MarkerY = y;
+	gColosso_MarkerPriority = (style & 3);
+	gColosso_MarkerBlink = 0;
+	gColosso_MarkerSteps = 0;
 
 	FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
 }
 
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
 {
-	Colosso_MarkerEndX = x;
-	Colosso_MarkerEndY = y;
-	*(u16 *)&Colosso_MarkerStartX = Colosso_MarkerX;
-	*(u16 *)&Colosso_MarkerStartY = Colosso_MarkerY;
-	Colosso_MarkerSteps = duration;
-	Colosso_MarkerStep = 0;
+	gColosso_MarkerEndX = x;
+	gColosso_MarkerEndY = y;
+	*(u16 *)&gColosso_MarkerStartX = gColosso_MarkerX;
+	*(u16 *)&gColosso_MarkerStartY = gColosso_MarkerY;
+	gColosso_MarkerSteps = duration;
+	gColosso_MarkerStep = 0;
 
 	FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
 }
@@ -234,8 +234,8 @@ void SceneEffect_RemoveMarkerTask(void)
 {
 
 	Engine_TaskRemoveCallback(Colosso_UpdateMarker);
-	Resource_ResetEntry(Colosso_MarkerSlot);
-	Colosso_MarkerSlot = -1;
+	Resource_ResetEntry(gColosso_MarkerSlot);
+	gColosso_MarkerSlot = -1;
 }
 
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)

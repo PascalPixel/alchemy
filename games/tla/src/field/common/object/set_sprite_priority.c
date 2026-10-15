@@ -5,11 +5,11 @@ void Object_SetSpritePriority(struct FieldActor *object, s32 priority)
 {
     struct FieldSprite *sprite;
 
-    if (object == 0 || object->animation_kind == 0) {
+    if (object == 0 || object->animationKind == 0) {
         return;
     }
     sprite = object->sprite;
     sprite->priority = priority;
-    sprite->part_priority = priority;
-    object->priority_flags &= ~1;
+    sprite->partPriority = priority;
+    object->priorityFlags &= ~1;
 }

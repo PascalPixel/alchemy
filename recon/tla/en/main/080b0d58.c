@@ -13,7 +13,7 @@ struct TradeOfferList {
 };
 
 struct TradeOfferTable {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct TradeOfferList list;
 };
 

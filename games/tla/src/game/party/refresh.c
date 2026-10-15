@@ -28,7 +28,7 @@ void Func_080ae16c(s32 arg0)
             struct PartyState *party = &gPartyState;
 
             asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's offset; read as a plain field the offset is started first (differ 2) */
-            obj = UnitGet(party->active_owners[n]);
+            obj = UnitGet(party->activeOwners[n]);
         }
 
         do {
@@ -72,7 +72,7 @@ void Func_080ae16c(s32 arg0)
     }
 }
 
-extern const u8 Character_ElementGroupTable[];
+extern const u8 gCharacter_ElementGroupTable[];
 
 // The Broken Seal の Owner_RefreshRatiosOnFlag
 void Func_080ae220(void)
@@ -98,9 +98,9 @@ void Func_080ae220(void)
             struct PartyState *party = &gPartyState;
 
             asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's offset; read as a plain field the offset is started first (differ 2) */
-            ownerId = party->active_owners[n];
+            ownerId = party->activeOwners[n];
         }
-        group = Character_ElementGroupTable[ownerId];
+        group = gCharacter_ElementGroupTable[ownerId];
         doRefresh = 0;
         if (group == 0) {
             if (GameFlag_Test(0x110) || GameFlag_Test(0x112)) {
@@ -156,7 +156,7 @@ void Func_080ae220(void)
 }
 
 struct UnitDjinnSets {
-    u8 unknown_00[0xf8];
+    u8 unk00[0xf8];
     u32 djinn[4];
 };
 

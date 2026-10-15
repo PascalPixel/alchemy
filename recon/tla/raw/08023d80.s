@@ -81,4 +81,4 @@ Func_08023d80:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_08023e14:
-	.4byte Data_0802eb90
+	.4byte gData_0802eb90

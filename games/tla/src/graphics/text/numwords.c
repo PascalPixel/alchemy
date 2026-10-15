@@ -6,28 +6,28 @@
 //--------------------------------------------------------------------------
 
 #if defined(TLA_EDITION_DE)
-extern const s8 UiText_ArticleEmpty[];
-extern const u8 UiText_NumberWord0[];
-extern const u8 UiText_NumberWord1[];
-extern const u8 UiText_NumberWord2[];
-extern const u8 UiText_NumberWord3[];
-extern const u8 UiText_NumberWord4[];
-extern const u8 UiText_NumberWord5[];
-extern const u8 UiText_NumberWord6[];
-extern const u8 UiText_NumberWord7[];
-extern const u8 UiText_NumberWord8[];
-extern const u8 UiText_NumberWord9[];
+extern const s8 gUiText_ArticleEmpty[];
+extern const u8 gUiText_NumberWord0[];
+extern const u8 gUiText_NumberWord1[];
+extern const u8 gUiText_NumberWord2[];
+extern const u8 gUiText_NumberWord3[];
+extern const u8 gUiText_NumberWord4[];
+extern const u8 gUiText_NumberWord5[];
+extern const u8 gUiText_NumberWord6[];
+extern const u8 gUiText_NumberWord7[];
+extern const u8 gUiText_NumberWord8[];
+extern const u8 gUiText_NumberWord9[];
 
 // {singular, plural}: window.c reads [(kind & 7) * 2 + plural]
-const u8 *const UiText_NumberWords[16] =
+const u8 *const gUiText_NumberWords[16] =
 {
-    UiText_NumberWord9, UiText_NumberWord8, // Punkt, Punkte
-    UiText_NumberWord7, UiText_NumberWord6, // Münze, Münzen
-    UiText_NumberWord5, UiText_NumberWord4, // Runde, Runden
-    UiText_NumberWord3, UiText_NumberWord2, // Ticket, Tickets
-    UiText_NumberWord1, UiText_NumberWord0, // Kampf, Käpfe (as the ROM spells it)
-    (const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
-    (const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
-    (const u8 *)UiText_ArticleEmpty, 0,
+    gUiText_NumberWord9, gUiText_NumberWord8, // Punkt, Punkte
+    gUiText_NumberWord7, gUiText_NumberWord6, // Münze, Münzen
+    gUiText_NumberWord5, gUiText_NumberWord4, // Runde, Runden
+    gUiText_NumberWord3, gUiText_NumberWord2, // Ticket, Tickets
+    gUiText_NumberWord1, gUiText_NumberWord0, // Kampf, Käpfe (as the ROM spells it)
+    (const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
+    (const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
+    (const u8 *)gUiText_ArticleEmpty, 0,
 };
 #endif

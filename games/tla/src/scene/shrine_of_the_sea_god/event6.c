@@ -21,17 +21,17 @@ void Func_02001a3c(void)
     Func_02003b08(0);
     Func_02003a70((s32)MsgFieldRopeThrownAgain);
     ShrineOfTheSeaGod_MessagePut(0x200c, 0);
-    ShrineOfTheSeaGod_ObjSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
+    ShrineOfTheSeaGod_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
     ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
-    ShrineOfTheSeaGod_ObjWalk(gPartyState.current_owner, 272, 336);
-    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0xc000, 0);
+    ShrineOfTheSeaGod_ObjWalk(gPartyState.currentOwner, 272, 336);
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
     ShrineOfTheSeaGod_ObjPlace(14, 272 << 16, 336 << 16);
     WaitFrames(1);
     ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
     ShrineOfTheSeaGod_ObjTurn(14, 0, 0);
-    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0x8000, 40);
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x8000, 40);
     ShrineOfTheSeaGod_ObjTurn(14, 0xd000, 0);
-    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0xc000, 0);
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0xc000, 0);
     ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
     ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
     ShrineOfTheSeaGod_CamMove(288 << 16, -1, 126 << 16, 1);
@@ -70,12 +70,12 @@ void Func_02001a3c(void)
     ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
     ShrineOfTheSeaGod_CamMove(264 << 16, -1, 320 << 16, 1);
     Func_02003ac8();
-    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0x8000, 0);
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x8000, 0);
     ShrineOfTheSeaGod_ObjTurn(14, 0, 20);
-    ShrineOfTheSeaGod_ObjMode(gPartyState.current_owner, 3);
+    ShrineOfTheSeaGod_ObjMode(gPartyState.currentOwner, 3);
     ShrineOfTheSeaGod_ObjModeWait(14, 3);
     ShrineOfTheSeaGod_ObjMode(14, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
         ObjectMotion_ResetAndSetPosition(14, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(14);

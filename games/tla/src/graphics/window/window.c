@@ -16,14 +16,14 @@
 
 void UiWork_UploadDirtyBlocks(void)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u32 flags;
     u8 *src;
     u8 *dst;
 
     flags = work->dirty;
     if (flags != 0) {
-        if (!work->menu_busy) {
+        if (!work->menuBusy) {
             src = (u8 *)work->tilemap;
             dst = (u8 *)0x06002000;
             if (flags & 1) flags = 63;
@@ -42,7 +42,7 @@ void UiWork_UploadDirtyBlocks(void)
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *cursor = &canvas->tilemap[y][x];
     s32 tile;
     u32 bottom;
@@ -69,7 +69,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
         do {
             u32 column;
 
-            if (canvas->menu_state != 0) {
+            if (canvas->menuState != 0) {
                 if ((u32)(y + row) > 16)
                     tile = 0xF07F;
                 else

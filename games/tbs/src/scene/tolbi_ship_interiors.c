@@ -80,38 +80,38 @@ static s32 ResetStagedActorState(struct StagedActor *actor)
 	actor->x.value = 0;
 	actor->y = 0;
 	actor->z.value = 0;
-	actor->velocity_x = 0;
-	actor->velocity_y = 0;
-	actor->velocity_z = 0;
-	actor->target_y = 0x80000000;
-	actor->target_x = 0x80000000;
+	actor->velocityX = 0;
+	actor->velocityY = 0;
+	actor->velocityZ = 0;
+	actor->targetY = 0x80000000;
+	actor->targetX = 0x80000000;
 	return 0;
 }
 
 static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 {
-	s16 vertical_motion_direction;
-	s32 descending_y;
-	s32 ascending_y;
+	s16 verticalMotionDirection;
+	s32 descendingY;
+	s32 ascendingY;
 
-	if (actor->vertical_motion_direction != 0)
+	if (actor->verticalMotionDirection != 0)
 	{
-		descending_y = (actor->y - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
-		actor->y = descending_y;
-		if (descending_y < 0)
+		descendingY = (actor->y - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
+		actor->y = descendingY;
+		if (descendingY < 0)
 		{
-			vertical_motion_direction = 0;
-			actor->vertical_motion_direction = vertical_motion_direction;
+			verticalMotionDirection = 0;
+			actor->verticalMotionDirection = verticalMotionDirection;
 		}
 	}
 	else
 	{
-		ascending_y = actor->y + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
-		actor->y = ascending_y;
-		if (ascending_y > 0x80000)
+		ascendingY = actor->y + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
+		actor->y = ascendingY;
+		if (ascendingY > 0x80000)
 		{
-			vertical_motion_direction = 1;
-			actor->vertical_motion_direction = vertical_motion_direction;
+			verticalMotionDirection = 1;
+			actor->verticalMotionDirection = verticalMotionDirection;
 		}
 	}
 	return 1;
@@ -136,7 +136,7 @@ static s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 
 static void TolbiShipInteriors_AdvanceWalkerAfterRise(u8 *o)
 {
-	u8 *p = &((struct FieldActor *)o)->rise_counter;
+	u8 *p = &((struct FieldActor *)o)->riseCounter;
 	s32 n = *p + 1;
 
 	*p = n;
@@ -148,17 +148,17 @@ static void TolbiShipInteriors_AdvanceWalkerAfterRise(u8 *o)
 
 static s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 {
-	s32 n = o->rise_base_y;
+	s32 n = o->riseBaseY;
 
 	if (n != 0)
 	{
-		o->rise_base_y = n - 1;
+		o->riseBaseY = n - 1;
 	}
 	else
 	{
 		return 1;
 	}
-	if (o->target_x == 0x80000000 && o->target_y == o->target_x && o->target_z == o->target_y)
+	if (o->targetX == 0x80000000 && o->targetY == o->targetX && o->targetZ == o->targetY)
 	{
 		return 1;
 	}
@@ -175,27 +175,27 @@ static void TolbiShipInteriors_RunWalkerStep(struct FieldActor *obj)
 	case 0:
 		obj->facing = 0xb000;
 		obj->work++;
-		obj->rise_counter = 0;
+		obj->riseCounter = 0;
 		break;
 	case 2:
 		obj->facing = 0;
 		obj->work++;
-		obj->rise_counter = 0;
+		obj->riseCounter = 0;
 		break;
 	case 4:
 		Object_SetMode(obj, 2);
 		FieldObject_SetPosition((s32)obj, 0x1d40000, 0x200000, 0x2780000);
-		obj->rise_base_y = 60;
+		obj->riseBaseY = 60;
 		obj->work++;
 		break;
 	case 5:
 		if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0)
 		{
 			Object_SetMode(obj, 1);
-			obj->rise_counter = 0;
+			obj->riseCounter = 0;
 			if (leader->paused == 0)
 			{
-				obj->rise_enabled = 1;
+				obj->riseEnabled = 1;
 			}
 			obj->work++;
 		}
@@ -204,26 +204,26 @@ static void TolbiShipInteriors_RunWalkerStep(struct FieldActor *obj)
 		if (leader->paused == 0)
 		{
 			Object_SetMode(obj, 3);
-			obj->rise_enabled = 2;
+			obj->riseEnabled = 2;
 		}
 		obj->work++;
-		obj->rise_counter = 0;
+		obj->riseCounter = 0;
 		break;
 	case 9:
 		Object_SetMode(obj, 2);
 		FieldObject_SetPosition((s32)obj, 0x1e00000, 0x200000, 0x2580000);
-		obj->rise_base_y = 60;
+		obj->riseBaseY = 60;
 		obj->work++;
 		if (leader->paused == 0)
 		{
-			obj->rise_enabled = 3;
+			obj->riseEnabled = 3;
 		}
 		break;
 	case 10:
 		if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0)
 		{
 			Object_SetMode(obj, 1);
-			obj->rise_counter = 0;
+			obj->riseCounter = 0;
 			obj->work++;
 		}
 		break;
@@ -247,23 +247,23 @@ static void UpdateActorNineEffectMode(struct FieldActor *record)
 	actor = Object_GetById(9);
 	if (record->paused != 0)
 		return;
-	if (actor->rise_enabled == 1)
+	if (actor->riseEnabled == 1)
 	{
 		record->facing = 0xd000;
-		record->rise_counter = 1;
-		actor->rise_enabled = 0;
+		record->riseCounter = 1;
+		actor->riseEnabled = 0;
 	}
-	else if (actor->rise_enabled == 2)
+	else if (actor->riseEnabled == 2)
 	{
-		if (record->rise_counter != 0)
+		if (record->riseCounter != 0)
 			Object_SetMode(record, 3);
-		record->rise_counter = 0;
-		actor->rise_enabled = 0;
+		record->riseCounter = 0;
+		actor->riseEnabled = 0;
 	}
-	else if (actor->rise_enabled == 3)
+	else if (actor->riseEnabled == 3)
 	{
 		record->facing = 0;
-		actor->rise_enabled = 0;
+		actor->riseEnabled = 0;
 	}
 }
 
@@ -271,11 +271,11 @@ static s32 StagedActor_SetReadyState(struct FieldActor *work)
 {
 	struct FieldSprite *rec = work->sprite;
 
-	work->collision_flags = 8;
+	work->collisionFlags = 8;
 	Engine_ActorSetSpriteFlags(work, 0);
 	rec->priority = 1;
-	rec->second_priority = 1;
-	work->priority_flags = (work->priority_flags & ~1) | 2;
+	rec->secondPriority = 1;
+	work->priorityFlags = (work->priorityFlags & ~1) | 2;
 	ObjectGroup_SetChildValue(work, 15);
 	return 1;
 }
@@ -284,9 +284,9 @@ s32 TolbiShipInteriors_SelectEntrances(void)
 {
 	if (gGameState.scene == (s32)&SceneId_TolbiShipInteriors)
 	{
-		return (s32)TolbiShipInteriors_SceneTable02;
+		return (s32)gTolbiShipInteriors_SceneTable02;
 	}
-	return (s32)TolbiShipInteriors_SceneTable01;
+	return (s32)gTolbiShipInteriors_SceneTable01;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -296,7 +296,7 @@ s32 SceneData_ReturnZero(void)
 
 s32 TolbiShipInteriors_GetExits(void)
 {
-	return (s32)&TolbiShipInteriors_SceneTable03;
+	return (s32)&gTolbiShipInteriors_SceneTable03;
 }
 
 s32 TolbiShipInteriors_GetStepScript(void)
@@ -310,13 +310,13 @@ s32 TolbiShipInteriors_GetStepScript(void)
 	case 11:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return (s32)TolbiShipInteriors_StepScriptF;
+			return (s32)gTolbiShipInteriors_StepScriptF;
 		}
 		else if (Engine_GameFlagIsSet(0x928) != 0)
 		{
 			if (Engine_GameFlagIsSet(0x8a0) != 0)
 			{
-				script = (u8 *)TolbiShipInteriors_StepScriptG;
+				script = (u8 *)gTolbiShipInteriors_StepScriptG;
 				script[22] = 2;
 				script[70] = 2;
 				script[118] = 2;
@@ -326,22 +326,22 @@ s32 TolbiShipInteriors_GetStepScript(void)
 				script[166] = 1;
 				script[94] = 2;
 			}
-			return (s32)TolbiShipInteriors_StepScriptG;
+			return (s32)gTolbiShipInteriors_StepScriptG;
 		}
 		else if (Engine_GameFlagIsSet(0x911) != 0)
 		{
 			if (Engine_GameFlagIsSet(0x925) != 0)
 			{
-				TolbiShipInteriors_StepScriptF[0].talk_facing = 2;
-				TolbiShipInteriors_StepScriptF[4].talk_facing = 2;
-				TolbiShipInteriors_StepScriptF[1].talk_facing = 2;
-				TolbiShipInteriors_StepScriptF[3].talk_facing = 2;
+				gTolbiShipInteriors_StepScriptF[0].talkFacing = 2;
+				gTolbiShipInteriors_StepScriptF[4].talkFacing = 2;
+				gTolbiShipInteriors_StepScriptF[1].talkFacing = 2;
+				gTolbiShipInteriors_StepScriptF[3].talkFacing = 2;
 			}
-			return (s32)TolbiShipInteriors_StepScriptF;
+			return (s32)gTolbiShipInteriors_StepScriptF;
 		}
 		else
 		{
-			return (s32)TolbiShipInteriors_StepScriptE;
+			return (s32)gTolbiShipInteriors_StepScriptE;
 		}
 		break;
 	case 4:
@@ -352,12 +352,12 @@ s32 TolbiShipInteriors_GetStepScript(void)
 	case 21:
 	case 23:
 	case 24:
-		return (s32)TolbiShipInteriors_StepScriptH;
+		return (s32)gTolbiShipInteriors_StepScriptH;
 		break;
 	case 15:
 	case 17:
 	case 19:
-		script = (u8 *)TolbiShipInteriors_StepScriptH;
+		script = (u8 *)gTolbiShipInteriors_StepScriptH;
 		script[22] = 2;
 		script[46] = 2;
 		script[94] = 1;
@@ -371,7 +371,7 @@ s32 TolbiShipInteriors_GetStepScript(void)
 	case 5:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return (s32)TolbiShipInteriors_StepScriptD;
+			return (s32)gTolbiShipInteriors_StepScriptD;
 		}
 		else if (Engine_GameFlagIsSet(0x911) != 0)
 		{
@@ -379,32 +379,32 @@ s32 TolbiShipInteriors_GetStepScript(void)
 			{
 				if (GameFlag_IsSet(0x8a0) != 0)
 				{
-					TolbiShipInteriors_StepScriptC[1].talk_facing = 1;
+					gTolbiShipInteriors_StepScriptC[1].talkFacing = 1;
 				}
 				if (Engine_GameFlagIsSet(0x925) != 0)
 				{
 					if (Engine_GameFlagIsSet(0x8a0) == 0)
 					{
-						TolbiShipInteriors_StepScriptC[0].talk_facing = 0;
+						gTolbiShipInteriors_StepScriptC[0].talkFacing = 0;
 					}
 				}
-				return (s32)TolbiShipInteriors_StepScriptC;
+				return (s32)gTolbiShipInteriors_StepScriptC;
 			}
-			return (s32)TolbiShipInteriors_StepScriptA;
+			return (s32)gTolbiShipInteriors_StepScriptA;
 		}
 		else
 		{
-			return (s32)TolbiShipInteriors_StepScriptB;
+			return (s32)gTolbiShipInteriors_StepScriptB;
 		}
 		break;
 	case 10:
 	case 13:
 	case 14:
 	case 22:
-		return (s32)TolbiShipInteriors_StepScriptB;
+		return (s32)gTolbiShipInteriors_StepScriptB;
 		break;
 	default:
-		return (s32)TolbiShipInteriors_StepScriptA;
+		return (s32)gTolbiShipInteriors_StepScriptA;
 		break;
 	}
 	return (s32)script;
@@ -421,41 +421,41 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 	case 2:
 		if (Engine_GameFlagIsSet(2208) != 0)
 		{
-			return TolbiShipInteriors_SceneTable07;
+			return gTolbiShipInteriors_SceneTable07;
 		}
 		if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0)
 		{
-			return TolbiShipInteriors_SceneTable06;
+			return gTolbiShipInteriors_SceneTable06;
 		}
-		return TolbiShipInteriors_SceneTable05;
+		return gTolbiShipInteriors_SceneTable05;
 	case 4:
 	case 23:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return TolbiShipInteriors_SceneTable14;
+			return gTolbiShipInteriors_SceneTable14;
 		}
-		return TolbiShipInteriors_SceneTable11;
+		return gTolbiShipInteriors_SceneTable11;
 	case 5:
 		if (Engine_GameFlagIsSet(2208) != 0)
 		{
-			return TolbiShipInteriors_SceneTable09;
+			return gTolbiShipInteriors_SceneTable09;
 		}
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return TolbiShipInteriors_SceneTable10;
+			return gTolbiShipInteriors_SceneTable10;
 		}
-		return TolbiShipInteriors_SceneTable08;
+		return gTolbiShipInteriors_SceneTable08;
 	case 15:
 	case 17:
 	case 19:
-		return TolbiShipInteriors_SceneTable12;
+		return gTolbiShipInteriors_SceneTable12;
 	case 21:
-		return TolbiShipInteriors_SceneTable13;
+		return gTolbiShipInteriors_SceneTable13;
 	default:
 		break;
 	}
 
-	return TolbiShipInteriors_SceneTable04;
+	return gTolbiShipInteriors_SceneTable04;
 }
 
 static void EV10_TALK_08(void)
@@ -524,7 +524,7 @@ static void EV08_TALK_08(void)
 		Event_ShowMessage(8, 0);
 		if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0)
 		{
-			gEventWork->unknown_172 = 1;
+			gEventWork->unk172 = 1;
 		}
 	}
 	else
@@ -1007,8 +1007,8 @@ static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	struct FieldActor **actor;
 	struct FieldActor  *current;
 	u32					i;
-	s32					actor_x;
-	s32					actor_y;
+	s32					actorX;
+	s32					actorY;
 	s32					left;
 	s32					top;
 	s32					right;
@@ -1020,13 +1020,13 @@ static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	right = x + 12;
 	top = y - 12;
 	bottom = y + 12;
-	actor = work->placed_actors;
+	actor = work->placedActors;
 	while (i <= 65)
 	{
 		current = *actor++;
-		actor_x = current->x.part.pixel;
-		actor_y = current->z.part.pixel;
-		if (left < actor_x && right > actor_x && top < actor_y && bottom > actor_y)
+		actorX = current->x.part.pixel;
+		actorY = current->z.part.pixel;
+		if (left < actorX && right > actorX && top < actorY && bottom > actorY)
 			return current;
 		i++;
 	}
@@ -1048,7 +1048,7 @@ static void TolbiShipInteriors_TurnActorToOpenSide(s32 a0)
 	{
 		struct FieldActor *record = Object_GetById(a0);
 
-		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+		record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 	}
 	v6 = (((rec4->facing + 0x4000) & 0xf000) >> 12);
 	if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + 0x4000) & 0xf000) >> 12)) != 0)
@@ -1077,7 +1077,7 @@ static void TolbiShipInteriors_TurnActorToOpenSide(s32 a0)
 	Actor_SetSpeed(a0, 0x19999, 0xcccc);
 	Engine_ActorSetAnimation(a0, 2);
 	{
-		s32 w = TolbiShipInteriors_TurnSteps[v6];
+		s32 w = gTolbiShipInteriors_TurnSteps[v6];
 
 		Engine_ActorSetDestinationOffset(a0, w >> 16, (w << 16) >> 16);
 	}
@@ -1111,7 +1111,7 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
 static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
 	struct FieldActor *obj = Object_GetById(0);
-	u32				   offset = TolbiShipInteriors_TurnSteps[bucket];
+	u32				   offset = gTolbiShipInteriors_TurnSteps[bucket];
 	s32				   x = obj->x.part.pixel + ((s32)offset >> 16);
 	s32				   z = obj->z.part.pixel + (s16)offset;
 
@@ -1515,8 +1515,8 @@ static void EV10_TOUCH(void)
 
 static void EV11_TOUCH(void)
 {
-	s32 request_a;
-	s32 request_b;
+	s32 requestA;
+	s32 requestB;
 	s32 action;
 
 	if (GameFlag_IsSet(0x911) == 0)
@@ -1532,51 +1532,51 @@ static void EV11_TOUCH(void)
 		Engine_EventSetMessage(MsgTolbiShipIfWeArentGoingSet);
 		FieldScene_RunStepThen10(0x200d);
 		FieldScene_CallPairWith10(12, 0xd000);
-		request_a = 0x800c;
+		requestA = 0x800c;
 		Actor_ShowEmote(12, 0x102, 20);
 		Engine_ActorStartRepeatedMotion(12, 2);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorRunRepeatedMotion(14, 1);
 		Event_ShowMessageAndWait(0xa00e, 0, 20);
 		FieldScene_CallPairWith10(12, 0);
-		request_b = 0xa00e;
+		requestB = 0xa00e;
 		Actor_ShowEmote(12, 0x101, 40);
 		Actor_ShowEmote(14, 0x103, 40);
 		Engine_ActorStartRepeatedMotion(14, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_SetAttachedEffect(12, 0x102);
 		Engine_EventWait(40);
 		Engine_ActorStartRepeatedMotion(12, 3);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0xb000);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(12, 0xd000);
 		Actor_ShowEmote(12, 0x100, 30);
 		Engine_ActorStartRepeatedMotion(12, 1);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(13, 4);
 		FieldScene_RunStepThen10(0x200d);
 		Engine_ActorStartRepeatedMotion(13, 2);
 		FieldScene_RunStepThen10(0x200d);
 		Engine_ActorSetAnimation(12, 4);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(14, 4);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0x8000);
 		Engine_ActorStartRepeatedMotion(14, 2);
-		Event_ShowMessageAndWait(request_b, 0, 20);
+		Event_ShowMessageAndWait(requestB, 0, 20);
 		Actor_FaceDirection(12, FACING_EAST, 0);
 		Actor_ShowEmote(12, 0x102, 80);
-		Event_ShowMessageAndWait(request_a, 0, 20);
+		Event_ShowMessageAndWait(requestA, 0, 20);
 		Actor_ShowEmote(14, 0x103, 0);
 		Actor_ShowEmote(13, 0x103, 60);
 		Engine_ActorStartRepeatedMotion(14, 2);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0xb000);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(13, 0x3000);
 		Actor_ShowEmote(13, 0x101, 0);
 		Actor_ShowEmote(12, 0x101, 60);
@@ -1584,25 +1584,25 @@ static void EV11_TOUCH(void)
 		FieldScene_RunStepThen10(13);
 		Actor_ShowEmote(14, 0x103, 40);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_FaceDirection(12, 0xd000, 0);
 		Actor_FaceDirection(13, 0x5000, 40);
 		Actor_FaceDirection(12, FACING_EAST, 0);
 		FieldScene_CallPairWith10(13, 0x3000);
 		Engine_ActorRunRepeatedMotion(12, 2);
-		Event_ShowMessageAndWait(request_a, 0, 20);
+		Event_ShowMessageAndWait(requestA, 0, 20);
 		Actor_FaceDirection(14, FACING_SOUTH, 40);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Engine_ActorStartRepeatedMotion(12, 2);
 		Engine_ActorRunRepeatedMotion(13, 2);
 		Engine_EventWait(60);
 		Engine_ActorRunRepeatedMotion(13, 1);
 		FieldScene_RunStepThen10(13);
 		Engine_ActorSetAnimationAndWait(14, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_ShowEmote(12, 0x102, 40);
 		Engine_ActorRunRepeatedMotion(12, 2);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(13, 3);
 		FieldScene_RunStepThen10(13);
 		Actor_FaceDirection(14, 0xb000, 40);
@@ -1610,18 +1610,18 @@ static void EV11_TOUCH(void)
 		Engine_ActorSetAnimationAndWait(13, 3);
 		Actor_SetSpeed(14, 0x19999, 0xcccc);
 		Actor_SetSpeed(13, 0x19999, 0xcccc);
-		action = (s32)TolbiShipInteriors_ActionScriptA;
+		action = (s32)gTolbiShipInteriors_ActionScriptA;
 		Engine_ActorEnableActionCallback(14, action);
 		Engine_ActorEnableActionCallback(13, action);
 		Engine_EventWait(20);
 		Actor_FaceDirection(12, FACING_SOUTH, 0);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x26666, 0x13333);
-		Object_GetById(0)->steering_flags &= 254;
+		Object_GetById(0)->steeringFlags &= 254;
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 0x208);
 		Engine_EventWait(1);
 		{
 			struct FieldActor *record = Object_GetById(0);
-			record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+			record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 		}
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1883,20 +1883,20 @@ static void FieldScene_RunExtendedActorChoreography(void)
 static void EV08_SCRIPT(void)
 {
 	struct FieldActor *record;
-	s32				   request_a;
-	s32				   request_b;
+	s32				   requestA;
+	s32				   requestB;
 	s32				   value;
-	s32				   request_c;
+	s32				   requestC;
 	s32				   action;
 
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
 	Actor_ShowEmote(8, 0x100, 40);
-	request_a = 0x1008;
+	requestA = 0x1008;
 	Engine_ActorStartRepeatedMotion(8, 3);
 	Engine_EventSetMessage(MsgTolbiShipItsMyLuckyAnchor);
-	FieldScene_RunStepThen10(request_a);
+	FieldScene_RunStepThen10(requestA);
 	Engine_ActorStartRepeatedMotion(9, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	Engine_ActorStartRepeatedMotion(11, 1);
@@ -1908,13 +1908,13 @@ static void EV08_SCRIPT(void)
 	Actor_FaceDirection(13, 0xd000, 0);
 	Actor_FaceDirection(10, 0xb000, 20);
 	Engine_ActorRunRepeatedMotion(8, 1);
-	Event_OpenMessage(request_a, 0);
+	Event_OpenMessage(requestA, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_ActorRunRepeatedMotion(9, 2);
 		FieldScene_RunStepThen10(0x9009);
 		Actor_ShowEmote(8, 0x108, 40);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		gEventWork->message += 2;
 	}
 	else
@@ -1946,10 +1946,10 @@ static void EV08_SCRIPT(void)
 	Actor_FaceDirection(11, 0xb000, 20);
 	Actor_ShowEmote(11, 0x101, 40);
 	FieldScene_RunStepThen10(11);
-	request_b = 0x900c;
+	requestB = 0x900c;
 	FieldScene_CallPairWith10(12, 0xd000);
 	Engine_ActorSetAnimation(12, 4);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	FieldScene_CallPairWith10(13, 0xb000);
 	Engine_ActorRunRepeatedMotion(13, 1);
 	FieldScene_RunStepThen10(13);
@@ -1958,17 +1958,17 @@ static void EV08_SCRIPT(void)
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_RunStepThen10(9);
 	Engine_ActorSetAnimationAndWait(12, 3);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	FieldScene_RunStepThen10(8);
 	FieldScene_CallPairWith10(12, 0xd000);
 	Engine_ActorSetAnimationAndWait(12, 3);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	FieldScene_CallPairWith10(11, 0xb000);
 	FieldScene_RunStepThen10(11);
 	FieldScene_CallPairWith10(12, 0);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Actor_FaceDirection(8, 0x3000, 0);
 	Actor_FaceDirection(9, FACING_EAST, 0);
 	Actor_FaceDirection(11, 0xd000, 0);
@@ -2001,7 +2001,7 @@ static void EV08_SCRIPT(void)
 	Actor_WalkToAndWait(MIA, 0x1e6, 0x290);
 	Actor_FaceDirection(MIA, FACING_WEST, 20);
 	Actor_ShowEmote(12, 0x108, 40);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_RunStepThen10(0x1009);
 	Engine_ActorSetAnimationAndWait(8, 3);
@@ -2014,7 +2014,7 @@ static void EV08_SCRIPT(void)
 		Engine_ActorStartRepeatedMotion(8, 2);
 		FieldScene_RunStepThen10(8);
 		Engine_ActorSetAnimationAndWait(12, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Engine_ActorStartRepeatedMotion(9, 1);
 		Event_ShowMessageAndWait(0x9009, 0, 40);
 		gEventWork->message += 1;
@@ -2036,14 +2036,14 @@ static void EV08_SCRIPT(void)
 	Event_ShowMessageAndWait(13, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
-	request_c = 0x4008;
+	requestC = 0x4008;
 	Actor_WalkToAndWait(8, 0x1d8, 0x278);
-	FieldScene_RunStepThen10(request_c);
+	FieldScene_RunStepThen10(requestC);
 	Actor_ShowEmote(13, 0x103, 40);
 	Engine_ActorStartRepeatedMotion(13, 2);
 	FieldScene_RunStepThen10(13);
 	Engine_ActorSetAnimation(8, 4);
-	Event_ShowMessageAndWait(request_c, 0, 40);
+	Event_ShowMessageAndWait(requestC, 0, 40);
 	Engine_ActorRunRepeatedMotion(11, 1);
 	FieldScene_CallPairWith10(11, (value << 8));
 	FieldScene_RunStepThen10(0x100b);
@@ -2058,7 +2058,7 @@ static void EV08_SCRIPT(void)
 	Engine_ActorSetAnimationAndWait(9, 4);
 	FieldScene_RunStepThen10(9);
 	Engine_ActorSetAnimationAndWait(8, 3);
-	FieldScene_RunStepThen10(request_c);
+	FieldScene_RunStepThen10(requestC);
 	Actor_ShowEmote(13, 0x102, 40);
 	Event_ShowMessageAndWait(13, 0, 40);
 	FieldScene_CallPairWith10(9, 0x3000);
@@ -2098,7 +2098,7 @@ static void EV08_SCRIPT(void)
 	Engine_ActorStartRepeatedMotion(10, 2);
 	Engine_ActorRunRepeatedMotion(13, 2);
 	Engine_EventWait(20);
-	action = (s32)TolbiShipInteriors_ActionScriptB;
+	action = (s32)gTolbiShipInteriors_ActionScriptB;
 	Engine_ActorEnableActionCallback(10, action);
 	Engine_EventWait(4);
 	Engine_ActorEnableActionCallback(11, action);
@@ -2142,7 +2142,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 {
 	Engine_TaskWait(1);
 	Engine_GameFlagSet(0x144);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	switch (((union GameStateRows *)&gGameState)->halves[225][0])
 	{
 	case 1:
@@ -2224,9 +2224,9 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 1, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
-			Engine_ActorEnableActionCallback(38, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, gTolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, gTolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(38, gTolbiShipInteriors_EntryActionScript);
 			Engine_ActorSetChildValue(36, 3);
 			Engine_ActorSetChildValue(37, 3);
 			Engine_ActorSetChildValue(38, 3);
@@ -2246,8 +2246,8 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 2, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, gTolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, gTolbiShipInteriors_EntryActionScript);
 			Engine_EventEnd();
 		}
 		else
@@ -2264,8 +2264,8 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 3, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, gTolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, gTolbiShipInteriors_EntryActionScript);
 			Engine_ActorSetChildValue(36, 3);
 			Engine_ActorSetChildValue(37, 3);
 			Engine_EventEnd();
@@ -2283,7 +2283,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void)
 		{
 			if (Engine_GameFlagIsSet(0x302) != 0)
 			{
-				TolbiShipInteriors_CueTimer = 0;
+				gTolbiShipInteriors_CueTimer = 0;
 				FieldScheduler_AddCallback(Scene_UpdateCueTimer, 0xc80);
 				Engine_ActorSetAnimation(9, 5);
 			}
@@ -2348,11 +2348,11 @@ static void TolbiShipInteriors_ApplyFlaggedLayout(void)
 		Actor_SetSpeed(9, 0xcccc, 0x6666);
 		actor->work = done;
 		zero.v = 0;
-		actor->rise_enabled = zero.v;
-		actor->collision_flags |= 128;
+		actor->riseEnabled = zero.v;
+		actor->collisionFlags |= 128;
 		actor->update = (void (*)(union FieldObject *))&TolbiShipInteriors_RunWalkerStep;
 		other = Object_GetById(8);
-		other->rise_counter = zero.v;
+		other->riseCounter = zero.v;
 		other->update = (void (*)(union FieldObject *))&UpdateActorNineEffectMode;
 		if (Engine_GameFlagIsSet(0x109))
 		{
@@ -2397,14 +2397,14 @@ static void SceneState_RunFlagGatedSetupCascade(void)
 	if (Engine_GameFlagIsSet(0x8a0) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(8, 0x98, 0x1bc, 0x3000);
-		Engine_ActorEnableActionCallback(8, TolbiShipInteriors_ActionScriptF);
+		Engine_ActorEnableActionCallback(8, gTolbiShipInteriors_ActionScriptF);
 		OverlayObject_SetPositionAndHeading(10, 0xb8, 0x1e0, 0xb000);
 		OverlayObject_SetPositionAndHeading(12, 0xaa, 0x1e8, 0xb000);
 		OverlayObject_SetPositionAndHeading(13, 0x88, 0x1e8, 0xd000);
 		OverlayObject_SetPositionAndHeading(15, 0x78, 0x1e0, 0xd000);
 		OverlayObject_SetPositionAndHeading(14, 0xb8, 0x20e, 0xb000);
 		OverlayObject_SetPositionAndHeading(11, 0x88, 0x248, 0x8000);
-		Engine_ActorEnableActionCallback(11, TolbiShipInteriors_ActionScriptE);
+		Engine_ActorEnableActionCallback(11, gTolbiShipInteriors_ActionScriptE);
 		return;
 	}
 
@@ -2504,8 +2504,8 @@ static void SceneActor_SetFlagBit3ForActors28To35(void)
 	for (; i <= 35; i++)
 	{
 		struct FieldActor *obj = Object_GetById(i);
-		u32				   v = obj->collision_flags;
-		obj->collision_flags = ((v | bit) | zero);
+		u32				   v = obj->collisionFlags;
+		obj->collisionFlags = ((v | bit) | zero);
 	}
 }
 
@@ -2566,7 +2566,7 @@ static void FieldScene_RunFourActorCoordinatePresentation(void)
 	Engine_ActorSetAnimation(9, 1);
 	mode = 128;
 	OverlayObject_SetPositionAndHeading(0, 0x1b8, 134, 0x8000);
-	gEventWork->start_transition = (mode << 1);
+	gEventWork->startTransition = (mode << 1);
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
@@ -2697,7 +2697,7 @@ static void TolbiShipInteriors_CastOff(void)
 	rec7 = (s32)TolbiShipInteriors_PlaceAnchorCharm();
 	Engine_EventWait(20);
 	Event_PlayCue(214);
-	Engine_ObjectSetScript(rec7, TolbiShipInteriors_Script01);
+	Engine_ObjectSetScript(rec7, gTolbiShipInteriors_Script01);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
@@ -2788,7 +2788,7 @@ static void FieldScene_RunFlagBranchedSetupCascade(void)
 	Engine_AudioPlayCue(0xbc);
 	Engine_EventWait(30);
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 
 	FieldScene_RunSceneStep(9, 0, 0);
 
@@ -2842,7 +2842,7 @@ static void TolbiShipInteriors_AnnounceTurn(void)
 
 static void TolbiShipInteriors_SetupFirstRowingPair(void)
 {
-	s32 entry_script;
+	s32 entryScript;
 
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
@@ -2850,11 +2850,11 @@ static void TolbiShipInteriors_SetupFirstRowingPair(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, 11, 12);
 	Engine_ActorSetAnimation(10, 6);
-	Engine_ActorEnableActionCallback(12, TolbiShipInteriors_ActionScriptE);
-	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
-	Engine_ActorEnableActionCallback(38, entry_script);
+	Engine_ActorEnableActionCallback(12, gTolbiShipInteriors_ActionScriptE);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
+	Engine_ActorEnableActionCallback(38, entryScript);
 	Engine_ActorSetChildValue(36, 3);
 	Engine_ActorSetChildValue(37, 3);
 	Engine_ActorSetChildValue(38, 3);
@@ -3002,21 +3002,21 @@ static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void)
 
 	if (set != 0)
 	{
-		return TolbiShipInteriors_AnchorObject;
+		return gTolbiShipInteriors_AnchorObject;
 	}
 	object = Engine_ObjectCreate(22, 0x1c70000, 0x40000, 0x2200000);
-	object->motion_flags = set;
-	object->unknown_5c = 1;
+	object->motionFlags = set;
+	object->unk5c = 1;
 	sprite = object->sprite;
-	sprite->part_count = set;
-	sprite->full_color = 0;
+	sprite->partCount = set;
+	sprite->fullColor = 0;
 	sprite->palette = 0;
 	buffer = Engine_HeapAllocate(17, 0x608);
 	Engine_ItemLoadIcon(232);
-	Engine_VramLoad(sprite->vram_block, 128, buffer + 0x400);
+	Engine_VramLoad(sprite->vramBlock, 128, buffer + 0x400);
 	Engine_HeapRelease(17);
 	Engine_GameFlagSet(0x200);
-	TolbiShipInteriors_AnchorObject = object;
+	gTolbiShipInteriors_AnchorObject = object;
 	return object;
 }
 
@@ -3038,7 +3038,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 	{
 		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(1, 0);
 		Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
-		Object_GetById(obj)->scale_x = 0xffff0000;
+		Object_GetById(obj)->scaleX = 0xffff0000;
 		FieldScene_RunSceneStep(7, obj, src);
 		Engine_ActorSetPosition(11, 0, 0);
 	}
@@ -3063,7 +3063,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 	{
 		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(3, 0);
 		Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
-		Object_GetById(obj)->scale_x = 0xffff0000;
+		Object_GetById(obj)->scaleX = 0xffff0000;
 		FieldScene_RunSceneStep(7, obj, src);
 		Engine_ActorSetPosition(13, 0, 0);
 	}
@@ -3204,7 +3204,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 
 		rec = Object_GetById(arg);
 		SetPose(rec, 0x5000);
-		rec->scale_x = -0x10000;
+		rec->scaleX = -0x10000;
 	}
 		Engine_ActorSetAnimation(arg, 5);
 		Object_SetActionById(arg, opt);
@@ -3223,7 +3223,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		}
 		break;
 	case 8:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 		Engine_EventOpenScreen();
 		if (arg != 0)
 		{
@@ -3258,7 +3258,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 			rec = Object_GetById(13);
 			SetPose(rec, 0x3000);
 			rec = Object_GetById(13);
-			rec->scale_x = 0x10000;
+			rec->scaleX = 0x10000;
 		}
 		{
 			struct FieldActor *rec;
@@ -3270,7 +3270,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 			rec = Object_GetById(15);
 			SetPose(rec, 0x3000);
 			rec = Object_GetById(15);
-			rec->scale_x = 0x10000;
+			rec->scaleX = 0x10000;
 			Engine_ActorSetAnimation(16, 1);
 			rec = Object_GetById(16);
 			SetPose(rec, 0x5000);
@@ -3278,7 +3278,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 			rec = Object_GetById(17);
 			SetPose(rec, 0x3000);
 			rec = Object_GetById(17);
-			rec->scale_x = 0x10000;
+			rec->scaleX = 0x10000;
 		}
 		Actor_SetPosition(28, 0x19a0000, 0xae0000);
 		Actor_SetPosition(29, 0x1d60000, 0xae0000);
@@ -3312,7 +3312,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		{
 			SetPose(rec, 0x5000);
 		}
-		rec->scale_x = 0x10000;
+		rec->scaleX = 0x10000;
 	}
 	break;
 	case 13:
@@ -3341,7 +3341,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		{
 			break;
 		}
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(20);
@@ -3396,7 +3396,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 	case 22:
 		Engine_TaskWait(1);
 		FieldScene_RunSceneStep(23, 0, 0);
-		Engine_ActorEnableActionCallback(12, TolbiShipInteriors_ActionScriptE);
+		Engine_ActorEnableActionCallback(12, gTolbiShipInteriors_ActionScriptE);
 		break;
 	case 23:
 		Engine_ActorDestroy(GARET);
@@ -3408,25 +3408,25 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		Engine_TaskWait(1);
 		if (arg != 0)
 		{
-			Battle_GetWorkObject1e0()->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motionFlags = 0;
 		}
 		break;
 	case 25:
-		Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsA);
+		Event_CallWithLastActiveObjectId(gTolbiShipInteriors_CellStepsA);
 		Engine_TaskWait(1);
 		if (arg == 1)
 		{
-			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsB);
+			Event_CallWithLastActiveObjectId(gTolbiShipInteriors_CellStepsB);
 			Engine_TaskWait(1);
 		}
 		else if (arg == 2)
 		{
-			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsC);
+			Event_CallWithLastActiveObjectId(gTolbiShipInteriors_CellStepsC);
 			Engine_TaskWait(1);
 		}
 		else if (arg == 3)
 		{
-			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsD);
+			Event_CallWithLastActiveObjectId(gTolbiShipInteriors_CellStepsD);
 			Engine_TaskWait(1);
 		}
 		break;
@@ -3496,8 +3496,8 @@ static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 static void TolbiShipInteriors_SetupReplacementRower(void)
 {
 	s32 rec8;
-	s32 rower_script;
-	s32 entry_script;
+	s32 rowerScript;
+	s32 entryScript;
 
 	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	Engine_EventBegin();
@@ -3506,13 +3506,13 @@ static void TolbiShipInteriors_SetupReplacementRower(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, 12);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)TolbiShipInteriors_ActionScriptE;
-	Engine_ActorEnableActionCallback(rec8, rower_script);
+	rowerScript = (s32)gTolbiShipInteriors_ActionScriptE;
+	Engine_ActorEnableActionCallback(rec8, rowerScript);
 	Engine_ActorDestroy(11);
-	Engine_ActorEnableActionCallback(12, rower_script);
-	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
+	Engine_ActorEnableActionCallback(12, rowerScript);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
 	FieldScene_RunPositionTransferPresentation();
 	Engine_EventEnd();
 }
@@ -3573,9 +3573,9 @@ static void FieldScene_RunPositionTransferPresentation(void)
 	FieldScene_RunStepThen10(8);
 	Actor_FaceDirection(8, FACING_EAST, 20);
 	ConfigureSceneMotionFlags(0x1b80000, -1, 0x860000, 0x10000000);
-	Engine_ActorEnableActionCallback(GARET, TolbiShipInteriors_ProgressTableA);
-	Engine_ActorEnableActionCallback(2, TolbiShipInteriors_ProgressTableA);
-	Object_SetActionCallbackAndRefreshById(3, (s32)TolbiShipInteriors_ProgressTableA);
+	Engine_ActorEnableActionCallback(GARET, gTolbiShipInteriors_ProgressTableA);
+	Engine_ActorEnableActionCallback(2, gTolbiShipInteriors_ProgressTableA);
+	Object_SetActionCallbackAndRefreshById(3, (s32)gTolbiShipInteriors_ProgressTableA);
 	Engine_EventWait(40);
 	GameFlag_Set(0x301);
 	FieldScene_RunSceneStep(23, 0, 0);
@@ -3659,7 +3659,7 @@ static void FieldScene_RunFormationAndEffectPresentation(void)
 		FieldScene_RunStepThen10(27);
 	}
 	FieldScene_RunSceneStep(2, 1, 20);
-	action = (s32)TolbiShipInteriors_ActionScriptC;
+	action = (s32)gTolbiShipInteriors_ActionScriptC;
 	Engine_ActorEnableActionCallback(GARET, action);
 	Engine_ActorEnableActionCallback(IVAN, action);
 	Object_SetActionCallbackAndRefreshById(3, action);
@@ -3669,7 +3669,7 @@ static void FieldScene_RunFormationAndEffectPresentation(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a8, 0x110);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1a8, 164);
 	Engine_EventWait(60);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	FieldScene_RunSceneStep(9, 0, 0);
 	GameFlag_Clear(0x301);
 	GameFlag_Clear(0x927);
@@ -3695,8 +3695,8 @@ static void TolbiShipInteriors_SetupReplacementPair(void)
 {
 	s32 rec2;
 	s32 rec8;
-	s32 rower_script;
-	s32 entry_script;
+	s32 rowerScript;
+	s32 entryScript;
 
 	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
@@ -3706,14 +3706,14 @@ static void TolbiShipInteriors_SetupReplacementPair(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, rec2);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)TolbiShipInteriors_ActionScriptE;
-	Engine_ActorEnableActionCallback(rec8, rower_script);
+	rowerScript = (s32)gTolbiShipInteriors_ActionScriptE;
+	Engine_ActorEnableActionCallback(rec8, rowerScript);
 	Engine_ActorDestroy(11);
-	Engine_ActorEnableActionCallback(rec2, rower_script);
+	Engine_ActorEnableActionCallback(rec2, rowerScript);
 	Engine_ActorDestroy(12);
-	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
 	Engine_ActorSetChildValue(36, 3);
 	Engine_ActorSetChildValue(37, 3);
 	FieldScene_RunPositionTransferPresentation();
@@ -3739,15 +3739,15 @@ static void FieldScene_RunActors24And25SetupWithValue92a(void)
 
 static void FieldScene_RunExtendedFormationPresentation(void)
 {
-	s32				   slot_b;
-	s32				   slot_c;
-	s32				   slot_a;
+	s32				   slotB;
+	s32				   slotC;
+	s32				   slotA;
 	struct FieldActor *record;
 	s32				   action;
 
-	slot_a = TolbiShipInteriors_FindFirstSetFlag(0, 0);
-	slot_b = TolbiShipInteriors_FindFirstSetFlag(1, 0);
-	slot_c = TolbiShipInteriors_FindFirstSetFlag(2, 0);
+	slotA = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	slotB = TolbiShipInteriors_FindFirstSetFlag(1, 0);
+	slotC = TolbiShipInteriors_FindFirstSetFlag(2, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(10, 0, 0);
 	FieldScene_RunSceneStep(17, 0, 0);
@@ -3807,22 +3807,22 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	FieldScene_CallPairWith10(27, 0x3000);
 	Engine_ActorStartRepeatedMotion(27, 2);
 	FieldScene_RunStepThen10(27);
-	Engine_ActorStartRepeatedMotion(slot_a, 1);
-	Engine_ActorStartRepeatedMotion(slot_b, 1);
-	Engine_ActorStartRepeatedMotion(slot_c, 1);
+	Engine_ActorStartRepeatedMotion(slotA, 1);
+	Engine_ActorStartRepeatedMotion(slotB, 1);
+	Engine_ActorStartRepeatedMotion(slotC, 1);
 	Engine_ActorRunRepeatedMotion(13, 1);
-	Actor_SetAttachedEffect(slot_a, 0x102);
-	Actor_SetAttachedEffect(slot_b, 0x102);
-	Actor_SetAttachedEffect(slot_c, 0x102);
+	Actor_SetAttachedEffect(slotA, 0x102);
+	Actor_SetAttachedEffect(slotB, 0x102);
+	Actor_SetAttachedEffect(slotC, 0x102);
 	Actor_SetAttachedEffect(13, 0x102);
 	Engine_EventWait(40);
-	FieldScene_RunSceneStep(12, slot_a, 0);
-	FieldScene_RunSceneStep(12, slot_b, 1);
-	FieldScene_RunSceneStep(12, slot_c, 0);
+	FieldScene_RunSceneStep(12, slotA, 0);
+	FieldScene_RunSceneStep(12, slotB, 1);
+	FieldScene_RunSceneStep(12, slotC, 0);
 	FieldScene_RunSceneStep(11, 1, 0);
-	Actor_FaceDirection(slot_a, 0xd000, 0);
-	Actor_FaceDirection(slot_b, 0xb000, 0);
-	Actor_FaceDirection(slot_c, 0xd000, 0);
+	Actor_FaceDirection(slotA, 0xd000, 0);
+	Actor_FaceDirection(slotB, 0xb000, 0);
+	Actor_FaceDirection(slotC, 0xd000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	Actor_FaceDirection(GARET, FACING_WEST, 0);
 	Actor_FaceDirection(IVAN, FACING_EAST, 0);
@@ -3847,12 +3847,12 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	action = (s32)TolbiShipInteriors_ActionScriptD;
+	action = (s32)gTolbiShipInteriors_ActionScriptD;
 	Engine_ActorEnableActionCallback(GARET, action);
 	Engine_ActorEnableActionCallback(IVAN, action);
 	Object_SetActionCallbackAndRefreshById(3, action);
 	GameFlag_Set(0x302);
-	TolbiShipInteriors_CueTimer = 0;
+	gTolbiShipInteriors_CueTimer = 0;
 	FieldScheduler_AddCallback((s32)Scene_UpdateCueTimer, 0xc80);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_ActorDestroy(27);
@@ -3864,7 +3864,7 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
 	s32	 value;
-	s32 *timer = &TolbiShipInteriors_CueTimer;
+	s32 *timer = &gTolbiShipInteriors_CueTimer;
 	s32	 remaining;
 	if (*timer != 0)
 	{
@@ -3908,9 +3908,9 @@ static void Scene_RunFourActorProgressPresentation(void)
 	s32				   rec7;
 	struct FieldActor *record;
 	s32				   v6 = 0;
-	s32				   progress_b;
-	s32				   progress_c;
-	s32				   progress_a;
+	s32				   progressB;
+	s32				   progressC;
+	s32				   progressA;
 
 	rec7 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
@@ -3999,8 +3999,8 @@ static void Scene_RunFourActorProgressPresentation(void)
 	FieldScene_CallPairWith10(rec7, 0);
 	FieldScene_RunStepThen10(rec7);
 	Actor_SetSpeed(rec7, 0x10000, 0x8000);
-	progress_b = (s32)&TolbiShipInteriors_ProgressTableB;
-	Object_SetActionCallbackAndRefreshById(rec7, progress_b);
+	progressB = (s32)&gTolbiShipInteriors_ProgressTableB;
+	Object_SetActionCallbackAndRefreshById(rec7, progressB);
 	Actor_FaceDirection(rec2, 0x5000, 0);
 	Engine_ActorFaceDirection(rec4, FACING_EAST, 0);
 	Actor_FaceDirection(rec, FACING_WEST, 40);
@@ -4010,20 +4010,20 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Actor_SetSpeed(rec2, 0x10000, 0x8000);
 	Actor_SetSpeed(rec4, 0x10000, 0x8000);
 	Actor_SetSpeed(rec, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(rec4, progress_b);
+	Engine_ActorEnableActionCallback(rec4, progressB);
 	Engine_EventWait(40);
-	progress_c = (s32)&TolbiShipInteriors_ProgressTableC;
-	Object_SetActionCallbackAndRefreshById(rec2, progress_c);
-	Engine_ActorEnableActionCallback(rec2, progress_b);
-	Object_SetActionCallbackAndRefreshById(rec, progress_c);
-	Object_SetActionCallbackAndRefreshById(rec, progress_b);
+	progressC = (s32)&gTolbiShipInteriors_ProgressTableC;
+	Object_SetActionCallbackAndRefreshById(rec2, progressC);
+	Engine_ActorEnableActionCallback(rec2, progressB);
+	Object_SetActionCallbackAndRefreshById(rec, progressC);
+	Object_SetActionCallbackAndRefreshById(rec, progressB);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(2, 0x10000, 0x8000);
 	Actor_SetSpeed(3, 0x10000, 0x8000);
-	progress_a = (s32)&TolbiShipInteriors_ProgressTableA;
-	Engine_ActorEnableActionCallback(1, progress_a);
-	Engine_ActorEnableActionCallback(2, progress_a);
-	Object_SetActionCallbackAndRefreshById(3, progress_a);
+	progressA = (s32)&gTolbiShipInteriors_ProgressTableA;
+	Engine_ActorEnableActionCallback(1, progressA);
+	Engine_ActorEnableActionCallback(2, progressA);
+	Object_SetActionCallbackAndRefreshById(3, progressA);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_GameFlagClear(0x927);
 	Engine_GameFlagSet(0x8a0);
@@ -4046,7 +4046,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void)
 	FieldScene_RunSceneStep(10, 0, 0);
 	OverlayObject_SetPositionAndHeading(8, 0x1d8, 144, 0x5000);
 	OverlayObject_SetPositionAndHeading(27, 0x198, 142, 0x3000);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -4096,7 +4096,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void)
 	Actor_WalkToAndWait(27, 0x198, 132);
 	Actor_WalkToAndWait(27, 0x1bc, 132);
 	Actor_SetPosition(27, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	SceneState_ScanTwoArraysAndCrossNotify(0x92c, 0x935);
@@ -4140,7 +4140,7 @@ static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 // 向き (16 方向) ごとの一歩: 上位 16 ビットが x、下位 16 ビットが z
 #define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 TolbiShipInteriors_TurnSteps[] = {
+s32 gTolbiShipInteriors_TurnSteps[] = {
 	TURN_STEP(16, 0),
 	TURN_STEP(16, 0),
 	TURN_STEP(16, 0),
@@ -4159,7 +4159,7 @@ s32 TolbiShipInteriors_TurnSteps[] = {
 	TURN_STEP(16, 0),
 };
 
-s32 TolbiShipInteriors_ActionScriptA[] = {
+s32 gTolbiShipInteriors_ActionScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(500)),
 	SC_SYNC,
@@ -4169,7 +4169,7 @@ s32 TolbiShipInteriors_ActionScriptA[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ActionScriptB[] = {
+s32 gTolbiShipInteriors_ActionScriptB[] = {
 	SC_SET(SW_SPEED, 0x10000),
 	SC_SET(SW_ACCEL, 0x8000),
 	SC_ARG(2),
@@ -4181,7 +4181,7 @@ s32 TolbiShipInteriors_ActionScriptB[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_Script01[] = {
+s32 gTolbiShipInteriors_Script01[] = {
 	SC_SET(SW_SCALE_X, 0x16000),
 	SC_SET(SW_SCALE_Y, 0x16000),
 	SC_WAIT(2),
@@ -4198,7 +4198,7 @@ s32 TolbiShipInteriors_Script01[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ProgressTableA[] = {
+s32 gTolbiShipInteriors_ProgressTableA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(434), 0, PIXELS(166)),
 	SC_SYNC,
@@ -4206,7 +4206,7 @@ s32 TolbiShipInteriors_ProgressTableA[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ActionScriptC[] = {
+s32 gTolbiShipInteriors_ActionScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(438), 0, PIXELS(300)),
 	SC_SYNC,
@@ -4214,7 +4214,7 @@ s32 TolbiShipInteriors_ActionScriptC[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ActionScriptD[] = {
+s32 gTolbiShipInteriors_ActionScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(432), 0, PIXELS(168)),
 	SC_SYNC,
@@ -4222,7 +4222,7 @@ s32 TolbiShipInteriors_ActionScriptD[] = {
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ActionScriptE[] = {
+s32 gTolbiShipInteriors_ActionScriptE[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -4240,13 +4240,13 @@ s32 TolbiShipInteriors_ActionScriptE[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 TolbiShipInteriors_EntryActionScript[] = {
+s32 gTolbiShipInteriors_EntryActionScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(0x24, 0),
 	SC_CALL(UpdateStagedActorVerticalPosition),
 };
 
-s32 TolbiShipInteriors_ProgressTableB[] = {
+s32 gTolbiShipInteriors_ProgressTableB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(408), 0, PIXELS(132)),
 	SC_SYNC,
@@ -4255,28 +4255,28 @@ s32 TolbiShipInteriors_ProgressTableB[] = {
 	SC_FREE,
 };
 
-s32 TolbiShipInteriors_ProgressTableC[] = {
+s32 gTolbiShipInteriors_ProgressTableC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(416), 0, PIXELS(186)),
 	SC_SYNC,
 	SC_END,
 };
 
-s32 TolbiShipInteriors_ActionScriptF[] = {
+s32 gTolbiShipInteriors_ActionScriptF[] = {
 	SC_CALL(StagedActor_SetAngleByKind),
 };
 
-s32 TolbiShipInteriors_StepScriptEData[] = {
+s32 gTolbiShipInteriors_StepScriptEData[] = {
 	SC_CALL(StagedActor_SetReadyState),
 };
 
-struct FieldActor *TolbiShipInteriors_AnchorObject = 0;
+struct FieldActor *gTolbiShipInteriors_AnchorObject = 0;
 
-struct SceneEntrance TolbiShipInteriors_SceneTable01[] = {
+struct SceneEntrance gTolbiShipInteriors_SceneTable01[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance TolbiShipInteriors_SceneTable02[] = {
+struct SceneEntrance gTolbiShipInteriors_SceneTable02[] = {
 	{ 1, CONDITION_ALWAYS, 152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0 },
 	{ 2, CONDITION_ALWAYS, 160, 0, 552, FACING_EAST, 0, 30, 380, 270, 620, 0 },
 	{ 3, CONDITION_ALWAYS, 120, 0, 136, FACING_WEST, 0, 25, 80, 265, 350, 0 },
@@ -4301,7 +4301,7 @@ struct SceneEntrance TolbiShipInteriors_SceneTable02[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 TolbiShipInteriors_SceneTable03[] = {
+u32 gTolbiShipInteriors_SceneTable03[] = {
 	SCENE_EXITS(111),
 	SCENE_EXIT(1, 109, 1),
 	SCENE_EXIT(2, 111, 4),
@@ -4323,11 +4323,11 @@ u32 TolbiShipInteriors_SceneTable03[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptA[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptB[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptB[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4337,7 +4337,7 @@ struct ScenePlacement TolbiShipInteriors_StepScriptB[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptC[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptC[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4359,19 +4359,19 @@ struct ScenePlacement TolbiShipInteriors_StepScriptC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptD[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptD[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptE[] = {
-	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
+struct ScenePlacement gTolbiShipInteriors_StepScriptE[] = {
+	{ 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptF[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptF[] = {
 	{ 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4390,12 +4390,12 @@ struct ScenePlacement TolbiShipInteriors_StepScriptF[] = {
 		PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
+	{ 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptG[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptG[] = {
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4418,12 +4418,12 @@ struct ScenePlacement TolbiShipInteriors_StepScriptG[] = {
 		PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
+	{ 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_StepScriptH[] = {
+struct ScenePlacement gTolbiShipInteriors_StepScriptH[] = {
 	{ 0x93, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x93, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4483,7 +4483,7 @@ struct ScenePlacement TolbiShipInteriors_StepScriptH[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_CellStepsA[] = {
+struct ScenePlacement gTolbiShipInteriors_CellStepsA[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4493,7 +4493,7 @@ struct ScenePlacement TolbiShipInteriors_CellStepsA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_CellStepsB[] = {
+struct ScenePlacement gTolbiShipInteriors_CellStepsB[] = {
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4503,7 +4503,7 @@ struct ScenePlacement TolbiShipInteriors_CellStepsB[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_CellStepsC[] = {
+struct ScenePlacement gTolbiShipInteriors_CellStepsC[] = {
 	{ 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4513,7 +4513,7 @@ struct ScenePlacement TolbiShipInteriors_CellStepsC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement TolbiShipInteriors_CellStepsD[] = {
+struct ScenePlacement gTolbiShipInteriors_CellStepsD[] = {
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4523,13 +4523,13 @@ struct ScenePlacement TolbiShipInteriors_CellStepsD[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable04[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable04[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf92, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable05[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable05[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(EV11_TOUCH) },
@@ -4557,7 +4557,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable05[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable06[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable06[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
@@ -4593,7 +4593,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable06[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable07[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable07[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
@@ -4620,7 +4620,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable07[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable08[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable08[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_08) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_08) },
@@ -4646,7 +4646,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable08[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable09[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable09[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
@@ -4656,7 +4656,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable09[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable10[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable10[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
@@ -4664,7 +4664,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable10[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable11[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable11[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_TALK, 8, 0x8a0, MSGNO(MsgTolbiShipInteriorsWeCanLeaveAsSoonAs) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenSailingForManyYears) },
@@ -4701,7 +4701,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable11[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable12[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable12[] = {
 	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
 	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
 	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
@@ -4745,7 +4745,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable12[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable13[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable13[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 19 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImagineTheSizeOfThatBeast) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsHowCanTheseSeaMonstersKeep) },
@@ -4782,7 +4782,7 @@ struct SceneEvent TolbiShipInteriors_SceneTable13[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent TolbiShipInteriors_SceneTable14[] = {
+struct SceneEvent gTolbiShipInteriors_SceneTable14[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWillBe) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouFolksReallyFoughtWell) },
@@ -4799,4 +4799,4 @@ struct SceneEvent TolbiShipInteriors_SceneTable14[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 TolbiShipInteriors_CueTimer;
+s32 gTolbiShipInteriors_CueTimer;

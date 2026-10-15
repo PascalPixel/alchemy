@@ -3,12 +3,12 @@
 #include "ram_buffer.h"
 #include "map.h"
 
-extern u8 Data_0201c000[];
+extern u8 gData_0201c000[];
 extern u8 gMapBlocks[];
 
 void MapAnimation_Update(void)
 {
-    struct MapWork *state = Ram_HeapSlots->map_work;
+    struct MapWork *state = Ram_HeapSlots->mapWork;
     u32 i;
 
     for (i = 0; i <= 15; i++) {
@@ -36,7 +36,7 @@ void MapAnimation_Update(void)
             count = *script++;
             dst = script[0];
             (state->anim + i)->timer = script[1];
-            if (state->wide_tiles == 0) {
+            if (state->wideTiles == 0) {
                 if (op >= 0x600)
                     Dma_Set(((u8 *)0x0201c000) + op * 32, (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
                 else

@@ -8,8 +8,8 @@
 	.2byte \group, \entrance & 0x7fff
 	.4byte \name
 	.endm
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
+	.global gScene_AreaNameRules
+gScene_AreaNameRules:
 	group_name 0, -1, 0
 	group_name 1, -1, 1
 	group_name 2, -1, 2

@@ -44,14 +44,14 @@ struct BattleLinkedActionState {
     s32 count;
     s32 check;
     s32 seed;
-    u8 unknown_0c[28];
+    u8 unk0c[28];
 };
 
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
-    struct BattleWork *battle = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battleWork;
     s32 result = 0;
-    s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
+    s32 allocationSize = (u32)(count * 16 + 19) / 20 * 20;
     struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
@@ -76,8 +76,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
                 disconnected = 0;
             }
         }
-        if (allocation_size) {
-            status = SerialRuntime_BeginTransferA(actions, allocation_size);
+        if (allocationSize) {
+            status = SerialRuntime_BeginTransferA(actions, allocationSize);
             if (status == -1)
                 return status;
             while (SerialRuntime_GetActiveTransfers()) {
@@ -147,9 +147,9 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
     for (index = 0; index < count; index++) {
         struct BattleActionRecord *action = &actions[index];
 
-        action->slot = battle->owner_slots[action->unit_id];
+        action->slot = battle->ownerSlots[action->unitId];
 
-        if (battle->link_side == 0) {
+        if (battle->linkSide == 0) {
             if (action->priority & 1)
                 action->priority++;
         } else {
@@ -157,8 +157,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         }
     }
 
-    if (battle->link_paused == 0) {
-        if (battle->link_side == 0) {
+    if (battle->linkPaused == 0) {
+        if (battle->linkSide == 0) {
             volatile u16 *ime;
             u32 saved;
 
@@ -192,7 +192,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         for (index = 0; index < result; index++) {
             struct BattleActionRecord *action = &actions[count + index];
 
-            action->unit_id = action->slot;
+            action->unitId = action->slot;
             action->target = action->target ^ 0x80;
         }
 

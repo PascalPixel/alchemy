@@ -11,8 +11,8 @@
 #include "glyph.h"
 #include "mem.h"
 
-extern u8 *UiIcon_BaseGlyphPointers[];
-extern u8 *UiIcon_OverlayPointerTable[];
+extern u8 *gUiIcon_BaseGlyphPointers[];
+extern u8 *gUiIcon_OverlayPointerTable[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 s32 Resource_FindFreeEntry(void);
@@ -23,11 +23,11 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     GlyphTransfer *work;
 
     work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
-    work->encoded = UiIcon_BaseGlyphPointers[no1];
+    work->encoded = gUiIcon_BaseGlyphPointers[no1];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);
-    work->encoded = UiIcon_OverlayPointerTable[no0];
+    work->encoded = gUiIcon_OverlayPointerTable[no0];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);

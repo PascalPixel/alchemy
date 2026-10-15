@@ -10,11 +10,11 @@
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020026f0;
-extern s32 Data_020026f4;
-extern u16 Data_0200271c[];
-extern u16 Data_0200273c[];
-extern u16 Data_02002740[];
+extern s32 gData_020026f0;
+extern s32 gData_020026f4;
+extern u16 gData_0200271c[];
+extern u16 gData_0200273c[];
+extern u16 gData_02002740[];
 extern u32 gFrameCount;
 
 s32 __modsi3();
@@ -46,9 +46,9 @@ void Func_020005e4(void)
     s32 offset;
     u16 *dst;
 
-    phase = (Data_020026f0 / 4) % 5;
-    if (Data_020026f4 != 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+    phase = (gData_020026f0 / 4) % 5;
+    if (gData_020026f4 != 0) {
+        u8 *work = Ram_HeapSlots->eventWork;
 
         if (*(s16 *)(work + 358) != 0 && (HALF_AT(work, 358) & 0x3ff) != 153)
             return;
@@ -61,17 +61,17 @@ void Func_020005e4(void)
     i = 0;
     offset = 4;
 next:
-    *(dst + (phase + i) % 5) = *(u16 *)(offset + (u8 *)Data_0200271c);
+    *(dst + (phase + i) % 5) = *(u16 *)(offset + (u8 *)gData_0200271c);
     i++;
     offset += 2;
     if (i <= 4)
         goto next;
     Dma_Set(dst, (void *)0x05000184, 0x84000002, REG_DMA3);
-    Data_020026f0++;
+    gData_020026f0++;
 }
 
-extern u8 Data_020026f8[];
-extern s32 Data_02002718;
+extern u8 gData_020026f8[];
+extern s32 gData_02002718;
 void ObjectDispatch_ApplyValueToChildren();
 s32 Func_02001ee8();
 void Func_02001ed8();
@@ -88,7 +88,7 @@ s32 Func_02000964(s32 *a, s32 *b)
 }
 
 struct EventHold {
-    u8 unknown_000[362];
+    u8 unk000[362];
     u16 hold;
 };
 
@@ -107,8 +107,8 @@ void Func_02000990(struct FieldActor *ball)
     s32 near;
     s32 t;
 
-    work = Ram_HeapSlots->event_work;
-    leader = Object_GetById(gPartyState.current_owner);
+    work = Ram_HeapSlots->eventWork;
+    leader = Object_GetById(gPartyState.currentOwner);
     if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
         || *(s16 *)(work + 360) != 0) {
         ObjectDispatch_ApplyValueToChildren(ball, 0);
@@ -141,9 +141,9 @@ void Func_02000990(struct FieldActor *ball)
         if (near && !GameFlag_Test(260)) {
             WORD_AT(leader, 104) = (s32)ball;
             leader->facing = ball->facing;
-            leader->priority_flags &= 254;
+            leader->priorityFlags &= 254;
             ((struct EventHold *)work)->hold = 200;
-            gPartyState.render_mode = 0;
+            gPartyState.renderMode = 0;
             BYTE_AT(ball, 98) = 1;
             BYTE_AT(ball, 99) = 1;
         }
@@ -154,7 +154,7 @@ void Func_02000990(struct FieldActor *ball)
 stop:
     BYTE_AT(ball, 99) = 0;
     WORD_AT(ball, 108) = 0;
-    Func_02001db8(ball, Data_020026f8);
+    Func_02001db8(ball, gData_020026f8);
     Func_02001f08(228);
-    Data_02002718 = 0;
+    gData_02002718 = 0;
 }

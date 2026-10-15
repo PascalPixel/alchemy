@@ -712,6 +712,6 @@ Func_08181910:
 .L_08181ea4:
 	.4byte Data_0201576b
 .L_08181ea8:
-	.4byte Data_081991f0
+	.4byte gData_081991f0
 .L_08181eac:
 	.4byte Func_08143000

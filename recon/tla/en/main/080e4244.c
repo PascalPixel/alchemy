@@ -16,13 +16,13 @@ s32 Func_080e4244(struct ObjectRuntime *object)
     struct ObjectRuntime *other;
     s32 i;
 
-    if (*((s8 *)Ram_HeapSlots->event_work + 394) != 3) {
-        if (Func_08020308(object->x, object->z, 0, object->terrain_height) != 0)
+    if (*((s8 *)Ram_HeapSlots->eventWork + 394) != 3) {
+        if (Func_08020308(object->x, object->z, 0, object->terrainHeight) != 0)
             result = 1;
     }
-    other = Ram_HeapSlots->script_objects;
+    other = Ram_HeapSlots->scriptObjects;
     for (i = 63; i >= 0; i--, other++) {
-        if (other->script != NULL && (other->collision_flags & 1) && other != object) {
+        if (other->script != NULL && (other->collisionFlags & 1) && other != object) {
             if (Runtime_CheckRadiusOverlapFar(&object->x, object->radius - 2, &other->x, other->radius - 2) >= 0)
                 result |= 2;
         }

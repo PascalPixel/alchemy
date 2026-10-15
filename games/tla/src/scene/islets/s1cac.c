@@ -2,13 +2,13 @@
 #include "dma.h"
 #include "io_reg.h"
 
-extern u8 Data_02004f04;
-extern s16 Data_02004f10[2][160];
+extern u8 gData_02004f04;
+extern s16 gData_02004f10[2][160];
 
 // 走査線ごとの BG1 横スクロールを HBlank DMA に掛ける
 void Func_02001cac(void)
 {
-    s16 *lines = Data_02004f10[Data_02004f04];
+    s16 *lines = gData_02004f10[gData_02004f04];
     s32 first = lines[0];
     volatile u16 *scroll;
     volatile u16 *dma;

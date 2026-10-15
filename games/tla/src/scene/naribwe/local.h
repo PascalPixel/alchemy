@@ -48,12 +48,12 @@ void Func_020005ec(s32 a);
 void Func_020005f4(s32 a);
 void Func_02000464(void);
 
-extern const u8 Data_020006cc[];
-extern const u8 Data_020008c4[];
-extern const u8 Data_02000954[];
-extern const u8 Data_02000b4c[];
-extern const u8 Data_02000cfc[];
-extern const struct WarpEntry Data_0200064c[];
+extern const u8 gData_020006cc[];
+extern const u8 gData_020008c4[];
+extern const u8 gData_02000954[];
+extern const u8 gData_02000b4c[];
+extern const u8 gData_02000cfc[];
+extern const struct WarpEntry gData_0200064c[];
 
 extern u8 MsgNaribwe02;
 extern u8 MsgNaribwe03;

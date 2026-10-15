@@ -56,21 +56,21 @@ enum
 struct SceneEntrance
 {
 	s16 entrance;
-	s16 required_flag;
+	s16 requiredFlag;
 	s16 x;
 	s16 y;
 	s16 z;
 	u16 facing;
 	s16 unused1;
-	s16 camera_left;
-	s16 camera_top;
-	s16 camera_right;
-	s16 camera_bottom;
+	s16 cameraLeft;
+	s16 cameraTop;
+	s16 cameraRight;
+	s16 cameraBottom;
 	s16 unused2;
 };
 
 LAYOUT_SIZE_GUARD(SceneEntrance_Size, struct SceneEntrance, 24);
-LAYOUT_OFFSET_GUARD(SceneEntrance_CameraLeft, struct SceneEntrance, camera_left, 14);
+LAYOUT_OFFSET_GUARD(SceneEntrance_CameraLeft, struct SceneEntrance, cameraLeft, 14);
 
 #define SCENE_EXITS(scene) ((u32)(scene))
 #define SCENE_EXIT(exit, scene, entrance) ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
@@ -87,12 +87,12 @@ struct ScenePlacement
 	s32 y;
 	s32 z;
 	u16 facing;
-	u8	talk_facing;
+	u8	talkFacing;
 	u8	flags;
 };
 
 LAYOUT_SIZE_GUARD(ScenePlacement_Size, struct ScenePlacement, 24);
-LAYOUT_OFFSET_GUARD(ScenePlacement_TalkFacing, struct ScenePlacement, talk_facing, 22);
+LAYOUT_OFFSET_GUARD(ScenePlacement_TalkFacing, struct ScenePlacement, talkFacing, 22);
 
 enum ActorBehavior
 {

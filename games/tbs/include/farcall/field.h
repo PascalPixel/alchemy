@@ -73,7 +73,7 @@ FAR_CALL(Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlo
 FAR_CALL(Map_PlayMetatileCopySequenceFar, Map_PlayMetatileCopySequence, void,
 	(u16 * command, s32 destination_x, u32 destination_y))
 FAR_CALL(Map_CopyMetatileIndicesRectFar, Map_CopyMetatileIndicesRect, void,
-	(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height))
+	(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 width, u32 height))
 FAR_CALL(Map_ClearLayerEntryFlagFar, Map_ClearLayerEntryFlag, void, (u32 no))
 FAR_CALL(Map_SetLayerEntryFlagFar, Map_SetLayerEntryFlag, void, (u32 no))
 FAR_CALL(DisplayBlend_DisableRunScriptFar, DisplayBlend_DisableRunScript, void, (void))
@@ -81,11 +81,11 @@ FAR_CALL(DisplayBlend_EnableRunScriptFar, DisplayBlend_EnableRunScript, void, (v
 FAR_CALL(Map_GetTerrainHeightFar, Map_GetTerrainHeight, s32, (s32 layer, s32 x, s32 y))
 FAR_CALL(GetMapCellCollisionFar, GetMapCellCollision, s32, (s32 layer, s32 x, s32 y))
 FAR_CALL(Map_CopyMetatileCellsRectFar, Map_CopyMetatileCellsRect, void,
-	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+	(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y))
 FAR_CALL(Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect, void,
-	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+	(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y))
 FAR_CALL(Map_CopyCellIndexRectFar, Map_CopyCellIndexRect, void,
-	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+	(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y))
 FAR_CALL(Map_SetWindowCellTileFar, Map_SetWindowCellTile, void, (s32 x, s32 y, s32 px, s32 py))
 FAR_CALL(Map_CheckObjectStepFar, Map_CheckObjectStep, s32,
 	(struct ObjectRuntime * object, struct FieldPosition *position))
@@ -121,7 +121,7 @@ FAR_CALL(GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior, s32,
 FAR_CALL(
 	ResourceSlot_LoadFar, ResourceSlot_Load, s32, (u32 slot, u32 *buffer, s32 number, u32 variant))
 FAR_CALL(SetMapCellCollisionFar, SetMapCellCollision, void,
-	(u32 layer, s32 x, s32 y, u32 collision_code))
+	(u32 layer, s32 x, s32 y, u32 collisionCode))
 FAR_CALL(AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps, void,
 	(struct AnimationObject * group, s32 val))
 FAR_CALL(Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable, void, (u8 * buf, s32 cnt))

@@ -6,12 +6,12 @@
 #include "party_state.h"
 
 struct MenuFlagWork {
-    u8 unknown_000[0x506];
+    u8 unk000[0x506];
     u8 busy;
 };
 
 struct FxGroup {
-    u8 unknown_00[32];
+    u8 unk00[32];
     struct ObjectRuntime *objects[8];
     u16 values[8];
     s32 count;
@@ -19,11 +19,11 @@ struct FxGroup {
 
 struct DescriptorEntry {
     s16 id;
-    u8 unknown_02[6];
+    u8 unk02[6];
 };
 
 extern void *gOverlayArea[];
-extern struct DescriptorEntry Data_080eff28[];
+extern struct DescriptorEntry gData_080eff28[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
 void Func_08143bb8(void);
@@ -58,7 +58,7 @@ void *Func_080cce94(s32 id)
     /* FAKEMATCH: the barrier loads the party state's address before the
        field offset is built (differ 2 without it) */
     asm volatile("");
-    stopped = *(s16 *)party->unknown_26a;
+    stopped = *(s16 *)party->unk26a;
     event = found;
     if (stopped == id) {
         void *alt = Func_080ccd78(7, stopped);

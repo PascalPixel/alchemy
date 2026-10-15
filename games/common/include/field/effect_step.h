@@ -9,9 +9,9 @@ struct EffectStep
 	s32 x;
 	s32 y;
 	s32 z;
-	s32 velocity_x;
-	s32 velocity_y;
-	s32 velocity_z;
+	s32 velocityX;
+	s32 velocityY;
+	s32 velocityZ;
 	s32 variant;
 };
 
@@ -33,9 +33,9 @@ void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position)
 typedef char EffectStep_x_offset[EFFECT_STEP_OFFSET(x) == 0x00 ? 1 : -1];
 typedef char EffectStep_y_offset[EFFECT_STEP_OFFSET(y) == 0x04 ? 1 : -1];
 typedef char EffectStep_z_offset[EFFECT_STEP_OFFSET(z) == 0x08 ? 1 : -1];
-typedef char EffectStep_velocity_x_offset[EFFECT_STEP_OFFSET(velocity_x) == 0x0c ? 1 : -1];
-typedef char EffectStep_velocity_y_offset[EFFECT_STEP_OFFSET(velocity_y) == 0x10 ? 1 : -1];
-typedef char EffectStep_velocity_z_offset[EFFECT_STEP_OFFSET(velocity_z) == 0x14 ? 1 : -1];
+typedef char EffectStep_velocity_x_offset[EFFECT_STEP_OFFSET(velocityX) == 0x0c ? 1 : -1];
+typedef char EffectStep_velocity_y_offset[EFFECT_STEP_OFFSET(velocityY) == 0x10 ? 1 : -1];
+typedef char EffectStep_velocity_z_offset[EFFECT_STEP_OFFSET(velocityZ) == 0x14 ? 1 : -1];
 typedef char EffectStep_variant_offset[EFFECT_STEP_OFFSET(variant) == 0x18 ? 1 : -1];
 typedef char EffectStep_size[sizeof(struct EffectStep) == 0x1c ? 1 : -1];
 typedef char EffectPosition_size[sizeof(struct EffectPosition) == 0x0c ? 1 : -1];

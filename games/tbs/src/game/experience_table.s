@@ -1,12 +1,12 @@
 	.section .rodata
 @ 属性の組
-	.global Character_ElementGroupTable
-Character_ElementGroupTable:
+	.global gCharacter_ElementGroupTable
+gCharacter_ElementGroupTable:
 	.byte 0, 0, 1, 1, 0, 0, 1, 1
 	.balign 4
 @ レベルごとの経験値
-	.global Character_LevelExpTable
-Character_LevelExpTable:
+	.global gCharacter_LevelExpTable
+gCharacter_LevelExpTable:
 	.incbin "games/tbs/src/game/level_experience_0.table"
 	.incbin "games/tbs/src/game/level_experience_1.table"
 	.incbin "games/tbs/src/game/level_experience_2.table"

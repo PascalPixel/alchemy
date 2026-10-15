@@ -17,8 +17,8 @@ void Func_02001334(void);
 
 void Func_020004ac(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
-    s32 effect = work->screen_effect;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
+    s32 effect = work->screenEffect;
 
     Func_02000178();
     Func_0200132c();
@@ -28,9 +28,9 @@ void Func_020004ac(void)
     Func_020012fc(16);
     WaitFrames(16);
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (2 differ without it). */
-    gPartyState.unknown_2c2 = 0;
-    Func_020012bc(gPartyState.current_owner, 0);
-    work->screen_effect = effect;
+    gPartyState.unk2c2 = 0;
+    Func_020012bc(gPartyState.currentOwner, 0);
+    work->screenEffect = effect;
 }
 
 void Func_02000508(void)
@@ -38,9 +38,9 @@ void Func_02000508(void)
     Func_020000f4();
     Func_02001334();
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (one row late without it). */
-    gPartyState.unknown_2c2 = 1;
+    gPartyState.unk2c2 = 1;
     Battle_WaitMode0(40);
-    Func_0200129c(gPartyState.current_owner, 232 << 16, 136 << 16);
+    Func_0200129c(gPartyState.currentOwner, 232 << 16, 136 << 16);
     Func_020004ac();
 }
 
@@ -49,8 +49,8 @@ void Func_02000544(void)
     Func_020000f4();
     Func_02001334();
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (one row late without it). */
-    gPartyState.unknown_2c2 = 1;
+    gPartyState.unk2c2 = 1;
     Battle_WaitMode0(40);
-    Func_0200129c(gPartyState.current_owner, 240 << 16, 480 << 16);
+    Func_0200129c(gPartyState.currentOwner, 240 << 16, 480 << 16);
     Func_020004ac();
 }

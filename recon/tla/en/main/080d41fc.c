@@ -13,23 +13,23 @@ struct InputState {
 };
 
 struct TalkWork {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 message;
 };
 
 struct TalkWindowWork {
-    u8 unknown_0000[0x1384];
+    u8 unk0000[0x1384];
     u16 speaker;
     u16 portrait;
 };
 
 struct PartyTalk {
-    u8 unknown_000[0x22c];
+    u8 unk000[0x22c];
     u8 language;
 };
 
 extern volatile struct InputState gInput;
-extern const u8 Data_080f330c[];
+extern const u8 gData_080f330c[];
 
 s32 ObjectTable_ReadActiveValue(s32 id);
 s32 Func_080d1eac(s32 value);
@@ -41,23 +41,23 @@ void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 value);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 
-void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 second, s32 x2,
-                   s32 y2, s32 face_x2, s32 face_y2, s32 delay)
+void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 faceX1, s32 faceY1, s32 second, s32 x2,
+                   s32 y2, s32 faceX2, s32 faceY2, s32 delay)
 {
-    struct TalkWork *work = Ram_HeapSlots->event_work;
+    struct TalkWork *work = Ram_HeapSlots->eventWork;
     s32 one = ObjectTable_ReadActiveValue(first);
     s32 two = ObjectTable_ReadActiveValue(second);
     s32 window1;
     s32 window2;
 
     window1 = UiText_OpenMessageWindowFar((s16)work->message++, x1, y1, Func_080d1eac(one) << 16);
-    Func_080380f8(one, 0, face_x1, face_y1);
+    Func_080380f8(one, 0, faceX1, faceY1);
     if (delay != 0) {
         while (!UiWork_IsCompleteFar())
             WaitFrames(delay);
     }
     window2 = UiText_OpenMessageWindowFar((s16)work->message++, x2, y2, Func_080d1eac(two) << 16);
-    Func_080380f8(two, 0, face_x2, face_y2);
+    Func_080380f8(two, 0, faceX2, faceY2);
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
     WaitFrames(1);
@@ -77,14 +77,14 @@ void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 seco
 
 void Func_080d4330(s32 id)
 {
-    struct TalkWindowWork *work = Ram_HeapSlots->window_tiles;
+    struct TalkWindowWork *work = Ram_HeapSlots->windowTiles;
 
     if (id == (s32)0x80000000) {
         work->speaker = 0;
         work->portrait = 0;
     } else {
         s32 speaker = Func_080d1eac(ObjectTable_ReadActiveValue(id));
-        s32 portrait = Data_080f330c[((struct PartyTalk *)&gPartyState)->language];
+        s32 portrait = gData_080f330c[((struct PartyTalk *)&gPartyState)->language];
 
         /* FAKEMATCH: loads the portrait before it builds the window offset. */
         __asm__("");

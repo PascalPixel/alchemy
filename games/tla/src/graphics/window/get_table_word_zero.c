@@ -22,13 +22,13 @@ extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_Decompress4bppCodeSize[];
 
 //--------------------------------------------------------------------------
-// Ui_FixedTileBlocks[0] を返す（0 以外の no も 0 として読む）
+// gUi_FixedTileBlocks[0] を返す（0 以外の no も 0 として読む）
 //--------------------------------------------------------------------------
 s32 Ui_GetTableWordZero(s32 no)
 {
 	if (no != 0)
 		no = 0;
-	return Ui_FixedTileBlocks[no];
+	return gUi_FixedTileBlocks[no];
 }
 
 //--------------------------------------------------------------------------

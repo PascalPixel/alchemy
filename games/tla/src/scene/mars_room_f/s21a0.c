@@ -3,14 +3,14 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 struct SpriteParts {
-    u8 unknown_00[9];
-    u8 unknown_09_low : 2;
+    u8 unk00[9];
+    u8 unk09Low : 2;
     u8 part : 2;
-    u8 unknown_0a[8];
-    u16 unknown_12;
+    u8 unk0a[8];
+    u16 unk12;
 };
 
-extern const u8 Data_02005d8c[];
+extern const u8 gData_02005d8c[];
 
 void Func_02001e20(void);
 void Func_02001ffc(void);
@@ -23,11 +23,11 @@ void Func_020021a0(s32 *position, s32 speed, s32 mode)
     if (object != NULL) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = -speed;
+        object->unk4c = -speed;
         Func_0200215c(object, 3);
         object->update = Func_02001e20;
         if (mode)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02005480(object, 2);
     }
 }
@@ -39,11 +39,11 @@ void Func_020021e8(s32 *position, s32 speed, s32 mode)
     if (object != NULL) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = speed;
+        object->unk4c = speed;
         Func_0200215c(object, 3);
         object->update = Func_02001ffc;
         if (mode)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02005480(object, 2);
     }
 }
@@ -55,11 +55,11 @@ void Func_02002230(s32 *position, s32 speed, s32 mode)
     if (object != NULL) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = -speed;
+        object->unk4c = -speed;
         Func_0200215c(object, 3);
         object->update = Func_02001ffc;
         if (mode)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02005480(object, 2);
     }
 }
@@ -78,7 +78,7 @@ s32 Func_02002278(struct ObjectRuntime *a, struct ObjectRuntime *b)
 
 void Func_020022d0(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 dx = object->bounce;
     s32 dz;
     struct SpriteParts *parts;
@@ -87,37 +87,37 @@ void Func_020022d0(struct ObjectRuntime *object)
 
     object->x += dx;
     object->y += object->gravity;
-    dz = object->unknown_4c;
+    dz = object->unk4c;
     object->z += dz;
     object->bounce = dx - dx / 18;
-    object->unknown_4c = dz - dz / 16;
+    object->unk4c = dz - dz / 16;
     /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate */
     asm volatile("");
-    rate = object->speed_limit;
-    scale = object->scale_x;
+    rate = object->speedLimit;
+    scale = object->scaleX;
     parts = object->animation;
-    object->scale_x = scale + rate;
-    object->scale_y += object->acceleration;
+    object->scaleX = scale + rate;
+    object->scaleY += object->acceleration;
     /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action */
     asm volatile("");
-    parts->unknown_12 += object->action;
-    if (leader->y == leader->terrain_height && Func_02002278(object, leader)) {
-        object->z -= object->unknown_4c;
-        object->gravity += object->unknown_4c >> 2;
-        object->unknown_4c = 0;
+    parts->unk12 += object->action;
+    if (leader->y == leader->terrainHeight && Func_02002278(object, leader)) {
+        object->z -= object->unk4c;
+        object->gravity += object->unk4c >> 2;
+        object->unk4c = 0;
     }
 }
 
 void Func_0200236c(struct ObjectRuntime *object, s32 unused)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02005480(object, 2);
-    Func_02005490(object, Data_02005d8c);
+    Func_02005490(object, gData_02005d8c);
     Object_SetPartAttribute(object, 10);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }
 
@@ -129,7 +129,7 @@ void Func_020023ac(s32 *position, s32 speed)
     if (object != NULL) {
         object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);
         object->gravity = (u16)Random16Far();
-        object->unknown_4c = (u16)(Random16Far() << 1) + speed;
+        object->unk4c = (u16)(Random16Far() << 1) + speed;
         spin = (u16)Random16Far() + 0xffff8000;
         object->action = spin;
         Func_0200236c(object, 2);

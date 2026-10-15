@@ -9,7 +9,7 @@ void Func_081082c4(s32 mode, s32 shop);
 s32 Debug_ApplyPresetItemsAndFlags(void)
 {
     gPartyState.coins = 200000;
-    gPartyState.counter_c = 28;
+    gPartyState.counterC = 28;
     Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
     Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
     Inventory_AddItemFar(2, 0xe7);

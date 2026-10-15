@@ -311,7 +311,7 @@ Func_080caa4c:
 .L_080caca8:
 	.4byte gPartyState
 .L_080cacac:
-	.4byte Data_080f21d4
+	.4byte gData_080f21d4
 .L_080cacb0:
 	.4byte 0x000fffff
 .L_080cacb4:

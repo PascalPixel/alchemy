@@ -11,7 +11,7 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
 s32 UiText_BuildRenderEntries(s32 key, s32 mode);
 void UiWindow_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height, u16 *bounds, s32 mode);
@@ -56,7 +56,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
         UiWork_Finalize(window, 1);
         return NULL;
     }
-    work->unknown_138a[0] = 0;
-    work->unknown_138a[1] = 0;
+    work->unk138a[0] = 0;
+    work->unk138a[1] = 0;
     return window;
 }

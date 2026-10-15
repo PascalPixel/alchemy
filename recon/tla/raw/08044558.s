@@ -197,7 +197,7 @@ Func_08044558:
 .L_080446f4:
 	.4byte gPartyState
 .L_080446f8:
-	.4byte NameEntry_KeyboardTilemap
+	.4byte gNameEntry_KeyboardTilemap
 .L_080446fc:
 	.4byte 0x000001fa
 .L_08044700:
@@ -342,7 +342,7 @@ Func_08044558:
 .L_08044818:
 	.4byte gFrameTick
 .L_0804481c:
-	.4byte NameEntry_CaretWave
+	.4byte gNameEntry_CaretWave
 .L_08044820:
 	.4byte gInput
 .L_08044824:

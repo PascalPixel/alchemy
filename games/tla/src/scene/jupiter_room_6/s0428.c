@@ -7,9 +7,9 @@
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020023bc;
-extern s32 Data_020023c0;
-extern u16 Data_020023e8[];
+extern s32 gData_020023bc;
+extern s32 gData_020023c0;
+extern u16 gData_020023e8[];
 
 s32 __modsi3();
 s32 Map_GetTerrainHeight();
@@ -26,13 +26,13 @@ void Func_02000428(s32 id)
     /* FAKEMATCH: the one-pass block loads the ground height before the word is cleared; as plain statements the ARM9TDMI schedule clears it first (differ 2). */
     do {
         object = Object_GetById(id);
-        object->motion_flags = 4;
+        object->motionFlags = 4;
         height = object->height;
         WORD_AT(object, 68) = 0;
         object->y = height + 0x200000;
     } while (0);
     {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: the native builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

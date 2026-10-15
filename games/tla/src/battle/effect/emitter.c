@@ -14,7 +14,7 @@ struct ParticleEmitter {
     u8 padding[8];
     struct ParticlePosition position;
     u8 padding2[20];
-    s32 travel_offset;
+    s32 travelOffset;
     u8 padding3[41];
     u8 active;
 };
@@ -27,9 +27,9 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
 {
     struct ParticlePosition position;
     struct ParticleEffectObject *object;
-    u32 random_angle;
+    u32 randomAngle;
 
-    if (emitter->travel_offset >= -255 && emitter->travel_offset <= 255)
+    if (emitter->travelOffset >= -255 && emitter->travelOffset <= 255)
         emitter->active = 0;
 
     if ((100 * Random16() >> 16) > 9)
@@ -38,14 +38,14 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     position.x = emitter->position.x;
     position.y = emitter->position.y;
     position.z = emitter->position.z;
-    random_angle = Random16();
-    Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
+    randomAngle = Random16();
+    Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
     object = Object_Spawn(0x2a1, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

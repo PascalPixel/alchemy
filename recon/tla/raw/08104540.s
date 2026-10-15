@@ -472,7 +472,7 @@ Func_08104540:
 .L_08104914:
 	.4byte 0x060052c0
 .L_08104918:
-	.4byte Menu_BackdropFrameTile
+	.4byte gMenu_BackdropFrameTile
 .L_0810491c:
 	.4byte IwramFillWords
 .L_08104920:

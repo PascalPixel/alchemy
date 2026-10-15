@@ -8,7 +8,7 @@ s32 __divsi3(s32, s32);
 s32 Object_ClearChildAndCollisionFlags(struct ObjectRuntime *obj)
 {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
-    obj->collision_flags = 0;
+    obj->collisionFlags = 0;
     return 0;
 }
 
@@ -19,13 +19,13 @@ s32 Object_ClearChildFlags(struct ObjectRuntime *obj)
 }
 
 struct ObjectFlags23 {
-    u8 unknown_00[0x23];
-    u8 flags_23;
+    u8 unk00[0x23];
+    u8 flags23;
 };
 
 s32 Object_SetPriorityBit5(struct ObjectFlags23 *obj)
 {
-    obj->flags_23 |= 0x20;
+    obj->flags23 |= 0x20;
     return 0;
 }
 
@@ -40,7 +40,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
     s32 distance;
     s32 step;
 
-    target = object->linked_object;
+    target = object->linkedObject;
     if (target != 0) {
         deltaX = target->x - object->x;
         if (deltaX < 0)

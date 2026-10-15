@@ -481,7 +481,7 @@ Func_0816aeec:
 .L_0816b294:
 	.4byte IwramCopyWords
 .L_0816b298:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816b29c:
 	.4byte gMapCellBuffer
 .L_0816b2a0:
@@ -1001,7 +1001,7 @@ Func_0816aeec:
 .L_0816b6ac:
 	.4byte 0xffff00ff
 .L_0816b6b0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816b6b4:
 	.4byte gMapCellBuffer
 .L_0816b6b8:
@@ -1009,11 +1009,11 @@ Func_0816aeec:
 .L_0816b6bc:
 	.4byte 0xffffe000
 .L_0816b6c0:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0816b6c4:
 	.4byte 0xfffd0000
 .L_0816b6c8:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0816b6cc:
 	.4byte 0xffff4000
 .L_0816b6d0:

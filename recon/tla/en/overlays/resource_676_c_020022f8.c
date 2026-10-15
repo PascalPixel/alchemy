@@ -9,7 +9,7 @@
 extern char SceneId_Ov676Room1;
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
 };
 
@@ -45,7 +45,7 @@ void Func_020022f8(void)
 
     GameFlag_SetBit(0x300);
     object->acceleration = 0x18000;
-    object->speed_limit = 0x80000;
+    object->speedLimit = 0x80000;
     Func_020025a0(227);
     Func_02002450_(object, 0xb00000, 0x280000, 0xb80000);
     step = 0;
@@ -68,7 +68,7 @@ void Func_020022f8(void)
     object->x = 0xa80000;
     object->z = 0xc00000;
     object->y = 0;
-    object->velocity_y = 0;
-    object->velocity_x = 0;
+    object->velocityY = 0;
+    object->velocityX = 0;
     Func_02002470_(8, 12, 1, 1, 10, 12);
 }

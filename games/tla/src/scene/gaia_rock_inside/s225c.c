@@ -16,8 +16,8 @@ void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acc
 void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void                  Battle_WaitMode0(s32 frames);
 void                  WaitFrames(s32 frames);
-void Func_02004df4(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_02004dfc(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02004df4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_02004dfc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02004e3c(struct ObjectRuntime *object, s32 value);
 void Func_02004e5c(void);
 void Func_02004e64(void);
@@ -46,12 +46,12 @@ void Func_0200225c(void)
     UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
-    Func_02004ec4(12, gPartyState.current_owner);
+    Func_02004ec4(12, gPartyState.currentOwner);
     Call3(ObjectMotion_ResetAndSetPosition, 12, 528, 372);
-    partner->velocity_y = 0x60000;
+    partner->velocityY = 0x60000;
     ObjectMotion_CommitCurrentPositionAndActivate(12);
     Battle_WaitMode0(45);
-    ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     Func_02005014(576);
     Object_SetModeById(8, 5);
     WaitFrames(30);
@@ -64,7 +64,7 @@ void Func_0200225c(void)
     {
         for (i = 19; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
@@ -72,30 +72,30 @@ void Func_0200225c(void)
         Call6(Func_02004dfc, 27, 23, 1, 1, 28, 22);
         Func_02004dfc(32, 16, 2, 1, 29, 22);
         i = 0;
-        if (object->unknown_56 != 0)
+        if (object->unk56 != 0)
         {
             do
             {
-                object->velocity_y = Random16Far();
+                object->velocityY = Random16Far();
                 WaitFrames(1);
                 if (++i > 299)
                     break;
-            } while (object->unknown_56 != 0);
+            } while (object->unk56 != 0);
         }
         Call6(Func_02004df4, 2, 93, 1, 5, 28, 85);
         for (i = 9; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Func_02005014(564);
         Object_SetModeById(8, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 12, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(12);
         Func_02004ebc(12, 0, 0);
         if (!GameFlag_Test(0x927))
@@ -115,17 +115,17 @@ void Func_0200225c(void)
     {
         for (i = 119; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Battle_WaitMode0(30);
         Object_SetModeById(8, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 12, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(12);
         Func_02004ebc(12, 0, 0);
         Func_02004e64();
@@ -146,12 +146,12 @@ void Func_020024b8(void)
     UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
-    Func_02004ec4(12, gPartyState.current_owner);
+    Func_02004ec4(12, gPartyState.currentOwner);
     Call3(ObjectMotion_ResetAndSetPosition, 12, 672, 372);
-    partner->velocity_y = 0x60000;
+    partner->velocityY = 0x60000;
     ObjectMotion_CommitCurrentPositionAndActivate(12);
     Battle_WaitMode0(45);
-    ObjectMotion_SetAngleToward(9, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
     Func_02005014(576);
     Object_SetModeById(9, 5);
     WaitFrames(30);
@@ -164,7 +164,7 @@ void Func_020024b8(void)
     {
         for (i = 19; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Call3(ObjectMotion_SetSpeedParameters, 9, 0x4000, 0xccc);
@@ -172,30 +172,30 @@ void Func_020024b8(void)
         Call6(Func_02004dfc, 35, 23, 1, 1, 36, 22);
         Func_02004dfc(32, 16, 2, 1, 37, 22);
         i = 0;
-        if (object->unknown_56 != 0)
+        if (object->unk56 != 0)
         {
             do
             {
-                object->velocity_y = Random16Far();
+                object->velocityY = Random16Far();
                 WaitFrames(1);
                 if (++i > 299)
                     break;
-            } while (object->unknown_56 != 0);
+            } while (object->unk56 != 0);
         }
         Call6(Func_02004df4, 2, 93, 1, 5, 36, 85);
         for (i = 9; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Func_02005014(564);
         Object_SetModeById(9, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 12, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(12);
         Func_02004ebc(12, 0, 0);
         if (!GameFlag_Test(0x927))
@@ -215,17 +215,17 @@ void Func_020024b8(void)
     {
         for (i = 119; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Battle_WaitMode0(30);
         Object_SetModeById(9, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 12, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(12);
         Func_02004ebc(12, 0, 0);
         Func_02004e64();
@@ -246,12 +246,12 @@ void Func_02002718(void)
     UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
-    Func_02004ec4(14, gPartyState.current_owner);
+    Func_02004ec4(14, gPartyState.currentOwner);
     Call3(ObjectMotion_ResetAndSetPosition, 14, 336, 396);
-    partner->velocity_y = 0x60000;
+    partner->velocityY = 0x60000;
     ObjectMotion_CommitCurrentPositionAndActivate(14);
     Battle_WaitMode0(45);
-    ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     Func_02005014(576);
     Object_SetModeById(8, 5);
     WaitFrames(30);
@@ -264,7 +264,7 @@ void Func_02002718(void)
     {
         for (i = 19; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
@@ -272,30 +272,30 @@ void Func_02002718(void)
         Call6(Func_02004dfc, 27, 15, 2, 1, 23, 23);
         Func_02004dfc(25, 25, 1, 1, 25, 23);
         i = 0;
-        if (object->unknown_56 != 0)
+        if (object->unk56 != 0)
         {
             do
             {
-                object->velocity_y = Random16Far();
+                object->velocityY = Random16Far();
                 WaitFrames(1);
                 if (++i > 299)
                     break;
-            } while (object->unknown_56 != 0);
+            } while (object->unk56 != 0);
         }
         Call6(Func_02004df4, 1, 85, 1, 4, 25, 85);
         for (i = 9; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Func_02005014(564);
         Object_SetModeById(8, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 14, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(14);
         Func_02004ebc(14, 0, 0);
         if (!GameFlag_Test(0x927))
@@ -315,17 +315,17 @@ void Func_02002718(void)
     {
         for (i = 119; i >= 0; i--)
         {
-            object->velocity_y = Random16Far();
+            object->velocityY = Random16Far();
             WaitFrames(1);
         }
         Battle_WaitMode0(30);
         Object_SetModeById(8, 4);
         Battle_WaitMode0(30);
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         if (leader != NULL)
             ObjectMotion_ResetAndSetPosition(
                 14, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
-        partner->velocity_y = 0x60000;
+        partner->velocityY = 0x60000;
         ObjectMotion_CommitCurrentPositionAndActivate(14);
         Func_02004ebc(14, 0, 0);
         Func_02004e64();

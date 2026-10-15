@@ -458,7 +458,7 @@ BattleTargetExec:
 .L_081207cc:
 	.4byte 0xfffffd30
 .L_081207d0:
-	.4byte HitTable
+	.4byte gHitTable
 .L_081207d4:
 	movs r2, #0
 	str r2, [sp, #40]
@@ -1433,19 +1433,19 @@ BattleTargetExec:
 .L_08120f48:
 	.4byte 0x00000c70
 .L_08120f4c:
-	.4byte PpLossTable
+	.4byte gPpLossTable
 .L_08120f50:
 	.4byte 0x00000c76
 .L_08120f54:
 	.4byte 0x00000c75
 .L_08120f58:
-	.4byte HpRecoveryTable
+	.4byte gHpRecoveryTable
 .L_08120f5c:
 	.4byte 0x00000c6c
 .L_08120f60:
 	.4byte 0x00000c69
 .L_08120f64:
-	.4byte PpDmgTable
+	.4byte gPpDmgTable
 .L_08120f68:
 	.4byte 0x00000c73
 .L_08120f6c:
@@ -2097,11 +2097,11 @@ BattleTargetExec:
 	bl UnitRatioFar
 	b .L_08121480
 .L_08121430:
-	.4byte HpDmgTable5
+	.4byte gHpDmgTable5
 .L_08121434:
-	.4byte HpDmgTable8
+	.4byte gHpDmgTable8
 .L_08121438:
-	.4byte HpDmgTable6
+	.4byte gHpDmgTable6
 .L_0812143c:
 	.4byte gPartyState
 .L_08121440:
@@ -2113,13 +2113,13 @@ BattleTargetExec:
 .L_0812144c:
 	.4byte 0x00000c70
 .L_08121450:
-	.4byte PpRecoveryTable
+	.4byte gPpRecoveryTable
 .L_08121454:
 	.4byte 0x00000c6d
 .L_08121458:
 	.4byte 0x00000c6a
 .L_0812145c:
-	.4byte HpDmgTable
+	.4byte gHpDmgTable
 .L_08121460:
 	.4byte 0x00000c73
 .L_08121464:

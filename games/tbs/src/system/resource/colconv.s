@@ -1,6 +1,6 @@
 	.section .rodata
-	.global ResourceSlot_ConversionTables
-ResourceSlot_ConversionTables:
+	.global gResourceSlot_ConversionTables
+gResourceSlot_ConversionTables:
 	.incbin "games/tbs/src/system/resource/colconv0.table"
 	.incbin "games/tbs/src/system/resource/colconv1.table"
 	.incbin "games/tbs/src/system/resource/colconv2.table"

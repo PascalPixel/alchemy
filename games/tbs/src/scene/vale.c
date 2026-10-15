@@ -391,13 +391,13 @@ static void FieldScene_RunScene373SequenceC(void)
 	jenna->x.fixed = leader->x.fixed;
 	jenna->y.fixed = leader->y.fixed;
 	jenna->z.fixed = leader->z.fixed;
-	jenna->target_x = ACTOR_NO_TARGET;
-	jenna->target_y = ACTOR_NO_TARGET;
-	jenna->target_z = ACTOR_NO_TARGET;
-	jenna->velocity_x = 0;
-	jenna->velocity_y = 0;
-	jenna->velocity_z = 0;
-	jenna->terrain_height = leader->y.fixed;
+	jenna->targetX = ACTOR_NO_TARGET;
+	jenna->targetY = ACTOR_NO_TARGET;
+	jenna->targetZ = ACTOR_NO_TARGET;
+	jenna->velocityX = 0;
+	jenna->velocityY = 0;
+	jenna->velocityZ = 0;
+	jenna->terrainHeight = leader->y.fixed;
 	Engine_TaskWait(1);
 	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
 	Actor_WalkToAndWait(JENNA, 110, 0x11b);
@@ -528,10 +528,10 @@ static void EV50_TOUCH(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 5, 0);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 0x193);
-	rec7->steering_flags |= ACTOR_FACES_MOTION;
+	rec7->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_SetPosition(22, 0xa60000, 0x1770000);
 	Actor_FaceDirection(22, FACING_SOUTHEAST, 20);
-	rec7->steering_flags = (rec7->steering_flags ^ 1);
+	rec7->steeringFlags = (rec7->steeringFlags ^ 1);
 	Actor_SetSpeed(22, 0x28000, 0x28000);
 	Engine_ActorJump(22, 4, 0);
 	Actor_WalkToAndWait(22, 202, 0x18b);
@@ -600,11 +600,11 @@ static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1)
 	Object_RefreshSelectorById(0);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(22, 2);
-	rec8->scale_x = 0x10000;
-	rec8->scale_y = 0x10000;
+	rec8->scaleX = 0x10000;
+	rec8->scaleY = 0x10000;
 	record = Object_GetById(ACTOR_PARTY_LEADER);
-	record->scale_x = 0x10000;
-	record->scale_y = 0x10000;
+	record->scaleX = 0x10000;
+	record->scaleY = 0x10000;
 	Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
 	Event_AskYesNo(22, 0);
 	record = Actor_Get(22);
@@ -654,14 +654,14 @@ static void HouseScene_RunRepairMorning(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
-	u8				   leader_motion_flags;
-	u8				  *leader_motion;
+	u8				   leaderMotionFlags;
+	u8				  *leaderMotion;
 	s32				   i;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	actor = Engine_EventGetViewCenter();
-	actor->motion_flags = 0;
+	actor->motionFlags = 0;
 	Camera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
 	Engine_EventWait(1);
 	Engine_MapRedraw();
@@ -670,9 +670,9 @@ static void HouseScene_RunRepairMorning(void)
 	Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
 	Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
-	leader_motion = &leader->motion_flags;
-	leader_motion_flags = *leader_motion;
-	*leader_motion = 0;
+	leaderMotion = &leader->motionFlags;
+	leaderMotionFlags = *leaderMotion;
+	*leaderMotion = 0;
 	Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
 	Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
 	Actor_SetPosition(GARET, PIXELS(298), PIXELS(736));
@@ -684,8 +684,8 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
 	SceneActor_ResetActorRun(ACTOR_BOARD, 2, 1);
-	gEventWork->start_transition = 0;
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = 0;
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(JENNA, 0x8000, 0x4000);
 	Actor_SetSpeed(GARET, 0x8000, 0x4000);
@@ -693,8 +693,8 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorEnableActionCallback(GARET, gGaretAction);
 
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
-	leader->scale_x = 0x10000;
-	leader->scale_y = 0x10000;
+	leader->scaleX = 0x10000;
+	leader->scaleY = 0x10000;
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 40);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	Engine_EventWait(10);
@@ -724,8 +724,8 @@ static void HouseScene_RunRepairMorning(void)
 	Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
 
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
-	leader->scale_x = 0x10000;
-	leader->scale_y = 0x10000;
+	leader->scaleX = 0x10000;
+	leader->scaleY = 0x10000;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -751,8 +751,8 @@ static void HouseScene_RunRepairMorning(void)
 	Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
 
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
-	leader->scale_x = 0x10000;
-	leader->scale_y = 0x10000;
+	leader->scaleX = 0x10000;
+	leader->scaleY = 0x10000;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -777,8 +777,8 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(200);
 	Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
-	leader->scale_x = 0x10000;
-	leader->scale_y = 0x10000;
+	leader->scaleX = 0x10000;
+	leader->scaleY = 0x10000;
 
 	Engine_EventSetMessage(MsgValeGoodJob);
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
@@ -895,10 +895,10 @@ static void HouseScene_RunRepairMorning(void)
 	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
 	Actor_SetSpeed(GARET, 0x4ccc, 0x2666);
 	Actor_WalkTo(GARET, 392, 843);
-	Actor_Get(JENNA)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(JENNA, 408, 843);
 	Engine_EventWait(1);
-	Actor_Get(JENNA)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(JENNA)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(JENNA, FACING_WEST, 0);
 	Engine_ActorWaitForMove(GARET);
 	Engine_ActorSetAnimation(GARET, ANIM_STAND);
@@ -993,14 +993,14 @@ static void HouseScene_RunRepairMorning(void)
 	Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, GARET, 10, 14, 4, 14, 0);
 	actor = Actor_Get(ACTOR_DORA);
 	actor->sprite->flags = 0;
-	actor->steering_flags &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
 	Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
 	Engine_EventWait(4);
 	for (i = 0; i != 4; i++)
 	{
 		actor->z.fixed += 0x18000;
-		actor->scale_y -= 0x1999;
+		actor->scaleY -= 0x1999;
 		Engine_EventWait(1);
 	}
 	Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -1023,11 +1023,11 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_MapRenderWaitForValues();
 	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
 	Engine_ActorSetAnimation(ACTOR_DORA, 8);
-	actor->scale_y = 0x8000;
+	actor->scaleY = 0x8000;
 	Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
 	for (i = 0; i != 5; i++)
 	{
-		actor->scale_y += 0x1999;
+		actor->scaleY += 0x1999;
 		Engine_EventWait(1);
 	}
 	Engine_EventWait(60);
@@ -1049,7 +1049,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(30);
 	actor = Actor_Get(ACTOR_DORA);
-	actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
@@ -1071,7 +1071,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorSetAnimation(GARET, ANIM_STAND);
 	Actor_SetSpeed(GARET, 0x40000, 0x20000);
 	actor = Actor_Get(GARET);
-	actor->steering_flags &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(GARET, 403, 827);
 	Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
 	Actor_FaceDirection(JENNA, FACING_NORTH, 20);
@@ -1158,9 +1158,9 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(60);
 
 	actor = Actor_Get(GARET);
-	actor->steering_flags |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = Actor_Get(JENNA);
-	actor->steering_flags |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
@@ -1182,7 +1182,7 @@ static void HouseScene_RunRepairMorning(void)
 	Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 0);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_Get(ACTOR_DORA)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
 	Vale_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
 	Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
@@ -1195,7 +1195,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(100);
 	GameFlag_Set(0x202);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-	*leader_motion = leader_motion_flags;
+	*leaderMotion = leaderMotionFlags;
 	Engine_EventEnd();
 }
 
@@ -1241,8 +1241,8 @@ s32 Vale_ApplyEntryState(void)
 		actor->z.fixed = 0x2480000;
 		actor->y.fixed = 0xc00000;
 		Vale_OpenVillagerLane();
-		actor->terrain_id = 3;
-		actor->motion_flags = 0;
+		actor->terrainId = 3;
+		actor->motionFlags = 0;
 		FieldScheduler_AddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 		if (Engine_GameFlagIsSet(0x87a))
@@ -1269,8 +1269,8 @@ s32 Vale_ApplyEntryState(void)
 			{
 				actor = Object_GetById(21);
 				Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
-				actor->scale_x = 0x28f;
-				actor->scale_y = 0x28f;
+				actor->scaleX = 0x28f;
+				actor->scaleY = 0x28f;
 			}
 			if (Engine_GameFlagIsSet(0x808))
 			{
@@ -1558,7 +1558,7 @@ static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Actor_SetSpeed(a0, 0x10000, 0x8000);
 	Actor_WalkToAndWait(a0, 0x188, 0x376);
 	Actor_FaceDirection(0, FACING_NORTH, 10);
-	rec8->motion_flags = 0;
+	rec8->motionFlags = 0;
 	((struct FieldSprite *)p5)->flags = 0;
 	Engine_ActorSetAnimation(a0, p8);
 	Actor_SetSpeed(a0, 0x4ccc, 0x2666);
@@ -1570,7 +1570,7 @@ static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	p5[38] = 1;
 	if (p9 != 0)
 	{
-		rec8->motion_flags = 3;
+		rec8->motionFlags = 3;
 	}
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(a0, 1);
@@ -1592,7 +1592,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Actor_SetSpeed(a0, 0x10000, 0x8000);
 	Actor_WalkToAndWait(a0, 0x188, 0x35b);
 	Actor_FaceDirection(a0, FACING_NORTH, 10);
-	rec8->motion_flags = 0;
+	rec8->motionFlags = 0;
 	((struct FieldSprite *)p5)->flags = 0;
 	Engine_ActorSetAnimation(a0, p8);
 	Actor_SetSpeed(a0, 0x10000, 0x8000);
@@ -1601,11 +1601,11 @@ static void Vale_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Actor_SetSpeed(a0, 0x4ccc, 0x2666);
 	Engine_ActorSetAnimation(a0, p10);
 	Actor_MoveToAndWait(a0, 0x188, 0x37a);
-	rec8->velocity_y = 0x20000;
+	rec8->velocityY = 0x20000;
 	p5[38] = 1;
 	if (p9 != 0)
 	{
-		rec8->motion_flags = 3;
+		rec8->motionFlags = 3;
 	}
 	Engine_ActorSetAnimation(a0, 1);
 }
@@ -1654,26 +1654,26 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
-	((struct FieldActor *)Engine_EventGetViewCenter())->motion_flags = 0;
+	((struct FieldActor *)Engine_EventGetViewCenter())->motionFlags = 0;
 	Engine_TaskWait(1);
 	Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
 	Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
 	Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
 	Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
 	rec = Object_GetById(11);
-	((struct FieldActor *)rec)->motion_flags = 0;
+	((struct FieldActor *)rec)->motionFlags = 0;
 	((struct FieldActor *)rec)->x.fixed = 0x1840000;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
 	((struct FieldActor *)rec)->z.fixed = 0x3480000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Object_GetById(12);
-	((struct FieldActor *)rec)->motion_flags = 0;
+	((struct FieldActor *)rec)->motionFlags = 0;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
 	((struct FieldActor *)rec)->z.fixed = 0x34c0000;
 	((struct FieldActor *)rec)->x.fixed = 0x1840000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Object_GetById(13);
-	((struct FieldActor *)rec)->motion_flags = 0;
+	((struct FieldActor *)rec)->motionFlags = 0;
 	((struct FieldActor *)rec)->z.fixed = 0x3500000;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
 	((struct FieldActor *)rec)->x.fixed = 0x1840000;
@@ -1698,7 +1698,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_SetSpeed(JENNA, 0xb333, 0x5999);
 	Actor_WalkTo(JENNA, 0x1a4, 0x42c);
 	Audio_PlayCueFromEventWork();
-	gEventWork->transition_frames = 60;
+	gEventWork->transitionFrames = 60;
 	Engine_EventOpenScreen();
 	Engine_ActorWaitForMove(JENNA);
 	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
@@ -1732,8 +1732,8 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_ActorJump(10, 2, 20);
 	Engine_EventSetMessage(msg + 1);
 	Event_ShowMessageAndWait(0x100a, 0, 10);
-	rec3->scale_x = 0x10000;
-	rec3->scale_y = 0x10000;
+	rec3->scaleX = 0x10000;
+	rec3->scaleY = 0x10000;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 40);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -1786,7 +1786,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	record = Object_GetById(14);
 	Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
 	none2 = 0;
-	rec8->motion_flags = none2;
+	rec8->motionFlags = none2;
 	rec8->x.fixed = 0x1ac0000;
 	rec8->y.fixed = 0xd00000;
 	rec8->z.fixed = 0x2480000;
@@ -1806,7 +1806,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Event_ShowMessageAndWait(0x2005, 0, 10);
 	rec8->update = (void (*)(union FieldObject *))none2;
 	Engine_ActorSetSpritePriority(GARET, 2);
-	Actor_Get(GARET)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	Scheduler_RemoveCallback((s32)SceneState_SetValue1ThenCall);
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep9);
 	Engine_TaskWait(1);
@@ -1936,7 +1936,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_WalkTo(JENNA, 0x1c2, 0x2ee);
 	Actor_WalkTo(GARET, 0x1c2, 0x2ee);
 	Engine_EventWait(60);
-	gEventWork->transition_frames = 60;
+	gEventWork->transitionFrames = 60;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(12);
@@ -1948,17 +1948,17 @@ static void Scene_RepairTheHouse(void)
 	struct FieldActor *scene;
 	struct FieldActor *rec;
 	u32				   i;
-	s32				   turn_back;
-	s32				   turn_side;
+	s32				   turnBack;
+	s32				   turnSide;
 	struct FieldActor *turned;
 	s32				   none;
 	s32				   flag;
-	s32				   callback_a;
-	s32				   callback_b;
-	s32				   callback_c;
-	s32				   callback_d;
-	s32				   callback_e;
-	s32				   callback_f;
+	s32				   callbackA;
+	s32				   callbackB;
+	s32				   callbackC;
+	s32				   callbackD;
+	s32				   callbackE;
+	s32				   callbackF;
 
 	scene = Actor_Get(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
@@ -1972,31 +1972,31 @@ static void Scene_RepairTheHouse(void)
 	turned = Actor_Get(ACTOR_DORA);
 
 	turned->facing = 0;
-	turn_back = 0xc000;
-	turned->facing = turn_back;
+	turnBack = 0xc000;
+	turned->facing = turnBack;
 	Actor_SetPosition(GARET, 0x12a0000, 0x2e00000);
 	turned = Actor_Get(GARET);
-	turn_side = 0x4000;
-	turned->facing = turn_side;
+	turnSide = 0x4000;
+	turned->facing = turnSide;
 	Actor_SetPosition(JENNA, 0x12a0000, 0x2f80000);
 	turned = Actor_Get(JENNA);
-	turned->facing = turn_side;
+	turned->facing = turnSide;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
 	rec = Actor_Get(23);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	rec->x.fixed = 0x1840000;
 	rec->y.fixed = 0xa00000;
 	rec->z.fixed = 0x3480000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Actor_Get(24);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	rec->x.fixed = 0x1840000;
 	rec->y.fixed = 0xa00000;
 	rec->z.fixed = 0x34c0000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Actor_Get(25);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	rec->x.fixed = 0x1840000;
 	rec->y.fixed = 0xa00000;
 	rec->z.fixed = 0x3500000;
@@ -2006,23 +2006,23 @@ static void Scene_RepairTheHouse(void)
 	Camera_MoveTo(0x17f0000, 0xa00000, 0x36d0000, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->transition_frames = 32;
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
-	Actor_SetSpeed(JENNA, 0x8000, turn_side);
-	Actor_SetSpeed(GARET, 0x8000, turn_side);
+	Actor_SetSpeed(JENNA, 0x8000, turnSide);
+	Actor_SetSpeed(GARET, 0x8000, turnSide);
 	Engine_ActorEnableActionCallback(5, (u32)gJennaAction);
 	Engine_ActorEnableActionCallback(1, (u32)gGaretAction);
 	Engine_EventWait(40);
 	Engine_ActorEnableActionCallback(0, 1);
-	scene->scale_x = 0x10000;
-	scene->scale_y = 0x10000;
+	scene->scaleX = 0x10000;
+	scene->scaleY = 0x10000;
 	Actor_FaceDirection(0, 0xb000, 40);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 400, 840);
 	Engine_EventWait(10);
-	Actor_FaceDirection(ACTOR_PARTY_LEADER, turn_back, 30);
+	Actor_FaceDirection(ACTOR_PARTY_LEADER, turnBack, 30);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
@@ -2036,10 +2036,10 @@ static void Scene_RepairTheHouse(void)
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-	callback_a = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_a, 3200);
-	callback_b = (s32)FieldScene_RunStep17;
-	Task_AddCallback((void (*)(void))callback_b, 3200);
+	callbackA = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackA, 3200);
+	callbackB = (s32)FieldScene_RunStep17;
+	Task_AddCallback((void (*)(void))callbackB, 3200);
 	Actor_SetSpeed(23, 0x3333, 0x1999);
 	Actor_MoveToAndWait(23, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2048,12 +2048,12 @@ static void Scene_RepairTheHouse(void)
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+		record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_a);
-	Scheduler_RemoveCallback(callback_b);
+	Scheduler_RemoveCallback(callbackA);
+	Scheduler_RemoveCallback(callbackB);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(23, 0);
@@ -2064,8 +2064,8 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventWait(120);
 	Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
 	Engine_ActorEnableActionCallback(0, 1);
-	scene->scale_x = 0x10000;
-	scene->scale_y = 0x10000;
+	scene->scaleX = 0x10000;
+	scene->scaleY = 0x10000;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -2080,10 +2080,10 @@ static void Scene_RepairTheHouse(void)
 		Engine_TaskWait(1);
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-	callback_c = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_c, 3200);
-	callback_d = (s32)SceneState_SetValue24ThenCall;
-	Task_AddCallback((void (*)(void))callback_d, 3200);
+	callbackC = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackC, 3200);
+	callbackD = (s32)SceneState_SetValue24ThenCall;
+	Task_AddCallback((void (*)(void))callbackD, 3200);
 	Actor_SetSpeed(24, 0x3333, 0x1999);
 	Actor_MoveToAndWait(24, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2092,12 +2092,12 @@ static void Scene_RepairTheHouse(void)
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+		record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_c);
-	Scheduler_RemoveCallback(callback_d);
+	Scheduler_RemoveCallback(callbackC);
+	Scheduler_RemoveCallback(callbackD);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(24, 0);
@@ -2108,8 +2108,8 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventWait(120);
 	Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
 	Engine_ActorEnableActionCallback(0, 1);
-	scene->scale_x = 0x10000;
-	scene->scale_y = 0x10000;
+	scene->scaleX = 0x10000;
+	scene->scaleY = 0x10000;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -2125,10 +2125,10 @@ static void Scene_RepairTheHouse(void)
 		Engine_TaskWait(1);
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-	callback_e = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_e, 3200);
-	callback_f = (s32)SceneState_SetValue25ThenCall;
-	FieldScheduler_AddCallback(callback_f, 3200);
+	callbackE = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackE, 3200);
+	callbackF = (s32)SceneState_SetValue25ThenCall;
+	FieldScheduler_AddCallback(callbackF, 3200);
 	Actor_SetSpeed(25, 0x3333, 0x1999);
 	Actor_MoveToAndWait(25, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2137,12 +2137,12 @@ static void Scene_RepairTheHouse(void)
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+		record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_e);
-	Scheduler_RemoveCallback(callback_f);
+	Scheduler_RemoveCallback(callbackE);
+	Scheduler_RemoveCallback(callbackF);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(25, 0);
@@ -2154,8 +2154,8 @@ static void Scene_RepairTheHouse(void)
 	SceneEffect_CleanupSceneObjects();
 	Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
 	Engine_ActorEnableActionCallback(0, 1);
-	scene->scale_x = 0x10000;
-	scene->scale_y = 0x10000;
+	scene->scaleX = 0x10000;
+	scene->scaleY = 0x10000;
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
 	Engine_EventSetMessage(MsgValeGoodJob);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2260,13 +2260,13 @@ static void Scene_RepairTheHouse(void)
 	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
 	Actor_SetSpeed(GARET, 0x4ccc, 0x2666);
 	Actor_WalkTo(GARET, 392, 843);
-	Object_GetById(5)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(5)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(JENNA, 408, 843);
 	Engine_EventWait(1);
 	{
 		struct FieldActor *record = Actor_Get(JENNA);
 
-		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+		record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 	}
 	Actor_FaceDirection(JENNA, FACING_WEST, 0);
 	Engine_ActorWaitForMove(GARET);
@@ -2357,14 +2357,14 @@ static void Scene_RepairTheHouse(void)
 	Event_PlayCue(161);
 	rec = Actor_Get(ACTOR_DORA);
 	rec->sprite->flags = none;
-	rec->steering_flags &= 0xfe;
+	rec->steeringFlags &= 0xfe;
 	Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
 	Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
 	Engine_EventWait(4);
 	for (i = 0; i != 4; i++)
 	{
 		rec->z.fixed += 0x18000;
-		rec->scale_y += -0x1999;
+		rec->scaleY += -0x1999;
 		Engine_EventWait(1);
 	}
 	Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -2394,11 +2394,11 @@ static void Scene_RepairTheHouse(void)
 	Engine_MapRenderWaitForValues();
 	Actor_ShowEmote(GARET, 258, 80);
 	Engine_ActorSetAnimation(ACTOR_DORA, 8);
-	rec->scale_y = 0x8000;
+	rec->scaleY = 0x8000;
 	Actor_SetPosition(ACTOR_DORA, 0x16c0000, 0x32b0000);
 	for (i = 0; i != 5; i++)
 	{
-		rec->scale_y += 0x1999;
+		rec->scaleY += 0x1999;
 		Engine_EventWait(1);
 	}
 	Engine_EventWait(60);
@@ -2418,7 +2418,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 20);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
-	rec->priority_flags &= 0xfe;
+	rec->priorityFlags &= 0xfe;
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
 	Actor_ShowEmote(ACTOR_DORA, 257, 80);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
@@ -2439,7 +2439,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_ActorSetAnimation(GARET, 1);
 	Actor_SetSpeed(GARET, 0x40000, 0x20000);
 	rec = Actor_Get(GARET);
-	rec->steering_flags &= ~ACTOR_FACES_MOTION;
+	rec->steeringFlags &= ~ACTOR_FACES_MOTION;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 	Actor_SetDestination(GARET, 403, 829);
@@ -2532,9 +2532,9 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventWait(60);
 	rec = Actor_Get(GARET);
 	flag = 1;
-	rec->steering_flags |= flag;
+	rec->steeringFlags |= flag;
 	rec = Actor_Get(JENNA);
-	rec->steering_flags |= flag;
+	rec->steeringFlags |= flag;
 	rec = Actor_Get(ACTOR_PARTY_LEADER);
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
@@ -2559,7 +2559,7 @@ static void Scene_RepairTheHouse(void)
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_DORA);
 
-		record->steering_flags = flag | record->steering_flags;
+		record->steeringFlags = flag | record->steeringFlags;
 	}
 	Vale_MoveActorAlongHigherZPath(21, 6, 5, 0);
 	Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
@@ -2575,12 +2575,12 @@ static void Scene_RepairTheHouse(void)
 	GameFlag_Set(514);
 	GameFlag_Clear(303);
 #if EDITION_INTERNATIONAL
-	scene->motion_flags = 3;
+	scene->motionFlags = 3;
 	scene->y.fixed = 0xa00000;
-	scene->target_y = 0x80000000;
-	scene->velocity_y = 0;
+	scene->targetY = 0x80000000;
+	scene->velocityY = 0;
 #else
-	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
+	Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
 #endif
 	Engine_EventEnd();
 }
@@ -2641,7 +2641,7 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target, s3
 	result = 0;
 	if (obj->paused == 1)
 	{
-		if (obj->rise_counter == 0)
+		if (obj->riseCounter == 0)
 		{
 			Object_SetMode(obj, 1);
 			return 1;
@@ -2659,20 +2659,20 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target, s3
 			obj->paused = 1;
 			Object_SetMode(obj, 1);
 			result = 1;
-			obj->rise_counter = result;
+			obj->riseCounter = result;
 		}
 		else
 		{
 			obj->paused = 0;
 			Object_SetMode(obj, 2);
-			obj->rise_counter = 0;
+			obj->riseCounter = 0;
 		}
 	}
 	else
 	{
 		obj->paused = 0;
 		Object_SetMode(obj, 2);
-		obj->rise_counter = 0;
+		obj->riseCounter = 0;
 	}
 	return result;
 }
@@ -2877,9 +2877,9 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 	if (q != 0)
 	{
 		if (g[3] > 0xc80000)
-			q->priority_flags = 3;
+			q->priorityFlags = 3;
 		else
-			q->priority_flags = 1;
+			q->priorityFlags = 1;
 	}
 }
 
@@ -2918,7 +2918,7 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2937,11 +2937,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,

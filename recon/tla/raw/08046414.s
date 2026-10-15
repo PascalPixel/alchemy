@@ -70,7 +70,7 @@ Func_08046414:
 .L_08046498:
 	.4byte 0xfffffe00
 .L_0804649c:
-	.4byte DjinnMenu_ArrowUpTiles
+	.4byte gDjinnMenu_ArrowUpTiles
 .L_080464a0:
 	ldr r1, .L_080464c4
 .L_080464a2:
@@ -90,7 +90,7 @@ Func_08046414:
 .L_080464c0:
 	.4byte 0x000003ff
 .L_080464c4:
-	.4byte DjinnMenu_ArrowDownTiles
+	.4byte gDjinnMenu_ArrowDownTiles
 .L_080464c8:
 	.4byte 0xfffffc00
 .L_080464cc:

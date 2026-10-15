@@ -2,12 +2,12 @@
 #include "ram_buffer.h"
 
 struct MenuEntryWork {
-    u8 unknown_000[0xf8];
+    u8 unk000[0xf8];
     void *objects[8];
     s16 x[8];
     s16 y[8];
     s32 scale[8];
-    u8 unknown_158[0x509 - 0x158];
+    u8 unk158[0x509 - 0x158];
     s8 active;
 };
 
@@ -15,7 +15,7 @@ void Func_08020018(void *object, s32 *transform, s32 *scale, s32 limit, s32 dept
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
-    struct MenuEntryWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
     s32 scale[2];
     s32 transform[4];
     s32 i;

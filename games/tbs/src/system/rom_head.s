@@ -15,8 +15,8 @@ Rom_Start:
 	.endif
 	.endif
 	.ascii	"AGS"				@ ゲームコード
-	.global Rom_LanguageCode
-Rom_LanguageCode:
+	.global gRom_LanguageCode
+gRom_LanguageCode:
 	.ifdef TBS_EDITION_JA
 	.ascii	"J"
 	.endif

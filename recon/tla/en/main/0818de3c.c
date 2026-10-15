@@ -12,9 +12,9 @@
 
 struct MeshTriangle {
     u8 vertex[3];
-    u8 unk_03;
+    u8 unk03;
     u8 texCoord[3][2];
-    u8 unk_0a[2];
+    u8 unk0a[2];
 };
 
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight)

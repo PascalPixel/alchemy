@@ -8,7 +8,7 @@
 #include "types.h"
 #include "frame.h"
 
-extern s16 Data_02002608[];
+extern s16 gData_02002608[];
 
 static __inline__ u32 Frame_Mod6(u32 frame)
 {
@@ -36,6 +36,6 @@ void Func_020000f4(void)
             goto loop;
         *(volatile u16 *)0x05000182 = saved;
     }
-    color = Data_02002608[(gFrameCount >> 2) % 12];
+    color = gData_02002608[(gFrameCount >> 2) % 12];
     *(volatile u16 *)0x0500019e = color;
 }

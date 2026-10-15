@@ -50,7 +50,7 @@ static void MercuryEntrance_RunDoorScene(void);
 struct WorkPointers
 {
 	u8 *event;
-	u8 *unknown_04[7];
+	u8 *unk04[7];
 	u8 *scene;
 };
 
@@ -107,7 +107,7 @@ static void EV11_TOUCH(void)
 
 void *SceneData_GetSceneTableA(void)
 {
-	return MercuryEntrance_SceneTableA;
+	return gMercuryEntrance_SceneTableA;
 }
 
 int SceneData_ReturnZero(void)
@@ -117,12 +117,12 @@ int SceneData_ReturnZero(void)
 
 void *SceneData_GetSceneTableB(void)
 {
-	return MercuryEntrance_SceneTableB;
+	return gMercuryEntrance_SceneTableB;
 }
 
 void *SceneData_GetSceneTableC(void)
 {
-	return MercuryEntrance_SceneTableC;
+	return gMercuryEntrance_SceneTableC;
 }
 
 static void EV01_SEARCH(void)
@@ -153,7 +153,7 @@ static void EV69_TOUCH(void)
 
 void *SceneData_GetSceneTableD(void)
 {
-	return MercuryEntrance_SceneTableD;
+	return gMercuryEntrance_SceneTableD;
 }
 
 static void EV16_PSYNERGY(void)
@@ -191,7 +191,7 @@ static void EV16_PSYNERGY(void)
 
 				*(u16 *)(slot + 24) = shown;
 			}
-			*(s32 *)(slot + 28) = (s32)MercuryEntrance_SparkBurstScript;
+			*(s32 *)(slot + 28) = (s32)gMercuryEntrance_SparkBurstScript;
 			Engine_AudioPlayCue(246);
 			x = 208 - ((u32)(Random_Next() << 4) >> 16);
 			y = 560 - ((u32)(Random_Next() << 4) >> 16);
@@ -222,7 +222,7 @@ static void EV10_TOUCH(void)
 static void MercuryEntrance_InstallActorEightPath(void)
 {
 	Engine_GameFlagClear(0x205);
-	Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path1);
+	Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path1);
 }
 
 static void EV41_TOUCH(void)
@@ -237,11 +237,11 @@ static void EV41_TOUCH(void)
 	Engine_GameFlagSet(0x205);
 	if (quotient == 7)
 	{
-		Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path2);
+		Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path2);
 	}
 	else
 	{
-		Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path3);
+		Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path3);
 	}
 }
 
@@ -250,7 +250,7 @@ static void MercuryEntrance_OpenEntrance(void)
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_MercuryEntrance, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
@@ -276,23 +276,23 @@ s32 MercuryEntrance_ApplyEntryState(void)
 	}
 	Mercury_SpawnLightObjects(21, (struct MercuryLights *)gSceneState);
 	GameFlag_Set(0x111);
-	gGameState.retreat_entrance = 11;
-	gGameState.retreat_scene = (s32)&SceneId_MercuryLighthouse4;
+	gGameState.retreatEntrance = 11;
+	gGameState.retreatScene = (s32)&SceneId_MercuryLighthouse4;
 	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
 		FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
 	else
 		Mercury_ClearPalette();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	switch (gGameState.entrance)
 	{
 	case 1:
 		if (!GameFlag_IsSet(0x872))
 			Engine_EventRequestExit(20);
 	case 2:
-		Actor_Get(12)->scale_x = -0x10000;
-		Actor_Get(13)->scale_x = -0x10000;
-		Actor_Get(14)->scale_x = -0x10000;
+		Actor_Get(12)->scaleX = -0x10000;
+		Actor_Get(13)->scaleX = -0x10000;
+		Actor_Get(14)->scaleX = -0x10000;
 		Engine_TaskWait(1);
 		break;
 	case 7:
@@ -332,11 +332,11 @@ s32 MercuryEntrance_ApplyEntryState(void)
 		Actor_Get(0)->y.fixed = 0x820000;
 		Actor_Get(0)->gravity = 0x8000;
 		Actor_Get(0)->bounce = flag;
-		Actor_Get(0)->motion_flags = flag;
+		Actor_Get(0)->motionFlags = flag;
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(30);
-		Actor_Get(0)->motion_flags = 3;
+		Actor_Get(0)->motionFlags = 3;
 		Engine_AudioPlayCue(204);
 		Engine_EventWait(24);
 		actor = Actor_Get(0);
@@ -388,7 +388,7 @@ s32 MercuryEntrance_ApplyEntryState(void)
 		Engine_EventBegin();
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(120);
@@ -417,11 +417,11 @@ static void MercuryEntrance_CrossDoorway(void)
 
 	Engine_EventBegin();
 	actor = Object_GetById(12);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	actor = Object_GetById(13);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	actor = Object_GetById(14);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	Actor_SetPosition(3, 0x880000, 0xb80000);
 	Actor_SetPosition(0, 0x880000, 0x1280000);
 	Actor_SetPosition(8, 0x880000, 0x980000);
@@ -433,38 +433,38 @@ static void MercuryEntrance_CrossDoorway(void)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorRunRepeatedMotion(3, 1);
-	Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	for (i = 0; i < 2; i++)
 	{
 		Engine_ActorWalkTo(3, 152, 168);
 		Engine_EventWait(10);
-		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path3);
+		Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path3);
 		Engine_ActorWaitForMove(3);
 		Actor_FaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
 		ivan = Object_GetById(3);
-		ivan->steering_flags &= ~ACTOR_FACES_MOTION;
+		ivan->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(10);
-		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
+		Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
-		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
 		Engine_EventWait(30);
 		Engine_ActorWalkTo(3, 120, 168);
 		Engine_EventWait(5);
-		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path2);
+		Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path2);
 		Engine_ActorWaitForMove(3);
 		Engine_ActorFaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
 		Engine_EventWait(15);
-		Object_GetById(3)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(15);
-		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
+		Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
 		Engine_ActorRunRepeatedMotion(3, 1);
-		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
 	}
 	Engine_EventWait(20);
 	Engine_ActorShowEmote(3, 0x102, 60);
@@ -487,14 +487,14 @@ static void MercuryEntrance_RunDoorScene(void)
 		GameFlag_Set(0x250);
 		Engine_EventBegin();
 		record = Actor_Get(12);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		record = Object_GetById(13);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		record = Actor_Get(14);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		Actor_SetPosition(MIA, 0x880000, 0x900000);
 		Actor_FaceDirection(MIA, 0x4000, 10);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(60);
@@ -507,7 +507,7 @@ static void MercuryEntrance_RunDoorScene(void)
 		Engine_ActorWaitForMove(MIA);
 		Actor_SetPosition(MIA, 0, 0);
 		GameFlag_Set(0x872);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 		Engine_EventEnd();
 	}
 }
@@ -523,10 +523,10 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	{
 		struct FieldSprite *sprite = obj->sprite;
 
-		Engine_ObjectSetScript(obj, MercuryEntrance_RiseScript);
-		obj->motion_flags = 0;
-		obj->terrain_id = 1;
-		obj->priority_flags = 2;
+		Engine_ObjectSetScript(obj, gMercuryEntrance_RiseScript);
+		obj->motionFlags = 0;
+		obj->terrainId = 1;
+		obj->priorityFlags = 2;
 		if (sprite != 0)
 		{
 			AnimationObjects_SelectAnimation(sprite, 2);
@@ -569,7 +569,7 @@ s32 gEffectScript2[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -588,11 +588,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -601,32 +601,32 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 MercuryEntrance_RiseScript[] = {
+s32 gMercuryEntrance_RiseScript[] = {
 	SC_WAIT(30),
 	SC_FREE,
 };
 
-s32 MercuryLighthouse_SparkScript[] = {
+s32 gMercuryLighthouse_SparkScript[] = {
 	SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
 	SC_FREE,
 };
 
-s32 Mercury_RampScript[] = {
+s32 gMercury_RampScript[] = {
 	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
-s32 Mercury_ScaleCounterScript[] = {
+s32 gMercury_ScaleCounterScript[] = {
 	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
-s32 Mercury_PillarScript[] = {
+s32 gMercury_PillarScript[] = {
 	SC_CALL(Mercury_FollowLeader),
 	SC_END,
 };
 
-u16 Mercury_MoveAngles[] = {
+u16 gMercury_MoveAngles[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
 	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
@@ -637,7 +637,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 MercuryEntrance_Actor8Path1[] = {
+s32 gMercuryEntrance_Actor8Path1[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -649,7 +649,7 @@ s32 MercuryEntrance_Actor8Path1[] = {
 	SC_END,
 };
 
-s32 MercuryEntrance_Actor8Path2[] = {
+s32 gMercuryEntrance_Actor8Path2[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -661,7 +661,7 @@ s32 MercuryEntrance_Actor8Path2[] = {
 	SC_END,
 };
 
-s32 MercuryEntrance_Actor8Path3[] = {
+s32 gMercuryEntrance_Actor8Path3[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -679,7 +679,7 @@ s32 gPaletteCycleGreen = 0;
 
 s32 gPaletteCycleBlue = 0;
 
-struct SceneEntrance MercuryEntrance_SceneTableA[] = {
+struct SceneEntrance gMercuryEntrance_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 280, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 120, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
@@ -712,14 +712,14 @@ struct SceneEntrance MercuryEntrance_SceneTableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance MercuryEntrance_SceneTableB[] = {
+struct SceneEntrance gMercuryEntrance_SceneTableB[] = {
 	{ 53, 0x0, -16327, 16, 12341, 0x20, 8245, 48, -28619, 64, -32715, 80 },
 	{ 4149, 0x61, 16437, 112, 20533, 0x80, 12341, 145, 4150, 160, 8246, 176 },
 	{ 28726, 0xc0, 16438, 208, 8245, 0xe1, 16437, 241, 28725, 256, -12235, 272 },
 	{ -24523, 0x120, 53, 305, -8139, 0x141, -4042, 800, -4043, 1009, 511, 0 },
 };
 
-struct SceneEntrance MercuryEntrance_SceneTableC[] = {
+struct SceneEntrance gMercuryEntrance_SceneTableC[] = {
 	{ 3, CONDITION_ALWAYS, 1, 0, 0, 0x8, 0, 0, 0, 8, -16384, 2 },
 	{ 192, CONDITION_ALWAYS, 1, 0, 0, 0x8, 0, 0, 0, 8, 16384, 2 },
 	{ 224, CONDITION_ALWAYS, 7, 0, 0, 0x58, 0, 0, 0, 136, 16384, 2 },
@@ -733,7 +733,7 @@ struct SceneEntrance MercuryEntrance_SceneTableC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent MercuryEntrance_SceneTableD[] = {
+struct SceneEvent gMercuryEntrance_SceneTableD[] = {
 	{ 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV31_TOUCH) },
 	{ 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
@@ -777,7 +777,7 @@ struct SceneEvent MercuryEntrance_SceneTableD[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 MercuryEntrance_SparkBurstScript[] = {
+u32 gMercuryEntrance_SparkBurstScript[] = {
 	21, 10, 0x10000, 21, 9, 0x10000, 0, 6,
 	21, 10, 0xa000, 21, 9, 0xa000, 0, 6,
 	21, 10, 0x4000, 21, 9, 0x4000, 0, 6,

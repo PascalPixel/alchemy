@@ -34,7 +34,7 @@ void Func_02001274(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_0200127c(s32 a, s32 b, s32 c);
 void Func_02001284(s32 cue);
 
-extern const u8 Data_0200128c[];
+extern const u8 gData_0200128c[];
 
 extern char SceneId_Ov673Room1;
 extern char SceneId_Ov673Room2;
@@ -97,18 +97,18 @@ struct GabombaCatacombsVec {
 };
 
 struct GabombaCatacombsFollower {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     s32 z;
 };
 
 struct GabombaCatacombsEventWork {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct GabombaCatacombsFollower *follower;
 };
 
 struct GabombaCatacombsParty {
-    u8 unknown_000[0x254];
-    u16 value_254;
+    u8 unk000[0x254];
+    u16 value254;
 };
 
 #endif

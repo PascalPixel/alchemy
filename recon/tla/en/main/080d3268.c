@@ -2,15 +2,15 @@
 #include "object_runtime.h"
 
 struct AnimationFrameSet {
-    u8 unknown_00[16];
+    u8 unk00[16];
     u8 *codes;
     u8 index;
 };
 
 struct AnimationPlayer {
-    u8 unknown_00[24];
+    u8 unk00[24];
     u8 animation;
-    u8 unknown_19[15];
+    u8 unk19[15];
     struct AnimationFrameSet *frames;
 };
 
@@ -24,7 +24,7 @@ void ObjectMotion_WaitForAnimationChange(u32 id)
     volatile u32 *animation;
     s32 frames;
 
-    if (object != NULL && object->animation_kind == 1) {
+    if (object != NULL && object->animationKind == 1) {
         player = object->animation;
         frames = 0;
         animation = &saved;

@@ -24,7 +24,7 @@ struct MarkerWork
     u8 sheet[0x7080];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x160];
+    u8 unk7788[0x160];
     s32 transferPending;
 };
 
@@ -50,8 +50,8 @@ void Func_0814b160(struct BattleEffectArgument *effect)
     s32 y;
     struct EffectPosition pos;
 
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    work = (struct MarkerWork *)Ram_HeapSlots->battle_fx_work[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    work = (struct MarkerWork *)Ram_HeapSlots->battleFxWork[0];
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
@@ -63,7 +63,7 @@ void Func_0814b160(struct BattleEffectArgument *effect)
     Func_081963ec(104, 0x23);
     work->transferMode = 1;
     work->transferValue = 0;
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     for (i = 0; i != effect->count; i++)
     {

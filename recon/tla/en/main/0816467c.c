@@ -27,10 +27,10 @@
 extern char ResourceId_Data134;
 extern char ResourceId_FlareSheet;
 extern char ResourceId_FlareImage;
-extern u16 Data_081989f2[];
-extern u8 Data_081989e2[];
-extern u8 Data_081989ea[];
-extern u16 Data_08197410[];
+extern u16 gData_081989f2[];
+extern u8 gData_081989e2[];
+extern u8 gData_081989ea[];
+extern u16 gData_08197410[];
 
 void Func_08143000(void);
 void Func_081963ec(s32 slot, s32 kind);
@@ -43,18 +43,18 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     struct BattleFxWork *work;
     void *canvas;
     DrawRectangle additive;
-    DrawRectangle max_blend;
+    DrawRectangle maxBlend;
     u8 *sheet;
-    s32 org_x;
+    s32 orgX;
     struct EffectStep *p;
     s32 frame;
     s32 i;
 
     __asm__("");
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
-    org_x = x;
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
+    orgX = x;
     x += 40 << 16;
     x /= 2;
     {
@@ -68,14 +68,14 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
     Func_081963ec(104, 19);
-    max_blend = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 3);
-    additive = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E, 0, 0);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     for (i = 0; i != 64; i++) {
@@ -84,16 +84,16 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
         work->particles[i].x = x;
         work->particles[i].y = y;
-        work->particles[i].velocity_x = (Trig_Sin(angle) * speed) >> 7;
-        work->particles[i].velocity_y = -((Trig_Cos(angle) * speed) >> 6);
+        work->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
+        work->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
         work->particles[i].variant = (Random16() & 15) + 16;
     }
 
     for (i = 0; i != 3; i++) {
         work->particles[61 + i].x = x;
         work->particles[61 + i].y = y;
-        work->particles[61 + i].velocity_x = (Trig_Sin(i * 0x5555) * 32) >> 6;
-        work->particles[61 + i].velocity_y = -((Trig_Cos(i * 0x5555) * 32) >> 5);
+        work->particles[61 + i].velocityX = (Trig_Sin(i * 0x5555) * 32) >> 6;
+        work->particles[61 + i].velocityY = -((Trig_Cos(i * 0x5555) * 32) >> 5);
     }
 
     for (i = 0; i != 64; i++) {
@@ -103,8 +103,8 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
         cells[i].x = x;
         cells[i].y = y;
-        cells[i].velocity_x = (Trig_Sin(angle) * speed) >> 6;
-        cells[i].velocity_y = -((Trig_Cos(angle) * speed) >> 5);
+        cells[i].velocityX = (Trig_Sin(angle) * speed) >> 6;
+        cells[i].velocityY = -((Trig_Cos(angle) * speed) >> 5);
         cells[i].variant = (Random16() & 15) + 20;
     }
 
@@ -121,9 +121,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            max_blend(canvas, work->sheet + Data_081989f2[cell],
-                (x >> 16) - ((width = Data_081989e2[cell]) >> 1),
-                (y >> 16) - ((height = Data_081989ea[cell]) >> 1), width, height);
+            maxBlend(canvas, work->sheet + gData_081989f2[cell],
+                (x >> 16) - ((width = gData_081989e2[cell]) >> 1),
+                (y >> 16) - ((height = gData_081989ea[cell]) >> 1), width, height);
         }
 
         for (i = 0, p = work->particles; i != 30; i++, p++) {
@@ -137,7 +137,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 3;
                 px = HI(p->x);
                 py = HI(p->y);
-                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + gData_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 
@@ -152,7 +152,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 1;
                 px = HI(p->x);
                 py = HI(p->y);
-                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + gData_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 
@@ -168,13 +168,13 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 cell = (frame - 36) / 7;
                 px = HI(shard->x);
                 py = HI(shard->y);
-                max_blend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
+                maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
             }
         }
 
         if (frame <= 35)
-            Func_0816442c(formation, org_x, y);
-        work->transfer_pending = 1;
+            Func_0816442c(formation, orgX, y);
+        work->transferPending = 1;
         WaitFrames(1);
     }
 

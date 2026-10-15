@@ -11,30 +11,30 @@
 #include "iwram_call.h"
 
 struct FxRunWork {
-    u8 unknown_0000[0x78e4];
+    u8 unk0000[0x78e4];
     s32 active;
-    u8 unknown_78e8[8];
+    u8 unk78e8[8];
     s32 *script;
 };
 
 struct FxPartyList {
-    u8 unknown_00[20];
+    u8 unk00[20];
     s32 count;
-    u8 unknown_18[12];
+    u8 unk18[12];
     s16 ids[8];
 };
 
 struct FxUnit {
-    u8 unknown_00[56];
+    u8 unk00[56];
     s16 hp;
 };
 
 struct FxBgScroll {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 y;
 };
 
-extern void (*Data_08197aa0[])(s32 *script);
+extern void (*gData_08197aa0[])(s32 *script);
 extern struct FxBgScroll gBgScroll[];
 extern u32 gCameraSceneParameters[];
 
@@ -48,8 +48,8 @@ void Audio_PlayCue(s32 cue);
 
 void Func_0814cca8(void)
 {
-    u8 *battle = Ram_HeapSlots->battle_work;
-    void *buffer = Ram_HeapSlots->battle_fx_work[1];
+    u8 *battle = Ram_HeapSlots->battleWork;
+    void *buffer = Ram_HeapSlots->battleFxWork[1];
 
     REG_DISPCNT = 1;
     gBgScroll[0].y = 32;

@@ -10,9 +10,9 @@ struct Sparkle {
     u8 padding00[4];
     u16 y : 8;
     u16 affine : 2;
-    u16 blend_mode : 2;
+    u16 blendMode : 2;
     u16 mosaic : 1;
-    u16 full_color : 1;
+    u16 fullColor : 1;
     u16 shape : 2;
     u16 x : 9;
     u16 matrix : 5;
@@ -21,9 +21,9 @@ struct Sparkle {
     u16 priority : 2;
     u16 palette : 4;
     u8 padding0a[2];
-    s32 pos_x;
+    s32 posX;
     s32 height;
-    s32 pos_z;
+    s32 posZ;
     s32 delay;
     u16 timer;
     u8 padding1e[2];
@@ -31,7 +31,7 @@ struct Sparkle {
 
 struct SparkleWork {
     u8 padding00[4];
-    s32 tile_base;
+    s32 tileBase;
     struct Sparkle sparkles[64];
     u8 padding808[8];
     s32 stopped;
@@ -42,7 +42,7 @@ struct SparkleFrame {
     u16 tile;
 };
 
-extern const struct SparkleFrame Data_080f0b7c[];
+extern const struct SparkleFrame gData_080f0b7c[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
@@ -56,13 +56,13 @@ void FieldEffect_UpdateSparkles(void)
     u32 i;
     struct MapWork *map;
     s32 *camera;
-    s32 spawn_x;
-    s32 spawn_z;
+    s32 spawnX;
+    s32 spawnZ;
     struct Sparkle *sparkle;
     const u16 *frame;
     s32 *leader;
-    s32 camera_x;
-    s32 camera_z;
+    s32 cameraX;
+    s32 cameraZ;
     s32 sx;
     s32 sy;
     s32 delay;
@@ -71,12 +71,12 @@ void FieldEffect_UpdateSparkles(void)
     u32 b;
     u32 frames;
 
-    work = Ram_HeapSlots->unknown_70[1];
+    work = Ram_HeapSlots->unk70[1];
     spawned = 0;
-    map = Ram_HeapSlots->map_work;
-    camera = &map->view_x;
-    spawn_x = 0;
-    spawn_z = 0;
+    map = Ram_HeapSlots->mapWork;
+    camera = &map->viewX;
+    spawnX = 0;
+    spawnZ = 0;
     i = 0;
     sparkle = work->sparkles;
     delay = 0;
@@ -84,19 +84,19 @@ void FieldEffect_UpdateSparkles(void)
     sy = 0;
     do {
         if (sparkle->timer != 0) {
-            camera_x = camera[0];
-            camera_z = camera[1];
+            cameraX = camera[0];
+            cameraZ = camera[1];
             if (GameFlag_Test(0x166) != 0)
                 sparkle->timer++;
-            frame = (const u16 *)&Data_080f0b7c[sparkle->timer >> 1];
+            frame = (const u16 *)&gData_080f0b7c[sparkle->timer >> 1];
             a = Random16();
             b = Random16();
-            x = ((sparkle->pos_x - camera_x) >> 16) + (((a & 1) + (b & 1)) >> 1);
+            x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
             sx = x - 1;
-            sy = (sparkle->pos_z - sparkle->height - camera_z) / 0x10000 + *(const s16 *)frame;
+            sy = (sparkle->posZ - sparkle->height - cameraZ) / 0x10000 + *(const s16 *)frame;
             frame++;
             if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
-                sparkle->tile = work->tile_base + *frame;
+                sparkle->tile = work->tileBase + *frame;
                 sparkle->x = sx;
                 sparkle->shape = 0;
                 sparkle->size = 1;
@@ -109,8 +109,8 @@ void FieldEffect_UpdateSparkles(void)
         }
         if (spawned <= 3 && sparkle->timer == 0 && work->stopped == 0) {
             if (delay != 0) {
-                sparkle->pos_x = spawn_x;
-                sparkle->pos_z = spawn_z;
+                sparkle->posX = spawnX;
+                sparkle->posZ = spawnZ;
                 sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
                 sparkle->timer = 62 - delay;
                 sparkle->delay = 0;
@@ -118,10 +118,10 @@ void FieldEffect_UpdateSparkles(void)
                 delay += 4;
             } else if ((Random16() & 255) == 0) {
                 leader = map->origin;
-                spawn_x = leader[0] + (Random16() << 8) - 0x800000;
-                spawn_z = leader[2] + (Random16() << 8) - 0x800000;
-                sparkle->pos_x = spawn_x;
-                sparkle->pos_z = spawn_z;
+                spawnX = leader[0] + (Random16() << 8) - 0x800000;
+                spawnZ = leader[2] + (Random16() << 8) - 0x800000;
+                sparkle->posX = spawnX;
+                sparkle->posZ = spawnZ;
                 sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
                 sparkle->timer = 30;
                 sparkle->delay = delay;

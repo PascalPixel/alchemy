@@ -11,16 +11,16 @@
 
 // 読む側は battle.h, field.h, graphics.h, scroll.h と object_effect_scripts.h、
 // 色の曲線は object.c が宣言する。次の表は読む側が const なしで宣言する:
-// battle.h の BattleFx_TargetRangeByMode, Animation_ChildPaletteCycle,
-// BattleFx_DefinitionTable, FieldFx_GroundParticleFrames, BattleFx_PulseScales,
-// BattleFx_CyclePatternWords, BattleFx_RandomChildValues、graphics.h の
-// DisplayTransition_NoiseWidths, DisplayTransition_EdgeOffsets、field.h の
-// ObjectGroup_BlinkChildValues、object.c の BattlePalette_ChannelCurve 3 つ。
+// battle.h の gBattleFx_TargetRangeByMode, gAnimation_ChildPaletteCycle,
+// gBattleFx_DefinitionTable, gFieldFx_GroundParticleFrames, gBattleFx_PulseScales,
+// gBattleFx_CyclePatternWords, gBattleFx_RandomChildValues、graphics.h の
+// gDisplayTransition_NoiseWidths, gDisplayTransition_EdgeOffsets、field.h の
+// gObjectGroup_BlinkChildValues、object.c の gBattlePalette_ChannelCurve 3 つ。
 // それでも定義はすべて const: rom_main_04 では .data が scripts.o の後に
 // 置かれ、この表が動くから。だからこのファイルはそれらのヘッダを読まない。
 
 // 調べた床の文章番号の差 (MsgTileChecked, MsgTileResult に足す)
-const u8 Field_TileMessageOffsets[6] =
+const u8 gField_TileMessageOffsets[6] =
 {
 	2,	// ツボ
 	3,	// タル
@@ -31,7 +31,7 @@ const u8 Field_TileMessageOffsets[6] =
 };
 
 // {方式, 探す範囲 (ドット)}, -1 で終わり。ない方式は 16
-const s16 BattleFx_TargetRangeByMode[25] =
+const s16 gBattleFx_TargetRangeByMode[25] =
 {
 	3, 16,
 	6, 16,
@@ -49,10 +49,10 @@ const s16 BattleFx_TargetRangeByMode[25] =
 };
 
 // 子のパレット番号 ((gFrameCount >> 1) & 7)
-const u8 Animation_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
+const u8 gAnimation_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 // 半分の大きさから 2 フレームごとに広がる
-const s32 BattleFx_ParticleEmitterScript[] =
+const s32 gBattleFx_ParticleEmitterScript[] =
 {
 	SC_SET(SW_SCALE_X, 0x8000),
 	SC_SET(SW_SCALE_Y, 0x8000),
@@ -72,7 +72,7 @@ const s32 BattleFx_ParticleEmitterScript[] =
 };
 
 // 2 度脈打って止まる
-const s32 BattleFx_RisingPulseScript[] =
+const s32 gBattleFx_RisingPulseScript[] =
 {
 	SC_WAIT(10),
 	SC_SET(SW_SCALE_X, 0x16000),
@@ -105,7 +105,7 @@ const s32 BattleFx_RisingPulseScript[] =
 };
 
 // 60 フレーム上がって消える
-const s32 BattleFx_ParticleScript[] =
+const s32 gBattleFx_ParticleScript[] =
 {
 	SC_ADD(SW_Y, -0x4000),
 	SC_WAIT(1),
@@ -113,28 +113,28 @@ const s32 BattleFx_ParticleScript[] =
 	SC_FREE,
 };
 
-const s32 BattleFx_MarkerParticleScript[] =
+const s32 gBattleFx_MarkerParticleScript[] =
 {
 	SC_CALL(EffectRuntime_IsActive),
 	SC_FREE,
 };
 
 // 画面切り替えの雑音の幅
-const u8 DisplayTransition_NoiseWidths[34] =
+const u8 gDisplayTransition_NoiseWidths[34] =
 {
 	0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
 	16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
 // 円の縁の揺れ
-const s8 DisplayTransition_EdgeOffsets[32] =
+const s8 gDisplayTransition_EdgeOffsets[32] =
 {
 	-4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
 	4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,
 };
 
 // 0 から 63 の並べ替え: 色を変える順
-const u8 DisplayTransition_DitherTable[64] =
+const u8 gDisplayTransition_DitherTable[64] =
 {
 	0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31,
 	16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24,
@@ -143,7 +143,7 @@ const u8 DisplayTransition_DitherTable[64] =
 };
 
 // 色成分の曲線 (0 から 31 を 0x7c00 までに)
-const u16 BattlePalette_ChannelCurve[32] =
+const u16 gBattlePalette_ChannelCurve[32] =
 {
 	0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
 	0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
@@ -151,7 +151,7 @@ const u16 BattlePalette_ChannelCurve[32] =
 	0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00,
 };
 
-const u16 BattlePalette_ChannelCurveLight[32] =
+const u16 gBattlePalette_ChannelCurveLight[32] =
 {
 	0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291,
 	0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0,
@@ -159,7 +159,7 @@ const u16 BattlePalette_ChannelCurveLight[32] =
 	0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00,
 };
 
-const u16 BattlePalette_ChannelCurveContrast[32] =
+const u16 gBattlePalette_ChannelCurveContrast[32] =
 {
 	0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a,
 	0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65,
@@ -169,7 +169,7 @@ const u16 BattlePalette_ChannelCurveContrast[32] =
 
 // {番号, 値 (0xff はなし), フラグ}: BattleFx_FindDefinition は 131 番目
 // までを探し、最後の組は見つからないときのもの
-const struct BattleEffectEntry BattleFx_DefinitionTable[131] =
+const struct BattleEffectEntry gBattleFx_DefinitionTable[131] =
 {
 	{0, 16, 0x00},
 	{1, 16, 0x00},
@@ -306,7 +306,7 @@ const struct BattleEffectEntry BattleFx_DefinitionTable[131] =
 
 // 方式 (1 から 3) の回数だけ揺れる: (3 - 方式) * 32 語目から始めて終わりまで
 // field.h は const u8[] と宣言し、psynergy_effects.c はバイトで (3 - 方式) << 7 を足して s32 * で読む
-const s32 ObjectMotion_VariantScripts[97] =
+const s32 gObjectMotion_VariantScripts[97] =
 {
 	// 方式 3
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -351,10 +351,10 @@ const s32 ObjectMotion_VariantScripts[97] =
 };
 
 // 子の値 ((gFrameCount >> 1) & 3)
-const u8 ObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
+const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
 
 // 正弦 (4096 倍, 256 で一周)
-const s16 DisplayScroll_WaveSine[256] =
+const s16 gDisplayScroll_WaveSine[256] =
 {
 	0, 100, 200, 301, 401, 501, 601, 700,
 	799, 897, 995, 1092, 1189, 1284, 1379, 1474,
@@ -391,7 +391,7 @@ const s16 DisplayScroll_WaveSine[256] =
 };
 
 // {dx, dy, タイル, 形, 大きさ} x 16
-const s16 FieldFx_GroundParticleFrames[80] =
+const s16 gFieldFx_GroundParticleFrames[80] =
 {
 	-8, -12, 20, 0, 1,
 	-8, -12, 20, 0, 1,
@@ -412,7 +412,7 @@ const s16 FieldFx_GroundParticleFrames[80] =
 };
 
 // {dy, タイル}
-const struct SparkleFrame FieldFx_SparkleFrames[32] =
+const struct SparkleFrame gFieldFx_SparkleFrames[32] =
 {
 	{-2, 12},
 	{-4, 12},
@@ -449,24 +449,24 @@ const struct SparkleFrame FieldFx_SparkleFrames[32] =
 };
 
 // 大きさを 2 つ交互に ((gFrameTick >> 2) & 1)。3 語目は読まれない
-const u32 BattleFx_PulseScales[3] = {0x10000, 0xf851, 16};
+const u32 gBattleFx_PulseScales[3] = {0x10000, 0xf851, 16};
 
-// [0] は解放だけ、+1 は到着を待って解放。+3 は次の BattleFx_SourceHoldScript
-const s32 BattleFx_CommonParticleScript[] =
+// [0] は解放だけ、+1 は到着を待って解放。+3 は次の gBattleFx_SourceHoldScript
+const s32 gBattleFx_CommonParticleScript[] =
 {
 	SC_FREE,
 	SC_SYNC,
 	SC_FREE,
 };
 
-const s32 BattleFx_SourceHoldScript[] =
+const s32 gBattleFx_SourceHoldScript[] =
 {
 	SC_FACE_LINK,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 BattleFx_FragmentScript[] =
+const s32 gBattleFx_FragmentScript[] =
 {
 	SC_SYNC,
 	SC_SET(SW_SPEED, 0x1000),
@@ -476,7 +476,7 @@ const s32 BattleFx_FragmentScript[] =
 };
 
 // 十字キーの向き: 右・左・上・下の 4 ビットごと、0xffff は向きなし
-const u16 BattleFx_CyclePatternWords[16] =
+const u16 gBattleFx_CyclePatternWords[16] =
 {
 	0xffff, 0x0000, 0x8000, 0xffff,
 	0xc000, 0xffff, 0xffff, 0xc000,
@@ -484,19 +484,19 @@ const u16 BattleFx_CyclePatternWords[16] =
 	0xffff, 0x0000, 0x8000, 0xffff,
 };
 
-const u8 BattleFx_QuadrantModes[4] = {3, 1, 2, 1};
+const u8 gBattleFx_QuadrantModes[4] = {3, 1, 2, 1};
 
-// +4 語は BattleFx_HeavyImpactScript
-const s32 BattleFx_BurstParticleObjectScript[] =
+// +4 語は gBattleFx_HeavyImpactScript
+const s32 gBattleFx_BurstParticleObjectScript[] =
 {
 	SC_WAIT(60),
 	SC_FREE,
 };
 
-// BattleFx_QuadrantModes と同じ 4 バイト。読む所はない
-const u8 Unused_BattleFxBytes[4] = {3, 1, 2, 1};
+// gBattleFx_QuadrantModes と同じ 4 バイト。読む所はない
+const u8 gUnused_BattleFxBytes[4] = {3, 1, 2, 1};
 
-const s32 BattleFx_HeavyImpactScript[] =
+const s32 gBattleFx_HeavyImpactScript[] =
 {
 	SC_SYNC,
 	SC_CALL(SpawnHeavyImpactEffect),
@@ -504,35 +504,35 @@ const s32 BattleFx_HeavyImpactScript[] =
 };
 
 // gEffectScripts の 3 つ
-const s32 BattleFx_ShortEffectScript[] =
+const s32 gBattleFx_ShortEffectScript[] =
 {
 	SC_WAIT(24),
 	SC_FREE,
 };
 
-const s32 BattleFx_MediumEffectScript[] =
+const s32 gBattleFx_MediumEffectScript[] =
 {
 	SC_WAIT(46),
 	SC_FREE,
 };
 
-const s32 BattleFx_LongEffectScript[] =
+const s32 gBattleFx_LongEffectScript[] =
 {
 	SC_WAIT(128),
 	SC_FREE,
 };
 
-const s8 BattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
+const s8 gBattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 // 目印の明るさ ((gFrameCount >> 1) & 31)
-const u8 WorldMap_MarkerBlendCycle[32] =
+const u8 gWorldMap_MarkerBlendCycle[32] =
 {
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 15, 15, 14, 12, 10, 9, 9, 8, 9, 9, 10, 12, 14, 14, 15,
 };
 
 // 十字キーの向き (8 方向)、0xffff は向きなし
-const u16 WorldMap_CursorDirectionAngles[16] =
+const u16 gWorldMap_CursorDirectionAngles[16] =
 {
 	0xffff, 0x0000, 0x8000, 0xffff,
 	0xc000, 0xe000, 0xa000, 0xc000,

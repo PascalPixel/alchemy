@@ -9,7 +9,7 @@
 #include "objdisp.h"
 #include "object_runtime.h"
 
-extern const s32 Data_080f0e78[];
+extern const s32 gData_080f0e78[];
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
@@ -27,8 +27,8 @@ void UpdateRisingParticleBurst(void *object)
     for (i = 30; i >= 0; i--) {
         src->y += 1 << 16;
         src->angle += 0x2000;
-        src->scale_x += -0x800;
-        src->scale_y += -0x800;
+        src->scaleX += -0x800;
+        src->scaleY += -0x800;
         WaitFrames(1);
     }
     for (i = 7; i >= 0; i--) {
@@ -38,14 +38,14 @@ void UpdateRisingParticleBurst(void *object)
             /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps 0x10000 in one register that loop.c hoists for both uses, as in ☀️'s UpdateRisingParticleBurst. */
             s32 unit = 0x10000;
 
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, Data_080f0e78);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, gData_080f0e78);
             speed = Random16();
             child->acceleration = unit;
-            child->speed_limit = speed + unit;
-            child->motion_flags = 2;
+            child->speedLimit = speed + unit;
+            child->motionFlags = 2;
             child->gravity = 0xa3d;
             spread = Random16();
-            child->velocity_y = spread - Random16();
+            child->velocityY = spread - Random16();
             dist = Random16() * 24;
             dist += 8 << 16;
             Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());

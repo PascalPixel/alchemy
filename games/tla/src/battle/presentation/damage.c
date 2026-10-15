@@ -21,108 +21,108 @@
 #include "text/msg_ids.h"
 
 
-void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
+void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage, u8 *context)
 {
-    u8 local_context[4];
+    u8 localContext[4];
     struct BattleUnit *character;
     struct BattleObj *slot;
 
     if (context == 0) {
-        context = local_context;
+        context = localContext;
         context[0] = 0;
         context[1] = 0;
         context[2] = 0;
         context[3] = 0;
     }
 
-    character = UnitGet(unit_id);
+    character = UnitGet(unitId);
     character->hp -= damage;
     if (character->hp < 0)
         character->hp = 0;
 
-    slot = BattleObjGet(unit_id);
+    slot = BattleObjGet(unitId);
     Object_SetMode(slot->object, 5);
     PartyStatusDrawFar(0);
     UiWork_ClearValueNameTablesFar();
 
-    if (unit_id <= 7) {
-        if (show_message != 0)
+    if (unitId <= 7) {
+        if (showMessage != 0)
             UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
         UiText_DrawQuantity(damage, 5);
-        UiText_DrawQuantity(unit_id, 1);
+        UiText_DrawQuantity(unitId, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
     } else {
-        if (show_message != 0)
+        if (showMessage != 0)
             UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
         UiText_DrawQuantity(damage, 5);
-        UiText_DrawQuantity(unit_id, 1);
+        UiText_DrawQuantity(unitId, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgE);
-        UiText_DrawQuantity(unit_id, 1);
+        UiText_DrawQuantity(unitId, 1);
     }
 
-    BattleMotion_SetMode5AndActivateSlot(unit_id);
-    if (unit_id <= 7) {
+    BattleMotion_SetMode5AndActivateSlot(unitId);
+    if (unitId <= 7) {
         if (character->hp <= 0) {
-            UiText_DrawQuantity(unit_id, 1);
+            UiText_DrawQuantity(unitId, 1);
             UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDown);
         }
     } else if (character->hp <= 0) {
-        UiText_DrawQuantity(unit_id, 1);
+        UiText_DrawQuantity(unitId, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
     }
 
-    slot = BattleObjGet(unit_id);
+    slot = BattleObjGet(unitId);
     Object_SetMode(slot->object, 1);
 }
 
 struct BattleObjectAnimation {
-    u8 unknown_00[0x28];
+    u8 unk00[0x28];
     struct AnimationEntry *entry;
 };
 
 s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
 
-void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
+void BattleMotion_SetMode5AndActivateSlot(s32 unitId)
 {
     struct BattleObjectAnimation *animation;
     struct AnimationEntry *entry;
 
-    if (((struct BattleUnit *)UnitGet(unit_id))->hp <= 0) {
-        animation = BattleObjGet(unit_id)->object->records;
+    if (((struct BattleUnit *)UnitGet(unitId))->hp <= 0) {
+        animation = BattleObjGet(unitId)->object->records;
         Animation_ApplyChildArgumentFar(animation, 5);
         entry = animation->entry;
         entry->param = 6;
         entry->frame = 0xff;
         WaitFrames(4);
         Map_RenderAnimatedTileFramesForObjectFar(animation);
-        ActivateBattleObjectSlot(unit_id);
+        ActivateBattleObjectSlot(unitId);
     }
 }
 
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
-    s16 living_units[14];
-    s32 target_id;
-    s32 living_count;
+    s16 livingUnits[14];
+    s32 targetId;
+    s32 livingCount;
 
-    target_id = action->target;
-    if (((struct BattleUnit *)UnitGet(target_id))->hp != 0) {
-        return target_id;
+    targetId = action->target;
+    if (((struct BattleUnit *)UnitGet(targetId))->hp != 0) {
+        return targetId;
     }
 
-    if (target_id > 0x7F) {
-        living_count = BattleParty_ListLivingUnits(
+    if (targetId > 0x7F) {
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
-            living_units);
+            livingUnits);
     } else {
-        living_count = BattleParty_ListLivingUnits(
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
-            living_units);
+            livingUnits);
     }
 
-    if (living_count == 0) {
+    if (livingCount == 0) {
         return 0x100;
     }
 
-    return living_units[(u32)(Random16() * living_count) >> 0x10];
+    return livingUnits[(u32)(Random16() * livingCount) >> 0x10];
 }

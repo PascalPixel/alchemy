@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);
@@ -47,11 +47,11 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b)
 void Func_020034f4(void)
 {
     if ((u16)(gPartyState.entrance - 3) <= 1) {
-        ObjectMotion_EnableActionAndSetCallback(27, Data_02005944);
-        ObjectMotion_EnableActionAndSetCallback(28, Data_02005944);
+        ObjectMotion_EnableActionAndSetCallback(27, gData_02005944);
+        ObjectMotion_EnableActionAndSetCallback(28, gData_02005944);
         Map_CopyBlock(33, 24, 3, 3, 27, 29);
     }
-    Func_020053bc(Data_02005d7c);
+    Func_020053bc(gData_02005d7c);
     if (!GameFlag_Test(0x8ce) || !GameFlag_Test(0x8cf))
         Object_GetById(26)->y = 0x100000;
     Func_02005824();

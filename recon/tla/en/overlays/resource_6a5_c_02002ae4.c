@@ -40,10 +40,10 @@ s32 Event_FinishScreenTransition();
 s32 Func_02005934();
 s32 Func_0200581c();
 extern u8 MsgWeDidItWe[];
-extern u8 Data_02005ff8[];
-extern u8 Data_02006088[];
-extern u8 Data_02005ff0[];
-extern u8 Data_020061e0[];
+extern u8 gData_02005ff8[];
+extern u8 gData_02006088[];
+extern u8 gData_02005ff0[];
+extern u8 gData_020061e0[];
 
 void Func_02002ae4(void)
 {
@@ -257,11 +257,11 @@ void Func_02002ae4(void)
     Call1(Battle_WaitMode0, 0x14);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Object_AttachWorkTargetToObject, 0x1b, 1);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)Data_02005ff8);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)gData_02005ff8);
     Call1(Battle_WaitMode0, 0x1e);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)Data_02005ff8);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)gData_02005ff8);
     Call1(Battle_WaitMode0, 0x1e);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)Data_02005ff8);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)gData_02005ff8);
     Call1(Object_RefreshSelectorById, 0x1d);
     t166 = Value1(Object_GetById, 0x1d);
     FIELD_AT((t166 + 0x23), u8, 0) = (FIELD_AT((t166 + 0x23), u8, 0) | 0x40);
@@ -271,11 +271,11 @@ void Func_02002ae4(void)
     FIELD_AT((t168 + 0x23), u8, 0) = (0x40 | FIELD_AT((t168 + 0x23), u8, 0));
     t169 = Value1(Object_GetById, 0x1d);
     FIELD_AT((t169 + 0x55), u8, 0) = 2;
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)Data_02006088);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)gData_02006088);
     Call1(Object_RefreshSelectorById, 0x1b);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)Data_02006088);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)gData_02006088);
     Call1(Object_RefreshSelectorById, 0x1c);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)Data_02006088);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)gData_02006088);
     Call1(Object_RefreshSelectorById, 0x1d);
     Call3(ObjectMotion_SetPositionAndReset, 0x1d, 0x137, 0x100);
     Call3(ObjectMotion_ArmCallback, 0x1d, 0x4000, 0);
@@ -414,9 +414,9 @@ void Func_02002ae4(void)
     if (t298 != 0) {
         Call3(ObjectMotion_ResetAndSetPosition, 1, FIELD_AT(t298, s16, 10), FIELD_AT(t298, s16, 18));
     }
-    Call2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)Data_02005ff0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 3, (s32)Data_02005ff0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)Data_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)gData_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 3, (s32)gData_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)gData_02005ff0);
     Call1(Object_RefreshSelectorById, 2);
     Call1(Object_RefreshSelectorById, 3);
     Call1(Object_RefreshSelectorById, 1);
@@ -441,7 +441,7 @@ void Func_02002ae4(void)
     Call3(ObjectMotion_SetPositionAndReset, 0, 0x269, 0x138);
     t325 = Value1(Object_GetById, 0);
     FIELD_AT((t325 + 0x55), u8, 0) = 2;
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_020061e0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_020061e0);
     Call1(Object_RefreshSelectorById, 0);
     Call2(Func_020058ec, 0, 0x4000);
     Call1(Battle_WaitMode0, 0x1e);
@@ -493,23 +493,23 @@ void Func_02002ae4(void)
     if (t367 != 0) {
         Call3(ObjectMotion_ResetAndSetPosition, 0x1e, FIELD_AT(t367, s16, 10), FIELD_AT(t367, s16, 18));
     }
-    Call2(ObjectMotion_EnableActionAndSetCallback, 7, (s32)Data_02005ff0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 6, (s32)Data_02005ff0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)Data_02005ff0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1e, (s32)Data_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 7, (s32)gData_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 6, (s32)gData_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_02005ff0);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0x1e, (s32)gData_02005ff0);
     Call1(Object_RefreshSelectorById, 7);
     Call1(Object_RefreshSelectorById, 6);
     Call1(Object_RefreshSelectorById, 5);
     Call1(Object_RefreshSelectorById, 0x1e);
     Call2(Object_AttachWorkTargetToObject, 4, 1);
     Call3(ObjectMotion_CommitPositionAndActivate, 4, -16, 0);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 4, (s32)Data_02005ff8);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 4, (s32)gData_02005ff8);
     Call1(Object_RefreshSelectorById, 4);
     t381 = Value1(Object_GetById, 4);
     FIELD_AT((t381 + 0x23), u8, 0) = (FIELD_AT((t381 + 0x23), u8, 0) | 0x40);
     t382 = Value1(Object_GetById, 0x1d);
     FIELD_AT((t382 + 0x55), u8, 0) = 2;
-    Call2(ObjectMotion_EnableActionAndSetCallback, 4, (s32)Data_02006088);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 4, (s32)gData_02006088);
     Call1(Object_RefreshSelectorById, 4);
     Call3(ObjectMotion_SetPositionAndReset, 4, 0x137, 0x100);
     Call2(Func_020058ec, 4, 0x4000);

@@ -7,8 +7,8 @@
 #include "menu.h"
 
 struct SaveGameWords {
-    u32 build_stamp;
-    u32 play_time;
+    u32 buildStamp;
+    u32 playTime;
 };
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gPartyState)
@@ -17,8 +17,8 @@ extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
 extern u8 MsgLoadFailed;
 
-extern u8 Data_02000000[];
-extern s16 Data_020036d0;
+extern u8 gData_02000000[];
+extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -38,17 +38,17 @@ s32 SaveState_SelectAndLoad(s32 mode)
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
-        slot = Func_08043cd8(Data_020036d0, mode);
+        slot = Func_08043cd8(gData_020036d0, mode);
         if (slot == -1) {
             result = slot;
-        } else if (SaveState_ReadRecordPayload(slot, Data_02000000) != 0) {
+        } else if (SaveState_ReadRecordPayload(slot, gData_02000000) != 0) {
             UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
             result = -2;
         } else {
-            gFrameWaitCount = SAVE_GAME_WORDS->play_time;
-            gAutoSleepEnabled = gPartyState.unknown_244[6];
+            gFrameWaitCount = SAVE_GAME_WORDS->playTime;
+            gAutoSleepEnabled = gPartyState.unk244[6];
             gIdleFrameCount = 0;
-            Data_020036d0 = slot;
+            gData_020036d0 = slot;
         }
     }
     SaveState_ReleaseWorkspace();
@@ -78,7 +78,7 @@ s32 SaveState_CopySlot(void)
         if (value == -1) {
             result = value;
         } else {
-            void *buffer = Data_02000000;
+            void *buffer = gData_02000000;
 
             value = SaveState_ReadRecordPayload(value, buffer);
             if (value != 0) {

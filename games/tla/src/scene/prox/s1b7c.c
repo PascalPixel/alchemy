@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -21,20 +21,20 @@ void Func_0200458c(s32 entrance);
 
 void Func_02001b7c(void)
 {
-    struct EventWork154 *work = Ram_HeapSlots->event_work;
-    s32 entrance = work->return_entrance;
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct EventWork154 *work = Ram_HeapSlots->eventWork;
+    s32 entrance = work->returnEntrance;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 cell;
     s32 id;
 
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     cell = object->x >> 16;
     Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z - 0x40000);
     Func_020043fc(object);
     object->angle = 0xc000;
     Func_0200463c(128);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    id = gPartyState.current_owner;
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    id = gPartyState.currentOwner;
     if (entrance == 6)
         Object_SetModeById(id, 25);
     else

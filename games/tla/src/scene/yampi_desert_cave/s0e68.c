@@ -41,7 +41,7 @@ void Func_02000f10(s32 unused, s32 id)
         s32 row = object->z >> 20;
 
         if (row == 13) {
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             GameFlag_SetBit(0x303);
             YampiDesertCave_Call1848(32, 13, 1, 1, 34, row);
             YampiDesertCave_Call1848(95, 3, 3, 3, 97, 12);

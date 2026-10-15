@@ -13,7 +13,7 @@ void Func_080db444(s32 id, s32 force)
     s32 y;
 
     if (object != NULL) {
-        if (object->motion_flags == 0) {
+        if (object->motionFlags == 0) {
             object->z += 0xfff00000;
             y = object->y;
             object->y = y + 0x400000;

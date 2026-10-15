@@ -8,7 +8,7 @@
 struct RenderInput;
 struct RenderOutput;
 
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+struct RenderOutput *RenderOutput_Create(s32 slot, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y);
 struct RenderOutput *RenderOutput_CreateLoaded(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon, struct RenderInput *input, s32 x, s32 y);
@@ -118,7 +118,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 item);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count);
-s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count);
+s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
 s32 UiText_ShowLocalizedMessageAndWait(void);
@@ -132,8 +132,8 @@ s32 Menu_RunResourceSelectionLoop(s32 initial);
 s32 Menu_SelectResource(s32 start, s32 goal);
 void Menu_LoadResourceSlot(s32 slot, s32 index);
 void Menu_AppendResourceEntry(s32 no);
-void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base);
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base);
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase);
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase);
 s32 Menu_SelectTopEntry(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1);
 s32 Menu_SelectSaveSlotAction(void);

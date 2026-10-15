@@ -14,11 +14,11 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
-extern u32 Data_02005ccc[];
-extern u32 Data_02005d24[];
-extern u32 Data_02005d8c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
+extern u32 gData_02005ccc[];
+extern u32 gData_02005d24[];
+extern u32 gData_02005d8c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);
@@ -109,7 +109,7 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode)
     Motion_CamBounds(x, y, z, mode);
 }
 
-extern u32 Data_02005c40[];
+extern u32 gData_02005c40[];
 
 static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b)
 {
@@ -143,7 +143,7 @@ void Func_02002a64(void)
     Func_0200580c(0);
     Camera_SetBounds(-1, -1, -1, 0);
     speed = 0xc000;
-    Actor_Slide(gPartyState.current_owner, 174 << 17, 156 << 17, speed);
+    Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
     Actor_Slide(7, 165 << 17, 156 << 17, speed);
     {
         s32 slow = 0xb000;
@@ -153,41 +153,41 @@ void Func_02002a64(void)
     Actor_Slide(6, 224 << 17, 156 << 17, speed);
     Actor_Slide(5, 234 << 17, 156 << 17, speed);
     WaitFrames(1);
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x201;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
     Func_0200578c_ArgsFirst(23, 256, 20);
     Func_02005754(MsgGabombaUnderstandsChannel);
     Func_02005764_(23, 0);
-    Func_020057bc()->motion_flags = 0;
+    Func_020057bc()->motionFlags = 0;
     Func_020057a4(0xcccc, 0x1999);
     Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
     Func_020057b4();
-    Actor_Turn(gPartyState.current_owner, 0, 0);
+    Actor_Turn(gPartyState.currentOwner, 0, 0);
     Actor_Turn(5, 0x8000, 0);
     Actor_Turn(7, 0, 0);
     Func_02005774_(6, 0x8000);
     Object_SetModeById(6, 3);
     Func_02005764_(0x4006, 0);
     UiText_OpenMessageAtObject(0x6005, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Func_0200578c(7, 256, 20);
         Actor_SetSpeed(7, 0x20000, 0x10000);
         Actor_Walk(7, 340, 296);
         Actor_Walk(7, 354, 296);
         Actor_Walk(7, 364, 308);
-        Actor_Turn(gPartyState.current_owner, 0xe000, 0);
+        Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
         Func_02005774_(7, 0x6000);
         Func_02005764(0x6007, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Actor_SetSpeed(7, 0x20000, 0x10000);
         Actor_Walk(7, 340, 296);
         Actor_Walk(7, 354, 296);
         Actor_Walk(7, 364, 308);
-        Actor_Turn(gPartyState.current_owner, 0xe000, 0);
+        Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
         Func_02005774_(7, 0x6000);
         Object_SetModeById(7, 3);
         Func_02005764(0x6007, 0);
@@ -217,13 +217,13 @@ void Func_02002a64(void)
     Func_0200578c_ArgsFirst(7, 261, 0);
     Actor_Turn(6, 0x2000, 0);
     Actor_Turn(5, 0xa000, 0);
-    Actor_Turn(gPartyState.current_owner, 0, 80);
+    Actor_Turn(gPartyState.currentOwner, 0, 80);
     Func_0200578c_ArgsFirst(7, 261, 40);
     Func_02005774_(7, 0);
     Func_02005764_(0x4007, 0);
     Actor_Turn(5, 0x8000, 0);
     Func_02005774_(6, 0x8000);
-    Object_SetModeById(gPartyState.current_owner, 3);
+    Object_SetModeById(gPartyState.currentOwner, 3);
     Object_SetModeById(23, 3);
     Object_SetModeById(5, 3);
     Motion_SetModeAndWaitAnimation(6, 3);
@@ -252,10 +252,10 @@ void Func_02002a64(void)
     Actor_SetSpeed(6, 0x19999, 0xcccc);
     Actor_SetSpeed(23, 0x19999, 0xcccc);
     Actor_SetSpeed(7, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(7, Data_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(23, Data_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02005c40);
-    Object_SetActionCallbackAndRefreshById(5, Data_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(7, gData_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(23, gData_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02005c40);
+    Object_SetActionCallbackAndRefreshById(5, gData_02005c40);
     GameFlag_SetBit(0x8f6);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

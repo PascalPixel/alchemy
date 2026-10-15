@@ -1,11 +1,11 @@
 #include "types.h"
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 typedef struct {
     u8 padding[15];
-    u8 field_0f;
+    u8 field0f;
 } Object0f;
 
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
@@ -19,7 +19,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
     void *object;
     struct State080a8088 *state;
 
-    state = *(struct State080a8088 **)((u32)&Data_03001f2c);
+    state = *(struct State080a8088 **)((u32)&gData_03001f2c);
     created = 0;
     handle = state->handle;
     if (handle == 0) {
@@ -29,7 +29,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
     if (created != 0) {
         object = SideObject_CreateFar(resource, 0, 0, handle, 0, 0);
         state->object = object;
-        if ((((Object0f *)object)->field_0f = 0xF0, state->mode) == 3) {
+        if ((((Object0f *)object)->field0f = 0xF0, state->mode) == 3) {
             Menu_SpawnIconEntries(state, handle);
         }
         Menu_CreateEightEntryObjects(handle);

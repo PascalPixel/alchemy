@@ -2,7 +2,7 @@
 
 void Func_02000d68(void)
 {
-    s32 value = HALF_AT(Ram_HeapSlots->event_work, 340);
+    s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
 
     if (value == 2)
         Call3((void (*)())Func_0200110c, 8, 0x900000, 0xe00000);

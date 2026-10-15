@@ -1,13 +1,13 @@
 #include "shaman_village.h"
 
-extern u16 Data_0200515a[];
+extern u16 gData_0200515a[];
 
 void Func_02002f20(s32 a, s32 b);
 void Func_02002fb0(s32 a);
 
 void Func_02003040(void)
 {
-    Data_0200515a[15] = 180;
+    gData_0200515a[15] = 180;
     Battle_WaitMode0(30);
     Engine_AudioPlayCue(78);
     Func_02002fb0(5);

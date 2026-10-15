@@ -18,7 +18,7 @@ void Func_02003c54(s32 a);
 
 void Func_02001a8c(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     work->target = Object_GetById(17);
     Func_020014bc(mode, cue);
@@ -27,7 +27,7 @@ void Func_02001a8c(s32 mode, s32 cue)
 
 void Func_02001ac0(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     work->target = Object_GetById(18);
     Func_020014bc(mode, cue);
@@ -36,7 +36,7 @@ void Func_02001ac0(s32 mode, s32 cue)
 
 void Func_02001af4(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     work->target = Object_GetById(11);
     Func_020014bc(mode, cue);
@@ -50,7 +50,7 @@ void Func_02001b24(void)
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
     do {
     } while (0);
-    if (party->render_mode != 2)
+    if (party->renderMode != 2)
         GameFlag_ClearBit(0x2f8);
 }
 
@@ -61,11 +61,11 @@ void Func_02001b44(void)
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
     do {
     } while (0);
-    if (party->render_mode != 2) {
+    if (party->renderMode != 2) {
         Func_02003aec();
         Func_02003bcc(0);
-        Object_GetById(party->current_owner)->motion_flags = 0;
-        ObjectMotion_ResetAndSetPositionInMode2(party->current_owner, 264, 440);
+        Object_GetById(party->currentOwner)->motionFlags = 0;
+        ObjectMotion_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
         Battle_WaitMode0(5);
         Func_02003c54(123);
         Func_02003b7c(2);

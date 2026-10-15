@@ -8,7 +8,7 @@ typedef void (*InterruptHandler)(void);
 
 extern InterruptHandler gIrqHandlers[14];
 
-extern const u32 Runtime_IrqHandlers[14];
+extern const u32 gRuntime_IrqHandlers[14];
 
 extern u8		 IwramIrqMain[];
 extern const u32 IwramIrqModeWord;

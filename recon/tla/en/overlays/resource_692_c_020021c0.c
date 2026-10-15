@@ -21,7 +21,7 @@ s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_020021c0(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     struct FieldActor *actor;
     struct ObjectRuntime *other;
@@ -32,7 +32,7 @@ void Func_020021c0(void)
     Func_02004f30(136);
     i = 0;
     do {
-        object->scale_y = object->scale_x += 0x1000;
+        object->scaleY = object->scaleX += 0x1000;
         WaitFrames(5);
         i++;
     } while (i != 16);
@@ -55,8 +55,8 @@ void Func_020021c0(void)
             REG_BLDALPHA = alpha;
         }
         REG_BLDCNT = 0x3f10;
-        actor = OverlayObject_PrepareObject(other->x, other->terrain_height, other->z + 0x300000, 312);
-        other->motion_flags = 0;
+        actor = OverlayObject_PrepareObject(other->x, other->terrainHeight, other->z + 0x300000, 312);
+        other->motionFlags = 0;
         i = 0;
         do {
             other->y -= 0x10000;

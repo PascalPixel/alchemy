@@ -9,8 +9,8 @@ extern u8 MsgSaveFailed;
 extern u8 MsgGameSaved;
 extern u8 MsgSaving;
 
-extern u8 Data_02000000[];
-extern s16 Data_020036d0;
+extern u8 gData_02000000[];
+extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -42,12 +42,12 @@ s32 SaveState_SaveToSlot(u32 slot)
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
-        Data_020036d0 = slot;
+        gData_020036d0 = slot;
         Audio_PlayCue(85);
         UiText_ShowPositionedMessageAndWait((s32)&MsgSaving, 13);
         SaveState_BuildSummaryHeader();
         ObjectTable_SnapshotFar();
-        found = Func_08042f10(slot, Data_02000000);
+        found = Func_08042f10(slot, gData_02000000);
         while (UiWork_IsComplete() == 0)
             WaitFrames(1);
         UiWork_FinalizePendingCore();

@@ -2,7 +2,7 @@
 
 void Func_02000280(void)
 {
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     u8 *state = &Object_GetById(14)->state;
     s32 y;
 

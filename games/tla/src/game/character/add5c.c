@@ -7,9 +7,9 @@ static __inline__ s32 Owner_GetPpRatio(s32 owner)
 {
     struct BattleUnit *unit = UnitGet(owner);
 
-    if (unit->max_pp <= 0)
+    if (unit->maxPp <= 0)
         return 0;
-    return (unit->pp << 16) / unit->max_pp;
+    return (unit->pp << 16) / unit->maxPp;
 }
 
 s32 Func_080adc90(void)
@@ -22,10 +22,10 @@ s32 Func_080adc90(void)
     if (count == 0)
         return 0;
     for (i = 0; i < count; i++) {
-        struct BattleUnit *unit = UnitGet(gPartyState.active_owners[i]);
+        struct BattleUnit *unit = UnitGet(gPartyState.activeOwners[i]);
 
         pp += unit->pp;
-        max += unit->max_pp;
+        max += unit->maxPp;
     }
     if (max == 0)
         return 0;
@@ -35,23 +35,23 @@ s32 Func_080adc90(void)
 s32 Func_080adcec(void)
 {
     s32 best = 0;
-    s32 best_owner = -1;
+    s32 bestOwner = -1;
     s32 count = Party_CountActiveOwners();
     s32 i;
 
     if (count == 0)
         return 0;
     for (i = 0; i < count; i++) {
-        s32 ratio = Owner_GetPpRatio(gPartyState.active_owners[i]);
+        s32 ratio = Owner_GetPpRatio(gPartyState.activeOwners[i]);
 
         if (ratio > best) {
             best = ratio;
-            best_owner = gPartyState.active_owners[i];
+            bestOwner = gPartyState.activeOwners[i];
         }
     }
-    if (best_owner == -1)
+    if (bestOwner == -1)
         return 0;
-    return UnitPpAdd(best_owner, -1);
+    return UnitPpAdd(bestOwner, -1);
 }
 
 void Func_080add5c(s32 count)

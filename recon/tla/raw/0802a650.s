@@ -48,6 +48,6 @@ Func_0802a650:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0802a6b0:
-	.4byte Data_0802f380
+	.4byte gData_0802f380
 .L_0802a6b4:
 	.4byte 0x0000026c

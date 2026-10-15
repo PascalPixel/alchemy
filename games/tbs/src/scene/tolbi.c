@@ -92,7 +92,7 @@ static s32 SceneActor_UpdatePartnerProximity(u8 *self)
 
 	player = Object_GetById(0);
 
-	if (*(s16 *)(work + 376) != 0 || scene->widen_proximity != 0)
+	if (*(s16 *)(work + 376) != 0 || scene->widenProximity != 0)
 	{
 		range = 26;
 		if ((*flags & 2) != 0)
@@ -133,7 +133,7 @@ static void EV08_PSYNERGY(void)
 	record = Object_GetById(8);
 	if ((s32)record != 0)
 	{
-		record->collision_flags = 0;
+		record->collisionFlags = 0;
 	}
 	record = Object_GetById(8);
 	Engine_ActorSetSpriteFlags((s32)record, 0);
@@ -175,8 +175,8 @@ static void EV16_SCRIPT(void)
 	actor = Object_GetById(16);
 	facing = actor->facing;
 	Engine_EventBegin();
-	actor->proximity_flags |= 2;
-	if (work->psynergy_request == 0)
+	actor->proximityFlags |= 2;
+	if (work->psynergyRequest == 0)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
@@ -212,7 +212,7 @@ static void EV16_SCRIPT(void)
 	Engine_EventShowMessageAndWait(16, 0, 10);
 	actor->facing = facing;
 	Engine_TaskWait(1);
-	actor->proximity_flags &= 1;
+	actor->proximityFlags &= 1;
 	Engine_EventEnd();
 }
 
@@ -226,8 +226,8 @@ static void EV17_SCRIPT(void)
 	actor = Object_GetById(17);
 	facing = actor->facing;
 	Engine_EventBegin();
-	actor->proximity_flags |= 2;
-	if (work->psynergy_request == 0)
+	actor->proximityFlags |= 2;
+	if (work->psynergyRequest == 0)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
@@ -263,7 +263,7 @@ static void EV17_SCRIPT(void)
 	Engine_EventShowMessageAndWait(17, 0, 10);
 	actor->facing = facing;
 	Engine_TaskWait(1);
-	actor->proximity_flags &= 1;
+	actor->proximityFlags &= 1;
 	Engine_EventEnd();
 }
 
@@ -370,19 +370,19 @@ static void SceneScript_SetupActors(void)
 			actor[85] = 0;
 		}
 	}
-	index = work->touched_trigger - 1;
+	index = work->touchedTrigger - 1;
 	Engine_AudioPlayCue(158);
 	Map_AnimateCells((s32)gTolbiCellSteps[index].steps, gTolbiCellSteps[index].x,
 		gTolbiCellSteps[index].y);
 	Actor_SetSpeed(0, 0x8000, 0x4000);
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetAnimation(0, 2);
 	if (index != 6)
 	{
 		Actor_CenterAndWalk(0, 2, -8);
 		Engine_EventWait(10);
 	}
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -395,9 +395,9 @@ static void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 	if (object != NULL)
 	{
 		priority = Object_GetById(0)->sprite->priority;
-		object->actor.priority_flags = 0;
+		object->actor.priorityFlags = 0;
 		object->actor.sprite->priority = priority;
-		((struct SceneSprite *)object->actor.sprite)->priority_15 = priority;
+		((struct SceneSprite *)object->actor.sprite)->priority15 = priority;
 	}
 }
 
@@ -407,18 +407,18 @@ s32 Tolbi_ApplyEntryState(s32 a0)
 	s32 handler;
 	s32 hidden;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Actor_SetPosition(16, 0x1600000, 0x1600000);
 	Engine_ActorEnableActionCallback(16, gTolbiActor16Action);
 	record = Object_GetById(16);
 	handler = (s32)SceneActor_UpdatePartnerProximity;
-	((struct SceneActor *)record)->proximity_flags = 1;
+	((struct SceneActor *)record)->proximityFlags = 1;
 	*(s32 *)(record + 108) = handler;
 	hidden = 0;
 	Engine_ActorSetPosition(17, 0x1700000, 0x1400000);
 	Engine_ActorEnableActionCallback(17, gTolbiActor17Action);
 	record = Object_GetById(17);
-	((struct SceneActor *)record)->proximity_flags = hidden;
+	((struct SceneActor *)record)->proximityFlags = hidden;
 	*(s32 *)(record + 108) = handler;
 	record = Object_GetById(14);
 	*(s32 *)(record + 108) = (s32)SceneActor_CopyPlayerModeToActor;
@@ -492,7 +492,7 @@ static void EV239_SCRIPT(void)
 static void Tolbi_RequestTouchedExit(void)
 {
 
-	s16 *cnt = &gEventWork->touched_trigger;
+	s16 *cnt = &gEventWork->touchedTrigger;
 
 	Engine_EventRequestExit(*cnt);
 }

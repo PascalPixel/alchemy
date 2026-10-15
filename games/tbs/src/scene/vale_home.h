@@ -40,8 +40,8 @@ struct SceneVerticalEffect
 	s32							 y;
 	s32							 z;
 	u8							 pad14[4];
-	s32							 amplitude_x;
-	s32							 amplitude_y;
+	s32							 amplitudeX;
+	s32							 amplitudeY;
 	u8							 pad20[0x44];
 	u16							 frame;
 	u8							 pad66[2];
@@ -50,8 +50,8 @@ struct SceneVerticalEffect
 
 struct PairDetail
 {
-	u8 unknown_00[22];
-	u8 field_16;
+	u8 unk00[22];
+	u8 field16;
 };
 
 struct PairSprite
@@ -66,7 +66,7 @@ union PairObject
 	s32				  words[28];
 	struct
 	{
-		u8				  unknown_00[0x68];
+		u8				  unk00[0x68];
 		union PairObject *parent;
 	} link;
 };
@@ -75,16 +75,16 @@ struct SceneVerticalEffect;
 
 struct PairWork
 {
-	u8	unknown_00[70];
-	u16 vram_block;
+	u8	unk00[70];
+	u16 vramBlock;
 };
 
 struct WorldMapOam
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 attr0;
 	u16 x : 9;
-	u16 affine_index : 5;
+	u16 affineIndex : 5;
 	u16 size : 2;
 };
 

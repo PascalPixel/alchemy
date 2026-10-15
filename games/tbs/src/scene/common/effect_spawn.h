@@ -5,11 +5,11 @@
 
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
 {
-	object->effect.x += object->effect.velocity_x;
-	object->effect.y += object->effect.velocity_y;
-	object->effect.z += object->effect.velocity_z;
-	object->effect.scale_x += object->effect.scale_rate_x;
-	object->effect.scale_y += object->effect.scale_rate_y;
+	object->effect.x += object->effect.velocityX;
+	object->effect.y += object->effect.velocityY;
+	object->effect.z += object->effect.velocityZ;
+	object->effect.scaleX += object->effect.scaleRateX;
+	object->effect.scaleY += object->effect.scaleRateY;
 	object->effect.sprite->rotation += object->effect.spin;
 }
 
@@ -27,7 +27,7 @@ enum
 };
 
 #define EFFECT_SPAWN(name, create, set_mode, set_script)                                      \
-	void name(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags, \
+	void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, \
 		const struct EffectOptions *options)                                                  \
 	{                                                                                         \
 		struct FieldActor  *party = Actor_Get(ACTOR_PARTY_LEADER);                            \
@@ -45,15 +45,15 @@ enum
 		sprite = effect->sprite;                                                              \
 		set_mode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);              \
 		set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);               \
-		effect->motion_flags = 0;                                                             \
+		effect->motionFlags = 0;                                                             \
 		sprite->flags = 0;                                                                    \
 		effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;                      \
-		effect->velocity_x = velocity_x;                                                      \
-		effect->velocity_y = velocity_y;                                                      \
-		effect->velocity_z = velocity_z;                                                      \
+		effect->velocityX = velocityX;                                                      \
+		effect->velocityY = velocityY;                                                      \
+		effect->velocityZ = velocityZ;                                                      \
 		sprite->priority = party->sprite->priority;                                           \
-		effect->scale_rate_x = 0;                                                             \
-		effect->scale_rate_y = 0;                                                             \
+		effect->scaleRateX = 0;                                                             \
+		effect->scaleRateY = 0;                                                             \
 		effect->spin = 0;                                                                     \
                                                                                               \
 		if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                                \
@@ -62,29 +62,29 @@ enum
 			ObjectGroup_SetChildValue((struct FieldActor *)effect, options->palette);         \
 		if ((flags & EFFECT_USE_PRIORITY) != 0)                                               \
 		{                                                                                     \
-			effect->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;                              \
+			effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                              \
 			sprite->priority = options->priority;                                             \
 		}                                                                                     \
 		if ((flags & EFFECT_USE_START_SCALE) != 0)                                            \
 		{                                                                                     \
-			effect->scale_x = options->start_scale_x;                                         \
-			effect->scale_y = options->start_scale_y;                                         \
+			effect->scaleX = options->startScaleX;                                         \
+			effect->scaleY = options->startScaleY;                                         \
 		}                                                                                     \
 		if ((flags & EFFECT_SCALE_TO_TARGET) != 0)                                            \
 		{                                                                                     \
 			script = gEffectScripts[flags & EFFECT_SCRIPT_MASK];                              \
 			if ((flags & EFFECT_USE_START_SCALE) != 0)                                        \
 			{                                                                                 \
-				effect->scale_rate_x = (options->target_scale_x - effect->scale_x)            \
+				effect->scaleRateX = (options->targetScaleX - effect->scaleX)            \
 									   / script[EFFECT_SCRIPT_REPEAT_COUNT];                  \
-				effect->scale_rate_y = (options->target_scale_y - effect->scale_y)            \
+				effect->scaleRateY = (options->targetScaleY - effect->scaleY)            \
 									   / script[EFFECT_SCRIPT_REPEAT_COUNT];                  \
 			}                                                                                 \
 			else                                                                              \
 			{                                                                                 \
-				effect->scale_rate_x = (options->target_scale_x - EFFECT_SCALE_ONE)           \
+				effect->scaleRateX = (options->targetScaleX - EFFECT_SCALE_ONE)           \
 									   / script[EFFECT_SCRIPT_REPEAT_COUNT];                  \
-				effect->scale_rate_y = (options->target_scale_y - EFFECT_SCALE_ONE)           \
+				effect->scaleRateY = (options->targetScaleY - EFFECT_SCALE_ONE)           \
 									   / script[EFFECT_SCRIPT_REPEAT_COUNT];                  \
 			}                                                                                 \
 		}                                                                                     \

@@ -6,12 +6,12 @@
 #include "field_event.h"
 #include "field_sprite.h"
 
-extern u8 Data_02002fb8[];
-extern u8 Data_02003214[];
-extern s32 Data_02003274;
-extern s32 Data_02003278;
-extern u8 Data_02002f70[];
-extern u8 Data_02002f94[];
+extern u8 gData_02002fb8[];
+extern u8 gData_02003214[];
+extern s32 gData_02003274;
+extern s32 gData_02003278;
+extern u8 gData_02002f70[];
+extern u8 gData_02002f94[];
 extern u32 gFrameCount;
 
 void Func_020029d0();
@@ -33,21 +33,21 @@ void Func_02002a40();
 void Func_02001650();
 
 struct SpriteFrames {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 frame;
 };
 
 struct AnimatedSprite {
-    u8 unknown_00[0x19];
+    u8 unk00[0x19];
     u8 frame;
-    u8 next_frame;
-    u8 unknown_1b[0xd];
+    u8 nextFrame;
+    u8 unk1b[0xd];
     struct SpriteFrames *frames;
 };
 
 void Func_02000054(void)
 {
-    Func_020029d0(Data_02002fb8);
+    Func_020029d0(gData_02002fb8);
 }
 
 void Func_020000c8(struct FieldActor *object)
@@ -59,21 +59,21 @@ void Func_020000c8(struct FieldActor *object)
     case 0:
         frames->frame = 7;
         sprite->frame = 1;
-        sprite->next_frame = 2;
+        sprite->nextFrame = 2;
         break;
     case 1:
         sprite->frame = 1;
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         break;
     case 2:
         frames->frame = 7;
         sprite->frame = 1;
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         break;
     case 3:
         frames->frame = 0;
         sprite->frame = 1;
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         break;
     }
     object->timer++;
@@ -105,8 +105,8 @@ void Func_02000148(struct FieldActor *object)
         object->z = z + sine * 2;
         /* FAKEMATCH: and the height store before the target store. */
         __asm__("");
-        object->target_x = x;
-        object->target_z = object->z;
+        object->targetX = x;
+        object->targetZ = object->z;
         object->timer -= 0x800;
     }
 }
@@ -140,9 +140,9 @@ void Func_020001a4(void)
     if (spark == NULL)
         return;
     sprite = spark->sprite;
-    Func_02002820(spark, Data_02003214);
+    Func_02002820(spark, gData_02003214);
     Object_SetPartAttribute(spark, 1);
-    spark->motion_flags = 0;
+    spark->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
     spark->timer = angle;
     HALF_AT(spark, 102) = 0;
@@ -154,7 +154,7 @@ void Func_020001a4(void)
 
 void Func_02000294(void)
 {
-    if (Data_02003278 != 0)
+    if (gData_02003278 != 0)
         Func_02002a40(201);
-    Func_02001650(Data_02003274);
+    Func_02001650(gData_02003274);
 }

@@ -12,16 +12,16 @@ void Func_0200538c(void)
     Func_0200324c();
     if (!GameFlag_Test(0x869))
         GameFlag_SetBit(0x201);
-    Func_02005c64(Data_02006324);
+    Func_02005c64(gData_02006324);
     ObjectMotion_SetActionVariant(8, 2);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
-    Object_GetById(11)->motion_flags = 0;
+    Object_GetById(11)->motionFlags = 0;
     if (GameFlag_Test(0x9ea)) {
         Kibombo_ObjSetPos(Object_GetById(11), 208 << 15, 0, 148 << 17);
         Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
         WaitFrames(10);
     }
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     if (GameFlag_Test(0x86a))
         Func_020005e0();
     if (GameFlag_Test(0x204))

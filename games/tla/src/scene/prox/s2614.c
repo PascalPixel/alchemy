@@ -5,8 +5,8 @@
 #include "io_reg.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
+    u8 unk000[0x1ac];
+    s32 screenEffect;
 };
 
 s32 GameFlag_Test(s32 flag);
@@ -42,13 +42,13 @@ s32 Func_02002614(void)
     }
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov6a8Room4) {
-        ((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+        ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
         Func_020029c8();
     } else if (scene == (s32)&SceneId_Ov6a8Room5) {
-        ((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+        ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
         Func_02002a38();
     } else if (scene == (s32)&SceneId_Ov6a8Room6) {
-        s32 *effect = &((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect;
+        s32 *effect = &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
         /* FAKEMATCH: the native loads the call's argument before the store; the plain order stores first (one reordered pair, differ 2). The argument is pinned to the r0 it is passed in. */
         register s32 skip __asm__("r0");
         s32 value = 0x209;

@@ -21,7 +21,7 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
-    struct BattleCamera *scene = Ram_HeapSlots->camera_work;
+    struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
     s32 *pos = scene->pos;
     s32 scale = (zoom << 16) / 100;
     s32 renderBounds[3];

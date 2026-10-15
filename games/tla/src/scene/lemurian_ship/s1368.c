@@ -12,9 +12,9 @@ void Func_02001380(s32 id)
 {
     struct LemurianShipObject *object = Object_GetById(id);
 
-    Object_GetById(id)->priority_flags |= 0x20;
+    Object_GetById(id)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(id, 1);
-    object->priority_flags &= ~2;
+    object->priorityFlags &= ~2;
     object->timer = 1;
 }
 
@@ -24,18 +24,18 @@ void Func_020013b8(s32 id)
 {
     struct LemurianShipObject *object = Object_GetById(id);
 
-    Object_GetById(id)->priority_flags |= 0x20;
+    Object_GetById(id)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(id, 2);
-    object->priority_flags &= ~2;
+    object->priorityFlags &= ~2;
     object->timer = 1;
 }
 #endif
 
 void Func_020013f0(void)
 {
-    Object_GetById(15)->priority_flags |= 0x20;
+    Object_GetById(15)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(15, 3);
-    Object_GetById(15)->priority_flags &= ~2;
+    Object_GetById(15)->priorityFlags &= ~2;
     Func_02001380(16);
     Func_02001380(17);
     Func_02001380(18);
@@ -66,7 +66,7 @@ void Func_02001464(void)
 
 void Func_02001474(void)
 {
-    struct LemurianShipObject *leader = Object_GetById(gPartyState.current_owner);
+    struct LemurianShipObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 

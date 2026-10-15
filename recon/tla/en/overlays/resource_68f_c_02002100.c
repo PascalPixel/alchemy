@@ -2,7 +2,7 @@
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 struct TundariaTowerEffectWork {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     s16 actor;
 };
 
@@ -10,7 +10,7 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_02002100(u16 *row, s32 mode, s32 count)
 {
-    struct TundariaTowerEffectWork *work = Ram_HeapSlots->effect_work;
+    struct TundariaTowerEffectWork *work = Ram_HeapSlots->effectWork;
 
     goto test;
     do {
@@ -25,11 +25,11 @@ void Func_02002100(u16 *row, s32 mode, s32 count)
             kind = row[0];
             flag = row[1];
             if (count <= 7)
-                object->scale_y -= 0x1f00;
+                object->scaleY -= 0x1f00;
             if (mode == 1) {
                 GameFlag_SetBit(flag);
-                Func_02002184(actor, kind, flag, object->terrain_id);
-                object->scale_y = 0x10000;
+                Func_02002184(actor, kind, flag, object->terrainId);
+                object->scaleY = 0x10000;
             }
             return;
         }

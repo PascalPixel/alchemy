@@ -409,7 +409,7 @@ Func_08180c94:
 .L_08180fc0:
 	.4byte 0x3f3f3f3f
 .L_08180fc4:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08180fc8:
 	.4byte 0xfffff800
 .L_08180fcc:
@@ -655,6 +655,6 @@ Func_08180c94:
 .L_081811c8:
 	.4byte 0xffc00000
 .L_081811cc:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_081811d0:
 	.4byte Func_08143000

@@ -563,7 +563,7 @@ Func_08049a30:
 .L_08049e9c:
 	.4byte gFrameCount
 .L_08049ea0:
-	.4byte Resource_FixedBlockBTiles
+	.4byte gResource_FixedBlockBTiles
 .L_08049ea4:
 	lsrs r0, r0, #2
 	ands r3, r1

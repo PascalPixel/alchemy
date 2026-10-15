@@ -4,7 +4,7 @@
 #include "text/msg_ids.h"
 
 struct EventWork15a {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 value;
 };
 
@@ -27,8 +27,8 @@ void Func_020005b4(s32 id)
         Func_02005888();
     } else {
         UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadPlaceItemPrompt, 13);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 1) == 0)
-            ((struct EventWork15a *)Ram_HeapSlots->event_work)->value = 1;
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 1) == 0)
+            ((struct EventWork15a *)Ram_HeapSlots->eventWork)->value = 1;
     }
 }
 
@@ -38,7 +38,7 @@ void Func_02000628(void)
 
 void Func_0200062c(s32 id)
 {
-    struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->map_work;
+    struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
     struct ObjectRuntime *object = Object_GetById(id);
 
     if (object != NULL) {
@@ -52,7 +52,7 @@ void Func_0200062c(s32 id)
 
 void Func_02000660(s32 id)
 {
-    struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->map_work;
+    struct TrialRoadMapWork *map = (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
     struct ObjectRuntime *object = Object_GetById(id);
 
     if (object != NULL) {
@@ -65,16 +65,16 @@ void Func_02000660(s32 id)
 
 s32 Func_02000694(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *owner = object->linked_object;
+    struct ObjectRuntime *owner = object->linkedObject;
 
     object->x = owner->x;
     object->y = owner->y + (OBJECT_BYTE(object, 99) << 16);
     object->z = owner->z;
-    object->terrain_height = owner->terrain_height;
+    object->terrainHeight = owner->terrainHeight;
     return 1;
 }
 
-extern const u8 Data_02005a7c[];
+extern const u8 gData_02005a7c[];
 
 void Func_020006b4(s32 id)
 {
@@ -85,15 +85,15 @@ void Func_020006b4(s32 id)
         object = Object_Create(489, owner->x, owner->y, owner->z);
         if (object != NULL) {
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            Func_020057d0(object, Data_02005a7c);
-            object->linked_object = owner;
+            Func_020057d0(object, gData_02005a7c);
+            object->linkedObject = owner;
             /* FAKEMATCH: stores the owner link before it copies the object for the priority flags (differ 2 without it; an explicit flag pointer is differ 27). */
             do { } while (0);
-            object->priority_flags |= 0x80;
-            object->motion_flags = 0;
-            object->collision_flags = 0;
+            object->priorityFlags |= 0x80;
+            object->motionFlags = 0;
+            object->collisionFlags = 0;
             OBJECT_BYTE(object, 99) = 16;
-            owner->linked_object = object;
+            owner->linkedObject = object;
         }
     }
 }

@@ -52,7 +52,7 @@ struct ItemEffect
 {
 	u8 kind;
 	s8 amount;
-	u8 reserved_02[2];
+	u8 reserved02[2];
 };
 
 LAYOUT_SIZE_GUARD(ItemEffect_Size, struct ItemEffect, 0x04);
@@ -64,36 +64,36 @@ struct ItemDefinition
 	s16				  price;
 	u8				  type;
 	u8				  flags;
-	u16				  equip_mask;
+	u16				  equipMask;
 	u16				  icon;
-	s16				  primary_bonus;
-	s8				  secondary_bonus;
-	u8				  secondary_flags;
-	u8				  use_type;
-	u8				  reserved_0d;
-	u16				  description_message;
-	u8				  reserved_10[4];
+	s16				  primaryBonus;
+	s8				  secondaryBonus;
+	u8				  secondaryFlags;
+	u8				  useType;
+	u8				  reserved0d;
+	u16				  descriptionMessage;
+	u8				  reserved10[4];
 	s32				  element;
 	struct ItemEffect effects[4];
-	u16				  action_id;
-	u8				  reserved_2a[2];
+	u16				  actionId;
+	u8				  reserved2a[2];
 };
 
 LAYOUT_SIZE_GUARD(ItemDefinition_Size, struct ItemDefinition, 0x2c);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Price, struct ItemDefinition, price, 0x00);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Type, struct ItemDefinition, type, 0x02);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Flags, struct ItemDefinition, flags, 0x03);
-LAYOUT_OFFSET_GUARD(ItemDefinition_EquipMask, struct ItemDefinition, equip_mask, 0x04);
+LAYOUT_OFFSET_GUARD(ItemDefinition_EquipMask, struct ItemDefinition, equipMask, 0x04);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Icon, struct ItemDefinition, icon, 0x06);
-LAYOUT_OFFSET_GUARD(ItemDefinition_PrimaryBonus, struct ItemDefinition, primary_bonus, 0x08);
-LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryBonus, struct ItemDefinition, secondary_bonus, 0x0a);
-LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryFlags, struct ItemDefinition, secondary_flags, 0x0b);
-LAYOUT_OFFSET_GUARD(ItemDefinition_UseType, struct ItemDefinition, use_type, 0x0c);
+LAYOUT_OFFSET_GUARD(ItemDefinition_PrimaryBonus, struct ItemDefinition, primaryBonus, 0x08);
+LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryBonus, struct ItemDefinition, secondaryBonus, 0x0a);
+LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryFlags, struct ItemDefinition, secondaryFlags, 0x0b);
+LAYOUT_OFFSET_GUARD(ItemDefinition_UseType, struct ItemDefinition, useType, 0x0c);
 LAYOUT_OFFSET_GUARD(
-	ItemDefinition_DescriptionMessage, struct ItemDefinition, description_message, 0x0e);
+	ItemDefinition_DescriptionMessage, struct ItemDefinition, descriptionMessage, 0x0e);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Element, struct ItemDefinition, element, 0x14);
 LAYOUT_OFFSET_GUARD(ItemDefinition_Effects, struct ItemDefinition, effects, 0x18);
-LAYOUT_OFFSET_GUARD(ItemDefinition_ActionId, struct ItemDefinition, action_id, 0x28);
+LAYOUT_OFFSET_GUARD(ItemDefinition_ActionId, struct ItemDefinition, actionId, 0x28);
 
 struct ItemDefinition *Item_Get(s32 item);
 #if GAME_TLA

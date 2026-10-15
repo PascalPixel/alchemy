@@ -19,9 +19,9 @@
 
 #define ITEM_COUNT 512
 
-extern const u8 Data_02000748[];
-extern const u8 Data_02000754[];
-extern const u8 Data_0200076c[];
+extern const u8 gData_02000748[];
+extern const u8 gData_02000754[];
+extern const u8 gData_0200076c[];
 extern char MsgItemName[];
 
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -77,10 +77,10 @@ void Func_020002cc(void)
             item = (item + ITEM_COUNT) % count;
             RenderOutput_RedrawSavedRect(window);
             RenderOutput_ClearList(window);
-            UiText_DrawStringInWindow(Data_02000748, window, 0, 0);
+            UiText_DrawStringInWindow(gData_02000748, window, 0, 0);
             UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
             if (PartyInventory_HasSpace()) {
-                UiText_DrawStringInWindow(Data_02000754, window, 0, 32);
+                UiText_DrawStringInWindow(gData_02000754, window, 0, 32);
                 index = item & 0x1ff;
                 Func_020006bc(index);
                 UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
@@ -88,7 +88,7 @@ void Func_020002cc(void)
                 RenderOutput_RedrawSavedRect(details);
                 ItemMenu_DrawItemDetails(details, item);
             } else {
-                UiText_DrawStringInWindow(Data_0200076c, window, 0, 32);
+                UiText_DrawStringInWindow(gData_0200076c, window, 0, 32);
             }
         }
         if (Input_PressedFenced(1)) {

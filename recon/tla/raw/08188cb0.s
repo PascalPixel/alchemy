@@ -513,15 +513,15 @@ Func_08188cb0:
 .L_0818909c:
 	.4byte Func_08143000
 .L_081890a0:
-	.4byte Data_08199d40
+	.4byte gData_08199d40
 .L_081890a4:
-	.4byte Data_08199d4e
+	.4byte gData_08199d4e
 .L_081890a8:
-	.4byte Data_08199d55
+	.4byte gData_08199d55
 .L_081890ac:
-	.4byte Data_08199d31
+	.4byte gData_08199d31
 .L_081890b0:
-	.4byte Data_08199d38
+	.4byte gData_08199d38
 .L_081890b4:
 	.4byte 0x007effff
 .L_081890b8:

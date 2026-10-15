@@ -17,7 +17,7 @@
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern struct ScriptMotionObject *gObjectSlots;
-extern ScriptCommandFn			  ScriptObject_CommandTable[];
+extern ScriptCommandFn			  gScriptObject_CommandTable[];
 
 // このコードと一緒に写される中継 (updfar.s)
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -66,17 +66,17 @@ void Object_UpdateAll(void)
 		{
 			for (;;)
 			{
-				s32 cursor = (s16)obj->script_cursor;
+				s32 cursor = (s16)obj->scriptCursor;
 				u32 cmd = obj->script->word[cursor];
 
 				if (cmd <= 63)
 				{
-					if (ScriptObject_CommandTable[cmd](obj) == 0)
+					if (gScriptObject_CommandTable[cmd](obj) == 0)
 						break;
 				}
 				else
 				{
-					obj->script_cursor++;
+					obj->scriptCursor++;
 				}
 			}
 			if (obj->script == NULL)
@@ -89,131 +89,131 @@ void Object_UpdateAll(void)
 		if (obj->frozen == 0)
 		{
 			arrived = 0;
-			if (obj->target_x != TARGET_UNSET)
+			if (obj->targetX != TARGET_UNSET)
 			{
 				// 目標へ加速
-				dx = (obj->target_x - x) / 65536;
-				dz = (obj->target_z - z) / 65536;
+				dx = (obj->targetX - x) / 65536;
+				dz = (obj->targetZ - z) / 65536;
 				dist = IwramSqrt(dx * dx + dz * dz) << 16;
 				if (dist <= 0xffffff)
 				{
-					dx = obj->target_x - x;
-					dz = obj->target_z - z;
+					dx = obj->targetX - x;
+					dz = obj->targetZ - z;
 					dist = IwramSqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
 				}
 				if (dist == 0)
 				{
-					x = obj->target_x;
-					z = obj->target_z;
+					x = obj->targetX;
+					z = obj->targetZ;
 				}
 				else
 				{
 					ratio = IwramRatioMulQ14(dist, obj->acceleration);
-					vx = obj->velocity_x + MulQ16(dx, ratio);
-					obj->velocity_x = vx;
-					dx = obj->velocity_z + MulQ16(dz, ratio);
-					obj->velocity_z = dx;
+					vx = obj->velocityX + MulQ16(dx, ratio);
+					obj->velocityX = vx;
+					dx = obj->velocityZ + MulQ16(dz, ratio);
+					obj->velocityZ = dx;
 					dist = IwramSqrt(MulQ16(vx, vx) + MulQ16(dx, dx)) << 8;
-					if (dist > obj->speed_limit)
+					if (dist > obj->speedLimit)
 					{
 						// 最高速度
-						ratio = IwramRatioMulQ14(dist, obj->speed_limit);
-						obj->velocity_x = MulQ16(vx, ratio);
-						obj->velocity_z = MulQ16(dx, ratio);
+						ratio = IwramRatioMulQ14(dist, obj->speedLimit);
+						obj->velocityX = MulQ16(vx, ratio);
+						obj->velocityZ = MulQ16(dx, ratio);
 					}
 				}
 			}
 			else
 			{
 				// 減速
-				dx = obj->velocity_x;
-				dz = obj->velocity_z;
+				dx = obj->velocityX;
+				dz = obj->velocityZ;
 				dist = IwramSqrtFarArm(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
 				if (dist != 0)
 				{
 					if (dist - obj->acceleration < 0)
 					{
-						obj->velocity_x = 0;
-						obj->velocity_z = 0;
+						obj->velocityX = 0;
+						obj->velocityZ = 0;
 					}
 					else
 					{
 						ratio = IwramRatioMulQ14FarArm(dist, dist - obj->acceleration);
-						obj->velocity_x = MulQ16(dx, ratio);
-						obj->velocity_z = MulQ16(dz, ratio);
+						obj->velocityX = MulQ16(dx, ratio);
+						obj->velocityZ = MulQ16(dz, ratio);
 					}
 				}
 				else
 				{
-					obj->velocity_x = 0;
-					obj->velocity_z = 0;
+					obj->velocityX = 0;
+					obj->velocityZ = 0;
 				}
 			}
 
 			// 重力と跳ね返り
-			if (obj->motion_flags & 2)
+			if (obj->motionFlags & 2)
 			{
-				ground = obj->terrain_height;
+				ground = obj->terrainHeight;
 				if (y > ground)
-					obj->velocity_y -= obj->gravity;
-				if (y <= ground && obj->velocity_y < 0)
+					obj->velocityY -= obj->gravity;
+				if (y <= ground && obj->velocityY < 0)
 				{
 					y = ground;
-					obj->velocity_y = -MulQ16(obj->velocity_y, obj->vertical.bounce);
-					if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
-						obj->velocity_y = 0;
+					obj->velocityY = -MulQ16(obj->velocityY, obj->vertical.bounce);
+					if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY) <= obj->gravity)
+						obj->velocityY = 0;
 				}
 			}
 		}
 
-		x += obj->velocity_x;
-		y += obj->velocity_y;
-		z += obj->velocity_z;
+		x += obj->velocityX;
+		y += obj->velocityY;
+		z += obj->velocityZ;
 
 		// 到着: 目標に着いた、または通り過ぎた
-		switch (obj->arrival_axis)
+		switch (obj->arrivalAxis)
 		{
 		case 16:
-			if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
+			if (x == obj->targetX || ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
 				arrived = 1;
 			break;
 		case 17:
-			if (y == obj->target_y || ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
+			if (y == obj->targetY || ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
 				arrived = 1;
 			break;
 		case 18:
-			if (z == obj->target_z || ((obj->z - obj->target_z) ^ (z - obj->target_z)) < 0)
+			if (z == obj->targetZ || ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
 				arrived = 1;
 			break;
 		}
 		if (arrived)
 		{
-			if (obj->snap_to_target)
+			if (obj->snapToTarget)
 			{
-				x = obj->target_x;
-				obj->velocity_x = 0;
-				z = obj->target_z;
-				obj->velocity_z = 0;
-				if (obj->motion_flags == 0)
+				x = obj->targetX;
+				obj->velocityX = 0;
+				z = obj->targetZ;
+				obj->velocityZ = 0;
+				if (obj->motionFlags == 0)
 				{
-					y = obj->target_y;
-					obj->velocity_y = 0;
+					y = obj->targetY;
+					obj->velocityY = 0;
 				}
 			}
-			obj->target_x = TARGET_UNSET;
-			obj->target_y = TARGET_UNSET;
-			obj->target_z = TARGET_UNSET;
-			obj->arrival_axis = 0;
+			obj->targetX = TARGET_UNSET;
+			obj->targetY = TARGET_UNSET;
+			obj->targetZ = TARGET_UNSET;
+			obj->arrivalAxis = 0;
 		}
 		obj->x = x;
 		obj->y = y;
 		obj->z = z;
 
 		// 進む方へ向きを変える
-		if (obj->steering_flags & 1)
+		if (obj->steeringFlags & 1)
 		{
-			x = obj->velocity_x;
-			z = obj->velocity_z;
+			x = obj->velocityX;
+			z = obj->velocityZ;
 			if (x != 0 || z != 0)
 			{
 				angle = ArcTan2FarArm(z, x);

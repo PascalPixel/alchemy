@@ -21,7 +21,7 @@ void BattleFx_StartArcEffect(void)
     struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));
 
     work->resource = Resource_FindFreeEntry();
-    VramBlock_LoadCached(work->resource, 0x100, BattleFx_ArcTiles);
+    VramBlock_LoadCached(work->resource, 0x100, gBattleFx_ArcTiles);
     work->group = 0;
     work->age[0] = 999;
     work->age[1] = 999;
@@ -31,7 +31,7 @@ void BattleFx_StartArcEffect(void)
 
 void BattleFx_EndArcEffect(void)
 {
-    struct ArcEffectWork *work = Ram_HeapSlots->block_62;
+    struct ArcEffectWork *work = Ram_HeapSlots->block62;
 
     Resource_ResetEntry(work->resource);
     Scheduler_RemoveCallback((u32)BattleFx_UpdateArcEffect);

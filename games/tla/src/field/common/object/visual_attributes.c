@@ -13,68 +13,68 @@
 
 struct ObjectRuntime *Object_GetById(u32);
 
-void Object_ResetTargetAndSetMode1(u32 object_id)
+void Object_ResetTargetAndSetMode1(u32 objectId)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
-        object->target_x = 0x80000000;
-        object->target_y = 0x80000000;
-        object->target_z = 0x80000000;
+        object->targetX = 0x80000000;
+        object->targetY = 0x80000000;
+        object->targetZ = 0x80000000;
         Object_ResetMotion(object);
         Object_SetMode(object, 1);
     }
 }
 
-void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
+void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         object->action = angle;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gObjectMotion_StepAngleScript);
         EventRuntime_Wait(wait);
     }
 }
 
-void ObjectMotion_ArmCallbackAndRefresh(s32 object_id, s32 angle)
+void ObjectMotion_ArmCallbackAndRefresh(s32 objectId, s32 angle)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         object->action = angle;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
-        Object_RefreshSelectorById(object_id);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gObjectMotion_StepAngleScript);
+        Object_RefreshSelectorById(objectId);
     }
 }
 
-void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
+void ObjectMotion_SetActionVariant(u32 objectId, s32 priority)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    if (object != NULL && (object->animation_kind & 0xF) == 1) {
+    if (object != NULL && (object->animationKind & 0xF) == 1) {
         struct FieldSprite *sprite = object->animation;
 
         sprite->priority = priority;
-        sprite->part_priority = priority;
-        object->priority_flags &= ~1;
+        sprite->partPriority = priority;
+        object->priorityFlags &= ~1;
     }
 }
 
-void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
+void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId)
 {
     struct FieldSprite *sprite;
     u8 block;
     u32 tile;
 
-    sprite = (struct FieldSprite *)Object_GetById(source_id);
+    sprite = (struct FieldSprite *)Object_GetById(sourceId);
     sprite = ((struct ObjectRuntime *)sprite)->animation;
-    block = sprite->vram_block;
+    block = sprite->vramBlock;
     tile = sprite->tile;
 
-    sprite = (struct FieldSprite *)Object_GetById(target_id);
+    sprite = (struct FieldSprite *)Object_GetById(targetId);
     sprite = ((struct ObjectRuntime *)sprite)->animation;
-    sprite->vram_block = block;
+    sprite->vramBlock = block;
     sprite->tile = tile;
 }
 
@@ -82,8 +82,8 @@ void Func_080d390c(u32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
 }
 

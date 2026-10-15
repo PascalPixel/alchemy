@@ -49,15 +49,15 @@ void BattlePresentation_UpdateCamera(void)
     }
 
     if (transition->frames != 0) {
-        delta = transition->target_yaw - state->yaw;
+        delta = transition->targetYaw - state->yaw;
         delta /= 16;
         state->yaw += delta;
         transition->frames--;
     }
 
     pos = state->pos;
-    if (state->follow_pos != 0) {
-        pos = state->follow_pos;
+    if (state->followPos != 0) {
+        pos = state->followPos;
     }
 
     Render_ResetTransformState();

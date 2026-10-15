@@ -14,15 +14,15 @@ struct SettlementsVector {
 };
 
 struct SettlementsSpawn {
-    s32 unknown_00;
-    s32 unknown_04;
-    s32 scale_x;
-    s32 scale_y;
+    s32 unk00;
+    s32 unk04;
+    s32 scaleX;
+    s32 scaleY;
     s32 speed;
     s32 acceleration;
     u16 kind;
     const u8 *script;
-    s32 unknown_20;
+    s32 unk20;
     void *update;
 };
 

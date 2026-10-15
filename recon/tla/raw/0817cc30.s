@@ -55,7 +55,7 @@ Func_0817cc30:
 .L_0817cc9c:
 	.4byte 0x00001010
 .L_0817cca0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0817cca4:
 	.4byte 0x0000013e
 .L_0817cca8:
@@ -530,13 +530,13 @@ Func_0817cc30:
 .L_0817d050:
 	.4byte 0x000000b7
 .L_0817d054:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0817d058:
 	.4byte 0xffffe000
 .L_0817d05c:
 	.4byte gMapCellBuffer
 .L_0817d060:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817d064:
 	subs r2, r2, r3
 	mov lr, r2

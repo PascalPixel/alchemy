@@ -32,8 +32,8 @@ void Func_020035d8(void)
     if (object != NULL)
         Func_02004090(64, 0, 0);
     object = (struct ObjectRuntime *)Object_GetById(10);
-    object->scale_x = 0xb333;
-    object->scale_y = 0xb333;
+    object->scaleX = 0xb333;
+    object->scaleY = 0xb333;
     object->radius = 8;
     Func_02002d40();
     Scheduler_AddOrUpdateCallback(Func_02001e58, 0x480);

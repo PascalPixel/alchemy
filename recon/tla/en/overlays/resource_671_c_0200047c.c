@@ -15,18 +15,18 @@ struct PuzzleCell {
 
 struct SceneState {
     struct PuzzleCell cells[88];
-    u8 unknown_160[4];
-    s16 first_id;
-    s16 end_id;
-    u16 tile_entry;
-    s8 redraw_a;
-    s8 redraw_b;
-    s16 origin_x;
-    s16 origin_z;
+    u8 unk160[4];
+    s16 firstId;
+    s16 endId;
+    u16 tileEntry;
+    s8 redrawA;
+    s8 redrawB;
+    s16 originX;
+    s16 originZ;
 };
 
 struct EventWork1cc {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct ObjectRuntime *object;
 };
 
@@ -38,9 +38,9 @@ struct IoReg16 {
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 extern struct SceneState gSceneState;
-extern s32 Data_02005af0;
-extern const s8 Data_02005940[];
-extern const u8 Data_02005948[];
+extern s32 gData_02005af0;
+extern const s8 gData_02005940[];
+extern const u8 gData_02005948[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -96,7 +96,7 @@ static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position)
 
 s32 Func_0200047c(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *owner = object->linked_object;
+    struct ObjectRuntime *owner = object->linkedObject;
 
     if (owner != NULL) {
         u8 *phase = &OBJECT_BYTE(object, 98);

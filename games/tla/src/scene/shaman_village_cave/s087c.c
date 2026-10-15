@@ -24,7 +24,7 @@ void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 void UiWork_FinalizePendingCore();
 
-#define EVENT_MESSAGE (((struct { u8 unknown_000[0x1c4]; s16 message; } *)Ram_HeapSlots->event_work)->message)
+#define EVENT_MESSAGE (((struct { u8 unk000[0x1c4]; s16 message; } *)Ram_HeapSlots->eventWork)->message)
 
 #define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames) \
     { \
@@ -84,8 +84,8 @@ void Func_0200087c(void)
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_CAVE_EMOTE. */
     SHAMAN_VILLAGE_CAVE_EMOTE(18, 261, 1)
     Call1(Battle_WaitMode0, 20);
-    Call2(Func_02001190, (s16)gPartyState.saved_scene, (s16)gPartyState.saved_entrance);
+    Call2(Func_02001190, (s16)gPartyState.savedScene, (s16)gPartyState.savedEntrance);
     Call2(Func_02001208, gPartyState.scene, gPartyState.entrance);
-    ((struct { u8 unknown_000[0x1ac]; s32 value; } *)Ram_HeapSlots->event_work)->value = 0;
+    ((struct { u8 unk000[0x1ac]; s32 value; } *)Ram_HeapSlots->eventWork)->value = 0;
 }
 #endif

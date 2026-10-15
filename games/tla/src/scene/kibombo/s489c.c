@@ -14,10 +14,10 @@ void Func_0200489c(void)
     Func_02005b4c((s32)MsgLookLookThe);
     Func_02005b64(17, 0);
     Func_02005c9c(0x241);
-    ObjectMotion_EnableActionAndSetCallback(12, Data_0200614c);
-    Object_SetActionCallbackAndRefreshById(13, Data_0200614c);
-    ObjectMotion_EnableActionAndSetCallback(12, Data_0200613c);
-    ObjectMotion_EnableActionAndSetCallback(13, Data_0200613c);
+    ObjectMotion_EnableActionAndSetCallback(12, gData_0200614c);
+    Object_SetActionCallbackAndRefreshById(13, gData_0200614c);
+    ObjectMotion_EnableActionAndSetCallback(12, gData_0200613c);
+    ObjectMotion_EnableActionAndSetCallback(13, gData_0200613c);
     Object_SetPartAttribute(Object_GetById(12), 12);
     Object_SetPartAttribute(Object_GetById(13), 12);
     Battle_WaitMode0(120);

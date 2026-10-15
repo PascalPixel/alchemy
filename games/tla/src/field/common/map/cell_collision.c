@@ -11,13 +11,13 @@ s32 Func_080c8720(s32 layer, s32 unused, s32 value);
 
 s32 Func_0802d4d8(s32 layer, s32 x, s32 z)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     u8 *grid;
 
     x >>= 16;
     z >>= 16;
     if (work != NULL)
-        grid = work->layers[layer & 3].terrain_ids;
+        grid = work->layers[layer & 3].terrainIds;
     else
         grid = gMapShapeGrid;
     return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
@@ -25,7 +25,7 @@ s32 Func_0802d4d8(s32 layer, s32 x, s32 z)
 
 s32 Func_0802d530(s32 layer, s32 x, s32 z)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     u8 *grid;
     u8 *code;
     s32 kind;
@@ -33,7 +33,7 @@ s32 Func_0802d530(s32 layer, s32 x, s32 z)
     x >>= 16;
     z >>= 16;
     if (work != NULL)
-        grid = work->layers[layer & 3].terrain_ids;
+        grid = work->layers[layer & 3].terrainIds;
     else
         grid = gMapShapeGrid;
     code = &Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4];
@@ -66,7 +66,7 @@ s32 Func_0802d594(s32 layer, s32 x, s32 z, s32 reach)
 
 void Func_0802d600(s32 x, s32 z, s32 layer, s32 value)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     u8 *shape;
 
     shape = gMapShapeGrid + (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
@@ -85,13 +85,13 @@ s32 Func_0802d644(s32 a, s32 b, s32 c)
 
 s32 Func_0802d658(s32 layer, s32 x, s32 z)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     u8 *grid;
 
     x >>= 16;
     z >>= 16;
     if (work != NULL)
-        grid = work->layers[layer & 3].terrain_ids;
+        grid = work->layers[layer & 3].terrainIds;
     else
         grid = gMapShapeGrid;
     return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
@@ -102,7 +102,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
     struct MapWork *state;
     struct MapCell *cells;
 
-    state = Ram_HeapSlots->map_work;
+    state = Ram_HeapSlots->mapWork;
     x >>= 20;
     y >>= 20;
     cells = (struct MapCell *)gMapCellBuffer;
@@ -110,12 +110,12 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
         cells = state->layers[layer & 3].cells;
     }
     cells += x + (y << 7);
-    return cells->collision_code;
+    return cells->collisionCode;
 }
 
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
+void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode)
 {
-    struct MapWork *state = Ram_HeapSlots->map_work;
+    struct MapWork *state = Ram_HeapSlots->mapWork;
 
     x >>= 20;
     y >>= 20;
@@ -123,6 +123,6 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
         struct MapCell *cells = state->layers[layer & 3].cells;
 
         cells += x + (y << 7);
-        cells->collision_code = collision_code;
+        cells->collisionCode = collisionCode;
     }
 }

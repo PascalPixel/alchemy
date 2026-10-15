@@ -26,12 +26,12 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x20];
+    u8 unk7788[0x20];
     s32 shakeFrames;
-    u8 unknown_77ac[0x13c];
+    u8 unk77ac[0x13c];
     s32 transferPending;
 };
 
@@ -42,8 +42,8 @@ struct BattleObjectSlot
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
-extern u8 Data_0819793c[];
-extern u16 Data_08197410[];
+extern u8 gData_0819793c[];
+extern u16 gData_08197410[];
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
@@ -80,15 +80,15 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    graphics = Ram_HeapSlots->unknown_64[0];
-    camera = Ram_HeapSlots->camera_work;
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    graphics = Ram_HeapSlots->unk64[0];
+    camera = Ram_HeapSlots->cameraWork;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
     Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     work->transferMode = 2;
     work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
@@ -102,9 +102,9 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
         point->x = source->x / 2;
         point->y = source->y + 0x780000;
         point->z = source->z;
-        point->velocity_x = (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
-        point->velocity_y = (target->y - point->y + 0x140000) / 12;
-        point->velocity_z = (target->z - point->z) / 12;
+        point->velocityX = (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
+        point->velocityY = (target->y - point->y + 0x140000) / 12;
+        point->velocityZ = (target->z - point->z) / 12;
         point->variant = (Random16() & 15) + delay;
         point++;
     }
@@ -133,16 +133,16 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
                         {
                             for (j = 0; j != 10; j++)
                             {
-                                trails[i * 10 + j].velocity_x =
+                                trails[i * 10 + j].velocityX =
                                     pos.x
                                     + ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11))
-                                           * Data_0819793c[j & 1])
+                                           * gData_0819793c[j & 1])
                                             / 2
                                         >> 16);
-                                trails[i * 10 + j].velocity_y =
+                                trails[i * 10 + j].velocityY =
                                     pos.y
                                     - (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11))
-                                            * Data_0819793c[j & 1]
+                                            * gData_0819793c[j & 1]
                                         >> 16);
                             }
                             for (j = 0; j != 10; j++)
@@ -152,12 +152,12 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
 
                                 for (k = 0; k != 12; k++)
                                 {
-                                    s32 x = from->velocity_x
-                                            + (to->velocity_x - from->velocity_x) * k / 12;
-                                    s32 y = from->velocity_y
-                                            + (to->velocity_y - from->velocity_y) * k / 12;
+                                    s32 x = from->velocityX
+                                            + (to->velocityX - from->velocityX) * k / 12;
+                                    s32 y = from->velocityY
+                                            + (to->velocityY - from->velocityY) * k / 12;
 
-                                    draw[0](canvas, graphics + Data_08197410[size - 1],
+                                    draw[0](canvas, graphics + gData_08197410[size - 1],
                                         x - size / 2, y - size, size, size * 2);
                                 }
                             }
@@ -166,17 +166,17 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
                 }
                 if (step->y <= 0x1dffff)
                 {
-                    step->velocity_y = -step->velocity_y;
-                    step->velocity_x /= 2;
-                    step->velocity_z /= 2;
+                    step->velocityY = -step->velocityY;
+                    step->velocityX /= 2;
+                    step->velocityZ /= 2;
                     work->shakeFrames = 4;
                     Audio_PlayCue(134);
                     for (j = 0; j != effect->count; j++)
                         Func_0814cd48(effect->actors[j], 7, 5, j, 8);
                 }
-                step->x += step->velocity_x;
-                step->y += step->velocity_y;
-                step->z += step->velocity_z;
+                step->x += step->velocityX;
+                step->y += step->velocityY;
+                step->z += step->velocityZ;
             }
         }
         Func_08158ce0(4, 4);

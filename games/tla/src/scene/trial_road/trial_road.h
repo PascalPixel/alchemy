@@ -11,29 +11,29 @@
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 struct TrialRoadMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct TrialRoadMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct TrialRoadMapLayer layers[3];
 };
 
 struct TrialRoadState {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     s16 pattern;
     s16 mirrored;
-    s16 field_14;
-    s16 field_16[2];
-    s16 field_1a;
-    s16 field_1c;
+    s16 field14;
+    s16 field16[2];
+    s16 field1a;
+    s16 field1c;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
-#define gTrialRoadState ((struct TrialRoadState *)(Data_020023c4 + 0x88))
+#define gTrialRoadState ((struct TrialRoadState *)(gData_020023c4 + 0x88))
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -67,7 +67,7 @@ s32 Func_02005a30(void);
 void Func_02005a38(void);
 
 struct PartyState254 {
-    u8 unknown_000[0x254];
+    u8 unk000[0x254];
     u16 value;
 };
 

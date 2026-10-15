@@ -18,9 +18,9 @@ void Func_0200083c(void);
 void Func_02000d84(void);
 void Func_02001038(void);
 
-extern s32 Data_020012a0[];
-extern u32 Data_020012b8[];
-extern u32 Data_020015e0[];
+extern s32 gData_020012a0[];
+extern u32 gData_020012b8[];
+extern u32 gData_020015e0[];
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -42,7 +42,7 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-s32 Data_020012a0[] = {
+s32 gData_020012a0[] = {
 	22,
 	11,
 	0x18000,
@@ -51,19 +51,19 @@ s32 Data_020012a0[] = {
 	17,
 };
 
-u32 Data_020012b8[] = {
+u32 gData_020012b8[] = {
 	22, 26, 0, 17,
 };
 
 struct ScenePlacement gScenePlacements[] = {
-	{307, CONDITION_ALWAYS, (s32)Data_020012a0, PIXELS(40), 0, PIXELS(128), FACING_NORTH, 2, 0},
+	{307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(40), 0, PIXELS(128), FACING_NORTH, 2, 0},
 	{329, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-	{307, CONDITION_ALWAYS, (s32)Data_020012a0, PIXELS(232), 0, PIXELS(608), FACING_NORTH, 2, 0},
+	{307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(232), 0, PIXELS(608), FACING_NORTH, 2, 0},
 	{329, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(808), FACING_NORTH, 2, 0},
 	{329, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(808), FACING_NORTH, 2, 0},
 	{329, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(792), FACING_NORTH, 2, 0},
 	{329, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(792), FACING_NORTH, 2, 0},
-	{272, CONDITION_ALWAYS, (s32)Data_020012b8, PIXELS(584), 0, PIXELS(312), FACING_NORTH, 2, 0},
+	{272, CONDITION_ALWAYS, (s32)gData_020012b8, PIXELS(584), 0, PIXELS(312), FACING_NORTH, 2, 0},
 	{290, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(680), FACING_SOUTH, 2, 0},
 	{244, 0x53, 1, PIXELS(264), 0, PIXELS(760), FACING_SOUTH, 0, 0},
 	{56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -110,13 +110,13 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_020015e0[] = {
+u32 gData_020015e0[] = {
 	39, 2, 48, 0xe80000, 0xe30000, 1,
 	48, 0xd90000, 0xf30000, 1, 48, 0xd90000,
 	0x14e0000, 1, 38,
 };
 
-s32 Data_0200161c[] = {
+s32 gData_0200161c[] = {
 	39,
 	2,
 	48,
@@ -124,5 +124,5 @@ s32 Data_0200161c[] = {
 	0xc30000,
 	1,
 	43,
-	(s32)Data_020015e0,
+	(s32)gData_020015e0,
 };

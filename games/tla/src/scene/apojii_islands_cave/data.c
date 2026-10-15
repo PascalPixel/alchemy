@@ -3,9 +3,9 @@
 
 void Func_02000054(void);
 
-extern u32 Data_02000090[];
+extern u32 gData_02000090[];
 
-u32 Data_02000090[] = {
+u32 gData_02000090[] = {
 	22, 26, 0, 22, 22, 0x40000,
 	22, 6, 0x30000, 22, 10, 0x18000,
 	17,
@@ -27,10 +27,10 @@ u32 gSceneExits[] = {
 };
 
 struct ScenePlacement gScenePlacements[] = {
-	{307, 0x8e9, (s32)Data_02000090, PIXELS(120), 0, PIXELS(608), FACING_NORTH, 2, 0},
-	{307, 0x8ea, (s32)Data_02000090, PIXELS(184), 0, PIXELS(592), FACING_NORTH, 2, 0},
-	{307, 0x8eb, (s32)Data_02000090, PIXELS(216), 0, PIXELS(592), FACING_NORTH, 2, 0},
-	{307, 0x8ec, (s32)Data_02000090, PIXELS(280), 0, PIXELS(640), FACING_NORTH, 2, 0},
+	{307, 0x8e9, (s32)gData_02000090, PIXELS(120), 0, PIXELS(608), FACING_NORTH, 2, 0},
+	{307, 0x8ea, (s32)gData_02000090, PIXELS(184), 0, PIXELS(592), FACING_NORTH, 2, 0},
+	{307, 0x8eb, (s32)gData_02000090, PIXELS(216), 0, PIXELS(592), FACING_NORTH, 2, 0},
+	{307, 0x8ec, (s32)gData_02000090, PIXELS(280), 0, PIXELS(640), FACING_NORTH, 2, 0},
 	{SCENE_TABLE_END},
 };
 

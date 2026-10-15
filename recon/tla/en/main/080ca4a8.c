@@ -12,18 +12,18 @@
 
 s32 GameFlag_Test(s32 flag);
 
-extern s32 Data_080ef984[];
+extern s32 gData_080ef984[];
 
 extern char ResourceId_DragonHallABackdrop;
 extern char ResourceId_DragonHallBBackdrop;
 
-// Looks the scene up in Data_080ef984 and keeps the last marked backdrop
+// Looks the scene up in gData_080ef984 and keeps the last marked backdrop
 // before it; with flag 0xa30 set, the second dragon hall backdrop becomes
 // the first.
 void Func_080ca4a8(void)
 {
     s32 target = gPartyState.scene;
-    s32 *table = Data_080ef984;
+    s32 *table = gData_080ef984;
     s32 entry = *table++;
     s32 result; // not initialised: with no marked row before the scene it keeps whatever it held
 

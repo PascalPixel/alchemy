@@ -28,25 +28,25 @@ void Func_0200051c(void)
     const void *data;
     struct AlhafranCaveEventWork *work;
 
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-    Object_GetById(8)->priority_flags |= 32;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+    Object_GetById(8)->priorityFlags |= 32;
     Func_02001520(0);
-    data = Data_02001be0;
+    data = gData_02001be0;
     Func_020015e0(0);
     Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
     Scheduler_AddOrUpdateCallback(Func_02000258, 0x480);
     if ((u16)(gPartyState.entrance - 8) <= 1) {
-        work = Ram_HeapSlots->event_work;
+        work = Ram_HeapSlots->eventWork;
         /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
         do {
         } while (0);
-        work->value_d4c = 3;
+        work->valueD4c = 3;
     }
     Func_02001568();
     Func_02001570(0, 0x200, 10, 11);
-    Object_GetById(10)->priority_flags |= 32;
-    Object_GetById(11)->priority_flags |= 32;
-    Func_02001230(Data_020016e4);
+    Object_GetById(10)->priorityFlags |= 32;
+    Object_GetById(11)->priorityFlags |= 32;
+    Func_02001230(gData_020016e4);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     Call2((void (*)())Func_02001598, 14, 0x1000);
     Object_SetModeById(12, 0);
@@ -54,9 +54,9 @@ void Func_0200051c(void)
     Object_SetModeById(14, 2);
     ObjectMotion_SetActionVariant(12, 1);
     ObjectMotion_SetActionVariant(13, 1);
-    Object_GetById(12)->priority_flags |= 2;
-    Object_GetById(13)->priority_flags |= 2;
-    Object_GetById(14)->priority_flags |= 2;
+    Object_GetById(12)->priorityFlags |= 2;
+    Object_GetById(13)->priorityFlags |= 2;
+    Object_GetById(14)->priorityFlags |= 2;
     Animation_ApplyChildValues(Object_GetById(12), 6);
     Animation_ApplyChildValues(Object_GetById(13), 6);
     Animation_ApplyChildValues(Object_GetById(14), 6);

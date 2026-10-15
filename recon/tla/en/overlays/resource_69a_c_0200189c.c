@@ -14,20 +14,20 @@ struct LightCell {
     s16 x;
     s16 z;
     s16 flag;
-    s16 unknown_06;
+    s16 unk06;
 };
 
 struct LightWork {
-    s16 unknown_00;
-    s16 flag_base;
-    u8 unknown_04[6];
+    s16 unk00;
+    s16 flagBase;
+    u8 unk04[6];
     s16 count;
     s16 current;
-    u8 unknown_0e[18];
+    u8 unk0e[18];
     struct LightCell cells[1];
 };
 
-extern struct LightWork Data_020023a0;
+extern struct LightWork gData_020023a0;
 
 struct FieldActor *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -38,8 +38,8 @@ void Func_0200156c(struct LightWork *work, struct LightCell *cell);
 
 s32 Func_0200189c(void)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
-    struct LightWork *work = &Data_020023a0;
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
+    struct LightWork *work = &gData_020023a0;
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct LightCell *cell = work->cells;
@@ -56,8 +56,8 @@ s32 Func_0200189c(void)
             if (i != work->current) {
                 work->current = i;
                 Func_0200156c(work, cell);
-                GameFlag_SetByte(work->flag_base, x);
-                GameFlag_SetByte(work->flag_base + 8, z);
+                GameFlag_SetByte(work->flagBase, x);
+                GameFlag_SetByte(work->flagBase + 8, z);
                 return 1;
             }
             break;

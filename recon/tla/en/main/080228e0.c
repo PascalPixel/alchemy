@@ -7,16 +7,16 @@
 #include "metadata_lookup.h"
 
 struct MetadataSlotState {
-    u8 unknown_00[0x0c];
+    u8 unk00[0x0c];
     s32 scale;
-    u8 unknown_10[4];
+    u8 unk10[4];
     u8 width;
     u8 height;
-    s8 offset_x;
-    s8 offset_y;
-    u8 unknown_18[3];
+    s8 offsetX;
+    s8 offsetY;
+    u8 unk18[3];
     u8 count;
-    u8 unknown_1c[0x0c];
+    u8 unk1c[0x0c];
     struct AnimationEntry *entries[4];
 };
 s32 Animation_LookupValueByKey(s32 key);
@@ -26,7 +26,7 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state)
 
     for (index = 0; index < state->count; index++) {
         struct AnimationEntry *object = state->entries[index];
-        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
+        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->animId);
         s32 frames;
         s32 animation;
 
@@ -37,21 +37,21 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state)
             state->width = metadata->width;
             state->height = metadata->height;
             state->scale = metadata->scale << 8;
-            state->offset_y = metadata->adjust_y;
-            state->offset_x = metadata->adjust_x;
+            state->offsetY = metadata->adjustY;
+            state->offsetX = metadata->adjustX;
         }
 
         frames = metadata->frames;
         if (frames == 0)
-            frames = Animation_LookupValueByKey(object->anim_id);
+            frames = Animation_LookupValueByKey(object->animId);
 
-        object->kind = metadata->draw_kind;
+        object->kind = metadata->drawKind;
         animation = metadata->animation;
         asm volatile(""); /* FAKEMATCH: first fence of the pair below */
         *(s32 *)&object->frames = frames;
         asm volatile(""); /* FAKEMATCH: the listing stores the frames before the animation; unfenced, the frames are stored two rows later (one reordered row) */
         *(s32 *)&object->scripts = animation;
-        object->mode = metadata->frame_codec;
+        object->mode = metadata->frameCodec;
         object->frame = 0xff;
         object->script = 0;
         object->pos = 0;

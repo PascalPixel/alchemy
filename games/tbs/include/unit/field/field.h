@@ -88,10 +88,10 @@ void Ui_SetGridColumnPriority(s32 slot, s32 value);
 
 struct ResourceObjectWork
 {
-	u8	  unknown_00[28];
+	u8	  unk00[28];
 	u8	  resource; // VRAM キャッシュの番号
 	u8	  flags;	// ビット 0：VRAM キャッシュを返さない
-	u8	  unknown_1e[10];
+	u8	  unk1e[10];
 	void *children[4];
 };
 
@@ -190,11 +190,11 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2);
 void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2);
 void Map_UpdateLayerScroll(void);
 void Map_SetCameraCenter(s32 x, s32 y);
-void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height);
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 width, u32 height);
 void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destination_y);
-void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
-void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
+void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y);
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y);
+void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y);
 void Map_SetWorkFlagBits9To11(u32 v);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
@@ -249,7 +249,7 @@ s32 Curve_GetFirstSampleC(const s8 *samples);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y);
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code);
+void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode);
 s32 Map_GetCellHighFlags(s32 x, s32 y);
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position);

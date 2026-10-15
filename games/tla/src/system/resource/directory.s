@@ -318,13 +318,13 @@ Resource_DirectoryTable:
 	resource , BattleFx_ExplosionSheet
 	resource , BattleFx_MagentaSwirlSheet
 	resource , BattleFx_MagentaTailSheet
-	resource , Resource_Data134
+	resource Data134, Resource_Data134
 	resource , Resource_Data135
 	resource , BattleFx_ParticleSpritesC
 	resource , BattleFx_ParticleSpritesD
 	resource , BattleFx_GreenPalette
 	resource , BattleFx_CrossedDaggersSheet
-	resource , BattleFx_RuneSheet
+	resource RuneSheet, BattleFx_RuneSheet
 	resource FlameColumnSheet, BattleFx_FlameColumnSheet
 	resource , BattleFx_EarthWallSheet
 	resource , BattleFx_OrangePaletteA

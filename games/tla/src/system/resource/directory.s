@@ -34,7 +34,7 @@ Resource_DirectoryTable:
 	resource Data015, Resource_Data015
 	resource , Title_ScreenPicture
 	resource , Title_IntroGraphicsC
-	resource , Resource_Data018
+	resource Data018, Resource_Data018
 	resource , Title_IntroLighthousePicture
 	resource , Title_IntroGullSprites
 	resource , Resource_Data01B

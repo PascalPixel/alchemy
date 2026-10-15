@@ -2273,7 +2273,6 @@ SECTIONS
         "*/games/tla/src/graphics/display/staffrol.o"(.rodata)
         . = ABSOLUTE(0x081a6000);
         "*/games/tla/src/system/far_call/resource_b.o"(.text)
-        "*/recon/tla/raw/081a6030.o"(.text)
         "*/games/tla/src/graphics/display/title_wait.o"(.text)
         "*/recon/tla/raw/081a6154.o"(.text)
         "*/recon/tla/raw/081a6638.o"(.text)

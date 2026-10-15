@@ -1978,7 +1978,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.001a2180)
     . = ABSOLUTE(0x081a6000);
     "*/games/tla/src/system/far_call/resource_b.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.001a6030)
     "*/games/tla/src/graphics/display/title_wait.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001a6154)
     "*/games/tla/src/graphics/display/title_logo_piece.o"(.text)

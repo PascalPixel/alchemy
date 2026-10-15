@@ -1,13 +1,15 @@
 /* Draft of overlay 6b5's Func_02000864 (0x02008864), ported from ☀️'s
- * EV10_TOUCH: differ 10 of 329, all scheduling. The native loads the scene
- * symbol into r5 after the 0x173 test's call (here before it), loads
- * gPartyState ahead of the battle rule's offset (movs r2, #166) and the
- * payload's last value ahead of the bound (movs r4, #217); sched2 gives the
- * constants one more priority step here. The same pool-load-first order is
- * da0's remaining difference. The copy loop matches only as a goto loop with
- * its bound in a variable and the byte read before the increments: as ☀️'s
- * do/while or a for loop, loop.c hoists the destination base and strength-
- * reduces it (differ 18-20). */
+ * EV10_TOUCH: differ 4 of 329. Devices in place, each measured: the 0x173
+ * test's result kept while the scene symbol is loaded once for both
+ * branches; a one-pass block loading gPartyState before the battle rule's
+ * offset; the copy loop as a goto loop with its bound in a variable and the
+ * byte read ahead of the increments (as ☀️'s do/while or a for loop, loop.c
+ * hoists and strength-reduces the destination, differ 18-20). Left: after
+ * the payload's first store the native loads 0x43 and stores it before the
+ * bound's movs r4, #217; sched2 here ties them at priority 3 and prefers the
+ * bound, which does not depend on the store just scheduled. One-pass blocks
+ * between the stores, store orders and five minutes of alchemy permute did
+ * not find it. */
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -74,6 +76,7 @@ s32 Func_02000864(void)
     u16 *tbl;
     u32 i;
     s32 scene;
+    s32 set;
 
     failed = 0;
     window = 0;
@@ -167,26 +170,33 @@ s32 Func_02000864(void)
             Actor_SetSpeed(4, 0x8000, 0x4000);
             ObjectMotion_CommitCurrentPositionAndActivate(4);
         }
+        set = Flag_IsSet(0x173);
         scene = (s32)&SceneId_LinkLobby;
-        if (Flag_IsSet(0x173)) {
+        if (set) {
             Party_SetFields1eeAnd1f0(scene, 8);
             Party_SetFields1f2And1f4(scene, 9);
         } else {
             Party_SetFields1eeAnd1f0(scene, 10);
             Party_SetFields1f2And1f4(scene, 11);
         }
-        gPartyState.battle_rule_24b = 4;
+        {
+            struct PartyState *party = &gPartyState;
+
+            do {
+            } while (0);
+            party->battle_rule_24b = 4;
+        }
         Func_02001a8c(1, 1);
         tbl = (u16 *)gSerialTransfer.payload;
         tbl[0] = 0x45;
         tbl[1] = 0x58;
         tbl[2] = 0x45;
         tbl[3] = 0x43;
-        src = buf;
         {
             u32 last = 0x7c7;
 
             i = 0;
+            src = buf;
         copy:
             {
                 u8 *dst = Ram_MapCellBuffer + 0x8000 + i;

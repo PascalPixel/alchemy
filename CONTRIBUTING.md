@@ -341,11 +341,10 @@ or functions is exactly this cheating.
   #define MONK    8
 
   // The monk walks to the well.
-  static void Event_WalkToWell(void)
-  {
-      ...
-      SetObjectPosition(MONK, 192, 264);
-      ...
+  static void Event_WalkToWell(void) {
+    ...
+    SetObjectPosition(MONK, 192, 264);
+    ...
   }
   ```
 
@@ -370,10 +369,11 @@ or functions is exactly this cheating.
     (`sub_08012345`, `unk_14`), never a guess.
   - Comments: English, short, saying what the code does and why where it
     is not obvious. FAKEMATCH tags (S2) say what they steer.
-  - Formatting, as pret's: four spaces, no tabs; opening braces on their own
-    lines; a space before control parentheses. `.clang-format` records it.
-    Preserve directive order, macro semantics and deliberate data-table
-    layout.
+  - Formatting: clang-format's default (LLVM) style (Pascal, 2026-10-15):
+    two spaces, no tabs, braces on the same line, 80 columns. `.clang-format`
+    records it; it leaves include order alone, since that decides which
+    declarations are in scope. Preserve directive order, macro semantics and
+    deliberate data-table layout.
   - Numbers stay numbers until evidence establishes their meaning, then take
     a name; do not invent meanings to remove literals. Decimal suits
     quantities, hexadecimal masks, packed fields and hardware values. A named

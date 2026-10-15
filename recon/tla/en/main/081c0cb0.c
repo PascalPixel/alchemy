@@ -19,8 +19,8 @@ extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
 extern u8 gMusicRestoreDelay;
 extern struct SoundPlayer gMusicPlayerBgm;
-extern struct SoundPlayer Data_02006b60;
-extern struct SoundPlayer Data_02006990;
+extern struct SoundPlayer Sound_Player3;
+extern struct SoundPlayer Sound_Player5;
 
 void SongFlag_Set(s32 cue);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
@@ -62,12 +62,12 @@ void AudioCommand_Play(s32 cue)
         Data_02005830 = busy;
     } else if (cue == 390) {
         Data_02005820[3] = busy;
-        MusicPlayer_FadeOut(&Data_02006b60, 3);
+        MusicPlayer_FadeOut(&Sound_Player3, 3);
         Data_02005820[5] = busy;
-        MusicPlayer_FadeOut(&Data_02006990, 3);
+        MusicPlayer_FadeOut(&Sound_Player5, 3);
     } else if (cue == 395) {
         Data_02005820[5] = busy;
-        MusicPlayer_FadeOut(&Data_02006990, 3);
+        MusicPlayer_FadeOut(&Sound_Player5, 3);
     } else {
         if (cue >= 700)
             goto background;

@@ -206,21 +206,58 @@ Data_0200688c:
 	.global Sound_CgbNotes
 Sound_CgbNotes:
 	.space 0x00000100
-	.global Data_02006990
-Data_02006990:
-	.space 0x00000080
-	.global Data_02006a10
-Data_02006a10:
-	.space 0x00000080
+	.global Sound_Player5
+Sound_Player5:
+	.space 0x00000040
+	.global Sound_Player6
+Sound_Player6:
+	.space 0x00000040
+	.global gMusicPlayerFanfare
+gMusicPlayerFanfare:
+	.space 0x00000040
+	.global Sound_Player7
+Sound_Player7:
+	.space 0x00000040
 	.global gMusicPlayerBgm
 gMusicPlayerBgm:
-	.space 0x000000c0
+	.space 0x00000040
+	.global Sound_Player2
+Sound_Player2:
+	.space 0x00000040
+	.global Sound_Player4
+Sound_Player4:
+	.space 0x00000040
 	.global Sound_WorkBytes
 Sound_WorkBytes:
 	.space 0x00000010
-	.global Data_02006b60
-Data_02006b60:
-	.space 0x000008a0
+	.global Sound_Player3
+Sound_Player3:
+	.space 0x00000040
+	.global Sound_Tracks0
+Sound_Tracks0:
+	.space 0x00000140
+	.global Sound_Tracks1
+Sound_Tracks1:
+	.space 0x00000320
+	.global Sound_Tracks2
+Sound_Tracks2:
+	.space 0x000000a0
+	.global Sound_Tracks3
+Sound_Tracks3:
+	.space 0x000000a0
+	.global Sound_Tracks4
+Sound_Tracks4:
+	.space 0x000000a0
+	.global Sound_Tracks5
+Sound_Tracks5:
+	.space 0x000000a0
+	.global Sound_Tracks6
+Sound_Tracks6:
+	.space 0x000000a0
+	.global Sound_Tracks7
+Sound_Tracks7:
+	.space 0x000000a0
+	.space 0x00000040
 	.global Flash_Handler3
 Flash_Handler3:
 	.space 0x00000004

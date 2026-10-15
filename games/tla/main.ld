@@ -2190,7 +2190,7 @@ SECTIONS
     "*/games/common/src/sound/tables.o"(.rodata)
     "*/games/tla/sound/voices.o"(.rodata)
     "*/games/tla/sound/cgb_waves.o"(.rodata)
-    "*/recon/tla/ja/rom.o"(.rom.001c44d0)
+    "*/games/common/sound/players.o"(.rodata)
     "*/games/tla/sound/songs.o"(.rodata)
     "*/games/tla/sound/samples.o"(.rodata)
     "*/games/tla/sound/sequence/bgm_000.o"(.rodata)

@@ -156,9 +156,9 @@ Func_081c0cb0:
 .L_081c0dd8:
 	.4byte Data_02005820
 .L_081c0ddc:
-	.4byte Data_02006b60
+	.4byte Sound_Player3
 .L_081c0de0:
-	.4byte Data_02006990
+	.4byte Sound_Player5
 .L_081c0de4:
 	.4byte Sound_SongTable
 .L_081c0de8:

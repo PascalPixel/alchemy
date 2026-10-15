@@ -11,7 +11,7 @@ MEMORY
 
 SECTIONS
 {
-    ewram (NOLOAD) : { "*/recon/tla/sym_ewram.o"(.sym_ewram) } > EWRAM
+    ewram (NOLOAD) : { "*/games/tla/src/system/ewram.o"(.sym_ewram) } > EWRAM
     .rom_start :
     {
     "*/games/tla/src/system/rom_head.o"(.text .rodata .data .padding)
@@ -27,7 +27,7 @@ SECTIONS
     "*/games/tla/src/sound/driver/vsync_dma_refresh.o"(.text .rodata .data .padding)
     "*/recon/tla/it/rom.o"(.rom.00000630)
 } > ROM
-    iwram_slots 0x3000000 (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram_slots) } > IWRAM
+    iwram_slots 0x3000000 (NOLOAD) : { "*/games/tla/src/system/iwram.o"(.sym_iwram_slots) } > IWRAM
     .iwram_runtime 0x3000100 :
     {
     "*/games/tla/src/system/runtime.o"(.text .rodata .data .padding)
@@ -49,7 +49,7 @@ SECTIONS
     "*/games/tla/src/system/runtime_mix_render.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/runtime_mix_modes.o"(.text .rodata .data .padding)
 } > IWRAM AT>ROM
-    iwram (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram) } > IWRAM
+    iwram (NOLOAD) : { "*/games/tla/src/system/iwram.o"(.sym_iwram) } > IWRAM
     .rom_main :
     {
     "*/games/tla/src/system/resource/decode_byte_lz.o"(.text .rodata .data .padding)
@@ -2247,7 +2247,7 @@ SECTIONS
     {
     "*/games/tla/src/sound/driver/mixer.o"(.text .rodata .data .padding)
 } > IWRAM AT>ROM
-    iwram_high (NOLOAD) : { "*/recon/tla/sym_iwram_high.o"(.sym_iwram_high) } > IWRAM
+    iwram_high (NOLOAD) : { "*/games/tla/src/system/iwram_hi.o"(.sym_iwram_high) } > IWRAM
     .rom_tail :
     {
     "*/games/tla/src/sound/driver/clear_buffer.o"(.text .rodata .data .padding)

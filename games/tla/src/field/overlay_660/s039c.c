@@ -91,3 +91,33 @@ void Func_0200049c(void)
     Func_0200085c(11, 0);
     GameFlag_SetBit(0x91a);
 }
+
+// Returns the room's table, chosen by flag 0x91B, the scene and, in the
+// first room, the entrance.
+const u8 *Func_020004f0(void)
+{
+    s32 moved = GameFlag_Test(0x91b);
+    struct PartyState *party = &gPartyState;
+    s32 room1 = (s32)&SceneId_Ov660Room1;
+    s32 scene;
+
+    if (moved) {
+        scene = party->scene;
+        if (scene == room1)
+            return Data_02000e44;
+        if (scene == (s32)&SceneId_Ov660Room2)
+            return Data_02000fe8;
+    } else {
+        scene = party->scene;
+        if (scene == room1) {
+            if (party->entrance == 99)
+                return Data_02000e44;
+            return Data_02000b80;
+        }
+        if (scene == (s32)&SceneId_Ov660Room2)
+            return Data_02000d18;
+    }
+    if (scene == (s32)&SceneId_Ov660Room3)
+        return Data_02000de4;
+    return Data_02000b5c;
+}

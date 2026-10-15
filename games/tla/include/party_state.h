@@ -4,7 +4,9 @@
 #include "types.h"
 
 struct PartyState {
-    u8 unknown_000[0x10];
+    u8 unknown_000[4];
+    u32 play_time;
+    u8 unknown_008[8];
     s32 coins;
     u8 unknown_014[0x124];
     s32 counter_b;

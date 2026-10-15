@@ -2311,7 +2311,6 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.081ad348)
         . = ABSOLUTE(0x081b2000);
         "*/games/tla/src/system/far_call/resource_e.o"(.text)
-        "*/recon/tla/raw/081b2008.o"(.text)
         "*/games/tla/src/graphics/palette/scale_rgb555.o"(.text)
         "*/recon/tla/raw/081b20a0.o"(.text)
         "*/games/tla/src/battle/effect/darken.o"(.text)

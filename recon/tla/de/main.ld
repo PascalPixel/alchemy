@@ -1979,11 +1979,11 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.001ac15c)
     . = ABSOLUTE(0x081b2000);
     "*/games/tla/src/system/far_call/resource_e.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.001b2008)
     "*/games/tla/src/graphics/palette/scale_rgb555.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001b20a0)
     "*/games/tla/src/battle/effect/darken.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001b21ec)
+    "*/recon/tla/de/rom.o"(.rom.001b34a8)
     "*/games/tla/src/sound/reset_slot_buckets.o"(.text)
     "*/games/tla/src/sound/track_slot_buffer.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001b3ed8)

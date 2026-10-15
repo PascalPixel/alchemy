@@ -4427,16 +4427,16 @@ Graphics_TransformPaletteBuffer:
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x00001238
-	.section .rom.001b2008, "ax"
-	.global Func_081b2008
-	.type Func_081b2008, %function
-	.thumb_func
-Func_081b2008:
-	.incbin "baserom.gba", 0x001b2008, 0x00000034
 	.section .rom.001b20a0, "ax"
 	.incbin "baserom.gba", 0x001b20a0, 0x000000b0
 	.section .rom.001b21ec, "ax"
-	.incbin "baserom.gba", 0x001b21ec, 0x00001c48
+	.incbin "baserom.gba", 0x001b21ec, 0x000012bc
+	.section .rom.001b34a8, "ax"
+	.global ReelGame_Run
+	.type ReelGame_Run, %function
+	.thumb_func
+ReelGame_Run:
+	.incbin "baserom.gba", 0x001b34a8, 0x0000098c
 	.section .rom.001b3ed8, "ax"
 	.incbin "baserom.gba", 0x001b3ed8, 0x000009f8
 	.section .rom.001b810c, "ax"

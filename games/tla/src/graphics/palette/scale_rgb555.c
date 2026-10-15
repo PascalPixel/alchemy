@@ -1,4 +1,21 @@
 #include "types.h"
+#include "io_reg.h"
+#include "party_state.h"
+#include "system.h"
+
+void Audio_PlayCue(s32 cue);
+void ReelGame_Run(void);
+
+// Blanks the display but for 1D objects, seeds the random state from the
+// play time, plays cue 709 and runs the reel game, as The Broken Seal's.
+s32 Runtime_BlankDisplayLoadValueAndRun(void)
+{
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
+    gRandomState = gPartyState.play_time;
+    Audio_PlayCue(709);
+    ReelGame_Run();
+    return 0;
+}
 
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count)
 {

@@ -1,6 +1,6 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-@ 文字幅 (0x20 から)
+@ The width of each main font glyph in pixels, from the space (0x20)
 	.global gUiText_GlyphWidths
 gUiText_GlyphWidths:
 	.include "games/common/src/graphics/window/glyph_widths.inc"
@@ -49,7 +49,8 @@ gStatusMenu_LevelLetterString:
 	.endif
 	.endif
 	.endif
-@ 濁点, 半濁点をつけられる文字の範囲
+@ The ranges of kana (first and last, ending in 0) that take the voiced
+@ mark, then those that take the semi-voiced mark
 	.global gNameEntry_VoicedMarkRanges
 gNameEntry_VoicedMarkRanges:
 	.byte 0xb6, 0xc4, 0xca, 0xce, 0x96, 0x9f, 0xe0, 0xe4, 0xea, 0xee, 0x93, 0x93, 0xb3, 0xb3, 0x00
@@ -96,18 +97,18 @@ gNameEntry_EndKeyLabel:
 	.endif
 	.endif
 	.endif
-@ 属性ごとのジンの種類
+@ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)
 	.global gDjinn_ElementSprites
 gDjinn_ElementSprites:
 	.2byte 90, 91, 92, 93
-@ 仲間ごとのキャラ
+@ The sprite of each party member
 	.global gCharacter_SpriteTable
 gCharacter_SpriteTable:
 	.2byte 0, 1, 2, 3, 35, 5, 6, 7
-@ 子供のころ (フラグ 32)
+@ The sprite of each party member as a child (while flag 32 is set)
 	.global gCharacter_ChildSpriteTable
 gCharacter_ChildSpriteTable:
-	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ ロビン(こ), ジェラルド(こ), ...
+	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ child Isaac, child Garet, ...
 	.global gUi_PairBobOffsets
 gUi_PairBobOffsets:
 	.ifdef TBS_EDITION_ES
@@ -124,7 +125,7 @@ gUi_PairBobOffsets:
 gUi_ObjectPulseScales:
 	.4byte 0x11999, 0x12147, 0x128f5, 0x130a3
 	.4byte 0x13851, 0x130a3, 0x128f5, 0x12147
-@ 伸びる棒の 4bpp 行
+@ The 4bpp pixel rows of a growing bar
 	.global gMenu_BarPatternRows
 gMenu_BarPatternRows:
 	.4byte 0x00055000, 0x00000000
@@ -157,7 +158,8 @@ gLink_TimeLabelString:
 	.global gDjinnMenu_BlinkTile
 gDjinnMenu_BlinkTile:
 	.incbin "games/common/src/menu/djinn/blink.4bpp"
-@ 項目, 列, 行, 強調列, 強調行, 強調幅
+@ Each cursor stop: item, column, row, highlight column, highlight row,
+@ highlight width
 	.global gOwnerStatus_StatCursors
 gOwnerStatus_StatCursors:
 	.byte 0, 2, 0, 0, 0, 12, 0, 0

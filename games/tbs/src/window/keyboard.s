@@ -1,11 +1,11 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
-@ ジンの種類
+@ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)
 	.global gMenu_PartySpriteResourceIds
 gMenu_PartySpriteResourceIds:
 	.4byte 90, 91, 92, 93
-@ 名前入力の文字盤
+@ The name entry screen's keyboard tilemaps
 	.global gNameEntry_KeyboardTilemap
 gNameEntry_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA

@@ -4,6 +4,10 @@
 #include "edition.h"
 #include "types.h"
 
+// Text windows lay text out on their 8x8-pixel tiles: the text writers place
+// pixel column x in cell x / 8, at pixel x % 8 within it.
+#define TEXT_CELL_WIDTH 8
+
 extern const u8 gUiText_KanjiGlyphs[];
 #if GAME_TLA
 extern const u16 gUiText_MarkGlyphCodes[];

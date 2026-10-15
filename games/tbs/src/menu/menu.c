@@ -57,6 +57,7 @@
 #include "a9_motion.h"
 #include "battle_effect.h"
 #include "four_object_motion.h"
+#include "text_font.h"
 
 extern u8 IwramCopyWords[];
 
@@ -289,6 +290,10 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
 }
 
 #if EDITION_INTERNATIONAL
+// Where the digit count gives up. A 32-bit number has at most ten digits, so
+// the count always ends first; the limit only guards the loop.
+#define DIGIT_COUNT_LIMIT 16
+
 // Draws number in window so that it ends at pixel column x, giving it one
 // 8-pixel text cell per digit and at least two cells.
 //
@@ -310,9 +315,8 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   // Count the digits: the units digit, one more for each division by ten
   // that leaves two digits or more, then the leading digit. Below 10 the
   // units digit is the leading digit and is counted twice, so those numbers
-  // take two cells: a space, then the digit. The limit only guards the loop:
-  // a 32-bit number has at most ten digits.
-  while (digits <= 15) {
+  // take two cells: a space, then the digit.
+  while (digits < DIGIT_COUNT_LIMIT) {
     rest = rest / 10;
     if (rest <= 9) {
       break;
@@ -323,7 +327,7 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 
   // Step x back from the number's right edge to its left edge. The number
   // writer right-aligns the value in a field of that many characters.
-  x -= digits * 8;
+  x -= digits * TEXT_CELL_WIDTH;
   UiText_DrawNumberAtOffsetFar(number, digits, window, x, y);
 }
 

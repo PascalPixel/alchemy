@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/field/suhara_gate/events_b.o"(.text)
         "*/games/tla/src/field/suhara_gate/s028c.o"(.text)
         "*/games/tla/src/field/suhara_gate/prepare.o"(.text)
-        "*/resource_64f_overlay.o"(.text.x020083ac)
+        "*/games/tla/src/field/suhara_gate/s03ac.o"(.text)
         "*/resource_64f_overlay.o"(.text.x02008494)
         "*/games/tla/src/field/suhara_gate/s05e8.o"(.text)
         "*/games/tla/src/field/suhara_gate/events_c.o"(.text)

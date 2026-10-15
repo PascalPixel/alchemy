@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object_runtime.h"
+#include "field_sprite.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "eventwrk.h"
@@ -393,4 +394,45 @@ L_02009b74:
     Call3((void (*)())Func_02004b04, 26, 0, 0);
     ((void (*)())Func_02004a9c)();
     return;
+}
+
+struct SpawnObject {
+    u8 unknown_00[0x50];
+    struct FieldSprite *sprite;
+    u8 unknown_54;
+    u8 motion_flags;
+    u8 unknown_56[8];
+    u16 unknown_5e;
+};
+
+extern const u8 Data_020056d4[];
+
+struct SpawnObject *Func_02004a1c(s32 type, s32 x, s32 y, s32 z);
+void Func_02004a0c(struct SpawnObject *object, s32 mode);
+void Func_02004a14(struct SpawnObject *object, const void *script);
+void Func_02004a74(struct SpawnObject *object, s32 priority);
+
+// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
+// its timer set.
+void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer)
+{
+    struct SpawnObject *object;
+    struct FieldSprite *sprite;
+
+    object = Func_02004a1c(0x1e8, x, y, z);
+    if (object != 0) {
+        sprite = object->sprite;
+        Func_02004a0c(object, 1);
+        Func_02004a14(object, Data_020056d4);
+        Func_02004a74(object, 1);
+        object->motion_flags = 0;
+        {
+            /* FAKEMATCH: the 64-bit copy loads the timer argument before the pooled zero for next_frame; stored directly the zero loads first (differ 2), and overlay 65f's barrier here swaps the next call's arguments (differ 4). */
+            s64 wide = timer;
+
+            object->unknown_5e = wide;
+        }
+        sprite->next_frame = 0;
+        sprite->rotation = value;
+    }
 }

@@ -234,46 +234,6 @@ Func_02000150:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008310:
 	.4byte 0xffff0000
-	.section .text.x0200834c,"ax",%progbits
-	.balign 4
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	adds r1, r0, #0
-	adds r5, r3, #0
-	movs r4, #8
-	adds r5, #52
-.L_0200835c:
-	ldmia r5!, {r0}
-	ldr r2, [r1]
-	ldr r3, [r0, #8]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_02008382
-	ldr r2, [r1, #4]
-	ldr r3, [r0, #12]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_02008382
-	ldr r2, [r1, #8]
-	ldr r3, [r0, #16]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	beq .L_0200838a
-.L_02008382:
-	adds r4, #1
-	cmp r4, #63
-	bls .L_0200835c
-	movs r0, #0
-.L_0200838a:
-	pop {r5, pc}
 	.section .text.x0200838c,"ax",%progbits
 	.global Func_0200038c
 	.thumb_func
@@ -314,7 +274,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	mov r1, r8
-	bl Func_0200034c
+	bl Object_FindInCell
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020083e2
@@ -336,7 +296,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	adds r1, r6, #0
-	bl Func_0200034c
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_02008418
 	adds r3, r0, #0
@@ -358,7 +318,7 @@ Func_0200038c:
 	adds r0, r7, #0
 	ldr r3, [r6, #16]
 	str r3, [r7, #8]
-	bl Func_0200034c
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_02008444
 	adds r3, r0, #0
@@ -547,112 +507,3 @@ Func_020005a8:
 	pop {r5, r6, r7, pc}
 .L_0200864c:
 	.4byte gFrameCount
-	.section .text.x02008a54,"ax",%progbits
-	.balign 4
-	.if EDITION_INTERNATIONAL
-	.global VinasuChojo_Start
-	.thumb_func
-VinasuChojo_Start:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	.if EDITION_INTERNATIONAL
-	movs r0, #214
-	lsls r0, r0, #1
-	movs r2, #129
-	adds r3, r3, r0
-	lsls r2, r2, #2
-	ldr r1, .L_02008b20
-	str r2, [r3]
-	subs r2, #34
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	.else
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #88
-	str r2, [r3]
-	ldr r3, .L_02008b20
-	subs r2, #34
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	.endif
-	cmp r3, #99
-	bne .L_02008aa2
-	.if EDITION_INTERNATIONAL
-	ldr r3, .L_02008b24
-	movs r0, #242
-	lsls r0, r0, #1
-	adds r2, r1, r0
-	strh r3, [r2]
-	movs r3, #243
-	lsls r3, r3, #1
-	adds r2, r1, r3
-	movs r3, #22
-	strh r3, [r2]
-	.endif
-	bl Engine_EventBegin
-	movs r0, #0
-	bl Engine_EventResolvePendingActions
-	bl Func_02000b2c
-	bl Func_02000d30
-	bl Engine_EventEnd
-	b .L_02008b1a
-.L_02008aa2:
-	movs r0, #10
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #17
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #18
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #19
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #20
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #21
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #22
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #23
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #24
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-	movs r0, #25
-	bl Engine_ActorGet
-	movs r1, #6
-	bl Object_SetPartAttribute
-.L_02008b1a:
-	movs r0, #0
-	pop {pc}
-	.if EDITION_INTERNATIONAL
-	.2byte 0x0000
-	.endif
-.L_02008b20:
-	.4byte gPartyState
-	.if EDITION_INTERNATIONAL
-.L_02008b24:
-	.4byte 0x00000005
-	.endif
-	.endif

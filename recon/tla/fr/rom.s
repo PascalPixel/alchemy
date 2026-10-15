@@ -858,12 +858,6 @@ Func_0803c198:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x0003c534, 0x00000464
-	.section .rom.0003c9a8, "ax"
-	.global UiText_CopyMessageString
-	.type UiText_CopyMessageString, %function
-	.thumb_func
-UiText_CopyMessageString:
-	.incbin "baserom.gba", 0x0003c9a8, 0x00000064
 	.section .rom.0003ca0c, "ax"
 	.global UiText_DecodeMessage
 	.type UiText_DecodeMessage, %function

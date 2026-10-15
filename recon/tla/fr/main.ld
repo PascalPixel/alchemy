@@ -454,7 +454,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.0003c3f8)
     "*/recon/tla/fr/rom.o"(.rom.0003c534)
     "*/games/tla/src/graphics/window/adjust_value_without_limit.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.0003c9a8)
     "*/recon/tla/fr/rom.o"(.rom.0003ca0c)
     "*/games/tla/src/system/memory/clear_word_if_set.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0003cb5e)

@@ -473,7 +473,6 @@ SECTIONS
         "*/recon/tla/raw/0803c40c.o"(.text)
         "*/recon/tla/raw/0803c548.o"(.text)
         "*/games/tla/src/graphics/window/adjust_value_without_limit.o"(.text)
-        "*/recon/tla/raw/0803c9bc.o"(.text)
         "*/recon/tla/raw/0803ca20.o"(.text)
         "*/games/tla/src/system/memory/clear_word_if_set.o"(.text)
         "*/recon/tla/raw/0803cb1a.o"(.text)

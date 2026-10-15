@@ -35,14 +35,14 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
+void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
+void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_08152474(void);           // BattleFx_ArmBg2AffineHBlankDma
+void Func_08152474(void); // BattleFx_ArmBg2AffineHBlankDma
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
 void Audio_PlayCue(s32 cue);
@@ -50,7 +50,7 @@ void Audio_PlayCue(s32 cue);
 extern char ResourceId_SkullSheet;
 extern char ResourceId_PinkBurstSheet;
 
-#define SKULLS 8           // per target
+#define SKULLS 8 // per target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 

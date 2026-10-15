@@ -34,7 +34,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -44,16 +44,16 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
+void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
-void Func_080150e4(s32 angle);      // SceneTransform_ApplyRoll
-void Func_080151ac(s32 *scale);     // SceneTransform_ApplyScale
+                   s32 frames); // ObjectGroup_UpdateMembers
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPosition(void *position);
 void Graphics_RestoreTransferWork(void);
@@ -117,7 +117,8 @@ void Func_08146638(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Object_SetMode(caster, 2);
   ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)caster, 48);
-  Func_081963ec(HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
   work->transferValue = 75;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -210,8 +211,8 @@ void Func_08146638(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gData_08197410[size - 1],
-                      x - size / 2, y - size, size, size * 2);
+              draw[0](canvas, graphics + gData_08197410[size - 1], x - size / 2,
+                      y - size, size, size * 2);
             }
           }
         }

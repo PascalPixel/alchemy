@@ -49,15 +49,15 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
+void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081434f8(void);      // ObjectGroup_TickMemberTimers
+void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_081524b4(void);           // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void);           // mode 3 only
+void Func_081524b4(void); // arms the BG1 scroll's HBlank DMA
+void Func_0815b634(void); // mode 3 only
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 s32 Battle_GetObjectTableValueFar(s32 unit);
@@ -118,8 +118,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   for (k = 0; k != effect->count; k++) {
-    struct MotionObject *source =
-        GetBattleObjectSlotFar(effect->actor)->object;
+    struct MotionObject *source = GetBattleObjectSlotFar(effect->actor)->object;
     s32 height = Battle_GetObjectTableValueFar(effect->actor);
 
     for (i = 0; i != MOTES_PER_TARGET; i++) {

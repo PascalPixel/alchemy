@@ -36,7 +36,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -45,13 +45,14 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
+void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0814cc4c(struct BattleEffectArgument *effect); // ..SelectLivingTargets
+void Func_0814cc4c(
+    struct BattleEffectArgument *effect); // ..SelectLivingTargets
 void Func_08152404(s32 count, s32 resource, s32 priority); // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
@@ -220,8 +221,8 @@ void Func_08148458(struct BattleEffectArgument *effect) {
 
           draw[0](canvas, work->sheet + COLUMN_SHEET,
                   Data_08197990[k * 2] - COLUMN_WIDTH / 2,
-                  Data_08197990[k * 2 + 1] - span - COLUMN_HEIGHT,
-                  COLUMN_WIDTH, COLUMN_HEIGHT);
+                  Data_08197990[k * 2 + 1] - span - COLUMN_HEIGHT, COLUMN_WIDTH,
+                  COLUMN_HEIGHT);
           draw[0](canvas, work->sheet + COLUMN_SHEET,
                   Data_08197990[k * 2] - COLUMN_WIDTH / 2,
                   Data_08197990[k * 2 + 1] - span, COLUMN_WIDTH, span);

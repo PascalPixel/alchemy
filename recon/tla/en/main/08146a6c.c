@@ -35,7 +35,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -45,16 +45,16 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
+void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames); // ObjectGroup_UpdateMembers
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
-                   s32 bluePhase);  // Graphics_UpdatePhasePalette
+                   s32 bluePhase); // Graphics_UpdatePhasePalette
 void Audio_PlayCue(s32 cue);
 
 extern char ResourceId_RuneSheet;
@@ -100,7 +100,8 @@ void Func_08146a6c(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Func_081963ec(HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;

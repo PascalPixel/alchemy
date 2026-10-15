@@ -36,7 +36,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -47,14 +47,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginTiledCanvas(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                   // BattleFx_EndCanvasLayer
+void Func_08143000(void);                   // ..ProcessPendingGraphicsTransfer
+void Func_081434f8(void);                   // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
+void Func_081180e8(s32 phase);              // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
-void Func_08152474(void);           // BattleFx_ArmBg2AffineHBlankDma
+void Func_08152474(void);                      // BattleFx_ArmBg2AffineHBlankDma
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Audio_PlayCue(s32 cue);
 

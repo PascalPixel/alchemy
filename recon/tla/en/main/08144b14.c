@@ -34,7 +34,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -48,12 +48,12 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
+void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
@@ -110,7 +110,8 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   if (effect->prelude == 1)
     Func_0815585c(effect, (effect->side ^ effect->prelude) << 4 | mode, djinn,
                   djinnSize);
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
                              work->sheet + PIC_MOTE, 1, 1);
   if (mode == 0)
@@ -248,9 +249,8 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
             draw[0](canvas, work->sheet + Data_08197874[pic],
-                    pos.x - Data_0819787a[pic],
-                    pos.y - Data_0819787d[pic] + 8, Data_0819787a[pic],
-                    Data_0819787d[pic]);
+                    pos.x - Data_0819787a[pic], pos.y - Data_0819787d[pic] + 8,
+                    Data_0819787a[pic], Data_0819787d[pic]);
             draw[1](canvas, work->sheet + Data_08197874[pic], pos.x,
                     pos.y - Data_0819787d[pic] + 8, Data_0819787a[pic],
                     Data_0819787d[pic]);

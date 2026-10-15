@@ -33,7 +33,7 @@
 #include "ram_buffer.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
-#define HEAP_OFFSET(field) ((s32) & ((struct HeapSlots *)0)->field)
+#define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
@@ -44,23 +44,23 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);      // BattleFx_EndCanvasLayer
+void Func_08143000(void);      // ..ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
-                   s32 bluePhase);  // Graphics_UpdatePhasePalette
-void Func_080150e4(s32 angle);      // SceneTransform_ApplyRoll
-void Func_080151ac(s32 *scale);     // SceneTransform_ApplyScale
+                   s32 bluePhase); // Graphics_UpdatePhasePalette
+void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
+void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
 void Audio_PlayCue(s32 cue);
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_ParticleSpritesD;
-extern s32 Data_08197918[];  // the triangle's first corner: (0, 24, 0)
-extern u16 Data_08197424[];  // flare sizes 1 to 5: cell offsets
-#define FLARE_SHEET 0x1000   // the flares, after the rune picture
+extern s32 Data_08197918[]; // the triangle's first corner: (0, 24, 0)
+extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
+#define FLARE_SHEET 0x1000  // the flares, after the rune picture
 
 #define CORNERS 3
 #define EDGE_STEPS 24 // flares drawn along each edge
@@ -164,8 +164,8 @@ void Func_0814627c(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             Func_080150e4(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(
-                Data_08197918, (struct EffectPosition *)vector);
+            EffectPosition_ApplyBaseAndYOffset(Data_08197918,
+                                               (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;
           }

@@ -47,14 +47,14 @@
 
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
-void Func_08143488(void);           // Palette_StepFadeTransfer
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);         // BattleFx_EndCanvasLayer
+void Func_08143000(void);         // ..ProcessPendingGraphicsTransfer
+void Func_08143488(void);         // Palette_StepFadeTransfer
+void Func_081434f8(void);         // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void Func_081180e8(s32 phase);    // BattleEventRuntime_BeginPhaseFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);     // ObjectGroup_UpdateMembers
+                   s32 frames);                    // ObjectGroup_UpdateMembers
 void Func_08144aac(s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleFx_PrepareCanvasEffect
@@ -118,8 +118,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   // smoke with their palettes, then the mode's palette.
   if (mode == 7) {
     BattleFx_BeginCanvasLayer(0);
-    Func_0815585c(effect, effect->side << 4 | 0x44, preludeOrigin,
-                  preludeSize);
+    Func_0815585c(effect, effect->side << 4 | 0x44, preludeOrigin, preludeSize);
     REG_BG2CNT = 0x785;
   } else {
     BattleFx_BeginCanvasLayer(1);
@@ -272,8 +271,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
         EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
         position.x >>= 1;
         if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
-          draw[1](canvas,
-                  work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,
+          draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,
                   position.x - 12, position.y - 24, 24, 48);
         } else {
           s32 picture = burst->variant / 5;
@@ -284,8 +282,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
           flip = effect->side;
           if (burst->velocityX > 0)
             flip ^= 1;
-          draw[flip](canvas,
-                     work->sheet + Data_081978cc[picture] + SHARD_SHEET,
+          draw[flip](canvas, work->sheet + Data_081978cc[picture] + SHARD_SHEET,
                      position.x - Data_081978a8[picture] / 2,
                      position.y - Data_081978ba[picture] / 2,
                      Data_081978a8[picture], Data_081978ba[picture]);

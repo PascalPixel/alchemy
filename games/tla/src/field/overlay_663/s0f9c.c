@@ -1,14 +1,12 @@
-/* Near miss, differ 2 of 51 (one reordered pair): in the first branch the
- * native starts the scale step constant (movs r2, #192) before it loads
- * scale_x; the draft loads scale_x first. Without the one-pass block after
- * the speed store the constant is started before the store instead
- * (differ 4). A step temporary was tried. */
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
 
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 
+// Moves the object: left of x 320 it speeds up rightward and grows, past it
+// it speeds up leftward and shrinks; its priority follows its direction and
+// its sprite spins.
 void Func_02000f9c(struct ObjectRuntime *object)
 {
     s32 scale;
@@ -18,9 +16,8 @@ void Func_02000f9c(struct ObjectRuntime *object)
     object->z += object->unknown_4c;
     if ((object->x >> 19) <= 39) {
         object->bounce += 0x18000;
-        /* FAKEMATCH: the loop note ends the scheduling block after the speed store; without it the step constant is started before the store (one reordered pair twice). */
-        do {
-        } while (0);
+        /* FAKEMATCH: the barrier ends the scheduling block after the speed store, so the step constant is started before scale_x is loaded; plainly it is started before the store (differ 4), and a one-pass block here loads scale_x first (differ 2). */
+        __asm__("");
         scale = object->scale_x + 0xccc;
     } else {
         object->bounce -= 0x18000;

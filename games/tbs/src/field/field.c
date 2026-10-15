@@ -434,6 +434,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   return mirrored;
 }
 
+// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
+// image centred on screenX and raised height above screenY, the shadow at
+// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
+// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale) {
@@ -469,8 +473,14 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   shadow->y = y;
 }
 
+// Places a sprite for the scrolling camera and queues it for drawing. pos is
+// (screen x, height, screen y, ground height) in 16.16 pixels, scale its
+// (x, y) scale and facing its facing angle. Builds an affine matrix when the
+// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
+// has one) and then the image in a draw slot by depth; an object 100 pixels
+// or more below the ground takes slot 1 instead, its shadow slot 0.
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
-                                    s32 *scale, s32 mode) {
+                                    s32 *scale, s32 facing) {
   s32 matrix;
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
@@ -478,11 +488,11 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 sizeHalf = 4;
   s32 affine;
   s32 scaleX = *scale++;
-  s32 px = *pos++;
+  s32 screenX = *pos++;
   s32 scaleY = *scale;
-  s32 py = *pos++;
-  s32 pz = *pos++;
-  s32 pw = *pos;
+  s32 height = *pos++;
+  s32 screenY = *pos++;
+  s32 groundHeight = *pos;
   s32 slot;
   /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the
    * 68-byte frame; removing them leaves 44 bytes. */
@@ -495,7 +505,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   s32 depth;
   struct AnimationSpritePart *part;
 
-  flip = Sprite_ComposeAnimationFrame(sprite, mode);
+  flip = Sprite_ComposeAnimationFrame(sprite, facing);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
@@ -516,26 +526,26 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
     size = 16;
     sizeHalf = 8;
   }
-  if (py <= -0x640000) {
+  if (height <= -0x640000) {
     slot = 1;
     depth = 0;
   } else {
-    slot = (pz >> 17) + 10;
+    slot = (screenY >> 17) + 10;
     depth = 2;
   }
-  y = ((pz - pw) >> 16) - sizeHalf;
+  y = ((screenY - groundHeight) >> 16) - sizeHalf;
   if (sprite->flags & 1) {
     if (y < 160) {
       part = &sprite->part[1];
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = (px >> 16) - size;
+      part->x = (screenX >> 16) - size;
       part->y = y;
       Runtime_PushSlotEntry(part, depth);
     }
   }
-  x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
-  y = ((pz - py) >> 16) - halfHeight -
+  x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+  y = ((screenY - height) >> 16) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   if (x < 240 && y < 160) {
     part = &sprite->part[0];
@@ -547,8 +557,14 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
   }
 }
 
+// Places a sprite at 3D point for the fixed camera and queues it for drawing:
+// projected to the screen and scaled by its distance (unless displayFlags bit
+// 1 keeps its own scale), with an affine matrix as needed and its shadow on
+// the ground below. depth 0 sorts it by distance; any other value is its draw
+// slot. A sprite off screen gives up its VRAM cache entry unless displayFlags
+// bit 0 holds it.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 mode, s32 depth) {
+                                 s32 *scale, s32 facing, s32 depth) {
   s32 flip;
   u32 halfHeight;
   u32 size;
@@ -558,7 +574,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   s32 screen[3];
   struct AffineTransform effect;
   s32 z;
-  s32 base;
+  s32 roundedScale;
   s32 scaleX;
   s32 scaleY;
   s32 offsetX;
@@ -577,10 +593,10 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
-      flip = Sprite_ComposeAnimationFrame(sprite, mode);
-      base = (z + 0x400) & -0x800;
-      scaleX = Iwram_MulQ16(base, *scale++);
-      scaleY = Iwram_MulQ16(base, *scale);
+      flip = Sprite_ComposeAnimationFrame(sprite, facing);
+      roundedScale = (z + 0x400) & -0x800;
+      scaleX = Iwram_MulQ16(roundedScale, *scale++);
+      scaleY = Iwram_MulQ16(roundedScale, *scale);
       if (scaleX > 0x1f7ff)
         scaleX = 0x1f800;
       if (scaleY > 0x1f7ff)
@@ -649,22 +665,24 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   }
 }
 
-void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value) {
-  struct AnimationObject *parent = raw_parent;
-  if (parent != 0) {
-    u32 n = parent->count;
+// Sets the draw parameter of each of a sprite's layers to value, except
+// layers whose parameter is 15, and marks the sprite for redrawing.
+void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
+  struct AnimationObject *sprite = rawSprite;
+  if (sprite != 0) {
+    u32 count = sprite->count;
 
-    if (n != 0) {
-      struct AnimationEntry **p = parent->entries;
-      u32 cnt = n;
+    if (count != 0) {
+      struct AnimationEntry **entry = sprite->entries;
+      u32 remaining = count;
       do {
-        struct AnimationEntry *child = *p++;
-        if (child->param != 15)
-          child->param = value;
-        cnt--;
-      } while (cnt != 0);
+        struct AnimationEntry *layer = *entry++;
+        if (layer->param != 15)
+          layer->param = value;
+        remaining--;
+      } while (remaining != 0);
     }
-    parent->dirty = 1;
+    sprite->dirty = 1;
   }
 }
 
@@ -677,6 +695,12 @@ enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
 
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
+// Loads the frames of animation id number into resource slot slot's buffer:
+// the resource listed for it in gResourceSlot_NumberTable, decoded, its frame
+// offsets turned into pointers, and for variant 1-5 its pixel colours (those
+// up to 0xdf) remapped through that variant's conversion table. Returns the
+// image's size in pixels (width * height), or 0 when the slot or id is not
+// known.
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
@@ -740,302 +764,334 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
+// Returns the buffer loaded into the resource slot whose tag is key, or 0.
 s32 Animation_LookupValueByKey(s32 key) {
-  u32 no;
-  struct ResourceSlot *p = gMenuCtrlWork->slots;
+  u32 i;
+  struct ResourceSlot *slot = gMenuCtrlWork->slots;
 
-  for (no = 0; no < RESOURCE_SLOT_COUNT; no++, p++) {
-    if (p->tag == key)
-      return (s32)p->buffer;
+  for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
+    if (slot->tag == key)
+      return (s32)slot->buffer;
   }
   return 0;
 }
 
-s32 Animation_InitializeObjects(struct AnimationObject *state) {
-  s32 index;
+// Resets each layer of a sprite from its animation's metadata: its facing
+// kind, frames, scripts and codec, with no frame shown and no script
+// running. The first layer also sets the sprite's size, scale and offsets.
+// Returns 0.
+s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
+  s32 i;
 
-  for (index = 0; index < state->count; index++) {
-    struct AnimationEntry *object = state->entries[index];
+  for (i = 0; i < sprite->count; i++) {
+    struct AnimationEntry *layer = sprite->entries[i];
     struct AnimationMetadata *metadata =
-        Resource_GetMetadataRecordFar(object->animId);
+        Resource_GetMetadataRecordFar(layer->animId);
     void **frames;
 
     if (metadata->width == 0)
       continue;
 
-    if (index == 0) {
-      state->width = metadata->width;
-      state->height = metadata->height;
-      state->scale = metadata->scale << 8;
-      state->offsetY = metadata->adjustY;
-      state->offsetX = metadata->adjustX;
+    if (i == 0) {
+      sprite->width = metadata->width;
+      sprite->height = metadata->height;
+      sprite->scale = metadata->scale << 8;
+      sprite->offsetY = metadata->adjustY;
+      sprite->offsetX = metadata->adjustX;
     }
 
     frames = metadata->frames;
     if (frames == 0)
-      frames = (void **)Animation_LookupValueByKey(object->animId);
+      frames = (void **)Animation_LookupValueByKey(layer->animId);
 
-    object->kind = metadata->drawKind;
-    object->frames = frames;
-    object->scripts = metadata->animation;
-    object->mode = metadata->frameCodec;
-    object->frame = 0xff;
-    object->script = 0;
-    object->pos = 0;
+    layer->kind = metadata->drawKind;
+    layer->frames = frames;
+    layer->scripts = metadata->animation;
+    layer->mode = metadata->frameCodec;
+    layer->frame = 0xff;
+    layer->script = 0;
+    layer->pos = 0;
   }
 
   return 0;
 }
 
-void Animation_InitWorkFromMetadata(struct AnimationEntry *work) {
-  void **value;
-  s32 z;
-  struct AnimationMetadata *info;
-
-  if (work != NULL) {
-    info = Resource_GetMetadataRecordFar(work->animId);
-    if (info->width != 0) {
-      value = info->frames;
-      if (value == 0)
-        value = (void **)Animation_LookupValueByKey(work->animId);
-      work->kind = info->drawKind;
-      work->scripts = info->animation;
-      work->frames = value;
-      work->mode = info->frameCodec;
-      z = 0;
-      work->frame = 0xff;
-      work->script = (u8 *)z;
-      work->pos = z;
-    }
-  }
-}
-
-s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id) {
-  s32 value = (s32)state->entries[0];
-  s32 index = 0;
-  struct AnimationEntry **slot;
+// Resets one animation layer from its animation's metadata, as
+// Animation_InitializeObjects does for each layer.
+void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
+  void **frames;
+  s32 zero;
   struct AnimationMetadata *metadata;
 
-  if (value != 0) {
-    slot = &state->entries[0];
+  if (layer != NULL) {
+    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    if (metadata->width != 0) {
+      frames = metadata->frames;
+      if (frames == 0)
+        frames = (void **)Animation_LookupValueByKey(layer->animId);
+      layer->kind = metadata->drawKind;
+      layer->scripts = metadata->animation;
+      layer->frames = frames;
+      layer->mode = metadata->frameCodec;
+      zero = 0;
+      layer->frame = 0xff;
+      layer->script = (u8 *)zero;
+      layer->pos = zero;
+    }
+  }
+}
+
+// Adds a layer of animation id to a sprite, in its first free layer of
+// four. The first layer also sets the sprite's size, scale and offsets.
+// Returns the layer, 0 when no layer record is free, or -1 when the sprite
+// has four layers already.
+s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
+  s32 layer = (s32)sprite->entries[0];
+  s32 freeIndex = 0;
+  struct AnimationEntry **entry;
+  struct AnimationMetadata *metadata;
+
+  if (layer != 0) {
+    entry = &sprite->entries[0];
     do {
-      index++;
-      if (index > 3)
+      freeIndex++;
+      if (freeIndex > 3)
         break;
-      slot++;
-      value = (s32)*slot;
-    } while (value != 0);
+      entry++;
+      layer = (s32)*entry;
+    } while (layer != 0);
   }
-  if (index == 4)
+  if (freeIndex == 4)
     return -1;
-  value = (s32)AnimationObject_Allocate(id);
-  if (value == 0)
+  layer = (s32)AnimationObject_Allocate(id);
+  if (layer == 0)
     return 0;
-  state->entries[index] = (struct AnimationEntry *)value;
+  sprite->entries[freeIndex] = (struct AnimationEntry *)layer;
   metadata = Resource_GetMetadataRecordFar(id);
-  if (state->count == 0) {
-    state->width = metadata->width;
-    state->height = metadata->height;
-    state->scale = metadata->scale << 8;
-    state->offsetY = metadata->adjustY;
-    state->offsetX = metadata->adjustX;
+  if (sprite->count == 0) {
+    sprite->width = metadata->width;
+    sprite->height = metadata->height;
+    sprite->scale = metadata->scale << 8;
+    sprite->offsetY = metadata->adjustY;
+    sprite->offsetX = metadata->adjustX;
   }
-  if (index == state->count)
-    state->count = index + 1;
-  return value;
+  if (freeIndex == sprite->count)
+    sprite->count = freeIndex + 1;
+  return layer;
 }
 
-void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle) {
-  s32 count;
-  u32 slot;
+// Removes the layer handle from a sprite and clears it, trimming the
+// sprite's layer count when no later layer remains.
+void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
+  s32 laterLayers;
+  u32 index;
   u32 i;
 
-  if (state != NULL && handle != 0) {
-    ResourceMetadata_ClearRecord(handle);
-    for (slot = 0; slot <= 3; slot++) {
-      if (handle == (s32)state->entries[slot])
+  if (sprite != NULL && layer != 0) {
+    ResourceMetadata_ClearRecord(layer);
+    for (index = 0; index <= 3; index++) {
+      if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (slot != 4) {
-      state->entries[slot] = 0;
-      count = 0;
-      for (i = slot + 1; i <= 3; i++) {
-        if (state->entries[i] != 0)
-          count++;
+    if (index != 4) {
+      sprite->entries[index] = 0;
+      laterLayers = 0;
+      for (i = index + 1; i <= 3; i++) {
+        if (sprite->entries[i] != 0)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = slot;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
-void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no) {
-  struct AnimationEntry *v;
-  s32 cnt;
+// Removes and clears a sprite's layer number no (0-3), trimming the sprite's
+// layer count when no later layer remains.
+void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
+  struct AnimationEntry *layer;
+  s32 laterLayers;
   u32 i;
 
-  if (group != NULL && no <= 3) {
-    v = group->entries[no];
-    if (v != NULL) {
-      ResourceMetadata_ClearRecord(v);
-      group->entries[no] = NULL;
-      cnt = 0;
-      for (i = no + 1; i <= 3; i++) {
-        if (group->entries[i] != NULL)
-          cnt++;
+  if (sprite != NULL && index <= 3) {
+    layer = sprite->entries[index];
+    if (layer != NULL) {
+      ResourceMetadata_ClearRecord(layer);
+      sprite->entries[index] = NULL;
+      laterLayers = 0;
+      for (i = index + 1; i <= 3; i++) {
+        if (sprite->entries[i] != NULL)
+          laterLayers++;
       }
-      if (cnt == 0)
-        group->count = no;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no) {
-  s32 hi;
-  struct AnimationMetadata *info;
-  s32 value;
+// Starts animation no on a layer: from its first command, unless bit 7 of no
+// is set. An animation number the layer's metadata does not have is ignored.
+void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
+  s32 keepPlace;
+  struct AnimationMetadata *metadata;
+  s32 script;
 
-  hi = 0x80 & no;
-  if (work->scripts != 0) {
-    info = Resource_GetMetadataRecordFar(work->animId);
-    if (no < info->animationCount) {
-      value = (s32)work->scripts[no];
-      work->kind = info->drawKind;
-      work->script = (u8 *)value;
-      work->step = 0x10;
-      if (hi == 0) {
-        work->pos = hi;
-        work->timer = hi;
+  keepPlace = 0x80 & animation;
+  if (layer->scripts != 0) {
+    metadata = Resource_GetMetadataRecordFar(layer->animId);
+    if (animation < metadata->animationCount) {
+      script = (s32)layer->scripts[animation];
+      layer->kind = metadata->drawKind;
+      layer->script = (u8 *)script;
+      layer->step = 0x10;
+      if (keepPlace == 0) {
+        layer->pos = keepPlace;
+        layer->timer = keepPlace;
       }
     }
   }
 }
 
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags) {
-  s32 highBit;
-  s32 index;
+// Starts animation flags & 0x7f on every layer of a sprite (bit 7 keeps
+// each layer's place and timer), unless the sprite plays it already. The
+// first layer's animation also sets the sprite's offsets. Returns 0.
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
+                                     s32 animation) {
+  s32 keepPlace;
+  s32 i;
 
-  highBit = flags & 0x80;
-  flags &= 0x7f;
+  keepPlace = animation & 0x80;
+  animation &= 0x7f;
 
-  /* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
-   * entry cursor and uses 12 bytes. 2026-10-13: for (index = 0; index <
-   * state->count; index++) strength-reduces entries[index] into that cursor
+  /* FAKEMATCH: the i/test loop keeps an 8-byte frame; a for loop spills an
+   * layer cursor and uses 12 bytes. 2026-10-13: for (i = 0; i <
+   * sprite->count; i++) strength-reduces entries[i] into that cursor
    * (82 instructions for 76, differ 30). */
-  if (state->lastNo != flags) {
-    index = 0;
+  if (sprite->lastNo != animation) {
+    i = 0;
     goto test_entry;
   entry_loop:
     {
-      struct AnimationEntry *entry = state->entries[index];
+      struct AnimationEntry *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
-      if (entry != 0 && entry->scripts != 0) {
-        metadata = Resource_GetMetadataRecordFar(entry->animId);
-        if (flags < metadata->animationCount) {
-          selectedAnimation = (s32)entry->scripts[flags];
-          entry->kind = metadata->drawKind;
-          entry->script = (u8 *)selectedAnimation;
-          entry->step = 0x10;
-          if (highBit == 0) {
-            entry->pos = 0;
-            entry->timer = 0;
+      if (layer != 0 && layer->scripts != 0) {
+        metadata = Resource_GetMetadataRecordFar(layer->animId);
+        if (animation < metadata->animationCount) {
+          selectedAnimation = (s32)layer->scripts[animation];
+          layer->kind = metadata->drawKind;
+          layer->script = (u8 *)selectedAnimation;
+          layer->step = 0x10;
+          if (keepPlace == 0) {
+            layer->pos = 0;
+            layer->timer = 0;
           }
-          if (index == 0) {
-            state->offsetY = metadata->adjustY;
-            state->offsetX = metadata->adjustX;
+          if (i == 0) {
+            sprite->offsetY = metadata->adjustY;
+            sprite->offsetX = metadata->adjustX;
           }
         }
       }
     }
-    index++;
+    i++;
   test_entry:
-    if (index < state->count)
+    if (i < sprite->count)
       goto entry_loop;
-    state->lastNo = flags;
+    sprite->lastNo = animation;
   }
   return 0;
 }
 
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group,
-                                          s32 val) {
-  u8 n = group->count;
-  struct AnimationEntry **p;
-  s32 cnt;
+// Sets the frame timer of each animated layer of a sprite to val frames.
+// Returns 0.
+s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                          s32 frames) {
+  u8 count = sprite->count;
+  struct AnimationEntry **layerList;
+  s32 remaining;
 
-  if (n != 0) {
-    val <<= 4;
-    p = group->entries;
-    cnt = n;
+  if (count != 0) {
+    frames <<= 4;
+    layerList = sprite->entries;
+    remaining = count;
     do {
-      struct AnimationEntry *entry = *p++;
-      if (entry != 0 && entry->scripts != 0)
-        entry->timer = val;
-      cnt--;
-    } while (cnt != 0);
+      struct AnimationEntry *layer = *layerList++;
+      if (layer != 0 && layer->scripts != 0)
+        layer->timer = frames;
+      remaining--;
+    } while (remaining != 0);
   }
   return 0;
 }
 
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group,
-                                          s32 val) {
-  u8 n = group->count;
-  if (n != 0) {
-    struct AnimationEntry **p = group->entries;
-    s32 cnt = n;
+// Sets the timer step, the animation speed, of each animated layer of a
+// sprite (16 is normal speed).
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                          s32 step) {
+  u8 count = sprite->count;
+  if (count != 0) {
+    struct AnimationEntry **layerList = sprite->entries;
+    s32 remaining = count;
     do {
-      struct AnimationEntry *entry = *p++;
-      if (entry != 0 && entry->scripts != 0)
-        entry->step = val;
-      cnt--;
-    } while (cnt != 0);
+      struct AnimationEntry *layer = *layerList++;
+      if (layer != 0 && layer->scripts != 0)
+        layer->step = step;
+      remaining--;
+    } while (remaining != 0);
   }
 }
 
+// Allocates and zeroes the 64 sprites and 64 animation layers (from the
+// fixed blocks in mode 3, the heap otherwise), sets up the palette DMA,
+// loads the shadow tiles into VRAM cache entry 93 and puts the sprite tile
+// uploader in RAM.
 void ObjectSystem_Configure(s32 mode) {
-  void *objects;
-  void *states;
+  void *sprites;
+  void *layers;
   volatile u32 zero;
 
   if (mode == 3) {
-    objects = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
+    sprites = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
                                            sizeof(struct AnimationObject));
-    states = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT *
+    layers = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT *
                                           sizeof(struct AnimationEntry));
   } else {
-    objects = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT *
+    sprites = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT *
                                                sizeof(struct AnimationObject));
-    states = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
+    layers = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
                                               sizeof(struct AnimationEntry));
   }
   PaletteDma_LoadBlock();
-  Dma_Fill32Cell(zero, 0, objects,
+  Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
-  Dma_Fill32Cell(zero, 0, states,
+  Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
   VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
   RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
+// Takes a free animation layer record and starts it on animation id's first
+// animation. Returns the layer, or NULL when none is free or the id has no
+// image.
 struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   struct AnimationMetadata *metadata;
-  struct AnimationEntry *entry;
+  struct AnimationEntry *candidate;
   struct AnimationEntry *found;
-  struct AnimationEntry *object;
+  struct AnimationEntry *layer;
   s32 i;
   void **frames;
   u8 **animation;
 
   found = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
-  entry = gAnimationObjects[0];
-  object = NULL;
+  candidate = gAnimationObjects[0];
+  layer = NULL;
 
   if (metadata->width != 0) {
-    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++) {
-      if (entry->kind == 0) {
-        found = entry;
+    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, candidate++) {
+      if (candidate->kind == 0) {
+        found = candidate;
         break;
       }
     }
@@ -1044,23 +1100,23 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
        * not wait on the animId store, so the zero for pos and param loads first
        * as native; the typed read swaps the two (differ 2). */
       frames = (void **)*(s32 *)&metadata->frames;
-      object = found;
-      object->animId = id;
+      layer = found;
+      layer->animId = id;
       if (frames == 0)
         frames = (void **)Animation_LookupValueByKey(id);
 
       animation = metadata->animation;
-      object->scripts = animation;
-      object->frames = frames;
-      object->mode = metadata->frameCodec;
-      object->frame = 0xff;
-      object->script = animation[0];
-      object->pos = 0;
-      object->kind = metadata->drawKind;
-      object->param = 0;
+      layer->scripts = animation;
+      layer->frames = frames;
+      layer->mode = metadata->frameCodec;
+      layer->frame = 0xff;
+      layer->script = animation[0];
+      layer->pos = 0;
+      layer->kind = metadata->drawKind;
+      layer->param = 0;
     }
   }
-  return object;
+  return layer;
 }
 
 // Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
@@ -1076,8 +1132,8 @@ typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
 // Creates a sprite for animation id, taking one of the 64 free sprites and a
-// VRAM cache entry for its tiles.
-// Returns the sprite, or NULL when there is no room or the id has no image.
+// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
+// no room or the id has no image.
 struct ResourceObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *meta;
   struct AnimationObject *obj;
@@ -1094,9 +1150,9 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   obj = gSpriteObjects;
   if (meta->width == 0)
     return NULL;
+  // A width of 0 marks a free sprite.
   for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) // a width of 0 marks a free sprite
-    {
+    if (obj->width == 0) {
       found = obj;
       break;
     }

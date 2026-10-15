@@ -6064,41 +6064,37 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 }
 
 //--------------------------------------------------------------------------
-// runtime_draw_render_animation_mode1.c
-// バトル演出：粒が昇る演出 (embers.c) の二つの入口
+// Rising embers, and embers with three columns of fire.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// mode 1 : 使う者の側から出し、LightningBolt のパレットで描く
-//--------------------------------------------------------------------------
+
+// Battle effect 385: the rising embers from the user's side, in the
+// LightningBolt colours.
 void BattleFx_RenderAnimationMode1(s32 effect) {
   BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 1);
 }
 
-//--------------------------------------------------------------------------
-// mode 0 : 8 体の隊列を出して動かし、最後にその位置で爆発を起こす
-//--------------------------------------------------------------------------
+// Large battle effect 7 (BattleFx_InitializeMode): the rising embers with a
+// formation of eight objects that sweeps in and explodes at the end.
 void BattleFx_RenderAnimationMode0(s32 effect) {
   BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 0);
 }
 
-//--------------------------------------------------------------------------
-// embers.c
-// バトル演出：粒を下から昇らせる演出と、粒を噴き上げて 3 本の柱を流す演出
-//--------------------------------------------------------------------------
-// PARTICLES : 昇る粒 (最大 512)
-//--------------------------------------------------------------------------
-// 208 フレームの演出。49〜159 フレームに A か B を押すと 160 フレームへ飛ばす
-// mode : 0 なら 8 体の隊列を出して動かし、最後にその位置で ImpactBurst を起こす
-//        1 なら effect->side で決まる位置から火花と閃光を出し、
-//        LightningBolt のパレットで描く
-// 粒は 4 種類 (キャンバス座標、y は下向きが正)：
-//   PARTICLES[0..511]    昇る粒：y = 112 から上へ加速して昇る。33〜103
-//   フレームは
-//                     1 フレームに 1 つ、104〜175 フレームは 8 つずつ出す
-//   particles[40..63] 火花：41〜127 の奇数フレームに 1 つずつ、斜め上へ飛ぶ
-//   particles[0..23]  閃光：129〜175 フレームに 1 つずつ、横へ飛ぶ
-//   particles[24..39] 筋：上から斜めに落ち、y が 55 を越えたら絵を繰り返す
-//--------------------------------------------------------------------------
+// A 208-frame effect of embers rising from the ground; pressing A or B
+// during frames 49 to 159 skips to frame 160. The targets reel on frame
+// 138, the screen flares white over frames 160 to 175 and fades out after,
+// and the battle shows the damage on frame 178.
+// mode : 0 also brings in a formation of eight objects that sweeps in and,
+//          at the end, explodes with BattleEffect_RunImpactBurst;
+//        1 throws the sparks and flashes from the user's side
+//          (effect->side), in the LightningBolt colours.
+// Four kinds of particle, in canvas coordinates with y growing downwards:
+//   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
+//                      over frames 33 to 103, eight a frame over 104 to 175
+//   particles[40..63]  sparks: one on each odd frame from 41 to 127,
+//                      thrown up at a slant
+//   particles[0..23]   flashes: one a frame over 129 to 175, thrown across
+//   particles[24..39]  streaks: fall at a slant from the top and, below
+//                      y 55, play their images over and over
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
                                       s32 mode) {
   struct EffectPosition origin;
@@ -6114,15 +6110,15 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   u8 *palette;
   s32 i;
 
-  // cursor は gWorkSlot[HEAP_SLOT_BATTLE_CANVAS] (キャンバス) を指す
+  // cursor points at gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], the canvas.
   cursor = &gBattleFxWork[1];
   canvas = cursor[0];
-  camera = cursor[-28]; // [12] カメラ
-  work = cursor[-1];    // [39] 作業領域
-  sheet = cursor[1];    // [41] 粒の絵
+  camera = cursor[-28]; // [12] the camera
+  work = cursor[-1];    // [39] the effect work
+  sheet = cursor[1];    // [41] the particle images
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = 0x1010; // an even mix
   REG_BG2CNT = 0x784;
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
@@ -6132,9 +6128,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
                         COMPOSITE_ADDITIVE);
   draw[1] = cursor[7];
 
-  // 閃光は FlashBurst、筋は EmberStreak (sheet + 0x3000) の絵
+  // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
+  // 0x3000).
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
@@ -6143,15 +6140,15 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
   if (mode == 1)
-    Iwram_CopyWords((void *)0x05000000,
+    Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
-  work->transferMode = 2;
-  work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
+  work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // mode 1 で side が 1 なら左右を逆にする
+  // Mode 1 mirrors everything when the user is on the right (side 1).
   if (mode == 0)
     dir = 1;
   else if (work->effect->side == 1)
@@ -6168,7 +6165,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       origin.x = 44;
   }
 
-  // 隊列の中心は (212, -60) から
+  // The formation's centre starts at (212, -60).
   focus.x = 212 << 16;
   focus.y = -(60 << 16);
   for (i = 0; i != 64; i++)
@@ -6181,7 +6178,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     else
       streak->x = (Random16() & 127) - 128;
     streak->y = (Random16() & 7) - 72;
-    streak->variant = -(Random16() & 31); // 落ち始めるまでの待ち
+    streak->variant = -(Random16() & 31); // frames to wait before falling
   }
   for (i = 0; i != 512; i++)
     PARTICLES[i].variant = -1;
@@ -6192,7 +6189,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   }
 
   for (frame = 0; frame != 208; frame++) {
-    // A か B で 160 フレームへ
+    // A or B skips to frame 160.
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
       if (mode == 0) {
         AnimationObjects_SelectAnimationFar(work->objects[0], 8);
@@ -6211,28 +6208,27 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     if (frame == 178)
       BattleEventRuntime_BeginPhaseFar(134);
 
-    // 128 から残像を半分に、160〜175
-    // はキャンバスを塗りつぶしてパレットを明るくし、 176
-    // からは転送のたびに画素値を 2 ずつ下げて消す
+    // From frame 128 the trails keep only half; over frames 160 to 175 the
+    // canvas is filled each frame and the palette brightens; from 176 the
+    // pixels fade 2 a frame.
     if (frame == 128)
       work->transferValue = 50;
     if (frame == 176) {
-      work->transferMode = 3;
+      work->transferMode = CANVAS_COPY_AND_DARKEN;
       work->transferValue = 0x02020202;
       palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
-      Iwram_CopyWords((void *)0x05000000, palette, 128);
+      Iwram_CopyWords((void *)BG_PLTT, palette, 128);
     } else if (frame >= 160 && frame <= 175) {
-      work->transferMode = 1;
+      work->transferMode = CANVAS_COPY_AND_CLEAR;
       work->transferValue = 0x10101010;
       if (frame > 173)
         work->transferValue = 0x3f3f3f3f;
       Palette_BrightenBgEntries(2, 2, 2);
     }
 
-    //------------------------------------------------------------------
-    // 新しい粒を出す
-    //------------------------------------------------------------------
-    // 昇る粒：y = 112 から上向きに出す
+    // Start new particles.
+
+    // Embers: from y 112, moving up.
     if (frame >= 33 && frame <= 175) {
       s32 spawned = 0;
       s32 limit = 1;
@@ -6256,7 +6252,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
         }
       }
     }
-    // 火花：奇数フレームに 1 つ、斜め上へ出す
+    // Sparks: one on each odd frame, thrown up at a slant.
     if (frame >= 41 && frame <= 127) {
       s32 spawned = 0;
 
@@ -6289,7 +6285,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       AudioCommand_PlayFar(141);
     if (frame == 128)
       AudioCommand_PlayFar(145);
-    // 閃光：1 フレームに 1 つ、横へ出す
+    // Flashes: one a frame, thrown across.
     if (frame >= 129 && frame <= 175) {
       s32 spawned = 0;
 
@@ -6317,10 +6313,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    //------------------------------------------------------------------
-    // 粒を描いて動かす
-    //------------------------------------------------------------------
-    // 閃光：4 フレームごとに絵を進め、24 フレームで消える
+    // Draw and move the particles.
+
+    // Flashes: a new image every 4 frames; gone after 24 frames.
     if (frame <= 175) {
       for (i = 0; i != 24; i++) {
         struct EffectStep *flash = &work->particles[i];
@@ -6337,7 +6332,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    // 火花：1×2 の点、上へ加速して 48 フレームで消える
+    // Sparks: 1x2 dots that speed upwards; gone after 48 frames.
     for (i = 0; i != 24; i++) {
       struct EffectStep *spark = &work->particles[40 + i];
       s32 size = 1;
@@ -6354,9 +6349,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    // 昇る粒：128 フレームまでは上へ加速し、その後は上昇の速さを保ったまま
-    // x の速度を毎フレーム減らして左へ曲げる (dir = -1 なら右、奇数番が強い)。
-    // 256 フレームで消える
+    // Embers: speed upwards until frame 128, then keep their climb and curve
+    // away to the left (to the right when dir is -1), the odd ones harder;
+    // gone after 256 frames.
     if (frame <= 175) {
       for (i = 0; i != 512; i++) {
         struct EffectStep *grain = &PARTICLES[i];
@@ -6384,15 +6379,14 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    //------------------------------------------------------------------
-    // 揺れと隊列
-    //------------------------------------------------------------------
+    // The shake and the formation.
     if (frame == 128)
       work->shakeFrames = 48;
     if (mode == 0 && frame == 48)
       work->shakeFrames = 8;
 
-    // 40〜47 フレームに隊列を 1 フレームあたり左へ 8、下へ 16 ドット動かす
+    // Over frames 40 to 47 the formation moves 8 pixels left and 16 down a
+    // frame; from 128 to 175 four of its objects play animations 8 to 11.
     if (frame >= 40 && frame <= 47) {
       focus.x += -(8 << 16);
       focus.y += 16 << 16;
@@ -6419,8 +6413,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    // 筋：待ちの後、1 フレームに 6 ドットずつ斜めに落ち、y = 55 を越えたら
-    // 2 フレームごとに 6 枚の絵を繰り返す
+    // Streaks: after their wait, fall 6 pixels across and 6 down a frame;
+    // below y 55 they play six images, two frames each, over and over.
     if (frame <= 175) {
       for (i = 0; i != 16; i++) {
         struct EffectStep *streak = &work->particles[24 + i];
@@ -6470,12 +6464,13 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
-//--------------------------------------------------------------------------
-// 124 フレームの演出。33〜97 フレームに A か B を押すと 98 フレームへ飛ばす
-// 12 体の隊列を右から入れ、28 フレームと 32〜79 フレームに粒を噴き上げる
-// 粒は重力で落ち、80 フレームを過ぎると上へ加速して昇る
-// 32〜79 フレームには 3 本の柱 (FirePillarA の絵) を上へ流す
-//--------------------------------------------------------------------------
+// Large battle effect 2 (BattleFx_InitializeMode), 124 frames; pressing A
+// or B during frames 33 to 97 skips to frame 98. A formation of twelve
+// objects sweeps in from the right; embers burst up on frame 28 and over
+// frames 32 to 79, fall back under gravity and from frame 80 rise away,
+// while three columns of fire stream upwards over frames 32 to 79 and the
+// targets bounce. At the end the formation explodes with
+// BattleEffect_RunImpactBurst; the battle shows the damage on frame 120.
 void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -6484,19 +6479,20 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
   u8 *graphics;
   u8 *palette;
 
-  // cursor は gWorkSlot[HEAP_SLOT_BATTLE_CANVAS] (キャンバス) を指す
+  // cursor points at gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], the canvas.
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
-  work = cursor[-1];    // [39] 作業領域
-  graphics = cursor[1]; // [41] 粒の絵
+  work = cursor[-1];    // [39] the effect work
+  graphics = cursor[1]; // [41] the particle images
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = 0x1010; // an even mix
   BattleFx_FetchRectangleBlitters(0, draw);
 
-  // 下の帯は WaterSpray、柱は FirePillarA (sheet + 0x6e4) の絵
+  // The band along the bottom from WaterSpray, the columns from FirePillarA
+  // (at sheet + 0x6e4).
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
@@ -6504,8 +6500,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + 0x6e4);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  work->transferMode = 2;
-  work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
+  work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   {
@@ -6519,7 +6515,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
     struct EffectStep *sparks;
     s32 *life;
 
-    // 隊列は (256, 88) から左へ
+    // The formation comes in from (256, 88), heading left.
     rise = 0;
     focus.x = 256 << 16;
     focus.y = 88 << 16;
@@ -6536,7 +6532,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
     life = &gMapCellBuffer->variant;
     for (k = 0; k != 1024; k++) {
       *life = -1;
-      life += 7; // sizeof (struct EffectStep) / 4
+      life += 7; // sizeof(struct EffectStep) / 4
     }
     sparks = gMapCellBuffer;
     BattleFx_SelectLivingTargets(work->effect);
@@ -6547,12 +6543,12 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        BattleEventRuntime_BeginPhaseFar(134);
+        BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
       if (frame <= 15)
         rise += 2;
 
-      // 隊列：速度を毎フレーム x 58/64、y 56/64 に減らし、x = 120
-      // より左では右へ押し戻す
+      // The formation slows to 58/64 of its speed across and 56/64 down
+      // each frame, and is pushed back right when left of x 120.
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
@@ -6563,8 +6559,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
       }
       BattleFx_PlaceFormationObjects(1, focus.x, focus.y);
 
-      // 粒：(32, 96) のまわりから上向きに、28 フレームに 256 個、
-      // 32〜79 フレームには 1 フレームに 16 個ずつ噴き上げる
+      // Embers burst up from around (32, 96): 256 on frame 28, then 16 a
+      // frame over frames 32 to 79.
       if (frame == 28) {
         for (k = 0; k != 256; k++) {
           spark = &sparks[k];
@@ -6607,7 +6603,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
       if (frame == 80)
         AudioCommand_PlayFar(144);
 
-      // 柱：104 ドットの絵を 1 フレームに 16 ドットずつ上へ流す
+      // The columns: a 104-pixel image scrolling up 16 pixels a frame,
+      // drawn twice to wrap round.
       if (frame >= 32 && frame < 80) {
         for (k = 0; k != 3; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
@@ -6621,16 +6618,17 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
         }
       }
 
-      // 下の帯：32×32 の絵を 5 枚、16 フレームで 32 ドットせり上がる
+      // The band along the bottom: five 32x32 images that rise 32 pixels
+      // over the first 16 frames and drift right.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work, k * 32 + ((frame / 4) & 31) - 32, 120 - rise,
                   32, 32);
       }
 
-      // 粒：68 フレームを過ぎると大きくし、落ちているものは加算合成で描く。
-      // 80 フレームまでは gEmberColumns_Gravity で下へ、その後は上へ加速し、
-      // 速度は毎フレーム 62/64 に減らす。落ちながら y が 104 を越えたら消す
+      // Embers: grow from frame 68; those falling are drawn additively. Until
+      // frame 80 they fall under gEmberColumns_Gravity, then speed upwards;
+      // they slow to 62/64 a frame, and go out when they fall below y 104.
       for (k = 0; k != 1024; k++) {
         spark = &sparks[k];
         if (spark->variant >= 0) {
@@ -6665,8 +6663,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
         }
       }
 
-      // 対象：36・48・60・72 フレームにパレット 7 で跳ねさせ、6
-      // フレーム後にパレットを戻す
+      // The targets bounce and flash palette 7 on frames 36, 48, 60 and 72,
+      // getting their colours back 6 frames later.
       if (frame <= 79) {
         for (k = 0; k != work->effect->count; k++) {
           if (frame > 29) {
@@ -6699,6 +6697,12 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 10: motes fly out of the top of the user, hang, and from 48
+// frames after each appears home in on the targets in turn; each that
+// reaches the ground strikes in a burst, flashing and knocking back its
+// target, while the camera swings round over frames 17 to 63.
+// effect->variant picks the volley from gVortexMotes_Counts (motes and
+// frames) and how hard the screen shakes.
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct BattleEffectWork *work;
@@ -6716,19 +6720,20 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   s32 i;
   s8 *flags;
 
-  flags = (s8 *)gMapCellBuffer;
+  flags = (s8 *)gMapCellBuffer; // nonzero once a mote has struck
   work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
   canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
-  REG_BLDALPHA = 0x0f0f;
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
+  REG_BLDALPHA = 0x0f0f; // 15/16 of each
   draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
@@ -6743,6 +6748,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
     point->variant = -1;
     flags[i] = 0;
   }
+  // Where each target stands, on the ground.
   for (i = 0; i != work->effect->count; i++) {
     seat = &work->particles[32 + i];
     object = GetBattleObjectSlotFar(work->effect->actors[i])->object;
@@ -6753,7 +6759,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -6766,6 +6772,8 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
       work->cameraDelta = 0x180;
     else
       work->cameraDelta = 0;
+    // 16 frames before the end the battle shows the damage, with sound 132
+    // on each hit.
     if (frame == gVortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
       BattleEventRuntime_BeginPhaseFar(132);
     Render_ResetTransformState();
@@ -6784,6 +6792,9 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
         point->y += point->velocityY;
         point->z += point->velocityZ;
       }
+      // Mote i appears on frame 2i; 48 frames later it starts to home in on
+      // its target, damped until frame 2i + 85, and strikes on reaching
+      // the ground.
       if (frame > i * 2 + 48 && flags[i] == 0) {
         target = &work->particles[32 + i % work->effect->count];
         point->velocityX += (target->x - point->x) >> 9;
@@ -6808,6 +6819,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
           AudioCommand_PlayFar(132);
         }
       }
+      // The burst where a mote struck: two mirrored halves, three images.
       if (point->variant >= 0 && point->variant < 16) {
         draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                 point->x - 16, point->y - 56, 16, 64);
@@ -6832,9 +6844,15 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Battle effect 20: tornadoes sweep across the targets for 80 frames,
+// sparkling with glints; the canvas flashes and the targets reel seven
+// times, 8 frames apart, from frame 16, and the battle shows the damage on
+// frame 32.
+// effect->variant picks the shape from gTornado_Shapes: how many
+// tornadoes, how far they sway and how hard the screen shakes.
 void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   BlitterPair draw;
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -6849,32 +6867,36 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  heapCache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
+  slots = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = 0x1010; // an even mix
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work);
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-  draw[0] = (DrawRectangle)heapCache[7];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-  draw[1] = (DrawRectangle)heapCache[8];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)slots[7];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  draw[1] = (DrawRectangle)slots[8];
+
+  // The glints: each waits up to 15 frames, then plays at a random spot on
+  // its tornado.
   for (j = 0; j != 16; j++) {
     point = &work->particles[j];
     point->x = Random16() & 31;
     point->y = (Random16() & 63) + 16;
     point->variant = -(Random16() & 15);
   }
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  REG_BLDALPHA = 0x1000;
+  REG_BLDALPHA = 0x1000; // invisible to start with
   WaitFrames(1);
   AudioCommand_PlayFar(141);
 
@@ -6882,6 +6904,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
     wave = Trig_Sin(frame << 10) << 4;
     if (frame == 32)
       BattleEventRuntime_BeginPhaseFar(133);
+    // Seven flashes of the canvas, 8 frames apart.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
         Iwram_FillWords(canvas, 0x4000, 0x08080808);
@@ -6890,10 +6913,13 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
       wave += 0x200000;
     else
       wave -= 0x200000;
+    // Fade in over 16 frames and out over the last 16.
     if (frame <= 16)
       REG_BLDALPHA = frame | 0x1000;
     if (frame > 63)
       REG_BLDALPHA = (0x4f - frame) | 0x1000;
+    // Each tornado: three sections stacked, swaying about the sweep, a
+    // quarter turn apart, with four glints.
     for (i = 0; i != gTornado_Shapes[work->effect->variant * 3]; i++) {
       x = ((gTornado_Shapes[work->effect->variant * 3 + 1] *
                 Trig_Sin((frame << 11) + i * 0x4000) +
@@ -6924,6 +6950,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
         }
       }
     }
+    // Target j reels 3j frames after each flash.
     for (j = 0; j != work->effect->count; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
@@ -6946,16 +6973,19 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Falling crystals.
 //--------------------------------------------------------------------------
-// crystal.c
-// バトル演出：降ってきて砕ける結晶
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 結晶が降ってきて地面で砕ける
-// gCrystal_Counts は variant ごとに（結晶の数, 全体のフレーム数）
-// 結晶 : particles[]（z は砕けたら 1、variant は降り始めるフレーム）
-// 破片 : gMapCellBuffer に結晶 1 個あたり 16 個（z は回転の速さ）
-//--------------------------------------------------------------------------
+
+// Battle effect 8: crystals drop out of the sky onto the targets' side, 8
+// frames apart, and shatter on the ground into 16 spinning shards each,
+// flashing the targets and shaking the screen; the battle shows the damage
+// 80 frames before the end, and the canvas darkens away over the last 8.
+// effect->variant picks the volley from gCrystal_Counts (crystals and
+// frames: 1 in 110, 4 in 134, 12 in 166); with variant 2 the camera also
+// swings round for the first 104 frames.
+// The crystals are particles[]: z is 1 once shattered, variant is the frame
+// it starts to fall. The shards are 16 per crystal in gMapCellBuffer: z is
+// how fast it spins.
 void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -6977,15 +7007,16 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = 0x1010; // an even mix
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
-  work->transferMode = 2; // 残像 1/2
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 結晶を画面の上に並べ、8 フレームずつずらして降らせる
+  // Line the crystals up above the screen, each starting 8 frames after
+  // the last and drifting towards the middle as it falls.
   for (j = 0; j != gCrystal_Counts[work->effect->variant * 2]; j++) {
     seed = &work->particles[j];
     x = Random16() & 31;
@@ -7006,7 +7037,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != gCrystal_Counts[work->effect->variant * 2 + 1];
        frame++) {
     if (work->effect->variant == 2 && frame <= 103) {
-      // カメラを横に回す（96 フレーム目から遅くする）
+      // Swing the camera round, slowing from frame 96.
       struct BattleCamera *camera = gCameraWork;
       s32 speed;
 
@@ -7020,17 +7051,17 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
         camera->yaw += speed;
     }
     if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 80)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
     if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 8) {
-      // 最後の 8 フレームは暗くしていく
-      work->transferMode = 3;
+      // Darken the canvas away over the last 8 frames.
+      work->transferMode = CANVAS_COPY_AND_DARKEN;
       work->transferValue = 0x06060606;
     }
     if (frame <= gCrystal_Counts[work->effect->variant * 2 + 1] - 8) {
       for (i = 0; i != gCrystal_Counts[work->effect->variant * 2]; i++) {
         cry = &work->particles[i];
         if (cry->z == 1) {
-          // 砕けた結晶：破片を回しながら飛ばす
+          // A shattered crystal: its shards fly and spin, slowing down.
           for (j = 0; j != 16; j++) {
             cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
             shard = &shards[i * 16 + j];
@@ -7045,11 +7076,11 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
               shard->z--;
           }
         } else if (frame >= cry->variant) {
-          // 落ちている結晶（32x64）
+          // A falling crystal (32x64).
           draw[i & 1](canvas, work, HI(cry->x) - 16, HI(cry->y), 32, 64);
           EffectStep_AdvanceWithGravity2D(cry, 64, 0x10000);
           if (cry->y > 0x380000) {
-            // 地面（y = 56）に着いたら砕く
+            // Shatter it on reaching the ground (y 56).
             cry->z = 1;
             cry->y = 0x380000;
             for (j = 0; j != 16; j++) {
@@ -7086,6 +7117,11 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Rebuilds background colours 1 to 63 as a grey ramp whose red, green and
+// blue each sway with the frame, out of step by their phases (1/65536ths
+// of a turn), so the effect shimmers through colours.
+// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
+// red_phase, green_phase, blue_phase : each channel's offset in the sway
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase,
                                  s32 blue_phase) {
   u16 palette[64];
@@ -7134,19 +7170,21 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase,
 }
 
 //--------------------------------------------------------------------------
-// lightning.c
-// 戦闘エフェクト：稲妻の柱と飛び散る火花
+// Pillars of lightning and the sparks they throw up.
 //--------------------------------------------------------------------------
 
-#define SPARK_MAX 1024 // 火花の数
+#define SPARK_MAX 1024 // sparks
 
-//--------------------------------------------------------------------------
-// 稲妻の柱を 8 フレームおきに落とし、そのたびに地面から火花を散らす
-// effect : variant が柱の本数と火花の数を、side が柱の並びを決める
-//--------------------------------------------------------------------------
+// Battle effect 18: pillars of lightning strike one every 8 frames, each
+// with a white flash, throwing sparks up from the ground and knocking the
+// targets back; the battle shows the damage on frame 32.
+// effect->variant picks how many pillars (gLightningPillar_Counts), how many
+// sparks each throws and how long the screen shakes (gLightningPillar_Sparks);
+// with variant 2 the camera also swings round for the first 64 frames.
+// effect->side picks the row of pillar positions.
 void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
   BlitterPair draw;
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -7160,19 +7198,20 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
   struct EffectStep *spark;
   struct EffectStep *sparks;
 
-  heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heap;
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BLDALPHA = 0x1010;
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-  draw[0] = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+  REG_BLDALPHA = 0x1010; // an even mix
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+                        CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = (DrawRectangle)
-      heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -7181,21 +7220,21 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
-  // 火花をすべて止める
+  // Every spark starts idle.
   var = &((struct EffectStep *)gMapCellBuffer)->variant;
   for (k = 0; k != SPARK_MAX; k++) {
     *var = 0;
     var += 7;
   }
   sparks = gMapCellBuffer;
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   count = gLightningPillar_Counts[work->effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
-    // variant 2 : 最初の 64 フレームはカメラを横へ流す
+    // Variant 2 swings the camera round for the first 64 frames.
     if (work->effect->variant == 2 && frame <= 63) {
       struct CameraWork *camera = (struct CameraWork *)gCameraWork;
       s32 speed;
@@ -7210,11 +7249,10 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
         camera->scroll += speed;
     }
     if (frame == 32)
-      BattleEventRuntime_BeginPhaseFar(134);
+      BattleEventRuntime_BeginPhaseFar(SOUND_HEAVY_IMPACT);
 
-    //------------------------------------------------------------------
-    // 柱 i は 8i フレーム目に落ち、+1 で 1 コマ目、+2〜3 で 2 コマ目を描く
-    //------------------------------------------------------------------
+    // Pillar i strikes on frame 8i with a flash, shows its first image the
+    // frame after and its second for two frames after that.
     for (i = 0; i != count; i++) {
       start = i * 8;
       if (frame == start) {
@@ -7231,7 +7269,8 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
                   gLightningPillar_Columns[i + work->effect->side * 7] - 24, 0,
                   48, 112);
 
-        // 柱の根もと (y = 104) から上向き ±90 度へ火花を散らし、画面を揺らす
+        // Throw sparks from the pillar's foot (y 104), anywhere in the
+        // upper half circle, and shake the screen.
         if (frame == start + 2) {
           s32 n = 0;
 
@@ -7267,7 +7306,8 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 火花 : 地面で半分の速さで跳ね返り、残りが少ないほど小さく描く
+    // Sparks: bounce off the ground at half speed, and shrink as their lives
+    // run out; only those on the canvas are drawn.
     for (k = 0; k != SPARK_MAX; k++) {
       spark = &sparks[k];
       if (spark->variant > 0) {

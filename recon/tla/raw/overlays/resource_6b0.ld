@@ -47,7 +47,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b0/s1b88.o"(.text)
         "*/games/tla/src/field/overlay_6b0/s1bec.o"(.text)
         "*/games/tla/src/field/overlay_6b0/s1c60.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x02009c94)
+        "*/games/tla/src/field/overlay_6b0/s1c94.o"(.text)
         "*/games/tla/src/field/overlay_6b0/s1d68.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x02009e64)
         "*/games/tla/src/field/overlay_6b0/prepare.o"(.text)

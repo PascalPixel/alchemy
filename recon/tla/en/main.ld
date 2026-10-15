@@ -3092,6 +3092,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.0887bee2)
         "*/games/tla/src/graphics/battle_fx/sheet_0b1.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0887c324)
+        "*/games/tla/src/graphics/battle_fx/sheet_0b3.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0887c706)
         "*/games/tla/src/graphics/battle_fx/sheet_0b4.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0887cf31)
         "*/games/tla/src/graphics/battle_fx/sheet_0b5.o"(.rodata)

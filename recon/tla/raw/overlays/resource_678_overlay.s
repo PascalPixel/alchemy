@@ -594,49 +594,6 @@ Func_0200065c:
 	pop {r5, r6, r7, pc}
 .L_0200870c:
 	.4byte gPartyState
-	.section .text.x02008ca0,"ax",%progbits
-	.balign 4
-	.global Func_02000ca0
-	.thumb_func
-Func_02000ca0:
-	push {r5, lr}
-	ldr r5, .L_02008ce4
-	sub sp, #8
-	ldr r2, [r5]
-	subs r1, r2, #1
-	str r1, [r5]
-	adds r3, r1, #0
-	cmp r1, #0
-	bge .L_02008cb4
-	adds r3, r2, #6
-.L_02008cb4:
-	movs r2, #1
-	ands r1, r2
-	lsls r2, r1, #1
-	movs r0, #47
-	asrs r3, r3, #3
-	subs r0, r0, r2
-	movs r2, #15
-	subs r2, r2, r3
-	movs r1, #64
-	subs r1, r1, r3
-	movs r4, #29
-	str r2, [sp, #4]
-	movs r2, #2
-	str r4, [sp, #0]
-	bl Func_02002838
-	ldr r3, [r5]
-	cmp r3, #0
-	bne .L_02008ce0
-	ldr r0, .L_02008ce8
-	bl Scheduler_RemoveCallbackFar
-.L_02008ce0:
-	add sp, #8
-	pop {r5, pc}
-.L_02008ce4:
-	.4byte Data_0200345c
-.L_02008ce8:
-	.4byte Func_02000ca0
 	.section .text.x02008d2c,"ax",%progbits
 	.balign 4
 	.global Func_02000d2c
@@ -1179,51 +1136,6 @@ Func_02001304:
 	lsls r0, r0, #1
 	bl Func_0200273c
 	pop {r5, pc}
-	.section .text.x02009618,"ax",%progbits
-	.balign 4
-	.global Func_02001618
-	.thumb_func
-Func_02001618:
-	push {r5, lr}
-	ldr r3, .L_02009664
-	movs r2, #63
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02009660
-	movs r1, #204
-	movs r3, #220
-	movs r2, #160
-	movs r0, #46
-	lsls r3, r3, #17
-	lsls r1, r1, #17
-	lsls r2, r2, #16
-	adds r0, #255
-	bl Func_02002808
-	movs r3, #168
-	lsls r3, r3, #7
-	adds r5, r0, #0
-	adds r3, #122
-	cmp r5, #0
-	beq .L_02009660
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-	movs r3, #230
-	lsls r3, r3, #7
-	adds r3, #51
-	ldr r1, .L_02009668
-	str r3, [r5, #72]
-	bl Func_02002800
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-.L_02009660:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02009664:
-	.4byte gFrameCount
-.L_02009668:
-	.4byte Data_02002a60
 	.section .text.x02009684,"ax",%progbits
 	.balign 4
 	.global Func_02001684

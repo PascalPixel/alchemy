@@ -1,4 +1,5 @@
 /* Draft, differ 4 of 40: the native builds the priority mask 3 before it loads the sprite pointer and masks the priority before it reads the sprite byte; this form loads first. Masking the parameter in its own statement is differ 15. */
+/* Trial: the sprite pointer in a FieldSprite local (sprite = object->animation; sprite->priority = priority) is differ 4 too, the same two loads ahead of the mask. */
 #include "../../../../games/tla/src/field/overlay_678/local.h"
 
 

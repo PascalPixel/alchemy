@@ -782,50 +782,6 @@ Func_02000a6c:
 	.4byte 0x05000100
 .L_02008ad4:
 	.4byte 0x05000102
-	.section .text.x02008ad8,"ax",%progbits
-	.global Func_02000ad8
-	.thumb_func
-Func_02000ad8:
-	ldr r3, .L_02008b1c
-	ldrb r3, [r3]
-	lsls r0, r3, #2
-	adds r0, r0, r3
-	ldr r3, .L_02008b20
-	lsls r0, r0, #6
-	adds r0, r0, r3
-	movs r2, #0
-	ldrsh r3, [r0, r2]
-	movs r1, #128
-	lsls r1, r1, #19
-	adds r1, #24
-	strh r3, [r1]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #176
-	ldrh r4, [r3, #10]
-	movs r2, #197
-	lsls r2, r2, #8
-	adds r2, #255
-	ands r2, r4
-	strh r2, [r3, #10]
-	movs r2, #254
-	ldrh r4, [r3, #10]
-	lsls r2, r2, #7
-	adds r2, #255
-	ands r2, r4
-	strh r2, [r3, #10]
-	adds r0, #2
-	ldrh r2, [r3, #10]
-	ldr r2, .L_02008b24
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	bx lr
-.L_02008b1c:
-	.4byte Data_02002590
-.L_02008b20:
-	.4byte Data_020025a0
-.L_02008b24:
-	.4byte 0xa2600001
 	.section .text.x02008b28,"ax",%progbits
 	.global Func_02000b28
 	.thumb_func

@@ -17,7 +17,7 @@ SECTIONS
         "*/resource_68b_overlay.o"(.text.x02008934)
         "*/games/tla/src/field/overlay_68b/scene_events.o"(.text)
         "*/resource_68b_overlay.o"(.text.x02008a6c)
-        "*/resource_68b_overlay.o"(.text.x02008ad8)
+        "*/games/tla/src/field/overlay_68b/s0ad8.o"(.text)
         "*/resource_68b_overlay.o"(.text.x02008b28)
         "*/games/tla/src/field/overlay_68b/s0bbc.o"(.text)
         "*/resource_68b_overlay.o"(.text.x02008bdc)

@@ -1,5 +1,37 @@
 #include "local.h"
 
+void Func_0200065c(void)
+{
+    struct ObjectRuntime *object = Object_GetById(8);
+    s32 speed;
+    /* FAKEMATCH: the counter pinned to r6; unpinned, the object outranks it in global allocation and takes r6, pushing the counter to r7 (differ 16, 13 with the object pinned to r7 instead). */
+    register s32 i asm("r6");
+
+    Func_02002898();
+    Func_02002968(0);
+    ObjectMotion_SetAngleToward(gPartyState.current_owner, 8, 0);
+    Func_02002908(gPartyState.current_owner, 256, 30);
+    Motion_CamBounds(0x1980000, -1, 0x1380000, 1);
+    Func_02002928();
+    Func_02002910_(8, 257);
+    speed = 0x8000;
+    i = 2;
+    do {
+        object->velocity_y = 0x20000;
+        Func_020029b0(152);
+        object->speed_limit = speed;
+        object->acceleration = speed / 2;
+        ObjectMotion_CommitPositionAndActivate(8, 0, 8);
+        speed += 0x4000;
+    } while (--i >= 0);
+    Func_020029b0(310);
+    object->velocity_y = 0x40000;
+    ObjectMotion_CommitPositionAndActivate(8, 0, 8);
+    Battle_WaitMode0(60);
+    GameFlag_SetBit(0x310);
+    Func_020028a0();
+}
+
 void Func_02000710(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);

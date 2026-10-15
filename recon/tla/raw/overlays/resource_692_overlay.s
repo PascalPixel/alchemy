@@ -250,46 +250,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008374,"ax",%progbits
-	.balign 4
-	.global Func_02000374
-	.thumb_func
-Func_02000374:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	adds r1, r0, #0
-	adds r5, r3, #0
-	movs r4, #8
-	adds r5, #52
-.L_02008384:
-	ldmia r5!, {r0}
-	ldr r2, [r1]
-	ldr r3, [r0, #8]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_020083aa
-	ldr r2, [r1, #4]
-	ldr r3, [r0, #12]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_020083aa
-	ldr r2, [r1, #8]
-	ldr r3, [r0, #16]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	beq .L_020083b2
-.L_020083aa:
-	adds r4, #1
-	cmp r4, #63
-	bls .L_02008384
-	movs r0, #0
-.L_020083b2:
-	pop {r5, pc}
 	.section .text.x020083b4,"ax",%progbits
 	.global Func_020003b4
 	.thumb_func
@@ -330,7 +290,7 @@ Func_020003b4:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	mov r1, r8
-	bl Func_02000374
+	bl Object_FindInCell
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_0200840a
@@ -352,7 +312,7 @@ Func_020003b4:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	adds r1, r6, #0
-	bl Func_02000374
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_02008440
 	adds r3, r0, #0
@@ -374,7 +334,7 @@ Func_020003b4:
 	adds r0, r7, #0
 	ldr r3, [r6, #16]
 	str r3, [r7, #8]
-	bl Func_02000374
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_0200846c
 	adds r3, r0, #0
@@ -1620,7 +1580,7 @@ Func_020011fc:
 	bl Vector_AddPolarOffsetFar
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_02000374
+	bl Object_FindInCell
 	adds r7, r0, #0
 	cmp r7, #0
 	beq .L_02009336
@@ -4766,230 +4726,6 @@ Func_02002cd0:
 	.4byte Data_02005608
 .L_0200b0c8:
 	.4byte Func_02002c48
-	.section .text.x0200b0cc,"ax",%progbits
-	.global Func_020030cc
-	.thumb_func
-Func_020030cc:
-	push {r5, r6, lr}
-	bl Func_02004d40
-	movs r0, #0
-	bl Func_02004e90
-	ldr r6, .L_0200b2cc
-	movs r1, #1
-	adds r0, r6, #0
-	bl UiText_ShowPositionedMessageAndWait
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #250
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200b0f6
-	bl Func_02004d48
-	b .L_0200b2c8
-.L_0200b0f6:
-	adds r0, r6, #0
-	bl Func_02004dd0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	ldr r5, .L_0200b2d0
-	adds r3, #1
-	strh r3, [r2]
-	movs r3, #133
-	lsls r3, r3, #2
-	movs r1, #179
-	movs r2, #178
-	adds r5, r5, r3
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	ldr r0, [r5]
-	adds r1, #51
-	adds r2, #153
-	bl ObjectMotion_SetSpeedParameters
-	movs r1, #179
-	movs r2, #178
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	adds r2, #153
-	movs r0, #5
-	adds r1, #51
-	bl ObjectMotion_SetSpeedParameters
-	ldr r1, [r5]
-	movs r0, #5
-	bl Func_02004da8
-	movs r0, #1
-	bl Battle_WaitMode0
-	movs r1, #128
-	ldr r0, [r5]
-	lsls r1, r1, #1
-	movs r2, #136
-	bl ObjectMotion_ResetAndSetPositionInMode2
-	movs r1, #136
-	lsls r1, r1, #1
-	movs r2, #136
-	movs r0, #5
-	bl ObjectMotion_ResetAndSetPositionInMode2
-	ldr r0, [r5]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #5
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	ldr r0, [r5]
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #5
-	bl ObjectMotion_ArmCallback
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #5
-	movs r1, #0
-	bl Func_02004de0
-	movs r1, #3
-	ldr r0, [r5]
-	bl Object_SetModeById
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #128
-	ldr r0, [r5]
-	lsls r1, r1, #1
-	movs r2, #152
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #192
-	lsls r1, r1, #8
-	movs r2, #0
-	ldr r0, [r5]
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #7
-	movs r0, #5
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #3
-	movs r0, #5
-	bl Object_SetModeById
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r1, #192
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #5
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r1, #132
-	movs r0, #5
-	lsls r1, r1, #1
-	movs r2, #137
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #192
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #5
-	bl ObjectMotion_ArmCallback
-	movs r0, #20
-	bl Battle_WaitMode0
-.ifdef TLA_EDITION_JA
-	adds r0, r6, #3
-.else
-.ifdef TLA_EDITION_EN
-	adds r0, r6, #3
-.else
-	adds r0, r6, #2
-.endif
-.endif
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	movs r0, #160
-	movs r1, #224
-	movs r2, #128
-	lsls r0, r0, #11
-	lsls r1, r1, #11
-	lsls r2, r2, #9
-	bl Func_02004d10
-	movs r2, #230
-	movs r0, #1
-	movs r1, #1
-	lsls r2, r2, #8
-	adds r2, #102
-	negs r0, r0
-	negs r1, r1
-	bl Func_02004d10
-	bl Func_02004d18
-	movs r0, #8
-	movs r1, #5
-	bl Func_02002cd0
-	movs r1, #154
-	movs r0, #5
-	bl UiText_DrawQuantityPairWithCue
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #250
-	bl GameFlag_SetBit
-	movs r2, #0
-	movs r1, #5
-	ldr r0, [r5]
-	bl Object_LinkPair
-	movs r0, #10
-	bl Battle_WaitMode0
-	movs r0, #5
-	movs r1, #3
-	bl Object_SetModeById
-	movs r1, #3
-	ldr r0, [r5]
-	bl Object_SetModeById
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r2, #153
-	lsls r2, r2, #8
-	movs r0, #5
-	ldr r1, .L_0200b2d4
-	adds r2, #153
-	bl ObjectMotion_SetSpeedParameters
-	movs r0, #5
-	movs r1, #2
-	bl Object_SetModeById
-	ldr r0, [r5]
-	bl Object_GetById
-	cmp r0, #0
-	beq .L_0200b2a8
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #5
-	bl ObjectMotion_ResetAndSetPosition
-.L_0200b2a8:
-	movs r0, #5
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r1, #0
-	movs r2, #0
-	movs r0, #5
-	bl Func_02004da0
-	movs r0, #8
-	bl Object_GetById
-	movs r1, #9
-	bl Object_SetActionCallback
-	bl Func_02004d48
-.L_0200b2c8:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200b2cc:
-	.4byte MsgBlazeTabletInscription
-.L_0200b2d0:
-	.4byte gPartyState
-.L_0200b2d4:
-	.4byte 0x00013333
 	.section .text.x0200b678,"ax",%progbits
 	.global Func_02003678
 	.thumb_func

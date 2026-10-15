@@ -34,22 +34,25 @@ s32 Func_02002a9c();
 s32 Func_02002a4c();
 extern u8 MsgScene682No52[];
 
-// The Japanese edition has an older form of this scene (no flag 0 test, a message this catalogue
-// does not name); it stays on its listing in recon/tla/raw/overlays (S4).
-#if !defined(TLA_EDITION_JA)
 void Func_02000638(void)
 {
     s32 t0;
+#if !defined(TLA_EDITION_JA)
     s32 t1;
+#endif
     s32 t17;
     s32 t106;
 
     t0 = Value1(GameFlag_Test, 0x822);
     if (t0 == 0) {
     } else {
+#if !defined(TLA_EDITION_JA)
+        // The Japanese edition has no flag 0 test.
         t1 = Value1(GameFlag_Test, 0);
         if (t1 != 0) {
-        } else {
+        } else
+#endif
+        {
             Call1(GameFlag_SetBit, 0xa75);
             Func_02002a44();
             Call1(Func_02002b64, 0);
@@ -192,4 +195,3 @@ void Func_02000638(void)
     }
 }
 
-#endif

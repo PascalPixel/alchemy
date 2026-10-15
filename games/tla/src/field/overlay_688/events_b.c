@@ -75,6 +75,47 @@ static __inline__ void Show(s32 kind, s32 frames)
     Func_02000310(kind, frames);
 }
 
+void Func_02000060(s32 arg)
+{
+    struct PartyState *party = &gPartyState;
+    /* FAKEMATCH: the native loads gPartyState's address before it copies the countdown to r6. The
+     * entry copy of a plain parameter comes first; pinned and assigned after the barrier, the copy
+     * follows the load (differ 2 with neither or with the pin alone, 6 with the barrier alone). */
+    register s32 countdown asm("r6");
+
+    asm("");
+    countdown = arg;
+    party->owner_override = 0;
+    GameFlag_ClearBit(0x960);
+    Func_020005dc(123);
+    party->current_owner = 8;
+    ((struct EventWorkRoute *)Ram_HeapSlots->event_work)->route = 0x209;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    party->current_owner = 4;
+    Func_020005ac(countdown);
+}
+
+void Func_020000b0(s32 arg)
+{
+    struct PartyState *party = &gPartyState;
+    /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gPartyState's address before the
+     * countdown's copy (differ 2 without them). */
+    register s32 countdown asm("r6");
+
+    asm("");
+    countdown = arg;
+    party->owner_override = 0;
+    GameFlag_SetBit(0x960);
+    Func_020005dc(123);
+    party->current_owner = 8;
+    ((struct EventWorkRoute *)Ram_HeapSlots->event_work)->route = 0x209;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    party->current_owner = 4;
+    Func_020005ac(countdown);
+}
+
 void Func_02000100(void)
 {
     Flag_Set(0x909);

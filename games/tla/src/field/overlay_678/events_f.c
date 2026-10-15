@@ -83,3 +83,45 @@ void Func_02001138(void)
 {
     Func_020029a0((s32)&MsgIThoughtI);
 }
+
+extern const u8 Data_0200302c[];
+extern const u8 Data_02003038[];
+extern const u8 Data_02003068[];
+extern const u8 Data_02003128[];
+extern const u8 Data_02003194[];
+extern const u8 Data_020031e8[];
+extern const u8 Data_02003314[];
+extern const u8 Data_02003338[];
+extern const u8 Data_020033e0[];
+extern const u8 Data_02003464[];
+extern const u8 Data_020034e8[];
+extern const u8 Data_02003560[];
+
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov678Room1)
+        return (const struct SceneEvent *)Data_02003038;
+    if (scene == (s32)&SceneId_Ov678Room2)
+        return (const struct SceneEvent *)Data_02003068;
+    if (scene == (s32)&SceneId_Ov678Room3)
+        return (const struct SceneEvent *)Data_02003128;
+    if (scene == (s32)&SceneId_Ov678Room4)
+        return (const struct SceneEvent *)Data_02003194;
+    if (scene == (s32)&SceneId_Ov678Room5)
+        return (const struct SceneEvent *)Data_020031e8;
+    if (scene == (s32)&SceneId_Ov678Room6)
+        return (const struct SceneEvent *)Data_02003314;
+    if (scene == (s32)&SceneId_Ov678Room7)
+        return (const struct SceneEvent *)Data_02003338;
+    if (scene == (s32)&SceneId_Ov678Room8)
+        return (const struct SceneEvent *)Data_020033e0;
+    if (scene == (s32)&SceneId_Ov678Room9)
+        return (const struct SceneEvent *)Data_020034e8;
+    if (scene == (s32)&SceneId_Ov678Room10)
+        return (const struct SceneEvent *)Data_02003464;
+    if (scene == (s32)&SceneId_Ov678Room11)
+        return (const struct SceneEvent *)Data_02003560;
+    return (const struct SceneEvent *)Data_0200302c;
+}

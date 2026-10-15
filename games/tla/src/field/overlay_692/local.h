@@ -23,6 +23,15 @@ struct MapLayers {
 
 extern u8 gMapCellBuffer[];
 
+extern char SceneId_Ov692Room1;
+extern char SceneId_Ov692Room2;
+extern char SceneId_Ov692Room3;
+extern char SceneId_Ov692Room4;
+extern char SceneId_Ov692Room5;
+extern char SceneId_Ov692Room6;
+extern char SceneId_Ov692Room7;
+extern char SceneId_Ov692Room8;
+
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -55,6 +64,14 @@ static __inline__ struct ObjectRuntime *Create(s32 kind, s32 x, s32 y, s32 z)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return Engine_ObjectCreate(kind, x, y, z);
+}
+
+void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+
+static __inline__ void ObjectMotion_ResetAndSetPositionInMode2_(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline sets x between the two halves of z, as the native does; called directly, z is built whole first (differ 2). */
+    ObjectMotion_ResetAndSetPositionInMode2(id, x, z);
 }
 
 #endif

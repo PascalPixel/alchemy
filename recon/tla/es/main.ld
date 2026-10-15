@@ -1872,7 +1872,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.00126afc)
     "*/games/tla/src/battle/presentation/present.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00126be4)
-    "*/recon/tla/es/rom.o"(.rom.00126d14)
+    "*/games/tla/src/battle/presentation/actor_modes.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00126e18)
     "*/games/tla/src/battle/presentation/vramup.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00127080)

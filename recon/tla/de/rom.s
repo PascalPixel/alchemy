@@ -3830,13 +3830,11 @@ Func_08126978:
 BattlePres_SetActorRecordMode:
 	.incbin "baserom.gba", 0x00126afc, 0x00000080
 	.section .rom.00126be4, "ax"
-	.incbin "baserom.gba", 0x00126be4, 0x00000130
-	.section .rom.00126d14, "ax"
-	.global BattlePres_SetActorModes
-	.type BattlePres_SetActorModes, %function
+	.global Graphics_AdvancePaletteCycle
+	.type Graphics_AdvancePaletteCycle, %function
 	.thumb_func
-BattlePres_SetActorModes:
-	.incbin "baserom.gba", 0x00126d14, 0x00000104
+Graphics_AdvancePaletteCycle:
+	.incbin "baserom.gba", 0x00126be4, 0x00000130
 	.section .rom.00126e18, "ax"
 	.global Func_08126e00
 	.type Func_08126e00, %function

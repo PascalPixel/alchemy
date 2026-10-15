@@ -1851,7 +1851,7 @@ SECTIONS
         "*/recon/tla/raw/08126ae4.o"(.text)
         "*/games/tla/src/battle/presentation/present.o"(.text)
         "*/recon/tla/raw/08126bcc.o"(.text)
-        "*/recon/tla/raw/08126cfc.o"(.text)
+        "*/games/tla/src/battle/presentation/actor_modes.o"(.text)
         "*/recon/tla/raw/08126e00.o"(.text)
         "*/games/tla/src/battle/presentation/vramup.o"(.text)
         "*/recon/tla/raw/08127068.o"(.text)

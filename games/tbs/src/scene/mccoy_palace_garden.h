@@ -11,7 +11,7 @@
 
 enum
 {
-	ITEM_NUT = 181
+    ITEM_NUT = 181
 };
 
 #endif

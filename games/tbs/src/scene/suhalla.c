@@ -20,267 +20,269 @@
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)gSuhalla_Scripts;
+    return (u8 *)gSuhalla_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
 {
-	return 0;
+    return 0;
 }
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)gSuhalla_Messages;
+    return (u8 *)gSuhalla_Messages;
 }
 
 s32 SceneData_SelectActorTableByFlag96f(void)
 {
-	if (Engine_GameFlagIsSet(0x96f) != 0)
-	{
-		return (s32)gSuhalla_ActorsFlag96f;
-	}
-	return (s32)gSuhalla_Actors;
+    if (Engine_GameFlagIsSet(0x96f) != 0)
+    {
+        return (s32)gSuhalla_ActorsFlag96f;
+    }
+    return (s32)gSuhalla_Actors;
 }
 
 static void EV09_TALK(s32 obj)
 {
-	s32 cue = MsgSuhallaTryingGetLalivero;
-	Engine_EventSetMessage(cue);
-	Engine_EventOpenMessage(obj, 0);
-	if (Engine_EventChooseYesNo(0, 0) == 0)
-	{
-		Engine_EventWait(10);
-		Engine_EventSetMessage(cue + 1);
-	}
-	else
-	{
-		Engine_EventSetMessage(cue + 2);
-	}
-	Engine_EventShowMessage(obj, 0);
+    s32 cue = MsgSuhallaTryingGetLalivero;
+    Engine_EventSetMessage(cue);
+    Engine_EventOpenMessage(obj, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+    {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(cue + 1);
+    }
+    else
+    {
+        Engine_EventSetMessage(cue + 2);
+    }
+    Engine_EventShowMessage(obj, 0);
 }
 
 static void EV13_TALK(s32 obj)
 {
-	s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
-	Engine_EventSetMessage(cue);
-	Engine_EventOpenMessage(obj, 0);
-	if (Engine_EventChooseYesNo(0, 0) == 0)
-	{
-		Engine_EventWait(10);
-		Engine_EventSetMessage(cue + 1);
-	}
-	else
-	{
-		Engine_EventSetMessage(cue + 2);
-	}
-	Engine_EventShowMessage(obj, 0);
+    s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
+    Engine_EventSetMessage(cue);
+    Engine_EventOpenMessage(obj, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+    {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(cue + 1);
+    }
+    else
+    {
+        Engine_EventSetMessage(cue + 2);
+    }
+    Engine_EventShowMessage(obj, 0);
 }
 
 static void EV16_PSYNERGY(void)
 {
 
-	Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-	Engine_GameFlagSet(0x201);
+    Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
+    Engine_GameFlagSet(0x201);
 }
 
 static void Suhalla_AnimateCells0(void)
 {
-	struct EventWork *work = gEventWork;
-	s32				  no = work->touchedTrigger;
-	u16				  x = gSuhalla_CellAnimationOrigins[no][0];
-	u16				  y = gSuhalla_CellAnimationOrigins[no][1];
+    struct EventWork *work = gEventWork;
+    s32               no = work->touchedTrigger;
+    u16               x = gSuhalla_CellAnimationOrigins[no][0];
+    u16               y = gSuhalla_CellAnimationOrigins[no][1];
 
-	Event_PlayCue(158);
-	Map_AnimateCells(gSuhalla_CellSteps0, x, y);
-	Actor_WalkBy(0, 0, -16);
-	gEventWork->transitionFrames = 16;
-	Engine_EventRequestExit(no);
+    Event_PlayCue(158);
+    Map_AnimateCells(gSuhalla_CellSteps0, x, y);
+    Actor_WalkBy(0, 0, -16);
+    gEventWork->transitionFrames = 16;
+    Engine_EventRequestExit(no);
 }
 
 static void EV02_TOUCH(void)
 {
-	struct EventWork *work = gEventWork;
-	s32				  no = work->touchedTrigger;
-	u16				  x = gSuhalla_CellAnimationOrigins[no][0];
-	u16				  y = gSuhalla_CellAnimationOrigins[no][1];
+    struct EventWork *work = gEventWork;
+    s32               no = work->touchedTrigger;
+    u16               x = gSuhalla_CellAnimationOrigins[no][0];
+    u16               y = gSuhalla_CellAnimationOrigins[no][1];
 
-	Event_PlayCue(158);
-	Map_AnimateCells(gSuhalla_CellSteps1, x, y);
-	Actor_WalkBy(0, 0, -16);
-	gEventWork->transitionFrames = 16;
-	Engine_EventRequestExit(no);
+    Event_PlayCue(158);
+    Map_AnimateCells(gSuhalla_CellSteps1, x, y);
+    Actor_WalkBy(0, 0, -16);
+    gEventWork->transitionFrames = 16;
+    Engine_EventRequestExit(no);
 }
 
 s32 SceneData_SelectExtraTableByFlag96f(void)
 {
-	if (Engine_GameFlagIsSet(0x96F) != 0)
-	{
-		return (s32)gSuhalla_ExtrasFlag96f;
-	}
-	return (s32)gSuhalla_Extras;
+    if (Engine_GameFlagIsSet(0x96F) != 0)
+    {
+        return (s32)gSuhalla_ExtrasFlag96f;
+    }
+    return (s32)gSuhalla_Extras;
 }
 
 s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 {
-	struct EventWork *work;
+    struct EventWork *work;
 
-	if (gGameState.entrance == 90)
-	{
-		Engine_GameFlagSet(0x96f);
-	}
+    if (gGameState.entrance == 90)
+    {
+        Engine_GameFlagSet(0x96f);
+    }
 
-	work = gEventWork;
-	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transitionFrames = 24;
+    work = gEventWork;
+    work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transitionFrames = 24;
 
-	if (Engine_GameFlagIsSet(0x201) != 0)
-	{
-		EV16_PSYNERGY();
-		Engine_ActorSetAnimation(16, 4);
-	}
-	return 0;
+    if (Engine_GameFlagIsSet(0x201) != 0)
+    {
+        EV16_PSYNERGY();
+        Engine_ActorSetAnimation(16, 4);
+    }
+    return 0;
 }
 
 struct SceneEntrance gSuhalla_Scripts[] = {
-	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 3, CONDITION_ALWAYS, 88, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 4, CONDITION_ALWAYS, 216, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 5, CONDITION_ALWAYS, 296, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-	{ 6, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-	{ 10, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-	{ SCENE_TABLE_END },
+    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 3, CONDITION_ALWAYS, 88, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 4, CONDITION_ALWAYS, 216, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 5, CONDITION_ALWAYS, 296, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { 6, CONDITION_ALWAYS, 120, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { 10, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { SCENE_TABLE_END },
 };
 
 u32 gSuhalla_Messages[] = {
-	SCENE_EXITS(167),
-	SCENE_EXIT(1, 168, 1),
-	SCENE_EXIT(2, 168, 2),
-	SCENE_EXIT(3, 168, 3),
-	SCENE_EXIT(4, 168, 4),
-	SCENE_EXIT(5, 168, 5),
-	SCENE_EXIT(10, 2, 27),
-	SCENE_EXIT(11, 2, 56),
-	SCENE_EXIT(12, 2, 57),
-	SCENE_EXITS_END,
+    SCENE_EXITS(167),
+    SCENE_EXIT(1, 168, 1),
+    SCENE_EXIT(2, 168, 2),
+    SCENE_EXIT(3, 168, 3),
+    SCENE_EXIT(4, 168, 4),
+    SCENE_EXIT(5, 168, 5),
+    SCENE_EXIT(10, 2, 27),
+    SCENE_EXIT(11, 2, 56),
+    SCENE_EXIT(12, 2, 57),
+    SCENE_EXITS_END,
 };
 
+// clang-format off
 struct ScenePlacement gSuhalla_Actors[] = {
-	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(184), 0, PIXELS(304), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x8f, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(248), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(104), 0, PIXELS(320), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(72), 0, PIXELS(112), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0xee, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ SCENE_TABLE_END },
+    { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
+    { 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(184), 0, PIXELS(304), FACING_WEST, TALK_FACE_PARTY, 0 },
+    { 0x8f, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(248), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
+    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(104), 0, PIXELS(320), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+    { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(72), 0, PIXELS(112), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gSuhalla_ActorsFlag96f[] = {
-	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(184), 0, PIXELS(320), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x8f, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(296), 0, PIXELS(328), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(88), 0, PIXELS(336), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-	{ 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(248), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(104), 0, PIXELS(320), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
-		PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0xee, CONDITION_ALWAYS, ACTOR_STAND,
-		PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ SCENE_TABLE_END },
+    { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
+    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(184), 0, PIXELS(320), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { 0x8f, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(296), 0, PIXELS(328), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(88), 0, PIXELS(336), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+    { 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(248), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
+    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(104), 0, PIXELS(320), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+    { 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
+        PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SCENE_TABLE_END },
 };
 
 // セルアニメの原点 (x, y)
 s16 gSuhalla_CellAnimationOrigins[][2] = {
-	{ 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
+    { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };
 
 u16 gSuhalla_CellSteps0[] = {
-	MAP_CELL_STEP(25, 0, 1, 2, 8), MAP_CELL_STEP(26, 0, 1, 2, 1), MAP_CELL_STEPS_END,
+    MAP_CELL_STEP(25, 0, 1, 2, 8), MAP_CELL_STEP(26, 0, 1, 2, 1), MAP_CELL_STEPS_END,
 };
 
 u16 gSuhalla_CellSteps1[] = {
-	MAP_CELL_STEP(26, 2, 2, 2, 8), MAP_CELL_STEP(28, 2, 2, 2, 1), MAP_CELL_STEPS_END,
+    MAP_CELL_STEP(26, 2, 2, 2, 8), MAP_CELL_STEP(28, 2, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 
 struct SceneEvent gSuhalla_Extras[] = {
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSuhallaHasLongBeenKnown) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaThePeopleOfLaliveroHaveBeen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaIKnowTheDesertSpiritsWill) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaNoneOfTheGrownUpsIn) },
-	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
-	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
-	{ SCENE_EVENTS_END },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+    { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSuhallaHasLongBeenKnown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaThePeopleOfLaliveroHaveBeen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaIKnowTheDesertSpiritsWill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaNoneOfTheGrownUpsIn) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
+    { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
+    { PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gSuhalla_ExtrasFlag96f[] = {
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
-	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaIWonderWhyThereAreSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaAfterYouGetSwallowedByA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaLatelyAllTheSandstormsHaveBeen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaGrownUpsSayTheSandstormsAttack) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheySayTheSoldiersWereRavaged) },
-	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
-	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
-	{ SCENE_EVENTS_END },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+    { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaIWonderWhyThereAreSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaAfterYouGetSwallowedByA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaLatelyAllTheSandstormsHaveBeen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaGrownUpsSayTheSandstormsAttack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheySayTheSoldiersWereRavaged) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
+    { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
+    { PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { SCENE_EVENTS_END },
 };
+// clang-format on

@@ -10,7 +10,7 @@
 
 enum
 {
-	FLAG_REWARD_TAKEN = 0x84e
+    FLAG_REWARD_TAKEN = 0x84e
 };
 
 #endif

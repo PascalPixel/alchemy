@@ -34,32 +34,37 @@ struct ObjectRuntime *Func_02002c08(s32 id, s32 emote, s32 frames);
 void Func_02002c10(s32 id, s32 a);
 void Func_02002c28(void);
 void Func_02002c58(s32 a);
+void Func_02002be8(s32 id, s32 a);
+void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void Func_02002c68(s32 id, s32 a, s32 b, s32 c);
 
 extern const u8 MsgYouThereHold[];
 extern const u8 MsgHasEscaped2[];
+extern const u8 MsgHeyYouLot[];
+extern const u8 MsgItWasThem[];
+extern const u8 MsgWasAnythingStolen[];
 
 static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 72 of 475 in Func_02000ac4, 36 of 549 in Func_02000f80). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 72 of 475 in Func_02000ac4, 36 of 549 in Func_02000f80, 64 of 490 in Func_020014fc). */
     ObjectMotion_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void OffsetPos(u32 id, s32 dx, s32 dz)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 10 of 475 in Func_02000ac4). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 10 of 475 in Func_02000ac4, 12 of 490 in Func_020014fc). */
     ObjectMotion_OffsetPositionAndReset(id, dx, dz);
 }
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 31 of 475 in Func_02000ac4). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 31 of 475 in Func_02000ac4, 2 of 490 in Func_020014fc). */
     ObjectMotion_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 24 of 475 in Func_02000ac4, 30 of 549 in Func_02000f80). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 24 of 475 in Func_02000ac4, 30 of 549 in Func_02000f80, 28 of 490 in Func_020014fc). */
     ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -77,13 +82,13 @@ static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 d)
 
 static __inline__ void ArmCallbackAndRefresh(s32 id, s32 a)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 44 of 475 in Func_02000ac4, 4 of 549 in Func_02000f80). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 44 of 475 in Func_02000ac4, 4 of 549 in Func_02000f80, 48 of 490 in Func_020014fc). */
     Func_02002bf8(id, a);
 }
 
 static __inline__ struct ObjectRuntime *Emote(s32 id, s32 emote, s32 frames)
 {
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 8 of 475 in Func_02000ac4, 25 of 549 in Func_02000f80). */
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does (direct: differ 8 of 475 in Func_02000ac4, 25 of 549 in Func_02000f80, 27 of 490 in Func_020014fc). */
     return Func_02002c08(id, emote, frames);
 }
 
@@ -404,5 +409,145 @@ void Func_02000f80(void)
     Battle_WaitMode0(20);
     SetHorizontalPos(33, 0, 0);
     Battle_WaitMode0(20);
+    Func_02002b30();
+}
+
+// "Hey, you lot": actors 24, 25 and 32 question 4, whose answers are
+// counted in the event work; after flag 0x98f 32 asks again ("It was
+// them"). Then 32 is placed at the current owner and flag 0x914 is set.
+void Func_020014fc(void)
+{
+    struct ObjectRuntime *object;
+
+    Func_02002b28();
+    Func_02002c58(0);
+    Func_02002bd0(MsgHeyYouLot);
+    Func_02002be0(24, 0, 2);
+    CamBounds(0x1dc0000, -1, 0x1900000, 1);
+    CommitPos(24, -3, 8);
+    SetPos(4, 472, 426);
+    Battle_WaitMode0(10);
+    ArmCallbackAndRefresh(gPartyState.current_owner, 0xc000);
+    LaunchFromFocused(32, 16, 1, 0xc000);
+    Func_02002c28();
+    ObjectMotion_CommitCurrentPositionAndActivate(32);
+    CommitPos(25, 3, 8);
+    ArmCallbackAndRefresh(25, 0);
+    Object_SetModeById(25, 4);
+    Battle_WaitMode0(20);
+    Func_02002be0(25, 0, 10);
+    ArmCallback(4, 0, 0);
+    ArmCallback(32, 0x8000, 0);
+    Battle_WaitMode0(20);
+    Emote(32, 0x101, 30);
+    Func_02002be8(32, 0);
+    Motion_SetModeAndWaitAnimation(4, 4);
+    ArmCallbackAndRefresh(24, 0x5000);
+    Motion_SetModeAndWaitAnimation(24, 4);
+    Func_02002be0(24, 0, 10);
+    ArmCallback(32, 0xd000, 0);
+    Emote(32, 0x103, 0);
+    ObjectMotion_Launch(32, 6, 15);
+    ObjectMotion_Launch(32, 6, 23);
+    Func_02002be8(32, 0);
+    Emote(4, 0x100, 30);
+    ObjectMotion_SetAngleToward(4, 24, 0);
+    Battle_WaitMode0(20);
+    Emote(32, 0x100, 30);
+    ArmCallbackAndRefresh(32, 0xd000);
+    Func_02002be8(32, 0);
+    ArmCallbackAndRefresh(25, 0x2000);
+    Motion_SetModeAndWaitAnimation(25, 3);
+    ArmCallback(32, 0xb000, 0);
+    Battle_WaitMode0(10);
+    UiText_OpenMessageAtObject(25, 0);
+    ArmCallbackAndRefresh(4, 0xb000);
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+        Battle_WaitMode0(25);
+        ArmCallback(32, 0xb000, 0);
+        Func_02002be0(25, 0, 10);
+        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+    } else {
+        Battle_WaitMode0(25);
+        ArmCallback(32, 0xd000, 0);
+        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        Func_02002be0(25, 0, 10);
+    }
+    Motion_SetVarCbAndRefresh(32, 2);
+    Battle_WaitMode0(20);
+    ArmCallbackAndRefresh(32, 0xb000);
+    Func_02002be8(32, 0);
+    Emote(25, 0x102, 30);
+    Func_02002be0(25, 0, 10);
+    Motion_SetVarCbAndRefresh(24, 2);
+    Battle_WaitMode0(20);
+    Func_02002be0(24, 0, 10);
+    if (GameFlag_Test(0x98f)) {
+        Func_02002bd0(MsgItWasThem);
+        ArmCallback(32, 0x8000, 0);
+        Battle_WaitMode0(20);
+        UiText_OpenMessageAtObject(32, 0);
+        ArmCallback(4, 0, 0);
+        if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+            Battle_WaitMode0(20);
+            Motion_SetModeAndWaitAnimation(32, 3);
+            Func_02002be8(32, 0);
+            (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        } else {
+            Battle_WaitMode0(20);
+            (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+            Motion_SetModeAndWaitAnimation(32, 4);
+            Func_02002be8(32, 0);
+        }
+    }
+    Func_02002bd0(MsgWasAnythingStolen);
+    ArmCallback(32, 0xd000, 0);
+    ArmCallback(4, 0xd000, 0);
+    Battle_WaitMode0(20);
+    Func_02002be8(32, 0);
+    Battle_WaitMode0(40);
+    Emote(24, 0x101, 30);
+    ArmCallback(24, 0x8000, 0);
+    Battle_WaitMode0(20);
+    ArmCallback(32, 0xb000, 0);
+    ArmCallback(4, 0xb000, 0);
+    Emote(25, 0x102, 30);
+    Motion_SetModeAndWaitAnimation(25, 4);
+    Battle_WaitMode0(10);
+    ArmCallback(25, 0x2000, 0);
+    Func_02002be0(25, 0, 10);
+    Emote(32, 0x101, 0);
+    Emote(4, 0x101, 30);
+    Func_02002be8(32, 0);
+    ArmCallbackAndRefresh(24, 0x5000);
+    Motion_SetModeAndWaitAnimation(24, 4);
+    Battle_WaitMode0(10);
+    Func_02002be0(24, 0, 10);
+    Motion_SetModeAndWaitAnimation(25, 3);
+    Battle_WaitMode0(10);
+    Func_02002be0(25, 0, 10);
+    Speed(24, 0x4ccc, 0x2666);
+    Speed(25, 0x4ccc, 0x2666);
+    OffsetPos(24, 3, -8);
+    OffsetPos(25, -3, -8);
+    ObjectMotion_CommitCurrentPositionAndActivate(24);
+    ObjectMotion_CommitCurrentPositionAndActivate(25);
+    ArmCallback(25, 0x3000, 0);
+    ArmCallback(24, 0x5000, 0);
+    Battle_WaitMode0(20);
+    ArmCallback(4, 0, 0);
+    ArmCallback(32, 0x8000, 0);
+    Battle_WaitMode0(20);
+    Object_SetModeById(32, 3);
+    Motion_SetModeAndWaitAnimation(4, 3);
+    Battle_WaitMode0(10);
+    GameFlag_SetBit(0x914);
+    Object_SetModeById(32, 2);
+    object = Object_GetById(gPartyState.current_owner);
+    if (object != NULL)
+        ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    ObjectMotion_CommitCurrentPositionAndActivate(32);
+    SetHorizontalPos(32, 0, 0);
+    ArmCallbackAndRefresh(4, 0xc000);
     Func_02002b30();
 }

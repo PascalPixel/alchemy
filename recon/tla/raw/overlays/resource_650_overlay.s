@@ -1305,36 +1305,6 @@ Func_020015a0:
 	.4byte Data_02003990
 .L_02009618:
 	.4byte Data_02003c10
-	.section .text.x0200961c,"ax",%progbits
-	.global Func_0200161c
-	.thumb_func
-Func_0200161c:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #128
-	ldr r0, [r3]
-	movs r3, #128
-	lsls r3, r3, #1
-	adds r1, r0, #0
-	adds r2, r0, r3
-	movs r4, #0
-.L_02009630:
-	ldrh r3, [r2]
-	adds r4, #1
-	strh r3, [r1]
-	adds r2, #2
-	adds r1, #2
-	cmp r4, #63
-	bls .L_02009630
-	movs r3, #0
-	strh r3, [r0]
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl Func_020032f0
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x020096d8,"ax",%progbits
 	.global Func_020016d8
 	.thumb_func

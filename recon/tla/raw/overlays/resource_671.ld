@@ -15,7 +15,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_671/orbit.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200847c)
         "*/games/tla/src/field/overlay_671/s04b8.o"(.text)
-        "*/resource_671_overlay.o"(.text.x02008550)
         "*/games/tla/src/field/overlay_671/find_near.o"(.text)
         "*/resource_671_overlay.o"(.text.x02008624)
         "*/games/tla/src/field/overlay_671/hop.o"(.text)

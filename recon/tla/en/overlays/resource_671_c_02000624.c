@@ -1,4 +1,4 @@
-/* Draft, differ 47 of 63: ported from Func_020005b4 (find_near.c). The native rebuilds the vector's stack address (mov r4, sp) inside the loop; here GCSE's PRE carries the first block's address pseudo across the loop in a callee-saved register (r5), which shifts i and id to r6 and r7. Tried: a struct vector, a pointer local inside the loop, i set before the call, permuter 4 minutes (best kept semantics: no gain). */
+/* Draft, differ 47 of 63: ported from Func_020005b4 (find_near.c). The native rebuilds the vector's stack address (mov r4, sp) inside the loop and keeps only i and the id in r5 and r6; here GCSE's PRE carries the first block's address pseudo across the loop in a callee-saved register (r5), which shifts i and id to r6 and r7. Tried: a struct vector, a pointer local inside the loop (or in the innermost block), i set before the call, taking the address of i, id or origin, permuter 4 minutes (no gain). Func_02000550 shows the same habit; a goto loop with (void)&actor stopped it there. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

@@ -272,58 +272,6 @@ Func_0200047c:
 .L_020084b4:
 	movs r0, #1
 	pop {r5, pc}
-	.section .text.x02008550,"ax",%progbits
-	.balign 4
-	.global Func_02000550
-	.thumb_func
-Func_02000550:
-	push {r5, r6, r7, lr}
-	movs r0, #9
-	bl Object_GetById
-	adds r7, r0, #0
-	movs r0, #0
-	bl Func_02005834
-	cmp r0, #1
-	bne .L_020085a8
-	ldr r3, .L_020085ac
-	movs r0, #0
-	ldr r6, [r3]
-	bl Func_020020f0
-	movs r0, #130
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #179
-	lsls r1, r1, #1
-	adds r2, r3, r1
-	movs r3, #0
-	strh r3, [r2]
-	movs r5, #0
-.L_0200858a:
-	ldr r3, .L_020085b0
-	adds r1, r7, #0
-	ldrsb r3, [r3, r5]
-	adds r1, #98
-	adds r2, r6, #0
-	muls r2, r3
-	ldrb r3, [r1]
-	movs r0, #1
-	adds r3, r3, r2
-	strb r3, [r1]
-	adds r5, #1
-	bl WaitFrames
-	cmp r5, #24
-	ble .L_0200858a
-.L_020085a8:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_020085ac:
-	.4byte Data_02005af0
-.L_020085b0:
-	.4byte Data_02006b38
 	.section .text.x02008624,"ax",%progbits
 	.balign 4
 	.global Func_02000624

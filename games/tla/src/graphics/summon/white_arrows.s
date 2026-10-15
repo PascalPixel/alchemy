@@ -10,3 +10,4 @@
 Summon_WhiteArrowsTiles:
 	.incbin "games/tla/src/graphics/summon/white_arrows.gbapal"
 	.incbin "games/tla/src/graphics/summon/white_arrows.parts.lz"
+	.byte 0x34, 0x88	@ PACKER: left in the buffer by Summon_RedCrescentTiles+0x25a

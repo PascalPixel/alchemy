@@ -2,3 +2,4 @@
 	.global Monster_PinkWormSprites
 Monster_PinkWormSprites:
 	.incbin "games/tla/src/graphics/monster/pink_worm.frames.lz"
+	.byte 0x09, 0x25, 0x74	@ PACKER: left in the buffer by Monster_RedBeetleSprites+0x1069

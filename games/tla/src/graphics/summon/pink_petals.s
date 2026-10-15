@@ -12,3 +12,4 @@
 Summon_PinkPetalsTiles:
 	.incbin "games/tla/src/graphics/summon/pink_petals.gbapal"
 	.incbin "games/tla/src/graphics/summon/pink_petals.parts.lz"
+	.byte 0xe1, 0xb1	@ PACKER: left in the buffer by Summon_SeaSerpentTiles+0x77a

@@ -10,3 +10,4 @@
 Summon_WhiteWispsTiles:
 	.incbin "games/tla/src/graphics/summon/white_wisps.gbapal"
 	.incbin "games/tla/src/graphics/summon/white_wisps.parts.lz"
+	.byte 0xfc	@ PACKER: left in the buffer by Summon_RedCrescentTiles+0x577

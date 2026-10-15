@@ -9,4 +9,6 @@ Monster_WingedDragonSprites:
 	.else
 	.byte 0x8c	@ PACKER: left in the buffer by Ui_Icons+0x4f53
 	.endif
+	.else
+	.byte 0xc6	@ PACKER: left in the buffer by Monster_SeaSerpentSprites+0x4f53
 	.endif

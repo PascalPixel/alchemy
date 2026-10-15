@@ -5,4 +5,6 @@ Monster_SmallLizardSprites:
 	.incbin "games/common/src/graphics/monster/small_lizard.frames.lz"
 	.ifeq GAME_TLA
 	.byte 0x70	@ PACKER: left in the buffer by Monster_FairySprites+0xc6f
+	.else
+	.byte 0x1d	@ PACKER: left in the buffer by Monster_JellySprites+0xc6f
 	.endif

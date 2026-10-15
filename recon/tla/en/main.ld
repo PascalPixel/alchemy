@@ -378,7 +378,9 @@ SECTIONS
         "*/games/tla/src/field/common/object/objdata.o"(.rodata)
         "*/games/tla/src/field/common/map/wmapres.o"(.rodata)
         "*/games/tla/src/lib/curvedat.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0802efc4)
+        "*/games/tla/src/field/common/map/mapdata.o"(.rodata)
+        "*/games/tla/src/field/common/map/griddata.o"(.rodata)
+        "*/games/tla/src/field/common/script/objscrpt.o"(.rodata)
         "*/games/tla/src/field/common/map/layered.o"(.rodata)
         "*/recon/tla/raw/08030310.o"(.text)
         . = ABSOLUTE(0x08038000);

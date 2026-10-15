@@ -18,7 +18,6 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x02008da0)
         "*/games/tla/src/field/overlay_6b5/prompt.o"(.text)
         "*/games/tla/src/field/overlay_6b5/sound_call.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x02008f6c)
         "*/resource_6b5_overlay.o"(.text.x02008fbc)
         "*/games/tla/src/field/overlay_6b5/talk.o"(.text)
         "*/games/tla/src/field/overlay_6b5/scene_events.o"(.text)

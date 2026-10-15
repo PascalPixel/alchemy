@@ -13,6 +13,18 @@ extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
 
+extern char SceneId_Ov678Room1;
+extern char SceneId_Ov678Room2;
+extern char SceneId_Ov678Room3;
+extern char SceneId_Ov678Room4;
+extern char SceneId_Ov678Room5;
+extern char SceneId_Ov678Room6;
+extern char SceneId_Ov678Room7;
+extern char SceneId_Ov678Room8;
+extern char SceneId_Ov678Room9;
+extern char SceneId_Ov678Room10;
+extern char SceneId_Ov678Room11;
+
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

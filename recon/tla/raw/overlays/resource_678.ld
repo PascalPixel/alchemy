@@ -4,7 +4,6 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_678/entry.o"(.text)
         "*/games/tla/src/field/overlay_678/scene_tables.o"(.text)
-        "*/resource_678_overlay.o"(.text.x02008058)
         "*/games/tla/src/field/overlay_678/events_a.o"(.text)
         "*/resource_678_overlay.o"(.text.x0200813c)
         "*/games/tla/src/field/overlay_678/events_b.o"(.text)
@@ -17,7 +16,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_678/events_e.o"(.text)
         "*/resource_678_overlay.o"(.text.x02008d2c)
         "*/games/tla/src/field/overlay_678/events_f.o"(.text)
-        "*/resource_678_overlay.o"(.text.x02009148)
         "*/games/tla/src/field/overlay_678/events_g.o"(.text)
         "*/games/tla/src/field/overlay_678/s1288.o"(.text)
         "*/resource_678_overlay.o"(.text.x02009304)

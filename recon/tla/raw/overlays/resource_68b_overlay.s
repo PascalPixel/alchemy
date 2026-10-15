@@ -721,67 +721,6 @@ Func_02000934:
 	.4byte MsgDoYouWish
 .L_02008a60:
 	.4byte 0x00013333
-	.section .text.x02008a6c,"ax",%progbits
-	.global Func_02000a6c
-	.thumb_func
-Func_02000a6c:
-	push {lr}
-	ldr r3, .L_02008acc
-	movs r2, #3
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02008aca
-	movs r3, #160
-	lsls r3, r3, #19
-	adds r3, #252
-	ldrh r3, [r3]
-	movs r1, #14
-	lsls r3, r3, #16
-	asrs r0, r3, #16
-.L_02008a88:
-	movs r4, #160
-	lsls r4, r4, #19
-	lsls r3, r1, #1
-	adds r4, #224
-	adds r2, r3, r4
-	subs r4, #2
-	adds r3, r3, r4
-	ldrh r3, [r3]
-	subs r1, #1
-	strh r3, [r2]
-	cmp r1, #1
-	bne .L_02008a88
-	movs r3, #160
-	lsls r3, r3, #19
-	adds r3, #226
-	strh r0, [r3]
-	adds r3, #58
-	ldrh r3, [r3]
-	movs r1, #14
-	lsls r3, r3, #16
-	asrs r0, r3, #16
-.L_02008ab2:
-	ldr r4, .L_02008ad0
-	lsls r3, r1, #1
-	adds r2, r3, r4
-	subs r4, #2
-	adds r3, r3, r4
-	ldrh r3, [r3]
-	subs r1, #1
-	strh r3, [r2]
-	cmp r1, #1
-	bne .L_02008ab2
-	ldr r3, .L_02008ad4
-	strh r0, [r3]
-.L_02008aca:
-	pop {pc}
-.L_02008acc:
-	.4byte gFrameCount
-.L_02008ad0:
-	.4byte 0x05000100
-.L_02008ad4:
-	.4byte 0x05000102
 	.section .text.x02008b28,"ax",%progbits
 	.global Func_02000b28
 	.thumb_func

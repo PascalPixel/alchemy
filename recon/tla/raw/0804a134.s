@@ -624,7 +624,7 @@ Func_0804a134:
 .L_0804a61c:
 	.4byte gFrameCount
 .L_0804a620:
-	.4byte Data_080597f8
+	.4byte Resource_FixedBlockBTiles
 .L_0804a624:
 	ldrh r3, [r1, #6]
 	ldr r1, .L_0804a660

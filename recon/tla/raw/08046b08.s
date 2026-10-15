@@ -1116,7 +1116,7 @@ Func_08046b08:
 .L_080473a0:
 	.4byte 0x40000400
 .L_080473a4:
-	.4byte Data_080597f8
+	.4byte Resource_FixedBlockBTiles
 .L_080473a8:
 	ldr r1, [sp, #32]
 	ands r0, r3

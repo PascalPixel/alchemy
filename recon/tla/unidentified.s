@@ -155,11 +155,6 @@ Data_0802f204:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x000000a4
-	.section .unidentified.080597f4,"a"
-	.incbin "baserom.gba", 0x000597f4, 0x00000004
-	.global Data_080597f8
-Data_080597f8:
-	.incbin "baserom.gba", 0x000597f8, 0x00000080
 	.section .unidentified.0805c0e0,"a"
 	.incbin "baserom.gba", 0x0005c0e0, 0x0000002c
 	.global Data_0805c10c

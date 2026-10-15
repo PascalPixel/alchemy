@@ -233,6 +233,7 @@ void BattleFx_FinishAction(void) {
 // game.
 void Event_NoOpHookA(void) {}
 
+// Does nothing.
 void Event_NoOpHook(void) {}
 
 // Respawns the scene's actors from a placement table and waits one frame for
@@ -4144,6 +4145,7 @@ void BattleFx_AdvanceAngleWithRamp(void *obj) {
     }                                                                          \
   }
 
+// Spins and shrinks an object by 0x1c0 a frame, then releases it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
 // Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
@@ -4340,6 +4342,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
+// Spins and shrinks an object by 0x400 a frame, then releases it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
 // Per-frame update of a Venus Djinni's falling motes: each circles the
@@ -8816,7 +8819,7 @@ void BattleFx_RunEffect15(void) {
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               (Random16() * 7) >> 16);
-    scale = (Random16() >> 1) + 0x13333; // 1.2〜1.7 倍
+    scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
     slot->scaleY = scale;
     slot->scaleX = scale;
     i++;
@@ -8997,7 +9000,7 @@ void BattleFx_UpdateEffect16State(void) {
     rec->dirty = 1;
     rec->flags = 3;
   } else if (phase == 2) {
-    entry->param = 0; // 色を戻す
+    entry->param = 0; // restore its colours
     rec->dirty = 1;
     rec->flags = 1;
   }
@@ -9023,7 +9026,8 @@ void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj) {
     obj->angle += 0xc00;
 }
 
-// Avoid (or the Sacred Feather) has worn off: says so.
+// Avoid (or the Sacred Feather) has worn off: "Avoid's effects wore off." (or
+// "Sacred Feather's ...").
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
@@ -9035,6 +9039,11 @@ void FieldEvent_ShowStatusMessage(void) {
   UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 
+// Psynergy effect 16, Avoid: the caster spins shedding falling arcs and
+// flashes 20 times, then blinks for 55 frames; encounters are kept away
+// (avoidDistance 0x9600000) until it wears off, and the game says
+// "Monsters won't attack so often now.". Flag 0x145 marks it as cast from the
+// Sacred Feather.
 void RunBattleEffect16(void) {
   struct BattleFxScene *scene;
   struct ArcEffectObject *object;
@@ -9092,6 +9101,8 @@ void RunBattleEffect16(void) {
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }
 
+// Updates one effect slot: counts its age, runs its callback (after any
+// delay), moves it and draws it.
 void EffectSlot_Update(struct EffectSlot *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -9108,6 +9119,9 @@ void EffectSlot_Update(struct EffectSlot *effect) {
   }
 }
 
+// Draws an effect slot's sprite at its screen position and scale, when it is
+// near the screen. With flag 4 the slot's z also lifts it (0x1fc pixels
+// less z).
 void BattleFx_DrawScaledObject(struct EffectSlot *object) {
   struct AnimationObject *sprite;
   s32 offset;
@@ -9129,6 +9143,9 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
     Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
+// Moves an effect slot toward its target, turning at most maxTurnStep a
+// frame when flag42 is set and speeding up by acceleration to maxSpeed. A
+// slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 dx;
   s32 dz;
@@ -9181,6 +9198,8 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
+// Returns nonzero while an effect slot that stops at its target still has
+// one (it has not arrived), 0 once it has arrived or when it never stops.
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect) {
   u32 value;
 
@@ -9191,6 +9210,7 @@ u32 BattleFx_HasReachedTarget(struct EffectSlot *effect) {
   return ((0u - value) | value) >> 31;
 }
 
+// Places an effect slot at (x, z), at rest with no target.
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;
@@ -9199,10 +9219,12 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
   effect->speed = 0;
 }
 
+// Sets the animation of an effect slot's sprite.
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
   AnimationObjects_SelectAnimationFar(effect->object, mode);
 }
 
+// Gives an effect slot its per-frame callback, starting at state 0.
 void EffectSlot_SetCallback(struct EffectSlot *effect,
                             EffectCallback callback) {
   effect->callback = callback;
@@ -9211,6 +9233,8 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
   effect->state = 0;
 }
 
+// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
+// target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
   s8 *object;
@@ -9243,26 +9267,32 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   EffectSlot_SetObjectMode(effect, 1);
 }
 
+// Frees an effect slot and its sprite.
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot) {
   if (slot->object)
     ResourceObject_ReleaseFar(slot->object);
   Dma_Fill32(0, slot, sizeof *slot);
 }
 
-// ワールドマップの作業領域（gMapCellBuffer に置く）
+#define FLAG_NOT_ON_MAP 284 // the current place is not on the world map
+
+// The world map screen's work, kept in gMapCellBuffer.
 struct WorldMapWork {
-  u16 vramBlock;           // 印の OBJ キャラクタの VRAM ブロック
-  u16 windowSlot;          // もうひとつの VRAM ブロック（終わりに返す）
-  union FieldCoordinate x; // カーソル（ドット）
+  u16 vramBlock;           // VRAM block of the markers' tiles
+  u16 windowSlot;          // a second VRAM block, returned at the end
+  union FieldCoordinate x; // the cursor, in pixels
   union FieldCoordinate z;
   u8 padding0c[6];
-  s16 shown; // いま地名ウインドウに出している印（-1 はなし）
+  s16 shown; // the marker whose name is shown (-1: none)
   u8 padding14[4];
-  s32 speed; // カーソルの速さ
+  s32 speed; // the cursor's speed
   s32 window;
   struct AnimationSpritePart markers[67];
 };
 
+// Sets up the world map screen: the marker tiles and their OAM entries, the
+// cursor where the leader is on the map (or mid-screen when the place is not
+// on it), and the place-name window.
 void BattleFx_SetupResourcesAndWindow(void) {
   u32 *oam;
   u32 *pal;
@@ -9320,27 +9350,23 @@ void BattleFx_SetupResourcesAndWindow(void) {
 }
 
 //--------------------------------------------------------------------------
-// cleanup_resources_and_window.c
-// ワールドマップ：地名の印・カーソル・地名ウインドウ
+// The world map screen: place markers, the cursor and the place-name window.
 //--------------------------------------------------------------------------
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-// キーを離すとカーソルが近くの地名へ寄る
+// The cursor snaps to the nearest place when the d-pad is released.
 #define WORLD_MAP_CURSOR_SNAPS 1
-#define WORLD_MAP_NAME_RANGE 64 // 地名を出す距離の 2 乗
-#define WORLD_MAP_NAME_LEFT 3   // 地名ウインドウを印から左へずらす量
+#define WORLD_MAP_NAME_RANGE 64 // squared distance that shows a place's name
+#define WORLD_MAP_NAME_LEFT 3   // how far left of its marker the name goes
 #else
 #define WORLD_MAP_CURSOR_SNAPS 0
 #define WORLD_MAP_NAME_RANGE 100
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-#define FLAG_NOT_ON_MAP 284 // いまいる場所が地図にのっていない
-
-//--------------------------------------------------------------------------
-// ワールドマップを閉じる：VRAM ブロックを返し、地名ウインドウを消す
-//--------------------------------------------------------------------------
+// Closes the world map screen: returns its VRAM blocks and removes the
+// place-name window.
 void BattleFx_CleanupResourcesAndWindow(void) {
   struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
@@ -9349,12 +9375,9 @@ void BattleFx_CleanupResourcesAndWindow(void) {
   UiWork_FinalizeFar(work->window, 2);
 }
 
-//--------------------------------------------------------------------------
-// ワールドマップの毎フレーム処理（スケジューラのコールバック）
-// フラグの立った場所に印を出し、十字キーでカーソルを動かし、
-// カーソルにいちばん近い印の地名をウインドウに出す
-// L・R を押している間はカーソルを現在地に合わせる
-//--------------------------------------------------------------------------
+// Scheduler callback of the world map screen: shows a marker at each place
+// whose flag is set, moves the cursor with the d-pad (to the current place
+// while L or R is held) and shows the name of the marker nearest the cursor.
 void Map_UpdateWorldMapMarkers(void) {
   s32 leader;
   const s32 *place;
@@ -9400,28 +9423,28 @@ void Map_UpdateWorldMapMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
 
   //------------------------------------------------------------------
-  // カーソル
+  // The cursor.
   //------------------------------------------------------------------
   if (!GameFlag_TestFar(FLAG_NOT_ON_MAP) && (gKeysHeld & KEYS_SHOULDERS)) {
-    // L・R：現在地
+    // L or R: the current place.
     obj = ObjectTable_Get(gGameState.selectedActor);
     if (obj != NULL) {
       cursorX = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
       cursorY = obj->z.part.pixel * 160 / 4096;
     }
   } else {
-    // 十字キー：押し続けると速くなる
+    // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
     if (angle != 0xffff) {
       pos[0] = work->x.fixed;
       pos[1] = 0;
       pos[2] = work->z.fixed;
       Vector_AddPolarOffset(work->speed, angle, pos);
-      if (pos[0] < 0x100000) // x は 16〜239 ドット
+      if (pos[0] < 0x100000) // x is 16 to 239 pixels
         pos[0] = 0x100000;
       if (pos[0] > 0xef0000)
         pos[0] = 0xef0000;
-      if (pos[2] < 0) // y は 0〜141 ドット
+      if (pos[2] < 0) // y is 0 to 141 pixels
         pos[2] = 0;
       if (pos[2] > 0x8d0000)
         pos[2] = 0x8d0000;
@@ -9437,8 +9460,9 @@ void Map_UpdateWorldMapMarkers(void) {
   }
 
   //------------------------------------------------------------------
-  // 印：0 番は現在地、11〜65 番は gWorldMap_PlaceMarkers の場所
-  // 表は（フラグ, 地名）の組で、フラグの上位 16bit はキャラクタ番号
+  // Markers: 0 is the current place, 11 to 65 the places of
+  // gWorldMap_PlaceMarkers, (flag, name) pairs whose flag carries the marker's
+  // tile in its upper 16 bits.
   //------------------------------------------------------------------
   for (i = 0; i <= 65; i++) {
     if (i != leader && i <= 10)
@@ -9472,7 +9496,7 @@ void Map_UpdateWorldMapMarkers(void) {
     if (obj == NULL)
       continue;
 
-    // ワールドの 4096 ドット四方を 240x160 に縮める
+    // The world's 4096 pixels square shrunk to 240 by 160.
     x = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
     y = obj->z.part.pixel * 160 / 4096;
     marker->objectMode = mode;
@@ -9488,11 +9512,11 @@ void Map_UpdateWorldMapMarkers(void) {
       bestX = x;
       bestY = y;
     }
-    if (i != 0 || (gFrameCount & 15) <= 7) // 現在地は 8 フレームごとに点滅
+    if (i != 0 || (gFrameCount & 15) <= 7) // the current place blinks
       Runtime_PushSlotEntry(marker++, y);
   }
 #if WORLD_MAP_CURSOR_SNAPS
-  // キーを離していれば、カーソルをいちばん近い印へ寄せる
+  // With the d-pad released, the cursor moves onto the nearest marker.
   if (gKeysHeld == 0) {
     if (best != -1) {
       if (bestDist <= 1) {
@@ -9520,7 +9544,7 @@ void Map_UpdateWorldMapMarkers(void) {
   }
 #endif
 
-  // いちばん近い印を囲む枠（点滅）
+  // The blinking frame round the nearest marker.
   if (best != -1 && (gFrameCount & 15) <= 7) {
     marker->objectMode = 0;
     marker->tile = tileBase + 3;
@@ -9529,7 +9553,7 @@ void Map_UpdateWorldMapMarkers(void) {
     Runtime_PushSlotEntry(marker, bestY);
   }
 
-  // カーソル
+  // The cursor.
   marker = &work->markers[66];
   marker->affineIndex = 0;
   marker->x = cursorX - 17;
@@ -9537,7 +9561,7 @@ void Map_UpdateWorldMapMarkers(void) {
   Runtime_PushSlotEntry(marker, 246);
 
   //------------------------------------------------------------------
-  // 地名ウインドウ：印が変わったときだけ書き直す
+  // The place-name window, redrawn only when the marker changes.
   //------------------------------------------------------------------
   if (work->shown != best) {
     work->shown = best;
@@ -9554,7 +9578,7 @@ void Map_UpdateWorldMapMarkers(void) {
       cursorX -= WORLD_MAP_NAME_LEFT;
       cursorY -= 11;
       if (cursorX + width > 240) {
-        // 右へはみ出すなら、印の左上へ回す
+        // Past the right edge, it goes up and left of the marker.
         cursorX = 232 - width;
         cursorY = bestY - 20;
       }
@@ -9564,11 +9588,15 @@ void Map_UpdateWorldMapMarkers(void) {
     }
   }
 
-  // 印の半透明を明滅させる
+  // Pulse the markers' transparency.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
 
+// Shows the world map screen from the world map (event mode 3): closes the
+// screen, pauses the map's animations, draws the map picture on BG1 and runs
+// Map_UpdateWorldMapMarkers until A or B, then puts everything back. Says
+// "This place doesn't seem to be on the map..." when it is not.
 void Map_ShowWorldMap(s32 picture) {
   struct MapState *map = WORK_SLOT(8);
   struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
@@ -9610,7 +9638,7 @@ void Map_ShowWorldMap(s32 picture) {
              &REG_DISPCNT);
   BattleFx_SetupResourcesAndWindow();
   Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
-  if (GameFlag_TestFar(284))
+  if (GameFlag_TestFar(FLAG_NOT_ON_MAP))
     UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
   do {
     WaitFrames(1);
@@ -9632,6 +9660,8 @@ void Map_ShowWorldMap(s32 picture) {
   field->viewCenter->paused = 0;
 }
 
+// On the world map, shows only the scene actors within 320 pixels sideways,
+// 600 above and 400 below the camera.
 void BattleFx_UpdateObjectVisibilityBounds(void) {
   struct ObjectRuntime *object;
   s32 x;
@@ -9670,6 +9700,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void) {
   } while (id <= 65);
 }
 
+// On the world map, zooms the view out (0x9d89) while L is held, then back.
 void BattleFx_RunVisibilityTransition(void) {
   struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
 

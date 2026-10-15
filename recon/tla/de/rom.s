@@ -4230,7 +4230,10 @@ Func_08173aac:
 	.incbin "baserom.gba", 0x00173aac, 0x00007ec4
 	.section .rom.0017b9b8, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0017b9b8, 0x000026c0
+	.incbin "baserom.gba", 0x0017b9b8, 0x00001d0c
+	.section .rom.0017d724, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0017d724, 0x00000954
 	.section .rom.0017e0c0, "ax"
 	.balign 4
 	.global Func_0817e0c0

@@ -2052,6 +2052,8 @@ SECTIONS
         "*/recon/tla/es/rom.o"(.rom.00173aac)
         "*/games/tla/src/battle/effect/set_record_priority.o"(.text)
         "*/recon/tla/es/rom.o"(.rom.0017b9b8)
+        "*/games/tla/src/battle/effect/f17d6c4.o"(.text)
+        "*/recon/tla/es/rom.o"(.rom.0017d724)
         "*/games/tla/src/battle/effect/variant_j.o"(.text)
         "*/recon/tla/es/rom.o"(.rom.0017e0c0)
         "*/games/tla/src/battle/effect/variant_k.o"(.text)

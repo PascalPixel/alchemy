@@ -2153,7 +2153,7 @@ SECTIONS
         "*/recon/tla/raw/0817c6ac.o"(.text)
         "*/recon/tla/raw/0817cc30.o"(.text)
         "*/recon/tla/raw/0817d174.o"(.text)
-        "*/recon/tla/raw/0817d6c4.o"(.text)
+        "*/games/tla/src/battle/effect/f17d6c4.o"(.text)
         "*/recon/tla/raw/0817d724.o"(.text)
         "*/games/tla/src/battle/effect/variant_j.o"(.text)
         "*/recon/tla/raw/0817e0c0.o"(.text)

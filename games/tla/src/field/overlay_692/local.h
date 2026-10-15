@@ -57,4 +57,12 @@ static __inline__ struct ObjectRuntime *Create(s32 kind, s32 x, s32 y, s32 z)
     return Engine_ObjectCreate(kind, x, y, z);
 }
 
+void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+
+static __inline__ void ObjectMotion_ResetAndSetPositionInMode2_(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline sets x between the two halves of z, as the native does; called directly, z is built whole first (differ 2). */
+    ObjectMotion_ResetAndSetPositionInMode2(id, x, z);
+}
+
 #endif

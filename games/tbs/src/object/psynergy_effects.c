@@ -6418,7 +6418,7 @@ void RunBattleEffect08(void) {
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
 #if !defined(TBS_EDITION_EN)
-  scene->effectActive = 0; // 英語版にはない
+  scene->effectActive = 0; // not in the English release
 #endif
   WaitFrames(1);
   ev = BattleFx_FindMatchingEvent(0x50000005, 8, &arg);
@@ -6426,7 +6426,8 @@ void RunBattleEffect08(void) {
     BattleFx_RunEventAction(ev, gGameState.selectedActor, arg);
   AudioCommand_PlayFar(131);
 
-  // イベントのワークに中心 (ドット) と時間を入れ、近くに印を出す
+  // Record the centre (in pixels) and the time in the event work, and put
+  // markers nearby.
   scene->effectActive = 1;
   scene->effectCenterX = work->centreX / 0x10000;
   scene->effectCenterY = work->centreY / 0x10000;
@@ -6443,21 +6444,21 @@ void RunBattleEffect08(void) {
 }
 
 //--------------------------------------------------------------------------
-// burstobj.c
-// エナジー演出：イマジンの打ち切り、演出 12 の粒、演出 7 で対象を持ち上げる
+// Psynergy effects: ending Reveal, effect 12's particles, and effect 7
+// lifting its target.
 //--------------------------------------------------------------------------
 
-#define PSYNERGY_EV_4 0x40000005 // エナジーのイベント、段階 4
-#define FX_REVEAL 8              // イマジンの演出
-#define PARTICLE_OBJ 284         // 粒の物体
-#define FALL_OBJ 217             // 落ちる物体
-#define FALL_LAST 4              // 落ちる物体は 0-4 の 5 個
+#define PSYNERGY_EV_4 0x40000005 // Psynergy event, stage 4
+#define FX_REVEAL 8              // the Reveal effect
+#define PARTICLE_OBJ 284         // particle object
+#define FALL_OBJ 217             // falling object
+#define FALL_LAST 4              // five falling objects, 0 to 4
 
 struct BurstParticleVector {
   s32 values[3]; // x, y, z
 };
 
-// 粒のスプライトの属性
+// A particle sprite's attributes.
 struct BurstParticleVisual {
   u8 reserved00[5];
   u8 flagsALow : 5;
@@ -6484,14 +6485,11 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
-//--------------------------------------------------------------------------
-// イマジンの効果中なら打ち切る
-// 見張りをやめ、色を黒から 30 フレームで戻し、イマジンの段階 4
-// のイベントを実行する
-//--------------------------------------------------------------------------
+// Ends Reveal if it is running: stops its watch, brings the colours back
+// from black over 30 frames and runs stage 4 of the Psynergy event.
 void ResetSceneTransitionEffect(void) {
-  // gEffectWork はスロット 56。0x74 前がイベントワーク (27)、0x64 前がスロット
-  // 31
+  // gEffectWork is slot 56 of gWorkSlot: 0x74 bytes before it is the event
+  // work (slot 27), 0x64 bytes before it slot 31.
   struct BattleFxScene **cell = &gEffectWork;
   struct BattleFxScene *work = *cell;
   struct DisplayTransitionState *scene =
@@ -6530,9 +6528,8 @@ void ResetSceneTransitionEffect(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 対象のある演出 12：対象のまわりに粒を出し、対象を足元の優先度にする
-//--------------------------------------------------------------------------
+// Effect 12 cast on a target: particles round the target, which takes the
+// sprite priority of the ground under it.
 void BattleFx_RunBurstParticleMainObject(s32 unused) {
   struct FieldActor *target;
 
@@ -6550,9 +6547,8 @@ void BattleFx_RunBurstParticleMainObject(s32 unused) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 対象のない演出 12：粒を出したあと、まわり 4-10 ドットに落ちる物体を 5 個出す
-//--------------------------------------------------------------------------
+// Effect 12 cast with no target: the particles, then five falling objects
+// 4 to 10 pixels round the effect's position.
 void BattleFx_RunBurstParticles(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
@@ -6585,11 +6581,9 @@ void BattleFx_RunBurstParticles(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-//--------------------------------------------------------------------------
-// 使う者の前から粒を 24 個、2 フレームおきに出し、演出の位置のまわりへ飛ばす
-// 出る位置：向き 0x4000 は 10 ドット上、0xc000 は 24 ドット上、ほかは 10
-// ドット上の 10 ドット前
-//--------------------------------------------------------------------------
+// Sends 24 particles, one every 2 frames, from in front of the caster to
+// points round the effect's position. They start 10 pixels up facing south,
+// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
 void BattleEffect_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
   struct FieldActor *user;
@@ -6621,7 +6615,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(0xa0000, work->angle, pos);
     }
 
-    // 子のスプライトに、向きと形と色を写す
+    // Copy the flip, shape and palette to the child sprite.
     obj = Object_Spawn(PARTICLE_OBJ, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
@@ -6632,7 +6626,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (obj != 0) {
-      obj->scaleY = 0xb333; // 0.7 倍
+      obj->scaleY = 0xb333; // 0.7
       obj->scaleX = 0xb333;
       obj->acceleration = 0x18000;
       obj->speed = 0x18000;
@@ -6643,7 +6637,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
                                    gBattleFx_CommonParticleScript + 1);
       ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
 
-      // 行き先：演出の位置から 4-10 ドット
+      // Destination: 4 to 10 pixels from the effect's position.
       pos[0] = work->x;
       pos[1] = work->y;
       pos[2] = work->z;
@@ -6659,11 +6653,8 @@ void BattleEffect_SpawnBurstParticleField(void) {
   WaitFrames(8);
 }
 
-//--------------------------------------------------------------------------
-// 対象のある演出 7
-// 左右 32 ドットに物体を出して 14 ドット動かし、対象といっしょに 32
-// ドット持ち上げる
-//--------------------------------------------------------------------------
+// Effect 7 cast on a target: an object appears 32 pixels to either side,
+// each moves 14 pixels in, and they lift the target 32 pixels with them.
 void BattleEffect_RunTargetedItemBreak(s32 unused) {
   struct BattleFxScene *work;
   struct DispatchObject *user;
@@ -6686,7 +6677,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
 
   x = work->x;
   pos[0] = x;
-  y = work->y + 0x100000; // 16 ドット上
+  y = work->y + 0x100000; // 16 pixels up
   pos[1] = y;
   z = work->z;
   pos[2] = z;
@@ -6706,7 +6697,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
   AudioCommand_PlayFar(130);
   target->motionFlags = 4;
 
-  // 1/4 ドットずつ 32 ドット上げる
+  // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
   if (pair[0] != NULL && pair[1] != NULL && startY <= startY + 0x200000) {
     do {
@@ -6723,16 +6714,15 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
 }
 
 //--------------------------------------------------------------------------
-// anchor.c
-// エナジー演出 7：左右の二つの物体と、飛び散る破片
+// Psynergy effect 7: the two objects to either side, and the shards.
 //--------------------------------------------------------------------------
-// 破片の数
+// Shards scattered.
 #define ANCHOR_SHARD_MAX 24
 
 //--------------------------------------------------------------------------
-// 対象のない演出の本体：演出の位置の 16 ドット上、左右 32 ドットに spawn で
-// 物体を出し、それぞれの向きへ 24 ドット動かしてから、破片を 24 個、
-// 8-32 ドット先へ散らす
+// Defines an effect cast with no target: spawn makes an object 16 pixels
+// above the effect's position and 32 pixels to either side; each moves 24
+// pixels its way, then 24 shards scatter 8 to 32 pixels.
 //--------------------------------------------------------------------------
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
@@ -6783,13 +6773,11 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
     BattleFx_PrepareBufferInterpolation();                                     \
   }
 
-// 対象のない演出 7
+// Effect 7 cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect07, BattleFx_SpawnItemBreakMode3)
 
-//--------------------------------------------------------------------------
-// 物体 215 を出し、回しながら 1/4 から等倍まで 24 フレームで大きくする
-// angle : 大きくなったあとの向き
-//--------------------------------------------------------------------------
+// Spawns object 215 and grows it, spinning, from a quarter to full size over
+// 24 frames; angle is the way it faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *obj;
@@ -6799,7 +6787,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   obj = Object_Spawn(215, x, y, z);
   if (obj != NULL) {
     obj->scaleX = obj->scaleY = 0x4000;
-    obj->acceleration = obj->speedLimit = 0x30000; // 3 ドット/フレーム
+    obj->acceleration = obj->speedLimit = 0x30000; // 3 pixels a frame
     ((struct FieldSprite *)obj->records)->priority = 0;
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
     scale = obj->scaleX;
@@ -6808,7 +6796,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
         scale += 0x800;
         obj->scaleY = scale;
         obj->scaleX = scale;
-        obj->angle += 0x2000; // 1/8 回転
+        obj->angle += 0x2000; // 1/8 turn
         WaitFrames(1);
         scale = obj->scaleX;
       } while (scale <= 0xffff);
@@ -6818,13 +6806,8 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   return obj;
 }
 
-//--------------------------------------------------------------------------
-// impact.c
-// 散って集まる粒の動きと、重い衝撃の破片
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 粒の動き : 原点のまわりへ散ってから、主オブジェクトのそばへ集まって消える
-//--------------------------------------------------------------------------
+// Effect slot callback of a particle that scatters 25 pixels from its origin
+// in a random direction, then gathers beside the main object and is freed.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
@@ -6833,7 +6816,7 @@ void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
 again:
   state = slot->state;
   if (state == 0) {
-    // 原点から 25 ドット、でたらめな方向へ
+    // 25 pixels from the origin, in a random direction.
     pos.x = slot->originX;
     pos.z = slot->originZ;
     Vector_AddPolarOffset(25 << 16, (u16)Random16(), &pos);
@@ -6847,7 +6830,7 @@ again:
   }
 
   if (state == 1) {
-    // 着いたらすぐ次へ
+    // On arrival, go straight on.
     if (BattleFx_HasReachedTarget(slot) == 0) {
       slot->state++;
       goto again;
@@ -6856,8 +6839,8 @@ again:
   }
 
   if (state == 2) {
-    // 主オブジェクトの 16 ドット上から scene->angle へ 8 ドット、
-    // 画面座標にして 4 ドットの揺らぎを足す
+    // 8 pixels toward scene->angle from 16 pixels above the main object, on
+    // screen, give or take 4 pixels.
     struct MotionObject *obj = scene->mainObject;
 
     pos.x = obj->x;
@@ -6878,10 +6861,8 @@ again:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-//--------------------------------------------------------------------------
-// 重い衝撃 : y を 32 ドット下げた位置に 0x11b を置き、破片を 12 個まき散らす
-// src : 衝撃の位置になるオブジェクト
-//--------------------------------------------------------------------------
+// A heavy impact: places object 0x11b 32 pixels below src and scatters 12
+// shards from it.
 s32 SpawnHeavyImpactEffect(struct MotionObject *src) {
   struct EffectVector pos;
   struct ObjectRuntime *obj;
@@ -6900,7 +6881,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src) {
                                  gBattleFx_CommonParticleScript);
   }
 
-  // 破片 : 速さ 1〜2 ドット、8〜32 ドット先のでたらめな方向へ
+  // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
   for (i = 0; i < 12; i++) {
     frag = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
     if (frag != NULL) {
@@ -6916,21 +6897,17 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src) {
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// 戦闘エフェクト 4 番を呼ぶ
-//--------------------------------------------------------------------------
+// Effect 4 cast on a target.
 void BattleFx_CallEffect04(s32 unused) { RunBattleEffect04(); }
 
 //--------------------------------------------------------------------------
-// orbit.c
-// フィールドのエナジー演出：4 番（押し出す弾）、6 番（渦を巻いて集まる粒）
+// Psynergy effects 4 (a shot that pushes what it hits) and 6 (particles
+// that spiral in).
 //--------------------------------------------------------------------------
 
-#define ABOVE (16 << 16) // 16 ドット上
+#define ABOVE (16 << 16) // 16 pixels up
 
-//--------------------------------------------------------------------------
-// obj の 16 ドット上の位置
-//--------------------------------------------------------------------------
+// The position 16 pixels above obj.
 static __inline__ void PosAbove(struct FieldActor *obj,
                                 struct EffectVector *pos) {
   pos->x = obj->x.fixed;
@@ -6938,7 +6915,8 @@ static __inline__ void PosAbove(struct FieldActor *obj,
   pos->z = obj->z.fixed;
 }
 
-// FieldActor と同じ物体。FieldActor に欄のない 0x5e を使う
+// A FieldActor seen with the halfword at 0x5e (its lifetime), which
+// FieldActor does not name.
 struct SparkObject {
   u8 unk00[8];
   s32 x;
@@ -6948,23 +6926,22 @@ struct SparkObject {
   s32 scaleX;
   s32 scaleY;
   u8 unk20[24];
-  s32 anchorX; // ゆれの中心（FieldActor の targetX の位置）
+  s32 anchorX; // centre of the sway (FieldActor's targetX)
   u8 unk3c[12];
-  s32 gravity; // FieldActor と同じ位置
+  s32 gravity; // as in FieldActor
   u8 unk4c[9];
-  u8 motionFlags; // FieldActor と同じ位置
+  u8 motionFlags; // as in FieldActor
   u8 unk56[8];
   u16 lifetime;
   u8 unk60[4];
-  s16 phase; // ゆれの位相（128 フレームで 1 周）
+  s16 phase; // phase of the sway (128 frames a cycle)
   u8 unk66[6];
   void (*update)(struct SparkObject *);
 };
 
-//--------------------------------------------------------------------------
-// エナジー 4 番 : 使う者の前に弾を出して大きくし、残像 3 つと前へ飛ばす
-// 当たった物（scene->child）は 16 ドット押し出す
-//--------------------------------------------------------------------------
+// Psynergy effect 4: a shot appears in front of the caster, grows and flies
+// forward with three afterimages; what it hits (scene->child) is pushed 16
+// pixels.
 void RunBattleEffect04(void) {
   struct FieldActor *target;
   s32 ctx;
@@ -6987,7 +6964,7 @@ void RunBattleEffect04(void) {
   AudioCommand_PlayFar(130);
   slot = scene->slots;
 
-  // 使う者の頭上から、光を 2 フレームおきに 12 個はじけさせる
+  // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     src = scene->mainObject;
     PosAbove(src, &pos);
@@ -6996,13 +6973,14 @@ void RunBattleEffect04(void) {
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 9);
-    slot->scaleY = 0xb333; // 0.7 倍
+    slot->scaleY = 0xb333; // 0.7
     slot->scaleX = 0xb333;
     WaitFrames(2);
     slot++;
   }
 
-  // 弾：使う者の向きに 8 ドット先で、0.25 倍から等倍まで大きくする
+  // The shot: 8 pixels in front of the caster, growing from 0.25 to full
+  // size.
   src = scene->mainObject;
   pos.x = src->x.fixed;
   pos.y = src->y.fixed + ABOVE;
@@ -7033,7 +7011,7 @@ void RunBattleEffect04(void) {
   }
   WaitFrames(3);
 
-  // 残像 3 つ。絵の資源はひとつを分けあう
+  // Three afterimages, sharing one set of graphics.
   res = NULL;
   for (i = 2; i >= 0; i--) {
     copy = copies[i] =
@@ -7053,7 +7031,8 @@ void RunBattleEffect04(void) {
   }
   resSlot = res->slot;
 
-  // 行き先：scene->enabled なら使う者の 56 ドット先、ほかは scene の位置
+  // Destination: 56 pixels in front of the caster with scene->enabled set,
+  // otherwise the effect's position.
   if (scene->enabled != 0) {
     src = scene->mainObject;
     pos.x = src->x.fixed;
@@ -7078,12 +7057,13 @@ void RunBattleEffect04(void) {
     }
   }
 
-  // 弾のスクリプトが終わるまで、60 フレームまで待つ
+  // Wait, at most 60 frames, for the shot's script to end.
   for (i = 0; i <= 59 && ((struct ScriptMotionObject *)obj)->script != NULL;
        i++)
     WaitFrames(1);
 
-  // 当たった物を、ぶつからなければ 16 ドット押し出す（childOption なら跳ねる）
+  // Push what was hit 16 pixels if nothing is in the way (it hops with
+  // childOption).
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
       target->velocityY = 8 << 16;
@@ -7099,7 +7079,7 @@ void RunBattleEffect04(void) {
     }
   }
 
-  // 応じるマップのイベントがあれば動かす
+  // Run the map's event for it, if there is one.
   ev = BattleFx_FindMatchingEvent(0x50000005, 4, &ctx);
   if (ev != NULL)
     BattleFx_RunEventAction(ev, gGameState.selectedActor, ctx);
@@ -7110,9 +7090,7 @@ void RunBattleEffect04(void) {
     Resource_ResetEntry(resSlot);
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：8 フレームごとに 2 フレームだけアニメ 2 にして光らせる
-//--------------------------------------------------------------------------
+// Per-frame update: flashes (animation 2) for 2 frames in every 8.
 void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle) {
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
@@ -7122,9 +7100,7 @@ void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：1/16 ずつ縮み、1/16 以下で消える
-//--------------------------------------------------------------------------
+// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle) {
   s32 scale;
 
@@ -7138,11 +7114,9 @@ void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：target のまわりを左まわりに渦を巻いて寄る
-// 半径は残りフレーム × 2 ドット、1 フレームに 0x800 まわる
-// work は始めの向き、timer は残りフレーム。0 で縮んで消える
-//--------------------------------------------------------------------------
+// Per-frame update: spirals anticlockwise in on the target, at a radius of
+// twice the frames left in pixels, turning 0x800 a frame. work holds its
+// starting direction and timer the frames left; at 0 it shrinks away.
 void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle) {
   struct EffectVector pos;
   s16 life;
@@ -7168,9 +7142,7 @@ void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：左まわりと同じで、右まわり
-//--------------------------------------------------------------------------
+// Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
 void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle) {
   struct EffectVector pos;
   s16 life;
@@ -7196,10 +7168,8 @@ void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle) {
   }
 }
 
-//--------------------------------------------------------------------------
-// エナジー 6 番をかけられた物（scene->child）から始める
-// childMode があれば、物は変えずに粒だけ出す
-//--------------------------------------------------------------------------
+// Effect 6 cast on a target (scene->child); with childMode the target is
+// left as it is and only the particles appear.
 void BattleFx_StartOrbitingParticles(s32 unused) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
@@ -7213,10 +7183,9 @@ void BattleFx_StartOrbitingParticles(s32 unused) {
   }
 }
 
-//--------------------------------------------------------------------------
-// エナジー 6 番 : 粒 16 個が scene の位置へ渦を巻いて集まり、
-// 物を 16 回光らせる。childOption がなければ物を mode 2 にする
-//--------------------------------------------------------------------------
+// Psynergy effect 6: 16 particles spiral in on the effect's position and
+// make the target flash 16 times; without childOption the target takes
+// mode 2.
 void BattleFx_RunOrbitingParticles(void) {
   s32 ctx;
   struct EffectVector pos;
@@ -7232,8 +7201,8 @@ void BattleFx_RunOrbitingParticles(void) {
   BattleEffect_InitializeSharedScene();
   AudioCommand_PlayFar(115);
 
-  // 3 フレームおきに粒を出す。大きさ 0.5〜1 倍、まわる向きはでたらめ
-  // 中心は scene の位置から 2〜6 ドットずらす
+  // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
+  // centred 2 to 6 pixels from the effect's position.
   p = &pos;
   cnt = 15;
   do {
@@ -7278,7 +7247,7 @@ void BattleFx_RunOrbitingParticles(void) {
   if (target != NULL && scene->enabled == 0) {
     AudioCommand_PlayFar(212);
 
-    // 5 フレームごとに 1 フレーム光る
+    // Flash for 1 frame in every 5.
     cnt = 15;
     do {
       Animation_ApplyChildValuesFar(target, 7);
@@ -7305,9 +7274,8 @@ void BattleFx_RunOrbitingParticles(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：anchorX を中心に左右 4 ドット、128 フレームで 1 往復ゆれる
-//--------------------------------------------------------------------------
+// Per-frame update: sways 4 pixels either side of anchorX, once every 128
+// frames.
 void BattleFx_SwayParticle(struct SparkObject *obj) {
   s16 *phase;
 
@@ -7317,10 +7285,9 @@ void BattleFx_SwayParticle(struct SparkObject *obj) {
   *phase = (*phase + 128) % 128;
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：scene の位置の 10 ドット上を中心に、渦を巻いて寄る
-// 半径は残りフレームと同じドット数。timer が 0 で消える
-//--------------------------------------------------------------------------
+// Per-frame update: spirals in on a point 10 pixels above the effect's
+// position, at a radius of as many pixels as frames are left; released when
+// timer reaches 0.
 void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
@@ -7346,11 +7313,9 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：scene の位置の 16 ドット上で左右 6 ドット（64
-// フレーム）ゆれ、 3 フレームごとに、ゆれながらゆっくり落ちる粒を出す phase が
-// -1 なら、その場から動かない
-//--------------------------------------------------------------------------
+// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
+// above the effect's position, and every 3 frames sheds a spark that sways
+// as it slowly falls. With phase -1 it stays where it is.
 void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
   struct BattleFxScene *scene;
   s16 *phase;
@@ -7367,7 +7332,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
-    // 2 ドット上から、でたらめな向きに 0〜6 ドットずらす
+    // From 2 pixels up, 0 to 6 pixels in a random direction.
     pos[0] = obj->x;
     pos[1] = obj->y + (2 << 16);
     pos[2] = obj->z;
@@ -7375,7 +7340,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
     spark = Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleFx_SwayParticle;
-      spark->scaleX = spark->scaleY = 0x9999; // 0.6 倍
+      spark->scaleX = spark->scaleY = 0x9999; // 0.6
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
       spark->phase = Random16() >> 9;
@@ -7389,22 +7354,18 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj) {
 }
 
 //--------------------------------------------------------------------------
-// call_effect_03_and_stop.c
-// 演出 03：渦を巻いて集まる 8 個の粒と、火花を出して飛び去る 1 個
+// Psynergy effect 3: eight particles that spiral in, and one that sheds
+// sparks and flies away.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 演出 03 を流し、いまのオブジェクトを止める
-//--------------------------------------------------------------------------
+
+// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
 void BattleFx_CallEffect03AndStop(s32 unused) {
   RunBattleEffect03();
   EffectRuntime_StopCurrentObject();
 }
 
-//--------------------------------------------------------------------------
-// 演出 03
-// 8 個の粒が渦を巻いて中心へ集まり、中心に現れた 1 個が火花を出してから
-// 遠くへ飛び去る
-//--------------------------------------------------------------------------
+// Psynergy effect 3: eight particles spiral into the centre, where one
+// appears, sheds sparks and flies far away.
 void RunBattleEffect03(void) {
   struct BattleFxScene *scn = gEffectWork;
   struct FieldActor *target = scn->mainObject;
@@ -7415,13 +7376,13 @@ void RunBattleEffect03(void) {
 
   BattleEffect_InitializeSharedScene();
 
-  // 渦の粒：1 フレームに 1 個ずつ、1/8 周ずらして出す
+  // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
     object = Object_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
                           target->z.fixed);
     if (object != 0) {
-      object->scaleY = 0xb333; // 0.7 倍
+      object->scaleY = 0xb333; // 0.7
       object->scaleX = 0xb333;
       object->update = BattleFx_UpdateShrinkingOrbitObject;
       object->timer = 120;
@@ -7436,7 +7397,7 @@ void RunBattleEffect03(void) {
   AudioCommand_PlayFar(130);
   WaitFrames(110);
 
-  // 中心の 1 個
+  // The one in the centre.
   target = Object_Spawn(233, 0, 0, 0);
   object = target;
   if (target != 0) {
@@ -7452,7 +7413,7 @@ void RunBattleEffect03(void) {
   AudioCommand_PlayFar(131);
   WaitFrames(12);
   if (target != 0) {
-    // 2 フレームごとに子の値を切り替える（4 回に 1 回は 10）
+    // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
       /* FAKEMATCH: needed to match: the ROM keeps object as a second register
        * copy of the spark (r5 beside r6); this redundant reassignment stops
@@ -7467,7 +7428,7 @@ void RunBattleEffect03(void) {
     }
   }
 
-  // 火花
+  // Sparks.
   Animation_ApplyChildValuesFar(object, 0);
   AudioCommand_PlayFar(84);
   if (object != 0) {
@@ -7479,7 +7440,7 @@ void RunBattleEffect03(void) {
       WaitFrames(192);
   }
 
-  // 飛び去る
+  // Fly away.
   if (target != 0) {
     target->timer = -1;
     target->speed = 0x50000;
@@ -7496,15 +7457,12 @@ void RunBattleEffect03(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-#define CLOAK_TILE 0xfb  // 隠れていられるタイルの属性
-#define CLOAK_END 0x2092 // 隠れていられないときの psynergyRequest
+#define CLOAK_TILE 0xfb  // the tile attribute Cloak can stay hidden on
+#define CLOAK_END 0x2092 // psynergyRequest when Cloak can no longer hide
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理 : 選択中のオブジェクトの足もとのタイルが
-// CLOAK_TILE でなければ、CLOAK_END を要求する
-// イベントの mode が 3 なら 32 ドット四方の gMapBlocks、
-// ほかは 16 ドット四方の地形のマップを見る
-//--------------------------------------------------------------------------
+// Scheduler callback of Cloak: when the tile under the leader is not
+// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
+// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map.
 void CheckObjectMapTile(void) {
   u32 slot;
   struct EventRuntime *ev;
@@ -7557,9 +7515,8 @@ void CheckObjectMapTile(void) {
     ((struct EventWork *)ev)->psynergyRequest = CLOAK_END;
 }
 
-//--------------------------------------------------------------------------
-// 姿を戻す : 確認を止め、点滅させて cloaked を消す
-//--------------------------------------------------------------------------
+// Ends Cloak: stops the tile check and makes the leader blink back into
+// sight, clearing cloaked.
 void MapEvent_RunTileTriggerSequence(void) {
   struct ObjectRuntime *obj;
   struct AnimationObject *anim;
@@ -7599,19 +7556,16 @@ void MapEvent_RunTileTriggerSequence(void) {
   gGameState.cloaked = 0;
 }
 
-//--------------------------------------------------------------------------
-// 隠れているなら、足もとの確認を始める
-//--------------------------------------------------------------------------
+// Starts the Cloak tile check if the leader is hidden.
 void BattleFx_ScheduleCloakedMapCheck(void) {
   if (gGameState.cloaked != 0) {
     Scheduler_AddOrUpdateCallback((SchedulerCallback)CheckObjectMapTile, 0xc80);
   }
 }
 
-//--------------------------------------------------------------------------
-// 姿を隠す : 10 回点滅させて cloaked を立て、足もとを確かめる
-// その場で隠れられなければ、すぐに姿を戻す
-//--------------------------------------------------------------------------
+// Psynergy effect 10, Cloak: the leader blinks 10 times and hides (cloaked
+// set), and the tile check starts; where the leader cannot hide it shows
+// again at once.
 void BattleFx_RunFlashingCallbackSequence(void) {
   struct EventWork *ev = gEventWork;
   struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selectedActor);
@@ -7648,11 +7602,12 @@ void BattleFx_RunFlashingCallbackSequence(void) {
   }
 }
 
-// FieldActor と同じ物体。FieldActor に欄のない 0x5e (phase) を使う
+// A FieldActor seen with the halfword at 0x5e (here its phase), which
+// FieldActor does not name.
 struct Effect05Object {
   u8 reserved00[8];
   s32 x, y, z;
-  s32 altitude; // 落ちて止まる高さ
+  s32 altitude; // the height it falls to
   s32 scaleX, scaleY;
   u8 reserved20[8];
   s32 velocityY;
@@ -7665,12 +7620,12 @@ struct Effect05Object {
   u8 reserved56[8];
   s16 phase;
   u8 reserved60[0xc];
-  void *callback; // 毎フレームの処理
+  void *callback; // per-frame update
 };
 
 struct Effect05State {
   s32 angle;
-  s32 x, y, z; // 玉の行き先の足もと
+  s32 x, y, z; // the ground under the orb's destination
   struct Object *target;
   s32 initialized;
   u8 reserved18[8];
@@ -7681,9 +7636,8 @@ struct Effect05State {
   u8 alternate;
 };
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理 : 落ちる粒が altitude に着いたら、小さな粒を 3 つ散らす
-//--------------------------------------------------------------------------
+// Per-frame update of a falling particle: on reaching altitude, it scatters
+// three small particles.
 void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
   s32 i;
   struct Effect05Object *p;
@@ -7698,7 +7652,8 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
     p = NULL;
     obj->callback = p;
 
-    // 半分の大きさで、上へ 1 ドットの速さで跳ね、32 ドット先のでたらめな方向へ
+    // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
+    // away.
     for (i = 0; i <= 2; i++) {
       p = Object_Spawn(0xf0, obj->x, obj->y, obj->z);
       if (p == NULL) {
@@ -7719,9 +7674,8 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理 : 左右にゆれながらゆっくり落ち、地面に着いたら消える
-//--------------------------------------------------------------------------
+// Per-frame update: drifts from side to side as it slowly falls, and is
+// released on reaching the ground.
 void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj) {
   s32 r;
 
@@ -7734,20 +7688,18 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj) {
   }
 }
 
+// Effect 5 cast on a target.
 void BattleFx_CallEffect05(s32 unused) { RunBattleEffect05(); }
 
-//--------------------------------------------------------------------------
-// 0〜10 段で start から end へ
-//--------------------------------------------------------------------------
+// From start to end in 10 steps: the value at step (0 to 10).
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
-//--------------------------------------------------------------------------
-// 光の玉を対象の 16 ドット上から行き先の 32 ドット上 (variant なら 80 ドット上)
-// へ 10 フレームで運びながら大きくし、粒を降らせてから戻す
-// 行き先は、まだ決まっていなければ対象から angle の向きへ 16 ドット
-//--------------------------------------------------------------------------
+// Psynergy effect 5: an orb of light rises from 16 pixels above the target
+// to 32 pixels above the destination (80 with variant) over 10 frames,
+// growing as it goes, rains particles, and returns. With no destination yet,
+// the destination is 16 pixels from the target toward angle.
 void RunBattleEffect05(void) {
   struct EffectVector pos;
   struct EffectVector start;
@@ -7787,7 +7739,7 @@ void RunBattleEffect05(void) {
   if ((s8)work->variant != 0)
     to->y = y + (80 << 16);
 
-  // 運びながら 1/4 から等倍まで大きくする
+  // Grow from a quarter to full size on the way.
   for (; i < steps; i++) {
     s32 scale;
 
@@ -7817,7 +7769,8 @@ void RunBattleEffect05(void) {
   WaitFrames(10);
 
   if ((s8)work->alternate == 0) {
-    // 玉のまわり 3〜8 ドットから粒を 6 フレームおきに落とす (最後は玉の真下)
+    // Drop a particle every 6 frames from 3 to 8 pixels round the orb (the
+    // last right under it).
     count = 10;
     if ((s8)work->highArc == 0)
       count = 24;
@@ -7843,7 +7796,8 @@ void RunBattleEffect05(void) {
     }
     WaitFrames(10);
   } else {
-    // 玉のまわり 3〜8 ドットから、ゆれて落ちる粒を 6 フレームおきに出す
+    // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
+    // orb.
     if ((s8)work->highArc != 0)
       count = 10;
     else
@@ -7866,7 +7820,7 @@ void RunBattleEffect05(void) {
     WaitFrames(70);
   }
 
-  // 等倍から 1/4 まで縮めながら、対象の上へ戻す
+  // Shrink back to a quarter on the way back over the target.
   i = 0;
   do {
     s32 scale;
@@ -7900,22 +7854,19 @@ void RunBattleEffect05(void) {
 }
 
 //--------------------------------------------------------------------------
-// particles.c
-// バトル効果：持ち上げた物のまわりに落ちる粒
+// Particles falling round a lifted object.
 //--------------------------------------------------------------------------
 
 struct FallScene {
   u8 reserved00[20];
-  struct FieldActor *child; // 持ち上げている物
+  struct FieldActor *child; // the lifted object
 };
 
 LAYOUT_SIZE_GUARD(FallPos_Size, struct EffectVector, 0x0c);
 LAYOUT_OFFSET_GUARD(FallScene_Child, struct FallScene, child, 0x14);
 
-//--------------------------------------------------------------------------
-// 毎フレームの処理：持ち上げている物のまわりに、落ちる粒をひとつ出す
-// 高さは物から 8〜24 ドット上、横はでたらめな向きに 0〜48 ドット
-//--------------------------------------------------------------------------
+// Per-frame update: drops one particle round the lifted object, 8 to 24
+// pixels above it and 0 to 48 pixels away in a random direction.
 void BattleFx_SpawnFallingParticles(void) {
   struct FieldActor *src;
   struct EffectVector pos;
@@ -7933,7 +7884,7 @@ void BattleFx_SpawnFallingParticles(void) {
   obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->motionFlags = ACTOR_FALLS;
-    obj->gravity = 0x1999; // 重力 0.1 ドット
+    obj->gravity = 0x1999; // gravity 0.1 pixel
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
     obj->lifetime = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
@@ -7942,15 +7893,13 @@ void BattleFx_SpawnFallingParticles(void) {
 }
 
 //--------------------------------------------------------------------------
-// lift_drop.c
-// 対象を 2 つの持ち手で持ち上げ、方向キーで動かして落とす
+// Lifting a target with two hands, moving it with the d-pad and dropping
+// it.
 //--------------------------------------------------------------------------
 
-#define SHARD_MAX 20 // 破片の数
+#define SHARD_MAX 20 // shards
 
-//--------------------------------------------------------------------------
-// 足もとを 16 ドット上げて、pos へ動いたときにぶつかるかを調べる
-//--------------------------------------------------------------------------
+// Whether obj, raised 16 pixels, would collide moving to pos.
 static __inline__ s32 ObjProbeUp(struct FieldActor *obj,
                                  struct EffectVector *pos) {
   s32 hit;
@@ -7961,11 +7910,9 @@ static __inline__ s32 ObjProbeUp(struct FieldActor *obj,
   return hit;
 }
 
-//--------------------------------------------------------------------------
-// 対象を左右の持ち手で 24 ドットの高さまで持ち上げ、方向キーの向きへ
-// 16 ドット動かして落とす (A・B・L・R ならその場で落とす)
-// 行き先がふさがっていれば、ブザーを鳴らして待つ
-//--------------------------------------------------------------------------
+// Effect 11 cast on a target: two hands lift it to 24 pixels above the
+// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
+// where it is. Where the way is blocked a buzzer sounds.
 void BattleFx_SteerLiftedTarget(s32 id) {
   struct BattleFxScene *work;
   struct FieldActor *src;
@@ -7990,7 +7937,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   ObjectDispatch_InitializeFar((struct DispatchObject *)src,
                                gBattleFx_SourceHoldScript);
 
-  // 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
+  // The hands appear 32 pixels to either side and move to 16 pixels.
   /* FAKEMATCH: the position is reached through this pointer everywhere
    * but in the steering loop's first part, which names the position
    * itself. Measured: the position named everywhere differs 10; the
@@ -8020,7 +7967,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   right->x.fixed = p->x - (16 << 16);
   right->velocityX = 0;
 
-  // 地面から 24 ドットの高さまで持ち上げる
+  // Lift to 24 pixels above the ground.
   target->update = ObjectGroup_ApplyRandomChildValues;
   Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
   AudioCommand_PlayFar(130);
@@ -8044,14 +7991,14 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   target->terrainId = 2;
 
   //------------------------------------------------------------------
-  // 方向キーで動かす
+  // Move with the d-pad.
   //------------------------------------------------------------------
   for (;;) {
     WaitFrames(1);
     if ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
 
-    // 方向キーなし : 持ち手を対象の左右に戻す
+    // No direction held: the hands go back to the target's sides.
     angle = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
     if (angle == 0xffff) {
       pos.x = target->x.fixed;
@@ -8064,7 +8011,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
       continue;
     }
 
-    // 持ち手をその向きへ 2 ドット寄せ、16 ドット先の地面を調べる
+    // The hands lean 2 pixels that way; check the ground 16 pixels on.
     pos.x = target->x.fixed;
     pos.y = target->y.fixed + (16 << 16);
     pos.z = target->z.fixed;
@@ -8086,14 +8033,14 @@ void BattleFx_SteerLiftedTarget(s32 id) {
     if (i != 0)
       goto blocked;
     if (ObjProbeUp(target, p) > 0) {
-    blocked: // ふさがっている : 16 フレームごとにブザー
+    blocked: // the way is blocked: a buzzer every 16 frames
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SOUND_MENU_ERROR);
       continue;
     }
-    // 空いている : 対象をそこへ動かす
+    // The way is free: move the target there.
     {
       struct FieldActor *second;
       s32 x;
@@ -8127,7 +8074,8 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   }
 
   //------------------------------------------------------------------
-  // 対象の位置から破片を飛ばして持ち手を消し、対象を跳ねさせて落とす
+  // Shards fly from the target, the hands vanish, and the target hops and
+  // drops.
   //------------------------------------------------------------------
   ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
   ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
@@ -8142,7 +8090,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   {
     struct FieldActor **walk = shards;
 
-    // 破片 : 速さ 2〜3 ドット、8〜32 ドット先のでたらめな方向へ
+    // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < SHARD_MAX; i++) {
       obj = Object_Spawn(0x11d, p->x, p->y, p->z);
       *walk++ = obj;
@@ -8161,7 +8109,8 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   ObjectDispatch_ReleaseFar(hands[0]);
   ObjectDispatch_ReleaseFar(hands[1]);
 
-  // 対象の見た目と動きを戻し、上へ 10 ドットの速さで跳ねさせる
+  // Restore the target's look and motion, and throw it up at 10 pixels a
+  // frame.
   Animation_ApplyChildValuesFar(target, work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                work->savedScript);
@@ -8173,7 +8122,7 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   src->update = 0;
   Animation_ApplyChildValuesFar(src, 0);
   if (work->childOption != 0) {
-    // 上がりきって落ちきるまで (それぞれ最長 90 フレーム) 待ち、輪を出す
+    // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       WaitFrames(1);
     WaitFrames(1);
@@ -8187,8 +8136,12 @@ void BattleFx_SteerLiftedTarget(s32 id) {
   }
 }
 
+// Effect 11 cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect11, BattleFx_SpawnItemBreakMode1)
 
+// Spawns object 215 with the item break sound, in animation 1, and grows it,
+// spinning, from a quarter to full size over 24 frames; angle is the way it
+// faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *obj;
@@ -8219,11 +8172,11 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   return obj;
 }
 
-// FieldActor と同じ物体。0x64 を符号なし、0x66 を符号つきで読む (FieldActor
-// の型ではバイトが変わる)
+// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
+// signed, as the bytes read them (FieldActor's own types change the code).
 struct OrbitEffect {
   u8 unk00[6];
-  u16 angle; // 進む向き・回る角度
+  u16 angle; // the way it heads, or its angle round the anchor
   s32 x;
   s32 y;
   s32 z;
@@ -8232,21 +8185,19 @@ struct OrbitEffect {
   u8 unk2c[28];
   s32 speed;
   u8 unk4c[24];
-  u16 timer;                  // 経過フレーム
-  s16 pause;                  // 向きを大きく変える残りフレーム
-  struct OrbitEffect *anchor; // 回る中心
+  u16 timer;                  // frames so far
+  s16 pause;                  // frames left of a sharp turn
+  struct OrbitEffect *anchor; // what it circles
   void (*update)(struct OrbitEffect *);
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
 #include "../scene/common/effect_spawn.h"
 #undef EFFECT_SPAWN_RESIDENT
 
-//--------------------------------------------------------------------------
-// 粒子の毎フレーム処理
-// 速度で進み、x と z の速度を少しずつ落とし、拡大率と回転を変える
-//--------------------------------------------------------------------------
+// Per-frame update of a particle: moves by its velocity, slowing its x and z
+// velocity a little, and changes its scale and spin.
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
@@ -8260,10 +8211,8 @@ void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   effect->sprite->rotation += effect->spin;
 }
 
-//--------------------------------------------------------------------------
-// origin の位置から、水平に輪を描いて広がる粒子を 17 個出す
-// x 方向の速度は z 方向の 1.5 倍
-//--------------------------------------------------------------------------
+// Spawns 17 particles that spread from origin in a flat ring, their x
+// velocity 1.5 times their z velocity.
 void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions opt;
   s32 vel[3];
@@ -8273,11 +8222,11 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
 
   opt.palette = 0;
   opt.update = BattleFx_UpdateParticleMotionAndScale;
-  opt.startScaleX = 0xcccc; // 0.8 倍
+  opt.startScaleX = 0xcccc; // 0.8
   opt.startScaleY = 0xcccc;
   i = 0;
   do {
-    angle = i << 12; // 1/16 周ずつ
+    angle = i << 12; // 1/16 turn apart
     vel[0] = Trig_Cos(angle) * 3 / 2;
     vel[1] = 0;
     vz = Trig_Sin(angle);
@@ -8288,11 +8237,9 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   } while (i <= 16);
 }
 
-//--------------------------------------------------------------------------
-// 中心を離れてさまよう（毎フレーム）
-// 1 フレームに 2〜3 ドット進み、ときどき向きを大きく変える
-// 101 フレームで共通の粒子スクリプトへ移る
-//--------------------------------------------------------------------------
+// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
+// now and then turning sharply; after 101 frames it hands over to the
+// common particle script.
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
   s32 len;
   s32 angle;
@@ -8309,19 +8256,17 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
   if (effect->pause != 0) {
     effect->pause--;
     effect->angle += 0x800;
-  } else if ((Random16() << 5) >> 16 == 0) // 1/32 の確率
+  } else if ((Random16() << 5) >> 16 == 0) // one chance in 32
   {
-    effect->pause = ((Random16() << 4) >> 16) + 8; // 8〜23 フレーム
+    effect->pause = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->timer == 101)
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
                                  gBattleFx_CommonParticleScript);
 }
 
-//--------------------------------------------------------------------------
-// 中心のまわりを半径 8 ドットで回る（毎フレーム）
-// 121 フレーム回ったら、さまよう動きに切り替える
-//--------------------------------------------------------------------------
+// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
+// starts to wander (BattleFx_WanderAroundAnchor).
 void BattleFx_CircleAnchor(struct OrbitEffect *effect) {
   struct OrbitEffect *anchor;
   s32 angle;
@@ -8347,9 +8292,8 @@ void BattleFx_CircleAnchor(struct OrbitEffect *effect) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 毎フレーム縮め、0.5 倍を切ったら位置を戻して処理を外す
-//--------------------------------------------------------------------------
+// Per-frame update: shrinks the object; below half size, puts its position
+// back and removes the update.
 void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj) {
   s32 scale;
 
@@ -8362,18 +8306,13 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj) {
   }
 }
 
+// Effect 14 cast on a target.
 void BattleFx_CallEffect14(s32 unused) { RunBattleEffect14(); }
 
-//--------------------------------------------------------------------------
-// radial.c
-// フィールドのエナジー演出：14 番（運ばれる玉と、まわりを回る粒）ほか
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// エナジー 14 番 : 玉を使う者から scene の位置（4 ドット上）まで 10
-// フレームで運び、 0.25 倍から大きくする。scene->enabled
-// がなければ、かけられた物を縮め、 玉のまわりに 6 フレームおきに粒を 16
-// 個出して回らせる
-//--------------------------------------------------------------------------
+// Psynergy effect 14: an orb is carried from the caster to 4 pixels above
+// the effect's position over 10 frames, growing from 0.25. Without
+// scene->enabled the target shrinks, and 16 particles appear round the orb,
+// one every 6 frames, and circle it.
 void RunBattleEffect14(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;
@@ -8404,21 +8343,22 @@ void RunBattleEffect14(void) {
     ball->x.fixed = from.x + step * (to.x - from.x) / 10;
     ball->y.fixed = from.y + step * (to.y - from.y) / 10;
     ball->z.fixed = from.z + step * (to.z - from.z) / 10;
-    scale = 0x4000 + step * 0x10ccc / 10; // 0.25 倍から 1.3 倍へ
+    scale = 0x4000 + step * 0x10ccc / 10; // from 0.25 to 1.3
     ball->scaleX = scale;
     ball->scaleY = scale;
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ball->scaleX = 0x1b333; // 横 1.7 倍
-  ball->scaleY = 0x14ccc; // 縦 1.3 倍
+  ball->scaleX = 0x1b333; // 1.7 wide
+  ball->scaleY = 0x14ccc; // 1.3 high
   AudioCommand_PlayFar(163);
   WaitFrames(20);
   if (scene->enabled == 0) {
     if (target != 0)
       target->update = BattleFx_ShrinkObjectScaleUntilHalf;
 
-    // 粒は玉の 4 ドット上から 0.8 ドットずつ高く、3〜8 ドット離して出す
+    // Particles from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
+    // pixels away.
     step = 0;
     do {
       s32 dist;
@@ -8450,13 +8390,10 @@ void RunBattleEffect14(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-//--------------------------------------------------------------------------
-// スロットの粒の動き（毎フレーム）
-// state 0 : 出た所から 40〜70 ドット離れた所へ向かう
-// state 1 : 着くまで待ち、着いたら state 2 へ
-// state 2 : scene の位置の 8 ドット上（画面の位置）のまわり 4 ドットへ向かう
-// state 3 : 着いたらスロットを空ける
-//--------------------------------------------------------------------------
+// Effect slot callback: state 0 heads for a point 40 to 70 pixels from where
+// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
+// heads for a point 4 pixels round 8 pixels above the effect's position on
+// screen; state 3 frees the slot on arrival.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   struct BattleFxScene *scene;
   struct EffectVector pos;
@@ -8504,10 +8441,8 @@ top:
     BattleFx_ClearOwnedSlot(effect);
 }
 
-//--------------------------------------------------------------------------
-// かけられた物（scene->child）に paused を立て、
-// BattleEffect_RunFallbackObjectTransition の演出を動かす
-//--------------------------------------------------------------------------
+// Pauses the target (scene->child) and runs
+// BattleEffect_RunFallbackObjectTransition.
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
 
@@ -8515,14 +8450,8 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   BattleEffect_RunFallbackObjectTransition();
 }
 
-//--------------------------------------------------------------------------
-// fallback.c
-// フィールド効果：対象のない場所へ飛ばして散らす
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 使い手から効果の位置へオブジェクトを 10 フレームで飛ばし、16
-// 個の粒にして散らす
-//--------------------------------------------------------------------------
+// Throws an object from the caster to the effect's position over 10 frames
+// and scatters it into 16 particles.
 void BattleEffect_RunFallbackObjectTransition(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *user = scene->mainObject;
@@ -8541,7 +8470,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   if (obj == 0)
     return;
 
-  // 使い手の 16 ドット上から、効果の位置の 8 ドット上へ
+  // From 16 pixels above the caster to 8 pixels above the effect's position.
   BattleEffect_InitializeSharedScene();
   from.x = user->x;
   from.y = user->y + (16 << 16);
@@ -8556,7 +8485,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     obj->x = from.x + (to.x - from.x) * step / 10;
     obj->y = from.y + (to.y - from.y) * step / 10;
     obj->z = from.z + (to.z - from.z) * step / 10;
-    scale = BattleFx_Interpolate(0x10000, 0x4000, step); // 0.25 倍から等倍へ
+    scale = BattleFx_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
     obj->scaleX = scale;
     obj->scaleY = scale;
     WaitFrames(1);
@@ -8575,7 +8504,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   WaitFrames(10);
   AudioCommand_PlayFar(SOUND_TRIPLE_TONE_HIGH);
 
-  // その周り 4 ドットに粒を置き、外へ飛ばしてから効果の位置へ戻す
+  // Particles 4 pixels round it fly out, then come back to the effect's
+  // position.
   slot = &scene->slots[0];
   for (i = 0; i < 16; i++) {
     pos.x = obj->x;
@@ -8599,24 +8529,16 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-//--------------------------------------------------------------------------
-// object_pause.c
-// オブジェクトを止めて表の値をでたらめに当て続け、もとの処理に戻す
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 止めているあいだの毎フレームの処理 : 表の 8 つからでたらめに選んで当てる
-//--------------------------------------------------------------------------
+// Per-frame update of a paused object: gives its sprite one of the table's
+// eight params at random.
 void BattleEffect_SetRandomTableValueOnObject(void *obj) {
   s8 *table = gBattleFx_RandomChildValues;
   s32 r = Random16();
   Animation_ApplyChildValuesFar(obj, table[(u32)(r * 8) >> 16]);
 }
 
-//--------------------------------------------------------------------------
-// id のオブジェクトを止める
-// 毎フレームの処理と、動いていれば最初のアニメーションの param を
-// gGameState に覚えておく
-//--------------------------------------------------------------------------
+// Pauses object id, keeping its per-frame update and, if it is animated, its
+// first animation's param in gGameState.
 void BattleEffect_PauseObject(s32 id) {
   struct FieldActor *obj;
   struct AnimationEntry *entry;
@@ -8638,9 +8560,8 @@ void BattleEffect_PauseObject(s32 id) {
   }
 }
 
-//--------------------------------------------------------------------------
-// id のオブジェクトを、覚えておいた毎フレームの処理と param に戻す
-//--------------------------------------------------------------------------
+// Resumes object id with the update and param kept by
+// BattleEffect_PauseObject.
 void BattleFx_ResumeObject(s32 id) {
   struct FieldActor *obj = ObjectTable_Get(id);
   if (obj != 0) {
@@ -8656,32 +8577,22 @@ void BattleFx_ResumeObject(s32 id) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 今の演出定義の flags が 0xff なら、対象なし (-1) を返す
-// id : 対象オブジェクト番号
-//--------------------------------------------------------------------------
+// Returns id, or -1 (no target) when the current effect's definition has
+// flags 0xff.
 s32 BattleFx_FilterObjectIdByFlags(s32 id) {
   if (BattleFx_GetFlags(id) == 0xff)
     return -1;
   return id;
 }
 
-//--------------------------------------------------------------------------
-// run_effect13_hook.c
-// エナジー演出 13：オブジェクト 215 を目標まで伸ばし、押し下げて戻す
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 対象への演出 (BattleFx_DispatchRequestKind から)
-//--------------------------------------------------------------------------
+// Effect 13 cast on a target (from BattleFx_DispatchRequestKind).
 void BattleFx_RunEffect13Hook(s32 unused) { RunBattleEffect13(); }
 
-//--------------------------------------------------------------------------
-// オブジェクト 215 を使う者の 16 ドット上から目標へ 10 段で運びながら
-// 1/4 倍から等倍にし、20 ドット押し下げて child を (-9, -9) へ移し、
-// 19.5 ドット上げてから縮めて戻す
-// 目標は scene->enabled なら使う者の前 32 ドット、ほかは scene の位置で、
-// どちらも 32 ドット上
-//--------------------------------------------------------------------------
+// Psynergy effect 13: carries object 215 from 16 pixels above the caster to
+// the goal in 10 steps, growing from a quarter to full size, presses down 20
+// pixels moving child to (-9, -9), rises 19.5 pixels and shrinks back. The
+// goal is 32 pixels in front of the caster with scene->enabled, otherwise
+// the effect's position, 32 pixels up in both cases.
 void RunBattleEffect13(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;
@@ -8721,7 +8632,7 @@ void RunBattleEffect13(void) {
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
   Animation_ApplyChildValuesFar(object, 1);
 
-  // 目標へ伸ばす
+  // Reach out to the goal.
   step = 0;
   do {
     s32 scale;
@@ -8739,7 +8650,7 @@ void RunBattleEffect13(void) {
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
   WaitFrames(15);
 
-  // 2 ドットずつ 10 フレーム押し下げる
+  // Press down 2 pixels a frame for 10 frames.
   for (i = 0; i < 10; i++) {
     object->y -= 2 << 16;
     WaitFrames(1);
@@ -8751,7 +8662,7 @@ void RunBattleEffect13(void) {
                                         -(9 << 16));
   WaitFrames(20);
 
-  // 1.5 ドットずつ 13 フレーム上げる
+  // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
     object->y += 0x18000;
     WaitFrames(1);
@@ -8759,7 +8670,7 @@ void RunBattleEffect13(void) {
   WaitFrames(10);
   AudioCommand_PlayFar(114);
 
-  // 使う者のところへ縮めて戻す
+  // Shrink back to the caster.
   step = 0;
   do {
     s32 scale;
@@ -8778,16 +8689,14 @@ void RunBattleEffect13(void) {
 }
 
 //--------------------------------------------------------------------------
-// launch.c
-// 戦闘エフェクト 15 番：回って縮む主オブジェクトと、扇状に飛び出す粒
+// Psynergy effect 15: the main object spins and shrinks, and particles fan
+// out.
 //--------------------------------------------------------------------------
 
-#define SLOT_MAX 24 // エフェクト枠の数 (粒の数)
+#define SLOT_MAX 24 // effect slots (particles)
 
-//--------------------------------------------------------------------------
-// 毎フレームの更新 : 0x1000 + timer × 0x50 ずつ回し、timer × 0x50 が 0x1000 に
-// 達するまで timer を増やして速める
-//--------------------------------------------------------------------------
+// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
+// (timer counts up) until timer * 0x50 reaches 0x1000.
 void BattleFx_UpdateSpinAngle(struct FieldActor *obj) {
   u32 step;
 
@@ -8797,10 +8706,8 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *obj) {
     obj->timer = obj->timer + 1;
 }
 
-//--------------------------------------------------------------------------
-// 毎フレームの更新 : 45 度ずつ回りながら縮み、y を 1 ドットずつ増やす
-// 拡大率が 0x3000 を下回ったら消える
-//--------------------------------------------------------------------------
+// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
+// frame; released once its scale falls below 0x3000.
 void BattleFx_UpdateDescendingObject(struct FieldActor *obj) {
   u32 scale;
 
@@ -8813,10 +8720,9 @@ void BattleFx_UpdateDescendingObject(struct FieldActor *obj) {
     obj->active = 0;
 }
 
-//--------------------------------------------------------------------------
-// 粒の動き : 主オブジェクトの画面位置 (z + 8 ドット) から、0xc000 の向きの ±45
-// 度へ 120 ドット飛ぶ。状態 1 は着いたら飛びなおし、状態 2 は着いたら消える
-//--------------------------------------------------------------------------
+// Effect slot callback: a particle flies 120 pixels from the main object's
+// screen position (8 pixels lower) in a direction within 1/8 turn of up the
+// screen. In state 1 it flies again on arrival; in state 2 it is freed.
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   struct EffectVector pos;
   struct FieldActor *src;
@@ -8862,10 +8768,8 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 戦闘エフェクト 15 番
-// 主オブジェクトを回して縮めながら、粒を 1 フレームに 1 つずつ 24 個飛ばす
-//--------------------------------------------------------------------------
+// Psynergy effect 15: spins the main object and shrinks it while 24
+// particles fly out, one a frame.
 void BattleFx_RunEffect15(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
@@ -8886,7 +8790,7 @@ void BattleFx_RunEffect15(void) {
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 28);
   WaitFrames(40);
 
-  // 回りはじめる
+  // Start spinning.
   AudioCommand_PlayFar(220);
   Animation_ApplyChildValuesFar(obj, 0);
   ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
@@ -8894,7 +8798,7 @@ void BattleFx_RunEffect15(void) {
   obj->timer = 0;
   WaitFrames(70);
 
-  // 縮みはじめ、その画面位置から粒を飛ばす
+  // Start shrinking, and send particles from where it is on screen.
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
   obj->update = (void (*)(union FieldObject *))BattleFx_UpdateDescendingObject;
@@ -8921,7 +8825,7 @@ void BattleFx_RunEffect15(void) {
   } while (i < SLOT_MAX);
   WaitFrames(70);
 
-  // 飛んでいる粒を、着いたら消える状態にする
+  // The flying particles vanish once they arrive.
   i = 0;
   last = 2;
   do {
@@ -8934,6 +8838,10 @@ void BattleFx_RunEffect15(void) {
   WaitFrames(10);
 }
 
+// Per-frame update of a falling arc: grows toward full size as it falls 2
+// pixels a frame on the object it follows, 9 pixels in front of it and up
+// to 5 pixels further while small; released 10 pixels above the ground (4
+// on the clear screen).
 void BattleFx_UpdateDescendingParticlePositiveArc(struct FieldActor *particle) {
   struct FieldActor *source;
   s32 y;
@@ -8961,6 +8869,8 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct FieldActor *particle) {
   particle->z.fixed = source->z.fixed + ((0x10000 - scale) * 5) + 0x90000;
 }
 
+// As BattleFx_UpdateDescendingParticlePositiveArc for the arc drawn upside
+// down, 16 pixels in front of the object and up to 5 pixels nearer.
 void BattleFx_UpdateDescendingParticleNegativeArc(struct FieldActor *particle) {
   struct FieldActor *source;
   s32 y;
@@ -9018,6 +8928,7 @@ struct DescendingArcSprite {
   struct AnimationEntry *frame;
 };
 
+// Spawns a pair of falling arcs (one upside down) on arc.
 void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *source = arc;
   struct BattleFxScene *scene = gEffectWork;
@@ -9063,16 +8974,15 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
 }
 
 //--------------------------------------------------------------------------
-// arcstate.c
-// エナジー演出 16 (プルーフ)：使う者の動きと、効果が切れたときのメッセージ
+// Psynergy effect 16 (Avoid): the caster's motion, and the message when the
+// effect wears off.
 //--------------------------------------------------------------------------
 
-#define PSYNERGY_AVOID 150      // プルーフ
-#define ITEM_SACRED_FEATHER 236 // せいなるはね
+#define PSYNERGY_AVOID 150      // Avoid
+#define ITEM_SACRED_FEATHER 236 // Sacred Feather
 
-//--------------------------------------------------------------------------
-// 演出の終わり：使う者の表示の flags を 5 フレームの周期で 3 と 1 に切り替える
-//--------------------------------------------------------------------------
+// End of the effect: switches the caster's display flags between 3 and 1 on
+// a 5-frame cycle.
 void BattleFx_UpdateEffect16State(void) {
   struct ArcEffectObject *obj;
   struct AnimationObject *rec;
@@ -9093,10 +9003,8 @@ void BattleFx_UpdateEffect16State(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// 演出中の使う者：5 フレームごと (ワールドマップでは 7) に降る弧の粒を出し、
-// phase 1 では回る
-//--------------------------------------------------------------------------
+// The caster during the effect: sheds a pair of falling arcs every 5 frames
+// (7 on the world map), and spins in phase 1.
 void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj) {
   s16 phase;
   s32 cnt;
@@ -9115,9 +9023,7 @@ void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj) {
     obj->angle += 0xc00;
 }
 
-//--------------------------------------------------------------------------
-// プルーフ (せいなるはね) の効果が切れた
-//--------------------------------------------------------------------------
+// Avoid (or the Sacred Feather) has worn off: says so.
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {

@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"

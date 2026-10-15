@@ -7,7 +7,7 @@
 #include "unit/import.h"
 #include "unit/scene/lunpa_fortress.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"

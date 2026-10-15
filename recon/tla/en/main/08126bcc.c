@@ -1,5 +1,5 @@
 #include "mem.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "types.h"
 #include "callback_scheduler.h"
 #include "scene.h"

@@ -1,7 +1,7 @@
 #include "fixed_math.h"
 #include "objdisp.h"
 #include "types.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "system.h"
 
 struct ItemBreakFragmentPosition {

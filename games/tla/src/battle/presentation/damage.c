@@ -15,8 +15,8 @@
 #include "system.h"
 #include "animspr.h"
 #include "fixed_math.h"
-#include "btlpty.h"
-#include "btlsys.h"
+#include "battle_party.h"
+#include "battle_system.h"
 #include "battle_target.h"
 #include "text/msg_ids.h"
 

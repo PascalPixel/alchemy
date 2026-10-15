@@ -11,7 +11,7 @@
 
 #include "types.h"
 #include "ram_buffer.h"
-#include "resmenu.h"
+#include "resource_menu.h"
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 

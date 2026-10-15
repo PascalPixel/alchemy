@@ -1,4 +1,4 @@
-#include "btltype.h"
+#include "battle_type.h"
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);

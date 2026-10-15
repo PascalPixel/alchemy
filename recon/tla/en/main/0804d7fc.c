@@ -21,7 +21,7 @@
 #include "system.h"
 #include "edition.h"
 #include "types.h"
-#include "resmenu.h"
+#include "resource_menu.h"
 #include "ram_buffer.h"
 #include "callback_scheduler.h"
 

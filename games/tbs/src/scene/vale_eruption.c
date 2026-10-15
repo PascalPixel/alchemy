@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/vale_eruption.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

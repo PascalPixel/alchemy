@@ -5,8 +5,8 @@
    block or barrier after the load fixes it but moves the frame's sub sp,
    #8 up to the load (differ 8 again); permute (3 min) found nothing. */
 #include "types.h"
-#include "disptran.h"
-#include "eventwrk.h"
+#include "display_transition.h"
+#include "event_work.h"
 #include "io_reg.h"
 #include "iowrite.h"
 #include "object_runtime.h"

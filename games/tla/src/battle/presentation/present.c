@@ -4,8 +4,8 @@
 //--------------------------------------------------------------------------
 
 #include "types.h"
-#include "btlpty.h"
-#include "btldisp.h"
+#include "battle_party.h"
+#include "battle_display.h"
 #include "battle_session.h"
 #include "motobj.h"
 

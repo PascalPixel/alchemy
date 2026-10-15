@@ -21,7 +21,7 @@
 #include "callback_scheduler.h"
 #include "resource.h"
 #include "effect_step.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_fx_work.h"
 

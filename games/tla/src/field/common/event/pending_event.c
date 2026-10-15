@@ -1,5 +1,5 @@
 #include "types.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "text/msg_ids.h"
 
 s32 GameFlag_Test(s32 flag);

@@ -1,14 +1,14 @@
 /* Near miss: differ 4 of 181 (two reordered rows). Twice the native reloads the entries pointer from its stack slot (ldr r2, [sp, #12]) before a register copy that reload also made (mov r1, r8; mov r8, r1); the draft copies first. Both are reload insns with equal priority, so no source statement stands between them: a one-pass block on a copy of the pointer moves other rows instead (differ 8). */
 #include "types.h"
 #include "scene.h"
-#include "btlmes.h"
+#include "battle_message.h"
 #include "battle_escape.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "battle_target.h"
 #include "fixed_math.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "system.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "dma.h"
 void *UnitGet(s32 owner);
 

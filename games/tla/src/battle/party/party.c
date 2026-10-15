@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "battle_unit.h"
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)

@@ -8,7 +8,7 @@
 #include "call.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
 

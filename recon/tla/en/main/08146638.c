@@ -15,7 +15,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "object_runtime.h"
 
 // The battle effect work as the canvas effects use it.

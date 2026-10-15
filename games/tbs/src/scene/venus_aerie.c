@@ -6,15 +6,15 @@
 #include "unit/scene/common/object_nearest.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "types.h"
 #include "venus_aerie.h"
 #include "field_effect.h"

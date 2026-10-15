@@ -7,7 +7,7 @@
 #include "edition.h"
 #include "objdisp.h"
 #include "fixed_math.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "system.h"
 #include "field_event.h"
 

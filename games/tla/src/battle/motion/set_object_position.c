@@ -10,7 +10,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "motobj.h"
-#include "btlobj.h"
+#include "battle_obj.h"
 #include "iwram_call.h"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "field_event.h"
 
 static void SceneActor_RunActorCommandWithFlag91(s32 x)

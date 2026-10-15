@@ -1,7 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 struct VenusActor {
     u8 unknown_00[6];

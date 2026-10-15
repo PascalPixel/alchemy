@@ -1,6 +1,6 @@
 #include "types.h"
-#include "engcall.h"
-#include "fieldobj.h"
+#include "engine_call.h"
+#include "field_obj.h"
 #include "staged_actor_effect.h"
 #include "game_state.h"
 

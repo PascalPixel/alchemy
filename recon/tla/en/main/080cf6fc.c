@@ -11,7 +11,7 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "disptran.h"
+#include "display_transition.h"
 
 //--------------------------------------------------------------------------
 // ウィンドウ 0/1 を有効にし、ページの値を WININ, WINOUT, WIN0H, WIN1H に入れてから

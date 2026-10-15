@@ -1,6 +1,6 @@
 #include "types.h"
 #include "owner_state.h"
-#include "btltype.h"
+#include "battle_type.h"
 
 s32 BattleUnit_KeepsOneHp(s32 unit_id)
 {

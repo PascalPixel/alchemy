@@ -12,8 +12,8 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 #include "bg_scroll.h"
 
 void Func_081434d8(void);

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "text/msg_ids.h"
 
 s32 BtlEnmList(s16 *unit_ids);

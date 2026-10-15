@@ -8,12 +8,12 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "party_state.h"
 #include "fixed_math.h"
-#include "btlcalc.h"
+#include "battle_calc.h"
 #include "field_event.h"
 
 

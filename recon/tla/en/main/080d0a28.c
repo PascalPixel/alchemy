@@ -8,7 +8,7 @@
    more; permute (3 min) found nothing. */
 #include "types.h"
 #include "callback_scheduler.h"
-#include "disptran.h"
+#include "display_transition.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"

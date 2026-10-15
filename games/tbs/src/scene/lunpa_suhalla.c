@@ -2,7 +2,7 @@
 #include "field_event.h"
 #include "unit/scene/lunpa_suhalla.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "lunpa_suhalla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

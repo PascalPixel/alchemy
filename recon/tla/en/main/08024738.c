@@ -17,7 +17,7 @@
 #include "objdisp.h"
 #include "script_object_runtime.h"
 #include "io_reg.h"
-#include "btlsys.h"
+#include "battle_system.h"
 
 #define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 

@@ -8,9 +8,9 @@
 #include "sound.h"
 #include "system.h"
 #include "owner_state.h"
-#include "btlsys.h"
-#include "btltype.h"
-#include "btlwork.h"
+#include "battle_system.h"
+#include "battle_type.h"
+#include "battle_work.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 

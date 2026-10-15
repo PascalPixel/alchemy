@@ -6,8 +6,8 @@
  * alchemy permute measured 2 to 4. The listing ends with a two-byte empty function (bx lr) at
  * 0x08119050 that adopts with it. */
 #include "types.h"
-#include "btlsmn.h"
-#include "btlpty.h"
+#include "battle_summon.h"
+#include "battle_party.h"
 #include "battle_unit.h"
 
 struct BattleSummonState *Trade_GetOfferStateFar(s32 owner);

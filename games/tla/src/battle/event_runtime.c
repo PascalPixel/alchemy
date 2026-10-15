@@ -7,7 +7,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "system.h"
 #include "callback_scheduler.h"
 

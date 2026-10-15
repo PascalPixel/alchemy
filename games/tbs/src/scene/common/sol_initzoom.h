@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 s32 Scene_InitSceneRequestAndCameraZoom(void)
 {

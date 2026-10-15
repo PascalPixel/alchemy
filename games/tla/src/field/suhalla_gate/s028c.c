@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 extern char SceneId_SuhallaGate1;
 extern char SceneId_SuhallaGate2;

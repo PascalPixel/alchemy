@@ -9,7 +9,7 @@
  * load in each branch, which cross-jumps the two loader calls into one. */
 #include "types.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "battle_session.h"
 #include "effect_step.h"
 #include "io_reg.h"

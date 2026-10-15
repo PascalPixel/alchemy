@@ -18,7 +18,7 @@
 #include "input.h"
 #include "bg_scroll.h"
 #include "effect_step.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_fx_work.h"
 

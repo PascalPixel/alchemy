@@ -23,7 +23,7 @@
 #include "mem.h"
 #include "fixed_math.h"
 #include "effect_step.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "callback_scheduler.h"
 #include "map_scroll.h"
 #include "ram_buffer.h"

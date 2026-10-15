@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 
 // The Broken Seal's BattleFx_ArmPaletteHBlankDma: stops DMA 0, then arms it
 // to copy one palette line from the battle effect work into the BG palette

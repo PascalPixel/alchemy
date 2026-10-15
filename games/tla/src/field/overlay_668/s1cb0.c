@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "scene_ids.h"
 #include "call.h"
 #include "text/msg_ids.h"

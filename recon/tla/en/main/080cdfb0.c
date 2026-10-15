@@ -1,5 +1,5 @@
-#include "btlsys.h"
-#include "fieldrun.h"
+#include "battle_system.h"
+#include "field_runtime.h"
 #include "scene.h"
 #include "effect_runtime.h"
 #include "global_cells.h"

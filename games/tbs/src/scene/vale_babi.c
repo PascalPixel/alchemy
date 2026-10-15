@@ -8,10 +8,10 @@
 #include "unit/scene/vale_babi.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "facing_object.h"
@@ -43,7 +43,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void FieldScene_RunComplexActorSequence(void);

@@ -2,8 +2,8 @@
  * the three halfword 0xff end markers load from the literal pool one or two rows earlier in the
  * native than here (ldr r2, =0xff before lsls r3, r6, #1, and so on). */
 #include "types.h"
-#include "btlwork.h"
-#include "btlpty.h"
+#include "battle_work.h"
+#include "battle_party.h"
 
 s32 BtlEnmList(s16 *unit_ids);
 extern const s8 Data_081287c8[];

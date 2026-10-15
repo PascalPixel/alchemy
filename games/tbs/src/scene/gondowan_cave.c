@@ -5,7 +5,7 @@
 #include "unit/scene/gondowan_cave.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"
@@ -23,7 +23,7 @@
 #include "staged_actor.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void EV09_PSYNERGY_3(void);

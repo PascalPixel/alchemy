@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/lalivero_interiors.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/shop/shop.h"
 #include "battle.h"

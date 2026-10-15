@@ -5,8 +5,8 @@
 #include "iwram_call.h"
 #include "io_write_queue.h"
 #include "callback_scheduler.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 #include "bg_scroll.h"
 
 // The battle effect work, as far as the canvas layer reads it.

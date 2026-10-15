@@ -29,8 +29,8 @@
 #include "edition.h"
 #include "iwram_call.h"
 #include "layout_guard.h"
-#include "btlpty.h"
-#include "btlsys.h"
+#include "battle_party.h"
+#include "battle_system.h"
 #include "frame.h"
 
 //--------------------------------------------------------------------------

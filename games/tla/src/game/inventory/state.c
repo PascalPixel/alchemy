@@ -1,5 +1,5 @@
 #include "inventory.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "battle_unit.h"
 
 enum { ITEM_COUNTER_COUNT = 300 };

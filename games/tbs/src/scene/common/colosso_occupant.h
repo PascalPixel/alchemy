@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "game_state.h"
 
 void *SceneActor_FindOccupantAheadOfSubject(void)

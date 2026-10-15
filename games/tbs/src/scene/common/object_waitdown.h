@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 static void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height)
 {

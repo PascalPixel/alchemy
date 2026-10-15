@@ -11,11 +11,11 @@
 #include "mercury.h"
 #include "iwram_call.h"
 #include "field_event.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "field_effect.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "fieldrun.h"
+#include "field_runtime.h"
 #include "heap_state.h"
 #include "keystate.h"
 

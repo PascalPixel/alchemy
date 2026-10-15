@@ -46,7 +46,7 @@
 #include "runtime_interfaces.h"
 #include "flash.h"
 #include "audio_engine_symbols.h"
-#include "unit/runtime/mathtbl.h"
+#include "unit/runtime/math_table.h"
 #include "unit/runtime/numtext.h"
 #include "savedata.h"
 
@@ -944,7 +944,7 @@ void Render_BuildOamList(void *work)
 }
 
 //--------------------------------------------------------------------------
-// rescache.c
+// resource_cache.c
 // リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
 //--------------------------------------------------------------------------
 // OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、

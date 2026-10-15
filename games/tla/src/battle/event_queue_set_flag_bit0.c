@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "objdisp.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "battle_session.h"
 #include "owner_state.h"
 

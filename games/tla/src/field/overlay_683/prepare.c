@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_scene.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void GameFlag_ClearBit(s32 flag);
 

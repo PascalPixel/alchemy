@@ -20,7 +20,7 @@
 #include "system.h"
 #include "fixed_math.h"
 #include "callback_scheduler.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_fx_work.h"
 

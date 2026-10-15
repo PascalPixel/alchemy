@@ -10,11 +10,11 @@
 #include "system.h"
 #include "battle_escape.h"
 
-#include "btlwork.h"
-#include "btlpty.h"
+#include "battle_work.h"
+#include "battle_party.h"
 #include "battle_unit.h"
-#include "btlsys.h"
-#include "btldisp.h"
+#include "battle_system.h"
+#include "battle_display.h"
 #include "owner_state.h"
 
 extern struct BattlePresentationTransition *gTransitionWork;

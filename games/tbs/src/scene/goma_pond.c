@@ -2,7 +2,7 @@
 
 #include "unit/scene/goma_pond.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -17,7 +17,7 @@
 
 #include "resource_388_runtime.h"
 #include "field_scene.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 #include "field_event.h"
 

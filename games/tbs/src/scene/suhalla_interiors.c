@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/suhalla_interiors.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "suhalla_interiors.h"
 #include "text/msg_ids.h"
 #include "types.h"

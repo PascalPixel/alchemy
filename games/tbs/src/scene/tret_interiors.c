@@ -4,12 +4,12 @@
 #include "unit/scene/tret_interiors.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"

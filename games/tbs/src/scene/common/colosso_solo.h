@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -12,7 +12,7 @@
 #include "system.h"
 #include "game_state.h"
 #include "battle_unit.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "animspr.h"
 #include "text/msg_ids.h"
 

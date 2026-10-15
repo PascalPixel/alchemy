@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/sol_statue.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "callback_scheduler.h"
 #include "resource.h"

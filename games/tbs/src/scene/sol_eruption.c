@@ -3,7 +3,7 @@
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/scene/common/sol_star_ring_setup.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -26,7 +26,7 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "global_cells.h"
 #include "vram_tab.h"
 

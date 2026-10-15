@@ -10,4 +10,4 @@ BattleFx_ArcSparkTiles:
 @ 遭遇する敵の組 104 個
 	.global Encounter_EnemyGroupTable
 Encounter_EnemyGroupTable:
-	.incbin "games/tbs/src/object/encount.table"
+	.incbin "games/tbs/src/object/encounter.table"

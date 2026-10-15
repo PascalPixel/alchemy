@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "inventory.h"
-#include "btltype.h"
+#include "battle_type.h"
 
 
 s32 Equipment_HasValue(s32 owner, s32 value);

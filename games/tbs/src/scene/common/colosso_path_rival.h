@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "callback_scheduler.h"
-#include "colgauge.h"
+#include "colosso_gauge.h"
 #include "resource.h"
 #include "types.h"
 #include "mem.h"

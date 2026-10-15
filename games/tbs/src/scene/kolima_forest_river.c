@@ -4,7 +4,7 @@
 #include "unit/scene/kolima_forest_river.h"
 #include "unit/scene/common/kolima_palette.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -20,7 +20,7 @@
 
 #include "staged_actor.h"
 #include "staged_actor_effect.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "game_state.h"
 #include "field_event.h"
 #include "field_scene.h"

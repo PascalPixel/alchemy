@@ -1,10 +1,10 @@
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "battle_status_icon.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "motobj.h"
 #include "animspr.h"
-#include "btldisp.h"
+#include "battle_display.h"
 
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *output)
 {

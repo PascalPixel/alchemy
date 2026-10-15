@@ -1,5 +1,5 @@
 #include "owner_state.h"
-#include "ownerval.h"
+#include "owner_value.h"
 
 void UnitRatio(s32);
 

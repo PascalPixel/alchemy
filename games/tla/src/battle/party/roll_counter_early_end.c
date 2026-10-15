@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "owner_state.h"
 #include "scene.h"
 #include "battle_unit.h"

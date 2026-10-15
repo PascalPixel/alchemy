@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {

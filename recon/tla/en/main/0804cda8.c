@@ -8,10 +8,10 @@
  * and cascades. Orders of the work and transition reads tried: 192 to 204. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "resmenu.h"
+#include "resource_menu.h"
 #include "affine.h"
 #include "frame.h"
-#include "disptran.h"
+#include "display_transition.h"
 #include "vram_tab.h"
 #include "callback_scheduler.h"
 

@@ -11,7 +11,7 @@
 #include "system.h"
 #include "motobj.h"
 #include "owner_state.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "field_event.h"
 
 

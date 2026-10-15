@@ -1,15 +1,15 @@
 #include "game_state.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/mogall_forest.h"
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "mapcopy.h"
 #include "types.h"
 #include "field_event.h"

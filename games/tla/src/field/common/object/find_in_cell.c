@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 // Returns the first of objects 8 to 63 standing in the same 16-pixel cell
 // as position (x, y and z), or NULL. Callers pass the object asking, as

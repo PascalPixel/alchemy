@@ -3,7 +3,7 @@
  * leading empty slots (254) and lays out up to the last live one. Swapping the two initialisers does not move the load. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "battle_session.h"
 
 void Func_0811b180(u16 *unit_ids, s32 count, s32 *x, s32 *z);

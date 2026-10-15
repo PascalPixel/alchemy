@@ -1,4 +1,4 @@
-#include "btlsys.h"
+#include "battle_system.h"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 

@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "bg_scroll.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "iowrite.h"
 
 extern const u8 Data_0812cc74[];

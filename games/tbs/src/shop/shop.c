@@ -15,7 +15,7 @@
 #include "scene.h"
 #include "global_cells.h"
 #include "party_state.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "object_runtime.h"
 #include "dma.h"
 #include "callback_scheduler.h"
@@ -36,8 +36,8 @@
 #include "fixed_point_position.h"
 #include "inn_runtime.h"
 #include "event_runtime.h"
-#include "btlcalc.h"
-#include "fieldobj.h"
+#include "battle_calc.h"
+#include "field_obj.h"
 
 s32 AbilityMenu_BuildAvailableList(void)
 {

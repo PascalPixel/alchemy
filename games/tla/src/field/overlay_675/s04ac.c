@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);

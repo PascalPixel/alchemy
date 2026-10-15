@@ -5,7 +5,7 @@
 #include "types.h"
 #include "objdisp.h"
 #include "system.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 
 struct BattleEffectScene {
     u8 reserved_00[4];

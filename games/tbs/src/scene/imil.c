@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/scene/imil.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"

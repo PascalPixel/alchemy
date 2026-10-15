@@ -22,7 +22,7 @@
 #include "field_scene.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
 

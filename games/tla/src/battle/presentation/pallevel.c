@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 

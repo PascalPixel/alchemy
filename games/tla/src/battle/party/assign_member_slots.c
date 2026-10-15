@@ -1,4 +1,4 @@
-#include "btlpty.h"
+#include "battle_party.h"
 #include "ram_buffer.h"
 
 s32 BattleParty_AssignMemberSlots(void)

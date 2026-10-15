@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 extern u8 MsgFieldAddressCompanion;
 extern const u8 Data_020005e4[];

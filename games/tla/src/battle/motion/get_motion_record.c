@@ -3,8 +3,8 @@
 #include "motobj.h"
 #include "iwram_call.h"
 #include "fixed_point_position.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 
 void *GetMotionRecord(struct MotionObject *object, s32 record_index)
 {

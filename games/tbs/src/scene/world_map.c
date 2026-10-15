@@ -4,11 +4,11 @@
 #include "unit/scene/world_map.h"
 #include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
@@ -40,7 +40,7 @@
 #include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "frame.h"
 
 // 前方宣言

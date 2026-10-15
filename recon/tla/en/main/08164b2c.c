@@ -12,7 +12,7 @@
  * source in a one-pass block (22, 24), alchemy permute 5 minutes (no
  * candidate below 8). */
 #include "types.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 void Func_08164b2c(s32 red_delta, s32 green_delta, s32 blue_delta)
 {

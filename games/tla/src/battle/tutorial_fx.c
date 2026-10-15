@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 struct BattleFxRequest {
     s32 field_00;

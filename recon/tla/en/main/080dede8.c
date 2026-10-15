@@ -9,9 +9,9 @@
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "object_runtime.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "ram_buffer.h"
 
 struct EffectVector {

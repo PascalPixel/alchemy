@@ -5,8 +5,8 @@
 
 #include "types.h"
 #include "battle.h"
-#include "btlpty.h"
-#include "btldisp.h"
+#include "battle_party.h"
+#include "battle_display.h"
 
 //--------------------------------------------------------------------------
 // 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、

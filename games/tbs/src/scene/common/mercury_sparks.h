@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "field_effect.h"
 
 static s32 Mercury_TrailSparks(struct FieldActor *actor)

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "scene_call.h"
 #include "party_state.h"
 #include "scene_ids.h"

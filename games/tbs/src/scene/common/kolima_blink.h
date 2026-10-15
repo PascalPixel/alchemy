@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "field_event.h"
 
 static s32 SceneEffect_SetModeByFrameBit1(s32 arg0)

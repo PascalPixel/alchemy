@@ -10,7 +10,7 @@
 #include "types.h"
 #include "objdisp.h"
 #include "scene.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "fixed_math.h"
 #include "system.h"
 #include "frame.h"

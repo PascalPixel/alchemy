@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "game_state.h"
 
 static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)

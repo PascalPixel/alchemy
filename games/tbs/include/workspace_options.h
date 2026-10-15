@@ -2,7 +2,7 @@
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "types.h"
 #include "render_input.h"
 #include "cursor.h"

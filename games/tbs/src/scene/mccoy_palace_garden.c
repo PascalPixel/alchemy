@@ -3,7 +3,7 @@
 #include "unit/scene/mccoy_palace_garden.h"
 #include "unit/scene/common/object_orbit.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

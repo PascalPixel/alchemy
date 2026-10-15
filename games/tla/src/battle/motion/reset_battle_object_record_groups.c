@@ -10,7 +10,7 @@
 #include "types.h"
 #include "motobj.h"
 #include "battle_session.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "ram_buffer.h"
 #include "fixed_point_position.h"
 

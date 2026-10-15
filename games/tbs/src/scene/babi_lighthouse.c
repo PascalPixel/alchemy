@@ -5,7 +5,7 @@
 #include "unit/scene/babi_lighthouse.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
@@ -32,7 +32,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void BabiLighthouse_CloseTruthDoor(void);

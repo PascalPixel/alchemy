@@ -3,7 +3,7 @@
 #include "unit/scene/venus_lighthouse.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"

@@ -5,7 +5,7 @@
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -29,7 +29,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void FieldScene_RunScene3b2SequenceA(void);

@@ -5,12 +5,12 @@
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/object_nearest.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "field_event.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "field_scene.h"
 #include "overlay_object.h"
 #include "create_configured_overlay_object.h"
@@ -27,7 +27,7 @@
 #include "iwram_call.h"
 #include "map_scroll.h"
 #include "text/msg_ids.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void FieldScene_RunFourActorPresentation(void);

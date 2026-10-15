@@ -7,7 +7,7 @@
  * each) and takes left, the earlier insn. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 struct FacingActor {
     u8 unknown_00[6];

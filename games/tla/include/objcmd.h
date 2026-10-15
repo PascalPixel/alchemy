@@ -2,7 +2,7 @@
 #define TLA_OBJCMD_H
 
 // Field object scripts: one s32 command word, then its operands, as the
-// command table in field/common/script/objscrpt.c runs them. Each macro
+// command table in field/common/script/object_script.c runs them. Each macro
 // expands to the words of one command. The Lost Age numbers its commands
 // as The Broken Seal does, with SC_CMD_03 added before SC_MOVE, eleven
 // more commands after SC_PLAYER, SC_CMD_2A after SC_SE and SC_MOVE_XZ

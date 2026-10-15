@@ -2,8 +2,8 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "inventory.h"
-#include "btlwork.h"
-#include "btltype.h"
+#include "battle_work.h"
+#include "battle_type.h"
 
 #if defined(TBS_EDITION_EN)
 

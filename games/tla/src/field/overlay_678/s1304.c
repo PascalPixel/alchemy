@@ -1,5 +1,5 @@
 #include "local.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void Func_020009c0(s32 id);
 void Func_02000a94(s32 id);

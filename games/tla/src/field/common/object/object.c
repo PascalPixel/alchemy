@@ -18,7 +18,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "ramcode.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "transform.h"
 
 #if GAME_TLA
@@ -32,7 +32,7 @@
 #include "script.h"
 #include "animspr.h"
 #include "field_sprite.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "script_object_runtime.h"
 #include "script_motion.h"
 #include "vram_block.h"

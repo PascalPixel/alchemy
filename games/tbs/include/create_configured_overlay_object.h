@@ -2,7 +2,7 @@
 #define GUARD_CREATE_CONFIGURED_OVERLAY_OBJECT_H
 
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "types.h"
 
 #define NULL ((void *)0)

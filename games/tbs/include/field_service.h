@@ -2,11 +2,11 @@
 #define FIELD_SERVICE_H
 
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "field_event.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "farcall.h"
 
 static inline void Actor_EnableActionCallback(s32 actor, const s32 *table)
@@ -180,7 +180,7 @@ static inline void Psynergy_Cancel(void)
 	Engine_PsynergyCancel();
 }
 
-// engcall.h の本体スケジューラ呼び出しを通る
+// engine_call.h の本体スケジューラ呼び出しを通る
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
 {
 	return FieldScheduler_AddCallback(callback, priority);
@@ -221,7 +221,7 @@ static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x, s32 
 	Engine_ObjectMotionSetPositionAndCommit(actor, x, z);
 }
 
-// engcall.h の本体スケジューラ呼び出しを通る
+// engine_call.h の本体スケジューラ呼び出しを通る
 static inline s32 FieldScheduler_AddOrUpdateCallback(s32 a0, s32 a1)
 {
 	return FieldScheduler_AddCallback(a0, a1);

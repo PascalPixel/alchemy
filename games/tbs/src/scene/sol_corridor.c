@@ -16,7 +16,7 @@
 
 #include "resource_37de_scene.h"
 #include "field_scene.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 #include "field_event.h"
 

@@ -15,7 +15,7 @@
 #include "call.h"
 #include "animspr.h"
 #include "object_runtime.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "callback_scheduler.h"
 #include "vram_block.h"
 

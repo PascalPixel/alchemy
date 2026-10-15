@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 
 u32 Stream_ReadU16(u8 **cursor)

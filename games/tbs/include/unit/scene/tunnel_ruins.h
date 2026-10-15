@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
-#include "fieldcoo.h"
+#include "field_coordinate.h"
 
 struct SceneEntrance;
 struct SceneRegion;

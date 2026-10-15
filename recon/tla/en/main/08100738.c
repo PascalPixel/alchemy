@@ -1,6 +1,6 @@
 #include "types.h"
-#include "battle_efx.h"
-#include "btltype.h"
+#include "battle_effect.h"
+#include "battle_type.h"
 
 struct ItemOwner {
     u8 padding_000[0x10];

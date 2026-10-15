@@ -4,7 +4,7 @@
 #include "unit/scene/kolima.h"
 #include "unit/scene/common/kolima_forest_bridge_falling_effect.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"

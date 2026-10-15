@@ -3,7 +3,7 @@
 #include "field_event.h"
 #include "unit/scene/west_lunpa_cave.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 

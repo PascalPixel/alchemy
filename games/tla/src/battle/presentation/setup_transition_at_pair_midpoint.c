@@ -5,7 +5,7 @@
 
 #include "types.h"
 #include "motobj.h"
-#include "btldisp.h"
+#include "battle_display.h"
 
 //--------------------------------------------------------------------------
 // ふたつのオブジェクトの中間（x, z）にカメラを合わせる

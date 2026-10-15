@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "resource.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "field_event.h"
 #include "animspr.h"
 #include "mem.h"

@@ -5,7 +5,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "btlsmn.h"
+#include "battle_summon.h"
 #include "battle_unit.h"
 #include "item.h"
 #include "character_ids.h"
@@ -14,7 +14,7 @@
 #include "preset_table.h"
 #endif
 #if GAME_TLA
-#include "btltype.h"
+#include "battle_type.h"
 #endif
 #if !GAME_TLA
 #include "farcall.h"

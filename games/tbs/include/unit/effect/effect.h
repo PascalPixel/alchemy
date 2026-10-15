@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 
 struct BattleEffectArgument;
 struct EffectPosition;

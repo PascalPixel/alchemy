@@ -1,5 +1,5 @@
 #include "types.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "party_state.h"

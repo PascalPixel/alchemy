@@ -1,12 +1,12 @@
 /* Near miss: differ 4 of 41 (two reordered rows). The native loads the key register address from the pool before it finishes the heap base (movs; ldr r0; lsls) and reads the keys before it builds 0x200. A one-pass block on the key read forces sub sp ahead and swaps r0 and r4 (differ 12): the block holds the prologue. Declaring the keys first gives them r4 (differ 10). */
 #include "types.h"
 #include "scene.h"
-#include "btlmes.h"
+#include "battle_message.h"
 #include "battle_escape.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "battle_target.h"
 #include "fixed_math.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "system.h"
 #include "ram_buffer.h"
 void UiWork_ClearValueNameTablesFar(void);

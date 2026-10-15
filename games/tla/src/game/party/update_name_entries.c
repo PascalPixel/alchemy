@@ -14,7 +14,7 @@
 #include "serial_runtime.h"
 #include "tla_edition.h"
 #include "text/msg_ids.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "iwram_call.h"
 
 

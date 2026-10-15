@@ -2,7 +2,7 @@
 #include "unit/scene/xian_interiors.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -17,7 +17,7 @@
 #include "system.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"

@@ -1,11 +1,11 @@
 #include "types.h"
 #include "motobj.h"
 #include "battle_session.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "fixed_point_position.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 void Object_Destroy(void *object);
 void Render_ResetTransformState(void);

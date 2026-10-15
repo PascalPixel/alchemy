@@ -15,8 +15,8 @@
 #include "dma.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void BattlePres_UpdateHBlankScroll(void);

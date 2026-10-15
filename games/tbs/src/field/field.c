@@ -29,16 +29,16 @@
 #include "edition.h"
 #include "objdisp.h"
 #include "object_runtime.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "transform.h"
 #include "script.h"
 #include "script_motion.h"
 #include "script_object_entry.h"
 #include "script_object_runtime.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "fixed_math.h"
 #include "keystate.h"
-#include "fieldrun.h"
+#include "field_runtime.h"
 #include "event_runtime.h"
 #include "game_state.h"
 #include "map.h"
@@ -50,18 +50,18 @@
 #include "mapcopy.h"
 #include "fixed_point_position.h"
 #include "mapframe.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "project.h"
 #include "frame.h"
 #include "palqueue.h"
 #include "curve.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "b5_context.h"
 #include "vram_tab.h"
 #include "vram_block.h"
 #include "unit/field/update.h"
 #include "unit/field/vertices.h"
-#include "unit/field/curvedat.h"
+#include "unit/field/curve_data.h"
 #include "unit/field/griddata.h"
 
 //--------------------------------------------------------------------------
@@ -1157,7 +1157,7 @@ void ResourceMetadata_ClearRecord(void *dst)
 }
 
 //--------------------------------------------------------------------------
-// resobj.c
+// resource_obj.c
 // リソース：アニメのスプライトオブジェクトの作成・解放と、コマの長さ
 //--------------------------------------------------------------------------
 

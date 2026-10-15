@@ -7,7 +7,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 #include "scene_ids.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "resource.h"
 #include "mem.h"
 #include "call.h"

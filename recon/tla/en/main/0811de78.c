@@ -5,8 +5,8 @@
  * catalogs yet: MsgNoEscape here is undefined. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
-#include "btltype.h"
+#include "battle_work.h"
+#include "battle_type.h"
 #include "battle_unit.h"
 
 struct EscapeTransition {

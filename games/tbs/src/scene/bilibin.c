@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/bilibin.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -25,7 +25,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "facing_object.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 // 前方宣言
 static void Bilibin_RestoreVillageActors(void);

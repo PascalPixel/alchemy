@@ -6,9 +6,9 @@
 #include "types.h"
 #include "battle.h"
 #include "system.h"
-#include "btlev.h"
-#include "btldisp.h"
-#include "btltype.h"
+#include "battle_event.h"
+#include "battle_display.h"
+#include "battle_type.h"
 
 void BattlePresentation_WaitForAdvance(void);
 

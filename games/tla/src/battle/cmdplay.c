@@ -2,7 +2,7 @@
 #include "system.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "callback_scheduler.h"
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/alpine_crossing_lama_temple.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

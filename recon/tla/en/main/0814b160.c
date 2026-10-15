@@ -15,7 +15,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 
 // The battle effect work as this effect uses it.
 struct MarkerWork

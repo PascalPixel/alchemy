@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a9/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_6a9/places.o"(.text)
         "*/games/tla/src/field/overlay_6a9/exits.o"(.text)
-        "*/games/tla/src/field/overlay_6a9/mapcell.o"(.text)
+        "*/games/tla/src/field/overlay_6a9/map_cell.o"(.text)
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008454)
         "*/resource_6a9_overlay.o"(.text.x0200853c)

@@ -5,7 +5,7 @@
  * for initialiser. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "battle_session.h"
 
 extern const s8 BattlePlacement_StepPairs[];

@@ -1,5 +1,5 @@
 #include "ov6ae.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 extern const u8 MsgWhatSTheMatter[];
 struct ObjectRuntime *Func_0200573c(void);

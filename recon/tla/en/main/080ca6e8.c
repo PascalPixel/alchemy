@@ -11,8 +11,8 @@
 #include "object_runtime.h"
 #include "script_object_runtime.h"
 #include "animspr.h"
-#include "fieldrun.h"
-#include "fieldobj.h"
+#include "field_runtime.h"
+#include "field_obj.h"
 #include "object_dispatch.h"
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 

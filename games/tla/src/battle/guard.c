@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 

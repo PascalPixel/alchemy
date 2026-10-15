@@ -10,8 +10,8 @@
 #include "types.h"
 #include "owner_state.h"
 #include "system.h"
-#include "btlpty.h"
-#include "btldisp.h"
+#include "battle_party.h"
+#include "battle_display.h"
 #include "text/msg_ids.h"
 
 

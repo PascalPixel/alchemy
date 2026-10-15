@@ -1,5 +1,5 @@
 #include "local.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "scene_ids.h"
 
 struct MapBits {

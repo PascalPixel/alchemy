@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 s32 SceneActor_CheckFacingAndRange(
 	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)

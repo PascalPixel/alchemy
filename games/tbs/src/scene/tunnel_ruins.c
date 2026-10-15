@@ -4,12 +4,12 @@
 #include "unit/scene/tunnel_ruins.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "object_effect.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "types.h"
 #include "text/msg_ids.h"
 #include "field_event.h"

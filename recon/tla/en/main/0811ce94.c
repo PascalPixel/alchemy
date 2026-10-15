@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "battle_escape.h"
 #include "owner_state.h"
 #include "party_state.h"

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 static s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
 {

@@ -2,7 +2,7 @@
 #include "unit/import.h"
 #include "unit/scene/vale_kraden.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

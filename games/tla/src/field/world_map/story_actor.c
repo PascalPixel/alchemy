@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
-#include "fieldcoo.h"
+#include "field_coordinate.h"
 
 struct BobbingMarker {
     u8 unknown_00[6];

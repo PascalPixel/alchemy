@@ -7,12 +7,12 @@
 #include "battle.h"
 #include "game.h"
 #include "system.h"
-#include "btlcalc.h"
+#include "battle_calc.h"
 #include "scene.h"
 #include "item.h"
 #include "inventory.h"
 #include "battle_random.h"
-#include "btltype.h"
+#include "battle_type.h"
 
 //--------------------------------------------------------------------------
 // バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す

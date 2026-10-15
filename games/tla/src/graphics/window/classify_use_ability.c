@@ -3,7 +3,7 @@
 // アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
 //--------------------------------------------------------------------------
 
-#include "btlsys.h"
+#include "battle_system.h"
 #include "item.h"
 #include "types.h"
 #include "scene.h"

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "btltype.h"
+#include "battle_type.h"
 void UiWindow_Commit(s32 window);
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);

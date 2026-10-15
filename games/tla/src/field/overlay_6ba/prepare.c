@@ -2,7 +2,7 @@
 #include "field_scene.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void Object_SetModeById(s32 id, s32 mode);
 void Func_02000db0(void);

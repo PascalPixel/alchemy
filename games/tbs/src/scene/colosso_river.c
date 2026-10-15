@@ -9,11 +9,11 @@
 #include "unit/scene/common/colosso_setup.h"
 #include "unit/scene/common/colosso_occupant.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/menu/menu.h"
 #include "unit/sound/sound.h"
 #include "unit/runtime/runtime.h"
@@ -44,7 +44,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "heap_state.h"
 
 // 前方宣言

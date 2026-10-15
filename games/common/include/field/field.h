@@ -7,7 +7,7 @@
 #include "edition.h"
 #include "object_runtime.h"
 #if !GAME_TLA
-#include "fieldrun.h"
+#include "field_runtime.h"
 #include "field_scene.h"
 #include "menu_list.h"
 #endif

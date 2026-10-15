@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/colosseum_entrance.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "battle.h"
 #include "debug.h"
@@ -18,7 +18,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 

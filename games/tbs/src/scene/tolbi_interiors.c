@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "tolbi_interiors.h"
 #include "field_event.h"
 #include "text/msg_ids.h"

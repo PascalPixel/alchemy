@@ -7,7 +7,7 @@
  * the count test (differ 17), found set later (91), four minutes of permute
  * (no gain). */
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 
 struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[72]; s32 count; };

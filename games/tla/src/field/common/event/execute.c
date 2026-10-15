@@ -8,9 +8,9 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "battle_unit.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void BattleEffect_CleanupSceneObjects(void);
 

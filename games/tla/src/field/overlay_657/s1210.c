@@ -6,7 +6,7 @@
 #include "call.h"
 #include "flag_call.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "text/msg_ids.h"
 
 struct ObjectRuntime *Func_02001f0c(s32 type, s32 x, s32 y, s32 z);

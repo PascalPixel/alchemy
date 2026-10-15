@@ -2,7 +2,7 @@
  * Earlier register-allocation notes describe the prior pinned form.
  */
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 extern u8 Data_03001e74[];
 
 s32 Battle_SelectWeightedIndex(u8 *weights)

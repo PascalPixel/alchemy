@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/sol_luna_rooms.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"

@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_69e/s0810.o"(.text)
         "*/games/tla/src/field/overlay_69e/s08a4.o"(.text)
         "*/games/tla/src/field/overlay_69e/scene_events.o"(.text)
-        "*/resource_69e_overlay.o"(.text.x02008ae8)
+        "*/games/tla/src/field/overlay_69e/s0ae8.o"(.text)
         "*/games/tla/src/field/overlay_69e/s0bf0.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_69e_overlay.o"(.text.x02008cb6)

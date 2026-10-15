@@ -66,7 +66,7 @@ struct SelectedSubject
 };
 
 // 表を符号付き半語で読む見方
-extern s32 ImiruMura_ArcOrigin[];
+extern s32 Imil_ArcOrigin[];
 
 static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 {
@@ -976,9 +976,9 @@ static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o)
 		if (t != 0)
 		{
 			b = buf;
-			b[0] = ImiruMura_ArcOrigin[0];
-			b[1] = ImiruMura_ArcOrigin[1] + 0x80000;
-			b[2] = ImiruMura_ArcOrigin[2];
+			b[0] = Imil_ArcOrigin[0];
+			b[1] = Imil_ArcOrigin[1] + 0x80000;
+			b[2] = Imil_ArcOrigin[2];
 			Vector_AddPolarOffset(t << 16, (t << 11) + o->unk66, b);
 			o->unk8 = b[0];
 			o->unkC = b[1];
@@ -998,7 +998,7 @@ static void Imil_SwayAndSpark(struct FieldActor *actor)
 	s32				   radius;
 
 	actor->x.fixed =
-		ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin(actor->timer << 10));
+		Imil_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin(actor->timer << 10));
 	actor->timer++;
 	actor->timer = (actor->timer + 64) % 64;
 	if (gFrameCount % 3 == 0)
@@ -1893,4 +1893,4 @@ u16 Imil_CellStepsB[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(2, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
 
-s32 ImiruMura_ArcOrigin[3];
+s32 Imil_ArcOrigin[3];

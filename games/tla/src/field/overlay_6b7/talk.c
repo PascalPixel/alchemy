@@ -1,13 +1,3 @@
-/* Draft, differ 11 of 116: ☀️'s EV11_TALK (debug/level.c) for overlay 6B7.
- * Left: the native loads gInput's address into r1 for the first key test and
- * again into r5 after it; this C (like ☀️'s native) loads it once into r5.
- * Tried: a plain read in either test, a local input pointer, a goto or
- * while (1) loop, three minutes of alchemy permute (12 at best). The RTL
- * dumps show the cause: CSE leaves two loads of the address, and GCSE's PRE
- * merges the third test's into the first's (a copy at the end of the first
- * test's body); a one-pass block before the third test and an asm in-out
- * pointer for the last two tests (its input is PRE'd the same way) leave
- * differ 11. */
 #include "types.h"
 #include "input.h"
 #include "party_state.h"
@@ -15,7 +5,7 @@
 
 extern const u8 Data_02000744[];
 
-/* FAKEMATCH: the pressed keys are read through a volatile view, as ☀️ declares gKeyState volatile: each test reloads them (read plainly, the two first tests merge into one mask, differ 30). */
+// The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
 u8 *UnitGet(s32 owner);
@@ -31,6 +21,19 @@ void WaitFrames(s32 frames);
 void Func_0200017c(s32 delta);
 void Func_0200073c(s32 cue);
 
+// The pressed keys under a mask, for the last test of a group: the next
+// test loads gInput's address again.
+static inline u32 Input_PressedFenced(u32 mask)
+{
+    u32 keys = KEYS_PRESSED & mask;
+
+    /* FAKEMATCH: the empty asm's memory clobber ends the test's block, so GCSE's PRE does not carry gInput's address on to the next test, which loads it again as the native does (without it, one load for all tests: differ 11 in Func_020001a8). */
+    __asm__ volatile("" : "+r"(keys) : : "memory");
+    return keys;
+}
+
+// The debug room's level raiser: Start or Select raises the party's levels
+// by 5 and A by 1; B closes the window and recalculates the four units.
 void Func_020001a8(void)
 {
     u8 *record;
@@ -57,7 +60,8 @@ void Func_020001a8(void)
             UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
         }
 
-        if ((KEYS_PRESSED & 8) != 0 || (KEYS_PRESSED & 4) != 0) {
+        /* FAKEMATCH: the pressed keys are read through a volatile view (KEYS_PRESSED), as ☀️ declares gKeyState volatile: each test reloads them (read plainly, the two first tests merge into one mask, differ 30). */
+        if ((KEYS_PRESSED & 8) != 0 || Input_PressedFenced(4) != 0) {
             Func_0200017c(5);
             Func_0200073c(93);
             flag = 1;

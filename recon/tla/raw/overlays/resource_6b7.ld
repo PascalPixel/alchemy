@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b7/s00fc.o"(.text)
         "*/games/tla/src/field/overlay_6b7/level.o"(.text)
         "*/resource_6b7_overlay.o"(.text.x0200817c)
-        "*/resource_6b7_overlay.o"(.text.x020081a8)
+        "*/games/tla/src/field/overlay_6b7/talk.o"(.text)
         "*/resource_6b7_overlay.o"(.text.x020082cc)
         "*/games/tla/src/field/overlay_6b7/finish.o"(.text)
         "*/games/tla/src/field/overlay_6b7/s0590.o"(.text)

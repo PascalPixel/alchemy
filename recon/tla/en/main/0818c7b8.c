@@ -21,7 +21,8 @@
  * Human Hunt's blend value before its address, the pool after
  * BattleMotion_ApproachTargetFar one instruction early, and the fill's
  * IwramFillWords address before 0x4000. alchemy permute (10 min, 2 jobs,
- * 7,474 candidates): nothing below 16 (its weighted best differs 24). */
+ * 7,474 candidates): nothing below 16 (its weighted best differs 24). The
+ * crescent's second half as cells + 0x4000 or the fixed 0x02014000: 16. */
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -54,10 +55,6 @@ struct EffectPosition;
 extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
-
-// The second half of the grey crescent's sheet, as the map cell buffer
-// unpacks it.
-extern u8 gData_02014000[];
 
 void BattleFx_BeginTiledCanvas(s32 bgControl);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -177,7 +174,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
           draw[0](canvas, cells, x - 4, y, 128, 128);
           break;
         case 3:
-          draw[0](canvas, gData_02014000, x - 4, y, 128, 128);
+          draw[0](canvas, cells + 0x4000, x - 4, y, 128, 128);
           break;
         case 4:
           draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
@@ -195,7 +192,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
           draw[0](canvas, cells, x - 4, y - 8, 128, 128);
           break;
         case 3:
-          draw[0](canvas, gData_02014000, x - 4, y - 8, 128, 128);
+          draw[0](canvas, cells + 0x4000, x - 4, y - 8, 128, 128);
           break;
         case 4:
           draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);

@@ -1556,27 +1556,27 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
 // Defines name(object, value), which calls apply(sprite, value) on an
 // object's one sprite, or on each sprite of its group.
 #define DEFINE_APPLY_TO_CHILDREN(name, object_type, apply)                     \
-  void name(object_type raw, s32 value) {                                      \
+  void name(object_type rawObject, s32 value) {                                \
     struct DispatchObject *obj;                                                \
-    void **list;                                                               \
-    s32 n;                                                                     \
-    void *spr;                                                                 \
+    void **sprites;                                                            \
+    s32 remaining;                                                             \
+    void *sprite;                                                              \
                                                                                \
-    obj = raw;                                                                 \
+    obj = rawObject;                                                           \
     if (obj != 0) {                                                            \
       switch (obj->kind & 0xf) {                                               \
       case 1:                                                                  \
         apply(obj->target.child, value);                                       \
         break;                                                                 \
       case 2:                                                                  \
-        list = obj->target.children;                                           \
-        n = 3;                                                                 \
+        sprites = obj->target.children;                                        \
+        remaining = 3;                                                         \
         do {                                                                   \
-          spr = *list++;                                                       \
-          if (spr != 0)                                                        \
-            apply(spr, value);                                                 \
-          n--;                                                                 \
-        } while (n >= 0);                                                      \
+          sprite = *sprites++;                                                 \
+          if (sprite != 0)                                                     \
+            apply(sprite, value);                                              \
+          remaining--;                                                         \
+        } while (remaining >= 0);                                              \
         break;                                                                 \
       }                                                                        \
     }                                                                          \
@@ -1591,26 +1591,27 @@ DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren,
                          struct DispatchObject *,
                          AnimationObjects_SetActiveTimerSteps)
 
-// Both of the above: switches all of an object's sprites to animation no
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
-                                        s32 steps) {
-  void **list;
-  void *spr;
-  s32 n;
+// Both of the above: switches all of an object's sprites to animation and
+// sets their timer step to step.
+void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj,
+                                        s32 animation, s32 step) {
+  void **sprites;
+  void *sprite;
+  s32 i;
 
   if (obj != 0) {
     switch (obj->kind & 15) {
     case 1:
-      AnimationObjects_SelectAnimation(obj->target.child, no);
-      AnimationObjects_SetActiveTimerSteps(obj->target.child, steps);
+      AnimationObjects_SelectAnimation(obj->target.child, animation);
+      AnimationObjects_SetActiveTimerSteps(obj->target.child, step);
       break;
     case 2:
-      list = obj->target.children;
-      for (n = 3; n >= 0; n--) {
-        spr = *list++;
-        if (spr != 0) {
-          AnimationObjects_SelectAnimation(spr, no);
-          AnimationObjects_SetActiveTimerSteps(spr, steps);
+      sprites = obj->target.children;
+      for (i = 3; i >= 0; i--) {
+        sprite = *sprites++;
+        if (sprite != 0) {
+          AnimationObjects_SelectAnimation(sprite, animation);
+          AnimationObjects_SetActiveTimerSteps(sprite, step);
         }
       }
       break;
@@ -1619,64 +1620,75 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
 }
 
 // Sets the rotation of an object's sprite, when it has just one.
-void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot) {
+void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rotation) {
   if (obj != 0 && (obj->kind & 0xf) == 1)
-    ((struct FieldSprite *)obj->target.child)->rotation = rot;
+    ((struct FieldSprite *)obj->target.child)->rotation = rotation;
 }
 
-// Gives a one-sprite object's first layer animation id no and restarts
+// Gives a one-sprite object's first layer animation id animId and restarts
 // its layers.
-// A negative no does nothing.
-void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
-  struct DispatchObject *obj = raw;
-  struct AnimationObject *spr;
+// A negative animId does nothing.
+void Animation_SetIndexAndInitObjects(void *rawObject, s32 animId) {
+  struct DispatchObject *obj = rawObject;
+  struct AnimationObject *sprite;
 
   if (obj != NULL && (obj->kind & 0xf) == 1) {
-    spr = obj->target.child;
-    if (no >= 0) {
-      spr->entries[0]->animId = no;
-      Animation_InitializeObjects(spr);
+    sprite = obj->target.child;
+    if (animId >= 0) {
+      sprite->entries[0]->animId = animId;
+      Animation_InitializeObjects(sprite);
     }
   }
 }
 
-// Adds a layer of animation id no to a one-sprite object's sprite.
-// A negative no does nothing.
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
+// Adds a layer of animation id animId to a one-sprite object's sprite.
+// A negative animId does nothing.
+void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj,
+                                          s32 animId) {
   if (obj != 0 && (obj->kind & 0xf) == 1) {
-    struct AnimationObject *spr = obj->target.child;
-    if (no >= 0)
-      ResourceMetadata_Register(spr, no);
+    struct AnimationObject *sprite = obj->target.child;
+    if (animId >= 0)
+      ResourceMetadata_Register(sprite, animId);
   }
 }
 
-// Starts an object on one of the engine's own scripts (object_script.c).
+// Starts an object on the script that approaches its linked object
+// (SC_APPROACH_LINK), linked to arg. The functions below start the engine's
+// other scripts (object_script.c).
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
   obj->argument = arg;
 }
 
+// Starts an object on the script that runs SC_KEY_COUNT every frame.
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
+// Starts an object on the script that moves it by the keys (SC_KEYS).
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
+// Starts an object on the player control script (SC_PLAYER).
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
+// Starts an object on the world map control script (SC_WORLD).
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
+// Starts an object on the idle script (a lone SC_END).
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
+// Starts an object on the camera script (SC_CAMERA). With a leader to
+// follow (arg), it also gets a speed limit of 4 pixels a frame and an
+// acceleration of 0.5 (value30 and value34 are those fields).
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
   ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
@@ -1689,18 +1701,18 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
 }
 
 // Waits until the object's script reaches SC_END (0x10), at most 300 frames.
-void ObjectDispatch_WaitForValue16(void *raw) {
-  struct ScriptInterpreter *sc = raw;
-  s32 cnt;
+void ObjectDispatch_WaitForValue16(void *rawObject) {
+  struct ScriptInterpreter *interpreter = rawObject;
+  s32 frames;
 
-  cnt = 0;
-  if (sc->script[sc->cursor] != 0x10) {
+  frames = 0;
+  if (interpreter->script[interpreter->cursor] != 0x10) {
     do {
       WaitFrames(1);
-      cnt++;
-      if (cnt > 299)
+      frames++;
+      if (frames > 299)
         break;
-    } while (sc->script[sc->cursor] != 0x10);
+    } while (interpreter->script[interpreter->cursor] != 0x10);
   }
 }
 
@@ -1715,26 +1727,30 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
 // Sets the OAM blend mode of a one-sprite object's sprite.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
   if (obj != 0 && obj->kind == 1) {
-    struct FieldSprite *spr = obj->target.child;
-    spr->blendMode = mode;
+    struct FieldSprite *sprite = obj->target.child;
+    sprite->blendMode = mode;
   }
 }
 
-// Sets bit 1 of a one-sprite object's displayFlags: keep its scale fixed
-void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
+// Sets bit 1 of a one-sprite object's displayFlags: when set, the fixed
+// camera draws it at its own scale, not scaled by distance.
+void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj,
+                                         u32 fixedScale) {
   if (obj != 0 && obj->kind == 1) {
-    struct FieldSprite *spr = obj->target.child;
-    spr->unk1d1 = on;
+    struct FieldSprite *sprite = obj->target.child;
+    sprite->unk1d1 = fixedScale;
   }
 }
 
-// Sets the draw parameter of a one-sprite object's layers
-void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
+// Sets the draw parameter of a one-sprite object's layers (see
+// ObjectGroup_SetChildValueUnlessFifteen).
+void Animation_ApplyChildValues(struct DispatchObject *obj, u32 param) {
   if (obj != NULL && obj->kind == 1)
-    ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, val);
+    ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, param);
 }
 
-// Resumes the object camera updates, fades the palette in, and shows
+// Resumes the object camera updates, starts the palette back to normal and,
+// a frame later, shows BG0 and the sprites with BG1-3 hidden.
 void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
   Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
@@ -1751,11 +1767,12 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   REG_DISPCNT &= 0xe1ff;
 }
 
+// Returns 1.
 s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
 // A map cell's word, as the camera reads it.
 struct CameraTile {
-  u32 unk00 : 12;
+  u32 block : 12;   // the block (metatile) number
   u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; // if not 0, the priority of an object standing on it
   u32 unk10 : 16;
@@ -1786,7 +1803,7 @@ struct CameraSprite {
   u8 resource; // its VRAM cache entry
   u8 flags1d;
   u8 unk1e[7];
-  u8 activated;
+  u8 dirty; // redraw when next placed
 };
 
 // A field object, as the camera reads it.
@@ -1847,34 +1864,34 @@ void ObjectSystem_UpdateCamera(void) {
      three points above the position. Measured (2026-10-13): without it
      the frame is 44 bytes for 80 (differ 4, the two sp adjustments). */
   struct CameraPoint spare[3];
-  s32 cnt;
-  struct CameraState *map;
-  s32 camX;
-  s32 camZ;
-  struct ObjectSystemWork *sync;
+  s32 i;
+  struct CameraState *mapWork;
+  s32 viewX;
+  s32 viewZ;
+  struct ObjectSystemWork *system;
   struct CameraObject *obj;
-  struct CameraSprite *spr;
-  s32 *cam;
+  struct CameraSprite *sprite;
+  s32 *view;
   u32 kind;
   s32 dx;
   s32 dz;
-  s32 top;
+  s32 screenTop;
   struct CameraTile *tile;
-  u32 bits;
+  u32 priority;
   s32 scale[2];
   s32 pos[4];
-  u32 bitsVal;
+  u32 layerPlusOne;
 
-  map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
-  cam = &map->x;
-  camX = cam[0] & 0xffff0000;
-  camZ = cam[1] & 0xffff0000;
-  sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  mapWork = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
+  view = &mapWork->x;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
   // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-  sync->used = 0;
+  system->used = 0;
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
-  for (cnt = 0; cnt < 64; cnt++, obj++) {
+  for (i = 0; i < 64; i++, obj++) {
     if (obj->active == 0)
       continue;
     if (obj->x != 0 || obj->z != 0) {
@@ -1883,34 +1900,34 @@ void ObjectSystem_UpdateCamera(void) {
         continue;
       if (kind != 1)
         continue;
-      if (sync->suspended != 0 && obj->held == 0) {
+      if (system->suspended != 0 && obj->held == 0) {
         struct CameraSprite *frozen = obj->sprite;
 
         Resource_ActivateEntry(frozen->resource);
-        frozen->activated = kind;
+        frozen->dirty = kind;
         continue;
       }
-      dx = obj->x - camX;
-      dz = obj->z - camZ;
-      top = dz - obj->y;
-      spr = obj->sprite;
-      if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 &&
-          top < 0xe00000) {
+      dx = obj->x - viewX;
+      dz = obj->z - viewZ;
+      screenTop = dz - obj->y;
+      sprite = obj->sprite;
+      if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
+          screenTop < 0xe00000) {
         // The cell under the object.
-        tile = &map->layers[obj->layer]
+        tile = &mapWork->layers[obj->layer]
                     .tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
         if (obj->flags & 1) {
-          bits = tile->priority;
-          if (bits != 0) {
-            spr->priority = bits;
-            spr->secondPriority = bits;
+          priority = tile->priority;
+          if (priority != 0) {
+            sprite->priority = priority;
+            sprite->secondPriority = priority;
           }
         }
-        bitsVal = tile->layer;
-        if (bitsVal != 0)
-          obj->layer = bitsVal - 1;
-        scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
-        scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
+        layerPlusOne = tile->layer;
+        if (layerPlusOne != 0)
+          obj->layer = layerPlusOne - 1;
+        scale[0] = Iwram_MulQ16(obj->scaleX, sprite->scale);
+        scale[1] = Iwram_MulQ16(obj->scaleY, sprite->scale);
         pos[0] = dx;
         pos[1] = obj->y;
         pos[2] = dz;
@@ -1925,22 +1942,22 @@ void ObjectSystem_UpdateCamera(void) {
           pos[2] += 0x1400000;
           pos[3] += 0x1400000;
         }
-        Render_ApplyProjectedPlacement(spr, pos, scale, obj->angle);
+        Render_ApplyProjectedPlacement(sprite, pos, scale, obj->angle);
         continue;
       }
       if (obj->held == 0) {
-        if (!(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
-          spr->activated = 1;
+        if (!(sprite->flags1d & 1)) {
+          Resource_ActivateEntry(sprite->resource);
+          sprite->dirty = 1;
         }
       }
     } else {
       kind = obj->kind & 15;
       if (kind == 1) {
-        spr = obj->sprite;
-        if (obj->held == 0 && !(spr->flags1d & 1)) {
-          Resource_ActivateEntry(spr->resource);
-          spr->activated = kind;
+        sprite = obj->sprite;
+        if (obj->held == 0 && !(sprite->flags1d & 1)) {
+          Resource_ActivateEntry(sprite->resource);
+          sprite->dirty = kind;
         }
       }
     }
@@ -1948,6 +1965,7 @@ void ObjectSystem_UpdateCamera(void) {
   Runtime_ReleaseHeapBlock(52);
 }
 
+// Returns 1.
 s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 // Each frame, with the fixed camera: places every object's sprite, from the
@@ -1955,37 +1973,37 @@ s32 ObjectCamera_ReturnTrue(void) { return 1; }
 // While battle commands are chosen (flag 363, set by
 // BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0 scale.
 void ObjectSystem_UpdateCameraFixed(void) {
-  s32 cnt;
-  struct FixedCamera *cam;
-  struct ObjectSystemWork *sync;
+  s32 i;
+  struct FixedCamera *camera;
+  struct ObjectSystemWork *system;
   struct CameraPoint *eye;
   struct CameraPoint *target;
   struct CameraObject *obj;
   s32 angle;
-  s32 part;
+  s32 p;
   s32 kind;
   s32 *pos;
-  s32 one;
-  void **parts;
-  void *spr;
-  s32 scale2[2];
+  s32 unitScale;
+  void **sprites;
+  void *sprite;
+  s32 groupScale[2];
   s32 scale[2];
   /* FAKEMATCH: frame local: unused; the native frame keeps room for two
      points above the scales. Measured (2026-10-13): without it the frame
      is 28 bytes for 52 (differ 4, the two sp adjustments). */
   struct CameraPoint spare[2];
 
-  cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
-  sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-  eye = &cam->eye;
-  target = &cam->target;
-  if (cam->eyeOverride != NULL)
-    eye = cam->eyeOverride;
-  if (cam->targetOverride != NULL)
-    target = cam->targetOverride;
+  eye = &camera->eye;
+  target = &camera->target;
+  if (camera->eyeOverride != NULL)
+    eye = camera->eyeOverride;
+  if (camera->targetOverride != NULL)
+    target = camera->targetOverride;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
-  sync->used = 0;
+  system->used = 0;
   Render_ResetTransformState();
   if (GameFlag_TestFar(363)) {
     angle += 0xffffe000;
@@ -1996,8 +2014,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
   }
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
   obj += 63;
-  one = 0x10000;
-  for (cnt = 63; cnt >= 0; cnt--, obj--) {
+  unitScale = 0x10000;
+  for (i = 63; i >= 0; i--, obj--) {
     if (obj->active == 0)
       continue;
     kind = obj->kind & 15;
@@ -2006,27 +2024,27 @@ void ObjectSystem_UpdateCameraFixed(void) {
       pos = &obj->x;
       scale[0] = obj->scaleX;
       scale[1] = obj->scaleY;
-      spr = obj->sprite;
+      sprite = obj->sprite;
       if (GameFlag_TestFar(363)) {
-        scale[0] = one;
-        scale[1] = one;
+        scale[0] = unitScale;
+        scale[1] = unitScale;
       }
-      Render_PlaceProjectedSprite(spr, pos, scale, obj->angle + angle,
+      Render_PlaceProjectedSprite(sprite, pos, scale, obj->angle + angle,
                                   obj->layer);
       break;
     case 2:
-      scale2[0] = obj->scaleX;
-      scale2[1] = obj->scaleY;
+      groupScale[0] = obj->scaleX;
+      groupScale[1] = obj->scaleY;
       if (GameFlag_TestFar(363)) {
-        scale2[0] = one;
-        scale2[1] = one;
+        groupScale[0] = unitScale;
+        groupScale[1] = unitScale;
       }
-      parts = obj->sprite;
-      for (part = 3; part >= 0; part--) {
-        spr = *parts++;
-        if (spr != NULL)
-          Render_PlaceProjectedSprite(spr, &obj->x, scale2, obj->angle + angle,
-                                      obj->layer);
+      sprites = obj->sprite;
+      for (p = 3; p >= 0; p--) {
+        sprite = *sprites++;
+        if (sprite != NULL)
+          Render_PlaceProjectedSprite(sprite, &obj->x, groupScale,
+                                      obj->angle + angle, obj->layer);
       }
       break;
     case 0:

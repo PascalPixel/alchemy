@@ -72,3 +72,39 @@ void Func_0811c01c(s32 objectId) {
   }
   Object_SetMode(object, 5);
 }
+
+// The Broken Seal's gBattleMotion_Variant* tables, indexed by the variant.
+extern const s32 Data_0812cbb0[]; // acceleration
+extern const s32 Data_0812cbd8[]; // speed limit
+extern const s32 Data_0812cc00[]; // upward velocity
+extern const s32 Data_0812cc28[]; // distance, in percent of the anchor's x
+
+// The Broken Seal's BattleMotion_ApplyVariantMotion: sends a battle object
+// back by its variant's distance and speed, with a hop when it stands on the
+// ground or for the strong variants (5 and up). Four enemies stay where they
+// stand, and every object gets its vertical motion before it takes mode 5.
+void Func_0811c074(s32 id, s32 variant) {
+  struct BattleObj *slot;
+  struct MotionObject *object;
+  s32 x;
+  s32 scale;
+  s32 enemyId;
+
+  slot = BattleObjGet(id);
+  object = slot->object;
+  enemyId = ((struct BattleUnit *)UnitGet(id))->enemyId;
+  if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
+    object->acceleration = Data_0812cbb0[variant];
+    object->speedLimit = Data_0812cbd8[variant];
+    if (object->y == 0 || variant > 4)
+      object->velocityY = Data_0812cc00[variant];
+    Object_ResetMotion(object);
+    scale = slot->anchorX;
+    x = (scale * Data_0812cc28[variant]) / 100;
+    Object_SetPosition(object, x, 0, slot->anchorZ);
+  }
+  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Object_SetMode(object, 5);
+}

@@ -1878,7 +1878,7 @@ s32 Field_RunScene(s32 entrance) {
   UiWork_InitializeWithResourceCountersFar();
   Field_ClearRequests();
   work->view = (s32)gOverlayArea.events();
-  BattleMap_ApplyEntranceView();
+  Scene_ApplyEntrance();
   ObjectTable_ResetForObject(
       (struct ScenePlacement *)gOverlayArea.placements());
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -2015,7 +2015,7 @@ s32 Field_RunScene(s32 entrance) {
             Battle_InitializeRenderObject();
             BattleFx_RunVisibilityTransition();
           } else {
-            BattleFx_RunKind6DescriptorAction(work->event);
+            Scene_RunRaisedEvent(work->event);
           }
           work->busy = 0;
           work->event = 0;
@@ -2033,11 +2033,11 @@ s32 Field_RunScene(s32 entrance) {
           gGameState.encounterSteps = 0;
         } else if (work->action != 0) {
           work->busy = 1;
-          BattleAction_RunDescriptor(work->action);
+          Scene_RunTouchOrExit(work->action);
           work->busy = 0;
           work->action = 0;
         } else if (work->input != 0) {
-          Battle_DispatchInputEvent(work->input);
+          Field_RunPushTileEvent(work->input);
           work->input = 0;
         } else if (work->examine != 0) {
           // Examine the actor or tile ahead, or open the menu if neither has an
@@ -2086,23 +2086,23 @@ s32 Field_RunScene(s32 entrance) {
           work->menu = 0;
         } else if ((s16)work->descriptor != 0) {
           Battle_SetObjectFlag5bWhenMode3();
-          BattleFx_RunDescriptorAction(work->descriptor & 0xfff);
+          Scene_TalkToActor(work->descriptor & 0xfff);
           Battle_ClearObjectFlag5bWhenMode3();
           work->descriptor = 0;
         } else if (work->tile != 0) {
           Battle_SetObjectFlag5bWhenMode3();
-          Field_RunTileAction(work->tile);
+          Field_SearchTile(work->tile);
           Battle_ClearObjectFlag5bWhenMode3();
           work->tile = 0;
         } else if (work->command != 0) {
           UiTimedNotice_CloseIfActiveFar();
           Battle_SetObjectFlag5bWhenMode3();
-          BattleCommand_ExecuteSelectedAction(work->command);
+          Field_UsePsynergy(work->command);
           Battle_ClearObjectFlag5bWhenMode3();
           work->command = 0;
         } else if (work->item != 0) {
           Battle_SetObjectFlag5bWhenMode3();
-          BattleCommand_ExecuteSelectedItem(work->item, work->itemArgument);
+          Field_UseItem(work->item, work->itemArgument);
           Battle_ClearObjectFlag5bWhenMode3();
           work->item = 0;
         } else if (work->start != 0) {
@@ -2193,7 +2193,7 @@ done:
   return result;
 }
 
-// FieldActor と同じ物体。位置をひとつのベクトルとして渡すための見え方
+// A field actor (struct FieldActor), seen with its position as one vector.
 struct Object {
   u8 pad0[6];
   u16 angle;
@@ -2204,9 +2204,11 @@ struct Object {
   struct AnimationObject *sprite;
 };
 
+// One of the scene's entrances (gOverlayArea.entrances), ended by entrance -1:
+// where the party appears, and the scroll bounds to use. -1 keeps a bound.
 struct EntranceView {
   s16 entrance;
-  s16 flag;
+  s16 flag; // -1, or a flag that must be set
   s16 x;
   s16 y;
   s16 z;
@@ -2221,29 +2223,33 @@ struct EntranceView {
 
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
-#define HEX_DIGIT 0xf0e0
+#define HEX_DIGIT 0xf0e0 // the tile of digit 0, in BG palette 15
 
+// Returns the collision code of the map cell 16 pixels ahead of the party
+// leader when there is something to search there: a tile code from 242 to 247
+// whose ground is no more than 64 pixels above the leader, or a code the
+// scene has a search event for. Returns 0 otherwise.
 s32 Object_GetTriggerTileAheadOfCurrent(void) {
   u8 *state;
   u8 *map;
-  struct Object *obj;
+  struct Object *leader;
   struct EffectVector pos;
   u8 *cell;
   u8 *base;
-  s32 kind;
+  s32 code;
   s32 height;
   s32 result;
 
   result = 0;
-  obj = ObjectTable_Get(gGameState.selectedActor);
+  leader = ObjectTable_Get(gGameState.selectedActor);
   state = *(u8 **)Ram_EventWork;
   map = *(u8 **)Ram_MapWork;
-  if (obj != 0) {
-    pos.x = obj->pos.x;
-    pos.y = obj->pos.y;
-    pos.z = obj->pos.z;
-    Vector_AddPolarOffset(0x100000, obj->angle, &pos);
-    if (((struct FieldWork *)state)->mode == 3) {
+  if (leader != 0) {
+    pos.x = leader->pos.x;
+    pos.y = leader->pos.y;
+    pos.z = leader->pos.z;
+    Vector_AddPolarOffset(0x100000, leader->angle, &pos);
+    if (((struct FieldWork *)state)->mode == MODE_WORLD_MAP) {
       cell =
           Ram_MapBlocks +
           ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
@@ -2251,20 +2257,23 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
       base = *(u8 **)(map + 0x130);
       cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);
     }
-    kind = cell[2];
-    if (kind >= 242 && kind <= 247) {
-      height = Map_GetTerrainHeightFar(obj->kind, pos.x, pos.z);
-      if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
-        result = kind;
+    code = cell[2];
+    if (code >= 242 && code <= 247) {
+      height = Map_GetTerrainHeightFar(leader->kind, pos.x, pos.z);
+      if (height >= leader->pos.y && height <= leader->pos.y + 0x400000) {
+        result = code;
       }
-    } else if (BattleFx_FindDescriptor(3, kind) != 0) {
-      result = kind;
+    } else if (Scene_FindEvent(EVENT_SEARCH, code) != 0) {
+      result = code;
     }
   }
   return result;
 }
 
-void BattleMap_ApplyEntranceView(void) {
+// Places the party at the entrance it came in by (the first matching entry, or
+// the scene's first one) unless it keeps its position, and sets the map's
+// scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
+void Scene_ApplyEntrance(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 entrance = gGameState.entrance;
   struct EntranceView *view = (struct EntranceView *)gOverlayArea.entrances();
@@ -2281,7 +2290,7 @@ void BattleMap_ApplyEntranceView(void) {
   if (!found)
     view = (struct EntranceView *)gOverlayArea.entrances();
 
-  if (!GameFlag_TestFar(0x109)) {
+  if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
     gGameState.x = view->x << 16;
     gGameState.y = view->y << 16;
     gGameState.z = view->z << 16;
@@ -2304,6 +2313,11 @@ void BattleMap_ApplyEntranceView(void) {
     work->minY = work->maxY - (160 << 16);
 }
 
+// The debug palette editor (L on the pause menu in debug mode). Shows colours
+// 1 to 15 of a palette with their red, green and blue values in hex. Left and
+// right choose the colour, up and down the channel, L and R the palette (0 to
+// 13); A raises the channel and B lowers it, Start makes the colour blink
+// while held, and Select leaves.
 void Debug_RunPaletteEditor(void) {
   s32 palette = 0;
   s32 channel = 1;
@@ -2320,6 +2334,8 @@ void Debug_RunPaletteEditor(void) {
 
   Resource_DecompressHalfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
+  // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
+  // colour's swatch and its three channels.
   tile = (palette << 12) + 0xd1;
   colors = &PALETTE[palette * 16 + 1];
   map = EDITOR_MAP;
@@ -2409,6 +2425,8 @@ redraw:
       goto redraw;
     }
     if (gKeysRepeat & KEY_START) {
+      // Blink white, the colour, black, the colour, every 10 frames; red
+      // counts the frames here.
       colors = &PALETTE[palette * 16 + color];
       value = *colors;
       red = 0;
@@ -2431,7 +2449,7 @@ redraw:
     }
     if (gKeysRepeat & KEY_SELECT)
       break;
-    gFrameCount;
+    gFrameCount; // a read whose value is not used
     WaitFrames(1);
   }
   Ui_LoadWindowGraphics();
@@ -2442,10 +2460,13 @@ struct ActionDescriptorTables {
   struct ActionDescriptor *tables[4];
 };
 
+// Returns the placement of actor id in the scene's placement tables, or NULL:
+// for a party character (0 to 7) the row with its sprite, and for a placed
+// actor (8 on) the row it was created from, counting the placed rows in order.
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id) {
   struct ActionDescriptor *entry;
   s32 i;
-  s32 group = 8;
+  s32 placed = ACTOR_FIRST_PLACED;
 
   for (i = 0; i < 4; i++) {
     entry = ((struct ActionDescriptorTables *)gEventWork)->tables[i];
@@ -2459,9 +2480,9 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id) {
     } else {
       for (; (s16)entry->sprite != -1; entry++) {
         if ((s16)entry->sprite > 7) {
-          if (group == id)
+          if (placed == id)
             goto found;
-          group++;
+          placed++;
         }
       }
     }
@@ -2472,27 +2493,26 @@ found:
   return entry;
 }
 
-// イベントの作業領域（gEventWork）の一部
+// Part of the event work (gEventWork).
 struct EffectDescriptorRuntime {
   u8 unused00[16];
-  struct EffectDescriptor
-      *descriptors; // いまのシーンのイベント表（-1 で終わり）
+  struct EffectDescriptor *descriptors; // the scene's events, ended by -1
   u8 unused14[0x15c];
-  s16 queuedResult; // 出口の行き先
+  s16 queuedResult; // the exit taken
   u8 unused172[0x2a];
-  s16 limit; // 押し続けた数（EventWork の blockedSteps）
+  s16 limit; // how long the leader has pushed (EventWork's blockedSteps)
 };
 
-// 配置表の 1 件（struct ScenePlacement）
+// A row of a placement table (struct ScenePlacement).
 struct BattleEffectAction {
-  s16 id;
+  s16 sprite;
   u8 unused02[20];
-  s8 mode; // 話しかけたときの向き方（talkFacing）
+  s8 talkFacing; // how the actor turns when talked to
   u8 unused17;
 };
 
-// イベント表の 1
-// 件にも、イベントの作業領域にも重ねる（触れる・出口の処理で使う）
+// Laid over both an event (struct EffectDescriptor) and the event work, for
+// touch events and exits.
 typedef struct {
   s32 flags;
   u8 unk04[4];
@@ -2503,11 +2523,8 @@ typedef struct {
   s16 limit;
 } EffectDescriptorWorkView;
 
-//--------------------------------------------------------------------------
-// イベントの条件を調べる
-// -1 は常に成り立つ。0x1000 が立っていればフラグが立っているとき、
-// そうでなければフラグが立っていないときに成り立つ
-//--------------------------------------------------------------------------
+// Returns whether an event condition holds: -1 always holds; a condition with
+// bit 0x1000 holds while that flag is set, any other while its flag is clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 on;
 
@@ -2521,36 +2538,31 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return on == 0;
 }
 
-//--------------------------------------------------------------------------
-// 調べるイベント（種類 3）で、条件を見ずに成り立たせるものか
-// 対象つき（flags & 0x1ff が 3 でない）で、result の上位 12bit が 0x005
-// でないとき 1
-//--------------------------------------------------------------------------
-u32 BattleFx_CheckDescriptorKind3Result(s32 flags, s32 result) {
+// Returns 1 for a search event (kind 3) that holds whatever its condition: one
+// with more flags than its kind, unless its result is a mimic battle (type
+// 0x005 in its top 12 bits).
+u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   u32 tmp;
   s32 kind;
   u32 ret;
 
-  if ((flags & 0xf) != 3)
+  if ((flags & 0xf) != EVENT_SEARCH)
     return 0;
   kind = flags & 0x1ff;
   ret = 0;
-  if (kind != 3) {
+  if (kind != EVENT_SEARCH) {
     tmp = (result & 0xfff00000) ^ 0x500000;
     ret = tmp | (0U - tmp);
-    ret >>= 31; // tmp != 0 なら 1
+    ret >>= 31; // 1 when tmp is not 0
   }
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// いまのシーンのイベント表から、種類と相手が合い、条件の成り立つものを探す
-// flags 0x200 : 押し続けた数が 12（0x800 なら 2）を超えたときだけ
-// flags 0x400 : 先頭の向きが flags の上位 4bit の向きから 1/8 周以内のときだけ
-// kind  : 種類
-// value : 相手
-//--------------------------------------------------------------------------
-struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value) {
+// Returns the first of the scene's events of kind for target whose condition
+// holds, or NULL. Flag 0x200 also needs the leader to have pushed against it
+// for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
+// face within an eighth of a turn of the direction in the top four bits.
+struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   struct EffectDescriptorRuntime *work =
       (struct EffectDescriptorRuntime *)gEventWork;
   struct EffectDescriptor *ev = work->descriptors;
@@ -2560,8 +2572,8 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value) {
 
   flags = ev->flags;
   while (flags != -1) {
-    if ((flags & 0xf) == kind && ev->value == value &&
-        (BattleFx_CheckDescriptorKind3Result(flags, ev->result) != 0 ||
+    if ((flags & 0xf) == kind && ev->value == target &&
+        (Event_SearchIgnoresCondition(flags, ev->result) != 0 ||
          (GameFlag_IsConditionActive(ev->condition) != 0 &&
           (flags = ev->flags, 1)))) {
       s32 ok = 0;
@@ -2570,22 +2582,22 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value) {
 
       if ((flags & 0x800) != 0)
         steps = 2;
-      need = flags & 0x600;
+      need = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
 
       switch (need) {
       case 0:
         ok = 1;
         break;
-      case 0x200: // 押し続け
+      case EVENT_TOUCH_WALKING:
         if (work->limit > steps) {
           ok = 1;
         }
         break;
-      case 0x400: // 向き
+      case EVENT_TOUCH_FACING:
         flags &= 0xf000;
         ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
-      case 0x600: // 両方
+      case EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING:
         if (work->limit > steps) {
           flags &= 0xf000;
           ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
@@ -2604,20 +2616,17 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value) {
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// オーバーレイ領域に読み込んだシーンの初期化を呼ぶ
-//--------------------------------------------------------------------------
+// Runs the scene's initialization again. Nothing calls this.
 void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
-//--------------------------------------------------------------------------
-// 話すイベントを探す（止めている相手なら、種類 7 のほうを先に見る）
-//--------------------------------------------------------------------------
+// Returns the talk event of actor id: for the actor the party has stopped, its
+// kind 7 event if it has one.
 s32 BattleFx_FindDescriptorWithOverride(s32 id) {
-  struct EffectDescriptor *ev = BattleFx_FindDescriptor(0, id);
+  struct EffectDescriptor *ev = Scene_FindEvent(EVENT_TALK, id);
   s32 paused = gGameState.pausedObject;
 
   if (paused == id) {
-    struct EffectDescriptor *alt = BattleFx_FindDescriptor(7, paused);
+    struct EffectDescriptor *alt = Scene_FindEvent(7, paused);
 
     if (alt != 0) {
       return (s32)alt;
@@ -2626,28 +2635,27 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id) {
   return (s32)ev;
 }
 
-//--------------------------------------------------------------------------
-// オブジェクト id に話しかける
-// 止めている相手は種類 7 を先に使い、なくて種類 0 が関数なら
-// MsgPonderEllipsis（「・・・。」）からのメッセージで済ませる
-// 戻り値 : 動かしたら 0、なければ -1
-//--------------------------------------------------------------------------
-s32 BattleFx_RunDescriptorAction(s32 id) {
-  struct BattleEffectAction *place =
+// Talks to actor id: shows its event's message or calls its event function,
+// with the actor stopped and turned as its placement says. For the actor the
+// party has stopped, its kind 7 event comes first; without one, a talk event
+// that is a function gives a random line from MsgPonderEllipsis ("...")
+// instead. Returns 0 when an event ran, -1 when there was none.
+s32 Scene_TalkToActor(s32 id) {
+  struct BattleEffectAction *placement =
       (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
   s32 ret = -1;
   struct ObjectRuntime *obj = (struct ObjectRuntime *)Object_GetById(id);
   struct EffectDescriptor *ev;
   s32 paused = 0;
-  u32 savedValue;
-  u32 mode;
+  u32 savedAngle;
+  u32 talkFacing;
   s32 talk = 0;
 
   if (gGameState.pausedObject == id) {
     paused = 1;
-    ev = BattleFx_FindDescriptor(7, id);
+    ev = Scene_FindEvent(7, id);
     if (ev == 0) {
-      ev = BattleFx_FindDescriptor(0, id);
+      ev = Scene_FindEvent(EVENT_TALK, id);
       talk = 1;
       if (ev == 0) {
         return -1;
@@ -2664,19 +2672,20 @@ s32 BattleFx_RunDescriptorAction(s32 id) {
       }
     }
   } else {
-    ev = BattleFx_FindDescriptor(0, id);
+    ev = Scene_FindEvent(EVENT_TALK, id);
   }
 
   if (ev != 0 && ev->result != 0) {
     if (!paused) {
-      // 相手を止め、向き方が 0・1・3 なら先頭も止めて相手とつなぐ
+      // Stop the actor; with talk facing 0, 1 or 3, also stop the leader and
+      // link the two.
       u8 *busy = &obj->movementState;
 
       *busy = 1;
       ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 0);
-      savedValue = obj->angle;
-      mode = (u8)place->mode << 24;
-      if (mode <= (1 << 24) || mode == (3 << 24)) {
+      savedAngle = obj->angle;
+      talkFacing = (u8)placement->talkFacing << 24;
+      if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct ObjectRuntime *leader =
             (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
 
@@ -2689,6 +2698,7 @@ s32 BattleFx_RunDescriptorAction(s32 id) {
         Object_LinkPair(id, gGameState.selectedActor, 0);
       }
     }
+    // A result below 0x10000 is a message; above, a function to call.
     if (ev->result < 0x10000) {
       UiWork_SetBusyFlagsFar(talk);
       Battle_Reset();
@@ -2700,14 +2710,15 @@ s32 BattleFx_RunDescriptorAction(s32 id) {
       ((void (*)(s32))ev->result)(id);
     }
     if (!paused) {
-      // 相手の状態が 16 なら、向き方に合わせて動きを戻す
+      // An actor left idle (script command 16) goes back to what its talk
+      // facing says: following the leader (3) or its old angle (1).
       if (obj->script[obj->step] == (void *)16) {
-        if (place->mode == 3) {
+        if (placement->talkFacing == 3) {
           obj->linkedObject = Object_GetById(gGameState.selectedActor);
           obj->actionFlags |= 1;
           ObjectMotion_SetActionCallback(obj, gObjectMotion_LinkedActionScript);
-        } else if (place->mode == 1) {
-          obj->action = savedValue;
+        } else if (placement->talkFacing == 1) {
+          obj->action = savedAngle;
           ObjectDispatch_InitializeFar(
               (struct DispatchObject *)obj,
               (const s32 *)gObjectMotion_StepAngleScript);
@@ -2726,28 +2737,26 @@ finish:
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// 種類 6 のイベントを動かす
-// 戻り値 : 動かしたら 0、なければ -1
-//--------------------------------------------------------------------------
-s32 BattleFx_RunKind6DescriptorAction(s32 value) {
-  s32 res;
+// Runs the scene's raised event (kind 6) for value: its message or its
+// function. Returns 0 when an event ran, -1 when there was none.
+s32 Scene_RunRaisedEvent(s32 value) {
+  s32 result;
   s32 ret;
   struct EffectDescriptor *ev;
 
-  ev = BattleFx_FindDescriptor(6, value);
+  ev = Scene_FindEvent(EVENT_RAISED, value);
   ret = -1;
   if (ev != NULL) {
-    res = ev->result;
-    if (res != 0) {
-      if (res < 0x10000) {
+    result = ev->result;
+    if (result != 0) {
+      if (result < 0x10000) {
         Battle_Reset();
         Event_SetMessageId(ev->result);
         BattleEv_RunWait(-1, 0);
         ret = 0;
         BattleFx_FinishAction();
       } else {
-        ((void (*)(s32))res)(value);
+        ((void (*)(s32))result)(value);
         ret = 0;
       }
     }
@@ -2755,23 +2764,21 @@ s32 BattleFx_RunKind6DescriptorAction(s32 value) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// 触れたものの触れるイベント（種類 2）を動かし、なければ出口（種類 1）へ
-// 出口は音を鳴らし、行き先を積んでおく
-// 戻り値 : 動かしたら 0、なければ -1
-//--------------------------------------------------------------------------
-s32 BattleAction_RunDescriptor(s32 value) {
+// Runs the touch event (kind 2) of what the leader touched, or else takes its
+// exit (kind 1): plays the exit's sound (and effect) and records where it
+// leads. Returns 0 when something ran, -1 when there was nothing.
+s32 Scene_RunTouchOrExit(s32 value) {
   EffectDescriptorWorkView *touch;
   EffectDescriptorWorkView *exit;
   s32 kind;
   s32 ret;
   EffectDescriptorWorkView *work;
 
-  touch = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, value);
+  touch = (EffectDescriptorWorkView *)Scene_FindEvent(EVENT_TOUCH, value);
   ret = -1;
   work = (EffectDescriptorWorkView *)gEventWork;
   if ((touch != 0) && (touch->result != 0)) {
-    if (touch->flags & 0x200) {
+    if (touch->flags & EVENT_TOUCH_WALKING) {
       work->limit = 0;
     }
     if (touch->result < 0x10000) {
@@ -2785,12 +2792,12 @@ s32 BattleAction_RunDescriptor(s32 value) {
       ret = 0;
     }
   } else {
-    exit = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(1, value);
+    exit = (EffectDescriptorWorkView *)Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
       kind = exit->flags & 0x30;
       switch (kind) {
       case 0:
-        AudioCommand_PlayFar(123);
+        AudioCommand_PlayFar(SOUND_MAP_EXIT);
         break;
       case 32:
         AudioCommand_PlayFar(128);
@@ -2808,30 +2815,28 @@ s32 BattleAction_RunDescriptor(s32 value) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// 入力イベント（0xf9・0xfc〜0xfe）の処理
-// 押し続けた数が 12 を超えたら動かし、数え直す
-//--------------------------------------------------------------------------
-s32 Battle_DispatchInputEvent(s32 event) {
+// Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
+// 0xfe), once it has pushed for more than 12 frames; the count then restarts.
+s32 Field_RunPushTileEvent(s32 event) {
   struct EffectDescriptorRuntime *work =
       (struct EffectDescriptorRuntime *)gEventWork;
   s32 leader = gGameState.selectedActor;
 
   switch (event) {
-  case 0xfc: // 下を押していれば BattleFx_RunRisingObjectSequence
+  case 0xfc: // with Down held
     if (work->limit > 12 && (gKeysHeld & KEY_DOWN)) {
       BattleFx_RunRisingObjectSequence(leader, 6, 0);
       work->limit = 0;
     }
     break;
   case 0xf9:
-  case 0xfe: // 前へ跳ぶ
+  case 0xfe: // jump forward
     if (work->limit > 12) {
       Field_TryJumpForward();
       work->limit = 0;
     }
     break;
-  case 0xfd: // 下なら FieldEffect_UpdateGridPlacement、上なら battle_owner_69
+  case 0xfd: // one thing with Down held, another with Up
     if (work->limit > 12) {
       if (gKeysHeld & KEY_DOWN) {
         FieldEffect_UpdateGridPlacement();
@@ -2845,12 +2850,16 @@ s32 Battle_DispatchInputEvent(s32 event) {
   return 0;
 }
 
-s32 Field_RunTileAction(s32 tile) {
-  const struct SceneEvent *descriptor;
+// Searches the tile ahead with the given collision code. Codes 242 to 247 show
+// their two messages. Otherwise the scene's search event for the tile runs: a
+// function, a message, or a chest holding a Psynergy stone, a mimic, coins or
+// an item; with no event, "checked the ground" and "found nothing".
+s32 Field_SearchTile(s32 tile) {
+  const struct SceneEvent *event;
   s32 leader;
   u32 n;
   s16 condition;
-  u32 action;
+  u32 value;
   s32 type;
   s32 allowed;
 
@@ -2862,57 +2871,63 @@ s32 Field_RunTileAction(s32 tile) {
     UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
     UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
   } else {
-    descriptor = (const struct SceneEvent *)BattleFx_FindDescriptor(3, tile);
-    if (descriptor != NULL) {
-      s32 flags = descriptor->control;
+    event = (const struct SceneEvent *)Scene_FindEvent(EVENT_SEARCH, tile);
+    if (event != NULL) {
+      s32 flags = event->control;
 
-      condition = descriptor->condition;
+      // Bits 4 to 8 choose what the leader says on checking (flag 0x142 marks
+      // that it was said).
+      condition = event->condition;
       n = (flags >> 4) & 31;
-      if ((descriptor->trigger & 0x400) == 0 && n != 0) {
+      if ((event->trigger & 0x400) == 0 && n != 0) {
         Battle_InitializeRenderObject();
         UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + n, 1);
         GameFlag_SetBitFar(0x142);
       } else {
         GameFlag_ClearBitFar(0x142);
       }
-      action = descriptor->value;
-      if ((action & 0x0f000000) != 0 || (action & 0xfff00000) == 0x400000) {
-        if ((action & 0x0f000000) != 0) {
+      value = event->value;
+      if ((value & 0x0f000000) != 0 || (value & 0xfff00000) == 0x400000) {
+        if ((value & 0x0f000000) != 0) {
+          // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))descriptor->value)(gGameState.selectedActor);
+            ((void (*)(s32))event->value)(gGameState.selectedActor);
           if (GameFlag_TestFar(0x142) != 0)
             UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + n, 1);
         } else {
+          // A message (type 0x004).
           if (GameFlag_IsConditionActive(condition) != 0)
             UiText_ShowPositionedMessageAndWaitFar(
-                (*(const u16 *)&descriptor->value), 1);
+                (*(const u16 *)&event->value), 1);
           else
             UiText_ShowPositionedMessageAndWaitFar(MsgButFoundNothing, 1);
         }
       } else {
+        // A chest; its condition flag is set once it has been opened.
         Battle_Reset();
         if (GameFlag_IsConditionActive(condition) != 0) {
-          action = descriptor->value;
+          value = event->value;
           allowed = 1;
-          if ((action & 0xf0000) == 0x10000 && leader <= 7)
+          if ((value & 0xf0000) == 0x10000 && leader <= 7)
             allowed = 0;
           if (allowed != 0) {
-            if ((descriptor->control & 0x1ff) == 19)
+            if ((event->control & 0x1ff) == 19)
               EffectRuntime_SetMode4AndPlayCue(tile);
-            type = descriptor->value & 0xfff00000;
+            type = event->value & 0xfff00000;
             if (type == 0x300000) {
+              // A Psynergy stone: restores all PP.
               void *object;
 
-              if ((descriptor->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == 19)
                 EffectRuntime_SetMode2(tile);
               object = EffectRuntime_GetCurrentObject(tile);
               EffectRuntime_PrepareRisingObject(object);
-              AudioCommand_PlayFar(83);
-              UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
+              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               BattleParty_ApplyDrain(999, 0);
               UiWindow_CreateWithLayoutBoundsFar(1);
-              AudioCommand_PlayFar(126);
+              AudioCommand_PlayFar(SOUND_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
               UiWork_FinalizeAndReleaseBlock16Far();
@@ -2925,57 +2940,60 @@ s32 Field_RunTileAction(s32 tile) {
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
             } else if (type == 0x500000) {
+              // A mimic: a battle with enemy group slot of zone 99.
               struct EventRuntime *work = (struct EventRuntime *)gEventWork;
 
-              if ((descriptor->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == 19)
                 EffectRuntime_SetMode7AndLaunch(tile);
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              work->value17c = BattleFx_GetWeightedResult(
-                  99, (*(const u16 *)&descriptor->value));
+              work->value17c =
+                  BattleFx_GetWeightedResult(99, (*(const u16 *)&event->value));
               Battle_SetStart(2);
-              BattleFx_SelectBattleCue(99, (*(const u16 *)&descriptor->value));
+              BattleFx_SelectBattleCue(99, (*(const u16 *)&event->value));
               AudioCommand_PlayFar(gGameState.sceneCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
             } else if (type == 0x200000) {
+              // Coins.
               void *object;
 
               object = BattleFx_StartRandomParticleEmitter(
                   gGameState.selectedActor, 0);
               WaitFrames(30);
-              if ((descriptor->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == 19)
                 EffectRuntime_SetMode2(tile);
               EffectRuntime_PrepareRisingObject(object);
-              AudioCommand_PlayFar(83);
-              UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
+              AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+              UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
-              Party_AdjustCoinsFar((*(const u16 *)&descriptor->value));
+              Party_AdjustCoinsFar((*(const u16 *)&event->value));
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
               ObjectDispatch_ReleaseFar(object);
             } else {
+              // An item, which stays in the chest when nobody can carry it.
               void *object;
               s32 owner;
 
               object = BattleFx_StartRandomParticleEmitter(
-                  gGameState.selectedActor, descriptor->value & 0xfff);
+                  gGameState.selectedActor, event->value & 0xfff);
               WaitFrames(30);
-              owner = PartyInventory_AddFar((*(const u16 *)&descriptor->value));
+              owner = PartyInventory_AddFar((*(const u16 *)&event->value));
               n = 0xffff;
               if (owner == -1) {
-                UiWork_PushValueSlotFar(descriptor->value & 0xfff, 2);
+                UiWork_PushValueSlotFar(event->value & 0xfff, 2);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
-                if ((descriptor->control & 0x1ff) == 19)
+                if ((event->control & 0x1ff) == 19)
                   EffectRuntime_SetMode5AndPlayCue(tile);
               } else {
-                if ((descriptor->control & 0x1ff) == 19)
+                if ((event->control & 0x1ff) == 19)
                   EffectRuntime_SetMode2(tile);
                 EffectRuntime_PrepareRisingObject(object);
-                AudioCommand_PlayFar(83);
-                UiWork_PushValueSlotFar(descriptor->value & n, 2);
+                AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
+                UiWork_PushValueSlotFar(event->value & n, 2);
                 if (owner == gGameState.selectedActor) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
                                                          3);
@@ -3008,22 +3026,20 @@ s32 Field_RunTileAction(s32 tile) {
 }
 
 //--------------------------------------------------------------------------
-// nearobj.c
-// 向いている方の近くにあるオブジェクトを選ぶ
+// Choosing the actor nearest to where an actor faces.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// mode に対する探す距離 (ドット)
-// gBattleFx_TargetRangeByMode は mode と距離の組の並びで、-1 で終わる。なければ
-// 16
-//--------------------------------------------------------------------------
-s32 BattleFx_MapKeyThroughTable(s32 mode) {
+
+// Returns how far, in pixels, a field Psynergy of the given kind reaches:
+// gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
+// not listed reaches 16 pixels.
+s32 BattleFx_MapKeyThroughTable(s32 kind) {
   s16 *p = gBattleFx_TargetRangeByMode;
   s32 range = 16;
   s32 key = *p;
 
   while (key != -1) {
     ++p;
-    if (mode == key) {
+    if (kind == key) {
       range = *p;
       break;
     }
@@ -3033,11 +3049,10 @@ s32 BattleFx_MapKeyThroughTable(s32 mode) {
   return range;
 }
 
-//--------------------------------------------------------------------------
-// id のオブジェクトにいちばん近いオブジェクトを選ぶ (なければ -1)
-// 高さの差 48 ドット未満、距離 32 ドット未満のもの。11 ドットより遠ければ
-// 向きの ±0x2fff の中にあるものだけ。unk59 の 8 は除き、4 は 10/13 の距離とみる
-//--------------------------------------------------------------------------
+// Returns the actor nearest to actor id that it could talk to, or -1: within
+// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
+// 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
+// with flag 4 count as 10/13 as far.
 s32 BattleEffect_SelectNearbyObject(s32 id) {
   struct ObjectRuntime *src;
   struct ObjectRuntime *obj;
@@ -3073,7 +3088,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id) {
         continue;
       }
 
-      // ドット単位の距離
+      // The distance in pixels.
       dx = (obj->x - src->x) / 0x10000;
       dy = (obj->y - src->y) / 0x10000;
       dz = (obj->z - src->z) / 0x10000;
@@ -3105,12 +3120,11 @@ s32 BattleEffect_SelectNearbyObject(s32 id) {
   return best;
 }
 
-//--------------------------------------------------------------------------
-// id のオブジェクトの前にいちばん近いオブジェクトを選ぶ (なければ -1)
-// 向きは 90 度単位に丸め、距離は x と z だけで測る。
-// mode : 探す距離と、高さの差・向きの幅を決める
-//--------------------------------------------------------------------------
-s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
+// Returns the actor nearest in front of actor id that a field Psynergy of the
+// given kind can reach, or -1. The direction is rounded to a quarter turn and
+// the distance measured on the ground; kind sets the range, the height
+// allowed and the width of the cone.
+s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 kind) {
   struct ObjectRuntime *src;
   struct ObjectRuntime *obj;
   s32 best;
@@ -3126,7 +3140,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
   s32 width;
 
   best = -1;
-  bestDist = BattleFx_MapKeyThroughTable(mode);
+  bestDist = BattleFx_MapKeyThroughTable(kind);
   src = (struct ObjectRuntime *)ObjectTable_Get(id);
   if (src == 0)
     return best;
@@ -3140,13 +3154,13 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
     if (obj == 0 || (obj->unk59 & 8) != 0)
       continue;
 
-    // 高さの差 : ふつうは 8、mode 13 は 48、5 は 64、2 は 16 ドットまで
+    // The height allowed: 8 pixels, or 48 for kind 13, 64 for 5, 16 for 2.
     dyMax = 8 << 16;
-    if (mode == 13)
+    if (kind == 13)
       dyMax = 48 << 16;
-    if (mode == 5)
+    if (kind == 5)
       dyMax = 64 << 16;
-    if (mode == 2)
+    if (kind == 2)
       dyMax = 16 << 16;
 
     {
@@ -3159,7 +3173,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
       }
     }
 
-    // ドット単位の距離 (0 へ向けて切り捨て)
+    // The distance in whole pixels, rounded toward 0.
     dx = obj->x - src->x;
     if (dx < 0)
       dx += 0xffff;
@@ -3176,13 +3190,13 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
     if (dist >= bestDist)
       continue;
 
-    // 向きの幅 : 19 ドットまでは ±0x1800、それより遠ければ ±0x1000、mode 2 は
-    // ±0x2000
+    // The cone: 0x1800 either side up to 19 pixels, 0x1000 beyond; 0x2000
+    // for kind 2.
     angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
     width = 0x1800;
     if (dist > 19)
       width = 0x1000;
-    if (mode == 2)
+    if (kind == 2)
       width = 0x2000;
 
     if (dist > 11) {
@@ -3200,11 +3214,10 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode) {
   return best;
 }
 
-//--------------------------------------------------------------------------
-// target のオブジェクトがいれば音を鳴らして mode 4 にし、12 フレームのちに
-// 粒の発生を始める
-//--------------------------------------------------------------------------
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
+// If actor target exists, plays sound 124, gives it animation 4 and, 12 frames
+// later, starts a particle emitter on actor (mode as for
+// BattleFx_StartRandomParticleEmitter); returns the emitter, or 0.
+s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 mode) {
   void *obj;
   s32 ret;
 
@@ -3214,13 +3227,16 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
     AudioCommand_PlayFar(124);
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 4);
     WaitFrames(12);
-    ret = (s32)BattleFx_StartRandomParticleEmitter(effect, mode);
+    ret = (s32)BattleFx_StartRandomParticleEmitter(actor, mode);
   }
   return ret;
 }
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
+// Gives every part of a motion object's sprite (but those at palette 15)
+// palette - 1, or for palette 0 the next palette of a cycle that changes every
+// 2 frames.
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette) {
   struct AnimationObject *state;
   struct AnimationEntry **p;
@@ -3250,52 +3266,91 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette) {
   }
 }
 
+// Clears the field's busy flag and, while a field Psynergy effect is active,
+// ends it (packed effect 0x2090).
 void Battle_ResetEffectCounter(void) {
   struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
   runtime->unkcb6 = 0;
   if (*(s16 *)runtime->unkcb8 != 0) {
-    BattleFx_ExecutePackedAbilityEffect(0x2090);
+    Field_RunPsynergyEvents(0x2090);
   }
 }
 
-s32 Event_FindFacingTrigger(s32 source) {
+// A field Psynergy or item use, packed into one value.
+#define ABILITY_ID(c) ((c) & 0x3ff)    // the Psynergy
+#define ACT_UNIT(c) (((c) >> 10) & 15) // who uses it
+#define ACT_PACKED 0x2000              // use it without paying PP
+#define UNIT_NONE 15
+#define ALLY_MAX 7 // the last party member
+
+#define PSYNERGY_REVEAL 144
+#define PSYNERGY_RETREAT 149
+
+#define EXIT_RETREAT 999 // the exit Retreat takes
+
+#define FLAG_PSYNERGY_NONE 0x17e   // Psynergy has no effect here
+#define FLAG_RETREAT_BLOCKED 0x144 // Retreat does not work here
+#define FLAG_ITEM_USE 0x145        // the Psynergy comes from an item
+#define FLAG_PSYNERGY_EFFECT 0x140 // play the usual effect
+#define FLAG_PSYNERGY_TARGET 0x141 // aim the effect at the target
+
+// The flags of a Psynergy event (kind 5) in the given phase.
+#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
+#define PSYNERGY_EV_ANY PSYNERGY_EV(7) // any phase
+
+// Shows message m with the user's and the Psynergy's names, and waits.
+#define PSYNERGY_MESSAGE(who, act, m)                                          \
+  (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \
+   UiText_ShowPositionedMessageAndWaitFar((m), 1))
+
+// Returns the scene's item event (kind 4) for item that applies to what the
+// leader faces, or 0 (item 0 matches any item). The event's trigger names an
+// actor (control flag 0x10) or a tile code, and may also require the leader
+// to face within 0x17ff of a direction.
+s32 Field_FindItemEvent(s32 item) {
   struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
-  const struct SceneEvent *trigger = runtime->events;
+  const struct SceneEvent *event = runtime->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
-  s32 selected = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
-  s32 collision;
+  s32 actorAhead = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
+  s32 tileAhead;
 
-  source &= 0x1ff;
-  collision = Field_GetCollisionAheadOfLeader();
+  item &= 0x1ff;
+  tileAhead = Field_GetCollisionAheadOfLeader();
 
-  while (trigger->control != -1) {
-    s32 highValue = trigger->trigger & 0xf000;
-    s16 hasFacing = trigger->trigger & 0x0800;
-    s32 lowValue = trigger->trigger & 0xff;
+  while (event->control != -1) {
+    s32 direction = event->trigger & 0xf000;
+    s16 hasDirection = event->trigger & 0x0800;
+    s32 target = event->trigger & 0xff;
 
-    if ((trigger->control & 0x0f) == 4 &&
-        GameFlag_IsConditionActive(trigger->condition) != 0 &&
-        (hasFacing == 0 || (u16)(highValue - facing + 0x17ff) <= 0x2ffe)) {
-      u32 flags = trigger->control;
-      s32 owner = ((const u8 *)&trigger->control)[1];
+    if ((event->control & 0x0f) == 4 &&
+        GameFlag_IsConditionActive(event->condition) != 0 &&
+        (hasDirection == 0 || (u16)(direction - facing + 0x17ff) <= 0x2ffe)) {
+      u32 flags = event->control;
+      s32 eventItem = ((const u8 *)&event->control)[1];
 
-      if (source == 0 || owner == source) {
+      if (item == 0 || eventItem == item) {
         if ((flags & 0x10) != 0) {
-          if (lowValue == selected)
-            return (s32)trigger;
-        } else if (lowValue == collision) {
-          return (s32)trigger;
+          if (target == actorAhead)
+            return (s32)event;
+        } else if (target == tileAhead) {
+          return (s32)event;
         }
       }
     }
-    trigger++;
+    event++;
   }
   return 0;
 }
 
-s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
+// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
+// character using it (bits 10 to 13; 15 for the character carrying most of
+// it); slot is its inventory slot. The scene's item event for what the leader
+// faces runs if there is one; otherwise an item with a field action uses it
+// (Retreat asks first and leaves the scene). Flag 0x142 means nothing happened
+// and flag 0x143 that the item is used up.
+s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 actor;
@@ -3309,8 +3364,8 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
   struct FieldWork *runtime;
 
   result = -1;
-  itemId = arg & 0x3ff;
-  actor = (arg >> 10) & 0xf;
+  itemId = packedItem & 0x3ff;
+  actor = (packedItem >> 10) & 0xf;
   {
     best = 0;
     count = Party_CountActiveOwnersFar();
@@ -3344,8 +3399,9 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
     }
   }
 
-  event = (const struct SceneEvent *)Event_FindFacingTrigger(itemId);
+  event = (const struct SceneEvent *)Field_FindItemEvent(itemId);
   if (event != 0 && event->value != 0) {
+    // The scene's event: a message, or a function.
     GameFlag_ClearBitFar(0x143);
     GameFlag_ClearBitFar(0x142);
     if (!(event->trigger & 0x400)) {
@@ -3364,6 +3420,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
     }
     result = 0;
   } else {
+    // The item's own field action, if it has one.
     s32 actionId;
 
     GameFlag_ClearBitFar(0x143);
@@ -3372,10 +3429,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
     runtime = (struct FieldWork *)gEventWork;
 
     if (actionId != 0) {
-      GameFlag_SetBitFar(0x145);
+      GameFlag_SetBitFar(FLAG_ITEM_USE);
       GameFlag_ClearBitFar(0x142);
 
-      if (actionId == 149 && !GameFlag_TestFar(0x144)) {
+      if (actionId == PSYNERGY_RETREAT && !GameFlag_TestFar(0x144)) {
         UiWork_PushValueSlotFar(itemId, 2);
         UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH: needed to match: the owner index doubles as the declined
@@ -3388,7 +3445,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
 
         gGameState.scene = gGameState.retreatScene;
         gGameState.entrance = gGameState.retreatEntrance;
-        runtime->exit = 999;
+        runtime->exit = EXIT_RETREAT;
       }
 
       UiWork_PushValueSlotFar(actor, 1);
@@ -3416,38 +3473,42 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot) {
   return result;
 }
 
-void *BattleFx_FindMatchingEvent(s32 requestedFlags, s32 group, void *result) {
+// Returns the scene's Psynergy event (kind 5) for a Psynergy of the given
+// group that applies to what the leader faces, or NULL; stores the actor the
+// Psynergy would target in *target. eventFlags gives the event's phase and
+// kind (0x70000005 for any phase). The event may apply to any target
+// (control flag 0x80), to an actor (0x10) or to a tile code.
+void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
   const struct SceneEvent *event = runtime->events;
-  s32 reference =
+  s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
-  s32 selected =
+  s32 actorAhead =
       BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, group);
-  s32 alternate;
-  s32 ignoreFlags = 0;
+  s32 tileAhead;
+  s32 anyPhase = 0;
 
-  *(s32 *)result = selected;
-  alternate = Field_GetCollisionAheadOfLeader();
-  if (requestedFlags == 0x70000005)
-    ignoreFlags = 1;
+  *(s32 *)target = actorAhead;
+  tileAhead = Field_GetCollisionAheadOfLeader();
+  if (eventFlags == PSYNERGY_EV_ANY)
+    anyPhase = 1;
 
   while (event->control != -1) {
-    s32 highValue = event->trigger & 0xf000;
-    s16 hasReference = event->trigger & 0x0800;
-    s32 lowValue = event->trigger & 0xff;
+    s32 direction = event->trigger & 0xf000;
+    s16 hasDirection = event->trigger & 0x0800;
+    s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == 5 &&
+    if ((event->control & 0x0f) == EVENT_PSYNERGY &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
-        (hasReference == 0 ||
-         (u16)(highValue - reference + 0x17ff) <= 0x2ffe) &&
+        (hasDirection == 0 || (u16)(direction - facing + 0x17ff) <= 0x2ffe) &&
         BattleActGet(((const u8 *)&event->control)[1])->type0c == group &&
-        (ignoreFlags || (event->control & 0x7000000f) == requestedFlags)) {
+        (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
       if ((event->control & 0x80) != 0)
         return (void *)event;
       if ((event->control & 0x10) != 0) {
-        if (lowValue == selected)
+        if (eventTarget == actorAhead)
           return (void *)event;
-      } else if (lowValue == alternate) {
+      } else if (eventTarget == tileAhead) {
         return (void *)event;
       }
     }
@@ -3456,111 +3517,89 @@ void *BattleFx_FindMatchingEvent(s32 requestedFlags, s32 group, void *result) {
   return NULL;
 }
 
-s32 BattleFx_ExecutePackedAbilityEffect(s32 packed) {
-  s32 output;
-  s32 index;
-  s32 mode;
-  u8 object;
+// Runs the scene's events for a Psynergy without paying its PP or showing its
+// usual effect (phases 3 and 2, around the event's own effect), as for a
+// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
+// its user (bits 10 to 13).
+s32 Field_RunPsynergyEvents(s32 packed) {
+  s32 target;
+  s32 ability;
+  s32 user;
+  u8 group;
   void *first;
   void *second;
 
-  index = packed & 0x3FF;
-  mode = ((u32)packed >> 10) & 0xF;
-  object = BattleActGet(index)->type0c;
-  // The object is looked up and the result is not used.
+  ability = packed & 0x3FF;
+  user = ((u32)packed >> 10) & 0xF;
+  group = BattleActGet(ability)->type0c;
+  // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
-  first = BattleFx_FindMatchingEvent(0x30000005, object, &output);
-  second = BattleFx_FindMatchingEvent(0x20000005, object, &output);
-  BattleFx_LoadActionEffectResources(index, 0);
-  BattleFx_SetupObjectPair(gGameState.selectedActor, output);
-  BattleFx_RunEventAction(first, mode, output);
+  first = BattleFx_FindMatchingEvent(PSYNERGY_EV(3), group, &target);
+  second = BattleFx_FindMatchingEvent(PSYNERGY_EV(2), group, &target);
+  BattleFx_LoadActionEffectResources(ability, 0);
+  BattleFx_SetupObjectPair(gGameState.selectedActor, target);
+  BattleFx_RunEventAction(first, user, target);
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(second, mode, output);
+  BattleFx_RunEventAction(second, user, target);
   BattleEffect_CleanupSceneObjects();
   return 0;
 }
 
 //--------------------------------------------------------------------------
-// action.c
-// フィールドでのエナジー使用と、マップのマーカー物体の配置
+// Using Psynergy on the field, and the map's markers.
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// エナジーの実行
-//--------------------------------------------------------------------------
-#define ABILITY_ID(c) ((c) & 0x3ff)    // わざ番号
-#define ACT_UNIT(c) (((c) >> 10) & 15) // 使う者
-#define ACT_PACKED 0x2000              // PPを使わずに実行する
-#define UNIT_NONE 15
-#define ALLY_MAX 7 // 仲間の番号の上限
 
-#define PSYNERGY_REVEAL 144  // イマジン
-#define PSYNERGY_RETREAT 149 // リターン
-
-#define EXIT_RETREAT 999 // リターンによる出口
-
-#define FLAG_PSYNERGY_NONE 0x17e   // エナジーが効かない
-#define FLAG_RETREAT_BLOCKED 0x144 // リターンが打ち消される
-#define FLAG_ITEM_USE 0x145        // 道具から使った
-#define FLAG_PSYNERGY_EFFECT 0x140 // 標準の演出を行う
-#define FLAG_PSYNERGY_TARGET 0x141 // 対象に向けて演出する
-
-// エナジーのイベントの段階
-#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
-#define PSYNERGY_EV_ANY PSYNERGY_EV(7) // 段階を問わない
-
-// 使う者とわざの名前を入れたメッセージを出して待つ
-#define PSYNERGY_MESSAGE(who, act, m)                                          \
-  (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \
-   UiText_ShowPositionedMessageAndWaitFar((m), 1))
-
-//--------------------------------------------------------------------------
-// フィールドでエナジーを使う
-// code : わざ番号と使う者
-//--------------------------------------------------------------------------
-s32 BattleCommand_ExecuteSelectedAction(u32 code) {
+// Uses a Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
+// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
+// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
+// where it is not blocked, after asking), pays its PP, then plays its effect
+// between the scene's Psynergy events for what the leader faces: phase 1
+// before, phase 0 after and phase 5 while it plays. An event whose trigger
+// has flag 0x400 plays the effect itself.
+s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  const struct SceneEvent *pre;
-  const struct SceneEvent *post;
-  const struct SceneEvent *mid;
-  s32 aid;
-  s32 tid;
+  const struct SceneEvent *before;
+  const struct SceneEvent *after;
+  const struct SceneEvent *during;
+  s32 user;
+  s32 target;
   s32 retreat;
   s32 group;
   s32 cost;
-  s32 no;
+  s32 answer;
 
   group = BattleActGet(abilityId)->type0c;
-  aid = ACT_UNIT(code);
+  user = ACT_UNIT(code);
   ObjectTable_Get(gGameState.selectedActor);
   retreat = 0;
   Battle_InitializeRenderObject();
   GameFlag_ClearBitFar(FLAG_ITEM_USE);
-  if (aid == UNIT_NONE)
-    aid = 0;
+  if (user == UNIT_NONE)
+    user = 0;
 
-  // 効かないとき
+  // Where Psynergy has no effect.
   if (GameFlag_TestFar(FLAG_PSYNERGY_NONE)) {
-    PSYNERGY_MESSAGE(aid, abilityId, MsgNothingHappened);
+    PSYNERGY_MESSAGE(user, abilityId, MsgNothingHappened);
     return 0;
   }
   if (work->mode == MODE_WORLD_MAP && abilityId == PSYNERGY_REVEAL) {
-    PSYNERGY_MESSAGE(aid, PSYNERGY_REVEAL, MsgNothingHappened);
+    PSYNERGY_MESSAGE(user, PSYNERGY_REVEAL, MsgNothingHappened);
     return 0;
   }
 
-  // リターン：確かめてから戻り先へ
+  // Retreat: ask, then go back to where the party entered this place.
   if (abilityId == PSYNERGY_RETREAT) {
     if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
-      PSYNERGY_MESSAGE(aid, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
+      PSYNERGY_MESSAGE(user, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
     UiWork_PushValueSlotFar(PSYNERGY_RETREAT, 4);
     UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
-    no = Object_CallSpawnRoutineAtOrigin(1); // 0 = はい
+    answer = Object_CallSpawnRoutineAtOrigin(1); // 0 is yes
     UiWork_FinalizePendingCoreFar();
-    if (no != 0)
+    if (answer != 0)
       return 0;
     {
       struct GameState *st = &gGameState;
@@ -3574,31 +3613,31 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code) {
     retreat = 1;
   }
   if (code & ACT_PACKED)
-    return BattleFx_ExecutePackedAbilityEffect(code);
+    return Field_RunPsynergyEvents(code);
 
-  // 仲間ならPPを払う
-  if (aid <= ALLY_MAX) {
+  // A party member pays the PP.
+  if (user <= ALLY_MAX) {
     cost = BattleActGet(abilityId)->ppCost;
-    if (UnitGetFar(aid)->pp < cost) {
-      PSYNERGY_MESSAGE(aid, abilityId, MsgNotEnoughPp);
+    if (UnitGetFar(user)->pp < cost) {
+      PSYNERGY_MESSAGE(user, abilityId, MsgNotEnoughPp);
       if (retreat)
         work->exit = 0;
       return 0;
     }
-    UnitPpAddFar(aid, -cost);
+    UnitPpAddFar(user, -cost);
   }
 
-  // マップのイベントを探し、演出の方法を決める
-  pre = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), group, &tid);
-  post = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), group, &tid);
-  mid = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), group, &tid);
-  tid = -1;
+  // Find the scene's events, and choose how the effect plays.
+  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), group, &target);
+  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), group, &target);
+  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), group, &target);
+  target = -1;
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
-  if (pre || post || mid) {
-    tid =
+  if (before || after || during) {
+    target =
         BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, group);
-    if (post && (post->trigger & 0x400)) // イベントが演出を受け持つ
+    if (after && (after->trigger & 0x400)) // the event plays the effect
     {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
       GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
@@ -3606,15 +3645,15 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code) {
   } else
     GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 
-  // 演出
+  // Play the effect.
   if (work->mode == MODE_WORLD_MAP)
     BattleEffect_ClearOutOfBoundsObjects();
   BattleFx_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
-  BattleFx_SetupObjectPair(gGameState.selectedActor, tid);
+  BattleFx_SetupObjectPair(gGameState.selectedActor, target);
   EventObject_Initialize();
 
-  BattleFx_RunEventAction(pre, aid, tid);
+  BattleFx_RunEventAction(before, user, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
     if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
       BattleFx_DispatchRequestKind();
@@ -3622,7 +3661,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code) {
       BattleFx_Run();
   }
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(post, aid, tid);
+  BattleFx_RunEventAction(after, user, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
     BattleFx_ClearChildValueOnMismatch();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -3634,22 +3673,20 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code) {
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// このエナジーに応えるイベントがマップにあるか
-//--------------------------------------------------------------------------
+// Returns whether the scene has a Psynergy event, in any phase, for a
+// Psynergy of group and what the leader faces.
 s32 BattleFx_HasMatchingEvent5(s32 group) {
-  s32 tid;
-  s32 ev = (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &tid);
+  s32 target;
+  s32 ev =
+      (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &target);
   return (u32)((-ev) | ev) >> 31;
 }
 
-//--------------------------------------------------------------------------
-// この道具に応えるイベントが目の前にあるか
-//--------------------------------------------------------------------------
+// Returns whether the scene has an event for item and what the leader faces.
 u32 BattleFx_HasTrigger(u16 item) {
   s32 ev;
 
-  ev = Event_FindFacingTrigger(item);
+  ev = Field_FindItemEvent(item);
   return (u32)((0 - ev) | ev) >> 31;
 }
 

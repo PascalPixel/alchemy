@@ -5,7 +5,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_65d/entry.o"(.text)
         "*/games/tla/src/field/overlay_65d/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_65d/exits.o"(.text)
-        "*/resource_65d_overlay.o"(.text.x0200809c)
         "*/games/tla/src/field/overlay_65d/events_a.o"(.text)
         "*/games/tla/src/field/overlay_65d/events_b.o"(.text)
         "*/games/tla/src/field/overlay_65d/s0438.o"(.text)

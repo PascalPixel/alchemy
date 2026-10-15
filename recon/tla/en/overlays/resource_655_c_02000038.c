@@ -1,225 +1,57 @@
+/* Draft of overlay 655's Func_02000038, differ 2 of 51 (was 25), the representative of ten copies
+ * (661, 662, 664, 668, 66a, 671, 67f, 68f, 6a0, 6aa): for each three-halfword record up to an id
+ * of 0xffff, clear the actor's collision bit 0, reset its child flags and pass its mode, flag and
+ * layer to Func_02000128. The records are halfwords (a struct of three is padded to 8 bytes).
+ * The loop is a goto loop with the first test on the parameter: as a for or while loop the
+ * 0xffff limit is kept in r10 (differ 35). The memory barrier at the loop head reloads the id
+ * the test read (GCSE shares it, differ 21); the bottom test takes snap_scale.c's limit device
+ * (the native starts 0xffff, loads the id, then finishes the limit), with the limit pinned to r2
+ * so the id takes r3. Left: the entry test, where the native also loads the id between movs r2,
+ * #255 and lsls r2, r2, #8; the same asm there holds the frame's sub sp ahead of it (differ 8),
+ * so the limit is set in a one-pass block, which lets sub sp sink but leaves the shift first. */
 #include "types.h"
-#include "ram_buffer.h"
 #include "object_runtime.h"
-#include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003d78(s32 skip);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003df8(s32 cue);
-void Func_02003c68(s32 id, s32 x, s32 z);
-void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
-void Func_020015b8(struct ObjectRuntime *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-struct CellRecord {
-    u16 present;
-    u16 x;
-    u16 y;
-    u16 unknown_06[3];
-};
-
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
-
-static __inline__ s32 Flag_Test(s32 flag)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    WaitFrames(frames);
-}
-
-void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
-void Func_02003cc8(s32 id, s32 a, s32 b);
-void Func_02003cf0(void);
-struct ObjectRuntime *Func_02003cf8(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
-void Func_02003cb0(s32 id, s32 value);
-void Func_02003cc0(s32 id);
-void Func_02003cd0(s32 id, s32 value);
-void Func_02003d40(struct ObjectRuntime *object, s32 mode);
-void Func_02003bb8(struct ObjectRuntime *object);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-void PartyInventory_GiveItem(s32 item, s32 mode);
-void Func_02002b68(void);
-void Func_02002f08(void);
-
-struct EffectWork7c4 {
-    u8 unknown_000[0x7c4];
-    s16 active;
-    s16 timer;
-};
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
-void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_Launch(s32 id, s32 a, s32 b);
-void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
-void Object_LinkObjectAndSetCallback(s32 id, s32 target);
-void Battle_WaitMode0(s32 frames);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Field_DispatchTypeHandler(s32 type);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Motion_CamBounds(a, b, c, d);
-}
-
-static __inline__ void Actor_FaceToward(s32 id, s32 target, s32 mode)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetAngleToward(id, target, mode);
-}
-
-static __inline__ void Actor_SetTurn(s32 id, s32 a, s32 b)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003cc8(id, a, b);
-}
-
-static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetSpeedParameters(id, speed, acceleration);
-}
-
-static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetPositionAndReset(id, x, z);
-}
-
-static __inline__ void Actor_Launch(s32 id, s32 a, s32 b)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_Launch(id, a, b);
-}
-
-static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003c70(id, x, z, angle);
-}
-
-static __inline__ void Actor_PlaceOnTerrain(s32 id, s32 x, s32 z)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003c68(id, x, z);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003be0(a, b, c, d, e, f);
-}
-
-static __inline__ void Cue(s32 cue)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02003df8(cue);
-}
-
-static __inline__ void Pause(s32 frames)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Battle_WaitMode0(frames);
-}
-
-static __inline__ void Actor_SetVariant(s32 id, s32 variant)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetActionVariant(id, variant);
-}
-
-static __inline__ struct ObjectRuntime *Actor_Get(s32 id)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    return Object_GetById(id);
-}
-
-struct ObjectSpec {
-    u16 id;
-    s16 mode;
-    s16 flag;
-};
-
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 
-void Func_02000038(const struct ObjectSpec *spec)
+void Func_02000038(const u16 *list)
 {
+    const u16 *spec;
     u16 id;
     struct ObjectRuntime *object;
     s16 mode;
     s16 flag;
-
-    if (spec->id == 0xffff)
+    register s32 limit asm("r2");
+    s32 first;
+    do
+    {
+        limit = 0xff;
+    }
+    while (0);
+    first = list[0];
+    if (first == ((limit << 8) + 0xff))
+    {
         return;
-loop:
-    id = spec->id;
+    }
+    spec = list;
+    next:
+    asm("" : : : "memory");
+
+    id = spec[0];
     object = Object_GetById(id);
-    mode = spec->mode;
-    flag = spec->flag;
+    mode = spec[1];
+    flag = spec[2];
     object->collision_flags &= 0xfe;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    spec++;
-    Func_02000128(id, (u16)mode, (u16)flag, object->terrain_id);
-    if (spec->id != 0xffff)
-        goto loop;
+    Func_02000128(id, (u16) mode, (u16) flag, object->terrain_id);
+    limit = 0xff;
+    spec += 3;
+    first = spec[0];
+    asm volatile("" : "+l"(limit));
+    if (first != ((limit << 8) + 0xff))
+    {
+        goto next;
+    }
 }

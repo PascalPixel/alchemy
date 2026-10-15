@@ -1,0 +1,146 @@
+/* Near miss, differ 105 of 290 (2026-10-15): the wave scroll's per-frame
+ * callback, which wavefx.c removes. The delay, the wave lines and the
+ * colour match but for one pair (this builds the page field's offset
+ * before the phase's store, the native after it); from the two
+ * BattleAction_FindDescriptor lookups on, the registers differ: this
+ * builds &from in sl first and copies it back (one instruction more, 291
+ * against 290), and the orientation tests take r1 and r2 where the native
+ * takes r0 and r1. Belongs between Func_080dcadc and hue.c's
+ * Func_080dcdc8. */
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+
+struct WaveFxWork {
+    u16 lines[2][162];
+    u16 phase;
+    u8 page;
+    s8 red;
+    s8 green;
+    s8 blue;
+    u16 hue;
+    u16 source_id;
+    u16 target_id;
+    u8 delay;
+    u8 counter;
+};
+
+struct WaveFxSprite {
+    u32 unknown_00[2];
+    u8 unknown_08;
+    u32 unknown_09_0 : 2;
+    u32 mode : 2;
+    u32 unknown_09_4 : 4;
+    u8 unknown_0a[8];
+    u16 orientation;
+    u8 unknown_14[6];
+    u8 palette;
+};
+
+struct WaveFxVector {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct WaveFxDescriptor {
+    s16 sprite;
+};
+
+struct WaveFxMetadata {
+    u8 unknown_00[8];
+    s8 box_x;
+};
+
+s32 Trig_Sin(s32 angle);
+void Func_080dce60(void);
+void BattleFx_ApplyColorToTargetBuffer(u32 color, s32 mode);
+void BattleFx_StartBufferInterpolation(s32 frames);
+struct ObjectRuntime *Object_GetById(s32 id);
+void BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+struct WaveFxDescriptor *BattleAction_FindDescriptor(s32 id);
+struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
+struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+s16 ArcTan2(s32 y, s32 x);
+void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
+
+// Each frame after the delay: rewrites the 160-line wave into the other
+// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
+// its 61-frame cycle sends a particle from the target back to the user.
+void Func_080dcb44(void)
+{
+    struct WaveFxWork *work = Ram_HeapSlots->unknown_4c[3];
+    struct WaveFxVector from;
+    struct WaveFxVector to;
+    struct WaveFxDescriptor *descriptor;
+    struct WaveFxMetadata *metadata;
+    struct WaveFxSprite *sprite;
+    struct ObjectRuntime *source;
+    struct ObjectRuntime *target;
+    struct ObjectRuntime *object;
+    u16 *line;
+    s32 i;
+
+    if (work->delay != 0) {
+        work->delay--;
+        return;
+    }
+
+    line = work->lines[work->page ^ 1];
+    for (i = 0; i < 160; i++)
+        *line++ = Trig_Sin(((work->phase + i * 8) << 16) / 160) >> 14;
+    work->phase += 4;
+    work->page ^= 1;
+    if (work->page != 0) {
+        Func_080dce60();
+        BattleFx_ApplyColorToTargetBuffer((work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
+        BattleFx_StartBufferInterpolation(1);
+    }
+    BattleFx_ApplyFlickerValue(Object_GetById(work->source_id), 0);
+
+    if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
+        source = Object_GetById(work->source_id);
+        target = Object_GetById(work->target_id);
+        if (source != NULL && target != NULL) {
+            descriptor = BattleAction_FindDescriptor(work->source_id);
+            from.x = source->x;
+            metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
+            from.y = source->y + (metadata->box_x << 16) - 0x20000;
+            from.z = source->z;
+            sprite = target->animation;
+            descriptor = BattleAction_FindDescriptor(work->target_id);
+            to.x = target->x;
+            metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
+            to.y = target->y + (metadata->box_x << 16) - 0x20000;
+            to.z = target->z;
+            if (sprite->orientation == 0x8000) {
+                to.y -= 0x180000;
+            } else if (sprite->orientation == 0x4000) {
+                to.x += 0x60000;
+                to.y -= 0xc0000;
+            } else if (sprite->orientation == 0xc000) {
+                to.x -= 0x60000;
+                to.y -= 0xc0000;
+            }
+            object = Func_080200c0(677, to.x, to.y, to.z);
+            if (object != NULL) {
+                sprite = object->animation;
+                object->motion_flags = 0;
+                object->speed_limit = 0xa3d7;
+                object->acceleration = 0xa3d7;
+                object->angle = ArcTan2(from.z - to.z, from.x - to.x);
+                object->update = (void (*)(void))BattleFx_SetCallbackWhenTargetUnset;
+                sprite->palette = 0;
+                sprite->mode = 1;
+                Object_SetPosition(object, from.x, from.y, from.z);
+            }
+        }
+    }
+
+    if (work->counter != 99) {
+        if (work->counter == 0)
+            Audio_PlayCue(130);
+        if (++work->counter > 60)
+            work->counter = 0;
+    }
+}

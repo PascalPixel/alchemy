@@ -1,8 +1,16 @@
-/* Draft, differ 10 of 63. Two places: the native keeps the table in r0, reads the first halfword as table[index * 8 + 4], adds the table to that offset for the second and reads the word last as table[index * 8]; this form, an entry pointer and a pointer to its pair, adds the table to the entry first (three indexed loads from the struct: differ 12; the byte offsets written out: differ 12 to 14); and for the (owner, 0, -4) call it clears r1 between the halves of -4, this form after them (657's Func_02000078 matches the same call with 2 for 0). */
+/* Draft, differ 8 of 63 (10 before). The (owner, 0, -4) call and the table
+ * call now go through call.h, which fixes the -4 halves. Left: the native shifts
+ * the index after Func_02001344 returns and reads the second halfword through
+ * the table plus the first's offset (adds r3, r3, r0; ldrh r2, [r3, #2]); here
+ * the shift rises above the call and the second halfword is read as
+ * [table + offset + 6]. Tried 2026-10-15: a position pointer (12), the address
+ * of position[0] indexed (8), a one-pass block before the shift (10); permute
+ * 4 minutes found nothing below 16. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "object_runtime.h"
+#include "call.h"
 
 struct Ov675Entry {
     s32 value;
@@ -47,15 +55,10 @@ loop:
     index = *(s16 *)(work + 0x154) - 1;
     Func_02001344(158);
     index >>= 1;
-    {
-        const struct Ov675Entry *entry = &Data_020019ec[index];
-        const u16 *position = entry->position;
-
-        Func_0200122c(entry->value, position[0], position[1]);
-    }
+    Call3((void (*)())Func_0200122c, Data_020019ec[index].value, Data_020019ec[index].position[0], Data_020019ec[index].position[1]);
     Object_SetModeById(gPartyState.current_owner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, 0, -4);
+    Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.current_owner, 0, -4);
     Battle_WaitMode0(6);
     Func_020012cc(*(s16 *)(work + 0x154));
     Event_FinishScreenTransition();

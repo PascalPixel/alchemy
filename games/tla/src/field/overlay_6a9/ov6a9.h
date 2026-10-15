@@ -54,7 +54,7 @@ void Func_02000ea0(void);
 void Func_02001074(struct FieldActor *object, s32 value);
 void Func_02001094(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020010ac(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Func_020010b4(struct FieldActor *object);
+s32 Func_020010b4(struct FieldActor *object, s16 *position);
 void Func_020010dc(void);
 void Func_020010e4(void);
 void Func_0200110c(s32 id, s32 x, s32 z);

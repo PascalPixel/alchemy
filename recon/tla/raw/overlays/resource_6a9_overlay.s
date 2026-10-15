@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080ce,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200815a,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
 	.balign 4
 	.global Func_0200015c
@@ -251,8 +245,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008452,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02008454,"ax",%progbits
 	.balign 4
 	.global Func_02000454
@@ -990,120 +982,3 @@ Func_0200087c:
 	.4byte 0xfff00000
 .L_02008acc:
 	.4byte Func_02000848
-	.section .text.x02008ba8,"ax",%progbits
-	.balign 4
-	.global Func_02000ba8
-	.thumb_func
-Func_02000ba8:
-	push {r5, lr}
-	movs r0, #4
-	sub sp, #8
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #32
-	orrs r3, r2
-	strb r3, [r0]
-	bl Func_0200114c
-	movs r1, #128
-	lsls r1, r1, #2
-	movs r2, #8
-	movs r3, #9
-	movs r0, #0
-	bl Func_02001154
-	movs r0, #10
-	bl Object_GetById
-	adds r3, r0, #0
-	movs r5, #0
-	adds r3, #85
-	strb r5, [r3]
-	movs r2, #10
-	ldr r3, [r0, #8]
-	movs r1, #10
-	asrs r3, r3, #20
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #16
-	movs r2, #1
-	movs r3, #1
-	bl Func_020010ac
-	add sp, #8
-	pop {r5, pc}
-	.2byte 0x0000
-	.section .text.x02008c38,"ax",%progbits
-	.balign 4
-	.global Func_02000c38
-	.thumb_func
-Func_02000c38:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r0, #0
-	adds r7, r5, #0
-	adds r7, #85
-	ldrb r0, [r7]
-	adds r6, r1, #0
-	mov r8, r0
-	adds r0, r5, #0
-	bl Func_020010b4
-	cmp r0, #0
-	bne .L_02008cce
-	bl Func_020010dc
-	movs r0, #0
-	bl Func_0200113c
-	movs r1, #6
-	adds r0, r5, #0
-	bl Func_02001074
-	movs r0, #6
-	bl WaitFrames
-	movs r0, #152
-	bl Func_02001164
-	adds r0, r5, #0
-	movs r1, #7
-	bl Func_02001074
-	movs r3, #192
-	lsls r3, r3, #10
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #10
-	str r3, [r5, #52]
-	movs r3, #128
-	lsls r3, r3, #11
-	str r3, [r5, #40]
-	ldrb r2, [r7]
-	movs r3, #126
-	ands r3, r2
-	adds r0, r5, #0
-	strb r3, [r7]
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r3, .L_02008cd8
-	movs r2, #2
-	ldrsh r1, [r6, r2]
-	movs r0, #10
-	ldrsh r2, [r6, r0]
-	movs r0, #133
-	lsls r0, r0, #2
-	adds r3, r3, r0
-	ldr r0, [r3]
-	bl ObjectMotion_SetPositionAndCommit
-	adds r0, r5, #0
-	movs r1, #6
-	bl Func_02001074
-	adds r0, r5, #0
-	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
-	mov r2, r8
-	strb r2, [r7]
-	bl Func_020010e4
-	movs r0, #1
-	b .L_02008cd0
-.L_02008cce:
-	movs r0, #0
-.L_02008cd0:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008cd8:
-	.4byte gPartyState

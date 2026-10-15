@@ -1,4 +1,9 @@
 #include "room.h"
+#include "input.h"
+
+extern s16 Data_02005f18[];
+
+void Func_02000cb8(s32 id);
 
 void Func_020009ec(void)
 {
@@ -51,4 +56,64 @@ void Func_02000ad8(void)
     Func_020055e0();
     Battle_WaitMode0(60);
     Func_02005568();
+}
+
+void Func_02000b40(void)
+{
+    struct Box box;
+
+    if (Func_02004a8c(&box)) {
+        Func_02004d10(box);
+        Func_020009ec();
+        if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
+            struct ObjectRuntime *object = Object_GetById(12);
+
+            object->update = NULL;
+            Animation_ApplyChildValues(object, 0);
+            Object_SetModeById(12, 6);
+            Flag_Clear(0x221);
+            Func_02000cb8(12);
+        }
+        if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {
+            struct ObjectRuntime *object = Object_GetById(11);
+
+            object->update = NULL;
+            Animation_ApplyChildValues(object, 0);
+            Object_SetModeById(11, 6);
+            Flag_Clear(0x220);
+            Func_02000cb8(11);
+        }
+    } else {
+        s32 angle;
+        const s16 *table;
+        u32 *keys;
+
+        Object_GetById(gPartyState.current_owner);
+        keys = &gInput.held;
+        table = Data_02005f18;
+        /* FAKEMATCH: the barrier loads the table's address before the direction mask's 15, where plainly sched2 builds the 15 first (differ 4); reading through a byte offset keeps the table as the base register (indexed plainly, differ 2). */
+        asm volatile("" : "+l"(table));
+        angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
+        if (angle != -1) {
+            struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+            struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+            s32 position[3];
+            s32 x;
+            s32 z;
+            u8 *cells;
+
+            position[0] = (leader->x & 0xfff00000) + 0x80000;
+            position[1] = leader->y;
+            position[2] = (leader->z & 0xfff00000) + 0x80000;
+            Vector_AddPolarOffsetFar(0x100000, angle, position);
+            x = position[0] >> 20;
+            z = position[2] >> 20;
+            cells = Ram_MapCellBuffer;
+            if (map != NULL)
+                cells = map->layers[2].cells;
+            cells += (x + (z << 7)) << 2;
+            if (cells[2] != 255)
+                Func_02005600();
+        }
+    }
 }

@@ -39,6 +39,30 @@ void WaitFrames(s32 frames);
 
 #define DIFF_WITHIN(a, b, limit) ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
+void Func_02000550(void)
+{
+    struct Orbiter *actor = Object_GetById(9);
+    u16 zero = 0;
+    s32 direction;
+    s32 i;
+
+    /* FAKEMATCH: taking actor's address keeps GCSE from hoisting the phase's address out of the loop, which the native rebuilds on every pass (differ 25 without it). */
+    (void)&actor;
+    if (Func_02005834(0) == 1) {
+        direction = Data_02005af0;
+        Func_020020f0(0);
+        GameFlag_SetBit(515);
+        /* FAKEMATCH: a u16 local stores its 0 from a register (movs, strh); the constant would load from the pool (differ 11). */
+        *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x166) = zero;
+        i = 0;
+    loop:
+        actor->phase += Data_02006b38[i] * direction;
+        WaitFrames(1);
+        if (++i <= 24)
+            goto loop;
+    }
+}
+
 struct Orbiter *Func_020005b4(struct Orbiter *origin, s32 id)
 {
     s32 i;

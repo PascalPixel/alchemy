@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
 	.balign 4
 	.global Func_020000b8
@@ -272,58 +268,6 @@ Func_0200047c:
 .L_020084b4:
 	movs r0, #1
 	pop {r5, pc}
-	.section .text.x02008550,"ax",%progbits
-	.balign 4
-	.global Func_02000550
-	.thumb_func
-Func_02000550:
-	push {r5, r6, r7, lr}
-	movs r0, #9
-	bl Object_GetById
-	adds r7, r0, #0
-	movs r0, #0
-	bl Func_02005834
-	cmp r0, #1
-	bne .L_020085a8
-	ldr r3, .L_020085ac
-	movs r0, #0
-	ldr r6, [r3]
-	bl Func_020020f0
-	movs r0, #130
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #179
-	lsls r1, r1, #1
-	adds r2, r3, r1
-	movs r3, #0
-	strh r3, [r2]
-	movs r5, #0
-.L_0200858a:
-	ldr r3, .L_020085b0
-	adds r1, r7, #0
-	ldrsb r3, [r3, r5]
-	adds r1, #98
-	adds r2, r6, #0
-	muls r2, r3
-	ldrb r3, [r1]
-	movs r0, #1
-	adds r3, r3, r2
-	strb r3, [r1]
-	adds r5, #1
-	bl WaitFrames
-	cmp r5, #24
-	ble .L_0200858a
-.L_020085a8:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_020085ac:
-	.4byte Data_02005af0
-.L_020085b0:
-	.4byte Data_02006b38
 	.section .text.x02008624,"ax",%progbits
 	.balign 4
 	.global Func_02000624
@@ -1178,149 +1122,6 @@ Func_02000cf0:
 	bl Func_020056bc
 	pop {r5, r6, pc}
 .L_02008f4c:
-	.4byte gPartyState
-	.section .text.x02008fc0,"ax",%progbits
-	.balign 4
-	.global Func_02000fc0
-	.thumb_func
-Func_02000fc0:
-	push {r5, lr}
-	movs r0, #131
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	bl Func_020056b4
-	movs r0, #0
-	bl Func_0200580c
-	movs r0, #78
-	bl Func_02005854
-	bl Func_0200533c
-	movs r0, #40
-	bl Battle_WaitMode0
-	ldr r0, .L_0200911c
-	bl Func_02005754
-	movs r0, #24
-	movs r1, #0
-	bl Func_02005764
-	movs r0, #196
-	movs r1, #1
-	movs r2, #128
-	movs r3, #1
-	lsls r2, r2, #17
-	negs r1, r1
-	lsls r0, r0, #17
-	bl Motion_CamBounds
-	bl Func_020057b4
-	movs r0, #220
-	bl Func_02005854
-	movs r0, #1
-	bl WaitFrames
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl Func_020057e4
-	movs r0, #254
-	lsls r0, r0, #7
-	movs r1, #0
-	adds r0, #255
-	bl Func_020057dc
-	movs r0, #40
-	bl Func_020057ec
-	movs r0, #80
-	bl WaitFrames
-	ldr r5, .L_02009120
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r1, #15
-	bl Object_SetPartAttribute
-	bl Func_02000f6c
-	movs r0, #1
-	bl WaitFrames
-	movs r0, #128
-	movs r1, #0
-	lsls r0, r0, #9
-	bl Func_020057dc
-	movs r0, #10
-	bl Func_020057ec
-	movs r0, #20
-	bl WaitFrames
-	movs r0, #130
-	bl Func_02005854
-	movs r0, #9
-	bl Object_GetById
-	movs r1, #7
-	bl Object_SetPartAttribute
-	movs r0, #10
-	bl Object_GetById
-	movs r1, #7
-	bl Object_SetPartAttribute
-	movs r0, #8
-	bl WaitFrames
-	movs r0, #10
-	bl Object_GetById
-	movs r1, #3
-	bl Object_SetPartAttribute
-	movs r0, #9
-	bl Object_GetById
-	movs r1, #0
-	bl Object_SetPartAttribute
-	movs r0, #8
-	bl WaitFrames
-	movs r0, #11
-	bl Func_02005854
-	movs r1, #1
-	movs r0, #11
-	bl Func_02004d48
-	adds r5, r0, #0
-	bl Func_0200581c
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #85
-	str r2, [r3]
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	cmp r5, #1
-	beq .L_02009104
-	cmp r5, #1
-	bgt .L_020090f4
-	cmp r5, #0
-	beq .L_02009114
-	b .L_0200911a
-.L_020090f4:
-	cmp r5, #2
-	beq .L_0200910c
-	cmp r5, #3
-	bne .L_0200911a
-	movs r0, #14
-	bl Func_020057c4
-	b .L_0200911a
-.L_02009104:
-	movs r0, #15
-	bl Func_020057c4
-	b .L_0200911a
-.L_0200910c:
-	movs r0, #16
-	bl Func_020057c4
-	b .L_0200911a
-.L_02009114:
-	movs r0, #17
-	bl Func_020057c4
-.L_0200911a:
-	pop {r5, pc}
-.L_0200911c:
-	.4byte MsgGabombaAcceptOffering
-.L_02009120:
 	.4byte gPartyState
 	.section .text.x020091bc,"ax",%progbits
 	.balign 4
@@ -2220,8 +2021,6 @@ Func_020020f0:
 	.4byte 0x00000079
 .L_0200a2cc:
 	.4byte 0x0000007b
-	.section .text.x0200a392,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200a394,"ax",%progbits
 	.balign 4
 	.global Func_02002394

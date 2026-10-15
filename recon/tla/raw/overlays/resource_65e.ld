@@ -6,7 +6,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_65e/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_65e/events.o"(.text)
         "*/games/tla/src/field/overlay_65e/events3.o"(.text)
-        "*/resource_65e_overlay.o"(.text.x02008340)
         "*/games/tla/src/field/overlay_65e/prepare.o"(.text)
         "*/games/tla/src/field/overlay_65e/s0470.o"(.text)
         "*/games/tla/src/field/overlay_65e/events2.o"(.text)

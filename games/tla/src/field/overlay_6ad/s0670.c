@@ -136,3 +136,39 @@ void Func_02000900(void)
     Func_020054e8_(20, 25, 1, 1, 18, 77);
     Func_020054e0_(62, 22, 1, 2, 54, 20);
 }
+
+void Func_02000944(void)
+{
+    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    s32 frame;
+    s32 delta;
+
+    /* FAKEMATCH: taking the object's address keeps the motion flags' address inside the loop; without it GCSE hoists it out (differ 24). */
+    (void)&object;
+    Func_02005608();
+    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Object_SetModeById(gPartyState.current_owner, 28);
+    Battle_WaitMode0(16);
+    frame = 0;
+step:
+    if (frame == 5)
+        Func_020056c0(204);
+    object->motion_flags = 0;
+    delta = -0x400;
+    /* FAKEMATCH: the barrier loads the first step before the scale it is added to; plainly sched2 loads the scale first (differ 2). */
+    asm volatile("" : "+l"(delta));
+    object->scale_x += delta;
+    object->scale_y += -0x300;
+    object->y += -0x9999;
+    WaitFrames(1);
+    if (++frame <= 39)
+        goto step;
+    /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots' address; plainly sched2 builds the address first (differ 2). */
+    do {
+        Object_GetById(gPartyState.current_owner)->animation_kind = 0;
+    } while (0);
+    SCENE_WORK->unknown_1ac = 521;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_020055f0(16);
+}

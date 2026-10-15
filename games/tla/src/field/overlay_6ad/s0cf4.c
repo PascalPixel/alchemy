@@ -9,12 +9,50 @@ extern const u8 Data_02006b98[];
 extern const u8 Data_02006d78[];
 extern const u8 Data_02006e38[];
 extern const u8 Data_02006f64[];
-void Func_02000c80(s32 id);
-void Func_02000cb8(s32 id);
 s32 Func_02002cfc(void);
 void Func_02002ce0(void);
 void Func_020043ec(void);
 void Func_02004700(s32 a0);
+
+void Func_02000c80(s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    s32 z = object->z >> 20;
+    s32 x = object->x;
+    u8 *cell = map->layers[2].cells;
+    s32 offset = (x >> 20) + (z << 7);
+
+    /* FAKEMATCH: the one-pass block keeps the cell row's address loaded before x is shifted (differ 6 without it). */
+    do {
+        cell += offset << 2;
+        cell[2] = 255;
+    } while (0);
+    Object_GetById(id)->priority_flags = 0;
+}
+
+void Func_02000cb8(s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    s32 z = object->z >> 20;
+    s32 x = object->x;
+    u8 *cell = map->layers[2].cells;
+    s32 offset = (x >> 20) + (z << 7);
+
+    /* FAKEMATCH: as in Func_02000c80 (differ 6 without it). */
+    do {
+        cell += offset << 2;
+        cell[2] = 0;
+    } while (0);
+    {
+        u8 *flags = &Object_GetById(id)->priority_flags;
+        s32 value = 2;
+
+        value |= *flags;
+        *flags = value;
+    }
+}
 
 void Func_02000cf4(s32 unused, s32 id)
 {

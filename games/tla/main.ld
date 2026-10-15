@@ -1013,6 +1013,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ca2fc)
     "*/games/tla/src/battle/effect/special.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ca4a8)
+    "*/games/tla/src/game/party/is_active_owner.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ca5d8)
     "*/games/tla/src/field/common/event/spawn.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ca6e8)

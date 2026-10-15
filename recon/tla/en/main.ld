@@ -888,7 +888,6 @@ SECTIONS
         "*/recon/tla/raw/080ca3f4.o"(.text)
         "*/games/tla/src/battle/effect/special.o"(.text)
         "*/recon/tla/raw/080ca4a8.o"(.text)
-        "*/recon/tla/raw/080ca514.o"(.text)
         "*/games/tla/src/game/party/is_active_owner.o"(.text)
         "*/recon/tla/raw/080ca5d8.o"(.text)
         "*/recon/tla/raw/080ca6a4.o"(.text)

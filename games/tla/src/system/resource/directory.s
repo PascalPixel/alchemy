@@ -80,9 +80,9 @@ Resource_DirectoryTable:
 	resource , Battle_SoruShindenBackdrop
 	resource , Battle_ForestBackdrop
 	resource , Battle_VioletSkyBackdrop
-	resource , Battle_GrasslandBBackdrop
-	resource , Battle_RockyBeachBackdrop
-	resource , Battle_DenseForestBackdrop
+	resource GrasslandBBackdrop, Battle_GrasslandBBackdrop
+	resource RockyBeachBackdrop, Battle_RockyBeachBackdrop
+	resource DenseForestBackdrop, Battle_DenseForestBackdrop
 	resource , Battle_FireCavePoolBackdrop
 	resource , Battle_CanyonMeadowBackdrop
 	resource , Battle_BlueCaveBackdrop
@@ -93,7 +93,7 @@ Resource_DirectoryTable:
 	resource , Battle_PalmCliffBackdrop
 	resource , Battle_ToyRoomBackdrop
 	resource , Battle_ShipCabinBackdrop
-	resource , Battle_ShipDeckBackdrop
+	resource ShipDeckBackdrop, Battle_ShipDeckBackdrop
 	resource , Battle_GoldRocksBackdrop
 	resource , Battle_StoneCorridorBackdrop
 	resource , Battle_FaceTempleBackdrop
@@ -119,13 +119,13 @@ Resource_DirectoryTable:
 	resource , Battle_DragonHallBBackdrop
 	resource , Battle_GorgePoolBackdrop
 	resource , Battle_SpikeHallBackdrop
-	resource , Battle_SnowfieldBBackdrop
-	resource , Battle_BlizzardBackdrop
+	resource SnowfieldBBackdrop, Battle_SnowfieldBBackdrop
+	resource BlizzardBackdrop, Battle_BlizzardBackdrop
 	resource , Battle_SnowfieldCBackdrop
 	resource , Battle_SerpentStarsBBackdrop
 	resource , Battle_SunbeamCloudsBackdrop
 	resource , Battle_RedHazeBackdrop
-	resource , Battle_DesertBackdrop
+	resource DesertBackdrop, Battle_DesertBackdrop
 	resource , Battle_DuskCloudsBackdrop
 	resource , Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop

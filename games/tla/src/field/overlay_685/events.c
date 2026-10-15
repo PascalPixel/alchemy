@@ -1,4 +1,7 @@
 #include "scene.h"
+#include "scene_ids.h"
+
+void Func_020034d4(s32 actor, s32 x, s32 z);
 
 void Func_02000304(s32 actor)
 {
@@ -38,4 +41,19 @@ void Func_020003bc(void)
 {
     Func_02003424(41, 97, 1, 4, 41, 77);
     Func_0200341c(41, 33, 1, 4, 41, 13);
+}
+
+void Func_020003ec(void)
+{
+    struct FieldActor *object;
+    s32 x;
+    s32 z;
+
+    Func_02003424(50, 97, 1, 4, 41, 77);
+    Func_0200341c(46, 33, 1, 4, 41, 13);
+    object = Object_GetById(gPartyState.current_owner);
+    x = object->x >> 20;
+    z = object->z >> 20;
+    if (gPartyState.scene == (s32)&SceneId_Ov685Room4 && x == 41 && (u32)(z - 13) <= 4)
+        Func_020034d4(gPartyState.current_owner, 0x2980000, 0x1180000);
 }

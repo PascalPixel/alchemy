@@ -110,68 +110,6 @@ Func_02000208:
 	.4byte MsgHasMyGrandson
 .L_02008300:
 	.4byte Data_02003d18
-	.section .text.x020083ec,"ax",%progbits
-	.balign 4
-	.global Func_020003ec
-	.thumb_func
-Func_020003ec:
-	push {r5, r6, lr}
-	sub sp, #8
-	movs r3, #77
-	str r3, [sp, #4]
-	movs r5, #41
-	movs r0, #50
-	movs r1, #97
-	movs r2, #1
-	movs r3, #4
-	str r5, [sp, #0]
-	bl Func_02003424
-	movs r3, #13
-	str r3, [sp, #4]
-	movs r1, #33
-	movs r2, #1
-	movs r3, #4
-	movs r0, #46
-	str r5, [sp, #0]
-	bl Func_0200341c
-	ldr r5, .L_0200845c
-	movs r0, #133
-	lsls r0, r0, #2
-	adds r6, r5, r0
-	ldr r0, [r6]
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	movs r2, #240
-	asrs r4, r3, #20
-	ldr r3, [r0, #16]
-	lsls r2, r2, #1
-	asrs r1, r3, #20
-	adds r3, r5, r2
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, .L_02008460
-	cmp r2, r3
-	bne .L_02008456
-	cmp r4, #41
-	bne .L_02008456
-	adds r3, r1, #0
-	subs r3, #13
-	cmp r3, #4
-	bhi .L_02008456
-	movs r1, #166
-	movs r2, #140
-	ldr r0, [r6]
-	lsls r1, r1, #18
-	lsls r2, r2, #17
-	bl Func_020034d4
-.L_02008456:
-	add sp, #8
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200845c:
-	.4byte gPartyState
-.L_02008460:
-	.4byte 0x000000bc
 	.section .text.x020084d4,"ax",%progbits
 	.global Func_020004d4
 	.thumb_func

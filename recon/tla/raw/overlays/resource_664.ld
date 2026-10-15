@@ -55,7 +55,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200b254)
         "*/resource_664_overlay.o"(.text.x0200b32c)
         "*/resource_664_overlay.o"(.text.x0200b654)
-        "*/resource_664_overlay.o"(.text.x0200bac4)
+        "*/games/tla/src/field/overlay_664/s3ac4.o"(.text)
         "*/resource_664_overlay.o"(.text.x0200bb08)
         "*/resource_664_overlay.o"(.text.x0200bb7c)
         "*/resource_664_overlay.o"(.text.x0200bcac)

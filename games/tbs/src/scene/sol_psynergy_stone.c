@@ -17,55 +17,70 @@
 
 #include "field_event.h"
 
-u8 *State_Run(void) { return (u8 *)gSolPsynergyStone_SceneTable0; }
+// The Sol Sanctum room that holds a psynergy stone, scene 13.
 
-s32 SolPsynergyStone_GetView(void) { return 0; }
+enum {
+  FLAG_144 = 0x144, // set on every entry; what reads it is not known
+  FLAG_814 = 0x814  // when set, the room hums and sparkles on entry
+};
 
-u8 *SceneData_GetPrimaryTable37c(void) {
-  return (u8 *)gSolPsynergyStone_SceneTable1;
+// Where the party can enter the room.
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSolPsynergyStoneEntrances;
 }
 
-u8 *SceneData_GetSecondaryTable37c(void) {
-  return (u8 *)gSolPsynergyStone_SceneTable2;
+// The room has no regions.
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
+
+// Where its one exit leads.
+const u32 *Scene_GetExits(void) { return gSolPsynergyStoneExits; }
+
+// Nobody is placed here.
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  return gSolPsynergyStonePlacements;
 }
 
-u8 *SceneData_GetTertiaryTable37c(void) {
-  return (u8 *)gSolPsynergyStone_SceneTable3;
+// The exit and the psynergy stone.
+const struct SceneEvent *Scene_GetEvents(void) {
+  return gSolPsynergyStoneEvents;
 }
 
-s32 Resource37c_Run(void) {
+// Opens the room through a window, and once flag 0x814 is set plays sound
+// 141, sets the map render values to 1 and starts the sparkles
+// (Resource37c_FinalizeSetup imports FieldEffect_InitSparkles).
+s32 Scene_Initialize(void) {
 
   s32 scaleX = 0x10000;
   s32 scaleY = 0x10000;
   s32 scaleZ = 0x10000;
 
-  RESOURCE37C_RUNTIME->setupRequest1c0 = 0x204;
-  Engine_GameFlagSet(0x144);
-  if (Engine_GameFlagIsSet(0x814) != 0) {
-    Resource37c_QueueSoundCue(0x8D);
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  Engine_GameFlagSet(FLAG_144);
+  if (Engine_GameFlagIsSet(FLAG_814) != 0) {
+    Resource37c_QueueSoundCue(141);
     Engine_WorkSetValuesIfNonNegative(scaleX, scaleY, scaleZ);
     Resource37c_FinalizeSetup();
   }
   return 0;
 }
 
-struct SceneEntrance gSolPsynergyStone_SceneTable0[] = {
+struct SceneEntrance gSolPsynergyStoneEntrances[] = {
     {0, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gSolPsynergyStone_SceneTable1[] = {
+u32 gSolPsynergyStoneExits[] = {
     SCENE_EXITS(13),
     SCENE_EXIT(1, 12, 2),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSolPsynergyStone_SceneTable2[] = {
+struct ScenePlacement gSolPsynergyStonePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSolPsynergyStone_SceneTable3[] = {
+struct SceneEvent gSolPsynergyStoneEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE},
     {SCENE_EVENTS_END},

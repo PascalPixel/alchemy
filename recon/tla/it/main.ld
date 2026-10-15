@@ -1198,6 +1198,8 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.000d7af8)
     "*/games/tla/src/battle/effect/radpart.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d7d84)
+    "*/games/tla/src/battle/effect/radial_spread.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000d82d4)
     "*/games/tla/src/field/common/object/motion_move_halfway_toward_target_copy.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d8734)
     "*/recon/tla/it/rom.o"(.rom.000d8970)

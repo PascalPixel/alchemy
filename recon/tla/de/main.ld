@@ -988,6 +988,8 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.000e4b04)
     "*/games/tla/src/battle/effect/radpart.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e4d90)
+    "*/games/tla/src/battle/effect/radial_spread.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000e52e0)
     "*/games/tla/src/field/common/object/motion_move_halfway_toward_target_copy.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e5740)
     "*/games/tla/src/field/common/work9c/f0d897c.o"(.text)

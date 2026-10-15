@@ -2412,7 +2412,9 @@ Func_080d7788:
 Func_080d7b04:
 	.incbin "baserom.gba", 0x000dcaf8, 0x00000100
 	.section .rom.000dcd84, "ax"
-	.incbin "baserom.gba", 0x000dcd84, 0x0000097c
+	.incbin "baserom.gba", 0x000dcd84, 0x0000045c
+	.section .rom.000dd2d4, "ax"
+	.incbin "baserom.gba", 0x000dd2d4, 0x0000042c
 	.section .rom.000dd734, "ax"
 	.incbin "baserom.gba", 0x000dd734, 0x0000023c
 	.section .rom.000dd9f4, "ax"

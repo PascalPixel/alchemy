@@ -1048,7 +1048,7 @@ SECTIONS
         "*/recon/tla/raw/080d7f80.o"(.text)
         "*/recon/tla/raw/080d8148.o"(.text)
         "*/recon/tla/raw/080d8174.o"(.text)
-        "*/recon/tla/raw/080d81ec.o"(.text)
+        "*/games/tla/src/battle/effect/radial_spread.o"(.text)
         "*/recon/tla/raw/080d82e0.o"(.text)
         "*/recon/tla/raw/080d85b8.o"(.text)
         "*/games/tla/src/field/common/object/motion_move_halfway_toward_target_copy.o"(.text)

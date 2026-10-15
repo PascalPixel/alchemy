@@ -2360,7 +2360,6 @@ SECTIONS
         "*/recon/tla/raw/081c0772.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c09d0.o"(.text)
         "*/games/tla/src/sound/sndstub.o"(.text)
-        "*/recon/tla/raw/081c0c1c.o"(.text)
         "*/games/tla/src/sound/f1c0cac.o"(.text)
         "*/recon/tla/raw/081c0cb0.o"(.text)
         "*/recon/tla/raw/081c0e30.o"(.text)

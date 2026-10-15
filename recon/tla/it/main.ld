@@ -2222,7 +2222,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.001c08a4)
     "*/recon/tla/it/rom.o"(.rom.001c09d0)
     "*/games/tla/src/sound/sndstub.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.001c0c1c)
     "*/games/tla/src/sound/f1c0cac.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001c0cb0)
     "*/recon/tla/it/rom.o"(.rom.001c0e30)

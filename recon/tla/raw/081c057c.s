@@ -21,7 +21,7 @@ Func_081c057c:
 	beq .L_081c05b0
 	adds r0, r1, #0
 	adds r1, r2, #0
-	bl Func_081c0c84
+	bl Audio_InitializeRuntimeDefaults + 0x68
 	b .L_081c05c4
 	.2byte 0x0000
 .L_081c05a8:
@@ -38,7 +38,7 @@ Func_081c057c:
 .L_081c05bc:
 	adds r0, r1, #0
 	adds r1, r3, #0
-	bl Func_081c0c84
+	bl Audio_InitializeRuntimeDefaults + 0x68
 .L_081c05c4:
 	pop {r0}
 	bx r0

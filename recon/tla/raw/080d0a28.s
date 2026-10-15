@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global DisplayTransition_UpdateFrame
 	.thumb_func
 DisplayTransition_UpdateFrame:

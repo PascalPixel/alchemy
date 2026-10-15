@@ -989,8 +989,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000d51cc)
     "*/recon/tla/fr/rom.o"(.rom.000d5520)
     "*/games/tla/src/graphics/display/m80d072c.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d5788)
-    "*/recon/tla/fr/rom.o"(.rom.000d5954)
     "*/recon/tla/fr/rom.o"(.rom.000d5a28)
     "*/recon/tla/fr/rom.o"(.rom.000d5b7c)
     "*/games/tla/src/graphics/palette/blend.o"(.text)

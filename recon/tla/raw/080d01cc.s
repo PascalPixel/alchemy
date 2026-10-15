@@ -314,9 +314,9 @@ DisplayTransition_Start:
 .L_080d044c:
 	.4byte 0x00000050
 .L_080d0450:
-	.4byte Func_080d0788
+	.4byte DisplayTransition_Update
 .L_080d0454:
-	.4byte Func_080d0954
+	.4byte DisplayTransition_UpdateScanline
 .L_080d0458:
 	bl Runtime_SetIrqHandler
 	movs r2, #160
@@ -412,9 +412,9 @@ DisplayTransition_Start:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_080d0510:
-	.4byte Func_080d085c
+	.4byte DisplayTransition_UpdateFromCentre
 .L_080d0514:
-	.4byte Func_080d0954
+	.4byte DisplayTransition_UpdateScanline
 .L_080d0518:
 	.4byte gIoWriteQueue
 .L_080d051c:

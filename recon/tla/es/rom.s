@@ -3175,16 +3175,8 @@ DisplayTransition_Start:
 	.thumb_func
 DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d9520, 0x0000020c
-	.section .rom.000d9788, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d9788, 0x000001cc
-	.section .rom.000d9954, "ax"
-	.global Func_080d0954
-	.type Func_080d0954, %function
-	.thumb_func
-Func_080d0954:
-	.incbin "baserom.gba", 0x000d9954, 0x000000d4
 	.section .rom.000d9a28, "ax"
+	.balign 4
 	.global DisplayTransition_UpdateFrame
 	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func

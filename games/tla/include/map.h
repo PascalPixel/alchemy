@@ -64,7 +64,10 @@ struct MapViewWork {
     u8 unknown_101[3];
     u16 window_top;
     u16 window_bottom;
-    u8 unknown_108[0x18];
+    u16 irq_first_line;
+    u16 irq_second_line;
+    u16 irq_phase;
+    u8 unknown_10e[0x12];
     u32 *resources;
     u8 unknown_124[0x84c];
     s8 extra_tiles;

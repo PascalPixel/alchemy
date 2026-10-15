@@ -1,12 +1,17 @@
-/* Near miss: differ 30 of 86, registers only: the native keeps the id in r5
- * and the wait counter's shifted copy in r7; the draft has them the other way
- * round. With the flag calls through the inline forwarder the object and the
- * id also swap (differ 38). */
+/* Near miss: differ 2 of 86, one reordered pair in the wait loop's decrement:
+ * the native loads the pooled -0x10000 before it copies the shifted count
+ * (adds r3, r7, #0); the draft copies first. With the id pinned to r5 and
+ * the object to r6 the registers match (differ 30 plain: the id and the
+ * count's shifted copy trade r5 and r7). In sched2 the copy and the pool
+ * load tie at priority 3 and the copy has two dependents to the load's one.
+ * Tried: a one-pass block around the decrement, frames = (s16)(frames - 1),
+ * a for loop (all 2); a 4-minute permute found nothing better. */
 #include "../../../../games/tla/src/field/overlay_686/ov686.h"
 
-void Func_02000a68(s32 unused, s32 id)
+void Func_02000a68(s32 unused, s32 objectId)
 {
-    struct ObjectRuntime *object = Object_GetById(id);
+    register s32 id asm("r5") = objectId;
+    register struct ObjectRuntime *object asm("r6") = Object_GetById(id);
     s16 frames = 60;
 
     if (object->z >> 20 == 31) {

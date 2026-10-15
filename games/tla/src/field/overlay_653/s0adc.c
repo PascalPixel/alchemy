@@ -3,7 +3,7 @@
 s32 Math_Cosine(s32 angle);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Func_02000930(struct ObjectRuntime *object, s32 priority);
-s32 Func_02000a0c(struct ObjectRuntime *object);
+void Func_02000a0c(struct ObjectRuntime *object);
 
 void Func_02000adc(void)
 {

@@ -1,5 +1,59 @@
 #include "local.h"
 
+void Func_020044d4(void)
+{
+    /* FAKEMATCH: a temporary set just before its call builds the angle ahead of the other arguments (one reordered row as a plain argument). */
+    s32 angle;
+
+    Func_020051c0();
+    Func_02005370(0);
+    Motion_CamBounds_(-1, -1, -1, 0);
+    WaitFrames_(1);
+    Func_02005230_(gPartyState.current_owner, 0x1480000, 0x1680000);
+    angle = 0x5000;
+    Func_02005238_(12, 0x1d80000, 0x1980000, angle);
+    Object_GetById_(16)->angle = 0xc000;
+    WaitFrames_(1);
+    Event_StartScreenTransition();
+    ObjectMotion_SetSpeedParameters_(gPartyState.current_owner, 0xcccc, 0x6666);
+    ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 328, 392);
+    Func_020052d8_(0xcccc, 0x1999);
+    Motion_CamBounds_(0x1980000, -1, 0x1900000, 1);
+    ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 376, 408);
+    Battle_WaitMode0_(20);
+    Motion_SetVarCbAndRefresh(12, 1);
+    Func_02005280((s32)&MsgScene653No05);
+    Func_02005298(12, 0);
+    ObjectMotion_ArmCallback_(12, 0x8000, 20);
+    Func_020052c8(12, 256, 0);
+    ObjectMotion_SetSpeedParameters_(12, 0x19999, 0xcccc);
+    ObjectMotion_SetPositionAndReset_(12, 456, 408);
+    Func_02005298(12, 0);
+    Func_02005240(16, gPartyState.current_owner);
+    WaitFrames_(1);
+    ObjectMotion_SetSpeedParameters_(16, 0xcccc, 0x6666);
+    ObjectMotion_SetPositionAndReset_(16, 376, 392);
+    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xc000, 0);
+    ObjectMotion_ArmCallback_(16, 0x3000, 40);
+    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0, 0);
+    ObjectMotion_ArmCallback_(16, 0, 20);
+    Func_020052d0_(12, 258);
+    Func_02005298(12, 0);
+    Func_020052c8(16, 265, 0);
+    ObjectMotion_ArmCallback_(16, 0x3000, 0);
+    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xc000, 20);
+    Func_02005298(16, 0);
+    Motion_SetModeAndWaitAnimation_(gPartyState.current_owner, 3);
+    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0, 0);
+    ObjectMotion_ArmCallback_(16, 0, 0);
+    ObjectMotion_SetPositionAndReset_(12, 468, 428);
+    ObjectMotion_SetPositionAndReset_(12, 472, 454);
+    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 514;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_020052f8(13);
+}
+
 void Func_020046d8(void)
 {
     Func_020051c0();

@@ -1,14 +1,14 @@
 /* Near miss, differ 4 of 59: after the twin Effect_AdvanceMotion body the listing loads the
  * party state address before it builds the owner offset, and the object's layer byte after the mask;
  * this draft has both pairs the other way round. */
-#include "../../../../games/tla/src/field/overlay_67f/ov67f.h"
+#include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_020008f4(struct ObjectRuntime *object)
 {
     s32 vx;
     s32 vz;
     s32 rate;
-    struct Ov67fAnimation *animation;
+    struct IzumoRuinsAnimation *animation;
     struct ObjectRuntime *owner;
 
     vx = object->bounce;
@@ -28,5 +28,5 @@ void Func_020008f4(struct ObjectRuntime *object)
     __asm__("");
     animation->angle += object->action;
     owner = Object_GetById(gPartyState.current_owner);
-    ((struct Ov67fAnimation *)object->animation)->layer = ((struct Ov67fAnimation *)owner->animation)->layer;
+    ((struct IzumoRuinsAnimation *)object->animation)->layer = ((struct IzumoRuinsAnimation *)owner->animation)->layer;
 }

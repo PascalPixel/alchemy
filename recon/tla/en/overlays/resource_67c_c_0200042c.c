@@ -1,5 +1,5 @@
 /* Draft, differ 4: the listing loads the pool word -0x10000 before object->y, twice. */
-#include "../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_0200042c(s32 unused, s32 id)
 {

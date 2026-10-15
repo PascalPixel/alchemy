@@ -6,18 +6,18 @@
  * goto loop, which loop.c leaves alone, measures 43 (i in r0, the register
  * address in r4, 16 pooled) and is not kept: no new goto. Tried: the step as
  * a local, as ++blend inside the expression, the operands of | swapped. */
-#include "../../../../games/tla/src/field/overlay_672/ov672.h"
+#include "../../../../games/tla/src/scene/gabomba_statue_chamber/gabomba_statue_chamber.h"
 #include "../../../../games/common/include/system/io_reg.h"
 
-struct Ov672Layer {
+struct GabombaStatueChamberLayer {
     u8 unknown_00[12];
     s32 y;
     u8 unknown_10[0x28];
 };
 
-struct Ov672MapWork {
+struct GabombaStatueChamberMapWork {
     u8 unknown_000[0x108];
-    struct Ov672Layer layers[3];
+    struct GabombaStatueChamberLayer layers[3];
 };
 
 void Func_02001d40(void);
@@ -28,9 +28,9 @@ void Func_02001ba8(void)
 {
     if (GameFlag_Test(265)) {
         if (GameFlag_Test(519)) {
-            struct Ov672MapWork *map = (struct Ov672MapWork *)Ram_HeapSlots->map_work;
-            struct Ov672Layer *front = &map->layers[0];
-            struct Ov672Layer *back = &map->layers[2];
+            struct GabombaStatueChamberMapWork *map = (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->map_work;
+            struct GabombaStatueChamberLayer *front = &map->layers[0];
+            struct GabombaStatueChamberLayer *back = &map->layers[2];
             s32 blend = 1;
             s32 i;
 

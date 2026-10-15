@@ -1,7 +1,7 @@
 /* Near miss: differ 4 of 82 (two reordered rows): the native loads the party
  * state's address before it builds the owner offset, and sets the first
  * argument after the movement byte is cleared. */
-#include "../../../../games/tla/src/field/overlay_676/ov676.h"
+#include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 s32 Func_0200014c(struct ObjectRuntime *object)
 {

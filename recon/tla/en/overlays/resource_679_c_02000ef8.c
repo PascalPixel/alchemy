@@ -13,7 +13,7 @@
  *   address load, where the native loads the address first (equal priority and
  *   dependent count; RTL order decides). Without the "+l" barrier that tie falls the
  *   native way but the size is started before the entry is stored. */
-#include "../../../../games/tla/src/field/overlay_679/local.h"
+#include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "map.h"
 
 void Func_02000ef8(void)

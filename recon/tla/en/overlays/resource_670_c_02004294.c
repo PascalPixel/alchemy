@@ -4,17 +4,17 @@
  * here jump.c copies the test ahead of the loop and the address stays in r5. A pointer variable
  * reloaded at the end of the body changes nothing (differ 29). Func_020047e4 waits in the same
  * loop, there rotated with the test copied. */
-#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 void Func_02004294(void)
 {
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
     Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
-    Ov670_CamMove(-1, -1, -1, 0);
+    Kibombo_CamMove(-1, -1, -1, 0);
     Func_02005bbc()->motion_flags = 0;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
     Object_GetById(27)->motion_flags = 0;
-    Ov670_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
+    Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
     Func_02003640(1, 1);
     WaitFrames(1);
     if (Data_02007950 != 0) {
@@ -24,31 +24,31 @@ void Func_02004294(void)
     }
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    OV670_TASK_ADD(Func_02002ccc, 0x480);
-    Ov670_Wait(40);
-    Ov670_SePlay(161);
+    KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
+    Kibombo_Wait(40);
+    Kibombo_SePlay(161);
     Func_02003640(0, 1);
-    Ov670_Wait(20);
-    Ov670_ObjEmoteWait(17, 0x102);
-    Ov670_Wait(20);
+    Kibombo_Wait(20);
+    Kibombo_ObjEmoteWait(17, 0x102);
+    Kibombo_Wait(20);
     Func_02005b4c((s32)MsgYouAreStill);
-    Ov670_MessagePut(17, 0);
+    Kibombo_MessagePut(17, 0);
     if (Data_02007950 != 0) {
         Data_02007950->motion_flags = 0;
         while (Data_02007950->y > 0x240000) {
-            Ov670_ObjArm(17, 0xd000, 0);
+            Kibombo_ObjArm(17, 0xd000, 0);
             Data_02007950->y += 0xffffc000;
             WaitFrames(1);
         }
     }
     Motion_SetModeAndWaitAnimation(17, 4);
-    Ov670_MessagePut(17, 0);
-    Ov670_ObjTurn(17, 0x3000);
-    Ov670_MessagePut(0x4000 + 17, 0);
+    Kibombo_MessagePut(17, 0);
+    Kibombo_ObjTurn(17, 0x3000);
+    Kibombo_MessagePut(0x4000 + 17, 0);
     GameFlag_ClearBit(0x8f7);
-    Ov670_SePlay(11);
-    Ov670_Wait(80);
-    ((struct Ov670EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x201;
+    Kibombo_SePlay(11);
+    Kibombo_Wait(80);
+    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02005bc4(11);

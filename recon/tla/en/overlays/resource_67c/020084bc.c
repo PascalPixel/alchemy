@@ -5,7 +5,7 @@
    layer in r7. Measured: column - 42 written inside the loop, with or without
    an empty asm barrier before the loop, is differ 31. Func_02000574, the same
    event without the column, matches (s0574.c). */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_0200349c(s32 column, s32 value);
 

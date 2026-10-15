@@ -1,5 +1,5 @@
 /* Near miss of Func_020011a8 (twin: overlay 67C Func_02002ca4), differ 24, all instruction order: the heap, owner and anchor loads at the top interleave differently, and in each of the four position blocks the native starts the z offset or the object argument one step earlier than y is copied. Seven spots; no device tried yet. */
-#include "../../../../games/tla/src/field/overlay_679/local.h"
+#include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "scene_ids.h"
 
 struct EventWork1cc {

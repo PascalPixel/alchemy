@@ -6,11 +6,11 @@
  * a barrier after the address (differ 29, the address no longer shared with the later
  * party reads), the address pinned to r5 (22), a one-pass block between the store and
  * its address (4 to 6); permute 3 minutes: nothing below 11. */
-#include "../../../../games/tla/src/field/overlay_67f/ov67f.h"
+#include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 s32 Func_020012dc(void)
 {
-    struct Ov67fEventWork *work = Ram_HeapSlots->event_work;
+    struct IzumoRuinsEventWork *work = Ram_HeapSlots->event_work;
     struct ObjectRuntime *object;
     s32 height;
 

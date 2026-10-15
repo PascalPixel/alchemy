@@ -10,7 +10,7 @@
  * Measured: the loop as a goto (no strength reduction at all, 48); the destination as
  * a pointer set in the loop and used after it (32); the base computed inside the loop
  * (51). */
-#include "../../../../games/tla/src/field/overlay_679/local.h"
+#include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "io_write_queue.h"
 
 extern s32 Data_020024cc[];

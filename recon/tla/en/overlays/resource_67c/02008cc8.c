@@ -4,7 +4,7 @@
    which moves the id from r6 to r7, and it builds each clamp bound twice
    (cmp r3, r1; ble; movs r3, #128; lsls r3, r3, #9) where this form copies the
    bound it compared with. A for loop with breaks is differ 91. */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 #include "scene_ids.h"
 
 void Func_02000ca8(s32 id);

@@ -6,7 +6,7 @@
  * arrival) and the state switch match. */
 #include "types.h"
 
-struct Ov676Object {
+struct YallamObject {
     u8 unknown_00[8];
     s32 x;
     s32 y;
@@ -17,16 +17,16 @@ struct Ov676Object {
     s16 timer;
 };
 
-struct Ov676Object *Object_GetById(s32 id);
+struct YallamObject *Object_GetById(s32 id);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Func_02002448(struct Ov676Object *object, s32 mode);
-void Func_02002450(struct Ov676Object *object, s32 x, s32 y, s32 z);
-s32 Func_020006a4(struct Ov676Object *object);
+void Func_02002448(struct YallamObject *object, s32 mode);
+void Func_02002450(struct YallamObject *object, s32 x, s32 y, s32 z);
+s32 Func_020006a4(struct YallamObject *object);
 
 void Func_020006bc(s32 actor)
 {
-    struct Ov676Object *object = Object_GetById(actor);
+    struct YallamObject *object = Object_GetById(actor);
     u8 *state = &object->state;
     s16 *timer;
 

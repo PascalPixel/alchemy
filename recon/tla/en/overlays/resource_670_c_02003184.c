@@ -1,9 +1,9 @@
 // near miss: differ 10 (listing 43 instructions, draft 43); scheduling: the native loads 0x0c08 before it builds the register address
-#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
-extern struct Ov670Object *Data_02007950;
+extern struct KibomboObject *Data_02007950;
 
-struct Ov670EffectWork {
+struct KibomboEffectWork {
     u8 unknown_000[0x7c4];
     s16 field_7c4;
 };
@@ -22,11 +22,11 @@ void Func_02003220(void);
 void Func_02003898(void);
 void Func_020038ec(void);
 
-struct Ov670Object *Func_02005a34(s32 type, s32 x, s32 y, s32 z);
-void Func_02005a24(struct Ov670Object *object, s32 mode);
-void Func_02005a3c(struct Ov670Object *object);
-void ObjectDispatch_SetSingleChildFlags(struct Ov670Object *object, u32 value);
-void Animation_SetStateFlags(struct Ov670Object *object, s32 flags);
+struct KibomboObject *Func_02005a34(s32 type, s32 x, s32 y, s32 z);
+void Func_02005a24(struct KibomboObject *object, s32 mode);
+void Func_02005a3c(struct KibomboObject *object);
+void ObjectDispatch_SetSingleChildFlags(struct KibomboObject *object, u32 value);
+void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
 void Object_SetModeById(s32 actor, s32 mode);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));

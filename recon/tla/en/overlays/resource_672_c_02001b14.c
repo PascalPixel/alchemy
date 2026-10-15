@@ -7,9 +7,9 @@
  * reads. Measured: "+l" barriers on a pointer to the party state at each
  * read, input-only barriers, loop notes before each read and a volatile view
  * all leave the shared load (28 to 41 differ). The position call through
- * Ov672_ObjPosSet is measured: direct, its shifts are scheduled before the
+ * GabombaStatueChamber_ObjPosSet is measured: direct, its shifts are scheduled before the
  * actor's id. */
-#include "../../../../games/tla/src/field/overlay_672/ov672.h"
+#include "../../../../games/tla/src/scene/gabomba_statue_chamber/gabomba_statue_chamber.h"
 
 void Func_02000f00(void);
 void Func_02001010(void);
@@ -26,7 +26,7 @@ void Func_02001b14(void)
     if (GameFlag_Test(0x8fd)) {
         Func_02001010();
         Func_02001064();
-        Ov672_ObjPosSet(8, 0x1a80000, 0x980000);
+        GabombaStatueChamber_ObjPosSet(8, 0x1a80000, 0x980000);
         WaitFrames(1);
         Func_02000f00();
     } else {

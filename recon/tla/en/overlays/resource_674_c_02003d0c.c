@@ -1,10 +1,10 @@
 /* Near miss, differ 32 of 61: the listing reloads the table address and the hit object's
  * animation value on every pass of the search loop and indexes the table; this draft hoists them and walks a pointer. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02003d0c(struct ObjectRuntime *object)
 {
-    struct Ov674Vector position;
+    struct IsletsVector position;
     struct ObjectRuntime *hit;
     u32 i;
 

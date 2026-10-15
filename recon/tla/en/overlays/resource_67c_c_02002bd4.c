@@ -1,5 +1,5 @@
 /* Draft, differ 8 of 46: the listing loads sprite (child->animation) right after object->terrain_height, before the store and the Data_0200411c pool load; the draft loads the pool first and the sprite after the store, and copies the priority bits one load later. Tried the scene-layer inlines and a one-pass block. */
-#include "../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02002bd4(struct ObjectRuntime *object)
 {

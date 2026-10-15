@@ -2,14 +2,14 @@
    The listing schedules sub sp, #12 after the follower pointer moves to r8 and
    object->x is loaded; this draft emits it two instructions earlier. Tried: the
    declaration order, an s32[3] position and a three-field struct. */
-#include "../../../../games/tla/src/field/overlay_673/local.h"
+#include "../../../../games/tla/src/scene/gabomba_catacombs/local.h"
 
 void Func_020008a0(struct ObjectRuntime *object, s32 dz)
 {
-    struct Ov673Follower *follower;
-    struct Ov673Vec position;
+    struct GabombaCatacombsFollower *follower;
+    struct GabombaCatacombsVec position;
 
-    follower = ((struct Ov673EventWork *)Ram_HeapSlots->event_work)->follower;
+    follower = ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->event_work)->follower;
 
     position.x = object->x;
     position.y = object->y;

@@ -6,7 +6,7 @@
    index or between its two steps, differ 8 and 12 (the second byte is then
    read through base + index). With for loops the two stack arguments and the
    table address are hoisted (differ 38). */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 extern const u8 Data_02003fb8[];
 

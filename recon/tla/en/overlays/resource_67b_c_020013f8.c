@@ -9,7 +9,7 @@
  * barrier after the mode load (14), the sprite pinned to r4 and held by an
  * empty asm, with and without the 2 as its input (4), the 2 in a local held
  * by an asm (32: a compare and branch). */
-#include "../../../../games/tla/src/field/overlay_67b/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock/local.h"
 
 void Func_020013f8(void)
 {

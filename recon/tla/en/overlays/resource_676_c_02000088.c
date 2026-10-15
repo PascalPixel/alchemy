@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/field/overlay_676/ov676.h"
+#include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target, s32 range, s32 force)
 {

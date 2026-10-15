@@ -26,7 +26,6 @@ SECTIONS
         "*/resource_653_overlay.o"(.text.x02008a0c)
         "*/games/tla/src/field/overlay_653/s0adc.o"(.text)
         "*/games/tla/src/field/overlay_653/events_f.o"(.text)
-        "*/resource_653_overlay.o"(.text.x02008e60)
         "*/resource_653_overlay.o"(.text.x02008f60)
         "*/resource_653_overlay.o"(.text.x020092c4)
         "*/resource_653_overlay.o"(.text.x02009634)

@@ -1265,7 +1265,6 @@ SECTIONS
         "*/recon/tla/raw/080e89e4.o"(.text)
         "*/recon/tla/raw/080e8b44.o"(.text)
         "*/recon/tla/raw/080e8c9c.o"(.text)
-        "*/recon/tla/raw/080e8cfc.o"(.text)
         "*/games/tla/src/battle/effect/group_sync.o"(.text)
         "*/recon/tla/raw/080e8db0.o"(.text)
         "*/recon/tla/raw/080e9090.o"(.text)

@@ -2879,11 +2879,11 @@ Func_080e7804:
 	.type Func_080e87c4, %function
 	.thumb_func
 Func_080e87c4:
-	.incbin "baserom.gba", 0x000ed7b8, 0x000005bc
-	.section .rom.000edd74, "ax"
-	.global Func_080e8d80
-Func_080e8d80:
-	.incbin "baserom.gba", 0x000edd74, 0x000004d0
+	.incbin "baserom.gba", 0x000ed7b8, 0x00000538
+	.section .rom.000edda4, "ax"
+	.global Func_080e8db0
+Func_080e8db0:
+	.incbin "baserom.gba", 0x000edda4, 0x000004a0
 	.section .rom.000ee244, "ax"
 	.global Func_080e9250
 Func_080e9250:

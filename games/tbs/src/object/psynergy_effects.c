@@ -1154,7 +1154,7 @@ void BattleFx_UpdateParticleLinearMotion(struct FieldActor *particle) {
 void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
   struct FieldSprite *child;
-  s32 value;
+  s32 speed;
 
   object = (struct FieldActor *)Object_CreateFar(
       222, source->x.fixed, source->y.fixed, source->z.fixed);
@@ -1178,11 +1178,11 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 
     // speed and acceleration hold the puff's x and z velocity.
     object->motionFlags = 0;
-    value = Random16() % 10 + 5;
-    object->acceleration = -0x1999 * value;
-    value = Random16() % 15 - 7;
-    value <<= 1;
-    object->speed = 0x1999 * value;
+    speed = Random16() % 10 + 5;
+    object->acceleration = -0x1999 * speed;
+    speed = Random16() % 15 - 7;
+    speed <<= 1;
+    object->speed = 0x1999 * speed;
     object->timer = 0;
     object->update = BattleFx_UpdateParticleLinearMotion;
     child->flags = 0;
@@ -3649,11 +3649,11 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
 // A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 // the leader, hops back 16 pixels three times, then leaps 64 pixels at the
 // party trailing eight afterimages tinted for its element.
-void EventActor_RunHopAndLeapSequence(s32 id) {
-  struct FieldActor *actor;
+void EventActor_RunHopAndLeapSequence(s32 djinniId) {
+  struct FieldActor *djinni;
   struct FieldActor *copy;
   struct FieldActor *prev;
-  void *res;
+  void *sharedSprite;
   s32 dir;
   s32 back;
   s32 dist;
@@ -3663,45 +3663,45 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
   struct FieldActor *copies[CLONE_MAX];
 
   // The way the leader faces, to the nearest quarter turn.
-  actor = Object_GetById(id);
+  djinni = Object_GetById(djinniId);
   dir = (Object_GetById(gGameState.selectedActor)->facing + 0x2000) & 0xc000;
   Battle_Reset();
   WaitFrames(10);
   AudioCommand_PlayFar(173);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(175);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   back = dir + 0x8000;
   WaitFrames(20);
-  ObjectMotion_ArmCallback(id, back, 0);
+  ObjectMotion_ArmCallback(djinniId, back, 0);
   WaitFrames(10);
-  actor->sprite->priority = 0;
-  actor->facing = back;
-  Object_GetById(id)->steeringFlags &= ~1;
-  actor->motionFlags = 2;
+  djinni->sprite->priority = 0;
+  djinni->facing = back;
+  Object_GetById(djinniId)->steeringFlags &= ~1;
+  djinni->motionFlags = 2;
 
   // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
-  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
+  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 4, 0);
-  Script_WaitForEventTimeoutFar(actor);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
+  ObjectMotion_Launch(djinniId, 4, 0);
+  Script_WaitForEventTimeoutFar(djinni);
+  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 4, 0);
-  Script_WaitForEventTimeoutFar(actor);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
+  ObjectMotion_Launch(djinniId, 4, 0);
+  Script_WaitForEventTimeoutFar(djinni);
+  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 4, 0);
-  Script_WaitForEventTimeoutFar(actor);
+  ObjectMotion_Launch(djinniId, 4, 0);
+  Script_WaitForEventTimeoutFar(djinni);
   WaitFrames(20);
 
   // Afterimages of the same sprite, each chasing the one before it, tinted
   // by the Djinni's sprite (90, 91 and 92).
-  sprite = ((struct AnimationObject *)actor->sprite)->entries[0]->animId;
+  sprite = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
   tint = 9;
   if (sprite == 90)
     tint = 2;
@@ -3709,11 +3709,11 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
     tint = 10;
   if (sprite == 91)
     tint = 9;
-  res = NULL;
-  prev = actor;
+  sharedSprite = NULL;
+  prev = djinni;
   for (i = 0; i < CLONE_MAX; i++) {
     copy = (struct FieldActor *)Object_CreateFar(
-        sprite, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+        sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -3722,32 +3722,32 @@ void EventActor_RunHopAndLeapSequence(s32 id) {
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
       copy->update = (void *)ObjectMotion_MoveHalfwayTowardTarget;
-      copy->facing = actor->facing;
+      copy->facing = djinni->facing;
       copy->sprite->priority = 0;
       Animation_ApplyChildValuesFar(copy, tint);
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
-      res = Object_ReplaceResourceEntry(copy->sprite, res);
+      sharedSprite = Object_ReplaceResourceEntry(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
       prev = copy;
     }
   }
 
   // Leap 64 pixels at the leader and stop there.
-  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor,
+  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              64 << 16, dir + 0x8000);
   AudioCommand_PlayFar(136);
-  ObjectMotion_Launch(id, 12, 0);
+  ObjectMotion_Launch(djinniId, 12, 0);
   WaitFrames(24);
-  actor->motionFlags = 0;
-  actor->velocityX = 0;
-  actor->velocityZ = 0;
-  actor->velocityY = 0;
-  actor->targetX = ACTOR_NO_TARGET;
-  actor->targetZ = ACTOR_NO_TARGET;
-  actor->targetY = ACTOR_NO_TARGET;
-  ObjectDispatch_ApplyArgumentToChildrenFar(actor, 0);
-  actor->sprite->priority = 2;
+  djinni->motionFlags = 0;
+  djinni->velocityX = 0;
+  djinni->velocityZ = 0;
+  djinni->velocityY = 0;
+  djinni->targetX = ACTOR_NO_TARGET;
+  djinni->targetZ = ACTOR_NO_TARGET;
+  djinni->targetY = ACTOR_NO_TARGET;
+  ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 0);
+  djinni->sprite->priority = 2;
   BattleFx_FinishAction();
 }
 
@@ -4109,9 +4109,9 @@ struct RampedSpinObject {
 void BattleFx_SetObjectAlternatingWords(u8 *object) {
   u32 *table = gBattleFx_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
-  u32 value = index[table];
-  ((struct MotionObject *)object)->scaleX = value;
-  ((struct MotionObject *)object)->scaleY = value;
+  u32 scale = index[table];
+  ((struct MotionObject *)object)->scaleX = scale;
+  ((struct MotionObject *)object)->scaleY = scale;
 }
 
 // Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
@@ -4228,45 +4228,45 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
 // (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
 // and plays animation 28, the sparks swarm the leader, who pulses for 100
 // frames, and the sparks vanish.
-void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
+void BattleEffect_RunPhasedRadialParticleSequence(s32 djinniId) {
   struct EffectVector position;
-  s32 value;
+  s32 scale;
   s32 remaining;
-  struct FieldActor *sourceObject;
+  struct FieldActor *djinni;
   void *effectSlots;
-  struct FieldActor *targetObject;
+  struct FieldActor *leader;
   struct EffectSlot *slot;
   s8 *slotState;
 
-  sourceObject = Object_GetById(arg);
-  targetObject = Object_GetById(gGameState.selectedActor);
-  if (sourceObject == NULL)
+  djinni = Object_GetById(djinniId);
+  leader = Object_GetById(gGameState.selectedActor);
+  if (djinni == NULL)
     return;
 
   BattleFx_InitializeSlots();
   effectSlots = gEffectWork;
   Shop_RestoreSceneTilesFar(0x201090);
   WaitFrames(30);
-  ObjectMotion_ArmCallback(arg, 0x4000, 0);
+  ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
   AudioCommand_PlayFar(173);
-  Motion_SetVarCbAndRefresh(arg, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(174);
-  Motion_SetVarCbAndRefresh(arg, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(175);
-  Motion_SetVarCbAndRefresh(arg, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
   AudioCommand_PlayFar(140);
-  sourceObject->update = (void *)BattleFx_AdvanceAngleWithRamp;
-  sourceObject->timer = 0;
+  djinni->update = (void *)BattleFx_AdvanceAngleWithRamp;
+  djinni->timer = 0;
   WaitFrames(80);
-  sourceObject->update = (void *)BattleFx_ShrinkObjectAndDestroySlow;
-  ObjectDispatch_ApplyArgumentToChildrenFar(sourceObject, 3);
+  djinni->update = (void *)BattleFx_ShrinkObjectAndDestroySlow;
+  ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
-  position.x = sourceObject->x.fixed;
-  position.y = sourceObject->y.fixed;
-  position.z = sourceObject->z.fixed;
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
   slot = ((struct BattleFxScene *)effectSlots)->slots;
@@ -4277,9 +4277,9 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
                            (void *)BattleEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 10);
-    value = Random16() / 3 + 0x10000; // 1.0 to 1.33
-    slot->scaleY = value;
-    slot->scaleX = value;
+    scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
+    slot->scaleY = scale;
+    slot->scaleX = scale;
     remaining--;
     WaitFrames(1);
     slot++;
@@ -4309,7 +4309,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   }
 
   WaitFrames(60);
-  targetObject->update = (void *)BattleFx_SetObjectAlternatingWords;
+  leader->update = (void *)BattleFx_SetObjectAlternatingWords;
   WaitFrames(100);
 
   // Every spark still in use goes (state 5). This loop's cursor starts as
@@ -4334,9 +4334,9 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg) {
   // as the bytes do: a plain NULL store differs by 9.
   WaitFrames(10);
   slot = NULL;
-  targetObject->update = (void *)slot;
-  targetObject->scaleX = 0x10000;
-  targetObject->scaleY = 0x10000;
+  leader->update = (void *)slot;
+  leader->scaleX = 0x10000;
+  leader->scaleY = 0x10000;
   WaitFrames(30);
   Shop_InitEffectFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
@@ -4348,27 +4348,28 @@ DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 // Per-frame update of a Venus Djinni's falling motes: each circles the
 // leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 // pixel a frame, and is released 20 pixels above the leader's feet.
-void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg) {
-  struct EffectVector local;
+void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *mote) {
+  struct EffectVector position;
   struct DescendingOrbitObject *leader;
-  s32 raw;
-  s16 value;
+  s32 timer;
+  s16 frames;
   s32 y;
 
   leader =
       (struct DescendingOrbitObject *)Object_GetById(gGameState.selectedActor);
-  raw = arg->timer - 1;
-  arg->timer = raw;
-  value = arg->timer;
-  local.x = leader->x;
-  local.z = leader->z;
-  Vector_AddPolarOffset(value * 0x6666, (value << 11) + arg->angle, &local);
-  arg->x = local.x;
-  arg->z = local.z;
-  y = arg->y + 0xFFFF0000;
-  arg->y = y;
+  timer = mote->timer - 1;
+  mote->timer = timer;
+  frames = mote->timer;
+  position.x = leader->x;
+  position.z = leader->z;
+  Vector_AddPolarOffset(frames * 0x6666, (frames << 11) + mote->angle,
+                        &position);
+  mote->x = position.x;
+  mote->z = position.z;
+  y = mote->y + 0xFFFF0000;
+  mote->y = y;
   if (y < leader->y + 0x140000)
-    ObjectDispatch_ReleaseFar(arg);
+    ObjectDispatch_ReleaseFar(mote);
 }
 
 // Effect slot callback of a Venus Djinni's particles: each starts on screen
@@ -4424,7 +4425,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
 // 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
 // spiral down onto the leader from 120 pixels above
 // (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
-void BattleFx_RunVenusDjinnCapture(s32 arg) {
+void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
   void *effectSlots;
@@ -4435,7 +4436,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   s32 position[3];
 
   leader = (struct CaptureObject *)Object_GetById(gGameState.selectedActor);
-  djinni = (struct CaptureObject *)Object_GetById(arg);
+  djinni = (struct CaptureObject *)Object_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -4445,13 +4446,13 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   WaitFrames(30);
   djinni->visible = 0;
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(arg, 4, 15);
+  ObjectMotion_Launch(djinniId, 4, 15);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(arg, 4, 15);
+  ObjectMotion_Launch(djinniId, 4, 15);
   WaitFrames(30);
   djinni->callback = (void *)BattleFx_AdvanceSpinAngle;
   AudioCommand_PlayFar(153);
-  ObjectMotion_Launch(arg, 8, 22);
+  ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(140);
   Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
@@ -4635,7 +4636,7 @@ void BattleFx_HalveDistanceToTarget(struct FieldActor *object) {
 // of sight trailing eight afterimages. The leader turns to the camera and
 // plays animation 28 while 24 droplets rain round it, one a frame
 // (BattleFx_UpdateRandomTargetParticle); then the colours return.
-void BattleFx_RunMercuryDjinnCapture(s32 id) {
+void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
   struct FieldActor *previous;
@@ -4651,7 +4652,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
   struct FieldActor *copies[AFTERIMAGE_MAX];
   struct EffectVector position;
 
-  djinni = Object_GetById(id);
+  djinni = Object_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -4662,18 +4663,18 @@ void BattleFx_RunMercuryDjinnCapture(s32 id) {
   WaitFrames(30);
   djinni->paused = 0;
   AudioCommand_PlayFar(173);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(175);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 3, 14);
+  ObjectMotion_Launch(djinniId, 3, 14);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 5, 16);
+  ObjectMotion_Launch(djinniId, 5, 16);
   AudioCommand_PlayFar(152);
-  ObjectMotion_Launch(id, 7, 18);
+  ObjectMotion_Launch(djinniId, 7, 18);
   WaitFrames(20);
 
   // Eight afterimages of the same sprite, each closing half the distance to
@@ -5026,7 +5027,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner) {
    * gFrameCount read directly in the loop differs 6; 46 instructions every way.
    */
   volatile u32 *frameCount;
-  s32 value;
+  s32 param;
 
   kind = ((struct ObjectRuntime *)owner)->animationKind;
   if (kind == 1) {
@@ -5040,9 +5041,9 @@ void ObjectGroup_ApplyRandomChildValues(void *owner) {
         cnt = initialCount;
         do {
           part = *entry++;
-          value = *frameCount % 6;
+          param = *frameCount % 6;
           cnt--;
-          ((struct AnimationEntry *)part)->param = value;
+          ((struct AnimationEntry *)part)->param = param;
         } while (cnt != 0);
       }
       ((struct AnimationObject *)anim)->dirty = 1;
@@ -5087,11 +5088,11 @@ s32 ResourceTable_CountFreeBlocks(void) {
 // sprite whose block is shared from now on (alt, or src when there was none),
 // or NULL for no src. Chains of afterimages pass one block along this way.
 void *Object_ReplaceResourceEntry(void *src, void *alt) {
-  void *ret;
+  void *shared;
   struct FieldSprite *obj;
 
   obj = src;
-  ret = NULL;
+  shared = NULL;
   if (obj != NULL) {
     if (alt == NULL) {
       obj->unk1d0 = 1;
@@ -5101,9 +5102,9 @@ void *Object_ReplaceResourceEntry(void *src, void *alt) {
       obj->unk1d0 = 1;
       obj = alt;
     }
-    ret = obj;
+    shared = obj;
   }
-  return ret;
+  return shared;
 }
 
 // Creates an object for an effect, at the caster's ground height, with
@@ -5562,16 +5563,16 @@ void BattleEffect_InitializeSharedScene(void) {
 // Fades the palettes back from an effect's colours to the saved ones (or to
 // palette 0x10001 while an effect is shown) over 8 frames.
 void BattleFx_PrepareBufferInterpolation(void) {
-  s32 value;
-  u8 *state;
+  s32 savedPalettes;
+  u8 *field;
 
-  state = (u8 *)gEventWork;
-  value = (s32)(state + 0x236);
-  BattleFx_ApplyColorToTargetBuffer(value, 2);
-  if (((struct FieldWork *)state)->effectActive != 0) {
+  field = (u8 *)gEventWork;
+  savedPalettes = (s32)(field + 0x236);
+  BattleFx_ApplyColorToTargetBuffer(savedPalettes, 2);
+  if (((struct FieldWork *)field)->effectActive != 0) {
     BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   } else {
-    BattleFx_ApplyColorToTargetBuffer(value, 1);
+    BattleFx_ApplyColorToTargetBuffer(savedPalettes, 1);
   }
   BattleFx_StartBufferInterpolation(8);
 }
@@ -5580,9 +5581,9 @@ void BattleFx_PrepareBufferInterpolation(void) {
 // the screen's x and y and y becomes 0. The world map uses its perspective
 // projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
-  struct EventRuntime **data = (struct EventRuntime **)&gEventWork;
+  struct EventRuntime **eventCell = (struct EventRuntime **)&gEventWork;
 
-  if ((*data)->mode19e == 3) {
+  if ((*eventCell)->mode19e == 3) {
     struct EffectVector result;
 
     Render_ProjectPoint(position, &result);
@@ -5591,7 +5592,8 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     position->y = 0;
   } else {
     // The map work, gWorkSlot[8], reached from the event work's slot 27.
-    struct MapScrollWork *state = *(struct MapScrollWork **)((u8 *)data - 76);
+    struct MapScrollWork *state =
+        *(struct MapScrollWork **)((u8 *)eventCell - 76);
     s32 x = state->viewX & 0xffff0000;
     s32 z = state->viewY & 0xffff0000;
 
@@ -6403,44 +6405,44 @@ void FieldEffect_WatchLeaderDistance(void) {
 // Psynergy effect 8: starts a screen transition centred on the leader, runs
 // the matching event if there is one, and puts markers round the leader.
 void RunBattleEffect08(void) {
-  struct FieldWork *scene;
-  struct DisplayTransitionState *work;
+  struct FieldWork *field;
+  struct DisplayTransitionState *transition;
   struct FieldActor *target;
-  s32 arg;
-  void *ev;
+  s32 eventTarget;
+  void *event;
   s32 frame;
 
-  scene = WORK_SLOT(HEAP_SLOT_EVENT);
+  field = WORK_SLOT(HEAP_SLOT_EVENT);
   ObjectDispatch_ApplyValueToKind200Children(6);
   DisplayTransition_InitializeBattleEffectState(8);
-  work = WORK_SLOT(HEAP_SLOT_TRANSITION);
+  transition = WORK_SLOT(HEAP_SLOT_TRANSITION);
   target = ObjectTable_Get(gGameState.selectedActor);
-  work->centreX = target->x.fixed;
-  work->centreY = target->z.fixed - target->y.fixed;
+  transition->centreX = target->x.fixed;
+  transition->centreY = target->z.fixed - target->y.fixed;
   BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
 #if !defined(TBS_EDITION_EN)
-  scene->effectActive = 0; // not in the English release
+  field->effectActive = 0; // not in the English release
 #endif
   WaitFrames(1);
-  ev = BattleFx_FindMatchingEvent(0x50000005, 8, &arg);
-  if (ev != NULL)
-    BattleFx_RunEventAction(ev, gGameState.selectedActor, arg);
+  event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
+  if (event != NULL)
+    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(131);
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.
-  scene->effectActive = 1;
-  scene->effectCenterX = work->centreX / 0x10000;
-  scene->effectCenterY = work->centreY / 0x10000;
-  scene->effectFrames = 600;
-  scene->effectTimerRunning = 1;
+  field->effectActive = 1;
+  field->effectCenterX = transition->centreX / 0x10000;
+  field->effectCenterY = transition->centreY / 0x10000;
+  field->effectFrames = 600;
+  field->effectTimerRunning = 1;
   FieldEffect_SpawnNearbyMarkers();
   frame = 0;
   do {
     WaitFrames(1);
-    work->value = frame;
+    transition->value = frame;
     frame++;
   } while (frame <= 18);
   Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
@@ -7680,11 +7682,11 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj) {
 // Per-frame update: drifts from side to side as it slowly falls, and is
 // released on reaching the ground.
 void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj) {
-  s32 r;
+  s32 drift;
 
   obj->y -= 0x4ccc;
-  r = Random16();
-  obj->x += r - Random16();
+  drift = Random16();
+  obj->x += drift - Random16();
   if (obj->y <= obj->terrainHeight) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_CommonParticleScript);
@@ -7916,7 +7918,7 @@ static __inline__ s32 ObjProbeUp(struct FieldActor *obj,
 // Effect 11 cast on a target: two hands lift it to 24 pixels above the
 // ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 // where it is. Where the way is blocked a buzzer sounds.
-void BattleFx_SteerLiftedTarget(s32 id) {
+void BattleFx_SteerLiftedTarget(s32 targetId) {
   struct BattleFxScene *work;
   struct FieldActor *src;
   struct FieldActor *target;
@@ -8273,15 +8275,15 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect) {
 void BattleFx_CircleAnchor(struct OrbitEffect *effect) {
   struct OrbitEffect *anchor;
   s32 angle;
-  s32 r;
+  s32 radius;
   s32 dx;
   s32 dz;
 
   anchor = effect->anchor;
-  r = 0x80000;
+  radius = 0x80000;
   angle = effect->angle;
-  dx = Iwram_MulQ16(r, Trig_Cos(angle));
-  dz = Iwram_MulQ16(r, Trig_Sin(angle));
+  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
+  dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x = anchor->x + dx;
   effect->z = anchor->z + dz;
   effect->angle += 0x800;
@@ -8536,8 +8538,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 // eight params at random.
 void BattleEffect_SetRandomTableValueOnObject(void *obj) {
   s8 *table = gBattleFx_RandomChildValues;
-  s32 r = Random16();
-  Animation_ApplyChildValuesFar(obj, table[(u32)(r * 8) >> 16]);
+  s32 random = Random16();
+  Animation_ApplyChildValuesFar(obj, table[(u32)(random * 8) >> 16]);
 }
 
 // Pauses object id, keeping its per-frame update and, if it is animated, its
@@ -8728,17 +8730,17 @@ void BattleFx_UpdateDescendingObject(struct FieldActor *obj) {
 // screen. In state 1 it flies again on arrival; in state 2 it is freed.
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   struct EffectVector pos;
-  struct FieldActor *src;
+  struct FieldActor *main;
   s32 state;
-  u32 r;
+  u32 spread;
 
-  src = ((struct BattleFxScene *)gEffectWork)->mainObject;
+  main = ((struct BattleFxScene *)gEffectWork)->mainObject;
   state = slot->state;
 
   if (state == 0) {
-    pos.x = src->x.fixed;
-    pos.y = src->y.fixed;
-    pos.z = src->z.fixed;
+    pos.x = main->x.fixed;
+    pos.y = main->y.fixed;
+    pos.z = main->z.fixed;
     Camera_WorldToScreen(&pos);
 
     slot->x = pos.x;
@@ -8748,9 +8750,9 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
     pos.z = slot->originZ;
     pos.x = slot->originX;
 
-    r = Random16();
+    spread = Random16();
     Vector_AddPolarOffset(
-        120 << 16, ((r << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
+        120 << 16, ((spread << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
         &pos);
 
     slot->targetX = pos.x;
@@ -9201,13 +9203,13 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
 // Returns nonzero while an effect slot that stops at its target still has
 // one (it has not arrived), 0 once it has arrived or when it never stops.
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect) {
-  u32 value;
+  u32 targetX;
 
   if (effect->stopAtTarget == 0) {
     return 0;
   }
-  value = effect->targetX ^ 0x80000000;
-  return ((0u - value) | value) >> 31;
+  targetX = effect->targetX ^ 0x80000000;
+  return ((0u - targetX) | targetX) >> 31;
 }
 
 // Places an effect slot at (x, z), at rest with no target.

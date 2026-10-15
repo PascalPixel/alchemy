@@ -8,9 +8,7 @@
  * from the stack (ldr r5, [sp, #56]) and the window tiles before it copies
  * the value (adds r4, r0, #0); this copies first. Pinning the value to r4
  * (which fixes UiText_DrawNumber) or any other parameter to its register,
- * and an asm use of the variant or the work, did not move the copy. The
- * other editions' scaffold holds this function in one piece with
- * UiText_DrawNumberInWindow. */
+ * and an asm use of the variant or the work, did not move the copy. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

@@ -4,7 +4,10 @@
 #include "field_sprite.h"
 
 extern const u8 Data_02004f90[];
+extern const u8 Data_02004f9c[];
 
+u32 Random16Far(void);
+void Vector_AddPolarOffsetFar(s32 angle, s32 distance, s32 *position);
 struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 void Func_02004b20(struct ObjectRuntime *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
@@ -52,5 +55,33 @@ void Func_020039f4(struct ObjectRuntime *object)
             Animation_ApplyChildArgument(sprite, 1);
             sprite->next_frame = 0;
         }
+    }
+}
+
+// Spawns a particle at a random spot around the object.
+void Func_02003aac(struct ObjectRuntime *object)
+{
+    s32 position[3];
+    s32 angle;
+    struct ObjectRuntime *particle;
+    struct FieldSprite *sprite;
+
+    Iwram_MulQ16(object->scale_x, 0x18000);
+    position[0] = object->x;
+    position[1] = object->y + 0x20000;
+    position[2] = object->z;
+    angle = Random16Far();
+    Vector_AddPolarOffsetFar(angle * 20, Random16Far(), position);
+    particle = Func_02004b30(674, position[0], position[1], position[2]);
+    if (particle != NULL) {
+        particle->terrain_height = object->terrain_height;
+        sprite = particle->animation;
+        Func_02004b20(particle, Data_02004f9c);
+        Animation_ApplyChildArgument(sprite, 2);
+        particle->gravity = 0x200;
+        particle->scale_x = 0xcccc;
+        particle->scale_y = 0xcccc;
+        if (sprite != NULL)
+            sprite->next_frame = 0;
     }
 }

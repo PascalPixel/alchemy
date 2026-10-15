@@ -48,7 +48,6 @@ SECTIONS
         "*/games/tla/src/field/world_map/cell_index.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200b9a8)
         "*/games/tla/src/field/world_map/s39f4.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200baac)
         "*/games/tla/src/field/world_map/s3b38.o"(.text)
         "*/games/tla/src/field/world_map/s3b70.o"(.text)
         "*/games/tla/src/field/world_map/s3bb8.o"(.text)

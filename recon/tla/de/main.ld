@@ -561,7 +561,6 @@ SECTIONS
     "*/games/tla/src/graphics/window/runtime_set_byte5_and_reset_halfword_c.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000425ce)
     "*/games/tla/src/graphics/window/set_byte15.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000425dc)
     "*/games/tla/src/graphics/window/layout.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00042734)
     "*/recon/tla/de/rom.o"(.rom.000429d0)

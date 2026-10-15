@@ -590,7 +590,6 @@ SECTIONS
         "*/games/tla/src/graphics/window/runtime_set_byte5_and_reset_halfword_c.o"(.text)
         "*/recon/tla/raw/0804257a.o"(.text)
         "*/games/tla/src/graphics/window/set_byte15.o"(.text)
-        "*/recon/tla/raw/08042588.o"(.text)
         "*/games/tla/src/graphics/window/layout.o"(.text)
         "*/recon/tla/raw/080426e0.o"(.text)
         "*/recon/tla/raw/08042808.o"(.text)

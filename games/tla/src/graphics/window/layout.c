@@ -10,6 +10,36 @@
 #include "types.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "dma.h"
+#include "ramcode.h"
+
+extern u8 Tile_BuildMetatilesCode[];
+extern u8 Tile_BuildMetatilesCodeSize[];
+
+// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
+// window tiles' map through the metatile routine copied to RAM.
+void UiWindow_FillFromScene(void *dst)
+{
+    u8 *scene = Ram_HeapSlots->window_tiles;
+
+    if (scene == 0) {
+        /* FAKEMATCH: the fill value is pinned to the r3 it takes, which loads it from
+           the pool before the buffer's address is formed; a plain Dma_Fill16 forms
+           the address first (one reordered pair, differ 2). */
+        register u16 value asm("r3") = 0xe0e0;
+
+        Dma_Fill16(value, dst, 0x140);
+    } else {
+        void (*code)(void *, void *);
+
+        RamCode_Load(code, Tile_BuildMetatilesCode, Tile_BuildMetatilesCodeSize);
+        code(dst, scene + 8);
+        /* FAKEMATCH: the barrier keeps the second argument's add ahead of the
+           first argument's copy; without it they trade places (differ 2). */
+        asm("");
+        MemFree(code);
+    }
+}
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                    s32 value)

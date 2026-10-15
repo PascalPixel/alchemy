@@ -997,13 +997,6 @@ Ui_LoadCharacterEntryForSlot:
 	.incbin "baserom.gba", 0x0004264c, 0x00000064
 	.section .rom.000426be, "ax"
 	.incbin "baserom.gba", 0x000426be, 0x00000002
-	.section .rom.000426cc, "ax"
-	.balign 4
-	.global UiWindow_FillFromScene
-	.type UiWindow_FillFromScene, %function
-	.thumb_func
-UiWindow_FillFromScene:
-	.incbin "baserom.gba", 0x000426cc, 0x00000074
 	.section .rom.00042824, "ax"
 	.incbin "baserom.gba", 0x00042824, 0x0000029c
 	.section .rom.00042ac0, "ax"

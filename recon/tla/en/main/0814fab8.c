@@ -21,16 +21,24 @@
  * BattleFx_PinkBurstSheet, 0xb9 BattleFx_EffectPalette01 and the Djinn
  * sheets 0x150, 0x152, 0x154 and 0x156.
  *
- * Draft: differ 670 of 1146 (draft 1146).
+ * Draft: differ 341 of 1146 (draft 1145).
  *
- * Left: register allocation from the prologue on (the work pointer and
- * the start frame take r0 and r1 where the native has r1 and r2, the
- * shift and the effect's reloads trade registers), which shifts most rows
- * of the member loop. The instruction count already matches.
+ * Each blitter is built and fetched by one statement macro (LOAD_BLITTER),
+ * because the native computes the flags afresh for every call: a one-pass
+ * block ends CSE's block, where plain calls let agscc keep flags ^
+ * COMPOSITE_FLIP_X in r5 across the first call (670, and every register
+ * after it shifted).
+ *
+ * Left: the member loop's setup (35 rows) and the Djinni's position (17)
+ * differ in register choice; the rest is order residue in the draws.
  *
  * Tried (2026-10-15):
  *   - greedy declaration-order sweep, two passes: no gain.
  *   - a separate counter for the frame loop's lights: 688.
+ *   - flags declared volatile: 916; the loader as a static inline returning
+ *     the slot's entry: 774; the macro reading the entry at slot bytes
+ *     into Ram_HeapSlots: 390; the macro with the field: 341.
+ *   - greedy loop-counter sweep (each loop its own counter): no gain.
  */
 #include "types.h"
 #include "battle_display.h"
@@ -68,6 +76,24 @@ void Func_0815f0a0(s32 resource); // BattleFx_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 void Func_0815b410(void);         // a grey ramp from color 1
 s32 Battle_GetObjectTableValueFar(s32 actor);
+
+// The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
+// Seal's HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE).
+#define BLITTER_SLOT 104           // Ram_HeapSlots->unk64[1]
+#define BLITTER_SLOT_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
+
+// Build a blitter in its heap slot and fetch its entry, as one statement:
+// the flags are computed afresh for each blitter.
+#define LOAD_BLITTER(out, flags, mode)                                         \
+  do {                                                                         \
+    Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
+    out = (DrawRectangle)Ram_HeapSlots->unk64[1];                              \
+  } while (0)
+#define LOAD_BLITTER_ALTERNATE(out, flags, mode)                               \
+  do {                                                                         \
+    Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                  \
+    out = (DrawRectangle)Ram_HeapSlots->unkb8[1];                              \
+  } while (0)
 
 // The Lost Age's blitter modes: 3 minus The Broken Seal's
 // COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
@@ -282,17 +308,15 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
 
-      Func_08196404(104, 7, 7, flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      Func_08196404(188, 7, 7, flags ^ COMPOSITE_FLIP_X, BLIT_ADDITIVE);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
+      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ COMPOSITE_FLIP_X, BLIT_ADDITIVE);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
-      Runtime_ReleaseHeapBlock(188);
-      Runtime_ReleaseHeapBlock(104);
+      Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
+      Runtime_ReleaseHeapBlock(BLITTER_SLOT);
     }
 
     for (member = 0; member != effect->count; member++) {
@@ -319,10 +343,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          Func_08196404(104, 7, 7, flags, BLIT_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-          Func_08196404(188, 7, 7, flags, BLIT_ADDITIVE);
-          draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER_ALTERNATE(draw[1], flags, BLIT_ADDITIVE);
           if (mode == 0) {
             SceneTransform_ApplyPitch(-frame << 10);
           } else if (mode == 1) {
@@ -360,8 +382,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
               }
             }
           }
-          Runtime_ReleaseHeapBlock(188);
-          Runtime_ReleaseHeapBlock(104);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
         }
       }
 
@@ -376,11 +398,10 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-        Func_08196404(104, 7, 7, flags, BLIT_MAX);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+        LOAD_BLITTER(draw[0], flags, BLIT_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
-        Runtime_ReleaseHeapBlock(104);
+        Runtime_ReleaseHeapBlock(BLITTER_SLOT);
       }
 
       // From frame 80, the mode's picture.
@@ -389,49 +410,44 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
-          Func_08196404(104, 7, 7, flags, BLIT_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
-          Runtime_ReleaseHeapBlock(104);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
         }
       } else if (mode == 3 || mode == 5 || mode == 8 || mode == 12) {
         // Six 32x64 pictures, four frames apart.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          Func_08196404(104, 7, 7, flags, BLIT_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
-          Runtime_ReleaseHeapBlock(104);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
         }
       } else if (mode == 4 || mode == 9) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 2 % 6;
 
-          Func_08196404(104, 7, 7, flags, BLIT_MAX);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-          Func_08196404(188, 7, 7, flags | COMPOSITE_FLIP_Y, BLIT_MAX);
-          draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER_ALTERNATE(draw[1], flags | COMPOSITE_FLIP_Y, BLIT_MAX);
           draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 32, screen.y + 8, 64, 32);
-          Runtime_ReleaseHeapBlock(188);
-          Runtime_ReleaseHeapBlock(104);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT_ALTERNATE);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          Func_08196404(104, 7, 7, flags, BLIT_ADDITIVE);
-          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+          LOAD_BLITTER(draw[0], flags, BLIT_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
-          Runtime_ReleaseHeapBlock(104);
+          Runtime_ReleaseHeapBlock(BLITTER_SLOT);
         }
       }
     }

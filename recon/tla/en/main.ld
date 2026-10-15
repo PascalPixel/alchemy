@@ -1225,7 +1225,6 @@ SECTIONS
         "*/recon/tla/raw/080de864.o"(.text)
         "*/recon/tla/raw/080de8d0.o"(.text)
         "*/games/tla/src/battle/effect/effect03_stop.o"(.text)
-        "*/recon/tla/raw/080de9f8.o"(.text)
         "*/games/tla/src/battle/effect/check_owner_tile.o"(.text)
         "*/recon/tla/raw/080debd8.o"(.text)
         "*/games/tla/src/battle/effect/f0dec8c.o"(.text)

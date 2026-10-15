@@ -31,6 +31,7 @@ extern char SceneId_Ov664Room6;
 extern char SceneId_Ov664Room7;
 extern char SceneId_Ov664Room8;
 extern char SceneId_Ov664Room9;
+extern char SceneId_Ov664Room10;
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 

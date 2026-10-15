@@ -72,7 +72,6 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200c8c4)
         "*/resource_664_overlay.o"(.text.x0200cab8)
         "*/games/tla/src/field/overlay_664/s4bb4.o"(.text)
-        "*/resource_664_overlay.o"(.text.x0200cc00)
         "*/resource_664_overlay.o"(.text.x0200ccc8)
         "*/resource_664_overlay.o"(.text.x0200ceb0)
         "*/resource_664_overlay.o"(.text.x0200cf3c)

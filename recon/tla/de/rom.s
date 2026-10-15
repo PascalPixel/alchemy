@@ -3952,14 +3952,8 @@ Func_08142944:
 	.thumb_func
 BattleFx_BeginCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x000004a8
-	.section .rom.00143bb6, "ax"
-	.incbin "baserom.gba", 0x00143bb6, 0x00000002
-	.section .rom.00143bb8, "ax"
-	.global Func_08143bb8
-	.type Func_08143bb8, %function
-	.thumb_func
-Func_08143bb8:
-	.incbin "baserom.gba", 0x00143bb8, 0x000002fc
+	.section .rom.00143d04, "ax"
+	.incbin "baserom.gba", 0x00143d04, 0x000001b0
 	.section .rom.00143eb4, "ax"
 	.global Func_08143eb4
 	.type Func_08143eb4, %function

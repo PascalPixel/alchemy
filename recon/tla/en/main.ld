@@ -1709,7 +1709,6 @@ SECTIONS
         "*/games/tla/src/battle/party/prepare_reserve_owners.o"(.text)
         "*/games/tla/src/battle/party/list_living_units.o"(.text)
         "*/games/tla/src/battle/party/party.o"(.text)
-        "*/recon/tla/raw/0811a39c.o"(.text)
         "*/games/tla/src/battle/battle.o"(.text)
         "*/games/tla/src/battle/summon/class_is_valid.o"(.text)
         "*/recon/tla/raw/0811a4de.o"(.text)

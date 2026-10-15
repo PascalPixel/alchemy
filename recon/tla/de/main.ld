@@ -1582,7 +1582,6 @@ SECTIONS
     "*/games/tla/src/battle/party/prepare_reserve_owners.o"(.text)
     "*/games/tla/src/battle/party/list_living_units.o"(.text)
     "*/games/tla/src/battle/party/party.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.0011a3b4)
     "*/games/tla/src/battle/battle.o"(.text)
     "*/games/tla/src/battle/summon/class_is_valid.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011a4f6)

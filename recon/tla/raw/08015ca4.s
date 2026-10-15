@@ -216,4 +216,4 @@ Func_08015ca4:
 .L_08015e3c:
 	.4byte 0x84000bfc
 .L_08015e40:
-	.4byte Data_08017d10
+	.4byte Save_HeaderTemplate

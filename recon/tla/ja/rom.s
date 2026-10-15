@@ -217,34 +217,6 @@ Func_08016dd0:
 	.section .rom.00017ce4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00017ce4, 0x00000004
-	.section .rom.00017d08, "ax"
-	.incbin "baserom.gba", 0x00017d08, 0x00000008
-	.section .rom.00017d10, "ax"
-	.global Data_08017d10
-Data_08017d10:
-	.incbin "baserom.gba", 0x00017d10, 0x00000054
-	.section .rom.00017d64, "ax"
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00017d64, 0x00000014
-	.section .rom.00017dfc, "ax"
-	.incbin "baserom.gba", 0x00017dfc, 0x00000018
-	.section .rom.00017e14, "ax"
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00017e14, 0x00000058
-	.section .rom.00017e94, "ax"
-	.incbin "baserom.gba", 0x00017e94, 0x00000088
-	.section .rom.00017f24, "ax"
-	.incbin "baserom.gba", 0x00017f24, 0x00000018
-	.section .rom.00017f3c, "ax"
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00017f3c, 0x0000002c
-	.section .rom.00017f68, "ax"
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00017f68, 0x0000002c
 	.section .rom.000212d8, "ax"
 	.incbin "baserom.gba", 0x000212d8, 0x0000042c
 	.section .rom.00021824, "ax"

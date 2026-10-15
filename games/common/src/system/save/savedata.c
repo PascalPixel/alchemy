@@ -1,13 +1,12 @@
-#include "unit/runtime/savedata.h"
+#include "savedata.h"
 #include "types.h"
-#include "save_state.h"
 
-// セーブ領域の署名
+// The signature that marks a save record
 const u8 Save_Signature[] = "CAMELOT";
 const u8 Save_HeaderTemplate[8] = "CAMELOTT";
 
 const u32 Link_TestWord = 0;
 
-// 通信テストの送信データ
+// The data the link test sends
 const u8 Link_TestDataA[] = "Trans Data A: This is a pen.";
 const u8 Link_TestDataB[] = "Trans Data B: Hello world.";

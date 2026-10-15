@@ -247,34 +247,6 @@ Func_08016dd0:
 	.section .rom.00017d10, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00017d10, 0x00000004
-	.section .rom.00017d34, "ax"
-	.incbin "baserom.gba", 0x00017d34, 0x00000008
-	.section .rom.00017d3c, "ax"
-	.global Data_08017d10
-Data_08017d10:
-	.incbin "baserom.gba", 0x00017d3c, 0x00000054
-	.section .rom.00017d90, "ax"
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00017d90, 0x00000014
-	.section .rom.00017e28, "ax"
-	.incbin "baserom.gba", 0x00017e28, 0x00000018
-	.section .rom.00017e40, "ax"
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00017e40, 0x00000058
-	.section .rom.00017ec0, "ax"
-	.incbin "baserom.gba", 0x00017ec0, 0x00000088
-	.section .rom.00017f50, "ax"
-	.incbin "baserom.gba", 0x00017f50, 0x00000018
-	.section .rom.00017f68, "ax"
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .rom.00017f94, "ax"
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00017f94, 0x0000002c
 	.section .rom.00020010, "ax"
 	.global Render_ApplyProjectedPlacementFar
 Render_ApplyProjectedPlacementFar:

@@ -1,28 +1,3 @@
-	.section .unidentified.08017d08,"a"
-	.global Data_08017d08
-Data_08017d08:
-	.incbin "baserom.gba", 0x00017d08, 0x00000008
-	.global Data_08017d10
-Data_08017d10:
-	.incbin "baserom.gba", 0x00017d10, 0x00000054
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00017d64, 0x00000014
-	.section .unidentified.08017dfc,"a"
-	.incbin "baserom.gba", 0x00017dfc, 0x00000018
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00017e14, 0x00000058
-	.section .unidentified.08017e94,"a"
-	.incbin "baserom.gba", 0x00017e94, 0x00000088
-	.section .unidentified.08017f24,"a"
-	.incbin "baserom.gba", 0x00017f24, 0x00000018
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00017f3c, 0x0000002c
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00017f68, 0x0000002c
 	.section .unidentified.0802e91c,"a"
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:

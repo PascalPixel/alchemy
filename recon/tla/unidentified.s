@@ -2963,9 +2963,8 @@ Resource_Data0B2:
 	.incbin "baserom.gba", 0x008a9ec1, 0x00000003
 	.section .unidentified.088aace9,"a"
 	.incbin "baserom.gba", 0x008aace9, 0x00000003
-	.global Resource_Data104
-Resource_Data104:
-	.incbin "baserom.gba", 0x008aacec, 0x00000100
+	.section .unidentified.088aade9,"a"
+	.incbin "baserom.gba", 0x008aade9, 0x00000003
 	.section .unidentified.088aba5d,"a"
 	.incbin "baserom.gba", 0x008aba5d, 0x00000003
 	.section .unidentified.088ac2a5,"a"

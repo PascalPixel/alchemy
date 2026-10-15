@@ -3239,6 +3239,8 @@ SECTIONS
         "*/games/tla/src/graphics/battle_fx/sheet_102.o"(.rodata)
         "*/games/tla/src/graphics/battle_fx/sheet_103.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088aace9)
+        "*/games/tla/src/graphics/battle_fx/sheet_104.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.088aade9)
         "*/games/tla/src/graphics/battle_fx/cloud_puff.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088aba5d)
         "*/games/common/src/graphics/battle_fx/tile_mask.o"(.rodata)

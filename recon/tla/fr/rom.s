@@ -2918,7 +2918,13 @@ Func_080decb8:
 	.section .rom.000e3ddc, "ax"
 	.global RunBattleEffect05
 RunBattleEffect05:
-	.incbin "baserom.gba", 0x000e3ddc, 0x00000ac0
+	.incbin "baserom.gba", 0x000e3ddc, 0x0000038c
+	.section .rom.000e41f0, "ax"
+	.global Func_080df1fc
+	.type Func_080df1fc, %function
+	.thumb_func
+Func_080df1fc:
+	.incbin "baserom.gba", 0x000e41f0, 0x000006ac
 	.section .rom.000e48d2, "ax"
 	.incbin "baserom.gba", 0x000e48d2, 0x00000002
 	.section .rom.000e48d4, "ax"

@@ -1300,6 +1300,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000dec74)
     "*/games/tla/src/battle/effect/fall.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000deda4)
+    "*/games/tla/src/battle/effect/particles.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000df1b8)
     "*/games/tla/src/field/common/effect/move.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000df89a)
     "*/recon/tla/ja/rom.o"(.rom.000df89c)

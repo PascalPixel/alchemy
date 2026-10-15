@@ -1231,7 +1231,7 @@ SECTIONS
         "*/recon/tla/raw/080decb8.o"(.text)
         "*/games/tla/src/battle/effect/fall.o"(.text)
         "*/recon/tla/raw/080dede8.o"(.text)
-        "*/recon/tla/raw/080df174.o"(.text)
+        "*/games/tla/src/battle/effect/particles.o"(.text)
         "*/recon/tla/raw/080df1fc.o"(.text)
         "*/recon/tla/raw/080df6f4.o"(.text)
         "*/recon/tla/raw/080df820.o"(.text)

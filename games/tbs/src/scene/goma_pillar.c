@@ -248,7 +248,7 @@ static void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-s32 GomaHashira_Actor13Frames;
+s32 GomaPillar_Actor13Frames;
 
 static void EV09_PSYNERGY(void)
 {
@@ -426,7 +426,7 @@ static void GomaPillar_DriveActor13Idle(void)
 	s32				  t;
 
 	work = gEventWork;
-	t = ++GomaHashira_Actor13Frames;
+	t = ++GomaPillar_Actor13Frames;
 	switch (t)
 	{
 	case 60:
@@ -518,7 +518,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 	}
 	if (gGameState.pending_djinn_event != 0)
 	{
-		GomaHashira_Actor13Frames = 0;
+		GomaPillar_Actor13Frames = 0;
 		Task_AddCallback(GomaPillar_DriveActor13Idle, 0xc80);
 	}
 	return 0;

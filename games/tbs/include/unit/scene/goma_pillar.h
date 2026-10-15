@@ -8,7 +8,7 @@ u8 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);
 u8 *SceneData_GetActorTable(void);
-extern s32 GomaHashira_Actor13Frames;
+extern s32 GomaPillar_Actor13Frames;
 u8 *SceneData_GetExtraTable(void);
 s32 FieldScene_SetupPillarsOnEntry(void);
 extern s32 StagedActor_DirectionSteps[];

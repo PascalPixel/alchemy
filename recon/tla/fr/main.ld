@@ -1834,7 +1834,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/series_g.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00151ff0)
     "*/games/tla/src/battle/effect/noeffect.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00152474)
     "*/games/tla/src/battle/effect/projectile_volley_b.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0015265a)
     "*/recon/tla/fr/rom.o"(.rom.0015265c)

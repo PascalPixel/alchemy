@@ -21,7 +21,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall008
 	resource , Resource_FarCall009
 	resource , Resource_FarCall00A
-	resource , Resource_FarCall00B
+	resource FarCall00B, Resource_FarCall00B
 	resource , Resource_FarCall00C
 	resource , Resource_FarCall00D
 	resource , Resource_FarCall00E

@@ -292,7 +292,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000297b4)
     "*/games/tla/src/field/common/remap_bytes.o"(.text)
     "*/games/tla/src/field/common/map/decode_staged_buffer.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0002a560)
     "*/recon/tla/ja/rom.o"(.rom.0002a5cc)
     "*/recon/tla/ja/rom.o"(.rom.0002a634)
     "*/recon/tla/ja/rom.o"(.rom.0002a9f0)

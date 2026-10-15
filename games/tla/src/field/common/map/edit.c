@@ -134,7 +134,7 @@ struct MapHeader {
     s32 shapes;
 };
 extern u8 gMapShapeGrid[];
-void Func_0802a5e4(void);
+void Tilemap_ConvertBuffer(void);
 
 void Map_LoadCellsAndShapes(void)
 {
@@ -144,7 +144,7 @@ void Map_LoadCellsAndShapes(void)
 
     source = (u8 *)header + header->cells;
     Resource_DecodeType01(source, Ram_MapCellBuffer);
-    Func_0802a5e4();
+    Tilemap_ConvertBuffer();
     source = (u8 *)header + header->shapes;
     Resource_DecodeType01(source, gMapShapeGrid);
 }

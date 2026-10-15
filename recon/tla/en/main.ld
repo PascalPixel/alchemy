@@ -312,7 +312,6 @@ SECTIONS
         "*/recon/tla/raw/0802a124.o"(.text)
         "*/games/tla/src/field/common/remap_bytes.o"(.text)
         "*/games/tla/src/field/common/map/decode_staged_buffer.o"(.text)
-        "*/recon/tla/raw/0802a5e4.o"(.text)
         "*/recon/tla/raw/0802a650.o"(.text)
         "*/recon/tla/raw/0802a6b8.o"(.text)
         "*/recon/tla/raw/0802aa74.o"(.text)

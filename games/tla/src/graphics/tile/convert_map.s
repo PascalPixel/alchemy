@@ -52,3 +52,5 @@ AlchemyUncreditedEnd_08021706:
 	bne	.L_0802175c
 	pop	{r5, r6, r7, r8}
 	bx	lr
+	.global Render_ConvertMapCodeSize
+	.set Render_ConvertMapCodeSize, . - Render_ConvertMapCode

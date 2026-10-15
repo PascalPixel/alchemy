@@ -16,7 +16,7 @@
 void Func_08041b68(void)
 {
     u8 *base = Ram_HeapSlots->window_tiles;
-    u32 alternate = ((struct UiRenderWork *)base)->unknown_00[2];
+    u32 alternate = ((struct UiRenderWork *)base)->alt;
     u16 *cursor = ((struct UiRenderWork *)base)->tilemap[0];
     s32 width = 30;
     s32 row;

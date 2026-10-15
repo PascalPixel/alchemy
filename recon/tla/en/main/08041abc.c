@@ -17,7 +17,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
 {
     u8 *base = Ram_HeapSlots->window_tiles;
     u16 *cursor = &((struct UiRenderWork *)base)->tilemap[y][x];
-    u32 alternate = ((struct UiRenderWork *)base)->unknown_00[2];
+    u32 alternate = ((struct UiRenderWork *)base)->alt;
     u32 row;
 
     for (row = 0; row < height; row++) {

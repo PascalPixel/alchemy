@@ -828,13 +828,6 @@ UiWindow_ClearTileAttributesInRect:
 	.thumb_func
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041cac, 0x000000a4
-	.section .rom.00041d98, "ax"
-	.balign 4
-	.global UiWindow_DrawDividerLine
-	.type UiWindow_DrawDividerLine, %function
-	.thumb_func
-UiWindow_DrawDividerLine:
-	.incbin "baserom.gba", 0x00041d98, 0x0000031c
 	.section .rom.000420b4, "ax"
 	.global Func_08041f70
 	.type Func_08041f70, %function
@@ -1067,12 +1060,6 @@ Menu_SelectResource:
 	.thumb_func
 Menu_CenterResourceEntries:
 	.incbin "baserom.gba", 0x0004d5dc, 0x0000009c
-	.section .rom.0004d678, "ax"
-	.global Menu_LayoutResourceEntries
-	.type Menu_LayoutResourceEntries, %function
-	.thumb_func
-Menu_LayoutResourceEntries:
-	.incbin "baserom.gba", 0x0004d678, 0x00000074
 	.section .rom.0004d764, "ax"
 	.global Menu_AnimateSelectionToEntry
 	.type Menu_AnimateSelectionToEntry, %function
@@ -1631,23 +1618,6 @@ Owner_LevelUp:
 	.incbin "baserom.gba", 0x000aa918, 0x00000264
 	.section .rom.000aabe8, "ax"
 	.incbin "baserom.gba", 0x000aabe8, 0x000001d0
-	.section .rom.000aaf24, "ax"
-	.incbin "baserom.gba", 0x000aaf24, 0x00000054
-	.section .rom.000aafa8, "ax"
-	.balign 4
-	.global Owner_GetDigitValues
-	.type Owner_GetDigitValues, %function
-	.thumb_func
-Owner_GetDigitValues:
-	.incbin "baserom.gba", 0x000aafa8, 0x0000007c
-	.section .rom.000ab056, "ax"
-	.incbin "baserom.gba", 0x000ab056, 0x00000002
-	.section .rom.000ab058, "ax"
-	.global Owner_GetDefaultElement
-	.type Owner_GetDefaultElement, %function
-	.thumb_func
-Owner_GetDefaultElement:
-	.incbin "baserom.gba", 0x000ab058, 0x00000028
 	.section .rom.000ab080, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

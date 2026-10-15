@@ -10,6 +10,46 @@
 #include "types.h"
 
 
+// The summons in the order the menus list them.
+extern u8 Summon_OrderList[29];
+
+u32 *Trade_GetOfferState();
+
+// Lists the summons, in the game's order, whose bit is set in the state's
+// first word, ends the list with 32 and returns how many it listed.
+s32 Trade_ListFlaggedEntries(u8 *output)
+{
+    u8 *source = Summon_OrderList;
+    u8 *end = Summon_OrderList + 28;
+    s32 count = 0;
+    /* FAKEMATCH: the one is kept in a register across the loop, as the
+       native keeps it in r8; written as a constant in the shift, with the
+       word pinned below, it is built in the loop (differ 18). */
+    u32 one = 1;
+
+    do {
+        u8 value = *source;
+        /* FAKEMATCH: the word is pinned to the r3 it takes in the native, so
+           the and keeps its result there; in a plain local the word and the
+           bit trade registers (differ 10). */
+        register u32 flags asm("r3") = *Trade_GetOfferState(0);
+
+        /* FAKEMATCH: the barrier loads the word before the bit is started,
+           as the native does; plainly the copy of the one is scheduled
+           first, as it does not wait for the call's result (one reordered
+           pair, differ 2). */
+        asm("");
+        source++;
+        flags &= one << value;
+        if (flags != 0) {
+            *output++ = value;
+            count++;
+        }
+    } while (source <= end);
+    *output = 32;
+    return count;
+}
+
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
 {
     if (summon_id > 28)
@@ -17,7 +57,6 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
     return &Summon_DefinitionTable[summon_id];
 }
 
-u32 *Trade_GetOfferState();
 
 void Func_080aff94(s32 bit)
 {

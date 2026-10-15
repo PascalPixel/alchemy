@@ -28,7 +28,8 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
     work->previousWidth = work->width;
     work->previousHeight = work->height;
 
-    if (release != 0) {
+    if (release != 0)
+    {
         UiWindow_EraseBorderRect((s16)work->x, (s16)work->y, work->width, work->height);
         work->output.head = NULL;
         work->output.tailLink = NULL;
@@ -46,7 +47,9 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
         work->previousY = zero;
         work->previousWidth = zero;
         work->previousHeight = zero;
-    } else {
+    }
+    else
+    {
         work->frame = release;
         work->duration = 4;
     }
@@ -54,7 +57,8 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *work)
 {
-    if (!(8 & work->flags)) {
+    if (!(8 & work->flags))
+    {
         RenderOutput_RedrawSavedRect(work);
         RenderOutput_ClearList(work);
     }

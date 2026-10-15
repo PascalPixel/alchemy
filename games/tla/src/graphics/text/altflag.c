@@ -5,7 +5,8 @@
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-struct WindowTileWork {
+struct WindowTileWork
+{
     u8 unk000[2];
     u8 alt;
     u8 unk003[0xe35];
@@ -15,15 +16,18 @@ struct WindowTileWork {
 void UiWork_SetAltFlagAndClearTable(s32 alt)
 {
     struct WindowTileWork *work = (struct WindowTileWork *)Ram_HeapSlots->windowTiles;
-    s32 i;
-    s32 fill;
-    u8 *p;
+    s32                    i;
+    s32                    fill;
+    u8                    *p;
 
-    if (alt) {
+    if (alt)
+    {
         work->alt = 1;
         for (i = 128; i < 256; i++)
             work->table[i] = 0;
-    } else {
+    }
+    else
+    {
         work->alt = 0;
         fill = 0;
         p = work->table + 128;
@@ -41,9 +45,9 @@ void Func_08041c50(void)
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2, u32 y2)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    u16 *cursor;
-    u32 pos;
-    u32 tile;
+    u16                 *cursor;
+    u32                  pos;
+    u32                  tile;
 
     if (x1 == x2)
     {

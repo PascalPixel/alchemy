@@ -7,12 +7,12 @@
 
 void DisplayBlend_RunScript(void)
 {
-    struct MapWork *work = Ram_HeapSlots->mapWork;
+    struct MapWork          *work = Ram_HeapSlots->mapWork;
     struct BlendScriptState *state;
-    u16 *cursor;
-    u32 command;
-    u32 value;
-    u16 test;
+    u16                     *cursor;
+    u32                      command;
+    u32                      value;
+    u16                      test;
 
     state = &work->blend;
     if (state->script == 0)
@@ -29,12 +29,14 @@ again:
     cursor = state->cursor;
     command = *cursor;
     cursor++;
-    if (command == 0xffff) {
+    if (command == 0xffff)
+    {
         state->cursor = state->script;
         goto again;
     }
 
-    if ((command & 0xff00) == 0xfe00) {
+    if ((command & 0xff00) == 0xfe00)
+    {
         value = command & 0xff;
         if (value == 0xff)
             return;
@@ -42,7 +44,8 @@ again:
         goto again;
     }
 
-    if ((command & 0xf000) == 0x3000) {
+    if ((command & 0xf000) == 0x3000)
+    {
         REG_BLDCNT = command;
         work->blendControl = command;
         state->cursor++;
@@ -64,9 +67,9 @@ tick:
 void DisplayBlend_StartScript(u16 *script)
 {
     struct BlendScriptState *state;
-    s32 started;
-    volatile u32 zero;
-    u32 first;
+    s32                      started;
+    volatile u32             zero;
+    u32                      first;
 
     started = 0;
     zero = 0;
@@ -75,7 +78,8 @@ void DisplayBlend_StartScript(u16 *script)
     first = *script;
     /* FAKEMATCH: the plain order builds 0xffff before loading the first command. */
     __asm__("");
-    if (first != 0xffff) {
+    if (first != 0xffff)
+    {
         state->script = script;
         state->cursor = script;
         /* FAKEMATCH: the ARM9 scheduling would clear the delay and pause before storing the pointers. */

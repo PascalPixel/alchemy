@@ -26,9 +26,9 @@ extern u8 Tile_Decompress4bppCodeSize[];
 //--------------------------------------------------------------------------
 s32 Ui_GetTableWordZero(s32 no)
 {
-	if (no != 0)
-		no = 0;
-	return gUi_FixedTileBlocks[no];
+    if (no != 0)
+        no = 0;
+    return gUi_FixedTileBlocks[no];
 }
 
 //--------------------------------------------------------------------------
@@ -37,9 +37,9 @@ s32 Ui_GetTableWordZero(s32 no)
 //--------------------------------------------------------------------------
 void Func_08045564(u8 *work)
 {
-	void (*routine)(void *, void *);
+    void (*routine)(void *, void *);
 
-	RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
-	routine(*(void **)(work + 0x604), work);
-	MemFree(routine);
+    RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
+    routine(*(void **)(work + 0x604), work);
+    MemFree(routine);
 }

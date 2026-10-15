@@ -14,10 +14,10 @@ extern char ResourceId_CommandIcons;
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {
     GlyphTransfer *buffer = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
-    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
-    u8 **slot = &buffer->encoded;
-    void *target = (void *)((u32)base + base[arg1]);
-    s32 ret;
+    u16           *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    u8           **slot = &buffer->encoded;
+    void          *target = (void *)((u32)base + base[arg1]);
+    s32            ret;
 
     *slot = target;
     Resource_DecodeByteLzInRam(target, buffer);
@@ -29,14 +29,14 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 {
     GlyphTransfer *decoded;
-    u8 *font;
-    u8 *remapped;
-    u8 *src;
-    u8 *dst;
-    s32 i;
-    u32 index;
-    u32 vram;
-    s32 offset;
+    u8            *font;
+    u8            *remapped;
+    u8            *src;
+    u8            *dst;
+    s32            i;
+    u32            index;
+    u32            vram;
+    s32            offset;
 
     decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(*decoded));
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
@@ -45,11 +45,14 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     remapped = MemAlloc(0x400);
     src = decoded->input;
     dst = remapped;
-    for (i = 0; i < 0x400; i++) {
+    for (i = 0; i < 0x400; i++)
+    {
         index = *src++;
-        if (palette->slot[index] == 255) {
+        if (palette->slot[index] == 255)
+        {
             palette->slot[index] = palette->count;
-            if (palette->count < 64) {
+            if (palette->count < 64)
+            {
                 ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
                 palette->count++;
             }

@@ -28,12 +28,14 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count)
     u32 green;
     u32 blue;
 
-    if (count > 0) {
+    if (count > 0)
+    {
         red_mask = 0x1f;
         green_mask = 0x3e0;
         blue_mask = 0x7c00;
         remaining = count;
-        do {
+        do
+        {
             pixel = *source;
             red = pixel & red_mask;
             green = pixel & green_mask;

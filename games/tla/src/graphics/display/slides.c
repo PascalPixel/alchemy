@@ -38,6 +38,7 @@ extern char ResourceId_DuskCloudsBackdrop;
 
 // The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
 // reads this list.
+// clang-format off
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,
     (u32)&ResourceId_SolSanctumBackdrop,
@@ -486,5 +487,6 @@ const void *gDisplayScroll_LineTable[] = {
     CREDITS_SECTION_END,
     0
 };
+// clang-format on
 
 #include "../../../../common/src/graphics/display/glyph_widths.h"

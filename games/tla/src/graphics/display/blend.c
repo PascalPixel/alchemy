@@ -30,12 +30,12 @@
 //--------------------------------------------------------------------------
 void Blend_SetDarkenTarget16(s32 frames)
 {
-	gBlendBrighten = 0;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 16;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 16;
+    gBlendDuration = frames;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 //--------------------------------------------------------------------------
@@ -43,12 +43,12 @@ void Blend_SetDarkenTarget16(s32 frames)
 //--------------------------------------------------------------------------
 void Blend_SetDarkenTarget0(s32 frames)
 {
-	gBlendBrighten = 0;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 0;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = frames;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 //--------------------------------------------------------------------------
@@ -56,12 +56,12 @@ void Blend_SetDarkenTarget0(s32 frames)
 //--------------------------------------------------------------------------
 void Blend_SetBrightenTarget16(s32 frames)
 {
-	gBlendBrighten = 1;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 16;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 16;
+    gBlendDuration = frames;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 //--------------------------------------------------------------------------
@@ -69,12 +69,12 @@ void Blend_SetBrightenTarget16(s32 frames)
 //--------------------------------------------------------------------------
 void Blend_SetBrightenTarget0(s32 frames)
 {
-	gBlendBrighten = 1;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 0;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = frames;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 //--------------------------------------------------------------------------
@@ -87,18 +87,18 @@ void Blend_SetBrightenTarget0(s32 frames)
 //--------------------------------------------------------------------------
 void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target, s32 frames)
 {
-	gBlendBrighten = bright;
-	gBlendLayers = layer & 0x3f;
-	if (start > 16U)
-	{
-		gBlendStartLevel = gBlendTargetLevel;
-	}
-	else
-	{
-		gBlendStartLevel = start;
-	}
-	gBlendTargetLevel = target;
-	gBlendFramesLeft = (gBlendDuration = frames);
+    gBlendBrighten = bright;
+    gBlendLayers = layer & 0x3f;
+    if (start > 16U)
+    {
+        gBlendStartLevel = gBlendTargetLevel;
+    }
+    else
+    {
+        gBlendStartLevel = start;
+    }
+    gBlendTargetLevel = target;
+    gBlendFramesLeft = (gBlendDuration = frames);
 }
 
 //--------------------------------------------------------------------------
@@ -106,13 +106,13 @@ void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target, s32 
 //--------------------------------------------------------------------------
 void Blend_WaitForTransition(void)
 {
-	if (gBlendDuration != 0)
-	{
-		do
-		{
-			WaitFrames(1);
-		} while (gBlendDuration != 0);
-	}
+    if (gBlendDuration != 0)
+    {
+        do
+        {
+            WaitFrames(1);
+        } while (gBlendDuration != 0);
+    }
 }
 
 extern u8 gOamBucketMasks[];
@@ -128,11 +128,11 @@ void Graphics_ResetFrameState(void)
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {
     union AffineMatrix *matrix;
-    s16 *coefficient;
-    s32 xScale;
-    s32 yScale;
-    s32 angle;
-    u8 index;
+    s16                *coefficient;
+    s32                 xScale;
+    s32                 yScale;
+    s32                 angle;
+    u8                  index;
 
     xScale = (s16)source->scaleX;
     angle = source->angle;

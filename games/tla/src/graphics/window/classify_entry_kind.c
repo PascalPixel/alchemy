@@ -15,26 +15,26 @@
 //--------------------------------------------------------------------------
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act)
 {
-	s32 val;
-	s32 type;
-	s32 kind;
-	u8	effect;
+    s32 val;
+    s32 type;
+    s32 kind;
+    u8  effect;
 
-	kind = 0;
-	type = act->targetFlag & 15;
-	if (type == 1) // HPかいふく
-		kind = 1;
-	if (type == 11) // PPかいふく
-		kind = 2;
-	val = (s8)act->effect;
-	effect = val;
-	if (effect == 3) // 毒がきえる
-		kind = 3;
-	if (effect == 4) // 状態異常をなおす
-		kind = 4;
-	if (effect == 64) // 状態異常をすべてなおす
-		kind = 6;
-	if (BattleEffectRevCheckFar(act->effect) != 0) // ふっき
-		kind = 5;
-	return kind;
+    kind = 0;
+    type = act->targetFlag & 15;
+    if (type == 1) // HPかいふく
+        kind = 1;
+    if (type == 11) // PPかいふく
+        kind = 2;
+    val = (s8)act->effect;
+    effect = val;
+    if (effect == 3) // 毒がきえる
+        kind = 3;
+    if (effect == 4) // 状態異常をなおす
+        kind = 4;
+    if (effect == 64) // 状態異常をすべてなおす
+        kind = 6;
+    if (BattleEffectRevCheckFar(act->effect) != 0) // ふっき
+        kind = 5;
+    return kind;
 }

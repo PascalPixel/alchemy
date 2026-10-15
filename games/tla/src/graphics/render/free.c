@@ -27,19 +27,22 @@ void Ui_FillVramBlockPattern(void)
 
 void UiWork_ResetFreeChannel(void)
 {
-    struct UiChannelSlot *slot =
-        ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
+    struct UiChannelSlot *slot = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
     struct UiChannelSlot *selection = 0;
-    s32 i;
+    s32                   i;
 
-    for (i = 0; i != 3; slot++, i++) {
-        if (slot->work == 0 || slot->work->state != 0) {
+    for (i = 0; i != 3; slot++, i++)
+    {
+        if (slot->work == 0 || slot->work->state != 0)
+        {
             selection = slot;
             break;
         }
     }
-    if (selection != 0) {
-        if (selection->work != 0) {
+    if (selection != 0)
+    {
+        if (selection->work != 0)
+        {
             Ui_ClearVramBlock();
             selection->y = 0;
         }

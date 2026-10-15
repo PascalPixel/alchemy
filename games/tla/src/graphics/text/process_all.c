@@ -10,7 +10,6 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-
 // テキストワークの末尾: 日本語版は表が 0x200 バイト短い
 #if defined(TLA_EDITION_JA)
 #define TEXT_WORK_TAIL 0x1184
@@ -20,28 +19,29 @@
 
 struct Work;
 
-s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+s32          UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 struct Work *UiText_OpenMessageWindow(s32 no, s32 x, s32 y, s32 flags);
-s32 EventRuntime_GetControlledOwnerFar(void);
-s32 Func_080c82a8(s32 object, s32 *out);
-s32 UiWork_IsComplete(void);
-void UiWork_Finalize(struct Work *work, s32 release);
-s32 UiWork_IsIdle(struct Work *work);
+s32          EventRuntime_GetControlledOwnerFar(void);
+s32          Func_080c82a8(s32 object, s32 *out);
+s32          UiWork_IsComplete(void);
+void         UiWork_Finalize(struct Work *work, s32 release);
+s32          UiWork_IsIdle(struct Work *work);
 
-#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT) /* Spanish and Italian reach the owner and its screen position through far-call slots two entries earlier, unnamed in their scaffolds: their copies stay on the scaffold (S4) */
+/* Spanish and Italian reach the owner and its screen position through far-call slots two entries earlier, unnamed in their scaffolds: their copies stay on the scaffold (S4) */
+#if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
-    u8 *base = Ram_HeapSlots->windowTiles;
-    s32 release;
-    s32 pos[2] = {0, 0};
-    s32 height;
-    s32 width;
-    s32 y;
-    s32 x;
+    u8          *base = Ram_HeapSlots->windowTiles;
+    s32          release;
+    s32          pos[2] = { 0, 0 };
+    s32          height;
+    s32          width;
+    s32          y;
+    s32          x;
     struct Work *work = NULL;
-    s32 zero;
-    s32 margin;
-    s32 rows;
+    s32          zero;
+    s32          margin;
+    s32          rows;
 
     y = x = 0;
     release = flags & 1;
@@ -55,7 +55,8 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
     margin = 30 - width;
     /* FAKEMATCH: the one-pass block ends the scheduling block: the native reads the height before it halves the horizontal margin (one reordered row, differ 2 without). */
-    do {
+    do
+    {
         rows = height;
     } while (0);
     x = margin >> 1;
@@ -126,11 +127,14 @@ void UiWork_ProcessAll(void)
 
 void UiWork_ProcessAllOrChannels(void)
 {
-    if (Ram_HeapSlots->unke4[0] != 0) {
+    if (Ram_HeapSlots->unke4[0] != 0)
+    {
         UiWork_ProcessDirectWork();
         UiWork_ProcessRenderChannels();
         UiWork_AnimateSpriteSlots();
-    } else {
+    }
+    else
+    {
         UiWork_ProcessRenderChannels();
     }
 }

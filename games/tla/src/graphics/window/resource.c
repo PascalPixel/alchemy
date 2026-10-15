@@ -12,18 +12,18 @@
 #include "render_input.h"
 #include "mem.h"
 
-#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+#define Resource_DecodeByteLzInRam ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
 
-
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
 {
-    s32 size = 1024;
+    s32   size = 1024;
     void *buffer = Runtime_AllocateBlock(56, size);
-    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    u16  *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-    if (value <= 95) {
+    if (value <= 95)
+    {
         Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
         if (flag != 0)
             Runtime_RemapBytesByTableFar(buffer, 768);
@@ -33,18 +33,15 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
 }
 
 struct RenderOutput *RenderResource_CreateFrame(
-    s32 arg0,
-    s32 arg1,
-    struct RenderInput *arg2,
-    s32 arg3,
-    s32 arg4)
+    s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4)
 {
-    s32 index;
+    s32                  index;
     struct RenderOutput *entity;
 
     index = Resource_FindFreeEntry();
     entity = NULL;
-    if (index != 0x60) {
+    if (index != 0x60)
+    {
         RenderResource_LoadFrame(arg0, index, arg1);
         entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
         entity->oam.palette256 = 1;

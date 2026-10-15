@@ -9,7 +9,7 @@
 void TitlePalette_InitializeBuffers(void)
 {
     struct TitlePaletteWork *buffer;
-    s32 operation;
+    s32                      operation;
 
     buffer = Runtime_AllocateBlock(128, sizeof(*buffer));
     Dma_Fill32(0, buffer, sizeof(*buffer));
@@ -54,9 +54,11 @@ void Graphics_UpdatePaletteInterpolation(s32 value)
 {
     struct TitlePaletteWork *state = Ram_HeapSlots->block32;
 
-    if (state != NULL) {
+    if (state != NULL)
+    {
         state->duration = value;
         state->step = 0;
-        Graphics_InterpolatePaletteBuffers((s16 *)state->current, (s16 *)state->target, (s16 *)state->delta, value);
+        Graphics_InterpolatePaletteBuffers(
+            (s16 *)state->current, (s16 *)state->target, (s16 *)state->delta, value);
     }
 }

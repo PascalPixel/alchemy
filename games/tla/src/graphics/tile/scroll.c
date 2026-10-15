@@ -12,13 +12,15 @@ void DisplayScroll_BuildHblankWordTable(u32 *table)
     u32 step;
 
     /* FAKEMATCH: a one-pass block keeps the pool load of the fill word ahead of the step's split constant; plain, the split's two instructions take the lead (differ 2), as the scheduler prefers the instruction with a dependent. */
-    do {
+    do
+    {
         value = 0x01ff01ff;
     } while (0);
     step = 0x10000;
     for (i = 0; i < 32; i++)
         *table++ = value;
-    for (i = 0; i < 240; i++) {
+    for (i = 0; i < 240; i++)
+    {
         *table++ = step;
         step += 0x20002;
     }
@@ -30,7 +32,8 @@ void DisplayScroll_BuildHblankWordTable(u32 *table)
 
 void DisplayScroll_StepPositionEveryFourFrames(void)
 {
-    if ((gFrameTick & 3) == 0) {
+    if ((gFrameTick & 3) == 0)
+    {
         u32 decrement = 0xffff;
 
         gBgScroll[2].x += decrement;

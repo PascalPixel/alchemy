@@ -8,8 +8,8 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    u16 *cursor = &canvas->tilemap[y][x];
-    u32 row;
+    u16                 *cursor = &canvas->tilemap[y][x];
+    u32                  row;
 
     if (width <= 1 || height <= 1 || width > 30 || height > 30)
         return;
@@ -24,7 +24,8 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
     else
         *cursor++ = 0xf012;
     cursor += 32 - width;
-    for (row = 1; row < height - 1; row++) {
+    for (row = 1; row < height - 1; row++)
+    {
         *cursor++ = 0xf016;
         if (width != 2)
             cursor = Memory_FillHalfwordsDma(cursor, 0xf020f020, width - 2);
@@ -46,8 +47,8 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    u16 *cursor = &canvas->tilemap[y][x];
-    u32 row;
+    u16                 *cursor = &canvas->tilemap[y][x];
+    u32                  row;
 
     if (width <= 1 || height <= 1 || width > 30 || height > 30)
         return;
@@ -56,7 +57,8 @@ void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height)
     cursor = Memory_FillHalfwordsDma(cursor, 0xf009f009, width - 2);
     *cursor++ = 0xf00a;
     cursor += 32 - width;
-    for (row = 1; row < height - 1; row++) {
+    for (row = 1; row < height - 1; row++)
+    {
         *cursor++ = 0xf00e;
         if (width != 2)
             cursor = Memory_FillHalfwordsDma(cursor, 0xf020f020, width - 2);

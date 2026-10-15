@@ -8,7 +8,8 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
     u16 *output = buffer;
 
-    while (*text != 0) {
+    while (*text != 0)
+    {
         *output = *text;
         text++;
         output++;

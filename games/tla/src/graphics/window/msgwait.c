@@ -3,10 +3,11 @@
 #include "ram_buffer.h"
 
 void WaitFrames(s32 frames);
-s32 UiWork_IsComplete(void);
+s32  UiWork_IsComplete(void);
 void UiMessage_Show(s32 message);
-s32 UiText_BuildRenderEntries(s32 key, s32 mode);
-s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *bounds, s32 mode);
+s32  UiText_BuildRenderEntries(s32 key, s32 mode);
+s32  UiText_QueueRenderEntries(
+    struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *bounds, s32 mode);
 
 void UiMessage_ShowAndWait(s32 message)
 {
@@ -22,8 +23,8 @@ void UiMessage_ShowAndWait(s32 message)
 s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    s32 entry;
-    s32 result = 0;
+    s32                  entry;
+    s32                  result = 0;
     /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two outgoing arguments, exactly these four slots; without them the frame is 8 bytes, not 16 (differ 4). */
     u16 entries[4];
 

@@ -2,10 +2,11 @@
 #include "resource.h"
 #include "callback_scheduler.h"
 
-struct TextResourcePosition {
-    u8 padding[4];
-    s8 kind;
-    u8 padding2;
+struct TextResourcePosition
+{
+    u8  padding[4];
+    s8  kind;
+    u8  padding2;
     u16 index : 9;
     u16 rest : 7;
 };

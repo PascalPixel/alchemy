@@ -1,33 +1,37 @@
 #include "types.h"
 #include "dma.h"
 
-struct DisplayScrollObject {
+struct DisplayScrollObject
+{
     u32 attr01;
     u32 attr2;
 };
 
-extern u16 gDisplayScroll_Position;
+extern u16                         gDisplayScroll_Position;
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
-extern u32 gFrameTick;
+extern u32                         gFrameTick;
 
 void Func_081a0cac(void)
 {
-    u32 frame = gDisplayScroll_Position;
-    u32 fine = frame & 7;
-    s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
+    u32  frame = gDisplayScroll_Position;
+    u32  fine = frame & 7;
+    s32  tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = (u32 *)(gDisplayScroll_Objects + 24);
-    s32 row;
+    s32  row;
 
-    for (row = 0; row <= 15; row++) {
+    for (row = 0; row <= 15; row++)
+    {
         s32 col;
 
-        for (col = 0; col < 6; col++) {
+        for (col = 0; col < 6; col++)
+        {
             u32 *q = entry;
 
             *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
             entry += 2;
             /* FAKEMATCH: a one-pass block keeps the entry step ahead of the tile store; as plain statements, in either order, the step falls behind the tile step (2 differ). */
-            do {
+            do
+            {
             } while (0);
             *q = tile;
             tile += 4;

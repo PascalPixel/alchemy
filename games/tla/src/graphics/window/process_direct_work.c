@@ -13,9 +13,9 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
 void UiWork_ProcessDirectWork(void)
 {
     struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    struct UiWindow *work = state->windows;
-    s32 index = 0;
-    u8 dirty;
+    struct UiWindow     *work = state->windows;
+    s32                  index = 0;
+    u8                   dirty;
 
     do
     {

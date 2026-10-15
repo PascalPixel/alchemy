@@ -17,22 +17,22 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y
 //--------------------------------------------------------------------------
 void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y)
 {
-	s32 v = num;
-	s32 digits = 1;
+    s32 v = num;
+    s32 digits = 1;
 
-	while (digits <= 15)
-	{
-		v = v / 10;
-		if (v <= 9)
-		{
-			break;
-		}
-		digits++;
-	}
+    while (digits <= 15)
+    {
+        v = v / 10;
+        if (v <= 9)
+        {
+            break;
+        }
+        digits++;
+    }
 
-	digits++;
-	x -= digits * 8;
-	UiText_DrawNumberAtOffsetFar(num, digits, win, x, y);
+    digits++;
+    x -= digits * 8;
+    UiText_DrawNumberAtOffsetFar(num, digits, win, x, y);
 }
 
 #endif

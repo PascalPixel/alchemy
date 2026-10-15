@@ -12,29 +12,24 @@
 #include "types.h"
 #include "render_input.h"
 
-#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
-
-
+#define Resource_DecodeByteLzInRam ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex)
 {
     void *stagingBuffer = Runtime_AllocateBlock(56, 0x400);
-    s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
+    s32   resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
-    if (resourceIndex <= 0x5F) {
+    if (resourceIndex <= 0x5F)
+    {
         Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
         VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
         Runtime_ReleaseHeapBlock(56);
     }
 }
 
-struct RenderOutput *RenderResource_CreatePair(
-    s32 group,
-    struct RenderInput *input,
-    s32 x,
-    s32 y)
+struct RenderOutput *RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y)
 {
-    s32 index;
+    s32                  index;
     struct RenderOutput *first;
     struct RenderOutput *second;
 
@@ -51,17 +46,18 @@ struct RenderOutput *RenderResource_CreatePair(
     return first;
 }
 
-struct BobPairObject {
+struct BobPairObject
+{
     struct BobPairObject *next;
-    u8 unk04[4];
-    u8 baseY;
-    u8 unk09[11];
-    u8 y;
+    u8                    unk04[4];
+    u8                    baseY;
+    u8                    unk09[11];
+    u8                    y;
 };
 
 // The frame counter, advanced by the vblank interrupt.
 extern volatile u32 gFrameTick;
-extern const u8 gUi_PairBobOffsets[];
+extern const u8     gUi_PairBobOffsets[];
 
 // Bobs the object and the one after it by the same step of an eight-step
 // table, advanced every four frames.

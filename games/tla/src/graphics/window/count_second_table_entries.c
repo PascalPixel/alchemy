@@ -8,7 +8,6 @@
 #include "system.h"
 #include "types.h"
 
-
 s32 Ui_CountSecondTableEntries(void)
 {
     return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;

@@ -9,8 +9,9 @@
 #include "system.h"
 #include "types.h"
 
-struct BattleActionGlyph {
-    u8 unk00[4];
+struct BattleActionGlyph
+{
+    u8  unk00[4];
     u16 icon;
 };
 

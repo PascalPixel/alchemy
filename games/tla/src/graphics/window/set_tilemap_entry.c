@@ -2,7 +2,8 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-enum {
+enum
+{
     TILEMAP_ENTRY_PLAIN,
     TILEMAP_ENTRY_NONE,
     TILEMAP_ENTRY_PALETTE_14,
@@ -13,12 +14,11 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-void UiWindow_SetTilemapEntry(
-    struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
+void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
     u16 *map = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
-    s32 palette;
-    s32 index;
+    s32  palette;
+    s32  index;
 
     y += 1;
     x += 1;
@@ -27,7 +27,8 @@ void UiWindow_SetTilemapEntry(
     if ((u32)x > (u32)(window->width - 1))
         return;
 
-    switch (mode) {
+    switch (mode)
+    {
     case TILEMAP_ENTRY_PALETTE_15:
         palette = 0xf000;
         break;
@@ -43,7 +44,8 @@ void UiWindow_SetTilemapEntry(
     }
 
     /* FAKEMATCH: byte-offset stores preserve both strh base/offset register pairs. */
-    switch (mode) {
+    switch (mode)
+    {
     case TILEMAP_ENTRY_NONE:
         return;
     case TILEMAP_ENTRY_PALETTE_14:

@@ -14,7 +14,6 @@
 #include "item.h"
 #include "ram_buffer.h"
 
-
 s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot)
 {
     GlyphTransfer *work;
@@ -33,13 +32,16 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 // Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Ui_PrepareTransferForItem(s32 code)
 {
-    GlyphTransfer *state = Ram_HeapSlots->glyphWork;
+    GlyphTransfer         *state = Ram_HeapSlots->glyphWork;
     struct ItemDefinition *item = Item_Get(0x1ff & code);
 
-    if (code != 0) {
+    if (code != 0)
+    {
         state->encoded = gUiIcon_ItemIconPointers[item->icon];
-    } else {
-        u8 *encoded;
+    }
+    else
+    {
+        u8  *encoded;
         u8 **table = gUiIcon_ItemIconPointers;
 
         /* FAKEMATCH: a no-op self-assignment keeps the item live here, so the table takes r2 as native; without it the table takes r3 (differ 4) */

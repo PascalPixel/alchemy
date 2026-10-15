@@ -16,7 +16,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {
     struct UiWindow *slot;
     struct UiWindow *found;
-    s32 i;
+    s32              i;
 
     slot = UI_WORK->windows;
     found = 0;
@@ -78,11 +78,12 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     return found;
 }
 
-
 void UiWork_WaitWindowDuration(void *work)
 {
-    if (!(2 & ((struct UiWindow *)work)->flags) && (((struct UiWindow *)work)->duration != 0)) {
-        do {
+    if (!(2 & ((struct UiWindow *)work)->flags) && (((struct UiWindow *)work)->duration != 0))
+    {
+        do
+        {
             WaitFrames(1);
         } while (((struct UiWindow *)work)->duration != 0);
     }

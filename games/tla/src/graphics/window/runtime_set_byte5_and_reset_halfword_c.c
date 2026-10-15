@@ -12,9 +12,9 @@
 //--------------------------------------------------------------------------
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode)
 {
-	if (out != NULL)
-	{
-		out->active = mode;
-		out->animStep = 0;
-	}
+    if (out != NULL)
+    {
+        out->active = mode;
+        out->animStep = 0;
+    }
 }

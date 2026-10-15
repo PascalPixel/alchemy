@@ -6,11 +6,13 @@ void UiText_PlotGlyphRows(u16 *rows, u8 *dst, s32 color)
     u8 *p;
     s32 bits;
 
-    for (y = 0; y != 14; y++) {
+    for (y = 0; y != 14; y++)
+    {
         bits = *rows++ & ~3;
         p = dst;
         bits <<= 16;
-        while (bits != 0) {
+        while (bits != 0)
+        {
             if (bits < 0)
                 *p = color;
             bits <<= 1;

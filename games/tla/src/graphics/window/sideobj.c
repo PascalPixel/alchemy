@@ -14,7 +14,8 @@ s32 Localization_LookupEntryId(u32 value)
     s32 result = -1;
     s32 i = 0;
 
-    switch (value) {
+    switch (value)
+    {
     case 47:
         value = 4;
         break;
@@ -40,26 +41,33 @@ s32 Localization_LookupEntryId(u32 value)
         value = 3;
         break;
     }
-    if (value < 16) {
-        for (;;) {
+    if (value < 16)
+    {
+        for (;;)
+        {
             s32 key = gPortrait_CharacterMap[i];
 
             if (key == -1)
                 break;
-            if (key == value) {
+            if (key == value)
+            {
                 i++;
                 result = gPortrait_CharacterMap[i];
                 break;
             }
             i += 2;
         }
-    } else {
-        for (;;) {
+    }
+    else
+    {
+        for (;;)
+        {
             s32 key = gPortrait_SpriteMap[i];
 
             if (key == -1)
                 break;
-            if (key == value) {
+            if (key == value)
+            {
                 i++;
                 result = gPortrait_SpriteMap[i];
                 result += 128;
@@ -73,24 +81,29 @@ s32 Localization_LookupEntryId(u32 value)
 
 struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
 {
-    struct UiWindow *win;
-    s32 minusFour;
-    s32 offset;
+    struct UiWindow     *win;
+    s32                  minusFour;
+    s32                  offset;
     struct UiRenderWork *work;
 
     work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
-    if (Localization_LookupEntryId(arg0) == -1) {
+    if (Localization_LookupEntryId(arg0) == -1)
+    {
         return 0;
     }
     minusFour = -4;
     offset = minusFour;
-    if (work->mode != 0) {
+    if (work->mode != 0)
+    {
         win = UiWindow_Create(x, y, 6, 5, 2);
         offset = 0;
-    } else {
+    }
+    else
+    {
         win = UiWindow_Create(x, y, 5, 5, 2);
     }
-    if (win != 0) {
+    if (win != 0)
+    {
         CreateSideObject(arg0, arg1, -1, win, offset, minusFour);
     }
     return win;
@@ -99,9 +112,9 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
 void Func_0803d450(s32 id)
 {
     struct UiRenderWork *state;
-    struct UiWindow *work;
-    s32 index;
-    s32 i;
+    struct UiWindow     *work;
+    s32                  index;
+    s32                  i;
     struct RenderOutput *entity;
 
     state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
@@ -110,19 +123,26 @@ void Func_0803d450(s32 id)
     if (id == -1)
         return;
 
-    if (state->resourceIds[1] == id) {
+    if (state->resourceIds[1] == id)
+    {
         index = 1;
-    } else if (state->resourceIds[0] == id) {
+    }
+    else if (state->resourceIds[0] == id)
+    {
         index = 0;
-    } else {
+    }
+    else
+    {
         return;
     }
 
     id = state->outputIds[index];
 
-    for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
+    for (i = 0; i != UI_WINDOW_COUNT; i++, work++)
+    {
         entity = work->output.head;
-        if ((u8)entity->kind == 2 && (u8)entity->index == id) {
+        if ((u8)entity->kind == 2 && (u8)entity->index == id)
+        {
             UiWork_Finalize(work, 2);
             return;
         }

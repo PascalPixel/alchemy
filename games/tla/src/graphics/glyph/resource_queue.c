@@ -28,7 +28,8 @@ void Resource_ClearOwnerListAndCounters(void)
     screen = Ram_HeapSlots->menuWork;
     screen->head = NULL;
     screen->unk39a = 0;
-    if (screen->cursorIndex & 0x80) {
+    if (screen->cursorIndex & 0x80)
+    {
         screen->top = 0;
         screen->cursorIndex = 0;
     }
@@ -39,9 +40,10 @@ void Resource_ClearOwnerListAndCounters(void)
 void Resource_PushPendingPair(u32 first, u32 second)
 {
     struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-    u16 cnt = state->count;
+    u16                     cnt = state->count;
 
-    if (cnt != 16) {
+    if (cnt != 16)
+    {
         state->kinds[cnt] = first;
         state->bases[cnt] = second;
         state->count++;

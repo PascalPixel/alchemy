@@ -203,9 +203,6 @@ SerialRuntime_HandleTransferInterrupt:
 	.thumb_func
 Func_08016990:
 	.incbin "baserom.gba", 0x00016990, 0x00000248
-	.section .rom.00016bdc, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00016bdc, 0x000000c8
 	.section .rom.00016dd0, "ax"
 	.global Func_08016dd0
 	.type Func_08016dd0, %function

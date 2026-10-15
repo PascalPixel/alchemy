@@ -142,7 +142,6 @@ SECTIONS
     "*/games/tla/src/system/link/reset_transfer.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00016990)
     "*/games/tla/src/system/link/siostub.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00016bdc)
     "*/games/tla/src/game/flags/test.o"(.text)
     "*/games/tla/src/game/flags/get_byte.o"(.text)
     "*/games/tla/src/game/flags/set_byte.o"(.text)

@@ -9,7 +9,7 @@ SECTIONS
         "*/resource_64e_overlay.o"(.text.x0200814e)
         "*/resource_64e_overlay.o"(.text.x02008150)
         "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x0200834c)
+        "*/games/tla/src/field/common/object/find_in_cell.o"(.text)
         "*/resource_64e_overlay.o"(.text.x0200838c)
         "*/games/tla/src/field/common/map/cellfilb.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/cellfill.o"(.text)

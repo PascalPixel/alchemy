@@ -234,46 +234,6 @@ Func_02000150:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008310:
 	.4byte 0xffff0000
-	.section .text.x0200834c,"ax",%progbits
-	.balign 4
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	adds r1, r0, #0
-	adds r5, r3, #0
-	movs r4, #8
-	adds r5, #52
-.L_0200835c:
-	ldmia r5!, {r0}
-	ldr r2, [r1]
-	ldr r3, [r0, #8]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_02008382
-	ldr r2, [r1, #4]
-	ldr r3, [r0, #12]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	bne .L_02008382
-	ldr r2, [r1, #8]
-	ldr r3, [r0, #16]
-	asrs r2, r2, #20
-	asrs r3, r3, #20
-	cmp r2, r3
-	beq .L_0200838a
-.L_02008382:
-	adds r4, #1
-	cmp r4, #63
-	bls .L_0200835c
-	movs r0, #0
-.L_0200838a:
-	pop {r5, pc}
 	.section .text.x0200838c,"ax",%progbits
 	.global Func_0200038c
 	.thumb_func
@@ -314,7 +274,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	mov r1, r8
-	bl Func_0200034c
+	bl Object_FindInCell
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020083e2
@@ -336,7 +296,7 @@ Func_0200038c:
 	adds r3, r3, r1
 	str r3, [r7, #8]
 	adds r1, r6, #0
-	bl Func_0200034c
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_02008418
 	adds r3, r0, #0
@@ -358,7 +318,7 @@ Func_0200038c:
 	adds r0, r7, #0
 	ldr r3, [r6, #16]
 	str r3, [r7, #8]
-	bl Func_0200034c
+	bl Object_FindInCell
 	cmp r0, #0
 	beq .L_02008444
 	adds r3, r0, #0

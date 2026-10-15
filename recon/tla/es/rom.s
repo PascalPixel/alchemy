@@ -4545,58 +4545,6 @@ Func_08104ef8:
 	.incbin "baserom.gba", 0x0010b4f4, 0x000000c0
 	.section .rom.0010b62c, "ax"
 	.incbin "baserom.gba", 0x0010b62c, 0x000000a0
-	.section .rom.0010b742, "ax"
-	.incbin "baserom.gba", 0x0010b742, 0x00000346
-	.section .rom.0010ba88, "ax"
-	.global Ui_HpString
-Ui_HpString:
-	.incbin "baserom.gba", 0x0010ba88, 0x00000004
-	.section .rom.0010ba8c, "ax"
-	.global Ui_SlashString
-Ui_SlashString:
-	.incbin "baserom.gba", 0x0010ba8c, 0x00000004
-	.section .rom.0010ba90, "ax"
-	.global Ui_PpString
-Ui_PpString:
-	.incbin "baserom.gba", 0x0010ba90, 0x00000004
-	.section .rom.0010ba94, "ax"
-	.global Data_08105948
-Data_08105948:
-	.incbin "baserom.gba", 0x0010ba94, 0x00000024
-	.section .rom.0010bab8, "ax"
-	.global Menu_PlusSignString
-Menu_PlusSignString:
-	.incbin "baserom.gba", 0x0010bab8, 0x00000004
-	.section .rom.0010babc, "ax"
-	.global Menu_MinusSignString
-Menu_MinusSignString:
-	.incbin "baserom.gba", 0x0010babc, 0x00000014
-	.section .rom.0010bb00, "ax"
-	.incbin "baserom.gba", 0x0010bb00, 0x0000003a
-	.section .rom.0010bb3a, "ax"
-	.global Menu_ListOrderDefault
-Menu_ListOrderDefault:
-	.incbin "baserom.gba", 0x0010bb3a, 0x0000000d
-	.section .rom.0010bb47, "ax"
-	.global Menu_ListOrderMode2
-Menu_ListOrderMode2:
-	.incbin "baserom.gba", 0x0010bb47, 0x0000000d
-	.section .rom.0010bb54, "ax"
-	.global Menu_ListOrderMode1
-Menu_ListOrderMode1:
-	.incbin "baserom.gba", 0x0010bb54, 0x00000018
-	.section .rom.0010bb6c, "ax"
-	.global Menu_ListOrderMode0
-Menu_ListOrderMode0:
-	.incbin "baserom.gba", 0x0010bb6c, 0x00000030
-	.section .rom.0010bb9c, "ax"
-	.global CharacterMenu_CursorWidths
-CharacterMenu_CursorWidths:
-	.incbin "baserom.gba", 0x0010bb9c, 0x00000008
-	.section .rom.0010bba4, "ax"
-	.global Data_08105a40
-Data_08105a40:
-	.incbin "baserom.gba", 0x0010bba4, 0x0000001c
 	.section .rom.0010c148, "ax"
 	.global Func_08108148
 	.type Func_08108148, %function

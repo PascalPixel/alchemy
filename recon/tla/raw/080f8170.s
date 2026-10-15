@@ -482,7 +482,7 @@ Func_080f8170:
 .L_080f8550:
 	.4byte 0x0000110a
 .L_080f8554:
-	.4byte Data_08105938
+	.4byte Ui_LvString
 .L_080f8558:
 	.4byte .L_080f82f0
 .L_080f855c:

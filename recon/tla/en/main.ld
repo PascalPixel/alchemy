@@ -1591,10 +1591,9 @@ SECTIONS
         "*/games/tla/src/menu/iconact.o"(.text)
         "*/recon/tla/raw/081054e0.o"(.text)
         "*/games/tla/src/menu/build_availability.o"(.text)
-        "*/recon/tla/raw/081055f6.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.081055f8)
-        "*/games/tla/src/graphics/window/d0105984.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.081059b4)
+        "*/games/tla/src/graphics/ui/menuspr.o"(.rodata)
+        "*/games/tla/src/menu/menustr.o"(.rodata)
+        "*/games/tla/src/menu/menudata.o"(.data)
         . = ABSOLUTE(0x08108000);
         "*/games/tla/src/system/far_call/table_41.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/table_42.o"(.text .rodata .data .padding)

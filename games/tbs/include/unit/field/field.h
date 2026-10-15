@@ -20,36 +20,37 @@ struct WorldPosition;
 
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x,
-                                s32 height, s32 screen_y, s32 ground_height,
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
+                                s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale);
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
-                                    s32 *scale, s32 mode);
+                                    s32 *scale, s32 facing);
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 mode, s32 depth);
-void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value);
+                                 s32 *scale, s32 facing, s32 depth);
+void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 Animation_LookupValueByKey(s32 key);
-s32 Animation_InitializeObjects(struct AnimationObject *state);
-void Animation_InitWorkFromMetadata(struct AnimationEntry *work);
-s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
-void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle);
-void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no);
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags);
-s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group,
-                                          s32 val);
-void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group,
-                                          s32 val);
+s32 Animation_InitializeObjects(struct AnimationObject *sprite);
+void Animation_InitWorkFromMetadata(struct AnimationEntry *layer);
+s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
+void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
+void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
+void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation);
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
+                                     s32 animation);
+s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
+                                          s32 frames);
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
+                                          s32 step);
 void ObjectSystem_Configure(s32 mode);
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
 void ResourceMetadata_ClearRecord(void *dst);
 struct ResourceObject *ResourceObject_Create(s32 id);
-void ResourceObject_Release(struct ResourceObjectWork *work);
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt);
+void ResourceObject_Release(struct ResourceObjectWork *sprite);
+s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
-void Map_RenderAnimatedTileFramesForObject(u8 *obj);
-void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt);
+void Map_RenderAnimatedTileFramesForObject(u8 *sprite);
+void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count);
 void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no);
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val);
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter);
@@ -143,11 +144,12 @@ void *ObjectDispatch_FindFreeObject(void);
 void ObjectDispatch_Release(struct DispatchObject *obj);
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z);
 void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script);
-void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
-                                        s32 steps);
-void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot);
-void Animation_SetIndexAndInitObjects(void *raw, s32 no);
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no);
+void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj,
+                                        s32 animation, s32 step);
+void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rotation);
+void Animation_SetIndexAndInitObjects(void *rawObject, s32 animId);
+void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj,
+                                          s32 animId);
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
                                                s32 arg);
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj);
@@ -157,11 +159,12 @@ void ObjectDispatch_InitFromTable3(struct DispatchObject *obj);
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj);
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
                                                s32 arg);
-void ObjectDispatch_WaitForValue16(void *raw);
+void ObjectDispatch_WaitForValue16(void *rawObject);
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags);
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode);
-void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on);
-void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val);
+void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj,
+                                         u32 fixedScale);
+void Animation_ApplyChildValues(struct DispatchObject *obj, u32 param);
 void Graphics_EnableObjLayerAndCallbacks(void);
 void ObjectDispatch_StopCallbacksAndHideLayers(void);
 s32 ObjectDispatch_ReturnTrue(void);
@@ -169,10 +172,10 @@ void ObjectSystem_UpdateCamera(void);
 s32 ObjectCamera_ReturnTrue(void);
 void ObjectSystem_UpdateCameraFixed(void);
 
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc);
-s32 Script_ClearByte54(struct ScriptInterpreter *sc);
-s32 Script_SetByte54(struct ScriptInterpreter *sc);
-void Script_WaitForEventTimeout(s32 arg0);
+s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter);
+s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
+s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
+void Script_WaitForEventTimeout(s32 object);
 s32 Object_IsTargetUnset(struct ObjectRuntime *object);
 void Object_UpdateAllThumb(void);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
@@ -223,7 +226,7 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work);
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value);
 u32 Field_StoreAssignedKeyValue(u32 value);
 s32 Field_CheckConfiguredKeys(void);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object);
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object);
 s32 Field_CheckConfiguredKeysAndCount(void *work);
@@ -239,16 +242,16 @@ void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
 void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);
 void Map_UpdateLayerScroll(void);
 void Map_SetCameraCenter(s32 x, s32 y);
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height);
-void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
-                                  u32 destination_y);
+void Map_PlayMetatileCopySequence(u16 *command, s32 destinationX,
+                                  u32 destinationY);
 void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                               s32 dst_x, s32 dst_y);
+                               s32 dstX, s32 dstY);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                               s32 dst_x, s32 dst_y);
-void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
-                           s32 dst_y);
+                               s32 dstX, s32 dstY);
+void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
+                           s32 dstY);
 void Map_SetWorkFlagBits9To11(u32 v);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
@@ -311,7 +314,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position);
 s32 GetWorldMapCollision(struct WorldPosition *position);
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position);
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
-                               s32 *terrain_kind);
+                               s32 *terrainKind);
 void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY, s32 shakeDecay);
 void Map_WaitWorkValuesBelow256(void);
 void Resource_RunCopiedDecoder(s32 a, s32 b);

@@ -4975,10 +4975,10 @@ typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 
 // Plays a map edit sequence (struct MapCopyCommand records, ended by a
 // source of 0xffff): copies each record's rectangle of block numbers to
-// (destination_x, destination_y) and waits its delay in frames. Doors and
+// (destinationX, destinationY) and waits its delay in frames. Doors and
 // other changing scenery are drawn this way.
-void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
-                                  u32 destination_y) {
+void Map_PlayMetatileCopySequence(u16 *command, s32 destinationX,
+                                  u32 destinationY) {
   struct MapCopyCommand *record = (struct MapCopyCommand *)command;
   u32 source = record->source;
   u32 end = 0xffff;
@@ -4997,14 +4997,14 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
     s16 *args = (s16 *)(command + 1);
 
     while (1) {
-      s32 source_y = args[0];
+      s32 sourceY = args[0];
       s32 width = args[1];
       s32 height = args[2];
       s32 delay = args[3];
       args += 5;
 
-      Map_CopyMetatileIndicesRect(source, (u16)source_y, destination_x,
-                                  destination_y, (u16)width, (u16)height);
+      Map_CopyMetatileIndicesRect(source, (u16)sourceY, destinationX,
+                                  destinationY, (u16)width, (u16)height);
       record++;
       WaitFrames((u16)delay);
       source = record->source;

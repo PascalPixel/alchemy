@@ -1,28 +1,12 @@
-/* Draft, differ 4 of 40: the native builds the priority mask 3 before it loads the sprite pointer and masks the priority before it reads the sprite byte; this form loads first. Masking the parameter in its own statement is differ 15. */
-/* Trial: the sprite pointer in a FieldSprite local (sprite = object->animation; sprite->priority = priority) is differ 4 too, the same two loads ahead of the mask. */
+/* Draft, differ 4 of 40: the native builds the priority mask 3 before it loads the sprite pointer
+ * and masks the priority before it reads the sprite byte; this form loads first. Tried: masking the
+ * parameter in its own statement (15), priority & 3 (7), a u32 parameter, an empty barrier before the
+ * store, an inline setter taking the sprite or the object (4 each), one-pass blocks around the flag
+ * stores or the priority store (6 and 8), the mask in a register-operand barrier (4, masked twice),
+ * three minutes of permute (nothing better). */
 #include "../../../../games/tla/src/field/overlay_678/local.h"
 
-
-struct PartyState254 {
-    u8 unknown_000[0x254];
-    u16 value;
-};
-
-void Func_020009c0(s32 id);
-void Func_02000a94(s32 id);
-void Func_020024f8(struct ObjectRuntime *object, s32 priority);
-void Func_02002554(s32 *position, s32 base);
-
-/* The accessors step the work pointer by whole entries and then take entry 0: the bytes add the base to index * 20 before the field offset. */
-#define VENT_AT(work, index) ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
-
-/* FAKEMATCH: the callers set up the arguments as for a call whose value is used (flag before index); the setter is declared void for the modules that match with that. */
-#define Vent_SetActive(index, active) ((s32 (*)(s32, s32))Func_0200271c)(index, active)
-
-static __inline__ void Blend_SetAlpha(s32 value)
-{
-    REG_BLDALPHA->value = value;
-}
+void Func_020027f8(struct ObjectRuntime *object, s32 a);
 
 void Func_020024f8(struct ObjectRuntime *object, s32 priority)
 {

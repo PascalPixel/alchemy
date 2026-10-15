@@ -255,12 +255,12 @@ Func_08040a48:
 .L_08040c48:
 	.4byte Data_0805ea98
 .L_08040c4c:
-	.4byte Data_0805eaa8
+	.4byte SoundTest_MusicString
 .L_08040c50:
-	.4byte Data_0805eab0
+	.4byte SoundTest_JingleString
 .L_08040c54:
-	.4byte Data_0805eab8
+	.4byte SoundTest_SeString
 .L_08040c58:
-	.4byte Data_0805eabc
+	.4byte SoundTest_FxString
 .L_08040c5c:
 	.4byte gInput

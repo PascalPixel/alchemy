@@ -444,8 +444,8 @@ Func_0803fd28:
 .L_080400d8:
 	.4byte 0xfffffc00
 .L_080400dc:
-	.4byte Data_0805ea7c
+	.4byte OptionMenu_SpeedFrames
 .L_080400e0:
-	.4byte Data_0805ea7f
+	.4byte OptionMenu_SpeechFrames
 .L_080400e4:
-	.4byte Data_0805ea81
+	.4byte OptionMenu_SleepFrames

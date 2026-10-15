@@ -14,7 +14,7 @@ struct OutputSprite {
     u16 other_x : 2;
     u16 tile;
 };
-extern u16 Data_0805e9c4[];
+extern u16 Ui_BounceScales[];
 
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 {
@@ -24,18 +24,18 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 
     switch ((u8)output->active) {
     case 9:
-        scale = Data_0805e9c4[output->anim_step++ & 31];
+        scale = Ui_BounceScales[output->anim_step++ & 31];
         break;
     case 10:
-        scale = Data_0805e9c4[output->anim_step++ & 31] >> 1;
+        scale = Ui_BounceScales[output->anim_step++ & 31] >> 1;
         break;
     case 11:
         if (output->anim_step <= 7)
-            scale = Data_0805e9c4[output->anim_step++ * 2 + 16];
+            scale = Ui_BounceScales[output->anim_step++ * 2 + 16];
         break;
     case 12:
         if (output->anim_step <= 7)
-            scale = Data_0805e9c4[output->anim_step++ * 2 + 16] >> 1;
+            scale = Ui_BounceScales[output->anim_step++ * 2 + 16] >> 1;
         break;
     }
     if (scale == 256) {

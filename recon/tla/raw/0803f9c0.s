@@ -181,7 +181,7 @@ Func_0803f9c0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803fb2c:
-	.4byte Data_0805ea1c
+	.4byte PaletteGlow_WaveTable
 .L_0803fb30:
 	.4byte 0x00011110
 .L_0803fb34:

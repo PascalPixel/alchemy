@@ -717,7 +717,7 @@ SECTIONS
         "*/games/tla/src/graphics/window/d005c12c.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0805c1b4)
         "*/games/tla/src/menu/curtiles.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0805e9c4)
+        "*/games/tla/src/graphics/window/scales.o"(.rodata)
         "*/games/tla/src/graphics/window/curframe.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0805f484)
         "*/games/tla/src/graphics/window/d005f6e0.o"(.rodata)

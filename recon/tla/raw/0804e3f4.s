@@ -198,9 +198,9 @@ Func_0804e3f4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0804e574:
-	.4byte Data_0805eb58
+	.4byte Portrait_CharacterMap
 .L_0804e578:
-	.4byte Data_0805eb7c
+	.4byte Portrait_SpriteMap
 .L_0804e57c:
 	.4byte gInput
 .L_0804e580:

@@ -1385,20 +1385,6 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0005c2e4, 0x00000090
 	.section .rom.0005c3fc, "ax"
 	.incbin "baserom.gba", 0x0005c3fc, 0x00000010
-	.section .rom.0005ec0c, "ax"
-	.incbin "baserom.gba", 0x0005ec0c, 0x0000018c
-	.section .rom.0005ed98, "ax"
-	.global Data_0805eb50
-Data_0805eb50:
-	.incbin "baserom.gba", 0x0005ed98, 0x00000008
-	.section .rom.0005eda0, "ax"
-	.global Data_0805eb58
-Data_0805eb58:
-	.incbin "baserom.gba", 0x0005eda0, 0x00000024
-	.section .rom.0005edc4, "ax"
-	.global Data_0805eb7c
-Data_0805eb7c:
-	.incbin "baserom.gba", 0x0005edc4, 0x00000108
 	.section .rom.0005f6cc, "ax"
 	.incbin "baserom.gba", 0x0005f6cc, 0x00000101
 	.section .rom.0005f7cd, "ax"

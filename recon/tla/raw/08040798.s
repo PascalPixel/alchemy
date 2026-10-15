@@ -246,6 +246,6 @@ Func_08040798:
 .L_08040980:
 	.4byte gDebugMode
 .L_08040984:
-	.4byte Data_0805ea8f
+	.4byte Menu_WorkspaceIconFrames
 .L_08040988:
 	.4byte gInput

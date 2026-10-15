@@ -599,7 +599,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.00044d0c)
     "*/recon/tla/es/rom.o"(.rom.00044e54)
     "*/games/tla/src/graphics/render/load_pair.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000450a4)
     "*/games/tla/src/graphics/window/resource.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00045188)
     "*/games/tla/src/graphics/window/givemsg.o"(.text)

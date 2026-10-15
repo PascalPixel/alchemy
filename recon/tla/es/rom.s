@@ -1237,9 +1237,6 @@ Func_08044c80:
 	.thumb_func
 Func_08044dc8:
 	.incbin "baserom.gba", 0x00044e54, 0x00000184
-	.section .rom.000450a4, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000450a4, 0x00000030
 	.section .rom.00045188, "ax"
 	.global Func_080450fc
 	.type Func_080450fc, %function
@@ -1393,7 +1390,10 @@ StatusMenu_LevelLetterString:
 	.section .rom.0005f920, "ax"
 	.global Data_0805f666
 Data_0805f666:
-	.incbin "baserom.gba", 0x0005f920, 0x00000078
+	.incbin "baserom.gba", 0x0005f920, 0x00000070
+	.global Data_0805f6d6
+Data_0805f6d6:
+	.incbin "baserom.gba", 0x0005f990, 0x00000008
 	.section .rom.0005fa68, "ax"
 	.global Link_TimeLabelString
 Link_TimeLabelString:

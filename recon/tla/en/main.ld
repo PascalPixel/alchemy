@@ -625,7 +625,6 @@ SECTIONS
         "*/recon/tla/raw/08044c80.o"(.text)
         "*/recon/tla/raw/08044dc8.o"(.text)
         "*/games/tla/src/graphics/render/load_pair.o"(.text)
-        "*/recon/tla/raw/08045018.o"(.text)
         "*/games/tla/src/graphics/window/resource.o"(.text)
         "*/recon/tla/raw/080450fc.o"(.text)
         "*/games/tla/src/graphics/window/givemsg.o"(.text)

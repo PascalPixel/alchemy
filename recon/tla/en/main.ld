@@ -3583,7 +3583,7 @@ SECTIONS
         "*/games/tla/src/graphics/field_fx/white_puff.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08969f7e)
         "*/games/tla/src/graphics/field_fx/r1ed.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0896a018)
+        "*/games/tla/src/graphics/field_fx/r1ee.o"(.rodata)
         "*/games/tla/src/graphics/field_fx/coloured_orbs.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0896a18e)
         "*/games/tla/src/graphics/field_fx/falling_rock.o"(.rodata)

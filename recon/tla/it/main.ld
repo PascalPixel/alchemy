@@ -3464,7 +3464,7 @@ SECTIONS
     "*/games/tla/src/graphics/field_fx/white_puff.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00969916)
     "*/games/tla/src/graphics/field_fx/r1ed.o"(.rodata)
-    "*/recon/tla/it/rom.o"(.rom.009699b0)
+    "*/games/tla/src/graphics/field_fx/r1ee.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/coloured_orbs.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00969b26)
     "*/games/tla/src/graphics/field_fx/falling_rock.o"(.rodata)

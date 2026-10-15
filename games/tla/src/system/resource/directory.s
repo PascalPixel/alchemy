@@ -381,7 +381,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_RedCrescentSheetA
 	resource , BattleFx_BlueBeastSheet
 	resource , BattleFx_RedCrescentSheetB
-	resource , BattleFx_SpiralSheet
+	resource SpiralSheet, BattleFx_SpiralSheet
 	resource , BattleFx_VioletStreakSheet
 	resource , BattleFx_CrescentMoonSheet
 	resource , BattleFx_ThornVineSheet

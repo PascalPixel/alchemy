@@ -202,9 +202,7 @@ A game is finished when all six hold (Pascal, 2026-10-08; humanizing,
 - **C3** Every push to main carries its measurement: `make land` compares all
   twelve editions, runs the tests and measures both games, and the pre-push
   hook uploads that count by commit. CI records it on the `progress` branch,
-  draws README's two figures there and sends decomp.dev its report. Model
-  credit comes from main's commit trailers; days through 2026-10-04 keep
-  their approved counts.
+  draws README's two figures there and sends decomp.dev its report.
 
 ### The oracle stays out of the build
 

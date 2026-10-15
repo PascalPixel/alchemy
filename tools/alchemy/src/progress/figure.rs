@@ -1,19 +1,20 @@
 use super::boxtree::{
     content_mix, directories, disk_tiles, legend_items, quiet, source_name, tracked_only,
 };
-use super::history::{day_number, Day, History, Measure, UNTAGGED};
+use super::history::{day_number, History, Measure};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Rect, Tile};
-use super::palette::{BLUE, DARK, DARK_BLUE, DARK_GOLD, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
+use super::palette::{BLUE, DARK_BLUE, DARK_GOLD, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
-use super::sessions::{family, Family};
 use std::path::Path;
 
 pub(crate) const WIDTH: i32 = 838;
 pub(crate) const CHART: &str = "PROGRESS_CHART.png";
 pub(crate) const MAP: &str = "PROGRESS.png";
 pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
+/// Below the plot: the date axis and its labels.
+const FOOTER: i32 = 30;
 
 fn latest_label(history: &History, game: &str) -> Option<String> {
     latest(history, game, Measure::percent, "")
@@ -55,9 +56,7 @@ fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i3
 
 pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     let days = &history.days;
-    let models = models_shown(days);
     let height = WIDTH * 9 / 16;
-    let footer = 72 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
     canvas.bevel(0, 0, WIDTH, height, Relief::Raised);
     canvas.clear_corners(0, 0, WIDTH, height);
@@ -106,7 +105,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         .unwrap_or(0)
         + 12;
     let (left, top) = (40, 32);
-    let (right, bottom) = (WIDTH - 8 - label_room, height - footer);
+    let (right, bottom) = (WIDTH - 8 - label_room, height - FOOTER);
     let (plot_w, plot_h) = (right - left, bottom - top);
     let waiting = series
         .iter()
@@ -166,14 +165,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
             labelled_until = at + width;
         }
     }
-    models_strip(
-        &mut canvas,
-        letters,
-        days,
-        &models,
-        (left, right, bottom + 24),
-        &x_of,
-    );
     let mut ends = Vec::new();
     // DONE data, from 2026-10-08, is a line of its own in the game's darker
     // colour, drawn first so that the code line lies over it where they meet.
@@ -215,151 +206,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         floor = at + LINE as i32;
     }
     canvas
-}
-
-const MODEL_COLOURS: [(&str, &str); 15] = [
-    ("Haiku 4.5", "#fff6cf"),
-    ("Sonnet 5", "#ffe79a"),
-    ("Opus 4.8", "#fcd3ad"),
-    ("Opus 5", "#ffbd8c"),
-    ("Opus 5.5", "#ffa27a"),
-    ("Fable 5", "#eb9a9c"),
-    ("Fable 5.1", "#ff8f94"),
-    ("Claude", "#c9ab84"),
-    ("Luna 5.6", "#dcf0ff"),
-    ("Terra 5.6", "#aed4fb"),
-    ("Sol 5.6", "#9fabf5"),
-    ("Sol 6.1", "#7d8cf0"),
-    ("Astra 6", "#c8a6f7"),
-    ("Grok 4.6", "#000000"),
-    ("Grok", "#000000"),
-];
-fn model_colour(model: &str) -> &'static str {
-    let known = |name: &str| {
-        MODEL_COLOURS
-            .iter()
-            .find(|(m, _)| *m == name)
-            .map(|(_, c)| *c)
-    };
-    known(model).unwrap_or_else(|| match family(model) {
-        Some(Family::Claude) => known("Claude").unwrap_or(MUTED),
-        Some(Family::Codex) => known("Codex").unwrap_or(MUTED),
-        Some(Family::Grok) => "#000000",
-        None => "#8c8c8c",
-    })
-}
-fn models_shown(days: &[Day]) -> Vec<(String, &'static str)> {
-    let mut first = std::collections::BTreeMap::<String, String>::new();
-    for row in days {
-        for (model, count) in &row.models {
-            if *count > 0 {
-                first
-                    .entry(model.clone())
-                    .or_insert_with(|| row.date.clone());
-            }
-        }
-    }
-    let rank = |model: &str| {
-        MODEL_COLOURS
-            .iter()
-            .position(|(m, _)| *m == model)
-            .unwrap_or(MODEL_COLOURS.len())
-    };
-    let mut models = first.into_iter().collect::<Vec<_>>();
-    let group = |model: &str| match family(model) {
-        Some(Family::Claude) => 0,
-        Some(Family::Codex) => 1,
-        Some(Family::Grok) => 2,
-        None => 3,
-    };
-    models.sort_by(|(a, day_a), (b, day_b)| {
-        (a == UNTAGGED, group(a), rank(a), day_a, a).cmp(&(
-            b == UNTAGGED,
-            group(b),
-            rank(b),
-            day_b,
-            b,
-        ))
-    });
-    models
-        .into_iter()
-        .map(|(model, _)| {
-            let colour = model_colour(&model);
-            (model, colour)
-        })
-        .collect()
-}
-const STRIP: i32 = 8;
-const KEY_ROW: i32 = 18;
-fn key_entry(letters: &Letters, model: &str) -> i32 {
-    12 + letters.width(model) as i32 + 12
-}
-fn key_rows<'a>(
-    letters: &Letters,
-    models: &'a [(String, &'static str)],
-) -> Vec<Vec<&'a (String, &'static str)>> {
-    let mut rows: Vec<Vec<_>> = vec![Vec::new()];
-    let mut x = 40;
-    for entry in models {
-        let advance = key_entry(letters, &entry.0);
-        if x > 40 && x + advance - 12 > WIDTH - 8 {
-            rows.push(Vec::new());
-            x = 40;
-        }
-        rows.last_mut().expect("a row").push(entry);
-        x += advance;
-    }
-    rows
-}
-fn legend_rows(letters: &Letters, models: &[(String, &'static str)]) -> i32 {
-    key_rows(letters, models).len() as i32
-}
-fn models_strip(
-    canvas: &mut Canvas,
-    letters: &Letters,
-    days: &[Day],
-    models: &[(String, &'static str)],
-    (left, right, top): (i32, i32, i32),
-    x_of: &dyn Fn(i64) -> i32,
-) {
-    canvas.rounded_fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
-    let present: Vec<(i64, &std::collections::BTreeMap<String, u64>)> = days
-        .iter()
-        .filter_map(|row| {
-            let day = day_number(&row.date)?;
-            (row.models.values().sum::<u64>() > 0).then_some((day, &row.models))
-        })
-        .collect();
-    for (index, (day, counts)) in present.iter().enumerate() {
-        let day = *day;
-        let before = index.checked_sub(1).map_or(day - 1, |i| present[i].0);
-        let after = present.get(index + 1).map_or(day + 1, |next| next.0);
-        let (from, to) = (
-            ((x_of(before) + x_of(day)) / 2 + 1).max(left),
-            ((x_of(day) + x_of(after)) / 2 + 1).min(right),
-        );
-        let total: u64 = counts.values().sum();
-        let mut below = 0u64;
-        for (model, colour) in models {
-            let Some(count) = counts.get(model).copied().filter(|n| *n > 0) else {
-                continue;
-            };
-            let y0 = top + STRIP - (below * STRIP as u64 / total) as i32;
-            below += count;
-            let y1 = top + STRIP - (below * STRIP as u64 / total) as i32;
-            canvas.fill(from, y1, (to - from).max(1), y0 - y1, colour);
-        }
-    }
-    for (row, entries) in key_rows(letters, models).into_iter().enumerate() {
-        let y = top + STRIP + 4 + row as i32 * KEY_ROW;
-        let mut x = left;
-        for (model, colour) in entries {
-            canvas.fill(x, y + 4, 8, 8, SHADOW);
-            canvas.fill(x - 1, y + 3, 8, 8, colour);
-            canvas.text(letters, x + 12, y, model, MUTED, Some(SHADOW));
-            x += key_entry(letters, model);
-        }
-    }
 }
 
 pub(crate) fn map(letters: &Letters, root: &Path) -> Canvas {
@@ -598,18 +444,12 @@ fn caption(letters: &Letters, name: &str, body: Box, folder: bool) -> Option<(Ve
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::progress::history::Current;
+    use crate::progress::history::{Current, Day};
     use crate::progress::letters::fixture;
     fn row(date: &str, tbs: Option<f64>, tla: Option<f64>) -> Day {
         Day {
             tbs: tbs.map(Measure::published),
             tla: tla.map(Measure::published),
-            ..Day::new(date)
-        }
-    }
-    fn counted(date: &str, models: &[(&str, u64)]) -> Day {
-        Day {
-            models: models.iter().map(|(m, n)| (m.to_string(), *n)).collect(),
             ..Day::new(date)
         }
     }
@@ -662,32 +502,6 @@ mod tests {
         assert_eq!(canvas.rgba(2), again.rgba(2));
     }
     #[test]
-    fn the_model_key_groups_each_company_weakest_to_strongest() {
-        let days = [
-            counted("2026-07-16", &[("Untagged", 5), ("Opus 5", 0)]),
-            counted(
-                "2026-07-17",
-                &[("Opus 5.5", 1), ("Fable 5", 2), ("GPT-9 Nova", 1)],
-            ),
-            counted("2026-07-18", &[("Grok 4.6", 1), ("Opus 5", 1)]),
-        ];
-        let shown = models_shown(&days);
-        let names = shown.iter().map(|(m, _)| m.as_str()).collect::<Vec<_>>();
-        assert_eq!(
-            names,
-            [
-                "Opus 5",
-                "Opus 5.5",
-                "Fable 5",
-                "GPT-9 Nova",
-                "Grok 4.6",
-                UNTAGGED
-            ]
-        );
-        assert_eq!(shown[3].1, model_colour("Codex"));
-        assert_eq!(shown[4].1, "#000000");
-    }
-    #[test]
     fn the_chart_starts_each_line_at_its_first_measurement() {
         let letters = fixture();
         let history = History {
@@ -702,32 +516,27 @@ mod tests {
                 Day {
                     tbs: Some(Measure::bytes(6486, 10000)),
                     tla: Some(Measure::bytes(213, 10000)),
-                    ..counted("2026-09-24", &[("Opus 5.5", 3), ("Untagged", 1)])
+                    ..Day::new("2026-09-24")
                 },
             ],
             ..History::default()
         };
         let canvas = chart(&letters, &history);
         assert_eq!((canvas.width, canvas.height), (838, 471));
+        let bottom = canvas.height - FOOTER;
         let gold = super::super::raster::rgb(GOLD);
         let blue = super::super::raster::rgb(BLUE);
-        let column = |x: i32, ink| (0..399).any(|y| canvas.get(x, y) == Some(ink));
+        let column = |x: i32, ink| (0..bottom).any(|y| canvas.get(x, y) == Some(ink));
         assert!(column(41, gold));
         assert!(!column(41, blue) && !column(300, blue));
         let right = (0..WIDTH).rev().find(|x| column(*x, blue)).unwrap();
         assert!(right > 600);
-        let pink = super::super::raster::rgb(model_colour("Opus 5.5"));
-        let grey = super::super::raster::rgb(model_colour(UNTAGGED));
-        let strip = (0..WIDTH)
-            .rev()
-            .find(|x| (423..431).any(|y| canvas.get(*x, y) == Some(pink)))
-            .unwrap();
-        let shades = (423..431).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
-        assert_eq!(shades.iter().filter(|c| **c == Some(pink)).count(), 6);
-        assert_eq!(shades.iter().filter(|c| **c == Some(grey)).count(), 2);
+        // The plot reaches down to the date axis.
+        let well = super::super::raster::rgb(WELL);
+        assert_eq!(canvas.get(WIDTH / 2, bottom - 2), Some(well));
     }
     #[test]
-    fn hourly_points_change_the_line_and_leave_the_date_axis_and_strip_alone() {
+    fn hourly_points_change_the_line_and_leave_the_date_axis_alone() {
         let mut history = History {
             began: "2026-07-16".into(),
             days: vec![
@@ -744,7 +553,7 @@ mod tests {
         ];
         let hourly = chart(&fixture(), &history);
         assert_ne!(daily.rgba(1), hourly.rgba(1));
-        for y in 399..daily.height {
+        for y in (daily.height - FOOTER + 2)..daily.height {
             for x in 0..daily.width {
                 assert_eq!(daily.get(x, y), hourly.get(x, y), "{x},{y}");
             }
@@ -771,7 +580,7 @@ mod tests {
         let canvas = chart(&fixture(), &history);
         for ink in [GOLD, BLUE] {
             let ink = super::super::raster::rgb(ink);
-            assert!((32..399).any(|y| canvas.get(41, y) == Some(ink)));
+            assert!((32..canvas.height - FOOTER).any(|y| canvas.get(41, y) == Some(ink)));
         }
         assert_eq!(history.days, published);
     }
@@ -803,7 +612,7 @@ mod tests {
         assert_ne!(code_only.rgba(1), drawn.rgba(1));
         // The data line has the game's darker colour, which code alone never draws.
         let dark = super::super::raster::rgb(DARK_GOLD);
-        let has = |canvas: &Canvas| (0..WIDTH).any(|x| (32..399).any(|y| canvas.get(x, y) == Some(dark)));
+        let has = |canvas: &Canvas| (0..WIDTH).any(|x| (32..canvas.height - FOOTER).any(|y| canvas.get(x, y) == Some(dark)));
         assert!(has(&drawn) && !has(&code_only));
     }
 }

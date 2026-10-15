@@ -12,7 +12,6 @@ pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod publish;
 pub(crate) mod raster;
-pub(crate) mod sessions;
 
 use calcrom::{Game, GameDone};
 use std::path::Path;
@@ -174,7 +173,6 @@ fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<
     let today = hour[..10].to_string();
     history::record(&mut history, &today, sun, anchor);
     history::record_hour(&mut history, &hour, sun, anchor);
-    history::derive_models(root, &mut history)?;
     history::mark_drawn(&mut history, &today);
     write(&path, &history::text(&history))?;
     let letters = letters::Letters::face();

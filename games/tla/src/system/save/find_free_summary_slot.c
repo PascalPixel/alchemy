@@ -22,7 +22,7 @@ u32 SaveState_FindFreeSummarySlot(void)
 }
 
 s32 Func_0801596c(void);
-s32 Func_08016054(void);
+s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 
 s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
@@ -35,7 +35,7 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
     if (Func_0801596c() != 0) {
         cnt = -9;
     } else {
-        cnt = Func_08016054();
+        cnt = SaveState_LoadSummaryRecords();
         if (flag != 0) {
             work = Ram_HeapSlots->serial_work;
             /* FAKEMATCH: Without it the summary offset starts before the workspace loads (differ 2). */

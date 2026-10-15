@@ -116,7 +116,6 @@ SECTIONS
         "*/recon/tla/raw/08015ca4.o"(.text)
         "*/games/tla/src/system/save/record.o"(.text)
         "*/games/tla/src/system/save/state.o"(.text)
-        "*/recon/tla/raw/08016054.o"(.text)
         "*/games/tla/src/system/save/release_workspace.o"(.text)
         "*/games/tla/src/system/link/serial_queue_command.o"(.text)
         "*/recon/tla/raw/08016180.o"(.text)

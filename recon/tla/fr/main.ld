@@ -122,7 +122,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.00015cd0)
     "*/games/tla/src/system/save/record.o"(.text)
     "*/games/tla/src/system/save/state.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00016080)
     "*/games/tla/src/system/save/release_workspace.o"(.text)
     "*/games/tla/src/system/link/serial_queue_command.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000161ac)

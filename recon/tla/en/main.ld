@@ -436,7 +436,7 @@ SECTIONS
         "*/games/tla/src/graphics/text/get_wide_string_width.o"(.text)
         "*/recon/tla/raw/0803aae4.o"(.text)
         "*/recon/tla/raw/0803ac60.o"(.text)
-        "*/recon/tla/raw/0803acd4.o"(.text)
+        "*/games/tla/src/graphics/text/render_wide.o"(.text)
         "*/recon/tla/raw/0803ae14.o"(.text)
         "*/recon/tla/raw/0803aed8.o"(.text)
         "*/recon/tla/raw/0803b094.o"(.text)

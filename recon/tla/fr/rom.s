@@ -767,12 +767,6 @@ Func_0803a8fc:
 	.thumb_func
 UiText_RenderWideStringAtOffset:
 	.incbin "baserom.gba", 0x0003aa98, 0x000001f0
-	.section .rom.0003ac88, "ax"
-	.global UiText_RenderWideStringInWindow
-	.type UiText_RenderWideStringInWindow, %function
-	.thumb_func
-UiText_RenderWideStringInWindow:
-	.incbin "baserom.gba", 0x0003ac88, 0x00000120
 	.section .rom.0003ada8, "ax"
 	.global UiText_FormatNumber
 	.type UiText_FormatNumber, %function
@@ -809,7 +803,13 @@ Func_0803c068:
 	.type Func_0803c198, %function
 	.thumb_func
 Func_0803c198:
-	.incbin "baserom.gba", 0x0003c184, 0x000001e0
+	.incbin "baserom.gba", 0x0003c184, 0x000000dc
+	.section .rom.0003c260, "ax"
+	.global Func_0803c274
+	.type Func_0803c274, %function
+	.thumb_func
+Func_0803c274:
+	.incbin "baserom.gba", 0x0003c260, 0x00000104
 	.section .rom.0003c3f8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003c3f8, 0x0000013c

@@ -1,6 +1,11 @@
 /* Near miss: differ 2 of 48 (one reordered row): the native copies the anchor
- * to r1 before it adds 6 to the radius; the draft copies it after the
- * multiply. The twin of ☀️'s SceneEffect_UpdateCounterDrivenOrbit. */
+ * to r1 (the reload for anchor->x) before it adds 6 to the radius; here sched2
+ * gives the add 81 and the multiply 80 against the copy's 79, so the copy
+ * follows the multiply. The twin of ☀️'s SceneEffect_UpdateCounterDrivenOrbit;
+ * its form verbatim (byte offsets, the angle through a block local) also
+ * differs by 2. Tried: the sum and product in either order (9), the radius as
+ * a block local, the anchor through a one-pass block (4), an asm input operand
+ * on the anchor (45), three minutes of alchemy permute (17,543 candidates). */
 #include "../../../../games/tla/src/field/overlay_6ae/ov6ae.h"
 
 s32 Math_Cosine(s32 angle);

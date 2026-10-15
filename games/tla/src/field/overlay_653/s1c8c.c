@@ -101,3 +101,42 @@ void Func_02001e44(void)
     Func_02001db4();
 }
 
+
+void Func_02001e58(void)
+{
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    s32 x = leader->x >> 20;
+    s32 z = leader->z >> 20;
+    struct PartyState *party;
+    u8 *flags;
+    s32 zero;
+
+    if (z == 5) {
+        if (x == 9 && (gInput.held & 16) == 0)
+            return;
+        if (x == 11 && (gInput.held & 32) == 0)
+            return;
+    } else if (x == 10 && z == 6 && (gInput.held & 64) == 0) {
+        return;
+    }
+    Func_020051c0();
+    Func_02005370(0);
+    /* FAKEMATCH: the flags address, the zero and gPartyState's address are taken before an empty asm, which holds the byte store below the address load as the native has it; the plain store goes first (differ 2). */
+    flags = &leader->motion_flags;
+    zero = 0;
+    party = &gPartyState;
+    asm("");
+    *flags = zero;
+    ObjectMotion_SetSpeedParameters(party->current_owner, 0x10000, 0x8000);
+    ObjectMotion_SetPositionAndReset(party->current_owner, 168, 80);
+    Func_020052b0(party->current_owner, 0xc000);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(party->current_owner), 0);
+    Object_SetModeById(party->current_owner, 13);
+    Func_02005160(leader, 0xa80000, -0xc0000, 0x500000);
+    Func_02005168(leader);
+    Object_SetModeById(party->current_owner, 10);
+    Func_020053d8(123);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_020052f8(8);
+}

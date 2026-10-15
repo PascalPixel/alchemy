@@ -24,6 +24,8 @@
  *     the position pointer's)                                          176
  *   the choice as &draw[(i & 3) == 0] taken early                      399
  *   the choice as a byte offset into the pair                          165
+ *   alchemy permute 8 minutes, 2 jobs: 170 with one variable expanded
+ *     in place (an unclear rewrite of the printed source; not kept)
  */
 #include "types.h"
 #include "io_reg.h"

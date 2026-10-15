@@ -1,11 +1,12 @@
 use super::calcrom::GameDone;
-use super::sessions;
-use std::collections::BTreeMap;
 use std::path::Path;
 
-const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttbs_data\ttbs_data_total\ttla_done\ttla_executable\ttla_percent\ttla_data\ttla_data_total\tmodels\toverhaul";
+const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttbs_data\ttbs_data_total\ttla_done\ttla_executable\ttla_percent\ttla_data\ttla_data_total\toverhaul";
+/// The columns while each day also counted its commits by model, read and
+/// rewritten without that column.
+const MODELS_HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttbs_data\ttbs_data_total\ttla_done\ttla_executable\ttla_percent\ttla_data\ttla_data_total\tmodels\toverhaul";
 /// The columns before DONE data (Pascal, 2026-10-08), read and rewritten
-/// with the data columns left empty.
+/// with the data columns left empty and without the model counts.
 const CODE_ONLY_HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
 /// The note on the first day that records DONE data.
 pub(crate) const DATA_BEGINS: &str = "DONE is code and data from here (Pascal, 2026-10-08)";
@@ -54,7 +55,6 @@ pub(crate) struct Day {
     pub date: String,
     pub tbs: Option<Measure>,
     pub tla: Option<Measure>,
-    pub models: BTreeMap<String, u64>,
     pub correction: Option<String>,
 }
 impl Day {
@@ -73,7 +73,6 @@ impl Day {
     fn is_empty(&self) -> bool {
         self.tbs.is_none()
             && self.tla.is_none()
-            && self.models.is_empty()
             && self.correction.is_none()
     }
 }
@@ -155,12 +154,6 @@ pub(crate) fn text(history: &History) -> String {
                 show(measure.and_then(|m| m.data_total).map(|v| v.to_string())),
             ]
         };
-        let models = day
-            .models
-            .iter()
-            .map(|(name, count)| format!("{name}={count}"))
-            .collect::<Vec<_>>()
-            .join(";");
         let note = day
             .correction
             .as_deref()
@@ -169,11 +162,6 @@ pub(crate) fn text(history: &History) -> String {
         let mut row = vec![day.date.clone()];
         row.extend(fields(day.tbs.as_ref()));
         row.extend(fields(day.tla.as_ref()));
-        row.push(if models.is_empty() {
-            "-".into()
-        } else {
-            models
-        });
         row.push(note);
         text.push_str(&row.join("\t"));
         text.push('\n');
@@ -216,21 +204,25 @@ fn parse(text: &str) -> Result<History, String> {
         if line.starts_with('#') || line.is_empty() {
             continue;
         }
-        let Some(with_data) = header else {
+        let Some(columns) = header else {
             header = Some(match line {
-                HEADER => true,
-                CODE_ONLY_HEADER => false,
+                HEADER => HEADER,
+                MODELS_HEADER => MODELS_HEADER,
+                CODE_ONLY_HEADER => CODE_ONLY_HEADER,
                 _ => return Err(problem("unexpected progress columns")),
             });
             continue;
         };
         let mut fields = line.split('\t').collect::<Vec<_>>();
-        if !with_data && fields.len() == 9 {
+        if columns == CODE_ONLY_HEADER && fields.len() == 9 {
             fields.splice(7..7, ["-", "-"]);
             fields.splice(4..4, ["-", "-"]);
         }
-        if fields.len() != 13 {
-            return Err(problem("expected thirteen progress columns"));
+        if columns != HEADER && fields.len() == 13 {
+            fields.remove(11);
+        }
+        if fields.len() != 12 {
+            return Err(problem("expected twelve progress columns"));
         }
         let date = fields[0];
         let valid_date = hour_number(date).is_some();
@@ -294,27 +286,11 @@ fn parse(text: &str) -> Result<History, String> {
             }
         }
         if fields[11] != "-" {
-            for field in fields[11].split(';') {
-                let (name, count) = field
-                    .rsplit_once('=')
-                    .ok_or_else(|| problem("model counts use name=count"))?;
-                let count = count
-                    .parse::<u64>()
-                    .map_err(|_| problem("invalid model count"))?;
-                if name.is_empty() || count == 0 || row.models.insert(name.into(), count).is_some()
-                {
-                    return Err(problem("model counts must be positive and distinct"));
-                }
-            }
-        }
-        if fields[12] != "-" {
-            row.correction = Some(fields[12].to_string());
+            row.correction = Some(fields[11].to_string());
         }
         if date.len() == 13 {
-            if !row.models.is_empty() || row.correction.is_some() {
-                return Err(problem(
-                    "hourly rows hold measurements; attribution and notes stay daily",
-                ));
+            if row.correction.is_some() {
+                return Err(problem("hourly rows hold measurements; notes stay daily"));
             }
             hours.push(row);
         } else {
@@ -465,23 +441,6 @@ pub(crate) fn record(
         history.days.retain(|row| row.date != date);
     }
 }
-pub(crate) const UNTAGGED: &str = "Untagged";
-pub(crate) const FROZEN_THROUGH: &str = "2026-10-04";
-
-pub(crate) fn derive_models(root: &Path, history: &mut History) -> Result<(), String> {
-    let log = sessions::git_log(root, Some(FROZEN_THROUGH))?;
-    for (date, models) in count_models(&sessions::commits(&log)) {
-        record_models(history, &date, &models);
-    }
-    Ok(())
-}
-
-pub(crate) fn record_models(history: &mut History, date: &str, models: &BTreeMap<String, u64>) {
-    if models.is_empty() {
-        return;
-    }
-    history.day_mut(date).models = models.clone();
-}
 pub(crate) fn as_drawn(history: &History) -> History {
     let mut drawn = history.clone();
     let Some(figures) = &history.figures else {
@@ -540,17 +499,6 @@ pub(crate) fn civil(day: i64) -> (i64, i64, i64) {
     (yoe + era * 400 + i64::from(m <= 2), m, d)
 }
 
-
-fn count_models(commits: &[sessions::Commit]) -> BTreeMap<String, BTreeMap<String, u64>> {
-    let mut days = BTreeMap::<String, BTreeMap<String, u64>>::new();
-    for commit in commits.iter().filter(|c| c.date.as_str() > FROZEN_THROUGH) {
-        let day = days.entry(commit.date.clone()).or_default();
-        for model in sessions::label(commit) {
-            *day.entry(model).or_default() += 1;
-        }
-    }
-    days
-}
 #[cfg(test)]
 pub(crate) fn previous(date: &str) -> Option<String> {
     let (y, m, d) = civil(day_number(date)? - 1);
@@ -646,7 +594,6 @@ mod tests {
         let mut history = History {
             began: "2026-09-27".into(),
             days: vec![Day {
-                models: BTreeMap::from([("Astra 6".into(), 17), ("Sol 6".into(), 8)]),
                 correction: Some("Executable audit pending after cleanup".into()),
                 ..day(
                     "2026-09-28",
@@ -684,21 +631,17 @@ mod tests {
     }
 
     #[test]
-    fn days_after_the_frozen_table_are_counted_from_commit_trailers() {
-        let commit = |date: &str, trailers: &str| sessions::Commit {
-            date: date.into(),
-            author: "Pascal Pixel".into(),
-            trailers: trailers.into(),
-        };
-        let days = count_models(&[
-            commit(FROZEN_THROUGH, "Sol 6 <agent@example.com>"),
-            commit("2026-10-05", "Claude Opus 5.5 <noreply@anthropic.com>"),
-            commit("2026-10-05", "Claude Opus 5.5 <noreply@anthropic.com>"),
-            commit("2026-10-06", ""),
-        ]);
-        assert!(!days.contains_key(FROZEN_THROUGH));
-        assert_eq!(days["2026-10-05"], BTreeMap::from([("Opus 5.5".into(), 2)]));
-        assert_eq!(days["2026-10-06"], BTreeMap::from([(UNTAGGED.into(), 1)]));
+    fn model_counts_are_read_from_older_rows_and_dropped() {
+        let old = format!(
+            "# began\t2026-10-05\n{MODELS_HEADER}\n2026-10-05\t1\t10\t-\t-\t-\t-\t-\t-\t-\t-\tOpus 5.5=3;Untagged=1\tstricter\n"
+        );
+        let history = parse(&old).unwrap();
+        assert_eq!(history.days[0].tbs, Some(Measure::bytes(1, 10)));
+        assert_eq!(history.days[0].correction.as_deref(), Some("stricter"));
+        let text = text(&history);
+        assert!(!text.contains("models") && !text.contains("Opus"), "{text}");
+        assert!(text.contains("2026-10-05\t1\t10\t-\t-\t-\t-\t-\t-\t-\t-\tstricter\n"), "{text}");
+        assert_eq!(parse(&text).unwrap().days, history.days);
     }
     fn done(bytes: i64) -> GameDone {
         GameDone {
@@ -737,18 +680,6 @@ mod tests {
         assert_eq!(history.days.len(), 3);
     }
     #[test]
-    fn a_day_takes_its_model_counts() {
-        let mut history = History {
-            days: vec![day("2026-09-24", Some(Measure::published(1.0)), None)],
-            ..History::default()
-        };
-        let models = BTreeMap::from([("Opus 5.5".to_string(), 3), (UNTAGGED.to_string(), 1)]);
-        record_models(&mut history, "2026-09-24", &models);
-        record_models(&mut history, "2026-09-23", &models);
-        assert_eq!(history.days[1].models["Opus 5.5"], 3);
-        assert_eq!(history.days[0].date, "2026-09-23");
-    }
-    #[test]
     fn civil_dates_count_days() {
         assert_eq!(day_number("1970-01-01"), Some(0));
         assert_eq!(
@@ -770,7 +701,7 @@ mod tests {
         let text_before = text(&history);
         assert!(text_before.starts_with(&format!("# Published progress; '-' means no value was recorded.\n# began\t2026-10-05\n{HEADER}\n")));
         assert!(text_before.contains(
-            "2026-10-05\t7808068\t8237808\t-\t-\t-\t731298\t11872824\t-\t-\t-\tOpus 5.5=3\t-\n"
+            "2026-10-05\t7808068\t8237808\t-\t-\t-\t731298\t11872824\t-\t-\t-\t-\n"
         ));
         assert_eq!(parse(&text_before).unwrap().days, history.days);
         let sun = GameDone {
@@ -796,17 +727,17 @@ mod tests {
             (loaded.days, loaded.hours),
             (history.days.clone(), history.hours.clone())
         );
-        let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t-\t9\t10\t-\t-\t-\t-\t-\t-\t-\n");
+        let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t-\t9\t10\t-\t-\t-\t-\t-\t-\n");
         assert!(parse(&invalid).is_err());
     }
     #[test]
     fn rebuilt_data_sits_beside_a_published_percentage_but_never_alone() {
         let head = format!("# began\t2026-07-16\n{HEADER}\n");
-        let beside = format!("{head}2026-07-16\t-\t-\t1.0\t0\t100\t-\t-\t-\t-\t-\t-\t-\n");
+        let beside = format!("{head}2026-07-16\t-\t-\t1.0\t0\t100\t-\t-\t-\t-\t-\t-\n");
         let history = parse(&beside).unwrap();
         assert_eq!(history.days[0].tbs.as_ref().unwrap().data_percent(), Some(0.0));
         assert_eq!(data_points(&history, "tbs").len(), 1);
-        let alone = format!("{head}2026-07-16\t-\t-\t-\t0\t100\t-\t-\t-\t-\t-\t-\t-\n");
+        let alone = format!("{head}2026-07-16\t-\t-\t-\t0\t100\t-\t-\t-\t-\t-\t-\n");
         assert!(parse(&alone).is_err());
     }
 

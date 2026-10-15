@@ -23,10 +23,9 @@ once every language that uses it comes out byte for byte identical, and a
 game is only 100% done when both numbers are.
 
 The chart shows that climb day by day: code as the bright line and data,
-measured since 8 October 2026, as the darker one. The colours along the bottom
-show which AI models did the work. Sudden drops are honesty checks: when we find
-something that only looked finished, it comes back off the count until it’s
-done properly. The map below it shows the whole project by size: everything
+measured since 8 October 2026, as the darker one. Sudden drops are honesty
+checks: when we find something that only looked finished, it comes back off
+the count until it’s done properly. The map below it shows the whole project by size: everything
 in light rose is still waiting to be rewritten.
 
 ## What this is

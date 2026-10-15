@@ -1,69 +1,56 @@
-/* ☀️ SpawnHeavyImpactEffect; differ 18: arm9tdmi scheduling of the z copy
-   and the fragment speed stores. */
+/* Near miss, differ 6 of 80 (2026-10-15), ported from ☀️'s SpawnHeavyImpactEffect
+ * with ⚓️'s objects 671 and 673. The halfword timer at 0x5e takes a struct field so
+ * the 20 is an immediate. Left: the listing loads the -0x200000 literal right after
+ * the x store and before pos.y's load; this loads it after the z load (one pair), and
+ * a forced opaque literal moves the loop's registers. */
 #include "types.h"
+#include "system.h"
 #include "objdisp.h"
 #include "object_efx.h"
-#include "system.h"
+#include "object_runtime.h"
 
-struct ImpactPosition {
+struct ImpactVector {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct ImpactSource {
-    u8 reserved_00[8];
-    struct ImpactPosition position;
+extern const s32 Data_080f0e78[];
+
+struct ParticleTimer {
+    u8 unknown_00[0x5e];
+    u16 timer;
 };
 
-struct ImpactObject {
-    u8 reserved_00[0x30];
-    s32 field_30;
-    s32 field_34;
-    u8 reserved_38[0x1d];
-    u8 mode_55;
-    u8 reserved_56[8];
-    u16 field_5e;
-};
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 
-void Audio_PlayCue(s32 cue);
-extern const u8 Data_080f0e78[];
-struct ImpactObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct ImpactObject *object, s32 magnitude, s32 angle);
-
-s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
+s32 Func_080de154(struct ObjectRuntime *src)
 {
-    struct ImpactPosition position;
-    struct ImpactObject *object;
-    struct ImpactObject *fragment;
+    struct ImpactVector pos;
+    struct ObjectRuntime *obj;
+    struct ObjectRuntime *frag;
     s32 i;
-    s32 lift;
 
     Audio_PlayCue(134);
-
-    position.x = source->position.x;
-    lift = -0x200000;
-    /* FAKEMATCH: ⚓️ loads the lift before the rest of the position. */
-    __asm__ volatile("" : "+r"(lift));
-    position.y = source->position.y;
-    position.z = source->position.z;
-    object = Object_Spawn(0x29f, position.x, position.y + lift, position.z);
-    if (object != NULL) {
-        object->mode_55 = 0;
-        object->field_5e = 20;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+    pos.x = src->x;
+    pos.y = src->y;
+    pos.z = src->z;
+    obj = Object_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
+    if (obj != NULL) {
+        obj->motion_flags = 0;
+        ((struct ParticleTimer *)obj)->timer = 20;
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
     }
 
     for (i = 0; i < 12; i++) {
-        fragment = Object_Spawn(0x2a1, position.x, position.y, position.z);
-        if (fragment != NULL) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, (u32)Data_080f0e78);
-            fragment->field_30 = Random16() + 0x10000;
-            fragment->field_34 = 0x10000;
-            fragment->mode_55 = 0;
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                fragment, Random16() * 24 + 0x80000, Random16());
+        frag = Object_Spawn(673, pos.x, pos.y, pos.z);
+        if (frag != NULL) {
+            ObjectDispatch_InitializeFar((struct DispatchObject *)frag, Data_080f0e78);
+            frag->speed_limit = Random16() + (1 << 16);
+            frag->acceleration = 1 << 16;
+            frag->motion_flags = 0;
+            Motion_SetTargetPositionFromMagnitudeAngle(frag, Random16() * 24 + (8 << 16), Random16());
         }
     }
     return 0;

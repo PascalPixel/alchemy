@@ -1,21 +1,17 @@
+/* Near miss, differ 4 of 130 (2026-10-15), ported from ☀️'s RunBattleEffect07
+ * (DEFINE_ITEM_BREAK_EFFECT) with ⚓️'s fragment object 673 and its script
+ * Data_080f0e78. In the fragment loop the listing starts the 0x100000 lift before it
+ * loads work->y and starts the object id (movs r0, #209) before it loads work->z;
+ * this loads both first. A block-local lift, a split y and every single barrier
+ * position measured the same or worse. 080df6f4 is the same body around
+ * Func_080df820. */
 #include "types.h"
-#include "objdisp.h"
 #include "system.h"
-
-struct BattleEffectScene {
-    u8 reserved_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct ScatterShard {
-    u8 reserved_00[0x30];
-    s32 speed;
-    s32 lift;
-    u8 reserved_38[0x55 - 0x38];
-    u8 flag;
-};
+#include "objdisp.h"
+#include "object_dispatch.h"
+#include "object_runtime.h"
+#include "fx_scene.h"
+#include "ram_buffer.h"
 
 struct ScatterPosition {
     s32 x;
@@ -23,63 +19,59 @@ struct ScatterPosition {
     s32 z;
 };
 
-#include "ram_buffer.h"
+extern const s32 Data_080f0e78[];
 
 void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
-void Motion_SetTargetPositionFromMagnitudeAngle(
-    void *object, s32 magnitude, s32 angle);
-void Object_CommitPosition(void *object);
-void Audio_PlayCue(s32 sound);
-struct ScatterShard *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-extern const u8 BattleFx_FragmentScript[];
-void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct ObjectRuntime *Func_080ddfd4(s32 x, s32 y, s32 z, s32 angle);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
+void Object_Destroy(struct ObjectRuntime *object);
 
-void RunBattleEffect07(void)
+void Func_080ddea8(void)
 {
-    struct BattleEffectScene *scene;
-    struct ScatterShard *obj;
-    void *anchors[2];
-    struct ScatterPosition position;
-    void **walk;
-    s32 index;
-    s32 magnitude;
+    struct BattleFxScene *work;
+    struct ObjectRuntime *obj;
+    struct ObjectRuntime *pair[2];
+    struct ScatterPosition pos;
+    struct ObjectRuntime **walk;
+    s32 n;
+    s32 dist;
 
-    scene = Ram_HeapSlots->effect_work;
+    work = Ram_HeapSlots->effect_work;
     BattleEffect_InitializeSharedScene();
-    position.x = scene->x;
-    position.y = scene->y + 0x100000;
-    position.z = scene->z;
-    anchors[0] = BattleFx_SpawnItemBreakMode3(
-        position.x + 0x200000, position.y, position.z, 0x8000);
-    anchors[1] = BattleFx_SpawnItemBreakMode3(
-        position.x - 0x200000, position.y, position.z, 0);
+    pos.x = work->x;
+    pos.y = work->y + 0x100000;
+    pos.z = work->z;
+    pair[0] = Func_080ddfd4(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+    pair[1] = Func_080ddfd4(pos.x - 0x200000, pos.y, pos.z, 0);
 
     WaitFrames(15);
-    walk = anchors;
-    for (index = 0; index < 2; index++) {
+    walk = pair;
+    for (n = 0; n < 2; n++) {
         obj = *walk++;
         if (obj != 0)
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                obj, 0x180000, *(u16 *)((u8 *)obj + 6));
+            Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
     }
 
-    Object_CommitPosition(anchors[0]);
+    Object_CommitPosition(pair[0]);
     Audio_PlayCue(134);
-    for (index = 0; index < 24; index++) {
-        obj = SpawnShard(scene, &position);
+    for (n = 0; n < 24; n++) {
+        pos.x = work->x;
+        pos.y = work->y + 0x100000;
+        pos.z = work->z;
+        obj = Object_Spawn(673, pos.x, pos.y, pos.z);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
-            obj->speed = Random16() + 0x20000;
-            obj->lift = 0x20000;
-            obj->flag = 0;
-            magnitude = Random16() * 24 + 0x80000;
-            Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, Data_080f0e78);
+            obj->speed_limit = Random16() + 0x20000;
+            obj->acceleration = 0x20000;
+            obj->motion_flags = 0;
+            dist = Random16() * 24 + 0x80000;
+            Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
         }
     }
 
-    Object_Destroy(anchors[0]);
-    Object_Destroy(anchors[1]);
+    Object_Destroy(pair[0]);
+    Object_Destroy(pair[1]);
     BattleFx_PrepareBufferInterpolation();
 }

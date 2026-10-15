@@ -1,92 +1,67 @@
-#include "fixed_math.h"
+/* Near miss, differ 6 of 117 (2026-10-15), ported from ☀️'s
+ * BattleFx_UpdateRadialCamera. The listing loads the effect work before it copies
+ * the slot argument (ldr r3, [r3]; adds r7, r0, #0) and keeps two later loads one slot
+ * earlier; no single or paired barrier moved them. */
 #include "types.h"
-#include "scene.h"
 #include "system.h"
-extern u8 Data_03001f30[];
-s32 BattleEffect_RunFallbackObjectTransition();
+#include "effect_slot.h"
+#include "fx_scene.h"
+#include "ram_buffer.h"
 
-struct EffectPosition {
+struct EffectVector {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct EffectCamera {
-    s32 filler_00;
-    s32 x;
-    s32 y;
-    s32 z;
-};
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
+void Camera_WorldToScreen(struct EffectVector *pos);
+void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
 
-struct RadialCameraEffect {
-    u8 filler_00[0xC];
-    s32 x;
-    s32 z;
-    s32 source_x;
-    s32 source_z;
-    s32 filler_1c;
-    s32 velocity;
-    s32 acceleration;
-    u8 filler_28[0xA];
-    u16 field_32;
-    u8 filler_34[0xC];
-    s8 state;
-    u8 filler_41;
-    u8 flag;
-};
-
-extern struct EffectCamera *gEffectWork;
-
-extern void Vector_AddPolarOffset(s32, s32, struct EffectPosition *);
-extern void Camera_WorldToScreen(struct EffectPosition *);
-extern s32 BattleFx_HasReachedTarget(struct RadialCameraEffect *);
-
-void BattleFx_UpdateRadialCamera(struct RadialCameraEffect *effect)
+void Func_080e0020(struct EffectSlot *effect)
 {
-    struct EffectCamera *camera;
-    struct EffectPosition position;
-    s8 *state_pointer;
+    struct BattleFxScene *scene;
+    struct EffectVector pos;
+    s8 *st;
     s16 angle;
     s32 state;
 
-    camera = gEffectWork;
-    state_pointer = &effect->state;
+    scene = Ram_HeapSlots->effect_work;
+    st = &effect->state;
 top:
-    state = *state_pointer;
+    state = *st;
     if (state == 0) {
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        pos.x = effect->origin_x;
+        pos.z = effect->origin_z;
         angle = Random16();
-        Vector_AddPolarOffset(Random16() * 30 + 0x280000, (u16)angle, &position);
-        effect->x = position.x;
-        effect->z = position.z;
-        effect->acceleration = 0x40000;
-        effect->velocity = 0x40000;
-        effect->flag = state;
-        goto advance;
-    } else if (state == 1) {
-        if (BattleFx_HasReachedTarget(effect)!= 0)
-            return;
-        *state_pointer = (u8)*state_pointer + 1;
-        goto top;
-    } else if (state == 2) {
-        position.x = camera->x;
-        position.y = camera->y + 0x80000;
-        position.z = camera->z;
-        Camera_WorldToScreen(&position);
-        Vector_AddPolarOffset(0x40000, Random16(), &position);
-        effect->x = position.x;
-        effect->z = position.z;
-        effect->field_32 = 0x1000;
-        effect->flag = 1;
-advance:
-        *state_pointer = (u8)*state_pointer + 1;
-        return;
-    } else if (state == 3) {
-        if (BattleFx_HasReachedTarget(effect) == 0)
-            BattleFx_ClearOwnedSlot(effect);
-        return;
-    } else {
+        Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+        effect->target_x = pos.x;
+        effect->target_z = pos.z;
+        effect->acceleration = 4 << 16;
+        effect->max_speed = 4 << 16;
+        effect->flag42 = state;
+        *st = *st + 1;
         return;
     }
+    if (state == 1) {
+        if (BattleFx_HasReachedTarget(effect) != 0)
+            return;
+        *st = *st + 1;
+        goto top;
+    }
+    if (state == 2) {
+        pos.x = scene->x;
+        pos.y = scene->y + (8 << 16);
+        pos.z = scene->z;
+        Camera_WorldToScreen(&pos);
+        Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+        effect->target_x = pos.x;
+        effect->target_z = pos.z;
+        effect->max_turn_step = 0x1000;
+        effect->flag42 = 1;
+        *st = *st + 1;
+        return;
+    }
+    if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+        BattleFx_ClearOwnedSlot(effect);
 }

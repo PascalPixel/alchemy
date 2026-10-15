@@ -3938,12 +3938,9 @@ BattlePresentation_AppendLinkedActions:
 	.section .rom.0011e848, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011e848, 0x00000800
-	.section .rom.0011f048, "ax"
-	.global BattleMotion_SetRecordChildValues
-	.type BattleMotion_SetRecordChildValues, %function
-	.thumb_func
-BattleMotion_SetRecordChildValues:
-	.incbin "baserom.gba", 0x0011f048, 0x00000300
+	.section .rom.0011f0a0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011f0a0, 0x000002a8
 	.section .rom.0011f4ec, "ax"
 	.global Func_0811f4d4
 	.type Func_0811f4d4, %function

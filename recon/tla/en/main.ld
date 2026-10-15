@@ -1784,7 +1784,7 @@ SECTIONS
         "*/recon/tla/raw/0811e830.o"(.text)
         "*/recon/tla/raw/0811ea0c.o"(.text)
         "*/recon/tla/raw/0811edb0.o"(.text)
-        "*/recon/tla/raw/0811f030.o"(.text)
+        "*/games/tla/src/battle/motion/set_record_child_values.o"(.text)
         "*/recon/tla/raw/0811f088.o"(.text)
         "*/games/tla/src/battle/motion/run_value_sequence.o"(.text)
         "*/games/tla/src/battle/actor.o"(.text)

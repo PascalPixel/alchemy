@@ -40,3 +40,5 @@ AlchemyUncreditedEnd_08013062:
 	add	ip, ip, #212
 	stm	ip, {r2, r3, r4}
 	b	.L_080130ac
+	.global Resource_ExecuteTransferSize
+	.set Resource_ExecuteTransferSize, . - Resource_ExecuteTransferCode

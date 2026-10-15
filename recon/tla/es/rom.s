@@ -99,8 +99,12 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 Input_UpdateKeyRepeatAndDirection:
 	.incbin "baserom.gba", 0x000138e0, 0x0000027c
-	.section .rom.00013db0, "ax"
-	.incbin "baserom.gba", 0x00013db0, 0x000000ec
+	.section .rom.00013e10, "ax"
+	.global Func_08013de4
+	.type Func_08013de4, %function
+	.thumb_func
+Func_08013de4:
+	.incbin "baserom.gba", 0x00013e10, 0x0000008c
 	.section .rom.00014048, "ax"
 	.global AffineMatrix_BuildForEffect
 	.type AffineMatrix_BuildForEffect, %function

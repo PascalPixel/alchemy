@@ -84,7 +84,6 @@ SECTIONS
         "*/recon/tla/raw/080138b4.o"(.text)
         "*/recon/tla/raw/0801399c.o"(.text)
         "*/games/tla/src/system/io.o"(.text)
-        "*/recon/tla/raw/08013d84.o"(.text)
         "*/recon/tla/raw/08013de4.o"(.text)
         "*/games/tla/src/graphics/display/blend.o"(.text)
         "*/recon/tla/raw/0801401c.o"(.text)

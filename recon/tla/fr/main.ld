@@ -91,7 +91,7 @@ SECTIONS
     "*/games/tla/src/system/system.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000138e0)
     "*/games/tla/src/system/io.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00013db0)
+    "*/recon/tla/fr/rom.o"(.rom.00013e10)
     "*/games/tla/src/graphics/display/blend.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00014048)
     "*/games/tla/src/graphics/render/oambuck.o"(.text)

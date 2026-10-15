@@ -63,8 +63,8 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames)
 
 static inline void LeaderAnimate(s32 animation, s32 frames)
 {
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_0200226c(gPartyState.current_owner, animation, frames);
+    /* FAKEMATCH: scene calls reach the engine through one inline layer; called as value-returning, the animation and frames are set before the owner is loaded (differ 4 as a void call). */
+    ((s32 (*)(s32, s32, s32))Func_0200226c)(gPartyState.current_owner, animation, frames);
 }
 
 const u8 *Func_020000b4(void)
@@ -223,5 +223,31 @@ void Func_02000400(void)
         Func_02002244(msg + 2);
     }
     Func_02002254(16, 0);
+    Func_020021cc();
+}
+
+void Func_02000458(void)
+{
+    Func_020021c4();
+    Func_020022bc(0);
+    ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
+    if (FlagChk(0x92b)) {
+        Func_02002244((s32)MsgTryingAgainWhat);
+        Func_02002254(15, 0);
+    } else {
+        Func_02002244((s32)MsgAndWhatWere);
+        Func_02002254(15, 0);
+        if (FlagChk(0x923)) {
+            LeaderAnimate(256, 30);
+            Func_0200226c(15, 259, 30);
+            Func_02002254(15, 0);
+            LeaderAnimate(258, 30);
+            Object_SetModeById(15, 4);
+            Battle_WaitMode0(30);
+            Func_02002254(15, 0);
+        }
+        FlagSet(0x92b);
+    }
+    ActorTurn(15, 0x4000, 0);
     Func_020021cc();
 }

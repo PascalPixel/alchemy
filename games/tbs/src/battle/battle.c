@@ -82,75 +82,95 @@
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
 
+// One row of the debug party presets (presets.tsv): a party member, the
+// level to raise them to, the djinn of each element to give them, the items
+// to equip and up to two abilities to teach. A row whose owner is -1 ends a
+// preset.
 struct DebugPartyEntry {
   s8 owner;
   u8 level;
   s8 djinnCounts[4];
   u16 items[4];
-  u16 actions[2];
-  u16 unk12;
+  u16 abilities[2];
+  u16 unused; // 0 in every row
 };
 
 extern struct DebugPartyEntry gDebug_PartyPresets[];
 
+#define DEBUG_PRESET_LAST_ROW 332
+#define DEBUG_PRESET_END -1
+
+// The size of a member's inventory.
+#define INVENTORY_SLOTS 16
+
+//--------------------------------------------------------------------------
+// Debug: replaces the party with the members of preset number preset.
+// Each member is raised to the row's level, given the row's djinn (Set, in
+// order of their numbers across the party), the row's abilities, and an
+// emptied inventory holding the row's items, each equipped.
+// Returns 1 when the table ends before that preset, 0 otherwise.
+//--------------------------------------------------------------------------
 s32 DebugParty_LoadPreset(s32 preset) {
-  s32 nextDjinn[4];
-  struct BattleUnit *state;
+  s32 nextDjinn[4]; // the next djinn number of each element to hand out
+  struct BattleUnit *member;
   s32 owner;
-  s32 done;
+  s32 notFound;
   s32 row;
   s32 j;
-  s32 set;
+  s32 currentPreset;
   s32 i;
 
-  done = 0;
+  notFound = 0;
   Party_RemoveActiveOwnerFar(0);
   Party_RemoveActiveOwnerFar(1);
   Party_RemoveActiveOwnerFar(2);
   Party_RemoveActiveOwnerFar(3);
   Party_RemoveActiveOwnerFar(5);
 
-  set = 0;
+  currentPreset = 0;
   for (i = 0; i < 4; i++)
     nextDjinn[i] = 0;
 
   for (row = 0;; row++) {
     owner = gDebug_PartyPresets[row].owner;
-    if (row < 0 || row > 332) {
-      done = 1;
+    if (row < 0 || row > DEBUG_PRESET_LAST_ROW) {
+      notFound = 1;
       break;
     }
-    if (owner == -1) {
-      if (set == preset)
+    if (owner == DEBUG_PRESET_END) {
+      if (currentPreset == preset)
         break;
-      set++;
+      currentPreset++;
       continue;
     }
-    if (set != preset)
+    if (currentPreset != preset)
       continue;
 
     Party_AddActiveOwnerFar(owner);
     Party_AdvanceOwnerCountToTargetFar(owner, gDebug_PartyPresets[row].level);
-    state = (struct BattleUnit *)UnitGetFar(owner);
+
+    // Start from no djinn and no abilities.
+    member = (struct BattleUnit *)UnitGetFar(owner);
     for (i = 0; i < 4; i++) {
-      state->djinnOwnedCounts[i] = 0;
-      state->djinnActiveCounts[i] = 0;
-      state->djinnAvailable[i] = 0;
-      state->djinnActive[i] = 0;
+      member->djinnOwnedCounts[i] = 0;
+      member->djinnActiveCounts[i] = 0;
+      member->djinnAvailable[i] = 0;
+      member->djinnActive[i] = 0;
     }
     for (i = 0; i < 32; i++)
       /* FAKEMATCH: the halfword store through a u16 cast loads its zero from
        * the literal pool, as the reference does. 2026-10-13: the field store
-       * state->actionSlots[i].encodedAction = 0, with or without a (u16) cast
+       * member->actionSlots[i].encodedAction = 0, with or without a (u16) cast
        * on the zero, differs 23 of 210: movs r3, #0 takes the place of the ldr
        * of the zero and the literal pool moves to the function end; any store
        * through a dereference (this cast, *&...encodedAction, ((u16
-       * *)state->actionSlots)[i * 2]) matches. */
-      *(u16 *)&state->actionSlots[i] = 0;
+       * *)member->actionSlots)[i * 2]) matches. */
+      *(u16 *)&member->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
-      if (gDebug_PartyPresets[row].actions[i] != 0)
-        OwnerAction_AddFar(owner, gDebug_PartyPresets[row].actions[i]);
+      if (gDebug_PartyPresets[row].abilities[i] != 0)
+        OwnerAction_AddFar(owner, gDebug_PartyPresets[row].abilities[i]);
     }
+
     for (i = 0; i < 4; i++) {
       for (j = 0; j < gDebug_PartyPresets[row].djinnCounts[i]; j++) {
         Djinn_AddToOwnerFar(owner, i, nextDjinn[i]);
@@ -158,7 +178,9 @@ s32 DebugParty_LoadPreset(s32 preset) {
         nextDjinn[i]++;
       }
     }
-    for (i = 0; i < 16; i++)
+
+    // Empty the inventory, then add and equip the row's items.
+    for (i = 0; i < INVENTORY_SLOTS; i++)
       Inventory_RemoveFar(owner, 0);
     for (i = 0; i < 4; i++) {
       if (gDebug_PartyPresets[row].items[i] != 0)
@@ -167,15 +189,20 @@ s32 DebugParty_LoadPreset(s32 preset) {
             Inventory_AddItemFar(owner, gDebug_PartyPresets[row].items[i]));
     }
   }
-  return done;
+  return notFound;
 }
 
+// The window work's byte that marks a message window busy; it moved when the
+// international editions grew the work.
 #if EDITION_INTERNATIONAL
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
 #define WINDOW_WORK_MESSAGE_BUSY 0x1188
 #endif
 
+// The first message of the viewer's second range: in Japanese, an earlier
+// copy of the first range's opening lines; the localizations moved it
+// elsewhere.
 #if defined(TBS_EDITION_EN)
 #define DEBUG_SECOND_FORM MsgBecameCursed
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
@@ -184,13 +211,29 @@ s32 DebugParty_LoadPreset(s32 preset) {
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
+// The highest message index the viewer reaches.
 #define DEBUG_VIEW_LIMIT                                                       \
   (MsgLaliveroHowDidSearchForSheba -                                           \
    MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
+// The length of a unit's name, its terminator excluded.
+#define UNIT_NAME_LENGTH 14
+
+#define DEBUG_VIEWER_SONG 71
+
+//--------------------------------------------------------------------------
+// Debug: a message viewer that never returns. Names the first party member
+// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
+// sample values and shows one message at a time, counted from the Babi
+// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
+// in the second range, from DEBUG_SECOND_FORM. Right and Left step the
+// index, R and L step it by ten, Up and Down pick the range, and B
+// alternates between the ranges, moving on one message each time it leaves
+// the first. A closes the window and shows the message again.
+//--------------------------------------------------------------------------
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
-  s32 second = 0;
+  s32 secondRange = 0;
   struct BattleUnit *unit = UnitGetFar(0);
   s32 i;
   s32 index;
@@ -198,30 +241,32 @@ void DebugBattle_ViewMessages(void) {
   s32 message;
 
   Ui_AdjustValueWithoutLimitFar(MsgDebugSampleName, text);
-  for (i = 0; i <= 13; i++) {
+  for (i = 0; i < UNIT_NAME_LENGTH; i++) {
     unit->name[i] = text[i];
     if (text[i] == 0)
       break;
   }
-  unit->name[14] = 0;
+  unit->name[UNIT_NAME_LENGTH] = 0;
   UiWork_InitializeWithResourceCountersFar();
-  AudioCommand_PlayFar(71);
+  AudioCommand_PlayFar(DEBUG_VIEWER_SONG);
   for (;;) {
     index = 0;
     {
-      s32 control = 0x1341;
+      s32 control = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                    DISPCNT_OBJ_1D_MAP | 1; // mode 1
 
       REG_DISPCNT = control;
     }
     gGameState.messageSpeed = 2;
     for (;;) {
+      // Sample arguments for the message's placeholders.
       UiWork_ClearValueNameTablesFar();
       UiWork_PushValueSlotFar(999, 5);
       UiWork_PushValueSlotFar(0, 3);
       UiWork_PushValueSlotFar(1, 1);
       UiWork_PushValueSlotFar(1, 2);
       UiWork_PushValueSlotFar(2, 4);
-      if (second == 0) {
+      if (secondRange == 0) {
         message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
         window = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
       } else {
@@ -229,13 +274,16 @@ void DebugBattle_ViewMessages(void) {
         window = UiText_OpenMessageWindowFar(index + message, 2, 2, 4);
       }
       WaitFrames(10);
+
+      // Wait for a key that picks another message, or for A once the
+      // message has been shown in full.
       for (;;) {
         if (gKeysRepeat & KEY_B) {
-          if (second != 0) {
-            second = 0;
+          if (secondRange != 0) {
+            secondRange = 0;
           } else {
             index++;
-            second = 1;
+            secondRange = 1;
           }
         }
         if (gKeysRepeat & KEY_RIGHT)
@@ -243,9 +291,9 @@ void DebugBattle_ViewMessages(void) {
         if (gKeysRepeat & KEY_LEFT)
           index -= 2;
         if (gKeysRepeat & KEY_UP)
-          second = 1;
+          secondRange = 1;
         if (gKeysRepeat & KEY_DOWN)
-          second = 0;
+          secondRange = 0;
         if (gKeysRepeat & KEY_R)
           index += 10;
         if (gKeysRepeat & KEY_L)
@@ -267,11 +315,23 @@ void DebugBattle_ViewMessages(void) {
   }
 }
 
+// The encounter the debug battle starts with, and the Djinn tutorial's.
+#define DEBUG_FIRST_ENCOUNTER 257
+#define DJINN_TUTORIAL_ENCOUNTER 28
+
+//--------------------------------------------------------------------------
+// Debug: the battle test menu, which never returns. Without Down held it
+// fights encounter 257 again and again with auto battle on. Holding Down at
+// the start opens the chooser: Right and Left step the encounter, Up and
+// Down by ten, R and L pick the party preset, Start opens the message
+// viewer and A fights; B marks every later battle with start mode 5.
+// Holding Down when A is pressed makes it a link battle.
+//--------------------------------------------------------------------------
 void DebugBattle_RunMenu(void) {
-  s32 locked = 0;
+  s32 startModeSet = 0;
   s32 encounter;
   s32 preset;
-  s32 loaded;
+  s32 loadedPreset;
 
   GameState_InitDefaultsFar();
 restart:
@@ -280,11 +340,11 @@ restart:
   Scheduler_ResetTaskTable();
   Runtime_InitializeHeap();
   Resource_InitializeTable();
-  GameFlag_SetBitFar(362);
-  encounter = 257;
+  GameFlag_SetBitFar(FLAG_AUTO_BATTLE);
+  encounter = DEBUG_FIRST_ENCOUNTER;
   if (gKeysHeld & KEY_DOWN) {
-    loaded = -1;
-    GameFlag_ClearBitFar(362);
+    loadedPreset = -1;
+    GameFlag_ClearBitFar(FLAG_AUTO_BATTLE);
     preset = 0;
     for (;;) {
       GameFlag_ClearBitFar(32);
@@ -308,23 +368,23 @@ restart:
           DebugBattle_ViewMessages();
         if (gKeysRepeat & KEY_SELECT)
           Battle_ReservedNoOp2A08();
-        if ((gKeysRepeat & KEY_B) || locked) {
-          locked = 1;
+        if ((gKeysRepeat & KEY_B) || startModeSet) {
+          startModeSet = 1;
           Battle_SetStart(5);
         }
-        if (preset != loaded) {
+        if (preset != loadedPreset) {
           GameState_InitDefaultsFar();
           DebugParty_LoadPreset(preset);
-          loaded = preset;
+          loadedPreset = preset;
         }
         WaitFrames(1);
       }
       if (gKeysHeld & KEY_DOWN)
-        GameFlag_SetBitFar(364);
+        GameFlag_SetBitFar(FLAG_LINK_BATTLE);
       UnitCalcFar(0);
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
-      if (encounter == 28)
-        GameFlag_SetBitFar(366);
+      if (encounter == DJINN_TUTORIAL_ENCOUNTER)
+        GameFlag_SetBitFar(FLAG_DJINN_TUTORIAL);
       GameFlag_SetBitFar(354);
       Battle_RunEncounter(encounter);
       Ui_LoadWindowGraphics();
@@ -335,30 +395,50 @@ restart:
     }
   }
   GameFlag_SetBitFar(354);
-  Battle_RunEncounter(257);
+  Battle_RunEncounter(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }
 
+// This console's number in a link session (SIOCNT bits 4 and 5, which the
+// hardware sets in multi-player mode): 0 for the parent, 1 for the child.
+#define SIO_MULTI_PLAYER_ID() ((REG_SIOCNT << 26) >> 30)
+
+// gLinkStatus: both consoles are connected.
+#define LINK_BOTH_CONNECTED 3
+
+// The frames a link battle tolerates without a connection before it gives
+// up.
+#define LINK_MAX_MISSED_FRAMES 24
+
+//--------------------------------------------------------------------------
+// Runs each frame of a battle. In a link battle it first checks the link:
+// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
+// console whose link number changed, pauses the battle. Then it turns the
+// camera a sixteenth of the way toward a transition's yaw, places the camera
+// at its position (or at the one it follows) with its yaw, pitch and
+// distance, and, unless a transition owns the background, refreshes the
+// background's perspective.
+//--------------------------------------------------------------------------
 void BattlePresentation_UpdateCamera(void) {
   void **slot = (void **)&gCameraWork;
-  struct BattleCamera *state = slot[0];
+  struct BattleCamera *camera = slot[0];
   struct BattlePresentationTransition *transition =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
   struct BattleWork *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
-  struct FixedPointPosition local;
-  s32 *pos;
+  struct FixedPointPosition eyeOffset;
+  s32 *focus;
   s16 delta;
-  u32 id;
+  u32 linkId;
 
   if (work->twoSided != 0) {
-    if ((gLinkStatus & 3) != 3) {
+    if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
       work->linkMisses++;
-      if (work->linkMisses > 24) {
+      if (work->linkMisses > LINK_MAX_MISSED_FRAMES) {
         work->linkPaused = 1;
       }
     } else {
-      id = (REG_SIOCNT << 0x1A) >> 0x1E;
-      if (work->linkSide != id) {
+      linkId = SIO_MULTI_PLAYER_ID();
+      if (work->linkSide != linkId) {
         work->linkPaused = 1;
       }
       work->linkMisses = 0;
@@ -366,32 +446,38 @@ void BattlePresentation_UpdateCamera(void) {
   }
 
   if (transition->frames != 0) {
-    delta = transition->targetYaw - state->yaw;
+    delta = transition->targetYaw - camera->yaw;
     delta /= 16;
-    state->yaw += delta;
+    camera->yaw += delta;
     transition->frames--;
   }
 
-  pos = state->pos;
-  if (state->followPos != 0) {
-    pos = state->followPos;
+  focus = camera->pos;
+  if (camera->followPos != 0) {
+    focus = camera->followPos;
   }
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(pos);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  SceneTransform_ApplyPosition(focus);
+  SceneTransform_ApplyYaw((s16)camera->yaw);
+  SceneTransform_ApplyPitch((s16)camera->pitch);
 
-  local.x = 0;
-  local.y = 0;
-  local.z = state->distance;
-  Iwram_TransformVector(&local.x, (s32 *)state);
+  // The eye sits distance behind the focus, along the turned view.
+  eyeOffset.x = 0;
+  eyeOffset.y = 0;
+  eyeOffset.z = camera->distance;
+  Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   if (transition->flag == 0) {
     BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
   }
 }
 
+//--------------------------------------------------------------------------
+// Announces the enemies at the start of a battle: "<enemy> appeared!" for
+// each of the first enemyCount enemies, the last one's message a different
+// line, then whether the party strikes first or is caught by surprise.
+//--------------------------------------------------------------------------
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;
@@ -430,53 +516,65 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
+// BattleWork.battleType, from the enemy formation
+// (BattleFormation_BuildEnemyList): the random formations stand left to right
+// in the order they were drawn, any other is laid out from the centre.
+#define FORMATION_SHUFFLED 0
+#define FORMATION_INTERLEAVED 1
+
+//--------------------------------------------------------------------------
+// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END:
+// the party members in their order, and the enemies, left to right for a
+// random formation or, for a fixed one, alternating out from the centre
+// (gBattleParty_CenterOrderOffsets).
+//--------------------------------------------------------------------------
 void BattleParty_CollectUnitList(void) {
-  u16 buf[14];
+  u16 unitIds[14];
   struct BattleWork *battle;
   s32 count;
   s32 i;
-  s32 index;
-  s32 kind;
+  s32 position;
+  s32 formation;
 
   battle = gBattleWork;
-  count = BattleParty_PrepareActiveOwners(buf);
+  count = BattleParty_PrepareActiveOwners(unitIds);
   for (i = 0; i < count; i++)
-    battle->partyUnits[i] = buf[i];
-  battle->partyUnits[count] = 0xff;
+    battle->partyUnits[i] = unitIds[i];
+  battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
-  count = BattleEnemyList(buf);
-  kind = battle->battleType;
-  if (kind >= 0) {
-    if (kind <= 1) {
+  count = BattleEnemyList(unitIds);
+  formation = battle->battleType;
+  if (formation >= FORMATION_SHUFFLED) {
+    if (formation <= FORMATION_INTERLEAVED) {
       for (i = 0; i < count; i++)
-        battle->enemyIds[i] = buf[i];
+        battle->enemyIds[i] = unitIds[i];
       goto done;
     }
   }
   for (i = 0; i < count; i++) {
-    index = gBattleParty_CenterOrderOffsets[i] + count / 2;
-    battle->enemyIds[index] = buf[i];
+    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+    battle->enemyIds[position] = unitIds[i];
   }
 done:
-  battle->enemyIds[count] = 0xff;
+  battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
 //--------------------------------------------------------------------------
 // tile_pattern.c
-// バトル表示：VRAM のパターン詰めと BG0 の縦スクロール
+// Battle display: packing a tile pattern in VRAM, and BG0's vertical scroll
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// VRAM 0x06000290 からの 16 バイトを 0x06000280 へ詰め、
-// 0x0600028c からの 20 バイトを 0 で消す
+// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
+// 20 bytes from 0x0600028c.
 //--------------------------------------------------------------------------
 s32 BattlePresentation_InitializeTilePattern(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008,
-          REG_DMA3); // 16 ビット × 8
+          REG_DMA3); // eight halfwords
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
 //--------------------------------------------------------------------------
-// BG0 の縦スクロールを 0 にもどす
+// Sets BG0's vertical scroll back to 0.
 //--------------------------------------------------------------------------
 void BattlePresentation_ClearBg0VerticalOffset(void) {
   u32 zero = 0;
@@ -485,10 +583,15 @@ void BattlePresentation_ClearBg0VerticalOffset(void) {
 }
 
 //--------------------------------------------------------------------------
-// 何もしない
+// Does nothing.
 //--------------------------------------------------------------------------
 void Party_ReservedNoOp5B14(s32 unused) {}
 
+//--------------------------------------------------------------------------
+// Clears every battle-only state of the party members (stat stages and
+// their turns, statuses, Djinn element boosts, the countdowns) and
+// recalculates their stats, as a battle ends.
+//--------------------------------------------------------------------------
 s32 BattleParty_ResetActiveRuntimeFields(void) {
   u16 owners[10];
   s32 count;
@@ -499,17 +602,18 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   i = 0;
   if (i < count) {
     struct BattleUnit *unit;
-    u8 *cursor;
+    u8 *level;
     s32 remaining;
 
     do {
       unit = UnitGetFar(owners[i]);
-      cursor = (u8 *)&unit->elementLevels[3];
-      remaining = 3;
 
+      // The four element levels, cleared from the last.
+      level = (u8 *)&unit->elementLevels[3];
+      remaining = 3;
       do {
         remaining--;
-        *cursor-- = 0;
+        *level-- = 0;
       } while (remaining >= 0);
 
       unit->atkCnt = 0;
@@ -541,55 +645,73 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   }
 }
 
+// The Djinn recovery list's two tables (Trade_GetOfferStateFar): the
+// party's and the link opponent's.
+#define DJINN_RECOVERY_PARTY 0
+#define DJINN_RECOVERY_OPPONENT 1
+
+// DjinnRecoveryEntry.turns of a Djinni waiting for the battle to end.
+#define DJINN_RECOVERY_AFTER_BATTLE -1
+
+#define DJINN_PER_ELEMENT 20
+
+//--------------------------------------------------------------------------
+// Brings the Djinn recovery list up to date as a battle ends: every Djinni
+// a party member has on standby that the list lacks joins it. Then, outside
+// a link battle, each Djinni waiting for the battle to end whose owner is
+// no longer in the battle is Set again and leaves the list.
+//--------------------------------------------------------------------------
 s32 BattleParty_ReconcileDjinnRecovery(void) {
   u16 owners[10];
   s32 count;
   s32 i;
   s32 owner;
   s32 element;
-  s32 index;
+  s32 djinni;
 
   count = BattleParty_PrepareActiveOwners(owners);
 
   for (i = 0; i < count; i++) {
     owner = owners[i];
-    for (element = 0; element <= 3; element++) {
-      for (index = 0; index <= 19; index++) {
-        if (Trade_CanOfferDjinnFar(owner, element, index) != 0) {
+    for (element = 0; element < 4; element++) {
+      for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
+        if (Trade_CanOfferDjinnFar(owner, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
               &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
-                    (owner < 0 || owner > 7) ? 1 : 0))
+                    (owner < 0 || owner > 7) ? DJINN_RECOVERY_OPPONENT
+                                             : DJINN_RECOVERY_PARTY))
                    ->list;
           s32 j;
 
           for (j = 0; j < list->count; j++) {
             if (element == list->entries[j].element &&
-                index == list->entries[j].index)
+                djinni == list->entries[j].index)
               break;
           }
           if (j == list->count)
-            Trade_AddOfferFar(owner, element, index);
+            Trade_AddOfferFar(owner, element, djinni);
         }
       }
     }
   }
 
-  if (GameFlag_TestFar(364) != 0)
+  if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0)
     return;
 
   {
     struct DjinnRecoveryList *list =
-        &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
+        &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
+              DJINN_RECOVERY_PARTY))
+             ->list;
     struct DjinnRecoveryEntry *entry;
 
     i = 0;
     if (i < list->count) {
-      s32 permanentTimer = -1;
+      s32 afterBattle = DJINN_RECOVERY_AFTER_BATTLE;
 
       entry = list->entries;
       do {
-        if (entry->turns == permanentTimer &&
-            BattleObjGet(entry->unitId) == 0) {
+        if (entry->turns == afterBattle && BattleObjGet(entry->unitId) == 0) {
           u8 id = entry->unitId;
           u8 element = entry->element;
           u8 index = entry->index;
@@ -604,6 +726,14 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
   }
 }
 
+#define NUM_SUMMONS 32
+
+//--------------------------------------------------------------------------
+// Works out which summons the party can call: one whose Djinn requirement
+// of every element is met by the party's Djinn of that element, all
+// members together. Stores the mask of them (bit n for summon n) and
+// returns the state that holds it.
+//--------------------------------------------------------------------------
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u8 totals[4];
   u16 partyMembers[10];
@@ -614,6 +744,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   partySize = BattleParty_PrepareActiveOwners(partyMembers);
   availableMask = 0;
 
+  // The party's Djinn of each element.
   element = 0;
   do {
     totals[element] = 0;
@@ -627,8 +758,9 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       }
     }
     element++;
-  } while (element <= 3);
+  } while (element < 4);
 
+  // A summon is available when all four elements meet its requirement.
   element = 0;
   do {
     const struct SummonDefinition *summon = SummonDefinition_Get(element);
@@ -654,17 +786,23 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
         availableMask |= 1u << element;
     }
     element++;
-  } while (element <= 31);
+  } while (element < NUM_SUMMONS);
 
   {
-    struct BattleSummonState *state = Trade_GetOfferStateFar(0);
+    struct BattleSummonState *state =
+        Trade_GetOfferStateFar(DJINN_RECOVERY_PARTY);
     state->availableMask = availableMask;
     return state;
   }
 }
 
+//--------------------------------------------------------------------------
+// Does nothing.
+//--------------------------------------------------------------------------
 void BattleSummon_ReservedNoOp(void) {}
 
+// The longest "Enemy" label the opponent's names take before them; the
+// European editions also put a space after it.
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define NAME_LIMIT 7
@@ -674,67 +812,91 @@ void BattleSummon_ReservedNoOp(void) {}
 #define APPEND_NAME_SPACE 0
 #endif
 
+// What a link battle sends of each party member, and of the Djinn recovery
+// list.
 enum LinkPartyPacketSize {
   LINK_PARTY_UNIT_BYTES = 340,
   LINK_PARTY_OFFER_BYTES = 320
 };
 
+// Unit ids from 128 are the enemies'; in a link battle the opponent's party
+// takes the first three.
+#define FIRST_ENEMY_UNIT 128
+#define LINK_PARTY_SIZE 3
+
+//--------------------------------------------------------------------------
+// Link battle: receives the opponent's party into the enemy units, one
+// member at a time, and puts the "Enemy" label (MsgEnemyLabel) before each
+// name; then receives the opponent's Djinn recovery list. Stops early if a
+// transfer cannot start. Returns how many of the received units are
+// members (a unit sent with side 0 is an empty place).
+//--------------------------------------------------------------------------
 s32 UpdateNameEntries(void) {
-  u16 name_text[24];
+  u16 label[24];
   void *buffer;
-  struct BattleUnit *name_entry;
-  s32 named_count;
+  struct BattleUnit *opponent;
+  s32 memberCount;
   s32 index;
-  s32 len;
+  s32 labelLength;
   s32 i;
 
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
-  named_count = 0;
+  memberCount = 0;
   index = 0;
-  while (index <= 2) {
-    name_entry = UnitGetFar(index + 128);
-    if (SerialRuntime_BeginTransferB(name_entry) == -1) {
+  while (index < LINK_PARTY_SIZE) {
+    opponent = UnitGetFar(index + FIRST_ENEMY_UNIT);
+    if (SerialRuntime_BeginTransferB(opponent) == -1) {
       break;
     }
     SerialRuntime_WaitForTransferB();
-    if (name_entry->side != 0) {
-      named_count += 1;
+    if (opponent->side != 0) {
+      memberCount += 1;
     }
     WaitFrames(2);
-    Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, name_text);
+
+    // Shift the name right to make room for the label, then write it in.
+    Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, label);
     i = 0;
-    if (name_text[i] != 0) {
+    if (label[i] != 0) {
       do {
         i += 1;
         if (i > NAME_LIMIT) {
           break;
         }
-      } while (name_text[i] != 0);
+      } while (label[i] != 0);
     }
 #if APPEND_NAME_SPACE
-    name_text[i] = ' ';
+    label[i] = ' ';
     i += 1;
 #endif
-    len = i;
-    for (i = 14; i >= len; i--) {
-      name_entry->name[i] = name_entry->name[i - len];
+    labelLength = i;
+    for (i = UNIT_NAME_LENGTH; i >= labelLength; i--) {
+      opponent->name[i] = opponent->name[i - labelLength];
     }
-    for (i = 0; i < len; i++) {
-      name_entry->name[i] = name_text[i];
+    for (i = 0; i < labelLength; i++) {
+      opponent->name[i] = label[i];
     }
-    name_entry->name[14] = 0;
+    opponent->name[UNIT_NAME_LENGTH] = 0;
     index += 1;
   }
   MemFree(buffer);
+
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
-  if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
+  if (SerialRuntime_BeginTransferB(
+          Trade_GetOfferStateFar(DJINN_RECOVERY_OPPONENT)) != -1) {
     SerialRuntime_WaitForTransferB();
     WaitFrames(2);
   }
   MemFree(buffer);
-  return named_count;
+  return memberCount;
 }
 
+//--------------------------------------------------------------------------
+// Link battle: sends the party, one member at a time and three places in
+// all (an empty place has side 0), then the Djinn recovery list with each
+// owner given the unit id the opponent knows them by. Records that id of
+// each member in ownerSlots.
+//--------------------------------------------------------------------------
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *work;
@@ -743,32 +905,37 @@ s32 LinkBattle_SendParty(void) {
   s32 size;
   s32 count;
   s32 i;
-  s32 mark;
+  s32 noSlot;
   u16 owners[8];
 
   size = LINK_PARTY_UNIT_BYTES;
   buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-  mark = 0xff;
+  noSlot = 0xff;
   work = gBattleWork;
   for (i = 7; i >= 0; i--)
-    work->ownerSlots[i] = mark;
+    work->ownerSlots[i] = noSlot;
+
+  // The members, each marked as the opponent's.
   count = BattleParty_PrepareActiveOwners(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
-    ((struct BattleUnit *)buffer)->side = 2;
-    work->ownerSlots[owners[i]] = i - 128;
+    ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_PARTY;
+    work->ownerSlots[owners[i]] = i - 128; // FIRST_ENEMY_UNIT + i in a byte
     if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForTransferA();
     WaitFrames(2);
   }
-  for (; i <= 2; i++) {
-    ((struct BattleUnit *)buffer)->side = 0;
+  // Empty places up to three.
+  for (; i < LINK_PARTY_SIZE; i++) {
+    ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_ABSENT;
     if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForTransferA();
     WaitFrames(2);
   }
+
+  // The Djinn recovery list, its owners renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
   MemFree(buffer);
   buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
@@ -779,7 +946,7 @@ s32 LinkBattle_SendParty(void) {
    * the for's initializer, and the offer state read into a local first differ
    * the same 2. */
   do {
-    Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+    Iwram_CopyWords(buffer, Trade_GetOfferStateFar(DJINN_RECOVERY_PARTY), size);
   } while (0);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
@@ -792,12 +959,18 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
+//--------------------------------------------------------------------------
+// Unused. Copies the first four characters of a name into a buffer on its
+// own stack, an underscore for each one that is missing, and returns a
+// pointer past them into that buffer, which no longer exists once it
+// returns. Its first two arguments are ignored.
+//--------------------------------------------------------------------------
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;
   u32 fill = '_';
-  u8 *p = base;
-  u8 *dst = p;
+  u8 *current = base;
+  u8 *dst = current;
   s32 count = 3;
 
   do {
@@ -807,8 +980,8 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
     source++;
     dst++;
     if ((u8)value == 0)
-      *p = fill;
-    p++;
+      *current = fill;
+    current++;
     count--;
   } while (count >= 0);
   base[4] = 0;
@@ -817,40 +990,40 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
 
 //--------------------------------------------------------------------------
 // wait_sync.c
-// バトル：通信対戦の合図あわせ
+// Battle: keeping a link battle's two consoles in step
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 通信対戦なら、相手と "EXEC" の合図をそろえる
-// 30 フレームのうちにそろえば 0、通信が切れたりそろわなければ -1
-// 通信対戦でなければ 0
+// In a link battle, shows the "EXEC" signature to the other console and
+// waits up to 30 frames for it to show the same. Returns 0 once both do (or
+// outside a link battle), and -1 if the battle is paused, the link is lost
+// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
 //--------------------------------------------------------------------------
 s32 BattlePres_WaitSync(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
-  u16 *sig;
-  s32 lost = 0;
+  u16 *signature;
+  s32 missed = 0;
   s32 i;
 
   if (work->twoSided != 0) {
     u32 other = work->linkSide ^ 1;
 
     peer = (u16 *)(gSerialPeerPayloads[other] + 4);
-    sig = (u16 *)gSerialTransfer.payload;
+    signature = (u16 *)gSerialTransfer.payload;
     if (work->linkPaused == 0) {
-      sig[0] = 'E';
-      sig[1] = 'X';
-      sig[2] = 'E';
-      sig[3] = 'C';
+      signature[0] = 'E';
+      signature[1] = 'X';
+      signature[2] = 'E';
+      signature[3] = 'C';
 
-      for (i = 0; i <= 29; i++) {
-        if ((gLinkStatus & 3) != 3) // 2 台の通信がとぎれた
-        {
-          lost++;
-          if (lost > 24)
+      for (i = 0; i < 30; i++) {
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          missed++;
+          if (missed > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
-          lost = 0;
-          if (sig[2] == peer[2] && sig[3] == peer[3])
+          missed = 0;
+          if (signature[2] == peer[2] && signature[3] == peer[3])
             return 0;
         }
         WaitFrames(1);
@@ -862,16 +1035,19 @@ s32 BattlePres_WaitSync(void) {
 }
 
 //--------------------------------------------------------------------------
-// 通信対戦なら、行動のたびとラウンド終了処理のあとに相手と合図を順にそろえる
-// "ex" "TU" → "rn" → "EXEC" → "tu" → "RN"
-// 通信が切れているか、前にそろえた合図が相手と食いちがうか、
-// 通信が 25 フレーム続けてとぎれたら -1。そろえば（通信対戦でなくても）0
+// In a link battle, after each action and after the end of each round,
+// steps both consoles through the same handshake: "ex" "TU", then "rn",
+// "EXEC", "tu" and finally "RN". Each step shows its signature and waits
+// for the other console to show it too, failing if the other console
+// shows a different earlier step. Returns -1 if the battle is paused, the
+// link is lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps
+// disagree; 0 once in step, or outside a link battle.
 //--------------------------------------------------------------------------
 s32 BattlePres_SyncTurn(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
-  u16 *sig;
-  s32 lost = 0;
+  u16 *signature;
+  s32 missed = 0;
   /* FAKEMATCH: never used: the reference's frame keeps twenty bytes that no
    * instruction touches; without it 20 of 232 differ (no sub sp, #20, and the
    * branches and literal offsets shift). */
@@ -879,95 +1055,95 @@ s32 BattlePres_SyncTurn(void) {
 
   if (work->twoSided != 0) {
     peer = gLinkPeerSignatures[work->linkSide ^ 1];
-    sig = (u16 *)gSerialTransfer.payload;
+    signature = (u16 *)gSerialTransfer.payload;
     if (work->linkPaused != 0)
       return -1;
 
     // "ex" "TU"
-    sig[0] = 'e';
-    sig[1] = 'x';
-    sig[4] = 'T';
-    sig[5] = 'U';
+    signature[0] = 'e';
+    signature[1] = 'x';
+    signature[4] = 'T';
+    signature[5] = 'U';
     WaitFrames(1);
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[2] != peer[2] || sig[3] != peer[3])
+        missed = 0;
+        if (signature[2] != peer[2] || signature[3] != peer[3])
           return -1;
-        if (sig[0] == peer[0] && sig[1] == peer[1] && sig[4] == peer[4] &&
-            sig[5] == peer[5])
+        if (signature[0] == peer[0] && signature[1] == peer[1] &&
+            signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
       WaitFrames(1);
     }
 
     // "rn"
-    sig[6] = 'r';
-    sig[7] = 'n';
+    signature[6] = 'r';
+    signature[7] = 'n';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[4] != peer[4] || sig[5] != peer[5])
+        missed = 0;
+        if (signature[4] != peer[4] || signature[5] != peer[5])
           return -1;
-        if (sig[6] == peer[6] && sig[7] == peer[7])
+        if (signature[6] == peer[6] && signature[7] == peer[7])
           break;
       }
       WaitFrames(1);
     }
 
     // "EXEC"
-    sig[0] = 'E';
-    sig[1] = 'X';
-    sig[2] = 'E';
-    sig[3] = 'C';
+    signature[0] = 'E';
+    signature[1] = 'X';
+    signature[2] = 'E';
+    signature[3] = 'C';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[6] != peer[6] || sig[7] != peer[7])
+        missed = 0;
+        if (signature[6] != peer[6] || signature[7] != peer[7])
           return -1;
-        if (sig[0] == peer[0] && sig[1] == peer[1] && sig[2] == peer[2] &&
-            sig[3] == peer[3])
+        if (signature[0] == peer[0] && signature[1] == peer[1] &&
+            signature[2] == peer[2] && signature[3] == peer[3])
           break;
       }
       WaitFrames(1);
     }
 
     // "tu"
-    sig[4] = 't';
-    sig[5] = 'u';
+    signature[4] = 't';
+    signature[5] = 'u';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
-        if (sig[0] != peer[0] || sig[1] != peer[1] || sig[2] != peer[2] ||
-            sig[3] != peer[3])
+        missed = 0;
+        if (signature[0] != peer[0] || signature[1] != peer[1] ||
+            signature[2] != peer[2] || signature[3] != peer[3])
           return -1;
-        if (sig[4] == peer[4] && sig[5] == peer[5])
+        if (signature[4] == peer[4] && signature[5] == peer[5])
           break;
       }
       WaitFrames(1);
     }
 
-    // "RN"：相手が "rn" から変わるのを待つ
-    sig[6] = 'R';
-    sig[7] = 'N';
+    // "RN": wait for the other console to move on from "rn".
+    signature[6] = 'R';
+    signature[7] = 'N';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++missed > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
-        lost = 0;
+        missed = 0;
         if (peer[6] != 'r' || peer[7] != 'n')
           break;
       }
@@ -977,6 +1153,10 @@ s32 BattlePres_SyncTurn(void) {
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Records, for each party member, the unit id the link opponent knows them
+// by (FIRST_ENEMY_UNIT plus their place in the party).
+//--------------------------------------------------------------------------
 s32 BattleParty_AssignMemberSlots(void) {
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
@@ -986,10 +1166,14 @@ s32 BattleParty_AssignMemberSlots(void) {
 
   for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
     unitId = activeMembers[memberSlot];
-    battleState->ownerSlots[unitId] = memberSlot - 128;
+    battleState->ownerSlots[unitId] =
+        memberSlot - 128; // FIRST_ENEMY_UNIT + slot
   }
 }
 
+//--------------------------------------------------------------------------
+// Clears the link transfer's payload, the signatures included.
+//--------------------------------------------------------------------------
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

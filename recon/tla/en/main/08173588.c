@@ -7,16 +7,18 @@
  * fills the centre and base points; its prototype here is read from the
  * calls.
  *
- * Listing 485 instructions, draft 483, differ 296.
- * Left: allocation and frame. The native keeps work in r11, the frame in
- * r9 and the model in r10 (here r9, r10 and others), and its frame is 84
- * bytes with an unused word at sp 24 between the canvas and the blitter
- * (here 80), so every stack offset after it is 4 apart.
+ * Listing 485 instructions, draft 483, differ 258.
+ * Left: allocation. The native keeps work in r11, the frame in r9 and
+ * the model in r10; here work takes r9, which renames every use of it,
+ * and the mirror copy's first load and store come one row apart.
  * Tried (differ):
  *   first draft (the mirror copy through walking pointers)              461
  *   the mirror copy indexed (the native reloads the source byte after
  *     the first store, as both do), centre and base declared first      296
- *   alchemy permute 8 minutes, 2 jobs: 202 only with a forced pointer
+ *   the blitter as The Broken Seal's pair, only the first used (the
+ *     native frame's unused word; FAKEMATCH below)                     258
+ *   alchemy permute 8 minutes, 2 jobs, from the 296 form: 202 only with
+ *     a forced pointer
  *     temporary for Haze's star->variant, 221 with star->y through a
  *     temporary; neither kept
  */
@@ -112,7 +114,11 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   s32 base[3];
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle blit;
+  /* FAKEMATCH: the blitter is declared as The Broken Seal's pair though only
+   * the first is used: its second word is the unused word at sp 24 that
+   * makes the native frame 84 bytes. As one DrawRectangle the frame is 80
+   * and every stack offset after it moves (differ 296). */
+  DrawRectangle blit[2];
   void *vertices;
   struct Texture texture;
   struct RenderModel *model;
@@ -165,7 +171,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   else
     Func_081963ec(104,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != 48; frame++) {
     // Frame 0: Haze's stars take random places about the centre, one more
@@ -198,9 +204,9 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
 
       if (height > 39)
         height = 40;
-      blit(canvas, work->sheet + DJINNI_OFFSET,
-           ((Trig_Sin(frame << 10) << 5) >> 16) + 44, center[1] - 20, 40,
-           height);
+      blit[0](canvas, work->sheet + DJINNI_OFFSET,
+              ((Trig_Sin(frame << 10) << 5) >> 16) + 44, center[1] - 20, 40,
+              height);
     }
 
     Render_ResetTransformState();

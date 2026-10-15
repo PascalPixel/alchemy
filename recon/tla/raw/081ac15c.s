@@ -738,9 +738,9 @@ LuckyDice_Run:
 .L_081ac740:
 	.4byte 0x80002040
 .L_081ac744:
-	.4byte Data_081ad368
+	.4byte LuckyDice_LabelCounts
 .L_081ac748:
-	.4byte Data_081ad36c
+	.4byte LuckyDice_LabelTiles
 .L_081ac74c:
 	.4byte 0x80002000
 .L_081ac750:
@@ -1666,7 +1666,7 @@ LuckyDice_Run:
 .L_081ace60:
 	.4byte 0x40002300
 .L_081ace64:
-	.4byte Data_081ad374
+	.4byte LuckyDice_FaceTiles
 .L_081ace68:
 	.4byte 0x80002000
 .L_081ace6c:
@@ -1988,7 +1988,7 @@ LuckyDice_Run:
 .L_081ad0c4:
 	.4byte 0xffffb800
 .L_081ad0c8:
-	.4byte Data_081ad386
+	.4byte LuckyDice_FaceHeights
 .L_081ad0cc:
 	.4byte gPartyState
 .L_081ad0d0:

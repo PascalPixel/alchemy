@@ -2161,6 +2161,7 @@ SECTIONS
     "*/games/tla/src/lib/recip.o"(.text)
     "*/games/tla/src/graphics/palette/scale_rgb555_buffer.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001ac15c)
+    "*/games/tla/src/graphics/lucky_dice/lucky_dice.o"(.rodata)
     . = ABSOLUTE(0x081b2000);
     "*/games/tla/src/system/far_call/resource_e.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001b2008)

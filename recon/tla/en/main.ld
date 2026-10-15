@@ -2309,7 +2309,7 @@ SECTIONS
         "*/recon/tla/raw/081ac0f6.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/palette/scale_rgb555_buffer.o"(.text)
         "*/recon/tla/raw/081ac15c.o"(.text .rodata .data .padding)
-        "*/recon/tla/unidentified.o"(.unidentified.081ad348)
+        "*/games/tla/src/graphics/lucky_dice/lucky_dice.o"(.rodata)
         . = ABSOLUTE(0x081b2000);
         "*/games/tla/src/system/far_call/resource_e.o"(.text)
         "*/recon/tla/raw/081b2008.o"(.text)

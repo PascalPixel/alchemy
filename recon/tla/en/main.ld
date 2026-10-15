@@ -2302,8 +2302,6 @@ SECTIONS
         . = ABSOLUTE(0x081ac000);
         "*/games/tla/src/system/far_call/resource_d.o"(.text)
         "*/games/tla/src/system/scheduler/blank_display_and_run.o"(.text)
-        "*/recon/tla/raw/081ac026.o"(.text)
-        "*/recon/tla/raw/081ac028.o"(.text)
         "*/games/tla/src/lib/multiply.o"(.text)
         "*/games/tla/src/lib/fixed_8.o"(.text)
         "*/games/tla/src/lib/recip.o"(.text)
@@ -2332,7 +2330,6 @@ SECTIONS
         . = ABSOLUTE(0x081b8000);
         "*/games/tla/src/system/far_call/resource_f.o"(.text)
         "*/games/tla/src/field/common/camera/camera.o"(.text)
-        "*/recon/tla/raw/081b8020.o"(.text)
         "*/games/tla/src/graphics/palette/scale_rgb555_buffer_b.o"(.text)
         "*/recon/tla/raw/081b810c.o"(.text)
         "*/recon/tla/raw/081b8180.o"(.text)

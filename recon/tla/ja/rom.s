@@ -5127,8 +5127,6 @@ Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x001a8286, 0x000004b8
 	.section .rom.001a883a, "ax"
 	.incbin "baserom.gba", 0x001a883a, 0x00000002
-	.section .rom.001ac026, "ax"
-	.incbin "baserom.gba", 0x001ac026, 0x0000008a
 	.section .rom.001ac15c, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function
@@ -5147,8 +5145,6 @@ Func_081b2008:
 	.incbin "baserom.gba", 0x001b21ec, 0x00001b00
 	.section .rom.001b3d90, "ax"
 	.incbin "baserom.gba", 0x001b3d90, 0x000009f8
-	.section .rom.001b8020, "ax"
-	.incbin "baserom.gba", 0x001b8020, 0x00000088
 	.section .rom.001b810c, "ax"
 	.incbin "baserom.gba", 0x001b810c, 0x000002b8
 	.section .rom.001b83c4, "ax"

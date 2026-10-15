@@ -5083,13 +5083,7 @@ EnmCntDec:
 	.section .rom.00128202, "ax"
 	.incbin "baserom.gba", 0x00128202, 0x0000003e
 	.section .rom.00128264, "ax"
-	.incbin "baserom.gba", 0x00128264, 0x000005f8
-	.section .rom.0012885c, "ax"
-	.global BattlePlacement_StepPairs
-BattlePlacement_StepPairs:
-	.incbin "baserom.gba", 0x0012885c, 0x00000024
-	.section .rom.001288b0, "ax"
-	.incbin "baserom.gba", 0x001288b0, 0x000000da
+	.incbin "baserom.gba", 0x00128264, 0x00000578
 	.section .rom.0012ce6c, "ax"
 	.incbin "baserom.gba", 0x0012ce6c, 0x00000028
 	.section .rom.001380ac, "ax"

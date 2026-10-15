@@ -44,35 +44,7 @@ Camera_FlagTransformWork:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x500000, 0x0, 0x0
-@ 距離による命中率 (%)
-	.global HitTbl
-HitTbl:
-	.byte 100, 60, 30, 30, 30, 30
-	.balign 4
-	.global EpLossTbl
-EpLossTbl:
-	.4byte 100, 50, 30, 10, 10, 10
-	.global HpRcvTbl
-HpRcvTbl:
-	.4byte 100, 80, 60, 40, 20, 10
-	.global EpDmgTbl
-EpDmgTbl:
-	.4byte 100, 50, 30, 10, 10, 10
-	.global HpDmgTbl5
-HpDmgTbl5:
-	.4byte 100, 80, 60, 40, 20, 10
-	.global HpDmgTbl8
-HpDmgTbl8:
-	.4byte 100, 70, 40, 30, 20, 10
-	.global HpDmgTbl6
-HpDmgTbl6:
-	.4byte 100, 50, 30, 10, 10, 10
-	.global EpRcvTbl
-EpRcvTbl:
-	.4byte 100, 80, 60, 40, 20, 10
-	.global HpDmgTbl
-HpDmgTbl:
-	.4byte 100, 50, 30, 10, 10, 10
+	.include "games/common/src/battle/btlcalc.s"
 	.global BattleCommand_SelectionWeights
 BattleCommand_SelectionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32

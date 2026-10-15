@@ -1,6 +1,31 @@
 #include "resource.h"
 #include "vram_tab.h"
 
+s32 ResourceTable_GetLongestFreeBlockRun(void)
+{
+    u8 *marker = ResourceBlockOwners;
+    s32 run;
+    s32 longest;
+    /* FAKEMATCH: the count takes r2 and the run r1; unpinned, the barrier below swaps them (differ 18), and without the barrier the pin alone schedules the count's first half ahead of the table load (differ 2) */
+    register s32 remaining asm("r2");
+
+    asm volatile(""); /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512; without the barrier the count's first half is scheduled ahead of the load (differ 2) */
+    run = 0;
+    longest = 0;
+    remaining = VRAM_BLOCK_COUNT;
+    do {
+        if (*marker++ != VRAM_BLOCK_OWNER_FREE) {
+            run = 0;
+        } else {
+            run++;
+            if (longest < run)
+                longest = run;
+        }
+        remaining--;
+    } while (remaining != 0);
+    return longest;
+}
+
 s32 Func_08014220(void)
 {
     u8 *marker = ResourceBlockOwners;

@@ -112,7 +112,7 @@ AffineMatrix_BuildForEffect:
 	.type ResourceTable_AllocateBlocks, %function
 	.thumb_func
 ResourceTable_AllocateBlocks:
-	.incbin "baserom.gba", 0x000141a0, 0x000000ac
+	.incbin "baserom.gba", 0x000141a0, 0x00000080
 	.section .rom.000142a0, "ax"
 	.global Resource_ResetEntry
 	.type Resource_ResetEntry, %function

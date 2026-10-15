@@ -53,6 +53,7 @@ void Func_02004000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02004040(void);
 void Func_02004048(void);
 void Func_02004090(s32 actor, s32 x, s32 z);
+void Func_02004098(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020040c8(s32 message);
 s32 Func_020040d8(s32 speaker, s32 flags);
 void Func_020040f8(s32 actor);
@@ -66,6 +67,8 @@ void Func_020041a8(void);
 void Func_020041b0(void);
 void Func_020041b8(s32 skip);
 void Func_020041c8(s32 cue);
+void Func_020041d0(void);
+void Func_020041d8(s32 a, s32 b, s32 c, s32 d);
 s32 Func_020041e0(struct FieldActor *object);
 void Func_020040d0(s32 actor, s32 flags);
 void Func_020004e0(void);
@@ -142,6 +145,24 @@ static inline void Scene_Call4090(s32 actor, s32 x, s32 z)
     Func_02004090(actor, x, z);
 }
 
+static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004098(actor, x, z, angle);
+}
+
+static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004000(a, b, c, d, e, f);
+}
+
+static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_020041d8(a, b, c, d);
+}
+
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -164,6 +185,12 @@ static inline void Scene_Call4178(s32 a, s32 b, s32 c)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02004178(a, b, c);
+}
+
+static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndReset(id, x, z);
 }
 
 #endif

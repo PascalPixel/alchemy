@@ -1,5 +1,8 @@
-/* Near miss: Func_02000618 differs 14: the party state address is loaded one row late and the owner override
- * store swaps r2 and r3. */
+/* Near miss: Func_02000618 differs 14. With the first store and the party state address in a
+ * one-pass block (alchemy permute's), the address is loaded one row early instead of late; the
+ * owner override store swaps r2 and r3 (offset and value in r3, address in r2). Tried for the
+ * store: the field through the state pointer, a field pointer, a value temporary, a value pinned
+ * to r2 (differ 14 to 25); 3 minutes of alchemy permute. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -20,9 +23,14 @@ void Func_02000b08(void);
 
 s32 Func_02000618(void)
 {
-    ((struct SceneWork *)Ram_HeapSlots->event_work)->unknown_1ac = 256;
+    struct PartyState *state;
+
+    do {
+        ((struct SceneWork *)Ram_HeapSlots->event_work)->unknown_1ac = 256;
+        state = &gPartyState;
+    } while (0);
     Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-    if (gPartyState.entrance == 90) {
+    if (state->entrance == 90) {
         GameFlag_SetBit(0x90a);
         gPartyState.owner_override = 1;
         Func_02000af8((s32)&SceneId_Ov6a7Room1, 4);

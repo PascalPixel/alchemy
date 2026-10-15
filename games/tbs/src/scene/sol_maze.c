@@ -20,38 +20,49 @@
 
 #include "field_event.h"
 
-u8 *SceneData_GetScriptTable(void) { return (u8 *)gSolMaze_SceneTable0; }
+// A maze of Sol Sanctum, scene 14: two exits to scene 16 and one chest.
 
-s32 SceneData_ReturnZero(void) { return 0; }
+// Where the party can enter the maze.
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSolMazeEntrances;
+}
 
-u8 *SceneData_GetMessageTable(void) { return (u8 *)gSolMaze_SceneTable1; }
+// No regions.
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-u8 *SceneData_GetActorTable(void) { return (u8 *)gSolMaze_SceneTable2; }
+// Where each exit leads.
+const u32 *Scene_GetExits(void) { return gSolMazeExits; }
 
-u8 *SceneData_GetEffectTable(void) { return (u8 *)gSolMaze_SceneTable3; }
+// Nobody is placed here.
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  return gSolMazePlacements;
+}
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// The exits, and the maze's chest.
+const struct SceneEvent *Scene_GetEvents(void) { return gSolMazeEvents; }
+
+// Shared scene code, included where the ROM places it.
 #include "common/sol_initzoom.h"
 
-struct SceneEntrance gSolMaze_SceneTable0[] = {
+struct SceneEntrance gSolMazeEntrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 424, 0, 615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 376, 0, 53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gSolMaze_SceneTable1[] = {
+u32 gSolMazeExits[] = {
     SCENE_EXITS(14),
     SCENE_EXIT(1, 16, 7),
     SCENE_EXIT(2, 16, 14),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSolMaze_SceneTable2[] = {
+struct ScenePlacement gSolMazePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gSolMaze_SceneTable3[] = {
+struct SceneEvent gSolMazeEvents[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {SEARCH(SEARCH_CHEST), 100, 0xf02, FIND_ITEM(0xe1)},

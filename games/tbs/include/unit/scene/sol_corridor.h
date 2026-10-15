@@ -4,14 +4,16 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetActorTable(void);
-u8 *SceneData_GetEffectTable(void);
-extern struct SceneEntrance gSolCorridor_SceneTable0[];
-extern u32 gSolCorridor_SceneTable1[];
-extern struct ScenePlacement gSolCorridor_SceneTable2[];
-extern struct SceneEvent gSolCorridor_SceneTable3[];
+struct SceneRegion;
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+extern struct SceneEntrance gSolCorridorEntrances[];
+extern u32 gSolCorridorExits[];
+extern struct ScenePlacement gSolCorridorPlacements[];
+extern struct SceneEvent gSolCorridorEvents[];
 
 #endif

@@ -3181,46 +3181,6 @@ Func_020024f8:
 	pop {r5, r6, pc}
 .L_0200a550:
 	.4byte Data_02002af4
-	.section .text.x0200a5d4,"ax",%progbits
-	.balign 4
-	.global Func_020025d4
-	.thumb_func
-Func_020025d4:
-	push {r5, r6, lr}
-	ldr r3, .L_0200a610
-	movs r6, #15
-	ldr r0, [r3, #4]
-	adds r5, r3, #0
-	mov lr, r0
-	.2byte 0xf800
-	adds r5, #8
-.L_0200a5e4:
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	cmp r3, #0
-	beq .L_0200a606
-	movs r1, #2
-	ldrsh r3, [r5, r1]
-	ldrh r2, [r5, #2]
-	cmp r3, #0
-	bgt .L_0200a602
-	adds r0, r5, #4
-	ldr r1, [r5, #16]
-	bl Func_02002554
-	movs r3, #9
-	b .L_0200a604
-.L_0200a602:
-	subs r3, r2, #1
-.L_0200a604:
-	strh r3, [r5, #2]
-.L_0200a606:
-	subs r6, #1
-	adds r5, #20
-	cmp r6, #0
-	bge .L_0200a5e4
-	pop {r5, r6, pc}
-.L_0200a610:
-	.4byte Data_020023c4 + 0x188
 	.section .text.x0200a614,"ax",%progbits
 	.balign 4
 	.global Func_02002614

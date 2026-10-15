@@ -120,7 +120,7 @@ struct VentEntry {
 
 struct VentWork {
     s32 counter;
-    void (*hook)(void);
+    s32 (*hook)(void);
     struct VentEntry entries[16];
     u16 ids[4];
 };

@@ -19,3 +19,22 @@ void Func_02002554(s32 *position, s32 base)
         Animation_SetStateFlags(object, 1);
     }
 }
+
+void Func_020025d4(void)
+{
+    struct VentWork *work = VENT_WORK;
+    struct VentEntry *entry = work->entries;
+    s32 i;
+
+    work->hook();
+    for (i = 15; i >= 0; i--, entry++) {
+        if (entry->active != 0) {
+            if (entry->timer <= 0) {
+                Func_02002554(&entry->x, entry->value);
+                entry->timer = 9;
+            } else {
+                entry->timer--;
+            }
+        }
+    }
+}

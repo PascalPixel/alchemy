@@ -3,7 +3,7 @@
    entry after the call (adds r5, #8); this draft loads the address straight
    into r5 and has no copy. Indexing VENT_ROW(i) inside the loop is further
    away (differ 34). */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02003a70(void)
 {

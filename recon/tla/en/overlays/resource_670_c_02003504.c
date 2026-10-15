@@ -6,15 +6,15 @@
  * literal pool and a branch round it before the loop's increment). Here loop.c hoists one zero
  * for all the stores and the counter takes r7. A u8, s16 or s32 zero declared for the timer
  * changes nothing (118); permute 4 minutes reached differ 88 by register choices only. */
-#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
-void Func_02003308(struct Ov670Object *object);
+void Func_02003308(struct KibomboObject *object);
 
 void Func_02003504(void)
 {
-    struct Ov670Object *center = Object_GetById(17);
-    struct Ov670Object *spark;
+    struct KibomboObject *center = Object_GetById(17);
+    struct KibomboObject *spark;
     s32 previous = 0;
     u32 i;
     u32 angle;

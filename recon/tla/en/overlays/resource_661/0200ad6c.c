@@ -6,7 +6,7 @@
    Tried 2026-10-12: an empty asm barrier after the address puts ldr r5 above the
    flags address as well (differ 2, another row); the flags address taken before
    a barrier and stored through after the party address changes the prologue. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 
 void Func_02002d6c(struct FieldActor *object, s32 x, s32 z, s32 mode)
 {

@@ -6,7 +6,7 @@
  * three minutes of permute (nothing better). Also tried: the byte written by hand in four shapes (7 to
  * 16); the mask 3 in a local ahead of a barrier (15: the order then matches, but the mask moves to r2
  * and -13 is built from the 2 left in r3). sched2 ranks the sprite load (74) above the 3 (73). */
-#include "../../../../games/tla/src/field/overlay_678/local.h"
+#include "../../../../games/tla/src/scene/taopo_swamp/local.h"
 
 void Func_020027f8(struct ObjectRuntime *object, s32 a);
 

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-struct Ov682EventWork {
+struct ChampaEventWork {
     u8 unknown_000[0x1c4];
     u16 message;
 };
@@ -26,7 +26,7 @@ void Func_02000d4c(s32 first_id, s32 first_x, s32 first_y, s32 first_a,
                    volatile s32 first_b, /* FAKEMATCH: volatile, the fifth argument is read before the side call's other arguments, as the native does (differ 6 plain). */
                    s32 second_id, s32 second_x, s32 second_y, s32 second_a, s32 second_b, s32 frames)
 {
-    struct Ov682EventWork *work = Ram_HeapSlots->event_work;
+    struct ChampaEventWork *work = Ram_HeapSlots->event_work;
     s32 first = ObjectTable_ReadActiveValue(first_id);
     s32 second = ObjectTable_ReadActiveValue(second_id);
 

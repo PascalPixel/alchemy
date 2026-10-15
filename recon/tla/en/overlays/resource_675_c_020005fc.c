@@ -12,12 +12,12 @@
 #include "object_runtime.h"
 #include "call.h"
 
-struct Ov675Entry {
+struct IsletCaveEntry {
     s32 value;
     u16 position[2];
 };
 
-extern const struct Ov675Entry Data_020019ec[];
+extern const struct IsletCaveEntry Data_020019ec[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001254(void);

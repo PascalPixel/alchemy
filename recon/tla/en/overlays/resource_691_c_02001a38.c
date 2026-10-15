@@ -1,5 +1,5 @@
 /* Draft, differ 4 of 32: the native loads the party state address before it saves the second argument (adds r7, r1) and starts the scene offset after; this form saves the argument first. */
-#include "../../../../games/tla/src/field/overlay_691/ov691.h"
+#include "../../../../games/tla/src/scene/magma_rock/magma_rock.h"
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "scene_ids.h"
@@ -10,7 +10,7 @@ s32 Func_020014bc(s32 a, s32 b);
 
 void Func_02001a38(s32 a, s32 b)
 {
-    struct Ov691Work *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room1)
         work->target = Object_GetById(16);

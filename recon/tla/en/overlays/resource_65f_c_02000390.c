@@ -5,7 +5,7 @@
  * green as blue - 2); every form tried here (a [8][3] table, a flat table
  * with i * 3, a second index stepped by 3) is strength-reduced to three
  * pointers. */
-#include "../../../../games/tla/src/field/overlay_65f/ov65f.h"
+#include "../../../../games/tla/src/scene/garoh/garoh.h"
 #include "palbuf.h"
 
 extern const u16 Data_020054ee[];

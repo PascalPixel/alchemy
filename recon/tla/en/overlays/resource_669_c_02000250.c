@@ -25,7 +25,7 @@ void Func_02003198();
 void Func_02003298(s32 actor, s32 value);
 void Func_02000c5c(void);
 
-static __inline__ void Ov669_ObjPlace(s32 actor, s32 x, s32 z)
+static __inline__ void EasternAlhafraShip_ObjPlace(s32 actor, s32 x, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer, as cutscene.c's Call3. */
     Call3((void (*)())Func_02003198, actor, x, z);
@@ -46,28 +46,28 @@ s32 Func_02000250(void)
     }
     if (GameFlag_Test(0x8a7))
     {
-        Ov669_ObjPlace(10, 0, 0);
-        Ov669_ObjPlace(11, 0, 0);
-        Ov669_ObjPlace(8, 0, 0);
-        Ov669_ObjPlace(9, 0, 0);
+        EasternAlhafraShip_ObjPlace(10, 0, 0);
+        EasternAlhafraShip_ObjPlace(11, 0, 0);
+        EasternAlhafraShip_ObjPlace(8, 0, 0);
+        EasternAlhafraShip_ObjPlace(9, 0, 0);
     }
     else if (GameFlag_Test(0x8ab))
     {
-        Ov669_ObjPlace(8, 0, 0);
-        Ov669_ObjPlace(9, 0, 0);
+        EasternAlhafraShip_ObjPlace(8, 0, 0);
+        EasternAlhafraShip_ObjPlace(9, 0, 0);
         if (!GameFlag_Test(0x8bd))
         {
-            Ov669_ObjPlace(10, 0, 0);
-            Ov669_ObjPlace(11, 0, 0);
+            EasternAlhafraShip_ObjPlace(10, 0, 0);
+            EasternAlhafraShip_ObjPlace(11, 0, 0);
         }
     }
     else
     {
-        Ov669_ObjPlace(10, 0, 0);
-        Ov669_ObjPlace(11, 0, 0);
+        EasternAlhafraShip_ObjPlace(10, 0, 0);
+        EasternAlhafraShip_ObjPlace(11, 0, 0);
     }
     if (GameFlag_Test(0x900))
-        Ov669_ObjPlace(13, 0x1880000, 0x2880000);
+        EasternAlhafraShip_ObjPlace(13, 0x1880000, 0x2880000);
     Object_GetById(13)->priority_flags |= 32;
     Func_02003298(15, 457);
     if (!GameFlag_Test(0x901))
@@ -84,11 +84,11 @@ s32 Func_02000250(void)
     }
     else
     {
-        Ov669_ObjPlace(14, 0x880000, 0x1db0000);
+        EasternAlhafraShip_ObjPlace(14, 0x880000, 0x1db0000);
         if (!GameFlag_Test(0x902))
-            Ov669_ObjPlace(15, 0x780000, 0x1d80000);
+            EasternAlhafraShip_ObjPlace(15, 0x780000, 0x1d80000);
         else
-            Ov669_ObjPlace(15, 0, 0);
+            EasternAlhafraShip_ObjPlace(15, 0, 0);
     }
     return 0;
 }

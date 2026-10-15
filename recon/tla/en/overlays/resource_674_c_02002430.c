@@ -1,6 +1,6 @@
 /* Near miss, differ 4 of 60: the listing loads the address of Data_02005198 before the
  * first object's z; this draft loads it after. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002430(void)
 {

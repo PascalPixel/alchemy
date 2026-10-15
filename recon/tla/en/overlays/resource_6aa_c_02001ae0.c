@@ -1,5 +1,5 @@
 /* Draft, differ 95 of 168: a rolling ride object's step (overlays 6ab, 6ac and 6ad hold copies). Left: the native keeps the leader in r4, saving it around __divsi3 (caller-save is profitable only with five references, this has four), so gPartyState takes r10 and the event work r9; here the leader takes r10 and the event work r11. The slot loop in the native loads the first id into r0 and reuses it as the call's argument. Measured: the direction as a ternary (pool load of a halfword 0xffff) or a u16 local (negs). */
-#include "../../../../games/tla/src/field/overlay_6aa/room.h"
+#include "../../../../games/tla/src/scene/mars_entrance/room.h"
 
 struct RideSlot {
     u16 id;

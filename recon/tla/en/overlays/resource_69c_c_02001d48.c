@@ -10,7 +10,7 @@
  * reused as the loop counter (differ 83 to 34), a word temporary for 0xf1f, the mask in a variable set before a
  * one-pass boundary after the x shift, and a one-pass boundary after the WINOUT store. Those three devices need
  * FAKEMATCH tags with these reasons when the function is adopted. */
-#include "../../../../games/tla/src/field/overlay_69c/local.h"
+#include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
 #include "io_reg.h"
 
 struct PushEvent {

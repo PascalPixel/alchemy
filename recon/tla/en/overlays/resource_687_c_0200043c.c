@@ -1,11 +1,11 @@
 /* Near miss (16 of 120 instructions differ): three loads of the object's
  * position sit one slot earlier or later than the native's, and the native
  * stores the turned x after it sums z. */
-#include "../../../../games/tla/src/field/overlay_687/ov687.h"
+#include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 
 void Func_0200043c(void)
 {
-    struct Ov687Object *object = Object_GetById(8);
+    struct SeaOfTimeObject *object = Object_GetById(8);
     s32 turn[1];
     s32 center[3];
     s32 *pos;
@@ -28,11 +28,11 @@ void Func_0200043c(void)
         else
             object->z -= 0x3333;
         if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
-            turn[0] = Ov687_Cos(-0x200);
-            sine = Ov687_Sin(-0x200);
+            turn[0] = SeaOfTime_Cos(-0x200);
+            sine = SeaOfTime_Sin(-0x200);
         } else {
-            turn[0] = Ov687_Cos(0x200);
-            sine = Ov687_Sin(0x200);
+            turn[0] = SeaOfTime_Cos(0x200);
+            sine = SeaOfTime_Sin(0x200);
         }
         dx = object->x - center[0];
         dz = object->z - center[2];

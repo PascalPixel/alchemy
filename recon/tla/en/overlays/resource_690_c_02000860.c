@@ -6,7 +6,7 @@
  * stores, 8 minutes of alchemy permute. The alpha pin with a one-pass block and the priority
  * temporary (both as in overlay 696) are what place the literal pool where the native has it:
  * an empty asm before the pool moves it (its estimated 4 bytes). */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 #include "io_reg.h"
 
 struct OrbitSprite {
@@ -59,7 +59,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Func_020007d8(void);
 s32 Func_020007fc(s32 *p);
 
-static __inline__ void Ov690_Func_02002180(s32 a, s32 b, s32 c, s32 d)
+static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d)
 {
     Func_02002180(a, b, c, d);
 }
@@ -85,7 +85,7 @@ void Func_02000860(void)
     }
     Func_02002170();
     Func_02002170();
-    Ov690_Func_02002180(1, 0x203, 8, 9);
+    Settlements_Func_02002180(1, 0x203, 8, 9);
     if (GameFlag_Test(0xf5d)) {
         Func_020020c0(11, 0, 0);
         return;

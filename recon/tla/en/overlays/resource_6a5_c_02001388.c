@@ -26,7 +26,7 @@ s32 Owner_AdjustFirstValue();
 s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
 s32 Func_0200593c();
-extern u8 MsgScene665No19[];
+extern u8 MsgAlhafra19[];
 extern u8 gPartyState[];
 extern u8 MsgShield[];
 
@@ -64,7 +64,7 @@ void Func_02001388(void)
     Call4(Motion_CamBounds, 0x2080000, 0x680000, 0x1380000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Call1(Func_020058c4, (s32)MsgScene665No19);
+    Call1(Func_020058c4, (s32)MsgAlhafra19);
     Call3(Func_020058d4, 5, 0, 0);
     Call3(Func_020058fc, 4, 0x100, 0);
     Call3(Func_020058fc, 7, 0x100, 0);

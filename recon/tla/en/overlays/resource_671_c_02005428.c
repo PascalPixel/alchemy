@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-struct Ov671EffectWork {
+struct GabombaStatueEffectWork {
     u8 unknown_00[0x1a];
     s16 object_id;
 };
@@ -22,7 +22,7 @@ void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 // 表から今の相手の行を探して縮める
 void Func_02005428(u16 *list, s32 mode, s32 count)
 {
-    struct Ov671EffectWork *work = Ram_HeapSlots->effect_work;
+    struct GabombaStatueEffectWork *work = Ram_HeapSlots->effect_work;
 
     while (*list != 0xffff) {
         s32 id = work->object_id;

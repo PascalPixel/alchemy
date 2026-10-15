@@ -2,7 +2,7 @@
  * other->animation->value_28 and reloads the table address on every pass with the index in r4, and
  * builds the angle through two registers before it copies the position; the draft hoists all three in
  * a for loop, a goto loop and with a one-pass block around the test. */
-#include "../../../../games/tla/src/field/overlay_69c/local.h"
+#include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
 
 extern const u16 Data_02002478[];
 

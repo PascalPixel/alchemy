@@ -14,7 +14,7 @@
 #include "iwram_call.h"
 #include "frame.h"
 
-struct Ov681Orbit {
+struct GaiaRockInsideOrbit {
     u8 unknown_00[8];
     s32 x;
     s32 y;
@@ -34,7 +34,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 // 円を描いて回る
-s32 Func_0200142c(struct Ov681Orbit *object)
+s32 Func_0200142c(struct GaiaRockInsideOrbit *object)
 {
     s16 *speed = &object->speed;
     s16 *angle = &object->angle;

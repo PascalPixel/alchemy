@@ -1,6 +1,6 @@
 /* Near miss, differ 10: the listing reloads -0x2000 inside the loop; this
  * draft hoists it and spills it across WaitFrames (sub sp, #12). */
-#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
+#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 
 void Func_0200063c(s32 x, s32 y)
 {

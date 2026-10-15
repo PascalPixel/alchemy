@@ -4,7 +4,7 @@
  * pools 0x2000000. Measured: x and z in locals, 512 << 16, a direct call, a
  * pixel-coordinate inline that shifts (all 24 to 26). The 0xd4c store matches
  * through the one-pass block that Func_02000624 also takes. */
-#include "../../../../games/tla/src/field/overlay_659/ov659.h"
+#include "../../../../games/tla/src/scene/madra_interiors/madra_interiors.h"
 
 void Func_02000570(void)
 {

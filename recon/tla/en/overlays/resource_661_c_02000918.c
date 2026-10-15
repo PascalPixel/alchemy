@@ -1,5 +1,5 @@
 /* Draft, differ 8 of 31: entered at its test (goto); left is the cell store's registers (see resource_661_c_0200095c.c, its twin, at 2 with integer address arithmetic). */
-#include "../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "map.h"
 
 void Func_02000918(u16 *list)

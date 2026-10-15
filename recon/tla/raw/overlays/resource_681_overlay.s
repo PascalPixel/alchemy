@@ -1982,7 +1982,7 @@ Func_020019cc:
 .L_02009b50:
 	.4byte gPartyState
 .L_02009b54:
-	.4byte MsgScene681No09
+	.4byte MsgGaiaRockInside09
 .L_02009b58:
 	movs r5, #128
 	lsls r5, r5, #19
@@ -2434,7 +2434,7 @@ Func_02001ebc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009f5c:
-	.4byte MsgScene681No08
+	.4byte MsgGaiaRockInside08
 .L_02009f60:
 	.4byte gPartyState
 .L_02009f64:
@@ -2679,7 +2679,7 @@ Func_02002020:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a254:
-	.4byte MsgScene681No01
+	.4byte MsgGaiaRockInside01
 .L_0200a258:
 	.4byte gPartyState
 	.section .text.x0200a974,"ax",%progbits

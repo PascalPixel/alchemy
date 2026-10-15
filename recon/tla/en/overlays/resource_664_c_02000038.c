@@ -7,9 +7,9 @@
  * byte and builds the bit 2 in r3; the draft holds the flags in r3.
  * Func_020004d4 (53, 28): register names of the random offsets (r2 for the base, the leader
  * coordinate loaded before the mask). */
-#include "../../../../games/tla/src/field/overlay_664/ov664.h"
+#include "../../../../games/tla/src/scene/airs_rock_inside/airs_rock_inside.h"
 
-struct Ov664Entry {
+struct AirsRockInsideEntry {
     u16 id;
     s16 kind;
     s16 flag;
@@ -49,7 +49,7 @@ next:
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer)
 {
     struct FieldActor *object = Object_GetById(id);
-    u8 *cell = ((struct Ov664MapWork *)Ram_HeapSlots->map_work)->layers[layer].cells;
+    u8 *cell = ((struct AirsRockInsideMapWork *)Ram_HeapSlots->map_work)->layers[layer].cells;
 
     cell += Func_02005f64(object) * 4;
     if (GameFlag_Test(flag)) {

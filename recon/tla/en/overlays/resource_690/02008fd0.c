@@ -8,7 +8,7 @@
    registers; direct calls for the two speeds and the 0x207 flag share their
    constants in r5, r6 and r10 (differ 97); a flags pointer for the last block
    changes nothing. */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 
 void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);

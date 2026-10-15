@@ -7,7 +7,7 @@
  * differ 2), gSceneState read without the pointer (21), a one-pass block on
  * the load (the copy moves ahead, 4), the call's result in a temporary, a
  * barrier after the call (4), alchemy permute for 4 minutes (2). */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_0200253c(void)
 {

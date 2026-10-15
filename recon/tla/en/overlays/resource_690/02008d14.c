@@ -5,7 +5,7 @@
    form allocates them the other way round and reads the counter once. The
    cycle loop as a goto loop is further away (differ 85): the native steps a
    byte offset by 2, as a for loop does. */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 #include "io_write_queue.h"
 
 extern s32 Data_02002c5c;

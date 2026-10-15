@@ -5,9 +5,9 @@
  * register pin on state does not hold its place either. (2) loop.c hoists 0x14ccc out of the loop
  * into r7 (push r7); the native builds it in the loop, then finishes it before it starts 999, as in
  * Func_0200320c. Tried a one-case switch, while and do-while loops. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
-struct Ov685Work {
+struct ChampaCliffCavesWork {
     u8 tiles[0x1000];
     s32 origin_x;
     s32 origin_y;
@@ -40,7 +40,7 @@ void Func_02002de4(void);
 
 void Func_02003164(const struct Vec3 *origin)
 {
-    struct Ov685Work *work = Runtime_AllocateHeapBlockFar(220, sizeof(struct Ov685Work));
+    struct ChampaCliffCavesWork *work = Runtime_AllocateHeapBlockFar(220, sizeof(struct ChampaCliffCavesWork));
     s32 state;
 
     work->origin_x = origin->x;

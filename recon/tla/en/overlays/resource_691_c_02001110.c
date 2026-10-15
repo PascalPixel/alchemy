@@ -7,7 +7,7 @@
  * (43), a party pointer, the default table set first, the scene read into
  * a local (18), s16/u8/u16/s8 modes (9 to 37), alchemy permute (4
  * minutes, differ 17 at best). */
-#include "../../../../games/tla/src/field/overlay_691/ov691.h"
+#include "../../../../games/tla/src/scene/magma_rock/magma_rock.h"
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "scene_ids.h"
@@ -25,7 +25,7 @@ void Func_02000fcc(struct ObjectRuntime *object);
 
 void Func_02001110(s32 mode)
 {
-    struct Ov691Work *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
     s16 *table = Data_02003d9e;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {

@@ -3,7 +3,7 @@
  * threshold in r4, then loads the address again into r5 for the step; the
  * draft loads it inside each branch and uses r2 for the threshold. A
  * counter pointer local, a division and a one-pass block were tried. */
-#include "../../../../games/tla/src/field/overlay_653/local.h"
+#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 void Func_02000668(struct ObjectRuntime *object, s32 step)
 {

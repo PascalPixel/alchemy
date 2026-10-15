@@ -5,7 +5,7 @@
    the value local the scroll offset is held in r3 and its address in r2
    (differ 40); four minutes of permuter found nothing better. Overlay 690's
    Func_02000e90, which sets the three values this reads, is a draft too. */
-#include "../../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../../games/tla/src/scene/settlements/local.h"
 #include "io_reg.h"
 
 void Func_02000e30(void)

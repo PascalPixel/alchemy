@@ -1,5 +1,5 @@
 /* differ 2: the native loads the first warp target into r6 two instructions after the owner address (between the halves of the constant 424); here that load has the lowest priority before the first call and comes last. */
-#include "../../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
 extern const struct WarpTarget Data_02003d18;
 

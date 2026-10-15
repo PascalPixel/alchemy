@@ -1,5 +1,5 @@
 /* Draft, differ 44 of 57 (register choice): the native keeps the timer in r3 and the offsets and the mask 7 in r2, this draft the other way round. The goto loop keeps the offsets and the counter in r8 as the native has them (a do-while hoists them, differ 60). The same update is overlay 6A8's Func_02004114. Permute 1 minute: differ 36 only through an inline helper. */
-#include "../../../../games/tla/src/field/overlay_68f/ov68f.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 struct Spark {
     s32 position[3];

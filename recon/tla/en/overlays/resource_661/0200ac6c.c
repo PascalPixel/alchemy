@@ -2,7 +2,7 @@
    starts the 0x7c4 offset constant (ldr r3, [r3]; movs r2, #224); this draft
    starts the constant first. A local pointer, a struct field, an empty asm
    and a register-use barrier all leave the same order. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 
 void Func_02002c6c(void)
 {

@@ -6,7 +6,7 @@
  * load tie at priority 3 and the copy has two dependents to the load's one.
  * Tried: a one-pass block around the decrement, frames = (s16)(frames - 1),
  * a for loop (all 2); a 4-minute permute found nothing better. */
-#include "../../../../games/tla/src/field/overlay_686/ov686.h"
+#include "../../../../games/tla/src/scene/ankohl_ruins/ankohl_ruins.h"
 
 void Func_02000a68(s32 unused, s32 objectId)
 {

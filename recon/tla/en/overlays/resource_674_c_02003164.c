@@ -2,12 +2,12 @@
  * setup written from the listing. The native keeps the map work in r5, a zero for the
  * motion flags in r6 and object 10 in r7, and reuses the flag result as the zero in the
  * else branch; this draft keeps the zero in r8. alchemy permute (5 minutes) did not close it. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02003f4c(s32 actor);
 void ObjectMotion_SetActionVariant();
 
-struct Ov674MapWork {
+struct IsletsMapWork {
     u8 unknown_000[0x190];
     s32 value_190;
     s32 value_194;
@@ -15,7 +15,7 @@ struct Ov674MapWork {
 
 void Func_02003164(void)
 {
-    struct Ov674MapWork *map = (struct Ov674MapWork *)Ram_HeapSlots->map_work;
+    struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->map_work;
     struct ObjectRuntime *object = Object_GetById(10);
     struct ObjectRuntime *first;
     struct ObjectRuntime *second;

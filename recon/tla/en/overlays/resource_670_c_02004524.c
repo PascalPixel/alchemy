@@ -1,11 +1,11 @@
-// near miss: differ 6 (listing 65 instructions, draft 65); scheduling after Func_02005bbc: the native loads the owner's address (ldr r5) between the zero's offset and its store; the task add now goes through OV670_TASK_ADD (was differ 8). Tried: an empty asm after the store (differ 4, but it swaps the camera call's negs), a one-pass block (6), a u8 zero (8)
-#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+// near miss: differ 6 (listing 65 instructions, draft 65); scheduling after Func_02005bbc: the native loads the owner's address (ldr r5) between the zero's offset and its store; the task add now goes through KIBOMBO_TASK_ADD (was differ 8). Tried: an empty asm after the store (differ 4, but it swaps the camera call's negs), a one-pass block (6), a u8 zero (8)
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern const u8 Data_0200613c[];
 extern const u8 Data_0200614c[];
 extern const u8 Data_02006324[];
 
-void Func_020000a0(struct Ov670Object *object);
+void Func_020000a0(struct KibomboObject *object);
 void Func_02002f34(void);
 void Func_02003030(void);
 void Func_02003184(void);
@@ -28,15 +28,15 @@ void Func_02005c64(const void *script);
 
 void Func_02004524(void)
 {
-    struct Ov670EventWork *work;
+    struct KibomboEventWork *work;
 
     Func_02005a9c();
     Func_02005c3c(0);
-    Ov670_CamMove(-1, -1, -1, 0);
+    Kibombo_CamMove(-1, -1, -1, 0);
     Func_02005bbc()->motion_flags = 0;
     Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    OV670_TASK_ADD(Func_02002ccc, 0x480);
+    KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
     Func_02003640(1, 1);
     if (Data_02007950 != 0) {
         Data_02007950->y += 0x200000;

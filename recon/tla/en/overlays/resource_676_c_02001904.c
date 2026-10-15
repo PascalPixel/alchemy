@@ -5,17 +5,17 @@
  * struct field loads as a literal. */
 #include "types.h"
 
-struct Ov676Actor {
+struct YallamActor {
     u8 unknown_00[98];
     u8 state;
     u8 kind;
     s16 timer;
     s16 count;
     u8 unknown_68[4];
-    void (*update)(struct Ov676Actor *actor);
+    void (*update)(struct YallamActor *actor);
 };
 
-struct Ov676Actor *Object_GetById(s32 id);
+struct YallamActor *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Object_SetModeById(u32 id, s32 mode);
 
@@ -27,7 +27,7 @@ static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed, s32 a
 
 void Func_02001904(s32 id)
 {
-    struct Ov676Actor *actor = Object_GetById(id);
+    struct YallamActor *actor = Object_GetById(id);
 
     ObjectMotion_SetSpeedParameters_(id, 0x13333, 0x13333);
     Object_SetModeById(id, 2);

@@ -319,7 +319,7 @@ Func_02000a5c:
 	strh r3, [r2]
 	b .L_02008d7e
 .L_02008d54:
-	.4byte MsgScene68CNo10
+	.4byte MsgLemuriaInteriors10
 .L_02008d58:
 	movs r0, #40
 	bl Battle_WaitMode0

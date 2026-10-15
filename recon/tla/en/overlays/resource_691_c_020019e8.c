@@ -5,7 +5,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 #include "scene_ids.h"
-#include "ov691.h"
+#include "magma_rock.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -21,7 +21,7 @@ void Func_02003c54(s32 a);
 
 void Func_020019e8(s32 mode, s32 cue)
 {
-    struct Ov691Work *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
@@ -37,7 +37,7 @@ void Func_020019e8(s32 mode, s32 cue)
 
 void Func_02001a38(s32 mode, s32 cue)
 {
-    struct Ov691Work *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */

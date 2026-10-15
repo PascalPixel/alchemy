@@ -6,9 +6,9 @@
  * hoists both masks and reverses the count. The pool's 0x1f7 wants a ResourceId_Data1F7 name in
  * system/resource/directory.s (not added while this is a draft). The work then lands in r6, not
  * r7, and the closing zeros take r6's place. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
-struct Ov685Work {
+struct ChampaCliffCavesWork {
     u8 tiles[0x1000];
     s32 origin_x;
     s32 origin_y;
@@ -37,7 +37,7 @@ void Func_020035fc(struct FieldSprite *sprite, s32 width, s32 height, u32 attrib
 
 void Func_02002d34(void)
 {
-    struct Ov685Work *work = Ram_HeapSlots->menu_runtime;
+    struct ChampaCliffCavesWork *work = Ram_HeapSlots->menu_runtime;
     struct FieldSprite *sprite;
     s32 i;
     s32 entry;

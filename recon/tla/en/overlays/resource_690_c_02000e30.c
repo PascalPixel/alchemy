@@ -1,5 +1,5 @@
 /* Draft, differ 40 of 35: the hblank split of Func_02000e90's values. The native rebuilds each register address for each store (0x04000014 twice, 0x04000050 by subs from 0x04000052) and loads the zero for BLDCNT from the pool; plain, volatile and Io_Write16 stores share one base (differ 33-40). */
-#include "../../../../games/tla/src/field/overlay_690/local.h"
+#include "../../../../games/tla/src/scene/settlements/local.h"
 #include "io_reg.h"
 
 void Func_02000e30(void)

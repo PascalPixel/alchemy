@@ -6,7 +6,7 @@
  * them); (3) at both terrain calls it builds the 0 argument before it loads
  * x and z (an asm-held zero is copied from r6 instead). alchemy permute for
  * 4 minutes reached 8 only by changing a signature. */
-#include "../../../../games/tla/src/field/overlay_66a/local.h"
+#include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 #include "call.h"
 
 void Func_020000fc(void);
@@ -19,7 +19,7 @@ void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 
 void Func_020002f8(void)
 {
-    struct Ov66aMapWork *map = (struct Ov66aMapWork *)Ram_HeapSlots->map_work;
+    struct AlhafranCaveMapWork *map = (struct AlhafranCaveMapWork *)Ram_HeapSlots->map_work;
     struct ObjectRuntime *object;
 
     Object_GetById(gPartyState.current_owner)->priority_flags |= 32;

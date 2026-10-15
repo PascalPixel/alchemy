@@ -3,12 +3,12 @@
  * r4, ORs the halfword constant 0xffff (from the pool) into the second and
  * stores it, and keeps a zero in r5 across the calls. The draft stores -1
  * and reads the id once. Tried: a u16 pointer with |= and with a raw copy. */
-#include "../../../../games/tla/src/field/overlay_6ae/ov6ae.h"
+#include "../../../../games/tla/src/scene/mars_aerie/mars_aerie.h"
 
 void Func_02004d50(s32 id)
 {
     u8 *work = Ram_HeapSlots->window_tiles;
-    struct Ov6aeParty *party = (struct Ov6aeParty *)&gPartyState;
+    struct MarsAerieParty *party = (struct MarsAerieParty *)&gPartyState;
     s32 held = party->held;
 
     if (held == id) {

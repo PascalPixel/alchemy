@@ -4,7 +4,7 @@
    and the pooled 0xffff8001 before the mask is complete (lsls r3, #7; ldr r2;
    adds r3, #255); this form loads each after. Three minutes of permuter found
    nothing better. */
-#include "../../../../games/tla/src/field/overlay_664/ov664.h"
+#include "../../../../games/tla/src/scene/airs_rock_inside/airs_rock_inside.h"
 
 s32 Random16Far(void);
 void Func_02001458(void);

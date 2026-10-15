@@ -1,6 +1,6 @@
 /* Draft, differ 2 of 25: entered at its test (goto); the cell address as integer arithmetic with the base first and the index as a temporary, as alchemy permute found. One pair is left: the listing builds 0xffff for the loop test after loading the next entry; this draft before. */
-#include "../../../../games/tla/src/field/overlay_661/scene.h"
-#include "../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../games/tla/src/scene/yampi_desert/scene.h"
+#include "../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "map.h"
 
 void Func_0200095c(u16 *list)

@@ -390,7 +390,7 @@ Func_02001008:
 	pop {pc}
 	.2byte 0x0000
 .L_020092f4:
-	.4byte MsgScene659No110
+	.4byte MsgMadraInteriors110
 .L_020092f8:
 	.4byte Data_02001f18
 .L_020092fc:

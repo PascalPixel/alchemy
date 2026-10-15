@@ -1,6 +1,6 @@
-#include "../../../../games/tla/src/field/overlay_67b/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock/local.h"
 
-struct Overlay67bSpray {
+struct AquaRockSpray {
     s32 unknown_00;
     s32 kind;
     s32 scale_x;
@@ -8,11 +8,11 @@ struct Overlay67bSpray {
     u8 unknown_10[24];
 };
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d, struct Overlay67bSpray *spray);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d, struct AquaRockSpray *spray);
 
 s32 Func_02002030(struct ObjectRuntime *object)
 {
-    struct Overlay67bSpray spray;
+    struct AquaRockSpray spray;
 
     if (gFrameCount & 1) {
         s32 drift;

@@ -3,7 +3,7 @@
    address (str r3, [r5, #20]; ldr r1), and clears the frame before it copies
    the parent sprite out of r8 (strb r5, [r7, #26]; mov r2, r8); this form has
    both pairs the other way round. */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02002bd4(struct ObjectRuntime *object)
 {

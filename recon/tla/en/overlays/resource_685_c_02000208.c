@@ -4,7 +4,7 @@
  * last before the call. The three forwarding inlines are needed (differ 10 as direct calls);
  * Func_02003534_ and an inline for the first move change nothing, nor does assigning the warp
  * pointer as a statement. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
 
 void Func_020034d4(s32 actor, s32 x, s32 z);

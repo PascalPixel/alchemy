@@ -47,7 +47,7 @@ s32 Object_SetModeById();
 s32 UiText_OpenMessageAtObject();
 s32 WaitFrames();
 s32 __divsi3();
-extern u8 MsgScene65FNo28[];
+extern u8 MsgGaroh28[];
 extern u8 gPartyState[];
 
 void Func_02003878(void)
@@ -94,7 +94,7 @@ void Func_02003878(void)
     Call1(GameFlag_SetBit, 0x91f);
     Func_020051ac();
     Call1(Func_02005324, 0);
-    Call1(Func_0200524c, ((s32)MsgScene65FNo28));
+    Call1(Func_0200524c, ((s32)MsgGaroh28));
     Call3(Func_0200520c, 10, 0x1480000, 0x280000);
     Call3(ObjectMotion_ArmCallback, 10, 0x4000, 0);
     Call3(Func_0200525c, 10, 0, 0);

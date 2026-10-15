@@ -5,7 +5,7 @@
  * by backward branches: bne to Remove(item), beq to the 441 test), and compares each later owner
  * with the previous -1 kept in r10 and r8; this draft's if/else chain emits them in source order
  * with one -1. The layout looks like gotos or a rotated loop; not tried further. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
 struct EventFlags685 {
     u8 unknown_000[0x15a];

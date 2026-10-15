@@ -784,7 +784,7 @@ Func_02000198:
 	b .L_020088f0
 	.2byte 0x0000
 .L_020088dc:
-	.4byte MsgScene6A6No28
+	.4byte MsgLoho28
 .L_020088e0:
 	.4byte 0x021e0000
 .L_020088e4:

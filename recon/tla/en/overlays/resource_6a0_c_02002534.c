@@ -3,9 +3,9 @@
  * mask's copy (108). Also tried: a mask local, the operands swapped, the shift of x in its own
  * statement, the masked x in an s16 local, a barrier between x and z (2 each); the cell and owner
  * reads ahead of a barrier (7); four minutes of permute (nothing better). */
-#include "../../../../games/tla/src/field/overlay_6a0/ov6a0.h"
+#include "../../../../games/tla/src/scene/jupiter_room_7/jupiter_room_7.h"
 
-void Func_02002534(struct Ov6a0Cell *cell)
+void Func_02002534(struct JupiterRoom7Cell *cell)
 {
     struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
     s32 x = (owner->x >> 20) | (s16)(cell->x & 0x40);

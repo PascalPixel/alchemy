@@ -4,22 +4,22 @@
  * the store and swaps r1 and r2. */
 #include "types.h"
 
-struct Ov676Actor {
+struct YallamActor {
     u8 unknown_00[98];
     u8 state;
     u8 kind;
     s16 timer;
     s16 count;
     u8 unknown_68[4];
-    void (*update)(struct Ov676Actor *actor);
+    void (*update)(struct YallamActor *actor);
 };
 
-struct Ov676Actor *Object_GetById(s32 id);
-void Func_0200014c(struct Ov676Actor *actor);
+struct YallamActor *Object_GetById(s32 id);
+void Func_0200014c(struct YallamActor *actor);
 
 void Func_020023c8(void)
 {
-    struct Ov676Actor *actor = Object_GetById(9);
+    struct YallamActor *actor = Object_GetById(9);
 
     actor->timer = 1;
     actor->kind = 0;

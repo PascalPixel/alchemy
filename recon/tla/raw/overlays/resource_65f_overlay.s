@@ -1319,7 +1319,7 @@ Func_02001490:
 	adds r2, r2, r3
 	b .L_02009828
 .L_0200981c:
-	.4byte MsgScene65FNo01
+	.4byte MsgGaroh01
 .L_02009820:
 	.4byte 0xfff00000
 .L_02009824:
@@ -2672,7 +2672,7 @@ Func_02003878:
 	bl Object_SetModeById
 	b .L_0200ba8c
 .L_0200ba88:
-	.4byte MsgScene65FNo28
+	.4byte MsgGaroh28
 .L_0200ba8c:
 	movs r1, #3
 	movs r0, #9

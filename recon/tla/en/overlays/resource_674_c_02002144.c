@@ -1,6 +1,6 @@
 /* Near miss, differ 35 of 58: the listing keeps the second object's x and z in r4 and r2
  * and passes the first pair from r0 and r1 where it tested them; this draft allocates them otherwise. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002144(void)
 {

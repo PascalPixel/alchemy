@@ -5,10 +5,10 @@
  * from two instructions late to one; a one-pass block there fixes neither (differ 12, pool two
  * late). The sum goes through an int variable: stored directly it is narrowed to a halfword add
  * of 0x8000 (differ 13). */
-#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 s32 Math_Cosine(s32 angle);
-void Func_02005a2c(struct Ov670Object *object, const void *script);
+void Func_02005a2c(struct KibomboObject *object, const void *script);
 void Effect_AdvanceMotion(void);
 extern u32 Data_02005ca4[];
 
@@ -17,7 +17,7 @@ void Func_02002f34(void)
     s32 phase = gFrameCount & 3;
 
     if (phase == 0) {
-        struct Ov670Object *object = Func_02005a34(0x16e, 0x1080000, 0x200000, 0x13c0000);
+        struct KibomboObject *object = Func_02005a34(0x16e, 0x1080000, 0x200000, 0x13c0000);
         s32 value;
 
         if (object != 0) {

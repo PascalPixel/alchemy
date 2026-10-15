@@ -506,7 +506,7 @@ Func_0200058c:
 	bl Func_02001fd4
 	bl .L_02009f20
 .L_02008630:
-	.4byte MsgScene68DNo11
+	.4byte MsgLemuriaPalace11
 .L_02008634:
 	.4byte 0x00013333
 .L_02008638:

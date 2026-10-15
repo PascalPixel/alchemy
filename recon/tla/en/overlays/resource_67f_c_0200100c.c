@@ -2,7 +2,7 @@
  * the bottom, 0xffff rebuilt on every pass; as a while loop the test is copied and the constant
  * hoisted to r8). Left: the register that holds the offset 4, where object is copied for the
  * flag byte, and where 0xffff is shifted. */
-#include "../../../../games/tla/src/field/overlay_67f/ov67f.h"
+#include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_0200100c(u16 *list)
 {

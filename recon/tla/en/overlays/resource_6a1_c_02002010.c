@@ -4,19 +4,19 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct Ov6a1Puzzle {
+struct JupiterRoom8Puzzle {
     s16 unknown_00;
     s16 flag;
 };
 
-struct Ov6a1EventWork {
+struct JupiterRoom8EventWork {
     u8 unknown_000[0x1ac];
     s32 screen_effect;
     u8 unknown_1b0[0x1c];
     struct ObjectRuntime *marker;
 };
 
-extern struct Ov6a1Puzzle Data_02002bf8;
+extern struct JupiterRoom8Puzzle Data_02002bf8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
@@ -27,7 +27,7 @@ void Func_02001dc8(void);
 void Func_02002010(s32 x, s32 z, s32 effect)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    struct Ov6a1EventWork *work = Ram_HeapSlots->event_work;
+    struct JupiterRoom8EventWork *work = Ram_HeapSlots->event_work;
     s32 dx = GameFlag_GetByte(Data_02002bf8.flag);
     s32 dz = GameFlag_GetByte(Data_02002bf8.flag + 8);
 
@@ -43,6 +43,6 @@ void Func_02002010(s32 x, s32 z, s32 effect)
         marker->z = leader->z;
         Func_02002188();
         Func_02001dc8();
-        ((struct Ov6a1EventWork *)Ram_HeapSlots->event_work)->screen_effect = effect;
+        ((struct JupiterRoom8EventWork *)Ram_HeapSlots->event_work)->screen_effect = effect;
     }
 }

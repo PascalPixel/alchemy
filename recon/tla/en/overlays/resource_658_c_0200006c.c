@@ -10,12 +10,12 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct Ov658EventWork {
+struct MadraEventWork {
     u8 unknown_000[0x154];
     s16 value_154;
 };
 
-struct Ov658Placement {
+struct MadraPlacement {
     const void *data;
     u16 x;
     u16 y;
@@ -37,7 +37,7 @@ void Func_02002c90(s32 a);
 
 void Func_0200006c(void)
 {
-    struct Ov658EventWork *work = Ram_HeapSlots->event_work;
+    struct MadraEventWork *work = Ram_HeapSlots->event_work;
     struct ObjectRuntime *object;
     u32 id;
 

@@ -4,9 +4,9 @@
  * a save slot (frame 24), because its 13 loop-weighted uses over 2 calls make caller-save
  * profitable (refs > 4 * calls). The native countdown therefore has at most 8 weighted uses or
  * crosses more calls. Measured: u8 or u32 countdown, owners[i] or a walking pointer. */
-#include "../../../../games/tla/src/field/overlay_696/ov696.h"
+#include "../../../../games/tla/src/scene/shaman_village/shaman_village.h"
 
-#define EVENT_WORK ((struct Ov696EventWork *)Ram_HeapSlots->event_work)
+#define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->event_work)
 
 s32 PartyInventory_FindOwner(s32 item);
 u8 *UnitGet(s32 owner);
@@ -45,7 +45,7 @@ void Func_0200290c(void)
         EVENT_WORK->field_1c4++;
         if (remaining == 0) {
             EVENT_WORK->field_1c4++;
-            Ov696_MessagePut(0x200f, 0);
+            ShamanVillage_MessagePut(0x200f, 0);
             Object_LinkObjectAndSetCallback(16, gPartyState.current_owner);
             Object_LinkObjectAndSetCallback(17, gPartyState.current_owner);
             Object_LinkObjectAndSetCallback(15, gPartyState.current_owner);
@@ -54,8 +54,8 @@ void Func_0200290c(void)
             return;
         }
     }
-    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
-    OV696_EMOTE(15, 257, 20)
-    Ov696_MessagePut(0x200f, 0);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
+    SHAMAN_VILLAGE_EMOTE(15, 257, 20)
+    ShamanVillage_MessagePut(0x200f, 0);
     Func_0200289c();
 }

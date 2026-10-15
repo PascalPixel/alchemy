@@ -7,7 +7,7 @@
  * copies go first (all three tie at priority 1 and the copies come first in
  * insn order). The counter set before the pointers are formed (differ 16) and
  * the pointers copied through an operand asm after it (52) were worse. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 extern u8 Data_02004f04;
 extern s16 Data_02004f10[2][160];

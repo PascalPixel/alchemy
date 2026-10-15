@@ -1,0 +1,15 @@
+#include "mars_room_m.h"
+
+const u8 *Func_02000af4(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov6ACRoom6)
+        return Data_020036c8;
+    if (scene == (s32)&SceneId_Ov6ACRoom1)
+        return Data_02003708;
+    if (scene == (s32)&SceneId_Ov6ACRoom2 || scene == (s32)&SceneId_Ov6ACRoom3
+        || scene == (s32)&SceneId_Ov6ACRoom4 || scene == (s32)&SceneId_Ov6ACRoom5)
+        return Data_02003858;
+    return Data_020036b8;
+}

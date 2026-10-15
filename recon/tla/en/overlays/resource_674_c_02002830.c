@@ -2,11 +2,11 @@
  * shifts the offset, reloads the event work, then copies the offset to r11 and adds 85; this draft
  * copies it to r11 before the reload. A local for the work, a cast and plain pointer arithmetic give
  * the same code, and an empty loop note there changes the allocation (differ 34). */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002830(void)
 {
-    struct Ov674EventWork *work;
+    struct IsletsEventWork *work;
     struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
     struct ObjectRuntime *object = Object_GetById(9);
 

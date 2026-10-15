@@ -1,5 +1,5 @@
 /* Draft, differ 4: the listing loads the sprite and its attribute byte one instruction later, around movs r3, #3 and ands. */
-#include "../../../../games/tla/src/field/overlay_67c/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02003994(struct ObjectRuntime *object, s32 priority)
 {

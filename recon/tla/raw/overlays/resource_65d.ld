@@ -2,15 +2,15 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/field/overlay_65d/entry.o"(.text)
-        "*/games/tla/src/field/overlay_65d/scene_tables.o"(.text)
-        "*/games/tla/src/field/overlay_65d/exits.o"(.text)
-        "*/games/tla/src/field/overlay_65d/events_a.o"(.text)
-        "*/games/tla/src/field/overlay_65d/events_b.o"(.text)
-        "*/games/tla/src/field/overlay_65d/s0438.o"(.text)
-        "*/games/tla/src/field/overlay_65d/events_c.o"(.text)
-        "*/games/tla/src/field/overlay_65d/import.o"(.text)
-        "*/games/tla/src/field/overlay_65d/data.o"(.data)
+        "*/games/tla/src/scene/mikasalla/entry.o"(.text)
+        "*/games/tla/src/scene/mikasalla/scene_tables.o"(.text)
+        "*/games/tla/src/scene/mikasalla/exits.o"(.text)
+        "*/games/tla/src/scene/mikasalla/events_a.o"(.text)
+        "*/games/tla/src/scene/mikasalla/events_b.o"(.text)
+        "*/games/tla/src/scene/mikasalla/s0438.o"(.text)
+        "*/games/tla/src/scene/mikasalla/events_c.o"(.text)
+        "*/games/tla/src/scene/mikasalla/import.o"(.text)
+        "*/games/tla/src/scene/mikasalla/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

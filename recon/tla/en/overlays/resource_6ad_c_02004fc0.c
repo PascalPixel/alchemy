@@ -1,5 +1,5 @@
 /* Draft, differ 32 of 61 (twins in overlays 662, 668, 674, 69c, 6a1 have drafts too): the listing rereads other->animation, its value_28 and the table address on every pass with the index in r4, and builds the angle through r3; a for loop strength-reduces the index, a goto loop hoists the loads. */
-#include "../../../../games/tla/src/field/overlay_6ad/room.h"
+#include "../../../../games/tla/src/scene/mars_room_f/room.h"
 
 extern u16 Data_02005f58[];
 

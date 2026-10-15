@@ -64,7 +64,7 @@ void Func_02001008(void)
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x16a, 95);
     Call2((void (*)())Func_02001e40, 4, 0x4000);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 11);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No110);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors110);
     Call3((void (*)())ObjectMotion_SetAngleToward, 10, 4, 0);
     Call1((void (*)())Battle_WaitMode0, 20);
     Value3((s32 (*)())Func_02001e48, 10, 0x102, 30);

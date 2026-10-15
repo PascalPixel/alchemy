@@ -5,10 +5,10 @@
  * r5/r2, #1; negs), loads the item for PartyInventory_GiveItem after the mode 0 (movs r1, #0;
  * adds r0, r5), and steps the prize pointer after the 0xc000 wait argument; the draft does each
  * the other way round. */
-#include "../../../../games/tla/src/field/overlay_694/ov694.h"
+#include "../../../../games/tla/src/scene/contigo/contigo.h"
 #include "call.h"
 
-struct Ov694Prizes {
+struct ContigoPrizes {
     u8 unknown_000[0x14c];
     s8 list[8];
 };
@@ -58,14 +58,14 @@ void Func_02003a8c(void)
             else
                 Func_020042b4(91);
             Battle_WaitMode0(20);
-            Func_0200412c((s32)MsgScene694No15);
+            Func_0200412c((s32)MsgContigo15);
             Func_0200403c(diff, 5);
             Func_02004144(14, 0);
             AudioCommand_WaitForStateByteClear();
         }
         else if (diff < 0)
         {
-            Func_0200412c((s32)MsgScene694No16);
+            Func_0200412c((s32)MsgContigo16);
             Func_0200403c(-diff, 5);
             Func_02004144(14, 0);
         }
@@ -87,14 +87,14 @@ void Func_02003a8c(void)
             else
                 Func_020042b4(91);
             Battle_WaitMode0(20);
-            Func_0200412c((s32)MsgScene694No15);
+            Func_0200412c((s32)MsgContigo15);
             Func_0200403c(diff, 5);
             Func_02004144(14, 0);
             AudioCommand_WaitForStateByteClear();
         }
         else if (diff < 0)
         {
-            Func_0200412c((s32)MsgScene694No16);
+            Func_0200412c((s32)MsgContigo16);
             Func_0200403c(-diff, 5);
             Func_02004144(14, 0);
         }
@@ -102,7 +102,7 @@ void Func_02003a8c(void)
     }
     else if (gPartyState.entrance == 20)
     {
-        list = ((struct Ov694Prizes *)&gPartyState)->list;
+        list = ((struct ContigoPrizes *)&gPartyState)->list;
         Func_0200406c();
         Func_02004204(0);
         Event_StartScreenTransition();
@@ -114,21 +114,21 @@ void Func_02003a8c(void)
         }
         else if (list[0] == -2)
         {
-            Func_0200412c((s32)MsgScene694No04);
+            Func_0200412c((s32)MsgContigo04);
             Func_02004144(18, 0);
         }
         else
         {
-            Func_0200412c((s32)MsgScene694No05);
+            Func_0200412c((s32)MsgContigo05);
             Func_02004144(18, 0);
             if (list[0] != -1)
             {
                 prize = list;
             next:
                     if (prize == list)
-                        Func_0200412c((s32)MsgScene694No11);
+                        Func_0200412c((s32)MsgContigo11);
                     else
-                        Func_0200412c((s32)MsgScene694No14);
+                        Func_0200412c((s32)MsgContigo14);
                     item = Func_02001a60(*prize);
                     Func_0200403c(item, 2);
                     Func_02004144(18, 0);
@@ -139,8 +139,8 @@ void Func_02003a8c(void)
                 if (*prize != -1)
                     goto next;
             }
-            ((struct Ov694Prizes *)&gPartyState)->list[0] = -2;
-            Func_0200412c((s32)MsgScene694No17);
+            ((struct ContigoPrizes *)&gPartyState)->list[0] = -2;
+            Func_0200412c((s32)MsgContigo17);
             Func_02004144(18, 0);
         }
         Func_02004074();

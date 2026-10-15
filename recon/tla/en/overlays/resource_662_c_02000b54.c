@@ -1,10 +1,10 @@
 // Draft, differ 30 of 51: the listing rebuilds the list end 0xffff on every pass and so keeps one register
 // fewer; here the constant of the first test lives in r10 through the loop. Three extra temporaries for the
 // call arguments do not keep it in the loop.
-#include "../../../../games/tla/src/field/overlay_662/ov662.h"
+#include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "object_runtime.h"
 
-struct Ov662Placement {
+struct YampiDesertCavePlacement {
     u16 id;
     s16 column;
     s16 row;
@@ -13,7 +13,7 @@ struct Ov662Placement {
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 
-void Func_02000b54(struct Ov662Placement *list)
+void Func_02000b54(struct YampiDesertCavePlacement *list)
 {
     while (list->id != 0xffff) {
         s32 id = list->id;

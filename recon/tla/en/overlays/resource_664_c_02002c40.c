@@ -6,7 +6,7 @@
  * Func_02003cac (62, 30): the native keeps the event work pointer in r5 and adds the room
  * offset into it, with the row in r6; the draft allocates them the other way. The row
  * passes through an inline so that 54 - (room - 201) * 4 does not fold. */
-#include "../../../../games/tla/src/field/overlay_664/ov664.h"
+#include "../../../../games/tla/src/scene/airs_rock_inside/airs_rock_inside.h"
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);

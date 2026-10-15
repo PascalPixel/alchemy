@@ -7,9 +7,9 @@
  * chain (19), state = 999 first (6), a volatile store, a register pin, an empty asm or a break
  * after it (4), a one-pass block round the store or round state = 999 (2, the store then goes
  * before 999); permute 3 minutes found only the one-pass block. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
-struct Ov685Work {
+struct ChampaCliffCavesWork {
     u8 unknown_0000[0x1000];
     s32 field_1000;
     s32 field_1004;
@@ -31,7 +31,7 @@ void Func_02002de4(void);
 
 void Func_0200320c(void)
 {
-    struct Ov685Work *work = Runtime_AllocateHeapBlockFar(220, sizeof(struct Ov685Work));
+    struct ChampaCliffCavesWork *work = Runtime_AllocateHeapBlockFar(220, sizeof(struct ChampaCliffCavesWork));
     s32 state;
 
     Func_02002d34();

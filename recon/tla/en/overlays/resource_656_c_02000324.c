@@ -5,28 +5,28 @@
  * against 86). A one-pass block around the action call (6), an empty barrier after it, "+r" and
  * "+l" barriers on found, a one-pass block around the cue call (2 each) and alchemy permute 4
  * minutes (2) did not move it. */
-#include "../../../../games/tla/src/field/overlay_656/ov656.h"
+#include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
 
-struct Ov656Warp {
+struct LemurianShipWarp {
     u16 exit;
     s32 value;
     u16 x;
     u16 z;
 };
 
-extern struct Ov656Warp Data_02003904[];
-extern struct Ov656Warp Data_0200397c[];
+extern struct LemurianShipWarp Data_02003904[];
+extern struct LemurianShipWarp Data_0200397c[];
 void Func_02002c28(s32 value, s32 x, s32 z);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
 void ObjectMotion_CenterOnColumn(s32 actor, s32 a, s32 b);
 
-static inline void Ov656_ObjOffset(s32 actor, s32 a, s32 b)
+static inline void LemurianShip_ObjOffset(s32 actor, s32 a, s32 b)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     ObjectMotion_OffsetPositionAndResetMotion(actor, a, b);
 }
 
-static inline void Ov656_ObjCenter(s32 actor, s32 a, s32 b)
+static inline void LemurianShip_ObjCenter(s32 actor, s32 a, s32 b)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     ObjectMotion_CenterOnColumn(actor, a, b);
@@ -34,8 +34,8 @@ static inline void Ov656_ObjCenter(s32 actor, s32 a, s32 b)
 
 void Func_02000324(void)
 {
-    struct Ov656EventWork *work = Ram_HeapSlots->event_work;
-    struct Ov656Object *object;
+    struct LemurianShipEventWork *work = Ram_HeapSlots->event_work;
+    struct LemurianShipObject *object;
     u8 *entry;
     s32 offset;
     u32 found;
@@ -66,7 +66,7 @@ next2:
         found += 4;
     Func_02002de0(158);
     ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
-    Ov656_MapCopy(0, 0, Data_0200397c[found].x, Data_0200397c[found].z, 1, 2);
+    LemurianShip_MapCopy(0, 0, Data_0200397c[found].x, Data_0200397c[found].z, 1, 2);
     Func_02002c28(Data_0200397c[found].value, Data_0200397c[found].x, Data_0200397c[found].z + 60);
     Object_SetModeById(gPartyState.current_owner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);

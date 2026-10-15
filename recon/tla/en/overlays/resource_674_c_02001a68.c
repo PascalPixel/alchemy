@@ -2,7 +2,7 @@
  * Func_02000df8 before it copies object 9 for the done flag; this draft copies first.
  * alchemy permute matched it only by giving call.h's Call3 a volatile int result, which
  * is no source form. */
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02003fbc(void);
 void Func_02003fc4(void);
@@ -81,7 +81,7 @@ void Func_02001a68(void)
 
         Call1((void (*)())WaitFrames, 1);
 
-        ((struct Ov674EventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x201;
+        ((struct IsletsEventWork *)Ram_HeapSlots->event_work)->field_1ac = 0x201;
         ((void (*)())Event_FinishScreenTransition)();
 
         ((void (*)())Event_WaitTransitionFrames)();

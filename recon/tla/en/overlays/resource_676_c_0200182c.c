@@ -3,7 +3,7 @@
  * before it loads the saved word, and sets the next id before the last byte
  * store; the draft loads each saved word first. Func_02001730, the saving
  * half, matches in this form (s1688.c). */
-#include "../../../../games/tla/src/field/overlay_676/ov676.h"
+#include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 void Func_0200182c(void)
 {

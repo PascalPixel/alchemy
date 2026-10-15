@@ -2,16 +2,16 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/field/overlay_6b2/entry.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/s0038.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/s0060.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/scene_tables.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/entry.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/s0038.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/s0060.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/scene_tables.o"(.text)
         "*/resource_6b2_overlay.o"(.text.x020080f4)
         "*/resource_6b2_overlay.o"(.text.x020081b0)
-        "*/games/tla/src/field/overlay_6b2/s04c4.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/prepare.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/import.o"(.text)
-        "*/games/tla/src/field/overlay_6b2/data.o"(.data)
+        "*/games/tla/src/scene/mercury_lighthouse/s04c4.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/prepare.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/import.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/data.o"(.data)
     }
     .bss : { "*/resource_6b2_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

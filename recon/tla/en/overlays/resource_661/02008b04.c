@@ -8,7 +8,7 @@
    before the owner's sprite it keeps r4 but the two pointer loads swap,
    differ 4); the two bytes read through u8 casts before a barrier and merged
    by hand (other masks, differ 17); five permuter minutes. */
-#include "../../../../../games/tla/src/field/overlay_661/scene.h"
+#include "../../../../../games/tla/src/scene/yampi_desert/scene.h"
 
 void Func_02000b04(struct ObjectRuntime *object)
 {

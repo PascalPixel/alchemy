@@ -1,9 +1,9 @@
 /* Near miss: differ 2 of 49 (one reordered row): the native loads x before it
  * copies the mask 64; the draft copies the mask first.
  * Tried: an x temporary, the mask as the first operand of the OR. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "../../../../games/tla/src/scene/jupiter_aerie/jupiter_aerie.h"
 
-void Func_02002438(struct Ov6a4Work *work, struct Ov6a4Entry *entry)
+void Func_02002438(struct JupiterAerieWork *work, struct JupiterAerieEntry *entry)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
     s32 x = (object->x >> 20) | (s16)(work->x & 64);

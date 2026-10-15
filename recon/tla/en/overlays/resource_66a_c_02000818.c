@@ -5,7 +5,7 @@
  * Tried: the z store before y, the linked-object store moved, a struct vector, the
  * address as &position[0], a z local, a "+l" asm on object 15 or z (differ 12),
  * one-pass blocks around the y or z store (differ 6-8), alchemy permute (5 minutes). */
-#include "../../../../games/tla/src/field/overlay_66a/local.h"
+#include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 #include "call.h"
 extern u8 MsgYouHereTo[];
 

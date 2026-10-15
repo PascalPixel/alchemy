@@ -8,7 +8,7 @@
  * of the offset, where the native makes the frame last). The scale call through an inline keeps its three
  * constants apart, and the goto loop keeps the step's pool load inside the
  * loop (a for loop: differ 30). */
-#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
+#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 
 void Event_FinishScreenTransition(void);
 void Func_020039b8(s32 a, s32 b, s32 c);

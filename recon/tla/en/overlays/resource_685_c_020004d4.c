@@ -1,5 +1,5 @@
 /* Draft, differ 49 of 112: the native builds 513 from the 0x1ac offset (adds r2, #85) and rebuilds 0x214 for the owner, where this draft builds 513 apart and reaches 0x214 from 0x1ac; the entrance == 99 test compiles as a halfword shifted compare after a hoisted ldrh, where the native reloads with ldrsh and compares 99. Tried gPartyState directly and a chained store. */
-#include "../../../../games/tla/src/field/overlay_685/scene.h"
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
 
 struct EventTransition

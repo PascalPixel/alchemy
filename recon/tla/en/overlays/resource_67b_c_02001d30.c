@@ -2,7 +2,7 @@
 // store of terrain_height and the pool address after them, and the parent
 // sprite's attribute byte before the child's. Assigning the sprite after the
 // terrain copy moves the parent sprite out of r8 (differ 28).
-#include "../../../../games/tla/src/field/overlay_67b/local.h"
+#include "../../../../games/tla/src/scene/aqua_rock/local.h"
 
 void Func_02001d30(struct ObjectRuntime *object)
 {

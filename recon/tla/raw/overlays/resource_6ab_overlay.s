@@ -917,7 +917,7 @@ Func_02000714:
 .L_02008aac:
 	.4byte Data_02004958
 .L_02008ab0:
-	.4byte MsgScene6ABNo01
+	.4byte MsgMarsStar01
 	.section .text.x02008ae4,"ax",%progbits
 	.global Func_02000ae4
 	.thumb_func
@@ -1086,13 +1086,13 @@ Func_02000bd8:
 	movs r6, #216
 	b .L_02008c98
 .L_02008c84:
-	.4byte MsgScene6ABNo02
+	.4byte MsgMarsStar02
 .L_02008c88:
 	.4byte gPartyState
 .L_02008c8c:
 	.4byte Data_02004cec
 .L_02008c90:
-	.4byte MsgScene6ABNo08
+	.4byte MsgMarsStar08
 .L_02008c94:
 	adds r6, #2
 	adds r5, #1
@@ -1194,7 +1194,7 @@ Func_02000bd8:
 .L_02008d78:
 	.4byte 0x0500021e
 .L_02008d7c:
-	.4byte MsgScene6ABNo06
+	.4byte MsgMarsStar06
 .L_02008d80:
 	bl Func_020042e4
 	pop {r5, r6, r7, pc}
@@ -1812,7 +1812,7 @@ Func_02000e80:
 	bl Func_020042e4
 	b .L_020093b0
 .L_0200904c:
-	.4byte MsgScene6ABNo09
+	.4byte MsgMarsStar09
 .L_02009050:
 	.4byte Data_02004cec
 .L_02009054:
@@ -2191,7 +2191,7 @@ Func_02000e80:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020093c0:
-	.4byte MsgScene6ABNo09
+	.4byte MsgMarsStar09
 .L_020093c4:
 	.4byte Data_02004cec
 .L_020093c8:

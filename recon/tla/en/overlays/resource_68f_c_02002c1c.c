@@ -1,5 +1,5 @@
 /* Draft, differ 11 of 60: the native subtracts the cell buffer base (pool 0xfdff0000) before it loads gMapShapeGrid and adds the grid after the shift; this draft loads the grid first, and copies the height before its shift (adds r2, r0, #0; asrs r2, r2, #19 for asrs r2, r0, #19). Tried: the index as a local (36), a cells local, array indexing, the grid added later (15), permute 1 minute. */
-#include "../../../../games/tla/src/field/overlay_68f/ov68f.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 
 extern u8 gMapShapeGrid[];

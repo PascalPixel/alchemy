@@ -101,7 +101,7 @@ static void EV12_TALK(void) {
       if (GameFlag_IsSet(0x201) == 0) {
         Engine_EventSetMessage(MsgBilibinWhere);
         Engine_EventShowMessageAndWait(12, 0, 10);
-        Actor_ShowEmote(12, 0x107, 40);
+        Actor_ShowEmote(12, EMOTE_IN_FRONT | 7, 40);
         Engine_EventShowMessageAndWait(12, 0, 10);
         Engine_ActorRunRepeatedMotion(12, 2);
         Engine_GameFlagSet(0x201);
@@ -123,23 +123,23 @@ static void EV12_TALK(void) {
         Actor_SetSpeed(12, 0xcccc, 0x6666);
         Actor_WalkToAndWait(0, 0x15a, 0x112);
         Actor_WalkToAndWait(0, 0x148, 0x11a);
-        Actor_FaceDirection(0, 0xc000, 0);
+        Actor_FaceDirection(0, FACING_NORTH, 0);
       }
-      Actor_FaceDirection(11, 0x1000, 0);
-      Actor_FaceDirection(12, 0x7000, 20);
-      Actor_ShowEmote(11, 0x102, 20);
+      Actor_FaceDirection(11, FACING_EAST + FACING_STEP, 0);
+      Actor_FaceDirection(12, FACING_SOUTHWEST + FACING_STEP, 20);
+      Actor_ShowEmote(11, EMOTE_IN_FRONT | 2, 20);
       Engine_ActorStartRepeatedMotion(11, 1);
       Engine_EventShowMessageAndWait(11, 0, 10);
-      Actor_ShowEmote(12, 0x108, 60);
+      Actor_ShowEmote(12, EMOTE_IN_FRONT | 8, 60);
       Engine_ActorStartRepeatedMotion(12, 1);
       Engine_EventShowMessageAndWait(12, 0, 20);
       Engine_ActorSetAnimation(11, 3);
       Engine_ActorSetAnimationAndWait(12, 3);
-      Actor_FaceDirection(11, 0x3000, 0);
-      Actor_FaceDirection(12, 0x5000, 10);
+      Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
+      Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 10);
       Engine_ActorStartRepeatedMotion(11, 1);
       Engine_EventShowMessageAndWait(11, 0, 20);
-      Actor_FaceDirection(11, 0xf000, 0);
+      Actor_FaceDirection(11, FACING_NORTHEAST + FACING_STEP, 0);
       Engine_ActorSetSpeed(12, 0x10000, 0x8000);
       Object_GetById(12)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(12, 0x15a, 0x107);
@@ -148,7 +148,7 @@ static void EV12_TALK(void) {
       Actor_SetSpeed(11, 0x9999, 0x4ccc);
       Actor_WalkToAndWait(11, 0x148, 0x107);
       Actor_WalkToAndWait(11, 0x148, 252);
-      Actor_FaceDirection(11, 0xc000, 10);
+      Actor_FaceDirection(11, FACING_NORTH, 10);
       FieldScene_OpenGate();
       Actor_WalkToAndWait(11, 0x148, 246);
       /* FAKEMATCH: instruction order only: called through a cast with no
@@ -169,7 +169,7 @@ static void EV12_TALK(void) {
                                        gMcCoyPalaceGarden_GuardScript);
     } else {
       Engine_EventShowMessage(12, 0);
-      Actor_FaceDirection(12, 0x3000, 10);
+      Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 10);
     }
   }
   Engine_EventEnd();
@@ -182,7 +182,7 @@ static void EV02_TOUCH(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventWait(16);
   Engine_EventRequestExit(2);
@@ -214,8 +214,8 @@ static void McCoyPalaceGarden_ApplyEntryState(void) {
     InitializeStagedActorSceneOrbitingEffect(13);
   }
   if (Engine_GameFlagIsSet(0x84a) != 0) {
-    Actor_SetPosition(11, 0x1340000, 0x1070000);
-    Engine_ActorSetPosition(12, 0x15a0000, 0x1070000);
+    Actor_SetPosition(11, PIXELS(308), PIXELS(263));
+    Engine_ActorSetPosition(12, PIXELS(346), PIXELS(263));
     if (Engine_GameFlagIsSet(0x84f) == 0) {
       if (Engine_GameFlagIsSet(0x845) == 0) {
         Engine_ActorSetPosition(11, 0, 0);
@@ -225,9 +225,9 @@ static void McCoyPalaceGarden_ApplyEntryState(void) {
     }
   }
   if (Engine_GameFlagIsSet(0x845) != 0) {
-    Actor_SetPosition(10, 0xe00000, 0x1240000);
-    Actor_FaceDirection(10, 0x4000, 0);
-    Engine_ActorFaceDirection(8, 0, 0);
+    Actor_SetPosition(10, PIXELS(224), PIXELS(292));
+    Actor_FaceDirection(10, FACING_SOUTH, 0);
+    Engine_ActorFaceDirection(8, FACING_EAST, 0);
     if (Engine_GameFlagIsSet(0x85e) == 0) {
       McCoyPalaceGarden_RunGardenScene();
     }
@@ -241,40 +241,40 @@ static void McCoyPalaceGarden_RunGardenScene(void) {
   Camera_MoveTo(0x1400000, -1, 0x1400000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_SetPosition(0, 0x1400000, 0x1740000);
+  Actor_SetPosition(0, PIXELS(320), PIXELS(372));
   Engine_EventOpenScreen();
   Engine_CameraSetSpeed(0x3333, 0x666);
   Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
   Actor_SetSpeed(0, 0x9999, 0x4ccc);
   Actor_WalkToAndWait(0, 0x140, 0x136);
-  Actor_FaceDirection(11, 0x3000, 10);
+  Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(11, 2);
-  Actor_ShowEmote(11, 0x100, 60);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT, 60);
   Engine_EventSetMessage(MsgBilibinOhItS);
   Engine_EventShowMessageAndWait(11, 0, 10);
-  Actor_FaceDirection(12, 0x5000, 10);
+  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(12, 2);
-  Actor_ShowEmote(12, 0x100, 60);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT, 60);
   Engine_EventShowMessageAndWait(12, 0, 20);
-  Actor_FaceDirection(11, 0x1000, 0);
-  Actor_FaceDirection(12, 0x7000, 40);
-  Actor_FaceDirection(11, 0x3000, 0);
-  Actor_FaceDirection(12, 0x5000, 10);
+  Actor_FaceDirection(11, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventShowMessageAndWait(11, 0, 10);
   Engine_ActorRunRepeatedMotion(12, 1);
   Engine_EventOpenMessage(12, 0);
-  Actor_FaceDirection(0, 0xe000, 0);
+  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   while (Engine_EventChooseYesNo(0, 0) != 0) {
-    Engine_ActorShowEmote(12, 0x100, 60);
+    Engine_ActorShowEmote(12, EMOTE_IN_FRONT, 60);
     Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
     Engine_EventShowMessageAndWait(12, 0, 10);
     Engine_ActorStartRepeatedMotion(12, 2);
     Engine_EventOpenMessage(12, 0);
   }
   Engine_EventWait(10);
-  Actor_FaceDirection(11, 0x3000, 0);
-  Actor_FaceDirection(12, 0x5000, 20);
+  Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorSetAnimation(11, 3);
   Engine_ActorSetAnimationAndWait(12, 3);
   Engine_EventWait(20);
@@ -283,7 +283,7 @@ static void McCoyPalaceGarden_RunGardenScene(void) {
   Engine_EventShowMessageAndWait(11, 0, 10);
   Actor_SetSpeed(11, 0x10000, 0x8000);
   Actor_WalkToAndWait(11, 0x13a, 0x118);
-  Actor_FaceDirection(0, 0xc000, 20);
+  Actor_FaceDirection(0, FACING_NORTH, 20);
   Engine_EventShowMessageAndWait(11, 0, 40);
   Actor_SetAttachedEffect(0, 0x102);
   Engine_EventWait(60);

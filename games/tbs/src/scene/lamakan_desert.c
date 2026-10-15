@@ -207,7 +207,7 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(76, 126, 4, 2, 16, 42);
     Map_CopyCells(80, 126, 4, 2, 36, 44);
     Map_CopyCells(84, 126, 4, 2, 14, 55);
-    Actor_SetPosition(9, 0x1900000, 0x16c0000);
+    Actor_SetPosition(9, PIXELS(400), PIXELS(364));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
     Map_CopyCells(64, 126, 4, 2, 42, 5);
     Map_CopyCells(68, 126, 4, 2, 20, 11);
@@ -227,11 +227,11 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(108, 126, 4, 2, 6, 46);
     Map_CopyCells(112, 126, 4, 2, 27, 55);
     Map_CopyCells(116, 126, 4, 2, 43, 56);
-    Actor_SetPosition(9, 0x1600000, 0xcc0000);
-    Actor_SetPosition(10, 0x2e00000, 0x18c0000);
-    Actor_SetPosition(11, 0x900000, 0x17c0000);
-    Actor_SetPosition(12, 0x2400000, 0x2cc0000);
-    Actor_SetPosition(13, 0x2880000, 0x1980000);
+    Actor_SetPosition(9, PIXELS(352), PIXELS(204));
+    Actor_SetPosition(10, PIXELS(736), PIXELS(396));
+    Actor_SetPosition(11, PIXELS(144), PIXELS(380));
+    Actor_SetPosition(12, PIXELS(576), PIXELS(716));
+    Actor_SetPosition(13, PIXELS(648), PIXELS(408));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     Map_CopyCells(64, 124, 4, 4, 8, 14);
     Map_CopyCells(68, 124, 4, 4, 6, 18);
@@ -241,8 +241,8 @@ static s32 LamakanDesert_ConfigureAreaLayout(void) {
     Map_CopyCells(5, 121, 5, 7, 43, 32);
     Map_CopyCells(0, 120, 3, 1, 9, 5);
     Map_CopyCells(3, 120, 3, 1, 44, 5);
-    Actor_SetPosition(8, 0xa80000, 0x5c0000);
-    Actor_SetPosition(9, 0x800000, 0x13c0000);
+    Actor_SetPosition(8, PIXELS(168), PIXELS(92));
+    Actor_SetPosition(9, PIXELS(128), PIXELS(316));
     Map_CopyCellAttributes(6, 0, 3, 3, 9, 6);
     if (Engine_GameFlagIsSet(0x90a) == 0) {
       Map_CopyCells(0, 119, 3, 1, 9, 5);
@@ -433,7 +433,7 @@ static void EV20_TOUCH(void) {
                      EFFECT_SCALE_TO_TARGET,
                  &options);
   }
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
   hold = (u16 *)(work + 0xcba);
   progress = &gGameState.hazardSteps;
@@ -559,7 +559,7 @@ static void EV22_TOUCH(void) {
       }
     }
   }
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorFaceActor(0, best, 0);
   Engine_EventWait(20);
@@ -580,7 +580,7 @@ static void EV22_TOUCH(void) {
     Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
   }
   Engine_EventWait(60);
-  Actor_ShowEmote(best, 0x104, 0);
+  Actor_ShowEmote(best, EMOTE_IN_FRONT | 4, 0);
   Engine_EventWait(60);
   Actor_SetAttachedEffect(0, 0x100);
   Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -684,7 +684,7 @@ static void EV40_TOUCH(void) {
       record->targetX = -0x80000000;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetZ = -0x80000000;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
       Engine_EventWait(40);
       Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -698,7 +698,7 @@ static void EV40_TOUCH(void) {
       FieldVector_AddPolarOffset(-0x100000, record->facing,
                                  (struct FieldPosition *)rect);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000,
                                  rect[2] / 0x10000);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);

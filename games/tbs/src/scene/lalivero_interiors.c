@@ -157,7 +157,7 @@ static void LaliveroScene_PlayPoseSequence(void) {
   Engine_ResetSceneEffectCounter();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
-  Actor_ShowEmote(14, 0x102, 50);
+  Actor_ShowEmote(14, EMOTE_IN_FRONT | 2, 50);
   Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessage(14, 0);
   Engine_EventWait(10);
@@ -174,7 +174,7 @@ static void LaliveroScene_PlayPoseSequence(void) {
   Event_ShowMessage(14, 0);
   if ((u16)facing == 0x8000) {
     Engine_ActorWalkByAndWait(0, 0, 16);
-    Engine_ActorFaceDirection(0, 0xc000, 0);
+    Engine_ActorFaceDirection(0, FACING_NORTH, 0);
     Engine_EventWait(20);
   }
   Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
@@ -195,7 +195,7 @@ static void EV51_TOUCH(void) {
   Engine_EventWait(0xA);
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
   Engine_EventWait(0x1E);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(0x1E);
   Engine_EventEnd();
 }
@@ -233,9 +233,9 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventBegin();
   Owner_RefreshActiveRatios(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 6291456, 12058624);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-  Actor_FaceDirection(11, 0, 0);
-  Actor_FaceDirection(12, 32768, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(11, FACING_EAST, 0);
+  Actor_FaceDirection(12, FACING_WEST, 0);
   Engine_EventSetMessage(MsgLaliveroHowDidSearchForSheba);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -244,9 +244,9 @@ static void FieldScene_RunPrimaryScript(void) {
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Engine_ActorWalkToAndWait(0, 104, 136);
   Engine_EventWait(10);
-  FieldMotion_LaunchFromFocusedObject(1, -16, 16, 49152);
-  FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
-  FieldMotion_LaunchFromFocusedObject(2, 16, 16, 49152);
+  FieldMotion_LaunchFromFocusedObject(1, -16, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(3, 0, 24, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(2, 16, 16, FACING_NORTH);
   Engine_ActorWaitForMove(1);
   Engine_EventWait(20);
   Engine_EventWait(10);
@@ -254,10 +254,10 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(2, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(11, 16384, 0);
-  Engine_ActorFaceDirection(12, 16384, 0);
+  Actor_FaceDirection(11, FACING_SOUTH, 0);
+  Engine_ActorFaceDirection(12, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(11, 261, 70);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 5, 70);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(11, 4);
@@ -268,7 +268,7 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(12, 258, 40);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | 2, 40);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(12, 4);
@@ -276,7 +276,7 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Actor_ShowEmote(11, 261, 50);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 5, 50);
   Engine_EventShowMessage(11, 0);
   if (GameFlag_IsSet(2495) == 0) {
     FieldScene_RunSecondaryScript();
@@ -287,13 +287,13 @@ static void FieldScene_RunPrimaryScript(void) {
     Engine_EventShowMessage(11, 0);
     Engine_EventWait(10);
     Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
     Engine_EventWait(10);
-    Engine_ActorFaceDirection(1, 49152, 0);
+    Engine_ActorFaceDirection(1, FACING_NORTH, 0);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
@@ -301,7 +301,7 @@ static void FieldScene_RunPrimaryScript(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(12, 257, 40);
+    Actor_ShowEmote(12, EMOTE_IN_FRONT | 1, 40);
     Event_OpenMessage(12, 0);
     Engine_EventChooseYesNo(0, 0);
     Engine_EventWait(20);
@@ -309,18 +309,18 @@ static void FieldScene_RunPrimaryScript(void) {
     Engine_EventWait(20);
     Engine_EventShowMessage(12, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(0, 3);
+    Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
     Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(2, 3);
+    Engine_ActorSetAnimationAndWait(2, ANIM_NOD);
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
@@ -329,13 +329,13 @@ static void FieldScene_RunPrimaryScript(void) {
   }
   Engine_EventSetMessage(MsgLaliveroDoNotWorryAboutSheba);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 20);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-    Actor_FaceDirection(GARET, 49152, 0);
-    Engine_ActorFaceDirection(2, 49152, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(GARET, FACING_NORTH, 0);
+    Engine_ActorFaceDirection(2, FACING_NORTH, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(11, 3);
@@ -344,9 +344,9 @@ static void FieldScene_RunPrimaryScript(void) {
     (gEventWork->message)++;
   } else {
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-    Actor_FaceDirection(GARET, 49152, 0);
-    Engine_ActorFaceDirection(2, 49152, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(GARET, FACING_NORTH, 0);
+    Engine_ActorFaceDirection(2, FACING_NORTH, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(11, 4);
@@ -363,13 +363,13 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_ActorFaceEachOther(3, 2, 0);
   Engine_EventWait(40);
   Engine_EventWait(10);
-  Actor_ShowEmote(11, 258, 40);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 2, 40);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-  Actor_FaceDirection(GARET, 49152, 0);
-  Actor_FaceDirection(IVAN, 49152, 0);
-  Actor_FaceDirection(3, 49152, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(3, FACING_NORTH, 0);
   Engine_EventWait(50);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(11, 3);
@@ -380,16 +380,16 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(MIA, 256, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
   Engine_EventShowMessage(3, 0);
   Engine_EventWait(20);
-  Engine_ActorFaceDirection(11, 0, 0);
+  Engine_ActorFaceDirection(11, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(12, 2);
   Engine_EventWait(20);
-  Actor_FaceDirection(12, 32768, 0);
+  Actor_FaceDirection(12, FACING_WEST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
@@ -401,28 +401,28 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(2, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(11, 16384, 0);
+  Actor_FaceDirection(11, FACING_SOUTH, 0);
   Engine_EventWait(30);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(12, 258, 50);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | 2, 50);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(11, 257, 65);
-  Engine_ActorFaceDirection(11, 0, 0);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 1, 65);
+  Engine_ActorFaceDirection(11, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(12, 256, 40);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT, 40);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(12, 16384, 0);
+  Actor_FaceDirection(12, FACING_SOUTH, 0);
   Engine_EventWait(40);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(11, 16384, 0);
+  Actor_FaceDirection(11, FACING_SOUTH, 0);
   Engine_EventWait(50);
-  Actor_ShowEmote(11, 262, 60);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 6, 60);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(11, 3);
@@ -435,44 +435,44 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_ActorRunRepeatedMotion(2, 2);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorFaceDirection(11, 0, 0);
+  Engine_ActorFaceDirection(11, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(12, 2);
   Engine_EventWait(30);
-  Actor_FaceDirection(12, 32768, 0);
+  Actor_FaceDirection(12, FACING_WEST, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(11, 257, 0);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(1, 57344, 0);
+  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(1, 4);
+  Engine_ActorSetAnimationAndWait(1, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(1, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(12, 16384, 0);
+  Actor_FaceDirection(12, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(12, 261, 60);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | 5, 60);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(1, 2);
   Engine_EventWait(20);
   Engine_EventShowMessage(1, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(11, 16384, 0);
+  Actor_FaceDirection(11, FACING_SOUTH, 0);
   Engine_EventWait(40);
-  Actor_ShowEmote(11, 258, 40);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | 2, 40);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(10);
-  Engine_ActorFaceDirection(2, 32768, 0);
+  Engine_ActorFaceDirection(2, FACING_WEST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(IVAN, 263, 60);
-  Engine_ActorFaceDirection(2, 49152, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 7, 60);
+  Engine_ActorFaceDirection(2, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(2, 4);
+  Engine_ActorSetAnimationAndWait(2, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(2, 0);
   Engine_EventWait(10);
@@ -490,10 +490,10 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(MIA, 3);
-  Engine_ActorSetAnimationAndWait(2, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(2, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(11, 2);
@@ -508,24 +508,24 @@ static void FieldScene_RunPrimaryScript(void) {
   Engine_EventWait(30);
   Engine_EventShowMessage(11, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(3, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
-  Actor_FaceDirection(GARET, 57344, 0);
-  Engine_ActorFaceDirection(2, 40960, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  Engine_ActorFaceDirection(2, FACING_NORTHWEST, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(IVAN, 3);
-  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(GARET, 78643, 39321);
   Actor_SetSpeed(MIA, 78643, 39321);
   Actor_SetSpeed(IVAN, 78643, 39321);
-  Engine_ActorSetAnimation(1, 2);
+  Engine_ActorSetAnimation(1, ANIM_WALK);
   {
     u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
     if (rec != 0) {
@@ -536,7 +536,7 @@ static void FieldScene_RunPrimaryScript(void) {
   }
   Engine_ActorWaitForMove(1);
   Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorSetAnimation(3, 2);
+  Engine_ActorSetAnimation(3, ANIM_WALK);
   {
     u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
     if (rec != 0) {
@@ -547,7 +547,7 @@ static void FieldScene_RunPrimaryScript(void) {
   }
   Engine_ActorWaitForMove(3);
   Actor_SetPosition(MIA, 0, 0);
-  Engine_ActorSetAnimation(2, 2);
+  Engine_ActorSetAnimation(2, ANIM_WALK);
   {
     u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
     if (rec != 0) {
@@ -572,14 +572,14 @@ static void FieldScene_RunSecondaryScript(void) {
   Engine_EventWait(10);
 
   Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
   Engine_EventWait(10);
-  Engine_ActorFaceDirection(GARET, 0xc000, 0);
+  Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -603,17 +603,17 @@ static void FieldScene_RunSecondaryScript(void) {
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(30);
 
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(GARET, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventShowMessage(MIA, 0);
   Engine_EventWait(10);
 
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventShowMessage(IVAN, 0);
   Engine_EventWait(10);

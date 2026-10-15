@@ -71,7 +71,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object) {
     object->facing = ArcTan2(leader->z.fixed - object->z.fixed,
                              leader->x.fixed - object->x.fixed);
   } else if (object->facing != 0xc000) {
-    Engine_ActorFaceDirection(MIA, 0xc000, 0);
+    Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
   }
   return 0;
 }
@@ -99,7 +99,7 @@ void *SceneData_GetSceneTableC(void) { return gMercuryEntrance_SceneTableC; }
 
 static void EV01_SEARCH(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
   Engine_EventEnd();
 }
@@ -308,7 +308,7 @@ s32 MercuryEntrance_ApplyEntryState(void) {
       ColorBuffer_ApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
-      Engine_ActorSetAnimation(0, 1);
+      Engine_ActorSetAnimation(0, ANIM_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
       ColorBuffer_ApplyTarget(0x10000, 0);
@@ -362,9 +362,9 @@ static void MercuryEntrance_CrossDoorway(void) {
   actor->scaleX = -0x10000;
   actor = Object_GetById(14);
   actor->scaleX = -0x10000;
-  Actor_SetPosition(3, 0x880000, 0xb80000);
-  Actor_SetPosition(0, 0x880000, 0x1280000);
-  Actor_SetPosition(8, 0x880000, 0x980000);
+  Actor_SetPosition(3, PIXELS(136), PIXELS(184));
+  Actor_SetPosition(0, PIXELS(136), PIXELS(296));
+  Actor_SetPosition(8, PIXELS(136), PIXELS(152));
   Actor_SetSpeed(3, 0x18000, 0xc000);
   Actor_SetSpeed(8, 0x18000, 0xc000);
   Actor_SetSpeed(0, 0xcccc, 0x6666);
@@ -380,7 +380,7 @@ static void MercuryEntrance_CrossDoorway(void) {
     Engine_EventWait(10);
     Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path3);
     Engine_ActorWaitForMove(3);
-    Actor_FaceDirection(3, 0xc000, 30);
+    Actor_FaceDirection(3, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(3, 1);
     ivan = Object_GetById(3);
     ivan->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -394,7 +394,7 @@ static void MercuryEntrance_CrossDoorway(void) {
     Engine_EventWait(5);
     Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path2);
     Engine_ActorWaitForMove(3);
-    Engine_ActorFaceDirection(3, 0xc000, 30);
+    Engine_ActorFaceDirection(3, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(3, 1);
     Engine_EventWait(15);
     Object_GetById(3)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -406,7 +406,7 @@ static void MercuryEntrance_CrossDoorway(void) {
     Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Engine_EventWait(20);
-  Engine_ActorShowEmote(3, 0x102, 60);
+  Engine_ActorShowEmote(3, EMOTE_IN_FRONT | 2, 60);
   actor = Object_GetById(3);
   actor->update =
       (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
@@ -430,14 +430,14 @@ static void MercuryEntrance_RunDoorScene(void) {
     record->scaleX = -0x10000;
     record = Actor_Get(14);
     record->scaleX = -0x10000;
-    Actor_SetPosition(MIA, 0x880000, 0x900000);
-    Actor_FaceDirection(MIA, 0x4000, 10);
+    Actor_SetPosition(MIA, PIXELS(136), PIXELS(144));
+    Actor_FaceDirection(MIA, FACING_SOUTH, 10);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(60);
     Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
-    Engine_ActorSetAnimationAndWait(MIA, 3);
+    Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(30);
     Actor_WalkTo(MIA, 136, 72);
     Engine_EventWait(40);

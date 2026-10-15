@@ -288,7 +288,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   FieldScheduler_AddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame,
                              0xc80);
   Actor_SetSpeed(0, 0x28000, 0x14000);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_AudioPlayCue(228);
   if (work->touchedTrigger == 2) {
@@ -1024,14 +1024,14 @@ static void FieldScene_RunActorThreeBranchSequence(void) {
   Engine_EventSetMessage(MsgImilSomebodyHere);
   Event_ShowMessageAndWait(3, 0, 20);
   Actor_WalkToAndWait(3, 0x348, 0x288);
-  Actor_ShowEmote(3, 0x100, 60);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT, 60);
   Actor_FaceDirection(3, FX16_0_5, 20);
   Engine_ActorSetAnimation(3, 16);
   record = Object_GetById(3);
   record->scaleX = -FX16_1_0;
   Engine_EventWait(20);
   Event_ShowMessageAndWait(3, 0, 20);
-  Engine_ActorSetAnimation(3, 1);
+  Engine_ActorSetAnimation(3, ANIM_STAND);
   record = Object_GetById(3);
   record->scaleX = FX16_1_0;
   Engine_EventWait(20);
@@ -1039,13 +1039,13 @@ static void FieldScene_RunActorThreeBranchSequence(void) {
   Event_OpenMessage(3, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Event_ShowMessageAndWait(3, 0, 20);
     gEventWork->message += 1;
   } else {
     gEventWork->message += 1;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(3, 0, 20);
   }
   Engine_EventWait(20);
@@ -1057,7 +1057,7 @@ static void FieldScene_RunActorThreeBranchSequence(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(3, 2);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(3, 4);
+  Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(3, 0, 20);
   Engine_GameFlagSet(0x870);
@@ -1066,7 +1066,7 @@ static void FieldScene_RunActorThreeBranchSequence(void) {
 
 static void EV03_TALK(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimationAndWait(3, 4);
+  Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MSGNO(MsgImilStatueBlocksEntrance));
   Engine_EventShowMessageAndWait(3, 0, 20);
@@ -1126,74 +1126,74 @@ static void EV10_PSYNERGY(void) {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(3, 2);
     Engine_EventWait(20);
-    Actor_FaceDirection(3, 0xd000, 0);
-    Engine_ActorFaceDirection(0, 0x5000, 10);
+    Actor_FaceDirection(3, FACING_NORTH + FACING_STEP, 0);
+    Engine_ActorFaceDirection(0, FACING_SOUTH + FACING_STEP, 10);
     Engine_EventSetMessage(MsgMercuryDidThat);
     Engine_EventOpenMessage(3, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       gEventWork->message += 1;
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(3, 3);
+      Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
       Engine_EventShowMessageAndWait(3, 0, 20);
     } else {
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(3, 4);
+      Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
       Event_ShowMessageAndWait(3, 0, 20);
       gEventWork->message += 1;
     }
-    Engine_ActorShowEmote(0, 0x100, 60);
+    Engine_ActorShowEmote(0, EMOTE_IN_FRONT, 60);
     record = Object_GetById(1);
     SetEffectRecordMode(record, 1);
     record = Object_GetById(2);
     SetEffectRecordMode(record, 1);
     Actor_SetSpeed(1, 0xcccc, 0x6666);
     Actor_SetSpeed(2, 0xcccc, 0x6666);
-    Actor_SetPosition(1, 0x3680000, 0x2580000);
-    Actor_SetPosition(2, 0x3680000, 0x2580000);
+    Actor_SetPosition(1, PIXELS(872), PIXELS(600));
+    Actor_SetPosition(2, PIXELS(872), PIXELS(600));
     Actor_WalkTo(2, 0x378, 0x278);
     Actor_WalkToAndWait(1, 0x370, 0x268);
-    Actor_FaceDirection(1, 0x5000, 0);
+    Actor_FaceDirection(1, FACING_SOUTH + FACING_STEP, 0);
     Engine_ActorWaitForMove(2);
-    Actor_FaceDirection(2, 0x8000, 0);
+    Actor_FaceDirection(2, FACING_WEST, 0);
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(1, 0, 20);
-    Actor_ShowEmote(3, 0x101, 60);
+    Actor_ShowEmote(3, EMOTE_IN_FRONT | 1, 60);
     Event_ShowMessageAndWait(3, 0, 20);
-    Actor_FaceDirection(1, 0x3000, 0);
-    Actor_FaceDirection(2, 0xb000, 20);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
+    Actor_FaceDirection(1, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(2, FACING_NORTHWEST + FACING_STEP, 20);
+    Engine_ActorSetAnimation(1, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(2, ANIM_NOD);
     Engine_EventWait(30);
-    Actor_FaceDirection(1, 0x5000, 0);
-    Actor_FaceDirection(2, 0x8000, 20);
+    Actor_FaceDirection(1, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(2, FACING_WEST, 20);
     Engine_EventShowMessageAndWait(2, 0, 20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(3, 0, 20);
     Engine_ActorWalkTo(3, 0x348, 0x290);
     Engine_EventWait(5);
-    Engine_ActorFaceDirection(2, 0x5000, 0);
+    Engine_ActorFaceDirection(2, FACING_SOUTH + FACING_STEP, 0);
     Engine_EventWait(10);
-    Engine_ActorFaceDirection(0, 0x4000, 0);
+    Engine_ActorFaceDirection(0, FACING_SOUTH, 0);
     Engine_ActorWaitForMove(3);
     Engine_EventWait(10);
     Engine_EventShowMessageAndWait(3, 0, 20);
-    Actor_FaceDirection(3, 0xd000, 20);
+    Actor_FaceDirection(3, FACING_NORTH + FACING_STEP, 20);
     Engine_EventShowMessageAndWait(3, 0, 20);
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(20);
-    Actor_FaceDirection(1, 0xc000, 20);
+    Actor_FaceDirection(1, FACING_NORTH, 20);
     Engine_EventOpenMessage(1, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(1, 3);
+      Engine_ActorSetAnimationAndWait(1, ANIM_NOD);
       Engine_EventShowMessageAndWait(1, 0, 20);
       gEventWork->message += 1;
     } else {
       gEventWork->message += 1;
       Engine_EventWait(20);
-      Engine_ActorSetAnimationAndWait(1, 4);
+      Engine_ActorSetAnimationAndWait(1, ANIM_SHAKE_HEAD);
       Engine_EventShowMessageAndWait(1, 0, 20);
     }
     Engine_ActorSetAnimation(3, 16);
@@ -1202,9 +1202,9 @@ static void EV10_PSYNERGY(void) {
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(3, 0, 20);
     Actor_WalkToAndWait(3, 0x348, 0x278);
-    Actor_FaceDirection(0, 0x5000, 0);
-    Actor_FaceDirection(1, 0x5000, 0);
-    Actor_FaceDirection(2, 0x8000, 0);
+    Actor_FaceDirection(0, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(1, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(2, FACING_WEST, 0);
     Engine_EventWait(30);
     MercuryLighthouse_CastPsynergyAtActor11();
     Engine_EventWait(50);
@@ -1224,7 +1224,7 @@ static void EV10_PSYNERGY(void) {
     Engine_MapAnimateCells((s32)gMercuryLighthouse_ColumnCells, 116, 35);
     Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(20);
     Actor_SetSpeed(3, 0x30000, 0x18000);
     Engine_ActorJump(3, 4, 0);
@@ -1236,20 +1236,20 @@ static void EV10_PSYNERGY(void) {
     Actor_WalkToAndWait(3, 0x348, 0x230);
     Engine_ActorSetPosition(3, 0, 0);
     Engine_EventWait(20);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0x8000, 0);
-    Engine_ActorFaceDirection(2, 0xb000, 0);
+    Actor_FaceDirection(0, FACING_SOUTH, 0);
+    Actor_FaceDirection(1, FACING_WEST, 0);
+    Engine_ActorFaceDirection(2, FACING_NORTHWEST + FACING_STEP, 0);
     Engine_EventWait(10);
-    Engine_ActorSetAnimation(0, 3);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
+    Engine_ActorSetAnimation(0, ANIM_NOD);
+    Engine_ActorSetAnimation(1, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(2, ANIM_NOD);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(1, 2);
+    Engine_ActorSetAnimation(1, ANIM_WALK);
     record = Object_GetById(0);
     if (record != 0) {
       Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
     }
-    Engine_ActorSetAnimation(2, 2);
+    Engine_ActorSetAnimation(2, ANIM_WALK);
     record = Object_GetById(0);
     if (record != 0) {
       Actor_SetDestination(2, record->x.part.pixel, record->z.part.pixel);
@@ -1490,64 +1490,64 @@ static void EV12_PSYNERGY(void) {
     Actor_SetSpeed(2, 0xcccc, 0x6666);
     Actor_SetSpeed(3, 0xcccc, 0x6666);
     Actor_WalkToAndWait(0, 0x338, 240);
-    Actor_FaceDirection(0, 0xa000, 20);
-    Actor_SetPosition(3, 0x3380000, 0xf00000);
+    Actor_FaceDirection(0, FACING_NORTHWEST, 20);
+    Actor_SetPosition(3, PIXELS(824), PIXELS(240));
     Actor_WalkToAndWait(3, 0x318, 232);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
     Engine_EventWait(60);
-    Actor_FaceDirection(3, 0x2000, 20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
+    Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(40);
-    Actor_FaceDirection(3, 0xc000, 20);
+    Actor_FaceDirection(3, FACING_NORTH, 20);
     Actor_WalkToAndWait(3, 0x318, 200);
     MercuryLighthouse_SinkActorWithSparks(3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(0, 2);
     Engine_EventWait(30);
     Actor_WalkToAndWait(0, 0x318, 232);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_SetPosition(1, 0x3180000, 0xe80000);
-    Actor_SetPosition(2, 0x3180000, 0xe80000);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_SetPosition(1, PIXELS(792), PIXELS(232));
+    Actor_SetPosition(2, PIXELS(792), PIXELS(232));
     Actor_WalkTo(1, 0x330, 224);
     Actor_WalkToAndWait(2, 0x300, 224);
     Engine_ActorWaitForMove(1);
-    Actor_FaceDirection(1, 0xa000, 0);
-    Actor_FaceDirection(2, 0xe000, 20);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 80);
-    Actor_FaceDirection(1, 0x6000, 0);
-    Actor_FaceDirection(2, 0x2000, 20);
+    Actor_FaceDirection(1, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(2, FACING_NORTHEAST, 20);
+    Actor_ShowEmote(0, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(2, EMOTE_IN_FRONT | 2, 80);
+    Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(2, FACING_SOUTHEAST, 20);
     Engine_ActorRunRepeatedMotion(0, 1);
     Engine_EventWait(60);
     Actor_SetSpeed(0, 0x8000, 0x4000);
     Actor_WalkToAndWait(0, 0x318, 224);
-    Actor_FaceDirection(1, 0x8000, 0);
-    Actor_FaceDirection(2, 0, 0);
+    Actor_FaceDirection(1, FACING_WEST, 0);
+    Actor_FaceDirection(2, FACING_EAST, 0);
     Actor_WalkToAndWait(0, 0x318, 208);
-    Actor_FaceDirection(1, 0xa000, 0);
-    Actor_FaceDirection(2, 0xe000, 20);
-    Engine_ActorSetAnimationAndWait(0, 3);
+    Actor_FaceDirection(1, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(2, FACING_NORTHEAST, 20);
+    Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
     Engine_EventWait(20);
     Actor_SetSpeed(0, 0x20000, 0x10000);
     Engine_ActorJump(0, 4, 0);
     Actor_WalkTo(0, 0x318, 200);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 18);
-    Actor_ShowEmote(1, 0x100, 0);
-    Actor_ShowEmote(2, 0x100, 0);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT, 0);
+    Actor_ShowEmote(2, EMOTE_IN_FRONT, 0);
     Engine_ActorStartRepeatedMotion(1, 2);
     Engine_ActorStartRepeatedMotion(2, 2);
     MercuryLighthouse_SinkActorWithSparks(0);
     Engine_EventWait(60);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 80);
+    Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(2, EMOTE_IN_FRONT | 2, 80);
     Engine_ActorFaceEachOther(1, 2, 20);
-    Engine_ActorSetAnimation(1, 3);
-    Engine_ActorSetAnimationAndWait(2, 3);
+    Engine_ActorSetAnimation(1, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(2, ANIM_NOD);
     Engine_EventWait(40);
     Actor_WalkToAndWait(1, 0x318, 216);
-    Actor_FaceDirection(2, 0xe000, 0);
+    Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     Actor_WalkToAndWait(1, 0x318, 200);
     Engine_EventWait(30);
     MercuryLighthouse_SinkActorWithSparks(1);
@@ -1570,14 +1570,14 @@ static void EV12_PSYNERGY(void) {
 
 static void EV42_SEARCH(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgImilHermesHealingWaterFountain), 1);
   Engine_EventEnd();
 }
 
 static void EV20_SEARCH(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   Engine_EventEnd();
 }
@@ -1585,7 +1585,7 @@ static void EV20_SEARCH(void) {
 static void EV05_SEARCH(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(0, ANIM_STAND);
   if (Engine_GameFlagIsSet(0x881) == 0)
     Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
   else
@@ -1616,7 +1616,7 @@ static void EV15_TOUCH(void) {
   Engine_EventBegin();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d8, 0x258);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     OverlayObject_PrepareObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0,
@@ -1845,7 +1845,7 @@ s32 Scene_Initialize(void) {
     case 10:
       if (!Engine_GameFlagIsSet(0x873)) {
         Actor_SetPosition(3, 174 << 18, 158 << 18);
-        Engine_ActorFaceDirection(3, 0, 0);
+        Engine_ActorFaceDirection(3, FACING_EAST, 0);
       } else {
         Actor_SetPosition(8, 194 << 18, 158 << 18);
         Map_CopyCellAttributes(110, 39, 5, 1, 46, 39);
@@ -2080,7 +2080,7 @@ s32 Scene_Initialize(void) {
       Engine_ColorBufferApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_EventWaitForScreen();
-      Engine_ActorSetAnimation(0, 1);
+      Engine_ActorSetAnimation(0, ANIM_STAND);
       Engine_EventWait(30);
       UiText_ShowCenteredMessage(MsgMercuryHonorsGoddessRainbows, 0, 0);
       Engine_ColorBufferApplyTarget(128 << 9, 0);
@@ -2142,7 +2142,7 @@ s32 Scene_Initialize(void) {
       }
       if (!Engine_GameFlagIsSet(0x871)) {
         if (!Engine_GameFlagIsSet(0x870)) {
-          Engine_ActorFaceDirection(3, 0, 0);
+          Engine_ActorFaceDirection(3, FACING_EAST, 0);
           Engine_ActorSetAnimation(3, 16);
         } else {
           Actor_SetPosition(3, 210 << 18, 158 << 18);
@@ -2182,26 +2182,26 @@ static void EV08_PSYNERGY_1(void) {
   Engine_EventSetMessage(base);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(3, 1);
-  Actor_FaceDirection(0, 32768, 20);
+  Actor_FaceDirection(0, FACING_WEST, 20);
   Event_ShowMessageAndWait(3, 0, 20);
-  Engine_ActorSetAnimationAndWait(3, 3);
+  Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_ActorSetAnimationAndWait(0, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventWait(60);
   Engine_ActorSetAnimation(3, 16);
   Engine_EventWait(50);
-  Engine_ActorSetAnimation(3, 1);
+  Engine_ActorSetAnimation(3, ANIM_STAND);
   Engine_EventOpenMessage(3, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(3, 2);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(3, 0, 20);
-    Engine_ActorSetAnimationAndWait(3, 4);
+    Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(3, 0, 20);
-    Engine_ActorSetAnimationAndWait(3, 3);
+    Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(20);
     Engine_EventOpenMessage(3, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
@@ -2237,13 +2237,13 @@ static void EV08_PSYNERGY_1(void) {
   Engine_EventShowMessageAndWait(3, 0, 20);
   Engine_ActorSetAnimation(3, 16);
   Engine_EventShowMessageAndWait(3, 0, 20);
-  Engine_ActorSetAnimation(3, 1);
+  Engine_ActorSetAnimation(3, ANIM_STAND);
   Engine_ActorFaceActor(3, 0, 20);
-  Engine_ActorSetAnimationAndWait(3, 4);
+  Engine_ActorSetAnimationAndWait(3, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(3, 0, 20);
-  Actor_ShowEmote(3, 261, 90);
-  Engine_ActorSetAnimationAndWait(3, 3);
+  Actor_ShowEmote(3, EMOTE_IN_FRONT | 5, 90);
+  Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(3, 0, 20);
   Event_PrepareObjectAndApplyValue(3, 1);
@@ -2251,7 +2251,7 @@ static void EV08_PSYNERGY_1(void) {
   Djinn_AddToOwner(3, 1, 0);
   Djinn_Activate(3, 1, 0);
   UnitCalc(3);
-  Engine_ActorSetAnimation(3, 2);
+  Engine_ActorSetAnimation(3, ANIM_WALK);
   actor = Object_GetById(0);
   if (actor != 0) {
     Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
@@ -2322,7 +2322,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_Get(0)->bounce = 0x4000;
   Engine_ActorSetAnimation(0, 6);
   Engine_EventWait(6);
-  Actor_FaceDirection(0, 0x8000, 30);
+  Actor_FaceDirection(0, FACING_WEST, 30);
   Engine_AudioPlayCue(223);
   for (;;) {
     layer->offset += speed;
@@ -2350,7 +2350,7 @@ static void MercuryLighthouse_CastPsynergyAtActor11(void) {
   u8 v;
 
   p5 = gEffectWork;
-  Actor_SetPosition(11, 0x3480000, 0x2580000);
+  Actor_SetPosition(11, PIXELS(840), PIXELS(600));
   Engine_PsynergyBegin(93, 1);
   Engine_PsynergySetTarget(3, 11);
   addr = p5 + 0x71c;

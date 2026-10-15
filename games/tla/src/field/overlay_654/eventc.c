@@ -1,4 +1,48 @@
 #include "kabe.h"
+#include "call.h"
+
+// Actor 14, linked to the leader, walks to (280, 432); then flags 0x876 and
+// 0x877 are set.
+void Func_020024e4(void)
+{
+    struct KabeObject *object = Object_GetById(13);
+    s32 angle;
+
+    Func_020039d8();
+    Func_02003b08(0);
+    Value3((s32 (*)())Func_02003aa8, gPartyState.current_owner, 0x100, 0);
+    Func_02003ad0()->motion_flags = 0;
+    Kabe_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
+    Func_02003ac8();
+    /* FAKEMATCH: the angle in a local is built before the coordinates, as the native does (differ 8 as constants). */
+    angle = 0xc000;
+    Kabe_ObjPlaceTurn(14, 328 << 16, 624 << 16, angle);
+    WaitFrames(1);
+    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 14);
+    object->priority_flags &= ~2;
+    ObjectMotion_SetActionVariant(14, 3);
+    Kabe_ObjSpeed(14, 0x19999, 0xcccc);
+    Kabe_ObjWalk(14, 328, 568);
+    Kabe_ObjWalk(14, 328, 496);
+    Kabe_ObjWalk(14, 280, 432);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+    WaitFrames(1);
+    angle = 0x4000;
+    Kabe_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
+    ObjectMotion_SetActionVariant(14, 2);
+    Object_GetById(14)->priority_flags |= 1;
+    {
+        s32 bit = 2;
+
+        /* FAKEMATCH: ⚓️ builds the bit before it loads the flags and fills the load's delay with WaitFrames' argument; plain, the load comes first and the argument last (differ 4). */
+        asm volatile("" : "+l"(bit));
+        object->priority_flags |= bit;
+    }
+    WaitFrames(1);
+    Kabe_FlagSet(0x876);
+    Kabe_FlagSet(0x877);
+    Func_020039e0();
+}
 
 void Func_020025fc(void)
 {

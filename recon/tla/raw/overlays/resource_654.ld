@@ -31,7 +31,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_654/event6.o"(.text)
         "*/resource_654_overlay.o"(.text.x02009d24)
         "*/games/tla/src/field/overlay_654/eventb.o"(.text)
-        "*/resource_654_overlay.o"(.text.x0200a4e4)
         "*/games/tla/src/field/overlay_654/eventc.o"(.text)
         "*/resource_654_overlay.o"(.text.x0200ad50)
         "*/games/tla/src/field/overlay_654/evente.o"(.text)

@@ -31,6 +31,7 @@ struct Ov66aEventWork {
     s32 value_1ac;
     u8 unknown_1b0[0xb9a];
     u16 value_d4a;
+    u16 value_d4c;
 };
 
 struct Ov66aEffectWork {

@@ -3380,37 +3380,49 @@ s32 Battle_GetObjectTableValue(s32 id) {
   return height;
 }
 
+// BattleActionRecord.target of an action that needs none: a held unit's
+// lost turn (the enemies' and the party's), and an enemy's attack in auto
+// battle, which picks a party place.
+#define TARGET_NONE_ENEMY 0x100
+#define TARGET_NONE_PARTY 0x180
+
+//--------------------------------------------------------------------------
+// Auto battle: gives every living unit a plain attack and sorts them into
+// turn order. The party act at their Agility and target the first enemy;
+// enemies act at half their Agility plus a random part of it and target a
+// random party member. Returns how many actions there are.
+//--------------------------------------------------------------------------
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries) {
   struct BattleActionRecord swap;
   u16 unitIds[14];
-  s32 firstCount;
+  s32 partyCount;
   s32 count = 0;
-  s32 secondCount;
-  s32 priorityRange;
+  s32 enemyCount;
+  s32 targetRange;
   s32 index;
   struct BattleActionRecord *entry;
   struct BattleUnit *unit;
 
-  firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
+  partyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   for (index = 0; index != 4; index++)
     UnitGetFar(index);
-  for (index = 0; index < firstCount; index++) {
+  for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = UnitGetFar(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
     entry->priority = unit->agi;
-    entry->command = 0;
+    entry->command = CMD_ATTACK;
     entry->parameter = 0;
-    entry->target = 0x80;
+    entry->target = FIRST_ENEMY_UNIT;
     count++;
   }
-  secondCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
-  entry = &entries[firstCount];
-  priorityRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
-  for (index = 0; index < secondCount; index++) {
+  enemyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
+  entry = &entries[partyCount];
+  targetRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
+  for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = UnitGetFar(unitId);
@@ -3418,12 +3430,14 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     entry->priority = unit->agi >> 1;
     if (entry->priority != 0)
       entry->priority += (Random16() * unit->agi) >> 16;
-    entry->command = 0;
+    entry->command = CMD_ATTACK;
     entry->parameter = 0;
-    entry->target = (Random16() * priorityRange) >> 16;
+    entry->target = (Random16() * targetRange) >> 16;
     count++;
     entry++;
   }
+
+  // Bubble the faster units forward until a pass swaps nothing.
   for (index = count - 2; index > 0; index--) {
     s32 swaps = 0;
     s32 pos;
@@ -3442,12 +3456,22 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   return count;
 }
 
+// Turns the camera while L or R is held.
 DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeys)
 
+// The camera's yaw while a party member acts, and while an enemy does.
+#define YAW_PARTY_TURN 0x2000
+#define YAW_ENEMY_TURN -0x2000
+
+//--------------------------------------------------------------------------
+// Auto battle: plays one action. A unit already down does nothing (-1);
+// a defeated target is replaced by a living unit of its side first.
+// Returns 1 when the party got away, 0 otherwise.
+//--------------------------------------------------------------------------
 s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 actorId;
-  s32 battleMode;
+  s32 yaw;
   struct BattleUnit *actor;
 
   actorId = action->unitId;
@@ -3458,28 +3482,28 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   action->target = BattleTarget_ReplaceDefeated(action);
   transition = gTransitionWork;
   if (action->unitId > 4)
-    battleMode = -0x2000;
+    yaw = YAW_ENEMY_TURN;
   else
-    battleMode = 0x2000;
-  transition->targetYaw = battleMode;
+    yaw = YAW_PARTY_TURN;
+  transition->targetYaw = yaw;
   transition->frames = 60;
   UiWork_ClearValueNameTablesFar();
 
   switch (action->command) {
-  case 99:
+  case CMD_FLEE:
     UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
     if (BattleEscape_PlayRun(action) != 0)
       return 1;
     break;
-  case 3:
+  case CMD_DEFEND:
     WaitFrames(45);
     BattlePres_ShowDefendMessage(action);
     break;
-  case 2:
+  case CMD_ITEM:
     WaitFrames(45);
     BattlePres_RunUnitAction(action);
     break;
-  case 0:
+  case CMD_ATTACK:
   default: {
     struct BattlePresentationTransition *tr = gTransitionWork;
     tr->flag = 0;
@@ -3487,7 +3511,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
     tr->flag = 0;
     break;
   }
-  case 1:
+  case CMD_PSYNERGY:
     BattlePresentation_RunPairedUnitTransition(action);
     break;
   }
@@ -3496,34 +3520,42 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
+//--------------------------------------------------------------------------
 s32 BattleObject_IsValidId(u32 objectId) {
   if (objectId <= 7) {
     return 0;
   }
-  if (objectId - 128 <= 5) {
+  if (objectId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE) {
     return 0;
   }
   return -1;
 }
 
+//--------------------------------------------------------------------------
+// Auto battle: the party tries to run, and gets away 15 times in 16, each
+// living member running off in turn. Returns 1 when they got away; else
+// shows "But there's no escape!"... and returns 0.
+//--------------------------------------------------------------------------
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
-  s16 party_members[14];
-  s32 party_size;
+  s16 partyMembers[14];
+  s32 partySize;
   s32 animated;
-  s32 member_slot;
+  s32 memberSlot;
 
   (void)action;
   if (((Random16() << 4) >> 16) != 0) {
-    party_size = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, party_members);
+    partySize = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, partyMembers);
     animated = 0;
-    if (party_size != 0) {
-      member_slot = 0;
+    if (partySize != 0) {
+      memberSlot = 0;
       do {
-        BattleMotion_SetupEscapeObject(party_members[member_slot]);
+        BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
         animated++;
         WaitFrames(8);
-        member_slot++;
-      } while (animated != party_size);
+        memberSlot++;
+      } while (animated != partySize);
     }
     WaitFrames(22);
     return 1;
@@ -3532,6 +3564,10 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Auto battle: shows "<unit> is defending" for a standing unit. Returns -1
+// for an invalid unit id, 0 otherwise.
+//--------------------------------------------------------------------------
 s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   s32 objectId;
   s32 result;
@@ -3552,6 +3588,17 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   return 0;
 }
 
+// REG_BLDCNT: blend the targets' sprites over every layer, fading.
+#define BLEND_SPRITES_OVER_ALL 0x3f40
+#define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
+
+//--------------------------------------------------------------------------
+// Auto battle: plays a Psynergy. The camera turns to the caster's side and
+// the caster raises its hand; the target side fades out, its living units
+// are readied alone, the Psynergy's effect (kind action->parameter) plays
+// on them, and everyone fades back in. Returns -1 for an invalid actor or
+// target.
+//--------------------------------------------------------------------------
 s32 BattlePresentation_RunPairedUnitTransition(
     struct BattleActionRecord *action) {
   u16 visibleUnits[14];
@@ -3576,18 +3623,19 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   {
     struct BattlePresentationTransition *transition = gTransitionWork;
-    transition->targetYaw = action->unitId > 4 ? 0x5000 : 0x2000;
+    transition->targetYaw = action->unitId > 4 ? 0x5000 : YAW_PARTY_TURN;
     transition->frames = 60;
   }
   WaitFrames(10);
   Random16();
   actorRecord = BattleObjGet(actorId)->object;
 
+  // The caster's side: its pose when the caster is among them.
   if (targetId >= 0 && targetId <= 7) {
-    sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
-    sideStart = 0x80;
+    sideCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
+    sideStart = FIRST_ENEMY_UNIT;
   } else {
-    sideCount = BattleParty_ListLivingUnits(1, visibleUnits);
+    sideCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, visibleUnits);
     sideStart = 0;
   }
 
@@ -3597,34 +3645,36 @@ s32 BattlePresentation_RunPairedUnitTransition(
     }
   }
 
+  // Fade the caster's side out.
   WaitFrames(30);
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
     BattlePres_SetActorRecordMode(index + sideStart, 1);
   }
   for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = (16 - index) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
     WaitFrames(1);
   }
   PartyStatusDrawFar(9);
 
-  if (targetId > 0x7f) {
-    u32 count = BattleParty_ListLivingUnits(2, visibleUnits);
+  // Ready only the target side's living units, and play the effect.
+  if (targetId > FIRST_ENEMY_UNIT - 1) {
+    u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      u32 unit = index + 0x80;
+      u32 unit = index + FIRST_ENEMY_UNIT;
       if (UnitGetFar(unit)->hp > 0) {
         visibleUnits[livingCount++] = unit;
       }
     }
   } else {
-    u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
+    u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       if (UnitGetFar(index)->hp > 0) {
         visibleUnits[livingCount++] = index;
       }
     }
   }
-  visibleUnits[livingCount] = 0xff;
+  visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForList(visibleUnits, 0);
 
   context.kind = action->parameter;
@@ -3640,14 +3690,15 @@ s32 BattlePresentation_RunPairedUnitTransition(
   }
   BattleFx_InitializeModeFar((s32 *)&context);
 
+  // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
   BattleObjPut();
-  REG_BLDCNT = 0x3f40;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
     BattlePres_SetActorRecordMode(index + sideStart, 1);
   }
   for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = index | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(index, 16);
     WaitFrames(1);
   }
   for (index = 0; index != sideCount; index++) {
@@ -3658,14 +3709,19 @@ s32 BattlePresentation_RunPairedUnitTransition(
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Auto battle: an attack. Shows "<unit> attacks!", sends the attacker up
+// to its target, plays the blow and sends both back. Returns -1 for an
+// invalid attacker or target.
+//--------------------------------------------------------------------------
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
-  if (gTransitionWork->targetYaw == 0x2000) {
-    gTransitionWork->targetYaw = 0x2000;
+  if (gTransitionWork->targetYaw == YAW_PARTY_TURN) {
+    gTransitionWork->targetYaw = YAW_PARTY_TURN;
     WaitFrames(10);
   } else {
-    gTransitionWork->targetYaw = 0x2000;
+    gTransitionWork->targetYaw = YAW_PARTY_TURN;
     WaitFrames(30);
   }
 
@@ -3700,6 +3756,12 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Auto battle: an attack or an item. Turns the camera to the actor's side,
+// poses the actor and plays the effect (kind action->parameter) on the
+// first living unit of the target's side, then sends both back. Returns -1
+// for an invalid actor.
+//--------------------------------------------------------------------------
 s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -3708,9 +3770,9 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   s32 i;
 
   if (action->unitId > 4)
-    facing = -0x2000;
+    facing = YAW_ENEMY_TURN;
   else
-    facing = 0x2000;
+    facing = YAW_PARTY_TURN;
   if (transition->targetYaw == facing) {
     transition->frames = 40;
     WaitFrames(40);
@@ -3725,23 +3787,25 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   work.firstTarget = action->target;
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
-  if (work.firstTarget > 127)
-    work.count = BattleParty_ListLivingUnits(2, work.actors);
+  if (work.firstTarget > FIRST_ENEMY_UNIT - 1)
+    work.count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.actors);
   else
-    work.count = BattleParty_ListLivingUnits(1, work.actors);
+    work.count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.actors);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(work.actor)->object;
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
   ObjectDispatch_ApplyValueToChildrenFar(object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
-    BattleParty_ListLivingUnits(1, work.actors);
+    BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.actors);
     work.count = 1;
   } else {
     work.side = 0;
-    BattleParty_ListLivingUnits(2, work.actors);
+    BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.actors);
     work.count = 1;
   }
+
+  // Keep each target's sprite entries' parameters for the effect.
   for (i = 0; i != work.count; i++) {
     struct AnimationObject *animation =
         BattleObjGet(work.actors[i])->object->records;
@@ -3774,6 +3838,13 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   return 0;
 }
 
+//--------------------------------------------------------------------------
+// Auto battle: deals damage HP to unit unitId and shows it: "A bitter
+// blow!" (to the party) or "A critical hit!" (to an enemy) first when
+// showMessage is set, then "<unit> takes <damage> damage!", and "<unit>
+// goes down..." or "<unit> has been downed!" when the HP runs out.
+// context, if null, is replaced by four cleared bytes nothing reads.
+//--------------------------------------------------------------------------
 void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {
   u8 localContext[4];
@@ -3828,6 +3899,10 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   ObjectDispatch_ApplyArgumentToChildrenFar(slot->object, 1);
 }
 
+//--------------------------------------------------------------------------
+// For a unit whose HP has run out: plays its falling animation to the last
+// frame and marks its object for release (ActivateBattleObjectSlot).
+//--------------------------------------------------------------------------
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
@@ -3843,6 +3918,13 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   }
 }
 
+// BattleTarget_ReplaceDefeated's result when the target's side is all down.
+#define TARGET_SIDE_DEFEATED 0x100
+
+//--------------------------------------------------------------------------
+// Returns the action's target, or a random living unit of its side when
+// the target is down; TARGET_SIDE_DEFEATED when none is left.
+//--------------------------------------------------------------------------
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   u16 livingUnits[14];
   s32 targetId;
@@ -3853,25 +3935,33 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
     return targetId;
   }
 
-  if (targetId > 0x7F) {
+  if (targetId > FIRST_ENEMY_UNIT - 1) {
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
   } else {
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
   }
 
   if (livingCount == 0) {
-    return 0x100;
+    return TARGET_SIDE_DEFEATED;
   }
 
   return (s16)livingUnits[(Random16() * livingCount) >> 0x10];
 }
 
+// The sprite palettes 14 and 15 (BG palette RAM 0x05000000).
+#define OBJ_PALETTE_14 ((u16 *)0x050001C0)
+
+//--------------------------------------------------------------------------
+// Pulses sprite palette 14's colours: each takes the matching colour of
+// palette 15 brightened by up to six steps, rising and falling with the
+// frame count.
+//--------------------------------------------------------------------------
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette;
   s32 i;
   s32 mask;
 
-  palette = (u16 *)0x050001C0;
+  palette = OBJ_PALETTE_14;
   mask = 31;
   i = 15;
   do {
@@ -3907,44 +3997,52 @@ void Palette_UpdatePulseBrightness(void) {
   } while (i >= 0);
 }
 
+//--------------------------------------------------------------------------
+// Sets the camera up for a scene drawn over the battle (the summons'):
+// a fixed view raised by pos pixels, with its projection and the
+// background's perspective to match.
+//--------------------------------------------------------------------------
 void Camera_ConfigureScene(s32 pos) {
   void **slots = (void **)&gCameraWork;
-  struct BattleCamera *state = slots[0];
-  struct BattlePresentationTransition *secondary =
+  struct BattleCamera *camera = slots[0];
+  struct BattlePresentationTransition *transition =
       slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-  struct FixedPointPosition local;
+  struct FixedPointPosition eyeOffset;
   u32 result;
 
-  state->pos[1] = 160 << 11;
-  state->pos[0] = 0;
-  state->pos[2] = 0;
-  secondary->targetYaw = 128 << 7;
-  state->yaw = 128 << 7;
-  state->pitch = 244 << 8;
-  state->followPos = 0;
-  state->distance = 0x02ee0000;
-  state->unk18 = 0;
+  camera->pos[1] = 160 << 11;
+  camera->pos[0] = 0;
+  camera->pos[2] = 0;
+  transition->targetYaw = 128 << 7;
+  camera->yaw = 128 << 7;
+  camera->pitch = 244 << 8;
+  camera->followPos = 0;
+  camera->distance = 0x02ee0000;
+  camera->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  SceneTransform_ApplyPosition(&camera->pos[0]);
+  SceneTransform_ApplyYaw((s16)camera->yaw);
+  SceneTransform_ApplyPitch((s16)camera->pitch);
 
-  local.x = 0;
-  local.y = 0;
-  local.z = state->distance;
-  Iwram_TransformVector((s32 *)&local, (s32 *)state);
+  eyeOffset.x = 0;
+  eyeOffset.y = 0;
+  eyeOffset.z = camera->distance;
+  Iwram_TransformVector((s32 *)&eyeOffset, (s32 *)camera);
 
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
   Camera_StoreSceneParameters(0, result, 0x07920000);
 
   gProjection.centerY = pos + 120;
-  secondary->active = 1;
+  transition->active = 1;
   BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
-  secondary->flag = 1;
-  secondary->active = 0;
+  transition->flag = 1;
+  transition->active = 0;
 }
 
+//--------------------------------------------------------------------------
+// Ends every unit's guard (Defend and the like) and recalculates its stats.
+//--------------------------------------------------------------------------
 void BattleUnit_ResetGuardLevels(void) {
   u16 ids[14];
   s32 count;
@@ -3960,6 +4058,17 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
+// gGameState.battleStart of a battle the party cannot run from.
+#define BATTLE_START_NO_ESCAPE 2
+
+//--------------------------------------------------------------------------
+// Rolls whether the party gets away. The chance, in hundredths of a
+// percent, is 5000 plus 2000 for each attempt that failed, plus 500 times
+// the party's average level, less 500 times the enemies' average level. A
+// party that struck first always gets away; no one gets away from a battle
+// that forbids it. Every attempt counts toward the next. Returns 1 when
+// the party gets away.
+//--------------------------------------------------------------------------
 s32 BattleEscape_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
@@ -3972,39 +4081,45 @@ s32 BattleEscape_CheckSuccess(void) {
 
   escaped = 0;
   escapeState = gBattleWork;
-  if (escapeState->encounterMode == 1) {
+  if (escapeState->encounterMode == BATTLE_ENCOUNTER_PARTY_FIRST) {
     escaped = 1;
   } else {
     failedAttempts = &escapeState->escapeFailures;
-    chance = 0x1388 + (escapeState->escapeFailures * 0x7D0);
+    chance = 5000 + (escapeState->escapeFailures * 2000);
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
       levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
     }
-    chance += levelTotal * 0x1F4 / livingCount;
+    chance += levelTotal * 500 / livingCount;
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
     }
-    chance -= levelTotal * 0x1F4 / livingCount;
-    if ((chance > 0) && (((0x2710 * Random16()) >> 0x10) < chance)) {
+    chance -= levelTotal * 500 / livingCount;
+    if ((chance > 0) && (((10000 * Random16()) >> 0x10) < chance)) {
       escaped = 1;
     }
     *failedAttempts += 1;
   }
-  if (gGameState.battleStart == 2) {
+  if (gGameState.battleStart == BATTLE_START_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;
 }
 
+//--------------------------------------------------------------------------
+// The party's actions for the round, from the command menu: a member who
+// is asleep, confused, charmed or stunned loses each of their turns
+// (CMD_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
+// Returns how many actions there are, or -1 if the menu gave up.
+//--------------------------------------------------------------------------
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
-  u16 *excludedUnits = Runtime_BumpAllocateAlternatePool(17);
+  u16 *choosingUnits = Runtime_BumpAllocateAlternatePool(17);
   u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
-  s32 unitCount = BattleParty_ListLivingUnits(1, unitIds);
-  s32 excludedCount = 0;
+  s32 unitCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
+  s32 choosingCount = 0;
   s32 entryCount = 0;
   s32 unitIndex;
 
@@ -4013,16 +4128,17 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
+      // The word from delusion holds confusion, charm and stun above it.
       if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00)) {
         struct BattleActionRecord *entry = &entries[entryCount];
         entry->unitId = unitIds[unitIndex];
         entry->priority = unit->agi;
-        entry->command = 8;
+        entry->command = CMD_NONE;
         entry->parameter = 0;
-        entry->target = 0x180;
+        entry->target = TARGET_NONE_PARTY;
         entryCount++;
       } else {
-        excludedUnits[excludedCount++] = unitIds[unitIndex];
+        choosingUnits[choosingCount++] = unitIds[unitIndex];
       }
     }
   }
@@ -4032,18 +4148,26 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
 
     entries += entryCount;
     appended =
-        Battle_CollectPartyCommandsFar(entries, excludedUnits, excludedCount);
+        Battle_CollectPartyCommandsFar(entries, choosingUnits, choosingCount);
     if (appended < 0) {
       unitCount = -1;
     } else {
       unitCount = entryCount + appended;
     }
     MemFree(unitIds);
-    MemFree(excludedUnits);
+    MemFree(choosingUnits);
     return unitCount;
   }
 }
 
+//--------------------------------------------------------------------------
+// The enemies' actions for the round, in a shuffled order, each chosen by
+// BattleCommand_SelectAutomatic; a sleeping or stunned enemy loses its
+// turns. An enemy acting more than once a turn acts later at half its
+// Agility. None act when the party struck first; when the party is caught
+// by surprise, only two to five enemies act, once each. Returns how many
+// actions there are.
+//--------------------------------------------------------------------------
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
@@ -4051,11 +4175,11 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   s32 unitCount;
   s32 i;
 
-  if (battle->encounterMode == 1) {
+  if (battle->encounterMode == BATTLE_ENCOUNTER_PARTY_FIRST) {
     return 0;
   }
 
-  unitCount = BattleParty_ListLivingUnits(2, unitIds);
+  unitCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
   if (unitCount == 0) {
     return 0;
   }
@@ -4068,7 +4192,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
-  if (battle->encounterMode == 2) {
+  if (battle->encounterMode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
     s32 limit = ((Random16() * 5) >> 16) + 1;
 
     if (limit <= 1) {
@@ -4086,26 +4210,26 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
       struct BattleActionRecord *entry = &entries[entryCount];
-      s32 value;
+      s32 agility;
 
       entry->unitId = unitId;
-      value = unit->agi;
-      entry->priority = value;
+      agility = unit->agi;
+      entry->priority = agility;
       if (copyIndex != 0) {
-        entry->priority = (s16)value / 2;
+        entry->priority = (s16)agility / 2;
       }
 
       if (unit->sleep != 0 || unit->stun != 0) {
-        entry->command = 8;
+        entry->command = CMD_NONE;
         entry->parameter = 0;
-        entry->target = 0x100;
+        entry->target = TARGET_NONE_ENEMY;
       } else {
         BattleCommand_SelectAutomatic(entry, 0);
       }
 
       entryCount++;
 
-      if (battle->encounterMode == 2) {
+      if (battle->encounterMode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         break;
       }
     }
@@ -4114,6 +4238,13 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   return entryCount;
 }
 
+// A Djinni whose effect is a guard or Ground acts before everyone else.
+#define DJINN_FIRST_PRIORITY 10000
+
+//--------------------------------------------------------------------------
+// Sorts the round's actions into turn order, fastest first, after moving
+// the guarding and grounding Djinn to the front.
+//--------------------------------------------------------------------------
 void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   s32 i;
   s32 j;
@@ -4122,15 +4253,17 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   for (i = 0; i < count; i++) {
     struct BattleActionRecord *entry = &entries[i];
 
-    if (entry->command == 5) {
+    if (entry->command == CMD_DJINN) {
       struct BattleAct *action;
 
+      // parameter: the Djinni's element in bits 8 to 11, its number below.
       UnitGetFar(entry->unitId);
       action = BattleActGet(Djinn_GetDefinitionHeaderFar(
           entry->parameter >> 8 & 15, entry->parameter & 0xff));
-      if (action->effect == 46 || action->effect == 47 ||
-          action->effect == 53) {
-        entry->priority += 10000;
+      if (action->effect == ABILITY_EFFECT_DEFEND ||
+          action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
+          action->effect == ABILITY_EFFECT_GROUND) {
+        entry->priority += DJINN_FIRST_PRIORITY;
       }
     }
   }
@@ -4153,37 +4286,60 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
+// The header a link battle sends before its actions: how many there are,
+// the next random number to check the consoles agree, and the parent's
+// random seed for the round.
 struct BattleLinkedActionState {
   s32 count;
   s32 check;
   s32 seed;
-  u8 unk0c[28];
+  u8 unused[28];
 };
 
+// The link sends in packets of 20 bytes (the header is one), and a transfer
+// may take 300 frames.
+#define LINK_PACKET_BYTES 20
+#define LINK_TRANSFER_TIMEOUT 300
+// The bytes of count actions, in whole packets.
+#define LINK_ACTIONS_BYTES(count)                                              \
+  ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
+   LINK_PACKET_BYTES)
+
+//--------------------------------------------------------------------------
+// Link battle: exchanges the round's actions with the other console and
+// appends the opponent's after the count of this console's. Each console
+// sees its own party as the party: the received actions' units take the
+// ids they have here and their targets swap sides. The parent sends first
+// and gives the round its random seed; the child checks both consoles
+// agree on the next random number. A party member's priority is made even
+// on the parent and odd on the child, so equal speeds sort alike on both.
+// Returns how many actions were received, or -1 when the exchange fails.
+//--------------------------------------------------------------------------
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count) {
   struct BattleWork *battle = gBattleWork;
   s32 result = 0;
-  s32 allocationSize = (u32)(count * 16 + 19) / 20 * 20;
+  s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
       (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
   s32 index;
 
+  // Sends the header, then this console's actions.
   s32 BattleLink_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_BeginTransferA(state, 20);
+    s32 status = SerialRuntime_BeginTransferA(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (SerialRuntime_GetActiveTransfers()) {
       WaitFrames(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
@@ -4197,8 +4353,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
         WaitFrames(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
@@ -4208,6 +4364,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     return 0;
   }
 
+  // Receives the header, then the other console's actions after ours.
   s32 BattleLink_ReceiveActions(void) {
     /* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every
      * read here is a load of its own. Measured on tbs-en: without the qualifier
@@ -4217,23 +4374,23 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     s32 status = SerialRuntime_BeginTransferB(state);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (SerialRuntime_GetActiveTransfers()) {
-      if (gSerialReceivedSize > 20)
+      if (gSerialReceivedSize > LINK_PACKET_BYTES)
         return -1;
       WaitFrames(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
       }
     }
-    if (gSerialReceivedSize != 20)
+    if (gSerialReceivedSize != LINK_PACKET_BYTES)
       return -1;
     result = state->count;
     if (state->count) {
@@ -4241,24 +4398,25 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       if (status == -1)
         return status;
       while (SerialRuntime_GetActiveTransfers()) {
-        if (gSerialReceivedSize > (u32)(result * 16 + 19) / 20 * 20)
+        if (gSerialReceivedSize > LINK_ACTIONS_BYTES(result))
           return -1;
         WaitFrames(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
         }
       }
-      if (gSerialReceivedSize != (u32)(result * 16 + 19) / 20 * 20)
+      if (gSerialReceivedSize != LINK_ACTIONS_BYTES(result))
         return -1;
     }
     return 0;
   }
 
+  // Each action carries its unit's id as the opponent knows it.
   for (index = 0; index < count; index++) {
     struct BattleActionRecord *action = &actions[index];
 
@@ -4294,11 +4452,12 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       gBattleRandomSeed = state->seed;
     }
 
+    // The received actions, seen from this side.
     for (index = 0; index < result; index++) {
       struct BattleActionRecord *action = &actions[count + index];
 
       action->unitId = action->slot;
-      action->target ^= 0x80;
+      action->target ^= FIRST_ENEMY_UNIT;
     }
 
     MemFree(state);

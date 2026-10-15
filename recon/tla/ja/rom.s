@@ -2531,18 +2531,11 @@ Func_080ccd78:
 	.thumb_func
 SceneEvent_FindActiveRecord:
 	.incbin "baserom.gba", 0x000ccd70, 0x0000010c
-	.section .rom.000cce8c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000cce8c, 0x000006f0
+	.section .rom.000ccec0, "ax"
+	.incbin "baserom.gba", 0x000ccec0, 0x000006bc
 	.section .rom.000cd5b4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000cd5b4, 0x00000360
-	.section .rom.000cd914, "ax"
-	.global Func_080cd91c
-	.type Func_080cd91c, %function
-	.thumb_func
-Func_080cd91c:
-	.incbin "baserom.gba", 0x000cd914, 0x0000013c
 	.section .rom.000cdab8, "ax"
 	.balign 4
 	.global Func_080cdac0
@@ -2696,12 +2689,6 @@ Func_080d1dac:
 	.thumb_func
 Func_080d1e18:
 	.incbin "baserom.gba", 0x000d1df8, 0x00000048
-	.section .rom.000d1e40, "ax"
-	.global Func_080d1e60
-	.type Func_080d1e60, %function
-	.thumb_func
-Func_080d1e60:
-	.incbin "baserom.gba", 0x000d1e40, 0x00000024
 	.section .rom.000d1ec8, "ax"
 	.balign 4
 	.global Func_080d1ee8
@@ -2924,9 +2911,15 @@ Func_080d7034:
 	.section .rom.000d7504, "ax"
 	.incbin "baserom.gba", 0x000d7504, 0x00000510
 	.section .rom.000d7ac0, "ax"
-	.incbin "baserom.gba", 0x000d7ac0, 0x00000244
+	.global Func_080d7b04
+	.type Func_080d7b04, %function
+	.thumb_func
+Func_080d7b04:
+	.incbin "baserom.gba", 0x000d7ac0, 0x00000100
 	.section .rom.000d7d4c, "ax"
-	.incbin "baserom.gba", 0x000d7d4c, 0x0000097c
+	.incbin "baserom.gba", 0x000d7d4c, 0x0000045c
+	.section .rom.000d829c, "ax"
+	.incbin "baserom.gba", 0x000d829c, 0x0000042c
 	.section .rom.000d86fc, "ax"
 	.incbin "baserom.gba", 0x000d86fc, 0x0000023c
 	.section .rom.000d89bc, "ax"

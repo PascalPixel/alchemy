@@ -2794,14 +2794,11 @@ BattleAction_FindDescriptor:
 	.section .rom.000d5d76, "ax"
 	.incbin "baserom.gba", 0x000d5d76, 0x00000002
 	.section .rom.000d5d78, "ax"
-	.global Func_080c8958_Target
-	.type Func_080c8958_Target, %function
+	.global Func_080ccd78
+	.type Func_080ccd78, %function
 	.thumb_func
-Func_080c8958_Target:
+Func_080ccd78:
 	.incbin "baserom.gba", 0x000d5d78, 0x0000010c
-	.section .rom.000d5e94, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d5e94, 0x00000034
 	.section .rom.000d5ec8, "ax"
 	.global Func_080d0520
 	.type Func_080d0520, %function
@@ -2937,10 +2934,10 @@ DisplayTransition_FillTilemapAndSolidTile:
 	.section .rom.000d9ca0, "ax"
 	.incbin "baserom.gba", 0x000d9ca0, 0x0000017c
 	.section .rom.000d9e1c, "ax"
-	.global BattleFx_BuildColorBuffers
-	.type BattleFx_BuildColorBuffers, %function
+	.global BattleFx_BuildBuffer
+	.type BattleFx_BuildBuffer, %function
 	.thumb_func
-BattleFx_BuildColorBuffers:
+BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x000d9e1c, 0x00000868
 	.section .rom.000da684, "ax"
 	.global BattleEffect_InitializeBuffers
@@ -2973,17 +2970,11 @@ BattleFx_ApplyColorToSourceBuffer:
 BattleFx_SetBufferWord:
 	.incbin "baserom.gba", 0x000da74c, 0x00000014
 	.section .rom.000da760, "ax"
-	.global Func_080ccd78
-	.type Func_080ccd78, %function
-	.thumb_func
-Func_080ccd78:
-	.incbin "baserom.gba", 0x000da760, 0x0000004c
-	.section .rom.000da7e8, "ax"
 	.global Func_080d1760
 	.type Func_080d1760, %function
 	.thumb_func
 Func_080d1760:
-	.incbin "baserom.gba", 0x000da7e8, 0x00000034
+	.incbin "baserom.gba", 0x000da760, 0x0000004c
 	.section .rom.000da83e, "ax"
 	.incbin "baserom.gba", 0x000da83e, 0x00000002
 	.section .rom.000da840, "ax"
@@ -3011,12 +3002,6 @@ Func_080d2cc4:
 	.thumb_func
 Func_080d1dac:
 	.incbin "baserom.gba", 0x000dae18, 0x00000048
-	.section .rom.000dae60, "ax"
-	.global Func_080d1e60
-	.type Func_080d1e60, %function
-	.thumb_func
-Func_080d1e60:
-	.incbin "baserom.gba", 0x000dae60, 0x00000024
 	.section .rom.000daee8, "ax"
 	.balign 4
 	.global Func_080d1ee8
@@ -3268,9 +3253,15 @@ Func_080d7034:
 Func_080c9dc8:
 	.incbin "baserom.gba", 0x000e077c, 0x000002d0
 	.section .rom.000e0af8, "ax"
-	.incbin "baserom.gba", 0x000e0af8, 0x00000244
+	.global Func_080d7b04
+	.type Func_080d7b04, %function
+	.thumb_func
+Func_080d7b04:
+	.incbin "baserom.gba", 0x000e0af8, 0x00000100
 	.section .rom.000e0d84, "ax"
-	.incbin "baserom.gba", 0x000e0d84, 0x0000097c
+	.incbin "baserom.gba", 0x000e0d84, 0x0000045c
+	.section .rom.000e12d4, "ax"
+	.incbin "baserom.gba", 0x000e12d4, 0x0000042c
 	.section .rom.000e1734, "ax"
 	.incbin "baserom.gba", 0x000e1734, 0x0000023c
 	.section .rom.000e1970, "ax"

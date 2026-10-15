@@ -18631,7 +18631,7 @@ msgctxt "message"
 msgid "04655"
 msgstr "{argument_signed_number}コ もってる"
 
-msgctxt "message"
+msgctxt "MsgNoItems"
 msgid "04656"
 msgstr "なにももってません"
 

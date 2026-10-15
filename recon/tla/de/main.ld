@@ -1475,7 +1475,6 @@ SECTIONS
     "*/games/tla/src/menu/shop/sell_price.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00111ad8)
     "*/recon/tla/de/rom.o"(.rom.00111cac)
-    "*/recon/tla/de/rom.o"(.rom.00112008)
     "*/games/tla/src/menu/shop/itemcnt.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011210c)
     "*/games/tla/src/menu/shop/price.o"(.text)

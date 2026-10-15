@@ -1620,7 +1620,6 @@ SECTIONS
     "*/games/tla/src/menu/shop/sell_price.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00109ae8)
     "*/recon/tla/ja/rom.o"(.rom.00109cbc)
-    "*/recon/tla/ja/rom.o"(.rom.0010a00c)
     "*/games/tla/src/menu/shop/itemcnt.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0010a110)
     "*/games/tla/src/menu/shop/rowtype.o"(.text)

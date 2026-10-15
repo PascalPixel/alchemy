@@ -20555,7 +20555,7 @@ msgctxt "message"
 msgid "05136"
 msgstr "Tiene {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgNoItems"
 msgid "05137"
 msgstr "No tiene."
 

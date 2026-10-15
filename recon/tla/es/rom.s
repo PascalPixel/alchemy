@@ -4640,12 +4640,6 @@ Func_08109ad8:
 	.thumb_func
 Func_08109cac:
 	.incbin "baserom.gba", 0x0010dcac, 0x0000035c
-	.section .rom.0010e008, "ax"
-	.global Shop_DrawItemCount
-	.type Shop_DrawItemCount, %function
-	.thumb_func
-Shop_DrawItemCount:
-	.incbin "baserom.gba", 0x0010e008, 0x00000038
 	.section .rom.0010e10c, "ax"
 	.global Func_0810a108
 	.type Func_0810a108, %function

@@ -10,7 +10,6 @@ void Func_0810bf98(void *window, s32 x, s32 y, s32 item);
 s32 Inventory_CountFar(s32 item);
 void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
 
-#if !defined(TLA_EDITION_JA) && !defined(TLA_EDITION_DE) && !defined(TLA_EDITION_ES) /* their copies differ and stay on their scaffold (S4) */
 void Shop_DrawItemCount(void *window, s32 item)
 {
     if (window != NULL) {
@@ -24,7 +23,6 @@ void Shop_DrawItemCount(void *window, s32 item)
 #endif
     }
 }
-#endif
 
 struct ShopCursor {
     struct RenderOutput *anchor;

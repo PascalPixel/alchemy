@@ -394,7 +394,6 @@ SECTIONS
     "*/games/tla/src/graphics/render/uiinit.o"(.text)
     "*/games/tla/src/graphics/window/window.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000391b8)
-    "*/recon/tla/ja/rom.o"(.rom.00039254)
     "*/games/tla/src/graphics/window/finalize.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003938e)
     "*/games/tla/src/graphics/window/release.o"(.text)

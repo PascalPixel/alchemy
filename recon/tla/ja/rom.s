@@ -601,13 +601,11 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000385e0, 0x00000310
 	.section .rom.000391b8, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000391b8, 0x0000009c
-	.section .rom.00039254, "ax"
-	.global UiWindow_Create
-	.type UiWindow_Create, %function
+	.global UiWork_DrawByAttributes
+	.type UiWork_DrawByAttributes, %function
 	.thumb_func
-UiWindow_Create:
-	.incbin "baserom.gba", 0x00039254, 0x00000114
+UiWork_DrawByAttributes:
+	.incbin "baserom.gba", 0x000391b8, 0x0000009c
 	.section .rom.0003938e, "ax"
 	.incbin "baserom.gba", 0x0003938e, 0x00000002
 	.section .rom.00039446, "ax"

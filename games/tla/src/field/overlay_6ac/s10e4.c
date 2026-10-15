@@ -1,5 +1,11 @@
 #include "ov6ac.h"
 
+s32 PartyInventory_FindOwner(s32 item);
+void Func_02003218(s32 a, s32 b);
+void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
+void Func_02003228(void);
+void Func_0200080c(void);
+
 void Func_020010e4(void)
 {
     volatile u16 *color = (volatile u16 *)0x0500021e;
@@ -112,4 +118,73 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f)
     }
     WaitFrames(4);
     Func_02003148(c, d, e + 64, f, 1, 1);
+}
+
+// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
+// (and flag 0xa30 set, outside the Japanese edition): MsgYouWhoHold and the
+// message after it, the camera moves on and Func_0200080c runs, then flag
+// 0xa2e is set. Each opens as Func_020010e4 does.
+void Func_020013a0(void)
+{
+    if (PartyInventory_FindOwner(222) == -1) {
+        if (!Value1((s32 (*)())GameFlag_Test, 0xa2f)) {
+            volatile u16 *color = (volatile u16 *)0x0500021e;
+
+            Func_020031e0();
+            Func_02003280(0);
+            Call2((void (*)())Func_02003218, 0x20000, 0x4000);
+            Call4((void (*)())Motion_CamBounds, 0xe00000, 0x400000, 0xd80000, 1);
+            Func_02003228();
+            Call1((void (*)())Battle_WaitMode0, 20);
+            Call2((void (*)())Func_02003250, 0x10000, 0);
+            Call2((void (*)())Func_02003248, 0x10003, 0);
+            Call1((void (*)())Func_02003258, 20);
+            Call1((void (*)())WaitFrames, 20);
+            *color = 0x7fff;
+            Call1((void (*)())WaitFrames, 1);
+            Func_020031c0((s32)MsgIfYouDo, 0, 4);
+            Call2((void (*)())Func_02003248, 0x10000, 0);
+            Call1((void (*)())Func_02003258, 20);
+            Call1((void (*)())WaitFrames, 20);
+            Call1((void (*)())GameFlag_SetBit, 0xa2f);
+            Func_020031e8();
+        }
+    }
+#ifdef TLA_EDITION_JA
+    else {
+#else
+    else if (Value1((s32 (*)())GameFlag_Test, 0xa30)) {
+#endif
+        volatile u16 *color = (volatile u16 *)0x0500021e;
+        s32 message;
+
+        Func_020031e0();
+        Func_02003280(0);
+        Call2((void (*)())Func_02003218, 0x20000, 0x4000);
+        Call4((void (*)())Motion_CamBounds, 0xe00000, 0x400000, 0xd80000, 1);
+        Func_02003228();
+        Call1((void (*)())Battle_WaitMode0, 20);
+        Call2((void (*)())Func_02003250, 0x10000, 0);
+        Call2((void (*)())Func_02003248, 0x10003, 0);
+        Call1((void (*)())Func_02003258, 20);
+        Call1((void (*)())WaitFrames, 20);
+        *color = 0x7fff;
+        Call1((void (*)())WaitFrames, 1);
+        message = (s32)MsgYouWhoHold;
+        Func_020031c0(message, 0, 4);
+        message++;
+        Call1((void (*)())WaitFrames, 10);
+        Func_020031c0(message, 0, 3);
+        Call4((void (*)())Motion_CamBounds, 0xe00000, 0x580000, 0xd80000, 1);
+        Func_02003228();
+        Call1((void (*)())Battle_WaitMode0, 20);
+        Call1((void (*)())Func_020032b8, 560);
+        Func_0200080c();
+        Call1((void (*)())Battle_WaitMode0, 20);
+        Call2((void (*)())Func_02003248, 0x10000, 0);
+        Call1((void (*)())Func_02003258, 20);
+        Call1((void (*)())WaitFrames, 40);
+        Call1((void (*)())GameFlag_SetBit, 0xa2e);
+        Func_020031e8();
+    }
 }

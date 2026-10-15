@@ -454,8 +454,6 @@ SECTIONS
         "*/games/tla/src/graphics/window/loadtile.o"(.text)
         "*/games/tla/src/graphics/window/uiwork.o"(.text)
         "*/recon/tla/raw/0803cd08.o"(.text)
-        "*/recon/tla/raw/0803cd5c.o"(.text)
-        "*/recon/tla/raw/0803cdb4.o"(.text)
         "*/games/tla/src/graphics/window/finalize_pending.o"(.text)
         "*/recon/tla/raw/0803ce64.o"(.text)
         "*/games/tla/src/graphics/text/build_mode1.o"(.text)

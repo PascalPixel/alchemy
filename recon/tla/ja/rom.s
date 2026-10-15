@@ -656,7 +656,7 @@ UiText_DecodeMessage:
 	.incbin "baserom.gba", 0x0003cc5e, 0x00000002
 	.section .rom.0003cdc0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0003cdc0, 0x00000114
+	.incbin "baserom.gba", 0x0003cdc0, 0x00000054
 	.section .rom.0003cf1c, "ax"
 	.balign 4
 	.global Func_0803ce64

@@ -7,6 +7,14 @@
  * pool word (IwramClearWords, IwramCopyWords, BG2PA's 0x100) before the
  * neighbouring constant, and the first "mov r3, #192" comes after the
  * argument's spill. u32 or u8 counters and a s8 canvas change nothing.
+ * The copy loops' order is what sched2 gives when a load after a store to
+ * the canvas waits two cycles (here one): the second ldrb is ready at
+ * once and goes before the left pointer's add. Measured against it: an
+ * empty asm or a volatile memory barrier between the copies (loop.c
+ * then rebuilds the row pointers: differ 166), a one-pass block around
+ * the second copy (differ 278), a volatile load or store (the address
+ * givs no longer combine: 166 to 267), an asm with an unused output
+ * (deleted), and walking pointers per row (206).
  * Resources 316, 328, 297 and 336 need their names in
  * system/resource/directory.s when this is adopted.
  */

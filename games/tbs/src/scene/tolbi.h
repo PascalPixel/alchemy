@@ -11,11 +11,7 @@ extern u8 gWindowWork[];
 
 #define NULL ((void *)0)
 
-// Story flags Tolbi's three moods are chosen by.
-enum TolbiStoryFlag {
-  FLAG_COLOSSO_ENDED = 0x950,      // "this year's Colosso has ended"
-  FLAG_COLOSSO_FINALS_DAY = 0x962, // "the finals start today"
-};
+#include "common/colosso_story_flags.h"
 
 // Tolbi's own flags.
 enum TolbiFlag {

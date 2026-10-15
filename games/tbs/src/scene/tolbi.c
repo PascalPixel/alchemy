@@ -249,7 +249,7 @@ u8 *Tolbi_SelectEvents(void) {
   return (u8 *)gTolbiEventsFestival;
 }
 
-// A man who asks whether anyone could live in a place like this.
+// A townsperson asks whether someone can live to be more than 100.
 static void Tolbi_TalkToActor15(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
@@ -257,7 +257,7 @@ static void Tolbi_TalkToActor15(void) {
   Engine_EventEnd();
 }
 
-// A souvenir-loving parent's question.
+// A parent asks whether children really do love souvenirs.
 static void Tolbi_TalkToActor24(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiChildrenLoveSouvenirs);
@@ -265,7 +265,8 @@ static void Tolbi_TalkToActor24(void) {
   Engine_EventEnd();
 }
 
-// A parent talks with the party, then turns back to the crying child.
+// A parent answers the party, then turns to the crying child: "Be patient,
+// little guy."
 static void Tolbi_TalkToActor25(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiPatientLittleGuy);
@@ -294,8 +295,8 @@ static void Tolbi_TalkToActor27(void) {
   Engine_EventEnd();
 }
 
-// After Colosso, a man asks whether the party saw the finals. The answer is
-// spoken as actor 24.
+// After Colosso, a man asks whether the party was in the finals. The question
+// is anchored to actor 24, who has left town by then, not to actor 12.
 static void Tolbi_TalkToActor12(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiFinalsWerent);

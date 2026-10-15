@@ -3709,62 +3709,6 @@ Func_02002ab0:
 	.4byte 0x0e770000
 .L_0200adfc:
 	.4byte 0x1de30000
-	.section .text.x0200ae00,"ax",%progbits
-	.global Func_02002e00
-	.thumb_func
-Func_02002e00:
-	push {r5, lr}
-	ldr r5, .L_0200ae64
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r3, #0
-	str r3, [r0, #24]
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	bl Event_StartScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	movs r1, #128
-	lsls r0, r0, #11
-	lsls r1, r1, #8
-	bl Func_02004d20
-	movs r1, #1
-	movs r3, #1
-	ldr r0, .L_0200ae68
-	negs r1, r1
-	ldr r2, .L_0200ae6c
-	bl Motion_CamBounds
-	b .L_0200ae50
-.L_0200ae4a:
-	movs r0, #1
-	bl WaitFrames
-.L_0200ae50:
-	ldr r3, .L_0200ae70
-	ldr r3, [r3]
-	cmp r3, #0
-	beq .L_0200ae4a
-	ldr r0, .L_0200ae74
-	movs r1, #80
-	bl Func_02004d38
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200ae64:
-	.4byte gPartyState
-.L_0200ae68:
-	.4byte 0x2e720000
-.L_0200ae6c:
-	.4byte 0x276a0000
-.L_0200ae70:
-	.4byte gInput
-.L_0200ae74:
-	.4byte 0x00000061
 	.section .text.x0200b144,"ax",%progbits
 	.balign 4
 	.global Func_02003144

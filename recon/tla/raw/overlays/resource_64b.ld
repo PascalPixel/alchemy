@@ -30,7 +30,6 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x0200a8cc)
         "*/resource_64b_overlay.o"(.text.x0200a9a4)
         "*/resource_64b_overlay.o"(.text.x0200aab0)
-        "*/resource_64b_overlay.o"(.text.x0200ae00)
         "*/games/tla/src/field/world_map/s2e78.o"(.text)
         "*/games/tla/src/field/world_map/s310c.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200b144)

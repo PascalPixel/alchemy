@@ -41,6 +41,7 @@ void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000ce0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -55,10 +56,14 @@ void Func_02000d90(s32 id, s32 a);
 void Func_02000da8(s32 id, s32 value);
 void Func_02000db0(s32 value);
 void Func_02000dd0(s32 value);
+void Func_02000de0(const u8 *data);
 void Func_02000de8(const u8 *data);
 void Func_02000df8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02000e00(void);
 void Func_02000e08(s32 cue);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Func_0200060c(void);
+void Func_020006a4(void);
 void Func_02000814(void);
 
 #endif

@@ -26,9 +26,8 @@ prints both figures for each game and each edition, with code in its parts
 (C, assembly and 8-byte stubs). ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
 sharing as much code between the games as possible.
 
-**100% is announced by pret's standard** (Pascal, 2026-10-11), the bar the
-decompilation scene holds a claim to, and nothing stricter (W3). A game is
-100% when all of these hold:
+**100% is pret's standard** (Pascal, 2026-10-11), and nothing stricter
+(W3). A game is 100% when all of these hold:
 
 1. All six editions build byte-identical from source, and anyone with their
    own cartridge dumps can verify it from the published hashes.
@@ -38,18 +37,18 @@ decompilation scene holds a claim to, and nothing stricter (W3). A game is
    inline asm other than the proven `CAMELOT_ASM` helpers (S2); the raw
    listings under `recon/<game>` are reference only, none linked.
 4. Nothing in the build reads a ROM (O1), confirmed by the independent
-   audit O4 requires before the announcement.
+   audit O4 requires.
 5. The source compiles as C with a current GCC (`make modern`): no match
    expected, no errors.
 6. Every compiler-steering device is tagged (S2) and counted
-   (a count of each kind), and the announcement
-   states the counts. pokeemerald announced 100% with its fakematches and
-   removed them over the years after; pokeruby is 100% with empty asm
+   (a count of each kind), and the counts are recorded with the game's
+   100%, as ☀️'s are below. pokeemerald reached 100% with its fakematches
+   and removed them over the years after; pokeruby is 100% with empty asm
    barriers in six files today. A register pin or an empty asm barrier is
    a tagged device like a volatile or a one-pass block, not a bar to 100%.
 
-☀️ reached 100% by this standard on 2026-10-14. What the announcement's
-counts were, measured in a clean clone with no ROM by the tools of that day
+☀️ reached 100% by this standard on 2026-10-14. Its counts that day,
+measured in a clean clone with no ROM by the tools of that day
 (C2 then credited assembly by proof; `make progress` now counts by folder and
 finds ☀️ at 8,247,796 code and 45,187,016 data bytes, 100% of each):
 
@@ -74,7 +73,7 @@ Matching is not the finish. The project is finished when the source also
 reads as modern C a person can follow, as pret's games do (S3). Work need
 not reach that form at once, but every change moves toward it (W8).
 Removing the tagged devices (S2) is humanizing work that continues after
-100% is announced.
+100%.
 
 A game is finished when all six hold (Pascal, 2026-10-08; humanizing,
 2026-10-14):
@@ -234,7 +233,8 @@ or functions is exactly this cheating.
 - **O3** Scene and resource ids come only from their tables and are used whole.
   Overlay code never branches straight into the main image.
 - **O4** A mismatch is fixed in source, or the code stays disassembly or a
-  draft. Before announcing a milestone, run an independent audit for leaks.
+  draft. Before a milestone is recorded, run an independent audit for
+  leaks.
 - **O5** Old git history, deleted files, backups and unreachable git objects
   are never evidence. Re-derive an answer from our ROMs and the current tree,
   or ask Pascal.
@@ -571,8 +571,8 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   literal changed, and nearly any stand-in value works. Patch bytes count
   as data and are reported apart, like FAKEMATCH (Pascal, 2026-10-08).
   What 100% means is settled the same way, in Goal (Pascal, 2026-10-11):
-  the earlier wording here, which refused the announcement while any
-  register pin or empty asm barrier remained, was stricter than pret.
+  the earlier wording here, which refused 100% while any register pin or
+  empty asm barrier remained, was stricter than pret.
 - **W4** Choose what to match: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.

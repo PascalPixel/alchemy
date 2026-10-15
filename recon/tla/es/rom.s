@@ -297,6 +297,10 @@ Animation_ApplyChildArgumentFar:
 Func_08022b80Far:
 	.incbin "baserom.gba", 0x00020038, 0x00000008
 	.section .rom.00020060, "ax"
+	.global ResourceMetadata_UnregisterFar
+	.type ResourceMetadata_UnregisterFar, %function
+	.thumb_func
+ResourceMetadata_UnregisterFar:
 	.incbin "baserom.gba", 0x00020060, 0x00000008
 	.section .rom.00020068, "ax"
 	.global ResourceMetadata_ReleaseSlotFar
@@ -4854,7 +4858,7 @@ EnmUpd:
 	.type BattleUnit_BuildStatusFlags, %function
 	.thumb_func
 BattleUnit_BuildStatusFlags:
-	.incbin "baserom.gba", 0x0011b4f0, 0x000001cc
+	.incbin "baserom.gba", 0x0011b4f0, 0x000000c0
 	.section .rom.0011b772, "ax"
 	.incbin "baserom.gba", 0x0011b772, 0x00000002
 	.section .rom.0011b774, "ax"

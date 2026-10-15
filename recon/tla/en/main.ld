@@ -1736,7 +1736,6 @@ SECTIONS
         "*/recon/tla/raw/0811b37c.o"(.text)
         "*/games/tla/src/battle/contains_id.o"(.text)
         "*/recon/tla/raw/0811b4d8.o"(.text)
-        "*/recon/tla/raw/0811b598.o"(.text)
         "*/games/tla/src/battle/presentation/set_actor_mode_and_action.o"(.text)
         "*/games/tla/src/battle/presentation/release_battle_object_records.o"(.text)
         "*/recon/tla/raw/0811b75a.o"(.text)

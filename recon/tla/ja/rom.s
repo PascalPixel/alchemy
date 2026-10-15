@@ -4341,7 +4341,7 @@ EnmUpd:
 	.type BattleUnit_BuildStatusFlags, %function
 	.thumb_func
 BattleUnit_BuildStatusFlags:
-	.incbin "baserom.gba", 0x0011b4d4, 0x000001cc
+	.incbin "baserom.gba", 0x0011b4d4, 0x000000c0
 	.section .rom.0011b756, "ax"
 	.incbin "baserom.gba", 0x0011b756, 0x00000002
 	.section .rom.0011b758, "ax"

@@ -176,7 +176,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0) {
     FieldGameFlag_SetByte(0x218, p10);
     FieldGameFlag_SetByte(0x210, 180);
     Engine_EventEnd();
-    *(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
+    gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 

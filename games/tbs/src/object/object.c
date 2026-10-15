@@ -575,22 +575,21 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 // data_lookup_routines.c
 // フィールド：エンカウント・曲・地名の表引き
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 地形ごとのエンカウント
-// terrain : 地形番号（0 は通常の地面）
-// steps   : 歩数の係数。そのまま Encounter_SelectEnemyGroup へ渡す
-//--------------------------------------------------------------------------
-s32 EffectRuntime_LookupByTableEntry(u32 terrain, s32 steps) {
+
+// Rolls a random battle on the encounter zone of the ground underfoot.
+// terrain: the terrain number, 0 for ordinary ground.
+// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
+// Returns the enemy group to fight, or 0 for no battle.
+s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   u8 *zone;
 
   zone = gEventWork->encounterGroups;
   return Encounter_SelectEnemyGroup(zone[terrain], steps);
 }
 
-//--------------------------------------------------------------------------
-// ワールドマップのエンカウント（足元の地形からゾーンを引く）
-//--------------------------------------------------------------------------
-s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps) {
+// Rolls a random battle on the world map, taking the zone from the tile at pos.
+// Returns the enemy group to fight, or 0 for no battle.
+s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)pos), steps);
 }
 
@@ -1468,14 +1467,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       speed <<= 1;
     if (work->mode == MODE_WORLD_MAP) {
       full = 1;
-      work->unk17c = BattleFx_ApplyLookupResult((s32)&actor->x, speed);
+      work->encounterEnemyGroup = Encounter_RollWorldMap((s32)&actor->x, speed);
     } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
       full = work->encounterFull[event - (STEP_TERRAIN_FIRST - 1)];
-      work->unk17c = EffectRuntime_LookupByTableEntry(
-          event - (STEP_TERRAIN_FIRST - 1), speed);
+      work->encounterEnemyGroup =
+          Encounter_RollTerrain(event - (STEP_TERRAIN_FIRST - 1), speed);
     } else {
       full = work->encounterFull[0];
-      work->unk17c = EffectRuntime_LookupByTableEntry(0, speed);
+      work->encounterEnemyGroup = Encounter_RollTerrain(0, speed);
     }
     steps = Iwram_MulQ16(work->encounterRate, actor->speedLimit);
     if (!full)
@@ -2773,7 +2772,7 @@ s32 Field_RunTileAction(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              work->value17c = BattleFx_GetWeightedResult(
+              work->encounterEnemyGroup = BattleFx_GetWeightedResult(
                   99, (*(const u16 *)&descriptor->value));
               Battle_SetStart(2);
               BattleFx_SelectBattleCue(99, (*(const u16 *)&descriptor->value));

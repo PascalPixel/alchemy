@@ -410,7 +410,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 #endif
 #ifndef OWN_BattleFx_ApplyColorToTargetBuffer
 #endif
-#ifndef OWN_BattleFx_ApplyLookupResult
+#ifndef OWN_Encounter_RollWorldMap
 #endif
 #ifndef OWN_BattleFx_CallEffect03AndStop
 #endif
@@ -509,7 +509,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 #ifndef OWN_Camera_WorldToScreen
 #endif
-#ifndef OWN_EffectRuntime_LookupByTableEntry
+#ifndef OWN_Encounter_RollTerrain
 #endif
 #ifndef OWN_EffectRuntime_PrepareRisingObject
 #endif

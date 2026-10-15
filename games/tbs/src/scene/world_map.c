@@ -2075,7 +2075,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0) {
     GameFlag_Set(0x2f0);
     FieldGameFlag_SetByte(0x2f8, 180);
     Engine_EventEnd();
-    ((struct EventRuntime *)gEventWork)->value17c = rec2;
+    gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 

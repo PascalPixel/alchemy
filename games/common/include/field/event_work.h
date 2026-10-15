@@ -19,7 +19,7 @@ struct EventWork {
   s16 countdown;
   u16 unk15a;
   u8 unk15c[8];
-  u16 battleGroup;
+  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
   u8 unk166[4];
   u16 unk16a;
   u8 unk16c[0x18];
@@ -57,8 +57,8 @@ struct EventWork {
 LAYOUT_OFFSET_GUARD(EventWork_Objects, struct EventWork, objects, 0x14);
 LAYOUT_OFFSET_GUARD(EventWork_Exit, struct EventWork, exit, 0x154);
 LAYOUT_OFFSET_GUARD(EventWork_Countdown, struct EventWork, countdown, 0x158);
-LAYOUT_OFFSET_GUARD(EventWork_BattleGroup, struct EventWork, battleGroup,
-                    0x164);
+LAYOUT_OFFSET_GUARD(EventWork_EncounterEnemyGroup, struct EventWork,
+                    encounterEnemyGroup, 0x164);
 LAYOUT_OFFSET_GUARD(EventWork_ControlMode, struct EventWork, controlMode,
                     0x18a);
 LAYOUT_OFFSET_GUARD(EventWork_ScreenEffect, struct EventWork, screenEffect,
@@ -85,7 +85,7 @@ struct EventWork {
   u16 unk172;
   u8 unk174[6];
   s16 facingTrigger;
-  u8 unk17c[2];
+  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
   s16 psynergyRequest;
   u8 unk180[2];
   s16 raisedTrigger;
@@ -116,6 +116,8 @@ LAYOUT_OFFSET_GUARD(EventWork_RequestedExit, struct EventWork, requestedExit,
                     0x170);
 LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facingTrigger,
                     0x17a);
+LAYOUT_OFFSET_GUARD(EventWork_EncounterEnemyGroup, struct EventWork,
+                    encounterEnemyGroup, 0x17c);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork,
                     psynergyRequest, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raisedTrigger,

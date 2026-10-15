@@ -14,7 +14,7 @@ struct EventRuntime {
   u8 unk000[0x170];
   u16 value170;
   s16 unk172[5];
-  u16 value17c;
+  u16 encounterEnemyGroup;
   u8 unk17e[0x20];
   s16 mode19e;
   u8 unk1a0[0x20];

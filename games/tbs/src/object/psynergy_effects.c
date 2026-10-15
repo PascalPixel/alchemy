@@ -574,7 +574,7 @@ void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
   s32 slot = slotNo;
   struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
 
-  ev->value17c = BattleFx_GetWeightedResult(zone, slot); // 敵グループ
+  ev->encounterEnemyGroup = BattleFx_GetWeightedResult(zone, slot);
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
   if (ev->mode19e == 3)
@@ -602,7 +602,8 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
 
   gs = &gGameState;
   gs->pendingDjinnEvent = (no + DJINNI_0) | skip;
-  ev->value17c = BattleFx_GetPhaseResult(no); // ジンの敵グループ
+  ev->encounterEnemyGroup =
+      BattleFx_GetPhaseResult(no); // the Djinni's enemy group
   if (ev->mode19e == 3) {
     void *obj = ObjectTable_Get(gs->selectedActor);
 

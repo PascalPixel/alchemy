@@ -68,7 +68,7 @@ void EventRuntime_SetCountdown(u16 frames) {
 void BattleFx_SetWeightedResult(s32 row, s32 column) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  event->battleGroup = BattleFx_GetWeightedResult(row, column);
+  event->encounterEnemyGroup = BattleFx_GetWeightedResult(row, column);
   /* FAKEMATCH: the ARM9 scheduling would address the control mode before
    * storing the group. */
   __asm__("");

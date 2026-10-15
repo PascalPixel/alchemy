@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_662/s11b4.o"(.text)
         "*/games/tla/src/field/overlay_662/s11e0.o"(.text)
         "*/resource_662_overlay.o"(.text.x02009238)
-        "*/resource_662_overlay.o"(.text.x0200930c)
+        "*/games/tla/src/field/overlay_662/guardian.o"(.text)
         "*/games/tla/src/field/overlay_662/s13c8.o"(.text)
         "*/resource_662_overlay.o"(.text.x02009418)
         "*/games/tla/src/field/overlay_662/prepare.o"(.text)

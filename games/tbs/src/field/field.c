@@ -6775,6 +6775,11 @@ void Resource_RunCopiedDecoder(s32 a, s32 b) {
   Runtime_ReleaseHeapBlock(49);
 }
 
+// Builds the world map ground plane's per-scanline terms for the camera's
+// pitch (depth is its cotangent): for each of the 160 lines, where its ray
+// meets the ground, the line's width scale and its distance, or zeros above
+// the horizon. Transform_UpdateVertices turns these into the affine
+// parameters each frame.
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct MapScanline *row) {
   s32 ground[3];
@@ -6829,27 +6834,37 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   }
 }
 
+// One animation layer the sprite viewer edits.
 struct IconColumn {
-  s16 no;
-  s16 animation;
-  u8 on;
+  s16 number;    // sprite number
+  s16 animation; // animation shown
+  u8 on;         // layer shown
   s8 priority;
   s8 param;
 };
 
+// A debug sprite viewer, which never returns. It shows a sprite (with up to
+// three more animation layers) once for each of its facings, in a ring.
+// Start with the direction pad moves the ring; otherwise up and down choose
+// a layer and left and right what to edit: 0 the animation, 1 the sprite
+// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
+// changed with L and R. A restarts the animation, or in the other modes
+// turns a layer on or off. Pressing Start toggles the shadows; B turns the
+// ring. Select reloads the far-call resources (the alternate set unless B is
+// held) and starts over.
 void Ui_RunIconMonitor(void) {
-  struct IconColumn ent[4];
+  struct IconColumn layers[4];
   struct AnimationMetadata *metadata;
   struct AnimationObject *table;
   volatile s32 zero;
-  s32 no;
+  s32 number;
   s32 x;
   s32 y;
   u32 mode;
   s32 flag;
-  struct AnimationPosition *work;
+  struct AnimationPosition *ring;
   s32 slot;
-  u32 cnt;
+  u32 steps;
   s32 alt;
   s32 moved;
   /* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared
@@ -6867,19 +6882,19 @@ void Ui_RunIconMonitor(void) {
   mode = 1;
   flag = 1;
   slot = 0;
-  work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
+  ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
   gDecodeFillByte = 3;
 
-  Dma_Fill32Cell(zero, 0, work, 4);
-  Dma_Fill32Cell(zero, 0, ent, sizeof(ent));
+  Dma_Fill32Cell(zero, 0, ring, 4);
+  Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
 
-  no = Ui_FindNextNumberWithMetadata(-1, 1);
+  number = Ui_FindNextNumberWithMetadata(-1, 1);
   for (i = 0; i <= 3; i++) {
-    ent[i].animation = 1;
-    ent[i].priority = 1;
-    ent[i].no = no;
+    layers[i].animation = 1;
+    layers[i].priority = 1;
+    layers[i].number = number;
   }
-  ent[0].on = 1;
+  layers[0].on = 1;
   gDebugMode = 2;
   REG_BLDCNT = 0x3F42;
   PLTT_BACKDROP = 0x01E0;
@@ -6889,25 +6904,25 @@ void Ui_RunIconMonitor(void) {
 restart:
   Runtime_InitializeHeap();
   Scheduler_ResetTaskTable();
-  work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
+  ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
   Resource_InitializeTable();
   ObjectSystem_Initialize(2);
-  ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
-  metadata = Resource_GetMetadataRecordFar(ent[0].no);
+  ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].number, 0);
+  metadata = Resource_GetMetadataRecordFar(layers[0].number);
   if (metadata->drawKind == 20) {
-    ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, ent[0].no + 1, 0);
+    ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].number + 1, 0);
   }
 
   for (i = 0; i <= 9; i++) {
-    metadata = Resource_GetMetadataRecordFar(ent[0].no);
+    metadata = Resource_GetMetadataRecordFar(layers[0].number);
     alt = 0;
     if (metadata->drawKind == 20 && (i & 1) != 0) {
       alt = 1;
     }
-    alt = (s32)ResourceObject_Create(ent[0].no + alt + (alt << 12));
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
-    ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
+    alt = (s32)ResourceObject_Create(layers[0].number + alt + (alt << 12));
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[1].number);
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[2].number);
+    ResourceMetadata_Register((struct AnimationObject *)alt, layers[3].number);
     /* FAKEMATCH: needed to match: the native adds the flags offset to the
      * object's own register (r5) in place; a separate address takes a copy.
      * Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the
@@ -6918,16 +6933,16 @@ restart:
   }
 
   for (i = 0; i <= 3; i++) {
-    if (ent[i].on != 0) {
-      Ui_SetGridColumnPriority(i, ent[i].priority);
+    if (layers[i].on != 0) {
+      Ui_SetGridColumnPriority(i, layers[i].priority);
     } else {
       Ui_SetGridColumnPriority(i, 8);
     }
-    Ui_SetGridColumnParameter(i, ent[i].param);
-    Ui_FillGridColumnFromMetadata(i, ent[i].animation);
+    Ui_SetGridColumnParameter(i, layers[i].param);
+    Ui_FillGridColumnFromMetadata(i, layers[i].animation);
   }
 
-  Map_BuildProbeRing(x, y, work);
+  Map_BuildProbeRing(x, y, ring);
   Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
@@ -6949,7 +6964,7 @@ next:
       if ((*held & KEY_DOWN) != 0) {
         y++;
       }
-      Map_BuildProbeRing(x, y, work);
+      Map_BuildProbeRing(x, y, ring);
     } else {
       (void)gKeysRepeat;
       if ((*repeat & KEY_UP) != 0) {
@@ -6982,42 +6997,44 @@ next:
         break;
       }
       if ((gKeysRepeat & KEY_L) != 0) {
-        ent[slot].animation--;
-        if (ent[slot].animation < 0) {
-          ent[slot].animation = 0;
+        layers[slot].animation--;
+        if (layers[slot].animation < 0) {
+          layers[slot].animation = 0;
         }
         if (slot == 0) {
-          ent[1].animation = ent[0].animation;
+          layers[1].animation = layers[0].animation;
         }
         goto next;
       }
       if ((gKeysRepeat & KEY_R) == 0) {
         break;
       }
-      ent[slot].animation++;
-      if (ent[slot].animation > 99) {
-        ent[slot].animation = 99;
+      layers[slot].animation++;
+      if (layers[slot].animation > 99) {
+        layers[slot].animation = 99;
       }
       if (slot == 0) {
-        ent[1].animation = ent[0].animation;
+        layers[1].animation = layers[0].animation;
       }
       goto next;
 
     case 1:
       moved = 0;
-      cnt = 1;
+      steps = 1;
       if ((*held & KEY_START) != 0) {
-        cnt = 10;
+        steps = 10;
       }
       if ((*repeat & KEY_L) != 0) {
-        for (i = 0; i < cnt; i++) {
-          ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, -1);
+        for (i = 0; i < steps; i++) {
+          layers[slot].number =
+              Ui_FindNextNumberWithMetadata(layers[slot].number, -1);
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        for (i = 0; i < cnt; i++) {
-          ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, 1);
+        for (i = 0; i < steps; i++) {
+          layers[slot].number =
+              Ui_FindNextNumberWithMetadata(layers[slot].number, 1);
         }
         moved = 1;
       }
@@ -7027,59 +7044,59 @@ next:
       if (slot == 0) {
         goto restart;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnNumber(slot, ent[slot].no);
-        Ui_SetGridColumnPriority(slot, ent[slot].priority);
-        Ui_SetGridColumnParameter(slot, ent[slot].param);
-        Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnNumber(slot, layers[slot].number);
+        Ui_SetGridColumnPriority(slot, layers[slot].priority);
+        Ui_SetGridColumnParameter(slot, layers[slot].param);
+        Ui_FillGridColumnFromMetadata(slot, layers[slot].animation);
       }
       goto next;
 
     case 2:
       moved = 0;
       if ((*repeat & KEY_L) != 0) {
-        ent[slot].priority--;
-        if (ent[slot].priority < 0) {
-          ent[slot].priority = 3;
+        layers[slot].priority--;
+        if (layers[slot].priority < 0) {
+          layers[slot].priority = 3;
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        ent[slot].priority++;
-        if (ent[slot].priority > 3) {
-          ent[slot].priority = 0;
+        layers[slot].priority++;
+        if (layers[slot].priority > 3) {
+          layers[slot].priority = 0;
         }
         moved = 1;
       }
       if (moved == 0) {
         break;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnPriority(slot, ent[slot].priority);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnPriority(slot, layers[slot].priority);
       }
       goto next;
 
     case 3:
       moved = 0;
       if ((*repeat & KEY_L) != 0) {
-        ent[slot].param--;
-        if (ent[slot].param < 0) {
-          ent[slot].param = 15;
+        layers[slot].param--;
+        if (layers[slot].param < 0) {
+          layers[slot].param = 15;
         }
         moved = 1;
       }
       if ((*repeat & KEY_R) != 0) {
-        ent[slot].param++;
-        if (ent[slot].param > 15) {
-          ent[slot].param = 0;
+        layers[slot].param++;
+        if (layers[slot].param > 15) {
+          layers[slot].param = 0;
         }
         moved = 1;
       }
       if (moved == 0) {
         break;
       }
-      if (ent[slot].on != 0) {
-        Ui_SetGridColumnParameter(slot, ent[slot].param);
+      if (layers[slot].on != 0) {
+        Ui_SetGridColumnParameter(slot, layers[slot].param);
       }
       goto next;
 
@@ -7090,18 +7107,18 @@ next:
     if ((*repeat & KEY_A) != 0) {
       if (mode == 0) {
         if (slot != 1) {
-          if (ent[slot].on != 0) {
-            Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+          if (layers[slot].on != 0) {
+            Ui_FillGridColumnFromMetadata(slot, layers[slot].animation);
             if (slot == 0) {
-              Ui_FillGridColumnFromMetadata(1, ent[1].animation);
+              Ui_FillGridColumnFromMetadata(1, layers[1].animation);
             }
           }
           goto next;
         }
       } else if (slot != 0) {
-        ent[slot].on ^= 1;
-        Ui_SetGridColumnPriority(slot,
-                                 ent[slot].on != 0 ? ent[slot].priority : 8);
+        layers[slot].on ^= 1;
+        Ui_SetGridColumnPriority(
+            slot, layers[slot].on != 0 ? layers[slot].priority : 8);
         goto next;
       }
     }
@@ -7121,6 +7138,8 @@ next:
   }
 }
 
+// Returns the next sprite number after start, stepping by step (1 or -1)
+// and wrapping within 0-511, that has an image.
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step) {
   for (;;) {
     start += step;
@@ -7146,6 +7165,9 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step) {
   }
 }
 
+// Lays out the sprite viewer's ring around pixel (x, z): one position per
+// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
+// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out) {
   struct AnimationPosition *pair;
   s32 angle;
@@ -7264,9 +7286,13 @@ struct Vec2 {
     }                                                                          \
   }
 
+// Set the draw parameter or the priority of one layer of the viewer's ten
+// sprites.
 DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
+// Starts animation value on layer slot of each of the viewer's ten sprites,
+// each one 16 timer units behind the last.
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
   s32 count;
   struct AnimationObject *object;
@@ -7297,6 +7323,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value) {
   } while (count <= 9);
 }
 
+// Gives layer slot of each of the viewer's ten sprites the sprite number no.
 void Ui_SetGridColumnNumber(s32 slot, s32 no) {
   struct AnimationObject *object = gSpriteObjects;
   s32 i;
@@ -7312,6 +7339,8 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no) {
   }
 }
 
+// Each frame in the sprite viewer: places each copy of the sprite at its
+// ring position, facing the way that position stands for.
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *actor = WORK_SLOT(4);
   u32 kind = actor->entries[0]->kind;

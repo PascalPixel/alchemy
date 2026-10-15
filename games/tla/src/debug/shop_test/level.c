@@ -4,7 +4,7 @@
 #include "input.h"
 
 extern const u8 MsgRaiseEveryoneS[];
-extern const u8 Data_02000e80[];
+extern const u8 gData_02000e80[];
 
 void WaitFrames(s32 frames);
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
@@ -35,7 +35,7 @@ void Func_02000748(void)
         if (redraw) {
             RenderOutput_RedrawSavedRect(window);
             UiText_DrawStringAtOffset(unit, window, 0, 48);
-            UiText_DrawStringInWindow(Data_02000e80, window, 48, 48);
+            UiText_DrawStringInWindow(gData_02000e80, window, 48, 48);
             redraw = 0;
             UiText_DrawNumberInWindow(unit[15], 0, window, 72, 48);
         }

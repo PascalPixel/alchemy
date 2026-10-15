@@ -350,7 +350,7 @@ Func_08029570:
 .L_08029800:
 	.4byte gInput
 .L_08029804:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08029808:
 	.4byte IwramMulQ16
 .L_0802980c:

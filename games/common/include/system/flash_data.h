@@ -33,7 +33,7 @@ struct FlashSetupInfo
 };
 
 extern const struct FlashType *gFlash;
-extern struct FlashSetupInfo Flash_ChipAtmel;
-extern struct FlashSetupInfo Flash_ChipAtmelLayout;
+extern struct FlashSetupInfo gFlash_ChipAtmel;
+extern struct FlashSetupInfo gFlash_ChipAtmelLayout;
 
 #endif

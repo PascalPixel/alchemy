@@ -11,8 +11,8 @@ gFrameTick:
 	.global gSavedStackSize
 gSavedStackSize:
 	.space 0x0000000c
-	.global ResourceBlockOwners
-ResourceBlockOwners:
+	.global gResourceBlockOwners
+gResourceBlockOwners:
 	.space 0x00000200
 	.global gSchedulerStatus
 gSchedulerStatus:
@@ -89,8 +89,8 @@ gResetRequested:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 0x00000004
-	.global Iwram_Data1
-Iwram_Data1:
+	.global gIwram_Data1
+gIwram_Data1:
 	.space 0x00000004
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -138,8 +138,8 @@ gKeysHeldAtVBlank:
 	.global gOamCopyEnabled
 gOamCopyEnabled:
 	.space 0x00000004
-	.global Iwram_Data2
-Iwram_Data2:
+	.global gIwram_Data2
+gIwram_Data2:
 	.space 0x00000004
 	.global gDebugPaused
 gDebugPaused:

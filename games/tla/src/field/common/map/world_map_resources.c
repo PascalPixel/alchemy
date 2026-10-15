@@ -42,7 +42,7 @@ extern char ResourceId_WorldMapTilesD6;
 // six tile sets, by resource id.
 //--------------------------------------------------------------------------
 
-const u32 Data_0802ed34[4][9] =
+const u32 gData_0802ed34[4][9] =
 {
     {
         (u32)&ResourceId_WorldMapPaletteA,

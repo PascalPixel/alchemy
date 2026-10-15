@@ -7,23 +7,23 @@ void Func_02000190(void);
 void Func_020001b0(void);
 void Func_020001d0(void);
 
-extern u32 Data_02002068[];
-extern u32 Data_020020a4[];
-extern u32 Data_020020e0[];
+extern u32 gData_02002068[];
+extern u32 gData_020020a4[];
+extern u32 gData_020020e0[];
 
-u32 Data_02002068[] = {
+u32 gData_02002068[] = {
 	0, 1, 13, 22, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_020020a4[] = {
+u32 gData_020020a4[] = {
 	0, 1, 13, 44, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_020020e0[] = {
+u32 gData_020020e0[] = {
 	0, 1, 13, 126, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
@@ -96,20 +96,20 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 Data_020023bc[] = {
+s32 gData_020023bc[] = {
 	-1,
 };
 
-u32 Data_020023c0[] = {
+u32 gData_020023c0[] = {
 	1,
 };
 
-u32 Data_0200a3c4[] = {
+u32 gData_0200a3c4[] = {
 	39, 5, 0, 12, 38,
 };
 
-s32 Data_020023d8[] = {
-	(s32)Data_02002068,
-	(s32)Data_020020a4,
-	(s32)Data_020020e0,
+s32 gData_020023d8[] = {
+	(s32)gData_02002068,
+	(s32)gData_020020a4,
+	(s32)gData_020020e0,
 };

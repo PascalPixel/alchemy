@@ -10,8 +10,8 @@ struct PartyState254 {
     u16 value;
 };
 
-extern const u8 Data_020022e8[];
-extern const u8 Data_0200236c[];
+extern const u8 gData_020022e8[];
+extern const u8 gData_0200236c[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
@@ -73,8 +73,8 @@ void Func_02000124(void)
 const u8 *Func_02000130(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov699Room2)
-        return Data_0200236c;
-    return Data_020022e8;
+        return gData_0200236c;
+    return gData_020022e8;
 }
 
 void Func_0200015c(struct ObjectRuntime *object)

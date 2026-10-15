@@ -39,7 +39,7 @@ void Engine_AudioPlayCue(s32 cue);
 
 u8 *MenuTest_GetEntrances(void)
 {
-	return (u8 *)MenuTest_Entrances;
+	return (u8 *)gMenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -49,12 +49,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *MenuTest_GetExits(void)
 {
-	return (u8 *)MenuTest_Exits;
+	return (u8 *)gMenuTest_Exits;
 }
 
 u8 *MenuTest_GetPlacements(void)
 {
-	return (u8 *)MenuTest_Placements;
+	return (u8 *)gMenuTest_Placements;
 }
 
 #if EDITION_INTERNATIONAL
@@ -204,7 +204,7 @@ static void DebugMenu_GiveItemToParty(void)
 
 s32 MenuTest_GetEvents(void)
 {
-	return (s32)MenuTest_Events;
+	return (s32)gMenuTest_Events;
 }
 
 static void EV01_TALK(void)
@@ -212,7 +212,7 @@ static void EV01_TALK(void)
 	s32 *p;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
-	p = &MenuTest_SlotOffsets;
+	p = &gMenuTest_SlotOffsets;
 	Party_AdvanceOwnerCountToTarget(0, *p);
 	Party_AdvanceOwnerCountToTarget(1, *p);
 	Party_AdvanceOwnerCountToTarget(3, *p);
@@ -440,12 +440,12 @@ static void EV09_TALK(void)
 		}
 		for (j = 0; j < i + 32; j++)
 		{
-			buf[j] = MenuTest_BenchmarkCharacter + 1;
+			buf[j] = gMenuTest_BenchmarkCharacter + 1;
 		}
-		MenuTest_BenchmarkCharacter++;
-		if (MenuTest_BenchmarkCharacter > 96)
+		gMenuTest_BenchmarkCharacter++;
+		if (gMenuTest_BenchmarkCharacter > 96)
 		{
-			MenuTest_BenchmarkCharacter = 65;
+			gMenuTest_BenchmarkCharacter = 65;
 		}
 	}
 #endif
@@ -862,16 +862,16 @@ char gDebugItemCapacityLabel[24] = "A:Get Item  B:Return";
 
 char gDebugItemFullLabel[20] = "ITEM FULL........";
 
-struct SceneEntrance MenuTest_Entrances[] = {
+struct SceneEntrance gMenuTest_Entrances[] = {
 	{0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 MenuTest_Exits[] = {
+u32 gMenuTest_Exits[] = {
 	SCENE_EXITS(511),
 };
 
-struct ScenePlacement MenuTest_Placements[] = {
+struct ScenePlacement gMenuTest_Placements[] = {
 	{GARET, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(48), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
 	{JENNA, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(80), FACING_SOUTHEAST,
@@ -903,7 +903,7 @@ struct ScenePlacement MenuTest_Placements[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent MenuTest_Events[] = {
+struct SceneEvent gMenuTest_Events[] = {
 	{EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TALK)},
 	{EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TALK)},
 	{EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TALK)},
@@ -950,6 +950,6 @@ struct SceneEvent MenuTest_Events[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 MenuTest_SlotOffsets = 10;
+s32 gMenuTest_SlotOffsets = 10;
 
-s32 MenuTest_BenchmarkCharacter = 65;
+s32 gMenuTest_BenchmarkCharacter = 65;

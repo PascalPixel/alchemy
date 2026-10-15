@@ -124,7 +124,7 @@ Func_080ddda0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080dde9c:
-	.4byte Data_080f0e60
+	.4byte gData_080f0e60
 .L_080ddea0:
 	.4byte 0xffe00000
 .L_080ddea4:

@@ -415,7 +415,7 @@ Func_080fb8b8:
 .L_080fbc18:
 	.4byte 0x0000106b
 .L_080fbc1c:
-	.4byte Menu_PointString
+	.4byte gMenu_PointString
 .L_080fbc20:
 	.4byte 0x000010a6
 .L_080fbc24:

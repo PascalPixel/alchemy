@@ -10,8 +10,8 @@
 #include "glyph.h"
 #include "mem.h"
 
-extern u8 *UiIcon_BaseGlyphPointers[];
-extern u8 *UiIcon_ItemIconPointers[];
+extern u8 *gUiIcon_BaseGlyphPointers[];
+extern u8 *gUiIcon_ItemIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 s32 Ui_CountIconTableEntries(void);
@@ -30,14 +30,14 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32
         glyph = 0;
 
     if (with_base != 0) {
-        work->encoded = UiIcon_BaseGlyphPointers[2];
+        work->encoded = gUiIcon_BaseGlyphPointers[2];
         work->width = 2;
         work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);
         slot = 1;
     }
 
-    work->encoded = UiIcon_ItemIconPointers[glyph];
+    work->encoded = gUiIcon_ItemIconPointers[glyph];
     work->width = 2;
     work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, slot);

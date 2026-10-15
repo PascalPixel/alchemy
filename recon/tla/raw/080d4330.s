@@ -44,4 +44,4 @@ Func_080d4330:
 .L_080d437c:
 	.4byte gPartyState
 .L_080d4380:
-	.4byte Data_080f330c
+	.4byte gData_080f330c

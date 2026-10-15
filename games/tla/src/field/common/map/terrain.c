@@ -49,7 +49,7 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
     if (kind == 12 || kind == 15)
         flag = 0x30;
 
-    return WorldMap_TerrainBehaviorTable[flag + selector];
+    return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
@@ -98,15 +98,15 @@ done:
 
 extern const u8 Render_DrawMapCode[];
 extern u8 Render_DrawMapCodeSize[];
-extern u8 Data_0201c000[];
-extern u8 Data_0203c000[];
+extern u8 gData_0201c000[];
+extern u8 gData_0203c000[];
 
 void Func_0802dd08(s32 arg0, s32 arg1)
 {
     void (*routine)(s32, s32, u8 *, u8 *);
-    u8 *tiles = Data_0201c000;
+    u8 *tiles = gData_0201c000;
 
     RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
-    routine(arg0, arg1, Data_0203c000, tiles + 0x1000);
+    routine(arg0, arg1, gData_0203c000, tiles + 0x1000);
     MemFree(routine);
 }

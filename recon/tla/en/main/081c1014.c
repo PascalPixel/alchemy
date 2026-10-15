@@ -10,9 +10,9 @@ struct SoundFrameState
     u8 unk03;
 };
 
-extern volatile struct SoundFrameState Data_03001138;
+extern volatile struct SoundFrameState gData_03001138;
 extern s32 Data_03000ee4;
-extern s32 IwramHi_Data1;
+extern s32 gIwramHi_Data1;
 
 void Sound_LoadPresetParameters(s32 preset);
 void AudioCommand_Play(s32 id);
@@ -28,9 +28,9 @@ void AudioTest_RunParameterController(void)
     row = 0;
     preset = 3;
     do {
-        IwramHi_Data1 = 0;
+        gIwramHi_Data1 = 0;
     } while (0);
-    Data_03001138.unk02 = 1;
+    gData_03001138.unk02 = 1;
     timer = 20;
 
     for (;;)

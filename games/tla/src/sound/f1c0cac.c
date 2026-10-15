@@ -10,17 +10,17 @@ struct SoundFrameState
     u8 unk03;
 };
 
-extern const struct SongEntry Sound_SongTable[];
-extern const struct PlayerSlot Sound_PlayerSlots[];
-extern volatile struct SoundFrameState Data_03001138;
-extern u8 Data_02005814;
-extern u16 Data_02005820[8];
-extern u16 Data_02005830;
-extern struct SoundPlayer Sound_Player3;
-extern struct SoundPlayer Sound_Player5;
-extern u16 Data_02005834;
-extern u16 Data_0200583c;
-extern u16 Data_0200580c;
+extern const struct SongEntry gSound_SongTable[];
+extern const struct PlayerSlot gSound_PlayerSlots[];
+extern volatile struct SoundFrameState gData_03001138;
+extern u8 gData_02005814;
+extern u16 gData_02005820[8];
+extern u16 gData_02005830;
+extern struct SoundPlayer gSound_Player3;
+extern struct SoundPlayer gSound_Player5;
+extern u16 gData_02005834;
+extern u16 gData_0200583c;
+extern u16 gData_0200580c;
 extern struct SoundPlayer gMusicPlayerFanfare;
 
 void SongFlag_Set(s32 cue);
@@ -49,29 +49,29 @@ void AudioCommand_Play(s32 id)
 
     SongFlag_Set(id);
     flags = id & 0xf000;
-    if (Data_03001138.unk03 != 0)
+    if (gData_03001138.unk03 != 0)
         return;
     id &= 0xfff;
 
     if (id == 78)
     {
-        if (Data_02005814 != 0)
+        if (gData_02005814 != 0)
             return;
         MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
-        Data_02005814++;
-        Data_02005830 = 0;
+        gData_02005814++;
+        gData_02005830 = 0;
     }
     else if (id == 390)
     {
-        Data_02005820[3] = 0;
-        MusicPlayer_FadeOut(&Sound_Player3, 3);
-        Data_02005820[5] = 0;
-        MusicPlayer_FadeOut(&Sound_Player5, 3);
+        gData_02005820[3] = 0;
+        MusicPlayer_FadeOut(&gSound_Player3, 3);
+        gData_02005820[5] = 0;
+        MusicPlayer_FadeOut(&gSound_Player5, 3);
     }
     else if (id == 395)
     {
-        Data_02005820[5] = 0;
-        MusicPlayer_FadeOut(&Sound_Player5, 3);
+        gData_02005820[5] = 0;
+        MusicPlayer_FadeOut(&gSound_Player5, 3);
     }
     else if (id >= 700)
     {
@@ -79,11 +79,11 @@ void AudioCommand_Play(s32 id)
     }
     else if (id > 99)
     {
-        player = Sound_SongTable[id].slot;
+        player = gSound_SongTable[id].slot;
         if (player == 7)
         {
         next:
-            if (((u8 *)&Sound_PlayerSlots[player].player->status)[0] != 0)
+            if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0)
             {
                 player--;
                 if (player > 3)
@@ -91,8 +91,8 @@ void AudioCommand_Play(s32 id)
                 player = 7;
             }
         }
-        MusicPlayer_StartSong(Sound_PlayerSlots[player].player, Sound_SongTable[id].header);
-        Data_02005820[player] = id;
+        MusicPlayer_StartSong(gSound_PlayerSlots[player].player, gSound_SongTable[id].header);
+        gData_02005820[player] = id;
     }
     else if (id > 79)
     {
@@ -107,9 +107,9 @@ void AudioCommand_Play(s32 id)
         if (id == 79)
             return;
     background:
-        if (id == Data_02005830)
+        if (id == gData_02005830)
             return;
-        Data_02005830 = id;
+        gData_02005830 = id;
         Sound_LoadPresetParameters(Func_081c0cac(id));
         Audio_PlaySound(id);
         if (flags & 0x1000)
@@ -118,7 +118,7 @@ void AudioCommand_Play(s32 id)
             gMusicVolume = 0x100;
         gMusicVolumeTarget = 0x100;
         gMusicVolumeStep = 4;
-        Data_02005814 = 0;
+        gData_02005814 = 0;
     }
 }
 
@@ -155,16 +155,16 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
             gMusicVolume = gMusicVolumeTarget;
         MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
     }
-    if ((s16)Data_02005834 != (s16)Data_0200583c)
+    if ((s16)gData_02005834 != (s16)gData_0200583c)
     {
-        delta = (s16)Data_02005834 - (s16)Data_0200583c;
+        delta = (s16)gData_02005834 - (s16)gData_0200583c;
         if (delta > 0)
-            Data_0200583c += Data_0200580c;
+            gData_0200583c += gData_0200580c;
         else
-            Data_0200583c -= Data_0200580c;
-        if ((((s16)Data_02005834 - (s16)Data_0200583c) ^ delta) < 0)
-            Data_0200583c = Data_02005834;
-        MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, Data_0200583c);
-        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)Data_0200583c * 12 - 3072);
+            gData_0200583c -= gData_0200580c;
+        if ((((s16)gData_02005834 - (s16)gData_0200583c) ^ delta) < 0)
+            gData_0200583c = gData_02005834;
+        MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gData_0200583c);
+        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)gData_0200583c * 12 - 3072);
     }
 }

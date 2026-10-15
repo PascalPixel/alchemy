@@ -119,7 +119,7 @@ LAYOUT_OFFSET_GUARD(EnemyDefinition_Coins, struct EnemyDefinition, coins, 0x4c);
 LAYOUT_OFFSET_GUARD(EnemyDefinition_Experience, struct EnemyDefinition, experience, 0x52);
 LAYOUT_SIZE_GUARD(LevelUpResult_Size, struct LevelUpResult, 0x10);
 
-extern struct CharacterDefinition Character_DefinitionTable[];
-extern struct ClassDefinition	  Class_DefinitionTable[];
+extern struct CharacterDefinition gCharacter_DefinitionTable[];
+extern struct ClassDefinition	  gClass_DefinitionTable[];
 
 #endif

@@ -9,7 +9,7 @@ struct JupiterRoom5EventWork1ac {
     s32 value;
 };
 
-extern u8 Data_02002fb8[];
+extern u8 gData_02002fb8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -34,7 +34,7 @@ s32 Func_02000ae8(void)
         angle = 0x4000;
         Call4((void (*)())Func_02002900, 22, 0x400000, 0xe10000, angle);
     }
-    Func_020029c8(Data_02002fb8);
+    Func_020029c8(gData_02002fb8);
     Object_SetActionCallback(Object_GetById(64), 9);
     object = Object_GetById(23);
     object->scaleX = 0;

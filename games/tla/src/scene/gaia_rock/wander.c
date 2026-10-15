@@ -28,7 +28,7 @@ void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 struct OrbitEffect *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-extern u32 Data_020015c0[];
+extern u32 gData_020015c0[];
 
 void Func_02000474(struct OrbitEffect *effect)
 {
@@ -53,6 +53,6 @@ void Func_02000474(struct OrbitEffect *effect)
         effect->pause = ((Random16Far() << 4) >> 16) + 8;
     }
     if (++effect->timer == 71)
-        Func_02000e2c(effect, Data_020015c0);
+        Func_02000e2c(effect, gData_020015c0);
 }
 

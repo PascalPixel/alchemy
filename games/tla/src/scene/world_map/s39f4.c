@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-extern const u8 Data_02004f90[];
-extern const u8 Data_02004f9c[];
+extern const u8 gData_02004f90[];
+extern const u8 gData_02004f9c[];
 
 u32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 angle, s32 distance, s32 *position);
@@ -32,7 +32,7 @@ void Func_020039f4(struct ObjectRuntime *object)
     if (spark != NULL) {
         spark->terrainHeight = object->terrainHeight;
         sprite = spark->animation;
-        Func_02004b20(spark, Data_02004f90);
+        Func_02004b20(spark, gData_02004f90);
         spark->motionFlags = 0;
         spark->action = 0;
         spark->linkedObject = object;
@@ -46,7 +46,7 @@ void Func_020039f4(struct ObjectRuntime *object)
     if (spark != NULL) {
         spark->terrainHeight = object->terrainHeight;
         sprite = spark->animation;
-        Func_02004b20(spark, Data_02004f90);
+        Func_02004b20(spark, gData_02004f90);
         spark->motionFlags = 0;
         spark->action = 0;
         spark->linkedObject = object;
@@ -76,7 +76,7 @@ void Func_02003aac(struct ObjectRuntime *object)
     if (particle != NULL) {
         particle->terrainHeight = object->terrainHeight;
         sprite = particle->animation;
-        Func_02004b20(particle, Data_02004f9c);
+        Func_02004b20(particle, gData_02004f9c);
         Animation_ApplyChildArgument(sprite, 2);
         particle->gravity = 0x200;
         particle->scaleX = 0xcccc;

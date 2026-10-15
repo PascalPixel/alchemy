@@ -2052,7 +2052,7 @@ Func_0200182c:
 	bl Scheduler_AddOrUpdateCallback
 	pop {r5, pc}
 .L_020098f8:
-	.4byte Data_02002fc0
+	.4byte gData_02002fc0
 .L_020098fc:
 	.4byte gPartyState
 .L_02009900:
@@ -2472,29 +2472,29 @@ Func_02001944:
 .L_02009cdc:
 	.4byte 0x00019999
 .L_02009ce0:
-	.4byte Data_0200277c
+	.4byte gData_0200277c
 .L_02009ce4:
-	.4byte Data_020027c0
+	.4byte gData_020027c0
 .L_02009ce8:
 	.4byte 0x036e0000
 .L_02009cec:
 	.4byte gPartyState
 .L_02009cf0:
-	.4byte Data_02002804
+	.4byte gData_02002804
 .L_02009cf4:
-	.4byte Data_02002870
+	.4byte gData_02002870
 .L_02009cf8:
-	.4byte Data_020028dc
+	.4byte gData_020028dc
 .L_02009cfc:
-	.4byte Data_02002948
+	.4byte gData_02002948
 .L_02009d00:
 	.4byte 0x00013333
 .L_02009d04:
-	.4byte Data_02002998
+	.4byte gData_02002998
 .L_02009d08:
-	.4byte Data_020029c0
+	.4byte gData_020029c0
 .L_02009d0c:
-	.4byte Data_02002a04
+	.4byte gData_02002a04
 .L_02009d10:
 	.4byte Func_02001688
 	.section .text.x02009d14,"ax",%progbits
@@ -3208,5 +3208,5 @@ Func_020023c8:
 	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_02002fc0
-Data_02002fc0:
+	.global gData_02002fc0
+gData_02002fc0:

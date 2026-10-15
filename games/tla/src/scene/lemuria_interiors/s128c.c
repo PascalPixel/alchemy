@@ -3,7 +3,7 @@
 
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-extern const u8 Data_02002dec[];
+extern const u8 gData_02002dec[];
 
 struct FieldActor *Func_02002804(s32 type, s32 x, s32 y, s32 z);
 void Func_020027f4(struct FieldActor *object, s32 mode);
@@ -41,7 +41,7 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer)
     if (object != 0) {
         sprite = (struct AnimatedSprite *)object->sprite;
         Func_020027f4(object, 1);
-        Func_020027fc(object, Data_02002dec);
+        Func_020027fc(object, gData_02002dec);
         object->motionFlags = 0;
         {
             s32 ticks = timer;

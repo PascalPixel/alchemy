@@ -111,6 +111,6 @@ Func_08023e18:
 .L_08023ef0:
 	.4byte 0xffffe000
 .L_08023ef4:
-	.4byte Data_0802eb98
+	.4byte gData_0802eb98
 .L_08023ef8:
 	.4byte IwramTransformMatrix

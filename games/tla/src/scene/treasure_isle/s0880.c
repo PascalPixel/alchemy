@@ -9,8 +9,8 @@ struct TreasureIsleCell {
     u16 unk0e;
 };
 
-extern struct TreasureIsleCell Data_0200117c[];
-extern struct TreasureIsleCell Data_020011cc[];
+extern struct TreasureIsleCell gData_0200117c[];
+extern struct TreasureIsleCell gData_020011cc[];
 
 void Func_02000f9c();
 void Func_02000f94();
@@ -21,10 +21,10 @@ void Func_02000880(s32 unused, s32 frame, s32 id)
     struct TreasureIsleCell *cells;
 
     if (id < 50) {
-        cells = Data_0200117c;
+        cells = gData_0200117c;
         id -= 40;
     } else {
-        cells = Data_020011cc;
+        cells = gData_020011cc;
         id -= 50;
     }
     if (frame == 15) {

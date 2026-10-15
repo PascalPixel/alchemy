@@ -14,16 +14,16 @@ struct EventWork1c4 {
     u16 count;
 };
 
-extern const u8 Data_0200094c[];
-extern const u8 Data_02000964[];
-extern const u8 Data_02000ab4[];
-extern const u8 Data_02000b2c[];
-extern const u8 Data_02000b5c[];
-extern const u8 Data_02000b80[];
-extern const u8 Data_02000d18[];
-extern const u8 Data_02000de4[];
-extern const u8 Data_02000e44[];
-extern const u8 Data_02000fe8[];
+extern const u8 gData_0200094c[];
+extern const u8 gData_02000964[];
+extern const u8 gData_02000ab4[];
+extern const u8 gData_02000b2c[];
+extern const u8 gData_02000b5c[];
+extern const u8 gData_02000b80[];
+extern const u8 gData_02000d18[];
+extern const u8 gData_02000de4[];
+extern const u8 gData_02000e44[];
+extern const u8 gData_02000fe8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Event_StartScreenTransition(void);

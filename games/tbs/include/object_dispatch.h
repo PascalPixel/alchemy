@@ -31,12 +31,12 @@ struct DispatchObject
 	u8	unk6c[4];
 };
 
-extern const s32 ObjectDispatch_Table0Script[];
-extern const s32 ObjectDispatch_Table1Script[];
-extern const s32 ObjectDispatch_Table2Script[];
-extern const s32 ObjectDispatch_Table3Script[];
-extern const s32 ObjectDispatch_Table4Script[];
-extern const s32 ObjectDispatch_Table5Script[];
-extern const s32 ObjectDispatch_Table6Script[];
+extern const s32 gObjectDispatch_Table0Script[];
+extern const s32 gObjectDispatch_Table1Script[];
+extern const s32 gObjectDispatch_Table2Script[];
+extern const s32 gObjectDispatch_Table3Script[];
+extern const s32 gObjectDispatch_Table4Script[];
+extern const s32 gObjectDispatch_Table5Script[];
+extern const s32 gObjectDispatch_Table6Script[];
 
 #endif

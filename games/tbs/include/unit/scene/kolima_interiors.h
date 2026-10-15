@@ -10,9 +10,9 @@ u8 *SceneData_GetSecondaryTable(void);
 u8 *SceneData_GetPreparedRecords(void);
 u8 *SceneData_GetFourthTable(void);
 s32 FieldScene_SetupEntryLayoutsBySelector(void);
-extern struct SceneEntrance EntryLayout_PrimaryTable[];
-extern u32 EntryLayout_SecondaryTable[];
-extern struct ScenePlacement EntryLayout_Records[];
-extern struct SceneEvent EntryLayout_FourthTable[];
+extern struct SceneEntrance gEntryLayout_PrimaryTable[];
+extern u32 gEntryLayout_SecondaryTable[];
+extern struct ScenePlacement gEntryLayout_Records[];
+extern struct SceneEvent gEntryLayout_FourthTable[];
 
 #endif

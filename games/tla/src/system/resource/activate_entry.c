@@ -10,7 +10,7 @@
 // range.
 s32 Resource_ResetEntry(u32 resource_index)
 {
-    struct VramBlockCacheEntry *entry = &ResourceTableEntries[resource_index];
+    struct VramBlockCacheEntry *entry = &gResourceTableEntries[resource_index];
     u32 offset;
 
     if (resource_index >= VRAM_CACHE_ENTRY_COUNT)
@@ -28,7 +28,7 @@ s32 Resource_ResetEntry(u32 resource_index)
 
 s32 Resource_ActivateEntry(u32 resource_index)
 {
-    u16 *entry = (u16 *)&ResourceTableEntries[resource_index];
+    u16 *entry = (u16 *)&gResourceTableEntries[resource_index];
 
     if (resource_index > 95)
         return -1;
@@ -52,7 +52,7 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
     void *dst;
 
     {
-        struct VramBlockCacheEntry *table = ResourceTableEntries;
+        struct VramBlockCacheEntry *table = gResourceTableEntries;
 
         /* FAKEMATCH: ⚓️ loads the table's address before it copies no to r5; plainly the copy comes first (differ 2), as sched2 ranks the two equal in priority and in dependents and takes the earlier. Two empty asms that read the address give its load two more dependents, and it is taken first; one alone leaves the tie (differ 2). */
         asm("" : "+r"(src) : "l"(table));

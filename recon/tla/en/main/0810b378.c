@@ -13,13 +13,13 @@ struct InnWork {
 };
 
 void *UnitGet(s32 unitId);
-extern const s8 Data_0810cf2c[];
+extern const s8 gData_0810cf2c[];
 
 s32 Func_0810b378(s32 mode)
 {
     struct InnWork *work = Ram_HeapSlots->menuRuntime;
     s32 active = 0;
-    s32 factor = Data_0810cf2c[mode];
+    s32 factor = gData_0810cf2c[mode];
     s32 index;
 
     for (index = 0; index < work->memberCount; index++) {

@@ -12,7 +12,7 @@
 #include "window.h"
 #include "uiwindow.h"
 
-extern const s8 UiWindow_PartyColumnOffsets[];
+extern const s8 gUiWindow_PartyColumnOffsets[];
 
 void Func_080426e0(struct UiWindow *window, u32 flags)
 {
@@ -34,9 +34,9 @@ void Func_080426e0(struct UiWindow *window, u32 flags)
         first = 0;
     }
     i = first;
-    while (UiWindow_PartyColumnOffsets[i] >= 0)
+    while (gUiWindow_PartyColumnOffsets[i] >= 0)
     {
-        col = UiWindow_PartyColumnOffsets[i] + bias;
+        col = gUiWindow_PartyColumnOffsets[i] + bias;
         if (col < max)
         {
             for (row = 0; row != rows; row++)

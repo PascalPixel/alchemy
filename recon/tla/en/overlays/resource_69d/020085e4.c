@@ -10,11 +10,11 @@
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020026f0;
-extern s32 Data_020026f4;
-extern u16 Data_0200271c[];
-extern u16 Data_0200273c[];
-extern u16 Data_02002740[];
+extern s32 gData_020026f0;
+extern s32 gData_020026f4;
+extern u16 gData_0200271c[];
+extern u16 gData_0200273c[];
+extern u16 gData_02002740[];
 extern u32 gFrameCount;
 
 s32 __modsi3();
@@ -46,8 +46,8 @@ void Func_020005e4(void)
     s32 offset;
     u16 *dst;
 
-    phase = (Data_020026f0 / 4) % 5;
-    if (Data_020026f4 != 0) {
+    phase = (gData_020026f0 / 4) % 5;
+    if (gData_020026f4 != 0) {
         u8 *work = Ram_HeapSlots->eventWork;
 
         if (*(s16 *)(work + 358) != 0 && (HALF_AT(work, 358) & 0x3ff) != 153)
@@ -61,17 +61,17 @@ void Func_020005e4(void)
     i = 0;
     offset = 4;
 next:
-    *(dst + (phase + i) % 5) = *(u16 *)(offset + (u8 *)Data_0200271c);
+    *(dst + (phase + i) % 5) = *(u16 *)(offset + (u8 *)gData_0200271c);
     i++;
     offset += 2;
     if (i <= 4)
         goto next;
     Dma_Set(dst, (void *)0x05000184, 0x84000002, REG_DMA3);
-    Data_020026f0++;
+    gData_020026f0++;
 }
 
-extern u8 Data_020026f8[];
-extern s32 Data_02002718;
+extern u8 gData_020026f8[];
+extern s32 gData_02002718;
 void ObjectDispatch_ApplyValueToChildren();
 s32 Func_02001ee8();
 void Func_02001ed8();
@@ -154,7 +154,7 @@ void Func_02000990(struct FieldActor *ball)
 stop:
     BYTE_AT(ball, 99) = 0;
     WORD_AT(ball, 108) = 0;
-    Func_02001db8(ball, Data_020026f8);
+    Func_02001db8(ball, gData_020026f8);
     Func_02001f08(228);
-    Data_02002718 = 0;
+    gData_02002718 = 0;
 }

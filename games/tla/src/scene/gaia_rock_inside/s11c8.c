@@ -3,7 +3,7 @@
 #include "party_state.h"
 #include "text/msg_ids.h"
 
-extern s32 Data_02005610[];
+extern s32 gData_02005610[];
 
 s32                   GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -38,7 +38,7 @@ void Func_020011c8(void)
     }
     else
     {
-        if (Object_GetById(9)->script == Data_02005610)
+        if (Object_GetById(9)->script == gData_02005610)
             Object_RefreshSelectorById(9);
         Func_02000f00();
         Func_02004f0c((s32)MsgGaiaRockInside03);

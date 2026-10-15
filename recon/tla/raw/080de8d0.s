@@ -138,4 +138,4 @@ Func_080de8d0:
 .L_080de9e4:
 	.4byte Func_080de818
 .L_080de9e8:
-	.4byte BattleFx_CommonParticleScript
+	.4byte gBattleFx_CommonParticleScript

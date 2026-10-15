@@ -29,9 +29,9 @@
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;
-extern u8 Data_0819896a[];
-extern const u16 Data_08197410[];
-extern const s32 Data_08198974[];
+extern u8 gData_0819896a[];
+extern const u16 gData_08197410[];
+extern const s32 gData_08198974[];
 
 void Func_08143000(void);
 void Func_08143bb8(void);
@@ -174,10 +174,10 @@ void Func_08163e14(struct BattleEffectArgument *effect)
                 for (k = 0; k != 3; k++) {
                     s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-                    draw[0](canvas, work->sheet + 0x6e4, Data_0819896a[k * 2] - 17,
-                        Data_0819896a[k * 2 + 1] - span - 104, 34, 104);
-                    draw[0](canvas, work->sheet + 0x6e4, Data_0819896a[k * 2] - 17,
-                        Data_0819896a[k * 2 + 1] - span, 34, span);
+                    draw[0](canvas, work->sheet + 0x6e4, gData_0819896a[k * 2] - 17,
+                        gData_0819896a[k * 2 + 1] - span - 104, 34, 104);
+                    draw[0](canvas, work->sheet + 0x6e4, gData_0819896a[k * 2] - 17,
+                        gData_0819896a[k * 2 + 1] - span, 34, span);
                 }
             }
 
@@ -204,14 +204,14 @@ void Func_08163e14(struct BattleEffectArgument *effect)
                     if (frame > 76)
                         size = 10;
                     draw[spark->velocityY > 0](canvas,
-                        graphics + Data_08197410[size - 1], HI(spark->x) - size / 2,
+                        graphics + gData_08197410[size - 1], HI(spark->x) - size / 2,
                         HI(spark->y) - size, size, size * 2);
                     spark->x += spark->velocityX;
                     spark->y += spark->velocityY;
                     if (frame > 80)
                         spark->velocityY += -0x8000;
                     else
-                        spark->velocityY += Data_08198974[k & 3];
+                        spark->velocityY += gData_08198974[k & 3];
                     spark->velocityX = spark->velocityX * 62 / 64;
                     spark->velocityY = spark->velocityY * 62 / 64;
                     spark->variant++;

@@ -678,6 +678,6 @@ Func_0814a264:
 .L_0814a79c:
 	.4byte gMapCellBuffer
 .L_0814a7a0:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814a7a4:
 	.4byte Func_08143000

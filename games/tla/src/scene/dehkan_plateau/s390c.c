@@ -4,10 +4,10 @@
 #include "party_state.h"
 #include "callback_scheduler.h"
 
-extern const u8 Data_02003fb0[];
-extern struct ObjectRuntime *Data_02004420;
-extern s32 Data_02005678;
-extern s32 Data_0200567c;
+extern const u8 gData_02003fb0[];
+extern struct ObjectRuntime *gData_02004420;
+extern s32 gData_02005678;
+extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -53,13 +53,13 @@ void Func_0200390c(void)
         Func_02003a30();
         if (Flag_Test(0x871) != 0) {
             Map_CopyAttributes(0, 0, 1, 1, 15, 5);
-            if (Data_02004420 != NULL) {
-                Actor_SetPosition(Data_02004420, 248 << 16, 0, 176 << 15);
+            if (gData_02004420 != NULL) {
+                Actor_SetPosition(gData_02004420, 248 << 16, 0, 176 << 15);
                 WaitFrames(1);
             }
         }
     }
-    Func_02000038(Data_02003fb0);
+    Func_02000038(gData_02003fb0);
     Func_020019b8();
     entrance = gPartyState.entrance;
     if (entrance > 10) {
@@ -77,7 +77,7 @@ void Func_0200390c(void)
                 Func_02003764();
         }
     }
-    Data_0200567c = 0;
-    Data_02005678 = 0;
+    gData_0200567c = 0;
+    gData_02005678 = 0;
     Scheduler_AddOrUpdateCallback(Func_02001ee8, 0x480);
 }

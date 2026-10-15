@@ -74,7 +74,7 @@ static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 
 void *SceneData_GetScriptTable(void)
 {
-	return Vault_Scripts;
+	return gVault_Scripts;
 }
 
 int SceneData_ReturnZero(void)
@@ -84,14 +84,14 @@ int SceneData_ReturnZero(void)
 
 void *SceneData_GetMessageTable(void)
 {
-	return Vault_Messages;
+	return gVault_Messages;
 }
 
 void *SceneData_SelectActorTableByFlag855(void)
 {
 	if (Engine_GameFlagIsSet(0x855) != 0)
-		return Vault_ActorsFlag855;
-	return Vault_Actors;
+		return gVault_ActorsFlag855;
+	return gVault_Actors;
 }
 
 static int Vault_GetIvanVenusDjinnCount(void)
@@ -161,8 +161,8 @@ static void EV90_SEARCH(void)
 void *Vault_SelectEvents(void)
 {
 	if (Engine_GameFlagIsSet(0x855) != 0)
-		return Vault_ExtrasFlag855;
-	return Vault_Extras;
+		return gVault_ExtrasFlag855;
+	return gVault_Extras;
 }
 
 static void EV09_TALK(void)
@@ -577,21 +577,21 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene5Cells, 56, 19);
+	Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
 	SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
 static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene6Cells, 50, 18);
+	Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
 	SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
 static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene7Cells, 44, 17);
+	Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
 	SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
@@ -601,7 +601,7 @@ static void EV08_TOUCH(void)
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene8Cells, 54, 13);
+	Engine_MapAnimateCells(gVault_Scene8Cells, 54, 13);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
@@ -617,7 +617,7 @@ static void EV09_TOUCH(void)
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene9Cells, 49, 10);
+	Engine_MapAnimateCells(gVault_Scene9Cells, 49, 10);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
@@ -630,7 +630,7 @@ static void EV09_TOUCH(void)
 static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene10Cells, 38, 6);
+	Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
 	SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
@@ -643,7 +643,7 @@ static void EV12_TOUCH(void)
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(Vault_Scene12Cells, 35, 9);
+	Engine_MapAnimateCells(gVault_Scene12Cells, 35, 9);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
@@ -941,11 +941,11 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 	{
 	case 1:
 		Object_SetMode(&leaf->actor, 3);
-		Engine_ObjectSetScript(&leaf->actor, Vault_DriftScriptA);
+		Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptA);
 		break;
 	default:
 		Object_SetMode(&leaf->actor, 2);
-		Engine_ObjectSetScript(&leaf->actor, Vault_DriftScriptB);
+		Engine_ObjectSetScript(&leaf->actor, gVault_DriftScriptB);
 		break;
 	}
 	{
@@ -1030,7 +1030,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 Vault_Actor2[] = {
+s32 gVault_Actor2[] = {
 	SC_SET(SW_SPEED, 0x6666),
 	SC_SET(SW_ACCEL, 0x3333),
 	SC_LABEL(1),
@@ -1086,7 +1086,7 @@ s32 Vault_Actor2[] = {
 	SC_END,
 };
 
-s32 Vault_Actor0[] = {
+s32 gVault_Actor0[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -1111,7 +1111,7 @@ s32 Vault_Actor0[] = {
 	SC_END,
 };
 
-s32 Vault_Actor1[] = {
+s32 gVault_Actor1[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -1136,7 +1136,7 @@ s32 Vault_Actor1[] = {
 	SC_END,
 };
 
-struct SceneEntrance Vault_Scripts[] = {
+struct SceneEntrance gVault_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1152,7 +1152,7 @@ struct SceneEntrance Vault_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Vault_Messages[] = {
+u32 gVault_Messages[] = {
 	SCENE_EXITS(20),
 	SCENE_EXIT(1, 2, 3),
 	SCENE_EXIT(2, 2, 44),
@@ -1169,7 +1169,7 @@ u32 Vault_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Vault_Actors[] = {
+struct ScenePlacement gVault_Actors[] = {
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1184,9 +1184,9 @@ struct ScenePlacement Vault_Actors[] = {
 		PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, (s32)Vault_Actor0,
+	{ 0x6b, CONDITION_ALWAYS, (s32)gVault_Actor0,
 		PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ 0x66, CONDITION_ALWAYS, (s32)Vault_Actor1,
+	{ 0x66, CONDITION_ALWAYS, (s32)gVault_Actor1,
 		PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1198,7 +1198,7 @@ struct ScenePlacement Vault_Actors[] = {
 		PIXELS(216), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, 0x853, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6a, IF_FLAG_SET(0x853), (s32)Vault_Actor2,
+	{ 0x6a, IF_FLAG_SET(0x853), (s32)gVault_Actor2,
 		PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0xf8, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1207,7 +1207,7 @@ struct ScenePlacement Vault_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Vault_ActorsFlag855[] = {
+struct ScenePlacement gVault_ActorsFlag855[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1220,9 +1220,9 @@ struct ScenePlacement Vault_ActorsFlag855[] = {
 		PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, (s32)Vault_Actor0,
+	{ 0x6b, CONDITION_ALWAYS, (s32)gVault_Actor0,
 		PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ 0x66, CONDITION_ALWAYS, (s32)Vault_Actor1,
+	{ 0x66, CONDITION_ALWAYS, (s32)gVault_Actor1,
 		PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1234,7 +1234,7 @@ struct ScenePlacement Vault_ActorsFlag855[] = {
 		PIXELS(216), 0, PIXELS(440), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6a, 0x855, (s32)Vault_Actor2,
+	{ 0x6a, 0x855, (s32)gVault_Actor2,
 		PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0xf8, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1243,7 +1243,7 @@ struct ScenePlacement Vault_ActorsFlag855[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Vault_Extras[] = {
+struct SceneEvent gVault_Extras[] = {
 	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
@@ -1291,7 +1291,7 @@ struct SceneEvent Vault_Extras[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Vault_ExtrasFlag855[] = {
+struct SceneEvent gVault_ExtrasFlag855[] = {
 	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
@@ -1336,41 +1336,41 @@ struct SceneEvent Vault_ExtrasFlag855[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Vault_Scene5Cells[] = {
+u16 gVault_Scene5Cells[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 4), MAP_CELL_STEP(33, 52, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene6Cells[] = {
+u16 gVault_Scene6Cells[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 4), MAP_CELL_STEP(33, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene7Cells[] = {
+u16 gVault_Scene7Cells[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 4), MAP_CELL_STEP(33, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene8Cells[] = {
+u16 gVault_Scene8Cells[] = {
 	MAP_CELL_STEP(42, 48, 2, 2, 4), MAP_CELL_STEP(40, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene9Cells[] = {
+u16 gVault_Scene9Cells[] = {
 	MAP_CELL_STEP(42, 46, 2, 2, 4), MAP_CELL_STEP(40, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene10Cells[] = {
+u16 gVault_Scene10Cells[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 4), MAP_CELL_STEP(33, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Vault_Scene12Cells[] = {
+u16 gVault_Scene12Cells[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 4), MAP_CELL_STEP(33, 33, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-s32 Vault_DriftScriptA[] = {
+s32 gVault_DriftScriptA[] = {
 	SC_WAIT(1),
 	SC_LOOP(118, SC_TOP),
 	SC_FREE,
 };
 
-s32 Vault_DriftScriptB[] = {
+s32 gVault_DriftScriptB[] = {
 	SC_WAIT(1),
 	SC_LOOP(38, SC_TOP),
 	SC_FREE,

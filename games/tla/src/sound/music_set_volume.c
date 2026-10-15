@@ -9,13 +9,13 @@
 #include "system.h"
 #include "audio_engine.h"
 
-extern u16 Data_02005834;
-extern u16 Data_0200580c;
+extern u16 gData_02005834;
+extern u16 gData_0200580c;
 
 void Func_081c0f70(u16 first, u16 second)
 {
-    Data_02005834 = first;
-    Data_0200580c = second;
+    gData_02005834 = first;
+    gData_0200580c = second;
 }
 
 void MusicCommand_SetVolume(s16 volume)

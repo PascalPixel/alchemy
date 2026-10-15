@@ -5,8 +5,8 @@
 extern char SceneId_Ov6A6Room2;
 extern char MsgLoho23;
 extern char MsgLoho27;
-extern const u8 Data_02001900[];
-extern const u8 Data_02001a80[];
+extern const u8 gData_02001900[];
+extern const u8 gData_02001a80[];
 
 void Battle_WaitMode0(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
@@ -26,8 +26,8 @@ struct EventWork15a {
 const u8 *Func_02000080(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6A6Room2)
-        return Data_02001a80;
-    return Data_02001900;
+        return gData_02001a80;
+    return gData_02001900;
 }
 
 void Func_020000ac(void)

@@ -54,7 +54,7 @@ struct ClearWork
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return Clear_ScriptTable;
+	return gClear_ScriptTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -64,17 +64,17 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return Clear_MessageTable;
+	return gClear_MessageTable;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return Clear_ActorTable;
+	return gClear_ActorTable;
 }
 
 u8 *SceneData_GetEffectTable(void)
 {
-	return Clear_EffectTable;
+	return gClear_EffectTable;
 }
 
 static void Clear_LoadBackground(void)
@@ -129,8 +129,8 @@ static void Clear_UpdateBlend(void)
 	s32 frame;
 	s32 level;
 
-	frame = *(u16 *)&Clear_BlendFrame + 1;
-	*(u16 *)&Clear_BlendFrame = frame;
+	frame = *(u16 *)&gClear_BlendFrame + 1;
+	*(u16 *)&gClear_BlendFrame = frame;
 	level = (u16)frame >> 1;
 	IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
 	IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level, 0x20000);
@@ -139,69 +139,69 @@ static void Clear_UpdateBlend(void)
 }
 
 // 隠しコマンド: 押したキーの並び、0 で終わり
-const u16 Clear_CodeSequence[] = {
+const u16 gClear_CodeSequence[] = {
 	KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
-const u16 Clear_ExtraCodeSequence[] = {
+const u16 gClear_ExtraCodeSequence[] = {
 	KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
 	KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
 
 static void Clear_CheckButtonCodes(void)
 {
-	if (Clear_CodeUnlocked == 0)
+	if (gClear_CodeUnlocked == 0)
 	{
-		if (Clear_CodeHeld != 0)
+		if (gClear_CodeHeld != 0)
 		{
 			if (gKeysHeld == 0)
-				Clear_CodeHeld = 0;
+				gClear_CodeHeld = 0;
 		}
 		else if (gKeysHeld != 0)
 		{
 			if (gKeysHeld
-				== ((struct { u16 key[1]; } *)Clear_CodeSequence)->key[Clear_CodeProgress])
+				== ((struct { u16 key[1]; } *)gClear_CodeSequence)->key[gClear_CodeProgress])
 			{
-				Clear_CodeProgress++;
-				Clear_CodeHeld = 1;
-				if (((struct { u16 key[1]; } *)Clear_CodeSequence)->key[Clear_CodeProgress] == 0)
+				gClear_CodeProgress++;
+				gClear_CodeHeld = 1;
+				if (((struct { u16 key[1]; } *)gClear_CodeSequence)->key[gClear_CodeProgress] == 0)
 				{
-					Clear_CodeUnlocked = 1;
+					gClear_CodeUnlocked = 1;
 					Engine_AudioPlayCue(110);
 				}
 			}
 			else
 			{
-				Clear_CodeProgress = 0;
+				gClear_CodeProgress = 0;
 			}
 		}
 	}
-	if (Clear_ExtraCodeUnlocked == 0)
+	if (gClear_ExtraCodeUnlocked == 0)
 	{
-		if (*(s16 *)&Clear_ExtraCodeHeld != 0)
+		if (*(s16 *)&gClear_ExtraCodeHeld != 0)
 		{
 			if (gKeysHeld == 0)
-				*(s16 *)&Clear_ExtraCodeHeld = 0;
+				*(s16 *)&gClear_ExtraCodeHeld = 0;
 		}
 		else if (gKeysHeld != 0)
 		{
 			if (gKeysHeld
-				== ((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)
-					->key[Clear_ExtraCodeProgress])
+				== ((struct { u16 key[1]; } *)gClear_ExtraCodeSequence)
+					->key[gClear_ExtraCodeProgress])
 			{
-				Clear_ExtraCodeProgress++;
-				*(s16 *)&Clear_ExtraCodeHeld = 1;
-				if (((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)
-						->key[Clear_ExtraCodeProgress]
+				gClear_ExtraCodeProgress++;
+				*(s16 *)&gClear_ExtraCodeHeld = 1;
+				if (((struct { u16 key[1]; } *)gClear_ExtraCodeSequence)
+						->key[gClear_ExtraCodeProgress]
 					== 0)
 				{
-					Clear_ExtraCodeUnlocked = 1;
+					gClear_ExtraCodeUnlocked = 1;
 					Engine_AudioPlayCue(110);
 				}
 			}
 			else
 			{
-				Clear_ExtraCodeProgress = 0;
+				gClear_ExtraCodeProgress = 0;
 			}
 		}
 	}
@@ -403,11 +403,11 @@ menu_top:;
 				v7--;
 				continue;
 			}
-			if (Clear_CodeUnlocked != 0)
+			if (gClear_CodeUnlocked != 0)
 			{
 				v5 = 4;
 			}
-			if (Clear_ExtraCodeUnlocked != 0)
+			if (gClear_ExtraCodeUnlocked != 0)
 			{
 				v5 = 7;
 			}
@@ -1005,7 +1005,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 
 	for (i = 0; i != 6; i++)
 	{
-		if (Engine_GameFlagIsSet(((const u16 *)Clear_PasswordFlags)[i]))
+		if (Engine_GameFlagIsSet(((const u16 *)gClear_PasswordFlags)[i]))
 		{
 			flag_bits |= 1 << i;
 		}
@@ -1014,7 +1014,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 	for (i = 0; i != 4; i++)
 	{
 		struct PasswordOwner *owner =
-			UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+			UnitGet(((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 		struct PasswordStats *stats = &owner->stats;
 
 		if (stats->value10 > 1999)
@@ -1070,7 +1070,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 
 			for (k = 0; k != 8; k++)
 			{
-				if (item == ((const u16 *)Clear_PasswordKeyItems)[k])
+				if (item == ((const u16 *)gClear_PasswordKeyItems)[k])
 				{
 					item_bits |= 1 << k;
 				}
@@ -1085,7 +1085,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		for (i = 0; i != 4; i++)
 		{
 			struct PasswordOwner *owner =
-				UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+				UnitGet(((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 
 			for (n = 0; n != 15; n++)
 			{
@@ -1110,7 +1110,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		for (i = 0; i != 4; i++)
 		{
 			struct PasswordOwner *owner =
-				UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+				UnitGet(((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 			s32 m;
 
 			for (m = 0; m != 23; m++)
@@ -1120,7 +1120,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 				j = 0;
 				for (n = 0; n != 15; n++)
 				{
-					if ((owner->items[n] & 0x1ff) == ((const u16 *)Clear_PasswordStackItems)[m])
+					if ((owner->items[n] & 0x1ff) == ((const u16 *)gClear_PasswordStackItems)[m])
 					{
 						j = (owner->items[n] & 0xf800) >> 11;
 					}
@@ -1274,50 +1274,50 @@ static u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
 	return ~crc;
 }
 
-struct SceneEntrance Clear_ScriptTable[] = {
+struct SceneEntrance gClear_ScriptTable[] = {
 	{ 0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 Clear_MessageTable[] = {
+u32 gClear_MessageTable[] = {
 	SCENE_EXITS(511),
 };
 
-struct ScenePlacement Clear_ActorTable[] = {
+struct ScenePlacement gClear_ActorTable[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Clear_EffectTable[] = {
+struct SceneEvent gClear_EffectTable[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s16 Clear_BlendFrame = 0;
+s16 gClear_BlendFrame = 0;
 
-s16 Clear_CodeUnlocked = 0;
+s16 gClear_CodeUnlocked = 0;
 
-s16 Clear_ExtraCodeUnlocked = 0;
+s16 gClear_ExtraCodeUnlocked = 0;
 
-s16 Clear_CodeProgress = 0;
+s16 gClear_CodeProgress = 0;
 
-s16 Clear_ExtraCodeProgress = 0;
+s16 gClear_ExtraCodeProgress = 0;
 
-s16 Clear_CodeHeld = 0;
+s16 gClear_CodeHeld = 0;
 
-s32 Clear_ExtraCodeHeld = 0;
+s32 gClear_ExtraCodeHeld = 0;
 
-u32 Clear_PasswordMembers[] = {
+u32 gClear_PasswordMembers[] = {
 	0, 1, 2, 3,
 };
 
-u32 Clear_PasswordFlags[] = {
+u32 gClear_PasswordFlags[] = {
 	0x9510941, 0x8d108b3, 0x868081e,
 };
 
-u32 Clear_PasswordKeyItems[] = {
+u32 gClear_PasswordKeyItems[] = {
 	0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };
 
-u16 Clear_PasswordStackItems[] = {
+u16 gClear_PasswordStackItems[] = {
 	180, 181, 182, 183, 186, 187, 188, 189,
 	191, 192, 193, 194, 195, 196, 226, 227,
 	228, 229, 236, 238, 239, 240, 241,

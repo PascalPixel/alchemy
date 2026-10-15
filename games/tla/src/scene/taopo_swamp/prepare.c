@@ -12,7 +12,7 @@ void Func_02001eb8(void)
     if (GameFlag_Test(0x348)) {
         frame = 62;
     } else {
-        switch (Data_020035f0) {
+        switch (gData_020035f0) {
         case 0:
             frame = 59;
             break;
@@ -28,8 +28,8 @@ void Func_02001eb8(void)
             frame = 50;
             break;
         }
-        if (++Data_020035f0 > 59)
-            Data_020035f0 = 0;
+        if (++gData_020035f0 > 59)
+            gData_020035f0 = 0;
     }
     if (frame != -1)
         Func_02002848_(45, frame, 3, 3, 76, 61);

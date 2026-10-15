@@ -508,7 +508,7 @@ Func_0816e65c:
 .L_0816ea48:
 	.4byte Data_081991c0
 .L_0816ea4c:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0816ea50:
 	.4byte 0xfffff000
 .L_0816ea54:

@@ -4,17 +4,17 @@
 
 extern char SceneId_Ov676Room1;
 extern char SceneId_Ov676Room2;
-extern const u8 Data_02002ac4[];
-extern const u8 Data_02002be4[];
-extern const u8 Data_02002bfc[];
+extern const u8 gData_02002ac4[];
+extern const u8 gData_02002be4[];
+extern const u8 gData_02002bfc[];
 
 const u8 *Func_02000218(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov676Room1 && gPartyState.entrance == 15)
-        return Data_02002bfc;
+        return gData_02002bfc;
     if (gPartyState.scene == (s32)&SceneId_Ov676Room2)
-        return Data_02002be4;
-    return Data_02002ac4;
+        return gData_02002be4;
+    return gData_02002ac4;
 }
 
 static __inline__ void Offset(s32 id, s32 x, s32 z)
@@ -60,7 +60,7 @@ void Func_02000270(void)
     Func_020025a0(158);
     asm("");
     index--;
-    Func_02002460_(Data_02002ce4[index].a, Data_02002ce4[index].b, Data_02002ce4[index].c);
+    Func_02002460_(gData_02002ce4[index].a, gData_02002ce4[index].b, gData_02002ce4[index].c);
     /* FAKEMATCH: the empty asm ends the shift's output dependences on the later calls (r4 is call-used), so sched2 takes the table address first as the native does (differ 2). */
     asm("");
     Object_SetModeById(gPartyState.currentOwner, 2);

@@ -23,11 +23,11 @@ extern char ResourceId_Data123;
 extern char ResourceId_Data12E;
 extern char ResourceId_Data16D;
 extern char ResourceId_BlueFlameSheet;
-extern const u16 Data_08199d40[];
-extern const s8 Data_08199d4e[];
-extern const s8 Data_08199d55[];
-extern const u8 Data_08199d31[];
-extern const u8 Data_08199d38[];
+extern const u16 gData_08199d40[];
+extern const s8 gData_08199d4e[];
+extern const s8 gData_08199d55[];
+extern const u8 gData_08199d31[];
+extern const u8 gData_08199d38[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
@@ -126,16 +126,16 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                     cell = 6;
                 if (effect->side == 0)
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        Data_08199d4e[cell] + 30, Data_08199d55[cell] + position.y - 60,
-                        Data_08199d31[cell], Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        gData_08199d4e[cell] + 30, gData_08199d55[cell] + position.y - 60,
+                        gData_08199d31[cell], gData_08199d38[cell]);
                 }
                 else
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        -Data_08199d4e[cell] - Data_08199d31[cell] + 98,
-                        Data_08199d55[cell] + position.y - 60, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        -gData_08199d4e[cell] - gData_08199d31[cell] + 98,
+                        gData_08199d55[cell] + position.y - 60, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
             }
         }
@@ -150,17 +150,17 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                     cell = 6;
                 if (effect->side == 0)
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        position.x / 2 + Data_08199d4e[cell] - 16,
-                        Data_08199d55[cell] + position.y - 92, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        position.x / 2 + gData_08199d4e[cell] - 16,
+                        gData_08199d55[cell] + position.y - 92, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
                 else
                 {
-                    draw[0](canvas, work + Data_08199d40[cell] + 0x700,
-                        position.x / 2 - Data_08199d4e[cell] - Data_08199d31[cell] + 16,
-                        Data_08199d55[cell] + position.y - 92, Data_08199d31[cell],
-                        Data_08199d38[cell]);
+                    draw[0](canvas, work + gData_08199d40[cell] + 0x700,
+                        position.x / 2 - gData_08199d4e[cell] - gData_08199d31[cell] + 16,
+                        gData_08199d55[cell] + position.y - 92, gData_08199d31[cell],
+                        gData_08199d38[cell]);
                 }
             }
         }

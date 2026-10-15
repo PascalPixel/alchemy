@@ -58,8 +58,8 @@ struct RenderModel {
 
 extern char ResourceId_CrossedDaggersSheet;
 extern s32 gCameraSceneParameters[];
-extern const u8 Data_08199450[];
-extern const u8 Data_08199474[];
+extern const u8 gData_08199450[];
+extern const u8 gData_08199474[];
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack, s32 wait);
@@ -156,7 +156,7 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
         model->source = &sprite;
         sprite.pixels = (u8 *)work + 0x700;
         model->kind = 9;
-        model->mesh = Data_08199450;
+        model->mesh = gData_08199450;
         model->vertices = vertices;
         for (i = 0, step = work->steps; i != 8; i++, step++) {
             if (frame == 80) {
@@ -176,7 +176,7 @@ void Func_0817b66c(struct BattleEffectArgument *effect)
             Func_08015160(step->x - 0x400000, step->y - 0x400000, 0);
             Func_0801521c(0x8000);
             Func_080150e4(step->z);
-            Func_08196958(Data_08199474, vertices, 4);
+            Func_08196958(gData_08199474, vertices, 4);
             Func_08196a7c(model);
             if (frame > 79)
                 BattleFxKernels_IntegrateVector3(step, 64, 0);

@@ -20,7 +20,7 @@
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-	return (u8 *)BilibinInteriors_PrimaryTable;
+	return (u8 *)gBilibinInteriors_PrimaryTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -30,7 +30,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSecondaryTable(void)
 {
-	return (u8 *)BilibinInteriors_SecondaryTable;
+	return (u8 *)gBilibinInteriors_SecondaryTable;
 }
 
 s32 BilibinInteriors_PreparePlacements(void)
@@ -97,7 +97,7 @@ static void EV18_TALK(void)
 
 u8 *SceneData_GetTertiaryTable(void)
 {
-	return (u8 *)BilibinInteriors_TertiaryTable;
+	return (u8 *)gBilibinInteriors_TertiaryTable;
 }
 
 static void EV17_TALK(void)
@@ -309,7 +309,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
 	return 0;
 }
 
-struct SceneEntrance BilibinInteriors_PrimaryTable[] = {
+struct SceneEntrance gBilibinInteriors_PrimaryTable[] = {
 	{ 0, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, 24, 32, 264, 240, 0 },
 	{ 2, CONDITION_ALWAYS, 400, 0, 264, FACING_NORTH, 0, 256, 0, 496, 288, 0 },
@@ -322,7 +322,7 @@ struct SceneEntrance BilibinInteriors_PrimaryTable[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 BilibinInteriors_SecondaryTable[] = {
+u32 gBilibinInteriors_SecondaryTable[] = {
 	SCENE_EXITS(31),
 	SCENE_EXIT(1, 30, 4),
 	SCENE_EXIT(2, 30, 5),
@@ -385,7 +385,7 @@ struct ScenePlacement gBilibinInteriorsPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent BilibinInteriors_TertiaryTable[] = {
+struct SceneEvent gBilibinInteriors_TertiaryTable[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

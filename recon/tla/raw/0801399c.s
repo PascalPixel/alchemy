@@ -121,7 +121,7 @@ Func_0801399c:
 .L_08013a84:
 	.4byte gBgScroll
 .L_08013a88:
-	.4byte Data_030011f8
+	.4byte gData_030011f8
 .L_08013a8c:
 	.4byte 0x04000130
 .L_08013a90:
@@ -199,12 +199,12 @@ Func_0801399c:
 .L_08013b18:
 	.4byte gFrameTick
 .L_08013b1c:
-	.4byte Data_03001138
+	.4byte gData_03001138
 .L_08013b20:
-	.4byte Data_03007ff0
+	.4byte gData_03007ff0
 .L_08013b24:
 	.4byte IwramSoundRenderFrame
 .L_08013b28:
 	.4byte gLagFrameCount
 .L_08013b2c:
-	.4byte Data_0300121c
+	.4byte gData_0300121c

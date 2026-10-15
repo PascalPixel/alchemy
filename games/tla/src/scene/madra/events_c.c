@@ -42,11 +42,11 @@ void Func_02002c90(s32 a);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
-extern const u8 Data_02002d38[];
-extern const u8 Data_02002ff0[];
-extern const u8 Data_02003358[];
-extern const u8 Data_0200367c[];
-extern const u8 Data_0200394c[];
+extern const u8 gData_02002d38[];
+extern const u8 gData_02002ff0[];
+extern const u8 gData_02003358[];
+extern const u8 gData_0200367c[];
+extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe;
 extern u8 MsgTheArmorerAnd;
@@ -170,10 +170,10 @@ static __inline__ void Turn(s32 id, s32 a)
 const u8 *Func_02000638(void)
 {
     if (GameFlag_Test(0x8ff))
-        return Data_0200394c;
+        return gData_0200394c;
     if (GameFlag_Test(0x8ab))
-        return Data_0200367c;
-    return Data_02003358;
+        return gData_0200367c;
+    return gData_02003358;
 }
 
 void Func_02000670(void)

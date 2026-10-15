@@ -3,8 +3,8 @@
 extern u8 gOverlayArea[];
 extern char MsgPonderEllipsis;
 
-extern const u8 ObjectMotion_LinkedActionScript[];
-extern const u8 ObjectMotion_StepAngleScript[];
+extern const u8 gObjectMotion_LinkedActionScript[];
+extern const u8 gObjectMotion_StepAngleScript[];
 
 s32 BattleAction_RunDescriptor(s32 arg0)
 {

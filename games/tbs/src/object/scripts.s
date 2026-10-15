@@ -4,14 +4,14 @@
 	.global Object_CameraFollowScript
 Object_CameraFollowScript:
 	.4byte 11, 0, 1, 12, 65535, 0, 16
-	.global Object_IdleScript
-Object_IdleScript:
+	.global gObject_IdleScript
+gObject_IdleScript:
 	.4byte 16
 @ 場面の配置 {絵, 条件, 動作, x, y, z, 向き, 話す向き, フラグ}
-	.global Field_DefaultPlacements
-Field_DefaultPlacements:
+	.global gField_DefaultPlacements
+gField_DefaultPlacements:
 	.2byte 0, -1
-	.4byte Object_IdleScript, 300 << 16, 0, 300 << 16
+	.4byte gObject_IdleScript, 300 << 16, 0, 300 << 16
 	.2byte 0x5bb0
 	.byte 0, 0
 	.2byte -1, 0
@@ -19,8 +19,8 @@ Field_DefaultPlacements:
 	.2byte 0x0000
 	.byte 0, 0
 @ 画面切り替えの形 {first, second, {数, 値, x0, x1, y0, y1} x 3}
-	.global DisplayTransition_Shapes
-DisplayTransition_Shapes:
+	.global gDisplayTransition_Shapes
+gDisplayTransition_Shapes:
 	.2byte 1, 32639
 	.2byte 160, 65535
 	.byte 0, 0, 0, 0
@@ -250,23 +250,23 @@ DisplayTransition_ShapesTail:
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
-	.global ObjectMotion_LaunchScript
-ObjectMotion_LaunchScript:
+	.global gObjectMotion_LaunchScript
+gObjectMotion_LaunchScript:
 	.4byte 1, 0, 1, 28, 1, 34, ObjectMotion_StepAngle, 16
-	.global BattleFx_BurstParticleScriptA
-BattleFx_BurstParticleScriptA:
+	.global gBattleFx_BurstParticleScriptA
+gBattleFx_BurstParticleScriptA:
 	.4byte 0, 1, 12, 38, 0, 27
-	.global BattleFx_BurstParticleScriptB
-BattleFx_BurstParticleScriptB:
+	.global gBattleFx_BurstParticleScriptB
+gBattleFx_BurstParticleScriptB:
 	.4byte 0, 1, 12, 18, 0, 27
-	.global ObjectMotion_StepAngleScript
-ObjectMotion_StepAngleScript:
+	.global gObjectMotion_StepAngleScript
+gObjectMotion_StepAngleScript:
 	.4byte 34, ObjectMotion_StepAngle, 16
-	.global Ui_RenderResultValues
-Ui_RenderResultValues:
+	.global gUi_RenderResultValues
+gUi_RenderResultValues:
 	.byte 1, 3, 10, 0
-	.global BattleFx_LinkedObjectScript
-BattleFx_LinkedObjectScript:
+	.global gBattleFx_LinkedObjectScript
+gBattleFx_LinkedObjectScript:
 	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
 	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
 	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
@@ -276,69 +276,69 @@ BattleFx_LinkedObjectScript:
 	.4byte 22, 9, 0xfffff800, 22, 10, 1024, 0, 2
 	.4byte 22, 9, 2048, 22, 10, 0xfffffc00, 0, 2
 	.4byte 0, 30, 27
-	.global ObjectMotion_WaitScript
-ObjectMotion_WaitScript:
+	.global gObjectMotion_WaitScript
+gObjectMotion_WaitScript:
 	.4byte 0, 40, 27
-	.global ObjectMotion_ActionKind2Script
-ObjectMotion_ActionKind2Script:
+	.global gObjectMotion_ActionKind2Script
+gObjectMotion_ActionKind2Script:
 	.4byte 21, 15, 32768, 21, 16, 3276, 21, 30
 	.4byte 131, 0x80010000, 28, 2, 9, 262144, 524288, 1048576
 	.4byte 1, 28, 1, 0, 20, 28, 2, 9
 	.4byte 262144, 524288, 1048576, 1, 28, 1, 0, 20
 	.4byte 28, 2, 9, 262144, 524288, 1048576, 1, 28
 	.4byte 1, 0, 60, 12, 65535, 0xc0010000, 16
-	.global ObjectMotion_ActionKind1Script
-ObjectMotion_ActionKind1Script:
+	.global gObjectMotion_ActionKind1Script
+gObjectMotion_ActionKind1Script:
 	.4byte 16
-	.global ObjectMotion_ResetActionScript
-ObjectMotion_ResetActionScript:
+	.global gObjectMotion_ResetActionScript
+gObjectMotion_ResetActionScript:
 	.4byte 34, Object_ClearChildAndCollisionFlags, 16
-	.global ObjectMotion_ActionKind3Script
-ObjectMotion_ActionKind3Script:
+	.global gObjectMotion_ActionKind3Script
+gObjectMotion_ActionKind3Script:
 	.4byte 21, 15, 32768, 21, 16, 3276, 21, 30
 	.4byte 131, 0x80010000, 28, 2, 9, 131072, 131072, 524288
 	.4byte 1, 28, 1, 0, 20, 28, 2, 9
 	.4byte 131072, 131072, 524288, 1, 28, 1, 0, 20
 	.4byte 28, 2, 9, 131072, 131072, 524288, 1, 28
 	.4byte 1, 0, 60, 12, 65535, 0xc0010000, 16
-	.global ObjectMotion_ActionKind4Script
-ObjectMotion_ActionKind4Script:
+	.global gObjectMotion_ActionKind4Script
+gObjectMotion_ActionKind4Script:
 	.4byte 21, 15, 26214, 21, 16, 13107, 28, 2
 	.4byte 0x80010000, 9, 131072, 131072, 393216, 1, 0, 4
 	.4byte 12, 65535, 0xc0010000
-	.global ObjectMotion_MoveTowardTargetScript
-ObjectMotion_MoveTowardTargetScript:
+	.global gObjectMotion_MoveTowardTargetScript
+gObjectMotion_MoveTowardTargetScript:
 	.4byte 34, ObjectMotion_MoveTowardTarget, 12, 65535, 0
-	.global ObjectMotion_TurnTowardLinkedScript
-ObjectMotion_TurnTowardLinkedScript:
+	.global gObjectMotion_TurnTowardLinkedScript
+gObjectMotion_TurnTowardLinkedScript:
 	.4byte 34, ObjectMotion_TurnTowardLinkedTarget, 12, 65535, 0
-	.global ObjectMotion_LinkedActionScript
-ObjectMotion_LinkedActionScript:
+	.global gObjectMotion_LinkedActionScript
+gObjectMotion_LinkedActionScript:
 	.4byte 5, 0, 1, 12, 65535, 0
 @ 地面の粒, 光の粒, きらめき
-	.global FieldFx_GroundParticleTiles
-FieldFx_GroundParticleTiles:
+	.global gFieldFx_GroundParticleTiles
+gFieldFx_GroundParticleTiles:
 	.incbin "games/common/src/field/common/effect/ground.4bpp16x16.plz"
-	.global FieldFx_MoteTiles
-FieldFx_MoteTiles:
+	.global gFieldFx_MoteTiles
+gFieldFx_MoteTiles:
 	.incbin "games/tbs/src/object/mote.4bpp16x16.plz"
-	.global FieldFx_SparkleTiles
-FieldFx_SparkleTiles:
+	.global gFieldFx_SparkleTiles
+gFieldFx_SparkleTiles:
 	.incbin "games/common/src/field/common/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
-	.global BattleFx_TargetColors
-BattleFx_TargetColors:
+	.global gBattleFx_TargetColors
+gBattleFx_TargetColors:
 	.4byte 2113668, 2101764, 2101392, 2114052
 	.4byte 2113680, 2101776, 2105608, 2114064
-	.global BattleFx_UntargetedObjectScript
-BattleFx_UntargetedObjectScript:
+	.global gBattleFx_UntargetedObjectScript
+gBattleFx_UntargetedObjectScript:
 	.4byte 27
 	.global gEffectScripts
 gEffectScripts:
-	.4byte BattleFx_ShortEffectScript, BattleFx_MediumEffectScript, BattleFx_LongEffectScript
+	.4byte gBattleFx_ShortEffectScript, gBattleFx_MediumEffectScript, gBattleFx_LongEffectScript
 @ {タイル << 16 | フラグ, 地名}
-	.global WorldMap_PlaceMarkers
-WorldMap_PlaceMarkers:
+	.global gWorldMap_PlaceMarkers
+gWorldMap_PlaceMarkers:
 	.4byte 0x10183, 3
 	.4byte 0x10185, 20
 	.4byte 0x10199, 75

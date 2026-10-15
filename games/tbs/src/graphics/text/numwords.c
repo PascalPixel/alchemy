@@ -8,15 +8,15 @@
 
 #if defined(TBS_EDITION_DE)
 // {単数, 複数}: window.c が [(種類 & 7) * 2 + 複数] で読む
-const u8 *const UiText_NumberWords[16] =
+const u8 *const gUiText_NumberWords[16] =
 {
-	UiText_NumberWord9, UiText_NumberWord8, // Punkt, Punkte
-	UiText_NumberWord7, UiText_NumberWord6, // Münze, Münzen
-	UiText_NumberWord5, UiText_NumberWord4, // Runde, Runden
-	UiText_NumberWord3, UiText_NumberWord2, // Ticket, Tickets
-	UiText_NumberWord1, UiText_NumberWord0, // Kampf, Käpfe (ROM の綴りのまま: m がない)
-	(const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
-	(const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
-	(const u8 *)UiText_ArticleEmpty, 0,
+	gUiText_NumberWord9, gUiText_NumberWord8, // Punkt, Punkte
+	gUiText_NumberWord7, gUiText_NumberWord6, // Münze, Münzen
+	gUiText_NumberWord5, gUiText_NumberWord4, // Runde, Runden
+	gUiText_NumberWord3, gUiText_NumberWord2, // Ticket, Tickets
+	gUiText_NumberWord1, gUiText_NumberWord0, // Kampf, Käpfe (ROM の綴りのまま: m がない)
+	(const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
+	(const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
+	(const u8 *)gUiText_ArticleEmpty, 0,
 };
 #endif

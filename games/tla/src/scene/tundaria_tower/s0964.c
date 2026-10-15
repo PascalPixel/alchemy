@@ -1,6 +1,6 @@
 #include "tundaria_tower.h"
 
-extern const u8 Data_02003370[];
+extern const u8 gData_02003370[];
 
 void Func_02003118(s32 frames);
 void Func_020031a8(s32 cue);
@@ -28,7 +28,7 @@ void Func_02000964(void)
     object->actionFlags = 0;
     object->update = 0;
     TundariaTower_ObjPlace(8, 424, 536);
-    Func_02002f90(object, Data_02003370);
+    Func_02002f90(object, gData_02003370);
     ObjectMotion_CommitCurrentPositionAndActivate(8);
     GameFlag_SetBit(0x200);
     Object_LinkObjectAndSetCallback(8, gPartyState.currentOwner);

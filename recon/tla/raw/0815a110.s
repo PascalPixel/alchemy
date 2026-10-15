@@ -1103,19 +1103,19 @@ BattlePres_RunBurstScene:
 .L_0815a9b4:
 	.4byte gMapCellBuffer
 .L_0815a9b8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0815a9bc:
 	.4byte 0xfffffc00
 .L_0815a9c0:
 	.4byte 0x0007ffff
 .L_0815a9c4:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_0815a9c8:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_0815a9cc:
 	.4byte Data_0819861b
 .L_0815a9d0:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_0815a9d4:
 	.4byte Data_02013788
 .L_0815a9d8:

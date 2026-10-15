@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern const u8 Data_0200247c[];
+extern const u8 gData_0200247c[];
 
 s32 Random16Far(void);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
@@ -28,6 +28,6 @@ void Func_02001188(void)
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02001efc(object, 0);
         Func_02001f24(object, 0x1680000, 0x400000, 0x1a80000);
-        Func_02001f04(object, Data_0200247c);
+        Func_02001f04(object, gData_0200247c);
     }
 }

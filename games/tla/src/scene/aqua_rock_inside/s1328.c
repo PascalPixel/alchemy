@@ -19,5 +19,5 @@ void Func_02001364(struct ObjectRuntime *object)
     Func_02003cc4(child, 1);
     ObjectDispatch_SetSingleChildFlags(child, 0);
     Animation_SetStateFlags(child, 1);
-    Func_02003ccc(child, Data_02003fd8);
+    Func_02003ccc(child, gData_02003fd8);
 }

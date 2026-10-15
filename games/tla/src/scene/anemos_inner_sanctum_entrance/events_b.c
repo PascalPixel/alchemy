@@ -1,13 +1,13 @@
 #include "anemos_inner_sanctum_entrance.h"
 
-extern const s8 Data_02000ee0[];
+extern const s8 gData_02000ee0[];
 
 void Func_020004e4(s32 a, s32 b)
 {
     s32 i;
 
-    const s8 *x = Data_02000ee0;
-    const s8 *z = Data_02000ee0 + 1;
+    const s8 *x = gData_02000ee0;
+    const s8 *z = gData_02000ee0 + 1;
 
     for (i = 9; i <= 14; i++) {
         struct ObjectRuntime *object = Object_GetById(i);

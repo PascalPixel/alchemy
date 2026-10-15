@@ -134,7 +134,7 @@ static s32 FieldScene_QueryActorFootprint(
 
 	for (i = 0; i <= 5; i++)
 	{
-		if (actor->animation->entries[0]->animId == StagedActor_FootprintKinds[i])
+		if (actor->animation->entries[0]->animId == gStagedActor_FootprintKinds[i])
 		{
 			probe->footprintIndex = i;
 			break;
@@ -148,31 +148,31 @@ static s32 FieldScene_QueryActorFootprint(
 	probe->positionX = actor->x.value;
 	probe->positionY = actor->y;
 	probe->positionZ = actor->z.value;
-	a = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
+	a = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
 	if (a < 0)
 	{
 		a = -a;
 	}
-	b = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
+	b = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
 	if (b < 0)
 	{
 		b = -b;
 	}
 	*depth = (a + b) >> 4;
-	a = StagedActor_FootprintBounds[probe->footprintIndex * 4];
+	a = gStagedActor_FootprintBounds[probe->footprintIndex * 4];
 	if (a < 0)
 	{
 		a = -a;
 	}
-	b = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
+	b = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
 	if (b < 0)
 	{
 		b = -b;
 	}
 	*width = (a + b) >> 4;
-	probe->positionX += StagedActor_FootprintBounds[probe->footprintIndex * 4] << 16;
+	probe->positionX += gStagedActor_FootprintBounds[probe->footprintIndex * 4] << 16;
 	{
-		s32 step = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] << 16;
+		s32 step = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] << 16;
 
 		a = probe->positionZ;
 		a += step;
@@ -435,7 +435,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 	Vector_AddPolarOffset(0x100000, mode, p);
 #else
 	mode = leader->facing >> 12;
-	step = StagedActor_DirectionSteps[mode];
+	step = gStagedActor_DirectionSteps[mode];
 	p[0] = leader->x.fixed + (step & 0xffff0000);
 	p[1] = leader->y.fixed;
 	step <<= 16;
@@ -450,7 +450,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 		p[2] = (leader->z.fixed & -0x100000) + 0x80000;
 		Vector_AddPolarOffset(0x200000, mode, p);
 #else
-		step = StagedActor_DirectionSteps[mode];
+		step = gStagedActor_DirectionSteps[mode];
 		p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
 		p[1] = leader->y.fixed;
 		step <<= 17;
@@ -704,7 +704,7 @@ static void EV20_SEARCH(void)
 	if (queried == 0)
 	{
 		Event_PlayCue(232);
-		Map_AnimateCells(CrossbonePillar_ShiftSteps1, 84, 24);
+		Map_AnimateCells(gCrossbonePillar_ShiftSteps1, 84, 24);
 		Engine_EventWait(30);
 		Event_PlayCue(240);
 		Engine_ActorSetSpritePriority(REC_ID, 1);
@@ -713,8 +713,8 @@ static void EV20_SEARCH(void)
 		record->y.fixed = -0x200000;
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
 		Engine_ActorSetAnimation(REC_ID, 1);
-		Map_AnimateCells(CrossbonePillar_ShiftSteps3, 80, 24);
-		Map_AnimateCells(CrossbonePillar_ShiftSteps5, 80, 28);
+		Map_AnimateCells(gCrossbonePillar_ShiftSteps3, 80, 24);
+		Map_AnimateCells(gCrossbonePillar_ShiftSteps5, 80, 28);
 		Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
 		FieldScene_RunScene3b3SequenceA();
 		SceneActor_ApplyPlacementQueryAndTag(9);
@@ -730,7 +730,7 @@ static void EV20_SEARCH(void)
 	else
 	{
 		Event_PlayCue(232);
-		Map_AnimateCells(CrossbonePillar_ShiftSteps2, 84, 24);
+		Map_AnimateCells(gCrossbonePillar_ShiftSteps2, 84, 24);
 		Engine_EventWait(30);
 		Event_PlayCue(230);
 		Object_GetById(REC_ID)->motionFlags = 0;
@@ -739,7 +739,7 @@ static void EV20_SEARCH(void)
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
 		Engine_ActorSetAnimation(REC_ID, 2);
 		Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
-		Map_AnimateCells(CrossbonePillar_ShiftSteps4, 80, 24);
+		Map_AnimateCells(gCrossbonePillar_ShiftSteps4, 80, 24);
 		FieldScene_RunScene3b3SequenceA();
 		SceneActor_ApplyPlacementQuery(9);
 		SceneActor_ApplyPlacementQuery(10);
@@ -1085,7 +1085,7 @@ static void CrossbonePillar_RunActorAction(s32 id)
 	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
 	Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	GameFlag_Set(id + 0x1f5);
-	Engine_ActorEnableActionCallback(id, CrossbonePillar_ActionTable);
+	Engine_ActorEnableActionCallback(id, gCrossbonePillar_ActionTable);
 	Engine_EventEnd();
 }
 
@@ -1348,7 +1348,7 @@ static void CrossbonePillar_RestoreFlaggedPillar(s32 a0)
 		Object_SetMode(actor, 5);
 		actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
 		Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
-		Engine_ActorEnableActionCallback(a0, CrossbonePillar_ActionTable);
+		Engine_ActorEnableActionCallback(a0, gCrossbonePillar_ActionTable);
 	}
 }
 
@@ -1544,7 +1544,7 @@ s32 gEffectScript2[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1563,11 +1563,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -1582,7 +1582,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 CrossbonePillar_ActionTable[] = {
+s32 gCrossbonePillar_ActionTable[] = {
 	SC_SET(0x23, 2),
 	SC_CALL(SceneActor_ApplyCounterLowBitsAsMode),
 	SC_WAIT(2),
@@ -1592,23 +1592,23 @@ s32 CrossbonePillar_ActionTable[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 CrossbonePillar_ShiftSteps1[] = {
+u16 gCrossbonePillar_ShiftSteps1[] = {
 	MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 CrossbonePillar_ShiftSteps2[] = {
+u16 gCrossbonePillar_ShiftSteps2[] = {
 	MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 CrossbonePillar_ShiftSteps3[] = {
+u16 gCrossbonePillar_ShiftSteps3[] = {
 	MAP_CELL_STEP(67, 34, 2, 5, 6), MAP_CELL_STEP(69, 34, 2, 5, 6), MAP_CELL_STEP(71, 34, 2, 5, 6), MAP_CELL_STEP(73, 34, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 CrossbonePillar_ShiftSteps4[] = {
+u16 gCrossbonePillar_ShiftSteps4[] = {
 	MAP_CELL_STEP(71, 50, 2, 5, 6), MAP_CELL_STEP(69, 50, 2, 5, 6), MAP_CELL_STEP(67, 50, 2, 5, 6), MAP_CELL_STEP(65, 50, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 CrossbonePillar_ShiftSteps5[] = {
+u16 gCrossbonePillar_ShiftSteps5[] = {
 	MAP_CELL_STEP(75, 38, 2, 1, 4), MAP_CELL_STEP(77, 38, 2, 1, 6), MAP_CELL_STEP(79, 38, 2, 1, 8), MAP_CELL_STEP(65, 53, 2, 1, 1), MAP_CELL_STEPS_END,
 };
 

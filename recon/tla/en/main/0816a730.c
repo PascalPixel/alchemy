@@ -30,8 +30,8 @@
 extern char ResourceId_Data134;
 extern char ResourceId_LimeColumnSheet;
 extern char ResourceId_BlastSheet;
-extern const u16 Data_08198afc[];
-extern const u16 Data_08198b0a[];
+extern const u16 gData_08198afc[];
+extern const u16 gData_08198b0a[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -142,8 +142,8 @@ void Func_0816a730(struct BattleEffectArgument *effect)
                 py = HI(p->y);
                 if (cell > 6)
                     cell = 6;
-                src = work->sheet + Data_08198afc[cell] + 0x460;
-                size = Data_08198b0a[cell];
+                src = work->sheet + gData_08198afc[cell] + 0x460;
+                size = gData_08198b0a[cell];
                 draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
                 p->variant++;
                 BattleFxKernels_IntegrateVector2(p, 62, -0x2000);

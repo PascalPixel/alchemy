@@ -261,7 +261,7 @@ Func_080daab0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080dac9c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080daca0:
 	.4byte 0xffff0000
 .L_080daca4:

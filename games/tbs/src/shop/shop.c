@@ -84,22 +84,22 @@ void Shop_InitializeCursorWork(void)
 	work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
 	slot = Resource_FindFreeEntry();
 	work->cursorIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_HandTiles);
+	VramBlock_LoadCached(slot, 128, gShop_HandTiles);
 	slot = Resource_FindFreeEntry();
 	work->previousPageIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_UpArrowTiles);
+	VramBlock_LoadCached(slot, 128, gShop_UpArrowTiles);
 	slot = Resource_FindFreeEntry();
 	work->nextPageIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_DownArrowTiles);
+	VramBlock_LoadCached(slot, 128, gShop_DownArrowTiles);
 	slot = Resource_FindFreeEntry();
 	work->gemIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_GemTiles);
+	VramBlock_LoadCached(slot, 128, gShop_GemTiles);
 	slot = Resource_FindFreeEntry();
 	work->statDownIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_SmallDownArrowTiles);
+	VramBlock_LoadCached(slot, 128, gShop_SmallDownArrowTiles);
 	slot = Resource_FindFreeEntry();
 	work->statUpIcon = slot;
-	VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
+	VramBlock_LoadCached(slot, 128, gShop_SmallUpArrowTiles);
 	Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
@@ -374,7 +374,7 @@ static const u16 sGlyphOffsets[5] =
 
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
-	u8 *src = Shop_GlyphBytes + (arg0 << 5);
+	u8 *src = gShop_GlyphBytes + (arg0 << 5);
 	u8 *dst = arg1 + sGlyphOffsets[arg2] + 2;
 	s32 count = 3;
 
@@ -407,7 +407,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
 	buf = Runtime_AllocateBlock(14, 0x400);
 	sprite = 0;
-	Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
+	Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
 	Shop_CopyGlyphs(value % 10, buf, 0);
 	value = value / 10;
 	if (value != 0)
@@ -1269,7 +1269,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 				{
 					changed = 0;
 					count = (count + maximum) % maximum;
-					Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
+					Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
 					Shop_FillSelector(30, 14, buffer);
 					Shop_FillSelector(minimum + maximum, 0, buffer);
 					Shop_FillSelector(minimum + count + 1, 10, buffer);
@@ -1985,7 +1985,7 @@ static const s16 sSpecialItemPrices[30] =
 };
 
 // 贈り物の品物 (0 で終わり)。どの関数も読まない
-const s16 Shop_GiftItemIds[21] =
+const s16 gShop_GiftItemIds[21] =
 {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	16, 195, 38, 84, 89, 90, 180, 181, 190, 0,

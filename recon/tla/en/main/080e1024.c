@@ -101,7 +101,7 @@ void Func_080e1024(struct ArcObject *source)
         Resource_ResetEntry(sprite->resource);
         sprite->resource = *(u16 *)(work + 0x710);
         sprite->active = 1;
-        sprite->attr.half.tile = ResourceTableEntries[sprite->resource].offset >> 5;
+        sprite->attr.half.tile = gResourceTableEntries[sprite->resource].offset >> 5;
         sprite->flags05_5 = 0;
         sprite->layer = 1;
         sprite->size = 2;

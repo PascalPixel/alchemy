@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's BattleParty_RoundEndGroupOrder, byte for byte
+@ The Broken Seal's gBattleParty_RoundEndGroupOrder, byte for byte
 	.global Data_081297c4
 Data_081297c4:
 	.4byte 1, 2

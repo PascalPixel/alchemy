@@ -166,7 +166,7 @@ Func_020005a0:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020085e4:
-	.4byte Data_02002c64
+	.4byte gData_02002c64
 	.section .text.x020085e8,"ax",%progbits
 	.global Func_020005e8
 	.thumb_func
@@ -1196,7 +1196,7 @@ Func_02000e30:
 .L_02008fb8:
 	.4byte gPartyState
 .L_02008fbc:
-	.4byte Data_020031c4
+	.4byte gData_020031c4
 	.section .text.x0200915a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009168,"ax",%progbits
@@ -1293,11 +1293,11 @@ Func_02001168:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009214:
-	.4byte Data_02003590
+	.4byte gData_02003590
 .L_02009218:
-	.4byte Data_02003594
+	.4byte gData_02003594
 .L_0200921c:
-	.4byte Data_020035bc
+	.4byte gData_020035bc
 .L_02009220:
 	.4byte 0x05000184
 	.section .text.x020092fc,"ax",%progbits
@@ -1763,7 +1763,7 @@ Func_02001514:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020096cc:
-	.4byte Data_02003598
+	.4byte gData_02003598
 .L_020096d0:
 	.4byte Data_020035b8
 	.section .text.x020096d4,"ax",%progbits
@@ -2484,23 +2484,23 @@ Func_02001b74:
 .L_02009d08:
 	.4byte 0xffff0000
 .L_02009d0c:
-	.4byte Data_020035fc
+	.4byte gData_020035fc
 .L_02009d10:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_02009d14:
 	.4byte Data_02003640
 .L_02009d18:
-	.4byte Data_020035fe
+	.4byte gData_020035fe
 .L_02009d1c:
-	.4byte Data_02003600
+	.4byte gData_02003600
 .L_02009d20:
-	.4byte Data_02003700
+	.4byte gData_02003700
 .L_02009d24:
 	.4byte 0x40002000
 .L_02009d28:
 	.4byte 0xc000a000
 .L_02009d2c:
-	.4byte Data_02003702
+	.4byte gData_02003702
 	.section .text.x02009f3a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009f72,"ax",%progbits
@@ -2732,7 +2732,7 @@ Func_02001f74:
 .L_0200a12c:
 	.4byte gPartyState
 .L_0200a130:
-	.4byte Data_020035ac
+	.4byte gData_020035ac
 .L_0200a134:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200a138:
@@ -2882,13 +2882,13 @@ Func_0200213c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a254:
-	.4byte Data_02003704
+	.4byte gData_02003704
 .L_0200a258:
 	.4byte gPartyState
 .L_0200a25c:
 	.4byte 0xffff0000
 .L_0200a260:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0200a264:
 	.4byte 0x80008800
 	.section .text.x0200a268,"ax",%progbits
@@ -3176,7 +3176,7 @@ Func_02002268:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a498:
-	.4byte Data_02003704
+	.4byte gData_02003704
 .L_0200a49c:
 	.4byte IwramClearWords
 .L_0200a4a0:
@@ -3668,7 +3668,7 @@ Func_020028d4:
 .L_0200a97c:
 	.4byte gPartyState
 .L_0200a980:
-	.4byte Data_02003704
+	.4byte gData_02003704
 	.section .text.x0200a984,"ax",%progbits
 	.global Func_02002984
 	.thumb_func
@@ -3759,37 +3759,37 @@ Func_02002984:
 .L_0200aa34:
 	.4byte gPartyState
 .L_0200aa38:
-	.4byte Data_02003704
+	.4byte gData_02003704
 	.section .bss,"aw",%nobits
 	.global Data_020035b8
 Data_020035b8:
 	.space 0x00000004
-	.global Data_020035bc
-Data_020035bc:
+	.global gData_020035bc
+gData_020035bc:
 	.space 0x00000020
-	.global Data_020035dc
-Data_020035dc:
+	.global gData_020035dc
+gData_020035dc:
 	.space 0x00000004
-	.global Data_020035e0
-Data_020035e0:
+	.global gData_020035e0
+gData_020035e0:
 	.space 0x0000001c
-	.global Data_020035fc
-Data_020035fc:
+	.global gData_020035fc
+gData_020035fc:
 	.space 0x00000002
-	.global Data_020035fe
-Data_020035fe:
+	.global gData_020035fe
+gData_020035fe:
 	.space 0x00000002
-	.global Data_02003600
-Data_02003600:
+	.global gData_02003600
+gData_02003600:
 	.space 0x00000040
 	.global Data_02003640
 Data_02003640:
 	.space 0x000000c0
-	.global Data_02003700
-Data_02003700:
+	.global gData_02003700
+gData_02003700:
 	.space 0x00000002
-	.global Data_02003702
-Data_02003702:
+	.global gData_02003702
+gData_02003702:
 	.space 0x00000002
-	.global Data_02003704
-Data_02003704:
+	.global gData_02003704
+gData_02003704:

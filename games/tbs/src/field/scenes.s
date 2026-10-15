@@ -1,7 +1,7 @@
 	.macro scene name, code:req, area:req, kind:req, map:req
 	.ifnb \name
 	.global SceneId_\name
-	.equiv SceneId_\name, (. - Field_SceneTable) / 8
+	.equiv SceneId_\name, (. - gField_SceneTable) / 8
 	.endif
 	.2byte \code
 	.byte \area, \kind
@@ -10,8 +10,8 @@
 
 	.section .rodata
 	.balign 4
-	.global Field_SceneTable
-Field_SceneTable:
+	.global gField_SceneTable
+gField_SceneTable:
 	scene Title, 0x36f, 0x00, 1, 0x00
 	scene Clear, 0x370, 0x01, 1, 0x00
 	scene WorldMap, 0x371, 0x02, 1, 0x01

@@ -445,7 +445,7 @@ Func_08151ff0:
 .L_08152354:
 	.4byte Data_081983a2
 .L_08152358:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0815235c:
 	.4byte 0xffffe000
 .L_08152360:

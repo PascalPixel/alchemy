@@ -18,7 +18,7 @@ s32 Scene_Initialize(void);
 extern struct SceneEntrance gKalayInteriorsEntrancesOther[];
 extern struct SceneEntrance gKalayInteriorsEntrances1[];
 extern struct SceneEntrance gKalayInteriorsEntrances2[];
-extern u32 KalayInteriors_Exits[];
+extern u32 gKalayInteriors_Exits[];
 extern struct ScenePlacement gKalayInteriorsPlacementsOther[];
 extern struct ScenePlacement gKalayInteriorsPlacements1[];
 extern struct ScenePlacement gKalayInteriorsPlacements1Entrance9[];
@@ -27,7 +27,7 @@ extern struct SceneEvent gKalayInteriorsEventsOther[];
 extern struct SceneEvent gKalayInteriorsEvents1[];
 extern struct SceneEvent gKalayInteriorsEvents1Entrance9[];
 extern struct SceneEvent gKalayInteriorsEvents2[];
-extern u16 KalayInteriors_ArrivalPlacementData[];
-extern struct MapCellAnim KalayInteriors_ArrivalPlacements[];
+extern u16 gKalayInteriors_ArrivalPlacementData[];
+extern struct MapCellAnim gKalayInteriors_ArrivalPlacements[];
 
 #endif

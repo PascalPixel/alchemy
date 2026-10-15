@@ -53,7 +53,7 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 		{
 			obj->terrainHeight = actor->terrainHeight;
 			anim = obj->sprite;
-			Engine_ObjectSetScript(obj, Mercury_PillarScript);
+			Engine_ObjectSetScript(obj, gMercury_PillarScript);
 			obj->linkedObject = (struct FieldActor *)actor;
 			obj->motionFlags = 4;
 			obj->y.fixed += -0x8000;
@@ -77,7 +77,7 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 			return;
 		obj->terrainHeight = actor->terrainHeight;
 		anim = obj->sprite;
-		Engine_ObjectSetScript(obj, Mercury_RampScript);
+		Engine_ObjectSetScript(obj, gMercury_RampScript);
 		obj->motionFlags = 0;
 		obj->timer = 0;
 		obj->priorityFlags = 2;

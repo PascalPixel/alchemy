@@ -12,7 +12,7 @@ struct SpriteParts {
     u16 unk12;
 };
 
-extern const u8 Data_02005d8c[];
+extern const u8 gData_02005d8c[];
 
 void Func_02001e20(void);
 void Func_02001ffc(void);
@@ -24,7 +24,7 @@ void Func_0200215c(struct ObjectRuntime *object, s32 part)
     object->collisionFlags = 0;
     ((struct SpriteParts *)object->animation)->part = part;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02005490(object, Data_02005d8c);
+    Func_02005490(object, gData_02005d8c);
     object->action = 0;
     object->speedLimit = 0;
     object->acceleration = 0;

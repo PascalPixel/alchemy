@@ -1,11 +1,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-s16 Data_02000e04[] = {
+s16 gData_02000e04[] = {
 	10, 544, 11, 545, 12, 546, -1, 0,
 };
 
-s32 Data_02000e14[] = {
+s32 gData_02000e14[] = {
 	22, 30,
 #if defined(TLA_EDITION_JA)
 	131,
@@ -22,7 +22,7 @@ s32 Data_02000e14[] = {
 	17,
 };
 
-s32 Data_02000ecc[] = {
+s32 gData_02000ecc[] = {
 	22, 30, 129, 22, 16, 0x1999,
 	22, 15, 0x4ccc, (s32)0x80010000, 39, 1,
 	22, 3, 0x6000, 0, 5, 22,

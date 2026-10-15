@@ -9,24 +9,24 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 Data_0200503c[];
-extern const u8 Data_0200547c[];
-extern const u8 Data_020054cc[];
-extern const u8 Data_02005528[];
-extern const u8 Data_02005578[];
-extern const u8 Data_020055d4[];
-extern const u8 Data_02005644[];
-extern const u8 Data_0200610c[];
-extern const u8 Data_02006118[];
-extern const u8 Data_0200613c[];
-extern const u8 Data_02006250[];
-extern const u8 Data_020063b8[];
-extern const u8 Data_020064fc[];
-extern const u8 Data_02006628[];
-extern const u8 Data_02006778[];
-extern s16 Data_02006868;
-extern s16 Data_020068a0;
-extern u16 Data_020068a2;
+extern const u8 gData_0200503c[];
+extern const u8 gData_0200547c[];
+extern const u8 gData_020054cc[];
+extern const u8 gData_02005528[];
+extern const u8 gData_02005578[];
+extern const u8 gData_020055d4[];
+extern const u8 gData_02005644[];
+extern const u8 gData_0200610c[];
+extern const u8 gData_02006118[];
+extern const u8 gData_0200613c[];
+extern const u8 gData_02006250[];
+extern const u8 gData_020063b8[];
+extern const u8 gData_020064fc[];
+extern const u8 gData_02006628[];
+extern const u8 gData_02006778[];
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+extern u16 gData_020068a2;
 extern u8 gMapCellBuffer[];
 
 void *MemAlloc(s32 size);
@@ -52,35 +52,35 @@ s32 Func_02001930(void)
 
 void Func_0200196c(void)
 {
-    Func_02002f4c(10, 19, 20, 0, Data_0200547c);
+    Func_02002f4c(10, 19, 20, 0, gData_0200547c);
 }
 
 void Func_02001988(void)
 {
-    Func_02002f4c(12, 19, 20, 0, Data_020054cc);
+    Func_02002f4c(12, 19, 20, 0, gData_020054cc);
 }
 
 void Func_020019a4(void)
 {
-    Func_02002f4c(9, 18, 20, 0x4000, Data_02005528);
+    Func_02002f4c(9, 18, 20, 0x4000, gData_02005528);
 }
 
 void Func_020019c4(void)
 {
-    Func_02002f4c(9, 13, 14, 0, Data_02005578);
+    Func_02002f4c(9, 13, 14, 0, gData_02005578);
 }
 
 void Func_020019e0(void)
 {
-    Func_02002f4c(11, 13, 14, 0x4000, Data_020055d4);
+    Func_02002f4c(11, 13, 14, 0x4000, gData_020055d4);
 }
 
 void Func_02001a00(void)
 {
-    Func_02002f4c(13, 21, 22, 0, Data_02005644);
+    Func_02002f4c(13, 21, 22, 0, gData_02005644);
 }
 
-extern const u8 Data_020056a0[];
+extern const u8 gData_020056a0[];
 
 void Func_02001ae0(void);
 void Func_02001cbc(void);

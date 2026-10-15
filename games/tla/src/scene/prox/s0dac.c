@@ -25,9 +25,9 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
 extern u8 MsgProx75[];
-extern u8 Data_020049c4[];
-extern u8 Data_02004980[];
-extern u8 Data_02004a08[];
+extern u8 gData_020049c4[];
+extern u8 gData_02004980[];
+extern u8 gData_02004a08[];
 
 void Func_02000dac(void)
 {
@@ -57,8 +57,8 @@ void Func_02000dac(void)
     Call3(ObjectMotion_ArmCallback, 0xe, 0xb000, 0);
     Call3(ObjectMotion_SetSpeedParameters, 0x12, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_020049c4);
-    Call2(Object_SetActionCallbackAndRefreshById, 0x12, (s32)Data_02004980);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_020049c4);
+    Call2(Object_SetActionCallbackAndRefreshById, 0x12, (s32)gData_02004980);
     Call3(ObjectMotion_ArmCallback, 0xb, 0x3000, 0);
     Prox_Jump(0xb, 0x108, 0x14);
     Call2(Func_02004534, 0xb, 0);
@@ -226,8 +226,8 @@ void Func_02000dac(void)
     Call2(Func_0200454c, 0, 0);
     Call2(Object_SetModeById, gPartyState.currentOwner, 3);
     Call2(Motion_SetModeAndWaitAnimation, 0, 3);
-    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)Data_02004a08);
-    Call2(Object_SetActionCallbackAndRefreshById, 0x12, (s32)Data_02004a08);
+    Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_02004a08);
+    Call2(Object_SetActionCallbackAndRefreshById, 0x12, (s32)gData_02004a08);
     Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0xa0, 0x9a);
     Call2(Func_0200454c, gPartyState.currentOwner, 0xc000);
     Call2(Motion_SetVarCbAndRefresh, 0xa, 1);

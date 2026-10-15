@@ -1,14 +1,14 @@
 /* Near miss, differ 8 of 218 (2026-10-15): ☀️'s EFFECT_SPAWN (Effect_SpawnResident)
  * with ⚓️'s calls (Object_GetById(0), Func_080200c0, default type 285, the
- * Data_080f3978 scripts, Object_SetPartAttribute). Left: the listing stores
+ * gData_080f3978 scripts, Object_SetPartAttribute). Left: the listing stores
  * scaleRateX and _y (0x30, 0x34) after the priority byte copy; here the scheduler
  * lifts both stores above the party sprite's byte load, and a barrier after the copy
- * swaps r9 and r11. One reordered pool load before it (Data_080f3978). */
+ * swaps r9 and r11. One reordered pool load before it (gData_080f3978). */
 #include "types.h"
 #include "field_effect.h"
 #include "objdisp.h"
 
-extern const s32 *Data_080f3978[];
+extern const s32 *gData_080f3978[];
 
 struct FieldActor *Object_GetById(s32 id);
 struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z);
@@ -32,7 +32,7 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Object_SetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    ObjectDispatch_InitializeFar((void *)effect, Data_080f3978[flags & EFFECT_SCRIPT_MASK]);
+    ObjectDispatch_InitializeFar((void *)effect, gData_080f3978[flags & EFFECT_SCRIPT_MASK]);
     effect->motionFlags = 0;
     sprite->nextFrame = 0;
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
@@ -57,7 +57,7 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         effect->scaleY = options->startScaleY;
     }
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-        script = Data_080f3978[flags & EFFECT_SCRIPT_MASK];
+        script = gData_080f3978[flags & EFFECT_SCRIPT_MASK];
         if ((flags & EFFECT_USE_START_SCALE) != 0) {
             effect->scaleRateX = (options->targetScaleX - effect->scaleX) / script[3];
             effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];

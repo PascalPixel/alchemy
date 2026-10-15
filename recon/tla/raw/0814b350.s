@@ -787,7 +787,7 @@ Func_0814b350:
 	add sp, #168
 	b .L_0814b9b8
 .L_0814b99c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814b9a0:
 	.4byte gMapCellBuffer
 .L_0814b9a4:

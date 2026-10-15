@@ -30,7 +30,7 @@ struct PushWork {
     struct PushEntry entries[1];
 };
 
-extern struct PushWork Data_02002e34;
+extern struct PushWork gData_02002e34;
 
 void Func_02001d48(struct PushWork *work, struct PushEntry *entry);
 void Func_02001db8(struct PushWork *work, struct PushEntry *entry);
@@ -47,7 +47,7 @@ static __inline__ void SetByte(s32 flag, s32 value)
 s32 Func_020020e8(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    struct PushWork *work = &Data_02002e34;
+    struct PushWork *work = &gData_02002e34;
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct PushEntry *entry;
@@ -76,7 +76,7 @@ s32 Func_020020e8(void)
 void Func_02002198(s32 dx, s32 dz, s32 route)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    struct PushWork *work = &Data_02002e34;
+    struct PushWork *work = &gData_02002e34;
     u8 *eventWork = Ram_HeapSlots->eventWork;
     s32 x = GameFlag_GetByte(work->flag);
     s32 z = GameFlag_GetByte(work->flag + 8);

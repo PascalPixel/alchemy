@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 
-extern s16 Data_02006350[];
+extern s16 gData_02006350[];
 
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -18,7 +18,7 @@ static inline s32 LowestLineOffset(void)
 // to BG0HOFS by HBlank DMA 0.
 void Func_02000378(void)
 {
-    s16 *line = Data_02006350;
+    s16 *line = gData_02006350;
     s32 i;
     s16 *source;
     volatile u16 *scroll;
@@ -34,7 +34,7 @@ void Func_02000378(void)
         else if (*line < LowestLineOffset())
             *line += 64;
     }
-    line = Data_02006350;
+    line = gData_02006350;
     scroll = (volatile u16 *)0x04000010;
     *scroll = *line;
     dma = REG_DMA0;

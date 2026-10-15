@@ -14,11 +14,11 @@
 #include "map.h"
 #include "callback_scheduler.h"
 
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003fc4[];
-extern const u8 Data_02003fc8[];
-extern s32 Data_02005678;
-extern s32 Data_0200567c;
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003fc4[];
+extern const u8 gData_02003fc8[];
+extern s32 gData_02005678;
+extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -111,7 +111,7 @@ void Func_02003284(void)
     Actor_SetVariant(13, 1);
     Func_02003d90();
     Func_02003da8(0, 520, 12, 13);
-    Func_02003db8(Data_02003fc4);
+    Func_02003db8(gData_02003fc4);
     if (Object_GetById(19)->y > (s32)0xfff80000)
         Actor_SetVariant(19, 1);
     else
@@ -127,7 +127,7 @@ void Func_02003284(void)
     Object_GetById(15)->priorityFlags &= ~1;
     Object_GetById(16)->priorityFlags &= ~1;
     Object_GetById(17)->priorityFlags &= ~1;
-    Func_02000c64(Data_02003fc8);
+    Func_02000c64(gData_02003fc8);
     object = Object_GetById(17);
     zero = 0;
     if ((object->x >> 20) == 54) {
@@ -166,13 +166,13 @@ void Func_02003284(void)
         Flag_Set(534);
         Func_02003c68(25, 0, 0);
     }
-    Func_020001d0(Data_02003f80);
+    Func_020001d0(gData_02003f80);
     Func_020013b0();
     Func_02001fc4();
     object = Object_GetById(27);
     *((u8 *)object + 85) = zero;
     object->y = zero;
-    Data_0200567c = zero;
-    Data_02005678 = zero;
+    gData_0200567c = zero;
+    gData_02005678 = zero;
     Scheduler_AddOrUpdateCallback(Func_02001ee8, 0x480);
 }

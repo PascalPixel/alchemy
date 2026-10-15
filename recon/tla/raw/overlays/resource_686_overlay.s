@@ -248,7 +248,7 @@ Func_0200015c:
 .L_0200832c:
 	.4byte gPartyState
 .L_02008330:
-	.4byte Data_02003040
+	.4byte gData_02003040
 .L_02008334:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
@@ -2138,7 +2138,7 @@ Func_020012c4:
 .L_0200940c:
 	.4byte Data_02004030
 .L_02009410:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_02009414:
 	.4byte .L_02009344
 .L_02009418:
@@ -2783,17 +2783,17 @@ Func_0200160c:
 .L_02009984:
 	.4byte Data_02004030
 .L_02009988:
-	.4byte Data_02003780
+	.4byte gData_02003780
 .L_0200998c:
-	.4byte Data_02003788
+	.4byte gData_02003788
 .L_02009990:
 	.4byte 0x000fffff
 .L_02009994:
-	.4byte Data_02003782
+	.4byte gData_02003782
 .L_02009998:
 	.4byte Func_020015ac
 .L_0200999c:
-	.4byte Data_02002fa8
+	.4byte gData_02002fa8
 	.section .text.x020099a0,"ax",%progbits
 	.global Func_020019a0
 	.thumb_func
@@ -3230,17 +3230,17 @@ Func_020019a0:
 .L_02009d18:
 	.4byte Data_02004030
 .L_02009d1c:
-	.4byte Data_02003780
+	.4byte gData_02003780
 .L_02009d20:
-	.4byte Data_02003788
+	.4byte gData_02003788
 .L_02009d24:
 	.4byte 0x000fffff
 .L_02009d28:
-	.4byte Data_02003782
+	.4byte gData_02003782
 .L_02009d2c:
 	.4byte Func_020015ac
 .L_02009d30:
-	.4byte Data_02002ff0
+	.4byte gData_02002ff0
 	.section .text.x02009f7c,"ax",%progbits
 	.balign 4
 	.global Func_02001f7c

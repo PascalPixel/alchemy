@@ -1018,7 +1018,7 @@ Func_0818d5a8:
 .L_0818ddb0:
 	.4byte 0xffff00ff
 .L_0818ddb4:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0818ddb8:
 	.4byte 0xffffcc78
 .L_0818ddbc:
@@ -1026,7 +1026,7 @@ Func_0818d5a8:
 .L_0818ddc0:
 	.4byte Data_081991e0
 .L_0818ddc4:
-	.4byte Data_081990d0
+	.4byte gData_081990d0
 .L_0818ddc8:
 	.4byte Data_08199e58
 .L_0818ddcc:
@@ -1034,7 +1034,7 @@ Func_0818d5a8:
 .L_0818ddd0:
 	.4byte Data_08199e60
 .L_0818ddd4:
-	.4byte Data_08199090
+	.4byte gData_08199090
 .L_0818ddd8:
 	.4byte Data_08198ec4
 .L_0818dddc:
@@ -1050,6 +1050,6 @@ Func_0818d5a8:
 .L_0818ddf0:
 	.4byte 0x007effff
 .L_0818ddf4:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818ddf8:
 	.4byte Func_08143000

@@ -23,7 +23,7 @@ struct MarsStarRoute {
     struct MarsStarStop stops[1];
 };
 
-extern struct MarsStarRoute Data_02004cf4;
+extern struct MarsStarRoute gData_02004cf4;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 s32 GameFlag_GetByte(s32 flag);
@@ -35,7 +35,7 @@ s32 Func_02003f9c(void)
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 column = object->x >> 20;
     s32 row = object->z >> 20;
-    struct MarsStarRoute *route = &Data_02004cf4;
+    struct MarsStarRoute *route = &gData_02004cf4;
     struct MarsStarStop *stop = route->stops;
     s32 i;
 

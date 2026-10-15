@@ -22,7 +22,7 @@
 //--------------------------------------------------------------------------
 struct ItemDefinition *Item_GetDirect(s32 item)
 {
-	return Item_DefinitionTable + (item & ITEM_ID_MASK);
+	return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 #include "owner_state.h"
 #include "battle_unit.h"

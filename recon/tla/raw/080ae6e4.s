@@ -156,6 +156,6 @@ Func_080ae6e4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ae828:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080ae82c:
 	.4byte gPartyState

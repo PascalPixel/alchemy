@@ -276,20 +276,20 @@ void Func_02000e2c(void);
 void Func_02001380(s32 id);
 void Func_020013b8(s32 id);
 
-extern const u8 Data_02002e30[];
-extern const u8 Data_02002e6c[];
-extern const u8 Data_02002e9c[];
-extern const u8 Data_02003010[];
-extern const u8 Data_02003014[];
-extern const u8 Data_0200301e[];
-extern const u8 Data_02003034[];
-extern const u8 Data_0200304e[];
+extern const u8 gData_02002e30[];
+extern const u8 gData_02002e6c[];
+extern const u8 gData_02002e9c[];
+extern const u8 gData_02003010[];
+extern const u8 gData_02003014[];
+extern const u8 gData_0200301e[];
+extern const u8 gData_02003034[];
+extern const u8 gData_0200304e[];
 
 void Func_02001a04(void);
 void Func_02001650(void);
 void Func_02002bf8(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-extern const u8 Data_02003ef8[];
+extern const u8 gData_02003ef8[];
 
 #endif

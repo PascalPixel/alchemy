@@ -15,7 +15,7 @@ struct ClearWork
 };
 
 extern char ResourceId_LogoOnBlack;
-extern u16  Data_020024f4[];
+extern u16  gData_020024f4[];
 
 void                  Blend_SetDarkenTarget16(s32 frames);
 void                  Func_020021f8(void *source, void *destination);
@@ -112,8 +112,8 @@ void Func_0200015c(void)
     s32 frame;
     u32 level;
 
-    frame = Data_020024f4[0] + 1;
-    Data_020024f4[0] = frame;
+    frame = gData_020024f4[0] + 1;
+    gData_020024f4[0] = frame;
     level = (u16)frame >> 1;
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
     IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level, 0x20000);

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern s32 Data_02005af0;
+extern s32 gData_02005af0;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_0200584c(void);
@@ -9,7 +9,7 @@ struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
 
 void Func_02000740(void)
 {
-    s32 step = Data_02005af0;
+    s32 step = gData_02005af0;
 
     if (step != 0) {
         s32 turn = step * 1092;

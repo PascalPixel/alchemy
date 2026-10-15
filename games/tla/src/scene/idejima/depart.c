@@ -235,7 +235,7 @@ void Idejima_RunAlexDeparture(void)
     ObjectMotion_Launch(8, 4, 20);
     Call2(Engine_EventShowMessage, 0x2008, 0);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
-    script = Idejima_ActorDepartureScript;
+    script = gIdejima_ActorDepartureScript;
     ObjectMotion_EnableActionAndSetCallback(8, script);
     Call2(ObjectMotion_EnableActionAndSetCallback, 5, script);
     Object_SetActionCallbackAndRefreshById(6, script);
@@ -243,11 +243,11 @@ void Idejima_RunAlexDeparture(void)
     Engine_EventEnd();
 }
 
-extern s16 Data_02003c14;
-extern s32 Data_02003c10;
+extern s16 gData_02003c14;
+extern s32 gData_02003c10;
 
 void Func_0200153c(void)
 {
-    Data_02003c14 = 0;
-    Data_02003c10 = 0;
+    gData_02003c14 = 0;
+    gData_02003c10 = 0;
 }

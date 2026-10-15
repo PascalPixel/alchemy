@@ -289,7 +289,7 @@ Func_0803bb58:
 .L_0803bd9c:
 	.4byte .L_0803bc08
 .L_0803bda0:
-	.4byte UiText_Glyphs
+	.4byte gUiText_Glyphs
 .L_0803bda4:
 	ldr r2, [sp, #12]
 	ldrh r3, [r5, r2]

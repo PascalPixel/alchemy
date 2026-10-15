@@ -86,14 +86,14 @@ Func_08043534:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080435e4:
-	.4byte Data_020036d0
+	.4byte gData_020036d0
 .L_080435e8:
 	.4byte 0x0000000b
 .L_080435ec:
 	.4byte 0x0000000c
 .L_080435f0:
-	.4byte Data_02000504
+	.4byte gData_02000504
 .L_080435f4:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_080435f8:
 	.4byte IwramCopyWords

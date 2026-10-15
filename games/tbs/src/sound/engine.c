@@ -4,14 +4,14 @@
 
 void AudioCommand_InvokeSlot34(struct SoundNote *note)
 {
-    void (*func)(struct SoundNote *) = (void (*)(struct SoundNote *))*(&Sound_CommandTable[34]);
+    void (*func)(struct SoundNote *) = (void (*)(struct SoundNote *))*(&gSound_CommandTable[34]);
 
     func(note);
 }
 
 void AudioCommand_InvokeSlot35(void *block)
 {
-    void (*func)(void *) = (void (*)(void *))*(&Sound_CommandTable[35]);
+    void (*func)(void *) = (void (*)(void *))*(&gSound_CommandTable[35]);
 
     func(block);
 }
@@ -23,8 +23,8 @@ void Audio_EmptyCallback(void);
 void AudioEngine_SetPcmRate(u32 mode);
 void AudioEngine_SuspendDirectSound(void);
 void AudioEngine_ResumeDirectSound(void);
-extern const u16 Sound_FrameLengths[];
-extern SoundCommand Sound_CommandTable[36];
+extern const u16 gSound_FrameLengths[];
+extern SoundCommand gSound_CommandTable[36];
 
 void MusicPlayer_Tick(struct SoundPlayer *player);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
@@ -32,13 +32,13 @@ void AudioEngine_SetMode(u32 mode);
 
 struct SoundPlayer;
 
-extern const u8 Sound_CgbPitchCodes[];
-extern const s16 Sound_CgbFrequencySteps[];
-extern const u8 Sound_NoisePitchCodes[];
+extern const u8 gSound_CgbPitchCodes[];
+extern const s16 gSound_CgbFrequencySteps[];
+extern const u8 gSound_NoisePitchCodes[];
 
 void CgbChannel_Mute(u8 channel);
 
-extern const u8 Sound_Cgb3LevelCodes[];
+extern const u8 gSound_Cgb3LevelCodes[];
 
 void AudioEngine_Initialize(struct SoundWork *work)
 {
@@ -68,8 +68,8 @@ void AudioEngine_Initialize(struct SoundWork *work)
     work->cgbMute = (void (*)(u8))Audio_EmptyCallback;
     work->cgbFrequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
     work->unk3c = Audio_EmptyCallback;
-    Sound_LoadCommandTable(Sound_CommandTable);
-    work->commands = Sound_CommandTable;
+    Sound_LoadCommandTable(gSound_CommandTable);
+    work->commands = gSound_CommandTable;
     AudioEngine_SetPcmRate(0x40000);
     work->lock = SOUND_LOCK;
 }
@@ -82,7 +82,7 @@ void AudioEngine_SetPcmRate(u32 mode)
 
     mode = (mode & 0xF0000) >> 16;
     work->rate = mode;
-    frame = Sound_FrameLengths[mode - 1];
+    frame = gSound_FrameLengths[mode - 1];
     work->frameSamples = frame;
     work->transferPeriod = __divsi3(0x630, frame);
     work->outputRate = __divsi3(0x91D1B * frame + 5000, 10000);
@@ -396,7 +396,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine)
             if (key > 59)
                 key = 59;
         }
-        return Sound_NoisePitchCodes[key];
+        return gSound_NoisePitchCodes[key];
     }
 
     if (key <= 35) {
@@ -409,10 +409,10 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine)
             fine = 255;
         }
     }
-    low = Sound_CgbPitchCodes[key];
-    low = Sound_CgbFrequencySteps[low & 15] >> (low >> 4);
-    high = Sound_CgbPitchCodes[key + 1];
-    high = Sound_CgbFrequencySteps[high & 15] >> (high >> 4);
+    low = gSound_CgbPitchCodes[key];
+    low = gSound_CgbFrequencySteps[low & 15] >> (low >> 4);
+    high = gSound_CgbPitchCodes[key + 1];
+    high = gSound_CgbFrequencySteps[high & 15] >> (high >> 4);
     return low + ((fine * (high - low)) >> 8) + 2048;
 }
 
@@ -670,7 +670,7 @@ void Cgb_UpdateChannels(void)
         if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
             REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
             if (channel == 3) {
-                *reg2 = Sound_Cgb3LevelCodes[note->level];
+                *reg2 = gSound_Cgb3LevelCodes[note->level];
                 if (note->trigger & 0x80) {
                     *reg0 = 0x80;
                     *reg4 = note->trigger;
@@ -934,7 +934,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     }
 
 jump:
-    (*(&Sound_CommandTable[1]))(player, track);
+    (*(&gSound_CommandTable[1]))(player, track);
     return;
 skip:
     track->cursor += 4;
@@ -946,7 +946,7 @@ void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTr
 
     command = *track->cursor;
     track->cursor++;
-    Sound_ExtendedCommandTable[command](player, track);
+    gSound_ExtendedCommandTable[command](player, track);
 }
 
 union PackedWord {
@@ -961,7 +961,7 @@ union PackedWord {
 
 void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    SoundCommand func = *(&Sound_CommandTable[0]);
+    SoundCommand func = *(&gSound_CommandTable[0]);
 
     func(player, track);
 }

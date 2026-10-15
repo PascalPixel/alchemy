@@ -12,7 +12,7 @@
 void WaitFrames(s32);
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter);
 s32 __divsi3(s32, s32);
-extern u32 Data_03001144;
+extern u32 gData_03001144;
 
 void Func_080d450c(s32 id, s32 use_setter)
 {
@@ -87,7 +87,7 @@ void Func_080d45d8(void)
     (*step)++;
     offset = *from + __divsi3(delta * *step, *duration);
     map->zoom = Iwram_MulQ16(map->farPlane, offset);
-    Data_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
+    gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
     if (*step == *duration) {
         *duration = 0;
         Scheduler_RemoveCallback(Func_080d45d8);

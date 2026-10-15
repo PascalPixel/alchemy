@@ -29,7 +29,7 @@ s32 GameFlag_Test(s32 flag);
 s32 Party_GetAverageLevelFar(void);
 s32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone, s32 group);
-extern const struct EncounterZone Encounter_EnemyGroupTable[];
+extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
 #define ENCOUNTER_STEPS (*(s32 *)&party->unknown_258[0])
 
@@ -53,7 +53,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
             return 0;
         if ((s8)party->unk26d[0] != 0)
             return 0;
-        entry = Encounter_EnemyGroupTable + zone;
+        entry = gEncounter_EnemyGroupTable + zone;
         rate = entry->rate;
         if (rate == 0)
             return 0;

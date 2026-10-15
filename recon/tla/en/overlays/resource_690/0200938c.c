@@ -8,7 +8,7 @@
    flag forwarders so that each call builds its own constant. */
 #include "../../../../../games/tla/src/scene/settlements/local.h"
 
-extern const u8 Data_0200232c[];
+extern const u8 gData_0200232c[];
 
 s32 Object_AttachWorkTargetToObject(s32 id, s32 a);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *callback);
@@ -58,7 +58,7 @@ void Func_0200138c(void)
         Func_02001620(10);
         if (!GameFlag_Test(102)) {
             Func_020020c0(11, 0, 0);
-            ObjectMotion_EnableActionAndSetCallback(10, Data_0200232c);
+            ObjectMotion_EnableActionAndSetCallback(10, gData_0200232c);
             Battle_WaitMode0(20);
         }
         Battle_WaitMode0(20);

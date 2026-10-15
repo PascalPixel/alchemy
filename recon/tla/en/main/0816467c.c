@@ -27,10 +27,10 @@
 extern char ResourceId_Data134;
 extern char ResourceId_FlareSheet;
 extern char ResourceId_FlareImage;
-extern u16 Data_081989f2[];
-extern u8 Data_081989e2[];
-extern u8 Data_081989ea[];
-extern u16 Data_08197410[];
+extern u16 gData_081989f2[];
+extern u8 gData_081989e2[];
+extern u8 gData_081989ea[];
+extern u16 gData_08197410[];
 
 void Func_08143000(void);
 void Func_081963ec(s32 slot, s32 kind);
@@ -121,9 +121,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            max_blend(canvas, work->sheet + Data_081989f2[cell],
-                (x >> 16) - ((width = Data_081989e2[cell]) >> 1),
-                (y >> 16) - ((height = Data_081989ea[cell]) >> 1), width, height);
+            max_blend(canvas, work->sheet + gData_081989f2[cell],
+                (x >> 16) - ((width = gData_081989e2[cell]) >> 1),
+                (y >> 16) - ((height = gData_081989ea[cell]) >> 1), width, height);
         }
 
         for (i = 0, p = work->particles; i != 30; i++, p++) {
@@ -137,7 +137,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 3;
                 px = HI(p->x);
                 py = HI(p->y);
-                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + gData_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 
@@ -152,7 +152,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 1;
                 px = HI(p->x);
                 py = HI(p->y);
-                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + gData_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 

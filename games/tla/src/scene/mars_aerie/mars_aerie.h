@@ -38,21 +38,21 @@ extern const u8 MsgUhhhhnnnICan[];
 extern const u8 MsgKoffKoffYou[];
 extern const u8 MsgUnnnnIAm[];
 extern const u8 MsgIUnderstandYour[];
-extern const u8 Data_0200626c[];
-extern const u8 Data_0200644c[];
-extern const u8 Data_020066bc[];
-extern u32 Data_02006b64;
-extern u32 Data_02006b6c;
+extern const u8 gData_0200626c[];
+extern const u8 gData_0200644c[];
+extern const u8 gData_020066bc[];
+extern u32 gData_02006b64;
+extern u32 gData_02006b6c;
 
 void Func_02004e80(s32 from, s32 to);
 
 extern const u8 MsgDoNotLet[];
-extern u16 Data_02006cd0;
-extern u16 Data_02006cd8;
-extern u16 Data_02006cdc;
-extern u16 *Data_02006ce0;
-extern u16 Data_02006cec;
-extern u16 Data_02006cf0;
+extern u16 gData_02006cd0;
+extern u16 gData_02006cd8;
+extern u16 gData_02006cdc;
+extern u16 *gData_02006ce0;
+extern u16 gData_02006cec;
+extern u16 gData_02006cf0;
 
 struct MarsAerieParty {
     u8 unk000[0x26a];

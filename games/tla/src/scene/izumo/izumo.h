@@ -10,11 +10,11 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern const u8 Data_02000e10[];
-extern const u8 Data_02001644[];
-extern const u8 Data_02001494[];
-extern const u8 Data_02001b00[];
-extern const u8 Data_020018b4[];
+extern const u8 gData_02000e10[];
+extern const u8 gData_02001644[];
+extern const u8 gData_02001494[];
+extern const u8 gData_02001b00[];
+extern const u8 gData_020018b4[];
 extern u8 MsgCanYouImagine[];
 extern u8 MsgSeeThisRing[];
 extern u8 MsgButItS[];

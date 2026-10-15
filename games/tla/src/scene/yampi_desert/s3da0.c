@@ -10,8 +10,8 @@ struct YampiDesertRideWork {
     void *block;
 };
 
-extern u8 Data_020023c4[];
-extern const u8 Field_Tiles64D[];
+extern u8 gData_020023c4[];
+extern const u8 gField_Tiles64D[];
 
 s32 GameFlag_Test(s32 flag);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -27,13 +27,13 @@ struct ObjectRuntime *Object_GetById(s32 id);
 
 void Func_02003da0(s32 unused, s32 value)
 {
-    struct YampiDesertRideWork *work = (struct YampiDesertRideWork *)(Data_020023c4 + 0x188);
+    struct YampiDesertRideWork *work = (struct YampiDesertRideWork *)(gData_020023c4 + 0x188);
     void *buffer;
 
     if (!GameFlag_Test(0x109))
         Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
     buffer = (void *)Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x800);
-    Func_02003f70(Field_Tiles64D, buffer);
+    Func_02003f70(gField_Tiles64D, buffer);
     work->entry = Resource_FindFreeEntry();
     Call3((void (*)())VramBlock_LoadCached, work->entry, 0x800, (s32)buffer);
     MemFree(buffer);

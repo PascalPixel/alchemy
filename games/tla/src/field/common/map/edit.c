@@ -16,17 +16,17 @@ void Map_SetWorkFlagBits9To11(u32 v)
     state->flags = flags;
 }
 
-extern u8 Data_0202e000[];
-extern u8 Data_0202e002[];
+extern u8 gData_0202e000[];
+extern u8 gData_0202e002[];
 u32 Map_ReadEditU16(u8 **cursor);
 
 void Map_ApplySetFlagEdits(void)
 {
-    u8 *cursor = Data_0202e002;
+    u8 *cursor = gData_0202e002;
     u32 entry;
     s32 srcX, srcY, dst_x, dst_y, width, height;
 
-    cursor = Data_0202e000 + (u16)Map_ReadEditU16(&cursor);
+    cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
@@ -74,17 +74,17 @@ void Map_SetFlagAndApplyAttributeEdits(s32 flag)
     Map_ApplyFlagEdits(flag, 1);
 }
 
-extern u8 Data_0202e000[];
-extern u8 Data_0202e002[];
+extern u8 gData_0202e000[];
+extern u8 gData_0202e002[];
 u32 Map_ReadEditU16(u8 **cursor);
 
 void Map_ApplyFlagEdits(s32 flag, s32 attributes)
 {
-    u8 *cursor = Data_0202e002;
+    u8 *cursor = gData_0202e002;
     u32 entry;
     s32 srcX, srcY, dst_x, dst_y, width, height;
 
-    cursor = Data_0202e000 + (u16)Map_ReadEditU16(&cursor);
+    cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
@@ -106,14 +106,14 @@ next:
     goto next;
 }
 
-extern const u16 Data_0802f380[][6];
+extern const u16 gData_0802f380[][6];
 extern char ResourceId_Map000;
 
 void Map_GetHeaderSize(s32 map, s32 *size)
 {
     u8 *header;
     /* FAKEMATCH: the table address is a word local added after the row offset: the native reads the row as [offset, table] and loads the table between the offset's two halves; indexed as an array the operands are [table, offset] (differ 2), and without the local the table is loaded after the offset (differ 2). */
-    u32 table = (u32)Data_0802f380;
+    u32 table = (u32)gData_0802f380;
 
     header = Resource_GetTableEntry(*(const u16 *)(map * 12 + table) + (u32)&ResourceId_Map000);
     size[0] = header[0];
@@ -140,7 +140,7 @@ void Map_LoadCellsAndShapes(void)
 {
     u8 *source;
     struct MapHeader *header = Resource_GetTableEntry(
-        *(const u16 *)(gPartyState.map * 12 + (u32)Data_0802f380) + (u32)&ResourceId_Map000);
+        *(const u16 *)(gPartyState.map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
 
     source = (u8 *)header + header->cells;
     Resource_DecodeType01(source, Ram_MapCellBuffer);

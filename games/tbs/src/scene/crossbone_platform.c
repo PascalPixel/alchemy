@@ -105,7 +105,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTable(void)
 {
-	return CrossbonePlatform_SceneTable;
+	return gCrossbonePlatform_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -207,7 +207,7 @@ static void EV21_TOUCH(void)
 			rec7->sprite->rotation = 0xf800;
 			rec7->facing = 0;
 			ObjectDispatch_ApplyValueToChildren(rec7, 0);
-			Engine_ObjectSetScript(rec7, CrossbonePlatform_ActorFifteenMotionScript);
+			Engine_ObjectSetScript(rec7, gCrossbonePlatform_ActorFifteenMotionScript);
 			Engine_EventEnd();
 		}
 	}
@@ -280,7 +280,7 @@ static void FieldScene_CopyActorPosition(void)
 			src = Object_GetById(0);
 			dst->acceleration = src->speed;
 			idx -= 30;
-			table = (s32)CrossbonePlatform_ActorFifteenWalkTargets;
+			table = (s32)gCrossbonePlatform_ActorFifteenWalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
 			Engine_ActorWalkTo(15, *(s32 *)(table + idx), *(s32 *)(table + idx4));
@@ -606,14 +606,14 @@ static void SceneActor_TrackOriginColumnForSlot(s32 no)
 
 	if (gGameState.pausedObject == slot)
 		return;
-	if (col == CrossbonePlatform_SlotColumns[no])
+	if (col == gCrossbonePlatform_SlotColumns[no])
 		return;
 
 	Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
 	Engine_AudioPlayCue(188);
 	Engine_ActorSetDestination(slot, (col << 4) + 8, 360);
 
-	CrossbonePlatform_SlotColumns[no] = col;
+	gCrossbonePlatform_SlotColumns[no] = col;
 
 	if (row <= 22)
 	{
@@ -1174,11 +1174,11 @@ s32 Scene_Initialize(void)
 
 static void CrossbonePlatform_UpdateItemIcons(void)
 {
-	if (++CrossbonePlatform_IconTimer > 16)
+	if (++gCrossbonePlatform_IconTimer > 16)
 	{
-		CrossbonePlatform_IconTimer = 0;
+		gCrossbonePlatform_IconTimer = 0;
 	}
-	switch (CrossbonePlatform_IconTimer)
+	switch (gCrossbonePlatform_IconTimer)
 	{
 	case 12:
 		if (Engine_GameFlagIsSet(0xee7) == 0)
@@ -1340,7 +1340,7 @@ static void CrossbonePlatform_InitializeScene3(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1359,11 +1359,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -1372,7 +1372,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 CrossbonePlatform_ActorFifteenMotionScript[] = {
+s32 gCrossbonePlatform_ActorFifteenMotionScript[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1400,7 +1400,7 @@ s32 CrossbonePlatform_ActorFifteenMotionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 CrossbonePlatform_ActorFifteenWalkTargets[] = {
+s32 gCrossbonePlatform_ActorFifteenWalkTargets[] = {
 	0x378, 0x358,
 	0x368, 0x358,
 	0x358, 0x358,
@@ -1438,7 +1438,7 @@ struct SceneEntrance gCrossbonePlatformEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 CrossbonePlatform_SceneTable[] = {
+u32 gCrossbonePlatform_SceneTable[] = {
 	SCENE_EXITS(117),
 	SCENE_EXIT(1, 128, 3),
 	SCENE_EXIT(2, 128, 4),
@@ -1598,8 +1598,8 @@ struct SceneEvent gCrossbonePlatformEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 CrossbonePlatform_SlotColumns[] = {
+u32 gCrossbonePlatform_SlotColumns[] = {
 	16, 21, 0,
 };
 
-s32 CrossbonePlatform_IconTimer = 0;
+s32 gCrossbonePlatform_IconTimer = 0;

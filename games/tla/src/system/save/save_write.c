@@ -6,9 +6,9 @@
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
 
-extern u8 Data_02000000[];
-extern u8 Data_02000504[];
-extern s16 Data_020036d0;
+extern u8 gData_02000000[];
+extern u8 gData_02000504[];
+extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -27,7 +27,7 @@ s32 SaveState_WriteSlot(s32 slot)
     if (Func_0801596c() != 0) {
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
-    } else if (Func_08042f10(slot, Data_02000000) != 0) {
+    } else if (Func_08042f10(slot, gData_02000000) != 0) {
         UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
         result = -3;
     }

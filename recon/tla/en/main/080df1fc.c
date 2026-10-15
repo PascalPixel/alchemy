@@ -54,9 +54,9 @@ struct EffectWork {
     u8 palette;
 };
 
-extern const u8 Data_080f0e60[];
-extern const u8 Data_080f0e78[];
-extern u32 Data_0300122c;
+extern const u8 gData_080f0e60[];
+extern const u8 gData_080f0e78[];
+extern u32 gData_0300122c;
 
 void BattleEffect_InitializeSharedScene(void);
 struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
@@ -106,7 +106,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)Data_080f0e60);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)gData_080f0e60);
     /* FAKEMATCH: the position is reached through this pointer everywhere but
        in the steering loop's first part, which names the position itself;
        that keeps the pointer in r10 and gives the loop its own copy. */
@@ -191,7 +191,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId)
         blocked:
             Object_SetMode(anchors[0], 4);
             Object_SetMode(anchors[1], 4);
-            if ((Data_0300122c & 15) == 0)
+            if ((gData_0300122c & 15) == 0)
                 Audio_PlayCue(114);
             continue;
         }
@@ -240,7 +240,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId)
         for (i = 0; i < 20; i++) {
             object = Object_Spawn(0x2a1, p->x, p->y, p->z);
             if (object != NULL) {
-                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)Data_080f0e78);
+                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gData_080f0e78);
                 object->speed = Random16() + 0x20000;
                 object->lift = 0x20000;
                 object->flag = 0;

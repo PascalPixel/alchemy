@@ -20,7 +20,7 @@ struct DoorStep {
     u16 z;
 };
 
-extern struct DoorStep Data_02005290[];
+extern struct DoorStep gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
@@ -152,7 +152,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused)
 
 void Func_02000940(s32 countdown)
 {
-    Func_020008cc(Data_02005290, countdown, 0);
+    Func_020008cc(gData_02005290, countdown, 0);
 }
 
 void Func_02000954(void)

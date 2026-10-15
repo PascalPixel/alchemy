@@ -20,7 +20,7 @@ struct ScreenLine
 	s32		  unk4;
 };
 
-extern struct ScreenLine DebugWarp_Presets[];
+extern struct ScreenLine gDebugWarp_Presets[];
 
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void				UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y, s32 right, s32 bottom);
@@ -38,7 +38,7 @@ struct RenderInput *Func_08041068(void)
 	s32					y;
 
 	window = UiWindow_Create(0, 0, 30, 19, 2);
-	line = DebugWarp_Presets;
+	line = gDebugWarp_Presets;
 	y = 4;
 	i = 0;
 	row = 2;

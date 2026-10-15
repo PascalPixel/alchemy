@@ -345,7 +345,7 @@ Func_020007d4:
 .L_02008a10:
 	.4byte Func_02000a98
 .L_02008a14:
-	.4byte Data_02001d54
+	.4byte gData_02001d54
 	.section .text.x02008a18,"ax",%progbits
 	.global Func_02000a18
 	.thumb_func

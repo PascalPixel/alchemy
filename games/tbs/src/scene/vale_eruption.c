@@ -22,7 +22,7 @@ static void RunEventScript01(void);
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
-	return (u8 *)ValeEruption_SceneTable0;
+	return (u8 *)gValeEruption_SceneTable0;
 }
 
 s32 ConditionalSceneSetup_GetInitialState(void)
@@ -32,17 +32,17 @@ s32 ConditionalSceneSetup_GetInitialState(void)
 
 u8 *ConditionalSceneSetup_GetMessageData(void)
 {
-	return (u8 *)ValeEruption_SceneTable1;
+	return (u8 *)gValeEruption_SceneTable1;
 }
 
 u8 *ConditionalSceneSetup_GetActorData(void)
 {
-	return (u8 *)ValeEruption_SceneTable2;
+	return (u8 *)gValeEruption_SceneTable2;
 }
 
 u8 *ConditionalSceneSetup_GetEffectData(void)
 {
-	return (u8 *)ValeEruption_SceneTable3;
+	return (u8 *)gValeEruption_SceneTable3;
 }
 
 s32 ConditionalSceneSetup_InitForScene15(void)
@@ -230,9 +230,9 @@ static void RunEventScript01(void)
 	Camera_MoveTo(0xd60000, -1, 0x1d80000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ValeEruption_ActionScriptHead);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gValeEruption_ActionScriptHead);
 	Engine_EventWait(30);
-	Engine_ActorEnableActionCallback(GARET, ValeEruption_ActionScriptGaret);
+	Engine_ActorEnableActionCallback(GARET, gValeEruption_ActionScriptGaret);
 	Object_RefreshSelectorById(1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_FaceDirection(GARET, 0, 0);
@@ -326,7 +326,7 @@ static void RunEventScript01(void)
 	Engine_EventWait(30);
 	Actor_WalkToAndWait(8, 255, 0x1bd);
 	Engine_EventWait(40);
-	Map_AnimateCells(ValeEruption_CellSteps, 45, 11);
+	Map_AnimateCells(gValeEruption_CellSteps, 45, 11);
 	Event_PlayCue(188);
 	Engine_EventWait(30);
 	Actor_WalkTo(8, 255, 0x186);
@@ -343,7 +343,7 @@ static void RunEventScript01(void)
 	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(40);
 	Actor_WalkTo(10, 255, 0x186);
-	action_script = (s32)ValeEruption_ActionScript;
+	action_script = (s32)gValeEruption_ActionScript;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, action_script);
 	Engine_EventWait(40);
 	Engine_ActorEnableActionCallback(GARET, action_script);
@@ -367,7 +367,7 @@ static void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-s32 ValeEruption_ActionScriptHead[] = {
+s32 gValeEruption_ActionScriptHead[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
 	SC_SYNC,
@@ -381,7 +381,7 @@ s32 ValeEruption_ActionScriptHead[] = {
 	SC_END,
 };
 
-s32 ValeEruption_ActionScriptGaret[] = {
+s32 gValeEruption_ActionScriptGaret[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
 	SC_SYNC,
@@ -393,7 +393,7 @@ s32 ValeEruption_ActionScriptGaret[] = {
 	SC_END,
 };
 
-s32 ValeEruption_ActionScript[] = {
+s32 gValeEruption_ActionScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(255), 0, PIXELS(452)),
 	SC_SYNC,
@@ -403,19 +403,19 @@ s32 ValeEruption_ActionScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance ValeEruption_SceneTable0[] = {
+struct SceneEntrance gValeEruption_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 15, CONDITION_ALWAYS, 103, 0, 284, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 ValeEruption_SceneTable1[] = {
+u32 gValeEruption_SceneTable1[] = {
 	SCENE_EXITS(10),
 	SCENE_EXIT(1, 9, 20),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement ValeEruption_SceneTable2[] = {
+struct ScenePlacement gValeEruption_SceneTable2[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
@@ -445,10 +445,10 @@ struct ScenePlacement ValeEruption_SceneTable2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent ValeEruption_SceneTable3[] = {
+struct SceneEvent gValeEruption_SceneTable3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 ValeEruption_CellSteps[] = {
+u16 gValeEruption_CellSteps[] = {
 	MAP_CELL_STEP(0, 98, 2, 2, 2), MAP_CELL_STEP(2, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };

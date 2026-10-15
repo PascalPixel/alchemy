@@ -41,8 +41,8 @@ s32 Func_020021a8(void);
 void Func_020021b0(s32 a);
 #include "frame.h"
 
-extern const u8 Data_0200226c[];
-extern u16 Data_02002ce8;
+extern const u8 gData_0200226c[];
+extern u16 gData_02002ce8;
 
 void Func_02000758(s32 x, s32 y, s32 z);
 void Func_02000d14(void);
@@ -65,9 +65,9 @@ void Func_02001fe0(struct ObjectRuntime *object, s32 a);
 void Func_02002000(struct ObjectRuntime *object);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
-extern s32 Data_02002ce0;
-extern u16 Data_02002ce4;
-extern u16 Data_02002ce6;
+extern s32 gData_02002ce0;
+extern u16 gData_02002ce4;
+extern u16 gData_02002ce6;
 void Func_02000e30(void);
 void Func_02000e90(void);
 void Func_02001fa8(s32 a, s32 b, void (*callback)(void));
@@ -79,8 +79,8 @@ void Func_02002150(s32 a);
 void Func_02002158(s32 a, s32 b, s32 c);
 void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern const u8 Data_02002380[];
-extern const u8 Data_020023a0[];
+extern const u8 gData_02002380[];
+extern const u8 gData_020023a0[];
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z)
 {

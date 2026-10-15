@@ -24,7 +24,7 @@ struct CellTargetTable {
     struct CellTarget targets[1];
 };
 
-extern struct CellTargetTable Data_020024f8;
+extern struct CellTargetTable gData_020024f8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -39,7 +39,7 @@ s32 Func_020019f4(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
-    struct CellTargetTable *table = &Data_020024f8;
+    struct CellTargetTable *table = &gData_020024f8;
     struct CellTarget *target;
     s32 i;
 

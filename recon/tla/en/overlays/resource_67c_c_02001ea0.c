@@ -11,7 +11,7 @@ void Func_02001ea0(struct ObjectRuntime *object)
         if (child != 0) {
             struct FieldSprite *sprite = child->animation;
 
-            Func_02003ccc(child, Data_020040dc);
+            Func_02003ccc(child, gData_020040dc);
             child->motionFlags = 0;
             child->terrainId = 1;
             if (sprite != 0) {

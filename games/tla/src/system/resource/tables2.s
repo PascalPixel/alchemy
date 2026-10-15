@@ -1,5 +1,5 @@
 	.section .rodata
-@ 色変換表とバイト置換表の二つ目の写し (ResourceSlot_ConversionTables から
+@ 色変換表とバイト置換表の二つ目の写し (gResourceSlot_ConversionTables から
 @ Data_080209a8 の終わりまでと同じ並び)
 	.global Data_080c89cc
 Data_080c89cc:

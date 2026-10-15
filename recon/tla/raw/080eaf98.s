@@ -67,6 +67,6 @@ Func_080eaf98:
 .L_080eb010:
 	.4byte IwramFillWords
 .L_080eb014:
-	.4byte Data_080f3bc4
+	.4byte gData_080f3bc4
 .L_080eb018:
 	.4byte 0xfffffc00

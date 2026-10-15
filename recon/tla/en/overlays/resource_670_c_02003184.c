@@ -1,7 +1,7 @@
 // near miss: differ 10 (listing 43 instructions, draft 43); scheduling: the native loads 0x0c08 before it builds the register address
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
-extern struct KibomboObject *Data_02007950;
+extern struct KibomboObject *gData_02007950;
 
 struct KibomboEffectWork {
     u8 unk000[0x7c4];

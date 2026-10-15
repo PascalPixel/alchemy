@@ -8,11 +8,11 @@ void Camera_ResetSceneDefaults(void);
 s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1);
 s16 Math_ScaleByRatio(s16 arg0, s16 arg1);
 s16 FixedPoint_Reciprocal(s16 value);
-extern const s32 LuckyDice_UnusedSigns[];
-extern const u8 LuckyDice_LabelCounts[];
-extern const u8 LuckyDice_LabelTiles[];
-extern const u8 LuckyDice_FaceTiles[];
-extern const s16 LuckyDice_FaceHeights[];
+extern const s32 gLuckyDice_UnusedSigns[];
+extern const u8 gLuckyDice_LabelCounts[];
+extern const u8 gLuckyDice_LabelTiles[];
+extern const u8 gLuckyDice_FaceTiles[];
+extern const s16 gLuckyDice_FaceHeights[];
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void LuckyDice_Run(void);
 

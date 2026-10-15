@@ -8,7 +8,7 @@
 #include "types.h"
 #include "party_state.h"
 
-extern const s16 Party_PairResolveRules[];
+extern const s16 gParty_PairResolveRules[];
 
 void Func_080ca2fc(void)
 {
@@ -21,7 +21,7 @@ void Func_080ca2fc(void)
     do {
     } while (0);
     second = party->entrance;
-    entry = Party_PairResolveRules;
+    entry = gParty_PairResolveRules;
 
     while (entry[0] != -1) {
         if (entry[0] == first && (entry[1] == -1 || entry[1] == second)) {

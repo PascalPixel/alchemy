@@ -111,7 +111,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	u32					selection;
 
 	leader = Object_GetById(0);
-	table = *(struct ScriptTable *)GomaPillar_PillarScripts;
+	table = *(struct ScriptTable *)gGomaPillar_PillarScripts;
 	obj = Engine_ObjectCreate(222, x, y, z);
 	if (obj == 0)
 		return;
@@ -143,7 +143,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return GomaPillar_Scripts;
+	return gGomaPillar_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -153,12 +153,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return GomaPillar_Messages;
+	return gGomaPillar_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return GomaPillar_Actors;
+	return gGomaPillar_Actors;
 }
 
 static void EV08_PSYNERGY(void)
@@ -248,7 +248,7 @@ static void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-s32 GomaPillar_Actor13Frames;
+s32 gGomaPillar_Actor13Frames;
 
 static void EV09_PSYNERGY(void)
 {
@@ -417,7 +417,7 @@ static void EV20_TOUCH(void)
 
 u8 *SceneData_GetExtraTable(void)
 {
-	return GomaPillar_Extras;
+	return gGomaPillar_Extras;
 }
 
 static void GomaPillar_DriveActor13Idle(void)
@@ -426,7 +426,7 @@ static void GomaPillar_DriveActor13Idle(void)
 	s32				  t;
 
 	work = gEventWork;
-	t = ++GomaPillar_Actor13Frames;
+	t = ++gGomaPillar_Actor13Frames;
 	switch (t)
 	{
 	case 60:
@@ -518,7 +518,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 	}
 	if (gGameState.pendingDjinnEvent != 0)
 	{
-		GomaPillar_Actor13Frames = 0;
+		gGomaPillar_Actor13Frames = 0;
 		Task_AddCallback(GomaPillar_DriveActor13Idle, 0xc80);
 	}
 	return 0;
@@ -527,7 +527,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -546,11 +546,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -559,13 +559,13 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 *GomaPillar_PillarScripts[] = {
-	GomaPillar_PillarScript0,
-	GomaPillar_PillarScript1,
-	GomaPillar_PillarScript2,
+s32 *gGomaPillar_PillarScripts[] = {
+	gGomaPillar_PillarScript0,
+	gGomaPillar_PillarScript1,
+	gGomaPillar_PillarScript2,
 };
 
-s32 GomaPillar_PillarScript0[] = {
+s32 gGomaPillar_PillarScript0[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -573,7 +573,7 @@ s32 GomaPillar_PillarScript0[] = {
 	SC_FREE,
 };
 
-s32 GomaPillar_PillarScript1[] = {
+s32 gGomaPillar_PillarScript1[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -581,7 +581,7 @@ s32 GomaPillar_PillarScript1[] = {
 	SC_FREE,
 };
 
-s32 GomaPillar_PillarScript2[] = {
+s32 gGomaPillar_PillarScript2[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -589,7 +589,7 @@ s32 GomaPillar_PillarScript2[] = {
 	SC_FREE,
 };
 
-struct SceneEntrance GomaPillar_Scripts[] = {
+struct SceneEntrance gGomaPillar_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
 	{ 2, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
@@ -600,7 +600,7 @@ struct SceneEntrance GomaPillar_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaPillar_Messages[] = {
+u32 gGomaPillar_Messages[] = {
 	SCENE_EXITS(27),
 	SCENE_EXIT(1, 28, 2),
 	SCENE_EXIT(2, 26, 1),
@@ -610,7 +610,7 @@ u32 GomaPillar_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct SceneEntrance GomaPillar_Actors[] = {
+struct SceneEntrance gGomaPillar_Actors[] = {
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x148, 0, 0, 0, 104, 16384, 2 },
 	{ 212, CONDITION_ALWAYS, 1, 0, 0, 0x180, 0, 0, 0, 192, 16384, 2 },
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x248, 0, 0, 0, 280, 16384, 2 },
@@ -620,7 +620,7 @@ struct SceneEntrance GomaPillar_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent GomaPillar_Extras[] = {
+struct SceneEvent gGomaPillar_Extras[] = {
 	{ 0x21, 5, CONDITION_ALWAYS, 1 },
 	{ 0x31, 6, CONDITION_ALWAYS, 2 },
 	{ 0x31, 7, CONDITION_ALWAYS, 3 },

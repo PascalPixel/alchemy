@@ -8,7 +8,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 fla
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const u8 *script);
 void BattleFx_EmitRandomParticleFromEmitter(void);
 void Func_080cf350(struct ObjectRuntime *object);
-extern const u8 Data_080effd8[];
+extern const u8 gData_080effd8[];
 
 void Func_080cf3b4(struct ObjectRuntime *object, s32 flags)
 {
@@ -18,7 +18,7 @@ void Func_080cf3b4(struct ObjectRuntime *object, s32 flags)
         owner = ObjectTable_Get(EventRuntime_GetControlledOwner());
         if (flags & 1) {
             ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-            ObjectDispatch_InitializeFar(object, Data_080effd8);
+            ObjectDispatch_InitializeFar(object, gData_080effd8);
             object->velocityY = 0x20000;
             object->gravity = 0x4000;
             object->update = BattleFx_EmitRandomParticleFromEmitter;

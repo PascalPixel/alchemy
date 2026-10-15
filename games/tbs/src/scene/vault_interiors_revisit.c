@@ -28,7 +28,7 @@
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -38,12 +38,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 u8 *SceneData_GetPreparedActors(void)
 {
-	u8 *slot = (u8 *)Placement_Actors;
+	u8 *slot = (u8 *)gPlacement_Actors;
 
 	FieldScene_PrepareActors(slot);
 	return slot;
@@ -278,7 +278,7 @@ static void EV18_PSYNERGY(void)
 
 u8 *SceneData_GetEffectTable(void)
 {
-	return (u8 *)Placement_Effects;
+	return (u8 *)gPlacement_Effects;
 }
 
 s32 FieldScene_InitSceneStateByStep(void)
@@ -310,7 +310,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_itemobj.h"
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 5, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0 },
 	{ 6, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0 },
@@ -323,7 +323,7 @@ struct SceneEntrance Placement_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(24),
 	SCENE_EXIT(5, 23, 5),
 	SCENE_EXIT(6, 23, 6),
@@ -336,7 +336,7 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Placement_Actors[] = {
+struct ScenePlacement gPlacement_Actors[] = {
 	{ 0x6c, 0x0, ACTOR_STAND,
 		PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, 0x0, 3,
@@ -372,7 +372,7 @@ struct ScenePlacement Placement_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Placement_Effects[] = {
+struct SceneEvent gPlacement_Effects[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 7 },

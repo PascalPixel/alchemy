@@ -50,7 +50,7 @@ struct PalaceSceneRecord
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -60,7 +60,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -879,10 +879,10 @@ accepted:
 	Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
 	Engine_ActorSetAnimationAndWait(19, 3);
 	Engine_EventWait(20);
-	FieldObject_SetTargetAndCallback(0, 0x10013, Palace_FacingActions);
-	FieldObject_SetTargetAndCallback(1, 0x10013, Palace_FacingActions);
-	FieldObject_SetTargetAndCallback(2, 0x10013, Palace_FacingActions);
-	FieldObject_SetTargetAndCallback(3, 0x10013, Palace_FacingActions);
+	FieldObject_SetTargetAndCallback(0, 0x10013, gPalace_FacingActions);
+	FieldObject_SetTargetAndCallback(1, 0x10013, gPalace_FacingActions);
+	FieldObject_SetTargetAndCallback(2, 0x10013, gPalace_FacingActions);
+	FieldObject_SetTargetAndCallback(3, 0x10013, gPalace_FacingActions);
 	Actor_SetSpeed(19, 0x9999, 0x4ccc);
 	Actor_WalkToAndWait(19, 852, 646);
 	Actor_WalkToAndWait(19, 852, 666);
@@ -898,7 +898,7 @@ accepted:
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimationAndWait(IVAN, 3);
-	FieldObject_SetTargetAndCallback(19, 0x10000, Palace_FacingActions);
+	FieldObject_SetTargetAndCallback(19, 0x10000, gPalace_FacingActions);
 	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
@@ -1053,7 +1053,7 @@ static void RunEventScript02(void)
 	}
 
 	Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
-	Engine_ActorEnableActionCallback(19, Palace_PacingActions);
+	Engine_ActorEnableActionCallback(19, gPalace_PacingActions);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
 	actor = Object_GetById(0);
@@ -1272,7 +1272,7 @@ static void RunEventScript02(void)
 	Actor_SetPosition(MIA, 0, 0);
 	Engine_EventWait(20);
 	Actor_FaceDirection(18, 0x5000, 0);
-	FieldObject_SetTargetAndCallback(0, 0x10013, Palace_FacingActions);
+	FieldObject_SetTargetAndCallback(0, 0x10013, gPalace_FacingActions);
 	Actor_WalkToAndWait(19, 852, 646);
 	Actor_WalkToAndWait(19, 852, 666);
 	Actor_WalkToAndWait(19, 864, 672);
@@ -1353,12 +1353,12 @@ static void McCoyPalace_RunActorRowScene(void)
 	Engine_EventEnd();
 }
 
-s32 Palace_FacingActions[] = {
+s32 gPalace_FacingActions[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Palace_PacingActions[] = {
+s32 gPalace_PacingActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(842), 0, PIXELS(696)),
 	SC_SYNC,
@@ -1372,7 +1372,7 @@ s32 Palace_PacingActions[] = {
 	SC_END,
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, 32, 496, 480, 856, 0 },
 	{ 2, CONDITION_ALWAYS, 120, 0, 792, FACING_EAST, 0, 32, 496, 480, 856, 0 },
@@ -1406,7 +1406,7 @@ struct SceneEntrance Placement_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(33),
 	SCENE_EXIT(1, 34, 2),
 	SCENE_EXIT(2, 33, 14),

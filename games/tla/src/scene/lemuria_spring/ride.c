@@ -16,15 +16,15 @@ struct SpringRide {
     s32 frames;
 };
 
-extern struct SpringRide Data_02001760;
-extern s32 Data_020017b0;
-extern u8 Data_020017c0[];
-extern s32 Data_02001820;
-extern s32 Data_02001824;
-extern s32 Data_02001828;
-extern u8 Data_0200174c[];
-extern u8 Data_02001750[];
-extern u16 Data_02001754[];
+extern struct SpringRide gData_02001760;
+extern s32 gData_020017b0;
+extern u8 gData_020017c0[];
+extern s32 gData_02001820;
+extern s32 gData_02001824;
+extern s32 gData_02001828;
+extern u8 gData_0200174c[];
+extern u8 gData_02001750[];
+extern u16 gData_02001754[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(s32 id, s32 mode);
@@ -38,17 +38,17 @@ void Func_02001408(s32 cue);
 // its task.
 void Func_020010f4(void)
 {
-    struct SpringRide *ride = &Data_02001760;
+    struct SpringRide *ride = &gData_02001760;
     s32 i = 0;
     u8 *xtbl;
     u16 *htbl;
     u8 *rec;
     u8 *ztbl;
 
-    htbl = Data_02001754;
-    ztbl = Data_02001750;
-    xtbl = Data_0200174c;
-    rec = Data_020017c0;
+    htbl = gData_02001754;
+    ztbl = gData_02001750;
+    xtbl = gData_0200174c;
+    rec = gData_020017c0;
 
     /* FAKEMATCH: a goto loop; as ☀️'s do/while its loop-end note keeps CSE from reusing the loop's zero for the ride's stores (differ 31). */
 next:
@@ -87,24 +87,24 @@ s32 Func_02001184(s32 side)
 {
     struct SpringRide *ride;
 
-    ride = &Data_02001760;
+    ride = &gData_02001760;
     ride->trail[0].y = 0;
     ride->trail[1].y = 0;
     ride->trail[2].y = 0;
     ride->trail[3].y = 0;
-    Data_020017b0 = side;
-    Data_02001824 = 0;
+    gData_020017b0 = side;
+    gData_02001824 = 0;
     ride->hold = 0xffff;
-    Data_02001820 = 0;
+    gData_02001820 = 0;
     /* FAKEMATCH: a goto loop; as ☀️'s for loop, loop.c keeps the frame counter's and the party's addresses in registers (differ 64). */
     goto start;
 next:
-    Data_02001820++;
+    gData_02001820++;
 start:
-    if (Data_02001820 == 50)
+    if (gData_02001820 == 50)
         Func_02001408(300);
     /* FAKEMATCH: the volatile read keeps the frame's reload where both paths meet; plain, PRE copies it onto the cue's path (differ 2). */
-    if (*(volatile s32 *)&Data_02001820 == 16) {
+    if (*(volatile s32 *)&gData_02001820 == 16) {
         Object_SetModeById(gPartyState.currentOwner, 39);
         ride->hold = 0;
         ride->velocity.x = 0x14ccc;
@@ -114,7 +114,7 @@ start:
         ride->trail[0].y = 0x100000;
         ride->trail[0].z = 0x980000;
         ride->frames = 300;
-        if (Data_020017b0 == 1) {
+        if (gData_020017b0 == 1) {
             Func_020012e8(Object_GetById(16), 3);
             Func_020012e8(Object_GetById(17), 0);
             Func_020008f0(15, 1);
@@ -129,7 +129,7 @@ start:
         }
     }
     WaitFrames(1);
-    if (Data_02001824 != 1)
+    if (gData_02001824 != 1)
         goto next;
-    return Data_02001828;
+    return gData_02001828;
 }

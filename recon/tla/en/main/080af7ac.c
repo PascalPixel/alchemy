@@ -24,7 +24,7 @@ struct OwnerName {
 };
 
 extern u8 MsgCharacterName[];
-extern s32 Data_080b2340[];
+extern s32 gData_080b2340[];
 
 s32 Inventory_AddItem(s32 owner, s32 item);
 void Inventory_Equip(s32 owner, s32 slot);
@@ -38,7 +38,7 @@ void Owner_InitRecords(void)
     struct OwnerStart *start;
     u16 name_buf[16];
     s32 owner;
-    s32 *remote = Data_080b2340;
+    s32 *remote = gData_080b2340;
     s32 i;
     s32 slot;
     u8 *name;

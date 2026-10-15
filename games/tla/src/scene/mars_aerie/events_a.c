@@ -3,10 +3,10 @@
 const struct SceneEvent *Func_02000164(void)
 {
     if (gPartyState.entrance == 2)
-        return (const struct SceneEvent *)Data_0200644c;
+        return (const struct SceneEvent *)gData_0200644c;
     if ((u16)(gPartyState.entrance - 3) <= 2)
-        return (const struct SceneEvent *)Data_020066bc;
-    return (const struct SceneEvent *)Data_0200626c;
+        return (const struct SceneEvent *)gData_020066bc;
+    return (const struct SceneEvent *)gData_0200626c;
 }
 
 void Func_020001a0(void)

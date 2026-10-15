@@ -267,7 +267,7 @@ Func_080290f4:
 .L_080292e8:
 	.4byte gInput
 .L_080292ec:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_080292f0:
 	.4byte 0x000fffff
 .L_080292f4:

@@ -5,10 +5,10 @@ const u8 *Func_02000374(void)
     s32 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov6a9Room1)
-        return Data_02001358;
+        return gData_02001358;
     if (scene == (s32)&SceneId_Ov6a9Room4)
-        return Data_020013b8;
-    return Data_02001328;
+        return gData_020013b8;
+    return gData_02001328;
 }
 
 s32 Func_020003b4(u32 layer, s32 x, s32 y)

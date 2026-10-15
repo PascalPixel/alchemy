@@ -15,7 +15,7 @@
 
 // フォントの n 番目の文字
 #define FONT_GLYPH(n) \
-	((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) + (const u8 *)UiText_Glyphs))
+	((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs))
 
 //--------------------------------------------------------------------------
 // 空白は 4 ドット、0xff 以下の文字はフォントの幅、それより上は 10 ドット

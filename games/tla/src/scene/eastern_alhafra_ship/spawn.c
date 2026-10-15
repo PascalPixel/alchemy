@@ -16,7 +16,7 @@ struct Actor020003e8 {
     s16 unk5e;
 };
 
-extern const u8 Data_02003720[];
+extern const u8 gData_02003720[];
 
 struct Actor020003e8 *Func_02003110(s32 type, s32 x, s32 y, s32 z);
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
@@ -31,7 +31,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth)
     if (object != 0) {
         sprite = object->sprite;
         Func_02003100(object, 1);
-        Func_02003108(object, Data_02003720);
+        Func_02003108(object, gData_02003720);
         object->motionFlags = 0;
         /* FAKEMATCH: the empty asm ends the scheduling block: the native reads the fifth argument from the stack before it loads the zero for nextFrame (ldr r3, [sp, #16]; ldr r1, =0), and without it the zero comes first (differ 2; a signed or unsigned field measures the same). */
         __asm__("");

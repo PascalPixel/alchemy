@@ -70,7 +70,7 @@ s32 GetXianInitialState(void)
 
 s32 GetXianMessageData(void)
 {
-	return (s32)FuchinTemple_XianMessages;
+	return (s32)gFuchinTemple_XianMessages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -405,7 +405,7 @@ static void EV12_TALK(void)
 
 	Object_GetById(12)->paused = 0;
 
-	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
 	Engine_EventEnd();
 }
 
@@ -809,7 +809,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 128 << 6, 0);
 	Actor_FaceDirection(16, 192 << 8, 20);
 	Event_PlayCue(158);
-	Map_AnimateCells(FuchinTemple_CellStepsB, 78, 13);
+	Map_AnimateCells(gFuchinTemple_CellStepsB, 78, 13);
 	Engine_ActorRunRepeatedMotion(16, 2);
 	Engine_EventWait(20);
 	Actor_SetSpeed(16, 192 << 9, 192 << 8);
@@ -849,7 +849,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(18, 160 << 7, 0);
 	Engine_ActorWaitForMove(17);
 	Event_PlayCue(159);
-	Map_AnimateCells(FuchinTemple_CellStepsC, 78, 13);
+	Map_AnimateCells(gFuchinTemple_CellStepsC, 78, 13);
 	Event_ShowMessageAndWait(18, 0, 20);
 	Actor_FaceActor(9, 17, 0);
 	Actor_FaceActor(10, 17, 0);
@@ -1038,7 +1038,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(11, 128 << 8, 20);
 	Engine_ActorSetAnimation(10, 5);
 	Engine_ActorSetAnimation(11, 5);
-	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
 }
 
 static void EV18_TALK(void)
@@ -1243,7 +1243,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	Engine_ActorSetAnimation(10, 5);
 	Engine_ActorSetAnimation(11, 5);
 	Engine_ActorWaitForMove(12);
-	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
 	Actor_SetSpeed(15, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(15, 216, 168);
 	Actor_WalkToAndWait(15, 232, 168);
@@ -1288,7 +1288,7 @@ static void EV03_TOUCH(void)
 	else
 	{
 		Event_PlayCue(158);
-		Map_AnimateCells(FuchinTemple_CellStepsB, 78, 13);
+		Map_AnimateCells(gFuchinTemple_CellStepsB, 78, 13);
 		Actor_SetSpeed(0, 0x8000, 0x4000);
 		Actor_WalkToAndWait(0, 306, 248);
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 216);
@@ -1432,7 +1432,7 @@ static void EV02_TOUCH(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(188);
-	Map_AnimateCells(FuchinTemple_CellStepsA, 77, 8);
+	Map_AnimateCells(gFuchinTemple_CellStepsA, 77, 8);
 	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2230,7 +2230,7 @@ static void FieldScene_SpawnEightShots(void)
 	record = Object_GetById(8);
 	descriptor.priority = 1;
 	descriptor.type = 0x0119;
-	descriptor.script = FuchinTemple_ShotScript;
+	descriptor.script = gFuchinTemple_ShotScript;
 	descriptor.targetScaleX = 224 << 10;
 	descriptor.targetScaleY = 192 << 9;
 	for (i = 0; i <= 7; i++)
@@ -2339,7 +2339,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 FuchinTemple_ActorTwelveScript[] = {
+s32 gFuchinTemple_ActorTwelveScript[] = {
 	SC_ARG(0),
 	SC_SET(SW_GRAVITY, 0x9999),
 	SC_LABEL(1),
@@ -2377,15 +2377,15 @@ s32 gFuchinTemplePlacement1[] = {
 	SC_END,
 };
 
-u16 FuchinTemple_CellStepsA[] = {
+u16 gFuchinTemple_CellStepsA[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(63, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 FuchinTemple_CellStepsB[] = {
+u16 gFuchinTemple_CellStepsB[] = {
 	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(64, 19, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 FuchinTemple_CellStepsC[] = {
+u16 gFuchinTemple_CellStepsC[] = {
 	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(60, 19, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
@@ -2407,7 +2407,7 @@ struct SceneEntrance gFuchinTempleEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 FuchinTemple_XianMessages[] = {
+u32 gFuchinTemple_XianMessages[] = {
 	SCENE_EXITS(60),
 	SCENE_EXIT(1, 2, 12),
 	SCENE_EXIT(2, 61, 1),
@@ -2445,7 +2445,7 @@ struct ScenePlacement gFuchinTemplePlacements[] = {
 		PIXELS(120), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x83, 0x0, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(152), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x83, 0x0, (s32)FuchinTemple_ActorTwelveScript,
+	{ 0x83, 0x0, (s32)gFuchinTemple_ActorTwelveScript,
 		PIXELS(120), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x83, 0x0, ACTOR_STAND,
 		PIXELS(176), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -2625,7 +2625,7 @@ struct SceneEvent gFuchinTempleEventsEntrance3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 FuchinTemple_ShotScript[] = {
+s32 gFuchinTemple_ShotScript[] = {
 	SC_SET(SW_FACING, FACING_NORTH),
 	SC_WAIT(44),
 	SC_WAIT(1),

@@ -15,8 +15,8 @@ struct AnemosInnerSanctumPicture {
     u16 b;
 };
 
-extern const s16 Data_020043e4[];
-extern const struct AnemosInnerSanctumPicture Data_02004410[];
+extern const s16 gData_020043e4[];
+extern const struct AnemosInnerSanctumPicture gData_02004410[];
 
 void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -61,13 +61,13 @@ loop:
     Func_020034b8(158);
     if (gPartyState.scene == (s32)&SceneId_Ov6B0Room1)
     {
-        Func_02003320_(Data_020043e4, 33, 7);
+        Func_02003320_(gData_020043e4, 33, 7);
     }
     else
     {
         s32 index = work->value / 2 - 1;
 
-        Func_02003320_(Data_02004410[index].data, Data_02004410[index].a, Data_02004410[index].b);
+        Func_02003320_(gData_02004410[index].data, gData_02004410[index].a, gData_02004410[index].b);
     }
     Object_SetModeById(gPartyState.currentOwner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);

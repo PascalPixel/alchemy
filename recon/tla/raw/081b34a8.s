@@ -1021,7 +1021,7 @@ ReelGame_Run:
 .L_081b3c98:
 	.4byte 0x007fffff
 .L_081b3c9c:
-	.4byte ReelGame_SparkCellOffsets
+	.4byte gReelGame_SparkCellOffsets
 .L_081b3ca0:
 	mov r3, r11
 	mov r0, r8

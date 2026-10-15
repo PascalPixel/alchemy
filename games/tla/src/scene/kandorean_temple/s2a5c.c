@@ -13,10 +13,10 @@ void Func_02001804(void);
 void Func_02001b50(void);
 void Func_02003684(void);
 void Func_020037e0(void);
-extern s32 Data_020062a0;
-extern s32 Data_020062a4;
-extern u16 Data_020062a8;
-extern u16 Data_020062aa;
+extern s32 gData_020062a0;
+extern s32 gData_020062a4;
+extern u16 gData_020062a8;
+extern u16 gData_020062aa;
 
 void Func_0200290c(void)
 {
@@ -27,7 +27,7 @@ void Func_0200290c(void)
     Object_SetModeById(9, 4);
     Object_SetModeById(10, 4);
     Object_SetModeById(11, 4);
-    Func_020053b8(Data_020054dc);
+    Func_020053b8(gData_020054dc);
     {
         /* FAKEMATCH: the native loads the blend value from the pool before it starts the register address; the plain store starts the address first (one reordered row). Only a halfword register loads from the pool and a u16 local is widened, so the value is pinned to the r3 it already takes, as in overlay 6a8's s2614.c. Measured against it: one-pass blocks around the two stores, a value temporary, struct and plain pointer forms (differ 2), Io_Write16 (differ 26). */
         register u16 alpha __asm__("r3") = 0xc08;
@@ -47,10 +47,10 @@ void Func_0200290c(void)
     Func_02000b78(14);
     Func_02000bac(15);
     Func_02000bac(16);
-    Data_020062a0 = 0;
-    Data_020062a4 = 0;
-    Data_020062a8 = 0;
-    Data_020062aa = 0;
+    gData_020062a0 = 0;
+    gData_020062a4 = 0;
+    gData_020062a8 = 0;
+    gData_020062aa = 0;
     if (GameFlag_Test(0x109) == 0) {
         if (gPartyState.entrance == 5)
             Func_02003684();

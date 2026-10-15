@@ -11,7 +11,7 @@
 
 void *UnitGet(s32 owner);
 void UiWork_ClearValueNameTablesFar(void);
-extern u8 Data_03001ae8[];
+extern u8 gData_03001ae8[];
 s32 BattlePres_ShowDefendMessage(s16 *);
 s32 Func_0811ca54(s16 *);
 s32 Func_0811c710(struct BattleActionRecord *);

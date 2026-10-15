@@ -7,13 +7,13 @@ extern char SceneId_Ov65FRoom3;
 extern char SceneId_Ov65FRoom4;
 extern char SceneId_Ov65FRoom5;
 
-extern u32 Data_020056dc[];
-extern u32 Data_020056f4[];
-extern s16 Data_02005874[];
-extern u32 Data_020059dc[];
-extern s32 Data_02005a54[];
-extern u32 Data_02005b5c[];
-extern s32 Data_02005c1c[];
+extern u32 gData_020056dc[];
+extern u32 gData_020056f4[];
+extern s16 gData_02005874[];
+extern u32 gData_020059dc[];
+extern s32 gData_02005a54[];
+extern u32 gData_02005b5c[];
+extern s32 gData_02005c1c[];
 
 struct GarohPicture {
     const void *data;
@@ -21,7 +21,7 @@ struct GarohPicture {
     u16 b;
 };
 
-extern const struct GarohPicture Data_02005de0[];
+extern const struct GarohPicture gData_02005de0[];
 
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -37,18 +37,18 @@ const void *Func_02000440(void)
 
     if (scene == (s32)&SceneId_Ov65FRoom1) {
         if (Flag_IsSet(0x91b))
-            return Data_02005874;
-        return Data_020056f4;
+            return gData_02005874;
+        return gData_020056f4;
     }
     if (scene == (s32)&SceneId_Ov65FRoom2)
-        return Data_02005b5c;
+        return gData_02005b5c;
     if (scene == (s32)&SceneId_Ov65FRoom3)
-        return Data_020059dc;
+        return gData_020059dc;
     if (scene == (s32)&SceneId_Ov65FRoom4)
-        return Data_02005a54;
+        return gData_02005a54;
     if (scene == (s32)&SceneId_Ov65FRoom5)
-        return Data_02005c1c;
-    return Data_020056dc;
+        return gData_02005c1c;
+    return gData_020056dc;
 }
 
 static __inline__ void Func_0200517c_(const void *data, s32 a, s32 b)
@@ -99,7 +99,7 @@ loop:
         Func_02005394(158);
         index--;
     } while (0);
-    Func_0200517c_(Data_02005de0[index].data, Data_02005de0[index].a, Data_02005de0[index].b);
+    Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a, gData_02005de0[index].b);
     Object_SetModeById(gPartyState.currentOwner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     {

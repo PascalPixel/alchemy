@@ -6,7 +6,7 @@
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
 
-extern const u8 Data_02003c58[];
+extern const u8 gData_02003c58[];
 
 void Func_02003990(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z);
 void Func_02003a90(s32 actor, s32 angle);
@@ -153,7 +153,7 @@ void Func_02001d24(void)
     ShrineOfTheSeaGod_ObjModeWait(13, 3);
     ShrineOfTheSeaGod_ObjSpeed(12, 0x13333, 0x9999);
     ShrineOfTheSeaGod_ObjSpeed(13, 0x13333, 0x9999);
-    callback = Data_02003c58;
+    callback = gData_02003c58;
     ObjectMotion_EnableActionAndSetCallback(12, callback);
     ShrineOfTheSeaGod_Wait(10);
     Object_SetActionCallbackAndRefreshById(13, callback);

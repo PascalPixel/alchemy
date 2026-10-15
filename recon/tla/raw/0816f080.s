@@ -523,7 +523,7 @@ Func_0816f080:
 .L_0816f4a0:
 	.4byte 0x000000d8
 .L_0816f4a4:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0816f4a8:
 	.4byte Data_08198bea
 .L_0816f4ac:
@@ -537,7 +537,7 @@ Func_0816f080:
 .L_0816f4bc:
 	.4byte 0xffffe000
 .L_0816f4c0:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0816f4c4:
 	.4byte 0xffd00000
 .L_0816f4c8:

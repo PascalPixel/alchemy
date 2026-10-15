@@ -26,8 +26,8 @@
 	.ifdef TLA_EDITION_IT
 	.set PROMPT_IT, 1
 	.endif
-	.global Title_PromptTiles
-Title_PromptTiles:
+	.global gTitle_PromptTiles
+gTitle_PromptTiles:
 	.ifdef PROMPT_DE
 	.incbin "games/common/src/graphics/title/prompt_de.4bpp32x8.plz"
 	.else

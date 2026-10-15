@@ -38,6 +38,6 @@ void Func_020015c8(void)
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02002bf0(object, 0);
         Func_02002c18(object, 0x3280000, 0x80000, 0x8c0000);
-        Func_02002bf8(object, Data_02003ef8);
+        Func_02002bf8(object, gData_02003ef8);
     }
 }

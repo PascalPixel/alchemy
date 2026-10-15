@@ -7,14 +7,14 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 Data_02005af4[];
-extern const u8 Data_02005b0c[];
-extern const u8 Data_02005b54[];
-extern const u8 Data_02005bcc[];
-extern const u8 Data_02005d4c[];
-extern const u8 Data_02005eb4[];
-extern const u8 Data_02005f74[];
-extern const u8 Data_020060c4[];
+extern const u8 gData_02005af4[];
+extern const u8 gData_02005b0c[];
+extern const u8 gData_02005b54[];
+extern const u8 gData_02005bcc[];
+extern const u8 gData_02005d4c[];
+extern const u8 gData_02005eb4[];
+extern const u8 gData_02005f74[];
+extern const u8 gData_020060c4[];
 
 void Func_02000414(s32 id);
 void Func_02000798(void);
@@ -37,20 +37,20 @@ s32 Func_02000070(void)
 const u8 *Func_02000080(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom1)
-        return Data_02005b0c;
+        return gData_02005b0c;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom2)
-        return Data_02005b54;
+        return gData_02005b54;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom3)
-        return Data_02005bcc;
+        return gData_02005bcc;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom4)
-        return Data_02005d4c;
+        return gData_02005d4c;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom5)
-        return Data_02005eb4;
+        return gData_02005eb4;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom6)
-        return Data_02005f74;
+        return gData_02005f74;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom7)
-        return Data_020060c4;
-    return Data_02005af4;
+        return gData_020060c4;
+    return gData_02005af4;
 }
 
 void Func_02000118(void)

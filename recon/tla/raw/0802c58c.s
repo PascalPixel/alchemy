@@ -329,7 +329,7 @@ Func_0802c58c:
 .L_0802c824:
 	.4byte gMapBlocks
 .L_0802c828:
-	.4byte Data_0802ed34
+	.4byte gData_0802ed34
 .L_0802c82c:
 	.4byte .L_0802c6ec
 .L_0802c830:
@@ -337,24 +337,24 @@ Func_0802c58c:
 .L_0802c834:
 	.4byte gMapCollision
 .L_0802c838:
-	.4byte Data_02038000
+	.4byte gData_02038000
 .L_0802c83c:
 	.4byte 0x06008000
 .L_0802c840:
-	.4byte Data_0203a000
+	.4byte gData_0203a000
 .L_0802c844:
 	.4byte 0x0600a000
 .L_0802c848:
-	.4byte Data_0203c000
+	.4byte gData_0203c000
 .L_0802c84c:
 	.4byte 0x0600c000
 .L_0802c850:
-	.4byte Data_0203e000
+	.4byte gData_0203e000
 .L_0802c854:
 	.4byte 0x0600e000
 .L_0802c858:
 	.4byte 0x84000800
 .L_0802c85c:
-	.4byte Data_02028000
+	.4byte gData_02028000
 .L_0802c860:
 	.4byte gWorldMapWork

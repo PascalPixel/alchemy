@@ -88,8 +88,8 @@ BattleFx_LookupResult:
 .L_080c9fc8:
 	.4byte gPartyState
 .L_080c9fcc:
-	.4byte Data_080eedbc
+	.4byte gData_080eedbc
 .L_080c9fd0:
-	.4byte Data_080eef34
+	.4byte gData_080eef34
 .L_080c9fd4:
 	.4byte 0xffff0000

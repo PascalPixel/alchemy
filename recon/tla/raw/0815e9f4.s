@@ -746,7 +746,7 @@ Func_0815e9f4:
 .L_0815efec:
 	.4byte gMapCellBuffer
 .L_0815eff0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0815eff4:
 	.4byte Data_08197424
 .L_0815eff8:

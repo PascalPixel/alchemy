@@ -26,7 +26,7 @@ struct DailaMapWork {
     u8 high17 : 4;
 };
 
-extern const u8 Data_02000e04[];
+extern const u8 gData_02000e04[];
 
 struct DailaStartActor *Object_GetById(s32 id);
 void Object_SetModeById(s32 actor, s32 mode);
@@ -81,7 +81,7 @@ s32 DailaInteriors_Start(void)
             Func_02000d4c(12, 0, 0);
             map->mode17 = 1;
         } else {
-            Func_02000dc4(Data_02000e04);
+            Func_02000dc4(gData_02000e04);
         }
         Engine_EventEnd();
     }

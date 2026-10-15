@@ -8,11 +8,11 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_02003590;
-extern s32 Data_02003594;
-extern u16 Data_020035bc[];
-extern u16 Data_020035dc[];
-extern u16 Data_020035e0[];
+extern s32 gData_02003590;
+extern s32 gData_02003594;
+extern u16 gData_020035bc[];
+extern u16 gData_020035dc[];
+extern u16 gData_020035e0[];
 
 s32 GameFlag_Test();
 void Scheduler_AddOrUpdateCallback();
@@ -24,17 +24,17 @@ void Func_02001168(void);
 
 void Func_02001224(s32 mode)
 {
-    Data_02003594 = 1;
+    gData_02003594 = 1;
     if (mode != 2) {
-        Iwram_CopyWords(Data_020035bc, (void *)0x05000180, 32);
-        Iwram_CopyWords(Data_020035dc, (void *)0x050001a0, 32);
+        Iwram_CopyWords(gData_020035bc, (void *)0x05000180, 32);
+        Iwram_CopyWords(gData_020035dc, (void *)0x050001a0, 32);
     }
     if (GameFlag_Test(0xa00) || mode == 1) {
         s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address in r3 */
 
-        Data_02003590 = zero;
+        gData_02003590 = zero;
         Scheduler_AddOrUpdateCallback(Func_02001168, 1152);
     } else {
-        Dma_Set(Data_020035e0, (void *)0x05000184, 0x84000002, REG_DMA3);
+        Dma_Set(gData_020035e0, (void *)0x05000184, 0x84000002, REG_DMA3);
     }
 }

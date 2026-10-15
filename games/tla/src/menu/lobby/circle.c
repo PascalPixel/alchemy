@@ -15,7 +15,7 @@ struct LobbyEventWork {
     s16 raisedTrigger;
 };
 
-extern s32 Data_020022bc;
+extern s32 gData_020022bc;
 
 void Func_02001a14(void);
 void Func_02001a1c(void);
@@ -36,8 +36,8 @@ s32 Func_020002d8(void)
     if (set != 0) {
         return set;
     }
-    if (++Data_020022bc == 300) {
-        Data_020022bc = 0;
+    if (++gData_020022bc == 300) {
+        gData_020022bc = 0;
         GameFlag_ClearBit(0x200);
     }
     set = Flag_Test(0x200);

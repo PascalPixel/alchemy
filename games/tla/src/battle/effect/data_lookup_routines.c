@@ -33,7 +33,7 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
     s32 row;
 
     row = arg0 * 14;
-    table = Encounter_EnemyGroupTable;
+    table = gEncounter_EnemyGroupTable;
     /* FAKEMATCH: ⚓️ loads the table between the row and the column */
     asm volatile("" : "+l"(table), "+l"(row));
     row += arg1;
@@ -44,7 +44,7 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 
 u16 BattleFx_GetPhaseResult(s32 phase)
 {
-    u16 *entry = (u16 *)(Encounter_AreaEntryTable + phase * 4);
+    u16 *entry = (u16 *)(gEncounter_AreaEntryTable + phase * 4);
 
     BattleFx_GetWeightedResult(entry[0], entry[1]);
 }
@@ -66,7 +66,7 @@ void Scene_ResolveInteractionResult(void)
     s16 scene = gPartyState.scene;
     s16 entrance = gPartyState.entrance;
     s16 group = gPartyState.sceneGroup;
-    const struct SceneCueRule *rule = Scene_CueRuleTable;
+    const struct SceneCueRule *rule = gScene_CueRuleTable;
 
     for (; rule->id != -1; rule++) {
         if (rule->byScene) {
@@ -100,13 +100,13 @@ struct SceneAreaNameRule {
     s32 areaNameIndex;
 };
 
-extern const struct SceneAreaNameRule Scene_AreaNameRules[];
+extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-    const struct SceneAreaNameRule *entry = Scene_AreaNameRules;
+    const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
     s32 areaNameIndex = 0;
     s32 group = BattleFx_GetResourceGroup(scene);
 

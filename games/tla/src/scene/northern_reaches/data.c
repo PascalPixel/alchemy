@@ -6,9 +6,9 @@ void Func_020000a8(void);
 void Func_02000108(void);
 void Func_020001d8(void);
 
-extern s32 Data_02000b80[];
+extern s32 gData_02000b80[];
 
-s32 Data_02000b80[] = {
+s32 gData_02000b80[] = {
 	46,
 	(s32)Func_02000038,
 	39,
@@ -31,7 +31,7 @@ u32 gSceneExits[] = {
 };
 
 struct ScenePlacement gScenePlacements[] = {
-	{8, CONDITION_ALWAYS, (s32)Data_02000b80, PIXELS(120), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+	{8, CONDITION_ALWAYS, (s32)gData_02000b80, PIXELS(120), 0, PIXELS(280), FACING_SOUTH, 2, 0},
 	{263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
 	{285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
 	{56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

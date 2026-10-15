@@ -26,9 +26,9 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlastSheet;
-extern u8 Data_08198a92[];
-extern u8 Data_08198a98[];
-extern u16 Data_08197410[];
+extern u8 gData_08198a92[];
+extern u8 gData_08198a98[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -101,7 +101,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
 
             speed = (Random16() & 0x1ff) + 32;
             angle = Random16() & 0xffff;
-            spark->x = (Data_08198a92[col + effect->side * 3] + baseX) << 16;
+            spark->x = (gData_08198a92[col + effect->side * 3] + baseX) << 16;
             spark->y = 88 << 16;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
             spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -172,7 +172,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
                 work->shakeFrames = 12;
             if (frame >= start) {
                 if (frame < start + 2)
-                    blit[0](canvas, work->sheet + FLASH_SHEET, Data_08198a92[col + effect->side * 3] + baseX - 16, 56, 32, 64);
+                    blit[0](canvas, work->sheet + FLASH_SHEET, gData_08198a92[col + effect->side * 3] + baseX - 16, 56, 32, 64);
                 i = 0;
                 do {
                     struct EffectStep *flash = &work->particles[col * 16 + i];
@@ -181,10 +181,10 @@ void Func_081665a4(struct BattleEffectArgument *effect)
                     s32 y;
 
                     y = HI(flash->y);
-                    x = HI(flash->x) + Data_08198a92[col + effect->side * 3] + baseX;
+                    x = HI(flash->x) + gData_08198a92[col + effect->side * 3] + baseX;
                     life = flash->variant;
                     if (life >= 0 && life <= 17)
-                        blit[0](canvas, work->sheet + (Data_08198a98[life / 3] << 11) + FLASH_SHEET, x - 16, y + 56, 32, 64);
+                        blit[0](canvas, work->sheet + (gData_08198a98[life / 3] << 11) + FLASH_SHEET, x - 16, y + 56, 32, 64);
                     life = flash->variant;
                     flash->variant = life > 0 ? life - 1 : -1;
                     i++;
@@ -216,7 +216,7 @@ void Func_081665a4(struct BattleEffectArgument *effect)
 
                                 size = spark->variant / 5 + 1;
                                 lane = i & 1;
-                                cel = sheet + Data_08197410[size - 1];
+                                cel = sheet + gData_08197410[size - 1];
                                 px -= size / 2;
                                 py -= size;
                                 blit[lane](canvas, cel, px, py, size, size * 2);

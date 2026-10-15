@@ -23,7 +23,7 @@ void Func_02001684(void)
             object->motionFlags = 2;
             object->terrainHeight = 0xffc00000;
             object->gravity = 0x7333;
-            Func_02002800(object, Data_02002a6c);
+            Func_02002800(object, gData_02002a6c);
             ObjectDispatch_SetSingleChildFlags(object, 0);
         }
     }
@@ -45,7 +45,7 @@ void Func_020016fc(void)
             object->motionFlags = 2;
             object->terrainHeight = 0xffc00000;
             object->gravity = 0x7333;
-            Func_02002800(object, Data_02002a6c);
+            Func_02002800(object, gData_02002a6c);
             ObjectDispatch_SetSingleChildFlags(object, 0);
         }
     }

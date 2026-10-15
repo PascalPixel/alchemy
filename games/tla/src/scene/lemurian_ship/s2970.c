@@ -9,7 +9,7 @@ void Func_02002970(void)
     struct LemurianShipObject *object;
 
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-    Func_02002dc8(Data_0200304e);
+    Func_02002dc8(gData_0200304e);
     if (LemurianShip_FlagCheck(0x982))
     {
         LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);
@@ -57,7 +57,7 @@ void Func_02002970(void)
             Object_SetModeById(9, 2);
     }
     LemurianShip_WaitFrames(1);
-    Func_02002db8(Data_02003014);
+    Func_02002db8(gData_02003014);
     LemurianShip_TaskAdd(Func_02001464, 0x480);
     if (!LemurianShip_FlagCheck(0x210))
         Object_SetPartAttribute(Object_GetById(10), 15);

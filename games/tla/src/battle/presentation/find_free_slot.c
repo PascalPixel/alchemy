@@ -43,15 +43,15 @@ s32 Resource_FindFreeSlot(s32 key)
     u32 value;
 
     for (index = 0;; index++) {
-        entry = Resource_SlotAssignments[index];
+        entry = gResource_SlotAssignments[index];
         /* FAKEMATCH: the plain order builds the 0x1ff mask before the load. */
         __asm__("");
         if (key == (entry & 0x1ff)) {
 #ifdef MODERN
-            value = Resource_SlotAssignments[index];
+            value = gResource_SlotAssignments[index];
 #else
             /* FAKEMATCH: rereads the entry as [table, index]; cse otherwise swaps the operands */
-            asm("ldrh %0, [%1, %2]" : "=r"(value) : "r"(Resource_SlotAssignments), "r"(index * 2));
+            asm("ldrh %0, [%1, %2]" : "=r"(value) : "r"(gResource_SlotAssignments), "r"(index * 2));
 #endif
             result = value >> 9;
             goto done;
@@ -64,14 +64,14 @@ done:
     return result;
 }
 
-extern const u16 Data_081287d4[];
-extern const u16 Data_081287e2[];
-extern const u16 Data_081287f0[];
-extern const u16 Data_081287fe[];
-extern const u16 Data_0812880c[];
-extern const u16 Data_0812881a[];
-extern const u16 Data_08128828[];
-extern const u16 Data_08128836[];
+extern const u16 gData_081287d4[];
+extern const u16 gData_081287e2[];
+extern const u16 gData_081287f0[];
+extern const u16 gData_081287fe[];
+extern const u16 gData_0812880c[];
+extern const u16 gData_0812881a[];
+extern const u16 gData_08128828[];
+extern const u16 gData_08128836[];
 
 s32 Inventory_FindEquippedFar(s32 owner, s32 kind);
 
@@ -94,28 +94,28 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner)
         switch (unit->classId)
         {
         case ISAAC:
-            result = Data_081287d4[index];
+            result = gData_081287d4[index];
             break;
         case GARET:
-            result = Data_081287e2[index];
+            result = gData_081287e2[index];
             break;
         case IVAN:
-            result = Data_081287f0[index];
+            result = gData_081287f0[index];
             break;
         case MIA:
-            result = Data_081287fe[index];
+            result = gData_081287fe[index];
             break;
         case JENNA:
-            result = Data_0812880c[index];
+            result = gData_0812880c[index];
             break;
         case FELIX:
-            result = Data_0812881a[index];
+            result = gData_0812881a[index];
             break;
         case SHEBA:
-            result = Data_08128828[index];
+            result = gData_08128828[index];
             break;
         case PIERS:
-            result = Data_08128836[index];
+            result = gData_08128836[index];
             break;
         }
     }

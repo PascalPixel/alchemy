@@ -40,12 +40,12 @@ struct ScaledSprite;
 extern char ResourceId_DesertBackdrop;
 extern char ResourceId_Data134;
 extern char ResourceId_BlastSheet;
-extern struct FxScale Data_08196e6c;
-extern u8 Data_08198a64[];
-extern u8 Data_08198a6d[];
-extern u16 Data_08198a76[];
-extern u16 Data_08198a84[];
-extern u16 Data_08197410[];
+extern struct FxScale gData_08196e6c;
+extern u8 gData_08198a64[];
+extern u8 gData_08198a6d[];
+extern u16 gData_08198a76[];
+extern u16 gData_08198a84[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_0813ba50(void);
@@ -152,7 +152,7 @@ void Func_08165ab4(struct BattleEffectArgument *effect)
             Audio_PlayCue(156);
         if (frame == 260)
             Audio_PlayCue(145);
-        scale = Data_08196e6c;
+        scale = gData_08196e6c;
         if (frame >= 96 && frame <= 251)
             work->shakeFrames = 1;
         else if (frame >= 260 && frame <= 263)
@@ -160,8 +160,8 @@ void Func_08165ab4(struct BattleEffectArgument *effect)
         position[3] = 0;
         position[1] = 0;
         for (i = 0; i != 7; i++) {
-            position[0] = (Data_08198a64[i] << 16) + base.x - 0x200000;
-            position[2] = (Data_08198a6d[i] << 16) + base.y - 0x200000;
+            position[0] = (gData_08198a64[i] << 16) + base.x - 0x200000;
+            position[2] = (gData_08198a6d[i] << 16) + base.y - 0x200000;
             Render_ApplyProjectedPlacementFar(work->objects[i], position, &scale.x, 0);
         }
         if (frame <= 90) {
@@ -241,10 +241,10 @@ void Func_08165ab4(struct BattleEffectArgument *effect)
                 if (puff->variant >= 0 && puff->variant <= 23) {
                     s32 cell = puff->variant / 6 + 3;
 
-                    draw[0](canvas, work->sheet + Data_08198a76[cell],
-                        HI(puff->x) - Data_08198a84[cell] / 2,
-                        HI(puff->y) - Data_08198a84[cell] / 2,
-                        Data_08198a84[cell], Data_08198a84[cell]);
+                    draw[0](canvas, work->sheet + gData_08198a76[cell],
+                        HI(puff->x) - gData_08198a84[cell] / 2,
+                        HI(puff->y) - gData_08198a84[cell] / 2,
+                        gData_08198a84[cell], gData_08198a84[cell]);
                 }
                 BattleFxKernels_IntegrateVector2(puff, 60, -0x4000);
                 puff->variant++;
@@ -279,7 +279,7 @@ void Func_08165ab4(struct BattleEffectArgument *effect)
             if (spark->variant >= 0) {
                 s32 size = (spark->variant >> 3) + 1;
 
-                draw[i & 1](canvas, sheet + Data_08197410[size - 1],
+                draw[i & 1](canvas, sheet + gData_08197410[size - 1],
                     HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
                 BattleFxKernels_IntegrateVector2(spark, 62, 0x1000);
                 spark->variant--;

@@ -65,7 +65,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object)
             object->y = pos.y;
             object->z = pos.z;
         } else {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, gBattleFx_CommonParticleScript);
         }
     }
 }

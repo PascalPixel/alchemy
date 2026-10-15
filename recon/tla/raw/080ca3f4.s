@@ -81,7 +81,7 @@ Func_080ca3f4:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080ca488:
-	.4byte Party_PairResolveRules
+	.4byte gParty_PairResolveRules
 .L_080ca48c:
 	.4byte gPartyState
 .L_080ca490:

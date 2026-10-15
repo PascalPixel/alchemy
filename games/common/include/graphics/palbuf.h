@@ -45,9 +45,9 @@ LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers, delta
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers, packed, 0x2300);
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page, 0x2a00);
 
-extern u16 Palette_ChannelCurve[32];
-extern u16 Palette_ChannelCurveLight[32];
-extern u16 Palette_ChannelCurveContrast[32];
+extern u16 gPalette_ChannelCurve[32];
+extern u16 gPalette_ChannelCurveLight[32];
+extern u16 gPalette_ChannelCurveContrast[32];
 
 enum PaletteTransform
 {

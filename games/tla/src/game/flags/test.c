@@ -45,7 +45,7 @@ s32 GameFlag_Test(s32 flag)
     index = (u32)flag << 20;
     bit = flag & 7;
     flag = index >> 23;
-    return (GameFlagBytes[flag] >> bit) & 1;
+    return (gGameFlagBytes[flag] >> bit) & 1;
 }
 
 s32 GameFlag_SetBit(s32 flag)
@@ -55,7 +55,7 @@ s32 GameFlag_SetBit(s32 flag)
     u8 *bytes;
 
     bit = flag & 7;
-    bytes = GameFlagBytes;
+    bytes = gGameFlagBytes;
     /* FAKEMATCH: Both ordinary forms load the flag base after mask setup; keep that load first. */
     __asm__("" : : "r"(bit), "r"(bytes));
     mask = 1 << bit;
@@ -71,7 +71,7 @@ void GameFlag_ClearBit(s32 flag)
     u8 *bytes;
 
     bit = flag & 7;
-    bytes = GameFlagBytes;
+    bytes = gGameFlagBytes;
     /* FAKEMATCH: Both ordinary forms load the flag base after mask setup; keep that load first. */
     __asm__("" : : "r"(bit), "r"(bytes));
     mask = 1 << bit;
@@ -87,7 +87,7 @@ u32 GameFlag_Toggle(s32 flag)
     s32 value;
 
     bit = 7;
-    bytes = GameFlagBytes;
+    bytes = gGameFlagBytes;
     /* FAKEMATCH: Without it the flag base loads after the mask is built (differ 2); keep that load before the and. */
     __asm__("" : : "r"(bytes));
     bit &= flag;

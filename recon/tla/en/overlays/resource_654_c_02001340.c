@@ -7,7 +7,7 @@
  * 64). Two pool loads also sit one step later than the native's. */
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 
-extern s32 Data_02004a18[3];
+extern s32 gData_02004a18[3];
 
 void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSeaGodObject *other)
 {
@@ -37,8 +37,8 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSea
     }
     other->y += 0x10000;
     WaitFrames(20);
-    Data_02004a18[0] = other->x - object->x;
-    Data_02004a18[1] = other->y - object->y;
-    Data_02004a18[2] = other->z - object->z;
+    gData_02004a18[0] = other->x - object->x;
+    gData_02004a18[1] = other->y - object->y;
+    gData_02004a18[2] = other->z - object->z;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
 }

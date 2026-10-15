@@ -31,9 +31,9 @@ struct TrialRoadState {
     s16 field1c;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
-#define gTrialRoadState ((struct TrialRoadState *)(Data_020023c4 + 0x88))
+#define gTrialRoadState ((struct TrialRoadState *)(gData_020023c4 + 0x88))
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

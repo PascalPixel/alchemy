@@ -93,7 +93,7 @@ Func_080d6b90:
 .L_080d6c50:
 	.4byte 0x85000205
 .L_080d6c54:
-	.4byte Data_080f385e
+	.4byte gData_080f385e
 .L_080d6c58:
 	.4byte 0x40000400
 .L_080d6c5c:

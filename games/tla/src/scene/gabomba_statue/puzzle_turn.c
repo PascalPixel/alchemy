@@ -17,8 +17,8 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-extern const u8 Data_02005ad4[];
-extern const u8 Data_02006ea8[];
+extern const u8 gData_02005ad4[];
+extern const u8 gData_02006ea8[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02004288(s32 id, s32 value);
 void Func_02005624(struct ObjectRuntime *object, s32 mode);
@@ -33,7 +33,7 @@ u8 Func_02004380(s32 x, s32 z, s32 direction)
         asm("" : "+l"(column) : "l"(gSceneState.cells));
         i = z * 11 + column;
     }
-    gSceneState.cells[i].kind = Data_02006ea8[gSceneState.cells[i].kind * 2 + direction];
+    gSceneState.cells[i].kind = gData_02006ea8[gSceneState.cells[i].kind * 2 + direction];
     return gSceneState.cells[i].kind;
 }
 

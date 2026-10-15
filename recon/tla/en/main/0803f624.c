@@ -27,12 +27,12 @@ struct MenuSprite {
     } oam;
 };
 
-extern const u8 Data_0805c5c4[];
+extern const u8 gData_0805c5c4[];
 void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
 {
-    const void *data = Data_0805c5c4;
+    const void *data = gData_0805c5c4;
     s32 value = Resource_FindFreeEntry();
 
     *slot = value;

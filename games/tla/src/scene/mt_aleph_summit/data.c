@@ -1,32 +1,32 @@
 #include "types.h"
 #include "field_scene.h"
 
-extern u32 Data_0200159c[];
-extern u32 Data_020015d8[];
-extern u32 Data_02001614[];
+extern u32 gData_0200159c[];
+extern u32 gData_020015d8[];
+extern u32 gData_02001614[];
 
-u32 Data_0200159c[] = {
+u32 gData_0200159c[] = {
 	0, 1, 13, 22, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_020015d8[] = {
+u32 gData_020015d8[] = {
 	0, 1, 13, 44, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-u32 Data_02001614[] = {
+u32 gData_02001614[] = {
 	0, 1, 13, 126, 0, 0,
 	1, 2, 0, 0, 0, 0,
 	1, 38, 17,
 };
 
-s32 Data_02001650[] = {
-	(s32)Data_0200159c,
-	(s32)Data_020015d8,
-	(s32)Data_02001614,
+s32 gData_02001650[] = {
+	(s32)gData_0200159c,
+	(s32)gData_020015d8,
+	(s32)gData_02001614,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

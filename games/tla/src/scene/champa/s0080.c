@@ -49,13 +49,13 @@ void Func_02000080(const void *warp, s32 door, s32 mode)
     Func_02002a4c();
 }
 
-extern s32 Data_020031fc[];
+extern s32 gData_020031fc[];
 void Func_0200006c(s32 object);
 void Func_020029f4(s32 a);
 
 void Func_020000fc(s32 door)
 {
-    s32 *table = Data_020031fc;
+    s32 *table = gData_020031fc;
 
     if ((u32)(door - 1) <= 1)
         *(void **)((u8 *)Object_GetById(gPartyState.currentOwner) + 108) = Func_0200006c;

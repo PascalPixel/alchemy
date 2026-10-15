@@ -7,8 +7,8 @@
 	.macro group_cue group:req, entrance:req, flag:req, cue:req
 	.2byte \group, \entrance & 0x7fff, \flag, \cue
 	.endm
-	.global Scene_CueRuleTable
-Scene_CueRuleTable:
+	.global gScene_CueRuleTable
+gScene_CueRuleTable:
 	group_cue 1, -1, -1, 74
 	group_cue 2, 64, -1, 39
 	group_cue 2, 78, -1, 79

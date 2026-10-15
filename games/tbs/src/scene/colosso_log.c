@@ -200,7 +200,7 @@ static void ColossoLogRollingStage_SceneTask(void)
 		gColossoSceneTaskStatus = (gColossoSceneTaskStatus + 1) & 3;
 		for (i = 18; i <= 22; i++)
 		{
-			kind = ColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
+			kind = gColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
 			Engine_ActorSetAnimation(i, kind);
 			Engine_ActorSetAnimation(i + 5, kind + 8);
 			Engine_MapCopyCellAttributes(32, 11, 1, 2, (i - 18) * 2 + 33, 11);
@@ -209,13 +209,13 @@ static void ColossoLogRollingStage_SceneTask(void)
 				Engine_MapCopyCellAttributes(74, 12, 1, 1, (i - 18) * 2 + 33, 11);
 			}
 		}
-		Engine_ActorSetAnimation(28, ColossoLog_LogPattern[gColossoSceneTaskStatus][5]);
+		Engine_ActorSetAnimation(28, gColossoLog_LogPattern[gColossoSceneTaskStatus][5]);
 	}
 	else
 	{
 		for (i = 18; i <= 22; i++)
 		{
-			kind = ColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
+			kind = gColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
 			if ((u32)(actor->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe)
 			{
 				if (row == 11 && kind == 4)
@@ -1007,7 +1007,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor->z.fixed = 184 << 16;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Object_SetMode(actor, 3);
-		Engine_ObjectSetScript(actor, ColossoLog_Record30Script);
+		Engine_ObjectSetScript(actor, gColossoLog_Record30Script);
 	}
 	else
 	{
@@ -1195,7 +1195,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	{
 		Engine_ActorSetAnimation(8, 8);
 	}
-	Engine_ActorEnableActionCallback(8, ColossoLog_Actor8Action);
+	Engine_ActorEnableActionCallback(8, gColossoLog_Actor8Action);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
 	record = Object_GetById(0);
 	{
@@ -1203,7 +1203,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
 		record->facing = shown;
 	}
-	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionA);
+	Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionA);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
@@ -1250,7 +1250,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionB);
+	Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionB);
 	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(1, 0x5e0, 176);
@@ -1287,7 +1287,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Object_LinkObjectAndSetCallback(1, 3);
 	Engine_EventWait(20);
 	Event_ShowMessage(MIA, 0);
-	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionC);
+	Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionC);
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Object_LinkObjectAndSetCallback(1, 0);
 	Engine_EventWait(20);
@@ -1862,8 +1862,8 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
 	s32 handler;
 
-	Colosso_ModeTaskMode = mode;
-	Colosso_ModeTaskParam = (parameter << 4);
+	gColosso_ModeTaskMode = mode;
+	gColosso_ModeTaskParam = (parameter << 4);
 
 	{
 		s32 budget = 0xc80;
@@ -1892,11 +1892,11 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 		}
 	}
 
-	Colosso_ModeTaskTimer = 0;
-	Colosso_ModeTaskScript = (s16 *)handler;
-	Colosso_ModeMoveTarget = 0;
-	Colosso_ModeMoveDuration = 0;
-	Colosso_ModeTaskPosition = 0;
+	gColosso_ModeTaskTimer = 0;
+	gColosso_ModeTaskScript = (s16 *)handler;
+	gColosso_ModeMoveTarget = 0;
+	gColosso_ModeMoveDuration = 0;
+	gColosso_ModeTaskPosition = 0;
 }
 
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
@@ -2130,7 +2130,7 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	actor->speed = 0x10000;
 	Engine_ObjectSetPosition(actor, x, 0, z);
 	Engine_GameFlagSet(0x211);
-	Engine_ObjectSetScript(actor, ColossoLog_PlaceScript);
+	Engine_ObjectSetScript(actor, gColossoLog_PlaceScript);
 	while (*wait != 0)
 	{
 		Engine_TaskWait(1);
@@ -2179,7 +2179,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 
 	direction = subject->facing >> 12;
 
-	step = StagedActor_DirectionSteps[direction];
+	step = gStagedActor_DirectionSteps[direction];
 	position.x = subject->x + (step & 0xffff0000);
 	position.y = subject->y;
 	step <<= 16;
@@ -2191,7 +2191,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 		return;
 	}
 
-	step = StagedActor_DirectionSteps[direction];
+	step = gStagedActor_DirectionSteps[direction];
 	position.x = target->x + (step & 0xffff0000);
 	position.y = target->y;
 	step <<= 16;
@@ -2216,7 +2216,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 	target->state = 2;
 	zero = 0;
 
-	step = StagedActor_DirectionSteps[direction];
+	step = gStagedActor_DirectionSteps[direction];
 	position.x = target->x + (step & 0xffff0000);
 	position.y = target->y;
 	step <<= 16;
@@ -2253,7 +2253,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/colosso_occupant.h"
 
-const s32 ColossoLog_Record30Script[] = {
+const s32 gColossoLog_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),
 	SC_WAIT(10),
 	SC_SET(SW_Y, 0),
@@ -2261,7 +2261,7 @@ const s32 ColossoLog_Record30Script[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s8 ColossoLog_LogPattern[][6] = {
+const s8 gColossoLog_LogPattern[][6] = {
 	{ 7, 5, 7, 5, 7, 11 },
 	{ 4, 6, 4, 6, 4, 10 },
 	{ 5, 7, 5, 7, 5, 12 },
@@ -2286,7 +2286,7 @@ const s32 gColossoSceneEventEffect[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-const u8 Colosso_PortraitPaletteOffsets[] = {
+const u8 gColosso_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -2358,7 +2358,7 @@ s32 gColossoLinkedEffect[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
-u32 StagedActor_DirectionSteps[] = {
+u32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2526,7 +2526,7 @@ struct SceneEvent gColossoLogEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 ColossoLog_Actor8Action[] = {
+s32 gColossoLog_Actor8Action[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2549,7 +2549,7 @@ s32 ColossoLog_Actor8Action[] = {
 	SC_END,
 };
 
-s32 ColossoLog_LeaderActionA[] = {
+s32 gColossoLog_LeaderActionA[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2572,7 +2572,7 @@ s32 ColossoLog_LeaderActionA[] = {
 	SC_END,
 };
 
-s32 ColossoLog_LeaderActionB[] = {
+s32 gColossoLog_LeaderActionB[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -2592,7 +2592,7 @@ s32 ColossoLog_LeaderActionB[] = {
 	SC_END,
 };
 
-s32 ColossoLog_LeaderActionC[] = {
+s32 gColossoLog_LeaderActionC[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -2627,7 +2627,7 @@ s32 gColossoParticleKinds[] = {
 	SC_END,
 };
 
-s16 Colosso_PortraitSlot = -1;
+s16 gColosso_PortraitSlot = -1;
 
 s16 gColossoModeScriptDefault[] = {
 #if !EDITION_INTERNATIONAL
@@ -2681,9 +2681,9 @@ s16 gColossoModeScript3A[] = {
 	6, 0x1000, 448, 6, 0x7fff, 6, -1,
 };
 
-s16 Colosso_MarkerSlot = -1;
+s16 gColosso_MarkerSlot = -1;
 
-s32 Colosso_RivalFinishScript[] = {
+s32 gColosso_RivalFinishScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2697,7 +2697,7 @@ s32 Colosso_RivalFinishScript[] = {
 	SC_END,
 };
 
-s32 ColossoLog_PlaceScript[] = {
+s32 gColossoLog_PlaceScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),

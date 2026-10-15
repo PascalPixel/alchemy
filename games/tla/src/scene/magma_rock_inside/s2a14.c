@@ -12,5 +12,5 @@ void Func_02002a14(struct ObjectRuntime *source)
     Func_02004c98(object, 1);
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
-    Func_02004ca0(object, Data_02005534);
+    Func_02004ca0(object, gData_02005534);
 }

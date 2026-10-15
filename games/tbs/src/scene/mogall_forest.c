@@ -189,7 +189,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *MogallForest_GetExits(void)
 {
-	return MogallForest_SceneTable;
+	return gMogallForest_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -1355,7 +1355,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 
 		case 12:
 		case 13:
-			Engine_ActorEnableActionCallback(18, MogallForest_ActorScript);
+			Engine_ActorEnableActionCallback(18, gMogallForest_ActorScript);
 			if (Engine_GameFlagIsSet(0x893) == 0)
 			{
 				break;
@@ -1381,7 +1381,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1400,11 +1400,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -1453,7 +1453,7 @@ s32 gMogallForestPlacements2_0[] = {
 	SC_END,
 };
 
-s32 MogallForest_ActorScript[] = {
+s32 gMogallForest_ActorScript[] = {
 	SC_SET(SW_SCALE_X, 0xcccc),
 	SC_SET(SW_SCALE_Y, 0xcccc),
 	SC_SET(0x23, 15),
@@ -1534,7 +1534,7 @@ struct SceneEntrance gMogallForestEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 MogallForest_SceneTable[] = {
+u32 gMogallForest_SceneTable[] = {
 	SCENE_EXITS(68),
 	SCENE_EXIT(1, 2, 13),
 	SCENE_EXIT(2, 71, 2),
@@ -1599,11 +1599,11 @@ struct ScenePlacement gMogallForestPlacements1[] = {
 		PIXELS(488), 0, PIXELS(464), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(528), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x300, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x300, (s32)gMogallForest_ActorScript,
 		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x301, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x301, (s32)gMogallForest_ActorScript,
 		PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x302, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x302, (s32)gMogallForest_ActorScript,
 		PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x16, 0x300, (s32)gMogallForestPlacements1_1,
 		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1625,11 +1625,11 @@ struct ScenePlacement gMogallForestPlacements2[] = {
 		PIXELS(648), 0, PIXELS(512), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x125, CONDITION_ALWAYS, (s32)gMogallForestPlacements2_0,
 		PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x303, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x303, (s32)gMogallForest_ActorScript,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x304, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x304, (s32)gMogallForest_ActorScript,
 		PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x306, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x306, (s32)gMogallForest_ActorScript,
 		PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x16, 0x303, (s32)gMogallForestPlacements1_1,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1657,17 +1657,17 @@ struct ScenePlacement gMogallForestPlacements3[] = {
 		PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x125, CONDITION_ALWAYS, (s32)gMogallForestPlacements2_0,
 		PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xbf, 0x307, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x307, (s32)gMogallForest_ActorScript,
 		PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x308, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x308, (s32)gMogallForest_ActorScript,
 		PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x309, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x309, (s32)gMogallForest_ActorScript,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if defined(TBS_EDITION_EN)
-	{ 0xbf, 0x30b, (s32)MogallForest_ActorScript,
+	{ 0xbf, 0x30b, (s32)gMogallForest_ActorScript,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else
-	{ 0xbf, CONDITION_ALWAYS, (s32)MogallForest_ActorScript,
+	{ 0xbf, CONDITION_ALWAYS, (s32)gMogallForest_ActorScript,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif
 	{ 0x16, 0x307, (s32)gMogallForestPlacements1_1,

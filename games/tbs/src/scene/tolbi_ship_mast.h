@@ -10,13 +10,13 @@ enum
 	ITEM_ANCHOR_CHARM = 232
 };
 
-extern s32 TolbiShipMast_DriftY;
-extern s32 TolbiShipMast_DriftX;
-extern s32 TolbiShipMast_SwayY;
-extern s32 TolbiShipMast_SwayUnused;
-extern s32 TolbiShipMast_CameraCenter[2];
-extern s32 TolbiShipMast_CameraOrigin[2];
-extern s32 TolbiShipMast_SwayX;
+extern s32 gTolbiShipMast_DriftY;
+extern s32 gTolbiShipMast_DriftX;
+extern s32 gTolbiShipMast_SwayY;
+extern s32 gTolbiShipMast_SwayUnused;
+extern s32 gTolbiShipMast_CameraCenter[2];
+extern s32 gTolbiShipMast_CameraOrigin[2];
+extern s32 gTolbiShipMast_SwayX;
 
 enum
 {

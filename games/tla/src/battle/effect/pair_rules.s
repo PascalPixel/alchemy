@@ -1,11 +1,11 @@
 	.section .rodata
 @ 16 バイトの行、鍵 -1 で終わり
-	.global Party_PairResolveRules
-Party_PairResolveRules:
+	.global gParty_PairResolveRules
+gParty_PairResolveRules:
 	.incbin "games/tla/src/battle/effect/pair_rules.table"
 @ Func_080ca4a8 が 1 語ずつ読む、0 で終わり (bit 31 は印)
-	.global Data_080ef984
-Data_080ef984:
+	.global gData_080ef984
+gData_080ef984:
 	.4byte 0x80000000 + 72, 4, 0x80000000 + 74, 6
 	.4byte 7, 0x80000000 + 73, 8, 0x80000000 + 75
 	.4byte 14, 15, 16, 17

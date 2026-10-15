@@ -21,7 +21,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             u8                         value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = Flash_Handler3;
+            state = gFlash_Handler3;
             read_offset = state->inputCursor;
             do {
                 value = input[read_offset];
@@ -45,7 +45,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     if (current < limit)
     {
         u32                         mask = 0x3ff;
-        struct AudioTrackSlotWork **root = &Flash_Handler3;
+        struct AudioTrackSlotWork **root = &gFlash_Handler3;
         s32                         empty = -1;
 
         do

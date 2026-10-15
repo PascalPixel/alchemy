@@ -8,7 +8,7 @@
  * (ldrh r3, [r3, r4], differ 43). */
 #include "types.h"
 
-extern volatile u32 Data_020001b0[];
+extern volatile u32 gData_020001b0[];
 extern u32			gFrameCount;
 
 void Func_020000fc(void)
@@ -18,9 +18,9 @@ void Func_020000fc(void)
 		u16 *colors = (u16 *)0x05000180;
 		s32	 i;
 
-		if (Data_020001b0[0] == 8)
-			Data_020001b0[0] = 0;
-		i = Data_020001b0[0]++;
+		if (gData_020001b0[0] == 8)
+			gData_020001b0[0] = 0;
+		i = gData_020001b0[0]++;
 		*(u16 *)0x050000c2 = colors[i];
 		*(u16 *)0x050000c4 = colors[(i + 1) & 7];
 		*(u16 *)0x050000c6 = colors[(i + 2) & 7];

@@ -6,7 +6,7 @@
 #include "battle_display.h"
 #include "iowrite.h"
 
-extern const u8 Data_0812cc74[];
+extern const u8 gData_0812cc74[];
 
 // Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines and
 // the affine block, while the background view is in mode 2.
@@ -30,7 +30,7 @@ void Func_08125c5c(void)
     u32 index = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
 
     if (index <= 31)
-        Dma_Set(Data_0812cc74 + (index >> 2) * 32, (void *)0x06005000, 0x84000008, REG_DMA3);
+        Dma_Set(gData_0812cc74 + (index >> 2) * 32, (void *)0x06005000, 0x84000008, REG_DMA3);
 }
 
 void BattlePres_AdvanceTransitionTimer(void)

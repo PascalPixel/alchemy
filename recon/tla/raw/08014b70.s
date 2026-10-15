@@ -32,4 +32,4 @@ Func_08014b70:
 .L_08014ba4:
 	.4byte 0x85000140
 .L_08014ba8:
-	.4byte Data_030011c4
+	.4byte gData_030011c4

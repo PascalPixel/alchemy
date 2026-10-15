@@ -21,7 +21,7 @@ s32 Func_02003094(void)
     Func_020021d4();
     /* FAKEMATCH: the one-pass block ends the scheduling block after the store, so the party state address is loaded before the scene field offset is built (differ 2 plainly; an s32 scene does not help, an empty asm barrier does the same). */
     do {
-        Data_0200480c = 0;
+        gData_0200480c = 0;
     } while (0);
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov661Room1)

@@ -20,7 +20,7 @@ struct Orbiter {
     void *link;
 };
 
-extern s32 Data_02005af0;
+extern s32 gData_02005af0;
 struct Orbiter *Object_GetById(s32 id);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 struct Orbiter *Func_020005b4(struct Orbiter *origin, s32 id);

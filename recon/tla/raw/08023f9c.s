@@ -462,7 +462,7 @@ Func_08023f9c:
 	.2byte 0xf800
 	b .L_0802431a
 .L_08024304:
-	.4byte Data_0802f204
+	.4byte gData_0802f204
 .L_08024308:
 	.4byte IwramFillWords + 0x74
 .L_0802430c:
@@ -853,7 +853,7 @@ Func_08023f9c:
 .L_080245d8:
 	.4byte IwramRatioMulQ14
 .L_080245dc:
-	.4byte Data_0802ebc8
+	.4byte gData_0802ebc8
 .L_080245e0:
 	ldr r2, [r7, #64]
 	ldr r3, [sp, #16]

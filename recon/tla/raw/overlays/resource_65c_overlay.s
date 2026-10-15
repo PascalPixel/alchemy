@@ -59,6 +59,6 @@ Func_020000fc:
 .L_02008160:
 	.4byte gFrameCount
 .L_02008164:
-	.4byte Data_020001b0
+	.4byte gData_020001b0
 .L_02008168:
 	.4byte 0x05000180

@@ -7,7 +7,7 @@
 #include "iowrite.h"
 #include "call.h"
 
-extern const u8 Data_02002b60[];
+extern const u8 gData_02002b60[];
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -38,7 +38,7 @@ s32 Func_02000854(void)
     Io_Write16(0x3f06, &REG_BLDCNT);
     Io_Write16(0x1000, &REG_BLDALPHA);
     Func_02002314(0);
-    Call4((void (*)())Func_02002324, (s32)Data_02002b60, 0, 0, 0x80000000);
+    Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
     Func_02000054();
     Func_020007d0();
     if (GameFlag_Test(0xa02)) {

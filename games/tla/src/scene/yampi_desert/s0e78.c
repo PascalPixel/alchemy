@@ -21,15 +21,15 @@ void Func_02000e78(void)
     Func_02004048();
 }
 
-extern u32 Data_020042b4[];
-extern u32 Data_02005828[];
+extern u32 gData_020042b4[];
+extern u32 gData_02005828[];
 
 u32 Random16Far(void);
 struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fb8(struct ObjectRuntime *object, const void *script);
 
 // Spawns an object of kind 285 at each of the fifteen cells of
-// Data_020042b4, twice, each moved by -2 to +1 pixels at random.
+// gData_020042b4, twice, each moved by -2 to +1 pixels at random.
 void Func_02000f24(void)
 {
     u32 pass;
@@ -40,7 +40,7 @@ void Func_02000f24(void)
 
         /* FAKEMATCH: the one-pass block's loop-end note keeps the table address loaded before the counter's zero at the top of the outer loop (plainly the zero and its copy to r8 come first, differ 2; the pointer set in the for initializer, before or after the counter, does the same). */
         do {
-            cell = (u16 *)Data_020042b4;
+            cell = (u16 *)gData_020042b4;
         } while (0);
         for (i = 0; i <= 14; i++) {
             s32 x = *cell++ + ((Random16Far() << 2) >> 16);
@@ -52,7 +52,7 @@ void Func_02000f24(void)
                 object->acceleration = 0x8000;
                 ObjectDispatch_SetSingleChildFlags((struct FieldActor *)object, 0);
                 Func_02003fa8((struct FieldActor *)object, 1);
-                Func_02003fb8(object, Data_02005828);
+                Func_02003fb8(object, gData_02005828);
             }
         }
     }

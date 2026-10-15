@@ -29,7 +29,7 @@ s32 Func_0200006c(s32 slot)
     }
     /* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. */
     while (id >= 0 && GameFlag_Test(0x303)) {
-        const s32 *expected = &LinkLobby_SlotValues[slot];
+        const s32 *expected = &gLinkLobby_SlotValues[slot];
 
         if (id != 0)
             GameFlag_SetBit(0x302);
@@ -38,7 +38,7 @@ s32 Func_0200006c(s32 slot)
         {
             struct LinkPeer *row = &gLinkPeerSignatures[GameFlag_Test(0x302) ^ 1];
 
-            if (row->values[LinkLobby_SlotColumns[slot]] == *expected)
+            if (row->values[gLinkLobby_SlotColumns[slot]] == *expected)
                 return 1;
             break;
         }

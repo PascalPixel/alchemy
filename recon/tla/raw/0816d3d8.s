@@ -410,10 +410,10 @@ Func_0816d3d8:
 .L_0816d710:
 	.4byte Func_08143000
 .L_0816d714:
-	.4byte Data_0819749e
+	.4byte gData_0819749e
 .L_0816d718:
-	.4byte Data_081974ad
+	.4byte gData_081974ad
 .L_0816d71c:
-	.4byte Data_081974bc
+	.4byte gData_081974bc
 .L_0816d720:
 	.4byte 0xffff8000

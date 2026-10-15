@@ -19,7 +19,7 @@ struct MagmaRockEffectConfig {
     u8 unk20[8];
 };
 
-extern u32 Data_02003d50[];
+extern u32 gData_02003d50[];
 
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
@@ -36,7 +36,7 @@ void Func_02002024(s32 x, s32 z)
     cfg->unk0c = 0x20000;
     cfg->id = 403;
     cfg->kind = 1;
-    cfg->data = Data_02003d50;
+    cfg->data = gData_02003d50;
     i = 0;
 loop:
     position[0] = x + ((Random16Far() & 63) << 16) - 0x200000;

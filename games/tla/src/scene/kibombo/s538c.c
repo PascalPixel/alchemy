@@ -12,7 +12,7 @@ void Func_0200538c(void)
     Func_0200324c();
     if (!GameFlag_Test(0x869))
         GameFlag_SetBit(0x201);
-    Func_02005c64(Data_02006324);
+    Func_02005c64(gData_02006324);
     ObjectMotion_SetActionVariant(8, 2);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
     Object_GetById(11)->motionFlags = 0;

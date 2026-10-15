@@ -14,11 +14,11 @@ struct RideWork {
     struct ObjectRuntime *handle;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
 void Func_02001d7c(void)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
     struct ObjectRuntime *object;
     struct RideAnimation *animation;
 

@@ -16,8 +16,8 @@ Data_020020bc:
 	.global Data_0200213c
 Data_0200213c:
 	.incbin "games/tla/src/scene/staff_credit/pal_b.gbapal"
-	.global Data_0200215c
-Data_0200215c:
+	.global gData_0200215c
+gData_0200215c:
 	.incbin "games/tla/src/scene/staff_credit/pal_c.gbapal"
 	.global Data_0200217c
 Data_0200217c:

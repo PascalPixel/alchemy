@@ -23,7 +23,7 @@ extern struct SceneEntrance gMercuryAerieEntrances[];
 extern u32 gMercuryAerieExits[];
 extern struct ScenePlacement gMercuryAeriePlacements[];
 extern struct SceneEvent gMercuryAerieEvents[];
-extern s32 MercuryAerie_NearestActor;
-extern s32 MercuryAerie_SparkScript[];
+extern s32 gMercuryAerie_NearestActor;
+extern s32 gMercuryAerie_SparkScript[];
 
 #endif

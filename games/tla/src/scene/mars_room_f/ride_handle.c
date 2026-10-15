@@ -39,8 +39,8 @@ struct RideWork {
     void *handle;
 };
 
-extern u8 Data_020023c4[];
-extern u16 Data_02004cf0[];
+extern u8 gData_020023c4[];
+extern u16 gData_02004cf0[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
@@ -52,7 +52,7 @@ void Func_02002ad0(struct ObjectRuntime *object);
 
 void Func_02002604(void)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
 
     Func_020054a0(work->handle);
     work->handle = NULL;
@@ -60,5 +60,5 @@ void Func_02002604(void)
 
 void Func_02002618(s16 value)
 {
-    ((struct RideWork *)(Data_020023c4 + 0x188))->value0e = value;
+    ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;
 }

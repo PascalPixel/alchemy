@@ -874,6 +874,6 @@ BattleFx_RunSparkGroups:
 .L_0814a258:
 	.4byte 0x007effff
 .L_0814a25c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814a260:
 	.4byte Func_08143000

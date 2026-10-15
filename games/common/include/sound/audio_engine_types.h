@@ -313,9 +313,9 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask, s32 va
 void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 mask, u32 value);
 void MusicTrack_ClearModulation(struct SoundTrack *track);
 
-extern const struct PlayerSlot Sound_PlayerSlots[];
-extern const struct SongEntry  Sound_SongTable[];
-extern SoundCommand			   Sound_CommandTable[36];
-extern const SoundCommand	   Sound_ExtendedCommandTable[];
+extern const struct PlayerSlot gSound_PlayerSlots[];
+extern const struct SongEntry  gSound_SongTable[];
+extern SoundCommand			   gSound_CommandTable[36];
+extern const SoundCommand	   gSound_ExtendedCommandTable[];
 
 #endif

@@ -14,7 +14,7 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-extern const u8 Data_02001ee8[];
+extern const u8 gData_02001ee8[];
 
 struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgument(struct FieldSprite *sprite, s32 value);
@@ -33,7 +33,7 @@ void Func_020010d8(struct ObjectRuntime *object)
         child->terrainHeight = object->terrainHeight;
         /* FAKEMATCH: an empty asm keeps the height store ahead of the script address load, as in the native (differ 8 without). */
         asm("");
-        Func_02001c74(child, Data_02001ee8);
+        Func_02001c74(child, gData_02001ee8);
         child->motionFlags = 0;
         if (sprite != NULL) {
             Animation_ApplyChildArgument(sprite, 1);

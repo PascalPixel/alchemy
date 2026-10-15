@@ -422,13 +422,13 @@ Func_0804cda8:
 .L_0804d0b0:
 	.4byte gFrameCount
 .L_0804d0b4:
-	.4byte Ui_BounceScales
+	.4byte gUi_BounceScales
 .L_0804d0b8:
 	.4byte 0xffffff00
 .L_0804d0bc:
 	.4byte 0xffff0000
 .L_0804d0c0:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0804d0c4:
 	.4byte 0x80002300
 .L_0804d0c8:

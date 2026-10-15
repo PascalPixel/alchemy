@@ -14,7 +14,7 @@ struct LohoPicture {
     u16 b;
 };
 
-extern const struct LohoPicture Data_02001f14;
+extern const struct LohoPicture gData_02001f14;
 
 void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);

@@ -5,19 +5,19 @@ u8 *Func_0200004c(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov674Room1)
-        return Data_0200476c;
+        return gData_0200476c;
     if (scene == (s32)&SceneId_Ov674Room2)
-        return Data_020047e4;
+        return gData_020047e4;
     if (scene == (s32)&SceneId_Ov674Room3)
-        return Data_0200494c;
+        return gData_0200494c;
     if (scene == (s32)&SceneId_Ov674Room4)
-        return Data_020049c4;
+        return gData_020049c4;
     if (scene == (s32)&SceneId_Ov674Room5) {
         if (GameFlag_Test(0xaa5))
-            Data_02004a84[46] = 1;
-        return Data_02004a84;
+            gData_02004a84[46] = 1;
+        return gData_02004a84;
     }
-    return Data_02004754;
+    return gData_02004754;
 }
 
 void Func_020000d8(void)

@@ -237,7 +237,7 @@ Func_02000184:
 .L_020083b4:
 	.4byte 0x00403108
 .L_020083b8:
-	.4byte Data_02002058
+	.4byte gData_02002058
 .L_020083bc:
 	.4byte gPartyState
 .L_020083c0:
@@ -431,11 +431,11 @@ Func_02000184:
 .L_02008598:
 	.4byte 0x00007fff
 .L_0200859c:
-	.4byte Data_02001f78
+	.4byte gData_02001f78
 .L_020085a0:
 	.4byte 0x00019999
 .L_020085a4:
-	.4byte Data_02001f9c
+	.4byte gData_02001f9c
 .L_020085a8:
 	.4byte 0x0500021e
 .L_020085ac:
@@ -808,11 +808,11 @@ Func_02000184:
 	strh r3, [r2]
 	b .L_02008972
 .L_02008948:
-	.4byte Data_02001fe4
+	.4byte gData_02001fe4
 .L_0200894c:
 	.4byte 0x00403108
 .L_02008950:
-	.4byte Data_02002058
+	.4byte gData_02002058
 .L_02008954:
 	.4byte gPartyState
 .L_02008958:
@@ -943,7 +943,7 @@ Func_02000184:
 .L_02008a84:
 	.4byte gPartyState
 .L_02008a88:
-	.4byte Data_0200200c
+	.4byte gData_0200200c
 .L_02008a8c:
 	.4byte MsgCarriedTheMessage
 .L_02008a90:
@@ -1989,7 +1989,7 @@ Func_020010d4:
 .L_02009708:
 	.4byte 0x00019999
 .L_0200970c:
-	.4byte Data_02001f18
+	.4byte gData_02001f18
 	.section .text.x02009710,"ax",%progbits
 	.global Func_02001710
 	.thumb_func
@@ -2373,7 +2373,7 @@ Func_02001710:
 .L_02009a9c:
 	.4byte 0x00013333
 .L_02009aa0:
-	.4byte Data_02001f4c
+	.4byte gData_02001f4c
 	.section .text.x02009b14,"ax",%progbits
 	.global Func_02001b14
 	.thumb_func

@@ -6,11 +6,11 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-extern s32 Data_020024b4;
-extern s32 Data_020024b0;
-extern const u8 Data_0200218c[];
-extern const u8 Data_020021e8[];
-extern const u8 Data_0200221c[];
+extern s32 gData_020024b4;
+extern s32 gData_020024b0;
+extern const u8 gData_0200218c[];
+extern const u8 gData_020021e8[];
+extern const u8 gData_0200221c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
@@ -88,13 +88,13 @@ void Func_020002cc(void)
     Call4((void (*)())Func_02001fcc, 5, 0x2220000, 0x1b80000, angle);
     Func_02001f1c();
     Call1((void (*)())WaitFrames, 1);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, (s32)Data_0200218c);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, (s32)Data_020021e8);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)Data_0200221c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_0200218c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, (s32)gData_020021e8);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)gData_0200221c);
     Event_StartScreenTransition();
-    Data_020024b4 = 0;
+    gData_020024b4 = 0;
     Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000258, 0x480);
-    Data_020024b0 = 0;
+    gData_020024b0 = 0;
     Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000288, 0x480);
     Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
     Call4((void (*)())Motion_CamBounds, 0x21e0000, 0x2c0000, 0x18c0000, 1);
@@ -219,9 +219,9 @@ void Func_020006e4(void)
     Call1((void (*)())WaitFrames, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Data_020024b4 = 0;
+    gData_020024b4 = 0;
     Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000258, 0x480);
-    Data_020024b0 = 0;
+    gData_020024b0 = 0;
     Value2(Scheduler_AddOrUpdateCallback, (s32)Func_02000288, 0x480);
     Value3(Func_0200204c, 6, 0x102, 30);
     Call2((void (*)())Func_02002044, 6, 0x4000);

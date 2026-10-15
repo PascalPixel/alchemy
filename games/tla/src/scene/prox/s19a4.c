@@ -8,7 +8,7 @@ struct EventWork154 {
     s16 returnEntrance;
 };
 
-extern const u8 Data_020046f8[];
+extern const u8 gData_020046f8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -74,7 +74,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
         Func_020043fc(object);
         object->angle = 0xc000;
     }
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_020046f8);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_020046f8);
     Wait(12);
     Cue(123);
     Event_FinishScreenTransition();

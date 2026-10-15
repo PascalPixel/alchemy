@@ -12,7 +12,7 @@
 #include "party_state.h"
 #include "text/msg_ids.h"
 
-extern u8 Data_02001300[];
+extern u8 gData_02001300[];
 
 void Func_02000f34(s32 *, s32 *);
 void Func_02000e04(s32);
@@ -58,7 +58,7 @@ const u32 *Scene_GetExits(void)
 
 void *Func_0200004c(void)
 {
-    return Data_02001300;
+    return gData_02001300;
 }
 
 void Func_02000054(void)

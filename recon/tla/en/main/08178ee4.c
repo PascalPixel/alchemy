@@ -41,12 +41,12 @@ struct FxWork {
 };
 
 extern char ResourceId_Data0DC;
-extern const u16 Data_081993d8[];
-extern const u8 Data_081993d0[];
-extern const u8 Data_081993d4[];
-extern const u16 Data_081993f0[];
-extern const u8 Data_081993e8[];
-extern const u8 Data_081993e0[];
+extern const u16 gData_081993d8[];
+extern const u8 gData_081993d0[];
+extern const u8 gData_081993d4[];
+extern const u16 gData_081993f0[];
+extern const u8 gData_081993e8[];
+extern const u8 gData_081993e0[];
 
 void BattleFx_BeginTiledCanvas(s32 bg_control);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -148,13 +148,13 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
             s32 cell = (frame - 28) / 3;
 
             if (effect->side == 0) {
-                blit[effect->side](canvas, Ram_MapCellBuffer + 0x2e6e + Data_081993d8[cell],
-                    46 - Data_081993d0[cell] / 2, y - Data_081993d4[cell] / 2 + 61, Data_081993d0[cell],
-                    Data_081993d4[cell]);
+                blit[effect->side](canvas, Ram_MapCellBuffer + 0x2e6e + gData_081993d8[cell],
+                    46 - gData_081993d0[cell] / 2, y - gData_081993d4[cell] / 2 + 61, gData_081993d0[cell],
+                    gData_081993d4[cell]);
             } else {
-                blit[effect->side](canvas, Ram_MapCellBuffer + 0x2e6e + Data_081993d8[cell],
-                    Data_081993d0[cell] / 2 - Data_081993d0[cell] + 82, y - Data_081993d4[cell] / 2 + 61,
-                    Data_081993d0[cell], Data_081993d4[cell]);
+                blit[effect->side](canvas, Ram_MapCellBuffer + 0x2e6e + gData_081993d8[cell],
+                    gData_081993d0[cell] / 2 - gData_081993d0[cell] + 82, y - gData_081993d4[cell] / 2 + 61,
+                    gData_081993d0[cell], gData_081993d4[cell]);
             }
         }
         if (frame > 39) {
@@ -170,11 +170,11 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
                     cell = 0;
                 if (cell <= 7) {
                     if (effect->side == 0)
-                        blit[effect->side](canvas, Ram_MapCellBuffer + 0x4e9d + Data_081993f0[cell], 63,
-                            y + Data_081993e8[cell] - 8, 32, Data_081993e0[cell]);
+                        blit[effect->side](canvas, Ram_MapCellBuffer + 0x4e9d + gData_081993f0[cell], 63,
+                            y + gData_081993e8[cell] - 8, 32, gData_081993e0[cell]);
                     else
-                        blit[effect->side](canvas, Ram_MapCellBuffer + 0x4e9d + Data_081993f0[cell], 33,
-                            y + Data_081993e8[cell] - 8, 32, Data_081993e0[cell]);
+                        blit[effect->side](canvas, Ram_MapCellBuffer + 0x4e9d + gData_081993f0[cell], 33,
+                            y + gData_081993e8[cell] - 8, 32, gData_081993e0[cell]);
                 }
             }
         }

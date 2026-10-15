@@ -53,19 +53,19 @@ void Func_02002ba0(void);
 void Func_02002ce0(void);
 void Func_02004140(void);
 
-extern u8 Data_020056c8[];
-extern u8 Data_020056d4[];
-extern u8 Data_02005748[];
-extern u8 Data_020057bc[];
-extern u8 Data_02005890[];
-extern u8 Data_0200593c[];
-extern u8 Data_02005a3c[];
-extern u8 Data_02005a88[];
-extern u8 Data_02005e44[];
-extern u8 Data_02005e80[];
-extern u8 Data_02005ebc[];
+extern u8 gData_020056c8[];
+extern u8 gData_020056d4[];
+extern u8 gData_02005748[];
+extern u8 gData_020057bc[];
+extern u8 gData_02005890[];
+extern u8 gData_0200593c[];
+extern u8 gData_02005a3c[];
+extern u8 gData_02005a88[];
+extern u8 gData_02005e44[];
+extern u8 gData_02005e80[];
+extern u8 gData_02005ebc[];
 
-extern u32 Data_02006980[];
+extern u32 gData_02006980[];
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -121,11 +121,11 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-u32 Data_02006518[] = {
+u32 gData_02006518[] = {
 	0xffff, 0, 0, 0, 0, 0,
 };
 
-s32 Data_02006530[] = {
+s32 gData_02006530[] = {
 	(s32)0xffff0197,
 	1,
 	0x3080000,
@@ -163,13 +163,13 @@ s32 Data_02006530[] = {
 	0x800000,
 	0x24000,
 	(s32)0xffff019e,
-	(s32)Data_02005748,
+	(s32)gData_02005748,
 	0x2980000,
 	0,
 	0x1300000,
 	0x24000,
 	(s32)0xffff019e,
-	(s32)Data_020056d4,
+	(s32)gData_020056d4,
 	0x2f80000,
 	0,
 	0x1300000,
@@ -248,27 +248,27 @@ s32 Data_02006530[] = {
 	0,
 };
 
-s32 Data_02006710[] = {
+s32 gData_02006710[] = {
 	(s32)0xffff019e,
-	(s32)Data_020057bc,
+	(s32)gData_020057bc,
 	0x680000,
 	0,
 	0x2400000,
 	0x24000,
 	(s32)0xffff01a2,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0xf80000,
 	0,
 	0x2680000,
 	0x24000,
 	(s32)0xffff01a3,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0xf80000,
 	0,
 	0x2680000,
 	0x24000,
 	(s32)0xffff01a3,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0xf80000,
 	0,
 	0x2980000,
@@ -347,21 +347,21 @@ s32 Data_02006710[] = {
 	0,
 };
 
-s32 Data_02006890[] = {
+s32 gData_02006890[] = {
 	(s32)0xffff019e,
-	(s32)Data_02005890,
+	(s32)gData_02005890,
 	0x580000,
 	0,
 	0x700000,
 	0x24000,
 	(s32)0xffff019e,
-	(s32)Data_0200593c,
+	(s32)gData_0200593c,
 	0x1680000,
 	0,
 	0x700000,
 	0x24000,
 	(s32)0xffff019e,
-	(s32)Data_02005a3c,
+	(s32)gData_02005a3c,
 	0x780000,
 	0,
 	0x1200000,
@@ -379,13 +379,13 @@ s32 Data_02006890[] = {
 	0x1280000,
 	0x20000,
 	(s32)0xffff019e,
-	(s32)Data_02005a88,
+	(s32)gData_02005a88,
 	0x3c80000,
 	0,
 	0x500000,
 	0x24000,
 	(s32)0xffff01a3,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0x3680000,
 	0,
 	0x780000,
@@ -410,7 +410,7 @@ s32 Data_02006890[] = {
 	0,
 };
 
-u32 Data_02006980[] = {
+u32 gData_02006980[] = {
 	22, 31, 0, 22, 26, 2,
 	22, 6, 0x500000, 22, 22, 0x500000,
 	22, 15, 0x8000, 22, 16, 0x800,
@@ -419,7 +419,7 @@ u32 Data_02006980[] = {
 	0, 20, 13, 0xffff, 0,
 };
 
-s32 Data_02006a0c[] = {
+s32 gData_02006a0c[] = {
 	(s32)0xffff0126,
 	7,
 	0x2380000,
@@ -469,25 +469,25 @@ s32 Data_02006a0c[] = {
 	0xb00000,
 	0x28000,
 	(s32)0xffff019e,
-	(s32)Data_02006980,
+	(s32)gData_02006980,
 	0x980000,
 	0,
 	0x2000000,
 	0x24000,
 	(s32)0xffff01a2,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0x1080000,
 	0,
 	0x2080000,
 	0x24000,
 	(s32)0xffff01a3,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0x1080000,
 	0,
 	0x2080000,
 	0x24000,
 	(s32)0xffff01a3,
-	(s32)Data_020056c8,
+	(s32)gData_020056c8,
 	0xb80000,
 	0,
 	0x2280000,
@@ -518,11 +518,11 @@ s32 Data_02006a0c[] = {
 	0,
 };
 
-s32 Data_02006b8c[] = {
+s32 gData_02006b8c[] = {
 	-1, 0, 0,
 };
 
-s32 Data_02006b98[] = {
+s32 gData_02006b98[] = {
 	514,
 	(s32)0xffff001e,
 	(s32)Func_020000d0,
@@ -645,7 +645,7 @@ s32 Data_02006b98[] = {
 	0,
 };
 
-s32 Data_02006d78[] = {
+s32 gData_02006d78[] = {
 	1,
 	(s32)0xffff0001,
 	1,
@@ -696,7 +696,7 @@ s32 Data_02006d78[] = {
 	0,
 };
 
-s32 Data_02006e38[] = {
+s32 gData_02006e38[] = {
 	2,
 	(s32)0xffff0014,
 	(s32)Func_02000944,
@@ -774,7 +774,7 @@ s32 Data_02006e38[] = {
 	0,
 };
 
-s32 Data_02006f64[] = {
+s32 gData_02006f64[] = {
 	1,
 	(s32)0xffff0001,
 	1,
@@ -831,20 +831,20 @@ s32 Data_02006f64[] = {
 	0,
 };
 
-s32 Data_0200703c[] = {
+s32 gData_0200703c[] = {
 	-1,
 };
 
-u32 Data_02007040[] = {
+u32 gData_02007040[] = {
 	1,
 };
 
-u32 Data_02007044[] = {
+u32 gData_02007044[] = {
 	39, 5, 0, 12, 38,
 };
 
-s32 Data_02007058[] = {
-	(s32)Data_02005e44,
-	(s32)Data_02005e80,
-	(s32)Data_02005ebc,
+s32 gData_02007058[] = {
+	(s32)gData_02005e44,
+	(s32)gData_02005e80,
+	(s32)gData_02005ebc,
 };

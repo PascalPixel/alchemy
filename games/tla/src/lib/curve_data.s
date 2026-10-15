@@ -1,7 +1,7 @@
 	.section .rodata
-@ The Broken Seal's Curve_LerpWeightTable, byte for byte
-	.global Curve_LerpWeightTable
-Curve_LerpWeightTable:
+@ The Broken Seal's gCurve_LerpWeightTable, byte for byte
+	.global gCurve_LerpWeightTable
+gCurve_LerpWeightTable:
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
@@ -18,9 +18,9 @@ Curve_LerpWeightTable:
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
-@ The Broken Seal's Curve_SampleIndexTable, byte for byte
-	.global Curve_SampleIndexTable
-Curve_SampleIndexTable:
+@ The Broken Seal's gCurve_SampleIndexTable, byte for byte
+	.global gCurve_SampleIndexTable
+gCurve_SampleIndexTable:
 	.byte 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

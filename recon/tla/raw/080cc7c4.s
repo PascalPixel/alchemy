@@ -228,7 +228,7 @@ Func_080cc7c4:
 .L_080cc978:
 	.4byte gPartyState
 .L_080cc97c:
-	.4byte Data_0202e000
+	.4byte gData_0202e000
 .L_080cc980:
 	.4byte Data_02000448
 .L_080cc984:

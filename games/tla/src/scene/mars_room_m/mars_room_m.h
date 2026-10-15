@@ -47,7 +47,7 @@ struct MarsRoomMRideWork {
 };
 
 extern u32 gFrameCount;
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 extern char SceneId_Ov6ACRoom1;
 extern char SceneId_Ov6ACRoom2;
 extern char SceneId_Ov6ACRoom3;
@@ -74,23 +74,23 @@ void Func_02001aec(struct ObjectRuntime *object);
 void Func_02001cc4(struct ObjectRuntime *object, s32 layer);
 void Func_02001b64(void);
 
-extern const u8 Data_020032d4[];
-extern const u8 Data_020034f0[];
-extern const u8 Data_02003508[];
-extern const u8 Data_02003598[];
+extern const u8 gData_020032d4[];
+extern const u8 gData_020034f0[];
+extern const u8 gData_02003508[];
+extern const u8 gData_02003598[];
 
-extern u16 Data_02003918;
-extern u16 Data_02003920;
-extern u16 Data_02003924;
-extern u16 *Data_02003928;
-extern u16 Data_02003934;
-extern u16 Data_02003938;
-extern const u8 Data_020036b8[];
-extern const u8 Data_020036c8[];
-extern const u8 Data_02003708[];
-extern const u8 Data_02003858[];
-extern const u8 Data_0200387c[];
-extern const u8 Data_02003900[];
+extern u16 gData_02003918;
+extern u16 gData_02003920;
+extern u16 gData_02003924;
+extern u16 *gData_02003928;
+extern u16 gData_02003934;
+extern u16 gData_02003938;
+extern const u8 gData_020036b8[];
+extern const u8 gData_020036c8[];
+extern const u8 gData_02003708[];
+extern const u8 gData_02003858[];
+extern const u8 gData_0200387c[];
+extern const u8 gData_02003900[];
 
 s32 Func_020016e8(u16 *list);
 void Func_0200170c(void);

@@ -80,7 +80,7 @@ s32 Battle_IsEffect90Class(s32 classId)
     u32 i;
 
     for (i = 0; i < 47; i++) {
-        if (classId == Battle_Effect90Classes[i])
+        if (classId == gBattle_Effect90Classes[i])
             return 1;
     }
     return 0;
@@ -91,7 +91,7 @@ s32 Battle_IsEffect91Class(s32 classId)
     u32 i;
 
     for (i = 0; i < 29; i++) {
-        if (classId == Battle_Effect91Classes[i])
+        if (classId == gBattle_Effect91Classes[i])
             return 1;
     }
     return 0;

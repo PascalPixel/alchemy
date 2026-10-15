@@ -16,7 +16,7 @@ struct JupiterRoom7Cell {
 };
 
 extern u32 gFrameCount;
-extern s16 Data_02002c64[];
+extern s16 gData_02002c64[];
 
 void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);

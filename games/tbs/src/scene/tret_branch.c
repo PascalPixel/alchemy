@@ -59,7 +59,7 @@ static void EV08_TALK(void)
 
 u8 *TretBranch_GetEntrances(void)
 {
-	return (u8 *)TretBranch_SceneTable0;
+	return (u8 *)gTretBranch_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -69,12 +69,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *TretBranch_GetExits(void)
 {
-	return (u8 *)TretBranch_SceneTable1;
+	return (u8 *)gTretBranch_SceneTable1;
 }
 
 u8 *TretBranch_GetPlacements(void)
 {
-	return (u8 *)TretBranch_SceneTable2;
+	return (u8 *)gTretBranch_SceneTable2;
 }
 
 static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
@@ -178,7 +178,7 @@ static void EV00_PSYNERGY(void)
 
 u8 *TretBranch_GetEvents(void)
 {
-	return (u8 *)TretBranch_SceneTable3;
+	return (u8 *)gTretBranch_SceneTable3;
 }
 
 static void Scene_RunTwoCallSequence(void)
@@ -277,7 +277,7 @@ static void TretBranch_StartBg3Split(void)
 	FieldScheduler_AddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);
 }
 
-struct SceneEntrance TretBranch_SceneTable0[] = {
+struct SceneEntrance gTretBranch_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 328, 0, 424, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 424, 0, 440, FACING_EAST, 0, -1, -1, -1, -1, 0 },
@@ -290,7 +290,7 @@ struct SceneEntrance TretBranch_SceneTable0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 TretBranch_SceneTable1[] = {
+u32 gTretBranch_SceneTable1[] = {
 	SCENE_EXITS(46),
 	SCENE_EXIT(1, 45, 2),
 	SCENE_EXIT(2, 45, 3),
@@ -303,13 +303,13 @@ u32 TretBranch_SceneTable1[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement TretBranch_SceneTable2[] = {
+struct ScenePlacement gTretBranch_SceneTable2[] = {
 	{ 0x5d, 0x6d, ACTOR_STAND,
 		PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent TretBranch_SceneTable3[] = {
+struct SceneEvent gTretBranch_SceneTable3[] = {
 	{ 0xa02, 1, CONDITION_ALWAYS, EVENT_SCRIPT(TretBranch_PlayCueAndSelectTouchedExit) },
 	{ 0xa02, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TretBranch_PlayCueAndSelectTouchedExit) },
 	{ 0xa02, 3, CONDITION_ALWAYS, EVENT_SCRIPT(TretBranch_PlayCueAndSelectTouchedExit) },
@@ -329,6 +329,6 @@ struct SceneEvent TretBranch_SceneTable3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 TretBranch_CellSteps[] = {
+u16 gTretBranch_CellSteps[] = {
 	MAP_CELL_STEP(0, 96, 2, 2, 2), MAP_CELL_STEP(2, 96, 2, 2, 2), MAP_CELL_STEPS_END,
 };

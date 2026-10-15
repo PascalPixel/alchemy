@@ -4,13 +4,13 @@
 #include "text/msg_ids.h"
 #include "call.h"
 
-extern s32 Data_0200559c[];
-extern s32 Data_02005610[];
-extern s32 Data_020056c4[];
-extern s32 Data_02005728[];
-extern s32 Data_0200646c[];
-extern s32 Data_020064ec;
-extern s32 Data_020064f0;
+extern s32 gData_0200559c[];
+extern s32 gData_02005610[];
+extern s32 gData_020056c4[];
+extern s32 gData_02005728[];
+extern s32 gData_0200646c[];
+extern s32 gData_020064ec;
+extern s32 gData_020064f0;
 
 void                  GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -34,7 +34,7 @@ void                  Func_02004fcc(s32 value);
 
 // Object 10 turns to the leader, talks and walks to its place while the camera
 // follows; flag 0x9de is set, and object 9's script decides whether two
-// words of Data_0200646c are copied into place.
+// words of gData_0200646c are copied into place.
 void Func_02001048(void)
 {
     struct ObjectRuntime *object = Object_GetById(9);
@@ -43,7 +43,7 @@ void Func_02001048(void)
     Func_02004fcc(0);
     Func_02004f0c((s32)MsgGaiaRockInside02);
     Object_AttachWorkTargetToObject(10, 1);
-    if (object->script == Data_02005610 || object->script == Data_0200559c)
+    if (object->script == gData_02005610 || object->script == gData_0200559c)
         Object_RefreshSelectorById(9);
     Func_02000f00();
     Object_SetModeById(10, 1);
@@ -72,10 +72,10 @@ void Func_02001048(void)
     Call2(Motion_SetModeAndWaitAnimation, 10, 3);
     Call4(Motion_CamBounds, -1, -1, -1, 0);
     Call1(GameFlag_SetBit, 0x9de);
-    if (object->script == Data_020056c4 || object->script == Data_02005728)
+    if (object->script == gData_020056c4 || object->script == gData_02005728)
     {
-        Data_0200646c[2] = Data_020064ec = Data_0200646c[14];
-        Data_0200646c[4] = Data_020064f0 = Data_0200646c[16];
+        gData_0200646c[2] = gData_020064ec = gData_0200646c[14];
+        gData_0200646c[4] = gData_020064f0 = gData_0200646c[16];
     }
     Func_02000fac();
     Func_02004e64();

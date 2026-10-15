@@ -148,7 +148,7 @@ struct WorldMapOam
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -158,17 +158,17 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return (u8 *)Placement_Actors;
+	return (u8 *)gPlacement_Actors;
 }
 
 u8 *SceneData_GetEffectTable(void)
 {
-	return (u8 *)Placement_Effects;
+	return (u8 *)gPlacement_Effects;
 }
 
 static void Scene_SaturosTakesHostages(void)
@@ -756,7 +756,7 @@ static void SolEruption_StepEmbers(void)
 			Engine_ActorSetSpriteFlags(ember, 0);
 			ember->sprite->layer = 1;
 			Object_SetMode(ember, 2);
-			Engine_ObjectSetScript(ember, Eruption_EmberScript);
+			Engine_ObjectSetScript(ember, gEruption_EmberScript);
 			ember->x = Iwram_MulQ16(Engine_MathCos((u16)angle),
 						   (((u32)(Engine_RandomNext() << 8) >> 16) << 16) + 0x1000000)
 					   + 0x1450000;
@@ -1580,7 +1580,7 @@ static void FieldScene_RunFourWayEffectSequence(u32 mode)
 	Event_PlayCue(214);
 	i = 0;
 	zero = i;
-	for (pos = &Eruption_ArcOrigins[0]; i <= 9; i++, pos += 2)
+	for (pos = &gEruption_ArcOrigins[0]; i <= 9; i++, pos += 2)
 	{
 		x = pos[0];
 		y = pos[1];
@@ -1856,7 +1856,7 @@ static void FieldScene_RunActor15TwoStep(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/sol_star_ring_setup.h"
 
-s32 Eruption_ArcOriginsHead[] = {
+s32 gEruption_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, 2621),
@@ -1868,7 +1868,7 @@ s32 Eruption_ArcOriginsHead[] = {
 	SC_END,
 };
 
-s32 Eruption_ArcOrigins[] = {
+s32 gEruption_ArcOrigins[] = {
 	PIXELS(-6), 0,
 	PIXELS(10), PIXELS(10),
 	PIXELS(8), PIXELS(25),
@@ -1881,18 +1881,18 @@ s32 Eruption_ArcOrigins[] = {
 	PIXELS(-2), PIXELS(15),
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(18),
 	SCENE_EXIT(5, 11, 8),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Placement_Actors[] = {
+struct ScenePlacement gPlacement_Actors[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1948,20 +1948,20 @@ struct ScenePlacement Placement_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Placement_Effects[] = {
+struct SceneEvent gPlacement_Effects[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 SolEruption_StarCells[] = {
+u16 gSolEruption_StarCells[] = {
 	MAP_CELL_STEP(59, 40, 3, 4, 6), MAP_CELL_STEP(62, 40, 3, 4, 6), MAP_CELL_STEP(65, 40, 3, 4, 6), MAP_CELL_STEP(68, 40, 3, 4, 6), MAP_CELL_STEP(71, 40, 3, 4, 6), MAP_CELL_STEP(74, 40, 3, 4, 6), MAP_CELL_STEP(77, 40, 3, 4, 6), MAP_CELL_STEP(80, 40, 3, 4, 6), MAP_CELL_STEP(83, 40, 3, 4, 0), MAP_CELL_STEPS_END,
 };
 
-s32 Eruption_EmberScript[] = {
+s32 gEruption_EmberScript[] = {
 	SC_CALL(OverlayObject_SetRecordAngleFromHeading),
 	SC_END,
 };
 
-u8 Sol_RingDrift[][3] = {
+u8 gSol_RingDrift[][3] = {
 	{ 4, 4, 4 },
 	{ 4, 0, 3 },
 	{ 4, 0, 4 },
@@ -1974,7 +1974,7 @@ u8 Sol_RingDrift[][3] = {
 	{ 2, 0, 2 },
 };
 
-u8 Sol_RingSwing[][3] = {
+u8 gSol_RingSwing[][3] = {
 	{ 1, 1, 2 },
 	{ 1, 0, 2 },
 	{ 1, 0, 2 },
@@ -1987,7 +1987,7 @@ u8 Sol_RingSwing[][3] = {
 	{ 1, 0, 2 },
 };
 
-s8 Sol_RingDirection[][3] = {
+s8 gSol_RingDirection[][3] = {
 	{ 1, 1, 1 },
 	{ 1, 0, 1 },
 	{ 1, 0, 1 },
@@ -2000,12 +2000,12 @@ s8 Sol_RingDirection[][3] = {
 	{ -1, 0, -1 },
 };
 
-s32 Sol_RingOffsetX[] = {
+s32 gSol_RingOffsetX[] = {
 	0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
 	0x9999, 0xb333,
 };
 
-s32 Sol_RingOffsetZ[] = {
+s32 gSol_RingOffsetZ[] = {
 	655, 458, 655, 458, 655, 458, 655, 655,
 	524, 655,
 };

@@ -90,6 +90,6 @@ Func_080de154:
 .L_080de208:
 	.4byte 0xffe00000
 .L_080de20c:
-	.4byte BattleFx_CommonParticleScript
+	.4byte gBattleFx_CommonParticleScript
 .L_080de210:
-	.4byte Data_080f0e78
+	.4byte gData_080f0e78

@@ -80,13 +80,13 @@ Func_02000098:
 .L_02008138:
 	.4byte 0x000001f8
 .L_0200813c:
-	.4byte Data_02000a00
+	.4byte gData_02000a00
 .L_02008140:
 	.4byte Data_020008f0
 .L_02008144:
 	.4byte Data_02000a30
 .L_02008148:
-	.4byte Data_02000a34
+	.4byte gData_02000a34
 .L_0200814c:
 	.4byte Func_0200005c
 .L_02008150:
@@ -206,13 +206,13 @@ Func_02000158:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008234:
-	.4byte Data_02000a28
+	.4byte gData_02000a28
 .L_02008238:
-	.4byte Data_02000a34
+	.4byte gData_02000a34
 .L_0200823c:
-	.4byte Data_02000a38
+	.4byte gData_02000a38
 .L_02008240:
-	.4byte Data_02000a2c
+	.4byte gData_02000a2c
 	.section .text.x02008244,"ax",%progbits
 	.global Func_02000244
 	.thumb_func
@@ -328,7 +328,7 @@ Func_02000244:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008314:
-	.4byte Data_02000a28
+	.4byte gData_02000a28
 	.section .text.x02008318,"ax",%progbits
 	.ifdef TLA_EDITION_DE
 	.global Func_02000318
@@ -699,7 +699,7 @@ Func_02000318:
 .L_de_020086a4:
 	.4byte gPartyState
 .L_de_020086a8:
-	.4byte Data_02000a28
+	.4byte gData_02000a28
 .L_de_020086ac:
 	.4byte 0x0000325c
 .L_de_020086b0:
@@ -1173,7 +1173,7 @@ Func_02000318:
 .L_02008668:
 	.4byte gPartyState
 .L_0200866c:
-	.4byte Data_02000a28
+	.4byte gData_02000a28
 .L_02008670:
 	.4byte MsgFinallyWeVe
 .L_02008674:
@@ -1304,20 +1304,20 @@ Func_02000318:
 	.global Data_020008f0
 Data_020008f0:
 	.space 0x00000110
-	.global Data_02000a00
-Data_02000a00:
+	.global gData_02000a00
+gData_02000a00:
 	.space 0x00000028
-	.global Data_02000a28
-Data_02000a28:
+	.global gData_02000a28
+gData_02000a28:
 	.space 0x00000004
-	.global Data_02000a2c
-Data_02000a2c:
+	.global gData_02000a2c
+gData_02000a2c:
 	.space 0x00000004
 	.global Data_02000a30
 Data_02000a30:
 	.space 0x00000004
-	.global Data_02000a34
-Data_02000a34:
+	.global gData_02000a34
+gData_02000a34:
 	.space 0x00000004
-	.global Data_02000a38
-Data_02000a38:
+	.global gData_02000a38
+gData_02000a38:

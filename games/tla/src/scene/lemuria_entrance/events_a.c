@@ -21,7 +21,7 @@ struct AnimationRecord26 {
 };
 
 extern u8 MsgFieldAddressCompanion;
-extern const u8 Data_020005e4[];
+extern const u8 gData_020005e4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

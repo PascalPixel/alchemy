@@ -2,7 +2,7 @@
 #include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern FlashWaitProc Flash_Handler3;
+extern FlashWaitProc gFlash_Handler3;
 
 u16 EraseAtmelFlashChip(void)
 {
@@ -15,7 +15,7 @@ u16 EraseAtmelFlashChip(void)
 
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) |
-        Flash_ChipAtmelLayout.type.wait[0];
+        gFlash_ChipAtmelLayout.type.wait[0];
 
     command = (volatile u8 *)0x0E005555;
     *command = 0xAA;
@@ -26,7 +26,7 @@ u16 EraseAtmelFlashChip(void)
     *unlock = 0x55;
     *command = 0x10;
 
-    result = Flash_Handler3(3, (u8 *)0x0E000000, 255);
+    result = gFlash_Handler3(3, (u8 *)0x0E000000, 255);
 
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) | 3;
@@ -36,7 +36,7 @@ u16 EraseAtmelFlashChip(void)
 
 u16 EraseAtmelFlashSector(u16 sector)
 {
-    struct FlashSetupInfo *info = &Flash_ChipAtmelLayout;
+    struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
     u8 *cursor;
     u16 saved;
     s32 count;
@@ -56,7 +56,7 @@ u16 EraseAtmelFlashSector(u16 sector)
     }
     cursor--;
     REG_IME = saved;
-    result = Flash_Handler3(1, cursor, 0xFF);
+    result = gFlash_Handler3(1, cursor, 0xFF);
     if (result != 0) {
         result = (result & 0xFF00) | 2;
     }
@@ -77,7 +77,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        Flash_ChipAtmelLayout.type.wait[0];
+        gFlash_ChipAtmelLayout.type.wait[0];
 
     current = sector << 4;
     current = (u16)(current << 1);
@@ -116,14 +116,14 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     input = source;
     slot = (u16)slot;
     destination = (volatile u8 *)(
-        0x0e000000 + (slot << Flash_ChipAtmelLayout.type.sector.shift));
+        0x0e000000 + (slot << gFlash_ChipAtmelLayout.type.sector.shift));
     saved_ime = REG_IME;
     REG_IME = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
     *(volatile u8 *)0x0e002aaa = 0x55;
     *(volatile u8 *)0x0e005555 = 0xa0;
 
-    remaining = Flash_ChipAtmelLayout.type.sector.size;
+    remaining = gFlash_ChipAtmelLayout.type.sector.size;
     if (remaining != 0) {
         do {
             *destination++ = *input++;
@@ -134,7 +134,7 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     destination--;
     input--;
     REG_IME = saved_ime;
-    return Flash_Handler3(1, destination, *input);
+    return gFlash_Handler3(1, destination, *input);
 }
 
 extern u16 gFlashNumRemainingBytes;
@@ -152,10 +152,10 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        Flash_ChipAtmelLayout.type.wait[0];
+        gFlash_ChipAtmelLayout.type.wait[0];
 
     current = sector << 5;
-    gFlashNumRemainingBytes = Flash_ChipAtmel.type.sector.size;
+    gFlashNumRemainingBytes = gFlash_ChipAtmel.type.sector.size;
 
     while (gFlashNumRemainingBytes != 0) {
         retries = 2;
@@ -172,8 +172,8 @@ attempt:
         if (result != 0)
             break;
 
-        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.type.sector.size;
-        source += Flash_ChipAtmelLayout.type.sector.size;
+        gFlashNumRemainingBytes -= gFlash_ChipAtmelLayout.type.sector.size;
+        source += gFlash_ChipAtmelLayout.type.sector.size;
         current += 1;
     }
 

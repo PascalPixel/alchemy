@@ -30,7 +30,7 @@ Func_08122cd0:
 	mov r9, r3
 	pop {pc}
 .L_08122d04:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08122d08:
 	.4byte 0x06010000
 .L_08122d0c:

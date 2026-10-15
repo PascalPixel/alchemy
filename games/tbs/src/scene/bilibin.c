@@ -77,7 +77,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 static void EV09_TALK_2(void)
@@ -239,11 +239,11 @@ static void FieldScene_RunEarlySequence(void)
 		Engine_AudioPlayCue(158);
 	}
 	off = v5 << 2;
-	table = (u8 *)Village_DoorCellOrigins;
+	table = (u8 *)gVillage_DoorCellOrigins;
 	a1 = *(s16 *)(table + off);
 	off2 = off + 2;
 	a2 = *(s16 *)(table + off2);
-	table2 = (u8 *)Village_DoorCellSteps;
+	table2 = (u8 *)gVillage_DoorCellSteps;
 	Engine_MapAnimateCells(*(s32 *)(table2 + off), a1, a2);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Object_GetById(0)->motionFlags = 0;
@@ -418,9 +418,9 @@ static void EV13_TOUCH(void)
 			Engine_ActorSetAnimation(12, 3);
 			Engine_ActorSetAnimation(13, 3);
 			Engine_ActorSetAnimationAndWait(14, 3);
-			FieldObject_SetTargetAndCallback(12, 0x10000, Village_VillagerActions);
-			FieldObject_SetTargetAndCallback(13, 0x10000, Village_VillagerActions);
-			FieldObject_SetTargetAndCallback(14, 0x10000, Village_VillagerActions);
+			FieldObject_SetTargetAndCallback(12, 0x10000, gVillage_VillagerActions);
+			FieldObject_SetTargetAndCallback(13, 0x10000, gVillage_VillagerActions);
+			FieldObject_SetTargetAndCallback(14, 0x10000, gVillage_VillagerActions);
 			GameFlag_Set(0x849);
 			Engine_EventEnd();
 		}
@@ -646,8 +646,8 @@ static void EV08_PSYNERGY_3(void)
 
 	for (i = 0; i < 20; i += 2)
 	{
-		s32 x = ((u8 *)Village_RepaintCells)[i];
-		s32 z = ((u8 *)Village_RepaintCells)[i + 1];
+		s32 x = ((u8 *)gVillage_RepaintCells)[i];
+		s32 z = ((u8 *)gVillage_RepaintCells)[i + 1];
 		Map_CopyCellAttributes(1, 0, 1, 1, x, z);
 	}
 
@@ -688,14 +688,14 @@ static void Bilibin_PushFacedBlock(void)
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
 	block = SceneActor_FindActorAtCell(
-		(leader->x.part.pixel + (Bilibin_FacingCellSteps[dir] >> 16)) >> 4,
-		(leader->z.part.pixel + (s16)Bilibin_FacingCellSteps[dir]) >> 4);
+		(leader->x.part.pixel + (gBilibin_FacingCellSteps[dir] >> 16)) >> 4,
+		(leader->z.part.pixel + (s16)gBilibin_FacingCellSteps[dir]) >> 4);
 	if (block != NULL)
 	{
 		block->terrainId = 2;
-		pos[0].fixed = block->x.fixed + (Bilibin_FacingCellSteps[dir] & -0x10000);
+		pos[0].fixed = block->x.fixed + (gBilibin_FacingCellSteps[dir] & -0x10000);
 		pos[1].fixed = block->y.fixed;
-		pos[2].fixed = block->z.fixed + (Bilibin_FacingCellSteps[dir] << 16);
+		pos[2].fixed = block->z.fixed + (gBilibin_FacingCellSteps[dir] << 16);
 		if (FieldObject_CheckMovementCollision(block, pos) <= 0)
 		{
 			Object_SetMode(leader, 8);
@@ -754,7 +754,7 @@ static void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 		return;
 
 	sprite = effect->sprite;
-	Engine_ObjectSetScript(effect, Village_SpawnScript);
+	Engine_ObjectSetScript(effect, gVillage_SpawnScript);
 	effect->motionFlags = 0;
 	effect->terrainId = 1;
 	effect->priorityFlags = 2;
@@ -786,7 +786,7 @@ static void EV08_PSYNERGY_2(void)
 		Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
 }
 
-s32 Village_VillagerActions[] = {
+s32 gVillage_VillagerActions[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -832,7 +832,7 @@ s16 gBilibinRegions2[] = {
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(30),
 	SCENE_EXIT(1, 2, 5),
 	SCENE_EXIT(2, 34, 1),
@@ -1043,56 +1043,56 @@ struct SceneEvent gBilibinEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Village_DoorCellStep6[] = {
+u16 gVillage_DoorCellStep6[] = {
 	MAP_CELL_STEP(37, 33, 4, 2, 5), MAP_CELL_STEP(33, 33, 4, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep4[] = {
+u16 gVillage_DoorCellStep4[] = {
 	MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep5[] = {
+u16 gVillage_DoorCellStep5[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 5), MAP_CELL_STEP(33, 52, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep1[] = {
+u16 gVillage_DoorCellStep1[] = {
 	MAP_CELL_STEP(35, 54, 2, 2, 5), MAP_CELL_STEP(33, 54, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep0[] = {
+u16 gVillage_DoorCellStep0[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 5), MAP_CELL_STEP(33, 48, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep2[] = {
+u16 gVillage_DoorCellStep2[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 5), MAP_CELL_STEP(33, 46, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Village_DoorCellStep3[] = {
+u16 gVillage_DoorCellStep3[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 5), MAP_CELL_STEP(33, 50, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 *Village_DoorCellSteps[] = {
-	Village_DoorCellStep0,
-	Village_DoorCellStep1,
-	Village_DoorCellStep2,
-	Village_DoorCellStep3,
-	Village_DoorCellStep4,
-	Village_DoorCellStep5,
-	Village_DoorCellStep6,
+u16 *gVillage_DoorCellSteps[] = {
+	gVillage_DoorCellStep0,
+	gVillage_DoorCellStep1,
+	gVillage_DoorCellStep2,
+	gVillage_DoorCellStep3,
+	gVillage_DoorCellStep4,
+	gVillage_DoorCellStep5,
+	gVillage_DoorCellStep6,
 };
 
-u32 Village_DoorCellOrigins[] = {
+u32 gVillage_DoorCellOrigins[] = {
 	0x140036, 0x12002b, 0x130025, 0xb0029, 0xb0023, 0x90031, 0x60037,
 };
 
-u32 Village_RepaintCells[] = {
+u32 gVillage_RepaintCells[] = {
 	0x12091208, 0x1308120a, 0x130a1309, 0x1409130b, 0x140b140a,
 };
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 Bilibin_FacingCellSteps[] = {
+s32 gBilibin_FacingCellSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1111,7 +1111,7 @@ s32 Bilibin_FacingCellSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-s32 Village_SpawnScript[] = {
+s32 gVillage_SpawnScript[] = {
 	SC_WAIT(30),
 	SC_FREE,
 };

@@ -62,11 +62,11 @@ Func_020015a0:
 .L_0200960c:
 	.4byte 0x00000001
 .L_02009610:
-	.4byte Data_02003c14
+	.4byte gData_02003c14
 .L_02009614:
-	.4byte Data_02003990
+	.4byte gData_02003990
 .L_02009618:
-	.4byte Data_02003c10
+	.4byte gData_02003c10
 	.section .text.x020096d8,"ax",%progbits
 	.global Func_020016d8
 	.thumb_func
@@ -525,9 +525,9 @@ Func_020016d8:
 .L_02009b24:
 	.4byte MsgIdejimaIsThisThePlace
 .L_02009b28:
-	.4byte Data_02003330
+	.4byte gData_02003330
 .L_02009b2c:
-	.4byte Data_0200336c
+	.4byte gData_0200336c
 .L_02009b30:
 	.4byte 0x00019999
 .L_02009b34:
@@ -1333,17 +1333,17 @@ Func_02001ee0:
 .L_0200a2e8:
 	.4byte MsgIdejimaHowLongWillWeDrift
 .L_0200a2ec:
-	.4byte Data_020033a8
+	.4byte gData_020033a8
 .L_0200a2f0:
-	.4byte Data_02003400
+	.4byte gData_02003400
 .L_0200a2f4:
-	.4byte Data_0200346c
+	.4byte gData_0200346c
 .L_0200a2f8:
 	.4byte 0x00019999
 .L_0200a2fc:
-	.4byte Data_020034e4
+	.4byte gData_020034e4
 .L_0200a300:
-	.4byte Data_0200350c
+	.4byte gData_0200350c
 	.section .text.x0200a304,"ax",%progbits
 	.global Func_02002304
 	.thumb_func
@@ -2261,13 +2261,13 @@ Func_02002304:
 .L_0200abc8:
 	.4byte 0x00019999
 .L_0200abcc:
-	.4byte Data_020035bc
+	.4byte gData_020035bc
 .L_0200abd0:
-	.4byte Data_02003534
+	.4byte gData_02003534
 .L_0200abd4:
-	.4byte Data_02003600
+	.4byte gData_02003600
 .L_0200abd8:
-	.4byte Data_02003578
+	.4byte gData_02003578
 .L_0200abdc:
 	movs r0, #1
 	bl Task_Wait
@@ -2507,11 +2507,11 @@ Func_02002fd4:
 	pop {r5, r6, pc}
 	.section .bss,"aw",%nobits
 	.space 0x00000008
-	.global Data_02003990
-Data_02003990:
+	.global gData_02003990
+gData_02003990:
 	.space 0x00000280
-	.global Data_02003c10
-Data_02003c10:
+	.global gData_02003c10
+gData_02003c10:
 	.space 0x00000004
-	.global Data_02003c14
-Data_02003c14:
+	.global gData_02003c14
+gData_02003c14:

@@ -77,4 +77,4 @@ Func_0802e444:
 	pop {pc}
 	.2byte 0x0000
 .L_0802e4c4:
-	.4byte Data_0802f064
+	.4byte gData_0802f064

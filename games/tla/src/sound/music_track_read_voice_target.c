@@ -13,7 +13,7 @@ union PackedWord {
 
 void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player, struct SoundTrack *track)
 {
-    SoundCommand func = *(&Sound_CommandTable[0]);
+    SoundCommand func = *(&gSound_CommandTable[0]);
 
     func(player, track);
 }

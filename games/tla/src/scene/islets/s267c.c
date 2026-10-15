@@ -26,8 +26,8 @@ void Func_0200267c(void)
     Call1((void (*)())Func_02003ffc, 158);
     asm volatile("" : "+l"(index)); /* FAKEMATCH: the listing subtracts one after the call, not before it */
     index--;
-    Call3((void (*)())Func_02003e1c, Data_020046bc[index].value, Data_020046bc[index].pair.first, Data_020046bc[index].pair.second);
-    ObjectMotion_EnableActionAndSetCallback(party->currentOwner, Data_02004028);
+    Call3((void (*)())Func_02003e1c, gData_020046bc[index].value, gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
+    ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02004028);
     WaitFrames(12);
     Func_02003ffc(123);
     Event_FinishScreenTransition();

@@ -12,7 +12,7 @@ struct SceneRecord {
     s16 attributes;
 };
 
-extern const struct SceneRecord Field_SceneTable[];
+extern const struct SceneRecord gField_SceneTable[];
 
 enum Facing
 {

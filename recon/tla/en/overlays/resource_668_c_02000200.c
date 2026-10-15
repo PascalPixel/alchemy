@@ -30,10 +30,10 @@ struct DoorPlan {
     s32 value[6];
 };
 
-extern u8 Data_02004d0c[];
-extern u8 Data_02004dbc[];
-extern u8 Data_02004fe4[];
-extern u8 Data_02005290[];
+extern u8 gData_02004d0c[];
+extern u8 gData_02004dbc[];
+extern u8 gData_02004fe4[];
+extern u8 gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();

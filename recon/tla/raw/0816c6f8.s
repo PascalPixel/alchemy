@@ -1298,7 +1298,7 @@ Func_0816c6f8:
 .L_0816d110:
 	.4byte 0x3f3f3f3f
 .L_0816d114:
-	.4byte Data_081990d0
+	.4byte gData_081990d0
 .L_0816d118:
 	.4byte Data_08198b52
 .L_0816d11c:

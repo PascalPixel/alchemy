@@ -10,8 +10,8 @@
 #include "field_scene.h"
 #include "party_state.h"
 
-extern u8 Data_020017b0[];
-extern u8 Data_02001860[];
+extern u8 gData_020017b0[];
+extern u8 gData_02001860[];
 
 void Func_02000f14(s32, s32, s32);
 void Func_02000ebc(s32, s32);
@@ -87,8 +87,8 @@ void Func_02000744(void)
 
 void Func_02000748(s32 actor)
 {
-    Func_02000c4c(Object_GetById(actor), Data_02001860);
-    Func_02000c4c(Object_GetById(gPartyState.currentOwner), Data_020017b0);
+    Func_02000c4c(Object_GetById(actor), gData_02001860);
+    Func_02000c4c(Object_GetById(gPartyState.currentOwner), gData_020017b0);
     WaitFrames(100);
     Func_02000d4c(Object_GetById(actor));
     Func_02000d4c(Object_GetById(gPartyState.currentOwner));

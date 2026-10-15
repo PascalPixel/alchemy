@@ -228,7 +228,7 @@ Func_020000b8:
 .L_02008270:
 	.4byte gPartyState
 .L_02008274:
-	.4byte Data_02003c04
+	.4byte gData_02003c04
 .L_02008278:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
@@ -1451,7 +1451,7 @@ Func_02001340:
 .L_02009424:
 	.4byte 0xffff0000
 .L_02009428:
-	.4byte Data_02004a18
+	.4byte gData_02004a18
 	.section .text.x02009474,"ax",%progbits
 	.balign 4
 	.global Func_02001474
@@ -2356,7 +2356,7 @@ Func_02001d24:
 .L_0200a37c:
 	.4byte 0x00013333
 .L_0200a380:
-	.4byte Data_02003c58
+	.4byte gData_02003c58
 	.section .text.x0200ad50,"ax",%progbits
 	.balign 4
 	.global Func_02002d50
@@ -2680,5 +2680,5 @@ Func_02003598:
 .L_0200b73c:
 	.4byte 0x02160000
 	.section .bss,"aw",%nobits
-	.global Data_02004a18
-Data_02004a18:
+	.global gData_02004a18
+gData_02004a18:

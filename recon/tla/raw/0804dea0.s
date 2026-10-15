@@ -94,6 +94,6 @@ Menu_DrawFlagBitTable:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0804df5c:
-	.4byte Menu_HexDigitsString
+	.4byte gMenu_HexDigitsString
 .L_0804df60:
-	.4byte Menu_ColonString
+	.4byte gMenu_ColonString

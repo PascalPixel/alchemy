@@ -8,7 +8,7 @@ extern struct FieldEffect *Object_GetById(s32 id);
 extern struct FieldEffect *Func_02005140(s32 type, s32 x, s32 y, s32 z);
 extern void Func_02005130(struct FieldEffect *effect, s32 mode);
 extern void Func_02005138(struct FieldEffect *effect, const s32 *script);
-extern const s32 *Data_02005508[];
+extern const s32 *gData_02005508[];
 extern void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
 extern void Object_SetSpritePriority(struct FieldEffect *effect, s32 priority);
 extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
@@ -31,7 +31,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Func_02005130(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Func_02005138(effect, Data_02005508[flags & EFFECT_SCRIPT_MASK]);
+    Func_02005138(effect, gData_02005508[flags & EFFECT_SCRIPT_MASK]);
     effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
@@ -63,7 +63,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         s32 targetX;
         s32 count;
 
-        script = Data_02005508[flags & EFFECT_SCRIPT_MASK];
+        script = gData_02005508[flags & EFFECT_SCRIPT_MASK];
         targetX = options->targetScaleX;
         count = script[3];
         if (start != 0)

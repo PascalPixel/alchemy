@@ -69,10 +69,10 @@ void DailaInteriors_BeginLeaderEvent(void)
     Engine_ActorSetSpritePriority(gPartyState.currentOwner, 1);
 }
 
-extern const u8 Data_020016e4[];
-extern const u8 Data_02001924[];
-extern const u8 Data_02001990[];
-extern const u8 Data_02001c18[];
+extern const u8 gData_020016e4[];
+extern const u8 gData_02001924[];
+extern const u8 gData_02001990[];
+extern const u8 gData_02001c18[];
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -82,10 +82,10 @@ const struct SceneEvent *Scene_GetEvents(void)
 
     if (flag) {
         if (party->scene == id)
-            return (const struct SceneEvent *)Data_02001c18;
-        return (const struct SceneEvent *)Data_02001990;
+            return (const struct SceneEvent *)gData_02001c18;
+        return (const struct SceneEvent *)gData_02001990;
     }
     if (party->scene == id)
-        return (const struct SceneEvent *)Data_02001924;
-    return (const struct SceneEvent *)Data_020016e4;
+        return (const struct SceneEvent *)gData_02001924;
+    return (const struct SceneEvent *)gData_020016e4;
 }

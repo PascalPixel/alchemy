@@ -562,13 +562,13 @@ Func_08179394:
 .L_081797f4:
 	.4byte Data_08199400
 .L_081797f8:
-	.4byte Data_02015000
+	.4byte gData_02015000
 .L_081797fc:
 	.4byte 0xfffff000
 .L_08179800:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08179804:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08179808:
 	add r6, sp
 	str r4, [r0, #20]
@@ -756,6 +756,6 @@ Func_08179394:
 .L_08179988:
 	.4byte Data_02011000
 .L_0817998c:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08179990:
 	.4byte Func_08143000

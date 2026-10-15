@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -46,8 +46,8 @@ struct CellRecord {
     u16 unk06[3];
 };
 
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
@@ -79,8 +79,8 @@ static __inline__ void Wait(s32 frames)
     WaitFrames(frames);
 }
 
-extern s32 Data_0200567c;
-extern s32 Data_02005678;
+extern s32 gData_0200567c;
+extern s32 gData_02005678;
 
 void Func_02001ee8(void)
 {
@@ -88,7 +88,7 @@ void Func_02001ee8(void)
 
     if (Flag_Test(0x201) != 0) {
         object = Object_GetById(gPartyState.currentOwner);
-        if (Data_0200567c != (object->x >> 20) || Data_02005678 != (object->z >> 20))
+        if (gData_0200567c != (object->x >> 20) || gData_02005678 != (object->z >> 20))
             Flag_Clear(0x201);
     }
 }
@@ -200,7 +200,7 @@ s32 Func_02003de0(void);
 s32 Func_02003d10(s32 owner);
 void Func_02000d78(const void *data);
 void Func_0200200c(struct ObjectRuntime *object);
-extern const u8 Data_02003fc8[];
+extern const u8 gData_02003fc8[];
 
 void Func_020020dc(void)
 {
@@ -208,16 +208,16 @@ void Func_020020dc(void)
 
     if (Func_02003de0() != 0) {
         object = Object_GetById(Func_02003d10(gPartyState.currentOwner));
-        Func_02000d78(Data_02003fc8);
+        Func_02000d78(gData_02003fc8);
         Func_02003de8();
         Func_0200200c(object);
     }
 }
 
 void Func_02000d78(const void *data);
-extern const u8 Data_02003fc8[];
+extern const u8 gData_02003fc8[];
 
 void Func_02002114(void)
 {
-    Func_02000d78(Data_02003fc8);
+    Func_02000d78(gData_02003fc8);
 }

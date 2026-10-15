@@ -38,9 +38,9 @@ struct IoReg16 {
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 extern struct SceneState gSceneState;
-extern s32 Data_02005af0;
-extern const s8 Data_02005940[];
-extern const u8 Data_02005948[];
+extern s32 gData_02005af0;
+extern const s8 gData_02005940[];
+extern const u8 gData_02005948[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

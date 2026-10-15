@@ -135,7 +135,7 @@ Func_080d7034:
 .L_080d7134:
 	.4byte 0xfffffe00
 .L_080d7138:
-	.4byte Data_080f0b7c
+	.4byte gData_080f0b7c
 .L_080d713c:
 	adds r3, r1, #0
 	ands r3, r2

@@ -2,7 +2,7 @@
    ⚓️ has it: the effect argument read directly, resource 0x134 unpacked into
    the sheet slot and the ice block palette (resource 0x17d) copied, one blitter
    from Func_081963ec(104, 0x13), the callback at 0xc80, 128 shards a member
-   moved by BattleFxKernels_IntegrateVector2 with gravities from Data_081982e4.
+   moved by BattleFxKernels_IntegrateVector2 with gravities from gData_081982e4.
    Left: the sheet pointer and the member counter take each other's frame
    slots (sp+16 and sp+20), and at about a dozen rows the native issues a load
    one instruction earlier than here. */
@@ -41,8 +41,8 @@ struct BattleObjectSlot
 
 extern char ResourceId_Data134;
 extern char ResourceId_IceBlockSheet;
-extern u16 Data_08197410[];
-extern s32 Data_081982e4[];
+extern u16 gData_08197410[];
+extern s32 gData_081982e4[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void Func_08143000(void);
@@ -153,9 +153,9 @@ void Func_0814e744(struct BattleEffectArgument *effect)
                         s32 size;
 
                         size = i % 3 + 1;
-                        draw(canvas, sheet + Data_08197410[size - 1],
+                        draw(canvas, sheet + gData_08197410[size - 1],
                             HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
-                        BattleFxKernels_IntegrateVector2(shard, 62, Data_081982e4[i & 3]);
+                        BattleFxKernels_IntegrateVector2(shard, 62, gData_081982e4[i & 3]);
                         shard->variant++;
                         if (shard->velocityY > 0 && HI(shard->y) > 112)
                             shard->variant = -1;

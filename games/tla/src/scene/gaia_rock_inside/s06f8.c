@@ -5,11 +5,11 @@
 s32 Object_GetById();
 s32 Func_02004dac();
 s32 Func_02004f34();
-extern u8 Data_0200559c[];
+extern u8 gData_0200559c[];
 
 s32 Func_020006f8(void)
 {
-    Call2(Func_02004dac, Value1(Object_GetById, 9), (s32)Data_0200559c);
+    Call2(Func_02004dac, Value1(Object_GetById, 9), (s32)gData_0200559c);
     Call2(Func_02004f34, 0xa, 0x102);
     return 0;
 }

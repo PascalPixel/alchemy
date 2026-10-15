@@ -31,7 +31,7 @@ void Func_0200051c(void)
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     Object_GetById(8)->priorityFlags |= 32;
     Func_02001520(0);
-    data = Data_02001be0;
+    data = gData_02001be0;
     Func_020015e0(0);
     Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
     Scheduler_AddOrUpdateCallback(Func_02000258, 0x480);
@@ -46,7 +46,7 @@ void Func_0200051c(void)
     Func_02001570(0, 0x200, 10, 11);
     Object_GetById(10)->priorityFlags |= 32;
     Object_GetById(11)->priorityFlags |= 32;
-    Func_02001230(Data_020016e4);
+    Func_02001230(gData_020016e4);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     Call2((void (*)())Func_02001598, 14, 0x1000);
     Object_SetModeById(12, 0);

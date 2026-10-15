@@ -26,8 +26,8 @@ void Object_SetPositionAndResetMotion();
 void Party_RemoveOwnerRestored();
 void UiText_OpenMessageAtObject(s32 actor, s32 flags);
 void WaitFrames();
-extern u8 Data_02006b70[];
-extern u8 Data_02006c20[];
+extern u8 gData_02006b70[];
+extern u8 gData_02006c20[];
 
 void Func_02005714(s32 actor, s32 a, s32 b);
 
@@ -64,8 +64,8 @@ void Func_020029ac(void)
     ((void (*)())Event_StartScreenTransition)();
     ((void (*)())Event_WaitTransitionFrames)();
     Call2((void (*)())ObjectMotion_SetActionVariant, 3, 1);
-    Call2((void (*)())Func_020053e4, (s32)Object_GetById(7), (s32)Data_02006c20);
-    Call2((void (*)())Func_020053e4, (s32)Object_GetById(3), (s32)Data_02006b70);
+    Call2((void (*)())Func_020053e4, (s32)Object_GetById(7), (s32)gData_02006c20);
+    Call2((void (*)())Func_020053e4, (s32)Object_GetById(3), (s32)gData_02006b70);
     Call1((void (*)())Battle_WaitMode0, 0x78);
     Call1((void (*)())Func_020054e4, (s32)Object_GetById(7));
     Call1((void (*)())Func_020054e4, (s32)Object_GetById(3));

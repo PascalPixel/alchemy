@@ -45,7 +45,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

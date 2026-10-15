@@ -3,7 +3,7 @@
 #include "resource.h"
 
 extern u8 gSceneState[];
-extern const u8 Field_CachedTilesA[];
+extern const u8 gField_CachedTilesA[];
 void Func_020055cc(const u8 *data, void *buffer);
 
 s32 Func_020038f4(u32 x, u32 z)

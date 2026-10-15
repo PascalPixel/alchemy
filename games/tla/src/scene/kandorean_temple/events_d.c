@@ -7,7 +7,7 @@ void Func_020006b0(struct ObjectRuntime *object)
 
     if (steam) {
         sprite = steam->animation;
-        Func_02005138(steam, Data_020054e4);
+        Func_02005138(steam, gData_020054e4);
         steam->motionFlags = 0;
         steam->terrainId = 1;
         steam->priorityFlags = 2;
@@ -30,7 +30,7 @@ void Func_02000710(void)
         if (steam) {
             ObjectDispatch_SetSingleChildFlags(steam, 0);
             Func_02005130(steam, 1);
-            Func_02005138(steam, Data_020054f0);
+            Func_02005138(steam, gData_020054f0);
         }
     }
     Func_02000778(leader, 0xd999);

@@ -28,7 +28,7 @@ void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
 void Event_StartScreenTransitionFar(void);
 
-extern s8 Inn_PriceMultipliers[];
+extern s8 gInn_PriceMultipliers[];
 
 #if defined(TBS_EDITION_JA)
 #define MESSAGE_WINDOW_ROWS 11

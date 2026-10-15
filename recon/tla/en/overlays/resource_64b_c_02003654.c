@@ -9,14 +9,14 @@ struct EventChoice {
     s16 choice;
 };
 
-extern struct ObjectRuntime *Data_02006c08[];
+extern struct ObjectRuntime *gData_02006c08[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02004e30(s32 sound);
 
 void Func_02003654(s32 index, s32 near, s32 far)
 {
-    struct ObjectRuntime *marker = Data_02006c08[index - 100];
+    struct ObjectRuntime *marker = gData_02006c08[index - 100];
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct EventChoice *work = Ram_HeapSlots->eventWork;
 

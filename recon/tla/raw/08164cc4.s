@@ -1630,7 +1630,7 @@ BattleEffect_RunParticleStreams:
 .L_08165970:
 	.4byte Func_08143000
 .L_08165974:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08165978:
 	.4byte 0xffffe000
 .L_0816597c:

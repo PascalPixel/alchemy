@@ -167,7 +167,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	{
 		block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
 		Dma_Set(Render_DecodeFrame, block,
-			(((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
+			(((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
 				| (DMA_ENABLE32 | DMA_32BIT),
 			REG_DMA3);
 		draw = (DrawFn)(*(void *(*)[])
@@ -245,32 +245,32 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 		switch (e->kind)
 		{
 		case 1:
-			attr = AnimationFacing_Kind1[dir >> 13];
+			attr = gAnimationFacing_Kind1[dir >> 13];
 			break;
 		case 2:
 		case 20:
-			attr = AnimationFacing_Kind2[dir >> 13];
+			attr = gAnimationFacing_Kind2[dir >> 13];
 			break;
 		case 22:
-			attr = AnimationFacing_Kind22[dir >> 13];
+			attr = gAnimationFacing_Kind22[dir >> 13];
 			break;
 		case 3:
-			attr = AnimationFacing_Kind3[dir >> 12];
+			attr = gAnimationFacing_Kind3[dir >> 12];
 			break;
 		case 4:
-			attr = AnimationFacing_Kind4[dir >> 10];
+			attr = gAnimationFacing_Kind4[dir >> 10];
 			break;
 		case 5:
-			attr = AnimationFacing_Kind5[dir >> 12];
+			attr = gAnimationFacing_Kind5[dir >> 12];
 			break;
 		case 6:
-			attr = AnimationFacing_Kind6[dir >> 10];
+			attr = gAnimationFacing_Kind6[dir >> 10];
 			break;
 		case 8:
-			attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+			attr = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
 			break;
 		case 88:
-			attr = AnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+			attr = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
 			break;
 		default:
 			attr = 0;
@@ -710,7 +710,7 @@ enum
 	ANIMATION_OBJECT_COUNT = 64
 };
 
-extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
+extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
@@ -736,7 +736,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 	record->tag = (slot << 12) | number;
 	record->buffer = buffer;
 
-	entry = ResourceSlot_NumberTable;
+	entry = gResourceSlot_NumberTable;
 	for (count = 0; count < 256; count++)
 	{
 		s16 *numbers = &entry->number;
@@ -766,7 +766,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 		end = (u8 *)buffer + size;
 		if (index > 4)
 			index = 0;
-		table = ResourceSlot_ConversionTables[index];
+		table = gResourceSlot_ConversionTables[index];
 		for (; text < end; text++)
 		{
 			u32 c = *text;
@@ -1089,7 +1089,7 @@ void ObjectSystem_Configure(s32 mode)
 	PaletteDma_LoadBlock();
 	Dma_Fill32Cell(zero, 0, objects, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
 	Dma_Fill32Cell(zero, 0, states, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-	VramBlock_LoadCached(93, 128, Object_ShadowTiles);
+	VramBlock_LoadCached(93, 128, gObject_ShadowTiles);
 	RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
@@ -1354,7 +1354,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 
 	if (n < cnt)
 	{
-		table = Map_TileDissolveOrder;
+		table = gMap_TileDissolveOrder;
 		high_mask = 0xff00;
 		index_mask = 0x3f;
 		offset_mask = 0x3e;
@@ -1498,8 +1498,8 @@ void ObjectSystem_Initialize(s32 mode)
 	else
 	{
 		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		Iwram_Data2 = 0;
-		Iwram_Data1 = 0;
+		gIwram_Data2 = 0;
+		gIwram_Data1 = 0;
 	}
 	sys->edge = 15;
 	sys->fill = 0;
@@ -1634,7 +1634,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 		mot = (struct ScriptMotionObject *)obj;
 		sc = (struct ScriptObjectRuntime *)obj;
 		Object_SetPositionAndResetMotion(obj, x, y, z);
-		obj->script = (s32 *)ObjectDispatch_DefaultScript;
+		obj->script = (s32 *)gObjectDispatch_DefaultScript;
 		obj->speedLimit = 0x20000;
 		obj->step = 0;
 		act->scaleX = 0x10000;
@@ -1793,38 +1793,38 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table5Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
 	obj->argument = arg;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table0Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table1Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table2Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table3Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table6Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table4Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
 	if (arg != 0)
 	{
 		obj->value34 = 0x8000;
@@ -2193,7 +2193,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 	if (GameFlag_TestFar(363))
 	{
 		angle += 0xffffe000;
-		Iwram_TransformMatrix(Camera_FixedViewMatrix);
+		Iwram_TransformMatrix(gCamera_FixedViewMatrix);
 		Graphics_PrepareTransferAndRun(eye, target);
 	}
 	else
@@ -2323,7 +2323,7 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
-extern ScriptCommandFn ScriptObject_CommandTable[];
+extern ScriptCommandFn gScriptObject_CommandTable[];
 
 static __inline__ s32 Square(s32 value)
 {
@@ -2386,7 +2386,7 @@ void Object_UpdateAllThumb(void)
 				cmd = script->word[(s16)obj->scriptCursor];
 				if (cmd <= 63)
 				{
-					if (ScriptObject_CommandTable[cmd](obj) == 0)
+					if (gScriptObject_CommandTable[cmd](obj) == 0)
 						break;
 				}
 				else
@@ -2575,9 +2575,9 @@ void Object_UpdateAllThumb(void)
 				{
 					phase = (obj->vertical.phase & 0x3f);
 					if ((obj->motionFlags & 8) != 0)
-						obj->velocityY = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
+						obj->velocityY = gScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
 					else
-						obj->velocityY = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
+						obj->velocityY = gScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
 					obj->vertical.phase++;
 				}
 			}
@@ -3062,7 +3062,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
 	s32 result;
 
-	interpreter->script = Script_MainScript;
+	interpreter->script = gScript_MainScript;
 	interpreter->cursor = (result = 0);
 	return result;
 }
@@ -3577,7 +3577,7 @@ enum ScriptOperandOperation
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 
-extern OperandFunc Script_OperandHandlerTable[];
+extern OperandFunc gScript_OperandHandlerTable[];
 
 // 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は comparisonResult)
 // 32 ビットの項目
@@ -3722,7 +3722,7 @@ static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation)
 {
 	s16			index = work->cursor;
 	const s32  *command = (const s32 *)work->scriptAddress + index + 1;
-	OperandFunc handler = Script_OperandHandlerTable[command[0]];
+	OperandFunc handler = gScript_OperandHandlerTable[command[0]];
 
 	if (handler != 0)
 		handler(work, operation, command[1]);
@@ -3886,7 +3886,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		free = 0;
 		for (block = 0; block < 512; block++)
 		{
-			if (ResourceBlockOwners[block] == 0xff)
+			if (gResourceBlockOwners[block] == 0xff)
 				free++;
 		}
 		if (free - 136 < 0)
@@ -3943,7 +3943,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		mode = 5;
 	}
 
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	if ((u16)angle == 0xffff)
 	{
 		collision |= 4;
@@ -4187,7 +4187,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			effect->terrainHeight = object->terrainHeight;
 			animation = effect->animation;
 			ObjectDispatch_Initialize(
-				(struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
+				(struct DispatchObject *)effect, (u32)gWorldMap_FootprintActions);
 			effect->unk23 = 2;
 			effect->flags = collision;
 			if (animation != 0)
@@ -4268,7 +4268,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 	if ((gKeysRepeat & KEY_L) != 0)
 		object->speedLimit = 0x40000;
 
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	direction = angle;
 	if (direction == 0xffff)
 	{
@@ -4474,7 +4474,7 @@ update_object:
 	}
 
 	work = gMapWork[0];
-	rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+	rate = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
 	step = (s16)(rate - work->yaw) / 8;
 	if (step > 0x200)
 		step = 0x200;
@@ -4505,7 +4505,7 @@ update_object:
 			{
 				animation = effect->animation;
 				ObjectDispatch_Initialize(
-					(struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
+					(struct DispatchObject *)effect, (u32)(gWorldMap_FootprintActions + 12));
 				effect->flags = collision;
 				effect->terrainId = 1;
 				if (animation != 0)
@@ -4549,7 +4549,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 	object->speedLimit = 0x8000;
 	object->acceleration = 0x4000;
 	motion = 12;
-	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
 	if (angle == 0xffff)
 	{
 		blocked = 4;
@@ -4634,7 +4634,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 	u8 *table;
 
 	p = buf;
-	table = Runtime_ByteRemapTable;
+	table = gRuntime_ByteRemapTable;
 	n = cnt - 1;
 	if (n != -1)
 	{
@@ -4783,7 +4783,7 @@ struct SceneEntry
 	u16 resources[6];
 };
 
-extern struct SceneEntry Map_LayeredScenes[];
+extern struct SceneEntry gMap_LayeredScenes[];
 
 struct SceneLayerSource
 {
@@ -4830,7 +4830,7 @@ s32 Map_LoadLayeredScene(s32 index)
 	REG_DISPCNT &=
 		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 	Blend_SetDarkenTarget0(0);
-	entry = &Map_LayeredScenes[index];
+	entry = &gMap_LayeredScenes[index];
 	work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
 	Iwram_ClearWords(work, sizeof(struct MapScrollWork));
 	header =
@@ -5871,7 +5871,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	state = gMapWork[0];
 	if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
 		variant = 1;
-	resources = WorldMap_GraphicsResources[variant];
+	resources = gWorldMap_GraphicsResources[variant];
 	state->resources = resources;
 	value = BG_PALETTE[0];
 	Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
@@ -6718,7 +6718,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
 	start = samples[0] << CURVE_VALUE_SHIFT;
 	return start
 		   + (((samples[1] << CURVE_VALUE_SHIFT) - start)
-			   * Curve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+			   * gCurve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
 }
 
 s32 Curve_StepAtHalf(const s8 *samples, u32 position)
@@ -6809,12 +6809,12 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
-	return samples[Curve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
+	return samples[gCurve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {
-	return samples[Curve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+	return samples[gCurve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
 		   << CURVE_VALUE_SHIFT;
 }
 
@@ -6830,7 +6830,7 @@ s32 Curve_GetFirstSampleC(const s8 *samples)
 
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
-extern TerrainHeightFn Map_TerrainHeightFunctions[16];
+extern TerrainHeightFn gMap_TerrainHeightFunctions[16];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 {
@@ -6847,7 +6847,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 	}
 	cells += x / 16 + (y / 16 << 7);
 	attributes = Ram_MapCollision + cells->attributeB * 4;
-	return Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
+	return gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
 }
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
@@ -6936,7 +6936,7 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *posi
 	if (cell->collisionCode == 0xff)
 		return 2;
 	attributes = Ram_MapCollision + cell->attributeB * 4;
-	height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
+	height = gMap_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
 	delta = height - object->terrainHeight;
 	if (delta > 0x80000)
 		return 1;
@@ -7042,7 +7042,7 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind
 	if (*terrain_kind == 21)
 		flag = 0x20;
 
-	return WorldMap_TerrainBehaviorTable[flag + selector];
+	return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
@@ -7718,7 +7718,7 @@ void Battle_PlaceActorsByFormationKind(void)
 	u32						  count;
 	u32						  i;
 
-	scale = (*(struct Vec2 *)&Battle_FormationPlacementScale);
+	scale = (*(struct Vec2 *)&gBattle_FormationPlacementScale);
 	table = WORK_SLOT(HEAP_SLOT_BATTLE);
 
 	switch (kind)

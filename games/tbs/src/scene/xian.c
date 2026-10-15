@@ -120,7 +120,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 		config.kind = 1;
 		config.variant = 9;
 		config.id = 169;
-		config.data = Xian_EffectConfig;
+		config.data = gXian_EffectConfig;
 		Effect_Spawn(*(s32 *)(entity + 8), *(s32 *)(entity + 12), *(s32 *)(entity + 16) - 0x10000,
 			0, -0x10000, -0x10000, 0x330000, &config);
 	}
@@ -446,10 +446,10 @@ static void EV14_TALK(void)
 		Actor_SetDestination(14, 168, 0x138);
 		Engine_ActorWaitForMove(14);
 		Engine_AudioPlayCue(134);
-		Engine_ActorEnableActionCallback(19, (s32)Xian_Actor19Motion);
+		Engine_ActorEnableActionCallback(19, (s32)gXian_Actor19Motion);
 		FieldScheduler_AddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
 		params.sprite = 0x11b;
-		params.callback = (s32)Xian_EffectScript;
+		params.callback = (s32)gXian_EffectScript;
 		params.facing = 0x4000;
 		Effect_Spawn(0xa80000, 0, 0x14c0000, 0, 0, 0, 0x720000, &params);
 		Actor_SetDestination(14, 146, 0x138);
@@ -552,31 +552,31 @@ static void SceneEffect_DispatchStep(void)
 	{
 	case 1:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps1, 81, 18);
+		Engine_MapAnimateCells(gXian_GateSteps1, 81, 18);
 		break;
 	case 2:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps2, 83, 11);
+		Engine_MapAnimateCells(gXian_GateSteps2, 83, 11);
 		break;
 	case 3:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps2, 86, 11);
+		Engine_MapAnimateCells(gXian_GateSteps2, 86, 11);
 		break;
 	case 4:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps3, 84, 24);
+		Engine_MapAnimateCells(gXian_GateSteps3, 84, 24);
 		break;
 	case 5:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps3, 72, 7);
+		Engine_MapAnimateCells(gXian_GateSteps3, 72, 7);
 		break;
 	case 6:
 		Engine_AudioPlayCue(188);
-		Engine_MapAnimateCells(Xian_GateSteps4, 69, 11);
+		Engine_MapAnimateCells(gXian_GateSteps4, 69, 11);
 		break;
 	case 7:
 		Engine_AudioPlayCue(158);
-		Engine_MapAnimateCells(Xian_GateSteps5, 83, 7);
+		Engine_MapAnimateCells(gXian_GateSteps5, 83, 7);
 		break;
 	default:
 		break;
@@ -591,7 +591,7 @@ static void EV21_PSYNERGY(void)
 	s32 cb;
 
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(19, Xian_Actor19Motion);
+	Engine_ActorEnableActionCallback(19, gXian_Actor19Motion);
 	cb = (s32)SceneEffect_AdvanceRotatingSprite;
 	FieldScheduler_AddCallback((void (*)(void))cb, 0xc80);
 	Object_RefreshSelectorById(19);
@@ -647,7 +647,7 @@ static void EV200_RAISED(void)
 	Engine_ActorWaitForMove(18);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
-	Engine_ActorEnableActionCallback(18, Xian_ActionTable);
+	Engine_ActorEnableActionCallback(18, gXian_ActionTable);
 	record = Actor_Get(18);
 	*(s32 *)(record + 108) = (s32)Xian_WatchGateTrigger;
 	Engine_EventEnd();
@@ -758,7 +758,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 Xian_ActionTable[] = {
+s32 gXian_ActionTable[] = {
 	SC_SET(SW_SPEED, 0x6666),
 	SC_SET(SW_ACCEL, 0x1999),
 	SC_WAIT(60),
@@ -788,7 +788,7 @@ s32 Xian_ActionTable[] = {
 	SC_END,
 };
 
-s32 Xian_Actor19Motion[] = {
+s32 gXian_Actor19Motion[] = {
 	SC_SET(SW_SNAP, 0),
 	SC_SET(SW_SPEED, 0x30000),
 	SC_SET(SW_ACCEL, 0x18000),
@@ -802,7 +802,7 @@ s32 Xian_Actor19Motion[] = {
 	SC_END,
 };
 
-s32 Xian_EffectScript[] = {
+s32 gXian_EffectScript[] = {
 	SC_WAIT(18),
 	SC_WAIT(1),
 	SC_POS(0, 0, 0),
@@ -810,7 +810,7 @@ s32 Xian_EffectScript[] = {
 	SC_FREE,
 };
 
-s32 Xian_EffectConfig[] = {
+s32 gXian_EffectConfig[] = {
 	SC_SET(SW_FACING, FACING_WEST),
 	SC_WAIT(16),
 	SC_WAIT(1),
@@ -819,23 +819,23 @@ s32 Xian_EffectConfig[] = {
 	SC_FREE,
 };
 
-u16 Xian_GateSteps1[] = {
+u16 gXian_GateSteps1[] = {
 	MAP_CELL_STEP(64, 48, 1, 2, 4), MAP_CELL_STEP(63, 48, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps2[] = {
+u16 gXian_GateSteps2[] = {
 	MAP_CELL_STEP(69, 50, 2, 2, 4), MAP_CELL_STEP(65, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps3[] = {
+u16 gXian_GateSteps3[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 4), MAP_CELL_STEP(63, 46, 3, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps4[] = {
+u16 gXian_GateSteps4[] = {
 	MAP_CELL_STEP(67, 50, 4, 2, 4), MAP_CELL_STEP(63, 50, 4, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 Xian_GateSteps5[] = {
+u16 gXian_GateSteps5[] = {
 	MAP_CELL_STEP(66, 44, 3, 2, 4), MAP_CELL_STEP(63, 44, 3, 2, 4), MAP_CELL_STEPS_END,
 };
 
@@ -886,7 +886,7 @@ struct ScenePlacement gXianPlacements[] = {
 		PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x27, IF_FLAG_SET(0x89a), ACTOR_STAND,
 		PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
-	{ 0x9f, CONDITION_ALWAYS, (s32)Xian_ActionTable,
+	{ 0x9f, CONDITION_ALWAYS, (s32)gXian_ActionTable,
 		PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },

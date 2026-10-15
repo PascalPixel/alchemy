@@ -766,7 +766,7 @@ void Object_LinkObjectAndSetCallback(u32 objectId, u32 linked_object_id)
 	if (object != NULL)
 	{
 		object->linkedObject = (struct ObjectRuntime *)Object_GetById(linked_object_id);
-		ObjectMotion_SetActionCallback(object, (s32)ObjectMotion_LinkedActionScript);
+		ObjectMotion_SetActionCallback(object, (s32)gObjectMotion_LinkedActionScript);
 	}
 }
 
@@ -930,7 +930,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
 		ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 		ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
 		ObjectDispatch_InitializeFar(
-			(struct DispatchObject *)object, (const s32 *)&ObjectMotion_LaunchScript);
+			(struct DispatchObject *)object, (const s32 *)&gObjectMotion_LaunchScript);
 		object->action = arg3;
 	}
 }
@@ -1116,7 +1116,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant)
 			variant = 3;
 		}
 		ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-			(const s32 *)(ObjectMotion_VariantScripts + ((3 - variant) << 7)));
+			(const s32 *)(gObjectMotion_VariantScripts + ((3 - variant) << 7)));
 	}
 }
 
@@ -1171,12 +1171,12 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 optional)
 		case 1:
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)object, (const s32 *)BattleFx_BurstParticleScriptA);
+				(struct DispatchObject *)object, (const s32 *)gBattleFx_BurstParticleScriptA);
 			break;
 		default:
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)object, (const s32 *)BattleFx_BurstParticleScriptB);
+				(struct DispatchObject *)object, (const s32 *)gBattleFx_BurstParticleScriptB);
 			break;
 		}
 
@@ -1370,7 +1370,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 		struct AnimationObject *container;
 		u8						child_count;
 
-		child_value = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
+		child_value = gObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
 		container = object->target.child;
 		child_count = container->count;
 		if (child_count != 0)
@@ -1480,7 +1480,7 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait)
 	{
 		object->action = angle;
 		ObjectDispatch_InitializeFar(
-			(struct DispatchObject *)object, (const s32 *)ObjectMotion_StepAngleScript);
+			(struct DispatchObject *)object, (const s32 *)gObjectMotion_StepAngleScript);
 		Battle_WaitMode0(wait);
 	}
 }
@@ -1991,7 +1991,7 @@ void Ui_SetRenderResultFromObject(s32 arg0)
 	else
 	{
 		ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
-		value = Ui_RenderResultValues[gGameState.unk207[5]];
+		value = gUi_RenderResultValues[gGameState.unk207[5]];
 		*(s16 *)&state->result[0] = ret;
 		*(s16 *)&state->result[1] = value;
 	}
@@ -2296,7 +2296,7 @@ void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 
 		if (obj != 0)
 		{
-			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_LinkedObjectScript);
+			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_LinkedObjectScript);
 			ObjectDispatch_ApplyArgumentToChildrenFar(obj, mode & 15);
 			obj->motionFlags = 0;
 			obj->timer = 0;
@@ -2377,7 +2377,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 		break;
 	case 2:
 		ObjectDispatch_ApplyArgumentToChildrenFar(child, 2);
-		ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)ObjectMotion_WaitScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)gObjectMotion_WaitScript);
 		child->timer = 1;
 		break;
 	}
@@ -2493,26 +2493,26 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
 	switch ((kind - 1))
 	{
 	case 0:
-		kind = (s32)ObjectMotion_ActionKind1Script;
+		kind = (s32)gObjectMotion_ActionKind1Script;
 		break;
 	case 1:
-		kind = (s32)ObjectMotion_ActionKind2Script;
+		kind = (s32)gObjectMotion_ActionKind2Script;
 		break;
 	case 2:
-		kind = (s32)ObjectMotion_ActionKind3Script;
+		kind = (s32)gObjectMotion_ActionKind3Script;
 		break;
 	case 3:
-		kind = (s32)ObjectMotion_ActionKind4Script;
+		kind = (s32)gObjectMotion_ActionKind4Script;
 		break;
 	case 4:
-		kind = (s32)ObjectMotion_MoveTowardTargetScript;
+		kind = (s32)gObjectMotion_MoveTowardTargetScript;
 		break;
 	case 5:
 		object->linkedObject = Object_GetById(gGameState.selectedActor);
-		kind = (s32)ObjectMotion_TurnTowardLinkedScript;
+		kind = (s32)gObjectMotion_TurnTowardLinkedScript;
 		break;
 	case 6:
-		kind = (s32)ObjectMotion_ResetActionScript;
+		kind = (s32)gObjectMotion_ResetActionScript;
 		break;
 	default:
 		break;
@@ -3051,7 +3051,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 		amp = work->ampX;
 		for (i = 0; i != 160; i++)
 		{
-			d = Iwram_MulQ16(DisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
+			d = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
 			*row = a + d;
 			row += 2;
 			*row = b + d;
@@ -3082,7 +3082,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 		amp = work->ampY;
 		for (i = 0; i != 160; i++)
 		{
-			d = Iwram_MulQ16(DisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
+			d = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
 			*row = a + d;
 			row += 2;
 			*row = b + d;
@@ -3164,7 +3164,7 @@ void FieldFx_UpdateGroundParticles(void)
 			continue;
 		if (GameFlag_TestFar(0x166))
 			particle->timer++;
-		frame = &FieldFx_GroundParticleFrames[5 * particle->timer];
+		frame = &gFieldFx_GroundParticleFrames[5 * particle->timer];
 		x = (particle->posX - camera_x) / 0x10000 + *frame++;
 		y = (particle->posZ - particle->posY - camera_z) / 0x10000 + *frame++;
 		if ((x >= -16 && x <= 239) && y >= -32 && y <= 159)
@@ -3248,7 +3248,7 @@ void FieldFx_StartGroundParticles(void)
 	particle = work->particles;
 	Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
 	words = Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz(FieldFx_GroundParticleTiles, words);
+	Resource_DecodeByteLz(gFieldFx_GroundParticleTiles, words);
 	work->entry = Resource_FindFreeEntry();
 	work->tileBase = VramBlock_LoadCached(work->entry, 0x300, words);
 	Runtime_ReleaseHeapBlock(14);
@@ -3372,7 +3372,7 @@ void FieldMotes_Start(void)
 	size = 0;
 	Dma_Fill32(size, work, sizeof(*work));
 	tiles = Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
+	Resource_DecodeByteLz(gFieldFx_MoteTiles, tiles);
 	work->entry = Resource_FindFreeEntry();
 	work->tileBase = VramBlock_LoadCached(work->entry, 0x300, tiles);
 	Runtime_ReleaseHeapBlock(14);
@@ -3443,7 +3443,7 @@ void FieldEffect_UpdateSparkles(void)
 			camera_z = camera[1];
 			if (GameFlag_TestFar(0x166) != 0)
 				sparkle->timer++;
-			frame = (const u16 *)&FieldFx_SparkleFrames[sparkle->timer >> 1];
+			frame = (const u16 *)&gFieldFx_SparkleFrames[sparkle->timer >> 1];
 			a = Random16();
 			b = Random16();
 			x = ((sparkle->posX - camera_x) >> 16) + (((a & 1) + (b & 1)) >> 1);
@@ -3507,7 +3507,7 @@ void FieldEffect_InitSparkles(void)
 	size = 0;
 	Dma_Fill32(size, work, sizeof(*work));
 	buf = Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz(FieldFx_SparkleTiles, buf);
+	Resource_DecodeByteLz(gFieldFx_SparkleTiles, buf);
 	work->entry = Resource_FindFreeEntry();
 	work->tileBase = VramBlock_LoadCached(work->entry, 0x200, buf);
 	Runtime_ReleaseHeapBlock(14);
@@ -4139,7 +4139,7 @@ struct CaptureObject
 
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
-	u32 *table = BattleFx_PulseScales;
+	u32 *table = gBattleFx_PulseScales;
 	u32	 index = ((u32)gFrameTick >> 2) & 1;
 	u32	 value = index[table];
 	((struct MotionObject *)object)->scaleX = value;
@@ -4568,7 +4568,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 		Animation_ApplyChildValuesFar(djinni, 11);
 		djinni->lifetime = 8;
 		ObjectDispatch_InitializeFar(
-			(struct DispatchObject *)djinni, BattleFx_CommonParticleScript);
+			(struct DispatchObject *)djinni, gBattleFx_CommonParticleScript);
 	}
 
 	WaitFrames(15);
@@ -5128,7 +5128,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 
 s32 ResourceTable_CountFreeBlocks(void)
 {
-	u8 *marker = ResourceBlockOwners;
+	u8 *marker = gResourceBlockOwners;
 	s32 free_count = 0;
 	s32 remaining = 0x200;
 
@@ -5235,7 +5235,7 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 	v = ++obj->timer;
 	if (v > 31)
 	{
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 		return;
 	}
 	v = Trig_Sin(v << 10);
@@ -5258,7 +5258,7 @@ void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 	v = ++obj->timer;
 	if (v > 31)
 	{
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 		return;
 	}
 	v = Trig_Sin(v << 10);
@@ -5438,7 +5438,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode)
 	if (work->animation != 8)
 		ev->unkcc0 = running;
 	work->tileSlot = Resource_FindFreeEntry();
-	VramBlock_LoadCached((s16)work->tileSlot, 256, BattleFx_SparkTiles);
+	VramBlock_LoadCached((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
 	Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
@@ -5657,7 +5657,7 @@ void BattleEffect_InitializeSharedScene(void)
 		no = 6;
 	if (GameFlag_TestFar(0x14f))
 		no = 7;
-	BattleFx_ApplyColorToTargetBuffer(BattleFx_TargetColors[no], 1);
+	BattleFx_ApplyColorToTargetBuffer(gBattleFx_TargetColors[no], 1);
 	BattleFx_StartBufferInterpolation(8);
 }
 
@@ -5972,7 +5972,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj)
 		if ((ty == tx) && (obj->targetZ == ty))
 		{
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)obj, BattleFx_UntargetedObjectScript);
+				(struct DispatchObject *)obj, gBattleFx_UntargetedObjectScript);
 		}
 	}
 }
@@ -6038,7 +6038,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 //--------------------------------------------------------------------------
 s32 BattleFx_GetCycledTableWord(u32 unused)
 {
-	return BattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15]; // 右・左・上・下の 4 ビット
+	return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15]; // 右・左・上・下の 4 ビット
 }
 
 //--------------------------------------------------------------------------
@@ -6103,7 +6103,7 @@ void BattleFx_UpdateItemBreakFragment(struct FieldActor *src)
 		obj->gravity = 0x1999;
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		obj->unk5e = 12;
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 	}
 }
 
@@ -6147,7 +6147,7 @@ void BattleFx_SteerPushedTarget(s32 targetId)
 		return;
 	BattleEffect_InitializeSharedScene();
 	user->linkedObject = target;
-	ObjectDispatch_InitializeFar((struct DispatchObject *)user, BattleFx_SourceHoldScript);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)user, gBattleFx_SourceHoldScript);
 	pusher = BattleFx_StartItemBreak(user);
 	if (pusher == NULL)
 	{
@@ -6258,7 +6258,7 @@ void BattleFx_SteerPushedTarget(s32 targetId)
 		x = position.x;
 		z = position.z;
 		ObjectDispatch_ApplyArgumentToChildrenFar(
-			pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
+			pusher, gBattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
 		WaitFrames(15);
 		target->paused = 0;
 		target->speed = 0x3333;
@@ -6413,7 +6413,7 @@ void *BattleFx_StartItemBreak(void *object)
 		child = Object_Spawn(285, src->x, src->y + (16 << 16), src->z);
 		if (child != 0)
 		{
-			ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
+			ObjectDispatch_InitializeFar((struct DispatchObject *)child, gBattleFx_FragmentScript);
 			speed = Random16() + 0x10000;
 			child->acceleration = 1 << 16;
 			child->speedLimit = speed;
@@ -6491,7 +6491,7 @@ void UpdateRisingParticleBurst(void *object)
 			 * the call (differ 4). */
 			s32 unit = 0x10000;
 
-			ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
+			ObjectDispatch_InitializeFar((struct DispatchObject *)child, gBattleFx_FragmentScript);
 			speed = Random16();
 			child->acceleration = unit;
 			child->speedLimit = speed + unit;
@@ -6770,7 +6770,7 @@ void BattleFx_RunBurstParticles(void)
 		if (obj != 0)
 		{
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)obj, BattleFx_BurstParticleObjectScript);
+				(struct DispatchObject *)obj, gBattleFx_BurstParticleObjectScript);
 			obj->motionFlags = ACTOR_FALLS;
 		}
 		WaitFrames(((Random16() * 2) >> 16) + 2);
@@ -6842,7 +6842,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 			Animation_ApplyChildValuesFar(obj, 11);
 			ObjectDispatch_ApplyArgumentToChildrenFar(obj, 7);
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)obj, BattleFx_CommonParticleScript + 1);
+				(struct DispatchObject *)obj, gBattleFx_CommonParticleScript + 1);
 			ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
 
 			// 行き先：演出の位置から 4-10 ドット
@@ -6884,7 +6884,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused)
 
 	BattleEffect_InitializeSharedScene();
 	user->argument = (s32)target;
-	ObjectDispatch_InitializeFar(user, BattleFx_CommonParticleScript + 3);
+	ObjectDispatch_InitializeFar(user, gBattleFx_CommonParticleScript + 3);
 
 	x = work->x;
 	pos[0] = x;
@@ -6977,7 +6977,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused)
 			if (obj != 0)                                                              \
 			{                                                                          \
 				ObjectDispatch_InitializeFar(                                          \
-					(struct DispatchObject *)obj, BattleFx_FragmentScript);            \
+					(struct DispatchObject *)obj, gBattleFx_FragmentScript);            \
 				obj->speedLimit = Random16() + 0x20000;                               \
 				obj->acceleration = 0x20000;                                           \
 				obj->motionFlags = 0;                                                 \
@@ -7114,7 +7114,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src)
 	{
 		obj->flags = 0;
 		obj->unk5e = 20;
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 	}
 
 	// 破片 : 速さ 1〜2 ドット、8〜32 ドット先のでたらめな方向へ
@@ -7123,7 +7123,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src)
 		frag = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
 		if (frag != NULL)
 		{
-			ObjectDispatch_InitializeFar((struct DispatchObject *)frag, BattleFx_FragmentScript);
+			ObjectDispatch_InitializeFar((struct DispatchObject *)frag, gBattleFx_FragmentScript);
 			frag->speedLimit = Random16() + (1 << 16);
 			frag->acceleration = 1 << 16;
 			frag->flags = 0;
@@ -7297,7 +7297,7 @@ void RunBattleEffect04(void)
 	}
 	Object_SetMoveTargetFar(obj, pos.x, pos.y, pos.z);
 	ObjectDispatch_InitializeFar(
-		(struct DispatchObject *)obj, BattleFx_BurstParticleObjectScript + 4);
+		(struct DispatchObject *)obj, gBattleFx_BurstParticleObjectScript + 4);
 	for (i = 0; i < 3; i++)
 	{
 		copy = copies[i];
@@ -7306,7 +7306,7 @@ void RunBattleEffect04(void)
 			WaitFrames(3);
 			Object_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)copy, BattleFx_CommonParticleScript + 1);
+				(struct DispatchObject *)copy, gBattleFx_CommonParticleScript + 1);
 		}
 	}
 
@@ -7372,7 +7372,7 @@ void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle)
 		particle->scaleX = scale;
 		if (scale <= 0x1000)
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)particle, BattleFx_CommonParticleScript);
+				(struct DispatchObject *)particle, gBattleFx_CommonParticleScript);
 	}
 }
 
@@ -7600,7 +7600,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj)
 		else
 		{
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+				(struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 		}
 	}
 }
@@ -7646,7 +7646,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj)
 			Animation_ApplyChildValuesFar(spark, 9);
 			spark->unk5e = 72;
 			ObjectDispatch_InitializeFar(
-				(struct DispatchObject *)spark, BattleFx_CommonParticleScript);
+				(struct DispatchObject *)spark, gBattleFx_CommonParticleScript);
 		}
 	}
 }
@@ -7979,7 +7979,7 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj)
 	if (obj->y <= obj->altitude)
 	{
 		obj->phase = phase;
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 		p = NULL;
 		obj->callback = p;
 
@@ -8000,7 +8000,7 @@ void BattleFx_SpawnRandomAngleTriplet(struct Effect05Object *obj)
 			pp = &p->phase;
 			phase2 = 6;
 			*pp = phase2;
-			ObjectDispatch_InitializeFar((struct DispatchObject *)p, BattleFx_CommonParticleScript);
+			ObjectDispatch_InitializeFar((struct DispatchObject *)p, gBattleFx_CommonParticleScript);
 		}
 	}
 }
@@ -8017,7 +8017,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj)
 	obj->x += r - Random16();
 	if (obj->y <= obj->terrainHeight)
 	{
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 	}
 }
 
@@ -8241,7 +8241,7 @@ void BattleFx_SpawnFallingParticles(void)
 		obj->gravity = 0x1999; // 重力 0.1 ドット
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		obj->unk5e = 12;
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
 	}
 }
 
@@ -8292,7 +8292,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		return;
 	BattleEffect_InitializeSharedScene();
 	src->linkedObject = target;
-	ObjectDispatch_InitializeFar((struct DispatchObject *)src, BattleFx_SourceHoldScript);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)src, gBattleFx_SourceHoldScript);
 
 	// 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
 	/* FAKEMATCH: the position is reached through this pointer everywhere
@@ -8459,7 +8459,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 			*walk++ = obj;
 			if (obj != NULL)
 			{
-				ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
+				ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_FragmentScript);
 				obj->speed = Random16() + (2 << 16);
 				obj->acceleration = 2 << 16;
 				obj->motionFlags = 0;
@@ -8635,7 +8635,7 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
 		effect->pause = ((Random16() << 4) >> 16) + 8; // 8〜23 フレーム
 	}
 	if (++effect->timer == 101)
-		ObjectDispatch_InitializeFar((struct DispatchObject *)effect, BattleFx_CommonParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)effect, gBattleFx_CommonParticleScript);
 }
 
 //--------------------------------------------------------------------------
@@ -8947,7 +8947,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
 //--------------------------------------------------------------------------
 void BattleEffect_SetRandomTableValueOnObject(void *obj)
 {
-	s8 *table = BattleFx_RandomChildValues;
+	s8 *table = gBattleFx_RandomChildValues;
 	s32 r = Random16();
 	Animation_ApplyChildValuesFar(obj, table[(u32)(r * 8) >> 16]);
 }
@@ -9533,7 +9533,7 @@ void RunBattleEffect16(void)
 		s32	 zero = 0;
 
 		*tileSlot = slot;
-		VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
+		VramBlock_LoadCached((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
 		gGameState.avoidDistance = 0x09600000;
 		gGameState.avoidByItem = GameFlag_TestFar(0x145);
 		Animation_ApplyChildValuesFar(object, zero);
@@ -9891,18 +9891,18 @@ void Map_UpdateWorldMapMarkers(void)
 	leader = gGameState.selectedActor;
 	work = (struct WorldMapWork *)Ram_MapCellBuffer;
 	marker = work->markers;
-	place = WorldMap_PlaceMarkers;
+	place = gWorldMap_PlaceMarkers;
 	tileBase = gVramBlockCache[work->vramBlock].offset >> 5;
 #else
 	work = (struct WorldMapWork *)Ram_MapCellBuffer;
 	leader = gGameState.selectedActor;
-	place = WorldMap_PlaceMarkers;
+	place = gWorldMap_PlaceMarkers;
 	tileBase = gVramBlockCache[work->vramBlock].offset >> 5;
 	marker = work->markers;
 #endif
 	best = -1;
 	best_dist = WORLD_MAP_NAME_RANGE;
-	blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
+	blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
 
 	//------------------------------------------------------------------
 	// カーソル
@@ -9920,7 +9920,7 @@ void Map_UpdateWorldMapMarkers(void)
 	else
 	{
 		// 十字キー：押し続けると速くなる
-		angle = WorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
+		angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
 		if (angle != 0xffff)
 		{
 			pos[0] = work->x.fixed;
@@ -9949,7 +9949,7 @@ void Map_UpdateWorldMapMarkers(void)
 	}
 
 	//------------------------------------------------------------------
-	// 印：0 番は現在地、11〜65 番は WorldMap_PlaceMarkers の場所
+	// 印：0 番は現在地、11〜65 番は gWorldMap_PlaceMarkers の場所
 	// 表は（フラグ, 地名）の組で、フラグの上位 16bit はキャラクタ番号
 	//------------------------------------------------------------------
 	for (i = 0; i <= 65; i++)

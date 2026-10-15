@@ -13,8 +13,8 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-extern const u8 Data_020045a4[];
-extern const u8 Data_020045f0[];
+extern const u8 gData_020045a4[];
+extern const u8 gData_020045f0[];
 
 void Func_02001a68(void)
 {
@@ -66,12 +66,12 @@ void Func_02001a68(void)
         done = (u8 *)object + 99;
         *done = 0;
         object->update = Func_02000df8;
-        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)Data_020045a4);
+        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9, (s32)gData_020045a4);
 
         Call1((void (*)())Battle_WaitMode0, 30);
 
         Object_GetById(10)->update = Func_02000df8;
-        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)Data_020045f0);
+        Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, (s32)gData_020045f0);
 
         do {
             Call1((void (*)())WaitFrames, 1);

@@ -1,5 +1,5 @@
 #include "types.h"
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -19,7 +19,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
     void *object;
     struct State080a8088 *state;
 
-    state = *(struct State080a8088 **)((u32)&Data_03001f2c);
+    state = *(struct State080a8088 **)((u32)&gData_03001f2c);
     created = 0;
     handle = state->handle;
     if (handle == 0) {

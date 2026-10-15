@@ -18,13 +18,13 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 #include "party_state.h"
 #include "scene_ids.h"
 
-extern s16 Data_02000794[];
+extern s16 gData_02000794[];
 
 s16 *Func_02000040(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov65dRoom2)
-        return Data_02000794;
+        return gData_02000794;
     return 0;
 }

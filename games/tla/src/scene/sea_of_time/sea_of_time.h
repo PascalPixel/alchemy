@@ -60,8 +60,8 @@ struct SeaOfTimeSpark {
 };
 
 extern u32 gFrameCount;
-extern volatile u32 Data_020022c8;
-extern u32 Data_020022cc;
+extern volatile u32 gData_020022c8;
+extern u32 gData_020022cc;
 extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 

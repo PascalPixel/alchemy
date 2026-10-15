@@ -16,7 +16,7 @@
 #include "object_runtime.h"
 #include "call.h"
 
-extern u32 Data_020007e4;
+extern u32 gData_020007e4;
 extern u8 MsgImilVoicesDisbeliefReply[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -52,7 +52,7 @@ void Func_020001b0(void)
     Func_020005f8(0);
     Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     WaitFrames(1);
-    Data_020007e4 = 0;
+    gData_020007e4 = 0;
     Scheduler_AddOrUpdateCallback(Func_020000f4, 0x480);
     ObjectMotion_SetActionVariant(8, 2);
     ObjectMotion_SetActionVariant(9, 2);

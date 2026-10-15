@@ -715,7 +715,7 @@ Func_08142944:
 .L_08142ee8:
 	.4byte 0x3f3f3f3f
 .L_08142eec:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08142ef0:
 	.4byte 0xfffff800
 .L_08142ef4:
@@ -729,11 +729,11 @@ Func_08142944:
 .L_08142f04:
 	.4byte 0xffc00000
 .L_08142f08:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_08142f0c:
 	.4byte Data_02012000
 .L_08142f10:
-	.4byte Data_081990d0
+	.4byte gData_081990d0
 .L_08142f14:
 	.4byte Data_081977ec
 .L_08142f18:
@@ -836,7 +836,7 @@ Func_08142944:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08142fec:
-	.4byte Data_08199090
+	.4byte gData_08199090
 .L_08142ff0:
 	.4byte Func_08143000
 .L_08142ff4:

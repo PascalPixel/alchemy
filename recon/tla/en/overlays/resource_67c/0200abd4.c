@@ -14,7 +14,7 @@ void Func_02002bd4(struct ObjectRuntime *object)
         struct FieldSprite *sprite = child->animation;
 
         child->terrainHeight = object->terrainHeight;
-        Func_02003ccc(child, Data_0200411c);
+        Func_02003ccc(child, gData_0200411c);
         child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);

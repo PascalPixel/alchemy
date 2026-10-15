@@ -1,9 +1,9 @@
 #include "lemurian_ship.h"
 
-extern const u8 Data_02002f1c[];
-extern const u8 Data_02002f44[];
-extern const u8 Data_02002f88[];
-extern const u8 Data_02002fcc[];
+extern const u8 gData_02002f1c[];
+extern const u8 gData_02002f44[];
+extern const u8 gData_02002f88[];
+extern const u8 gData_02002fcc[];
 
 void Func_020015c8(void);
 void PartyInventory_Remove(s32 item);
@@ -30,10 +30,10 @@ void Func_02001650(void)
     LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
     LemurianShip_ObjSpeed(5, 0xcccc, 0x6666);
     LemurianShip_ObjSpeed(8, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02002f44);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02002f88);
-    ObjectMotion_EnableActionAndSetCallback(8, Data_02002fcc);
-    Object_SetActionCallbackAndRefreshById(7, Data_02002f1c);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02002f44);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02002f88);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_02002fcc);
+    Object_SetActionCallbackAndRefreshById(7, gData_02002f1c);
     LemurianShip_Wait(20);
     LemurianShip_MessagePut(7, 0);
     LemurianShip_ObjTurn(7, 0x4000);

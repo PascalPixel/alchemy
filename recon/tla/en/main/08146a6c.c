@@ -42,8 +42,8 @@ struct BattleObjectSlot
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
-extern u8 Data_0819793c[];
-extern u16 Data_08197410[];
+extern u8 gData_0819793c[];
+extern u16 gData_08197410[];
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
@@ -136,13 +136,13 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
                                 trails[i * 10 + j].velocityX =
                                     pos.x
                                     + ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11))
-                                           * Data_0819793c[j & 1])
+                                           * gData_0819793c[j & 1])
                                             / 2
                                         >> 16);
                                 trails[i * 10 + j].velocityY =
                                     pos.y
                                     - (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11))
-                                            * Data_0819793c[j & 1]
+                                            * gData_0819793c[j & 1]
                                         >> 16);
                             }
                             for (j = 0; j != 10; j++)
@@ -157,7 +157,7 @@ void Func_08146a6c(struct BattleEffectArgument *effect)
                                     s32 y = from->velocityY
                                             + (to->velocityY - from->velocityY) * k / 12;
 
-                                    draw[0](canvas, graphics + Data_08197410[size - 1],
+                                    draw[0](canvas, graphics + gData_08197410[size - 1],
                                         x - size / 2, y - size, size, size * 2);
                                 }
                             }

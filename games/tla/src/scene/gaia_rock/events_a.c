@@ -10,20 +10,20 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 void Func_02000f24(s32 cue);
 
-extern const u8 Data_0200102c[];
-extern const u8 Data_02001044[];
-extern const u8 Data_02001194[];
-extern const u8 Data_020012cc[];
+extern const u8 gData_0200102c[];
+extern const u8 gData_02001044[];
+extern const u8 gData_02001194[];
+extern const u8 gData_020012cc[];
 
 const struct SceneEvent *Func_02000080(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
-        return (const struct SceneEvent *)Data_02001044;
+        return (const struct SceneEvent *)gData_02001044;
     if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
-        return (const struct SceneEvent *)Data_02001194;
+        return (const struct SceneEvent *)gData_02001194;
     if (gPartyState.scene == (s32)&SceneId_Ov680Room3)
-        return (const struct SceneEvent *)Data_020012cc;
-    return (const struct SceneEvent *)Data_0200102c;
+        return (const struct SceneEvent *)gData_020012cc;
+    return (const struct SceneEvent *)gData_0200102c;
 }
 
 void Func_020000d0(void)

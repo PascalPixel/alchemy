@@ -2,7 +2,7 @@
    has it: the effect argument read directly, the vortex sheet (resource 0x191)
    unpacked after the particles, two blitters from Func_081963ec(104, 0x13) and
    (188, 0x1f), Func_0814c928 for the camera and the transfer callback at 0xc80,
-   the frame and mote counts from the byte table Data_081979a8 (not const),
+   the frame and mote counts from the byte table gData_081979a8 (not const),
    Func_081180e8(133) and Func_08118088 for the struck member. Same frame,
    registers and instructions; what is left is order at nine rows, each a load
    the native issues one instruction earlier (the second argument before the
@@ -47,7 +47,7 @@ struct BattleObjectSlot
 };
 
 extern char ResourceId_VortexSheet;
-extern u8 Data_081979a8[];
+extern u8 gData_081979a8[];
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
@@ -123,18 +123,18 @@ void Func_08148a54(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     Audio_PlayCue(164);
 
-    for (frame = 0; frame != Data_081979a8[effect->variant * 2 + 1]; frame++)
+    for (frame = 0; frame != gData_081979a8[effect->variant * 2 + 1]; frame++)
     {
         camera = Ram_HeapSlots->cameraWork;
         if (frame >= 17 && frame < 64)
             work->cameraDelta = 0x180;
         else
             work->cameraDelta = 0;
-        if (frame == Data_081979a8[effect->variant * 2 + 1] - 16)
+        if (frame == gData_081979a8[effect->variant * 2 + 1] - 16)
             Func_081180e8(133);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, camera + 3);
-        for (i = 0; i != Data_081979a8[effect->variant * 2]; i++)
+        for (i = 0; i != gData_081979a8[effect->variant * 2]; i++)
         {
             point = &work->particles[i];
             if (frame > i * 2 && flags[i] == 0)

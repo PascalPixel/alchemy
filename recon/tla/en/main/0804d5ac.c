@@ -53,7 +53,7 @@ s32 Menu_SelectSaveSlotAction(void)
     ret = Menu_RunResourceSelectionLoop(initial);
     Menu_EndResourceSelection();
     if (ret >= 0) {
-        ret = Menu_SaveSlotActionByPosition[ret + (group * 6)];
+        ret = gMenu_SaveSlotActionByPosition[ret + (group * 6)];
     }
     return ret;
 }

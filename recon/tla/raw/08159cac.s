@@ -458,8 +458,8 @@ Func_08159cac:
 .L_0815a034:
 	.4byte Data_081985ab
 .L_0815a038:
-	.4byte Data_081974bc
+	.4byte gData_081974bc
 .L_0815a03c:
-	.4byte Data_0819749e
+	.4byte gData_0819749e
 .L_0815a040:
-	.4byte Data_081974ad
+	.4byte gData_081974ad

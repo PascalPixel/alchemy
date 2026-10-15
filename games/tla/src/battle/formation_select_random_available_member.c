@@ -17,7 +17,7 @@ s32 BattleGroupRandom(s32 recordId)
     if ((u32)recordId >= 660)
         recordId = 1;
 
-    record = &BattleFormation_Records[recordId];
+    record = &gBattleFormation_Records[recordId];
     choices_base = choices;
     member_id = record->memberIds;
     maximum_count = record->maximumCounts;

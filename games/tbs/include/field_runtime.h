@@ -92,7 +92,7 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork, encounter
 LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
 LAYOUT_SIZE_GUARD(FieldPosition_Size, struct FieldPosition, 12);
 
-extern const struct SceneRecord Field_SceneTable[];
+extern const struct SceneRecord gField_SceneTable[];
 extern struct SceneEntries		gOverlayArea;
 
 #endif

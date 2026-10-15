@@ -4,7 +4,7 @@
 #include "object_runtime.h"
 #include "scene_ids.h"
 
-extern const u8 Data_020020dc[];
+extern const u8 gData_020020dc[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
@@ -43,7 +43,7 @@ s32 Func_02000be0(void)
         do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block after the store; without it the ROM differs (measured by make compare-tla-en). */
         Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
         Object_SetModeById(8, 1);
-        Func_020020c4(Data_020020dc);
+        Func_020020c4(gData_020020dc);
         AddCallback(Func_02000188, 0x480);
         if (party->entrance == 99)
             Func_02000210();

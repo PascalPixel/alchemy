@@ -21,7 +21,7 @@ struct EventWork {
     s32 transitionFrames;
 };
 
-extern const u8 Data_02004eb8[];
+extern const u8 gData_02004eb8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
@@ -65,7 +65,7 @@ void Func_020029a4(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     ObjectMotion_SetSpeedParameters_(8, 0x6666, 0x3333);
     actor->action = 0;
-    ObjectMotion_EnableActionAndSetCallback(8, Data_02004eb8);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_02004eb8);
     Scheduler_AddOrUpdateCallback(Func_020028cc, 0x480);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x100;
     Func_02004d78(0x10003, 1);

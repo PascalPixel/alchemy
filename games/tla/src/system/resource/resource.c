@@ -14,13 +14,13 @@
 
 
 
-extern s32 IwramHi_Data1[];
+extern s32 gIwramHi_Data1[];
 extern char ResourceId_BuildStamp;
 
 void Func_080132d0(void)
 {
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), IwramHi_Data1, 0x84000003, REG_DMA3);
-    IwramHi_Data1[3] = 0;
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), gIwramHi_Data1, 0x84000003, REG_DMA3);
+    gIwramHi_Data1[3] = 0;
 }
 
 void Resource_ReservedNoOp(s32 count)

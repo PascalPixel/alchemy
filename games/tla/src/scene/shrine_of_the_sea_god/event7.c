@@ -1,7 +1,7 @@
 #include "shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
 
-extern const u8 Data_02003c10[];
+extern const u8 gData_02003c10[];
 
 void Func_020004b0(void)
 {
@@ -26,7 +26,7 @@ void Func_020004e0(void)
     Func_02003a80(11, 0);
     Object_SetModeById(11, 4);
     Func_02003a78(11, 0, 20);
-    ObjectMotion_EnableActionAndSetCallback(11, Data_02003c10);
+    ObjectMotion_EnableActionAndSetCallback(11, gData_02003c10);
     Func_020039e0();
 }
 

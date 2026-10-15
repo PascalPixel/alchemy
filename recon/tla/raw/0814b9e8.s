@@ -614,10 +614,10 @@ Func_0814b9e8:
 .L_0814becc:
 	.4byte 0xffff00ff
 .L_0814bed0:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0814bed4:
 	.4byte 0xfffe0000
 .L_0814bed8:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0814bedc:
 	.4byte Func_08143000

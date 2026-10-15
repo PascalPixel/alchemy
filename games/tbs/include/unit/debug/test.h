@@ -14,11 +14,11 @@ extern u32 gDebugItemPromptHead[];
 extern char gDebugItemPrompt[12];
 extern char gDebugItemCapacityLabel[24];
 extern char gDebugItemFullLabel[20];
-extern struct SceneEntrance MenuTest_Entrances[];
-extern u32 MenuTest_Exits[];
-extern struct ScenePlacement MenuTest_Placements[];
-extern struct SceneEvent MenuTest_Events[];
-extern s32 MenuTest_SlotOffsets;
-extern s32 MenuTest_BenchmarkCharacter;
+extern struct SceneEntrance gMenuTest_Entrances[];
+extern u32 gMenuTest_Exits[];
+extern struct ScenePlacement gMenuTest_Placements[];
+extern struct SceneEvent gMenuTest_Events[];
+extern s32 gMenuTest_SlotOffsets;
+extern s32 gMenuTest_BenchmarkCharacter;
 
 #endif

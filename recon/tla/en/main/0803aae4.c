@@ -79,7 +79,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 			{
 				next = *text;
 				if (c > 32 && next > 32
-					&& (u16)(UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width) <= 15)
+					&& (u16)(gUiText_Glyphs[c - 32].width + gUiText_Glyphs[next - 32].width) <= 15)
 				{
 					c |= next << 8;
 					text++;

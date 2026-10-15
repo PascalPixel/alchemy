@@ -4,12 +4,12 @@
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
-extern s32 Data_02001018[];
-extern s32 Data_02001068[];
-extern s32 Data_020010d0[];
-extern s32 Data_02001238[];
-extern s32 Data_02001490[];
-extern s32 Data_02001664[];
+extern s32 gData_02001018[];
+extern s32 gData_02001068[];
+extern s32 gData_020010d0[];
+extern s32 gData_02001238[];
+extern s32 gData_02001490[];
+extern s32 gData_02001664[];
 
 static inline void CenterAndWalk(s32 actor, s32 priority, s32 dz)
 {
@@ -26,17 +26,17 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag)
 s32 *Func_02000044(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Daila2)
-        return Data_02001068;
+        return gData_02001068;
     else
-        return Data_02001018;
+        return gData_02001018;
 }
 
 s32 *Func_02000070(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Daila2)
-        return Data_02001238;
+        return gData_02001238;
     else
-        return Data_020010d0;
+        return gData_020010d0;
 }
 
 void Func_0200009c(void)
@@ -66,7 +66,7 @@ void Func_02000118(s32 mode)
 s32 *Func_02000128(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Daila2)
-        return Data_02001664;
+        return gData_02001664;
     else
-        return Data_02001490;
+        return gData_02001490;
 }

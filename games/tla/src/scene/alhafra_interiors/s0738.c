@@ -32,7 +32,7 @@ s32 Func_02000aec();
 s32 Func_02000bdc();
 s32 Func_02000a9c();
 extern u8 MsgAlhafraInteriors120[];
-extern u8 Data_02000be4[];
+extern u8 gData_02000be4[];
 
 void Func_02000738(void)
 {
@@ -125,9 +125,9 @@ void Func_02000738(void)
             Call3(ObjectMotion_CommitPositionAndActivate, 4, 0, -16);
             Call2(Func_02000b4c, 4, 0x4000);
             Call1(Battle_WaitMode0, 0xa);
-            Call2(ObjectMotion_EnableActionAndSetCallback, 0x20, (s32)Data_02000be4);
+            Call2(ObjectMotion_EnableActionAndSetCallback, 0x20, (s32)gData_02000be4);
             Call1(Battle_WaitMode0, 0xa);
-            Call2(ObjectMotion_EnableActionAndSetCallback, 0x1f, (s32)Data_02000be4);
+            Call2(ObjectMotion_EnableActionAndSetCallback, 0x1f, (s32)gData_02000be4);
             Call1(Battle_WaitMode0, 0xa);
             Call2(Object_LinkObjectAndSetCallback, 4, 0x20);
             Call1(Battle_WaitMode0, 0x3c);

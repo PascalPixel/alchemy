@@ -1,7 +1,7 @@
 /* Draft, differ 2 of 214: ⚓️'s Effect_Spawn as overlay 6b0 links it after common/effect/move.c,
  * the twin of ☀️'s EFFECT_SPAWN with party actor 0, default type 285 and the sprite priority both
  * written and set. Left: after the mode call the native loads the script table's address before it
- * copies the flags from sl (ldr r2, =Data_02003840; mov r3, sl); the draft copies first. sched2
+ * copies the flags from sl (ldr r2, =gData_02003840; mov r3, sl); the draft copies first. sched2
  * ranks the copy one above the table's reload (61 against 60), and the table's pseudo, shared with
  * the scale-to-target block by cse and again by cse2, is never allocated. Measured: a script local
  * (11), a table pinned to r2 (8), one-pass blocks around the mode or script call (2 or 4), a
@@ -21,7 +21,7 @@ struct SpriteView {
     s32 unk14;
 };
 
-extern const s32 *Data_02003840[];
+extern const s32 *gData_02003840[];
 
 struct FieldActor *Object_GetById(s32 id);
 struct FieldActor *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
@@ -49,7 +49,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Func_020032e0((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Func_020032e8((struct FieldActor *)effect, Data_02003840[flags & EFFECT_SCRIPT_MASK]);
+    Func_020032e8((struct FieldActor *)effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
     effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
@@ -84,7 +84,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         s32 targetX;
         s32 count;
 
-        script = Data_02003840[flags & EFFECT_SCRIPT_MASK];
+        script = gData_02003840[flags & EFFECT_SCRIPT_MASK];
         targetX = options->targetScaleX;
         count = script[3];
         if (start != 0)

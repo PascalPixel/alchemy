@@ -30,7 +30,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     selector = shifted + 1;
 
     if (count > 0) {
-        offset = Shop_SelectorOffsets;
+        offset = gShop_SelectorOffsets;
         do {
             struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
             record->values[0] = selector;
@@ -46,8 +46,8 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 
 void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
-    u8 *dst = tiles + Shop_GlyphRowOffsets[place] + 2;
+    u8 *src = gShop_GlyphBytes + ((u32)digit << 5);
+    u8 *dst = tiles + gShop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
 
     do {
@@ -66,7 +66,7 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
     } while (count >= 0);
 }
 
-extern const u8 Shop_PriceTiles[];
+extern const u8 gShop_PriceTiles[];
 
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 {
@@ -76,7 +76,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
     buf = Runtime_AllocateBlock(56, 0x400);
     sprite = 0;
-    Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
+    Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, buf, 0);
     value = value / 10;
     if (value != 0) {

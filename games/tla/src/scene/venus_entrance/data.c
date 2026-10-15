@@ -60,12 +60,12 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_0200b000[] = {
+u32 gData_0200b000[] = {
 	1, 0, 1, 39, 2, 0,
 	4, 22, 26, 3, 22, 13,
 	0, 0, 1, 17,
 };
 
-u32 Data_02003040[] = {
+u32 gData_02003040[] = {
 	1, 0, 1, 38,
 };

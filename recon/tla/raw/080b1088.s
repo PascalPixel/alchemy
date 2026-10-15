@@ -115,7 +115,7 @@ Func_080b1088:
 .L_080b1158:
 	.4byte 0x00000000
 .L_080b115c:
-	.4byte Data_020023c4
+	.4byte gData_020023c4
 .L_080b1160:
 	.4byte gPartyState
 .L_080b1164:

@@ -575,7 +575,7 @@ struct MetatileCopyEntry {
     u16 unk06;
 };
 
-extern const struct MetatileCopyEntry Data_02003308[];
+extern const struct MetatileCopyEntry gData_02003308[];
 
 /* FAKEMATCH: a one-pass block around each mode change, so it starts its own scheduling region (as plain calls Func_020019d8 loads arguments in other orders, differ 88 of 1565; four mode changes stay plain calls, where the native has no such break). */
 #define SET_MODE(id, mode)              \
@@ -612,7 +612,7 @@ void Func_020019d8(void)
     ObjectMotion_CommitCurrentPositionAndActivate(4);
     ArmCallback(4, 0xc000, 0);
     Battle_WaitMode0(20);
-    Func_02002ae8(Data_02003308[6].sequence, Data_02003308[6].unk04, Data_02003308[6].unk06);
+    Func_02002ae8(gData_02003308[6].sequence, gData_02003308[6].unk04, gData_02003308[6].unk06);
     Func_02002b90(34, x, z, 0x4000);
     CommitPos(34, 0, 4);
     SET_MODE(34, 3);

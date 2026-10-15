@@ -18,7 +18,7 @@
 
 #if defined(TBS_EDITION_DE)
 
-const s8 UiText_ArticleEmpty[] = "";
+const s8 gUiText_ArticleEmpty[] = "";
 
 static const s8 sArticleEin[] = "ein ";
 static const s8 sArticleEine[] = "eine ";
@@ -26,45 +26,45 @@ static const s8 sArticleDie[] = "die ";
 static const s8 sArticleDas[] = "das ";
 
 // 種類ごとの冠詞
-const s8 *const UiText_ArticleTable[8] =
+const s8 *const gUiText_ArticleTable[8] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleEin,
 	sArticleEine,
 	sArticleDie,
 	sArticleDas,
-	UiText_ArticleEmpty,
-	UiText_ArticleEmpty,
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 };
 
-// 数える語 (UiText_NumberWords が {単数, 複数} に並べる)
-const u8 UiText_NumberWord0[] = "K\xe4pfe";
-const u8 UiText_NumberWord1[] = "Kampf";
-const u8 UiText_NumberWord2[] = "Tickets";
-const u8 UiText_NumberWord3[] = "Ticket";
-const u8 UiText_NumberWord4[] = "Runden";
-const u8 UiText_NumberWord5[] = "Runde";
-const u8 UiText_NumberWord6[] = "M\xfcnzen";
-const u8 UiText_NumberWord7[] = "M\xfcnze";
-const u8 UiText_NumberWord8[] = "Punkte";
-const u8 UiText_NumberWord9[] = "Punkt";
+// 数える語 (gUiText_NumberWords が {単数, 複数} に並べる)
+const u8 gUiText_NumberWord0[] = "K\xe4pfe";
+const u8 gUiText_NumberWord1[] = "Kampf";
+const u8 gUiText_NumberWord2[] = "Tickets";
+const u8 gUiText_NumberWord3[] = "Ticket";
+const u8 gUiText_NumberWord4[] = "Runden";
+const u8 gUiText_NumberWord5[] = "Runde";
+const u8 gUiText_NumberWord6[] = "M\xfcnzen";
+const u8 gUiText_NumberWord7[] = "M\xfcnze";
+const u8 gUiText_NumberWord8[] = "Punkte";
+const u8 gUiText_NumberWord9[] = "Punkt";
 
 static const s8 sPossessiveDein[] = "dein ";
 static const s8 sPossessiveDeine[] = "deine ";
 
-// 道具の性 (UiText_ItemGenders) ごとの所有の語
-const s8 *const UiText_ItemPossessives[4] =
+// 道具の性 (gUiText_ItemGenders) ごとの所有の語
+const s8 *const gUiText_ItemPossessives[4] =
 {
 	sPossessiveDein,
 	sPossessiveDeine,
 	sPossessiveDein,
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 };
 
 #elif defined(TBS_EDITION_ES)
 
-const s8 UiText_ArticleEmpty[] = "";
+const s8 gUiText_ArticleEmpty[] = "";
 
 static const s8 sArticleEl[] = "el ";
 static const s8 sArticleLa[] = "la ";
@@ -72,9 +72,9 @@ static const s8 sArticleLos[] = "los ";
 static const s8 sArticleLas[] = "las ";
 
 // 種類ごとの定冠詞
-const s8 *const UiText_ArticleTable[5] =
+const s8 *const gUiText_ArticleTable[5] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleEl,
 	sArticleLa,
 	sArticleLos,
@@ -87,9 +87,9 @@ static const s8 sArticleUnos[] = "unos ";
 static const s8 sArticleUnas[] = "unas ";
 
 // 種類ごとの不定冠詞
-const s8 *const UiText_IndefiniteArticles[5] =
+const s8 *const gUiText_IndefiniteArticles[5] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleUn,
 	sArticleUna,
 	sArticleUnos,
@@ -100,7 +100,7 @@ static const s8 sPossessiveTu[] = "tu ";
 static const s8 sPossessiveTus[] = "tus ";
 
 // {単数, 複数} の所有の語
-const s8 *const UiText_ItemPossessives[2] =
+const s8 *const gUiText_ItemPossessives[2] =
 {
 	sPossessiveTu,
 	sPossessiveTus,
@@ -108,7 +108,7 @@ const s8 *const UiText_ItemPossessives[2] =
 
 #elif defined(TBS_EDITION_FR)
 
-const s8 UiText_ArticleEmpty[] = "";
+const s8 gUiText_ArticleEmpty[] = "";
 
 static const s8 sArticleLe[] = "le ";
 static const s8 sArticleLa[] = "la ";
@@ -119,9 +119,9 @@ static const s8 sArticleUne[] = "une ";
 static const s8 sArticleDes[] = "des ";
 
 // 種類ごとの冠詞
-const s8 *const UiText_ArticleTable[8] =
+const s8 *const gUiText_ArticleTable[8] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleLe,
 	sArticleLa,
 	sArticleL,
@@ -131,11 +131,11 @@ const s8 *const UiText_ArticleTable[8] =
 	sArticleDes,
 };
 
-const s8 UiText_ItemPronoun[] = "vous ";
+const s8 gUiText_ItemPronoun[] = "vous ";
 
 #elif defined(TBS_EDITION_IT)
 
-const s8 UiText_ArticleEmpty[] = "";
+const s8 gUiText_ArticleEmpty[] = "";
 
 static const s8 sArticleIl[] = "il ";
 static const s8 sArticleL[] = "l' ";
@@ -149,9 +149,9 @@ static const s8 sArticleUno[] = "uno ";
 static const s8 sArticleUna[] = "una ";
 
 // 種類ごとの冠詞
-const s8 *const UiText_ArticleTable[11] =
+const s8 *const gUiText_ArticleTable[11] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleIl,
 	sArticleL,
 	sArticleLa,
@@ -167,18 +167,18 @@ const s8 *const UiText_ArticleTable[11] =
 static const s8 sPossessiveIlTuo[] = "Il tuo ";
 static const s8 sPossessiveLaTua[] = "la tua ";
 
-// 道具の性 (UiText_ItemGenders) ごとの所有の語
-const s8 *const UiText_ItemPossessives[4] =
+// 道具の性 (gUiText_ItemGenders) ごとの所有の語
+const s8 *const gUiText_ItemPossessives[4] =
 {
 	sPossessiveIlTuo,
 	sPossessiveLaTua,
 	sPossessiveIlTuo,
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 };
 
 #elif EDITION_INTERNATIONAL
 
-const s8 UiText_ArticleEmpty[] = "";
+const s8 gUiText_ArticleEmpty[] = "";
 
 static const s8 sArticleA[] = "a ";
 static const s8 sArticleAn[] = "an ";
@@ -186,16 +186,16 @@ static const s8 sArticleSome[] = "some ";
 static const s8 sArticleThe[] = "the ";
 
 // 種類ごとの冠詞
-const s8 *const UiText_ArticleTable[8] =
+const s8 *const gUiText_ArticleTable[8] =
 {
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleA,
 	sArticleAn,
 	sArticleSome,
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 	sArticleThe,
-	UiText_ArticleEmpty,
-	UiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
+	gUiText_ArticleEmpty,
 };
 
 #endif
@@ -205,7 +205,7 @@ const s8 *const UiText_ArticleTable[8] =
 //--------------------------------------------------------------------------
 
 #if !EDITION_INTERNATIONAL
-const u16 UiText_MarkGlyphCodes[] = {
+const u16 gUiText_MarkGlyphCodes[] = {
 	TEXT_MARK_NONE,
 	TEXT_MARK_VOICED,
 	TEXT_MARK_SEMIVOICED,
@@ -214,7 +214,7 @@ const u16 UiText_MarkGlyphCodes[] = {
 #endif
 
 // カーソルの上下
-const u8 UiSprite_CursorBobOffsets[80] =
+const u8 gUiSprite_CursorBobOffsets[80] =
 {
 	0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
 	5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
@@ -224,7 +224,7 @@ const u8 UiSprite_CursorBobOffsets[80] =
 };
 
 // 半径 4 の円
-const s8 UiSprite_WobbleOffsets[40] =
+const s8 gUiSprite_WobbleOffsets[40] =
 {
 	0, 4, 1, 4, 2, 3, 3, 2,
 	4, 1, 4, 0, 4, 1, 3, 2,
@@ -233,13 +233,13 @@ const s8 UiSprite_WobbleOffsets[40] =
 	-4, 1, -3, 2, -2, 3, -1, 4,
 };
 
-const u8 UiSprite_WobbleTail[16] =
+const u8 gUiSprite_WobbleTail[16] =
 {
 	4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 // 弾み
-const u8 UiSprite_BounceOffsets[16] =
+const u8 gUiSprite_BounceOffsets[16] =
 {
 	0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };

@@ -304,10 +304,10 @@ void Func_0200289c(void);
 void Func_0200290c(void);
 void Func_02003040(void);
 
-extern const u8 Data_02004c08[];
-extern const u8 Data_020050f8[];
-extern u8 Data_02005284[];
-extern u8 Data_020052b4[];
-extern u8 Data_02005314[];
+extern const u8 gData_02004c08[];
+extern const u8 gData_020050f8[];
+extern u8 gData_02005284[];
+extern u8 gData_020052b4[];
+extern u8 gData_02005314[];
 
 #endif

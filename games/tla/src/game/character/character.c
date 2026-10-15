@@ -45,5 +45,5 @@ const u8 *Owner_GetRecord(s32 selector)
     record_index = selector - 8;
     if (record_index > 999U)
         record_index = 0;
-    return &Enemy_DefinitionTable[record_index * 76];
+    return &gEnemy_DefinitionTable[record_index * 76];
 }

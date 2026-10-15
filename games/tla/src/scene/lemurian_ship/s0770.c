@@ -2,7 +2,7 @@
 
 void Func_02000770(void)
 {
-    Func_02002dd0(Data_02003010);
+    Func_02002dd0(gData_02003010);
 }
 
 void Func_02000780(void)
@@ -12,7 +12,7 @@ void Func_02000780(void)
 
 void Func_02000788(void)
 {
-    Func_02002dd0(Data_02003010);
+    Func_02002dd0(gData_02003010);
 }
 
 void Func_02000798(void)
@@ -47,12 +47,12 @@ void Func_02000798(void)
 
 void Func_02000818(void)
 {
-    Func_02002dc0(Data_02003014);
+    Func_02002dc0(gData_02003014);
 }
 
 void Func_02000828(void)
 {
-    Func_02002dc0(Data_0200301e);
+    Func_02002dc0(gData_0200301e);
 }
 
 void Func_02000838(void)
@@ -63,5 +63,5 @@ void Func_02000838(void)
 
 void Func_02000860(void)
 {
-    Func_02002dc0(Data_02003034);
+    Func_02002dc0(gData_02003034);
 }

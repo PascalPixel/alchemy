@@ -493,7 +493,7 @@ Func_0804a85c:
 .L_0804ac00:
 	.4byte gFrameCount
 .L_0804ac04:
-	.4byte Data_0805c9c4
+	.4byte gData_0805c9c4
 .L_0804ac08:
 	.4byte 0xfffffc00
 .L_0804ac0c:
@@ -1169,11 +1169,11 @@ Func_0804a85c:
 .L_0804b10c:
 	.4byte 0x00000d0c
 .L_0804b110:
-	.4byte OwnerStatus_HpString
+	.4byte gOwnerStatus_HpString
 .L_0804b114:
-	.4byte OwnerStatus_SlashString
+	.4byte gOwnerStatus_SlashString
 .L_0804b118:
-	.4byte OwnerStatus_PpString
+	.4byte gOwnerStatus_PpString
 .L_0804b11c:
 	.4byte 0x00000d0b
 .L_0804b120:

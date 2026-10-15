@@ -96,7 +96,7 @@ void Func_080ddbd8(void)
             obj->motionFlags = 0;
             Animation_ApplyChildValuesFar(obj, 11);
             Object_SetMode(obj, 7);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript + 1);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript + 1);
             ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
 
             pos[0] = work->x;

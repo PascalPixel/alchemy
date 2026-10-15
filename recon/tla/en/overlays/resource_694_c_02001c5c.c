@@ -5,7 +5,7 @@
 #include "types.h"
 #include "party_state.h"
 
-extern const u8 Data_0200466c[];
+extern const u8 gData_0200466c[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
@@ -27,7 +27,7 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d)
     Func_02004004(a, b + 2, c + 1, d, 1, 2);
     Battle_WaitMode0(20);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_0200466c);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_0200466c);
     WaitFrames(12);
     Func_020042b4(123);
     Event_FinishScreenTransition();

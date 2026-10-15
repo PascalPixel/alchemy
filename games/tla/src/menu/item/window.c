@@ -38,10 +38,10 @@ void ItemMenu_DrawStat(
     }
     if (delta > 0) {
         UiText_DrawStringInWindowFar(
-            &Menu_PlusSignString, window, x - digits * 8 + 16, y);
+            &gMenu_PlusSignString, window, x - digits * 8 + 16, y);
     } else {
         UiText_DrawStringInWindowFar(
-            &Menu_MinusSignString, window, x - digits * 8 + 16, y);
+            &gMenu_MinusSignString, window, x - digits * 8 + 16, y);
     }
 }
 

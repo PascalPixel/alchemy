@@ -15,8 +15,8 @@ struct GaiaRockInsideMapWork
     struct GaiaRockInsideLayer layers[2];
 };
 
-extern u8 Data_020023c4[];
-extern s8 Data_020053fc[][2];
+extern u8 gData_020023c4[];
+extern s8 gData_020053fc[][2];
 
 void Func_02004e0c(s32 x, s32 z, s32 width, s32 height, s32 cellX, s32 cellZ);
 
@@ -25,8 +25,8 @@ void Func_02004e0c(s32 x, s32 z, s32 width, s32 height, s32 cellX, s32 cellZ);
 // layer's cell plus one.
 void Func_020048a0(void)
 {
-    s32                  state = *(s32 *)(Data_020023c4 + 0x288);
-    s8                  *origin = Data_020053fc[state];
+    s32                  state = *(s32 *)(gData_020023c4 + 0x288);
+    s8                  *origin = gData_020053fc[state];
     struct GaiaRockInsideMapWork *map = (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapWork;
 
     if (state > 1)

@@ -5,8 +5,8 @@ void Func_02001c5c(void)
     struct FieldActor *object;
     s16 scene;
 
-    ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = Data_02004808;
-    if (Data_0200480c != 0) {
+    ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = gData_02004808;
+    if (gData_0200480c != 0) {
         scene = gPartyState.scene;
         if (scene == (s32)&SceneId_Ov661Room4)
             object = Object_GetById(16);
@@ -14,8 +14,8 @@ void Func_02001c5c(void)
             object = Object_GetById(21);
         else
             return;
-        Data_0200480c->x = object->x;
-        Data_0200480c->z = object->z;
-        Data_0200480c->facing = object->facing;
+        gData_0200480c->x = object->x;
+        gData_0200480c->z = object->z;
+        gData_0200480c->facing = object->facing;
     }
 }

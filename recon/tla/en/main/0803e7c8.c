@@ -1,6 +1,6 @@
 /* Near miss, differ 6 of 140 (three reordered pairs), 2026-10-15: The
  * Broken Seal's Menu_SetupSelectionSide on this game's cursor tiles
- * (Data_0805c5c4 right, Data_0805c1c4 left). One empty one-pass block after
+ * (gData_0805c5c4 right, gData_0805c1c4 left). One empty one-pass block after
  * the left side's x (found by a device search, differ 12 without).
  * Remaining: on the left side the native loads baseX before it builds
  * 0xfff7 and stores the x before it copies the left tiles to r11; when the
@@ -12,8 +12,8 @@
 #include "resource.h"
 #include "select.h"
 
-extern u8 Data_0805c5c4[];
-extern u8 Data_0805c1c4[];
+extern u8 gData_0805c5c4[];
+extern u8 gData_0805c1c4[];
 
 void Func_0803e7c8(struct SelectionScreen *state, s32 index)
 {
@@ -23,7 +23,7 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index)
 
     state->records[index].kind = 0;
     if (index != 0) {
-        u8 *right = Data_0805c5c4;
+        u8 *right = gData_0805c5c4;
 
         count = state->count;
         if (state->top != 0)
@@ -35,7 +35,7 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index)
         frames = right;
         state->records[1].x = state->baseX + 16 * (count - 1) + 17;
     } else {
-        frames = Data_0805c1c4;
+        frames = gData_0805c1c4;
         state->records[0].x = state->baseX - 9;
     do { } while (0);
         if (state->top != 0)

@@ -36,8 +36,8 @@
 
 	.section .rodata
 	.balign 4
-	.global Scene_InteractionRuleTable
-Scene_InteractionRuleTable:
+	.global gScene_InteractionRuleTable
+gScene_InteractionRuleTable:
 	group_cue 1, -1, -1, 74
 	group_cue 2, 90, -1, 19
 	group_cue 2, 91, -1, 19
@@ -164,8 +164,8 @@ Scene_InteractionRuleTable:
 	group_cue 60, -1, -1, 9
 	.2byte -1, -1, -1, 0	@ 終わり
 
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
+	.global gScene_AreaNameRules
+gScene_AreaNameRules:
 	group_name 0, -1, 0
 	group_name 1, -1, 1
 	group_name 2, -1, 2
@@ -299,8 +299,8 @@ Scene_AreaNameRules:
 	.2byte 0, 0	@ 終わりの後の 0 の行
 	.4byte 0
 
-	.global Party_PairResolveRules
-Party_PairResolveRules:
+	.global gParty_PairResolveRules
+gParty_PairResolveRules:
 	return_to ValeStorm, 15, ValeBabi, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12
@@ -322,8 +322,8 @@ Party_PairResolveRules:
 	.2byte -1, -1, -1, -1	@ 終わり
 
 @ 合うシーンがなければ最後の背景
-	.global Battle_BackdropScenes
-Battle_BackdropScenes:
+	.global gBattle_BackdropScenes
+gBattle_BackdropScenes:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeHome, ValeKraden
 	backdrop SolSanctumBackdrop, SolCorridor, SolEntrance1, SolMaze, SolLunaRooms, AltinPeak10, CrossbonePillar1
 	backdrop InteriorBackdrop, VaultInteriors

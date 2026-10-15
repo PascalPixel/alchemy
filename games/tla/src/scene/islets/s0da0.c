@@ -24,7 +24,7 @@ void Func_02000df8(struct ObjectRuntime *object)
         if (spawned != 0) {
             ObjectDispatch_SetSingleChildFlags(spawned, 0);
             Func_02003de4(spawned, 1);
-            Func_02003dec(spawned, Data_020044f0);
+            Func_02003dec(spawned, gData_020044f0);
         }
     }
 }

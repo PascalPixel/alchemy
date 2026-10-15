@@ -9,10 +9,10 @@
 #include "dma.h"
 #include "io_reg.h"
 
-extern u16 *Data_02001fd8;
-extern u16 *Data_02001fdc;
-extern u16 *Data_02001fe0;
-extern u16 *Data_02001fcc;
+extern u16 *gData_02001fd8;
+extern u16 *gData_02001fdc;
+extern u16 *gData_02001fe0;
+extern u16 *gData_02001fcc;
 
 void Func_020018f0(s32 a, s32 b);
 void Func_02000acc(void);
@@ -21,10 +21,10 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b)
 {
     u8 *saved = Ram_HeapSlots->block32;
 
-    Data_02001fd8 = slots;
-    Data_02001fdc = colours;
-    Data_02001fe0 = a;
-    Data_02001fcc = b;
+    gData_02001fd8 = slots;
+    gData_02001fdc = colours;
+    gData_02001fe0 = a;
+    gData_02001fcc = b;
     if (*slots != 0xffff && *colours != 0xffff) {
     next:
         {

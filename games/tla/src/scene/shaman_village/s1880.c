@@ -1,7 +1,7 @@
 #include "shaman_village.h"
 
-extern const u8 Data_02004c5c[];
-extern const u8 Data_02004cac[];
+extern const u8 gData_02004c5c[];
+extern const u8 gData_02004cac[];
 
 void Func_02001880(void)
 {
@@ -46,8 +46,8 @@ void Func_02001880(void)
     ShamanVillage_CamMove(0xe00000, -1, 0xc80000, 1);
     owner->unk63 = 0;
     shaman->unk63 = 0;
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02004c5c);
-    ObjectMotion_EnableActionAndSetCallback(15, Data_02004cac);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02004c5c);
+    ObjectMotion_EnableActionAndSetCallback(15, gData_02004cac);
     do {
         WaitFrames(1);
     } while (owner->unk63 == 0 || shaman->unk63 == 0);
@@ -113,8 +113,8 @@ void Func_02001aa4(void)
     ShamanVillage_CamMove(0xe00000, -1, 0xc80000, 1);
     owner->unk63 = 0;
     shaman->unk63 = 0;
-    ObjectMotion_EnableActionAndSetCallback(15, Data_02004c5c);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02004cac);
+    ObjectMotion_EnableActionAndSetCallback(15, gData_02004c5c);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02004cac);
     do {
         WaitFrames(1);
     } while (owner->unk63 == 0 || shaman->unk63 == 0);

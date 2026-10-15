@@ -6,14 +6,14 @@ struct AnkohlRuinsEffectParams {
     u8 unk1a[0xe];
 };
 
-extern const u8 Data_02003790[];
-extern const u8 Data_020037b4[];
-extern const u8 Data_02003a78[];
-extern const u8 Data_02003b98[];
-extern const u8 Data_02003c94[];
-extern const u8 Data_02003e38[];
-extern const u8 Data_02003f4c[];
-extern const u8 Data_02004018[];
+extern const u8 gData_02003790[];
+extern const u8 gData_020037b4[];
+extern const u8 gData_02003a78[];
+extern const u8 gData_02003b98[];
+extern const u8 gData_02003c94[];
+extern const u8 gData_02003e38[];
+extern const u8 gData_02003f4c[];
+extern const u8 gData_02004018[];
 extern u32 gFrameCount;
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase, s32 life,
@@ -79,20 +79,20 @@ void Func_02002328(void)
 const u8 *Func_02002338(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov686Room1)
-        return Data_020037b4;
+        return gData_020037b4;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room2)
-        return Data_02003a78;
+        return gData_02003a78;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room3)
-        return Data_02003b98;
+        return gData_02003b98;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room4)
-        return Data_02003c94;
+        return gData_02003c94;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room5)
-        return Data_02003e38;
+        return gData_02003e38;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room6)
-        return Data_02003f4c;
+        return gData_02003f4c;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room8)
-        return Data_02004018;
-    return Data_02003790;
+        return gData_02004018;
+    return gData_02003790;
 }
 
 void Func_020023d0(struct ObjectRuntime *object)

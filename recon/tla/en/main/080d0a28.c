@@ -14,7 +14,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_080f0206[];
+extern const u8 gData_080f0206[];
 
 void DisplayTransition_UpdateFrame(void)
 {
@@ -58,7 +58,7 @@ void DisplayTransition_UpdateFrame(void)
         blend = 15;
     value = (value & 31) * 2;
     for (i = 0; i <= 1; i++) {
-        u8 entry = Data_080f0206[value & 63];
+        u8 entry = gData_080f0206[value & 63];
         u8 *p = &state->paletteNibbles[entry >> 1];
 
         if (entry & 1)

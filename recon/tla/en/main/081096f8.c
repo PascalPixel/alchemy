@@ -21,7 +21,7 @@
 #include "input.h"
 
 extern volatile struct InputState gInput;
-extern const u8 Shop_QuantityTiles[];
+extern const u8 gShop_QuantityTiles[];
 extern u8 MsgCoins[];
 
 struct UiSprite {
@@ -77,7 +77,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price)
                 if (changed) {
                     changed = 0;
                     count = __modsi3(count + maximum, maximum);
-                    Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
+                    Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
                     Shop_FillSelector(30, 14, buffer);
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);

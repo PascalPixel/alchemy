@@ -2,10 +2,10 @@
 #include "io_write_queue.h"
 
 extern u32 gFrameCount;
-extern u16 Data_02003dbc;
-extern u16 Data_02003dbe;
+extern u16 gData_02003dbc;
+extern u16 gData_02003dbe;
 
-// Sets the layer blend, switching its alpha every two frames unless Data_02003dbe is set.
+// Sets the layer blend, switching its alpha every two frames unless gData_02003dbe is set.
 void Func_0200005c(void)
 {
     u16 *blend;
@@ -16,8 +16,8 @@ void Func_0200005c(void)
     QueueIoWriteDelay2(0x04000050, 0x3f41);
     reg = 0x04000052;
     blink = gFrameCount & 2;
-    blend = &Data_02003dbc;
-    if (blink && Data_02003dbe == 0) {
+    blend = &gData_02003dbc;
+    if (blink && gData_02003dbe == 0) {
         value = *blend | 15;
         QueueIoWriteDelay2(reg, value);
     } else {

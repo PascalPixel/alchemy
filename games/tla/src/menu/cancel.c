@@ -51,7 +51,7 @@ void Menu_CancelSoundTick(void)
     frame = gFrameCount;
     if ((frame & 3) == 0) {
         if (frame & 4)
-            CopyWords(Data_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
+            CopyWords(gData_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
         else
             FillWords(Iwram_FillWords, (void *)0x06002540, 32, 0x44444444);
     }

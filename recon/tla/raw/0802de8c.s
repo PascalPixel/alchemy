@@ -757,6 +757,6 @@ Func_0802de8c:
 .L_0802e438:
 	.4byte 0x00000012
 .L_0802e43c:
-	.4byte Resource_Data012
+	.4byte gResource_Data012
 .L_0802e440:
-	.4byte Data_0802f054
+	.4byte gData_0802f054

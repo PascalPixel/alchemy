@@ -140,8 +140,8 @@ Func_080385e2:
 	.4byte 0xe2499001
 	.4byte 0xe2877001
 	.4byte 0xea000002
-	.4byte UiText_GlyphWidths
-	.4byte UiText_Glyphs
+	.4byte gUiText_GlyphWidths
+	.4byte gUiText_Glyphs
 	.4byte 0xe2477001
 	.4byte 0xe59d3004
 	.4byte 0xe59d0024

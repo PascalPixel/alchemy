@@ -39,7 +39,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
         while (index <= 4) {
             if (entries[index] != 0) {
                 if (selected == count) {
-                    width = CharacterMenu_CursorWidths[index];
+                    width = gCharacterMenu_CursorWidths[index];
                     break;
                 }
                 count++;

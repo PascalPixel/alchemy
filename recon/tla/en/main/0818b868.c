@@ -1,5 +1,5 @@
 /* Draft: listing 434 instructions, draft 425, differ 411 (the alignment drifts from the first
- * spill). Written from the listing: the bursts at the three frames of Data_08199d94, their
+ * spill). Written from the listing: the bursts at the three frames of gData_08199d94, their
  * flattened model drawn through Func_08196958/Func_08196a7c, and the particles blitted twice per
  * frame. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame 48, an unused
  * slot at 44, blit 40, graphics 36, the vertices 32, the model 28, the texture's and the
@@ -35,11 +35,11 @@ struct Model {
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
-extern struct EffectStep Data_02014000[];
-extern const u8 Data_08199364[];
-extern const u8 Data_08199d94[];
-extern const u8 Data_08199210[];
-extern const u16 Data_08197410[];
+extern struct EffectStep gData_02014000[];
+extern const u8 gData_08199364[];
+extern const u8 gData_08199d94[];
+extern const u8 gData_08199210[];
+extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -108,7 +108,7 @@ void Func_0818b868(struct BattleEffectArgument *effect)
         if (frame == 0)
         {
             for (i = 0; i != 512; i++)
-                Data_02014000[i].variant = -1;
+                gData_02014000[i].variant = -1;
         }
         vertices = Runtime_BumpAllocateAlternatePool(32);
         model = Func_081969f8(1);
@@ -116,7 +116,7 @@ void Func_0818b868(struct BattleEffectArgument *effect)
         texture.width = 7;
         texture.height = 7;
         texture.pixels = Ram_MapCellBuffer;
-        model->mesh = Data_08199364;
+        model->mesh = gData_08199364;
         model->kind = 7;
         model->texture = &texture;
         model->vertices = vertices;
@@ -125,9 +125,9 @@ void Func_0818b868(struct BattleEffectArgument *effect)
         {
             struct EffectStep *anchor = &((struct EffectStep *)work)[j];
 
-            if (frame == Data_08199d94[j])
+            if (frame == gData_08199d94[j])
             {
-                step = &Data_02014000[j * 128];
+                step = &gData_02014000[j * 128];
                 for (i = 0; i != 32; i++)
                 {
                     s32 angle;
@@ -156,9 +156,9 @@ void Func_0818b868(struct BattleEffectArgument *effect)
                 Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
                 *(s32 *)(work + 0x77a8) = 8;
             }
-            if (frame >= Data_08199d94[j] && frame < Data_08199d94[j] + 16)
+            if (frame >= gData_08199d94[j] && frame < gData_08199d94[j] + 16)
             {
-                s32 t = frame - Data_08199d94[j];
+                s32 t = frame - gData_08199d94[j];
                 s32 alpha = 64 - t * 8;
                 s32 scale = t * 10192 + 0x4000;
 
@@ -173,13 +173,13 @@ void Func_0818b868(struct BattleEffectArgument *effect)
                     Func_080150e4((j << 14) + 0x2000);
                     SceneTransform_ApplyPitch(-0x1000);
                     Func_0801521c(scale);
-                    Func_08196958(Data_08199210, vertices, 4);
+                    Func_08196958(gData_08199210, vertices, 4);
                     Func_08196a7c(model);
                 }
             }
             speed += 20;
         }
-        step = Data_02014000;
+        step = gData_02014000;
         for (i = 0; i != 512; i++)
         {
             s32 size = step->variant;
@@ -187,11 +187,11 @@ void Func_0818b868(struct BattleEffectArgument *effect)
             if (size >= 0)
             {
                 size = (size >> 2) + 3;
-                blit[0](canvas, graphics + Data_08197410[size - 1],
+                blit[0](canvas, graphics + gData_08197410[size - 1],
                     *(s16 *)((u8 *)&step->x + 2) - size / 2, *(s16 *)((u8 *)&step->y + 2) - size,
                     size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 62, 0);
-                blit[0](canvas, graphics + Data_08197410[size - 1],
+                blit[0](canvas, graphics + gData_08197410[size - 1],
                     *(s16 *)((u8 *)&step->x + 2) - size / 2, *(s16 *)((u8 *)&step->y + 2) - size,
                     size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 62, 0);

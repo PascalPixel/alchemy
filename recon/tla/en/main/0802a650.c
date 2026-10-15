@@ -12,12 +12,12 @@ struct MapPaletteEntry {
     u8 unk4[8];
 };
 
-extern const struct MapPaletteEntry Data_0802f380[];
+extern const struct MapPaletteEntry gData_0802f380[];
 extern char ResourceId_Map000;
 
 void Func_0802a650(s32 index, void *destination)
 {
-    const struct MapPaletteEntry *entry = &Data_0802f380[index];
+    const struct MapPaletteEntry *entry = &gData_0802f380[index];
     u16 *buffer = MemAlloc(0x200);
     s16 first = *(s16 *)0x05000000;
 

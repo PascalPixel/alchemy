@@ -97,6 +97,6 @@ BattleFx_SpawnScaledArcObjects:
 .L_080e1500:
 	.4byte 0x00000001
 .L_080e1504:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080e1508:
 	.4byte 0x80004000

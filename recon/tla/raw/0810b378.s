@@ -62,4 +62,4 @@ Func_0810b378:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0810b3e8:
-	.4byte Data_0810cf2c
+	.4byte gData_0810cf2c

@@ -27,12 +27,12 @@ struct BubbleParticle {
 
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width, s32 height);
 
-extern struct BubbleParticle Data_02015000[];
+extern struct BubbleParticle gData_02015000[];
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_Data0FD;
-extern u8 Data_0819966f[];
-extern u8 Data_0819967e[];
-extern u16 Data_0819968e[];
+extern u8 gData_0819966f[];
+extern u8 gData_0819967e[];
+extern u16 gData_0819968e[];
 
 void Func_08143000(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -72,7 +72,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
     {
         if (frame == 0)
         {
-            struct BubbleParticle *spawn = Data_02015000;
+            struct BubbleParticle *spawn = gData_02015000;
 
             for (i = 0; i != 256; i++)
             {
@@ -85,7 +85,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
                 spawn++;
             }
         }
-        particle = Data_02015000;
+        particle = gData_02015000;
         for (i = 0; i != 256; i++)
         {
             if (particle->timer >= 0)
@@ -94,12 +94,12 @@ void Func_08182898(struct BattleEffectArgument *effect)
                 u32 width;
                 u32 height;
 
-                blit[0](canvas, work + Data_0819968e[size] + 0x700,
-                     *(s16 *)((u8 *)&particle->x + 2) - ((width = Data_0819966f[size]) >> 1),
-                     *(s16 *)((u8 *)&particle->y + 2) - ((height = Data_0819967e[size]) >> 1),
+                blit[0](canvas, work + gData_0819968e[size] + 0x700,
+                     *(s16 *)((u8 *)&particle->x + 2) - ((width = gData_0819966f[size]) >> 1),
+                     *(s16 *)((u8 *)&particle->y + 2) - ((height = gData_0819967e[size]) >> 1),
                      width, height);
                 BattleFxKernels_IntegrateVector2(particle, 63, -0x4000);
-                if (particle->y < -(Data_0819967e[size] << 16))
+                if (particle->y < -(gData_0819967e[size] << 16))
                     particle->timer = -1;
             }
             particle++;

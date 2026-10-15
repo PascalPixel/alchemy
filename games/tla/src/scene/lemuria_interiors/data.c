@@ -114,6 +114,6 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_02002dec[] = {
+u32 gData_02002dec[] = {
 	38,
 };

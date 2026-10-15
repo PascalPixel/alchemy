@@ -77,7 +77,7 @@ loop:
                 Resource_ResetEntry(sprite->vramBlock);
                 sprite->vramBlock = work->vramBlock;
                 sprite->unk11 |= 1;
-                sprite->tile = (ResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
+                sprite->tile = (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
                 sprite->fullColor = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;

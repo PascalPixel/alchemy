@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 extern u32 gFrameCount;
-extern const u8 Data_02002498[];
+extern const u8 gData_02002498[];
 
 struct ObjectRuntime *Func_02001f0c(s32 type, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -18,7 +18,7 @@ void Func_02001d60(struct ObjectRuntime *object)
         if (spawned != 0) {
             ObjectDispatch_SetSingleChildFlags(spawned, 0);
             Func_02001efc(spawned, 1);
-            Func_02001f04(spawned, Data_02002498);
+            Func_02001f04(spawned, gData_02002498);
         }
     }
 }

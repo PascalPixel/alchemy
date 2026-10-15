@@ -6,7 +6,7 @@ extern char SceneId_Ov690Room6;
 extern char SceneId_Ov690Room7;
 extern char SceneId_Ov690Room9;
 
-extern const u8 Data_02002272[];
+extern const u8 gData_02002272[];
 
 void Object_SetModeById(u32 id, s32 mode);
 void Func_02000860(void);
@@ -30,7 +30,7 @@ s32 Func_02000988(void)
     __asm__("" : : : "memory");
     if (gPartyState.scene == (s32)&SceneId_Ov690Room9) {
         Func_02002140(0);
-        Func_02002188(Data_0200226c);
+        Func_02002188(gData_0200226c);
         if (GameFlag_Test(0x206))
             Func_020020c0(10, 0, 0);
         Object_GetById(10)->priorityFlags |= 2;
@@ -58,7 +58,7 @@ s32 Func_02000988(void)
             Flag_Clear(0x220);
             Func_0200125c();
         }
-        Func_02002188(Data_02002272);
+        Func_02002188(gData_02002272);
     }
     /* FAKEMATCH: as at the second test. */
     __asm__("" : : : "memory");

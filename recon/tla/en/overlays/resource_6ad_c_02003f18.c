@@ -22,7 +22,7 @@ struct WarpWork {
     struct WarpEntry entries[1];
 };
 
-extern struct WarpWork Data_020070a8;
+extern struct WarpWork gData_020070a8;
 
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
@@ -40,7 +40,7 @@ s32 Func_02003f18(void)
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    struct WarpWork *work = &Data_020070a8;
+    struct WarpWork *work = &gData_020070a8;
     struct WarpEntry *entry = work->entries;
     s32 index;
 
@@ -68,7 +68,7 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     u8 *event = Ram_HeapSlots->eventWork;
-    struct WarpWork *work = &Data_020070a8;
+    struct WarpWork *work = &gData_020070a8;
     s32 x = GameFlag_GetByte(work->positionFlag);
     s32 z = GameFlag_GetByte(work->positionFlag + 8);
 

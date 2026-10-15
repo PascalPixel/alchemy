@@ -7,9 +7,9 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-extern u32 Data_020007e4;
+extern u32 gData_020007e4;
 extern u32 gFrameCount;
-extern const u8 Data_02000618[];
+extern const u8 gData_02000618[];
 
 u32 Random16Far(void);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -41,9 +41,9 @@ void Func_020000f4(void)
             ObjectDispatch_SetSingleChildFlags(object, 0);
             object->priorityFlags &= ~1;
             sprite->priority = 2;
-            Func_02000548(object, Data_02000618);
+            Func_02000548(object, gData_02000618);
             Func_02000540(object, 1);
         }
     }
-    Data_020007e4++;
+    gData_020007e4++;
 }

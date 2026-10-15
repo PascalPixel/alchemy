@@ -1,11 +1,11 @@
 	.section .rodata
 	.4byte 0
-	.global Resource_FixedBlockBTiles
-Resource_FixedBlockBTiles:
+	.global gResource_FixedBlockBTiles
+gResource_FixedBlockBTiles:
 	.incbin "games/common/src/graphics/ui/menuspr/hand.4bpp16x16"
-	.global DjinnMenu_ArrowUpTiles
-DjinnMenu_ArrowUpTiles:
+	.global gDjinnMenu_ArrowUpTiles
+gDjinnMenu_ArrowUpTiles:
 	.incbin "games/common/src/menu/djinn/arrowup.4bpp16x16"
-	.global DjinnMenu_ArrowDownTiles
-DjinnMenu_ArrowDownTiles:
+	.global gDjinnMenu_ArrowDownTiles
+gDjinnMenu_ArrowDownTiles:
 	.incbin "games/common/src/menu/djinn/arrowdn.4bpp16x16"

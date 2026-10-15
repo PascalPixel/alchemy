@@ -25,7 +25,7 @@ struct DustWork {
     u8 pad80c[8];
 };
 
-extern const u8 Field_Tiles679[];
+extern const u8 gField_Tiles679[];
 void Func_02001940(void);
 void Func_02001c24(const void *source, void *destination);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -44,7 +44,7 @@ void Func_02001ad8(void)
     zero = size;
     Dma_Set((const void *)&zero, work, 0x85000205, REG_DMA3);
     buf = Runtime_AllocateBlock(56, 0x400);
-    Func_02001c24(Field_Tiles679, buf);
+    Func_02001c24(gField_Tiles679, buf);
     work->vramEntry = Resource_FindFreeEntry();
     work->tileBase = VramBlock_LoadCached(work->vramEntry, 0x300, buf);
     Runtime_ReleaseHeapBlock(56);

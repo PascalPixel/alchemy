@@ -77,7 +77,7 @@ Func_080e7fec:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080e8070:
-	.4byte Data_080f39c4
+	.4byte gData_080f39c4
 .L_080e8074:
 	.4byte IwramFillWords
 .L_080e8078:

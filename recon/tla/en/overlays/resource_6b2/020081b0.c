@@ -9,7 +9,7 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020007e4;
+extern s32 gData_020007e4;
 
 struct FieldActor *Object_GetById(s32 id);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
@@ -57,7 +57,7 @@ void Func_020001b0(void)
     Func_020005f8(0);
     Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     WaitFrames(1);
-    Data_020007e4 = 0;
+    gData_020007e4 = 0;
     Scheduler_AddOrUpdateCallback(Func_020000f4, 1152);
     Variant(8, 2);
     Variant(9, 2);

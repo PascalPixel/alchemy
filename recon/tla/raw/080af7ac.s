@@ -91,7 +91,7 @@ Func_080af7ac:
 .L_080af854:
 	.4byte 0x00000000
 .L_080af858:
-	.4byte Data_080b2340
+	.4byte gData_080b2340
 .L_080af85c:
 	.4byte 0x00000083
 .L_080af860:

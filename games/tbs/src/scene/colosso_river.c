@@ -73,7 +73,7 @@ typedef void (*SceneTask)(void);
 u8 *ColossoRiver_GetEntrances(void)
 {
 
-	return (u8 *)ColossoRiver_SceneTableA;
+	return (u8 *)gColossoRiver_SceneTableA;
 }
 
 s32 get_default_result(void)
@@ -84,18 +84,18 @@ s32 get_default_result(void)
 u8 *ColossoRiver_GetExits(void)
 {
 
-	return (u8 *)ColossoRiver_SceneTableB;
+	return (u8 *)gColossoRiver_SceneTableB;
 }
 
 u8 *ColossoRiver_GetPlacements(void)
 {
 
-	return (u8 *)ColossoRiver_SceneTableC;
+	return (u8 *)gColossoRiver_SceneTableC;
 }
 
 static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-	switch ((u32)ColossoRiver_Countdown)
+	switch ((u32)gColossoRiver_Countdown)
 	{
 	case 66:
 		Engine_MapCopyCellsLayered(92, 31, 2, 2, 50, 38);
@@ -118,17 +118,17 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 		Engine_MapCopyCellsLayered(92, 29, 2, 2, 54, 38);
 		Engine_ActorSetAnimation(16, 12);
 		Map_CopyCellAttributes(50, 24, 6, 1, 50, 12);
-		ColossoRiver_Countdown = 120;
+		gColossoRiver_Countdown = 120;
 		break;
 	}
-	ColossoRiver_Countdown--;
+	gColossoRiver_Countdown--;
 }
 
 static void SceneState_ResetCounterAndStartTask(void)
 {
 	SceneTask task;
 
-	ColossoRiver_Countdown = 0;
+	gColossoRiver_Countdown = 0;
 	task = (SceneTask)FieldScene_RunOpeningAuxiliarySequence;
 	Engine_TaskRemoveCallback(task);
 	task();
@@ -136,7 +136,7 @@ static void SceneState_ResetCounterAndStartTask(void)
 
 static void SceneState_SetMode66AndPassOpeningSequence(void)
 {
-	ColossoRiver_Countdown = 66;
+	gColossoRiver_Countdown = 66;
 	FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
@@ -146,7 +146,7 @@ static void ColossoRiver_WaitForCountdown(void)
 
 	Engine_TaskWait(10);
 	i = 0;
-	if (ColossoRiver_Countdown != 22)
+	if (gColossoRiver_Countdown != 22)
 	{
 		do
 		{
@@ -156,7 +156,7 @@ static void ColossoRiver_WaitForCountdown(void)
 			{
 				break;
 			}
-		} while (ColossoRiver_Countdown != 22);
+		} while (gColossoRiver_Countdown != 22);
 	}
 }
 
@@ -506,7 +506,7 @@ static void EV90_SCRIPT(void)
 u8 *ColossoRiver_GetEvents(void)
 {
 
-	return (u8 *)ColossoRiver_SceneTableD;
+	return (u8 *)gColossoRiver_SceneTableD;
 }
 
 static void ColossoRiver_RunPostMatchScene(s32 a0)
@@ -1088,37 +1088,37 @@ static void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
 	s32 handler;
 
-	Colosso_ModeTaskMode = mode;
-	Colosso_ModeTaskParam = (param << 4);
+	gColosso_ModeTaskMode = mode;
+	gColosso_ModeTaskParam = (param << 4);
 
 	FieldScheduler_AddCallback((s32)Colosso_UpdateModeTask, 0xc80);
 
-	handler = (s32)ColossoRiver_RoundSpans;
+	handler = (s32)gColossoRiver_RoundSpans;
 	if (mode == 2)
 	{
-		handler = (s32)ColossoRiver_ModeRecordTwo;
+		handler = (s32)gColossoRiver_ModeRecordTwo;
 	}
 	if (mode == 4)
 	{
-		handler = (s32)ColossoRiver_ModeRecordFour;
+		handler = (s32)gColossoRiver_ModeRecordFour;
 	}
 	if (mode == 3)
 	{
 		if (param != 0)
 		{
-			handler = (s32)ColossoRiver_SpanB;
+			handler = (s32)gColossoRiver_SpanB;
 		}
 		else
 		{
-			handler = (s32)ColossoRiver_SpanA;
+			handler = (s32)gColossoRiver_SpanA;
 		}
 	}
 
-	Colosso_ModeTaskTimer = 0;
-	Colosso_ModeTaskScript = (s16 *)handler;
-	Colosso_ModeMoveTarget = 0;
-	Colosso_ModeMoveDuration = 0;
-	Colosso_ModeTaskPosition = 0;
+	gColosso_ModeTaskTimer = 0;
+	gColosso_ModeTaskScript = (s16 *)handler;
+	gColosso_ModeMoveTarget = 0;
+	gColosso_ModeMoveDuration = 0;
+	gColosso_ModeTaskPosition = 0;
 }
 
 static void FieldScene_RunTwoArmSequence(s32 a)
@@ -1141,7 +1141,7 @@ static void FieldScene_RunTwoArmSequence(s32 a)
 		Engine_EventBegin();
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
-		ColossoRiver_RoundSpans[15] = a * 60;
+		gColossoRiver_RoundSpans[15] = a * 60;
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a + 90);
 		Colosso_LoadPortrait(a);
@@ -1180,8 +1180,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 	Engine_AudioPlayCue(247);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	ColossoRiver_SpanA[13] = a0 * 60;
-	STORE_CONST(ColossoRiver_SpanB[13]) = (a0 < 0 ? -a0 : a0) * 60;
+	gColossoRiver_SpanA[13] = a0 * 60;
+	STORE_CONST(gColossoRiver_SpanB[13]) = (a0 < 0 ? -a0 : a0) * 60;
 	if (a0 < 0)
 	{
 		Engine_EventWait(30);
@@ -1227,7 +1227,7 @@ static void Text_WriteU32AsHex(u8 *buf, u32 value)
 	buf--;
 	for (i = 7; i >= 0; i--)
 	{
-		*buf = HexDigits[value & 15];
+		*buf = gHexDigits[value & 15];
 		value >>= 4;
 		buf--;
 	}
@@ -1288,7 +1288,7 @@ static void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 		{
 			o->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(o, 0);
-			Engine_ObjectSetScript(o, ColossoRiver_ScriptA);
+			Engine_ObjectSetScript(o, gColossoRiver_ScriptA);
 			Object_SetMode(o, 1);
 			Object_SetMode(o, 0);
 		}
@@ -1301,7 +1301,7 @@ static s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 
 	Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
 	o->motionFlags = 0;
-	Engine_ObjectSetScript(o, ColossoRiver_ScriptB);
+	Engine_ObjectSetScript(o, gColossoRiver_ScriptB);
 	Engine_AudioPlayCue(83);
 	a->timer = 0;
 	return 0;
@@ -1351,7 +1351,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
 	Engine_ObjectSetPosition(rec, x, 0, z);
 	Engine_GameFlagSet(0x211);
-	Engine_ObjectSetScript(rec, ColossoRiver_ApproachScript);
+	Engine_ObjectSetScript(rec, gColossoRiver_ApproachScript);
 
 	while (*waitp != 0)
 	{
@@ -1403,7 +1403,7 @@ static void StagedActor_PushActorAhead(void)
 
 	dir = subject->facing >> 12;
 
-	step = ColossoRiver_DirectionSteps[dir];
+	step = gColossoRiver_DirectionSteps[dir];
 	pos.x = subject->x.fixed + (step & 0xffff0000);
 	pos.y = subject->y.fixed;
 	step <<= 16;
@@ -1415,7 +1415,7 @@ static void StagedActor_PushActorAhead(void)
 		return;
 	}
 
-	step = ColossoRiver_DirectionSteps[dir];
+	step = gColossoRiver_DirectionSteps[dir];
 	pos.x = target->x.fixed + (step & 0xffff0000);
 	pos.y = target->y.fixed;
 	step <<= 16;
@@ -1440,7 +1440,7 @@ static void StagedActor_PushActorAhead(void)
 	target->terrainId = 2;
 	zero = 0;
 
-	step = ColossoRiver_DirectionSteps[dir];
+	step = gColossoRiver_DirectionSteps[dir];
 	pos.x = target->x.fixed + (step & 0xffff0000);
 	pos.y = target->y.fixed;
 	step <<= 16;
@@ -1477,7 +1477,7 @@ static void StagedActor_PushActorAhead(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/colosso_occupant.h"
 
-const u8 Colosso_PortraitPaletteOffsets[] = {
+const u8 gColosso_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -1485,13 +1485,13 @@ const u8 Colosso_PortraitPaletteOffsets[] = {
 #endif
 };
 
-const s16 ColossoRiver_ModeRecordTwo[] = {
+const s16 gColossoRiver_ModeRecordTwo[] = {
 	0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
 	6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
 	30, 0x7fff, 30, -1,
 };
 
-const s16 ColossoRiver_SpanB[] = {
+const s16 gColossoRiver_SpanB[] = {
 	0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
 	6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
 	6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
@@ -1502,16 +1502,16 @@ const s16 ColossoRiver_SpanB[] = {
 	6, 0x1000, 320, 6, 0x7fff, 6, -1,
 };
 
-char HexDigits[20] = "0123456789ABCDEF";
+char gHexDigits[20] = "0123456789ABCDEF";
 
-s32 ColossoRiver_ScriptA[] = {
+s32 gColossoRiver_ScriptA[] = {
 	SC_ADD(SW_Y, -0x4000),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
 	SC_FREE,
 };
 
-s32 ColossoRiver_ScriptB[] = {
+s32 gColossoRiver_ScriptB[] = {
 	SC_SET(SW_HOOK, (s32)SceneEffect_SpawnKind285AtRandomChance),
 	SC_LABEL(1),
 	SC_WAIT(10),
@@ -1549,7 +1549,7 @@ s32 ColossoRiver_ScriptB[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
-u32 ColossoRiver_DirectionSteps[] = {
+u32 gColossoRiver_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1568,13 +1568,13 @@ u32 ColossoRiver_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-struct SceneEntrance ColossoRiver_SceneTableA[] = {
+struct SceneEntrance gColossoRiver_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 ColossoRiver_SceneTableB[] = {
+u32 gColossoRiver_SceneTableB[] = {
 	SCENE_EXITS(143),
 	SCENE_EXIT(10, 143, 1),
 	SCENE_EXIT(11, 140, 12),
@@ -1583,7 +1583,7 @@ u32 ColossoRiver_SceneTableB[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement ColossoRiver_SceneTableC[] = {
+struct ScenePlacement gColossoRiver_SceneTableC[] = {
 	{ 0x0, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1631,9 +1631,9 @@ struct ScenePlacement ColossoRiver_SceneTableC[] = {
 	{ SCENE_TABLE_END },
 };
 
-s32 ColossoRiver_Countdown = 0;
+s32 gColossoRiver_Countdown = 0;
 
-struct SceneEvent ColossoRiver_SceneTableD[] = {
+struct SceneEvent gColossoRiver_SceneTableD[] = {
 	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SCRIPT) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
@@ -1665,9 +1665,9 @@ struct SceneEvent ColossoRiver_SceneTableD[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s16 Colosso_PortraitSlot = -1;
+s16 gColosso_PortraitSlot = -1;
 
-s16 ColossoRiver_RoundSpans[] = {
+s16 gColossoRiver_RoundSpans[] = {
 #if !EDITION_INTERNATIONAL
 	0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
@@ -1677,7 +1677,7 @@ s16 ColossoRiver_RoundSpans[] = {
 	0x3000, 2048, 20, 0x7fff, 60, -1,
 };
 
-s16 ColossoRiver_ModeRecordFour[] = {
+s16 gColossoRiver_ModeRecordFour[] = {
 #if defined(TBS_EDITION_FR)
 	0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
 	6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
@@ -1708,7 +1708,7 @@ s16 ColossoRiver_ModeRecordFour[] = {
 #endif
 };
 
-s16 ColossoRiver_SpanA[] = {
+s16 gColossoRiver_SpanA[] = {
 	0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
 	6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
 	6, 0x7fff, 6, 0x1000, 272, 6, 0x7fff, 6,
@@ -1719,9 +1719,9 @@ s16 ColossoRiver_SpanA[] = {
 	6, 0x1000, 448, 6, 0x7fff, 6, -1,
 };
 
-s16 Colosso_MarkerSlot = -1;
+s16 gColosso_MarkerSlot = -1;
 
-s32 Colosso_RivalFinishScript[] = {
+s32 gColosso_RivalFinishScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),
@@ -1735,7 +1735,7 @@ s32 Colosso_RivalFinishScript[] = {
 	SC_END,
 };
 
-s32 ColossoRiver_ApproachScript[] = {
+s32 gColossoRiver_ApproachScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),

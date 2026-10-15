@@ -11,7 +11,7 @@ struct OwnerGrowthRecord {
     u8 unk92[0x22];
 };
 
-extern struct OwnerGrowthRecord Owner_GrowthRecords[8];
+extern struct OwnerGrowthRecord gOwner_GrowthRecords[8];
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index)
 {
@@ -20,7 +20,7 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index)
 
     /* FAKEMATCH: construct the row width before the native table-base pool load. */
     asm("" : : "r"(stride));
-    base = (u8 *)Owner_GrowthRecords;
+    base = (u8 *)gOwner_GrowthRecords;
     /* FAKEMATCH: keep both operands live before multiplying the row offset. */
     asm("" : "+r"(stride), "+r"(base));
     /* FAKEMATCH: the integer address sum retains the native multiply/add lifetimes; pointer addition changes six bytes. */

@@ -16,13 +16,13 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSceneEntrances;
 }
 
-extern u8 Data_0200635c[];
+extern u8 gData_0200635c[];
 
 u8 *Func_020000fc(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Kibombo3)
-        return Data_0200635c;
+        return gData_0200635c;
     return 0;
 }

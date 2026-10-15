@@ -8,7 +8,7 @@ struct ContigoEventWork {
     s32 value1ac;
 };
 
-extern const u8 Data_02004a1c[];
+extern const u8 gData_02004a1c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -30,7 +30,7 @@ void Func_020039d4(void)
         Object_SetModeById(17, 2);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
         if (GameFlag_Test(0x9b2) != 0)
-            ObjectMotion_EnableActionAndSetCallback(11, Data_02004a1c);
+            ObjectMotion_EnableActionAndSetCallback(11, gData_02004a1c);
         if (GameFlag_Test(0x9d0) != 0) {
             Func_020040d4(24, 0, 0);
             Func_020040d4(25, 0, 0);

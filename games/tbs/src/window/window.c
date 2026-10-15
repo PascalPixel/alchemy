@@ -847,7 +847,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 {
 	struct UiRenderWork *work = UI_WORK;
 	u32					 keys = gKeysHeld;
-	s32					 count = UiText_SpeedSteps[gGameState.messageSpeed];
+	s32					 count = gUiText_SpeedSteps[gGameState.messageSpeed];
 	s32					 lag;
 	u32					 code;
 	u32					 next;
@@ -1065,7 +1065,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 		{
 			gx = (ch->x + 128) / 256;
 			gy = (ch->y + 128) / 256;
-			cue = UiText_SpeedCueGaps[gGameState.messageSpeed];
+			cue = gUiText_SpeedCueGaps[gGameState.messageSpeed];
 			pc = ch->entry;
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 			if (work->mode != 0)
@@ -1090,7 +1090,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 			if (!(ch->work->flags & 8) && code > TEXT_SPACE && next > TEXT_SPACE)
 			{
 				s16 pair =
-					UiText_Glyphs[code - TEXT_SPACE].width + UiText_Glyphs[next - TEXT_SPACE].width;
+					gUiText_Glyphs[code - TEXT_SPACE].width + gUiText_Glyphs[next - TEXT_SPACE].width;
 
 				if (work->outline == 1)
 				{
@@ -1108,8 +1108,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 			}
 #else
 			if (!(ch->work->flags & 8) && code > TEXT_SPACE && next > TEXT_SPACE
-				&& (u16)(UiText_Glyphs[code - TEXT_SPACE].width
-						 + UiText_Glyphs[next - TEXT_SPACE].width)
+				&& (u16)(gUiText_Glyphs[code - TEXT_SPACE].width
+						 + gUiText_Glyphs[next - TEXT_SPACE].width)
 					   <= 15)
 			{
 				code |= next << 8;
@@ -1118,7 +1118,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 #endif
 #endif
 			advance = UiText_DrawGlyph(ch->work, code, gx, gy, 0);
-			ch->glyphDelay = UiText_SpeedDelays[gGameState.messageSpeed];
+			ch->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
 			if (advance != 0)
 			{
 				if (work->result[0] != 0)
@@ -1715,7 +1715,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 		colour = work->colour;
 	}
 	first_index = code - 32;
-	input = first_index * sizeof(struct FontGlyph) + (const u8 *)UiText_Glyphs;
+	input = first_index * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
 	length = ((const struct FontGlyph *)input)->width;
 	input = (const u8 *)((const struct FontGlyph *)input)->rows;
 	if (work->outline == 1)
@@ -1733,7 +1733,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 	}
 	if ((u16)second_index != 0)
 	{
-		input = (const u8 *)&UiText_Glyphs[-32] + ((u16)second_index << 5);
+		input = (const u8 *)&gUiText_Glyphs[-32] + ((u16)second_index << 5);
 		second_width = *(const u16 *)input;
 		input += 2;
 		if (work->outline == 1)
@@ -1810,22 +1810,22 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 	} while (0);
 	work = UI_WORK;
 	mark = 0;
-	mark_code = UiText_MarkGlyphCodes[code >> 14];
+	mark_code = gUiText_MarkGlyphCodes[code >> 14];
 	if (mark_code != 0)
 		mark =
-			(const u8 *)((const struct FontGlyph *)((const u8 *)UiText_Glyphs
+			(const u8 *)((const struct FontGlyph *)((const u8 *)gUiText_Glyphs
 													+ (mark_code - 32) * sizeof(struct FontGlyph)))
 				->rows;
 	code &= 0x3fff;
 	if (code <= 0xff)
 	{
-		input = (const u8 *)UiText_Glyphs + (code - 32) * sizeof(struct FontGlyph);
+		input = (const u8 *)gUiText_Glyphs + (code - 32) * sizeof(struct FontGlyph);
 		length = ((const struct FontGlyph *)input)->width;
 		input = (const u8 *)((const struct FontGlyph *)input)->rows;
 	}
 	else
 	{
-		input = UiText_KanjiGlyphs + (code - 256) * 24;
+		input = gUiText_KanjiGlyphs + (code - 256) * 24;
 		length = 10;
 	}
 	Iwram_ClearWords(buf, 256);
@@ -1915,7 +1915,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 
 // フォントの n 番目の文字
 #define FONT_GLYPH(n) \
-	((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) + (const u8 *)UiText_Glyphs))
+	((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs))
 
 //--------------------------------------------------------------------------
 // 空白は 4 ドット、0xff 以下の文字はフォントの幅、それより上は 10 ドット
@@ -2042,7 +2042,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 #if defined(TBS_EDITION_ES)
 				if (c > 32 && next > 32)
 				{
-					s16 width = UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width;
+					s16 width = gUiText_Glyphs[c - 32].width + gUiText_Glyphs[next - 32].width;
 
 					if (work->outline == 1)
 					{
@@ -2060,7 +2060,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 				}
 #else
 				if (c > 32 && next > 32
-					&& (u16)(UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width) <= 15)
+					&& (u16)(gUiText_Glyphs[c - 32].width + gUiText_Glyphs[next - 32].width) <= 15)
 				{
 					c |= next << 8;
 					text++;
@@ -2305,9 +2305,9 @@ u32 UiText_AppendArticleName(
 	else
 	{
 		kind = 0;
-		table = UiText_ArticleTable;
+		table = gUiText_ArticleTable;
 #if defined(TBS_EDITION_ES)
-		indefinite_table = UiText_IndefiniteArticles;
+		indefinite_table = gUiText_IndefiniteArticles;
 #endif
 		if (name[0] == 29)
 		{
@@ -2386,7 +2386,7 @@ u32 UiText_AppendArticleName(
 	if (no == 1 || (no == 3 && plural == 0))
 	{
 		kind = 0;
-		table = UiText_ArticleTable;
+		table = gUiText_ArticleTable;
 		head = name[0];
 		if (head == 29)
 		{
@@ -2459,7 +2459,7 @@ u32 UiText_AppendArticleName(
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 #if defined(TBS_EDITION_FR)
-extern s8 UiText_ItemPronoun[];
+extern s8 gUiText_ItemPronoun[];
 #else
 struct ItemPossessiveTable
 {
@@ -2469,9 +2469,9 @@ struct ItemPossessiveTable
 	s8 *text[4];
 #endif
 };
-extern const struct ItemPossessiveTable UiText_ItemPossessives;
-extern const s8							UiText_ItemGenders[];
-extern u8							   *UiText_NumberWords[];
+extern const struct ItemPossessiveTable gUiText_ItemPossessives;
+extern const s8							gUiText_ItemGenders[];
+extern u8							   *gUiText_NumberWords[];
 #endif
 #endif
 
@@ -2836,7 +2836,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #if defined(TBS_EDITION_DE)
 					case 13:
 						no = decode(&st) - 1;
-						src = UiText_NumberWords[(no & 7) * 2 + plural];
+						src = gUiText_NumberWords[(no & 7) * 2 + plural];
 						while (*src != 0)
 						{
 							entry[pos] = *src++;
@@ -2882,13 +2882,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 					case 25:
 #if defined(TBS_EDITION_ES)
 						UiRender_LookupNamedValue(2, 0);
-						possessives = UiText_ItemPossessives;
+						possessives = gUiText_ItemPossessives;
 						word = possessives.text[plural];
 #else
 						tmp = UiRender_LookupNamedValue(2, 0);
 						tmp &= RENDER_ENTRY_MASK;
-						possessives = UiText_ItemPossessives;
-						kind = UiText_ItemGenders[tmp];
+						possessives = gUiText_ItemPossessives;
+						kind = gUiText_ItemGenders[tmp];
 						word = possessives.text[kind & 3];
 #endif
 						/* FAKEMATCH: value counts the letters, compared unsigned, keeping the allocation of Spanish and Italian. With the function's u32 j or i as the counter: differ 44 or 58 in tbs-es, 476 or 486 in tbs-it. */
@@ -2908,12 +2908,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #if defined(TBS_EDITION_DE)
 						tmp = UiRender_LookupNamedValue(2, 0);
 						tmp &= RENDER_ENTRY_MASK;
-						possessives = UiText_ItemPossessives;
-						kind = UiText_ItemGenders[tmp];
+						possessives = gUiText_ItemPossessives;
+						kind = gUiText_ItemGenders[tmp];
 						word = possessives.text[kind & 3];
 #else
 						UiRender_LookupNamedValue(2, 0);
-						word = UiText_ItemPronoun;
+						word = gUiText_ItemPronoun;
 #endif
 						for (i = 0; i < 16; i++)
 						{
@@ -3419,7 +3419,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 			}
 			else
 			{
-				glyph = UiText_Glyphs[c - 32].width;
+				glyph = gUiText_Glyphs[c - 32].width;
 				style = work->outline;
 				if (style == 1 || style == 5)
 					glyph++;
@@ -3444,7 +3444,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 						trailing = 0;
 					glyph = 10;
 					if (c <= 0xff)
-						glyph = UiText_Glyphs[c - 32].width;
+						glyph = gUiText_Glyphs[c - 32].width;
 					style = work->outline;
 					if (style == 1 || style == 5)
 						glyph++;
@@ -3606,7 +3606,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 			}
 			else
 			{
-				glyph = UiText_Glyphs[code - 32].width;
+				glyph = gUiText_Glyphs[code - 32].width;
 				outline = work->outline;
 				if (outline == 1 || outline == 5)
 					glyph++;
@@ -3631,7 +3631,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 						trailing = 0;
 					glyph = 10;
 					if (code <= 0xff)
-						glyph = UiText_Glyphs[code - 32].width;
+						glyph = gUiText_Glyphs[code - 32].width;
 					outline = work->outline;
 					if (outline == 1 || outline == 5)
 						glyph++;
@@ -3773,7 +3773,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 			if (character == ' ')
 				goto done;
 		}
-		mark = (s16)UiText_MarkGlyphCodes[(u32)character >> 14];
+		mark = (s16)gUiText_MarkGlyphCodes[(u32)character >> 14];
 		character &= 0x3fff;
 		width = 4;
 #else
@@ -4126,18 +4126,18 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 	switch ((u8)output->active)
 	{
 	case 9:
-		scale = Ui_BounceScales[output->animStep++ & 31];
+		scale = gUi_BounceScales[output->animStep++ & 31];
 		break;
 	case 10:
-		scale = Ui_BounceScales[output->animStep++ & 31] >> 1;
+		scale = gUi_BounceScales[output->animStep++ & 31] >> 1;
 		break;
 	case 11:
 		if (output->animStep <= 7)
-			scale = Ui_BounceScales[output->animStep++ * 2 + 16];
+			scale = gUi_BounceScales[output->animStep++ * 2 + 16];
 		break;
 	case 12:
 		if (output->animStep <= 7)
-			scale = Ui_BounceScales[output->animStep++ * 2 + 16] >> 1;
+			scale = gUi_BounceScales[output->animStep++ * 2 + 16] >> 1;
 		break;
 	}
 	if (scale == 256)
@@ -4199,7 +4199,7 @@ void UiWork_AnimateSpriteSlots(void)
 			case 2:
 				if (work->glyphResource != 0x60)
 				{
-					const u8 *tiles = &UiSprite_CursorFrameTiles[phase * 128];
+					const u8 *tiles = &gUiSprite_CursorFrameTiles[phase * 128];
 
 					sprite->tile = VramBlock_LoadCached(work->glyphResource, 128, tiles);
 					output->index = sprite->tile;
@@ -4208,7 +4208,7 @@ void UiWork_AnimateSpriteSlots(void)
 					sprite->colors = 1;
 					sprite->size = 0;
 					sprite->shape = 2;
-					sprite->y = output->y + UiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+					sprite->y = output->y + gUiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
 					sprite->affine = 0;
 					sprite->affineIndex = 0;
 				}
@@ -4253,23 +4253,23 @@ void UiWork_AnimateSpriteSlots(void)
 			case 4:
 				if (gFrameTick & 1)
 					output->animStep++;
-				sprite->x = output->x + UiSprite_WobbleOffsets[output->animStep % 20][0];
-				sprite->y = output->y + UiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
+				sprite->x = output->x + gUiSprite_WobbleOffsets[output->animStep % 20][0];
+				sprite->y = output->y + gUiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
 				break;
 			case 17:
 				output->animStep++;
-				sprite->y = output->y - UiSprite_BounceOffsets[output->animStep & 15];
+				sprite->y = output->y - gUiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 14:
 			case 15:
 			case 16:
 				output->animStep++;
-				sprite->y = output->y + UiSprite_BounceOffsets[output->animStep & 15];
+				sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 18:
 				output->animStep++;
-				sprite->x = output->x - UiSprite_BounceOffsets[output->animStep & 15];
-				sprite->y = output->y + UiSprite_BounceOffsets[output->animStep & 15];
+				sprite->x = output->x - gUiSprite_BounceOffsets[output->animStep & 15];
+				sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 8:
 				if (output->animStep != 0)
@@ -4850,14 +4850,14 @@ s32 Localization_LookupEntryId(u32 value)
 	{
 		for (;;)
 		{
-			s32 key = Portrait_CharacterMap[i];
+			s32 key = gPortrait_CharacterMap[i];
 
 			if (key == -1)
 				break;
 			if (key == value)
 			{
 				i++;
-				result = Portrait_CharacterMap[i];
+				result = gPortrait_CharacterMap[i];
 				break;
 			}
 			i += 2;
@@ -4867,14 +4867,14 @@ s32 Localization_LookupEntryId(u32 value)
 	{
 		for (;;)
 		{
-			s32 key = Portrait_SpriteMap[i];
+			s32 key = gPortrait_SpriteMap[i];
 
 			if (key == -1)
 				break;
 			if (key == value)
 			{
 				i++;
-				result = Portrait_SpriteMap[i];
+				result = gPortrait_SpriteMap[i];
 				result += 128;
 				break;
 			}
@@ -4957,12 +4957,12 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry)
 
 s32 Ui_CountIconTableEntries(void)
 {
-	return UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers;
+	return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
 }
 
 s32 Ui_CountSecondTableEntries(void)
 {
-	return UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers;
+	return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
 
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag)
@@ -4970,11 +4970,11 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 	GlyphTransfer *work;
 
 	work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
-	work->encoded = UiIcon_FramePointerTable[no1];
+	work->encoded = gUiIcon_FramePointerTable[no1];
 	work->width = 2;
 	work->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(work, 0);
-	work->encoded = UiIcon_OverlayPointerTable[no0];
+	work->encoded = gUiIcon_OverlayPointerTable[no0];
 	work->width = 2;
 	work->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(work, 1);
@@ -5004,14 +5004,14 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32
 
 	if (with_base != 0)
 	{
-		work->encoded = UiIcon_FramePointerTable[2];
+		work->encoded = gUiIcon_FramePointerTable[2];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 0);
 		slot = 1;
 	}
 
-	work->encoded = UiIcon_ItemIconPointers[glyph];
+	work->encoded = gUiIcon_ItemIconPointers[glyph];
 	work->width = 2;
 	work->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(work, slot);
@@ -5047,33 +5047,33 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
 		return -1;
 	if (layers & ICON_FRAME)
 	{
-		work->encoded = UiIcon_FramePointerTable[2];
+		work->encoded = gUiIcon_FramePointerTable[2];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 0);
 		overlay = 1;
 	}
-	work->encoded = UiIcon_ItemIconPointers[item->icon];
+	work->encoded = gUiIcon_ItemIconPointers[item->icon];
 	work->width = 2;
 	work->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(work, overlay);
 	if ((layers & ICON_EQUIPPED) && (code & 0x400))
 	{
-		work->encoded = UiIcon_MarkPointers[1];
+		work->encoded = gUiIcon_MarkPointers[1];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 1);
 	}
 	if ((layers & ICON_BROKEN) && (code & 0x200))
 	{
-		work->encoded = UiIcon_MarkPointers[0];
+		work->encoded = gUiIcon_MarkPointers[0];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 1);
 	}
 	if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) && (item->flags & 2))
 	{
-		work->encoded = UiIcon_MarkPointers[2];
+		work->encoded = gUiIcon_MarkPointers[2];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 1);
@@ -5094,13 +5094,13 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
 	{
 		s32 ones = count % 10;
 
-		work->encoded = UiIcon_DigitPointers[ones];
+		work->encoded = gUiIcon_DigitPointers[ones];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 1);
 		if (count / 10 != 0)
 		{
-			work->encoded = UiIcon_DigitPointers[count / 10 + 9];
+			work->encoded = gUiIcon_DigitPointers[count / 10 + 9];
 			work->width = 2;
 			work->height = 2;
 			UiGlyph_DecodeWithHeapRoutines(work, 1);
@@ -5130,12 +5130,12 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot)
 	Runtime_ReleaseHeapBlock(0x11);
 	return 1;
 }
-extern const u8 *RenderResource_PairSourceTable[];
+extern const u8 *gRenderResource_PairSourceTable[];
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
 	/* FAKEMATCH: three more names of the one table keep each case's own literal slot; with the one name in every case the switch folds away, differ 21 on tbs-en (9 instructions for 24). */
-	extern const u8 *PairSource1[] __asm__("RenderResource_PairSourceTable"), *PairSource2[] __asm__("RenderResource_PairSourceTable"), *PairSource3[] __asm__("RenderResource_PairSourceTable");
+	extern const u8 *PairSource1[] __asm__("gRenderResource_PairSourceTable"), *PairSource2[] __asm__("gRenderResource_PairSourceTable"), *PairSource3[] __asm__("gRenderResource_PairSourceTable");
 	void *source;
 	switch (value)
 	{
@@ -5150,7 +5150,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 		break;
 	case 0:
 	default:
-		source = RenderResource_PairSourceTable;
+		source = gRenderResource_PairSourceTable;
 		break;
 	}
 	VramBlock_LoadCached(slot, 32, source);
@@ -5164,11 +5164,11 @@ void Ui_PrepareTransferForItem(s32 code)
 
 	if (code != 0)
 	{
-		state->encoded = UiIcon_ItemIconPointers[item->icon];
+		state->encoded = gUiIcon_ItemIconPointers[item->icon];
 	}
 	else
 	{
-		state->encoded = UiIcon_ItemIconPointers[0];
+		state->encoded = gUiIcon_ItemIconPointers[0];
 	}
 	state->width = 2;
 	state->height = 2;
@@ -5195,14 +5195,14 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, 
 
 	if (with_base != 0)
 	{
-		work->encoded = UiIcon_FramePointerTable[2];
+		work->encoded = gUiIcon_FramePointerTable[2];
 		work->width = 2;
 		work->height = 2;
 		UiGlyph_DecodeWithHeapRoutines(work, 0);
 		slot = 1;
 	}
 
-	work->encoded = UiIcon_PsynergyIconPointers[glyph];
+	work->encoded = gUiIcon_PsynergyIconPointers[glyph];
 	work->width = 2;
 	work->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(work, slot);
@@ -5218,7 +5218,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index)
 {
 	GlyphTransfer *state = gGlyphWork;
 
-	state->encoded = UiIcon_MiscIconPointers[index];
+	state->encoded = gUiIcon_MiscIconPointers[index];
 	state->width = 2;
 	state->height = 2;
 	UiGlyph_DecodeWithHeapRoutines(state, 0);
@@ -5311,7 +5311,7 @@ void UiGlyph_ResetWorkState(void)
 	work->records[1].kind = 0;
 	work->records[0].y = 0;
 	work->records[1].y = 0;
-	table = Menu_AnimatedCursorTiles;
+	table = gMenu_AnimatedCursorTiles;
 	work->records[14].slot = Resource_FindFreeEntry();
 	work->records[14].tile = VramBlock_LoadCached(work->records[14].slot, 256, table);
 	work->records[14].kind = 0;
@@ -5562,7 +5562,7 @@ void MenuSelection_DrawFrame(void)
 		te->priority = 0;
 		te->tile = transfer->tile;
 		te->x = node->x - 4;
-		te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+		te->y = node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
 		if (transfer->scale != transfer->scaleEnd)
 		{
 			state->matrix[0] = transfer->scale;
@@ -5632,7 +5632,7 @@ void MenuSelection_DrawFrame(void)
 	}
 	if (cursor->kind != 0)
 	{
-		cnt = (s32)Menu_AnimatedCursorTiles;
+		cnt = (s32)gMenu_AnimatedCursorTiles;
 		{
 			void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
@@ -5661,7 +5661,7 @@ void MenuSelection_DrawFrame(void)
 				cursor->y = cursor->targetY;
 			}
 		}
-		cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+		cursor_entry->y = cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
 		cursor_entry->x = cursor->x - 4;
 		if (GameFlag_TestFar(0x103) != 0)
 		{
@@ -5693,13 +5693,13 @@ void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)
 	entry->y = state->records[index].y;
 	if (index != 0)
 	{
-		frames = Menu_CursorObjectTiles;
+		frames = gMenu_CursorObjectTiles;
 		if (state->records[1].base != 0)
 			entry->x = entry->x + state->records[1].base;
 	}
 	else
 	{
-		frames = Menu_CursorLeftObjectTiles;
+		frames = gMenu_CursorLeftObjectTiles;
 		if (state->records[0].base != 0)
 			entry->x = entry->x - state->records[0].base;
 	}
@@ -5854,8 +5854,8 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 	state->records[index].kind = 0;
 	if (index != 0)
 	{
-		/* FAKEMATCH: the separate local loads the tile pointer early into r5 and makes its copy late, as the native does. Assigning Menu_CursorObjectTiles directly where right is read: differ 42; the same at the top of the branch: differ 16 (tbs-en). */
-		u8 *right = Menu_CursorObjectTiles;
+		/* FAKEMATCH: the separate local loads the tile pointer early into r5 and makes its copy late, as the native does. Assigning gMenu_CursorObjectTiles directly where right is read: differ 42; the same at the top of the branch: differ 16 (tbs-en). */
+		u8 *right = gMenu_CursorObjectTiles;
 
 		count = state->count;
 		if (state->top != 0)
@@ -5870,7 +5870,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 	}
 	else
 	{
-		frames = Menu_CursorLeftObjectTiles;
+		frames = gMenu_CursorLeftObjectTiles;
 		state->records[0].x = state->baseX - 9;
 		if (state->top != 0)
 			state->records[0].kind = 1;
@@ -6634,7 +6634,7 @@ void UiTextResource_NoOpCallback4(void)
 
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
 {
-	const void *data = Menu_CursorObjectTiles;
+	const void *data = gMenu_CursorObjectTiles;
 	s32			value = Resource_FindFreeEntry();
 
 	*slot = value;
@@ -6942,7 +6942,7 @@ void Debug_SelectAbilityPair(void)
 		slot = Resource_FindFreeEntry();
 		if (slot != 0)
 		{
-			VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+			VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
 			cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
 		}
 		/* FAKEMATCH: needed to match: the title message reuses the slot variable. The message id passed directly: differ 23. */
@@ -7201,9 +7201,9 @@ void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
 
 	phase = (gGameState.paletteGlow[0] + 12) % 24 * 4;
 	bias = gGameState.paletteGlow[1] - 7;
-	red = PaletteGlow_WaveTable[(phase % 96)];
-	green = PaletteGlow_WaveTable[(phase + 32) % 96];
-	blue = PaletteGlow_WaveTable[(phase + 64) % 96];
+	red = gPaletteGlow_WaveTable[(phase % 96)];
+	green = gPaletteGlow_WaveTable[(phase + 32) % 96];
+	blue = gPaletteGlow_WaveTable[(phase + 64) % 96];
 	red += bias;
 	green += bias;
 	blue += bias;
@@ -7294,9 +7294,9 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
 	step = ((phase + 12) % 24) * 4;
 	offset = brightness - 7;
-	red = PaletteGlow_WaveTable[(step % 96)] + offset;
-	green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
-	blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
+	red = gPaletteGlow_WaveTable[(step % 96)] + offset;
+	green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
+	blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
 	if (red < 0)
 		red = 0;
 	if (red > 31)
@@ -7477,7 +7477,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 	x = Resource_FindFreeEntry();
 	if (x < RESOURCE_SLOTS)
 	{
-		VramBlock_LoadCached(x, 128, Resource_FixedBlockBTiles);
+		VramBlock_LoadCached(x, 128, gResource_FixedBlockBTiles);
 		out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
 		work->cursor.output = out;
 		x = win->x * 8;
@@ -7488,9 +7488,9 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 	x = Resource_FindFreeEntry();
 	if (x < RESOURCE_SLOTS)
 	{
-		Dma_Set(WorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
+		Dma_Set(gWorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
 			0x80000020, REG_DMA3);
-		VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
+		VramBlock_LoadCached(x, 256, gWorkspaceOptions_SliderTiles);
 		y = 0;
 		out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
 		out->oam.palette = SLIDER_PALETTE;
@@ -7533,17 +7533,17 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
 	y = 28;
 	work->frame[0][0] =
-		RenderResource_CreateFrame(OptionMenu_SpeedFrames[0], 0, win, OPTION_FRAME_X, y);
+		RenderResource_CreateFrame(gOptionMenu_SpeedFrames[0], 0, win, OPTION_FRAME_X, y);
 	work->frame[0][1] =
-		RenderResource_CreateFrame(OptionMenu_SpeedFrames[1], 0, win, OPTION_FRAME_X + 24, y);
+		RenderResource_CreateFrame(gOptionMenu_SpeedFrames[1], 0, win, OPTION_FRAME_X + 24, y);
 	work->frame[0][2] =
-		RenderResource_CreateFrame(OptionMenu_SpeedFrames[2], 0, win, OPTION_FRAME_X + 48, y);
+		RenderResource_CreateFrame(gOptionMenu_SpeedFrames[2], 0, win, OPTION_FRAME_X + 48, y);
 	y = 52;
-	work->frame[1][0] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[0], 0, win, 100, y);
-	work->frame[1][1] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[1], 0, win, 124, y);
+	work->frame[1][0] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[0], 0, win, 100, y);
+	work->frame[1][1] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[1], 0, win, 124, y);
 	y = 76;
-	work->frame[2][0] = RenderResource_CreateFrame(OptionMenu_SleepFrames[0], 0, win, 100, y);
-	work->frame[2][1] = RenderResource_CreateFrame(OptionMenu_SleepFrames[1], 0, win, 124, y);
+	work->frame[2][0] = RenderResource_CreateFrame(gOptionMenu_SleepFrames[0], 0, win, 100, y);
+	work->frame[2][1] = RenderResource_CreateFrame(gOptionMenu_SleepFrames[1], 0, win, 124, y);
 	return win;
 }
 
@@ -7597,7 +7597,7 @@ s32 Menu_RunWorkspaceOptions(void)
 				dim = 0;
 				if (i != work->option[2])
 					dim = 1;
-				RenderResource_LoadFrame(OptionMenu_SpeedFrames[i], index, dim);
+				RenderResource_LoadFrame(gOptionMenu_SpeedFrames[i], index, dim);
 			}
 			for (i = 0; i <= 1; i++)
 			{
@@ -7608,7 +7608,7 @@ s32 Menu_RunWorkspaceOptions(void)
 				dim = 0;
 				if (i != work->option[3])
 					dim = 1;
-				RenderResource_LoadFrame(OptionMenu_SpeechFrames[i], index, dim);
+				RenderResource_LoadFrame(gOptionMenu_SpeechFrames[i], index, dim);
 			}
 			for (i = 0; i <= 1; i++)
 			{
@@ -7619,7 +7619,7 @@ s32 Menu_RunWorkspaceOptions(void)
 				dim = 0;
 				if (i != work->option[4])
 					dim = 1;
-				RenderResource_LoadFrame(OptionMenu_SleepFrames[i], index, dim);
+				RenderResource_LoadFrame(gOptionMenu_SleepFrames[i], index, dim);
 			}
 
 			x = icon->x * 8 + OPTION_SLIDER_X;
@@ -7660,8 +7660,8 @@ s32 Menu_RunWorkspaceOptions(void)
 			redraw = 1;
 			if (work->preset > 5)
 				work->preset = 0;
-			*pA = OptionMenu_FirstColorPresets[work->preset];
-			*pB = OptionMenu_SecondColorPresets[work->preset];
+			*pA = gOptionMenu_FirstColorPresets[work->preset];
+			*pB = gOptionMenu_SecondColorPresets[work->preset];
 			continue;
 		}
 		if (gKeyState & (KEY_A | KEY_START))
@@ -7815,7 +7815,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	slot = Resource_FindFreeEntry();
 	if (slot < RESOURCE_SLOTS)
 	{
-		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+		VramBlock_LoadCached(slot, 128, gResource_FixedBlockBTiles);
 		work->cursor.output = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
 		x = win->x * 8;
 		y = win->y * 8 + 16;
@@ -7825,7 +7825,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	for (i = 0; i < rows; i++)
 	{
 		work->icon[i] =
-			RenderResource_CreateFrame(Menu_WorkspaceIconFrames[first + i], 0, win, 12, y);
+			RenderResource_CreateFrame(gMenu_WorkspaceIconFrames[first + i], 0, win, 12, y);
 		y += WORKSPACE_ROW_HEIGHT;
 	}
 	return win;
@@ -7891,7 +7891,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 			if (i < rows)
 			{
 				j = first;
-				table = Menu_WorkspaceIconFrames;
+				table = gMenu_WorkspaceIconFrames;
 				do
 				{
 					icon = work->icon[i];
@@ -8048,7 +8048,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 	Iwram_ClearWords(pens, 16);
 	if (attr == 0xF000)
 	{
-		pens[1] = UiText_ColourPens[work->colour & 15];
+		pens[1] = gUiText_ColourPens[work->colour & 15];
 		pens[3] = 3;
 		Iwram_FillWords(canvas, 0x800, 0x04040404);
 	}
@@ -8072,17 +8072,17 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 				{
 				case 8:
 					work->colour = *script++;
-					pens[1] = UiText_ColourPens[work->colour & 15];
+					pens[1] = gUiText_ColourPens[work->colour & 15];
 					break;
 				case 7:
 				case 9:
 				case 10:
 					work->colour = 15;
-					pens[1] = UiText_ColourPens[work->colour];
+					pens[1] = gUiText_ColourPens[work->colour];
 					break;
 				case 3:
 #if EDITION_INTERNATIONAL
-					x += UiText_GlyphWidths[0];
+					x += gUiText_GlyphWidths[0];
 #else
 					x += 8;
 #endif
@@ -8153,7 +8153,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 					else
 #endif
 						if (c > 31)
-						w = UiText_GlyphWidths[c - 32];
+						w = gUiText_GlyphWidths[c - 32];
 					else
 						w = 1;
 					x += w;

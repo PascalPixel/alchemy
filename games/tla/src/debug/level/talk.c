@@ -3,7 +3,7 @@
 #include "party_state.h"
 #include "text/msg_ids.h"
 
-extern const u8 Data_02000744[];
+extern const u8 gData_02000744[];
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -55,7 +55,7 @@ void Func_020001a8(void)
         if (flag != 0) {
             RenderOutput_RedrawSavedRect(win);
             UiText_DrawStringAtOffset(record, win, 0, 48);
-            UiText_DrawStringInWindow(Data_02000744, win, 48, 48);
+            UiText_DrawStringInWindow(gData_02000744, win, 48, 48);
             flag = 0;
             UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
         }

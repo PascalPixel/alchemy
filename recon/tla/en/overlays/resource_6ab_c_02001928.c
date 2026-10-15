@@ -14,7 +14,7 @@ struct SpriteAttributes {
     u8 priority : 2;
 };
 
-extern const u8 Data_02004744[];
+extern const u8 gData_02004744[];
 
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Func_020041cc(struct ObjectRuntime *object, s32 mode);
@@ -28,7 +28,7 @@ void Func_02001928(struct ObjectRuntime *object, s32 priority)
     object->collisionFlags = 0;
     ((struct SpriteAttributes *)object->animation)->priority = priority;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_020041dc(object, Data_02004744);
+    Func_020041dc(object, gData_02004744);
     object->action = 0;
     object->speedLimit = 0;
     object->acceleration = 0;

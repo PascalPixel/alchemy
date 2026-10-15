@@ -4,7 +4,7 @@
 void Func_0200349c(u32 index, s32 height)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct PillarWork *work = &Data_0200536c;
+    struct PillarWork *work = &gData_0200536c;
 
     if (index <= 31) {
         struct PillarEntry *entry = &work->entries[index];

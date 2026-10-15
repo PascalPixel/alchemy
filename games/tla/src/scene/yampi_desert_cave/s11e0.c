@@ -1,7 +1,7 @@
 #include "yampi_desert_cave.h"
 #include "object_runtime.h"
 
-extern const s16 Data_020019cc[];
+extern const s16 gData_020019cc[];
 
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -25,8 +25,8 @@ void Func_020011e0(void)
 {
     s32 step = GameFlag_GetByte_(0x278);
     s32 index = (step / 32) * 2;
-    s32 column = Data_020019cc[index];
-    s32 row = Data_020019cc[index + 1];
+    s32 column = gData_020019cc[index];
+    s32 row = gData_020019cc[index + 1];
 
     if (Object_GetById(16)->movementState == 0) {
         Func_020018a8(16, column << 19, row << 19);

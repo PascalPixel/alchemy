@@ -3,7 +3,7 @@
 #include "input.h"
 #include "party_state.h"
 
-extern const u8 Data_080f1140[];
+extern const u8 gData_080f1140[];
 
 void EventRuntime_PrepareCurrentObject(void);
 void WaitFrames(s32 frames);
@@ -31,5 +31,5 @@ void Func_080ed788(void)
 
 const u8 *Func_080ed804(void)
 {
-    return Data_080f1140;
+    return gData_080f1140;
 }

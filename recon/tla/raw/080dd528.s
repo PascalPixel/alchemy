@@ -131,4 +131,4 @@ BattleFx_StartItemBreak:
 .L_080dd634:
 	.4byte BattleFx_UpdateItemBreakFragment
 .L_080dd638:
-	.4byte Data_080f0e78
+	.4byte gData_080f0e78

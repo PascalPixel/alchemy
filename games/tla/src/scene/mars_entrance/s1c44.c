@@ -1,6 +1,6 @@
 #include "room.h"
 
-extern const u8 Data_020056a0[];
+extern const u8 gData_020056a0[];
 
 void Func_02001ae0(void);
 void Func_02001cbc(void);
@@ -11,7 +11,7 @@ void Func_02001c44(struct ObjectRuntime *object, s32 unused)
     object->motionFlags = 0;
     object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02004bd0(object, Data_020056a0);
+    Func_02004bd0(object, gData_020056a0);
     object->action = 0;
     object->speedLimit = 0;
     object->acceleration = 0;

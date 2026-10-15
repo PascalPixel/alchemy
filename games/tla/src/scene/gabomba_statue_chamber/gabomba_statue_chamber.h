@@ -238,13 +238,13 @@ static inline void GabombaStatueChamber_MessageOpen(s32 speaker, s32 flags)
 
 void Func_02000a98(s32 x, s32 z);
 
-extern u8 Data_020020f8[];
-extern u8 Data_020021e8[];
-extern u8 Data_02002458[];
-extern u8 Data_02002470[];
-extern u8 Data_020024a0[];
-extern u8 Data_020024dc[];
-extern u8 Data_02002530[];
-extern u8 Data_0200a08c[];
+extern u8 gData_020020f8[];
+extern u8 gData_020021e8[];
+extern u8 gData_02002458[];
+extern u8 gData_02002470[];
+extern u8 gData_020024a0[];
+extern u8 gData_020024dc[];
+extern u8 gData_02002530[];
+extern u8 gData_0200a08c[];
 
 #endif

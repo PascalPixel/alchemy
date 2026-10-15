@@ -115,7 +115,7 @@ Func_080e1024:
 .L_080e1100:
 	.4byte 0xfffffc00
 .L_080e1104:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_080e1108:
 	adds r7, #1
 	cmp r7, #1

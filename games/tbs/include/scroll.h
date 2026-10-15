@@ -24,6 +24,6 @@ LAYOUT_OFFSET_GUARD(DisplayScrollWork_Page, struct DisplayScrollWork, page, 0xf0
 LAYOUT_OFFSET_GUARD(DisplayScrollWork_Frequency, struct DisplayScrollWork, freqX, 0xf08);
 
 extern struct DisplayScrollWork *gHBlankScrollWork;
-extern const s16				 DisplayScroll_WaveSine[];
+extern const s16				 gDisplayScroll_WaveSine[];
 
 #endif

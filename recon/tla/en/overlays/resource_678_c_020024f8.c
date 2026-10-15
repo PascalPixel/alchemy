@@ -18,7 +18,7 @@ void Func_020024f8(struct ObjectRuntime *object, s32 priority)
     ((struct FieldSprite *)object->animation)->priority = priority;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_020027f8(object, 2);
-    Func_02002800(object, Data_02002af4);
+    Func_02002800(object, gData_02002af4);
     Object_SetPartAttribute(object, 10);
     object->action = 0;
     object->speedLimit = 0;

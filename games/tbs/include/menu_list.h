@@ -145,7 +145,7 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, autoMode, 0xe0);
 	} while (0)
 
 extern struct MenuCell *gLinkCountdownWork;
-extern u8				Resource_FixedBlockBTiles[];
-extern const u8			Menu_AnimatedCursorTiles[];
+extern u8				gResource_FixedBlockBTiles[];
+extern const u8			gMenu_AnimatedCursorTiles[];
 
 #endif

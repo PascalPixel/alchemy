@@ -1,6 +1,6 @@
 #include "trial_road.h"
 
-extern s32 Data_02007e24;
+extern s32 gData_02007e24;
 
 void Func_02001dd4(void);
 
@@ -33,5 +33,5 @@ void Func_02001eb0(void)
 
 void Func_02001efc(s32 value)
 {
-    Data_02007e24 = value;
+    gData_02007e24 = value;
 }

@@ -354,7 +354,7 @@ Func_0817b66c:
 .L_0817b950:
 	.4byte 0xffff00ff
 .L_0817b954:
-	.4byte Data_08199450
+	.4byte gData_08199450
 .L_0817b958:
 	.4byte 0xffd00000
 .L_0817b95c:
@@ -362,7 +362,7 @@ Func_0817b66c:
 .L_0817b960:
 	.4byte 0xffc00000
 .L_0817b964:
-	.4byte Data_08199474
+	.4byte gData_08199474
 .L_0817b968:
 	.4byte 0xfffff000
 .L_0817b96c:

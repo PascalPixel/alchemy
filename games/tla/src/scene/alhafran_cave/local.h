@@ -76,13 +76,13 @@ void Func_0200051c(void);
 void Func_0200129c(const u16 *entry, s32 mode, s32 frame);
 void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer);
 
-extern s16 Data_02001608[];
-extern const u16 Data_020016e4[];
-extern u8 Data_02001778[];
-extern u8 Data_02001868[];
-extern u8 Data_02001a18[];
-extern u8 Data_02001a90[];
-extern u8 Data_02001be0[];
+extern s16 gData_02001608[];
+extern const u16 gData_020016e4[];
+extern u8 gData_02001778[];
+extern u8 gData_02001868[];
+extern u8 gData_02001a18[];
+extern u8 gData_02001a90[];
+extern u8 gData_02001be0[];
 
 static __inline__ void Func_02001420_(s32 x, s32 z, s32 a, s32 b)
 {

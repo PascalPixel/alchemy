@@ -29,7 +29,7 @@ struct ElementLevelBonus {
     u16 res;
 };
 
-extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
+extern const struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 s32 GameFlag_Test(s32 flag);
 
@@ -87,10 +87,10 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
     }
     series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
     for (i = 202; i >= 0; i--) {
-        if (Class_DefinitionTable[i].series != series)
+        if (gClass_DefinitionTable[i].series != series)
             continue;
         for (j = 0; j < 4; j++) {
-            if (levels[j] < Class_DefinitionTable[i].required[j] * 10)
+            if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
                 break;
         }
         if (j == 4) {

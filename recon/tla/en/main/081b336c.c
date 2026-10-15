@@ -26,7 +26,7 @@ struct ReelEffectWork
 };
 
 extern char MsgSlotsBet[];
-extern const u8 ReelGame_TitleLetterWidths[];
+extern const u8 gReelGame_TitleLetterWidths[];
 
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -55,7 +55,7 @@ void ReelGame_InitTitle(void)
 
     letter = work->particles;
     y = -0x200000;
-    width = ReelGame_TitleLetterWidths;
+    width = gReelGame_TitleLetterWidths;
     for (i = 0; i != 8; i++)
     {
         letter[i].x = (left + 24) << 16;

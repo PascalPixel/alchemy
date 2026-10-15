@@ -2,10 +2,10 @@
 #include "io_reg.h"
 
 extern volatile u32 gKeysRepeat;
-extern volatile u32 Data_03001ae8;
-extern volatile u32 Data_03001e40;
+extern volatile u32 gData_03001ae8;
+extern volatile u32 gData_03001e40;
 
-extern const u8 Debug_PaletteSwatchTiles[];
+extern const u8 gDebug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
@@ -31,7 +31,7 @@ void Debug_RunPaletteEditor(void)
     u32 blue;
     u32 i;
 
-    Resource_DecompressHalfwords(Debug_PaletteSwatchTiles, (void *)0x06001a00);
+    Resource_DecompressHalfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
     tile = (palette << 12) + 0xd1;
     colors = &PALETTE[palette * 16 + 1];
@@ -127,7 +127,7 @@ redraw:
             red = 0;
             for (;;) {
                 WaitFrames(1);
-                if (!(Data_03001ae8 & 8))
+                if (!(gData_03001ae8 & 8))
                     break;
                 if (red == 0)
                     *colors = 0x7fff;
@@ -144,7 +144,7 @@ redraw:
         }
         if (gKeysRepeat & KEY_SELECT)
             break;
-        Data_03001e40;
+        gData_03001e40;
         WaitFrames(1);
     }
     Ui_LoadWindowGraphics();

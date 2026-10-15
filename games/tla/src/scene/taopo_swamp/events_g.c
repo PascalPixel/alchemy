@@ -12,7 +12,7 @@ s32 Func_02001228(struct ObjectRuntime *object)
         if (spark) {
             spark->scaleX = scale;
             spark->scaleY = scale;
-            Func_02002800(spark, Data_02002a48);
+            Func_02002800(spark, gData_02002a48);
             ObjectDispatch_SetSingleChildFlags(spark, 0);
             Func_020027f8(spark, 2);
         }

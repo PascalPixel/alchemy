@@ -8,14 +8,14 @@
  * minutes of permuter found nothing. */
 #include "types.h"
 
-extern u8 GameFlagBytes[];
+extern u8 gGameFlagBytes[];
 
 void GameFlag_SetNibble(s32 flag, s32 value)
 {
     s32 field_mask = 0xF;
     s32 shift = 4 & flag;
     s32 mask = field_mask << shift;
-    u8 *bytes = GameFlagBytes;
+    u8 *bytes = gGameFlagBytes;
 
     flag = ((u32)flag << 0x14) >> 0x17;
     bytes[flag] = (bytes[flag] & ~mask) | ((value & field_mask) << shift);

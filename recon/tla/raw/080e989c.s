@@ -86,4 +86,4 @@ Func_080e989c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_080e993c:
-	.4byte Data_080f0fe0
+	.4byte gData_080f0fe0

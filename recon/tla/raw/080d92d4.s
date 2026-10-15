@@ -218,4 +218,4 @@ Func_080d92d4:
 .L_080d9490:
 	.4byte IwramFillWords + 0x74
 .L_080d9494:
-	.4byte Data_080f393c
+	.4byte gData_080f393c

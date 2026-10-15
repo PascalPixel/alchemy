@@ -607,20 +607,20 @@ Func_0815537c:
 .L_08155834:
 	.4byte Data_08198462
 .L_08155838:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_0815583c:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08155840:
 	.4byte Data_0819846e
 .L_08155844:
 	.4byte Data_08198472
 .L_08155848:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_0815584c:
 	.4byte gMapCellBuffer
 .L_08155850:
 	.4byte 0x007effff
 .L_08155854:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08155858:
 	.4byte Func_08143000

@@ -11,13 +11,13 @@ void Func_02003d40(void)
     s32 z = object->z >> 20;
     s32 key = (x << 16) + z;
 
-    if (key != Data_02006c0c) {
-        Data_02006c0c = key;
-        Data_020073dc = 1;
-        Data_020073e0 = 2;
-        Data_020073e4 = x + 64;
-        Data_020073e8 = z - y;
-        CopyCells(Data_020073e4, Data_020073e8, 1, 2, 73, 72);
-        CopyCells(70, 74, Data_020073dc, Data_020073e0, Data_020073e4, Data_020073e8);
+    if (key != gData_02006c0c) {
+        gData_02006c0c = key;
+        gData_020073dc = 1;
+        gData_020073e0 = 2;
+        gData_020073e4 = x + 64;
+        gData_020073e8 = z - y;
+        CopyCells(gData_020073e4, gData_020073e8, 1, 2, 73, 72);
+        CopyCells(70, 74, gData_020073dc, gData_020073e0, gData_020073e4, gData_020073e8);
     }
 }

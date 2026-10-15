@@ -1,16 +1,16 @@
 #include "types.h"
 
 extern u8 gNumberTextBuffer[];
-extern const u8 Text_HexDigits[];
-extern u8 Data_03001110;
-extern u16 *Data_030011c4;
+extern const u8 gText_HexDigits[];
+extern u8 gData_03001110;
+extern u16 *gData_030011c4;
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = gNumberTextBuffer;
-    const u8 *digits = Text_HexDigits;
+    const u8 *digits = gText_HexDigits;
     s32 index = 7;
 
     do {
@@ -57,20 +57,20 @@ void Text_FormatSignedDecimalToWork(s32 value)
 
 void Func_08014aa8(u32 count)
 {
-    u16 *dst = Data_030011c4;
+    u16 *dst = gData_030011c4;
     u32 i;
 
-    if (Data_03001110 != 0) {
+    if (gData_03001110 != 0) {
         for (i = 0; i < count; i++)
             *dst++ = 0xf000;
-        Data_030011c4 = dst;
+        gData_030011c4 = dst;
     }
 }
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {
-    if (Data_03001110 != 0) {
-        u32 addr = ((u32)&Data_030011c4);
+    if (gData_03001110 != 0) {
+        u32 addr = ((u32)&gData_030011c4);
         u32 c = *src;
         u16 *dst = *(u16 **)addr;
         u32 cnt = 0;
@@ -92,7 +92,7 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
                     break;
                 c = *src++;
             } while (c != 0);
-            addr = ((u32)&Data_030011c4);
+            addr = ((u32)&gData_030011c4);
         }
         *(u16 **)addr = dst;
     }

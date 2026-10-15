@@ -1,7 +1,7 @@
 #include "types.h"
 #include "fixed_math.h"
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 struct Position { s32 x, y, z; };
 union PositionWord { s32 w; s16 h[2]; };
@@ -32,7 +32,7 @@ void Shop_InitEffect(void);
 void Shop_ResetEffects(void);
 void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
-extern s8 Data_080b4ab2[];
+extern s8 gData_080b4ab2[];
 
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
@@ -49,7 +49,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     saved_kind = shop->cursor.anchor->kind;
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
     shop->cursor.anchor->kind = 13;
-    Audio_PlayCue(Data_080b4ab2[shop->partyAction]);
+    Audio_PlayCue(gData_080b4ab2[shop->partyAction]);
     Shop_RestoreSceneTiles(0x00202108);
     Func_08009280((s32)shop->partyMemberIcons[member], 0);
     WaitFrames(20);

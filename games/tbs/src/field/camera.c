@@ -415,15 +415,15 @@ void LuckyDice_Run(void)
 			}
 			if (timer > 19 && kind >= 0)
 			{
-				for (i = 0; i != LuckyDice_LabelCounts[kind]; i++)
+				for (i = 0; i != gLuckyDice_LabelCounts[kind]; i++)
 				{
 					s32 kx;
 					s32 ky;
 
-					kx = DICE_KIND_X - LuckyDice_LabelCounts[kind] * 16 + i * 32;
+					kx = DICE_KIND_X - gLuckyDice_LabelCounts[kind] * 16 + i * 32;
 					ky = 96;
 					sprites->obj[count].attr01 = (((kx & 0x1ff) << 16) | ky) | 0x80002000;
-					sprites->obj[count].attr2 = LuckyDice_LabelTiles[kind] * 8 + 152 + i * 32;
+					sprites->obj[count].attr2 = gLuckyDice_LabelTiles[kind] * 8 + 152 + i * 32;
 					count++;
 				}
 			}
@@ -633,7 +633,7 @@ void LuckyDice_Run(void)
 				sprites->obj[count].attr01 =
 					((order[i] << 25) | (((px + 0x278) & 0x1ff) << 16) | ((py + 0x160) & 255))
 					| 0x40002300;
-				sprites->obj[count].attr2 = (LuckyDice_FaceTiles[die->variant / 1024] << 3) | 0x400;
+				sprites->obj[count].attr2 = (gLuckyDice_FaceTiles[die->variant / 1024] << 3) | 0x400;
 				count++;
 			}
 		}
@@ -800,7 +800,7 @@ void LuckyDice_Run(void)
 					results[i] = die->variant / 0xc00;
 					for (j = 0; j != 6; j++)
 					{
-						if (die->z > LuckyDice_FaceHeights[j] << 16)
+						if (die->z > gLuckyDice_FaceHeights[j] << 16)
 						{
 							results[i + 2] = j;
 							break;

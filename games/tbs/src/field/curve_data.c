@@ -2,7 +2,7 @@
 #include "types.h"
 
 // 2 点補間の重み
-const u8 Curve_LerpWeightTable[256] =
+const u8 gCurve_LerpWeightTable[256] =
 {
 	0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
@@ -23,7 +23,7 @@ const u8 Curve_LerpWeightTable[256] =
 };
 
 // 標本番号
-const u8 Curve_SampleIndexTable[256] =
+const u8 gCurve_SampleIndexTable[256] =
 {
 	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

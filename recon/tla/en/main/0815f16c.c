@@ -144,57 +144,57 @@ extern u8 Value_0000018a;
 extern u8 Value_00000192;
 extern u8 Value_00000193;
 
-extern const u16 Data_08197410[];
-extern const u8 Data_08197467[];
-extern const u8 Data_0819746d[];
-extern const u8 Data_08197473[];
-extern const u16 Data_0819747a[];
-extern const u16 Data_08197486[];
-extern const u8 Data_08197492[];
-extern const u8 Data_08197498[];
-extern const u8 Data_0819749e[];
-extern const u8 Data_081974ad[];
-extern const u16 Data_081974bc[];
-extern const u8 Data_0819750c[];
-extern const u8 Data_0819751a[];
-extern const u8 Data_081977f8[];
-extern const u8 Data_0819781a[];
-extern const u8 Data_08197826[];
-extern const u32 Data_08197834[];
-extern const u8 Data_0819887e[];
-extern const u8 Data_08198882[];
-extern const u8 Data_08198886[];
-extern const u16 Data_0819888a[];
-extern const u16 Data_0819889e[];
-extern const u16 Data_081988b2[];
-extern const u16 Data_081988c6[];
-extern const u16 Data_081988da[];
-extern const u16 Data_081988ee[];
-extern const u16 Data_081988fc[];
-extern const u16 Data_0819890a[];
-extern const u16 Data_08198918[];
-extern const u16 Data_08198926[];
-extern const u16 Data_08198934[];
-extern const u8 Data_0819893a[];
-extern const u8 Data_0819893d[];
-extern const u8 Data_08198940[][2];
-extern const u16 Data_08198946[];
-extern const u8 Data_0819894e[];
-extern const u8 Data_08198952[];
-extern const u8 Data_08198956[];
-extern const s8 Data_0819895a[];
-extern const u8 Data_0819895e[];
-extern const u8 Data_08198962[];
-extern const u8 Data_08198966[];
-extern const u8 Data_08198c6c[];
-extern const u8 Data_08198d2c[];
-extern const u8 Data_08199090[];
-extern const u8 Data_081990d0[];
-extern const u8 Data_081991b0[];
-extern const u8 Data_08199210[];
-extern const u8 Data_08199268[];
-extern const u8 Data_08199340[];
-extern const u8 Data_08199364[];
+extern const u16 gData_08197410[];
+extern const u8 gData_08197467[];
+extern const u8 gData_0819746d[];
+extern const u8 gData_08197473[];
+extern const u16 gData_0819747a[];
+extern const u16 gData_08197486[];
+extern const u8 gData_08197492[];
+extern const u8 gData_08197498[];
+extern const u8 gData_0819749e[];
+extern const u8 gData_081974ad[];
+extern const u16 gData_081974bc[];
+extern const u8 gData_0819750c[];
+extern const u8 gData_0819751a[];
+extern const u8 gData_081977f8[];
+extern const u8 gData_0819781a[];
+extern const u8 gData_08197826[];
+extern const u32 gData_08197834[];
+extern const u8 gData_0819887e[];
+extern const u8 gData_08198882[];
+extern const u8 gData_08198886[];
+extern const u16 gData_0819888a[];
+extern const u16 gData_0819889e[];
+extern const u16 gData_081988b2[];
+extern const u16 gData_081988c6[];
+extern const u16 gData_081988da[];
+extern const u16 gData_081988ee[];
+extern const u16 gData_081988fc[];
+extern const u16 gData_0819890a[];
+extern const u16 gData_08198918[];
+extern const u16 gData_08198926[];
+extern const u16 gData_08198934[];
+extern const u8 gData_0819893a[];
+extern const u8 gData_0819893d[];
+extern const u8 gData_08198940[][2];
+extern const u16 gData_08198946[];
+extern const u8 gData_0819894e[];
+extern const u8 gData_08198952[];
+extern const u8 gData_08198956[];
+extern const s8 gData_0819895a[];
+extern const u8 gData_0819895e[];
+extern const u8 gData_08198962[];
+extern const u8 gData_08198966[];
+extern const u8 gData_08198c6c[];
+extern const u8 gData_08198d2c[];
+extern const u8 gData_08199090[];
+extern const u8 gData_081990d0[];
+extern const u8 gData_081991b0[];
+extern const u8 gData_08199210[];
+extern const u8 gData_08199268[];
+extern const u8 gData_08199340[];
+extern const u8 gData_08199364[];
 
 s32 __divsi3(s32, s32);
 s32 Func_08002064(s32, s32);
@@ -558,7 +558,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (pos[2] > 60)
                         pos[2] = 60;
                     pos[2] += 60;
-                    drawFuncs.draw[1](screen, (u8 *)tiles + Data_08197410[n - 1], pos[0] - n / 2, pos[1] - n, n, n * 2);
+                    drawFuncs.draw[1](screen, (u8 *)tiles + gData_08197410[n - 1], pos[0] - n / 2, pos[1] - n, n, n * 2);
                     p->x -= 4;
                 }
                 count++;
@@ -893,7 +893,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                                 n = 10;
                             EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
-                            drawFuncs.draw[0](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
+                            drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                             Func_08138058(p, 62, kind == 89 ? 0 : -0x800);
                             p->life -= 2;
                         }
@@ -905,7 +905,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             n = __divsi3(p->life, 20) + 2;
                             EffectPosition_ApplyBaseAndYOffset(p, point);
                             point[0] = point[0] / 2;
-                            drawFuncs.draw[(i / 2) & 1](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
+                            drawFuncs.draw[(i / 2) & 1](screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                             Func_08138058(p, 62, -0x800);
                             p->life--;
                         }
@@ -951,7 +951,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         n = (i & 1) + 6;
                         EffectPosition_ApplyBaseAndYOffset(p, point);
                         point[0] = point[0] >> 1;
-                        drawFuncs.draw[kind == 78](screen, (u8 *)tiles + Data_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
+                        drawFuncs.draw[kind == 78](screen, (u8 *)tiles + gData_08197410[n - 1], point[0] - n / 2, point[1] - n, n, n * 2);
                         Func_08138058(p, 62, 0);
                         if (frame > i + 22) {
                             dx = (object3->x - p->x) >> 8;
@@ -1014,12 +1014,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 for (i = 0; i != 3; i++) {
                     m = i & 3;
                     angle = Random16() & 0xffff;
-                    x = ((Func_08002096(angle) << 3) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
-                    y = ((amp * Func_08002090(angle)) >> 16) + off - Data_08197498[m] / 2;
+                    x = ((Func_08002096(angle) << 3) >> 16) + target[0] / 2 - gData_08197492[m] / 2;
+                    y = ((amp * Func_08002090(angle)) >> 16) + off - gData_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_0819887e[Random16() & 3] | 3, 0);
-                    IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 56, Data_08197492[m], Data_08197498[m]);
+                    Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
+                    IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56, gData_08197492[m], gData_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
                 }
@@ -1029,12 +1029,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 for (i = 0; i != 3; i++) {
                     angle = Random16() & 0xffff;
                     m = i & 3;
-                    x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
-                    y = ((Func_08002090(angle) << 4) >> 16) - Data_08197498[m] / 2;
+                    x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - gData_08197492[m] / 2;
+                    y = ((Func_08002090(angle) << 4) >> 16) - gData_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_08198882[Random16() & 3] | 3, 1);
-                    IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 80, Data_08197492[m], Data_08197498[m]);
+                    Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
+                    IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80, gData_08197492[m], gData_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
                 }
@@ -1136,23 +1136,23 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         } else if (kind == 41) {
             y = ((Func_08002090(frame << 9) << 2) >> 16) + ((s16 *)target)[3] + 16;
             if (frame < 4) {
-                drawFuncs.draw[0](screen, work->frames, Data_0819750c[action->side * 7], y + Data_0819751a[0], 57, 98);
+                drawFuncs.draw[0](screen, work->frames, gData_0819750c[action->side * 7], y + gData_0819751a[0], 57, 98);
             } else {
                 if (frame < 8)
-                    drawFuncs.draw[0](screen, work->frames, Data_0819750c[action->side * 7], y + Data_0819751a[0], 57, 98);
-                drawFuncs.draw[0](screen, work->frames + 0x1cd2, Data_0819750c[action->side * 7 + 1], y + Data_0819751a[1], 99, 69);
+                    drawFuncs.draw[0](screen, work->frames, gData_0819750c[action->side * 7], y + gData_0819751a[0], 57, 98);
+                drawFuncs.draw[0](screen, work->frames + 0x1cd2, gData_0819750c[action->side * 7 + 1], y + gData_0819751a[1], 99, 69);
                 if (frame >= 4 && frame < 6)
                     ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
                 if (frame >= 6 && frame < 8)
-                    drawFuncs.draw[0](screen, work->frames + 0x3781, Data_0819750c[action->side * 7 + 2], y + Data_0819751a[2], 128, 91);
+                    drawFuncs.draw[0](screen, work->frames + 0x3781, gData_0819750c[action->side * 7 + 2], y + gData_0819751a[2], 128, 91);
                 if (frame >= 8 && frame < 10)
-                    drawFuncs.draw[0](screen, EWRAM_BUF, Data_0819750c[action->side * 7 + 3], y + Data_0819751a[3], 128, 91);
+                    drawFuncs.draw[0](screen, EWRAM_BUF, gData_0819750c[action->side * 7 + 3], y + gData_0819751a[3], 128, 91);
                 if (frame >= 10 && frame < 12)
-                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x2d80, Data_0819750c[action->side * 7 + 4], y + Data_0819751a[4], 128, 59);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x2d80, gData_0819750c[action->side * 7 + 4], y + gData_0819751a[4], 128, 59);
                 if (frame >= 12 && frame < 14)
-                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x4b00, Data_0819750c[action->side * 7 + 5], y + Data_0819751a[5], 122, 29);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x4b00, gData_0819750c[action->side * 7 + 5], y + gData_0819751a[5], 122, 29);
                 if (frame >= 14 && frame < 16)
-                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x58d2, Data_0819750c[action->side * 7 + 6], y + Data_0819751a[6], 76, 25);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x58d2, gData_0819750c[action->side * 7 + 6], y + gData_0819751a[6], 76, 25);
             }
         } else if (kind == 85) {
             REG_BLDCNT = 0;
@@ -1215,7 +1215,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         } else if (kind == 96 || kind == 97 || kind == 98) {
             if (frame < 20) {
                 if (frame < 8)
-                    m = Data_08198886[frame / 2];
+                    m = gData_08198886[frame / 2];
                 else
                     m = 3;
                 Func_0801314c(188);
@@ -1275,11 +1275,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             m = frame / 2;
             if (m < 10) {
                 if (action->side == 0)
-                    drawFuncs.draw[0](screen, EWRAM_BUF + Data_0819888a[m], Data_081988c6[m], Data_081988da[m],
-                                      Data_0819889e[m], Data_081988b2[m]);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + gData_0819888a[m], gData_081988c6[m], gData_081988da[m],
+                                      gData_0819889e[m], gData_081988b2[m]);
                 else
-                    drawFuncs.draw[0](screen, EWRAM_BUF + Data_0819888a[m], 128 - Data_081988c6[m] - Data_0819889e[m],
-                                      Data_081988da[m], Data_0819889e[m], Data_081988b2[m]);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + gData_0819888a[m], 128 - gData_081988c6[m] - gData_0819889e[m],
+                                      gData_081988da[m], gData_0819889e[m], gData_081988b2[m]);
             }
             Func_0801314c(104);
             Func_08144aac(action->side, &drawFuncs);
@@ -1316,23 +1316,23 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
             if (frame >= 0 && (m = __divsi3(frame, 3)) < 7) {
                 if (action->side == 0)
-                    drawFuncs.draw[0](screen, EWRAM_BUF + Data_081988ee[m], Data_08198918[m], Data_08198926[m] - 16,
-                                      Data_081988fc[m], Data_0819890a[m]);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + gData_081988ee[m], gData_08198918[m], gData_08198926[m] - 16,
+                                      gData_081988fc[m], gData_0819890a[m]);
                 else
-                    drawFuncs.draw[0](screen, EWRAM_BUF + Data_081988ee[m], 128 - Data_08198918[m] - Data_081988fc[m],
-                                      Data_08198926[m] - 16, Data_081988fc[m], Data_0819890a[m]);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + gData_081988ee[m], 128 - gData_08198918[m] - gData_081988fc[m],
+                                      gData_08198926[m] - 16, gData_081988fc[m], gData_0819890a[m]);
             }
             for (i = 0; i != 3; i++) {
                 t = frame - 8 - i * 2;
                 if (t >= 0 && t <= 8) {
                     m = __divsi3(t, 3);
                     if (action->side == 0)
-                        drawFuncs.draw[0](screen, EWRAM_BUF + Data_08198934[m], Data_08198940[i][0] - Data_0819893a[m] / 2,
-                                          Data_08198940[i][1] - Data_0819893d[m] / 2 - 16, Data_0819893a[m], Data_0819893d[m]);
+                        drawFuncs.draw[0](screen, EWRAM_BUF + gData_08198934[m], gData_08198940[i][0] - gData_0819893a[m] / 2,
+                                          gData_08198940[i][1] - gData_0819893d[m] / 2 - 16, gData_0819893a[m], gData_0819893d[m]);
                     else
-                        drawFuncs.draw[0](screen, EWRAM_BUF + Data_08198934[m],
-                                          128 - Data_08198940[i][0] - Data_0819893a[m] / 2,
-                                          Data_08198940[i][1] - Data_0819893d[m] / 2 - 16, Data_0819893a[m], Data_0819893d[m]);
+                        drawFuncs.draw[0](screen, EWRAM_BUF + gData_08198934[m],
+                                          128 - gData_08198940[i][0] - gData_0819893a[m] / 2,
+                                          gData_08198940[i][1] - gData_0819893d[m] / 2 - 16, gData_0819893a[m], gData_0819893d[m]);
                 }
             }
             Func_0801314c(104);
@@ -1380,14 +1380,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             for (i = 0; i != 12; i++) {
                 if (frame >= i + 6 && frame < i + 18) {
                     m = (frame - i - 6) / 2;
-                    x = target[0] / 2 - Data_08197467[m] / 2;
+                    x = target[0] / 2 - gData_08197467[m] / 2;
                     if (i & 1)
                         x += (i + 1) / 2 * 3;
                     else
                         x -= (i + 1) / 2 * 3;
-                    drawFuncs.draw[i == 0 || ((i - 1) & 3) > 1](screen, EWRAM_BUF + Data_0819747a[m], x,
-                                                                   Data_08197473[m] + 48, Data_08197467[m],
-                                                                   Data_0819746d[m]);
+                    drawFuncs.draw[i == 0 || ((i - 1) & 3) > 1](screen, EWRAM_BUF + gData_0819747a[m], x,
+                                                                   gData_08197473[m] + 48, gData_08197467[m],
+                                                                   gData_0819746d[m]);
                 }
             }
         } else if (kind == 46) {
@@ -1413,7 +1413,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     EffectPosition_ApplyBaseAndYOffset(p, point);
                     point[0] = point[0] / 2 + target[0] / 2;
                     point[1] = point[1] + target[1] + 32;
-                    drawFuncs.draw[1](screen, EWRAM_BUF + Data_08198946[m], point[0] - 4, point[1] - 4, 8, 8);
+                    drawFuncs.draw[1](screen, EWRAM_BUF + gData_08198946[m], point[0] - 4, point[1] - 4, 8, 8);
                     p->x -= 6;
                     if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
                         Func_081c0010(133);
@@ -1492,7 +1492,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     work->unk77a8 = 8;
                     BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
                     p = SPARKS;
-                    table = Data_081977f8;
+                    table = gData_081977f8;
                     for (i = 0; i != 16; i++, p++) {
                         p->x = (*table++ + x - 40) << 16;
                         p->y = *table++ << 16;
@@ -1505,8 +1505,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             } else {
                 for (; i != 16; i++, p++) {
                     m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->life, 96), 3);
-                    drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + Data_08197834[m], (p->x >> 16) - Data_0819781a[m] / 2,
-                                          (p->y >> 16) - Data_08197826[m] / 2, Data_0819781a[m], Data_08197826[m]);
+                    drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + gData_08197834[m], (p->x >> 16) - gData_0819781a[m] / 2,
+                                          (p->y >> 16) - gData_08197826[m] / 2, gData_0819781a[m], gData_08197826[m]);
                     Func_08138086(p, 64, 0x2000);
                     p->life += p->z;
                     if (p->z > 1 && (frame & 1))
@@ -1549,8 +1549,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             } else {
                 for (; i != 32; i++, p++) {
                     m = Func_08002064(i, 5) * 3 + Func_08002064(__divsi3(p->z, 96), 3);
-                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + Data_081974bc[m], (p->x >> 16) - Data_0819749e[m] / 2,
-                                      (p->y >> 16) - Data_081974ad[m] / 2, Data_0819749e[m], Data_081974ad[m]);
+                    drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + gData_081974bc[m], (p->x >> 16) - gData_0819749e[m] / 2,
+                                      (p->y >> 16) - gData_081974ad[m] / 2, gData_0819749e[m], gData_081974ad[m]);
                     Func_08138086(p, 63, 0x8000);
                     p->z += p->vz;
                     if ((frame & 1) && p->vz > 0)
@@ -1578,12 +1578,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 for (i = 0; i != 3; i++) {
                     angle = Random16() & 0xffff;
                     m = i & 3;
-                    x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - Data_08197492[m] / 2;
-                    y = ((Func_08002090(angle) << 4) >> 16) - Data_08197498[m] / 2;
+                    x = ((Func_08002096(angle) << 4) >> 16) + target[0] / 2 - gData_08197492[m] / 2;
+                    y = ((Func_08002090(angle) << 4) >> 16) - gData_08197498[m] / 2;
                     Func_0801314c(188);
                     Func_0801314c(104);
-                    Func_08196404(188, 7, 7, Data_0819894e[Random16() & 3] | 3, 1);
-                    IWRAM_SLOT_BC(screen, EWRAM_BUF + Data_08197486[m], x, y + 80, Data_08197492[m], Data_08197498[m]);
+                    Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
+                    IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80, gData_08197492[m], gData_08197498[m]);
                     Func_0801314c(188);
                     Func_08144aac(action->side, &drawFuncs);
                 }
@@ -1594,7 +1594,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 texture164.width = 5;
                 texture164.height = 7;
                 model->kind = 6;
-                model->mesh = Data_08199268;
+                model->mesh = gData_08199268;
                 model->matrix = matrix;
                 model->texture = &texture164;
                 p = RINGS;
@@ -1613,7 +1613,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         Func_080150e4(p->z);
                         p->z += p->vz;
                         Func_080151e4(0x40000, 0x10000, 0x10000);
-                        Func_08196958(Data_081991b0, matrix, 4);
+                        Func_08196958(gData_081991b0, matrix, 4);
                         Func_08196a7c(model);
                     }
                 }
@@ -1633,7 +1633,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             texture156.pixels = EWRAM_BUF;
             model->kind = 7;
             model->texture = &texture156;
-            model->mesh = Data_08199340;
+            model->mesh = gData_08199340;
             model->matrix = matrix;
             model->fade = fade;
             Render_ResetTransformState();
@@ -1652,12 +1652,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     SceneTransform_ApplyYaw(frame << 11);
                 }
                 Func_0801521c(angle);
-                Func_08196958(Data_08199210, matrix, 4);
+                Func_08196958(gData_08199210, matrix, 4);
                 Func_08196a7c(model);
                 if (kind != 82) {
                     SceneTransform_ApplyYaw(-frame << 12);
                     Func_0801521c(0x8000);
-                    Func_08196958(Data_08199210, matrix, 4);
+                    Func_08196958(gData_08199210, matrix, 4);
                     Func_08196a7c(model);
                 }
             }
@@ -1683,7 +1683,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             texture148.pixels = EWRAM_BUF;
             model->texture = &texture148;
             model->kind = 7;
-            model->mesh = Data_08199364;
+            model->mesh = gData_08199364;
             model->matrix = matrix;
             if (kind == 92 || kind == 93) {
                 for (i = 0; i != 3; i++) {
@@ -1701,7 +1701,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             Func_080150e4((i << 14) + 0x2000);
                             SceneTransform_ApplyPitch(-0x1000);
                             Func_0801521c(angle >> 1);
-                            Func_08196958(Data_08199210, matrix, 4);
+                            Func_08196958(gData_08199210, matrix, 4);
                             Func_08196a7c(model);
                         }
                     }
@@ -1720,7 +1720,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         Func_080151e4(0x8000, 0x10000, 0x8000);
                         SceneTransform_ApplyPitch(0x4000);
                         Func_0801521c(angle);
-                        Func_08196958(Data_08199210, matrix, 4);
+                        Func_08196958(gData_08199210, matrix, 4);
                         Func_08196a7c(model);
                     }
                 }
@@ -1739,7 +1739,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             Func_080150e4((i << 14) + 0x2000);
                             SceneTransform_ApplyPitch(-0x1000);
                             Func_0801521c(t * 3 << 12);
-                            Func_08196958(Data_08199210, matrix, 4);
+                            Func_08196958(gData_08199210, matrix, 4);
                             Func_08196a7c(model);
                         }
                     }
@@ -1765,7 +1765,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                                 x = target[0] / 2 + ((r * Func_08002096(p->x)) >> 16);
                                 y = target[1] + ((r * Func_08002090(p->x)) >> 16);
                                 n = 2 - k / 8;
-                                drawFuncs.draw[0](screen, (u8 *)tiles + Data_08197410[n - 1], x - n / 2, y - n, n, n * 2);
+                                drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1], x - n / 2, y - n, n, n * 2);
                             }
                         }
                         p->y += p->vy;
@@ -1781,7 +1781,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             texture140.pixels = EWRAM_BUF;
             model->kind = 7;
             model->texture = &texture140;
-            model->mesh = Data_08199364;
+            model->mesh = gData_08199364;
             model->matrix = matrix;
             t = frame - 4;
             if (t >= 0) {
@@ -1796,32 +1796,32 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     Func_080151e4(0x8000, 0x10000, 0x8000);
                     SceneTransform_ApplyPitch(1000);
                     Func_0801521c(angle);
-                    Func_08196958(Data_08199210, matrix, 4);
+                    Func_08196958(gData_08199210, matrix, 4);
                     Func_08196a7c(model);
                 }
             }
             texture140.width = 7;
             texture140.height = 4;
             texture140.pixels = EWRAM_BUF + 0x4000;
-            model->mesh = Data_08198d2c;
+            model->mesh = gData_08198d2c;
             for (i = 0; i != 2; i++) {
-                start = Data_08198952[i] + 4;
+                start = gData_08198952[i] + 4;
                 if (frame > start) {
                     fade = (start - frame) * 8;
                     if (fade > -16)
                         fade = -16;
                     if (fade > -64) {
-                        scale = (frame - start) * Data_08198956[i] * 1500 + 0x4180;
+                        scale = (frame - start) * gData_08198956[i] * 1500 + 0x4180;
                         model->fade = fade;
                         Render_ResetTransformState();
-                        Func_08015160((target[0] / 2 - 60) << 16, Data_0819895a[i] << 16, 0);
+                        Func_08015160((target[0] / 2 - 60) << 16, gData_0819895a[i] << 16, 0);
                         Func_080151e4(scale * 2, scale * 4, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
                             SceneTransform_ApplyYaw((i * 2 + frame) << 12);
                         else
                             SceneTransform_ApplyYaw((i * 2 - frame) << 12);
-                        Func_08196958(Data_08198c6c, matrix, 16);
+                        Func_08196958(gData_08198c6c, matrix, 16);
                         Func_08196a7c(model);
                     }
                 }
@@ -1839,9 +1839,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             model->kind = 7;
             model->texture = &texture132;
             model->matrix = matrix;
-            model->mesh = Data_081990d0;
+            model->mesh = gData_081990d0;
             for (i = 0; i != 4; i++) {
-                start = Data_0819895e[i] + 4;
+                start = gData_0819895e[i] + 4;
                 model->frame = (frame * 8 + i * 32) & 127;
                 if (frame == start + 4)
                     Func_081c0010(104);
@@ -1850,17 +1850,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (fade > -16)
                         fade = -16;
                     if (fade > -64) {
-                        scale = (frame - start) * Data_08198962[i] * 2000 + 0x4000;
+                        scale = (frame - start) * gData_08198962[i] * 2000 + 0x4000;
                         model->fade = fade;
                         Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
-                        Func_080151e4(scale, Data_08198966[i] * scale * 2, scale / 4);
+                        Func_080151e4(scale, gData_08198966[i] * scale * 2, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
                             SceneTransform_ApplyYaw((i * 8 + frame) << 10);
                         else
                             SceneTransform_ApplyYaw((i * 8 - frame) << 10);
-                        Func_08196958(Data_08199090, matrix, 32);
+                        Func_08196958(gData_08199090, matrix, 32);
                         Func_08196a7c(model);
                     }
                 }

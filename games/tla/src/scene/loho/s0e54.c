@@ -14,7 +14,7 @@ struct LohoPicture {
     u16 b;
 };
 
-extern const struct LohoPicture Data_02001f14;
+extern const struct LohoPicture gData_02001f14;
 
 void Battle_WaitMode0(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -79,7 +79,7 @@ loop:
         goto loop;
     work = (u8 *)&((struct EventWork154 *)work)->value;
     Func_02001448(158);
-    Func_020012a0_(Data_02001f14.data, Data_02001f14.a, Data_02001f14.b);
+    Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
     Object_SetModeById(gPartyState.currentOwner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     Offset_(gPartyState.currentOwner, 0, -4);

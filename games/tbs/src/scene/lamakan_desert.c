@@ -108,7 +108,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return LamakanDesert_Exits;
+	return gLamakanDesert_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -156,7 +156,7 @@ static void EV09_TOUCH(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return LamakanDesert_Events;
+	return gLamakanDesert_Events;
 }
 
 static s32 LamakanDesert_ApplyEntryState(void)
@@ -436,17 +436,17 @@ static void EV20_TOUCH(void)
 	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
 		count = 3;
-		points = LamakanDesert_SafePoints1;
+		points = gLamakanDesert_SafePoints1;
 	}
 	else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
 		count = 5;
-		points = LamakanDesert_SafePoints2;
+		points = gLamakanDesert_SafePoints2;
 	}
 	else
 	{
 		count = 2;
-		points = LamakanDesert_SafePointsOther;
+		points = gLamakanDesert_SafePointsOther;
 	}
 	left = count;
 	point = points;
@@ -885,29 +885,29 @@ static void LamakanDesert_RunSandstorm(void)
 	s32				   x;
 	u32				   offset;
 
-	tile = gVramBlockCache[(*(s16 *)&LamakanDesert_SandVramSlot)].offset >> 5;
-	if ((*(s16 *)&LamakanDesert_SandPhase) != 0)
+	tile = gVramBlockCache[(*(s16 *)&gLamakanDesert_SandVramSlot)].offset >> 5;
+	if ((*(s16 *)&gLamakanDesert_SandPhase) != 0)
 	{
-		LamakanDesert_SandCounter = 2;
+		gLamakanDesert_SandCounter = 2;
 	}
 	else if (Engine_GameFlagIsSet(0x104) != 0)
 	{
-		if (LamakanDesert_SandCounter > 0)
+		if (gLamakanDesert_SandCounter > 0)
 		{
-			LamakanDesert_SandCounter--;
+			gLamakanDesert_SandCounter--;
 		}
 	}
-	else if (LamakanDesert_SandCounter <= 1)
+	else if (gLamakanDesert_SandCounter <= 1)
 	{
-		if (++LamakanDesert_SandCounter == 1)
+		if (++gLamakanDesert_SandCounter == 1)
 		{
-			Dma_Set(LamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+			Dma_Set(gLamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
 		}
 	}
-	counter = LamakanDesert_SandCounter;
+	counter = gLamakanDesert_SandCounter;
 	if (counter == 0)
 	{
-		Resource_ActivateEntry((*(s16 *)&LamakanDesert_SandVramSlot));
+		Resource_ActivateEntry((*(s16 *)&gLamakanDesert_SandVramSlot));
 		return;
 	}
 	display = *Ram_DisplayWork;
@@ -925,7 +925,7 @@ static void LamakanDesert_RunSandstorm(void)
 	}
 
 	buffer = MemAlloc(0x900);
-	Dma_Set(LamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
+	Dma_Set(gLamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
 	colors = (s16 *)(buffer + 12);
 	color = colors;
 	for (i = 6; i < 12; i++)
@@ -935,7 +935,7 @@ static void LamakanDesert_RunSandstorm(void)
 		red = value & 31;
 		green = (value >> 5) & 31;
 		blue = ((value >> 10) & 31) - 20;
-		level = LamakanDesert_SandLevel;
+		level = gLamakanDesert_SandLevel;
 		red += level / 3;
 		blue = blue - level / 6 + 20;
 		if (level > 60 && (gFrameCount & 1))
@@ -962,27 +962,27 @@ static void LamakanDesert_RunSandstorm(void)
 	QueueIoWriteDelay3((u32)palette++, *word++);
 	QueueIoWriteDelay3((u32)palette++, *word++);
 
-	LamakanDesert_SandLevel = gGameState.hazardSteps * 120 / gGameState.hazardLimit;
-	if (LamakanDesert_SandLevel > 118)
+	gLamakanDesert_SandLevel = gGameState.hazardSteps * 120 / gGameState.hazardLimit;
+	if (gLamakanDesert_SandLevel > 118)
 	{
-		LamakanDesert_SandFlash = 119;
+		gLamakanDesert_SandFlash = 119;
 	}
-	if (LamakanDesert_SandFlash != 0)
+	if (gLamakanDesert_SandFlash != 0)
 	{
-		LamakanDesert_SandLevel = LamakanDesert_SandFlash;
-		LamakanDesert_SandFlash -= 8;
-		if (LamakanDesert_SandFlash <= 0)
+		gLamakanDesert_SandLevel = gLamakanDesert_SandFlash;
+		gLamakanDesert_SandFlash -= 8;
+		if (gLamakanDesert_SandFlash <= 0)
 		{
-			LamakanDesert_SandFlash = 0;
+			gLamakanDesert_SandFlash = 0;
 		}
 	}
 
-	Dma_Set(LamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
-	if (LamakanDesert_SandFlash <= 118)
+	Dma_Set(gLamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
+	if (gLamakanDesert_SandFlash <= 118)
 	{
 		column = (u32 *)(buffer + 80);
 		fill = 0xeeeeeeee;
-		for (i = 12; i < 128 - LamakanDesert_SandLevel; i++)
+		for (i = 12; i < 128 - gLamakanDesert_SandLevel; i++)
 		{
 			column[8] = fill;
 			*column++ = fill;
@@ -1006,13 +1006,13 @@ static void LamakanDesert_RunSandstorm(void)
 		}
 		destination++;
 	}
-	Engine_VramLoad((*(s16 *)&LamakanDesert_SandVramSlot), 0x480, buffer);
+	Engine_VramLoad((*(s16 *)&gLamakanDesert_SandVramSlot), 0x480, buffer);
 
 	attributes = 0x80008000;
-	sprite = LamakanDesert_SandWork;
+	sprite = gLamakanDesert_SandWork;
 	for (i = 0, offset = 0, x = 8; i < 5; i++)
 	{
-		u32 y = (LamakanDesert_SandCounter * 8 - 16) & 0x1ff;
+		u32 y = (gLamakanDesert_SandCounter * 8 - 16) & 0x1ff;
 
 		if (i == 4)
 		{
@@ -1021,7 +1021,7 @@ static void LamakanDesert_RunSandstorm(void)
 		sprite->next = NULL;
 		sprite->oam.word.attr01 = (y << 16) | x | attributes;
 		sprite->oam.word.attr23 = 0xe400 | tile;
-		Runtime_PushSlotEntry(((u8 *)LamakanDesert_SandWork + offset), 255);
+		Runtime_PushSlotEntry(((u8 *)gLamakanDesert_SandWork + offset), 255);
 		sprite++;
 		tile += 8;
 		offset += 12;
@@ -1041,20 +1041,20 @@ void LamakanDesert_ClaimSandEffectVram(void)
 	u16		   *slotp;
 	struct Half zero;
 
-	FieldResource_DecodeType01(LamakanDesert_SandEffectTiles, LamakanDesert_SandTileBuffer);
-	slotp = &LamakanDesert_SandVramSlot;
+	FieldResource_DecodeType01(gLamakanDesert_SandEffectTiles, gLamakanDesert_SandTileBuffer);
+	slotp = &gLamakanDesert_SandVramSlot;
 	slot = Resource_FindFreeEntry();
 	*slotp = slot;
 	Engine_VramLoad((s16)slot, 0x480, 0);
 	zero.v = 0;
-	LamakanDesert_SandCounter = zero.v;
-	LamakanDesert_SandPhase = zero.v;
+	gLamakanDesert_SandCounter = zero.v;
+	gLamakanDesert_SandPhase = zero.v;
 	FieldScheduler_AddCallback(LamakanDesert_RunSandstorm, 0xc76);
 }
 
 static void LamakanDesert_SetSandPhase(u16 value)
 {
-	LamakanDesert_SandPhase = value;
+	gLamakanDesert_SandPhase = value;
 }
 
 const s32 gEffectScript0[] = {
@@ -1084,13 +1084,13 @@ const s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-const s32 LamakanDesert_SafePoints1[] = {
+const s32 gLamakanDesert_SafePoints1[] = {
 	PIXELS(384), PIXELS(128),
 	PIXELS(288), PIXELS(688),
 	PIXELS(608), PIXELS(720),
 };
 
-const s32 LamakanDesert_SafePoints2[] = {
+const s32 gLamakanDesert_SafePoints2[] = {
 	PIXELS(704), PIXELS(96),
 	PIXELS(448), PIXELS(464),
 	PIXELS(832), PIXELS(592),
@@ -1098,7 +1098,7 @@ const s32 LamakanDesert_SafePoints2[] = {
 	PIXELS(464), PIXELS(896),
 };
 
-const s32 LamakanDesert_SafePointsOther[] = {
+const s32 gLamakanDesert_SafePointsOther[] = {
 	PIXELS(192), PIXELS(224),
 	PIXELS(192), PIXELS(352),
 };
@@ -1148,7 +1148,7 @@ struct SceneEntrance gLamakanDesertEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 LamakanDesert_Exits[] = {
+u32 gLamakanDesert_Exits[] = {
 	SCENE_EXITS(89),
 	SCENE_EXIT(1, 2, 18),
 	SCENE_EXIT(2, 90, 1),
@@ -1204,7 +1204,7 @@ struct ScenePlacement gLamakanDesertPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent LamakanDesert_Events[] = {
+struct SceneEvent gLamakanDesert_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1244,8 +1244,8 @@ struct SceneEvent LamakanDesert_Events[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s16 LamakanDesert_SandLevel = 0;
+s16 gLamakanDesert_SandLevel = 0;
 
-s16 LamakanDesert_SandCounter = 0;
+s16 gLamakanDesert_SandCounter = 0;
 
-s16 LamakanDesert_SandFlash = 0;
+s16 gLamakanDesert_SandFlash = 0;

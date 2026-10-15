@@ -97,7 +97,7 @@ Owner_CalculateBaseElements:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_080b0138:
-	.4byte Data_080c6684
+	.4byte gData_080c6684
 .L_080b013c:
 	.4byte Data_080c6644
 .L_080b0140:

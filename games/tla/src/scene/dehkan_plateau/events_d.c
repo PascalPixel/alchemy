@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -46,8 +46,8 @@ struct CellRecord {
     u16 unk06[3];
 };
 
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
@@ -81,27 +81,27 @@ static __inline__ void Wait(s32 frames)
 
 void Func_02001554(s32 a, s32 b)
 {
-    Func_020000a4(Data_02003f98, a, b);
+    Func_020000a4(gData_02003f98, a, b);
 }
 
 void Func_02001568(s32 a, s32 b)
 {
-    Func_020000a4(Data_02003fa0, a, b);
+    Func_020000a4(gData_02003fa0, a, b);
 }
 
 void Func_0200157c(s32 a, s32 b)
 {
-    Func_020000a4(Data_02003fa8, a, b);
+    Func_020000a4(gData_02003fa8, a, b);
 }
 
 void Func_02001590(s32 a, s32 b)
 {
-    Func_020000a4(Data_02003fb0, a, b);
+    Func_020000a4(gData_02003fb0, a, b);
 }
 
 void Func_020015a4(s32 a, s32 b)
 {
-    Func_020000a4(Data_02003fb8, a, b);
+    Func_020000a4(gData_02003fb8, a, b);
 }
 
 void Func_020015b8(struct ObjectRuntime *object)
@@ -135,7 +135,7 @@ void Func_020015e0(void)
 
 void Func_02001630(void)
 {
-    Func_02003dc0(Data_02003fc0);
+    Func_02003dc0(gData_02003fc0);
 }
 
 void Func_02001640(void)
@@ -158,7 +158,7 @@ void Func_02001640(void)
 
 void Func_020016a0(void)
 {
-    Func_02003dc0(Data_02003fc4);
+    Func_02003dc0(gData_02003fc4);
 }
 
 void Func_020016b0(void)

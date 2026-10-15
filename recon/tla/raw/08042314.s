@@ -69,4 +69,4 @@ RenderOutput_Create:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_08042398:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries

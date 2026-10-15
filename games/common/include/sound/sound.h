@@ -11,15 +11,15 @@ struct SoundPlayer;
 struct SoundTrack;
 struct SoundWork;
 
-extern const u8			Sound_Cgb3LevelCodes[];
-extern const s16		Sound_CgbFrequencySteps[];
-extern const u8			Sound_CgbPitchCodes[];
-extern const u16		Sound_FrameLengths[];
-extern const u8			Sound_NoisePitchCodes[];
-extern u32				Sound_PcmFrequencySteps[];
-extern u8				Sound_PcmPitchCodes[];
-extern struct SoundWork Sound_Work;
-extern u8				Sound_WorkBytes[];
+extern const u8			gSound_Cgb3LevelCodes[];
+extern const s16		gSound_CgbFrequencySteps[];
+extern const u8			gSound_CgbPitchCodes[];
+extern const u16		gSound_FrameLengths[];
+extern const u8			gSound_NoisePitchCodes[];
+extern u32				gSound_PcmFrequencySteps[];
+extern u8				gSound_PcmPitchCodes[];
+extern struct SoundWork gSound_Work;
+extern u8				gSound_WorkBytes[];
 #if GAME_TLA
 void					Audio_EmptyCallback(void);
 #endif
@@ -52,18 +52,18 @@ void Sound_Mixer(void);
 
 #if !GAME_TLA
 #ifndef OWN_IwramHi_Data1
-extern s32 IwramHi_Data1;
+extern s32 gIwramHi_Data1;
 #endif
 extern u8  gMusicFadeRequested;
 extern s32 gSoundClipFlag;
-extern u8  Ewram_Data1;
+extern u8  gEwram_Data1;
 void	   Audio_Initialize(void);
 void	   Audio_PlaySound(u16 id);
 void	   Sound_TickDmaRestartTimer(void);
 #endif
 
 #if GAME_TLA
-extern u16 Data_02005830;
+extern u16 gData_02005830;
 extern u8  gSongFlags[];
 s32		   Audio_Check(void);
 void	   AudioCommand_WaitForStateByteClear(void);

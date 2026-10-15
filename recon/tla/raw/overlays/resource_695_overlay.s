@@ -1120,7 +1120,7 @@ Func_02000a24:
 .L_ja_02008d60:
 	.4byte 0x000030a9
 .L_ja_02008d64:
-	.4byte Data_020015e0
+	.4byte gData_020015e0
 .L_ja_02008d68:
-	.4byte Data_0200161c
+	.4byte gData_0200161c
 	.endif

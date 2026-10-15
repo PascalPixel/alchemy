@@ -1122,7 +1122,7 @@ Func_02000974:
 .L_02008a88:
 	.4byte 0xfffe0000
 .L_02008a8c:
-	.4byte Data_02001540
+	.4byte gData_02001540
 .L_02008a90:
 	.4byte IwramMulQ16
 .L_02008a94:
@@ -1262,7 +1262,7 @@ Func_02000aa8:
 .L_02008ba8:
 	.4byte gPartyState
 .L_02008bac:
-	.4byte Data_02001570
+	.4byte gData_02001570
 .L_02008bb0:
 	.4byte 0xffffa000
 .L_02008bb4:
@@ -1574,7 +1574,7 @@ Func_02000ce4:
 .L_02008e9c:
 	.4byte gPartyState
 .L_02008ea0:
-	.4byte Data_02001668
+	.4byte gData_02001668
 .L_02008ea4:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008ea8:
@@ -1851,12 +1851,12 @@ Func_020012dc:
 .L_020093d4:
 	.4byte 0x000000ac
 .L_020093d8:
-	.4byte Data_02001654
+	.4byte gData_02001654
 .L_020093dc:
-	.4byte Data_02001674
+	.4byte gData_02001674
 .L_020093e0:
-	.4byte Data_02001696
+	.4byte gData_02001696
 .L_020093e4:
-	.4byte Data_02001658
+	.4byte gData_02001658
 .L_020093e8:
-	.4byte Data_02001688
+	.4byte gData_02001688

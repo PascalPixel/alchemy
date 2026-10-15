@@ -5,15 +5,15 @@
 #include "field_event.h"
 #include "field_sprite.h"
 
-extern u8 Data_02001194[];
-extern u8 Data_020011ac[];
-extern u8 Data_020012cc[];
-extern u8 Data_0200147c[];
-extern u8 Data_0200159c[];
-extern u8 Data_0200165c[];
-extern u8 Data_0200171c[];
-extern u8 Data_02001728[];
-extern u8 Data_020018f0[];
+extern u8 gData_02001194[];
+extern u8 gData_020011ac[];
+extern u8 gData_020012cc[];
+extern u8 gData_0200147c[];
+extern u8 gData_0200159c[];
+extern u8 gData_0200165c[];
+extern u8 gData_0200171c[];
+extern u8 gData_02001728[];
+extern u8 gData_020018f0[];
 extern u32 gFrameCount;
 
 void Func_02001110(s32 a, s32 b, s32 c);
@@ -32,17 +32,17 @@ u8 *Func_02000064(void)
 
     if (scene == 0xea) {
         if (GameFlag_Test(0x9b2))
-            return Data_0200147c;
+            return gData_0200147c;
         if (GameFlag_Test(0x9d0))
-            return Data_020012cc;
-        return Data_020011ac;
+            return gData_020012cc;
+        return gData_020011ac;
     }
     if (scene == 0xeb) {
         if (GameFlag_Test(0x9d0))
-            return Data_0200159c;
-        return Data_0200165c;
+            return gData_0200159c;
+        return gData_0200165c;
     }
-    return Data_02001194;
+    return gData_02001194;
 }
 
 u8 *Func_020000e0(void)
@@ -50,10 +50,10 @@ u8 *Func_020000e0(void)
     s16 scene = gPartyState.scene;
 
     if (scene == 0xea)
-        return Data_02001728;
+        return gData_02001728;
     if (scene == 0xeb)
-        return Data_020018f0;
-    return Data_0200171c;
+        return gData_020018f0;
+    return gData_0200171c;
 }
 
 void Func_02000c14(void)

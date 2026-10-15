@@ -606,7 +606,7 @@ Func_08102008:
 .L_081024a0:
 	.4byte 0x00000b63
 .L_081024a4:
-	.4byte DjinnMenu_TextLevel
+	.4byte gDjinnMenu_TextLevel
 .L_081024a8:
 	.4byte 0x000010da
 .L_081024ac:

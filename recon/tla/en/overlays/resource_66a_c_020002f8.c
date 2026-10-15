@@ -72,7 +72,7 @@ void Func_020002f8(void)
     object->terrainHeight = 0;
     object->y = 0;
     Func_02001420_(object->x, object->z, 0, 4);
-    Func_02001578(Data_02001608);
+    Func_02001578(gData_02001608);
     Object_SetActionCallback(Object_GetById(16), 9);
     if (!Value1((s32 (*)())GameFlag_Test, 0x8a7)) {
         Func_02001408_(0, 58, 12, 7, 13, 58);

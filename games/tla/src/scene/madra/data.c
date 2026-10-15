@@ -23,8 +23,8 @@ void Func_020014fc(void);
 void Func_020029ac(void);
 void Func_020029b8(void);
 
-extern s16 Data_020032f0[];
-extern s16 Data_020032fc[];
+extern s16 gData_020032f0[];
+extern s16 gData_020032fc[];
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -49,7 +49,7 @@ u32 gSceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-s16 Data_02002d38[] = {
+s16 gData_02002d38[] = {
 	71, -1, 1, 0, 0, 136, 0, 0,
 	0, 296, 0x3000, 1, 72, -1, 1, 0,
 	0, 744, 0, 0, 0, 392, 0xc000, 1,
@@ -96,7 +96,7 @@ s16 Data_02002d38[] = {
 	0, 0, 0, 0,
 };
 
-u32 Data_02002ff0[] = {
+u32 gData_02002ff0[] = {
 	0xffff0047, 1, 0x960000, 0, 0x1580000, 0x15000,
 	0xffff0048, 1, 0x2e80000, 0, 0x1880000, 0x1c000,
 	0xffff0049, 1, 0x1380000, 0, 0x1680000, 0x14000,
@@ -131,38 +131,38 @@ u32 Data_02002ff0[] = {
 	0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 Data_020032f0[] = {
+s16 gData_020032f0[] = {
 	1, 39, 1, 2, 6, -1,
 };
 
-s16 Data_020032fc[] = {
+s16 gData_020032fc[] = {
 	3, 39, 1, 2, 6, -1,
 };
 
-s32 Data_02003308[] = {
-	(s32)Data_020032fc,
+s32 gData_02003308[] = {
+	(s32)gData_020032fc,
 	0x30014,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x17000d,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x110011,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x120017,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0xa001c,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x6001c,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x60009,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0x180013,
-	(s32)Data_020032f0,
+	(s32)gData_020032f0,
 	0,
-	(s32)Data_020032fc,
+	(s32)gData_020032fc,
 	0x30011,
 };
 
-s32 Data_02003358[] = {
+s32 gData_02003358[] = {
 	0xc602,
 	(s32)0xffff0001,
 	(s32)Func_0200006c,
@@ -366,7 +366,7 @@ s32 Data_02003358[] = {
 	0,
 };
 
-s32 Data_0200367c[] = {
+s32 gData_0200367c[] = {
 	0xc602,
 	(s32)0xffff0001,
 	(s32)Func_0200006c,
@@ -549,7 +549,7 @@ s32 Data_0200367c[] = {
 	0,
 };
 
-s32 Data_0200394c[] = {
+s32 gData_0200394c[] = {
 	0xc602,
 	(s32)0xffff0001,
 	(s32)Func_0200006c,

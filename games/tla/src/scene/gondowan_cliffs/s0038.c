@@ -4,8 +4,8 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-extern const u8 Data_02001698[];
-extern const u8 Data_02001728[];
+extern const u8 gData_02001698[];
+extern const u8 gData_02001728[];
 
 void Func_020012c4(s32, s32);
 
@@ -34,6 +34,6 @@ void Func_02000058(void)
 const u8 *Func_02000064(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov66bRoom2)
-        return Data_02001728;
-    return Data_02001698;
+        return gData_02001728;
+    return gData_02001698;
 }

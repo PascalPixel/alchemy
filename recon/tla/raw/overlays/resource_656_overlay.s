@@ -127,7 +127,7 @@ Func_0200021c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0200831c:
-	.4byte Data_02003904
+	.4byte gData_02003904
 .L_02008320:
 	.4byte gPartyState
 	.section .text.x02008324,"ax",%progbits
@@ -260,7 +260,7 @@ Func_02000324:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02008430:
-	.4byte Data_0200397c
+	.4byte gData_0200397c
 .L_02008434:
 	.4byte gPartyState
 	.section .text.x02008870,"ax",%progbits
@@ -962,7 +962,7 @@ Func_02001e0c:
 .L_0200a100:
 	.4byte gPartyState
 .L_0200a104:
-	.4byte Data_02003010
+	.4byte gData_02003010
 .L_0200a108:
 	.4byte 0xffe00000
 .L_0200a10c:
@@ -1295,9 +1295,9 @@ Func_02001e0c:
 .L_0200a3e4:
 	.4byte 0xffe00000
 .L_0200a3e8:
-	.4byte Data_02003010
+	.4byte gData_02003010
 .L_0200a3ec:
-	.4byte Data_0200301e
+	.4byte gData_0200301e
 .L_0200a3f0:
 	.4byte Func_020013f0
 .L_0200a3f4:

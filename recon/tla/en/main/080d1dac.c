@@ -28,7 +28,7 @@ void Func_080eaf98();
 
 void Func_080d1dac(struct EffectSprite *sprite, s32 a, s32 b, s32 c)
 {
-    Func_080eaf98(sprite, a, b, c, ResourceTableEntries[94].offset >> 5);
+    Func_080eaf98(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
     sprite->depth = 0;
     sprite->priority = 1;
     sprite->palette256 = 0;

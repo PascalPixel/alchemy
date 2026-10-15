@@ -1,6 +1,6 @@
 /* Draft, differ 8 of 88: The Broken Seal's System_Initialize with ⚓️'s
  * changes: the gamepak interrupt halts (IwramHalt), the OAM limit is set to
- * 256 with no sprites used, and gDebugTextEnabled is Data_03001110. All
+ * 256 with no sprites used, and gDebugTextEnabled is gData_03001110. All
  * eight rows are four one-slot load swaps: the native schedules each load
  * (the DMA0 control read, its reread, the WAITCNT and KEYCNT addresses) one
  * slot before sched2 ranks it here, the same one-slot load order as this
@@ -17,7 +17,7 @@
 #include "oam.h"
 #include "frame.h"
 
-extern u8 Data_03001110[];
+extern u8 gData_03001110[];
 void Func_080132d0(void);
 void Ui_LoadWindowGraphics(void);
 void Func_08014b70(void);
@@ -42,7 +42,7 @@ void System_Initialize(void)
 	Runtime_InitializeHeap();
 	Runtime_InstallIwramAndIrqs();
 	*(u32 *)&gIoWriteQueue.count = 0;
-	Data_03001110[0] = 0;
+	gData_03001110[0] = 0;
 	gDebugMode = 0;
 	gCpuLoadDisplayEnabled = 0;
 	Func_080132d0();

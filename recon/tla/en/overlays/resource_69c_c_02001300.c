@@ -4,7 +4,7 @@
  * a for loop, a goto loop and with a one-pass block around the test. */
 #include "../../../../games/tla/src/scene/jupiter_room_3/local.h"
 
-extern const u16 Data_02002478[];
+extern const u16 gData_02002478[];
 
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 struct ObjectRuntime *Func_02002438(s32 *position, s32 mode);
@@ -28,7 +28,7 @@ void Func_02001300(struct ObjectRuntime *object)
     if (other != NULL) {
         i = 0;
     next:
-        if (*((struct BattleAnimationState *)other->animation)->value28 == Data_02002478[i])
+        if (*((struct BattleAnimationState *)other->animation)->value28 == gData_02002478[i])
             return;
         i++;
         if (i < 6)

@@ -18,14 +18,14 @@ s32 Func_020012dc(void)
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     Func_020014e0(0);
     if (gPartyState.scene == (s32)&SceneId_Ov67FRoom1) {
-        Func_02001510(Data_02001654);
-        Func_0200100c((u16 *)Data_02001674);
-        Func_020014f8(Data_02001696);
+        Func_02001510(gData_02001654);
+        Func_0200100c((u16 *)gData_02001674);
+        Func_020014f8(gData_02001696);
     } else {
         Object_GetById(10)->priorityFlags |= 0x20;
         Object_GetById(11)->priorityFlags |= 0x20;
-        Func_02001510(Data_02001658);
-        Func_0200100c((u16 *)Data_02001688);
+        Func_02001510(gData_02001658);
+        Func_0200100c((u16 *)gData_02001688);
         if (GameFlag_Test(0x941)) {
             Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
             Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);

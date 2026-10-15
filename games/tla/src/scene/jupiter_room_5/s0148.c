@@ -21,7 +21,7 @@ struct OrbitEffect {
 };
 
 extern u32 gFrameCount;
-extern u32 Data_02003214[];
+extern u32 gData_02003214[];
 
 u32 __umodsi3(u32 a, u32 b);
 struct FieldActor *Object_GetById(s32 id);
@@ -92,7 +92,7 @@ void Func_020001a4(void)
     }
     if (effect != 0) {
         sprite = effect->sprite;
-        Func_02002820(effect, Data_02003214);
+        Func_02002820(effect, gData_02003214);
         Object_SetPartAttribute(effect, 1);
         effect->motionFlags = 0;
         angle = Random16Far() & 0xffff000;

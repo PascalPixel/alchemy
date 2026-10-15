@@ -8,11 +8,11 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_0200703c;
-extern s32 Data_02007040;
-extern u16 Data_02007068[];
-extern u16 Data_02007088[];
-extern u16 Data_0200708c[];
+extern s32 gData_0200703c;
+extern s32 gData_02007040;
+extern u16 gData_02007068[];
+extern u16 gData_02007088[];
+extern u16 gData_0200708c[];
 
 s32 GameFlag_Test();
 void Scheduler_AddOrUpdateCallback();

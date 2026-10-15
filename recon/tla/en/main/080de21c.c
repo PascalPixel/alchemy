@@ -63,8 +63,8 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 targe
 s32 Resource_ResetEntry(u32 entry);
 void Func_080de060(struct EffectSlot *slot);
 
-extern const u8 Data_080f0ef8[];
-extern const u8 Data_080f0e58[];
+extern const u8 gData_080f0ef8[];
+extern const u8 gData_080f0e58[];
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -166,13 +166,13 @@ void Func_080de21c(void)
         pos.z = scene->z;
     }
     Object_SetPosition(object, pos.x, pos.y, pos.z);
-    ObjectDispatch_InitializeFar(object, Data_080f0ef8);
+    ObjectDispatch_InitializeFar(object, gData_080f0ef8);
     for (i = 0; i < 3; i++) {
         copy = copies[i];
         if (copy != NULL) {
             WaitFrames(3);
             Object_SetPosition(copy, pos.x, pos.y, pos.z);
-            ObjectDispatch_InitializeFar(copy, Data_080f0e58);
+            ObjectDispatch_InitializeFar(copy, gData_080f0e58);
         }
     }
 

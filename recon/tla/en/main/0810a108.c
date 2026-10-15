@@ -1,6 +1,6 @@
 #include "battle_system.h"
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
 extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];

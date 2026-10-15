@@ -22,16 +22,16 @@ struct Orbiter {
     void *link;
 };
 
-extern s32 Data_02005af0;
-extern const s8 Data_02006b38[];
-extern const u8 Data_02006b20[];
-extern const u8 Data_02005fd4[];
-extern const u8 Data_02006004[];
-extern const u8 Data_02006244[];
-extern const u8 Data_020064cc[];
-extern const u8 Data_020067e4[];
-extern const u8 Data_02006898[];
-extern const u8 Data_02006a90[];
+extern s32 gData_02005af0;
+extern const s8 gData_02006b38[];
+extern const u8 gData_02006b20[];
+extern const u8 gData_02005fd4[];
+extern const u8 gData_02006004[];
+extern const u8 gData_02006244[];
+extern const u8 gData_020064cc[];
+extern const u8 gData_020067e4[];
+extern const u8 gData_02006898[];
+extern const u8 gData_02006a90[];
 struct Orbiter *Object_GetById(s32 id);
 s32 Func_02005834(s32 value);
 void Func_020020f0(s32 value);

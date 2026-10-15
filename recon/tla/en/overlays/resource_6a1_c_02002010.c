@@ -16,7 +16,7 @@ struct JupiterRoom8EventWork {
     struct ObjectRuntime *marker;
 };
 
-extern struct JupiterRoom8Puzzle Data_02002bf8;
+extern struct JupiterRoom8Puzzle gData_02002bf8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
@@ -28,14 +28,14 @@ void Func_02002010(s32 x, s32 z, s32 effect)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct JupiterRoom8EventWork *work = Ram_HeapSlots->eventWork;
-    s32 dx = GameFlag_GetByte(Data_02002bf8.flag);
-    s32 dz = GameFlag_GetByte(Data_02002bf8.flag + 8);
+    s32 dx = GameFlag_GetByte(gData_02002bf8.flag);
+    s32 dz = GameFlag_GetByte(gData_02002bf8.flag + 8);
 
     if (dx != 0 || dz != 0) {
         struct ObjectRuntime *marker;
 
-        GameFlag_SetByte(Data_02002bf8.flag, 0);
-        GameFlag_SetByte(Data_02002bf8.flag + 8, 0);
+        GameFlag_SetByte(gData_02002bf8.flag, 0);
+        GameFlag_SetByte(gData_02002bf8.flag + 8, 0);
         leader->x = ((dx + x) << 20) + 0x80000;
         leader->z = ((dz + z) << 20) + 0x80000;
         marker = work->marker;

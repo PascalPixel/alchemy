@@ -132,7 +132,7 @@ Func_08044a58:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08044b70:
-	.4byte Djinn_ElementSprites
+	.4byte gDjinn_ElementSprites
 .L_08044b74:
 	.4byte 0x8014000c
 .L_08044b78:

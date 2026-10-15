@@ -6,13 +6,13 @@ struct BattleFxDefinition {
     u8 flags;
 };
 
-extern struct BattleFxDefinition Data_080f0308[];
+extern struct BattleFxDefinition gData_080f0308[];
 
 // Finds the battle effect definition of id among the first 243 entries; when
 // none matches it returns entry 243.
 struct BattleFxDefinition *Func_080d1e60(u32 id)
 {
-    struct BattleFxDefinition *entry = Data_080f0308;
+    struct BattleFxDefinition *entry = gData_080f0308;
     u32 index = 0;
 
     if (entry->id != id) {

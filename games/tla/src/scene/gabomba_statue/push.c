@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern s32 Data_02005af0;
+extern s32 gData_02005af0;
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_02000624(struct ObjectRuntime *origin, s32 id);
 void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
@@ -26,7 +26,7 @@ void Object_AttachWorkTargetToObject(s32 actor, s32 value);
 
 void Func_02000c38(void)
 {
-    s32 *speed = &Data_02005af0;
+    s32 *speed = &gData_02005af0;
 
     if (*speed != 0) {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());
@@ -49,7 +49,7 @@ void Func_02000c38(void)
 
 void Func_02000c8c(void)
 {
-    s32 *speed = &Data_02005af0;
+    s32 *speed = &gData_02005af0;
 
     if (*speed != 0) {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());

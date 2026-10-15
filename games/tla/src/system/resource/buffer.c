@@ -33,7 +33,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
                 s32 nibble = 0;
 
                 do {
-                    u32 color = Graphics_ExpandNibbleTable[
+                    u32 color = gGraphics_ExpandNibbleTable[
                         (packed & 15) + pal_offset
                     ] << (nibble * 4);
                     nibble++;

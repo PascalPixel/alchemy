@@ -51,11 +51,11 @@ void Func_02000c78(s32 id);
 s32 Func_02000dcc(struct PushedBlock *block);
 void Func_02001050(struct PushedBlock block);
 
-extern s32 Data_02002cc0;
-extern s32 Data_02002cc4;
-extern const u16 Data_02002cec[];
-extern const u16 Data_02002d0c[];
-extern const u16 Data_02002d10[];
+extern s32 gData_02002cc0;
+extern s32 gData_02002cc4;
+extern const u16 gData_02002cec[];
+extern const u16 gData_02002d0c[];
+extern const u16 gData_02002d10[];
 
 static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b)
 {

@@ -191,14 +191,14 @@ SaveState_BuildSummaryHeader:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080434d4:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_080434d8:
 	.4byte gPartyState
 .L_080434dc:
 	.4byte gFrameWaitCount
 .L_080434e0:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080434e4:
 	.4byte gAutoSleepEnabled
 .L_080434e8:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes

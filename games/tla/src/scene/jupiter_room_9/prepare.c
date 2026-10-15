@@ -5,7 +5,7 @@
 #include "event_work.h"
 #include "field_scene.h"
 
-extern s32 Data_02002618;
+extern s32 gData_02002618;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
@@ -20,7 +20,7 @@ s32 Func_02000290(void)
 
     work->screenEffect = 0x204;
     ObjectMotion_SetActionVariant(64, 3);
-    Data_02002618 = 0;
+    gData_02002618 = 0;
     Object_GetById(8)->motionFlags = 0;
     if ((u16)(gPartyState.entrance - 6) <= 1) {
         Func_0200130c(33, 0x280, 0x380, 48, 1);

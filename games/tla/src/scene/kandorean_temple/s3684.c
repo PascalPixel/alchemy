@@ -1,8 +1,8 @@
 #include "local.h"
 
 void Func_02000cd8(s32 id, s32 dy, s32 scale);
-extern s32 Data_020062a0;
-extern s32 Data_020062a4;
+extern s32 gData_020062a0;
+extern s32 gData_020062a4;
 
 // The leader and actor 13 rise into view while actor 15 scales.
 void Func_02003684(void)
@@ -46,7 +46,7 @@ rise:
     if (*(volatile s32 *)&first->y < 0)
         goto rise;
     Func_02005178_(0, 0, 1, 1, 27, 12);
-    Data_020062a0 = 2000;
+    gData_020062a0 = 2000;
     ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
     Func_020051c8();
 }
@@ -93,7 +93,7 @@ rise:
     if (*(volatile s32 *)&first->y < 0)
         goto rise;
     Func_02005178_(0, 0, 1, 1, 37, 14);
-    Data_020062a4 = 2000;
+    gData_020062a4 = 2000;
     ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
     Func_020051c8();
 }

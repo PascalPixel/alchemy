@@ -13,8 +13,8 @@ void Func_02001944(s32 actor, s32 id)
     Event_WaitTransitionFrames();
     Battle_WaitMode0(20);
     Func_02002de0(103);
-    ObjectMotion_EnableActionAndSetCallback(actor, Data_02002e30);
-    Object_SetActionCallbackAndRefreshById(id, Data_02002e6c);
+    ObjectMotion_EnableActionAndSetCallback(actor, gData_02002e30);
+    Object_SetActionCallbackAndRefreshById(id, gData_02002e6c);
     Battle_WaitMode0(20);
     Func_02002c70();
 }

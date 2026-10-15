@@ -22,7 +22,7 @@ struct BattleSpriteDefinition
 };
 
 LAYOUT_SIZE_GUARD(BattleSpriteDefinition_Size, struct BattleSpriteDefinition, 8);
-extern struct BattleSpriteDefinition Summon_EntryTable[];
+extern struct BattleSpriteDefinition gSummon_EntryTable[];
 
 struct SummonDefinition
 {

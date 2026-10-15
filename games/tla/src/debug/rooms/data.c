@@ -31,6 +31,6 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 Data_0200015c[] = {
+s32 gData_0200015c[] = {
 	0x2000200, 0x3600400, -1, -1,
 };

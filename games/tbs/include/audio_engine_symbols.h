@@ -29,10 +29,10 @@ void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct SoundPlayer;
 struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *Flash_Handler3;
+extern struct AudioTrackSlotWork *gFlash_Handler3;
 extern struct SoundPlayer		  gMusicPlayerBgm;
 extern struct SoundPlayer		  gMusicPlayerFanfare;
-extern struct SoundPlayer		  Sound_Player3;
+extern struct SoundPlayer		  gSound_Player3;
 extern u16						  gMusicPlayerVolumes[8];
 extern u8						  gMusicRestoreDelay;
 
@@ -43,6 +43,6 @@ extern u16 gMusicPitch;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicPitchStep;
 extern u8  gAudioSecondaryState;
-extern u8  Audio_CommandMask;
+extern u8  gAudio_CommandMask;
 
 #endif

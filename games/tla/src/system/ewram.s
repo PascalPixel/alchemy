@@ -1,9 +1,9 @@
 	.section .sym_ewram,"aw",%nobits
-	.global Data_02000000
-Data_02000000:
+	.global gData_02000000
+gData_02000000:
 	.space 0x00000040
-	.global GameFlagBytes
-GameFlagBytes:
+	.global gGameFlagBytes
+gGameFlagBytes:
 	.space 0x00000200
 	.global gPartyState
 gPartyState:
@@ -50,14 +50,14 @@ Data_020004b8:
 	.global Data_02000500
 Data_02000500:
 	.space 0x00000004
-	.global Data_02000504
-Data_02000504:
+	.global gData_02000504
+gData_02000504:
 	.space 0x0000001c
 	.global gOwnerStates
 gOwnerStates:
 	.space 0x00000ae0
-	.global Data_02001000
-Data_02001000:
+	.global gData_02001000
+gData_02001000:
 	.space 0x00000024
 	.global gSnapshotObjects
 gSnapshotObjects:
@@ -68,8 +68,8 @@ gItemCounters:
 	.global gSceneState
 gSceneState:
 	.space 0x00000078
-	.global Data_020023c4
-Data_020023c4:
+	.global gData_020023c4
+gData_020023c4:
 	.space 0x00000b5c
 	.global gSongFlags
 gSongFlags:
@@ -80,26 +80,26 @@ gSleepActive:
 	.global gOamBuckets
 gOamBuckets:
 	.space 0x00000400
-	.global ResourceBlockOwners
-ResourceBlockOwners:
+	.global gResourceBlockOwners
+gResourceBlockOwners:
 	.space 0x00000200
 	.global gSchedulerTaskTable
 gSchedulerTaskTable:
 	.space 0x000000c0
-	.global Data_020036d0
-Data_020036d0:
+	.global gData_020036d0
+gData_020036d0:
 	.space 0x00000004
 	.global gSerialSendSize
 gSerialSendSize:
 	.space 0x00000004
-	.global Data_020036d8
-Data_020036d8:
+	.global gData_020036d8
+gData_020036d8:
 	.space 0x00000008
-	.global ResourceTableEntries
-ResourceTableEntries:
+	.global gResourceTableEntries
+gResourceTableEntries:
 	.space 0x00000180
-	.global Data_02003860
-Data_02003860:
+	.global gData_02003860
+gData_02003860:
 	.space 0x00000010
 	.global gSerialPeerPayloads
 gSerialPeerPayloads:
@@ -116,17 +116,17 @@ gIoWriteQueue:
 	.global gSerialTransfer
 gSerialTransfer:
 	.space 0x00000004
-	.global Data_02003a74
-Data_02003a74:
+	.global gData_02003a74
+gData_02003a74:
 	.space 0x0000001c
-	.global Data_02003a90
-Data_02003a90:
+	.global gData_02003a90
+gData_02003a90:
 	.space 0x00000ce8
 	.global gModelTransformWork
 gModelTransformWork:
 	.space 0x00000bd8
-	.global Data_02005350
-Data_02005350:
+	.global gData_02005350
+gData_02005350:
 	.space 0x00000004
 	.global gSerialReceivedSize
 gSerialReceivedSize:
@@ -155,47 +155,47 @@ gSerialReceiveDest:
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:
 	.space 0x00000004
-	.global Data_02005804
-Data_02005804:
+	.global gData_02005804
+gData_02005804:
 	.space 0x00000004
 	.global gMusicVolume
 gMusicVolume:
 	.space 0x00000004
-	.global Data_0200580c
-Data_0200580c:
+	.global gData_0200580c
+gData_0200580c:
 	.space 0x00000004
 	.global gMusicVolumeStep
 gMusicVolumeStep:
 	.space 0x00000004
-	.global Data_02005814
-Data_02005814:
+	.global gData_02005814
+gData_02005814:
 	.space 0x0000000c
-	.global Data_02005820
-Data_02005820:
+	.global gData_02005820
+gData_02005820:
 	.space 0x00000010
-	.global Data_02005830
-Data_02005830:
+	.global gData_02005830
+gData_02005830:
 	.space 0x00000004
-	.global Data_02005834
-Data_02005834:
+	.global gData_02005834
+gData_02005834:
 	.space 0x00000004
 	.global gMusicVolumeTarget
 gMusicVolumeTarget:
 	.space 0x00000004
-	.global Data_0200583c
-Data_0200583c:
+	.global gData_0200583c
+gData_0200583c:
 	.space 0x00000004
-	.global Audio_CommandMask
-Audio_CommandMask:
+	.global gAudio_CommandMask
+gAudio_CommandMask:
 	.space 0x00000010
-	.global Sound_Work
-Sound_Work:
+	.global gSound_Work
+gSound_Work:
 	.space 0x00000fb0
-	.global Sound_CommandTable
-Sound_CommandTable:
+	.global gSound_CommandTable
+gSound_CommandTable:
 	.space 0x00000004
-	.global Sound_JumpCommand
-Sound_JumpCommand:
+	.global gSound_JumpCommand
+gSound_JumpCommand:
 	.space 0x00000084
 	.global Data_02006888
 Data_02006888:
@@ -203,11 +203,11 @@ Data_02006888:
 	.global Data_0200688c
 Data_0200688c:
 	.space 0x00000004
-	.global Sound_CgbNotes
-Sound_CgbNotes:
+	.global gSound_CgbNotes
+gSound_CgbNotes:
 	.space 0x00000100
-	.global Sound_Player5
-Sound_Player5:
+	.global gSound_Player5
+gSound_Player5:
 	.space 0x00000040
 	.global Sound_Player6
 Sound_Player6:
@@ -227,11 +227,11 @@ Sound_Player2:
 	.global Sound_Player4
 Sound_Player4:
 	.space 0x00000040
-	.global Sound_WorkBytes
-Sound_WorkBytes:
+	.global gSound_WorkBytes
+gSound_WorkBytes:
 	.space 0x00000010
-	.global Sound_Player3
-Sound_Player3:
+	.global gSound_Player3
+gSound_Player3:
 	.space 0x00000040
 	.global Sound_Tracks0
 Sound_Tracks0:
@@ -258,11 +258,11 @@ Sound_Tracks6:
 Sound_Tracks7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global Flash_Handler3
-Flash_Handler3:
+	.global gFlash_Handler3
+gFlash_Handler3:
 	.space 0x00000004
-	.global Flash_Handler0
-Flash_Handler0:
+	.global gFlash_Handler0
+gFlash_Handler0:
 	.space 0x00000004
 	.global gFlash
 gFlash:
@@ -270,14 +270,14 @@ gFlash:
 	.global gFlashNumRemainingBytes
 gFlashNumRemainingBytes:
 	.space 0x00000004
-	.global Flash_Handler1
-Flash_Handler1:
+	.global gFlash_Handler1
+gFlash_Handler1:
 	.space 0x00000004
 	.global gEraseFlashSector
 gEraseFlashSector:
 	.space 0x00000004
-	.global Flash_Handler4
-Flash_Handler4:
+	.global gFlash_Handler4
+gFlash_Handler4:
 	.space 0x00000004
 	.global gFlashReadRoutine
 gFlashReadRoutine:
@@ -300,17 +300,17 @@ gFlashSavedIme:
 	.global Data_02007500
 Data_02007500:
 	.space 0x00000004
-	.global DisplayScroll_Position
-DisplayScroll_Position:
+	.global gDisplayScroll_Position
+gDisplayScroll_Position:
 	.space 0x00000004
-	.global DisplayScroll_Busy
-DisplayScroll_Busy:
+	.global gDisplayScroll_Busy
+gDisplayScroll_Busy:
 	.space 0x00000004
-	.global DisplayScroll_LastPosition
-DisplayScroll_LastPosition:
+	.global gDisplayScroll_LastPosition
+gDisplayScroll_LastPosition:
 	.space 0x00000004
-	.global DisplayScroll_Objects
-DisplayScroll_Objects:
+	.global gDisplayScroll_Objects
+gDisplayScroll_Objects:
 	.space 0x00000004
 	.global Data_02007514
 Data_02007514:
@@ -321,11 +321,11 @@ Data_02007516:
 	.global Data_02007518
 Data_02007518:
 	.space 0x00000004
-	.global Data_0200751c
-Data_0200751c:
+	.global gData_0200751c
+gData_0200751c:
 	.space 0x00000004
-	.global Data_02007520
-Data_02007520:
+	.global gData_02007520
+gData_02007520:
 	.space 0x00000002
 	.global gScrollTarget
 gScrollTarget:
@@ -336,8 +336,8 @@ Data_02007524:
 	.global Data_02007528
 Data_02007528:
 	.space 0x00000004
-	.global Data_0200752c
-Data_0200752c:
+	.global gData_0200752c
+gData_0200752c:
 	.space 0x00000ad4
 	.global gOverlayArea
 gOverlayArea:
@@ -561,8 +561,8 @@ Data_02013c56:
 	.global Data_02013e18
 Data_02013e18:
 	.space 0x000001e8
-	.global Data_02014000
-Data_02014000:
+	.global gData_02014000
+gData_02014000:
 	.space 0x00000002
 	.global Data_02014002
 Data_02014002:
@@ -630,8 +630,8 @@ Data_02014e20:
 	.global Data_02014e9d
 Data_02014e9d:
 	.space 0x00000163
-	.global Data_02015000
-Data_02015000:
+	.global gData_02015000
+gData_02015000:
 	.space 0x00000018
 	.global Data_02015018
 Data_02015018:
@@ -726,8 +726,8 @@ Data_02018000:
 	.global Data_02019600
 Data_02019600:
 	.space 0x00002a00
-	.global Data_0201c000
-Data_0201c000:
+	.global gData_0201c000
+gData_0201c000:
 	.space 0x00004000
 	.global gMapBlocks
 gMapBlocks:
@@ -744,8 +744,8 @@ gMapShapeGrid:
 	.global Data_02026800
 Data_02026800:
 	.space 0x00001800
-	.global Data_02028000
-Data_02028000:
+	.global gData_02028000
+gData_02028000:
 	.space 0x00002000
 	.global gWorldMapWork
 gWorldMapWork:
@@ -780,8 +780,8 @@ Data_0202a63e:
 	.global Data_0202a640
 Data_0202a640:
 	.space 0x00000002
-	.global Data_0202a642
-Data_0202a642:
+	.global gData_0202a642
+gData_0202a642:
 	.space 0x00000002
 	.global Data_0202a644
 Data_0202a644:
@@ -816,29 +816,29 @@ Data_0202d000:
 	.global Data_0202de00
 Data_0202de00:
 	.space 0x00000200
-	.global Data_0202e000
-Data_0202e000:
+	.global gData_0202e000
+gData_0202e000:
 	.space 0x00000002
-	.global Data_0202e002
-Data_0202e002:
+	.global gData_0202e002
+gData_0202e002:
 	.space 0x00000002
 	.global Data_0202e004
 Data_0202e004:
 	.space 0x00000004
-	.global Data_0202e008
-Data_0202e008:
+	.global gData_0202e008
+gData_0202e008:
 	.space 0x00001ff8
 	.global gEwramHeap
 gEwramHeap:
 	.space 0x00008000
-	.global Data_02038000
-Data_02038000:
+	.global gData_02038000
+gData_02038000:
 	.space 0x00002000
-	.global Data_0203a000
-Data_0203a000:
+	.global gData_0203a000
+gData_0203a000:
 	.space 0x00002000
-	.global Data_0203c000
-Data_0203c000:
+	.global gData_0203c000
+gData_0203c000:
 	.space 0x00002000
-	.global Data_0203e000
-Data_0203e000:
+	.global gData_0203e000
+gData_0203e000:

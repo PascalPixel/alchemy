@@ -148,14 +148,14 @@ void Func_02000428(void)
 const u8 *Func_020004c4(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov659Room2)
-        return Data_02002c9c;
+        return gData_02002c9c;
     if (gPartyState.entrance == 20)
-        return Data_02002bb8;
+        return gData_02002bb8;
     if (FlagCheck(0x8ff))
-        return Data_0200308c;
+        return gData_0200308c;
     if (FlagCheck(0x8ab))
-        return Data_02002da4;
-    return Data_020028a0;
+        return gData_02002da4;
+    return gData_020028a0;
 }
 
 void Func_02000534(void)

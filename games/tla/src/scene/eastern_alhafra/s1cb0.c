@@ -8,11 +8,11 @@
 #include "text/msg_ids.h"
 #include "map.h"
 
-extern s32 Data_020054f4[];
-extern s32 Data_0200556c[];
-extern u32 Data_0200d5d0[];
-extern u32 Data_02005620[];
-extern s32 Data_02005670[];
+extern s32 gData_020054f4[];
+extern s32 gData_0200556c[];
+extern u32 gData_0200d5d0[];
+extern u32 gData_02005620[];
+extern s32 gData_02005670[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test();
@@ -235,8 +235,8 @@ void Func_02002048(void)
     Func_02004b6c_(0x1c, 0x107, 0x28);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 0x1c, 0x30000, 0x18000);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 0x1d, 0x30000, 0x18000);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)Data_020054f4);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)Data_0200556c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)gData_020054f4);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)gData_0200556c);
     Call1((void (*)())Object_RefreshSelectorById, 0x1c);
     Call1((void (*)())Object_RefreshSelectorById, 0x1d);
     Call1((void (*)())Battle_WaitMode0, 0xa);
@@ -254,8 +254,8 @@ void Func_02002048(void)
     Call2((void (*)())ObjectMotion_SetVariantCallback, 0x1b, 3);
     Call2((void (*)())Func_02004b74, 0x1b, 0x102);
     Call1((void (*)())Battle_WaitMode0, 0x28);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)Data_0200d5d0);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)Data_02005620);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)gData_0200d5d0);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)gData_02005620);
     Call1((void (*)())Battle_WaitMode0, 0x14);
     Call2((void (*)())Object_AttachWorkTargetToObject, 0x19, 1);
     Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 0x19, 0x40, 0);
@@ -957,18 +957,18 @@ void Func_02003274(void)
     Call2((void (*)())Object_LinkObjectAndSetCallback, 0x1e, 0x19);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 0x1f, 0x19);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 0x1c, 0x19);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x19, (s32)Data_02005670);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)Data_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x19, (s32)gData_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1b, (s32)gData_02005670);
     Call1((void (*)())Battle_WaitMode0, 0xa);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)Data_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1d, (s32)gData_02005670);
     Call1((void (*)())Battle_WaitMode0, 0x46);
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 0x1c, -0x10, 0);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)Data_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1c, (s32)gData_02005670);
     Call1((void (*)())Battle_WaitMode0, 0x21);
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 0x1f, 0x10, 0);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1f, (s32)Data_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1f, (s32)gData_02005670);
     Call1((void (*)())Battle_WaitMode0, 0xf);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1e, (s32)Data_02005670);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 0x1e, (s32)gData_02005670);
     Call1((void (*)())Object_RefreshSelectorById, 0x19);
     Call3((void (*)())ObjectMotion_ArmCallback, 0x1a, 0x5000, 0);
     Call1((void (*)())Object_RefreshSelectorById, 0x1e);

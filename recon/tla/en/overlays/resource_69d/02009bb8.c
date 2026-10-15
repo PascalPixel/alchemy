@@ -21,7 +21,7 @@ struct LightPuzzle {
     struct LightTile tiles[1];
 };
 
-extern struct LightPuzzle Data_02002864;
+extern struct LightPuzzle gData_02002864;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -35,7 +35,7 @@ s32 Func_02001bb8(void)
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    struct LightPuzzle *puzzle = &Data_02002864;
+    struct LightPuzzle *puzzle = &gData_02002864;
     struct LightTile *tile = puzzle->tiles;
     s32 i;
 

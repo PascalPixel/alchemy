@@ -19,10 +19,10 @@ struct AnimationRecord18 {
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
-extern const u8 Data_020013ca[];
-extern const u8 Data_0200121c[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
+extern const u8 gData_020013ca[];
+extern const u8 gData_0200121c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -143,7 +143,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
         Func_020010c4(object);
         object->angle = 0xc000;
     }
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_0200121c);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_0200121c);
     Wait(12);
     Cue(123);
     Event_FinishScreenTransition();

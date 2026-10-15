@@ -15,10 +15,10 @@
 
 extern char ResourceId_EmberStreakSheet;
 
-extern const u16 Data_0819747a[];
-extern const u8 Data_08197467[];
-extern const u8 Data_08197473[];
-extern const u8 Data_0819746d[];
+extern const u16 gData_0819747a[];
+extern const u8 gData_08197467[];
+extern const u8 gData_08197473[];
+extern const u8 gData_0819746d[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -100,17 +100,17 @@ void Func_081509b4(struct BattleEffectArgument *effect)
         do {
             if (p->variant >= 0 && p->variant <= 23) {
                 cell = p->variant / 4;
-                draw(canvas, work->sheet + Data_0819747a[cell],
-                    p->x - ((w = Data_08197467[cell]) >> 1), p->y + Data_08197473[cell], w,
-                    Data_0819746d[cell]);
+                draw(canvas, work->sheet + gData_0819747a[cell],
+                    p->x - ((w = gData_08197467[cell]) >> 1), p->y + gData_08197473[cell], w,
+                    gData_0819746d[cell]);
                 if (effect->variant != 0)
-                    draw(canvas, work->sheet + Data_0819747a[cell],
-                        p->x - ((w = Data_08197467[cell]) >> 1),
-                        (p->y + Data_08197473[cell]) - 16, w, Data_0819746d[cell]);
+                    draw(canvas, work->sheet + gData_0819747a[cell],
+                        p->x - ((w = gData_08197467[cell]) >> 1),
+                        (p->y + gData_08197473[cell]) - 16, w, gData_0819746d[cell]);
                 if (effect->variant == 2)
-                    draw(canvas, work->sheet + Data_0819747a[cell],
-                        p->x - ((w = Data_08197467[cell]) >> 1),
-                        (p->y + Data_08197473[cell]) - 32, w, Data_0819746d[cell]);
+                    draw(canvas, work->sheet + gData_0819747a[cell],
+                        p->x - ((w = gData_08197467[cell]) >> 1),
+                        (p->y + gData_08197473[cell]) - 32, w, gData_0819746d[cell]);
             }
             i += 1;
             p->variant += 1;

@@ -13,7 +13,7 @@ void Func_02002d04(struct ObjectRuntime *object)
     if (GameFlag_Test(0x106))
         angle = -1;
     else
-        angle = Data_020047fc[(gInput >> 4) & 15];
+        angle = gData_020047fc[(gInput >> 4) & 15];
     if (angle == -1) {
         Func_020041cc(object, 9);
         return;

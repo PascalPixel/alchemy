@@ -45,9 +45,9 @@ void UiText_ShowPositionedMessageAndWait();
 void Task_Wait();
 void Func_02000098();
 
-extern const u8 Data_02003650[];
-extern const u8 Data_02003734[];
-extern const u8 Data_02003790[];
+extern const u8 gData_02003650[];
+extern const u8 gData_02003734[];
+extern const u8 gData_02003790[];
 
 // A scene of actor 6 and the leader that ends by setting flag 0x865.
 void Func_0200049c(void)
@@ -162,7 +162,7 @@ void Func_020006a8(void)
         Call3(ObjectMotion_SetPositionAndReset, 8, 192, 712);
         Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
         Call1(Object_RefreshSelectorById, 8);
-        Call2(Object_SetActionCallbackAndRefreshById, 8, (s32)Data_02003650);
+        Call2(Object_SetActionCallbackAndRefreshById, 8, (s32)gData_02003650);
         Call3(ObjectMotion_Launch, 8, 4, 20);
         Call2(Engine_EventShowMessage, 8, 0);
         Value3(Engine_ActorShowEmote, 8, 257, 0);
@@ -202,7 +202,7 @@ void Func_020006a8(void)
         Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
         Call4(Motion_CamBounds, 0xa80000, -1, 0x2d10000, 1);
         Call3(ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)Data_02003734);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003734);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
         Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
         Call1(Func_02000098, 5);
@@ -237,8 +237,8 @@ void Func_020006a8(void)
         Call3(ObjectMotion_ArmCallback, 8, 0xd000, 0);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 20);
         Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)Data_02003790);
-        Call2(Object_SetActionCallbackAndRefreshById, 5, (s32)Data_02003790);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003790);
+        Call2(Object_SetActionCallbackAndRefreshById, 5, (s32)gData_02003790);
         Call2(Event_PrepareObjectAndApplyValue, 5, 1);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 20);
         FlagSet(0x864);
@@ -255,7 +255,7 @@ void Func_020006a8(void)
         Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
         Call4(Motion_CamBounds, 0xa80000, -1, 0x2d10000, 1);
         Call3(ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)Data_02003734);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003734);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
         Call6(Func_02003190, 38, 31, 2, 1, 14, 40);
         Object_GetById(6)->motionFlags = 3;
@@ -295,8 +295,8 @@ void Func_020006a8(void)
         Call2(Engine_EventShowMessage, 6, 0);
         Call2(Engine_ActorSetAnimation, 8, 3);
         Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)Data_02003790);
-        Call2(Object_SetActionCallbackAndRefreshById, 6, (s32)Data_02003790);
+        Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02003790);
+        Call2(Object_SetActionCallbackAndRefreshById, 6, (s32)gData_02003790);
         Call2(Event_PrepareObjectAndApplyValue, 6, 1);
         Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 20);
         FlagSet(0x865);

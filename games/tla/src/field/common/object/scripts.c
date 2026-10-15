@@ -23,7 +23,7 @@ s32 Func_080d4ab4();
 #endif
 
 // DisplayTransition_ShapesTail
-const u8 Data_080f321c[12] =
+const u8 gData_080f321c[12] =
 {
     0, 2, 4, 2,
     0, 2, 4, 2,
@@ -31,7 +31,7 @@ const u8 Data_080f321c[12] =
 };
 
 // {key, value} rows ended by a key of -1; this list has only the end.
-const s32 Data_080f3228[2] =
+const s32 gData_080f3228[2] =
 {
     -1, -1,
 };
@@ -39,7 +39,7 @@ const s32 Data_080f3228[2] =
 // The cells of an 8x8 grid, one diagonal at a time from the top left
 // corner, each diagonal ended by -1; -4 follows the longest diagonal and
 // -9 the last.
-const s16 Data_080f3230[80] =
+const s16 gData_080f3230[80] =
 {
     0, -1,
     1, 8, -1,
@@ -59,14 +59,14 @@ const s16 Data_080f3230[80] =
     0,
 };
 
-const s32 Object_OffsetMotionScript[] =
+const s32 gObject_OffsetMotionScript[] =
 {
     SC_SYNC,
     SC_ARG(1),
     SC_END,
 };
 
-const s32 Data_080f32e0[] =
+const s32 gData_080f32e0[] =
 {
     SC_SYNC,
     SC_WAIT(1),
@@ -75,20 +75,20 @@ const s32 Data_080f32e0[] =
     SC_END,
 };
 
-const s32 ObjectMotion_StepAngleScript[] =
+const s32 gObjectMotion_StepAngleScript[] =
 {
     SC_CALL(ObjectMotion_StepAngle),
     SC_END,
 };
 
-// Ui_RenderResultValues
-const u8 Data_080f330c[4] =
+// gUi_RenderResultValues
+const u8 gData_080f330c[4] =
 {
     1, 3, 10, 0,
 };
 
-// BattleFx_LinkedObjectScript: squash and stretch, then release.
-const s32 Data_080f3310[] =
+// gBattleFx_LinkedObjectScript: squash and stretch, then release.
+const s32 gData_080f3310[] =
 {
     SC_ADD(SW_SCALE_X, -0x8000),
     SC_ADD(SW_SCALE_Y, 0x4000),
@@ -118,15 +118,15 @@ const s32 Data_080f3310[] =
     SC_FREE,
 };
 
-// ObjectMotion_WaitScript
-const s32 Data_080f341c[] =
+// gObjectMotion_WaitScript
+const s32 gData_080f341c[] =
 {
     SC_WAIT(40),
     SC_FREE,
 };
 
-// ObjectMotion_ActionKind2Script: wander near home, pausing between steps.
-const s32 Data_080f3428[] =
+// gObjectMotion_ActionKind2Script: wander near home, pausing between steps.
+const s32 gData_080f3428[] =
 {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0xccc),
@@ -151,33 +151,33 @@ const s32 Data_080f3428[] =
     SC_END,
 };
 
-// ObjectMotion_ActionKind1Script
-const s32 Data_080f34e4[] =
+// gObjectMotion_ActionKind1Script
+const s32 gData_080f34e4[] =
 {
     SC_END,
 };
 
-// ObjectMotion_ResetActionScript
-const s32 Data_080f34e8[] =
+// gObjectMotion_ResetActionScript
+const s32 gData_080f34e8[] =
 {
     SC_CALL(Object_ClearChildAndCollisionFlags),
     SC_END,
 };
 
-const s32 Data_080f34f4[] =
+const s32 gData_080f34f4[] =
 {
     SC_CALL(Object_ClearChildFlags),
     SC_END,
 };
 
-const s32 Data_080f3500[] =
+const s32 gData_080f3500[] =
 {
     SC_CALL(Object_SetPriorityBit5),
     SC_END,
 };
 
-// ObjectMotion_ActionKind3Script: wander a shorter way near home.
-const s32 Data_080f350c[] =
+// gObjectMotion_ActionKind3Script: wander a shorter way near home.
+const s32 gData_080f350c[] =
 {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0xccc),
@@ -202,8 +202,8 @@ const s32 Data_080f350c[] =
     SC_END,
 };
 
-// ObjectMotion_ActionKind4Script: wander near home without pausing.
-const s32 Data_080f35c8[] =
+// gObjectMotion_ActionKind4Script: wander near home without pausing.
+const s32 gData_080f35c8[] =
 {
     SC_SET(SW_SPEED, 0x6666),
     SC_SET(SW_ACCEL, 0x3333),
@@ -216,7 +216,7 @@ const s32 Data_080f35c8[] =
 };
 
 // Squash and stretch, twice in each round, for ever.
-const s32 Data_080f3614[] =
+const s32 gData_080f3614[] =
 {
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 0x10000),
@@ -248,15 +248,15 @@ const s32 Data_080f3614[] =
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-// ObjectMotion_MoveTowardTargetScript
-const s32 Data_080f373c[] =
+// gObjectMotion_MoveTowardTargetScript
+const s32 gData_080f373c[] =
 {
     SC_CALL(ObjectMotion_MoveTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-// ObjectMotion_TurnTowardLinkedScript
-const s32 Data_080f3750[] =
+// gObjectMotion_TurnTowardLinkedScript
+const s32 gData_080f3750[] =
 {
     SC_CALL(SceneActor_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -264,7 +264,7 @@ const s32 Data_080f3750[] =
 
 // Keep the leader's display layer. The Spanish and Italian scaffolds name
 // the function by the far-call slot that reaches it in the other editions.
-const s32 Data_080f3764[] =
+const s32 gData_080f3764[] =
 {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     SC_CALL(Func_080da908),
@@ -275,8 +275,8 @@ const s32 Data_080f3764[] =
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-// ObjectMotion_LinkedActionScript
-const s32 Object_LinkedMotionScript[] =
+// gObjectMotion_LinkedActionScript
+const s32 gObject_LinkedMotionScript[] =
 {
     SC_FACE_LINK,
     SC_WAIT(1),

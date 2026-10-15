@@ -15,13 +15,13 @@ struct MarsRoomFRideWork {
     struct ObjectRuntime *handle;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 
 void Func_020025b0(void)
 {
-    struct MarsRoomFRideWork *work = (struct MarsRoomFRideWork *)(Data_020023c4 + 0x188);
+    struct MarsRoomFRideWork *work = (struct MarsRoomFRideWork *)(gData_020023c4 + 0x188);
     struct ObjectRuntime *object;
     struct MarsRoomFAnimation *animation;
 

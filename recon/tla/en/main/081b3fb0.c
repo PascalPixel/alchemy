@@ -3,7 +3,7 @@
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
-    struct AudioTrackSlotWork *work = Flash_Handler3;
+    struct AudioTrackSlotWork *work = gFlash_Handler3;
     s32 index;
 
     for (index = 0; index != work->outCnt; index++) {

@@ -74,7 +74,7 @@ static void Colosso_UpdatePathRival(void)
 			obj->speed = 0x10000;
 			Engine_ObjectSetPosition(obj, x, 0, fz);
 			Engine_GameFlagSet(0x211);
-			Engine_ObjectSetScript(obj, Colosso_RivalFinishScript);
+			Engine_ObjectSetScript(obj, gColosso_RivalFinishScript);
 			return;
 		}
 		x <<= 16;
@@ -132,7 +132,7 @@ static void Colosso_UpdatePathRival(void)
 	}
 }
 
-extern u8 Colosso_GaugeGraphics[];
+extern u8 gColosso_GaugeGraphics[];
 
 static void Colosso_DrawGauge(void)
 {
@@ -166,10 +166,10 @@ static void Colosso_DrawGauge(void)
 	{
 		if (++gauge->level == 1)
 		{
-			Dma_Set(Colosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10,
+			Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10,
 				REG_DMA3);
 			buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
-			FieldResource_DecodeType01(Colosso_GaugeGraphics, buf);
+			FieldResource_DecodeType01(gColosso_GaugeGraphics, buf);
 			Engine_VramLoad(gauge->vramBlock, 512, buf);
 			Runtime_BumpFree(buf);
 		}

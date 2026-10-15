@@ -36,7 +36,7 @@ void Func_02001c88(void)
         ObjectMotion_SetActionVariant(11, 1);
         LemurianShip_WaitFrames(1);
     }
-    Func_02002db8(Data_02003014);
+    Func_02002db8(gData_02003014);
     if (LemurianShip_FlagCheck(0x220))
     {
         Func_02001944(8, 10);

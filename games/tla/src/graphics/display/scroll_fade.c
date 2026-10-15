@@ -6,11 +6,11 @@ struct BucketEntry {
     u8 unk05[7];
 };
 
-extern struct BucketEntry *Data_0200752c;
+extern struct BucketEntry *gData_0200752c;
 
 void Func_081a18f8(s32 enable)
 {
-    struct BucketEntry *entry = Data_0200752c;
+    struct BucketEntry *entry = gData_0200752c;
     u32 i;
 
     if (!enable) {

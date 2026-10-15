@@ -479,7 +479,7 @@ Func_0817c27c:
 .L_0817c634:
 	.4byte 0xfff80000
 .L_0817c638:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0817c63c:
 	.4byte 0xffffe000
 .L_0817c640:

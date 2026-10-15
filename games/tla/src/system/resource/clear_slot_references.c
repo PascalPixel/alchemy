@@ -3,7 +3,7 @@
 
 s32 ResourceTable_GetLongestFreeBlockRun(void)
 {
-    u8 *marker = ResourceBlockOwners;
+    u8 *marker = gResourceBlockOwners;
     s32 run;
     s32 longest;
     /* FAKEMATCH: the count takes r2 and the run r1; unpinned, the barrier below swaps them (differ 18), and without the barrier the pin alone schedules the count's first half ahead of the table load (differ 2) */
@@ -28,7 +28,7 @@ s32 ResourceTable_GetLongestFreeBlockRun(void)
 
 s32 Func_08014220(void)
 {
-    u8 *marker = ResourceBlockOwners;
+    u8 *marker = gResourceBlockOwners;
     s32 free_count;
     s32 remaining;
 
@@ -53,7 +53,7 @@ s32 Resource_ClearSlotReferences(s32 resourceId)
 
     if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
-    marker = ResourceBlockOwners;
+    marker = gResourceBlockOwners;
     /* FAKEMATCH: the plain order sets up the count before the marker. */
     __asm__("" : "+r"(marker));
     empty_marker = VRAM_BLOCK_OWNER_FREE;

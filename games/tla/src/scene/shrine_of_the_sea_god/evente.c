@@ -7,9 +7,9 @@ struct ShrineOfTheSeaGodSpot {
     s32 rotation;
 };
 
-extern const struct ShrineOfTheSeaGodSpot Data_02003cc0[];
-extern const u8 Data_02003cbc[];
-extern const u8 Data_02003c10[];
+extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
+extern const u8 gData_02003cbc[];
+extern const u8 gData_02003c10[];
 
 void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);

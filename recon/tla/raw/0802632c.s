@@ -429,7 +429,7 @@ Func_0802632c:
 .L_0802668c:
 	.4byte gInput
 .L_08026690:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08026694:
 	.4byte gDebugMode
 .L_08026698:

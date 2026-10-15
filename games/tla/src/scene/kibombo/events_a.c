@@ -1,37 +1,37 @@
 #include "kibombo.h"
 
-extern u8 Data_02006510[];
-extern u8 Data_020066d8[];
-extern u8 Data_020069a8[];
-extern u8 Data_02006a98[];
-extern u8 Data_02006cd8[];
-extern u8 Data_020064f8[];
-extern u8 Data_02006ef4[];
-extern u8 Data_020070d4[];
-extern u8 Data_02007434[];
-extern u8 Data_020074dc[];
-extern u8 Data_02007698[];
-extern u8 Data_02006ee8[];
-extern const u8 Data_02006324[];
+extern u8 gData_02006510[];
+extern u8 gData_020066d8[];
+extern u8 gData_020069a8[];
+extern u8 gData_02006a98[];
+extern u8 gData_02006cd8[];
+extern u8 gData_020064f8[];
+extern u8 gData_02006ef4[];
+extern u8 gData_020070d4[];
+extern u8 gData_02007434[];
+extern u8 gData_020074dc[];
+extern u8 gData_02007698[];
+extern u8 gData_02006ee8[];
+extern const u8 gData_02006324[];
 
 u8 *Func_0200012c(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Kibombo1)
-        return Data_02006510;
+        return gData_02006510;
     if (scene == (s32)&SceneId_Kibombo4)
-        return Data_020066d8;
+        return gData_020066d8;
     if (scene == (s32)&SceneId_Kibombo2)
-        return Data_020069a8;
+        return gData_020069a8;
     if (scene == (s32)&SceneId_Kibombo5)
-        return Data_02006a98;
+        return gData_02006a98;
     if (scene == (s32)&SceneId_Kibombo3) {
         if (GameFlag_Test(0x8ee))
-            Data_02006cd8[22] = 0;
-        return Data_02006cd8;
+            gData_02006cd8[22] = 0;
+        return gData_02006cd8;
     }
-    return Data_020064f8;
+    return gData_020064f8;
 }
 
 u8 *Func_020001b4(void)
@@ -39,16 +39,16 @@ u8 *Func_020001b4(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Kibombo1)
-        return Data_02006ef4;
+        return gData_02006ef4;
     if (scene == (s32)&SceneId_Kibombo4)
-        return Data_020070d4;
+        return gData_020070d4;
     if (scene == (s32)&SceneId_Kibombo2)
-        return Data_02007434;
+        return gData_02007434;
     if (scene == (s32)&SceneId_Kibombo5)
-        return Data_020074dc;
+        return gData_020074dc;
     if (scene == (s32)&SceneId_Kibombo3)
-        return Data_02007698;
-    return Data_02006ee8;
+        return gData_02007698;
+    return gData_02006ee8;
 }
 
 void Func_02000228(void)
@@ -252,7 +252,7 @@ void Func_02000590(s32 show, s32 first, u32 count)
 
 void Func_020005d0(void)
 {
-    Func_02005c6c(Data_02006324);
+    Func_02005c6c(gData_02006324);
 }
 
 void Func_020005e0(void)
@@ -368,9 +368,9 @@ void Func_020007c8(void)
     Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
     Kibombo_ObjSpeed(5, 0xcccc, 0x6666);
     Kibombo_ObjSpeed(6, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(26, Data_02005d18);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005d5c);
-    Object_SetActionCallbackAndRefreshById(6, Data_02005da0);
+    ObjectMotion_EnableActionAndSetCallback(26, gData_02005d18);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005d5c);
+    Object_SetActionCallbackAndRefreshById(6, gData_02005da0);
     Func_02005b64(7, 0);
     if (GameFlag_Test(0x911))
         Func_02000978();
@@ -380,9 +380,9 @@ void Func_020007c8(void)
     Kibombo_ObjSpeed(26, 0x19999, 0xcccc);
     Kibombo_ObjSpeed(5, 0x19999, 0xcccc);
     Kibombo_ObjSpeed(6, 0x19999, 0xcccc);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005e54);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02005e54);
-    Object_SetActionCallbackAndRefreshById(26, Data_02005e54);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005e54);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02005e54);
+    Object_SetActionCallbackAndRefreshById(26, gData_02005e54);
     GameFlag_SetBit(0x8f3);
     Func_02005aa4();
 }

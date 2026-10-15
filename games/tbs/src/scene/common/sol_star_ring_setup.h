@@ -96,13 +96,13 @@ static void Sol_UpdateRing(void)
 			if (hold == 0)
 			{
 				scale += step;
-				if (scale >= Sol_RingOffsetX[i])
+				if (scale >= gSol_RingOffsetX[i])
 				{
-					step = -Sol_RingOffsetZ[i];
+					step = -gSol_RingOffsetZ[i];
 				}
 				else if (scale <= 0x1999)
 				{
-					step = Sol_RingOffsetZ[i];
+					step = gSol_RingOffsetZ[i];
 					scale = 0x1999;
 					hold = 24;
 					x = obj->x;
@@ -115,34 +115,34 @@ static void Sol_UpdateRing(void)
 				obj->scaleX = scale;
 				obj->scaleY = scale;
 			}
-			rx = (Sol_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
-			ry = (Sol_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
-			rz = (Sol_RingDrift[i][2] * (u32)Engine_RandomNext()) >> 16;
+			rx = (gSol_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
+			ry = (gSol_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
+			rz = (gSol_RingDrift[i][2] * (u32)Engine_RandomNext()) >> 16;
 			rx = rx != 0 ? (rx << 16) / 1000 : 0;
 			ry = ry != 0 ? (ry << 16) / 1000 : 0;
 			rz = rz != 0 ? (rz << 16) / 1000 : 0;
-			if (Sol_RingDirection[i][0] == 1)
+			if (gSol_RingDirection[i][0] == 1)
 				speedX += rx;
-			else if (Sol_RingDirection[i][0] == -1)
+			else if (gSol_RingDirection[i][0] == -1)
 				speedX -= rx;
 			else
 				speedX = 0;
-			if (Sol_RingDirection[i][1] == 1)
+			if (gSol_RingDirection[i][1] == 1)
 				speedY += ry;
-			else if (Sol_RingDirection[i][1] == -1)
+			else if (gSol_RingDirection[i][1] == -1)
 				speedY -= ry;
 			else
 				speedY = 0;
-			if (Sol_RingDirection[i][2] == 1)
+			if (gSol_RingDirection[i][2] == 1)
 				speedZ += rz;
-			else if (Sol_RingDirection[i][2] == -1)
+			else if (gSol_RingDirection[i][2] == -1)
 				speedZ -= rz;
 			else
 				speedZ = 0;
-			dx = Engine_MathSin(speedX * Sol_RingSwing[i][0]) * 2;
-			dy = Engine_MathSin(speedY * Sol_RingSwing[i][1]) * 2;
+			dx = Engine_MathSin(speedX * gSol_RingSwing[i][0]) * 2;
+			dy = Engine_MathSin(speedY * gSol_RingSwing[i][1]) * 2;
 			{
-				s32 dz = Engine_MathCos(speedZ * Sol_RingSwing[i][2]) * 2;
+				s32 dz = Engine_MathCos(speedZ * gSol_RingSwing[i][2]) * 2;
 
 				if (hold != 0)
 				{
@@ -221,8 +221,8 @@ void SolStar_SetupElementalRings(s32 first, u32 count)
 			}
 			obj->state = cleared;
 			Engine_ObjectSetBlendMode(Object_GetById(first), 1);
-			entry->scale = Sol_RingOffsetX[i];
-			entry->scaleStep = -Sol_RingOffsetZ[i];
+			entry->scale = gSol_RingOffsetX[i];
+			entry->scaleStep = -gSol_RingOffsetZ[i];
 			entry->timer = 3;
 			i++;
 			entry++;

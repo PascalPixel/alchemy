@@ -36,7 +36,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
         Func_0200483c(object);
         object->facing = 0xc000;
     }
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02004c08);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02004c08);
     ShamanVillage_WaitFrames(12);
     ShamanVillage_SePlay(123);
     Event_FinishScreenTransition();

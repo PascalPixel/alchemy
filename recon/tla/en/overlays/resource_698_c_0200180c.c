@@ -20,7 +20,7 @@ struct SpotState {
     struct Spot spots[1];
 };
 
-extern struct SpotState Data_02002308;
+extern struct SpotState gData_02002308;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -34,7 +34,7 @@ s32 Func_0200180c(void)
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
-    struct SpotState *state = &Data_02002308;
+    struct SpotState *state = &gData_02002308;
     struct Spot *spot = state->spots;
     s32 i;
     s16 count = state->count;

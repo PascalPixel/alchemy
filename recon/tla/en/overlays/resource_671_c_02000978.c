@@ -4,7 +4,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-extern s32 Data_02005af0;
+extern s32 gData_02005af0;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Func_0200584c(void);
 struct ObjectRuntime *Func_020005b4(struct ObjectRuntime *origin, s32 id);
@@ -12,7 +12,7 @@ void Func_020006ac(struct ObjectRuntime *object, s32 dx, s32 dz, s32 velocity);
 
 void Func_02000978(void)
 {
-    s32 *speed = &Data_02005af0;
+    s32 *speed = &gData_02005af0;
 
     if (*speed != 0) {
         struct ObjectRuntime *actor = Object_GetById(Func_0200584c());

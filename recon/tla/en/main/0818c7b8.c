@@ -20,7 +20,7 @@ struct EffectPosition;
 extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
-extern u8 Data_02014000[];
+extern u8 gData_02014000[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
 void Func_08196404(s32 slot, s32 a1, s32 a2, s32 a3, s32 a4);
@@ -123,7 +123,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                     blit[0](canvas, cells, x - 4, y, 128, 128);
                     break;
                 case 3:
-                    blit[0](canvas, Data_02014000, x - 4, y, 128, 128);
+                    blit[0](canvas, gData_02014000, x - 4, y, 128, 128);
                     break;
                 case 4:
                     blit[0](canvas, work + 0x3f40, x, y, 120, 120);
@@ -144,7 +144,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                     blit[0](canvas, cells, x - 4, y - 8, 128, 128);
                     break;
                 case 3:
-                    blit[0](canvas, Data_02014000, x - 4, y - 8, 128, 128);
+                    blit[0](canvas, gData_02014000, x - 4, y - 8, 128, 128);
                     break;
                 case 4:
                     blit[0](canvas, work + 0x3f40, x, y, 120, 120);

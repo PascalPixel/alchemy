@@ -5,9 +5,9 @@
 extern char SceneId_Ov6A6Room1;
 extern char SceneId_Ov6A6Room2;
 extern char MsgLoho57;
-extern const u8 Data_02001ae0[];
-extern const u8 Data_02001aec[];
-extern const u8 Data_02001dd4[];
+extern const u8 gData_02001ae0[];
+extern const u8 gData_02001aec[];
+extern const u8 gData_02001dd4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -32,10 +32,10 @@ void Func_02000c84(void)
 const u8 *Func_02000cc0(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6A6Room1)
-        return Data_02001aec;
+        return gData_02001aec;
     if (gPartyState.scene == (s32)&SceneId_Ov6A6Room2)
-        return Data_02001dd4;
-    return Data_02001ae0;
+        return gData_02001dd4;
+    return gData_02001ae0;
 }
 
 void Func_02000d00(void)

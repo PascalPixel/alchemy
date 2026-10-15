@@ -191,11 +191,11 @@ void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
 
 // ---- this overlay
 
-extern u8 Data_02000c8c[];
-extern u8 Data_02000ca4[];
-extern u8 Data_02000dac[];
-extern u8 Data_02000e84[];
-extern u8 Data_02000ea8[];
-extern u8 Data_02000fe0[];
+extern u8 gData_02000c8c[];
+extern u8 gData_02000ca4[];
+extern u8 gData_02000dac[];
+extern u8 gData_02000e84[];
+extern u8 gData_02000ea8[];
+extern u8 gData_02000fe0[];
 
 #endif

@@ -16,32 +16,32 @@ s32 Func_020005c0(struct ObjectRuntime *object)
     return 0;
 }
 
-extern const u8 Data_020032a0[];
-extern const u8 Data_020032b8[];
-extern const u8 Data_020034f8[];
-extern const u8 Data_02003570[];
-extern const u8 Data_020035d0[];
-extern const u8 Data_02003708[];
-extern const u8 Data_02003750[];
-extern const u8 Data_02003768[];
+extern const u8 gData_020032a0[];
+extern const u8 gData_020032b8[];
+extern const u8 gData_020034f8[];
+extern const u8 gData_02003570[];
+extern const u8 gData_020035d0[];
+extern const u8 gData_02003708[];
+extern const u8 gData_02003750[];
+extern const u8 gData_02003768[];
 
 const u8 *Func_02000600(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov686Room1)
-        return Data_020032b8;
+        return gData_020032b8;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room2)
-        return Data_020034f8;
+        return gData_020034f8;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room3)
-        return Data_02003570;
+        return gData_02003570;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room4)
-        return Data_020035d0;
+        return gData_020035d0;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room5)
-        return Data_02003708;
+        return gData_02003708;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room6)
-        return Data_02003750;
+        return gData_02003750;
     if (gPartyState.scene == (s32)&SceneId_Ov686Room8)
-        return Data_02003768;
-    return Data_020032a0;
+        return gData_02003768;
+    return gData_020032a0;
 }
 
 void Func_02000698(void)

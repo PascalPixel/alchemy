@@ -35,7 +35,7 @@ struct MenuSelection {
     u16 mode;
 };
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
+extern u8 gMenu_CursorObjectTiles[], gMenu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 
 void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
@@ -51,11 +51,11 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
     entry->x = state->nodes[index].x;
     entry->y = state->nodes[index].y;
     if (index != 0) {
-        frames = Menu_CursorObjectTiles;
+        frames = gMenu_CursorObjectTiles;
         if (state->nodes[1].offset != 0)
             entry->x = entry->x + state->nodes[1].offset;
     } else {
-        frames = Menu_CursorLeftObjectTiles;
+        frames = gMenu_CursorLeftObjectTiles;
         if (state->nodes[0].offset != 0)
             entry->x = entry->x - state->nodes[0].offset;
     }

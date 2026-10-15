@@ -20,8 +20,8 @@ void Func_02000088(void)
 const u8 *Func_020000b8(void)
 {
     if (GameFlag_Test(0x8ff))
-        return Data_02000cfc;
-    return Data_02000b4c;
+        return gData_02000cfc;
+    return gData_02000b4c;
 }
 
 void Func_020000d8(void)
@@ -182,7 +182,7 @@ void Func_02000368(void)
     Func_020005f4(158);
     asm("");
     index -= 4;
-    Func_02000534_(Data_0200064c[index].script, Data_0200064c[index].x, Data_0200064c[index].z);
+    Func_02000534_(gData_0200064c[index].script, gData_0200064c[index].x, gData_0200064c[index].z);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
     Object_SetModeById(gPartyState.currentOwner, 2);

@@ -1,7 +1,7 @@
 #include "local.h"
 #include "call.h"
 
-extern const u8 Data_02002272[];
+extern const u8 gData_02002272[];
 
 void Func_02001200(void);
 
@@ -12,7 +12,7 @@ void Func_02001304(void)
     s32 z = object->z >> 20;
 
     Func_02001200();
-    Func_02002190(Data_02002272);
+    Func_02002190(gData_02002272);
     if (x == 12 && z == 15) {
         Call6((void (*)())Func_02002030, 42, 3, 7, 3, 42, 14);
         Call6((void (*)())Func_02002030, 42, 9, 10, 10, 11, 73);

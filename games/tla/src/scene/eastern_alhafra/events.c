@@ -405,7 +405,7 @@ struct SpawnObject {
     u16 unk5e;
 };
 
-extern const u8 Data_020056d4[];
+extern const u8 gData_020056d4[];
 
 struct SpawnObject *Func_02004a1c(s32 type, s32 x, s32 y, s32 z);
 void Func_02004a0c(struct SpawnObject *object, s32 mode);
@@ -423,7 +423,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer)
     if (object != 0) {
         sprite = object->sprite;
         Func_02004a0c(object, 1);
-        Func_02004a14(object, Data_020056d4);
+        Func_02004a14(object, gData_020056d4);
         Func_02004a74(object, 1);
         object->motionFlags = 0;
         {

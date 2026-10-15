@@ -11,33 +11,33 @@ void Func_02000600(void)
 
 void Func_02000620(s32 a, s32 b)
 {
-    Func_0200388c(Data_02004768, a, b);
+    Func_0200388c(gData_02004768, a, b);
 }
 
 void Func_02000634(s32 a, s32 b)
 {
-    Func_0200388c(Data_0200478e, a, b);
+    Func_0200388c(gData_0200478e, a, b);
 }
 
 void Func_02000648(s32 a, s32 b)
 {
-    Func_0200388c(Data_020047d2, a, b);
+    Func_0200388c(gData_020047d2, a, b);
     if (a == 1) {
-        if (Data_02004808 == 0)
-            Data_02004808 = 210;
+        if (gData_02004808 == 0)
+            gData_02004808 = 210;
     }
 }
 
 void Func_02000670(s32 a, s32 b)
 {
-    Func_0200388c(Data_02004800, a, b);
+    Func_0200388c(gData_02004800, a, b);
 }
 
 void Func_02000684(s32 a, s32 b)
 {
-    Func_0200388c(Data_020047ec, a, b);
+    Func_0200388c(gData_020047ec, a, b);
     if (a == 1) {
-        if (Data_02004808 == 0)
-            Data_02004808 = 210;
+        if (gData_02004808 == 0)
+            gData_02004808 = 210;
     }
 }

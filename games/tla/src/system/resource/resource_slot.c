@@ -19,7 +19,7 @@ struct ResourceSlotNumber {
     s16 number;
 };
 
-extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
+extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
@@ -45,7 +45,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
     record->tag = (slot << 12) | number;
     record->buffer = buffer;
 
-    entry = ResourceSlot_NumberTable;
+    entry = gResourceSlot_NumberTable;
     for (count = 0; count < 256; count++) {
         s16 *numbers = &entry->number;
 
@@ -72,7 +72,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         end = (u8 *)buffer + size;
         if (index > 4)
             index = 0;
-        table = ResourceSlot_ConversionTables[index];
+        table = gResourceSlot_ConversionTables[index];
         for (; text < end; text++) {
             u32 c = *text;
 

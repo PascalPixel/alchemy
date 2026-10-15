@@ -14,12 +14,12 @@ struct SceneEventWork {
     s32 screenEffect;
 };
 
-extern const u8 Data_02004768[];
-extern const u8 Data_0200478e[];
-extern const u8 Data_020047d2[];
-extern const u8 Data_020047ec[];
-extern const u8 Data_02004800[];
-extern s32 Data_02004808;
+extern const u8 gData_02004768[];
+extern const u8 gData_0200478e[];
+extern const u8 gData_020047d2[];
+extern const u8 gData_020047ec[];
+extern const u8 gData_02004800[];
+extern s32 gData_02004808;
 
 struct FieldActor *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
@@ -86,7 +86,7 @@ void PartyInventory_GiveItem(s32 item, s32 flags);
 struct FieldActor *Func_02001b70(void);
 void Func_02003fc8(struct FieldActor *object);
 void Func_020041f8(s32 cue);
-extern struct FieldActor *Data_0200480c;
+extern struct FieldActor *gData_0200480c;
 extern s32 gInput;
 extern u32 gFrameCount;
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);

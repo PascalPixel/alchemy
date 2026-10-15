@@ -19,11 +19,11 @@ struct BattleFxScene;
 
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
-#define BattleFx_PulseScales Data_080f0bfc
+#define gBattleFx_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
-extern u32 Data_080f0bfc[];
+extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
@@ -86,7 +86,7 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-extern const s32 BattleFx_CommonParticleScript[];
+extern const s32 gBattleFx_CommonParticleScript[];
 
 struct CaptureObject {
     u8 unk00[8];
@@ -262,7 +262,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);
         djinni->lifetime = 8;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, gBattleFx_CommonParticleScript);
     }
 
     WaitFrames(15);

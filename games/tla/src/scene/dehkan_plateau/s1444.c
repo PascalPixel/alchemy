@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -67,7 +67,7 @@ void Func_02001444(void)
 {
     s32 y;
 
-    Func_020002f8(Data_02003f92);
+    Func_020002f8(gData_02003f92);
     y = Object_GetById(gPartyState.currentOwner)->y;
     /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test starts the constant first (one pair of instructions swapped). */
     __asm__ volatile("");

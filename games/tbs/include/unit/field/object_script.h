@@ -8,6 +8,6 @@
 // 処理ごとに物体の見方 (構造体) が違うので、引数の型は決めない。
 typedef s32 (*ScriptCommandFn)();
 
-extern const ScriptCommandFn ScriptObject_CommandTable[47];
+extern const ScriptCommandFn gScriptObject_CommandTable[47];
 
 #endif

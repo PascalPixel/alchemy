@@ -42,9 +42,9 @@ struct RideWork {
     void *handle;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
-#define RIDE_WORK ((struct RideWork *)(Data_020023c4 + 0x188))
+#define RIDE_WORK ((struct RideWork *)(gData_020023c4 + 0x188))
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);

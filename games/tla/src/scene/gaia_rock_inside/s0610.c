@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-extern const u8 Data_020050d0[];
+extern const u8 gData_020050d0[];
 
 u32 Random16Far(void);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -61,7 +61,7 @@ s32 Func_02000678(void)
     object = Engine_ObjectCreate(14, x + 0x80000, source->y - 0x20000, source->z);
     object->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02004dac(object, Data_020050d0);
+    Func_02004dac(object, gData_020050d0);
     object->scaleX = 0x6666;
     object->scaleY = 0x6666;
     /* FAKEMATCH: the native stores both scales before it loads the sprite; without the object passed through this asm the sprite is loaded while the scale is built (two reordered instructions, differ 4). A volatile barrier here swaps the two arguments of the call above instead. */

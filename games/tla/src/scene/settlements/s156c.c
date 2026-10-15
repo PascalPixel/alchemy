@@ -19,7 +19,7 @@ struct SettlementsSpawn {
     void *update;
 };
 
-extern const u8 Data_02002310[];
+extern const u8 gData_02002310[];
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct SettlementsSpawn *spawn);
 
@@ -35,7 +35,7 @@ void Func_0200156c(s32 id)
     spawn.scaleY = 0xcccc;
     spawn.speed = 0x10000;
     spawn.acceleration = 0x10000;
-    spawn.script = Data_02002310;
+    spawn.script = gData_02002310;
     Func_020021b0(154);
     Func_020000b8(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }

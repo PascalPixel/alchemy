@@ -10,7 +10,7 @@
 #define BATTLE_AUTO_MODE gDebugMode
 #define BATTLE_OPTIONS gKeysHeld
 
-extern const u32 Battle_ActionFlags[];
-extern const u8	 Battle_ActionStatus[];
+extern const u32 gBattle_ActionFlags[];
+extern const u8	 gBattle_ActionStatus[];
 
 #endif

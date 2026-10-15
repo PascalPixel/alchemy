@@ -19,7 +19,7 @@ void Func_02002780(void)
     Func_02003e0c(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z);
     Func_02003e14(object);
     object->angle = 0xc000;
-    ObjectMotion_EnableActionAndSetCallback(party->currentOwner, Data_02004028);
+    ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02004028);
     WaitFrames(12);
     Func_02003ffc(123);
     Event_FinishScreenTransition();

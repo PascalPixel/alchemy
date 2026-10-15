@@ -1,7 +1,7 @@
 #include "room.h"
 #include "input.h"
 
-extern s16 Data_02005f18[];
+extern s16 gData_02005f18[];
 
 void Func_02000cb8(s32 id);
 
@@ -90,7 +90,7 @@ void Func_02000b40(void)
 
         Object_GetById(gPartyState.currentOwner);
         keys = &gInput.held;
-        table = Data_02005f18;
+        table = gData_02005f18;
         /* FAKEMATCH: the barrier loads the table's address before the direction mask's 15, where plainly sched2 builds the 15 first (differ 4); reading through a byte offset keeps the table as the base register (indexed plainly, differ 2). */
         asm volatile("" : "+l"(table));
         angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));

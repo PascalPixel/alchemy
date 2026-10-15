@@ -3,7 +3,7 @@
 #include "field_sprite.h"
 #include "party_state.h"
 
-extern const s32 *Data_020033f4[];
+extern const s32 *gData_020033f4[];
 
 struct FieldActor *Object_GetById(s32 id);
 struct FieldEffect *Func_02002828(s32 type, s32 x, s32 y, s32 z);
@@ -39,7 +39,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Func_02002810(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Func_02002820(effect, Data_020033f4[flags & EFFECT_SCRIPT_MASK]);
+    Func_02002820(effect, gData_020033f4[flags & EFFECT_SCRIPT_MASK]);
     effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
@@ -64,7 +64,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         effect->scaleY = options->startScaleY;
     }
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-        script = Data_020033f4[flags & EFFECT_SCRIPT_MASK];
+        script = gData_020033f4[flags & EFFECT_SCRIPT_MASK];
         target = options->targetScaleX;
         count = script[EFFECT_SCRIPT_REPEAT_COUNT];
         if ((flags & EFFECT_USE_START_SCALE) != 0) {

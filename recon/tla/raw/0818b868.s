@@ -475,18 +475,18 @@ Func_0818b868:
 .L_0818bc3c:
 	.4byte 0xffff00ff
 .L_0818bc40:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_0818bc44:
-	.4byte Data_08199d94
+	.4byte gData_08199d94
 .L_0818bc48:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0818bc4c:
 	.4byte 0xffff8000
 .L_0818bc50:
 	.4byte 0xfffff000
 .L_0818bc54:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_0818bc58:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0818bc5c:
 	.4byte Func_08143000

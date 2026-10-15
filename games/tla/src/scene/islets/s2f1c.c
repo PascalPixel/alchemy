@@ -7,7 +7,7 @@ void Func_02003ee4(s32 actor, s32 x, s32 z, s32 angle);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 other);
-extern const u8 Data_02004274[];
+extern const u8 gData_02004274[];
 
 // The room's setup: flags, the objects' places and the scene state.
 void Func_02002f1c(void)
@@ -60,8 +60,8 @@ void Func_02002f1c(void)
         Object_GetById(19)->collisionFlags |= 0x80;
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x20000, 0x10000);
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 19, 0x19999, 0xcccc);
-        ObjectMotion_EnableActionAndSetCallback(9, Data_02004274);
-        ObjectMotion_EnableActionAndSetCallback(19, Data_02004274);
+        ObjectMotion_EnableActionAndSetCallback(9, gData_02004274);
+        ObjectMotion_EnableActionAndSetCallback(19, gData_02004274);
         GameFlag_SetBit(0x200);
     }
 }

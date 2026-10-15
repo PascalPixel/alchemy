@@ -19,8 +19,8 @@ extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
 extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
-extern s16 Data_020006dc;
-extern struct TitleSprite Data_020006f0[];
+extern s16 gData_020006dc;
+extern struct TitleSprite gData_020006f0[];
 extern u32 gFrameCount;
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -179,10 +179,10 @@ void Func_02000278(void)
     s32 y;
     s32 x;
 
-    p = Data_020006f0;
-    w = Data_020006f0[0].attr;
+    p = gData_020006f0;
+    w = gData_020006f0[0].attr;
     {
-        register u32 offset asm("r3") = ResourceTableEntries[gTitleVramBlock].offset;
+        register u32 offset asm("r3") = gResourceTableEntries[gTitleVramBlock].offset;
 
         tile = offset >> 5;
     }
@@ -195,7 +195,7 @@ void Func_02000278(void)
         *w++ = 0;
         *w++ = (x << 16) | n | 0x8400;
         *w++ = 0xf000 | tile;
-        n = Data_020006dc / 2 - i;
+        n = gData_020006dc / 2 - i;
         if (n < 0)
             n = 0;
         if (n <= 2 && (gFrameCount & 1))
@@ -204,5 +204,5 @@ void Func_02000278(void)
             Func_020005ac(p++, 255);
         tile += 2;
     } while (++i <= 17);
-    Data_020006dc++;
+    gData_020006dc++;
 }

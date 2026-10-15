@@ -9,7 +9,7 @@ s32 EventRuntime_GetControlledOwner(void);
 void WaitFrames(s32);
 void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const u8 *script);
-extern const u8 Data_080f0074[];
+extern const u8 gData_080f0074[];
 
 void Func_080cf350(struct ObjectRuntime *object)
 {
@@ -26,6 +26,6 @@ void Func_080cf350(struct ObjectRuntime *object)
     ObjectDispatch_SetSpritePriorityFar(object, 1);
     WaitFrames(3);
     Object_SetMode(owner, 28);
-    ObjectDispatch_InitializeFar(object, Data_080f0074);
+    ObjectDispatch_InitializeFar(object, gData_080f0074);
     owner->angle = 0x4000;
 }

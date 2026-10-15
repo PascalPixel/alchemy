@@ -33,9 +33,9 @@ extern const u8 MsgIfYouRe[];
 extern const u8 MsgKushinadaSSafe[];
 extern const u8 MsgIReallyGot[];
 
-extern const u8 Data_020013c8[];
-extern const u8 Data_020014b8[];
-extern const u8 Data_02001554[];
+extern const u8 gData_020013c8[];
+extern const u8 gData_020014b8[];
+extern const u8 gData_02001554[];
 
 void Func_02000258(void)
 {
@@ -132,8 +132,8 @@ void Func_020003fc(void)
 const struct SceneEntrance *Func_02000434(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov680Room1)
-        return (const struct SceneEntrance *)Data_020013c8;
+        return (const struct SceneEntrance *)gData_020013c8;
     if (gPartyState.scene == (s32)&SceneId_Ov680Room2)
-        return (const struct SceneEntrance *)Data_020014b8;
-    return (const struct SceneEntrance *)Data_02001554;
+        return (const struct SceneEntrance *)gData_020014b8;
+    return (const struct SceneEntrance *)gData_02001554;
 }

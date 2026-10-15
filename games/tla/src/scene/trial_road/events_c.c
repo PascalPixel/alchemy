@@ -74,7 +74,7 @@ s32 Func_02000694(struct ObjectRuntime *object)
     return 1;
 }
 
-extern const u8 Data_02005a7c[];
+extern const u8 gData_02005a7c[];
 
 void Func_020006b4(s32 id)
 {
@@ -85,7 +85,7 @@ void Func_020006b4(s32 id)
         object = Object_Create(489, owner->x, owner->y, owner->z);
         if (object != NULL) {
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            Func_020057d0(object, Data_02005a7c);
+            Func_020057d0(object, gData_02005a7c);
             object->linkedObject = owner;
             /* FAKEMATCH: stores the owner link before it copies the object for the priority flags (differ 2 without it; an explicit flag pointer is differ 27). */
             do { } while (0);

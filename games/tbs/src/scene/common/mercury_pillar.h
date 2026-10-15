@@ -219,7 +219,7 @@ static void MercuryLighthouse_SpawnSparkPair(void)
 	{
 		spark->terrainHeight = point->value;
 		sprite = spark->sprite;
-		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
+		Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
 		spark->motionFlags = 0;
 		spark->timer = 0;
 		spark->linkedObject = (struct FieldActor *)point;
@@ -235,7 +235,7 @@ static void MercuryLighthouse_SpawnSparkPair(void)
 	{
 		spark->terrainHeight = point->value;
 		sprite = spark->sprite;
-		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
+		Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
 		spark->motionFlags = 0;
 		spark->timer = 0;
 		spark->linkedObject = (struct FieldActor *)point;
@@ -272,7 +272,7 @@ void MercuryEntrance_RaisePillar(void)
 		{
 			spr = *(struct Sprite39b **)(obj + 80);
 			*(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-			Engine_ObjectSetScript(obj, Mercury_PillarScript);
+			Engine_ObjectSetScript(obj, gMercury_PillarScript);
 			((struct Obj *)obj)->owner = leader;
 			((struct Obj *)obj)->f85 = 4;
 			((struct Obj *)obj)->y += -0x8000;
@@ -334,7 +334,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 	if (target != 0)
 	{
 		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Mercury_ScaleCounterScript);
+		Engine_ObjectSetScript(target, (s32)gMercury_ScaleCounterScript);
 		Object_SetMode(target, 7);
 		record[5] = 0;
 	}
@@ -371,8 +371,8 @@ void Mercury_RunActorMove(void)
 	flags = &actor->motionFlags;
 	saved = *flags;
 	keys = gKeysHeld;
-	angle = Mercury_MoveAngles[(keys >> 4) & 15];
-	if ((s16)Mercury_MoveAngles[(keys >> 4) & 15] == -1)
+	angle = gMercury_MoveAngles[(keys >> 4) & 15];
+	if ((s16)gMercury_MoveAngles[(keys >> 4) & 15] == -1)
 		return;
 	pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
 	pos[1].fixed = ((struct ObjectRuntime *)actor)->terrainHeight;
@@ -391,7 +391,7 @@ void Mercury_RunActorMove(void)
 	if (obj != NULL)
 	{
 		((union FieldObject *)obj)->effect.spin = 0;
-		Engine_ObjectSetScript(obj, Mercury_ScaleCounterScript);
+		Engine_ObjectSetScript(obj, gMercury_ScaleCounterScript);
 		Object_SetMode(obj, 7);
 		state->effect = NULL;
 	}
@@ -404,7 +404,7 @@ void Mercury_RunActorMove(void)
 			sprite = obj->sprite;
 			((struct ObjectRuntime *)obj)->terrainHeight =
 				((struct ObjectRuntime *)source)->terrainHeight;
-			Engine_ObjectSetScript(obj, Mercury_RampScript);
+			Engine_ObjectSetScript(obj, gMercury_RampScript);
 			obj->motionFlags = 0;
 			((union FieldObject *)obj)->effect.spin = 0;
 			obj->priorityFlags = 2;

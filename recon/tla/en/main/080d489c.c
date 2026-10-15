@@ -30,7 +30,7 @@ void Func_08009098(struct LinkedEffectObject *object, const void *configuration)
 void Func_08009080(struct LinkedEffectObject *object, s32 mode);
 void Func_080090d0(struct LinkedEffectObject *object);
 void BattleFx_CopyLinkedObjectPosition(void);
-extern const u8 Data_0809fd38[];
+extern const u8 gData_0809fd38[];
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {
@@ -71,7 +71,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         break;
     case 2:
         Func_08009080(child, 2);
-        Func_08009098(child, Data_0809fd38);
+        Func_08009098(child, gData_0809fd38);
         child->counter = 1;
         break;
     }

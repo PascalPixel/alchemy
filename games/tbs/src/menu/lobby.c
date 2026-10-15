@@ -40,7 +40,7 @@
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
-const s32 LinkLobby_SlotValues[] = {
+const s32 gLinkLobby_SlotValues[] = {
 #if defined(TBS_EDITION_DE)
 	PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
 	PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
@@ -132,7 +132,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 	/* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. As an if around the body: differ 43; as an early return 0 on the failed test: differ 55. */
 	while (id >= 0 && Engine_GameFlagIsSet(0x303))
 	{
-		const s32 *expected = &LinkLobby_SlotValues[slot];
+		const s32 *expected = &gLinkLobby_SlotValues[slot];
 
 		if (id != 0)
 			Engine_GameFlagSet(0x302);
@@ -141,7 +141,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 		{
 			struct LinkPeer *row = (struct LinkPeer *)gLinkPeerSignatures[Engine_GameFlagIsSet(0x302) ^ 1];
 
-			if (row->values[LinkLobby_SlotColumns[slot]] == *expected)
+			if (row->values[gLinkLobby_SlotColumns[slot]] == *expected)
 				return 1;
 			break;
 		}
@@ -152,8 +152,8 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 static void LinkLobby_WriteSlotValue(s32 slot)
 {
 	s32 *dst = (s32 *)gSerialTransfer.payload;
-	s32 *src = &LinkLobby_SlotValues[slot];
-	dst[LinkLobby_SlotColumns[slot]] = *src;
+	s32 *src = &gLinkLobby_SlotValues[slot];
+	dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
 static s32 LinkLobby_PollPeerReady(void)
@@ -1451,7 +1451,7 @@ s32 LinkLobby_RunRoundResult(void)
 	return 0;
 }
 
-u8 LinkLobby_SlotColumns[] = {
+u8 gLinkLobby_SlotColumns[] = {
 	0, 1, 1, 1, 1, 0, 0, 0,
 };
 

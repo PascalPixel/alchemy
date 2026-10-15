@@ -6,7 +6,7 @@
  * ahead of the test. */
 #include "types.h"
 
-extern const u16 Data_02004276[];
+extern const u16 gData_02004276[];
 
 s32 GameFlag_Test(s32 flag);
 void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
@@ -25,7 +25,7 @@ void Func_0200353c(void)
 next:
     {
         if (GameFlag_Test(flag)) {
-            const u16 *cell = (const u16 *)((const u8 *)Data_02004276 + offset);
+            const u16 *cell = (const u16 *)((const u8 *)gData_02004276 + offset);
             s32 x = *cell++;
             s32 y = *cell++;
 

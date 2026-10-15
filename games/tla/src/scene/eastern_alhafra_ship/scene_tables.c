@@ -15,7 +15,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-extern u8 Data_0200345c[];
+extern u8 gData_0200345c[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -34,7 +34,7 @@ const u32 *Scene_GetExits(void)
 
 s32 Func_0200004c(void)
 {
-    return (s32)Data_0200345c;
+    return (s32)gData_0200345c;
 }
 
 void Func_02000054(void)

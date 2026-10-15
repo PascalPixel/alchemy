@@ -212,7 +212,7 @@ UiText_MeasureEntryDimensions:
 .L_0803bad0:
 	.4byte .L_0803b9a4
 .L_0803bad4:
-	.4byte UiText_Glyphs
+	.4byte gUiText_Glyphs
 .L_0803bad8:
 	ldr r3, .L_0803bb08
 	strh r3, [r7, #6]

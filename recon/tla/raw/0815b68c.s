@@ -109,6 +109,6 @@ Func_0815b68c:
 	str r3, [r5]
 	pop {r5, r6, r7, pc}
 .L_0815b75c:
-	.4byte Data_08196e4c
+	.4byte gData_08196e4c
 .L_0815b760:
 	.4byte 0xfffff000

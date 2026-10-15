@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "item.h"
 #include "owner_state.h"
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 struct ItemMenuIcon {
     u8 unk00[5];
@@ -80,7 +80,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     selection = 0;
     ret = 0;
     state = 0;
-    menu = *(struct ItemCommandWork **)((u32)&Data_03001f2c);
+    menu = *(struct ItemCommandWork **)((u32)&gData_03001f2c);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         switch (state) {

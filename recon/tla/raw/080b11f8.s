@@ -65,6 +65,6 @@ Func_080b11f8:
 	bl GameFlag_ClearBit
 	pop {r5, r6, pc}
 .L_080b1274:
-	.4byte Data_020023c4
+	.4byte gData_020023c4
 .L_080b1278:
 	.4byte gPartyState

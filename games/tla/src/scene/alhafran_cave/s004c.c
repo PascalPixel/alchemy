@@ -5,15 +5,15 @@ u8 *Func_0200004c(void)
     s32 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov66aRoom1)
-        return Data_02001778;
+        return gData_02001778;
     if (scene == (s32)&SceneId_Ov66aRoom2)
-        return Data_02001868;
-    return Data_02001778;
+        return gData_02001868;
+    return gData_02001778;
 }
 
 void Func_02000084(s32 mode, s32 frame)
 {
-    Func_0200129c(Data_020016e4, mode, frame);
+    Func_0200129c(gData_020016e4, mode, frame);
 }
 
 void Func_02000098(void)
@@ -40,7 +40,7 @@ void Func_020000a0(s32 id)
 
 void Func_020000ec(void)
 {
-    Func_02001580(Data_02001608);
+    Func_02001580(gData_02001608);
 }
 
 void Func_020000fc(void)
@@ -80,10 +80,10 @@ u8 *Func_020001e8(void)
     s32 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov66aRoom1)
-        return Data_02001a18;
+        return gData_02001a18;
     if (scene == (s32)&SceneId_Ov66aRoom2)
-        return Data_02001a90;
-    return Data_02001a18;
+        return gData_02001a90;
+    return gData_02001a18;
 }
 
 void Func_02000220(void)
@@ -103,7 +103,7 @@ s32 Func_02000258(void)
 {
     struct ObjectRuntime *object = Object_GetById(8);
 
-    Func_020015f0(Data_02001be0, object->x, object->y + 0x1c0000, object->z);
+    Func_020015f0(gData_02001be0, object->x, object->y + 0x1c0000, object->z);
     return 0;
 }
 

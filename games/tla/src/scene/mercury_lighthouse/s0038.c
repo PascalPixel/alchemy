@@ -1,7 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 
-extern u32 Data_020007e4;
+extern u32 gData_020007e4;
 
 struct ObjectRuntime;
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -18,7 +18,7 @@ void WaitFrames(s32 frames);
 
 s32 Func_02000038(struct ObjectRuntime *object)
 {
-    if ((Data_020007e4 >> 1) & 1)
+    if ((gData_020007e4 >> 1) & 1)
         Object_SetPartAttribute(object, 15);
     else
         Object_SetPartAttribute(object, 7);

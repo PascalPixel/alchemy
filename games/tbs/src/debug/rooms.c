@@ -17,7 +17,7 @@
 
 u8 *TestRooms_GetEntrances(void)
 {
-	return (u8 *)TestRooms_Entrances;
+	return (u8 *)gTestRooms_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -27,12 +27,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *TestRooms_GetExits(void)
 {
-	return (u8 *)TestRooms_Exits;
+	return (u8 *)gTestRooms_Exits;
 }
 
 u8 *TestRooms_GetPlacements(void)
 {
-	return (u8 *)TestRooms_Placements;
+	return (u8 *)gTestRooms_Placements;
 }
 
 static void EV08_TALK(void)
@@ -61,7 +61,7 @@ static void EV11_TALK(void)
 
 u8 *TestRooms_GetEvents(void)
 {
-	return (u8 *)TestRooms_Events;
+	return (u8 *)gTestRooms_Events;
 }
 
 s32 Scene_RunEmptyScene(void)
@@ -69,7 +69,7 @@ s32 Scene_RunEmptyScene(void)
 	return 0;
 }
 
-u32 TestRooms_EntrancesHead[] = {
+u32 gTestRooms_EntrancesHead[] = {
 	0x500050,
 	0,
 	80,
@@ -128,12 +128,12 @@ u32 TestRooms_EntrancesHead[] = {
 	0,
 };
 
-struct SceneEntrance TestRooms_Entrances[] = {
+struct SceneEntrance gTestRooms_Entrances[] = {
 	{0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 TestRooms_Exits[] = {
+u32 gTestRooms_Exits[] = {
 	SCENE_EXITS(191),
 	SCENE_EXIT(0, 192, 0),
 	SCENE_EXIT(0, 193, 0),
@@ -141,7 +141,7 @@ u32 TestRooms_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement TestRooms_Placements[] = {
+struct ScenePlacement gTestRooms_Placements[] = {
 	{0x5a, 0x30, ACTOR_STAND, PIXELS(496), 0, PIXELS(176), FACING_EAST, TALK_FACE_PARTY, 0},
 	{0x5b, 0x44, ACTOR_STAND, PIXELS(496), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0},
 	{0x5c, 0x58, ACTOR_STAND, PIXELS(528), 0, PIXELS(176), FACING_WEST, TALK_FACE_PARTY, 0},
@@ -149,7 +149,7 @@ struct ScenePlacement TestRooms_Placements[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent TestRooms_Events[] = {
+struct SceneEvent gTestRooms_Events[] = {
 	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
 	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
 	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},

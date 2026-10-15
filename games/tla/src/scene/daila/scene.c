@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 
-extern s16 Data_02000d80[];
+extern s16 gData_02000d80[];
 
 void Func_02000c48();
 void Func_02000d18(void);
@@ -27,7 +27,7 @@ void Func_02000a9c(void)
     struct ObjectRuntime *object;
     s32 flags;
 
-    Func_02000d58(Data_02000d80);
+    Func_02000d58(gData_02000d80);
     object = *(struct ObjectRuntime **)(event + 0xcbc);
     flags = 1;
     flags |= object->priorityFlags;
@@ -41,7 +41,7 @@ s32 Func_02000ac8(void)
     if (gPartyState.scene == (s32)&SceneId_Daila1)
         Func_02000d68(12, 0);
     else if (gPartyState.scene == (s32)&SceneId_Daila2)
-        Func_02000d50(Data_02000d80);
+        Func_02000d50(gData_02000d80);
     Engine_ActorSetSpritePriority(21, 1);
     if (gPartyState.scene == (s32)&SceneId_Daila2 && Engine_GameFlagIsSet(0x300) == 0)
         Object_SetWideSprite(66, 0);

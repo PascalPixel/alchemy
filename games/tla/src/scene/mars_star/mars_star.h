@@ -40,7 +40,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags)
 void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
 void Func_02002738(void);
 extern u32 gInput;
-extern const s16 Data_020047fc[];
+extern const s16 gData_020047fc[];
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void WaitFrames(s32 frames);

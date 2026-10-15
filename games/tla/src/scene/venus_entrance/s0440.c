@@ -12,7 +12,7 @@ s32 Object_GetById();
 s32 Func_02002884();
 s32 Func_02002864();
 s32 Func_020028bc();
-extern u8 Data_02003040[];
+extern u8 gData_02003040[];
 
 void Func_02000440(void)
 {
@@ -32,14 +32,14 @@ void Func_02000440(void)
     FIELD_AT(t7, s32, 52) = 0x8000;
     Call2(Object_SetModeById, 0xa, 4);
     Call4(Func_02002884, t7, 0x2680000, 0x600000, 0xb00000);
-    Call2(Func_02002864, t7, (s32)Data_02003040);
+    Call2(Func_02002864, t7, (s32)gData_02003040);
     t11 = Value1(Object_GetById, 0xb);
     FIELD_AT((t11 + 0x55), u8, 0) = 0;
     FIELD_AT(t11, s32, 48) = 0x20000;
     FIELD_AT(t11, s32, 52) = 0x8000;
     Call2(Object_SetModeById, 0xb, 4);
     Call4(Func_02002884, t11, 0x780000, 0x600000, 0xb00000);
-    Call2(Func_02002864, t11, (s32)Data_02003040);
+    Call2(Func_02002864, t11, (s32)gData_02003040);
     Func_020028bc();
 }
 

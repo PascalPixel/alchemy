@@ -15,10 +15,10 @@ const u8 *Func_020004a4(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov67bRoom1)
-        return Data_02002f04;
+        return gData_02002f04;
     if (scene == (s32)&SceneId_Ov67bRoom2)
-        return Data_0200312c;
-    return Data_02002eec;
+        return gData_0200312c;
+    return gData_02002eec;
 }
 
 void Func_020004e4(struct ObjectRuntime *object)

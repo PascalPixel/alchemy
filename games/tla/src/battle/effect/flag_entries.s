@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's WorldMap_CursorDirectionAngles again, byte for byte;
+@ The Broken Seal's gWorldMap_CursorDirectionAngles again, byte for byte;
 @ read by Func_080ec4d4
 	.global Data_080f1120
 Data_080f1120:
@@ -18,8 +18,8 @@ Data_080f1120:
 	.2byte \unk_02, \unk_04, \unk_06, \unk_08, \unk_0a
 	.2byte \id, \variant, \unk_10, \unk_12
 	.endm
-	.global Data_080f1140
-Data_080f1140:
+	.global gData_080f1140
+gData_080f1140:
 	flag_entry 2, 17, 483, 10144, 8288, 0x4000, -1, 10, -1, 10, -1
 	flag_entry 4, 1, 456, 10136, 8570, 0x4000, -1, 21, -1, 0, -1
 	flag_entry 5, 0, 444, 10424, 8336, 0x4000, -1, -1, -2, 0, -1

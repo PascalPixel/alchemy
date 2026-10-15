@@ -2,11 +2,11 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 
-extern const u8 Data_020031c4[];
-extern s32 Data_02003594;
-extern s16 Data_020035fe;
-extern struct ObjectRuntime *Data_02003600[];
-extern u16 Data_02003702;
+extern const u8 gData_020031c4[];
+extern s32 gData_02003594;
+extern s16 gData_020035fe;
+extern struct ObjectRuntime *gData_02003600[];
+extern u16 gData_02003702;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -30,12 +30,12 @@ void Func_02001eb8(s32 id, s32 value)
         object->action = value;
         /* FAKEMATCH: ⚓️ stores the action before it addresses the list */
         asm volatile("");
-        Data_02003600[Data_020035fe] = object;
-        Data_020035fe++;
+        gData_02003600[gData_020035fe] = object;
+        gData_020035fe++;
     }
 }
 
 void Func_02001ee8(u16 value)
 {
-    Data_02003702 = value;
+    gData_02003702 = value;
 }

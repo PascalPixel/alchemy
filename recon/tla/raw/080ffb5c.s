@@ -182,4 +182,4 @@ PsynergyMenu_DrawListPage:
 .L_080ffccc:
 	.4byte 0x00000b63
 .L_080ffcd0:
-	.4byte Menu_LvString
+	.4byte gMenu_LvString

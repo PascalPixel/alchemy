@@ -205,11 +205,11 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 		work->transferValue = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	for (frame = 0; frame != FallingShards_Counts[work->effect->variant * 2 + 1]; frame++)
+	for (frame = 0; frame != gFallingShards_Counts[work->effect->variant * 2 + 1]; frame++)
 	{
-		if (frame == FallingShards_Counts[work->effect->variant * 2 + 1] - 16)
+		if (frame == gFallingShards_Counts[work->effect->variant * 2 + 1] - 16)
 			BattleEventRuntime_BeginPhaseFar(132);
-		for (i = 0; i != FallingShards_Counts[work->effect->variant * 2]; i++)
+		for (i = 0; i != gFallingShards_Counts[work->effect->variant * 2]; i++)
 		{
 			shard = &work->particles[i];
 			if (shard->variant == -1)
@@ -272,12 +272,12 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 				if (puff->variant <= 17)
 				{
 					s32 image = puff->variant / 2;
-					s32 x = puff->x / 8 - (BattleFx_PuffSizes[image] >> 1);
-					s32 y = puff->y / 8 - (BattleFx_PuffSizes[image] >> 1);
+					s32 x = puff->x / 8 - (gBattleFx_PuffSizes[image] >> 1);
+					s32 y = puff->y / 8 - (gBattleFx_PuffSizes[image] >> 1);
 
 					draw[work->effect->variant == 2 ? 1 : 0](canvas,
-						graphics + BattleFx_PuffCells[image], x, y, BattleFx_PuffSizes[image],
-						BattleFx_PuffSizes[image]);
+						graphics + gBattleFx_PuffCells[image], x, y, gBattleFx_PuffSizes[image],
+						gBattleFx_PuffSizes[image]);
 				}
 				if (puff->variant > -1)
 					puff->variant--;
@@ -348,7 +348,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
 		bolt = &work->particles[i];
 		x = Random16() & 63;
-		y = -(i * FallingBolts_Counts[work->effect->variant * 4 + 2] + 16);
+		y = -(i * gFallingBolts_Counts[work->effect->variant * 4 + 2] + 16);
 		if (work->effect->side == 1)
 			x = x + y / 2 - 48;
 		else
@@ -403,11 +403,11 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 	}
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	for (frame = 0; frame != FallingBolts_Counts[work->effect->variant * 4 + 3]; frame++)
+	for (frame = 0; frame != gFallingBolts_Counts[work->effect->variant * 4 + 3]; frame++)
 	{
-		if (frame == FallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
+		if (frame == gFallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
 			BattleEventRuntime_BeginPhaseFar(132);
-		for (i = 0; i != FallingBolts_Counts[work->effect->variant * 4]; i++)
+		for (i = 0; i != gFallingBolts_Counts[work->effect->variant * 4]; i++)
 		{
 			s32 x;
 			s32 y;
@@ -429,10 +429,10 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 				else
 				{
 					bolt->variant = 0;
-					for (k = 0; k != FallingBolts_Counts[work->effect->variant * 4 + 1]; k++)
+					for (k = 0; k != gFallingBolts_Counts[work->effect->variant * 4 + 1]; k++)
 					{
 						spark = &gBoltSparks
-									 ->sparks[i * FallingBolts_Counts[work->effect->variant * 4 + 1]
+									 ->sparks[i * gFallingBolts_Counts[work->effect->variant * 4 + 1]
 											  + k];
 						spark->x = (x + 12) << 16;
 						spark->y = y << 16;
@@ -468,7 +468,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
 				if (size > 6)
 					size = 6;
-				draw_spark(canvas, work->sheet + BattleFx6_FlareCells[size - 1],
+				draw_spark(canvas, work->sheet + gBattleFx6_FlareCells[size - 1],
 					((s16 *)&spark->x)[1] - size, ((s16 *)&spark->y)[1] - size, size * 2, size * 2);
 				EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
 				spark->variant--;
@@ -491,8 +491,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 // run_five_mode_mode0.c
 // バトル演出：使う者から対象ごとに 3 本の筋を飛ばして当てる (色の違う五種)
 //--------------------------------------------------------------------------
-// FiveMode_Records は mode ごとに 4 バイト
-#define REC(mode, n) FiveMode_Records[(mode) * 4 + (n)]
+// gFiveMode_Records は mode ごとに 4 バイト
+#define REC(mode, n) gFiveMode_Records[(mode) * 4 + (n)]
 #define REC_ANIMATE 0	 // 0 でなければ筋の絵を 3 枚で回す
 #define REC_HIT 1	 // 0 でなければ当たりの音とパレット
 #define REC_MOTION 2 // 当たったときののけぞり (-1 ならなし)
@@ -537,7 +537,7 @@ void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect)
 // 使う者の 20 ドット上から、対象ごとに 6 フレームおきに 3 本の筋を出し、
 // 24 フレームで対象へ届かせる。対象は 32 フレームおきに順に始まる
 // 筋の絵は 20x40 で、上半分を上下に反転して 20x80 に描く
-// mode : 色 (BG パレットの元の絵 0〜4) と FiveMode_Records の行
+// mode : 色 (BG パレットの元の絵 0〜4) と gFiveMode_Records の行
 //--------------------------------------------------------------------------
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 {
@@ -685,7 +685,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 						struct MotionObject *struck =
 							GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
-						struck->x += FiveMode_Tremble[(frame - k * 32 - 30) % 8] << 16;
+						struck->x += gFiveMode_Tremble[(frame - k * 32 - 30) % 8] << 16;
 						if (struck->x > 0)
 							struck->x += 0x8000;
 						else
@@ -821,7 +821,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 				if (position.depth > 634)
 					position.depth = 634;
 				size = 6 - (position.depth - 314) / 64;
-				draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					position.x - size / 2, position.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
 				if (mode == 1)
@@ -966,11 +966,11 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	REG_BLDALPHA = 0x1010;
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-	if (TwelveMode_Records[mode * 7] == 0)
+	if (gTwelveMode_Records[mode * 7] == 0)
 		Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
 	else
 		Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
-	switch (TwelveMode_Records[mode * 7 + 3])
+	switch (gTwelveMode_Records[mode * 7 + 3])
 	{
 	case 0:
 		resource = (s32)&ResourceId_BlueBeamSheet;
@@ -1028,7 +1028,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 			gSparks[i].x = target->x;
 			gSparks[i].y = 0x140000;
 			gSparks[i].z = target->z;
-			if (TwelveMode_Records[mode * 7] == 1)
+			if (gTwelveMode_Records[mode * 7] == 1)
 			{
 				gSparks[i].velocityX = ((Random16() & 255) - 128) << 11;
 				gSparks[i].velocityY = ((Random16() & 255) - 128) << 11;
@@ -1036,7 +1036,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 			}
 			else
 			{
-				if (TwelveMode_Records[mode * 7 + 2] & 16)
+				if (gTwelveMode_Records[mode * 7 + 2] & 16)
 				{
 					gSparks[i].velocityX = (Random16() & 0x1ff) << 11;
 					gSparks[i].velocityY = ((Random16() & 0x1ff) - 256) << 11;
@@ -1062,40 +1062,40 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &alternate);
 	target_position.y += (alternate.y - target_position.y) / 2;
 
-	for (frame = 0; frame != TwelveMode_Records[mode * 7 + 6]; frame++)
+	for (frame = 0; frame != gTwelveMode_Records[mode * 7 + 6]; frame++)
 	{
-		s32 span = TwelveMode_Records[mode * 7 + 1] * TwelveMode_Records[mode * 7 + 4];
+		s32 span = gTwelveMode_Records[mode * 7 + 1] * gTwelveMode_Records[mode * 7 + 4];
 		s32 length = span * 4;
 		s32 glint = 0;
 
-		if (TwelveMode_Records[mode * 7] == 0)
+		if (gTwelveMode_Records[mode * 7] == 0)
 		{
 			if (frame < span * 6)
 			{
-				s32 picture = frame / TwelveMode_Records[mode * 7 + 4] % 6;
+				s32 picture = frame / gTwelveMode_Records[mode * 7 + 4] % 6;
 
 				if (work->effect->side == 1)
 				{
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
 					gBlitters[HEAP_SLOT_BLITTER](canvas,
-						work->sheet + TwelveMode_StrikeOffsets[picture],
-						target_position.x / 2 - (TwelveMode_StrikeReach[picture] / 2)
-							- TwelveMode_StrikeWidths[picture] + 8,
-						target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
-						TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
+						work->sheet + gTwelveMode_StrikeOffsets[picture],
+						target_position.x / 2 - (gTwelveMode_StrikeReach[picture] / 2)
+							- gTwelveMode_StrikeWidths[picture] + 8,
+						target_position.y - (gTwelveMode_StrikeHeights[picture] / 2),
+						gTwelveMode_StrikeWidths[picture], gTwelveMode_StrikeHeights[picture]);
 				}
 				else
 				{
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 					gBlitters[HEAP_SLOT_BLITTER](canvas,
-						work->sheet + TwelveMode_StrikeOffsets[picture],
-						target_position.x / 2 + (TwelveMode_StrikeReach[picture] / 2) - 8,
-						target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
-						TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
+						work->sheet + gTwelveMode_StrikeOffsets[picture],
+						target_position.x / 2 + (gTwelveMode_StrikeReach[picture] / 2) - 8,
+						target_position.y - (gTwelveMode_StrikeHeights[picture] / 2),
+						gTwelveMode_StrikeWidths[picture], gTwelveMode_StrikeHeights[picture]);
 				}
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-				if (frame % (TwelveMode_Records[mode * 7 + 4] * 6)
-					== TwelveMode_Records[mode * 7 + 4] * 4)
+				if (frame % (gTwelveMode_Records[mode * 7 + 4] * 6)
+					== gTwelveMode_Records[mode * 7 + 4] * 4)
 				{
 					if (mode == 8)
 					{
@@ -1106,7 +1106,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 						AudioCommand_PlayFar(133);
 						BattleEventRuntime_BeginPhaseFar(133);
 					}
-					if (TwelveMode_Records[mode * 7 + 2] & 16)
+					if (gTwelveMode_Records[mode * 7 + 2] & 16)
 					{
 						work->shakeFrames = 8;
 						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 12);
@@ -1121,7 +1121,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 						for (i = 0; i != 32; i++)
 						{
 							struct EffectStep *step =
-								&gSparks[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 32 + i];
+								&gSparks[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 32 + i];
 
 							step->variant = (Random16() & 15) + 7;
 						}
@@ -1129,7 +1129,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 					for (i = 0; i != 8; i++)
 					{
 						struct EffectStep *step =
-							&work->particles[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16
+							&work->particles[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 16
 											 + i];
 
 						step->variant = 0;
@@ -1145,56 +1145,56 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 
 			if (frame < length)
 			{
-				s32 picture = frame / TwelveMode_Records[mode * 7 + 4];
+				s32 picture = frame / gTwelveMode_Records[mode * 7 + 4];
 
 				while (picture > 4)
 					picture -= 4;
-				stage = TwelveMode_ColumnStages[picture];
+				stage = gTwelveMode_ColumnStages[picture];
 			}
 			else
 			{
 				stage = 3;
 			}
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, TwelveMode_Records[mode * 7 + 5]);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, gTwelveMode_Records[mode * 7 + 5]);
 			gBlitters[HEAP_SLOT_BLITTER](
 				canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2 - 18, 56, 18, 48);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, TwelveMode_Records[mode * 7 + 5]);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, gTwelveMode_Records[mode * 7 + 5]);
 			gBlitters[HEAP_SLOT_BLITTER](
 				canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2, 56, 18, 48);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-			if (frame % (TwelveMode_Records[mode * 7 + 4] * 4)
-				== TwelveMode_Records[mode * 7 + 4] * 3)
+			if (frame % (gTwelveMode_Records[mode * 7 + 4] * 4)
+				== gTwelveMode_Records[mode * 7 + 4] * 3)
 			{
 				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
 				work->shakeFrames = 4;
 				if (frame
-					> (TwelveMode_Records[mode * 7 + 1] * 4 - 4) * TwelveMode_Records[mode * 7 + 4])
+					> (gTwelveMode_Records[mode * 7 + 1] * 4 - 4) * gTwelveMode_Records[mode * 7 + 4])
 					BattleEventRuntime_BeginPhaseFar(133);
 				else
 					AudioCommand_PlayFar(133);
 				for (i = 0; i != 64; i++)
 				{
 					struct EffectStep *step =
-						&gSparks[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 64 + i];
+						&gSparks[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 64 + i];
 
 					step->variant = (Random16() & 15) + 7;
 				}
 				for (i = 0; i != 8; i++)
 				{
 					struct EffectStep *step =
-						&work->particles[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16 + i];
+						&work->particles[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 16 + i];
 
 					step->variant = 0;
 				}
 				for (i = 0; i != 16; i++)
-					PARTICLES[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16 + i].variant = 0;
+					PARTICLES[frame / (gTwelveMode_Records[mode * 7 + 4] * 6) * 16 + i].variant = 0;
 			}
 			if (stage == 3)
 				glint = 1;
 		}
 
-		if ((TwelveMode_Records[mode * 7 + 2] & 4) && glint)
+		if ((gTwelveMode_Records[mode * 7 + 2] & 4) && glint)
 		{
 			for (i = 0; i != 3; i++)
 			{
@@ -1206,13 +1206,13 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 				s32 y;
 
 				x = target_position.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17)
-					- (BattleFx_GlintCellWidths[image] / 2);
+					- (gBattleFx_GlintCellWidths[image] / 2);
 				y = target_position.y - (Trig_Cos(angle) * (radius + 4) >> 17)
-					- (BattleFx_GlintCellHeights[image] / 2);
+					- (gBattleFx_GlintCellHeights[image] / 2);
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-					TwelveMode_GlintDrawFlags[Random16() & 3] | 3, 3);
-				(*lower)(canvas, work->sheet + BattleFx_GlintCellOffsets[image], x, y,
-					BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
+					gTwelveMode_GlintDrawFlags[Random16() & 3] | 3, 3);
+				(*lower)(canvas, work->sheet + gBattleFx_GlintCellOffsets[image], x, y,
+					gBattleFx_GlintCellWidths[image], gBattleFx_GlintCellHeights[image]);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			}
 		}
@@ -1226,7 +1226,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 		for (k = 0; k != 1; k++)
 		{
 			source = GetBattleObjectSlotFar(work->effect->actor)->object;
-			if (TwelveMode_Records[mode * 7 + 2] & 1)
+			if (gTwelveMode_Records[mode * 7 + 2] & 1)
 			{
 				for (i = 0; i != 64; i++)
 				{
@@ -1243,7 +1243,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 					}
 				}
 			}
-			if (TwelveMode_Records[mode * 7 + 2] & 2)
+			if (gTwelveMode_Records[mode * 7 + 2] & 2)
 			{
 				s32 size = 3;
 
@@ -1261,7 +1261,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 					{
 						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
 						position.x >>= 1;
-						draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 							position.x - ((u32)size >> 1), position.y - size, size, size * 2);
 						EffectStep_AdvanceWithGravity3D(step, 60, 0);
 						step->variant++;
@@ -1280,7 +1280,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 					}
 				}
 			}
-			if (TwelveMode_Records[mode * 7 + 2] & 8)
+			if (gTwelveMode_Records[mode * 7 + 2] & 8)
 			{
 				for (i = 0; i != 128; i++)
 				{
@@ -1294,7 +1294,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 						EffectStep_AdvanceWithGravity3D(step, 60, 0);
 						size >>= 3;
 						size++;
-						draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 							position.x - size / 2, position.y - size, size, size * 2);
 						step->variant--;
 					}
@@ -1303,7 +1303,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 		}
 		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-		if (TwelveMode_Records[mode * 7 + 2] & 16)
+		if (gTwelveMode_Records[mode * 7 + 2] & 16)
 			Camera_ApplyShake(8, 8);
 		else
 			Camera_ApplyShake(2, 4);
@@ -1571,9 +1571,9 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 				u32 wide;
 				u32 high;
 
-				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
-					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
-					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide, high);
+				blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_CellSourceOffsets[cell],
+					(blade->x >> 16) - ((wide = gBladeRain_CellWidths[cell]) >> 1),
+					(blade->y >> 16) - ((high = gBladeRain_CellHeights[cell]) >> 1), wide, high);
 				if (frame >= i * 4 + 16)
 				{
 					blade->x += blade->velocityX;
@@ -1585,9 +1585,9 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 				u32 wide;
 				u32 high;
 
-				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
-					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
-					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide, high - 4);
+				blit[(u32)drift >> 31](canvas, work->sheet + gBladeRain_CellSourceOffsets[cell],
+					(blade->x >> 16) - ((wide = gBladeRain_CellWidths[cell]) >> 1),
+					(blade->y >> 16) - ((high = gBladeRain_CellHeights[cell]) >> 1), wide, high - 4);
 			}
 		}
 
@@ -1744,7 +1744,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 				EffectPosition_ApplyBaseAndYOffset(point, &pos);
 				pos.x /= 2;
 				size = (i & 1) + work->effect->variant;
-				draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1], pos.x - size, pos.y - size,
+				draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1], pos.x - size, pos.y - size,
 					size * 2, size * 2);
 			}
 			fleck->variant++;
@@ -1870,8 +1870,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	draw[1] = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
-	start_y = BattlePieceStartY;
-	startX = BattlePieceStartX;
+	start_y = gBattlePieceStartY;
+	startX = gBattlePieceStartX;
 	r = 0;
 	piece = work->particles;
 	for (i = 0; i != 33; i++)
@@ -2045,8 +2045,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 			for (i = 0; i != 33; i++)
 			{
 				piece = &work->particles[i];
-				draw[0](canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
-					BattlePieceWidth[i], BattlePieceHeight[i]);
+				draw[0](canvas, (u8 *)work + gBattlePieceOffset[i], HI(piece->x), HI(piece->y),
+					gBattlePieceWidth[i], gBattlePieceHeight[i]);
 				if (frame > 3)
 					EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
 			}
@@ -2226,10 +2226,10 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 			for (i = 0; i != 4; i++)
 			{
 				BattleEffect_LoadWork(
-					HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
+					HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, gCornerSparks_DrawFlags[i] | 3, 2);
 				draw[1] = *slot;
-				draw[1](canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
-					ground.y + CornerSparks_Y[i] - 32, 32, 32);
+				draw[1](canvas, work->sheet + (picture << 10), gCornerSparks_X[i] + 32,
+					ground.y + gCornerSparks_Y[i] - 32, 32, 32);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			}
 		}
@@ -2247,7 +2247,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 
 					if (size <= 0)
 						size = 1;
-					draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1], x - size, y - size,
+					draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1], x - size, y - size,
 						size * 2, size * 2);
 					mote->y -= 2;
 					mote->variant--;
@@ -2445,15 +2445,15 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *effect, s32 mode)
 		if (cell <= 5)
 		{
 			if (cell <= 3)
-				draw[0](canvas, work->sheet + TwoResource_CellSourceOffsets[cell],
-					TwoResource_CellX[cell + work->effect->side * 6],
-					TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell],
-					TwoResource_CellHeights[cell]);
+				draw[0](canvas, work->sheet + gTwoResource_CellSourceOffsets[cell],
+					gTwoResource_CellX[cell + work->effect->side * 6],
+					gTwoResource_CellBiasY[cell] + 32, gTwoResource_CellWidths[cell],
+					gTwoResource_CellHeights[cell]);
 			else
-				draw[0](canvas, Ram_MapCellBuffer + TwoResource_CellSourceOffsets[cell],
-					TwoResource_CellX[cell + work->effect->side * 6],
-					TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell],
-					TwoResource_CellHeights[cell]);
+				draw[0](canvas, Ram_MapCellBuffer + gTwoResource_CellSourceOffsets[cell],
+					gTwoResource_CellX[cell + work->effect->side * 6],
+					gTwoResource_CellBiasY[cell] + 32, gTwoResource_CellWidths[cell],
+					gTwoResource_CellHeights[cell]);
 		}
 		if (frame == 8)
 		{
@@ -3361,7 +3361,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 				{
 					s32 size = chip->life / 8 + 1;
 
-					draw[i & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+					draw[i & 1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 						(chip->x >> 16) - size / 2, (chip->y >> 16) - size, size, size * 2);
 				}
 			}
@@ -3715,7 +3715,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	AudioCommand_PlayFar(146);
 
-	for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++)
+	for (frame = 0; frame != gMemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++)
 	{
 		s32 *row;
 
@@ -3750,7 +3750,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 				ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 26);
 			if (frame > k * 20)
 			{
-				for (i = 0; i != MemberBurst_Counts[mode * 2]; i++)
+				for (i = 0; i != gMemberBurst_Counts[mode * 2]; i++)
 				{
 					struct EffectStep *mote = &PARTICLES[k * 128 + i];
 
@@ -3938,12 +3938,12 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 				cell = (cell & 1) + 1;
 			if (frame <= 27)
 			{
-				draw[0](canvas, work->sheet + EarthWall_CellSourceOffsets[cell],
-					64 - EarthWall_CellWidths[cell], (pos.y - EarthWall_CellHeights[cell]) + 8,
-					EarthWall_CellWidths[cell], EarthWall_CellHeights[cell]);
-				draw[1](canvas, work->sheet + EarthWall_CellSourceOffsets[cell], 64,
-					(pos.y - EarthWall_CellHeights[cell]) + 8, EarthWall_CellWidths[cell],
-					EarthWall_CellHeights[cell]);
+				draw[0](canvas, work->sheet + gEarthWall_CellSourceOffsets[cell],
+					64 - gEarthWall_CellWidths[cell], (pos.y - gEarthWall_CellHeights[cell]) + 8,
+					gEarthWall_CellWidths[cell], gEarthWall_CellHeights[cell]);
+				draw[1](canvas, work->sheet + gEarthWall_CellSourceOffsets[cell], 64,
+					(pos.y - gEarthWall_CellHeights[cell]) + 8, gEarthWall_CellWidths[cell],
+					gEarthWall_CellHeights[cell]);
 			}
 		}
 		if (mode == 0)
@@ -4122,7 +4122,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 						else
 							pos.x += sway;
 						draw[i & 1](canvas,
-							work->sheet + MemberBeam_MotePictures[mote->variant / 8 & 7] * 576
+							work->sheet + gMemberBeam_MotePictures[mote->variant / 8 & 7] * 576
 								+ PIC_MOTE,
 							pos.x - 12, pos.y - 12, 24, 24);
 						mote->y -= 1 << 16;
@@ -4166,13 +4166,13 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 					// 足もとの光
 					if (frame < start + 100)
 					{
-						draw[0](canvas, work->sheet + MemberBeam_HeadOffsets[pic],
-							pos.x - MemberBeam_HeadWidths[pic],
-							pos.y - MemberBeam_HeadHeights[pic] + 8, MemberBeam_HeadWidths[pic],
-							MemberBeam_HeadHeights[pic]);
-						draw[1](canvas, work->sheet + MemberBeam_HeadOffsets[pic], pos.x,
-							pos.y - MemberBeam_HeadHeights[pic] + 8, MemberBeam_HeadWidths[pic],
-							MemberBeam_HeadHeights[pic]);
+						draw[0](canvas, work->sheet + gMemberBeam_HeadOffsets[pic],
+							pos.x - gMemberBeam_HeadWidths[pic],
+							pos.y - gMemberBeam_HeadHeights[pic] + 8, gMemberBeam_HeadWidths[pic],
+							gMemberBeam_HeadHeights[pic]);
+						draw[1](canvas, work->sheet + gMemberBeam_HeadOffsets[pic], pos.x,
+							pos.y - gMemberBeam_HeadHeights[pic] + 8, gMemberBeam_HeadWidths[pic],
+							gMemberBeam_HeadHeights[pic]);
 					}
 					// 柱 (1 行ずつ)
 					for (k = 0; k != pos.y; k++)
@@ -4228,10 +4228,10 @@ void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect)
 	BattleFx_RunSevenMode(effect, 3);
 }
 
-extern s8  SevenMode_Records[];
-extern u8  SevenMode_ShardWidths[];
-extern u8  SevenMode_ShardHeights[];
-extern u16 SevenMode_ShardOffsets[];
+extern s8  gSevenMode_Records[];
+extern u8  gSevenMode_ShardWidths[];
+extern u8  gSevenMode_ShardHeights[];
+extern u16 gSevenMode_ShardOffsets[];
 
 #define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
@@ -4312,7 +4312,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 	{
 		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-		if (SevenMode_Records[mode * 2] == 0)
+		if (gSevenMode_Records[mode * 2] == 0)
 		{
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
 			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -4327,7 +4327,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 	{
 		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
 		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-		if (SevenMode_Records[mode * 2] == 0)
+		if (gSevenMode_Records[mode * 2] == 0)
 		{
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
 			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -4341,7 +4341,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 	work->transferMode = 2;
 	work->transferValue = 75;
 	Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	if (SevenMode_Records[mode * 2] == 0)
+	if (gSevenMode_Records[mode * 2] == 0)
 		total = work->effect->count * 8 + 72;
 	else
 		total = work->effect->count * 8 + 56;
@@ -4390,12 +4390,12 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 						if (shot->y < 0)
 						{
 							s32 count;
-							s8 *records = SevenMode_Records;
+							s8 *records = gSevenMode_Records;
 							s32 row;
 
 							shot->y = 0;
 							shot->variant = 1;
-							/* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) 2026-10-11: SevenMode_Records[mode * 2] in the test differs 135, as a conditional expression too. */
+							/* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) 2026-10-11: gSevenMode_Records[mode * 2] in the test differs 135, as a conditional expression too. */
 							row = mode * 2;
 							if (records[row] == 0)
 								count = 4;
@@ -4415,7 +4415,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 								burst->x = shot->x;
 								burst->y = shot->y;
 								burst->z = shot->z;
-								if (SevenMode_Records[mode * 2] == 0)
+								if (gSevenMode_Records[mode * 2] == 0)
 								{
 									burst->velocityX = ((Random16() & 63) - 32) << 11;
 									burst->velocityY = 0;
@@ -4442,7 +4442,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 			{
 				EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
 				position.x >>= 1;
-				if (SevenMode_Records[mode * 2] == 0)
+				if (gSevenMode_Records[mode * 2] == 0)
 				{
 					draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + 0x3e80,
 						position.x - 12, position.y - 24, 24, 48);
@@ -4456,12 +4456,12 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 						picture += 9;
 					flip = effect->side;
 					draw[burst->velocityX > 0 ? flip ^ 1 : flip](canvas,
-						work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
-						position.x - SevenMode_ShardWidths[picture] / 2,
-						position.y - SevenMode_ShardHeights[picture] / 2,
-						SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);
+						work->sheet + gSevenMode_ShardOffsets[picture] + 0x1e00,
+						position.x - gSevenMode_ShardWidths[picture] / 2,
+						position.y - gSevenMode_ShardHeights[picture] / 2,
+						gSevenMode_ShardWidths[picture], gSevenMode_ShardHeights[picture]);
 				}
-				if (SevenMode_Records[mode * 2] == 0)
+				if (gSevenMode_Records[mode * 2] == 0)
 					EffectStep_AdvanceWithGravity3D(burst, 62, 0x800);
 				else
 					EffectStep_AdvanceWithGravity3D(burst, 62, -0x8000);
@@ -4638,19 +4638,19 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 			}
 			if (frame <= 87)
 			{
-				rectangle[work->effect->side](canvas, work, CounterReveal_PanelX[idx_a * 7],
-					CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
+				rectangle[work->effect->side](canvas, work, gCounterReveal_PanelX[idx_a * 7],
+					gCounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
 			}
 			else
 			{
 				if (frame <= 91)
 				{
-					rectangle[work->effect->side](canvas, work, CounterReveal_PanelX[idx_a * 7],
-						CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
+					rectangle[work->effect->side](canvas, work, gCounterReveal_PanelX[idx_a * 7],
+						gCounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
 				}
 				rectangle[work->effect->side](canvas, work->sheet + 0x15d2,
-					CounterReveal_PanelX[idx_a * 7 + 1],
-					CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
+					gCounterReveal_PanelX[idx_a * 7 + 1],
+					gCounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
 				if ((frame - 88) <= 1U)
 				{
 					Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
@@ -4658,32 +4658,32 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 				if ((frame - 90) <= 1U)
 				{
 					rectangle[work->effect->side](canvas, work->sheet + 0x3081,
-						CounterReveal_PanelX[idx_a * 7 + 2],
-						CounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
+						gCounterReveal_PanelX[idx_a * 7 + 2],
+						gCounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
 				}
 				if ((frame - 92) <= 1U)
 				{
 					rectangle[work->effect->side](canvas, (void *)gMapCellBuffer,
-						CounterReveal_PanelX[idx_a * 7 + 3],
-						CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
+						gCounterReveal_PanelX[idx_a * 7 + 3],
+						gCounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
 				}
 				if ((frame - 94) <= 1U)
 				{
 					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x2d80,
-						CounterReveal_PanelX[idx_a * 7 + 4],
-						CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
+						gCounterReveal_PanelX[idx_a * 7 + 4],
+						gCounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
 				}
 				if ((frame - 96) <= 1U)
 				{
 					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x4b00,
-						CounterReveal_PanelX[idx_a * 7 + 5],
-						CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
+						gCounterReveal_PanelX[idx_a * 7 + 5],
+						gCounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
 				}
 				if ((frame - 98) <= 1U)
 				{
 					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x58d2,
-						CounterReveal_PanelX[idx_a * 7 + 6],
-						CounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
+						gCounterReveal_PanelX[idx_a * 7 + 6],
+						gCounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
 				}
 			}
 		}
@@ -4913,7 +4913,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 						}
 						SceneTransform_ApplyRoll(j * 0x5555);
 						EffectPosition_ApplyBaseAndYOffset(
-							(s32 *)SpinningTriangle_Vertex, (struct EffectPosition *)&vector);
+							(s32 *)gSpinningTriangle_Vertex, (struct EffectPosition *)&vector);
 						point->velocityX = vector.x + screen.x;
 						point->velocityY = vector.y + screen.y + 16;
 					}
@@ -4928,7 +4928,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 							s32 x = from->velocityX + k * (to->velocityX - from->velocityX) / 24;
 							s32 y = from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
-							draw[0](canvas, work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
+							draw[0](canvas, work->sheet + gBattleFx6_FlareCells[size - 1] + 0x1000,
 								x - size, y - size, size * 2, size * 2);
 						}
 					}
@@ -5042,7 +5042,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
 						}
 						SceneTransform_ApplyRoll(j * 0x5555);
 						EffectPosition_ApplyBaseAndYOffset(
-							(s32 *)TriangleStrike_Vertex, (struct EffectPosition *)&vector);
+							(s32 *)gTriangleStrike_Vertex, (struct EffectPosition *)&vector);
 						point->velocityX = vector.x + screen.x;
 						point->velocityY = vector.y + screen.y + 16;
 					}
@@ -5057,7 +5057,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
 							s32 x = from->velocityX + k * (to->velocityX - from->velocityX) / 24;
 							s32 y = from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
-							draw[0](canvas, work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
+							draw[0](canvas, work->sheet + gBattleFx6_FlareCells[size - 1] + 0x1000,
 								x - size, y - size, size * 2, size * 2);
 						}
 					}
@@ -5185,7 +5185,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 					SceneTransform_ApplyScale(&scale);
 					SceneTransform_ApplyRoll(j * 0x199a);
 					depth =
-						EffectPosition_ApplyBaseAndYOffset((s32 *)&RingBolts_Points[j & 1], &pos);
+						EffectPosition_ApplyBaseAndYOffset((s32 *)&gRingBolts_Points[j & 1], &pos);
 					if (peak < depth)
 						peak = depth;
 					pos.x >>= 1;
@@ -5209,7 +5209,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 							s32 x = from->velocityX + (to->velocityX - from->velocityX) * k / 16;
 							s32 y = from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-							draw[0](canvas, graphics + ParticleStreams_CellOffsets[size - 1],
+							draw[0](canvas, graphics + gParticleStreams_CellOffsets[size - 1],
 								x - size / 2, y - size, size, size * 2);
 						}
 					}
@@ -5333,13 +5333,13 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 								trails[i * 10 + j].velocityX =
 									pos.x
 									+ ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11))
-										   * SpinningStars_Radii[j & 1])
+										   * gSpinningStars_Radii[j & 1])
 											/ 2
 										>> 16);
 								trails[i * 10 + j].velocityY =
 									pos.y
 									- (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11))
-											* SpinningStars_Radii[j & 1]
+											* gSpinningStars_Radii[j & 1]
 										>> 16);
 							}
 							for (j = 0; j != 10; j++)
@@ -5355,7 +5355,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 											+ (to->velocityY - from->velocityY) * k / 12;
 
 									draw[0](canvas,
-										graphics + ParticleStreams_CellOffsets[size - 1],
+										graphics + gParticleStreams_CellOffsets[size - 1],
 										x - size / 2, y - size, size, size * 2);
 								}
 							}
@@ -5396,14 +5396,14 @@ typedef struct Scale
 	s32 y;
 } Scale;
 
-extern const struct Scale BattleFx_StarsUnitScale;
-extern u8				  WhirlwindComets_GridX[];
-extern u8				  WhirlwindComets_GridY[];
-extern u16				  WhirlwindComets_Frames[];
-extern u8				  WhirlwindComets_CellWidths[];
-extern u8				  WhirlwindComets_CellHeights[];
-extern u8				  WhirlwindComets_CellBiasY[];
-extern u16				  WhirlwindComets_CellOffsets[];
+extern const struct Scale gBattleFx_StarsUnitScale;
+extern u8				  gWhirlwindComets_GridX[];
+extern u8				  gWhirlwindComets_GridY[];
+extern u16				  gWhirlwindComets_Frames[];
+extern u8				  gWhirlwindComets_CellWidths[];
+extern u8				  gWhirlwindComets_CellHeights[];
+extern u8				  gWhirlwindComets_CellBiasY[];
+extern u16				  gWhirlwindComets_CellOffsets[];
 
 void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 {
@@ -5560,7 +5560,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 				slot = 0;
 				do
 				{
-					if (frame == WhirlwindComets_Frames[slot])
+					if (frame == gWhirlwindComets_Frames[slot])
 					{
 						object->velocityY = 0;
 						ObjectGroup_UpdateMembers(runtime->effect->actors[index], 7, 5, index, 8);
@@ -5694,7 +5694,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 
 		if (frame > 159)
 		{
-			scale = BattleFx_StarsUnitScale;
+			scale = gBattleFx_StarsUnitScale;
 			size = 16;
 			if (frame - 160 <= 64)
 				size = 32;
@@ -5712,9 +5712,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			index = 0;
 			do
 			{
-				place.x = (WhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
+				place.x = (gWhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
 				place.y = 0xff0000 + index * 0x400000;
-				place.z = ((WhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
+				place.z = ((gWhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
 				Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
 				index++;
 			} while (index != 9);
@@ -5756,7 +5756,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 								screen.depth = 350;
 							span = 6 - (screen.depth - 170) / 36;
 							draw[1](draw_destination,
-								graphics + ParticleStreams_CellOffsets[span - 1],
+								graphics + gParticleStreams_CellOffsets[span - 1],
 								screen.x - span / 2, screen.y - span, span, span * 2);
 							point->x -= point->x / dist;
 							point->y -= point->y / dist;
@@ -5772,7 +5772,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 					if (alive > 0)
 					{
 						span = alive / 10 + 1;
-						draw[1](draw_destination, graphics + ParticleStreams_CellOffsets[span - 1],
+						draw[1](draw_destination, graphics + gParticleStreams_CellOffsets[span - 1],
 							(wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4, span,
 							span * 2);
 					}
@@ -5781,7 +5781,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 				slot = 0;
 				do
 				{
-					if (frame == WhirlwindComets_Frames[slot])
+					if (frame == gWhirlwindComets_Frames[slot])
 					{
 						s32 speed;
 						s32 angle;
@@ -5803,7 +5803,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 						} while (index != 96);
 					}
 
-					if (frame >= WhirlwindComets_Frames[0])
+					if (frame >= gWhirlwindComets_Frames[0])
 					{
 						spark = PARTICLES;
 						index = 0;
@@ -5821,7 +5821,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 									screen.depth = 350;
 								span = 3 - (screen.depth - 170) / 90;
 								draw[0](draw_destination,
-									graphics + ParticleStreams_CellOffsets[span - 1],
+									graphics + gParticleStreams_CellOffsets[span - 1],
 									screen.x - span / 2, screen.y - span, span, span * 2);
 								spark[index].x += spark[index].velocityX;
 								spark[index].y += spark[index].velocityY;
@@ -5865,9 +5865,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 						size = (frame - threshold) / 2;
 						if (size > 2)
 							size = 2;
-						draw[1](draw_destination, (u8 *)runtime + WhirlwindComets_CellOffsets[size],
-							mark->x, mark->y - WhirlwindComets_CellBiasY[size],
-							WhirlwindComets_CellWidths[size], WhirlwindComets_CellHeights[size]);
+						draw[1](draw_destination, (u8 *)runtime + gWhirlwindComets_CellOffsets[size],
+							mark->x, mark->y - gWhirlwindComets_CellBiasY[size],
+							gWhirlwindComets_CellWidths[size], gWhirlwindComets_CellHeights[size]);
 						mark->x -= 8;
 						mark->y += 2;
 
@@ -5899,7 +5899,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 									screen.depth = 350;
 								span = 3 - (screen.depth - 170) / 90;
 								draw[0](draw_destination,
-									graphics + ParticleStreams_CellOffsets[span - 1],
+									graphics + gParticleStreams_CellOffsets[span - 1],
 									screen.x - span / 2, screen.y - span, span, span * 2);
 								slot++;
 							} while (slot != 28);
@@ -6136,9 +6136,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 				{
 					grain->x = ((Random16() & 255) - 32) << 16;
 					grain->y = 112 << 16;
-					grain->velocityX = ((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+					grain->velocityX = ((Random16() & 127) + gPaletteParticles_DropSpeeds[i & 3])
 										<< 9;
-					grain->velocityY = -((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+					grain->velocityY = -((Random16() & 127) + gPaletteParticles_DropSpeeds[i & 3])
 										<< 11;
 					grain->variant = 0;
 					spawned++;
@@ -6252,7 +6252,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 
 			if (spark->variant >= 0)
 			{
-				draw[1](canvas, PaletteParticles_SparkPixels, HI(spark->x), HI(spark->y) - size,
+				draw[1](canvas, gPaletteParticles_SparkPixels, HI(spark->x), HI(spark->y) - size,
 					size, size * 2);
 				spark->x += spark->velocityX * dir;
 				spark->y += spark->velocityY;
@@ -6274,10 +6274,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 
 				if (grain->variant >= 0)
 				{
-					u8	size = PaletteParticles_DropSizes[i & 3];
+					u8	size = gPaletteParticles_DropSizes[i & 3];
 					s32 height = size * 2;
 
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
 					grain->x += grain->velocityX * dir;
 					grain->y += grain->velocityY;
@@ -6354,11 +6354,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 					{
 						s32 cel = streak->variant / 2;
 
-						draw[0](canvas, work->sheet + PaletteParticles_StreakOffsets[cel] + 0x3000,
-							streak->x - PaletteParticles_StreakWidths[cel] / 2,
-							streak->y + PaletteParticles_StreakDrops[cel],
-							PaletteParticles_StreakWidths[cel],
-							PaletteParticles_StreakHeights[cel]);
+						draw[0](canvas, work->sheet + gPaletteParticles_StreakOffsets[cel] + 0x3000,
+							streak->x - gPaletteParticles_StreakWidths[cel] / 2,
+							streak->y + gPaletteParticles_StreakDrops[cel],
+							gPaletteParticles_StreakWidths[cel],
+							gPaletteParticles_StreakHeights[cel]);
 					}
 					streak->variant++;
 					if (streak->variant == 12)
@@ -6372,7 +6372,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 					streak->y += 6;
 					if (frame <= 47 && streak->y > 55)
 						AudioCommand_PlayFar(136);
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						streak->x - size / 2, streak->y + 30, size, size * 2);
 				}
 				else
@@ -6551,10 +6551,10 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 				{
 					s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-					draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
-						EmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
-					draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
-						EmberColumns_Columns[k * 2 + 1] - span, 34, span);
+					draw[0](canvas, work->sheet + 0x6e4, gEmberColumns_Columns[k * 2] - 17,
+						gEmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
+					draw[0](canvas, work->sheet + 0x6e4, gEmberColumns_Columns[k * 2] - 17,
+						gEmberColumns_Columns[k * 2 + 1] - span, 34, span);
 				}
 			}
 
@@ -6566,7 +6566,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 			}
 
 			// 粒：68 フレームを過ぎると大きくし、落ちているものは加算合成で描く。
-			// 80 フレームまでは EmberColumns_Gravity で下へ、その後は上へ加速し、
+			// 80 フレームまでは gEmberColumns_Gravity で下へ、その後は上へ加速し、
 			// 速度は毎フレーム 62/64 に減らす。落ちながら y が 104 を越えたら消す
 			for (k = 0; k != 1024; k++)
 			{
@@ -6588,14 +6588,14 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 					if (frame > 76)
 						size = 10;
 					draw[spark->velocityY > 0](canvas,
-						graphics + ParticleStreams_CellOffsets[size - 1], HI(spark->x) - size / 2,
+						graphics + gParticleStreams_CellOffsets[size - 1], HI(spark->x) - size / 2,
 						HI(spark->y) - size, size, size * 2);
 					spark->x += spark->velocityX;
 					spark->y += spark->velocityY;
 					if (frame > 80)
 						spark->velocityY += -0x8000;
 					else
-						spark->velocityY += EmberColumns_Gravity[k & 3];
+						spark->velocityY += gEmberColumns_Gravity[k & 3];
 					spark->velocityX = spark->velocityX * 62 / 64;
 					spark->velocityY = spark->velocityY * 62 / 64;
 					spark->variant++;
@@ -6703,18 +6703,18 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	AudioCommand_PlayFar(164);
 
-	for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++)
+	for (frame = 0; frame != gVortexMotes_Counts[work->effect->variant * 2 + 1]; frame++)
 	{
 		camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
 		if (frame >= 17 && frame < 64)
 			work->cameraDelta = 0x180;
 		else
 			work->cameraDelta = 0;
-		if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
+		if (frame == gVortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
 			BattleEventRuntime_BeginPhaseFar(132);
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-		for (i = 0; i != VortexMotes_Counts[work->effect->variant * 2]; i++)
+		for (i = 0; i != gVortexMotes_Counts[work->effect->variant * 2]; i++)
 		{
 			point = &work->particles[i];
 			if (frame > i * 2 && flags[i] == 0)
@@ -6845,9 +6845,9 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 			REG_BLDALPHA = frame | 0x1000;
 		if (frame > 63)
 			REG_BLDALPHA = (0x4f - frame) | 0x1000;
-		for (i = 0; i != Tornado_Shapes[work->effect->variant * 3]; i++)
+		for (i = 0; i != gTornado_Shapes[work->effect->variant * 3]; i++)
 		{
-			x = ((Tornado_Shapes[work->effect->variant * 3 + 1]
+			x = ((gTornado_Shapes[work->effect->variant * 3 + 1]
 						 * Trig_Sin((frame << 11) + i * 0x4000)
 					 + wave)
 					>> 16)
@@ -6863,9 +6863,9 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 				if (point->variant >= 0)
 				{
 					cell = point->variant / 2 + (j / 2) * 3;
-					draw[j & 1](canvas, work->sheet + BattleFx_GlintCellOffsets[cell], point->x + x,
-						point->y + y, BattleFx_GlintCellWidths[cell],
-						BattleFx_GlintCellHeights[cell]);
+					draw[j & 1](canvas, work->sheet + gBattleFx_GlintCellOffsets[cell], point->x + x,
+						point->y + y, gBattleFx_GlintCellWidths[cell],
+						gBattleFx_GlintCellHeights[cell]);
 				}
 				point->variant++;
 				if (point->variant == 6)
@@ -6888,8 +6888,8 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 			}
 		}
 		work->shakeFrames = 1;
-		Camera_ApplyShake(Tornado_Shapes[work->effect->variant * 3 + 2],
-			Tornado_Shapes[work->effect->variant * 3 + 2] * 2);
+		Camera_ApplyShake(gTornado_Shapes[work->effect->variant * 3 + 2],
+			gTornado_Shapes[work->effect->variant * 3 + 2] * 2);
 		ObjectGroup_TickMemberTimers();
 		work->transferPending = 1;
 		WaitFrames(1);
@@ -6907,7 +6907,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // 結晶が降ってきて地面で砕ける
-// Crystal_Counts は variant ごとに（結晶の数, 全体のフレーム数）
+// gCrystal_Counts は variant ごとに（結晶の数, 全体のフレーム数）
 // 結晶 : particles[]（z は砕けたら 1、variant は降り始めるフレーム）
 // 破片 : gMapCellBuffer に結晶 1 個あたり 16 個（z は回転の速さ）
 //--------------------------------------------------------------------------
@@ -6941,7 +6941,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
 	// 結晶を画面の上に並べ、8 フレームずつずらして降らせる
-	for (j = 0; j != Crystal_Counts[work->effect->variant * 2]; j++)
+	for (j = 0; j != gCrystal_Counts[work->effect->variant * 2]; j++)
 	{
 		seed = &work->particles[j];
 		x = Random16() & 31;
@@ -6962,7 +6962,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 		seed->variant = j * 8;
 	}
 
-	for (frame = 0; frame != Crystal_Counts[work->effect->variant * 2 + 1]; frame++)
+	for (frame = 0; frame != gCrystal_Counts[work->effect->variant * 2 + 1]; frame++)
 	{
 		if (work->effect->variant == 2 && frame <= 103)
 		{
@@ -6979,17 +6979,17 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 			else
 				camera->yaw += speed;
 		}
-		if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 80)
+		if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 80)
 			BattleEventRuntime_BeginPhaseFar(134);
-		if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 8)
+		if (frame == gCrystal_Counts[work->effect->variant * 2 + 1] - 8)
 		{
 			// 最後の 8 フレームは暗くしていく
 			work->transferMode = 3;
 			work->transferValue = 0x06060606;
 		}
-		if (frame <= Crystal_Counts[work->effect->variant * 2 + 1] - 8)
+		if (frame <= gCrystal_Counts[work->effect->variant * 2 + 1] - 8)
 		{
-			for (i = 0; i != Crystal_Counts[work->effect->variant * 2]; i++)
+			for (i = 0; i != gCrystal_Counts[work->effect->variant * 2]; i++)
 			{
 				cry = &work->particles[i];
 				if (cry->z == 1)
@@ -6999,10 +6999,10 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 					{
 						cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
 						shard = &shards[i * 16 + j];
-						draw[j <= 2](canvas, work->sheet + Crystal_ShardOffsets[cell] + 0x800,
-							HI(shard->x) - Crystal_ShardWidths[cell] / 2,
-							HI(shard->y) - Crystal_ShardHeights[cell] / 2,
-							Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);
+						draw[j <= 2](canvas, work->sheet + gCrystal_ShardOffsets[cell] + 0x800,
+							HI(shard->x) - gCrystal_ShardWidths[cell] / 2,
+							HI(shard->y) - gCrystal_ShardHeights[cell] / 2,
+							gCrystal_ShardWidths[cell], gCrystal_ShardHeights[cell]);
 						EffectStep_AdvanceWithGravity2D(shard, 64, 0x2000);
 						shard->variant += shard->z;
 						if (shard->z > 1 && (frame & 1))
@@ -7022,8 +7022,8 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 						for (j = 0; j != 16; j++)
 						{
 							shard = &shards[i * 16 + j];
-							shard->x = ((Crystal_ShardStarts[j * 2] - 40) << 16) + cry->x;
-							shard->y = Crystal_ShardStarts[j * 2 + 1] << 16;
+							shard->x = ((gCrystal_ShardStarts[j * 2] - 40) << 16) + cry->x;
+							shard->y = gCrystal_ShardStarts[j * 2 + 1] << 16;
 							shard->velocityX = ((Random16() & 127) - 64) << 11;
 							shard->velocityY = -(Random16() & 127) << 11;
 							if (i & 1)
@@ -7161,7 +7161,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 	work->transferMode = 2;
 	work->transferValue = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	count = LightningPillar_Counts[work->effect->variant];
+	count = gLightningPillar_Counts[work->effect->variant];
 
 	for (frame = 0; frame != count * 8 - count + 48; frame++)
 	{
@@ -7197,11 +7197,11 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 			if (frame >= start && frame < start + 9)
 			{
 				if (frame >= start + 1 && frame < start + 2)
-					draw[0](canvas, work, LightningPillar_Columns[i + work->effect->side * 7] - 24,
+					draw[0](canvas, work, gLightningPillar_Columns[i + work->effect->side * 7] - 24,
 						0, 48, 112);
 				if (frame >= start + 2 && frame < start + 4)
 					draw[0](canvas, work->sheet + 0x1500,
-						LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
+						gLightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
 
 				// 柱の根もと (y = 104) から上向き ±90 度へ火花を散らし、画面を揺らす
 				if (frame == start + 2)
@@ -7219,17 +7219,17 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 							speed = (Random16() & 0x3ff) + 32;
 							angle = (Random16() & 0x7fff) - 0x4000;
 
-							spark->x = LightningPillar_Columns[i + work->effect->side * 7] << 16;
+							spark->x = gLightningPillar_Columns[i + work->effect->side * 7] << 16;
 							spark->y = 104 << 16;
 							spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
 							spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
 							spark->variant = (Random16() & 7) + 32;
 							n++;
-							if (n == LightningPillar_Sparks[work->effect->variant * 2])
+							if (n == gLightningPillar_Sparks[work->effect->variant * 2])
 								break;
 						}
 					}
-					work->shakeFrames = LightningPillar_Sparks[work->effect->variant * 2 + 1];
+					work->shakeFrames = gLightningPillar_Sparks[work->effect->variant * 2 + 1];
 				}
 			}
 			if (frame == start + 4)
@@ -7264,7 +7264,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 					{
 						y = spark->y >> 16;
 						size = spark->variant / 8 + 1;
-						draw[k & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						draw[k & 1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 							x - size / 2, y - size, size, size * 2);
 					}
 				}
@@ -7365,7 +7365,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 	}
 	sparks = gMapCellBuffer;
 
-	for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
+	for (i = 0; i != gSparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
 	{
 		for (j = 0; j != 16; j++)
 		{
@@ -7379,19 +7379,19 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 			point->y = -(Trig_Cos(angle) * radius);
 			point->variant = j / 2 + 25;
 		}
-		for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++)
+		for (j = 0; j != gSparkGroups_Shapes[work->effect->variant * 5]; j++)
 		{
 			s32 speed;
 			s32 angle;
 
-			spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
+			spark = &sparks[i * gSparkGroups_Shapes[work->effect->variant * 5]] + j;
 			speed = (Random16() & 0x3ff) + 32;
 			angle = Random16() & 0xffff;
 			if (work->effect->side == 1)
-				spark->x = (originX - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28)
+				spark->x = (originX - gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28)
 						   << 16;
 			else
-				spark->x = (originX + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28)
+				spark->x = (originX + gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28)
 						   << 16;
 			spark->y = originY << 16;
 			spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -7403,7 +7403,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 	work->transferValue = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	for (frame = 0; frame != SparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++)
+	for (frame = 0; frame != gSparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++)
 	{
 		struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + HEAP_SLOT_CAMERA);
 
@@ -7429,7 +7429,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 			if (frame == 24)
 				BattleEventRuntime_BeginPhaseFar(134);
 		}
-		for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
+		for (i = 0; i != gSparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
 		{
 			start = i * 8;
 			if (frame == start)
@@ -7438,11 +7438,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 			{
 				if (work->effect->side == 1)
 					draw[0](canvas, work,
-						originX - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 12,
+						originX - gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 12,
 						originY - 32, 32, 64);
 				else
 					draw[0](canvas, work,
-						originX + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 44,
+						originX + gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 44,
 						originY - 32, 32, 64);
 			}
 			if (frame >= start)
@@ -7456,13 +7456,13 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 					y = ((s16 *)&point->y)[1] + originY;
 					if (work->effect->side == 1)
 						x = ((s16 *)&point->x)[1] + originX
-							- SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
+							- gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
 					else
 						x = ((s16 *)&point->x)[1] + originX
-							+ SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
+							+ gSparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
 					if (point->variant >= 0 && point->variant < 18)
 						draw[0](canvas,
-							work->sheet + (SparkGroups_FlashCells[point->variant / 3] << 11),
+							work->sheet + (gSparkGroups_FlashCells[point->variant / 3] << 11),
 							x - 16, y - 32, 32, 64);
 					if (point->variant > 0)
 						point->variant--;
@@ -7478,9 +7478,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 					gravity = -0x1000;
 				else
 					gravity = 0x1000;
-				for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++)
+				for (j = 0; j != gSparkGroups_Shapes[work->effect->variant * 5]; j++)
 				{
-					spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
+					spark = &sparks[i * gSparkGroups_Shapes[work->effect->variant * 5]] + j;
 					if (spark->variant > 0)
 					{
 						EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
@@ -7495,7 +7495,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 							s32 x = spark->x >> 16;
 							s32 size = spark->variant / 5 + 1;
 
-							draw[j & 1](canvas, graphics + ParticleStreams_CellOffsets[size - 1],
+							draw[j & 1](canvas, graphics + gParticleStreams_CellOffsets[size - 1],
 								x - size / 2, y - size, size, size * 2);
 						}
 					}
@@ -7570,7 +7570,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 		x = ((Random16() & 15) + 72) << 16;
 		base->y = 0;
 		base->x = x;
-		base->z = FirePillars_Depths[work->effect->variant][i] << 16;
+		base->z = gFirePillars_Depths[work->effect->variant][i] << 16;
 		if (object->x < 0)
 			base->x = -x;
 	}
@@ -7596,14 +7596,14 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
 		if (frame < 64)
 		{
-			for (pillar = 0; pillar != FirePillars_Counts[work->effect->variant]; pillar++)
+			for (pillar = 0; pillar != gFirePillars_Counts[work->effect->variant]; pillar++)
 			{
 				EffectPosition_ApplyBaseAndYOffset((s32 *)&work->particles[pillar], &screen);
 				screen.x /= 2;
 				screen.y -= 8;
-				if (frame == FirePillars_StartFrames[pillar])
+				if (frame == gFirePillars_StartFrames[pillar])
 					AudioCommand_PlayFar(145);
-				if (frame >= FirePillars_StartFrames[pillar] + 4)
+				if (frame >= gFirePillars_StartFrames[pillar] + 4)
 				{
 					s32 scroll = (frame * 16 + pillar * 25) % 104;
 
@@ -7620,8 +7620,8 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 						draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24, 20, 37);
 					}
 				}
-				if (frame == FirePillars_StartFrames[pillar]
-					|| frame >= FirePillars_StartFrames[pillar] + 16)
+				if (frame == gFirePillars_StartFrames[pillar]
+					|| frame >= gFirePillars_StartFrames[pillar] + 16)
 				{
 					s32 spawned = 0;
 
@@ -7641,7 +7641,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 							spark->z = (Trig_Sin(angle) * speed) >> 15;
 							spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
 							spawned++;
-							if (frame == FirePillars_StartFrames[pillar])
+							if (frame == gFirePillars_StartFrames[pillar])
 							{
 								spark->variant = (Random16() & 7) + 48;
 								if (spawned == 200)
@@ -7656,7 +7656,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 						}
 					}
 				}
-				if (frame == FirePillars_StartFrames[pillar])
+				if (frame == gFirePillars_StartFrames[pillar])
 				{
 					work->shakeFrames = 2;
 					for (i = 0; i != work->effect->count; i++)
@@ -7696,7 +7696,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
 					if (size <= 0)
 						size = 1;
-					draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[i & 1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						px - size / 2, py - size, size, size * 2);
 				}
 			}
@@ -7913,15 +7913,15 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 					angle = Random16() & 0xffff;
 					radius = (Random16() & 31) + 4;
 					x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17)
-						- (BattleFx_GlintCellWidths[frame & 3] >> 1);
+						- (gBattleFx_GlintCellWidths[frame & 3] >> 1);
 					y = base.y - ((Trig_Cos(angle) * radius) >> 16)
-						- (BattleFx_GlintCellHeights[frame & 3] >> 1);
+						- (gBattleFx_GlintCellHeights[frame & 3] >> 1);
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						3 | RenderMode_GlintFlips[Random16() & 3], 2);
+						3 | gRenderMode_GlintFlips[Random16() & 3], 2);
 					((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-						work->sheet + BattleFx_GlintCellOffsets[frame & 3] + RENDER_MODE_TORNADO, x,
-						y + 16, BattleFx_GlintCellWidths[frame & 3],
-						BattleFx_GlintCellHeights[frame & 3]);
+						work->sheet + gBattleFx_GlintCellOffsets[frame & 3] + RENDER_MODE_TORNADO, x,
+						y + 16, gBattleFx_GlintCellWidths[frame & 3],
+						gBattleFx_GlintCellHeights[frame & 3]);
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 				}
 			}
@@ -8315,7 +8315,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 				if (screen.depth > 634)
 					screen.depth = 634;
 				size = 9 - (screen.depth - 250) / 64;
-				callbacks[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				callbacks[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					screen.x - size / 2, screen.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(spark, 60, 0);
 				if (frame > i + 30)
@@ -8408,8 +8408,8 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 							cel = 3 - (view.depth - 314) / 128;
 							cel = (i * 4 + frame) % 9;
 							{
-								u8 *cell = sheet + BattleFx_PuffCells[cel];
-								u32 edge = BattleFx_PuffSizes[cel];
+								u8 *cell = sheet + gBattleFx_PuffCells[cel];
+								u32 edge = gBattleFx_PuffSizes[cel];
 								u32 half = edge >> 1;
 
 								draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);
@@ -8481,7 +8481,7 @@ void BattleFx_RunNoEffectFrames(s32 cnt)
 //--------------------------------------------------------------------------
 
 typedef void (*Callback)(s32 *);
-extern Callback BattleFx_ModeHandlers[];
+extern Callback gBattleFx_ModeHandlers[];
 
 //--------------------------------------------------------------------------
 // 演出の作業領域を取り、種類（arg[0]）ごとの演出を流して返す
@@ -8546,7 +8546,7 @@ void BattleFx_InitializeMode(s32 *arg)
 }
 
 //--------------------------------------------------------------------------
-// 演出の作業領域を取り、BattleFx_ModeHandlers の表から演出を流す
+// 演出の作業領域を取り、gBattleFx_ModeHandlers の表から演出を流す
 // 種類 0 は演出なしで、variant（arg[6]）を 0 にする
 // arg : struct BattleEffectArgument
 //--------------------------------------------------------------------------
@@ -8565,7 +8565,7 @@ void BattleFx_DispatchMode(s32 *arg)
 	if (kind == 0)
 		arg[6] = 0;
 	else
-		BattleFx_ModeHandlers[kind - 1](arg);
+		gBattleFx_ModeHandlers[kind - 1](arg);
 
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
@@ -8878,9 +8878,9 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 		{
 			s32 pose = (frame - 48) / 24 % 3;
 
-			AnimationObjects_SelectAnimationFar(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
+			AnimationObjects_SelectAnimationFar(work->objects[3], gThornVines_ObjectPoses[pose * 2]);
 			AnimationObjects_SelectAnimationFar(
-				work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
+				work->objects[4], gThornVines_ObjectPoses[pose * 2 + 1]);
 		}
 
 		// とげを 1 フレームに 1 本ずつ飛ばす
@@ -8895,12 +8895,12 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 					s32 cel = (frame + i) / 4 % 5;
 					s32 x = HI(thorn->x);
 					s32 y = thorn->y >> 16;
-					u8 *cell = work->sheet + ThornVines_ThornOffsets[cel];
-					u32 width = ThornVines_ThornWidths[cel];
+					u8 *cell = work->sheet + gThornVines_ThornOffsets[cel];
+					u32 width = gThornVines_ThornWidths[cel];
 					u32 tall;
 
 					x -= width >> 1;
-					tall = ThornVines_ThornHeights[cel];
+					tall = gThornVines_ThornHeights[cel];
 					y -= tall >> 1;
 					draw[0](canvas, cell, x, y, width, tall);
 					EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
@@ -8976,13 +8976,13 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 					{
 						s32 y = ((vine->y - top) & 127) - 16;
 						s32 kind = i % 3;
-						s32 full = ThornVines_LeafSizes[kind];
+						s32 full = gThornVines_LeafSizes[kind];
 						s32 rows = full;
 
 						if (y + rows > vine->y)
 							rows -= y + rows - vine->y;
 						if (rows > 0)
-							draw[i & 1](canvas, work->sheet + ThornVines_LeafOffsets[kind],
+							draw[i & 1](canvas, work->sheet + gThornVines_LeafOffsets[kind],
 								vine->x + 8, y, full, rows);
 					}
 				}
@@ -8999,8 +8999,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 				{
 					s32 cel = i % 5;
 
-					draw[0](canvas, work->sheet + ThornVines_ChipOffsets[cel], HI(chip->x),
-						HI(chip->y), ThornVines_ChipWidths[cel], ThornVines_ChipHeights[cel]);
+					draw[0](canvas, work->sheet + gThornVines_ChipOffsets[cel], HI(chip->x),
+						HI(chip->y), gThornVines_ChipWidths[cel], gThornVines_ChipHeights[cel]);
 					chip->x += chip->velocityX;
 					chip->y += chip->velocityY;
 					chip->velocityY += 0x4000;
@@ -9067,8 +9067,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 					}
 					if (spark->variant >= 0 && spark->variant <= 4)
 					{
-						u8 *cell = work->sheet + ThornVines_SparkOffsets[spark->variant];
-						u32 size = ThornVines_SparkSizes[spark->variant];
+						u8 *cell = work->sheet + gThornVines_SparkOffsets[spark->variant];
+						u32 size = gThornVines_SparkSizes[spark->variant];
 						u32 half = size >> 1;
 
 						draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
@@ -9224,8 +9224,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 						if (ember->variant >= 0 && ember->variant <= 26)
 						{
 							s32 cel = 6;
-							s32 offset = ThornVines_EmberOffsets[cel];
-							u32 size = ThornVines_EmberSizes[cel];
+							s32 offset = gThornVines_EmberOffsets[cel];
+							u32 size = gThornVines_EmberSizes[cel];
 
 							draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
 								screen.y - (size >> 1), size, size);
@@ -9262,7 +9262,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 // 岩と氷塊
 //--------------------------------------------------------------------------
 
-extern const Scale BattleFx10_UnitScale;
+extern const Scale gBattleFx10_UnitScale;
 
 #define TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00)) // PARTICLES[128] から
 
@@ -9337,8 +9337,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 
 	for (i = 0; i != 32; i++)
 	{
-		pts[i][0] = BattleFx10_Points[i][0];
-		pts[i][1] = BattleFx10_Points[i][1];
+		pts[i][0] = gBattleFx10_Points[i][0];
+		pts[i][1] = gBattleFx10_Points[i][1];
 	}
 
 	AudioCommand_PlayFar(141);
@@ -9408,8 +9408,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		}
 		if (frame >= 176 && frame < 180)
 		{
-			ox = -BattleFx10_ShakeOffsets[frame - 176];
-			oy = BattleFx10_ShakeOffsets[frame - 176];
+			ox = -gBattleFx10_ShakeOffsets[frame - 176];
+			oy = gBattleFx10_ShakeOffsets[frame - 176];
 			((struct BgScrollWords *)gBgScroll)->unk04 = ox;
 			((struct BgScrollWords *)gBgScroll)->unk06 = oy + 32;
 		}
@@ -9417,13 +9417,13 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		for (i = 0; i != count; i++)
 		{
 			s32 n = i % 3;
-			draw(canvas, work->sheet + BattleFx10_RockCells[n], BattleFx10_Points[i][0] - ox,
-				BattleFx10_Points[i][1] - BattleFx10_RockHeights[n] - oy, BattleFx10_RockWidths[n],
-				BattleFx10_RockHeights[n]);
+			draw(canvas, work->sheet + gBattleFx10_RockCells[n], gBattleFx10_Points[i][0] - ox,
+				gBattleFx10_Points[i][1] - gBattleFx10_RockHeights[n] - oy, gBattleFx10_RockWidths[n],
+				gBattleFx10_RockHeights[n]);
 		}
 
 		// 3×3 のオブジェクトを 32 ドットおきに並べる
-		scale = BattleFx10_UnitScale;
+		scale = gBattleFx10_UnitScale;
 		if (frame == 174)
 		{
 			for (i = 0; i != 9; i++)
@@ -9440,7 +9440,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		if (frame > 208)
 		{
 			AnimationObjects_SelectAnimationFar(
-				work->objects[2], BattleFx10_Animations[(frame / 4) & 3]);
+				work->objects[2], gBattleFx10_Animations[(frame / 4) & 3]);
 		}
 
 		scale.x = 0x10000;
@@ -9548,9 +9548,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 					{
 						n = i & 3;
 					}
-					draw_alt(canvas, work->sheet + BattleFx10_DebrisCells[n], HI(PARTICLES[i].x),
-						HI(PARTICLES[i].y), BattleFx10_DebrisWidths[n],
-						BattleFx10_DebrisHeights[n]);
+					draw_alt(canvas, work->sheet + gBattleFx10_DebrisCells[n], HI(PARTICLES[i].x),
+						HI(PARTICLES[i].y), gBattleFx10_DebrisWidths[n],
+						gBattleFx10_DebrisHeights[n]);
 					PARTICLES[i].x += PARTICLES[i].velocityX;
 					PARTICLES[i].y += PARTICLES[i].velocityY;
 					PARTICLES[i].velocityY += 0x2000;
@@ -9579,9 +9579,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 					s32 n = i % 3;
 					if ((i & 1) == 0)
 					{
-						draw(canvas, work->sheet + BattleFx10_SprayCells[n], HI(PARTICLES[i].x),
-							HI(PARTICLES[i].y), BattleFx10_SprayWidths[n],
-							BattleFx10_SprayHeights[n]);
+						draw(canvas, work->sheet + gBattleFx10_SprayCells[n], HI(PARTICLES[i].x),
+							HI(PARTICLES[i].y), gBattleFx10_SprayWidths[n],
+							gBattleFx10_SprayHeights[n]);
 					}
 					PARTICLES[i].x += PARTICLES[i].velocityX;
 					PARTICLES[i].y += PARTICLES[i].velocityY;
@@ -9609,8 +9609,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 				if (frame >= i + 228)
 				{
 					s32 n = q->variant / 2 % 9;
-					s32 sz = BattleFx_PuffSizes[n];
-					draw(canvas, dots + BattleFx_PuffCells[n], HI(q->x) - sz / 2, HI(q->y) - sz / 2,
+					s32 sz = gBattleFx_PuffSizes[n];
+					draw(canvas, dots + gBattleFx_PuffCells[n], HI(q->x) - sz / 2, HI(q->y) - sz / 2,
 						sz, sz);
 					if (++q->variant == 18)
 					{
@@ -9691,9 +9691,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 			for (i = 0; i != count; i++)
 			{
 				s32 n = i % 3;
-				draw(canvas, work->sheet + BattleFx10_BoulderCells[n], BattleFx10_Points[i][0] - 56,
-					BattleFx10_Points[i][1] - BattleFx10_BoulderHeights[n],
-					BattleFx10_BoulderWidths[n], BattleFx10_BoulderHeights[n]);
+				draw(canvas, work->sheet + gBattleFx10_BoulderCells[n], gBattleFx10_Points[i][0] - 56,
+					gBattleFx10_Points[i][1] - gBattleFx10_BoulderHeights[n],
+					gBattleFx10_BoulderWidths[n], gBattleFx10_BoulderHeights[n]);
 			}
 		}
 		// 大岩が崩れ、破片 64 個を岩の位置から跳ねあげる
@@ -9701,8 +9701,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		{
 			for (i = 0; i != 64; i++)
 			{
-				work->particles[i].x = (BattleFx10_Points[i & 15][0] - 56) << 16;
-				work->particles[i].y = BattleFx10_Points[i & 15][1] << 16;
+				work->particles[i].x = (gBattleFx10_Points[i & 15][0] - 56) << 16;
+				work->particles[i].y = gBattleFx10_Points[i & 15][1] << 16;
 				work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
 				work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
 			}
@@ -9726,9 +9726,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 				if (y <= 135)
 				{
 					s32 n = i % 3;
-					draw(canvas, work->sheet + BattleFx10_FallCells[n], HI(q->x),
-						y - BattleFx10_FallHeights[n], BattleFx10_FallWidths[n],
-						BattleFx10_FallHeights[n]);
+					draw(canvas, work->sheet + gBattleFx10_FallCells[n], HI(q->x),
+						y - gBattleFx10_FallHeights[n], gBattleFx10_FallWidths[n],
+						gBattleFx10_FallHeights[n]);
 					EffectStep_AdvanceWithGravity2D(q, 64, 1 << 16);
 					if (HI(q->y) > 120 && q->velocityY > 8 << 16)
 					{
@@ -9772,8 +9772,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 				if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18)
 				{
 					s32 n = PARTICLES[i].variant / 2 % 9;
-					s32 sz = BattleFx_PuffSizes[n];
-					draw(canvas, dots + BattleFx_PuffCells[n], PARTICLES[i].x - sz / 2,
+					s32 sz = gBattleFx_PuffSizes[n];
+					draw(canvas, dots + gBattleFx_PuffCells[n], PARTICLES[i].x - sz / 2,
 						PARTICLES[i].y - sz / 2, sz, sz);
 				}
 				if (++PARTICLES[i].variant == 18 && frame <= 127)
@@ -9912,9 +9912,9 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 						s32 size;
 
 						size = i % 3 + 1;
-						draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						draw(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 							HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
-						EffectStep_AdvanceWithGravity2D(shard, 62, IceShardBursts_Gravities[i & 3]);
+						EffectStep_AdvanceWithGravity2D(shard, 62, gIceShardBursts_Gravities[i & 3]);
 						shard->variant++;
 						if (shard->velocityY > 0 && HI(shard->y) > 112)
 							shard->variant = -1;
@@ -10043,7 +10043,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 						EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
 						screen.x >>= 1;
 						size = 6;
-						draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						draw(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 							screen.x - size / 2, screen.y - size, size, size * 2);
 						EffectStep_AdvanceWithGravity3D(mote, 62, 0);
 
@@ -10436,15 +10436,15 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 								size = (i * 4 + frame) % 9;
 							if (mode == 0 || mode == 3 || mode == 4 || mode == 5)
 							{
-								u8 *cell = work->sheet + BattleFx_PuffCells[size];
-								u32 edge = BattleFx_PuffSizes[size];
+								u8 *cell = work->sheet + gBattleFx_PuffCells[size];
+								u32 edge = gBattleFx_PuffSizes[size];
 								u32 half = edge >> 1;
 
 								draw[1](canvas, cell, screen.x - half, screen.y - half, edge, edge);
 							}
 							else
 							{
-								draw[1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+								draw[1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 									screen.x - size / 2, screen.y - size, size, size * 2);
 							}
 
@@ -10743,7 +10743,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 							if (screen.depth > 634)
 								screen.depth = 634;
 							size = 6 - (screen.depth - 314) / 64;
-							draw[1](canvas, work->sheet + BattleFx6_FlareCells[size - 1],
+							draw[1](canvas, work->sheet + gBattleFx6_FlareCells[size - 1],
 								screen.x - size, screen.y - size, size * 2, size * 2);
 							flare->x -= flare->x / distance;
 							flare->y -= flare->y / distance;
@@ -11027,9 +11027,9 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 						x = screen.x + x_offset;
 						y = screen.y;
 						callbacks[0](canvas,
-							work->sheet + (level * RAMP_SIZE + PaletteRamp_ShardCells[cell])
+							work->sheet + (level * RAMP_SIZE + gPaletteRamp_ShardCells[cell])
 								+ RAMP_IMAGE,
-							x, y, PaletteRamp_ShardWidths[cell], PaletteRamp_ShardHeights[cell]);
+							x, y, gPaletteRamp_ShardWidths[cell], gPaletteRamp_ShardHeights[cell]);
 						EffectStep_AdvanceWithGravity3D(shard, 60, 0);
 					}
 				}
@@ -11137,20 +11137,20 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *effect)
 			if ((p->variant >= 0) && (p->variant <= 23))
 			{
 				cell = p->variant / 4;
-				draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
-					p->x - ((w = PuffArc_CellWidths[cell]) >> 1), p->y + PuffArc_CellBiasY[cell], w,
-					PuffArc_CellHeights[cell]);
+				draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+					p->x - ((w = gPuffArc_CellWidths[cell]) >> 1), p->y + gPuffArc_CellBiasY[cell], w,
+					gPuffArc_CellHeights[cell]);
 				if (work->effect->variant != 0)
 				{
-					draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
-						p->x - ((w = PuffArc_CellWidths[cell]) >> 1),
-						(p->y + PuffArc_CellBiasY[cell]) - 16, w, PuffArc_CellHeights[cell]);
+					draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+						p->x - ((w = gPuffArc_CellWidths[cell]) >> 1),
+						(p->y + gPuffArc_CellBiasY[cell]) - 16, w, gPuffArc_CellHeights[cell]);
 				}
 				if (work->effect->variant == 2)
 				{
-					draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
-						p->x - ((w = PuffArc_CellWidths[cell]) >> 1),
-						(p->y + PuffArc_CellBiasY[cell]) - 32, w, PuffArc_CellHeights[cell]);
+					draw(canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+						p->x - ((w = gPuffArc_CellWidths[cell]) >> 1),
+						(p->y + gPuffArc_CellBiasY[cell]) - 32, w, gPuffArc_CellHeights[cell]);
 				}
 			}
 			i += 1;
@@ -11208,7 +11208,7 @@ s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out)
 	return n;
 }
 
-// RockWall_Timings[variant] の並び
+// gRockWall_Timings[variant] の並び
 enum
 {
 	TIMING_FRAMES,		// 全体のフレーム数
@@ -11230,7 +11230,7 @@ struct RockWallHeights
 //--------------------------------------------------------------------------
 // 岩の柱を左から 4 フレームおきに 3 本せり上げて沈め、上に乗った対象を
 // 打ち上げる。柱の頭には背景から切り出した帯をのせる
-// effect->variant で RockWall_Timings の行を選ぶ
+// effect->variant で gRockWall_Timings の行を選ぶ
 //--------------------------------------------------------------------------
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 {
@@ -11293,15 +11293,15 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	work->transferMode = 1;				 // 転送のたびにキャンバスを 0 で消す
 	work->transferValue = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	heights = (*(const struct RockWallHeights *)&RockWall_Heights);
+	heights = (*(const struct RockWallHeights *)&gRockWall_Heights);
 	work->shakeFrames = 128;
 	AudioCommand_PlayFar(141);
 
-	for (frame = 0; frame != RockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++)
+	for (frame = 0; frame != gRockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++)
 	{
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-		if (frame == RockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
+		if (frame == gRockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
 			BattleEventRuntime_BeginPhaseFar(133); // 終わりの 16 フレーム前に結果へ進む
 
 		// 柱は 16・20・24 フレーム目から出る
@@ -11312,7 +11312,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 			if ((frame & 31) + 32 == start) // 左辺は 32 以上なので成り立たない
 				heights.column[column] += 32;
 			if (frame >= start
-				&& frame < start + RockWall_Timings[work->effect->variant][TIMING_RISE_FRAMES])
+				&& frame < start + gRockWall_Timings[work->effect->variant][TIMING_RISE_FRAMES])
 			{
 				s32 height;
 				s32 top;
@@ -11362,8 +11362,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 5);
 			}
 		}
-		Camera_ApplyShake(RockWall_Timings[work->effect->variant][TIMING_SHAKE],
-			RockWall_Timings[work->effect->variant][TIMING_SHAKE]);
+		Camera_ApplyShake(gRockWall_Timings[work->effect->variant][TIMING_SHAKE],
+			gRockWall_Timings[work->effect->variant][TIMING_SHAKE]);
 		ObjectGroup_TickMemberTimers();
 		work->transferPending = 1;
 		WaitFrames(1);
@@ -11381,7 +11381,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // 火の粉を 1 フレームに 2 個ずつ飛ばし、出てから 48 フレーム後に対象へ向かわせる
 // 地面に落ちた火の粉は着弾の絵を 12 フレーム出す
-// effect : variant で火の粉の数 (HomingEmbers_Counts) を選ぶ
+// effect : variant で火の粉の数 (gHomingEmbers_Counts) を選ぶ
 //--------------------------------------------------------------------------
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 {
@@ -11445,13 +11445,13 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 	work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	for (frame = 0; frame != (HomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++)
+	for (frame = 0; frame != (gHomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++)
 	{
 		if (frame > 16 && frame < 80)
 			work->cameraDelta = 0x100;
 		else
 			work->cameraDelta = 0;
-		if (frame == (HomingEmbers_Counts[work->effect->variant] >> 1) + 108)
+		if (frame == (gHomingEmbers_Counts[work->effect->variant] >> 1) + 108)
 			BattleEventRuntime_BeginPhaseFar(133);
 		BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
 		Render_ResetTransformState();
@@ -11460,7 +11460,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 		//------------------------------------------------------------------
 		// 飛んでいる火の粉
 		//------------------------------------------------------------------
-		for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++)
+		for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++)
 		{
 			struct EffectStep *ember = &PARTICLES[i];
 			s32				   start;
@@ -11479,7 +11479,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 					screen.depth = 799;
 				size = 10 - (screen.depth - 160) / 64;
 				draw[frame < start + 48 ? 1 : 0](canvas,
-					sheet + ParticleStreams_CellOffsets[size - 1], screen.x - size / 2,
+					sheet + gParticleStreams_CellOffsets[size - 1], screen.x - size / 2,
 					screen.y - size, size, size * 2);
 				ember->x += ember->velocityX;
 				ember->y += ember->velocityY;
@@ -11524,7 +11524,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 		//------------------------------------------------------------------
 		// 着弾の絵 (2 フレームごとに進め、6 枚で終わる)
 		//------------------------------------------------------------------
-		for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++)
+		for (i = 0; i != gHomingEmbers_Counts[work->effect->variant]; i++)
 		{
 			struct EffectStep *ember = &PARTICLES[i];
 
@@ -11534,10 +11534,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 				u32 width;
 
 				cel = ember->variant / 2;
-				draw[1](canvas, work->sheet + HomingEmbers_FlareCells[cel],
-					ember->x - ((width = HomingEmbers_FlareWidths[cel]) >> 1),
-					ember->y + HomingEmbers_FlareBiasY[cel] - 56, width,
-					HomingEmbers_FlareHeights[cel]);
+				draw[1](canvas, work->sheet + gHomingEmbers_FlareCells[cel],
+					ember->x - ((width = gHomingEmbers_FlareWidths[cel]) >> 1),
+					ember->y + gHomingEmbers_FlareBiasY[cel] - 56, width,
+					gHomingEmbers_FlareHeights[cel]);
 				ember->variant++;
 			}
 		}
@@ -11557,7 +11557,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-// RisingMotes_Timings の 1 組 (variant ごと)
+// gRisingMotes_Timings の 1 組 (variant ごと)
 enum
 {
 	RISE_MOTES,	  // 昇る粒の数
@@ -11617,12 +11617,12 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 	if (work->effect->side == 1)
 		REG_BG2X = -0x7000;
 
-	for (frame = 0; frame != RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 75;
+	for (frame = 0; frame != gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 75;
 		frame++)
 	{
 		ymin = 120 << 16;
 		ymax = 0;
-		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 11)
+		if (frame == gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 11)
 			BattleEventRuntime_BeginPhaseFar(132);
 		point[0] = 0;
 		point[1] = 0;
@@ -11643,11 +11643,11 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 		// 粒 : はじけるまでは半径を縮め、5 ドットずつ 48 ドットまで昇りながら回る。
 		// はじけたあとは半径を広げて落ち、高さの上下限を求める
 		//------------------------------------------------------------------
-		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
-			count = RisingMotes_Timings[work->effect->variant * 3 + RISE_MOTES];
+		if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+			count = gRisingMotes_Timings[work->effect->variant * 3 + RISE_MOTES];
 		else
 			count = 16;
-		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
+		if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
 		{
 			for (i = 0; i != count; i++)
 			{
@@ -11668,11 +11668,11 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 						EffectPosition_ApplyBaseAndYOffset(xyz, pos = &screen);
 						pos->x = (pos->x >> 17) + 64;
 						pos->y = HI(pos->y) + 60;
-						draw[1](canvas, work->sheet + RisingMotes_MoteCells[cel],
-							pos->x - ((width = RisingMotes_MoteWidths[cel]) >> 1),
-							pos->y - ((height = RisingMotes_MoteHeights[cel]) >> 1), width, height);
+						draw[1](canvas, work->sheet + gRisingMotes_MoteCells[cel],
+							pos->x - ((width = gRisingMotes_MoteWidths[cel]) >> 1),
+							pos->y - ((height = gRisingMotes_MoteHeights[cel]) >> 1), width, height);
 					}
-					if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+					if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 					{
 						if (frame > i + 16)
 						{
@@ -11699,29 +11699,29 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 		ymax += 64 << 16;
 
 		// 柱 (幅 32) : 36 フレーム目から 3 フレームおきに 1 本ずつ立てる
-		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		if (frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 		{
-			for (i = 0; i != RisingMotes_Timings[work->effect->variant * 3 + RISE_COLUMNS]; i++)
+			for (i = 0; i != gRisingMotes_Timings[work->effect->variant * 3 + RISE_COLUMNS]; i++)
 			{
 				if (i < (frame - 36) / 3)
 				{
 					s32 cel = i % 3;
 					u32 height;
 
-					if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] - 7)
+					if (frame >= gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] - 7)
 					{
-						draw[1](canvas, work->sheet + RisingMotes_ColumnCells[cel],
-							RisingMotes_ColumnSpots[i * 2],
-							RisingMotes_ColumnSpots[i * 2 + 1]
-								- (height = RisingMotes_ColumnHeights[cel]),
+						draw[1](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
+							gRisingMotes_ColumnSpots[i * 2],
+							gRisingMotes_ColumnSpots[i * 2 + 1]
+								- (height = gRisingMotes_ColumnHeights[cel]),
 							32, height);
 					}
 					else
 					{
-						pair[0](canvas, work->sheet + RisingMotes_ColumnCells[cel],
-							RisingMotes_ColumnSpots[i * 2],
-							RisingMotes_ColumnSpots[i * 2 + 1]
-								- (height = RisingMotes_ColumnHeights[cel]),
+						pair[0](canvas, work->sheet + gRisingMotes_ColumnCells[cel],
+							gRisingMotes_ColumnSpots[i * 2],
+							gRisingMotes_ColumnSpots[i * 2 + 1]
+								- (height = gRisingMotes_ColumnHeights[cel]),
 							32, height);
 					}
 				}
@@ -11729,7 +11729,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 		}
 
 		// 破片 : はじけたとき、下の方から上へ 32 個を飛ばす (描くのは 24 個)
-		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		if (frame == gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 		{
 			for (i = 0; i != 32; i++)
 			{
@@ -11742,7 +11742,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 				chip->variant = (Random16() & 15) + 16;
 			}
 		}
-		if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		if (frame >= gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 		{
 			for (i = 0; i != 24; i++)
 			{
@@ -11752,8 +11752,8 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 				{
 					s32 cel = i % 8;
 
-					draw[1](canvas, work->sheet + RisingMotes_EmberCells[cel], HI(chip->x),
-						HI(chip->y), RisingMotes_EmberWidths[cel], RisingMotes_EmberHeights[cel]);
+					draw[1](canvas, work->sheet + gRisingMotes_EmberCells[cel], HI(chip->x),
+						HI(chip->y), gRisingMotes_EmberWidths[cel], gRisingMotes_EmberHeights[cel]);
 					chip->x += chip->velocityX;
 					chip->y += chip->velocityY;
 					chip->variant--;
@@ -11770,7 +11770,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 			ymax = ymin + 1;
 
 		// 煙 : 粒と破片の高さの範囲に出し、1 フレームに 1/2 ドット上がる
-		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		if (frame == gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 		{
 			for (i = 0; i != 32; i++)
 			{
@@ -11784,9 +11784,9 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 				puff->variant = (Random16() & 15) + 20;
 			}
 		}
-		if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		if (frame >= gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
 		{
-			s32 rise = (frame - RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) / 2;
+			s32 rise = (frame - gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) / 2;
 
 			for (i = 0; i != 32; i++)
 			{
@@ -11797,13 +11797,13 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 					s32 cel = (17 - puff->variant) / 2;
 					u32 size;
 
-					draw[1](canvas, dots + BattleFx_PuffCells[cel],
-						HI(puff->velocityX) - ((size = BattleFx_PuffSizes[cel]) >> 1),
+					draw[1](canvas, dots + gBattleFx_PuffCells[cel],
+						HI(puff->velocityX) - ((size = gBattleFx_PuffSizes[cel]) >> 1),
 						HI(puff->velocityY) - (size >> 1) - rise, size, size);
 				}
 				puff->variant--;
 				if ((puff->variant == -1 || puff->variant == 17)
-					&& frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
+					&& frame < gRisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
 				{
 					puff->variant = 17;
 					puff->velocityX = (Random16() & 127) << 16;
@@ -11946,7 +11946,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 						spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
 						spark->variant = (Random16() & 7) + 32;
 						cnt++;
-						if (cnt == LightningBolts_Sparks[work->effect->variant][1])
+						if (cnt == gLightningBolts_Sparks[work->effect->variant][1])
 							break;
 					}
 				}
@@ -11973,7 +11973,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 					s32 y = spark->y >> 16;
 					s32 size = spark->variant / 8 + 1;
 
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1], x - size / 2,
 						y - size, size, size * 2);
 				}
 			}
@@ -12091,7 +12091,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 	work->transferValue = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	for (frame = 0; frame != ParticleField_Counts[variant][FIELD_FRAMES]; frame++)
+	for (frame = 0; frame != gParticleField_Counts[variant][FIELD_FRAMES]; frame++)
 	{
 		struct BattleCamera *camera;
 
@@ -12100,10 +12100,10 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 		if (frame == 2)
 			AudioCommand_PlayFar(144);
-		if (frame == ParticleField_Counts[variant][FIELD_FRAMES] - 48)
+		if (frame == gParticleField_Counts[variant][FIELD_FRAMES] - 48)
 			BattleEventRuntime_BeginPhaseFar(133);
 
-		for (i = 0; i != ParticleField_Counts[variant][FIELD_MOTES]; i++)
+		for (i = 0; i != gParticleField_Counts[variant][FIELD_MOTES]; i++)
 		{
 			struct EffectStep *mote = &PARTICLES[i];
 
@@ -12120,7 +12120,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 					screen.depth = 799;
 				size = 9 - (screen.depth - 160) / 64;
 				draw[0](canvas,
-					work->sheet + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+					work->sheet + (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
 					screen.x - size / 2, screen.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
 			}
@@ -12128,7 +12128,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 
 		if (frame > 2)
 		{
-			for (i = 0; i != ParticleField_Counts[variant][FIELD_PUFFS]; i++)
+			for (i = 0; i != gParticleField_Counts[variant][FIELD_PUFFS]; i++)
 			{
 				struct EffectStep *puff = &work->particles[i];
 
@@ -12142,8 +12142,8 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 						s32 cel = puff->variant / 3;
 						u32 width;
 
-						draw[0](canvas, work->sheet + ParticleField_PuffCells[cel],
-							screen.x - ((width = ParticleField_PuffSizes[cel]) >> 1),
+						draw[0](canvas, work->sheet + gParticleField_PuffCells[cel],
+							screen.x - ((width = gParticleField_PuffSizes[cel]) >> 1),
 							screen.y - (width >> 1), width, width);
 					}
 					if (puff->variant <= 20)
@@ -12628,7 +12628,7 @@ void BattleFx_RunSwirlingStars(void *object)
 					pos.depth = 0x27a;
 				size = 9 - (pos.depth - 250) / 64;
 				draw[0](canvas,
-					work->sheet + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
+					work->sheet + ((i & 3) * 770 + gParticleStreams_CellOffsets[size - 1]),
 					pos.x - size / 2, pos.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(star, 60, 0);
 				if (frame > i / 4 + 30)
@@ -12873,7 +12873,7 @@ void BattleFx_RunTargetBursts(void *object)
 	BattleFx_EndCanvasLayer();
 }
 
-extern const Scale StagedParticles_UnitScale;
+extern const Scale gStagedParticles_UnitScale;
 
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
 
@@ -13008,7 +13008,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 					position[0] = (path_x + 80 + column * 32) << 16;
 					position[2] = (64 - path_y + row * 32) << 16;
 					Object_ApplyProjectedPlacementFar(
-						work->objects[row * 3 + column], position, &StagedParticles_UnitScale, 0);
+						work->objects[row * 3 + column], position, &gStagedParticles_UnitScale, 0);
 				}
 			}
 		}
@@ -13096,7 +13096,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 							screen.y = screen.y + y + 16;
 #endif
 							trail->x -= 4;
-							draw[1](canvas, sheet + ParticleStreams_CellOffsets[4], screen.x - 2,
+							draw[1](canvas, sheet + gParticleStreams_CellOffsets[4], screen.x - 2,
 								screen.y - 5, 5, 10);
 						}
 					}
@@ -13148,10 +13148,10 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 						s32 cell = slash->variant / 4;
 						u32 width;
 
-						draw[i & 1](canvas, Ram_MapCellBuffer + PuffArc_CellSourceOffsets[cell],
-							slash->x - ((width = PuffArc_CellWidths[cell]) >> 1) - 8,
-							slash->y + PuffArc_CellBiasY[cell] - 40, width,
-							PuffArc_CellHeights[cell]);
+						draw[i & 1](canvas, Ram_MapCellBuffer + gPuffArc_CellSourceOffsets[cell],
+							slash->x - ((width = gPuffArc_CellWidths[cell]) >> 1) - 8,
+							slash->y + gPuffArc_CellBiasY[cell] - 40, width,
+							gPuffArc_CellHeights[cell]);
 						if (slash->variant <= 11)
 						{
 							draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40,
@@ -13234,7 +13234,7 @@ void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect)
 
 //--------------------------------------------------------------------------
 // つる（mode 0）か緑の柱（mode 1）が、左右交互に 4 フレームおきに伸びる
-// 本数は DualTable_ColumnCounts[variant]、根もとから土けむりが上がる
+// 本数は gDualTable_ColumnCounts[variant]、根もとから土けむりが上がる
 //--------------------------------------------------------------------------
 void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 {
@@ -13303,7 +13303,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	draw = rectangle;
 	draw[1] = second_slot;
 
-	duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
+	duration = gDualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
 	// 土けむりをすべて空きにする
 	age = (u8 *)gMapCellBuffer + 0x18;
@@ -13320,12 +13320,12 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	seed = (struct DualColumn *)work->particles;
 	do
 	{
-		x = (DualTable_ColumnX[i] + (7 & Random16())) - 4;
+		x = (gDualTable_ColumnX[i] + (7 & Random16())) - 4;
 		seed->y = i / 2 + 108;
 		seed->x = x;
 		height = (63 & Random16()) + 55;
 		seed->height = height;
-		limit = DualTable_HeightLimits[i % 3];
+		limit = gDualTable_HeightLimits[i % 3];
 		if (limit < height)
 		{
 			seed->height = limit;
@@ -13361,7 +13361,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 			if (frame < fade_end)
 			{
 				i = 0;
-				if (DualTable_ColumnCounts[work->effect->variant] != 0)
+				if (gDualTable_ColumnCounts[work->effect->variant] != 0)
 				{
 					do
 					{
@@ -13388,8 +13388,8 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 							{
 								{
 									s32 side = 1 & i;
-									s32 cell = DualTable_VineCells[shape];
-									shape = DualTable_VineWidths[shape];
+									s32 cell = gDualTable_VineCells[shape];
+									shape = gDualTable_VineWidths[shape];
 									((DrawRectangle)draw[side])(canvas, work->sheet + cell,
 										column->x - (shape >> 1), column->y - length, shape,
 										length);
@@ -13397,15 +13397,15 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 							}
 							else
 							{
-								pillar_height = DualTable_PillarHeights[7 & i];
+								pillar_height = gDualTable_PillarHeights[7 & i];
 								if (length > pillar_height)
 								{
 									length = pillar_height;
 								}
 								{
 									s32 side = 1 & i;
-									s32 cell = DualTable_PillarCells[shape];
-									shape = DualTable_PillarWidths[shape];
+									s32 cell = gDualTable_PillarCells[shape];
+									shape = gDualTable_PillarWidths[shape];
 									((DrawRectangle)draw[side])(canvas, work->sheet + cell,
 										column->x - (shape >> 1), column->y - length, shape,
 										length);
@@ -13457,7 +13457,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 							}
 						}
 						i++;
-					} while (i != DualTable_ColumnCounts[work->effect->variant]);
+					} while (i != gDualTable_ColumnCounts[work->effect->variant]);
 				}
 			}
 
@@ -13476,14 +13476,14 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 						puff_cells = 0xaff;
 					}
 					((DrawRectangle)rectangle[0])(canvas,
-						work->sheet + (DualTable_PuffCells[image] + puff_cells),
-						puff->x - DualTable_PuffWidths[image],
-						puff->y - (s8)DualTable_PuffHeights[image] / 2, DualTable_PuffWidths[image],
-						(s8)DualTable_PuffHeights[image]);
+						work->sheet + (gDualTable_PuffCells[image] + puff_cells),
+						puff->x - gDualTable_PuffWidths[image],
+						puff->y - (s8)gDualTable_PuffHeights[image] / 2, gDualTable_PuffWidths[image],
+						(s8)gDualTable_PuffHeights[image]);
 					((DrawRectangle)rectangle[1])(canvas,
-						work->sheet + (DualTable_PuffCells[image] + puff_cells), puff->x,
-						puff->y - (s8)DualTable_PuffHeights[image] / 2, DualTable_PuffWidths[image],
-						(s8)DualTable_PuffHeights[image]);
+						work->sheet + (gDualTable_PuffCells[image] + puff_cells), puff->x,
+						puff->y - (s8)gDualTable_PuffHeights[image] / 2, gDualTable_PuffWidths[image],
+						(s8)gDualTable_PuffHeights[image]);
 					puff->variant++;
 					if (puff->variant == 14)
 					{
@@ -13548,7 +13548,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 	i = 0;
 	do
 	{
-		column[i].x = RisingColumns_ColumnOffsets[i] + 64;
+		column[i].x = gRisingColumns_ColumnOffsets[i] + 64;
 		i++;
 	} while (i != 16);
 	work->transferMode = 1; // 毎フレーム 0 で消す
@@ -13606,7 +13606,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 
 //--------------------------------------------------------------------------
 // とげが 8 フレームおきに地面から突き出し、根もとから土けむりが上がる
-// 本数は BattleFxPillar_Counts[variant]、向きと大きさは BattleFxPillar_Kinds
+// 本数は gBattleFxPillar_Counts[variant]、向きと大きさは gBattleFxPillar_Kinds
 //--------------------------------------------------------------------------
 void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 {
@@ -13645,7 +13645,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 	work->transferValue = 0;
 	draw_flip = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
+	total = gBattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
 	for (i = 0; i != 1024; i++)
 	{
@@ -13665,7 +13665,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 			REG_BLDALPHA = (total - frame - 1) | 0x1000;
 		}
 
-		for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++)
+		for (i = 0; i != gBattleFxPillar_Counts[work->effect->variant]; i++)
 		{
 			start = i * 8 + 8;
 			age = frame - (i * 8 + 8);
@@ -13676,7 +13676,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 
 				// 種類 0・1 は大きいとげ（48 幅）、2・3 は小さいとげ（32 幅）
 				// 奇数は左右反転で、伸びるにつれて横へずれる
-				if (BattleFxPillar_Kinds[i] < 2)
+				if (gBattleFxPillar_Kinds[i] < 2)
 				{
 					h = age * 16;
 					w = age * 6;
@@ -13688,13 +13688,13 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 					{
 						w = 30;
 					}
-					if (BattleFxPillar_Kinds[i] & 1)
+					if (gBattleFxPillar_Kinds[i] & 1)
 					{
-						draw_flip(canvas, work->sheet, BattleFxPillar_X[i] - w, 108 - h, 48, h);
+						draw_flip(canvas, work->sheet, gBattleFxPillar_X[i] - w, 108 - h, 48, h);
 					}
 					else
 					{
-						draw(canvas, work->sheet, BattleFxPillar_X[i] + w, 108 - h, 48, h);
+						draw(canvas, work->sheet, gBattleFxPillar_X[i] + w, 108 - h, 48, h);
 					}
 				}
 				else
@@ -13709,14 +13709,14 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 					{
 						w = 8;
 					}
-					if (BattleFxPillar_Kinds[i] & 1)
+					if (gBattleFxPillar_Kinds[i] & 1)
 					{
 						draw_flip(
-							canvas, work->sheet + 0xf00, BattleFxPillar_X[i] - w, 108 - h, 32, h);
+							canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] - w, 108 - h, 32, h);
 					}
 					else
 					{
-						draw(canvas, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
+						draw(canvas, work->sheet + 0xf00, gBattleFxPillar_X[i] + w, 108 - h, 32, h);
 					}
 				}
 				if (frame == start + 1)
@@ -13734,7 +13734,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 						p = &PARTICLES[j];
 						if (p->variant == -1)
 						{
-							p->x = BattleFxPillar_X[i] + (Random16() & 31) + 32;
+							p->x = gBattleFxPillar_X[i] + (Random16() & 31) + 32;
 							if (p->x > 96)
 							{
 								p->x = 96;
@@ -13762,13 +13762,13 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 			if (PARTICLES[i].variant >= 0)
 			{
 				s32 n = PARTICLES[i].variant / 2;
-				draw(canvas, work->sheet + BattleFxPillar_PuffCells[n],
-					PARTICLES[i].x - BattleFxPillar_PuffWidths[n],
-					PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2,
-					BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
-				draw_flip(canvas, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x,
-					PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2,
-					BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
+				draw(canvas, work->sheet + gBattleFxPillar_PuffCells[n],
+					PARTICLES[i].x - gBattleFxPillar_PuffWidths[n],
+					PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[n] / 2,
+					gBattleFxPillar_PuffWidths[n], (s8)gBattleFxPillar_PuffHeights[n]);
+				draw_flip(canvas, work->sheet + gBattleFxPillar_PuffCells[n], PARTICLES[i].x,
+					PARTICLES[i].y - (s8)gBattleFxPillar_PuffHeights[n] / 2,
+					gBattleFxPillar_PuffWidths[n], (s8)gBattleFxPillar_PuffHeights[n]);
 				if (++PARTICLES[i].variant == 14)
 				{
 					PARTICLES[i].variant = -1;
@@ -13866,7 +13866,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 
 				if (height > 104)
 					height = 104;
-				for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 3]; j++)
+				for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4 + 3]; j++)
 				{
 					draw[0](canvas, work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
 						pos.x - 12, 0, 24, height);
@@ -13875,7 +13875,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 				// 足もと (y = 104) から上向き ±90 度へ火花を散らす
 				if (frame == start + 2)
 				{
-					for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4]; j++)
+					for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4]; j++)
 					{
 						struct EffectStep *spark = &PARTICLES[i * 128 + j];
 						s32				   speed = (Random16() & 0x1ff) + 64;
@@ -13893,25 +13893,25 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 			// 光 : 足もとから上のでたらめな位置に、でたらめな向き (左右・上下反転) で描く
 			if (frame >= start + 2 && frame < start + 24)
 			{
-				for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 1]; j++)
+				for (j = 0; j != gLightningBolts_Counts[work->effect->variant * 4 + 1]; j++)
 				{
 					s32 kind = j & 3;
-					s32 drop = Random16() % LightningBolts_Counts[work->effect->variant * 4 + 2];
-					s32 spread = LightningBolts_Counts[work->effect->variant * 4 + 2] - drop + 1;
-					s32 y = pos.y - drop - (BattleFx_GlintCellHeights[kind] >> 1) + 8;
+					s32 drop = Random16() % gLightningBolts_Counts[work->effect->variant * 4 + 2];
+					s32 spread = gLightningBolts_Counts[work->effect->variant * 4 + 2] - drop + 1;
+					s32 y = pos.y - drop - (gBattleFx_GlintCellHeights[kind] >> 1) + 8;
 					u32 r = Random16();
 					s32 x = pos.x;
 
 					x += r % spread;
 					x -= spread / 2;
-					x -= (BattleFx_GlintCellWidths[kind] >> 1);
+					x -= (gBattleFx_GlintCellWidths[kind] >> 1);
 
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						LightningBolts_GlintPalettes[Random16() & 3] | COMPOSITE_CLIP_X
+						gLightningBolts_GlintPalettes[Random16() & 3] | COMPOSITE_CLIP_X
 							| COMPOSITE_CLIP_Y,
-						LightningBolts_GlintModes[work->effect->variant]);
-					BLIT_ALT(canvas, work->sheet + BattleFx_GlintCellOffsets[kind], x, y,
-						BattleFx_GlintCellWidths[kind], BattleFx_GlintCellHeights[kind]);
+						gLightningBolts_GlintModes[work->effect->variant]);
+					BLIT_ALT(canvas, work->sheet + gBattleFx_GlintCellOffsets[kind], x, y,
+						gBattleFx_GlintCellWidths[kind], gBattleFx_GlintCellHeights[kind]);
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 				}
 			}
@@ -13936,7 +13936,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 					s32 x = spark->x >> 16;
 					s32 y = spark->y >> 16;
 
-					draw[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+					draw[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1], x - size / 2,
 						y - size, size, size * 2);
 				}
 			}
@@ -14129,7 +14129,7 @@ void BattleFx_PrepareCanvasEffect(
 				if (position.depth > 634)
 					position.depth = 634;
 				size = 8 - (position.depth - 250) / 64;
-				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					position.x - size / 2, position.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(spark, 60, 0);
 				if (frame >= i / 8 + 24)
@@ -14185,7 +14185,7 @@ void BattleFx_PrepareCanvasEffect(
 				{
 					s32 size = (mote->variant >> 3) + 2;
 
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
 					EffectStep_AdvanceWithGravity2D(mote, 60, 0);
 					mote->variant--;
@@ -14297,15 +14297,15 @@ void BattleFx_RunMode9WithAction(void *effect)
 // バトル効果：対象へ飛ぶ弾の一斉射撃と、キャラの移動
 //--------------------------------------------------------------------------
 // mode ごとの表
-extern u8 Volley_CometHeights[];
+extern u8 gVolley_CometHeights[];
 extern u8
-	Volley_Modes[]; // 5 バイトずつ：弾の数、届くまでのフレーム、弾の間隔、対象の間隔、火花の数
-extern u8  Volley_FlashWidths[];
-extern u8  Volley_FlashHeights[];
-extern u8  Volley_FlashSteps[];
-extern u8  Volley_FlashRises[];
-extern u16 Volley_FlashOffsets[];
-extern u16 Volley_PelletOffsets[];
+	gVolley_Modes[]; // 5 バイトずつ：弾の数、届くまでのフレーム、弾の間隔、対象の間隔、火花の数
+extern u8  gVolley_FlashWidths[];
+extern u8  gVolley_FlashHeights[];
+extern u8  gVolley_FlashSteps[];
+extern u8  gVolley_FlashRises[];
+extern u16 gVolley_FlashOffsets[];
+extern u16 gVolley_PelletOffsets[];
 
 // 粒の表：0- 当たりの光、100- 火花、512- 火の玉の尾
 #define PTCL_MAX 1024
@@ -14446,11 +14446,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 
 	// 弾の出る位置と速さ
 	user = GetBattleObjectSlotFar(work->effect->actor)->object;
-	shots = Volley_Modes[mode * 5];
-	steps = Volley_Modes[mode * 5 + 1];
+	shots = gVolley_Modes[mode * 5];
+	steps = gVolley_Modes[mode * 5 + 1];
 	{
-		s32 stagger = Volley_Modes[mode * 5 + 2];
-		s32 delay = Volley_Modes[mode * 5 + 3];
+		s32 stagger = gVolley_Modes[mode * 5 + 2];
+		s32 delay = gVolley_Modes[mode * 5 + 3];
 		s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
 
 		if (work->effect->count * shots > 63) // particles[64] に収める
@@ -14692,7 +14692,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 										p->velocityY = ((Random16() & 255) - 128) << shift;
 										p->variant = (Random16() & 7) + 16;
 										spawned++;
-										if (spawned == Volley_Modes[mode * 5 + 4])
+										if (spawned == gVolley_Modes[mode * 5 + 4])
 											break;
 									}
 								}
@@ -14710,7 +14710,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 									HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + 0x1000, pos->x - 16,
-								pos->y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
+								pos->y - gVolley_CometHeights[kind], 32, gVolley_CometHeights[kind]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							if (work->effect->side == 1)
 								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
@@ -14720,7 +14720,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 									CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + 0x1000, pos->x - 16, pos->y, 32,
-								Volley_CometHeights[kind]);
+								gVolley_CometHeights[kind]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 						}
 						else if (mode == 1)
@@ -14732,7 +14732,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						else if (mode == 7 || mode == 9 || mode == 10)
 						{
 							s32 cell = j & 3;
-							draw[0](canvas, work->sheet + Volley_PelletOffsets[cell], pos->x - 4,
+							draw[0](canvas, work->sheet + gVolley_PelletOffsets[cell], pos->x - 4,
 								pos->y - 4, 8, 8);
 						}
 						else if (mode == 2)
@@ -14776,17 +14776,17 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							BattleEffect_LoadWork(
 								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-								work->sheet + Volley_FlashOffsets[step],
-								flash->x - Volley_FlashWidths[step],
-								flash->y - Volley_FlashRises[step], Volley_FlashWidths[step],
-								Volley_FlashHeights[step]);
+								work->sheet + gVolley_FlashOffsets[step],
+								flash->x - gVolley_FlashWidths[step],
+								flash->y - gVolley_FlashRises[step], gVolley_FlashWidths[step],
+								gVolley_FlashHeights[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 								CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-								work->sheet + Volley_FlashOffsets[step], flash->x,
-								flash->y + Volley_FlashSteps[step] - Volley_FlashRises[step],
-								Volley_FlashWidths[step], Volley_FlashHeights[step]);
+								work->sheet + gVolley_FlashOffsets[step], flash->x,
+								flash->y + gVolley_FlashSteps[step] - gVolley_FlashRises[step],
+								gVolley_FlashWidths[step], gVolley_FlashHeights[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 						}
 						else
@@ -14794,17 +14794,17 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							BattleEffect_LoadWork(
 								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-								work->sheet + Volley_FlashOffsets[step] + 0x128a,
-								flash->x - Volley_FlashRises[step],
-								flash->y - Volley_FlashWidths[step], Volley_FlashHeights[step],
-								Volley_FlashWidths[step]);
+								work->sheet + gVolley_FlashOffsets[step] + 0x128a,
+								flash->x - gVolley_FlashRises[step],
+								flash->y - gVolley_FlashWidths[step], gVolley_FlashHeights[step],
+								gVolley_FlashWidths[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 								CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-								work->sheet + Volley_FlashOffsets[step] + 0x128a,
-								flash->x + Volley_FlashSteps[step] - Volley_FlashRises[step],
-								flash->y, Volley_FlashHeights[step], Volley_FlashWidths[step]);
+								work->sheet + gVolley_FlashOffsets[step] + 0x128a,
+								flash->x + gVolley_FlashSteps[step] - gVolley_FlashRises[step],
+								flash->y, gVolley_FlashHeights[step], gVolley_FlashWidths[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 						}
 						flash->z++;
@@ -14823,7 +14823,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 				{
 					s32 size = (p->variant >> 3) + 1;
 
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
 					EffectStep_AdvanceWithGravity2D(p, 60, 0x1000);
 					if (p->y > 0x700000)
@@ -14841,7 +14841,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 				{
 					s32 size = (p->variant >> 4) + 1;
 
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
 					EffectStep_AdvanceWithGravity2D(p, 60, -0x4000);
 					p->variant--;
@@ -15105,7 +15105,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 					size >>= 4;
 					size += 2;
 					pos.x >>= 1;
-					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1], pos.x - size / 2,
+					draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1], pos.x - size / 2,
 						pos.y - size, size, size * 2);
 					EffectStep_AdvanceWithGravity3D(p, 60, -0x200);
 					p->variant--;
@@ -15261,7 +15261,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 			{
 				// 決まったフレームに炎を撃ち、その 6 フレーム後に対象のパレットを
 				// 6 フレーム 7 番に替えてアニメ 5 にし、動き 6 を与える
-				if (frame == MercuryDjinnFlames_LaunchFrames[i])
+				if (frame == gMercuryDjinnFlames_LaunchFrames[i])
 				{
 					struct EffectStep *shot = &work->particles[i];
 
@@ -15274,7 +15274,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 						break;
 					}
 				}
-				if (frame == MercuryDjinnFlames_LaunchFrames[i] + 6)
+				if (frame == gMercuryDjinnFlames_LaunchFrames[i] + 6)
 				{
 					for (j = 0; j != work->effect->count; j++)
 					{
@@ -15293,7 +15293,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 			{
 				s32 size = mote->variant / 16 + 2;
 
-				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
 				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
 				mote->variant--;
@@ -15419,7 +15419,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 			{
 				s32 size = mote->variant / 16 + 1;
 
-				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
 				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
 				mote->variant--;
@@ -15553,7 +15553,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 			{
 				s32 size = mote->variant / 16 + 2;
 
-				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
 				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
 				mote->variant--;
@@ -15667,9 +15667,9 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 					s32 cell = step->variant / 8;
 					u32 width;
 
-					callbacks[0](canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
-						step->x - ((width = PuffArc_CellWidths[cell]) >> 1),
-						step->y + PuffArc_CellBiasY[cell], width, PuffArc_CellHeights[cell]);
+					callbacks[0](canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+						step->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
+						step->y + gPuffArc_CellBiasY[cell], width, gPuffArc_CellHeights[cell]);
 				}
 				member++;
 				step->variant++;
@@ -15688,7 +15688,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 
 				size = (member & 1) + 3;
 				x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1], x - ((u32)size >> 1),
+				draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1], x - ((u32)size >> 1),
 					HI(step->y) - size, size, size * 2);
 				EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
 				angle = step->z;
@@ -15803,9 +15803,9 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 				s32 h;
 
 				cell = (p->z / 128) & 3;
-				routine[i & 1](canvas, work->sheet + 0x400 + ParticleReveal_CellSourceOffsets[cell],
-					HI(p->x) - (w = ParticleReveal_CellWidths[cell]) / 2,
-					HI(p->y) - (h = ParticleReveal_CellHeights[cell]) / 2, w, h);
+				routine[i & 1](canvas, work->sheet + 0x400 + gParticleReveal_CellSourceOffsets[cell],
+					HI(p->x) - (w = gParticleReveal_CellWidths[cell]) / 2,
+					HI(p->y) - (h = gParticleReveal_CellHeights[cell]) / 2, w, h);
 				EffectStep_AdvanceWithGravity3D(p, 63, 0x1000);
 			}
 		}
@@ -15921,7 +15921,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 				struct EffectStep *chip = &work->particles[32 + i];
 
 				chip->velocityX = Random16() % 6 + 3;
-				chip->velocityY = RockToss_ChipFlips[Random16() & 3];
+				chip->velocityY = gRockToss_ChipFlips[Random16() & 3];
 			}
 		}
 		Render_ResetTransformState();
@@ -15943,11 +15943,11 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 					y = position.y - 24;
 					draw[0](canvas, work, x, y, 24, 48);
 					if ((frame & 3) <= 1)
-						draw[0](canvas, work->sheet + RockToss_ChipCells[1], x + RockToss_ChipX[1],
-							y + RockToss_ChipY[1], RockToss_ChipWidths[1], RockToss_ChipHeights[1]);
+						draw[0](canvas, work->sheet + gRockToss_ChipCells[1], x + gRockToss_ChipX[1],
+							y + gRockToss_ChipY[1], gRockToss_ChipWidths[1], gRockToss_ChipHeights[1]);
 					else
-						draw[0](canvas, work->sheet + RockToss_ChipCells[2], x + RockToss_ChipX[2],
-							y + RockToss_ChipY[2], RockToss_ChipWidths[2], RockToss_ChipHeights[2]);
+						draw[0](canvas, work->sheet + gRockToss_ChipCells[2], x + gRockToss_ChipX[2],
+							y + gRockToss_ChipY[2], gRockToss_ChipWidths[2], gRockToss_ChipHeights[2]);
 					for (j = 0; j != 4; j++)
 					{
 						struct EffectStep *chip = &work->particles[32 + i * 4 + j];
@@ -15959,18 +15959,18 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 						draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
 									  ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 						if (chip->velocityY & 4)
-							chip_x = x - RockToss_ChipWidths[chip->velocityX]
-									 - RockToss_ChipX[chip->velocityX] + 24;
+							chip_x = x - gRockToss_ChipWidths[chip->velocityX]
+									 - gRockToss_ChipX[chip->velocityX] + 24;
 						else
-							chip_x = x + RockToss_ChipX[chip->velocityX];
+							chip_x = x + gRockToss_ChipX[chip->velocityX];
 						if (chip->velocityY & 8)
-							chip_y = y - RockToss_ChipHeights[chip->velocityX]
-									 - RockToss_ChipY[chip->velocityX] + 48;
+							chip_y = y - gRockToss_ChipHeights[chip->velocityX]
+									 - gRockToss_ChipY[chip->velocityX] + 48;
 						else
-							chip_y = y + RockToss_ChipY[chip->velocityX];
-						draw[1](canvas, work->sheet + RockToss_ChipCells[chip->velocityX], chip_x,
-							chip_y, RockToss_ChipWidths[chip->velocityX],
-							RockToss_ChipHeights[chip->velocityX]);
+							chip_y = y + gRockToss_ChipY[chip->velocityX];
+						draw[1](canvas, work->sheet + gRockToss_ChipCells[chip->velocityX], chip_x,
+							chip_y, gRockToss_ChipWidths[chip->velocityX],
+							gRockToss_ChipHeights[chip->velocityX]);
 						Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 					}
 					rock->x += rock->velocityX;
@@ -16052,9 +16052,9 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 	center_p->centerY = 0x78;
 }
 
-extern const s16 Mode12_Points[][2];
-extern u8  Mode12_Animations[];
-extern u8  Mode12_SmokeFlips[];
+extern const s16 gMode12_Points[][2];
+extern u8  gMode12_Animations[];
+extern u8  gMode12_SmokeFlips[];
 
 // Ram_MapCellBuffer + 0xc58 から 910 個（その前には絵を読み込む）
 #define MODE12_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
@@ -16246,9 +16246,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 		{
 			for (i = 0; i != 6; i++)
 			{
-				vec[0] = (Mode12_Points[i][0] - 96) << 16;
+				vec[0] = (gMode12_Points[i][0] - 96) << 16;
 				vec[1] = 0;
-				vec[2] = (Mode12_Points[i][1] - 96) << 16;
+				vec[2] = (gMode12_Points[i][1] - 96) << 16;
 				EffectPosition_ApplyBaseAndYOffset(vec, &pts[i]);
 				pts[i].x = (pts[i].x >> 17) + 64;
 				pts[i].y = (pts[i].y >> 16) + 60;
@@ -16268,7 +16268,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 								+ Iwram_MulQ16(j * (pts[i * 2 + 1].x - pts[i * 2].x), 0x555);
 						s32 y = pts[i * 2].y
 								+ Iwram_MulQ16(j * (pts[i * 2 + 1].y - pts[i * 2].y), 0x555);
-						blit[0](dst, aux + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+						blit[0](dst, aux + gParticleStreams_CellOffsets[size - 1], x - size / 2,
 							y - size, size, size * 2);
 					}
 				}
@@ -16312,7 +16312,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 				pts[0].x = (pts[0].x >> 17) + 64;
 				pts[0].y = (pts[0].y >> 16) + 60;
 				blit47(dst,
-					work->sheet + (lvl * 0x302 + ParticleStreams_CellOffsets[s - 1]) + rings,
+					work->sheet + (lvl * 0x302 + gParticleStreams_CellOffsets[s - 1]) + rings,
 					pts[0].x - s / 2, pts[0].y - s, s, s * 2);
 			}
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -16511,7 +16511,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 							for (j = 0; j != work->effect->count; j++)
 							{
 								ObjectGroup_UpdateMembers(work->effect->actors[j],
-									Mode12_Animations[Random16() & 3], 5, j, 4);
+									gMode12_Animations[Random16() & 3], 5, j, 4);
 								BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
 							}
 						}
@@ -16583,7 +16583,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 							s32 x = q->x >> 16;
 							s32 y = q->y >> 16;
 							s32 s = q->variant / 16 + 1;
-							draw(dst, aux + ParticleStreams_CellOffsets[s - 1], x - s / 2, y - s, s,
+							draw(dst, aux + gParticleStreams_CellOffsets[s - 1], x - s / 2, y - s, s,
 								s * 2);
 						}
 					}
@@ -16615,13 +16615,13 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 					s32 k = i & 3;
 					s32 angle = Random16() & 0xffff;
 					s32 x =
-						((Trig_Sin(angle) << 3) >> 16) + base - (BattleFx_GlintCellWidths[k] >> 1);
-					s32 y = ((Trig_Cos(angle) * 40) >> 16) - (BattleFx_GlintCellHeights[k] >> 1);
+						((Trig_Sin(angle) << 3) >> 16) + base - (gBattleFx_GlintCellWidths[k] >> 1);
+					s32 y = ((Trig_Cos(angle) * 40) >> 16) - (gBattleFx_GlintCellHeights[k] >> 1);
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						3 | Mode12_SmokeFlips[Random16() & 3], 2);
+						3 | gMode12_SmokeFlips[Random16() & 3], 2);
 					gBlitters[HEAP_SLOT_BLITTER_ALTERNATE](dst,
-						Ram_MapCellBuffer + BattleFx_GlintCellOffsets[k], x, y + 56,
-						BattleFx_GlintCellWidths[k], BattleFx_GlintCellHeights[k]);
+						Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[k], x, y + 56,
+						gBattleFx_GlintCellWidths[k], gBattleFx_GlintCellHeights[k]);
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 				}
 			}
@@ -16686,7 +16686,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 	work->transferMode = 1;
 	work->transferValue = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	rows = ShatterRocks_RockCounts[work->effect->variant];
+	rows = gShatterRocks_RockCounts[work->effect->variant];
 	for (i = 0; i != rows; i++)
 	{
 		rock = &work->particles[i];
@@ -16699,35 +16699,35 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 		{
 			struct EffectStep *seed = &PARTICLES[i * 21 + j];
 
-			seed->x = (ShatterRocks_ShardOffsets[j * 2] + ShatterRocks_RockX[i]) << 16;
-			seed->y = ShatterRocks_ShardOffsets[j * 2 + 1] << 16;
+			seed->x = (gShatterRocks_ShardOffsets[j * 2] + gShatterRocks_RockX[i]) << 16;
+			seed->y = gShatterRocks_ShardOffsets[j * 2 + 1] << 16;
 			seed->velocityX = ((Random16() % 96) - 48) << 10;
 			seed->velocityY = -((Random16() & 127) + 32) << 11;
 			seed->z = 32;
 			seed->variant = 0;
 		}
 	}
-	for (frame = 0; frame != ShatterRocks_DropFrames[rows - 1] + 80; frame++)
+	for (frame = 0; frame != gShatterRocks_DropFrames[rows - 1] + 80; frame++)
 	{
-		if (frame == ShatterRocks_DropFrames[rows - 1] + 48)
+		if (frame == gShatterRocks_DropFrames[rows - 1] + 48)
 			BattleEventRuntime_BeginPhaseFar(132);
 		for (i = 0; i != rows; i++)
 		{
 			rock = &work->particles[i];
-			if (frame == ShatterRocks_DropFrames[i] + 18)
+			if (frame == gShatterRocks_DropFrames[i] + 18)
 			{
 				AudioCommand_PlayFar(134);
 				work->shakeFrames = 4;
 			}
-			if (frame >= ShatterRocks_DropFrames[i] + 18)
+			if (frame >= gShatterRocks_DropFrames[i] + 18)
 			{
 				for (j = 0; j != 21; j++)
 				{
 					shard = &PARTICLES[i * 21 + j];
 					cell = (j % 5) * 3 + shard->variant / 96 % 3;
-					blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 0x83c,
-						HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
-						HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1), width,
+					blit(canvas, work->sheet + gShatterRocks_ShardCells[cell] + 0x83c,
+						HI(shard->x) - ((width = gShatterRocks_ShardWidths[cell]) >> 1),
+						HI(shard->y) - ((height = gShatterRocks_ShardHeights[cell]) >> 1), width,
 						height);
 					EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
 					shard->variant += shard->z;
@@ -16735,17 +16735,17 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 						shard->z--;
 				}
 			}
-			if (frame < ShatterRocks_DropFrames[i] + 18)
+			if (frame < gShatterRocks_DropFrames[i] + 18)
 			{
-				if (frame >= ShatterRocks_DropFrames[i])
-					blit(canvas, work, ShatterRocks_RockX[i] + 47, HI(rock->y), 34, 62);
+				if (frame >= gShatterRocks_DropFrames[i])
+					blit(canvas, work, gShatterRocks_RockX[i] + 47, HI(rock->y), 34, 62);
 				rock->y += rock->velocityY;
-				if (frame > ShatterRocks_DropFrames[i])
+				if (frame > gShatterRocks_DropFrames[i])
 					rock->velocityY += 0x10000;
 				if (rock->y > 0x320000)
 					rock->y = 0x320000;
 			}
-			if (frame == ShatterRocks_DropFrames[i] + 18)
+			if (frame == gShatterRocks_DropFrames[i] + 18)
 			{
 				for (j = 0; j != work->effect->count; j++)
 					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 8);
@@ -16825,7 +16825,7 @@ void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // 対象に何度も重ねて弾ける連撃
-// BurstScene_Records は variant ごとに 7 バイト
+// gBurstScene_Records は variant ごとに 7 バイト
 //   [0] 弧の絵（0 なら BlueArcSheetA、ほかは B。1 ならすべての回を弧で描く）
 //   [1] パレットを取るリソース（0〜3）
 //   [2] 回数
@@ -16882,12 +16882,12 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 			work->sheet[dst] = work->sheet[src];
 		}
 	}
-	if (BurstScene_Records[variant * 7] == 0)
+	if (gBurstScene_Records[variant * 7] == 0)
 		Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1, 1);
 	else
 		Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, Ram_MapCellBuffer + 0x5e00, 1, 0);
-	switch (BurstScene_Records[variant * 7 + 1])
+	switch (gBurstScene_Records[variant * 7 + 1])
 	{
 	case 0:
 		res = (s32)&ResourceId_MarsDjinnSheet;
@@ -16929,9 +16929,9 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 	}
 	BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 4, 0);
 
-	for (frame = 0; frame != BurstScene_Records[variant * 7 + 5]; frame++)
+	for (frame = 0; frame != gBurstScene_Records[variant * 7 + 5]; frame++)
 	{
-		s32 bursts = BurstScene_Records[variant * 7 + 2];
+		s32 bursts = gBurstScene_Records[variant * 7 + 2];
 
 		EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actor_pos);
 		actor_pos.x /= 2;
@@ -16955,13 +16955,13 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 		for (i = 0; i != bursts; i++)
 		{
-			s32 start = i * BurstScene_Records[variant * 7 + 4];
+			s32 start = i * gBurstScene_Records[variant * 7 + 4];
 
 			if (frame >= start && frame < start + 6)
 			{
 				s32 step = frame - start;
 
-				if ((i & 3) <= 1 || BurstScene_Records[variant * 7] == 1)
+				if ((i & 3) <= 1 || gBurstScene_Records[variant * 7] == 1)
 				{
 					// 弧（48x72 を 6 コマ）
 					if (work->effect->side == 0)
@@ -16985,7 +16985,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 			if (frame == start + 2)
 			{
 				// 当たり：最後の回で締める
-				if (BurstScene_Records[variant * 7 + 6] == 1)
+				if (gBurstScene_Records[variant * 7 + 6] == 1)
 					Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
 				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
 				if (i == bursts - 1)
@@ -17001,7 +17001,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 					work->shakeFrames = 4;
 					AudioCommand_PlayFar(134);
 				}
-				for (j = 0; j != BurstScene_Records[variant * 7 + 3]; j++)
+				for (j = 0; j != gBurstScene_Records[variant * 7 + 3]; j++)
 					PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
 			}
 			// 玉（20x48 を 6 コマ、2 フレームずつ）
@@ -17032,7 +17032,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 				pos.x /= 2;
 				size >>= 3;
 				size++;
-				draw[(i / 2) & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+				draw[(i / 2) & 1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 					pos.x - size / 2, pos.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
 				if (mote->y < 0x80000)
@@ -17051,7 +17051,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 	BattleFx_EndCanvasLayer();
 }
 
-extern const struct Scale RisingWall_UnitScale;
+extern const struct Scale gRisingWall_UnitScale;
 
 //--------------------------------------------------------------------------
 // 地面が盛り上がり、岩の壁がせり上がって、しばらくして沈む
@@ -17108,7 +17108,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 		wall_x = -16;
 		rock_x = -12;
 	}
-	REG_BG2X = RisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
+	REG_BG2X = gRisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
 
 	//------------------------------------------------------------------
 	// パレット：BG の 1〜63 番を各成分 8 段暗くする
@@ -17150,10 +17150,10 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	{
 		for (i = 0; i != 32; i++)
 		{
-			for (k = 0; k != RisingWall_RowWidths[j]; k++, n++)
+			for (k = 0; k != gRisingWall_RowWidths[j]; k++, n++)
 				work->sheet[n] = src[k];
 		}
-		src += RisingWall_RowWidths[j];
+		src += gRisingWall_RowWidths[j];
 	}
 	for (j = 0; j != 32; j++)
 	{
@@ -17168,7 +17168,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 		work->sheet[n++] = *src++;
 	for (i = 0; i != 3; i++)
 	{
-		for (k = 0; k != RisingWall_MoundWidths[i] * RisingWall_MoundHeights[i]; k++)
+		for (k = 0; k != gRisingWall_MoundWidths[i] * gRisingWall_MoundHeights[i]; k++)
 			work->sheet[n++] = *src++;
 	}
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -17212,7 +17212,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 		rock->variant = 44 - i * 4;
 	}
 	for (i = 0; i != 6; i++)
-		work->particles[16 + i].x = RisingWall_LateRockColumns[i];
+		work->particles[16 + i].x = gRisingWall_LateRockColumns[i];
 
 	// 土ぼこり：壁の根もとから上へ昇る
 	for (i = 0; i != 256; i++)
@@ -17244,12 +17244,12 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 
 			if (cell > 2)
 				cell = (cell & 1) + 1;
-			draw[0](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell],
-				wall_x - RisingWall_MoundWidths[cell] + 64, 116 - RisingWall_MoundHeights[cell],
-				RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
-			draw[1](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], wall_x + 64,
-				116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell],
-				RisingWall_MoundHeights[cell]);
+			draw[0](canvas, work->sheet + gRisingWall_MoundSheetOffsets[cell],
+				wall_x - gRisingWall_MoundWidths[cell] + 64, 116 - gRisingWall_MoundHeights[cell],
+				gRisingWall_MoundWidths[cell], gRisingWall_MoundHeights[cell]);
+			draw[1](canvas, work->sheet + gRisingWall_MoundSheetOffsets[cell], wall_x + 64,
+				116 - gRisingWall_MoundHeights[cell], gRisingWall_MoundWidths[cell],
+				gRisingWall_MoundHeights[cell]);
 		}
 
 		// せり上がる壁（12〜87）
@@ -17263,11 +17263,11 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 				row = 7;
 			for (i = 0; i != 4; i++)
 			{
-				draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row],
-					wall_x - RisingWall_RowWidths[row] + 64, i * 32 - 12, RisingWall_RowWidths[row],
+				draw[0](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
+					wall_x - gRisingWall_RowWidths[row] + 64, i * 32 - 12, gRisingWall_RowWidths[row],
 					32);
-				draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], wall_x + 64,
-					i * 32 - 12, RisingWall_RowWidths[row], 32);
+				draw[1](canvas, work->sheet + gRisingWall_RowSheetOffsets[row], wall_x + 64,
+					i * 32 - 12, gRisingWall_RowWidths[row], 32);
 			}
 		}
 
@@ -17282,11 +17282,11 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 				row = 7;
 			for (i = 0; i != 4; i++)
 			{
-				draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row],
-					wall_x - RisingWall_RowWidths[row] + 64, i * 32 - 12, RisingWall_RowWidths[row],
+				draw[0](canvas, work->sheet + gRisingWall_RowSheetOffsets[row],
+					wall_x - gRisingWall_RowWidths[row] + 64, i * 32 - 12, gRisingWall_RowWidths[row],
 					32);
-				draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], wall_x + 64,
-					i * 32 - 12, RisingWall_RowWidths[row], 32);
+				draw[1](canvas, work->sheet + gRisingWall_RowSheetOffsets[row], wall_x + 64,
+					i * 32 - 12, gRisingWall_RowWidths[row], 32);
 			}
 		}
 
@@ -17312,7 +17312,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 				{
 					s32 size = (i & 3) + 5;
 
-					draw[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 						HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 					dust->y -= dust->velocityY;
 					if (dust->y < 0 && frame <= 159)
@@ -17339,7 +17339,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 
 				if (rock->variant == 0)
 				{
-					scale = RisingWall_UnitScale;
+					scale = gRisingWall_UnitScale;
 					if (frame > 71)
 					{
 						scale.x = (k << 12) + 0x8000;
@@ -17697,16 +17697,16 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 				s32 cell = frame / 3;
 
 				if (work->effect->side == 0)
-					draw[1](canvas, work->sheet + BeamSequence_CellSheetOffsets[cell],
-						pos.x + BeamSequence_CellReaches[cell] + shake - 58,
-						pos.y - BeamSequence_CellHeights[cell] / 2, BeamSequence_CellWidths[cell],
-						BeamSequence_CellHeights[cell]);
+					draw[1](canvas, work->sheet + gBeamSequence_CellSheetOffsets[cell],
+						pos.x + gBeamSequence_CellReaches[cell] + shake - 58,
+						pos.y - gBeamSequence_CellHeights[cell] / 2, gBeamSequence_CellWidths[cell],
+						gBeamSequence_CellHeights[cell]);
 				else
-					draw[1](canvas, work->sheet + BeamSequence_CellSheetOffsets[cell],
-						pos.x - BeamSequence_CellReaches[cell] + shake
-							- BeamSequence_CellWidths[cell] + 58,
-						pos.y - BeamSequence_CellHeights[cell] / 2, BeamSequence_CellWidths[cell],
-						BeamSequence_CellHeights[cell]);
+					draw[1](canvas, work->sheet + gBeamSequence_CellSheetOffsets[cell],
+						pos.x - gBeamSequence_CellReaches[cell] + shake
+							- gBeamSequence_CellWidths[cell] + 58,
+						pos.y - gBeamSequence_CellHeights[cell] / 2, gBeamSequence_CellWidths[cell],
+						gBeamSequence_CellHeights[cell]);
 			}
 		}
 		if (frame >= 4 && frame <= 15)
@@ -17728,7 +17728,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 					point.x += shake;
 					size >>= 3;
 					size += 2;
-					draw[pair & 1](canvas, sheet + BattleFx6_FlareCells[size - 1], point.x - size,
+					draw[pair & 1](canvas, sheet + gBattleFx6_FlareCells[size - 1], point.x - size,
 						point.y - size, size * 2, size * 2);
 					EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
 					spark->variant--;
@@ -17881,7 +17881,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 					if (point.depth > 60)
 						point.depth = 60;
 					point.depth += 60;
-					draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1], point.x - size,
+					draw[0](canvas, sheet + gBattleFx6_FlareCells[size - 1], point.x - size,
 						point.y - size, size * 2, size * 2);
 					mote->x -= 4;
 				}
@@ -17965,7 +17965,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 					size >>= 3;
 					size += 2;
 					spot.y += 16;
-					draw[pair & 1](canvas, sheet + BattleFx6_FlareCells[size - 1], spot.x - size,
+					draw[pair & 1](canvas, sheet + gBattleFx6_FlareCells[size - 1], spot.x - size,
 						spot.y - size, size * 2, size * 2);
 					EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
 					spark->variant--;
@@ -18333,7 +18333,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						if (spark_screen.depth > 60)
 							spark_screen.depth = 60;
 						spark_screen.depth += 60; // 0〜120
-						blitters[1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						blitters[1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 							spark_screen.x - size / 2, spark_screen.y - size, size, size * 2);
 					}
 					step->x -= 4;
@@ -18705,7 +18705,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						size >>= 4;
 						size++;
 						projected.x /= 2;
-						blitters[index & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						blitters[index & 1](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 							projected.x - size / 2, projected.y - size, size, size * 2);
 						EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
 						step->variant--;
@@ -18755,7 +18755,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						s32 size = (i & 1) + 6;
 						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
 						projected.x >>= 1;
-						blitters[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						blitters[0](canvas, sprites + gParticleStreams_CellOffsets[size - 1],
 							projected.x - (u32)size / 2, projected.y - size, size, size * 2);
 						EffectStep_AdvanceWithGravity3D(step, 62, 0);
 						if (frame > i + 22)
@@ -18805,21 +18805,21 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 					image_x <<= 3;
 					image_x >>= 16;
 					image_x += target_screen->x / 2;
-					image_x -= BattleFx_GlintCellWidths[image] / 2;
+					image_x -= gBattleFx_GlintCellWidths[image] / 2;
 					image_y = Trig_Cos(angle);
 					image_y <<= 5;
 					image_y >>= 16;
-					image_y -= BattleFx_GlintCellHeights[image] / 2;
+					image_y -= gBattleFx_GlintCellHeights[image] / 2;
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 					draw_flags = Random16(); // 反転はランダム
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						CastingImpact_GlintDrawFlags[draw_flags & 3] | COMPOSITE_CLIP_X
+						gCastingImpact_GlintDrawFlags[draw_flags & 3] | COMPOSITE_CLIP_X
 							| COMPOSITE_CLIP_Y,
 						COMPOSITE_MAX);
 					((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
-						Ram_MapCellBuffer + BattleFx_GlintCellOffsets[image], image_x, image_y + 56,
-						BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
+						Ram_MapCellBuffer + gBattleFx_GlintCellOffsets[image], image_x, image_y + 56,
+						gBattleFx_GlintCellWidths[image], gBattleFx_GlintCellHeights[image]);
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 					BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
 				}
@@ -18974,19 +18974,19 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			image_y = (target_screen->y >> 16) + sway + 16;
 			if (frame <= 3)
 			{
-				blitters[0](canvas, work, CastingImpact_ImageX[work->effect->side * 7],
-					image_y + CastingImpact_ImageY[0], 57, 98);
+				blitters[0](canvas, work, gCastingImpact_ImageX[work->effect->side * 7],
+					image_y + gCastingImpact_ImageY[0], 57, 98);
 			}
 			else
 			{
 				if (frame <= 7)
 				{
-					blitters[0](canvas, work, CastingImpact_ImageX[work->effect->side * 7],
-						image_y + CastingImpact_ImageY[0], 57, 98);
+					blitters[0](canvas, work, gCastingImpact_ImageX[work->effect->side * 7],
+						image_y + gCastingImpact_ImageY[0], 57, 98);
 				}
 				blitters[0](canvas, work->sheet + 0x15d2,
-					CastingImpact_ImageX[work->effect->side * 7 + 1],
-					image_y + CastingImpact_ImageY[1], 99, 69);
+					gCastingImpact_ImageX[work->effect->side * 7 + 1],
+					image_y + gCastingImpact_ImageY[1], 99, 69);
 				if (frame == 4 || frame == 5)
 				{
 					Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -18994,32 +18994,32 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				if (frame == 6 || frame == 7)
 				{
 					blitters[0](canvas, work->sheet + 0x3081,
-						CastingImpact_ImageX[work->effect->side * 7 + 2],
-						image_y + CastingImpact_ImageY[2], 128, 91);
+						gCastingImpact_ImageX[work->effect->side * 7 + 2],
+						image_y + gCastingImpact_ImageY[2], 128, 91);
 				}
 				if (frame == 8 || frame == 9)
 				{
 					DrawCroppedImage(canvas, Ram_MapCellBuffer,
-						CastingImpact_ImageX[work->effect->side * 7 + 3],
-						image_y + CastingImpact_ImageY[3], 128, &blitters[0]);
+						gCastingImpact_ImageX[work->effect->side * 7 + 3],
+						image_y + gCastingImpact_ImageY[3], 128, &blitters[0]);
 				}
 				if (frame == 10 || frame == 11)
 				{
 					blitters[0](canvas, Ram_MapCellBuffer + 0x2d80,
-						CastingImpact_ImageX[work->effect->side * 7 + 4],
-						image_y + CastingImpact_ImageY[4], 128, 59);
+						gCastingImpact_ImageX[work->effect->side * 7 + 4],
+						image_y + gCastingImpact_ImageY[4], 128, 59);
 				}
 				if (frame == 12 || frame == 13)
 				{
 					blitters[0](canvas, Ram_MapCellBuffer + 0x4b00,
-						CastingImpact_ImageX[work->effect->side * 7 + 5],
-						image_y + CastingImpact_ImageY[5], 122, 29);
+						gCastingImpact_ImageX[work->effect->side * 7 + 5],
+						image_y + gCastingImpact_ImageY[5], 122, 29);
 				}
 				if (frame == 14 || frame == 15)
 				{
 					blitters[0](canvas, Ram_MapCellBuffer + 0x58d2,
-						CastingImpact_ImageX[work->effect->side * 7 + 6],
-						image_y + CastingImpact_ImageY[6], 76, 25);
+						gCastingImpact_ImageX[work->effect->side * 7 + 6],
+						image_y + gCastingImpact_ImageY[6], 76, 25);
 				}
 			}
 		}
@@ -19107,7 +19107,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				if (frame >= i + 6 && frame < i + 18)
 				{
 					s32 image = (frame - i - 6) / 2;
-					s32 image_x = target_screen->x / 2 - PuffArc_CellWidths[image] / 2;
+					s32 image_x = target_screen->x / 2 - gPuffArc_CellWidths[image] / 2;
 					s32 mirrored;
 					if (i & 1)
 						image_x += (1 + i) / 2 * 3;
@@ -19120,9 +19120,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						if (((i - 1) & 3) > 1)
 							mirrored = 1;
 					}
-					blitters[mirrored](canvas, Ram_MapCellBuffer + PuffArc_CellSourceOffsets[image],
-						image_x, PuffArc_CellBiasY[image] + 48, PuffArc_CellWidths[image],
-						PuffArc_CellHeights[image]);
+					blitters[mirrored](canvas, Ram_MapCellBuffer + gPuffArc_CellSourceOffsets[image],
+						image_x, gPuffArc_CellBiasY[image] + 48, gPuffArc_CellWidths[image],
+						gPuffArc_CellHeights[image]);
 				}
 			}
 		}
@@ -19162,7 +19162,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						origin = (struct EffectPosition *)((u8 *)target_screen + bias);
 						projected.x = projected.x / 2 + origin->x / 2;
 						projected.y += origin->y + 32;
-						blitters[1](canvas, Ram_MapCellBuffer + CastingImpact_OrbitCells[image],
+						blitters[1](canvas, Ram_MapCellBuffer + gCastingImpact_OrbitCells[image],
 							projected.x - 4, projected.y - 4, 8, 8);
 						step->x -= 6;
 						if (step->x < 0 && ((i & 7) == 0 || i == 63))
@@ -19581,16 +19581,16 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 				cell = 6;
 			if (work->effect->side == 0)
 			{
-				draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
-					FireSwirl_CellBiasX[cell] + 30, FireSwirl_CellBiasY[cell] + position.y - 60,
-					FireSwirl_CellWidths[cell], FireSwirl_CellHeights[cell]);
+				draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
+					gFireSwirl_CellBiasX[cell] + 30, gFireSwirl_CellBiasY[cell] + position.y - 60,
+					gFireSwirl_CellWidths[cell], gFireSwirl_CellHeights[cell]);
 			}
 			else
 			{
-				draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
-					-FireSwirl_CellBiasX[cell] - FireSwirl_CellWidths[cell] + 108,
-					FireSwirl_CellBiasY[cell] + position.y - 60, FireSwirl_CellWidths[cell],
-					FireSwirl_CellHeights[cell]);
+				draw[0](canvas, work->sheet + gFireSwirl_CellSourceOffsets[cell],
+					-gFireSwirl_CellBiasX[cell] - gFireSwirl_CellWidths[cell] + 108,
+					gFireSwirl_CellBiasY[cell] + position.y - 60, gFireSwirl_CellWidths[cell],
+					gFireSwirl_CellHeights[cell]);
 			}
 		}
 		if (frame == 18)
@@ -19661,8 +19661,8 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
 	struct BattleEffectWork *work = gBattleFxWork[0];
-	struct Scale			 normal = (*(const struct Scale *)&Formation_NormalScale);
-	struct Scale			 big = (*(const struct Scale *)&Formation_SmallScale);
+	struct Scale			 normal = (*(const struct Scale *)&gFormation_NormalScale);
+	struct Scale			 big = (*(const struct Scale *)&gFormation_SmallScale);
 	struct Placement		 pos;
 	s32						 i;
 
@@ -19681,24 +19681,24 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 	case 1:
 		for (i = 0; i != 12; i++)
 		{
-			pos.x = (Formation_TwelveX[i] << 16) + x - (16 << 16);
-			pos.z = (Formation_TwelveZ[i] << 16) + z - (32 << 16);
+			pos.x = (gFormation_TwelveX[i] << 16) + x - (16 << 16);
+			pos.z = (gFormation_TwelveZ[i] << 16) + z - (32 << 16);
 			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
 		}
 		break;
 	case 2:
 		for (i = 0; i != 8; i++)
 		{
-			pos.x = (Formation_RightEightX[i] << 16) + x + (16 << 16);
-			pos.z = (Formation_RightEightZ[i] << 16) + z;
+			pos.x = (gFormation_RightEightX[i] << 16) + x + (16 << 16);
+			pos.z = (gFormation_RightEightZ[i] << 16) + z;
 			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
 		}
 		break;
 	case 3:
 		for (i = 0; i != 8; i++)
 		{
-			pos.x = (Formation_SmallEightX[i] << 16) + x;
-			pos.z = (Formation_SmallEightZ[i] << 16) + z;
+			pos.x = (gFormation_SmallEightX[i] << 16) + x;
+			pos.z = (gFormation_SmallEightZ[i] << 16) + z;
 			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &big, 0);
 		}
 		break;
@@ -19801,9 +19801,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
 			if (cell < 0)
 				cell = 0;
-			max_blend(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
-				(x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
-				(y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1), width, height);
+			max_blend(canvas, work->sheet + gImpactBurst_CellSourceOffsets[cell],
+				(x >> 16) - ((width = gImpactBurst_CellWidths[cell]) >> 1),
+				(y >> 16) - ((height = gImpactBurst_CellHeights[cell]) >> 1), width, height);
 		}
 
 		// 大きい火花は 2 個ずつ 1 フレームおきに出る
@@ -19820,7 +19820,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 				size = p->variant / 16 + 3;
 				px = HI(p->x);
 				py = HI(p->y);
-				additive(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+				additive(canvas, sheet + gParticleStreams_CellOffsets[size - 1], px - size / 2,
 					py - size, size, size * 2);
 			}
 		}
@@ -19839,7 +19839,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 				size = p->variant / 16 + 1;
 				px = HI(p->x);
 				py = HI(p->y);
-				additive(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+				additive(canvas, sheet + gParticleStreams_CellOffsets[size - 1], px - size / 2,
 					py - size, size, size * 2);
 			}
 		}
@@ -19930,12 +19930,12 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *effect)
 	BattleEffect_RunParticleStreams(effect, 1);
 }
 
-extern const struct Scale CirclingScene_UnitScale;
+extern const struct Scale gCirclingScene_UnitScale;
 
-extern s16 ParticleStreams_OrbitPoints[][3];
-extern s16 ParticleStreams_DropPoints[][2];
-extern u16 ParticleStreams_FlashSheetOffsets[];
-extern u16 ParticleStreams_FlashSizes[];
+extern s16 gParticleStreams_OrbitPoints[][3];
+extern s16 gParticleStreams_DropPoints[][2];
+extern u16 gParticleStreams_FlashSheetOffsets[];
+extern u16 gParticleStreams_FlashSizes[];
 
 #define EMBERS (&PARTICLES[128])
 
@@ -20268,9 +20268,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			SceneTransform_ApplyYaw(frame << 8);
 			for (i = 0; i != 7; i++)
 			{
-				vector[0] = (ParticleStreams_OrbitPoints[i][0] / 2) << 16;
-				vector[1] = (ParticleStreams_OrbitPoints[i][1] + frame) << 16;
-				vector[2] = (ParticleStreams_OrbitPoints[i][2] / 2) << 16;
+				vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
+				vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
+				vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
 				EffectPosition_ApplyBaseAndYOffset(vector, pos = &spot);
 				pos->x = HI(pos->x) + 128;
 				pos->y = HI(pos->y) + 60;
@@ -20283,13 +20283,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			y = frame - 96;
 			for (i = 0; i != 7; i++)
 			{
-				s32 drop = ParticleStreams_DropPoints[i][1] + y;
+				s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
 				if (drop <= 93)
 					draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80,
-						ParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
+						gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
 				else if (drop <= 95)
-					AddFlame((ParticleStreams_DropPoints[i][0] + x) << 16, drop << 16, 1);
+					AddFlame((gParticleStreams_DropPoints[i][0] + x) << 16, drop << 16, 1);
 			}
 			for (i = 0; i != 32; i++)
 			{
@@ -20408,7 +20408,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 					point.depth = 799;
 				size = 9 - (point.depth - 160) / 64;
 				draw(canvas,
-					(u8 *)work + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+					(u8 *)work + (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
 					point.x - size / 2, point.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
 				if (ember->y <= 0x140000)
@@ -20429,7 +20429,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			s32				   size = rise + 3;
 
 			draw(canvas,
-				(u8 *)work + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+				(u8 *)work + (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
 				mote->x - size / 2, mote->y - size, size, size * 2);
 			mote->y = mote->y - rise - 8;
 			if (mote->y < -10)
@@ -20447,10 +20447,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 				{
 					s32 cell = flash->variant / 2;
 
-					draw(canvas, (u8 *)work + ParticleStreams_FlashSheetOffsets[cell],
-						point.x - ParticleStreams_FlashSizes[cell] / 2,
-						point.y - ParticleStreams_FlashSizes[cell] / 2,
-						ParticleStreams_FlashSizes[cell], ParticleStreams_FlashSizes[cell]);
+					draw(canvas, (u8 *)work + gParticleStreams_FlashSheetOffsets[cell],
+						point.x - gParticleStreams_FlashSizes[cell] / 2,
+						point.y - gParticleStreams_FlashSizes[cell] / 2,
+						gParticleStreams_FlashSizes[cell], gParticleStreams_FlashSizes[cell]);
 				}
 				flash->variant++;
 				if (flash->variant == 14)
@@ -20596,7 +20596,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 			AudioCommand_PlayFar(156);
 		if (frame == 260)
 			AudioCommand_PlayFar(145);
-		scale = CirclingScene_UnitScale;
+		scale = gCirclingScene_UnitScale;
 		if (frame >= 96 && frame <= 251)
 			work->shakeFrames = 1;
 		else if (frame >= 260 && frame <= 263)
@@ -20605,8 +20605,8 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 		position[1] = 0;
 		for (i = 0; i != 7; i++)
 		{
-			position[0] = (CirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
-			position[2] = (CirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
+			position[0] = (gCirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
+			position[2] = (gCirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
 			Object_ApplyProjectedPlacementFar(work->objects[i], position, &scale, 0);
 		}
 		if (frame <= 90)
@@ -20702,10 +20702,10 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 				{
 					s32 cell = puff->variant / 6 + 3;
 
-					draw[0](canvas, work->sheet + CirclingScene_PuffSheetOffsets[cell],
-						HI(puff->x) - CirclingScene_PuffSizes[cell] / 2,
-						HI(puff->y) - CirclingScene_PuffSizes[cell] / 2,
-						CirclingScene_PuffSizes[cell], CirclingScene_PuffSizes[cell]);
+					draw[0](canvas, work->sheet + gCirclingScene_PuffSheetOffsets[cell],
+						HI(puff->x) - gCirclingScene_PuffSizes[cell] / 2,
+						HI(puff->y) - gCirclingScene_PuffSizes[cell] / 2,
+						gCirclingScene_PuffSizes[cell], gCirclingScene_PuffSizes[cell]);
 				}
 				EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
 				puff->variant++;
@@ -20746,7 +20746,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 			{
 				s32 size = (spark->variant >> 3) + 1;
 
-				draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[i & 1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 					HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
 				EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
 				spark->variant--;
@@ -20889,10 +20889,10 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
 		{
 			s32 cell = frame / 3;
 
-			draw[0](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell], 48,
-				PuffArc_CellBiasY[cell] + 60, PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
-			draw[1](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell], 56,
-				PuffArc_CellBiasY[cell] + 60, PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
+			draw[0](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell], 48,
+				gPuffArc_CellBiasY[cell] + 60, gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
+			draw[1](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell], 56,
+				gPuffArc_CellBiasY[cell] + 60, gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
 		}
 		if (frame >= 18 && frame <= 58)
 		{
@@ -20994,7 +20994,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
 					}
 					else
 					{
-						draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 							position.x - size / 2, position.y - size, size, size * 2);
 					}
 					ember->x += ember->velocityX;
@@ -21019,9 +21019,9 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
 				{
 					s32 cell = puff->variant / 2;
 
-					draw[1](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell],
-						puff->x - PuffArc_CellWidths[cell] / 2, puff->y + PuffArc_CellBiasY[cell],
-						PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
+					draw[1](canvas, &work->sheet[0x3c00] + gPuffArc_CellSourceOffsets[cell],
+						puff->x - gPuffArc_CellWidths[cell] / 2, puff->y + gPuffArc_CellBiasY[cell],
+						gPuffArc_CellWidths[cell], gPuffArc_CellHeights[cell]);
 				}
 				puff->variant++;
 			}
@@ -21156,7 +21156,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 					out.x >>= 1;
 					out.y = out.y + origin.y - 112;
 					size = (life >> 3) + 2;
-					routine[(i / 2) & 1](canvas, cells + ParticleStreams_CellOffsets[size - 1],
+					routine[(i / 2) & 1](canvas, cells + gParticleStreams_CellOffsets[size - 1],
 						out.x - size / 2, out.y - size, size, size * 2);
 					EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
 					shard->variant--;
@@ -21194,7 +21194,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // 剣を 40 フレーム描き (10 フレームで振り下ろす)、16 と 24 フレーム目に
 // 2 つの列で閃光を出し、6 フレーム後から火花を散らす
-// 列の x は FlameBlade_StrikeColumns (side ごとに 3 つ、使うのは最初の 2 つ)
+// 列の x は gFlameBlade_StrikeColumns (side ごとに 3 つ、使うのは最初の 2 つ)
 //--------------------------------------------------------------------------
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {
@@ -21260,7 +21260,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
 			speed = (Random16() & 0x1ff) + 32;
 			angle = Random16() & 0xffff;
-			spark->x = FlameBlade_StrikeColumns[col + work->effect->side * 3] << 16;
+			spark->x = gFlameBlade_StrikeColumns[col + work->effect->side * 3] << 16;
 			spark->y = 88 << 16;
 			spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
 			spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -21374,7 +21374,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 				if (frame < start + 2)
 				{
 					blit[0](canvas, work->sheet + FLASH_SHEET,
-						FlameBlade_StrikeColumns[col + work->effect->side * 3] - 16, 56, 32, 64);
+						gFlameBlade_StrikeColumns[col + work->effect->side * 3] - 16, 56, 32, 64);
 				}
 				i = 0;
 				do
@@ -21386,12 +21386,12 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 					s32 y;
 
 					y = HI(flash->y);
-					x = HI(flash->x) + FlameBlade_StrikeColumns[col + work->effect->side * 3];
+					x = HI(flash->x) + gFlameBlade_StrikeColumns[col + work->effect->side * 3];
 					life = flash->variant;
 					if (life >= 0 && life <= 17)
 					{
 						blit[0](canvas,
-							work->sheet + (FlameBlade_FlashCells[life / 3] << 11) + FLASH_SHEET,
+							work->sheet + (gFlameBlade_FlashCells[life / 3] << 11) + FLASH_SHEET,
 							x - 16, y + 56, 32, 64);
 					}
 					life = flash->variant;
@@ -21434,7 +21434,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 								// 寿命で大きさを決め、比較と加算を 1 個おきに使う
 								size = spark->variant / 5 + 1;
 								lane = i & 1;
-								cel = sheet + ParticleStreams_CellOffsets[size - 1];
+								cel = sheet + gParticleStreams_CellOffsets[size - 1];
 								px -= size / 2;
 								py -= size;
 								blit[lane](canvas, cel, px, py, size, size * 2);
@@ -21611,7 +21611,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 				if (life >= 0 && life <= 17)
 				{
 					routine[0](canvas,
-						(u8 *)work + (FallingSword_FlashCells[life / 3] << 11) + (221 << 4), x - 16,
+						(u8 *)work + (gFallingSword_FlashCells[life / 3] << 11) + (221 << 4), x - 16,
 						y + 48, 32, 64);
 				}
 				life = flash->variant;
@@ -21726,7 +21726,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 					{
 						size = 10;
 					}
-					routine[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					routine[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 
 					dust->x += dust->velocityX;
@@ -21737,7 +21737,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 					}
 					else
 					{
-						dust->velocityY += FallingSword_DustGravity[i & 3];
+						dust->velocityY += gFallingSword_DustGravity[i & 3];
 					}
 					dust->velocityX = dust->velocityX * 62 / 64;
 					dust->velocityY = dust->velocityY * 62 / 64;
@@ -21813,7 +21813,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 							u8 *cell;
 
 							size = spark->variant / 5 + 1;
-							cell = sheet + ParticleStreams_CellOffsets[size - 1];
+							cell = sheet + gParticleStreams_CellOffsets[size - 1];
 							x >>= 16;
 							y >>= 16;
 							x -= size / 2;
@@ -21863,10 +21863,10 @@ struct ShockwaveWork
 	u8 ramp[8][770];
 };
 
-extern const struct Scale ShockwaveScene_UnitScale;
-extern u16				  ShockwaveScene_ShardCells[];
-extern u8				  ShockwaveScene_ShardWidths[];
-extern u8				  ShockwaveScene_ShardHeights[];
+extern const struct Scale gShockwaveScene_UnitScale;
+extern u16				  gShockwaveScene_ShardCells[];
+extern u8				  gShockwaveScene_ShardWidths[];
+extern u8				  gShockwaveScene_ShardHeights[];
 
 #define SPARKS (&PARTICLES[128])
 
@@ -22039,7 +22039,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 				{
 					far = z;
 				}
-				draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2,
+				draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1], scene[0] - size / 2,
 					scene[1] - size, size, size * 2);
 				if (frame == 64)
 				{
@@ -22086,12 +22086,12 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 				size = ((scene[2]) / 20) + 2;
 				scene[0] += 60;
 				scene[1] += 80;
-				draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2,
+				draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1], scene[0] - size / 2,
 					scene[1] - size, size, size * 2);
 			}
 		}
 
-		pair = ShockwaveScene_UnitScale;
+		pair = gShockwaveScene_UnitScale;
 		place[3] = 0;
 		place[1] = 0;
 		for (i = 0; i != 16; i++)
@@ -22143,8 +22143,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			{
 				n = 6;
 			}
-			high = ShockwaveScene_BurstHeights[n];
-			cell = ShockwaveScene_BurstCells[n] + 0x600;
+			high = gShockwaveScene_BurstHeights[n];
+			cell = gShockwaveScene_BurstCells[n] + 0x600;
 
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
 			(((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
@@ -22167,10 +22167,10 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			{
 				s32 k = i & 3;
 				s32 angle = Random16() & 0xffff;
-				s32 x = ((Trig_Sin(angle) * 16) >> 16) - ShockwaveScene_ShardWidths[k] / 2;
-				s32 y = ((Trig_Cos(angle) * 16) >> 16) - ShockwaveScene_ShardHeights[k] / 2;
-				draw[0](canvas, work->sheet + ShockwaveScene_ShardCells[k], x + 60, y + 80,
-					ShockwaveScene_ShardWidths[k], ShockwaveScene_ShardHeights[k]);
+				s32 x = ((Trig_Sin(angle) * 16) >> 16) - gShockwaveScene_ShardWidths[k] / 2;
+				s32 y = ((Trig_Cos(angle) * 16) >> 16) - gShockwaveScene_ShardHeights[k] / 2;
+				draw[0](canvas, work->sheet + gShockwaveScene_ShardCells[k], x + 60, y + 80,
+					gShockwaveScene_ShardWidths[k], gShockwaveScene_ShardHeights[k]);
 			}
 		}
 
@@ -22191,7 +22191,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			work->transferValue = 75;
 			if (n <= 6)
 			{
-				s32 cell = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
+				s32 cell = n * 770 + gParticleStreams_CellOffsets[7] + 0x2710;
 				/* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp. 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
 				s32 high = 8;
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
@@ -22511,7 +22511,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 				s32 angle = i << 8;
 				s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
 				s32 y = (Trig_Cos(angle) * r2) >> 17;
-				draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], x + 60, y + 50, size,
+				draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1], x + 60, y + 50, size,
 					size * 2);
 			}
 		}
@@ -22783,7 +22783,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 #define REG16(address) (*(volatile u16 *)(address))
 
-// battle.h が ObjectRow_SweepPair と ObjectRow_RisePair をこの名前で宣言している (中身は Scale)
+// battle.h が gObjectRow_SweepPair と gObjectRow_RisePair をこの名前で宣言している (中身は Scale)
 struct FxPair
 {
 	s32 a;
@@ -22908,7 +22908,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
 		if (frame <= 149)
 		{
-			struct FxPair pair = ObjectRow_SweepPair;
+			struct FxPair pair = gObjectRow_SweepPair;
 			s32			  lift;
 
 			lift = 0;
@@ -22946,8 +22946,8 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 			i = 0;
 			do
 			{
-				place.x = ((baseX + ObjectRow_Columns[i] - lift) << 16) + (224 << 16);
-				place.z = ((ObjectRow_Rows[i] - wave) << 16) + (144 << 15);
+				place.x = ((baseX + gObjectRow_Columns[i] - lift) << 16) + (224 << 16);
+				place.z = ((gObjectRow_Rows[i] - wave) << 16) + (144 << 15);
 				Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
 				i++;
 			} while (i != 9);
@@ -22972,7 +22972,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 				s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
 				s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-				blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1], x - size / 2, y - size,
+				blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1], x - size / 2, y - size,
 					size, size * 2);
 			}
 		}
@@ -22998,7 +22998,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 				{
 					s32 size = i % 3 + 1;
 
-					blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1], fire->x,
+					blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1], fire->x,
 						HI(fire->y) - size, size, size * 2);
 					fire->x += 2;
 					fire->y += fire->velocityY;
@@ -23101,7 +23101,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 		{
 			if (frame <= 23)
 			{
-				struct FxPair pair2 = ObjectRow_RisePair;
+				struct FxPair pair2 = gObjectRow_RisePair;
 				s32			  ang;
 				s32			  rise;
 
@@ -23129,8 +23129,8 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 				i = 0;
 				do
 				{
-					place2.x = (rowX + ObjectRow_Columns[i]) << 16;
-					place2.z = ((ObjectRow_Rows[i] - rise) << 16) + (144 << 15);
+					place2.x = (rowX + gObjectRow_Columns[i]) << 16;
+					place2.z = ((gObjectRow_Rows[i] - rise) << 16) + (144 << 15);
 					Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &pair2, 0);
 					i++;
 				} while (i != 9);
@@ -23191,7 +23191,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 				{
 					s32 size = 3;
 
-					blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					blit(canvas, sheet + gParticleStreams_CellOffsets[size - 1],
 						HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
 					burst->x += burst->velocityX;
 					burst->y += burst->velocityY;
@@ -23253,7 +23253,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-extern const struct Scale BattleFx6_UnitScale;
+extern const struct Scale gBattleFx6_UnitScale;
 
 void Graphics_ResetBg2Pa(void)
 {
@@ -23408,7 +23408,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 
 		if (frame > 21)
 		{
-			scale = BattleFx6_UnitScale;
+			scale = gBattleFx6_UnitScale;
 			if (frame <= 83)
 			{
 				if (frame > 48)
@@ -23453,8 +23453,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 			pos[1] = 0;
 			for (i = 0; i != 8; i++)
 			{
-				pos[0] = (((BattleFx6_ObjectX[i] * 3) >> 1) << 16) + px - 0x200000;
-				pos[2] = (((BattleFx6_ObjectY[i] * 3) >> 1) << 16) + py - 0x180000;
+				pos[0] = (((gBattleFx6_ObjectX[i] * 3) >> 1) << 16) + px - 0x200000;
+				pos[2] = (((gBattleFx6_ObjectY[i] * 3) >> 1) << 16) + py - 0x180000;
 				Object_ApplyProjectedPlacementFar(work->objects[i], pos, &scale, 0);
 			}
 		}
@@ -23493,7 +23493,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 					s32 fy = HI(q2->y) + 62;
 					s32 r = (i & 3) + 5;
 					s = r * 2;
-					blit[0](dst, work->sheet + BattleFx6_FlareCells[r - 1] + 0x4e20, fx - r, fy - r,
+					blit[0](dst, work->sheet + gBattleFx6_FlareCells[r - 1] + 0x4e20, fx - r, fy - r,
 						s, s);
 					q2->x += q2->velocityX;
 					q2->y += q2->velocityY;
@@ -23536,7 +23536,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 		{
 			for (i = 0; i != 64; i++)
 			{
-				u16 *cells = BattleFx6_FlareCells;
+				u16 *cells = gBattleFx6_FlareCells;
 				s32	 r = 1;
 				if (frame >= i / 2 + 222)
 				{
@@ -23597,7 +23597,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 			{
 				z = 4;
 			}
-			blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
+			blit[1](dst, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
 				z * 2);
 		}
 		if (frame >= 192 && frame < 200)
@@ -23608,7 +23608,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 			{
 				z = 6;
 			}
-			blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
+			blit[1](dst, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
 				z * 2);
 		}
 		if (frame > 199)
@@ -23620,7 +23620,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 			{
 				z = 8;
 			}
-			blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
+			blit[1](dst, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2,
 				z * 2);
 			if (frame <= 213)
 			{
@@ -23629,7 +23629,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 				{
 					z = 4;
 				}
-				blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 100 - z, 52 - z,
+				blit[1](dst, work->sheet + gBattleFx6_FlareCells[z - 1] + 0x4e20, 100 - z, 52 - z,
 					z * 2, z * 2);
 			}
 		}
@@ -23663,9 +23663,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 				if (PARTICLES[i].variant >= 0)
 				{
 					s32 k = i % 3 + 2;
-					draw(dst, aux + ParticleStreams_CellOffsets[k - 1], HI(PARTICLES[i].x) - k / 2,
+					draw(dst, aux + gParticleStreams_CellOffsets[k - 1], HI(PARTICLES[i].x) - k / 2,
 						HI(PARTICLES[i].y) - k, k, k * 2);
-					EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & m]);
+					EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, gBattleFx6_Gravity[i & m]);
 					PARTICLES[i].variant++;
 					if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
 					{
@@ -23795,7 +23795,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 				{
 					s32 k = PARTICLES[i].variant / 8 + 3;
 					blit[i & 1](
-						dst, aux + ParticleStreams_CellOffsets[k - 1], x - k / 2, y - k, k, k * 2);
+						dst, aux + gParticleStreams_CellOffsets[k - 1], x - k / 2, y - k, k, k * 2);
 				}
 			}
 		}
@@ -24064,8 +24064,8 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect)
 				py = HI(p->y);
 				if (cell > 6)
 					cell = 6;
-				src = work->sheet + RisingBurst_SparkCells[cell] + 0x460;
-				size = RisingBurst_SparkSizes[cell];
+				src = work->sheet + gRisingBurst_SparkCells[cell] + 0x460;
+				size = gRisingBurst_SparkSizes[cell];
 				draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
 				p->variant++;
 				EffectStep_AdvanceWithGravity2D(p, 62, -0x2000);
@@ -24189,7 +24189,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		}
 		PUT(src[6]);
 		PUT(src[7]);
-		PUT(src[8] + BattleEffect_BitOperands[width_shift]);
+		PUT(src[8] + gBattleEffect_BitOperands[width_shift]);
 		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[9]);
@@ -24198,7 +24198,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		{
 			PUT(src[10]);
 		}
-		PUT(src[11] + BattleEffect_BitOperands[width_shift]);
+		PUT(src[11] + gBattleEffect_BitOperands[width_shift]);
 	}
 	src += 12;
 
@@ -24562,7 +24562,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		}
 		PUT(src[6]);
 		PUT(src[7]);
-		PUT(src[8] + BattleEffect_BitOperands[width_shift]);
+		PUT(src[8] + gBattleEffect_BitOperands[width_shift]);
 		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[9]);
@@ -24571,7 +24571,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		{
 			PUT(src[10]);
 		}
-		PUT(src[11] + BattleEffect_BitOperands[width_shift]);
+		PUT(src[11] + gBattleEffect_BitOperands[width_shift]);
 	}
 	src += 12;
 
@@ -24817,30 +24817,30 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	PUT(*src++);
 
-	end = (const u32 *)ParticleStreams_CellOffsets;
+	end = (const u32 *)gParticleStreams_CellOffsets;
 	return src == end;
 }
 
 // 拡大率 {x, y} (Q16)
-const struct Scale BattleFx_StarsUnitScale = {
+const struct Scale gBattleFx_StarsUnitScale = {
 	0x10000,
 	0x10000,
 };
 
-const Scale BattleFx10_UnitScale = {
+const Scale gBattleFx10_UnitScale = {
 	0x10000,
 	0x10000,
 };
 
 // 岩の壁の高さ
-const s32 RockWall_Heights[4] = {
+const s32 gRockWall_Heights[4] = {
 	-32,
 	-32,
 	-32,
 	-32,
 };
 
-const s16 Mode12_Points[6][2] = {
+const s16 gMode12_Points[6][2] = {
 	{8, 135},
 	{184, 135},
 	{128, 135},
@@ -24849,42 +24849,42 @@ const s16 Mode12_Points[6][2] = {
 	{64, 135},
 };
 
-const struct Scale RisingWall_UnitScale = {
+const struct Scale gRisingWall_UnitScale = {
 	0x10000,
 	0x10000,
 };
 
-const s32 Formation_NormalScale[2] = {
+const s32 gFormation_NormalScale[2] = {
 	0x10000,
 	0x10000,
 };
 
-const s32 Formation_SmallScale[2] = {
+const s32 gFormation_SmallScale[2] = {
 	0x14000,
 	0x14000,
 };
 
-const struct Scale CirclingScene_UnitScale = {
+const struct Scale gCirclingScene_UnitScale = {
 	0x10000,
 	0x10000,
 };
 
-const struct Scale ShockwaveScene_UnitScale = {
+const struct Scale gShockwaveScene_UnitScale = {
 	0x10000,
 	0x10000,
 };
 
-const struct FxPair ObjectRow_SweepPair = {
+const struct FxPair gObjectRow_SweepPair = {
 	0x10000,
 	0x10000,
 };
 
-const struct FxPair ObjectRow_RisePair = {
+const struct FxPair gObjectRow_RisePair = {
 	0x10000,
 	0x10000,
 };
 
-const struct Scale BattleFx6_UnitScale = {
+const struct Scale gBattleFx6_UnitScale = {
 	0x18000,
 	0x18000,
 };

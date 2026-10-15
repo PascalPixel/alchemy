@@ -389,6 +389,6 @@ Func_080de21c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080de548:
-	.4byte Data_080f0ef8
+	.4byte gData_080f0ef8
 .L_080de54c:
-	.4byte Data_080f0e58
+	.4byte gData_080f0e58

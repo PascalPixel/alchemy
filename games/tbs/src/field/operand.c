@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------
 
 // 作業値の番号 (enum ScriptWork) ごとの処理
-const OperandFunc Script_OperandHandlerTable[41] =
+const OperandFunc gScript_OperandHandlerTable[41] =
 {
 	Script_SetOrCompareAddress,				// 0x00 SW_SCRIPT
 	Script_SetOrCompareCursor,				// 0x01 SW_CURSOR

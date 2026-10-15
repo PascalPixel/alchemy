@@ -147,6 +147,6 @@ MapAnimation_Update:
 .L_0802cc68:
 	.4byte 0x06008000
 .L_0802cc6c:
-	.4byte Data_0201c000
+	.4byte gData_0201c000
 .L_0802cc70:
 	.4byte gMapBlocks

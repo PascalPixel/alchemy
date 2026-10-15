@@ -10,7 +10,7 @@ void Func_02001140(struct ObjectRuntime *object)
         if (child != 0) {
             struct FieldSprite *sprite = child->animation;
 
-            Func_02001c74(child, Data_02001ef4);
+            Func_02001c74(child, gData_02001ef4);
             child->motionFlags = 0;
             child->y = -0x78000;
             child->terrainId = 1;

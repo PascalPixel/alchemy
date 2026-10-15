@@ -25,5 +25,5 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode)
 
 void Func_020001f4(s32 door)
 {
-    Func_0200016c(&Data_02003d10, door, 0);
+    Func_0200016c(&gData_02003d10, door, 0);
 }

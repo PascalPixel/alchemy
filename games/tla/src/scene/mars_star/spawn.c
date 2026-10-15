@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 #include "call.h"
 
-extern const u8 Data_02004744[];
+extern const u8 gData_02004744[];
 
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Func_020041cc(struct ObjectRuntime *object, s32 mode);
@@ -15,7 +15,7 @@ void Func_02001750(struct ObjectRuntime *object)
     object->motionFlags = 0;
     object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_020041dc(object, Data_02004744);
+    Func_020041dc(object, gData_02004744);
     object->action = 0;
     object->speedLimit = 0;
     object->acceleration = 0;

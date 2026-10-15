@@ -68,7 +68,7 @@ void Animation_ApplyChildValues(struct DispatchObject *, u32);
 void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
 void ObjectDispatch_SetSpritePriority(struct DispatchObject *, s32);
 
-extern const s32 ObjectDispatch_Table4[];
-extern const s32 ObjectDispatch_Table6[];
+extern const s32 gObjectDispatch_Table4[];
+extern const s32 gObjectDispatch_Table6[];
 
 #endif

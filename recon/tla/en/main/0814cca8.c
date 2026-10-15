@@ -34,7 +34,7 @@ struct FxBgScroll {
     u16 y;
 };
 
-extern void (*Data_08197aa0[])(s32 *script);
+extern void (*gData_08197aa0[])(s32 *script);
 extern struct FxBgScroll gBgScroll[];
 extern u32 gCameraSceneParameters[];
 

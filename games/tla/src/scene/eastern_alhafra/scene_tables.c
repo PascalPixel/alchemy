@@ -11,9 +11,9 @@
 #include "party_state.h"
 #include "call.h"
 
-extern u8 Data_02004d0c[];
-extern u8 Data_02004dbc[];
-extern u8 Data_02004fe4[];
+extern u8 gData_02004d0c[];
+extern u8 gData_02004dbc[];
+extern u8 gData_02004fe4[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
@@ -47,8 +47,8 @@ const u32 *Scene_GetExits(void)
 void *Func_0200004c(void)
 {
     if (GameFlag_Test(0x8ab))
-        return Data_02004fe4;
-    return Data_02004dbc;
+        return gData_02004fe4;
+    return gData_02004dbc;
 }
 
 void Func_0200006c(s32 mode, s32 id)
@@ -73,7 +73,7 @@ void Func_020000c8(s32 mode, s32 arg)
     struct ObjectRuntime *b;
     s32 i;
 
-    Func_02004868(Data_02004d0c, mode, arg);
+    Func_02004868(gData_02004d0c, mode, arg);
     if (mode == 1) {
         a = Object_GetById(19);
         b = Object_GetById(21);

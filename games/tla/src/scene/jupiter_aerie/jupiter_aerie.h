@@ -33,10 +33,10 @@ struct JupiterAerieEntry {
 
 extern u8 gDecodeFillByte;
 extern s32 gFrameCount;
-extern s32 Data_02003314;
-extern s32 Data_02003318;
-extern u16 Data_02003340[];
-extern u8 Data_02003488[];
+extern s32 gData_02003314;
+extern s32 gData_02003318;
+extern u16 gData_02003340[];
+extern u8 gData_02003488[];
 
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 struct ObjectRuntime *Object_GetById(s32 id);

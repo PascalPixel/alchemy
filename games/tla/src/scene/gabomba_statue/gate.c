@@ -7,7 +7,7 @@ struct GateEventWork {
     u16 gateTimer;
 };
 
-extern const u8 Data_02005d7c[];
+extern const u8 gData_02005d7c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020018ec(s32 open);
 void GameFlag_SetBit(s32 flag);

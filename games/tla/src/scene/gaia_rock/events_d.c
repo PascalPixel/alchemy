@@ -10,7 +10,7 @@ void Func_02000e3c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02000e5c(struct ObjectRuntime *object, s32 a);
 void Func_02000f1c(struct ObjectRuntime *object, s32 a);
 
-extern const u8 Data_020015c4[];
+extern const u8 gData_020015c4[];
 
 void Func_02000670(void)
 {
@@ -28,7 +28,7 @@ void Func_02000670(void)
             object->priorityFlags = phase;
             Func_02000e24(object, 2);
             Func_02000e3c(object, object->x - 0x200000, object->y, object->z);
-            Func_02000e2c(object, Data_020015c4);
+            Func_02000e2c(object, gData_020015c4);
             Func_02000e5c(object, 2);
         }
     }

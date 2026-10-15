@@ -3,7 +3,7 @@
 #include "io_write_queue.h"
 #include "ram_buffer.h"
 
-extern s16 Data_020006dc;
+extern s16 gData_020006dc;
 
 void Func_02000490(void);
 void Func_02000278(void);
@@ -21,7 +21,7 @@ void Func_0200031c(void)
 
     Func_02000490();
     Battle_WaitMode0(30);
-    Data_020006dc = 0;
+    gData_020006dc = 0;
     Title_LoadSprites(0);
     Scheduler_AddOrUpdateCallback(Func_02000278, 0x480);
     IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);

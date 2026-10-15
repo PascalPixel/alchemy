@@ -15,11 +15,11 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-extern const u8 Data_020033a8[];
-extern const u8 Data_02003400[];
-extern const u8 Data_0200346c[];
-extern const u8 Data_020034e4[];
-extern const u8 Data_0200350c[];
+extern const u8 gData_020033a8[];
+extern const u8 gData_02003400[];
+extern const u8 gData_0200346c[];
+extern const u8 gData_020034e4[];
+extern const u8 gData_0200350c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -109,7 +109,7 @@ void Func_02001ee0(void)
     Value3((s32 (*)())Engine_ActorShowEmote, 8, 257, 0);
     Value3((s32 (*)())Engine_ActorShowEmote, 5, 257, 80);
     Call2((void (*)())Engine_EventShowMessage, 10, 0);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, Data_020033a8);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10, gData_020033a8);
     Call1((void (*)())Battle_WaitMode0, 40);
     Call2((void (*)())Engine_ActorSetAnimation, 8, 1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
@@ -121,12 +121,12 @@ void Func_02001ee0(void)
     Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xa000, 40);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, Data_02003400);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_02003400);
     Call1((void (*)())Battle_WaitMode0, 40);
     Call2((void (*)())Engine_CameraSetSpeed, 0xcccc, 0x1999);
     Call4((void (*)())Motion_CamBounds, 0x1700000, -1, 0xd20000, 1);
     actor->action = 0;
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, Data_0200346c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, gData_0200346c);
     do {
         Task_Wait(1);
     } while (actor->action == 0);
@@ -137,8 +137,8 @@ void Func_02001ee0(void)
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x3000, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, Data_020034e4);
-    Call2((void (*)())Object_SetActionCallbackAndRefreshById, 5, Data_0200350c);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_020034e4);
+    Call2((void (*)())Object_SetActionCallbackAndRefreshById, 5, gData_0200350c);
     Call1((void (*)())Battle_WaitMode0, 40);
     Call2((void (*)())Engine_EventShowMessage, 0x5008, 0);
     Call3((void (*)())ObjectMotion_Launch, 5, 4, 10);

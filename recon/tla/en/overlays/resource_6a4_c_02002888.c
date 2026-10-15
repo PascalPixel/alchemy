@@ -6,7 +6,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     u8 *event = Ram_HeapSlots->eventWork;
-    struct JupiterAerieWork *work = (struct JupiterAerieWork *)Data_02003488;
+    struct JupiterAerieWork *work = (struct JupiterAerieWork *)gData_02003488;
     s32 x = GameFlag_GetByte(work->flag);
     s32 z = GameFlag_GetByte(work->flag + 8);
 

@@ -7,7 +7,7 @@
 #include "field_scene.h"
 #include "field_effect.h"
 
-extern const u8 BattleFx_CommonParticleScript[];
+extern const u8 gBattleFx_CommonParticleScript[];
 
 struct OrbitEffect {
     u8 unk00[6];
@@ -79,5 +79,5 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)gBattleFx_CommonParticleScript);
 }

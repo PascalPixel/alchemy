@@ -98,7 +98,7 @@ static void FieldScene_RunPrimarySequence(void)
 	p6 += 0x16c;
 	n = *(s16 *)p6 - 14;
 	Engine_AudioPlayCue(158);
-	Map_AnimateCells(TolbiInteriors_ExitCells[n].steps, TolbiInteriors_ExitCells[n].x, TolbiInteriors_ExitCells[n].y);
+	Map_AnimateCells(gTolbiInteriors_ExitCells[n].steps, gTolbiInteriors_ExitCells[n].x, gTolbiInteriors_ExitCells[n].y);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -512,7 +512,7 @@ static void EV30_TALK(s32 no)
 	}
 }
 
-s32 TolbiInteriors_ScaleBounceScript[] = {
+s32 gTolbiInteriors_ScaleBounceScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -691,7 +691,7 @@ struct ScenePlacement gTolbiInteriorsPlacementsFlag950[] = {
 		PIXELS(568), 0, PIXELS(848), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(232), 0, PIXELS(592), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x94, CONDITION_ALWAYS, (s32)TolbiInteriors_ScaleBounceScript,
+	{ 0x94, CONDITION_ALWAYS, (s32)gTolbiInteriors_ScaleBounceScript,
 		PIXELS(230), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x42, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(864), 0, PIXELS(848), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -955,13 +955,13 @@ struct SceneEvent gTolbiInteriorsEventsFlag950[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 TolbiInteriors_ExitCellSteps[] = {
+u16 gTolbiInteriors_ExitCellSteps[] = {
 	MAP_CELL_STEP(2, 123, 1, 2, 6), MAP_CELL_STEP(4, 123, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim TolbiInteriors_ExitCells[] = {
-	{ TolbiInteriors_ExitCellSteps, 24, 100 },
-	{ TolbiInteriors_ExitCellSteps, 33, 100 },
-	{ TolbiInteriors_ExitCellSteps, 50, 99 },
-	{ TolbiInteriors_ExitCellSteps, 52, 109 },
+struct MapCellAnim gTolbiInteriors_ExitCells[] = {
+	{ gTolbiInteriors_ExitCellSteps, 24, 100 },
+	{ gTolbiInteriors_ExitCellSteps, 33, 100 },
+	{ gTolbiInteriors_ExitCellSteps, 50, 99 },
+	{ gTolbiInteriors_ExitCellSteps, 52, 109 },
 };

@@ -843,13 +843,13 @@ BattleFx_RenderMode:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0814ae9c:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_0814aea0:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_0814aea4:
 	.4byte Data_08197a34
 .L_0814aea8:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_0814aeac:
 	.4byte gMapCellBuffer
 .L_0814aeb0:

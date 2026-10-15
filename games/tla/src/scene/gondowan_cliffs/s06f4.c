@@ -2,8 +2,8 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-extern const u8 Data_020019c0[];
-extern const u8 Data_020019f0[];
+extern const u8 gData_020019c0[];
+extern const u8 gData_020019f0[];
 
 void GameFlag_SetBit(s32 flag);
 void Func_0200124c(s32, s32, s32);
@@ -17,6 +17,6 @@ void Func_020006f4(s32 unused, s32 id)
 const u8 *Func_0200070c(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov66bRoom2)
-        return Data_020019c0;
-    return Data_020019f0;
+        return gData_020019c0;
+    return gData_020019f0;
 }

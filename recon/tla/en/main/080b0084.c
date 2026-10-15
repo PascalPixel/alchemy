@@ -29,7 +29,7 @@ struct ElementLevelBonus {
     u16 res;
 };
 
-extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
+extern const struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 s32 GameFlag_Test(s32 flag);
 
@@ -61,7 +61,7 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
         i = 0;
         for (;;) {
             ((s32 *)destination)[i] =
-                Enemy_ElementPresetTable[index].values[i];
+                gEnemy_ElementPresetTable[index].values[i];
             i++;
             if (i > 3)
                 goto copied;
@@ -77,7 +77,7 @@ copied:
         s32 ones;
         s32 tens;
 
-        result = (u32)Element_PowerResistByLevel;
+        result = (u32)gElement_PowerResistByLevel;
         value = values[i];
         ones = value % 10;
         tens = value / 10;
@@ -87,9 +87,9 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
+        destination[i][0] = gElement_PowerResistByLevel[tens].power + ones;
         destination[i][1] =
-            ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].res + ones;
+            ((volatile const struct ElementLevelBonus *)gElement_PowerResistByLevel)[tens].res + ones;
         i++;
     } while (i < 4);
     return result;

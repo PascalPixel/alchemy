@@ -4,22 +4,22 @@
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_02005a3c;
+extern s32 gData_02005a3c;
 
 struct FieldActor *Object_GetById();
 void Func_02003474();
 
 void Func_02000060(void)
 {
-    if (Data_02005a3c == 0) {
+    if (gData_02005a3c == 0) {
         Func_02003474(Object_GetById(24));
-        Data_02005a3c = 1;
+        gData_02005a3c = 1;
     }
 }
 
 void Func_02000080(void)
 {
-    if (Data_02005a3c == 0) {
+    if (gData_02005a3c == 0) {
         struct PartyState *party = &gPartyState;
 
         asm volatile("" : "+l"(party)); /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; plain field tests and a local pointer build the offset first */
@@ -30,7 +30,7 @@ void Func_02000080(void)
             WORD_AT(object, 48) = 0;
             WORD_AT(object, 52) = 0;
             Func_02003474(Object_GetById(25));
-            Data_02005a3c = 1;
+            gData_02005a3c = 1;
         }
     }
 }

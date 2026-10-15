@@ -9,24 +9,24 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 Data_0200503c[];
-extern const u8 Data_0200547c[];
-extern const u8 Data_020054cc[];
-extern const u8 Data_02005528[];
-extern const u8 Data_02005578[];
-extern const u8 Data_020055d4[];
-extern const u8 Data_02005644[];
-extern const u8 Data_0200610c[];
-extern const u8 Data_02006118[];
-extern const u8 Data_0200613c[];
-extern const u8 Data_02006250[];
-extern const u8 Data_020063b8[];
-extern const u8 Data_020064fc[];
-extern const u8 Data_02006628[];
-extern const u8 Data_02006778[];
-extern s16 Data_02006868;
-extern s16 Data_020068a0;
-extern u16 Data_020068a2;
+extern const u8 gData_0200503c[];
+extern const u8 gData_0200547c[];
+extern const u8 gData_020054cc[];
+extern const u8 gData_02005528[];
+extern const u8 gData_02005578[];
+extern const u8 gData_020055d4[];
+extern const u8 gData_02005644[];
+extern const u8 gData_0200610c[];
+extern const u8 gData_02006118[];
+extern const u8 gData_0200613c[];
+extern const u8 gData_02006250[];
+extern const u8 gData_020063b8[];
+extern const u8 gData_020064fc[];
+extern const u8 gData_02006628[];
+extern const u8 gData_02006778[];
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+extern u16 gData_020068a2;
 extern u8 gMapCellBuffer[];
 
 void *MemAlloc(s32 size);
@@ -69,18 +69,18 @@ void Func_02001138(void)
 const u8 *Func_0200119c(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom1)
-        return Data_02006118;
+        return gData_02006118;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom2)
-        return Data_0200613c;
+        return gData_0200613c;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom3)
-        return Data_02006250;
+        return gData_02006250;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom4)
-        return Data_020063b8;
+        return gData_020063b8;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom5)
-        return Data_020064fc;
+        return gData_020064fc;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom6)
-        return Data_02006628;
+        return gData_02006628;
     if (gPartyState.scene == (s32)&SceneId_Ov6aaRoom7)
-        return Data_02006778;
-    return Data_0200610c;
+        return gData_02006778;
+    return gData_0200610c;
 }

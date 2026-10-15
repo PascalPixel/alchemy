@@ -14,11 +14,11 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
-extern u32 Data_02005ccc[];
-extern u32 Data_02005d24[];
-extern u32 Data_02005d8c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
+extern u32 gData_02005ccc[];
+extern u32 gData_02005d24[];
+extern u32 gData_02005d8c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);
@@ -109,7 +109,7 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode)
     Motion_CamBounds(x, y, z, mode);
 }
 
-extern u32 Data_02005c40[];
+extern u32 gData_02005c40[];
 
 static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b)
 {
@@ -252,10 +252,10 @@ void Func_02002a64(void)
     Actor_SetSpeed(6, 0x19999, 0xcccc);
     Actor_SetSpeed(23, 0x19999, 0xcccc);
     Actor_SetSpeed(7, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(7, Data_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(23, Data_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02005c40);
-    Object_SetActionCallbackAndRefreshById(5, Data_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(7, gData_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(23, gData_02005c40);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02005c40);
+    Object_SetActionCallbackAndRefreshById(5, gData_02005c40);
     GameFlag_SetBit(0x8f6);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

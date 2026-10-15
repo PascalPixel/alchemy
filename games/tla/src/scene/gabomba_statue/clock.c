@@ -12,7 +12,7 @@ struct ClockWork {
     u8 mode;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 void Func_02005854(s32 sound);
 void Func_02005090(void);
 s32 Math_Cosine(s32 angle);
@@ -32,7 +32,7 @@ extern char ResourceId_ClockDigits;
 
 void Func_020052a4(s32 mode)
 {
-    struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);
+    struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
     u8 *tiles;
 
     if (!GameFlag_Test(0x109)) {
@@ -55,7 +55,7 @@ void Func_020052a4(s32 mode)
 
 void Func_0200533c(void)
 {
-    struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);
+    struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
     if (clock->mode)
         Scheduler_RemoveCallbackFar(Func_02005210);
@@ -65,7 +65,7 @@ void Func_0200533c(void)
 
 void Func_02005364(void)
 {
-    struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);
+    struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
     if (clock->mode)
         Scheduler_AddOrUpdateCallback(Func_02005210, 1152);
@@ -76,10 +76,10 @@ void Func_02005364(void)
 
 s32 Func_020053a0(void)
 {
-    return ((struct ClockWork *)(Data_020023c4 + 0x288))->timer;
+    return ((struct ClockWork *)(gData_020023c4 + 0x288))->timer;
 }
 
 void Func_020053ac(void)
 {
-    ((struct ClockWork *)(Data_020023c4 + 0x288))->timer = 3600;
+    ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
 }

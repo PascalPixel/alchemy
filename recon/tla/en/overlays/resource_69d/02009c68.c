@@ -13,7 +13,7 @@
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s16 Data_02002864[];
+extern s16 gData_02002864[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
@@ -25,14 +25,14 @@ void Func_02001c68(s32 x, s32 z, s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     void *work = Ram_HeapSlots->eventWork;
-    s32 stepX = GameFlag_GetByte(Data_02002864[1]);
-    s32 step_z = GameFlag_GetByte(Data_02002864[1] + 8);
+    s32 stepX = GameFlag_GetByte(gData_02002864[1]);
+    s32 step_z = GameFlag_GetByte(gData_02002864[1] + 8);
 
     if (stepX != 0 || step_z != 0) {
         struct ObjectRuntime *follower;
 
-        GameFlag_SetByte(Data_02002864[1], 0);
-        GameFlag_SetByte(Data_02002864[1] + 8, 0);
+        GameFlag_SetByte(gData_02002864[1], 0);
+        GameFlag_SetByte(gData_02002864[1] + 8, 0);
         object->x = ((stepX + x) << 20) + 0x80000;
         object->z = ((step_z + z) << 20) + 0x80000;
         follower = (struct ObjectRuntime *)WORD_AT(work, 460);

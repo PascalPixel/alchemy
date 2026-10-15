@@ -51,8 +51,8 @@ s32 ResourceMetadata_Register(struct DispatchChild *);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
 s32 WaitFrames(s32);
 
-extern const s32 ObjectDispatch_Table4[];
-extern const s32 ObjectDispatch_Table6[];
+extern const s32 gObjectDispatch_Table4[];
+extern const s32 gObjectDispatch_Table6[];
 
 #endif
 

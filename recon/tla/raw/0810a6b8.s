@@ -36,4 +36,4 @@ Func_0810a6b8:
 .L_0810a6f0:
 	.4byte 0x00000000
 .L_0810a6f4:
-	.4byte Data_0810c3f4
+	.4byte gData_0810c3f4

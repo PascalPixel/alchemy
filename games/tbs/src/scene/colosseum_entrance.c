@@ -483,16 +483,16 @@ static void EV10_TOUCH(void)
 	{
 		Engine_ActorSetAnimationAndWait(17, 3);
 		FieldScene_CallPairWith10(17);
-		Engine_ActorEnableActionCallback(1, ColosseumEntrance_ActionTable1);
-		Engine_ActorEnableActionCallback(2, ColosseumEntrance_ActionTable1);
-		Object_SetActionCallbackAndRefreshById(3, (s32)ColosseumEntrance_ActionTable1);
+		Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable1);
+		Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable1);
+		Object_SetActionCallbackAndRefreshById(3, (s32)gColosseumEntrance_ActionTable1);
 		Engine_CameraSetSpeed(0x6666, 0xccc);
 		Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
 		Actor_SetSpeed(17, 0x10000, 0x8000);
-		Engine_ActorEnableActionCallback(17, ColosseumEntrance_ActionTable4);
+		Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
 		Engine_EventWait(10);
 		Actor_SetSpeed(0, 0x10000, 0x8000);
-		Engine_ActorEnableActionCallback(0, ColosseumEntrance_ActionTable4);
+		Engine_ActorEnableActionCallback(0, gColosseumEntrance_ActionTable4);
 		Engine_EventWait(80);
 		gEventWork->transitionFrames = 40;
 		Engine_EventCloseScreen();
@@ -538,16 +538,16 @@ static void EV10_TOUCH(void)
 		{
 			Engine_ActorSetAnimationAndWait(17, 3);
 			FieldScene_CallPairWith10(17);
-			Engine_ActorEnableActionCallback(1, ColosseumEntrance_ActionTable1);
-			Engine_ActorEnableActionCallback(2, ColosseumEntrance_ActionTable1);
-			Object_SetActionCallbackAndRefreshById(3, (s32)ColosseumEntrance_ActionTable1);
+			Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable1);
+			Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable1);
+			Object_SetActionCallbackAndRefreshById(3, (s32)gColosseumEntrance_ActionTable1);
 			Engine_CameraSetSpeed(0x6666, 0xccc);
 			Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
 			Actor_SetSpeed(17, 0x10000, 0x8000);
-			Engine_ActorEnableActionCallback(17, ColosseumEntrance_ActionTable4);
+			Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
 			Engine_EventWait(10);
 			Actor_SetSpeed(0, 0x10000, 0x8000);
-			Engine_ActorEnableActionCallback(0, ColosseumEntrance_ActionTable4);
+			Engine_ActorEnableActionCallback(0, gColosseumEntrance_ActionTable4);
 			Engine_EventWait(80);
 			gEventWork->transitionFrames = 40;
 			Engine_EventCloseScreen();
@@ -564,10 +564,10 @@ static void EV10_TOUCH(void)
 			SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
 			Engine_ActorSetAnimation(3, 3);
 			FieldScene_CallPairWith10(3);
-			Engine_ActorEnableActionCallback(2, ColosseumEntrance_ActionTable2);
-			Object_SetActionCallbackAndRefreshById(3, (s32)ColosseumEntrance_ActionTable2);
+			Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable2);
+			Object_SetActionCallbackAndRefreshById(3, (s32)gColosseumEntrance_ActionTable2);
 			Engine_EventWait(20);
-			Object_SetActionCallbackAndRefreshById(0, (s32)ColosseumEntrance_ActionTable2);
+			Object_SetActionCallbackAndRefreshById(0, (s32)gColosseumEntrance_ActionTable2);
 			Actor_WalkToAndWait(1, 0x106, 188);
 			SceneState_ForwardMaskedHalfwordWith10(1, 0xc000);
 			Engine_ActorSetAnimationAndWait(1, 3);
@@ -575,10 +575,10 @@ static void EV10_TOUCH(void)
 			Engine_CameraSetSpeed(0x6666, 0xccc);
 			Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
 			Actor_SetSpeed(17, 0x10000, 0x8000);
-			Engine_ActorEnableActionCallback(17, ColosseumEntrance_ActionTable4);
+			Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
 			Engine_EventWait(10);
 			Actor_SetSpeed(1, 0x10000, 0x8000);
-			Engine_ActorEnableActionCallback(1, ColosseumEntrance_ActionTable4);
+			Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable4);
 			Engine_EventWait(80);
 			gEventWork->transitionFrames = 40;
 			Engine_EventCloseScreen();
@@ -653,15 +653,15 @@ static void EV12_TOUCH(void)
 			Actor_SetSpeed(13, 0x19999, 0xcccc);
 			Actor_SetSpeed(14, 0x19999, 0xcccc);
 			Actor_SetSpeed(16, 0x19999, 0xcccc);
-			Engine_ActorEnableActionCallback(13, ColosseumEntrance_ActionTable5);
-			Engine_ActorEnableActionCallback(16, ColosseumEntrance_ActionTable7);
+			Engine_ActorEnableActionCallback(13, gColosseumEntrance_ActionTable5);
+			Engine_ActorEnableActionCallback(16, gColosseumEntrance_ActionTable7);
 			Engine_EventWait(20);
 			Engine_ActorFaceDirection(15, 0xd000, 0);
 			Engine_ActorFaceDirection(17, 0xb000, 0);
 			Engine_ActorFaceDirection(0, FACING_NORTHWEST, 0);
 			Engine_ActorFaceDirection(12, 0xd000, 0);
 			Engine_ActorFaceDirection(18, 0xb000, 0);
-			Object_SetActionCallbackAndRefreshById(14, (s32)ColosseumEntrance_ActionTable6);
+			Object_SetActionCallbackAndRefreshById(14, (s32)gColosseumEntrance_ActionTable6);
 			Engine_EventWait(20);
 			Engine_ActorFaceDirection(8, FACING_EAST, 0);
 			Engine_ActorFaceDirection(11, FACING_WEST, 40);
@@ -689,7 +689,7 @@ static void EV12_TOUCH(void)
 			actor->targetY = ACTOR_NO_TARGET;
 			actor->targetZ = ACTOR_NO_TARGET;
 			Engine_TaskWait(1);
-			script = (s32)ColosseumEntrance_ActionTable8;
+			script = (s32)gColosseumEntrance_ActionTable8;
 			Engine_ActorEnableActionCallback(15, script);
 			Engine_EventWait(20);
 			Engine_ActorEnableActionCallback(13, script);
@@ -816,7 +816,7 @@ static void FieldScene_BuildActorPresentationGroup(void)
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(16, 3);
 	Engine_EventWait(40);
-	Engine_ActorEnableActionCallback(16, (s32)ColosseumEntrance_ActionTable9);
+	Engine_ActorEnableActionCallback(16, (s32)gColosseumEntrance_ActionTable9);
 	Engine_EventWait(80);
 	Actor_SetAttachedEffect(16, 0x102);
 	Engine_EventWait(60);
@@ -951,7 +951,7 @@ static void FieldScene_RunMiddleSequence(void)
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(17, 3);
 	Engine_EventWait(40);
-	Engine_ActorEnableActionCallback(17, (s32)ColosseumEntrance_ActionTable9);
+	Engine_ActorEnableActionCallback(17, (s32)gColosseumEntrance_ActionTable9);
 	Engine_EventWait(80);
 	Actor_SetAttachedEffect(17, 0x102);
 	Engine_EventWait(60);
@@ -1307,9 +1307,9 @@ static void FieldScene_BuildActorPresentationSequence(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(GARET, (s32)ColosseumEntrance_ActionTable3);
-	Engine_ActorEnableActionCallback(IVAN, (s32)ColosseumEntrance_ActionTable3);
-	Object_SetActionCallbackAndRefreshById(3, (s32)ColosseumEntrance_ActionTable3);
+	Engine_ActorEnableActionCallback(GARET, (s32)gColosseumEntrance_ActionTable3);
+	Engine_ActorEnableActionCallback(IVAN, (s32)gColosseumEntrance_ActionTable3);
+	Object_SetActionCallbackAndRefreshById(3, (s32)gColosseumEntrance_ActionTable3);
 	Engine_EventWait(20);
 	SceneState_ForwardMaskedHalfwordWith10(0, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1466,7 +1466,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	actions = (s32)ColosseumEntrance_ActionTable3;
+	actions = (s32)gColosseumEntrance_ActionTable3;
 	Engine_ActorEnableActionCallback(GARET, actions);
 	Engine_ActorEnableActionCallback(2, actions);
 	Object_SetActionCallbackAndRefreshById(3, actions);
@@ -1564,7 +1564,7 @@ static void ColosseumEntrance_CelebrateBothWins(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	actions = (s32)ColosseumEntrance_ActionTable3;
+	actions = (s32)gColosseumEntrance_ActionTable3;
 	Engine_ActorEnableActionCallback(GARET, actions);
 	Engine_ActorEnableActionCallback(2, actions);
 	Object_SetActionCallbackAndRefreshById(3, actions);
@@ -1606,7 +1606,7 @@ static void ActorPresentation_SetActorsTwelveToEighteen(void)
 	Object_SetActionById(18, 60);
 }
 
-s32 ColosseumEntrance_ActionTable1[] = {
+s32 gColosseumEntrance_ActionTable1[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(262), 0, PIXELS(188)),
 	SC_SYNC,
@@ -1615,7 +1615,7 @@ s32 ColosseumEntrance_ActionTable1[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable2[] = {
+s32 gColosseumEntrance_ActionTable2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(246), 0, PIXELS(200)),
 	SC_SYNC,
@@ -1624,7 +1624,7 @@ s32 ColosseumEntrance_ActionTable2[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable3[] = {
+s32 gColosseumEntrance_ActionTable3[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(808), 0, PIXELS(120)),
 	SC_SYNC,
@@ -1633,7 +1633,7 @@ s32 ColosseumEntrance_ActionTable3[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable4[] = {
+s32 gColosseumEntrance_ActionTable4[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(268), 0, PIXELS(146)),
 	SC_SYNC,
@@ -1643,7 +1643,7 @@ s32 ColosseumEntrance_ActionTable4[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable5[] = {
+s32 gColosseumEntrance_ActionTable5[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(776), 0, PIXELS(120)),
 	SC_SYNC,
@@ -1653,7 +1653,7 @@ s32 ColosseumEntrance_ActionTable5[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable6[] = {
+s32 gColosseumEntrance_ActionTable6[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(894), 0, PIXELS(106)),
 	SC_SYNC,
@@ -1669,7 +1669,7 @@ s32 ColosseumEntrance_ActionTable6[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable7[] = {
+s32 gColosseumEntrance_ActionTable7[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(840), 0, PIXELS(136)),
 	SC_SYNC,
@@ -1681,7 +1681,7 @@ s32 ColosseumEntrance_ActionTable7[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable8[] = {
+s32 gColosseumEntrance_ActionTable8[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x6666),
 	SC_ARG(2),
@@ -1694,7 +1694,7 @@ s32 ColosseumEntrance_ActionTable8[] = {
 	SC_END,
 };
 
-s32 ColosseumEntrance_ActionTable9[] = {
+s32 gColosseumEntrance_ActionTable9[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_WAIT(2),

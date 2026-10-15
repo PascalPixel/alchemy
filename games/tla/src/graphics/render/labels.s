@@ -3,8 +3,8 @@
 	.balign 4
 @ The file menu's 64x16 headings, each drawn as two 32x16 sprites. The
 @ Broken Seal's Link heading gives way to Transfer and Update.
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
+	.global gRenderResource_PairSourceTable
+gRenderResource_PairSourceTable:
 	.4byte UiLabel_Save, UiLabel_Continue, UiLabel_Copy, UiLabel_Erase, UiLabel_Battle
 	.4byte UiLabel_Transfer, UiLabel_Update, UiLabel_Pause, UiLabel_Setup
 	.ifdef TLA_EDITION_JA

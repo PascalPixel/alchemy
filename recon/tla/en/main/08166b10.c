@@ -35,9 +35,9 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlastSheet;
 extern char ResourceId_Data188;
-extern u8 Data_08198a9e[];
-extern s32 Data_08198aa4[];
-extern u16 Data_08197410[];
+extern u8 gData_08198a9e[];
+extern s32 gData_08198aa4[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -181,7 +181,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                 x = HI(flash->x) + half;
                 life = flash->variant;
                 if (life >= 0 && life <= 17)
-                    routine[0](canvas, work->sheet + (Data_08198a9e[life / 3] << 11) + (221 << 4), x - 16, y + 48, 32, 64);
+                    routine[0](canvas, work->sheet + (gData_08198a9e[life / 3] << 11) + (221 << 4), x - 16, y + 48, 32, 64);
                 life = flash->variant;
                 flash->variant = life > 0 ? life - 1 : -1;
                 i++;
@@ -271,7 +271,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                         size = 9;
                     if (frame > 76)
                         size = 10;
-                    routine[0](canvas, sheet + Data_08197410[size - 1],
+                    routine[0](canvas, sheet + gData_08197410[size - 1],
                         HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 
                     dust->x += dust->velocityX;
@@ -279,7 +279,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                     if (frame > 80)
                         dust->velocityY += -32768;
                     else
-                        dust->velocityY += Data_08198aa4[i & 3];
+                        dust->velocityY += gData_08198aa4[i & 3];
                     dust->velocityX = dust->velocityX * 62 / 64;
                     dust->velocityY = dust->velocityY * 62 / 64;
                     dust->variant++;
@@ -332,7 +332,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode)
                             u8 *cell;
 
                             size = spark->variant / 5 + 1;
-                            cell = sheet + Data_08197410[size - 1];
+                            cell = sheet + gData_08197410[size - 1];
                             x >>= 16;
                             y >>= 16;
                             x -= size / 2;

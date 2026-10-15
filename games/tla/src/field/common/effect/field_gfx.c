@@ -41,7 +41,7 @@ struct DustWork {
     u8 pad808[12];
 };
 
-extern const u8 Data_080f38b2[];
+extern const u8 gData_080f38b2[];
 void Func_080d7034(void);
 #if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 // 欧州版の far call 表では、地形の高さへ届く口の名前が違う
@@ -67,7 +67,7 @@ void FieldEffect_InitSparkles(void)
     zero = size;
     Dma_Set(&zero, work, 0x85000205, REG_DMA3);
     buf = Runtime_AllocateBlock(56, 0x400);
-    Resource_DecodeByteLzInRam(Data_080f38b2, buf);
+    Resource_DecodeByteLzInRam(gData_080f38b2, buf);
     work->vramEntry = Resource_FindFreeEntry();
     work->tileBase = VramBlock_LoadCached(work->vramEntry, 0x200, buf);
     Runtime_ReleaseHeapBlock(56);

@@ -107,50 +107,50 @@ struct SceneEvent gSceneEvents[] = {
 	{SCENE_EVENTS_END},
 };
 
-u32 Data_02003d20[] = {
+u32 gData_02003d20[] = {
 	0x6f6243c, 0xc412a02, 0x187c27b0, 0x1ca62033, 0x13ec22de,
 };
 
-u32 Data_02003d34[] = {
+u32 gData_02003d34[] = {
 	0x30e233c, 0x10bc2775, 0x1c6627c3, 0x1c891c57, 0x13ec2649,
 };
 
-u32 Data_02003d48[] = {
+u32 gData_02003d48[] = {
 	0xa0d2562, 0x121f2f93, 0x1c952217, 0x1aad2617, 0x14642617,
 };
 
-u32 Data_02003d5c[] = {
+u32 gData_02003d5c[] = {
 	0x8000, 0xcccc, 0x18000, 0x9999, 0xe666,
 };
 
-u32 Data_02003d70[] = {
+u32 gData_02003d70[] = {
 	0x10000, 0xcccc, 0xb333, 0x14ccc, 0x9999,
 };
 
-u32 Data_02003d84[] = {
+u32 gData_02003d84[] = {
 	0x7e78aa82,
 };
 
-u16 Data_02003d88[] = {
+u16 gData_02003d88[] = {
 	0x6c6b, 0x6c40, 0x6c6c,
 };
 
-u8 Data_02003d8e[] = {
+u8 gData_02003d8e[] = {
 	0, 14, 0, 13, 0, 12, 0, 11,
 	0, 10, 0, 9, 0, 8,
 };
 
-u32 Data_02003d9c[] = {
+u32 gData_02003d9c[] = {
 	0xf808fc16, 0xc0ee402, 0x808,
 };
 
-s32 Data_02003da8[] = {
+s32 gData_02003da8[] = {
 	46,
 	(s32)Func_02000c9c,
 	17,
 	0,
 };
 
-u32 Data_02003db8[] = {
+u32 gData_02003db8[] = {
 	0,
 };

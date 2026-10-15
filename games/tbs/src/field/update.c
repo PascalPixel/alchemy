@@ -17,7 +17,7 @@
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern struct ScriptMotionObject *gObjectSlots;
-extern ScriptCommandFn			  ScriptObject_CommandTable[];
+extern ScriptCommandFn			  gScriptObject_CommandTable[];
 
 // このコードと一緒に写される中継 (updfar.s)
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -71,7 +71,7 @@ void Object_UpdateAll(void)
 
 				if (cmd <= 63)
 				{
-					if (ScriptObject_CommandTable[cmd](obj) == 0)
+					if (gScriptObject_CommandTable[cmd](obj) == 0)
 						break;
 				}
 				else

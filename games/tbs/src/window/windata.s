@@ -1,11 +1,11 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 @ 文字幅 (0x20 から)
-	.global UiText_GlyphWidths
-UiText_GlyphWidths:
+	.global gUiText_GlyphWidths
+gUiText_GlyphWidths:
 	.include "games/common/src/graphics/window/glyph_widths.inc"
-	.global UiText_ColourPens
-UiText_ColourPens:
+	.global gUiText_ColourPens
+gUiText_ColourPens:
 	.byte 0, 3
 	.byte 13, 13
 	.byte 14, 4
@@ -14,8 +14,8 @@ UiText_ColourPens:
 	.byte 1, 13
 	.byte 13, 2
 	.byte 2, 1
-	.global UiWindow_PartyColumnOffsets
-UiWindow_PartyColumnOffsets:
+	.global gUiWindow_PartyColumnOffsets
+gUiWindow_PartyColumnOffsets:
 	.ifdef TBS_EDITION_ES
 	.byte 0, 6, 12, 18, 24, -1, 1, 7, 13, 19, -1, 29, 30, 0
 	.byte 31, 5, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 2, 1
@@ -33,8 +33,8 @@ UiWindow_PartyColumnOffsets:
 	.endif
 	.endif
 	.endif
-	.global StatusMenu_LevelLetterString
-StatusMenu_LevelLetterString:
+	.global gStatusMenu_LevelLetterString
+gStatusMenu_LevelLetterString:
 	.ifdef TBS_EDITION_DE
 	.asciz "L"
 	.balign 4, 0
@@ -50,66 +50,66 @@ StatusMenu_LevelLetterString:
 	.endif
 	.endif
 @ 濁点, 半濁点をつけられる文字の範囲
-	.global NameEntry_VoicedMarkRanges
-NameEntry_VoicedMarkRanges:
+	.global gNameEntry_VoicedMarkRanges
+gNameEntry_VoicedMarkRanges:
 	.byte 0xb6, 0xc4, 0xca, 0xce, 0x96, 0x9f, 0xe0, 0xe4, 0xea, 0xee, 0x93, 0x93, 0xb3, 0xb3, 0x00
-	.global NameEntry_SemivoicedMarkRanges
-NameEntry_SemivoicedMarkRanges:
+	.global gNameEntry_SemivoicedMarkRanges
+gNameEntry_SemivoicedMarkRanges:
 	.byte 0xca, 0xce, 0xea, 0xee, 0x00
-	.global NameEntry_CaretWave
-NameEntry_CaretWave:
+	.global gNameEntry_CaretWave
+gNameEntry_CaretWave:
 	.byte 0, 1, 2, 3, 3, 2, 1, 0
 	.ifdef TBS_EDITION_DE
-	.global NameEntry_DeleteKeyLabel
-NameEntry_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "ENT"
 	.else
 	.ifdef TBS_EDITION_ES
-	.global NameEntry_DeleteKeyLabel
-NameEntry_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "SUP"
 	.else
 	.ifdef TBS_EDITION_FR
-	.global NameEntry_DeleteKeyLabel
-NameEntry_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "EFF"
 	.else
 	.endif
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.global NameEntry_EndKeyLabel
-NameEntry_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "ENDE"
 	.space 1
 	.else
 	.ifdef TBS_EDITION_ES
-	.global NameEntry_EndKeyLabel
-NameEntry_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "FIN"
 	.else
 	.ifdef TBS_EDITION_FR
-	.global NameEntry_EndKeyLabel
-NameEntry_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "FIN"
 	.else
 	.endif
 	.endif
 	.endif
 @ 属性ごとのジンの種類
-	.global Djinn_ElementSprites
-Djinn_ElementSprites:
+	.global gDjinn_ElementSprites
+gDjinn_ElementSprites:
 	.2byte 90, 91, 92, 93
 @ 仲間ごとのキャラ
-	.global Character_SpriteTable
-Character_SpriteTable:
+	.global gCharacter_SpriteTable
+gCharacter_SpriteTable:
 	.2byte 0, 1, 2, 3, 35, 5, 6, 7
 @ 子供のころ (フラグ 32)
-	.global Character_ChildSpriteTable
-Character_ChildSpriteTable:
+	.global gCharacter_ChildSpriteTable
+gCharacter_ChildSpriteTable:
 	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ ロビン(こ), ジェラルド(こ), ...
-	.global Ui_PairBobOffsets
-Ui_PairBobOffsets:
+	.global gUi_PairBobOffsets
+gUi_PairBobOffsets:
 	.ifdef TBS_EDITION_ES
 	.byte 0, 0, 1, 2, 3, 3, 2, 1
 	.else
@@ -120,13 +120,13 @@ Ui_PairBobOffsets:
 	.endif
 	.endif
 	.balign 4
-	.global Ui_ObjectPulseScales
-Ui_ObjectPulseScales:
+	.global gUi_ObjectPulseScales
+gUi_ObjectPulseScales:
 	.4byte 0x11999, 0x12147, 0x128f5, 0x130a3
 	.4byte 0x13851, 0x130a3, 0x128f5, 0x12147
 @ 伸びる棒の 4bpp 行
-	.global Menu_BarPatternRows
-Menu_BarPatternRows:
+	.global gMenu_BarPatternRows
+gMenu_BarPatternRows:
 	.4byte 0x00055000, 0x00000000
 	.4byte 0x05055050, 0x00000000
 	.4byte 0x05055050, 0x00000005
@@ -136,12 +136,12 @@ Menu_BarPatternRows:
 	.global gRomShiftedTilePair
 gRomShiftedTilePair:
 	.incbin "games/common/src/graphics/window/shiftpr.4bpp"
-	.global Graphics_ExpandNibbleTable
-Graphics_ExpandNibbleTable:
+	.global gGraphics_ExpandNibbleTable
+gGraphics_ExpandNibbleTable:
 	.2byte 0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.2byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-	.global Link_TimeLabelString
-Link_TimeLabelString:
+	.global gLink_TimeLabelString
+gLink_TimeLabelString:
 	.ifdef TBS_EDITION_ES
 	.asciz "TMPO."
 	.balign 4, 0
@@ -154,12 +154,12 @@ Link_TimeLabelString:
 	.balign 4, 0
 	.endif
 	.endif
-	.global DjinnMenu_BlinkTile
-DjinnMenu_BlinkTile:
+	.global gDjinnMenu_BlinkTile
+gDjinnMenu_BlinkTile:
 	.incbin "games/common/src/menu/djinn/blink.4bpp"
 @ 項目, 列, 行, 強調列, 強調行, 強調幅
-	.global OwnerStatus_StatCursors
-OwnerStatus_StatCursors:
+	.global gOwnerStatus_StatCursors
+gOwnerStatus_StatCursors:
 	.byte 0, 2, 0, 0, 0, 12, 0, 0
 	.byte 2, 8, 1, 0, 1, 13, 0, 0
 	.byte 3, 12, 3, 5, 3, 11, 0, 0
@@ -176,14 +176,14 @@ OwnerStatus_StatCursors:
 	.byte 7, 13, 10, 0, 10, 20, 0, 0
 	.byte 8, 13, 11, 0, 11, 20, 0, 0
 	.byte 9, 13, 12, 0, 12, 20, 0, 0
-	.global OwnerStatus_EquipmentCursors
-OwnerStatus_EquipmentCursors:
+	.global gOwnerStatus_EquipmentCursors
+gOwnerStatus_EquipmentCursors:
 	.byte 10, 19, 1, 0
 	.byte 11, 19, 2, 0
 	.byte 12, 19, 3, 0
 	.byte 13, 19, 4, 0
-	.global OwnerStatus_ConditionCursors
-OwnerStatus_ConditionCursors:
+	.global gOwnerStatus_ConditionCursors
+gOwnerStatus_ConditionCursors:
 	.byte 14, 13, 0, 0
 	.byte 15, 15, 0, 0
 	.byte 16, 17, 0, 0
@@ -193,161 +193,161 @@ OwnerStatus_ConditionCursors:
 	.byte 20, 25, 0, 0
 	.byte 21, 27, 0, 0
 	.ifdef TBS_EDITION_ES
-	.global OwnerStatus_NivString
-OwnerStatus_NivString:
+	.global gOwnerStatus_NivString
+gOwnerStatus_NivString:
 	.asciz "Niv"
 	.else
 	.ifdef TBS_EDITION_IT
-	.global OwnerStatus_NivString
-OwnerStatus_NivString:
+	.global gOwnerStatus_NivString
+gOwnerStatus_NivString:
 	.asciz "Niv"
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global OwnerStatus_NvString
-OwnerStatus_NvString:
+	.global gOwnerStatus_NvString
+gOwnerStatus_NvString:
 	.asciz "Nv."
 	.else
 	.ifdef TBS_EDITION_IT
-	.global OwnerStatus_NvString
-OwnerStatus_NvString:
+	.global gOwnerStatus_NvString
+gOwnerStatus_NvString:
 	.asciz "Nv."
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_FR
-	.global OwnerStatus_LevelString
-OwnerStatus_LevelString:
+	.global gOwnerStatus_LevelString
+gOwnerStatus_LevelString:
 	.asciz "Niv"
 	.else
-	.global OwnerStatus_LevelString
-OwnerStatus_LevelString:
+	.global gOwnerStatus_LevelString
+gOwnerStatus_LevelString:
 	.asciz "Lv"
 	.balign 4, 0
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global OwnerStatus_KpString
-OwnerStatus_KpString:
+	.global gOwnerStatus_KpString
+gOwnerStatus_KpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global OwnerStatus_KpString
-OwnerStatus_KpString:
+	.global gOwnerStatus_KpString
+gOwnerStatus_KpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global OwnerStatus_PvString
-OwnerStatus_PvString:
+	.global gOwnerStatus_PvString
+gOwnerStatus_PvString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global OwnerStatus_PvString
-OwnerStatus_PvString:
+	.global gOwnerStatus_PvString
+gOwnerStatus_PvString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.global OwnerStatus_HpString
-OwnerStatus_HpString:
+	.global gOwnerStatus_HpString
+gOwnerStatus_HpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_ES
-	.global OwnerStatus_HpString
-OwnerStatus_HpString:
+	.global gOwnerStatus_HpString
+gOwnerStatus_HpString:
 	.asciz "PS"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_FR
-	.global OwnerStatus_HpString
-OwnerStatus_HpString:
+	.global gOwnerStatus_HpString
+gOwnerStatus_HpString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global OwnerStatus_HpString
-OwnerStatus_HpString:
+	.global gOwnerStatus_HpString
+gOwnerStatus_HpString:
 	.asciz "PS"
 	.balign 4, 0
 	.else
-	.global OwnerStatus_HpString
-OwnerStatus_HpString:
+	.global gOwnerStatus_HpString
+gOwnerStatus_HpString:
 	.asciz "HP"
 	.balign 4, 0
 	.endif
 	.endif
 	.endif
 	.endif
-	.global OwnerStatus_SlashString
-OwnerStatus_SlashString:
+	.global gOwnerStatus_SlashString
+gOwnerStatus_SlashString:
 	.asciz "/"
 	.balign 4, 0
 	.if EDITION_INTERNATIONAL
-	.global OwnerStatus_PpString
-OwnerStatus_PpString:
+	.global gOwnerStatus_PpString
+gOwnerStatus_PpString:
 	.asciz "PP"
 	.else
-	.global OwnerStatus_PpString
-OwnerStatus_PpString:
+	.global gOwnerStatus_PpString
+gOwnerStatus_PpString:
 	.asciz "EP"
 	.endif
-	.global DjinnMenu_ElementXOffsets
-DjinnMenu_ElementXOffsets:
+	.global gDjinnMenu_ElementXOffsets
+gDjinnMenu_ElementXOffsets:
 	.byte 0, 2, 0, 2
-	.global DjinnMenu_ElementYOffsets
-DjinnMenu_ElementYOffsets:
+	.global gDjinnMenu_ElementYOffsets
+gDjinnMenu_ElementYOffsets:
 	.byte 0, 0, 1, 1
-	.global Menu_SelectionStepDelays
-Menu_SelectionStepDelays:
+	.global gMenu_SelectionStepDelays
+gMenu_SelectionStepDelays:
 	.byte 46, 20, 28, 24, 30, 44, 29, 32
-	.global Menu_TopEntryCommandByPosition
-Menu_TopEntryCommandByPosition:
+	.global gMenu_TopEntryCommandByPosition
+gMenu_TopEntryCommandByPosition:
 	.byte 0, 1, 2, 3, 4, 5
 	.byte 0, 1, 3, 4, 5, 0
-	.global Menu_TopEntryPositionByCommand
-Menu_TopEntryPositionByCommand:
+	.global gMenu_TopEntryPositionByCommand
+gMenu_TopEntryPositionByCommand:
 	.byte 0, 1, 2, 3, 4, 5
 	.byte 0, 1, 0, 2, 3, 0
-	.global Menu_SaveSlotActionByPosition
-Menu_SaveSlotActionByPosition:
+	.global gMenu_SaveSlotActionByPosition
+gMenu_SaveSlotActionByPosition:
 	.byte 0, 1, 2, 3, 4
 	.byte 5, 1, 3, 4, 5
 	.byte 1, 1, 3, 4, 5
 	.byte 1, 1, 1, 0, 2
 	.byte 3, 4, 5, 1, 0
-	.global Menu_ColonString
-Menu_ColonString:
+	.global gMenu_ColonString
+gMenu_ColonString:
 	.asciz ":"
 	.balign 4, 0
-	.global Menu_HexDigitsString
-Menu_HexDigitsString:
+	.global gMenu_HexDigitsString
+gMenu_HexDigitsString:
 	.asciz "0123456789ABCDEF"
 	.balign 4, 0
-	.global Workspace_ItemTitle
-Workspace_ItemTitle:
+	.global gWorkspace_ItemTitle
+gWorkspace_ItemTitle:
 	.asciz "ITEM"
 	.balign 4, 0
-	.global Workspace_EnergyTitle
-Workspace_EnergyTitle:
+	.global gWorkspace_EnergyTitle
+gWorkspace_EnergyTitle:
 	.asciz "ENERGY"
 	.balign 4, 0
-	.global Workspace_StatusTitle
-Workspace_StatusTitle:
+	.global gWorkspace_StatusTitle
+gWorkspace_StatusTitle:
 	.asciz "STATUS"
 	.balign 4, 0
-	.global Workspace_PageLabel
-Workspace_PageLabel:
+	.global gWorkspace_PageLabel
+gWorkspace_PageLabel:
 	.asciz "PAGE:"
 	.balign 4, 0
-	.global Workspace_RangeDash
-Workspace_RangeDash:
+	.global gWorkspace_RangeDash
+gWorkspace_RangeDash:
 	.asciz "-"
 	.balign 4, 0

@@ -178,4 +178,4 @@ Func_080e2774:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e28d0:
-	.4byte Data_02001000
+	.4byte gData_02001000

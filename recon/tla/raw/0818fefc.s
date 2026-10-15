@@ -320,7 +320,7 @@ Func_0818fefc:
 .L_08190188:
 	.4byte 0x000000c2
 .L_0819018c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08190190:
 	.4byte 0x000000e9
 .L_08190194:
@@ -1125,7 +1125,7 @@ Func_0818fefc:
 .L_081907c8:
 	.4byte 0xffffd000
 .L_081907cc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081907d0:
 	ldr r2, [sp, #84]
 	cmp r2, #142
@@ -1546,15 +1546,15 @@ Func_0818fefc:
 .L_08190b2c:
 	.4byte 0xffffd000
 .L_08190b30:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08190b34:
 	.4byte 0xffffff00
 .L_08190b38:
 	.4byte 0xffff00ff
 .L_08190b3c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08190b40:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08190b44:
 	.4byte Data_08199ee0
 .L_08190b48:
@@ -1576,6 +1576,6 @@ Func_0818fefc:
 .L_08190b68:
 	.4byte Data_08199efa
 .L_08190b6c:
-	.4byte Data_081991f0
+	.4byte gData_081991f0
 .L_08190b70:
 	.4byte Func_08143000

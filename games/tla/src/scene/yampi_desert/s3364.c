@@ -9,7 +9,7 @@ void Func_02003364(void)
         else
             Func_02002318();
     }
-    Func_02003820(Data_020047d2);
+    Func_02003820(gData_020047d2);
     if (Scene_FlagTest(0x20b)) {
         Func_020006ac();
         WaitFrames(10);
@@ -30,7 +30,7 @@ void Func_02002b84(void);
 void Func_02003404(void)
 {
     Func_02004180(0);
-    Func_02003820(Data_020047ec);
+    Func_02003820(gData_020047ec);
     Func_02003338(11);
     Func_02003338(12);
     Func_02003338(13);

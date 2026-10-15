@@ -30,7 +30,7 @@ void BattleFx_LandFallingObject(struct FallingObject *object)
     if (object->y <= object->floor) {
         object->dispatchState = 2;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-            (u32)BattleFx_CommonParticleScript);
+            (u32)gBattleFx_CommonParticleScript);
         object->update = 0;
     }
 }
@@ -44,7 +44,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
     object->x += r - Random16();
     if (object->y <= object->terrainHeight) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-            (u32)BattleFx_CommonParticleScript);
+            (u32)gBattleFx_CommonParticleScript);
     }
 }
 

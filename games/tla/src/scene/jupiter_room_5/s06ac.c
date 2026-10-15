@@ -25,7 +25,7 @@ struct SparkWork {
     s16 resource;
 };
 
-extern s32 Data_020033dc;
+extern s32 gData_020033dc;
 extern u8 MsgFieldShowAnemosPower[];
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));

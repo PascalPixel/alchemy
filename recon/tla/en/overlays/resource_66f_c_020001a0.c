@@ -14,7 +14,7 @@
 #include "flag_call.h"
 #include "call.h"
 
-extern const u8 Data_02001404[];
+extern const u8 gData_02001404[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Battle_WaitMode0(s32 frames);
@@ -78,7 +78,7 @@ void Func_020001a0(s32 unused, s32 id)
                 other->speedLimit = 0x10000;
                 Func_02001054(other, block->x, block->y, block->z);
                 Func_0200105c(other);
-                Func_02001044(block, Data_02001404);
+                Func_02001044(block, gData_02001404);
                 Func_0200104c(other);
                 other->x = 0;
                 other->z = 0;

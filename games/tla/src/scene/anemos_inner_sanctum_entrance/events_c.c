@@ -1,13 +1,13 @@
 #include "anemos_inner_sanctum_entrance.h"
 
-extern const u8 Data_02001c1c[];
-extern const u8 Data_02001c28[];
+extern const u8 gData_02001c1c[];
+extern const u8 gData_02001c28[];
 
 const u8 *Func_02000714(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1)
-        return Data_02001c28;
-    return Data_02001c1c;
+        return gData_02001c28;
+    return gData_02001c1c;
 }
 
 struct AnemosInnerSanctumEntranceEventWork {

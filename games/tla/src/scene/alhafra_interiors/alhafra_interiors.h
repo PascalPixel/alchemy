@@ -213,11 +213,11 @@ s32 Func_02000ba4(void);
 
 // ---- this overlay
 
-extern u8 Data_02000cbc[];
-extern u8 Data_02000f14[];
-extern u8 Data_0200116c[];
-extern u8 Data_020013dc[];
-extern u8 Data_02001730[];
-extern u8 Data_020019dc[];
+extern u8 gData_02000cbc[];
+extern u8 gData_02000f14[];
+extern u8 gData_0200116c[];
+extern u8 gData_020013dc[];
+extern u8 gData_02001730[];
+extern u8 gData_020019dc[];
 
 #endif

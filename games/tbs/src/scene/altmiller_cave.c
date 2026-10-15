@@ -58,7 +58,7 @@ struct ActorWheel
 	u16 travel;
 };
 
-#define AltmillerCave_Wheel ((struct ActorWheel *)AltmillerCave_ClearTarget)
+#define AltmillerCave_Wheel ((struct ActorWheel *)gAltmillerCave_ClearTarget)
 
 struct RockPuzzle
 {
@@ -80,7 +80,7 @@ static void EV13_TALK(void)
 
 u8 *AltmillerCave_GetEntrances(void)
 {
-	return AltmillerCave_SceneTableA;
+	return gAltmillerCave_SceneTableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -90,7 +90,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *AltmillerCave_GetExits(void)
 {
-	return AltmillerCave_SceneTableB;
+	return gAltmillerCave_SceneTableB;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -420,7 +420,7 @@ static void FieldScene_RunGuardedSixWordStep(void)
 
 static void AltmillerCave_UpdateScalePulse(struct FieldActor *obj)
 {
-	s32 v = AltmillerCave_PulseScales[(obj->timer >> 2) & 3];
+	s32 v = gAltmillerCave_PulseScales[(obj->timer >> 2) & 3];
 
 	obj->scaleX = v;
 	obj->scaleY = v;
@@ -1947,7 +1947,7 @@ s32 AltmillerCave_ApplyEntryState(void)
 		*(s32 *)&Object_GetById(10)->update = (s32)AltmillerCave_MatchLeaderPriority;
 		if (gGameState.entrance == 52)
 		{
-			Dma_Fill32(0, AltmillerCave_ClearTarget, 12);
+			Dma_Fill32(0, gAltmillerCave_ClearTarget, 12);
 			if (!Engine_GameFlagIsSet(0x109))
 			{
 				u8 *race = gSceneState;
@@ -2109,7 +2109,7 @@ static void AltmillerCave_ReleaseWallBurst(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2128,7 +2128,7 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207,
 	205,
 	228,
@@ -2137,7 +2137,7 @@ u32 StagedActor_FootprintKinds[] = {
 	297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32,
 	-8,
 	32,
@@ -2164,9 +2164,9 @@ s32 StagedActor_FootprintBounds[] = {
 	32,
 };
 
-u16 *AltmillerCave_ClearTarget = gAltmillerActorWheelWork;
+u16 *gAltmillerCave_ClearTarget = gAltmillerActorWheelWork;
 
-struct SceneEntrance AltmillerCave_SceneTableA[] = {
+struct SceneEntrance gAltmillerCave_SceneTableA[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0},
 	{2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
@@ -2188,7 +2188,7 @@ struct SceneEntrance AltmillerCave_SceneTableA[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 AltmillerCave_SceneTableB[] = {
+u32 gAltmillerCave_SceneTableB[] = {
 	SCENE_EXITS(146),
 	SCENE_EXIT(1, 2, 24),
 	SCENE_EXIT(2, 146, 3),
@@ -2273,7 +2273,7 @@ struct ScenePlacement gAltmillerCavePlacements6[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 AltmillerCave_PulseScales[] = {
+u32 gAltmillerCave_PulseScales[] = {
 	0x10000,
 	0x11999,
 	0x13333,

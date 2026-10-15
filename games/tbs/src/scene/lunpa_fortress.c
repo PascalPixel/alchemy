@@ -3103,7 +3103,7 @@ static void ActivateFiveActorGroupFromFlags(void)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 /* FAKEMATCH: the three section attributes below place non-const tables in .rodata, where the ROM has them; without them, tbs-en differs, and const conflicts with field.h */
-s32 StagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
+s32 gStagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -3122,11 +3122,11 @@ s32 StagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] __attribute__((section(".rodata"))) = {
+u32 gStagedActor_FootprintKinds[] __attribute__((section(".rodata"))) = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
+s32 gStagedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,

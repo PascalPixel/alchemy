@@ -49,7 +49,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -352,7 +352,7 @@ static void FieldScene_RunEarlySequence(void)
 			record->motionFlags = 0;
 		}
 	}
-	table = (u8 *)Altin_TriggerTable;
+	table = (u8 *)gAltin_TriggerTable;
 	idx = ((*(u16 *)&work->touchedTrigger - 2) << 16) >> 16;
 	off = idx << 3;
 	o4 = off + 4;
@@ -816,7 +816,7 @@ struct SceneEntrance gAltinEntrances2[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(75),
 	SCENE_EXIT(1, 2, 16),
 	SCENE_EXIT(2, 76, 7),
@@ -1114,7 +1114,7 @@ struct SceneEvent gAltinEvents2[] = {
 	{SCENE_EVENTS_END},
 };
 
-u16 Altin_TriggerTable1[] = {
+u16 gAltin_TriggerTable1[] = {
 	MAP_CELL_STEP(42, 33, 2, 2, 0),
 	MAP_CELL_STEP(42, 35, 2, 2, 5),
 	MAP_CELL_STEP(40, 33, 2, 2, 0),
@@ -1122,49 +1122,49 @@ u16 Altin_TriggerTable1[] = {
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable0[] = {
+u16 gAltin_TriggerTable0[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 5),
 	MAP_CELL_STEP(33, 48, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable5[] = {
+u16 gAltin_TriggerTable5[] = {
 	MAP_CELL_STEP(35, 35, 2, 2, 5),
 	MAP_CELL_STEP(33, 35, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable6[] = {
+u16 gAltin_TriggerTable6[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 5),
 	MAP_CELL_STEP(33, 46, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable2[] = {
+u16 gAltin_TriggerTable2[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 5),
 	MAP_CELL_STEP(33, 50, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable3[] = {
+u16 gAltin_TriggerTable3[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 5),
 	MAP_CELL_STEP(33, 33, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Altin_TriggerTable4[] = {
+u16 gAltin_TriggerTable4[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 5),
 	MAP_CELL_STEP(33, 52, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim Altin_TriggerTable[] = {
-	{Altin_TriggerTable0, 41, 5},
-	{Altin_TriggerTable1, 51, 6},
-	{Altin_TriggerTable2, 57, 17},
-	{Altin_TriggerTable3, 39, 17},
-	{Altin_TriggerTable4, 48, 25},
-	{Altin_TriggerTable5, 59, 9},
-	{Altin_TriggerTable6, 42, 23},
-	{Altin_TriggerTable3, 41, 27},
+struct MapCellAnim gAltin_TriggerTable[] = {
+	{gAltin_TriggerTable0, 41, 5},
+	{gAltin_TriggerTable1, 51, 6},
+	{gAltin_TriggerTable2, 57, 17},
+	{gAltin_TriggerTable3, 39, 17},
+	{gAltin_TriggerTable4, 48, 25},
+	{gAltin_TriggerTable5, 59, 9},
+	{gAltin_TriggerTable6, 42, 23},
+	{gAltin_TriggerTable3, 41, 27},
 };

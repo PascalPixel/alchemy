@@ -319,11 +319,11 @@ static void EV40_TOUCH(void)
 		{
 			Engine_ActorSetPosition(3, leader->x.fixed, leader->z.fixed);
 		}
-		Engine_ActorEnableActionCallback(3, TretInteriors_TableActions3);
+		Engine_ActorEnableActionCallback(3, gTretInteriors_TableActions3);
 	}
-	Engine_ActorEnableActionCallback(0, TretInteriors_TableActions0);
-	Engine_ActorEnableActionCallback(1, TretInteriors_TableActions1);
-	Object_SetActionCallbackAndRefreshById(2, (s32)TretInteriors_TableActions2);
+	Engine_ActorEnableActionCallback(0, gTretInteriors_TableActions0);
+	Engine_ActorEnableActionCallback(1, gTretInteriors_TableActions1);
+	Object_SetActionCallbackAndRefreshById(2, (s32)gTretInteriors_TableActions2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0xc000, 0);
 	Actor_FaceDirection(1, 0xc000, 0);
@@ -529,7 +529,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	Event_ShowMessageAndWait(0x8009, 0, 10);
 	TretInteriors_PlayGesture(0);
 	Event_ShowMessage(0x8009, 0);
-	Object_SetActionCallbackAndRefreshById(8, (s32)TretInteriors_ActionTable1);
+	Object_SetActionCallbackAndRefreshById(8, (s32)gTretInteriors_ActionTable1);
 	Engine_EventWait(40);
 	Actor_ShowEmote(GARET, 0x102, 60);
 	Event_ShowMessage(0x8001, 0);
@@ -551,7 +551,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(MIA, 3);
 	Engine_ActorSetAnimationAndWait(IVAN, 3);
-	actions = (s32)TretInteriors_ActionTable2;
+	actions = (s32)gTretInteriors_ActionTable2;
 	Engine_ActorEnableActionCallback(GARET, actions);
 	if (rec != 0)
 	{
@@ -700,9 +700,9 @@ static void TretPalette_ApplyTint(void)
 	i = 0;
 	for (; i <= 62; i++, src++)
 	{
-		r = TretInteriors_TintSteps[TretInteriors_TintIndex];
-		g = TretInteriors_TintSteps[TretInteriors_TintIndex + 1];
-		b = TretInteriors_TintSteps[TretInteriors_TintIndex + 2];
+		r = gTretInteriors_TintSteps[gTretInteriors_TintIndex];
+		g = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 1];
+		b = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 2];
 		if (i > 47)
 		{
 			r -= r / 2 + r / 3;
@@ -742,9 +742,9 @@ static void TretPalette_ApplyTint(void)
 			blue = 0;
 		*dst++ = (blue << 10) | (green << 5) | red;
 	}
-	TretInteriors_TintIndex += (Engine_RandomNext() & 7) * 3;
-	if (TretInteriors_TintSteps[TretInteriors_TintIndex] == 99)
-		TretInteriors_TintIndex = 0;
+	gTretInteriors_TintIndex += (Engine_RandomNext() & 7) * 3;
+	if (gTretInteriors_TintSteps[gTretInteriors_TintIndex] == 99)
+		gTretInteriors_TintIndex = 0;
 }
 
 static void TretInteriors_PlayGesture(s32 gesture)
@@ -919,11 +919,11 @@ static void TretInteriors_ApplyFlaggedMapPatches(void)
 {
 	s32 i;
 
-	for (i = 0; TretInteriors_MapPatches[i] != -1; i += 6)
+	for (i = 0; gTretInteriors_MapPatches[i] != -1; i += 6)
 	{
-		if (Engine_GameFlagIsSet(TretInteriors_MapPatches[i]) && TretInteriors_MapPatches[i + 1] != 0)
-			Map_CopyCellsTo(TretInteriors_MapPatches[i + 2], TretInteriors_MapPatches[i + 3],
-				TretInteriors_MapPatches[i + 4], TretInteriors_MapPatches[i + 5], 1, 1);
+		if (Engine_GameFlagIsSet(gTretInteriors_MapPatches[i]) && gTretInteriors_MapPatches[i + 1] != 0)
+			Map_CopyCellsTo(gTretInteriors_MapPatches[i + 2], gTretInteriors_MapPatches[i + 3],
+				gTretInteriors_MapPatches[i + 4], gTretInteriors_MapPatches[i + 5], 1, 1);
 	}
 }
 
@@ -1017,7 +1017,7 @@ s32 gEffectScript2[] = {
 };
 
 // フラグ、有効、コピー元 x y、コピー先 x y
-s16 TretInteriors_MapPatches[] = {
+s16 gTretInteriors_MapPatches[] = {
 	0x200, 1, 64, 35, 113, 6,
 	0x201, 0, 65, 35, 115, 6,
 	0x202, 1, 66, 35, 110, 8,
@@ -1048,7 +1048,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 TretInteriors_TableActions0[] = {
+s32 gTretInteriors_TableActions0[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(166), 0, PIXELS(80)),
 	SC_SYNC,
@@ -1056,7 +1056,7 @@ s32 TretInteriors_TableActions0[] = {
 	SC_END,
 };
 
-s32 TretInteriors_TableActions1[] = {
+s32 gTretInteriors_TableActions1[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(148), 0, PIXELS(90)),
 	SC_SYNC,
@@ -1064,7 +1064,7 @@ s32 TretInteriors_TableActions1[] = {
 	SC_END,
 };
 
-s32 TretInteriors_TableActions2[] = {
+s32 gTretInteriors_TableActions2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(182), 0, PIXELS(90)),
 	SC_SYNC,
@@ -1072,7 +1072,7 @@ s32 TretInteriors_TableActions2[] = {
 	SC_END,
 };
 
-s32 TretInteriors_TableActions3[] = {
+s32 gTretInteriors_TableActions3[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(166), 0, PIXELS(104)),
 	SC_SYNC,
@@ -1080,7 +1080,7 @@ s32 TretInteriors_TableActions3[] = {
 	SC_END,
 };
 
-s32 TretInteriors_ActionTable1[] = {
+s32 gTretInteriors_ActionTable1[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, PIXELS(80)),
 	SC_WAIT(4),
@@ -1094,7 +1094,7 @@ s32 TretInteriors_ActionTable1[] = {
 	SC_END,
 };
 
-s32 TretInteriors_ActionTable2[] = {
+s32 gTretInteriors_ActionTable2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(166), 0, PIXELS(80)),
 	SC_SYNC,
@@ -1103,7 +1103,7 @@ s32 TretInteriors_ActionTable2[] = {
 	SC_END,
 };
 
-u32 TretInteriors_TintSteps[] = {
+u32 gTretInteriors_TintSteps[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
@@ -1315,4 +1315,4 @@ struct SceneEvent gTretInteriorsEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 TretInteriors_TintIndex = 0;
+s32 gTretInteriors_TintIndex = 0;

@@ -140,7 +140,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *Kalay_GetExits(void)
 {
-	return (u8 *)Kalay_SceneTable01;
+	return (u8 *)gKalay_SceneTable01;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -344,10 +344,10 @@ static void Kalay_RunExitDoor(void)
 	door = *trigger - 1;
 	Engine_AudioPlayCue(158);
 	{
-		s32 x = Kalay_DoorCells[door].x;
-		s32 y = Kalay_DoorCells[door].y;
+		s32 x = gKalay_DoorCells[door].x;
+		s32 y = gKalay_DoorCells[door].y;
 
-		Engine_MapAnimateCells(Kalay_DoorCells[door].steps, x, y);
+		Engine_MapAnimateCells(gKalay_DoorCells[door].steps, x, y);
 	}
 	Engine_ActorSetSpeed(0, 0x8000, 0x4000);
 	Object_GetById(0)->motionFlags = 0;
@@ -402,7 +402,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x910) != 0 && GameFlag_IsSet(0x911) == 0)
 	{
-		Event_CallWithLastActiveObjectId((s32)Kalay_StagedGroupScript);
+		Event_CallWithLastActiveObjectId((s32)gKalay_StagedGroupScript);
 		Actor_SetPosition(20, PIXELS(252), PIXELS(272));
 		Actor_SetPosition(27, PIXELS(284), PIXELS(264));
 		Actor_SetPosition(28, PIXELS(284), PIXELS(280));
@@ -439,18 +439,18 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetSpeed(33, 0xb333, 0x5999);
 		Actor_SetSpeed(34, 0xb333, 0x5999);
 		Actor_SetSpeed(21, 0x9999, 0x4ccc);
-		Engine_ActorEnableActionCallback(20, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(27, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(28, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(29, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(30, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(32, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(31, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(33, SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(34, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(20, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(27, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(28, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(29, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(30, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(32, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(31, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(33, gSceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(34, gSceneAction_GroupMotion);
 		last = Actor_Get(21);
 		last->timer = 0;
-		Engine_ActorEnableActionCallback(21, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(21, gSceneAction_GroupMotion);
 		Camera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
 		Object_RefreshSelectorById(20);
 		Actor_FaceDirection(20, FACING_EAST, 0);
@@ -555,7 +555,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorSetAnimationAndWait(21, ANIM_NOD);
 		Actor_FaceDirection(21, FACING_EAST, 0);
 		Actor_SetSpeed(20, 0x19999, 0xcccc);
-		Object_SetActionCallbackAndRefreshById(20, (s32)Kalay_DanceScriptB);
+		Object_SetActionCallbackAndRefreshById(20, (s32)gKalay_DanceScriptB);
 		Actor_WalkToAndWait(20, 228, 296);
 		Actor_FaceDirection(20, FACING_NORTH, 40);
 		Actor_WalkToAndWait(20, 212, 296);
@@ -611,8 +611,8 @@ static void FieldScene_RunStagedGroupSequence(void)
 		last_wait->timer = 0;
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_SetSpeed(21, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(20, Kalay_DanceScriptC);
-		Engine_ActorEnableActionCallback(21, Kalay_DanceScriptD);
+		Engine_ActorEnableActionCallback(20, gKalay_DanceScriptC);
+		Engine_ActorEnableActionCallback(21, gKalay_DanceScriptD);
 		Engine_ActorStop(29);
 		Engine_TaskWait(1);
 		Actor_FaceDirection(29, FACING_SOUTH + FACING_STEP, 10);
@@ -626,8 +626,8 @@ static void FieldScene_RunStagedGroupSequence(void)
 		{
 			Engine_TaskWait(1);
 		} while (Actor_Get(20)->timer == 0 || Actor_Get(21)->timer != 1);
-		Engine_ActorEnableActionCallback(20, Kalay_DanceScriptE);
-		Engine_ActorEnableActionCallback(21, Kalay_DanceScriptF);
+		Engine_ActorEnableActionCallback(20, gKalay_DanceScriptE);
+		Engine_ActorEnableActionCallback(21, gKalay_DanceScriptF);
 		Engine_ActorStop(31);
 		Engine_TaskWait(1);
 		Actor_FaceDirection(31, FACING_SOUTH + FACING_STEP, 10);
@@ -760,18 +760,18 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorStop(20);
 		Engine_ActorStop(21);
 		Engine_TaskWait(1);
-		Engine_ActorEnableActionCallback(20, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(27, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(28, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(29, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(30, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(32, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(31, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(33, SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(34, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(20, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(27, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(28, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(29, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(30, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(32, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(31, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(33, gSceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(34, gSceneAction_GroupOffsetMotion);
 		closing = Actor_Get(21);
 		closing->timer = 0;
-		Engine_ActorEnableActionCallback(21, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(21, gSceneAction_GroupOffsetMotion);
 		do
 		{
 			Engine_TaskWait(1);
@@ -799,7 +799,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetSpeed(14, 0x13333, 0x9999);
 		closing = Actor_Get(14);
 		closing->timer = 0;
-		Engine_ActorEnableActionCallback(14, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(14, gSceneAction_GroupOffsetMotion);
 		do
 		{
 			Engine_TaskWait(1);
@@ -1230,13 +1230,13 @@ static void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
 	p->timer = a;
 	t = Engine_RandomNext();
 	p->work = (t * 5) >> 12;
-	Engine_ObjectSetScript(p, (s32)Kalay_Script01);
+	Engine_ObjectSetScript(p, (s32)gKalay_Script01);
 }
 
 static void Kalay_SpeedUpActors(void)
 {
 
-	Kalay_DanceStep = 0;
+	gKalay_DanceStep = 0;
 	Actor_SetSpeed(20, 0x19999, 0xcccc);
 	Actor_SetSpeed(21, 0x19999, 0xcccc);
 	FieldScheduler_AddCallback(Kalay_AlternateDance, 0xc80);
@@ -1244,41 +1244,41 @@ static void Kalay_SpeedUpActors(void)
 
 static void Kalay_AlternateDance(void)
 {
-	switch (Kalay_DanceStep)
+	switch (gKalay_DanceStep)
 	{
 	case 0:
 		ClearStep(Object_GetById(21));
-		Engine_ActorEnableActionCallback(21, Kalay_DanceScriptA);
-		Kalay_DanceStep++;
+		Engine_ActorEnableActionCallback(21, gKalay_DanceScriptA);
+		gKalay_DanceStep++;
 		break;
 	case 1:
 		if (Object_GetById(21)->timer != 0)
 		{
 			ClearStep(Object_GetById(20));
-			Engine_ActorEnableActionCallback(20, Kalay_DanceScriptB);
-			Kalay_DanceStep++;
+			Engine_ActorEnableActionCallback(20, gKalay_DanceScriptB);
+			gKalay_DanceStep++;
 		}
 		break;
 	case 2:
 		if (Object_GetById(20)->timer != 0)
 		{
 			ClearStep(Object_GetById(20));
-			Engine_ActorEnableActionCallback(20, Kalay_DanceScriptA);
-			Kalay_DanceStep++;
+			Engine_ActorEnableActionCallback(20, gKalay_DanceScriptA);
+			gKalay_DanceStep++;
 		}
 		break;
 	case 3:
 		if (Object_GetById(20)->timer != 0)
 		{
 			ClearStep(Object_GetById(21));
-			Engine_ActorEnableActionCallback(21, Kalay_DanceScriptB);
-			Kalay_DanceStep++;
+			Engine_ActorEnableActionCallback(21, gKalay_DanceScriptB);
+			gKalay_DanceStep++;
 		}
 		break;
 	case 4:
 		if (Object_GetById(21)->timer != 0)
 		{
-			Kalay_DanceStep = 0;
+			gKalay_DanceStep = 0;
 		}
 		break;
 	}
@@ -1528,7 +1528,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	fieldActor = Actor_Get(ACTOR_PARTY_LEADER);
 	random = Random_Next();
 	motionPhase = random * 5;
-	motionActions = (const u8 *)Kalay_Data02;
+	motionActions = (const u8 *)gKalay_Data02;
 	fieldActor += 102;
 	*(u16 *)fieldActor = motionPhase >> 12;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motionActions);
@@ -1733,7 +1733,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Actor_WalkToAndWait(11, 0x1b7, 0x138);
 	Actor_WalkToAndWait(11, 0x1b7, 0x132);
 	Actor_SetPosition(11, 0, 0);
-	exitActions = (const u8 *)Kalay_Data03;
+	exitActions = (const u8 *)gKalay_Data03;
 	Engine_ActorEnableActionCallback(GARET, exitActions);
 	Engine_ActorEnableActionCallback(IVAN, (s32)exitActions);
 	Object_SetActionCallbackAndRefreshById(3, (s32)exitActions);
@@ -1781,14 +1781,14 @@ static void FieldScene_RunLateSequence(void)
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	idx = (leader->facing >> 12);
 	a = leader->x.part.pixel;
-	w = Kalay_Data01[idx];
+	w = gKalay_Data01[idx];
 	block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s16)w) >> 4);
 	if (block != NULL)
 	{
 		zero = 0;
 		block->terrainId = 2;
 		dst = tmp;
-		w2 = Kalay_Data01[idx];
+		w2 = gKalay_Data01[idx];
 		dst[0] = block->x.fixed + (w2 & -0x10000);
 		dst[1] = block->y.fixed;
 		dst[2] = block->z.fixed + (w2 << 16);
@@ -1860,7 +1860,7 @@ static void FieldScene_RunScene3a8SequenceB(void)
 		rec2->scaleX = 0x1999;
 		rec2->scaleY = 0x1999;
 		Actor_SetPosition(11, 0x960000, 0x2d80000);
-		Engine_ActorEnableActionCallback(11, Kalay_ActionScript01);
+		Engine_ActorEnableActionCallback(11, gKalay_ActionScript01);
 		v6 = 1;
 		Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
 		Map_CopyCellsTo(67, 64, 72, 44, v6, v5);
@@ -2053,7 +2053,7 @@ static void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 			*((u8 *)target - 3) = 1;
 		}
 		Object_SetMode(rec7, 1);
-		Engine_ObjectSetScript(rec7, (s32)Kalay_Script02);
+		Engine_ObjectSetScript(rec7, (s32)gKalay_Script02);
 	}
 }
 
@@ -2096,7 +2096,7 @@ static void EV11_PSYNERGY(void)
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 Kalay_Data01[] = {
+s32 gKalay_Data01[] = {
 	FACING_STEP(16, 0),
 	FACING_STEP(16, 0),
 	FACING_STEP(16, 0),
@@ -2115,7 +2115,7 @@ s32 Kalay_Data01[] = {
 	FACING_STEP(16, 0),
 };
 
-s32 SceneAction_GroupMotion[] = {
+s32 gSceneAction_GroupMotion[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-80), 0, 0),
 	SC_SYNC,
@@ -2125,7 +2125,7 @@ s32 SceneAction_GroupMotion[] = {
 	SC_END,
 };
 
-s32 SceneAction_GroupOffsetMotion[] = {
+s32 gSceneAction_GroupOffsetMotion[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-72), 0, 0),
 	SC_SYNC,
@@ -2146,12 +2146,12 @@ s32 SceneAction_GroupOffsetMotion[] = {
 	SC_END,
 };
 
-s32 Kalay_Script01[] = {
+s32 gKalay_Script01[] = {
 	SC_CALL(SceneEffect_UpdateRandomAction),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kalay_DanceScriptA[] = {
+s32 gKalay_DanceScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(228), 0, PIXELS(296)),
 	SC_SYNC,
@@ -2180,7 +2180,7 @@ s32 Kalay_DanceScriptA[] = {
 	SC_END,
 };
 
-s32 Kalay_DanceScriptB[] = {
+s32 gKalay_DanceScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(164), 0, PIXELS(278)),
 	SC_SYNC,
@@ -2197,7 +2197,7 @@ s32 Kalay_DanceScriptB[] = {
 	SC_END,
 };
 
-s32 Kalay_DanceScriptC[] = {
+s32 gKalay_DanceScriptC[] = {
 	SC_SET(SW_TARGET_X, PIXELS(-32768)),
 	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
 	SC_SET(SW_TARGET_Z, PIXELS(-32768)),
@@ -2215,7 +2215,7 @@ s32 Kalay_DanceScriptC[] = {
 	SC_END,
 };
 
-s32 Kalay_DanceScriptD[] = {
+s32 gKalay_DanceScriptD[] = {
 	SC_SET(SW_TARGET_X, PIXELS(-32768)),
 	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
 	SC_SET(SW_TARGET_Z, PIXELS(-32768)),
@@ -2233,7 +2233,7 @@ s32 Kalay_DanceScriptD[] = {
 	SC_END,
 };
 
-s32 Kalay_DanceScriptE[] = {
+s32 gKalay_DanceScriptE[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(178), 0, PIXELS(272)),
 	SC_SYNC,
@@ -2244,7 +2244,7 @@ s32 Kalay_DanceScriptE[] = {
 	SC_END,
 };
 
-s32 Kalay_DanceScriptF[] = {
+s32 gKalay_DanceScriptF[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(255), 0, PIXELS(289)),
 	SC_SYNC,
@@ -2259,12 +2259,12 @@ s32 Kalay_DanceScriptF[] = {
 	SC_END,
 };
 
-s32 Kalay_Data02[] = {
+s32 gKalay_Data02[] = {
 	SC_CALL(OverlayObject_UpdateHeadingTimer),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kalay_Data03[] = {
+s32 gKalay_Data03[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(388), 0, PIXELS(300)),
 	SC_SYNC,
@@ -2273,7 +2273,7 @@ s32 Kalay_Data03[] = {
 	SC_END,
 };
 
-s32 Kalay_ActionScript01[] = {
+s32 gKalay_ActionScript01[] = {
 	SC_ADD(SW_SCALE_X, 546),
 	SC_ADD(SW_SCALE_Y, 546),
 	SC_WAIT(1),
@@ -2346,7 +2346,7 @@ struct SceneEntrance gKalayEntrances6[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Kalay_SceneTable01[] = {
+u32 gKalay_SceneTable01[] = {
 	SCENE_EXITS(99),
 	SCENE_EXIT(1, 100, 1),
 	SCENE_EXIT(2, 100, 2),
@@ -2433,7 +2433,7 @@ struct ScenePlacement gKalayPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Kalay_StagedGroupScript[] = {
+struct ScenePlacement gKalay_StagedGroupScript[] = {
 	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x94, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2622,22 +2622,22 @@ struct SceneEvent gKalayEvents6[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Kalay_DoorCellData[] = {
+u16 gKalay_DoorCellData[] = {
 	MAP_CELL_STEP(35, 33, 1, 2, 5), MAP_CELL_STEP(37, 33, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim Kalay_DoorCells[] = {
-	{ Kalay_DoorCellData, 36, 10 },
-	{ Kalay_DoorCellData, 57, 7 },
-	{ Kalay_DoorCellData, 57, 11 },
-	{ Kalay_DoorCellData, 57, 23 },
-	{ Kalay_DoorCellData, 52, 25 },
-	{ Kalay_DoorCellData, 39, 14 },
-	{ Kalay_DoorCellData, 51, 14 },
-	{ Kalay_DoorCellData, 41, 25 },
+struct MapCellAnim gKalay_DoorCells[] = {
+	{ gKalay_DoorCellData, 36, 10 },
+	{ gKalay_DoorCellData, 57, 7 },
+	{ gKalay_DoorCellData, 57, 11 },
+	{ gKalay_DoorCellData, 57, 23 },
+	{ gKalay_DoorCellData, 52, 25 },
+	{ gKalay_DoorCellData, 39, 14 },
+	{ gKalay_DoorCellData, 51, 14 },
+	{ gKalay_DoorCellData, 41, 25 },
 };
 
-s32 Kalay_Script02[] = {
+s32 gKalay_Script02[] = {
 	SC_CALL(SceneEffect_UpdateMotionWithDamping),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };

@@ -11,10 +11,10 @@ u8 *KolimaForestBend_GetPlacements(void);
 u8 *KolimaForestBend_GetEvents(void);
 s32 KolimaForestBend_SetupBoard(void);
 /* State_StampRecordCells is called before its definition with no prototype in scope. */
-extern u32 KolimaForestBend_DefaultRecords[];
-extern u8 KolimaForestBend_PushAnimations[];
-extern s8 KolimaForestBend_PushStepX[];
-extern s8 KolimaForestBend_PushStepZ[];
+extern u32 gKolimaForestBend_DefaultRecords[];
+extern u8 gKolimaForestBend_PushAnimations[];
+extern s8 gKolimaForestBend_PushStepX[];
+extern s8 gKolimaForestBend_PushStepZ[];
 extern struct SceneEntrance gKolimaForestBendEntrances[];
 extern u32 gKolimaForestBendExits[];
 extern struct ScenePlacement gKolimaForestBendPlacements[];

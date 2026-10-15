@@ -5,7 +5,7 @@ void Func_02001aec(struct ObjectRuntime *object)
     object->motionFlags = 0;
     object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02003120(object, Data_020032d4);
+    Func_02003120(object, gData_020032d4);
     object->action = 0;
     object->speedLimit = 0;
     object->acceleration = 0;

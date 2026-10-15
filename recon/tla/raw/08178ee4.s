@@ -583,21 +583,21 @@ Func_08178ee4:
 .L_08179364:
 	.4byte Data_02011f20
 .L_08179368:
-	.4byte Data_081993d8
+	.4byte gData_081993d8
 .L_0817936c:
-	.4byte Data_081993d0
+	.4byte gData_081993d0
 .L_08179370:
 	.4byte Data_02012e6e
 .L_08179374:
-	.4byte Data_081993d4
+	.4byte gData_081993d4
 .L_08179378:
 	.4byte Data_02014e9d
 .L_0817937c:
-	.4byte Data_081993f0
+	.4byte gData_081993f0
 .L_08179380:
-	.4byte Data_081993e8
+	.4byte gData_081993e8
 .L_08179384:
-	.4byte Data_081993e0
+	.4byte gData_081993e0
 .L_08179388:
 	.4byte IwramFillWords
 .L_0817938c:

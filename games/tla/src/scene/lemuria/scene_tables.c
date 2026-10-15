@@ -50,13 +50,13 @@ s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
 void Func_02001d7c(s32 a);
 
-extern const struct WarpTarget Data_020021bc;
-extern const struct WarpTarget Data_020021c4;
-extern const struct WarpTarget Data_020021cc;
-extern const struct WarpTarget Data_020021d4;
-extern const struct WarpTarget Data_020021dc;
-extern const struct WarpTarget Data_020021e4;
-extern const struct WarpTarget Data_020021ec;
+extern const struct WarpTarget gData_020021bc;
+extern const struct WarpTarget gData_020021c4;
+extern const struct WarpTarget gData_020021cc;
+extern const struct WarpTarget gData_020021d4;
+extern const struct WarpTarget gData_020021dc;
+extern const struct WarpTarget gData_020021e4;
+extern const struct WarpTarget gData_020021ec;
 
 extern u8 MsgTheDoorIs;
 extern u8 MsgItHasBeen;
@@ -321,7 +321,7 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode)
 
 void Func_02000278(s32 door)
 {
-    const struct WarpTarget *warp = &Data_020021bc;
+    const struct WarpTarget *warp = &gData_020021bc;
     s32 mode = 0;
 
     if (door == 3 && GameFlag_Test(0x96a)) {
@@ -330,31 +330,31 @@ void Func_02000278(s32 door)
         return;
     }
     if (door == 1) {
-        warp = &Data_020021bc;
+        warp = &gData_020021bc;
         mode = 0;
     }
     if (door == 2) {
-        warp = &Data_020021c4;
+        warp = &gData_020021c4;
         mode = 0;
     }
     if (door == 3) {
-        warp = &Data_020021cc;
+        warp = &gData_020021cc;
         mode = 1;
     }
     if (door == 12) {
-        warp = &Data_020021d4;
+        warp = &gData_020021d4;
         mode = 0;
     }
     if (door == 11) {
-        warp = &Data_020021dc;
+        warp = &gData_020021dc;
         mode = 1;
     }
     if (door == 10) {
-        warp = &Data_020021e4;
+        warp = &gData_020021e4;
         mode = 1;
     }
     if (door == 16) {
-        warp = &Data_020021ec;
+        warp = &gData_020021ec;
         mode = 0;
     }
     Func_020001f0(warp, door, mode);

@@ -5,10 +5,10 @@ u8 *Func_020010b0(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov67FRoom1)
-        return Data_0200176c;
+        return gData_0200176c;
     if (scene == (s32)&SceneId_Ov67FRoom2)
-        return Data_02001814;
-    return Data_02001754;
+        return gData_02001814;
+    return gData_02001754;
 }
 
 // Starts the effect for this scene's room, then, for a first argument of 1,
@@ -27,9 +27,9 @@ void Func_020010f0(s32 a_arg, s32 b)
         register s32 a asm("r5") = a_arg;
 
         if (scene == (s32)&SceneId_Ov67FRoom1)
-            Func_020000a4(Data_02001674, a, b);
+            Func_020000a4(gData_02001674, a, b);
         else
-            Func_020000a4(Data_02001688, a, b);
+            Func_020000a4(gData_02001688, a, b);
         if (a == 1)
             Func_02000f30(Object_GetById(work->objectId));
     }

@@ -623,7 +623,7 @@ static void FieldScene_RunFourStepSequenceA(void)
 
 static void EV19_SCRIPT(void)
 {
-	Engine_ActorEnableActionCallback(19, TunnelRuins_FlickerScript);
+	Engine_ActorEnableActionCallback(19, gTunnelRuins_FlickerScript);
 }
 
 static void SceneState_SetValue202ThenCall(void)
@@ -677,7 +677,7 @@ static void EV08_SCRIPT(void)
 {
 	struct FieldActor *owner;
 
-	Engine_ActorEnableActionCallback(8, TunnelRuins_FlickerScript);
+	Engine_ActorEnableActionCallback(8, gTunnelRuins_FlickerScript);
 	Engine_GameFlagSet(0x203);
 	owner = Object_GetById(9);
 	owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
@@ -735,13 +735,13 @@ static void TunnelRuins_SettleSteps(s32 wait)
 		Engine_AudioPlayCue(180);
 	}
 	Engine_ObjectSetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
-		TunnelRuins_SettleHeights[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
+		gTunnelRuins_SettleHeights[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
 	Engine_ObjectSetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
-		TunnelRuins_SettleHeights[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
+		gTunnelRuins_SettleHeights[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
 	Engine_ActorWaitForMove(10);
 	Engine_ActorWaitForMove(11);
-	Object_GetById(10)->y.fixed = TunnelRuins_SettleHeights[Object_GetById(10)->timer];
-	Object_GetById(11)->y.fixed = TunnelRuins_SettleHeights[Object_GetById(11)->timer];
+	Object_GetById(10)->y.fixed = gTunnelRuins_SettleHeights[Object_GetById(10)->timer];
+	Object_GetById(11)->y.fixed = gTunnelRuins_SettleHeights[Object_GetById(11)->timer];
 	if (wait != 0)
 	{
 		Engine_AudioPlayCue(0x121);
@@ -1031,7 +1031,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 		Engine_EventWait(30);
 		GameFlag_Set(0x984);
 		Engine_AudioPlayCue(158);
-		Map_AnimateCells(TunnelRuins_CellStepsA, 32, 46);
+		Map_AnimateCells(gTunnelRuins_CellStepsA, 32, 46);
 		Map_CopyCellAttributes(24, 60, 1, 1, 32, 47);
 		Engine_EventWait(40);
 	}
@@ -1046,7 +1046,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 			Engine_EventWait(30);
 			GameFlag_Clear(0x984);
 			Engine_AudioPlayCue(159);
-			Map_AnimateCells(TunnelRuins_CellStepsB, 32, 46);
+			Map_AnimateCells(gTunnelRuins_CellStepsB, 32, 46);
 			Map_CopyCellAttributes(31, 47, 1, 1, 32, 47);
 			Engine_EventWait(40);
 		}
@@ -1449,7 +1449,7 @@ s32 FieldScene_InitializeActorGroups(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -1468,7 +1468,7 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207,
 	205,
 	228,
@@ -1477,7 +1477,7 @@ u32 StagedActor_FootprintKinds[] = {
 	297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32,
 	-8,
 	32,
@@ -1531,7 +1531,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u32 TunnelRuins_SettleHeights[] = {
+u32 gTunnelRuins_SettleHeights[] = {
 	0xfff00000,
 	0xfff00000,
 	0xffe00000,
@@ -1547,7 +1547,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 TunnelRuins_ShrinkScript[] = {
+s32 gTunnelRuins_ShrinkScript[] = {
 	SC_SET(SW_SCALE_X, 0x9999),
 	SC_SET(SW_SCALE_Y, 0x9999),
 	SC_SET(SW_COLLISION, 0),
@@ -1555,12 +1555,12 @@ s32 TunnelRuins_ShrinkScript[] = {
 	SC_END,
 };
 
-s32 TunnelRuins_StretchScript[] = {
+s32 gTunnelRuins_StretchScript[] = {
 	SC_SET(SW_SCALE_Y, 0x19999),
 	SC_END,
 };
 
-s32 TunnelRuins_FlickerScript[] = {
+s32 gTunnelRuins_FlickerScript[] = {
 	SC_WAIT(35),
 	SC_SET(SW_HOOK, (s32)TunnelRuins_UpdateFlickerEffect),
 	SC_WAIT(130),
@@ -1569,14 +1569,14 @@ s32 TunnelRuins_FlickerScript[] = {
 	SC_END,
 };
 
-u16 TunnelRuins_CellStepsA[] = {
+u16 gTunnelRuins_CellStepsA[] = {
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(24, 59, 1, 2, 4),
 	MAP_CELL_STEPS_END,
 };
 
-u16 TunnelRuins_CellStepsB[] = {
+u16 gTunnelRuins_CellStepsB[] = {
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(30, 59, 1, 2, 4),
@@ -1722,17 +1722,17 @@ struct ScenePlacement gTunnelRuinsPlacements1[] = {
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{0xfe, 0x0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{0xf8, 0x0, (s32)TunnelRuins_StretchScript, PIXELS(416), 0, PIXELS(794), FACING_NORTH,
+	{0xf8, 0x0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0, PIXELS(794), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
-	{0xf8, 0x0, (s32)TunnelRuins_StretchScript, PIXELS(432), 0, PIXELS(794), FACING_NORTH,
+	{0xf8, 0x0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0, PIXELS(794), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
-	{0xf8, 0x970, (s32)TunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
+	{0xf8, 0x970, (s32)gTunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(808), 0, PIXELS(232), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
-	{0x114, 0x0, (s32)TunnelRuins_ShrinkScript, PIXELS(232), 0, PIXELS(248), FACING_SOUTH,
+	{0x114, 0x0, (s32)gTunnelRuins_ShrinkScript, PIXELS(232), 0, PIXELS(248), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };

@@ -1417,7 +1417,7 @@ BattleFx_RunSeriesA:
 .L_0814f9f8:
 	.4byte Data_0819745e
 .L_0814f9fc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814fa00:
 	.4byte 0xfffff000
 .L_0814fa04:

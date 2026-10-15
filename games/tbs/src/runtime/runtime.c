@@ -106,7 +106,7 @@ s32 System_GetLanguage(void)
 {
 	s32 language;
 
-	switch (Rom_LanguageCode)
+	switch (gRom_LanguageCode)
 	{
 	case 'D':
 		language = 1;
@@ -165,7 +165,7 @@ void Resource_LoadWorkHeader(void)
 	struct ResourceWork *work;
 
 	header = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
-	work = (struct ResourceWork *)&IwramHi_Data1;
+	work = (struct ResourceWork *)&gIwramHi_Data1;
 	Dma_Set(header, work, 0x84000003, REG_DMA3);
 	work->cursor = 0;
 }
@@ -252,7 +252,7 @@ void Runtime_InstallIwramAndIrqs(void)
 	iwram = IwramIrqMain;
 	Dma_Set(IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
 	gIrqVector = iwram;
-	Dma_Set(Runtime_IrqHandlers, gIrqHandlers, 0x8400000e, REG_DMA3);
+	Dma_Set(gRuntime_IrqHandlers, gIrqHandlers, 0x8400000e, REG_DMA3);
 	Io_Write16(0, &REG_DISPSTAT);
 	Io_Write16(0xc3ff, &REG_KEYCNT);
 #if defined(HALT_ON_GAMEPAK_IRQ)
@@ -948,7 +948,7 @@ void Render_BuildOamList(void *work)
 // リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
 //--------------------------------------------------------------------------
 // OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
-// ResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
+// gResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
 // キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
 // size が 16 以下のものは VRAM を持っていない
 
@@ -977,13 +977,13 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 		{
 			return ret;
 		}
-		if (ResourceBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE)
+		if (gResourceBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE)
 		{
 			ret = pos;
 			end = blocks + ret;
 			while (pos < end)
 			{
-				if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+				if (gResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
 				{
 					goto occupied;
 				}
@@ -991,13 +991,13 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 			}
 			for (i = 0; i < blocks; i++)
 			{
-				ResourceBlockOwners[ret + i] = id;
+				gResourceBlockOwners[ret + i] = id;
 			}
 			break;
 		}
 	occupied:
 		// 使っているブロックは、持ち主の大きさの分だけとばす
-		pos += gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
+		pos += gVramBlockCache[gResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
 	}
 	ret *= VRAM_BLOCK_BYTES;
 	return ret;
@@ -1009,7 +1009,7 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 s32 ResourceTable_GetLongestFreeBlockRun(void)
 {
 	s32 run = 0;
-	u8 *p = ResourceBlockOwners;
+	u8 *p = gResourceBlockOwners;
 	s32 max = 0;
 	s32 n = VRAM_BLOCK_COUNT;
 
@@ -1043,7 +1043,7 @@ s32 Resource_ClearSlotReferences(s32 id)
 
 	if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
 		return -1;
-	p = ResourceBlockOwners;
+	p = gResourceBlockOwners;
 	empty = VRAM_BLOCK_OWNER_FREE;
 	n = VRAM_BLOCK_COUNT;
 	do
@@ -1160,7 +1160,7 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 void Resource_InitializeTable(void)
 {
 	u32 limit = VRAM_BLOCK_COUNT - 1;
-	u8 *p = ResourceBlockOwners;
+	u8 *p = gResourceBlockOwners;
 	u32 n = 0;
 	u32 empty = VRAM_BLOCK_OWNER_FREE;
 
@@ -1553,7 +1553,7 @@ s32 ArcTan2(s32 x, s32 y)
 		result = 0x4000;
 		if (ratio <= 0xFB6A)
 		{
-			table = &Math_TanTable[127];
+			table = &gMath_TanTable[127];
 			result = 0;
 
 			value = *table;
@@ -1649,13 +1649,13 @@ s32 FixedSqrt(s32 value)
 
 s32 Runtime_GetLowTableAddress(void)
 {
-	return (s32)System_BasicColorPalette;
+	return (s32)gSystem_BasicColorPalette;
 }
 
 void Text_FormatHexToWork(u32 value)
 {
 	u8		 *buffer = gNumberTextBuffer;
-	const u8 *digits = Text_HexDigits;
+	const u8 *digits = gText_HexDigits;
 	s32		  index = 7;
 
 	do
@@ -1683,7 +1683,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 
 	result = arg0;
 	val = result;
-	table = (u32 *)Text_PowersOfTen;
+	table = (u32 *)gText_PowersOfTen;
 	sign = 0x20;
 	out = gNumberTextBuffer;
 	if (val < 0)
@@ -1822,7 +1822,7 @@ void Ui_LoadWindowGraphics(void)
 {
 	Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), BG_CHAR_BLOCK(0), 0x84000800,
 		REG_DMA3);
-	Dma_Set(Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010, REG_DMA3);
+	Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010, REG_DMA3);
 	Io_Write16(0, &PLTT_BACKDROP);
 	Io_Write16(0x4180, &BG_PLTT_COLOR(15, 4));
 	Io_Write16(0x3960, &BG_PLTT_COLOR(15, 5));
@@ -1831,12 +1831,12 @@ void Ui_LoadWindowGraphics(void)
 	Io_Write16(0x49a0, &BG_PLTT_COLOR(15, 8));
 	Io_Write16(0x51c0, &BG_PLTT_COLOR(15, 9));
 	Io_Write16(0x59e0, &BG_PLTT_COLOR(15, 10));
-	Dma_Set(System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+	Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-	Dma_Set(System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+	Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
@@ -2515,7 +2515,7 @@ s32 SaveState_InitializeWorkspace(void)
 		WAIT_DMA();
 		slot = &header;
 
-		if (SaveState_CompareBytes(slot->signature, (u8 *)Save_Signature, 7) != 0)
+		if (SaveState_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
 			continue;
 		work->sequence[index] = slot->sequence;
 		record = slot->recordId;
@@ -2587,7 +2587,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 
 u32 SaveState_WriteWorkspaceSlot(s32 sector)
 {
-	s32					 *param = &Flash_Handler0;
+	s32					 *param = &gFlash_Handler0;
 	s32					  result;
 	struct SaveWorkspace *work;
 	s32					  value;
@@ -2640,7 +2640,7 @@ s32 SaveState_WriteRecord(s32 recordId, void *source)
 
 	START_DMA(source, work->slot.record.payload, 0x840003fc);
 	WAIT_DMA();
-	START_DMA(Save_HeaderTemplate, &header, 0x84000002);
+	START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
 	WAIT_DMA();
 	header.recordId = recordId;
 	header.checksum = SaveState_ChecksumWorkspace();
@@ -2758,7 +2758,7 @@ s32 SaveState_InvalidateSlot(s32 index)
 	work = gSaveWorkspace;
 	Dma_Fill32(0, &header, sizeof(header));
 	WAIT_DMA();
-	START_DMA(Save_HeaderTemplate, &header, 0x84000002);
+	START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
 	WAIT_DMA();
 	header.recordId = 0x10;
 	header.sequence = 0;

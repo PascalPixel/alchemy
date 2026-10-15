@@ -2,7 +2,7 @@
  * Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
  * a hint). A five-cell burst drawn on the actor's side for 30 frames;
  * at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
- * from frame 18 on with sizes from Data_08197410.
+ * from frame 18 on with sizes from gData_08197410.
  * Left:
  * - the native frame is 40 bytes with an unreferenced slot at sp+16
  *   between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
@@ -41,7 +41,7 @@ struct FxWork {
 extern char ResourceId_Data134;
 extern char ResourceId_Data0F3;
 extern char ResourceId_EffectPalette02;
-extern const u16 Data_08197410[];
+extern const u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -160,7 +160,7 @@ void Func_0817c27c(struct BattleEffectArgument *effect)
                 if (step->variant >= 0) {
                     s32 size = (step->variant >> 3) + 1;
 
-                    draw(canvas, sheet + Data_08197410[size - 1], HI(step->x) - size / 2,
+                    draw(canvas, sheet + gData_08197410[size - 1], HI(step->x) - size / 2,
                         HI(step->y) - size, size, size * 2);
                     if (i & 1)
                         BattleFxKernels_IntegrateVector2(step, 60, -0x2000);

@@ -15,7 +15,7 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_02003584[];
+extern s32 gData_02003584[];
 
 struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
@@ -55,7 +55,7 @@ loop:
         Func_020032e0(object, 7);
         ObjectDispatch_SetSingleChildFlags(object, 0);
         i += 2;
-        Func_020032e8(object, Data_02003584);
+        Func_020032e8(object, gData_02003584);
     }
     if (i != 16)
         goto loop;

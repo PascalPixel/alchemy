@@ -28,9 +28,9 @@ struct WarpTarget {
 
 extern u32 gFrameCount;
 extern u8 MsgAreWeSetting[];
-extern const u8 Data_0200057c[];
-extern const u8 Data_0200059c[];
-extern const struct WarpTarget Data_02000610;
+extern const u8 gData_0200057c[];
+extern const u8 gData_0200059c[];
+extern const struct WarpTarget gData_02000610;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Battle_WaitMode0(s32 frames);

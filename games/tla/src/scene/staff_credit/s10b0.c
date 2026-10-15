@@ -4,6 +4,6 @@
 #define Func_02003aac Func_02001168
 #define Func_02004b30 Func_02001fcc
 #define Func_02004b20 Func_02001fc4
-#define Data_02004f90 Data_02002e74
-#define Data_02004f9c Data_02002e80
+#define gData_02004f90 gData_02002e74
+#define gData_02004f9c gData_02002e80
 #include "../world_map/s39f4.c"

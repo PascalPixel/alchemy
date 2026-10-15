@@ -179,5 +179,5 @@ ResourceObject_Create:
 .L_08022e88:
 	.4byte 0xc0004000
 .L_08022e8c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 	.size ResourceObject_Create, .-ResourceObject_Create

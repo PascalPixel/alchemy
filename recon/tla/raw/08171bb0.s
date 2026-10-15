@@ -174,7 +174,7 @@ Func_08171bb0:
 .L_08171d00:
 	.4byte 0x00000785
 .L_08171d04:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08171d08:
 	.4byte 0x0000013a
 .L_08171d0c:
@@ -190,7 +190,7 @@ Func_08171bb0:
 .L_08171d20:
 	.4byte 0x0000013e
 .L_08171d24:
-	.4byte Data_02015000
+	.4byte gData_02015000
 .L_08171d28:
 	movs r0, #104
 	movs r1, #23
@@ -1224,7 +1224,7 @@ Func_08171bb0:
 .L_081724d8:
 	.4byte 0xfff00000
 .L_081724dc:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081724e0:
 	.4byte gMapCellBuffer
 .L_081724e4:
@@ -1585,7 +1585,7 @@ Func_08171bb0:
 .L_081727c4:
 	.4byte Data_02012000
 .L_081727c8:
-	.4byte Data_02015000
+	.4byte gData_02015000
 .L_081727cc:
 	.4byte 0xffffe000
 .L_081727d0:
@@ -1593,13 +1593,13 @@ Func_08171bb0:
 .L_081727d4:
 	.4byte gMapCellBuffer
 .L_081727d8:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_081727dc:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_081727e0:
 	.4byte 0xfffff000
 .L_081727e4:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_081727e8:
 	ldr r2, [sp, #88]
 	cmp r2, #3

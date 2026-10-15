@@ -6,7 +6,7 @@
 #include "battle_party.h"
 
 s32 BattleEnemyList(s16 *unit_ids);
-extern const s8 Data_081287c8[];
+extern const s8 gData_081287c8[];
 
 void Func_08118c68(void)
 {
@@ -33,7 +33,7 @@ void Func_08118c68(void)
         }
     }
     for (i = 0; i < count; i++) {
-        index = Data_081287c8[i] + count / 2;
+        index = gData_081287c8[i] + count / 2;
         battle->enemyIds[index] = buf[i];
     }
 done:

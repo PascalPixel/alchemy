@@ -1,6 +1,6 @@
 #include "trial_road.h"
 
-extern const u8 Data_02007734[];
+extern const u8 gData_02007734[];
 
 void Func_02000924(s32 id);
 void Func_0200095c(s32 id);
@@ -45,7 +45,7 @@ void Func_02001afc(void)
 
 void Func_02001bdc(void)
 {
-    Func_020042f0(Data_02007734);
+    Func_020042f0(gData_02007734);
 }
 
 // Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears

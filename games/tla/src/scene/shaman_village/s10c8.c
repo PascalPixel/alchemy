@@ -66,7 +66,7 @@ void Func_020011f8(void)
     ObjectMotion_Launch(17, 4, 20);
     Engine_AudioPlayCue(229);
     WaitFrames(2);
-    Object_SetActionCallbackAndRefreshById(16, Data_020050f8);
+    Object_SetActionCallbackAndRefreshById(16, gData_020050f8);
 }
 
 void Func_0200122c(void)

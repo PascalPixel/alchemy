@@ -12,7 +12,7 @@
 #include "field_sprite.h"
 #include "party_state.h"
 
-extern s32 Data_02002b88[3];
+extern s32 gData_02002b88[3];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -39,7 +39,7 @@ void Func_020000d0(s32 kind)
 
     Func_0200224c();
     Func_020022dc(0);
-    target = Data_02002b88;
+    target = gData_02002b88;
     if (kind == 32) {
         target[0] = 136 << 16;
         target[1] = 144 << 16;

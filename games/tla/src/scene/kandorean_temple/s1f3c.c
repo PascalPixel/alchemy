@@ -59,7 +59,7 @@ void Func_02002014(void)
 
 void Func_020020c8(void)
 {
-    Func_020053c0(Data_020054dc);
+    Func_020053c0(gData_020054dc);
 }
 
 void Func_020020d8(void)
@@ -80,7 +80,7 @@ void Func_02002120(void)
     if ((u32)((Object_GetById(8)->x >> 20) - 15) > 6)
         GameFlag_SetBit(0x20a);
     GameFlag_SetBit(0x20b);
-    Func_020053c0(Data_020054e0);
+    Func_020053c0(gData_020054e0);
 }
 
 void Func_02002154(void)
@@ -106,7 +106,7 @@ void Func_020021b8(void)
 {
     GameFlag_ClearBit(0x302);
     GameFlag_ClearBit(0x303);
-    Func_020053c0(Data_020054e0);
+    Func_020053c0(gData_020054e0);
 }
 
 void Func_020021dc(void)

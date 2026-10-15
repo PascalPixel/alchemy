@@ -1,6 +1,6 @@
 #include "kibombo.h"
 
-extern const u8 Data_020061a8[];
+extern const u8 gData_020061a8[];
 
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 
@@ -24,14 +24,14 @@ void Func_020045d0(void)
     Kibombo_ObjTurn(23, 0x3000);
     ObjectMotion_Launch(23, 2, 0);
     Kibombo_MessagePut(0x4000 + 23, 0);
-    ObjectMotion_EnableActionAndSetCallback(18, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(19, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(20, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(21, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(22, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(23, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(24, Data_020061a8);
-    ObjectMotion_EnableActionAndSetCallback(25, Data_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(18, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(19, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(20, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(21, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(22, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(23, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(24, gData_020061a8);
+    ObjectMotion_EnableActionAndSetCallback(25, gData_020061a8);
     Kibombo_Wait(40);
     Kibombo_ObjTurn(17, 0x3000);
     ObjectMotion_Launch(17, 2, 10);

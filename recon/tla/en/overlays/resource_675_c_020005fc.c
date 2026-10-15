@@ -17,7 +17,7 @@ struct IsletCaveEntry {
     u16 position[2];
 };
 
-extern const struct IsletCaveEntry Data_020019ec[];
+extern const struct IsletCaveEntry gData_020019ec[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001254(void);
@@ -55,7 +55,7 @@ loop:
     index = *(s16 *)(work + 0x154) - 1;
     Func_02001344(158);
     index >>= 1;
-    Call3((void (*)())Func_0200122c, Data_020019ec[index].value, Data_020019ec[index].position[0], Data_020019ec[index].position[1]);
+    Call3((void (*)())Func_0200122c, gData_020019ec[index].value, gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
     Object_SetModeById(gPartyState.currentOwner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.currentOwner, 0, -4);

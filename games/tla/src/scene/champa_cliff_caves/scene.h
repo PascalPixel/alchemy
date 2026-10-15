@@ -22,7 +22,7 @@ struct RiseObject {
     s32 update;
 };
 
-extern const struct WarpTarget Data_02003d10;
+extern const struct WarpTarget gData_02003d10;
 
 struct FieldActor *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);

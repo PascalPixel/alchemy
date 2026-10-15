@@ -34,7 +34,7 @@ void Func_0810bebc(u16 *items, s32 count, s32 mode)
 
                 UiIcon_CopyResourceToSlotFar(*items, mode, entry);
                 sprite->attr = blank;
-                sprite->attr.tile = ResourceTableEntries[entry].offset >> 5;
+                sprite->attr.tile = gResourceTableEntries[entry].offset >> 5;
             }
             *resource = entry;
         }

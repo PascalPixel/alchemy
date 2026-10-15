@@ -56,7 +56,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offse
 
     if (object != NULL) {
         object->movementState = 0;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)Object_OffsetMotionScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gObject_OffsetMotionScript);
         Object_SetMode(object, 2);
         Object_SetPosition(object, object->x + (x_offset << 16),
             object->y, object->z + (z_offset << 16));
@@ -77,7 +77,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_of
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void ObjectMotion_MoveToObject(u32 objectId, s32 targetId);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-extern const s32 Data_080f32e0[];
+extern const s32 gData_080f32e0[];
 
 void Func_080d3070(u32 objectId, s32 x_offset, s32 z_offset, s32 action)
 {
@@ -90,7 +90,7 @@ void Func_080d3070(u32 objectId, s32 x_offset, s32 z_offset, s32 action)
         object->movementState = 0;
         Object_SetMode(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(objectId, x_offset, z_offset);
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, Data_080f32e0);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, gData_080f32e0);
         object->action = action;
     }
 }

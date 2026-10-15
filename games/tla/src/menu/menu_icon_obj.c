@@ -28,7 +28,7 @@ void MenuIcon_ReleaseObjects(void)
     Scheduler_RemoveCallback(MenuIcon_UpdateTransforms);
 }
 
-extern s32 FourObjectMotion_ResourceIds[];
+extern s32 gFourObjectMotion_ResourceIds[];
 void ResourceObject_ReleaseFar(void *object);
 void *ResourceObject_CreateFar(s32 resource);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
@@ -42,7 +42,7 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation)
         ResourceObject_ReleaseFar(menu->objects[index]);
         menu->objects[index] = NULL;
     }
-    object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
+    object = ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[kind]);
     if (object != NULL) {
         Animation_ApplyChildArgumentFar(object, animation);
         object[9] &= -13;

@@ -24,7 +24,7 @@ struct MarsEntranceRideHead {
     struct ObjectRuntime *handle;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 void Func_02004bc0(struct ObjectRuntime *object, s32 value);
@@ -32,7 +32,7 @@ struct ObjectRuntime *Func_02004bd8(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_02002270(void)
 {
-    struct MarsEntranceRideHead *work = (struct MarsEntranceRideHead *)(Data_020023c4 + 0x188);
+    struct MarsEntranceRideHead *work = (struct MarsEntranceRideHead *)(gData_020023c4 + 0x188);
     struct ObjectRuntime *object;
     struct MarsEntranceAnimation *animation;
 

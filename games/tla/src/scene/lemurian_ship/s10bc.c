@@ -2,7 +2,7 @@
 
 void Func_020010bc(void)
 {
-    Func_02002dd0(Data_0200304e);
+    Func_02002dd0(gData_0200304e);
 }
 
 void Func_020010cc(void)

@@ -9,16 +9,16 @@ gKolimaForestBendReturned:
 	.global gKolimaForestBendLayout
 gKolimaForestBendLayout:
 	.space 8
-	.global KolimaPalette_First
-KolimaPalette_First:
+	.global gKolimaPalette_First
+gKolimaPalette_First:
 	.space 1792
-	.global KolimaPalette_Second
-KolimaPalette_Second:
+	.global gKolimaPalette_Second
+gKolimaPalette_Second:
 	.space 896
 	.space 896
-	.global KolimaForestBend_ShakeScroll
-KolimaForestBend_ShakeScroll:
+	.global gKolimaForestBend_ShakeScroll
+gKolimaForestBend_ShakeScroll:
 	.space 12
-	.global KolimaForestBend_ShakeChance
-KolimaForestBend_ShakeChance:
+	.global gKolimaForestBend_ShakeChance
+gKolimaForestBend_ShakeChance:
 	.space 4

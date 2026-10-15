@@ -7,12 +7,12 @@ struct ActorSolid {
     u8 solid : 8;
 };
 
-extern const u8 Data_02005c88[];
-extern const u8 Data_02005be8[];
-extern const u8 Data_02005d28[];
-extern const u8 Data_02005dc8[];
-extern const u8 Data_02005e40[];
-extern const u8 Data_02005ed4[];
+extern const u8 gData_02005c88[];
+extern const u8 gData_02005be8[];
+extern const u8 gData_02005d28[];
+extern const u8 gData_02005dc8[];
+extern const u8 gData_02005e40[];
+extern const u8 gData_02005ed4[];
 
 void Battle_WaitMode0(s32 frames);
 void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
@@ -103,8 +103,8 @@ void Func_02003900(void)
             object->x -= 0x900000;
     }
     Motion_CamBounds_(-1, -1, -1, 0);
-    ObjectMotion_EnableActionAndSetCallback(13, Data_02005c88);
-    ObjectMotion_EnableActionAndSetCallback(14, Data_02005be8);
+    ObjectMotion_EnableActionAndSetCallback(13, gData_02005c88);
+    ObjectMotion_EnableActionAndSetCallback(14, gData_02005be8);
     Event_StartScreenTransition();
     Battle_WaitMode0(20);
     Func_02005970_(0x20000, 0x4000);
@@ -122,7 +122,7 @@ void Func_02003900(void)
     Func_02005980();
     Func_02005940(8, 0);
     Func_02005940(4, 0);
-    ObjectMotion_EnableActionAndSetCallback(13, Data_02005d28);
+    ObjectMotion_EnableActionAndSetCallback(13, gData_02005d28);
     Object_RefreshSelectorById(13);
     Object_SetModeById(13, 1);
     Battle_WaitMode0(10);
@@ -170,11 +170,11 @@ void Func_02003900(void)
     Map_Stamp(127, 3, 1, 2, 48, 3);
     Map_CopyCells(0, 127, 1, 1, 14, 8);
     Battle_WaitMode0(20);
-    ObjectMotion_EnableActionAndSetCallback(13, Data_02005dc8);
+    ObjectMotion_EnableActionAndSetCallback(13, gData_02005dc8);
     Object_RefreshSelectorById(13);
     Func_02005a68(123);
     Func_02005940(8, 0);
-    ObjectMotion_EnableActionAndSetCallback(14, Data_02005e40);
+    ObjectMotion_EnableActionAndSetCallback(14, gData_02005e40);
     Motion_CamBounds_(328 << 16, -1, 120 << 16, 1);
     Func_02005980();
     Func_02005940(8, 0);
@@ -212,7 +212,7 @@ void Func_02003900(void)
     Motion_CamBounds_(408 << 16, -1, 120 << 16, 1);
     Func_02005980();
     Func_02005940(8, 0);
-    ObjectMotion_EnableActionAndSetCallback(14, Data_02005ed4);
+    ObjectMotion_EnableActionAndSetCallback(14, gData_02005ed4);
     Object_RefreshSelectorById(14);
     Func_02005940(8, 0);
     Func_02005990(10);

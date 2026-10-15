@@ -197,7 +197,7 @@ Func_0816729c:
 .L_08167430:
 	.4byte 0x05000200
 .L_08167434:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08167438:
 	.4byte 0x80002000
 .L_0816743c:
@@ -281,7 +281,7 @@ Func_0816729c:
 .L_081674dc:
 	.4byte 0x000000c2
 .L_081674e0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_081674e4:
 	.4byte 0x00000134
 .L_081674e8:
@@ -740,7 +740,7 @@ Func_0816729c:
 .L_08167860:
 	.4byte gMapCellBuffer
 .L_08167864:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08167868:
 	.4byte 0x06010000
 .L_0816786c:
@@ -750,7 +750,7 @@ Func_0816729c:
 .L_08167874:
 	.4byte 0x2a2a2a2a
 .L_08167878:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0816787c:
 	.4byte Data_08196e74
 .L_08167880:
@@ -1233,13 +1233,13 @@ Func_0816729c:
 .L_08167c44:
 	.4byte 0xffff00ff
 .L_08167c48:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08167c4c:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_08167c50:
 	.4byte 0xfffc0000
 .L_08167c54:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08167c58:
 	.4byte gInput
 .L_08167c5c:
@@ -2327,13 +2327,13 @@ Func_0816729c:
 .L_081684bc:
 	.4byte 0xffff00ff
 .L_081684c0:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_081684c4:
-	.4byte Data_08199364
+	.4byte gData_08199364
 .L_081684c8:
 	.4byte 0xfffc0000
 .L_081684cc:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_081684d0:
 	ldr r5, [sp, #32]
 	movs r6, #0

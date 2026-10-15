@@ -28,7 +28,7 @@ struct EffectConfig {
     u8 unk20[8];
 };
 
-extern const u8 Data_0200502c[];
+extern const u8 gData_0200502c[];
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d, struct EffectConfig *config);
 
@@ -42,7 +42,7 @@ void Func_02001d04(struct ObjectRuntime *object)
         config.id = 403;
         config.kind = 2;
         config.variant = 10;
-        config.data = Data_0200502c;
+        config.data = gData_0200502c;
         Func_0200015c(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000, &config);
     }
 }

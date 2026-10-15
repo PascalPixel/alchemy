@@ -307,7 +307,7 @@ Func_0814153c:
 .L_081417ac:
 	.4byte gMapCellBuffer
 .L_081417b0:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_081417b4:
 	.4byte 0x80002000
 .L_081417b8:
@@ -777,9 +777,9 @@ Func_0814153c:
 .L_08141b34:
 	.4byte 0x000000b4
 .L_08141b38:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08141b3c:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_08141b40:
 	.4byte Data_02010400
 .L_08141b44:
@@ -1174,23 +1174,23 @@ Func_0814153c:
 .L_08141e78:
 	.4byte 0xffc00000
 .L_08141e7c:
-	.4byte Data_081991b0
+	.4byte gData_081991b0
 .L_08141e80:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08141e84:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08141e88:
 	.4byte 0xffbe0000
 .L_08141e8c:
 	.4byte 0xffc20000
 .L_08141e90:
-	.4byte Data_08199210
+	.4byte gData_08199210
 .L_08141e94:
 	.4byte Data_081991c0
 .L_08141e98:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08141e9c:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08141ea0:
 	bl Random16
 	ldr r4, [sp, #96]
@@ -1396,13 +1396,13 @@ Func_0814153c:
 .L_08142048:
 	.4byte 0x00000001
 .L_0814204c:
-	.4byte Data_08197492
+	.4byte gData_08197492
 .L_08142050:
-	.4byte Data_08197498
+	.4byte gData_08197498
 .L_08142054:
 	.4byte Data_08197744
 .L_08142058:
-	.4byte Data_08197486
+	.4byte gData_08197486
 .L_0814205c:
 	.4byte gInput
 .L_08142060:
@@ -2258,9 +2258,9 @@ Func_0814153c:
 .L_0814272c:
 	.4byte gInput
 .L_08142730:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_08142734:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08142738:
 	.4byte 0xffffc000
 .L_0814273c:

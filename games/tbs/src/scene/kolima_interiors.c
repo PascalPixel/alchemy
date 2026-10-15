@@ -51,7 +51,7 @@ static void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-	return (u8 *)EntryLayout_PrimaryTable;
+	return (u8 *)gEntryLayout_PrimaryTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -61,7 +61,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSecondaryTable(void)
 {
-	return (u8 *)EntryLayout_SecondaryTable;
+	return (u8 *)gEntryLayout_SecondaryTable;
 }
 
 u8 *SceneData_GetPreparedRecords(void)
@@ -70,9 +70,9 @@ u8 *SceneData_GetPreparedRecords(void)
 
 	if (Engine_GameFlagIsSet(0x845) == 0)
 	{
-		SceneData_InitRecordTable((struct Resource390TableEntry *)EntryLayout_Records);
+		SceneData_InitRecordTable((struct Resource390TableEntry *)gEntryLayout_Records);
 	}
-	buf = (u8 *)EntryLayout_Records;
+	buf = (u8 *)gEntryLayout_Records;
 	FieldScene_PrepareActors(buf);
 	return buf;
 }
@@ -159,7 +159,7 @@ static void EV19_TALK(void)
 
 u8 *SceneData_GetFourthTable(void)
 {
-	return (u8 *)EntryLayout_FourthTable;
+	return (u8 *)gEntryLayout_FourthTable;
 }
 
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
@@ -216,7 +216,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 	return 0;
 }
 
-struct SceneEntrance EntryLayout_PrimaryTable[] = {
+struct SceneEntrance gEntryLayout_PrimaryTable[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0 },
 	{ 2, CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216, 0 },
@@ -235,7 +235,7 @@ struct SceneEntrance EntryLayout_PrimaryTable[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 EntryLayout_SecondaryTable[] = {
+u32 gEntryLayout_SecondaryTable[] = {
 	SCENE_EXITS(37),
 	SCENE_EXIT(1, 37, 11),
 	SCENE_EXIT(2, 37, 14),
@@ -254,7 +254,7 @@ u32 EntryLayout_SecondaryTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement EntryLayout_Records[] = {
+struct ScenePlacement gEntryLayout_Records[] = {
 	{ 0x67, 0x0, ACTOR_WANDER,
 		PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6f, 0x0, ACTOR_STAND,
@@ -288,7 +288,7 @@ struct ScenePlacement EntryLayout_Records[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent EntryLayout_FourthTable[] = {
+struct SceneEvent gEntryLayout_FourthTable[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

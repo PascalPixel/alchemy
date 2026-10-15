@@ -66,7 +66,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *KalayTolbiDocks_GetExits(void)
 {
-	return KalayTolbiDocks_SceneTable;
+	return gKalayTolbiDocks_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -461,14 +461,14 @@ static void EV10_TOUCH(void)
 	if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1)
 	{
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x130, 0x570);
-		Map_AnimateCells(KalayTolbiDocks_LeaveCells1, 78, 86);
+		Map_AnimateCells(gKalayTolbiDocks_LeaveCells1, 78, 86);
 	}
 	else
 	{
 		if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3)
 		{
 			Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
-			Map_AnimateCells(KalayTolbiDocks_LeaveCells3, 74, 9);
+			Map_AnimateCells(gKalayTolbiDocks_LeaveCells3, 74, 9);
 		}
 	}
 	Engine_EventWait(16);
@@ -843,7 +843,7 @@ static void EV50_TOUCH(void)
 	Actor_WalkByAndWait(10, 24, 0);
 	Event_PlayCue(133);
 	Engine_ActorJump(16, 6, 0);
-	Engine_ActorEnableActionCallback(16, KalayTolbiDocks_ActorSixteenScript);
+	Engine_ActorEnableActionCallback(16, gKalayTolbiDocks_ActorSixteenScript);
 	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(10, 6, 0);
 	Actor_WalkByAndWait(10, -12, 4);
@@ -895,15 +895,15 @@ static void EV50_TOUCH(void)
 	Engine_EventEnd();
 }
 
-u16 KalayTolbiDocks_LeaveCells1[] = {
+u16 gKalayTolbiDocks_LeaveCells1[] = {
 	MAP_CELL_STEP(98, 84, 2, 2, 5), MAP_CELL_STEP(98, 82, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 KalayTolbiDocks_LeaveCells3[] = {
+u16 gKalayTolbiDocks_LeaveCells3[] = {
 	MAP_CELL_STEP(92, 9, 2, 2, 5), MAP_CELL_STEP(92, 7, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-s32 KalayTolbiDocks_ActorSixteenScript[] = {
+s32 gKalayTolbiDocks_ActorSixteenScript[] = {
 	SC_ADD(SW_FACING, -0x2000),
 	SC_WAIT(2),
 	SC_LOOP(8, SC_TOP),
@@ -939,7 +939,7 @@ struct SceneEntrance gKalayTolbiDocksEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 KalayTolbiDocks_SceneTable[] = {
+u32 gKalayTolbiDocks_SceneTable[] = {
 	SCENE_EXITS(107),
 	SCENE_EXIT(1, 2, 21),
 	SCENE_EXIT(2, 109, 5),

@@ -38,4 +38,4 @@ Func_0810a670:
 .L_0810a6b2:
 	pop {r5, r6, pc}
 .L_0810a6b4:
-	.4byte Data_0810c3f4
+	.4byte gData_0810c3f4

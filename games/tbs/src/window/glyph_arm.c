@@ -114,9 +114,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 			color3 = 0x3333;
 			row = 0;
 #if defined(TBS_EDITION_EN)
-			font_width = UiText_GlyphWidths[index];
+			font_width = gUiText_GlyphWidths[index];
 #else
-			font_width = UiText_GlyphWidths[character - 32];
+			font_width = gUiText_GlyphWidths[character - 32];
 #endif
 			if (y <= 31)
 			{
@@ -158,16 +158,16 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 #endif
 			return font_width;
 		}
-		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
+		rows = (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 26);
 		width = *rows++;
 	}
 	else
 	{
 #if defined(TBS_EDITION_JA)
 		width = 10;
-		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
+		rows = (const u16 *)(gUiText_KanjiGlyphs + (character - 256) * 24);
 #else
-		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
+		rows = (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 32);
 		width = *rows;
 		rows += 4;
 #endif

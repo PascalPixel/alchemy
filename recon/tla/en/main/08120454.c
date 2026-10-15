@@ -574,7 +574,7 @@ power_end:
         if (res == -1)
             hit = BattleHitCheck(
                 aid, tid, element, action->effect,
-                HitTable[dist]);
+                gHitTable[dist]);
         else
             hit = res;
     }
@@ -820,7 +820,7 @@ power_end:
             ELEMENT_BONUS();
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
-            dmg = dmg * PpLossTable[dist] / 100;
+            dmg = dmg * gPpLossTable[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
             if (action->effect == 32 && dmg > pp)
@@ -860,7 +860,7 @@ power_end:
 
             ap = action->power;
             dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-            dmg = dmg * HpRecoveryTable[dist] / 100;
+            dmg = dmg * gHpRecoveryTable[dist] / 100;
             dmg *= adj;
             dmg += BattleRandomFar() & 3;
             cur += dmg;
@@ -891,7 +891,7 @@ power_end:
             ELEMENT_BONUS();
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
-            dmg = dmg * PpDmgTable[dist] / 100;
+            dmg = dmg * gPpDmgTable[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
             BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
@@ -992,13 +992,13 @@ power_end:
                 dmg *= adj;
                 switch (type & 15) {
                 case 5:
-                    dmg = HpDmgTable5[dist] * dmg / 100;
+                    dmg = gHpDmgTable5[dist] * dmg / 100;
                     break;
                 case 8:
-                    dmg = dmg * HpDmgTable8[dist] / 100;
+                    dmg = dmg * gHpDmgTable8[dist] / 100;
                     break;
                 case 6:
-                    dmg = dmg * HpDmgTable6[dist] / 100;
+                    dmg = dmg * gHpDmgTable6[dist] / 100;
                     break;
                 }
                 dmg += BattleRandomFar() & 3;
@@ -1056,7 +1056,7 @@ power_end:
             pp = target->pp;
             ap = action->power;
             dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-            dmg = dmg * PpRecoveryTable[dist] / 100;
+            dmg = dmg * gPpRecoveryTable[dist] / 100;
             dmg *= adj;
             pp += dmg;
             if (pp > target->maxPp) {
@@ -1091,7 +1091,7 @@ power_end:
             ap = action->power;
             dmg = BattlePowerCalc(ap, bonus, 256);
             dmg *= adj;
-            dmg = dmg * HpDmgTable[dist] / 100;
+            dmg = dmg * gHpDmgTable[dist] / 100;
             GUARD_CUT();
             BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
             BattleEvPush(BATTLE_EVENT_NUM, dmg);

@@ -42,7 +42,7 @@ void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object)
         object->scaleY -= 0x1000;
         object->scaleX = scale;
         if (scale <= 0x1000)
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_CommonParticleScript);
     }
 }
 

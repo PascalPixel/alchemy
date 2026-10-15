@@ -32,7 +32,7 @@ struct StagedActor {
     u8 transitionBusy;
 };
 
-extern s32 Data_02001d8c[];
+extern s32 gData_02001d8c[];
 
 struct StagedActor *Engine_ActorGet(s32 actor);
 struct StagedActor *Object_FindInCell(s32 *position, struct StagedActor *self);
@@ -56,7 +56,7 @@ void Func_0200038c(void)
 
     lead = Engine_ActorGet(gPartyState.currentOwner);
     dir = lead->facing >> 12;
-    step = Data_02001d8c[dir];
+    step = gData_02001d8c[dir];
     dst[0] = lead->x + (step & 0xffff0000);
     dst[1] = lead->y;
     step <<= 16;
@@ -65,7 +65,7 @@ void Func_0200038c(void)
     if (next == 0)
         return;
 
-    step = Data_02001d8c[dir];
+    step = gData_02001d8c[dir];
     dst[0] = next->x + (step & 0xffff0000);
     dst[1] = next->y;
     step <<= 16;
@@ -82,7 +82,7 @@ void Func_0200038c(void)
         return;
 
     next->transitionMode = 2;
-    step = Data_02001d8c[dir];
+    step = gData_02001d8c[dir];
     dst[0] = next->x + (step & 0xffff0000);
     dst[1] = next->y;
     step <<= 16;

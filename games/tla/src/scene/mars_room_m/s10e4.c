@@ -93,12 +93,12 @@ void Func_020012a4(s32 x, s32 z, s32 kind)
         animation = object->animation;
         if (kind != 0) {
             animation->layer = 2;
-            Func_02003120(object, Data_0200387c);
+            Func_02003120(object, gData_0200387c);
         } else {
             animation->layer = 1;
             object->velocityX = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
             object->velocityY = 0x40000;
-            Func_02003120(object, Data_02003900);
+            Func_02003120(object, gData_02003900);
         }
     }
 }

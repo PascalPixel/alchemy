@@ -27,7 +27,7 @@ struct EffectSprite {
     u16 unk26;
 };
 
-extern const u8 Data_080f3bc4[][2];
+extern const u8 gData_080f3bc4[][2];
 
 void Func_080eaf98(struct EffectSprite *sprite, s32 a, s32 b, u32 attributes, s32 tiles)
 {
@@ -43,8 +43,8 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 a, s32 b, u32 attributes, s3
     sprite->unk24 = a;
     sprite->unk26 = b;
     shape = ((attributes >> 30) | (attributes >> 12)) & 15;
-    sprite->width = Data_080f3bc4[shape][0];
-    sprite->height = Data_080f3bc4[shape][1];
+    sprite->width = gData_080f3bc4[shape][0];
+    sprite->height = gData_080f3bc4[shape][1];
     words = (u32 *)&sprite->unk00[4];
     *words++ = attributes;
     *words = 0;

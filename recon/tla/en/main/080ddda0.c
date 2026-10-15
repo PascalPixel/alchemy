@@ -56,7 +56,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)mainObject + 0x68) = child;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject, (u32)(BattleFx_CommonParticleScript + 12));
+    ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject, (u32)(gBattleFx_CommonParticleScript + 12));
 
     x = scene->x;
     position[0] = x;

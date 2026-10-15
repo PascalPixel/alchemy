@@ -197,9 +197,9 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 		{
 			value = unit->level;
 #if EDITION_INTERNATIONAL
-			UiText_DrawStringAtOffsetFar(Ui_LvString, window, 40, 16);
+			UiText_DrawStringAtOffsetFar(gUi_LvString, window, 40, 16);
 #else
-			UiText_DrawStringInWindowFar(Ui_LvString, window, 40, 16);
+			UiText_DrawStringInWindowFar(gUi_LvString, window, 40, 16);
 #endif
 			UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
 		}
@@ -351,8 +351,8 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	s16 val;
 
 #if EDITION_INTERNATIONAL
-	UiText_DrawStringAtOffsetFar(Ui_HpString, win, 0, 40);
-	UiText_DrawStringInWindowFar((u8 *)Ui_SlashString, win, 48, 40);
+	UiText_DrawStringAtOffsetFar(gUi_HpString, win, 0, 40);
+	UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 40);
 	val = unit->maxHp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
 	val = unit->hp;
@@ -366,14 +366,14 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	}
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringAtOffsetFar(Ui_PpString, win, 0, 48);
-	UiText_DrawStringInWindowFar((u8 *)Ui_SlashString, win, 48, 48);
+	UiText_DrawStringAtOffsetFar(gUi_PpString, win, 0, 48);
+	UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, win, 48, 48);
 	val = unit->pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
 	val = unit->maxPp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
 #else
-	UiText_DrawStringInWindowFar((u8 *)Ui_HpRowString, win, 0, 40);
+	UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, win, 0, 40);
 	val = unit->maxHp;
 	UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
 	val = unit->hp;
@@ -387,7 +387,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	}
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringInWindowFar((u8 *)Ui_PpRowString, win, 0, 48);
+	UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, win, 0, 48);
 	val = unit->pp;
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
 	val = unit->maxPp;
@@ -448,7 +448,7 @@ s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused, s32 x, s32
 	entry_id = Resource_FindFreeEntry();
 	if (entry_id != 0)
 	{
-		VramBlock_LoadCached(entry_id, 0x80, UiIcon_ResourceTiles);
+		VramBlock_LoadCached(entry_id, 0x80, gUiIcon_ResourceTiles);
 		result = (s32)RenderOutput_CreateFar(entry_id, 0x40000000, window, x, y);
 	}
 	return result;
@@ -466,7 +466,7 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
 	resource_mode = 0x80;
 	if (slot != 0)
 	{
-		VramBlock_LoadCached(slot, copy_mode = resource_mode, UiIcon_ResourceTiles);
+		VramBlock_LoadCached(slot, copy_mode = resource_mode, gUiIcon_ResourceTiles);
 		icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
 	}
 	return icon;
@@ -625,9 +625,9 @@ void UiMenu_PositionCursor(s32 x_offset, s32 yOffset)
 	struct PsynergyMenuState *work = gMenuWork;
 	struct RenderOutput		 *cursor = work->paneIcon[0];
 
-	cursor->oam.x = cursor->x = UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
+	cursor->oam.x = cursor->x = gUiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
 								+ ((struct RenderInput *)work->auxiliaryWindow)->x * 8 + 8;
-	cursor->oam.y = cursor->y = UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + yOffset
+	cursor->oam.y = cursor->y = gUiMenu_CursorBobY[(gFrameCount >> 1) & 7] + yOffset
 								+ ((struct RenderInput *)work->auxiliaryWindow)->y * 8 + 8;
 }
 
@@ -919,17 +919,17 @@ void Menu_CopyListOrder(s32 mode, u8 *order)
 	u8 *src;
 	s32 n;
 
-	src = Menu_ListOrderDefault;
+	src = gMenu_ListOrderDefault;
 	switch (mode)
 	{
 	case 0:
-		src = Menu_ListOrderMode0;
+		src = gMenu_ListOrderMode0;
 		break;
 	case 1:
-		src = Menu_ListOrderMode1;
+		src = gMenu_ListOrderMode1;
 		break;
 	case 2:
-		src = Menu_ListOrderMode2;
+		src = gMenu_ListOrderMode2;
 		break;
 	}
 	*order = *src;
@@ -2243,9 +2243,9 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items)
 	UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, (s32)menu->helpWindow, 0, 0);
 	UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1, (s32)menu->helpWindow, 0, 8);
 #else
-	UiText_DrawStringInWindowFar(ItemMenu_ArrangeKeysString, (s32)menu->helpWindow, 0, 0);
+	UiText_DrawStringInWindowFar(gItemMenu_ArrangeKeysString, (s32)menu->helpWindow, 0, 0);
 	UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, (s32)menu->helpWindow, 32, 0);
-	UiText_DrawStringInWindowFar(ItemMenu_EquipmentKeyString, (s32)menu->helpWindow, 16, 8);
+	UiText_DrawStringInWindowFar(gItemMenu_EquipmentKeyString, (s32)menu->helpWindow, 16, 8);
 	UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1, (s32)menu->helpWindow, 32, 8);
 #endif
 	menu->paneIcons[0]->active = pending;
@@ -2842,7 +2842,7 @@ s32 ItemMenu_CmdCursorX(s32 column, s32 row)
 {
 	if (column > 2 || row > 2 || column < 0 || row < 0)
 		return 0;
-	return ItemMenu_CommandColumnXTable[row * 3 + column];
+	return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
 s32 ItemMenu_CmdCursorY(s32 column, s32 row)
@@ -3448,30 +3448,30 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
 			UiText_DrawCharacterAtOffsetFar(
 				def->effects[i].kind + MsgEquipEffectName, window, 0, row * 8);
 #if EDITION_INTERNATIONAL
-			UiText_DrawStringInWindowFar(Menu_TimesString, window, 64, row * 8);
+			UiText_DrawStringInWindowFar(gMenu_TimesString, window, 64, row * 8);
 			if (amount > 9)
 			{
 				UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
-				UiText_DrawStringInWindowFar(Menu_PointString, window, 80, row * 8);
+				UiText_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
 				UiText_DrawNumberInWindowFar(amount - 10, 1, window, 88, row * 8);
 			}
 			else
 			{
 				UiText_DrawNumberInWindowFar(0, 1, window, 72, row * 8);
-				UiText_DrawStringInWindowFar(Menu_PointString, window, 80, row * 8);
+				UiText_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
 				UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
 			}
 #else
 			if (amount > 9)
 			{
 				UiText_DrawNumberInWindowFar(1, 1, window, 48, row * 8);
-				UiText_DrawStringInWindowFar(Menu_PointString, window, 56, row * 8);
+				UiText_DrawStringInWindowFar(gMenu_PointString, window, 56, row * 8);
 				UiText_DrawNumberInWindowFar(amount - 10, 1, window, 64, row * 8);
 			}
 			else
 			{
 				UiText_DrawNumberInWindowFar(0, 1, window, 48, row * 8);
-				UiText_DrawStringInWindowFar(Menu_PointString, window, 56, row * 8);
+				UiText_DrawStringInWindowFar(gMenu_PointString, window, 56, row * 8);
 				UiText_DrawNumberInWindowFar(amount, 1, window, 64, row * 8);
 			}
 			UiText_DrawCharacterAtOffsetFar(MsgEffectRateSuffix, window, 72, row * 8);
@@ -3603,11 +3603,11 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y)
 	}
 	if (delta > 0)
 	{
-		UiText_DrawStringInWindowFar(&Menu_PlusSignString, window, x - digits * 8 + 16, y);
+		UiText_DrawStringInWindowFar(&gMenu_PlusSignString, window, x - digits * 8 + 16, y);
 	}
 	else
 	{
-		UiText_DrawStringInWindowFar(&Menu_MinusSignString, window, x - digits * 8 + 16, y);
+		UiText_DrawStringInWindowFar(&gMenu_MinusSignString, window, x - digits * 8 + 16, y);
 	}
 }
 
@@ -3699,7 +3699,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 				quantity = (range + quantity) % range;
 				RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 				UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
-				Dma_Set(Menu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
+				Dma_Set(gMenu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
 				Shop_FillSelectorFar(30, 14, tiles);
 				Shop_FillSelectorFar(range + base, 0, tiles);
 				Shop_FillSelectorFar(base + quantity + 1, 10, tiles);
@@ -3951,10 +3951,10 @@ void Resource_LoadPairedBlocks(void)
 	s32						   value = Resource_FindFreeEntry();
 
 	state->resourceSlots[0] = value;
-	VramBlock_LoadCached(value, 128, Menu_ArrowTiles);
+	VramBlock_LoadCached(value, 128, gMenu_ArrowTiles);
 	value = Resource_FindFreeEntry();
 	state->resourceSlots[1] = value;
-	VramBlock_LoadCached(value, 128, Menu_SmallDownArrowTiles);
+	VramBlock_LoadCached(value, 128, gMenu_SmallDownArrowTiles);
 }
 
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
@@ -4944,9 +4944,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 	else
 		wide = 0;
 	if (wide)
-		UiText_DrawStringInWindowFar((u8 *)Menu_ShortcutLString, window, 0, 0);
+		UiText_DrawStringInWindowFar((u8 *)gMenu_ShortcutLString, window, 0, 0);
 	else
-		UiText_DrawStringInWindowFar((u8 *)Menu_ShortcutLColonString, window, 0, 0);
+		UiText_DrawStringInWindowFar((u8 *)gMenu_ShortcutLColonString, window, 0, 0);
 	if (gGameState.firstShortcut != 0)
 	{
 		if (wide)
@@ -4969,9 +4969,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 	else
 		wide = 0;
 	if (wide)
-		UiText_DrawStringInWindowFar((u8 *)Menu_ShortcutRString, window, 0, 8);
+		UiText_DrawStringInWindowFar((u8 *)gMenu_ShortcutRString, window, 0, 8);
 	else
-		UiText_DrawStringInWindowFar((u8 *)Menu_ShortcutRColonString, window, 0, 8);
+		UiText_DrawStringInWindowFar((u8 *)gMenu_ShortcutRColonString, window, 0, 8);
 	if (gGameState.secondShortcut != 0)
 	{
 		if (wide)
@@ -6386,7 +6386,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries, s32 
 			{
 				if (selected == count)
 				{
-					width = CharacterMenu_CursorWidths[index];
+					width = gCharacterMenu_CursorWidths[index];
 					break;
 				}
 				count++;
@@ -6557,9 +6557,9 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
 		if (!has_djinn)
 			row--;
 #if EDITION_INTERNATIONAL
-		UiText_DrawStringAtOffsetFar(Menu_LvString, window, 64, row * 8 + 16);
+		UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, row * 8 + 16);
 #else
-		UiText_DrawStringInWindowFar(Menu_LvString, window, 64, row * 8 + 16);
+		UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, row * 8 + 16);
 #endif
 		UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64, row * 8 + 24);
 		UiText_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64, row * 8 + 32);
@@ -6575,7 +6575,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
 			{
 				UiText_DrawNumberInWindowFar(
 					status->djinnActiveCounts[i], 1, window, i * 32 + 104, row * 8 + 8);
-				UiText_DrawStringInWindowFar(Menu_SlashString, window, i * 32 + 112, row * 8 + 8);
+				UiText_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112, row * 8 + 8);
 			}
 			UiText_DrawNumberInWindowFar(
 				Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
@@ -6622,28 +6622,28 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 	UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
 	UiText_DrawCharacterAtOffsetFar(unit->classIndex + MsgClassName, window, 0, 32);
 #if EDITION_INTERNATIONAL
-	UiText_DrawStringAtOffsetFar(Menu_LvString, window, 104, 0);
+	UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 104, 0);
 #else
-	UiText_DrawStringInWindowFar(Menu_LvString, window, 104, 0);
+	UiText_DrawStringInWindowFar(gMenu_LvString, window, 104, 0);
 #endif
 	UiWork_SetParamNibbleFar(15);
 	UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
 #if EDITION_INTERNATIONAL
-	UiText_DrawStringAtOffsetFar(Menu_HpString, window, 40, 16);
+	UiText_DrawStringAtOffsetFar(gMenu_HpString, window, 40, 16);
 #else
-	UiText_DrawStringInWindowFar(Menu_HpString, window, 40, 16);
+	UiText_DrawStringInWindowFar(gMenu_HpString, window, 40, 16);
 #endif
 	UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
 	UiText_DrawNumberInWindowFar(unit->maxHp, 4, window, 112, 16);
-	UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 16);
+	UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
 #if EDITION_INTERNATIONAL
-	UiText_DrawStringAtOffsetFar(Menu_PpString, window, 40, 24);
+	UiText_DrawStringAtOffsetFar(gMenu_PpString, window, 40, 24);
 #else
-	UiText_DrawStringInWindowFar(Menu_PpString, window, 40, 24);
+	UiText_DrawStringInWindowFar(gMenu_PpString, window, 40, 24);
 #endif
 	UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
 	UiText_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
-	UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
+	UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
 	UiText_DrawCharacterAtOffsetFar(MsgExpLabel, window, 40, 8);
 	UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);
 	if (flags == 0)
@@ -6749,7 +6749,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 	return word ^ mask;
 }
 
-extern const struct TileMask Menu_PatternRowMasks[];
+extern const struct TileMask gMenu_PatternRowMasks[];
 
 void Menu_BuildPatternTiles(void)
 {
@@ -6785,8 +6785,8 @@ void Menu_BuildPatternTiles(void)
 						mi = 0;
 					}
 				}
-				tile[x] = XorWord(tile[x], Menu_PatternRowMasks[mi].word0);
-				tile[x + 8] = XorWord(tile[x + 8], Menu_PatternRowMasks[mi].word1);
+				tile[x] = XorWord(tile[x], gMenu_PatternRowMasks[mi].word0);
+				tile[x + 8] = XorWord(tile[x + 8], gMenu_PatternRowMasks[mi].word1);
 			}
 		}
 	}
@@ -6980,9 +6980,9 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *r
 	UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
 	UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-	UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
+	UiText_DrawStringAtOffsetFar(&gMenu_LvString, (void *)window, 0, 48);
 #else
-	UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
+	UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
 #endif
 	UiText_DrawNumberInWindowFar(owner->level, 2, window, 24, 48);
 
@@ -8656,7 +8656,7 @@ s32 Menu_OpenBackdropScreen(void)
 	Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
 	Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
 	Iwram_CopyWords(
-		BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP, Menu_BackdropFrameTile, TILE_SIZE_4BPP);
+		BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP, gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
 	Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010, REG_DMA3);
 	BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
 	Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0), 0x80000010, REG_DMA3);
@@ -9120,7 +9120,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 			RenderOutput_RedrawSavedRectFar(window);
 			UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
 			UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0, 8);
-			UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, 48, 0);
+			UiText_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, 48, 0);
 			UiText_DrawNumberInWindowFar(owner->level, 2, window, 72, 0);
 			if (mode == 0)
 				UiText_DrawCharacterAtOffsetFar(MsgDjinnCharacterStatus, window, 0, 16);
@@ -9876,9 +9876,9 @@ s32 DjinnMenu_DrawStatPreview(
 			UiText_DrawNumberInWindowFar(
 				state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
 			UiText_DrawStringAtOffsetFar(
-				DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
+				gDjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
 			UiText_DrawStringAtOffsetFar(
-				DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
+				gDjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
 		}
 		else
 		{
@@ -9931,7 +9931,7 @@ s32 DjinnMenu_DrawStatPreview(
 		s32 label;
 
 		UiText_DrawStringAtOffsetFar(state->name, window, x * 8 + 40, y * 8);
-		UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, x * 8 + 40, y * 8 + 16);
+		UiText_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, x * 8 + 40, y * 8 + 16);
 		UiText_DrawNumberInWindowFar(state->level, 2, window, x * 8 + 88, y * 8 + 16);
 		label = MsgPreviewStatLabel;
 		UiText_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
@@ -10109,7 +10109,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1)
 	for (index = 0; index < 4; index++)
 	{
 		struct AnimationObject *object =
-			ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
+			ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
 		if (object != NULL)
 		{
@@ -10251,7 +10251,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1)
 	for (index = 0; index < 4; index++)
 	{
 		struct AnimationObject *object =
-			ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
+			ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
 		if (object != NULL)
 			AnimationObjects_SelectAnimationFar(object, 2);
@@ -10292,7 +10292,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 	}
 	{
 		struct AnimationObject *object =
-			ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
+			ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[kind]);
 
 		if (object != NULL)
 			AnimationObjects_SelectAnimationFar(object, value);
@@ -10809,7 +10809,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 			fill = 0x44444444;
 			if ((frame & 4) != 0)
 			{
-				Iwram_CopyWords(tile, Menu_BackdropFrameTile, 32);
+				Iwram_CopyWords(tile, gMenu_BackdropFrameTile, 32);
 			}
 			else
 			{
@@ -11002,7 +11002,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
 		if ((frame & 3) == 0)
 		{
 			if (frame & 4)
-				Iwram_CopyWords((void *)0x060052c0, Menu_BackdropFrameTile, 32);
+				Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropFrameTile, 32);
 			else
 				Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
 		}
@@ -11159,13 +11159,13 @@ void Resource_LoadPairedBlocksIfAvailable(void)
 	active_state->resourceSlots[0] = first_slot;
 	if (first_slot != -1)
 	{
-		VramBlock_LoadCached(first_slot, 0x80, Menu_PairSpriteATiles);
+		VramBlock_LoadCached(first_slot, 0x80, gMenu_PairSpriteATiles);
 	}
 	second_slot = Resource_FindFreeEntry();
 	active_state->resourceSlots[1] = second_slot;
 	if (second_slot != -1)
 	{
-		VramBlock_LoadCached(second_slot, 0x80, Menu_PairSpriteBTiles);
+		VramBlock_LoadCached(second_slot, 0x80, gMenu_PairSpriteBTiles);
 	}
 }
 

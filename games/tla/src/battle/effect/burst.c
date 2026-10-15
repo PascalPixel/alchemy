@@ -7,7 +7,7 @@ struct BurstParticleVector {
     s32 values[3];
 };
 
-extern u8 Data_080f0ee8[];
+extern u8 gData_080f0ee8[];
 
 void Func_080ddbd8(void);
 void Audio_PlayCue(s32 no);
@@ -38,7 +38,7 @@ void Func_080ddb3c(void)
         p->values[1] = *(s32 *)(state + 8);
         object = Object_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, (u32)Data_080f0ee8);
+            ObjectDispatch_InitializeFar(object, (u32)gData_080f0ee8);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Random16() * 2) >> 16) + 2);

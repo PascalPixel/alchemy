@@ -6,17 +6,17 @@
 #include "ram_buffer.h"
 #include "frame.h"
 
-extern s32 Data_02002ce0;
-extern u16 Data_02002ce4;
-extern u16 Data_02002ce6;
+extern s32 gData_02002ce0;
+extern u16 gData_02002ce4;
+extern u16 gData_02002ce6;
 
 void Func_02000e90(void)
 {
     s16 *view = (s16 *)((u8 *)Ram_HeapSlots->mapWork + 376);
     s32 x;
 
-    Data_02002ce0 = 1448 - view[3];
+    gData_02002ce0 = 1448 - view[3];
     x = view[1];
-    Data_02002ce4 = x;
-    Data_02002ce6 = x - (gFrameCount >> 2);
+    gData_02002ce4 = x;
+    gData_02002ce6 = x - (gFrameCount >> 2);
 }

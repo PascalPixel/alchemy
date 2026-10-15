@@ -17,22 +17,22 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         result = -1;
         if (pos >= VRAM_BLOCK_COUNT)
             goto done;
-        if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+        if (gResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
             goto occupied;
         end = blocks + pos;
         if (end > VRAM_BLOCK_COUNT)
             goto done;
         result = pos;
         while (pos < end) {
-            if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+            if (gResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
                 goto occupied;
             pos++;
         }
         for (i = 0; i < blocks; i++)
-            ResourceBlockOwners[result + i] = id;
+            gResourceBlockOwners[result + i] = id;
         goto found;
 occupied:
-        pos += (u32)ResourceTableEntries[ResourceBlockOwners[pos]].size
+        pos += (u32)gResourceTableEntries[gResourceBlockOwners[pos]].size
             / VRAM_BLOCK_BYTES;
     }
 found:

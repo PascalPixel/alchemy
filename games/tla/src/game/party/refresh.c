@@ -72,7 +72,7 @@ void Func_080ae16c(s32 arg0)
     }
 }
 
-extern const u8 Character_ElementGroupTable[];
+extern const u8 gCharacter_ElementGroupTable[];
 
 // The Broken Seal の Owner_RefreshRatiosOnFlag
 void Func_080ae220(void)
@@ -100,7 +100,7 @@ void Func_080ae220(void)
             asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's offset; read as a plain field the offset is started first (differ 2) */
             ownerId = party->activeOwners[n];
         }
-        group = Character_ElementGroupTable[ownerId];
+        group = gCharacter_ElementGroupTable[ownerId];
         doRefresh = 0;
         if (group == 0) {
             if (GameFlag_Test(0x110) || GameFlag_Test(0x112)) {

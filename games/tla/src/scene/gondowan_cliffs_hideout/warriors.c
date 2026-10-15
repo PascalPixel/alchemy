@@ -3,8 +3,8 @@
 #include "text/msg_ids.h"
 #include "object_runtime.h"
 
-extern const u8 Data_02000318[];
-extern const u8 Data_02000270[];
+extern const u8 gData_02000318[];
+extern const u8 gData_02000270[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

@@ -524,7 +524,7 @@ Func_081665a4:
 .L_081669a4:
 	.4byte 0x00000134
 .L_081669a8:
-	.4byte Data_08198a92
+	.4byte gData_08198a92
 .L_081669ac:
 	.4byte gMapCellBuffer
 .L_081669b0:
@@ -532,7 +532,7 @@ Func_081665a4:
 .L_081669b4:
 	.4byte 0x00000184
 .L_081669b8:
-	.4byte Data_08198a98
+	.4byte gData_08198a98
 .L_081669bc:
 	ldr r0, [r6]
 	ldr r2, .L_08166aec
@@ -685,6 +685,6 @@ Func_081665a4:
 .L_08166aec:
 	.4byte 0x007effff
 .L_08166af0:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08166af4:
 	.4byte Func_08143000

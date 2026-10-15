@@ -10,35 +10,35 @@ extern char SceneId_Ov690Room8;
 extern char SceneId_Ov690Room9;
 extern char SceneId_Ov690Room10;
 
-extern u8 Data_020024ac[];
-extern u8 Data_020024dc[];
-extern u8 Data_02002524[];
-extern u8 Data_02002554[];
-extern u8 Data_020025cc[];
-extern u8 Data_02002614[];
-extern u8 Data_020027ac[];
-extern u8 Data_020027dc[];
-extern u8 Data_02002854[];
+extern u8 gData_020024ac[];
+extern u8 gData_020024dc[];
+extern u8 gData_02002524[];
+extern u8 gData_02002554[];
+extern u8 gData_020025cc[];
+extern u8 gData_02002614[];
+extern u8 gData_020027ac[];
+extern u8 gData_020027dc[];
+extern u8 gData_02002854[];
 
 u8 *Func_02000358(void)
 {
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov690Room1)
-        return Data_020024dc;
+        return gData_020024dc;
     if (scene == (s32)&SceneId_Ov690Room2)
-        return Data_02002524;
+        return gData_02002524;
     if (scene == (s32)&SceneId_Ov690Room4)
-        return Data_02002554;
+        return gData_02002554;
     if (scene == (s32)&SceneId_Ov690Room5)
-        return Data_020025cc;
+        return gData_020025cc;
     if (scene == (s32)&SceneId_Ov690Room7)
-        return Data_020027dc;
+        return gData_020027dc;
     if (scene == (s32)&SceneId_Ov690Room8)
-        return Data_02002854;
+        return gData_02002854;
     if (scene == (s32)&SceneId_Ov690Room9)
-        return Data_02002614;
+        return gData_02002614;
     if (scene == (s32)&SceneId_Ov690Room10)
-        return Data_020027ac;
-    return Data_020024ac;
+        return gData_020027ac;
+    return gData_020024ac;
 }

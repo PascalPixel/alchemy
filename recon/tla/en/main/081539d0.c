@@ -14,7 +14,7 @@
 #include "ram_buffer.h"
 
 extern char ResourceId_StarDotSheet;
-extern u16 Data_08197410[];
+extern u16 gData_08197410[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
@@ -107,7 +107,7 @@ void Func_081539d0(struct BattleEffectArgument *effect)
                     pos.depth = 0x27a;
                 size = 9 - (pos.depth - 250) / 64;
                 draw[0](canvas,
-                    work->sheet + ((i & 3) * 770 + Data_08197410[size - 1]),
+                    work->sheet + ((i & 3) * 770 + gData_08197410[size - 1]),
                     pos.x - size / 2, pos.y - size, size, size * 2);
                 BattleFxKernels_IntegrateVector3(star, 60, 0);
                 if (frame > i / 4 + 30) {

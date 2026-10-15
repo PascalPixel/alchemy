@@ -10,25 +10,25 @@
 #include "../../../../games/tla/src/scene/jupiter_room_m/s0b48.c"
 
 extern const u8 MsgAhhhh2[];
-extern u32 Data_020056ec[];
-extern u32 Data_02005748[];
-extern u32 Data_0200578c[];
-extern u32 Data_020057d0[];
-extern u32 Data_02005800[];
-extern u32 Data_0200d830[];
-extern u32 Data_02005860[];
-extern u32 Data_02005890[];
-extern u32 Data_020058d8[];
-extern u32 Data_02005920[];
-extern u32 Data_02005950[];
-extern u32 Data_020049cc[];
-extern u32 Data_020049dc[];
-extern u32 Data_020049ec[];
-extern u32 Data_020049fc[];
-extern u32 Data_02004a18[];
-extern u32 Data_02004a34[];
-extern u32 Data_02004a50[];
-extern u32 Data_0200599c[];
+extern u32 gData_020056ec[];
+extern u32 gData_02005748[];
+extern u32 gData_0200578c[];
+extern u32 gData_020057d0[];
+extern u32 gData_02005800[];
+extern u32 gData_0200d830[];
+extern u32 gData_02005860[];
+extern u32 gData_02005890[];
+extern u32 gData_020058d8[];
+extern u32 gData_02005920[];
+extern u32 gData_02005950[];
+extern u32 gData_020049cc[];
+extern u32 gData_020049dc[];
+extern u32 gData_020049ec[];
+extern u32 gData_020049fc[];
+extern u32 gData_02004a18[];
+extern u32 gData_02004a34[];
+extern u32 gData_02004a50[];
+extern u32 gData_0200599c[];
 
 void Func_020047d4(void);
 void Func_020047dc(void);
@@ -240,7 +240,7 @@ void Func_02000cac(s32 arg)
     I_Func_020049c4(124);
     I_Battle_WaitMode0(26);
     I_Func_020049c4(217);
-    I_ObjectMotion_EnableActionAndSetCallback(4, Data_020056ec);
+    I_ObjectMotion_EnableActionAndSetCallback(4, gData_020056ec);
     if (arg != 0) {
         I_Func_020048bc(3, 20, 9, 15, 8, 1, 20, 2, 15, 1, 25);
         I_Func_020049c4(310);
@@ -292,7 +292,7 @@ void Func_02000cac(s32 arg)
     I_Func_0200489c(6, 0, 5);
     I_Func_020048cc(4, 0x102, 30);
     I_ObjectMotion_SetSpeedParameters(4, 0x00013333, 0x9999);
-    ObjectMotion_EnableActionAndSetCallback(4, arg != 0 ? Data_02005748 : Data_0200578c);
+    ObjectMotion_EnableActionAndSetCallback(4, arg != 0 ? gData_02005748 : gData_0200578c);
     I_Battle_WaitMode0(30);
     I_ObjectMotion_ArmCallback(6, 0x8000, 0);
     I_ObjectMotion_ArmCallback(5, 0, 0);
@@ -308,10 +308,10 @@ void Func_02000cac(s32 arg)
     I_ObjectMotion_SetSpeedParameters(7, 0x10000, 0x8000);
     I_ObjectMotion_SetSpeedParameters(6, 0x10000, 0x8000);
     I_ObjectMotion_SetSpeedParameters(28, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(28, arg != 0 ? Data_020057d0 : Data_02005800);
-    ObjectMotion_EnableActionAndSetCallback(7, arg != 0 ? Data_0200d830 : Data_02005860);
-    ObjectMotion_EnableActionAndSetCallback(5, arg != 0 ? Data_02005890 : Data_020058d8);
-    ObjectMotion_EnableActionAndSetCallback(6, arg != 0 ? Data_02005920 : Data_02005950);
+    ObjectMotion_EnableActionAndSetCallback(28, arg != 0 ? gData_020057d0 : gData_02005800);
+    ObjectMotion_EnableActionAndSetCallback(7, arg != 0 ? gData_0200d830 : gData_02005860);
+    ObjectMotion_EnableActionAndSetCallback(5, arg != 0 ? gData_02005890 : gData_020058d8);
+    ObjectMotion_EnableActionAndSetCallback(6, arg != 0 ? gData_02005920 : gData_02005950);
     I_Func_020048e4(0x8000, 0x1000);
     if (arg != 0) {
         I_Motion_CamBounds(0x02a50000, 0xffc00000, 0x011f0000, 1);
@@ -392,7 +392,7 @@ void Func_02000cac(s32 arg)
     I_Object_SetModeById(2, 3);
     I_Battle_WaitMode0(20);
     I_Battle_WaitMode0(10);
-    I_ObjectMotion_EnableActionAndSetCallback(3, Data_02005548);
+    I_ObjectMotion_EnableActionAndSetCallback(3, gData_02005548);
     I_Func_0200484c(26, 0x02990000, 0x800000, angle);
     I_Func_0200484c(27, 0x02810000, 0x800000, angle);
     I_Func_020049c4(78);
@@ -407,8 +407,8 @@ void Func_02000cac(s32 arg)
     I_ObjectMotion_SetSpeedParameters(27, 0x4000, angle);
     I_ObjectMotion_ResetAndSetPositionInMode2(26, 714, 193);
     I_ObjectMotion_ResetAndSetPositionInMode2(27, 698, 209);
-    I_ObjectMotion_EnableActionAndSetCallback(26, Data_020049cc);
-    I_ObjectMotion_EnableActionAndSetCallback(27, Data_020049dc);
+    I_ObjectMotion_EnableActionAndSetCallback(26, gData_020049cc);
+    I_ObjectMotion_EnableActionAndSetCallback(27, gData_020049dc);
     I_Battle_WaitMode0(20);
     I_Func_020048cc(2, 0x102, 30);
     I_Func_0200489c(2, 0, 5);
@@ -562,7 +562,7 @@ void Func_02000cac(s32 arg)
     I_Func_0200489c(26, 0, 5);
     I_Func_020048cc(27, 0x108, 30);
     I_ObjectMotion_OffsetPositionAndReset(27, 24, 24);
-    I_ObjectMotion_EnableActionAndSetCallback(27, Data_020049ec);
+    I_ObjectMotion_EnableActionAndSetCallback(27, gData_020049ec);
     I_Func_0200489c(27, 0, 5);
     I_Object_RefreshSelectorById(27);
     I_Object_LinkPair(26, 27, 30);
@@ -576,13 +576,13 @@ void Func_02000cac(s32 arg)
     I_ObjectMotion_SetSpeedParameters(2, 0x30000, 0x18000);
     I_ObjectMotion_ResetAndSetPositionInMode2(26, 737, 202);
     I_ObjectMotion_ResetAndSetPositionInMode2(27, 731, 213);
-    I_ObjectMotion_EnableActionAndSetCallback(27, Data_020049fc);
-    I_ObjectMotion_EnableActionAndSetCallback(26, Data_02004a18);
+    I_ObjectMotion_EnableActionAndSetCallback(27, gData_020049fc);
+    I_ObjectMotion_EnableActionAndSetCallback(26, gData_02004a18);
     I_Battle_WaitMode0(5);
     I_ObjectMotion_ResetAndSetPositionInMode2(0, 776, 202);
     I_ObjectMotion_ResetAndSetPositionInMode2(2, 731, 232);
-    I_ObjectMotion_EnableActionAndSetCallback(0, Data_02004a34);
-    I_ObjectMotion_EnableActionAndSetCallback(2, Data_02004a50);
+    I_ObjectMotion_EnableActionAndSetCallback(0, gData_02004a34);
+    I_ObjectMotion_EnableActionAndSetCallback(2, gData_02004a50);
     I_Object_RefreshSelectorById(0);
     I_Object_RefreshSelectorById(2);
     I_Object_RefreshSelectorById(26);
@@ -632,10 +632,10 @@ void Func_02000cac(s32 arg)
     object = Object_GetById(4);
     if (object != NULL)
         I_ObjectMotion_ResetAndSetPosition(28, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
-    ObjectMotion_EnableActionAndSetCallback(7, Data_0200599c);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_0200599c);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_0200599c);
-    ObjectMotion_EnableActionAndSetCallback(28, Data_0200599c);
+    ObjectMotion_EnableActionAndSetCallback(7, gData_0200599c);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_0200599c);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_0200599c);
+    ObjectMotion_EnableActionAndSetCallback(28, gData_0200599c);
     I_Object_RefreshSelectorById(7);
     I_Object_RefreshSelectorById(6);
     I_Object_RefreshSelectorById(5);

@@ -5,10 +5,10 @@ u8 *Func_02000204(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov677Room1)
-        return Data_02000ea8;
+        return gData_02000ea8;
     if (scene == (s32)&SceneId_Ov677Room2)
-        return Data_02000fe0;
-    return Data_02000e84;
+        return gData_02000fe0;
+    return gData_02000e84;
 }
 
 void Func_02000244(void)

@@ -89,7 +89,7 @@ static void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 
 void *GomaEntrance_GetEntrances(void)
 {
-	return GomaEntrance_SceneTableA;
+	return gGomaEntrance_SceneTableA;
 }
 
 int SceneData_ReturnZero(void)
@@ -99,12 +99,12 @@ int SceneData_ReturnZero(void)
 
 void *GomaEntrance_GetExits(void)
 {
-	return GomaEntrance_SceneTableB;
+	return gGomaEntrance_SceneTableB;
 }
 
 void *GomaEntrance_GetPlacements(void)
 {
-	return GomaEntrance_SceneTableC;
+	return gGomaEntrance_SceneTableC;
 }
 
 static void EV09_PSYNERGY(void)
@@ -191,7 +191,7 @@ static void EV16_PSYNERGY(void)
 
 void *GomaEntrance_GetEvents(void)
 {
-	return GomaEntrance_SceneTableD;
+	return gGomaEntrance_SceneTableD;
 }
 
 s32 GomaEntrance_RestoreEntryState(void)
@@ -663,26 +663,26 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 GomaEntrance_SceneTableCData[] = {
+s32 gGomaEntrance_SceneTableCData[] = {
 	SC_SET(SW_SCALE_Y, 0x19999),
 	SC_END,
 };
 
-struct SceneEntrance GomaEntrance_SceneTableA[] = {
+struct SceneEntrance gGomaEntrance_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 96, 0, 440, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 200, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaEntrance_SceneTableB[] = {
+u32 gGomaEntrance_SceneTableB[] = {
 	SCENE_EXITS(25),
 	SCENE_EXIT(1, 28, 1),
 	SCENE_EXIT(2, 2, 4),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement GomaEntrance_SceneTableC[] = {
+struct ScenePlacement gGomaEntrance_SceneTableC[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -703,12 +703,12 @@ struct ScenePlacement GomaEntrance_SceneTableC[] = {
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, 0x865, 7,
 		PIXELS(191), 0, PIXELS(194), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ 0xf8, 0x866, (s32)GomaEntrance_SceneTableCData,
+	{ 0xf8, 0x866, (s32)gGomaEntrance_SceneTableCData,
 		PIXELS(200), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent GomaEntrance_SceneTableD[] = {
+struct SceneEvent gGomaEntrance_SceneTableD[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene387SequenceD) },

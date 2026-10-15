@@ -4,11 +4,11 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
-extern u32 Data_02005ccc[];
-extern u32 Data_02005d24[];
-extern u32 Data_02005d8c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
+extern u32 gData_02005ccc[];
+extern u32 gData_02005d24[];
+extern u32 gData_02005d8c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);
@@ -112,7 +112,7 @@ void Func_02002f70(void)
     Func_020056b4();
     Func_0200580c(0);
     Camera_SetBounds(-1, -1, -1, 0);
-    Func_020048a4(19, 11, Data_02005d8c[index], 16);
+    Func_020048a4(19, 11, gData_02005d8c[index], 16);
     Object_SetModeById(15, 5);
     Func_02005714(11, 0, 0);
     Func_02005714(12, 0, 0);
@@ -142,8 +142,8 @@ void Func_02002f70(void)
     Camera_SetBounds(220 << 17, -1, 156 << 17, 1);
     Actor_SetSpeed(5, 0x10000, 0x8000);
     Actor_SetSpeed(24, 0x10000, 0x8000);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02005ccc);
-    Object_SetActionCallbackAndRefreshById(24, Data_02005d24);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02005ccc);
+    Object_SetActionCallbackAndRefreshById(24, gData_02005d24);
     Func_02005754(MsgGabombaSawEnergyFlow);
     Func_02005764(5, 0);
     Actor_Turn(24, 0xb000, 0);

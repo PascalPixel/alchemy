@@ -24,7 +24,7 @@ struct WorkspaceScreen {
 extern u8 MsgTestA[];
 extern u8 MsgTestB[];
 extern u8 MsgTestC[];
-extern const s8 Data_0805ea8f[];
+extern const s8 gData_0805ea8f[];
 
 s32 GameFlag_Test(s32 flag);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -87,7 +87,7 @@ struct RenderInput *Func_08040628(void)
     work->cursor = RenderOutput_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, win, 0, 0);
     y = -4;
     for (i = 0; i < rows; i++) {
-        work->icons[i] = RenderResource_CreateFrame(Data_0805ea8f[first + i], 0, win, 12, y);
+        work->icons[i] = RenderResource_CreateFrame(gData_0805ea8f[first + i], 0, win, 12, y);
         y += 24;
     }
     return win;

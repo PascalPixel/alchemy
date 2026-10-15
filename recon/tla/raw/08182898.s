@@ -249,12 +249,12 @@ Func_08182898:
 .L_08182a90:
 	.4byte 0x000000fd
 .L_08182a94:
-	.4byte Data_02015000
+	.4byte gData_02015000
 .L_08182a98:
-	.4byte Data_0819967e
+	.4byte gData_0819967e
 .L_08182a9c:
-	.4byte Data_0819968e
+	.4byte gData_0819968e
 .L_08182aa0:
-	.4byte Data_0819966f
+	.4byte gData_0819966f
 .L_08182aa4:
 	.4byte 0xffffc000

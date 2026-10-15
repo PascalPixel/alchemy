@@ -5,11 +5,11 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-extern u8 Data_02006338[];
-extern u8 Data_02006500[];
-extern u8 Data_02006598[];
-extern u8 Data_02006700[];
-extern u8 Data_02006790[];
+extern u8 gData_02006338[];
+extern u8 gData_02006500[];
+extern u8 gData_02006598[];
+extern u8 gData_02006700[];
+extern u8 gData_02006790[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -26,16 +26,16 @@ u8 *Func_020003f8(void)
 {
     switch (gPartyState.entrance) {
     case 64:
-        return Data_02006500;
+        return gData_02006500;
     case 65:
-        return Data_02006598;
+        return gData_02006598;
     case 68:
         if (!GameFlag_Test(0x8de))
-            return Data_02006700;
+            return gData_02006700;
     case 77:
-        return Data_02006790;
+        return gData_02006790;
     default:
-        return Data_02006338;
+        return gData_02006338;
     }
 }
 

@@ -30,7 +30,7 @@
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -40,25 +40,25 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return (u8 *)Placement_Actors;
+	return (u8 *)gPlacement_Actors;
 }
 
 u8 *SceneData_SelectEffectTable(void)
 {
 	if (Engine_GameFlagIsSet(0x87A) != 0)
 	{
-		return (u8 *)Placement_Effects87a;
+		return (u8 *)gPlacement_Effects87a;
 	}
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return (u8 *)Placement_Effects834;
+		return (u8 *)gPlacement_Effects834;
 	}
-	return (u8 *)Placement_Effects;
+	return (u8 *)gPlacement_Effects;
 }
 
 static void EV12_TALK(void)
@@ -322,7 +322,7 @@ static void EV13_TALK(void)
 		Actor_FaceDirection(JENNA, 0xb000, 20);
 		Actor_FaceDirection(ACTOR_KRADEN, 0xb000, 10);
 		Event_PlayCue(158);
-		Map_AnimateCells(Kraden_GateCells, 43, 8);
+		Map_AnimateCells(gKraden_GateCells, 43, 8);
 		Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
 		Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -351,7 +351,7 @@ static void Scene_LeaveForMtAleph(void)
 	record->facing = facing;
 	record = Object_GetById(5);
 	record->facing = facing;
-	Map_AnimateCells(Kraden_GateCells, 43, 8);
+	Map_AnimateCells(gKraden_GateCells, 43, 8);
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -420,7 +420,7 @@ static void EV03_TOUCH(void)
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
 		Engine_AudioPlayCue(0x9E);
-		Engine_MapAnimateCells(Kraden_GateCells, 0x2B, 8);
+		Engine_MapAnimateCells(gKraden_GateCells, 0x2B, 8);
 	}
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
 	Engine_EventRequestExit(3);
@@ -639,8 +639,8 @@ static void EV07_TOUCH(void)
 	}
 	Engine_ActorWaitForMove(JENNA);
 	Actor_SetPosition(JENNA, 0, 0);
-	FieldObject_SetTargetAndCallback(14, 0x10000, Kraden_StrangerActions);
-	FieldObject_SetTargetAndCallback(15, 0x10000, Kraden_StrangerActions);
+	FieldObject_SetTargetAndCallback(14, 0x10000, gKraden_StrangerActions);
+	FieldObject_SetTargetAndCallback(15, 0x10000, gKraden_StrangerActions);
 	Audio_PlayCueFromEventWork();
 	Engine_EventEnd();
 }
@@ -767,7 +767,7 @@ s32 ValeKraden_RestoreEntryState(void)
 
 			record->radius = shown;
 		}
-		Engine_ActorEnableActionCallback(11, Kraden_Actor11Actions);
+		Engine_ActorEnableActionCallback(11, gKraden_Actor11Actions);
 		if (Engine_GameFlagIsSet(0x839) != 0)
 		{
 			Engine_ActorSetPosition(11, 0, 0);
@@ -808,8 +808,8 @@ s32 ValeKraden_RestoreEntryState(void)
 			{
 				Actor_SetPosition(14, 0x1880000, 0x1780000);
 				Actor_SetPosition(15, 0x1780000, 0x1780000);
-				FieldObject_SetTargetAndCallback(14, 0x10000, Kraden_StrangerActions);
-				FieldObject_SetTargetAndCallback(15, 0x10000, Kraden_StrangerActions);
+				FieldObject_SetTargetAndCallback(14, 0x10000, gKraden_StrangerActions);
+				FieldObject_SetTargetAndCallback(15, 0x10000, gKraden_StrangerActions);
 			}
 		}
 		if (Engine_GameFlagIsSet(0x87a) != 0)
@@ -883,9 +883,9 @@ static void ValeKraden_RunActorSequence(void)
 				Engine_ActorSetAnimationAndWait(11, 3);
 				Engine_EventShowMessageAndWait(11, 0, 10);
 				Engine_ActorSetAnimationAndWait(11, 3);
-				FieldObject_SetTargetAndCallback(0, 0x1000b, Kraden_StrangerActions);
-				FieldObject_SetTargetAndCallback(1, 0x1000b, Kraden_StrangerActions);
-				Object_SetActionCallbackAndRefreshById(11, (s32)Kraden_Actor11RockslideActions);
+				FieldObject_SetTargetAndCallback(0, 0x1000b, gKraden_StrangerActions);
+				FieldObject_SetTargetAndCallback(1, 0x1000b, gKraden_StrangerActions);
+				Object_SetActionCallbackAndRefreshById(11, (s32)gKraden_Actor11RockslideActions);
 				Engine_ActorStop(0);
 				Engine_ActorStop(1);
 				Actor_FaceDirection(0, FACING_SOUTH, 0);
@@ -947,7 +947,7 @@ static void EV16_TALK(void)
 	Engine_EventEnd();
 }
 
-s32 Kraden_Actor11RockslideActions[] = {
+s32 gKraden_Actor11RockslideActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(72), 0, PIXELS(294)),
 	SC_SYNC,
@@ -959,7 +959,7 @@ s32 Kraden_Actor11RockslideActions[] = {
 	SC_END,
 };
 
-s32 Kraden_Actor11Actions[] = {
+s32 gKraden_Actor11Actions[] = {
 	SC_ADD(SW_SCALE_Y, -0x1000),
 	SC_ADD(SW_SCALE_X, 2048),
 	SC_WAIT(2),
@@ -978,12 +978,12 @@ s32 Kraden_Actor11Actions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kraden_StrangerActions[] = {
+s32 gKraden_StrangerActions[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 454, 0, 290, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 454, 0, 443, FACING_WEST, 0, -1, -1, -1, -1, 0 },
@@ -994,7 +994,7 @@ struct SceneEntrance Placement_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(6),
 	SCENE_EXIT(1, 4, 3),
 	SCENE_EXIT(2, 4, 4),
@@ -1007,14 +1007,14 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Placement_Actors[] = {
+struct ScenePlacement gPlacement_Actors[] = {
 	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x6c, CONDITION_ALWAYS, (s32)Kraden_Actor11Actions,
+	{ 0x6c, CONDITION_ALWAYS, (s32)gKraden_Actor11Actions,
 		PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1033,7 +1033,7 @@ struct ScenePlacement Placement_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Placement_Effects[] = {
+struct SceneEvent gPlacement_Effects[] = {
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
@@ -1051,7 +1051,7 @@ struct SceneEvent Placement_Effects[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Placement_Effects834[] = {
+struct SceneEvent gPlacement_Effects834[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 12 },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
@@ -1064,7 +1064,7 @@ struct SceneEvent Placement_Effects834[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Placement_Effects87a[] = {
+struct SceneEvent gPlacement_Effects87a[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1081,6 +1081,6 @@ struct SceneEvent Placement_Effects87a[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Kraden_GateCells[] = {
+u16 gKraden_GateCells[] = {
 	MAP_CELL_STEP(2, 36, 2, 2, 1), MAP_CELL_STEP(4, 36, 2, 2, 1), MAP_CELL_STEPS_END,
 };

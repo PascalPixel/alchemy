@@ -39,8 +39,8 @@ struct RideWork {
     void *handle;
 };
 
-extern u8 Data_020023c4[];
-extern u16 Data_02004cf0[];
+extern u8 gData_020023c4[];
+extern u16 gData_02004cf0[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
@@ -52,22 +52,22 @@ void Func_02002ad0(struct ObjectRuntime *object);
 
 s32 Func_02002758(s32 index)
 {
-    return ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->a;
+    return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
 }
 
 void Func_02002768(s32 index, s16 value)
 {
-    ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->a = value;
+    ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a = value;
 }
 
 s32 Func_02002778(void)
 {
-    return ((struct RideWork *)(Data_020023c4 + 0x188))->counter;
+    return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
 }
 
 s32 Func_02002784(s32 limit)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
 
     if (!GameFlag_Test(260)) {
         if (++work->counter >= limit)
@@ -78,7 +78,7 @@ s32 Func_02002784(s32 limit)
 
 void Func_020027ac(s32 index, s32 value)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
     struct RideEntry *entry = &work->entries[index];
 
     entry->d = (value & 15) << 16;
@@ -87,17 +87,17 @@ void Func_020027ac(s32 index, s32 value)
 
 void Func_020027cc(s32 index, s16 value)
 {
-    ((struct RideWork *)(Data_020023c4 + 0x188))->entries[index].c = value;
+    ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
 }
 
 s32 Func_020027dc(s32 index)
 {
-    return ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->b;
+    return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
 }
 
 void Func_020027ec(u32 index, s32 value)
 {
-    struct RideWork *work = (struct RideWork *)(Data_020023c4 + 0x188);
+    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
 
     if (index <= 3)
         work->slots[index].value = value;

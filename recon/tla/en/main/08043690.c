@@ -16,8 +16,8 @@ extern u8 MsgOverwriteConfirm;
 extern u8 MsgGameSaved;
 extern u8 MsgSaving;
 
-extern u8 Data_02000000[];
-extern s16 Data_020036d0;
+extern u8 gData_02000000[];
+extern s16 gData_020036d0;
 
 s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
@@ -46,7 +46,7 @@ s32 SaveState_SelectAndSave(void)
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
-        slot = Func_08043cd8(Data_020036d0, 0);
+        slot = Func_08043cd8(gData_020036d0, 0);
         if (slot == -1) {
             result = slot;
         } else {
@@ -63,11 +63,11 @@ s32 SaveState_SelectAndSave(void)
                 }
                 UiWork_FinalizePendingCore();
             }
-            Data_020036d0 = slot;
+            gData_020036d0 = slot;
             token = SaveProgress_Open(0);
             SaveState_BuildSummaryHeader();
             ObjectTable_SnapshotFar();
-            found = Func_08042f10(slot, Data_02000000);
+            found = Func_08042f10(slot, gData_02000000);
             SaveProgress_Close(token);
             UiWork_FinalizePendingCore();
             if (found != 0) {

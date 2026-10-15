@@ -40,7 +40,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant)
     if (object != NULL && variant > 0) {
         if (variant > 3)
             variant = 3;
-        scripts = Object_VariantMotionScripts;
+        scripts = gObject_VariantMotionScripts;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
             (u32)(scripts + ((3 - variant) << 7)));
     }

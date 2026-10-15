@@ -27,7 +27,7 @@ struct LightWork {
     struct LightCell cells[1];
 };
 
-extern struct LightWork Data_020023a0;
+extern struct LightWork gData_020023a0;
 
 struct FieldActor *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -39,7 +39,7 @@ void Func_0200156c(struct LightWork *work, struct LightCell *cell);
 s32 Func_0200189c(void)
 {
     struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
-    struct LightWork *work = &Data_020023a0;
+    struct LightWork *work = &gData_020023a0;
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct LightCell *cell = work->cells;

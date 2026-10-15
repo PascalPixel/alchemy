@@ -106,11 +106,11 @@ Func_080addf0:
 .L_080adeb8:
 	.4byte gPartyState
 .L_080adebc:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080adec0:
 	.4byte 0x850007c8
 .L_080adec4:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_080adec8:
 	.4byte gOwnerStates
 .L_080adecc:
@@ -270,9 +270,9 @@ Func_080addf0:
 .L_080ae014:
 	.4byte gIdleFrameCount
 .L_080ae018:
-	.4byte Data_020036d0
+	.4byte gData_020036d0
 .L_080ae01c:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_080ae020:
 	adds r2, #2
 	adds r3, r7, r1
@@ -368,6 +368,6 @@ Func_080addf0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ae0d4:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080ae0d8:
 	.4byte Data_080b1f2c

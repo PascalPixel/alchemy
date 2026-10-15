@@ -3,7 +3,7 @@
 #include "system.h"
 
 // 正弦 1/4 周期 (65536 倍)
-const u16 Math_SinQuarter[256] =
+const u16 gMath_SinQuarter[256] =
 {
 	0, 402, 804, 1206, 1608, 2010, 2412, 2814,
 	3216, 3617, 4019, 4420, 4821, 5222, 5623, 6023,
@@ -40,19 +40,19 @@ const u16 Math_SinQuarter[256] =
 };
 
 // floor(i * 2π)
-const u16 Math_TwoPiSteps[8] =
+const u16 gMath_TwoPiSteps[8] =
 {
 	0, 6, 12, 18, 25, 31, 37, 43,
 };
 
 // 0, 90, 180, 270 度の正弦 (Q16)
-const s32 Math_QuadrantSin[4] =
+const s32 gMath_QuadrantSin[4] =
 {
 	0, 65536, 0, -65536,
 };
 
 // 正接 256 倍: [i] = tan(i * 45 / 128 度), [128] = tan 45 度; ArcTan2 は [127] から二分探索
-const u16 Math_TanTable[258] =
+const u16 gMath_TanTable[258] =
 {
 	0, 1, 3, 4, 6, 7, 9, 11,
 	12, 14, 15, 17, 18, 20, 22, 23,

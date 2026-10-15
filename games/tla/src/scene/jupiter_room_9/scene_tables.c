@@ -33,7 +33,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gScenePlacements;
 }
 
-extern s32 Data_02002618;
+extern s32 gData_02002618;
 
 struct ObjectRuntime *Object_GetById();
 void ObjectMotion_SetActionVariant();
@@ -63,7 +63,7 @@ void Func_02000090(s32 id)
 {
     struct ObjectRuntime *object;
 
-    if (Data_02002618 == 0) {
+    if (gData_02002618 == 0) {
         object = Object_GetById(8);
         if (id == 30) {
             Value3(Func_02001c10, 8, 0x1280000, 0x2580000);
@@ -75,7 +75,7 @@ void Func_02000090(s32 id)
             object->angle = 0;
         }
         Func_02000910(object);
-        Data_02002618 = 1;
+        gData_02002618 = 1;
     }
 }
 
@@ -84,7 +84,7 @@ void Func_020000e8(s32 id)
     struct ObjectRuntime *object;
     struct ObjectRuntime *motion;
 
-    if (Data_02002618 == 0 && Object_GetById(gPartyState.currentOwner)->y > 0) {
+    if (gData_02002618 == 0 && Object_GetById(gPartyState.currentOwner)->y > 0) {
         object = Object_GetById(8);
         if (id == 50) {
             Value3(Func_02001c10, 8, 0x1e80000, 0x1180000);
@@ -106,7 +106,7 @@ void Func_020000e8(s32 id)
         motion = Func_02000910(object);
         if (motion != NULL)
             motion->speedLimit = 0x10000;
-        Data_02002618 = 1;
+        gData_02002618 = 1;
     }
 }
 

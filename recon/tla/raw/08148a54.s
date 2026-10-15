@@ -537,4 +537,4 @@ Func_08148a54:
 .L_08148e94:
 	.4byte Func_08143000
 .L_08148e98:
-	.4byte Data_081979a8
+	.4byte gData_081979a8

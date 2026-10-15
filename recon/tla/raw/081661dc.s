@@ -470,6 +470,6 @@ Func_081661dc:
 .L_08166598:
 	.4byte 0x3f3f3f3f
 .L_0816659c:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_081665a0:
 	.4byte 0xfffffc00

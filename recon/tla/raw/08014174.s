@@ -72,6 +72,6 @@ ResourceTable_AllocateBlocks:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080141ec:
-	.4byte ResourceBlockOwners
+	.4byte gResourceBlockOwners
 .L_080141f0:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries

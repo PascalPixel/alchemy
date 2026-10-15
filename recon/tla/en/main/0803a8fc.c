@@ -10,8 +10,8 @@ struct GlyphWork {
 };
 
 extern struct GlyphWork *gWindowWork;
-extern u8 UiText_Glyphs[];
-extern u8 UiText_SecondGlyphs[];
+extern u8 gUiText_Glyphs[];
+extern u8 gUiText_SecondGlyphs[];
 
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {
@@ -41,7 +41,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         transparent = 1;
         colour = work->colour;
     }
-    input = UiText_Glyphs + ((code - 32) << 5);
+    input = gUiText_Glyphs + ((code - 32) << 5);
     length = *(const u16 *)input;
     input += 2;
     if (work->outlined == 1) {
@@ -55,7 +55,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
     }
     if ((u16)second_index != 0) {
-        input = UiText_SecondGlyphs + ((u16)second_index << 5);
+        input = gUiText_SecondGlyphs + ((u16)second_index << 5);
         second_width = *(const s16 *)input;
         input += 2;
         if (work->outlined == 1) {

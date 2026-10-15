@@ -1,11 +1,11 @@
 #include "contigo.h"
 
-extern const u8 Data_020048a0[];
-extern const u8 Data_020048f8[];
-extern const u8 Data_0200493c[];
-extern const u8 Data_02004980[];
-extern const u8 Data_020049c4[];
-extern const u8 Data_02006030[];
+extern const u8 gData_020048a0[];
+extern const u8 gData_020048f8[];
+extern const u8 gData_0200493c[];
+extern const u8 gData_02004980[];
+extern const u8 gData_020049c4[];
+extern const u8 gData_02006030[];
 
 // The reunion scene that opens with "Glad you kept your promise".
 void Func_02001d50(void)
@@ -40,10 +40,10 @@ void Func_02001d50(void)
     Contigo_ObjSpeed(7, 0xcccc, 0x6666);
     Contigo_ObjSpeed(9, 0xcccc, 0x6666);
     Contigo_ObjSpeed(6, 0xcccc, 0x6666);
-    Contigo_ObjAction(5, Data_020048a0);
-    Contigo_ObjAction(9, Data_02004980);
-    Contigo_ObjAction(6, Data_0200493c);
-    Contigo_ObjActionRefresh(7, Data_020048f8);
+    Contigo_ObjAction(5, gData_020048a0);
+    Contigo_ObjAction(9, gData_02004980);
+    Contigo_ObjAction(6, gData_0200493c);
+    Contigo_ObjActionRefresh(7, gData_020048f8);
     Contigo_ObjReset(gPartyState.currentOwner);
     Contigo_ObjReset(1);
     Contigo_ObjReset(3);
@@ -334,14 +334,14 @@ void Func_02001d50(void)
     Contigo_ObjMode(8, 4);
     Contigo_MessagePut(8, 0);
     Contigo_ObjShake(5, 0, 10);
-    Func_02003e54(object, Data_02006030);
+    Func_02003e54(object, gData_02006030);
     Contigo_Wait(80);
     Func_02003f54(object);
     Contigo_ObjModeWait(8, 4);
     Contigo_MessagePut(8, 0);
     Contigo_ObjEmote(7, 258);
     Contigo_ObjShake(7, 0, 10);
-    Func_02003e54(object, Data_02006030);
+    Func_02003e54(object, gData_02006030);
     Contigo_Wait(80);
     Func_02003f54(object);
     Contigo_ObjFace(8, 0xd000);
@@ -444,14 +444,14 @@ void Func_02001d50(void)
     Contigo_ObjMode(5, 3);
     Contigo_ObjMode(6, 3);
     Contigo_ObjModeWait(7, 3);
-    Contigo_ObjAction(0, Data_020049c4);
-    Contigo_ObjAction(1, Data_020049c4);
-    Contigo_ObjAction(3, Data_020049c4);
-    Contigo_ObjAction(2, Data_020049c4);
-    Contigo_ObjAction(9, Data_020049c4);
-    Contigo_ObjAction(5, Data_020049c4);
-    Contigo_ObjAction(6, Data_020049c4);
-    Contigo_ObjActionRefresh(7, Data_020049c4);
+    Contigo_ObjAction(0, gData_020049c4);
+    Contigo_ObjAction(1, gData_020049c4);
+    Contigo_ObjAction(3, gData_020049c4);
+    Contigo_ObjAction(2, gData_020049c4);
+    Contigo_ObjAction(9, gData_020049c4);
+    Contigo_ObjAction(5, gData_020049c4);
+    Contigo_ObjAction(6, gData_020049c4);
+    Contigo_ObjActionRefresh(7, gData_020049c4);
     Func_02004044();
     GameFlag_SetBit(2512);
     Func_02004074();

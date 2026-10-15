@@ -122,7 +122,7 @@ DebugParty_LoadPreset:
 .L_0811882c:
 	.4byte 0x00000000
 .L_08118830:
-	.4byte Data_0812a174
+	.4byte gData_0812a174
 .L_08118834:
 	subs r7, #1
 	adds r5, #2
@@ -270,6 +270,6 @@ DebugParty_LoadPreset:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0811894c:
-	.4byte Data_0812a174
+	.4byte gData_0812a174
 .L_08118950:
-	.4byte Data_0812a174 + 2
+	.4byte gData_0812a174 + 2

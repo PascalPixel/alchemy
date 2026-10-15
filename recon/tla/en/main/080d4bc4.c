@@ -23,17 +23,17 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const void *script);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 
-extern const u8 Data_080f34e4[];
-extern const u8 Data_080f3428[];
-extern const u8 Data_080f350c[];
-extern const u8 Data_080f35c8[];
-extern const u8 Data_080f373c[];
-extern const u8 Data_080f3750[];
-extern const u8 Data_080f34e8[];
-extern const u8 Data_080f3614[];
-extern const u8 Data_080f3764[];
-extern const u8 Data_080f3500[];
-extern const u8 Data_080f34f4[];
+extern const u8 gData_080f34e4[];
+extern const u8 gData_080f3428[];
+extern const u8 gData_080f350c[];
+extern const u8 gData_080f35c8[];
+extern const u8 gData_080f373c[];
+extern const u8 gData_080f3750[];
+extern const u8 gData_080f34e8[];
+extern const u8 gData_080f3614[];
+extern const u8 gData_080f3764[];
+extern const u8 gData_080f3500[];
+extern const u8 gData_080f34f4[];
 
 #include "iwram_call.h"
 

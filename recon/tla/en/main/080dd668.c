@@ -9,7 +9,7 @@
 #include "objdisp.h"
 #include "object_runtime.h"
 
-extern const s32 Data_080f0e78[];
+extern const s32 gData_080f0e78[];
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
@@ -38,7 +38,7 @@ void UpdateRisingParticleBurst(void *object)
             /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps 0x10000 in one register that loop.c hoists for both uses, as in ☀️'s UpdateRisingParticleBurst. */
             s32 unit = 0x10000;
 
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, Data_080f0e78);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, gData_080f0e78);
             speed = Random16();
             child->acceleration = unit;
             child->speedLimit = speed + unit;

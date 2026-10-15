@@ -11,7 +11,7 @@
 struct ItemDefinition;
 struct RenderInput;
 
-extern const u8		   Debug_PaletteSwatchTiles[];
+extern const u8		   gDebug_PaletteSwatchTiles[];
 void				   Engine_DebugClearWindow(struct RenderInput *window);
 void				   Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 u8					  *Engine_DebugGetAbility(s32 ability);

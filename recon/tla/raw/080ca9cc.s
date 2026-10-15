@@ -52,4 +52,4 @@ Func_080ca9cc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_080caa28:
-	.4byte Data_0202e008
+	.4byte gData_0202e008

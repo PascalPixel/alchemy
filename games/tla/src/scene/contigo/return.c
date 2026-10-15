@@ -1,7 +1,7 @@
 #include "contigo.h"
 
-extern const u8 Data_02004ac0[];
-extern const u8 Data_02004b18[];
+extern const u8 gData_02004ac0[];
+extern const u8 gData_02004b18[];
 
 void Func_02002e18(void)
 {
@@ -60,7 +60,7 @@ void Func_02002e18(void)
         Contigo_ObjMoveTo(9, gPartyState.currentOwner);
         WaitFrames(1);
         Contigo_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
-        Contigo_ObjAction(gPartyState.currentOwner, Data_02004ac0);
+        Contigo_ObjAction(gPartyState.currentOwner, gData_02004ac0);
         Contigo_ObjSpeed(9, 0xcccc, 0x6666);
         Contigo_ObjWalk(9, 182, 378);
         Contigo_ObjWalk(9, 182, 360);
@@ -204,9 +204,9 @@ void Func_02002e18(void)
         Contigo_ObjSpeed(2, 0x13333, 0x9999);
         Contigo_ObjSpeed(0, 0x13333, 0x9999);
         Contigo_ObjSpeed(9, 0x13333, 0x9999);
-        Contigo_ObjAction(2, Data_02004b18);
-        Contigo_ObjAction(0, Data_02004b18);
-        Contigo_ObjActionRefresh(9, Data_02004b18);
+        Contigo_ObjAction(2, gData_02004b18);
+        Contigo_ObjAction(0, gData_02004b18);
+        Contigo_ObjActionRefresh(9, gData_02004b18);
         GameFlag_SetBit(2513);
         Func_02004074();
     }

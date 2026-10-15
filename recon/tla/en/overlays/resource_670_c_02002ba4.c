@@ -1,9 +1,9 @@
 // near miss: differ 36 (listing 65 instructions, draft 63); as Func_02002b18, and the red channel's + 4 is scheduled apart
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
-extern u8 Data_0200635c[];
-extern s16 Data_02007948[];
-extern struct KibomboObject *Data_02007950;
+extern u8 gData_0200635c[];
+extern s16 gData_02007948[];
+extern struct KibomboObject *gData_02007950;
 
 void Func_02001318(void);
 s32 Func_02002b08(s32 value);
@@ -17,7 +17,7 @@ struct KibomboWork90 {
 
 void Func_02002ba4(s32 index, s32 entry, s32 delta)
 {
-    s16 color = Data_02007948[entry];
+    s16 color = gData_02007948[entry];
     s16 r = (color & 0x1f) + delta + 4;
     s16 g;
     s16 b;

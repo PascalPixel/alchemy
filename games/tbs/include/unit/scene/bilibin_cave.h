@@ -28,6 +28,6 @@ extern struct SceneEvent gBilibinCaveEventsOther[];
 extern struct SceneEvent gBilibinCaveEvents3[];
 extern struct SceneEvent gBilibinCaveEvents2[];
 extern struct SceneEvent gBilibinCaveEvents1[];
-extern s32 StagedActor_DirectionSteps[];
+extern s32 gStagedActor_DirectionSteps[];
 
 #endif

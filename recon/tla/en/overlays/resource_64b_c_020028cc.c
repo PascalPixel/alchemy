@@ -14,7 +14,7 @@
 #include "field_sprite.h"
 
 extern u32 gFrameCount;
-extern const u8 Data_02004f10[];
+extern const u8 gData_02004f10[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
@@ -60,5 +60,5 @@ void Func_020028cc(void)
     obj->motionFlags = leader->motionFlags;
     Object_SetPartAttribute(obj, 9);
     Func_02004b18(obj, 2);
-    Func_02004b20(obj, Data_02004f10);
+    Func_02004b20(obj, gData_02004f10);
 }

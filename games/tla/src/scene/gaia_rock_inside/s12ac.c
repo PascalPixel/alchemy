@@ -13,7 +13,7 @@ s32 Func_02000f00();
 s32 Func_02000fac();
 s32 Func_02004e64();
 extern u8 MsgGaiaRockInside07[];
-extern u8 Data_02005610[];
+extern u8 gData_02005610[];
 extern u8 MsgGaiaRockInside04[];
 
 void Func_020012ac(void)
@@ -29,7 +29,7 @@ void Func_020012ac(void)
         Call2(Func_02004f14, 0xa, 0);
     } else {
         t5 = Value1(Object_GetById, 9);
-        if (FIELD_AT(t5, s32, 0) == (s32)Data_02005610) {
+        if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610) {
             Call1(Object_RefreshSelectorById, 9);
         }
         Func_02000f00();

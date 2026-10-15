@@ -57,11 +57,11 @@ void Func_02005f34(s32 a, s32 b);
 void Func_02005f94(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
-extern s32 Data_02006c0c;
-extern s32 Data_020073dc;
-extern s32 Data_020073e0;
-extern s32 Data_020073e4;
-extern s32 Data_020073e8;
+extern s32 gData_02006c0c;
+extern s32 gData_020073dc;
+extern s32 gData_020073e0;
+extern s32 gData_020073e4;
+extern s32 gData_020073e8;
 
 s32 Func_02005f84(void);
 void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX, s32 destZ);

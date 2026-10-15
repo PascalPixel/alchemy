@@ -4,7 +4,7 @@
 #include "animspr.h"
 #include "io_write_queue.h"
 
-extern u8 Data_02006c08[];
+extern u8 gData_02006c08[];
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020036a8(void);
@@ -27,6 +27,6 @@ static inline void ClearWords(void *destination, s32 size)
 
 void Func_02003960(void)
 {
-    ClearWords(Data_02006c08, 0x200);
+    ClearWords(gData_02006c08, 0x200);
     Scheduler_AddOrUpdateCallback(Func_020036a8, 0x480);
 }

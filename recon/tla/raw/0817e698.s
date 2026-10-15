@@ -442,10 +442,10 @@ Func_0817e698:
 .L_0817ea00:
 	.4byte 0xffff00ff
 .L_0817ea04:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_0817ea08:
-	.4byte Data_081994e0
+	.4byte gData_081994e0
 .L_0817ea0c:
-	.4byte Data_081994d0
+	.4byte gData_081994d0
 .L_0817ea10:
-	.4byte Data_081991f0
+	.4byte gData_081991f0

@@ -2,7 +2,7 @@
 #include "frame.h"
 #include "object_runtime.h"
 
-extern const u8 Data_02004f70[];
+extern const u8 gData_02004f70[];
 
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Func_02004b18(struct ObjectRuntime *object, s32 a);
@@ -18,7 +18,7 @@ void Func_0200343c(struct ObjectRuntime *parent)
         struct ObjectRuntime *object = Func_02004b30(673, x, y, z);
 
         if (object != NULL) {
-            Func_02004b20(object, Data_02004f70);
+            Func_02004b20(object, gData_02004f70);
             Func_02004b18(object, 1);
             ObjectDispatch_SetSingleChildFlags(object, 0);
             object->motionFlags = 0;

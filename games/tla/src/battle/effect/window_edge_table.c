@@ -41,7 +41,7 @@ void Func_0818cb74(s32 *arg);
 void Func_0813fd84(s32 *arg);
 void Func_0818df5c(s32 *arg);
 
-extern void (*Data_08197aa0[])(s32 *script);
+extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
 
 // Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
@@ -181,7 +181,7 @@ void Func_0814cb60(s32 *script)
     /* FAKEMATCH: the one-pass block loads the handler table before the script's first word and sets the argument after the index (differ 2 without it). */
     do
     {
-        Data_08197aa0[*script - 1](script);
+        gData_08197aa0[*script - 1](script);
     } while (0);
     Runtime_ReleaseHeapBlock(96);
     Runtime_ReleaseHeapBlock(92);

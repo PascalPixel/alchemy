@@ -106,7 +106,7 @@ Func_0810bebc:
 .L_0810bf80:
 	.4byte 0xfffffc00
 .L_0810bf84:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0810bf88:
 	add sp, #4
 	pop {r3, r5, r6, r7}

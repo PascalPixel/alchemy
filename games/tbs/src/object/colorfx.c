@@ -742,7 +742,7 @@ void ReelGame_RunFrame(void)
 						if (mixed == 0)
 						{
 							work->winningLines[col] = 1;
-							save->wonPrizes[hits] = ReelGame_SymbolPrizes[found];
+							save->wonPrizes[hits] = gReelGame_SymbolPrizes[found];
 							hits++;
 						}
 					}
@@ -872,7 +872,7 @@ void ReelGame_RunFrame(void)
 #endif
 				work->obj[n].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | blend
 									  | ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
-			work->obj[n].attr2 = ((ReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
+			work->obj[n].attr2 = ((gReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
 			p->y += p->velocityY;
 			p->velocityY += 0x4000;
 			if (work->timer % 256 == i * 4 + 200)
@@ -894,7 +894,7 @@ void ReelGame_RunFrame(void)
 	for (k = 0; k != 14; k++)
 	{
 		work->obj[n].attr01 =
-			(ReelGame_FrameSpriteX[k] << 16) | blend | ReelGame_FrameSpriteY[k] | 0x80006000;
+			(gReelGame_FrameSpriteX[k] << 16) | blend | gReelGame_FrameSpriteY[k] | 0x80006000;
 		if (k <= 3)
 			work->obj[n].attr2 = 0x4e0;
 		else
@@ -1012,7 +1012,7 @@ void ReelGame_InitTitle(void)
 
 	letter = work->particles;
 	y = -0x200000;
-	width = ReelGame_TitleLetterWidths;
+	width = gReelGame_TitleLetterWidths;
 	for (i = 0; i != REEL_TITLE_LETTERS; i++)
 	{
 		letter[i].x = (left + REEL_TITLE_X) << 16;
@@ -1316,7 +1316,7 @@ void ReelGame_Run(void)
 									s32 py = y >> 16;
 									s32 size = spark->variant / 12 + 1;
 
-									draw[j & 1](canvas, sheet + ReelGame_SparkCellOffsets[size - 1],
+									draw[j & 1](canvas, sheet + gReelGame_SparkCellOffsets[size - 1],
 										px - size, py - size, size * 2, size * 2);
 								}
 							}
@@ -1405,10 +1405,10 @@ void AudioTrack_ResetSlotBuckets(void)
 
 	for (index = 0; index < 0x400; index++)
 	{
-		Flash_Handler3->nodes[index].slot = index;
-		Flash_Handler3->nodes[index].prev = NULL;
+		gFlash_Handler3->nodes[index].slot = index;
+		gFlash_Handler3->nodes[index].prev = NULL;
 	}
-	bucket = Flash_Handler3->bucket;
+	bucket = gFlash_Handler3->bucket;
 	for (index = 0xFF; index >= 0; index--)
 	{
 		*bucket++ = NULL;
@@ -1417,7 +1417,7 @@ void AudioTrack_ResetSlotBuckets(void)
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
-	struct AudioTrackSlotWork *work = Flash_Handler3;
+	struct AudioTrackSlotWork *work = gFlash_Handler3;
 
 	work->nodes[index].prev = (struct AudioSlotNode *)&work->bucket[work->bucketBySlot[index]];
 	work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
@@ -1428,11 +1428,11 @@ void AudioTrack_InsertSlotNode(s32 index)
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-	if (Flash_Handler3->nodes[slot].prev != NULL)
+	if (gFlash_Handler3->nodes[slot].prev != NULL)
 	{
-		if (Flash_Handler3->nodes[slot].next != NULL)
-			Flash_Handler3->nodes[slot].next->prev = Flash_Handler3->nodes[slot].prev;
-		Flash_Handler3->nodes[slot].prev->next = Flash_Handler3->nodes[slot].next;
+		if (gFlash_Handler3->nodes[slot].next != NULL)
+			gFlash_Handler3->nodes[slot].next->prev = gFlash_Handler3->nodes[slot].prev;
+		gFlash_Handler3->nodes[slot].prev->next = gFlash_Handler3->nodes[slot].next;
 	}
 }
 
@@ -1456,7 +1456,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 			u8						   value;
 
 			AudioTrack_RemoveSlotNode(removal & mask);
-			state = Flash_Handler3;
+			state = gFlash_Handler3;
 			read_offset = state->inputCursor;
 			value = input[read_offset];
 			next_offset = read_offset + 1;
@@ -1478,7 +1478,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 	if (current < limit)
 	{
 		u32							mask = 0x3ff;
-		struct AudioTrackSlotWork **root = &Flash_Handler3;
+		struct AudioTrackSlotWork **root = &gFlash_Handler3;
 		s32							empty = -1;
 
 		do
@@ -1496,7 +1496,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
-	struct AudioTrackSlotWork *work = Flash_Handler3;
+	struct AudioTrackSlotWork *work = gFlash_Handler3;
 	s32						   index;
 
 	for (index = 0; index != work->outCnt; index++)
@@ -1516,12 +1516,12 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 	struct AudioSlotNode *node;
 	s32					  len;
 
-	Flash_Handler3->matchLen = 1;
-	if (Flash_Handler3->bucketBySlot[start] == -1)
+	gFlash_Handler3->matchLen = 1;
+	if (gFlash_Handler3->bucketBySlot[start] == -1)
 	{
 		return;
 	}
-	node = Flash_Handler3->bucket[Flash_Handler3->bucketBySlot[start]];
+	node = gFlash_Handler3->bucket[gFlash_Handler3->bucketBySlot[start]];
 	if (start + MATCH_MAX > WINDOW_MASK)
 	{
 		while (node != NULL)
@@ -1532,16 +1532,16 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 			{
 				for (len = 1; len < MATCH_MAX; len++)
 				{
-					if (Flash_Handler3->bucketBySlot[(start + len) & WINDOW_MASK]
-						!= Flash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
+					if (gFlash_Handler3->bucketBySlot[(start + len) & WINDOW_MASK]
+						!= gFlash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
 					{
 						break;
 					}
 				}
-				if (Flash_Handler3->matchLen < len)
+				if (gFlash_Handler3->matchLen < len)
 				{
-					Flash_Handler3->matchOffset = dist;
-					Flash_Handler3->matchLen = len;
+					gFlash_Handler3->matchOffset = dist;
+					gFlash_Handler3->matchLen = len;
 					if (len == MATCH_MAX)
 					{
 						return;
@@ -1561,16 +1561,16 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 			{
 				for (len = 1; len < MATCH_MAX; len++)
 				{
-					if (Flash_Handler3->bucketBySlot[start + len]
-						!= Flash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
+					if (gFlash_Handler3->bucketBySlot[start + len]
+						!= gFlash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
 					{
 						break;
 					}
 				}
-				if (Flash_Handler3->matchLen < len)
+				if (gFlash_Handler3->matchLen < len)
 				{
-					Flash_Handler3->matchOffset = dist;
-					Flash_Handler3->matchLen = len;
+					gFlash_Handler3->matchOffset = dist;
+					gFlash_Handler3->matchLen = len;
 					if (len == MATCH_MAX)
 					{
 						return;
@@ -1592,88 +1592,88 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 	s16 code;
 
 	defer = 0;
-	Flash_Handler3 = (struct AudioTrackSlotWork *)gMapCellBuffer;
+	gFlash_Handler3 = (struct AudioTrackSlotWork *)gMapCellBuffer;
 	AudioTrack_ResetSlotBuckets();
-	Flash_Handler3->inputLimit = size;
-	Flash_Handler3->pos = 0;
-	Flash_Handler3->inputCursor = 0;
-	Flash_Handler3->outTotal = 0;
-	Flash_Handler3->flagMask = 0x80;
-	Flash_Handler3->outBuf[0] = 0;
-	Flash_Handler3->outCnt = 1;
+	gFlash_Handler3->inputLimit = size;
+	gFlash_Handler3->pos = 0;
+	gFlash_Handler3->inputCursor = 0;
+	gFlash_Handler3->outTotal = 0;
+	gFlash_Handler3->flagMask = 0x80;
+	gFlash_Handler3->outBuf[0] = 0;
+	gFlash_Handler3->outCnt = 1;
 	AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
 
-	while (Flash_Handler3->bucketBySlot[Flash_Handler3->pos] != -1)
+	while (gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos] != -1)
 	{
-		AudioTrack_FindWindowMatch(Flash_Handler3->pos);
+		AudioTrack_FindWindowMatch(gFlash_Handler3->pos);
 		if (defer == 0)
 		{
-			len = Flash_Handler3->matchLen;
-			if (Flash_Handler3->matchLen > 1)
+			len = gFlash_Handler3->matchLen;
+			if (gFlash_Handler3->matchLen > 1)
 			{
-				save_offset = Flash_Handler3->matchOffset;
+				save_offset = gFlash_Handler3->matchOffset;
 				save_len = len;
-				AudioTrack_FindWindowMatch((Flash_Handler3->pos + 1) & WINDOW_MASK);
-				if (Flash_Handler3->matchLen > 2)
+				AudioTrack_FindWindowMatch((gFlash_Handler3->pos + 1) & WINDOW_MASK);
+				if (gFlash_Handler3->matchLen > 2)
 				{
-					reach[0] = Flash_Handler3->matchLen + 1;
-					AudioTrack_FindWindowMatch((Flash_Handler3->pos + len) & WINDOW_MASK);
-					reach[1] = Flash_Handler3->matchLen + len;
+					reach[0] = gFlash_Handler3->matchLen + 1;
+					AudioTrack_FindWindowMatch((gFlash_Handler3->pos + len) & WINDOW_MASK);
+					reach[1] = gFlash_Handler3->matchLen + len;
 					if (reach[0] >= reach[1])
 					{
 						save_len = 1;
 						defer = 1;
 					}
 				}
-				Flash_Handler3->matchOffset = save_offset;
-				Flash_Handler3->matchLen = save_len;
+				gFlash_Handler3->matchOffset = save_offset;
+				gFlash_Handler3->matchLen = save_len;
 			}
 		}
 
-		if (Flash_Handler3->matchLen > 1)
+		if (gFlash_Handler3->matchLen > 1)
 		{
 			defer = 0;
-			Flash_Handler3->outBuf[0] |= Flash_Handler3->flagMask;
-			if (Flash_Handler3->matchLen <= 16)
+			gFlash_Handler3->outBuf[0] |= gFlash_Handler3->flagMask;
+			if (gFlash_Handler3->matchLen <= 16)
 			{
-				code = ((Flash_Handler3->matchOffset << 4) & ~0xfff)
-					   | (Flash_Handler3->matchOffset & 0xff)
-					   | (((Flash_Handler3->matchLen - 1) << 8) & 0xf00);
-				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = (u16)code >> 8;
-				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = code;
+				code = ((gFlash_Handler3->matchOffset << 4) & ~0xfff)
+					   | (gFlash_Handler3->matchOffset & 0xff)
+					   | (((gFlash_Handler3->matchLen - 1) << 8) & 0xf00);
+				gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = (u16)code >> 8;
+				gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = code;
 			}
 			else
 			{
-				code = ((Flash_Handler3->matchOffset << 4) & ~0xfff)
-					   | (Flash_Handler3->matchOffset & 0xff);
-				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = (u16)code >> 8;
-				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = code;
-				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = Flash_Handler3->matchLen - 17;
+				code = ((gFlash_Handler3->matchOffset << 4) & ~0xfff)
+					   | (gFlash_Handler3->matchOffset & 0xff);
+				gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = (u16)code >> 8;
+				gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = code;
+				gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = gFlash_Handler3->matchLen - 17;
 			}
 		}
 		else
 		{
-			Flash_Handler3->outBuf[Flash_Handler3->outCnt++] =
-				Flash_Handler3->bucketBySlot[Flash_Handler3->pos];
-			Flash_Handler3->matchLen = 1;
+			gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] =
+				gFlash_Handler3->bucketBySlot[gFlash_Handler3->pos];
+			gFlash_Handler3->matchLen = 1;
 		}
 
 		AudioTrack_ConsumeSlotBytes(
-			Flash_Handler3->pos + PRIME_COUNT, Flash_Handler3->matchLen, input);
-		Flash_Handler3->pos = (Flash_Handler3->pos + Flash_Handler3->matchLen) & WINDOW_MASK;
-		Flash_Handler3->flagMask >>= 1;
-		if (Flash_Handler3->flagMask == 0)
+			gFlash_Handler3->pos + PRIME_COUNT, gFlash_Handler3->matchLen, input);
+		gFlash_Handler3->pos = (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & WINDOW_MASK;
+		gFlash_Handler3->flagMask >>= 1;
+		if (gFlash_Handler3->flagMask == 0)
 		{
 			AudioTrack_CopyBufferedBytes(dst);
-			Flash_Handler3->flagMask = 0x80;
-			Flash_Handler3->outBuf[0] = 0;
-			Flash_Handler3->outCnt = 1;
+			gFlash_Handler3->flagMask = 0x80;
+			gFlash_Handler3->outBuf[0] = 0;
+			gFlash_Handler3->outCnt = 1;
 		}
 	}
 
-	Flash_Handler3->outBuf[0] |= Flash_Handler3->flagMask;
-	Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = 0;
-	Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = 0;
+	gFlash_Handler3->outBuf[0] |= gFlash_Handler3->flagMask;
+	gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
+	gFlash_Handler3->outBuf[gFlash_Handler3->outCnt++] = 0;
 	AudioTrack_CopyBufferedBytes(dst);
-	return Flash_Handler3->outTotal;
+	return gFlash_Handler3->outTotal;
 }

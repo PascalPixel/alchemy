@@ -6,7 +6,7 @@ void Object_LinkObjectAndSetCallback(u32 objectId, u32 linked_object_id)
 
     if (object != NULL) {
         object->linkedObject = Object_GetById(linked_object_id);
-        Object_SetActionCallback(object, (s32)Object_LinkedMotionScript);
+        Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
     }
 }
 

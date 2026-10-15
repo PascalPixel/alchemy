@@ -46,9 +46,9 @@ void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
-extern const u8 Data_02005534[];
+extern const u8 gData_02005534[];
 
-extern s32 Data_02006710;
+extern s32 gData_02006710;
 
 void Func_02001190(s32 a, s32 b);
 void Func_020024ac(void);

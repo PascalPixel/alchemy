@@ -17,7 +17,7 @@ struct PlacementScale {
     s32 y;
 };
 
-extern const struct PlacementScale Data_08196e4c;
+extern const struct PlacementScale gData_08196e4c;
 
 s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
@@ -26,7 +26,7 @@ s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
 void Func_0815b68c(void)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    struct PlacementScale scale = Data_08196e4c;
+    struct PlacementScale scale = gData_08196e4c;
     s32 position[4];
 
     position[3] = 0;

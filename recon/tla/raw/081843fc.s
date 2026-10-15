@@ -581,7 +581,7 @@ Func_081843fc:
 .L_081848a0:
 	.4byte gMapCellBuffer
 .L_081848a4:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_081848a8:
 	.4byte 0x80002000
 .L_081848ac:

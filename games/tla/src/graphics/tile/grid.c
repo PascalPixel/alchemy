@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "scene.h"
 
-extern u8 Data_03001e60[];
+extern u8 gData_03001e60[];
 
 void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {
@@ -119,7 +119,7 @@ struct Vec2 {
 
 extern struct BattleCells gSpriteObjects;
 
-extern struct Vec2 Battle_FormationPlacementScale;
+extern struct Vec2 gBattle_FormationPlacementScale;
 
 void Battle_PlaceActorsByFormationKind(void)
 {
@@ -133,7 +133,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 cnt;
     u32 i;
 
-    scale = Battle_FormationPlacementScale;
+    scale = gBattle_FormationPlacementScale;
     table = (u8 *)Ram_HeapSlots->battleWork;
 
     switch (kind) {

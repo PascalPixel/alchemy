@@ -10,7 +10,7 @@
 void Func_020034d4(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 
-extern const struct WarpTarget Data_02003d18;
+extern const struct WarpTarget gData_02003d18;
 
 static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 actor, s32 dx, s32 dz)
 {
@@ -32,7 +32,7 @@ void Func_02000208(void)
     const struct WarpTarget *warp;
     s32 msg;
 
-    warp = &Data_02003d10;
+    warp = &gData_02003d10;
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 168, 424);
     Func_02003534(gPartyState.currentOwner, 0);
     Func_0200362c(158);
@@ -56,7 +56,7 @@ void Func_02000208(void)
     ObjectMotion_SetSpeedParameters_(8, 0xcccc, 0x6666);
     ObjectMotion_CommitPositionAndActivate_(8, 0, -14);
     Func_020034d4_(8, 0, 0);
-    warp = &Data_02003d18;
+    warp = &gData_02003d18;
     Func_02003414(warp->scene, warp->x, warp->z);
     Func_0200362c(158);
 }

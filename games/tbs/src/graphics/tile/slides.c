@@ -64,7 +64,7 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt)
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
 // スタッフロールで順に映す戦闘背景（0 で消す）
-const u32 DisplayScroll_SlideResources[] = {
+const u32 gDisplayScroll_SlideResources[] = {
 	(u32)&ResourceId_ValeStormBackdrop,
 	(u32)&ResourceId_SolSanctumBackdrop,
 	(u32)&ResourceId_GrasslandBackdrop,
@@ -201,7 +201,7 @@ s32 DisplayScroll_RunSlideshow(void)
 	WaitFrames(300);
 	for (slide = 0; slide <= 32; slide++)
 	{
-		Graphics_LoadCharacterBlockAndPalette(DisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
+		Graphics_LoadCharacterBlockAndPalette(gDisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
 		for (alpha = 1; alpha <= 16; alpha++)
 		{
 			if (slide & 1)
@@ -226,7 +226,7 @@ struct DisplayScrollObject
 	u32 attr2;
 };
 
-extern u16 Flash_Handler3; // クレジットはフラッシュ用のワードを流用する
+extern u16 gFlash_Handler3; // クレジットはフラッシュ用のワードを流用する
 
 // OAM へ送る 128 個の表（これもフラッシュ用のワードに置く）
 #define SCROLL_OBJECTS (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
@@ -235,7 +235,7 @@ extern u16 Flash_Handler3; // クレジットはフラッシュ用のワード�
 static const u8 sBlank[] = "";
 
 // スタッフロール：1 行ずつ、0 で終わり
-const void *DisplayScroll_LineTable[] = {
+const void *gDisplayScroll_LineTable[] = {
 	sBlank,
 #if EDITION_INTERNATIONAL
 	"GOLDEN SUN STAFF CREDITS",
@@ -1135,7 +1135,7 @@ const void *DisplayScroll_LineTable[] = {
 
 void DisplayScroll_UpdateObjects(void)
 {
-	u32	 frame = Flash_Handler3;
+	u32	 frame = gFlash_Handler3;
 	u32	 fine = frame & 7;
 	s32	 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
 	u32 *entry = (u32 *)(SCROLL_OBJECTS + 24);
@@ -1155,8 +1155,8 @@ void DisplayScroll_UpdateObjects(void)
 		}
 	}
 	Dma_Set(SCROLL_OBJECTS, OAM, 0x84000100, REG_DMA3);
-	if ((*(s16 *)&Flash_Handler0) == 0 && (gFrameTick & 3) == 0)
-		Flash_Handler3++;
+	if ((*(s16 *)&gFlash_Handler0) == 0 && (gFrameTick & 3) == 0)
+		gFlash_Handler3++;
 }
 
 void DisplayScroll_RenderEnteringLine(void)
@@ -1164,15 +1164,15 @@ void DisplayScroll_RenderEnteringLine(void)
 	u32 current;
 	s32 line;
 
-	if ((*(s16 *)&Flash_Handler0) == 0)
+	if ((*(s16 *)&gFlash_Handler0) == 0)
 	{
-		current = Flash_Handler3;
-		if ((s16)Flash_Handler3 / 8 != *(s16 *)&gFlash / 8)
+		current = gFlash_Handler3;
+		if ((s16)gFlash_Handler3 / 8 != *(s16 *)&gFlash / 8)
 		{
-			line = (s16)Flash_Handler3 / 8;
+			line = (s16)gFlash_Handler3 / 8;
 			*(s16 *)&gFlash = current;
-			(*(s16 *)&Flash_Handler0) =
-				DisplayScroll_DrawLine(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
+			(*(s16 *)&gFlash_Handler0) =
+				DisplayScroll_DrawLine(gDisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
 		}
 	}
 }
@@ -1218,13 +1218,13 @@ void DisplayScroll_InitObjectTable(void)
 		*entry++ = 0x00c000c0;
 		*entry++ = 0x300;
 	}
-	Flash_Handler3 = 0;
+	gFlash_Handler3 = 0;
 	*(s16 *)&gFlash = 0;
-	(*(s16 *)&Flash_Handler0) = 0;
+	(*(s16 *)&gFlash_Handler0) = 0;
 	Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
 	Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);
 	for (i = 0; i < 32; i++)
-		DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
+		DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
@@ -1232,7 +1232,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 	u8		 *buf = Runtime_BumpAllocateAlternatePool(0x900);
 	s32		  x = 0;
 	s32		  width = 192;
-	const u8 *font = DisplayScroll_Font;
+	const u8 *font = gDisplayScroll_Font;
 	s32		  tiles;
 	s32		  pos;
 	const u8 *p;
@@ -1266,7 +1266,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 	while ((c = *p++) != 0)
 	{
 		if (c > 31)
-			pos += DisplayScroll_GlyphWidths[c - 32];
+			pos += gDisplayScroll_GlyphWidths[c - 32];
 	}
 	if (align == 2)
 		x = width - pos;
@@ -1301,7 +1301,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 			}
 			w = 1;
 			if (c > 31)
-				w = DisplayScroll_GlyphWidths[glyph];
+				w = gDisplayScroll_GlyphWidths[glyph];
 			pos += w;
 		}
 	}

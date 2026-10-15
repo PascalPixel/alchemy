@@ -1,18 +1,18 @@
 #include "scene.h"
 #include "scene_ids.h"
 
-extern u32 Data_0200375c[];
-extern u32 Data_020037a4[];
-extern u32 Data_0200381c[];
-extern u32 Data_02003864[];
-extern u32 Data_020038ac[];
-extern u32 Data_0200390c[];
-extern u32 Data_02003984[];
-extern u32 Data_020039cc[];
-extern u32 Data_02003aec[];
-extern u32 Data_02003b94[];
-extern u32 Data_02003c0c[];
-extern u32 Data_02003c84[];
+extern u32 gData_0200375c[];
+extern u32 gData_020037a4[];
+extern u32 gData_0200381c[];
+extern u32 gData_02003864[];
+extern u32 gData_020038ac[];
+extern u32 gData_0200390c[];
+extern u32 gData_02003984[];
+extern u32 gData_020039cc[];
+extern u32 gData_02003aec[];
+extern u32 gData_02003b94[];
+extern u32 gData_02003c0c[];
+extern u32 gData_02003c84[];
 
 u32 *Func_02000070(void)
 {
@@ -21,13 +21,13 @@ u32 *Func_02000070(void)
     if (GameFlag_Test(0x97e)) {
         scene = gPartyState.scene;
         if (scene == (s32)&SceneId_Ov685Room1)
-            return Data_02003aec;
+            return gData_02003aec;
         if (scene == (s32)&SceneId_Ov685Room2)
-            return Data_02003b94;
+            return gData_02003b94;
         if (scene == (s32)&SceneId_Ov685Room3)
-            return Data_02003c0c;
+            return gData_02003c0c;
         if (scene == (s32)&SceneId_Ov685Room4)
-            return Data_02003c84;
+            return gData_02003c84;
     } else {
         /* FAKEMATCH: the native loads the party state and the first scene id once, before it tests the second flag, and both branches use them; read inside each branch they are loaded twice (differ 76). */
         s32 second = GameFlag_Test(0x97f);
@@ -37,24 +37,24 @@ u32 *Func_02000070(void)
         if (second) {
             scene = party->scene;
             if (scene == first)
-                return Data_020038ac;
+                return gData_020038ac;
             if (scene == (s32)&SceneId_Ov685Room2)
-                return Data_0200390c;
+                return gData_0200390c;
             if (scene == (s32)&SceneId_Ov685Room3)
-                return Data_02003984;
+                return gData_02003984;
             if (scene == (s32)&SceneId_Ov685Room4)
-                return Data_020039cc;
+                return gData_020039cc;
         } else {
             scene = party->scene;
             if (scene == first)
-                return Data_0200375c;
+                return gData_0200375c;
             if (scene == (s32)&SceneId_Ov685Room2)
-                return Data_020037a4;
+                return gData_020037a4;
             if (scene == (s32)&SceneId_Ov685Room3)
-                return Data_0200381c;
+                return gData_0200381c;
             if (scene == (s32)&SceneId_Ov685Room4)
-                return Data_02003864;
+                return gData_02003864;
         }
     }
-    return Data_0200375c;
+    return gData_0200375c;
 }

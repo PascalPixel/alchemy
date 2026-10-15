@@ -4,11 +4,11 @@ extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
-extern const u8 Data_02006518[];
-extern const u8 Data_02006530[];
-extern const u8 Data_02006710[];
-extern const u8 Data_02006890[];
-extern const u8 Data_02006a0c[];
+extern const u8 gData_02006518[];
+extern const u8 gData_02006530[];
+extern const u8 gData_02006710[];
+extern const u8 gData_02006890[];
+extern const u8 gData_02006a0c[];
 
 s32 Func_0200004c(struct ObjectRuntime *object)
 {
@@ -19,14 +19,14 @@ s32 Func_0200004c(struct ObjectRuntime *object)
 const u8 *Func_02000058(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom4)
-        return Data_02006530;
+        return gData_02006530;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom2)
-        return Data_02006a0c;
+        return gData_02006a0c;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom1)
-        return Data_02006710;
+        return gData_02006710;
     if (gPartyState.scene == (s32)&SceneId_Ov6adRoom3)
-        return Data_02006890;
-    return Data_02006518;
+        return gData_02006890;
+    return gData_02006518;
 }
 
 void Func_020000bc(void)

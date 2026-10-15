@@ -16,7 +16,7 @@ void Func_02000930(struct ObjectRuntime *object, s32 priority)
     sprite->priority = priority;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02005130(object, 2);
-    Func_02005138(object, Data_02005494);
+    Func_02005138(object, gData_02005494);
     Object_SetPartAttribute(object, 9);
     object->action = 0;
     object->speedLimit = 0;

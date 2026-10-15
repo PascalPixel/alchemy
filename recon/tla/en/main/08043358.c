@@ -15,9 +15,9 @@ struct SaveGameWords {
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gPartyState)
 
-extern u8 Data_02000000[];
-extern u32 Data_02001000;
-extern u32 GameFlagBytes[];
+extern u8 gData_02000000[];
+extern u32 gData_02001000;
+extern u32 gGameFlagBytes[];
 
 u32 Runtime_GetBuildStampTimeFar(s32);
 s32 GameFlag_Test(s32 flag);
@@ -34,10 +34,10 @@ s32 SaveState_BuildSummaryHeader(void)
     s32 i;
     u32 sum = 0;
 
-    summary = (struct SaveSummary *)(Data_02000000 - 16);
+    summary = (struct SaveSummary *)(gData_02000000 - 16);
     SAVE_GAME_WORDS->buildStamp = Runtime_GetBuildStampTimeFar(0);
     SAVE_GAME_WORDS->playTime = gFrameWaitCount;
-    Data_02001000 = gFrameWaitCount;
+    gData_02001000 = gFrameWaitCount;
     gPartyState.unk244[6] = gAutoSleepEnabled;
     owner = UnitGet(gPartyState.currentOwner);
     destination = summary->name;
@@ -71,7 +71,7 @@ s32 SaveState_BuildSummaryHeader(void)
         u32 frames;
 
         frames = SAVE_GAME_WORDS->buildStamp;
-        word = GameFlagBytes;
+        word = gGameFlagBytes;
         /* FAKEMATCH: keeps the two loads before the bound (differ 4 more without) */
         __asm__("" : : "r"(frames), "r"(word));
         n = 242;

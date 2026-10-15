@@ -381,7 +381,7 @@ Func_0816dc50:
 .L_0816df38:
 	.4byte 0x000000c1
 .L_0816df3c:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816df40:
 	.4byte 0x000000cd
 .L_0816df44:
@@ -1234,7 +1234,7 @@ Func_0816dc50:
 .L_0816e620:
 	.4byte gMapCellBuffer
 .L_0816e624:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0816e628:
 	.4byte Data_08198ec4
 .L_0816e62c:

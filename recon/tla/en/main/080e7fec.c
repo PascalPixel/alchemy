@@ -6,12 +6,12 @@
 #include "types.h"
 #include "iwram_call.h"
 
-extern const u16 Data_080f39c4[];
+extern const u16 gData_080f39c4[];
 
 // 16x16 の絵を BG の地図へ写す。画面（30x20 タイル）の外になるマスは写さない
 void Func_080e7fec(s32 x, s32 y)
 {
-    const u16 *tiles = Data_080f39c4;
+    const u16 *tiles = gData_080f39c4;
     s32 row;
     s32 column;
     s32 sx;

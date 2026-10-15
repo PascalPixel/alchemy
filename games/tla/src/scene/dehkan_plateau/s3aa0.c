@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003fb8[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003fb8[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -22,8 +22,8 @@ void Func_02003aa0(void)
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     if (GameFlag_Test(95) != 0)
         GameFlag_SetBit(521);
-    Func_02000038(Data_02003fb8);
-    Func_020001d0(Data_02003f92);
+    Func_02000038(gData_02003fb8);
+    Func_020001d0(gData_02003f92);
     if (GameFlag_Test(519) == 0) {
         Func_02002140();
         WaitFrames(10);

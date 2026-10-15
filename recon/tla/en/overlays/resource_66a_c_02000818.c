@@ -47,9 +47,9 @@ void UpdateRisingParticleBurst();
 void Vector_AddPolarOffsetFar();
 void Func_02000814(void);
 void Func_02001228(void);
-extern s32 Data_02001610[];
-extern u32 Data_02001674[];
-extern s32 Data_02001c08;
+extern s32 gData_02001610[];
+extern u32 gData_02001674[];
+extern s32 gData_02001c08;
 
 void Func_02000818(void)
 {
@@ -108,7 +108,7 @@ void Func_02000818(void)
     Call2((void (*)())Object_AttachWorkTargetToObject, 24, 1);
     ((void (*)())Func_02001508)();
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 24, 0x18000, 0xc000);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 24, (s32)Data_02001610);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 24, (s32)gData_02001610);
     Call1((void (*)())Battle_WaitMode0, 20);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 21, 3);
     Call1((void (*)())Battle_WaitMode0, 20);
@@ -249,7 +249,7 @@ void Func_02000818(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call2((void (*)())Func_020014f0, 21, 0x101);
     Call3((void (*)())Func_020014c8, 21, 0, 20);
-    Data_02001c08 = 0;
+    gData_02001c08 = 0;
     Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000814, 0x480);
     Value3((s32 (*)())Func_020014e8, 24, 0x102, 30);
     Call3((void (*)())Func_020014c8, 24, 0, 10);
@@ -315,9 +315,9 @@ void Func_02000818(void)
     Call2((void (*)())Object_LinkObjectAndSetCallback, 4, 21);
     Call2((void (*)())ObjectMotion_SetActionVariant, 22, 2);
     Call2((void (*)())ObjectMotion_SetActionVariant, 21, 2);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 22, (s32)Data_02001674);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 22, (s32)gData_02001674);
     Call1((void (*)())Battle_WaitMode0, 10);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 21, (s32)Data_02001674);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 21, (s32)gData_02001674);
     Call1((void (*)())Battle_WaitMode0, 10);
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 20, 16, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 20, 0x3000, 0);

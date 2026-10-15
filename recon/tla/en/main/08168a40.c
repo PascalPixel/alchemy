@@ -47,11 +47,11 @@ struct ScaledSprite;
 extern char ResourceId_ForestBackdrop;
 extern char ResourceId_Data134;
 extern char ResourceId_FireBlobSheet;
-extern struct FxPair Data_08196e7c;
-extern struct FxPair Data_08196e84;
-extern u8 Data_08198ada[];
-extern u8 Data_08198ae3[];
-extern u16 Data_08197410[];
+extern struct FxPair gData_08196e7c;
+extern struct FxPair gData_08196e84;
+extern u8 gData_08198ada[];
+extern u8 gData_08198ae3[];
+extern u16 gData_08197410[];
 extern u32 gCameraSceneParameters[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
@@ -169,7 +169,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
         }
 
         if (frame <= 149) {
-            struct FxPair pair = Data_08196e7c;
+            struct FxPair pair = gData_08196e7c;
             s32 lift;
 
             lift = 0;
@@ -195,8 +195,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             place.y = 255 << 16;
             i = 0;
             do {
-                place.x = ((baseX + Data_08198ada[i] - lift) << 16) + (224 << 16);
-                place.z = ((Data_08198ae3[i] - wave) << 16) + (144 << 15);
+                place.x = ((baseX + gData_08198ada[i] - lift) << 16) + (224 << 16);
+                place.z = ((gData_08198ae3[i] - wave) << 16) + (144 << 15);
                 Render_ApplyProjectedPlacementFar(work->objects[i], &place.x, &pair.a, 0);
                 i++;
             } while (i != 9);
@@ -215,7 +215,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
                 s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-                blit(canvas, sheet + Data_08197410[size - 1], x - size / 2, y - size, size, size * 2);
+                blit(canvas, sheet + gData_08197410[size - 1], x - size / 2, y - size, size, size * 2);
             }
         }
 
@@ -234,7 +234,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 if (fire->variant == 0) {
                     s32 size = i % 3 + 1;
 
-                    blit(canvas, sheet + Data_08197410[size - 1], fire->x, HI(fire->y) - size, size, size * 2);
+                    blit(canvas, sheet + gData_08197410[size - 1], fire->x, HI(fire->y) - size, size, size * 2);
                     fire->x += 2;
                     fire->y += fire->velocityY;
                     fire->velocityY = fire->velocityY * 48 / 64;
@@ -318,7 +318,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
         frame = 0;
         do {
             if (frame <= 23) {
-                struct FxPair pair2 = Data_08196e84;
+                struct FxPair pair2 = gData_08196e84;
                 s32 ang;
                 s32 rise;
 
@@ -338,8 +338,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 place2.y = 255 << 16;
                 i = 0;
                 do {
-                    place2.x = (rowX + Data_08198ada[i]) << 16;
-                    place2.z = ((Data_08198ae3[i] - rise) << 16) + (144 << 15);
+                    place2.x = (rowX + gData_08198ada[i]) << 16;
+                    place2.z = ((gData_08198ae3[i] - rise) << 16) + (144 << 15);
                     Render_ApplyProjectedPlacementFar(work->objects[i], &place2.x, &pair2.a, 0);
                     i++;
                 } while (i != 9);
@@ -389,7 +389,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 if (burst->variant > 0) {
                     s32 size = 3;
 
-                    blit(canvas, sheet + Data_08197410[size - 1], HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
+                    blit(canvas, sheet + gData_08197410[size - 1], HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
                     burst->x += burst->velocityX;
                     burst->y += burst->velocityY;
                     burst->variant--;

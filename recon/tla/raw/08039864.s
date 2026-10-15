@@ -409,13 +409,13 @@ Func_08039864:
 .L_08039ba8:
 	.4byte gPartyState
 .L_08039bac:
-	.4byte UiText_SpeedSteps
+	.4byte gUiText_SpeedSteps
 .L_08039bb0:
 	.4byte gLagFramesShown
 .L_08039bb4:
 	.4byte .L_08039910
 .L_08039bb8:
-	.4byte Data_080aa0df
+	.4byte gData_080aa0df
 .L_08039bbc:
 	ldrh r1, [r6, #20]
 	cmp r1, #0
@@ -502,7 +502,7 @@ Func_08039864:
 .L_08039c54:
 	.4byte gPartyState
 .L_08039c58:
-	.4byte Data_080aa0df
+	.4byte gData_080aa0df
 .L_08039c5c:
 	.4byte gInput
 .L_08039c60:
@@ -648,7 +648,7 @@ Func_08039864:
 .L_08039d64:
 	.4byte gPartyState
 .L_08039d68:
-	.4byte UiText_SpeedCueGaps
+	.4byte gUiText_SpeedCueGaps
 .L_08039d6c:
 	cmp r0, #223
 	bne .L_08039d7e
@@ -697,7 +697,7 @@ Func_08039864:
 .L_08039dc0:
 	.4byte 0x000001ff
 .L_08039dc4:
-	.4byte UiText_Glyphs
+	.4byte gUiText_Glyphs
 .L_08039dc8:
 	movs r3, #152
 	lsls r3, r3, #5
@@ -771,7 +771,7 @@ Func_08039864:
 .L_08039e54:
 	.4byte gPartyState
 .L_08039e58:
-	.4byte UiText_SpeedDelays
+	.4byte gUiText_SpeedDelays
 .L_08039e5c:
 	movs r0, #255
 	lsls r0, r0, #8

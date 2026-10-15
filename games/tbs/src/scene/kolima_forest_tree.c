@@ -300,8 +300,8 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	{
 		Actor_SetPosition(IVAN, object->x.fixed, object->z.fixed);
 	}
-	Engine_ActorEnableActionCallback(GARET, SceneAction_ActorOneEntry);
-	Engine_ActorEnableActionCallback(IVAN, SceneAction_ActorTwoEntry);
+	Engine_ActorEnableActionCallback(GARET, gSceneAction_ActorOneEntry);
+	Engine_ActorEnableActionCallback(IVAN, gSceneAction_ActorTwoEntry);
 	if (actorThreeEnabled != 0)
 	{
 		Actor_SetSpeed(MIA, 0x10000, 0x8000);
@@ -310,7 +310,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 		{
 			Actor_SetPosition(MIA, object->x.fixed, object->z.fixed);
 		}
-		Engine_ActorEnableActionCallback(MIA, SceneAction_ActorThreeEntry);
+		Engine_ActorEnableActionCallback(MIA, gSceneAction_ActorThreeEntry);
 	}
 	Object_RefreshSelectorById(2);
 	Engine_EventWait(40);
@@ -643,7 +643,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Engine_ActorSetAnimation(MIA, 3);
 	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Event_PlayCue(17);
-	finalActions = SceneAction_GroupFinish;
+	finalActions = gSceneAction_GroupFinish;
 	Engine_ActorEnableActionCallback(GARET, finalActions);
 	if (actorThreeEnabled != 0)
 	{
@@ -977,7 +977,7 @@ static void PaletteScene_SetRecordValue(s32 key, s32 value)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_palette.h"
 
-s32 SceneAction_ActorOneEntry[] = {
+s32 gSceneAction_ActorOneEntry[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(312), 0, PIXELS(230)),
 	SC_SYNC,
@@ -987,7 +987,7 @@ s32 SceneAction_ActorOneEntry[] = {
 	SC_END,
 };
 
-s32 SceneAction_ActorTwoEntry[] = {
+s32 gSceneAction_ActorTwoEntry[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(346), 0, PIXELS(224)),
 	SC_SYNC,
@@ -997,7 +997,7 @@ s32 SceneAction_ActorTwoEntry[] = {
 	SC_END,
 };
 
-s32 SceneAction_ActorThreeEntry[] = {
+s32 gSceneAction_ActorThreeEntry[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(333), 0, PIXELS(240)),
 	SC_SYNC,
@@ -1007,7 +1007,7 @@ s32 SceneAction_ActorThreeEntry[] = {
 	SC_END,
 };
 
-s32 SceneAction_GroupFinish[] = {
+s32 gSceneAction_GroupFinish[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(328), 0, PIXELS(212)),
 	SC_SYNC,

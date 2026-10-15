@@ -88,9 +88,9 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec)
 		y = 0;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TLA_EDITION_ES) \
 	|| defined(TLA_EDITION_FR)
-		UiText_DrawStringAtOffset(StatusMenu_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
+		UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
 #else
-		UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, win, 72, 0);
+		UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, win, 72, 0);
 #endif
 		UiText_DrawNumberAtOffset(rec[28], 2, win, 80, y);
 		UiText_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);

@@ -13,7 +13,7 @@
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 s32 Func_080d1eac(s32 id);
-extern const u8 Data_080f330c[];
+extern const u8 gData_080f330c[];
 
 void Func_080d4330(s32 key)
 {
@@ -27,7 +27,7 @@ void Func_080d4330(s32 key)
     } else {
         do {
             id = Func_080d1eac(ObjectTable_ReadActiveValue(key));
-            value = Data_080f330c[gPartyState.eventMode];
+            value = gData_080f330c[gPartyState.eventMode];
             *(s16 *)&work->result[0] = id;
         } while (0);
         *(s16 *)&work->result[1] = value;

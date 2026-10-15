@@ -11,6 +11,6 @@ struct BattleFormationRecord
 	u8 maximumCounts[5];
 };
 
-extern struct BattleFormationRecord BattleFormation_Records[];
+extern struct BattleFormationRecord gBattleFormation_Records[];
 
 #endif

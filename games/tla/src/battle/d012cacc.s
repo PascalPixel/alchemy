@@ -1,11 +1,11 @@
 	.section .rodata
-@ The Broken Seal's BattlePres_ActorObjectScript in form (16 there)
+@ The Broken Seal's gBattlePres_ActorObjectScript in form (16 there)
 	.global Data_0812cacc
 Data_0812cacc:
 	.4byte 17
 @ 資源番号 | 枠 << 9, 0xffff で終わり
-	.global Resource_SlotAssignments
-Resource_SlotAssignments:
+	.global gResource_SlotAssignments
+gResource_SlotAssignments:
 	.2byte 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008
 	.2byte 0x0009, 0x000a, 0x000b, 0x020f, 0x0210, 0x0211, 0x0212, 0x0213
 	.2byte 0x0214, 0x0215, 0x0216, 0x0217, 0x0218, 0x0219, 0x021a, 0x021b
@@ -20,22 +20,22 @@ Resource_SlotAssignments:
 	.2byte 0x0939, 0x093a, 0x093b, 0x093c, 0x093d, 0x093e, 0x093f, 0x0940
 	.2byte 0x0941, 0x0942, 0x0b43, 0x0944, 0x03a1, 0x01a2, 0x03a3, 0x01a4
 	.2byte 0x05a5, 0x05a6, 0x07a7, 0x07a8, 0x09a9, 0x09aa, 0x09ab, 0xffff
-@ The Broken Seal's BattleMotion_VariantAcceleration in form, ten for its eight
+@ The Broken Seal's gBattleMotion_VariantAcceleration in form, ten for its eight
 	.global Data_0812cbb0
 Data_0812cbb0:
 	.4byte 1 << 16, 1 << 16, 1 << 16, 1 << 16, 8 << 16, 1 << 16, 1 << 16, 1 << 16
 	.4byte 1 << 16, 8 << 16
-@ BattleMotion_VariantSpeedLimit
+@ gBattleMotion_VariantSpeedLimit
 	.global Data_0812cbd8
 Data_0812cbd8:
 	.4byte 4 << 16, 4 << 16, 4 << 16, 4 << 16, 20 << 16, 4 << 16, 4 << 16, 4 << 16
 	.4byte 4 << 16, 20 << 16
-@ BattleMotion_VariantVelocityY
+@ gBattleMotion_VariantVelocityY
 	.global Data_0812cc00
 Data_0812cc00:
 	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 0x58000
 	.4byte 10 << 16, 5 << 16
-@ BattleMotion_VariantDistancePercent
+@ gBattleMotion_VariantDistancePercent
 	.global Data_0812cc28
 Data_0812cc28:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100

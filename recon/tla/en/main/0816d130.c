@@ -32,7 +32,7 @@ struct EffectCamera {
 
 extern char ResourceId_Data134;
 extern char ResourceId_Data17F;
-extern u16 Data_08197410[];
+extern u16 gData_08197410[];
 
 void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_08143000(void);
@@ -123,7 +123,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
                 EffectPosition_ApplyBaseAndYOffset(point, &out);
                 out.x >>= 1;
                 Graphics_RestoreTransferWork();
-                blit(canvas, sheet + Data_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
+                blit(canvas, sheet + gData_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
             }
             BattleFxKernels_IntegrateVector3(orb, 62, 0);
             if (frame > 0) {

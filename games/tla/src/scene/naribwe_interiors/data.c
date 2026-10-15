@@ -46,7 +46,7 @@ struct ScenePlacement gScenePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-s32 Data_02001370[] = {
+s32 gData_02001370[] = {
 	1,
 	(s32)0xffff0001,
 	1,
@@ -133,7 +133,7 @@ s32 Data_02001370[] = {
 	0,
 };
 
-s32 Data_020014c0[] = {
+s32 gData_020014c0[] = {
 	1,
 	(s32)0xffff0001,
 	1,

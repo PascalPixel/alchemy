@@ -47,7 +47,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return GomaWaterway_Exits;
+	return gGomaWaterway_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -264,7 +264,7 @@ struct SceneEntrance gGomaWaterwayEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaWaterway_Exits[] = {
+u32 gGomaWaterway_Exits[] = {
 	SCENE_EXITS(28),
 	SCENE_EXIT(1, 25, 2),
 	SCENE_EXIT(2, 27, 1),

@@ -132,7 +132,7 @@ Func_0804bc08:
 .L_0804bd0c:
 	.4byte 0x06006680
 .L_0804bd10:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_0804bd14:
 	ldr r3, .L_0804bfc0
 	ldrh r2, [r3]
@@ -2059,7 +2059,7 @@ Func_0804bc08:
 .L_0804cc7c:
 	.4byte 0x00000053
 .L_0804cc80:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_0804cc84:
 	.4byte UpdateLinkSessionCountdown
 .L_0804cc88:

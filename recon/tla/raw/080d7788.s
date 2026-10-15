@@ -94,6 +94,6 @@ Func_080d7788:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080d7844:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_080d7848:
 	.4byte gPartyState

@@ -47,7 +47,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTable(void)
 {
-	return (u8 *)SuhallaGate_SceneTable;
+	return (u8 *)gSuhallaGate_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -391,7 +391,7 @@ static void Scene_RunActorTenRepeatedMotion(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-s32 SuhallaGate_PatrolStartup[] = {
+s32 gSuhallaGate_PatrolStartup[] = {
 	SC_SET(SW_COLLISION, 0),
 };
 #endif
@@ -402,7 +402,7 @@ s32 gSuhallaGatePlacements1Flagged1[] = {
 };
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-s32 SuhallaGate_FirstGuardStartup[] = {
+s32 gSuhallaGate_FirstGuardStartup[] = {
 	SC_SET(SW_COLLISION, 0),
 };
 #endif
@@ -440,7 +440,7 @@ struct SceneEntrance gSuhallaGateEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SuhallaGate_SceneTable[] = {
+u32 gSuhallaGate_SceneTable[] = {
 	SCENE_EXITS(169),
 	SCENE_EXIT(1, 2, 29),
 	SCENE_EXIT(2, 170, 1),
@@ -498,11 +498,11 @@ struct ScenePlacement gSuhallaGatePlacements1Flagged[] = {
 	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged1,
 		PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #else
-	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_FirstGuardStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGate_FirstGuardStartup,
 		PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_PatrolStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGate_PatrolStartup,
 		PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_PatrolStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGate_PatrolStartup,
 		PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #endif
 	{ 0x39, CONDITION_ALWAYS, ACTOR_STAND,

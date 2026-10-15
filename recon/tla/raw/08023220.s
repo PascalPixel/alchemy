@@ -167,7 +167,7 @@ Func_08023220:
 .L_08023360:
 	.4byte 0x00000000
 .L_08023364:
-	.4byte ObjectDispatch_Table6
+	.4byte gObjectDispatch_Table6
 .L_08023368:
 	movs r2, #255
 	lsls r2, r2, #8

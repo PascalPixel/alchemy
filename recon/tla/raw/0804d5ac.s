@@ -105,8 +105,8 @@ Menu_SelectSaveSlotAction:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0804d66c:
-	.4byte Data_020036d8
+	.4byte gData_020036d8
 .L_0804d670:
-	.4byte Data_02005350
+	.4byte gData_02005350
 .L_0804d674:
-	.4byte Menu_SaveSlotActionByPosition
+	.4byte gMenu_SaveSlotActionByPosition

@@ -103,7 +103,7 @@ void Func_02000d44(void)
     Func_02002cd0(13, 0, 0);
     Battle_WaitMode0(20);
     Func_02002de0(52);
-    Object_SetActionCallbackAndRefreshById(8, Data_02002e9c);
+    Object_SetActionCallbackAndRefreshById(8, gData_02002e9c);
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state address before it builds the field offset (2 differ without it). */
     gPartyState.battleRule24b = 2;
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);

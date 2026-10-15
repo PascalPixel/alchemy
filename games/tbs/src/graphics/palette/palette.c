@@ -60,10 +60,10 @@ struct IntroWork
 };
 
 // 六列のスプライトの x
-const u8 Title_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
+const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
 
 // プロンプトの明るさ（60 フレームで一巡）
-const u8 Title_PromptBlendLevels[60] = {
+const u8 gTitle_PromptBlendLevels[60] = {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
@@ -79,7 +79,7 @@ const u8 Title_PromptBlendLevels[60] = {
 	(v) += 256
 
 #define PLACE(column, half)                                       \
-	x = Title_IntroSpriteColumns[column] - (half);                \
+	x = gTitle_IntroSpriteColumns[column] - (half);                \
 	y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
 	WRAP256(y)
 
@@ -407,7 +407,7 @@ s32 Title_ShowIntro(s32 prompt)
 		u8				   *buffer = Runtime_AllocateBlock(14, 0x400);
 		struct IntroSprite *sprite = work->area.prompt.sprites;
 
-		Resource_DecodeByteLz(Title_PromptTiles, buffer);
+		Resource_DecodeByteLz(gTitle_PromptTiles, buffer);
 		for (i = 0; i < PROMPT_TILES; i++)
 		{
 			s32	 block = VramBlock_LoadCached(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
@@ -460,7 +460,7 @@ s32 Title_ShowIntro(s32 prompt)
 				sprite++;
 			}
 #endif
-			level = Title_PromptBlendLevels[i % 60];
+			level = gTitle_PromptBlendLevels[i % 60];
 			REG_BLDCNT = 0x2f50;
 			REG_BLDALPHA = (16 - level) * 256 + level;
 		}
@@ -782,9 +782,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 					g = 28;
 				if (b > 28)
 					b = 28;
-				*dst++ = Palette_ChannelCurveLight[b];
-				*dst++ = Palette_ChannelCurveLight[g];
-				*dst++ = Palette_ChannelCurveLight[r];
+				*dst++ = gPalette_ChannelCurveLight[b];
+				*dst++ = gPalette_ChannelCurveLight[g];
+				*dst++ = gPalette_ChannelCurveLight[r];
 			}
 			break;
 		case PALETTE_TRANSFORM_WARM:
@@ -802,9 +802,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = Graphics_ClampRgb555Channel(r);
 				g = Graphics_ClampRgb555Channel(g);
 				b = Graphics_ClampRgb555Channel(b);
-				dst[0] = Palette_ChannelCurveContrast[b];
-				dst[1] = Palette_ChannelCurveLight[g];
-				dst[2] = Palette_ChannelCurve[r];
+				dst[0] = gPalette_ChannelCurveContrast[b];
+				dst[1] = gPalette_ChannelCurveLight[g];
+				dst[2] = gPalette_ChannelCurve[r];
 				dst += 3;
 			}
 			break;
@@ -832,9 +832,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = Graphics_ClampRgb555Channel(r);
 				g = Graphics_ClampRgb555Channel(g);
 				b = Graphics_ClampRgb555Channel(b);
-				*dst++ = Palette_ChannelCurve[b];
-				*dst++ = Palette_ChannelCurve[g];
-				*dst++ = Palette_ChannelCurve[r];
+				*dst++ = gPalette_ChannelCurve[b];
+				*dst++ = gPalette_ChannelCurve[g];
+				*dst++ = gPalette_ChannelCurve[r];
 			}
 			break;
 		case PALETTE_TRANSFORM_PALE:
@@ -853,9 +853,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = Graphics_ClampRgb555Channel(r);
 				g = Graphics_ClampRgb555Channel(g);
 				b = Graphics_ClampRgb555Channel(b);
-				dst[0] = Palette_ChannelCurveContrast[b];
-				dst[1] = Palette_ChannelCurveContrast[g];
-				dst[2] = Palette_ChannelCurveContrast[r];
+				dst[0] = gPalette_ChannelCurveContrast[b];
+				dst[1] = gPalette_ChannelCurveContrast[g];
+				dst[2] = gPalette_ChannelCurveContrast[r];
 				dst += 3;
 			}
 			break;
@@ -870,9 +870,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = Graphics_ClampRgb555Channel(r);
 				g -= g / 3;
 				b -= b / 3;
-				dst[0] = Palette_ChannelCurve[b];
-				dst[1] = Palette_ChannelCurve[g];
-				dst[2] = Palette_ChannelCurveLight[r];
+				dst[0] = gPalette_ChannelCurve[b];
+				dst[1] = gPalette_ChannelCurve[g];
+				dst[2] = gPalette_ChannelCurveLight[r];
 				dst += 3;
 			}
 			break;
@@ -891,9 +891,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = Graphics_ClampRgb555Channel(r);
 				g = Graphics_ClampRgb555Channel(g);
 				b = Graphics_ClampRgb555Channel(b);
-				dst[0] = Palette_ChannelCurveContrast[b];
-				dst[1] = Palette_ChannelCurveLight[g];
-				dst[2] = Palette_ChannelCurve[r];
+				dst[0] = gPalette_ChannelCurveContrast[b];
+				dst[1] = gPalette_ChannelCurveLight[g];
+				dst[2] = gPalette_ChannelCurve[r];
 				dst += 3;
 			}
 			break;
@@ -956,9 +956,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 			r = Graphics_ClampRgb555Channel((u32)r >> 16);
 			g = Graphics_ClampRgb555Channel((u32)g >> 16);
 			b = Graphics_ClampRgb555Channel((u32)b >> 16);
-			*dst++ = Palette_ChannelCurve[b];
-			*dst++ = Palette_ChannelCurve[g];
-			*dst++ = Palette_ChannelCurve[r];
+			*dst++ = gPalette_ChannelCurve[b];
+			*dst++ = gPalette_ChannelCurve[g];
+			*dst++ = gPalette_ChannelCurve[r];
 		}
 	}
 	else if (mode & PALETTE_TRANSFORM_SPLIT)
@@ -1068,7 +1068,7 @@ s32 Graphics_ClampRgb555Component(s32 val)
 //--------------------------------------------------------------------------
 
 // 色の成分（0..31）を 0..(31 << 10) に写す曲線
-u16 Palette_ChannelCurve[32] = {
+u16 gPalette_ChannelCurve[32] = {
 	0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
 	4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740,
 	11715, 12729, 13783, 14877, 16014, 17195, 18422, 19694,
@@ -1076,7 +1076,7 @@ u16 Palette_ChannelCurve[32] = {
 };
 
 // 明るめの曲線
-u16 Palette_ChannelCurveLight[32] = {
+u16 gPalette_ChannelCurveLight[32] = {
 	0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
 	5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
 	12674, 13699, 14755, 15843, 16965, 18121, 19312, 20538,
@@ -1084,7 +1084,7 @@ u16 Palette_ChannelCurveLight[32] = {
 };
 
 // コントラストの強い曲線（25 以上は最大）
-u16 Palette_ChannelCurveContrast[32] = {
+u16 gPalette_ChannelCurveContrast[32] = {
 	0, 360, 759, 1201, 1689, 2226, 2817, 3466,
 	4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,
 	12784, 14325, 15996, 17806, 19767, 21888, 24183, 26662,

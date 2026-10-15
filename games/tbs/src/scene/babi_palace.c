@@ -69,12 +69,12 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 
 s32 BabiPalace_GetRegions(void)
 {
-	return (s32)BabiPalace_EmptyTable;
+	return (s32)gBabiPalace_EmptyTable;
 }
 
 s32 BabiPalace_GetExits(void)
 {
-	return (s32)BabiPalace_MessageTable;
+	return (s32)gBabiPalace_MessageTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -241,7 +241,7 @@ static void RunMiddleAuxiliarySequence(s32 a)
 
 	obj = Actor_Get(a);
 	Event_Begin();
-	q = (u8 *)BabiPalace_MiddleActionScript;
+	q = (u8 *)gBabiPalace_MiddleActionScript;
 	Actor_EnableActionCallback(a, q);
 	Event_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
 	Event_ShowMessage(a, 0);
@@ -2215,7 +2215,7 @@ static void EV02_TOUCH(void)
 	Event_Begin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
 	Event_PlayCue(158);
-	Map_AnimateCells(BabiPalace_CellSteps, 36, 10);
+	Map_AnimateCells(gBabiPalace_CellSteps, 36, 10);
 	Actor_CenterAndWalk(0, 2, -16);
 	Event_Wait(16);
 	Event_RequestExit(2);
@@ -2419,11 +2419,11 @@ s32 BabiPalace_ApplyEntryState(void)
 	return 0;
 }
 
-u16 BabiPalace_CellSteps[] = {
+u16 gBabiPalace_CellSteps[] = {
 	MAP_CELL_STEP(25, 28, 1, 3, 5), MAP_CELL_STEP(26, 28, 1, 3, 5), MAP_CELL_STEP(27, 28, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-s32 BabiPalace_MiddleActionScript[] = {
+s32 gBabiPalace_MiddleActionScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -2494,11 +2494,11 @@ struct SceneEntrance gBabiPalaceEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 BabiPalace_EmptyTable[] = {
+s16 gBabiPalace_EmptyTable[] = {
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 BabiPalace_MessageTable[] = {
+u32 gBabiPalace_MessageTable[] = {
 	SCENE_EXITS(138),
 	SCENE_EXIT(1, 139, 2),
 	SCENE_EXIT(2, 138, 24),
@@ -2566,7 +2566,7 @@ struct ScenePlacement gBabiPalacePlacementsOther[] = {
 		PIXELS(56), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(392), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ 0x3e, CONDITION_ALWAYS, (s32)BabiPalace_MiddleActionScript,
+	{ 0x3e, CONDITION_ALWAYS, (s32)gBabiPalace_MiddleActionScript,
 		PIXELS(472), 0, PIXELS(136), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(88), 0, PIXELS(296), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },

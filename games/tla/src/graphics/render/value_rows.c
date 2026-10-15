@@ -35,8 +35,8 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	s16 val;
 
 #if EDITION_INTERNATIONAL
-	UiText_DrawStringAtOffsetFar((s32)Ui_HpString, win, 0, 40);
-	UiText_DrawStringInWindowFar((s32)Ui_SlashString, win, 48, 40);
+	UiText_DrawStringAtOffsetFar((s32)gUi_HpString, win, 0, 40);
+	UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 40);
 	val = unit->maxHp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 40);
 	val = unit->hp;
@@ -50,14 +50,14 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	}
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringAtOffsetFar((s32)Ui_PpString, win, 0, 48);
-	UiText_DrawStringInWindowFar((s32)Ui_SlashString, win, 48, 48);
+	UiText_DrawStringAtOffsetFar((s32)gUi_PpString, win, 0, 48);
+	UiText_DrawStringInWindowFar((s32)gUi_SlashString, win, 48, 48);
 	val = unit->pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
 	val = unit->maxPp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
 #else
-	UiText_DrawStringInWindowFar((s32)Ui_HpRowString, win, 0, 40);
+	UiText_DrawStringInWindowFar((s32)gUi_HpRowString, win, 0, 40);
 	val = unit->maxHp;
 	UiText_DrawNumberInWindowFar(val, 4, win, 56, 40);
 	val = unit->hp;
@@ -71,7 +71,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 	}
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringInWindowFar((s32)Ui_PpRowString, win, 0, 48);
+	UiText_DrawStringInWindowFar((s32)gUi_PpRowString, win, 0, 48);
 	val = unit->pp;
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
 	val = unit->maxPp;

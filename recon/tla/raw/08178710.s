@@ -799,7 +799,7 @@ Func_08178710:
 	bl Func_08015160
 	b .L_08178d8a
 .L_08178d44:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08178d48:
 	.4byte 0xfffffd40
 .L_08178d4c:
@@ -989,7 +989,7 @@ Func_08178710:
 .L_08178ed4:
 	.4byte Data_02011000
 .L_08178ed8:
-	.4byte Data_08199340
+	.4byte gData_08199340
 .L_08178edc:
 	.4byte Data_081991e0
 .L_08178ee0:

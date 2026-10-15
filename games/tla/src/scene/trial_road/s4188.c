@@ -9,7 +9,7 @@ struct TrialRoadGauge {
     void *buffer;
 };
 
-extern const u8 Field_Tiles64D[];
+extern const u8 gField_Tiles64D[];
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Resource_FindFreeEntry(void);
@@ -34,13 +34,13 @@ static __inline__ void Words_Clear(void *destination, s32 size)
 
 void Func_02004188(s32 a, s32 b)
 {
-    struct TrialRoadGauge *gauge = (struct TrialRoadGauge *)(Data_020023c4 + 0x188);
+    struct TrialRoadGauge *gauge = (struct TrialRoadGauge *)(gData_020023c4 + 0x188);
     void *buffer;
 
     if (!GameFlag_Test(0x109))
         Words_Clear(gauge, 0x1c8);
     buffer = Pool_Alloc(0x800);
-    Func_02005770(Field_Tiles64D, buffer);
+    Func_02005770(gField_Tiles64D, buffer);
     gauge->handle = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)gauge->handle, 0x800, buffer);
     MemFree(buffer);

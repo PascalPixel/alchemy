@@ -94,18 +94,18 @@ void Func_02002250(void);
 void Func_020023c0(void);
 void Func_02002534(void);
 
-extern struct AquaRockWork Data_020034f0;
-extern const u8 Data_02002c44[];
-extern const u8 Data_02002c50[];
-extern const u8 Data_02002c74[];
-extern const u8 Data_02002e30[];
-extern const u8 Data_02002e60[];
-extern const u8 Data_02002eec[];
-extern const u8 Data_02002f04[];
-extern const u8 Data_0200312c[];
-extern const u8 Data_02003214[];
-extern const u8 Data_02003220[];
-extern const u8 Data_020032d4[];
+extern struct AquaRockWork gData_020034f0;
+extern const u8 gData_02002c44[];
+extern const u8 gData_02002c50[];
+extern const u8 gData_02002c74[];
+extern const u8 gData_02002e30[];
+extern const u8 gData_02002e60[];
+extern const u8 gData_02002eec[];
+extern const u8 gData_02002f04[];
+extern const u8 gData_0200312c[];
+extern const u8 gData_02003214[];
+extern const u8 gData_02003220[];
+extern const u8 gData_020032d4[];
 
 
 static __inline__ s32 GameFlag_Test_(s32 flag)

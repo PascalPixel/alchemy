@@ -3113,7 +3113,7 @@ Func_020023a4:
 .L_0200a51c:
 	.4byte 0x00000000
 .L_0200a520:
-	.4byte Field_Tiles64D
+	.4byte gField_Tiles64D
 .L_0200a524:
 	.4byte 0xfff40000
 .L_0200a528:

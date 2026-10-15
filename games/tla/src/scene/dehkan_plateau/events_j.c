@@ -3,17 +3,17 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f44[];
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003f80[];
-extern const u8 Data_02003f92[];
-extern const u8 Data_02003f98[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fa8[];
-extern const u8 Data_02003fb0[];
-extern const u8 Data_02003fb8[];
-extern const u8 Data_02003fc0[];
-extern const u8 Data_02003fc4[];
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -46,8 +46,8 @@ struct CellRecord {
     u16 unk06[3];
 };
 
-extern const u16 Data_02003fd2[];
-extern const struct CellRecord Data_02004066[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
@@ -205,17 +205,17 @@ void Func_02002f74(void)
     Flag_Set(0x209);
 }
 
-extern struct ObjectRuntime *Data_02004420;
+extern struct ObjectRuntime *gData_02004420;
 
 void Func_02002f9c(void)
 {
     Func_02003c28();
     Func_02003d78(0);
-    if (Data_02004420 != 0)
-        Func_02003d40(Data_02004420, 3);
+    if (gData_02004420 != 0)
+        Func_02003d40(gData_02004420, 3);
     PartyInventory_GiveItem(199, 0);
-    if (Data_02004420 != 0)
-        Func_02003bb8(Data_02004420);
+    if (gData_02004420 != 0)
+        Func_02003bb8(gData_02004420);
     Map_CopyAttributes(1, 0, 1, 1, 15, 5);
     Flag_Set(0x878);
     Func_02003c30();

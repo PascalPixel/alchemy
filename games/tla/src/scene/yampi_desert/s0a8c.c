@@ -19,6 +19,6 @@ void Func_02000a8c(void)
     do {
         WaitFrames(1);
 test:;
-    } while (Data_02004808 == 210);
+    } while (gData_02004808 == 210);
     Func_02004048();
 }

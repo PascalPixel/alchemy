@@ -6,12 +6,12 @@
 #include "field_event.h"
 #include "field_sprite.h"
 
-extern u8 Data_02002fb8[];
-extern u8 Data_02003214[];
-extern s32 Data_02003274;
-extern s32 Data_02003278;
-extern u8 Data_02002f70[];
-extern u8 Data_02002f94[];
+extern u8 gData_02002fb8[];
+extern u8 gData_02003214[];
+extern s32 gData_02003274;
+extern s32 gData_02003278;
+extern u8 gData_02002f70[];
+extern u8 gData_02002f94[];
 extern u32 gFrameCount;
 
 void Func_020029d0();
@@ -47,7 +47,7 @@ struct AnimatedSprite {
 
 void Func_02000054(void)
 {
-    Func_020029d0(Data_02002fb8);
+    Func_020029d0(gData_02002fb8);
 }
 
 void Func_020000c8(struct FieldActor *object)
@@ -140,7 +140,7 @@ void Func_020001a4(void)
     if (spark == NULL)
         return;
     sprite = spark->sprite;
-    Func_02002820(spark, Data_02003214);
+    Func_02002820(spark, gData_02003214);
     Object_SetPartAttribute(spark, 1);
     spark->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
@@ -154,7 +154,7 @@ void Func_020001a4(void)
 
 void Func_02000294(void)
 {
-    if (Data_02003278 != 0)
+    if (gData_02003278 != 0)
         Func_02002a40(201);
-    Func_02001650(Data_02003274);
+    Func_02001650(gData_02003274);
 }

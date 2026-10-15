@@ -13,7 +13,7 @@
  * Func_080e97c8 and Func_080e9940. */
 #include "types.h"
 
-extern const u8 Data_080f0fe0[];
+extern const u8 gData_080f0fe0[];
 
 s32 Func_080e989c(s32 counter, s32 level)
 {
@@ -25,9 +25,9 @@ s32 Func_080e989c(s32 counter, s32 level)
 
     phase = (counter + 12) % 24 * 4;
     bias = level - 7;
-    red = Data_080f0fe0[(s16)(phase % 96)] + bias;
-    green = Data_080f0fe0[(phase + 32) % 96] + bias;
-    blue = Data_080f0fe0[(phase + 64) % 96] + bias;
+    red = gData_080f0fe0[(s16)(phase % 96)] + bias;
+    green = gData_080f0fe0[(phase + 32) % 96] + bias;
+    blue = gData_080f0fe0[(phase + 64) % 96] + bias;
     if (red < 0)
         red = 0;
     if (red > 31)

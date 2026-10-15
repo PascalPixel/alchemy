@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-extern const s32 Battle_FormationPlacementScale[2];
+extern const s32 gBattle_FormationPlacementScale[2];
 
 #endif

@@ -35,7 +35,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(
 	*(u16 *)(desc + 218) = 0;
 	*(u16 *)(desc + 220) = 0;
 
-	FieldResource_DecodeType01(Colosso_GaugeGraphics, handle);
+	FieldResource_DecodeType01(gColosso_GaugeGraphics, handle);
 
 	pal = Resource_FindFreeEntry();
 	*(u16 *)(desc + 216) = pal;

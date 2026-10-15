@@ -74,7 +74,7 @@ Func_080451bc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0804523c:
-	.4byte Menu_BarPatternRows
+	.4byte gMenu_BarPatternRows
 .L_08045240:
 	.4byte IwramFillWords
 .L_08045244:

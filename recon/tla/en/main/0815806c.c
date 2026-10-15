@@ -18,11 +18,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
-extern u16 Data_08197410[];
-extern u8 Data_08197467[];
-extern u8 Data_0819746d[];
-extern u8 Data_08197473[];
-extern u16 Data_0819747a[];
+extern u16 gData_08197410[];
+extern u8 gData_08197467[];
+extern u8 gData_0819746d[];
+extern u8 gData_08197473[];
+extern u16 gData_0819747a[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
@@ -127,9 +127,9 @@ void Func_0815806c(struct BattleEffectArgument *effect)
                     s32 cell = step->variant / 8;
                     u32 width;
 
-                    callbacks[0](canvas, work->sheet + Data_0819747a[cell],
-                        step->x - ((width = Data_08197467[cell]) >> 1),
-                        step->y + Data_08197473[cell], width, Data_0819746d[cell]);
+                    callbacks[0](canvas, work->sheet + gData_0819747a[cell],
+                        step->x - ((width = gData_08197467[cell]) >> 1),
+                        step->y + gData_08197473[cell], width, gData_0819746d[cell]);
                 }
                 member++;
                 step->variant++;
@@ -146,7 +146,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
 
                 size = (member & 1) + 3;
                 x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-                draw[1](canvas, sheet + Data_08197410[size - 1], x - ((u32)size >> 1),
+                draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
                     HI(step->y) - size, size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 64, -0x2000);
                 angle = step->z;

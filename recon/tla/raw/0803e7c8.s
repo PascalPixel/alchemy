@@ -150,6 +150,6 @@ Func_0803e7c8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0803e8e4:
-	.4byte Data_0805c5c4
+	.4byte gData_0805c5c4
 .L_0803e8e8:
-	.4byte Data_0805c1c4
+	.4byte gData_0805c1c4

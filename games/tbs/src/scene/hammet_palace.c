@@ -52,7 +52,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -678,7 +678,7 @@ static void RunEventScript01(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	table = (s32)HammetPalace_PartyActions;
+	table = (s32)gHammetPalace_PartyActions;
 	Engine_ActorEnableActionCallback(GARET, table);
 	Engine_ActorEnableActionCallback(2, table);
 	Object_SetActionCallbackAndRefreshById(3, table);
@@ -878,7 +878,7 @@ static void Scene_RunPartySequence(void)
 	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	table = (s32)HammetPalace_PartyActions;
+	table = (s32)gHammetPalace_PartyActions;
 	Engine_ActorEnableActionCallback(GARET, table);
 	Engine_ActorEnableActionCallback(2, table);
 	Object_SetActionCallbackAndRefreshById(3, table);
@@ -890,7 +890,7 @@ static void Scene_RunPartySequence(void)
 	Engine_EventEnd();
 }
 
-s32 HammetPalace_PartyActions[] = {
+s32 gHammetPalace_PartyActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(856), 0, PIXELS(486)),
 	SC_SYNC,
@@ -925,7 +925,7 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(103),
 	SCENE_EXIT(1, 102, 2),
 	SCENE_EXIT(2, 103, 6),

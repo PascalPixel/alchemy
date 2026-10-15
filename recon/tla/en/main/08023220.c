@@ -113,7 +113,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y, s32 z)
     }
     if (object !=0) {
         Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, x, y, z);
-        object->script = (s32 *)ObjectDispatch_Table6;
+        object->script = (s32 *)gObjectDispatch_Table6;
         object->speedLimit =0x20000;
         object->step =0;
         object->scaleX =0x10000;

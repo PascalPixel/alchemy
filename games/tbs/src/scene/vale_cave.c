@@ -96,7 +96,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return ValeCave_Exits;
+	return gValeCave_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -348,7 +348,7 @@ static void FieldScene_RunScene3a6SequenceC(void)
 			record = Object_GetById(ACTOR_PARTY_LEADER);
 			rec8->acceleration = record->acceleration;
 			idx -= 45;
-			table = (s32)ValeCave_WalkTargets;
+			table = (s32)gValeCave_WalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
 			Engine_ActorWalkTo(8, *(s32 *)(table + idx), *(s32 *)(table + idx4));
@@ -731,7 +731,7 @@ s32 gEffectScript2[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -750,11 +750,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -763,7 +763,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 ValeCave_WalkTargets[] = {
+s32 gValeCave_WalkTargets[] = {
 	0x2f8, 0x128,
 	0x2f8, 0x118,
 	0x308, 0x118,
@@ -822,7 +822,7 @@ struct SceneEntrance gValeCaveEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 ValeCave_Exits[] = {
+u32 gValeCave_Exits[] = {
 	SCENE_EXITS(93),
 	SCENE_EXIT(1, 6, 4),
 	SCENE_EXIT(2, 94, 1),

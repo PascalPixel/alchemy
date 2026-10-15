@@ -39,8 +39,8 @@ struct YallamStop {
     u16 c;
 };
 
-extern struct YallamSaved Data_02002fc0[5];
-extern const struct YallamStop Data_02002ce4[];
+extern struct YallamSaved gData_02002fc0[5];
+extern const struct YallamStop gData_02002ce4[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);

@@ -581,6 +581,6 @@ Func_08151b48:
 .L_08151fcc:
 	.4byte 0x007effff
 .L_08151fd0:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08151fd4:
 	.4byte Func_08143000

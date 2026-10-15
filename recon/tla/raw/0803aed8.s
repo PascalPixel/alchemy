@@ -161,7 +161,7 @@ Func_0803aed8:
 	b .L_0803b004
 	.2byte 0x0000
 .L_0803affc:
-	.4byte UiText_ArticleTable
+	.4byte gUiText_ArticleTable
 .L_0803b000:
 	mov r3, lr
 	str r1, [r3]

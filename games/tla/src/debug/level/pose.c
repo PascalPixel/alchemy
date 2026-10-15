@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02000f10[];
-extern const u8 Data_02000ebc[];
+extern const u8 gData_02000f10[];
+extern const u8 gData_02000ebc[];
 u8 *UnitGet(s32 owner);
 void UnitCalc(s32 owner);
 void Func_02000724(void);

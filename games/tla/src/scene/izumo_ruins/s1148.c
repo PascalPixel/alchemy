@@ -7,7 +7,7 @@ void Func_02001148(void)
 
     Func_02001488();
     Func_020014e8(0);
-    Func_02001500(Data_02001696);
+    Func_02001500(gData_02001696);
     object = work->objectCbc;
     object->priorityFlags |= 1;
     object->priorityFlags &= ~2;

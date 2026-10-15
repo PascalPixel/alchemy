@@ -14,7 +14,7 @@
 extern char ResourceId_Data134;
 extern char ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_FlameballSheet;
-extern const u16 Data_08197410[];
+extern const u16 gData_08197410[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
@@ -121,7 +121,7 @@ void Func_081579d0(struct BattleEffectArgument *effect)
             if (mote->variant != -1) {
                 s32 size = mote->variant / 16 + 1;
 
-                draw[1](canvas, sheet + Data_08197410[size - 1],
+                draw[1](canvas, sheet + gData_08197410[size - 1],
                     HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                 BattleFxKernels_IntegrateVector2(mote, 62, 0x2000);
                 mote->variant--;

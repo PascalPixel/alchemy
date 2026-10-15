@@ -21,11 +21,11 @@ extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
 
-extern const u16 Data_081986d4[];
-extern const u8 Data_081986e0[];
-extern const u8 Data_081986c8[];
-extern const s8 Data_081986ec[];
-extern const u8 Data_081986ce[];
+extern const u16 gData_081986d4[];
+extern const u8 gData_081986e0[];
+extern const u8 gData_081986c8[];
+extern const s8 gData_081986ec[];
+extern const u8 gData_081986ce[];
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -90,15 +90,15 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode)
         cell = frame / 4;
         if (cell <= 5) {
             if (cell <= 3)
-                draw(canvas, work->sheet + Data_081986d4[cell],
-                    Data_081986e0[cell + effect->side * 6],
-                    Data_081986ec[cell] + 32, Data_081986c8[cell],
-                    Data_081986ce[cell]);
+                draw(canvas, work->sheet + gData_081986d4[cell],
+                    gData_081986e0[cell + effect->side * 6],
+                    gData_081986ec[cell] + 32, gData_081986c8[cell],
+                    gData_081986ce[cell]);
             else
-                draw(canvas, Ram_MapCellBuffer + Data_081986d4[cell],
-                    Data_081986e0[cell + effect->side * 6],
-                    Data_081986ec[cell] + 32, Data_081986c8[cell],
-                    Data_081986ce[cell]);
+                draw(canvas, Ram_MapCellBuffer + gData_081986d4[cell],
+                    gData_081986e0[cell + effect->side * 6],
+                    gData_081986ec[cell] + 32, gData_081986c8[cell],
+                    gData_081986ce[cell]);
         }
         if (frame == 8) {
             if (mode == 0) {

@@ -16,7 +16,7 @@
 #include "io_reg.h"
 #include "render_input.h"
 
-extern const s16 Data_0805f65e[];
+extern const s16 gData_0805f65e[];
 extern u8 MsgFoundVenusDjinni[];
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -47,7 +47,7 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn)
 
     window = NULL;
     zero = 0;
-    name = Data_0805f65e[element & 3];
+    name = gData_0805f65e[element & 3];
     entry = sprite;
     window = UiWindow_Create(2, 1, 26, 5, 0);
 

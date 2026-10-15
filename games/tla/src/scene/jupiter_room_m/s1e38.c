@@ -1,6 +1,6 @@
 #include "jupiter_room_m.h"
 
-extern u32 Data_02005548[];
+extern u32 gData_02005548[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -30,5 +30,5 @@ void Func_02001e38(void)
     PLACE(5, 761, 203, 0x4000);
     PLACE(6, 725, 232, 0);
     PLACE(28, 729, 203, 0x2000);
-    ObjectMotion_EnableActionAndSetCallback(3, Data_02005548);
+    ObjectMotion_EnableActionAndSetCallback(3, gData_02005548);
 }

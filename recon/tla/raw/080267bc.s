@@ -426,7 +426,7 @@ Func_080267bc:
 .L_08026b14:
 	.4byte gInput
 .L_08026b18:
-	.4byte Data_0802ec5c
+	.4byte gData_0802ec5c
 .L_08026b1c:
 	.4byte 0x0007ffff
 .L_08026b20:

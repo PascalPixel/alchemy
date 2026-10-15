@@ -18,15 +18,15 @@ struct TerrainResult {
     s16 result;
 };
 
-extern struct TerrainResult Data_080eedbc[];
-extern struct TerrainResult Data_080eef34[];
+extern struct TerrainResult gData_080eedbc[];
+extern struct TerrainResult gData_080eef34[];
 s32 GetWorldMapTerrainBehaviorFar(void *position, s32 *terrain);
 s32 GameFlag_Test(s32 flag);
 void Func_080ca514(s32 behavior);
 
 s32 BattleFx_LookupResult(void *position)
 {
-    struct TerrainResult *entry = Data_080eedbc;
+    struct TerrainResult *entry = gData_080eedbc;
     s32 behavior;
     u32 terrain;
     s32 result;
@@ -34,7 +34,7 @@ s32 BattleFx_LookupResult(void *position)
     if (gPartyState.renderMode == 8)
         return 0;
     if (gPartyState.renderMode == 7)
-        entry = Data_080eef34;
+        entry = gData_080eef34;
     behavior = GetWorldMapTerrainBehaviorFar(position, (s32 *)&terrain);
     terrain %= 20;
     result = 0;

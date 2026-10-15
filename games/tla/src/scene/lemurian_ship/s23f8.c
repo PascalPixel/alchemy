@@ -11,7 +11,7 @@ void Func_0200241c(void)
 {
     if (GameFlag_Test(8))
         LemurianShip_BlendStart(14, 46, 1, 1, 16, 46);
-    Func_02002dc8(Data_02003010);
+    Func_02002dc8(gData_02003010);
     LEMURIAN_SHIP_TASK_ADD(Func_020023f8, 0x480);
 }
 

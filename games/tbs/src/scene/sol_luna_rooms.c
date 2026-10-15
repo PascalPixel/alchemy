@@ -544,7 +544,7 @@ static void UpdateStatueLight1(void)
 {
 	if ((Random_Next() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light1Timer)
+		switch (gSolLunaRooms_Light1Timer)
 		{
 		case 0:
 			Event_PlayCue(0xbb);
@@ -563,7 +563,7 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x25, 1, 5);
 			break;
@@ -571,23 +571,23 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x31, 30, 0x21, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light1Timer++;
-		if (SolLunaRooms_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
+		gSolLunaRooms_Light1Timer++;
+		if (gSolLunaRooms_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
 		{
-			SolLunaRooms_Light1Timer = 0;
+			gSolLunaRooms_Light1Timer = 0;
 		}
 	}
-	if (SolLunaRooms_FlashState != 0)
+	if (gSolLunaRooms_FlashState != 0)
 	{
-		if (SolLunaRooms_FlashState == 2)
+		if (gSolLunaRooms_FlashState == 2)
 		{
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 		}
-		else if (SolLunaRooms_FlashState == 1)
+		else if (gSolLunaRooms_FlashState == 1)
 		{
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 		}
-		SolLunaRooms_FlashState--;
+		gSolLunaRooms_FlashState--;
 	}
 }
 
@@ -595,7 +595,7 @@ static void UpdateStatueLight2(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light2Timer)
+		switch (gSolLunaRooms_Light2Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -614,7 +614,7 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x25, 1, 5);
 			break;
@@ -622,10 +622,10 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x31, 42, 0x21, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light2Timer++;
-		if (SolLunaRooms_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
+		gSolLunaRooms_Light2Timer++;
+		if (gSolLunaRooms_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
 		{
-			SolLunaRooms_Light2Timer = 0;
+			gSolLunaRooms_Light2Timer = 0;
 		}
 	}
 }
@@ -634,7 +634,7 @@ static void UpdateStatueLight3(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light3Timer)
+		switch (gSolLunaRooms_Light3Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -653,7 +653,7 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 1);
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x28, 1, 5);
 			break;
@@ -661,10 +661,10 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x31, 31, 0x24, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light3Timer++;
-		if (SolLunaRooms_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
+		gSolLunaRooms_Light3Timer++;
+		if (gSolLunaRooms_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
 		{
-			SolLunaRooms_Light3Timer = 0;
+			gSolLunaRooms_Light3Timer = 0;
 		}
 	}
 }
@@ -673,7 +673,7 @@ static void UpdateStatueLight4(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SolLunaRooms_Light4Timer)
+		switch (gSolLunaRooms_Light4Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -692,7 +692,7 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 5);
 			break;
 		case 4:
-			SolLunaRooms_FlashState = 2;
+			gSolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x28, 1, 5);
 			break;
@@ -700,10 +700,10 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x31, 41, 0x24, 1, 10);
 			break;
 		}
-		SolLunaRooms_Light4Timer++;
-		if (SolLunaRooms_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
+		gSolLunaRooms_Light4Timer++;
+		if (gSolLunaRooms_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
 		{
-			SolLunaRooms_Light4Timer = 0;
+			gSolLunaRooms_Light4Timer = 0;
 		}
 	}
 }
@@ -819,10 +819,10 @@ static void FieldScene_RunClosingSequence(void)
 	s32 i;
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
-	SolLunaRooms_Light1Timer = 0;
-	SolLunaRooms_Light2Timer = 0;
-	SolLunaRooms_Light3Timer = 0;
-	SolLunaRooms_Light4Timer = 0;
+	gSolLunaRooms_Light1Timer = 0;
+	gSolLunaRooms_Light2Timer = 0;
+	gSolLunaRooms_Light3Timer = 0;
+	gSolLunaRooms_Light4Timer = 0;
 	Engine_EventSetMessage(MsgSolWhatsHappening);
 	Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
 	Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
@@ -841,11 +841,11 @@ static void FieldScene_RunClosingSequence(void)
 		Engine_EventWait(12);
 	}
 	SetSolSanctumActorStep(32784, 6);
-	SolLunaRooms_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SolLunaRooms_FlashState = 0;
+	gSolLunaRooms_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	gSolLunaRooms_FlashState = 0;
 	Task_AddCallback(UpdateStatueLight1, 3200);
 	Task_AddCallback(UpdateStatueLight2, 3200);
 	Task_AddCallback(UpdateStatueLight3, 3200);

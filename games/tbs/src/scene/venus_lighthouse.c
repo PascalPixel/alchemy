@@ -138,7 +138,7 @@ static void RunStagedActorTransition(void)
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	direction_index = leader->directionAndKind >> 12;
-	packed_step = StagedActor_DirectionSteps[direction_index];
+	packed_step = gStagedActor_DirectionSteps[direction_index];
 	target_position[0] = leader->x.value + (packed_step & 0xffff0000);
 	target_position[1] = leader->y;
 	packed_step <<= 16;
@@ -147,7 +147,7 @@ static void RunStagedActorTransition(void)
 	if (actor == 0)
 		return;
 
-	packed_step = StagedActor_DirectionSteps[direction_index];
+	packed_step = gStagedActor_DirectionSteps[direction_index];
 	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
 	target_position[1] = actor->y;
 	packed_step <<= 16;
@@ -164,7 +164,7 @@ static void RunStagedActorTransition(void)
 		return;
 
 	actor->transitionMode = 2;
-	packed_step = StagedActor_DirectionSteps[direction_index];
+	packed_step = gStagedActor_DirectionSteps[direction_index];
 	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
 	target_position[1] = actor->y;
 	packed_step <<= 16;
@@ -524,7 +524,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 	Vector_AddPolarOffset(0x100000, m, &vec);
 #else
 	m = obj->facing >> 12;
-	step = StagedActor_DirectionSteps[m];
+	step = gStagedActor_DirectionSteps[m];
 	vec.x = obj->x.fixed + (step & 0xffff0000);
 	vec.y = obj->y.fixed;
 	step <<= 16;
@@ -539,7 +539,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 		vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
 		Vector_AddPolarOffset(0x200000, (obj->facing + 0x2000) & 0xc000, &vec);
 #else
-		step = StagedActor_DirectionSteps[m];
+		step = gStagedActor_DirectionSteps[m];
 		vec.x = obj->x.fixed + ((step & 0xffff0000) << 1);
 		vec.y = obj->y.fixed;
 		step <<= 17;
@@ -3244,7 +3244,7 @@ s32 gEffectScript2[] = {
 // 向き (16 方向) ごとの一歩: 上位 16 ビットが x、下位 16 ビットが z
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-u32 StagedActor_DirectionSteps[] = {
+u32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),

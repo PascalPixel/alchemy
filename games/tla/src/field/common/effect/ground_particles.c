@@ -37,7 +37,7 @@ s32 Func_08020190(s32 layer, s32 x, s32 z);
 #else
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
-extern const u8 Data_080f3798[];
+extern const u8 gData_080f3798[];
 
 // Starts the ground particles: 64 sprites placed at the leader's position on
 // the terrain, their tiles decoded into VRAM, the blend set, and
@@ -58,7 +58,7 @@ void Func_080d690c(void)
     particle = work->particles;
     Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
     words = Runtime_AllocateBlock(56, 0x400);
-    Resource_DecodeByteLzInRam(Data_080f3798, words);
+    Resource_DecodeByteLzInRam(gData_080f3798, words);
     work->entry = Resource_FindFreeEntry();
     work->tileBase = VramBlock_LoadCached(work->entry, 0x300, words);
     Runtime_ReleaseHeapBlock(56);

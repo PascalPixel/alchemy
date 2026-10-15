@@ -193,9 +193,9 @@ static void State_UpdateScrollRegistersWithPreset(void)
 
 	if (line == 227 || line <= 52)
 	{
-		if ((((u32)Engine_RandomNext() * 100) >> 16) < KolimaForestBend_ShakeChance)
+		if ((((u32)Engine_RandomNext() * 100) >> 16) < gKolimaForestBend_ShakeChance)
 		{
-			source = KolimaForestBend_ShakeScroll;
+			source = gKolimaForestBend_ShakeScroll;
 		}
 	}
 
@@ -212,11 +212,11 @@ static void KolimaForestBend_CaptureShakeScroll(void)
 	u16		  *p;
 
 	src = (const u32 *)((u8 *)gBgScroll + 4);
-	dst = KolimaForestBend_ShakeScroll;
+	dst = gKolimaForestBend_ShakeScroll;
 	*dst++ = *src++;
 	*dst++ = *src++;
 	*dst = *src;
-	p = (u16 *)KolimaForestBend_ShakeScroll;
+	p = (u16 *)gKolimaForestBend_ShakeScroll;
 	p[1] += 0xb0;
 	p[3] += 0xb0;
 	p[5] += 0xb0;
@@ -293,17 +293,17 @@ static void EV09_SEARCH(void)
 		Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 30);
 	}
 
-	KolimaForestBend_ShakeChance = 0;
+	gKolimaForestBend_ShakeChance = 0;
 	FieldScheduler_AddCallback(KolimaForestBend_CaptureShakeScroll, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
 	Engine_AudioPlayCue(231);
-	KolimaForestBend_ShakeChance = 0;
+	gKolimaForestBend_ShakeChance = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v3 = (KolimaForestBend_ShakeChance + 1);
-		KolimaForestBend_ShakeChance += 1;
+		v3 = (gKolimaForestBend_ShakeChance + 1);
+		gKolimaForestBend_ShakeChance += 1;
 	} while (v3 <= 100);
 	Engine_AudioPlayCue(0x121);
 	if (*gKolimaForestBendLayout == 0)
@@ -392,13 +392,13 @@ s32 KolimaForestBend_SetupBoard(void)
 	Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
-		Dma_Set(KolimaForestBend_DefaultRecords, gKolimaForestBendRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
+		Dma_Set(gKolimaForestBend_DefaultRecords, gKolimaForestBendRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
 			REG_DMA3);
 		*gKolimaForestBendReturned = 0;
 		*(*(u16 **)&gKolimaForestBendLayout) = 1;
 	}
 	KolimaForestBend_PlaceObjects(gKolimaForestBendRecords);
-	State_StampRecordCells(KolimaForestBend_DefaultRecords, 255);
+	State_StampRecordCells(gKolimaForestBend_DefaultRecords, 255);
 	Scene_RepaintBoardRecords();
 	Engine_ActorSetAnimation(9, 0);
 	Object_GetById(9)->motionFlags = 0;
@@ -575,14 +575,14 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 	actor->speed = 0x8000;
 	actor->acceleration = 0x3333;
 	Event_PlayCue(239);
-	Object_SetMode(actor, KolimaForestBend_PushAnimations[quarter]);
+	Object_SetMode(actor, gKolimaForestBend_PushAnimations[quarter]);
 	Engine_ObjectSetPosition(actor, x, 0, z);
 	Engine_EventWait(6);
 	Engine_ActorSetAnimation(0, 2);
 	ObjectDispatch_InitFromTable4WithArgument(
 		*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
 	Actor_SetSpeed(0, 0x4ccc, 0x3333);
-	Actor_SetDestinationOffset(0, KolimaForestBend_PushStepX[quarter], KolimaForestBend_PushStepZ[quarter]);
+	Actor_SetDestinationOffset(0, gKolimaForestBend_PushStepX[quarter], gKolimaForestBend_PushStepZ[quarter]);
 	Engine_EventWait(24);
 	Engine_ActorSetAnimation(0, 1);
 	Object_CommitPosition(actor);
@@ -596,17 +596,17 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_palette.h"
 
-u32 KolimaForestBend_DefaultRecords[] = {
+u32 gKolimaForestBend_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,
 	0, 0xd00cd, 0x1000d, 0, 0xa00cf, 18, 0, 0xffff,
 	0, 0,
 };
 
-u8 KolimaForestBend_PushAnimations[] = {2, 2, 3, 3};
+u8 gKolimaForestBend_PushAnimations[] = {2, 2, 3, 3};
 
-s8 KolimaForestBend_PushStepX[] = {8, 0, -8, 0};
+s8 gKolimaForestBend_PushStepX[] = {8, 0, -8, 0};
 
-s8 KolimaForestBend_PushStepZ[] = {0, 8, 0, -8};
+s8 gKolimaForestBend_PushStepZ[] = {0, 8, 0, -8};
 
 struct SceneEntrance gKolimaForestBendEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },

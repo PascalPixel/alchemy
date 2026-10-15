@@ -54,7 +54,7 @@ void *BattleFx_StartItemBreak(void *source)
                               ((struct MotionObject *)source)->y + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&gBattleFx_FragmentScript);
             fragment_scale = Random16() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;

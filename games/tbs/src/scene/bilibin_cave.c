@@ -434,23 +434,23 @@ static void StagedActor_PushActorAhead(void)
 	player = Object_GetById(ACTOR_PARTY_LEADER);
 	heading = player->facing >> 12;
 
-	tx = (player->x.part.pixel + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
-	tz = (player->z.part.pixel + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
+	tx = (player->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >> 4;
+	tz = (player->z.part.pixel + ((gStagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
 	target = SceneActor_FindActorAtCell(tx, tz);
 	if (target == 0)
 		return;
 
-	tx = (target->x.part.pixel + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
-	tz = (target->z.part.pixel + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
+	tx = (target->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >> 4;
+	tz = (target->z.part.pixel + ((gStagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
 	blocker = SceneActor_FindActorAtCell(tx, tz);
 	if (blocker != 0)
 		return;
 
 	target->terrainId = 2;
 
-	pos[0] = target->x.fixed + (StagedActor_DirectionSteps[heading] & 0xffff0000);
+	pos[0] = target->x.fixed + (gStagedActor_DirectionSteps[heading] & 0xffff0000);
 	pos[1] = target->y.fixed;
-	pos[2] = target->z.fixed + (StagedActor_DirectionSteps[heading] << 16);
+	pos[2] = target->z.fixed + (gStagedActor_DirectionSteps[heading] << 16);
 
 	if (FieldObject_CheckMovementCollision(target, pos) > 0)
 		return;
@@ -657,7 +657,7 @@ struct SceneEvent gBilibinCaveEvents1[] = {
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),

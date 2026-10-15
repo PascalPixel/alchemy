@@ -1,7 +1,7 @@
 	.section .rodata
 @ The Broken Seal's sSelectorTileOffsets, byte for byte
-	.global Shop_SelectorOffsets
-Shop_SelectorOffsets:
+	.global gShop_SelectorOffsets
+gShop_SelectorOffsets:
 	.2byte 0x00, 0x01, 0x02, 0x03
 	.2byte 0x20, 0x21, 0x22, 0x23
 	.2byte 0x40, 0x41, 0x42, 0x43
@@ -11,6 +11,6 @@ Shop_SelectorOffsets:
 	.2byte 0xc0, 0xc1, 0xc2, 0xc3
 	.2byte 0xe0, 0xe1
 @ Where each digit of a price is drawn in its sprite, ones first
-	.global Shop_GlyphRowOffsets
-Shop_GlyphRowOffsets:
+	.global gShop_GlyphRowOffsets
+gShop_GlyphRowOffsets:
 	.2byte 0xc0, 0x90, 0x80, 0x50, 0x40

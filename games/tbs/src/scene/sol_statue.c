@@ -117,7 +117,7 @@ static struct Ent		sSpriteRows[27];
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {
-	return (u8 *)SceneEventRuntime_ScriptData;
+	return (u8 *)gSceneEventRuntime_ScriptData;
 }
 
 s32 SceneEventRuntime_ReturnZero(void)
@@ -127,17 +127,17 @@ s32 SceneEventRuntime_ReturnZero(void)
 
 u8 *SceneEventRuntime_GetMessageData(void)
 {
-	return (u8 *)SceneEventRuntime_MessageData;
+	return (u8 *)gSceneEventRuntime_MessageData;
 }
 
 u8 *SceneEventRuntime_GetActorData(void)
 {
-	return (u8 *)SceneEventRuntime_ActorData;
+	return (u8 *)gSceneEventRuntime_ActorData;
 }
 
 u8 *SceneEventRuntime_GetEffectData(void)
 {
-	return (u8 *)SceneEventRuntime_EffectData;
+	return (u8 *)gSceneEventRuntime_EffectData;
 }
 
 static s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
@@ -622,7 +622,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 
 	if ((u32)(sy + 16) <= 175)
 	{
-		v = (SolStatue_ScrollPhase >> 10) - sx;
+		v = (gSolStatue_ScrollPhase >> 10) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -634,7 +634,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SolStatue_ScrollPhase >> 9) - sx;
+		v = (gSolStatue_ScrollPhase >> 9) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -646,7 +646,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SolStatue_ScrollPhase >> 8) - sx;
+		v = (gSolStatue_ScrollPhase >> 8) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -663,7 +663,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 			}
 		}
 	}
-	SolStatue_ScrollPhase += 0x80;
+	gSolStatue_ScrollPhase += 0x80;
 }
 
 static void SceneState_RunWhenSlotZeroFacingC000(void)
@@ -829,7 +829,7 @@ static void Scene_RunGuardSequenceC(void)
 
 	p = (s32 *)sSpriteRows;
 	buf = (s32)Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz((s32)SolStatue_SpriteRowsGfx, buf);
+	Resource_DecodeByteLz((s32)gSolStatue_SpriteRowsGfx, buf);
 	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
 	for (i = 0; i < 9; i++)
 	{
@@ -1550,7 +1550,7 @@ static void Event_SayThenWait(s32 speaker, s32 frames)
 	Engine_EventWait(frames);
 }
 
-struct SceneEntrance SceneEventRuntime_ScriptData[] = {
+struct SceneEntrance gSceneEventRuntime_ScriptData[] = {
 	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 647, 0, 470, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1562,7 +1562,7 @@ struct SceneEntrance SceneEventRuntime_ScriptData[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SceneEventRuntime_MessageData[] = {
+u32 gSceneEventRuntime_MessageData[] = {
 	SCENE_EXITS(12),
 	SCENE_EXIT(1, 11, 2),
 	SCENE_EXIT(2, 13, 1),
@@ -1574,7 +1574,7 @@ u32 SceneEventRuntime_MessageData[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement SceneEventRuntime_ActorData[] = {
+struct ScenePlacement gSceneEventRuntime_ActorData[] = {
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1604,7 +1604,7 @@ struct ScenePlacement SceneEventRuntime_ActorData[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent SceneEventRuntime_EffectData[] = {
+struct SceneEvent gSceneEventRuntime_EffectData[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunWhenSlotZeroFacingC000) },
@@ -1637,4 +1637,4 @@ struct SceneEvent SceneEventRuntime_EffectData[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 SolStatue_ScrollPhase = 0;
+s32 gSolStatue_ScrollPhase = 0;

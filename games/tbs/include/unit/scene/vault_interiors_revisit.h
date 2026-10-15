@@ -10,9 +10,9 @@ u8 *SceneData_GetMessageTable(void);
 u8 *SceneData_GetPreparedActors(void);
 u8 *SceneData_GetEffectTable(void);
 s32 FieldScene_InitSceneStateByStep(void);
-extern struct SceneEntrance Placement_Scripts[];
-extern u32 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
-extern struct SceneEvent Placement_Effects[];
+extern struct SceneEntrance gPlacement_Scripts[];
+extern u32 gPlacement_Messages[];
+extern struct ScenePlacement gPlacement_Actors[];
+extern struct SceneEvent gPlacement_Effects[];
 
 #endif

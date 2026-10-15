@@ -1,7 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 
-extern u32 Data_020007e4;
+extern u32 gData_020007e4;
 
 struct ObjectRuntime;
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);

@@ -1,6 +1,6 @@
 #include "gabomba_statue_chamber.h"
 
-extern struct GabombaStatueChamberObject *Data_02002058;
+extern struct GabombaStatueChamberObject *gData_02002058;
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void VramBlock_LoadCached(s32 entry, s32 size, void *source);
@@ -16,7 +16,7 @@ void Func_02000f00(void)
     s32 zero = 0;
     struct GabombaStatueChamberObject *object;
 
-    if ((Data_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
+    if ((gData_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
         struct FieldSprite *sprite = object->sprite;
         u8 *block;
 
@@ -44,7 +44,7 @@ void Func_02000f88(void)
     s32 zero = 0;
     struct GabombaStatueChamberObject *object;
 
-    if ((Data_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
+    if ((gData_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
         struct FieldSprite *sprite = object->sprite;
         u8 *block;
 

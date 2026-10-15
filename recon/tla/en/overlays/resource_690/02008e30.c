@@ -12,12 +12,12 @@ void Func_02000e30(void)
 {
     u32 value;
 
-    if (REG_VCOUNT < Data_02002ce0) {
-        value = Data_02002ce4;
+    if (REG_VCOUNT < gData_02002ce0) {
+        value = gData_02002ce4;
         REG_BG1HOFS = value;
         REG_BLDCNT = 0;
     } else {
-        value = Data_02002ce6;
+        value = gData_02002ce6;
         REG_BG1HOFS = value;
         REG_BLDALPHA = 0x100c;
         REG_BLDCNT = 0x3f42;

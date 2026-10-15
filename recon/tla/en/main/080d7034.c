@@ -42,7 +42,7 @@ struct SparkleFrame {
     u16 tile;
 };
 
-extern const struct SparkleFrame Data_080f0b7c[];
+extern const struct SparkleFrame gData_080f0b7c[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
@@ -88,7 +88,7 @@ void FieldEffect_UpdateSparkles(void)
             camera_z = camera[1];
             if (GameFlag_Test(0x166) != 0)
                 sparkle->timer++;
-            frame = (const u16 *)&Data_080f0b7c[sparkle->timer >> 1];
+            frame = (const u16 *)&gData_080f0b7c[sparkle->timer >> 1];
             a = Random16();
             b = Random16();
             x = ((sparkle->posX - camera_x) >> 16) + (((a & 1) + (b & 1)) >> 1);

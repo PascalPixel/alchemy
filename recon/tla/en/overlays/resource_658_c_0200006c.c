@@ -21,7 +21,7 @@ struct MadraPlacement {
     u16 y;
 };
 
-extern s32 Data_02003308[];
+extern s32 gData_02003308[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Battle_WaitMode0(s32 frames);
@@ -56,7 +56,7 @@ next:
 
         Func_02002c90(158);
         index--;
-        Func_02002ae8((const void *)Data_02003308[index * 2], ((u16 *)&Data_02003308[index * 2 + 1])[0], ((u16 *)&Data_02003308[index * 2 + 1])[1]);
+        Func_02002ae8((const void *)gData_02003308[index * 2], ((u16 *)&gData_02003308[index * 2 + 1])[0], ((u16 *)&gData_02003308[index * 2 + 1])[1]);
     }
     Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
     Object_SetModeById(gPartyState.currentOwner, 2);

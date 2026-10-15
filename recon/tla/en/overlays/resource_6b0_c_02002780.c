@@ -12,7 +12,7 @@
 extern struct FieldEffect *Object_GetById(s32 id);
 extern void Func_020032e0(struct FieldEffect *effect, s32 mode);
 extern void Func_020032e8(struct FieldEffect *effect, const s32 *script);
-extern const s32 *Data_02004428[];
+extern const s32 *gData_02004428[];
 extern void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
 extern void Object_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
 extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
@@ -35,7 +35,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Func_020032e8(effect, Data_02004428[flags & EFFECT_SCRIPT_MASK]);
+    Func_020032e8(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
     effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(effect, 0);
     effect->update = Effect_MoveLocal;
@@ -67,7 +67,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         s32 targetX;
         s32 count;
 
-        script = Data_02004428[flags & EFFECT_SCRIPT_MASK];
+        script = gData_02004428[flags & EFFECT_SCRIPT_MASK];
         targetX = options->targetScaleX;
         count = script[3];
         if (start != 0)

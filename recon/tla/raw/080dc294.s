@@ -128,4 +128,4 @@ BattleEffect_InitializeSharedScene:
 .L_080dc374:
 	.4byte gFrameCount
 .L_080dc378:
-	.4byte Data_080f3954
+	.4byte gData_080f3954

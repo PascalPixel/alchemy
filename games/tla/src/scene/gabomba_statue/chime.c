@@ -8,7 +8,7 @@ struct ClockWork {
     u8 mode;
 };
 
-extern u8 Data_020023c4[];
+extern u8 gData_020023c4[];
 void Func_02005854(s32 sound);
 s32 Math_Cosine(s32 angle);
 
@@ -33,7 +33,7 @@ void Func_02004f84(s32 time, u8 *text)
 
 s32 Func_02005020(s32 time)
 {
-    struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);
+    struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
     s32 second = time % 60;
     s32 volume = 512;
     u8 *ringing = &clock->ringing;

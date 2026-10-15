@@ -1,11 +1,11 @@
 /* Draft, differ 4 of 28 (2026-10-15), ported from The Broken Seal's EventTable_CopyRowHeader over
- * this game's Data_0810c3f4: the native copies output to r5 and loads the table between the two
+ * this game's gData_0810c3f4: the native copies output to r5 and loads the table between the two
  * halves of row * 33 (lsls r3, r0, #5; adds r5, r1, #0; ldr r1, =table; adds r3, r3, r0); here the
  * add comes right after the shift. rowtype.c and 0810a670 show the same order. Three minutes of
  * alchemy permute found nothing better. */
 #include "types.h"
 
-extern const s16 Data_0810c3f4[][33];
+extern const s16 gData_0810c3f4[][33];
 
 s32 Func_0810a6b8(s32 row_no, s16 *output)
 {
@@ -14,9 +14,9 @@ s32 Func_0810a6b8(s32 row_no, s16 *output)
     s32 count;
 
     count = 0;
-    if (Data_0810c3f4[row_no][0] != 0) {
+    if (gData_0810c3f4[row_no][0] != 0) {
         dst = output;
-        src = Data_0810c3f4[row_no];
+        src = gData_0810c3f4[row_no];
         do {
             *dst = *(const volatile s16 *)src;
             count++;

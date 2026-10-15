@@ -565,17 +565,17 @@ static s32 TolbiShipDeck_IdleTurn(struct FieldActor *actor)
 
 u8 *TolbiShipDeck_GetEntrances(void)
 {
-	return TolbiShipDeck_SceneTableA;
+	return gTolbiShipDeck_SceneTableA;
 }
 
 u8 *TolbiShipDeck_GetRegions(void)
 {
-	return TolbiShipDeck_SceneTableB;
+	return gTolbiShipDeck_SceneTableB;
 }
 
 u8 *TolbiShipDeck_GetExits(void)
 {
-	return TolbiShipDeck_SceneTableC;
+	return gTolbiShipDeck_SceneTableC;
 }
 
 u8 *TolbiShipDeck_GetPlacements(void)
@@ -641,7 +641,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 			record = Random_Next();
 			shown = ((u32)(90 * record) >> 16) + 60;
 			rec7->timer = shown;
-			Engine_ActorEnableActionCallback(21, TolbiShipDeck_RandomActorActions);
+			Engine_ActorEnableActionCallback(21, gTolbiShipDeck_RandomActorActions);
 		}
 		else
 		{
@@ -677,7 +677,7 @@ static void EV24_TALK(void)
 			record = Random_Next();
 			shown = ((u32)(90 * record) >> 16) + 60;
 			rec7->timer = shown;
-			Engine_ActorEnableActionCallback(24, TolbiShipDeck_RandomActorActions);
+			Engine_ActorEnableActionCallback(24, gTolbiShipDeck_RandomActorActions);
 		}
 		else
 		{
@@ -844,9 +844,9 @@ static void EV10_TOUCH(void)
 		Camera_SetSpeed(0xcccc, 0x1999);
 		Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
 		Actor_SetSpeed(23, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(23, TolbiShipDeck_PresentationActionsA);
+		Engine_ActorEnableActionCallback(23, gTolbiShipDeck_PresentationActionsA);
 		Actor_SetSpeed(22, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(22, TolbiShipDeck_PresentationActionsB);
+		Engine_ActorEnableActionCallback(22, gTolbiShipDeck_PresentationActionsB);
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(20, 182, 0x2f8);
 		Engine_ActorStartRepeatedMotion(20, 2);
@@ -1161,11 +1161,11 @@ static void TolbiShipDeck_PlaceRandomDeckActors(void)
 		Object_GetById(21)->facing = 0x5000;
 		actor = Object_GetById(21);
 		actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-		Engine_ActorEnableActionCallback(21, TolbiShipDeck_RandomActorActions);
+		Engine_ActorEnableActionCallback(21, gTolbiShipDeck_RandomActorActions);
 		Engine_ActorSetPosition(24, 0xf80000, 0x2a80000);
 		actor = Actor_Get(24);
 		actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-		Engine_ActorEnableActionCallback(24, TolbiShipDeck_RandomActorActions);
+		Engine_ActorEnableActionCallback(24, gTolbiShipDeck_RandomActorActions);
 		Engine_ActorSetPosition(22, 0, 0);
 	}
 	else
@@ -1203,7 +1203,7 @@ static void TolbiShipDeck_SetupRaisedCrewman(void)
 	u8				   bits;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(20, 0, 0);
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1218,7 +1218,7 @@ static void TolbiShipDeck_SetupRaisedCrewman(void)
 		record->collisionFlags = value | bits;
 	}
 	Actor_SetSpeed(22, 0x9999, 0x4ccc);
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_LeadActionsA);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsA);
 	{
 		struct FieldActor *record = Object_GetById(21);
 
@@ -1226,7 +1226,7 @@ static void TolbiShipDeck_SetupRaisedCrewman(void)
 		record->collisionFlags = bits;
 	}
 	Actor_SetSpeed(21, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(21, TolbiShipDeck_LeadActionsB);
+	Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
 	if (GameFlag_IsSet(0x109) != 0)
 	{
 		TolbiShipDeck_PlaceLeaderOnDeck();
@@ -1239,20 +1239,20 @@ static void TolbiShipDeck_SetupDeckCrewman(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(20, 0, 0);
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
 	Actor_SetPosition(22, 0x10c0000, 0x2a60000);
 	record = Object_GetById(22);
 	record->facing = 0;
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_LeadActionsC);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsC);
 	{
 		struct FieldActor *record = Object_GetById(21);
 		record->collisionFlags = 128 | record->collisionFlags;
 	}
 	Actor_SetSpeed(21, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(21, TolbiShipDeck_LeadActionsB);
+	Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
 	if (GameFlag_IsSet(0x109) != 0)
 	{
 		TolbiShipDeck_PlaceLeaderOnDeck();
@@ -1267,7 +1267,7 @@ static void TolbiShipDeck_PlaceDeckActors(void)
 
 	*(s32 *)((s32)gMapWork[0] + 236) = 0x410000;
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScriptE);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptE);
 	Engine_TaskWait(1);
 	Engine_ActorDestroy(24);
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -1330,7 +1330,7 @@ static void TolbiShipDeck_SetupVisibleLeaderDeparture(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1385,7 +1385,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 a0, s32 a1)
 static void FieldScene_RunActorTwentyDialogueSequence(void)
 {
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((s32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
@@ -1410,9 +1410,9 @@ static void FieldScene_RunShipDeckEventScript(void)
 	s32 v;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((s32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
-	Event_CallWithLastActiveObjectId((s32)TolbiShipDeck_CrewScriptB);
+	Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScriptB);
 	Engine_TaskWait(1);
 	Actor_SetPosition(21, 16252928, 47710208);
 	Engine_ActorSetChildValue(0, 15);
@@ -1439,7 +1439,7 @@ static void FieldScene_RunShipDeckEventScript(void)
 	Actor_SetSpeed(24, 157286, 78643);
 	Actor_SetSpeed(25, 157286, 78643);
 	Actor_SetSpeed(26, 157286, 78643);
-	v = (s32)TolbiShipDeck_DeckEventActions;
+	v = (s32)gTolbiShipDeck_DeckEventActions;
 	Engine_ActorEnableActionCallback(24, v);
 	Engine_ActorEnableActionCallback(25, v);
 	Engine_ActorEnableActionCallback(26, v);
@@ -1474,9 +1474,9 @@ static void TolbiShipDeck_RunDeckCrewScene(void)
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScriptC);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptC);
 	Engine_TaskWait(1);
 	Engine_ActorSetAnimation(31, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
@@ -1486,9 +1486,9 @@ static void TolbiShipDeck_RunDeckCrewScene(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(28), 1);
 	Engine_ActorSetSpriteFlags(Object_GetById(29), 1);
 	Actor_SetPosition(22, 0x1000000, 0x2800000);
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_CrewActionsD);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_CrewActionsD);
 	Actor_SetPosition(21, 0x10c0000, 0x2b40000);
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_CrewActionsD);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_CrewActionsD);
 	Actor_SetPosition(24, 0xf20000, 0x25c0000);
 	Actor_SetPosition(25, 0x1080000, 0x2580000);
 	Actor_SetPosition(26, 0xfe0000, 0x29c0000);
@@ -1497,10 +1497,10 @@ static void TolbiShipDeck_RunDeckCrewScene(void)
 	Object_GetById(25)->riseEnabled = 1;
 	Object_GetById(26)->riseEnabled = 0;
 	Object_GetById(27)->riseEnabled = 1;
-	Engine_ActorEnableActionCallback(24, TolbiShipDeck_CrewActionsB);
-	Engine_ActorEnableActionCallback(25, TolbiShipDeck_CrewActionsB);
-	Engine_ActorEnableActionCallback(26, TolbiShipDeck_CrewActionsA);
-	Engine_ActorEnableActionCallback(27, TolbiShipDeck_CrewActionsA);
+	Engine_ActorEnableActionCallback(24, gTolbiShipDeck_CrewActionsB);
+	Engine_ActorEnableActionCallback(25, gTolbiShipDeck_CrewActionsB);
+	Engine_ActorEnableActionCallback(26, gTolbiShipDeck_CrewActionsA);
+	Engine_ActorEnableActionCallback(27, gTolbiShipDeck_CrewActionsA);
 	Engine_ActorSetPosition(20, 0, 0);
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
@@ -1516,11 +1516,11 @@ static void TolbiShipDeck_RunDeckCrewScene(void)
 	Actor_SetDestination(0, 174, 0x26c);
 	Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
 	Engine_AudioPlayCue(146);
-	Engine_ActorEnableActionCallback(28, TolbiShipDeck_CrewActionsC);
-	Engine_ActorEnableActionCallback(29, TolbiShipDeck_CrewActionsC);
+	Engine_ActorEnableActionCallback(28, gTolbiShipDeck_CrewActionsC);
+	Engine_ActorEnableActionCallback(29, gTolbiShipDeck_CrewActionsC);
 	Engine_AudioPlayCue(240);
 	Actor_SetPosition(31, 0x860000, 0x2520000);
-	Engine_ActorEnableActionCallback(31, TolbiShipDeck_CrewActionsE);
+	Engine_ActorEnableActionCallback(31, gTolbiShipDeck_CrewActionsE);
 	Engine_EventWait(10);
 	Actor_SetPosition(30, 0x860000, 0x2480000);
 	Actor_SetSpeed(30, 0x40000, 0x20000);
@@ -1533,11 +1533,11 @@ static void TolbiShipDeck_RunDeckCrewScene(void)
 	FieldScene_CallPairWith10(30, 0xc000);
 	TolbiShipDeck_OpenFirstDoor();
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(30, TolbiShipDeck_SailorActions);
+	Engine_ActorEnableActionCallback(30, gTolbiShipDeck_SailorActions);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(28, TolbiShipDeck_SailorActions);
+	Engine_ActorEnableActionCallback(28, gTolbiShipDeck_SailorActions);
 	Engine_EventWait(10);
-	Object_SetActionCallbackAndRefreshById(29, TolbiShipDeck_SailorActions);
+	Object_SetActionCallbackAndRefreshById(29, gTolbiShipDeck_SailorActions);
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(147);
 	Engine_EventCloseScreen();
@@ -1565,9 +1565,9 @@ static void FieldScene_RunActorSequence(void)
 	Engine_ActorSetChildValue(0, 15);
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScriptD);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptD);
 	Engine_TaskWait(1);
 	Engine_ActorSetPosition(22, 0xb00000, 0x2b80000);
 	record = Object_GetById(22);
@@ -1586,12 +1586,12 @@ static void FieldScene_RunActorSequence(void)
 	Object_GetById(26)->riseEnabled = 0;
 	Object_GetById(27)->riseEnabled = 2;
 	Engine_ActorSetPosition(20, 0, 0);
-	Engine_ActorEnableActionCallback(24, TolbiShipDeck_DeckActionsA);
-	Engine_ActorEnableActionCallback(25, TolbiShipDeck_DeckActionsA);
-	Engine_ActorEnableActionCallback(26, TolbiShipDeck_DeckActionsB);
-	Engine_ActorEnableActionCallback(27, TolbiShipDeck_DeckActionsB);
-	Engine_ActorEnableActionCallback(28, TolbiShipDeck_DeckActionsC);
-	Engine_ActorEnableActionCallback(29, TolbiShipDeck_DeckActionsC);
+	Engine_ActorEnableActionCallback(24, gTolbiShipDeck_DeckActionsA);
+	Engine_ActorEnableActionCallback(25, gTolbiShipDeck_DeckActionsA);
+	Engine_ActorEnableActionCallback(26, gTolbiShipDeck_DeckActionsB);
+	Engine_ActorEnableActionCallback(27, gTolbiShipDeck_DeckActionsB);
+	Engine_ActorEnableActionCallback(28, gTolbiShipDeck_DeckActionsC);
+	Engine_ActorEnableActionCallback(29, gTolbiShipDeck_DeckActionsC);
 	Engine_ActorSetChildValue(24, 3);
 	Engine_ActorSetChildValue(25, 3);
 	Engine_ActorSetChildValue(26, 3);
@@ -1638,7 +1638,7 @@ static void FieldScene_RunActorSequence(void)
 	Engine_ActorStop(28);
 	Engine_TaskWait(1);
 	Actor_SetSpeed(28, 0x19999, 0xcccc);
-	sailor_actions = TolbiShipDeck_SailorActions;
+	sailor_actions = gTolbiShipDeck_SailorActions;
 	Engine_ActorEnableActionCallback(28, sailor_actions);
 	FieldScene_CallPairWith10(30, 0xd000);
 	TolbiShipDeck_OpenFirstDoor();
@@ -1670,7 +1670,7 @@ static void TolbiShipDeck_RunJumpScene(void)
 	struct FieldActor *actor;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((s32)TolbiShipDeck_CrewScriptE);
+	Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScriptE);
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(25, 1);
 	Engine_TaskWait(1);
@@ -1780,20 +1780,20 @@ static void FieldScene_ConfigureLeadActors(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(20, 0xb60000, 0x26a0000);
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
 	Actor_SetPosition(22, 0x10c0000, 0x2a60000);
 	record = Object_GetById(22);
 	record->facing = 0;
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_LeadActionsC);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsC);
 	{
 		struct FieldActor *record = Object_GetById(21);
 		record->collisionFlags = 128 | record->collisionFlags;
 	}
 	Actor_SetSpeed(21, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(21, TolbiShipDeck_LeadActionsB);
+	Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -1835,7 +1835,7 @@ static void FieldScene_ConfigureThreeActors(void)
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Event_CallWithLastActiveObjectId((u32)TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(20, 0xc40000, 0x1f60000);
 	record = Object_GetById(20);
@@ -2068,7 +2068,7 @@ static void FieldScene_RunPartyRosterScene(void)
 		}
 
 		FieldScene_RunStepThen10(actor);
-		Engine_ActorEnableActionCallback(actor, TolbiShipDeck_RosterActions);
+		Engine_ActorEnableActionCallback(actor, gTolbiShipDeck_RosterActions);
 	}
 
 	Object_RefreshSelectorById(actor);
@@ -2173,7 +2173,7 @@ static void TolbiShipDeck_RockDeck(void)
 	}
 }
 
-s32 FuneKanpan_SlotDepth[8];
+s32 gTolbiShipDeck_SlotDepth[8];
 
 static void SceneEffect_InitSlotsEightToNineteen(void)
 {
@@ -2189,10 +2189,10 @@ static void SceneEffect_InitSlotsEightToNineteen(void)
 	OverlayObject_ActivateSlotWithMode3(13);
 	OverlayObject_ActivateSlotWithMode3(14);
 	OverlayObject_ActivateSlotWithMode3(15);
-	FuneKanpan_SlotDepth[0] = Object_GetById(12)->z.fixed;
-	FuneKanpan_SlotDepth[1] = Object_GetById(13)->z.fixed;
-	FuneKanpan_SlotDepth[2] = Object_GetById(14)->z.fixed;
-	FuneKanpan_SlotDepth[3] = Object_GetById(15)->z.fixed;
+	gTolbiShipDeck_SlotDepth[0] = Object_GetById(12)->z.fixed;
+	gTolbiShipDeck_SlotDepth[1] = Object_GetById(13)->z.fixed;
+	gTolbiShipDeck_SlotDepth[2] = Object_GetById(14)->z.fixed;
+	gTolbiShipDeck_SlotDepth[3] = Object_GetById(15)->z.fixed;
 	OverlayObject_ActivateSlotWithMode3(16);
 	OverlayObject_ActivateSlotWithMode3(17);
 	OverlayObject_ActivateSlotWithMode3(18);
@@ -2201,10 +2201,10 @@ static void SceneEffect_InitSlotsEightToNineteen(void)
 	Object_GetById(17)->scaleX = 0xffff0000;
 	Object_GetById(18)->scaleX = 0xffff0000;
 	Object_GetById(19)->scaleX = 0xffff0000;
-	FuneKanpan_SlotDepth[4] = Object_GetById(16)->z.fixed;
-	FuneKanpan_SlotDepth[5] = Object_GetById(17)->z.fixed;
-	FuneKanpan_SlotDepth[6] = Object_GetById(18)->z.fixed;
-	FuneKanpan_SlotDepth[7] = Object_GetById(19)->z.fixed;
+	gTolbiShipDeck_SlotDepth[4] = Object_GetById(16)->z.fixed;
+	gTolbiShipDeck_SlotDepth[5] = Object_GetById(17)->z.fixed;
+	gTolbiShipDeck_SlotDepth[6] = Object_GetById(18)->z.fixed;
+	gTolbiShipDeck_SlotDepth[7] = Object_GetById(19)->z.fixed;
 	TolbiShipDeck_ChooseSlotModes();
 }
 
@@ -2225,7 +2225,7 @@ static void OverlayObject_ActivateSlotWithMode3(s32 a)
 	}
 }
 
-u32 FuneKanpan_SlotMode[8];
+u32 gTolbiShipDeck_SlotMode[8];
 
 struct SlotSprite
 {
@@ -2236,7 +2236,7 @@ struct SlotSprite
 
 static void TolbiShipDeck_ChooseSlotModes(void)
 {
-	u32 *mode = FuneKanpan_SlotMode;
+	u32 *mode = gTolbiShipDeck_SlotMode;
 	u32	 i;
 
 	for (i = 0; i <= 3; i++)
@@ -2248,25 +2248,25 @@ static void TolbiShipDeck_ChooseSlotModes(void)
 		mode++;
 	}
 	if (SceneState_FindFirstSetFlagOfGroup(0) != 0)
-		FuneKanpan_SlotMode[0] = SceneData_SelectTableEntryByFlagGroup(0);
+		gTolbiShipDeck_SlotMode[0] = SceneData_SelectTableEntryByFlagGroup(0);
 	else
-		FuneKanpan_SlotMode[0] = 3;
+		gTolbiShipDeck_SlotMode[0] = 3;
 	if (SceneState_FindFirstSetFlagOfGroup(2) != 0)
-		FuneKanpan_SlotMode[1] = SceneData_SelectTableEntryByFlagGroup(2);
+		gTolbiShipDeck_SlotMode[1] = SceneData_SelectTableEntryByFlagGroup(2);
 	else
-		FuneKanpan_SlotMode[1] = 3;
-	FuneKanpan_SlotMode[2] = 3;
-	FuneKanpan_SlotMode[3] = 3;
+		gTolbiShipDeck_SlotMode[1] = 3;
+	gTolbiShipDeck_SlotMode[2] = 3;
+	gTolbiShipDeck_SlotMode[3] = 3;
 	if (SceneState_FindFirstSetFlagOfGroup(1) != 0)
-		FuneKanpan_SlotMode[4] = SceneData_SelectTableEntryByFlagGroup(1);
+		gTolbiShipDeck_SlotMode[4] = SceneData_SelectTableEntryByFlagGroup(1);
 	else
-		FuneKanpan_SlotMode[4] = 3;
+		gTolbiShipDeck_SlotMode[4] = 3;
 	if (SceneState_FindFirstSetFlagOfGroup(3) != 0)
-		FuneKanpan_SlotMode[5] = SceneData_SelectTableEntryByFlagGroup(3);
+		gTolbiShipDeck_SlotMode[5] = SceneData_SelectTableEntryByFlagGroup(3);
 	else
-		FuneKanpan_SlotMode[5] = 3;
-	FuneKanpan_SlotMode[6] = 3;
-	FuneKanpan_SlotMode[7] = 3;
+		gTolbiShipDeck_SlotMode[5] = 3;
+	gTolbiShipDeck_SlotMode[6] = 3;
+	gTolbiShipDeck_SlotMode[7] = 3;
 }
 
 static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection)
@@ -2292,7 +2292,7 @@ static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection)
 	for (i = 0; i < 9; i++)
 	{
 		if (Engine_GameFlagIsSet(base + i) != 0)
-			return TolbiShipDeck_FlagGroupEntries[i];
+			return gTolbiShipDeck_FlagGroupEntries[i];
 	}
 	return 0;
 }
@@ -2351,7 +2351,7 @@ static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 
 	if ((flags & 2) == 0)
 	{
-		switch (FuneKanpan_SlotMode[slot])
+		switch (gTolbiShipDeck_SlotMode[slot])
 		{
 		case 1:
 			sSlotValue[slot] = sSlotPhase[0];
@@ -2375,13 +2375,13 @@ static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 	{
 		sine = Engine_MathSin(sSlotValue[slot]);
 		sprite->tilt = Engine_MathSin(sSlotValue[slot] + 0x8000) >> 5;
-		actor->z.fixed = FuneKanpan_SlotDepth[slot] - (sine << 2) - (sine << 1);
+		actor->z.fixed = gTolbiShipDeck_SlotDepth[slot] - (sine << 2) - (sine << 1);
 	}
 	else
 	{
 		sine = Engine_MathSin(sSlotValue[slot] + 0x8000);
 		sprite->tilt = Engine_MathSin(sSlotValue[slot]) >> 5;
-		actor->z.fixed = FuneKanpan_SlotDepth[slot] + (sine << 2) + (sine << 1);
+		actor->z.fixed = gTolbiShipDeck_SlotDepth[slot] + (sine << 2) + (sine << 1);
 	}
 }
 
@@ -2400,14 +2400,14 @@ static void SceneState_InitActorSlots8To19(void)
 	OverlayObject_ActivateSlotWithMode3(13);
 	OverlayObject_ActivateSlotWithMode3(14);
 	OverlayObject_ActivateSlotWithMode3(15);
-	FuneKanpan_SlotMode[0] = 0;
-	FuneKanpan_SlotMode[1] = 0;
-	FuneKanpan_SlotMode[2] = 0;
-	FuneKanpan_SlotMode[3] = 0;
-	FuneKanpan_SlotDepth[0] = Object_GetById(8)->z.fixed;
-	FuneKanpan_SlotDepth[1] = Object_GetById(13)->z.fixed;
-	FuneKanpan_SlotDepth[2] = Object_GetById(14)->z.fixed;
-	FuneKanpan_SlotDepth[3] = Object_GetById(15)->z.fixed;
+	gTolbiShipDeck_SlotMode[0] = 0;
+	gTolbiShipDeck_SlotMode[1] = 0;
+	gTolbiShipDeck_SlotMode[2] = 0;
+	gTolbiShipDeck_SlotMode[3] = 0;
+	gTolbiShipDeck_SlotDepth[0] = Object_GetById(8)->z.fixed;
+	gTolbiShipDeck_SlotDepth[1] = Object_GetById(13)->z.fixed;
+	gTolbiShipDeck_SlotDepth[2] = Object_GetById(14)->z.fixed;
+	gTolbiShipDeck_SlotDepth[3] = Object_GetById(15)->z.fixed;
 	OverlayObject_ActivateSlotWithMode3(16);
 	OverlayObject_ActivateSlotWithMode3(17);
 	OverlayObject_ActivateSlotWithMode3(18);
@@ -2416,14 +2416,14 @@ static void SceneState_InitActorSlots8To19(void)
 	Object_GetById(17)->scaleX = 0xffff0000;
 	Object_GetById(18)->scaleX = 0xffff0000;
 	Object_GetById(19)->scaleX = 0xffff0000;
-	FuneKanpan_SlotMode[4] = 0;
-	FuneKanpan_SlotMode[5] = 0;
-	FuneKanpan_SlotMode[6] = 0;
-	FuneKanpan_SlotMode[7] = 0;
-	FuneKanpan_SlotDepth[4] = Object_GetById(16)->z.fixed;
-	FuneKanpan_SlotDepth[5] = Object_GetById(17)->z.fixed;
-	FuneKanpan_SlotDepth[6] = Object_GetById(18)->z.fixed;
-	FuneKanpan_SlotDepth[7] = Object_GetById(19)->z.fixed;
+	gTolbiShipDeck_SlotMode[4] = 0;
+	gTolbiShipDeck_SlotMode[5] = 0;
+	gTolbiShipDeck_SlotMode[6] = 0;
+	gTolbiShipDeck_SlotMode[7] = 0;
+	gTolbiShipDeck_SlotDepth[4] = Object_GetById(16)->z.fixed;
+	gTolbiShipDeck_SlotDepth[5] = Object_GetById(17)->z.fixed;
+	gTolbiShipDeck_SlotDepth[6] = Object_GetById(18)->z.fixed;
+	gTolbiShipDeck_SlotDepth[7] = Object_GetById(19)->z.fixed;
 	actor = Object_GetById(0);
 	if (actor != NULL)
 		Engine_ActorSetPosition(8, actor->x.fixed, actor->z.fixed);
@@ -2490,7 +2490,7 @@ static void TolbiShipDeck_ArriveAtTolbi(void)
 	Engine_EventBegin();
 	sLayerScroll[0] = 0x40000;
 	sLayerSpeed[0] = -0x8000;
-	Event_CallWithLastActiveObjectId(TolbiShipDeck_CrewScript);
+	Event_CallWithLastActiveObjectId(gTolbiShipDeck_CrewScript);
 	Engine_TaskWait(1);
 	Actor_SetPosition(21, 0xb60000, 0x26a0000);
 	Actor_Get(21)->facing = 0xc000;
@@ -2658,7 +2658,7 @@ static void FieldScene_RunThreeActorEncounter(void)
 static void TolbiShipDeck_RunIsaacTalk(void)
 {
 	Engine_EventBegin();
-	Event_CallWithLastActiveObjectId(TolbiShipDeck_ClosingCrewScript);
+	Event_CallWithLastActiveObjectId(gTolbiShipDeck_ClosingCrewScript);
 	Engine_TaskWait(1);
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -2718,12 +2718,12 @@ static void TolbiShipDeck_RunIsaacTalk(void)
 	Engine_ActorRunRepeatedMotion(22, 1);
 	FieldScene_RunStepThen10(22);
 	Actor_SetSpeed(22, 0x19999, 0xcccc);
-	Engine_ActorEnableActionCallback(22, TolbiShipDeck_LeaveActions);
+	Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeaveActions);
 	Actor_SetSpeed(21, 0x19999, 0xcccc);
 	Actor_WalkToAndWait(21, 168, 0x278);
-	Engine_ActorEnableActionCallback(21, TolbiShipDeck_LeaveActions);
+	Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeaveActions);
 	Engine_EventWait(80);
-	Engine_ActorEnableActionCallback(26, TolbiShipDeck_LeaveActions);
+	Engine_ActorEnableActionCallback(26, gTolbiShipDeck_LeaveActions);
 	Engine_EventWait(40);
 	FieldScene_CallPairWith10(20, 0x8000);
 	FieldScene_RunStepThen10(0x2014);
@@ -2748,7 +2748,7 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void)
 	Engine_TaskWait(1);
 }
 
-const s32 TolbiShipDeck_PresentationActionsA[] = {
+const s32 gTolbiShipDeck_PresentationActionsA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(202), 0, PIXELS(600)),
 	SC_SYNC,
@@ -2757,7 +2757,7 @@ const s32 TolbiShipDeck_PresentationActionsA[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_PresentationActionsB[] = {
+const s32 gTolbiShipDeck_PresentationActionsB[] = {
 	SC_WAIT(20),
 	SC_ARG(2),
 	SC_MOVE(PIXELS(162), 0, PIXELS(666)),
@@ -2767,12 +2767,12 @@ const s32 TolbiShipDeck_PresentationActionsB[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_RandomActorActions[] = {
+const s32 gTolbiShipDeck_RandomActorActions[] = {
 	SC_CALL(SceneActor_UpdateScalePulse),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 TolbiShipDeck_DeckEventActions[] = {
+const s32 gTolbiShipDeck_DeckEventActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(140), 0, PIXELS(586)),
 	SC_SYNC,
@@ -2791,7 +2791,7 @@ const s32 TolbiShipDeck_DeckEventActions[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_LeadActionsA[] = {
+const s32 gTolbiShipDeck_LeadActionsA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(228), 0, PIXELS(521)),
 	SC_SYNC,
@@ -2811,7 +2811,7 @@ const s32 TolbiShipDeck_LeadActionsA[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 TolbiShipDeck_LeadActionsB[] = {
+const s32 gTolbiShipDeck_LeadActionsB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(672)),
 	SC_SYNC,
@@ -2847,7 +2847,7 @@ const s32 TolbiShipDeck_LeadActionsB[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 TolbiShipDeck_CrewActionsA[] = {
+const s32 gTolbiShipDeck_CrewActionsA[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(0x23, 0),
 	SC_SET(0x24, 0),
@@ -2856,7 +2856,7 @@ const s32 TolbiShipDeck_CrewActionsA[] = {
 	SC_CALL(TolbiShipDeck_UpdateHoverGullA),
 };
 
-const s32 TolbiShipDeck_CrewActionsB[] = {
+const s32 gTolbiShipDeck_CrewActionsB[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(0x23, 0),
 	SC_SET(0x24, 0),
@@ -2865,17 +2865,17 @@ const s32 TolbiShipDeck_CrewActionsB[] = {
 	SC_CALL(TolbiShipDeck_UpdateHoverGullB),
 };
 
-const s32 TolbiShipDeck_CrewActionsC[] = {
+const s32 gTolbiShipDeck_CrewActionsC[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(0x24, 0),
 	SC_CALL(SceneActor_OscillateHeightBetweenLimits),
 };
 
-const s32 TolbiShipDeck_CrewActionsD[] = {
+const s32 gTolbiShipDeck_CrewActionsD[] = {
 	SC_CALL(SceneActor_SetFacingFromSample),
 };
 
-const s32 TolbiShipDeck_CrewActionsE[] = {
+const s32 gTolbiShipDeck_CrewActionsE[] = {
 	SC_ARG(1),
 	SC_SET(SW_SCALE_X, 0xb333),
 	SC_SET(SW_SCALE_Y, 0xb333),
@@ -2890,28 +2890,28 @@ const s32 TolbiShipDeck_CrewActionsE[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_SailorActions[] = {
+const s32 gTolbiShipDeck_SailorActions[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(586)),
 	SC_SYNC,
 	SC_POS(0, 0, 0),
 	SC_END,
 };
 
-const s32 TolbiShipDeck_DeckActionsB[] = {
+const s32 gTolbiShipDeck_DeckActionsB[] = {
 	SC_SET(0x23, 0),
 	SC_CALL(TolbiShipDeck_UpdateFlyByForActor21),
 };
 
-const s32 TolbiShipDeck_DeckActionsA[] = {
+const s32 gTolbiShipDeck_DeckActionsA[] = {
 	SC_SET(0x23, 0),
 	SC_CALL(TolbiShipDeck_UpdateFlyByForActor22),
 };
 
-const s32 TolbiShipDeck_DeckActionsC[] = {
+const s32 gTolbiShipDeck_DeckActionsC[] = {
 	SC_CALL(TolbiShipDeck_RandomlyStartActorHop),
 };
 
-const s32 TolbiShipDeck_RosterActions[] = {
+const s32 gTolbiShipDeck_RosterActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(82), 0, PIXELS(656)),
 	SC_SYNC,
@@ -2920,7 +2920,7 @@ const s32 TolbiShipDeck_RosterActions[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_LeaveActions[] = {
+const s32 gTolbiShipDeck_LeaveActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(186), 0, PIXELS(604)),
 	SC_SYNC,
@@ -2934,12 +2934,12 @@ const s32 TolbiShipDeck_LeaveActions[] = {
 	SC_END,
 };
 
-const s32 TolbiShipDeck_LeadActionsC[] = {
+const s32 gTolbiShipDeck_LeadActionsC[] = {
 	SC_SET(0x27, 0),
 	SC_CALL(TolbiShipDeck_IdleTurn),
 };
 
-const struct SceneEntrance TolbiShipDeck_SceneTableA[] = {
+const struct SceneEntrance gTolbiShipDeck_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 179, 0, 653, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 216, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 232, 0, 664, FACING_EAST, 0, -1, -1, -1, -1, 0 },
@@ -2960,12 +2960,12 @@ const struct SceneEntrance TolbiShipDeck_SceneTableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-const s16 TolbiShipDeck_SceneTableB[] = {
+const s16 gTolbiShipDeck_SceneTableB[] = {
 	208, 24, 634, 224, 40, 650, -1, 5,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-const u32 TolbiShipDeck_SceneTableC[] = {
+const u32 gTolbiShipDeck_SceneTableC[] = {
 	SCENE_EXITS(109),
 	SCENE_EXIT(1, 111, 1),
 	SCENE_EXIT(2, 111, 3),
@@ -3115,7 +3115,7 @@ const struct ScenePlacement gTolbiShipDeckPlacementsFlag928[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_CrewScript[] = {
+const struct ScenePlacement gTolbiShipDeck_CrewScript[] = {
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(192), 0, PIXELS(512), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0x43, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3127,13 +3127,13 @@ const struct ScenePlacement TolbiShipDeck_CrewScript[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_ClosingCrewScript[] = {
+const struct ScenePlacement gTolbiShipDeck_ClosingCrewScript[] = {
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_CrewScriptB[] = {
+const struct ScenePlacement gTolbiShipDeck_CrewScriptB[] = {
 	{ 0xbd, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, 7,
@@ -3143,7 +3143,7 @@ const struct ScenePlacement TolbiShipDeck_CrewScriptB[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_CrewScriptC[] = {
+const struct ScenePlacement gTolbiShipDeck_CrewScriptC[] = {
 	{ 0xc4, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xc4, CONDITION_ALWAYS, 7,
@@ -3163,7 +3163,7 @@ const struct ScenePlacement TolbiShipDeck_CrewScriptC[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_CrewScriptD[] = {
+const struct ScenePlacement gTolbiShipDeck_CrewScriptD[] = {
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3183,7 +3183,7 @@ const struct ScenePlacement TolbiShipDeck_CrewScriptD[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement TolbiShipDeck_CrewScriptE[] = {
+const struct ScenePlacement gTolbiShipDeck_CrewScriptE[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3363,7 +3363,7 @@ const struct SceneEvent gTolbiShipDeckEventsFlag8a0[] = {
 	{ SCENE_EVENTS_END },
 };
 
-const s32 TolbiShipDeck_FlagGroupEntries[] = {
+const s32 gTolbiShipDeck_FlagGroupEntries[] = {
 	SC_MOVE(0x2, 0x3, 0x1),
 	SC_MOVE_BY(0x4, 0x2, 0x1),
 	SC_SYNC,

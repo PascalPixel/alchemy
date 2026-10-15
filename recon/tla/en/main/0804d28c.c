@@ -1,7 +1,7 @@
 #include "types.h"
 #include "resource.h"
 #include "system.h"
-extern u8 Data_03001f38[];
+extern u8 gData_03001f38[];
 
 struct MenuSelectionState {
     u8 padding000[0x78];
@@ -15,7 +15,7 @@ struct MenuSelectionState {
 };
 
 extern struct MenuSelectionState *gMenuSelectWork;
-extern u8 Menu_SelectionStepDelays[];
+extern u8 gMenu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 
 void RenderOutput_PrepareForRedraw(void *work);
@@ -54,7 +54,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         UiText_DrawCharacterAtOffset(resourceId, state->work, 0, 0);
 
         cur = state->selection;
-        table = Menu_SelectionStepDelays;
+        table = gMenu_SelectionStepDelays;
         diff = cur - goal;
         dist = AbsoluteDifference(diff, cur, goal);
         WaitFrames(table[dist] + delay);

@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02005944[];
-extern const u8 Data_02005d7c[];
+extern const u8 gData_02005944[];
+extern const u8 gData_02005d7c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *UnitGet(s32 owner);
 void Func_0200533c(void);

@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-extern s16 Data_02001c30[];
+extern s16 gData_02001c30[];
 
 // 4 フレームごとにパレット 7 と 8 の色 2-14 を 1 つずつ送り、色 0x7f を表から選ぶ
 s32 Func_02000630(void)
@@ -33,7 +33,7 @@ s32 Func_02000630(void)
 		*(volatile u16 *)0x05000102 = saved;
 	}
 	{
-		s16 color = Data_02001c30[(*Ram_FrameCount >> 2) % 12];
+		s16 color = gData_02001c30[(*Ram_FrameCount >> 2) % 12];
 
 		*(volatile u16 *)0x050000fe = color;
 		return color;

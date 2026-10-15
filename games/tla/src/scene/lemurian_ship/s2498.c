@@ -8,7 +8,7 @@ void Func_0200245c(s32 actor);
 void Func_02002498(void)
 {
     Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-    Func_02002dc8(Data_02003010);
+    Func_02002dc8(gData_02003010);
     Object_GetById(8)->priorityFlags |= 32;
     ObjectMotion_SetActionVariant(8, 1);
     if (LemurianShip_FlagCheck(0x938))
@@ -83,7 +83,7 @@ void Func_02002498(void)
     {
         Func_0200245c(15);
     }
-    Func_02002db8(Data_02003034);
+    Func_02002db8(gData_02003034);
     LemurianShip_TaskAdd(Func_0200143c, 0x480);
     if (LemurianShip_FlagCheck(0x228))
     {

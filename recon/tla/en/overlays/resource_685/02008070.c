@@ -2,18 +2,18 @@
 #include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
 
-extern u32 Data_0200375c[];
-extern u32 Data_020037a4[];
-extern u32 Data_0200381c[];
-extern u32 Data_02003864[];
-extern u32 Data_020038ac[];
-extern u32 Data_0200390c[];
-extern u32 Data_02003984[];
-extern u32 Data_020039cc[];
-extern u32 Data_02003aec[];
-extern u32 Data_02003b94[];
-extern u32 Data_02003c0c[];
-extern u32 Data_02003c84[];
+extern u32 gData_0200375c[];
+extern u32 gData_020037a4[];
+extern u32 gData_0200381c[];
+extern u32 gData_02003864[];
+extern u32 gData_020038ac[];
+extern u32 gData_0200390c[];
+extern u32 gData_02003984[];
+extern u32 gData_020039cc[];
+extern u32 gData_02003aec[];
+extern u32 gData_02003b94[];
+extern u32 gData_02003c0c[];
+extern u32 gData_02003c84[];
 
 struct EventTransition {
     u8 unk000[0x1ac];

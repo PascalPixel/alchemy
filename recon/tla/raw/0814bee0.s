@@ -261,7 +261,7 @@ Func_0814bee0:
 .L_0814c0e8:
 	.4byte 0x00000134
 .L_0814c0ec:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814c0f0:
 	.4byte 0x000000c5
 .L_0814c0f4:
@@ -1324,7 +1324,7 @@ Func_0814bee0:
 .L_0814c8f4:
 	.4byte 0x000000c1
 .L_0814c8f8:
-	.4byte Data_02014000
+	.4byte gData_02014000
 .L_0814c8fc:
 	.4byte 0xffffff00
 .L_0814c900:

@@ -20,7 +20,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+    Dma_Set((const void *)gUi_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
     /* FAKEMATCH: the do-while keeps the backdrop store's value before its address. */
     do {
@@ -53,13 +53,13 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     }
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
+    Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)

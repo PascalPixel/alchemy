@@ -238,14 +238,14 @@ void Func_02000c24(void)
     s32 z;
     struct ObjectRuntime *object;
 
-    Data_02003458--;
+    gData_02003458--;
     a = Random16Far() * 32;
     x = Random16Far() * 16 + a + 0x12c0000;
     z = Random16Far() * 16 + a + 0x1040000;
     object = Func_02002808(0x11d, x, 0, z);
-    Func_02002800(object, Data_020029c8);
+    Func_02002800(object, gData_020029c8);
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Animation_SetStateFlags(object, 1);
-    if (Data_02003458 == 0)
+    if (gData_02003458 == 0)
         Scheduler_RemoveCallbackFar(Func_02000c24);
 }

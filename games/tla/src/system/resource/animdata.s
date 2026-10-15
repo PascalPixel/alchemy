@@ -1,13 +1,13 @@
 	.section .rodata
-@ The Broken Seal's Object_ShadowTiles, byte for byte
-	.global Data_0802e89c
-Data_0802e89c:
+@ The Broken Seal's gObject_ShadowTiles, byte for byte
+	.global gData_0802e89c
+gData_0802e89c:
 	.incbin "games/common/src/system/resource/shadow.8bpp"
 
 @ {sprite resource, metadata number}: ResourceSlot_Load finds the number it
 @ is given and decodes that resource. A zero number ends the table.
-	.global ResourceSlot_NumberTable
-ResourceSlot_NumberTable:
+	.global gResourceSlot_NumberTable
+gResourceSlot_NumberTable:
 	.2byte ResourceId_BlueDevilSprites, 526
 	.2byte ResourceId_PinkBruteSprites, 527
 	.2byte ResourceId_ClubTrollSprites, 528

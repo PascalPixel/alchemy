@@ -10,7 +10,7 @@
 s32 Math_Cosine(s32 angle);
 void Func_02005a2c(struct KibomboObject *object, const void *script);
 void Effect_AdvanceMotion(void);
-extern u32 Data_02005ca4[];
+extern u32 gData_02005ca4[];
 
 void Func_02002f34(void)
 {
@@ -31,7 +31,7 @@ void Func_02002f34(void)
             object->motionFlags = 0;
             ObjectDispatch_SetSingleChildFlags(object, 0);
             Func_02005a24(object, 2);
-            Func_02005a2c(object, Data_02005ca4);
+            Func_02005a2c(object, gData_02005ca4);
             object->sprite->priority = 1;
             object->field64 = 0;
             *(s32 *)&object->unk2c[4] = 0;

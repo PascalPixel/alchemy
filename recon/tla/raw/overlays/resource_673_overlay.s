@@ -485,7 +485,7 @@ Func_020009d4:
 .L_02008d80:
 	.4byte MsgByReachingThis
 .L_02008d84:
-	.4byte Data_020012a4
+	.4byte gData_020012a4
 .L_02008d88:
 	.4byte Func_020009bc
 .L_02008d8c:

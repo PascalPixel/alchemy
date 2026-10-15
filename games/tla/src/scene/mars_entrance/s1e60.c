@@ -1,13 +1,13 @@
 #include "room.h"
 
-extern const u8 Data_020056a0[];
+extern const u8 gData_020056a0[];
 
 void Func_02001ae0(void);
 void Func_02001cbc(void);
 void Func_02001f90(struct ObjectRuntime *object);
 
 // Stops the object and sets its sprite part, then restarts its script at
-// Data_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
+// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
 void Func_02001e1c(struct ObjectRuntime *object, s32 part)
 {
     s32 zero = 0;
@@ -22,7 +22,7 @@ void Func_02001e1c(struct ObjectRuntime *object, s32 part)
         ((struct SpriteParts *)object->animation)->part = part;
     }
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02004bd0(object, Data_020056a0);
+    Func_02004bd0(object, gData_020056a0);
     object->action = zero;
     object->speedLimit = zero;
     object->acceleration = zero;
@@ -126,7 +126,7 @@ void Func_0200202c(struct ObjectRuntime *object, s32 unused)
     object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02004bc0(object, 2);
-    Func_02004bd0(object, Data_020056a0);
+    Func_02004bd0(object, gData_020056a0);
     Object_SetPartAttribute(object, 10);
     object->action = 0;
     object->speedLimit = 0;

@@ -6,12 +6,12 @@
 
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-extern const u8 Data_02002b40[];
-extern const u8 Data_02002cf0[];
-extern const u8 Data_02002d80[];
-extern const u8 Data_02002f78[];
-extern const u8 Data_02003164[];
-extern const u8 Data_0200323c[];
+extern const u8 gData_02002b40[];
+extern const u8 gData_02002cf0[];
+extern const u8 gData_02002d80[];
+extern const u8 gData_02002f78[];
+extern const u8 gData_02003164[];
+extern const u8 gData_0200323c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);

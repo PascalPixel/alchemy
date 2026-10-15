@@ -24,17 +24,17 @@ void Menu_CopyListOrder(s32 mode, u8 *order)
 	u8 *src;
 	s32 n;
 
-	src = Menu_ListOrderDefault;
+	src = gMenu_ListOrderDefault;
 	switch (mode)
 	{
 	case 0:
-		src = Menu_ListOrderMode0;
+		src = gMenu_ListOrderMode0;
 		break;
 	case 1:
-		src = Menu_ListOrderMode1;
+		src = gMenu_ListOrderMode1;
 		break;
 	case 2:
-		src = Menu_ListOrderMode2;
+		src = gMenu_ListOrderMode2;
 		break;
 	}
 	*order = *src;

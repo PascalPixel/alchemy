@@ -1,6 +1,6 @@
 /* Draft of overlay 670's Func_02004294, differ 25 of 151: everything but the wait loop matches.
  * The native's loop is rotated without a copied test (b to the test, which reuses the pointer
- * loaded for the zero store) and reloads Data_02007950's address and 0xffffc000 in the body;
+ * loaded for the zero store) and reloads gData_02007950's address and 0xffffc000 in the body;
  * here jump.c copies the test ahead of the loop and the address stays in r5. A pointer variable
  * reloaded at the end of the body changes nothing (differ 29). Func_020047e4 waits in the same
  * loop, there rotated with the test copied. */
@@ -17,10 +17,10 @@ void Func_02004294(void)
     Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
     Func_02003640(1, 1);
     WaitFrames(1);
-    if (Data_02007950 != 0) {
-        Data_02007950->y += 0x200000;
+    if (gData_02007950 != 0) {
+        gData_02007950->y += 0x200000;
         WaitFrames(1);
-        Data_02007950->motionFlags = 4;
+        gData_02007950->motionFlags = 4;
     }
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -33,11 +33,11 @@ void Func_02004294(void)
     Kibombo_Wait(20);
     Func_02005b4c((s32)MsgYouAreStill);
     Kibombo_MessagePut(17, 0);
-    if (Data_02007950 != 0) {
-        Data_02007950->motionFlags = 0;
-        while (Data_02007950->y > 0x240000) {
+    if (gData_02007950 != 0) {
+        gData_02007950->motionFlags = 0;
+        while (gData_02007950->y > 0x240000) {
             Kibombo_ObjArm(17, 0xd000, 0);
-            Data_02007950->y += 0xffffc000;
+            gData_02007950->y += 0xffffc000;
             WaitFrames(1);
         }
     }

@@ -6,9 +6,9 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 extern u32 gFrameCount;
-extern s32 Data_02006a24;
-extern s32 Data_0200641c[];
-extern s32 Data_02006470[];
+extern s32 gData_02006a24;
+extern s32 gData_0200641c[];
+extern s32 gData_02006470[];
 
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
@@ -62,7 +62,7 @@ void Func_02000198(void)
 
     center = Object_GetById(36);
     spawn = 0;
-    switch (Data_02006a24) {
+    switch (gData_02006a24) {
     case 0:
         Event_PlayCue(220);
         Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
@@ -83,14 +83,14 @@ void Func_02000198(void)
         center->scaleX = 0x10000;
         center->scaleY = 0x10000;
         SceneActor_ParkRecord(center);
-        ObjectMotion_EnableActionAndSetCallback(36, Data_0200641c);
+        ObjectMotion_EnableActionAndSetCallback(36, gData_0200641c);
         break;
     case 25:
-        Data_02006a24--;
+        gData_02006a24--;
         if (*(volatile s32 *)&center->y > 0) {
             ColorBuffer_ApplyTarget(0x203210, 0);
             ColorBuffer_Interpolate(16);
-            Data_02006a24++;
+            gData_02006a24++;
         } else {
             if ((gFrameCount & 7) == 0)
                 Event_PlayCue(246);
@@ -99,11 +99,11 @@ void Func_02000198(void)
         }
         break;
     case 26:
-        Data_02006a24--;
+        gData_02006a24--;
         if (*(volatile s32 *)&center->y > (160 << 14)) {
             ColorBuffer_ApplyTarget(0x10000, 0);
             ColorBuffer_Interpolate(40);
-            Data_02006a24++;
+            gData_02006a24++;
         } else {
             if ((gFrameCount & 7) == 0)
                 Event_PlayCue(246);
@@ -136,7 +136,7 @@ void Func_02000198(void)
         effect = Object_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
         if (effect != 0) {
             sprite = effect->animation;
-            Func_02005764(effect, Data_02006470);
+            Func_02005764(effect, gData_02006470);
             Object_SetPartAttribute(effect, 1);
             effect->motionFlags = 0;
             angle = Random16Far() & 0xffff000;
@@ -154,5 +154,5 @@ void Func_02000198(void)
             sprite->priority = 1;
         }
     }
-    Data_02006a24++;
+    gData_02006a24++;
 }

@@ -183,9 +183,9 @@ BattleFx_StartRandomParticleEmitter:
 .L_080cf2e8:
 	.4byte BattleFx_SpawnRandomParticleAtPosition
 .L_080cf2ec:
-	.4byte BattleFx_ParticleScript
+	.4byte gBattleFx_ParticleScript
 .L_080cf2f0:
-	.4byte Data_080effd8
+	.4byte gData_080effd8
 .L_080cf2f4:
 	.4byte 0xfffffc00
 .L_080cf2f8:

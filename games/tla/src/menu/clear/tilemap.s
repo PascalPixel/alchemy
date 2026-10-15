@@ -6,8 +6,8 @@
 Data_02002504:
 	.incbin "games/tla/src/menu/clear/tilemap.table.lz"
 
-	.global Data_0200265e
-Data_0200265e:
+	.global gData_0200265e
+gData_0200265e:
 	.ifdef TLA_EDITION_JA
 	@ 20 cells a row; 99 is an empty cell
 	.byte  0,  1,  2,  3,  4, 20, 21, 22, 23, 24, 38, 39, 40, 41, 42, 56, 99, 99, 57, 58

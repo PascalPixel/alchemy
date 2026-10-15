@@ -35,7 +35,7 @@ static void FieldScene_OpenGate(void);
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)Placement_Scripts;
+	return (u8 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -45,7 +45,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)Placement_Messages;
+	return (u8 *)gPlacement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -194,7 +194,7 @@ static void EV12_TALK(void)
 				Engine_GameFlagSet(0x84a);
 			} while (0);
 		guard:
-			FieldObject_SetTargetAndCallback(12, 0x10000, McCoyPalaceGarden_GuardScript);
+			FieldObject_SetTargetAndCallback(12, 0x10000, gMcCoyPalaceGarden_GuardScript);
 		}
 		else
 		{
@@ -259,7 +259,7 @@ static void McCoyPalaceGarden_ApplyEntryState(void)
 			if (Engine_GameFlagIsSet(0x845) == 0)
 			{
 				Engine_ActorSetPosition(11, 0, 0);
-				FieldObject_SetTargetAndCallback(12, 0x10000, McCoyPalaceGarden_GuardScript);
+				FieldObject_SetTargetAndCallback(12, 0x10000, gMcCoyPalaceGarden_GuardScript);
 			}
 		}
 	}
@@ -364,29 +364,29 @@ static void McCoyPalaceGarden_RunGardenScene(void)
 static void FieldScene_OpenGate(void)
 {
 	Engine_AudioPlayCue(0xBC);
-	Engine_MapAnimateCells(Garden_GateCells, 0x34, 0xB);
+	Engine_MapAnimateCells(gGarden_GateCells, 0x34, 0xB);
 	Engine_GameFlagSet(0x200);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_orbit.h"
 
-u16 Garden_GateCells[] = {
+u16 gGarden_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-s32 McCoyPalaceGarden_GuardScript[] = {
+s32 gMcCoyPalaceGarden_GuardScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 1, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(34),
 	SCENE_EXIT(1, 30, 2),
 	SCENE_EXIT(2, 33, 1),

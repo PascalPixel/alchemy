@@ -53,8 +53,8 @@ struct Vector3
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
-extern s32 Data_08197924[];
-extern u16 Data_08197410[];
+extern s32 gData_08197924[];
+extern u16 gData_08197410[];
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
@@ -179,7 +179,7 @@ void Func_08146638(struct BattleEffectArgument *effect)
                     scale.z = scale.x;
                     Func_080151ac(&scale);
                     Func_080150e4(j * 0x199a);
-                    depth = EffectPosition_ApplyBaseAndYOffset(&Data_08197924[(j & 1) * 3], &pos);
+                    depth = EffectPosition_ApplyBaseAndYOffset(&gData_08197924[(j & 1) * 3], &pos);
                     if (peak < depth)
                         peak = depth;
                     pos.x >>= 1;
@@ -203,7 +203,7 @@ void Func_08146638(struct BattleEffectArgument *effect)
                             s32 x = from->velocityX + (to->velocityX - from->velocityX) * k / 16;
                             s32 y = from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-                            draw[0](canvas, graphics + Data_08197410[size - 1],
+                            draw[0](canvas, graphics + gData_08197410[size - 1],
                                 x - size / 2, y - size, size, size * 2);
                         }
                     }

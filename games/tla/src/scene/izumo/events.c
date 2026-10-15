@@ -3,8 +3,8 @@
 const u8 *Func_020001ac(void)
 {
     if (GameFlag_Test(2343))
-        return Data_02001644;
-    return Data_02001494;
+        return gData_02001644;
+    return gData_02001494;
 }
 
 void Func_020001cc(void)
@@ -113,6 +113,6 @@ void Func_02000438(void)
 const u8 *Func_0200049c(void)
 {
     if (GameFlag_Test(2343))
-        return Data_02001b00;
-    return Data_020018b4;
+        return gData_02001b00;
+    return gData_020018b4;
 }

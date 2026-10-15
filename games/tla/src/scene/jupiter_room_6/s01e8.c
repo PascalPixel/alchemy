@@ -7,9 +7,9 @@
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 Data_020023bc;
-extern s32 Data_020023c0;
-extern u16 Data_020023e8[];
+extern s32 gData_020023bc;
+extern s32 gData_020023c0;
+extern u16 gData_020023e8[];
 
 s32 __modsi3();
 s32 Map_GetTerrainHeight();

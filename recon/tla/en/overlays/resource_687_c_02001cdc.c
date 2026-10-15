@@ -6,7 +6,7 @@
 #include "party_state.h"
 #include "scene_ids.h"
 
-extern u16 Data_020026c0[];
+extern u16 gData_020026c0[];
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02000c50(void);
@@ -18,26 +18,26 @@ s32 Func_02001cdc(void)
 {
     ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     if (gPartyState.scene == (s32)&SceneId_Ov687Room1) {
-        Data_020022c8 = gFrameCount;
-        Data_020022cc = 1;
-        Dma_Set((const void *)0x05000062, Data_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
+        gData_020022c8 = gFrameCount;
+        gData_020022cc = 1;
+        Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
         if (GameFlag_Test(0x200)) {
             u32 *state = gSceneState;
             u32 i;
 
-            Data_020022c8 = *state++;
-            Data_020022cc = *state++;
+            gData_020022c8 = *state++;
+            gData_020022cc = *state++;
             gFrameCount = *state;
             for (i = 1; i != 14; i++)
                 ((volatile u16 *)0x05000060)[i] = 0x5ccb;
             Scheduler_AddOrUpdateCallback(Func_02000c50, 0x480);
         }
     } else if (gPartyState.scene == (s32)&SceneId_Ov687Room2) {
-        Data_020022c8 = gFrameCount;
-        Data_020022cc = 0;
+        gData_020022c8 = gFrameCount;
+        gData_020022cc = 0;
         if (gPartyState.entrance <= 4) {
             if (!GameFlag_Test(0x940)) {
-                Dma_Set((const void *)0x05000062, Data_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
+                Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e, (volatile u32 *)0x040000d4);
             } else {
                 if (!GameFlag_Test(0xa90))
                     Func_020018a8(21, 23, 9);

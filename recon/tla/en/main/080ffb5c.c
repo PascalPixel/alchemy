@@ -68,7 +68,7 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFFSET] + (s32)&MsgClassName, window, 0, 32);
-    UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
+    UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
     UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFFSET], 2, window, 24, 48);
 
     return 1;

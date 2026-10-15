@@ -106,7 +106,7 @@ Func_080d489c:
 .L_080d4964:
 	.4byte 0x00000000
 .L_080d4968:
-	.4byte Data_080f341c
+	.4byte gData_080f341c
 .L_080d496c:
 	.4byte BattleFx_CopyLinkedObjectPosition
 .L_080d4970:

@@ -2,7 +2,7 @@
 #include "io_write_queue.h"
 
 extern u32 gFrameCount;
-extern u16 Data_02006e08;
+extern u16 gData_02006e08;
 
 static inline void QueueBlend(u32 address, u32 value)
 {
@@ -18,7 +18,7 @@ void Func_02003c50(void)
 
     QueueIoWriteDelay2(0x04000050, 0x3f41);
     odd = gFrameCount & 2;
-    alpha = &Data_02006e08;
+    alpha = &gData_02006e08;
     if (odd)
         QueueBlend(0x04000052, *alpha | 12);
     else

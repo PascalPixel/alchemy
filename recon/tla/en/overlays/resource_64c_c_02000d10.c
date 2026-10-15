@@ -12,14 +12,14 @@ struct EventWork158 {
     s16 nextEvent;
 };
 
-extern struct ObjectRuntime *Data_02003dc0[];
+extern struct ObjectRuntime *gData_02003dc0[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020020b4(s32 a);
 
 void Func_02000d10(s32 id, s32 before, s32 after)
 {
-    struct ObjectRuntime *target = Data_02003dc0[id - 100];
+    struct ObjectRuntime *target = gData_02003dc0[id - 100];
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct EventWork158 *work = Ram_HeapSlots->eventWork;
 

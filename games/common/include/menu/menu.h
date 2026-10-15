@@ -9,17 +9,17 @@
 #include "farcall.h"
 #endif
 
-extern u8 CharacterMenu_CursorWidths[];
-extern u8 Menu_ListOrderDefault[];
-extern u8 Menu_ListOrderMode0[];
-extern u8 Menu_ListOrderMode1[];
-extern u8 Menu_ListOrderMode2[];
-extern u8 Menu_MinusSignString;
-extern u8 Menu_PlusSignString;
-extern s8 Menu_TopEntryCommandByPosition[];
-extern s8 Menu_TopEntryPositionByCommand[];
-extern u8 Shop_GlyphBytes[];
-extern u8 StatusMenu_LevelLetterString[];
+extern u8 gCharacterMenu_CursorWidths[];
+extern u8 gMenu_ListOrderDefault[];
+extern u8 gMenu_ListOrderMode0[];
+extern u8 gMenu_ListOrderMode1[];
+extern u8 gMenu_ListOrderMode2[];
+extern u8 gMenu_MinusSignString;
+extern u8 gMenu_PlusSignString;
+extern s8 gMenu_TopEntryCommandByPosition[];
+extern s8 gMenu_TopEntryPositionByCommand[];
+extern u8 gShop_GlyphBytes[];
+extern u8 gStatusMenu_LevelLetterString[];
 #if GAME_TLA
 void *AffineEffect_InitializeWork(void);
 void  ItemMenu_PosCategory(void);
@@ -53,13 +53,13 @@ struct ScrollPair
 	u16 x;
 	u16 y;
 };
-extern u8		  Menu_SmallDownArrowTiles[];
-extern u8		  Menu_ArrowTiles[];
-extern u8		  Menu_PairSpriteATiles[];
-extern u8		  Menu_PairSpriteBTiles[];
-extern const u8	  Menu_QuantityTiles[];
-extern const char DjinnMenu_TextLevel[];
-extern const char DjinnMenu_TextSlash[];
+extern u8		  gMenu_SmallDownArrowTiles[];
+extern u8		  gMenu_ArrowTiles[];
+extern u8		  gMenu_PairSpriteATiles[];
+extern u8		  gMenu_PairSpriteBTiles[];
+extern const u8	  gMenu_QuantityTiles[];
+extern const char gDjinnMenu_TextLevel[];
+extern const char gDjinnMenu_TextSlash[];
 #ifndef OWN_gMenuCtrlWork
 extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif
@@ -68,45 +68,45 @@ extern struct SelectionScreen *gResQueueWork;
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern u8		ItemMenu_ArrangeKeysString[];
-extern s32		ItemMenu_CommandColumnXTable[];
-extern u8		ItemMenu_EquipmentKeyString[];
-extern const u8 Menu_BackdropFrameTile[];
+extern u8		gItemMenu_ArrangeKeysString[];
+extern s32		gItemMenu_CommandColumnXTable[];
+extern u8		gItemMenu_EquipmentKeyString[];
+extern const u8 gMenu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
-extern const u8 Menu_ColonString[];
+extern const u8 gMenu_ColonString[];
 #endif
-extern u8		Menu_CursorLeftObjectTiles[];
-extern const u8 Menu_HexDigitsString[];
-extern const u8 Menu_HpString[];
+extern u8		gMenu_CursorLeftObjectTiles[];
+extern const u8 gMenu_HexDigitsString[];
+extern const u8 gMenu_HpString[];
 #ifndef OWN_Menu_LvString
-extern const u8 Menu_LvString[];
+extern const u8 gMenu_LvString[];
 #endif
-extern const s32 Menu_PartySpriteResourceIds[4];
-extern u8		 Menu_PointString[];
-extern const u8	 Menu_PpString[];
-extern s8		 Menu_SaveSlotActionByPosition[];
-extern u8		 Menu_SelectionStepDelays[];
-extern const u8	 Menu_ShortcutLColonString[];
-extern const u8	 Menu_ShortcutLString[];
-extern const u8	 Menu_ShortcutRColonString[];
-extern const u8	 Menu_ShortcutRString[];
-extern const u8	 Menu_SlashString[];
-extern u8		 Menu_TimesString[];
+extern const s32 gMenu_PartySpriteResourceIds[4];
+extern u8		 gMenu_PointString[];
+extern const u8	 gMenu_PpString[];
+extern s8		 gMenu_SaveSlotActionByPosition[];
+extern u8		 gMenu_SelectionStepDelays[];
+extern const u8	 gMenu_ShortcutLColonString[];
+extern const u8	 gMenu_ShortcutLString[];
+extern const u8	 gMenu_ShortcutRColonString[];
+extern const u8	 gMenu_ShortcutRString[];
+extern const u8	 gMenu_SlashString[];
+extern u8		 gMenu_TimesString[];
 #ifndef OWN_Menu_WorkspaceIconFrames
 #endif
-extern s8		 OptionMenu_SleepFrames[];
-extern s8		 OptionMenu_SpeechFrames[];
-extern s8		 OptionMenu_SpeedFrames[];
-extern u8		 Ui_LvString[];
-extern u8		 UiMenu_CursorBobX[];
-extern u8		 UiMenu_CursorBobY[];
-extern u8		 Workspace_EnergyTitle[];
-extern u8		 Workspace_ItemTitle[];
-extern u8		 Workspace_PageLabel[];
-extern u8		 Workspace_RangeDash[];
-extern u8		 Workspace_StatusTitle[];
-extern const u16 WorkspaceOptions_SliderPalette[];
-extern const u8	 WorkspaceOptions_SliderTiles[];
+extern s8		 gOptionMenu_SleepFrames[];
+extern s8		 gOptionMenu_SpeechFrames[];
+extern s8		 gOptionMenu_SpeedFrames[];
+extern u8		 gUi_LvString[];
+extern u8		 gUiMenu_CursorBobX[];
+extern u8		 gUiMenu_CursorBobY[];
+extern u8		 gWorkspace_EnergyTitle[];
+extern u8		 gWorkspace_ItemTitle[];
+extern u8		 gWorkspace_PageLabel[];
+extern u8		 gWorkspace_RangeDash[];
+extern u8		 gWorkspace_StatusTitle[];
+extern const u16 gWorkspaceOptions_SliderPalette[];
+extern const u8	 gWorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct BattleAct *Ability_GetData(s32 actionId);
 #endif
@@ -166,9 +166,9 @@ struct RenderInput;
 struct RenderOutput;
 struct UiPanel;
 
-extern u8  Data_08105948[];
-extern u16 Shop_GlyphRowOffsets[];
-extern u16 Shop_SelectorOffsets[];
+extern u8  gData_08105948[];
+extern u16 gShop_GlyphRowOffsets[];
+extern u16 gShop_SelectorOffsets[];
 void	   DjinnMenu_DrawPage(struct UiPanel *panel, s32 first);
 void	   Event_DelayEffectFramesFar(void);
 void	   Event_FinishScreenTransitionFar(void);

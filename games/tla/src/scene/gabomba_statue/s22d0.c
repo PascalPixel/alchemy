@@ -11,7 +11,7 @@ struct Orbiter {
     struct Orbiter *link;
 };
 
-extern const u8 Data_0200e88c[];
+extern const u8 gData_0200e88c[];
 
 struct Orbiter *Object_GetById(s32 id);
 void Func_02005624(struct Orbiter *object, s32 mode);
@@ -25,7 +25,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle)
     struct Orbiter *target = Object_GetById(targetId);
 
     Func_02005624(object, 0);
-    Func_02005634(object, Data_0200e88c);
+    Func_02005634(object, gData_0200e88c);
     ObjectDispatch_SetSingleChildFlags(object, 0);
     object->motionFlags = 0;
     object->link = target;

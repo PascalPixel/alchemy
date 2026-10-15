@@ -5,11 +5,11 @@
 void Func_020011d4(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov67FRoom1) {
-        Func_02001518(Data_02001654);
+        Func_02001518(gData_02001654);
     } else {
         /* FAKEMATCH: the cell read through an s16 return type: ⚓️ masks the old cell in r3 and builds 0xff00 in r2; read as s32 the two registers swap (differ 6). */
         Func_02000ee8(2, 50, 13, 0xff00 | (((s16 (*)(u32, s32, s32))Func_02000eac)(2, 50, 13) & 255));
-        Func_02001518(Data_02001658);
+        Func_02001518(gData_02001658);
     }
 }
 
@@ -37,6 +37,6 @@ u8 *Func_020012b0(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov67FRoom1)
-        return Data_020018ec;
-    return Data_020019ac;
+        return gData_020018ec;
+    return gData_020019ac;
 }

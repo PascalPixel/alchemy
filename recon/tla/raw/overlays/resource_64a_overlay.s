@@ -443,13 +443,13 @@ Func_02000328:
 .L_ja_020086c8:
 	.4byte Func_0200015c
 .L_ja_020086cc:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_ja_020086d0:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_ja_020086d4:
 	.4byte 0x00000024
 .L_ja_020086d8:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_ja_020086dc:
 	.4byte IwramCopyWords
 .L_ja_020086e0:
@@ -457,7 +457,7 @@ Func_02000328:
 .L_ja_020086e4:
 	.4byte Data_02012f94 + 0x6c
 .L_ja_020086e8:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_ja_020086ec:
 	.4byte 0x00000025
 .L_ja_020086f0:
@@ -865,7 +865,7 @@ Func_02000328:
 .L_ja_02008a38:
 	.4byte 0x00000007
 .L_ja_02008a3c:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_ja_02008a40:
 	.4byte 0x00000005
 .L_ja_02008a44:
@@ -873,7 +873,7 @@ Func_02000328:
 .L_ja_02008a48:
 	.4byte 0x00000138
 .L_ja_02008a4c:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_ja_02008a50:
 	.4byte IwramCopyWords
 .L_ja_02008a54:
@@ -881,9 +881,9 @@ Func_02000328:
 .L_ja_02008a58:
 	.4byte Data_02012f94 + 0x6c
 .L_ja_02008a5c:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_ja_02008a60:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.else
 	.ifdef TLA_EDITION_FR
 	.global Func_02000328
@@ -1323,13 +1323,13 @@ Func_02000328:
 .L_fr_020086c0:
 	.4byte Func_0200015c
 .L_fr_020086c4:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_fr_020086c8:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_fr_020086cc:
 	.4byte 0x00000024
 .L_fr_020086d0:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_fr_020086d4:
 	.4byte IwramCopyWords
 .L_fr_020086d8:
@@ -1337,7 +1337,7 @@ Func_02000328:
 .L_fr_020086dc:
 	.4byte 0x02013000
 .L_fr_020086e0:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_fr_020086e4:
 	.4byte 0x00000025
 .L_fr_020086e8:
@@ -1749,7 +1749,7 @@ Func_02000328:
 .L_fr_02008a38:
 	.4byte 0x00000007
 .L_fr_02008a3c:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_fr_02008a40:
 	.4byte 0x00000005
 .L_fr_02008a44:
@@ -1757,7 +1757,7 @@ Func_02000328:
 .L_fr_02008a48:
 	.4byte 0x00000138
 .L_fr_02008a4c:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_fr_02008a50:
 	.4byte IwramCopyWords
 .L_fr_02008a54:
@@ -1765,9 +1765,9 @@ Func_02000328:
 .L_fr_02008a58:
 	.4byte 0x02013000
 .L_fr_02008a5c:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_fr_02008a60:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.else
 	.global Func_02000328
 	.thumb_func
@@ -2207,13 +2207,13 @@ Func_02000328:
 .L_de_020086c0:
 	.4byte Func_0200015c
 .L_de_020086c4:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_de_020086c8:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_de_020086cc:
 	.4byte 0x00000024
 .L_de_020086d0:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_de_020086d4:
 	.4byte IwramCopyWords
 .L_de_020086d8:
@@ -2221,7 +2221,7 @@ Func_02000328:
 .L_de_020086dc:
 	.4byte 0x02013000
 .L_de_020086e0:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_de_020086e4:
 	.4byte 0x00000025
 .L_de_020086e8:
@@ -2633,7 +2633,7 @@ Func_02000328:
 .L_de_02008a38:
 	.4byte 0x00000007
 .L_de_02008a3c:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_de_02008a40:
 	.4byte 0x00000005
 .L_de_02008a44:
@@ -2641,7 +2641,7 @@ Func_02000328:
 .L_de_02008a48:
 	.4byte 0x00000138
 .L_de_02008a4c:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_de_02008a50:
 	.4byte IwramCopyWords
 .L_de_02008a54:
@@ -2649,9 +2649,9 @@ Func_02000328:
 .L_de_02008a58:
 	.4byte 0x02013000
 .L_de_02008a5c:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_de_02008a60:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.else
 	.ifdef TLA_EDITION_ES
 	push {r5, r6, r7, lr}
@@ -3088,13 +3088,13 @@ Func_02000328:
 .L_es_020086c0:
 	.4byte Func_0200015c
 .L_es_020086c4:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_es_020086c8:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_es_020086cc:
 	.4byte 0x00000024
 .L_es_020086d0:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_es_020086d4:
 	.4byte IwramCopyWords
 .L_es_020086d8:
@@ -3102,7 +3102,7 @@ Func_02000328:
 .L_es_020086dc:
 	.4byte 0x02013000
 .L_es_020086e0:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_es_020086e4:
 	.4byte 0x00000025
 .L_es_020086e8:
@@ -3514,7 +3514,7 @@ Func_02000328:
 .L_es_02008a38:
 	.4byte 0x00000007
 .L_es_02008a3c:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_es_02008a40:
 	.4byte 0x00000005
 .L_es_02008a44:
@@ -3522,7 +3522,7 @@ Func_02000328:
 .L_es_02008a48:
 	.4byte 0x00000138
 .L_es_02008a4c:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_es_02008a50:
 	.4byte IwramCopyWords
 .L_es_02008a54:
@@ -3530,9 +3530,9 @@ Func_02000328:
 .L_es_02008a58:
 	.4byte 0x02013000
 .L_es_02008a5c:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_es_02008a60:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.else
 	.ifdef TLA_EDITION_IT
 	push {r5, r6, r7, lr}
@@ -3969,13 +3969,13 @@ Func_02000328:
 .L_it_020086c0:
 	.4byte Func_0200015c
 .L_it_020086c4:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_it_020086c8:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_it_020086cc:
 	.4byte 0x00000024
 .L_it_020086d0:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_it_020086d4:
 	.4byte IwramCopyWords
 .L_it_020086d8:
@@ -3983,7 +3983,7 @@ Func_02000328:
 .L_it_020086dc:
 	.4byte 0x02013000
 .L_it_020086e0:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_it_020086e4:
 	.4byte 0x00000025
 .L_it_020086e8:
@@ -4395,7 +4395,7 @@ Func_02000328:
 .L_it_02008a38:
 	.4byte 0x00000007
 .L_it_02008a3c:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_it_02008a40:
 	.4byte 0x00000005
 .L_it_02008a44:
@@ -4403,7 +4403,7 @@ Func_02000328:
 .L_it_02008a48:
 	.4byte 0x00000138
 .L_it_02008a4c:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_it_02008a50:
 	.4byte IwramCopyWords
 .L_it_02008a54:
@@ -4411,9 +4411,9 @@ Func_02000328:
 .L_it_02008a58:
 	.4byte 0x02013000
 .L_it_02008a5c:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_it_02008a60:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.else
 	push {r5, r6, r7, lr}
 	mov r7, r10
@@ -4853,13 +4853,13 @@ Func_02000328:
 .L_020086c8:
 	.4byte Func_0200015c
 .L_020086cc:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_020086d0:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 .L_020086d4:
 	.4byte 0x00000024
 .L_020086d8:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_020086dc:
 	.4byte IwramCopyWords
 .L_020086e0:
@@ -4867,7 +4867,7 @@ Func_02000328:
 .L_020086e4:
 	.4byte Data_02012f94 + 0x6c
 .L_020086e8:
-	.4byte Data_02003860
+	.4byte gData_02003860
 .L_020086ec:
 	.4byte 0x00000025
 .L_020086f0:
@@ -5279,7 +5279,7 @@ Func_02000328:
 .L_02008a40:
 	.4byte 0x00000007
 .L_02008a44:
-	.4byte Data_02001000
+	.4byte gData_02001000
 .L_02008a48:
 	.4byte 0x00000005
 .L_02008a4c:
@@ -5287,7 +5287,7 @@ Func_02000328:
 .L_02008a50:
 	.4byte 0x00000138
 .L_02008a54:
-	.4byte Data_02000000
+	.4byte gData_02000000
 .L_02008a58:
 	.4byte IwramCopyWords
 .L_02008a5c:
@@ -5295,9 +5295,9 @@ Func_02000328:
 .L_02008a60:
 	.4byte Data_02012f94 + 0x6c
 .L_02008a64:
-	.4byte Data_020024f6
+	.4byte gData_020024f6
 .L_02008a68:
-	.4byte Data_020024f8
+	.4byte gData_020024f8
 	.endif
 	.endif
 	.endif
@@ -5415,7 +5415,7 @@ Func_02000b24:
 .L_fr_02008bf4:
 	.4byte gLinkPeerSignatures
 .L_fr_02008bf8:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_fr_02008bfc:
 	.4byte gInput
 .L_fr_02008c00:
@@ -5598,7 +5598,7 @@ Func_02000b24:
 .L_fr_02008d7c:
 	.4byte 0x00001352
 .L_fr_02008d80:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_fr_02008d84:
 	.4byte gLinkStatus
 .L_fr_02008d88:
@@ -5610,7 +5610,7 @@ Func_02000b24:
 .L_fr_02008d94:
 	.4byte gInput
 .L_fr_02008d98:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_fr_02008d9c:
 	.4byte IwramCopyWords
 .L_fr_02008da0:
@@ -5729,7 +5729,7 @@ Func_02000b24:
 .L_es_02008bf0:
 	.4byte gLinkPeerSignatures
 .L_es_02008bf4:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_es_02008bf8:
 	.4byte gInput
 .L_es_02008bfc:
@@ -5912,7 +5912,7 @@ Func_02000b24:
 .L_es_02008d78:
 	.4byte 0x00001352
 .L_es_02008d7c:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_es_02008d80:
 	.4byte gLinkStatus
 .L_es_02008d84:
@@ -5924,7 +5924,7 @@ Func_02000b24:
 .L_es_02008d90:
 	.4byte gInput
 .L_es_02008d94:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_es_02008d98:
 	.4byte IwramCopyWords
 .L_es_02008d9c:
@@ -6049,7 +6049,7 @@ Func_02000b24:
 .L_02008bfc:
 	.4byte gLinkPeerSignatures
 .L_02008c00:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_02008c04:
 	.4byte gInput
 .L_02008c08:
@@ -6232,7 +6232,7 @@ Func_02000b24:
 .L_02008d84:
 	.4byte MsgFieldTransferringData
 .L_02008d88:
-	.4byte Data_02003a74
+	.4byte gData_02003a74
 .L_02008d8c:
 	.4byte gLinkStatus
 .L_02008d90:
@@ -6244,7 +6244,7 @@ Func_02000b24:
 .L_02008d9c:
 	.4byte gInput
 .L_02008da0:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_02008da4:
 	.4byte IwramCopyWords
 .L_02008da8:
@@ -7117,9 +7117,9 @@ Func_02000e44:
 .L_ja_02009428:
 	.4byte gFrameTick
 .L_ja_0200942c:
-	.4byte Data_02002438
+	.4byte gData_02002438
 .L_ja_02009430:
-	.4byte Data_0200265e
+	.4byte gData_0200265e
 .L_ja_02009434:
 	.4byte Data_0200274a
 .L_ja_02009438:
@@ -7554,7 +7554,7 @@ Func_02000e44:
 .L_ja_020097e4:
 	.4byte Data_02012f94 + 0xac
 .L_ja_020097e8:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_ja_020097ec:
 	.4byte 0x00000d91
 .L_ja_020097f0:
@@ -8046,13 +8046,13 @@ Func_02000e44:
 	str r2, [sp, #52]
 	b .L_fr_02009184
 .L_fr_02009158:
-	.4byte Data_02002440
+	.4byte gData_02002440
 .L_fr_0200915c:
-	.4byte Data_02002454
+	.4byte gData_02002454
 .L_fr_02009160:
-	.4byte Data_02002468
+	.4byte gData_02002468
 .L_fr_02009164:
-	.4byte Data_0200247c
+	.4byte gData_0200247c
 .L_fr_02009168:
 	.4byte 0x00000f5a
 .L_fr_0200916c:
@@ -8398,9 +8398,9 @@ Func_02000e44:
 .L_fr_020093fc:
 	.4byte gFrameTick
 .L_fr_02009400:
-	.4byte Data_02002438
+	.4byte gData_02002438
 .L_fr_02009404:
-	.4byte Data_0200265e
+	.4byte gData_0200265e
 .L_fr_02009408:
 	.4byte Data_0200274a
 .L_fr_0200940c:
@@ -8808,17 +8808,17 @@ Func_02000e44:
 .L_fr_02009768:
 	.4byte 0x02013040
 .L_fr_0200976c:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_fr_02009770:
 	.4byte 0x00000f5d
 .L_fr_02009774:
-	.4byte Data_02002440
+	.4byte gData_02002440
 .L_fr_02009778:
-	.4byte Data_02002454
+	.4byte gData_02002454
 .L_fr_0200977c:
-	.4byte Data_02002468
+	.4byte gData_02002468
 .L_fr_02009780:
-	.4byte Data_0200247c
+	.4byte gData_0200247c
 .L_fr_02009784:
 	.4byte 0x00000f5a
 .L_fr_02009788:
@@ -9270,13 +9270,13 @@ Func_02000e44:
 	str r2, [sp, #52]
 	b .L_0200918c
 .L_02009160:
-	.4byte Data_02002440
+	.4byte gData_02002440
 .L_02009164:
-	.4byte Data_02002454
+	.4byte gData_02002454
 .L_02009168:
-	.4byte Data_02002468
+	.4byte gData_02002468
 .L_0200916c:
-	.4byte Data_0200247c
+	.4byte gData_0200247c
 .L_02009170:
 	.4byte MsgFieldSpace
 .L_02009174:
@@ -9622,9 +9622,9 @@ Func_02000e44:
 .L_02009404:
 	.4byte gFrameTick
 .L_02009408:
-	.4byte Data_02002438
+	.4byte gData_02002438
 .L_0200940c:
-	.4byte Data_0200265e
+	.4byte gData_0200265e
 .L_02009410:
 	.4byte Data_0200274a
 .L_02009414:
@@ -10032,17 +10032,17 @@ Func_02000e44:
 .L_02009770:
 	.4byte Data_02012f94 + 0xac
 .L_02009774:
-	.4byte GameFlagBytes
+	.4byte gGameFlagBytes
 .L_02009778:
 	.4byte MsgFieldInvalidPassword
 .L_0200977c:
-	.4byte Data_02002440
+	.4byte gData_02002440
 .L_02009780:
-	.4byte Data_02002454
+	.4byte gData_02002454
 .L_02009784:
-	.4byte Data_02002468
+	.4byte gData_02002468
 .L_02009788:
-	.4byte Data_0200247c
+	.4byte gData_0200247c
 .L_0200978c:
 	.4byte MsgFieldSpace
 .L_02009790:
@@ -10392,9 +10392,9 @@ Func_020018e0:
 	b .L_ja_02009ace
 	.2byte 0x0000
 .L_ja_02009ac0:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_ja_02009ac4:
-	.4byte Data_02002490
+	.4byte gData_02002490
 .L_ja_02009ac8:
 	ldrh r0, [r3, r0]
 	bl GameFlag_ClearBit
@@ -10556,11 +10556,11 @@ Func_020018e0:
 .L_ja_02009c04:
 	.4byte 0x000001ff
 .L_ja_02009c08:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_ja_02009c0c:
 	.4byte IwramClearWords
 .L_ja_02009c10:
-	.4byte Data_020026b0
+	.4byte gData_020026b0
 .L_ja_02009c14:
 	adds r6, #1
 	cmp r6, #15
@@ -10686,9 +10686,9 @@ Func_020018e0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_ja_02009d00:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_ja_02009d04:
-	.4byte Data_020026c0
+	.4byte gData_020026c0
 .L_ja_02009d08:
 	.4byte gPartyState
 	.else
@@ -10856,9 +10856,9 @@ Func_020018e0:
 	b .L_02009a2a
 	.2byte 0x0000
 .L_02009a1c:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_02009a20:
-	.4byte Data_02002490
+	.4byte gData_02002490
 .L_02009a24:
 	ldrh r0, [r3, r0]
 	bl GameFlag_ClearBit
@@ -11029,11 +11029,11 @@ Func_020018e0:
 .L_02009b74:
 	.4byte 0x000001ff
 .L_02009b78:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_02009b7c:
 	.4byte IwramClearWords
 .L_02009b80:
-	.4byte Data_020026b0
+	.4byte gData_020026b0
 .L_02009b84:
 	adds r6, #1
 	cmp r6, #15
@@ -11159,9 +11159,9 @@ Func_020018e0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009c70:
-	.4byte Data_020026a0
+	.4byte gData_020026a0
 .L_02009c74:
-	.4byte Data_020026c0
+	.4byte gData_020026c0
 .L_02009c78:
 	.4byte gPartyState
 	.endif
@@ -11424,11 +11424,11 @@ Func_02001c7c:
 .L_02009e40:
 	.4byte 0x000001ff
 .L_02009e44:
-	.4byte Data_02002700
+	.4byte gData_02002700
 .L_02009e48:
-	.4byte Data_020026f0
+	.4byte gData_020026f0
 .L_02009e4c:
-	.4byte Data_0200270c
+	.4byte gData_0200270c
 .L_02009e50:
 	adds r1, #1
 	cmp r1, #8
@@ -11496,7 +11496,7 @@ Func_02001c7c:
 .L_02009ec8:
 	.4byte 0x000001ff
 .L_02009ecc:
-	.4byte Data_020026f0
+	.4byte gData_020026f0
 .L_02009ed0:
 	movs r2, #1
 	add r12, r2
@@ -11706,9 +11706,9 @@ Func_02001c7c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200a05c:
-	.4byte Data_020026f0
+	.4byte gData_020026f0
 .L_0200a060:
-	.4byte Data_0200271c
+	.4byte gData_0200271c
 .L_0200a064:
 	.4byte gPartyState
 	.section .text.x0200a068,"ax",%progbits

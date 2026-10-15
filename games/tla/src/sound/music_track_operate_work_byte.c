@@ -1,6 +1,6 @@
 #include "audio_engine.h"
 
-extern SoundCommand Sound_JumpCommand;
+extern SoundCommand gSound_JumpCommand;
 
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track)
 {
@@ -87,7 +87,7 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     }
 
 jump:
-    Sound_JumpCommand(player, track);
+    gSound_JumpCommand(player, track);
     return;
 skip:
     track->cursor += 4;

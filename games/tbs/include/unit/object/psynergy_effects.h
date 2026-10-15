@@ -14,7 +14,7 @@ struct SparkleFrame
 	u16 tile;
 };
 
-extern const struct SparkleFrame FieldFx_SparkleFrames[32];
+extern const struct SparkleFrame gFieldFx_SparkleFrames[32];
 
 void Battle_UpdateModeFromShoulderButtons(void);
 void Battle_WaitMode0(s32 frames);

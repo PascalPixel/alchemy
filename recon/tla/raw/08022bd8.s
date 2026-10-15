@@ -74,7 +74,7 @@ Func_08022bd8:
 .L_08022c68:
 	.4byte 0x85000180
 .L_08022c6c:
-	.4byte Data_0802e89c
+	.4byte gData_0802e89c
 .L_08022c70:
 	.4byte 0x00000080
 .L_08022c74:

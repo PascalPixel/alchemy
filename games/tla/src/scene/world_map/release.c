@@ -4,11 +4,11 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 
-extern u8 Data_02006c08[];
+extern u8 gData_02006c08[];
 extern const u8 gWorldMapPackedTilesC[];
-extern u8 Data_02006f20[];
-extern u8 Data_02006e0e[];
-extern u8 Data_02006e0c[];
+extern u8 gData_02006f20[];
+extern u8 gData_02006e0e[];
+extern u8 gData_02006e0c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
@@ -44,8 +44,8 @@ struct TileSprite {
 
 void Func_02004a1c(void)
 {
-    Func_02004aa8(gWorldMapPackedTilesC, Data_02006f20);
-    Resource_ResetEntry(*(s16 *)Data_02006e0e);
-    *(s16 *)Data_02006e0c = -1;
+    Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
+    Resource_ResetEntry(*(s16 *)gData_02006e0e);
+    *(s16 *)gData_02006e0c = -1;
     Scheduler_RemoveCallbackFar(Func_020048f4);
 }

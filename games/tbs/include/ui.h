@@ -36,18 +36,18 @@ struct OwnerStatusCursor
 LAYOUT_SIZE_GUARD(OwnerStatusStatCursor_Size, struct OwnerStatusStatCursor, 8);
 LAYOUT_SIZE_GUARD(OwnerStatusCursor_Size, struct OwnerStatusCursor, 4);
 
-extern const struct OwnerStatusStatCursor OwnerStatus_StatCursors[];
-extern const struct OwnerStatusCursor	  OwnerStatus_EquipmentCursors[];
-extern const struct OwnerStatusCursor	  OwnerStatus_ConditionCursors[];
-extern const u8							  OwnerStatus_LevelString[];
-extern const u8							  OwnerStatus_HpString[];
-extern const u8							  OwnerStatus_SlashString[];
-extern const u8							  OwnerStatus_PpString[];
+extern const struct OwnerStatusStatCursor gOwnerStatus_StatCursors[];
+extern const struct OwnerStatusCursor	  gOwnerStatus_EquipmentCursors[];
+extern const struct OwnerStatusCursor	  gOwnerStatus_ConditionCursors[];
+extern const u8							  gOwnerStatus_LevelString[];
+extern const u8							  gOwnerStatus_HpString[];
+extern const u8							  gOwnerStatus_SlashString[];
+extern const u8							  gOwnerStatus_PpString[];
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-extern const u8 OwnerStatus_NivString[];
-extern const u8 OwnerStatus_NvString[];
-extern const u8 OwnerStatus_KpString[];
-extern const u8 OwnerStatus_PvString[];
+extern const u8 gOwnerStatus_NivString[];
+extern const u8 gOwnerStatus_NvString[];
+extern const u8 gOwnerStatus_KpString[];
+extern const u8 gOwnerStatus_PvString[];
 #endif
 
 #endif

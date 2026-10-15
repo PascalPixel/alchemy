@@ -132,7 +132,7 @@ struct DirectionSteps
 };
 
 #define DIRECTION_STEP(heading) \
-	(((struct DirectionSteps *)VaultCave_DirectionSteps)->xz[heading])
+	(((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 
 static void VaultCave_PushBlockAhead(void)
 {
@@ -636,18 +636,18 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	flag = Object_GetById(10)->paused;
 	if (flag == 0)
 	{
-		if (++VaultCave_ScheduleTimer > 190)
+		if (++gVaultCave_ScheduleTimer > 190)
 		{
-			VaultCave_ScheduleTimer = 0;
+			gVaultCave_ScheduleTimer = 0;
 		}
-		index = VaultCave_ScheduleIndex;
-		if (VaultCave_ScheduleFrames[index] == VaultCave_ScheduleTimer)
+		index = gVaultCave_ScheduleIndex;
+		if (gVaultCave_ScheduleFrames[index] == gVaultCave_ScheduleTimer)
 		{
 			rec7 = Actor_Get((index + 11));
 			rec7->gravity = 0xa3d;
-			if (++VaultCave_ScheduleIndex > 3)
+			if (++gVaultCave_ScheduleIndex > 3)
 			{
-				VaultCave_ScheduleIndex = 0;
+				gVaultCave_ScheduleIndex = 0;
 			}
 		}
 		for (i = 0; i <= 3; i++)
@@ -697,9 +697,9 @@ static void FieldScene_RunScene3a7SequenceD(void)
 	rec7 = Object_GetById(10);
 	if (rec7->paused == 0)
 	{
-		if ((++VaultCave_TickCounter & 63) == 0)
+		if ((++gVaultCave_TickCounter & 63) == 0)
 		{
-			selected = &VaultCave_TickValue;
+			selected = &gVaultCave_TickValue;
 			record = Engine_RandomNext();
 			record = Math_RemainderUnsigned(record, 6);
 			*selected = record;
@@ -780,7 +780,7 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source)
 
 			*timer = frames;
 		}
-		Engine_ObjectSetScript(puff, VaultCave_PuffScript);
+		Engine_ObjectSetScript(puff, gVaultCave_PuffScript);
 	}
 }
 
@@ -971,7 +971,7 @@ s32 VaultCave_ApplyEntryState(void)
 	return 0;
 }
 
-const s16 VaultCave_DirectionSteps[] = {
+const s16 gVaultCave_DirectionSteps[] = {
 	0, 16,
 	0, 16,
 	0, 16,
@@ -990,7 +990,7 @@ const s16 VaultCave_DirectionSteps[] = {
 	0, 16,
 };
 
-const s32 VaultCave_PuffScript[] = {
+const s32 gVaultCave_PuffScript[] = {
 	SC_FREE,
 };
 
@@ -1229,14 +1229,14 @@ struct SceneEvent gVaultCaveEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 VaultCave_ScheduleFrames[] = {
+u32 gVaultCave_ScheduleFrames[] = {
 	20, 80, 115, 170,
 };
 
-s32 VaultCave_ScheduleTimer = 0;
+s32 gVaultCave_ScheduleTimer = 0;
 
-s32 VaultCave_ScheduleIndex = 0;
+s32 gVaultCave_ScheduleIndex = 0;
 
-s32 VaultCave_TickCounter = 0;
+s32 gVaultCave_TickCounter = 0;
 
-s32 VaultCave_TickValue = 0;
+s32 gVaultCave_TickValue = 0;

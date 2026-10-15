@@ -37,7 +37,7 @@ void Func_02000bf4(void)
 {
     s32 position[3];
 
-    if (Data_02006298 != 0 && gFrameCount % 9 == 0) {
+    if (gData_02006298 != 0 && gFrameCount % 9 == 0) {
         position[0] = 0x1280000;
         position[1] = 0;
         position[2] = 0xb00000;
@@ -49,7 +49,7 @@ void Func_02000c34(void)
 {
     s32 position[3];
 
-    if (Data_0200629c != 0 && gFrameCount % 5 == 0) {
+    if (gData_0200629c != 0 && gFrameCount % 5 == 0) {
         position[0] = 0x1580000;
         position[1] = 0;
         position[2] = 0xa00000;
@@ -131,7 +131,7 @@ void Func_02000d64(void)
         Func_02000c90(15);
         Func_02000c90(16);
     }
-    Data_02006298 = 1;
+    gData_02006298 = 1;
     GameFlag_SetBit_(0x20c);
 }
 
@@ -159,6 +159,6 @@ void Func_02000e60(void)
         Func_02000cb4(19);
         Func_02000cb4(20);
     }
-    Data_0200629c = 1;
+    gData_0200629c = 1;
     GameFlag_SetBit_(0x20d);
 }

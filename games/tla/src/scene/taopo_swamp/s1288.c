@@ -13,7 +13,7 @@ void Func_02001288(void)
             object->scaleX = scale;
             object->scaleY = scale;
             object->gravity = 0x7333;
-            Func_02002800(object, Data_02002a54);
+            Func_02002800(object, gData_02002a54);
             ObjectDispatch_SetSingleChildFlags(object, 0);
             Func_02002880(object, 3);
         }

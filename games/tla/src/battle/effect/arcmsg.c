@@ -56,7 +56,7 @@ struct ArcScene {
     s16 arcTileSlot;
 };
 
-extern const u8 Data_080ed90c[];
+extern const u8 gData_080ed90c[];
 extern char MsgMonstersAttackLess;
 
 s32 Resource_FindFreeEntry(void);
@@ -106,7 +106,7 @@ void BattleFx_RunEffect16(void)
         do { } while (0);
         work->arcTileSlot = slot;
         id = slot << 16;
-        tiles = Data_080ed90c;
+        tiles = gData_080ed90c;
         VramBlock_LoadCached(id >> 16, 0x100, tiles);
         gPartyState.avoidDistance = 0x09600000;
         gPartyState.avoidByItem = GameFlag_Test(0x145);

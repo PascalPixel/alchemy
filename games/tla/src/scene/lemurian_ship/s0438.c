@@ -1,6 +1,6 @@
 #include "lemurian_ship.h"
 
-extern const u8 Data_02002de8[];
+extern const u8 gData_02002de8[];
 
 void Func_02000438(void)
 {
@@ -23,7 +23,7 @@ void Func_02000438(void)
         Func_02002c18(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
         Func_02002c20(leader);
         leader->facing = 0xc000;
-        ObjectMotion_EnableActionAndSetCallback(party->currentOwner, Data_02002de8);
+        ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02002de8);
         WaitFrames(12);
         Func_02002de0(123);
         Event_FinishScreenTransition();

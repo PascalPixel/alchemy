@@ -39,7 +39,7 @@ struct ObjectRuntime *Func_02001210(void)
 }
 
 extern u8 MsgAtLastI[];
-extern const u8 Data_02002120[];
+extern const u8 gData_02002120[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
@@ -98,7 +98,7 @@ void Func_0200128c(void)
     Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 3);
     Call2((void (*)())Func_02002034, 7, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc, 0x6666);
-    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner, (s32)Data_02002120);
+    Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner, (s32)gData_02002120);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0xcccc, 0x6666);
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 7, 360, 424);
     Call2((void (*)())Func_02002044, 7, 0xc000);
@@ -140,7 +140,7 @@ void Func_0200128c(void)
     Func_02001f64();
 }
 
-extern const u8 Data_020020e4[];
+extern const u8 gData_020020e4[];
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
 void Object_SetActionCallbackAndRefreshById(s32 id, const void *script);
@@ -158,7 +158,7 @@ void Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
 
 // Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
 // over the ship, the leader answers two prompts, and everyone leaves by
-// script Data_020020e4; it sets flag 0x981.
+// script gData_020020e4; it sets flag 0x981.
 void Func_020014c0(void)
 {
     if (Flag_IsSet(0x8ff) == 0)
@@ -370,10 +370,10 @@ void Func_020014c0(void)
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x13333, 0x9999);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_020020e4);
-    ObjectMotion_EnableActionAndSetCallback(9, Data_020020e4);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_020020e4);
-    Object_SetActionCallbackAndRefreshById(7, Data_020020e4);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_020020e4);
+    ObjectMotion_EnableActionAndSetCallback(9, gData_020020e4);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_020020e4);
+    Object_SetActionCallbackAndRefreshById(7, gData_020020e4);
     Call1((void (*)())Battle_WaitMode0, 20);
     Call1((void (*)())GameFlag_SetBit, 0x981);
     Func_02001f64();

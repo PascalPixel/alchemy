@@ -12,7 +12,7 @@ void Func_0200094c(void)
         if (steam) {
             ObjectDispatch_SetSingleChildFlags(steam, 0);
             Func_0200114c(steam, 1);
-            Func_02001154(steam, Data_0200128c);
+            Func_02001154(steam, gData_0200128c);
         }
         Func_02001284(0x26f);
     }

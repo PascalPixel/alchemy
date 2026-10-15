@@ -75,8 +75,8 @@ void Object_SetModeById(u32, s32);
 void Object_RefreshSelectorById(u32);
 void Audio_PlayCue(s32);
 
-extern const u8 Object_LinkedMotionScript[];
-extern const u8 Object_OffsetMotionScript[];
-extern const u8 Object_VariantMotionScripts[];
+extern const u8 gObject_LinkedMotionScript[];
+extern const u8 gObject_OffsetMotionScript[];
+extern const u8 gObject_VariantMotionScripts[];
 
 #endif

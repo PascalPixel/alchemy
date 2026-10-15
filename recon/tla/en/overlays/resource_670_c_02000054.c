@@ -1,9 +1,9 @@
 // near miss: differ 17 (listing 31 instructions, draft 30); the native keeps the constant 0xffff0000 in r5 and finishes the first offset before the second random call
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
-extern u8 Data_0200635c[];
-extern s16 Data_02007948[];
-extern struct KibomboObject *Data_02007950;
+extern u8 gData_0200635c[];
+extern s16 gData_02007948[];
+extern struct KibomboObject *gData_02007950;
 
 void Func_02001318(void);
 s32 Func_02002b08(s32 value);

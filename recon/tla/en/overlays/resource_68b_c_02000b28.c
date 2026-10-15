@@ -12,15 +12,15 @@
 #include "ram_buffer.h"
 #include "map.h"
 
-extern u8 Data_02002590;
-extern s16 Data_020025a0[2][160];
+extern u8 gData_02002590;
+extern s16 gData_020025a0[2][160];
 
 s32 Math_Sine(s32 angle);
 
 void Func_02000b28(void)
 {
     s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[1];
-    s16 *lines = Data_020025a0[Data_02002590 ^ 1];
+    s16 *lines = gData_020025a0[gData_02002590 ^ 1];
     s32 v[2];
     s32 *count = &v[1];
     s32 value;
@@ -36,5 +36,5 @@ void Func_02000b28(void)
         value += *count % 3;
         *lines++ = value - 1;
     }
-    Data_02002590 ^= 1;
+    gData_02002590 ^= 1;
 }

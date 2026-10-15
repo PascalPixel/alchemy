@@ -15,7 +15,7 @@
 #include "vram_tab.h"
 #include "callback_scheduler.h"
 
-extern const u16 Ui_BounceScales[];
+extern const u16 gUi_BounceScales[];
 
 struct WindowLine {
     u16 left;
@@ -50,7 +50,7 @@ void AffineEffect_UpdateFrame(void)
     work = Ram_HeapSlots->menuSelectWork;
     buffers = Ram_HeapSlots->displayTransition;
     sprite = work->entries;
-    scale = Ui_BounceScales[(gFrameCount * 2) & 31];
+    scale = gUi_BounceScales[(gFrameCount * 2) & 31];
     scale = (scale - 256) / 4 + 304;
     effect.scaleX = scale;
     effect.scaleY = scale;
@@ -74,7 +74,7 @@ void AffineEffect_UpdateFrame(void)
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
-            *attr = ResourceTableEntries[sprite->slot].offset >> 5;
+            *attr = gResourceTableEntries[sprite->slot].offset >> 5;
             slot = 246;
         } else {
             u32 base;
@@ -84,7 +84,7 @@ void AffineEffect_UpdateFrame(void)
             y = sprite->y;
             *attr++ = 0;
             value = y | (px << 16) | 0x80002000;
-            base = ResourceTableEntries[sprite->slot].offset;
+            base = gResourceTableEntries[sprite->slot].offset;
             *attr++ = value;
             *attr = base >> 5;
             slot = 245;

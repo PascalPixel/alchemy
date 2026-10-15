@@ -10,7 +10,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 void UiWork_ClearValueNameTablesFar(void);
-extern u8 Data_03001ae8[];
+extern u8 gData_03001ae8[];
 s32 BattlePres_ShowDefendMessage(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
@@ -20,7 +20,7 @@ void BattlePres_AdjustCameraByShoulderKeys(void)
 {
     struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
     struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
-    volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
+    volatile u32 *keys = (volatile u32 *)((u32)&gData_03001ae8);
 
     if ((*keys & 512) != 0) {
         cam->yaw += 512;

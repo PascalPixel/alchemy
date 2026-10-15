@@ -74,7 +74,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 
 	if (n < cnt)
 	{
-		table = Map_TileDissolveOrder;
+		table = gMap_TileDissolveOrder;
 		high_mask = 0xff00;
 		index_mask = 0x3f;
 		offset_mask = 0x3e;
@@ -220,8 +220,8 @@ void ObjectSystem_Initialize(s32 mode)
 	else
 	{
 		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		Iwram_Data2 = 0;
-		Iwram_Data1 = 0;
+		gIwram_Data2 = 0;
+		gIwram_Data1 = 0;
 	}
 	sys->edge = 15;
 	sys->fill = 0;
@@ -369,7 +369,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 		mot = (struct ScriptMotionObject *)obj;
 		sc = (struct ScriptObjectRuntime *)obj;
 		Object_SetPositionAndResetMotion(obj, x, y, z);
-		obj->script = (s32 *)ObjectDispatch_DefaultScript;
+		obj->script = (s32 *)gObjectDispatch_DefaultScript;
 		obj->speedLimit = 0x20000;
 		obj->step = 0;
 		act->scaleX = 0x10000;
@@ -550,38 +550,38 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no)
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table5Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
 	obj->argument = arg;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table0Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table1Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table2Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table3Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *obj)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table6Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj, s32 arg)
 {
-	ObjectDispatch_Initialize(obj, ObjectDispatch_Table4Script);
+	ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
 	if (arg != 0)
 	{
 		obj->value34 = 0x8000;
@@ -961,7 +961,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 	if (GameFlag_TestFar(363))
 	{
 		angle += 0xffffe000;
-		Iwram_TransformMatrix(Camera_FixedViewMatrix);
+		Iwram_TransformMatrix(gCamera_FixedViewMatrix);
 		Graphics_PrepareTransferAndRun(eye, target);
 	}
 	else

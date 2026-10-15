@@ -392,14 +392,14 @@ Func_02001008:
 .L_020092f4:
 	.4byte MsgMadraInteriors110
 .L_020092f8:
-	.4byte Data_02001f18
+	.4byte gData_02001f18
 .L_020092fc:
-	.4byte Data_02001f4c
+	.4byte gData_02001f4c
 .L_02009300:
-	.4byte Data_02001f90
+	.4byte gData_02001f90
 .L_02009304:
-	.4byte Data_02001fc4
+	.4byte gData_02001fc4
 .L_02009308:
-	.4byte Data_02002054
+	.4byte gData_02002054
 .L_0200930c:
-	.4byte Data_020020e4
+	.4byte gData_020020e4

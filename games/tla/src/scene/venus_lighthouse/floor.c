@@ -34,8 +34,8 @@ struct VenusActor {
     void *update;
 };
 
-extern const u32 Data_02001d8c[];
-extern const u8 Data_02001dd8[];
+extern const u32 gData_02001d8c[];
+extern const u8 gData_02001dd8[];
 extern u8 gMapCellBuffer[];
 
 struct VenusActor *Engine_ActorGet(s32 id);
@@ -90,7 +90,7 @@ void Func_020006ac(void)
 
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    ObjectMotion_EnableActionAndSetCallback(leader, Data_02001dd8);
+    ObjectMotion_EnableActionAndSetCallback(leader, gData_02001dd8);
     Object_RefreshSelectorById(leader);
     Object_SetPartAttribute(Engine_ActorGet(leader), 6);
     {

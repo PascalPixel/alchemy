@@ -5,12 +5,12 @@ const u8 *Func_0200004c(void)
     s16 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov660Room1)
-        return Data_02000964;
+        return gData_02000964;
     if (scene == (s32)&SceneId_Ov660Room2)
-        return Data_02000ab4;
+        return gData_02000ab4;
     if (scene == (s32)&SceneId_Ov660Room3)
-        return Data_02000b2c;
-    return Data_0200094c;
+        return gData_02000b2c;
+    return gData_0200094c;
 }
 
 void Func_0200009c(s32 actor)

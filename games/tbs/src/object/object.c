@@ -237,7 +237,7 @@ void Party_SetReturnPoint(s32 reason)
 //--------------------------------------------------------------------------
 s32 BattleFx_GetResourceGroup(s32 scene)
 {
-	return Field_SceneTable[scene].group;
+	return gField_SceneTable[scene].group;
 }
 
 enum
@@ -280,7 +280,7 @@ void Game_ResetForNewGame(s32 mode)
 	const struct SceneRecord *record;
 	s32						  entrance;
 
-	table = Field_SceneTable;
+	table = gField_SceneTable;
 	if (gDebugMode && mode == 1)
 	{
 		gGameState.scene = (s32)&SceneId_ValeHome;
@@ -376,11 +376,11 @@ void BattleFx_LoadResourceGroup(s32 unused)
 {
 	const struct SceneRecord *table;
 
-	table = Field_SceneTable;
+	table = gField_SceneTable;
 	Resource_LoadCode(table[gGameState.scene].resourceId, &gOverlayArea);
 }
 
-#define SCENE_RECORD(id) (&Field_SceneTable[id])
+#define SCENE_RECORD(id) (&gField_SceneTable[id])
 
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 {
@@ -431,7 +431,7 @@ void Audio_PlayCueFromEventWork(void)
 // encountr.c
 // エンカウント：場所ごとの出現テーブルの選択と、敵グループの抽選
 //--------------------------------------------------------------------------
-// マップと部屋ごとの出現テーブル (Battle_LocationRules、map が -1 で終わり)
+// マップと部屋ごとの出現テーブル (gBattle_LocationRules、map が -1 で終わり)
 struct BattleLocationRule
 {
 	s16 map;
@@ -441,9 +441,9 @@ struct BattleLocationRule
 	s16 result;	   // 最初の出現テーブル番号
 };
 
-extern const struct BattleLocationRule Battle_LocationRules[];
+extern const struct BattleLocationRule gBattle_LocationRules[];
 
-// ワールドマップの地形ごとの出現テーブル (BattleFx_ResultRules、-1 で終わり)
+// ワールドマップの地形ごとの出現テーブル (gBattleFx_ResultRules、-1 で終わり)
 typedef struct TerrainRule
 {
 	s16 kind;	 // 地形の種類 (マップブロックから)
@@ -480,7 +480,7 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 	map = gGameState.scene;
 	room = gGameState.entrance;
 	out = work->encounterGroups;
-	rule = Battle_LocationRules;
+	rule = gBattle_LocationRules;
 	zone = 0;
 	shift = 0;
 	if (use_rules != 0)
@@ -524,7 +524,7 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 s32 BattleFx_LookupResult(void *pos)
 {
 	s32			 kind;
-	TerrainRule *rule = BattleFx_ResultRules;
+	TerrainRule *rule = gBattleFx_ResultRules;
 	s32			 terrain = GetWorldMapTerrainBehaviorFar(pos, &kind);
 	s32			 zone = 0;
 
@@ -568,7 +568,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 			return 0;
 		if (gGameState.cloaked != 0)
 			return 0;
-		entry = (struct EncounterZone *)Encounter_EnemyGroupTable + zone;
+		entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
 		rate = entry->rate;
 		if (rate == 0)
 			return 0;
@@ -664,7 +664,7 @@ s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps)
 //--------------------------------------------------------------------------
 u16 BattleFx_GetWeightedResult(s32 zone, s32 slot)
 {
-	return Encounter_EnemyGroupTable[zone * 14 + slot + 2];
+	return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
 //--------------------------------------------------------------------------
@@ -675,7 +675,7 @@ s16 BattleFx_GetPhaseResult(s32 no)
 {
 	u16 *ent;
 
-	ent = (u16 *)&Encounter_AreaEntryTable[no * 2];
+	ent = (u16 *)&gEncounter_AreaEntryTable[no * 2];
 	BattleFx_GetWeightedResult(ent[0], ent[1]);
 }
 
@@ -688,7 +688,7 @@ struct SceneInteractionEntry
 	s16 result;			// 曲
 };
 
-extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
+extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
 //--------------------------------------------------------------------------
 // シーンと入口から、そのシーンの曲を決める
@@ -699,7 +699,7 @@ void Scene_ResolveInteractionResult(void)
 	s16									scene = gGameState.scene;
 	s16									ent = gGameState.entrance;
 	s16									group = gGameState.sceneGroup;
-	const struct SceneInteractionEntry *p = Scene_InteractionRuleTable;
+	const struct SceneInteractionEntry *p = gScene_InteractionRuleTable;
 
 	for (; p->id != -1; p++)
 	{
@@ -735,14 +735,14 @@ struct SceneAreaNameRule
 	s32 areaNameIndex;  // 地名番号
 };
 
-extern const struct SceneAreaNameRule Scene_AreaNameRules[];
+extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 //--------------------------------------------------------------------------
 // シーンと入口から地名の番号を返す（見つからなければ 0）
 //--------------------------------------------------------------------------
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
+	const struct SceneAreaNameRule *p = gScene_AreaNameRules;
 	s32								name = 0;
 	s32								group = BattleFx_GetResourceGroup(scene);
 
@@ -779,7 +779,7 @@ void Party_ResolveTablePair(void)
 {
 	s16		   first = gGameState.scene;
 	s16		   second = gGameState.entrance;
-	const s16 *entry = Party_PairResolveRules;
+	const s16 *entry = gParty_PairResolveRules;
 
 	while (entry[0] != -1)
 	{
@@ -801,7 +801,7 @@ s16 Event_GetSpecialValue(void)
 void BattleFx_SetSpecialFromTable(void)
 {
 	s32	 target = gGameState.scene;
-	s32 *table = Battle_BackdropScenes;
+	s32 *table = gBattle_BackdropScenes;
 	s32	 entry = *table++;
 	s32	 result; // 初期化しない：該当する行がなければ不定の値がそのまま入る
 
@@ -923,7 +923,7 @@ s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1)
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-extern const struct ScenePlacement Field_DefaultPlacements[2];
+extern const struct ScenePlacement gField_DefaultPlacements[2];
 
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
@@ -1047,8 +1047,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 	work = (struct FieldStepWork *)gEventWork;
 	leader = gGameState.selectedActor;
 	entry = (struct ScenePlacement *)((u8 *)work + 0x200);
-	entry[0] = Field_DefaultPlacements[0];
-	entry[1] = Field_DefaultPlacements[1];
+	entry[0] = gField_DefaultPlacements[0];
+	entry[1] = gField_DefaultPlacements[1];
 	for (pos = 0; pos < 4; pos++)
 		work->tables[pos] = 0;
 	ObjectTable_ClearBattleSlots();
@@ -2232,7 +2232,7 @@ s32 Field_RunScene(s32 entrance)
 						if (GameFlag_TestFar(0x17e) == 0)
 						{
 							struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
-							u8				*owner = ResourceBlockOwners;
+							u8				*owner = gResourceBlockOwners;
 							s32				 free = 0;
 							s32				 n = 512;
 
@@ -2434,7 +2434,7 @@ void Debug_RunPaletteEditor(void)
 	u32	 blue;
 	u32	 i;
 
-	Resource_DecompressHalfwords(Debug_PaletteSwatchTiles, (void *)0x06001a00);
+	Resource_DecompressHalfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
 	tile = (palette << 12) + 0xd1;
 	colors = &PALETTE[palette * 16 + 1];
@@ -2872,13 +2872,13 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 				{
 					obj->linkedObject = Object_GetById(gGameState.selectedActor);
 					obj->actionFlags |= 1;
-					ObjectMotion_SetActionCallback(obj, ObjectMotion_LinkedActionScript);
+					ObjectMotion_SetActionCallback(obj, gObjectMotion_LinkedActionScript);
 				}
 				else if (place->mode == 1)
 				{
 					obj->action = saved_value;
 					ObjectDispatch_InitializeFar(
-						(struct DispatchObject *)obj, (const s32 *)ObjectMotion_StepAngleScript);
+						(struct DispatchObject *)obj, (const s32 *)gObjectMotion_StepAngleScript);
 				}
 			}
 			obj->movementState = 0;
@@ -3052,7 +3052,7 @@ s32 Field_RunTileAction(s32 tile)
 	if (n <= 5)
 	{
 		Battle_InitializeRenderObject();
-		tile = Field_TileMessageOffsets[n];
+		tile = gField_TileMessageOffsets[n];
 		UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
 		UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
 	}
@@ -3238,11 +3238,11 @@ s32 Field_RunTileAction(s32 tile)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // mode に対する探す距離 (ドット)
-// BattleFx_TargetRangeByMode は mode と距離の組の並びで、-1 で終わる。なければ 16
+// gBattleFx_TargetRangeByMode は mode と距離の組の並びで、-1 で終わる。なければ 16
 //--------------------------------------------------------------------------
 s32 BattleFx_MapKeyThroughTable(s32 mode)
 {
-	s16 *p = BattleFx_TargetRangeByMode;
+	s16 *p = gBattleFx_TargetRangeByMode;
 	s32	 range = 16;
 	s32	 key = *p;
 
@@ -3476,7 +3476,7 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
 		state = obj->records;
 		replacement = palette - 1;
 		if (palette == 0)
-			replacement = Animation_ChildPaletteCycle[(gFrameCount >> 1) & 7];
+			replacement = gAnimation_ChildPaletteCycle[(gFrameCount >> 1) & 7];
 
 		n = state->count;
 		if (n != 0)
@@ -4325,7 +4325,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 	if (obj != 0)
 	{
 		// パーツ 0 の優先度を 1 にする
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
@@ -4371,7 +4371,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 				{
 					ObjectDispatch_ReleaseFar(ent);
 				}
-				if (ent->data == (s32)BattleFx_ParticleScript)
+				if (ent->data == (s32)gBattleFx_ParticleScript)
 				{
 					ObjectDispatch_ReleaseFar(ent);
 				}
@@ -4386,7 +4386,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	if (obj == 0)
 		return 0;
 
-	ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleEmitterScript);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_ParticleEmitterScript);
 	{
 		struct AnimationObject *vis = obj->vis;
 		void				   *buf;
@@ -4437,7 +4437,7 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object)
 	Object_SetMoveTargetFar(object, actor->x, actor->y + (36 << 16), actor->z);
 	WaitFrames(3);
 	ObjectDispatch_ApplyArgumentToChildrenFar(actor, 28);
-	ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_RisingPulseScript);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)object, gBattleFx_RisingPulseScript);
 	actor->angle = 0x4000;
 }
 
@@ -4455,7 +4455,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
 		if (flags & 1)
 		{
 			ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-			ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
+			ObjectDispatch_InitializeFar(object, gBattleFx_ParticleEmitterScript);
 			((struct EffectObj *)object)->travel = 0x20000;
 			((struct EffectObj *)object)->dy = 0x4000;
 			((struct EffectObj *)object)->proc =
@@ -4537,7 +4537,7 @@ void BattleFx_ClearRandomParticles(void)
 		{
 			if (ent->data != 0)
 			{
-				if (ent->data == (s32)BattleFx_ParticleScript)
+				if (ent->data == (s32)gBattleFx_ParticleScript)
 					ObjectDispatch_ReleaseFar(ent);
 			}
 			n--;
@@ -4572,7 +4572,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source)
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
-		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
@@ -4662,7 +4662,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 							if (actor != 0)
 							{
 								ObjectDispatch_InitializeFar(
-									(struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
+									(struct DispatchObject *)actor, gBattleFx_MarkerParticleScript);
 								ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
 								((struct EffectObj *)actor)->proc =
 									(void (*)(void))BattleFx_SpawnRandomParticleAtPosition;
@@ -4717,7 +4717,7 @@ struct TransitionShape
 	struct TransitionSpan spans[3];
 };
 
-extern struct TransitionShape DisplayTransition_Shapes[];
+extern struct TransitionShape gDisplayTransition_Shapes[];
 
 void DisplayTransition_UpdateScanlineTable(void)
 {
@@ -4805,7 +4805,7 @@ void DisplayTransition_UpdateScanlineTable(void)
 		{
 			v &= 31;
 		}
-		v = DisplayTransition_NoiseWidths[v];
+		v = gDisplayTransition_NoiseWidths[v];
 		for (i = 0; i < 160; i++)
 		{
 			w = (Random16() * (241 - v)) >> 16;
@@ -4816,7 +4816,7 @@ void DisplayTransition_UpdateScanlineTable(void)
 
 	case 1:
 		v = state->value;
-		shape = &DisplayTransition_Shapes[v & 31];
+		shape = &gDisplayTransition_Shapes[v & 31];
 		if (v & 32)
 		{
 			*dst++ = shape->first;
@@ -5028,7 +5028,7 @@ void DisplayTransition_UpdateScanlineTable(void)
 			hi = cx + h;
 			if (lo < hi)
 			{
-				d = DisplayTransition_EdgeOffsets[k & 31];
+				d = gDisplayTransition_EdgeOffsets[k & 31];
 				lo -= d;
 				hi += d;
 				if (lo >= hi)
@@ -5553,7 +5553,7 @@ void DisplayTransition_UpdateFrame(void)
 	value = (value & 31) * 2;
 	for (i = 0; i <= 1; i++)
 	{
-		u8	entry = DisplayTransition_DitherTable[value & 63];
+		u8	entry = gDisplayTransition_DitherTable[value & 63];
 		u8 *p = &state->paletteNibbles[entry >> 1];
 		if (entry & 1)
 			*p = (*p & 0x0f) | (blend << 4);
@@ -5683,9 +5683,9 @@ void BattlePalette_UpdateBlend(void)
 #define COLOR_HALF 224
 
 // 5 ビットの値を、バッファの 10 ビット上げた値に写す表
-extern u16 BattlePalette_ChannelCurve[];
-extern u16 BattlePalette_ChannelCurveLight[];
-extern u16 BattlePalette_ChannelCurveContrast[];
+extern u16 gBattlePalette_ChannelCurve[];
+extern u16 gBattlePalette_ChannelCurveLight[];
+extern u16 gBattlePalette_ChannelCurveContrast[];
 
 //--------------------------------------------------------------------------
 // 元の色 src から、色変えの目標 dst を作る
@@ -5762,9 +5762,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 					g = 28;
 				if (b > 28)
 					b = 28;
-				*dst++ = BattlePalette_ChannelCurveLight[b];
-				*dst++ = BattlePalette_ChannelCurveLight[g];
-				*dst++ = BattlePalette_ChannelCurveLight[r];
+				*dst++ = gBattlePalette_ChannelCurveLight[b];
+				*dst++ = gBattlePalette_ChannelCurveLight[g];
+				*dst++ = gBattlePalette_ChannelCurveLight[r];
 			}
 			break;
 		case PALETTE_TRANSFORM_WARM: // R を半分 +10、G を 2/3 +8、B を -7 (黒はそのまま)
@@ -5785,9 +5785,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 					g = BattleFx_ClampRgb555Channel(g);
 					b = BattleFx_ClampRgb555Channel(b);
 				}
-				*dst++ = BattlePalette_ChannelCurveContrast[b];
-				*dst++ = BattlePalette_ChannelCurveLight[g];
-				*dst++ = BattlePalette_ChannelCurve[r];
+				*dst++ = gBattlePalette_ChannelCurveContrast[b];
+				*dst++ = gBattlePalette_ChannelCurveLight[g];
+				*dst++ = gBattlePalette_ChannelCurve[r];
 			}
 			break;
 		case PALETTE_TRANSFORM_MUTED: // 範囲を狭め、G と B を +2
@@ -5814,9 +5814,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = BattleFx_ClampRgb555Channel(r);
 				g = BattleFx_ClampRgb555Channel(g);
 				b = BattleFx_ClampRgb555Channel(b);
-				*dst++ = BattlePalette_ChannelCurve[b];
-				*dst++ = BattlePalette_ChannelCurve[g];
-				*dst++ = BattlePalette_ChannelCurve[r];
+				*dst++ = gBattlePalette_ChannelCurve[b];
+				*dst++ = gBattlePalette_ChannelCurve[g];
+				*dst++ = gBattlePalette_ChannelCurve[r];
 			}
 			break;
 		case PALETTE_TRANSFORM_PALE: // 半分にして平均を足す
@@ -5835,9 +5835,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = BattleFx_ClampRgb555Channel(r);
 				g = BattleFx_ClampRgb555Channel(g);
 				b = BattleFx_ClampRgb555Channel(b);
-				dst[0] = BattlePalette_ChannelCurveContrast[b];
-				dst[1] = BattlePalette_ChannelCurveContrast[g];
-				dst[2] = BattlePalette_ChannelCurveContrast[r];
+				dst[0] = gBattlePalette_ChannelCurveContrast[b];
+				dst[1] = gBattlePalette_ChannelCurveContrast[g];
+				dst[2] = gBattlePalette_ChannelCurveContrast[r];
 				dst += 3;
 			}
 			break;
@@ -5852,9 +5852,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = BattleFx_ClampRgb555Channel(r);
 				g -= g / 3;
 				b -= b / 3;
-				dst[0] = BattlePalette_ChannelCurve[b];
-				dst[1] = BattlePalette_ChannelCurve[g];
-				dst[2] = BattlePalette_ChannelCurveLight[r];
+				dst[0] = gBattlePalette_ChannelCurve[b];
+				dst[1] = gBattlePalette_ChannelCurve[g];
+				dst[2] = gBattlePalette_ChannelCurveLight[r];
 				dst += 3;
 			}
 			break;
@@ -5873,9 +5873,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				r = BattleFx_ClampRgb555Channel(r);
 				g = BattleFx_ClampRgb555Channel(g);
 				b = BattleFx_ClampRgb555Channel(b);
-				dst[0] = BattlePalette_ChannelCurveContrast[b];
-				dst[1] = BattlePalette_ChannelCurveLight[g];
-				dst[2] = BattlePalette_ChannelCurve[r];
+				dst[0] = gBattlePalette_ChannelCurveContrast[b];
+				dst[1] = gBattlePalette_ChannelCurveLight[g];
+				dst[2] = gBattlePalette_ChannelCurve[r];
 				dst += 3;
 			}
 			break;
@@ -5945,9 +5945,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 			nr = BattleFx_ClampRgb555Channel((u32)nr >> 16);
 			ng = BattleFx_ClampRgb555Channel((u32)ng >> 16);
 			nb = BattleFx_ClampRgb555Channel((u32)nb >> 16);
-			*dst++ = BattlePalette_ChannelCurve[nb];
-			*dst++ = BattlePalette_ChannelCurve[ng];
-			*dst++ = BattlePalette_ChannelCurve[nr];
+			*dst++ = gBattlePalette_ChannelCurve[nb];
+			*dst++ = gBattlePalette_ChannelCurve[ng];
+			*dst++ = gBattlePalette_ChannelCurve[nr];
 		}
 	}
 	else if (mode & PALETTE_TRANSFORM_SPLIT)
@@ -6191,7 +6191,7 @@ void Object_DisableEffectSpawnCallback(void)
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 {
-	struct BattleEffectEntry *entry = BattleFx_DefinitionTable;
+	struct BattleEffectEntry *entry = gBattleFx_DefinitionTable;
 	u32						  index = 0;
 
 	if (entry->id != id)

@@ -1,24 +1,24 @@
 #include "trial_road.h"
 
-extern const u8 Data_02007044[];
-extern const u8 Data_02007cf8[];
-extern const u8 Data_02007d40[];
-extern const u8 Data_02007d94[];
-extern const u8 *const Data_02007e00[];
+extern const u8 gData_02007044[];
+extern const u8 gData_02007cf8[];
+extern const u8 gData_02007d40[];
+extern const u8 gData_02007d94[];
+extern const u8 *const gData_02007e00[];
 
 const u8 *Func_02001890(void)
 {
     s32 pattern = gTrialRoadState->pattern;
 
     if (gPartyState.scene == (s32)&SceneId_Ov697Room1)
-        return Data_02007e00[pattern & 7];
+        return gData_02007e00[pattern & 7];
     if (gPartyState.scene == (s32)&SceneId_Ov697Room3)
-        return Data_02007cf8;
+        return gData_02007cf8;
     if (gPartyState.scene == (s32)&SceneId_Ov697Room4)
-        return Data_02007d40;
+        return gData_02007d40;
     if (gPartyState.scene == (s32)&SceneId_Ov697Room2)
-        return Data_02007d94;
-    return Data_02007044;
+        return gData_02007d94;
+    return gData_02007044;
 }
 
 void Func_02001904(void)

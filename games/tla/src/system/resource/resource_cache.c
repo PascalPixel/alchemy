@@ -10,7 +10,7 @@
 #include "affine.h"
 
 // OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
-// ResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
+// gResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
 // キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
 // size が 16 以下のものは VRAM を持っていない
 
@@ -21,7 +21,7 @@
 s32 Resource_GetBuffer(s32 no, s32 src)
 {
 #if GAME_TLA
-	return VramBlock_LoadCached(no, ResourceTableEntries[no].size, (const void *)src);
+	return VramBlock_LoadCached(no, gResourceTableEntries[no].size, (const void *)src);
 #endif
 }
 

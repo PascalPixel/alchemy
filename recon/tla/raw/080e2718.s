@@ -48,4 +48,4 @@ Func_080e2718:
 	add sp, #8
 	pop {r5, r6, r7, pc}
 .L_080e2770:
-	.4byte Data_02001000
+	.4byte gData_02001000

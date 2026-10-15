@@ -7,7 +7,7 @@ void VramBlock_LoadCached(s32 handle, s32 size, void *source);
 
 void Func_02002de0(void)
 {
-    struct KibomboObject **slot = &Data_02007950;
+    struct KibomboObject **slot = &gData_02007950;
     /* FAKEMATCH: the native keeps one zero in r7 for the three byte stores below; plain zeros are built in r2 where they are stored (differ 30). */
     s32 zero = 0;
     struct KibomboObject *object = Func_02005a34(0x1e9, 0x1090000, 0x240000, 0x1580000);
@@ -47,9 +47,9 @@ void Func_02002e60(void)
 
 void Func_02002eb0(void)
 {
-    if (Data_02007950 != 0) {
+    if (gData_02007950 != 0) {
         struct KibomboObject *object = Object_GetById(27);
 
-        Object_SetPositionAndResetMotion(Data_02007950, object->x, object->y + 0xc0000, object->z);
+        Object_SetPositionAndResetMotion(gData_02007950, object->x, object->y + 0xc0000, object->z);
     }
 }

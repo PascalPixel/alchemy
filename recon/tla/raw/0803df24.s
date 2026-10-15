@@ -523,7 +523,7 @@ Func_0803df24:
 .L_0803e314:
 	.4byte 0xfffffc00
 .L_0803e318:
-	.4byte Menu_CursorBobOffsets
+	.4byte gMenu_CursorBobOffsets
 .L_0803e31c:
 	.4byte 0xfffffe00
 .L_0803e320:
@@ -600,7 +600,7 @@ Func_0803df24:
 .L_0803e3a8:
 	.4byte gFrameTick
 .L_0803e3ac:
-	.4byte Data_0805c9c4
+	.4byte gData_0805c9c4
 .L_0803e3b0:
 	.4byte 0xfffffc00
 .L_0803e3b4:
@@ -676,7 +676,7 @@ Func_0803df24:
 .L_0803e438:
 	.4byte gFrameTick
 .L_0803e43c:
-	.4byte Menu_CursorBobOffsets
+	.4byte gMenu_CursorBobOffsets
 .L_0803e440:
 	.4byte 0xfffffe00
 .L_0803e444:

@@ -4,14 +4,14 @@ struct ShamanVillageObject *Func_02001fec(void);
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 
-extern const u8 Data_02004cfc[];
-extern const u8 Data_02004d40[];
-extern const u8 Data_02004d84[];
-extern const u8 Data_02004dc8[];
-extern const u8 Data_02004e0c[];
-extern const u8 Data_02004e5c[];
-extern const u8 Data_02004eac[];
-extern const u8 Data_02004f08[];
+extern const u8 gData_02004cfc[];
+extern const u8 gData_02004d40[];
+extern const u8 gData_02004d84[];
+extern const u8 gData_02004dc8[];
+extern const u8 gData_02004e0c[];
+extern const u8 gData_02004e5c[];
+extern const u8 gData_02004eac[];
+extern const u8 gData_02004f08[];
 
 void Func_02002068(void)
 {
@@ -53,10 +53,10 @@ void Func_02002068(void)
     ShamanVillage_ObjSpeed(7, 0x19999, 0xcccc);
     ShamanVillage_ObjSpeed(5, 0x19999, 0xcccc);
     ShamanVillage_ObjSpeed(6, 0x19999, 0xcccc);
-    ObjectMotion_EnableActionAndSetCallback(18, Data_02004cfc);
-    ObjectMotion_EnableActionAndSetCallback(7, Data_02004d40);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02004d84);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02004dc8);
+    ObjectMotion_EnableActionAndSetCallback(18, gData_02004cfc);
+    ObjectMotion_EnableActionAndSetCallback(7, gData_02004d40);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02004d84);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02004dc8);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(17, 256, 0)
     ShamanVillage_ObjSpeed(17, 0x13333, 0x9999);
@@ -180,10 +180,10 @@ void Func_02002068(void)
     ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
     ShamanVillage_ObjSpeed(16, 0x19999, 0xcccc);
     ShamanVillage_ObjSpeed(17, 0x19999, 0xcccc);
-    ObjectMotion_EnableActionAndSetCallback(15, Data_02004e0c);
+    ObjectMotion_EnableActionAndSetCallback(15, gData_02004e0c);
     Battle_WaitMode0(20);
-    ObjectMotion_EnableActionAndSetCallback(17, Data_02004e5c);
-    ObjectMotion_EnableActionAndSetCallback(16, Data_02004eac);
+    ObjectMotion_EnableActionAndSetCallback(17, gData_02004e5c);
+    ObjectMotion_EnableActionAndSetCallback(16, gData_02004eac);
     Engine_AudioPlayCue(78);
     do {
         WaitFrames(1);
@@ -216,10 +216,10 @@ void Func_02002068(void)
     ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
     ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);
     ShamanVillage_ObjSpeed(18, 0x10000, 0x8000);
-    ObjectMotion_EnableActionAndSetCallback(6, Data_02004f08);
-    ObjectMotion_EnableActionAndSetCallback(5, Data_02004f08);
-    ObjectMotion_EnableActionAndSetCallback(7, Data_02004f08);
-    Object_SetActionCallbackAndRefreshById(18, Data_02004f08);
+    ObjectMotion_EnableActionAndSetCallback(6, gData_02004f08);
+    ObjectMotion_EnableActionAndSetCallback(5, gData_02004f08);
+    ObjectMotion_EnableActionAndSetCallback(7, gData_02004f08);
+    Object_SetActionCallbackAndRefreshById(18, gData_02004f08);
     Battle_WaitMode0(20);
     GameFlag_SetBit(514);
     GameFlag_SetBit(0x9e1);

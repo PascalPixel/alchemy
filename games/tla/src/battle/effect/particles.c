@@ -43,6 +43,6 @@ void Func_080df174(void)
         obj->gravity = 0x1999;
         Object_SetMode(obj, 0);
         ((struct ParticleTimer *)obj)->timer = 12;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, gBattleFx_CommonParticleScript);
     }
 }

@@ -19,7 +19,7 @@ struct EffectVector {
 };
 
 extern u32 gFrameTick;
-extern u32 Data_080f0bfc[];
+extern u32 gData_080f0bfc[];
 
 void *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
@@ -114,7 +114,7 @@ void BattleFx_SetObjectAlternatingWords(u8 *object)
     u32 value;
 
     asm volatile("" : "+l"(tick)); /* FAKEMATCH: load the tick address before the table. */
-    table = Data_080f0bfc;
+    table = gData_080f0bfc;
     /* FAKEMATCH: keep the tick extraction in its own block; without this
      * boundary the table address loads after the tick (two reordered rows). */
     do {

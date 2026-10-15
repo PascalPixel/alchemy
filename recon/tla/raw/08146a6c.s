@@ -440,10 +440,10 @@ Func_08146a6c:
 .L_08146dec:
 	.4byte Func_08143000
 .L_08146df0:
-	.4byte Data_0819793c
+	.4byte gData_0819793c
 .L_08146df4:
 	.4byte gMapCellBuffer
 .L_08146df8:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08146dfc:
 	.4byte 0x001dffff

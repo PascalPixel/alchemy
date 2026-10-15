@@ -318,11 +318,11 @@ static void EV10_TOUCH(void)
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
 	id = SceneActor_FindNearestSlotOfKindF2();
-	MercuryAerie_NearestActor = id;
+	gMercuryAerie_NearestActor = id;
 	if (id != 0)
 	{
 		Engine_GameFlagSet(0x250);
-		actor = Object_GetById(MercuryAerie_NearestActor);
+		actor = Object_GetById(gMercuryAerie_NearestActor);
 		actor->motionFlags = 0;
 		leader->motionFlags &= 0xfe;
 		actor->y.fixed -= 0x30000;
@@ -1709,7 +1709,7 @@ static void MercuryAerie_FlickerActorEight(void)
 		return;
 	}
 	sprite = spark->sprite;
-	Engine_ObjectSetScript((struct FieldActor *)spark, MercuryAerie_SparkScript);
+	Engine_ObjectSetScript((struct FieldActor *)spark, gMercuryAerie_SparkScript);
 	ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
 	spark->motionFlags = tick;
 	angle = Engine_RandomNext() & 0x0ffff000;
@@ -1829,9 +1829,9 @@ struct SceneEvent gMercuryAerieEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 MercuryAerie_NearestActor = 0;
+s32 gMercuryAerie_NearestActor = 0;
 
-s32 MercuryAerie_SparkScript[] = {
+s32 gMercuryAerie_SparkScript[] = {
 	SC_SET(SW_SCALE_Y, 0x16666),
 	SC_SET(SW_SCALE_X, 0x16666),
 	SC_ARG(4),

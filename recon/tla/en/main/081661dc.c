@@ -27,7 +27,7 @@
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
 extern char ResourceId_Data134;
-extern const u16 Data_08197410[];
+extern const u16 gData_08197410[];
 
 struct EffectCamera {
     s32 eye[3];
@@ -150,7 +150,7 @@ void Func_081661dc(struct BattleEffectArgument *effect)
                     out.x >>= 1;
                     out.y = out.y + origin.y - 112;
                     size = (life >> 3) + 2;
-                    routine[(i / 2) & 1](canvas, cells + Data_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
+                    routine[(i / 2) & 1](canvas, cells + gData_08197410[size - 1], out.x - size / 2, out.y - size, size, size * 2);
                     BattleFxKernels_IntegrateVector3(shard, 60, -0x400);
                     shard->variant--;
                 }

@@ -8,9 +8,9 @@ struct ShrineOfTheSeaGodSpot {
     s32 rotation;
 };
 
-extern const struct ShrineOfTheSeaGodSpot Data_02003cc0[];
-extern const u8 Data_02003cbc[];
-extern const u8 Data_02003c10[];
+extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
+extern const u8 gData_02003cbc[];
+extern const u8 gData_02003c10[];
 
 void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
@@ -115,7 +115,7 @@ void Func_0200300c(void)
 
 void Func_02003024(void)
 {
-    const struct ShrineOfTheSeaGodSpot *spot = Data_02003cc0;
+    const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;
     u32 i;
 
     /* FAKEMATCH: loads the spot table before it clears the counter. */
@@ -180,7 +180,7 @@ void Func_02003134(void)
 
     Func_02002f88(10)->y = -0x100000;
     ObjectMotion_SetActionVariant(10, 3);
-    Func_02003b30(Data_02003cbc);
+    Func_02003b30(gData_02003cbc);
     Func_02002e70();
     ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
     Func_02003aa0(11);
@@ -194,7 +194,7 @@ void Func_02003134(void)
         angle = 0x8000;
         ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
         WaitFrames(1);
-        ObjectMotion_EnableActionAndSetCallback(11, Data_02003c10);
+        ObjectMotion_EnableActionAndSetCallback(11, gData_02003c10);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 1);
         Object_GetById(11)->collisionFlags = 1;
     }
@@ -232,7 +232,7 @@ void Func_0200320c(void)
     }
     if (GameFlag_Test(0x84c))
         ShrineOfTheSeaGod_ObjSetPos(Object_GetById(8), 200 << 16, 0, 296 << 16);
-    Func_02003b30(Data_02003cbc);
+    Func_02003b30(gData_02003cbc);
     if (GameFlag_Test(0x875))
         Func_02003a30(15, 0, 0);
     else if (GameFlag_Test(0x874)) {
@@ -283,7 +283,7 @@ void Func_0200338c(void)
     if (GameFlag_Test(0x202))
         ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
     ShrineOfTheSeaGod_TaskAdd(Func_02001128, 0x480);
-    Func_02003b30(Data_02003cbc);
+    Func_02003b30(gData_02003cbc);
     Func_02002e70();
     ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
     if (GameFlag_Test(115) || GameFlag_Test(0x340)) {

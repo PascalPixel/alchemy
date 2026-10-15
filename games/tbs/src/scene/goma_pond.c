@@ -23,7 +23,7 @@
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-	return (u8 *)GomaPond_SceneTable0;
+	return (u8 *)gGomaPond_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -33,17 +33,17 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSecondaryTable(void)
 {
-	return (u8 *)GomaPond_SceneTable1;
+	return (u8 *)gGomaPond_SceneTable1;
 }
 
 u8 *SceneData_GetTertiaryTable(void)
 {
-	return (u8 *)GomaPond_SceneTable2;
+	return (u8 *)gGomaPond_SceneTable2;
 }
 
 u8 *SceneData_GetQuaternaryTable(void)
 {
-	return (u8 *)GomaPond_SceneTable3;
+	return (u8 *)gGomaPond_SceneTable3;
 }
 
 s32 Scene_PlaceActor8OnGate300(void)
@@ -65,7 +65,7 @@ s32 Scene_PlaceActor8OnGate300(void)
 	return 0;
 }
 
-struct SceneEntrance GomaPond_SceneTable0[] = {
+struct SceneEntrance gGomaPond_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 120, 0, 88, FACING_SOUTH, 0, 24, 8, 504, 424, 0 },
 	{ 2, CONDITION_ALWAYS, 424, 0, 344, FACING_SOUTH, 0, 24, 8, 504, 424, 0 },
@@ -73,7 +73,7 @@ struct SceneEntrance GomaPond_SceneTable0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaPond_SceneTable1[] = {
+u32 gGomaPond_SceneTable1[] = {
 	SCENE_EXITS(26),
 	SCENE_EXIT(1, 27, 4),
 	SCENE_EXIT(2, 27, 5),
@@ -81,13 +81,13 @@ u32 GomaPond_SceneTable1[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement GomaPond_SceneTable2[] = {
+struct ScenePlacement gGomaPond_SceneTable2[] = {
 	{ 0xd4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent GomaPond_SceneTable3[] = {
+struct SceneEvent gGomaPond_SceneTable3[] = {
 	{ 0x21, 5, CONDITION_ALWAYS, 1 },
 	{ 0x21, 6, CONDITION_ALWAYS, 2 },
 	{ 0x21, 7, CONDITION_ALWAYS, 3 },

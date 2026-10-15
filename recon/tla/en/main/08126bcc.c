@@ -12,7 +12,7 @@
 
 void Graphics_AdvancePaletteCycle(void)
 {
-    s32 _c0 = ((u32)&Data_03001e74);
+    s32 _c0 = ((u32)&gData_03001e74);
     s8 *table;
     u16 index;
     s32 next;

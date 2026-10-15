@@ -305,10 +305,10 @@ Func_081509b4:
 .L_08150c04:
 	.4byte Func_08143000
 .L_08150c08:
-	.4byte Data_0819747a
+	.4byte gData_0819747a
 .L_08150c0c:
-	.4byte Data_08197467
+	.4byte gData_08197467
 .L_08150c10:
-	.4byte Data_08197473
+	.4byte gData_08197473
 .L_08150c14:
-	.4byte Data_0819746d
+	.4byte gData_0819746d

@@ -2,7 +2,7 @@
 
 void Func_020025a8(s32 id)
 {
-    struct AquaRockWork *work = &Data_020034f0;
+    struct AquaRockWork *work = &gData_020034f0;
 
     if (id == 0) {
         work->object = 0;

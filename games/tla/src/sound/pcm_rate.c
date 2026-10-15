@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 
-extern u8 Data_02003a90[];
+extern u8 gData_02003a90[];
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void AudioEngine_ResumeDirectSound(void);
@@ -41,7 +41,7 @@ void AudioEngine_SetFixedPcmRate(u32 mode)
     {
         REG_TM0CNT_L = __divsi3(-140448, frame);
     } while (0);
-    buffer = Data_02003a90;
+    buffer = gData_02003a90;
     /* FAKEMATCH: the clear goes through the inline wrapper Sound_ClearWords, as ☀️'s IWRAM call layer, so the entry's pool load comes after the size's shift (differ 2 called directly). */
     Sound_ClearWords(buffer, 0x18c0);
     AudioEngine_ResumeDirectSound();

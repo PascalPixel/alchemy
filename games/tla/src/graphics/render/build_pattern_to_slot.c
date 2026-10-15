@@ -26,7 +26,7 @@ s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot)
     return 1;
 }
 
-extern u8 *UiIcon_ItemIconPointers[];
+extern u8 *gUiIcon_ItemIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 
@@ -37,10 +37,10 @@ void Ui_PrepareTransferForItem(s32 code)
     struct ItemDefinition *item = Item_Get(0x1ff & code);
 
     if (code != 0) {
-        state->encoded = UiIcon_ItemIconPointers[item->icon];
+        state->encoded = gUiIcon_ItemIconPointers[item->icon];
     } else {
         u8 *encoded;
-        u8 **table = UiIcon_ItemIconPointers;
+        u8 **table = gUiIcon_ItemIconPointers;
 
         /* FAKEMATCH: a no-op self-assignment keeps the item live here, so the table takes r2 as native; without it the table takes r3 (differ 4) */
         item->icon += 0;

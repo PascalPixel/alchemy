@@ -1,11 +1,11 @@
 	.section .rodata
-	.global Object_ShadowTiles
-Object_ShadowTiles:
+	.global gObject_ShadowTiles
+gObject_ShadowTiles:
 	.incbin "games/common/src/system/resource/shadow.8bpp"
 
 @ 敵スプライトの資源番号と敵番号
-	.global ResourceSlot_NumberTable
-ResourceSlot_NumberTable:
+	.global gResourceSlot_NumberTable
+gResourceSlot_NumberTable:
 	.2byte ResourceId_AxeGoblinSprites, 400
 	.2byte ResourceId_GhoulSprites, 401
 	.2byte ResourceId_HarpySprites, 402

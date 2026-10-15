@@ -10,6 +10,6 @@ struct BattleFormationRecord {
     u8 unk14[4];
 };
 
-extern struct BattleFormationRecord BattleFormation_Records[];
+extern struct BattleFormationRecord gBattleFormation_Records[];
 
 #endif

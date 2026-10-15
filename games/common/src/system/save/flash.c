@@ -46,12 +46,12 @@ s32 ReadFlashId(void)
     return result;
 }
 
-extern const struct FlashSetupInfo *const Flash_Chips[];
-extern FlashWaitProc Flash_Handler3;
-extern u32 Flash_Handler0;
-extern u32 Flash_Handler1;
+extern const struct FlashSetupInfo *const gFlash_Chips[];
+extern FlashWaitProc gFlash_Handler3;
+extern u32 gFlash_Handler0;
+extern u32 gFlash_Handler1;
 extern u32 gEraseFlashSector;
-extern u16 *Flash_Handler4;
+extern u16 *gFlash_Handler4;
 
 s32 IdentifyFlash(void)
 {
@@ -61,7 +61,7 @@ s32 IdentifyFlash(void)
 
     REG_WAITCNT = (REG_WAITCNT & ~3) | 3;
     id = ReadFlashId();
-    chip = Flash_Chips;
+    chip = gFlash_Chips;
     missing = 1;
     while (((u8 *)&(*chip)->type.id)[0] != 0) {
         if (id == (*chip)->type.id) {
@@ -70,11 +70,11 @@ s32 IdentifyFlash(void)
         }
         chip++;
     }
-    Flash_Handler0 = (*chip)->handlers[0];
-    Flash_Handler1 = (*chip)->handlers[1];
+    gFlash_Handler0 = (*chip)->handlers[0];
+    gFlash_Handler1 = (*chip)->handlers[1];
     gEraseFlashSector = (*chip)->handlers[2];
-    Flash_Handler3 = (*chip)->wait;
-    Flash_Handler4 = (*chip)->maxTime;
+    gFlash_Handler3 = (*chip)->wait;
+    gFlash_Handler4 = (*chip)->maxTime;
     gFlash = &(*chip)->type;
     return missing;
 }
@@ -111,7 +111,7 @@ extern u16 gFlashSavedIme;
 
 void StartFlashTimer(u8 index)
 {
-    u16 *limit = (u16 *)((u8 *)Flash_Handler4 + index * 6);
+    u16 *limit = (u16 *)((u8 *)gFlash_Handler4 + index * 6);
     u16 *timer;
 
     gFlashSavedIme = REG_IME;
@@ -210,7 +210,7 @@ struct FlashChipType {
 
 typedef void (*FlashReadCore)(u32 source, u8 *destination, s32 size);
 
-extern const struct FlashChipType Flash_ChipUnknown;
+extern const struct FlashChipType gFlash_ChipUnknown;
 
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size)
 {
@@ -230,7 +230,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size)
         count--;
     }
     core = (FlashReadCore)((u8 *)code + 1);
-    core((u32)((u8 *)0x0e000000 + (sector << Flash_ChipUnknown.sectorShift) + offset), destination, size);
+    core((u32)((u8 *)0x0e000000 + (sector << gFlash_ChipUnknown.sectorShift) + offset), destination, size);
 }
 
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size)
@@ -271,5 +271,5 @@ s32 Flash_VerifySector(u16 sector, s32 source)
         count--;
     }
     core = (FlashVerifyCore)((u8 *)code + 1);
-    return core(source, (u8 *)0x0e000000 + (sector << Flash_ChipUnknown.sectorShift), Flash_ChipUnknown.sectorSize);
+    return core(source, (u8 *)0x0e000000 + (sector << gFlash_ChipUnknown.sectorShift), gFlash_ChipUnknown.sectorSize);
 }

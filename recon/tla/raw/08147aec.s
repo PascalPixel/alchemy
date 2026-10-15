@@ -858,7 +858,7 @@ Func_08147aec:
 .L_08148184:
 	.4byte Data_0819796e
 .L_08148188:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_0814818c:
 	.4byte 0xffff8000
 .L_08148190:
@@ -1217,6 +1217,6 @@ Func_08147aec:
 .L_0814844c:
 	.4byte Data_08197978
 .L_08148450:
-	.4byte Data_08197410
+	.4byte gData_08197410
 .L_08148454:
 	.4byte Func_08143000

@@ -8,7 +8,7 @@
 #include "battle_work.h"
 #include "battle_session.h"
 
-extern const s8 BattlePlacement_StepPairs[];
+extern const s8 gBattlePlacement_StepPairs[];
 void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 s32 BattleParty_PrepareReserveOwners(u16 *ids);
@@ -43,8 +43,8 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = ids[i];
 
         work->placement[id] = place;
-        BattleObjMake(BattleObjGet(id), id, BattlePlacement_StepPairs[place * 2],
-            BattlePlacement_StepPairs[place * 2 + 1]);
+        BattleObjMake(BattleObjGet(id), id, gBattlePlacement_StepPairs[place * 2],
+            gBattlePlacement_StepPairs[place * 2 + 1]);
     }
     for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
         ids[i] = work->enemyIds[i];

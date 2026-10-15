@@ -6,7 +6,7 @@ struct ContigoTopicState {
     s8 cursor[6];
 };
 
-extern s32 Data_02004630[];
+extern s32 gData_02004630[];
 
 u32 Random16Far(void);
 
@@ -27,5 +27,5 @@ s32 Func_02001a60(s32 topic)
     state->cursor[topic] = variant;
     index = topic * 2;
     do { } while (0); /* FAKEMATCH: a forced temporary and the loop note after it: the native loads the table address between the doubling of the topic and the rest of the index (two rows late as one expression, one row early with the note alone). */
-    return Data_02004630[index + topic + variant];
+    return gData_02004630[index + topic + variant];
 }

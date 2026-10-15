@@ -24,7 +24,7 @@ struct RenderOutput *RenderOutput_Create(
     x &= 0x1ff;
     y &= 0xff;
     output->packed = (x << 16) | y | flags;
-    output->table.value = ResourceTableEntries[slot].offset >> 5;
+    output->table.value = gResourceTableEntries[slot].offset >> 5;
     output->sentinel = 254;
     output->x = x;
     output->y = (s16)y;

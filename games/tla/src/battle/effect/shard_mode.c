@@ -22,7 +22,7 @@ struct DescriptorEntry {
 };
 
 extern void *gOverlayArea[];
-extern struct DescriptorEntry Data_080eff28[];
+extern struct DescriptorEntry gData_080eff28[];
 
 void BattleFx_BeginTiledCanvas(s32 mode);
 void Func_08143bb8(void);

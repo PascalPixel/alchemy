@@ -1,15 +1,15 @@
 #include "airs_rock_inside.h"
 
-extern u32 Data_0200654c[];
-extern u32 Data_02006564[];
-extern u32 Data_0200663c[];
-extern u32 Data_020066b4[];
-extern u32 Data_0200675c[];
-extern u32 Data_020068ac[];
-extern u32 Data_020068f4[];
-extern u32 Data_020069e4[];
-extern u32 Data_02006aec[];
-extern u32 Data_02006bac[];
+extern u32 gData_0200654c[];
+extern u32 gData_02006564[];
+extern u32 gData_0200663c[];
+extern u32 gData_020066b4[];
+extern u32 gData_0200675c[];
+extern u32 gData_020068ac[];
+extern u32 gData_020068f4[];
+extern u32 gData_020069e4[];
+extern u32 gData_02006aec[];
+extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);

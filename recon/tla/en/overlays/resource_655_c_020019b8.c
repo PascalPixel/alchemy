@@ -7,9 +7,9 @@
  * and the flag stepped before the index. */
 #include "types.h"
 
-extern u16 Data_02003fea[];
-extern u16 Data_020041b6[];
-extern u16 Data_020041b8[];
+extern u16 gData_02003fea[];
+extern u16 gData_020041b6[];
+extern u16 gData_020041b8[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -17,7 +17,7 @@ void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 heig
 
 void Func_020019b8(void)
 {
-    u16 *record = Data_020041b6;
+    u16 *record = gData_020041b6;
     s32 flag = 0x240;
     u32 i;
 
@@ -27,10 +27,10 @@ void Func_020019b8(void)
                 s32 x;
                 s32 y;
 
-                record = &Data_020041b8[i * 6];
+                record = &gData_020041b8[i * 6];
                 x = *record++;
                 y = *record++;
-                Func_02003be0(Data_02003fea[0], Data_02003fea[1], x, y, 1, 1);
+                Func_02003be0(gData_02003fea[0], gData_02003fea[1], x, y, 1, 1);
             }
         } else {
             if (*record != 0)

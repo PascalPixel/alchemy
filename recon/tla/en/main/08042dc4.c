@@ -5,7 +5,7 @@
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);
 void UiWork_Finalize(void *, s32);
-extern const u8 Ui_ProgressBarRows[];
+extern const u8 gUi_ProgressBarRows[];
 
 void Func_08042dc4(s32 step)
 {
@@ -23,7 +23,7 @@ void Func_08042dc4(s32 step)
     if (row > 6)
         row = 6;
     dst = (u16 *)0x06002252;
-    src = Ui_ProgressBarRows + row * 12;
+    src = gUi_ProgressBarRows + row * 12;
     for (i = 11; i >= 0; i--)
         *dst++ = *src++ + 0xf080;
 }

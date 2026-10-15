@@ -3,9 +3,9 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern const u8 Data_02003f52[];
-extern const u8 Data_02003fa0[];
-extern const u8 Data_02003fc0[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fc0[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -61,15 +61,15 @@ void Func_02003164(void)
             Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
         }
     }
-    Func_02000584(Data_02003f52);
+    Func_02000584(gData_02003f52);
     Func_020012d8();
-    Func_02000038(Data_02003fa0);
+    Func_02000038(gData_02003fa0);
     if (Flag_Test(0x840) != 0) {
         Func_02003cc0(23);
         Map_CopyAttributes(50, 7, 1, 1, 52, 7);
         Actor_SetPosition(Object_GetById(23), 210 << 18, 0, 240 << 15);
     } else {
-        Func_02003db8(Data_02003fc0);
+        Func_02003db8(gData_02003fc0);
     }
     Func_020018a8();
     if (Flag_Test(0x86c) != 0) {

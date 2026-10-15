@@ -33,13 +33,13 @@ struct Sprite
 	u32 words[3];
 };
 
-extern s16	Colosso_ModeTaskTimer;
-extern s16	Colosso_ModeMoveTarget;
-extern s16	Colosso_ModeMoveDuration;
-extern s16	Colosso_ModeTaskMode;
-extern s16	Colosso_ModeTaskParam;
-extern s32	Colosso_ModeTaskPosition;
-extern s16 *Colosso_ModeTaskScript;
+extern s16	gColosso_ModeTaskTimer;
+extern s16	gColosso_ModeMoveTarget;
+extern s16	gColosso_ModeMoveDuration;
+extern s16	gColosso_ModeTaskMode;
+extern s16	gColosso_ModeTaskParam;
+extern s32	gColosso_ModeTaskPosition;
+extern s16 *gColosso_ModeTaskScript;
 
 static void Colosso_LoadPortrait(s32 id)
 {
@@ -47,121 +47,121 @@ static void Colosso_LoadPortrait(s32 id)
 	s32 off;
 
 	buf = Runtime_BumpAllocateAlternatePool(0x1c00 + COLOSSO_PALETTE_BYTES);
-	if (Colosso_PortraitSlot == -1)
-		Colosso_PortraitSlot = Resource_FindFreeEntry();
-	off = Colosso_PortraitPaletteOffsets[id];
+	if (gColosso_PortraitSlot == -1)
+		gColosso_PortraitSlot = Resource_FindFreeEntry();
+	off = gColosso_PortraitPaletteOffsets[id];
 	if (id == 8)
 		id = 4;
 	FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
 	Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
-	Vram_Load(Colosso_PortraitSlot, 0x400, (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
+	Vram_Load(gColosso_PortraitSlot, 0x400, (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
 	Dma_Wait(REG_DMA3);
 	Runtime_BumpFree(buf);
 }
 
 static void Colosso_UpdateModeTask(void)
 {
-	u32					  *write = Colosso_ModeTaskSprites;
+	u32					  *write = gColosso_ModeTaskSprites;
 	struct Sprite		  *sprite = (struct Sprite *)write;
-	s32					   tile = gVramBlockCache[Colosso_PortraitSlot].offset >> 5;
+	s32					   tile = gVramBlockCache[gColosso_PortraitSlot].offset >> 5;
 	u32					   flags;
 	s32					   scale, blend, pos;
 	s32					   matrix, i, x, y, left;
 	struct AffineTransform work;
 
 commands:
-	if (Colosso_ModeTaskTimer == 0)
+	if (gColosso_ModeTaskTimer == 0)
 	{
 		{
-			switch (*Colosso_ModeTaskScript++)
+			switch (*gColosso_ModeTaskScript++)
 			{
 			case 0x4000:
-				Colosso_ModeTaskPosition = *Colosso_ModeTaskScript++ << 8;
-				Colosso_ModeMoveTarget = *Colosso_ModeTaskScript++;
-				Colosso_ModeMoveDuration = 0;
+				gColosso_ModeTaskPosition = *gColosso_ModeTaskScript++ << 8;
+				gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
+				gColosso_ModeMoveDuration = 0;
 				break;
 			case 0x3000:
-				Colosso_ModeMoveStart = Colosso_ModeMoveTarget;
-				Colosso_ModeMoveTarget = *Colosso_ModeTaskScript++;
-				Colosso_ModeMoveDuration = *Colosso_ModeTaskScript++;
-				Colosso_ModeMoveStep = 0;
+				gColosso_ModeMoveStart = gColosso_ModeMoveTarget;
+				gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
+				gColosso_ModeMoveDuration = *gColosso_ModeTaskScript++;
+				gColosso_ModeMoveStep = 0;
 				break;
 			case 0x1000:
-				Colosso_ModeScaleStart = Colosso_ModeScaleTarget;
-				Colosso_ModeScaleTarget = *Colosso_ModeTaskScript++;
-				Colosso_ModeScaleDuration = *Colosso_ModeTaskScript++;
-				Colosso_ModeScaleStep = 0;
+				gColosso_ModeScaleStart = gColosso_ModeScaleTarget;
+				gColosso_ModeScaleTarget = *gColosso_ModeTaskScript++;
+				gColosso_ModeScaleDuration = *gColosso_ModeTaskScript++;
+				gColosso_ModeScaleStep = 0;
 				break;
 			case 0x2000:
-				Colosso_ModeBlendStart = Colosso_ModeBlendTarget;
-				Colosso_ModeBlendTarget = *Colosso_ModeTaskScript++;
-				Colosso_ModeBlendDuration = *Colosso_ModeTaskScript++;
-				Colosso_ModeBlendStep = 0;
+				gColosso_ModeBlendStart = gColosso_ModeBlendTarget;
+				gColosso_ModeBlendTarget = *gColosso_ModeTaskScript++;
+				gColosso_ModeBlendDuration = *gColosso_ModeTaskScript++;
+				gColosso_ModeBlendStep = 0;
 				break;
 			case 0x7fff:
-				Colosso_ModeTaskTimer = *Colosso_ModeTaskScript++;
+				gColosso_ModeTaskTimer = *gColosso_ModeTaskScript++;
 				break;
 			case -1:
 				Engine_TaskRemoveCallback(Colosso_UpdateModeTask);
-				Resource_ResetEntry(Colosso_PortraitSlot);
+				Resource_ResetEntry(gColosso_PortraitSlot);
 				return;
 			}
 		}
 		goto commands;
 	}
-	Colosso_ModeTaskTimer--;
-	if (Colosso_ModeScaleDuration == 0)
+	gColosso_ModeTaskTimer--;
+	if (gColosso_ModeScaleDuration == 0)
 	{
-		scale = Colosso_ModeScaleTarget;
+		scale = gColosso_ModeScaleTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Colosso_ModeScaleDuration;
-		start = Colosso_ModeScaleStart;
-		target = Colosso_ModeScaleTarget;
-		progress = ++Colosso_ModeScaleStep;
+		duration = gColosso_ModeScaleDuration;
+		start = gColosso_ModeScaleStart;
+		target = gColosso_ModeScaleTarget;
+		progress = ++gColosso_ModeScaleStep;
 		scale = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Colosso_ModeScaleDuration = 0;
+			gColosso_ModeScaleDuration = 0;
 	}
-	if (Colosso_ModeBlendDuration == 0)
+	if (gColosso_ModeBlendDuration == 0)
 	{
-		blend = Colosso_ModeBlendTarget;
+		blend = gColosso_ModeBlendTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Colosso_ModeBlendDuration;
-		start = Colosso_ModeBlendStart;
-		target = Colosso_ModeBlendTarget;
-		progress = ++Colosso_ModeBlendStep;
+		duration = gColosso_ModeBlendDuration;
+		start = gColosso_ModeBlendStart;
+		target = gColosso_ModeBlendTarget;
+		progress = ++gColosso_ModeBlendStep;
 		blend = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Colosso_ModeBlendDuration = 0;
+			gColosso_ModeBlendDuration = 0;
 	}
-	if (Colosso_ModeMoveDuration == 0)
+	if (gColosso_ModeMoveDuration == 0)
 	{
-		pos = Colosso_ModeMoveTarget;
+		pos = gColosso_ModeMoveTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Colosso_ModeMoveDuration;
-		start = Colosso_ModeMoveStart;
-		target = Colosso_ModeMoveTarget;
-		progress = ++Colosso_ModeMoveStep;
+		duration = gColosso_ModeMoveDuration;
+		start = gColosso_ModeMoveStart;
+		target = gColosso_ModeMoveTarget;
+		progress = ++gColosso_ModeMoveStep;
 		pos = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Colosso_ModeMoveDuration = 0;
+			gColosso_ModeMoveDuration = 0;
 	}
 	work.angle = 0;
 	work.scaleX = scale;
 	work.scaleY = scale;
 	matrix = (s16)AffineMatrix_BuildForEffect(&work);
-	Colosso_ModeTaskPosition += pos;
-	pos = Colosso_ModeTaskPosition / 256;
-	switch (Colosso_ModeTaskMode)
+	gColosso_ModeTaskPosition += pos;
+	pos = gColosso_ModeTaskPosition / 256;
+	switch (gColosso_ModeTaskMode)
 	{
 	case 1:
 	{
@@ -202,7 +202,7 @@ commands:
 				x = left & 511;
 				*write++ = 0;
 				*write++ = (x << 16) | y | flags | attr | 0x700;
-				*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
+				*write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
 				Runtime_PushSlotEntry(sprite++, 236);
 			}
 			tile += 8;
@@ -226,7 +226,7 @@ commands:
 				x = left & 511;
 				*write++ = 0;
 				*write++ = (x << 16) | y | flags | attr | 0x700;
-				*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
+				*write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
 				Runtime_PushSlotEntry(sprite++, 236);
 			}
 			tile += 8;
@@ -243,7 +243,7 @@ commands:
 			x = left & 511;
 			*write++ = 0;
 			*write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-			*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
+			*write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
 			Runtime_PushSlotEntry(sprite, 236);
 		}
 		break;
@@ -257,7 +257,7 @@ commands:
 			x = left & 511;
 			*write++ = 0;
 			*write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-			*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
+			*write++ = 0xf400 | (tile + gColosso_ModeTaskParam);
 			Runtime_PushSlotEntry(sprite, 236);
 		}
 		break;

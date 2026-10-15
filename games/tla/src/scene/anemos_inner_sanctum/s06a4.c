@@ -3,7 +3,7 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern const u8 Data_02003674[];
+extern const u8 gData_02003674[];
 
 struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
@@ -22,6 +22,6 @@ void Func_020006a4(struct ObjectRuntime *source)
     Object_SetSpritePriority(object, 2);
     Func_020032e0(object, 1);
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_020032e8(object, Data_02003674);
+    Func_020032e8(object, gData_02003674);
     Animation_SetStateFlags(object, 1);
 }

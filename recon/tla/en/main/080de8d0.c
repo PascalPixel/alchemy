@@ -73,7 +73,7 @@ void Func_080de8d0(struct SparkObject *obj)
             spark->anchorX = spark->x;
             Animation_ApplyChildValuesFar(spark, 9);
             spark->unk5e = 72;
-            ObjectDispatch_InitializeFar((struct DispatchObject *)spark, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)spark, gBattleFx_CommonParticleScript);
         }
     }
 }

@@ -19,7 +19,7 @@
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
     void *staging_buffer = Runtime_AllocateBlock(56, 0x400);
-    s32 resource_address = RenderResource_PairSourceTable[group_index];
+    s32 resource_address = gRenderResource_PairSourceTable[group_index];
 
     if (resource_index <= 0x5F) {
         Resource_DecodeByteLzInRam((void *)resource_address, staging_buffer);
@@ -61,7 +61,7 @@ struct BobPairObject {
 
 // The frame counter, advanced by the vblank interrupt.
 extern volatile u32 gFrameTick;
-extern const u8 Ui_PairBobOffsets[];
+extern const u8 gUi_PairBobOffsets[];
 
 // Bobs the object and the one after it by the same step of an eight-step
 // table, advanced every four frames.
@@ -69,7 +69,7 @@ void Func_08045018(struct BobPairObject *object)
 {
     s32 value;
 
-    value = object->baseY + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
     object->y = value;
     /* FAKEMATCH: tying the object to an empty asm after the first store
        loads the next object before the second tick is shifted, as the
@@ -77,6 +77,6 @@ void Func_08045018(struct BobPairObject *object)
        differ 2). */
     asm("" : "+r"(object));
     object = object->next;
-    value = object->baseY + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
     object->y = value;
 }

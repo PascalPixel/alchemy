@@ -6,12 +6,12 @@ struct ResourceSprite {
     u8 flags;
 };
 
-extern u8 ResourceBlockOwners[];
+extern u8 gResourceBlockOwners[];
 void Resource_ResetEntry(s32 block);
 
 s32 ResourceTable_CountFreeBlocks(void)
 {
-    u8 *marker = ResourceBlockOwners;
+    u8 *marker = gResourceBlockOwners;
     s32 free_count;
     s32 remaining;
 

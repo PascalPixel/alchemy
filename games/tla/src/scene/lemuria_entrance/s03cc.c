@@ -4,7 +4,7 @@
 #include "event_work.h"
 
 extern u8 MsgFieldAddressCompanion;
-extern const u8 Data_020005e4[];
+extern const u8 gData_020005e4[];
 
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -35,7 +35,7 @@ void Func_020003cc(void)
     Func_0200055c();
     Func_020005cc(0);
     ObjectMotion_SetSpeedParameters_(8, 0x451e, 0x228f);
-    ObjectMotion_EnableActionAndSetCallback(8, Data_020005e4);
+    ObjectMotion_EnableActionAndSetCallback(8, gData_020005e4);
     Battle_WaitMode0(80);
     Func_0200059c((s32)&MsgFieldAddressCompanion);
     Func_02000310(6, 90);

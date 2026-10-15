@@ -66,7 +66,7 @@ struct SelectedSubject
 };
 
 // 表を符号付き半語で読む見方
-extern s32 Imil_ArcOrigin[];
+extern s32 gImil_ArcOrigin[];
 
 static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 {
@@ -120,7 +120,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *Imil_GetExits(void)
 {
-	return (u8 *)Imil_SceneTable;
+	return (u8 *)gImil_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -260,11 +260,11 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		{
 			Engine_EventBegin();
 			Engine_ActorSetAnimation(9, 7);
-			Engine_MapAnimateCells((s32)Imil_CellStepsA, 10, 69);
+			Engine_MapAnimateCells((s32)gImil_CellStepsA, 10, 69);
 			Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
 			Event_ShowMessage(9, 0);
 			Engine_ActorSetAnimation(9, 8);
-			Map_AnimateCells((s32)Imil_CellStepsB, 10, 69);
+			Map_AnimateCells((s32)gImil_CellStepsB, 10, 69);
 			Engine_EventEnd();
 		}
 		else
@@ -272,7 +272,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Engine_EventBegin();
 			actor9_record = Object_GetById(9);
 			actor9_record->timer = 10;
-			Engine_ActorEnableActionCallback(9, Imil_ActorScriptA);
+			Engine_ActorEnableActionCallback(9, gImil_ActorScriptA);
 			Engine_EventSetMessage(MsgMercuryOoohHelpMe);
 			Engine_EventShowMessage(9, 0);
 			Engine_ActorStop(8);
@@ -280,9 +280,9 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Actor_FaceDirection(8, 53248, 10);
 			Engine_ActorStartRepeatedMotion(8, 2);
 			Event_ShowMessageAndWait(8, 0, 20);
-			Engine_ActorEnableActionCallback(0, Imil_ActorScriptC);
+			Engine_ActorEnableActionCallback(0, gImil_ActorScriptC);
 			Actor_SetSpeed(8, 104857, 52428);
-			Object_SetActionCallbackAndRefreshById(8, (s32)Imil_ActorScriptB);
+			Object_SetActionCallbackAndRefreshById(8, (s32)gImil_ActorScriptB);
 			Engine_EventWait(40);
 			Engine_ActorJump(8, 2, 0);
 			Engine_ActorStartRepeatedMotion(8, 2);
@@ -432,10 +432,10 @@ static void Imil_RunExitDoor(void)
 		Engine_AudioPlayCue(158);
 	}
 	{
-		s32 x = Imil_ExitCellPoints[exit - 1][0];
-		s32 y = Imil_ExitCellPoints[exit - 1][1];
+		s32 x = gImil_ExitCellPoints[exit - 1][0];
+		s32 y = gImil_ExitCellPoints[exit - 1][1];
 
-		Engine_MapAnimateCells(Imil_ExitCellSteps[exit - 1], x, y);
+		Engine_MapAnimateCells(gImil_ExitCellSteps[exit - 1], x, y);
 	}
 	Actor_SetSpeed(0, 0x8000, 0x4000);
 	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -485,7 +485,7 @@ static void Imil_RunWeaponShop(void)
 			Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
-			Object_SetActionCallbackAndRefreshById(12, (s32)Imil_TurnScript);
+			Object_SetActionCallbackAndRefreshById(12, (s32)gImil_TurnScript);
 			Engine_EventSetMessage(MsgMercuryStoreClosedUntilWell);
 			Engine_EventShowMessage(12, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
@@ -524,7 +524,7 @@ static void Imil_RunArmorShop(void)
 			Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
-			Object_SetActionCallbackAndRefreshById(13, (s32)Imil_TurnScript);
+			Object_SetActionCallbackAndRefreshById(13, (s32)gImil_TurnScript);
 			Engine_EventSetMessage(MsgMercuryTooSickBusiness);
 			Engine_EventShowMessage(13, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
@@ -713,7 +713,7 @@ s32 Imil_ApplyEntryState(void)
 					Engine_ActorSetPosition(8, 0x950000, 0x740000);
 					Object_GetById(8)->facing = 0;
 					Object_GetById(9)->work = 0;
-					Engine_ActorEnableActionCallback(9, Imil_ActorScriptA);
+					Engine_ActorEnableActionCallback(9, gImil_ActorScriptA);
 				}
 				else
 				{
@@ -726,7 +726,7 @@ s32 Imil_ApplyEntryState(void)
 			if (!Engine_GameFlagIsSet(0x881))
 			{
 				Object_GetById(11)->work = 1;
-				Engine_ActorEnableActionCallback(11, Imil_ActorScriptA);
+				Engine_ActorEnableActionCallback(11, gImil_ActorScriptA);
 			}
 		}
 		else if (entrance == 4)
@@ -826,11 +826,11 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Actor_WalkTo(GARET, 150, 234);
 	Actor_WalkToAndWait(IVAN, 134, 234);
 	Engine_ActorSetAnimation(GARET, 1);
-	FieldObject_SetTargetAndCallback(0, 0x10003, Imil_PrimaryScript);
-	FieldObject_SetTargetAndCallback(1, 0x10003, Imil_PrimaryScript);
-	FieldObject_SetTargetAndCallback(2, 0x10003, Imil_PrimaryScript);
+	FieldObject_SetTargetAndCallback(0, 0x10003, gImil_PrimaryScript);
+	FieldObject_SetTargetAndCallback(1, 0x10003, gImil_PrimaryScript);
+	FieldObject_SetTargetAndCallback(2, 0x10003, gImil_PrimaryScript);
 	Engine_CameraWaitForMove();
-	table = (s32)Imil_TurnScript;
+	table = (s32)gImil_TurnScript;
 	Engine_ActorEnableActionCallback(9, table);
 	Engine_EventWait(40);
 	Actor_SetAttachedEffect(MIA, 0x102);
@@ -857,7 +857,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Engine_ActorSetAnimation(9, 7);
-	Map_AnimateCells((s32)Imil_CellStepsA, 10, 69);
+	Map_AnimateCells((s32)gImil_CellStepsA, 10, 69);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_ActorSetAnimationAndWait(MIA, 4);
@@ -865,7 +865,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimation(9, 8);
-	Map_AnimateCells((s32)Imil_CellStepsB, 10, 69);
+	Map_AnimateCells((s32)gImil_CellStepsB, 10, 69);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
@@ -882,7 +882,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_EventWait(40);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
 	Object_GetById(3)->timer = 0;
-	Engine_ActorEnableActionCallback(MIA, Imil_MiaScriptA);
+	Engine_ActorEnableActionCallback(MIA, gImil_MiaScriptA);
 	while (Object_GetById(3)->timer == 0)
 	{
 		Engine_TaskWait(1);
@@ -924,7 +924,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_ActorStop(IVAN);
 	Actor_SetSpeed(MIA, 0x30000, 0x18000);
 	Object_GetById(3)->timer = 0;
-	Engine_ActorEnableActionCallback(MIA, Imil_MiaScriptB);
+	Engine_ActorEnableActionCallback(MIA, gImil_MiaScriptB);
 	while (Object_GetById(3)->timer == 0)
 	{
 		Engine_TaskWait(1);
@@ -950,7 +950,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
 	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-	table = (s32)Imil_PrimaryScript2;
+	table = (s32)gImil_PrimaryScript2;
 	Engine_ActorEnableActionCallback(GARET, table);
 	Object_SetActionCallbackAndRefreshById(2, table);
 	Engine_EventWait(20);
@@ -976,9 +976,9 @@ static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o)
 		if (t != 0)
 		{
 			b = buf;
-			b[0] = Imil_ArcOrigin[0];
-			b[1] = Imil_ArcOrigin[1] + 0x80000;
-			b[2] = Imil_ArcOrigin[2];
+			b[0] = gImil_ArcOrigin[0];
+			b[1] = gImil_ArcOrigin[1] + 0x80000;
+			b[2] = gImil_ArcOrigin[2];
 			Vector_AddPolarOffset(t << 16, (t << 11) + o->unk66, b);
 			o->unk8 = b[0];
 			o->unkC = b[1];
@@ -998,7 +998,7 @@ static void Imil_SwayAndSpark(struct FieldActor *actor)
 	s32				   radius;
 
 	actor->x.fixed =
-		Imil_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin(actor->timer << 10));
+		gImil_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin(actor->timer << 10));
 	actor->timer++;
 	actor->timer = (actor->timer + 64) % 64;
 	if (gFrameCount % 3 == 0)
@@ -1019,7 +1019,7 @@ static void Imil_SwayAndSpark(struct FieldActor *actor)
 			spark->priorityFlags = 2;
 			spark->motionFlags = 0;
 			ObjectGroup_SetChildValue(spark, 9);
-			Engine_ObjectSetScript(spark, Imil_SparkScript);
+			Engine_ObjectSetScript(spark, gImil_SparkScript);
 		}
 	}
 }
@@ -1027,7 +1027,7 @@ static void Imil_SwayAndSpark(struct FieldActor *actor)
 
 static void Imil_ShowActorNineTurnMessage(void)
 {
-	Engine_ActorEnableActionCallback(9, (s32)Imil_TurnScript);
+	Engine_ActorEnableActionCallback(9, (s32)gImil_TurnScript);
 	Engine_EventShowMessage(9, 0);
 }
 
@@ -1392,7 +1392,7 @@ static void SceneActor_TurnTowardTableAngle(s32 z)
 	}
 	o->unk5A = t;
 	z = 1;
-	d = Imil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
+	d = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
 	z = -z;
 	if (d == z)
 	{
@@ -1426,7 +1426,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 
 	for (;;)
 	{
-		heading = Imil_SwayHeadings[(gKeysHeld >> 4) & 15];
+		heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
 		if ((heading << 16) == -0x10000)
 		{
 			return;
@@ -1504,14 +1504,14 @@ tail:
 	Engine_EventEnd();
 }
 
-s16 Imil_KeyHeadings[] = {
+s16 gImil_KeyHeadings[] = {
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
 	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, -1, -1, FACING_NORTH,
 	FACING_SOUTH, -1, -1, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
-s16 Imil_SwayHeadings[] = {
+s16 gImil_SwayHeadings[] = {
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
 	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
@@ -1534,12 +1534,12 @@ s32 gImilPlacementData[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Imil_ActorScriptA[] = {
+s32 gImil_ActorScriptA[] = {
 	SC_CALL(OverlayObject_UpdateWobbleByCounter),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Imil_ActorScriptB[] = {
+s32 gImil_ActorScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(136), 0, PIXELS(192)),
 	SC_SYNC,
@@ -1552,7 +1552,7 @@ s32 Imil_ActorScriptB[] = {
 	SC_END,
 };
 
-s32 Imil_ActorScriptC[] = {
+s32 gImil_ActorScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(155), 0, PIXELS(135)),
 	SC_SYNC,
@@ -1570,7 +1570,7 @@ s32 Imil_ActorScriptC[] = {
 	SC_END,
 };
 
-s32 Imil_TurnScript[] = {
+s32 gImil_TurnScript[] = {
 	SC_ADD(SW_SCALE_Y, 0x6000),
 	SC_WAIT(2),
 	SC_ADD(SW_SCALE_Y, -0x3000),
@@ -1583,14 +1583,14 @@ s32 Imil_TurnScript[] = {
 	SC_END,
 };
 
-s32 Imil_SparkScript[] = {
+s32 gImil_SparkScript[] = {
 	SC_ADD(SW_Y, -0x6666),
 	SC_WAIT(1),
 	SC_LOOP(72, SC_TOP),
 	SC_FREE,
 };
 
-s32 Imil_MiaScriptA[] = {
+s32 gImil_MiaScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(177), 0, PIXELS(136)),
 	SC_SYNC,
@@ -1605,7 +1605,7 @@ s32 Imil_MiaScriptA[] = {
 	SC_END,
 };
 
-s32 Imil_MiaScriptB[] = {
+s32 gImil_MiaScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(165), 0, PIXELS(207)),
 	SC_SYNC,
@@ -1619,12 +1619,12 @@ s32 Imil_MiaScriptB[] = {
 	SC_END,
 };
 
-s32 Imil_PrimaryScript[] = {
+s32 gImil_PrimaryScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Imil_PrimaryScript2[] = {
+s32 gImil_PrimaryScript2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(132), 0, PIXELS(206)),
 	SC_SYNC,
@@ -1660,7 +1660,7 @@ struct SceneEntrance gImilEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Imil_SceneTable[] = {
+u32 gImil_SceneTable[] = {
 	SCENE_EXITS(50),
 	SCENE_EXIT(1, 51, 1),
 	SCENE_EXIT(2, 51, 5),
@@ -1846,51 +1846,51 @@ struct SceneEvent gImilEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Imil_ExitCellStep5[] = {
+u16 gImil_ExitCellStep5[] = {
 	MAP_CELL_STEP(40, 37, 4, 2, 5), MAP_CELL_STEP(40, 39, 4, 2, 5), MAP_CELL_STEPS_END,
 	MAP_CELL_STEP(35, 35, 2, 2, 5), MAP_CELL_STEP(33, 35, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_ExitCellStep4[] = {
+u16 gImil_ExitCellStep4[] = {
 	MAP_CELL_STEP(35, 37, 2, 2, 5), MAP_CELL_STEP(33, 37, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_ExitCellStep1[] = {
+u16 gImil_ExitCellStep1[] = {
 	MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_ExitCellStep0[] = {
+u16 gImil_ExitCellStep0[] = {
 	MAP_CELL_STEP(35, 39, 2, 2, 5), MAP_CELL_STEP(33, 39, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_ExitCellStep2[] = {
+u16 gImil_ExitCellStep2[] = {
 	MAP_CELL_STEP(42, 48, 2, 2, 5), MAP_CELL_STEP(40, 48, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_ExitCellStep3[] = {
+u16 gImil_ExitCellStep3[] = {
 	MAP_CELL_STEP(42, 46, 2, 2, 5), MAP_CELL_STEP(40, 46, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 *Imil_ExitCellSteps[] = {
-	Imil_ExitCellStep0,
-	Imil_ExitCellStep1,
-	Imil_ExitCellStep2,
-	Imil_ExitCellStep3,
-	Imil_ExitCellStep4,
-	Imil_ExitCellStep5,
+u16 *gImil_ExitCellSteps[] = {
+	gImil_ExitCellStep0,
+	gImil_ExitCellStep1,
+	gImil_ExitCellStep2,
+	gImil_ExitCellStep3,
+	gImil_ExitCellStep4,
+	gImil_ExitCellStep5,
 };
 
 // 出口ごとのセル位置 (x, y)
-s16 Imil_ExitCellPoints[][2] = {
+s16 gImil_ExitCellPoints[][2] = {
 	{ 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };
 
-u16 Imil_CellStepsA[] = {
+u16 gImil_CellStepsA[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(0, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
 
-u16 Imil_CellStepsB[] = {
+u16 gImil_CellStepsB[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(2, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
 
-s32 Imil_ArcOrigin[3];
+s32 gImil_ArcOrigin[3];

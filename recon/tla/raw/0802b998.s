@@ -395,7 +395,7 @@ Func_0802b998:
 .L_0802bcd4:
 	.4byte 0x00000199
 .L_0802bcd8:
-	.4byte Data_0202e000
+	.4byte gData_0202e000
 .L_0802bcdc:
 	.4byte gCameraSceneParameters
 .L_0802bce0:
@@ -409,7 +409,7 @@ Func_0802b998:
 .L_0802bcf0:
 	.4byte Data_03001244
 .L_0802bcf4:
-	.4byte Data_03001144
+	.4byte gData_03001144
 .L_0802bcf8:
 	.4byte gFrameCount
 .L_0802bcfc:

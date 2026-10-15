@@ -1,6 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 
-extern const u8 Data_02003cbc[];
+extern const u8 gData_02003cbc[];
 
 void Func_02000f18(s32 actor)
 {
@@ -28,7 +28,7 @@ void Func_02000f80(void)
 
 void Func_02000fa8(void)
 {
-    Func_02003b38(Data_02003cbc);
+    Func_02003b38(gData_02003cbc);
 }
 
 void Func_02000fb8(void)

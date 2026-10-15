@@ -69,7 +69,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     }
 
     triple = group * 3;
-    table = Menu_TopEntryPositionByCommand;
+    table = gMenu_TopEntryPositionByCommand;
     offset = triple << 1;
     selection = TableGet(table, selection + offset) - 1;
     if (selection < 0) {
@@ -88,7 +88,7 @@ s32 Menu_SelectTopEntry(s32 selection)
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
-        s8 *commands = Menu_TopEntryCommandByPosition;
+        s8 *commands = gMenu_TopEntryCommandByPosition;
         s32 index;
 
         /* FAKEMATCH: ⚓️ loads the table's address before forming the index */

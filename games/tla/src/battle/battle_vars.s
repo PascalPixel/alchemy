@@ -3,8 +3,8 @@
 	.include "games/common/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 38
 @ 敵の編成 660 個
-	.global BattleFormation_Records
-BattleFormation_Records:
+	.global gBattleFormation_Records
+gBattleFormation_Records:
 	.incbin "games/tla/src/battle/formatn.table"
 	.global Data_08130c5c
 Data_08130c5c:
@@ -20,6 +20,6 @@ Data_08130c5c:
 	.2byte 0x156, 0x158, 0x15a, 0x160, 0x163, 0x170, 0x171, 0x172
 	.2byte 0x173, 0x174, 0x175, 0x176, 0x177, 0x178, 0x179, 0x000
 @ 戦闘の絵 387 個
-	.global Summon_EntryTable
-Summon_EntryTable:
+	.global gSummon_EntryTable
+gSummon_EntryTable:
 	.incbin "games/tla/src/battle/summon/sprites.table"

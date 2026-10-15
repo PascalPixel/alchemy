@@ -25,13 +25,13 @@ const u32 *Scene_GetExits(void)
     return gSceneExits;
 }
 
-extern s16 Data_02002c5c[];
-extern s16 Data_02002efc[];
+extern s16 gData_02002c5c[];
+extern s16 gData_02002efc[];
 s32 GameFlag_Test(s32 flag);
 
 const s16 *Func_0200004c(void)
 {
     if (GameFlag_Test(0x97f))
-        return Data_02002efc;
-    return Data_02002c5c;
+        return gData_02002efc;
+    return gData_02002c5c;
 }

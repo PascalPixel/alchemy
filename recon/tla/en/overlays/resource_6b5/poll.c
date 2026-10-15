@@ -31,8 +31,8 @@ struct LobbyEventWork {
 };
 
 extern struct LinkPeer gLinkPeerSignatures[4];
-extern s32 Data_020022b8;
-extern s32 Data_020022bc;
+extern s32 gData_020022b8;
+extern s32 gData_020022bc;
 
 s32 Func_0200006c(s32 slot);
 void Func_02001a14(void);
@@ -72,17 +72,17 @@ s32 Func_02000134(void)
     if (work->raisedTrigger != 2) {
         Func_0200006c(0);
         if (!GameFlag_Test(0x303)) {
-            if (++Data_020022b8 > 25) {
+            if (++gData_020022b8 > 25) {
                 for (i = 0; i < 4; i++) {
                     Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
                 }
-                Data_020022b8 = 0;
+                gData_020022b8 = 0;
                 LinkLobby_WriteSlotValue(4);
             }
         } else {
-            Data_020022b8 = 0;
+            gData_020022b8 = 0;
         }
-        if (Data_020022b8 == 0) {
+        if (gData_020022b8 == 0) {
             if (Func_0200006c(0)
                 && (Func_0200006c(1) || Func_0200006c(2))) {
                 GameFlag_SetBit(0x201);
@@ -100,7 +100,7 @@ s32 Func_02000134(void)
         }
     }
     if ((Flag_Test(0x201) || Flag_Test(0x202)) && !Flag_Test(0x173)
-        && !Func_0200006c(0) && Data_020022b8 > 24) {
+        && !Func_0200006c(0) && gData_020022b8 > 24) {
         work->raisedTrigger = 2;
         Flag_Set(0x205);
         Flag_Clear(0x201);
@@ -121,8 +121,8 @@ s32 Func_020002d8(void)
     if (set != 0) {
         return set;
     }
-    if (++Data_020022bc == 300) {
-        Data_020022bc = 0;
+    if (++gData_020022bc == 300) {
+        gData_020022bc = 0;
         GameFlag_ClearBit(0x200);
     }
     set = Flag_Test(0x200);

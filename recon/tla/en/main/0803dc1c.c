@@ -58,7 +58,7 @@ struct GlyphWork {
     u8 unk3ba[42];
 };
 
-extern const u8 Data_080346f8[];
+extern const u8 gData_080346f8[];
 
 void UiGlyph_ResetWorkState(void)
 {
@@ -90,7 +90,7 @@ void UiGlyph_ResetWorkState(void)
     work->rows[1].index.cursor = 0;
     work->rows[0].state = 0;
     work->rows[1].state = 0;
-    table = Data_080346f8;
+    table = gData_080346f8;
     work->slot = Resource_FindFreeEntry();
     work->tile = VramBlock_LoadCached(work->slot, 256, table);
     work->field2e2 = 0;

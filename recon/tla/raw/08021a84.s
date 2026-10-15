@@ -459,17 +459,17 @@ Func_08021a84:
 .L_08021e10:
 	.4byte .L_08021be8
 .L_08021e14:
-	.4byte Data_0802eac4
+	.4byte gData_0802eac4
 .L_08021e18:
-	.4byte Data_0802eadc
+	.4byte gData_0802eadc
 .L_08021e1c:
-	.4byte Data_0802ead4
+	.4byte gData_0802ead4
 .L_08021e20:
-	.4byte Data_0802eae4
+	.4byte gData_0802eae4
 .L_08021e24:
-	.4byte Data_0802eb04
+	.4byte gData_0802eb04
 .L_08021e28:
-	.4byte Data_0802eb44
+	.4byte gData_0802eb44
 .L_08021e2c:
 	.4byte IwramClearWords
 .L_08021e30:

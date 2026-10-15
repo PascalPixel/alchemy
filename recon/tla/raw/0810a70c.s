@@ -35,4 +35,4 @@ Forge_FindRecipe:
 	pop {pc}
 	.2byte 0x0000
 .L_0810a744:
-	.4byte Data_0810cc34
+	.4byte gData_0810cc34

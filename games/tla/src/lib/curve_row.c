@@ -2,12 +2,12 @@
 
 s32 Func_0802d3c4(const s8 *samples, u32 row, u32 position)
 {
-    return samples[Curve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
+    return samples[gCurve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
 }
 
 s32 Func_0802d3d8(const s8 *samples, u32 row, u32 position)
 {
-    const u8 *table = Curve_SampleIndexTable;
+    const u8 *table = gCurve_SampleIndexTable;
     u32 index;
 
     /* FAKEMATCH: ⚓️ loads the index table before scaling the row */

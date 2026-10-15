@@ -112,4 +112,4 @@ Func_081b3ed8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081b3fac:
-	.4byte Flash_Handler3
+	.4byte gFlash_Handler3

@@ -1,7 +1,7 @@
 #include "party_state.h"
 #include "battle_system.h"
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
+extern u8 gData_03001f2c[];
 
 extern u8 MsgShopRepairConfirm[];
 extern u8 MsgCannotRepairKind[];

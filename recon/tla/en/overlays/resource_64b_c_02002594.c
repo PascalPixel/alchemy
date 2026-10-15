@@ -11,7 +11,7 @@
 #include "object_runtime.h"
 #include "field_sprite.h"
 
-extern const u8 Data_02006bc8[];
+extern const u8 gData_02006bc8[];
 
 u32 Random16Far(void);
 struct ObjectRuntime *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
@@ -38,6 +38,6 @@ void Func_02002594(void)
         obj->scaleX = scale;
         obj->scaleY = scale;
         Func_02004b18(obj, 1);
-        Func_02004b20(obj, Data_02006bc8);
+        Func_02004b20(obj, gData_02006bc8);
     }
 }

@@ -11,11 +11,11 @@ void Func_020047e4(void)
     Battle_WaitMode0(20);
     Func_02005b4c((s32)MsgYouAreStillNot);
     Func_02005b64(17, 0);
-    if (Data_02007950 != 0) {
-        Data_02007950->motionFlags = 0;
-        while (Data_02007950->y > 0x240000) {
+    if (gData_02007950 != 0) {
+        gData_02007950->motionFlags = 0;
+        while (gData_02007950->y > 0x240000) {
             Kibombo_ObjArm(17, 0xd000, 0);
-            Data_02007950->y += 0xffffc000;
+            gData_02007950->y += 0xffffc000;
             WaitFrames(1);
         }
     }

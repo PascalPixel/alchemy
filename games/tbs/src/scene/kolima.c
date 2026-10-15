@@ -54,10 +54,10 @@ struct Sub
 
 static s32 Kolima_ApplyPendingPose(s32 arg0)
 {
-	if (Kolima_PendingPose != 0)
+	if (gKolima_PendingPose != 0)
 	{
 		Object_SetMode(arg0, 2);
-		Kolima_PendingPose = 0;
+		gKolima_PendingPose = 0;
 	}
 	return 1;
 }
@@ -251,7 +251,7 @@ static void Kolima_AnimateSwitchOrExit(void)
 		Engine_EventEnd();
 		return;
 	}
-	Engine_MapAnimateCells(Kolima_SwitchCells, x, y);
+	Engine_MapAnimateCells(gKolima_SwitchCells, x, y);
 	FieldScene_ConfigureActor0ThenRun(work->touchedTrigger);
 	Engine_EventEnd();
 }
@@ -322,7 +322,7 @@ static void EV10_TOUCH(void)
 				obj->velocityX = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
 			}
 			Object_SetMode(obj, 1);
-			Engine_ObjectSetScript(obj, (s32)Kolima_DebrisScript);
+			Engine_ObjectSetScript(obj, (s32)gKolima_DebrisScript);
 		}
 	}
 	Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
@@ -332,7 +332,7 @@ static void EV10_TOUCH(void)
 	Engine_ActorJump(0, 6, 0);
 	Engine_EventWait(20);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	FieldObject_SetTargetAndCallback(8, 0x10000, Kolima_Actor8Path);
+	FieldObject_SetTargetAndCallback(8, 0x10000, gKolima_Actor8Path);
 	Engine_EventWait(60);
 	Engine_ActorShowEmote(0, 0x102, 60);
 	Engine_GameFlagSet(0x847);
@@ -364,7 +364,7 @@ s32 Scene_Initialize(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(25), 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 
-	table = Kolima_EntryActions;
+	table = gKolima_EntryActions;
 	Engine_ActorEnableActionCallback(23, table);
 	Engine_ActorEnableActionCallback(24, table);
 	Engine_ActorEnableActionCallback(25, table);
@@ -400,7 +400,7 @@ s32 Scene_Initialize(void)
 		Engine_ActorDestroy(20);
 		Engine_ActorDestroy(21);
 		Engine_ActorDestroy(22);
-		Event_CallWithLastActiveObjectId(Kolima_EntryScript);
+		Event_CallWithLastActiveObjectId(gKolima_EntryScript);
 	}
 
 	return 0;
@@ -501,7 +501,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	s32				  *again;
 
 	Engine_EventBegin();
-	layout = &Kolima_LayoutFlag;
+	layout = &gKolima_LayoutFlag;
 	*layout = GameFlag_IsSet(3);
 	actor = Object_GetById(19);
 	Engine_ActorSetSpriteFlags(actor, 0);
@@ -531,8 +531,8 @@ static void FieldScene_RunExtendedActorSequence(void)
 	{
 		Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
 	}
-	Engine_ActorEnableActionCallback(GARET, Kolima_ActionTable1);
-	Engine_ActorEnableActionCallback(IVAN, Kolima_ActionTable2);
+	Engine_ActorEnableActionCallback(GARET, gKolima_ActionTable1);
+	Engine_ActorEnableActionCallback(IVAN, gKolima_ActionTable2);
 	if (*layout != 0)
 	{
 		Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
@@ -541,13 +541,13 @@ static void FieldScene_RunExtendedActorSequence(void)
 		{
 			Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
 		}
-		Engine_ActorEnableActionCallback(MIA, Kolima_ActionTable3);
+		Engine_ActorEnableActionCallback(MIA, gKolima_ActionTable3);
 	}
 	Object_RefreshSelectorById(2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
 	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
 	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-	layout = &Kolima_LayoutFlag;
+	layout = &gKolima_LayoutFlag;
 	if (*layout != 0)
 	{
 		Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
@@ -629,7 +629,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Actor_WalkToAndWait(IVAN, 72, 0x11e);
 	Engine_EventWait(1);
 	((struct ObjectRuntime *)Object_GetById(2))->actionFlags |= mask;
-	Engine_ActorEnableActionCallback(IVAN, Kolima_ActionTable2);
+	Engine_ActorEnableActionCallback(IVAN, gKolima_ActionTable2);
 	if (*layout != 0)
 	{
 		Actor_ShowEmote(MIA, 0x105, 0);
@@ -701,14 +701,14 @@ static void FieldScene_RunExtendedActorSequence(void)
 	ColorBuffer_ApplyTarget(0x7fff, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
-	Kolima_EffectActive = 1;
+	gKolima_EffectActive = 1;
 	FieldScheduler_AddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
 	Engine_TaskWait(20);
 	ColorBuffer_ApplyTarget(0x405210, 1);
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(120);
 	Engine_TaskWait(60);
-	actions_a = Kolima_ActionTable4;
+	actions_a = gKolima_ActionTable4;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actions_a);
 	Engine_ActorEnableActionCallback(GARET, actions_a);
 	Engine_ActorEnableActionCallback(IVAN, actions_a);
@@ -716,7 +716,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_EventWait(100);
 	FieldScene_RunPairedStepA(1, 20);
 	FieldScene_RunPairedStepA(2, 40);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_EventWait(40);
 		Actor_SetAttachedEffect(MIA, 0x102);
@@ -728,7 +728,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 		gEventWork->message++;
 	}
 	Engine_EventWait(20);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		value = 128;
 		actor = Object_GetById(3);
@@ -736,7 +736,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 		Engine_EventWait(10);
 		Actor_SetSpeed(MIA, (value << 10), (value << 10));
 		Actor_SetDestinationOffset(MIA, -2, 0);
-		Engine_ActorEnableActionCallback(MIA, Kolima_ActionTable5);
+		Engine_ActorEnableActionCallback(MIA, gKolima_ActionTable5);
 		actor = Object_GetById(3);
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Engine_ActorSetAnimation(MIA, 19);
@@ -747,7 +747,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
-	actions_b = Kolima_ActionTable5;
+	actions_b = gKolima_ActionTable5;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actions_b);
 	actor = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(actor, 0);
@@ -769,7 +769,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	actor = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ActorSetAnimation(IVAN, 19);
-	Kolima_EffectActive = 0;
+	gKolima_EffectActive = 0;
 	Engine_EventWait(160);
 	Engine_TaskRemoveCallback(SceneEffect_SpawnObject26EveryEightFrames);
 	Engine_EventWait(120);
@@ -808,7 +808,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorStartRepeatedMotion(MIA, 2);
 	Actor_SetAttachedEffect(GARET, 0x102);
 	FieldScene_RunPairedStepA(1, 20);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Actor_SetAttachedEffect(MIA, 0x102);
 		FieldScene_RunPairedStepA(3, 10);
@@ -828,19 +828,19 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(IVAN, 3);
 	value = 0;
 	Engine_ActorSetSpritePriority(MIA, 3);
-	Kolima_PendingPose = value;
+	gKolima_PendingPose = value;
 	FieldScheduler_AddCallback(SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
 	Event_PlayCue(220);
 	Object_GetById(19)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(19, 2);
 	Actor_SetPosition(19, 0x780000, 0xf80000);
-	actions_c = Kolima_ActionTable6;
+	actions_c = gKolima_ActionTable6;
 	Engine_ActorEnableActionCallback(19, actions_c);
 	Object_GetById(20)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(20, 2);
 	Actor_SetPosition(20, 0x640000, 0x1120000);
 	Engine_ActorEnableActionCallback(20, actions_c);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Object_GetById(21)->priorityFlags &= 254;
 		Engine_ActorSetSpritePriority(21, 2);
@@ -867,16 +867,16 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_TaskWait(60);
 	Engine_ActorStop(19);
 	Engine_ActorStop(20);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_ActorStop(21);
 	}
 	Engine_ActorStop(22);
 	Engine_TaskWait(1);
-	actions_d = Kolima_ActionTable7;
+	actions_d = gKolima_ActionTable7;
 	Engine_ActorEnableActionCallback(19, actions_d);
 	Engine_ActorEnableActionCallback(20, actions_d);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_ActorEnableActionCallback(21, actions_d);
 	}
@@ -896,7 +896,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	FieldScene_RunPairedStepA(2, 20);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(10);
@@ -936,7 +936,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorJump(GARET, 4, 0);
 	Engine_EventWait(20);
 	FieldScene_RunPairedStepA(1, 20);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Actor_ShowEmote(MIA, 0x100, 0);
 		Engine_EventWait(60);
@@ -1026,7 +1026,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	FieldScene_RunPairedStepB(2, 0xc000, 10);
 	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	FieldScene_RunPairedStepA(2, 10);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_ActorRunRepeatedMotion(MIA, 2);
 		FieldScene_RunPairedStepB(3, 0, 20);
@@ -1106,7 +1106,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	FieldScene_RunPairedStepA(2, 10);
 	FieldScene_RunPairedStepB(1, 0xc000, 10);
 	FieldScene_RunPairedStepB(0, 0xc000, 10);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		FieldScene_RunPairedStepB(3, 0xc000, 10);
 	}
@@ -1121,11 +1121,11 @@ static void FieldScene_RunExtendedActorSequence(void)
 	*again = 2;
 	Event_PlayCue(220);
 	Actor_SetPosition(19, 0x780000, 0xf80000);
-	actions_c = Kolima_ActionTable6;
+	actions_c = gKolima_ActionTable6;
 	Engine_ActorEnableActionCallback(19, actions_c);
 	Actor_SetPosition(20, 0x640000, 0x1120000);
 	Engine_ActorEnableActionCallback(20, actions_c);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Actor_SetPosition(21, 0x4a0000, 0xfe0000);
 		Engine_ActorEnableActionCallback(21, actions_c);
@@ -1240,11 +1240,11 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_TaskWait(80);
 	Engine_ActorStop(19);
 	Engine_ActorStop(20);
-	work = &Kolima_LayoutFlag;
+	work = &gKolima_LayoutFlag;
 	Engine_ActorStop(21);
 	Engine_ActorStop(22);
 	Engine_TaskWait(1);
-	actions_d = Kolima_ActionTable7;
+	actions_d = gKolima_ActionTable7;
 	Engine_ActorEnableActionCallback(19, actions_d);
 	Engine_ActorEnableActionCallback(20, actions_d);
 	if (*work != 0)
@@ -1324,7 +1324,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Engine_EventWait(40);
 			FieldScene_RunPairedStepB(2, 0xe000, 10);
 			FieldScene_RunPairedStepA(2, 10);
-			if (Kolima_LayoutFlag != 0)
+			if (gKolima_LayoutFlag != 0)
 			{
 				FieldScene_RunPairedStepB(3, 0, 10);
 				Engine_ActorStartRepeatedMotion(MIA, 3);
@@ -1342,7 +1342,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Actor_ShowEmote(GARET, 0x105, 0);
 			Engine_EventWait(120);
 			FieldScene_RunPairedStepA(2, 40);
-			if (Kolima_LayoutFlag != 0)
+			if (gKolima_LayoutFlag != 0)
 			{
 				FieldScene_RunPairedStepB(3, 0x2000, 10);
 				Engine_ActorSetAnimationAndWait(MIA, 4);
@@ -1354,7 +1354,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			}
 			Engine_EventWait(60);
 			Engine_ActorRunRepeatedMotion(IVAN, 2);
-			if (Kolima_LayoutFlag != 0)
+			if (gKolima_LayoutFlag != 0)
 			{
 				FieldScene_RunPairedStepB(2, 0xa000, 40);
 				FieldScene_RunPairedStepB(2, 0xe000, 20);
@@ -1377,7 +1377,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Engine_ActorSetAnimationAndWait(IVAN, 3);
 			Engine_EventSetMessage(MsgKolimaThatsReliefIsaacThoughtYoud);
 			FieldScene_RunPairedStepA(2, 20);
-			if (Kolima_LayoutFlag != 0)
+			if (gKolima_LayoutFlag != 0)
 			{
 				FieldScene_RunPairedStepB(3, 0, 10);
 				Engine_ActorStartRepeatedMotion(MIA, 1);
@@ -1395,7 +1395,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Actor_ShowEmote(IVAN, 0x105, 0);
 			Engine_EventWait(80);
 			FieldScene_RunPairedStepA(2, 40);
-			if (Kolima_LayoutFlag != 0)
+			if (gKolima_LayoutFlag != 0)
 			{
 				FieldScene_RunPairedStepB(3, 0x2000, 20);
 				Engine_ActorSetAnimation(MIA, 4);
@@ -1436,7 +1436,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Actor_SetPosition(IVAN, 0, 0);
 	Actor_SetPosition(17, 0, 0);
 	Actor_SetPosition(18, 0, 0);
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		Engine_ActorSetAnimation(MIA, 2);
 		actor = Object_GetById(0);
@@ -1484,7 +1484,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	{
 		return;
 	}
-	if (Kolima_EffectActive != 0)
+	if (gKolima_EffectActive != 0)
 	{
 		Engine_AudioPlayCue(200);
 	}
@@ -1508,7 +1508,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	p->motionFlags = f;
 	Object_SetMode(p, 2);
 	Engine_ObjectSetPosition(p, c3, 0, c4);
-	Engine_ObjectSetScript(p, Kolima_Object26Script);
+	Engine_ObjectSetScript(p, gKolima_Object26Script);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -1516,7 +1516,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 
 static s32 Kolima_TriggerRegionScript(struct FieldActor *actor)
 {
-	if (Kolima_LayoutFlag != 0)
+	if (gKolima_LayoutFlag != 0)
 	{
 		if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd30000
 				&& actor->z.fixed < 0x1010000)
@@ -1524,8 +1524,8 @@ static s32 Kolima_TriggerRegionScript(struct FieldActor *actor)
 				&& actor->z.fixed < 0x1150000))
 		{
 			Engine_AudioPlayCue(106);
-			Engine_ObjectSetScript(actor, Kolima_RegionScript);
-			Kolima_PendingPose = 1;
+			Engine_ObjectSetScript(actor, gKolima_RegionScript);
+			gKolima_PendingPose = 1;
 		}
 	}
 	else
@@ -1538,8 +1538,8 @@ static s32 Kolima_TriggerRegionScript(struct FieldActor *actor)
 				&& actor->z.fixed < 0x1150000))
 		{
 			Engine_AudioPlayCue(106);
-			Engine_ObjectSetScript(actor, Kolima_RegionScript);
-			Kolima_PendingPose = 1;
+			Engine_ObjectSetScript(actor, gKolima_RegionScript);
+			gKolima_PendingPose = 1;
 		}
 	}
 	return 0;
@@ -1547,9 +1547,9 @@ static s32 Kolima_TriggerRegionScript(struct FieldActor *actor)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_forest_bridge_falling_effect.h"
-s32 Kolima_PendingPose __attribute__((section(".bss")));
-s32 Kolima_LayoutFlag __attribute__((section(".bss")));
-s32 Kolima_EffectActive __attribute__((section(".bss")));
+s32 gKolima_PendingPose __attribute__((section(".bss")));
+s32 gKolima_LayoutFlag __attribute__((section(".bss")));
+s32 gKolima_EffectActive __attribute__((section(".bss")));
 
 static void FieldScene_RunFlag845And847Branches(void)
 {
@@ -1579,7 +1579,7 @@ static void FieldScene_RunFlag845And847Branches(void)
 	}
 }
 
-s32 Kolima_ActionTable1[] = {
+s32 gKolima_ActionTable1[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(97), 0, PIXELS(221)),
 	SC_SYNC,
@@ -1588,7 +1588,7 @@ s32 Kolima_ActionTable1[] = {
 	SC_END,
 };
 
-s32 Kolima_ActionTable2[] = {
+s32 gKolima_ActionTable2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(101), 0, PIXELS(268)),
 	SC_SYNC,
@@ -1597,7 +1597,7 @@ s32 Kolima_ActionTable2[] = {
 	SC_END,
 };
 
-s32 Kolima_ActionTable3[] = {
+s32 gKolima_ActionTable3[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(78), 0, PIXELS(247)),
 	SC_SYNC,
@@ -1606,7 +1606,7 @@ s32 Kolima_ActionTable3[] = {
 	SC_END,
 };
 
-s32 Kolima_ActionTable4[] = {
+s32 gKolima_ActionTable4[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1622,14 +1622,14 @@ s32 Kolima_ActionTable4[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kolima_ActionTable5[] = {
+s32 gKolima_ActionTable5[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_WAIT(1),
 	SC_END,
 };
 
-s32 Kolima_ActionTable6[] = {
+s32 gKolima_ActionTable6[] = {
 	SC_SET(SW_SCALE_X, 0x1999),
 	SC_SET(SW_SCALE_Y, 0x1999),
 	SC_WAIT(1),
@@ -1642,7 +1642,7 @@ s32 Kolima_ActionTable6[] = {
 	SC_END,
 };
 
-s32 Kolima_ActionTable7[] = {
+s32 gKolima_ActionTable7[] = {
 	SC_ARG(1),
 	SC_ADD(SW_Z, -0x1999),
 	SC_ADD(SW_SCALE_X, -983),
@@ -1654,7 +1654,7 @@ s32 Kolima_ActionTable7[] = {
 	SC_END,
 };
 
-s32 Kolima_EntryActions[] = {
+s32 gKolima_EntryActions[] = {
 	SC_SET(SW_SCALE_X, 0xc000),
 	SC_SET(SW_SCALE_Y, 0xc000),
 	SC_SET(SW_COLLISION, 0),
@@ -1664,17 +1664,17 @@ s32 Kolima_EntryActions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kolima_DebrisScript[] = {
+s32 gKolima_DebrisScript[] = {
 	SC_CALL(SceneEffect_UpdateFallingObject),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kolima_Actor8Path[] = {
+s32 gKolima_Actor8Path[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 Kolima_SwitchCells[] = {
+u16 gKolima_SwitchCells[] = {
 	MAP_CELL_STEP(66, 32, 1, 2, 4), MAP_CELL_STEP(67, 32, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
@@ -1784,7 +1784,7 @@ struct ScenePlacement gKolimaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Kolima_EntryScript[] = {
+struct ScenePlacement gKolima_EntryScript[] = {
 	{ 0x11d, 0x845, 7,
 		PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x11d, 0x845, 7,
@@ -1858,12 +1858,12 @@ struct SceneEvent gKolimaEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 Kolima_Object26Script[] = {
+s32 gKolima_Object26Script[] = {
 	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Kolima_RegionScript[] = {
+s32 gKolima_RegionScript[] = {
 	SC_SET(SW_SCALE_X, 0x20000),
 	SC_SET(SW_SCALE_Y, 0x20000),
 	SC_WAIT(10),

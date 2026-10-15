@@ -73,7 +73,7 @@ Func_080d20fc:
 	add r10, r3
 	b .L_080d212e
 .L_080d2184:
-	.4byte Data_080f3230
+	.4byte gData_080f3230
 .L_080d2188:
 	movs r5, #128
 	lsls r5, r5, #19

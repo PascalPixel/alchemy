@@ -7,13 +7,13 @@
 #include "io_reg.h"
 #include "callback_scheduler.h"
 
-extern void (*Data_030011f8)(void);
+extern void (*gData_030011f8)(void);
 extern char ResourceId_DefaultMapCells;
-extern u8 Data_02038000[];
-extern u8 Data_0203a000[];
-extern u8 Data_0203c000[];
-extern u8 Data_0203e000[];
-extern u8 Data_02028000[];
+extern u8 gData_02038000[];
+extern u8 gData_0203a000[];
+extern u8 gData_0203c000[];
+extern u8 gData_0203e000[];
+extern u8 gData_02028000[];
 extern u8 gWorldMapWork[];
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 void MapAnimation_Update(void);
@@ -35,13 +35,13 @@ s32 Map_LoadAreaGraphics(void)
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
     Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Data_02038000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Data_0203a000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), Data_0203c000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[6]), Data_0203e000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[7]), Data_02028000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[6]), gData_0203e000);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
     Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
-    Data_030011f8 = Map_ShowBg1FromBuffer;
+    gData_030011f8 = Map_ShowBg1FromBuffer;
     state->windowTop = 0;
     state->windowBottom = 159;
     WaitFrames(1);

@@ -19,10 +19,10 @@ struct AnimationRecord18 {
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 Data_020013c0[];
-extern const u8 Data_020013c4[];
-extern const u8 Data_020013ca[];
-extern const u8 Data_0200121c[];
+extern const u8 gData_020013c0[];
+extern const u8 gData_020013c4[];
+extern const u8 gData_020013ca[];
+extern const u8 gData_0200121c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -155,12 +155,12 @@ void Func_02000dcc(void)
     }
     if (Flag_Test(0x8ca) != 0)
         Actor_Place(12, 712 << 16, 424 << 16);
-    Func_020011dc(Data_020013c0);
+    Func_020011dc(gData_020013c0);
     if (Flag_Test(0x9ef) != 0)
         Actor_Place(8, 568 << 16, 280 << 16);
     Object_GetById(8)->priorityFlags &= 0xfe;
-    Func_02000038(Data_020013ca);
-    Func_020011c4(Data_020013c4);
+    Func_02000038(gData_020013ca);
+    Func_020011c4(gData_020013c4);
     if (Flag_Test(0x8cb) != 0) {
         Map_CopyCells(75, 66, 97, 39, 2, 2);
         Map_CopyAttributes(33, 37, 2, 2, 33, 39);

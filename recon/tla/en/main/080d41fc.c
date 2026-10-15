@@ -29,7 +29,7 @@ struct PartyTalk {
 };
 
 extern volatile struct InputState gInput;
-extern const u8 Data_080f330c[];
+extern const u8 gData_080f330c[];
 
 s32 ObjectTable_ReadActiveValue(s32 id);
 s32 Func_080d1eac(s32 value);
@@ -84,7 +84,7 @@ void Func_080d4330(s32 id)
         work->portrait = 0;
     } else {
         s32 speaker = Func_080d1eac(ObjectTable_ReadActiveValue(id));
-        s32 portrait = Data_080f330c[((struct PartyTalk *)&gPartyState)->language];
+        s32 portrait = gData_080f330c[((struct PartyTalk *)&gPartyState)->language];
 
         /* FAKEMATCH: loads the portrait before it builds the window offset. */
         __asm__("");

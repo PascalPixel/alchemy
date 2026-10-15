@@ -18,7 +18,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void WaitFrames(s32 frames);
 u32 Random16(void);
-extern const s32 Data_080f0e78[];
+extern const s32 gData_080f0e78[];
 
 void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {

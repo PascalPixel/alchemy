@@ -31,9 +31,9 @@ struct LobbyEventWork {
     s32 startTransition;
 };
 
-extern s32 Data_020022b8;
-extern s32 Data_020022bc;
-extern u16 Data_02003a74[];
+extern s32 gData_020022b8;
+extern s32 gData_020022bc;
+extern u16 gData_02003a74[];
 extern u8 gAutoSleepEnabled;
 
 s32 Func_02000134(void);
@@ -88,8 +88,8 @@ s32 Func_0200145c(void)
     Flag_Set(0x17e);
     gPartyState.packedEvents[0] = 0;
     gPartyState.packedEvents[1] = 0;
-    Data_020022bc = 0;
-    Data_020022b8 = 0;
+    gData_020022bc = 0;
+    gData_020022b8 = 0;
     ((struct LobbyEventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
     Sound_LoadPresetParameters(2);
     Func_02001414(gPartyState.linkTallies[6]);
@@ -98,7 +98,7 @@ s32 Func_0200145c(void)
     WaitFrames(1);
     Func_02001994(5);
     {
-        u16 *name = Data_02003a74;
+        u16 *name = gData_02003a74;
 
         name[4] = 'T';
         name[5] = 'A';

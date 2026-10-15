@@ -140,4 +140,4 @@ Func_080ddea8:
 .L_080ddfcc:
 	.4byte 0xffe00000
 .L_080ddfd0:
-	.4byte Data_080f0e78
+	.4byte gData_080f0e78

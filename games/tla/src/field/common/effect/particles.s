@@ -1,19 +1,19 @@
 	.section .rodata
 @ Field effect particles, 16x16 sprite frames packed one after another
 
-@ The Broken Seal's FieldFx_GroundParticleTiles, byte for byte
-	.global Data_080f3798
-Data_080f3798:
+@ The Broken Seal's gFieldFx_GroundParticleTiles, byte for byte
+	.global gData_080f3798
+gData_080f3798:
 	.incbin "games/common/src/field/common/effect/ground.4bpp16x16.plz"
 
 @ A mote shrinking away, in six frames
-	.global Data_080f385e
-Data_080f385e:
+	.global gData_080f385e
+gData_080f385e:
 	.incbin "games/tla/src/field/common/effect/mote.4bpp16x16.plz"
 
-@ The Broken Seal's FieldFx_SparkleTiles, byte for byte
-	.global Data_080f38b2
-Data_080f38b2:
+@ The Broken Seal's gFieldFx_SparkleTiles, byte for byte
+	.global gData_080f38b2
+gData_080f38b2:
 	.incbin "games/common/src/field/common/effect/sparkle.4bpp16x16.plz"
 
 @ A short streak, in two frames

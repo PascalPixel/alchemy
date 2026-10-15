@@ -61,7 +61,7 @@ struct ClassDefinition {
     u8 weakEffects[4];
 };
 
-extern struct ClassDefinition Class_DefinitionTable[];
+extern struct ClassDefinition gClass_DefinitionTable[];
 
 LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(OwnerDjinn_Owned, struct OwnerDjinnState, flags.banks.owned, 0xf8);

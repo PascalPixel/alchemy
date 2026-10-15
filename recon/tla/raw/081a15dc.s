@@ -255,8 +255,8 @@ Func_081a15dc:
 .L_081a17c0:
 	.4byte Data_02007518
 .L_081a17c4:
-	.4byte Data_02007520
+	.4byte gData_02007520
 .L_081a17c8:
-	.4byte Data_0200751c
+	.4byte gData_0200751c
 .L_081a17cc:
 	.4byte Data_02007516

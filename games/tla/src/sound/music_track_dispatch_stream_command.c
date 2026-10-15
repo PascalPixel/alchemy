@@ -6,5 +6,5 @@ void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTr
 
     command = *track->cursor;
     track->cursor++;
-    Sound_ExtendedCommandTable[command](player, track);
+    gSound_ExtendedCommandTable[command](player, track);
 }

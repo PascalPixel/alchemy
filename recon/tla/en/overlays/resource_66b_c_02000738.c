@@ -9,7 +9,7 @@
 #include "types.h"
 #include "frame.h"
 
-extern const u16 Data_02001ae0[];
+extern const u16 gData_02001ae0[];
 
 void Func_02000738(void)
 {
@@ -21,7 +21,7 @@ void Func_02000738(void)
         u32 index = 3;
 
         index &= phase;
-        *color++ = Data_02001ae0[index];
+        *color++ = gData_02001ae0[index];
         phase++;
     }
 }

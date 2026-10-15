@@ -92,7 +92,7 @@ struct DebugPartyEntry
 	u16 unk12;
 };
 
-extern struct DebugPartyEntry Debug_PartyPresets[];
+extern struct DebugPartyEntry gDebug_PartyPresets[];
 
 s32 DebugParty_LoadPreset(s32 preset)
 {
@@ -118,7 +118,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
 	for (row = 0;; row++)
 	{
-		owner = Debug_PartyPresets[row].owner;
+		owner = gDebug_PartyPresets[row].owner;
 		if (row < 0 || row > 332)
 		{
 			done = 1;
@@ -135,7 +135,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 			continue;
 
 		Party_AddActiveOwnerFar(owner);
-		Party_AdvanceOwnerCountToTargetFar(owner, Debug_PartyPresets[row].level);
+		Party_AdvanceOwnerCountToTargetFar(owner, gDebug_PartyPresets[row].level);
 		state = (struct BattleUnit *)UnitGetFar(owner);
 		for (i = 0; i < 4; i++)
 		{
@@ -149,12 +149,12 @@ s32 DebugParty_LoadPreset(s32 preset)
 			*(u16 *)&state->actionSlots[i] = 0;
 		for (i = 0; i < 2; i++)
 		{
-			if (Debug_PartyPresets[row].actions[i] != 0)
-				OwnerAction_AddFar(owner, Debug_PartyPresets[row].actions[i]);
+			if (gDebug_PartyPresets[row].actions[i] != 0)
+				OwnerAction_AddFar(owner, gDebug_PartyPresets[row].actions[i]);
 		}
 		for (i = 0; i < 4; i++)
 		{
-			for (j = 0; j < Debug_PartyPresets[row].djinnCounts[i]; j++)
+			for (j = 0; j < gDebug_PartyPresets[row].djinnCounts[i]; j++)
 			{
 				Djinn_AddToOwnerFar(owner, i, next_djinn[i]);
 				Djinn_ActivateFar(owner, i, next_djinn[i]);
@@ -165,9 +165,9 @@ s32 DebugParty_LoadPreset(s32 preset)
 			Inventory_RemoveFar(owner, 0);
 		for (i = 0; i < 4; i++)
 		{
-			if (Debug_PartyPresets[row].items[i] != 0)
+			if (gDebug_PartyPresets[row].items[i] != 0)
 				Inventory_EquipFar(
-					owner, Inventory_AddItemFar(owner, Debug_PartyPresets[row].items[i]));
+					owner, Inventory_AddItemFar(owner, gDebug_PartyPresets[row].items[i]));
 		}
 	}
 	return done;
@@ -494,7 +494,7 @@ void BattleParty_CollectUnitList(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		index = BattleParty_CenterOrderOffsets[i] + count / 2;
+		index = gBattleParty_CenterOrderOffsets[i] + count / 2;
 		battle->enemyIds[index] = buf[i];
 	}
 done:
@@ -1735,11 +1735,11 @@ s32 Resource_FindFreeSlot(s32 key)
 
 	for (index = 0;; index++)
 	{
-		entry = Resource_SlotAssignments[index];
+		entry = gResource_SlotAssignments[index];
 		if (key == (entry & 0x1ff))
 		{
 			/* FAKEMATCH: the volatile array member preserves the native second ldrh [table, index]. A scalar pointer needs an extra address add; a nonvolatile member reuses the first load. */
-			value = ((struct SlotAssignmentView *)Resource_SlotAssignments)->entries[index];
+			value = ((struct SlotAssignmentView *)gResource_SlotAssignments)->entries[index];
 			result = value >> 9;
 			break;
 		}
@@ -1769,21 +1769,21 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 		switch (state->classId)
 		{
 		case ISAAC:
-			result = BattleUnit_WeaponAnimsClass0[selection];
+			result = gBattleUnit_WeaponAnimsClass0[selection];
 			break;
 		case GARET:
-			result = BattleUnit_WeaponAnimsClass1[selection];
+			result = gBattleUnit_WeaponAnimsClass1[selection];
 			break;
 		case IVAN:
-			result = BattleUnit_WeaponAnimsClass2[selection];
+			result = gBattleUnit_WeaponAnimsClass2[selection];
 			break;
 		case MIA:
-			result = BattleUnit_WeaponAnimsClass3[selection];
+			result = gBattleUnit_WeaponAnimsClass3[selection];
 			break;
 		case FELIX:
 			break;
 		case JENNA:
-			result = BattleUnit_WeaponAnimsClass5[selection];
+			result = gBattleUnit_WeaponAnimsClass5[selection];
 			break;
 		}
 	}
@@ -2028,14 +2028,14 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 		object->scaleX = 0x10000;
 		object->scaleY = 0x10000;
 	}
-	ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattlePres_ActorObjectScript);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)object, gBattlePres_ActorObjectScript);
 }
 
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
 	index *= 2;
-	*x = BattlePlacement_StepPairs[index];
-	*y = BattlePlacement_StepPairs[index + 1];
+	*x = gBattlePlacement_StepPairs[index];
+	*y = gBattlePlacement_StepPairs[index + 1];
 }
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
@@ -2149,8 +2149,8 @@ void BattleUnit_RefreshPlacement(void)
 		s32 id = ids[i];
 
 		work->placement[id] = place;
-		BattleObjMake(BattleObjGet(id), id, BattlePlacement_StepPairs[place * 2],
-			BattlePlacement_StepPairs[place * 2 + 1]);
+		BattleObjMake(BattleObjGet(id), id, gBattlePlacement_StepPairs[place * 2],
+			gBattlePlacement_StepPairs[place * 2 + 1]);
 	}
 	for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
 		ids[i] = work->enemyIds[i];
@@ -2767,7 +2767,7 @@ s32 Camera_ApplyTransformByFlag(void)
 	Render_ResetTransformState();
 	if (GameFlag_TestFar(0x16B) != 0)
 	{
-		Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
+		Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
 		Graphics_PrepareTransferAndRun(state->eye, state->pos);
 	}
 	else
@@ -2964,16 +2964,16 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 	object = slot->object;
 	if (UnitGetFar(id)->classId != 0x94)
 	{
-		object->acceleration = BattleMotion_VariantAcceleration[variant];
-		object->speedLimit = BattleMotion_VariantSpeedLimit[variant];
+		object->acceleration = gBattleMotion_VariantAcceleration[variant];
+		object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
 		if (object->y == 0 || variant > 4)
-			object->velocityY = BattleMotion_VariantVelocityY[variant];
+			object->velocityY = gBattleMotion_VariantVelocityY[variant];
 		object->verticalMotionStrength = 0x9999;
 		object->verticalMotionPhase = 0;
 		object->autoFaceMotion = 0;
 		ObjectDispatch_InitFromTable6Far(object);
 		scale = slot->anchorX;
-		x = (scale * BattleMotion_VariantDistancePercent[variant]) / 100;
+		x = (scale * gBattleMotion_VariantDistancePercent[variant]) / 100;
 		Object_SetMoveTargetFar(object, x, 0, slot->anchorZ);
 	}
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
@@ -5957,7 +5957,7 @@ s32 BattlePresentation_WaitForAdvance(void)
 	for (frame = 0;; frame++)
 	{
 		// 4 フレームごとに 8 枚のパターンを回す
-		pat = ((gFrameCount >> 2) & 7) * 128 + (s32)BattlePres_AdvanceArrowTiles;
+		pat = ((gFrameCount >> 2) & 7) * 128 + (s32)gBattlePres_AdvanceArrowTiles;
 		window = gBattleDisplayWork->window;
 		offset = gBattleDisplayWork->offset;
 		QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
@@ -6330,7 +6330,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 
 		res = plan->targetHit[slot];
 		if (res == -1)
-			hit = BattleHitCheck(aid, tid, element, action->effect, HitTable[dist]);
+			hit = BattleHitCheck(aid, tid, element, action->effect, gHitTable[dist]);
 		else
 			hit = res;
 	}
@@ -6541,7 +6541,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 			ELEMENT_BONUS();
 			ap = action->power;
 			dmg = BattlePowerCalc(ap, bonus, 256);
-			dmg = dmg * PpLossTable[dist] / 100;
+			dmg = dmg * gPpLossTable[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
 			if (action->effect == 32 && dmg > pp)
@@ -6569,7 +6569,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 
 			ap = action->power;
 			dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-			dmg = dmg * HpRecoveryTable[dist] / 100;
+			dmg = dmg * gHpRecoveryTable[dist] / 100;
 			dmg *= adj;
 			dmg += BattleRandomFar() & 3;
 			cur += dmg;
@@ -6600,7 +6600,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 			ELEMENT_BONUS();
 			ap = action->power;
 			dmg = BattlePowerCalc(ap, bonus, 256);
-			dmg = dmg * PpDmgTable[dist] / 100;
+			dmg = dmg * gPpDmgTable[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
 			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
@@ -6674,13 +6674,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 				switch (type & 15)
 				{
 				case 5:
-					dmg = HpDmgTable5[dist] * dmg / 100;
+					dmg = gHpDmgTable5[dist] * dmg / 100;
 					break;
 				case 8:
-					dmg = dmg * HpDmgTable8[dist] / 100;
+					dmg = dmg * gHpDmgTable8[dist] / 100;
 					break;
 				case 6:
-					dmg = dmg * HpDmgTable6[dist] / 100;
+					dmg = dmg * gHpDmgTable6[dist] / 100;
 					break;
 				}
 				dmg += BattleRandomFar() & 3;
@@ -6719,7 +6719,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 			pp = target->pp;
 			ap = action->power;
 			dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
-			dmg = dmg * PpRecoveryTable[dist] / 100;
+			dmg = dmg * gPpRecoveryTable[dist] / 100;
 			dmg *= adj;
 			pp += dmg;
 			if (pp > target->maxPp)
@@ -6755,7 +6755,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 				ap = action->power;
 				dmg = BattlePowerCalc(ap, bonus, 256);
 				dmg *= adj;
-				dmg = dmg * HpDmgTable[dist] / 100;
+				dmg = dmg * gHpDmgTable[dist] / 100;
 				GUARD_CUT();
 				BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
 				BattleEvPush(BATTLE_EVENT_NUM, dmg);
@@ -7434,13 +7434,13 @@ select_again:
 	switch (mode)
 	{
 	case 0: // 重みの表から
-		selection = WeightRandom(BattleCommand_SelectionWeights[0]);
+		selection = WeightRandom(gBattleCommand_SelectionWeights[0]);
 		break;
 	case 1:
-		selection = WeightRandom(BattleCommand_SelectionWeights[1]);
+		selection = WeightRandom(gBattleCommand_SelectionWeights[1]);
 		break;
 	case 2:
-		selection = WeightRandom(BattleCommand_SelectionWeights[2]);
+		selection = WeightRandom(gBattleCommand_SelectionWeights[2]);
 		break;
 	case 3: // 乱数で始め、順に進む
 		if (memo->initialized == 0)
@@ -7865,7 +7865,7 @@ void BattleEvent_Playback(void)
 			// 矢印を出して送りのキーを待つ
 			// B を押し続けるか送りのキーを押すと進み、10 ティックを過ぎれば押し続けていても進む
 			struct BattlePromptSprite  *spr = &ev->displayEntry;
-			u8						   *arrow = BattlePres_AdvanceArrowTiles;
+			u8						   *arrow = gBattlePres_AdvanceArrowTiles;
 			s32							pat = (s32)arrow + ((gFrameCount >> 2) & 7) * 128;
 			struct BattleDisplayWork   *disp = gBattleDisplayWork;
 			struct UiWindow			   *window = disp->window;
@@ -8795,13 +8795,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 		}
 		if (abilityId >= 0 && abilityId <= 518)
 		{
-			plan->presentationFlags = Battle_ActionFlags[abilityId];
+			plan->presentationFlags = gBattle_ActionFlags[abilityId];
 			if (plan->targetAdj[0] > 1)
 				plan->presentationFlags =
-					Battle_ActionFlags[abilityId] + (plan->targetAdj[0] << 12) - 0x1000;
+					gBattle_ActionFlags[abilityId] + (plan->targetAdj[0] << 12) - 0x1000;
 		}
-		if ((abilityId >= 0 && abilityId <= 517) && Battle_ActionStatus[abilityId] != 0)
-			plan->outcome = Battle_ActionStatus[abilityId];
+		if ((abilityId >= 0 && abilityId <= 517) && gBattle_ActionStatus[abilityId] != 0)
+			plan->outcome = gBattle_ActionStatus[abilityId];
 		else if (Ability_CheckStatusOrSpecialId(abilityId))
 			plan->outcome = 3;
 		else if (plan->presentationFlags != 0)
@@ -9166,7 +9166,7 @@ s32 Battle_ProcessRoundEnd(void)
 	BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
 	{
 		s32					   *group_list;
-		struct BattleGroupOrder order = BattleParty_RoundEndGroupOrder;
+		struct BattleGroupOrder order = gBattleParty_RoundEndGroupOrder;
 		u16						ids[14];
 		s32						group;
 		s32						j;
@@ -9658,7 +9658,7 @@ void BattlePresentation_UploadTileVariant(void)
 {
 	u32 variant = *gDisp - 1;
 	if (variant <= 31)
-		Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008,
+		Dma_Set(gBattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008,
 			REG_DMA3);
 }
 
@@ -9784,13 +9784,13 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 
 			volatile u32 *dma;
 
-			Dma_Set(BattlePres_CurtainTiles, (void *)0x06005020, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 64, (void *)0x06005060, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 96, (void *)0x06005080, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 128, (void *)0x060050a0, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 160, (void *)0x060050c0, 0x84000008, REG_DMA3);
-			Dma_Set(BattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles, (void *)0x06005020, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 64, (void *)0x06005060, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 96, (void *)0x06005080, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 128, (void *)0x060050a0, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 160, (void *)0x060050c0, 0x84000008, REG_DMA3);
+			Dma_Set(gBattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008, REG_DMA3);
 			dma = REG_DMA3;
 			/* FAKEMATCH: introducing the pointer after the transfers avoids a preserved-register copy; the volatile output orders its subtraction before the control value, differing by two instructions without volatile. 2026-10-11: the native subs r3, #212 is reload_cse_move2add on a constant address that happened to land in r3; plain pointer arithmetic is CSE-reused by the later Dma_Sets (differ 45), REG_DISPCNT = 1 takes a pool constant (63), and a constant struct-field store gets r2 from local-alloc, so no move2add (31). */
 			asm volatile("" : "+l"(dma));
@@ -10426,7 +10426,7 @@ void Graphics_AdvancePaletteCycle(void)
 	{
 		REG_BLDCNT = 0x3f90;
 		REG_BLDALPHA = 0x10;
-		table = BattleFx_HighlightBlendRamp;
+		table = gBattleFx_HighlightBlendRamp;
 		REG_BLDY = table[battle->highlightStep];
 		step = battle->highlightStep;
 		next = (step + 1) & 0xf;
@@ -10592,8 +10592,8 @@ s32 BattleFx_UpdateStarField(void)
 				frame = 0;
 			else if (frame > 6)
 				frame = 6;
-			size = BattleFx_StarSizes[frame];
-			draw(dest, (u8 *)work + BattleFx_StarWorkOffsets[frame], x - (size >> 1),
+			size = gBattleFx_StarSizes[frame];
+			draw(dest, (u8 *)work + gBattleFx_StarWorkOffsets[frame], x - (size >> 1),
 				y - (size >> 1), size, size);
 		}
 	}
@@ -10608,7 +10608,7 @@ s32 BattleFx_UpdateStarField(void)
 		if (phase >= 0)
 		{
 			ring->age++;
-			draw(dest, (u8 *)work + BattleFx_RingFrameOffsets[phase], ring_x + 48, ring_y + 48, 32,
+			draw(dest, (u8 *)work + gBattleFx_RingFrameOffsets[phase], ring_x + 48, ring_y + 48, 32,
 				32);
 		}
 	}
@@ -10897,7 +10897,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 recordId)
 
 	count = 0;
 	sum = 0;
-	record = &BattleFormation_Records[recordId];
+	record = &gBattleFormation_Records[recordId];
 	for (i = 0; i < 5; i++)
 	{
 		if (record->minimumCounts[i] != 0)
@@ -10985,8 +10985,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
 	for (i = 0; (u32)i <= 19; i++)
 	{
-		Owner_GetRecordFar(BattleFormation_LevelMatchedEnemies[i]);
-		GameFlag_ClearBitFar(BattleFormation_LevelMatchedEnemies[i] + 1536);
+		Owner_GetRecordFar(gBattleFormation_LevelMatchedEnemies[i]);
+		GameFlag_ClearBitFar(gBattleFormation_LevelMatchedEnemies[i] + 1536);
 	}
 
 	for (i = 0; (u32)i <= 379; i++)
@@ -11254,7 +11254,7 @@ s32 BattleGroupRandom(s32 recordId)
 		recordId = 1;
 
 	choices_base = choices;
-	record = &BattleFormation_Records[recordId];
+	record = &gBattleFormation_Records[recordId];
 	member_id = record->memberIds;
 	maximum_count = record->maximumCounts;
 	choice_cursor = choices_base;
@@ -11304,11 +11304,11 @@ s32 BattleFormation_BuildEnemyList(s32 recordId)
 		recordId = BattleFormation_SelectLevelMatchedCandidate(&margin);
 	if (recordId < 0 || recordId >= 380)
 		recordId = 1;
-	record = &BattleFormation_Records[recordId];
+	record = &gBattleFormation_Records[recordId];
 	for (j = 0; j <= 4 && record->minimumCounts[j] == 0; j++)
 		;
 	if (j == 5)
-		record = &BattleFormation_Records[1];
+		record = &gBattleFormation_Records[1];
 
 	budget = 6;
 	count = 0;
@@ -11449,7 +11449,7 @@ assigned:
 
 u32 Summon_GetLayoutKind(s32 index)
 {
-	u32 kind = Summon_EntryTable[index].layoutKind;
+	u32 kind = gSummon_EntryTable[index].layoutKind;
 
 	if ((s32)kind > 4)
 		kind = -1U;
@@ -11459,15 +11459,15 @@ u32 Summon_GetLayoutKind(s32 index)
 s32 Summon_GetEntryValue(s32 index)
 {
 	if (index < 0 || index > 171)
-		return Summon_EntryTable[0].animation;
-	return Summon_EntryTable[index].animation;
+		return gSummon_EntryTable[0].animation;
+	return gSummon_EntryTable[index].animation;
 }
 
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
 	if (index < 0 || index > 171)
-		return Summon_EntryTable[0].animation;
-	return Summon_EntryTable[index].layoutBits1;
+		return gSummon_EntryTable[0].animation;
+	return gSummon_EntryTable[index].layoutBits1;
 }
 
 s32 Summon_IsEntryFlagged(s32 index)
@@ -11477,7 +11477,7 @@ s32 Summon_IsEntryFlagged(s32 index)
 	if (index < 0 || index > 171)
 		return 0;
 	result = 0;
-	if (Summon_EntryTable[index].spriteBit0)
+	if (gSummon_EntryTable[index].spriteBit0)
 		result = 1;
 	return result;
 }
@@ -11488,7 +11488,7 @@ u32 Battle_GetSpriteFlagNibble(u32 index)
 
 	if (index > 171)
 		return 1;
-	value = Summon_EntryTable[index].spriteBits1;
+	value = gSummon_EntryTable[index].spriteBits1;
 	return value ? value : 1;
 }
 
@@ -11498,7 +11498,7 @@ u32 Battle_GetSpriteFlagHighBits(u32 index)
 
 	if (index > 171)
 		return 0;
-	value = Summon_EntryTable[index].spriteBits5;
+	value = gSummon_EntryTable[index].spriteBits5;
 	return value ? value : 0;
 }
 
@@ -11506,14 +11506,14 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
 	if (index < 0 || index > 171)
 		return 0;
-	return Summon_EntryTable[index].layoutBit0;
+	return gSummon_EntryTable[index].layoutBit0;
 }
 
 s32 Summon_GetEntryByte4(s32 index)
 {
 	if (index < 0 || index > 171)
 		return 0;
-	return Summon_EntryTable[index].unk04[0];
+	return gSummon_EntryTable[index].unk04[0];
 }
 
 u32 Item_EncodeBankedId(u32 value)

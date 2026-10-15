@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-extern u32 Data_020001b0[];
+extern u32 gData_020001b0[];
 
 struct MapBits
 {
@@ -25,7 +25,7 @@ s32 Func_02000074(void)
 	struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 
 	map->mode = 1;
-	Data_020001b0[0] = 0;
+	gData_020001b0[0] = 0;
 	*(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
 	Scheduler_AddOrUpdateCallback(Func_020000fc, 0x480);
 	{

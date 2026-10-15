@@ -42,7 +42,7 @@ struct GroundParticleWork {
     s32 *leader;
 };
 
-extern s16 Data_02001f18[];
+extern s16 gData_02001f18[];
 
 s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
@@ -70,7 +70,7 @@ loop:
             goto next;
         if (GameFlag_Test(0x166))
             particle->timer++;
-        frame = &Data_02001f18[5 * particle->timer];
+        frame = &gData_02001f18[5 * particle->timer];
         x = (particle->posX - camera_x) / 0x10000 + *frame++;
         y = (particle->posZ - particle->posY - camera_z) / 0x10000 + *frame++;
         if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {

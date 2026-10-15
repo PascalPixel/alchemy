@@ -31,7 +31,7 @@ static void Scene_RunTransitionCue(void);
 static void Scene_RunActorFormation(s32 a0);
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
-s32 SolEntrance_CueTimer __attribute__((section(".bss")));
+s32 gSolEntrance_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
@@ -57,7 +57,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return SolEntrance_Exits;
+	return gSolEntrance_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -563,7 +563,7 @@ static void SolEntrance_ApplyEntryState(void)
 	gEventWork->startTransition = 0x100;
 	if (GameFlag_IsSet(0x814) != 0)
 	{
-		SolEntrance_CueTimer = 0;
+		gSolEntrance_CueTimer = 0;
 		Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);
 	}
 	if (GameFlag_IsSet(0x879) != 0)
@@ -1145,7 +1145,7 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	s32 *timer;
 	s32	 v3;
 
-	timer = &SolEntrance_CueTimer;
+	timer = &gSolEntrance_CueTimer;
 	if (*timer != 0)
 	{
 		v3 = (*timer - 1);
@@ -1200,7 +1200,7 @@ struct SceneEntrance gSolEntranceEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SolEntrance_Exits[] = {
+u32 gSolEntrance_Exits[] = {
 	SCENE_EXITS(19),
 	SCENE_EXIT_IF(1, 4, 2, 0x814),
 	SCENE_EXIT_IF(1, 10, 15, 0x815),

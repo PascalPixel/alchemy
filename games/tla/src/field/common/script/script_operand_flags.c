@@ -2,7 +2,7 @@
 #include "types.h"
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc Script_OperandHandlerTable[];
+extern OperandFunc gScript_OperandHandlerTable[];
 
 void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -177,7 +177,7 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
     s16 index = work->cursor;
     s32 *entry = (s32 *)work->scriptAddress + index + 1;
-    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
+    OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
         callback(work, 0, entry[1]);
@@ -189,7 +189,7 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
     s16 index = work->cursor;
     s32 *entry = (s32 *)work->scriptAddress + index + 1;
-    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
+    OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
         callback(work, 1, entry[1]);
@@ -201,7 +201,7 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
     s16 index = work->cursor;
     s32 *entry = (s32 *)work->scriptAddress + index + 1;
-    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
+    OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
         callback(work, 2, entry[1]);

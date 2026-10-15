@@ -61,7 +61,7 @@ void Func_02001d40(void)
     Func_020052a0(9, 0);
     Object_GetById(9)->angle = 0x3000;
     WaitFrames(1);
-    ObjectMotion_EnableActionAndSetCallback(9, Data_02005514);
+    ObjectMotion_EnableActionAndSetCallback(9, gData_02005514);
     WaitFrames(1);
     Func_020051c8();
     GameFlag_SetBit(0x845);

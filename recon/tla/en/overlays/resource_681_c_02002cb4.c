@@ -7,7 +7,7 @@
 #include "../../../../games/tla/include/object_runtime.h"
 
 extern u16 gSceneState[];
-extern const s16 Data_0200533c[][2];
+extern const s16 gData_0200533c[][2];
 
 s32 GameFlag_Test(s32 flag);
 s32 Func_02004fe4(void);
@@ -27,7 +27,7 @@ void Func_02002cb4(u8 mode)
         gSceneState[1] = 0;
         Object_GetById(Func_02004fe4())->priorityFlags |= 0x40;
         for (i = 0, id = 8; id <= 16; i++, id++) {
-            Func_02004ebc(id, Data_0200533c[i][0] << 19, Data_0200533c[i][1] << 19);
+            Func_02004ebc(id, gData_0200533c[i][0] << 19, gData_0200533c[i][1] << 19);
             Func_02002b04(id, mode);
         }
     }

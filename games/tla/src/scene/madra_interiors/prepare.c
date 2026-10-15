@@ -9,9 +9,9 @@
 #include "text/msg_ids.h"
 #include "madra_interiors.h"
 
-extern u8 Data_0200349c[];
-extern u8 Data_02003418[];
-extern u8 Data_020033c8[];
+extern u8 gData_0200349c[];
+extern u8 gData_02003418[];
+extern u8 gData_020033c8[];
 void Battle_WaitMode0();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
@@ -249,7 +249,7 @@ void Func_020007dc(void)
     Call3((void (*)())ObjectMotion_SetAngleToward, 10, 7, 0);
     object2 = Object_GetById(9);
     Call2((void (*)())ObjectDispatch_SetSingleChildFlags, (s32)object2, 0);
-    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, Data_0200349c);
+    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, gData_0200349c);
     Call1((void (*)())Field_DispatchTypeHandler, 1);
     ((void (*)())Func_02001ea0)();
     ((void (*)())Func_02001ea8)();
@@ -265,7 +265,7 @@ void Func_020007dc(void)
     object6 = Object_GetById(9);
     object6->actionFlags &= 254;
     Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 9, -8, 0);
-    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, Data_02003418);
+    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, gData_02003418);
     Call1((void (*)())Object_RefreshSelectorById, 9);
     Call1((void (*)())Func_02001f10, 127);
     Call1((void (*)())Battle_WaitMode0, 60);
@@ -304,7 +304,7 @@ void Func_020007dc(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     object11 = Object_GetById(9);
     object11->actionFlags = (object11->actionFlags | 1);
-    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, Data_020033c8);
+    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, gData_020033c8);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 4, 9);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 11, 9);
     Call3((void (*)())Func_02001e28, 9, 0, 10);
@@ -329,7 +329,7 @@ void Func_020007dc(void)
     Call3((void (*)())Func_02001e28, 10, 0, 10);
     object12 = Object_GetById(10);
     object12->actionFlags |= 1;
-    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 10, Data_020033c8);
+    Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 10, gData_020033c8);
     Call1((void (*)())Battle_WaitMode0, 40);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 4);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 11);

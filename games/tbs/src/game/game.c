@@ -140,7 +140,7 @@ const u8 *Owner_GetRecord(s32 selector)
 	{
 		record_index = 0;
 	}
-	return (const u8 *)&Enemy_Definitions[record_index];
+	return (const u8 *)&gEnemy_Definitions[record_index];
 }
 
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction)
@@ -610,7 +610,7 @@ void GameState_InitDefaults(void)
 	START_DMA(&zero, gSceneState, 0x850003e1);
 	WAIT_DMA();
 	zero = 0;
-	START_DMA(&zero, GameFlagBytes, 0x85000080);
+	START_DMA(&zero, gGameFlagBytes, 0x85000080);
 	((struct SceneStateTail *)gSceneState)->unk104 = 0xff;
 	zero = 0;
 	START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
@@ -747,7 +747,7 @@ void Owner_RefreshRatiosOnFlag(void)
 	for (n = 0; n < count; n++)
 	{
 		ownerId = gGameState.activeOwners[n];
-		group = Character_ElementGroupTable[ownerId];
+		group = gCharacter_ElementGroupTable[ownerId];
 		doRefresh = 0;
 		if (group == 0)
 		{
@@ -888,7 +888,7 @@ s16 UnitPpAdd(s32 owner, s32 delta)
 //--------------------------------------------------------------------------
 struct ItemDefinition *Item_GetDirect(s32 item)
 {
-	return Item_DefinitionTable + (item & ITEM_ID_MASK);
+	return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 
 //--------------------------------------------------------------------------
@@ -1387,7 +1387,7 @@ s32 Item_AdjustCounter(s32 item_id, s32 delta)
 	u8	counter;
 	s32 result = 0;
 
-	counter = Item_ArtifactSlotTable[item_id & item_id_mask];
+	counter = gItem_ArtifactSlotTable[item_id & item_id_mask];
 	if (counter != 0)
 	{
 		result = ItemCounter_Adjust(counter - 1, delta);
@@ -1449,7 +1449,7 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId)
 	{
 		entry_index = 0;
 	}
-	return &BattleAction_DefinitionTable[entry_index];
+	return &gBattleAction_DefinitionTable[entry_index];
 }
 
 s32 Equipment_HasValue(s32 owner, s32 value)
@@ -1664,7 +1664,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index)
 {
 	struct CharacterDefinition *base;
 
-	base = Character_DefinitionTable;
+	base = gCharacter_DefinitionTable;
 	return &base[index];
 }
 
@@ -1674,7 +1674,7 @@ void Owner_InitRecords(void)
 	struct CharacterDefinition *tmpl;
 	u16							name_buf[16];
 	s32							owner;
-	s32						   *remote = Character_StartingEquipOwnerIds;
+	s32						   *remote = gCharacter_StartingEquipOwnerIds;
 	s32							i;
 	s32							slot;
 	u8						   *name;
@@ -1745,7 +1745,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 		}
 		if (level <= 99 && state->classId <= 7)
 		{
-			return Character_LevelExpTable[state->classId * 99 + level - 1];
+			return gCharacter_LevelExpTable[state->classId * 99 + level - 1];
 		}
 	}
 	return -1;
@@ -1866,7 +1866,7 @@ s32 GameFlag_Test(s32 flag)
 
 	flagMask = 1 << (7 & flag);
 	flag = ((u32)flag << 0x14) >> 0x17;
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag_value = flag_bytes[flag] & flagMask;
 	return (u32)((0 - flag_value) | flag_value) >> 0x1F;
 }
@@ -1877,7 +1877,7 @@ s32 GameFlag_SetBit(s32 flag)
 	u8 *flag_bytes;
 
 	flagMask = 1 << (7 & flag);
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
 	flag_bytes[flag] |= flagMask;
 	return flag;
@@ -1889,7 +1889,7 @@ void GameFlag_ClearBit(s32 flag)
 	u8 *flag_bytes;
 
 	flagMask = ~(1 << (7 & flag));
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
 	flag_bytes[flag] &= flagMask;
 }
@@ -1901,7 +1901,7 @@ u32 GameFlag_Toggle(s32 flag)
 	s32 flag_value;
 
 	flagMask = 1 << (7 & flag);
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
 	flag_bytes[flag] ^= flagMask;
 	flag_value = flag_bytes[flag] & flagMask;
@@ -1914,21 +1914,21 @@ s32 GameFlag_GetByte(s32 flag)
 
 	byte_index = flag << 20;
 	flag = byte_index >> 23;
-	return GameFlagBytes[flag];
+	return gGameFlagBytes[flag];
 }
 
 void GameFlag_SetByte(s32 flag, s32 value)
 {
 	u32 shifted = flag << 20;
 	flag = shifted >> 23;
-	GameFlagBytes[flag] = value;
+	gGameFlagBytes[flag] = value;
 }
 
 u8 GameFlag_IncrementByte(s32 flag)
 {
 	u8 *flag_bytes;
 
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
 	if (flag_bytes[flag] <= 0xFE)
 	{
@@ -1941,7 +1941,7 @@ u8 GameFlag_DecrementByte(s32 flag)
 {
 	u8 *flag_bytes;
 
-	flag_bytes = GameFlagBytes;
+	flag_bytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
 	if (flag_bytes[flag] != 0)
 	{
@@ -1960,7 +1960,7 @@ s32 GameFlag_GetNibble(u32 flag)
 	shift = flag & 4;
 	mask = 15;
 	flag = shifted >> 23;
-	result = GameFlagBytes[flag];
+	result = gGameFlagBytes[flag];
 	result &= mask << shift;
 	return result >> shift;
 }
@@ -1970,7 +1970,7 @@ void GameFlag_SetNibble(s32 flag, s32 value)
 	s32 field_mask = 0xF;
 	s32 shift = 4 & flag;
 	s32 mask = field_mask << shift;
-	u8 *bytes = GameFlagBytes;
+	u8 *bytes = gGameFlagBytes;
 
 	flag = ((u32)flag << 0x14) >> 0x17;
 	bytes[flag] = (bytes[flag] & ~mask) | ((value & field_mask) << shift);
@@ -2005,7 +2005,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix)
 	Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);
 	if (index > 164)
 		index = 0;
-	enemy = &Enemy_Definitions[index];
+	enemy = &gEnemy_Definitions[index];
 	unit->level = enemy->level;
 	unit->baseHp = enemy->hp;
 	unit->hp = enemy->hp;
@@ -2179,7 +2179,7 @@ struct ElementLevelBonus
 	u16 res;
 };
 
-extern struct ElementLevelBonus Element_PowerResistByLevel[16];
+extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 // gGameState の field に amount を足し、0 から max までにおさめて返す
 #define DEFINE_PARTY_ADJUST(name, field, max)     \
@@ -2203,8 +2203,8 @@ DEFINE_PARTY_ADJUST(Party_AdjustCounterCappedAt28, shopGifts, 28)
 
 s32 Trade_ListFlaggedEntries(u8 *output)
 {
-	u8 *source = Summon_OrderList;
-	u8 *end = Summon_OrderList + 15;
+	u8 *source = gSummon_OrderList;
+	u8 *end = gSummon_OrderList + 15;
 	s32 count = 0;
 
 	do
@@ -2224,12 +2224,12 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
 {
 	if (summon_id > 15)
 		return NULL;
-	return &Summon_DefinitionTable[summon_id];
+	return &gSummon_DefinitionTable[summon_id];
 }
 
 s32 Owner_LookupFourColumnTable(s32 row, s32 column)
 {
-	return Owner_FourColumnValues[(row * 4) + column];
+	return gOwner_FourColumnValues[(row * 4) + column];
 }
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
@@ -2248,7 +2248,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 		i = 0;
 		cursor = output;
 		for (; i <= 3; i++)
-			*cursor++ = Enemy_ElementPresetTable[index].digits[i] * 10;
+			*cursor++ = gEnemy_ElementPresetTable[index].digits[i] * 10;
 	}
 	else
 	{
@@ -2297,7 +2297,7 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state)
 
 	if (value > 43)
 		value = 0;
-	return Enemy_ElementPresetTable[value].first;
+	return gEnemy_ElementPresetTable[value].first;
 }
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
@@ -2316,7 +2316,7 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 		i = 0;
 		for (;;)
 		{
-			((s32 *)destination)[i] = Enemy_ElementPresetTable[index].values[i];
+			((s32 *)destination)[i] = gEnemy_ElementPresetTable[index].values[i];
 			i++;
 			if (i > 3)
 				return index;
@@ -2339,8 +2339,8 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 		if (tens < 0)
 			tens = 0;
 
-		destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
-		destination[i][1] = Element_PowerResistByLevel[tens].res + ones;
+		destination[i][0] = gElement_PowerResistByLevel[tens].power + ones;
+		destination[i][1] = gElement_PowerResistByLevel[tens].res + ones;
 	}
 	// 戻り値なし（r0 には表のアドレスが残る）
 }
@@ -2393,11 +2393,11 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
 	series = Owner_LookupFourColumnTable(primary, levels[j] > 9 ? j : primary);
 	for (i = 202; i >= 0; i--)
 	{
-		if (Class_DefinitionTable[i].series != series)
+		if (gClass_DefinitionTable[i].series != series)
 			continue;
 		for (j = 0; j < 4; j++)
 		{
-			if (levels[j] < Class_DefinitionTable[i].required[j] * 10)
+			if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
 				break;
 		}
 		if (j == 4)
@@ -2413,7 +2413,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
 
 struct ClassDefinition *Owner_GetRecordStride84(s32 arg0)
 {
-	return &Class_DefinitionTable[arg0];
+	return &gClass_DefinitionTable[arg0];
 }
 
 void Owner_RefreshDerivedData(s32 owner_id)
@@ -2435,8 +2435,8 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
 	s32 dx;
 	s32 dy;
 
-	max = Element_PowerResistCurve[0][0];
-	min = Element_PowerResistCurve[4][0];
+	max = gElement_PowerResistCurve[0][0];
+	min = gElement_PowerResistCurve[4][0];
 	n = 5;
 	if (input > max)
 		input = max;
@@ -2444,18 +2444,18 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
 		input = min;
 	for (i = 0; i < n; i++)
 	{
-		if (input > Element_PowerResistCurve[i][0])
+		if (input > gElement_PowerResistCurve[i][0])
 			break;
 	}
 	if (i == n)
 	{
-		value = Element_PowerResistCurve[i - 1][1];
+		value = gElement_PowerResistCurve[i - 1][1];
 	}
 	else
 	{
-		dx = Element_PowerResistCurve[i - 1][0] - Element_PowerResistCurve[i][0];
-		dy = Element_PowerResistCurve[i - 1][1] - Element_PowerResistCurve[i][1];
-		value = (input - Element_PowerResistCurve[i][0]) * dy / dx + Element_PowerResistCurve[i][1];
+		dx = gElement_PowerResistCurve[i - 1][0] - gElement_PowerResistCurve[i][0];
+		dy = gElement_PowerResistCurve[i - 1][1] - gElement_PowerResistCurve[i][1];
+		value = (input - gElement_PowerResistCurve[i][0]) * dy / dx + gElement_PowerResistCurve[i][1];
 	}
 	switch (halve)
 	{
@@ -2821,7 +2821,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 	{
 		entry = (group * 0x14) + index;
 	}
-	return (const u16 *)((u8 *)Djinn_DefinitionTable + entry * 0xC);
+	return (const u16 *)((u8 *)gDjinn_DefinitionTable + entry * 0xC);
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)

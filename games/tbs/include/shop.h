@@ -63,14 +63,14 @@ LAYOUT_OFFSET_GUARD(ShopRuntime_BurstMember, struct ShopRuntime, burstMember, 0x
 LAYOUT_OFFSET_GUARD(ShopRuntime_WarriorShop, struct ShopRuntime, warriorShop, 0x3ac);
 LAYOUT_OFFSET_GUARD(ShopRuntime_Effects, struct ShopRuntime, effects, 0x3b0);
 
-extern const u8 Shop_HandTiles[];
-extern const u8 Shop_GemTiles[];
-extern const u8 Shop_SmallDownArrowTiles[];
-extern const u8 Shop_SmallUpArrowTiles[];
-extern const u8 Shop_UpArrowTiles[];
-extern const u8 Shop_DownArrowTiles[];
+extern const u8 gShop_HandTiles[];
+extern const u8 gShop_GemTiles[];
+extern const u8 gShop_SmallDownArrowTiles[];
+extern const u8 gShop_SmallUpArrowTiles[];
+extern const u8 gShop_UpArrowTiles[];
+extern const u8 gShop_DownArrowTiles[];
 
-extern const u8 Shop_PriceTiles[];
-extern const u8 Shop_QuantityTiles[];
+extern const u8 gShop_PriceTiles[];
+extern const u8 gShop_QuantityTiles[];
 
 #endif

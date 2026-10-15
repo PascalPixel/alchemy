@@ -78,7 +78,7 @@ Func_0815b290:
 .L_0815b31c:
 	.4byte 0x00000000
 .L_0815b320:
-	.4byte ResourceTableEntries
+	.4byte gResourceTableEntries
 .L_0815b324:
 	lsls r3, r3, #1
 	add r3, r9

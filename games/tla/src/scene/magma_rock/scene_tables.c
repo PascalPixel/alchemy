@@ -17,15 +17,15 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 
 #include "scene_ids.h"
 
-extern const u8 Data_02003ea8[];
-extern const u8 Data_02003ed8[];
-extern const u8 Data_02003f88[];
+extern const u8 gData_02003ea8[];
+extern const u8 gData_02003ed8[];
+extern const u8 gData_02003f88[];
 
 const struct SceneEntrance *Func_0200088c(void)
 {
     if (gPartyState.scene == (s32)&SceneId_Ov691Room2)
-        return (const struct SceneEntrance *)Data_02003ed8;
+        return (const struct SceneEntrance *)gData_02003ed8;
     if (gPartyState.scene == (s32)&SceneId_Ov691Room3)
-        return (const struct SceneEntrance *)Data_02003f88;
-    return (const struct SceneEntrance *)Data_02003ea8;
+        return (const struct SceneEntrance *)gData_02003f88;
+    return (const struct SceneEntrance *)gData_02003ea8;
 }

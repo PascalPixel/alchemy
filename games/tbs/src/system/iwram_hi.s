@@ -3,8 +3,8 @@
 	.global gCartridgeResetMarker
 gCartridgeResetMarker:
 	.space 0x00000004
-	.global IwramHi_Data1
-IwramHi_Data1:
+	.global gIwramHi_Data1
+gIwramHi_Data1:
 	.space 0x000001fc
 	.global gFrameWaitStackTop
 gFrameWaitStackTop:

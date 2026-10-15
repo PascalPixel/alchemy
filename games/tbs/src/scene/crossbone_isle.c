@@ -398,7 +398,7 @@ static void EV20_SCRIPT(void)
 
 static void EV04_TOUCH(void)
 {
-	Engine_MapAnimateCells(CrossboneIsle_EntranceCells, 37, 7);
+	Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
 	Engine_AudioPlayCue(183);
 	Engine_EventRequestExit(4);
 }
@@ -444,7 +444,7 @@ static void EV03_TOUCH(void)
 	}
 	else
 	{
-		Engine_MapAnimateCells((s32)CrossboneIsle_EntranceCells, 44, 7);
+		Engine_MapAnimateCells((s32)gCrossboneIsle_EntranceCells, 44, 7);
 		Engine_AudioPlayCue(183);
 		Engine_EventRequestExit(3);
 	}
@@ -459,7 +459,7 @@ static void CrossboneIsle_LeaveClearedRoom(void)
 	GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0]
 				  + (0x8c8 - (s32)&SceneId_CrossboneIsle6)));
 	Engine_EventWait(30);
-	Map_AnimateCells(CrossboneIsle_EntranceCells, 44, 7);
+	Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();
@@ -2328,7 +2328,7 @@ static void AdvanceActor16AlongEscapeRoute(void)
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 StagedActor_DirectionSteps[] = {
+s32 gStagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
@@ -2347,11 +2347,11 @@ s32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-u32 StagedActor_FootprintKinds[] = {
+u32 gStagedActor_FootprintKinds[] = {
 	207, 205, 228, 229, 298, 297,
 };
 
-s32 StagedActor_FootprintBounds[] = {
+s32 gStagedActor_FootprintBounds[] = {
 	-32, -8, 32, 8,
 	-8, -32, 8, 32,
 	-32, -16, 32, 0,
@@ -2387,7 +2387,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u16 CrossboneIsle_EntranceCells[] = {
+u16 gCrossboneIsle_EntranceCells[] = {
 	MAP_CELL_STEP(58, 23, 1, 2, 5), MAP_CELL_STEP(59, 23, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 

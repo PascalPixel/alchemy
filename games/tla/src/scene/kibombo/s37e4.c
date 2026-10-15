@@ -89,7 +89,7 @@ void Func_02003948(void)
     leader->facing = 0xc000;
     if (GameFlag_Test(0x202))
         Func_02003898();
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02005cd0);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, gData_02005cd0);
     WaitFrames(12);
     Func_02005c9c(123);
     Event_FinishScreenTransition();

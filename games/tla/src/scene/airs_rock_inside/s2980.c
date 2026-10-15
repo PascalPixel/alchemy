@@ -10,14 +10,14 @@ void Func_02002980(void)
     s32 z = object->z >> 20;
     s32 key = (x << 16) + z;
 
-    if (key != Data_02006c0c) {
-        Data_02006c0c = key;
-        Data_020073dc = 1;
-        Data_020073e0 = 3;
-        Data_020073e4 = x;
-        Data_020073e8 = z - y + 64;
-        CopyCells(x, Data_020073e8, 1, 3, 73, 72);
-        CopyCells(72, 72, Data_020073dc, Data_020073e0, Data_020073e4, Data_020073e8);
+    if (key != gData_02006c0c) {
+        gData_02006c0c = key;
+        gData_020073dc = 1;
+        gData_020073e0 = 3;
+        gData_020073e4 = x;
+        gData_020073e8 = z - y + 64;
+        CopyCells(x, gData_020073e8, 1, 3, 73, 72);
+        CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4, gData_020073e8);
     }
 }
 
@@ -30,13 +30,13 @@ void Func_02002a14(void)
     s32 z = object->z >> 20;
     s32 key = (x << 16) + z;
 
-    if (key != Data_02006c0c) {
-        Data_02006c0c = key;
-        Data_020073dc = 1;
-        Data_020073e0 = 3;
-        Data_020073e4 = x;
-        Data_020073e8 = z - y + 63;
-        CopyCells(x, Data_020073e8, 1, 3, 73, 72);
-        CopyCells(72, 72, Data_020073dc, Data_020073e0, Data_020073e4, Data_020073e8);
+    if (key != gData_02006c0c) {
+        gData_02006c0c = key;
+        gData_020073dc = 1;
+        gData_020073e0 = 3;
+        gData_020073e4 = x;
+        gData_020073e8 = z - y + 63;
+        CopyCells(x, gData_020073e8, 1, 3, 73, 72);
+        CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4, gData_020073e8);
     }
 }

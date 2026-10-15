@@ -2,12 +2,12 @@
 
 s32 Func_02002418(s32 index)
 {
-    return ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->a;
+    return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
 }
 
 void Func_02002428(s32 index, s16 value)
 {
-    ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->a = value;
+    ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a = value;
 }
 
 s32 Func_02002438(void)
@@ -42,7 +42,7 @@ void Func_0200248c(s32 index, s16 value)
 
 s32 Func_0200249c(s32 index)
 {
-    return ((struct RideRow *)(Data_020023c4 + 0x188 + index * 16))->b;
+    return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
 }
 
 void Func_020024ac(u32 index, s32 value)

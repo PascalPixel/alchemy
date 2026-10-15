@@ -75,7 +75,7 @@ enum
 
 struct ObjectRuntime;
 
-extern struct SceneEvent Placement_Effects[];
+extern struct SceneEvent gPlacement_Effects[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
@@ -91,7 +91,7 @@ static __inline__ void SkipMessage(s32 amount)
 
 s32 *SceneData_GetScriptTable(void)
 {
-	return (s32 *)Placement_Scripts;
+	return (s32 *)gPlacement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -101,17 +101,17 @@ s32 SceneData_ReturnZero(void)
 
 s32 *SceneData_GetMessageTable(void)
 {
-	return Placement_Messages;
+	return gPlacement_Messages;
 }
 
 s32 *SceneData_GetActorTable(void)
 {
-	return (s32 *)Placement_Actors;
+	return (s32 *)gPlacement_Actors;
 }
 
 s32 *SceneData_GetEffectTable(void)
 {
-	return (s32 *)Placement_Effects;
+	return (s32 *)gPlacement_Effects;
 }
 
 static void EV02_SEARCH(void)
@@ -143,7 +143,7 @@ static void EV02_SEARCH(void)
 	Engine_EventWait(20);
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_AudioPlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 96, 29);
+	Engine_MapAnimateCells(gSolStar_StarCells, 96, 29);
 	Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
 	Map_CopyCellsTo(87, 42, 41, 31, 1, 2);
 	Engine_EventWait(40);
@@ -154,7 +154,7 @@ static void EV02_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 74, 29);
+	Engine_MapAnimateCells(gSolStar_StarCells, 74, 29);
 	Map_CopyCellAttributes(0, 0, 1, 1, 19, 29);
 	Map_CopyCellsTo(87, 42, 19, 31, 1, 2);
 	Engine_EventWait(40);
@@ -164,7 +164,7 @@ static void EV02_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 96, 10);
+	Engine_MapAnimateCells(gSolStar_StarCells, 96, 10);
 	Map_CopyCellAttributes(0, 0, 1, 1, 41, 10);
 	Map_CopyCellsTo(87, 42, 41, 12, 1, 2);
 	Engine_EventWait(40);
@@ -243,7 +243,7 @@ static void EV03_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 84, 4);
+	Engine_MapAnimateCells(gSolStar_StarCells, 84, 4);
 	Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
 	Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
 	Engine_EventWait(40);
@@ -253,7 +253,7 @@ static void EV03_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 76, 21);
+	Engine_MapAnimateCells(gSolStar_StarCells, 76, 21);
 	Map_CopyCellAttributes(0, 0, 1, 1, 21, 21);
 	Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
 	Engine_EventWait(40);
@@ -264,7 +264,7 @@ static void EV03_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 76, 29);
+	Engine_MapAnimateCells(gSolStar_StarCells, 76, 29);
 	Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
 	Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
 	Engine_EventWait(40);
@@ -354,7 +354,7 @@ static void Scene_BagJupiterStar(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 65, 31);
+	Engine_MapAnimateCells(gSolStar_StarCells, 65, 31);
 	Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
 	Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
 	Engine_EventWait(40);
@@ -365,7 +365,7 @@ static void Scene_BagJupiterStar(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 79, 9);
+	Engine_MapAnimateCells(gSolStar_StarCells, 79, 9);
 	Map_CopyCellAttributes(0, 0, 1, 1, 24, 9);
 	Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
 	Engine_EventWait(40);
@@ -376,7 +376,7 @@ static void Scene_BagJupiterStar(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_EventWait(20);
 	Event_PlayCue(144);
-	Engine_MapAnimateCells(SolStar_StarCells, 91, 10);
+	Engine_MapAnimateCells(gSolStar_StarCells, 91, 10);
 	Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
 	Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
 	Engine_EventWait(40);
@@ -1142,19 +1142,19 @@ static void SolStar_LineUpFollowers(void)
 	actor = (struct StarFollower *)Object_GetById(5);
 	actor->leader = leader;
 	actor->flags |= 1;
-	Engine_ObjectSetScript((struct FieldActor *)actor, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
 	actor = (struct StarFollower *)Object_GetById(9);
 	actor->leader = leader;
 	actor->flags |= 1;
-	Engine_ObjectSetScript((struct FieldActor *)actor, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
 	actor = (struct StarFollower *)Object_GetById(11);
 	actor->leader = leader;
 	actor->flags |= 1;
-	Engine_ObjectSetScript((struct FieldActor *)actor, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
 	actor = (struct StarFollower *)Object_GetById(10);
 	actor->leader = leader;
 	actor->flags |= 1;
-	Engine_ObjectSetScript((struct FieldActor *)actor, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
 	menardi = (struct StarFollower *)Object_GetById(14);
 	menardi->leader = leader;
 	menardi->flags |= 1;
@@ -1162,11 +1162,11 @@ static void SolStar_LineUpFollowers(void)
 	menardi->scaleY = 0x10000;
 	menardi->motionFlags = Object_GetById(11)->motionFlags;
 	menardi->y = 0;
-	Engine_ObjectSetScript((struct FieldActor *)menardi, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)menardi, gSolStar_AngleScript);
 	actor = (struct StarFollower *)Object_GetById(13);
 	actor->leader = leader;
 	actor->flags |= 1;
-	Engine_ObjectSetScript((struct FieldActor *)actor, SolStar_AngleScript);
+	Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
 	Engine_EventEnd();
 }
 
@@ -2119,7 +2119,7 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 	slot = Inventory_Find(owner, 224);
 	if (actor == NULL)
 		return owner;
-	Engine_ObjectSetScript(actor, SolStar_PresentItemScript);
+	Engine_ObjectSetScript(actor, gSolStar_PresentItemScript);
 	sprite = actor->sprite;
 	sprite->flags = 0;
 	sprite->partCount = 0;
@@ -2243,12 +2243,12 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 SolStar_AngleScript[] = {
+s32 gSolStar_AngleScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 SolStar_PresentItemScript[] = {
+s32 gSolStar_PresentItemScript[] = {
 	SC_SET(SW_SCALE_X, 0x8000),
 	SC_SET(SW_SCALE_Y, 0x8000),
 	SC_WAIT(2),
@@ -2291,18 +2291,18 @@ s32 SolStar_PresentItemScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance Placement_Scripts[] = {
+struct SceneEntrance gPlacement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 Placement_Messages[] = {
+u32 gPlacement_Messages[] = {
 	SCENE_EXITS(17),
 	SCENE_EXIT(2, 18, 10),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Placement_Actors[] = {
+struct ScenePlacement gPlacement_Actors[] = {
 	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2344,7 +2344,7 @@ struct ScenePlacement Placement_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Placement_Effects[] = {
+struct SceneEvent gPlacement_Effects[] = {
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SCRIPT) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
@@ -2366,11 +2366,11 @@ struct SceneEvent Placement_Effects[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 SolStar_StarCells[] = {
+u16 gSolStar_StarCells[] = {
 	MAP_CELL_STEP(59, 40, 3, 4, 6), MAP_CELL_STEP(62, 40, 3, 4, 6), MAP_CELL_STEP(65, 40, 3, 4, 6), MAP_CELL_STEP(68, 40, 3, 4, 6), MAP_CELL_STEP(71, 40, 3, 4, 6), MAP_CELL_STEP(74, 40, 3, 4, 6), MAP_CELL_STEP(77, 40, 3, 4, 6), MAP_CELL_STEP(80, 40, 3, 4, 6), MAP_CELL_STEP(83, 40, 3, 4, 0), MAP_CELL_STEPS_END,
 };
 
-u8 Sol_RingDrift[][3] = {
+u8 gSol_RingDrift[][3] = {
 	{ 4, 4, 4 },
 	{ 4, 0, 3 },
 	{ 4, 0, 4 },
@@ -2383,7 +2383,7 @@ u8 Sol_RingDrift[][3] = {
 	{ 2, 0, 2 },
 };
 
-u8 Sol_RingSwing[][3] = {
+u8 gSol_RingSwing[][3] = {
 	{ 1, 1, 2 },
 	{ 1, 0, 2 },
 	{ 1, 0, 2 },
@@ -2396,7 +2396,7 @@ u8 Sol_RingSwing[][3] = {
 	{ 1, 0, 2 },
 };
 
-s8 Sol_RingDirection[][3] = {
+s8 gSol_RingDirection[][3] = {
 	{ 1, 1, 1 },
 	{ 1, 0, 1 },
 	{ 1, 0, 1 },
@@ -2409,12 +2409,12 @@ s8 Sol_RingDirection[][3] = {
 	{ -1, 0, -1 },
 };
 
-s32 Sol_RingOffsetX[] = {
+s32 gSol_RingOffsetX[] = {
 	0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
 	0x9999, 0xb333,
 };
 
-s32 Sol_RingOffsetZ[] = {
+s32 gSol_RingOffsetZ[] = {
 	655, 458, 655, 458, 655, 458, 655, 655,
 	524, 655,
 };

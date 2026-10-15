@@ -45,13 +45,13 @@ void Func_020040a0(s32 id)
     s32 height;
 
     object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
+    object->motionFlags = 4;
+    height = object->terrainHeight;
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     /* FAKEMATCH: the one-pass block keeps the ground height load before the word clear; as a bare block the clear comes first (differ 2) */
     do {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

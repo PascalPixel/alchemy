@@ -12,12 +12,12 @@
 #include "text/msg_ids.h"
 
 struct MarsRoomMEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[0x10];
-    s16 field_166;
-    u8 unknown_168[0x44];
-    s32 field_1ac;
+    u8 unk156[0x10];
+    s16 field166;
+    u8 unk168[0x44];
+    s32 field1ac;
 };
 
 struct MarsRoomMVector {
@@ -27,22 +27,22 @@ struct MarsRoomMVector {
 };
 
 struct MarsRoomMAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[6];
-    u8 value_10;
-    u8 flag_11 : 1;
+    u8 unk0a[6];
+    u8 value10;
+    u8 flag11 : 1;
     u16 angle;
 };
 
 struct MarsRoomMRideWork {
     s32 counter;
     s16 active;
-    u8 unknown_06[6];
-    u16 value_0c;
-    s16 value_0e;
-    u8 unknown_10[0x60];
+    u8 unk06[6];
+    u16 value0c;
+    s16 value0e;
+    u8 unk10[0x60];
     struct ObjectRuntime *handle;
 };
 

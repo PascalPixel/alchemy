@@ -9,8 +9,8 @@
 #include "call.h"
 
 struct SpriteAttributes {
-    u8 unknown_00[9];
-    u8 unknown_09_0 : 2;
+    u8 unk00[9];
+    u8 unk09_0 : 2;
     u8 priority : 2;
 };
 
@@ -24,12 +24,12 @@ void Func_020015ec(void);
 
 void Func_02001928(struct ObjectRuntime *object, s32 priority)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ((struct SpriteAttributes *)object->animation)->priority = priority;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_020041dc(object, Data_02004744);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }

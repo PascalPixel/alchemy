@@ -9,12 +9,12 @@
 extern s32 gFrameTick;
 
 struct ProbeShape {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u8 kind;
 };
 
 struct ProbeObjects {
-    u8 unknown_00[40];
+    u8 unk00[40];
     struct ProbeShape *shape;
 };
 
@@ -29,7 +29,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
     u8 kind;
 
     angle = 0;
-    kind = ((struct ProbeObjects *)Ram_HeapSlots->unknown_0c[1])->shape->kind;
+    kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
     if ((gInput.held & 2) != 0)
         angle = (s16)(gFrameTick << 8);
     switch ((u32)kind) {

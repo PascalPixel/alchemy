@@ -13,25 +13,25 @@
 #include "text/msg_ids.h"
 
 struct OwnerVitals {
-    u8 unknown_000[20];
-    s16 hp_ratio;
-    s16 pp_ratio;
-    u8 unknown_018[28];
-    s16 max_hp;
-    s16 max_pp;
+    u8 unk000[20];
+    s16 hpRatio;
+    s16 ppRatio;
+    u8 unk018[28];
+    s16 maxHp;
+    s16 maxPp;
     s16 hp;
     s16 pp;
-    u8 unknown_03c[0x131 - 60];
+    u8 unk03c[0x131 - 60];
     u8 status;
 };
 
 
 void Event_ClearValidPackedIds(void)
 {
-    if (Event_ValidatePackedId(gPartyState.packed_events[0]))
-        gPartyState.packed_events[0] = 0;
-    if (Event_ValidatePackedId(gPartyState.packed_events[1]))
-        gPartyState.packed_events[1] = 0;
+    if (Event_ValidatePackedId(gPartyState.packedEvents[0]))
+        gPartyState.packedEvents[0] = 0;
+    if (Event_ValidatePackedId(gPartyState.packedEvents[1]))
+        gPartyState.packedEvents[1] = 0;
 }
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
@@ -59,32 +59,32 @@ void Party_RemoveOwnerRestored(s32 owner)
     vitals = UnitGet(owner);
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
-        vitals->hp = vitals->max_hp;
-        vitals->pp = vitals->max_pp;
+        vitals->hp = vitals->maxHp;
+        vitals->pp = vitals->maxPp;
     } while (0);
-    vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
-    if (vitals->hp_ratio == 0 && vitals->hp != 0)
-        vitals->hp_ratio = 1;
-    vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-    if (vitals->pp_ratio == 0 && vitals->pp != 0)
-        vitals->pp_ratio = 1;
+    vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
+    if (vitals->hpRatio == 0 && vitals->hp != 0)
+        vitals->hpRatio = 1;
+    vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
+    if (vitals->ppRatio == 0 && vitals->pp != 0)
+        vitals->ppRatio = 1;
     vitals->status = 0;
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        vitals = UnitGet(gPartyState.active_owners[i]);
+        vitals = UnitGet(gPartyState.activeOwners[i]);
         if (vitals->hp != 0)
             standing++;
     }
     if (standing == 0) {
-        vitals = UnitGet(gPartyState.current_owner);
+        vitals = UnitGet(gPartyState.currentOwner);
         vitals->hp = 1;
-        vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
-        if (vitals->hp_ratio == 0 && vitals->hp != 0)
-            vitals->hp_ratio = 1;
-        vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-        if (vitals->pp_ratio == 0 && vitals->pp != 0)
-            vitals->pp_ratio = 1;
+        vitals->hpRatio = Vitals_Ratio(vitals->hp, vitals->maxHp);
+        if (vitals->hpRatio == 0 && vitals->hp != 0)
+            vitals->hpRatio = 1;
+        vitals->ppRatio = Vitals_Ratio(vitals->pp, vitals->maxPp);
+        if (vitals->ppRatio == 0 && vitals->pp != 0)
+            vitals->ppRatio = 1;
     }
 }
 

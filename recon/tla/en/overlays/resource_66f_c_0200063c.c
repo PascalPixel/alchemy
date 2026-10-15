@@ -37,16 +37,16 @@ s32 Func_0200063c(void)
     s32 flag;
     s32 height;
 
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 0x204;
-    Object_GetById(Func_02001184())->priority_flags |= 0x20;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
+    Object_GetById(Func_02001184())->priorityFlags |= 0x20;
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov66fRoom1) {
         ObjectMotion_SetActionVariant(18, 1);
         ObjectMotion_SetActionVariant(19, 1);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
-        Object_GetById(19)->collision_flags = 0;
-        Object_GetById(19)->priority_flags |= 2;
-        Object_GetById(12)->collision_flags = 0;
+        Object_GetById(19)->collisionFlags = 0;
+        Object_GetById(19)->priorityFlags |= 2;
+        Object_GetById(12)->collisionFlags = 0;
         if (GameFlag_Test(0x222)) {
             Call6((void (*)())Func_0200106c, 30, 35, 1, 1, 28, 34);
             Call6((void (*)())Func_0200106c, 30, 34, 1, 1, 28, 33);
@@ -63,12 +63,12 @@ s32 Func_0200063c(void)
         if (flag == 0) {
             struct ObjectRuntime *lift;
 
-            Object_GetById(16)->priority_flags |= 0x80;
+            Object_GetById(16)->priorityFlags |= 0x80;
             lift = Object_GetById(17);
-            lift->priority_flags |= 0x40;
+            lift->priorityFlags |= 0x40;
             lift->y = 0xe00000;
-            lift->terrain_height = 0xe00000;
-            lift->collision_flags = flag;
+            lift->terrainHeight = 0xe00000;
+            lift->collisionFlags = flag;
         } else {
             Call2((void (*)())Func_02001124, 10, 257);
         }
@@ -76,7 +76,7 @@ s32 Func_0200063c(void)
         if (GameFlag_Test(0x882))
             Func_020010d4(13, 0, 0);
         else
-            Object_GetById(13)->scale_y = 0x14000;
+            Object_GetById(13)->scaleY = 0x14000;
     } else if (scene == (s32)&SceneId_Ov66fRoom2) {
         ObjectMotion_SetActionVariant(8, 1);
         ObjectMotion_SetActionVariant(9, 1);
@@ -89,18 +89,18 @@ s32 Func_0200063c(void)
         if (GameFlag_Test(0x8e7)) {
             object = Object_GetById(20);
             Call3((void (*)())Func_020010d4, 20, 0x480000, 0x1c80000);
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             height = Map_GetTerrainHeight(0, object->x, object->z);
-            object->terrain_height = height;
+            object->terrainHeight = height;
             object->y = height;
             Call6((void (*)())Func_0200106c, 3, 28, 1, 1, 4, 28);
         }
         if (GameFlag_Test(0x8e8)) {
             object = Object_GetById(13);
             Call3((void (*)())Func_020010d4, 13, 0x1c80000, 0x1e80000);
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             height = Map_GetTerrainHeight(0, object->x, object->z);
-            object->terrain_height = height;
+            object->terrainHeight = height;
             object->y = height;
             Call6((void (*)())Func_0200106c, 32, 30, 1, 2, 28, 30);
         }

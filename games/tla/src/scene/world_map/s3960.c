@@ -13,7 +13,7 @@ void Func_020036a8(void);
 // next frames.
 void Func_020038e4(void)
 {
-    if ((u16)Ram_HeapSlots->object_system->suspended == 0) {
+    if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
         IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
         IO_WRITE_QUEUE_PUSH(0x4000054, 12, 0x20000);
     }

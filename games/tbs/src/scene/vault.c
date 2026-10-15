@@ -59,7 +59,7 @@ static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 	s32				   selector = 18;
 	struct FieldActor *leader;
 
-	if (entity->target_x == 0x80000000)
+	if (entity->targetX == 0x80000000)
 		return 0;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -96,7 +96,7 @@ void *SceneData_SelectActorTableByFlag855(void)
 
 static int Vault_GetIvanVenusDjinnCount(void)
 {
-	return UnitGet(2)->djinn_owned_counts[0];
+	return UnitGet(2)->djinnOwnedCounts[0];
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -110,7 +110,7 @@ static void Vault_SayFarewellToIvan(void)
 	p5 = gEventWork;
 	if (GameFlag_IsSet(0x855) != 0 || GameFlag_IsSet(0x856) == 0)
 	{
-		Engine_EventRequestExit(p5->touched_trigger - 19);
+		Engine_EventRequestExit(p5->touchedTrigger - 19);
 		return;
 	}
 	Engine_EventBegin();
@@ -120,7 +120,7 @@ static void Vault_SayFarewellToIvan(void)
 		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
 	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-	if (p5->touched_trigger == 20)
+	if (p5->touchedTrigger == 20)
 	{
 		Actor_WalkToAndWait(IVAN, 0x190, 0x1c0);
 	}
@@ -144,7 +144,7 @@ static void Vault_SayFarewellToIvan(void)
 		Engine_TaskWait(20);
 	}
 	Party_RemoveOwnerRestored(2);
-	Engine_EventRequestExit(p5->touched_trigger - 19);
+	Engine_EventRequestExit(p5->touchedTrigger - 19);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -443,7 +443,7 @@ static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 	Engine_ActorSetAnimation(19, 1);
 	if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0)
 	{
-		u16 *p = &gEventWork->unknown_172;
+		u16 *p = &gEventWork->unk172;
 		u16	 value = 1;
 
 		*p = value;
@@ -570,7 +570,7 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
 	Actor_SetSpeed(0, 0x8000, 0x4000);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(continuation);
 }
 
@@ -606,7 +606,7 @@ static void EV08_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
-	actor->priority_flags &= ~1;
+	actor->priorityFlags &= ~1;
 	sprite->priority = 3;
 	SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
@@ -622,7 +622,7 @@ static void EV09_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
-	actor->priority_flags &= ~1;
+	actor->priorityFlags &= ~1;
 	sprite->priority = 3;
 	SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
@@ -648,7 +648,7 @@ static void EV12_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
-	actor->priority_flags &= ~1;
+	actor->priorityFlags &= ~1;
 	sprite->priority = 3;
 	SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
@@ -666,7 +666,7 @@ static void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z
 	Engine_ActorSetSpeed(actor, 0x30000, 0x18000);
 	record->gravity = 0x8000;
 	record->bounce = 0;
-	record->velocity_y = field40;
+	record->velocityY = field40;
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorMoveToAndWait(actor, x, z);
 	Engine_ActorSetPosition(actor, x << 16, z << 16);
@@ -877,29 +877,29 @@ static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
 
 static void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
 {
-	s32 horizontal_rate;
-	s32 vertical_rate;
+	s32 horizontalRate;
+	s32 verticalRate;
 
-	effect->x += effect->horizontal_rate;
-	effect->shadow_x = effect->x;
+	effect->x += effect->horizontalRate;
+	effect->shadowX = effect->x;
 
 	if (effect->mode != 0)
 	{
-		effect->y += effect->vertical_rate;
-		effect->shadow_y = effect->y;
+		effect->y += effect->verticalRate;
+		effect->shadowY = effect->y;
 	}
 	else
 	{
-		effect->z += effect->vertical_rate;
-		effect->shadow_z = effect->z;
+		effect->z += effect->verticalRate;
+		effect->shadowZ = effect->z;
 		effect->y += 1024;
-		effect->shadow_y = effect->y;
+		effect->shadowY = effect->y;
 	}
 
-	horizontal_rate = effect->horizontal_rate;
-	effect->horizontal_rate = horizontal_rate - Math_Divide(horizontal_rate, 28);
-	vertical_rate = effect->vertical_rate;
-	effect->vertical_rate = vertical_rate - Math_Divide(vertical_rate, 28);
+	horizontalRate = effect->horizontalRate;
+	effect->horizontalRate = horizontalRate - Math_Divide(horizontalRate, 28);
+	verticalRate = effect->verticalRate;
+	effect->verticalRate = verticalRate - Math_Divide(verticalRate, 28);
 }
 
 static void Vault_SpawnDriftingEffect(s32 flags)
@@ -925,14 +925,14 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 	x <<= 16;
 	z <<= 16;
 	{
-		s32 base_x = leader->motion.x;
-		s32 base_z = leader->motion.z;
-		s32 base_y;
+		s32 baseX = leader->motion.x;
+		s32 baseZ = leader->motion.z;
+		s32 baseY;
 
-		x += base_x;
-		base_y = leader->motion.y;
-		z += base_z;
-		leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, base_y, z);
+		x += baseX;
+		baseY = leader->motion.y;
+		z += baseZ;
+		leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, baseY, z);
 	}
 	if (leaf == NULL)
 		return;
@@ -949,10 +949,10 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 		break;
 	}
 	{
-		u8 *motion_flags = &leaf->actor.motion_flags;
+		u8 *motionFlags = &leaf->actor.motionFlags;
 
 		zero = 0;
-		*motion_flags = zero;
+		*motionFlags = zero;
 	}
 	if (flags & 2)
 	{
@@ -966,9 +966,9 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 		bias = flags ^ x;
 		bias <<= 2;
 		cnt += bias;
-		leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
+		leaf->motion.verticalRate = (0x3332 * flags - 0x1999) * cnt;
 		cnt = (u32)Engine_RandomNext() % 15 - 7;
-		leaf->motion.horizontal_rate = 0x1999 * cnt;
+		leaf->motion.horizontalRate = 0x1999 * cnt;
 		leaf->motion.mode = zero;
 	}
 	else
@@ -976,9 +976,9 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 		s32 cnt;
 
 		cnt = (u32)Engine_RandomNext() % 10 + 8;
-		leaf->motion.horizontal_rate = (0x3332 * flags - 0x1999) * cnt;
+		leaf->motion.horizontalRate = (0x3332 * flags - 0x1999) * cnt;
 		cnt = (u32)Engine_RandomNext() % 14 + 1;
-		leaf->motion.vertical_rate = 0x1999 * cnt;
+		leaf->motion.verticalRate = 0x1999 * cnt;
 		leaf->motion.mode = 1;
 	}
 	{

@@ -83,7 +83,7 @@ void Func_02003720(void)
     }
     if (GameFlag_Test(0x200) != 0) {
         Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
-        Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
         Func_02003ffc();
         WaitFrames(1);
     }

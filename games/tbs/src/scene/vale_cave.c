@@ -54,10 +54,10 @@ static void SceneActor_WaitActorDescent(struct FieldActor *actor)
 	{
 		Engine_TaskWait(1);
 		frames--;
-		if (actor->y.fixed <= actor->terrain_height)
+		if (actor->y.fixed <= actor->terrainHeight)
 			break;
 	}
-	actor->y.fixed = actor->terrain_height;
+	actor->y.fixed = actor->terrainHeight;
 }
 
 static s32 SceneActor_FaceActorZero(struct FieldActor *obj)
@@ -146,10 +146,10 @@ static void EV09_PSYNERGY(void)
 			Object_GetById(9)->x.fixed, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
 		right = OverlayObject_PrepareObject(
 			Object_GetById(9)->x.fixed + 0x100000, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
-		Object_GetById(9)->motion_flags = 0;
+		Object_GetById(9)->motionFlags = 0;
 		o = &options;
-		o->start_scale_x = 0x9999;
-		o->start_scale_y = 0x9999;
+		o->startScaleX = 0x9999;
+		o->startScaleY = 0x9999;
 		o->palette = 7;
 		Engine_AudioPlayCue(216);
 		for (i = 0; i < 68; i++)
@@ -162,7 +162,7 @@ static void EV09_PSYNERGY(void)
 			Engine_EventWait(1);
 		}
 		Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
-		Object_GetById(9)->priority_flags |= 2;
+		Object_GetById(9)->priorityFlags |= 2;
 		Engine_GameFlagSet(0x200);
 		Object_GetById(9)->y.fixed = -0x80000;
 		Engine_ActorSetAnimation(9, 2);
@@ -188,10 +188,10 @@ static void EV10_PSYNERGY(void)
 			Object_GetById(10)->x.fixed - 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
 		right = OverlayObject_PrepareObject(
 			Object_GetById(10)->x.fixed + 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
-		Object_GetById(9)->motion_flags = 0;
+		Object_GetById(9)->motionFlags = 0;
 		o = &options;
-		o->start_scale_x = 0x9999;
-		o->start_scale_y = 0x9999;
+		o->startScaleX = 0x9999;
+		o->startScaleY = 0x9999;
 		o->palette = 7;
 		Engine_AudioPlayCue(216);
 		for (i = 0; i < 68; i++)
@@ -204,7 +204,7 @@ static void EV10_PSYNERGY(void)
 			Engine_EventWait(1);
 		}
 		Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
-		Object_GetById(10)->priority_flags |= 2;
+		Object_GetById(10)->priorityFlags |= 2;
 		Engine_GameFlagSet(0x201);
 		Object_GetById(10)->y.fixed = -0x80000;
 		Engine_ActorSetAnimation(10, 2);
@@ -232,7 +232,7 @@ static s32 FieldScene_RunPrimarySequence(s32 a0)
 	s32					  saved;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	flags = &leader->motion_flags;
+	flags = &leader->motionFlags;
 	saved = *flags;
 #if EDITION_INTERNATIONAL
 	to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
@@ -252,7 +252,7 @@ static s32 FieldScene_RunPrimarySequence(s32 a0)
 		Object_SetMode(leader, 7);
 		leader->speed = 0x30000;
 		leader->acceleration = 0x20000;
-		leader->velocity_y = 0x40000;
+		leader->velocityY = 0x40000;
 		*flags &= 126;
 		Engine_ActorSetSpriteFlags(leader, 0);
 		Engine_ActorMoveToAndWait(0, to[0].part.pixel, to[2].part.pixel);
@@ -286,7 +286,7 @@ static void EV40_TOUCH(void)
 		Actor_WalkToAndWait(8, 0x318, 248);
 		Engine_AudioPlayCue(152);
 		record = Actor_Get(8);
-		record->velocity_y = 0x80000;
+		record->velocityY = 0x80000;
 		Actor_WalkToAndWait(8, 0x318, 0x118);
 		Engine_EventWait(20);
 		Actor_FaceDirection(8, 0xc000, 20);
@@ -340,7 +340,7 @@ static void FieldScene_RunScene3a6SequenceC(void)
 		off24a = 0x24a;
 		if (*(s16 *)((s32)&gGameState + off24a) != 8)
 		{
-			idx = p5->touched_trigger;
+			idx = p5->touchedTrigger;
 			rec8 = Object_GetById(8);
 			record = Object_GetById(ACTOR_PARTY_LEADER);
 			rec8->speed = record->speed;
@@ -375,32 +375,32 @@ static void EV20_SCRIPT(void)
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
 		SceneActor_MoveAndRedraw(probe);
-		if ((probe.position_x >> 20) == 17)
+		if ((probe.positionX >> 20) == 17)
 		{
-			Engine_ActorSetAnimation(probe.actor_slot, 3);
+			Engine_ActorSetAnimation(probe.actorSlot, 3);
 			v6 = 0;
-			Object_GetById(probe.actor_slot)->motion_flags = v6;
-			record = Object_GetById(probe.actor_slot);
+			Object_GetById(probe.actorSlot)->motionFlags = v6;
+			record = Object_GetById(probe.actorSlot);
 			record->bounce = v6;
-			Engine_ActorSetDestinationOffset(probe.actor_slot, -12, 0);
-			Engine_ActorWaitForMove(probe.actor_slot);
-			Engine_ActorSetAnimation(probe.actor_slot, 3);
+			Engine_ActorSetDestinationOffset(probe.actorSlot, -12, 0);
+			Engine_ActorWaitForMove(probe.actorSlot);
+			Engine_ActorSetAnimation(probe.actorSlot, 3);
 			Engine_ActorSetSpritePriority(10, 3);
-			Object_GetById(probe.actor_slot)->motion_flags = 3;
-			Engine_ActorSetDestinationOffset(probe.actor_slot, -6, 0);
-			SceneActor_WaitActorDescent(Object_GetById(probe.actor_slot));
-			Engine_ActorSetAnimation(probe.actor_slot, 8);
+			Object_GetById(probe.actorSlot)->motionFlags = 3;
+			Engine_ActorSetDestinationOffset(probe.actorSlot, -6, 0);
+			SceneActor_WaitActorDescent(Object_GetById(probe.actorSlot));
+			Engine_ActorSetAnimation(probe.actorSlot, 8);
 			{
-				struct FieldActor *obj = Object_GetById(probe.actor_slot);
+				struct FieldActor *obj = Object_GetById(probe.actorSlot);
 
 				two = 2;
-				obj->priority_flags = two;
+				obj->priorityFlags = two;
 			}
 			v5 = 4;
 			StagedActor_FillGridAttributeRectangle(
-				0, (probe.position_x >> 20), ((probe.position_z >> 20) - 2), 1, v5, v6);
+				0, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
 			StagedActor_FillGridAttributeRectangle(
-				2, (probe.position_x >> 20), ((probe.position_z >> 20) - 2), 1, v5, v6);
+				2, (probe.positionX >> 20), ((probe.positionZ >> 20) - 2), 1, v5, v6);
 			StagedActor_FillGridAttributeRectangle(2, 16, 18, 1, two, v6);
 			StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, v5, v6);
 			Engine_GameFlagSet(0x203);
@@ -428,7 +428,7 @@ static void EV21_TOUCH_3(void)
 	Actor_SetSpeed(9, 0x8000, 0x1999);
 	Engine_ActorSetAnimation(9, 2);
 	zero = 0;
-	Object_GetById(9)->motion_flags = zero;
+	Object_GetById(9)->motionFlags = zero;
 	record = Actor_Get(9);
 	record->bounce = zero;
 	Engine_ActorSetDestinationOffset(9, 12, 0);
@@ -438,12 +438,12 @@ static void EV21_TOUCH_3(void)
 	Event_PlayCue(0x120);
 	Event_PlayCue(213);
 	Engine_ActorSetAnimation(9, 3);
-	Object_GetById(9)->motion_flags = 3;
+	Object_GetById(9)->motionFlags = 3;
 	Engine_ActorSetDestinationOffset(9, 6, 0);
 	SceneActor_WaitActorDescent(Actor_Get(9));
 	Engine_ActorSetAnimation(9, 8);
 	Engine_ActorSetSpritePriority(9, 3);
-	Object_GetById(9)->priority_flags = 2;
+	Object_GetById(9)->priorityFlags = 2;
 	StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
 	StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
 	GameFlag_Set(0x202);
@@ -470,11 +470,11 @@ static void EV22_SCRIPT(void)
 			s32				   two = 2;
 			s32				   zero = 0;
 
-			obj->priority_flags = two;
+			obj->priorityFlags = two;
 			StagedActor_FillGridAttributeRectangle(
-				0, 13, (probe.position_z >> 20) - 1, 4, two, zero);
+				0, 13, (probe.positionZ >> 20) - 1, 4, two, zero);
 		}
-		if ((probe.position_z >> 20) == 20)
+		if ((probe.positionZ >> 20) == 20)
 		{
 			Engine_GameFlagSet(0x205);
 		}
@@ -512,7 +512,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 s32 ValeCave_RunSceneScript(void)
 {
-	s32 *request = &gEventWork->start_transition;
+	s32 *request = &gEventWork->startTransition;
 
 	*request = 0x204;
 	if (gGameState.scene == (s32)&SceneId_ValeCave1)
@@ -529,7 +529,7 @@ s32 ValeCave_RunSceneScript(void)
 
 static void ValeCave_PlayCueAndRequestTouchedExit(void)
 {
-	s32 val = gEventWork->touched_trigger;
+	s32 val = gEventWork->touchedTrigger;
 
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(val);
@@ -585,8 +585,8 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 	if (rec != 0)
 	{
 		Engine_ActorSetSpritePriority(id, 3);
-		rec->terrain_id = 2;
-		rec->priority_flags |= 2;
+		rec->terrainId = 2;
+		rec->priorityFlags |= 2;
 		rec->x.fixed = (x << 20) + 0x80000;
 		rec->z.fixed = (y << 20) + 0x80000;
 	}

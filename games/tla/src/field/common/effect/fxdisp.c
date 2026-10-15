@@ -8,10 +8,10 @@
 
 struct BattleFxWorkTail
 {
-	u8							 unknown_0000[0x78e4];
+	u8							 unk0000[0x78e4];
 	s32							 active;
-	s32							 unknown_78e8;
-	s32							 unknown_78ec;
+	s32							 unk78e8;
+	s32							 unk78ec;
 	struct BattleEffectArgument *effect;
 };
 
@@ -30,7 +30,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 	u8	*info;
 	s32	 scale;
 
-	camera = Ram_HeapSlots->camera_work;
+	camera = Ram_HeapSlots->cameraWork;
 	object = GetBattleObjectSlotFar(unit)->object;
 	info = GetMotionRecordFar(object, 0);
 	Render_ResetTransformState();
@@ -49,7 +49,7 @@ void BattleFx_ProbeKeysForExtendedActor(void)
 	/* FAKEMATCH: the one-pass block loads the effect work before the effect offset is started; assigned directly the offset is started first (differ 2). */
 	do
 	{
-		work = (struct BattleFxWorkTail *)Ram_HeapSlots->battle_fx_work[0];
+		work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
 	} while (0);
 	effect = work->effect;
 
@@ -75,7 +75,7 @@ void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect)
 	/* FAKEMATCH: the one-pass block loads the effect work before the effect offset is started; assigned directly the offset is started first (differ 2). */
 	do
 	{
-		work = (struct BattleFxWorkTail *)Ram_HeapSlots->battle_fx_work[0];
+		work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
 	} while (0);
 	work->effect = effect;
 	work->active = 1;

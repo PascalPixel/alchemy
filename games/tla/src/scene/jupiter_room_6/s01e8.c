@@ -20,9 +20,9 @@ void Func_0200196c(s32 a, s32 b, s32 c);
 
 s32 Func_020001e8(void)
 {
-    struct JupiterRoom6EventWork *work = Ram_HeapSlots->event_work;
+    struct JupiterRoom6EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screen_effect = 0x204;
+    work->screenEffect = 0x204;
     if (JupiterRoom6_FlagCheck(0xa19)) {
         Func_02001b6c(12, 0x480000, 0x2580000);
         Func_020000b4(0);

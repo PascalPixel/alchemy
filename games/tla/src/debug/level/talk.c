@@ -41,7 +41,7 @@ void Func_020001a8(void)
     s32 flag;
     s32 msg;
 
-    record = UnitGet(gPartyState.current_owner);
+    record = UnitGet(gPartyState.currentOwner);
     win = UiWindow_Create(0, 0, 30, 9, 2);
 
     msg = (s32)MsgRaiseEveryoneS;

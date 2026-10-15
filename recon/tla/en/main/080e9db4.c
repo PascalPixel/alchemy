@@ -20,36 +20,36 @@ void Func_080e9940(void);
 
 void Func_080e9db4(void)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
     struct ObjectRuntime *object = Object_GetById(EventRuntime_GetControlledOwner());
     s32 i;
 
     Scheduler_RemoveCallback(Func_080e9940);
     Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
-    object->motion_flags = 3;
-    gPartyState.render_mode = 0;
+    object->motionFlags = 3;
+    gPartyState.renderMode = 0;
     for (i = 0; i < 60; i++) {
-        if (object->y <= object->terrain_height)
+        if (object->y <= object->terrainHeight)
             break;
         WaitFrames(1);
     }
     Audio_PlayCue(132);
     WaitFrames(1);
     for (i = 0; i < 20; i++) {
-        if (object->y <= object->terrain_height)
+        if (object->y <= object->terrainHeight)
             break;
         WaitFrames(1);
     }
     WaitFrames(1);
     for (i = 0; i < 20; i++) {
-        if (object->y <= object->terrain_height)
+        if (object->y <= object->terrainHeight)
             break;
         WaitFrames(1);
     }
     WaitFrames(1);
     object->bounce = 0;
-    object->velocity_y = 0;
-    object->y = object->terrain_height;
+    object->velocityY = 0;
+    object->y = object->terrainHeight;
     object->gravity = 0x10000;
     Resource_ResetEntry(*(s16 *)(work + 0x102c));
     Runtime_ReleaseHeapBlock(92);

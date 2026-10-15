@@ -4,12 +4,12 @@ s32 Func_020005c0(struct ObjectRuntime *object)
 {
     ObjectDispatch_SetSingleChildFlags(object, 0);
     ((struct FieldSprite *)object->animation)->priority = 2;
-    object->priority_flags &= 0xfe;
-    object->motion_flags = 0;
+    object->priorityFlags &= 0xfe;
+    object->motionFlags = 0;
     {
         s32 step = -0x40000;
 
-        /* FAKEMATCH: the object passes through an asm that reads the step, so the step's pool load comes before the y load as the native has; plain, the y load comes first (one reordered row). Measured against it: += (s32)0xfffc0000, the constant first, y and constant temporaries, the y update before the motion_flags store (differ 13), the step behind its own "+l" barrier (differ 2 and 4), the step pinned to r2 behind a one-pass block (differ 2). */
+        /* FAKEMATCH: the object passes through an asm that reads the step, so the step's pool load comes before the y load as the native has; plain, the y load comes first (one reordered row). Measured against it: += (s32)0xfffc0000, the constant first, y and constant temporaries, the y update before the motionFlags store (differ 13), the step behind its own "+l" barrier (differ 2 and 4), the step pinned to r2 behind a one-pass block (differ 2). */
         __asm__("" : "+l"(object) : "l"(step));
         object->y += step;
     }
@@ -46,10 +46,10 @@ const u8 *Func_02000600(void)
 
 void Func_02000698(void)
 {
-    Object_GetById(gPartyState.current_owner)->terrain_id = 2;
+    Object_GetById(gPartyState.currentOwner)->terrainId = 2;
 }
 
 void Func_020006b4(void)
 {
-    Object_GetById(gPartyState.current_owner)->terrain_id = 0;
+    Object_GetById(gPartyState.currentOwner)->terrainId = 0;
 }

@@ -9,11 +9,11 @@
 #include "object_runtime.h"
 
 struct MagmaRockWork {
-    s32 unknown_00;
+    s32 unk00;
     s32 x;
     s32 y;
     s32 z;
-    s32 unknown_10;
+    s32 unk10;
     struct ObjectRuntime *target;
 };
 
@@ -22,7 +22,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 s32 Func_02001084(u16 *table)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     s32 result = 0;
     s32 code = MapCell_GetAttributes(0, work->x >> 20, work->z >> 20) >> 8;
     s32 id;

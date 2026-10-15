@@ -168,7 +168,7 @@ static void EV02_SEARCH(void)
 	Map_CopyCellAttributes(0, 0, 1, 1, 41, 10);
 	Map_CopyCellsTo(87, 42, 41, 12, 1, 2);
 	Engine_EventWait(40);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0x2c60000, -1, 0x1da0000, 0);
@@ -268,7 +268,7 @@ static void EV03_SEARCH(void)
 	Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
 	Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
 	Engine_EventWait(40);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0x2c80000, -1, 0x980000, 0);
@@ -380,7 +380,7 @@ static void Scene_BagJupiterStar(void)
 	Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
 	Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
 	Engine_EventWait(40);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0xe80000, -1, 0x1dd0000, 0);
@@ -461,7 +461,7 @@ static void FieldScene_StagePairedActors(void)
 
 static void FieldScene_RunElementalStarDemand(void)
 {
-	u8				  *motion_flags;
+	u8				  *motionFlags;
 	u8				  *sprite_flags;
 	struct FieldActor *star;
 	struct FieldActor *glow;
@@ -497,14 +497,14 @@ static void FieldScene_RunElementalStarDemand(void)
 	sprite_flags = &star->sprite->flags;
 	zero = 0;
 	*sprite_flags = zero;
-	star->scale_x = 0x1999;
-	star->scale_y = 0x1999;
-	glow->scale_x = 0x1999;
-	glow->scale_y = 0x1999;
+	star->scaleX = 0x1999;
+	star->scaleY = 0x1999;
+	glow->scaleX = 0x1999;
+	glow->scaleY = 0x1999;
 	Actor_SetChildValue(12, 0x100);
 	Actor_SetPosition(12, 0x1d70000, 0x1220000);
-	motion_flags = &star->motion_flags;
-	*motion_flags = zero;
+	motionFlags = &star->motionFlags;
+	*motionFlags = zero;
 	star->y.fixed = 0x280000;
 	Engine_EventWait(1);
 	Event_SayThenWait(12, 10);
@@ -523,26 +523,26 @@ static void FieldScene_RunElementalStarDemand(void)
 	for (i = 0; i != 90; i++)
 	{
 		star->y.fixed -= 0x1999;
-		star->scale_x += 0x28f;
-		star->scale_y += 0x28f;
-		glow->scale_x += 0x28f;
-		glow->scale_y += 0x28f;
+		star->scaleX += 0x28f;
+		star->scaleY += 0x28f;
+		glow->scaleX += 0x28f;
+		glow->scaleY += 0x28f;
 		Engine_EventWait(1);
 	}
-	*motion_flags = 5;
+	*motionFlags = 5;
 	Engine_EventWait(80);
 	for (i = 0; i != 60; i++)
 	{
 		star->y.fixed -= 0x8000;
 		Engine_EventWait(1);
 	}
-	*motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	*motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	Engine_EventWait(30);
 	*sprite_flags = 1;
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_ActorSetSpritePriority(12, 1);
 	{
-		u8 *flags = &Object_GetById(12)->priority_flags;
+		u8 *flags = &Object_GetById(12)->priorityFlags;
 
 		/* FAKEMATCH: the bit held in the loop counter first keeps the 1 in r5 ahead of the actor 8 call's arguments; a plain |= loads it after. Plain |=: differ 31, one instruction shorter; *flags = ACTOR_PRIORITY_AUTOMATIC | *flags, either operand first, differ 35. */
 		i = ACTOR_PRIORITY_AUTOMATIC;
@@ -867,7 +867,7 @@ static void Scene_UnmaskFelix(void)
 			Engine_ActorRunRepeatedMotion(GARET, 1);
 			Actor_SetSpeed(GARET, 0x20000, 0x10000);
 			obj = Object_GetById(ACTOR_PARTY_LEADER);
-			obj->steering_flags &= ~ACTOR_FACES_MOTION;
+			obj->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Actor_WalkToAndWait(GARET, 244, 0x1de);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 			Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
@@ -876,7 +876,7 @@ static void Scene_UnmaskFelix(void)
 			UiText_ShowCenteredMessage((message_b + 1), 1, 0);
 			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
-			obj->steering_flags |= ACTOR_FACES_MOTION;
+			obj->steeringFlags |= ACTOR_FACES_MOTION;
 		}
 		else
 		{
@@ -895,26 +895,26 @@ static void Scene_UnmaskFelix(void)
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Actor_SetSpeed(GARET, 0x8000, 0x4000);
 	obj = Object_GetById(GARET);
-	obj->steering_flags &= ~ACTOR_FACES_MOTION;
+	obj->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(GARET, 0x108, 0x1e2);
-	obj->steering_flags |= ACTOR_FACES_MOTION;
+	obj->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(GARET, 0x116, 0x1e0);
 	obj->speed = 0x30000;
 	obj->acceleration = 0x20000;
 	Event_PlayCue(153);
-	obj->velocity_y = 0x60000;
+	obj->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x138, 0x1d6);
 	Engine_ActorSetAnimation(GARET, 1);
 	Engine_EventWait(30);
 	Event_PlayCue(153);
-	obj->velocity_y = 0x60000;
+	obj->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x156, 0x1d6);
 	Engine_ActorSetAnimation(GARET, 1);
 	Engine_EventWait(30);
 	Event_PlayCue(153);
-	obj->velocity_y = 0x60000;
+	obj->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x178, 0x1d6);
 	Engine_ActorSetAnimation(GARET, 1);
@@ -959,11 +959,11 @@ static void Scene_AlexTakesStars(void)
 	UiText_ShowCenteredMessage(MsgSolPermitRelieveElemental + 4, 1, 10);
 	Actor_SetSpeed(GARET, 0x8000, 0x4000);
 	rec = Object_GetById(GARET);
-	rec->steering_flags &= ~ACTOR_FACES_MOTION;
+	rec->steeringFlags &= ~ACTOR_FACES_MOTION;
 	none = 0;
 	Actor_WalkToAndWait(GARET, 0x178, 0x1d6);
 	Engine_EventWait(30);
-	rec->steering_flags |= ACTOR_FACES_MOTION;
+	rec->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
 	Engine_EventWait(10);
 	Engine_EventSetMessage(MsgSolPermitRelieveElemental + 5);
@@ -979,14 +979,14 @@ static void Scene_AlexTakesStars(void)
 	record = Actor_Get(ACTOR_ALEX);
 	Engine_ActorSetSpriteFlags(record, 0);
 	rec = Object_GetById(ACTOR_ALEX);
-	rec->motion_flags = none;
+	rec->motionFlags = none;
 	Event_PlayCue(220);
 	for (i = 0; i != 30; i++)
 	{
 		rec->y.fixed += 0x10000;
 		Engine_EventWait(1);
 	}
-	rec->motion_flags = 5;
+	rec->motionFlags = 5;
 	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Event_SayThenWait(1, 10);
 	Actor_ShowEmote(ACTOR_ALEX, 0x101, 60);
@@ -1042,7 +1042,7 @@ static void Scene_AlexTakesStars(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
 	Engine_EventWait(10);
 	Event_SayThenWait(14, 30);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_ALEX, 0x26666, 0x13333);
 	FieldObject_SetMoveTarget((s32)rec, 0x1cc0000, 0, 0x1680000);
 	Engine_ActorWaitForMove(ACTOR_ALEX);
@@ -1057,23 +1057,23 @@ static void Scene_AlexTakesStars(void)
 	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(20);
 	rec = Object_GetById(GARET);
-	rec->steering_flags |= ACTOR_FACES_MOTION;
+	rec->steeringFlags |= ACTOR_FACES_MOTION;
 	rec->speed = 0x30000;
 	rec->acceleration = 0x20000;
 	Event_PlayCue(153);
-	rec->velocity_y = 0x60000;
+	rec->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x156, 0x1d6);
 	Engine_ActorSetAnimation(GARET, 1);
 	Engine_EventWait(30);
 	Event_PlayCue(153);
-	rec->velocity_y = 0x60000;
+	rec->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x138, 0x1d6);
 	Engine_ActorSetAnimation(GARET, 1);
 	Engine_EventWait(30);
 	Event_PlayCue(153);
-	rec->velocity_y = 0x60000;
+	rec->velocityY = 0x60000;
 	Engine_ActorSetAnimation(GARET, 7);
 	Actor_MoveToAndWait(GARET, 0x116, 0x1e0);
 	Engine_ActorSetAnimation(GARET, 1);
@@ -1106,16 +1106,16 @@ static void Scene_AlexTakesStars(void)
 
 struct StarFollower
 {
-	u8				   unknown_00[12];
+	u8				   unk00[12];
 	s32				   y;
-	u8				   unknown_10[8];
-	s32				   scale_x;
-	s32				   scale_y;
-	u8				   unknown_20[0x35];
-	u8				   motion_flags;
-	u8				   unknown_56[4];
+	u8				   unk10[8];
+	s32				   scaleX;
+	s32				   scaleY;
+	u8				   unk20[0x35];
+	u8				   motionFlags;
+	u8				   unk56[4];
 	u8				   flags;
-	u8				   unknown_5b[13];
+	u8				   unk5b[13];
 	struct FieldActor *leader;
 };
 
@@ -1158,9 +1158,9 @@ static void SolStar_LineUpFollowers(void)
 	menardi = (struct StarFollower *)Object_GetById(14);
 	menardi->leader = leader;
 	menardi->flags |= 1;
-	menardi->scale_x = 0x10000;
-	menardi->scale_y = 0x10000;
-	menardi->motion_flags = Object_GetById(11)->motion_flags;
+	menardi->scaleX = 0x10000;
+	menardi->scaleY = 0x10000;
+	menardi->motionFlags = Object_GetById(11)->motionFlags;
 	menardi->y = 0;
 	Engine_ObjectSetScript((struct FieldActor *)menardi, SolStar_AngleScript);
 	actor = (struct StarFollower *)Object_GetById(13);
@@ -1259,7 +1259,7 @@ static void EV05_SEARCH(void)
 	Engine_ActorJump(GARET, 2, 20);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
 	Engine_ActorJump(GARET, 6, 40);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(2);
@@ -1374,20 +1374,20 @@ static void Scene_EnterStarRoom(void)
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
 	glow = Actor_Get(8);
-	glow->scale_x = 0x1999;
-	glow->scale_y = 0x1999;
+	glow->scaleX = 0x1999;
+	glow->scaleY = 0x1999;
 	rising = Actor_Get(ACTOR_PARTY_LEADER);
 	leader_sprite = &rising->sprite->flags;
 	*leader_sprite = 0;
-	rising->scale_x = 0x1999;
-	rising->scale_y = 0x1999;
+	rising->scaleX = 0x1999;
+	rising->scaleY = 0x1999;
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0x100);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1d70000, 0x1220000);
-	leader_motion = &rising->motion_flags;
+	leader_motion = &rising->motionFlags;
 	*leader_motion = 0;
 	rising->y.fixed = 0x280000;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -1397,10 +1397,10 @@ static void Scene_EnterStarRoom(void)
 	for (i = 0; i != 90; i++)
 	{
 		rising->y.fixed += -0x1999;
-		rising->scale_x += 0x28f;
-		rising->scale_y += 0x28f;
-		glow->scale_x += 0x28f;
-		glow->scale_y += 0x28f;
+		rising->scaleX += 0x28f;
+		rising->scaleY += 0x28f;
+		glow->scaleX += 0x28f;
+		glow->scaleY += 0x28f;
 		Engine_EventWait(1);
 	}
 	*leader_motion = 5;
@@ -1417,8 +1417,8 @@ static void Scene_EnterStarRoom(void)
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	{
 		struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-		s32				   flags = 1 | actor->priority_flags;
-		actor->priority_flags = flags;
+		s32				   flags = 1 | actor->priorityFlags;
+		actor->priorityFlags = flags;
 	}
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	{
@@ -1507,13 +1507,13 @@ static void Scene_EnterStarRoom(void)
 	rising = Actor_Get(ACTOR_KRADEN);
 	kraden_sprite = &rising->sprite->flags;
 	*kraden_sprite = zero;
-	rising->scale_x = 0x1999;
-	rising->scale_y = 0x1999;
-	glow->scale_x = 0x1999;
-	glow->scale_y = 0x1999;
+	rising->scaleX = 0x1999;
+	rising->scaleY = 0x1999;
+	glow->scaleX = 0x1999;
+	glow->scaleY = 0x1999;
 	Actor_SetChildValue(ACTOR_KRADEN, 0x100);
 	Actor_SetPosition(ACTOR_KRADEN, 0x1d70000, 0x1220000);
-	kraden_motion = &rising->motion_flags;
+	kraden_motion = &rising->motionFlags;
 	*kraden_motion = zero;
 	rising->y.fixed = 0x280000;
 	Engine_EventWait(1);
@@ -1534,10 +1534,10 @@ static void Scene_EnterStarRoom(void)
 	for (i = 0; i != 90; i++)
 	{
 		rising->y.fixed += -0x1999;
-		rising->scale_x += 0x28f;
-		rising->scale_y += 0x28f;
-		glow->scale_x += 0x28f;
-		glow->scale_y += 0x28f;
+		rising->scaleX += 0x28f;
+		rising->scaleY += 0x28f;
+		glow->scaleX += 0x28f;
+		glow->scaleY += 0x28f;
 		Engine_EventWait(1);
 	}
 	*kraden_motion = 5;
@@ -1552,8 +1552,8 @@ static void Scene_EnterStarRoom(void)
 	Engine_ActorSetSpritePriority(ACTOR_KRADEN, 1);
 	{
 		struct FieldActor *actor = Actor_Get(ACTOR_KRADEN);
-		s32				   flags = 1 | actor->priority_flags;
-		actor->priority_flags = flags;
+		s32				   flags = 1 | actor->priorityFlags;
+		actor->priorityFlags = flags;
 	}
 	Actor_SetChildValue(ACTOR_KRADEN, 0);
 	{
@@ -1867,11 +1867,11 @@ static void Scene_EnterStarRoom(void)
 	rising->speed = 0x30000;
 	rising->acceleration = 0x20000;
 	Event_PlayCue(153);
-	rising->velocity_y = (height << 11);
+	rising->velocityY = (height << 11);
 	Actor_MoveToAndWait(ACTOR_KRADEN, 0x1d7, 0x18b);
 	Engine_TaskWait(6);
 	Actor_SetSpeed(ACTOR_KRADEN, 0x4ccc, 0x2666);
-	kraden_flags = &rising->steering_flags;
+	kraden_flags = &rising->steeringFlags;
 	*kraden_flags &= 254;
 	Actor_SetDestination(ACTOR_KRADEN, 0x1d9, 0x18b);
 	Engine_ActorWaitForMove(ACTOR_KRADEN);
@@ -1910,7 +1910,7 @@ static void Scene_EnterStarRoom(void)
 	rising->speed = 0x30000;
 	rising->acceleration = 0x20000;
 	Event_PlayCue(153);
-	rising->velocity_y = (height << 11);
+	rising->velocityY = (height << 11);
 	Actor_MoveToAndWait(ACTOR_KRADEN, 0x1d7, 0x168);
 	Engine_TaskWait(6);
 	Engine_EventWait(40);
@@ -2026,7 +2026,7 @@ static void Scene_EnterStarRoom(void)
 	Party_RemoveOwnerRestored(5);
 	Scene_GiveMythrilBags();
 	Map_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	Engine_EventEnd();
 }
@@ -2040,7 +2040,7 @@ s32 SolStar_ApplyEntryState(void)
 	base5_f = 15;
 	do
 	{
-		Object_GetById(base5_f)->collision_flags = 0;
+		Object_GetById(base5_f)->collisionFlags = 0;
 		Engine_ActorSetSpritePriority(base5_f++, 1);
 	} while ((u32)base5_f <= 24);
 	SolStar_SetupElementalRings(15, 16);
@@ -2122,14 +2122,14 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 	Engine_ObjectSetScript(actor, SolStar_PresentItemScript);
 	sprite = actor->sprite;
 	sprite->flags = 0;
-	sprite->part_count = 0;
-	sprite->full_color = 0;
+	sprite->partCount = 0;
+	sprite->fullColor = 0;
 	sprite->palette = 0;
-	actor->velocity_y = 0x28000;
+	actor->velocityY = 0x28000;
 	actor->gravity = 0x4000;
 	glyph = Engine_HeapAllocate(17, sizeof(*glyph));
 	Engine_ItemLoadIcon(item);
-	Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
+	Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
 	Engine_HeapRelease(17);
 	Engine_AudioPlayCue(83);
 	Engine_RunRisingObjectSequence(actor, 3);

@@ -5,8 +5,8 @@
 #include "ram_buffer.h"
 
 struct ResourceEntry {
-    u8 unknown_00[0x10];
-    u8 vram_block;
+    u8 unk00[0x10];
+    u8 vramBlock;
 };
 
 void Func_080de9f8(void);
@@ -32,8 +32,8 @@ void Func_080de9ec(void)
 // object flashes for 60 frames, emits sparks and flies off.
 void Func_080de9f8(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
-    struct ObjectRuntime *target = scene->main_object;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+    struct ObjectRuntime *target = scene->mainObject;
     struct ObjectRuntime *object;
     struct ResourceEntry *last;
     u8 marker;
@@ -45,30 +45,30 @@ void Func_080de9f8(void)
     for (i = 0; i < 8; i++) {
         object = Object_Spawn(296, target->x, target->y + 0x200000, target->z);
         if (object != 0) {
-            object->scale_y = 0xb333;
-            object->scale_x = 0xb333;
+            object->scaleY = 0xb333;
+            object->scaleX = 0xb333;
             object->update = (void (*)(void))BattleFx_UpdateShrinkingOrbitObject;
             object->action = 120;
-            object->unknown_66 = i << 13;
-            object->motion_flags = 4;
+            object->unk66 = i << 13;
+            object->motionFlags = 4;
             last = Object_ReplaceResourceEntry(object->animation, last);
         }
         WaitFrames(1);
     }
 
-    marker = last->vram_block;
+    marker = last->vramBlock;
     Audio_PlayCue(130);
     WaitFrames(110);
 
     target = Object_Spawn(296, 0, 0, 0);
     object = target;
     if (target != 0) {
-        target->scale_y = 0xb333;
-        target->scale_x = 0xb333;
+        target->scaleY = 0xb333;
+        target->scaleX = 0xb333;
         target->x = scene->x;
         target->y = scene->y + 0x100000;
         target->z = scene->z;
-        target->motion_flags = 4;
+        target->motionFlags = 4;
         Animation_ApplyChildValuesFar(target, 7);
     }
 
@@ -99,16 +99,16 @@ void Func_080de9f8(void)
 
     if (target != 0) {
         target->action = -1;
-        target->speed_limit = 0x50000;
+        target->speedLimit = 0x50000;
         target->acceleration = 0x6666;
-        target->action_flags = 0;
+        target->actionFlags = 0;
         Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
         Object_CommitPosition(target);
         Object_Destroy(target);
     }
     if (marker != 0x60)
         Resource_ResetEntry(marker);
-    if (scene->finish_callback != 0)
-        scene->finish_callback();
+    if (scene->finishCallback != 0)
+        scene->finishCallback();
     BattleFx_PrepareBufferInterpolation();
 }

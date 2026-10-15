@@ -10,7 +10,7 @@
 #include "text/msg_ids.h"
 
 struct JupiterRoom7Cell {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };

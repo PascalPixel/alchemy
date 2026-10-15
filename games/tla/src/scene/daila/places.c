@@ -41,16 +41,16 @@ s32 *Func_02000070(void)
 
 void Func_0200009c(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    Engine_ActorSetSpeed(gPartyState.current_owner, 0x8000, 0x4000);
-    Engine_ActorSetSpritePriority(gPartyState.current_owner, 2);
-    Engine_ActorGet(gPartyState.current_owner)->motion_flags = 0;
+    Engine_ActorSetSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
+    Engine_ActorSetSpritePriority(gPartyState.currentOwner, 2);
+    Engine_ActorGet(gPartyState.currentOwner)->motionFlags = 0;
     Engine_AudioPlayCue(123);
-    Engine_ActorSetAnimation(gPartyState.current_owner, 2);
-    CenterAndWalk(gPartyState.current_owner, 2, -6);
+    Engine_ActorSetAnimation(gPartyState.currentOwner, 2);
+    CenterAndWalk(gPartyState.currentOwner, 2, -6);
     Engine_EventWait(10);
     Engine_EventSetCountdown(work->exit);
     Engine_EventCloseScreen();

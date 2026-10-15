@@ -21,7 +21,7 @@
 
 struct CompetitorState
 {
-	u8 unknown_00[6];
+	u8 unk00[6];
 	u8 mode;
 	u8 stage;
 };
@@ -42,7 +42,7 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z)
 	sprite = (struct AnimationObject *)actor->sprite;
 	Colosso_CompetitorStartAngle = actor->facing;
 	Engine_ActorSetSpritePriority(id, 2);
-	actor->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	actor->facing = FACING_SOUTH;
 	Engine_ActorSetSpriteFlags(actor, 3);
 	Object_SetMode(actor, 0);
@@ -50,25 +50,25 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z)
 	Engine_ActorSetPosition(id, x << 16, z << 16);
 	Engine_ActorFaceActor(0, 0x4000, 0);
 	IO_WRITE_QUEUE_PUSH(0x4000050, 0xf00, 0x20000);
-	sprite->part[0].object_mode = 1;
-	sprite->part[1].object_mode = 1;
+	sprite->part[0].objectMode = 1;
+	sprite->part[1].objectMode = 1;
 	Engine_AudioPlayCue(252);
 	for (i = 0; i <= 15; i += 2)
 	{
-		actor->scale_x = (i << 12) + 0x1000;
-		actor->scale_y = 0x1f000 - (i << 12);
+		actor->scaleX = (i << 12) + 0x1000;
+		actor->scaleY = 0x1f000 - (i << 12);
 		IO_WRITE_QUEUE_PUSH(0x4000052, ((15 - i) << 8) | (i + 1), 0x20000);
 		Engine_TaskWait(1);
 	}
 	IO_WRITE_QUEUE_PUSH(0x4000052, 16, 0x20000);
-	actor->scale_x = 0x11000;
-	actor->scale_y = 0xf000;
+	actor->scaleX = 0x11000;
+	actor->scaleY = 0xf000;
 	Engine_EventWait(1);
-	actor->scale_x = 0x10000;
-	actor->scale_y = 0x10000;
+	actor->scaleX = 0x10000;
+	actor->scaleY = 0x10000;
 	Engine_EventWait(13);
-	sprite->part[0].object_mode = 0;
-	sprite->part[1].object_mode = 0;
+	sprite->part[0].objectMode = 0;
+	sprite->part[1].objectMode = 0;
 	Engine_ActorSetAnimationAndWait(id, 3);
 	Engine_EventWait(20);
 }
@@ -82,9 +82,9 @@ void Colosso_RestoreCompetitor(s32 id)
 
 	state = (struct CompetitorState *)gMenuCtrlWork;
 	actor = Object_GetById(id);
-	if (gGameState.movement_mode == 1)
+	if (gGameState.movementMode == 1)
 	{
-		gGameState.movement_mode = 0;
+		gGameState.movementMode = 0;
 		Engine_ActorSetAnimation(id, 1);
 	}
 	else
@@ -101,14 +101,14 @@ void Colosso_RestoreCompetitor(s32 id)
 	actor->x.fixed = Colosso_CompetitorStartX;
 	actor->z.fixed = Colosso_CompetitorStartZ;
 	actor->facing = Colosso_CompetitorStartAngle;
-	actor->target_x = ACTOR_NO_TARGET;
-	actor->target_z = ACTOR_NO_TARGET;
-	actor->velocity_x = zero;
-	actor->velocity_z = zero;
-	actor->motion_flags = 3;
-	actor->terrain_id = 0;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	actor->velocityX = zero;
+	actor->velocityZ = zero;
+	actor->motionFlags = 3;
+	actor->terrainId = 0;
 	actor->y.fixed = zero;
-	((struct ObjectRuntime *)actor)->terrain_height = zero;
+	((struct ObjectRuntime *)actor)->terrainHeight = zero;
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Object_SetMode(actor, 0);
 	Object_SetMode(actor, 1);
@@ -120,10 +120,10 @@ void OverlayObject_ResetMotionFields(s32 actor)
 	struct FieldActor *o = Object_GetById(actor);
 
 	ObjectDispatch_InitFromTable6(o);
-	o->velocity_x = 0;
-	o->velocity_z = 0;
-	o->target_x = ACTOR_NO_TARGET;
-	o->target_z = ACTOR_NO_TARGET;
+	o->velocityX = 0;
+	o->velocityZ = 0;
+	o->targetX = ACTOR_NO_TARGET;
+	o->targetZ = ACTOR_NO_TARGET;
 }
 
 static void Colosso_EnsureMarkerSlot(void)
@@ -137,7 +137,7 @@ static void Colosso_EnsureMarkerSlot(void)
 
 union MarkerCoordinate
 {
-	s16 signed_value;
+	s16 signedValue;
 	u16 value;
 };
 
@@ -176,12 +176,12 @@ static void Colosso_UpdateMarker(void)
 		step = ++Colosso_MarkerStep;
 		py = &Colosso_MarkerX;
 		sy = &Colosso_MarkerStartX;
-		diff = Colosso_MarkerEndX - sy->signed_value;
+		diff = Colosso_MarkerEndX - sy->signedValue;
 		base = sy->value;
 		*py = base + diff * (s16)step / total;
 		Colosso_MarkerY =
 			Colosso_MarkerStartY.value
-			+ (Colosso_MarkerEndY - Colosso_MarkerStartY.signed_value) * (s16)step / total;
+			+ (Colosso_MarkerEndY - Colosso_MarkerStartY.signedValue) * (s16)step / total;
 		if ((s16)step >= total)
 			*steps = 0;
 		Colosso_MarkerBlink = 0;

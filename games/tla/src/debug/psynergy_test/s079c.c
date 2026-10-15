@@ -17,7 +17,7 @@ void Func_02000f0c(s32 actor);
 
 s32 Func_0200079c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: the turns and placements go through call.h's Call2 and Call3, which build each call's constants again (direct: differ 2, 8 and 18), and a one-pass block between the two entrance tests keeps the second a load of its own, as in overlay 657's s0b84.c (without it gcse shares one halfword load, differ 18). */
     *(s32 *)(work + 428) = 0x100;
@@ -37,7 +37,7 @@ s32 Func_0200079c(void)
     Item_AdjustCounter(130, 1);
     Item_AdjustCounter(140, 1);
     Item_AdjustCounter(151, 1);
-    gPartyState.event_mode = 2;
+    gPartyState.eventMode = 2;
     Object_SetModeById(15, 2);
     Object_SetModeById(16, 2);
     Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
@@ -54,11 +54,11 @@ s32 Func_0200079c(void)
         struct PartyState *party = &gPartyState;
 
         if (party->entrance == 6)
-            Func_02000f04(party->current_owner);
+            Func_02000f04(party->currentOwner);
         do {
         } while (0);
         if (party->entrance == 8)
-            Func_02000f0c(party->current_owner);
+            Func_02000f0c(party->currentOwner);
     }
     return 0;
 }

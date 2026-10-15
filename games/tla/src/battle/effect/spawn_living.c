@@ -5,26 +5,26 @@
 #include "iwram_call.h"
 
 struct FxRunWork {
-    u8 unknown_0000[0x78e4];
+    u8 unk0000[0x78e4];
     s32 active;
-    u8 unknown_78e8[8];
+    u8 unk78e8[8];
     s32 *script;
 };
 
 struct FxPartyList {
-    u8 unknown_00[20];
+    u8 unk00[20];
     s32 count;
-    u8 unknown_18[12];
+    u8 unk18[12];
     s16 ids[8];
 };
 
 struct FxUnit {
-    u8 unknown_00[56];
+    u8 unk00[56];
     s16 hp;
 };
 
 struct FxBgScroll {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 y;
 };
 

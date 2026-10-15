@@ -47,7 +47,7 @@ void Func_02001048(void)
         Object_RefreshSelectorById(9);
     Func_02000f00();
     Object_SetModeById(10, 1);
-    ObjectMotion_SetAngleToward(10, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
     Value3(Func_02004f2c, 10, 256, 0);
     Call1(Battle_WaitMode0, 30);
     Call2(Func_02004f14, 10, 0);

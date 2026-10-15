@@ -27,10 +27,10 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x160];
+    u8 unk7788[0x160];
     s32 transferPending;
 };
 
@@ -72,15 +72,15 @@ void Func_0814e744(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
-    camera = Ram_HeapSlots->camera_work;
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
+    camera = Ram_HeapSlots->cameraWork;
     BattleFx_BeginCanvasLayer(1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
     Func_081963ec(104, 0x13);
-    draw = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
     for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
@@ -114,10 +114,10 @@ void Func_0814e744(struct BattleEffectArgument *effect)
             angle = Random16() & 0xffff;
             shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
             shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
-            shard->velocity_x = (128 - (Random16() & 0xff)) << 9;
+            shard->velocityX = (128 - (Random16() & 0xff)) << 9;
             lift = Random16() & 0xff;
             shard->variant = 0;
-            shard->velocity_y = (-lift - 128) << 10;
+            shard->velocityY = (-lift - 128) << 10;
             shard++;
         }
     }
@@ -157,7 +157,7 @@ void Func_0814e744(struct BattleEffectArgument *effect)
                             HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
                         BattleFxKernels_IntegrateVector2(shard, 62, Data_081982e4[i & 3]);
                         shard->variant++;
-                        if (shard->velocity_y > 0 && HI(shard->y) > 112)
+                        if (shard->velocityY > 0 && HI(shard->y) > 112)
                             shard->variant = -1;
                     }
                     shard++;

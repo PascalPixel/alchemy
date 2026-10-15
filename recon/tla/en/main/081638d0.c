@@ -63,8 +63,8 @@ void Func_081638d0(struct BattleEffectArgument *effect)
     s32 *line;
 
     __asm__("");
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0x2000);
     Func_0815585c(effect, (effect->side << 4) | 70, screen_x, screen_y);
     {
@@ -78,8 +78,8 @@ void Func_081638d0(struct BattleEffectArgument *effect)
     REG_BLDALPHA = 0x1000;
     REG_BG2PA = 0xaa;
     Func_08144aac(effect->side, draw);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     for (y = 0; y != 64; y++) {
@@ -128,7 +128,7 @@ void Func_081638d0(struct BattleEffectArgument *effect)
     }
 
     draw[0](canvas, work->sheet, 0, 0, 128, 128);
-    work->transfer_pending = 1;
+    work->transferPending = 1;
     Scheduler_AddOrUpdateCallback(Func_08152474, 0xc80);
 
     for (frame = 0; frame != 80; frame++) {
@@ -143,18 +143,18 @@ void Func_081638d0(struct BattleEffectArgument *effect)
             REG_BLDALPHA = (0xa0 - frame * 2) | 0x1000;
         if (frame == 48) {
             Func_081180e8(134);
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
             Func_08118088(effect->actors[0], 0);
         }
 
-        line = (s32 *)work->unknown_7080;
+        line = (s32 *)work->unk7080;
         for (i = 0, angle = -(wave << 9); i != 160; i++) {
             *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
             angle += 0x200;
         }
 
         if (frame > 127) {
-            work->transfer_pending = 1;
+            work->transferPending = 1;
         } else {
             pal[1] = pal[63];
             Dma_Set(pal + 62, pal + 63, 0x80a0003e, (volatile u32 *)0x040000d4);

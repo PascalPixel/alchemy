@@ -77,8 +77,8 @@ static void RunEventScript01(void)
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
 	work = gEventWork;
-	work->start_transition = 0;
-	work->transition_frames = 32;
+	work->startTransition = 0;
+	work->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x1000000, -1, 0x1f40000, 1);
@@ -356,8 +356,8 @@ static void RunEventScript01(void)
 	Event_PlayCue(145);
 	Engine_EventWait(30);
 	work = gEventWork;
-	work->start_transition = 0;
-	work->transition_frames = 64;
+	work->startTransition = 0;
+	work->transitionFrames = 64;
 	Engine_EventCloseScreen();
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();

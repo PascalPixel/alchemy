@@ -6,8 +6,8 @@ void Func_02001944(s32 actor, s32 id)
 
     Func_02002c68();
     Func_02002da8(0);
-    object->scale_x = 0x1000;
-    object->scale_y = 0x1000;
+    object->scaleX = 0x1000;
+    object->scaleY = 0x1000;
     WaitFrames(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -48,7 +48,7 @@ void Func_02001a04(void)
 
     Func_02002d40(9, 0x100, 0);
     Motion_SetVarCbAndRefresh(9, 2);
-    object->field_48 = 0x8000;
+    object->field48 = 0x8000;
     ObjectMotion_SetActionVariant(9, 1);
     LemurianShip_ObjSpeed(9, 0xcccc, 0x6666);
     ObjectMotion_Launch(9, 6, 0);

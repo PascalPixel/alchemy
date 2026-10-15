@@ -7,7 +7,7 @@
 
 void Func_08143424(void)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
 
     /* FAKEMATCH: keeps this store in source order: the native loads each value before it starts the constant that follows. */
     __asm__ volatile("");

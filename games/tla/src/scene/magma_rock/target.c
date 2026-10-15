@@ -17,7 +17,7 @@ void Func_02003bcc(s32 value);
 
 void Func_02001444(void)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     struct ObjectRuntime *object;
 
     Func_02003aec();
@@ -35,7 +35,7 @@ void Func_02001444(void)
 
 void Func_0200148c(void)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     struct ObjectRuntime *object;
 
     Func_02003aec();
@@ -48,7 +48,7 @@ void Func_0200148c(void)
 
 void Func_020014bc(s32 mode, s32 cue)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     if (cue == 0)
         Func_020038dc();

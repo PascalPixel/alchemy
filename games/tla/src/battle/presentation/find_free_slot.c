@@ -14,23 +14,23 @@
 
 struct BattleSpriteSlots
 {
-	s32 enemy_group;
-	s16 sprite_slots[6];
+	s32 enemyGroup;
+	s16 spriteSlots[6];
 };
 
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 void BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-	struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battle_work;
+	struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
 	s32					   index;
 
 	for (index = 0; index <= 5; index++)
 	{
-		if (work->sprite_slots[index] == value)
+		if (work->spriteSlots[index] == value)
 		{
 			ResourceSlot_LoadFar(index, 0, 0, 0);
-			work->sprite_slots[index] = 0;
+			work->spriteSlots[index] = 0;
 		}
 	}
 }
@@ -91,7 +91,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner)
         /* FAKEMATCH: the barrier of the pin above. */
         __asm__ volatile("");
         index = Resource_FindFreeSlot(item & 0x1ff);
-        switch (unit->class_id)
+        switch (unit->classId)
         {
         case ISAAC:
             result = Data_081287d4[index];

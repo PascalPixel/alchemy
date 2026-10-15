@@ -11,5 +11,5 @@ void Func_020036f8(s32 a, s32 b, s32 owner);
 
 void Func_02003784(s32 a, s32 b)
 {
-    Func_020036f8(a, b, gPartyState.current_owner);
+    Func_020036f8(a, b, gPartyState.currentOwner);
 }

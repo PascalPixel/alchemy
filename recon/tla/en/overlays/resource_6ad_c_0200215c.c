@@ -5,11 +5,11 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 struct SpriteParts {
-    u8 unknown_00[9];
-    u8 unknown_09_low : 2;
+    u8 unk00[9];
+    u8 unk09Low : 2;
     u8 part : 2;
-    u8 unknown_0a[8];
-    u16 unknown_12;
+    u8 unk0a[8];
+    u16 unk12;
 };
 
 extern const u8 Data_02005d8c[];
@@ -20,13 +20,13 @@ void Func_020022d0(struct ObjectRuntime *object);
 
 void Func_0200215c(struct ObjectRuntime *object, s32 part)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ((struct SpriteParts *)object->animation)->part = part;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02005490(object, Data_02005d8c);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }
 

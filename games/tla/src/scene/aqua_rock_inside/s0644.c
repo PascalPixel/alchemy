@@ -11,9 +11,9 @@ void Func_02000644(s32 unused, s32 id)
         x = object->x >> 20;
         if (x == 39) {
 #if defined(TLA_EDITION_JA)
-            object->motion_flags = 3;
+            object->motionFlags = 3;
             WaitFrames(15);
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             GameFlag_SetBit(0x95c);
             Func_02003d1c(41, 9, 1, 1, x, id);
 #else

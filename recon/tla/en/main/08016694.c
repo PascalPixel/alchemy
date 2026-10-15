@@ -6,7 +6,7 @@
  * a pinned pointer (all differ 2 or worse); three minutes of permuter found
  * nothing. Fixed so far: sio_control set before the data read (the permuter's
  * form, differ 6 to 4) and the send index read into a temporary before a
- * barrier, so it loads before the is_parent store (differ 4 to 2). */
+ * barrier, so it loads before the isParent store (differ 4 to 2). */
 #include "serial_runtime.h"
 #include "io_reg.h"
 
@@ -24,53 +24,53 @@ void SerialRuntime_HandleTransferInterrupt(void)
     send_state = &gSerialRuntime;
     {
         s32 index;
-        u8 is_parent = (*sio_control << 25) >> 31;
+        u8 isParent = (*sio_control << 25) >> 31;
 
-        index = send_state->send_index;
+        index = send_state->sendIndex;
         asm volatile("");
-        send_state->is_parent = is_parent;
+        send_state->isParent = isParent;
         if (index == -1) {
             u32 idle_word = 0xfefe;
             u16 *swap;
 
             ((volatile u16 *)sio_control)[1] = idle_word;
-            swap = send_state->send_buffer[1];
-            send_state->send_buffer[1] = send_state->send_buffer[0];
-            send_state->send_buffer[0] = swap;
+            swap = send_state->sendBuffer[1];
+            send_state->sendBuffer[1] = send_state->sendBuffer[0];
+            send_state->sendBuffer[0] = swap;
         } else if (index >= 0) {
-            ((volatile u16 *)sio_control)[1] = send_state->send_buffer[1][index];
+            ((volatile u16 *)sio_control)[1] = send_state->sendBuffer[1][index];
         }
     }
     receive_state = &gSerialRuntime;
-    if (receive_state->send_index <= 14)
-        receive_state->send_index++;
+    if (receive_state->sendIndex <= 14)
+        receive_state->sendIndex++;
 
     channel = 0;
 receive_loop:
     {
-        s32 receive_index;
+        s32 receiveIndex;
         u16 *incoming;
 
-        if (recv[channel] == 0xfefe && receive_state->receive_index[channel] > 13) {
-            receive_state->receive_index[channel] = -1;
+        if (recv[channel] == 0xfefe && receive_state->receiveIndex[channel] > 13) {
+            receive_state->receiveIndex[channel] = -1;
         } else {
-            receive_index = receive_state->receive_index[channel];
-            incoming = receive_state->incoming_buffer[channel];
-            incoming[receive_index] = recv[channel];
-            if (receive_index == 13) {
-                u16 *swap = receive_state->ready_buffer[channel];
+            receiveIndex = receive_state->receiveIndex[channel];
+            incoming = receive_state->incomingBuffer[channel];
+            incoming[receiveIndex] = recv[channel];
+            if (receiveIndex == 13) {
+                u16 *swap = receive_state->readyBuffer[channel];
 
-                receive_state->ready_buffer[channel] = incoming;
-                receive_state->incoming_buffer[channel] = swap;
-                receive_state->channel_flags[channel] |= 1;
+                receive_state->readyBuffer[channel] = incoming;
+                receive_state->incomingBuffer[channel] = swap;
+                receive_state->channelFlags[channel] |= 1;
             }
         }
     }
     tail_state = &gSerialRuntime;
-    if (tail_state->is_parent != 0)
-        tail_state->channel_flags[channel] |= 2;
-    if (tail_state->receive_index[channel] <= 14)
-        tail_state->receive_index[channel]++;
+    if (tail_state->isParent != 0)
+        tail_state->channelFlags[channel] |= 2;
+    if (tail_state->receiveIndex[channel] <= 14)
+        tail_state->receiveIndex[channel]++;
     channel++;
     receive_state = tail_state;
     if (channel <= 1)

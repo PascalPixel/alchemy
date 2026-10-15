@@ -22,10 +22,10 @@ void Func_02000670(void)
         object = Object_Spawn(0x118, object->x, object->y, object->z);
         if (object != NULL) {
             object->acceleration = 0x20000;
-            object->speed_limit = 0x20000;
-            object->scale_x = 0x8000;
-            object->scale_y = 0x1999;
-            object->priority_flags = phase;
+            object->speedLimit = 0x20000;
+            object->scaleX = 0x8000;
+            object->scaleY = 0x1999;
+            object->priorityFlags = phase;
             Func_02000e24(object, 2);
             Func_02000e3c(object, object->x - 0x200000, object->y, object->z);
             Func_02000e2c(object, Data_020015c4);

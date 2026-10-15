@@ -19,7 +19,7 @@ void Graphics_AdvancePaletteCycle(void);
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 activeActors[14];
-    struct BattleWork *battle = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battleWork;
     u32 count;
     u32 i;
 
@@ -33,8 +33,8 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     }
     if (battle != NULL && mode != 0)
     {
-        battle->highlight_mode = mode;
-        battle->highlight_step = 0;
+        battle->highlightMode = mode;
+        battle->highlightStep = 0;
         REG_BLDY = 0;
         Io_Write16(16, &REG_BLDALPHA);
 

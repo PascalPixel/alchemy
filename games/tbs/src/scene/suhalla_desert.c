@@ -39,7 +39,7 @@ static void SuhallaDesert_ApplyAltarFlagBlend(void);
 struct SelectedActorId
 {
 	u8	reserved000[500];
-	s32 actor_id;
+	s32 actorId;
 };
 
 struct SelectedActorFacing
@@ -51,7 +51,7 @@ struct SelectedActorFacing
 struct StateMarkerWork
 {
 	u8	reserved000[386];
-	u16 state_one_marker;
+	u16 stateOneMarker;
 };
 
 static u16 gSuhallaDesertShownLevel;
@@ -69,7 +69,7 @@ static u16 gSuhallaDesertShownLevel;
 struct FieldGlobals
 {
 	u8				 *map;
-	u8				  unknown_04[0x48];
+	u8				  unk04[0x48];
 	struct EventWork *event;
 };
 
@@ -83,7 +83,7 @@ static void EV15_TALK(void)
 static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
 	Engine_ActorSetSpriteFlags(obj, 0);
-	((struct FieldActor *)obj)->collision_flags = 0;
+	((struct FieldActor *)obj)->collisionFlags = 0;
 	return 0;
 }
 
@@ -147,7 +147,7 @@ static void SuhallaDesert_SyncSelectedActorProgress(void)
 	struct StateMarkerWork *scene;
 	s32						   progress;
 
-	actor = Object_GetById(((struct SelectedActorId *)((s16 *)&gGameState))->actor_id);
+	actor = Object_GetById(((struct SelectedActorId *)((s16 *)&gGameState))->actorId);
 	scene = *(struct StateMarkerWork **)((u8 *)&gEventWork);
 	actor->presentation = (gFrameCount << 12);
 
@@ -156,7 +156,7 @@ static void SuhallaDesert_SyncSelectedActorProgress(void)
 	{
 		if (progress == 1)
 		{
-			scene->state_one_marker = 99;
+			scene->stateOneMarker = 99;
 		}
 		else if (Engine_GameFlagIsSet(0x106) == 0)
 		{
@@ -194,11 +194,11 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		Engine_ActorWaitForMove((s32)p6);
 		Event_PlayCue(244);
 		FieldScheduler_AddCallback((s32)SuhallaDesert_SyncSelectedActorProgress, 0xc80);
-		rec7->motion_flags = rec2;
+		rec7->motionFlags = rec2;
 		Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
 		Engine_ActorWaitForMove((s32)p6);
-		rec7->velocity_y = rec2;
-		rec7->motion_flags = 4;
+		rec7->velocityY = rec2;
+		rec7->motionFlags = 4;
 		*(base + 498) = 2;
 		GameFlag_Set(0x20f);
 		FieldGameFlag_SetByte(0x218, p10);
@@ -236,7 +236,7 @@ static void FieldScene_RunActor12Step(void)
 static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0)
 {
 	s32				   i;
-	s32				   next_frame;
+	s32				   nextFrame;
 	s32				   p10;
 	s32				   p9;
 	s32				   p11;
@@ -246,7 +246,7 @@ static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0)
 	struct FieldActor *record;
 
 	p10 = a0;
-	rec7 = Object_GetById(gGameState.selected_actor);
+	rec7 = Object_GetById(gGameState.selectedActor);
 	rec = Object_GetById(p10);
 	rec2 = Engine_GameFlagIsSet(0x340);
 	p9 = rec7->x.part.pixel;
@@ -256,19 +256,19 @@ static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0)
 	i = 0;
 	do
 	{
-		rec->scale_x = ((i << 11) + 0x800);
-		rec->scale_y = ((i << 12) + 0x1000);
+		rec->scaleX = ((i << 11) + 0x800);
+		rec->scaleY = ((i << 12) + 0x1000);
 		if (rec2 == 0)
 		{
-			next_frame = i + 1;
-			IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - next_frame) << 8) | next_frame, 0x20000);
+			nextFrame = i + 1;
+			IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - nextFrame) << 8) | nextFrame, 0x20000);
 		}
 		else
 		{
-			next_frame = i + 1;
+			nextFrame = i + 1;
 		}
 		Engine_TaskWait(1);
-		i = next_frame;
+		i = nextFrame;
 	} while (i <= 15);
 	Engine_GameFlagSet((0x1fe + p10));
 	Engine_GameFlagSet(0x340);
@@ -291,12 +291,12 @@ static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0)
 				Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
 			}
 			Actor_FaceActor(13, 0x4000, 0);
-			Object_GetById(13)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(13)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Engine_ActorWalkTo(13, p9, (p11 - 16));
-			Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
 			Engine_EventWait(1);
-			Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+			Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 			Engine_ActorSetAnimation(13, 1);
 			Engine_ActorFaceDirection(0, 0x4000, 0);
 			Engine_EventSetMessage(MsgSuhallaSandstorm);
@@ -426,23 +426,23 @@ static s32 SuhallaDesert_FollowLeaderWithSparks(struct FieldActor *actor)
 	s32					 dz;
 	s32					 phase;
 
-	leader = Object_GetById(gGameState.selected_actor);
+	leader = Object_GetById(gGameState.selectedActor);
 	actor->acceleration = 0x4000;
 	actor->speed = 0x18000;
-	actor->motion_flags = 0;
+	actor->motionFlags = 0;
 	Engine_ActorSetSpriteFlags(actor, 0);
 	actor->active ^= 1;
 	if (Engine_GameFlagIsSet(0x104))
 	{
-		actor->target_x = ACTOR_NO_TARGET;
-		actor->target_y = ACTOR_NO_TARGET;
-		actor->target_z = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 	}
 	else
 	{
-		actor->target_x = leader->x.fixed;
-		actor->target_y = leader->terrain_height;
-		actor->target_z = leader->z.fixed;
+		actor->targetX = leader->x.fixed;
+		actor->targetY = leader->terrainHeight;
+		actor->targetZ = leader->z.fixed;
 		dx = actor->x.fixed - leader->x.fixed;
 		if (dx < 0)
 		{
@@ -454,21 +454,21 @@ static s32 SuhallaDesert_FollowLeaderWithSparks(struct FieldActor *actor)
 		{
 			struct EventWork *work = gEventWork;
 
-			if (leader->motion_flags != 0)
+			if (leader->motionFlags != 0)
 			{
-				work->raised_trigger = 55;
+				work->raisedTrigger = 55;
 			}
-			actor->motion_flags = 3;
-			actor->target_x = leader->x.fixed;
-			actor->target_y = leader->y.fixed;
-			actor->target_z = leader->z.fixed;
+			actor->motionFlags = 3;
+			actor->targetX = leader->x.fixed;
+			actor->targetY = leader->y.fixed;
+			actor->targetZ = leader->z.fixed;
 		}
 	}
 	phase = gFrameCount & 7;
 	if (phase == 0)
 	{
-		options.start_scale_x = 0xcccc;
-		options.start_scale_y = 0xcccc;
+		options.startScaleX = 0xcccc;
+		options.startScaleY = 0xcccc;
 		options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		Effect_Spawn(
 			actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase, 0x880001, &options);
@@ -489,16 +489,16 @@ static void EV81_TOUCH(void)
 static void SuhallaDesert_EnableEffectChildOption(void)
 {
 	u8 *state = gEffectWork;
-	((struct BattleFxScene *)state)->child_option = 1;
+	((struct BattleFxScene *)state)->childOption = 1;
 }
 
 static void SuhallaDesert_MeetActor(s32 a0, s32 actor)
 {
 	struct GameState *state;
 
-	if (gEventWork->raised_trigger == 99)
+	if (gEventWork->raisedTrigger == 99)
 	{
-		gEventWork->raised_trigger = 0;
+		gEventWork->raisedTrigger = 0;
 	}
 	Engine_GameFlagClear(0x20f);
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1)
@@ -532,7 +532,7 @@ static void SuhallaDesert_MeetActor(s32 a0, s32 actor)
 			}
 		}
 	}
-	Object_GetById(gGameState.selected_actor)->motion_flags = 3;
+	Object_GetById(gGameState.selectedActor)->motionFlags = 3;
 }
 
 static void EV99_RAISED(void)
@@ -543,21 +543,21 @@ static void EV99_RAISED(void)
 	s32				   i;
 
 	other = FieldGameFlag_GetByte(0x218);
-	leader = Object_GetById(gGameState.selected_actor);
+	leader = Object_GetById(gGameState.selectedActor);
 	partner = Object_GetById(other);
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_AudioPlayCue(219);
-	Engine_ActorSetSpriteFlags((struct FieldActor *)gGameState.selected_actor, 0);
-	partner->motion_flags = 0;
-	leader->motion_flags = 0;
-	leader->velocity_y = 0;
-	leader->unknown_5d[4] = 1;
-	partner->unknown_5d[4] = 1;
+	Engine_ActorSetSpriteFlags((struct FieldActor *)gGameState.selectedActor, 0);
+	partner->motionFlags = 0;
+	leader->motionFlags = 0;
+	leader->velocityY = 0;
+	leader->unk5d[4] = 1;
+	partner->unk5d[4] = 1;
 	for (i = 0; i < 60; i++)
 	{
-		leader->velocity_y += 0x3333;
-		partner->velocity_y += 0x3333;
+		leader->velocityY += 0x3333;
+		partner->velocityY += 0x3333;
 		Engine_TaskWait(1);
 	}
 	Engine_EventCloseScreen();
@@ -592,8 +592,8 @@ static s32 FieldScene_RunOpeningAuxiliarySequence(void)
 
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
-		Object_GetById(14)->priority_flags = 2;
-		Object_GetById(14)->motion_flags = 3;
+		Object_GetById(14)->priorityFlags = 2;
+		Object_GetById(14)->motionFlags = 3;
 		Actor_SetPosition(14, 0, 0);
 		Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
 		MapObject_SetPosition(100, 0, 0);
@@ -609,8 +609,8 @@ static s32 FieldScene_RunScene3c0SequenceA(void)
 {
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
-		Object_GetById(14)->priority_flags = 2;
-		Object_GetById(14)->motion_flags = 0;
+		Object_GetById(14)->priorityFlags = 2;
+		Object_GetById(14)->motionFlags = 0;
 		Actor_SetPosition(14, 0xf80000, 0x2c80000);
 		Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
 		MapObject_SetPosition(100, -1, -1);
@@ -634,11 +634,11 @@ s32 SuhallaDesert_RunSceneScript(void)
 	u8 *map;
 
 	map = (*(struct FieldGlobals *)gMapWork).map;
-	(*(struct FieldGlobals *)gMapWork).event->start_transition =
+	(*(struct FieldGlobals *)gMapWork).event->startTransition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	if (FieldGameFlag_GetByte(0x210) != 0)
 	{
-		gGameState.movement_mode = 2;
+		gGameState.movementMode = 2;
 		FieldScheduler_AddCallback(SuhallaDesert_SyncSelectedActorProgress, 0xc80);
 	}
 	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1
@@ -699,8 +699,8 @@ static void SuhallaDesert_ApplyVisitFlagBlend(void)
 		{
 			if (!Engine_GameFlagIsSet(0x109))
 			{
-				actor->scale_x = 0x800;
-				actor->scale_y = 0x800;
+				actor->scaleX = 0x800;
+				actor->scaleY = 0x800;
 			}
 			actor->sprite->flags = 0;
 		}
@@ -740,8 +740,8 @@ static void SuhallaDesert_ApplyAltarFlagBlend(void)
 		{
 			if (!Engine_GameFlagIsSet(0x109))
 			{
-				actor->scale_x = 0x800;
-				actor->scale_y = 0x800;
+				actor->scaleX = 0x800;
+				actor->scaleY = 0x800;
 			}
 			sprite = actor->sprite;
 			sprite->flags = 0;
@@ -758,7 +758,7 @@ static void SuhallaDesert_ApplyAltarFlagBlend(void)
 		{
 			part[5] = 10;
 		}
-		sprite->unknown_20[5] = 1;
+		sprite->unk20[5] = 1;
 		sprite->flags = 0;
 	}
 	if (Engine_GameFlagIsSet(0x315))

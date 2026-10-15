@@ -14,8 +14,8 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Event_WaitTransitionFrames(void);
 
-void Func_02005184(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_0200518c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02005184(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_0200518c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020051ac(void);
 void Func_020051b4(void);
 void Func_0200524c(s32 message);

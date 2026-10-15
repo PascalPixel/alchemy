@@ -70,7 +70,7 @@ static void PaletteScene_Initialize(void)
 	scene = gEventWork;
 	Engine_EventBegin();
 	Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
-	Engine_EventRequestExit(scene->touched_trigger);
+	Engine_EventRequestExit(scene->touchedTrigger);
 	Engine_EventEnd();
 }
 
@@ -138,7 +138,7 @@ static void KolimaForestTree_TalkToTret(void)
 			record = PartyInventory_FindOwner(184);
 			if (record != -1)
 			{
-				u16 *target = &gEventWork->unknown_172;
+				u16 *target = &gEventWork->unk172;
 				u16	 shown = 1;
 
 				*target = shown;
@@ -224,22 +224,22 @@ static void RunEventScript01(void)
 	gKolimaForestTreeSparkSound = 0;
 	Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
 	Event_PlayCue(133);
-	rec8->velocity_y = 0x50000;
+	rec8->velocityY = 0x50000;
 	rec8->gravity = 0x4000;
 	rec8->bounce = 0xa000;
 	Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x14f, 0x102);
-	while (rec8->velocity_y >= 0)
+	while (rec8->velocityY >= 0)
 	{
 		Engine_TaskWait(1);
 	}
 	do
 	{
 		Engine_TaskWait(1);
-	} while (rec8->velocity_y <= 0);
+	} while (rec8->velocityY <= 0);
 	Event_PlayCue(161);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
 	Engine_EventWait(120);
@@ -248,7 +248,7 @@ static void RunEventScript01(void)
 	rec8->bounce = 0x4000;
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
-		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+		record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 	}
 	Engine_EventWait(80);
 	Engine_EventSetMessage(MsgKolimaControlTretsHeartShallNot);
@@ -676,9 +676,9 @@ s32 KolimaForestTree_PrepareActors(void)
 	second = Object_GetById(11);
 	Engine_TaskWait(1);
 	Engine_ActorSetChildValue(14, 15);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	gGameState.retreat_scene = (s32)&SceneId_KolimaForestBridge;
-	gGameState.retreat_entrance = 4;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gGameState.retreatScene = (s32)&SceneId_KolimaForestBridge;
+	gGameState.retreatEntrance = 4;
 	if (!Engine_GameFlagIsSet(0x845))
 		SceneEffect_AdjustPaletteColors(3);
 	Object_GetById(8)->radius = 6;
@@ -693,19 +693,19 @@ s32 KolimaForestTree_PrepareActors(void)
 	Engine_ActorSetSpritePriority(8, 2);
 	Engine_ActorSetSpritePriority(14, 2);
 	Engine_ActorSetSpritePriority(9, 2);
-	first->motion_flags = 0;
+	first->motionFlags = 0;
 	first->y.fixed = 0x1c0000;
-	second->motion_flags = 0;
+	second->motionFlags = 0;
 	second->y.fixed = 0x1c0000;
-	third->motion_flags = 0;
+	third->motionFlags = 0;
 	third->y.fixed = 0x1c0000;
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimation(8, 3);
-	Object_GetById(8)->collision_flags |= 8;
-	Object_GetById(9)->collision_flags |= 8;
-	Object_GetById(10)->collision_flags |= 8;
-	Object_GetById(11)->collision_flags |= 8;
-	Object_GetById(14)->collision_flags |= 8;
+	Object_GetById(8)->collisionFlags |= 8;
+	Object_GetById(9)->collisionFlags |= 8;
+	Object_GetById(10)->collisionFlags |= 8;
+	Object_GetById(11)->collisionFlags |= 8;
+	Object_GetById(14)->collisionFlags |= 8;
 	return 0;
 }
 
@@ -723,8 +723,8 @@ static void PaletteScene_SpawnEffect(void)
 	s32					  spawn_x = 0x01460000;
 	s32					  spawn_y = 0x00200000;
 	s32					  spawn_z = 0x00c00000;
-	s32					  target_x = 0x01460000;
-	s32					  target_z = 0x00f00000;
+	s32					  targetX = 0x01460000;
+	s32					  targetZ = 0x00f00000;
 
 	phase = gFrameCount & 3;
 	if (phase != 0)
@@ -744,11 +744,11 @@ static void PaletteScene_SpawnEffect(void)
 	sprite_flags |= 4;
 	sprite->flags = sprite_flags;
 	effect->progress = 0x1999;
-	effect->rate_x = 0x40000;
-	effect->rate_y = 0x40000;
+	effect->rateX = 0x40000;
+	effect->rateY = 0x40000;
 	effect->mode = phase;
 	Object_SetMode(effect, 2);
-	Engine_ObjectSetPosition((struct FieldActor *)effect, target_x, 0, target_z);
+	Engine_ObjectSetPosition((struct FieldActor *)effect, targetX, 0, targetZ);
 	Engine_ObjectSetScript(effect, gKolimaForestTreeEffectScript);
 }
 
@@ -897,16 +897,16 @@ static void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
 
 	if (step <= 119)
 	{
-		position[0] = effect->anchor_x;
-		position[1] = effect->anchor_y;
-		position[2] = effect->anchor_z;
+		position[0] = effect->anchorX;
+		position[1] = effect->anchorY;
+		position[2] = effect->anchorZ;
 		heading = effect->heading;
 		Vector_AddPolarOffset(step << 16, step * 768 + heading, position);
 		effect->x = position[0];
 		effect->y = position[1];
 		effect->z = position[2];
-		effect->angle_x += 0x147;
-		effect->angle_y += 0x147;
+		effect->angleX += 0x147;
+		effect->angleY += 0x147;
 		effect->step++;
 	}
 	else
@@ -938,15 +938,15 @@ static void KolimaForestTree_SpawnOrbitSparks(void)
 			if (spark != 0)
 			{
 				previous = Object_ReplaceResourceEntry(spark->sprite, previous);
-				spark->motion_flags = 0;
+				spark->motionFlags = 0;
 				spark->sprite->priority = 1;
 				Engine_ActorSetSpriteFlags(spark, 0);
 				Object_SetMode(spark, 1);
 				spark->timer = 0;
 				spark->work = (i * 60 << 16) / 360;
-				spark->target_x = gKolimaForestTreeSparkOrigin[0];
-				spark->target_y = gKolimaForestTreeSparkOrigin[1];
-				spark->target_z = gKolimaForestTreeSparkOrigin[2];
+				spark->targetX = gKolimaForestTreeSparkOrigin[0];
+				spark->targetY = gKolimaForestTreeSparkOrigin[1];
+				spark->targetZ = gKolimaForestTreeSparkOrigin[2];
 				spark->speed = 0x19999;
 				spark->update = (void (*)(union FieldObject *))PaletteScene_AdvanceOrbit;
 			}

@@ -2,14 +2,14 @@
 #include "motobj.h"
 
 void ResourceObject_ReleaseFar(void *);
-void ReleaseBattleObjectRecords(s32 object_id)
+void ReleaseBattleObjectRecords(s32 objectId)
 {
     struct BattleObj *slot;
     struct MotionObject *object;
     s32 record_index;
     void *record;
 
-    slot = BattleObjGet(object_id);
+    slot = BattleObjGet(objectId);
     if (slot != NULL) {
         object = slot->object;
         if (object != NULL) {
@@ -20,7 +20,7 @@ void ReleaseBattleObjectRecords(s32 object_id)
                 ResourceObject_ReleaseFar(record);
                 record_index += 1;
             }
-            object->record_storage_kind = (s8)record;
+            object->recordStorageKind = (s8)record;
             object->records = record;
         }
     }

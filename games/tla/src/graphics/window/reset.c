@@ -30,12 +30,12 @@ void Resource_ResetOwnerEntries(void);
 
 u32 Menu_RunSelectionForValue(u32 value)
 {
-    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
     u32 result;
 
     /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
     asm volatile("" : "+l"(state));
-    state->cursor_index = value;
+    state->cursorIndex = value;
     state->locked = 1;
     Func_0803dd98(value);
     Func_0803e7ac();

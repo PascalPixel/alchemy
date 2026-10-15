@@ -37,7 +37,7 @@ static __inline__ void Func_02002460_(s32 a, s32 b, s32 c)
 
 void Func_02000270(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     u32 i;
     s32 index;
 
@@ -63,10 +63,10 @@ void Func_02000270(void)
     Func_02002460_(Data_02002ce4[index].a, Data_02002ce4[index].b, Data_02002ce4[index].c);
     /* FAKEMATCH: the empty asm ends the shift's output dependences on the later calls (r4 is call-used), so sched2 takes the table address first as the native does (differ 2). */
     asm("");
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0xcccc, 0x6666);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
     {
-        s32 owner = gPartyState.current_owner;
+        s32 owner = gPartyState.currentOwner;
 
         if (index == 7)
             Offset(owner, 0, -4);

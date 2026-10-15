@@ -10,9 +10,9 @@
 #include "ram_buffer.h"
 
 struct Panel_02001804 {
-    u8 unknown_00[8];
+    u8 unk00[8];
     u16 stride;
-    u8 unknown_0a[2];
+    u8 unk0a[2];
     s16 x;
     s16 y;
 };
@@ -21,7 +21,7 @@ void Func_020021f8(s32 source, void *work);
 
 void Func_02001804(struct Panel_02001804 *panel, s32 source)
 {
-    u16 *shadow = (u16 *)Ram_HeapSlots->window_tiles;
+    u16 *shadow = (u16 *)Ram_HeapSlots->windowTiles;
     void *work = Runtime_BumpAllocateAlternatePool(0x300);
     u16 *tiles;
     s32 offset;
@@ -47,7 +47,7 @@ void Func_02001804(struct Panel_02001804 *panel, s32 source)
 
 void Func_0200187c(struct Panel_02001804 *panel)
 {
-    u16 *shadow = (u16 *)Ram_HeapSlots->window_tiles;
+    u16 *shadow = (u16 *)Ram_HeapSlots->windowTiles;
     void *work = Runtime_BumpAllocateAlternatePool(0x300);
     u16 *tiles;
     s32 offset;

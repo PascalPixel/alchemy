@@ -17,7 +17,7 @@ void Func_0803cbf8(void *);
 
 void UiWork_ProcessRenderChannels(void)
 {
-    u8 *channel = (u8 *)Ram_HeapSlots->window_tiles + 0x6b8;
+    u8 *channel = (u8 *)Ram_HeapSlots->windowTiles + 0x6b8;
     s32 channel_no = 0;
     s32 one = 1;
 

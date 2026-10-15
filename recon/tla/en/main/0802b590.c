@@ -4,12 +4,12 @@
 extern u8 gMapShapeGrid[];
 
 void Map_CopyCellShapeRect(
-    s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+    s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
     u32 *cells = (u32 *)Ram_MapCellBuffer;
     u8 *shapes = gMapShapeGrid;
     s32 dst = (dst_y << 7) + dst_x;
-    s32 src = (src_y << 7) + src_x;
+    s32 src = (srcY << 7) + srcX;
     u8 *dst_shapes = shapes + dst;
     u32 *dst_cells = cells + dst;
     u8 *src_shapes = shapes + src;

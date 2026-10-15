@@ -5,14 +5,14 @@
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 struct MapWork17 {
-    u8 unknown_00[0x17];
+    u8 unk00[0x17];
     u8 bits0 : 2;
     u8 mode : 2;
 };
 
 void Func_02003a14(void)
 {
-    struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->map_work;
+    struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
     Data_02006294 = 0;
     map->mode = 1;

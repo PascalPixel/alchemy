@@ -51,15 +51,15 @@ s32 Scene_PlaceActor8OnGate300(void)
 	struct Resource388Runtime *work;
 
 	work = (struct Resource388Runtime *)gEventWork;
-	work->setup_request_1c0 = 0x204;
-	work->setup_value_1c8 = 0x18;
+	work->setupRequest1c0 = 0x204;
+	work->setupValue1c8 = 0x18;
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
 		Actor_SetPosition(8, 0xD80000, 0x880000);
 		Engine_ActorSetAnimation(8, 2);
 		Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
-		((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
-		((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = 0;
+		((struct Resource388SlotView *)Object_GetById(8))->unk23 = 2;
+		((struct Resource388SlotView *)Object_GetById(8))->unk59 = 0;
 		Map_CopyCellAttributes(0xB, 0x24, 5, 5, 0xB, 6);
 	}
 	return 0;

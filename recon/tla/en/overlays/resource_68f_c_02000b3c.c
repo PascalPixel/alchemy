@@ -18,27 +18,27 @@ void Func_020030e8(s32 a);
 
 void Func_02000b3c(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 zero;
 
     Func_02003048();
     Func_02003148(0);
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     zero = 0;
     leader->angle = 0x4000;
     Battle_WaitMode0(10);
-    Object_SetModeById(gPartyState.current_owner, 22);
+    Object_SetModeById(gPartyState.currentOwner, 22);
     Battle_WaitMode0(30);
-    TundariaTower_Emote(gPartyState.current_owner, 0x102);
-    Motion_SetVarCbAndRefresh(gPartyState.current_owner, 2);
+    TundariaTower_Emote(gPartyState.currentOwner, 0x102);
+    Motion_SetVarCbAndRefresh(gPartyState.currentOwner, 2);
     Battle_WaitMode0(20);
     leader->angle = 0xc000;
-    Object_SetModeById(gPartyState.current_owner, 5);
-    Object_SetActionById(gPartyState.current_owner, 24);
+    Object_SetModeById(gPartyState.currentOwner, 5);
+    Object_SetActionById(gPartyState.currentOwner, 24);
     Battle_WaitMode0(40);
     Func_02003030(0x1300000, 0x3900000, 0, -12);
-    Object_GetById(gPartyState.current_owner)->bounce = zero;
+    Object_GetById(gPartyState.currentOwner)->bounce = zero;
     Func_020030e8(11);
     Func_02003050();
 }

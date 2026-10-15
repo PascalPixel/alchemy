@@ -6,11 +6,11 @@ void Inventory_ReservedNoOp(void)
 {
 }
 
-void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
+void Object_WaitUntilChildValueDiffers(s32 objectId, s32 value)
 {
-    struct ObjectRuntime *obj = ObjectTable_Get(object_id);
+    struct ObjectRuntime *obj = ObjectTable_Get(objectId);
 
-    if (obj != 0 && obj->animation_kind == 1) {
+    if (obj != 0 && obj->animationKind == 1) {
         s32 cnt = 0;
         u8 *anim = (u8 *)obj->animation;
 

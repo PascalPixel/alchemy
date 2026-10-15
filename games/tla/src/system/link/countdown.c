@@ -15,21 +15,21 @@ struct CountdownDisplayEntry {
 };
 
 struct LinkSignature {
-    u8 padding_000[8];
+    u8 padding000[8];
     u16 e;
     u16 d;
     u16 v;
     u16 s;
-    u8 padding_010[8];
+    u8 padding010[8];
 };
 
 struct LinkCountdownState {
     struct CountdownDisplayEntry entries[3];
     u8 entryActive[3];
-    u8 padding_027;
+    u8 padding027;
     s32 targetOffset;
     s32 currentOffset;
-    u8 padding_030[20];
+    u8 padding030[20];
     s32 displayHandle;
     s32 secondaryHandle;
     s32 timer;
@@ -37,9 +37,9 @@ struct LinkCountdownState {
 };
 
 struct LinkRuntimeState {
-    u8 padding_000[80];
+    u8 padding000[80];
     u8 side;
-    u8 padding_051;
+    u8 padding051;
     u8 paused;
 };
 
@@ -98,7 +98,7 @@ void UpdateLinkSessionCountdown(void)
         if (state->enabled == 0)
             goto done;
 
-        runtime = (struct LinkRuntimeState *)Ram_HeapSlots->battle_work;
+        runtime = (struct LinkRuntimeState *)Ram_HeapSlots->battleWork;
         if (runtime->paused == 0)
             goto load_timer;
         state->timer = 0;

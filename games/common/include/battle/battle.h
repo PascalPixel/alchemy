@@ -62,9 +62,9 @@ void  BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode
 void  BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
 void *BattleFx_StartItemBreak(void *object);
 s32	  BattleMotion_GetSlotPalette(s32 id);
-void  BattleMotion_ResetObjectAtScaledAnchor(s32 object_id);
-void  BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
-void  BattleMotion_SetupEscapeObject(s32 object_id);
+void  BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
+void  BattleMotion_SetMode5AndActivateSlot(s32 unitId);
+void  BattleMotion_SetupEscapeObject(s32 objectId);
 #endif
 #ifndef OWN_BattlePres_BuildOpponentEntries
 #if GAME_TLA
@@ -139,7 +139,7 @@ struct WaveFxWork;
 
 struct CameraWork
 {
-	u8	unknown_00[0x36];
+	u8	unk00[0x36];
 	u16 scroll;
 };
 struct BgScrollWords
@@ -159,8 +159,8 @@ struct Ring
 {
 	s32 x;
 	s32 y;
-	s32 vel_x;
-	s32 vel_y;
+	s32 velX;
+	s32 velY;
 	s32 age;
 };
 struct ScatterPosition
@@ -591,7 +591,7 @@ void							 BattleFx_UpdateArcEffect(void);
 void							 BattleLayout_HighlightPartyPanelsFar(u16 *);
 void							 BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void							 BattleMotion_DestroyAllSlotObjects(void);
-void							 BattleMotion_ReleaseObjectSlotByValue(s32 object_id);
+void							 BattleMotion_ReleaseObjectSlotByValue(s32 objectId);
 void							 BattleMotion_SetObjectPosition(struct BattleObj *slot);
 void							 BattleMotion_SetRecordChildValues(void *, s32);
 void							 BattlePalette_UpdateBlend(void);
@@ -601,7 +601,7 @@ void							 BattlePresentation_WaitForAdvance(void);
 void				 BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void				 Camera_ConfigureScene(s32 scene);
 s32					 Curve_LookupScaledValue(s32 selector, s32 mode);
-s32					 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+s32					 Djinn_ActivateFar(s32 unitId, s32 element, s32 index);
 s32					 Func_08020190(s32, s32, s32);
 s32					 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32					 Func_080ce31c(s32 kind);
@@ -625,9 +625,9 @@ void Render_ApplyProjectedPlacementFar(
 	struct ScaledSprite *sprite, s32 *position, s32 *scale, s32 mode);
 void				   SummonFx_RunCanvasEffect(void *action, s32 mode);
 struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
-s32					   Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
+s32					   Trade_RemoveOfferFar(s32 unitId, s32 element, s32 index);
 void				   UiText_DrawQuantity(s32, s32);
-void				   UiText_ShowMessageAndWaitCoreFar(s32 message_id);
+void				   UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 void				   PartyStatusDrawFar(s32 mode);
 #endif
 

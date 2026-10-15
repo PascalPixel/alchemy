@@ -36,10 +36,10 @@ s32 Math_RemainderUnsigned();
 
 struct MapShake
 {
-	u8	unknown_00[0x18];
-	s32 direction_x;
-	s32 direction_z;
-	u8	unknown_20[4];
+	u8	unk00[0x18];
+	s32 directionX;
+	s32 directionZ;
+	u8	unk20[4];
 	s32 scroll;
 };
 
@@ -149,7 +149,7 @@ static void VaultCave_PushBlockAhead(void)
 	cx = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
 	cz = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
 	block = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
-	if (block->collision_flags == 0 || block == 0)
+	if (block->collisionFlags == 0 || block == 0)
 	{
 		return;
 	}
@@ -163,11 +163,11 @@ static void VaultCave_PushBlockAhead(void)
 	cx = (block->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
 	cz = (block->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
 	beyond = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
-	if (beyond != 0 && (beyond->collision_flags & 1))
+	if (beyond != 0 && (beyond->collisionFlags & 1))
 	{
 		return;
 	}
-	block->terrain_id = 2;
+	block->terrainId = 2;
 	pos[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
 	pos[1].fixed = block->y.fixed;
 	pos[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
@@ -188,12 +188,12 @@ static void VaultCave_PushBlockAhead(void)
 	Engine_AudioPlayCue(288);
 	block->x.fixed = pos[0].fixed;
 	block->z.fixed = pos[2].fixed;
-	block->velocity_x = 0;
-	block->velocity_z = 0;
-	leader->velocity_x = 0;
-	leader->velocity_z = 0;
-	leader->target_x = ACTOR_NO_TARGET;
-	leader->target_z = ACTOR_NO_TARGET;
+	block->velocityX = 0;
+	block->velocityZ = 0;
+	leader->velocityX = 0;
+	leader->velocityZ = 0;
+	leader->targetX = ACTOR_NO_TARGET;
+	leader->targetZ = ACTOR_NO_TARGET;
 	Object_SetMode(leader, 1);
 }
 
@@ -378,8 +378,8 @@ static void EV16_PSYNERGY(void)
 	if (rec != 0)
 	{
 
-		Object_GetById(16)->motion_flags = 0;
-		rec->priority_flags = 1;
+		Object_GetById(16)->motionFlags = 0;
+		rec->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x200);
@@ -395,8 +395,8 @@ static void EV17_PSYNERGY(void)
 	if (rec != 0)
 	{
 
-		Object_GetById(17)->motion_flags = 0;
-		rec->priority_flags = 1;
+		Object_GetById(17)->motionFlags = 0;
+		rec->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x201);
@@ -412,8 +412,8 @@ static void EV18_PSYNERGY(void)
 	if (record != 0)
 	{
 
-		Object_GetById(18)->motion_flags = 0;
-		record->priority_flags = 1;
+		Object_GetById(18)->motionFlags = 0;
+		record->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x202);
@@ -430,8 +430,8 @@ static void EV19_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
 
-		Object_GetById(19)->motion_flags = 0;
-		p->priority_flags = 1;
+		Object_GetById(19)->motionFlags = 0;
+		p->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x203);
@@ -448,8 +448,8 @@ static void EV20_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(rec, 0);
 
-		Object_GetById(20)->motion_flags = 0;
-		rec->priority_flags = 1;
+		Object_GetById(20)->motionFlags = 0;
+		rec->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x204);
@@ -466,8 +466,8 @@ static void EV21_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(record, 0);
 
-		Object_GetById(21)->motion_flags = 0;
-		record->priority_flags = 1;
+		Object_GetById(21)->motionFlags = 0;
+		record->priorityFlags = 1;
 	}
 
 	Engine_GameFlagSet(0x205);
@@ -495,7 +495,7 @@ static void VaultCave_RaiseActorPriorities(void)
 	id = 16;
 	for (i = 0; i < 6; i++)
 	{
-		Object_GetById(id)->priority_flags |= 2;
+		Object_GetById(id)->priorityFlags |= 2;
 		id++;
 	}
 }
@@ -511,7 +511,7 @@ static void VaultCave_EnableGroupAutomaticPriority(void)
 		struct FieldActor *entry = Object_GetById(index);
 
 		remaining--;
-		entry->priority_flags = flag;
+		entry->priorityFlags = flag;
 		index++;
 	} while (remaining >= 0);
 }
@@ -527,13 +527,13 @@ static void VaultCave_RunRumble(void)
 	Engine_EventBegin();
 	if (gFrameCount & 1)
 	{
-		shake->direction_x = 1;
-		shake->direction_z = 1;
+		shake->directionX = 1;
+		shake->directionZ = 1;
 	}
 	else
 	{
-		shake->direction_x = -1;
-		shake->direction_z = -1;
+		shake->directionX = -1;
+		shake->directionZ = -1;
 	}
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -604,18 +604,18 @@ static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 
 		if ((u32)(actor->y.fixed - 1) <= 0x000ffffe)
 		{
-			s32 actor_z = TILE(actor->z.fixed);
-			s32 actor_x = TILE(actor->x.fixed);
+			s32 actorZ = TILE(actor->z.fixed);
+			s32 actorX = TILE(actor->x.fixed);
 			s32 subject_z = TILE(subject->z.fixed);
 			s32 subject_x = TILE(subject->x.fixed);
-			s32 z_delta = subject_z - actor_z;
-			s32 x_delta = subject_x - actor_x;
+			s32 z_delta = subject_z - actorZ;
+			s32 x_delta = subject_x - actorX;
 
 			if (x_delta == 0 && z_delta == 0)
 			{
 				actor->y.fixed = 0x00ff0000;
 				actor->gravity = 0;
-				actor->velocity_y = 0;
+				actor->velocityY = 0;
 				return 1;
 			}
 		}
@@ -653,14 +653,14 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 		for (i = 0; i <= 3; i++)
 		{
 			rec7 = Actor_Get((i + 11));
-			if (rec7->velocity_y >= 0)
+			if (rec7->velocityY >= 0)
 			{
 				if (rec7->y.fixed <= 0xffff)
 				{
 					VaultCave_SpawnPuffs(rec7);
 					rec7->y.fixed = 0xff0000;
 					rec7->gravity = 0;
-					rec7->velocity_y = 0;
+					rec7->velocityY = 0;
 					rec7->paused = 0;
 					Event_PlayCue(106);
 				}
@@ -712,7 +712,7 @@ static void FieldScene_RunScene3a7SequenceD(void)
 			record = Engine_GameFlagIsSet((i + 0x200));
 			if (record != 0)
 			{
-				if (rec7->velocity_y <= 0)
+				if (rec7->velocityY <= 0)
 				{
 					if (rec7->y.fixed > 0x20ffff)
 					{
@@ -721,12 +721,12 @@ static void FieldScene_RunScene3a7SequenceD(void)
 				}
 				rec7->y.fixed = 0xff0000;
 				rec7->gravity = 0;
-				rec7->velocity_y = 0;
+				rec7->velocityY = 0;
 				Engine_AudioPlayCue(106);
 			}
 			else
 			{
-				if (rec7->velocity_y <= 0)
+				if (rec7->velocityY <= 0)
 				{
 					if (rec7->y.fixed > 0xffff)
 					{
@@ -734,7 +734,7 @@ static void FieldScene_RunScene3a7SequenceD(void)
 					}
 				}
 				rec7->gravity = record;
-				rec7->velocity_y = record;
+				rec7->velocityY = record;
 				rec7->y.fixed = 0xff0000;
 				Engine_AudioPlayCue(106);
 			}
@@ -767,15 +767,15 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source)
 		puff = Engine_ObjectCreate(240, source->x.fixed, source->y.fixed, source->z.fixed);
 		if (puff == 0)
 			break;
-		puff->scale_y = 0x8ccc;
-		puff->scale_x = 0x8ccc;
-		puff->motion_flags = 2;
-		puff->velocity_y = -0x10000;
+		puff->scaleY = 0x8ccc;
+		puff->scaleX = 0x8ccc;
+		puff->motionFlags = 2;
+		puff->velocityY = -0x10000;
 		puff->speed = Engine_RandomNext() + 0xcccc;
-		puff->collision_flags = 1;
+		puff->collisionFlags = 1;
 		SceneActor_TransformAndApplyRecordPosition(puff, 0x200000, Engine_RandomNext());
 		{
-			u16 *timer = (u16 *)&puff->unknown_5d[1];
+			u16 *timer = (u16 *)&puff->unk5d[1];
 			s32	 frames = 8;
 
 			*timer = frames;
@@ -829,7 +829,7 @@ static void SceneActor_SetupActors11To14AndInstallTask(void)
 
 s32 VaultCave_ApplyEntryState(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_VaultCave1)
 	{
 		switch (gGameState.entrance)
@@ -863,7 +863,7 @@ s32 VaultCave_ApplyEntryState(void)
 	{
 		if (Engine_GameFlagIsSet(0x300) == 0)
 		{
-			Object_GetById(22)->scale_y = 0x18000;
+			Object_GetById(22)->scaleY = 0x18000;
 		}
 		switch (gGameState.entrance)
 		{
@@ -925,14 +925,14 @@ s32 VaultCave_ApplyEntryState(void)
 				SceneState_ApplyThreeRects();
 				Actor_SetPosition(9, 0xf80000, 0x36c0000);
 			}
-			Object_GetById(8)->priority_flags = 2;
+			Object_GetById(8)->priorityFlags = 2;
 			break;
 		}
 		Engine_ActorSetAnimation(8, 2);
 		Engine_ActorSetAnimation(9, 2);
 		Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-		Object_GetById(9)->collision_flags = 1;
+		Object_GetById(9)->collisionFlags = 1;
 	}
 	if (gGameState.scene == (s32)&SceneId_VaultCave3)
 	{
@@ -944,20 +944,20 @@ s32 VaultCave_ApplyEntryState(void)
 		Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-		Object_GetById(10)->collision_flags |= 0x80;
-		Object_GetById(9)->collision_flags |= 0x80;
+		Object_GetById(10)->collisionFlags |= 0x80;
+		Object_GetById(9)->collisionFlags |= 0x80;
 		switch (gGameState.entrance)
 		{
 		case 5:
 		case 6:
 			SceneActor_SetupActors11To14AndInstallTask();
-			Object_GetById(11)->collision_flags = 2;
-			Object_GetById(12)->collision_flags = 2;
-			Object_GetById(13)->collision_flags = 2;
-			Object_GetById(14)->collision_flags = 2;
-			Object_GetById(8)->collision_flags = 1;
-			Object_GetById(10)->collision_flags = 1;
-			Object_GetById(9)->collision_flags = 1;
+			Object_GetById(11)->collisionFlags = 2;
+			Object_GetById(12)->collisionFlags = 2;
+			Object_GetById(13)->collisionFlags = 2;
+			Object_GetById(14)->collisionFlags = 2;
+			Object_GetById(8)->collisionFlags = 1;
+			Object_GetById(10)->collisionFlags = 1;
+			Object_GetById(9)->collisionFlags = 1;
 			if (Engine_GameFlagIsSet(0x9aa) != 0)
 			{
 				SceneState_ApplyThreeRectsRows9And10();
@@ -966,8 +966,8 @@ s32 VaultCave_ApplyEntryState(void)
 			break;
 		}
 	}
-	gGameState.retreat_entrance = 10;
-	gGameState.retreat_scene = (s32)&SceneId_VaultCave1;
+	gGameState.retreatEntrance = 10;
+	gGameState.retreatScene = (s32)&SceneId_VaultCave1;
 	return 0;
 }
 

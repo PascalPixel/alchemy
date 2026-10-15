@@ -33,7 +33,7 @@ void Func_020000a4(void)
 
 void Func_020000fc(void)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load. */
     do {

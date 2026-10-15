@@ -2,12 +2,12 @@
 
 void Func_020000b0(void)
 {
-    WORD_AT(Ram_HeapSlots->map_work, 240) = 0x02ee0000;
+    WORD_AT(Ram_HeapSlots->mapWork, 240) = 0x02ee0000;
 }
 
 void Func_020000c4(void)
 {
-    WORD_AT(Ram_HeapSlots->map_work, 240) = 0x01600000;
+    WORD_AT(Ram_HeapSlots->mapWork, 240) = 0x01600000;
 }
 
 void Func_020000d4(void)

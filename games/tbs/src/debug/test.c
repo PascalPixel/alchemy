@@ -74,7 +74,7 @@ static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 	s32 token;
 	s32 i;
 
-	gGameState.message_speed = 2;
+	gGameState.messageSpeed = 2;
 	token = UiWindow_CreateWithSideObject(125, 0, 0, 0);
 	for (i = 0; i < cnt; i++)
 	{
@@ -192,7 +192,7 @@ static void EV15_PSYNERGY(void)
 
 static void EV15_SCRIPT(void)
 {
-	((struct BattleFxScene *)gEffectWork)->child_mode = 1;
+	((struct BattleFxScene *)gEffectWork)->childMode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -791,9 +791,9 @@ static s32 DebugMenu_SelectCharacter(void)
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else
-static s32 SceneState_GetFarResult2418(s32 unit_id)
+static s32 SceneState_GetFarResult2418(s32 unitId)
 {
-	return Shop_ConfirmAct(unit_id);
+	return Shop_ConfirmAct(unitId);
 }
 #endif
 

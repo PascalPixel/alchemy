@@ -69,12 +69,12 @@ void Func_0200105c(void)
 
 void Func_02001080(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 256;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
 }
 
 void Func_020010a0(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 521;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 521;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
 }

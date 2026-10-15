@@ -7,7 +7,7 @@ void ItemMenu_DrawCategory(void *window, s32 category, s32 flags);
 
 void Func_080fa84c(s32 category)
 {
-    u8 *menu = Ram_HeapSlots->menu_runtime;
+    u8 *menu = Ram_HeapSlots->menuRuntime;
 
     ItemMenu_PosCategory(category);
     RenderOutput_RedrawSavedRectFar(*(void **)(menu + 36));

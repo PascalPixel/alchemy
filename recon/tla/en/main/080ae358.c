@@ -30,7 +30,7 @@ void Func_080ae358(void)
         s32 index;
 
         for (i = 0; i < count; i++) {
-            s32 owner = gPartyState.active_owners[i];
+            s32 owner = gPartyState.activeOwners[i];
             struct OwnerDjinnState *unit = UnitGet(owner);
             u8 *counts;
             s32 j;

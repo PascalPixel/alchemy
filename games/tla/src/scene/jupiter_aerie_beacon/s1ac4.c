@@ -51,15 +51,15 @@ void Func_02001b04(s32 clearStatus)
 
             /* FAKEMATCH: the barrier loads the party state before the owner list's offset, as in the main image's Func_080ae16c (differ 2 without). */
             asm volatile("");
-            member = UnitGet(party->active_owners[n]);
+            member = UnitGet(party->activeOwners[n]);
         }
-        maxHp = member->hp = member->max_hp;
-        member->hp_gauge = Vitals_Clamp((maxHp << 14) / maxHp);
-        if (member->hp_gauge == 0 && member->hp != 0)
-            member->hp_gauge = 1;
-        member->pp_gauge = Vitals_Clamp((member->pp << 14) / member->max_pp);
-        if (member->pp_gauge == 0 && member->pp != 0)
-            member->pp_gauge = 1;
+        maxHp = member->hp = member->maxHp;
+        member->hpGauge = Vitals_Clamp((maxHp << 14) / maxHp);
+        if (member->hpGauge == 0 && member->hp != 0)
+            member->hpGauge = 1;
+        member->ppGauge = Vitals_Clamp((member->pp << 14) / member->maxPp);
+        if (member->ppGauge == 0 && member->pp != 0)
+            member->ppGauge = 1;
         if (clear == 1) {
             member->poison = 0;
             member->haunt = 0;

@@ -16,13 +16,13 @@ void Func_02004cf4(void)
     Kibombo_CamMove(-1, -1, -1, 0);
     Kibombo_CamMove(192 << 17, -1, 0x2590000, 0);
     WaitFrames(1);
-    Func_02005b14(gPartyState.current_owner, 185 << 17, 159 << 18, 0xc000);
+    Func_02005b14(gPartyState.currentOwner, 185 << 17, 159 << 18, 0xc000);
     Func_02005a4c();
     WaitFrames(1);
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x100;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
     Func_02005bdc(0, 0);
     Func_02005bd4(0x10002, 0);
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1b4 = 60;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 60;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Kibombo_Wait(40);
@@ -33,7 +33,7 @@ void Func_02004cf4(void)
     Motion_SetModeAndWaitAnimation(8, 3);
     Kibombo_ObjArm(10, 0xb000, 20);
     Kibombo_ObjArm(10, 0xd000, 20);
-    Object_GetById(10)->velocity_y = 0x30000;
+    Object_GetById(10)->velocityY = 0x30000;
     Kibombo_Wait(40);
     Object_SetModeById(9, 3);
     Motion_SetModeAndWaitAnimation(8, 3);
@@ -46,11 +46,11 @@ void Func_02004cf4(void)
     Motion_SetModeAndWaitAnimation(9, 3);
     Kibombo_MessagePut(9, 0);
     Kibombo_ObjArm(10, 0, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0x8000, 40);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0x8000, 40);
     Kibombo_ObjArm(10, 0xd000, 0);
-    Kibombo_ObjArm(gPartyState.current_owner, 0xc000, 10);
+    Kibombo_ObjArm(gPartyState.currentOwner, 0xc000, 10);
     Object_SetModeById(10, 3);
-    Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
+    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
     ObjectMotion_Launch(8, 4, 10);
     Kibombo_MessagePut(0x2008, 0);
     Kibombo_ObjTurn(9, 0);
@@ -80,20 +80,20 @@ void Func_02004cf4(void)
     Kibombo_MessagePut(10, 0);
     Kibombo_ObjTurn(10, 0);
     Kibombo_MessagePut(10, 0);
-    Kibombo_ObjTurn(gPartyState.current_owner, 0x8000);
+    Kibombo_ObjTurn(gPartyState.currentOwner, 0x8000);
     Object_SetModeById(10, 3);
     Kibombo_MessagePut(10, 0);
-    Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
+    Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
     Kibombo_ObjSpeed(10, 0xcccc, 0x6666);
     Object_SetModeById(10, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(10, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(10);
     Func_02005b0c(10, 0, 0);
-    work = Ram_HeapSlots->event_work;
-    work->field_1b4 = 16;
-    work->screen_effect = 0x209;
+    work = Ram_HeapSlots->eventWork;
+    work->field1b4 = 16;
+    work->screenEffect = 0x209;
     GameFlag_SetBit(0x8ef);
     Func_02005aa4();
 }

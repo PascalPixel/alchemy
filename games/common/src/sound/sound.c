@@ -85,9 +85,9 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed)
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->fade_counter = speed;
-        player->fade_period = speed;
-        player->fade_volume = 0x100;
+        player->fadeCounter = speed;
+        player->fadePeriod = speed;
+        player->fadeVolume = 0x100;
         player->lock = SOUND_LOCK;
     }
 }
@@ -103,9 +103,9 @@ void Audio_Initialize(void)
     for (i = 0; i < SOUND_PLAYER_COUNT; i++) {
         struct SoundPlayer *player = Sound_PlayerSlots[i].player;
 
-        MusicPlayer_Initialize(player, Sound_PlayerSlots[i].tracks, Sound_PlayerSlots[i].track_count);
-        player->check_priority = Sound_PlayerSlots[i].check_priority;
-        player->work_bytes = Sound_WorkBytes;
+        MusicPlayer_Initialize(player, Sound_PlayerSlots[i].tracks, Sound_PlayerSlots[i].trackCount);
+        player->checkPriority = Sound_PlayerSlots[i].checkPriority;
+        player->workBytes = Sound_WorkBytes;
     }
 }
 
@@ -203,9 +203,9 @@ void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed)
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->fade_counter = speed;
-        player->fade_period = speed;
-        player->fade_volume = 0x101;
+        player->fadeCounter = speed;
+        player->fadePeriod = speed;
+        player->fadeVolume = 0x101;
         player->lock = SOUND_LOCK;
     }
 }
@@ -214,9 +214,9 @@ void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->fade_counter = speed;
-        player->fade_period = speed;
-        player->fade_volume = 2;
+        player->fadeCounter = speed;
+        player->fadePeriod = speed;
+        player->fadeVolume = 2;
         player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
     }
@@ -224,7 +224,7 @@ void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
 
 void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
 {
-    s32 count = player->track_count;
+    s32 count = player->trackCount;
     struct SoundTrack *track = player->tracks;
 
     while (count > 0) {
@@ -232,9 +232,9 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
             if (track->flags & SOUND_TRACK_RESET) {
                 AudioCommand_InvokeSlot35(track);
                 track->flags = SOUND_TRACK_ACTIVE;
-                track->bend_range = 2;
-                track->volume_scale = 0x40;
-                track->lfo_speed = 22;
+                track->bendRange = 2;
+                track->volumeScale = 0x40;
+                track->lfoSpeed = 22;
                 track->voice.kind = 1;
             }
         }
@@ -275,11 +275,11 @@ void CgbAudio_Initialize(struct CgbNote *notes)
     Sound_CommandTable[32] = (SoundCommand)MusicPlayer_StepFade;
     Sound_CommandTable[33] = MusicTrack_CalcOutput;
 
-    work->cgb_notes = notes;
-    work->cgb_update = Cgb_UpdateChannels;
-    work->cgb_mute = CgbChannel_Mute;
-    work->cgb_frequency = Cgb_KeyToFrequency;
-    work->max_lines = SOUND_MAX_LINES;
+    work->cgbNotes = notes;
+    work->cgbUpdate = Cgb_UpdateChannels;
+    work->cgbMute = CgbChannel_Mute;
+    work->cgbFrequency = Cgb_KeyToFrequency;
+    work->maxLines = SOUND_MAX_LINES;
 
     {
         volatile u32 zero = 0;
@@ -287,13 +287,13 @@ void CgbAudio_Initialize(struct CgbNote *notes)
         Bios_CpuSet((void *)&zero, notes, 0x05000000 | (sizeof(struct CgbNote) * 4 / 4));
     }
     notes[0].kind = 1;
-    notes[0].channel_bits = 0x11;
+    notes[0].channelBits = 0x11;
     notes[1].kind = 2;
-    notes[1].channel_bits = 0x22;
+    notes[1].channelBits = 0x22;
     notes[2].kind = 3;
-    notes[2].channel_bits = 0x44;
+    notes[2].channelBits = 0x44;
     notes[3].kind = 4;
-    notes[3].channel_bits = 0x88;
+    notes[3].channelBits = 0x88;
 
     work->lock = lock;
 }

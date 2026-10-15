@@ -19,7 +19,7 @@ void Func_02003b7c(s32 x, s32 y);
 
 void Func_02002bd0(struct FieldActor *object)
 {
-    s32 radius = ((object->y - object->terrain_height) >> 1) + 0x100000;
+    s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
 
     object->x = WORD_AT(object, 68) + Iwram_MulQ16(Math_Cosine((WORD_AT(object, 48) & 255) << 11), radius);
     object->z = WORD_AT(object, 76) + Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius) / 3;
@@ -48,14 +48,14 @@ static inline void FlagOn(u8 *flags, s32 bit)
 
 void Func_02003b08(void)
 {
-    if (*(s16 *)((u8 *)Object_GetById(gPartyState.current_owner) + 18) <= 653) {
+    if (*(s16 *)((u8 *)Object_GetById(gPartyState.currentOwner) + 18) <= 653) {
         Func_02005e14();
         Func_02005f2c(0);
         Func_02005f94(186);
-        BYTE_AT(Object_GetById(gPartyState.current_owner), 90) &= ~1;
-        ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x40000, 0x20000);
-        ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 376, 668);
-        FlagOn(&BYTE_AT(Object_GetById(gPartyState.current_owner), 90), 1);
+        BYTE_AT(Object_GetById(gPartyState.currentOwner), 90) &= ~1;
+        ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
+        ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 376, 668);
+        FlagOn(&BYTE_AT(Object_GetById(gPartyState.currentOwner), 90), 1);
         Func_02005e1c();
     }
 }
@@ -68,8 +68,8 @@ static inline s32 RowTop(s32 row)
 
 void Func_02003cac(void)
 {
-    s16 *room = (s16 *)Ram_HeapSlots->event_work;
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    s16 *room = (s16 *)Ram_HeapSlots->eventWork;
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
     s32 kind = Func_02000690(2, leader->x >> 20, leader->z >> 20) >> 8;
     s32 row;
 

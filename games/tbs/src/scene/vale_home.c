@@ -314,15 +314,15 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	FieldScheduler_AddCallback((s32)FieldScene_RunStep20, 0xc80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
 	rec8 = Object_GetById(20);
-	v2 = rec8->motion_flags;
-	rec8->motion_flags = 0;
+	v2 = rec8->motionFlags;
+	rec8->motionFlags = 0;
 	p8 = v2;
 	for (i = 0; i < 40; i++)
 	{
 		rec8->y.fixed += 0x1800;
 		Engine_TaskWait(1);
 	}
-	rec8->motion_flags = p8;
+	rec8->motionFlags = p8;
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
 	Engine_TaskWait(1);
@@ -521,11 +521,11 @@ s32 ValeHome_RestoreEntryState(void)
 	}
 	v5 = 192;
 	record = Object_GetById(8);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	record = Object_GetById(9);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	record = Object_GetById(10);
-	((struct FieldActor *)record)->scale_y = (v5 << 9);
+	((struct FieldActor *)record)->scaleY = (v5 << 9);
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
 		Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
@@ -568,13 +568,13 @@ s32 ValeHome_RestoreEntryState(void)
 			if (Engine_GameFlagIsSet(0x834) != 0)
 			{
 				record = Object_GetById(20);
-				((struct FieldActor *)record)->scale_x = 0x4ccc;
-				((struct FieldActor *)record)->scale_y = 0x4ccc;
+				((struct FieldActor *)record)->scaleX = 0x4ccc;
+				((struct FieldActor *)record)->scaleY = 0x4ccc;
 				record = Object_GetById(20);
 				Engine_ActorSetSpriteFlags(record, 0);
 				record = Object_GetById(21);
-				((struct FieldActor *)record)->scale_x = 0x9999;
-				((struct FieldActor *)record)->scale_y = 0x9999;
+				((struct FieldActor *)record)->scaleX = 0x9999;
+				((struct FieldActor *)record)->scaleY = 0x9999;
 				Engine_ActorSetAnimation(13, 5);
 			}
 			else
@@ -663,7 +663,7 @@ static void EV20_TOUCH(void)
 		Engine_ActorEnableActionCallback(17, (s32)ValeHome_Actor17Actions);
 		Engine_EventWait(20);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-		Object_GetById(18)->priority_flags |= 1;
+		Object_GetById(18)->priorityFlags |= 1;
 #endif
 		Engine_ActorEnableActionCallback(18, (s32)ValeHome_Actor17Actions);
 		Actor_FaceDirection(0, 0xc000, 0);
@@ -942,7 +942,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	Actor_FaceDirection(24, 0x8000, 0);
 	Engine_ActorSetAnimation(0, 16);
 	record = Object_GetById(0);
-	record->scale_x = -0x10000;
+	record->scaleX = -0x10000;
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(25, 7);
@@ -953,7 +953,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	{
 		struct EventWork *work = gEventWork;
 
-		work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	}
 	Engine_EventOpenScreen();
 	BattleFx_SetBlock30Values128One();
@@ -990,7 +990,7 @@ static void ValeHome_RunActorPairEffectScene(void)
 	Engine_TaskWait(20);
 	BattleFx_SetBlock30ValuesMaxZero();
 	Engine_EventWait(40);
-	gEventWork->transition_frames = 120;
+	gEventWork->transitionFrames = 120;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_GameFlagClear(0x834);
@@ -1120,8 +1120,8 @@ static void Scene_RunExtendedActorSequence(void)
 	}
 	v5 = 254;
 	Engine_TaskWait(2);
-	Object_GetById(30)->priority_flags &= v5;
-	Object_GetById(31)->priority_flags &= v5;
+	Object_GetById(30)->priorityFlags &= v5;
+	Object_GetById(31)->priorityFlags &= v5;
 	Engine_ActorSetSpritePriority(30, 2);
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
@@ -1151,7 +1151,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
-	Battle_GetWorkObject1e0()->motion_flags = v6;
+	Battle_GetWorkObject1e0()->motionFlags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
 	Engine_ActorEnableActionCallback(12, (s32)ValeHome_Actor12Actions);
@@ -1291,12 +1291,12 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_MessageShowCentered(MSGNO(MsgValeFarewell), 1);
 	v5 = 1;
 	Engine_EventWait(80);
-	Object_GetById(0)->priority_flags |= v5;
+	Object_GetById(0)->priorityFlags |= v5;
 	{
 		struct FieldActor *actor = Object_GetById(1);
-		u8				   value = (v5 | actor->priority_flags);
+		u8				   value = (v5 | actor->priorityFlags);
 
-		actor->priority_flags = value;
+		actor->priorityFlags = value;
 	}
 	Actor_ShowEmote(0, 0x102, 0);
 	Actor_ShowEmote(1, 0x102, 80);
@@ -1313,8 +1313,8 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorEnableActionCallback(1, pair_actions);
 	Engine_EventWait(60);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 60;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 60;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorStop(0);
@@ -1395,7 +1395,7 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 		{
 			child->words[5] = parent->words[5];
 			part = (struct PairSprite *)child->object.actor.sprite;
-			child->object.actor.motion_flags = 0;
+			child->object.actor.motionFlags = 0;
 			child->object.effect.spin = 0;
 			child->link.parent = parent;
 			if (part != NULL)
@@ -1403,14 +1403,14 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 				sprite = &part->sprite;
 				AnimationObjects_SelectAnimation(sprite, 0);
 				sprite->flags = 0;
-				Resource_ResetEntry(sprite->vram_block);
-				sprite->vram_block = work->vram_block;
-				sprite->unknown_1d_0 = 1;
-				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-				sprite->full_color = 0;
+				Resource_ResetEntry(sprite->vramBlock);
+				sprite->vramBlock = work->vramBlock;
+				sprite->unk1d0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
+				sprite->fullColor = 0;
 				sprite->shape = 1;
 				((struct WorldMapOam *)sprite)->size = 2;
-				part->detail->field_16 = 0;
+				part->detail->field16 = 0;
 			}
 		}
 	}
@@ -1427,7 +1427,7 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent)
 
 		sp->priority = 2;
 		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 }
 

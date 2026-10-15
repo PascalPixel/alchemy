@@ -14,7 +14,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
 void Func_02000fcc(struct ObjectRuntime *object)
 {
-    if (gFrameCount & object->unknown_5c[7])
+    if (gFrameCount & object->unk5c[7])
         Object_SetPartAttribute(object, 10);
     else
         Object_SetPartAttribute(object, 0);

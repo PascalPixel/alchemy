@@ -4,8 +4,8 @@ void Func_02003524(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 0x209;
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
 }
@@ -24,19 +24,19 @@ void Func_02003574(void)
 
 void Func_02003584(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     u32 i;
     s32 delta;
     struct PartyState *party;
 
     Func_020051c0();
     Func_02005370(0);
-    object->motion_flags = 0;
-    ObjectMotion_SetActionVariantValue(gPartyState.current_owner, 1);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    object->motionFlags = 0;
+    ObjectMotion_SetActionVariantValue(gPartyState.currentOwner, 1);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     object->angle = 0;
     {
-        s32 *owner = &gPartyState.current_owner;
+        s32 *owner = &gPartyState.currentOwner;
         /* FAKEMATCH: the mode is pinned to r1 and read by an asm that passes the owner's address through, so the mode is set before the owner is loaded as the native has; plain, through the inline layer, value-returning or pinned alone, the owner's load comes first (one reordered row). */
         register s32 mode asm("r1") = 16;
 
@@ -52,28 +52,28 @@ void Func_02003584(void)
     object->angle = 0x4000;
     /* FAKEMATCH: the native loads the party state's address among the angle's stores and builds the owner's offset after them, as overlay 671's Func_02000a20 does; plain, the offset is built before the store (differ 4), behind an empty asm after the store the address loads late (differ 2). */
     asm volatile("" : "+l"(party));
-    Func_020052d0(party->current_owner, 258);
-    Object_SetModeById_(party->current_owner, 27);
+    Func_020052d0(party->currentOwner, 258);
+    Object_SetModeById_(party->currentOwner, 27);
     Battle_WaitMode0_(30);
-    Object_SetModeById_(party->current_owner, 28);
+    Object_SetModeById_(party->currentOwner, 28);
     Battle_WaitMode0_(10);
-    ObjectMotion_SetActionVariant_(party->current_owner, 3);
+    ObjectMotion_SetActionVariant_(party->currentOwner, 3);
     for (i = 0; i <= 39; i++) {
         {
-            s32 scale = object->scale_x;
+            s32 scale = object->scaleX;
 
             /* FAKEMATCH: one variable set twice in the loop keeps both constants inside it, as the native loads them on every pass and as overlay 671's Func_02000a20 does; as plain constants loop.c moves -0x400 above the loop (differ 8). */
             delta = -0x400;
-            object->scale_x = scale + delta;
+            object->scaleX = scale + delta;
         }
-        object->scale_y += delta;
+        object->scaleY += delta;
         delta = -0x20000;
         object->y += delta;
         WaitFrames_(1);
         if (i == 10)
             Func_020053d8(204);
         if (i == 20) {
-            ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 521;
+            ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
             Event_FinishScreenTransition();
         }
     }

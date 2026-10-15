@@ -7,11 +7,11 @@ struct MenuSelectionState {
     u8 padding000[0x78];
     void *work;
     u8 padding07c[8];
-    u8 resource_ids[8];
+    u8 resourceIds[8];
     s16 selection;
-    s16 item_count;
+    s16 itemCount;
     s16 field090;
-    s16 resource_base;
+    s16 resourceBase;
 };
 
 extern struct MenuSelectionState *gMenuSelectWork;
@@ -19,15 +19,15 @@ extern u8 Menu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 
 void RenderOutput_PrepareForRedraw(void *work);
-void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 resourceId, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);
 
 s32 Menu_SelectResource(s32 start, s32 goal)
 {
-    s16 resource_base;
+    s16 resourceBase;
     s16 cur;
     s32 diff;
-    s32 resource_id;
+    s32 resourceId;
     s32 dist;
     s32 pos;
     s32 step;
@@ -45,13 +45,13 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 
     for (;;) {
         RenderOutput_PrepareForRedraw(state->work);
-        resource_base = state->resource_base;
-        if (resource_base != 0) {
-            resource_id = resource_base + state->selection;
+        resourceBase = state->resourceBase;
+        if (resourceBase != 0) {
+            resourceId = resourceBase + state->selection;
         } else {
-            resource_id = state->resource_ids[state->selection] + (s32)&MsgCommandName;
+            resourceId = state->resourceIds[state->selection] + (s32)&MsgCommandName;
         }
-        UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
+        UiText_DrawCharacterAtOffset(resourceId, state->work, 0, 0);
 
         cur = state->selection;
         table = Menu_SelectionStepDelays;

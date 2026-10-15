@@ -54,7 +54,7 @@ void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
-    struct SelectionScreen *screen = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *screen = Ram_HeapSlots->menuWork;
 
     Menu_LoadSelectionNodeResource(screen, 0);
     for (;;) {
@@ -83,7 +83,7 @@ s32 Menu_SelectionLoop(s32 mode)
 
 u32 Menu_WaitForSelectionInput(u32 mode)
 {
-    struct SelectionScreen *screen = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *screen = Ram_HeapSlots->menuWork;
     u32 result;
 
     for (;;) {

@@ -4,19 +4,19 @@
 struct SceneRegionEntry {
     s16 id;
     s16 flag;
-    u8 unknown_04[4];
+    u8 unk04[4];
     s32 x;
-    u8 unknown_0c[4];
+    u8 unk0c[4];
     s32 z;
-    u8 unknown_14[4];
+    u8 unk14[4];
 };
 
 struct MapViewBounds {
-    u8 unknown_000[0xec];
-    s32 min_x;
-    s32 min_y;
-    s32 max_x;
-    s32 max_y;
+    u8 unk000[0xec];
+    s32 minX;
+    s32 minY;
+    s32 maxX;
+    s32 maxY;
 };
 
 void GameFlag_SetBit(s32 flag);
@@ -24,7 +24,7 @@ void GameFlag_ClearBit(s32 flag);
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {
-    struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->map_work;
+    struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapWork;
 
     GameFlag_ClearBit(0x164);
     GameFlag_SetBit(0x165);
@@ -39,8 +39,8 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
             s32 x = entry->x;
             s32 z = entry->z;
 
-            if (view->min_x <= x && x <= view->max_x
-                && view->min_y <= z && z <= view->max_y)
+            if (view->minX <= x && x <= view->maxX
+                && view->minY <= z && z <= view->maxY)
                 entry->flag = 0x164;
             else
                 entry->flag = 0x165;

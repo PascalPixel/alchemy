@@ -8,22 +8,22 @@
 #include "iwram_call.h"
 
 struct UiWindow {
-    s32 unknown_00;
-    s32 unknown_04;
+    s32 unk00;
+    s32 unk04;
     u16 width;
     u16 height;
     s16 x;
     s16 y;
-    u16 unknown_10;
-    u16 unknown_12;
+    u16 unk10;
+    u16 unk12;
     u16 state;
     u16 flags;
     s16 frame;
     s16 duration;
-    s16 previous_x;
-    s16 previous_y;
-    s16 previous_width;
-    s16 previous_height;
+    s16 previousX;
+    s16 previousY;
+    s16 previousWidth;
+    s16 previousHeight;
 };
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
@@ -64,9 +64,9 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 
     UiWindow_DrawFrame(x, y, width, height);
     if (save_position != 0) {
-        window->previous_x = x;
-        window->previous_y = y;
-        window->previous_width = width;
-        window->previous_height = height;
+        window->previousX = x;
+        window->previousY = y;
+        window->previousWidth = width;
+        window->previousHeight = height;
     }
 }

@@ -69,11 +69,11 @@ void Func_02001368(void)
 
     Func_02000708(Data_02003f52);
     Func_020012d8();
-    y = Object_GetById(gPartyState.current_owner)->y;
+    y = Object_GetById(gPartyState.currentOwner)->y;
     /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test starts the constant first (one pair of instructions swapped). */
     __asm__ volatile("");
     if (y < 0x80000) {
-        ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+        ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
     }
 }

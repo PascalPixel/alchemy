@@ -52,7 +52,7 @@
 s32 Runtime_BlankDisplayLoadValueAndRun(void)
 {
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-	gRandomSeed = gGameState.play_time;
+	gRandomSeed = gGameState.playTime;
 	AudioCommand_PlayFar(9);
 	ReelGame_Run();
 	return 0;
@@ -105,7 +105,7 @@ s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count)
 
 //--------------------------------------------------------------------------
 // キャンバスの転送（スケジューラのコールバック）
-// transfer_pending が立ったフレームだけ、256x128 の 8bpp キャンバスを
+// transferPending が立ったフレームだけ、256x128 の 8bpp キャンバスを
 // VRAM 0x06003500 へ送る
 //--------------------------------------------------------------------------
 void BattlePres_ProcessPendingTileTransfer(void)
@@ -114,28 +114,28 @@ void BattlePres_ProcessPendingTileTransfer(void)
 	u8						*buf;
 
 	work = gBattleFxWork[0];
-	if (work->transfer_pending == 1)
+	if (work->transferPending == 1)
 	{
 		buf = gBattleFxWork[1];
-		switch (work->transfer_mode)
+		switch (work->transferMode)
 		{
-		case 1: // 送ったあと transfer_value で塗りつぶす
+		case 1: // 送ったあと transferValue で塗りつぶす
 			Dma_Set(buf, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x2000, REG_DMA3);
-			Iwram_FillWords(buf, 0x8000, work->transfer_value);
+			Iwram_FillWords(buf, 0x8000, work->transferValue);
 			break;
 		case 2: // 残像：0 以外の色番号を 1/2 または 3/4 に落とす
-			if (work->transfer_value == 50)
+			if (work->transferValue == 50)
 				ColorBuffer_BackupAndHalveNonzero(buf, (u8 *)0x06003500, 0x8000);
 			else
 				ColorBuffer_BackupAndScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500, 0x8000);
 			break;
 		}
-		work->transfer_pending = 0;
-		work->frames_since_transfer = 1;
+		work->transferPending = 0;
+		work->framesSinceTransfer = 1;
 	}
 	else
 	{
-		(work->frames_since_transfer)++;
+		(work->framesSinceTransfer)++;
 	}
 }
 
@@ -335,25 +335,25 @@ struct ReelWork
 	u16				  direction;
 	u16				  pressed;
 	u16				  repeat;
-	u8				  unknown_0a4[4];
+	u8				  unk0a4[4];
 	s32				  timer;
-	s32				  winning_lines[7];
+	s32				  winningLines[7];
 	struct OamShadow  obj[128];
 	struct UiWindow	 *window;
-	struct UiWindow	 *sub_window;
-	u8				  unknown_4d0[8];
-	u16				  scanline_offsets[160];
+	struct UiWindow	 *subWindow;
+	u8				  unk4d0[8];
+	u16				  scanlineOffsets[160];
 #if EDITION_INTERNATIONAL
 	s32 phase;
 #endif
 };
 
-// gGameState seen from +12, the base the bytes load: won_prizes is gGameState.won_prizes
+// gGameState seen from +12, the base the bytes load: wonPrizes is gGameState.won_prizes
 // (through the field itself ReelGame_RunFrame differs 12)
 struct ReelSave
 {
-	u8 unknown_000[0x120];
-	s8 won_prizes[16];
+	u8 unk000[0x120];
+	s8 wonPrizes[16];
 };
 
 #include "../../../common/src/graphics/slots/reel_tables.h"
@@ -390,7 +390,7 @@ void ReelGame_RunFrame(void)
 	dma[5] &= ~DMA_START_HBLANK_REPEAT;
 	dma[5] &= ~DMA_ENABLE;
 	dma[5];
-	Dma_Set(work->scanline_offsets, (void *)&REG_BLDY, 0xa2600001, (volatile u32 *)dma);
+	Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001, (volatile u32 *)dma);
 
 	pad = gKeysHeld;
 	held = gKeysHeld & KEYS_DPAD;
@@ -422,14 +422,14 @@ void ReelGame_RunFrame(void)
 		{
 			coins = PartyInventory_CountItemFar(228);
 			UiText_DrawNumberInWindowFar(
-				coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
-			UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_window, 64, 8);
+				coins - work->bet, REEL_COIN_DIGITS, work->subWindow, REEL_COIN_X, 0);
+			UiText_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
 			if (work->pressed & KEY_B)
 			{
 				struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
 				work->state = 10;
-				save->won_prizes[0] = -2;
+				save->wonPrizes[0] = -2;
 				UiWork_FinalizeFar(work->window, 1);
 			}
 			else
@@ -467,7 +467,7 @@ void ReelGame_RunFrame(void)
 					UiWork_FinalizeFar(work->window, 1);
 					for (k = 0; k != work->bet; k++)
 						PartyInventory_RemoveFar(228);
-					UiWork_FinalizeFar(work->sub_window, 1);
+					UiWork_FinalizeFar(work->subWindow, 1);
 					AudioCommand_PlayFar(0x130);
 				}
 			}
@@ -623,8 +623,8 @@ void ReelGame_RunFrame(void)
 				work->timer = 0;
 				REG_BLDCNT = 0x3f44;
 				REG_BLDALPHA = 0x1010;
-				fx->transfer_mode = 2;
-				fx->transfer_value = 75;
+				fx->transferMode = 2;
+				fx->transferValue = 75;
 			}
 		}
 		else if (work->state == 3)
@@ -715,7 +715,7 @@ void ReelGame_RunFrame(void)
 
 					found = -1;
 					mixed = 0;
-					work->winning_lines[col] = 0;
+					work->winningLines[col] = 0;
 					if (col > 3 - work->bet && col < work->bet + 3)
 					{
 						for (i = 0; i != 5; i++)
@@ -741,8 +741,8 @@ void ReelGame_RunFrame(void)
 						}
 						if (mixed == 0)
 						{
-							work->winning_lines[col] = 1;
-							save->won_prizes[hits] = ReelGame_SymbolPrizes[found];
+							work->winningLines[col] = 1;
+							save->wonPrizes[hits] = ReelGame_SymbolPrizes[found];
 							hits++;
 						}
 					}
@@ -750,11 +750,11 @@ void ReelGame_RunFrame(void)
 				work->timer = 0;
 				if (hits != 0)
 				{
-					save->won_prizes[hits] = -1;
+					save->wonPrizes[hits] = -1;
 					work->state = 2;
 					AudioCommand_PlayFar(171);
-					fx->transfer_mode = 1;
-					fx->transfer_value = 0;
+					fx->transferMode = 1;
+					fx->transferValue = 0;
 					REG_BLDCNT = 0;
 					UiWork_FinalizeFar(work->window, 1);
 				}
@@ -801,14 +801,14 @@ void ReelGame_RunFrame(void)
 							work->reels[i].held = 0;
 							work->reels[i].stop = -1;
 						}
-						fx->transfer_mode = 1;
-						fx->transfer_value = 0;
+						fx->transferMode = 1;
+						fx->transferValue = 0;
 						REG_BLDCNT = 0;
 						window = UiWindow_CreateFar(18, 0, 12, 4, 6);
-						work->sub_window = window;
+						work->subWindow = window;
 						message = MsgSlotsBet;
 						UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-						UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(message - 1, work->subWindow, 0, 0);
 					}
 				}
 			}
@@ -873,18 +873,18 @@ void ReelGame_RunFrame(void)
 				work->obj[n].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | blend
 									  | ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
 			work->obj[n].attr2 = ((ReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
-			p->y += p->velocity_y;
-			p->velocity_y += 0x4000;
+			p->y += p->velocityY;
+			p->velocityY += 0x4000;
 			if (work->timer % 256 == i * 4 + 200)
 			{
-				p->velocity_y = 0x60000;
+				p->velocityY = 0x60000;
 				p->variant = 0;
 			}
 			if (p->y > 0x400000)
 			{
 				p->y = 0x400000;
 				if (p->variant <= 1)
-					p->velocity_y = -p->velocity_y / 2;
+					p->velocityY = -p->velocityY / 2;
 				p->variant++;
 			}
 			n++;
@@ -1020,32 +1020,32 @@ void ReelGame_InitTitle(void)
 		width++;
 		left += step;
 		letter[i].y = y;
-		letter[i].velocity_y = 0;
+		letter[i].velocityY = 0;
 		letter[i].variant = 0;
 		y += -0x80000;
 	}
 
 	for (i = 0; i != 160; i++)
-		state->scanline_offsets[i] = 0;
+		state->scanlineOffsets[i] = 0;
 
 	for (i = 0; i != 40; i++)
 	{
 		angle = i * 0x199;
-		state->scanline_offsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
-		state->scanline_offsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
+		state->scanlineOffsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
+		state->scanlineOffsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
 	}
 
 	state->spins = 0;
 	state->state = 0;
 	state->cursor = 0;
-	work->transfer_mode = 1;
-	work->transfer_value = 0;
+	work->transferMode = 1;
+	work->transferValue = 0;
 	REG_BLDCNT = 0;
 	window = UiWindow_CreateFar(18, 0, 12, 4, 6);
-	state->sub_window = window;
+	state->subWindow = window;
 	message = MsgSlotsBet;
 	UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-	UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
+	UiText_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
 }
 
 void ReelGame_Run(void)
@@ -1073,7 +1073,7 @@ void ReelGame_Run(void)
 	tiles = Ram_MapCellBuffer;
 	save = (struct ReelSave *)((u8 *)&gGameState + 12);
 	RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
-	save->won_prizes[0] = -1;
+	save->wonPrizes[0] = -1;
 	state->repeat = 0;
 	state->bet = 1;
 	Scheduler_ResetTaskTable();
@@ -1245,7 +1245,7 @@ void ReelGame_Run(void)
 			UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
 			UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
 		}
-		work->transfer_pending = 0;
+		work->transferPending = 0;
 		Scheduler_AddOrUpdateCallback(ReelGame_RunFrame, 0x480);
 		Scheduler_AddOrUpdateCallback(BattlePres_ProcessPendingTileTransfer, 0x480);
 
@@ -1288,8 +1288,8 @@ void ReelGame_Run(void)
 						angle = Random16() & 0xffff;
 						spark->x = x << 16;
 						spark->y = y << 16;
-						spark->velocity_x = Trig_Sin(angle) * (speed + 64) >> 6;
-						spark->velocity_y = -(Trig_Cos(angle) * (speed + 64)) >> 6;
+						spark->velocityX = Trig_Sin(angle) * (speed + 64) >> 6;
+						spark->velocityY = -(Trig_Cos(angle) * (speed + 64)) >> 6;
 						spark->variant = (Random16() & 15) + 16;
 						spark++;
 					}
@@ -1321,10 +1321,10 @@ void ReelGame_Run(void)
 								}
 							}
 						}
-						spark->x += spark->velocity_x;
-						spark->y += spark->velocity_y;
-						spark->velocity_x = spark->velocity_x * 60 / 64;
-						spark->velocity_y = spark->velocity_y * 60 / 64;
+						spark->x += spark->velocityX;
+						spark->y += spark->velocityY;
+						spark->velocityX = spark->velocityX * 60 / 64;
+						spark->velocityY = spark->velocityY * 60 / 64;
 					}
 				}
 			}
@@ -1354,7 +1354,7 @@ void ReelGame_Run(void)
 				else if ((frame & 7) <= 3)
 				{
 					for (j = 0; j != 7; j++)
-						lit[j] = state->winning_lines[j];
+						lit[j] = state->winningLines[j];
 				}
 				for (j = 0; j != 3; j++)
 				{
@@ -1377,7 +1377,7 @@ void ReelGame_Run(void)
 						BattleFx_DrawCanvasLine(28, j + 97, 200, j + 11, color);
 				}
 			}
-			work->transfer_pending = 1;
+			work->transferPending = 1;
 			WaitFrames(1);
 		}
 
@@ -1419,9 +1419,9 @@ void AudioTrack_InsertSlotNode(s32 index)
 {
 	struct AudioTrackSlotWork *work = Flash_Handler3;
 
-	work->nodes[index].prev = (struct AudioSlotNode *)&work->bucket[work->bucket_by_slot[index]];
-	work->nodes[index].next = work->bucket[work->bucket_by_slot[index]];
-	work->bucket[work->bucket_by_slot[index]] = &work->nodes[index];
+	work->nodes[index].prev = (struct AudioSlotNode *)&work->bucket[work->bucketBySlot[index]];
+	work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
+	work->bucket[work->bucketBySlot[index]] = &work->nodes[index];
 	if (work->nodes[index].next != NULL)
 		work->nodes[index].next->prev = &work->nodes[index];
 }
@@ -1457,17 +1457,17 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
 			AudioTrack_RemoveSlotNode(removal & mask);
 			state = Flash_Handler3;
-			read_offset = state->input_cursor;
+			read_offset = state->inputCursor;
 			value = input[read_offset];
 			next_offset = read_offset + 1;
-			state->input_cursor = next_offset;
-			if (next_offset == state->input_limit)
+			state->inputCursor = next_offset;
+			if (next_offset == state->inputLimit)
 			{
-				state->bucket_by_slot[slot & mask] = -1;
+				state->bucketBySlot[slot & mask] = -1;
 				break;
 			}
 
-			state->bucket_by_slot[slot & mask] = value;
+			state->bucketBySlot[slot & mask] = value;
 			current++;
 			AudioTrack_InsertSlotNode(slot & mask);
 			removal++;
@@ -1489,7 +1489,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 			AudioTrack_RemoveSlotNode(slot);
 			state = *root;
 			current++;
-			state->bucket_by_slot[slot] = empty;
+			state->bucketBySlot[slot] = empty;
 		} while (current < limit);
 	}
 }
@@ -1499,10 +1499,10 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
 	struct AudioTrackSlotWork *work = Flash_Handler3;
 	s32						   index;
 
-	for (index = 0; index != work->out_cnt; index++)
+	for (index = 0; index != work->outCnt; index++)
 	{
-		destination[work->out_total] = work->out_buf[index];
-		work->out_total++;
+		destination[work->outTotal] = work->outBuf[index];
+		work->outTotal++;
 	}
 }
 
@@ -1516,12 +1516,12 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 	struct AudioSlotNode *node;
 	s32					  len;
 
-	Flash_Handler3->match_len = 1;
-	if (Flash_Handler3->bucket_by_slot[start] == -1)
+	Flash_Handler3->matchLen = 1;
+	if (Flash_Handler3->bucketBySlot[start] == -1)
 	{
 		return;
 	}
-	node = Flash_Handler3->bucket[Flash_Handler3->bucket_by_slot[start]];
+	node = Flash_Handler3->bucket[Flash_Handler3->bucketBySlot[start]];
 	if (start + MATCH_MAX > WINDOW_MASK)
 	{
 		while (node != NULL)
@@ -1532,16 +1532,16 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 			{
 				for (len = 1; len < MATCH_MAX; len++)
 				{
-					if (Flash_Handler3->bucket_by_slot[(start + len) & WINDOW_MASK]
-						!= Flash_Handler3->bucket_by_slot[(node->slot + len) & WINDOW_MASK])
+					if (Flash_Handler3->bucketBySlot[(start + len) & WINDOW_MASK]
+						!= Flash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
 					{
 						break;
 					}
 				}
-				if (Flash_Handler3->match_len < len)
+				if (Flash_Handler3->matchLen < len)
 				{
-					Flash_Handler3->match_offset = dist;
-					Flash_Handler3->match_len = len;
+					Flash_Handler3->matchOffset = dist;
+					Flash_Handler3->matchLen = len;
 					if (len == MATCH_MAX)
 					{
 						return;
@@ -1561,16 +1561,16 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 			{
 				for (len = 1; len < MATCH_MAX; len++)
 				{
-					if (Flash_Handler3->bucket_by_slot[start + len]
-						!= Flash_Handler3->bucket_by_slot[(node->slot + len) & WINDOW_MASK])
+					if (Flash_Handler3->bucketBySlot[start + len]
+						!= Flash_Handler3->bucketBySlot[(node->slot + len) & WINDOW_MASK])
 					{
 						break;
 					}
 				}
-				if (Flash_Handler3->match_len < len)
+				if (Flash_Handler3->matchLen < len)
 				{
-					Flash_Handler3->match_offset = dist;
-					Flash_Handler3->match_len = len;
+					Flash_Handler3->matchOffset = dist;
+					Flash_Handler3->matchLen = len;
 					if (len == MATCH_MAX)
 					{
 						return;
@@ -1594,86 +1594,86 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 	defer = 0;
 	Flash_Handler3 = (struct AudioTrackSlotWork *)gMapCellBuffer;
 	AudioTrack_ResetSlotBuckets();
-	Flash_Handler3->input_limit = size;
+	Flash_Handler3->inputLimit = size;
 	Flash_Handler3->pos = 0;
-	Flash_Handler3->input_cursor = 0;
-	Flash_Handler3->out_total = 0;
-	Flash_Handler3->flag_mask = 0x80;
-	Flash_Handler3->out_buf[0] = 0;
-	Flash_Handler3->out_cnt = 1;
+	Flash_Handler3->inputCursor = 0;
+	Flash_Handler3->outTotal = 0;
+	Flash_Handler3->flagMask = 0x80;
+	Flash_Handler3->outBuf[0] = 0;
+	Flash_Handler3->outCnt = 1;
 	AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
 
-	while (Flash_Handler3->bucket_by_slot[Flash_Handler3->pos] != -1)
+	while (Flash_Handler3->bucketBySlot[Flash_Handler3->pos] != -1)
 	{
 		AudioTrack_FindWindowMatch(Flash_Handler3->pos);
 		if (defer == 0)
 		{
-			len = Flash_Handler3->match_len;
-			if (Flash_Handler3->match_len > 1)
+			len = Flash_Handler3->matchLen;
+			if (Flash_Handler3->matchLen > 1)
 			{
-				save_offset = Flash_Handler3->match_offset;
+				save_offset = Flash_Handler3->matchOffset;
 				save_len = len;
 				AudioTrack_FindWindowMatch((Flash_Handler3->pos + 1) & WINDOW_MASK);
-				if (Flash_Handler3->match_len > 2)
+				if (Flash_Handler3->matchLen > 2)
 				{
-					reach[0] = Flash_Handler3->match_len + 1;
+					reach[0] = Flash_Handler3->matchLen + 1;
 					AudioTrack_FindWindowMatch((Flash_Handler3->pos + len) & WINDOW_MASK);
-					reach[1] = Flash_Handler3->match_len + len;
+					reach[1] = Flash_Handler3->matchLen + len;
 					if (reach[0] >= reach[1])
 					{
 						save_len = 1;
 						defer = 1;
 					}
 				}
-				Flash_Handler3->match_offset = save_offset;
-				Flash_Handler3->match_len = save_len;
+				Flash_Handler3->matchOffset = save_offset;
+				Flash_Handler3->matchLen = save_len;
 			}
 		}
 
-		if (Flash_Handler3->match_len > 1)
+		if (Flash_Handler3->matchLen > 1)
 		{
 			defer = 0;
-			Flash_Handler3->out_buf[0] |= Flash_Handler3->flag_mask;
-			if (Flash_Handler3->match_len <= 16)
+			Flash_Handler3->outBuf[0] |= Flash_Handler3->flagMask;
+			if (Flash_Handler3->matchLen <= 16)
 			{
-				code = ((Flash_Handler3->match_offset << 4) & ~0xfff)
-					   | (Flash_Handler3->match_offset & 0xff)
-					   | (((Flash_Handler3->match_len - 1) << 8) & 0xf00);
-				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
-				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
+				code = ((Flash_Handler3->matchOffset << 4) & ~0xfff)
+					   | (Flash_Handler3->matchOffset & 0xff)
+					   | (((Flash_Handler3->matchLen - 1) << 8) & 0xf00);
+				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = (u16)code >> 8;
+				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = code;
 			}
 			else
 			{
-				code = ((Flash_Handler3->match_offset << 4) & ~0xfff)
-					   | (Flash_Handler3->match_offset & 0xff);
-				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
-				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
-				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = Flash_Handler3->match_len - 17;
+				code = ((Flash_Handler3->matchOffset << 4) & ~0xfff)
+					   | (Flash_Handler3->matchOffset & 0xff);
+				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = (u16)code >> 8;
+				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = code;
+				Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = Flash_Handler3->matchLen - 17;
 			}
 		}
 		else
 		{
-			Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] =
-				Flash_Handler3->bucket_by_slot[Flash_Handler3->pos];
-			Flash_Handler3->match_len = 1;
+			Flash_Handler3->outBuf[Flash_Handler3->outCnt++] =
+				Flash_Handler3->bucketBySlot[Flash_Handler3->pos];
+			Flash_Handler3->matchLen = 1;
 		}
 
 		AudioTrack_ConsumeSlotBytes(
-			Flash_Handler3->pos + PRIME_COUNT, Flash_Handler3->match_len, input);
-		Flash_Handler3->pos = (Flash_Handler3->pos + Flash_Handler3->match_len) & WINDOW_MASK;
-		Flash_Handler3->flag_mask >>= 1;
-		if (Flash_Handler3->flag_mask == 0)
+			Flash_Handler3->pos + PRIME_COUNT, Flash_Handler3->matchLen, input);
+		Flash_Handler3->pos = (Flash_Handler3->pos + Flash_Handler3->matchLen) & WINDOW_MASK;
+		Flash_Handler3->flagMask >>= 1;
+		if (Flash_Handler3->flagMask == 0)
 		{
 			AudioTrack_CopyBufferedBytes(dst);
-			Flash_Handler3->flag_mask = 0x80;
-			Flash_Handler3->out_buf[0] = 0;
-			Flash_Handler3->out_cnt = 1;
+			Flash_Handler3->flagMask = 0x80;
+			Flash_Handler3->outBuf[0] = 0;
+			Flash_Handler3->outCnt = 1;
 		}
 	}
 
-	Flash_Handler3->out_buf[0] |= Flash_Handler3->flag_mask;
-	Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = 0;
-	Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = 0;
+	Flash_Handler3->outBuf[0] |= Flash_Handler3->flagMask;
+	Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = 0;
+	Flash_Handler3->outBuf[Flash_Handler3->outCnt++] = 0;
 	AudioTrack_CopyBufferedBytes(dst);
-	return Flash_Handler3->out_total;
+	return Flash_Handler3->outTotal;
 }

@@ -9,8 +9,8 @@
 #include "menu.h"
 
 struct SaveGameWords {
-    u32 build_stamp;
-    u32 play_time;
+    u32 buildStamp;
+    u32 playTime;
 };
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gPartyState)
@@ -35,19 +35,19 @@ s32 SaveState_BuildSummaryHeader(void)
     u32 sum = 0;
 
     summary = (struct SaveSummary *)(Data_02000000 - 16);
-    SAVE_GAME_WORDS->build_stamp = Runtime_GetBuildStampTimeFar(0);
-    SAVE_GAME_WORDS->play_time = gFrameWaitCount;
+    SAVE_GAME_WORDS->buildStamp = Runtime_GetBuildStampTimeFar(0);
+    SAVE_GAME_WORDS->playTime = gFrameWaitCount;
     Data_02001000 = gFrameWaitCount;
-    gPartyState.unknown_244[6] = gAutoSleepEnabled;
-    owner = UnitGet(gPartyState.current_owner);
+    gPartyState.unk244[6] = gAutoSleepEnabled;
+    owner = UnitGet(gPartyState.currentOwner);
     destination = summary->name;
     source = owner->name;
     for (i = 11; i >= 0; i--)
         *destination++ = *source++;
     summary->level = owner->level;
-    summary->play_time = SAVE_GAME_WORDS->play_time;
+    summary->playTime = SAVE_GAME_WORDS->playTime;
     summary->area = Scene_GetAreaNameIndexFar(gPartyState.scene, gPartyState.entrance);
-    summary->class_id = owner->class_index;
+    summary->classId = owner->classIndex;
     summary->coins = gPartyState.coins;
     summary->djinn[0] = Party_SumDjinnCountsFar(0);
     summary->djinn[1] = Party_SumDjinnCountsFar(1);
@@ -57,20 +57,20 @@ s32 SaveState_BuildSummaryHeader(void)
     for (i = 0; i <= 3 && owners[i] != 255; i++)
         summary->party[i] = owners[i];
     summary->party[i] = -1;
-    summary->palette_glow = gPartyState.unknown_220[5];
-    summary->palette_glow_sub = gPartyState.unknown_220[6];
-    summary->send_flag = gPartyState.unknown_22d[2];
-    summary->flag_count = 0;
+    summary->paletteGlow = gPartyState.unk220[5];
+    summary->paletteGlowSub = gPartyState.unk220[6];
+    summary->sendFlag = gPartyState.unk22d[2];
+    summary->flagCount = 0;
     for (i = 48; i <= 127; i++) {
         if (GameFlag_Test(i))
-            summary->flag_count++;
+            summary->flagCount++;
     }
-    summary->has_flag_34 = GameFlag_Test(34) != 0;
+    summary->hasFlag34 = GameFlag_Test(34) != 0;
     {
         s32 n;
         u32 frames;
 
-        frames = SAVE_GAME_WORDS->build_stamp;
+        frames = SAVE_GAME_WORDS->buildStamp;
         word = GameFlagBytes;
         /* FAKEMATCH: keeps the two loads before the bound (differ 4 more without) */
         __asm__("" : : "r"(frames), "r"(word));

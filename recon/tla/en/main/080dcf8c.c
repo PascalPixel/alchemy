@@ -11,24 +11,24 @@ struct ItemBreakFragmentPosition {
 };
 
 struct ItemBreakFragmentSource {
-    u8 reserved_00[6];
+    u8 reserved00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 reserved_14[70];
-    u8 flag_5a;
-    u8 reserved_5b[13];
+    u8 reserved14[70];
+    u8 flag5a;
+    u8 reserved5b[13];
     struct ItemBreakFragmentSource *target;
 };
 
 struct ItemBreakFragmentObject {
-    u8 reserved_00[72];
-    s32 field_48;
-    u8 reserved_4c[9];
-    u8 mode_55;
-    u8 reserved_56[8];
-    u16 field_5e;
+    u8 reserved00[72];
+    s32 field48;
+    u8 reserved4c[9];
+    u8 mode55;
+    u8 reserved56[8];
+    u16 field5e;
 };
 
 extern s32 ArcTan2(s32, s32);
@@ -57,7 +57,7 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
                 steering_delta = -0x1000;
             source->angle += steering_delta;
         }
-        source->flag_5a = 0;
+        source->flag5a = 0;
     }
 
     position.x = source->x;
@@ -69,10 +69,10 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 
     object = Object_Spawn(0x11D, position.x, position.y, position.z);
     if (object != 0) {
-        object->mode_55 = 2;
-        object->field_48 = 0x1999;
+        object->mode55 = 2;
+        object->field48 = 0x1999;
         Object_SetMode(object, 0);
-        object->field_5e = 12;
+        object->field5e = 12;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
 }

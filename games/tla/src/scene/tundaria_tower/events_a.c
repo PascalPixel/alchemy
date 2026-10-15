@@ -53,7 +53,7 @@ void Func_020008a8(void)
     GameFlag_SetBit(0x944);
     Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
     object->gravity = 0x8000;
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     Func_02003088(8, 0, 0);
     Func_02003088(68, 0x1580000, 0x1740000);
@@ -67,9 +67,9 @@ void Func_02000920(void)
     Func_02003148(0);
     UiText_ShowPositionedMessageAndWait(MsgThereSSomething, 1);
     if (GameFlag_Test(0x949)) {
-        struct EventWork *work = Ram_HeapSlots->event_work;
+        struct EventWork *work = Ram_HeapSlots->eventWork;
 
-        work->unknown_15a = 1;
+        work->unk15a = 1;
     }
     Func_02003050();
 }

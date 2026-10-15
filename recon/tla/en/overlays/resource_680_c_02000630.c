@@ -7,22 +7,22 @@
 
 struct Slot02000630 {
     s16 kind;
-    s16 unknown_02;
+    s16 unk02;
     s32 position;
-    u8 unknown_08[8];
+    u8 unk08[8];
     s32 speed;
-    u8 unknown_14[8];
+    u8 unk14[8];
 };
 
 struct Work02000630 {
-    s32 unknown_00;
+    s32 unk00;
     struct Slot02000630 slots[8];
 };
 
 // 種類 8 の枠を探して進める
 void Func_02000630(void)
 {
-    struct Work02000630 *work = Ram_HeapSlots->unknown_84[8];
+    struct Work02000630 *work = Ram_HeapSlots->unk84[8];
     struct Slot02000630 *slot = NULL;
     s32 i;
 

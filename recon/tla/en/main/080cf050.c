@@ -23,9 +23,9 @@ void Func_080cf050(void)
                 leader->x = other->x;
                 leader->z = other->z;
                 Vector_AddPolarOffset(0x140000, ArcTan2(dz, dx), &leader->x);
-                leader->target_x = 0x80000000;
-                leader->target_y = 0x80000000;
-                leader->target_z = 0x80000000;
+                leader->targetX = 0x80000000;
+                leader->targetY = 0x80000000;
+                leader->targetZ = 0x80000000;
                 break;
             }
     }

@@ -12,7 +12,7 @@ extern u16 Data_02002ce6;
 
 void Func_02000e90(void)
 {
-    s16 *view = (s16 *)((u8 *)Ram_HeapSlots->map_work + 376);
+    s16 *view = (s16 *)((u8 *)Ram_HeapSlots->mapWork + 376);
     s32 x;
 
     Data_02002ce0 = 1448 - view[3];

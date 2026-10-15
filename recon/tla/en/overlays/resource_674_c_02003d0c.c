@@ -15,7 +15,7 @@ void Func_02003d0c(struct ObjectRuntime *object)
     hit = Func_02003fdc(&position, 1);
     if (hit != 0) {
         for (i = 0; i < 6; i++) {
-            if (*((struct BattleAnimationState *)hit->animation)->value_28 == Data_02004070[i])
+            if (*((struct BattleAnimationState *)hit->animation)->value28 == Data_02004070[i])
                 return;
         }
         Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);

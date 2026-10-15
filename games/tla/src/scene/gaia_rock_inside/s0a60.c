@@ -52,7 +52,7 @@ void Func_02000a60(struct ObjectRuntime *object)
         value = 7;
     Animation_ApplyChildValues(object, value & 7);
     if ((Data_02005ee4 & 31) == 0) {
-        object->scale_x = 0x10000;
+        object->scaleX = 0x10000;
         Func_02004dac(object, Data_02005e28);
         Func_02005014(106);
     }
@@ -67,7 +67,7 @@ void Func_02000aac(struct ObjectRuntime *object)
         value = 7;
     Animation_ApplyChildValues(object, value & 7);
     if ((Data_02005ee4 & 31) == 0) {
-        object->scale_y = 0x10000;
+        object->scaleY = 0x10000;
         Func_02004dac(object, Data_02005d6c);
         Func_02005014(106);
     }
@@ -89,13 +89,13 @@ void Func_02000af8(s32 unused, u32 id)
         direction = ret;
         state = address;
     }
-    object->collision_flags = 0;
+    object->collisionFlags = 0;
     Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
     if (direction & 0x4000)
         object->update = (void (*)(void))Func_02000aac;
     else
         object->update = (void (*)(void))Func_02000a60;
-    object->collision_flags = 1;
+    object->collisionFlags = 1;
     GameFlag_SetBit(*state + 0xa50);
     GameFlag_SetBit(0x200);
     WaitFrames(20);

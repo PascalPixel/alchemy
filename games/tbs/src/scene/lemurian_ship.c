@@ -68,7 +68,7 @@ u8 *LemurianShip_GetPlacements(void)
 
 static void EV01_TOUCH(void)
 {
-	Engine_EventRequestExit(gEventWork->touched_trigger);
+	Engine_EventRequestExit(gEventWork->touchedTrigger);
 	Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -147,14 +147,14 @@ static void SceneState_CountDownEveryFortyTicks(void)
 
 struct WaveMapLayer
 {
-	s32 unknown_00[3];
+	s32 unk00[3];
 	s32 y;
-	s32 unknown_10[8];
+	s32 unk10[8];
 };
 
 struct WaveMap
 {
-	u8					unknown_00[20];
+	u8					unk00[20];
 	struct WaveMapLayer layers[8];
 };
 
@@ -186,36 +186,36 @@ static void LemurianShip_UpdateWaves(void)
 		{
 			actor = Object_GetById(0);
 			actor->y.fixed = LemurianShip_StoredSlot0 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->terrainHeight = LemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
 		if (LemurianShip_StoredRecord1 != -0x10000)
 		{
 			actor = Object_GetById(1);
 			actor->y.fixed = LemurianShip_StoredRecord1 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->terrainHeight = LemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
 		if (LemurianShip_StoredSlot3 != -0x10000)
 		{
 			actor = Object_GetById(3);
 			actor->y.fixed = LemurianShip_StoredSlot3 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->terrainHeight = LemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
 		if (LemurianShip_StoredRecord2 != -0x10000)
 		{
 			actor = Object_GetById(2);
 			actor->y.fixed = LemurianShip_StoredRecord2 + swell;
-			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
-			actor->motion_flags = 0;
+			actor->terrainHeight = LemurianShip_StoredSlot0 + swell;
+			actor->motionFlags = 0;
 		}
 		LemurianShip_SwellPhase++;
 	}
 	if (LemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0)
 	{
-		x = map->layers[4].unknown_10[0] & -0x10000;
-		z = map->layers[4].unknown_10[1] & -0x10000;
+		x = map->layers[4].unk10[0] & -0x10000;
+		z = map->layers[4].unk10[1] & -0x10000;
 		x += Random_Next() * 240;
 		pos = &place;
 		pos->x = x;
@@ -229,8 +229,8 @@ static void LemurianShip_UpdateWaves(void)
 			actor->update = (void (*)(union FieldObject *))LemurianShip_UpdateDriftingObject;
 			actor->timer = 60;
 			actor->work = 1;
-			actor->motion_flags = 0;
-			actor->priority_flags = 2;
+			actor->motionFlags = 0;
+			actor->priorityFlags = 2;
 			actor->sprite->priority = 2;
 			Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
 			Object_SetMode(actor, 0);
@@ -492,9 +492,9 @@ static void Scene_RunExtendedPresentationSequence(void)
 	ship = Object_GetById(8);
 	ship->acceleration = 131;
 	ship->speed = 0x20000;
-	scroll->layers[0].speed_x = -0x3000;
+	scroll->layers[0].speedX = -0x3000;
 	ObjectMotion_CommitPositionAndActivate(8, 60, 0);
-	scroll->layers[0].speed_x = -0x6000;
+	scroll->layers[0].speedX = -0x6000;
 	ObjectMotion_CommitPositionAndActivate(8, 60, 0);
 	Engine_EventWait(80);
 	Engine_EventWait(100);
@@ -502,9 +502,9 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_CameraMoveTo(52953088, -1, 11010048, 1);
 	Engine_EventWait(300);
 	event = gMapWork[19];
-	event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Io_Write16(0, &PLTT_BACKDROP);
-	event->transition_frames = 96;
+	event->transitionFrames = 96;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
@@ -521,7 +521,7 @@ union GameStateRows
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) \
-	((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
+	((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->secondPriority = 1))
 
 struct ScrollWork
 {
@@ -529,7 +529,7 @@ struct ScrollWork
 	u8	page;
 	u8	mode;
 	u16 phase;
-	u8	unknown_f04[4];
+	u8	unkf04[4];
 	s32 frequency[2];
 	s32 step[2];
 	s32 amplitude[2];
@@ -647,12 +647,12 @@ s32 LemurianShip_SetupScene(void)
 	{
 		Inventory_AddItem(0, 242);
 	}
-	((struct EventWork *)gMapWork[19])->start_transition =
+	((struct EventWork *)gMapWork[19])->startTransition =
 		SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	Object_GetById(8)->collision_flags = 0;
-	Object_GetById(8)->priority_flags = 2;
-	Object_GetById(9)->collision_flags = 0;
-	Object_GetById(9)->priority_flags = 2;
+	Object_GetById(8)->collisionFlags = 0;
+	Object_GetById(8)->priorityFlags = 2;
+	Object_GetById(9)->collisionFlags = 0;
+	Object_GetById(9)->priorityFlags = 2;
 	{
 		struct FieldActor *actor = Object_GetById(8);
 

@@ -25,7 +25,7 @@ void Func_020034b8(s32 cue);
 // 4 pixels at once and then 128 more, before the screen transition finishes.
 void Func_02001518(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *object;
 
     Func_02003398();
@@ -41,15 +41,15 @@ void Func_02001518(void)
         s32 x = ((leader->x >> 20) << 4) + 8;
         s32 z = ((leader->z >> 20) << 4) + 8;
 
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, x, z);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, x, z);
     }
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 10);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 10);
     Battle_WaitMode0(30);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native; called directly the
      * three share one register, two instructions shorter (differ 12). */
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
-    object->speed_limit = 0x20000;
+    object->speedLimit = 0x20000;
     object->acceleration = 0x800;
     Func_020034b8(198);
     Func_02003310(object, object->x, object->y + 0x40000, object->z);

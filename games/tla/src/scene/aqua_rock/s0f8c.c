@@ -2,8 +2,8 @@
 #include "map.h"
 
 struct AquaRockEventWork {
-    u8 unknown_000[0x16a];
-    s16 field_16a;
+    u8 unk000[0x16a];
+    s16 field16a;
 };
 
 void Func_02001e00(void);
@@ -11,25 +11,25 @@ void Func_02001e00(void);
 static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col)
 {
     cells += row * 128 + col;
-    return cells->attribute_b;
+    return cells->attributeB;
 }
 
 void Func_02000f8c(void)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
-    struct AquaRockEventWork *work = Ram_HeapSlots->event_work;
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct MapWork *map = Ram_HeapSlots->mapWork;
+    struct AquaRockEventWork *work = Ram_HeapSlots->eventWork;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x;
     s32 z = object->z;
     s32 y = object->y;
     s32 col;
     s32 row;
 
-    if (gPartyState.render_mode == 2) {
+    if (gPartyState.renderMode == 2) {
         col = x >> 20;
         row = (z - y - 0xc0000) >> 20;
         if (CellAttribute(map->layers[1].cells, row, col) != 0)
-            work->field_16a = 44;
+            work->field16a = 44;
     } else {
         col = x >> 20;
         row = (z - y) >> 20;

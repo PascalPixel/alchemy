@@ -39,7 +39,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 
     if (slot >= RESOURCE_SLOT_COUNT)
         return 0;
-    work = Ram_HeapSlots->object_system;
+    work = Ram_HeapSlots->objectSystem;
     record = &work->slots[slot];
     metadata = Resource_GetMetadataRecordFar(number);
     record->tag = (slot << 12) | number;
@@ -87,7 +87,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 
 s32 Animation_LookupValueByKey(s32 key)
 {
-    struct ObjectSystemWork *work = Ram_HeapSlots->object_system;
+    struct ObjectSystemWork *work = Ram_HeapSlots->objectSystem;
     u32 no;
     struct ResourceSlot *p;
 

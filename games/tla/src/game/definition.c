@@ -29,7 +29,7 @@ struct ItemDefinition *Item_GetDirect(s32 item)
 
 //--------------------------------------------------------------------------
 // キャラクターがアイテムを装備できるか
-// equip_mask の class_id 番目のビットで決まり、class_id が 8 以上なら 0
+// equipMask の classId 番目のビットで決まり、classId が 8 以上なら 0
 //--------------------------------------------------------------------------
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 {
@@ -37,13 +37,13 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 	struct OwnerInventoryState *st = UnitGet(unit);
 #endif
 	struct ItemDefinition *def = Item_GetDirect(item);
-	s32					   mask = def->equip_mask;
+	s32					   mask = def->equipMask;
 
-	if (st->class_id >= 8)
+	if (st->classId >= 8)
 	{
 		return 0;
 	}
-	return (mask >> st->class_id) & 1;
+	return (mask >> st->classId) & 1;
 }
 
 //--------------------------------------------------------------------------

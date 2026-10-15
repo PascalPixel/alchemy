@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct ChannelTransition {
-    u8 unknown_00[28];
+    u8 unk00[28];
     u16 transition;
 };
 

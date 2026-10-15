@@ -10,20 +10,20 @@ void Func_02000d9c(void);
 void Func_02000ca4(s32 mode);
 
 struct DailaStartActor {
-    u8 unknown_00[0x18];
-    s32 speed_18;
-    s32 speed_1c;
-    u8 unknown_20[3];
-    u8 priority_flags;
-    u8 unknown_24[0x35];
-    u8 collision_flags;
+    u8 unk00[0x18];
+    s32 speed18;
+    s32 speed1c;
+    u8 unk20[3];
+    u8 priorityFlags;
+    u8 unk24[0x35];
+    u8 collisionFlags;
 };
 
 struct DailaMapWork {
-    u8 unknown_000[0x17];
-    u8 low_17 : 2;
-    u8 mode_17 : 2;
-    u8 high_17 : 4;
+    u8 unk000[0x17];
+    u8 low17 : 2;
+    u8 mode17 : 2;
+    u8 high17 : 4;
 };
 
 extern const u8 Data_02000e04[];
@@ -40,7 +40,7 @@ s32 DailaInteriors_Start(void)
 {
     struct DailaMapWork *map;
 
-    ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     if (gPartyState.scene == (s32)&SceneId_DailaInteriors1) {
         if (gPartyState.entrance == 7) {
             Func_02000c58();
@@ -51,14 +51,14 @@ s32 DailaInteriors_Start(void)
                 Object_SetModeById(25, 5);
                 ObjectDispatch_SetSingleChildFlags(Object_GetById(25), 0);
             }
-            Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-            Object_GetById(13)->priority_flags |= 32;
-            Object_GetById(19)->priority_flags |= 32;
+            Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+            Object_GetById(13)->priorityFlags |= 32;
+            Object_GetById(19)->priorityFlags |= 32;
             Engine_ActorSetSpritePriority(19, 2);
-            Object_GetById(19)->collision_flags |= 4;
+            Object_GetById(19)->collisionFlags |= 4;
         }
     } else if (gPartyState.scene == (s32)&SceneId_DailaInteriors2) {
-        map = (struct DailaMapWork *)Ram_HeapSlots->map_work;
+        map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
@@ -67,19 +67,19 @@ s32 DailaInteriors_Start(void)
             Func_02000cbc(Object_GetById(9), 458);
             ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
             Engine_ActorSetSpritePriority(9, 1);
-            Object_GetById(9)->speed_1c = 0x13333;
-            Object_GetById(9)->speed_18 = 0x13333;
-            Object_GetById(9)->collision_flags |= 4;
-            Object_GetById(13)->collision_flags |= 4;
+            Object_GetById(9)->speed1c = 0x13333;
+            Object_GetById(9)->speed18 = 0x13333;
+            Object_GetById(9)->collisionFlags |= 4;
+            Object_GetById(13)->collisionFlags |= 4;
         } else {
-            Object_GetById(9)->collision_flags |= 4;
+            Object_GetById(9)->collisionFlags |= 4;
             ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
         }
         if (!GameFlag_Test(0x873)) {
             Func_02000d4c(10, 0, 0);
             Func_02000d4c(11, 0, 0);
             Func_02000d4c(12, 0, 0);
-            map->mode_17 = 1;
+            map->mode17 = 1;
         } else {
             Func_02000dc4(Data_02000e04);
         }
@@ -99,9 +99,9 @@ s32 Scene_PrepareMap(void)
 
 void Func_02000c58(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screen_effect = 0x209;
+    work->screenEffect = 0x209;
     GameFlag_ClearBit(0x12f);
 }
 

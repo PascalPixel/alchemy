@@ -10,7 +10,7 @@ struct LightOam {
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u16 unknown_0a;
+    u16 unk0a;
 };
 
 extern s16 Data_0200275c;
@@ -27,13 +27,13 @@ void Func_02001d80(struct LightOam *oam, s32 depth);
 
 void Func_02000e58(void)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s32 *camera = (s32 *)((u8 *)map + 228);
     s32 camera_x = camera[0] & 0xffff0000;
     s32 camera_z = camera[1] & 0xffff0000;
     s32 tile = ResourceTableEntries[Data_0200275c].offset >> 5;
     struct LightOam *oam = Data_020027a0;
-    s32 origin_y = map->origin[1];
+    s32 originY = map->origin[1];
     s32 i;
 
     for (i = 0; i < Data_0200275e; i++) {
@@ -44,8 +44,8 @@ void Func_02000e58(void)
         if (actor == 0 || actor->x == 0)
             continue;
         x = actor->x - camera_x;
-        y = actor->y - origin_y + 0x80000;
-        z = actor->z - camera_z - origin_y;
+        y = actor->y - originY + 0x80000;
+        z = actor->z - camera_z - originY;
         sy = z - y;
         depth = ((y + z) >> 16) + 58;
         sx = x >> 16;

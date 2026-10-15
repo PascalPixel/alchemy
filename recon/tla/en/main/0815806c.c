@@ -59,17 +59,17 @@ void Func_0815806c(struct BattleEffectArgument *effect)
     s32 i;
     s32 curtain_y;
 
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    sheet = Ram_HeapSlots->unk64[0];
     BattleFx_BeginCanvasLayer(0);
     draw = callbacks;
     Func_08144aac(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     member = 0;
@@ -88,10 +88,10 @@ void Func_0815806c(struct BattleEffectArgument *effect)
             mote = &PARTICLES[member * 16 + i];
             mote->x = (((Random16() & 15) + step->x) - 8) << 16;
             mote->y = ((Random16() & 7) + 96) << 16;
-            mote->velocity_x = ((Random16() & 127) - 64) << 11;
-            mote->velocity_y = ((Random16() & 127) - 64) << 10;
+            mote->velocityX = ((Random16() & 127) - 64) << 11;
+            mote->velocityY = ((Random16() & 127) - 64) << 10;
             mote->z = Random16() & 0xffff;
-            mote->velocity_z = Random16() & 0xffff;
+            mote->velocityZ = Random16() & 0xffff;
         }
         step++;
         member++;
@@ -116,7 +116,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
         }
         if (frame == 32) {
             Audio_PlayCue(0x91);
-            work->shake_frames = 8;
+            work->shakeFrames = 8;
             Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
         }
         if (frame > 31) {
@@ -166,7 +166,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
         curtain_y += 8;
         frame++;

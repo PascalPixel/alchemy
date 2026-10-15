@@ -16,7 +16,7 @@ s32 *ImilFuchinFalls_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 ImilFuchinFalls_ApplyEntryHook(void);
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags, const struct EffectOptions *extra);
+void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *extra);
 extern s32 *gEffectScripts[];
 extern s16 gImilFuchinFallsKeyHeadings[];
 extern s16 gImilFuchinFallsHeadings[];

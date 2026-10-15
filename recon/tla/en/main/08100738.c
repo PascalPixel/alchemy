@@ -3,40 +3,40 @@
 #include "battle_type.h"
 
 struct ItemOwner {
-    u8 padding_000[0x10];
-    u16 stat_10;
-    u16 stat_12;
-    u8 padding_014[4];
-    u16 stat_18;
-    u16 stat_1a;
-    u16 stat_1c;
-    u8 stat_1e;
-    u8 padding_01f[0x15];
-    s16 max_hp;
-    s16 max_pp;
+    u8 padding000[0x10];
+    u16 stat10;
+    u16 stat12;
+    u8 padding014[4];
+    u16 stat18;
+    u16 stat1a;
+    u16 stat1c;
+    u8 stat1e;
+    u8 padding01f[0x15];
+    s16 maxHp;
+    s16 maxPp;
     s16 hp;
     s16 pp;
-    u8 padding_03c[0x9c];
+    u8 padding03c[0x9c];
     u16 items[15];
-    u8 padding_0f6[0x3b];
+    u8 padding0f6[0x3b];
     s8 poison;
 };
 
 struct ItemData {
-    u8 padding_00[0x0c];
+    u8 padding00[0x0c];
     u8 kind;
-    u8 padding_0d[0x1b];
-    u16 use_ability;
+    u8 padding0d[0x1b];
+    u16 useAbility;
 };
 
 struct ItemUseWork {
-    u8 padding_000[0x1c8];
+    u8 padding000[0x1c8];
     u16 entries[32];
     u16 targets[8];
-    u8 entry_count;
-    u8 target_count;
-    u8 padding_21a[0x40];
-    s16 result_code;
+    u8 entryCount;
+    u8 targetCount;
+    u8 padding21a[0x40];
+    s16 resultCode;
 };
 
 extern struct ItemUseWork *gMenuWork;
@@ -47,7 +47,7 @@ u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 
-s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
+s32 Item_Use(s32 slot, s32 owner_id, s32 targetId)
 {
     struct ItemUseWork *work;
     s32 result;
@@ -60,15 +60,15 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     item_id = 0x1ff & owner->items[slot];
     item = Item_Get(item_id);
     result = BattleEffect_ApplyToTargets(
-        0x3fff & item->use_ability,
+        0x3fff & item->useAbility,
         owner_id,
-        target_id,
+        targetId,
         1);
     if (result != -1) {
         item = Item_Get(owner->items[slot]);
         if (item->kind == 1) {
             Inventory_RemoveFar(owner_id, slot);
-            work->entry_count =
+            work->entryCount =
                 ItemMenu_Collect(owner, work->entries, 0);
         }
         if (item->kind == 4) {

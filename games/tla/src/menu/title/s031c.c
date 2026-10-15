@@ -36,9 +36,9 @@ fade:
     WaitFrames(3);
     if (++i <= 16)
         goto fade;
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 0;
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 436) = 1;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 1;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 436) = 60;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 60;
 }

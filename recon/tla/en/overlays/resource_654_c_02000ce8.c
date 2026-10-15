@@ -14,9 +14,9 @@ void Event_StartScreenTransition(void);
 
 void Func_02000ce8(void)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
     struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[1];
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     u32 i;
 
     Func_020039d8();
@@ -26,14 +26,14 @@ void Func_02000ce8(void)
     ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
     ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
     WaitFrames(1);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-    leader->motion_flags = 0;
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+    leader->motionFlags = 0;
     leader->y = -50 << 16;
     leader->height = -50 << 16;
     layer->y += -50 << 16;
     Func_02003988();
     WaitFrames(1);
-    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 515;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 515;
     Event_StartScreenTransition();
     Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
     i = 0;
@@ -48,8 +48,8 @@ loop:
     Func_02003b48(288);
     Func_02003b48(390);
     Call3((void (*)())Func_020039b8, 0, 0, 0);
-    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
     ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
     WaitFrames(1);
     Func_020039e0();

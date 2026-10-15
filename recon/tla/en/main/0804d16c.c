@@ -3,7 +3,7 @@
  * and gInput, the keys read through a volatile view of gInput, as the native
  * reloads the pressed keys at each test (plain: differ 42). One empty asm
  * barrier after the first store (found by a device search, differ 8
- * without). Remaining: the native starts resource_base's address between the
+ * without). Remaining: the native starts resourceBase's address between the
  * selection's address copy and its store; it loads gInput's address before
  * it adds the count's offset; after the selection's increment it shifts
  * before it loads the count. Moving the barrier or wrapping the stores in a
@@ -26,17 +26,17 @@ void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
-    struct ResourceMenuWork *work = Ram_HeapSlots->menu_select_work;
+    struct ResourceMenuWork *work = Ram_HeapSlots->menuSelectWork;
     s32 resource;
 
     work->selection = initial;
     asm("");
 redraw:
     RenderOutput_PrepareForRedraw(work->window);
-    if (work->resource_base != 0)
-        resource = work->resource_base + work->selection;
+    if (work->resourceBase != 0)
+        resource = work->resourceBase + work->selection;
     else
-        resource = work->resource_ids[work->selection] + (s32)MsgCommandName;
+        resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
     UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
     for (;;) {
         WaitFrames(1);

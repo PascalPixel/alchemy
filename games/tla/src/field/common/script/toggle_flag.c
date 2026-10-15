@@ -9,8 +9,8 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter)
     s32 value;
 
     value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = GameFlag_Test(value);
-    if (interpreter->condition_result == 1)
+    interpreter->conditionResult = GameFlag_Test(value);
+    if (interpreter->conditionResult == 1)
         GameFlag_ClearBit(value);
     else
         GameFlag_SetBit(value);

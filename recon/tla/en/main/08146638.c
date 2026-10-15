@@ -24,12 +24,12 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x20];
+    u8 unk7788[0x20];
     s32 shakeFrames;
-    u8 unknown_77ac[0x13c];
+    u8 unk77ac[0x13c];
     s32 transferPending;
 };
 
@@ -40,7 +40,7 @@ struct BattleObjectSlot
 
 struct CameraView
 {
-    u8 unknown_00[0x36];
+    u8 unk00[0x36];
     u16 yaw;
 };
 
@@ -102,10 +102,10 @@ void Func_08146638(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    graphics = Ram_HeapSlots->unknown_64[0];
-    camera = Ram_HeapSlots->camera_work;
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    graphics = Ram_HeapSlots->unk64[0];
+    camera = Ram_HeapSlots->cameraWork;
     caster = GetBattleObjectSlotFar(effect->actor)->object;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
@@ -115,7 +115,7 @@ void Func_08146638(struct BattleEffectArgument *effect)
     Func_081963ec(104, 0x13);
     work->transferMode = 2;
     work->transferValue = 75;
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     source = GetBattleObjectSlotFar(effect->actor)->object;
@@ -126,11 +126,11 @@ void Func_08146638(struct BattleEffectArgument *effect)
         point->y = source->y + 0x280000;
         point->z = source->z;
         if (i == 0)
-            point->velocity_x = (target->x - point->x) / 12;
+            point->velocityX = (target->x - point->x) / 12;
         else
-            point->velocity_x = (target->x * 2 - point->x) / 12;
-        point->velocity_y = (target->y - point->y + 0x280000) / 12;
-        point->velocity_z = (target->z - point->z) / 12;
+            point->velocityX = (target->x * 2 - point->x) / 12;
+        point->velocityY = (target->y - point->y + 0x280000) / 12;
+        point->velocityZ = (target->z - point->z) / 12;
         point->variant = 0;
         point++;
     }
@@ -183,10 +183,10 @@ void Func_08146638(struct BattleEffectArgument *effect)
                     if (peak < depth)
                         peak = depth;
                     pos.x >>= 1;
-                    trails[i * 10 + j].velocity_x = pos.x + base.x;
-                    trails[i * 10 + j].velocity_y = pos.y + base.y;
-                    trails[i * 10 + j].velocity_x = pos.x;
-                    trails[i * 10 + j].velocity_y = pos.y;
+                    trails[i * 10 + j].velocityX = pos.x + base.x;
+                    trails[i * 10 + j].velocityY = pos.y + base.y;
+                    trails[i * 10 + j].velocityX = pos.x;
+                    trails[i * 10 + j].velocityY = pos.y;
                     Graphics_RestoreTransferWork();
                 }
                 if (peak <= 399999)
@@ -200,24 +200,24 @@ void Func_08146638(struct BattleEffectArgument *effect)
 
                         for (k = 0; k != 16; k++)
                         {
-                            s32 x = from->velocity_x + (to->velocity_x - from->velocity_x) * k / 16;
-                            s32 y = from->velocity_y + (to->velocity_y - from->velocity_y) * k / 16;
+                            s32 x = from->velocityX + (to->velocityX - from->velocityX) * k / 16;
+                            s32 y = from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
                             draw[0](canvas, graphics + Data_08197410[size - 1],
                                 x - size / 2, y - size, size, size * 2);
                         }
                     }
                 }
-                step->x += step->velocity_x;
-                step->y += step->velocity_y;
-                step->z += step->velocity_z;
+                step->x += step->velocityX;
+                step->y += step->velocityY;
+                step->z += step->velocityZ;
                 if (frame == start + i + 10)
                 {
                     target->acceleration = 0x20000;
-                    target->speed_limit = 0x80000;
-                    target->velocity_y = 0x50000;
+                    target->speedLimit = 0x80000;
+                    target->velocityY = 0x50000;
                     target->gravity = 0xab85;
-                    target->action_flags = 0;
+                    target->actionFlags = 0;
                     Object_ResetMotion(target);
                     if (target->x < 0)
                         Object_SetPosition(target, target->x - 0x280000, 0, target->z);

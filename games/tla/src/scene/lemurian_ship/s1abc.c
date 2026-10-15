@@ -11,7 +11,7 @@ void Func_02002b98(void);
 
 s32 Func_02001abc(void)
 {
-    ((struct LemurianShipEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     if (GameFlag_Test(0x9b4))
         GameFlag_SetBit(0x144);
     if (gPartyState.scene == (s32)&SceneId_Ov656Room1) {

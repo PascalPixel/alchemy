@@ -7,7 +7,7 @@ struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     s32 column = x;
     if (*(s8 *)(event + 394) == 3) {
         s32 position[3];
@@ -17,7 +17,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer)
         position[2] = z;
         column = (u32)(GetWorldMapCollisionFar(position) - 5) <= 1;
     } else {
-        s32 code = Func_080dbb78(column, z, 2)->collision_code;
+        s32 code = Func_080dbb78(column, z, 2)->collisionCode;
 
         code ^= 232;
         column = (u32)(-code | code) >> 31;

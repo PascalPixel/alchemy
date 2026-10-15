@@ -97,18 +97,18 @@ struct GabombaCatacombsVec {
 };
 
 struct GabombaCatacombsFollower {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     s32 z;
 };
 
 struct GabombaCatacombsEventWork {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct GabombaCatacombsFollower *follower;
 };
 
 struct GabombaCatacombsParty {
-    u8 unknown_000[0x254];
-    u16 value_254;
+    u8 unk000[0x254];
+    u16 value254;
 };
 
 #endif

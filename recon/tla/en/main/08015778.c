@@ -5,8 +5,8 @@ struct Projection {
     s32 focal;
     s32 near;
     s32 far;
-    s32 center_x;
-    s32 center_y;
+    s32 centerX;
+    s32 centerY;
 };
 
 struct ProjectedPoint {
@@ -36,8 +36,8 @@ s32 Render_ProjectPoint(s32 *point, struct ProjectedPoint *screen)
         } else {
             scale = 0x151eb;
         }
-        x = projection->center_x + Iwram_MulQ16(view.x, scale) / 0x10000;
-        screen->y = projection->center_y - Iwram_MulQ16(view.y, scale) / 0x10000;
+        x = projection->centerX + Iwram_MulQ16(view.x, scale) / 0x10000;
+        screen->y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
         screen->x = x;
         return scale;
     }

@@ -36,7 +36,7 @@ void Func_02000884(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
         object->z = *pos;
         object->angle = dir;
         zero.v = 0;
-        object->motion_flags = zero.v;
+        object->motionFlags = zero.v;
         ((u8 *)object->animation)[26] = zero.v;
         ObjectDispatch_ApplyValueToChildren(object, value);
     }

@@ -15,15 +15,15 @@
 #include "frame.h"
 
 struct GaiaRockInsideOrbit {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x30];
-    s32 centre_x;
-    s32 centre_z;
+    u8 unk14[0x30];
+    s32 centreX;
+    s32 centreZ;
     s32 radius;
-    u8 unknown_50[0x12];
+    u8 unk50[0x12];
     u8 phase;
     u8 growth;
     s16 angle;
@@ -44,9 +44,9 @@ s32 Func_0200142c(struct GaiaRockInsideOrbit *object)
     *angle += *speed;
     object->x = Iwram_MulQ16(Math_Cosine(*angle), object->radius);
     z = Iwram_MulQ16(Math_Sine(*angle), object->radius);
-    object->x += object->centre_x;
+    object->x += object->centreX;
     growth = (u8 *)angle - 1;
-    object->z = (z >> 1) + object->centre_z;
+    object->z = (z >> 1) + object->centreZ;
     if (*growth != 141 && (gFrameCount & 1)) {
         object->radius = *growth * Math_Sine(object->phase << 10);
         *growth += 10;

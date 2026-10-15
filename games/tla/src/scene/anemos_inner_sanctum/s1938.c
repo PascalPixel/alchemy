@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct AnemosInnerSanctumEventWork {
-    u8 unknown_000[0x1ac];
-    s32 value_1ac;
+    u8 unk000[0x1ac];
+    s32 value1ac;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -30,11 +30,11 @@ void Func_02001938(void)
         object = Object_GetById(9);
     else
         object = Object_GetById(10);
-    if (*(s16 *)((u8 *)Object_GetById(gPartyState.current_owner) + 18) <= 247) {
-        object->motion_flags = 0;
+    if (*(s16 *)((u8 *)Object_GetById(gPartyState.currentOwner) + 18) <= 247) {
+        object->motionFlags = 0;
         object->update = Func_020017b4;
-        object->unknown_4c = Object_GetById(gPartyState.current_owner)->x;
-        object->acceleration = Object_GetById(gPartyState.current_owner)->z;
+        object->unk4c = Object_GetById(gPartyState.currentOwner)->x;
+        object->acceleration = Object_GetById(gPartyState.currentOwner)->z;
         GameFlag_SetBit(0x200);
     }
 }

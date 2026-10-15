@@ -23,7 +23,7 @@ extern char ResourceId_CommandIcons;
 
 void Menu_LoadSelectedResource(void)
 {
-    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
     struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
     struct SelectionNode *transfer;
     GlyphTransfer *buffer;
@@ -53,15 +53,15 @@ void Menu_LoadSelectedResource(void)
     transfer->kind = 1;
     transfer->base = no;
     transfer->scale = 40;
-    transfer->scale_step = 40;
-    transfer->scale_end = 240;
+    transfer->scaleStep = 40;
+    transfer->scaleEnd = 240;
     Runtime_ReleaseHeapBlock(68);
 }
 
 void Resource_ResetPendingTransfer(void)
 {
     struct SelectionNode *transfer =
-        &((struct SelectionScreen *)Ram_HeapSlots->menu_work)->records[15];
+        &((struct SelectionScreen *)Ram_HeapSlots->menuWork)->records[15];
 
     if (transfer->kind != 0) {
         Resource_ResetEntry(transfer->slot);

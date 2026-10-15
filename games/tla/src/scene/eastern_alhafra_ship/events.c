@@ -91,7 +91,7 @@ void Func_0200013c(s32 id)
     Call2((void (*)())Func_02003290, (s32)Object_GetById(id), 2);
     Call1((void (*)())Func_020032a8, 201);
     Call1((void (*)())Battle_WaitMode0, 30);
-    flags = &object->motion_flags;
+    flags = &object->motionFlags;
     *flags = 4;
     for (i = 39; i >= 0; i--) {
         s32 y = object->y;

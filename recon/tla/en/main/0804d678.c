@@ -11,8 +11,8 @@ void Menu_DrawModeLabel(void)
 {
     struct MenuModeLabelState *state = gMenuSelectWork;
 
-    if (state->previous_mode != state->mode) {
-        state->previous_mode = state->mode;
+    if (state->previousMode != state->mode) {
+        state->previousMode = state->mode;
         UiWindow_ClearInteriorTiles(state->window, 8, 40, 144, 80);
 
         if (state->mode != 1) {

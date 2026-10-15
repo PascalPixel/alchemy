@@ -3,21 +3,21 @@
 #include "party_state.h"
 
 struct Orbiter {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[15];
-    u8 flags_23;
-    u8 unknown_24[44];
+    u8 unk14[15];
+    u8 flags23;
+    u8 unk24[44];
     void **animation;
     u8 kind;
-    u8 unknown_55[13];
+    u8 unk55[13];
     u8 phase;
-    u8 unknown_63;
-    s16 center_x;
-    s16 center_z;
+    u8 unk63;
+    s16 centerX;
+    s16 centerZ;
     void *link;
 };
 
@@ -53,7 +53,7 @@ void Func_02000550(void)
         Func_020020f0(0);
         GameFlag_SetBit(515);
         /* FAKEMATCH: a u16 local stores its 0 from a register (movs, strh); the constant would load from the pool (differ 11). */
-        *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x166) = zero;
+        *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
         i = 0;
     loop:
         actor->phase += Data_02006b38[i] * direction;

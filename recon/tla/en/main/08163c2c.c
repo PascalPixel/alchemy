@@ -28,9 +28,9 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
 
     /* FAKEMATCH: the one-pass block stores the value argument before 0x03000000 is started and builds the delay array's address in one add (add r2, sp, #8), as the native does (differ 9 without it). */
     do {
-        canvas = Ram_HeapSlots->battle_fx_work[1];
+        canvas = Ram_HeapSlots->battleFxWork[1];
     } while (0);
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 
@@ -52,7 +52,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                             canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] = 1 - value;
                 }
             }
-            work->transfer_pending = 1;
+            work->transferPending = 1;
             WaitFrames(1);
         } while (front <= 256);
     } else if (mode != 3) {
@@ -73,7 +73,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                             canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] = 1 - value;
                 }
             }
-            work->transfer_pending = 1;
+            work->transferPending = 1;
             WaitFrames(1);
         } while (front <= 191);
     }

@@ -14,7 +14,7 @@ static inline void RegSet(s32 value, s32 reg)
 
 void Func_02000070(void)
 {
-    u8 *map = (u8 *)Ram_HeapSlots->map_work;
+    u8 *map = (u8 *)Ram_HeapSlots->mapWork;
     s32 *layer;
     s32 i;
 

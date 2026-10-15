@@ -1,21 +1,21 @@
 #include "kibombo.h"
 
 struct KibomboWork90 {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     struct KibomboObject *leader;
 };
 
 void Func_02002ad8(void)
 {
-    struct KibomboWork90 *work = Ram_HeapSlots->unknown_84[3];
+    struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state's address before it builds the owner's offset (2 differ without it). */
-    work->leader = Object_GetById(gPartyState.current_owner);
+    work->leader = Object_GetById(gPartyState.currentOwner);
 }
 
 void Func_02002af8(void)
 {
-    struct KibomboWork90 *work = Ram_HeapSlots->unknown_84[3];
+    struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
 
     work->leader = 0;
 }

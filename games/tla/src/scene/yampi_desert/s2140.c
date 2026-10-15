@@ -2,7 +2,7 @@
 
 void Func_02002140(void)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
     u32 x = leader->x >> 20;
     u32 z = leader->z >> 20;
 

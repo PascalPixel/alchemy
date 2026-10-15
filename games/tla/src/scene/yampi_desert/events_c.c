@@ -17,7 +17,7 @@ void Func_02002ce0(s32 id)
     Func_020040f8(id);
     Object_SetPartAttribute(Object_GetById(id), 15);
     ObjectMotion_SetActionVariant(id, 1);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02002d10(void)

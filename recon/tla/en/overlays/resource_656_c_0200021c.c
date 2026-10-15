@@ -31,7 +31,7 @@ static inline void LemurianShip_ObjCenter(s32 actor, s32 a, s32 b)
 
 void Func_0200021c(void)
 {
-    struct LemurianShipEventWork *work = Ram_HeapSlots->event_work;
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
     struct LemurianShipObject *object;
     u8 *entry;
     s32 offset;
@@ -45,7 +45,7 @@ void Func_0200021c(void)
 next:
     object = Object_GetById(i);
     if (object != NULL)
-        object->motion_flags = 0;
+        object->motionFlags = 0;
     i++;
     if (i < 64)
         goto next;
@@ -60,13 +60,13 @@ next2:
     if (i < 10)
         goto next2;
     Func_02002de0(158);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
     LemurianShip_MapCopy(0, 0, Data_02003904[found].x, Data_02003904[found].z, 1, 2);
     Func_02002c28(Data_02003904[found].value, Data_02003904[found].x, Data_02003904[found].z + 60);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    LemurianShip_ObjSpeed(gPartyState.current_owner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    LemurianShip_ObjSpeed(gPartyState.currentOwner, 0x8000, 0x4000);
     {
-        s32 owner = gPartyState.current_owner;
+        s32 owner = gPartyState.currentOwner;
 
         if (found == 12)
             LemurianShip_ObjOffset(owner, 0, -4);

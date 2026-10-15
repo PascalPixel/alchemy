@@ -13,7 +13,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, 
     u16 c;
     s16 start;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     start = x;
     if (text == NULL)
     {

@@ -4,17 +4,17 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 
@@ -133,7 +133,7 @@ void Func_020008f4(void)
     struct ObjectRuntime *object;
 
     if (Func_020011fc() != 0) {
-        object = Object_GetById(Func_02001184(gPartyState.current_owner));
+        object = Object_GetById(Func_02001184(gPartyState.currentOwner));
         Func_0200014c(Data_020013ca);
         Func_02001204();
         Func_020008d0(object);

@@ -14,15 +14,15 @@ union HeapState
 {
 	struct
 	{
-		void *next_ewram;
-		void *next_iwram;
+		void *nextEwram;
+		void *nextIwram;
 		void *blocks[62];
 	} heap;
 	void *slots[64];
 };
 
 LAYOUT_SIZE_GUARD(HeapState_Size, union HeapState, 0x100);
-LAYOUT_OFFSET_GUARD(HeapState_Iwram, union HeapState, heap.next_iwram, 4);
+LAYOUT_OFFSET_GUARD(HeapState_Iwram, union HeapState, heap.nextIwram, 4);
 LAYOUT_OFFSET_GUARD(HeapState_Blocks, union HeapState, heap.blocks, 8);
 
 enum HeapSlot

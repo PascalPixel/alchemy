@@ -16,9 +16,9 @@ extern u32 Data_02003c0c[];
 extern u32 Data_02003c84[];
 
 struct EventTransition {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 type;
-    u8 unknown_1b0[4];
+    u8 unk1b0[4];
     s32 frames;
 };
 
@@ -33,7 +33,7 @@ s32 Func_020004d4(void)
 {
     struct PartyState *party;
     s32 scene;
-    s32 *type = &((struct EventTransition *)Ram_HeapSlots->event_work)->type;
+    s32 *type = &((struct EventTransition *)Ram_HeapSlots->eventWork)->type;
 
 #ifdef TLA_EDITION_JA
     *type = 516;
@@ -42,7 +42,7 @@ s32 Func_020004d4(void)
 #endif
     party = &gPartyState;
     if (party->scene != (s32)&SceneId_Ov685Room1)
-        Object_GetById(party->current_owner)->priority_flags |= 0x20;
+        Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
     Func_020035ac(0);
     scene = party->scene;
     if (scene == (s32)&SceneId_Ov685Room4) {
@@ -56,7 +56,7 @@ s32 Func_020004d4(void)
         if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
             Func_0200361c(10, 326);
             Func_020034d4(10, 664 << 16, 232 << 16);
-            Object_GetById(10)->motion_flags = 4;
+            Object_GetById(10)->motionFlags = 4;
         }
         if (GameFlag_Test(0x977))
             Func_020034d4(8, 664 << 16, 200 << 16);

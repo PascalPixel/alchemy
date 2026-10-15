@@ -21,17 +21,17 @@ void Func_02000e2c(void)
             row = object->z >> 20;
             if (row == 9)
             {
-                leader = Object_GetById(gPartyState.current_owner);
+                leader = Object_GetById(gPartyState.currentOwner);
                 Func_02002c68();
                 Func_02002da8(0);
                 Battle_WaitMode0(20);
                 Func_02002de0(183);
                 LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
                 LemurianShip_BlendStart(35, 0, 1, 1, column, row);
-                object->motion_flags = done;
+                object->motionFlags = done;
                 ObjectMotion_SetActionVariant(8, 3);
                 if (object->z > leader->z)
-                    ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
+                    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
                 for (i = 0; i < 128; i++)
                 {
                     object->y += 0xffffe000;
@@ -43,8 +43,8 @@ void Func_02000e2c(void)
                 GameFlag_SetBit(0x202);
                 if (object->z > leader->z)
                 {
-                    ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-                    Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+                    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+                    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
                 }
                 Func_02002c70();
             }
@@ -60,17 +60,17 @@ void Func_02000e2c(void)
             row = object->z >> 20;
             if (row == 9)
             {
-                leader = Object_GetById(gPartyState.current_owner);
+                leader = Object_GetById(gPartyState.currentOwner);
                 Func_02002c68();
                 Func_02002da8(0);
                 Battle_WaitMode0(20);
                 Func_02002de0(183);
                 LemurianShip_MapCopy(29, 68, 29, 69, 1, 1);
                 LemurianShip_BlendStart(35, 0, 1, 1, column, row);
-                object->motion_flags = done;
+                object->motionFlags = done;
                 ObjectMotion_SetActionVariant(9, 3);
                 if (object->z > leader->z)
-                    ObjectMotion_SetActionVariant(gPartyState.current_owner, 3);
+                    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
                 for (i = 0; i < 128; i++)
                 {
                     object->y += 0xffffe000;
@@ -82,8 +82,8 @@ void Func_02000e2c(void)
                 GameFlag_SetBit(0x203);
                 if (object->z > leader->z)
                 {
-                    ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-                    Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+                    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+                    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
                 }
                 Func_02002c70();
             }

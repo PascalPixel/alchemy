@@ -15,7 +15,7 @@ u8 *Func_020010b0(void)
 // runs Func_02000f30 on the effect work's object.
 void Func_020010f0(s32 a_arg, s32 b)
 {
-    struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effect_work;
+    struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
     struct PartyState *party = &gPartyState;
     s16 scene;
 
@@ -31,6 +31,6 @@ void Func_020010f0(s32 a_arg, s32 b)
         else
             Func_020000a4(Data_02001688, a, b);
         if (a == 1)
-            Func_02000f30(Object_GetById(work->object_id));
+            Func_02000f30(Object_GetById(work->objectId));
     }
 }

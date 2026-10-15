@@ -13,17 +13,17 @@ struct Position {
 };
 
 struct Effect_080b2f4c {
-    u8 filler_00[0xC];
+    u8 filler00[0xC];
     s32 x;
     s32 z;
-    s32 source_x;
-    s32 source_z;
-    s32 filler_1C;
+    s32 sourceX;
+    s32 sourceZ;
+    s32 filler1C;
     s32 velocity;
     s32 acceleration;
-    u8 filler_28[0x18];
+    u8 filler28[0x18];
     s8 state;
-    u8 filler_41;
+    u8 filler41;
     s8 flag;
 };
 
@@ -39,12 +39,12 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
     state_pointer = &effect->state;
     state = *state_pointer;
     if (state == 0) {
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        position.x = effect->sourceX;
+        position.z = effect->sourceZ;
         Vector_AddPolarOffset(0x280000, Random16(), &position);
         EffectSlot_SetPositionFar(effect, position.x, position.z);
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        position.x = effect->sourceX;
+        position.z = effect->sourceZ;
         Vector_AddPolarOffset(0x40000, Random16(), &position);
         effect->x = position.x;
         effect->z = position.z;

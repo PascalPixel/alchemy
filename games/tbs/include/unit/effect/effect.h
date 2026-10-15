@@ -11,11 +11,11 @@ struct EffectStep;
 
 typedef struct
 {
-	s32 reserved_00[3];
-	s32 current_value;
-	s32 index_radius;
-	s32 entry_limit;
-	s32 reserved_18[3];
+	s32 reserved00[3];
+	s32 currentValue;
+	s32 indexRadius;
+	s32 entryLimit;
+	s32 reserved18[3];
 	s16 values[1];
 } BattleEffectIndexWindow;
 
@@ -63,7 +63,7 @@ struct Placement
 	s32 x;
 	s32 y;
 	s32 z;
-	s32 unknown_0c;
+	s32 unk0c;
 };
 
 // 2 次元の組 {x, y}（位置や速さ）
@@ -207,7 +207,7 @@ void BattleFx_RunParticleFieldMode1(struct BattleEffectArgument *effect);
 void BattleFx_RunParticleFieldMode0(struct BattleEffectArgument *effect);
 void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode);
 
-void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant);
+void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleFx_RunNoEffect(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect);
@@ -242,7 +242,7 @@ void BattleFx_RunMode10(void *effect);
 void BattleFx_RunMode9WithAction(void *effect);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_InitializeRisingObject(s32 id);
-void BattleFx_SetApproachMotion(s32 id, s32 target_id, s32 frames);
+void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames);
 void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused);
 void BattleFx_RunParticleFieldVariant0(s32 effect);
 void BattleFx_RunParticleFieldVariant1(s32 effect);
@@ -281,7 +281,7 @@ void BattleFx_ProbeKeysForExtendedActor(void);
 void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
-void BattleFx_StepPaletteToResource(s32 resource_id);
+void BattleFx_StepPaletteToResource(s32 resourceId);
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind);
 
 void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect);

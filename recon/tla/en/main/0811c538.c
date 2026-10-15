@@ -18,8 +18,8 @@ void BattleMotion_SetupEscapeObject(s32);
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-    struct BattleCamera *cam = Ram_HeapSlots->camera_work;
-    struct BattlePresentationTransition *trans = Ram_HeapSlots->transition_work;
+    struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
+    struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
     volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
 
     if ((*keys & 512) != 0) {

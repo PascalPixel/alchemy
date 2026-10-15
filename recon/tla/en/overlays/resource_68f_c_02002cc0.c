@@ -8,19 +8,19 @@ struct Spark {
 };
 
 struct SparkSprite {
-    u8 unknown_00[8];
+    u8 unk00[8];
     u16 tile : 10;
-    u16 unknown_08_10 : 2;
-    u16 unknown_08_12 : 4;
-    u8 unknown_0a[0x1e];
+    u16 unk08_10 : 2;
+    u16 unk08_12 : 4;
+    u8 unk0a[0x1e];
 };
 
 struct SparkWork {
-    u8 unknown_0000[0x500];
+    u8 unk0000[0x500];
     struct Spark sparks[64];
     struct SparkSprite sprites[64];
     s16 next;
-    u16 tile_base;
+    u16 tileBase;
     s16 resource;
 };
 
@@ -29,14 +29,14 @@ void Func_020031a0(struct Spark *spark, s32 a, s32 b);
 
 void Func_02002cc0(void)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
     struct Spark *spark = work->sparks;
     struct SparkSprite *sprite = work->sprites;
     s32 i = 63;
 
 loop:
         if ((u32)spark->timer < 20) {
-            sprite->tile = work->tile_base + ((spark->timer >> 2) & 7) * 8;
+            sprite->tile = work->tileBase + ((spark->timer >> 2) & 7) * 8;
             Func_02003198(sprite, spark);
             Func_020031a0(spark, 63, -0x8000);
             spark->timer++;

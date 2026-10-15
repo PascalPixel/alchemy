@@ -156,8 +156,8 @@ commands:
 			Colosso_ModeMoveDuration = 0;
 	}
 	work.angle = 0;
-	work.scale_x = scale;
-	work.scale_y = scale;
+	work.scaleX = scale;
+	work.scaleY = scale;
 	matrix = (s16)AffineMatrix_BuildForEffect(&work);
 	Colosso_ModeTaskPosition += pos;
 	pos = Colosso_ModeTaskPosition / 256;

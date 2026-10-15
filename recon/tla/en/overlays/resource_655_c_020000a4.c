@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -43,7 +43,7 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
 extern const u16 Data_02003fd2[];
@@ -99,7 +99,7 @@ void Func_02002b68(void);
 void Func_02002f08(void);
 
 struct EffectWork7c4 {
-    u8 unknown_000[0x7c4];
+    u8 unk000[0x7c4];
     s16 active;
     s16 timer;
 };
@@ -195,7 +195,7 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id)
 }
 
 struct EffectWork1a {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     s16 active;
 };
 
@@ -204,7 +204,7 @@ void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 void Func_020000a4(const void *data, s32 mode, s32 timer)
 {
     const u16 *spec = data;
-    struct EffectWork1a *work = Ram_HeapSlots->effect_work;
+    struct EffectWork1a *work = Ram_HeapSlots->effectWork;
     s32 active;
     struct ObjectRuntime *object;
     u16 kind;
@@ -218,11 +218,11 @@ void Func_020000a4(const void *data, s32 mode, s32 timer)
             kind = *spec;
             flag = spec[1];
             if (timer <= 7)
-                object->scale_y += -0x1f00;
+                object->scaleY += -0x1f00;
             if (mode == 1) {
                 GameFlag_SetBit(flag);
-                Func_02000128(active, kind, flag, object->terrain_id);
-                object->scale_y = 0x10000;
+                Func_02000128(active, kind, flag, object->terrainId);
+                object->scaleY = 0x10000;
             }
             return;
         }

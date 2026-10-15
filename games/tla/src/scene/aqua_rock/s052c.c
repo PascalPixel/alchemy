@@ -18,7 +18,7 @@ void Func_0200052c(struct ObjectRuntime *object)
         if (child != 0) {
             ObjectDispatch_SetSingleChildFlags(child, 0);
             child->update = (void (*)(void))Func_020004e4;
-            child->motion_flags = 0;
+            child->motionFlags = 0;
         }
     }
 }

@@ -286,7 +286,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 	s32 scene;
 	s32 zero;
 
-	gEventWork->start_transition = 521;
+	gEventWork->startTransition = 521;
 	scene = gGameState.entrance;
 
 	if (scene == 5)
@@ -294,9 +294,9 @@ s32 FieldScene_InitSceneStateByStep(void)
 
 		Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
 		zero = 0;
-		Object_GetById(8)->motion_flags = zero;
+		Object_GetById(8)->motionFlags = zero;
 		Object_GetById(8)->y.fixed = zero;
-		Object_GetById(8)->terrain_height = zero;
+		Object_GetById(8)->terrainHeight = zero;
 	}
 	else if (scene == 7 || scene == 11)
 	{

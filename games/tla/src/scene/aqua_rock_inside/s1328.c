@@ -11,9 +11,9 @@ void Func_02001364(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *child = Engine_ObjectCreate_(0x2a0, object->x, object->y, object->z);
 
-    child->scale_y = 0x6666;
-    child->scale_x = 0x6666;
-    child->motion_flags = 0;
+    child->scaleY = 0x6666;
+    child->scaleX = 0x6666;
+    child->motionFlags = 0;
     Object_SetPartAttribute(child, 2);
     Object_SetSpritePriority(child, 1);
     Func_02003cc4(child, 1);

@@ -3,7 +3,7 @@
 void Func_02001134(s32 actor, s32 x, s32 z);
 void Func_0200113c(s32 actor, s32 target);
 void Object_SetModeById(s32 actor, s32 mode);
-void Func_020010dc(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_020010dc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void WaitFrames(s32 frames);
 
 static inline void MadraCatacombs_ObjPlace(s32 actor, s32 x, s32 z)

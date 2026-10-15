@@ -7,7 +7,7 @@ s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target, s3
     s32 *objectPos;
 
     if (BYTE_AT(object, 99) != 0) {
-        object->movement_state = 1;
+        object->movementState = 1;
         return 1;
     }
     targetPos = &target->x;
@@ -20,12 +20,12 @@ s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target, s3
         u32 facing = object->angle & 0xf000;
 
         if (ahead == facing || right == facing || left == facing || force != 0) {
-            object->movement_state = 1;
+            object->movementState = 1;
             Func_02002448(object, 1);
             result = 1;
         }
     } else {
-        object->movement_state = 0;
+        object->movementState = 0;
         Func_02002448(object, 2);
     }
     return result;

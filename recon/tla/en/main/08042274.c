@@ -17,7 +17,7 @@
 
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32 offset_x, s32 offset_y, s32 variant)
+void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32 offsetX, s32 offsetY, s32 variant)
 {
     u8 formatted[16];
     u16 output[8];
@@ -31,7 +31,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32 
     s32 phase;
     u16 second;
 
-    canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     text = UiText_FormatNumber(formatted, value, 4);
     if (variant == 0) {
         output[0] = 0xf01d;
@@ -45,13 +45,13 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32 
         output[index + 2] = text[index];
     }
     output[6] = 0;
-    cell = (((s16)work->y + ((u32)offset_y >> 3) + 1) << 5) + ((s16)work->x + ((u32)offset_x >> 3)) + 1;
+    cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) + ((s16)work->x + ((u32)offsetX >> 3)) + 1;
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
         src = (s32)canvas->tilemap + cell;
-        phase = offset_x & 7;
+        phase = offsetX & 7;
         UiText_RenderStringTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
     }
 }

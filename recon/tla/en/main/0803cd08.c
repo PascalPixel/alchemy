@@ -5,7 +5,7 @@
 u32 UiRender_LookupNamedValue(u32 name, u32 clear)
 {
     struct UiRenderWork *work =
-        (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+        (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u32 index;
     u32 value = 0;
 

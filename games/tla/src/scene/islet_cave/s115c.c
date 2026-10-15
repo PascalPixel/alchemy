@@ -14,19 +14,19 @@ void Func_0200115c(void)
 {
     if (!Flag_IsSet(0x230)) {
         struct ObjectRuntime *object = Object_GetById(9);
-        struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+        struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
         s32 other;
 
         Flag_Set(0x230);
         Call3((void (*)())Func_0200129c, 9, 296 << 16, 160 << 16);
-        object->speed_limit = 0x18000;
-        object->velocity_y = 0xf0000;
+        object->speedLimit = 0x18000;
+        object->velocityY = 0xf0000;
         Call3((void (*)())ObjectMotion_SetPositionAndCommit, 9, 344, ((owner->z >> 19) << 3) + 24);
         ObjectMotion_EnableActionAndResetMotion(8);
-        object->speed_limit = 0x10000;
+        object->speedLimit = 0x10000;
         other = 9;
         /* FAKEMATCH: the native loads the second argument before the owner; a direct call and a forwarding inline load the owner first. */
         __asm__ volatile("" : "+r"(other));
-        Object_LinkPair(gPartyState.current_owner, other, 0);
+        Object_LinkPair(gPartyState.currentOwner, other, 0);
     }
 }

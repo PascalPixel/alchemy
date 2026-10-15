@@ -52,7 +52,7 @@ s32 Func_0200005c(void)
     s32 limit;
 
     if (gPartyState.entrance == 10) {
-        Object_GetById(gPartyState.current_owner)->motion_flags = 0;
+        Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
         Func_02000644(75);
         Func_0200031c(0);
         WaitFrames(120);
@@ -121,7 +121,7 @@ s32 Func_0200005c(void)
         if (gPartyState.entrance == 2) {
             Func_02000644(40);
             Func_0200063c(0);
-            Func_020005dc(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
+            Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
             Func_020005e4();
             Func_02000604((s32)&SceneId_VenusLighthouse, 99);
         }
@@ -130,7 +130,7 @@ s32 Func_0200005c(void)
         if (gPartyState.entrance == 3) {
             Func_02000644(75);
             Func_02000624(0);
-            Func_020005dc(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
+            Func_020005dc(gPartyState.unk220[5], gPartyState.unk220[6]);
             Func_020005ec();
             Func_02000604((s32)&SceneId_Ov650, 13);
         }

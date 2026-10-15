@@ -35,7 +35,7 @@ void Func_02000d80(void)
 
 void Func_02000da8(s32 id)
 {
-    s32 owner = gPartyState.current_owner;
+    s32 owner = gPartyState.currentOwner;
 
     Func_02001084();
     Func_02001164(0);
@@ -55,7 +55,7 @@ void Func_02000da8(s32 id)
 
 void Func_02000e28(s32 id)
 {
-    s32 owner = gPartyState.current_owner;
+    s32 owner = gPartyState.currentOwner;
 
     Func_02001084();
     Func_02001164(0);
@@ -75,7 +75,7 @@ void Func_02000e28(s32 id)
 
 void Func_02000ea8(void)
 {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *guard = Object_GetById(14);
 
     if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000 && guard->x > owner->x)
@@ -85,7 +85,7 @@ void Func_02000ea8(void)
 
 void Func_02000ef4(void)
 {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *guard = Object_GetById(15);
 
     if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) < 0x100000 && guard->x < owner->x)

@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 
 struct InventoryMenuDetailsState {
-    u8 unknown_000[0x34];
-    s32 details_window;
-    u8 unknown_038[0x134];
-    u16 item_ids[0x100];
+    u8 unk000[0x34];
+    s32 detailsWindow;
+    u8 unk038[0x134];
+    u16 itemIds[0x100];
 };
 
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
@@ -14,14 +14,14 @@ void ItemMenu_DrawItemDetails(s32, s32);
 
 s32 ItemMenu_OpenDetail(s32 item_index)
 {
-    struct InventoryMenuDetailsState *menu = Ram_HeapSlots->menu_runtime;
+    struct InventoryMenuDetailsState *menu = Ram_HeapSlots->menuRuntime;
 
-    UiWindow_UpdateOrCreate(&menu->details_window, 0, 0, 13, 10, 2);
+    UiWindow_UpdateOrCreate(&menu->detailsWindow, 0, 0, 13, 10, 2);
     Palette_CopyObjectBankToBackground14();
 
-    if (menu->item_ids[item_index] != 0)
+    if (menu->itemIds[item_index] != 0)
         ItemMenu_DrawItemDetails(
-            menu->details_window, menu->item_ids[item_index]);
+            menu->detailsWindow, menu->itemIds[item_index]);
 
     return 1;
 }

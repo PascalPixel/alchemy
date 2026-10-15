@@ -7,7 +7,7 @@
 
 struct AnimationEntry
 {
-	s16	   anim_id;
+	s16	   animId;
 	u16	   timer;
 	u8	   kind;
 	u8	   param;
@@ -19,7 +19,7 @@ struct AnimationEntry
 	u8	   pos;
 	u8	   step;
 	u8	   frame;
-	u8	   frame_base;
+	u8	   frameBase;
 };
 
 struct ResourceSlot
@@ -31,11 +31,11 @@ struct ResourceSlot
 struct ObjectSystemWork
 {
 	u16					used;
-	u8					unknown_02[2];
+	u8					unk02[2];
 	s16					suspended;
 	u8					edge;
 	u8					fill;
-	u8					unknown_08[0x10];
+	u8					unk08[0x10];
 	s32					count;
 	struct ResourceSlot slots[8];
 };
@@ -62,20 +62,20 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *points);
 
 struct AnimationSpritePart
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 y : 8;
 	u16 affine : 2;
-	u16 object_mode : 2;
+	u16 objectMode : 2;
 	u16 mosaic : 1;
-	u16 full_color : 1;
+	u16 fullColor : 1;
 	u16 shape : 2;
 	u16 x : 9;
-	u16 affine_index : 5;
+	u16 affineIndex : 5;
 	u16 size : 2;
 	u16 tile : 10;
 	u16 priority : 2;
 	u16 palette : 4;
-	u8	unknown_0a[2];
+	u8	unk0a[2];
 };
 
 struct AnimationObject
@@ -83,13 +83,13 @@ struct AnimationObject
 	struct AnimationSpritePart part[2];
 	s32						   scale;
 	u8						   slot;
-	u8						   display_flags;
+	u8						   displayFlags;
 	u16						   rotation;
 	u8						   width;
 	u8						   height;
-	s8						   offset_x;
-	s8						   offset_y;
-	u8						   last_no;
+	s8						   offsetX;
+	s8						   offsetY;
+	u8						   lastNo;
 	u8						   dirty;
 	u8						   flags;
 	u8						   count;

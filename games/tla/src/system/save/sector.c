@@ -34,7 +34,7 @@ s32 SaveState_InvalidateSlot(s32 index);
 
 u32 SaveState_WriteWorkspaceSlot(s32 sector)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     void (*progress)(s32) = work->progress;
 
     if (progress != 0)
@@ -56,7 +56,7 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector)
 
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     struct SaveSlotHeader header;
 
     ReadFlash(index, 0, work->slot, 0x1000);

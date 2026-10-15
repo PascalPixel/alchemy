@@ -70,7 +70,7 @@ static void EV08_PSYNERGY(void)
 	if (value == 24)
 	{
 		SceneEffect_RunActorBurst(8);
-		Object_GetById(8)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		Object_GetById(8)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
 		target = Object_GetById(8);
 		Engine_ActorSetSpriteFlags((s32)target, 0);
@@ -91,7 +91,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 {
 	struct FieldActor *record;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_GomaWaterway1)
 	{
 		if (gGameState.entrance == 5)
@@ -100,13 +100,13 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 		}
 		else
 		{
-			Object_GetById(8)->collision_flags |= 16;
+			Object_GetById(8)->collisionFlags |= 16;
 			if (Engine_GameFlagIsSet(0x864) != 0)
 			{
 				Engine_ActorSetPosition(8, 0x15a0000, 0x1240000);
 				record = Object_GetById(8);
 				Engine_ActorSetSpriteFlags(record, 0);
-				Object_GetById(8)->priority_flags |= 2;
+				Object_GetById(8)->priorityFlags |= 2;
 				Engine_ActorSetAnimation(8, 2);
 				Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
 			}
@@ -129,22 +129,22 @@ union SceneActor
 {
 	struct
 	{
-		u32			   unk_00[2];
+		u32			   unk00[2];
 		s32			   x, y, z;
-		u32			   unk_14[3];
-		u8			   unk_20[2];
-		u8			   field_22;
-		u8			   unk_23[5];
-		s32			   field_28;
-		u32			   unk_2c[3];
-		u32			   field_38;
-		u32			   unk_3c[3];
-		s32			   velocity_y;
-		u32			   unk_4c;
+		u32			   unk14[3];
+		u8			   unk20[2];
+		u8			   field22;
+		u8			   unk23[5];
+		s32			   field28;
+		u32			   unk2c[3];
+		u32			   field38;
+		u32			   unk3c[3];
+		s32			   velocityY;
+		u32			   unk4c;
 		struct Sprite *sprite;
-		u8			   unk_54;
+		u8			   unk54;
 		u8			   mode;
-		u8			   unk_56[22];
+		u8			   unk56[22];
 		u32			   callback;
 	} fields;
 	u8 bytes[112];
@@ -174,14 +174,14 @@ static void SceneEffect_RunActorBurst(s32 no)
 		Engine_TaskWait(1);
 		work->fields.sprite->angle -= 256;
 		work->fields.x -= Trig_Cos(work->fields.sprite->angle) / 2;
-		work->fields.field_38 = 0x80000000;
+		work->fields.field38 = 0x80000000;
 	}
 	work->fields.callback = (u32)SceneEffect_RotateRecord;
 	Actor_SetSpeed(no, 0x30000, 0x18000);
 	Actor_SetDestination(no, 376, 288);
-	work->fields.velocity_y = 0xcccc;
+	work->fields.velocityY = 0xcccc;
 	work->fields.mode = 3;
-	work->fields.field_22 = 0;
+	work->fields.field22 = 0;
 	Engine_ActorWaitForMove(no);
 	SceneActor_WaitObjectBelowHeight(work, 0);
 	Engine_AudioPlayCue(188);
@@ -197,7 +197,7 @@ static void SceneEffect_RunActorBurst(s32 no)
 		vec.z -= vec.z / 2;
 		Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, vec.x, vec.y, vec.z, 0, NULL);
 	}
-	work->fields.field_28 = 0x50000;
+	work->fields.field28 = 0x50000;
 	Actor_SetDestination(no, 346, 292);
 	Engine_ActorWaitForMove(no);
 	SceneActor_WaitObjectBelowHeight(work, 0);

@@ -46,40 +46,40 @@ void ItemMenu_DrawStat(
 }
 
 struct ItemMenuWindows {
-    u8 unknown_00[0x24];
-    struct RenderInput *item_window;
-    u8 unknown_28[0xc8];
-    struct RenderInput *message_window;
+    u8 unk00[0x24];
+    struct RenderInput *itemWindow;
+    u8 unk28[0xc8];
+    struct RenderInput *messageWindow;
 };
 
-#define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menu_runtime)
+#define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menuRuntime)
 
 void ItemMenu_SetItemWin5(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 5, 17, 10);
+    UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
 }
 
 void ItemMenu_SetItemWin3(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 3, 17, 10);
+    UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
 }
 
 void ItemMenu_SetMsgWin5(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 5);
+    UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 5);
 }
 
 void ItemMenu_SetMsgWin6(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 6);
+    UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 6);
 }
 
 void ItemMenu_SetMsgWin7(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 7);
+    UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 7);
 }
 
 void ItemMenu_SetMsgWin3(void)
 {
-    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 3);
+    UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 3);
 }

@@ -7,11 +7,11 @@ void Func_02001d08(struct MarsRoomMVector *position, s32 value, s32 flag)
     if (object != 0) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = -value;
+        object->unk4c = -value;
         Func_02001cc4(object, 3);
         object->update = Func_02001988;
         if (flag != 0)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02003118(object, 2);
     }
 }
@@ -23,11 +23,11 @@ void Func_02001d50(struct MarsRoomMVector *position, s32 value, s32 flag)
     if (object != 0) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = value;
+        object->unk4c = value;
         Func_02001cc4(object, 3);
         object->update = Func_02001b64;
         if (flag != 0)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02003118(object, 2);
     }
 }
@@ -39,11 +39,11 @@ void Func_02001d98(struct MarsRoomMVector *position, s32 value, s32 flag)
     if (object != 0) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = -value;
+        object->unk4c = -value;
         Func_02001cc4(object, 3);
         object->update = Func_02001b64;
         if (flag != 0)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_02003118(object, 2);
     }
 }

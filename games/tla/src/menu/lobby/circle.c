@@ -11,8 +11,8 @@
 #include "text/msg_ids.h"
 
 struct LobbyEventWork {
-    u8 unknown_000[0x16a];
-    s16 raised_trigger;
+    u8 unk000[0x16a];
+    s16 raisedTrigger;
 };
 
 extern s32 Data_020022bc;
@@ -55,14 +55,14 @@ s32 Func_020002d8(void)
 
 s32 Func_02000344(void)
 {
-    struct LobbyEventWork *work = Ram_HeapSlots->event_work;
+    struct LobbyEventWork *work = Ram_HeapSlots->eventWork;
 
     LinkLobby_WriteSlotValue(4);
     GameFlag_ClearBit(0x200);
     GameFlag_ClearBit(0x203);
     Func_02001a14();
     Func_02001ab4(0);
-    work->raised_trigger = 0;
+    work->raisedTrigger = 0;
     Func_02001a64((s32)MsgTheLinkWas);
     UiText_OpenMessageAtObject(8, 0);
     GameFlag_ClearBit(0x205);

@@ -45,16 +45,16 @@ u8 *SceneData_GetTertiaryTable37c(void)
 s32 Resource37c_Run(void)
 {
 
-	s32 scale_x = 0x10000;
-	s32 scale_y = 0x10000;
-	s32 scale_z = 0x10000;
+	s32 scaleX = 0x10000;
+	s32 scaleY = 0x10000;
+	s32 scaleZ = 0x10000;
 
-	RESOURCE37C_RUNTIME->setup_request_1c0 = 0x204;
+	RESOURCE37C_RUNTIME->setupRequest1c0 = 0x204;
 	Engine_GameFlagSet(0x144);
 	if (Engine_GameFlagIsSet(0x814) != 0)
 	{
 		Resource37c_QueueSoundCue(0x8D);
-		Engine_WorkSetValuesIfNonNegative(scale_x, scale_y, scale_z);
+		Engine_WorkSetValuesIfNonNegative(scaleX, scaleY, scaleZ);
 		Resource37c_FinalizeSetup();
 	}
 	return 0;

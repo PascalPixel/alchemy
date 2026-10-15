@@ -9,10 +9,10 @@ s32 Func_020003d4(struct ObjectRuntime *object)
     s32 step = *phase & 63;
     s16 *animation = object->animation;
 
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     if (step < 32) {
         if (step == 0)
-            object->velocity_y = 0x10000;
+            object->velocityY = 0x10000;
         animation[9] = Math_Cosine(step << 12) / 128;
     }
     (*phase)++;

@@ -262,12 +262,12 @@ void Func_02000330(void)
 
 void Func_02000444(void)
 {
-    Object_GetById(4)->terrain_id = 2;
+    Object_GetById(4)->terrainId = 2;
 }
 
 void Func_02000454(void)
 {
-    Object_GetById(4)->terrain_id = 0;
+    Object_GetById(4)->terrainId = 0;
 }
 
 static __inline__ void Object_Emote(s32 actor, s32 emote, s32 frames)

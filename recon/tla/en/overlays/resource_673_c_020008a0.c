@@ -9,7 +9,7 @@ void Func_020008a0(struct ObjectRuntime *object, s32 dz)
     struct GabombaCatacombsFollower *follower;
     struct GabombaCatacombsVec position;
 
-    follower = ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->event_work)->follower;
+    follower = ((struct GabombaCatacombsEventWork *)Ram_HeapSlots->eventWork)->follower;
 
     position.x = object->x;
     position.y = object->y;

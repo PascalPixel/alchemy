@@ -7,7 +7,7 @@
 #include "text/msg_ids.h"
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -208,12 +208,12 @@ void Func_02001160(void)
         Call1((void (*)())Battle_WaitMode0, 30);
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
         Call3((void (*)())Func_02001c7c, 7, 0, 10);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     } else {
         Call1((void (*)())Battle_WaitMode0, 40);
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
         Call1((void (*)())Battle_WaitMode0, 10);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
         Call3((void (*)())Func_02001c7c, 7, 0, 10);
     }
     Call2((void (*)())Object_LinkObjectAndSetCallback, 4, 7);
@@ -305,14 +305,14 @@ void Func_02001160(void)
     Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xc000, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 7, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 7);
     Call3((void (*)())Func_02001c2c, 7, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 12, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 12);

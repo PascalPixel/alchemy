@@ -96,7 +96,7 @@ static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos)
 	u8				   saved;
 
 	obj = Object_GetById(0);
-	flags = &obj->motion_flags;
+	flags = &obj->motionFlags;
 	saved = *flags;
 	if (FieldObject_CheckMovementCollision(obj, pos) == 0)
 	{
@@ -107,7 +107,7 @@ static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos)
 		Object_SetMode(obj, 7);
 		obj->speed = 0x30000;
 		obj->acceleration = 0x20000;
-		obj->velocity_y = 0x40000;
+		obj->velocityY = 0x40000;
 		*flags &= 0x7e;
 		Engine_ActorSetSpriteFlags(obj, 0);
 		Engine_ActorMoveToAndWait(0, ((union FieldCoordinate *)&pos->x)->part.pixel,
@@ -554,18 +554,18 @@ struct Stop
 {
 	u8 id;
 	u8 pos;
-	u8 unknown_02[2];
+	u8 unk02[2];
 };
 
 struct StopSet
 {
-	u8			unknown_00[4];
+	u8			unk00[4];
 	struct Stop stops[3];
 };
 
 struct StopRecord
 {
-	u8 unknown_00[16];
+	u8 unk00[16];
 };
 
 static void EV10_TALK(void)
@@ -873,10 +873,10 @@ static void Scene_JoinRodSearch(void)
 	Engine_EventWait(40);
 	SceneState_SetValue2ThenFinish();
 	Engine_ActorRunRepeatedMotion(0, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(0, 0x180, 0x1a8);
 	Engine_EventWait(1);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(30);
 	Engine_EventShowMessage(2, 0);
 	Actor_SetAttachedEffect(0, 0x102);
@@ -916,10 +916,10 @@ static void Scene_JoinRodSearch(void)
 	Actor_ShowEmote(1, 0x102, 0);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(1, 1);
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(1, 0x160, 0x198);
 	Engine_EventWait(1);
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(10);
 	Actor_WalkTo(2, 0x170, 0x198);
 	Engine_EventWait(20);
@@ -1189,7 +1189,7 @@ static void EV08_TALK(void)
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	Engine_EventShowMessage(10, 0);
 	GameFlag_Set(2132);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	base = (s32)&SceneId_VaultInteriors;
 	Party_SetFields1ceAnd1d0(base, 17);
 	Event_SetDefeatDestination(base, 16);
@@ -1208,7 +1208,7 @@ static void EV26_TOUCH(void)
 {
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Event_PlayCue(123);
 	Engine_EventRequestExit(15);
 }
@@ -1224,7 +1224,7 @@ static void EV27_TOUCH(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventEnd();
 	}
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(14);
 }
@@ -1422,7 +1422,7 @@ static void FieldScene_SelectActorPair(void)
 	Actor_FaceActor(25, IVAN, 0);
 	Engine_EventWait(10);
 	actor = 24;
-	switch (work->raised_trigger)
+	switch (work->raisedTrigger)
 	{
 	case 202:
 	case 203:
@@ -1430,7 +1430,7 @@ static void FieldScene_SelectActorPair(void)
 		Actor_SetAttachedEffect(25, 0x102);
 		Engine_ActorRunRepeatedMotion(25, 2);
 		SceneActor_SetModeZeroAndValue(25, 20);
-		if (work->raised_trigger == 202)
+		if (work->raisedTrigger == 202)
 		{
 			actor = 25;
 			break;
@@ -1477,8 +1477,8 @@ static void FieldScene_SelectActorPair(void)
 	record = (u8 *)Object_GetById(2);
 
 	((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
-	gEventWork->transition_frames = 24;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 24;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	VaultInteriors_RunBranchingDialogueScene();
@@ -1497,7 +1497,7 @@ static void FieldScene_SelectActorPair(void)
 		((struct FieldActor *)record)->timer = shown;
 	}
 	FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
 
@@ -1511,7 +1511,7 @@ static void VaultInteriors_RunBranchingDialogueScene(void)
 	{
 		struct FieldActor *record = Object_GetById(0);
 
-		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+		record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 	}
 	FieldMap_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
@@ -1538,8 +1538,8 @@ static void VaultInteriors_RunBranchingDialogueScene(void)
 	{
 		u8 *work = *(u8 **)&gEventWork;
 
-		((struct EventWork *)work)->transition_frames = 24;
-		((struct EventWork *)work)->start_transition = 0x201;
+		((struct EventWork *)work)->transitionFrames = 24;
+		((struct EventWork *)work)->startTransition = 0x201;
 	}
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -1627,7 +1627,7 @@ static void VaultInteriors_RunBranchingDialogueScene(void)
 
 static void VaultInteriors_PoseDialogueActors(void)
 {
-	switch (gEventWork->touched_trigger)
+	switch (gEventWork->touchedTrigger)
 	{
 	case 11:
 		SceneActor_UpdateAnimationOnStateMatch(24, 1, 2, (s32)VaultInteriors_PairScriptC);
@@ -1684,16 +1684,16 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 
 
 s32 VaultInteriors_ApplyEntryState(void)
 {
-	gEventWork->start_transition = 0x209;
+	gEventWork->startTransition = 0x209;
 	switch (gGameState.entrance)
 	{
 	case 5:
 	{
 		s32 zero = 0;
 
-		Object_GetById(8)->motion_flags = zero;
+		Object_GetById(8)->motionFlags = zero;
 		Object_GetById(8)->y.fixed = zero;
-		Object_GetById(8)->terrain_height = zero;
+		Object_GetById(8)->terrainHeight = zero;
 	}
 	break;
 	case 10:
@@ -1766,7 +1766,7 @@ s32 VaultInteriors_ApplyEntryState(void)
 		Map_CopyCellsTo(54, 2, 35, 80, 2, 10);
 		Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
 		Map_CopyCellsTo(54, 2, 46, 81, 4, 8);
-		Object_GetById(26)->collision_flags |= 4;
+		Object_GetById(26)->collisionFlags |= 4;
 		Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 		if (Engine_GameFlagIsSet(0x859) != 0)
 		{
@@ -1858,9 +1858,9 @@ static void FieldScene_RunLateSequence(void)
 	Engine_ActorSetAnimation(GARET, 19);
 	Engine_ActorSetAnimation(IVAN, 19);
 	v5 = 2;
-	Object_GetById(0)->priority_flags = v5;
-	Object_GetById(1)->priority_flags = v5;
-	Object_GetById(2)->priority_flags = v5;
+	Object_GetById(0)->priorityFlags = v5;
+	Object_GetById(1)->priorityFlags = v5;
+	Object_GetById(2)->priorityFlags = v5;
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	record = Object_GetById(2);
@@ -1868,7 +1868,7 @@ static void FieldScene_RunLateSequence(void)
 	record = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Actor_FaceDirection(8, 0xb000, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
@@ -1908,12 +1908,12 @@ static void VaultInteriors_RunVaultEvent(void)
 	Actor_FaceDirection(1, 0xb000, 0);
 	Actor_FaceDirection(2, 0xb000, 0);
 	Actor_FaceActor(8, 10, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_CameraFollowActor(0, 0);
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->transition_frames = 32;
+	gEventWork->transitionFrames = 32;
 	VaultInteriors_OpenWindowTransition();
 	Engine_EventWait(60);
 	Engine_EventSetMessage(MsgVaultWontGoAway);
@@ -1935,7 +1935,7 @@ static void VaultInteriors_RunVaultEvent(void)
 	Engine_EventWait(20);
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	Event_ShowMessage(10, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_VaultInteriors, 17);
 	Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
 	Battle_SetStart(3);
@@ -1944,7 +1944,7 @@ static void VaultInteriors_RunVaultEvent(void)
 
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void)
 {
-	return UnitGet(2)->djinn_owned_counts[0];
+	return UnitGet(2)->djinnOwnedCounts[0];
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -1972,7 +1972,7 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(10, 9);
 	Engine_ActorSetAnimation(11, 9);
 	Engine_ActorSetAnimation(12, 9);
-	Object_GetById(12)->priority_flags &= 254;
+	Object_GetById(12)->priorityFlags &= 254;
 	actor12_record[9] |= 12;
 	actions = (s32)VaultInteriors_ActionTable;
 	Engine_ActorEnableActionCallback(10, actions);
@@ -1984,7 +1984,7 @@ static void RunEventScript01(void)
 	Actor_FaceDirection(IVAN, 0xb000, 0);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Actor_FaceDirection(8, 0xb000, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
@@ -2153,8 +2153,8 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(GARET, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
 	work = gEventWork;
-	work->transition_frames = 30;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	work->transitionFrames = 30;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
@@ -2175,7 +2175,7 @@ static void RunDialoguePromptScene(void)
 	{
 		struct FieldActor *actor = Object_GetById(12);
 
-		actor->priority_flags = ACTOR_PRIORITY_AUTOMATIC | actor->priority_flags;
+		actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | actor->priorityFlags;
 	}
 	Actor_MoveToAndWait(15, 0x368, 0x1a9);
 	Actor_MoveToAndWait(16, 0x368, 0x199);
@@ -2209,8 +2209,8 @@ static void RunDialoguePromptScene(void)
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
 	Actor_FaceActor(GARET, 10, 0);
 	Actor_FaceActor(IVAN, 10, 0);
-	gEventWork->transition_frames = 30;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 30;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -2309,7 +2309,7 @@ static void RunDialoguePromptScene(void)
 	Engine_ActorRunRepeatedMotion(14, 2);
 	Event_PlayCue(124);
 	Engine_ActorSetAnimation(16, 4);
-	Object_GetById(19)->motion_flags = 0;
+	Object_GetById(19)->motionFlags = 0;
 	Engine_ActorSetSpritePriority(19, 1);
 	Actor_SetPosition(19, 0x3680000, 0x1980000);
 	Actor_SetSpeed(19, 0xcccc, 0x6666);
@@ -2441,9 +2441,9 @@ static void RunDialoguePromptScene(void)
 
 		*target = shown;
 	}
-	obj->target_x = ACTOR_NO_TARGET;
-	obj->target_y = ACTOR_NO_TARGET;
-	obj->target_z = ACTOR_NO_TARGET;
+	obj->targetX = ACTOR_NO_TARGET;
+	obj->targetY = ACTOR_NO_TARGET;
+	obj->targetZ = ACTOR_NO_TARGET;
 	Actor_ShowEmote(9, 0x100, 0);
 	Engine_ActorSetAnimation(14, 1);
 	Engine_EventWait(50);
@@ -2588,7 +2588,7 @@ static void RunDialoguePromptScene(void)
 	Actor_SetPosition(11, 0, 0);
 	Actor_SetPosition(12, 0, 0);
 	Actor_SetPosition(IVAN, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
 
@@ -2597,7 +2597,7 @@ static void VaultInteriors_OpenWindowTransition(void)
 	struct EventWork *state;
 
 	state = gEventWork;
-	state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	state->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(1);
@@ -2714,22 +2714,22 @@ static struct StopRecord *VaultInteriors_SnapToNearestStop(struct StopSet *set, 
 static s32 VaultInteriors_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
 	struct FieldActor *rec = Engine_ActorLookup(id);
-	s32				   target_x = rec->target_x;
-	s32				   target_y;
+	s32				   targetX = rec->targetX;
+	s32				   targetY;
 
-	if (target_x == 0x80000000)
+	if (targetX == 0x80000000)
 	{
-		target_x = rec->x.fixed;
+		targetX = rec->x.fixed;
 	}
-	target_y = rec->target_z;
-	if (target_y == 0x80000000)
+	targetY = rec->targetZ;
+	if (targetY == 0x80000000)
 	{
-		target_y = rec->z.fixed;
+		targetY = rec->z.fixed;
 	}
 
-	target_x = (target_x - x) >> 16;
-	target_y = (target_y - y) >> 16;
-	if (target_x * target_x + target_y * target_y <= 64)
+	targetX = (targetX - x) >> 16;
+	targetY = (targetY - y) >> 16;
+	if (targetX * targetX + targetY * targetY <= 64)
 		return 1;
 	return 0;
 }
@@ -2740,10 +2740,10 @@ static s32 VaultInteriors_IsActorNearPoint(s32 x, s32 z, s32 id)
 	s32				   ax;
 	s32				   az;
 
-	ax = actor->target_x;
+	ax = actor->targetX;
 	if (ax == ACTOR_NO_TARGET)
 		ax = actor->x.fixed;
-	az = actor->target_z;
+	az = actor->targetZ;
 	if (az == ACTOR_NO_TARGET)
 		az = actor->z.fixed;
 	ax = (ax - x) >> 16;
@@ -2798,7 +2798,7 @@ static void VaultInteriors_UpdateActorStops(void)
 	work = gEventWork;
 	actor = Engine_ActorLookup(2);
 	entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
-	if (entry != NULL && actor->target_x == ACTOR_NO_TARGET)
+	if (entry != NULL && actor->targetX == ACTOR_NO_TARGET)
 	{
 		dx = actor->x.fixed - leader->x.fixed;
 		dz = actor->z.fixed - leader->z.fixed;
@@ -2806,7 +2806,7 @@ static void VaultInteriors_UpdateActorStops(void)
 		angle = ArcTan2(dz, dx);
 		dx >>= 16;
 		dz >>= 16;
-		if (work->blocked_steps > 0 && dx * dx + dz * dz <= 400
+		if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400
 			&& (d = (u16)facing - angle) > -0x1000 && d < 0x1000)
 		{
 			/* FAKEMATCH: a dead store keeps this empty branch through the first jump optimization, as the native lays out its jumps (bge to the else, then b past it). Measured: an empty branch, an empty statement, the negated test with || and a self-assignment all give the inverted blt (tbs-en 4 differ); Japanese matches all of them. */
@@ -2836,7 +2836,7 @@ static void VaultInteriors_UpdateActorStops(void)
 
 	actor = Engine_ActorLookup(24);
 	entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
-	if (entry != NULL && actor->target_x == ACTOR_NO_TARGET)
+	if (entry != NULL && actor->targetX == ACTOR_NO_TARGET)
 	{
 		u32 turn = (u32)Engine_RandomNext() * 2 >> 16;
 		s32 f;
@@ -2867,7 +2867,7 @@ static void VaultInteriors_UpdateActorStops(void)
 
 	actor = Engine_ActorLookup(25);
 	entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
-	if (entry != NULL && actor->target_x == ACTOR_NO_TARGET)
+	if (entry != NULL && actor->targetX == ACTOR_NO_TARGET)
 	{
 		u32 turn = (u32)Engine_RandomNext() * 3 >> 16;
 		s32 f;
@@ -2898,7 +2898,7 @@ static void VaultInteriors_UpdateActorStops(void)
 	if (blocked != 0)
 	{
 		if (++VaultInteriors_StopTimer > 29)
-			work->raised_trigger = blocked + 200;
+			work->raisedTrigger = blocked + 200;
 	}
 	else
 	{

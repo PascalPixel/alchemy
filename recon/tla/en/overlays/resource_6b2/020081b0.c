@@ -55,13 +55,13 @@ void Func_020001b0(void)
 
     Func_02000568();
     Func_020005f8(0);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
     WaitFrames(1);
     Data_020007e4 = 0;
     Scheduler_AddOrUpdateCallback(Func_020000f4, 1152);
     Variant(8, 2);
     Variant(9, 2);
-    WORD_AT(Ram_HeapSlots->event_work, 436) = 40;
+    WORD_AT(Ram_HeapSlots->eventWork, 436) = 40;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
@@ -135,8 +135,8 @@ void Func_020001b0(void)
     Battle_WaitMode0(20);
     *(u16 *)0x05000000 = 0;
     WaitFrames(1);
-    WORD_AT(Ram_HeapSlots->event_work, 436) = 16;
-    WORD_AT(Ram_HeapSlots->event_work, 428) = 513;
+    WORD_AT(Ram_HeapSlots->eventWork, 436) = 16;
+    WORD_AT(Ram_HeapSlots->eventWork, 428) = 513;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     GameFlag_SetBit(0xa3c);

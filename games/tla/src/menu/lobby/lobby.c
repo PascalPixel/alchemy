@@ -22,8 +22,8 @@ void LinkLobby_WriteSlotValue(s32 slot)
 }
 
 struct LobbyEventWork {
-    u8 unknown_000[0x16a];
-    s16 raised_trigger;
+    u8 unk000[0x16a];
+    s16 raisedTrigger;
 };
 
 struct LinkPeerSignature {
@@ -49,7 +49,7 @@ s32 Func_02000134(void)
     s32 z;
     s32 *wait;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     result = 1;
     z = Object_GetById(4)->z;
     /* FAKEMATCH: the one-pass block loads z before the 0xe00000 bound is built; tested directly the bound comes first (differ 2). */
@@ -57,7 +57,7 @@ s32 Func_02000134(void)
     } while (0);
     if (z > 0xe00000)
         Flag_Clear(0x304);
-    if (work->raised_trigger != 2) {
+    if (work->raisedTrigger != 2) {
         Func_0200006c(0);
         /* FAKEMATCH: the wait counter's address taken once before the test, where the native loads it for both branches; written in each branch it is loaded in each (differ 11). */
         set = Flag_IsSet(0x303);
@@ -84,7 +84,7 @@ s32 Func_02000134(void)
             if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
                 Flag_Set(0x201);
                 if (Flag_IsSet(0x202))
-                    work->raised_trigger = 1;
+                    work->raisedTrigger = 1;
                 result = 1;
             } else {
                 Flag_Clear(0x201);
@@ -92,17 +92,17 @@ s32 Func_02000134(void)
             }
         }
         if (Flag_IsSet(0x201) && Flag_IsSet(0x202) && !Flag_IsSet(0x200))
-            work->raised_trigger = 1;
+            work->raisedTrigger = 1;
     }
     if ((Flag_IsSet(0x201) || Flag_IsSet(0x202)) && !Flag_IsSet(0x173)
         && !Func_0200006c(0) && Data_020022b8 > 24) {
-        work->raised_trigger = 2;
+        work->raisedTrigger = 2;
         Flag_Set(0x205);
         Flag_Clear(0x201);
         Flag_Clear(0x202);
         LinkLobby_WriteSlotValue(4);
     }
     if (Flag_IsSet(0x205))
-        work->raised_trigger = 2;
+        work->raisedTrigger = 2;
     return result;
 }

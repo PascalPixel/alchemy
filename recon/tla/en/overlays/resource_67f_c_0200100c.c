@@ -15,8 +15,8 @@ next:
     flag = (s16)list[2];
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02001428(object, GameFlag_Test((u16)flag) + 1);
-    object->motion_flags = 0;
-    object->collision_flags &= 0xfe;
+    object->motionFlags = 0;
+    object->collisionFlags &= 0xfe;
     object->action = flag;
     list += 3;
     Func_02000f30(object);

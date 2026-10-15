@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -43,7 +43,7 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
 extern const u16 Data_02003fd2[];
@@ -87,7 +87,7 @@ void Func_02001ee8(void)
     struct ObjectRuntime *object;
 
     if (Flag_Test(0x201) != 0) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         if (Data_0200567c != (object->x >> 20) || Data_02005678 != (object->z >> 20))
             Flag_Clear(0x201);
     }
@@ -100,7 +100,7 @@ void Func_02001f38(s32 id)
     Func_02003cc0(id);
     Object_SetPartAttribute(Object_GetById(id), 15);
     ObjectMotion_SetActionVariant(id, 1);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02001f68(void)
@@ -159,7 +159,7 @@ void Func_02001ff4(void)
 }
 
 struct MapCells {
-    u8 unknown_000[0x138];
+    u8 unk000[0x138];
     u8 *cells;
 };
 
@@ -182,11 +182,11 @@ void Func_0200200c(struct ObjectRuntime *object)
         Map_CopyAttributes(1, 32, 1, 1, x, 11);
         Func_02003c30();
     } else if (x == 18) {
-        cell = ((struct MapCells *)Ram_HeapSlots->map_work)->cells;
+        cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
         cell += Func_02003db0(object) * 4;
         cell[3] &= 0x7f;
     } else if (x == 54) {
-        cell = ((struct MapCells *)Ram_HeapSlots->map_work)->cells;
+        cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
         cell += Func_02003db0(object) * 4;
         cell[3] &= 0x7f;
         cell[2] = 11;
@@ -207,7 +207,7 @@ void Func_020020dc(void)
     struct ObjectRuntime *object;
 
     if (Func_02003de0() != 0) {
-        object = Object_GetById(Func_02003d10(gPartyState.current_owner));
+        object = Object_GetById(Func_02003d10(gPartyState.currentOwner));
         Func_02000d78(Data_02003fc8);
         Func_02003de8();
         Func_0200200c(object);

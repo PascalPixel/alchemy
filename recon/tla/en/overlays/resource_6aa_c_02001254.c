@@ -68,15 +68,15 @@ void Func_020012e4(struct ObjectRuntime *object)
     s16 *count = &object->action;
     s32 zero;
 
-    ((struct SpriteParts *)object->animation)->unknown_12 += 0x800;
+    ((struct SpriteParts *)object->animation)->unk12 += 0x800;
     (*count)++;
     zero = 0;
     if (*count == 8)
-        object->velocity_y = 0x40000;
+        object->velocityY = 0x40000;
     if (*count > 9) {
         object->x += 0x40000;
-        object->scale_x += 0xfffff800;
-        object->scale_y += 0xfffff800;
+        object->scaleX += 0xfffff800;
+        object->scaleY += 0xfffff800;
     }
     if (*count == 32) {
         object->x = zero;

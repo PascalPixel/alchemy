@@ -27,7 +27,7 @@ loop:
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != 0)
-            object->motion_flags = 0;
+            object->motionFlags = 0;
     }
     i++;
     if (i <= 63)
@@ -37,9 +37,9 @@ loop:
     else
         CopyCells(27, 29, 40, 16, 1, 2);
     Func_020021b0(158);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    CenterOn(gPartyState.current_owner, 2, -4);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    CenterOn(gPartyState.currentOwner, 2, -4);
     Battle_WaitMode0(6);
     Func_02002110(2);
     Event_FinishScreenTransition();

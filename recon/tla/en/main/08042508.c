@@ -2,9 +2,9 @@
 #include "ram_buffer.h"
 
 struct CharacterGlyphWork {
-    u8 unknown_0000[0x137c];
+    u8 unk0000[0x137c];
     u16 loaded[2];
-    u16 glyph_slot[2];
+    u16 glyphSlot[2];
 };
 
 s32 Localization_LookupEntryId(s32 key);
@@ -12,7 +12,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
 
 void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused)
 {
-    struct CharacterGlyphWork *work = (struct CharacterGlyphWork *)Ram_HeapSlots->window_tiles;
+    struct CharacterGlyphWork *work = (struct CharacterGlyphWork *)Ram_HeapSlots->windowTiles;
     s32 id = Localization_LookupEntryId(key);
     s32 tile;
     s32 glyph;
@@ -27,6 +27,6 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused)
         else
             return;
     }
-    glyph = work->glyph_slot[slot];
+    glyph = work->glyphSlot[slot];
     UiGlyph_LoadEntryWithPalette(id, unused, &glyph, &tile, slot + 14, 1);
 }

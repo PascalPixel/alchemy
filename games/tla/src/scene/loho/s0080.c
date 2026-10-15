@@ -12,14 +12,14 @@ void Battle_WaitMode0(s32 frames);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void Func_020012b0(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_020012b8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_020012b0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_020012b8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02001380(s32 message);
 void Func_02001390(s32 id, s32 flags);
 s32 Func_02001420(void);
 
 struct EventWork15a {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 flag;
 };
 
@@ -59,5 +59,5 @@ void Func_0200012c(s32 actor)
 void Func_02000178(void)
 {
     UiText_ShowPositionedMessageAndWait((s32)&MsgLoho27, 1);
-    ((struct EventWork15a *)Ram_HeapSlots->event_work)->flag = 1;
+    ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }

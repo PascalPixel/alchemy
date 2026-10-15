@@ -5,6 +5,6 @@
 
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
-    UiWork_Finalize(*(void **)Ram_HeapSlots->window_layout, 1);
+    UiWork_Finalize(*(void **)Ram_HeapSlots->windowLayout, 1);
     Runtime_ReleaseHeapBlock(64);
 }

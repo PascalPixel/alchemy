@@ -22,7 +22,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 	u32 next;
 	s16 start;
 
-	work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+	work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 	c = 0;
 	start = x;
 	if (text == NULL)
@@ -51,7 +51,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 				text++;
 				break;
 			case 10:
-				work->line_spacing = *text;
+				work->lineSpacing = *text;
 				text++;
 				break;
 			case 7:

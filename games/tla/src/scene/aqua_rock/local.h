@@ -62,8 +62,8 @@ extern u32 gFrameCount;
 
 struct AquaRockWork {
     struct ObjectRuntime *object;
-    u16 vram_entry;
-    u16 unknown_06;
+    u16 vramEntry;
+    u16 unk06;
     s16 direction;
 };
 

@@ -37,7 +37,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     void *state;
     s32 mode;
 
-    state = Ram_HeapSlots->battle_work;
+    state = Ram_HeapSlots->battleWork;
     mode = gGameState[0x24B];
     if (gGameState[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;

@@ -18,7 +18,7 @@ struct ImpactVector {
 extern const s32 Data_080f0e78[];
 
 struct ParticleTimer {
-    u8 unknown_00[0x5e];
+    u8 unk00[0x5e];
     u16 timer;
 };
 
@@ -38,7 +38,7 @@ s32 Func_080de154(struct ObjectRuntime *src)
     pos.z = src->z;
     obj = Object_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
     if (obj != NULL) {
-        obj->motion_flags = 0;
+        obj->motionFlags = 0;
         ((struct ParticleTimer *)obj)->timer = 20;
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
     }
@@ -47,9 +47,9 @@ s32 Func_080de154(struct ObjectRuntime *src)
         frag = Object_Spawn(673, pos.x, pos.y, pos.z);
         if (frag != NULL) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)frag, Data_080f0e78);
-            frag->speed_limit = Random16() + (1 << 16);
+            frag->speedLimit = Random16() + (1 << 16);
             frag->acceleration = 1 << 16;
-            frag->motion_flags = 0;
+            frag->motionFlags = 0;
             Motion_SetTargetPositionFromMagnitudeAngle(frag, Random16() * 24 + (8 << 16), Random16());
         }
     }

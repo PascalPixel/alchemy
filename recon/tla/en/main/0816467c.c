@@ -51,9 +51,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     s32 i;
 
     __asm__("");
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
     org_x = x;
     x += 40 << 16;
     x /= 2;
@@ -68,14 +68,14 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
     Func_081963ec(104, 19);
-    max_blend = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    max_blend = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 3);
-    additive = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E, 0, 0);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     for (i = 0; i != 64; i++) {
@@ -84,16 +84,16 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
         work->particles[i].x = x;
         work->particles[i].y = y;
-        work->particles[i].velocity_x = (Trig_Sin(angle) * speed) >> 7;
-        work->particles[i].velocity_y = -((Trig_Cos(angle) * speed) >> 6);
+        work->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
+        work->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
         work->particles[i].variant = (Random16() & 15) + 16;
     }
 
     for (i = 0; i != 3; i++) {
         work->particles[61 + i].x = x;
         work->particles[61 + i].y = y;
-        work->particles[61 + i].velocity_x = (Trig_Sin(i * 0x5555) * 32) >> 6;
-        work->particles[61 + i].velocity_y = -((Trig_Cos(i * 0x5555) * 32) >> 5);
+        work->particles[61 + i].velocityX = (Trig_Sin(i * 0x5555) * 32) >> 6;
+        work->particles[61 + i].velocityY = -((Trig_Cos(i * 0x5555) * 32) >> 5);
     }
 
     for (i = 0; i != 64; i++) {
@@ -103,8 +103,8 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
         cells[i].x = x;
         cells[i].y = y;
-        cells[i].velocity_x = (Trig_Sin(angle) * speed) >> 6;
-        cells[i].velocity_y = -((Trig_Cos(angle) * speed) >> 5);
+        cells[i].velocityX = (Trig_Sin(angle) * speed) >> 6;
+        cells[i].velocityY = -((Trig_Cos(angle) * speed) >> 5);
         cells[i].variant = (Random16() & 15) + 20;
     }
 
@@ -174,7 +174,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
         if (frame <= 35)
             Func_0816442c(formation, org_x, y);
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
 

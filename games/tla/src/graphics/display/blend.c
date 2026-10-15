@@ -134,9 +134,9 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
     s32 angle;
     u8 index;
 
-    x_scale = (s16)source->scale_x;
+    x_scale = (s16)source->scaleX;
     angle = source->angle;
-    y_scale = (s16)source->scale_y;
+    y_scale = (s16)source->scaleY;
     index = gObjAffineCount;
     if (index > 31)
         return 31;

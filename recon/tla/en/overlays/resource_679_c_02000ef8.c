@@ -30,7 +30,7 @@ void Func_02000ef8(void)
 
 void Func_02000f58(void)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s16 *scroll = (s16 *)&map->layers[2];
     s32 hofs;
 
@@ -73,12 +73,12 @@ void Func_020010d8(struct ObjectRuntime *object)
     if (child != 0) {
         struct FieldSprite *sprite = child->animation;
 
-        child->terrain_height = object->terrain_height;
+        child->terrainHeight = object->terrainHeight;
         Func_02001c74_(child, Data_02001ee8);
-        child->motion_flags = 0;
+        child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = parent_sprite->priority;
         }
     }

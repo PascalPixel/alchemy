@@ -2,7 +2,7 @@
 
 void Func_02000670(void)
 {
-    ((struct SceneWork *)Ram_HeapSlots->event_work)->unknown_166 = 0;
+    ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
     GameFlag_ClearBit(0x106);
     GameFlag_ClearBit(0x104);
     Func_02005560();
@@ -99,12 +99,12 @@ void Func_020007f0(s32 unused, s32 id)
     struct ObjectRuntime *object = Object_GetById(id);
 
     if (object->x >> 20 == 13) {
-        object->motion_flags = 3;
-        if (object->terrain_height != Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
+        object->motionFlags = 3;
+        if (object->terrainHeight != Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
             s32 frames;
 
             WaitFrames(2);
-            for (frames = 0; frames < 30 && object->y > object->terrain_height; frames++)
+            for (frames = 0; frames < 30 && object->y > object->terrainHeight; frames++)
                 WaitFrames(1);
             Func_020056c0(133);
         }
@@ -139,7 +139,7 @@ void Func_02000900(void)
 
 void Func_02000944(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 frame;
     s32 delta;
 
@@ -147,27 +147,27 @@ void Func_02000944(void)
     (void)&object;
     Func_02005608();
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Object_SetModeById(gPartyState.current_owner, 28);
+    Object_SetModeById(gPartyState.currentOwner, 28);
     Battle_WaitMode0(16);
     frame = 0;
 step:
     if (frame == 5)
         Func_020056c0(204);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     delta = -0x400;
     /* FAKEMATCH: the barrier loads the first step before the scale it is added to; plainly sched2 loads the scale first (differ 2). */
     asm volatile("" : "+l"(delta));
-    object->scale_x += delta;
-    object->scale_y += -0x300;
+    object->scaleX += delta;
+    object->scaleY += -0x300;
     object->y += -0x9999;
     WaitFrames(1);
     if (++frame <= 39)
         goto step;
     /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots' address; plainly sched2 builds the address first (differ 2). */
     do {
-        Object_GetById(gPartyState.current_owner)->animation_kind = 0;
+        Object_GetById(gPartyState.currentOwner)->animationKind = 0;
     } while (0);
-    SCENE_WORK->unknown_1ac = 521;
+    SCENE_WORK->unk1ac = 521;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_020055f0(16);

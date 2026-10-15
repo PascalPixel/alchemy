@@ -50,7 +50,7 @@ s32 SaveState_SelectAndSave(void)
         if (slot == -1) {
             result = slot;
         } else {
-            work = Ram_HeapSlots->serial_work;
+            work = Ram_HeapSlots->serialWork;
             /* FAKEMATCH: see the header */
             __asm__("" : : "r"(work));
             if (work->summary[slot].level != 0) {

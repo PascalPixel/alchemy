@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct ResourceSprite {
-    u8 unknown_00[0x10];
-    u8 vram_block;
+    u8 unk00[0x10];
+    u8 vramBlock;
     u8 flags;
 };
 
@@ -39,8 +39,8 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
         if (alt == NULL) {
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
         } else {
-            Resource_ResetEntry(obj->vram_block);
-            obj->vram_block = ((struct ResourceSprite *)alt)->vram_block;
+            Resource_ResetEntry(obj->vramBlock);
+            obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
             obj = alt;
         }

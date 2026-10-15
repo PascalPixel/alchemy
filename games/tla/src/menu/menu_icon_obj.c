@@ -3,7 +3,7 @@
 #include "callback_scheduler.h"
 
 struct MenuIconWork {
-    u8 unknown_000[0x220];
+    u8 unk000[0x220];
     void *objects[4];
     s16 x[4];
     s16 y[4];
@@ -16,7 +16,7 @@ void MenuIcon_UpdateTransforms(void);
 
 void MenuIcon_ReleaseObjects(void)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
     s32 i;
 
     for (i = 0; i < 4; i++) {
@@ -35,7 +35,7 @@ void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
     s8 *object;
 
     if (menu->objects[index] != NULL) {
@@ -52,7 +52,7 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation)
 
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
     /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
     __asm__ volatile("" : "+l"(menu));
@@ -65,7 +65,7 @@ void MenuIcon_SetPosition(s32 index, s32 x, s32 y)
 
 void MenuIcon_SetFrame(s32 index, s32 frame)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
     /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
     __asm__ volatile("" : "+l"(menu));
@@ -76,7 +76,7 @@ void MenuIcon_SetFrame(s32 index, s32 frame)
 
 void Func_08105350(s32 index, s32 scale)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
     /* FAKEMATCH: the ARM9 scheduling would scale the index before loading the menu work. */
     __asm__("");

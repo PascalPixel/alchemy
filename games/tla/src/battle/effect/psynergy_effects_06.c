@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 
 struct ControlEvent {
-    u8 unknown_000[362];
+    u8 unk000[362];
     u16 cue;
 };
 

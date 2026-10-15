@@ -23,8 +23,8 @@ typedef struct LobeOrbitEffect
 	unsigned char pad10[0x20];
 	s32			  angle;
 	unsigned char pad34[4];
-	s32			  base_x;
-	s32			  base_y;
+	s32			  baseX;
+	s32			  baseY;
 	unsigned char pad40[0x10];
 	RenderData	 *render;
 } LobeOrbitEffect;

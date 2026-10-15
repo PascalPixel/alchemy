@@ -6,7 +6,7 @@
 #include "mem.h"
 #include "palqueue.h"
 
-#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unknown_70[0])
+#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
 
 #include "palqueue_add.c"
 

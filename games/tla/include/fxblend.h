@@ -12,7 +12,7 @@ struct FieldBlendWork
 	s16 timer;
 	s16 enabled;
 	s16 loud;
-	u8	unknown_1f86[2];
+	u8	unk1f86[2];
 };
 
 LAYOUT_SIZE_GUARD(FieldBlendWork_Size, struct FieldBlendWork, 0x1f88);

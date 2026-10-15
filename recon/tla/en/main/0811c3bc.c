@@ -14,13 +14,13 @@ void *UnitGet(s32 owner);
 
 
 struct BattleSortedUnitEntry {
-    u16 unit_id;
-    u16 unknown_02;
+    u16 unitId;
+    u16 unk02;
     s16 value;
     s16 width;
     s16 mode;
     s16 priority;
-    u8 unknown_0c[4];
+    u8 unk0c[4];
 };
 
 s32 BattlePresentation_BuildSortedUnitEntries(
@@ -40,11 +40,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     for (index = 0; index != 4; index++)
         UnitGet(index);
     for (index = 0; index < first_count; index++) {
-        s32 unit_id = unit_ids[index];
+        s32 unitId = unit_ids[index];
 
-        unit = UnitGet(unit_id);
+        unit = UnitGet(unitId);
         entry = &entries[index];
-        entry->unit_id = unit_id;
+        entry->unitId = unitId;
         entry->value = unit->agi;
         entry->width = 0;
         entry->mode = 0;
@@ -55,10 +55,10 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     entry = &entries[first_count];
     priority_range = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
     for (index = 0; index < second_count; index++) {
-        s32 unit_id = unit_ids[index];
+        s32 unitId = unit_ids[index];
 
-        unit = UnitGet(unit_id);
-        entry->unit_id = unit_id;
+        unit = UnitGet(unitId);
+        entry->unitId = unitId;
         entry->value = unit->agi >> 1;
         if (entry->value != 0)
             entry->value += (u32)(Random16() * unit->agi) >> 16;

@@ -16,29 +16,29 @@
 #include "ram_buffer.h"
 
 struct ItemUnit {
-    u8 unknown_000[0xd8];
+    u8 unk000[0xd8];
     u16 inventory[15];
 };
 
 struct ItemTrigger {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 trigger;
-    u8 unknown_06[2];
+    u8 unk06[2];
     u32 value;
 };
 
 struct ItemDefinitionView {
-    u8 unknown_00[12];
-    u8 use_type;
-    u8 unknown_0d[27];
-    u16 action_id;
+    u8 unk00[12];
+    u8 useType;
+    u8 unk0d[27];
+    u16 actionId;
 };
 
 struct ItemFieldWork {
-    u8 unknown_000[0x158];
+    u8 unk000[0x158];
     s16 exit;
-    u8 unknown_15a[0xcb6 - 0x15a];
-    u8 resolving_action;
+    u8 unk15a[0xcb6 - 0x15a];
+    u8 resolvingAction;
 };
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
@@ -95,7 +95,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
         if (actor == 15) {
             actor = 0;
             for (i = 0; i < count; i++) {
-                obj = UnitGet(gPartyState.active_owners[i]);
+                obj = UnitGet(gPartyState.activeOwners[i]);
                 matches = 0;
                 for (j = 0; j < 15; j++) {
                     if ((obj->inventory[j] & 0x1ff) == item_id)
@@ -104,7 +104,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
 
                 if (best < matches) {
                     best = matches;
-                    actor = gPartyState.active_owners[i];
+                    actor = gPartyState.activeOwners[i];
                 }
             }
         } else {
@@ -142,18 +142,18 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
         }
         result = 0;
     } else {
-        s32 action_id;
+        s32 actionId;
 
         GameFlag_ClearBit(0x143);
         GameFlag_SetBit(0x142);
-        action_id = Item_Get(item_id)->action_id;
-        runtime = Ram_HeapSlots->event_work;
+        actionId = Item_Get(item_id)->actionId;
+        runtime = Ram_HeapSlots->eventWork;
 
-        if (action_id != 0) {
+        if (actionId != 0) {
             GameFlag_SetBit(0x145);
             GameFlag_ClearBit(0x142);
 
-            if (action_id == 149 && !GameFlag_Test(0x144)) {
+            if (actionId == 149 && !GameFlag_Test(0x144)) {
                 UiText_DrawQuantity(item_id, 2);
                 UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseItemQuestion, 13);
                 i = Func_080d295c(1);
@@ -161,21 +161,21 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
                 if (i != 0)
                     return 0;
 
-                gPartyState.scene = *(u16 *)&gPartyState.unknown_25e[2];
-                gPartyState.entrance = *(u16 *)&gPartyState.unknown_25e[4];
+                gPartyState.scene = *(u16 *)&gPartyState.unk25e[2];
+                gPartyState.entrance = *(u16 *)&gPartyState.unk25e[4];
                 runtime->exit = 999;
             }
 
             UiText_DrawQuantity(actor, 1);
             UiText_DrawQuantity(item_id, 2);
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
-            BattleFx_LoadActionEffectResources(action_id, 0);
-            runtime->resolving_action = 1;
+            BattleFx_LoadActionEffectResources(actionId, 0);
+            runtime->resolvingAction = 1;
             BattleFx_Run();
-            runtime->resolving_action = 0;
+            runtime->resolvingAction = 0;
             BattleEffect_CleanupSceneObjects();
 
-            if (Item_Get(item_id)->use_type & 1)
+            if (Item_Get(item_id)->useType & 1)
                 GameFlag_SetBit(0x143);
         }
     }

@@ -14,7 +14,7 @@ s32 Random16Far(void);
 extern u32 gFrameCount;
 
 struct SceneEffectSource {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
@@ -25,7 +25,7 @@ struct SceneEffectParams {
     s32 mode;
     s32 color1;
     s32 color2;
-    u8 unknown_10[0x18];
+    u8 unk10[0x18];
 };
 
 void Func_02000eac(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,

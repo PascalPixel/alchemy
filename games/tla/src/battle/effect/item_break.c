@@ -13,8 +13,8 @@
 #include "field_event.h"
 
 struct BattleFxScene {
-    u8 unknown_00[16];
-    void *volatile main_object;
+    u8 unk00[16];
+    void *volatile mainObject;
 };
 
 
@@ -25,8 +25,8 @@ void BattleFx_RunItemBreakSequence(void)
     struct BattleFxScene *scene;
     void *object;
 
-    scene = Ram_HeapSlots->effect_work;
-    object = scene->main_object;
+    scene = Ram_HeapSlots->effectWork;
+    object = scene->mainObject;
 
     BattleEffect_InitializeSharedScene();
     object = BattleFx_StartItemBreak(object);

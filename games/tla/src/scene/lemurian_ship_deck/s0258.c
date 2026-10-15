@@ -13,7 +13,7 @@ struct ObjectRuntime *Func_02002074(void);
 
 void Func_02000258(void)
 {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x108);
+    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);
     s32 phase = Data_020024b4;
 
     layer[2] = phase;
@@ -27,7 +27,7 @@ void Func_02000258(void)
 // together on a sine wave, its phase advancing 0x200 a frame.
 void Func_02000288(void)
 {
-    struct MapLayer *layer = &Ram_HeapSlots->map_work->layers[0];
+    struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
     struct ObjectRuntime *object = Func_02002074();
     s32 offset = Math_Sine(Data_020024b0) >> 2;
     s32 step;

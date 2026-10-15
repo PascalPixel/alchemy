@@ -13,9 +13,9 @@ s32 Func_02001aa4(void)
     struct PartyState *party;
     s16 scene;
 
-    work = Ram_HeapSlots->event_work;
-    work->screen_effect = 521;
-    Object_GetById(Func_02001f00())->priority_flags |= 0x20;
+    work = Ram_HeapSlots->eventWork;
+    work->screenEffect = 521;
+    Object_GetById(Func_02001f00())->priorityFlags |= 0x20;
     party = &gPartyState;
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the scene's offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2). */
     asm volatile("" : "+l"(party));

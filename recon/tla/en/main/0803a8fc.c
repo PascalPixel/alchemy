@@ -2,9 +2,9 @@
 #include "iwram_call.h"
 
 struct GlyphWork {
-    u8 unknown_000[0xea4];
-    u8 fixed_colour;
-    u8 unknown_ea5[7];
+    u8 unk000[0xea4];
+    u8 fixedColour;
+    u8 unkea5[7];
     u16 outlined;
     u16 colour;
 };
@@ -34,7 +34,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     second_index = (s32)((u32)code << 8) >> 16;
     code &= 255;
     Iwram_ClearWords(buf, 384);
-    if (work->fixed_colour != 0) {
+    if (work->fixedColour != 0) {
         transparent = 0;
         colour = 8;
     } else {

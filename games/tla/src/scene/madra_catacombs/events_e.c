@@ -4,17 +4,17 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 
@@ -158,7 +158,7 @@ void Func_02000dcc(void)
     Func_020011dc(Data_020013c0);
     if (Flag_Test(0x9ef) != 0)
         Actor_Place(8, 568 << 16, 280 << 16);
-    Object_GetById(8)->priority_flags &= 0xfe;
+    Object_GetById(8)->priorityFlags &= 0xfe;
     Func_02000038(Data_020013ca);
     Func_020011c4(Data_020013c4);
     if (Flag_Test(0x8cb) != 0) {
@@ -206,11 +206,11 @@ void Func_02000fd8(void)
         Actor_Place(64, 0, 0);
     } else {
         object = Object_GetById(64);
-        object->collision_flags = 8;
-        object->motion_flags = 2;
+        object->collisionFlags = 8;
+        object->motionFlags = 2;
         object->y = 0x200000;
-        object->terrain_height = 0x200000;
+        object->terrainHeight = 0x200000;
         object->update = Func_02000a28;
-        Object_GetById(8)->scale_y = 0xcccc;
+        Object_GetById(8)->scaleY = 0xcccc;
     }
 }

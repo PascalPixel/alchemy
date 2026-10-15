@@ -74,8 +74,8 @@ void Func_020001a0(s32 unused, s32 id)
             other = Object_GetById(9);
             dx = block->x - other->x;
             if (dx >= 0 ? dx < 0x80000 : other->x - block->x < 0x80000) {
-                other->motion_flags = 0;
-                other->speed_limit = 0x10000;
+                other->motionFlags = 0;
+                other->speedLimit = 0x10000;
                 Func_02001054(other, block->x, block->y, block->z);
                 Func_0200105c(other);
                 Func_02001044(block, Data_02001404);

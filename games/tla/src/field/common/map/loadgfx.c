@@ -35,29 +35,29 @@ void Func_0802dd08(void *source, void *destination);
 
 void MapAnimation_Start(void)
 {
-    u8 *pages = Ram_HeapSlots->unknown_1c[0];
-    struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    u8 *pages = Ram_HeapSlots->unk1c[0];
+    struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
     u32 *resources;
     s32 one;
     s8 *active;
 
-    active = &work->animation_active;
+    active = &work->animationActive;
     one = 1;
     *active = one;
     Scheduler_EnableCallbacks(MapAnimation_Update);
-    work->frame_pending = one;
+    work->framePending = one;
     resources = work->resources;
     Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Data_02038000);
-    if (work->extra_tiles != 0)
+    if (work->extraTiles != 0)
         Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Data_0203a000);
-    work->extra_tiles = 0;
+    work->extraTiles = 0;
     Dma_Set((void *)0x06004000, Data_0201c000, 0x84000800, REG_DMA3);
     WaitFrames(1);
     Func_0802dd08(pages + (gFrameCount & one) * 0x1400 + 0xc80, Ram_MapCellBuffer);
-    work->window_top = 200;
-    work->window_bottom = 255;
+    work->windowTop = 200;
+    work->windowBottom = 255;
     Data_030011f8 = MapAnimation_PresentFrame;
-    work->frame_shown = one;
+    work->frameShown = one;
 }
 
 extern u8 Data_02038000[];

@@ -61,7 +61,7 @@ struct ActionDescriptor
 	s32 y;
 	s32 z;
 	u16 facing;
-	u8	talk_facing;
+	u8	talkFacing;
 	u8	flags;
 };
 
@@ -70,7 +70,7 @@ struct EffectDescriptor
 {
 	s32 flags; // 下位 4bit が種類（SceneEventKind、7 は止めた相手と話す）
 	u8	value; // 相手（オブジェクト番号など）
-	u8	unused_05;
+	u8	unused05;
 	s16 condition; // GameFlag_IsConditionActive の条件
 	s32 result;	   // 0x10000 未満はメッセージ、それ以上は呼ぶ関数
 };
@@ -102,7 +102,7 @@ void ObjectTable_Restore(void);
 void BattleFx_ResetCounters(void);
 s32 BattleFx_SumCounters(void);
 s32 GetFocusedObjectCollision(void);
-void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z);
+void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled);

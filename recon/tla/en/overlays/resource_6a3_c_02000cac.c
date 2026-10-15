@@ -277,11 +277,11 @@ void Func_02000cac(s32 arg)
         I_Battle_WaitMode0(20);
         I_Battle_WaitMode0(10);
         I_Func_0200489c(28, 0, 5);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
         I_Object_SetModeById(28, 4);
         I_Battle_WaitMode0(33);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         I_Func_0200489c(28, 0, 5);
     }
     I_Motion_SetVarCbAndRefresh(5, 2);
@@ -351,7 +351,7 @@ void Func_02000cac(s32 arg)
     I_Motion_SetVarCbAndRefresh(1, 2);
     I_Battle_WaitMode0(5);
     I_Func_0200489c(1, 0, 5);
-    Object_GetById(3)->action_flags &= 0xfe;
+    Object_GetById(3)->actionFlags &= 0xfe;
     I_ObjectMotion_SetSpeedParameters(3, 0x1999, 0xccc);
     I_ObjectMotion_OffsetPositionAndResetMotion(3, 4, 2);
     I_ObjectMotion_CommitCurrentPositionAndActivate(3);
@@ -376,7 +376,7 @@ void Func_02000cac(s32 arg)
     do { I_Object_SetModeById(3, 4); } while (0);
     do { I_Battle_WaitMode0(33); } while (0);
     I_Func_0200489c(3, 0, 5);
-    Object_GetById(3)->action_flags |= 1;
+    Object_GetById(3)->actionFlags |= 1;
     I_ObjectMotion_OffsetPositionAndResetMotion(3, -2, -8);
     I_ObjectMotion_CommitCurrentPositionAndActivate(3);
     I_Object_SetModeById(3, 1);

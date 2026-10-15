@@ -7,12 +7,12 @@
 #include "scene.h"
 
 struct TimedNoticeWork {
-    u8 unknown_000[0x21c];
+    u8 unk000[0x21c];
     struct UiWindow *window;
     u16 countdown;
 };
 
-#define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->event_work)
+#define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
 void UiTimedNotice_Tick(void);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);

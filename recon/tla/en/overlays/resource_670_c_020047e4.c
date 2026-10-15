@@ -12,7 +12,7 @@ void Func_020047e4(void)
     Func_02005b4c((s32)MsgYouAreStillNot);
     Func_02005b64(17, 0);
     if (Data_02007950 != 0) {
-        Data_02007950->motion_flags = 0;
+        Data_02007950->motionFlags = 0;
         while (Data_02007950->y > 0x240000) {
             Kibombo_ObjArm(17, 0xd000, 0);
             Data_02007950->y += 0xffffc000;

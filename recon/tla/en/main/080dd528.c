@@ -5,7 +5,7 @@
 #include "objdisp.h"
 #include "object_effect_scripts.h"
 
-struct BattleFxScene { u8 pad00[16]; void *volatile main_object; };
+struct BattleFxScene { u8 pad00[16]; void *volatile mainObject; };
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);

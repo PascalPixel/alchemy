@@ -7,9 +7,9 @@ struct Position { s32 x, y, z; };
 union PositionWord { s32 w; s16 h[2]; };
 struct Effect_080b2f4c { u8 filler[0x48]; };
 struct ShopBurstRuntime {
-    u8 unknown_000[0x134];
-    s16 member_x[8];
-    s16 member_z[8];
+    u8 unk000[0x134];
+    s16 memberX[8];
+    s16 memberZ[8];
 };
 
 u32 Random16(void);
@@ -49,17 +49,17 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     saved_kind = shop->cursor.anchor->kind;
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
     shop->cursor.anchor->kind = 13;
-    Audio_PlayCue(Data_080b4ab2[shop->party_action]);
+    Audio_PlayCue(Data_080b4ab2[shop->partyAction]);
     Shop_RestoreSceneTiles(0x00202108);
-    Func_08009280((s32)shop->party_member_icons[member], 0);
+    Func_08009280((s32)shop->partyMemberIcons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
     Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
-       may alias the member_z load, which keeps the reference schedule. */
-    ((union PositionWord *)&position.x)->w = (s32)burst->member_x[member] << 16;
-    position.z = ((s32)burst->member_z[member] << 16) + (s32)0xfff40000;
+       may alias the memberZ load, which keeps the reference schedule. */
+    ((union PositionWord *)&position.x)->w = (s32)burst->memberX[member] << 16;
+    position.z = ((s32)burst->memberZ[member] << 16) + (s32)0xfff40000;
 
     i = 0;
     effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
@@ -122,7 +122,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     }
 
     Scheduler_RemoveCallback(Shop_ResetEffects);
-    Func_08009280((s32)shop->party_member_icons[member], 16);
+    Func_08009280((s32)shop->partyMemberIcons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
     shop->cursor.anchor->kind = saved_kind;

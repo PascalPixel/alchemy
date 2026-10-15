@@ -17,18 +17,18 @@ void Func_02002b84(void)
     /* FAKEMATCH: through the pointer, taken here, Data_0200480c's address loads before the call that fetches actor 22, as in the native (differ 2 naming the global at each use). */
     followed = &Data_0200480c;
     object = (struct ObjectRuntime *)Object_GetById(22);
-    object->priority_flags |= 2;
-    object->scale_x = 0x14ccc;
-    object->scale_y = 0x14ccc;
+    object->priorityFlags |= 2;
+    object->scaleX = 0x14ccc;
+    object->scaleY = 0x14ccc;
     *followed = (struct FieldActor *)object;
     Func_020040f8(22);
     ObjectMotion_SetActionVariant(22, 3);
-    (*followed)->motion_flags = 3;
+    (*followed)->motionFlags = 3;
     Scene_SetSpeed(21, 0x19999, 0xcccc);
     Object_SetPartAttribute((struct FieldActor *)leader, 15);
     ObjectMotion_SetActionVariant(21, 3);
     Func_020040f8(21);
-    Object_GetById(21)->motion_flags = 3;
+    Object_GetById(21)->motionFlags = 3;
     if (GameFlag_Test(0x88b)) {
         angle = 0x4000;
         Scene_Call4098(21, 232 << 16, 168 << 16, angle);

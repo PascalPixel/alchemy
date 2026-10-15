@@ -147,8 +147,8 @@ static void EV10_TOUCH(void)
 			GameFlag_Clear(0x9a0);
 			Engine_ActorWaitForMove(11);
 			Engine_ActorSetAnimation(11, 1);
-			gGameState.saved_scene = (s32)&SceneId_TolbiInteriors;
-			gGameState.saved_entrance = 30;
+			gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
+			gGameState.savedEntrance = 30;
 		}
 		else
 		{
@@ -245,7 +245,7 @@ static void EV01_TOUCH(void)
 		GameFlag_Set(0x9a5);
 		GameFlag_Set(0x9a4);
 	}
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -335,21 +335,21 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id)
 	s32					 angle;
 
 	work = (union SpinningActor *)Object_GetById(id);
-	work->object.actor.motion_flags = 0;
+	work->object.actor.motionFlags = 0;
 	for (cnt = 0; cnt < 9; cnt++)
 	{
 		Engine_TaskWait(1);
 		work->object.actor.sprite->rotation -= 0x100;
 		work->object.actor.x.fixed -= Engine_MathCos(work->object.actor.sprite->rotation) / 2;
-		work->staged.target_x = 0x80000000;
+		work->staged.targetX = 0x80000000;
 	}
 	work->object.actor.update = (void (*)(union FieldObject *))StagedActorPairScene_RotateActorPart;
 	Engine_AudioPlayCue(136);
 	Actor_SetSpeed(id, 0x20000, 0x10000);
 	Actor_SetDestination(id, 472, 288);
-	work->object.effect.velocity_y = 0xcccc;
-	work->object.actor.motion_flags = 3;
-	work->object.actor.terrain_id = 0;
+	work->object.effect.velocityY = 0xcccc;
+	work->object.actor.motionFlags = 3;
+	work->object.actor.terrainId = 0;
 	Engine_ActorWaitForMove(id);
 	StagedActorPairScene_WaitForHeight(work, 0x200000);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);

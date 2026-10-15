@@ -17,7 +17,7 @@ s32 Func_02000f6c(s32 id);
 s32 Func_02000fbc(s32 actor);
 void Func_0200191c(void);
 void Func_0200197c(void);
-void Func_02001984(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02001984(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020019e4(s32 value, s32 digits);
 void Func_020019ec(void);
 void Func_02001a14(void);
@@ -44,7 +44,7 @@ s32 Func_02001130(s32 actor)
 
     Func_02001a14();
     Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(actor, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
     if (GameFlag_Test(0x304)) {
         Flag_Test(0x2f4);
         base = GameFlag_Test(actor + 0x2f0);
@@ -127,7 +127,7 @@ s32 Func_0200122c(s32 actor)
         ObjectMotion_SetVariantCallback(14, 1);
         Object_SetModeById(14, 4);
         Battle_WaitMode0(15);
-        ObjectMotion_SetAngleToward(14, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
         Battle_WaitMode0(5);
         UiText_OpenMessageAtObject(14, 0);
     }
@@ -140,7 +140,7 @@ s32 Func_02001304(s32 actor)
 
     Func_02001a14();
     Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(actor, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
     if (!Flag_Test(0x204)) {
         if (Party_CountActiveOwners() == 8)
             message = (s32)MsgUpToThree;
@@ -165,9 +165,9 @@ s32 Func_02001388(s32 id)
     Func_02001a14();
     Func_02001ab4(0);
     gs = &gPartyState;
-    ObjectMotion_SetAngleToward(id, gs->current_owner, 0);
-    if (gs->link_tallies[2] != 0) {
-        Func_020019e4(gs->link_tallies[2], 5);
+    ObjectMotion_SetAngleToward(id, gs->currentOwner, 0);
+    if (gs->linkTallies[2] != 0) {
+        Func_020019e4(gs->linkTallies[2], 5);
         Func_02001a64((s32)MsgYouVeWon);
     } else {
         Func_02001a64((s32)MsgICanTWaitTo);

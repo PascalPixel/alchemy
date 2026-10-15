@@ -7,28 +7,28 @@ void Func_020006a4(void)
     Func_02000d00();
     Func_02000dd0(0);
     Func_02000d60(MsgWait2);
-    ObjectMotion_ResetAndSetPositionInMode2(gPartyState.current_owner, 200, 264);
-    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+    ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 200, 264);
+    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
     Func_02000d70(32, 0);
     Battle_WaitMode0(15);
-    Value3((s32 (*)())Func_02000d88, gPartyState.current_owner, 256, 30);
+    Value3((s32 (*)())Func_02000d88, gPartyState.currentOwner, 256, 30);
     Call3((void (*)())Func_02000d40, 32, 200 << 16, 216 << 16);
     ObjectMotion_ResetAndSetPositionInMode2(32, 200, 248);
     ObjectMotion_CommitCurrentPositionAndActivate(32);
     Battle_WaitMode0(30);
     Func_02000d70(32, 0);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 32, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 32, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(32, 4);
     Battle_WaitMode0(30);
     Func_02000d70(32, 0);
-    Value3((s32 (*)())Func_02000d88, gPartyState.current_owner, 261, 60);
+    Value3((s32 (*)())Func_02000d88, gPartyState.currentOwner, 261, 60);
     Func_02000d88(32, 262, 30);
     Func_02000d70(32, 0);
     Object_SetModeById(32, 3);
     Battle_WaitMode0(15);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 32, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1) {
         Battle_WaitMode0(90);
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 32, 0x6666, 0x3333);
         ObjectMotion_ResetAndSetPositionInMode2(32, 200, 216);
@@ -39,7 +39,7 @@ void Func_020006a4(void)
         Func_02000d88(32, 265, 30);
         Func_02000d70(32, 0);
         ObjectMotion_SetActionVariant(32, 3);
-        Object_GetById(32)->motion_flags |= 2;
+        Object_GetById(32)->motionFlags |= 2;
         GameFlag_SetBit(0x302);
     } else {
         Func_02000814();
@@ -55,7 +55,7 @@ void Func_02000814(void)
     ObjectMotion_ArmCallback(32, 0x2000, 0);
     Battle_WaitMode0(30);
     Func_02000d70(32, 0);
-    ObjectMotion_SetAngleToward(32, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(32, gPartyState.currentOwner, 0);
     Object_SetModeById(32, 3);
     Battle_WaitMode0(30);
     Func_02000d70(32, 0);
@@ -65,19 +65,19 @@ void Func_02000814(void)
     Object_SetModeById(32, 4);
     Battle_WaitMode0(30);
     Func_02000d70(32, 0);
-    Object_SetModeById(gPartyState.current_owner, 3);
+    Object_SetModeById(gPartyState.currentOwner, 3);
     Battle_WaitMode0(15);
     Func_02000d88(32, 265, 30);
     Func_02000d70(32, 0);
-    ObjectMotion_SetAngleToward(32, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(32, gPartyState.currentOwner, 0);
     Battle_WaitMode0(15);
     Func_02000d70(32, 0);
     Object_SetModeById(32, 3);
     Battle_WaitMode0(15);
-    Object_SetModeById(gPartyState.current_owner, 3);
+    Object_SetModeById(gPartyState.currentOwner, 3);
     Battle_WaitMode0(30);
     ObjectMotion_SetSpeedParameters(32, 0x3333, 0x1999);
-    Object_GetById(32)->motion_flags = 0;
+    Object_GetById(32)->motionFlags = 0;
     ObjectMotion_SetActionVariant(32, 3);
     ObjectMotion_ResetAndSetPositionInMode2(32, 200, 208);
     ObjectMotion_CommitCurrentPositionAndActivate(32);

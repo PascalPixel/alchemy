@@ -9,16 +9,16 @@
 
 void Func_0200495c(s32 layer, s32 keep)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     struct MapLayer *mapLayer = &map->layers[layer];
     u32 *cells = (u32 *)mapLayer->cells;
-    s32 width = (map->max_x - map->min_x) >> 20;
-    s32 height = (map->max_z - map->min_z) >> 20;
+    s32 width = (map->maxX - map->minX) >> 20;
+    s32 height = (map->maxZ - map->minZ) >> 20;
     u32 fill;
     u16 z;
     u16 x;
 
-    cells += ((map->min_z >> 20) << 7) + (map->min_x >> 20);
+    cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
     fill = *cells;
     for (z = 0; z < height; z++) {
         u32 *cell = &cells[z * 128];

@@ -32,7 +32,7 @@ void Func_02001d04();
 
 void Func_020008e8(void)
 {
-    s32 y = Object_GetById(gPartyState.current_owner)->y;
+    s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the owner's y before it builds the limit (2 differ without it). */
     if (y < 0x5a0000) {
@@ -40,7 +40,7 @@ void Func_020008e8(void)
         Func_02001d7c(126);
         Func_02001bb4(1);
     } else {
-        FIELD_AT(Ram_HeapSlots->event_work, u16, 346) = 1;
+        FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
     }
 }
 
@@ -49,7 +49,7 @@ void Func_020008e8(void)
 void Func_02000934(void)
 {
     if (Value1(GameFlag_Test, 0x908)) {
-        Call3(ObjectMotion_SetAngleToward, 30, gPartyState.current_owner, 0);
+        Call3(ObjectMotion_SetAngleToward, 30, gPartyState.currentOwner, 0);
         Call1((void (*)())Object_RefreshSelectorById, 30);
         Call1(Func_02001c6c, (s32)MsgYouLookLike);
         Call2(Func_02001c84, 30, 0);
@@ -60,7 +60,7 @@ void Func_02000934(void)
     Call1(Func_02001d04, 0);
     Call1(Func_02001c6c, (s32)MsgDoYouWish);
     Value3(Func_02001ca4, 30, 0x100, 30);
-    Call3(ObjectMotion_SetAngleToward, 30, gPartyState.current_owner, 0);
+    Call3(ObjectMotion_SetAngleToward, 30, gPartyState.currentOwner, 0);
     Call1((void (*)())Object_RefreshSelectorById, 30);
     Call1(Battle_WaitMode0, 5);
     Value2(UiText_OpenMessageAtObject, 30, 0);
@@ -70,10 +70,10 @@ void Func_02000934(void)
     } else {
         Call1(Battle_WaitMode0, 20);
         Call2(Motion_SetModeAndWaitAnimation, 30, 3);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Call3(Func_02001c7c, 30, 0, 5);
-        Call3(ObjectMotion_SetPositionAndReset, gPartyState.current_owner, 0x1d0, 0x410);
-        Call2(Func_02001c94, gPartyState.current_owner, 0xc000);
+        Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x1d0, 0x410);
+        Call2(Func_02001c94, gPartyState.currentOwner, 0xc000);
         Call1(Battle_WaitMode0, 5);
         Call3(ObjectMotion_SetSpeedParameters, 30, 0x13333, 0x9999);
         Call3(ObjectMotion_SetPositionAndReset, 30, 0x1b8, 0x418);

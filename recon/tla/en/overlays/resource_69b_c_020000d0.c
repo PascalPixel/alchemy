@@ -1,7 +1,7 @@
 /* Draft of overlay 69b's Func_020000d0, differ 58 of 145: the leader sinks 36 frames, a kind-280
  * object spawns at it, both go down to height 32 while the leader spins, then the leader spins
  * 15 frames more and is restored. Written from the listing (the ☀️ twin's shape was 0.49). Left:
- * (1) the native stores 0 into terrain_id from a pool word loaded just before the store; here the
+ * (1) the native stores 0 into terrainId from a pool word loaded just before the store; here the
  * pool word is loaded inside the last spin loop and kept in r8, which pushes the owner to r10;
  * (2) the native rotates the descent loop (its test at the top and again at the bottom) where
  * this jumps to one test at the bottom; (3) the native places a literal pool after the first
@@ -31,7 +31,7 @@ void Func_020022dc(s32 a);
 
 void Func_020000d0(s32 kind)
 {
-    s32 owner = gPartyState.current_owner;
+    s32 owner = gPartyState.currentOwner;
     struct ObjectRuntime *leader = Object_GetById(owner);
     struct ObjectRuntime *effect;
     s32 i;
@@ -55,12 +55,12 @@ void Func_020000d0(s32 kind)
         leader->y += -0x10000;
         WaitFrames(1);
     }
-    leader->scale_x = 0x10000;
-    leader->scale_y = 0x10000;
+    leader->scaleX = 0x10000;
+    leader->scaleY = 0x10000;
     effect = Object_Spawn(280, leader->x, leader->y, leader->z);
     Func_020021b4(effect, 2);
-    effect->scale_x = 0x18000;
-    effect->scale_y = 0x10000;
+    effect->scaleX = 0x18000;
+    effect->scaleY = 0x10000;
     ((struct FieldSprite *)effect->animation)->priority = 1;
     while (leader->y > 0x200000) {
         leader->y += -0x10000;
@@ -81,8 +81,8 @@ spin:
     Func_020021d4(effect);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(owner), 1);
     leader->angle = 0x4000;
-    leader->terrain_id = 0;
-    leader->motion_flags = 3;
+    leader->terrainId = 0;
+    leader->motionFlags = 3;
     Scheduler_RemoveCallbackFar(Func_020000b4);
     Func_02000054();
     Func_02002254();

@@ -10,13 +10,13 @@
 struct MagmaRockEffectConfig {
     s32 kind;
     s32 variant;
-    s32 unknown_08;
-    s32 unknown_0c;
-    u8 unknown_10[8];
+    s32 unk08;
+    s32 unk0c;
+    u8 unk10[8];
     u16 id;
-    u8 unknown_1a[2];
+    u8 unk1a[2];
     const void *data;
-    u8 unknown_20[8];
+    u8 unk20[8];
 };
 
 extern u32 Data_02003d50[];
@@ -32,8 +32,8 @@ void Func_02002024(s32 x, s32 z)
     s32 position[3];
     s32 i;
 
-    cfg->unknown_08 = 0x20000;
-    cfg->unknown_0c = 0x20000;
+    cfg->unk08 = 0x20000;
+    cfg->unk0c = 0x20000;
     cfg->id = 403;
     cfg->kind = 1;
     cfg->data = Data_02003d50;

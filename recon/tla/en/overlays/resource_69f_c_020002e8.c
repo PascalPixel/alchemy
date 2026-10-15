@@ -31,7 +31,7 @@ void Func_020002e8(void)
 
     phase = (Data_020023bc / 4) % 5;
     if (Data_020023c0 != 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
 
         if (*(s16 *)(work + 358) != 0 && (HALF_AT(work, 358) & 0x3ff) != 153)
             return;

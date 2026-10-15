@@ -15,7 +15,7 @@ struct TitlePaletteWork
 	u8	page;
 	s8	duration;
 	u8	step;
-	u8	padding_3003;
+	u8	padding3003;
 };
 
 LAYOUT_SIZE_GUARD(TitlePaletteWork_Size, struct TitlePaletteWork, 0x3004);
@@ -35,7 +35,7 @@ struct BattleEffectBuffers
 	u8	page;
 	s8	duration;
 	s8	step;
-	u8	padding_2a03;
+	u8	padding2a03;
 };
 
 LAYOUT_SIZE_GUARD(BattleEffectBuffers_Size, struct BattleEffectBuffers, 0x2a04);

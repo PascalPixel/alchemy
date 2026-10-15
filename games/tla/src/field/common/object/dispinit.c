@@ -34,7 +34,7 @@ void Func_08023524(struct DispatchObject *object)
 
     /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset 0x212 in r2; the empty asm holds r2 until the address is loaded. Plainly the offset is started first (differ 2). */
     asm("" : "+l"(party) : : "r2");
-    switch (party->render_mode) {
+    switch (party->renderMode) {
     case 0:
         script = Data_0802f140;
         break;

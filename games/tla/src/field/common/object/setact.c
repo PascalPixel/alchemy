@@ -36,7 +36,7 @@ void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind)
         kind = (s32)Data_080f373c;
         break;
     case 6:
-        object->linked_object = Object_GetById(gPartyState.current_owner);
+        object->linkedObject = Object_GetById(gPartyState.currentOwner);
         kind = (s32)Data_080f3750;
         break;
     case 7:

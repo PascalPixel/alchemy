@@ -25,12 +25,12 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x20];
+    u8 unk7788[0x20];
     s32 shakeFrames;
-    u8 unknown_77ac[0x13c];
+    u8 unk77ac[0x13c];
     s32 transferPending;
 };
 
@@ -66,15 +66,15 @@ void Func_08148e9c(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
     Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 0x17);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     for (j = 0; j != 16; j++)
     {
         point = &work->particles[j];

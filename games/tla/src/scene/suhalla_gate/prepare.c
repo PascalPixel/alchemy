@@ -8,9 +8,9 @@ void Func_020002e0(void)
 
 void Func_02000308(void)
 {
-    s32 value = *(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x154);
+    s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
-    Object_GetById(0)->motion_flags = 0;
+    Object_GetById(0)->motionFlags = 0;
     Func_02000aa0(158);
     Func_02000970(66, 36, 71, 8, 2, 2);
     WaitFrames(4);
@@ -23,9 +23,9 @@ void Func_02000308(void)
 
 void Func_02000378(void)
 {
-    s32 value = *(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x154);
+    s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
-    gPartyState.current_owner = 4;
+    gPartyState.currentOwner = 4;
     Func_02000aa0(123);
     Func_02000a38(value);
 }

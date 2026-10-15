@@ -13,28 +13,28 @@
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
-    s32 vx = step->velocity_x;
-    s32 vy = step->velocity_y;
-    s32 vz = step->velocity_z;
+    s32 vx = step->velocityX;
+    s32 vy = step->velocityY;
+    s32 vz = step->velocityZ;
 
     step->x += vx;
     step->y += vy;
     step->z += vz;
-    step->velocity_x = vx * damping / 64;
-    step->velocity_y = (vy + gravity) * damping / 64;
-    step->velocity_z = vz * damping / 64;
+    step->velocityX = vx * damping / 64;
+    step->velocityY = (vy + gravity) * damping / 64;
+    step->velocityZ = vz * damping / 64;
 }
 
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity)
 {
     s32 x = step->x;
-    s32 vx = step->velocity_x;
-    s32 vy = step->velocity_y;
+    s32 vx = step->velocityX;
+    s32 vy = step->velocityY;
 
     step->x = x + vx;
     step->y += vy;
-    step->velocity_x = vx * damping / 64;
-    step->velocity_y = (vy + gravity) * damping / 64;
+    step->velocityX = vx * damping / 64;
+    step->velocityY = (vy + gravity) * damping / 64;
 }
 
 s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position)

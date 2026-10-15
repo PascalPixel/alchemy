@@ -5,7 +5,7 @@
 
 void Func_0200095c(u16 *list)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s32 index;
 
     goto next;

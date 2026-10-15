@@ -24,8 +24,8 @@ void Func_0200030c(void)
         GameFlag_SetBit(0xa35);
         break;
     }
-    work = Ram_HeapSlots->event_work;
-    work->field_166 = 0;
+    work = Ram_HeapSlots->eventWork;
+    work->field166 = 0;
     Battle_WaitMode0(30);
     Call2((void (*)())Func_02003248, 0x10000, 0);
     Func_02003258(30);

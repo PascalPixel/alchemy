@@ -30,7 +30,7 @@ struct UiChannelSlot *Func_080395fc(struct UiWindow *work, s32 value, s32 preser
     u16 zero;
     u32 index;
 
-    slot = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
+    slot = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {
@@ -60,10 +60,10 @@ reset_x:
         }
 
         zero = 0;
-        selected->start_x = 0x300;
+        selected->startX = 0x300;
         selected->work->state = zero;
         selected->colour = 15;
-        selected->line_spacing = 10;
+        selected->lineSpacing = 10;
         selected->entry = value;
         selected->countdown = zero;
         selected->outline = zero;

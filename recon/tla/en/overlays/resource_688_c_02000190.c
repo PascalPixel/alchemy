@@ -26,8 +26,8 @@ s32 Func_02000190(void)
 {
     s32 effect = 0x204;
 
-    ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = effect;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);
     GameFlag_SetBit(0x907);
     GameFlag_ClearBit(0x9b4);
@@ -44,16 +44,16 @@ s32 Func_02000190(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(18), 0);
     if (gPartyState.entrance == 90) {
-        gPartyState.owner_override = 1;
+        gPartyState.ownerOverride = 1;
         Func_020005a4((s32)&SceneId_Ov688, 1);
     }
     if (gPartyState.entrance == 3 || gPartyState.entrance == 5) {
-        gPartyState.current_owner = 8;
-        ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+        gPartyState.currentOwner = 8;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        gPartyState.current_owner = 4;
-        ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = effect;
+        gPartyState.currentOwner = 4;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
     }
     if (gPartyState.entrance == 3 && GameFlag_Test(0x96b)) {
         GameFlag_ClearBit(0x96b);

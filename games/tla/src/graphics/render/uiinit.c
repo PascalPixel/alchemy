@@ -31,7 +31,7 @@ void UiWork_InitializeWithResourceCounters(void)
     work = (struct UiRenderWork *)Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
     Iwram_ClearWords(work, sizeof(struct UiRenderWork));
     work->dirty = 1;
-    work->glyph_resource = 99;
+    work->glyphResource = 99;
     work->level = 15;
     FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
     UiWork_InitFreeList();
@@ -57,8 +57,8 @@ void UiWork_Initialize(s32 kind)
     work = (struct UiRenderWork *)Runtime_AllocateBlock(60, sizeof(struct UiRenderWork));
     Iwram_ClearWords(work, sizeof(struct UiRenderWork));
     work->dirty = 1;
-    work->glyph_resource = 99;
-    work->menu_state = 1;
+    work->glyphResource = 99;
+    work->menuState = 1;
     work->level = 15;
     Iwram_FillWords(work->tilemap, sizeof(work->tilemap), 0xf000f000);
     UiWork_InitFreeList();
@@ -71,6 +71,6 @@ void UiWork_Initialize(s32 kind)
         u8 mode = 4;
 
         for (i = 2; i >= 0; i--)
-            work->tile_attributes[i] = mode;
+            work->tileAttributes[i] = mode;
     }
 }

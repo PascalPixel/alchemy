@@ -18,7 +18,7 @@ void Func_08118bcc(s32 enemy_count)
     s16 *enemy;
     s32 announced;
 
-    battle = Ram_HeapSlots->battle_work;
+    battle = Ram_HeapSlots->battleWork;
     UiWork_ClearValueNameTablesFar();
     BattleEnemyList(enemies);
 
@@ -37,11 +37,11 @@ void Func_08118bcc(s32 enemy_count)
     }
 
     UiWork_FinalizeSharedSlotFar();
-    if (battle->encounter_mode == 1) {
+    if (battle->encounterMode == 1) {
         UiWork_ClearValueNameTablesFar();
         UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
         BattlePresentation_WaitForAdvance();
-    } else if (battle->encounter_mode == 2) {
+    } else if (battle->encounterMode == 2) {
         UiWork_ClearValueNameTablesFar();
         UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
         BattlePresentation_WaitForAdvance();

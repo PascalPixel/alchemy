@@ -45,7 +45,7 @@ void Func_02004d98(void);
 
 void Func_02001344(struct ObjectRuntime *object)
 {
-    if (ABS(object->x - object->linked_object->x) > 0x200000)
+    if (ABS(object->x - object->linkedObject->x) > 0x200000)
         return;
     object->action = 0;
     object->update = (void (*)(void))Func_020012e4;

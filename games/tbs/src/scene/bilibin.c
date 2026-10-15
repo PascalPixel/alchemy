@@ -226,7 +226,7 @@ static void FieldScene_RunEarlySequence(void)
 		record = Object_GetById(i);
 		if (record != 0)
 		{
-			record->motion_flags = 0;
+			record->motionFlags = 0;
 		}
 	}
 	v5 = ((*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
@@ -246,8 +246,8 @@ static void FieldScene_RunEarlySequence(void)
 	table2 = (u8 *)Village_DoorCellSteps;
 	Engine_MapAnimateCells(*(s32 *)(table2 + off), a1, a2);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Object_GetById(0)->motion_flags = 0;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	Object_GetById(0)->motionFlags = 0;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if (v5 == 6)
 	{
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -285,28 +285,28 @@ static void EV11_PSYNERGY(void)
 		Engine_EventWait(20);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 		Actor_SetSpeed(11, 0x3333, 0x1999);
-		Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-		rec7->motion_flags = 0;
-		rec->scale_x = -0x10000;
+		Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		rec7->motionFlags = 0;
+		rec->scaleX = -0x10000;
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
 		Actor_MoveToAndWait(11, 111, 196);
-		rec->scale_x = 0x10000;
+		rec->scaleX = 0x10000;
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
 		Engine_EventWait(20);
-		rec->scale_x = -0x10000;
+		rec->scaleX = -0x10000;
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
 		Actor_MoveToAndWait(11, 121, 190);
-		rec->scale_x = 0x10000;
+		rec->scaleX = 0x10000;
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
 		Engine_EventWait(20);
-		rec->scale_x = -0x10000;
+		rec->scaleX = -0x10000;
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
 		Actor_MoveToAndWait(11, 132, 186);
-		rec->scale_x = 0x10000;
-		Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
+		rec->scaleX = 0x10000;
+		Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
@@ -388,10 +388,10 @@ static void EV13_TOUCH(void)
 			Engine_EventWait(20);
 			Event_ShowMessage(14, 0);
 			Actor_SetSpeed(14, 0x9999, 0x4ccc);
-			Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(14)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Actor_WalkToAndWait(14, 0x10a, 172);
 			Engine_EventWait(1);
-			Object_GetById(14)->steering_flags |= ACTOR_FACES_MOTION;
+			Object_GetById(14)->steeringFlags |= ACTOR_FACES_MOTION;
 			Engine_EventWait(10);
 			Engine_ActorSetAnimationAndWait(14, 3);
 			Event_ShowMessageAndWait(14, 0, 10);
@@ -403,7 +403,7 @@ static void EV13_TOUCH(void)
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 			Actor_SetSpeed(14, 0x10000, 0x8000);
-			Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(14)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Actor_WalkToAndWait(14, 0x106, 156);
 			Engine_EventWait(1);
 			{
@@ -429,7 +429,7 @@ static void EV13_TOUCH(void)
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if (gGameState.scene == (s32)&SceneId_Bilibin1)
 	{
 		Bilibin_RestoreVillageActors();
@@ -471,7 +471,7 @@ static void Bilibin_RestoreVillageActors(void)
 		Actor_SetPosition(21, 0, 0);
 	}
 	record = Actor_Get(8);
-	record->scale_y = 0x18000;
+	record->scaleY = 0x18000;
 	{
 		s32 off = 450;
 		sub_state = *(s16 *)((u8 *)&gGameState + off);
@@ -599,13 +599,13 @@ static void FieldScene_RunScene38bSequenceA(void)
 		Engine_ActorSetSpriteFlags(record, 0);
 		record = Actor_Get(11);
 		Engine_ActorSetSpriteFlags(record, 0);
-		rec8->motion_flags = rec7;
+		rec8->motionFlags = rec7;
 		record = GameFlag_IsSet(0x881);
 		if (record != 0)
 		{
-			Object_GetById(9)->collision_flags |= 16;
-			Object_GetById(16)->collision_flags |= 16;
-			Object_GetById(11)->collision_flags |= 16;
+			Object_GetById(9)->collisionFlags |= 16;
+			Object_GetById(16)->collisionFlags |= 16;
+			Object_GetById(11)->collisionFlags |= 16;
 			Actor_SetPosition(16, 0x8e0000, 0x9c0000);
 			record = Actor_Get(16);
 			Engine_ActorSetSpriteFlags(record, 0);
@@ -620,13 +620,13 @@ static void FieldScene_RunScene38bSequenceA(void)
 			{
 				Actor_SetPosition(11, 0x580000, 0xc40000);
 				Engine_ActorSetSpritePriority(11, 3);
-				rec->collision_flags |= 4;
+				rec->collisionFlags |= 4;
 			}
 		}
 		else
 		{
 			rec8->y.fixed = 0x200000;
-			rec->motion_flags = record;
+			rec->motionFlags = record;
 			rec->y.fixed = 0x300000;
 		}
 	}
@@ -658,7 +658,7 @@ static void Bilibin_RestoreRaisedEntrance(void)
 {
 	struct FieldActor *leader;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	EV08_PSYNERGY_2();
 	if (gGameState.entrance == 3 || gGameState.entrance == 4)
 	{
@@ -692,7 +692,7 @@ static void Bilibin_PushFacedBlock(void)
 		(leader->z.part.pixel + (s16)Bilibin_FacingCellSteps[dir]) >> 4);
 	if (block != NULL)
 	{
-		block->terrain_id = 2;
+		block->terrainId = 2;
 		pos[0].fixed = block->x.fixed + (Bilibin_FacingCellSteps[dir] & -0x10000);
 		pos[1].fixed = block->y.fixed;
 		pos[2].fixed = block->z.fixed + (Bilibin_FacingCellSteps[dir] << 16);
@@ -710,8 +710,8 @@ static void Bilibin_PushFacedBlock(void)
 			Engine_ObjectCommitPosition(block);
 			block->x.fixed = pos[0].fixed;
 			block->z.fixed = pos[2].fixed;
-			block->velocity_x = 0;
-			block->velocity_z = 0;
+			block->velocityX = 0;
+			block->velocityZ = 0;
 			Object_SetMode(leader, 1);
 			if (gGameState.scene == (s32)&SceneId_Bilibin3)
 				EV08_PSYNERGY_3();
@@ -727,7 +727,7 @@ static void Bilibin_UpdateCornerSpawn(void)
 {
 	struct FieldActor *actor;
 
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	if (actor->x.fixed < 0x8e0000)
 	{
 		if (actor->y.fixed < 0x80000)
@@ -755,15 +755,15 @@ static void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 
 	sprite = effect->sprite;
 	Engine_ObjectSetScript(effect, Village_SpawnScript);
-	effect->motion_flags = 0;
-	effect->terrain_id = 1;
-	effect->priority_flags = 2;
+	effect->motionFlags = 0;
+	effect->terrainId = 1;
+	effect->priorityFlags = 2;
 	if (sprite == NULL)
 		return;
 
 	AnimationObjects_SelectAnimation(sprite, 2);
 	sprite->flags = 0;
-	sprite->blend_mode = 1;
+	sprite->blendMode = 1;
 	sprite->priority = 3;
 }
 

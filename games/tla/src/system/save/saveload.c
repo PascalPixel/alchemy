@@ -7,8 +7,8 @@
 #include "menu.h"
 
 struct SaveGameWords {
-    u32 build_stamp;
-    u32 play_time;
+    u32 buildStamp;
+    u32 playTime;
 };
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gPartyState)
@@ -45,8 +45,8 @@ s32 SaveState_SelectAndLoad(s32 mode)
             UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
             result = -2;
         } else {
-            gFrameWaitCount = SAVE_GAME_WORDS->play_time;
-            gAutoSleepEnabled = gPartyState.unknown_244[6];
+            gFrameWaitCount = SAVE_GAME_WORDS->playTime;
+            gAutoSleepEnabled = gPartyState.unk244[6];
             gIdleFrameCount = 0;
             Data_020036d0 = slot;
         }

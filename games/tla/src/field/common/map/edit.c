@@ -8,7 +8,7 @@
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
-    struct MapWork *state = Ram_HeapSlots->map_work;
+    struct MapWork *state = Ram_HeapSlots->mapWork;
     u32 mask = v & 0xe00;
     u32 flags = state->flags;
 
@@ -24,7 +24,7 @@ void Map_ApplySetFlagEdits(void)
 {
     u8 *cursor = Data_0202e002;
     u32 entry;
-    s32 src_x, src_y, dst_x, dst_y, width, height;
+    s32 srcX, srcY, dst_x, dst_y, width, height;
 
     cursor = Data_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
@@ -32,16 +32,16 @@ next:
     if (((entry + 1) & 0xffff) == 0)
         return;
     if (GameFlag_Test(entry & 0xfff) != 0) {
-        src_x = *cursor++;
-        src_y = *cursor++;
+        srcX = *cursor++;
+        srcY = *cursor++;
         dst_x = *cursor++;
         dst_y = *cursor++;
         width = *cursor++;
         height = *cursor++;
         if (entry & 0x1000)
-            Map_CopyCellAttributeRect(src_x, src_y, width, height, dst_x, dst_y);
+            Map_CopyCellAttributeRect(srcX, srcY, width, height, dst_x, dst_y);
         else
-            Map_CopyMetatileIndicesRect(src_x, src_y, dst_x, dst_y, width, height);
+            Map_CopyMetatileIndicesRect(srcX, srcY, dst_x, dst_y, width, height);
     } else {
         cursor += 6;
     }
@@ -82,7 +82,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes)
 {
     u8 *cursor = Data_0202e002;
     u32 entry;
-    s32 src_x, src_y, dst_x, dst_y, width, height;
+    s32 srcX, srcY, dst_x, dst_y, width, height;
 
     cursor = Data_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
@@ -90,16 +90,16 @@ next:
     if (((entry + 1) & 0xffff) == 0)
         return;
     if ((entry & 0xfff) == flag) {
-        src_x = *cursor++;
-        src_y = *cursor++;
+        srcX = *cursor++;
+        srcY = *cursor++;
         dst_x = *cursor++;
         dst_y = *cursor++;
         width = *cursor++;
         height = *cursor++;
         if (attributes != 0)
-            Map_CopyCellAttributeRect(src_x, src_y, width, height, dst_x, dst_y);
+            Map_CopyCellAttributeRect(srcX, srcY, width, height, dst_x, dst_y);
         else
-            Map_CopyMetatileIndicesRect(src_x, src_y, dst_x, dst_y, width, height);
+            Map_CopyMetatileIndicesRect(srcX, srcY, dst_x, dst_y, width, height);
     } else {
         cursor += 6;
     }
@@ -129,7 +129,7 @@ void Map_GetHeaderSize(s32 map, s32 *size)
 }
 
 struct MapHeader {
-    u8 unknown_00[44];
+    u8 unk00[44];
     s32 cells;
     s32 shapes;
 };

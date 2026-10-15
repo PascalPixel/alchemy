@@ -19,10 +19,10 @@ static __inline__ void FillWords_(void *destination, s32 size, u32 value)
 // The battle effect work, as far as the canvas transfer reads it.
 struct CanvasWork
 {
-    u8 unknown_0000[0x7780];
+    u8 unk0000[0x7780];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x15c];
+    u8 unk7788[0x15c];
     s32 framesSinceTransfer;
     s32 transferPending;
 };
@@ -36,8 +36,8 @@ void ColorBuffer_Brighten(void *source, s32 amount, void *destination, s32 size)
 // when a transfer is pending, in the way the transfer mode asks for.
 void Func_08143000(void)
 {
-    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
-    void *source = Ram_HeapSlots->battle_fx_work[1];
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+    void *source = Ram_HeapSlots->battleFxWork[1];
     u32 ime;
 
     IRQ_LOCK(ime);
@@ -80,7 +80,7 @@ void Func_08143000(void)
 
 void Func_08143114(void)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
     u32 ime;
     s32 *pending;
 
@@ -100,7 +100,7 @@ void Func_08143114(void)
 // BG character block 2.
 void Func_08143174(void)
 {
-    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
     void *source = Ram_MapCellBuffer;
     u32 ime;
 
@@ -142,14 +142,14 @@ void Func_08143174(void)
 // The same for the canvas in the second effect work block.
 void Func_08143264(void)
 {
-    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
     void *source;
     u32 ime;
 
     IRQ_LOCK(ime);
     if (work->transferPending == 1)
     {
-        source = Ram_HeapSlots->battle_fx_work[1];
+        source = Ram_HeapSlots->battleFxWork[1];
         work->transferPending = 0;
         IRQ_UNLOCK(ime);
         switch (work->transferMode)

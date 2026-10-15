@@ -208,11 +208,11 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void FieldScene_ConfigureActor0ThenRun(s32 a0)
 {
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(a0);
 }
 
@@ -224,7 +224,7 @@ static void Kolima_AnimateSwitchOrExit(void)
 
 	Engine_EventBegin();
 	Engine_AudioPlayCue(158);
-	switch (work->touched_trigger)
+	switch (work->touchedTrigger)
 	{
 	case 5:
 		x = 71;
@@ -243,16 +243,16 @@ static void Kolima_AnimateSwitchOrExit(void)
 		y = 12;
 		break;
 	case 9:
-		Object_GetById(0)->motion_flags = 0;
+		Object_GetById(0)->motionFlags = 0;
 		Actor_SetSpeed(0, 0x8000, 0x4000);
 		Engine_ActorSetDestinationOffset(0, 0, 8);
-		gEventWork->transition_frames = 16;
+		gEventWork->transitionFrames = 16;
 		Engine_EventRequestExit(9);
 		Engine_EventEnd();
 		return;
 	}
 	Engine_MapAnimateCells(Kolima_SwitchCells, x, y);
-	FieldScene_ConfigureActor0ThenRun(work->touched_trigger);
+	FieldScene_ConfigureActor0ThenRun(work->touchedTrigger);
 	Engine_EventEnd();
 }
 
@@ -281,7 +281,7 @@ static void EV10_TOUCH(void)
 	Actor_FaceDirection(8, 0x9000, 20);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(20);
-	Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetSpeed(8, 0x20000, 0x10000);
 	Engine_ActorJump(8, 2, 0);
 	Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);
@@ -307,7 +307,7 @@ static void EV10_TOUCH(void)
 
 		if (obj != 0)
 		{
-			obj->motion_flags = 0;
+			obj->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(obj, 0);
 			((struct Flags9 *)obj->sprite)->mode = 0;
 			{
@@ -315,11 +315,11 @@ static void EV10_TOUCH(void)
 
 				obj->timer = delay;
 			}
-			obj->velocity_x = (s32)(((i & 3) << 16) + 0x10000) >> 1;
-			obj->velocity_z = 0x10000;
+			obj->velocityX = (s32)(((i & 3) << 16) + 0x10000) >> 1;
+			obj->velocityZ = 0x10000;
 			if (i & 1)
 			{
-				obj->velocity_x = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
+				obj->velocityX = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
 			}
 			Object_SetMode(obj, 1);
 			Engine_ObjectSetScript(obj, (s32)Kolima_DebrisScript);
@@ -355,7 +355,7 @@ s32 Scene_Initialize(void)
 
 	if (scene == (s32)&SceneId_Kolima2)
 	{
-		gEventWork->start_transition = 0x204;
+		gEventWork->startTransition = 0x204;
 		return 0;
 	}
 
@@ -414,7 +414,7 @@ static void SceneActor_SetActors19To22HeightByFrameParity(void)
 	if (p != 0)
 	{
 		s32 m;
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		m = gFrameCount & 1;
 		if (m == 0)
 		{
@@ -429,7 +429,7 @@ static void SceneActor_SetActors19To22HeightByFrameParity(void)
 	if (p != 0)
 	{
 		s32 z = 0;
-		p->motion_flags = z;
+		p->motionFlags = z;
 		if (gFrameCount & 1)
 		{
 			p->y.fixed = z;
@@ -443,7 +443,7 @@ static void SceneActor_SetActors19To22HeightByFrameParity(void)
 	if (p != 0)
 	{
 		s32 m;
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		m = gFrameCount & 1;
 		if (m == 0)
 		{
@@ -458,7 +458,7 @@ static void SceneActor_SetActors19To22HeightByFrameParity(void)
 	if (p != 0)
 	{
 		s32 z = 0;
-		p->motion_flags = z;
+		p->motionFlags = z;
 		if (gFrameCount & 1)
 		{
 			p->y.fixed = z;
@@ -602,11 +602,11 @@ static void FieldScene_RunExtendedActorSequence(void)
 	FieldScene_RunSequenceA();
 	Actor_ShowEmote(IVAN, 0x100, 40);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-	((struct ObjectRuntime *)Object_GetById(2))->action_flags &= 254;
+	((struct ObjectRuntime *)Object_GetById(2))->actionFlags &= 254;
 	Actor_WalkToAndWait(IVAN, 80, 0x136);
 	mask = 1;
 	Engine_EventWait(1);
-	((struct ObjectRuntime *)Object_GetById(2))->action_flags |= mask;
+	((struct ObjectRuntime *)Object_GetById(2))->actionFlags |= mask;
 	Actor_ShowEmote(GARET, 0x102, 40);
 	FieldScene_RunPairedStepA(1, 20);
 	Actor_ShowEmote(IVAN, 0x102, 40);
@@ -625,10 +625,10 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorStartRepeatedMotion(GARET, 1);
 	FieldScene_RunPairedStepA(1, 20);
 	Actor_SetSpeed(IVAN, 0x8000, 0x4000);
-	((struct ObjectRuntime *)Object_GetById(2))->action_flags &= 254;
+	((struct ObjectRuntime *)Object_GetById(2))->actionFlags &= 254;
 	Actor_WalkToAndWait(IVAN, 72, 0x11e);
 	Engine_EventWait(1);
-	((struct ObjectRuntime *)Object_GetById(2))->action_flags |= mask;
+	((struct ObjectRuntime *)Object_GetById(2))->actionFlags |= mask;
 	Engine_ActorEnableActionCallback(IVAN, Kolima_ActionTable2);
 	if (*layout != 0)
 	{
@@ -732,7 +732,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	{
 		value = 128;
 		actor = Object_GetById(3);
-		actor->velocity_y = (value << 10);
+		actor->velocityY = (value << 10);
 		Engine_EventWait(10);
 		Actor_SetSpeed(MIA, (value << 10), (value << 10));
 		Actor_SetDestinationOffset(MIA, -2, 0);
@@ -744,7 +744,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	}
 	value = 128;
 	actor = Object_GetById(0);
-	actor->velocity_y = (value << 10);
+	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
 	actions_b = Kolima_ActionTable5;
@@ -754,7 +754,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
 	Engine_EventWait(20);
 	actor = Object_GetById(1);
-	actor->velocity_y = (value << 10);
+	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Actor_SetSpeed(GARET, (value << 10), (value << 10));
 	Engine_ActorEnableActionCallback(GARET, actions_b);
@@ -763,7 +763,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorSetAnimation(GARET, 19);
 	Engine_EventWait(40);
 	actor = Object_GetById(2);
-	actor->velocity_y = (value << 10);
+	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Engine_ActorEnableActionCallback(IVAN, actions_b);
 	actor = Object_GetById(2);
@@ -819,10 +819,10 @@ static void FieldScene_RunExtendedActorSequence(void)
 	}
 	work = &gFallingEffectState;
 	*work = 3;
-	Object_GetById(0)->priority_flags &= 254;
-	Object_GetById(1)->priority_flags &= 254;
-	Object_GetById(2)->priority_flags &= 254;
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
+	Object_GetById(1)->priorityFlags &= 254;
+	Object_GetById(2)->priorityFlags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetSpritePriority(GARET, 3);
 	Engine_ActorSetSpritePriority(IVAN, 3);
@@ -831,23 +831,23 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Kolima_PendingPose = value;
 	FieldScheduler_AddCallback(SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
 	Event_PlayCue(220);
-	Object_GetById(19)->priority_flags &= 254;
+	Object_GetById(19)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(19, 2);
 	Actor_SetPosition(19, 0x780000, 0xf80000);
 	actions_c = Kolima_ActionTable6;
 	Engine_ActorEnableActionCallback(19, actions_c);
-	Object_GetById(20)->priority_flags &= 254;
+	Object_GetById(20)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(20, 2);
 	Actor_SetPosition(20, 0x640000, 0x1120000);
 	Engine_ActorEnableActionCallback(20, actions_c);
 	if (Kolima_LayoutFlag != 0)
 	{
-		Object_GetById(21)->priority_flags &= 254;
+		Object_GetById(21)->priorityFlags &= 254;
 		Engine_ActorSetSpritePriority(21, 2);
 		Actor_SetPosition(21, 0x4a0000, 0xfe0000);
 		Engine_ActorEnableActionCallback(21, actions_c);
 	}
-	Object_GetById(22)->priority_flags &= 254;
+	Object_GetById(22)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(22, 2);
 	Actor_SetPosition(22, 0x5e0000, 0xe10000);
 	Engine_ActorEnableActionCallback(22, actions_c);
@@ -912,7 +912,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(40);
 	Engine_ActorSetSpritePriority(GARET, 2);
-	Object_GetById(1)->priority_flags |= 1;
+	Object_GetById(1)->priorityFlags |= 1;
 	actor = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Engine_ActorJump(GARET, 6, 0);
@@ -943,7 +943,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(80);
 		Engine_ActorSetSpritePriority(MIA, 2);
-		Object_GetById(3)->priority_flags |= 1;
+		Object_GetById(3)->priorityFlags |= 1;
 		actor = Object_GetById(3);
 		Engine_ActorSetSpriteFlags(actor, 1);
 		Engine_ActorJump(MIA, 4, 0);
@@ -971,7 +971,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_EventWait(20);
 	value = 1;
 	Engine_ActorSetSpritePriority(IVAN, 2);
-	Object_GetById(2)->priority_flags |= value;
+	Object_GetById(2)->priorityFlags |= value;
 	actor = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Engine_ActorJump(IVAN, 4, 0);
@@ -980,7 +980,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(10);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	Object_GetById(0)->priority_flags |= value;
+	Object_GetById(0)->priorityFlags |= value;
 	actor = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1110,10 +1110,10 @@ static void FieldScene_RunExtendedActorSequence(void)
 	{
 		FieldScene_RunPairedStepB(3, 0xc000, 10);
 	}
-	Object_GetById(0)->priority_flags &= 254;
-	Object_GetById(1)->priority_flags &= 254;
-	Object_GetById(2)->priority_flags &= 254;
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
+	Object_GetById(1)->priorityFlags &= 254;
+	Object_GetById(2)->priorityFlags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetSpritePriority(GARET, 3);
 	Engine_ActorSetSpritePriority(IVAN, 3);
@@ -1258,10 +1258,10 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(IVAN, 2);
 	value = 1;
 	Engine_ActorSetSpritePriority(MIA, 2);
-	Object_GetById(0)->priority_flags |= value;
-	Object_GetById(1)->priority_flags |= value;
-	Object_GetById(2)->priority_flags |= value;
-	Object_GetById(3)->priority_flags |= value;
+	Object_GetById(0)->priorityFlags |= value;
+	Object_GetById(1)->priorityFlags |= value;
+	Object_GetById(2)->priorityFlags |= value;
+	Object_GetById(3)->priorityFlags |= value;
 	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	FieldScene_RunPairedStepB(2, 0xe000, 10);
 	Event_OpenMessage(IVAN, 0);
@@ -1496,16 +1496,16 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	q = (struct Sub *)p->sprite;
 	q->f26 = f;
 	v = 0xfe;
-	v &= p->priority_flags;
-	p->priority_flags = v;
+	v &= p->priorityFlags;
+	p->priorityFlags = v;
 	w = ~12;
 	w &= q->f09;
 	w |= 4;
 	q->f09 = w;
-	p->scale_x = 0x1999;
+	p->scaleX = 0x1999;
 	p->speed = 0x80000;
 	p->acceleration = 0x80000;
-	p->motion_flags = f;
+	p->motionFlags = f;
 	Object_SetMode(p, 2);
 	Engine_ObjectSetPosition(p, c3, 0, c4);
 	Engine_ObjectSetScript(p, Kolima_Object26Script);

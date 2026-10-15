@@ -3,8 +3,8 @@
 #include "party_state.h"
 
 struct SceneWork {
-    u8 unknown_000[0x1ac];
-    s32 unknown_1ac;
+    u8 unk000[0x1ac];
+    s32 unk1ac;
 };
 
 extern char SceneId_Ov65aRoom1;

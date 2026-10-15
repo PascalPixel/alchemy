@@ -7,7 +7,7 @@
 
 void Func_02004d50(s32 id)
 {
-    u8 *work = Ram_HeapSlots->window_tiles;
+    u8 *work = Ram_HeapSlots->windowTiles;
     struct MarsAerieParty *party = (struct MarsAerieParty *)&gPartyState;
     s32 held = party->held;
 

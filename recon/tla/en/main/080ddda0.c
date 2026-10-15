@@ -8,20 +8,20 @@
 #include "object_effect_scripts.h"
 
 struct BattleEffectScene {
-    u8 reserved_00[4];
+    u8 reserved00[4];
     s32 x;
     s32 y;
     s32 z;
-    void *main_object;
+    void *mainObject;
     void *child;
 };
 
 struct EffectChild {
-    u8 reserved_00[12];
+    u8 reserved00[12];
     s32 y;
-    u8 reserved_10[0x55 - 0x10];
+    u8 reserved10[0x55 - 0x10];
     u8 flag;
-    u8 reserved_56[0x6c - 0x56];
+    u8 reserved56[0x6c - 0x56];
     void (*callback)(void);
 };
 
@@ -40,7 +40,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleEffectScene *scene;
-    void *main_object;
+    void *mainObject;
     void *child;
     void *anchors[2];
     s32 position[3];
@@ -48,15 +48,15 @@ void BattleEffect_RunTargetedItemBreak(void)
     s32 index;
     s32 start_y;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     child = scene->child;
-    main_object = scene->main_object;
+    mainObject = scene->mainObject;
     if (child == 0)
         return;
 
     BattleEffect_InitializeSharedScene();
-    *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, (u32)(BattleFx_CommonParticleScript + 12));
+    *(void **)((u8 *)mainObject + 0x68) = child;
+    ObjectDispatch_InitializeFar((struct DispatchObject *)mainObject, (u32)(BattleFx_CommonParticleScript + 12));
 
     x = scene->x;
     position[0] = x;

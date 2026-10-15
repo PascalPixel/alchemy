@@ -2,17 +2,17 @@
 #include "node_chain.h"
 
 struct MenuResourceNode {
-    u8 unknown0[4];
+    u8 unk0[4];
     struct MenuResourceNode *next;
-    u8 unknown8[2];
+    u8 unk8[2];
     u16 type;
     u16 value;
-    u8 unknown14[18];
+    u8 unk14[18];
     u16 base;
 };
 
 struct MenuResourceList {
-    u8 unknown0[0x348];
+    u8 unk0[0x348];
     struct MenuResourceNode *head;
 };
 

@@ -18,12 +18,12 @@
 #include "text/msg_ids.h"
 
 struct ShopRuntime {
-    u8 unknown_000[0x4dc];
+    u8 unk000[0x4dc];
     struct RenderOutput *anchor;
-    u8 unknown_4e0[0x1a];
-    u16 keeper_resource;
-    u8 unknown_4fc[0xa];
-    s8 shop_type;
+    u8 unk4e0[0x1a];
+    u16 keeperResource;
+    u8 unk4fc[0xa];
+    s8 shopType;
 };
 
 struct Record_080b06c0 {
@@ -35,7 +35,7 @@ void UiWork_FinalizePendingCoreFar(void);
 
 void Func_081084f4(s32 first)
 {
-    struct ShopRuntime *state = Ram_HeapSlots->menu_runtime;
+    struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
     s32 message;
     s32 value;
     s8 mode;
@@ -43,9 +43,9 @@ void Func_081084f4(s32 first)
     /* FAKEMATCH: the native loads the shop work before it builds the keeper offset, and saves the message after; the barrier and the copy after it give that order (differ 2 without them). */
     asm volatile("");
     message = first;
-    value = BattleFx_GetResourceIdFar(state->keeper_resource);
+    value = BattleFx_GetResourceIdFar(state->keeperResource);
     UiWork_FinalizePendingCoreFar();
-    mode = state->shop_type;
+    mode = state->shopType;
     if (mode == 3)
         message += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
     if (mode == 2)
@@ -58,7 +58,7 @@ void Func_081084f4(s32 first)
     WaitFrames(1);
 }
 
-void Func_0810857c(s32 message_id)
+void Func_0810857c(s32 messageId)
 {
     s32 variant;
     s32 no;
@@ -69,13 +69,13 @@ void Func_0810857c(s32 message_id)
 
     /* FAKEMATCH: the one-pass block loads the shop work before the anchor offset is built (differ 2 without it). */
     do {
-        state = Ram_HeapSlots->menu_runtime;
+        state = Ram_HeapSlots->menuRuntime;
     } while (0);
     slot = &state->anchor;
     saved = (*slot)->active;
-    no = message_id;
-    variant = BattleFx_GetResourceIdFar(state->keeper_resource);
-    mode = state->shop_type;
+    no = messageId;
+    variant = BattleFx_GetResourceIdFar(state->keeperResource);
+    mode = state->shopType;
     if (mode == 3)
         no += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
     if (mode == 2)
@@ -93,7 +93,7 @@ void Func_0810857c(s32 message_id)
 
 s32 Func_08108630(s32 arg0)
 {
-    struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menu_runtime)->anchor;
+    struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
     u8 saved = (*slot)->active;
 
     UiIcon_PrepareObjectFar(*slot);
@@ -108,7 +108,7 @@ s32 Func_08108630(s32 arg0)
 
 s32 Func_08108660(s32 arg0)
 {
-    struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menu_runtime)->anchor;
+    struct RenderOutput **slot = &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->anchor;
     u8 saved = (*slot)->active;
 
     UiIcon_PrepareObjectFar(*slot);

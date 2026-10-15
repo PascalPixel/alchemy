@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 
 struct GateEventWork {
-    u8 unknown_000[362];
-    u16 gate_timer;
+    u8 unk000[362];
+    u16 gateTimer;
 };
 
 extern const u8 Data_02005d7c[];
@@ -19,5 +19,5 @@ void Func_02001990(s32 a, s32 b)
 {
     Func_02005428(Data_02005d7c, a, b);
     if (GameFlag_Test(0x8ce) && GameFlag_Test(0x8cf))
-        ((struct GateEventWork *)Ram_HeapSlots->event_work)->gate_timer = 200;
+        ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
 }

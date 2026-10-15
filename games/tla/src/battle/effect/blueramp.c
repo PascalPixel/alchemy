@@ -32,7 +32,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
         *palette++ = (i << 10) | (half << 5) | half;
         i++;
     } while (i != 32);
-    delays = Ram_HeapSlots->unknown_64[0];
+    delays = Ram_HeapSlots->unk64[0];
     end = 0;
     speed = 16;
     CopyWords_(PIXEL_BUFFER, (void *)0x06008000, 0x7800);

@@ -19,11 +19,11 @@
 struct ClassAbility {
     u16 ability;
     u8 level;
-    u8 unknown_03;
+    u8 unk03;
 };
 
 struct ClassAbilities {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     struct ClassAbility abilities[16];
 };
 
@@ -44,9 +44,9 @@ s32 Owner_UpdateClassActions(s32 owner)
     struct ClassAbility *cg;
 
     st = UnitGet(owner);
-    ability = (u16 *)st->action_slots;
-    cls = (struct ClassAbilities *)Owner_GetRecordStride84(st->class_index);
-    if (st->class_index == 0)
+    ability = (u16 *)st->actionSlots;
+    cls = (struct ClassAbilities *)Owner_GetRecordStride84(st->classIndex);
+    if (st->classIndex == 0)
         return 0;
     mask = OWNER_ACTION_CLASS | OWNER_ACTION_ITEM;
     for (j = 0; j < 32; j++) {
@@ -93,17 +93,17 @@ s32 Owner_UpdateClassActions(s32 owner)
         if (!(st->inventory[j] & INVENTORY_EQUIPPED))
             continue;
         def = Item_GetDirect(st->inventory[j]);
-        if (def->use_type != 3)
+        if (def->useType != 3)
             continue;
         for (i = 0; i < 32; i++) {
-            if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->action_id)
+            if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->actionId)
                 break;
         }
         if (i != 32)
             continue;
         for (i = 0; i < 32; i++) {
             if (ability[i * 2] == 0) {
-                ability[i * 2] = def->action_id | OWNER_ACTION_ITEM;
+                ability[i * 2] = def->actionId | OWNER_ACTION_ITEM;
                 break;
             }
         }

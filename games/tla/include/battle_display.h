@@ -14,18 +14,18 @@ struct BattleCamera
 {
 	s32	 eye[3];
 	s32	 pos[3];
-	s32	 unknown_18;
-	s32 *follow_pos;
+	s32	 unk18;
+	s32 *followPos;
 	s32	 distance;
-	u8	 unknown_24[16];
+	u8	 unk24[16];
 	u16	 pitch;
 	u16	 yaw;
-	u8	 unknown_38[20];
+	u8	 unk38[20];
 };
 
 LAYOUT_SIZE_GUARD(BattleCamera_Size, struct BattleCamera, 0x4c);
 LAYOUT_OFFSET_GUARD(BattleCamera_Position, struct BattleCamera, pos, 0x0c);
-LAYOUT_OFFSET_GUARD(BattleCamera_FollowPosition, struct BattleCamera, follow_pos, 0x1c);
+LAYOUT_OFFSET_GUARD(BattleCamera_FollowPosition, struct BattleCamera, followPos, 0x1c);
 LAYOUT_OFFSET_GUARD(BattleCamera_Pitch, struct BattleCamera, pitch, 0x34);
 LAYOUT_OFFSET_GUARD(BattleCamera_Yaw, struct BattleCamera, yaw, 0x36);
 
@@ -33,13 +33,13 @@ extern struct BattleCamera *gCameraWork;
 
 struct BattlePresentationTransition
 {
-	s32 target_yaw;
+	s32 targetYaw;
 	s32 frames;
-	u8	unknown_08[8];
+	u8	unk08[8];
 	s32 active;
 	s32 flag;
-	s32 unknown_18;
-	s32 unknown_1c;
+	s32 unk18;
+	s32 unk1c;
 };
 
 struct BattlePresentationWork
@@ -47,12 +47,12 @@ struct BattlePresentationWork
 	s32 kind;
 	s32 side;
 	s32 actor;
-	s32 first_target;
-	s32 initial_value;
+	s32 firstTarget;
+	s32 initialValue;
 	s32 count;
 	s32 variant;
 	s32 flags;
-	u8	unknown_20[4];
+	u8	unk20[4];
 	s16 actors[9];
 	u8	params[8][4];
 };
@@ -66,9 +66,9 @@ LAYOUT_OFFSET_GUARD(BattlePresentationWork_Params, struct BattlePresentationWork
 
 struct BattleBackgroundView
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 mode;
-	s32 second_mode;
+	s32 secondMode;
 	s32 busy;
 };
 
@@ -81,7 +81,7 @@ struct BattleAffine
 struct BattleAffineHdma
 {
 	u32					page;
-	u8					unknown_04[12];
+	u8					unk04[12];
 	struct BattleAffine affine;
 	u16					lines[2][160];
 };
@@ -100,7 +100,7 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan, struct BattlePresentatio
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
 s32	 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action);
-s32	 BattleObject_IsValidId(u32 object_id);
+s32	 BattleObject_IsValidId(u32 objectId);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BattleObjPut(void);

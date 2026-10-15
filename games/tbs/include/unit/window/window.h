@@ -81,7 +81,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out);
 #endif
 s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
-void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer, const struct RenderInput *work, s32 offset_x, s32 offset_y);
+void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer, const struct RenderInput *work, s32 offsetX, s32 offsetY);
 /* UiText_RenderWideStringInWindow is called from battle_command.c with no prototype in scope: in one file its definition would come before DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18 bytes in tbs-en. Split evidence for window|battle_command. */
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix);
@@ -109,7 +109,7 @@ u32 UiRender_LookupNamedValue(u32 kind, u32 clear);
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch);
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch);
 void UiWork_FinalizePendingCore(void);
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
+void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset);
 s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 void UiText_LookupMessage(struct TextReader *reader, s32 message);
 s32 UiText_DecodeSymbol(struct TextReader *reader);
@@ -252,9 +252,9 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u
 void UiWork_SetParamNibble(s32 param);
 void UiWork_SetRenderWord(u16 value);
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offset_x, u32 offset_y);
+void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offset_x, s32 offset_y);
+void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY);
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4);

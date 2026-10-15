@@ -1,19 +1,19 @@
 #include "local.h"
 
 struct MapCell {
-    u8 unknown_0[2];
-    u8 unknown_2;
-    u8 unknown_3;
+    u8 unk0[2];
+    u8 unk2;
+    u8 unk3;
 };
 
 struct MapWork170 {
-    u8 unknown_000[0x170];
+    u8 unk000[0x170];
     struct MapCell *cells;
 };
 
 void Func_02001c8c(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 priority = ((struct FieldSprite *)leader->animation)->priority;
 
     ObjectMotion_SetActionVariant(13, priority);
@@ -23,14 +23,14 @@ void Func_02001c8c(void)
 
 void Func_02001cc4(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->map_work;
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
 
     struct MapCell *cell = &map->cells[Func_020053b0()];
 
-    if (cell->unknown_2 != 0) {
+    if (cell->unk2 != 0) {
         leader->y = 0;
-        leader->terrain_height = 0;
+        leader->terrainHeight = 0;
     }
 }
 
@@ -56,7 +56,7 @@ void Func_02001d40(void)
     Func_02005370(0);
     ObjectMotion_EnableActionAndResetMotion(9);
     WaitFrames(1);
-    ObjectMotion_SetAngleToward(9, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
     Func_02005280((s32)&MsgKandoreanTemple02);
     Func_020052a0(9, 0);
     Object_GetById(9)->angle = 0x3000;
@@ -71,7 +71,7 @@ void Func_02001db4(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    ObjectMotion_SetAngleToward(10, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
     Func_02005280((s32)&MsgKandoreanTemple03);
     Func_02005298(10, 0);
     Object_GetById(10)->angle = 0x5000;
@@ -104,7 +104,7 @@ void Func_02001e44(void)
 
 void Func_02001e58(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
     struct PartyState *party;
@@ -122,19 +122,19 @@ void Func_02001e58(void)
     Func_020051c0();
     Func_02005370(0);
     /* FAKEMATCH: the flags address, the zero and gPartyState's address are taken before an empty asm, which holds the byte store below the address load as the native has it; the plain store goes first (differ 2). */
-    flags = &leader->motion_flags;
+    flags = &leader->motionFlags;
     zero = 0;
     party = &gPartyState;
     asm("");
     *flags = zero;
-    ObjectMotion_SetSpeedParameters(party->current_owner, 0x10000, 0x8000);
-    ObjectMotion_SetPositionAndReset(party->current_owner, 168, 80);
-    Func_020052b0(party->current_owner, 0xc000);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(party->current_owner), 0);
-    Object_SetModeById(party->current_owner, 13);
+    ObjectMotion_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
+    ObjectMotion_SetPositionAndReset(party->currentOwner, 168, 80);
+    Func_020052b0(party->currentOwner, 0xc000);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(party->currentOwner), 0);
+    Object_SetModeById(party->currentOwner, 13);
     Func_02005160(leader, 0xa80000, -0xc0000, 0x500000);
     Func_02005168(leader);
-    Object_SetModeById(party->current_owner, 10);
+    Object_SetModeById(party->currentOwner, 10);
     Func_020053d8(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

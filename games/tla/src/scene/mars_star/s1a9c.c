@@ -3,15 +3,15 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 struct SpriteParts {
-    u8 unknown_00[0x12];
-    u16 unknown_12;
+    u8 unk00[0x12];
+    u16 unk12;
 };
 
 s32 Func_02001a44(struct ObjectRuntime *a, struct ObjectRuntime *b);
 
 void Func_02001a9c(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 dx = object->bounce;
     s32 dz;
     struct SpriteParts *parts;
@@ -20,23 +20,23 @@ void Func_02001a9c(struct ObjectRuntime *object)
 
     object->x += dx;
     object->y += object->gravity;
-    dz = object->unknown_4c;
+    dz = object->unk4c;
     object->z += dz;
     object->bounce = dx - dx / 18;
-    object->unknown_4c = dz - dz / 16;
+    object->unk4c = dz - dz / 16;
     /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate */
     asm volatile("");
-    rate = object->speed_limit;
-    scale = object->scale_x;
+    rate = object->speedLimit;
+    scale = object->scaleX;
     parts = object->animation;
-    object->scale_x = scale + rate;
-    object->scale_y += object->acceleration;
+    object->scaleX = scale + rate;
+    object->scaleY += object->acceleration;
     /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action */
     asm volatile("");
-    parts->unknown_12 += object->action;
-    if (leader->y == leader->terrain_height && Func_02001a44(object, leader)) {
-        object->z -= object->unknown_4c;
-        object->gravity += object->unknown_4c >> 2;
-        object->unknown_4c = 0;
+    parts->unk12 += object->action;
+    if (leader->y == leader->terrainHeight && Func_02001a44(object, leader)) {
+        object->z -= object->unk4c;
+        object->gravity += object->unk4c >> 2;
+        object->unk4c = 0;
     }
 }

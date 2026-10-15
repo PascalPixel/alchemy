@@ -20,7 +20,7 @@ struct BattleFxScene;
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
 #define BattleFx_PulseScales Data_080f0bfc
-#define gEffectWork Ram_HeapSlots->effect_work
+#define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
 extern u32 Data_080f0bfc[];
@@ -28,9 +28,9 @@ void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
 struct EffectOwner {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct EffectVector position;
-    u8 unknown_14[0x3c];
+    u8 unk14[0x3c];
     struct AnimationObject *sprite;
 };
 
@@ -49,16 +49,16 @@ void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[68];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[68];
     u16 timer;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void *callback;
 };
 
@@ -69,11 +69,11 @@ struct OrbitPosition {
 };
 
 struct DescendingOrbitObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     u16 timer;
     s16 angle;
 };
@@ -89,27 +89,27 @@ void Audio_PlayCue(s32);
 extern const s32 BattleFx_CommonParticleScript[];
 
 struct CaptureObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    s32 base_y;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[8];
+    s32 baseY;
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[8];
     s32 gravity;
-    u8 unknown_2c[4];
+    u8 unk2c[4];
     s32 speed;
-    u8 unknown_34[33];
+    u8 unk34[33];
     u8 mode;
-    u8 unknown_56[5];
+    u8 unk56[5];
     u8 visible;
-    u8 unknown_5c[2];
+    u8 unk5c[2];
     u16 lifetime;
-    u8 unknown_60[4];
+    u8 unk60[4];
     u16 timer;
     u16 angle;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void *callback;
 };
 
@@ -141,12 +141,12 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
     struct EffectVector position;
     s32 state;
 
-    owner = (struct EffectOwner *)Object_GetById(gPartyState.current_owner);
+    owner = (struct EffectOwner *)Object_GetById(gPartyState.currentOwner);
     state = effect->state;
 
     if (state == 0) {
-        effect->x = effect->origin_x;
-        effect->z = effect->origin_z;
+        effect->x = effect->originX;
+        effect->z = effect->originZ;
         position.x = effect->x;
         position.z = effect->z;
         Vector_AddPolarOffset(
@@ -155,10 +155,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
                 - ((Random16() * 3 << 11) >> 16)
                 + 0xc000,
             &position);
-        effect->target_x = position.x;
-        effect->target_z = position.z;
+        effect->targetX = position.x;
+        effect->targetZ = position.z;
         effect->acceleration = 0x50000;
-        effect->max_speed = 0x50000;
+        effect->maxSpeed = 0x50000;
         effect->flag42 = state;
         effect->state++;
 
@@ -177,25 +177,25 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
             effect->state--;
     } else if (state == 2) {
         if (BattleFx_HasReachedTarget(effect) == 0) {
-            effect->origin_x = effect->x;
-            effect->origin_z = effect->z;
+            effect->originX = effect->x;
+            effect->originZ = effect->z;
             ((struct AnimationObject *)effect->object)->part[0].priority = 0;
             effect->flags = 4;
             effect->render = 0;
             effect->state++;
-            effect->callback_delay = 40;
+            effect->callbackDelay = 40;
         }
     } else if (state == 3) {
         effect->render = 1;
-        effect->x = effect->origin_x;
-        effect->z = effect->origin_z;
+        effect->x = effect->originX;
+        effect->z = effect->originZ;
         position.x = owner->position.x;
         position.y = owner->position.y + 0x140000;
         position.z = owner->position.z;
         Camera_WorldToScreen(&position);
         Vector_AddPolarOffset(0x40000, Random16(), &position);
-        effect->target_x = position.x;
-        effect->target_z = position.z;
+        effect->targetX = position.x;
+        effect->targetZ = position.z;
         effect->state++;
         if ((gFrameTick & 1) != 0)
             Audio_PlayCue(145);

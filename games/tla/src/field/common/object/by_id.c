@@ -1,44 +1,44 @@
 #include "object_runtime.h"
 
-struct ObjectRuntime *Object_GetById(u32 object_id)
+struct ObjectRuntime *Object_GetById(u32 objectId)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object == NULL)
         return NULL;
     return object;
 }
 
-void ObjectMotion_SetSpeedParameters(u32 object_id, s32 speed_limit, s32 acceleration)
+void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         object->acceleration = acceleration;
-        object->speed_limit = speed_limit;
+        object->speedLimit = speedLimit;
     }
 }
 
-void ObjectMotion_EnableActionAndSetCallback(u32 object_id, s32 action)
+void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         s32 value = 1;
-        value |= object->action_flags;
-        object->action_flags = value;
+        value |= object->actionFlags;
+        object->actionFlags = value;
         Object_SetActionCallback(object, action);
     }
 }
 
-void ObjectMotion_EnableActionAndResetMotion(u32 object_id)
+void ObjectMotion_EnableActionAndResetMotion(u32 objectId)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
     u8 enabled;
 
     if (object != NULL) {
         enabled = 1;
-        object->action_flags = enabled | object->action_flags;
+        object->actionFlags = enabled | object->actionFlags;
         Object_ResetMotion(object);
     }
 }

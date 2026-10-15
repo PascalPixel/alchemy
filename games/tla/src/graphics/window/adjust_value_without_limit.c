@@ -8,7 +8,7 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
 void UiText_BuildRenderEntries(s32 key, s32 mode);
 

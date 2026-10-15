@@ -13,18 +13,18 @@ struct InputState {
 };
 
 struct TalkWork {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 message;
 };
 
 struct TalkWindowWork {
-    u8 unknown_0000[0x1384];
+    u8 unk0000[0x1384];
     u16 speaker;
     u16 portrait;
 };
 
 struct PartyTalk {
-    u8 unknown_000[0x22c];
+    u8 unk000[0x22c];
     u8 language;
 };
 
@@ -44,7 +44,7 @@ void WaitFrames(s32 frames);
 void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 second, s32 x2,
                    s32 y2, s32 face_x2, s32 face_y2, s32 delay)
 {
-    struct TalkWork *work = Ram_HeapSlots->event_work;
+    struct TalkWork *work = Ram_HeapSlots->eventWork;
     s32 one = ObjectTable_ReadActiveValue(first);
     s32 two = ObjectTable_ReadActiveValue(second);
     s32 window1;
@@ -77,7 +77,7 @@ void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 seco
 
 void Func_080d4330(s32 id)
 {
-    struct TalkWindowWork *work = Ram_HeapSlots->window_tiles;
+    struct TalkWindowWork *work = Ram_HeapSlots->windowTiles;
 
     if (id == (s32)0x80000000) {
         work->speaker = 0;

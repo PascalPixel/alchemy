@@ -10,42 +10,42 @@
 #include "text/msg_ids.h"
 
 struct IzumoRuinsEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[0x56];
-    s32 field_1ac;
-    u8 unknown_1b0[0xb0c];
-    struct ObjectRuntime *object_cbc;
+    u8 unk156[0x56];
+    s32 field1ac;
+    u8 unk1b0[0xb0c];
+    struct ObjectRuntime *objectCbc;
 };
 
 struct IzumoRuinsAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[8];
+    u8 unk0a[8];
     u16 angle;
 };
 
 struct IzumoRuinsMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct IzumoRuinsMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct IzumoRuinsMapLayer layers[3];
 };
 
 struct IzumoRuinsPlacement {
     u16 id;
-    u16 unknown_02;
+    u16 unk02;
     s16 flag;
 };
 
 struct IzumoRuinsEffectWork {
-    u8 unknown_00[26];
-    s16 object_id;
+    u8 unk00[26];
+    s16 objectId;
 };
 
 extern u32 gFrameCount;

@@ -46,8 +46,8 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 void UiText_DrawStringAtOffset(
     u8 *text,
     struct RenderInput *work,
-    s32 offset_x,
-    s32 offset_y)
+    s32 offsetX,
+    s32 offsetY)
 {
     s16 *buffer;
     s16 *output;
@@ -70,14 +70,14 @@ void UiText_DrawStringAtOffset(
     }
     *output = 0;
 
-    cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
-        + (work->x + ((u32)offset_x >> 3)) + 1;
+    cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5)
+        + (work->x + ((u32)offsetX >> 3)) + 1;
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
         src = (s32)base + cell + 8;
-        phase = offset_x & 7;
+        phase = offsetX & 7;
         UiText_RenderTileRow(
             buffer,
             src,
@@ -133,8 +133,8 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
     struct RenderInput *work,
-    s32 offset_x,
-    s32 offset_y,
+    s32 offsetX,
+    s32 offsetY,
     s32 variant)
 {
     u8 formatted[16];
@@ -161,14 +161,14 @@ void UiText_DrawPrefixedNumberAtOffset(
     }
     output[6] = 0;
 
-    cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
-        + (work->x + ((u32)offset_x >> 3)) + 1;
+    cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5)
+        + (work->x + ((u32)offsetX >> 3)) + 1;
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
         src = (s32)base + cell + 8;
-        phase = offset_x & 7;
+        phase = offsetX & 7;
         UiText_RenderTileRow(
             output,
             src,

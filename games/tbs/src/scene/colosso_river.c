@@ -58,9 +58,9 @@ static void StagedActor_PushActorAhead(void);
 
 typedef struct PartyInteractionRecord
 {
-	u8	padding_00[10];
+	u8	padding00[10];
 	s16 x;
-	u8	padding_0c[6];
+	u8	padding0c[6];
 	s16 y;
 } PartyInteractionRecord;
 
@@ -171,8 +171,8 @@ static void SceneState_ApplyRectsForActorsNineAndTen(void)
 	blocked = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if (actor->y.fixed == 0 && blocked == 0)
 	{
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-		actor->motion_flags = 0;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = 0;
 		{
 			s32 x = actor->x.fixed >> 20;
 			s32 y = actor->z.fixed >> 20;
@@ -223,13 +223,13 @@ static void EV13_PSYNERGY(void)
 	Object_SetMode((s32)rec7, 3);
 	Engine_CameraWaitForMove();
 	none = 0;
-	((struct FieldActor *)rec7)->motion_flags = none;
+	((struct FieldActor *)rec7)->motionFlags = none;
 	((struct FieldActor *)rec7)->acceleration = 0x6666;
 	((struct FieldActor *)rec7)->speed = 0xcccc;
 	FieldObject_SetMoveTarget((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x80000,
 		((struct FieldActor *)rec7)->z.fixed);
 	rec7 = Actor_Get(14);
-	((struct FieldActor *)rec7)->motion_flags = none;
+	((struct FieldActor *)rec7)->motionFlags = none;
 	((struct FieldActor *)rec7)->acceleration = 0x6666;
 	((struct FieldActor *)rec7)->speed = 0xcccc;
 	Engine_ObjectSetPosition((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x200000,
@@ -240,15 +240,15 @@ static void EV13_PSYNERGY(void)
 	Engine_EventEnd();
 }
 
-static void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
+static void StagedActor_PlacePairAtOffsetAndRun(s32 actorId, s32 dx, s32 dz)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
 	s32				   x;
 	s32				   z;
 
-	leader = Object_GetById(gGameState.selected_actor);
-	actor = Object_GetById(actor_id);
+	leader = Object_GetById(gGameState.selectedActor);
+	actor = Object_GetById(actorId);
 	Engine_EventBegin();
 	{
 		x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
@@ -288,7 +288,7 @@ static void EV20_TOUCH(void)
 	s32				   row;
 	s32				   offset;
 
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	row = actor->z.fixed >> 20;
 	offset = -48;
 	if (row <= 8)
@@ -309,7 +309,7 @@ static void EV21_TOUCH(void)
 	s32				   offset;
 	s32				   direction;
 
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	column = actor->x.fixed >> 20;
 	if ((KEYS_HELD & 32) != 0)
 	{
@@ -363,7 +363,7 @@ static void EV12_TOUCH(void)
 	struct FieldActor *actor;
 	s32				   none;
 
-	leader_id = gGameState.selected_actor;
+	leader_id = gGameState.selectedActor;
 	leader = Object_GetById(leader_id);
 	actor = Object_GetById(12);
 	GameFlag_Set(0x302);
@@ -417,7 +417,7 @@ static void EV12_TOUCH(void)
 	Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
 	Engine_CameraWaitForMove();
 	actor = Object_GetById(13);
-	actor->motion_flags = none;
+	actor->motionFlags = none;
 	actor->acceleration = 0x6666;
 	actor->speed = 0xcccc;
 	Engine_ObjectSetPosition(actor, actor->x.fixed, 0x80000, actor->z.fixed);
@@ -432,7 +432,7 @@ static void EV12_TOUCH(void)
 	Engine_EventWait(3);
 	Map_CopyCells(100, 29, 1, 3, 34, 38);
 	actor = Object_GetById(14);
-	actor->motion_flags = none;
+	actor->motionFlags = none;
 	actor->acceleration = 0x6666;
 	actor->speed = 0xcccc;
 	Engine_ObjectSetPosition(actor, actor->x.fixed, 0x200000, actor->z.fixed);
@@ -550,7 +550,7 @@ static void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 		y = o->z.fixed >> 19;
 		if (x >= 94 && x <= 95 && y > 23 && y <= 26)
 		{
-			o->terrain_id = 1;
+			o->terrainId = 1;
 		}
 	}
 }
@@ -564,14 +564,14 @@ s32 ColossoRiver_ApplyEntryState(void)
 	u8				   zero;
 	s32				   col;
 
-	gEventWork->start_transition = 0;
+	gEventWork->startTransition = 0;
 	GameFlag_Set(0x144);
 	actor = Object_GetById(9);
 	hit = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if (actor->y.fixed == 0 && hit == 0)
 	{
-		actor->priority_flags = 2;
-		actor->motion_flags = hit;
+		actor->priorityFlags = 2;
+		actor->motionFlags = hit;
 		Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	}
 	x = FieldGameFlag_GetByte(0x310);
@@ -581,30 +581,30 @@ s32 ColossoRiver_ApplyEntryState(void)
 	}
 	actor = Object_GetById(10);
 	actor->x.fixed = (x << 20) + 0x80000;
-	actor->motion_flags = 0;
-	actor->priority_flags = 2;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
 	FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
 	actor = Object_GetById(15);
-	actor->terrain_id = 1;
+	actor->terrainId = 1;
 	zero = 0;
 	if (Engine_GameFlagIsSet(0x303))
 	{
 		Object_SetMode(actor, 4);
 		Engine_ActorSetSpriteFlags(actor, 0);
-		actor->collision_flags = zero;
-		actor->priority_flags = 3;
+		actor->collisionFlags = zero;
+		actor->priorityFlags = 3;
 		Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
 	}
 	actor = Object_GetById(17);
 	col = actor->z.fixed >> 20;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(64, 24, 3, 1, 64, col);
 	actor = Object_GetById(18);
 	col = actor->x.fixed >> 20;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(63, 25, 1, 3, col, 9);
 	if (Engine_GameFlagIsSet(0x302))
 	{
@@ -616,7 +616,7 @@ s32 ColossoRiver_ApplyEntryState(void)
 	if (Engine_GameFlagIsSet(0x301))
 	{
 		Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
-		actor->motion_flags = zero;
+		actor->motionFlags = zero;
 		actor->acceleration = 0x6666;
 		actor->speed = 0xcccc;
 		actor->y.fixed = 0x80000;
@@ -626,7 +626,7 @@ s32 ColossoRiver_ApplyEntryState(void)
 	{
 		Object_SetMode(actor, 2);
 	}
-	Object_GetById(14)->priority_flags = 2;
+	Object_GetById(14)->priorityFlags = 2;
 	Colosso_ShowItemIcon(24, 120);
 	Colosso_ShowItemIcon(25, 127);
 	switch (gGameState.entrance)
@@ -915,24 +915,24 @@ static void EV21_TALK(s32 a0)
 			SceneEffect_RemoveMarkerTask();
 			Engine_TaskWait(2);
 			first = Object_GetById(13);
-			first->motion_flags = 0;
+			first->motionFlags = 0;
 			first->acceleration = 0x6666;
 			first->speed = 0xcccc;
 			Engine_ObjectSetPosition(first, first->x.fixed, 0x80000, first->z.fixed);
 			second = Object_GetById(14);
-			second->motion_flags = 0;
+			second->motionFlags = 0;
 			second->acceleration = 0x6666;
 			second->speed = 0xcccc;
 			Engine_ObjectSetPosition(second, second->x.fixed, 0x200000, second->z.fixed);
 			Object_CommitPosition((s32)second);
 			Engine_EventWait(45);
 			first = Object_GetById(13);
-			first->motion_flags = 0;
+			first->motionFlags = 0;
 			first->acceleration = 0x6666;
 			first->speed = 0xcccc;
 			Engine_ObjectSetPosition(first, first->x.fixed, 0x180000, first->z.fixed);
 			second = Actor_Get(14);
-			second->motion_flags = 0;
+			second->motionFlags = 0;
 			second->acceleration = 0x6666;
 			second->speed = 0xcccc;
 			Engine_ObjectSetPosition(second, second->x.fixed, 0, second->z.fixed);
@@ -1260,9 +1260,9 @@ static void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 	s32 t[3];
 	u32 n;
 
-	if (a->velocity_y >= -255 && a->velocity_y <= 255)
+	if (a->velocityY >= -255 && a->velocityY <= 255)
 	{
-		a->motion_flags = 0;
+		a->motionFlags = 0;
 	}
 	n = Engine_RandomNext();
 	if (n * 100 >> 16 <= 9)
@@ -1286,7 +1286,7 @@ static void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 		}
 		if (o != 0)
 		{
-			o->motion_flags = 0;
+			o->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(o, 0);
 			Engine_ObjectSetScript(o, ColossoRiver_ScriptA);
 			Object_SetMode(o, 1);
@@ -1300,7 +1300,7 @@ static s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 	struct FieldActor *o = Object_GetById(a->timer);
 
 	Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
-	o->motion_flags = 0;
+	o->motionFlags = 0;
 	Engine_ObjectSetScript(o, ColossoRiver_ScriptB);
 	Engine_AudioPlayCue(83);
 	a->timer = 0;
@@ -1322,7 +1322,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 	flag = Engine_GameFlagIsSet(0x211);
 
 	shared = (u8 *)&gGameState;
-	rec = Object_GetById(((struct GameState *)shared)->selected_actor);
+	rec = Object_GetById(((struct GameState *)shared)->selectedActor);
 
 	if (*(s32 *)(work + 232) < rec->x.fixed)
 	{
@@ -1372,7 +1372,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 	}
 
 	shared = (u8 *)&gGameState;
-	UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
+	UiWork_PushValueSlot(((struct GameState *)shared)->selectedActor, 1);
 	Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
 	ObjectDispatch_WaitForValue16(rec);
 
@@ -1422,7 +1422,7 @@ static void StagedActor_PushActorAhead(void)
 	pos.z = target->z.fixed + step;
 
 	blocker = SceneData_FindSlotAtPosition(&pos, target);
-	if (blocker != 0 && (blocker->collision_flags & 1) != 0)
+	if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
 	{
 		return;
 	}
@@ -1432,12 +1432,12 @@ static void StagedActor_PushActorAhead(void)
 	pos.z = target->z.fixed;
 
 	blocker = SceneData_FindSlotAtPosition(&pos, target);
-	if (blocker != 0 && (blocker->collision_flags & 1) != 0)
+	if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
 	{
 		return;
 	}
 
-	target->terrain_id = 2;
+	target->terrainId = 2;
 	zero = 0;
 
 	step = ColossoRiver_DirectionSteps[dir];
@@ -1468,8 +1468,8 @@ static void StagedActor_PushActorAhead(void)
 
 	target->x.fixed = pos.x;
 	target->z.fixed = pos.z;
-	target->velocity_x = zero;
-	target->velocity_z = zero;
+	target->velocityX = zero;
+	target->velocityZ = zero;
 
 	Object_SetMode(subject, 1);
 }

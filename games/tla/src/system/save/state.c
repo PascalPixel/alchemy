@@ -22,15 +22,15 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
     return difference;
 }
 
-u32 SaveState_FindLatestSequence(s32 record_id)
+u32 SaveState_FindLatestSequence(s32 recordId)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     u32 latest_sequence;
     u32 i;
 
     latest_sequence = 0;
     for (i = 0; i <= 14; i += 3) {
-        if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
+        if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
             if (latest_sequence < work->sequence[i])
                 latest_sequence = work->sequence[i];
         }
@@ -42,7 +42,7 @@ u32 SaveState_FindLatestSequence(s32 record_id)
 // it first; returns how many files have one.
 s32 SaveState_LoadSummaryRecords(void)
 {
-    struct SaveWorkspace *work = Ram_HeapSlots->serial_work;
+    struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
     struct SaveSummary *summary;
     s32 count;
     u32 group;
@@ -58,7 +58,7 @@ s32 SaveState_LoadSummaryRecords(void)
         slot = SaveState_FindLatestSlot(group);
         if (slot <= 14) {
             ReadFlash(slot, 0, (u8 *)summary, sizeof(*summary));
-            ReadFlash(slot + 1, 16, summary->unknown_38, sizeof(summary->unknown_38));
+            ReadFlash(slot + 1, 16, summary->unk38, sizeof(summary->unk38));
             count++;
         }
         summary++;

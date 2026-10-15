@@ -5,9 +5,9 @@
 
 struct SoundFrameState
 {
-    u8 unknown_00[2];
-    u8 unknown_02;
-    u8 unknown_03;
+    u8 unk00[2];
+    u8 unk02;
+    u8 unk03;
 };
 
 extern volatile struct SoundFrameState Data_03001138;
@@ -30,7 +30,7 @@ void AudioTest_RunParameterController(void)
     do {
         IwramHi_Data1 = 0;
     } while (0);
-    Data_03001138.unknown_02 = 1;
+    Data_03001138.unk02 = 1;
     timer = 20;
 
     for (;;)

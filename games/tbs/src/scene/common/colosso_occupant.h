@@ -9,7 +9,7 @@ void *SceneActor_FindOccupantAheadOfSubject(void)
 	s32				   position[3];
 	s32				  *occupant;
 
-	record = Object_GetById(gGameState.selected_actor);
+	record = Object_GetById(gGameState.selectedActor);
 
 	facing = (record->facing + 0x2000) & 0xc000;
 

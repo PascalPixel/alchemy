@@ -21,13 +21,13 @@ struct BattleEventQueue
 {
 	u8	opcodes[BATTLE_EVENT_CAPACITY];
 	u32 operands[BATTLE_EVENT_CAPACITY];
-	s32 target_index;
+	s32 targetIndex;
 	s32 count;
 };
 
 LAYOUT_SIZE_GUARD(BattleEventQueue_Size, struct BattleEventQueue, 0x148);
 LAYOUT_OFFSET_GUARD(BattleEventQueue_Operands, struct BattleEventQueue, operands, 0x040);
-LAYOUT_OFFSET_GUARD(BattleEventQueue_TargetIndex, struct BattleEventQueue, target_index, 0x140);
+LAYOUT_OFFSET_GUARD(BattleEventQueue_TargetIndex, struct BattleEventQueue, targetIndex, 0x140);
 LAYOUT_OFFSET_GUARD(BattleEventQueue_Count, struct BattleEventQueue, count, 0x144);
 
 enum BattleEventOpcode
@@ -50,7 +50,7 @@ enum BattleEventOpcode
 };
 
 #if GAME_TLA
-s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
+s32 BattleActor_DestroyTemporaryObject(s32 unitId);
 #endif
 
 #if GAME_TLA

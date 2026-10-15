@@ -25,7 +25,7 @@ static void ActorDraw_SetupActorSceneCells(void)
 	{
 		Map_CopyCellAttributes(33, 21, 2, 2, 3, 16);
 	}
-	actor->priority_flags &= ~1;
+	actor->priorityFlags &= ~1;
 	sprite->priority = 3;
 	SceneActor_PlaceAndSetSceneDelay(64, 272, 11);
 }

@@ -17,7 +17,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode)
 // 3 フレームごとにカメラを斜めに 1 ピクセル揺らす
 void Func_02003ca8(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = *(s16 *)((u8 *)object + 10);
     s32 z = *(s16 *)((u8 *)object + 18);
 

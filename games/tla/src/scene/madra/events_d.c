@@ -23,8 +23,8 @@ void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Func_02002ae8(const void *data, s32 a, s32 b);
-void Func_02002af0(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-void Func_02002af8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
+void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Func_02002b88(s32 id, s32 a, s32 b);
@@ -182,11 +182,11 @@ void Func_020029c8(void)
     s32 next;
 
     next = 16;
-    if (*(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x154) > 34)
+    if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
         next = 15;
     ObjectMotion_ArmCallback(4, 0xc000, 0);
     Battle_WaitMode0(10);
-    Object_GetById(4)->action_flags &= 0xfe;
+    Object_GetById(4)->actionFlags &= 0xfe;
     ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
     ObjectMotion_CommitCurrentPositionAndActivate(4);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);

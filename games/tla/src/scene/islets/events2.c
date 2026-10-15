@@ -46,7 +46,7 @@ void Func_02000210(void)
     if (result0 == 0) goto L_02008260;
     result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
     if (result1 == 0) goto L_02008250;
-    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner, 0);
     Call1((void (*)())Func_02003f24, (s32)MsgPenPenPen);
     goto L_02008256;
 L_02008250:
@@ -57,7 +57,7 @@ L_02008256:
 L_02008260:
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 9);
     Call1((void (*)())WaitFrames, 1);
-    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner, 0);
     Call1((void (*)())Func_02003f24, (s32)MsgPenPen3);
     Call2((void (*)())Func_02003f2c, 9, 0);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 9, 19);
@@ -103,7 +103,7 @@ void Func_0200030c(void)
     if (result0 == 0) goto L_0200835c;
     result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
     if (result1 == 0) goto L_0200834c;
-    Call3((void (*)())ObjectMotion_SetAngleToward, 19, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 19, gPartyState.currentOwner, 0);
     Call1((void (*)())Func_02003f24, (s32)MsgPenPenPehnnnn);
     goto L_02008352;
 L_0200834c:
@@ -149,7 +149,7 @@ s32 Func_020003dc(void)
     u16 turn;
     s32 facing;
 
-    turn = Object_GetById(gPartyState.current_owner)->angle + 0x5fff;
+    turn = Object_GetById(gPartyState.currentOwner)->angle + 0x5fff;
     facing = 1;
     if (turn >= 0x3fff)
         facing = 0;
@@ -194,7 +194,7 @@ void Func_02000440(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call1((void (*)())GameFlag_SetBit, 0x214);
 L_020084b6:
-    Call3((void (*)())ObjectMotion_SetAngleToward, 8, gPartyState.current_owner, 0);
+    Call3((void (*)())ObjectMotion_SetAngleToward, 8, gPartyState.currentOwner, 0);
     Call1((void (*)())Func_02003f24, (s32)MsgLookWeRe);
     Call2((void (*)())Func_02003f2c, 8, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
@@ -221,7 +221,7 @@ void Func_02000520(void)
     Call1((void (*)())Func_02003fa4, 0);
     result0 = Value1((s32 (*)())GameFlag_Test, 0xaa4);
     if (result0 == 0) goto L_0200854a;
-    Call2((void (*)())Object_LinkObjectAndSetCallback, 10, gPartyState.current_owner);
+    Call2((void (*)())Object_LinkObjectAndSetCallback, 10, gPartyState.currentOwner);
 L_0200854a:
     Call1((void (*)())Func_02003f24, (s32)MsgChirpChirp2);
     Call2((void (*)())Func_02003f2c, 10, 0);
@@ -240,16 +240,16 @@ void Func_02000568(void)
     Call1((void (*)())Func_02003fa4, 0);
     if (Value1((s32 (*)())PartyInventory_FindOwner, 0x1c4) == -1) {
         if (Value1((s32 (*)())GameFlag_Test, 0xaa4)) {
-            Call2((void (*)())Object_LinkObjectAndSetCallback, 10, gPartyState.current_owner);
+            Call2((void (*)())Object_LinkObjectAndSetCallback, 10, gPartyState.currentOwner);
             Call1((void (*)())Func_02003f24, (s32)MsgWhatDoYou);
         } else {
             Call1((void (*)())Func_02003f24, (s32)MsgILoveFeeling);
         }
         Call2((void (*)())Func_02003f2c, 10, 0);
     } else {
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         object = Object_GetById(10);
-        Call3((void (*)())ObjectMotion_SetAngleToward, 10, gPartyState.current_owner, 0);
+        Call3((void (*)())ObjectMotion_SetAngleToward, 10, gPartyState.currentOwner, 0);
         Call3((void (*)())ObjectMotion_Launch, 10, 4, 10);
         Call1((void (*)())Func_02003f24, (s32)MsgOhMyThat);
         Call2((void (*)())Func_02003f2c, 10, 0);
@@ -259,13 +259,13 @@ void Func_02000568(void)
         Object_SetPositionAndResetMotion(object, 0x780000, 0x800000, 0x1380000);
         Call2((void (*)())Object_SetModeById, 10, 5);
         Call1((void (*)())WaitFrames, 10);
-        Call2((void (*)())Func_02003f3c, gPartyState.current_owner, 0x4000);
+        Call2((void (*)())Func_02003f3c, gPartyState.currentOwner, 0x4000);
         spawned = (struct ObjectRuntime *)Value4((s32 (*)())Func_02003df4, 0x1e9, leader->x, 0x980000, leader->z);
         if (spawned != 0) {
-            Call2((void (*)())Object_SetModeById, gPartyState.current_owner, 28);
+            Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 28);
             Call2((void (*)())Func_02003e3c, (s32)spawned, 0x1c5);
             ObjectDispatch_SetSingleChildFlags(spawned, 0);
-            spawned->motion_flags = 0;
+            spawned->motionFlags = 0;
         }
         Call1((void (*)())Battle_WaitMode0, 10);
         ((void (*)())Func_02003fc4)();
@@ -275,7 +275,7 @@ void Func_02000568(void)
         ((void (*)())Func_02003fbc)();
         if (spawned != 0) {
             Func_02003dfc(spawned);
-            Call2((void (*)())Object_SetModeById, gPartyState.current_owner, 1);
+            Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 1);
         }
         Call2((void (*)())Func_02003f3c, 10, 0);
         Call1((void (*)())GameFlag_SetBit, 0xaa4);

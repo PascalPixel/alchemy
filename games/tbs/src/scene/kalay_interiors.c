@@ -192,11 +192,11 @@ static void FieldScene_RunArrivalPlacement(void)
 
 		if (rec != 0)
 		{
-			rec->motion_flags = 0;
+			rec->motionFlags = 0;
 		}
 	}
 
-	switch (work->touched_trigger)
+	switch (work->touchedTrigger)
 	{
 	case 12:
 		idx = 0;
@@ -226,13 +226,13 @@ static void FieldScene_RunArrivalPlacement(void)
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
 	p = Object_GetById(0);
-	p->motion_flags = 0;
+	p->motionFlags = 0;
 
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
 	Engine_EventWait(10);
 
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -240,7 +240,7 @@ static void FieldScene_RunArrivalPlacement(void)
 
 s32 Scene_Initialize(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	if (gGameState.scene == (s32)&SceneId_KalayInteriors1)
 	{
 		SceneState_ClearSlotsBySubState();

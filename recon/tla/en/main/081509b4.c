@@ -53,14 +53,14 @@ void Func_081509b4(struct BattleEffectArgument *effect)
     struct EffectStep *puff;
     struct EffectStep *p;
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     REG_BLDCNT = 0x3f46;
     REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
     Func_081963ec(104, 3);
-    draw = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
     if (effect->actors[0] > 127) {
         org = 0;
@@ -83,11 +83,11 @@ void Func_081509b4(struct BattleEffectArgument *effect)
         puff++;
     } while (i != PUFF_COUNT);
 
-    work->transfer_mode = 2;
+    work->transferMode = 2;
     if (effect->variant == 2)
-        work->transfer_value = 75;
+        work->transferValue = 75;
     else
-        work->transfer_value = 50;
+        work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     Audio_PlayCue(136);
     frame = 0;
@@ -124,7 +124,7 @@ void Func_081509b4(struct BattleEffectArgument *effect)
             i += 1;
         }
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
         frame += 1;
     } while (frame != 60);

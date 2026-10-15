@@ -13,12 +13,12 @@
 #include "field_sprite.h"
 
 struct SpriteView {
-    u8 unknown_00[8];
+    u8 unk00[8];
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[10];
-    s32 unknown_14;
+    u8 unk0a[10];
+    s32 unk14;
 };
 
 extern const s32 *Data_02003840[];
@@ -31,7 +31,7 @@ void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, u32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 attribute);
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 
-void Func_02000480(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
+void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     const struct EffectOptions *options)
 {
     struct FieldActor *party = Object_GetById(0);
@@ -50,15 +50,15 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velo
     sprite = effect->sprite;
     Func_020032e0((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
     Func_020032e8((struct FieldActor *)effect, Data_02003840[flags & EFFECT_SCRIPT_MASK]);
-    effect->motion_flags = 0;
+    effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-    effect->velocity_x = velocity_x;
-    effect->velocity_y = velocity_y;
-    effect->velocity_z = velocity_z;
+    effect->velocityX = velocityX;
+    effect->velocityY = velocityY;
+    effect->velocityZ = velocityZ;
     Object_SetSpritePriority((struct FieldActor *)effect, party->sprite->priority);
-    effect->scale_rate_x = 0;
-    effect->scale_rate_y = 0;
+    effect->scaleRateX = 0;
+    effect->scaleRateY = 0;
     effect->spin = 0;
 
     if ((flags & 0xffff0000) == 0 || options == 0)
@@ -67,7 +67,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velo
         Object_SetPartAttribute((struct FieldActor *)effect, options->palette);
     if ((flags & EFFECT_USE_PRIORITY) != 0)
     {
-        effect->priority_flags &= ~1;
+        effect->priorityFlags &= ~1;
         do {
             ((struct SpriteView *)sprite)->priority = options->priority;
             Object_SetSpritePriority((struct FieldActor *)effect, options->priority);
@@ -76,26 +76,26 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velo
     start = flags & EFFECT_USE_START_SCALE;
     if (start != 0)
     {
-        effect->scale_x = options->start_scale_x;
-        effect->scale_y = options->start_scale_y;
+        effect->scaleX = options->startScaleX;
+        effect->scaleY = options->startScaleY;
     }
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0)
     {
-        s32 target_x;
+        s32 targetX;
         s32 count;
 
         script = Data_02003840[flags & EFFECT_SCRIPT_MASK];
-        target_x = options->target_scale_x;
+        targetX = options->targetScaleX;
         count = script[3];
         if (start != 0)
         {
-            effect->scale_rate_x = (target_x - effect->scale_x) / count;
-            effect->scale_rate_y = (options->target_scale_y - effect->scale_y) / script[3];
+            effect->scaleRateX = (targetX - effect->scaleX) / count;
+            effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
         }
         else
         {
-            effect->scale_rate_x = (target_x - 0x10000) / count;
-            effect->scale_rate_y = (options->target_scale_y - 0x10000) / script[3];
+            effect->scaleRateX = (targetX - 0x10000) / count;
+            effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
         }
     }
     if ((flags & EFFECT_USE_SCRIPT) != 0)

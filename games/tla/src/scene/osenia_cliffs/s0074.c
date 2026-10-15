@@ -6,7 +6,7 @@ extern u32 Data_020001b0[];
 
 struct MapBits
 {
-	u8 unknown_00[23];
+	u8 unk00[23];
 	u8 low : 2;
 	u8 mode : 2;
 };
@@ -22,14 +22,14 @@ void  Func_020000fc(void);
 
 s32 Func_02000074(void)
 {
-	struct MapBits *map = (struct MapBits *)Ram_HeapSlots->map_work;
+	struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 
 	map->mode = 1;
 	Data_020001b0[0] = 0;
-	*(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 256;
+	*(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
 	Scheduler_AddOrUpdateCallback(Func_020000fc, 0x480);
 	{
-		u8 *flags = (u8 *)Object_GetById(gPartyState.current_owner) + 35;
+		u8 *flags = (u8 *)Object_GetById(gPartyState.currentOwner) + 35;
 		u32 value = *flags;
 		u32 bit = 32;
 

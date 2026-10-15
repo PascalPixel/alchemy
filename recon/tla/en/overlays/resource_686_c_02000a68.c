@@ -15,12 +15,12 @@ void Func_02000a68(s32 unused, s32 objectId)
     s16 frames = 60;
 
     if (object->z >> 20 == 31) {
-        object->motion_flags = 3;
+        object->motionFlags = 3;
         Func_02002e34(object, 3);
         Func_02002eec(204);
         while (frames != 0) {
             WaitFrames(1);
-            if (object->velocity_y == 0)
+            if (object->velocityY == 0)
                 break;
             frames--;
         }

@@ -11,13 +11,13 @@
 #include "frame.h"
 
 struct MapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct MapLayers {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct MapLayer layers[3];
 };
 

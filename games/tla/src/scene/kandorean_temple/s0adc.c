@@ -14,7 +14,7 @@ void Func_02000adc(void)
 
         object->bounce = Math_Cosine(((Random16Far() * 0x3000) >> 16) + 0x3000);
         object->gravity = (u16)Random16Far();
-        object->unknown_4c = (u16)(Random16Far() * 2) + 0x58000;
+        object->unk4c = (u16)(Random16Far() * 2) + 0x58000;
         timer = (u16)Random16Far() - 0x8000;
         object->action = timer;
         Func_02000930(object, 1);

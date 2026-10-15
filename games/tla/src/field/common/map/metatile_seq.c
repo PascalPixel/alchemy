@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height);
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 width, u32 height);
 void WaitFrames(s32 frames);
 
 struct MapCopyCommand {

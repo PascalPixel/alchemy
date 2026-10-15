@@ -1,7 +1,7 @@
 #include "ankohl_ruins.h"
 
 struct AnkohlRuinsEventWork {
-    u8 unknown_000[0x16a];
+    u8 unk000[0x16a];
     s16 alarm;
 };
 
@@ -13,7 +13,7 @@ void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 void Func_020015ac(void)
 {
-    struct AnkohlRuinsEventWork *work = (struct AnkohlRuinsEventWork *)Ram_HeapSlots->event_work;
+    struct AnkohlRuinsEventWork *work = (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
 
     if (GameFlag_Test(0x104) == 0) {
         if (++Data_02003782 >= Data_02003784) {

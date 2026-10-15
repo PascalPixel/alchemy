@@ -33,19 +33,19 @@ void Func_02004524(void)
     Func_02005a9c();
     Func_02005c3c(0);
     Kibombo_CamMove(-1, -1, -1, 0);
-    Func_02005bbc()->motion_flags = 0;
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    Func_02005bbc()->motionFlags = 0;
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
     Func_02003640(1, 1);
     if (Data_02007950 != 0) {
         Data_02007950->y += 0x200000;
         WaitFrames(1);
-        Data_02007950->motion_flags = 4;
+        Data_02007950->motionFlags = 4;
     }
     WaitFrames(1);
-    work = Ram_HeapSlots->event_work;
-    work->screen_effect = 0x201;
+    work = Ram_HeapSlots->eventWork;
+    work->screenEffect = 0x201;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);

@@ -11,17 +11,17 @@ s32 Func_02003a7c(void);
 
 void Func_0200244c(s32 height)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
 
     if (!Flag_IsSet(0x109)) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         object->y += height;
-        object->speed_limit = 0x10000;
-        object->velocity_y = 0;
-        gPartyState.render_mode = 2;
-        object->action_flags = 1;
-        Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+        object->speedLimit = 0x10000;
+        object->velocityY = 0;
+        gPartyState.renderMode = 2;
+        object->actionFlags = 1;
+        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
         Func_02003a7c();
         WaitFrames(1);
     }

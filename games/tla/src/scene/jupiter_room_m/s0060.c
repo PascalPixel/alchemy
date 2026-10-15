@@ -23,10 +23,10 @@ void Func_02000080(void)
         struct PartyState *party = &gPartyState;
 
         asm volatile("" : "+l"(party)); /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; plain field tests and a local pointer build the offset first */
-        if (party->render_mode == 10) {
-            struct FieldActor *object = Object_GetById(party->current_owner);
+        if (party->renderMode == 10) {
+            struct FieldActor *object = Object_GetById(party->currentOwner);
 
-            party->render_mode = 12;
+            party->renderMode = 12;
             WORD_AT(object, 48) = 0;
             WORD_AT(object, 52) = 0;
             Func_02003474(Object_GetById(25));

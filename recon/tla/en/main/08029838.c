@@ -6,7 +6,7 @@
  * the null test, returned at the null test, as the one result variable of
  * the function, and as the result of an inline (the zero then comes after
  * the null test). The three key fields at 0x230, 0x234 and 0x236 of the
- * party state are named keys_230, keys_234 and keys_236 for it.
+ * party state are named keys230, keys234 and keys236 for it.
  */
 #include "types.h"
 #include "ram_buffer.h"
@@ -17,7 +17,7 @@
 #define INPUT_PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
 struct EventWork {
-    u8 unknown_000[0x166];
+    u8 unk000[0x166];
     s16 request;
 };
 
@@ -27,13 +27,13 @@ s32 GameFlag_Test();
 
 s32 Func_08029838(s32 arg)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 pressed = 0;
 
     if (work == NULL)
         return 0;
-    if ((INPUT_PRESSED & gPartyState.keys_234) || (INPUT_PRESSED & gPartyState.keys_230)
-        || (INPUT_PRESSED & gPartyState.keys_236))
+    if ((INPUT_PRESSED & gPartyState.keys234) || (INPUT_PRESSED & gPartyState.keys230)
+        || (INPUT_PRESSED & gPartyState.keys236))
         pressed = 1;
     if (pressed) {
         if (Func_080c8828(arg)) {

@@ -15,12 +15,12 @@
 #include "battle_unit.h"
 
 struct AnchorWork {
-    u8 unknown_0000[0x1930];
+    u8 unk0000[0x1930];
     struct ObjectRuntime *anchor;
 };
 
 struct DropEvent {
-    u8 unknown_000[0xd34];
+    u8 unk000[0xd34];
     u16 item;
 };
 
@@ -35,7 +35,7 @@ extern const u16 Data_080f0fc0[];
 
 void Func_080e716c(void)
 {
-    struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
     struct ObjectRuntime *anchor;
     struct EventWork *event;
     struct BattleUnit *unit;
@@ -45,8 +45,8 @@ void Func_080e716c(void)
 
     asm("");
     anchor = work->anchor;
-    event = Ram_HeapSlots->event_work;
-    unit = UnitGet(gPartyState.current_owner);
+    event = Ram_HeapSlots->eventWork;
+    unit = UnitGet(gPartyState.currentOwner);
 
     object = Object_GetById(id);
     if (object == NULL) {

@@ -9,7 +9,7 @@ extern u8 gMapShapeGrid[];
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 
 void Map_CopyCellAttributeRect(
-    s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+    s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
     u32 *dst = MAP_CELLS;
     u32 *src = dst;
@@ -21,10 +21,10 @@ void Map_CopyCellAttributeRect(
     u16 col;
 
     dst += (dst_y << 7) + dst_x;
-    src += (src_y << 7) + src_x;
+    src += (srcY << 7) + srcX;
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     dst_shape += (dst_y << 7) + dst_x;
-    src_shape += (src_y << 7) + src_x;
+    src_shape += (srcY << 7) + srcX;
 #endif
 
     for (row = 0; row < height; row++) {

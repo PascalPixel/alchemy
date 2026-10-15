@@ -12,7 +12,7 @@ void Audio_PlayCue(s32 cue);
 
 void Func_080d2c9c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     if (work != 0) {
         s16 cue = *(s16 *)(work + 0xcb8);
@@ -29,7 +29,7 @@ void GameFlag_ClearBit(s32 flag);
 s32 Party_FindOwnerWithActionFar(s32 action);
 
 struct EventWork15a {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 flag;
 };
 
@@ -41,18 +41,18 @@ void Func_080d2cc4(s32 message)
     GameFlag_ClearBit(0x142);
     EventRuntime_End();
     if (Party_FindOwnerWithActionFar(136) != -1)
-        ((struct EventWork15a *)Ram_HeapSlots->event_work)->flag = 1;
+        ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
 
 struct CueObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 base;
     s32 top;
 };
 
 struct EventWork1cc {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct CueObject *focus;
 };
 
@@ -60,7 +60,7 @@ struct EventWork1cc {
 
 void Func_080d2d08(struct CueObject *object, s32 cue)
 {
-    struct CueObject *focus = ((struct EventWork1cc *)Ram_HeapSlots->event_work)->focus;
+    struct CueObject *focus = ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
 
     if (object == 0 || focus == 0)
         return;
@@ -73,6 +73,6 @@ void Func_080d2d08(struct CueObject *object, s32 cue)
 
 void Func_080d2d70(void)
 {
-    gPartyState.counter_274++;
+    gPartyState.counter274++;
 }
 #endif

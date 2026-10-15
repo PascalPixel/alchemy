@@ -4,7 +4,7 @@ extern s32 Data_02004a18[];
 
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object)
 {
-    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.currentOwner);
     s32 *offset = Data_02004a18;
 
     object->x = leader->x + offset[0];

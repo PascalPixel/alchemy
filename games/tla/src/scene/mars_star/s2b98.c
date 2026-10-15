@@ -10,29 +10,29 @@ s32 Func_02002b98(struct ObjectRuntime *object)
 
     if (frame == 0) {
         object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-        object->scale_x = frame;
-        object->scale_y = frame;
-        object->speed_limit = 0x10000;
+        object->scaleX = frame;
+        object->scaleY = frame;
+        object->speedLimit = 0x10000;
         object->acceleration = 0x10000;
         Func_0200427c(object, 1);
     } else if (frame <= 30) {
         if (frame == 30) {
             Func_0200446c(136);
-            Func_020041cc(object->linked_object, 2);
+            Func_020041cc(object->linkedObject, 2);
         }
     } else if (frame <= 60) {
-        object->scale_x = 0x10000;
-        object->scale_y = 0x10000;
+        object->scaleX = 0x10000;
+        object->scaleY = 0x10000;
         {
             s32 half = (object->action / 2) & 1;
 
-            Animation_ApplyChildValues(object->linked_object, half * 7);
+            Animation_ApplyChildValues(object->linkedObject, half * 7);
         }
     } else {
-        Func_020041cc(object->linked_object, 1);
+        Func_020041cc(object->linkedObject, 1);
         Func_0200446c(184);
         object->y = Map_GetTerrainHeight(0, object->x, object->z);
-        object->linked_object = 0;
+        object->linkedObject = 0;
         return 0;
     }
     object->action++;
@@ -45,26 +45,26 @@ s32 Func_02002c44(struct ObjectRuntime *object)
 
     if (frame == 0) {
         Func_0200446c(136);
-        Func_020041cc(object->linked_object, 2);
+        Func_020041cc(object->linkedObject, 2);
         object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-        object->scale_x = frame;
-        object->scale_y = frame;
-        object->speed_limit = 0x10000;
+        object->scaleX = frame;
+        object->scaleY = frame;
+        object->speedLimit = 0x10000;
         object->acceleration = 0x8000;
         Func_0200427c(object, 1);
     } else if (frame <= 32) {
-        object->scale_x = 0x10000;
-        object->scale_y = 0x10000;
+        object->scaleX = 0x10000;
+        object->scaleY = 0x10000;
         {
             s32 half = (object->action / 2) & 1;
 
-            Animation_ApplyChildValues(object->linked_object, half * 7);
+            Animation_ApplyChildValues(object->linkedObject, half * 7);
         }
     } else {
-        Func_020041cc(object->linked_object, 1);
+        Func_020041cc(object->linkedObject, 1);
         Func_0200446c(184);
         object->y = Map_GetTerrainHeight(0, object->x, object->z);
-        object->linked_object = 0;
+        object->linkedObject = 0;
         return 0;
     }
     object->action++;

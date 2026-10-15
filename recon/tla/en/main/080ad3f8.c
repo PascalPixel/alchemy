@@ -5,22 +5,22 @@
 #include "owner_state.h"
 
 struct OwnerStats {
-    u8 unknown_000[0x10];
-    s16 base_hp;
-    s16 base_pp;
-    s16 hp_ratio;
-    s16 pp_ratio;
-    u16 base_attack;
-    u16 base_defense;
-    u16 base_agility;
-    u8 base_luck;
-    u8 base_turns;
-    u8 base_20;
-    u8 base_21;
-    u8 unknown_022[2];
-    s16 base_element[4][2];
-    s16 max_hp;
-    s16 max_pp;
+    u8 unk000[0x10];
+    s16 baseHp;
+    s16 basePp;
+    s16 hpRatio;
+    s16 ppRatio;
+    u16 baseAttack;
+    u16 baseDefense;
+    u16 baseAgility;
+    u8 baseLuck;
+    u8 baseTurns;
+    u8 base20;
+    u8 base21;
+    u8 unk022[2];
+    s16 baseElement[4][2];
+    s16 maxHp;
+    s16 maxPp;
     s16 hp;
     s16 pp;
     s16 atk;
@@ -28,37 +28,37 @@ struct OwnerStats {
     s16 agi;
     u8 luck;
     u8 turns;
-    u8 stat_44;
-    u8 stat_45;
-    u8 unknown_046[2];
+    u8 stat44;
+    u8 stat45;
+    u8 unk046[2];
     s16 element[4][2];
-    u8 unknown_058[0x80];
+    u8 unk058[0x80];
     u16 equipment[15];
-    u8 unknown_0f6[0x12];
+    u8 unk0f6[0x12];
     u32 djinn[4];
-    u8 unknown_118[0x10];
+    u8 unk118[0x10];
     u8 character;
-    u8 class_id;
-    u8 unknown_12a[2];
-    s8 element_level[4];
+    u8 classId;
+    u8 unk12a[2];
+    s8 elementLevel[4];
     s8 curse;
-    u8 unknown_131[2];
-    s8 attack_level;
-    u8 unknown_134;
-    s8 defense_level;
-    u8 unknown_136;
-    s8 resist_level;
-    u8 unknown_138[3];
-    u8 unknown_13b[7];
-    u8 bonus_142;
-    u8 bonus_143;
-    u8 extra_turn;
-    u8 unknown_145[2];
-    s8 agility_level;
+    u8 unk131[2];
+    s8 attackLevel;
+    u8 unk134;
+    s8 defenseLevel;
+    u8 unk136;
+    s8 resistLevel;
+    u8 unk138[3];
+    u8 unk13b[7];
+    u8 bonus142;
+    u8 bonus143;
+    u8 extraTurn;
+    u8 unk145[2];
+    s8 agilityLevel;
 };
 
 struct DjinnDefinition {
-    u8 unknown_00[4];
+    u8 unk00[4];
     s8 hp;
     s8 pp;
     s8 atk;
@@ -68,7 +68,7 @@ struct DjinnDefinition {
 };
 
 struct ClassRecord {
-    u8 unknown_00[8];
+    u8 unk00[8];
     u8 hp;
     u8 pp;
     u8 atk;
@@ -83,17 +83,17 @@ struct StatWork {
     s32 atk;
     s32 def;
     s32 agi;
-    s32 unused_14;
+    s32 unused14;
     s32 luck;
     s32 turns;
-    s32 stat_20;
-    s32 stat_24;
+    s32 stat20;
+    s32 stat24;
     s32 element[4][2];
     s32 kind;
-    s32 unused_4c[2];
+    s32 unused4c[2];
     s32 amount;
     struct ItemDefinition *item;
-    s32 unused_5c;
+    s32 unused5c;
 };
 
 s32 __divsi3(s32 numerator, s32 denominator);
@@ -114,17 +114,17 @@ void UnitCalc(s32 owner)
 
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
     st = UnitGet(owner);
-    work->hp = st->base_hp;
-    work->pp = st->base_pp;
-    work->atk = st->base_attack;
-    work->def = st->base_defense;
-    work->agi = st->base_agility;
-    work->luck = st->base_luck;
-    work->turns = st->base_turns & 15;
-    work->stat_20 = st->base_20;
-    work->stat_24 = st->base_21;
+    work->hp = st->baseHp;
+    work->pp = st->basePp;
+    work->atk = st->baseAttack;
+    work->def = st->baseDefense;
+    work->agi = st->baseAgility;
+    work->luck = st->baseLuck;
+    work->turns = st->baseTurns & 15;
+    work->stat20 = st->base20;
+    work->stat24 = st->base21;
     {
-        s16 *src = st->base_element[0];
+        s16 *src = st->baseElement[0];
         s32 *dst = work->element[0];
         for (i = 0; i < 4; i++) {
             dst[0] = src[0];
@@ -134,23 +134,23 @@ void UnitCalc(s32 owner)
         }
     }
 
-    if (STAT_DIFF(st->max_hp * st->hp_ratio / 0x4000, st->hp) > 1
-        || STAT_DIFF(st->max_pp * st->pp_ratio / 0x4000, st->pp) > 1) {
-        st->hp_ratio = 0x4000;
-        st->pp_ratio = 0x4000;
-        st->hp = st->max_hp;
-        st->pp = st->max_pp;
+    if (STAT_DIFF(st->maxHp * st->hpRatio / 0x4000, st->hp) > 1
+        || STAT_DIFF(st->maxPp * st->ppRatio / 0x4000, st->pp) > 1) {
+        st->hpRatio = 0x4000;
+        st->ppRatio = 0x4000;
+        st->hp = st->maxHp;
+        st->pp = st->maxPp;
     }
 
     st->curse &= ~3;
     if (st->curse & 4)
         st->curse |= 1;
-    if (st->extra_turn)
+    if (st->extraTurn)
         work->turns++;
-    st->bonus_142 = 0;
-    st->bonus_143 = 0;
+    st->bonus142 = 0;
+    st->bonus143 = 0;
 
-    if (st->class_id) {
+    if (st->classId) {
         for (i = 0; i < 15; i++) {
             if (!(st->equipment[i] & 0x200))
                 continue;
@@ -160,9 +160,9 @@ void UnitCalc(s32 owner)
             /* FAKEMATCH: a do-while barrier keeps the defense load after the
                item bonus load, as the ROM schedules it */
             do {
-                work->atk += work->item->primary_bonus;
+                work->atk += work->item->primaryBonus;
             } while (0);
-            work->def += work->item->secondary_bonus;
+            work->def += work->item->secondaryBonus;
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
@@ -175,13 +175,13 @@ void UnitCalc(s32 owner)
                     work->hp += work->amount;
                     break;
                 case 2:
-                    work->stat_20 += work->amount;
+                    work->stat20 += work->amount;
                     break;
                 case 3:
                     work->pp += work->amount;
                     break;
                 case 4:
-                    work->stat_24 += work->amount;
+                    work->stat24 += work->amount;
                     break;
                 case 5:
                     work->agi += work->amount;
@@ -214,10 +214,10 @@ void UnitCalc(s32 owner)
                     work->element[3][1] += work->amount;
                     break;
                 case 23:
-                    st->bonus_142 += work->amount;
+                    st->bonus142 += work->amount;
                     break;
                 case 24:
-                    st->bonus_143 += work->amount;
+                    st->bonus143 += work->amount;
                     break;
                 case 25:
                     st->curse |= 8;
@@ -250,7 +250,7 @@ void UnitCalc(s32 owner)
         }
 
         {
-            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_id);
+            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->classId);
 
             work->hp = __divsi3(work->hp * class->hp, 10);
             work->pp = __divsi3(work->pp * class->pp, 10);
@@ -275,13 +275,13 @@ void UnitCalc(s32 owner)
                     work->hp = __divsi3(work->hp * work->amount, 10);
                     break;
                 case 1:
-                    work->stat_20 = __divsi3(work->stat_20 * work->amount, 10);
+                    work->stat20 = __divsi3(work->stat20 * work->amount, 10);
                     break;
                 case 2:
                     work->pp = __divsi3(work->pp * work->amount, 10);
                     break;
                 case 3:
-                    work->stat_24 = __divsi3(work->stat_24 * work->amount, 10);
+                    work->stat24 = __divsi3(work->stat24 * work->amount, 10);
                     break;
                 case 4:
                     work->atk = __divsi3(work->atk * work->amount, 10);
@@ -300,15 +300,15 @@ void UnitCalc(s32 owner)
         }
     }
 
-    work->atk = work->atk * (st->attack_level + 8) / 8;
-    work->def = work->def * (st->defense_level + 8) / 8;
-    work->agi = work->agi * (st->agility_level + 8) / 8;
+    work->atk = work->atk * (st->attackLevel + 8) / 8;
+    work->def = work->def * (st->defenseLevel + 8) / 8;
+    work->agi = work->agi * (st->agilityLevel + 8) / 8;
     for (i = 0; i < 4; i++)
-        work->element[i][0] += (st->element_level[i] * st->element_level[i] + st->element_level[i]) * 5;
+        work->element[i][0] += (st->elementLevel[i] * st->elementLevel[i] + st->elementLevel[i]) * 5;
     for (i = 0; i < 4; i++)
-        work->element[i][1] += st->resist_level * 20;
+        work->element[i][1] += st->resistLevel * 20;
 
-    if (st->class_id) {
+    if (st->classId) {
         flag = 0;
         switch (st->character) {
         case 0:
@@ -328,7 +328,7 @@ void UnitCalc(s32 owner)
             break;
         }
         if (flag)
-            work->stat_24 += 4;
+            work->stat24 += 4;
     }
 
     if (work->atk < 0)
@@ -351,14 +351,14 @@ void UnitCalc(s32 owner)
         work->turns = 0;
     if (work->turns > 2)
         work->turns = 2;
-    if (work->stat_20 < 0)
-        work->stat_20 = 0;
-    if (work->stat_20 > 10000)
-        work->stat_20 = 10000;
-    if (work->stat_24 < 0)
-        work->stat_24 = 0;
-    if (work->stat_24 > 200)
-        work->stat_24 = 200;
+    if (work->stat20 < 0)
+        work->stat20 = 0;
+    if (work->stat20 > 10000)
+        work->stat20 = 10000;
+    if (work->stat24 < 0)
+        work->stat24 = 0;
+    if (work->stat24 > 200)
+        work->stat24 = 200;
     for (i = 0; i < 4; i++) {
         if (work->element[i][0] < 0)
             work->element[i][0] = 0;
@@ -375,25 +375,25 @@ void UnitCalc(s32 owner)
     st->agi = work->agi;
     st->luck = work->luck;
     st->turns = work->turns;
-    st->stat_44 = work->stat_20;
-    st->stat_45 = work->stat_24;
+    st->stat44 = work->stat20;
+    st->stat45 = work->stat24;
     for (i = 0; i < 4; i++) {
         st->element[i][0] = work->element[i][0];
         st->element[i][1] = work->element[i][1];
     }
 
     cap = 9999;
-    if (st->class_id)
+    if (st->classId)
         cap = 1999;
 
-    old = st->max_hp;
+    old = st->maxHp;
     if (work->hp < 0)
         work->hp = 0;
     if (work->hp > cap)
         work->hp = cap;
-    st->max_hp = work->hp;
-    if (old != st->max_hp) {
-        value = work->hp * st->hp_ratio / 0x4000;
+    st->maxHp = work->hp;
+    if (old != st->maxHp) {
+        value = work->hp * st->hpRatio / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)
@@ -403,14 +403,14 @@ void UnitCalc(s32 owner)
         st->hp = value;
     }
 
-    old = st->max_pp;
+    old = st->maxPp;
     if (work->pp < 0)
         work->pp = 0;
     if (work->pp > cap)
         work->pp = cap;
-    st->max_pp = work->pp;
-    if (old != st->max_pp) {
-        value = work->pp * st->pp_ratio / 0x4000;
+    st->maxPp = work->pp;
+    if (old != st->maxPp) {
+        value = work->pp * st->ppRatio / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)

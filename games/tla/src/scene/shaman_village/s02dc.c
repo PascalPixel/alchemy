@@ -4,8 +4,8 @@ extern u32 Data_02005410[];
 extern u32 Data_02005428[];
 extern s16 Data_02005590[];
 struct ShamanVillageSceneBlock {
-    u8 unknown_00[22];
-    u8 field_16;
+    u8 unk00[22];
+    u8 field16;
 };
 
 extern struct ShamanVillageSceneBlock Data_020056b0;
@@ -23,7 +23,7 @@ void *Func_020002dc(void)
         return Data_02005590;
     if (scene == (s32)&SceneId_Shaman2) {
         if (GameFlag_Test(0x9fe))
-            Data_020056b0.field_16 = 1;
+            Data_020056b0.field16 = 1;
         return &Data_020056b0;
     }
     if (scene == (s32)&SceneId_Shaman4)

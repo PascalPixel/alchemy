@@ -11,13 +11,13 @@ struct SceneRegion;
 
 typedef struct
 {
-	u8	pad_to_angle[30];
+	u8	padToAngle[30];
 	u16 angle;
 } RotatingEffectRecord;
 
 typedef struct
 {
-	u8					   pad_to_record[80];
+	u8					   padToRecord[80];
 	RotatingEffectRecord *record;
 } RotatingEffectWork;
 

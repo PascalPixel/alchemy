@@ -181,13 +181,13 @@ void *Resource_GetTableEntry(s32 index)
 
 void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 {
-	s32 entry_count;
+	s32 entryCount;
 	s32 entry_index;
 
-	entry_count = byte_length >> 1;
+	entryCount = byte_length >> 1;
 	entry_index = 1;
 	entries++;
-	if (entry_index < entry_count)
+	if (entry_index < entryCount)
 	{
 		u32 next_marker_mask;
 		u32 current_marker_mask;
@@ -225,7 +225,7 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 				}
 			}
 			entry_index++;
-		} while (entry_index < entry_count);
+		} while (entry_index < entryCount);
 	}
 }
 
@@ -442,7 +442,7 @@ void WaitFrames(s32 frames)
 		{
 			SerialRuntime_PollStatus();
 			if (gSerialRuntime.mode)
-				gSerialRuntime.transfer_enabled = 1;
+				gSerialRuntime.transferEnabled = 1;
 		}
 		if (gSleepRequested && gSleepDisabled == 0)
 		{
@@ -751,20 +751,20 @@ void BlendTransition_Update(void)
 	if (gBlendDuration != 0)
 	{
 		{
-			volatile u16 *blend_control;
+			volatile u16 *blendControl;
 			u32			  control;
 
 			if (gBlendBrighten != 0)
 			{
 				control = gBlendLayers | 0x80;
-				blend_control = &REG_BLDCNT;
+				blendControl = &REG_BLDCNT;
 			}
 			else
 			{
 				control = gBlendLayers | 0xc0;
-				blend_control = &REG_BLDCNT;
+				blendControl = &REG_BLDCNT;
 			}
-			*blend_control = control;
+			*blendControl = control;
 		}
 		{
 			u8 *remaining = &gBlendFramesLeft;
@@ -878,8 +878,8 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 	u8					index;
 
 	index = gObjAffineCount;
-	x_scale = (s16)source->scale_x;
-	y_scale = (s16)source->scale_y;
+	x_scale = (s16)source->scaleX;
+	y_scale = (s16)source->scaleY;
 	angle = source->angle;
 	if (index > 31)
 		return 0;
@@ -1844,22 +1844,22 @@ void Runtime_InitializeHeap(void)
 	union HeapState *work = (union HeapState *)gWorkSlot;
 
 	Dma_Fill32(0, work, 0x100);
-	work->heap.next_iwram = gIwramHeap;
-	work->heap.next_ewram = gEwramHeap;
+	work->heap.nextIwram = gIwramHeap;
+	work->heap.nextEwram = gEwramHeap;
 }
 
 s32 Runtime_GetRemainingIwram(void)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
 
-	return (s32)(*(u8(*)[]) & gCartridgeResetMarker) - (s32)work->heap.next_iwram;
+	return (s32)(*(u8(*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
 
-	return 0x02040000 - (s32)work->heap.next_ewram;
+	return 0x02040000 - (s32)work->heap.nextEwram;
 }
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
@@ -1875,22 +1875,22 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 	cached_address = (u32)work->slots[kind];
 	if (cached_address == 0)
 	{
-		cached_address = (u32)work->heap.next_iwram;
+		cached_address = (u32)work->heap.nextIwram;
 		aligned_size = (((u32)size + 3) >> 2) * 4;
 		next = cached_address + aligned_size;
 		if (next >= (u32)Ram_IwramHeapEnd)
 		{
-			address = (u32)work->heap.next_ewram;
+			address = (u32)work->heap.nextEwram;
 			next_address = address + aligned_size;
 			if (next_address >= 0x02040000U)
 			{
 				return NULL;
 			}
-			work->heap.next_ewram = (void *)next_address;
+			work->heap.nextEwram = (void *)next_address;
 			work->slots[kind] = (void *)address;
 			return (void *)address;
 		}
-		work->heap.next_iwram = (void *)next;
+		work->heap.nextIwram = (void *)next;
 		work->slots[kind] = (void *)cached_address;
 		return (void *)cached_address;
 	}
@@ -1910,22 +1910,22 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
 	cached_address = (u32)work->slots[kind];
 	if (cached_address == 0)
 	{
-		address = (u32)work->heap.next_ewram;
+		address = (u32)work->heap.nextEwram;
 		aligned_size = (((u32)size + 3) >> 2) * 4;
 		next = address + aligned_size;
 		if (next >= 0x02040000U)
 		{
-			address = (u32)work->heap.next_iwram;
+			address = (u32)work->heap.nextIwram;
 			next_address = address + aligned_size;
 			if (next_address >= (u32)Ram_IwramHeapEnd)
 			{
 				return NULL;
 			}
-			work->heap.next_iwram = (void *)next_address;
+			work->heap.nextIwram = (void *)next_address;
 			work->slots[kind] = (void *)address;
 			return (void *)address;
 		}
-		work->heap.next_ewram = (void *)next;
+		work->heap.nextEwram = (void *)next;
 		work->slots[kind] = (void *)address;
 		return (void *)address;
 	}
@@ -1940,22 +1940,22 @@ void *MemAlloc(s32 size)
 	u32				 allocation_address;
 	u32				 aligned_words = ((u32)size + 3) >> 2;
 
-	allocation_address = (u32)work->heap.next_iwram;
+	allocation_address = (u32)work->heap.nextIwram;
 	size = aligned_words << 2;
 	next = allocation_address + size;
 	if (next >= (u32)Ram_IwramHeapEnd)
 	{
-		allocation_address = (u32)work->heap.next_ewram;
+		allocation_address = (u32)work->heap.nextEwram;
 		next_address = allocation_address + size;
 		if (next_address >= 0x02040000U)
 		{
 			return NULL;
 		}
-		work->heap.next_ewram = (void *)next_address;
+		work->heap.nextEwram = (void *)next_address;
 	}
 	else
 	{
-		work->heap.next_iwram = (void *)next;
+		work->heap.nextIwram = (void *)next;
 	}
 	return (void *)allocation_address;
 }
@@ -1968,22 +1968,22 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
 	u32				 allocation_address;
 	u32				 aligned_words = ((u32)size + 3) >> 2;
 
-	allocation_address = (u32)work->heap.next_ewram;
+	allocation_address = (u32)work->heap.nextEwram;
 	size = aligned_words << 2;
 	primary_next_address = allocation_address + size;
 	if (primary_next_address >= 0x02040000U)
 	{
-		allocation_address = (u32)work->heap.next_iwram;
+		allocation_address = (u32)work->heap.nextIwram;
 		alternate_next_address = allocation_address + size;
 		if (alternate_next_address >= (u32)Ram_IwramHeapEnd)
 		{
 			return NULL;
 		}
-		work->heap.next_iwram = (void *)alternate_next_address;
+		work->heap.nextIwram = (void *)alternate_next_address;
 	}
 	else
 	{
-		work->heap.next_ewram = (void *)primary_next_address;
+		work->heap.nextEwram = (void *)primary_next_address;
 	}
 	return (void *)allocation_address;
 }
@@ -2383,8 +2383,8 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen)
 		{
 			scale = 0x151eb;
 		}
-		screen[0] = projection->center_x + Iwram_MulQ16(screen[0], scale) / 0x10000;
-		screen[1] = projection->center_y - Iwram_MulQ16(screen[1], scale) / 0x10000;
+		screen[0] = projection->centerX + Iwram_MulQ16(screen[0], scale) / 0x10000;
+		screen[1] = projection->centerY - Iwram_MulQ16(screen[1], scale) / 0x10000;
 		result = scale;
 	}
 	return result;
@@ -2508,7 +2508,7 @@ s32 SaveState_InitializeWorkspace(void)
 		u8	id;
 
 		work->occupied[index] = 0;
-		work->record_id[index] = 0x10;
+		work->recordId[index] = 0x10;
 		work->sequence[index] = 0;
 		status = SaveState_ReadSlotAndCheckChecksum(index);
 		START_DMA(&work->slot, &header, 0x84000004);
@@ -2518,7 +2518,7 @@ s32 SaveState_InitializeWorkspace(void)
 		if (SaveState_CompareBytes(slot->signature, (u8 *)Save_Signature, 7) != 0)
 			continue;
 		work->sequence[index] = slot->sequence;
-		record = slot->record_id;
+		record = slot->recordId;
 		id = record;
 		if (id > 15)
 			continue;
@@ -2526,12 +2526,12 @@ s32 SaveState_InitializeWorkspace(void)
 			continue;
 
 		work->occupied[index] = 1;
-		work->record_id[index] = record;
+		work->recordId[index] = record;
 		if (status < index)
 		{
 			do
 			{
-				if (work->record_id[status] == (u8)record)
+				if (work->recordId[status] == (u8)record)
 				{
 					if (work->sequence[status] < slot->sequence)
 						work->occupied[status] = 0;
@@ -2623,7 +2623,7 @@ u16 SaveState_EraseSlotSector(u16 value)
 	return ((EraseSectorProc)gEraseFlashSector)(value);
 }
 
-s32 SaveState_WriteRecord(s32 record_id, void *source)
+s32 SaveState_WriteRecord(s32 recordId, void *source)
 {
 	struct SaveWorkspace *work;
 	struct SaveSlotHeader header;
@@ -2633,8 +2633,8 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
 	work = gSaveWorkspace;
 	Dma_Fill32(0, &work->slot, sizeof(work->slot));
 	WAIT_DMA();
-	current = SaveState_FindLatestSlot(record_id);
-	slot = SaveState_SelectWriteSlot(record_id);
+	current = SaveState_FindLatestSlot(recordId);
+	slot = SaveState_SelectWriteSlot(recordId);
 	if (slot > 15)
 		return 1;
 
@@ -2642,9 +2642,9 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
 	WAIT_DMA();
 	START_DMA(Save_HeaderTemplate, &header, 0x84000002);
 	WAIT_DMA();
-	header.record_id = record_id;
+	header.recordId = recordId;
 	header.checksum = SaveState_ChecksumWorkspace();
-	header.sequence = SaveState_GetLatestSequence(record_id) + 1;
+	header.sequence = SaveState_GetLatestSequence(recordId) + 1;
 	START_DMA(&header, &work->slot.record.header, 0x84000004);
 	WAIT_DMA();
 
@@ -2666,18 +2666,18 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
 	}
 
 	work->occupied[slot] = 1;
-	work->record_id[slot] = record_id;
+	work->recordId[slot] = recordId;
 	work->sequence[slot] = header.sequence;
 	return 0;
 }
 
-u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
+u32 SaveState_ReadRecordPayload(s32 recordId, void *destination)
 {
 	struct SaveWorkspace *work;
 	u32					  index;
 
 	work = gSaveWorkspace;
-	index = SaveState_FindLatestSlot(record_id);
+	index = SaveState_FindLatestSlot(recordId);
 	if (index > 15)
 		return 1;
 	SaveState_ReadSlotAndCheckChecksum(index);
@@ -2686,12 +2686,12 @@ u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
 	return 0;
 }
 
-u32 SaveState_DeleteRecord(s32 record_id)
+u32 SaveState_DeleteRecord(s32 recordId)
 {
 	s32 index;
 	s32 deletion_result;
 
-	index = SaveState_FindLatestSlot(record_id);
+	index = SaveState_FindLatestSlot(recordId);
 	if (index > 0xFU)
 	{
 		return 1U;
@@ -2726,7 +2726,7 @@ s32 SaveState_ChecksumWorkspace(void)
 	return sum;
 }
 
-u32 SaveState_FindLatestSlot(s32 record_id)
+u32 SaveState_FindLatestSlot(s32 recordId)
 {
 	struct SaveWorkspace *work;
 	u32					  latest_sequence;
@@ -2738,7 +2738,7 @@ u32 SaveState_FindLatestSlot(s32 record_id)
 	latest_sequence = 0;
 	for (i = 0; i <= 15; i++)
 	{
-		if (work->occupied[i] != 0 && record_id == work->record_id[i])
+		if (work->occupied[i] != 0 && recordId == work->recordId[i])
 		{
 			if (latest_sequence < work->sequence[i])
 			{
@@ -2760,14 +2760,14 @@ s32 SaveState_InvalidateSlot(s32 index)
 	WAIT_DMA();
 	START_DMA(Save_HeaderTemplate, &header, 0x84000002);
 	WAIT_DMA();
-	header.record_id = 0x10;
+	header.recordId = 0x10;
 	header.sequence = 0;
 	START_DMA(&header, &work->slot.record.header, 0x84000004);
 	WAIT_DMA();
 	if (SaveState_WriteWorkspaceSlot(index) != 0)
 		return 1;
 	work->occupied[index] = 0;
-	work->record_id[index] = 0x10;
+	work->recordId[index] = 0x10;
 	work->sequence[index] = 0;
 	return 0;
 }
@@ -2788,7 +2788,7 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 	return difference;
 }
 
-u32 SaveState_GetLatestSequence(s32 record_id)
+u32 SaveState_GetLatestSequence(s32 recordId)
 {
 	struct SaveWorkspace *work;
 	u32					  latest_sequence;
@@ -2798,7 +2798,7 @@ u32 SaveState_GetLatestSequence(s32 record_id)
 	latest_sequence = 0;
 	for (i = 0; i <= 15; i++)
 	{
-		if (work->occupied[i] != 0 && record_id == work->record_id[i])
+		if (work->occupied[i] != 0 && recordId == work->recordId[i])
 		{
 			if (latest_sequence < work->sequence[i])
 				latest_sequence = work->sequence[i];
@@ -2831,9 +2831,9 @@ s32 SaveState_LoadSummaryRecords(void)
 		}
 		index = SaveState_FindLatestSlot(group + 3);
 		if (index <= 15)
-			ReadFlash(index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
+			ReadFlash(index, 0x110, summary->unk38, sizeof(summary->unk38));
 		else
-			*(u32 *)summary->unknown_38 = 0;
+			*(u32 *)summary->unk38 = 0;
 		group++;
 		summary++;
 	} while (group <= 2);
@@ -2877,14 +2877,14 @@ void SerialRuntime_Initialize(void)
 	 * zero is stored through its address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain
 	 * u32 the zero is stored to [sp, #0] before the address is formed (differ 6). */
 	Dma_Fill32(0, state, sizeof(*state));
-	state->send_index = -1;
-	state->send_buffer[0] = (u16 *)(state->storage + 0);
-	state->send_buffer[1] = (u16 *)(state->storage + 32);
+	state->sendIndex = -1;
+	state->sendBuffer[0] = (u16 *)(state->storage + 0);
+	state->sendBuffer[1] = (u16 *)(state->storage + 32);
 	for (index = 0; index <= 1; index++)
 	{
-		state->incoming_buffer[index] = (u16 *)(state->storage + 64 + index * 96);
-		state->ready_buffer[index] = (u16 *)(state->storage + 96 + index * 96);
-		state->pending_buffer[index] = (u16 *)(state->storage + 128 + index * 96);
+		state->incomingBuffer[index] = (u16 *)(state->storage + 64 + index * 96);
+		state->readyBuffer[index] = (u16 *)(state->storage + 96 + index * 96);
+		state->pendingBuffer[index] = (u16 *)(state->storage + 128 + index * 96);
 	}
 	REG_IME = 0;
 	REG_IE |= 0x80;
@@ -2904,7 +2904,7 @@ void SerialRuntime_EnableTransferTimer(void)
 	struct SerialRuntime *state = &gSerialRuntime;
 
 	if (state->mode != 0)
-		state->transfer_enabled = 1;
+		state->transferEnabled = 1;
 }
 
 void SerialRuntime_DisableTransfer(void)
@@ -2918,7 +2918,7 @@ void SerialRuntime_DisableTransfer(void)
 	REG_TM3CNT = 0x0000c963;
 	REG_IF = 0xc0;
 	state = &gSerialRuntime;
-	state->transfer_enabled = 0;
+	state->transferEnabled = 0;
 }
 
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
@@ -2941,7 +2941,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 		{
 			u8 serial_error = control & 4;
 
-			if (serial_error == 0 && gSerialRuntime.send_index == -1)
+			if (serial_error == 0 && gSerialRuntime.sendIndex == -1)
 			{
 				u32 ie;
 
@@ -2968,7 +2968,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 	}
 
 	gSerialRuntime.sequence++;
-	status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
 	if (gSerialRuntime.mode == 8)
 		status |= 0x80;
 	result = SerialRuntime_AddParentFlag(status);
@@ -2994,7 +2994,7 @@ s32 SerialRuntime_PollStatus(void)
 		{
 			u8 serial_error = control & 4;
 
-			if (serial_error == 0 && gSerialRuntime.send_index == -1)
+			if (serial_error == 0 && gSerialRuntime.sendIndex == -1)
 			{
 				u32 ie;
 
@@ -3012,7 +3012,7 @@ s32 SerialRuntime_PollStatus(void)
 		gSerialRuntime.sequence++;
 	}
 
-	status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
 	if (gSerialRuntime.mode == 8)
 		status |= 0x80;
 	result = SerialRuntime_AddParentFlag(status);
@@ -3027,8 +3027,8 @@ s32 SerialRuntime_PollStatus(void)
 //--------------------------------------------------------------------------
 // phase 1 なら受けたデータを receive に集め、send から次のパケットを作る
 // 戻り値は通信の状態
-//   ビット 0〜7  : current_mask（mode 8 ならビット 7 も立てる）
-//   ビット 8〜15 : received_mask
+//   ビット 0〜7  : currentMask（mode 8 ならビット 7 も立てる）
+//   ビット 8〜15 : receivedMask
 //   0x1000       : 親
 //   0x2000       : SIOCNT のマルチプレイ ID が 2 以上
 //--------------------------------------------------------------------------
@@ -3047,7 +3047,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 		SerialRuntime_PrepareSendPacket(send);
 		gSerialRuntime.sequence++;
 	}
-	st = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	st = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
 	if (gSerialRuntime.mode == 8)
 		st |= 0x80;
 	ret = SerialRuntime_AddParentFlag(st);
@@ -3057,13 +3057,13 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 }
 
 //--------------------------------------------------------------------------
-// 送るパケットを send_buffer[0] に組み立てる
+// 送るパケットを sendBuffer[0] に組み立てる
 // [0] 番号、[1] まだ受けていない相手のマスク、[2] チェックサム、[4] データ 24 バイト
 // チェックサムは先頭 28 バイトを 16 ビットずつ足して反転したもの
 //--------------------------------------------------------------------------
 void SerialRuntime_PrepareSendPacket(void *payload)
 {
-	/* FAKEMATCH: volatile keeps the second load of sr->send_buffer[0], as the bytes do; through a plain pointer CSE reuses the first (differ 8, 48 instructions either way). */
+	/* FAKEMATCH: volatile keeps the second load of sr->sendBuffer[0], as the bytes do; through a plain pointer CSE reuses the first (differ 8, 48 instructions either way). */
 	volatile struct SerialRuntime *sr;
 	u32							   i;
 	u32							   sum;
@@ -3074,10 +3074,10 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		u8	cur;
 		u8	recv;
 
-		pkt = (u8 *)sr->send_buffer[0];
+		pkt = (u8 *)sr->sendBuffer[0];
 		pkt[0] = sr->sequence;
-		cur = sr->current_mask;
-		recv = sr->received_mask;
+		cur = sr->currentMask;
+		recv = sr->receivedMask;
 		sum = 0;
 		pkt[1] = recv ^ cur;
 		*(u16 *)(pkt + 2) = sum;
@@ -3087,7 +3087,7 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		u16 *pkt;
 		u32	 v;
 
-		pkt = sr->send_buffer[0];
+		pkt = sr->sendBuffer[0];
 		for (i = 0; i <= 13; i++)
 		{
 			v = *pkt;
@@ -3100,15 +3100,15 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		struct SerialPacket *pkt;
 
 		inv = ~sum;
-		pkt = (struct SerialPacket *)sr->send_buffer[0];
+		pkt = (struct SerialPacket *)sr->sendBuffer[0];
 		pkt->checksum = inv;
 	}
 
 	// タイマー 3 を止め、送る位置を戻してから動かしなおす
 	if (sr->mode != 0)
 		REG_TM3CNT_H = 0;
-	sr->send_index = -1;
-	if (sr->mode != 0 && sr->transfer_enabled != 0)
+	sr->sendIndex = -1;
+	if (sr->mode != 0 && sr->transferEnabled != 0)
 		REG_TM3CNT_H = 0xc0; // 開始・割り込み
 }
 
@@ -3125,31 +3125,31 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
 	Io_Write16(0, &REG_IME);
 	for (i = 0; i <= 3; i++)
 	{
-		swap = gSerialRuntime.pending_buffer[i];
-		gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
-		gSerialRuntime.ready_buffer[i] = swap;
+		swap = gSerialRuntime.pendingBuffer[i];
+		gSerialRuntime.pendingBuffer[i] = gSerialRuntime.readyBuffer[i];
+		gSerialRuntime.readyBuffer[i] = swap;
 	}
-	*(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
-	*(u32 *)gSerialRuntime.channel_flags = 0;
+	*(u32 *)flags = *(u32 *)gSerialRuntime.channelFlags;
+	*(u32 *)gSerialRuntime.channelFlags = 0;
 	Io_Write16(1, &REG_IME);
-	gSerialRuntime.current_mask = 0;
+	gSerialRuntime.currentMask = 0;
 	for (i = 0; i <= 1; i++)
 	{
-		packet = gSerialRuntime.pending_buffer[i];
+		packet = gSerialRuntime.pendingBuffer[i];
 		sum = 0;
 		for (k = 0; k <= 13; k++)
 			sum += packet[k];
 		if (flags[i] == 1 && (s16)sum == -1)
 		{
 			Dma_Set(
-				gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, REG_DMA3);
-			gSerialRuntime.current_mask |= 1 << i;
+				gSerialRuntime.pendingBuffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, REG_DMA3);
+			gSerialRuntime.currentMask |= 1 << i;
 		}
 		if ((s16)sum == -1)
-			gSerialRuntime.pending_buffer[i][1] = ~gSerialRuntime.pending_buffer[i][1];
+			gSerialRuntime.pendingBuffer[i][1] = ~gSerialRuntime.pendingBuffer[i][1];
 	}
-	gSerialRuntime.received_mask |= gSerialRuntime.current_mask;
-	return gSerialRuntime.current_mask;
+	gSerialRuntime.receivedMask |= gSerialRuntime.currentMask;
+	return gSerialRuntime.currentMask;
 }
 
 void SerialRuntime_HandleTransferInterrupt(void)
@@ -3164,56 +3164,56 @@ void SerialRuntime_HandleTransferInterrupt(void)
 	*(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
 	sio_control = &REG_SIOCNT;
 	send_state = &gSerialRuntime;
-	send_state->is_parent = (*sio_control << 25) >> 31;
+	send_state->isParent = (*sio_control << 25) >> 31;
 
-	if (send_state->send_index == -1)
+	if (send_state->sendIndex == -1)
 	{
 		u32	 idle_word = 0xfefe;
 		u16 *swap;
 
 		((volatile u16 *)sio_control)[1] = idle_word;
-		swap = send_state->send_buffer[1];
-		send_state->send_buffer[1] = send_state->send_buffer[0];
-		send_state->send_buffer[0] = swap;
+		swap = send_state->sendBuffer[1];
+		send_state->sendBuffer[1] = send_state->sendBuffer[0];
+		send_state->sendBuffer[0] = swap;
 	}
-	else if (send_state->send_index >= 0)
+	else if (send_state->sendIndex >= 0)
 	{
-		((volatile u16 *)sio_control)[1] = send_state->send_buffer[1][send_state->send_index];
+		((volatile u16 *)sio_control)[1] = send_state->sendBuffer[1][send_state->sendIndex];
 	}
 	receive_state = &gSerialRuntime;
-	if (receive_state->send_index <= 14)
-		receive_state->send_index++;
+	if (receive_state->sendIndex <= 14)
+		receive_state->sendIndex++;
 
 	channel = 0;
 receive_loop:
 	{
-		s32	 receive_index;
+		s32	 receiveIndex;
 		u16 *incoming;
 
-		if (recv[channel] == 0xfefe && receive_state->receive_index[channel] > 13)
+		if (recv[channel] == 0xfefe && receive_state->receiveIndex[channel] > 13)
 		{
-			receive_state->receive_index[channel] = -1;
+			receive_state->receiveIndex[channel] = -1;
 		}
 		else
 		{
-			receive_index = receive_state->receive_index[channel];
-			incoming = receive_state->incoming_buffer[channel];
-			incoming[receive_index] = recv[channel];
-			if (receive_index == 13)
+			receiveIndex = receive_state->receiveIndex[channel];
+			incoming = receive_state->incomingBuffer[channel];
+			incoming[receiveIndex] = recv[channel];
+			if (receiveIndex == 13)
 			{
-				u16 *swap = receive_state->ready_buffer[channel];
+				u16 *swap = receive_state->readyBuffer[channel];
 
-				receive_state->ready_buffer[channel] = incoming;
-				receive_state->incoming_buffer[channel] = swap;
-				receive_state->channel_flags[channel] |= 1;
+				receive_state->readyBuffer[channel] = incoming;
+				receive_state->incomingBuffer[channel] = swap;
+				receive_state->channelFlags[channel] |= 1;
 			}
 		}
 	}
 	tail_state = &gSerialRuntime;
-	if (tail_state->is_parent != 0)
-		tail_state->channel_flags[channel] |= 2;
-	if (tail_state->receive_index[channel] <= 14)
-		tail_state->receive_index[channel]++;
+	if (tail_state->isParent != 0)
+		tail_state->channelFlags[channel] |= 2;
+	if (tail_state->receiveIndex[channel] <= 14)
+		tail_state->receiveIndex[channel]++;
 	channel++;
 	receive_state = tail_state;
 	if (channel <= 1)
@@ -3246,7 +3246,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
 	return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
+s32 SerialRuntime_BeginTransferA(void *source, s32 transferValue)
 {
 	struct SerialTransferState *state = &gSerialTransfer;
 	u32							saved_interrupt_master;
@@ -3256,7 +3256,7 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 	IRQ_LOCK(saved_interrupt_master);
 	state->status = 0x80;
 	gSerialSendSource = (s32)source;
-	gSerialSendSize = transfer_value;
+	gSerialSendSize = transferValue;
 	gSerialBlockSequence = 0;
 	state->active = 1;
 	IRQ_UNLOCK(saved_interrupt_master);
@@ -3363,12 +3363,12 @@ void SerialRuntime_StepBlockTransfer(void)
 		s32	 dest = *receive;
 		if (dest != 0)
 		{
-			if (own->flags == 1 && (u8)(peer->peer_flags - 1) <= 1)
+			if (own->flags == 1 && (u8)(peer->peerFlags - 1) <= 1)
 			{
 				if (peer->active == (gSerialBlockSequence & 0x7f))
 				{
 					own->active = 0;
-					switch (peer->peer_flags)
+					switch (peer->peerFlags)
 					{
 					case 1:
 						Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
@@ -3431,30 +3431,30 @@ void SerialRuntime_StepBlockTransfer(void)
 					gSerialSendSize += -20;
 					if (gSerialSendSize != 0)
 					{
-						own->peer_flags = 1;
+						own->peerFlags = 1;
 						own->active = gSerialBlockSequence & 0x7f;
 						*send += 20;
 					}
 					else
 					{
-						own->peer_flags = 2;
+						own->peerFlags = 2;
 						own->active = gSerialBlockSequence & 0x7f;
 						*send += 20;
 					}
 					gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
 				}
 			}
-			if (own->peer_flags == 2 && peer->flags == 2)
+			if (own->peerFlags == 2 && peer->flags == 2)
 			{
 				gSerialSendSource = 0;
-				own->peer_flags = 0;
+				own->peerFlags = 0;
 				own->active = 1;
 			}
 		}
 	}
 	if (own->flags == 2)
 	{
-		if (peer->peer_flags != 2)
+		if (peer->peerFlags != 2)
 		{
 			gSerialReceiveDest = 0;
 			own->flags = 0;

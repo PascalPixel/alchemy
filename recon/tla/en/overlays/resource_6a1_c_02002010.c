@@ -5,14 +5,14 @@
 #include "party_state.h"
 
 struct JupiterRoom8Puzzle {
-    s16 unknown_00;
+    s16 unk00;
     s16 flag;
 };
 
 struct JupiterRoom8EventWork {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
-    u8 unknown_1b0[0x1c];
+    u8 unk000[0x1ac];
+    s32 screenEffect;
+    u8 unk1b0[0x1c];
     struct ObjectRuntime *marker;
 };
 
@@ -26,8 +26,8 @@ void Func_02001dc8(void);
 
 void Func_02002010(s32 x, s32 z, s32 effect)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    struct JupiterRoom8EventWork *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+    struct JupiterRoom8EventWork *work = Ram_HeapSlots->eventWork;
     s32 dx = GameFlag_GetByte(Data_02002bf8.flag);
     s32 dz = GameFlag_GetByte(Data_02002bf8.flag + 8);
 
@@ -43,6 +43,6 @@ void Func_02002010(s32 x, s32 z, s32 effect)
         marker->z = leader->z;
         Func_02002188();
         Func_02001dc8();
-        ((struct JupiterRoom8EventWork *)Ram_HeapSlots->event_work)->screen_effect = effect;
+        ((struct JupiterRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
     }
 }

@@ -60,7 +60,7 @@ static void EV10_SCRIPT(void)
 	if (StagedActor_FindClearPosition(&result))
 	{
 		SceneActor_MoveAndRedraw(result);
-		if (result.actor_slot == 10 && (result.position_x >> 20) == 12)
+		if (result.actorSlot == 10 && (result.positionX >> 20) == 12)
 		{
 			struct FieldActor *actor;
 			Engine_ActorSetAnimation(10, 3);
@@ -68,7 +68,7 @@ static void EV10_SCRIPT(void)
 			Engine_EventWait(30);
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetAnimation(10, 8);
-			Object_GetById(10)->priority_flags = 2;
+			Object_GetById(10)->priorityFlags = 2;
 			Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
 			StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
 			Engine_GameFlagSet(0x201);
@@ -91,12 +91,12 @@ s32 KolimaForestRiver_PrepareWindowTransition(void)
 {
 	struct EventWork *work = gEventWork;
 
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	FieldScene_RedrawActorFootprint(10);
 
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
-		Object_GetById(10)->priority_flags = 2;
+		Object_GetById(10)->priorityFlags = 2;
 		Map_CopyCellAttributes(32, 20, 2, 4, 11, 16);
 		StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);

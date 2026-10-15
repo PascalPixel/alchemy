@@ -44,11 +44,11 @@ static __inline__ void Actor_SetPosition(struct ObjectRuntime *object, s32 x, s3
 
 void Func_0200390c(void)
 {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
     s32 entrance;
 
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x204;
-    owner->priority_flags |= 32;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+    owner->priorityFlags |= 32;
     if (Flag_Test(0x878) == 0) {
         Func_02003a30();
         if (Flag_Test(0x871) != 0) {

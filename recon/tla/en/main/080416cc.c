@@ -51,7 +51,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
     s32 j;
     u32 bits;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     canvas = MemAlloc(0x800);
     glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     attr = work->level << 12;
@@ -163,11 +163,11 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
             mask = 255;
         tile = *tiles & 0x3FF;
         if ((tile < 0x80 || tile > 0xFF) && (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
-            tile = work->tile_cursor & mask;
-            for (j = 0; j <= mask && work->tile_attributes[tile] != 0; j++)
+            tile = work->tileCursor & mask;
+            for (j = 0; j <= mask && work->tileAttributes[tile] != 0; j++)
                 tile = (tile + 1) & mask;
-            work->tile_cursor = (tile + 1) & mask;
-            work->tile_attributes[tile] = 1;
+            work->tileCursor = (tile + 1) & mask;
+            work->tileAttributes[tile] = 1;
             if (tile > 127)
                 tile += 0x180;
             else

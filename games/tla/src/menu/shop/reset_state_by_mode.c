@@ -20,7 +20,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 
     unit = UnitGet(id);
     if (mode == 0) {
-        unit->hp = unit->max_hp;
+        unit->hp = unit->maxHp;
         UnitRatioFar(id);
     } else if (mode == 1) {
         unit->poison = 0;

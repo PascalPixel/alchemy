@@ -8,22 +8,22 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
     s32 count;
     s32 i;
 
-    order = Ram_HeapSlots->battle_work;
+    order = Ram_HeapSlots->battleWork;
     count = 0;
     if (groups & 1) {
-        for (i = 0; order->party_units[i] != 255; i++) {
-            if (order->party_units[i] != 254) {
+        for (i = 0; order->partyUnits[i] != 255; i++) {
+            if (order->partyUnits[i] != 254) {
                 if (dst != NULL)
-                    *dst++ = order->party_units[i];
+                    *dst++ = order->partyUnits[i];
                 count++;
             }
         }
     }
     if (groups & 2) {
-        for (i = 0; order->enemy_ids[i] != 255; i++) {
-            if (order->enemy_ids[i] != 254) {
+        for (i = 0; order->enemyIds[i] != 255; i++) {
+            if (order->enemyIds[i] != 254) {
                 if (dst != NULL)
-                    *dst++ = order->enemy_ids[i];
+                    *dst++ = order->enemyIds[i];
                 count++;
             }
         }
@@ -33,7 +33,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
     return count;
 }
 
-struct BattleUnit *UnitGet(s32 unit_id);
+struct BattleUnit *UnitGet(s32 unitId);
 
 // As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
 s32 Func_0811a39c(s32 groups, u16 *dst)
@@ -42,22 +42,22 @@ s32 Func_0811a39c(s32 groups, u16 *dst)
     s32 count;
     s32 i;
 
-    order = Ram_HeapSlots->battle_work;
+    order = Ram_HeapSlots->battleWork;
     count = 0;
     if (groups & 1) {
-        for (i = 0; order->party_units[i] != 255; i++) {
-            if (order->party_units[i] != 254 && UnitGet(order->party_units[i])->hp != 0) {
+        for (i = 0; order->partyUnits[i] != 255; i++) {
+            if (order->partyUnits[i] != 254 && UnitGet(order->partyUnits[i])->hp != 0) {
                 if (dst != NULL)
-                    *dst++ = order->party_units[i];
+                    *dst++ = order->partyUnits[i];
                 count++;
             }
         }
     }
     if (groups & 2) {
-        for (i = 0; order->enemy_ids[i] != 255; i++) {
-            if (order->enemy_ids[i] != 254 && UnitGet(order->enemy_ids[i])->hp != 0) {
+        for (i = 0; order->enemyIds[i] != 255; i++) {
+            if (order->enemyIds[i] != 254 && UnitGet(order->enemyIds[i])->hp != 0) {
                 if (dst != NULL)
-                    *dst++ = order->enemy_ids[i];
+                    *dst++ = order->enemyIds[i];
                 count++;
             }
         }

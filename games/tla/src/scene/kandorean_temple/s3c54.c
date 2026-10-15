@@ -23,7 +23,7 @@ void Func_02004fb4(void);
 
 void Func_02003c8c(void)
 {
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 521;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
     Func_02005390();
     Func_020053a8_(0, 527, 8, 9);
     Func_020053a8_(1, 528, 10, 11);

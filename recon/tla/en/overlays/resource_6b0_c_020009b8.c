@@ -1,6 +1,6 @@
 /* Draft, differ 14 of 83: spawns the eight objects of a ring around (x, y), each at its own angle,
  * with the turn rate and part that overlay 6b0's Func_02000660 (the orbit callback) reads back:
- * radius in unknown_4c, angle in action, turn in unknown_66, centre in bounce and gravity. Written
+ * radius in unk4c, angle in action, turn in unk66, centre in bounce and gravity. Written
  * from the listing (no twin). The loop is a goto loop: as a for loop loop.c hoists 0x200000 and the
  * part conversion (62 as a counting loop, 45 as a do-while). The polar offset goes through an
  * inline so its 0x200000 is not shared with the radius store (as the native rebuilds it). Left:
@@ -42,13 +42,13 @@ loop:
 
         Vector_AddPolarOffsetFar_(0x200000, angle, &object->x);
         object->action = angle;
-        object->unknown_66 = a3;
+        object->unk66 = a3;
         BYTE_AT(object, 98) = i;
         BYTE_AT(object, 99) = part;
         object->bounce = x;
-        object->unknown_4c = 0x200000;
+        object->unk4c = 0x200000;
         object->gravity = y;
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         Animation_SetStateFlags(object, 1);
         Object_SetPartAttribute(object, part & 0xffff);
         Object_SetSpritePriority(object, 2);

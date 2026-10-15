@@ -20,6 +20,6 @@ void Func_080d1cc0(s32 object)
     Scheduler_AddOrUpdateCallback(Func_080d1ae4, 0x480);
     Runtime_ReleaseHeapBlock(56);
     if (object == 0)
-        object = ObjectTable_Get(gPartyState.current_owner);
+        object = ObjectTable_Get(gPartyState.currentOwner);
     *(s32 *)(work + 24) = object;
 }

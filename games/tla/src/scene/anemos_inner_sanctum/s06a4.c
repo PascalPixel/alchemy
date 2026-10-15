@@ -17,7 +17,7 @@ void Func_020006a4(struct ObjectRuntime *source)
 {
     struct ObjectRuntime *object = Engine_ObjectCreate(672, source->x, source->y, source->z);
 
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Object_SetPartAttribute(object, BYTE_AT(source, 98));
     Object_SetSpritePriority(object, 2);
     Func_020032e0(object, 1);

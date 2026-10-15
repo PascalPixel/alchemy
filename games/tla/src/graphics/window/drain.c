@@ -12,7 +12,7 @@ void UiWork_DrainPending(void)
     struct UiWindow *poll_work;
     s32 index;
 
-    state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     slot = state->channels;
     direct = state->windows;
     index = 0;

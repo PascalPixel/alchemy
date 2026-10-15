@@ -8,15 +8,15 @@
 #include "types.h"
 
 struct DescendingObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[0x34];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[0x34];
     u8 active;
 };
 
@@ -24,11 +24,11 @@ void Func_080e0cac(struct DescendingObject *obj)
 {
     u32 scale;
 
-    obj->scale_y -= 0x280;
-    scale = obj->scale_x - 0x280;
+    obj->scaleY -= 0x280;
+    scale = obj->scaleX - 0x280;
     obj->angle += 0x2000;
     obj->y += 1 << 16;
-    obj->scale_x = scale;
+    obj->scaleX = scale;
     if ((s32)scale < 0x3000)
         obj->active = 0;
 }

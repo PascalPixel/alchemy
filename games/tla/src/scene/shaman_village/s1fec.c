@@ -15,16 +15,16 @@ struct ShamanVillageObject *Func_02001fec(void)
     {
         struct FieldSprite *sprite = object->sprite;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 1;
-        object->motion_flags = 0;
-        object->field_5c = 1;
-        sprite->next_frame = 0;
-        sprite->unknown_1b[0] = 0;
+        object->motionFlags = 0;
+        object->field5c = 1;
+        sprite->nextFrame = 0;
+        sprite->unk1b[0] = 0;
         buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02004884(65);
-        VramBlock_LoadCached(sprite->vram_block, 128, buffer + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
     return object;

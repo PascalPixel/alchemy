@@ -53,9 +53,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
 	{
 		if (Engine_GameFlagIsSet(0x84f) != 0)
-			gMcCoyPalaceGardenPlacements[4].talk_facing = TALK_FACE_PARTY_AND_BACK;
+			gMcCoyPalaceGardenPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
 		if (Engine_GameFlagIsSet(0x845) != 0)
-			gMcCoyPalaceGardenPlacements[2].talk_facing = TALK_FACE_PARTY;
+			gMcCoyPalaceGardenPlacements[2].talkFacing = TALK_FACE_PARTY;
 		return gMcCoyPalaceGardenPlacements;
 	}
 	return gMcCoyPalaceGardenPlacementsOther;
@@ -169,10 +169,10 @@ static void EV12_TALK(void)
 			Engine_EventShowMessageAndWait(11, 0, 20);
 			Actor_FaceDirection(11, 0xf000, 0);
 			Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-			Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(12)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Actor_WalkToAndWait(12, 0x15a, 0x107);
 			Engine_EventWait(1);
-			Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
+			Object_GetById(12)->steeringFlags |= ACTOR_FACES_MOTION;
 			Actor_SetSpeed(11, 0x9999, 0x4ccc);
 			Actor_WalkToAndWait(11, 0x148, 0x107);
 			Actor_WalkToAndWait(11, 0x148, 252);
@@ -213,7 +213,7 @@ static void EV02_TOUCH(void)
 		FieldScene_OpenGate();
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	Engine_EventWait(16);
@@ -226,10 +226,10 @@ s32 Scene_Initialize(void)
 	struct EventWork  *work = gEventWork;
 	struct FieldActor *actor;
 
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
 	actor = Object_GetById(8);
-	actor->priority_flags = 0;
+	actor->priorityFlags = 0;
 	actor->sprite->priority = 1;
 
 	if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
@@ -333,13 +333,13 @@ static void McCoyPalaceGarden_RunGardenScene(void)
 	if (Engine_GameFlagIsSet(0x84a) == 0)
 	{
 		Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-		Object_GetById(12)->steering_flags &= 254;
+		Object_GetById(12)->steeringFlags &= 254;
 		Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
 		Engine_EventWait(1);
 		{
 			struct FieldActor *record = Object_GetById(12);
 
-			record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+			record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 		}
 	}
 	Actor_SetSpeed(11, 0xcccc, 0x6666);
@@ -354,7 +354,7 @@ static void McCoyPalaceGarden_RunGardenScene(void)
 	Engine_ActorSetPosition(11, 0, 0);
 	Engine_ActorWaitForMove(0);
 	Engine_ActorSetPosition(0, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(10);

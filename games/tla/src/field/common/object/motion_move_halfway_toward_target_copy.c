@@ -2,7 +2,7 @@
 
 void ObjectMotion_MoveHalfwayTowardTargetCopy(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *target = object->linked_object;
+    struct ObjectRuntime *target = object->linkedObject;
 
     object->x += (target->x - object->x) / 2;
     /* FAKEMATCH: the ARM9 scheduling would load the target's y before the object's own. */

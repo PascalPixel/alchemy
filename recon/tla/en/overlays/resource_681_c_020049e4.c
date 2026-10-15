@@ -13,14 +13,14 @@ struct ObjectRuntime *Object_GetById(u32 id);
 
 void Func_020049e4(void)
 {
-    if (gPartyState.render_mode == 2) {
-        u8 *event = Ram_HeapSlots->event_work;
-        struct MapWork *map = Ram_HeapSlots->map_work;
-        struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    if (gPartyState.renderMode == 2) {
+        u8 *event = Ram_HeapSlots->eventWork;
+        struct MapWork *map = Ram_HeapSlots->mapWork;
+        struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
         s32 x = object->x / 0x100000;
         s32 z = (object->z - object->y + 0x7fff) / 0x100000;
         struct MapCell *cells = map->layers[2].cells;
-        s32 code = cells[x + (z << 7)].collision_code;
+        s32 code = cells[x + (z << 7)].collisionCode;
 
         if (code >= 1 && code <= 230)
             *(u16 *)(event + 340) = code;

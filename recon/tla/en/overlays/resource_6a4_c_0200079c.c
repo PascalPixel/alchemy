@@ -14,7 +14,7 @@ void Func_0200079c(void)
     s32 i;
 
     if (Data_02003318 != 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
         s16 *state = (s16 *)(work + 358);
 
         if (*state != 0 && (*state & 0x3ff) != 153)

@@ -96,13 +96,13 @@
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
 	struct UiRenderWork *work = UI_WORK;
-	struct RenderOutput *out = work->free_outputs.head;
+	struct RenderOutput *out = work->freeOutputs.head;
 
 	if (out != NULL)
 	{
 		if (out->next == NULL)
-			work->free_outputs.tail_link = &work->free_outputs.head; // 空になった
-		work->free_outputs.head = out->next;
+			work->freeOutputs.tailLink = &work->freeOutputs.head; // 空になった
+		work->freeOutputs.head = out->next;
 		out->next = NULL;
 	}
 	return out;
@@ -115,11 +115,11 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out)
 {
 	struct UiRenderWork *work = UI_WORK;
 
-	if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->free_outputs.head)
+	if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->freeOutputs.head)
 	{
-		struct RenderOutput **tail = work->free_outputs.tail_link;
+		struct RenderOutput **tail = work->freeOutputs.tailLink;
 
-		work->free_outputs.tail_link = &out->next;
+		work->freeOutputs.tailLink = &out->next;
 		*tail = out;
 		out->next = NULL;
 	}
@@ -137,7 +137,7 @@ void UiWork_InitFreeList(void)
 
 	work = UI_WORK;
 	out = work->outputs;
-	work->free_outputs.head = out;
+	work->freeOutputs.head = out;
 	n = UI_OUTPUT_COUNT - 2;
 	do
 	{
@@ -147,7 +147,7 @@ void UiWork_InitFreeList(void)
 		out = next;
 	} while (n >= 0);
 	next->next = NULL;
-	work->free_outputs.tail_link = &next->next;
+	work->freeOutputs.tailLink = &next->next;
 }
 
 void UiWork_InitializeWithResourceCounters(void)
@@ -165,7 +165,7 @@ void UiWork_InitializeWithResourceCounters(void)
 	Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
 	work->dirty = 1;
-	work->glyph_resource = 99;
+	work->glyphResource = 99;
 	work->level = 15;
 #if EDITION_INTERNATIONAL
 	fill = 0xf000f000;
@@ -203,8 +203,8 @@ void UiWork_Initialize(s32 kind)
 	Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
 	work->dirty = 1;
-	work->glyph_resource = 99;
-	work->menu_state = 1;
+	work->glyphResource = 99;
+	work->menuState = 1;
 	work->level = 15;
 #if EDITION_INTERNATIONAL
 	fill = 0xf000f000;
@@ -222,7 +222,7 @@ void UiWork_Initialize(s32 kind)
 		u8 mode = 4;
 
 		for (i = 2; i >= 0; i--)
-			work->tile_attributes[i] = mode;
+			work->tileAttributes[i] = mode;
 	}
 }
 
@@ -232,7 +232,7 @@ void UiWork_UploadDirtyBlocks(void)
 	u32					 flags;
 	u8					*src;
 	u8					*dst;
-	if (!work->menu_busy)
+	if (!work->menuBusy)
 	{
 		flags = work->dirty;
 		if (flags)
@@ -284,7 +284,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 	row = 0;
 	if (row < height)
 	{
-		mode = &canvas->menu_state;
+		mode = &canvas->menuState;
 		do
 		{
 			u32 column;
@@ -375,8 +375,8 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 		found->x = x;
 		found->output.head = NULL;
 		found->state = 0;
-		found->output.tail_link = &slot->output.head;
-		found->unknown_10 = 1;
+		found->output.tailLink = &slot->output.head;
+		found->unk10 = 1;
 		found->flags = 1;
 		UiWork_ResetCounters(x);
 		if (attrs & 8)
@@ -436,32 +436,32 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
 		return;
 
 	RenderOutput_PrepareForRedraw(work);
-	work->previous_x = work->x;
-	work->previous_y = work->y;
-	work->previous_width = work->width;
+	work->previousX = work->x;
+	work->previousY = work->y;
+	work->previousWidth = work->width;
 	zero = 0;
 	work->flags = zero;
-	work->previous_height = work->height;
+	work->previousHeight = work->height;
 
 	if (release != 0)
 	{
 		UiWindow_EraseBorderRect(work->x, work->y, work->width, work->height);
 		work->output.head = NULL;
-		work->output.tail_link = NULL;
+		work->output.tailLink = NULL;
 		work->width = zero;
 		work->height = zero;
 		work->x = zero;
 		work->y = zero;
-		work->unknown_10 = zero;
+		work->unk10 = zero;
 		work->effect = zero;
 		work->state = zero;
 		work->flags = zero;
 		work->frame = zero;
 		work->duration = zero;
-		work->previous_x = zero;
-		work->previous_y = zero;
-		work->previous_width = zero;
-		work->previous_height = zero;
+		work->previousX = zero;
+		work->previousY = zero;
+		work->previousWidth = zero;
+		work->previousHeight = zero;
 	}
 	else
 	{
@@ -494,7 +494,7 @@ void RenderOutput_ClearList(void *work)
 	if (list != NULL)
 	{
 		node = list->head;
-		list->tail_link = &list->head;
+		list->tailLink = &list->head;
 		list->head = next;
 		while (node != NULL)
 		{
@@ -552,16 +552,16 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
 		tail = &node->next;
 		node = node->next;
 	}
-	list->tail_link = tail;
+	list->tailLink = tail;
 }
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
-	/* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in one alias set, so they stay in order. The typed list->tail_link = &node->next lets the scheduler put the tail store first (differ 2 in all six editions). */
+	/* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in one alias set, so they stay in order. The typed list->tailLink = &node->next lets the scheduler put the tail store first (differ 2 in all six editions). */
 	if (list != NULL)
 	{
-		*list->tail_link = node;
-		*(struct RenderOutput **)&list->tail_link = node;
+		*list->tailLink = node;
+		*(struct RenderOutput **)&list->tailLink = node;
 	}
 }
 
@@ -599,12 +599,12 @@ struct UiChannelSlot *UiText_QueueRenderEntries(
 	if (found != NULL)
 	{
 		found->work = window;
-		found->start_x = x << 8;
+		found->startX = x << 8;
 		found->x = x << 8;
 		found->y = y << 8;
 		found->entry = entry;
 		found->colour = 15;
-		found->line_spacing = 10;
+		found->lineSpacing = 10;
 		found->countdown = 0;
 		found->outline = 0;
 		found->ended = 0;
@@ -669,10 +669,10 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
 		}
 
 		zero = 0;
-		selected->start_x = 0x300;
+		selected->startX = 0x300;
 		selected->work->state = zero;
 		selected->colour = 15;
-		selected->line_spacing = 10;
+		selected->lineSpacing = 10;
 		selected->entry = value;
 		selected->countdown = zero;
 		selected->outline = zero;
@@ -724,7 +724,7 @@ void UiWork_ResetFreeChannel(void)
 		selection->countdown = 0;
 		selection->colour = 0xF;
 		selection->outline = 0;
-		selection->line_spacing = 0xA;
+		selection->lineSpacing = 0xA;
 	}
 }
 
@@ -734,7 +734,7 @@ void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel)
 
 	work->colour = channel->colour;
 	work->outline = channel->outline;
-	work->line_spacing = channel->line_spacing;
+	work->lineSpacing = channel->lineSpacing;
 }
 
 void UiWork_ResetChannelTransition(struct UiChannelSlot *channel)
@@ -809,7 +809,7 @@ void UiWork_ProcessRenderChannels(void)
 						channel->countdown = pending;
 						channel->colour = pending;
 						channel->outline = pending;
-						channel->line_spacing = pending;
+						channel->lineSpacing = pending;
 						channel->work->state = 1;
 						break;
 					}
@@ -847,7 +847,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 {
 	struct UiRenderWork *work = UI_WORK;
 	u32					 keys = gKeysHeld;
-	s32					 count = UiText_SpeedSteps[gGameState.message_speed];
+	s32					 count = UiText_SpeedSteps[gGameState.messageSpeed];
 	s32					 lag;
 	u32					 code;
 	u32					 next;
@@ -866,7 +866,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 	s32					 advance;
 	s32					 width;
 
-	if (work->menu_state != 0)
+	if (work->menuState != 0)
 	{
 		lag = gLagFramesShown;
 		if (lag < 0)
@@ -882,9 +882,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 		ch->transition = (s16)ch->transition - 1;
 		return 0;
 	}
-	if (gKeysHeld == 0 && ch->glyph_delay != 0)
+	if (gKeysHeld == 0 && ch->glyphDelay != 0)
 	{
-		ch->glyph_delay--;
+		ch->glyphDelay--;
 		return 0;
 	}
 
@@ -899,7 +899,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 			switch (code)
 			{
 			case TEXT_NEWLINE:
-				ch->x = ch->start_x;
+				ch->x = ch->startX;
 				if (ch->work->flags & 8)
 				{
 					if (ch->y > 0xcff)
@@ -929,14 +929,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 					struct UiWindow *pane = ch->work;
 
 #if EDITION_INTERNATIONAL
-					if (pane->width == 0 || pane->height == 0 || work->page_arrow_shown != 0)
+					if (pane->width == 0 || pane->height == 0 || work->pageArrowShown != 0)
 						break;
 #else
-					if (work->page_arrow_shown != 0)
+					if (work->pageArrowShown != 0)
 						break;
 #endif
 					UiText_DrawGlyph(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16, 1);
-					work->page_arrow_shown = 1;
+					work->pageArrowShown = 1;
 					break;
 				}
 				window = ch->work;
@@ -945,7 +945,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 				old_w = window->width;
 				old_h = window->height;
 				entry = ch->entry;
-				work->page_arrow_shown = 0;
+				work->pageArrowShown = 0;
 				RenderOutput_PrepareForRedraw(window);
 				if (ch->flags == 0 && (window->width | window->height) != 0)
 					UiWindow_EraseBorderRect(window->x, window->y, window->width, window->height);
@@ -979,17 +979,17 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 					}
 					UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 				}
-				ch->x = ch->start_x;
+				ch->x = ch->startX;
 				ch->y = 0;
 				ch->line = 0;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 				ch->colour = 15;
 				ch->outline = 0;
-				ch->line_spacing = 10;
+				ch->lineSpacing = 10;
 				UiWork_CopyParamsToRenderWork(ch);
 #endif
-				Resource_ResetEntry(work->glyph_resource);
-				work->glyph_resource = 99;
+				Resource_ResetEntry(work->glyphResource);
+				work->glyphResource = 99;
 				break;
 
 			case TEXT_WAIT_KEY:
@@ -1034,14 +1034,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 
 			case TEXT_LINE_SPACING:
 				ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-				ch->line_spacing = work->entries[ch->entry];
+				ch->lineSpacing = work->entries[ch->entry];
 				UiWork_CopyParamsToRenderWork(ch);
 				break;
 
 			case TEXT_COLOURS_RESET:
 				ch->colour = 15;
 				ch->outline = 0;
-				ch->line_spacing = 10;
+				ch->lineSpacing = 10;
 				UiWork_CopyParamsToRenderWork(ch);
 				break;
 
@@ -1058,14 +1058,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 				return 8;
 			}
 
-			if (work->menu_state == 0)
+			if (work->menuState == 0)
 				count = 1;
 		}
 		else
 		{
 			gx = (ch->x + 128) / 256;
 			gy = (ch->y + 128) / 256;
-			cue = UiText_SpeedCueGaps[gGameState.message_speed];
+			cue = UiText_SpeedCueGaps[gGameState.messageSpeed];
 			pc = ch->entry;
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 			if (work->mode != 0)
@@ -1118,7 +1118,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 #endif
 #endif
 			advance = UiText_DrawGlyph(ch->work, code, gx, gy, 0);
-			ch->glyph_delay = UiText_SpeedDelays[gGameState.message_speed];
+			ch->glyphDelay = UiText_SpeedDelays[gGameState.messageSpeed];
 			if (advance != 0)
 			{
 				if (work->result[0] != 0)
@@ -1149,7 +1149,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 			else
 				return 9;
 #endif
-			if (code == TEXT_SPACE && work->menu_state == 0)
+			if (code == TEXT_SPACE && work->menuState == 0)
 				count = 1;
 		}
 
@@ -1167,8 +1167,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 
 struct UiWindowInterpolationScratch
 {
-	s32 scaled_part;
-	s32 scaled_duration;
+	s32 scaledPart;
+	s32 scaledDuration;
 	s32 result;
 };
 
@@ -1196,8 +1196,8 @@ loop:
 	{
 		if ((s16)work->frame != work->duration)
 		{
-			UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
-				(s16)work->previous_width, (s16)work->previous_height);
+			UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+				(s16)work->previousWidth, (s16)work->previousHeight);
 			UiWindow_UpdateInterpolatedGeometry(work, 1);
 			work->frame++;
 			dirty = 1;
@@ -1205,24 +1205,24 @@ loop:
 		}
 		else
 		{
-			UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
-				(s16)work->previous_width, (s16)work->previous_height);
+			UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
+				(s16)work->previousWidth, (s16)work->previousHeight);
 			work->output.head = NULL;
-			work->output.tail_link = NULL;
+			work->output.tailLink = NULL;
 			work->width = 0;
 			work->height = 0;
 			work->x = 0;
 			work->y = 0;
-			work->unknown_10 = 0;
+			work->unk10 = 0;
 			work->effect = 0;
 			work->state = 0;
 			work->flags = 0;
 			work->frame = 0;
 			work->duration = 0;
-			work->previous_x = 0;
-			work->previous_y = 0;
-			work->previous_width = 0;
-			work->previous_height = 0;
+			work->previousX = 0;
+			work->previousY = 0;
+			work->previousWidth = 0;
+			work->previousHeight = 0;
 			state->dirty = 1;
 		}
 	}
@@ -1247,31 +1247,31 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 	frame = (s16)window->frame;
 	duration = window->duration;
 	remaining = duration - frame;
-	scratch.scaled_part = (frame * window->width) << 16;
-	scratch.scaled_duration = duration << 17;
-	scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+	scratch.scaledPart = (frame * window->width) << 16;
+	scratch.scaledDuration = duration << 17;
+	scratch.result = Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
 	x = (scratch.result >> 16) + window->x;
 
-	scratch.scaled_part = (remaining * window->width) << 16;
-	scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+	scratch.scaledPart = (remaining * window->width) << 16;
+	scratch.result = Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
 	width = scratch.result >> 15;
 
-	scratch.scaled_part = (frame * window->height) << 16;
-	scratch.scaled_duration = window->duration << 17;
-	scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+	scratch.scaledPart = (frame * window->height) << 16;
+	scratch.scaledDuration = window->duration << 17;
+	scratch.result = Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
 	y = (scratch.result >> 16) + window->y;
 
-	scratch.scaled_part = (remaining * window->height) << 16;
-	scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+	scratch.scaledPart = (remaining * window->height) << 16;
+	scratch.result = Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
 	height = scratch.result >> 15;
 
 	UiWindow_DrawFrame(x, y, width, height);
 	if (save_position != 0)
 	{
-		window->previous_x = x;
-		window->previous_y = y;
-		window->previous_width = width;
-		window->previous_height = height;
+		window->previousX = x;
+		window->previousY = y;
+		window->previousWidth = width;
+		window->previousHeight = height;
 	}
 }
 
@@ -1402,10 +1402,10 @@ void UiWork_ResetCounters(void)
 	struct UiRenderWork *state = UI_WORK;
 
 	state->colour = 15;
-	state->line_spacing = 10;
-	state->unknown_before_count = 9;
+	state->lineSpacing = 10;
+	state->unknownBeforeCount = 9;
 	state->outline = 0;
-	state->unknown_after_line_spacing = 1;
+	state->unknownAfterLineSpacing = 1;
 }
 
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
@@ -1413,9 +1413,9 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 	struct UiRenderWork *state = UI_WORK;
 	s32					 size;
 
-	state->glyph_tiles = VramBlock_LoadCached(95, 128 << 6, 0);
-	state->unknown_before_count = 9;
-	state->line_spacing = 10;
+	state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+	state->unknownBeforeCount = 9;
+	state->lineSpacing = 10;
 	state->outline = 0;
 	state->colour = 15;
 	state->count = 0;
@@ -1430,9 +1430,9 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 	s32					 size;
 
 	if (initialize != 0)
-		state->glyph_tiles = VramBlock_LoadCached(95, 128 << 6, 0);
-	state->unknown_before_count = 9;
-	state->line_spacing = 10;
+		state->glyphTiles = VramBlock_LoadCached(95, 128 << 6, 0);
+	state->unknownBeforeCount = 9;
+	state->lineSpacing = 10;
 	state->outline = 0;
 	state->colour = 15;
 	state->count = 0;
@@ -1471,9 +1471,9 @@ void UiText_PrepareMessageWork(s32 argument)
 	control = (struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW];
 	// result starts as NULL, though it is assigned again before it is read; the same zero clears marked below
 	result = NULL;
-	state->menu_state = 2;
+	state->menuState = 2;
 	index = UiText_BuildRenderEntries(argument, 1);
-	state->menu_state = 1;
+	state->menuState = 1;
 
 	if (state->entries[index] != 0)
 	{
@@ -1540,11 +1540,11 @@ void UiWork_SetBusyFlags(s32 flags)
 	{
 		if (flags & 1)
 		{
-			work->spacing_before = 1;
+			work->spacingBefore = 1;
 		}
 		if (2 & flags)
 		{
-			work->spacing_after = 1;
+			work->spacingAfter = 1;
 		}
 	}
 }
@@ -1589,8 +1589,8 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 		UiWork_Finalize(window, 1);
 		return NULL;
 	}
-	work->spacing_before = 0;
-	work->spacing_after = 0;
+	work->spacingBefore = 0;
+	work->spacingAfter = 0;
 	return window;
 }
 
@@ -1631,7 +1631,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 	{
 		s32 dy;
 
-		Object_GetScreenPositionFar(gGameState.selected_actor, pos);
+		Object_GetScreenPositionFar(gGameState.selectedActor, pos);
 		dy = pos[1] >> 3;
 		if (dy > 9)
 		{
@@ -1654,7 +1654,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
 		if (flags & 0x20)
 		{
-			UI_WORK->menu_busy = 1;
+			UI_WORK->menuBusy = 1;
 		}
 
 		if (!(flags & 4))
@@ -2009,7 +2009,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 				text++;
 				break;
 			case 10:
-				work->line_spacing = *text;
+				work->lineSpacing = *text;
 				text++;
 				break;
 			case 7:
@@ -2085,7 +2085,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 }
 
 void UiText_RenderGlyphTileAtWorkOffset(
-	u16 *buffer, const struct RenderInput *work, s32 offset_x, s32 offset_y)
+	u16 *buffer, const struct RenderInput *work, s32 offsetX, s32 offsetY)
 {
 	struct UiRenderWork *canvas = UI_WORK;
 	u32					 cell;
@@ -2099,7 +2099,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
 		*counter = (*counter + 1) & RENDER_ENTRY_MASK;
 	}
 
-	cell = ((work->y + offset_y + 1) << 5) + (work->x + offset_x) + 1;
+	cell = ((work->y + offsetY + 1) << 5) + (work->x + offsetX) + 1;
 	if (cell < 0x280)
 	{
 		s32 src;
@@ -2533,7 +2533,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 
 	if (script == -1)
 	{
-		start = work->message_start;
+		start = work->messageStart;
 	}
 	else
 	{
@@ -2616,7 +2616,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 			}
 			else
 			{
-				if (work->spacing_before != 0
+				if (work->spacingBefore != 0
 #if defined(TBS_EDITION_EN)
 					&& head == 0 && ch != 222 && ch != 223
 #endif
@@ -2627,7 +2627,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 				}
 
 #if defined(TBS_EDITION_EN)
-				if (work->spacing_after != 0 && head == 0 && ch != 222 && ch != 223 && prev <= 256
+				if (work->spacingAfter != 0 && head == 0 && ch != 222 && ch != 223 && prev <= 256
 					&& prev > 127 && prev != 222 && prev != 223 && prev != 32 && prev != 165
 					&& prev != 161 && prev != 164)
 				{
@@ -2638,7 +2638,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
 				if (ch > 31)
 				{
-					if (work->spacing_before != 0 && (ch == 32 || cnt > 10))
+					if (work->spacingBefore != 0 && (ch == 32 || cnt > 10))
 					{
 						entry[pos] = '.';
 						pos = (pos + 1) & RENDER_ENTRY_MASK;
@@ -2770,7 +2770,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						pos = next;
 						break;
 					case 16:
-						src = UnitGetFar(gGameState.selected_actor)->name;
+						src = UnitGetFar(gGameState.selectedActor)->name;
 						dst = name;
 						i = 0;
 						do
@@ -2973,7 +2973,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 		next = (pos + 1) & RENDER_ENTRY_MASK;
 		work->count = (u16)next;
 		Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
-		work->message_start = (u16)start;
+		work->messageStart = (u16)start;
 	}
 
 	if (clear != 0)
@@ -3028,7 +3028,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 	s32					 running = 1;
 	u32					 pos = start;
 	u16					*entry = work->entries;
-	u8					 mode = work->menu_state & 2;
+	u8					 mode = work->menuState & 2;
 	s32 (*decode)(struct TextReader *);
 	s32				  overflow = 0;
 	u32				  prev;
@@ -3048,7 +3048,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 
 	if (script == -1)
 	{
-		start = work->message_start;
+		start = work->messageStart;
 	}
 	else
 	{
@@ -3119,12 +3119,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 			}
 			else
 			{
-				if (work->spacing_before != 0 && head == 0 && ch != 222 && ch != 223)
+				if (work->spacingBefore != 0 && head == 0 && ch != 222 && ch != 223)
 				{
 					entry[pos] = 5;
 					pos = (pos + 1) & RENDER_ENTRY_MASK;
 				}
-				if (work->spacing_after != 0 && head == 0 && ch != 222 && ch != 223 && prev <= 256
+				if (work->spacingAfter != 0 && head == 0 && ch != 222 && ch != 223 && prev <= 256
 					&& prev > 127 && prev != 222 && prev != 223 && prev != 32 && prev != 165
 					&& prev != 161 && prev != 164)
 				{
@@ -3138,7 +3138,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						entry[pos] = ch;
 						pos = (pos + 1) & RENDER_ENTRY_MASK;
 					}
-					if (work->spacing_before != 0 && (ch == 32 || cnt > 10))
+					if (work->spacingBefore != 0 && (ch == 32 || cnt > 10))
 					{
 						entry[pos] = 165;
 						pos = (pos + 1) & RENDER_ENTRY_MASK;
@@ -3206,7 +3206,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 16:
-						src = UnitGetFar(gGameState.selected_actor)->name;
+						src = UnitGetFar(gGameState.selectedActor)->name;
 						dst = name;
 						i = 0;
 						do
@@ -3220,11 +3220,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						break;
 					case 18:
 						actor = UnitGetFar(UiRender_LookupNamedValue(1, clear));
-						if (work->menu_state != 0
-							&& (actor->class_id == 122 || actor->class_id == 125))
+						if (work->menuState != 0
+							&& (actor->classId == 122 || actor->classId == 125))
 						{
 							message = MsgMysteryPersonName;
-							if (actor->class_id == 125)
+							if (actor->classId == 125)
 								message++;
 							UiText_DecodeMessage(message, name, 10);
 							pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
@@ -3278,7 +3278,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 		next = (pos + 1) & RENDER_ENTRY_MASK;
 		work->count = (u16)next;
 		Runtime_ReleaseHeapBlock(50);
-		work->message_start = (u16)start;
+		work->messageStart = (u16)start;
 	}
 	if (clear != 0)
 		UiWork_ClearValueNameTables();
@@ -3746,14 +3746,14 @@ done:
 typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
 
 // RenderOutput の 0x10 からの 12 バイト：リンクと OAM の属性（スプライトのセル）
-#define SPRITE_CELL(output) ((struct CursorSprite *)(output)->unknown_10)
+#define SPRITE_CELL(output) ((struct CursorSprite *)(output)->unk10)
 
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode)
 {
 	struct UiRenderWork *work = UI_WORK;
-	u32					 spacing_x = work->unknown_before_count;
+	u32					 spacing_x = work->unknownBeforeCount;
 	s32					 width;
-	u32					 spacing_y = work->line_spacing;
+	u32					 spacing_y = work->lineSpacing;
 
 	if (mode != 1 && (window->flags & 8) != 0)
 	{
@@ -3837,15 +3837,15 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 				break;
 			case 4:
 				output->active = 6;
-				output->anim_step = 8;
+				output->animStep = 8;
 				break;
 			case 5:
 				output->active = 7;
-				output->anim_step = 0;
+				output->animStep = 0;
 				break;
 			case 2:
 				output->active = 4;
-				output->anim_step = 0;
+				output->animStep = 0;
 				break;
 			}
 #if !EDITION_INTERNATIONAL
@@ -3864,8 +3864,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		if ((u8)output->active == 2)
 		{
 			sprite = SPRITE_CELL(output);
-			if (work->glyph_resource == 99)
-				work->glyph_resource = Resource_FindFreeEntry();
+			if (work->glyphResource == 99)
+				work->glyphResource = Resource_FindFreeEntry();
 			sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
 #if !EDITION_INTERNATIONAL
 			sprite->y = (window->y << 3) + ((window->height - 2) << 3) + 1;
@@ -3875,7 +3875,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		}
 		else
 		{
-			Dma_Set(tiles, (void *)(0x06010000 + (work->glyph_tiles + index) * 32), 0x84000020,
+			Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32), 0x84000020,
 				REG_DMA3);
 #if !EDITION_INTERNATIONAL
 			((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8;
@@ -3883,7 +3883,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 			((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8 - 2;
 #endif
 			((u16 *)&output->oam)[1] = (x + (spacing_x >> 1) + window->x * 8 + 2) | 0x4000;
-			((u16 *)&output->oam)[2] = work->glyph_tiles + index;
+			((u16 *)&output->oam)[2] = work->glyphTiles + index;
 			sprite = SPRITE_CELL(output);
 		}
 		output->sentinel = 254;
@@ -3898,7 +3898,7 @@ done:
 }
 
 // RenderOutput の見方：0x10 からのスプライトのセルをメンバー attr として持つ。
-// RenderOutput の unknown_10 をキャストして読むと UiWork_AnimateSpriteSlots が合わない (578 -> 605 命令)
+// RenderOutput の unk10 をキャストして読むと UiWork_AnimateSpriteSlots が合わない (578 -> 605 命令)
 struct SpriteOutput
 {
 	struct SpriteOutput *next;
@@ -3906,8 +3906,8 @@ struct SpriteOutput
 	u8					 active;
 	u16					 x;
 	u16					 y;
-	u16					 unknown_0a;
-	u16					 anim_step;
+	u16					 unk0a;
+	u16					 animStep;
 	u8					 index;
 	u8					 sentinel;
 	struct CursorSprite	 attr;
@@ -3917,12 +3917,12 @@ LAYOUT_OFFSET_GUARD(SpriteOutput_X, struct SpriteOutput, x, (u32) & ((struct Ren
 LAYOUT_OFFSET_GUARD(SpriteOutput_Y, struct SpriteOutput, y, (u32) & ((struct RenderOutput *)0)->y);
 LAYOUT_OFFSET_GUARD(
 	SpriteOutput_Active, struct SpriteOutput, active, (u32) & ((struct RenderOutput *)0)->active);
-LAYOUT_OFFSET_GUARD(SpriteOutput_AnimStep, struct SpriteOutput, anim_step,
-	(u32) & ((struct RenderOutput *)0)->anim_step);
+LAYOUT_OFFSET_GUARD(SpriteOutput_AnimStep, struct SpriteOutput, animStep,
+	(u32) & ((struct RenderOutput *)0)->animStep);
 LAYOUT_OFFSET_GUARD(
 	SpriteOutput_Index, struct SpriteOutput, index, (u32) & ((struct RenderOutput *)0)->index);
 LAYOUT_OFFSET_GUARD(
-	SpriteOutput_Attr, struct SpriteOutput, attr, (u32) & ((struct RenderOutput *)0)->unknown_10);
+	SpriteOutput_Attr, struct SpriteOutput, attr, (u32) & ((struct RenderOutput *)0)->unk10);
 
 #if EDITION_INTERNATIONAL
 
@@ -3951,7 +3951,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 		idx = ((struct RenderOutput *)out - ((struct UiRenderWork *)base)->outputs) * 4;
 		out->active = 2;
 		attr = &out->attr;
-		slot = &((struct UiRenderWork *)base)->glyph_resource;
+		slot = &((struct UiRenderWork *)base)->glyphResource;
 		if (*slot == 99)
 			*slot = Resource_FindFreeEntry();
 		column = 0xfffe;
@@ -4007,7 +4007,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 		idx = ((struct RenderOutput *)out - ((struct UiRenderWork *)base)->outputs) * 4;
 		out->active = 2;
 		attr = &out->attr;
-		slot = &((struct UiRenderWork *)base)->glyph_resource;
+		slot = &((struct UiRenderWork *)base)->glyphResource;
 		if (*slot == 99)
 			*slot = Resource_FindFreeEntry();
 		column = 0xfffe;
@@ -4126,33 +4126,33 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 	switch ((u8)output->active)
 	{
 	case 9:
-		scale = Ui_BounceScales[output->anim_step++ & 31];
+		scale = Ui_BounceScales[output->animStep++ & 31];
 		break;
 	case 10:
-		scale = Ui_BounceScales[output->anim_step++ & 31] >> 1;
+		scale = Ui_BounceScales[output->animStep++ & 31] >> 1;
 		break;
 	case 11:
-		if (output->anim_step <= 7)
-			scale = Ui_BounceScales[output->anim_step++ * 2 + 16];
+		if (output->animStep <= 7)
+			scale = Ui_BounceScales[output->animStep++ * 2 + 16];
 		break;
 	case 12:
-		if (output->anim_step <= 7)
-			scale = Ui_BounceScales[output->anim_step++ * 2 + 16] >> 1;
+		if (output->animStep <= 7)
+			scale = Ui_BounceScales[output->animStep++ * 2 + 16] >> 1;
 		break;
 	}
 	if (scale == 256)
 	{
-		sprite->affine_index = 0;
+		sprite->affineIndex = 0;
 		sprite->affine = 0;
 		sprite->x = output->x;
 		sprite->y = output->y;
 	}
 	else
 	{
-		effect.scale_x = scale;
-		effect.scale_y = scale;
+		effect.scaleX = scale;
+		effect.scaleY = scale;
 		effect.angle = 0;
-		sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+		sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
 		if (scale > 256)
 		{
 			sprite->affine = 3;
@@ -4191,17 +4191,17 @@ void UiWork_AnimateSpriteSlots(void)
 
 			if (window->effect == 4)
 			{
-				output->anim_step = 2;
+				output->animStep = 2;
 				output->active = 8;
 			}
 			switch (output->active)
 			{
 			case 2:
-				if (work->glyph_resource != 0x60)
+				if (work->glyphResource != 0x60)
 				{
 					const u8 *tiles = &UiSprite_CursorFrameTiles[phase * 128];
 
-					sprite->tile = VramBlock_LoadCached(work->glyph_resource, 128, tiles);
+					sprite->tile = VramBlock_LoadCached(work->glyphResource, 128, tiles);
 					output->index = sprite->tile;
 					sprite->mode = 0;
 					sprite->mosaic = 0;
@@ -4210,7 +4210,7 @@ void UiWork_AnimateSpriteSlots(void)
 					sprite->shape = 2;
 					sprite->y = output->y + UiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
 					sprite->affine = 0;
-					sprite->affine_index = 0;
+					sprite->affineIndex = 0;
 				}
 				break;
 			case 5:
@@ -4223,68 +4223,68 @@ void UiWork_AnimateSpriteSlots(void)
 				}
 				break;
 			case 6:
-				if (output->anim_step == 0)
+				if (output->animStep == 0)
 				{
-					sprite->affine_index = 0;
+					sprite->affineIndex = 0;
 					sprite->affine = 0;
 					sprite->x = output->x;
 					sprite->y = output->y;
 					break;
 				}
-				effect.scale_x = 512;
-				effect.scale_y = 512;
+				effect.scaleX = 512;
+				effect.scaleY = 512;
 				effect.angle = 0;
-				sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+				sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
 				sprite->affine = 3;
 				sprite->x = output->x - 5;
 				sprite->y = output->y - 5;
-				output->anim_step--;
+				output->animStep--;
 				break;
 			case 7:
-				effect.scale_x = 256;
-				effect.scale_y = 256;
-				output->anim_step += 768;
-				effect.angle = output->anim_step;
-				sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+				effect.scaleX = 256;
+				effect.scaleY = 256;
+				output->animStep += 768;
+				effect.angle = output->animStep;
+				sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
 				sprite->affine = 1;
 				sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
 				sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
 				break;
 			case 4:
 				if (gFrameTick & 1)
-					output->anim_step++;
-				sprite->x = output->x + UiSprite_WobbleOffsets[output->anim_step % 20][0];
-				sprite->y = output->y + UiSprite_WobbleOffsets[output->anim_step % 20][1] - 2;
+					output->animStep++;
+				sprite->x = output->x + UiSprite_WobbleOffsets[output->animStep % 20][0];
+				sprite->y = output->y + UiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
 				break;
 			case 17:
-				output->anim_step++;
-				sprite->y = output->y - UiSprite_BounceOffsets[output->anim_step & 15];
+				output->animStep++;
+				sprite->y = output->y - UiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 14:
 			case 15:
 			case 16:
-				output->anim_step++;
-				sprite->y = output->y + UiSprite_BounceOffsets[output->anim_step & 15];
+				output->animStep++;
+				sprite->y = output->y + UiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 18:
-				output->anim_step++;
-				sprite->x = output->x - UiSprite_BounceOffsets[output->anim_step & 15];
-				sprite->y = output->y + UiSprite_BounceOffsets[output->anim_step & 15];
+				output->animStep++;
+				sprite->x = output->x - UiSprite_BounceOffsets[output->animStep & 15];
+				sprite->y = output->y + UiSprite_BounceOffsets[output->animStep & 15];
 				break;
 			case 8:
-				if (output->anim_step != 0)
+				if (output->animStep != 0)
 				{
-					effect.scale_x = 320;
-					effect.scale_y = 320;
+					effect.scaleX = 320;
+					effect.scaleY = 320;
 					effect.angle = 0;
-					sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+					sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
 					sprite->affine = 3;
 					sprite->x = output->x - 8;
 					sprite->y = output->y - 8;
-					output->anim_step--;
+					output->animStep--;
 					break;
 				}
-				sprite->affine_index = 0;
+				sprite->affineIndex = 0;
 				sprite->affine = 0;
 				sprite->x = output->x;
 				sprite->y = output->y;
@@ -4298,7 +4298,7 @@ void UiWork_AnimateSpriteSlots(void)
 			}
 			if (output->active == 2)
 			{
-				if (work->glyph_resource != 0x60)
+				if (work->glyphResource != 0x60)
 					Runtime_PushSlotEntry(sprite, output->sentinel);
 			}
 			else if (output->active != 13)
@@ -4675,7 +4675,7 @@ void UiWork_FinalizePendingCore(void)
 }
 #endif
 
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
+void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset)
 {
 	struct UiRenderWork *work;
 	struct UiWindow		*window;
@@ -4695,7 +4695,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
 	{
 		UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width, (u32 *)&height);
 		x = (30 - width) >> 1;
-		y = ((15 - height) >> 1) + y_offset;
+		y = ((15 - height) >> 1) + yOffset;
 		if (mode != 0)
 			window = UiWindow_Create(x, y, width, height, 0);
 		else
@@ -4756,7 +4756,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	u32		  index;
 	u32		  half;
 
-	code = reader->previous_code;
+	code = reader->previousCode;
 	text = (const u8 *)reader->words;
 	text_bits = reader->bits;
 	tree_bits = 1;
@@ -4824,7 +4824,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 		code = leaves[-(index >> 1) - 1] | (half << 8);
 	}
 	reader->bits = text_bits;
-	reader->previous_code = code;
+	reader->previousCode = code;
 	reader->words = (const u32 *)text;
 	return code;
 }
@@ -4836,7 +4836,7 @@ void UiWork_SetTwoEntriesTo999(void)
 
 	do
 	{
-		work->resource_ids[index] = 999;
+		work->resourceIds[index] = 999;
 		index++;
 	} while (index != 2);
 }
@@ -4929,11 +4929,11 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry)
 	if (id == -1)
 		return;
 
-	if (state->resource_ids[1] == id)
+	if (state->resourceIds[1] == id)
 	{
 		index = 1;
 	}
-	else if (state->resource_ids[0] == id)
+	else if (state->resourceIds[0] == id)
 	{
 		index = 0;
 	}
@@ -4942,7 +4942,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry)
 		return;
 	}
 
-	id = state->output_ids[index];
+	id = state->outputIds[index];
 
 	for (i = 0; i != WINDOW_COUNT; i++, work++)
 	{
@@ -4988,7 +4988,7 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-	UiIcon_BuildItemIconTiles(BattleActGet(action)->unknown_04[0], with_base, slot, tile, reuse);
+	UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], with_base, slot, tile, reuse);
 }
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse)
@@ -5177,7 +5177,7 @@ void Ui_PrepareTransferForItem(s32 code)
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-	UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unknown_04[0], with_base, slot, tile, reuse);
+	UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], with_base, slot, tile, reuse);
 }
 
 #define ROUTINE_BLOCK 49
@@ -5292,10 +5292,10 @@ void UiGlyph_ResetWorkState(void)
 	work->head = NULL;
 	work->path = NULL;
 	work->window = NULL;
-	work->unknown_39a = clear;
+	work->unk39a = clear;
 	work->top = clear;
-	work->cursor_index = 128;
-	work->vertical_scroll = 32;
+	work->cursorIndex = 128;
+	work->verticalScroll = 32;
 	work->count = clear;
 	work->locked = 999;
 	i = 0;
@@ -5334,13 +5334,13 @@ void Resource_ClearOwnerListAndCounters(void)
 
 	screen = gResQueueWork;
 	screen->head = NULL;
-	screen->unknown_39a = 0;
-	if (screen->cursor_index & 0x80)
+	screen->unk39a = 0;
+	if (screen->cursorIndex & 0x80)
 	{
 		screen->top = 0;
-		screen->cursor_index = 0;
+		screen->cursorIndex = 0;
 	}
-	screen->vertical_scroll = 0;
+	screen->verticalScroll = 0;
 	screen->count = 0;
 }
 
@@ -5393,22 +5393,22 @@ void MenuSelection_BuildEntries(u32 unused)
 		index++;
 	}
 
-	screen->base_x = 100 - cnt * 8;
-	screen->base_y = 140;
+	screen->baseX = 100 - cnt * 8;
+	screen->baseY = 140;
 	for (prev = screen->head, cnt = 0; prev != 0; prev = prev->next)
 	{
-		s32 x = screen->base_x + cnt;
+		s32 x = screen->baseX + cnt;
 		s32 y;
 
 		prev->x = x;
-		y = screen->base_y;
+		y = screen->baseY;
 		prev->y = y;
-		prev->target_x = x;
-		prev->target_y = y;
+		prev->targetX = x;
+		prev->targetY = y;
 		if (prev->kind == 6 && screen->locked == 0)
 		{
 			prev->y = 6;
-			prev->target_y = 6;
+			prev->targetY = 6;
 		}
 		prev->dx = 0;
 		prev->dy = 0;
@@ -5478,17 +5478,17 @@ void MenuSelection_DrawFrame(void)
 		e->x = node->x;
 		e->y = node->y;
 		slot = 240;
-		if (state->vertical_scroll != 0)
+		if (state->verticalScroll != 0)
 		{
-			e->y += state->vertical_scroll;
+			e->y += state->verticalScroll;
 		}
-		else if (node->x != node->target_x)
+		else if (node->x != node->targetX)
 		{
 			if (node->dx > 0)
 			{
-				if (node->x + node->dx > node->target_x)
+				if (node->x + node->dx > node->targetX)
 				{
-					node->x = node->target_x;
+					node->x = node->targetX;
 				}
 				else
 				{
@@ -5497,9 +5497,9 @@ void MenuSelection_DrawFrame(void)
 			}
 			else
 			{
-				if (node->x + node->dx < node->target_x)
+				if (node->x + node->dx < node->targetX)
 				{
-					node->x = node->target_x;
+					node->x = node->targetX;
 				}
 				else
 				{
@@ -5508,15 +5508,15 @@ void MenuSelection_DrawFrame(void)
 			}
 			e->x = node->x;
 		}
-		else if (cnt == state->cursor_index)
+		else if (cnt == state->cursorIndex)
 		{
 			slot = 241;
 			if (cursor->kind != 0)
 			{
 				if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1)
 				{
-					cursor->target_x = pos.x;
-					cursor->target_y = pos.y;
+					cursor->targetX = pos.x;
+					cursor->targetY = pos.y;
 					if (cursor->scale == 0)
 					{
 						cursor->x = pos.x;
@@ -5563,7 +5563,7 @@ void MenuSelection_DrawFrame(void)
 		te->tile = transfer->tile;
 		te->x = node->x - 4;
 		te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
-		if (transfer->scale != transfer->scale_end)
+		if (transfer->scale != transfer->scaleEnd)
 		{
 			state->matrix[0] = transfer->scale;
 			state->matrix[1] = transfer->scale;
@@ -5572,7 +5572,7 @@ void MenuSelection_DrawFrame(void)
 			te->affine = 3;
 			te->x += 0xfff0;
 			te->y += 0xf0;
-			transfer->scale += transfer->scale_step;
+			transfer->scale += transfer->scaleStep;
 		}
 		if (GameFlag_TestFar(0x103) != 0)
 		{
@@ -5586,19 +5586,19 @@ void MenuSelection_DrawFrame(void)
 	while (node != 0)
 	{
 		e = &node->sprite;
-		if (node->x != node->target_x)
+		if (node->x != node->targetX)
 		{
 			node->x += node->dx;
 		}
-		if (node->y != node->target_y)
+		if (node->y != node->targetY)
 		{
 			node->y += node->dy;
 		}
 		e->x = node->x;
 		e->y = node->y;
-		if (node->scale != node->scale_end)
+		if (node->scale != node->scaleEnd)
 		{
-			node->scale += node->scale_step;
+			node->scale += node->scaleStep;
 			state->matrix[0] = node->scale;
 			state->matrix[1] = node->scale;
 			state->matrix[2] = 0;
@@ -5638,27 +5638,27 @@ void MenuSelection_DrawFrame(void)
 
 			cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
 		}
-		if (cursor->target_x != cursor->x)
+		if (cursor->targetX != cursor->x)
 		{
-			tmp = (cursor->target_x - cursor->x) >> 1;
+			tmp = (cursor->targetX - cursor->x) >> 1;
 			if (tmp != 0)
 			{
 				cursor->x += tmp;
 			}
 			else
 			{
-				cursor->x = cursor->target_x;
+				cursor->x = cursor->targetX;
 			}
 		}
-		if (cursor->target_y != cursor->y)
+		if (cursor->targetY != cursor->y)
 		{
-			if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0)
+			if ((tmp = (cursor->targetY - cursor->y) >> 1) != 0)
 			{
 				cursor->y += tmp;
 			}
 			else
 			{
-				cursor->y = cursor->target_y;
+				cursor->y = cursor->targetY;
 			}
 		}
 		cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
@@ -5740,7 +5740,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
 			{
 				*slot = UiWindow_Create(17, 0, 5, 3, mode);
 			}
-			screen->vertical_scroll = 0;
+			screen->verticalScroll = 0;
 			screen->locked = 999;
 		}
 		else
@@ -5822,15 +5822,15 @@ void Menu_SetNodeCoordinates(u32 first, u32 second)
 	struct SelectionScreen *state = gResQueueWork;
 	struct SelectionNode   *node;
 
-	state->base_x = first;
-	state->base_y = second;
+	state->baseX = first;
+	state->baseY = second;
 	node = state->head;
 	while (node != 0)
 	{
 		node->x = first;
-		node->target_x = first;
+		node->targetX = first;
 		node->y = second;
-		node->target_y = second;
+		node->targetY = second;
 		node = node->next;
 		first += 16;
 	}
@@ -5866,12 +5866,12 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 			count = 5;
 		}
 		frames = right;
-		state->records[1].x = state->base_x + 16 * (count - 1) + 17;
+		state->records[1].x = state->baseX + 16 * (count - 1) + 17;
 	}
 	else
 	{
 		frames = Menu_CursorLeftObjectTiles;
-		state->records[0].x = state->base_x - 9;
+		state->records[0].x = state->baseX - 9;
 		if (state->top != 0)
 			state->records[0].kind = 1;
 	}
@@ -5879,7 +5879,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 	{
 		state->records[index].slot = Resource_FindFreeEntry();
 		state->records[index].tile = VramBlock_LoadCached(state->records[index].slot, 128, frames);
-		state->records[index].y = state->base_y;
+		state->records[index].y = state->baseY;
 		state->records[index].base = 0;
 		entry->mode = 0;
 		entry->mosaic = 0;
@@ -5929,7 +5929,7 @@ s32 Menu_SelectionLoop(s32 mode)
 	for (;;)
 	{
 		WaitFrames(1);
-		if (screen->vertical_scroll != 0)
+		if (screen->verticalScroll != 0)
 		{
 			continue;
 		}
@@ -5963,7 +5963,7 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 	for (;;)
 	{
 		WaitFrames(1);
-		if (screen->vertical_scroll != 0)
+		if (screen->verticalScroll != 0)
 		{
 			continue;
 		}
@@ -5983,7 +5983,7 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 
 			if (gKeyState & KEY_A)
 			{
-				result = screen->top + screen->cursor_index;
+				result = screen->top + screen->cursorIndex;
 				if (screen->head->kind == NODE_KIND_YES_NO)
 				{
 					if (result == 0)
@@ -6009,30 +6009,30 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 
 void Menu_MoveSelectionForward(struct SelectionScreen *screen)
 {
-	u32 end = screen->top + screen->cursor_index + 1;
+	u32 end = screen->top + screen->cursorIndex + 1;
 
 	if (end == screen->count)
 	{
 		return;
 	}
-	Menu_ReloadNodeResource(screen, screen->cursor_index);
+	Menu_ReloadNodeResource(screen, screen->cursorIndex);
 	screen->status = NODE_STATUS_SCROLLING;
 	WaitFrames(1);
-	screen->cursor_index++;
-	if (screen->cursor_index == SELECTION_ROWS && end + 1 < screen->count)
+	screen->cursorIndex++;
+	if (screen->cursorIndex == SELECTION_ROWS && end + 1 < screen->count)
 	{
-		screen->cursor_index--;
+		screen->cursorIndex--;
 		screen->records[1].base = ARROW_SCROLL_FRAMES;
 		screen->top++;
 		Menu_ScrollSelectionList(screen, TRUE);
-		if (screen->top + screen->cursor_index + 2 == screen->count)
+		if (screen->top + screen->cursorIndex + 2 == screen->count)
 		{
 			screen->records[1].kind = FALSE;
 		}
 		screen->records[0].kind = TRUE;
 	}
 	screen->status = NODE_STATUS_SHOWN;
-	Menu_LoadSelectionNodeResource(screen, screen->cursor_index);
+	Menu_LoadSelectionNodeResource(screen, screen->cursorIndex);
 	WaitFrames(1);
 	Menu_OpenSelectionWindow(screen->head->kind, 0);
 	WaitFrames(1);
@@ -6042,14 +6042,14 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 {
 	u32 cursor;
 
-	if (screen->top == 0 && screen->cursor_index == 0)
+	if (screen->top == 0 && screen->cursorIndex == 0)
 	{
 		return;
 	}
-	Menu_ReloadNodeResource(screen, screen->cursor_index);
+	Menu_ReloadNodeResource(screen, screen->cursorIndex);
 	screen->status = NODE_STATUS_SCROLLING;
 	WaitFrames(1);
-	cursor = screen->cursor_index;
+	cursor = screen->cursorIndex;
 	if (cursor == 1 && screen->top != 0)
 	{
 		screen->records[0].base = ARROW_SCROLL_FRAMES;
@@ -6063,10 +6063,10 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 	}
 	else
 	{
-		screen->cursor_index--;
+		screen->cursorIndex--;
 	}
 	screen->status = NODE_STATUS_SHOWN;
-	Menu_LoadSelectionNodeResource(screen, screen->cursor_index);
+	Menu_LoadSelectionNodeResource(screen, screen->cursorIndex);
 	WaitFrames(1);
 	Menu_OpenSelectionWindow(screen->head->kind, 0);
 	WaitFrames(1);
@@ -6079,28 +6079,28 @@ void Menu_StepRight(struct SelectionScreen *state)
 	s32					  y;
 	u32					  end;
 
-	Menu_ReloadNodeResource(state, state->cursor_index);
+	Menu_ReloadNodeResource(state, state->cursorIndex);
 	state->status = 33;
 	WaitFrames(1);
-	state->cursor_index++;
+	state->cursorIndex++;
 	if (state->count > 5)
 	{
-		end = state->top + state->cursor_index;
+		end = state->top + state->cursorIndex;
 		if (end == state->count)
 		{
 			node = state->head;
 			state->records[0].kind = 0;
 			while (node->next != NULL)
 			{
-				node->target_x = state->base_x;
-				node->target_y = state->base_y;
+				node->targetX = state->baseX;
+				node->targetY = state->baseY;
 				node->dx = -12;
 				node = node->next;
 			}
-			node->target_x = state->base_x;
-			node->target_y = state->base_y;
+			node->targetX = state->baseX;
+			node->targetY = state->baseY;
 			node->dx = -12;
-			while (node->target_x != node->x)
+			while (node->targetX != node->x)
 				WaitFrames(1);
 			node = state->head;
 			if (node != NULL)
@@ -6113,37 +6113,37 @@ void Menu_StepRight(struct SelectionScreen *state)
 					ids++;
 				} while (node != NULL);
 			}
-			state->cursor_index = 0;
+			state->cursorIndex = 0;
 			state->top = 0;
 			node = state->head;
 			y = node->x + 16;
 			node = node->next;
 			while (node != NULL)
 			{
-				node->target_x = y;
+				node->targetX = y;
 				node->dx = 12;
 				node = node->next;
 				y += 16;
 			}
 			state->records[1].kind = 1;
 		}
-		else if (state->cursor_index == 4 && end + 1 < state->count)
+		else if (state->cursorIndex == 4 && end + 1 < state->count)
 		{
-			state->cursor_index--;
+			state->cursorIndex--;
 			state->records[1].base = 8;
 			state->top++;
 			Menu_ScrollSelectionList(state, 1);
-			if (state->top + state->cursor_index + 2 == state->count)
+			if (state->top + state->cursorIndex + 2 == state->count)
 				state->records[1].kind = 0;
 			state->records[0].kind = 1;
 		}
 	}
-	else if (state->cursor_index == state->count)
+	else if (state->cursorIndex == state->count)
 	{
-		state->cursor_index = 0;
+		state->cursorIndex = 0;
 	}
 	state->status = 1;
-	Menu_LoadSelectionNodeResource(state, state->cursor_index);
+	Menu_LoadSelectionNodeResource(state, state->cursorIndex);
 	WaitFrames(1);
 	Menu_OpenSelectionWindow(state->head->kind, 0);
 	WaitFrames(1);
@@ -6154,14 +6154,14 @@ void Menu_StepLeft(struct SelectionScreen *state)
 	struct SelectionNode *node;
 	s32					  i;
 
-	Menu_ReloadNodeResource(state, state->cursor_index);
+	Menu_ReloadNodeResource(state, state->cursorIndex);
 	state->status = 33;
 	WaitFrames(1);
 	if (state->count > 5)
 	{
-		if ((state->cursor_index | state->top) != 0)
+		if ((state->cursorIndex | state->top) != 0)
 		{
-			if (state->cursor_index == 1 && state->top != 0)
+			if (state->cursorIndex == 1 && state->top != 0)
 			{
 				state->records[0].base = 8;
 				state->top--;
@@ -6172,7 +6172,7 @@ void Menu_StepLeft(struct SelectionScreen *state)
 			}
 			else
 			{
-				state->cursor_index--;
+				state->cursorIndex--;
 			}
 		}
 		else
@@ -6184,20 +6184,20 @@ void Menu_StepLeft(struct SelectionScreen *state)
 			}
 			while (node->next != NULL)
 			{
-				node->target_x = node->x + i;
+				node->targetX = node->x + i;
 				node->dx = 12;
 				node = node->next;
 				i -= 16;
 			}
 			node = state->head;
-			while (node->x != node->target_x)
+			while (node->x != node->targetX)
 				WaitFrames(1);
 			i = 0;
 			while (i != state->count - 5)
 				i++;
 			node = state->head;
 			state->top = i;
-			state->cursor_index = 4;
+			state->cursorIndex = 4;
 			while (node != NULL)
 			{
 				MenuSelection_SetupEntry(state->kinds[i], state->bases[i], node, 1);
@@ -6205,10 +6205,10 @@ void Menu_StepLeft(struct SelectionScreen *state)
 				i++;
 			}
 			node = state->head;
-			i = state->base_x;
+			i = state->baseX;
 			while (node->next != NULL)
 			{
-				node->target_x = i;
+				node->targetX = i;
 				node->dx = -12;
 				node = node->next;
 				i += 16;
@@ -6216,16 +6216,16 @@ void Menu_StepLeft(struct SelectionScreen *state)
 			state->records[0].kind = 1;
 		}
 	}
-	else if (state->cursor_index != 0)
+	else if (state->cursorIndex != 0)
 	{
-		state->cursor_index--;
+		state->cursorIndex--;
 	}
 	else
 	{
-		state->cursor_index = state->count - 1;
+		state->cursorIndex = state->count - 1;
 	}
 	state->status = 1;
-	Menu_LoadSelectionNodeResource(state, state->cursor_index);
+	Menu_LoadSelectionNodeResource(state, state->cursorIndex);
 	WaitFrames(1);
 	Menu_OpenSelectionWindow(state->head->kind, 0);
 	WaitFrames(1);
@@ -6307,23 +6307,23 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
 		if (p == NULL)
 			return;
 		MenuSelection_SetupEntry(kind, base, p, 0);
-		y = screen->base_x;
+		y = screen->baseX;
 		p->x = y + 80;
-		z = screen->base_y;
-		p->target_x = y + 64;
+		z = screen->baseY;
+		p->targetX = y + 64;
 		p->y = z;
-		p->target_y = z;
-		p->scale_step = 32;
+		p->targetY = z;
+		p->scaleStep = 32;
 		p->scale = 32;
-		p->scale_end = 256;
+		p->scaleEnd = 256;
 		p->dx = -2;
 		last = p;
 		p = screen->head;
-		p->scale_step = -32;
-		p->scale_end = 0;
+		p->scaleStep = -32;
+		p->scaleEnd = 0;
 		for (;;)
 		{
-			p->target_x = p->x - 16;
+			p->targetX = p->x - 16;
 			p->dx = -2;
 			if (p->next == NULL)
 				break;
@@ -6352,14 +6352,14 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
 		if (p == NULL)
 			return;
 		MenuSelection_SetupEntry(kind, base, p, 0);
-		p->x = screen->base_x - 16;
-		p->y = screen->base_y;
-		p->target_y = p->y;
+		p->x = screen->baseX - 16;
+		p->y = screen->baseY;
+		p->targetY = p->y;
 		p->dx = 2;
 		p->scale = 32;
-		p->scale_step = 32;
-		p->target_x = p->x + 16;
-		p->scale_end = 256;
+		p->scaleStep = 32;
+		p->targetX = p->x + 16;
+		p->scaleEnd = 256;
 		first = p;
 		p = screen->head;
 		p->prev = first;
@@ -6369,14 +6369,14 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
 		p = first;
 		for (;;)
 		{
-			p->target_x = p->x + 16;
+			p->targetX = p->x + 16;
 			p->dx = 2;
 			if (p->next == NULL)
 				break;
 			p = p->next;
 		}
-		p->scale_end = 0;
-		p->scale_step = -32;
+		p->scaleEnd = 0;
+		p->scaleStep = -32;
 		p = screen->head;
 		do
 		{
@@ -6492,7 +6492,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s3
 	node->tile = tile;
 	node->kind = kind;
 	node->scale = 0x100;
-	node->scale_end = 0x100;
+	node->scaleEnd = 0x100;
 
 	obj = &node->sprite;
 	obj->mode = 0;
@@ -6514,9 +6514,9 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 	u32						index;
 	struct SelectionSprite *sprite;
 
-	index = screen->top + screen->cursor_index;
+	index = screen->top + screen->cursorIndex;
 	Menu_SendNodeCountList(screen);
-	Menu_ReloadNodeResource(screen, screen->cursor_index);
+	Menu_ReloadNodeResource(screen, screen->cursorIndex);
 	screen->status = 33;
 	WaitFrames(1);
 	screen->records[0].kind = 0;
@@ -6525,18 +6525,18 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 	screen->records[14].scale = 0;
 	Resource_ResetPendingTransfer();
 	node = screen->head;
-	while (node != NULL && screen->cursor_index != cnt)
+	while (node != NULL && screen->cursorIndex != cnt)
 	{
 		node = node->next;
 		cnt++;
 	}
-	node->home_x = node->x;
-	node->home_y = node->y;
+	node->homeX = node->x;
+	node->homeY = node->y;
 	for (other = screen->head; other != NULL; other = other->next)
 	{
 		if (other != node)
 		{
-			other->target_x = node->x;
+			other->targetX = node->x;
 			other->dx = (node->x - other->x) >> 1;
 		}
 	}
@@ -6552,17 +6552,17 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 	screen->head = node;
 	node->prev = NULL;
 	node->next = NULL;
-	node->target_x = 4;
+	node->targetX = 4;
 	for (other = screen->path, cnt = 0; other != NULL; other = other->next)
 	{
-		node->target_x += 16;
+		node->targetX += 16;
 		cnt++;
 	}
-	screen->path_top[cnt] = screen->top;
-	screen->path_cursor[cnt] = screen->cursor_index;
-	node->dx = (node->target_x - node->x) >> 1;
-	screen->unknown_39a = 0;
-	screen->cursor_index |= 0x80;
+	screen->pathTop[cnt] = screen->top;
+	screen->pathCursor[cnt] = screen->cursorIndex;
+	node->dx = (node->targetX - node->x) >> 1;
+	screen->unk39a = 0;
+	screen->cursorIndex |= 0x80;
 	WaitFrames(2);
 	other = Resource_FindFreeTransferEntry(1);
 	other->kind = node->kind;
@@ -6572,14 +6572,14 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 	other->tile = node->tile;
 	other->x = node->x;
 	other->y = node->y;
-	other->target_x = other->x;
-	other->target_y = other->y;
-	other->home_x = node->home_x;
-	other->home_y = node->home_y;
+	other->targetX = other->x;
+	other->targetY = other->y;
+	other->homeX = node->homeX;
+	other->homeY = node->homeY;
 	other->dx = 0;
 	other->dy = 0;
 	other->scale = 0x100;
-	other->scale_end = 0x100;
+	other->scaleEnd = 0x100;
 	sprite = &other->sprite;
 	sprite->mode = 0;
 	sprite->colors = 0;
@@ -6643,7 +6643,7 @@ void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
 	object->oam.f.mosaic = 0;
 	object->oam.f.colors = 1;
 	object->oam.f.affine = 0;
-	object->oam.f.affine_index = 0;
+	object->oam.f.affineIndex = 0;
 	object->oam.f.size = 0;
 	object->oam.f.shape = 2;
 	object->oam.f.priority = 0;
@@ -6691,8 +6691,8 @@ void Menu_LoadSelectedResource(void)
 	transfer->kind = 1;
 	transfer->base = no;
 	transfer->scale = 40;
-	transfer->scale_step = 40;
-	transfer->scale_end = 240;
+	transfer->scaleStep = 40;
+	transfer->scaleEnd = 240;
 	Runtime_ReleaseHeapBlock(17);
 }
 
@@ -6742,7 +6742,7 @@ s32 Menu_RunTopSelection(void)
 			ret = Object_GetTriggerTileAheadOfCurrentFar();
 			if (ret == 0)
 				ret = 0xff;
-			((struct EventWork *)state)->facing_trigger = ret;
+			((struct EventWork *)state)->facingTrigger = ret;
 			break;
 		case 1:
 			ret = Menu_OpenConfirmPromptFar();
@@ -6806,7 +6806,7 @@ u32 Menu_RunSelectionForValue(u32 value)
 	struct SelectionScreen *state = gResQueueWork;
 	u32						result;
 
-	state->cursor_index = value;
+	state->cursorIndex = value;
 	state->locked = 1;
 	MenuSelection_BuildEntries(value);
 	Menu_SetupSelectionBothSides();
@@ -6819,7 +6819,7 @@ u32 Menu_RunSelectionForValue(u32 value)
 
 struct TimedNoticeWork
 {
-	u8				 unknown_000[0x230];
+	u8				 unk000[0x230];
 	struct UiWindow *window;
 	u16				 countdown;
 };
@@ -6888,12 +6888,12 @@ s32 Item_ReturnTrue(void)
 
 void Party_AdjustPaletteGlowPhase(s32 arg0)
 {
-	u8 value = gGameState.palette_glow[0];
+	u8 value = gGameState.paletteGlow[0];
 	if (arg0 & 0x20)
 		value += 0xff;
 	else
 		value += 1;
-	gGameState.palette_glow[0] = value;
+	gGameState.paletteGlow[0] = value;
 }
 
 struct AbilityListEntry
@@ -6972,12 +6972,12 @@ void Debug_SelectAbilityPair(void)
 				UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
 				if (row != 0)
 				{
-					cost = BattleActGet(list[second].ability)->pp_cost;
+					cost = BattleActGet(list[second].ability)->ppCost;
 					ability = list[second].ability;
 				}
 				else
 				{
-					cost = BattleActGet(list[first].ability)->pp_cost;
+					cost = BattleActGet(list[first].ability)->ppCost;
 					ability = list[first].ability;
 				}
 				UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
@@ -7026,8 +7026,8 @@ void Debug_SelectAbilityPair(void)
 			done = 1;
 			break;
 		}
-		gGameState.first_shortcut = (list[first].owner << 10) | list[first].ability;
-		gGameState.second_shortcut = (list[second].owner << 10) | list[second].ability;
+		gGameState.firstShortcut = (list[first].owner << 10) | list[first].ability;
+		gGameState.secondShortcut = (list[second].owner << 10) | list[second].ability;
 		UiWork_Finalize(win, 1);
 		UiWork_Finalize(title, 1);
 		UiWork_Finalize(info, 1);
@@ -7048,19 +7048,19 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 		struct BattleUnit *object;
 		u32				id;
 		s32				index;
-		u32				resource_id;
+		u32				resourceId;
 
 		id = object_ids[i];
 		object = UnitGetFar(id);
 		for (index = 0;
-			index < (s32)(sizeof(object->action_slots) / sizeof(object->action_slots[0])); index++)
+			index < (s32)(sizeof(object->actionSlots) / sizeof(object->actionSlots[0])); index++)
 		{
-			resource_id = object->action_slots[index].encoded_action & ACTION_ID_MASK;
-			if (resource_id == 0)
+			resourceId = object->actionSlots[index].encodedAction & ACTION_ID_MASK;
+			if (resourceId == 0)
 				break;
-			BattleActGet(resource_id);
+			BattleActGet(resourceId);
 			output[output_count].owner = id;
-			output[output_count].ability = resource_id;
+			output[output_count].ability = resourceId;
 			output_count++;
 		}
 	}
@@ -7078,8 +7078,8 @@ void Menu_FindShortcutEntries(
 
 	for (i = 0; i <= 447; i++)
 	{
-		if (entries[i].ability == (gGameState.first_shortcut & 0x3ff)
-			&& entries[i].owner == (gGameState.first_shortcut >> 10))
+		if (entries[i].ability == (gGameState.firstShortcut & 0x3ff)
+			&& entries[i].owner == (gGameState.firstShortcut >> 10))
 		{
 			*first_index = i;
 			break;
@@ -7088,8 +7088,8 @@ void Menu_FindShortcutEntries(
 
 	for (i = 0; i <= 447; i++)
 	{
-		if (entries[i].ability == (gGameState.second_shortcut & 0x3ff)
-			&& entries[i].owner == (gGameState.second_shortcut >> 10))
+		if (entries[i].ability == (gGameState.secondShortcut & 0x3ff)
+			&& entries[i].owner == (gGameState.secondShortcut >> 10))
 		{
 			*second_index = i;
 			break;
@@ -7104,15 +7104,15 @@ void Menu_RunSelectionHook(void)
 
 struct SelectionWorkspace
 {
-	u8				 unknown_000[0x46];
-	u16				 first_active;
-	u16				 first_resource;
-	u8				 unknown_04a[0x352 - 0x4a];
-	u16				 second_active;
-	u16				 second_resource;
-	u8				 unknown_356[0xff4 - 0x356];
+	u8				 unk000[0x46];
+	u16				 firstActive;
+	u16				 firstResource;
+	u8				 unk04a[0x352 - 0x4a];
+	u16				 secondActive;
+	u16				 secondResource;
+	u8				 unk356[0xff4 - 0x356];
 	struct UiWindow *window;
-	u8				 unknown_ff8[12];
+	u8				 unkff8[12];
 };
 
 void Menu_AllocateSelectionWorkspace(void)
@@ -7122,8 +7122,8 @@ void Menu_AllocateSelectionWorkspace(void)
 
 	work = Runtime_AllocateBlock(0x13, 0x1004);
 	zero = 0;
-	work->first_active = zero;
-	work->second_active = zero;
+	work->firstActive = zero;
+	work->secondActive = zero;
 }
 
 void Ui_FinalizeWorkAndReleaseHeap13(void)
@@ -7136,13 +7136,13 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
 	{
 		WaitFrames(1);
 	}
-	if (state->first_active != 0)
+	if (state->firstActive != 0)
 	{
-		Resource_ResetEntry(state->first_resource);
+		Resource_ResetEntry(state->firstResource);
 	}
-	if (state->second_active != 0)
+	if (state->secondActive != 0)
 	{
-		Resource_ResetEntry(state->second_resource);
+		Resource_ResetEntry(state->secondResource);
 	}
 	Runtime_ReleaseHeapBlock(0x13);
 }
@@ -7161,9 +7161,9 @@ void GraphicsPalette_ReservedNoOpC9C4(void)
 
 struct MenuWorkspaceEntry
 {
-	u8	unknown_00[10];
+	u8	unk00[10];
 	u16 state;
-	u8	unknown_0c[40];
+	u8	unk0c[40];
 };
 
 void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
@@ -7188,7 +7188,7 @@ void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
 	work->tint[0] = zero;
 	work->tint[1] = zero;
 	work->tint[2] = zero;
-	work->cursor_frame = zero;
+	work->cursorFrame = zero;
 }
 
 void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
@@ -7199,8 +7199,8 @@ void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
 	s32 red;
 	s32 green;
 
-	phase = (gGameState.palette_glow[0] + 12) % 24 * 4;
-	bias = gGameState.palette_glow[1] - 7;
+	phase = (gGameState.paletteGlow[0] + 12) % 24 * 4;
+	bias = gGameState.paletteGlow[1] - 7;
 	red = PaletteGlow_WaveTable[(phase % 96)];
 	green = PaletteGlow_WaveTable[(phase + 32) % 96];
 	blue = PaletteGlow_WaveTable[(phase + 64) % 96];
@@ -7340,16 +7340,16 @@ void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work)
 	switch (work->page)
 	{
 	case 0:
-		if (gGameState.message_speed != 0)
-			gGameState.message_speed--;
+		if (gGameState.messageSpeed != 0)
+			gGameState.messageSpeed--;
 		break;
 	case 1:
-		if (gGameState.palette_glow[0] != 0)
-			gGameState.palette_glow[0]--;
+		if (gGameState.paletteGlow[0] != 0)
+			gGameState.paletteGlow[0]--;
 		break;
 	case 2:
-		if (gGameState.palette_glow[1] != 0)
-			gGameState.palette_glow[1]--;
+		if (gGameState.paletteGlow[1] != 0)
+			gGameState.paletteGlow[1]--;
 		break;
 	}
 }
@@ -7359,16 +7359,16 @@ void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work)
 	switch (work->page)
 	{
 	case 0:
-		if (gGameState.message_speed <= 1)
-			gGameState.message_speed++;
+		if (gGameState.messageSpeed <= 1)
+			gGameState.messageSpeed++;
 		break;
 	case 1:
-		if (gGameState.palette_glow[0] <= 23)
-			gGameState.palette_glow[0]++;
+		if (gGameState.paletteGlow[0] <= 23)
+			gGameState.paletteGlow[0]++;
 		break;
 	case 2:
-		if (gGameState.palette_glow[1] <= 14)
-			gGameState.palette_glow[1]++;
+		if (gGameState.paletteGlow[1] <= 14)
+			gGameState.paletteGlow[1]++;
 		break;
 	}
 }
@@ -7392,7 +7392,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection == 0)
 	{
-		src0 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
+		src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
 	else
 	{
@@ -7402,7 +7402,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection == 1)
 	{
-		src1 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
+		src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
 	else
 	{
@@ -7412,7 +7412,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	if (selection > 1)
 		Ui_ApplyTableScaleToObject(work->frame[selection - 2][work->option[selection]]);
-	work->cursor_frame++;
+	work->cursorFrame++;
 }
 
 void OptionMenu_InitializeWork(void)
@@ -7421,16 +7421,16 @@ void OptionMenu_InitializeWork(void)
 
 	work = Runtime_AllocateBlock(20, 0x628);
 	Dma_Fill32(0, work, 0x628);
-	work->option[0] = gGameState.palette_glow[0];
-	work->option_count[0] = 24;
-	work->option[1] = gGameState.palette_glow[1];
-	work->option_count[1] = 15;
-	work->option[2] = gGameState.message_speed;
-	work->option_count[2] = 3;
+	work->option[0] = gGameState.paletteGlow[0];
+	work->optionCount[0] = 24;
+	work->option[1] = gGameState.paletteGlow[1];
+	work->optionCount[1] = 15;
+	work->option[2] = gGameState.messageSpeed;
+	work->optionCount[2] = 3;
 	work->option[3] = gGameState.speech;
-	work->option_count[3] = 2;
-	work->option[4] = gGameState.saved_options;
-	work->option_count[4] = 2;
+	work->optionCount[3] = 2;
+	work->option[4] = gGameState.savedOptions;
+	work->optionCount[4] = 2;
 	Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
 }
 
@@ -7510,10 +7510,10 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 	{
 		VramBlock_LoadCached(x, 256, 0);
 		out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-		out->oam.palette_256 = 1;
+		out->oam.palette256 = 1;
 		work->marker[0].output = out;
 		x = win->x * 8 + OPTION_SLIDER_X;
-		x += work->option[0] * 60 / work->option_count[0];
+		x += work->option[0] * 60 / work->optionCount[0];
 		y = win->y * 8 + 4;
 		ShopCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
 	}
@@ -7523,10 +7523,10 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 	{
 		VramBlock_LoadCached(x, 256, 0);
 		out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-		out->oam.palette_256 = 1;
+		out->oam.palette256 = 1;
 		work->marker[1].output = out;
 		x = win->x * 8 + OPTION_SLIDER_X;
-		x += work->option[1] * 60 / work->option_count[1];
+		x += work->option[1] * 60 / work->optionCount[1];
 		y = win->y * 8 + 20;
 		ShopCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
 	}
@@ -7583,7 +7583,7 @@ s32 Menu_RunWorkspaceOptions(void)
 			redraw = 0;
 			page = (page + 5) % 5;
 			work->option[page] =
-				(work->option[page] + work->option_count[page]) % work->option_count[page];
+				(work->option[page] + work->optionCount[page]) % work->optionCount[page];
 			work->page = page;
 			if (gSleepDisabled != 0)
 				work->option[4] = 0;
@@ -7623,11 +7623,11 @@ s32 Menu_RunWorkspaceOptions(void)
 			}
 
 			x = icon->x * 8 + OPTION_SLIDER_X;
-			x += (*pA * 60) / work->option_count[0];
+			x += (*pA * 60) / work->optionCount[0];
 			y = icon->y * 8 + 4;
 			Shop_SetCursorFar(&work->marker[0].cursor, x, y, 1);
 			x = icon->x * 8 + OPTION_SLIDER_X;
-			x += (*pB * 60) / work->option_count[1];
+			x += (*pB * 60) / work->optionCount[1];
 			y = icon->y * 8 + 20;
 			Shop_SetCursorFar(&work->marker[1].cursor, x, y, 1);
 
@@ -7709,16 +7709,16 @@ s32 Menu_RunWorkspaceOptions(void)
 	UiWork_Finalize(icon, 2);
 	if (result == 0)
 	{
-		gGameState.palette_glow[0] = work->option[0];
-		gGameState.palette_glow[1] = work->option[1];
-		gGameState.message_speed = work->option[2];
+		gGameState.paletteGlow[0] = work->option[0];
+		gGameState.paletteGlow[1] = work->option[1];
+		gGameState.messageSpeed = work->option[2];
 		gGameState.speech = work->option[3];
-		gGameState.saved_options = work->option[4];
-		gOptionMirror = gGameState.saved_options;
+		gGameState.savedOptions = work->option[4];
+		gOptionMirror = gGameState.savedOptions;
 	}
 	else
 	{
-		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+		PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
 	}
 	Runtime_ScheduleCallbackAndReleaseBlock20B();
 	WaitFrames(1);
@@ -8006,15 +8006,15 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap
 	{
 		for (n = 0; n < 128; n++)
 		{
-			u32 value = work->tile_cursor;
+			u32 value = work->tileCursor;
 			u32 following = (value + 1) % 128;
 
 			slot = (u8)value;
-			work->tile_cursor = following;
-			if (work->tile_attributes[slot] == 0)
+			work->tileCursor = following;
+			if (work->tileAttributes[slot] == 0)
 				break;
 		}
-		work->tile_attributes[slot] = 1;
+		work->tileAttributes[slot] = 1;
 		slot |= 0x80;
 		*entry = slot | 0xf000;
 		*mirror = slot | 0xf000;
@@ -8196,11 +8196,11 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 		tile = *tiles & 0x3FF;
 		if ((tile < 0x80 || tile > 0xFF) && (work->alt == 0 || tile < 0x200 || tile > 0x27F))
 		{
-			tile = work->tile_cursor & mask;
-			for (j = 0; j <= mask && work->tile_attributes[tile] != 0; j++)
+			tile = work->tileCursor & mask;
+			for (j = 0; j <= mask && work->tileAttributes[tile] != 0; j++)
 				tile = (tile + 1) & mask;
-			work->tile_cursor = (tile + 1) & mask;
-			work->tile_attributes[tile] = 1;
+			work->tileCursor = (tile + 1) & mask;
+			work->tileAttributes[tile] = 1;
 			if (tile > 127)
 				tile += 0x180;
 			else
@@ -8242,7 +8242,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
 			if ((tile - 0x80) <= 0x7F || (alternate != 0 && tile > 0x1FF && tile <= 0x27F))
 			{
 				u32 index = ((tile & 0xFF) ^ 0x80);
-				((struct UiRenderWork *)base)->tile_attributes[index] &= 0xFC;
+				((struct UiRenderWork *)base)->tileAttributes[index] &= 0xFC;
 			}
 		}
 		cursor += 32 - width;
@@ -8268,15 +8268,15 @@ void UiWindow_MarkVisibleTileAttributes(void)
 			{
 				u32 index = ((tile & 0xff) ^ 0x80);
 
-				((struct UiRenderWork *)base)->tile_attributes[index] |= 2;
+				((struct UiRenderWork *)base)->tileAttributes[index] |= 2;
 			}
 		}
 	}
 
 	for (row = 0; row < 256; row++, base++)
 	{
-		if (((struct UiRenderWork *)base)->tile_attributes[0] == 1)
-			((struct UiRenderWork *)base)->tile_attributes[0] = 0;
+		if (((struct UiRenderWork *)base)->tileAttributes[0] == 1)
+			((struct UiRenderWork *)base)->tileAttributes[0] = 0;
 	}
 }
 
@@ -8293,7 +8293,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
 	{
 		((struct UiRenderWork *)work)->alt = 1;
 		flag = 0;
-		for (i = 0x80, p = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80; i <= 0xFF;
+		for (i = 0x80, p = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80; i <= 0xFF;
 			i += 1)
 		{
 			*p = flag;
@@ -8303,7 +8303,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
 	}
 	((struct UiRenderWork *)work)->alt = 0;
 	flag = 0;
-	q = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80;
+	q = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80;
 	j = 0x7F;
 	do
 	{
@@ -8524,7 +8524,7 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 }
 
 void UiText_DrawCharacterAtOffset(
-	s32 character, struct RenderInput *position, u32 offset_x, u32 offset_y)
+	s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY)
 {
 	s32					 byte_offset;
 	s32					 vram_address;
@@ -8543,14 +8543,14 @@ void UiText_DrawCharacterAtOffset(
 	canvas->entries[*counter] = zero;
 	*counter = (*counter + 1) & RENDER_ENTRY_MASK;
 
-	cell = ((position->y + (offset_y >> 3) + 1) << 5) + (position->x + (offset_x >> 3)) + 1;
+	cell = ((position->y + (offsetY >> 3) + 1) << 5) + (position->x + (offsetX >> 3)) + 1;
 	if (cell < 0x280U)
 	{
 		byte_offset = cell * 2;
 		vram_address = byte_offset + 0x06002000;
 		text = canvas->entries;
 		UiText_RenderStringTiles(
-			text, (u16 *)((u8 *)canvas->tilemap + byte_offset), (u16 *)vram_address, 7 & offset_x);
+			text, (u16 *)((u8 *)canvas->tilemap + byte_offset), (u16 *)vram_address, 7 & offsetX);
 	}
 }
 
@@ -8577,7 +8577,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 	MemFree(buffer);
 }
 
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offset_x, s32 offset_y)
+void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY)
 {
 	s16					*buffer;
 	s16					*output;
@@ -8602,14 +8602,14 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offset_x,
 	}
 	*output = 0;
 
-	cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5) + (work->x + ((u32)offset_x >> 3)) + 1;
+	cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) + (work->x + ((u32)offsetX >> 3)) + 1;
 	if (cell < 0x280)
 	{
 		vram = 0x06002000;
 		cell *= 2;
 		dst = vram + cell;
 		src = (s32)canvas->tilemap + cell;
-		phase = offset_x & 7;
+		phase = offsetX & 7;
 		UiText_RenderStringTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
 		MemFree(buffer);
 	}
@@ -8655,7 +8655,7 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 }
 
 void UiText_DrawPrefixedNumberAtOffset(
-	s32 value, struct RenderInput *work, s32 offset_x, s32 offset_y, s32 variant)
+	s32 value, struct RenderInput *work, s32 offsetX, s32 offsetY, s32 variant)
 {
 	u8					 formatted[16];
 	s16					 output[8];
@@ -8698,14 +8698,14 @@ void UiText_DrawPrefixedNumberAtOffset(
 	}
 	output[6] = 0;
 
-	cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5) + (work->x + ((u32)offset_x >> 3)) + 1;
+	cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) + (work->x + ((u32)offsetX >> 3)) + 1;
 	if (cell < 0x280)
 	{
 		vram = 0x06002000;
 		cell *= 2;
 		dst = vram + cell;
 		src = (s32)canvas->tilemap + cell;
-		phase = offset_x & 7;
+		phase = offsetX & 7;
 		UiText_RenderStringTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
 	}
 }

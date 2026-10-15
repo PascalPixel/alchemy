@@ -22,12 +22,12 @@ void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value)
 {
-    if (Object_GetById(gPartyState.current_owner)->y == 0 && Func_020018bc(value))
+    if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
         Func_02001ba4(13);
 }
 
 void Func_02000084(s32 value)
 {
-    if (Object_GetById(gPartyState.current_owner)->y == 0 && Func_020018bc(value))
+    if (Object_GetById(gPartyState.currentOwner)->y == 0 && Func_020018bc(value))
         Func_02001ba4(14);
 }

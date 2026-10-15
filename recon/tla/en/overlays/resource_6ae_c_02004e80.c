@@ -11,7 +11,7 @@
 #include "party_state.h"
 
 struct MarsAerieParty {
-    u8 unknown_000[0x26a];
+    u8 unk000[0x26a];
     s16 held;
 };
 
@@ -24,7 +24,7 @@ void Func_02004e80(s32 from, s32 to)
     struct ObjectRuntime *target;
     struct PartyState *party = &gPartyState;
 
-    party->saved_byte = 0;
+    party->savedByte = 0;
     object = found;
     ((struct MarsAerieParty *)party)->held = to;
     target = Object_GetById(to);

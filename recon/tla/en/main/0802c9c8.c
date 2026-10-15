@@ -28,7 +28,7 @@ s32 Map_LoadAreaGraphics(void)
     u8 *buffer;
     s16 value;
 
-    state = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
     buffer = Ram_MapCellBuffer;
     resources = state->resources;
     value = *(s16 *)0x05000000;
@@ -42,17 +42,17 @@ s32 Map_LoadAreaGraphics(void)
     Resource_DecodeType01(Resource_GetTableEntry(resources[7]), Data_02028000);
     Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
     Data_030011f8 = Map_ShowBg1FromBuffer;
-    state->window_top = 0;
-    state->window_bottom = 159;
+    state->windowTop = 0;
+    state->windowBottom = 159;
     WaitFrames(1);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the halfword local keeps zero in r5 and the short-range pool before the epilogue. */
     value = 0;
     Map_UpdateCurrentTileBlock();
-    state->animation_active = value;
+    state->animationActive = value;
     Scheduler_DisableCallbacks(MapAnimation_Update);
-    state->frame_pending = value;
-    state->frame_shown = value;
+    state->framePending = value;
+    state->frameShown = value;
     Func_0802d088(state->area, 0);
     WaitFrames(1);
 }

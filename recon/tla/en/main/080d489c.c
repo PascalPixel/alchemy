@@ -3,24 +3,24 @@
 void *ObjectTable_Get(u32 object);
 
 struct LinkedEffectVisual {
-    u8 unknown_00[9];
+    u8 unk00[9];
     u8 flags;
-    u8 unknown_0a[28];
-    u8 value_26;
+    u8 unk0a[28];
+    u8 value26;
 };
 
 struct LinkedEffectObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[60];
+    u8 unk14[60];
     struct LinkedEffectVisual *visual;
-    u8 value_54;
-    u8 value_55;
-    u8 unknown_56[14];
+    u8 value54;
+    u8 value55;
+    u8 unk56[14];
     u16 counter;
-    u16 resource_id;
+    u16 resourceId;
     struct LinkedEffectObject *resource;
     void (*callback)(void);
 };
@@ -76,11 +76,11 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         break;
     }
 
-    child->resource_id = id;
-    child->value_55 = 0;
+    child->resourceId = id;
+    child->value55 = 0;
     child->callback = BattleFx_CopyLinkedObjectPosition;
     visual = child->visual;
-    visual->value_26 = 0;
+    visual->value26 = 0;
     child->resource = object;
 
     if (flags & 0x100) {

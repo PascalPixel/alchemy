@@ -9,30 +9,30 @@
 struct MapLayerScroll
 {
 	s32				x, y;
-	s32				offset_x, offset_y;
-	s32				scale_x, scale_y;
-	s32				speed_x, speed_y;
-	s32				phase_x, phase_y;
-	u16				mask_x, mask_y;
+	s32				offsetX, offsetY;
+	s32				scaleX, scaleY;
+	s32				speedX, speedY;
+	s32				phaseX, phaseY;
+	u16				maskX, maskY;
 	struct MapCell *cells;
 };
 
 struct MapScrollWork
 {
 	s32					   *origin;
-	s32						shake_x, shake_y, shake_decay;
+	s32						shakeX, shakeY, shakeDecay;
 	u8					   *script;
 	u16						flags;
-	u8						wide_tiles;
+	u8						wideTiles;
 	u8						footprints;
 	struct MapAnimation		anim[16];
 	struct BlendScriptState blend;
-	s32						view_x, view_y;
-	s32						min_x, min_y, max_x, max_y;
-	s8						animation_active;
-	u8						unknown_0fd[3];
+	s32						viewX, viewY;
+	s32						minX, minY, maxX, maxY;
+	s8						animationActive;
+	u8						unk0fd[3];
 	u8						enabled[3];
-	u8						unknown_103;
+	u8						unk103;
 	struct MapLayerScroll	layers[3];
 };
 
@@ -43,8 +43,8 @@ LAYOUT_OFFSET_GUARD(MapLayerScroll_Cells, struct MapLayerScroll, cells, 0x2c);
 LAYOUT_SIZE_GUARD(MapScrollWork_Size, struct MapScrollWork, 0x194);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Animation, struct MapScrollWork, anim, 0x18);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Blend, struct MapScrollWork, blend, 0xd8);
-LAYOUT_OFFSET_GUARD(MapScrollWork_View, struct MapScrollWork, view_x, 0xe4);
-LAYOUT_OFFSET_GUARD(MapScrollWork_Active, struct MapScrollWork, animation_active, 0xfc);
+LAYOUT_OFFSET_GUARD(MapScrollWork_View, struct MapScrollWork, viewX, 0xe4);
+LAYOUT_OFFSET_GUARD(MapScrollWork_Active, struct MapScrollWork, animationActive, 0xfc);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Layers, struct MapScrollWork, layers, 0x104);
 
 struct BgScroll

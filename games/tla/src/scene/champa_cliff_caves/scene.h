@@ -15,10 +15,10 @@ struct WarpTarget {
 };
 
 struct RiseObject {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     s32 scale;
-    s32 scale_copy;
-    u8 unknown_20[0x4c];
+    s32 scaleCopy;
+    u8 unk20[0x4c];
     s32 update;
 };
 

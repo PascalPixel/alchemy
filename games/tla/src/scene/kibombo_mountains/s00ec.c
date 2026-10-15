@@ -10,8 +10,8 @@ void Func_020000ec(void)
 {
     struct ObjectRuntime *object = Object_GetById(11);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Call6((void (*)())Func_0200106c, 24, 32, 1, 1, 22, 32);
     GameFlag_SetBit(0x221);
 }

@@ -17,7 +17,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
     u8 *slot;
     u8 value;
 
-    slot = ((struct SaveWorkspace *)Ram_HeapSlots->serial_work)->occupied;
+    slot = ((struct SaveWorkspace *)Ram_HeapSlots->serialWork)->occupied;
     count = 0;
     index = 0;
     do {

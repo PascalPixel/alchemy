@@ -1,11 +1,11 @@
 /* Draft of Func_020010d8 (overlay 679, 46 instructions), differ 4: spawns object 14
  * above the given object, copies its ground height and sprite priority. Loading the
  * child's sprite before copying the height took it from differ 28 to 8. One
- * scheduling swap remains: the native stores next_frame before it loads the
+ * scheduling swap remains: the native stores nextFrame before it loads the
  * parent's byte 9 and then its own; here the parent's sprite pointer is copied
  * first and its own byte is loaded after the mask. The height store before the
  * script address now comes from a tagged empty asm (differ 8 to 4); another empty
- * asm after next_frame's store or a u32 priority temporary changes nothing (4),
+ * asm after nextFrame's store or a u32 priority temporary changes nothing (4),
  * an empty asm after the animation call gives 6.
  * Measured: creation through a forwarding inline (no change); the priority copy as
  * a u8 bitfield (differ 8, other rows), as explicit masks (17 to 31). alchemy
@@ -30,14 +30,14 @@ void Func_020010d8(struct ObjectRuntime *object)
     parent = object->animation;
     if (child != NULL) {
         sprite = child->animation;
-        child->terrain_height = object->terrain_height;
+        child->terrainHeight = object->terrainHeight;
         /* FAKEMATCH: an empty asm keeps the height store ahead of the script address load, as in the native (differ 8 without). */
         asm("");
         Func_02001c74(child, Data_02001ee8);
-        child->motion_flags = 0;
+        child->motionFlags = 0;
         if (sprite != NULL) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = parent->priority;
         }
     }

@@ -12,7 +12,7 @@ struct EffectPosition {
 };
 
 struct EffectTarget {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
@@ -20,24 +20,24 @@ struct EffectTarget {
 
 struct EffectRuntime {
     u16 angle;
-    u8 unknown_02[14];
+    u8 unk02[14];
     struct EffectTarget *target;
 };
 
 struct RadialBurstEffect {
-    u8 unknown_00[12];
+    u8 unk00[12];
     s32 x;
     s32 z;
-    s32 source_x;
-    s32 source_z;
-    u8 unknown_1c[4];
-    s32 velocity_x;
-    s32 velocity_z;
-    u8 unknown_28[10];
+    s32 sourceX;
+    s32 sourceZ;
+    u8 unk1c[4];
+    s32 velocityX;
+    s32 velocityZ;
+    u8 unk28[10];
     u16 scale;
-    u8 unknown_34[12];
+    u8 unk34[12];
     s8 state;
-    u8 unknown_41;
+    u8 unk41;
     u8 enabled;
 };
 
@@ -51,20 +51,20 @@ void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
 void BattleFx_UpdateRadialBurst(struct RadialBurstEffect *effect)
 {
-    struct EffectRuntime *runtime = Ram_HeapSlots->effect_work;
+    struct EffectRuntime *runtime = Ram_HeapSlots->effectWork;
     struct EffectPosition value;
     s32 state;
 
 again:
     state = effect->state;
     if (state == 0) {
-        value.x = effect->source_x;
-        value.z = effect->source_z;
+        value.x = effect->sourceX;
+        value.z = effect->sourceZ;
         Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
         effect->x = value.x;
         effect->z = value.z;
-        effect->velocity_z = 0x30000;
-        effect->velocity_x = 0x30000;
+        effect->velocityZ = 0x30000;
+        effect->velocityX = 0x30000;
         effect->enabled = 0;
         effect->state++;
         return;

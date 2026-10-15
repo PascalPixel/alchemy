@@ -4,7 +4,7 @@
    and loads the page's zero before it builds the page's offset (ldr r3, [pc];
    movs r2, #135). Tried: a volatile empty asm after the -1 (it also pulls the tiles
    copy forward, differ 16); a halfword struct temporary with a volatile operand
-   barrier for the zero (the last menu_busy store then takes movs instead of the
+   barrier for the zero (the last menuBusy store then takes movs instead of the
    pool, differ 20); a volatile result (the registers shift, differ 97). */
 #include "types.h"
 #include "ram_buffer.h"
@@ -17,17 +17,17 @@
 #include "display_transition.h"
 
 struct OwnerMenuState {
-    u8 unknown_000[0x28];
-    void *status_window;
-    u8 unknown_02c[0xc4];
-    void *selector_window;
-    u8 unknown_0f4[0x34];
-    u16 owner_y[4];
-    u8 unknown_130[0xd4];
-    s16 owner_ids[8];
-    u8 unknown_214;
-    u8 party_count;
-    u8 unknown_216[6];
+    u8 unk000[0x28];
+    void *statusWindow;
+    u8 unk02c[0xc4];
+    void *selectorWindow;
+    u8 unk0f4[0x34];
+    u16 ownerY[4];
+    u8 unk130[0xd4];
+    s16 ownerIds[8];
+    u8 unk214;
+    u8 partyCount;
+    u8 unk216[6];
     u16 page;
 };
 
@@ -75,8 +75,8 @@ s32 Func_080fe274(void)
     u16 *page;
 
     heap = Ram_HeapSlots;
-    transition = heap->display_transition;
-    heap->object_system->suspended = 1;
+    transition = heap->displayTransition;
+    heap->objectSystem->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     saved = *(u16 *)&transition->active;
@@ -85,7 +85,7 @@ s32 Func_080fe274(void)
     UiWindow_InitializeWork(0);
     page = &state->page;
     *page = 0;
-    state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
+    state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
     Func_080fee04(0, 3, 0, 7);
     CopyWords_(palette, (void *)0x05000000, 64);
     CopyWords_(tiles, (void *)0x06004000, 0x2800);
@@ -95,7 +95,7 @@ s32 Func_080fe274(void)
     Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
     Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
     UiWork_SetAltFlagAndClearTableFar(1);
-    state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
+    state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
     if (Party_SumDjinnCountsFar(result) != 0)
         Func_081051a8();
     Link_DrawShiftedTilePairFar(0x06002500);
@@ -107,7 +107,7 @@ s32 Func_080fe274(void)
 
     Menu_EnsureCancelSound();
     MenuIcon_ReleaseSlots();
-    RenderOutput_ClearListFar(state->status_window);
+    RenderOutput_ClearListFar(state->statusWindow);
     MenuIcon_ReleaseObjects();
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -118,14 +118,14 @@ s32 Func_080fe274(void)
     CopyWords_((void *)0x06004000, tiles, 0x2800);
     MemFree(tiles);
     MemFree(palette);
-    ((struct UiRenderWork *)heap->window_tiles)->menu_busy = 1;
+    ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(220);
-    heap->object_system->suspended = 0;
+    heap->objectSystem->suspended = 0;
     transition->active = saved;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    ((struct UiRenderWork *)heap->window_tiles)->menu_busy = 0;
+    ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 0;
     return result;
 }

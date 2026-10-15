@@ -47,7 +47,7 @@ s32 Func_0804e1d8(void)
     page = 0;
     mode = 0;
     redraw = 1;
-    Ram_HeapSlots->object_system->suspended = redraw;
+    Ram_HeapSlots->objectSystem->suspended = redraw;
     WaitFrames(1);
 
     while (1) {
@@ -110,6 +110,6 @@ s32 Func_0804e1d8(void)
         WaitFrames(1);
     }
     UiWork_Finalize(window, 2);
-    Ram_HeapSlots->object_system->suspended = 0;
+    Ram_HeapSlots->objectSystem->suspended = 0;
     return 0;
 }

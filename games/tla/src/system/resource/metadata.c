@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct ResourceMetadataRecord {
-    u8 unknown_00[20];
+    u8 unk00[20];
 };
 
 extern struct ResourceMetadataRecord Resource_Data012[];

@@ -20,18 +20,18 @@ void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void EventRuntime_RunPendingEvent(void *event, s32 a, s32 b);
 
 struct EffectWork_080dd950 {
-    u8 unknown_00[24];
-    s16 value_18;
-    s16 value_1a;
-    u8 unknown_1c[24];
-    s8 child_option;
+    u8 unk00[24];
+    s16 value18;
+    s16 value1a;
+    u8 unk1c[24];
+    s8 childOption;
 };
 
 void Func_080dd950(void)
 {
-    u8 *state = Ram_HeapSlots->event_work;
-    struct EffectWork_080dd950 *work = Ram_HeapSlots->effect_work;
-    u8 *scene = (u8 *)Ram_HeapSlots->display_transition;
+    u8 *state = Ram_HeapSlots->eventWork;
+    struct EffectWork_080dd950 *work = Ram_HeapSlots->effectWork;
+    u8 *scene = (u8 *)Ram_HeapSlots->displayTransition;
     void *ev;
     s16 zero;
 
@@ -50,8 +50,8 @@ void Func_080dd950(void)
         WaitFrames(1);
         ev = Func_080ce458(0x40000005, 8, Func_080ce31c(8));
         if (ev != NULL)
-            EventRuntime_RunPendingEvent(ev, work->value_18, work->value_1a);
-        if (work->child_option == 0) {
+            EventRuntime_RunPendingEvent(ev, work->value18, work->value1a);
+        if (work->childOption == 0) {
             scene[0x53e] = 0;
             scene[0x53c] = 1;
             scene[0x53d] = 1;

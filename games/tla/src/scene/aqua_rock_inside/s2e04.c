@@ -16,16 +16,16 @@ void Func_02002e04(s32 id)
 
 void Func_02002e34(s32 entrance)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 i;
 
     Func_02003d7c();
     Func_02003eac(0);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
-    leader->motion_flags = 0;
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+    leader->motionFlags = 0;
     /* FAKEMATCH: the native clears the motion flags before it addresses the priority flags (differ 2 without the barrier). */
-    __asm__("" : "+r"(leader), "+m"(leader->motion_flags));
-    leader->priority_flags |= 0x20;
+    __asm__("" : "+r"(leader), "+m"(leader->motionFlags));
+    leader->priorityFlags |= 0x20;
     Func_02003ef4(215);
     Func_02003cc4(leader, 18);
     Func_02003ef4(612);

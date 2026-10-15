@@ -23,23 +23,23 @@ void Func_02001a20(void);
 
 void Func_02001c68(s32 x, s32 z, s32 value)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    void *work = Ram_HeapSlots->event_work;
-    s32 step_x = GameFlag_GetByte(Data_02002864[1]);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    void *work = Ram_HeapSlots->eventWork;
+    s32 stepX = GameFlag_GetByte(Data_02002864[1]);
     s32 step_z = GameFlag_GetByte(Data_02002864[1] + 8);
 
-    if (step_x != 0 || step_z != 0) {
+    if (stepX != 0 || step_z != 0) {
         struct ObjectRuntime *follower;
 
         GameFlag_SetByte(Data_02002864[1], 0);
         GameFlag_SetByte(Data_02002864[1] + 8, 0);
-        object->x = ((step_x + x) << 20) + 0x80000;
+        object->x = ((stepX + x) << 20) + 0x80000;
         object->z = ((step_z + z) << 20) + 0x80000;
         follower = (struct ObjectRuntime *)WORD_AT(work, 460);
         follower->x = object->x;
         follower->z = object->z;
         Func_02001dd0();
         Func_02001a20();
-        WORD_AT(Ram_HeapSlots->event_work, 428) = value;
+        WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
     }
 }

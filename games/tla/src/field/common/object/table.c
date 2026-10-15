@@ -17,20 +17,20 @@
 
 void ObjectTable_Clear(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 i;
 
     for (i = 0; i < 80; i++)
         work->objects[i] = NULL;
 }
 
-struct ObjectRuntime *ObjectTable_Get(u32 object_id)
+struct ObjectRuntime *ObjectTable_Get(u32 objectId)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    if (object_id > 0xbf)
+    if (objectId > 0xbf)
         return NULL;
-    return work->objects[object_id];
+    return work->objects[objectId];
 }
 
 void ObjectTable_Snapshot(void)
@@ -55,10 +55,10 @@ void ObjectTable_Snapshot(void)
             continue;
         *indices++ = i;
         Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
-        if (object->animation_kind == 1) {
+        if (object->animationKind == 1) {
             sprite = object->animation;
             frame = sprite->frame;
-            next = sprite->next_frame;
+            next = sprite->nextFrame;
             priority = sprite->priority;
         } else {
             frame = 0;

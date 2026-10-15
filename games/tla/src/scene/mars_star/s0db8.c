@@ -23,11 +23,11 @@ void Func_02000db8(s32 id)
 
     ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
     ObjectMotion_SetActionVariant(id, 3);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2 without) */
     __asm__("");
-    object->priority_flags |= 2;
-    object->collision_flags = 0;
+    object->priorityFlags |= 2;
+    object->collisionFlags = 0;
     if (id == 13) {
         Func_0200432c_(13, 175 << 18, 224 << 16);
         Object_SetModeById(13, 10);

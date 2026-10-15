@@ -1,5 +1,5 @@
 /* Near miss, differ 4 of 124 (two reordered rows at the start): The Broken Seal's
- * Object_FindNearestFacingTarget with this game's object table (Ram_HeapSlots->script_objects).
+ * Object_FindNearestFacingTarget with this game's object table (Ram_HeapSlots->scriptObjects).
  * The native starts the table's address, then the empty result (movs r3, #192; lsls r3, r3, #18;
  * movs r2, #0; ldr r5, [r3, #20]; mov sl, r2); this starts the result one row early on both.
  * The other five orders of the three initial statements measured 4 or 8, a barrier after the
@@ -10,12 +10,12 @@
 #include "ram_buffer.h"
 
 struct ObjectLayerAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[27];
-    u8 unused_25 : 2;
-    u8 shadow_layer : 2;
+    u8 unk0a[27];
+    u8 unused25 : 2;
+    u8 shadowLayer : 2;
 };
 
 void SceneActor_UpdateFacingTowardTarget(void);
@@ -40,11 +40,11 @@ extern const u8 Data_080f34f4[];
 s32 ArcTan2(s32, s32);
 
 struct ObjectAnimationEntry {
-    s16 anim_id;
+    s16 animId;
 };
 
 struct ObjectAnimation {
-    u8 unknown_00[0x28];
+    u8 unk00[0x28];
     struct ObjectAnimationEntry *entries[1];
 };
 
@@ -64,13 +64,13 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 
     found = NULL;
     best = 40;
-    entry = Ram_HeapSlots->script_objects;
+    entry = Ram_HeapSlots->scriptObjects;
     for (cnt = 0; cnt < 64; cnt++, entry++) {
         if (entry->script == NULL)
             continue;
         if (entry == self)
             continue;
-        if (entry->animation_kind != 1)
+        if (entry->animationKind != 1)
             continue;
         dy = entry->y - self->y;
         if (dy >= 0) {
@@ -98,7 +98,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
     }
     if (found == NULL)
         return NULL;
-    if (((struct ObjectAnimation *)found->animation)->entries[0]->anim_id != id)
+    if (((struct ObjectAnimation *)found->animation)->entries[0]->animId != id)
         return NULL;
     return found;
 }

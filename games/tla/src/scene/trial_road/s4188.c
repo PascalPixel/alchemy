@@ -4,8 +4,8 @@
 
 struct TrialRoadGauge {
     u16 handle;
-    u16 field_02;
-    u8 unknown_004[0x1c0];
+    u16 field02;
+    u8 unk004[0x1c0];
     void *buffer;
 };
 
@@ -45,8 +45,8 @@ void Func_02004188(s32 a, s32 b)
     VramBlock_LoadCached((s16)gauge->handle, 0x800, buffer);
     MemFree(buffer);
     gauge->buffer = Runtime_BumpAllocateAlternatePool(0x3c0);
-    gauge->field_02 = b;
+    gauge->field02 = b;
     Scheduler_AddOrUpdateCallback(Func_02003da0, 0x48d);
     Scheduler_AddOrUpdateCallback(Func_02003f68, 0x480);
-    Object_GetById(Func_02005a40())->priority_flags |= 0x40;
+    Object_GetById(Func_02005a40())->priorityFlags |= 0x40;
 }

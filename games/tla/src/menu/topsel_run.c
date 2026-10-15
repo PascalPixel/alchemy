@@ -18,7 +18,7 @@ s32 Menu_RunTopSelection(void)
     s32 selection;
     u8 *state;
 
-    state = Ram_HeapSlots->event_work;
+    state = Ram_HeapSlots->eventWork;
     selection = 0;
 
 loop:

@@ -54,7 +54,7 @@ void Func_0200096c(s32 unused, s32 id)
     if (object->x >> 20 == 11) {
         s32 y;
 
-        object->speed_limit = 0x4000;
+        object->speedLimit = 0x4000;
         object->acceleration = 0x2000;
         y = object->y;
         Func_02004bf8(object, 0x980000, y, 0x3180000);
@@ -63,7 +63,7 @@ void Func_0200096c(s32 unused, s32 id)
     if (*(volatile s32 *)&object->x >> 20 == 10) {
         s32 y;
 
-        object->speed_limit = 0x4000;
+        object->speedLimit = 0x4000;
         object->acceleration = 0x2000;
         y = object->y;
         {

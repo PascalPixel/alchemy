@@ -9,18 +9,18 @@
 #include "types.h"
 
 struct OrbitEffect {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[15];
-    u8 priority_flags;
-    u8 unknown_24[4];
+    u8 unk14[15];
+    u8 priorityFlags;
+    u8 unk24[4];
     s32 scale;
-    u8 unknown_2c[28];
+    u8 unk2c[28];
     s32 speed;
-    u8 unknown_4c[24];
+    u8 unk4c[24];
     u16 timer;
     s16 pause;
     struct OrbitEffect *anchor;
@@ -59,7 +59,7 @@ loop:
             effect->speed = 0x1999;
             effect->scale = 0x30000;
             effect->angle = Random16Far();
-            effect->priority_flags = 0;
+            effect->priorityFlags = 0;
             Func_02000e5c(effect, 2);
         }
     }

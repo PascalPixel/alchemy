@@ -29,7 +29,7 @@ void Func_0200582c(s32 index, s32 a, s32 b);
 
 s32 Func_02003604(void)
 {
-    u8 *state = UnitGet(gPartyState.current_owner);
+    u8 *state = UnitGet(gPartyState.currentOwner);
     s32 sum = 0;
     u32 i;
 

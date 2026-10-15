@@ -33,7 +33,7 @@ void Func_02000244(void)
 
 void Func_0200029c(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -49,7 +49,7 @@ void Func_0200029c(s32 actor)
 
 void Func_020002fc(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -65,7 +65,7 @@ void Func_020002fc(s32 actor)
 
 void Func_0200035c(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -81,7 +81,7 @@ void Func_0200035c(s32 actor)
 
 void Func_020003bc(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -98,7 +98,7 @@ void Func_020003bc(s32 actor)
 
 void Func_02000424(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->facing;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {

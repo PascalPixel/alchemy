@@ -19,7 +19,7 @@ void Func_080cf3b4(struct ObjectRuntime *object, s32 flags)
         if (flags & 1) {
             ObjectDispatch_SetSingleChildFlagsFar(object, 0);
             ObjectDispatch_InitializeFar(object, Data_080effd8);
-            object->velocity_y = 0x20000;
+            object->velocityY = 0x20000;
             object->gravity = 0x4000;
             object->update = BattleFx_EmitRandomParticleFromEmitter;
         }
@@ -34,15 +34,15 @@ void Func_080cf3b4(struct ObjectRuntime *object, s32 flags)
 }
 
 struct EffectVisual {
-    u8 unknown_00[5];
-    u8 flags_05;
-    u8 unknown_06[3];
-    u8 flags_09;
-    u8 unknown_0a[6];
-    u8 tile_slot;
-    u8 unknown_11[9];
-    u8 value_1a;
-    u8 value_1b;
+    u8 unk00[5];
+    u8 flags05;
+    u8 unk06[3];
+    u8 flags09;
+    u8 unk0a[6];
+    u8 tileSlot;
+    u8 unk11[9];
+    u8 value1a;
+    u8 value1b;
 };
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_08038248(s32 item);
@@ -61,11 +61,11 @@ void Func_080cf424(s32 item, s32 flags)
         s32 mask;
         s32 zero = 0;
 
-        visual->value_1a = zero;
-        visual->value_1b = zero;
-        visual->flags_05 &= zero - 33;
+        visual->value1a = zero;
+        visual->value1b = zero;
+        visual->flags05 &= zero - 33;
 
-        mask = visual->flags_09 & 0x0f;
+        mask = visual->flags09 & 0x0f;
         {
             s32 clear = 13;
 
@@ -73,10 +73,10 @@ void Func_080cf424(s32 item, s32 flags)
             mask &= clear;
         }
         mask |= 4;
-        visual->flags_09 = mask;
+        visual->flags09 = mask;
 
         Func_08038248(item);
-        VramBlock_LoadCached(visual->tile_slot, 128, buffer + 0x400);
+        VramBlock_LoadCached(visual->tileSlot, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
 
         if (flags & 1)

@@ -62,13 +62,13 @@ void Colosso_SelectSoloCompetitor(s32 id)
 	Party_RemoveActiveOwner(3);
 	Party_RemoveActiveOwner(5);
 	Party_AddActiveOwner(id);
-	gGameState.selected_actor = id;
+	gGameState.selectedActor = id;
 	Engine_CameraFollowActor(id, 0);
 	unit = UnitGet(id);
-	unit->hp = unit->max_hp;
-	unit->pp = unit->max_pp;
+	unit->hp = unit->maxHp;
+	unit->pp = unit->maxPp;
 	unit->poison = 0;
-	v = (unit->hp << 14) / unit->max_hp;
+	v = (unit->hp << 14) / unit->maxHp;
 	t = 0x4000;
 	if (v <= 0x4000)
 	{
@@ -76,12 +76,12 @@ void Colosso_SelectSoloCompetitor(s32 id)
 		if (v >= 0)
 			t = v;
 	}
-	unit->hp_gauge = t;
+	unit->hpGauge = t;
 	if ((u16)t == 0 && unit->hp != 0)
 	{
-		unit->hp_gauge = 1;
+		unit->hpGauge = 1;
 	}
-	v = (unit->pp << 14) / unit->max_pp;
+	v = (unit->pp << 14) / unit->maxPp;
 	t = 0x4000;
 	if (v <= 0x4000)
 	{
@@ -89,10 +89,10 @@ void Colosso_SelectSoloCompetitor(s32 id)
 		if (v >= 0)
 			t = v;
 	}
-	unit->pp_gauge = t;
+	unit->ppGauge = t;
 	if ((u16)t == 0 && unit->pp != 0)
 	{
-		unit->pp_gauge = 1;
+		unit->ppGauge = 1;
 	}
 	Engine_EventClearInvalidPackedValues();
 }
@@ -100,11 +100,11 @@ void Colosso_SelectSoloCompetitor(s32 id)
 void SceneState_RaiseTriggerOnPsynergyTarget(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  selection = gGameState.selected_actor;
+	s32				  selection = gGameState.selectedActor;
 
-	if (selection != 0 && (work->psynergy_request >> 10) == selection && Engine_GameFlagIsSet(321) != 0)
+	if (selection != 0 && (work->psynergyRequest >> 10) == selection && Engine_GameFlagIsSet(321) != 0)
 	{
-		u16 *p = (u16 *)&work->raised_trigger;
+		u16 *p = (u16 *)&work->raisedTrigger;
 		s32	 val = 99;
 
 		*p = val;
@@ -117,7 +117,7 @@ static void EV99_RAISED(void)
 	u8				  *state = (u8 *)gEventWork;
 	s32				   best = 8;
 	s32				   bestd = 0x100000;
-	s32				   n = gGameState.selected_actor;
+	s32				   n = gGameState.selectedActor;
 	struct FieldActor *p = Object_GetById(n);
 	s32				   i;
 	s32				  *q;
@@ -129,7 +129,7 @@ static void EV99_RAISED(void)
 		struct FieldActor *o = Object_GetById(i);
 
 		if (o != 0 && o->active == 1
-			&& ((struct AnimationObject *)o->sprite)->entries[0]->anim_id == 165)
+			&& ((struct AnimationObject *)o->sprite)->entries[0]->animId == 165)
 		{
 			s32 dx = (p->x.fixed - o->x.fixed) / 65536;
 			s32 dy = (p->z.fixed - o->z.fixed) / 65536;
@@ -154,9 +154,9 @@ static void EV99_RAISED(void)
 	}
 	Engine_EventSetMessage(MsgColossoMatchAboutBeginPleaseTake);
 	Engine_EventShowMessage(best, 0);
-	q = &((struct EventWork *)state)->start_transition;
+	q = &((struct EventWork *)state)->startTransition;
 	*q = 512;
-	((struct EventWork *)state)->transition_frames = 15;
+	((struct EventWork *)state)->transitionFrames = 15;
 	Engine_EventWait(20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -195,21 +195,21 @@ void Colosso_FinishSoloRound(s32 id)
 	// 話者を二度引き、どちらの結果も使わない (original behaviour: two real calls)
 	Object_GetById(id);
 	Object_GetById(id);
-	slot = gGameState.selected_actor;
+	slot = gGameState.selectedActor;
 	obj = Object_GetById(slot);
 	Engine_EventBegin();
 	msg = MsgColossoCheering;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(id, 0);
-	gEventWork->choice_message = MsgColossoCheeringChoices;
-	gEventWork->unknown_cc4 = 4;
+	gEventWork->choiceMessage = MsgColossoCheeringChoices;
+	gEventWork->unkcc4 = 4;
 	res = Engine_EventChooseYesNo(slot, 0);
 	if (res == 0)
 	{
 		Engine_EventSetMessage(msg + 1);
 		Engine_EventShowMessage(id, 0);
-		work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-		work->transition_frames = 15;
+		work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		work->transitionFrames = 15;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		FieldGameFlag_SetByte((slot << 4) + 0x370, obj->x.fixed >> 20);
@@ -225,7 +225,7 @@ void Colosso_FinishSoloRound(s32 id)
 			Colosso_SelectSoloCompetitor(slot);
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
-			work->start_transition = 0;
+			work->startTransition = 0;
 		}
 	}
 	else
@@ -376,7 +376,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 		count = GetPartyMemberCount();
 		for (i = 0; i < count; i++)
 		{
-			buf[i] = gGameState.active_owners[i];
+			buf[i] = gGameState.activeOwners[i];
 		}
 		if (count <= 1)
 		{

@@ -5,20 +5,20 @@
 extern u8 gDebugMode;
 
 struct EventWaitWork {
-    u8 unknown_000[0x1b8];
-    s32 wait_mode;
+    u8 unk000[0x1b8];
+    s32 waitMode;
 };
 
 void EventRuntime_UpdateWaitMode(void)
 {
-    struct EventWaitWork *work = Ram_HeapSlots->event_work;
+    struct EventWaitWork *work = Ram_HeapSlots->eventWork;
 
     if (gDebugMode != 0) {
         if (((struct InputState *)&gInput)->pressed & 0x200) {
-            work->wait_mode = 0;
+            work->waitMode = 0;
         }
         if (((volatile struct InputState *)&gInput)->pressed & 0x100) {
-            work->wait_mode = -1;
+            work->waitMode = -1;
         }
     }
 }

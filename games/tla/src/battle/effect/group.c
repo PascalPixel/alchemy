@@ -16,26 +16,26 @@ struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
 
 struct SpawnScene {
-    u8 unknown_00[0x10];
-    struct ObjectRuntime *main_object;
+    u8 unk00[0x10];
+    struct ObjectRuntime *mainObject;
 };
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
-    struct SpawnScene *scene = Ram_HeapSlots->effect_work;
+    struct SpawnScene *scene = Ram_HeapSlots->effectWork;
     struct ObjectRuntime *object;
     u8 *part;
     s32 mask;
 
     object = Func_080200c0(kind, x, y, z);
     if (object != NULL) {
-        if (object->animation_kind == 0) {
+        if (object->animationKind == 0) {
             Object_Destroy((struct DispatchObject *)object);
             return NULL;
         }
-        object->terrain_height = scene->main_object->terrain_height;
-        object->motion_flags = 4;
-        object->priority_flags = 4;
+        object->terrainHeight = scene->mainObject->terrainHeight;
+        object->motionFlags = 4;
+        object->priorityFlags = 4;
         mask = ~0xc;
         /* FAKEMATCH: ⚓️ builds the priority mask before loading the animation */
         asm volatile("" : "+l"(mask) : : "memory");
@@ -52,16 +52,16 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
 {
     s16 *active_object_id;
     struct ObjectRuntime *object;
-    s32 object_id;
+    s32 objectId;
 
-    object_id = 0;
+    objectId = 0;
     active_object_id = (s16 *)gPlayerObjectId;
     do {
-        object = ObjectTable_Get(object_id);
-        if (object_id != *active_object_id && object != NULL && object != excluded_object) {
-            object->movement_state = group_mode;
+        object = ObjectTable_Get(objectId);
+        if (objectId != *active_object_id && object != NULL && object != excluded_object) {
+            object->movementState = group_mode;
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }
-        object_id++;
-    } while (object_id <= 0x50);
+        objectId++;
+    } while (objectId <= 0x50);
 }

@@ -51,7 +51,7 @@ struct SpringPoint
 
 struct SpringRide
 {
-	u8				   unknown_00[2];
+	u8				   unk00[2];
 	s16				   hold;
 	struct SpringPoint trail[4];
 	struct SpringPoint shadow;
@@ -69,7 +69,7 @@ struct SpringActor
 	s16 mode;
 	s16 react;
 	s16 cool;
-	u8	unknown_16[2];
+	u8	unk16[2];
 };
 
 static __inline__ void Io_SetBlendControl(s32 value)
@@ -142,7 +142,7 @@ static void EV11_TALK(s32 object)
 
 static void EV80_SEARCH(void)
 {
-	s32 leader = gGameState.selected_actor;
+	s32 leader = gGameState.selectedActor;
 
 	if (GameFlag_IsSet(0x200) == 0)
 	{
@@ -195,15 +195,15 @@ s32 TolbiSpring_OpenScene(void)
 
 	if (gGameState.scene == (s32)&SceneId_TolbiSpring2)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Io_Write16(0x3f42, &REG_BLDCNT);
 		Io_Write16(0x80c, &REG_BLDALPHA);
 		Engine_ActorSetAnimation(24, 2);
 		Engine_ActorSetAnimation(25, 2);
-		Object_GetById(24)->scale_x = -0x10000;
-		Object_GetById(25)->scale_x = -0x10000;
-		Object_GetById(24)->priority_flags = 2;
-		Object_GetById(25)->priority_flags = 2;
+		Object_GetById(24)->scaleX = -0x10000;
+		Object_GetById(25)->scaleX = -0x10000;
+		Object_GetById(24)->priorityFlags = 2;
+		Object_GetById(25)->priorityFlags = 2;
 		Engine_EventOpenScreen();
 		if (gGameState.entrance == 1)
 		{
@@ -222,7 +222,7 @@ s32 TolbiSpring_OpenScene(void)
 			Engine_ActorSetPosition(17, 0, 0);
 		}
 		gOamCopyEnabled = 1;
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		if (gGameState.entrance == 10)
 		{
 			Engine_ActorSetChildValue(8, 1);
@@ -269,7 +269,7 @@ s32 TolbiSpring_OpenScene(void)
 		}
 		if (gGameState.entrance == 12 && !Engine_GameFlagIsSet(0x109))
 		{
-			list = gGameState.won_prizes;
+			list = gGameState.wonPrizes;
 			Engine_EventBegin();
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
@@ -304,7 +304,7 @@ s32 TolbiSpring_OpenScene(void)
 						Engine_EventWait(30);
 					}
 				}
-				gGameState.won_prizes[0] = -2;
+				gGameState.wonPrizes[0] = -2;
 				Engine_EventSetMessage(MsgTolbiComeAgain);
 				Engine_EventShowMessage(8, 0);
 			}
@@ -787,7 +787,7 @@ prompt:
 			roll = (u32)(Random_Next() * sum) >> 16;
 			for (i = 0; i < 15; i++)
 			{
-				roll -= state->prize_weights[i];
+				roll -= state->prizeWeights[i];
 				if (roll < 0)
 				{
 					break;
@@ -861,11 +861,11 @@ static s32 SceneDialogue_PickTopicVariantId(s32 topic)
 		topic = ((unsigned int)(Engine_RandomNext() * 5) >> 16);
 	}
 
-	cursor = gGameState.won_prizes[8 + topic];
+	cursor = gGameState.wonPrizes[8 + topic];
 
 	variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
-	gGameState.won_prizes[8 + topic] = variant;
+	gGameState.wonPrizes[8 + topic] = variant;
 
 	return TolbiSpring_TopicIds[topic * 3 + variant];
 }
@@ -885,7 +885,7 @@ static void TolbiSpring_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 v
 		((struct FieldActor *)actor)->z.fixed = *pos;
 		((struct FieldActor *)actor)->facing = dir;
 		zero.v = 0;
-		((struct FieldActor *)actor)->motion_flags = zero.v;
+		((struct FieldActor *)actor)->motionFlags = zero.v;
 		((struct FieldActor *)actor)->sprite->flags = zero.v;
 		ObjectDispatch_ApplyValueToChildren(actor, value);
 	}
@@ -1311,7 +1311,7 @@ static void FieldScene_RunSecondaryScript(void)
 			if (dist <= 119 && ride->frames > 30)
 			{
 				s32 speed;
-				s32 next_mode;
+				s32 nextMode;
 
 				speed = 0x30000;
 				if (i <= 1)
@@ -1343,9 +1343,9 @@ static void FieldScene_RunSecondaryScript(void)
 					ride->frames = ride->frames - 100;
 				}
 				Engine_AudioPlayCue(301);
-				next_mode = (rec->mode + 1) % 3;
+				nextMode = (rec->mode + 1) % 3;
 				rec->react = 36;
-				rec->mode = next_mode;
+				rec->mode = nextMode;
 				rec->cool = 30;
 			}
 		}
@@ -1477,7 +1477,7 @@ static s32 TolbiSpring_RunSpringRide(s32 side)
 		}
 		if (TolbiSpring_RideFrame == 16)
 		{
-			Engine_ActorSetAnimation(gGameState.selected_actor, 29);
+			Engine_ActorSetAnimation(gGameState.selectedActor, 29);
 			ride->hold = 0;
 			ride->velocity.x = 0x14ccc;
 			ride->velocity.y = 0x40000;

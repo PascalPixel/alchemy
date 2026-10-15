@@ -2,9 +2,9 @@
 
 struct DescriptorEntry {
     s16 id;
-    u8 unknown_02[2];
+    u8 unk02[2];
     s16 range;
-    u8 unknown_06[2];
+    u8 unk06[2];
 };
 
 struct DescriptorEntry *Func_080cda58(s32 id);

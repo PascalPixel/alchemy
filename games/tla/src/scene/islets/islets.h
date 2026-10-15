@@ -11,12 +11,12 @@
 #include "text/msg_ids.h"
 
 struct IsletsEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[4];
-    s16 field_15a;
-    u8 unknown_15c[0x50];
-    s32 field_1ac;
+    u8 unk156[4];
+    s16 field15a;
+    u8 unk15c[0x50];
+    s32 field1ac;
 };
 
 extern u32 gFrameCount;
@@ -74,7 +74,7 @@ void Func_0200329c(void);
 void Func_02003e3c(struct ObjectRuntime *object, s32 value);
 
 struct IsletsMapFlags {
-    u8 unknown_00[0x17];
+    u8 unk00[0x17];
     u8 unused : 2;
     u8 mode : 2;
 };

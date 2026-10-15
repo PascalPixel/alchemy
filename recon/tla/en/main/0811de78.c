@@ -10,8 +10,8 @@
 #include "battle_unit.h"
 
 struct EscapeTransition {
-    s32 target_yaw;
-    s32 unknown_04[3];
+    s32 targetYaw;
+    s32 unk04[3];
     s32 active;
 };
 
@@ -19,13 +19,13 @@ extern u8 MsgNoEscape[];
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattlePresentation_WaitForAdvance(void);
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
+void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
-void BattleMotion_SetupEscapeObject(s32 object_id);
+void BattleMotion_SetupEscapeObject(s32 objectId);
 void WaitFrames(s32 frames);
 u32 Random16(void);
-void BattleActor_RemoveFromLists(s32 unit_id);
-void ActivateBattleObjectSlot(s32 object_id);
+void BattleActor_RemoveFromLists(s32 unitId);
+void ActivateBattleObjectSlot(s32 objectId);
 struct BattleUnit *UnitGet(s32 id);
 
 s32 Func_0811de78(struct BattlePlan *plan)
@@ -35,20 +35,20 @@ s32 Func_0811de78(struct BattlePlan *plan)
         s32 value;
         u16 halves[2];
     } completed;
-    struct EscapeTransition *presentation = (struct EscapeTransition *)Ram_HeapSlots->transition_work;
+    struct EscapeTransition *presentation = (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
     u32 aid = plan->aid;
-    struct BattleWork *scene = Ram_HeapSlots->battle_work;
+    struct BattleWork *scene = Ram_HeapSlots->battleWork;
     s32 party_mode;
 
     completed.halves[0] = 0;
     completed.halves[1] = 0;
-    presentation->target_yaw = 0x2000;
+    presentation->targetYaw = 0x2000;
     presentation->active = 1;
     BattlePres_SetActorModes(0, 0);
 
     if (aid <= 7) {
         party_mode = completed.value;
-        if (scene->encounter_mode != 2)
+        if (scene->encounterMode != 2)
             party_mode = 1;
 
         if (!party_mode) {

@@ -39,13 +39,13 @@ void Func_02000488(void)
 
 void Func_020004a8(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
 
     if (x == 5 && z == 17) {
-        ObjectMotion_Launch(gPartyState.current_owner, 2, 0);
-        SetPosCommit(gPartyState.current_owner, 88, 296);
+        ObjectMotion_Launch(gPartyState.currentOwner, 2, 0);
+        SetPosCommit(gPartyState.currentOwner, 88, 296);
     }
     Func_020021a0(5, 70, 9, 7, 5, 43, 1);
     Func_02002018(4, 25, 5, 17, 1, 1);
@@ -55,11 +55,11 @@ void Func_020004a8(void)
 
 void Func_0200052c(void)
 {
-    s32 next = *(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x154);
+    s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
     ObjectMotion_ArmCallback(4, 0xc000, 0);
     Battle_WaitMode0(10);
-    Object_GetById(4)->action_flags &= 0xfe;
+    Object_GetById(4)->actionFlags &= 0xfe;
     CopyCells(96, 14, 72, 14, 2, 1);
     ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
     ObjectMotion_CommitCurrentPositionAndActivate(4);

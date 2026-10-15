@@ -73,13 +73,13 @@ s32 Func_02000624(void)
     struct FieldSprite *sprite;
     void *event;
 
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 521;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     Func_02001e80(0);
     if (gPartyState.scene == (s32)&SceneId_Ov659Room1) {
         /* FAKEMATCH: the one-pass block ends the scheduling block: ⚓️ loads the event work before it builds the offset 0xd4c (differ 2 without it; through a plain pointer 20). */
         do {
-            event = Ram_HeapSlots->event_work;
+            event = Ram_HeapSlots->eventWork;
         } while (0);
         FIELD_AT(event, u16, 0xd4c) = 3;
         if (!FlagCheck(0x821)) {
@@ -102,10 +102,10 @@ s32 Func_02000624(void)
         } else {
             Func_02001ef0(10, 0xc000);
             ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-            ((struct FieldSprite *)Object_GetById(10)->animation)->next_frame |= 8;
+            ((struct FieldSprite *)Object_GetById(10)->animation)->nextFrame |= 8;
             sprite = Object_GetById(10)->animation;
-            sprite->unknown_11 = (sprite->unknown_11 & 3) | 32;
-            ((struct FieldSprite *)Object_GetById(10)->animation)->unknown_19 = 1;
+            sprite->unk11 = (sprite->unk11 & 3) | 32;
+            ((struct FieldSprite *)Object_GetById(10)->animation)->unk19 = 1;
         }
     }
     Func_02000534();
@@ -198,14 +198,14 @@ void Func_020007dc(void)
     Call3((void (*)())Func_02001e28, 7, 0, 10);
     Value3((s32 (*)())Func_02001e48, 9, 0x103, 0);
     object0 = Object_GetById(9);
-    object0->action_flags &= 254;
+    object0->actionFlags &= 254;
     for (i = 2; i >= 0; i--) {
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, 0, -8);
         Call1((void (*)())Func_02001f10, 134);
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, 0, 8);
     }
     object1 = Object_GetById(9);
-    object1->action_flags |= 1;
+    object1->actionFlags |= 1;
     Call1((void (*)())Battle_WaitMode0, 30);
     Value3((s32 (*)())Func_02001e48, 7, 0x102, 30);
     Call3((void (*)())Func_02001e28, 9, 0, 10);
@@ -256,21 +256,21 @@ void Func_020007dc(void)
     Call3((void (*)())Func_02001e28, 11, 0, 10);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 9);
     object3 = Object_GetById(9);
-    object3->scale_x = 0x10000;
+    object3->scaleX = 0x10000;
     object4 = Object_GetById(9);
-    object4->scale_y = 0x10000;
+    object4->scaleY = 0x10000;
     Call1((void (*)())Battle_WaitMode0, 4);
     object5 = Object_GetById(9);
-    object5->motion_flags = 2;
+    object5->motionFlags = 2;
     object6 = Object_GetById(9);
-    object6->action_flags &= 254;
+    object6->actionFlags &= 254;
     Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 9, -8, 0);
     Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, Data_02003418);
     Call1((void (*)())Object_RefreshSelectorById, 9);
     Call1((void (*)())Func_02001f10, 127);
     Call1((void (*)())Battle_WaitMode0, 60);
     object7 = Object_GetById(9);
-    object7->action_flags = (object7->action_flags | 1);
+    object7->actionFlags = (object7->actionFlags | 1);
     Call3((void (*)())ObjectMotion_Launch, 9, 6, 0);
     Call1((void (*)())Battle_WaitMode0, 3);
     Call2((void (*)())Func_02001ef0, 9, 0);
@@ -291,9 +291,9 @@ void Func_020007dc(void)
     Call3((void (*)())ObjectMotion_SetAngleToward, 9, 7, 0);
     Call1((void (*)())Battle_WaitMode0, 20);
     object9 = Object_GetById(10);
-    object9->action_flags &= 254;
+    object9->actionFlags &= 254;
     object10 = Object_GetById(9);
-    object10->action_flags &= 254;
+    object10->actionFlags &= 254;
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 9, -16, 16);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 7, 2);
     Call1((void (*)())Battle_WaitMode0, 20);
@@ -303,7 +303,7 @@ void Func_020007dc(void)
     Call3((void (*)())ObjectMotion_Launch, 9, 6, 20);
     Call1((void (*)())Battle_WaitMode0, 20);
     object11 = Object_GetById(9);
-    object11->action_flags = (object11->action_flags | 1);
+    object11->actionFlags = (object11->actionFlags | 1);
     Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 9, Data_020033c8);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 4, 9);
     Call2((void (*)())Object_LinkObjectAndSetCallback, 11, 9);
@@ -328,7 +328,7 @@ void Func_020007dc(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 10, 0, 10);
     object12 = Object_GetById(10);
-    object12->action_flags |= 1;
+    object12->actionFlags |= 1;
     Value2((s32 (*)())ObjectMotion_EnableActionAndSetCallback, 10, Data_020033c8);
     Call1((void (*)())Battle_WaitMode0, 40);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 4);
@@ -350,11 +350,11 @@ void Func_020007dc(void)
     if (result13 != 0) goto L_02008e40;
     Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
     Call3((void (*)())Func_02001e28, 11, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     goto L_02008e64;
 L_02008e40:
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 4);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call3((void (*)())Func_02001e28, 11, 0, 10);
 L_02008e64:
     Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);

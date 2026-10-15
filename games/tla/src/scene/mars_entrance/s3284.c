@@ -45,7 +45,7 @@ void Func_02004d98(void);
 
 void Func_02003284(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
     asm volatile("");

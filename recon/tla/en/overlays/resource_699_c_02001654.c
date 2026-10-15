@@ -9,12 +9,12 @@
 #include "field_sprite.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
 struct CellTarget {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -44,7 +44,7 @@ void Func_02001d4c(s32 cue);
 
 void Func_02001654(struct CellTarget *target)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = (leader->x >> 20) | (s16)(target->x & 64);
     s32 z = (leader->z >> 20) | (s16)(target->z & 64);
 

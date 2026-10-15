@@ -21,9 +21,9 @@ void Func_0200036c(void)
     Func_02001164(0);
     Call3((void (*)())ObjectMotion_ResetAndSetPosition, 17, 764, 384);
     Call3((void (*)())ObjectMotion_SetPositionAndCommit, 16, 746, 380);
-    Object_GetById(17)->velocity_y = 0x40000;
+    Object_GetById(17)->velocityY = 0x40000;
     ObjectMotion_CommitCurrentPositionAndActivate(17);
-    Object_GetById(17)->priority_flags |= 2;
+    Object_GetById(17)->priorityFlags |= 2;
     if (!Flag_IsSet(0x8ff) && !Flag_IsSet(0x201)) {
         ObjectMotion_EnableActionAndResetMotion(10);
         Call3((void (*)())ObjectMotion_SetPositionAndCommit, 10, 764, 388);

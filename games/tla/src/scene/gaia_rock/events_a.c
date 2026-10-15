@@ -50,14 +50,14 @@ void Func_02000100(s32 id)
     struct ObjectRuntime *object = Object_GetById(id);
     register s32 frames asm("r6"); /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native (differ 12 unpinned). */
 
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     for (frames = 60; frames != 0; frames--) {
         WaitFrames(1);
-        if (object->velocity_y == 0)
+        if (object->velocityY == 0)
             break;
     }
     WaitFrames(10);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
 }
 #else
 void Func_02000100(s32 id, s32 cue)
@@ -78,7 +78,7 @@ void Func_02000100(s32 id, s32 cue)
     while (frames != 0) {
         WaitFrames(1);
         frames--;
-        if (object->velocity_y == 0)
+        if (object->velocityY == 0)
             break;
     }
     if (cue != 0)

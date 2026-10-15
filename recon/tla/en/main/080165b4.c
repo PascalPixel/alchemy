@@ -19,26 +19,26 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     *(u32 *)&flags[4] = 0;
     Io_Write16(0, &REG_IME);
     for (i = 0; i <= 3; i++) {
-        swap = gSerialRuntime.pending_buffer[i];
-        gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
-        gSerialRuntime.ready_buffer[i] = swap;
+        swap = gSerialRuntime.pendingBuffer[i];
+        gSerialRuntime.pendingBuffer[i] = gSerialRuntime.readyBuffer[i];
+        gSerialRuntime.readyBuffer[i] = swap;
     }
-    *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
-    *(u32 *)gSerialRuntime.channel_flags = 0;
+    *(u32 *)flags = *(u32 *)gSerialRuntime.channelFlags;
+    *(u32 *)gSerialRuntime.channelFlags = 0;
     Io_Write16(1, &REG_IME);
-    gSerialRuntime.current_mask = 0;
+    gSerialRuntime.currentMask = 0;
     for (i = 0; i <= 1; i++) {
-        packet = gSerialRuntime.pending_buffer[i];
+        packet = gSerialRuntime.pendingBuffer[i];
         sum = 0;
         for (k = 0; k <= 13; k++)
             sum += packet[k];
         if (flags[i] == 1 && (s16)sum == -1) {
-            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, REG_DMA3);
-            gSerialRuntime.current_mask |= 1 << i;
+            Dma_Set(gSerialRuntime.pendingBuffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, REG_DMA3);
+            gSerialRuntime.currentMask |= 1 << i;
         }
         if ((s16)sum == -1)
-            gSerialRuntime.pending_buffer[i][1] = ~gSerialRuntime.pending_buffer[i][1];
+            gSerialRuntime.pendingBuffer[i][1] = ~gSerialRuntime.pendingBuffer[i][1];
     }
-    gSerialRuntime.received_mask |= gSerialRuntime.current_mask;
-    return gSerialRuntime.current_mask;
+    gSerialRuntime.receivedMask |= gSerialRuntime.currentMask;
+    return gSerialRuntime.currentMask;
 }

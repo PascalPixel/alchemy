@@ -45,13 +45,13 @@ void Func_020004e4(s32 id)
     s32 height;
 
     object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
+    object->motionFlags = 4;
+    height = object->terrainHeight;
     asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

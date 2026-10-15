@@ -16,13 +16,13 @@
 struct SceneEvent;
 
 struct TundariaTowerEffectParams {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u16 kind;
-    u8 unknown_1a[0xe];
+    u8 unk1a[0xe];
 };
 
 struct TundariaTowerSparkWork {
-    u8 unknown_0000[0x1604];
+    u8 unk0000[0x1604];
     s16 resource;
 };
 

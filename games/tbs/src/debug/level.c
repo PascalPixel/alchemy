@@ -110,7 +110,7 @@ static void EV11_TALK(void)
 	s32 flag;
 	s32 msg;
 
-	record = UnitGet(gGameState.selected_actor);
+	record = UnitGet(gGameState.selectedActor);
 	win = UiWindow_Create(0, 0, 30, 9, 2);
 
 	msg = MsgDebugRaiseEveryonesLevel;
@@ -417,23 +417,23 @@ static void ItemLevel_SelectAbility(void)
 
 static void SceneState_SetWorkWords1c0And1c8(void)
 {
-	gEventWork->start_transition = 0x201;
-	gEventWork->transition_frames = 24;
+	gEventWork->startTransition = 0x201;
+	gEventWork->transitionFrames = 24;
 	Engine_EventRequestExit();
 }
 
 s32 FieldScene_RunEntrySetup(void)
 {
-	gEventWork->start_transition = 516;
-	gEventWork->transition_frames = 24;
+	gEventWork->startTransition = 516;
+	gEventWork->transitionFrames = 24;
 #if EDITION_INTERNATIONAL
-	Object_GetById(11)->scale_y = 0x19999;
-	Object_GetById(11)->scale_x = 0x19999;
+	Object_GetById(11)->scaleY = 0x19999;
+	Object_GetById(11)->scaleX = 0x19999;
 	Engine_ActorSetAnimation(13, 5);
 	Engine_ActorSetAnimation(14, 2);
 #else
-	Object_GetById(11)->scale_y = 0x1b333;
-	Object_GetById(11)->scale_x = 0x1b333;
+	Object_GetById(11)->scaleY = 0x1b333;
+	Object_GetById(11)->scaleX = 0x1b333;
 #endif
 	return 0;
 }

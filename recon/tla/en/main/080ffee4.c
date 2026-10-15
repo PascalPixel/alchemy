@@ -11,21 +11,21 @@
 #include "text/msg_ids.h"
 
 struct InventoryMenuState {
-    u8 unknown_000[0x30];
-    s32 info_window;
-    s32 equip_window;
-    u8 unknown_038[0x18c];
+    u8 unk000[0x30];
+    s32 infoWindow;
+    s32 equipWindow;
+    u8 unk038[0x18c];
     u16 items[32];
 };
 
 struct MenuResult {
-    s32 owner_state;
-    s32 unused_04;
+    s32 ownerState;
+    s32 unused04;
     s32 page;
-    s32 page_count;
+    s32 pageCount;
     s32 row;
-    s32 entry_count;
-    s32 selected_index;
+    s32 entryCount;
+    s32 selectedIndex;
 };
 
 #define PAGE_ROWS 5
@@ -47,20 +47,20 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     u32 entry;
     u32 mask;
 
-    menu = Ram_HeapSlots->menu_runtime;
+    menu = Ram_HeapSlots->menuRuntime;
     base = state->page * PAGE_ROWS;
-    state->selected_index = base + state->row;
-    RenderOutput_RedrawSavedRectFar(menu->info_window);
+    state->selectedIndex = base + state->row;
+    RenderOutput_RedrawSavedRectFar(menu->infoWindow);
     WaitFrames(1);
-    if (menu->items[state->selected_index] != 0) {
+    if (menu->items[state->selectedIndex] != 0) {
         UiText_DrawCharacterAtOffsetFar(
-            (menu->items[state->selected_index] & ITEM_ID_MASK) + MsgItemPlainName,
-            menu->info_window, 0, 0);
+            (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
+            menu->infoWindow, 0, 0);
     }
 
     for (row = 0; row < PAGE_ROWS; row++) {
         if (row == state->row) {
-            entry = menu->items[state->selected_index];
+            entry = menu->items[state->selectedIndex];
             asm volatile("");
             mask = ITEM_ID_MASK;
             mask &= entry;
@@ -87,22 +87,22 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     }
 
     for (row = 0; row <= 3; row++)
-        Render_SetTilemapFlagRect(menu->equip_window, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, 15);
+        Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, 15);
 
-    if (menu->items[state->selected_index] & INVENTORY_EQUIPPED) {
-        item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
+    if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
+        item = Item_Get(menu->items[state->selectedIndex] & ITEM_ID_MASK);
         switch (item->type) {
         case 1:
-            Render_SetTilemapFlagRect(menu->equip_window, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, 14);
+            Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 4:
-            Render_SetTilemapFlagRect(menu->equip_window, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, 14);
+            Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 3:
-            Render_SetTilemapFlagRect(menu->equip_window, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, 14);
+            Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         case 2:
-            Render_SetTilemapFlagRect(menu->equip_window, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, 14);
+            Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, 14);
             break;
         }
     }

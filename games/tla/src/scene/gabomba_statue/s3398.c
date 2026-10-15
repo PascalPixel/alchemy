@@ -5,8 +5,8 @@
 #include "scene_ids.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
-    s32 screen_effect;
+    u8 unk000[0x1ac];
+    s32 screenEffect;
 };
 
 s32 GameFlag_Test(s32 flag);
@@ -34,7 +34,7 @@ s32 Func_02003398(void)
     s16 scene;
     struct PartyState *party;
 
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->screen_effect = 521;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
     if (gPartyState.scene != (s32)&SceneId_Ov671Room1) {
         if (GameFlag_Test(515))
             Func_020020f0(0);
@@ -44,7 +44,7 @@ s32 Func_02003398(void)
             Func_020020f0(1);
         Func_02001c10();
     }
-    Object_GetById(Func_0200584c())->priority_flags |= 0x20;
+    Object_GetById(Func_0200584c())->priorityFlags |= 0x20;
     party = &gPartyState;
     /* FAKEMATCH: the native loads the party state's address before it builds the scene's offset; the plain read builds the offset first (one reordered pair, differ 2). */
     asm volatile("" : "+l"(party));

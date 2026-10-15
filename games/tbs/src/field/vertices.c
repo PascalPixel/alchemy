@@ -99,7 +99,7 @@ void Transform_UpdateVertices(
 			vtx->v = v;
 			out->pc = v;
 			/* FAKEMATCH: the centre is read through its own address, so the native single literal for it is built; member access loads gProjection and reads at offset 12 (differ 2). */
-			cx = *&gProjection.center_x;
+			cx = *&gProjection.centerX;
 			a = (a << 8) * cx;
 			b = ((s16)v << 8) * -cx;
 			vtx->dx = -(a + MulQ16(nsin, z));

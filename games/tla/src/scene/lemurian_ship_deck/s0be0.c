@@ -15,7 +15,7 @@ void Func_02000210(void);
 void Func_02000b84(void);
 
 struct MapMode {
-    u8 unknown_00[23];
+    u8 unk00[23];
     struct MapModeBits { u8 low : 2; u8 mode : 2; } __attribute__((packed)) bits;
 };
 
@@ -28,7 +28,7 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority)
 s32 Func_02000be0(void)
 {
     struct PartyState *party;
-    struct MapMode *map = (struct MapMode *)Ram_HeapSlots->map_work;
+    struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
     struct MapModeBits bits = map->bits;
 
     bits.mode = 1;
@@ -39,9 +39,9 @@ s32 Func_02000be0(void)
     if (party->scene == (s32)&SceneId_Ov657Room1) {
         Func_02000b84();
     } else {
-        *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
+        *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
         do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block after the store; without it the ROM differs (measured by make compare-tla-en). */
-        Object_GetById(party->current_owner)->priority_flags |= 0x20;
+        Object_GetById(party->currentOwner)->priorityFlags |= 0x20;
         Object_SetModeById(8, 1);
         Func_020020c4(Data_020020dc);
         AddCallback(Func_02000188, 0x480);

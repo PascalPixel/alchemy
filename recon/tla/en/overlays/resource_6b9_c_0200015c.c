@@ -1,6 +1,6 @@
 /* Near misses of Func_0200015c (57 native instructions, 60 differ), Func_020001e0 (88, 46) and
  * Func_0200029c (83, 84): the same calls, constants and stores. The draft hoists the address of
- * tile_base and the tile mask out of the 64-spark loops and counts in r7; the native builds them
+ * tileBase and the tile mask out of the 64-spark loops and counts in r7; the native builds them
  * inside the loop, keeps the work in r7 and counts in r8. Count-up and count-down loops measured
  * the same. Func_02000358 is adopted in games/tla/src/debug/psynergy_test_2/sparks.c. */
 #include "types.h"
@@ -15,23 +15,23 @@ struct Spark {
 };
 
 struct SparkSprite {
-    u8 unknown_00[5];
-    u8 unknown_05;
-    u8 unknown_06[2];
+    u8 unk00[5];
+    u8 unk05;
+    u8 unk06[2];
     u16 tile : 10;
-    u16 unknown_08_10 : 2;
-    u16 unknown_08_12 : 4;
-    u8 unknown_0a[0x14];
-    u16 unknown_1e;
-    u8 unknown_20[8];
+    u16 unk08_10 : 2;
+    u16 unk08_12 : 4;
+    u8 unk0a[0x14];
+    u16 unk1e;
+    u8 unk20[8];
 };
 
 struct SparkWork {
-    u8 unknown_0000[0x500];
+    u8 unk0000[0x500];
     struct Spark sparks[64];
     struct SparkSprite sprites[64];
     s16 next;
-    u16 tile_base;
+    u16 tileBase;
     s16 resource;
 };
 
@@ -52,14 +52,14 @@ void Func_02000600(struct Spark *spark, s32 a, s32 b);
 
 void Func_0200015c(void)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
     struct Spark *spark = work->sparks;
     struct SparkSprite *sprite = work->sprites;
     s32 i;
 
     for (i = 0; i < 64; i++) {
         if (spark->timer >= 0 && spark->timer < 20) {
-            sprite->tile = work->tile_base + ((spark->timer >> 2) & 7) * 8;
+            sprite->tile = work->tileBase + ((spark->timer >> 2) & 7) * 8;
             Func_020005f8(sprite, spark);
             Func_02000600(spark, 63, 0xffff8000);
             spark->timer++;
@@ -71,7 +71,7 @@ void Func_0200015c(void)
 
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
     struct Spark *spark;
     s32 angle;
 
@@ -103,16 +103,16 @@ void Func_0200029c(void)
     Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
     resource = Resource_FindFreeEntry();
     tile = VramBlock_LoadCached(resource, 0x500, work);
-    work->tile_base = tile;
+    work->tileBase = tile;
     work->resource = resource;
     spark = work->sparks;
     sprite = work->sprites;
     for (i = 0; i < 64; i++) {
         Func_020005f0(sprite, 8, 8, 0x40000000, tile);
-        sprite->unknown_05 |= 0x20;
-        sprite->unknown_08_12 = 0;
-        sprite->unknown_08_10 = 0;
-        sprite->unknown_1e = 240;
+        sprite->unk05 |= 0x20;
+        sprite->unk08_12 = 0;
+        sprite->unk08_10 = 0;
+        sprite->unk1e = 240;
         spark->timer = -1;
         sprite++;
         spark++;
@@ -123,7 +123,7 @@ void Func_0200029c(void)
 
 void Func_02000358(void)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
     Scheduler_RemoveCallbackFar(Func_0200015c);
     Resource_ResetEntry(work->resource);

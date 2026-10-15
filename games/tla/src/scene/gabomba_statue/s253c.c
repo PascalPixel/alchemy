@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 
 struct Wanderer {
-    u8 unknown_00[98];
+    u8 unk00[98];
     u8 timer;
 };
 
@@ -130,25 +130,25 @@ void Func_0200253c(void)
     Func_020056b4();
     Func_0200580c(0);
     Camera_SetBounds(-1, -1, -1, 0);
-    Func_020057bc()->motion_flags = 0;
+    Func_020057bc()->motionFlags = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
     Func_02005754(MsgGabombaFocusEnergies);
     Func_02005764_(24, 0);
-    Func_02005724(23, gPartyState.current_owner);
-    Func_02005724(5, gPartyState.current_owner);
-    Func_02005724(6, gPartyState.current_owner);
-    Func_02005724(7, gPartyState.current_owner);
+    Func_02005724(23, gPartyState.currentOwner);
+    Func_02005724(5, gPartyState.currentOwner);
+    Func_02005724(6, gPartyState.currentOwner);
+    Func_02005724(7, gPartyState.currentOwner);
     WaitFrames(1);
-    Actor_SetSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
     Actor_SetSpeed(5, 0xcccc, 0x6666);
     Actor_SetSpeed(6, 0xcccc, 0x6666);
     Actor_SetSpeed(7, 0xcccc, 0x6666);
     Actor_SetSpeed(23, 0xcccc, 0x6666);
     ObjectMotion_EnableActionAndSetCallback(23, Data_02005ba4);
     WaitFrames(10);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_02005af4);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02005af4);
     ObjectMotion_EnableActionAndSetCallback(5, Data_02005b1c);
     ObjectMotion_EnableActionAndSetCallback(7, Data_02005b60);
     Object_RefreshSelectorById(23);
@@ -166,18 +166,18 @@ void Func_0200253c(void)
     Battle_WaitMode0(20);
     Actor_Turn(6, 0x2000, 0);
     Actor_Turn(5, 0xa000, 0);
-    Actor_Turn(gPartyState.current_owner, 0xa000, 0);
+    Actor_Turn(gPartyState.currentOwner, 0xa000, 0);
     Actor_Turn(7, 0x2000, 40);
     Object_GetById(7)->angle = 0x4000;
-    Object_GetById(gPartyState.current_owner)->angle = 0x4000;
+    Object_GetById(gPartyState.currentOwner)->angle = 0x4000;
     Object_GetById(6)->angle = 0x4000;
     Object_GetById(5)->angle = 0x4000;
-    Object_GetById(7)->action_flags &= 0xfe;
-    Object_GetById(gPartyState.current_owner)->action_flags &= 0xfe;
-    Object_GetById(6)->action_flags &= 0xfe;
-    Object_GetById(5)->action_flags &= 0xfe;
+    Object_GetById(7)->actionFlags &= 0xfe;
+    Object_GetById(gPartyState.currentOwner)->actionFlags &= 0xfe;
+    Object_GetById(6)->actionFlags &= 0xfe;
+    Object_GetById(5)->actionFlags &= 0xfe;
     Actor_Place(7, 400, 272);
-    Actor_Place(gPartyState.current_owner, 420, 272);
+    Actor_Place(gPartyState.currentOwner, 420, 272);
     Actor_Place(6, 444, 272);
     Actor_Place(5, 468, 272);
     Battle_WaitMode0(20);
@@ -197,7 +197,7 @@ void Func_020027cc(void)
     Camera_SetBounds(-1, -1, -1, 0);
     Func_02005854(78);
     speed = 0x4000;
-    Actor_Slide(gPartyState.current_owner, 174 << 17, 156 << 17, speed);
+    Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
     Actor_Slide(7, 165 << 17, 156 << 17, speed);
     {
         s32 slow = 0x3000;
@@ -207,7 +207,7 @@ void Func_020027cc(void)
     Actor_Slide(6, 224 << 17, 156 << 17, speed);
     Actor_Slide(5, 234 << 17, 156 << 17, speed);
     WaitFrames(1);
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x202;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
@@ -222,12 +222,12 @@ void Func_020027cc(void)
     Func_020057dc_(0x10000, 0);
     Func_020057ec(10);
     WaitFrames(20);
-    Func_0200578c_(gPartyState.current_owner, 256, 0);
+    Func_0200578c_(gPartyState.currentOwner, 256, 0);
     Func_0200578c_ArgsFirst(5, 256, 0);
     Func_0200578c_ArgsFirst(6, 256, 0);
     Func_0200578c_ArgsFirst(7, 256, 0);
     Func_0200578c_ArgsFirst(23, 256, 0);
-    Actor_Turn(gPartyState.current_owner, 0xc000, 0);
+    Actor_Turn(gPartyState.currentOwner, 0xc000, 0);
     Actor_Turn(5, 0xc000, 0);
     Actor_Turn(6, 0xc000, 0);
     Actor_Turn(7, 0xc000, 0);
@@ -239,12 +239,12 @@ void Func_020027cc(void)
     Object_SetPartAttribute(Object_GetById(10), 3);
     Object_SetPartAttribute(Object_GetById(9), 0);
     WaitFrames(8);
-    ((struct Wanderer *)Object_GetById(gPartyState.current_owner))->timer = (Random16Far() * 40 >> 16) + 10;
+    ((struct Wanderer *)Object_GetById(gPartyState.currentOwner))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(7))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(5))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(6))->timer = (Random16Far() * 40 >> 16) + 10;
     ((struct Wanderer *)Object_GetById(23))->timer = (Random16Far() * 40 >> 16) + 10;
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_02005c74);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02005c74);
     ObjectMotion_EnableActionAndSetCallback(7, Data_02005c74);
     ObjectMotion_EnableActionAndSetCallback(5, Data_02005ca0);
     ObjectMotion_EnableActionAndSetCallback(6, Data_02005ca0);

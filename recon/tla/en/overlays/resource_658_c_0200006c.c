@@ -11,8 +11,8 @@
 #include "party_state.h"
 
 struct MadraEventWork {
-    u8 unknown_000[0x154];
-    s16 value_154;
+    u8 unk000[0x154];
+    s16 value154;
 };
 
 struct MadraPlacement {
@@ -37,7 +37,7 @@ void Func_02002c90(s32 a);
 
 void Func_0200006c(void)
 {
-    struct MadraEventWork *work = Ram_HeapSlots->event_work;
+    struct MadraEventWork *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     u32 id;
 
@@ -47,22 +47,22 @@ void Func_0200006c(void)
 next:
     object = Object_GetById(id);
     if (object)
-        object->motion_flags = 0;
+        object->motionFlags = 0;
     id++;
     if (id < 64)
         goto next;
     {
-        s32 index = work->value_154;
+        s32 index = work->value154;
 
         Func_02002c90(158);
         index--;
         Func_02002ae8((const void *)Data_02003308[index * 2], ((u16 *)&Data_02003308[index * 2 + 1])[0], ((u16 *)&Data_02003308[index * 2 + 1])[1]);
     }
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_CenterOnColumn(gPartyState.current_owner, 2, -8);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
     Battle_WaitMode0(10);
-    Func_02002c30(work->value_154);
+    Func_02002c30(work->value154);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02002b30();

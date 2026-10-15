@@ -7,7 +7,7 @@
 #include "../../../../games/tla/src/scene/mars_star/mars_star.h"
 
 struct MarsStarCell {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 column;
     s16 row;
 };
@@ -16,7 +16,7 @@ void Func_02003b74(void);
 
 void Func_02003bfc(struct MarsStarCell *cell)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = (object->x >> 20) | (s16)(cell->column & 64);
     s32 z = (object->z >> 20) | (s16)(cell->row & 64);
 

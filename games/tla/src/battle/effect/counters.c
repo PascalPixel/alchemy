@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 
 struct BattleEffectCounterState {
-    u8 unk_000[0x154];
+    u8 unk000[0x154];
     s16 counters[12];
 };
 
@@ -17,7 +17,7 @@ void BattleFx_ResetCounters(void)
     struct BattleEffectCounterState *state;
 
     value = 0;
-    state = Ram_HeapSlots->event_work;
+    state = Ram_HeapSlots->eventWork;
     state->counters[0] = value;
     state->counters[1] = 0;
     state->counters[2] = 0;
@@ -34,7 +34,7 @@ void BattleFx_ResetCounters(void)
 
 s32 BattleFx_SumCounters(void)
 {
-    struct BattleEffectCounterState *state = Ram_HeapSlots->event_work;
+    struct BattleEffectCounterState *state = Ram_HeapSlots->eventWork;
 
     return state->counters[0] + state->counters[1] + state->counters[2]
         + state->counters[3] + state->counters[4] + state->counters[5]
@@ -47,7 +47,7 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 
 void Func_080cb05c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
         work[0xd39] = 1;

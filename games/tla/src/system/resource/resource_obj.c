@@ -12,15 +12,15 @@
 struct ResourceObjectWork
 {
 #if GAME_TLA
-	u8 unknown_00[16];
+	u8 unk00[16];
 	u8 resource; // VRAM キャッシュの番号
 	u8 flags;	 // ビット 0：VRAM キャッシュを返さない
-	u8 unknown_12[22];
+	u8 unk12[22];
 #else
-	u8 unknown_00[28];
+	u8 unk00[28];
 	u8 resource; // VRAM キャッシュの番号
 	u8 flags;	 // ビット 0：VRAM キャッシュを返さない
-	u8 unknown_1e[10];
+	u8 unk1e[10];
 #endif
 	void *children[4];
 };
@@ -181,7 +181,7 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 	s32						  sum = 0;
 
 	info = Resource_GetMetadataRecordFar(id);
-	if (no >= info->animation_count)
+	if (no >= info->animationCount)
 	{
 		return 0;
 	}

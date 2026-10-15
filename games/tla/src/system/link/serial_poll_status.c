@@ -19,7 +19,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
             s32 index;
 
             if (serial_error == 0) {
-            index = gSerialRuntime.send_index;
+            index = gSerialRuntime.sendIndex;
             /* FAKEMATCH: keeps the send-index load ahead of the -1, as in SerialRuntime_PollStatus; without the barrier the -1 is started first (differ 2). */
             asm("");
             if (index == -1) {
@@ -58,7 +58,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
     }
 
     gSerialRuntime.sequence++;
-    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
     if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);
@@ -83,7 +83,7 @@ s32 SerialRuntime_PollStatus(void)
             u8 serial_error = control & 4;
 
             if (serial_error == 0) {
-                s32 index = gSerialRuntime.send_index;
+                s32 index = gSerialRuntime.sendIndex;
 
                 /* FAKEMATCH: keeps the send-index load ahead of the -1. */
                 asm("");
@@ -115,7 +115,7 @@ s32 SerialRuntime_PollStatus(void)
         gSerialRuntime.sequence++;
     }
 
-    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
     if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);

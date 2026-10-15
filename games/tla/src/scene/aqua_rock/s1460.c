@@ -10,8 +10,8 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001460(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    s32 saved = object->motion_flags;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+    s32 saved = object->motionFlags;
     s32 i;
     s32 angle;
     s32 up;
@@ -22,9 +22,9 @@ void Func_02001460(void)
     Func_02002a48(0);
     Event_StartScreenTransition();
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = -0x100000;
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x20000, 0x10000);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
     for (i = 15; i >= 0; i--) {
         object->y += 0x10000;
         angle = object->angle;
@@ -35,14 +35,14 @@ void Func_02001460(void)
         WaitFrames(1);
     }
     Func_02001d30(object);
-    object->motion_flags = saved;
-    object->velocity_y = 0x80000;
+    object->motionFlags = saved;
+    object->velocityY = 0x80000;
     ObjectDispatch_SetSingleChildFlags(object, 1);
     up = gInput.held & 0x40;
     state = &gPartyState;
     if (up)
-        ObjectMotion_SetPositionAndCommit(state->current_owner, 264, 760);
+        ObjectMotion_SetPositionAndCommit(state->currentOwner, 264, 760);
     else
-        ObjectMotion_SetPositionAndCommit(state->current_owner, 264, 824);
+        ObjectMotion_SetPositionAndCommit(state->currentOwner, 264, 824);
     Func_020029a0();
 }

@@ -15,9 +15,9 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSea
     u32 n;
     u32 i;
 
-    Func_02003ab0(gPartyState.current_owner, 258);
+    Func_02003ab0(gPartyState.currentOwner, 258);
     Func_02003b48(210);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     for (n = 0; n <= 1; n++) {
         other->y -= 0x10000;
         for (i = 0; i <= 3; i++) {
@@ -40,5 +40,5 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSea
     Data_02004a18[0] = other->x - object->x;
     Data_02004a18[1] = other->y - object->y;
     Data_02004a18[2] = other->z - object->z;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
 }

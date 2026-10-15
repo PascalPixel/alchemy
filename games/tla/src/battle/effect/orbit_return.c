@@ -23,14 +23,14 @@ next_state:
     if (state == 0) {
         u32 angle;
 
-        position.x = effect->origin_x;
-        position.z = effect->origin_z;
+        position.x = effect->originX;
+        position.z = effect->originZ;
         angle = Random16();
         Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
-        effect->target_x = position.x;
-        effect->target_z = position.z;
+        effect->targetX = position.x;
+        effect->targetZ = position.z;
         effect->acceleration = 0x40000;
-        effect->max_speed = 0x40000;
+        effect->maxSpeed = 0x40000;
         effect->flag42 = state;
         (*state_pointer)++;
         return;
@@ -45,12 +45,12 @@ next_state:
     }
 
     if (state == 2) {
-        effect->target_x = effect->origin_x;
-        effect->target_z = effect->origin_z;
+        effect->targetX = effect->originX;
+        effect->targetZ = effect->originZ;
         {
             u32 value = 0x400;
 
-            effect->max_turn_step = value;
+            effect->maxTurnStep = value;
         }
         effect->flag42 = 1;
         (*state_pointer)++;

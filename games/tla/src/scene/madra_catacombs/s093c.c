@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 
 struct EventWorkCbc {
-    u8 unknown_000[0xcbc];
+    u8 unk000[0xcbc];
     void *active;
 };
 
@@ -22,7 +22,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_0200093c(void)
 {
-    struct EventWorkCbc *work = Ram_HeapSlots->event_work;
+    struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
     asm volatile("");

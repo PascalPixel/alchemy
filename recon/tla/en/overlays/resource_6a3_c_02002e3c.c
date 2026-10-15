@@ -37,7 +37,7 @@ s32 Func_02002e3c(void)
         Call6(Func_0200474c, 106, 52, 1, 1, 63, 84);
         Func_020049ac(0x4100000, 0xa00000, 2, 236);
     }
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Func_02004774(object->x, object->z, 0, -6);
     return 0;
 }

@@ -62,9 +62,9 @@ void Func_02001bec(void)
         /* FAKEMATCH: the zero pinned to r6, where ⚓️ builds it; unpinned it reuses r5, which held the 1 (differ 12). */
         register s32 clear asm("r6") = 0;
 
-        Object_GetById(16)->collision_flags = clear;
-        Object_GetById(17)->collision_flags = clear;
-        Object_GetById(18)->collision_flags = clear;
+        Object_GetById(16)->collisionFlags = clear;
+        Object_GetById(17)->collisionFlags = clear;
+        Object_GetById(18)->collisionFlags = clear;
     }
     Func_02000d70();
     Func_020006b4(15);

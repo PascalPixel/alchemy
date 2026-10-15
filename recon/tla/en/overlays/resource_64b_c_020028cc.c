@@ -4,7 +4,7 @@
  * inline took it from differ 34 to 8: the arguments then build in r0 as the native.
  * Three swaps remain, each where the native loads earlier: obj->x after the * 48
  * multiply (here after its first shift) and after the << 5 random (here after the
- * shift); and the sprite's byte 9 right after next_frame's store, before the leader's
+ * shift); and the sprite's byte 9 right after nextFrame's store, before the leader's
  * sprite pointer (then the native fills the load stall with the first call's
  * adds r0, r5). sched2 gives the shifts and the leader's chain the higher priority.
  * Measured: the random value apart from its shifts in the else branch (no change).
@@ -41,8 +41,8 @@ void Func_020028cc(void)
     obj = CreateObject(285, leader->x - 0x200000, leader->y, leader->z - 0x100000);
     if (obj == NULL)
         return;
-    obj->scale_x = 0x8000;
-    obj->scale_y = 0x8000;
+    obj->scaleX = 0x8000;
+    obj->scaleY = 0x8000;
     spr = obj->animation;
     if ((Random16Far() * 2) >> 16) {
         s32 back = ((Random16Far() * 48) >> 16) << 16;
@@ -54,10 +54,10 @@ void Func_020028cc(void)
         obj->x += ((value << 5) >> 16) << 16;
         obj->z += (s32)(((value << 5) >> 16) << 16) >> 1;
     }
-    spr->next_frame = 0;
+    spr->nextFrame = 0;
     spr->priority = ((struct FieldSprite *)leader->animation)->priority;
-    obj->priority_flags |= 2;
-    obj->motion_flags = leader->motion_flags;
+    obj->priorityFlags |= 2;
+    obj->motionFlags = leader->motionFlags;
     Object_SetPartAttribute(obj, 9);
     Func_02004b18(obj, 2);
     Func_02004b20(obj, Data_02004f10);

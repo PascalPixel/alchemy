@@ -16,9 +16,9 @@
 #include "field_sprite.h"
 
 struct ObjectRowWork {
-    u8 unknown_000[0xf8];
+    u8 unk000[0xf8];
     void *icons[4];
-    u8 unknown_108[0x10];
+    u8 unk108[0x10];
     s16 x[8];
     s16 y[8];
     s32 scale[4];
@@ -30,7 +30,7 @@ void Func_08043b70(void);
 
 void Func_08043a64(struct RenderInput *origin, s32 x, s32 y, struct SaveSummary *descriptor)
 {
-    struct ObjectRowWork *state = (struct ObjectRowWork *)Ram_HeapSlots->menu_runtime;
+    struct ObjectRowWork *state = (struct ObjectRowWork *)Ram_HeapSlots->menuRuntime;
     s32 i;
 
     for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
@@ -38,7 +38,7 @@ void Func_08043a64(struct RenderInput *origin, s32 x, s32 y, struct SaveSummary 
 
         if (object != 0) {
             Animation_ApplyChildArgumentFar(object, 1);
-            ((struct FieldSprite *)object)->next_frame = 0;
+            ((struct FieldSprite *)object)->nextFrame = 0;
     asm("");
             ((struct FieldSprite *)object)->priority = 0;
     asm("");

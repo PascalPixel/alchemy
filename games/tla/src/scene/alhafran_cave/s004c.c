@@ -67,12 +67,12 @@ void Func_02000168(void)
 
 void Func_020001d4(void)
 {
-    struct AlhafranCaveEventWork *work = Ram_HeapSlots->event_work;
+    struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: a one-pass block loads the event work before its offset is built (one reordered row). */
     do {
     } while (0);
-    work->value_d4a = 2;
+    work->valueD4a = 2;
 }
 
 u8 *Func_020001e8(void)
@@ -88,7 +88,7 @@ u8 *Func_020001e8(void)
 
 void Func_02000220(void)
 {
-    s32 y = Object_GetById(gPartyState.current_owner)->y;
+    s32 y = Object_GetById(gPartyState.currentOwner)->y;
 
     /* FAKEMATCH: a one-pass block loads the height before the threshold is built (one reordered row). */
     do {
@@ -110,7 +110,7 @@ s32 Func_02000258(void)
 s32 Func_0200027c(void)
 {
 #if defined(TLA_EDITION_JA) /* 日本版は入口を見ない */
-    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x201;
+    ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
     if (gPartyState.scene == (s32)&SceneId_Ov66aRoom1)
         Func_020002f8();
     else if (gPartyState.scene == (s32)&SceneId_Ov66aRoom2)
@@ -120,13 +120,13 @@ s32 Func_0200027c(void)
     s32 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov66aRoom1) {
-        ((struct AlhafranCaveEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x201;
+        ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
         Func_020002f8();
     } else if (scene == (s32)&SceneId_Ov66aRoom2) {
         if (gPartyState.entrance == 8 || gPartyState.entrance == 9)
-            ((struct AlhafranCaveEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x209;
+            ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
         else
-            ((struct AlhafranCaveEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x201;
+            ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
         Func_0200051c();
     }
     return 0;

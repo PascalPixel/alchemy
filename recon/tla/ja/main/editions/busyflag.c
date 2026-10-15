@@ -5,7 +5,7 @@ void UiWork_SetBusyFlags(u32 flags)
 {
     u8 *work;
 
-    work = Ram_HeapSlots->window_tiles;
+    work = Ram_HeapSlots->windowTiles;
     if (work == 0)
         return;
     if (flags & 1)

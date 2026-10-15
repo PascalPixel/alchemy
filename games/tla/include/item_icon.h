@@ -11,12 +11,12 @@
 
 struct IconAttr {
     u8 y;
-    u8 attr0_high;
+    u8 attr0High;
     u16 x : 9;
-    u16 attr1_high : 7;
+    u16 attr1High : 7;
     u16 tile : 10;
-    u16 attr2_high : 6;
-    u16 unknown_06;
+    u16 attr2High : 6;
+    u16 unk06;
 };
 
 struct IconSprite {
@@ -25,7 +25,7 @@ struct IconSprite {
 };
 
 struct IconWork {
-    u8 unknown_000[0xc14];
+    u8 unk000[0xc14];
     struct IconSprite sprites[ICON_COUNT];
     u16 resources[ICON_COUNT];
     s8 active;

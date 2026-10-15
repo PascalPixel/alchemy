@@ -29,7 +29,7 @@ struct RenderOutput {
     u8 one5;
     s16 x;
     s16 y;
-    u8 unknown_0a[4];
+    u8 unk0a[4];
     s8 index;
     u8 sentinel;
     struct SpriteAttr attr;

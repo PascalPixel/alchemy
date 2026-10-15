@@ -3,11 +3,11 @@
 
 void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     work->colour = channel->colour;
     work->outline = channel->outline;
-    work->line_spacing = channel->line_spacing;
+    work->lineSpacing = channel->lineSpacing;
 }
 
 void UiWork_ResetChannelTransition(struct UiChannelSlot *channel)

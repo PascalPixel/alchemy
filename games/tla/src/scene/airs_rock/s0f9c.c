@@ -13,18 +13,18 @@ void Func_02000f9c(struct ObjectRuntime *object)
 
     object->y += object->gravity;
     object->x += object->bounce;
-    object->z += object->unknown_4c;
+    object->z += object->unk4c;
     if ((object->x >> 19) <= 39) {
         object->bounce += 0x18000;
-        /* FAKEMATCH: the barrier ends the scheduling block after the speed store, so the step constant is started before scale_x is loaded; plainly it is started before the store (differ 4), and a one-pass block here loads scale_x first (differ 2). */
+        /* FAKEMATCH: the barrier ends the scheduling block after the speed store, so the step constant is started before scaleX is loaded; plainly it is started before the store (differ 4), and a one-pass block here loads scaleX first (differ 2). */
         __asm__("");
-        scale = object->scale_x + 0xccc;
+        scale = object->scaleX + 0xccc;
     } else {
         object->bounce -= 0x18000;
-        scale = object->scale_x - 0x51e;
+        scale = object->scaleX - 0x51e;
     }
-    object->scale_x = scale;
-    object->scale_y = scale;
+    object->scaleX = scale;
+    object->scaleY = scale;
     if (object->bounce > 0)
         Object_SetSpritePriority(object, 1);
     else

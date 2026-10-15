@@ -7,7 +7,7 @@
 
 struct TitleWork
 {
-    u8  unknown_00[20];
+    u8  unk00[20];
     u16 mode;
 };
 
@@ -86,5 +86,5 @@ scroll_pair:
     if (y <= 3)
         goto scroll_pair;
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
-    ((struct TitleWork *)Ram_HeapSlots->map_work)->mode = 0x1400;
+    ((struct TitleWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
 }

@@ -6,42 +6,42 @@
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 struct SummonChargeState {
-    u8 unknown_00[0x10];
-    u16 class_ids[6];
-    u32 used_masks[6];
+    u8 unk00[0x10];
+    u16 classIds[6];
+    u32 usedMasks[6];
     s8 channels[6];
-    u8 unknown_3a[6];
+    u8 unk3a[6];
     u8 count;
 };
 
 struct BattleActorDefinition {
     u8 name[14];
-    u8 unknown_0e[0x11b];
+    u8 unk0e[0x11b];
     u8 unavailable;
-    u8 unknown_12a[0x20];
-    u16 class_id;
+    u8 unk12a[0x20];
+    u16 classId;
 };
 
-s32 EnemyCountRelease(s32 actor_id)
+s32 EnemyCountRelease(s32 actorId)
 {
-    struct SummonChargeState *state = (struct SummonChargeState *)Ram_HeapSlots->battle_work;
+    struct SummonChargeState *state = (struct SummonChargeState *)Ram_HeapSlots->battleWork;
     struct BattleActorDefinition *actor;
     s32 count = state->count;
     s32 index;
     s32 name_length;
     s32 bit;
-    s32 class_id;
+    s32 classId;
 
-    actor = UnitGet(actor_id);
+    actor = UnitGet(actorId);
     if (actor->unavailable != 0)
         return;
 
-    class_id = actor->class_id;
+    classId = actor->classId;
     for (index = 0; index < count; index++) {
-        if (state->class_ids[index] == class_id)
+        if (state->classIds[index] == classId)
             break;
     }
-    if (index == count || state->used_masks[index] == 0)
+    if (index == count || state->usedMasks[index] == 0)
         return;
 
     for (name_length = 0; name_length <= 13; name_length++) {
@@ -52,10 +52,10 @@ s32 EnemyCountRelease(s32 actor_id)
     bit = 32;
     if (name_length > 0)
         bit = actor->name[name_length - 1] - LIST_MARKER_CHAR;
-    state->used_masks[index] &= ~(1 << bit);
+    state->usedMasks[index] &= ~(1 << bit);
 }
 
-s32 EnemyCountClear(s32 enemy_id)
+s32 EnemyCountClear(s32 enemyId)
 {
     struct BattleUnit *summon;
     s32 object_index;
@@ -70,7 +70,7 @@ scan_objects:
     summon = UnitGet(object_index + 0x80);
     occupied = summon->side;
     if (occupied != 1) goto next_object;
-    if (summon->enemy_id != enemy_id) goto next_object;
+    if (summon->enemyId != enemyId) goto next_object;
     slot = 0;
     if (summon->name[0] != 0) goto scan_slots;
     summon->name[0] = marker;

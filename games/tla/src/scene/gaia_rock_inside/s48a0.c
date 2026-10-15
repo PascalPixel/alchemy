@@ -3,15 +3,15 @@
 
 struct GaiaRockInsideLayer
 {
-    u8  unknown_00[8];
+    u8  unk00[8];
     s32 x;
     s32 z;
-    u8  unknown_10[0x28];
+    u8  unk10[0x28];
 };
 
 struct GaiaRockInsideMapWork
 {
-    u8                unknown_000[0x108];
+    u8                unk000[0x108];
     struct GaiaRockInsideLayer layers[2];
 };
 
@@ -27,7 +27,7 @@ void Func_020048a0(void)
 {
     s32                  state = *(s32 *)(Data_020023c4 + 0x288);
     s8                  *origin = Data_020053fc[state];
-    struct GaiaRockInsideMapWork *map = (struct GaiaRockInsideMapWork *)Ram_HeapSlots->map_work;
+    struct GaiaRockInsideMapWork *map = (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapWork;
 
     if (state > 1)
     {

@@ -11,7 +11,7 @@ s32 Audio_Check(void);
 // the window's voice has finished or A, B or a shoulder button is held.
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 cancel = 0;
     /* FAKEMATCH: the native keeps the address of the held keys and reads them twice; a plain read is shared. */
     volatile u32 *held;
@@ -38,7 +38,7 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch)
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
 {
     /* FAKEMATCH: the work is pinned to the r6 the native keeps it in; with the barrier below and no pin it takes r5 and the channel r6 (differ 14). */
-    register struct UiRenderWork *work asm("r6") = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    register struct UiRenderWork *work asm("r6") = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 cancel = 0;
     u32 keys;
 
@@ -48,7 +48,7 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
         cancel = 1;
     keys = gInput.pressed;
     if (work->mode != 0)
-        keys = gInput.pending_pressed;
+        keys = gInput.pendingPressed;
     if (keys & (KEY_A | KEY_B | KEYS_SHOULDERS))
         cancel = 1;
     if (gInput.held & KEY_B) {
@@ -65,10 +65,10 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
 }
 
 struct UiWindowState {
-    u8 unknown_00[0x14];
+    u8 unk00[0x14];
     u16 state;
     u16 flags;
-    s32 pending_value;
+    s32 pendingValue;
 };
 
 void UiWork_FinalizePendingCore(void)
@@ -77,11 +77,11 @@ void UiWork_FinalizePendingCore(void)
     struct UiChannelSlot *slot;
     struct UiWindowState *work;
 
-    slot = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
+    slot = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
     slot_index = 0;
     do {
         work = (struct UiWindowState *)slot->work;
-        if (work != NULL && work->pending_value == 0
+        if (work != NULL && work->pendingValue == 0
             && work->flags != 0
             && work->state != 0) {
             UiWork_Finalize((struct UiWindow *)work, work->flags & 2);

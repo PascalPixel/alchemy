@@ -13,10 +13,10 @@ void Func_02000fbc(s32 a, s32 id)
 
     if (object->z >> 20 == 21) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x339);
         GameFlag_SetBit(0x33a);
         Func_02002840(11, 19, 1, 1, 11, 21);
@@ -36,10 +36,10 @@ void Func_02001038(s32 a, s32 id)
 
     if (object->x >> 20 == 31) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x33c);
         GameFlag_SetBit(0x33d);
         ObjectMotion_SetSpeedParameters_(id, 0x8000, 0x4000);

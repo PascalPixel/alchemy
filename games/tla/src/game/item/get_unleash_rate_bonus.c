@@ -31,20 +31,20 @@ s32 RollWeaponUnleash(struct BattleUnit *owner)
     struct ItemDefinition *item;
     s32 rate;
 
-    if (owner->class_index == 0) {
+    if (owner->classIndex == 0) {
         return 1;
     }
     item = Inventory_GetEquippedDefinition(owner, 1);
     if (item == NULL) {
         return 1;
     }
-    if (item->description_message == 0) {
+    if (item->descriptionMessage == 0) {
         return 1;
     }
     rate = ((Equipment_GetUnleashRateBonus(owner) +
-         (item->secondary_flags * 5)) << 0x10) / 100;
+         (item->secondaryFlags * 5)) << 0x10) / 100;
     if (rate > (s32)(BattleRandom() & 0xFFFF)) {
-        return item->description_message;
+        return item->descriptionMessage;
     }
     return 1;
 }

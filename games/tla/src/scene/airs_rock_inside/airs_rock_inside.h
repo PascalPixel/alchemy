@@ -12,13 +12,13 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct AirsRockInsideMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct AirsRockInsideMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct AirsRockInsideMapLayer layers[3];
 };
 
@@ -64,12 +64,12 @@ extern s32 Data_020073e4;
 extern s32 Data_020073e8;
 
 s32 Func_02005f84(void);
-void Func_02005db4(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z);
+void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX, s32 destZ);
 
-static inline void CopyCells(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z)
+static inline void CopyCells(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX, s32 destZ)
 {
     /* FAKEMATCH: forwarding through the inline puts every argument in a register before the stack arguments are stored, as the native does; called directly, the two stack constants share r3 and the second call loads its last argument first (differ 24 in Func_02002980; six instructions move in Func_02003d40). */
-    Func_02005db4(src_x, src_z, width, height, dest_x, dest_z);
+    Func_02005db4(srcX, src_z, width, height, destX, destZ);
 }
 
 #endif

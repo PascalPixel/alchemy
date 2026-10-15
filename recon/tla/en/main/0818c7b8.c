@@ -42,8 +42,8 @@ void Func_08143000(void);
 
 void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
     u8 *cells = Ram_MapCellBuffer;
     /* The blitter pair, as a two-word array one DImode pseudo: it takes r6 and r7, the second
        unused, which is why the native pushes r7 and spills effect. */
@@ -66,7 +66,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
             kernel = 15;
     }
     Func_08196404(104, 7, 7, kernel, 1);
-    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unk64[1];
     Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work + 0x700, 1, 0);
     if (mode == 0)

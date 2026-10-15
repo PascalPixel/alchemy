@@ -39,13 +39,13 @@ void Func_02001128(void)
 
 void Func_02001138(void)
 {
-    struct LemurianShipEventWork *work = Ram_HeapSlots->event_work;
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
     struct LemurianShipObject *object = Object_GetById(8);
     u32 i;
 
     Func_02002c68();
     Func_02002da8(0);
-    work->field_16a = 0;
+    work->field16a = 0;
     GameFlag_ClearBit(0x202);
     GameFlag_ClearBit(0x204);
     Battle_WaitMode0(20);
@@ -66,13 +66,13 @@ void Func_02001138(void)
 
 void Func_020011f4(void)
 {
-    struct LemurianShipEventWork *work = Ram_HeapSlots->event_work;
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
     struct LemurianShipObject *object = Object_GetById(9);
     u32 i;
 
     Func_02002c68();
     Func_02002da8(0);
-    work->field_16a = 0;
+    work->field16a = 0;
     GameFlag_ClearBit(0x203);
     GameFlag_ClearBit(0x205);
     Battle_WaitMode0(20);

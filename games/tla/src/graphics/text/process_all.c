@@ -31,7 +31,7 @@ s32 UiWork_IsIdle(struct Work *work);
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT) /* Spanish and Italian reach the owner and its screen position through far-call slots two entries earlier, unnamed in their scaffolds: their copies stay on the scaffold (S4) */
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
-    u8 *base = Ram_HeapSlots->window_tiles;
+    u8 *base = Ram_HeapSlots->windowTiles;
     s32 release;
     s32 pos[2] = {0, 0};
     s32 height;
@@ -96,7 +96,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
         if (flags & 0x20)
         {
-            Ram_HeapSlots->window_tiles[6] = 1;
+            Ram_HeapSlots->windowTiles[6] = 1;
         }
 
         if (!(flags & 4))
@@ -126,7 +126,7 @@ void UiWork_ProcessAll(void)
 
 void UiWork_ProcessAllOrChannels(void)
 {
-    if (Ram_HeapSlots->unknown_e4[0] != 0) {
+    if (Ram_HeapSlots->unke4[0] != 0) {
         UiWork_ProcessDirectWork();
         UiWork_ProcessRenderChannels();
         UiWork_AnimateSpriteSlots();

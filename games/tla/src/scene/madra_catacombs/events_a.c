@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 
 struct EventWork15a {
-    u8 unknown_000[0x15a];
+    u8 unk000[0x15a];
     u16 flag;
 };
 
@@ -26,7 +26,7 @@ void Func_020011ec(void);
 
 void Func_02000474(void)
 {
-    struct EventWork15a *work = Ram_HeapSlots->event_work;
+    struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
     Func_0200110c();
     Func_020011ac(0);
@@ -37,12 +37,12 @@ void Func_02000474(void)
 
 void Func_020004a4(struct ObjectRuntime *object)
 {
-    u8 *flags = &object->motion_flags;
+    u8 *flags = &object->motionFlags;
 
     *flags = 3;
     do {
         WaitFrames(1);
-    } while (object->velocity_y != 0);
+    } while (object->velocityY != 0);
     Func_02001214(188);
     WaitFrames(10);
     *flags = 0;

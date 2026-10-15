@@ -32,20 +32,20 @@ s32 SaveState_ScanRecordFlags(void)
         struct SaveWorkspace *work;
 
         ret = SaveState_LoadSummaryRecords();
-        work = Ram_HeapSlots->serial_work;
+        work = Ram_HeapSlots->serialWork;
         flags = &work->summary[0].party[4];
         Data_02003860 = 0;
         Data_020036d8 = 0;
         Data_02005350 = 0;
         for (i = 0; i < 3; i++) {
-            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(send_flag)] != 0) {
+            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(sendFlag)] != 0) {
                 Data_02003860 = 1;
                 cnt++;
             }
-            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(flag_count)] != 0)
+            if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(flagCount)] != 0)
                 Data_020036d8 = 1;
             if (work->summary[i].level != 0
-                && flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(has_flag_34)] == 0)
+                && flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(hasFlag34)] == 0)
                 Data_02005350 = 1;
         }
     }

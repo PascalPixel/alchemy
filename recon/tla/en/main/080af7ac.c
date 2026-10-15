@@ -9,18 +9,18 @@
 #include "party_state.h"
 
 struct OwnerStart {
-    u8 unknown_00[150];
+    u8 unk00[150];
     u8 level;
-    u8 unknown_97;
+    u8 unk97;
     u16 items[13];
 };
 
 struct OwnerName {
     u8 name[14];
-    u8 name_flags;
-    u8 unknown_0f[5];
-    u16 hp_ratio;
-    u16 pp_ratio;
+    u8 nameFlags;
+    u8 unk0f[5];
+    u16 hpRatio;
+    u16 ppRatio;
 };
 
 extern u8 MsgCharacterName[];
@@ -57,7 +57,7 @@ void Owner_InitRecords(void)
                 name[i] = name_buf[i];
             } while (name_buf[i] != 0);
         }
-        ((struct OwnerName *)state)->name_flags = 0;
+        ((struct OwnerName *)state)->nameFlags = 0;
     }
 
     if (*remote != -1) {
@@ -69,9 +69,9 @@ void Owner_InitRecords(void)
 
                     /* FAKEMATCH: the barrier keeps the id load ahead of the class field offset; without it the offset is started first (one reordered row). */
                     __asm__("");
-                    state->class_id = id;
+                    state->classId = id;
                 }
-                start = Character_GetDefinition(state->class_id);
+                start = Character_GetDefinition(state->classId);
                 for (i = 14; i >= 0; i--)
                     state->inventory[i] = 0;
 
@@ -81,8 +81,8 @@ void Owner_InitRecords(void)
                 }
 
                 Owner_RefreshDerivedData(*remote);
-                ((struct OwnerName *)state)->pp_ratio = 0x4000;
-                ((struct OwnerName *)state)->hp_ratio = 0x4000;
+                ((struct OwnerName *)state)->ppRatio = 0x4000;
+                ((struct OwnerName *)state)->hpRatio = 0x4000;
                 Party_AdvanceOwnerCountToTarget(*remote, start->level);
                 Owner_RefreshDerivedData(*remote);
                 UnitCalc(*remote);

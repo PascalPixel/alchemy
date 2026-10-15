@@ -4,7 +4,7 @@ void Func_02003ae4(s32 id, s32 base);
 
 void Func_02003b2c(void)
 {
-    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 0x100;
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
     if (GameFlag_Test(0x842)) {
         Func_02005230(8, 0, 0);
         Func_02005178_(0, 0, 1, 1, 5, 13);

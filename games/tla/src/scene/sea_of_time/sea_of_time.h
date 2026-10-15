@@ -7,56 +7,56 @@
 #include "dma.h"
 
 struct SeaOfTimeSprite {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 visible;
 };
 
 struct SeaOfTimeObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
     s32 height;
-    s32 field_18;
+    s32 field18;
     s32 scale;
-    u8 unknown_20[2];
+    u8 unk20[2];
     u8 layer;
-    u8 priority_flags;
-    u8 unknown_24[0x2c];
+    u8 priorityFlags;
+    u8 unk24[0x2c];
     struct SeaOfTimeSprite *sprite;
-    u8 unknown_54;
-    u8 motion_flags;
-    u8 unknown_56[3];
-    u8 collision_flags;
+    u8 unk54;
+    u8 motionFlags;
+    u8 unk56[3];
+    u8 collisionFlags;
 };
 
 struct SeaOfTimeMapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct SeaOfTimeMapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct SeaOfTimeMapLayer layers[3];
 };
 
 struct SeaOfTimeEventWork {
-    u8 unknown_000[0x16a];
+    u8 unk000[0x16a];
     s16 alarm;
-    u8 unknown_16c[0x40];
-    s32 screen_effect;
+    u8 unk16c[0x40];
+    s32 screenEffect;
 };
 
 struct SeaOfTimeSpark {
     s32 mode;
     s32 kind;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_10[8];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk10[8];
     s16 life;
-    u8 unknown_1a[0xe];
+    u8 unk1a[0xe];
 };
 
 extern u32 gFrameCount;

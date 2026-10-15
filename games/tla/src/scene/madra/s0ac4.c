@@ -148,7 +148,7 @@ void Func_02000ac4(void)
     ObjectMotion_CommitCurrentPositionAndActivate(25);
     SetPos(4, 472, 426);
     Battle_WaitMode0(10);
-    ArmCallbackAndRefresh(gPartyState.current_owner, 0xc000);
+    ArmCallbackAndRefresh(gPartyState.currentOwner, 0xc000);
     LaunchFromFocused(32, 16, 1, 0xc000);
     Func_02002c28();
     ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -180,14 +180,14 @@ void Func_02000ac4(void)
     Motion_SetModeAndWaitAnimation(25, 3);
     Battle_WaitMode0(30);
     ArmCallback(24, 0x5000, 0);
-    Object_GetById(25)->priority_flags &= 0xfe;
+    Object_GetById(25)->priorityFlags &= 0xfe;
     ObjectMotion_SetActionVariant(25, 3);
     SetPos(25, 457, 402);
     CommitPos(25, 16, 0);
     SetPos(25, 472, 420);
     Battle_WaitMode0(30);
     SetPos(25, 484, 420);
-    Object_GetById(25)->priority_flags |= 1;
+    Object_GetById(25)->priorityFlags |= 1;
     ArmCallback(25, 0x4000, 0);
     Battle_WaitMode0(60);
     Battle_WaitMode0(10);
@@ -203,12 +203,12 @@ void Func_02000ac4(void)
     Motion_SetModeAndWaitAnimation(25, 3);
     Battle_WaitMode0(5);
     Func_02002be0(25, 0, 2);
-    Object_GetById(25)->priority_flags &= 0xfe;
+    Object_GetById(25)->priorityFlags &= 0xfe;
     ObjectMotion_SetActionVariant(25, 3);
     CommitPos(25, 0, -16);
     SetPos(25, 475, 400);
     CommitPos(25, -16, 0);
-    Object_GetById(25)->priority_flags |= 1;
+    Object_GetById(25)->priorityFlags |= 1;
     CamBounds(238 << 17, -1, 198 << 17, 1);
     SetPos(25, 459, 416);
     ArmCallback(25, 0x2000, 0);
@@ -256,7 +256,7 @@ void Func_02000ac4(void)
     Motion_SetModeAndWaitAnimation(4, 3);
     Battle_WaitMode0(30);
     Object_SetModeById(32, 2);
-    object = Object_GetById(gPartyState.current_owner);
+    object = Object_GetById(gPartyState.currentOwner);
     if (object != NULL)
         ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -384,9 +384,9 @@ void Func_02000f80(void)
     UiText_OpenMessageAtObject(33, 0);
     if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
         Func_02002be0(33, 0, 10);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(33, 0, 10);
     }
     ObjectMotion_SetAngleToward(33, 34, 0);
@@ -442,7 +442,7 @@ void Func_020014fc(void)
     CommitPos(24, -3, 8);
     SetPos(4, 472, 426);
     Battle_WaitMode0(10);
-    ArmCallbackAndRefresh(gPartyState.current_owner, 0xc000);
+    ArmCallbackAndRefresh(gPartyState.currentOwner, 0xc000);
     LaunchFromFocused(32, 16, 1, 0xc000);
     Func_02002c28();
     ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -481,11 +481,11 @@ void Func_020014fc(void)
         Battle_WaitMode0(25);
         ArmCallback(32, 0xb000, 0);
         Func_02002be0(25, 0, 10);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
         Battle_WaitMode0(25);
         ArmCallback(32, 0xd000, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(25, 0, 10);
     }
     Motion_SetVarCbAndRefresh(32, 2);
@@ -507,10 +507,10 @@ void Func_020014fc(void)
             Battle_WaitMode0(20);
             Motion_SetModeAndWaitAnimation(32, 3);
             Func_02002be8(32, 0);
-            (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+            (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         } else {
             Battle_WaitMode0(20);
-            (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+            (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
             Motion_SetModeAndWaitAnimation(32, 4);
             Func_02002be8(32, 0);
         }
@@ -558,7 +558,7 @@ void Func_020014fc(void)
     Battle_WaitMode0(10);
     GameFlag_SetBit(0x914);
     Object_SetModeById(32, 2);
-    object = Object_GetById(gPartyState.current_owner);
+    object = Object_GetById(gPartyState.currentOwner);
     if (object != NULL)
         ObjectMotion_ResetAndSetPosition(32, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(32);
@@ -571,8 +571,8 @@ void Func_020014fc(void)
 // to Map_PlayMetatileCopySequence).
 struct MetatileCopyEntry {
     const s16 *sequence;
-    u16 unknown_04;
-    u16 unknown_06;
+    u16 unk04;
+    u16 unk06;
 };
 
 extern const struct MetatileCopyEntry Data_02003308[];
@@ -612,7 +612,7 @@ void Func_020019d8(void)
     ObjectMotion_CommitCurrentPositionAndActivate(4);
     ArmCallback(4, 0xc000, 0);
     Battle_WaitMode0(20);
-    Func_02002ae8(Data_02003308[6].sequence, Data_02003308[6].unknown_04, Data_02003308[6].unknown_06);
+    Func_02002ae8(Data_02003308[6].sequence, Data_02003308[6].unk04, Data_02003308[6].unk06);
     Func_02002b90(34, x, z, 0x4000);
     CommitPos(34, 0, 4);
     SET_MODE(34, 3);
@@ -638,7 +638,7 @@ void Func_020019d8(void)
         Battle_WaitMode0(33);
         Battle_WaitMode0(20);
         Func_02002be8(34, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
         ArmCallback(32, 0xc000, 0);
         ArmCallback(5, 0xc000, 0);
@@ -649,7 +649,7 @@ void Func_020019d8(void)
         SET_MODE(34, 4);
         Battle_WaitMode0(33);
         Battle_WaitMode0(20);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(34, 0, 0);
     }
     Emote(34, 0x102, 30);
@@ -676,24 +676,24 @@ void Func_020019d8(void)
     if (Func_02002b18(210) >= 0) {
         Func_02002c50(210, 3);
         PartyInventory_GiveItem(210, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         ArmCallback(4, 0xc000, 0);
         GameFlag_SetBit(0x918);
     } else {
-        s32 count = *(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4) + 1;
+        s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
         Func_02002bd0(MsgTheMayorTried);
         Func_02002b10(210, 2);
-        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++, 5);
+        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
         Motion_SetVarCbAndRefresh(34, 2);
         Func_02002be8(34, 0);
         CommitPos(34, 16, 0);
         Func_02002b10(210, 2);
-        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++, 5);
+        UiText_ShowPositionedMessageAndWait((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
         CommitPos(34, -16, 0);
         ArmCallbackAndRefresh(34, 0x4000);
         SetHorizontalPos(66, 0xc00000, 0x1000000);
-        *(s16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4) = count;
+        *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) = count;
     }
     CommitPos(34, -16, -8);
     ArmCallbackAndRefresh(34, 0x4000);
@@ -891,10 +891,10 @@ void Func_020019d8(void)
     if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
         Emote(33, 0x108, 30);
         Func_02002be0(33, 0, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
         Emote(33, 0x103, 30);
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_02002be0(33, 0, 0);
     }
     Emote(32, 0x102, 30);

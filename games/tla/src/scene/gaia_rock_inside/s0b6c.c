@@ -10,7 +10,7 @@ void                  ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, 
 void                  ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void                  Battle_WaitMode0(s32 frames);
 s32                   Func_02004dec(s32 a, s32 x, s32 z);
-void Func_02004dfc(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02004dfc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02004e5c(void);
 void Func_02004e64(void);
 void Func_02004f34(s32 id, s32 emote);
@@ -24,7 +24,7 @@ void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 // once flag 0x927 is set.
 void Func_02000b6c(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
     if (Value3(Func_02004dec, 2, 152 << 18, 200 << 17) == 0)
@@ -34,10 +34,10 @@ void Func_02000b6c(void)
         Func_02004fcc(0);
         if (leader->x >> 20 == 38 && leader->z >> 20 == 25)
         {
-            Call2(Func_02004f34, gPartyState.current_owner, 258);
-            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, 16, 0);
-            leader->velocity_y = 0x60000;
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Call2(Func_02004f34, gPartyState.currentOwner, 258);
+            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
+            leader->velocityY = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
         }
         if (!GameFlag_Test(0x927))
         {

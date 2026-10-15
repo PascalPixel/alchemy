@@ -51,17 +51,17 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
         object->x = x;
         object->y = y;
         object->z = z;
-        object->target_x = 0x80000000;
-        object->target_y = 0x80000000;
-        object->target_z = 0x80000000;
+        object->targetX = 0x80000000;
+        object->targetY = 0x80000000;
+        object->targetZ = 0x80000000;
         return;
     }
-    if (object->snap_to_target == 0) {
+    if (object->snapToTarget == 0) {
         s32 brake;
         s32 ratio;
 
         brake = Iwram_RatioMulQ14(object->acceleration,
-                             Iwram_MulQ16(object->speed_limit, object->speed_limit));
+                             Iwram_MulQ16(object->speedLimit, object->speedLimit));
         if (dist > brake)
             brake = dist - brake / 2;
         else
@@ -71,19 +71,19 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
         y = object->y + Iwram_MulQ16(y - object->y, ratio);
         z = object->z + Iwram_MulQ16(z - object->z, ratio);
     }
-    object->target_x = x;
-    object->target_y = y;
-    object->target_z = z;
+    object->targetX = x;
+    object->targetY = y;
+    object->targetZ = z;
     dx = x - object->x;
     dy = y - object->y;
     dz = z - object->z;
-    axis = &object->unknown_56;
+    axis = &object->unk56;
     *axis = 16;
     if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
         *axis = 18;
         dx = dz;
     }
-    if (object->motion_flags == 0) {
+    if (object->motionFlags == 0) {
         if (dx < 0)
             dx = -dx;
         if (dx < (dy < 0 ? -dy : dy))

@@ -96,8 +96,8 @@ void Func_020012a4(s32 x, s32 z, s32 kind)
             Func_02003120(object, Data_0200387c);
         } else {
             animation->layer = 1;
-            object->velocity_x = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
-            object->velocity_y = 0x40000;
+            object->velocityX = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
+            object->velocityY = 0x40000;
             Func_02003120(object, Data_02003900);
         }
     }

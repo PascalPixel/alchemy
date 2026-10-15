@@ -136,7 +136,7 @@ void Func_02000818(void)
     Call1((void (*)())Battle_WaitMode0, 40);
     effect = (struct ObjectRuntime *)Value1((s32 (*)())BattleFx_StartItemBreak, (s32)object21);
     position[0] = object15->x;
-    effect->linked_object = object15;
+    effect->linkedObject = object15;
     position[1] = object15->y + 0x100000;
     position[2] = object15->z;
     Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, 0xc000, (s32)position);
@@ -333,6 +333,6 @@ void Func_02000818(void)
     Call3((void (*)())Func_02001488, 22, 0, 0);
     Call3((void (*)())Func_02001488, 21, 0, 0);
     Call2((void (*)())Object_SetActionCallback, (s32)Object_GetById(24), 9);
-    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.current_owner, 1);
+    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.currentOwner, 1);
     ((void (*)())Func_02001438)();
 }

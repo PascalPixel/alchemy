@@ -30,11 +30,11 @@ void Func_02000798(void)
         Func_02002da8(0);
         LemurianShip_BlendStart(16, 47, 1, 1, x, 46);
         WaitFrames(1);
-        flags = &object->motion_flags;
+        flags = &object->motionFlags;
         *flags = 3;
         do {
             WaitFrames(1);
-            moving = object->velocity_y;
+            moving = object->velocityY;
         } while (moving != 0);
         Func_02002de0(188);
         WaitFrames(10);

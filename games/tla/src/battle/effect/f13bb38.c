@@ -3,12 +3,12 @@
 #include "dma.h"
 
 struct AffineStepWork {
-    u8 unknown_0000[0x7790];
+    u8 unk0000[0x7790];
     s32 counter;
     s32 period;
-    s32 step_x;
-    s32 step_y;
-    u8 unknown_77a0[0x30];
+    s32 stepX;
+    s32 stepY;
+    u8 unk77a0[0x30];
     s32 x;
     s32 y;
 };
@@ -19,7 +19,7 @@ void Func_0813bb38(void)
 
     /* FAKEMATCH: the one-pass block loads the effect work before the counter offset is started (one reordered pair, differ 2 without it). */
     do {
-        work = (struct AffineStepWork *)Ram_HeapSlots->battle_fx_work[0];
+        work = (struct AffineStepWork *)Ram_HeapSlots->battleFxWork[0];
     } while (0);
 
     if (++work->counter == work->period) {
@@ -30,8 +30,8 @@ void Func_0813bb38(void)
         do { } while (0);
         *(volatile s32 *)0x04000028 = x;
         *(volatile s32 *)0x0400002c = work->y;
-        work->x += work->step_x;
-        work->y += work->step_y;
+        work->x += work->stepX;
+        work->y += work->stepY;
         work->counter = 0;
     }
 }

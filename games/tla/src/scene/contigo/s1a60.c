@@ -2,7 +2,7 @@
 #include "party_state.h"
 
 struct ContigoTopicState {
-    u8 unknown_000[340];
+    u8 unk000[340];
     s8 cursor[6];
 };
 

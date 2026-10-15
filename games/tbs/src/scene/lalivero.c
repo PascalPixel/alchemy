@@ -89,9 +89,9 @@ static void EV10_TALK(s32 actor)
 	struct FieldActor *object;
 
 	object = Actor_Get(actor);
-	object->scale_x = 0x10000;
+	object->scaleX = 0x10000;
 	object = Actor_Get(actor);
-	object->scale_y = 0x10000;
+	object->scaleY = 0x10000;
 	Engine_EventSetMessage(MsgLaliveroOhhTheyTookShebaHeaded);
 	Event_ShowMessage(actor, 0);
 	Actor_FaceDirection(actor, 0xc000, 0);
@@ -130,11 +130,11 @@ static void SceneActor_SetupActor18Event(void)
 
 static void Scene_RunTableTransition(void)
 {
-	s32 no = gEventWork->touched_trigger;
+	s32 no = gEventWork->touchedTrigger;
 	s32 x = Lalivero_DoorCells[no][0];
 	s32 y = Lalivero_DoorCells[no][1];
 
-	Object_GetById(0)->motion_flags = 2;
+	Object_GetById(0)->motionFlags = 2;
 	Engine_AudioPlayCue(158);
 	if (no == 6)
 	{
@@ -147,17 +147,17 @@ static void Scene_RunTableTransition(void)
 		Actor_CenterAndWalk(0, 2, -16);
 	}
 	Engine_EventWait(10);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
 static void Lalivero_RequestTouchedExit(void)
 {
 	struct EventWork *work = gEventWork;
-	s16				 *p = (s16 *)&work->touched_trigger;
+	s16				 *p = (s16 *)&work->touchedTrigger;
 	s32				  n = *p;
 
-	work->transition_frames = 16;
+	work->transitionFrames = 16;
 	Engine_EventRequestExit(n);
 }
 
@@ -404,7 +404,7 @@ static void EV50_TOUCH(void)
 	Actor_FaceDirection(22, 0x4000, 0);
 	Engine_EventWait(80);
 	Actor_SetSpeed(22, 0xcccc, 0x6666);
-	Object_GetById(22)->motion_flags = 2;
+	Object_GetById(22)->motionFlags = 2;
 	Engine_ActorSetSpritePriority(22, 2);
 	Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
 	Event_PlayCue(158);
@@ -412,7 +412,7 @@ static void EV50_TOUCH(void)
 	Actor_SetPosition(22, 0x480000, 0x1380000);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-	Object_GetById(22)->target_z = ACTOR_NO_TARGET;
+	Object_GetById(22)->targetZ = ACTOR_NO_TARGET;
 	Actor_SetPosition(22, 0x480000, 0x1380000);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(22, 72, 328);
@@ -553,9 +553,9 @@ static void EV50_TOUCH(void)
 	gEventWork->message += 1;
 	Engine_PartyGiveItem(242, 0);
 	Engine_EventWait(10);
-	Actor_Get(22)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(22)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkByAndWait(22, 0, -16);
-	Actor_Get(22)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(22)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(22, 0x4100, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
@@ -711,37 +711,37 @@ s32 Scene_Initialize(void)
 	{
 		GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 24;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 24;
 
 	Engine_ActorSetAnimation(19, 3);
-	Actor_Get(19)->collision_flags = 0;
+	Actor_Get(19)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(19), 0);
 	Engine_ActorSetAnimation(20, 3);
-	Actor_Get(20)->collision_flags = 0;
+	Actor_Get(20)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(20), 0);
 	Engine_ActorSetAnimation(21, 3);
-	Actor_Get(21)->collision_flags = 0;
+	Actor_Get(21)->collisionFlags = 0;
 	Engine_ActorSetSpriteFlags(Actor_Get(21), 0);
 	Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_BLACK_ORB), 0);
 
 	object = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
-	object->actor.unknown_5c = 1;
-	object->actor.motion_flags = 0;
+	object->actor.unk5c = 1;
+	object->actor.motionFlags = 0;
 	sprite = object->actor.sprite;
 	object->actor.y.fixed = PIXELS(10);
-	sprite->part_count = 0;
-	sprite->full_color = 0;
+	sprite->partCount = 0;
+	sprite->fullColor = 0;
 	sprite->palette = 0;
 	icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
 	Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-	Engine_VramLoad(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
+	Engine_VramLoad(sprite->vramBlock, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
 	Engine_HeapRelease(HEAP_ITEM_ICON);
 
 	if (GameFlag_IsSet(FLAG_AERIE_EVENTS_DONE))
 	{
 		Engine_ActorSetSpriteFlags(Actor_Get(24), 0);
-		Actor_Get(24)->collision_flags = 0;
+		Actor_Get(24)->collisionFlags = 0;
 		Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
 		Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
 		Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
@@ -753,13 +753,13 @@ s32 Scene_Initialize(void)
 	else
 	{
 		object = (union FieldObject *)Actor_Get(8);
-		object->actor.collision_flags = 0;
-		object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		object->actor.collisionFlags = 0;
+		object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		object->actor.sprite->flags = 0;
 		object->actor.sprite->rotation = FACING_NORTH;
 		object = (union FieldObject *)Actor_Get(9);
-		object->actor.collision_flags = 0;
-		object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		object->actor.collisionFlags = 0;
+		object->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		object->actor.sprite->flags = 0;
 		object->actor.sprite->rotation = FACING_SOUTH;
 		Map_CopyCellAttributes(20, 23, 1, 1, 13, 23);

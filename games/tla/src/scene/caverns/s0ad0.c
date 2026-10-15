@@ -17,7 +17,7 @@ s32 Func_02000b20(void)
 {
     s16 *scene;
 
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x204;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
     if (gPartyState.scene == (s32)&SceneId_Ov6a9Room1)
         Func_02000ba8();
     /* FAKEMATCH: a pointer to the scene field keeps the second test a plain ldrsh (plain gPartyState.scene or a party pointer: differ 16). */

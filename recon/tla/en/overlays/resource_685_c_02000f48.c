@@ -8,8 +8,8 @@
 #include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
 struct EventFlags685 {
-    u8 unknown_000[0x15a];
-    u16 field_15a;
+    u8 unk000[0x15a];
+    u16 field15a;
 };
 
 s32 PartyInventory_FindOwner(s32 item);
@@ -25,8 +25,8 @@ void Func_02000f48(s32 actor)
 {
     s32 item;
 
-    if ((Object_GetById(gPartyState.current_owner)->x >> 20) > 41) {
-        ((struct EventFlags685 *)Ram_HeapSlots->event_work)->field_15a = 1;
+    if ((Object_GetById(gPartyState.currentOwner)->x >> 20) > 41) {
+        ((struct EventFlags685 *)Ram_HeapSlots->eventWork)->field15a = 1;
         return;
     }
     item = 439;
@@ -64,7 +64,7 @@ void Func_02000f48(s32 actor)
             Func_0200343c(164 << 18, 128 << 17, 0, 0);
         }
     } else {
-        ObjectMotion_SetAngleToward(actor, gPartyState.current_owner, 5);
+        ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 5);
         if (!GameFlag_Test(0x975))
             Func_0200350c((s32)MsgIMeanIt);
         else if (!GameFlag_Test(0x976))

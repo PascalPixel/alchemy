@@ -9,10 +9,10 @@
 void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script)
 {
     if (object != 0) {
-        object->value_04 = 0;
-        object->value_00 = (u32)script;
-        object->value_5b = 0;
-        object->value_5d = 0;
-        object->value_57 = 0;
+        object->value04 = 0;
+        object->value00 = (u32)script;
+        object->value5b = 0;
+        object->value5d = 0;
+        object->value57 = 0;
     }
 }

@@ -8,10 +8,10 @@
 #include "scene_ids.h"
 
 struct SceneEventWork {
-    u8 unknown_000[0x16a];
-    u16 unknown_16a;
-    u8 unknown_16c[0x40];
-    s32 screen_effect;
+    u8 unk000[0x16a];
+    u16 unk16a;
+    u8 unk16c[0x40];
+    s32 screenEffect;
 };
 
 extern const u8 Data_02004768[];

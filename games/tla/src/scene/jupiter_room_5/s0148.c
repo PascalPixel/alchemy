@@ -3,20 +3,20 @@
 #include "flag_call.h"
 
 struct OrbitEffect {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x1c];
+    u8 unk14[0x1c];
     s32 radius;
-    u8 unknown_34[0x1c];
+    u8 unk34[0x1c];
     struct FieldSprite *sprite;
-    u8 unknown_54;
-    u8 motion_flags;
-    u8 unknown_56[0x0e];
+    u8 unk54;
+    u8 motionFlags;
+    u8 unk56[0x0e];
     u16 angle;
-    u16 unknown_66;
-    u8 unknown_68[4];
+    u16 unk66;
+    u8 unk68[4];
     void (*update)(struct OrbitEffect *effect);
 };
 
@@ -48,9 +48,9 @@ void Func_02000148(struct FieldActor *self)
     asm volatile(""); /* FAKEMATCH: both positions are read before the sine is doubled; without it the shift comes before the second read */
     z += sine * 2;
     self->z = z;
-    self->target_x = x;
+    self->targetX = x;
     asm volatile(""); /* FAKEMATCH: the target z store stays ahead of the timer load; without it the store falls behind (6 differ; placed by alchemy permute) */
-    self->target_z = z;
+    self->targetZ = z;
     *(s16 *)&self->timer += -0x800;
 }
 
@@ -94,13 +94,13 @@ void Func_020001a4(void)
         sprite = effect->sprite;
         Func_02002820(effect, Data_02003214);
         Object_SetPartAttribute(effect, 1);
-        effect->motion_flags = 0;
+        effect->motionFlags = 0;
         angle = Random16Far() & 0xffff000;
         effect->angle = angle;
-        effect->unknown_66 = 0;
+        effect->unk66 = 0;
         effect->update = (void (*)(struct OrbitEffect *))Func_02000148;
         effect->radius = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         sprite->priority = 1;
     }
 }

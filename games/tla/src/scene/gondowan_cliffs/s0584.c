@@ -13,8 +13,8 @@ void Func_02000584(void)
 {
     struct ObjectRuntime *object = Object_GetById(12);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
     GameFlag_SetBit(0x201);
 }
@@ -23,9 +23,9 @@ void Func_020005bc(void)
 {
     struct ObjectRuntime *object = Object_GetById(13);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
-    object->terrain_height = 0x200000;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
+    object->terrainHeight = 0x200000;
     object->y = 0x200000;
     Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
     GameFlag_SetBit(0x202);
@@ -44,7 +44,7 @@ void Func_02000610(s32 unused, s32 cell)
         object = Object_GetById(17);
         Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
         Call3(Func_0200124c, 17, 0x7780000, 0x2d80000);
-        object->terrain_height = object->y = Map_GetTerrainHeight(0, object->x, object->z);
+        object->terrainHeight = object->y = Map_GetTerrainHeight(0, object->x, object->z);
         GameFlag_SetBit(0x886);
     }
 }

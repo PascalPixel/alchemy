@@ -26,9 +26,9 @@ struct Effect
 	s32			   rate30;
 	s32			   rate34;
 	u8			   pad38[12];
-	s32			   velocity_x;
-	s32			   velocity_y;
-	s32			   velocity_z;
+	s32			   velocityX;
+	s32			   velocityY;
+	s32			   velocityZ;
 	struct Sprite *sprite;
 	u8			   pad54;
 	u8			   mode55;
@@ -40,7 +40,7 @@ struct Effect
 
 struct ConfiguredEffectOptions
 {
-	s32 mode_bits;
+	s32 modeBits;
 	s32 mode;
 	s32 accum18;
 	s32 accum1c;
@@ -48,7 +48,7 @@ struct ConfiguredEffectOptions
 	s32 target34;
 	s16 kind;
 	u16 pad1a;
-	s32 callback_arg;
+	s32 callbackArg;
 	u16 angle;
 	u16 step;
 	u32 callback;

@@ -11,41 +11,41 @@ typedef struct SceneParticle
 	s32 y;
 	s32 z;
 	u8	filler14[4];
-	s32 scale_x;
-	s32 scale_y;
+	s32 scaleX;
+	s32 scaleY;
 	u8	filler20[0x1c];
-	s32 anchor_y;
+	s32 anchorY;
 	u8	filler40[0x15];
 	u8	state;
 	u8	filler56[0xe];
-	s16 velocity_x;
-	s16 velocity_y;
+	s16 velocityX;
+	s16 velocityY;
 } SceneParticle;
 
 typedef struct StageEffect
 {
-	s32 reserved_00;
-	s32 reserved_04;
+	s32 reserved00;
+	s32 reserved04;
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	reserved_14[20];
-	s32 vertical_motion;
-	u8	reserved_2c[41];
+	u8	reserved14[20];
+	s32 verticalMotion;
+	u8	reserved2c[41];
 	u8	state;
 } StageEffect;
 
 typedef struct LinkedStageEffect
 {
-	s32 reserved_00;
-	s32 reserved_04;
+	s32 reserved00;
+	s32 reserved04;
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	reserved_14[65];
+	u8	reserved14[65];
 	u8	state;
-	u8	reserved_56[14];
-	s16 linked_effect_slot;
+	u8	reserved56[14];
+	s16 linkedEffectSlot;
 } LinkedStageEffect;
 
 u8 *ColossoLogRollingStage_GetScriptData(void);

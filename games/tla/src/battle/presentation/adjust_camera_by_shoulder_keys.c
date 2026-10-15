@@ -20,22 +20,22 @@ void BattleMotion_SetupEscapeObject(s32);
 s32 BattlePres_RunAction(s16 *action)
 {
     struct BattlePresentationTransition *transition;
-    s32 actor_id;
+    s32 actorId;
     s32 battle_mode;
     u8 *actor;
 
-    actor_id = action[0];
-    actor = UnitGet(actor_id);
+    actorId = action[0];
+    actor = UnitGet(actorId);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 
     action[5] = BattleTarget_ReplaceDefeated((const struct BattleActionRecord *)action);
-    transition = Ram_HeapSlots->transition_work;
+    transition = Ram_HeapSlots->transitionWork;
     if (action[0] > 4)
         battle_mode = -0x2000;
     else
         battle_mode = 0x2000;
-    transition->target_yaw = battle_mode;
+    transition->targetYaw = battle_mode;
     transition->frames = 60;
     UiWork_ClearValueNameTablesFar();
 
@@ -55,7 +55,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 0:
     default: {
-        struct BattlePresentationTransition *tr = Ram_HeapSlots->transition_work;
+        struct BattlePresentationTransition *tr = Ram_HeapSlots->transitionWork;
         tr->flag = 0;
         Func_0811ca54(action);
         tr->flag = 0;
@@ -70,12 +70,12 @@ s32 BattlePres_RunAction(s16 *action)
     return 0;
 }
 
-s32 BattleObject_IsValidId(u32 object_id)
+s32 BattleObject_IsValidId(u32 objectId)
 {
-    if (object_id <= 7) {
+    if (objectId <= 7) {
         return 0;
     }
-    if (object_id - 128 <= 5) {
+    if (objectId - 128 <= 5) {
         return 0;
     }
     return -1;

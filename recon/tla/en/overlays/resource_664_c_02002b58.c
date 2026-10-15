@@ -14,14 +14,14 @@ struct AirsRockInsideVector {
 
 struct AirsRockInsideSpawn {
     s32 mode;
-    s32 unknown_04;
-    s32 scale_x;
-    s32 scale_y;
+    s32 unk04;
+    s32 scaleX;
+    s32 scaleY;
     s32 speed;
     s32 acceleration;
     u16 kind;
     const u8 *script;
-    s32 unknown_20;
+    s32 unk20;
     void *update;
 };
 
@@ -36,8 +36,8 @@ void Func_02002b58(s32 x, s32 z)
 
     spawn.kind = 0x2a0;
     spawn.mode = 1;
-    spawn.scale_x = 0xcccc;
-    spawn.scale_y = 0x30000;
+    spawn.scaleX = 0xcccc;
+    spawn.scaleY = 0x30000;
     /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes rebuild the height and the position's address on every pass, and a for loop hoists both (differ 55). */
     i = 0;
 next:

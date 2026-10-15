@@ -18,15 +18,15 @@ s32 *BattleObjGet(s32);
 
 struct StatusIconRecord
 {
-    u8 unknown_00[0x14];
+    u8 unk00[0x14];
     u8 width;
-    u8 unknown_15[4];
+    u8 unk15[4];
     u8 dirty;
 };
 
 struct StatusIconEntry
 {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u8 priority;
 };
 
@@ -50,36 +50,36 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot)
     s32 prev;
     s32 changed = 0;
 
-    if (slot->cycle_timer >= 0)
-        slot->cycle_timer--;
+    if (slot->cycleTimer >= 0)
+        slot->cycleTimer--;
 
-    if (((s16)slot->active_conditions != 0 && slot->animation_entry == 0)
-        || (slot->animation_entry != 0 && (((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
-        || slot->cycle_timer == 0)
+    if (((s16)slot->activeConditions != 0 && slot->animationEntry == 0)
+        || (slot->animationEntry != 0 && (((s16)slot->activeConditions >> slot->selectedCondition) & 1) == 0)
+        || slot->cycleTimer == 0)
     {
         anim = -1;
         owner = slot->object;
-        if ((s16)slot->active_conditions != 0)
+        if ((s16)slot->activeConditions != 0)
         {
-            prev = slot->selected_condition;
+            prev = slot->selectedCondition;
             for (anim = prev + 1;; anim++)
             {
                 if (anim > ICON_MAX - 1)
                     anim = 0;
-                if ((((s16)slot->active_conditions >> anim) & 1) != 0)
+                if ((((s16)slot->activeConditions >> anim) & 1) != 0)
                     break;
             }
 
-            if (prev != anim || slot->animation_entry == 0)
+            if (prev != anim || slot->animationEntry == 0)
             {
                 /* FAKEMATCH: the native stores the condition before it sets changed; plainly changed is set first (one reordered row, differ 2). The one-pass block ends the store's scheduling block, as an empty barrier would, without its 4 estimated bytes. */
                 do
                 {
-                    slot->selected_condition = anim;
+                    slot->selectedCondition = anim;
                 } while (0);
                 changed = 1;
             }
-            slot->cycle_timer = 80;
+            slot->cycleTimer = 80;
         }
         else
         {
@@ -97,19 +97,19 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot)
                     anim += 688;
             }
 
-            if (slot->animation_entry != 0 && changed != 0)
+            if (slot->animationEntry != 0 && changed != 0)
             {
-                ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
-                slot->animation_entry = 0;
+                ResourceMetadata_UnregisterFar(rec, (s32)slot->animationEntry);
+                slot->animationEntry = 0;
             }
 
             if (anim >= 0 && changed != 0)
             {
                 handle = ResourceMetadata_RegisterFar(rec, anim);
-                slot->animation_entry = (struct SpriteEntry *)handle;
+                slot->animationEntry = (struct SpriteEntry *)handle;
                 if (handle == -1)
-                    slot->animation_entry = 0;
-                icon = (struct StatusIconEntry *)slot->animation_entry;
+                    slot->animationEntry = 0;
+                icon = (struct StatusIconEntry *)slot->animationEntry;
                 if (icon != 0)
                 {
                     icon->priority = 3;

@@ -40,7 +40,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
     if (best_no < result) {
         struct PartyState *party = &gPartyState;
 
-        owners = party->active_owners;
+        owners = party->activeOwners;
         count = result;
         do {
             struct OwnerDjinnState *state = UnitGet(*owners);

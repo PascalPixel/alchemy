@@ -7,7 +7,7 @@ u32 Random16(void);
 
 void Func_08158d68(s32 range)
 {
-    u8 *fx = Ram_HeapSlots->battle_fx_work[0];
+    u8 *fx = Ram_HeapSlots->battleFxWork[0];
     s32 *timer;
 
     /* FAKEMATCH: keep the timer address in its own block; the ordinary

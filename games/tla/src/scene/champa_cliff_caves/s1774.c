@@ -1,9 +1,9 @@
 #include "scene.h"
 
 struct EventTransition {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 type;
-    u8 unknown_1b0[4];
+    u8 unk1b0[4];
     s32 frames;
 };
 
@@ -34,14 +34,14 @@ void Func_02001774(void)
     Func_0200345c();
     Func_020035b4(0);
     Func_0200350c((s32)MsgHaveYouLearned);
-    Func_020034d4_(gPartyState.current_owner, 568 << 16, 248 << 16);
+    Func_020034d4_(gPartyState.currentOwner, 568 << 16, 248 << 16);
     Func_020034d4_(8, 584 << 16, 224 << 16);
     Func_020034d4_(13, 600 << 16, 240 << 16);
     Func_020034d4_(11, 584 << 16, 264 << 16);
     ObjectMotion_ArmCallback_(8, 0x5000, 0);
     ObjectMotion_ArmCallback_(11, 0xb000, 0);
-    Object_SetModeById(gPartyState.current_owner, 41);
-    Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+    Object_SetModeById(gPartyState.currentOwner, 41);
+    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(10);
@@ -49,10 +49,10 @@ void Func_02001774(void)
     Func_0200351c(11, 0, 5);
     Motion_SetModeAndWaitAnimation(8, 4);
     Func_0200351c(8, 0, 20);
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     work->frames = 40;
     work->type = 521;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Func_0200356c((s16)gPartyState.saved_scene, (s16)gPartyState.saved_entrance);
+    Func_0200356c((s16)gPartyState.savedScene, (s16)gPartyState.savedEntrance);
 }

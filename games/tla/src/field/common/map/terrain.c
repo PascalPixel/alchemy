@@ -56,15 +56,15 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
     struct MapWork *work;
 
-    work = Ram_HeapSlots->map_work;
+    work = Ram_HeapSlots->mapWork;
     if (value0 >= 0) {
-        work->shake_x = value0;
+        work->shakeX = value0;
     }
     if (value1 >= 0) {
-        work->shake_y = value1;
+        work->shakeY = value1;
     }
     if (value2 >= 0) {
-        work->shake_decay = value2;
+        work->shakeDecay = value2;
     }
 }
 
@@ -75,7 +75,7 @@ void Map_WaitWorkValuesBelow256(void)
     s32 *work;
     s32 cnt;
 
-    work = (s32 *)Ram_HeapSlots->map_work;
+    work = (s32 *)Ram_HeapSlots->mapWork;
     cnt = 0;
     if (work[1] > 255 || work[2] > 255) {
         goto body;

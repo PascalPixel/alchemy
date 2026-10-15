@@ -13,7 +13,7 @@ void Func_02003c84(void)
     } while (0);
     WaitFrames(1);
     Kibombo_FadeTo(0x10000, 0);
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1b4 = 1;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Kibombo_TaskAdd(Func_02002d64, 0x480);
@@ -57,7 +57,7 @@ void Func_02003c84(void)
     Scheduler_RemoveCallbackFar(Func_02002d64);
     WaitFrames(1);
 
-    ((struct KibomboEventWork *)Ram_HeapSlots->event_work)->field_1b4 = 1;
+    ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Kibombo_Wait(10);

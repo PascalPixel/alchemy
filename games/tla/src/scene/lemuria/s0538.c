@@ -16,7 +16,7 @@ void Func_02000538(void)
     Func_02001ccc((s32)&SceneId_Ov68b, 2);
     party = &gPartyState;
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state's address before it builds the field's offset (2 differ without it). */
-    party->unknown_2c2 = 2;
+    party->unk2c2 = 2;
 }
 
 void Func_02000560(void)

@@ -11,46 +11,46 @@ enum {
 
 struct BattlePlan {
     u8 aid;
-    s8 target_count;
-    u8 actor_id2;
-    u8 target_ids[BATTLE_TARGET_CAPACITY];
-    s8 target_offset0;
-    s8 target_dist[BATTLE_TARGET_CAPACITY];
-    s8 target_adjustment0;
-    s8 target_adj[BATTLE_TARGET_CAPACITY];
-    s8 target_modifier0;
-    s8 target_crit[BATTLE_TARGET_CAPACITY];
-    s8 target_result0;
-    s8 target_hit[BATTLE_TARGET_CAPACITY];
-    u8 unknown_48[2];
+    s8 targetCount;
+    u8 actorId2;
+    u8 targetIds[BATTLE_TARGET_CAPACITY];
+    s8 targetOffset0;
+    s8 targetDist[BATTLE_TARGET_CAPACITY];
+    s8 targetAdjustment0;
+    s8 targetAdj[BATTLE_TARGET_CAPACITY];
+    s8 targetModifier0;
+    s8 targetCrit[BATTLE_TARGET_CAPACITY];
+    s8 targetResult0;
+    s8 targetHit[BATTLE_TARGET_CAPACITY];
+    u8 unk48[2];
     s16 cmd;
-    s32 ability_id;
+    s32 abilityId;
     s32 element;
     s32 outcome;
-    u32 presentation_flags;
+    u32 presentationFlags;
     s32 failure;
-    u32 haunt_dmg;
+    u32 hauntDmg;
 };
 
 struct ActionDefinition {
-    u8 unknown_00[12];
+    u8 unk00[12];
 };
 
 LAYOUT_SIZE_GUARD(ActionDefinition_Size, struct ActionDefinition, 12);
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actor_id2, 0x02);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, target_ids, 0x03);
+LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actorId2, 0x02);
+LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, targetIds, 0x03);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_TargetAdj,
     struct BattlePlan,
-    target_adj,
+    targetAdj,
     0x1f);
 LAYOUT_OFFSET_GUARD(BattlePlan_Command, struct BattlePlan, cmd, 0x4a);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, ability_id, 0x4c);
+LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, abilityId, 0x4c);
 LAYOUT_OFFSET_GUARD(
     BattlePlan_SpiritDmg,
     struct BattlePlan,
-    haunt_dmg,
+    hauntDmg,
     0x60);
 
 #endif

@@ -27,33 +27,33 @@ void Func_020039f4(struct ObjectRuntime *object)
     s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
     /* FAKEMATCH: through a local pointer the resident multiply's entry loads before the factor's shift, as in the native (direct: differ 2; its result kept in a local: 2). */
-    mulQ16(object->scale_x, 0x18000);
+    mulQ16(object->scaleX, 0x18000);
     spark = Func_02004b30_(271, object->x, object->y, object->z);
     if (spark != NULL) {
-        spark->terrain_height = object->terrain_height;
+        spark->terrainHeight = object->terrainHeight;
         sprite = spark->animation;
         Func_02004b20(spark, Data_02004f90);
-        spark->motion_flags = 0;
+        spark->motionFlags = 0;
         spark->action = 0;
-        spark->linked_object = object;
+        spark->linkedObject = object;
         if (sprite != NULL) {
             Animation_ApplyChildArgument(sprite, 2);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = 1;
         }
     }
     spark = Func_02004b30_(271, object->x, object->y, object->z);
     if (spark != NULL) {
-        spark->terrain_height = object->terrain_height;
+        spark->terrainHeight = object->terrainHeight;
         sprite = spark->animation;
         Func_02004b20(spark, Data_02004f90);
-        spark->motion_flags = 0;
+        spark->motionFlags = 0;
         spark->action = 0;
-        spark->linked_object = object;
-        spark->terrain_id = 1;
+        spark->linkedObject = object;
+        spark->terrainId = 1;
         if (sprite != NULL) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
         }
     }
 }
@@ -66,7 +66,7 @@ void Func_02003aac(struct ObjectRuntime *object)
     struct ObjectRuntime *particle;
     struct FieldSprite *sprite;
 
-    Iwram_MulQ16(object->scale_x, 0x18000);
+    Iwram_MulQ16(object->scaleX, 0x18000);
     position[0] = object->x;
     position[1] = object->y + 0x20000;
     position[2] = object->z;
@@ -74,14 +74,14 @@ void Func_02003aac(struct ObjectRuntime *object)
     Vector_AddPolarOffsetFar(angle * 20, Random16Far(), position);
     particle = Func_02004b30(674, position[0], position[1], position[2]);
     if (particle != NULL) {
-        particle->terrain_height = object->terrain_height;
+        particle->terrainHeight = object->terrainHeight;
         sprite = particle->animation;
         Func_02004b20(particle, Data_02004f9c);
         Animation_ApplyChildArgument(sprite, 2);
         particle->gravity = 0x200;
-        particle->scale_x = 0xcccc;
-        particle->scale_y = 0xcccc;
+        particle->scaleX = 0xcccc;
+        particle->scaleY = 0xcccc;
         if (sprite != NULL)
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
     }
 }

@@ -14,7 +14,7 @@ void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void                  Battle_WaitMode0(s32 frames);
 void                  WaitFrames(s32 frames);
-void Func_02000ff8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02000ff8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02001010(void);
 void Func_02001018(void);
 void Func_02001068(s32 id, s32 x, s32 z, s32 angle);
@@ -57,7 +57,7 @@ void Func_02000208(void)
         Call3(ObjectMotion_SetPositionAndCommit, 10, 90, 288);
         Call3(ObjectMotion_SetPositionAndReset, 10, 80, 316);
         Call2(Func_020010b8, 10, 0);
-        Object_GetById(9)->velocity_y = 0x40000;
+        Object_GetById(9)->velocityY = 0x40000;
         Call1(Battle_WaitMode0, 10);
         Call1(Func_02001098, (s32)MsgWhereDoYouThink);
         Call2(Func_020010a8, 0x4009, 0);

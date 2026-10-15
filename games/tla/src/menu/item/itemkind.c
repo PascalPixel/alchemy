@@ -8,7 +8,7 @@ s32 Func_08100d40(s32 item)
     return Func_08100d58(*(u16 *)(Item_Get(item) + 40) & 0x3fff);
 }
 
-u8 *BattleActGet(s32 action_id);
+u8 *BattleActGet(s32 actionId);
 s32 Audio_PlayCueReturnOne(s32 cue);
 
 s32 Func_08100d58(s32 kind)

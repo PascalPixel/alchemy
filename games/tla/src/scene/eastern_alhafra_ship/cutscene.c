@@ -48,7 +48,7 @@ void UiText_OpenMessageAtObject();
 #include "scene_ids.h"
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -93,11 +93,11 @@ void Func_020004f4(void)
     Call1((void (*)())Func_02003240, 0);
     Call1((void (*)())Func_020031c8, (s32)MsgTheMayorOf);
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
-    map = Ram_HeapSlots->map_work;
-    map->min_x = 0;
-    map->max_x = 0x4000000;
-    map->min_z = 0;
-    map->max_z = 0x4000000;
+    map = Ram_HeapSlots->mapWork;
+    map->minX = 0;
+    map->maxX = 0x4000000;
+    map->minZ = 0;
+    map->maxZ = 0x4000000;
     Call3((void (*)())Func_020031d8, 8, 0, 10);
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x1c8, 0x198);
     Call4((void (*)())Func_02003248, 25, 0, -16, 0x4000);
@@ -268,13 +268,13 @@ void Func_020004f4(void)
         Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
         Call1((void (*)())Battle_WaitMode0, 20);
         Call3((void (*)())Func_020031d8, 5, 0, 10);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     } else {
         Func_020032a0();
         Call1((void (*)())Battle_WaitMode0, 20);
         Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x8000, 0);
         Call1((void (*)())Battle_WaitMode0, 20);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
         Call3((void (*)())Func_020031d8, 5, 0, 10);
     }
     Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x4000, 0);
@@ -289,7 +289,7 @@ void Func_020004f4(void)
     Call1((void (*)())Battle_WaitMode0, 10);
     Call2((void (*)())Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov669, 99);
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state address before it builds the field offset (differ 2 without it). */
-    gPartyState.battle_rule_24b = 2;
+    gPartyState.battleRule24b = 2;
     Call2((void (*)())Func_02003220, 10, 1);
     Func_02003138();
 }
@@ -410,13 +410,13 @@ void Func_02000c5c(void)
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
     Call1((void (*)())Battle_WaitMode0, 10);
     Call3((void (*)())Func_020031d8, 6, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     goto L_0200903c;
 L_0200900c:
     Call1((void (*)())Battle_WaitMode0, 40);
     Value2((s32 (*)())Motion_SetVarCbAndRefresh, 6, 2);
     Call1((void (*)())Battle_WaitMode0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call3((void (*)())Func_020031d8, 6, 0, 10);
 L_0200903c:
     Value2((s32 (*)())Motion_SetVarCbAndRefresh, 25, 2);
@@ -924,11 +924,11 @@ L_0200903c:
     Call3((void (*)())ObjectMotion_ArmCallback, 17, 0, 0);
     Call1((void (*)())Battle_WaitMode0, 10);
     object16 = Object_GetById(17);
-    object16->action_flags &= 254;
+    object16->actionFlags &= 254;
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 17, 0x1c8, 0x138);
     Call1((void (*)())Battle_WaitMode0, 1);
     object17 = Object_GetById(17);
-    object17->action_flags |= 1;
+    object17->actionFlags |= 1;
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 9, 0, -16);
     Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 22, 0, -16);
@@ -1159,7 +1159,7 @@ L_0200903c:
     Call1((void (*)())Battle_WaitMode0, 20);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 4);
     Call3((void (*)())Func_020031d8, 17, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     goto L_0200abc0;
 L_0200ab7a:
     Call1((void (*)())Battle_WaitMode0, 40);
@@ -1168,7 +1168,7 @@ L_0200ab7a:
     Call1((void (*)())Battle_WaitMode0, 20);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
     Call1((void (*)())Battle_WaitMode0, 20);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call3((void (*)())Func_020031d8, 17, 0, 10);
 L_0200abc0:
     Value3((s32 (*)())Func_020031f8, 17, 0x109, 30);
@@ -1277,12 +1277,12 @@ L_0200abc0:
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_020031d8, 5, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     goto L_0200afe8;
 L_0200afbe:
     Call1((void (*)())Battle_WaitMode0, 40);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call3((void (*)())Func_020031d8, 5, 0, 10);
 L_0200afe8:
     Call2((void (*)())Object_SetModeById, 25, 3);
@@ -1291,7 +1291,7 @@ L_0200afe8:
     Call1((void (*)())Battle_WaitMode0, 30);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 5, 2);
-    object20 = Object_GetById(gPartyState.current_owner);
+    object20 = Object_GetById(gPartyState.currentOwner);
     if (object20 == 0) goto L_0200b03c;
     Call3((void (*)())ObjectMotion_ResetAndSetPosition, 5, *(s16 *)((u8 *)object20 + 10), *(s16 *)((u8 *)object20 + 18));
 L_0200b03c:
@@ -1299,7 +1299,7 @@ L_0200b03c:
     Call3((void (*)())Func_02003198, 5, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 6, 2);
-    object21 = Object_GetById(gPartyState.current_owner);
+    object21 = Object_GetById(gPartyState.currentOwner);
     if (object21 == 0) goto L_0200b07a;
     Call3((void (*)())ObjectMotion_ResetAndSetPosition, 6, *(s16 *)((u8 *)object21 + 10), *(s16 *)((u8 *)object21 + 18));
 L_0200b07a:
@@ -1307,13 +1307,13 @@ L_0200b07a:
     Call3((void (*)())Func_02003198, 6, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 25, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 25, 2);
-    object22 = Object_GetById(gPartyState.current_owner);
+    object22 = Object_GetById(gPartyState.currentOwner);
     if (object22 == 0) goto L_0200b0b8;
     Call3((void (*)())ObjectMotion_ResetAndSetPosition, 25, *(s16 *)((u8 *)object22 + 10), *(s16 *)((u8 *)object22 + 18));
 L_0200b0b8:
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 25);
     Call3((void (*)())Func_02003198, 25, 0, 0);
-    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.current_owner, 1);
+    Call2((void (*)())Object_AttachWorkTargetToObject, gPartyState.currentOwner, 1);
     ((void (*)())Func_02003138)();
     return;
 }

@@ -8,8 +8,8 @@ s32 Func_020031dc(struct ObjectRuntime *object)
     object->x = 0;
     object->y = 0;
     object->z = 0;
-    object->velocity_x = 0;
-    object->velocity_y = 0;
-    object->velocity_z = 0;
+    object->velocityX = 0;
+    object->velocityY = 0;
+    object->velocityZ = 0;
     return 0;
 }

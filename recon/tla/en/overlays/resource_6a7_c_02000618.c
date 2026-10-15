@@ -10,8 +10,8 @@
 #include "flag_call.h"
 
 struct SceneWork {
-    u8 unknown_000[0x1ac];
-    s32 unknown_1ac;
+    u8 unk000[0x1ac];
+    s32 unk1ac;
 };
 
 extern char SceneId_Ov6a7Room1;
@@ -26,13 +26,13 @@ s32 Func_02000618(void)
     struct PartyState *state;
 
     do {
-        ((struct SceneWork *)Ram_HeapSlots->event_work)->unknown_1ac = 256;
+        ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
         state = &gPartyState;
     } while (0);
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
     if (state->entrance == 90) {
         GameFlag_SetBit(0x90a);
-        gPartyState.owner_override = 1;
+        gPartyState.ownerOverride = 1;
         Func_02000af8((s32)&SceneId_Ov6a7Room1, 4);
     }
     Func_02000b08();

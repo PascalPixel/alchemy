@@ -20,10 +20,10 @@ enum {
     EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-void Func_02001c88(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
+void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,
     u32 flags, const struct EffectOptions *options)
 {
-    struct FieldActor *party = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *party = Object_GetById(gPartyState.currentOwner);
     struct FieldEffect *effect;
     struct FieldSprite *sprite;
     const s32 *script;
@@ -40,15 +40,15 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velo
     sprite = effect->sprite;
     Func_02002810(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
     Func_02002820(effect, Data_020033f4[flags & EFFECT_SCRIPT_MASK]);
-    effect->motion_flags = 0;
+    effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
-    effect->velocity_x = velocity_x;
-    effect->velocity_y = velocity_y;
-    effect->velocity_z = velocity_z;
+    effect->velocityX = velocityX;
+    effect->velocityY = velocityY;
+    effect->velocityZ = velocityZ;
     Object_SetSpritePriority(effect, party->sprite->priority);
-    effect->scale_rate_x = 0;
-    effect->scale_rate_y = 0;
+    effect->scaleRateX = 0;
+    effect->scaleRateY = 0;
     effect->spin = 0;
 
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
@@ -56,23 +56,23 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velo
     if ((flags & EFFECT_USE_PALETTE) != 0)
         Object_SetPartAttribute(effect, options->palette);
     if ((flags & EFFECT_USE_PRIORITY) != 0) {
-        effect->priority_flags &= ~1;
+        effect->priorityFlags &= ~1;
         Object_SetSpritePriority(effect, options->priority);
     }
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
-        effect->scale_x = options->start_scale_x;
-        effect->scale_y = options->start_scale_y;
+        effect->scaleX = options->startScaleX;
+        effect->scaleY = options->startScaleY;
     }
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
         script = Data_020033f4[flags & EFFECT_SCRIPT_MASK];
-        target = options->target_scale_x;
+        target = options->targetScaleX;
         count = script[EFFECT_SCRIPT_REPEAT_COUNT];
         if ((flags & EFFECT_USE_START_SCALE) != 0) {
-            effect->scale_rate_x = (target - effect->scale_x) / count;
-            effect->scale_rate_y = (options->target_scale_y - effect->scale_y) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+            effect->scaleRateX = (target - effect->scaleX) / count;
+            effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[EFFECT_SCRIPT_REPEAT_COUNT];
         } else {
-            effect->scale_rate_x = (target - EFFECT_SCALE_ONE) / count;
-            effect->scale_rate_y = (options->target_scale_y - EFFECT_SCALE_ONE) / script[EFFECT_SCRIPT_REPEAT_COUNT];
+            effect->scaleRateX = (target - EFFECT_SCALE_ONE) / count;
+            effect->scaleRateY = (options->targetScaleY - EFFECT_SCALE_ONE) / script[EFFECT_SCRIPT_REPEAT_COUNT];
         }
     }
     if ((flags & EFFECT_USE_SCRIPT) != 0) {

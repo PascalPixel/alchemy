@@ -4,8 +4,8 @@ void Func_020010f4(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Func_02002960_(42, 32, 1, 1, 44, 32);
     GameFlag_SetBit(0x221);
 }
@@ -14,8 +14,8 @@ void Func_0200112c(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Func_02002960_(48, 32, 1, 1, 46, 32);
     GameFlag_SetBit(0x222);
 }
@@ -24,8 +24,8 @@ void Func_02001164(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Func_02002960_(44, 44, 1, 1, 46, 44);
     GameFlag_SetBit(0x223);
 }

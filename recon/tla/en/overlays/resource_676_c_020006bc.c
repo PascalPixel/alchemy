@@ -7,13 +7,13 @@
 #include "types.h"
 
 struct YallamObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x4e];
+    u8 unk14[0x4e];
     u8 state;
-    u8 unknown_63;
+    u8 unk63;
     s16 timer;
 };
 

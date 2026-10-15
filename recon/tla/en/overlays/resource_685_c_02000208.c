@@ -33,11 +33,11 @@ void Func_02000208(void)
     s32 msg;
 
     warp = &Data_02003d10;
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 168, 424);
-    Func_02003534(gPartyState.current_owner, 0);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 168, 424);
+    Func_02003534(gPartyState.currentOwner, 0);
     Func_0200362c(158);
     Func_02003414(warp->scene, warp->x, warp->z);
-    Object_GetById(8)->motion_flags = 0;
+    Object_GetById(8)->motionFlags = 0;
     Func_020034d4_(8, 184 << 16, 204 << 17);
     ObjectMotion_SetSpeedParameters_(8, 0x1cccc, 0xe666);
     ObjectMotion_CommitPositionAndActivate_(8, 0, 16);

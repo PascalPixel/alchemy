@@ -306,7 +306,7 @@ void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);
 void UiWork_InitCountersAndScheduleRefresh(s32 kind);
 s32	 UiWork_SetParamNibbleFar(s32 color);
-void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resource_id);
+void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 #endif
 
 #endif

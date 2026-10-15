@@ -8,12 +8,12 @@ static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 	s32					 angle;
 	struct FacingObject *target;
 
-	target = obj->facing_target;
+	target = obj->facingTarget;
 	if (target != 0)
 	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
+		obj->facingFlags = (0xFE & obj->facingFlags);
 		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
+			target->positionZ - obj->positionZ, target->positionX - obj->positionX);
 		old = obj->facing;
 		delta = (s16)(angle - old);
 		if (delta != 0)

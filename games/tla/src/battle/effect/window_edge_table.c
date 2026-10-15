@@ -4,9 +4,9 @@
 #include "mem.h"
 
 struct FxRunWork {
-    u8 unknown_0000[0x78e4];
+    u8 unk0000[0x78e4];
     s32 active;
-    u8 unknown_78e8[8];
+    u8 unk78e8[8];
     s32 *script;
 };
 
@@ -56,7 +56,7 @@ void Func_0814c994(s32 *arg)
     /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0 offset is started, as in Func_0814cb60 (differ 2 without it). */
     do
     {
-        work = (struct FxRunWork *)Ram_HeapSlots->battle_fx_work[0];
+        work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
     } while (0);
     work->script = arg;
     work->active = 1;
@@ -174,7 +174,7 @@ void Func_0814cb60(s32 *script)
     /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0 offset is started (differ 2 without it). */
     do
     {
-        work = (struct FxRunWork *)Ram_HeapSlots->battle_fx_work[0];
+        work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
     } while (0);
     work->script = script;
     work->active = 1;

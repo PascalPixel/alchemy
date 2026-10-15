@@ -7,9 +7,9 @@
 #include "io_reg.h"
 
 struct MapPaletteEntry {
-    u16 unknown_0;
+    u16 unk0;
     u16 resource;
-    u8 unknown_4[8];
+    u8 unk4[8];
 };
 
 extern const struct MapPaletteEntry Data_0802f380[];

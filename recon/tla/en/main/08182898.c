@@ -21,7 +21,7 @@ struct BubbleParticle {
     s32 size;
     s32 velocityX;
     s32 velocityY;
-    s32 unk_14;
+    s32 unk14;
     s32 timer;
 };
 
@@ -52,8 +52,8 @@ void Func_08143bb8(void);
 
 void Func_08182898(struct BattleEffectArgument *effect)
 {
-    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
     /* The blitter pair, of which this effect uses the first: as a two-word array it is one
        DImode pseudo, and its spill takes sp+12 and the unused sp+16 the native frame has. */
     CanvasBlitFunc blit[2];
@@ -65,7 +65,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
     *(s32 *)(work + 0x7780) = 2;
     *(s32 *)(work + 0x7784) = 50;
     Func_081963ec(104, 19);
-    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unk64[1];
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work + 0x700, 0, 0);
     for (frame = 0; frame != 60; frame++)

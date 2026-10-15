@@ -42,7 +42,7 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
 // with that side's palette (14 + side).
 struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     struct RenderOutput *object = 0;
     s32 first;
     s32 second;
@@ -56,7 +56,7 @@ struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s
     if ((u32)side > 1) {
         u32 current;
 
-        current = state->resource_ids[1];
+        current = state->resourceIds[1];
         /* FAKEMATCH: the barrier loads the second side's id before 999 is
            built and the side is set; plain, both come first (one reordered
            row, differ 2). */
@@ -64,7 +64,7 @@ struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s
         side = 1;
         if (current != 999) {
             side = 0;
-            if (state->resource_ids[0] != 999)
+            if (state->resourceIds[0] != 999)
                 return object;
         }
     }
@@ -77,7 +77,7 @@ struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s
         object->kind = 2;
     }
 
-    state->resource_ids[side] = id;
-    state->output_ids[side] = first;
+    state->resourceIds[side] = id;
+    state->outputIds[side] = first;
     return object;
 }

@@ -168,7 +168,7 @@ static s32 LinkLobby_PollPeerReady(void)
 	{
 		Engine_GameFlagClear(0x304);
 	}
-	if (work->raised_trigger != 2)
+	if (work->raisedTrigger != 2)
 	{
 		LinkLobby_PeerSlotMatches(0);
 		if (!Engine_GameFlagIsSet(0x303))
@@ -195,7 +195,7 @@ static s32 LinkLobby_PollPeerReady(void)
 				Engine_GameFlagSet(0x201);
 				if (Engine_GameFlagIsSet(0x202))
 				{
-					work->raised_trigger = 1;
+					work->raisedTrigger = 1;
 				}
 				result = 1;
 			}
@@ -208,13 +208,13 @@ static s32 LinkLobby_PollPeerReady(void)
 		if (Engine_GameFlagIsSet(0x201) && Engine_GameFlagIsSet(0x202)
 			&& !Engine_GameFlagIsSet(0x200))
 		{
-			work->raised_trigger = 1;
+			work->raisedTrigger = 1;
 		}
 	}
 	if ((GameFlag_IsSet(0x201) || GameFlag_IsSet(0x202)) && !GameFlag_IsSet(0x173)
 		&& !LinkLobby_PeerSlotMatches(0) && gLinkLobbyWaitFrames > 24)
 	{
-		work->raised_trigger = 2;
+		work->raisedTrigger = 2;
 		GameFlag_Set(0x205);
 		GameFlag_Clear(0x201);
 		GameFlag_Clear(0x202);
@@ -222,7 +222,7 @@ static s32 LinkLobby_PollPeerReady(void)
 	}
 	if (GameFlag_IsSet(0x205))
 	{
-		work->raised_trigger = 2;
+		work->raisedTrigger = 2;
 	}
 	return result;
 }
@@ -264,7 +264,7 @@ static s32 EV02_RAISED(void)
 	Engine_GameFlagClear(512);
 	Engine_GameFlagClear(0x203);
 	Engine_EventBegin();
-	work->raised_trigger = 0;
+	work->raisedTrigger = 0;
 	Engine_EventSetMessage(MsgLobbyLinkDisconnected);
 	Engine_EventOpenMessage(8, 0);
 	Engine_GameFlagClear(0x205);
@@ -697,7 +697,7 @@ static s32 EV10_TOUCH(void)
 			}
 			if (stop)
 			{
-				work->raised_trigger = 2;
+				work->raisedTrigger = 2;
 				Engine_GameFlagSet(0x205);
 				Engine_GameFlagClear(0x201);
 				Engine_GameFlagClear(0x202);
@@ -720,7 +720,7 @@ static s32 EV10_TOUCH(void)
 		Map_SetLayerEntryFlag(5);
 		if (Engine_GameFlagIsSet(0x173))
 		{
-			Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+			Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
 			Engine_EventSetMessage(MsgLobbyGoodLuck);
 			Engine_EventOpenMessage(8, 0);
 			Engine_TaskWait(45);
@@ -755,7 +755,7 @@ static s32 EV10_TOUCH(void)
 				Engine_GameFlagClear(0x303);
 				Engine_GameFlagClear(0x203);
 				Engine_GameFlagClear(0x200);
-				work->raised_trigger = 2;
+				work->raisedTrigger = 2;
 				Engine_EventEnd();
 				return;
 			}
@@ -802,7 +802,7 @@ static s32 EV08_TALK(void)
 
 	msg = MsgLobbyPleaseSpeakWhen;
 	Engine_EventBegin();
-	Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
 	if (LinkLobby_PeerSlotMatches(0) == 0)
 	{
 		Engine_TaskWait(1);
@@ -824,7 +824,7 @@ static s32 EV08_TALK(void)
 				Engine_GameFlagClear(0x16c);
 				Engine_GameFlagSet(0x202);
 				line = msg + 7;
-				gGameState.link_tallies[3] = answer;
+				gGameState.linkTallies[3] = answer;
 				goto message;
 			}
 			Engine_GameFlagClear(0x173);
@@ -916,11 +916,11 @@ static s32 EV09_TALK(s32 actor)
 	s32	 base;
 
 	Engine_EventBegin();
-	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
 	if ((facing - 0xa001) <= 0x3ffe)
 	{
 		base = MsgLobbyLooksLikeFirst;
-		count = &gGameState.link_tallies[4];
+		count = &gGameState.linkTallies[4];
 		if (*count != 0)
 		{
 			UiWork_ClearValueNameTables();
@@ -937,7 +937,7 @@ static s32 EV09_TALK(s32 actor)
 	else
 	{
 		base = MsgLobbyLooksLikeFirstTime;
-		count = &gGameState.link_tallies[7];
+		count = &gGameState.linkTallies[7];
 		if (*count != 0)
 		{
 			UiWork_ClearValueNameTables();
@@ -960,7 +960,7 @@ static s32 EV15_TALK(s32 id)
 	s32 ok;
 
 	Engine_EventBegin();
-	Engine_ActorFaceActor(id, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(id, gGameState.selectedActor, 0);
 	Engine_EventSetMessage(MsgLobbyChooseParameters);
 	Engine_EventShowMessage(id, 0);
 	window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
@@ -1046,11 +1046,11 @@ static s32 LinkLobby_PartyContains(s32 id)
 	}
 	for (i = 0; i < count; i++)
 	{
-		if (gGameState.active_owners[i] == 0xff)
+		if (gGameState.activeOwners[i] == 0xff)
 		{
 			return 0;
 		}
-		if (gGameState.active_owners[i] == id)
+		if (gGameState.activeOwners[i] == id)
 		{
 			return 1;
 		}
@@ -1069,7 +1069,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor)
 	s32 own = LinkLobby_PartyContains(actor);
 
 	Engine_EventBegin();
-	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
 	if (Engine_GameFlagIsSet(0x304))
 	{
 
@@ -1132,7 +1132,7 @@ static s32 LinkLobby_TalkToAttendant(s32 actor)
 		message = MsgLobbyBattleArenaOld;
 		break;
 	}
-	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
 	if (Engine_GameFlagIsSet(0x304))
 		step = 2 - (Engine_GameFlagIsSet(0x305) != 0);
 	Engine_EventSetMessage(message + step);
@@ -1145,7 +1145,7 @@ static s32 EV16_TALK(s32 actor)
 	s32 message;
 
 	Engine_EventBegin();
-	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
+	Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
 	if (!GameFlag_IsSet(0x204))
 	{
 		if (Party_CountActiveOwners() <= 3)
@@ -1170,10 +1170,10 @@ static s32 EV22_TALK(s32 id)
 
 	Engine_EventBegin();
 	gs = &gGameState;
-	Engine_ActorFaceActor(id, gs->selected_actor, 0);
-	if (gs->link_tallies[2] != 0)
+	Engine_ActorFaceActor(id, gs->selectedActor, 0);
+	if (gs->linkTallies[2] != 0)
 	{
-		UiText_DrawQuantity(gs->link_tallies[2], 5);
+		UiText_DrawQuantity(gs->linkTallies[2], 5);
 		Engine_EventSetMessage(MsgLobbyWonNumberConsecutive);
 	}
 	else
@@ -1246,9 +1246,9 @@ s32 LinkLobby_RunRoundResult(void)
 
 	gLinkLobbyCallFrames = 0;
 	gLinkLobbyWaitFrames = 0;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Sound_LoadPresetParameters(2);
-	LinkLobby_DrawThreeDigitValue(gGameState.link_tallies[6]);
+	LinkLobby_DrawThreeDigitValue(gGameState.linkTallies[6]);
 	Map_CopyCellAttributes(11, 11, 1, 1, 13, 10);
 	LinkLobby_WriteSlotValue(4);
 	Engine_TaskWait(1);
@@ -1280,8 +1280,8 @@ s32 LinkLobby_RunRoundResult(void)
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
-		gGameState.link_tallies[0]++;
-		gGameState.link_tallies[3]++;
+		gGameState.linkTallies[0]++;
+		gGameState.linkTallies[3]++;
 		wins = (s8)FieldGameFlag_GetByte(0x3f8);
 		msg = wins * 2 + 2;
 		if (msg > 14)
@@ -1299,7 +1299,7 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			FieldGameFlag_SetByte(1000, v + 1);
 		}
-		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+		Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
 		Engine_EventSetMessage(MsgLobbyNotBadNextMonster + msg);
 		Engine_EventOpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1314,11 +1314,11 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			Engine_GameFlagClear(0x173);
 			FieldGameFlag_SetByte(0x3f8, -1);
-			UiText_DrawQuantity(gGameState.link_tallies[3], 5);
-			score = gGameState.link_tallies[3];
-			if (gGameState.link_tallies[2] < score)
+			UiText_DrawQuantity(gGameState.linkTallies[3], 5);
+			score = gGameState.linkTallies[3];
+			if (gGameState.linkTallies[2] < score)
 			{
-				gGameState.link_tallies[2] = score;
+				gGameState.linkTallies[2] = score;
 				Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
 				Engine_EventOpenMessage(8, 0);
 				LinkLobby_SaveMonsterBattleResults();
@@ -1335,19 +1335,19 @@ s32 LinkLobby_RunRoundResult(void)
 	else if (gGameState.entrance == 9)
 	{
 
-		gGameState.link_tallies[1]++;
+		gGameState.linkTallies[1]++;
 		Engine_EventBegin();
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
-		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-		/* FAKEMATCH: one scalar holds the row address, then its score. Reading link_tallies[3] twice, also through a u16 pointer local: differ 36; reading it once into score before the call: differ 10. */
-		score = (u32)&gGameState.link_tallies[3];
+		Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+		/* FAKEMATCH: one scalar holds the row address, then its score. Reading linkTallies[3] twice, also through a u16 pointer local: differ 36; reading it once into score before the call: differ 10. */
+		score = (u32)&gGameState.linkTallies[3];
 		UiText_DrawQuantity(*(u16 *)score, 5);
 		score = *(u16 *)score;
-		if (gGameState.link_tallies[2] < score)
+		if (gGameState.linkTallies[2] < score)
 		{
-			gGameState.link_tallies[2] = score;
+			gGameState.linkTallies[2] = score;
 			Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
 			Engine_EventOpenMessage(8, 0);
 			LinkLobby_SaveMonsterBattleResults();
@@ -1357,7 +1357,7 @@ s32 LinkLobby_RunRoundResult(void)
 			Engine_EventSetMessage(MsgLobbyWonNumberBattleTold);
 			Engine_EventOpenMessage(8, 0);
 		}
-		gGameState.link_tallies[3] = 0;
+		gGameState.linkTallies[3] = 0;
 		Engine_GameFlagClear(0x173);
 		FieldGameFlag_SetByte(0x3f8, -1);
 		LinkLobby_WriteSlotValue(0);
@@ -1376,7 +1376,7 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			ew = gEventWork;
 			Engine_GameFlagClear(1000);
-			ew->raised_trigger = 2;
+			ew->raisedTrigger = 2;
 			Engine_GameFlagClear(0x304);
 			Engine_TaskWait(20);
 			LinkLobby_InitializeSerial();
@@ -1385,11 +1385,11 @@ s32 LinkLobby_RunRoundResult(void)
 		}
 		else
 		{
-			gGameState.link_tallies[4]++;
-			v = gGameState.link_tallies[7] + 1;
-			gGameState.link_tallies[7] = v;
-			/* FAKEMATCH: reuse the other score branches' address slot. Through link_tallies[6] itself or a u16 pointer local: differ 8. */
-			score = (u32)&gGameState.link_tallies[6];
+			gGameState.linkTallies[4]++;
+			v = gGameState.linkTallies[7] + 1;
+			gGameState.linkTallies[7] = v;
+			/* FAKEMATCH: reuse the other score branches' address slot. Through linkTallies[6] itself or a u16 pointer local: differ 8. */
+			score = (u32)&gGameState.linkTallies[6];
 			if (*(u16 *)score < (u16)v)
 			{
 				*(u16 *)score = v;
@@ -1412,8 +1412,8 @@ s32 LinkLobby_RunRoundResult(void)
 		LinkLobby_WriteSlotValue(4);
 		if ((v = Engine_GameFlagIsSet(0x173)) == 0)
 		{
-			gGameState.link_tallies[5]++;
-			gGameState.link_tallies[7] = v;
+			gGameState.linkTallies[5]++;
+			gGameState.linkTallies[7] = v;
 			LinkLobby_SaveBattleResults();
 		}
 		Engine_GameFlagSet(0x304);
@@ -1425,17 +1425,17 @@ s32 LinkLobby_RunRoundResult(void)
 		SerialRuntime_Initialize();
 		Engine_GameFlagClear(0x172);
 		FieldGameFlag_SetByte(0x3f8, -1);
-		if (gGameState.saved_options != 0)
+		if (gGameState.savedOptions != 0)
 		{
 			Engine_EventBegin();
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
-			Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+			Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
 			Engine_EventSetMessage(MsgLobbyNoteCantUse);
 			Engine_EventShowMessage(8, 0);
 			Engine_EventEnd();
 		}
-		gGameState.saved_options = 0;
+		gGameState.savedOptions = 0;
 		gOptionMirror = 0;
 		LinkLobby_WriteSlotValue(0);
 		LinkLobby_WriteSlotValue(4);

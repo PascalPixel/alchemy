@@ -5,7 +5,7 @@
 #include "scene_ids.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 value;
 };
 
@@ -41,7 +41,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b)
 // and steps the leader in.
 void Func_02001c94(void)
 {
-    struct EventWork154 *work = Ram_HeapSlots->event_work;
+    struct EventWork154 *work = Ram_HeapSlots->eventWork;
     s32 i;
 
     Func_02003398();
@@ -53,7 +53,7 @@ loop:
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != NULL)
-            object->motion_flags = 0;
+            object->motionFlags = 0;
     }
     i++;
     if ((u32)i <= 63)
@@ -69,9 +69,9 @@ loop:
 
         Func_02003320_(Data_02004410[index].data, Data_02004410[index].a, Data_02004410[index].b);
     }
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, 0, -4);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 0, -4);
     Battle_WaitMode0(6);
     Func_02003450(work->value);
     Event_FinishScreenTransition();

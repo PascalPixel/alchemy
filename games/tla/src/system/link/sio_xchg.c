@@ -10,8 +10,8 @@
 //--------------------------------------------------------------------------
 // phase 1 なら受けたデータを receive に集め、send から次のパケットを作る
 // 戻り値は通信の状態
-//   ビット 0〜7  : current_mask（mode 8 ならビット 7 も立てる）
-//   ビット 8〜15 : received_mask
+//   ビット 0〜7  : currentMask（mode 8 ならビット 7 も立てる）
+//   ビット 8〜15 : receivedMask
 //   0x1000       : 親
 //   0x2000       : SIOCNT のマルチプレイ ID が 2 以上
 //--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 		SerialRuntime_PrepareSendPacket(send);
 		gSerialRuntime.sequence++;
 	}
-	st = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	st = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
 	if (gSerialRuntime.mode == 8)
 		st |= 0x80;
 	ret = SerialRuntime_AddParentFlag(st);
@@ -40,7 +40,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 }
 
 //--------------------------------------------------------------------------
-// 送るパケットを send_buffer[0] に組み立てる（作りは上と同じ）
+// 送るパケットを sendBuffer[0] に組み立てる（作りは上と同じ）
 //--------------------------------------------------------------------------
 void SerialRuntime_PrepareSendPacket(void *payload)
 {
@@ -54,10 +54,10 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		u8	cur;
 		u8	recv;
 
-		pkt = (u8 *)sr->send_buffer[0];
+		pkt = (u8 *)sr->sendBuffer[0];
 		pkt[0] = sr->sequence;
-		cur = sr->current_mask;
-		recv = sr->received_mask;
+		cur = sr->currentMask;
+		recv = sr->receivedMask;
 		sum = 0;
 		/* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
 		*(volatile u16 *)(pkt + 2) = sum;
@@ -68,7 +68,7 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		u16 *pkt;
 		u32	 v;
 
-		pkt = sr->send_buffer[0];
+		pkt = sr->sendBuffer[0];
 		for (i = 0; i <= 13; i++)
 		{
 			v = *pkt;
@@ -81,12 +81,12 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		struct SerialPacket *pkt;
 
 		inv = ~sum;
-		pkt = (struct SerialPacket *)sr->send_buffer[0];
+		pkt = (struct SerialPacket *)sr->sendBuffer[0];
 		pkt->checksum = inv;
 	}
 	if (sr->mode != 0)
 		REG_TM3CNT_H = 0;
-	sr->send_index = -1;
-	if (sr->mode != 0 && sr->transfer_enabled != 0)
+	sr->sendIndex = -1;
+	if (sr->mode != 0 && sr->transferEnabled != 0)
 		REG_TM3CNT_H = 0xc0;
 }

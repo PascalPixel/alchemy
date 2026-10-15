@@ -17,7 +17,7 @@ struct FlashSector
 // フラッシュの種類 (gFlash が指す 24 バイト)
 struct FlashType
 {
-	u32 rom_size;
+	u32 romSize;
 	struct FlashSector sector;
 	u16 wait[2]; // REG_WAITCNT の下位 2 ビット
 	u16 id;
@@ -28,7 +28,7 @@ struct FlashSetupInfo
 {
 	u32 handlers[3]; // 書き込み, 全消去, セクタ消去
 	FlashWaitProc wait; // 書き込み待ち
-	u16 *max_time; // 待ち時間の表
+	u16 *maxTime; // 待ち時間の表
 	struct FlashType type;
 };
 

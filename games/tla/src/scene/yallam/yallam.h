@@ -29,8 +29,8 @@ void Func_02002590(s32 skip);
 struct YallamSaved {
     s32 action;
     s32 mode;
-    s32 byte_98;
-    s32 byte_99;
+    s32 byte98;
+    s32 byte99;
 };
 
 struct YallamStop {

@@ -34,7 +34,7 @@ void InitializeSceneRecordBuffer(void);
 struct EventGlobals
 {
 	struct EventWork *event;
-	u8				  unknown_04[0x10];
+	u8				  unk04[0x10];
 	u8				 *field;
 };
 
@@ -725,8 +725,8 @@ static void FieldScene_PrepareStatueTransition(void)
 	GameFlag_Set(0x201);
 	GameFlag_Clear(0x200);
 	GameFlag_Clear(0x202);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -806,8 +806,8 @@ static void Scene_SpringStatueTrap(void)
 	SetSolSanctumActorStep(32784, 6);
 	Actor_SetSpeed(ACTOR_KRADEN, 0x20000, 0x10000);
 	Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	GameFlag_Set(FLAG_STATUE_TRAP_SPRUNG);
@@ -895,8 +895,8 @@ static void FieldScene_RunClosingSequence(void)
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight2);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight3);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight4);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(4);
@@ -1010,8 +1010,8 @@ static void FieldScene_RunFlaggedSequence(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 		SetSolSanctumActorStep(base, 6);
 	}
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(5);
@@ -1182,14 +1182,14 @@ static void EV20_SEARCH(void)
 		Engine_EventWait(20);
 		Actor_FaceDirection(0, 0xc000, 20);
 		Actor_SetSpeed(0, 0x4ccc, 0x2666);
-		actor->steering_flags &= ~ACTOR_FACES_MOTION;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 		/* FAKEMATCH: register choice only: the zero goes through the sprite
 		   variable, whose pseudo has r7, as native. Plain forms measured
-		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4), also
+		   (2026-10-13): motionFlags = 0 puts the zero in r2 (differ 4), also
 		   with the actor held as union FieldObject and with FieldActor's
 		   coordinates as s32. */
 		sprite = 0;
-		actor->motion_flags = (u32)sprite;
+		actor->motionFlags = (u32)sprite;
 		Engine_AudioPlayCue(201);
 		Actor_SetChildValue(0, 0x100);
 		sprite = actor->sprite;
@@ -1224,14 +1224,14 @@ static void EV20_SEARCH(void)
 		   byte stores wait past the zero, as native. Plain forms measured
 		   (2026-10-13): &= ~ACTOR_FACES_MOTION with base5_0 = 0 and the
 		   store before, after or chained puts the flags in r3, stored at
-		   once (differ 10); motion_flags = 0 before base5_0 = 0, 23. */
+		   once (differ 10); motionFlags = 0 before base5_0 = 0, 23. */
 		{
 			s32 m = 254;
 
-			m &= actor->steering_flags;
+			m &= actor->steeringFlags;
 			base5_0 = 0;
-			actor->steering_flags = m;
-			actor->motion_flags = base5_0;
+			actor->steeringFlags = m;
+			actor->motionFlags = base5_0;
 		}
 		Engine_AudioPlayCue(201);
 		Actor_SetChildValue(16, 0x100);
@@ -1254,8 +1254,8 @@ static void EV20_SEARCH(void)
 		} while (base5_0 != 60);
 		Engine_ActorSetPosition(16, 0, 0);
 		Engine_EventWait(80);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
-		gEventWork->transition_frames = 24;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+		gEventWork->transitionFrames = 24;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		Engine_ColorBufferApplyTarget(0, 0);
@@ -1272,7 +1272,7 @@ s32 SolLunaRooms_RestoreEntryState(void)
 	s32 lit;
 
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	done = 0;
 	if (Engine_GameFlagIsSet(0x809) != 0 && Engine_GameFlagIsSet(0x814) == 0
 		&& Engine_GameFlagIsSet(0x819) == 0)
@@ -1476,7 +1476,7 @@ static void SolLunaRooms_RunLightScene(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(1, 0x1180000, 0x860000);
 	Actor_FaceDirection(1, 0xa000, 0);
-	((struct EventGlobals *)&gEventWork)->event->transition_frames = 1;
+	((struct EventGlobals *)&gEventWork)->event->transitionFrames = 1;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1513,16 +1513,16 @@ static void SolLunaRooms_RunLightScene(void)
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	Engine_EventWait(40);
 	InitializeSceneRecordBuffer();
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(0, 4, 0);
 	Engine_ActorJump(1, 4, 0);
 	Actor_SetDestination(0, 0x12c, 0x82);
 	Engine_ActorSetDestination(1, 0x10a, 0x90);
 	Engine_ActorWaitForMove(1);
 	Engine_EventWait(40);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	BattleFx_SetQueuedSoundAndPlay(141);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Engine_EventWait(40);
@@ -1547,9 +1547,9 @@ static void SolLunaRooms_RunLightScene(void)
 	field[0x2a02] = 1;
 	field[0x2a03] = 1;
 	Io_Write16(0, &PLTT_BACKDROP);
-	((struct EventGlobals *)&gEventWork)->event->start_transition =
+	((struct EventGlobals *)&gEventWork)->event->startTransition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	((struct EventGlobals *)&gEventWork)->event->transition_frames = 16;
+	((struct EventGlobals *)&gEventWork)->event->transitionFrames = 16;
 	Engine_EventEnd();
 }
 

@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 
 struct EventWork1cc {
-    u8 unknown_000[0x1cc];
+    u8 unk000[0x1cc];
     struct ObjectRuntime *object;
 };
 
@@ -17,7 +17,7 @@ struct IoReg16 {
 void Func_02002074(void)
 {
     s32 blend;
-    struct ObjectRuntime *object = ((struct EventWork1cc *)Ram_HeapSlots->event_work)->object;
+    struct ObjectRuntime *object = ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->object;
     s32 level = object->z;
 
     level = (level - 0xe80000) >> 19;

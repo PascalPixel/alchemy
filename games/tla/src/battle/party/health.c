@@ -19,11 +19,11 @@
 
 void BattleParty_ApplyDrain(s32 amount)
 {
-    s32 target_count = Party_CountActiveOwnersFar();
+    s32 targetCount = Party_CountActiveOwnersFar();
     s32 i;
 
-    for (i = 0; i < target_count; i++)
-        UnitPpAddFar(gPartyState.active_owners[i], amount);
+    for (i = 0; i < targetCount; i++)
+        UnitPpAddFar(gPartyState.activeOwners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -44,18 +44,18 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     }
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = UnitGet(gPartyState.active_owners[i]);
+        unit = UnitGet(gPartyState.activeOwners[i]);
         if (!scaled) {
             value = amount;
         } else {
-            value = unit->max_hp * amount / 100;
+            value = unit->maxHp * amount / 100;
             if (value == 0) {
                 value = amount;
                 if (value < 0)
                     value = -value;
             }
         }
-        Owner_AdjustFirstValueFar(gPartyState.active_owners[i], value);
+        Owner_AdjustFirstValueFar(gPartyState.activeOwners[i], value);
     }
 }
 
@@ -79,14 +79,14 @@ s32 BattleParty_ApplyStatusDamage(void)
 
             switch (object->poison) {
             case 1:
-                amount = -((object->max_hp + 10) / 20);
+                amount = -((object->maxHp + 10) / 20);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 0)
                     result = 1;
                 break;
             case 2:
-                amount = -((object->max_hp + 5) / 10);
+                amount = -((object->maxHp + 5) / 10);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 1)

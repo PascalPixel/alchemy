@@ -80,7 +80,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argum
 void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
-        object->target.child->value_12 = value;
+        object->target.child->value12 = value;
 }
 
 void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
@@ -90,7 +90,7 @@ void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
     if (object != NULL && (object->kind & 0xf) == 1) {
         child = object->target.child;
         if (index >= 0) {
-            child->entries[0]->anim_id = index;
+            child->entries[0]->animId = index;
             InitializeAnimationObjects(child);
         }
     }

@@ -21,9 +21,9 @@ void Func_0200343c(struct ObjectRuntime *parent)
             Func_02004b20(object, Data_02004f70);
             Func_02004b18(object, 1);
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            object->motion_flags = 0;
-            object->scale_x = 0x20000;
-            object->scale_y = 0x20000;
+            object->motionFlags = 0;
+            object->scaleX = 0x20000;
+            object->scaleY = 0x20000;
         }
     }
 }

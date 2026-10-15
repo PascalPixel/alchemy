@@ -10,7 +10,7 @@
 #include "uiwindow.h"
 
 struct ScreenWork {
-    u8 unknown_000[0x5a4];
+    u8 unk000[0x5a4];
     u8 panel[0x84];
 };
 
@@ -32,7 +32,7 @@ s32 Func_08040d70(s32 index)
     s32 moved;
 
     Func_08040c78();
-    work = Ram_HeapSlots->unknown_d0[0];
+    work = Ram_HeapSlots->unkd0[0];
     WaitFrames(1);
     window = Func_08040cc4();
     moved = -1;

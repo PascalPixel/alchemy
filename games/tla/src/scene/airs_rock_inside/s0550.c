@@ -22,7 +22,7 @@ u32 Random16Far(void);
 // previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *self = (struct ObjectRuntime *)object;
 
     if (Random16Far() & 0xff)
@@ -47,7 +47,7 @@ void Func_020004d4(struct FieldActor *object)
             object->z = z + ((r & 127) << 16);
         }
     }
-    self->unknown_66 = self->action;
+    self->unk66 = self->action;
     if (self->action == 212)
         Func_02005d5c(object, 9);
     else
@@ -56,7 +56,7 @@ void Func_020004d4(struct FieldActor *object)
 
 void Func_02000550(struct FieldActor *object)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
         || *(s16 *)(work + 360) != 0) {

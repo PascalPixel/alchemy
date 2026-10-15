@@ -162,8 +162,8 @@ static void EV08_PSYNERGY_1(void)
 	GameFlag_Set(0x883);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(15, 2);
-	Actor_Get(15)->motion_flags = 0;
-	Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+	Actor_Get(15)->motionFlags = 0;
+	Actor_Get(15)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	Engine_ActorSetSpritePriority(15, 2);
 	Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
 	Engine_EventEnd();
@@ -307,7 +307,7 @@ static void RunGuardedSceneSetup(void)
 static void BilibinCave_PrepareWindowTransition(void)
 {
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
 	Engine_ActorSetAnimation(8, 1);
 	Engine_ActorSetAnimation(10, 2);
@@ -327,7 +327,7 @@ static void FieldScene_RunScene398SequenceC(void)
 	struct FieldActor *record;
 	s32				   v5;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	record = Actor_Get(18);
 	Engine_ActorSetSpriteFlags((s32)record, 0);
 	record = Actor_Get(19);
@@ -380,9 +380,9 @@ static void FieldScene_RunScene398SequenceC(void)
 	{
 		Actor_SetPosition(8, 0, 0);
 		Engine_ActorSetAnimation(15, 5);
-		Actor_Get(15)->motion_flags = 0;
+		Actor_Get(15)->motionFlags = 0;
 		Actor_Get(15)->y.fixed = -0x40000;
-		Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		Actor_Get(15)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		Engine_ActorSetSpritePriority(15, 2);
 		Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
 	}
@@ -446,7 +446,7 @@ static void StagedActor_PushActorAhead(void)
 	if (blocker != 0)
 		return;
 
-	target->terrain_id = 2;
+	target->terrainId = 2;
 
 	pos[0] = target->x.fixed + (StagedActor_DirectionSteps[heading] & 0xffff0000);
 	pos[1] = target->y.fixed;
@@ -471,8 +471,8 @@ static void StagedActor_PushActorAhead(void)
 
 	target->x.fixed = pos[0];
 	target->z.fixed = pos[2];
-	target->velocity_x = (s32)blocker;
-	target->velocity_z = (s32)blocker;
+	target->velocityX = (s32)blocker;
+	target->velocityZ = (s32)blocker;
 
 	Object_SetMode(player, 1);
 	FieldScene_RunScene398SequenceB();

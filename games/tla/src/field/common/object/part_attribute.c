@@ -10,18 +10,18 @@
 #include "object_runtime.h"
 
 struct ObjectPart {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 attribute;
-    u8 unknown_06[0xa];
+    u8 unk06[0xa];
     void *graphics;
 };
 
 struct ObjectPartList {
-    u8 unknown_00[0x19];
+    u8 unk00[0x19];
     u8 dirty;
-    u8 unknown_1a;
+    u8 unk1a;
     u8 count;
-    u8 unknown_1c[0xc];
+    u8 unk1c[0xc];
     struct ObjectPart *parts[1];
 };
 
@@ -34,7 +34,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object)
     s32 attribute;
     s32 i;
 
-    if ((object->animation_kind & 0xf) == 1) {
+    if ((object->animationKind & 0xf) == 1) {
         list = object->animation;
         attribute = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
         for (i = 0; i < list->count; i++) {
@@ -55,7 +55,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute)
     struct ObjectPart *part;
     s32 i;
 
-    if ((object->animation_kind & 0xf) == 1) {
+    if ((object->animationKind & 0xf) == 1) {
         list = object->animation;
         for (i = 0; i < list->count; i++) {
             part = list->parts[i];

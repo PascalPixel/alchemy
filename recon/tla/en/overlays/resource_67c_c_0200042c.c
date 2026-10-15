@@ -9,7 +9,7 @@ void Func_0200042c(s32 unused, s32 id)
         s32 row = object->z >> 20;
 
         if (row == 12) {
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             object->y += -0x10000;
             GameFlag_SetBit(0x95a);
             Func_02003d1c(0, 12, 1, 1, 9, row);
@@ -17,7 +17,7 @@ void Func_0200042c(s32 unused, s32 id)
         }
     } else if (id == 11) {
         if (object->x >> 20 == 51) {
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             object->y += -0x10000;
             GameFlag_SetBit(0x95b);
         }

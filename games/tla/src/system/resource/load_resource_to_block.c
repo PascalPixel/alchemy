@@ -14,14 +14,14 @@
 #define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
 
 
-void VramBlock_LoadResource(s32 entry_id, s32 size, s32 resource_id)
+void VramBlock_LoadResource(s32 entry_id, s32 size, s32 resourceId)
 {
     void *source;
     void *buffer;
 
     if (entry_id > 95)
         return;
-    source = Resource_GetTableEntry(resource_id);
+    source = Resource_GetTableEntry(resourceId);
     buffer = MemAlloc(size);
     Resource_DecodeByteLzInRam(source, buffer);
     VramBlock_LoadCached(entry_id, size, buffer);

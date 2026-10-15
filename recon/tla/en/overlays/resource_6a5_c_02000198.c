@@ -80,8 +80,8 @@ void Func_02000198(void)
         center->x = 152 << 17;
         center->y = -0x1680000;
         center->z = 164 << 16;
-        center->scale_x = 0x10000;
-        center->scale_y = 0x10000;
+        center->scaleX = 0x10000;
+        center->scaleY = 0x10000;
         SceneActor_ParkRecord(center);
         ObjectMotion_EnableActionAndSetCallback(36, Data_0200641c);
         break;
@@ -138,19 +138,19 @@ void Func_02000198(void)
             sprite = effect->animation;
             Func_02005764(effect, Data_02006470);
             Object_SetPartAttribute(effect, 1);
-            effect->motion_flags = 0;
+            effect->motionFlags = 0;
             angle = Random16Far() & 0xffff000;
             effect->action = angle;
-            effect->unknown_66 = 0;
+            effect->unk66 = 0;
             {
                 u32 counter = Random16Far() >> 13;
 
                 BYTE_AT(effect, 0x62) = counter;
             }
             effect->update = Func_020000ec;
-            effect->speed_limit = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24;
-            effect->speed_limit = center->speed_limit >> 16;
-            sprite->next_frame = 0;
+            effect->speedLimit = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24;
+            effect->speedLimit = center->speedLimit >> 16;
+            sprite->nextFrame = 0;
             sprite->priority = 1;
         }
     }

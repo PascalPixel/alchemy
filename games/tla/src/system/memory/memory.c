@@ -67,8 +67,8 @@ void Runtime_InitializeHeap(void)
     struct HeapSlots *work = Ram_HeapSlots;
 
     Dma_Fill32(0, work, sizeof(struct HeapSlots));
-    Ram_HeapSlots->next_iwram = gIwramHeap;
-    Ram_HeapSlots->next_ewram = gEwramHeap;
+    Ram_HeapSlots->nextIwram = gIwramHeap;
+    Ram_HeapSlots->nextEwram = gEwramHeap;
 }
 
 extern u8 IwramSoundMixWorkspace[];
@@ -77,14 +77,14 @@ s32 Runtime_GetRemainingIwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
 
-    return (s32)IwramSoundMixWorkspace - (s32)work->next_iwram;
+    return (s32)IwramSoundMixWorkspace - (s32)work->nextIwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
 
-    return 0x02040000 - (s32)work->next_ewram;
+    return 0x02040000 - (s32)work->nextEwram;
 }
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)

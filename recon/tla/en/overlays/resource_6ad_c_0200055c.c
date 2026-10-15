@@ -34,16 +34,16 @@ loop:
             else
                 Func_02005490(object, Data_02005bac);
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            object->velocity_y = (angle << 2) + 0x20000;
-            object->velocity_z = Iwram_MulQ16(speed, Math_Cosine(angle));
+            object->velocityY = (angle << 2) + 0x20000;
+            object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
             {
                 s32 vx = Iwram_MulQ16(speed, Math_Sine(angle));
 
                 object->acceleration = 0;
-                object->scale_x = scale;
-                object->scale_y = scale;
+                object->scaleX = scale;
+                object->scaleY = scale;
                 object->gravity = 0x547a;
-                object->velocity_x = vx;
+                object->velocityX = vx;
                 object->bounce = 0x8000;
             }
             Animation_ApplyChildValues(object, 1);

@@ -21,15 +21,15 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames)
         sprite = object->sprite;
         Func_020029dc(object, 1);
         Func_020029e4(object, Data_02003620);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         {
             /* FAKEMATCH: a 64-bit copy of frames reads it from the stack after the pool zero is loaded (one reordered pair; as u32, u16 or s16 it stays before). */
             u64 count = frames;
 
-            ((struct { u8 unknown_00[94]; u16 frames; } *)object)->frames = count;
+            ((struct { u8 unk00[94]; u16 frames; } *)object)->frames = count;
         }
 
-        sprite->next_frame = 0;
+        sprite->nextFrame = 0;
         sprite->rotation = value;
     }
 }

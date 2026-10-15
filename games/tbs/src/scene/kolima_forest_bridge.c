@@ -103,7 +103,7 @@ static void EV10_SCRIPT(void)
 	if (StagedActor_FindClearPosition(&res))
 	{
 		SceneActor_MoveAndRedraw(res);
-		if (res.actor_slot == 10 && (res.position_x >> 20) == 20)
+		if (res.actorSlot == 10 && (res.positionX >> 20) == 20)
 		{
 			struct FieldActor *actor;
 
@@ -112,7 +112,7 @@ static void EV10_SCRIPT(void)
 			Engine_EventWait(30);
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetAnimation(10, 8);
-			Object_GetById(10)->priority_flags = 2;
+			Object_GetById(10)->priorityFlags = 2;
 			Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
 			StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
 			Engine_GameFlagSet(0x200);
@@ -137,7 +137,7 @@ s32 Scene_Initialize(void)
 	FieldScene_RedrawActorFootprint(10);
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
-		Object_GetById(10)->priority_flags = 2;
+		Object_GetById(10)->priorityFlags = 2;
 		Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
 		StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
@@ -314,7 +314,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		record = Object_GetById(3);
-		record->velocity_y = 0x20000;
+		record->velocityY = 0x20000;
 		Engine_EventWait(10);
 		Actor_SetSpeed(MIA, 0x20000, 0x20000);
 		Actor_SetDestinationOffset(MIA, -2, 0);
@@ -325,7 +325,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 		Engine_EventWait(10);
 	}
 	record = Object_GetById(0);
-	record->velocity_y = 0x20000;
+	record->velocityY = 0x20000;
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
 	reset_action = KolimaForestBridge_ResetAction;
@@ -335,7 +335,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
 	Engine_EventWait(20);
 	record = Object_GetById(1);
-	record->velocity_y = 0x20000;
+	record->velocityY = 0x20000;
 	Engine_EventWait(10);
 	Actor_SetSpeed(GARET, 0x20000, 0x20000);
 	Engine_ActorEnableActionCallback(GARET, reset_action);
@@ -344,7 +344,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetAnimation(GARET, 19);
 	Engine_EventWait(40);
 	record = Object_GetById(2);
-	record->velocity_y = 0x20000;
+	record->velocityY = 0x20000;
 	Engine_EventWait(10);
 	Engine_ActorEnableActionCallback(IVAN, reset_action);
 	record = Object_GetById(2);
@@ -398,10 +398,10 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 		gEventWork->message += 1;
 	}
 	gFallingEffectState = 3;
-	Object_GetById(0)->priority_flags &= 254;
-	Object_GetById(1)->priority_flags &= 254;
-	Object_GetById(2)->priority_flags &= 254;
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
+	Object_GetById(1)->priorityFlags &= 254;
+	Object_GetById(2)->priorityFlags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetSpritePriority(GARET, 3);
 	Engine_ActorSetSpritePriority(IVAN, 3);
@@ -409,23 +409,23 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	KolimaForestBridge_TriggerPending = 0;
 	FieldScheduler_AddCallback(KolimaForestBridge_AlternateBridgePostHeights, 0xc80);
 	Event_PlayCue(220);
-	Object_GetById(13)->priority_flags &= 254;
+	Object_GetById(13)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(13, 2);
 	Actor_SetPosition(13, 0xfd0000, 0x25b0000);
 	formation_action = KolimaForestBridge_FormationAction;
 	Engine_ActorEnableActionCallback(13, formation_action);
-	Object_GetById(14)->priority_flags &= 254;
+	Object_GetById(14)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(14, 2);
 	Actor_SetPosition(14, 0xe90000, 0x2750000);
 	Engine_ActorEnableActionCallback(14, formation_action);
 	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Object_GetById(15)->priority_flags &= 254;
+		Object_GetById(15)->priorityFlags &= 254;
 		Engine_ActorSetSpritePriority(15, 2);
 		Actor_SetPosition(15, 0xcf0000, 0x2610000);
 		Engine_ActorEnableActionCallback(15, formation_action);
 	}
-	Object_GetById(16)->priority_flags &= 254;
+	Object_GetById(16)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(16, 2);
 	Actor_SetPosition(16, 0xe30000, 0x2440000);
 	Engine_ActorEnableActionCallback(16, formation_action);
@@ -490,7 +490,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(40);
 	Engine_ActorSetSpritePriority(GARET, 2);
-	Object_GetById(1)->priority_flags |= 1;
+	Object_GetById(1)->priorityFlags |= 1;
 	record = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(record, 1);
 	Engine_ActorJump(GARET, 6, 0);
@@ -522,7 +522,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(80);
 		Engine_ActorSetSpritePriority(MIA, 2);
-		Object_GetById(3)->priority_flags |= 1;
+		Object_GetById(3)->priorityFlags |= 1;
 		record = Object_GetById(3);
 		Engine_ActorSetSpriteFlags(record, 1);
 		Engine_ActorJump(MIA, 4, 0);
@@ -549,7 +549,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	Engine_ActorSetSpritePriority(IVAN, 2);
-	Object_GetById(2)->priority_flags |= 1;
+	Object_GetById(2)->priorityFlags |= 1;
 	record = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(record, 1);
 	Engine_ActorJump(IVAN, 4, 0);
@@ -558,7 +558,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(10);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	Object_GetById(0)->priority_flags |= 1;
+	Object_GetById(0)->priorityFlags |= 1;
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 1);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -687,10 +687,10 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	{
 		SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
 	}
-	Object_GetById(0)->priority_flags &= 254;
-	Object_GetById(1)->priority_flags &= 254;
-	Object_GetById(2)->priority_flags &= 254;
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
+	Object_GetById(1)->priorityFlags &= 254;
+	Object_GetById(2)->priorityFlags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetSpritePriority(GARET, 3);
 	Engine_ActorSetSpritePriority(IVAN, 3);
@@ -834,10 +834,10 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetSpritePriority(GARET, 2);
 	Engine_ActorSetSpritePriority(IVAN, 2);
 	Engine_ActorSetSpritePriority(MIA, 2);
-	Object_GetById(0)->priority_flags |= 1;
-	Object_GetById(1)->priority_flags |= 1;
-	Object_GetById(2)->priority_flags |= 1;
-	Object_GetById(3)->priority_flags |= 1;
+	Object_GetById(0)->priorityFlags |= 1;
+	Object_GetById(1)->priorityFlags |= 1;
+	Object_GetById(2)->priorityFlags |= 1;
+	Object_GetById(3)->priorityFlags |= 1;
 	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
 	Event_OpenMessage(IVAN, 0);
@@ -1077,16 +1077,16 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	sprite = (struct Sub *)obj->sprite;
 	sprite->f26 = phase;
 	v = 0xfe;
-	v &= obj->priority_flags;
-	obj->priority_flags = v;
+	v &= obj->priorityFlags;
+	obj->priorityFlags = v;
 	w = ~12;
 	w &= sprite->f09;
 	w |= 4;
 	sprite->f09 = w;
-	obj->scale_x = 0x1999;
+	obj->scaleX = 0x1999;
 	obj->speed = 0x80000;
 	obj->acceleration = 0x80000;
-	obj->motion_flags = phase;
+	obj->motionFlags = phase;
 	Object_SetMode(obj, 2);
 	Engine_ObjectSetPosition(obj, c3, 0, c4);
 	Engine_ObjectSetScript(obj, KolimaForestBridge_Object26Script);
@@ -1135,7 +1135,7 @@ static void KolimaForestBridge_AlternateBridgePostHeights(void)
 	p = Object_GetById(13);
 	if (p != 0)
 	{
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		if ((gFrameCount & 1) == 0)
 		{
 			p->y.fixed = 0;
@@ -1148,7 +1148,7 @@ static void KolimaForestBridge_AlternateBridgePostHeights(void)
 	p = Object_GetById(14);
 	if (p != 0)
 	{
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		if ((gFrameCount & 1) != 0)
 		{
 			p->y.fixed = 0;
@@ -1161,7 +1161,7 @@ static void KolimaForestBridge_AlternateBridgePostHeights(void)
 	p = Object_GetById(15);
 	if (p != 0)
 	{
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		if ((gFrameCount & 1) == 0)
 		{
 			p->y.fixed = 0;
@@ -1174,7 +1174,7 @@ static void KolimaForestBridge_AlternateBridgePostHeights(void)
 	p = Object_GetById(16);
 	if (p != 0)
 	{
-		p->motion_flags = 0;
+		p->motionFlags = 0;
 		if ((gFrameCount & 1) != 0)
 		{
 			p->y.fixed = 0;

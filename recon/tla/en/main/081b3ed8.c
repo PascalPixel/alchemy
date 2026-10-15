@@ -22,19 +22,19 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
             AudioTrack_RemoveSlotNode(removal & mask);
             state = Flash_Handler3;
-            read_offset = state->input_cursor;
+            read_offset = state->inputCursor;
             do {
                 value = input[read_offset];
             } while (0);
             next_offset = read_offset + 1;
-            state->input_cursor = next_offset;
-            if (next_offset == state->input_limit)
+            state->inputCursor = next_offset;
+            if (next_offset == state->inputLimit)
             {
-                state->bucket_by_slot[slot & mask] = -1;
+                state->bucketBySlot[slot & mask] = -1;
                 break;
             }
 
-            state->bucket_by_slot[slot & mask] = value;
+            state->bucketBySlot[slot & mask] = value;
             current++;
             AudioTrack_InsertSlotNode(slot & mask);
             removal++;
@@ -58,7 +58,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             } while (0);
             state = *root;
             current++;
-            state->bucket_by_slot[slot] = empty;
+            state->bucketBySlot[slot] = empty;
         } while (current < limit);
     }
 }

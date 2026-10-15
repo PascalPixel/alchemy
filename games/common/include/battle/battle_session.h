@@ -14,29 +14,29 @@ struct BattleObj
 	u16					 overlay;
 	u16					 animation;
 	u16					 effect;
-	s32					 anchor_x;
-	s32					 anchor_z;
+	s32					 anchorX;
+	s32					 anchorZ;
 	s32					 palette;
 	s32					 scale;
-	u16					 active_conditions;
-	u8					 selected_condition;
-	s8					 cycle_timer;
-	struct SpriteEntry	*animation_entry;
-	struct SpriteEntry	*effect_entry;
+	u16					 activeConditions;
+	u8					 selectedCondition;
+	s8					 cycleTimer;
+	struct SpriteEntry	*animationEntry;
+	struct SpriteEntry	*effectEntry;
 	s16					 active;
 	s16					 fading;
 };
 
 struct BattleActionRecord
 {
-	s16 unit_id;
+	s16 unitId;
 	u16 slot;
 	u16 priority;
 	s16 command;
 	s16 parameter;
 	s16 target;
 	s16 range;
-	s16 unknown_0e;
+	s16 unk0e;
 };
 
 struct BattleSpoils
@@ -48,9 +48,9 @@ struct BattleSpoils
 };
 
 LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BattleObj, 0x2c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObj, anchor_x, 0x0c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BattleObj, active_conditions, 0x1c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObj, cycle_timer, 0x1f);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObj, anchorX, 0x0c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BattleObj, activeConditions, 0x1c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObj, cycleTimer, 0x1f);
 LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObj, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);

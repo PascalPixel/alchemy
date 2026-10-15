@@ -18,12 +18,12 @@ struct SolRingObject
 	s32 y;
 	s32 z;
 	u8	pad14[4];
-	s32 scale_x;
-	s32 scale_y;
+	s32 scaleX;
+	s32 scaleY;
 	u8	pad20[24];
-	s32 base_x;
-	s32 base_y;
-	s32 base_z;
+	s32 baseX;
+	s32 baseY;
+	s32 baseZ;
 	u8	pad44[12];
 	u8 *anim;
 	u8	pad54;
@@ -36,11 +36,11 @@ struct SolRingEntry
 	s32					   x;
 	s32					   y;
 	s32					   z;
-	s32					   speed_x;
-	s32					   speed_y;
-	s32					   speed_z;
+	s32					   speedX;
+	s32					   speedY;
+	s32					   speedZ;
 	s32					   scale;
-	s32					   scale_step;
+	s32					   scaleStep;
 	u8					   timer;
 	u8					   hold;
 	u8					   pad26[2];
@@ -62,9 +62,9 @@ static void Sol_UpdateRing(void)
 	while (i != list->count)
 	{
 		struct SolRingObject *obj;
-		s32					   speed_x;
-		s32					   speed_y;
-		s32					   speed_z;
+		s32					   speedX;
+		s32					   speedY;
+		s32					   speedZ;
 		s32					   scale;
 		s32					   step;
 		u8					   timer;
@@ -74,11 +74,11 @@ static void Sol_UpdateRing(void)
 		u8					   hold;
 
 		obj = entry->obj;
-		speed_x = entry->speed_x;
-		speed_y = entry->speed_y;
-		speed_z = entry->speed_z;
+		speedX = entry->speedX;
+		speedY = entry->speedY;
+		speedZ = entry->speedZ;
 		scale = entry->scale;
-		step = entry->scale_step;
+		step = entry->scaleStep;
 		hold = entry->hold;
 		x = entry->x;
 		y = entry->y;
@@ -112,8 +112,8 @@ static void Sol_UpdateRing(void)
 					obj->y = 0;
 					obj->z = 0;
 				}
-				obj->scale_x = scale;
-				obj->scale_y = scale;
+				obj->scaleX = scale;
+				obj->scaleY = scale;
 			}
 			rx = (Sol_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
 			ry = (Sol_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
@@ -122,27 +122,27 @@ static void Sol_UpdateRing(void)
 			ry = ry != 0 ? (ry << 16) / 1000 : 0;
 			rz = rz != 0 ? (rz << 16) / 1000 : 0;
 			if (Sol_RingDirection[i][0] == 1)
-				speed_x += rx;
+				speedX += rx;
 			else if (Sol_RingDirection[i][0] == -1)
-				speed_x -= rx;
+				speedX -= rx;
 			else
-				speed_x = 0;
+				speedX = 0;
 			if (Sol_RingDirection[i][1] == 1)
-				speed_y += ry;
+				speedY += ry;
 			else if (Sol_RingDirection[i][1] == -1)
-				speed_y -= ry;
+				speedY -= ry;
 			else
-				speed_y = 0;
+				speedY = 0;
 			if (Sol_RingDirection[i][2] == 1)
-				speed_z += rz;
+				speedZ += rz;
 			else if (Sol_RingDirection[i][2] == -1)
-				speed_z -= rz;
+				speedZ -= rz;
 			else
-				speed_z = 0;
-			dx = Engine_MathSin(speed_x * Sol_RingSwing[i][0]) * 2;
-			dy = Engine_MathSin(speed_y * Sol_RingSwing[i][1]) * 2;
+				speedZ = 0;
+			dx = Engine_MathSin(speedX * Sol_RingSwing[i][0]) * 2;
+			dy = Engine_MathSin(speedY * Sol_RingSwing[i][1]) * 2;
 			{
-				s32 dz = Engine_MathCos(speed_z * Sol_RingSwing[i][2]) * 2;
+				s32 dz = Engine_MathCos(speedZ * Sol_RingSwing[i][2]) * 2;
 
 				if (hold != 0)
 				{
@@ -152,35 +152,35 @@ static void Sol_UpdateRing(void)
 					if (--hold == 0)
 					{
 						obj->x = x;
-						obj->base_x = x;
+						obj->baseX = x;
 						if (ry != 0)
 						{
 							obj->y = y;
-							obj->base_y = y;
+							obj->baseY = y;
 						}
 						obj->z = z;
-						obj->base_z = z;
+						obj->baseZ = z;
 					}
 				}
 				else
 				{
 					obj->x += dx;
-					obj->base_x = obj->x;
+					obj->baseX = obj->x;
 					if (ry != 0)
 					{
 						obj->y += dy;
-						obj->base_y = obj->y;
+						obj->baseY = obj->y;
 					}
 					obj->z += dz;
-					obj->base_z = obj->z;
+					obj->baseZ = obj->z;
 				}
 			}
 		}
-		entry->speed_x = speed_x;
-		entry->speed_y = speed_y;
-		entry->speed_z = speed_z;
+		entry->speedX = speedX;
+		entry->speedY = speedY;
+		entry->speedZ = speedZ;
 		entry->scale = scale;
-		entry->scale_step = step;
+		entry->scaleStep = step;
 		entry->hold = hold;
 		entry->x = x;
 		entry->y = y;
@@ -222,7 +222,7 @@ void SolStar_SetupElementalRings(s32 first, u32 count)
 			obj->state = cleared;
 			Engine_ObjectSetBlendMode(Object_GetById(first), 1);
 			entry->scale = Sol_RingOffsetX[i];
-			entry->scale_step = -Sol_RingOffsetZ[i];
+			entry->scaleStep = -Sol_RingOffsetZ[i];
 			entry->timer = 3;
 			i++;
 			entry++;

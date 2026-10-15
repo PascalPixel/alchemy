@@ -30,7 +30,7 @@ s32 Func_02000bb0(void)
     msg = (s32)MsgPleaseSpeakTo;
     Func_02001a14();
     Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(8, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
     if (Func_0200006c(0) == 0)
         WaitFrames(1);
     if (Func_0200006c(0) == 0) {
@@ -47,7 +47,7 @@ s32 Func_02000bb0(void)
                 Flag_Clear(0x16c);
                 Flag_Set(0x202);
                 line = msg + 7;
-                gPartyState.link_tallies[3] = answer;
+                gPartyState.linkTallies[3] = answer;
                 goto message;
             }
             Flag_Clear(0x173);

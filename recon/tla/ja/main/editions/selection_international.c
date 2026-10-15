@@ -12,7 +12,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
     u8 *state;
     s32 i;
 
-    state = Ram_HeapSlots->menu_select_work;
+    state = Ram_HeapSlots->menuSelectWork;
 
     *(u16 *)(state + 144) = (u16)((u32)w + 2);
     *(u16 *)(state + 146) = (u16)h;

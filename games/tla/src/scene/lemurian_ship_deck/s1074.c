@@ -45,16 +45,16 @@ void Func_02001074(void)
     if (Flag_IsSet(0x211)) {
         Func_02001f5c();
         Func_020020ac(0);
-        Func_02001fd4(9, gPartyState.current_owner);
+        Func_02001fd4(9, gPartyState.currentOwner);
         WaitFrames(1);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0, 0);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
         SetSpeed(9, 0xcccc, 0x6666);
         SetPosition(9, 416, 428);
         Func_02002044(9, 0x8000);
         Func_0200201c(MsgWellThereS);
         Func_02002034(9, 0);
         Object_SetModeById(9, 2);
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         if (object != 0)
             ObjectMotion_ResetAndSetPosition(9, *(s16 *)((u8 *)object + 10), *(s16 *)((u8 *)object + 18));
         ObjectMotion_CommitCurrentPositionAndActivate(9);

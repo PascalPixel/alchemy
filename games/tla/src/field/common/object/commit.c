@@ -1,9 +1,9 @@
 #include "object_runtime.h"
 
 
-void ObjectMotion_CommitCurrentPositionAndActivate(u32 object_id)
+void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         Object_CommitPosition(object);

@@ -7,11 +7,11 @@
 #include "ram_buffer.h"
 
 struct SwayObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 y;
-    u8 unknown_0c[44];
-    s32 base_y;
-    u8 unknown_3c[40];
+    u8 unk0c[44];
+    s32 baseY;
+    u8 unk3c[40];
     s16 phase;
 };
 
@@ -29,7 +29,7 @@ void Func_080de818(struct SwayObject *object)
     s16 *phase = &object->phase;
     s32 amplitude = 0x40000;
 
-    object->y = object->base_y + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 9));
+    object->y = object->baseY + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 9));
     (*phase)++;
     *phase = (*phase + 128) % 128;
 }
@@ -38,7 +38,7 @@ void Func_080de818(struct SwayObject *object)
 // pixels the frames it has left; at 0 it runs the common particle script.
 void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
     struct OrbitVector pos;
     s16 life;
     s32 count;
@@ -60,7 +60,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object)
             /* FAKEMATCH: the loop note ends the scheduling block: the native starts the radius between the y store and the z load; without it the z load comes first (differ 2). */
             do { } while (0);
             pos.z = scene->z;
-            Vector_AddPolarOffset(radius, (s16)object->unknown_66 + (life << 11), &pos);
+            Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
             object->x = pos.x;
             object->y = pos.y;
             object->z = pos.z;

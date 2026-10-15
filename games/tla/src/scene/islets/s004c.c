@@ -34,11 +34,11 @@ void Func_020000d8(void)
         Battle_WaitMode0(22);
         Func_02003ffc(240);
         Object_SetModeById(10, 8);
-        object->priority_flags |= 2;
-        object->motion_flags = 0;
-        object->velocity_y = 0;
+        object->priorityFlags |= 2;
+        object->motionFlags = 0;
+        object->velocityY = 0;
         object->y = 0xfff80000;
-        object->terrain_height = 0xfff80000;
+        object->terrainHeight = 0xfff80000;
         Func_02003e24(9, 1, 4, 1, 9, 10);
         Func_02003e24(9, 8, 4, 1, 9, 9);
         Func_02003e24(9, 64, 4, 1, 9, 74);

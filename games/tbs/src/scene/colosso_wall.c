@@ -73,28 +73,28 @@ typedef struct MovedObject
 
 typedef struct PartyInteractionRecord
 {
-	u8	padding_00[10];
+	u8	padding00[10];
 	s16 x;
-	u8	padding_0c[6];
+	u8	padding0c[6];
 	s16 y;
 } PartyInteractionRecord;
 
 typedef struct ColossoWallSceneRecord
 {
-	u8	pad_00[6];
+	u8	pad00[6];
 	u16 facing;
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	pad_14[14];
+	u8	pad14[14];
 	u8	state;
-	u8	pad_23;
-	s32 motion_24;
-	u8	pad_28[4];
-	s32 motion_2c;
-	s32 rate_x;
-	s32 rate_z;
-	u8	pad_38[33];
+	u8	pad23;
+	s32 motion24;
+	u8	pad28[4];
+	s32 motion2c;
+	s32 rateX;
+	s32 rateZ;
+	u8	pad38[33];
 	u8	flags;
 } ColossoWallSceneRecord;
 
@@ -213,7 +213,7 @@ static void EV18_SCRIPT(void)
 {
 	u8 *record = gEffectWork;
 
-	((struct BattleFxScene *)record)->child_mode = 1;
+	((struct BattleFxScene *)record)->childMode = 1;
 }
 
 static void EV18_PSYNERGY(void)
@@ -257,8 +257,8 @@ static void EV18_PSYNERGY(void)
 	rec2->x.fixed = 0x1500000;
 	rec2->y.fixed = -0x80000;
 	rec2->z.fixed = 0x1080000;
-	rec2->velocity_y = 0;
-	rec2->velocity_x = 0;
+	rec2->velocityY = 0;
+	rec2->velocityX = 0;
 	Map_CopyCellAttributes(19, 16, 1, 1, 20, 16);
 	Map_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -300,7 +300,7 @@ static void EV19_PSYNERGY(void)
 
 static void ColossoWall_RunSelectedActorRisingEffect(void)
 {
-	FieldBattleFx_RunRisingObjectSequence(gGameState.selected_actor, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
 }
 
 static void ColossoWall_CheckLeaderAhead(void)
@@ -316,7 +316,7 @@ static void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 	s32			 x;
 	s32			 y;
 
-	p = (MovedObject *)Object_GetById(gGameState.selected_actor);
+	p = (MovedObject *)Object_GetById(gGameState.selectedActor);
 	q = (MovedObject *)Object_GetById(a0);
 	Engine_EventBegin();
 	{
@@ -353,7 +353,7 @@ static void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 
 static void EV22_SCRIPT(void)
 {
-	struct FieldActor *leader = Object_GetById(gGameState.selected_actor);
+	struct FieldActor *leader = Object_GetById(gGameState.selectedActor);
 	s32				   x = leader->x.fixed >> 20;
 	s32				   push = 0;
 	s32				   block = 32;
@@ -390,7 +390,7 @@ static void EV22_SCRIPT(void)
 
 static void ColossoWall_RollLogToCell(s32 id, s32 column, s32 row)
 {
-	s32				   pusher = gGameState.selected_actor;
+	s32				   pusher = gGameState.selectedActor;
 	struct FieldActor *leader = Object_GetById(pusher);
 	struct FieldActor *log = Object_GetById(id);
 	s32				   heading = (leader->facing + 0x1000) & 0xe000;
@@ -500,7 +500,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	s32				   yd;
 	struct FieldActor *record;
 
-	rec8 = Object_GetById(gGameState.selected_actor);
+	rec8 = Object_GetById(gGameState.selectedActor);
 	for (i = 22; i <= 25; i++)
 	{
 		rec7 = Object_GetById(i);
@@ -548,12 +548,12 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		else
 		{
 			yb = rec8->z.fixed;
-			yd = rec7->velocity_z;
+			yd = rec7->velocityZ;
 			yb += yd;
 		}
 		rec8->z.fixed = yb;
 	}
-	if (ColossoWall_SpectatorTimer != 0 && rec7->target_x == 0x80000000)
+	if (ColossoWall_SpectatorTimer != 0 && rec7->targetX == 0x80000000)
 	{
 		if (ColossoWall_SpectatorPhase == 0)
 		{
@@ -748,7 +748,7 @@ s32 ColossoWall_ApplyEntryState(void)
 	s32				   row;
 	s32				   zero;
 
-	gEventWork->start_transition = 0;
+	gEventWork->startTransition = 0;
 	Engine_GameFlagSet(0x144);
 	Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
 	Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
@@ -756,11 +756,11 @@ s32 ColossoWall_ApplyEntryState(void)
 	{
 		actor = Object_GetById(i);
 		Object_SetMode(actor, 4);
-		actor->motion_flags = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = 0;
-		actor->priority_flags = 2;
+		actor->priorityFlags = 2;
 	}
-	Object_GetById(18)->priority_flags = 2;
+	Object_GetById(18)->priorityFlags = 2;
 	if (Engine_GameFlagIsSet(0x330))
 	{
 		actor = Object_GetById(30);
@@ -776,7 +776,7 @@ s32 ColossoWall_ApplyEntryState(void)
 		Object_SetMode(actor, 3);
 		actor->y.fixed = 0x100000;
 	}
-	Object_GetById(11)->priority_flags = 2;
+	Object_GetById(11)->priorityFlags = 2;
 	zero = 0;
 	if (Engine_GameFlagIsSet(0x335))
 	{
@@ -789,27 +789,27 @@ s32 ColossoWall_ApplyEntryState(void)
 	}
 	if (Engine_GameFlagIsSet(0x331))
 	{
-		Object_GetById(20)->motion_flags = zero;
-		Object_GetById(20)->priority_flags = 2;
+		Object_GetById(20)->motionFlags = zero;
+		Object_GetById(20)->priorityFlags = 2;
 		Engine_ActorSetAnimation(20, 5);
 		Map_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 	}
 	if (Engine_GameFlagIsSet(0x332))
 	{
-		Object_GetById(21)->motion_flags = zero;
-		Object_GetById(21)->priority_flags = 2;
+		Object_GetById(21)->motionFlags = zero;
+		Object_GetById(21)->priorityFlags = 2;
 		Engine_ActorSetAnimation(21, 5);
 		Map_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 	}
 	actor = Object_GetById(32);
 	col = actor->x.fixed >> 20;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(52, 28, 1, 3, col, 10);
 	actor = Object_GetById(33);
 	col = actor->x.fixed >> 20;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(52, 28, 1, 3, col, 13);
 
 	x = FieldGameFlag_GetByte(0x340);
@@ -819,8 +819,8 @@ s32 ColossoWall_ApplyEntryState(void)
 	}
 	actor = Object_GetById(12);
 	actor->x.fixed = (x << 20) + 0x80000;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 	x = FieldGameFlag_GetByte(0x348);
 	if (x == 0)
@@ -829,8 +829,8 @@ s32 ColossoWall_ApplyEntryState(void)
 	}
 	actor = Object_GetById(13);
 	actor->x.fixed = (x << 20) + 0x80000;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 	x = FieldGameFlag_GetByte(0x350);
 	if (x == 0)
@@ -839,8 +839,8 @@ s32 ColossoWall_ApplyEntryState(void)
 	}
 	actor = Object_GetById(14);
 	actor->x.fixed = (x << 20) + 0x80000;
-	actor->motion_flags = zero;
-	actor->priority_flags = 2;
+	actor->motionFlags = zero;
+	actor->priorityFlags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
 	SceneState_ApplyRectsForActors15To17();
@@ -850,7 +850,7 @@ s32 ColossoWall_ApplyEntryState(void)
 		for (k = 22, row = 13, pos = 58; k <= 25; k++, pos += 2)
 		{
 			actor = Object_GetById(k);
-			actor->priority_flags = 2;
+			actor->priorityFlags = 2;
 			Object_SetMode(actor, 4);
 			Map_CopyCellAttributes(56, 13, 1, 1, pos, row);
 		}
@@ -862,7 +862,7 @@ s32 ColossoWall_ApplyEntryState(void)
 		for (k = 22; k <= 25; k++)
 		{
 			actor = Object_GetById(k);
-			actor->priority_flags = 2;
+			actor->priorityFlags = 2;
 			Object_SetMode(actor, 4);
 			actor->speed = 0x8000;
 			actor->acceleration = 0x3333;
@@ -871,7 +871,7 @@ s32 ColossoWall_ApplyEntryState(void)
 		Scheduler_SetCallbackMask((u32)FieldScene_RunSupplementalSequenceOne, 1);
 	}
 	Engine_ActorSetAnimation(8, 9);
-	gGameState.movement_mode = 0;
+	gGameState.movementMode = 0;
 	Colosso_ShowItemIcon(41, 89);
 	Colosso_ShowItemIcon(40, 77);
 	Engine_ActorSetChildValue(8, 1);
@@ -1025,7 +1025,7 @@ static void EV35_TALK(s32 speaker)
 			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
 			Engine_EventWait(3);
 			actor = Object_GetById(ACTOR_PARTY_LEADER);
-			actor->velocity_y = 0x40000;
+			actor->velocityY = 0x40000;
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
 			Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 			Engine_EventWait(30);
@@ -1210,7 +1210,7 @@ static void EV38_TALK(s32 speaker)
 
 static void ColossoWall_PushBlockToCell(s32 id, s32 column, s32 row)
 {
-	s32				   pusher = gGameState.selected_actor;
+	s32				   pusher = gGameState.selectedActor;
 	struct FieldActor *leader = Object_GetById(pusher);
 	struct FieldActor *block = Object_GetById(id);
 	s32				   along_x = (block->x.fixed >> 20) != column / 2;
@@ -1544,7 +1544,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 	flag = Engine_GameFlagIsSet(0x211);
 
 	shared = (u8 *)&gGameState;
-	record = Object_GetById(((struct GameState *)shared)->selected_actor);
+	record = Object_GetById(((struct GameState *)shared)->selectedActor);
 
 	if (*(s32 *)(workspace + 232) < record->x.fixed)
 	{
@@ -1594,7 +1594,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 	}
 
 	shared = (u8 *)&gGameState;
-	UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
+	UiWork_PushValueSlot(((struct GameState *)shared)->selectedActor, 1);
 	Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
 	ObjectDispatch_WaitForValue16(record);
 
@@ -1737,12 +1737,12 @@ static void StagedActor_PushActorAhead(void)
 	Object_SetMode(subject, 8);
 	Engine_TaskWait(15);
 
-	target->rate_x = 0x3333;
-	target->rate_z = 0x3333;
+	target->rateX = 0x3333;
+	target->rateZ = 0x3333;
 	Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
 
-	subject->rate_x = 0x3333;
-	subject->rate_z = 0x3333;
+	subject->rateX = 0x3333;
+	subject->rateZ = 0x3333;
 	Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
 
 	Engine_AudioPlayCue(0xee);
@@ -1751,8 +1751,8 @@ static void StagedActor_PushActorAhead(void)
 
 	target->x = pos.x;
 	target->z = pos.z;
-	target->motion_24 = zero;
-	target->motion_2c = zero;
+	target->motion24 = zero;
+	target->motion2c = zero;
 
 	Object_SetMode(subject, 1);
 }

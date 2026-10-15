@@ -6,7 +6,7 @@
 #include "scene_ids.h"
 
 struct PartyState254 {
-    u8 unknown_000[0x254];
+    u8 unk000[0x254];
     u16 value;
 };
 
@@ -50,7 +50,7 @@ void Func_02000094(void)
     if (!GameFlag_Test(0x9b8)) {
         Func_02001d44_(249, 424, 488);
         ((struct PartyState254 *)&gPartyState)->value = 0x19b8;
-        gPartyState.battle_rule_24b = 2;
+        gPartyState.battleRule24b = 2;
         Func_02001cec(106, 3);
     }
 }
@@ -94,7 +94,7 @@ void Func_0200015c(struct ObjectRuntime *object)
         object->y = position[1];
         object->z = position[2];
     }
-    object->unknown_66 = object->action;
+    object->unk66 = object->action;
     if (object->action == 212)
         Func_02001bec(object, 9);
     else

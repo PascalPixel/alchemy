@@ -27,8 +27,8 @@ void Func_0200074c(struct ObjectRuntime *object);
 
 void Func_02000940(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    u8 *event = Ram_HeapSlots->eventWork;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room1) {
         Func_02003aa4(98, 18, 4, 3, 78, 21);

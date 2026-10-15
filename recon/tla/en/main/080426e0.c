@@ -16,7 +16,7 @@ extern const s8 UiWindow_PartyColumnOffsets[];
 
 void Func_080426e0(struct UiWindow *window, u32 flags)
 {
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 first = 1;
     s32 bias = 0;
     u32 max = window->width - 1;
@@ -52,7 +52,7 @@ void Func_080426e0(struct UiWindow *window, u32 flags)
         }
         i++;
     }
-    if (canvas->menu_state)
+    if (canvas->menuState)
     {
         dest = canvas->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
         col = 1;

@@ -1,6 +1,6 @@
 /* Draft, differ 2 of 130: The Broken Seal's MenuSelection_BuildEntries
- * unchanged, the screen being the heap slot menu_work. The native loads the
- * halfword 100 from the pool (ldr r3) before it builds the offset of base_x
+ * unchanged, the screen being the heap slot menuWork. The native loads the
+ * halfword 100 from the pool (ldr r3) before it builds the offset of baseX
  * (movs r1, #192); sched2 takes the offset first, the same one-slot load
  * order as this lane's other near misses. */
 #include "types.h"
@@ -13,7 +13,7 @@ void Menu_LoadSelectedResource(void);
 
 void MenuSelection_BuildEntries(u32 unused)
 {
-	struct SelectionScreen *screen = Ram_HeapSlots->menu_work;
+	struct SelectionScreen *screen = Ram_HeapSlots->menuWork;
 	u32 count = screen->count;
 	u32 index = screen->top;
 	struct SelectionNode *prev = 0;
@@ -47,22 +47,22 @@ void MenuSelection_BuildEntries(u32 unused)
 		index++;
 	}
 
-	screen->base_x = 100 - cnt * 8;
-	screen->base_y = 140;
+	screen->baseX = 100 - cnt * 8;
+	screen->baseY = 140;
 	for (prev = screen->head, cnt = 0; prev != 0; prev = prev->next)
 	{
-		s32 x = screen->base_x + cnt;
+		s32 x = screen->baseX + cnt;
 		s32 y;
 
 		prev->x = x;
-		y = screen->base_y;
+		y = screen->baseY;
 		prev->y = y;
-		prev->target_x = x;
-		prev->target_y = y;
+		prev->targetX = x;
+		prev->targetY = y;
 		if (prev->kind == 6 && screen->locked == 0)
 		{
 			prev->y = 6;
-			prev->target_y = 6;
+			prev->targetY = 6;
 		}
 		prev->dx = 0;
 		prev->dy = 0;

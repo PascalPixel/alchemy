@@ -46,8 +46,8 @@ void Func_0200298c(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
 
-    object->collision_flags = 0;
-    object->motion_flags = 0;
+    object->collisionFlags = 0;
+    object->motionFlags = 0;
     ObjectMotion_SetActionVariant(id, 1);
 }
 
@@ -59,7 +59,7 @@ void Func_020029ac(void)
     Call1((void (*)())Func_02005784, 0);
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
     Call1((void (*)())WaitFrames, 1);
-    Call3((void (*)())Func_0200567c, gPartyState.current_owner, 0x1fa0000, 0x1180000);
+    Call3((void (*)())Func_0200567c, gPartyState.currentOwner, 0x1fa0000, 0x1180000);
     Call1((void (*)())WaitFrames, 1);
     ((void (*)())Event_StartScreenTransition)();
     ((void (*)())Event_WaitTransitionFrames)();
@@ -82,7 +82,7 @@ void Func_020029ac(void)
     Call2((void (*)())Func_02005704, 0, 0xe000);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
     Call2((void (*)())Func_020056f4, 0x2007, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
     Call2((void (*)())Func_02005704, 5, 0xe000);
     Func_02005714_(5, 0x107, 0);
     Call3((void (*)())ObjectMotion_Launch, 5, 2, 0xa);
@@ -115,7 +115,7 @@ void Func_020029ac(void)
     ((void (*)())Func_02005734)();
     Call2((void (*)())Func_020056f4, 0x2013, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x4000, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 0, 0x6000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 1, 0x6000, 0);
@@ -132,15 +132,15 @@ void Func_020029ac(void)
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 0x13, 3);
     Call2((void (*)())Func_020056f4, 0x2013, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 5, 0, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x6000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 0, 0, 0x28);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 1, 0xcccc, 0x6666);
-    Object_GetById(1)->action_flags &= 0xfe;
+    Object_GetById(1)->actionFlags &= 0xfe;
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 1, 0x21e, 0x148);
     Call1((void (*)())Battle_WaitMode0, 1);
-    Object_GetById(1)->action_flags |= 1;
+    Object_GetById(1)->actionFlags |= 1;
     Call2((void (*)())Func_02005724, 0xcccc, 0x1999);
-    Func_0200573c()->motion_flags = 0;
+    Func_0200573c()->motionFlags = 0;
     Call4((void (*)())Motion_CamBounds, 0x21c0000, 0x4c0000, 0x1540000, 1);
     ((void (*)())Func_02005734)();
     Call2((void (*)())Func_02005704, 1, 0x4000);
@@ -172,7 +172,7 @@ void Func_020029ac(void)
     Call2((void (*)())Func_020056f4, 0x5000, 0);
     Call4((void (*)())Motion_CamBounds, 0x2000000, -1, 0x1380000, 1);
     Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x2000, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x2000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 3, 0x6000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 0x13, 0xd000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x2000, 0);
@@ -187,7 +187,7 @@ void Func_020029ac(void)
         /* FAKEMATCH: the leader, pinned after both. */
         register s32 actor asm("r0");
 
-        actor = gPartyState.current_owner;
+        actor = gPartyState.currentOwner;
         Func_02005714(actor, second, third);
     }
     Call2((void (*)())Func_02005704, 0, 0);
@@ -200,16 +200,16 @@ void Func_020029ac(void)
 
         UiText_OpenMessageAtObject(0x8000, flags);
     }
-    if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0)
+    if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0)
     {
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
         Call2((void (*)())Func_020056f4, 0x8005, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     }
     else
     {
         Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Call2((void (*)())Func_020056f4, 5, 0);
     }
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 1, 0xcccc, 0x6666);
@@ -231,8 +231,8 @@ void Func_020029ac(void)
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 0x13, 0x1f2, 0x140);
     Call2((void (*)())Object_SetModeById, 0x13, 3);
     Call2((void (*)())Func_020056f4, 0x2013, 0);
-    Call2((void (*)())Func_02005704, gPartyState.current_owner, 0x4000);
-    Call2((void (*)())Motion_SetModeAndWaitAnimation, gPartyState.current_owner, 3);
+    Call2((void (*)())Func_02005704, gPartyState.currentOwner, 0x4000);
+    Call2((void (*)())Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
     Call1((void (*)())GameFlag_SetBit, 0xa3d);
     Call1((void (*)())Func_020057dc, 0x1c);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
@@ -246,7 +246,7 @@ void Func_020029ac(void)
     Call1((void (*)())Func_0200298c, 3);
     Call1((void (*)())Func_0200298c, 2);
     Call1((void (*)())Func_0200298c, 1);
-    Call2((void (*)())ObjectMotion_SetActionVariant, gPartyState.current_owner, 1);
+    Call2((void (*)())ObjectMotion_SetActionVariant, gPartyState.currentOwner, 1);
     Call1((void (*)())GameFlag_SetBit, 0x202);
     Call6((void (*)())Func_020055ac, 0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
     Call1((void (*)())Func_020055fc, 1);
@@ -257,15 +257,15 @@ void Func_020029ac(void)
     Call1((void (*)())Party_RemoveOwnerRestored, 3);
     Call1((void (*)())Party_RemoveOwnerRestored, 2);
     Call1((void (*)())Party_RemoveOwnerRestored, 1);
-    Object_GetById(0x14)->collision_flags |= 8;
-    Object_GetById(0x15)->collision_flags |= 8;
+    Object_GetById(0x14)->collisionFlags |= 8;
+    Object_GetById(0x15)->collisionFlags |= 8;
     Call2((void (*)())Object_SetPartAttribute, (s32)Object_GetById(0x1c), 0xf);
     Call3((void (*)())Func_0200567c, 0x1c, 0x2380000, 0x1120000);
-    Object_GetById(0x11)->motion_flags = 0;
+    Object_GetById(0x11)->motionFlags = 0;
     Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x11), 0x1ec0000, 0x600000, 0x11c0000);
-    Object_GetById(0x1d)->motion_flags = 0;
+    Object_GetById(0x1d)->motionFlags = 0;
     Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1d), 0x1fe0000, 0x600000, 0x1270000);
-    Object_GetById(0x1e)->motion_flags = 0;
+    Object_GetById(0x1e)->motionFlags = 0;
     Call4((void (*)())Object_SetPositionAndResetMotion, (s32)Object_GetById(0x1e), 0x21c0000, 0x600000, 0x12c0000);
     Call1((void (*)())WaitFrames, 1);
     Call1((void (*)())GameFlag_SetBit, 0x17c);

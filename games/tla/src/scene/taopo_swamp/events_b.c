@@ -17,7 +17,7 @@ void Func_02000314(void)
 
 void Func_02000334(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     Func_02002990_(76, 70, 14, 8, 14, 37, 0);
     if (GameFlag_Test_(0xf99) == 0) {
@@ -25,10 +25,10 @@ void Func_02000334(void)
         if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
             Func_02002898();
             Func_02002968_(0);
-            Func_02002910_(gPartyState.current_owner, 0x102);
-            ObjectMotion_OffsetPositionAndResetMotion_(gPartyState.current_owner, 0, -16);
-            leader->velocity_y = 0x60000;
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Func_02002910_(gPartyState.currentOwner, 0x102);
+            ObjectMotion_OffsetPositionAndResetMotion_(gPartyState.currentOwner, 0, -16);
+            leader->velocityY = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
             Func_020028a0();
         }
     }

@@ -15,11 +15,11 @@
 #include "party_state.h"
 
 struct FieldActor {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x1c];
+    u8 unk14[0x1c];
     s32 speed;
     s32 acceleration;
 };
@@ -33,7 +33,7 @@ void Func_02001224(struct FieldActor *actor);
 void Func_02001344(s32 cue);
 void Func_0200125c(void);
 
-void Func_020009f8(s32 actor_id, s32 dx, s32 dz)
+void Func_020009f8(s32 actorId, s32 dx, s32 dz)
 {
     struct FieldActor *leader;
     struct FieldActor *actor;
@@ -44,9 +44,9 @@ void Func_020009f8(s32 actor_id, s32 dx, s32 dz)
 
     party = &gPartyState;
     do { } while (0);
-    owner = &party->current_owner;
+    owner = &party->currentOwner;
     {
-        register s32 id asm("r5") = actor_id;
+        register s32 id asm("r5") = actorId;
 
         leader = Object_GetById(*owner);
         actor = Object_GetById(id);

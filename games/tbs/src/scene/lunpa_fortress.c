@@ -33,16 +33,16 @@
 #include "objcmd.h"
 
 // 前方宣言
-static s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id);
+static s32 TryStartActorInteraction(s32 actorId, s32 interaction_id);
 static void FieldScene_RunScene3bfSequenceC(void);
-static s32 IsActorInteractionAvailable(s32 actor_id);
-static s32 IsSceneActorWithinFourSteps(s32 actor_id);
-static s32 IsSceneActorWithinTriggerBox(s32 actor_id);
-static void RunActorScriptedSequenceA(s32 actor_id);
+static s32 IsActorInteractionAvailable(s32 actorId);
+static s32 IsSceneActorWithinFourSteps(s32 actorId);
+static s32 IsSceneActorWithinTriggerBox(s32 actorId);
+static void RunActorScriptedSequenceA(s32 actorId);
 static void RunActorScriptedSequenceB(s32 handle);
-static void RunActorScriptedSequenceC(s32 actor_id);
+static void RunActorScriptedSequenceC(s32 actorId);
 static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0);
-static void RunActorScriptedSequenceD(s32 actor_id);
+static void RunActorScriptedSequenceD(s32 actorId);
 static void FieldScene_InstallSceneTasks(void);
 static void FieldScene_SetupActorsForScene(void);
 static void FieldScene_RestoreActorsFromFlags(void);
@@ -150,8 +150,8 @@ static void ConfigureSceneActor12(void)
 	if (actor != 0)
 	{
 		Engine_ActorSetSpriteFlags(actor, 0);
-		actor->motion_flags = 0;
-		actor->priority_flags = 2;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 2;
 	}
 }
 
@@ -189,7 +189,7 @@ static void EV12_MOVE(void)
 		if (actor != NULL)
 		{
 			Engine_ActorSetSpriteFlags(actor, 0);
-			actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		}
 		FLAG_SET(0x943);
 	}
@@ -204,12 +204,12 @@ static void PlaceActorTwelveAndFinishScene(void)
 static void PlaceSceneObjectPairFromTableA(s32 table_index)
 {
 
-	s32 position_x = gLunpaFortressPairTableA[table_index * 2];
-	s32 position_z = gLunpaFortressPairTableA[table_index * 2 + 1];
+	s32 positionX = gLunpaFortressPairTableA[table_index * 2];
+	s32 positionZ = gLunpaFortressPairTableA[table_index * 2 + 1];
 
-	Map_CopyCells(0, 0x4d, 1, 3, position_x, position_z);
-	Map_CopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
-	Map_CopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
+	Map_CopyCells(0, 0x4d, 1, 3, positionX, positionZ);
+	Map_CopyCells(1, 0x4d, 1, 1, positionX + 1, positionZ);
+	Map_CopyCells(positionX, positionZ - 0x30, 1, 1, positionX, positionZ - 0x2e);
 }
 
 static void EV40_A(void)
@@ -222,7 +222,7 @@ static void EV40_A(void)
 	work = gEventWork;
 	if (Engine_PartyInventoryFindOwner(234) != -1)
 	{
-		trigger = work->touched_trigger;
+		trigger = work->touchedTrigger;
 		index = trigger - 40;
 		if (FLAG_CHECK(0x941) == 0 || index != 4)
 		{
@@ -260,7 +260,7 @@ static void EV40_B(void)
 	work = gEventWork;
 	if (Engine_PartyInventoryFindOwner(234) != -1)
 	{
-		trigger = work->touched_trigger;
+		trigger = work->touchedTrigger;
 		FieldScene_SetPositionPairs(trigger - 40);
 		SE(157);
 		Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -272,12 +272,12 @@ static void EV40_B(void)
 static void PlaceSceneObjectPairFromTableB(s32 table_index)
 {
 
-	s32 position_x = gLunpaFortressPairTableB[table_index * 2];
-	s32 position_z = gLunpaFortressPairTableB[table_index * 2 + 1];
+	s32 positionX = gLunpaFortressPairTableB[table_index * 2];
+	s32 positionZ = gLunpaFortressPairTableB[table_index * 2 + 1];
 
-	Map_CopyCells(0x37, 0x79, 1, 3, position_x, position_z);
-	Map_CopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
-	Map_CopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+	Map_CopyCells(0x37, 0x79, 1, 3, positionX, positionZ);
+	Map_CopyCells(0x38, 0x79, 1, 1, positionX + 1, positionZ);
+	Map_CopyCells(positionX, positionZ - 0x3f, 1, 1, positionX, positionZ - 0x3e);
 }
 
 static void EV40_D(void)
@@ -289,7 +289,7 @@ static void EV40_D(void)
 	work = gEventWork;
 	if (Engine_PartyInventoryFindOwner(234) != -1)
 	{
-		trigger = work->touched_trigger;
+		trigger = work->touchedTrigger;
 		PlaceSceneObjectPairFromTableB(trigger - 40);
 		SE(157);
 		Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -301,13 +301,13 @@ static void EV40_D(void)
 static void PlaceSceneObjectPairFromTableC(s32 table_index)
 {
 
-	s32 position_x = gLunpaFortressPairTableC[table_index * 2];
-	s32 position_z = gLunpaFortressPairTableC[table_index * 2 + 1];
+	s32 positionX = gLunpaFortressPairTableC[table_index * 2];
+	s32 positionZ = gLunpaFortressPairTableC[table_index * 2 + 1];
 
-	Map_CopyCells(1, 0x50, 1, 3, position_x, position_z);
-	Map_CopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
+	Map_CopyCells(1, 0x50, 1, 3, positionX, positionZ);
+	Map_CopyCells(2, 0x50, 1, 1, positionX + 1, positionZ);
 	Engine_MapCopyCellAttributes(
-		position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+		positionX, positionZ - 0x3f, 1, 1, positionX, positionZ - 0x3e);
 }
 
 static void EV40_C(void)
@@ -319,7 +319,7 @@ static void EV40_C(void)
 	work = gEventWork;
 	if (Engine_PartyInventoryFindOwner(234) != -1)
 	{
-		trigger = work->touched_trigger;
+		trigger = work->touchedTrigger;
 		PlaceSceneObjectPairFromTableC(trigger - 40);
 		SE(157);
 		Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -373,22 +373,22 @@ static void Actor11_Interact(void)
 	}
 }
 
-static s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
+static s32 TryStartActorInteraction(s32 actorId, s32 interaction_id)
 {
 	s32 started = 0;
 	s32 interaction;
 
 	EV_BEGIN();
-	interaction = Engine_BattleFxPlayCueAndStartEmitterOnTarget(0, actor_id, interaction_id);
+	interaction = Engine_BattleFxPlayCueAndStartEmitterOnTarget(0, actorId, interaction_id);
 	if (Engine_PartyGiveItem(interaction_id, 0) != -1)
 	{
-		OBJ_MODE(actor_id, 2);
+		OBJ_MODE(actorId, 2);
 		started = 1;
 	}
 	else
 	{
 		SE(0x7d);
-		OBJ_MODE(actor_id, 5);
+		OBJ_MODE(actorId, 5);
 	}
 	Engine_ObjectDispatchRelease(interaction);
 	EV_END();
@@ -464,26 +464,26 @@ static void FieldScene_UpdateActorPairInteraction(void)
 
 	if (gFrameCount & 1)
 	{
-		layer->speed_x = 1;
-		layer->speed_y = 1;
+		layer->speedX = 1;
+		layer->speedY = 1;
 	}
 	else
 	{
-		layer->speed_x = -1;
-		layer->speed_y = -1;
+		layer->speedX = -1;
+		layer->speedY = -1;
 	}
 	if (FLAG_CHECK(0x106) || scene[191] != 0 || scene[192] != 0)
 	{
-		actor->movement_state = 1;
-		other->movement_state = 1;
+		actor->movementState = 1;
+		other->movementState = 1;
 	}
 	else if (!FLAG_CHECK(0x214))
 	{
-		actor->movement_state = 0;
-		other->movement_state = 0;
-		if (!FLAG_CHECK(0x214) && actor->movement_state == 0)
+		actor->movementState = 0;
+		other->movementState = 0;
+		if (!FLAG_CHECK(0x214) && actor->movementState == 0)
 		{
-			layer->phase_x = 8912896.0 - actor->x;
+			layer->phaseX = 8912896.0 - actor->x;
 		}
 		if (!IsPlayerInAccidentTriggerArea())
 		{
@@ -580,25 +580,25 @@ static void FieldScene_UpdateActorSeventeenInteraction(void)
 	Engine_EventGetViewCenter();
 	if (gFrameCount & 1)
 	{
-		layer->speed_x = 1;
-		layer->speed_y = 1;
+		layer->speedX = 1;
+		layer->speedY = 1;
 	}
 	else
 	{
-		layer->speed_x = -1;
-		layer->speed_y = -1;
+		layer->speedX = -1;
+		layer->speedY = -1;
 	}
 	if (FLAG_CHECK(0x106) || scene[191] != 0 || scene[192] != 0)
 	{
-		actor->movement_state = 1;
+		actor->movementState = 1;
 	}
 	else if (!FLAG_CHECK(0x214))
 	{
-		actor->movement_state = 0;
-		if (!FLAG_CHECK(0x214) && actor->movement_state == 0)
+		actor->movementState = 0;
+		if (!FLAG_CHECK(0x214) && actor->movementState == 0)
 		{
-			layer->phase_x = 0x3400000 - actor->x;
-			layer->phase_y = 0x2400000 - actor->z;
+			layer->phaseX = 0x3400000 - actor->x;
+			layer->phaseY = 0x2400000 - actor->z;
 		}
 		if (!AreSceneActorsInPassingLane())
 		{
@@ -660,25 +660,25 @@ static void FieldScene_UpdateActorEighteenInteraction(void)
 
 	if (gFrameCount & 1)
 	{
-		layer->speed_x = 1;
-		layer->speed_y = 1;
+		layer->speedX = 1;
+		layer->speedY = 1;
 	}
 	else
 	{
-		layer->speed_x = -1;
-		layer->speed_y = -1;
+		layer->speedX = -1;
+		layer->speedY = -1;
 	}
 	if (FLAG_CHECK(0x106) || scene[191] != 0 || scene[192] != 0)
 	{
-		actor->movement_state = 1;
+		actor->movementState = 1;
 	}
 	else if (!FLAG_CHECK(0x214))
 	{
-		actor->movement_state = 0;
-		if (!FLAG_CHECK(0x214) && actor->movement_state == 0)
+		actor->movementState = 0;
+		if (!FLAG_CHECK(0x214) && actor->movementState == 0)
 		{
-			layer->phase_x = 0x2f00000 - actor->x;
-			layer->phase_y = 0x1f00000 - actor->z;
+			layer->phaseX = 0x2f00000 - actor->x;
+			layer->phaseY = 0x1f00000 - actor->z;
 		}
 		if (!IsPlayerInSecondaryTriggerArea())
 		{
@@ -742,7 +742,7 @@ static void FieldScene_RunScene3bfSequenceA(void)
 			}
 			if (FLAG_CHECK(0x214) != 0)
 			{
-				work->raised_trigger = 94;
+				work->raisedTrigger = 94;
 			}
 		}
 	}
@@ -765,7 +765,7 @@ static void TriggerSceneStage95FromActor12(void)
 		s32	 next_stage;
 
 		Engine_TaskRemoveCallback(TriggerSceneStage95FromActor12);
-		scene_stage = &scene_state->raised_trigger;
+		scene_stage = &scene_state->raisedTrigger;
 		next_stage = 95;
 		*scene_stage = next_stage;
 	}
@@ -786,7 +786,7 @@ static void FieldScene_RunScene3bfSequenceB(void)
 				FLAG_SET(0x225);
 				Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
 				Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
-				work->raised_trigger = 96;
+				work->raisedTrigger = 96;
 			}
 		}
 	}
@@ -807,84 +807,84 @@ static void FieldScene_RunScene3bfSequenceC(void)
 				FLAG_SET(0x225);
 				Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
 				Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
-				work->raised_trigger = 96;
+				work->raisedTrigger = 96;
 			}
 		}
 	}
 }
 
-static s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
+static s32 IsSceneActorVerticallyNearPlayer(s32 actorId)
 {
-	SceneActor *scene_actor = Object_GetById(actor_id);
+	SceneActor *scene_actor = Object_GetById(actorId);
 	SceneActor *player = Object_GetById(0);
-	s32			actor_z = scene_actor->z / 0x100000;
-	s32			actor_x = scene_actor->x / 0x100000;
+	s32			actorZ = scene_actor->z / 0x100000;
+	s32			actorX = scene_actor->x / 0x100000;
 	s32			player_z = player->z / 0x100000;
 	s32			player_x = player->x / 0x100000;
-	s32			z_distance = actor_z - player_z;
+	s32			z_distance = actorZ - player_z;
 
-	if (z_distance >= -6 && z_distance <= 6 && actor_x - 1 < player_x && actor_x + 1 > player_x)
+	if (z_distance >= -6 && z_distance <= 6 && actorX - 1 < player_x && actorX + 1 > player_x)
 	{
 		return 1;
 	}
 	return 0;
 }
 
-static s32 IsSceneActorHorizontallyNearPlayer(s32 actor_id)
+static s32 IsSceneActorHorizontallyNearPlayer(s32 actorId)
 {
-	SceneActor *scene_actor = Object_GetById(actor_id);
+	SceneActor *scene_actor = Object_GetById(actorId);
 	SceneActor *player = Object_GetById(0);
-	s32			actor_z = scene_actor->z / 0x100000;
-	s32			actor_x = scene_actor->x / 0x100000;
+	s32			actorZ = scene_actor->z / 0x100000;
+	s32			actorX = scene_actor->x / 0x100000;
 	s32			player_z = player->z / 0x100000;
 	s32			player_x = player->x / 0x100000;
-	s32			x_distance = actor_x - player_x;
+	s32			x_distance = actorX - player_x;
 
 	if (x_distance < -6 || x_distance > 6)
 	{
 		return 0;
 	}
-	if (actor_z - 2 < player_z && actor_z + 2 > player_z)
+	if (actorZ - 2 < player_z && actorZ + 2 > player_z)
 	{
 		return 1;
 	}
 	return 0;
 }
 
-static s32 IsActorInteractionAvailable(s32 actor_id)
+static s32 IsActorInteractionAvailable(s32 actorId)
 {
-	if (IsSceneActorWithinTriggerBox(actor_id) == 0)
+	if (IsSceneActorWithinTriggerBox(actorId) == 0)
 	{
 		return 0;
 	}
-	if (IsSceneActorVerticallyNearPlayer(actor_id) != 0)
+	if (IsSceneActorVerticallyNearPlayer(actorId) != 0)
 	{
 		return 1;
 	}
 	{
-		s32 result = IsSceneActorHorizontallyNearPlayer(actor_id);
+		s32 result = IsSceneActorHorizontallyNearPlayer(actorId);
 
 		return (u32)(result | -result) >> 31;
 	}
 }
 
-static s32 IsSceneActorWithinFourSteps(s32 actor_id)
+static s32 IsSceneActorWithinFourSteps(s32 actorId)
 {
-	SceneActor *scene_actor = Object_GetById(actor_id);
+	SceneActor *scene_actor = Object_GetById(actorId);
 	SceneActor *player = Object_GetById(0);
-	s32			actor_z = scene_actor->z / 0x100000;
-	s32			actor_x = scene_actor->x / 0x100000;
+	s32			actorZ = scene_actor->z / 0x100000;
+	s32			actorX = scene_actor->x / 0x100000;
 	s32			player_z = player->z / 0x100000;
 	s32			player_x = player->x / 0x100000;
-	s32			x_distance = actor_x - player_x;
+	s32			x_distance = actorX - player_x;
 	s32			z_distance;
 
-	actor_z += 1;
+	actorZ += 1;
 	if (x_distance < 0)
 	{
 		x_distance = -x_distance;
 	}
-	z_distance = actor_z - player_z;
+	z_distance = actorZ - player_z;
 	if (z_distance < 0)
 	{
 		z_distance = -z_distance;
@@ -896,22 +896,22 @@ static s32 IsSceneActorWithinFourSteps(s32 actor_id)
 	return 0;
 }
 
-static s32 IsSceneActorWithinTriggerBox(s32 actor_id)
+static s32 IsSceneActorWithinTriggerBox(s32 actorId)
 {
-	SceneActor *scene_actor = Object_GetById(actor_id);
+	SceneActor *scene_actor = Object_GetById(actorId);
 	SceneActor *player = Engine_EventGetViewCenter();
-	s32			actor_x = scene_actor->x / 0x100000;
-	s32			actor_z = scene_actor->z / 0x100000;
+	s32			actorX = scene_actor->x / 0x100000;
+	s32			actorZ = scene_actor->z / 0x100000;
 	s32			player_x = player->x / 0x100000;
 	s32			player_z = player->z / 0x100000;
-	s32			x_distance = actor_x - player_x;
+	s32			x_distance = actorX - player_x;
 	s32			z_distance;
 
 	if (x_distance < 0)
 	{
 		x_distance = -x_distance;
 	}
-	z_distance = actor_z - player_z;
+	z_distance = actorZ - player_z;
 	if (z_distance < 0)
 	{
 		z_distance = -z_distance;
@@ -935,7 +935,7 @@ static void TriggerScene41AtVillagePath(void)
 
 		if (player_x == 43 && player_z > 28 && player_z <= 31)
 		{
-			s16 *q = &gEventWork->touched_trigger;
+			s16 *q = &gEventWork->touchedTrigger;
 			s32	 v = 41;
 
 			*q = v;
@@ -957,7 +957,7 @@ static void TriggerScene40AtVillagePath(void)
 		if (player_x == 16 && player_z > 55 && player_z <= 58
 			&& (player->dir == 0xc000 || player->dir == 0x4000))
 		{
-			s16 *q = &gEventWork->touched_trigger;
+			s16 *q = &gEventWork->touchedTrigger;
 			s32	 v = 40;
 
 			*q = v;
@@ -988,58 +988,58 @@ static void RunActor9ScriptedSequence(void)
 	EV_END();
 }
 
-static void RunActorScriptedSequenceA(s32 actor_id)
+static void RunActorScriptedSequenceA(s32 actorId)
 {
 	EV_BEGIN();
 	EV_BEGIN();
-	Engine_ActorShowEmote(actor_id, 256, 1);
-	Engine_ActorSetDestinationOffset(actor_id, 0, 0);
-	Engine_ActorEnableActionCallback(actor_id, 1);
-	OBJ_MODE(actor_id, 0);
-	OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorShowEmote(actorId, 256, 1);
+	Engine_ActorSetDestinationOffset(actorId, 0, 0);
+	Engine_ActorEnableActionCallback(actorId, 1);
+	OBJ_MODE(actorId, 0);
+	OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorSetDestinationOffset(actor_id, 0, 0);
-	Engine_ActorEnableActionCallback(actor_id, 1);
-	Engine_ActorStop(actor_id);
-	OBJ_MODE(actor_id, 0);
+	Engine_ActorSetDestinationOffset(actorId, 0, 0);
+	Engine_ActorEnableActionCallback(actorId, 1);
+	Engine_ActorStop(actorId);
+	OBJ_MODE(actorId, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	{
 		s32 t = MsgLunpaWho2;
 
 		MESSAGE_SET(t);
-		MESSAGE_PUT(actor_id, 0);
-		OBJ_FACE(ACTOR_PARTY_LEADER, actor_id, 0);
+		MESSAGE_PUT(actorId, 0);
+		OBJ_FACE(ACTOR_PARTY_LEADER, actorId, 0);
 		Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
 		MESSAGE_SET(t + 1);
 	}
-	MESSAGE_PUT(actor_id, 0);
+	MESSAGE_PUT(actorId, 0);
 	Engine_EventCloseScreen();
 	WAIT(60);
 	Engine_EventRequestExit(60);
 	EV_END();
 }
 
-static void TurnActorToSceneDirection(s32 actor_id)
+static void TurnActorToSceneDirection(s32 actorId)
 {
 
-	OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
-	OBJ_FACE(ACTOR_PARTY_LEADER, actor_id, 0);
+	OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
+	OBJ_FACE(ACTOR_PARTY_LEADER, actorId, 0);
 	switch (gLunpaFortressRandomPick & 3)
 	{
 	case 0:
-		RunActorScriptedSequenceB(actor_id);
+		RunActorScriptedSequenceB(actorId);
 		break;
 	case 1:
-		RunActorScriptedSequenceC(actor_id);
+		RunActorScriptedSequenceC(actorId);
 		break;
 	case 2:
-		LunpaFortress_ActOutGuardShiftDialogue(actor_id);
+		LunpaFortress_ActOutGuardShiftDialogue(actorId);
 		break;
 	case 3:
-		RunActorScriptedSequenceD(actor_id);
+		RunActorScriptedSequenceD(actorId);
 		break;
 	default:
-		RunActorScriptedSequenceC(actor_id);
+		RunActorScriptedSequenceC(actorId);
 		break;
 	}
 }
@@ -1061,18 +1061,18 @@ static void RunActorScriptedSequenceB(s32 handle)
 	MESSAGE_PUT(handle, 0);
 }
 
-static void RunActorScriptedSequenceC(s32 actor_id)
+static void RunActorScriptedSequenceC(s32 actorId)
 {
 	s32 t = MsgLunpaGuardWhosThat;
 
 	MESSAGE_SET(t);
-	MESSAGE_PUT(actor_id, 0);
-	Engine_ActorRunRepeatedMotion(actor_id, 1);
+	MESSAGE_PUT(actorId, 0);
+	Engine_ActorRunRepeatedMotion(actorId, 1);
 	MESSAGE_SET(t + 1);
-	MESSAGE_PUT(actor_id, 0);
-	Engine_ActorSetAnimationAndWait(actor_id, 4);
+	MESSAGE_PUT(actorId, 0);
+	Engine_ActorSetAnimationAndWait(actorId, 4);
 	MESSAGE_SET(t + 2);
-	MESSAGE_PUT(actor_id, 0);
+	MESSAGE_PUT(actorId, 0);
 }
 
 static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0)
@@ -1094,21 +1094,21 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0)
 	MESSAGE_PUT(a0, 0);
 }
 
-static void RunActorScriptedSequenceD(s32 actor_id)
+static void RunActorScriptedSequenceD(s32 actorId)
 {
 	s32 t = MsgLunpaScoundrel;
 
 	MESSAGE_SET(t);
-	MESSAGE_PUT(actor_id, 0);
-	Engine_ActorSetAnimationAndWait(actor_id, 4);
+	MESSAGE_PUT(actorId, 0);
+	Engine_ActorSetAnimationAndWait(actorId, 4);
 	MESSAGE_SET(t + 1);
-	MESSAGE_PUT(actor_id, 0);
-	Engine_ActorRunRepeatedMotion(actor_id, 1);
+	MESSAGE_PUT(actorId, 0);
+	Engine_ActorRunRepeatedMotion(actorId, 1);
 	MESSAGE_SET(t + 2);
-	MESSAGE_PUT(actor_id, 0);
-	Engine_ActorSetAnimationAndWait(actor_id, 3);
+	MESSAGE_PUT(actorId, 0);
+	Engine_ActorSetAnimationAndWait(actorId, 3);
 	MESSAGE_SET(t + 3);
-	MESSAGE_PUT(actor_id, 0);
+	MESSAGE_PUT(actorId, 0);
 }
 
 static void EV33_CHECK(void)
@@ -1118,7 +1118,7 @@ static void EV33_CHECK(void)
 	SE(113);
 	Engine_ActorShowEmote(15, 256, 60);
 	TurnActorToSceneDirection(15);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 2);
 	Engine_ActorSetPosition(15, 0, 0);
@@ -1133,7 +1133,7 @@ static void EV30_TREASURE_CHEST(void)
 	SE(113);
 	Engine_ActorShowEmote(11, 256, 60);
 	TurnActorToSceneDirection(11);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 2);
 	Engine_ActorSetPosition(11, 0, 0);
@@ -1191,7 +1191,7 @@ static void EV31_GUARD(void)
 	WAIT(30);
 	MESSAGE_SET((line + 6));
 	MESSAGE_PUT(12, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress2, 31);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 3);
@@ -1223,7 +1223,7 @@ static void EV32_TOUCH(void)
 	SE(113);
 	Engine_ActorShowEmote(16, 256, 60);
 	TurnActorToSceneDirection(16);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 2);
 	Engine_ActorSetPosition(16, 0, 0);
@@ -1523,7 +1523,7 @@ static void EV20_CUTSCENE(void)
 		MESSAGE_SET(text_line);
 		MESSAGE_PUT(13, 0);
 		LunpaFortress_RevealMonster();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
 		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
@@ -1722,7 +1722,7 @@ static void EV20_CUTSCENE(void)
 		LunpaFortress_PositionPartyForMonster();
 		LunpaFortress_RevealMonster();
 		FLAG_SET(2370);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
 		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
@@ -2394,7 +2394,7 @@ static void FieldScene_RunMainScriptSequence(void)
 	OBJ_WALK(12, 352, 360);
 	WAIT(20);
 	SE(17);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 	Engine_EventCloseScreen();
 	WAIT(1);
 	WAIT(210);
@@ -2730,7 +2730,7 @@ static void EV20_END(void)
 	}
 	else
 	{
-		s16 *q = &gEventWork->psynergy_request;
+		s16 *q = &gEventWork->psynergyRequest;
 
 		*q = 0;
 		Engine_PsynergyCancel();
@@ -2776,7 +2776,7 @@ s32 FieldScene_DispatchActorUpdate(void)
 		FieldScene_RestoreActorsFromFlags();
 	if (gGameState.scene == (s32)&SceneId_LunpaFortress4)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 		Engine_ActorSetSpriteFlags(Actor_Get(12), 0);
 		OBJ_DIR(12, 0, 0);
 		OBJ_MODE(12, 0);
@@ -2784,15 +2784,15 @@ s32 FieldScene_DispatchActorUpdate(void)
 		actor = Actor_Get(8);
 		if (actor != 0)
 			Engine_ActorSetSpriteFlags(actor, 0);
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		actor = Actor_Get(9);
 		if (actor != 0)
 			Engine_ActorSetSpriteFlags(actor, 0);
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		actor = Actor_Get(10);
 		if (actor != 0)
 			Engine_ActorSetSpriteFlags(actor, 0);
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		if (gGameState.entrance == 4)
 		{
@@ -2816,8 +2816,8 @@ s32 FieldScene_DispatchActorUpdate(void)
 		actor = Actor_Get(15);
 		if (actor != 0)
 			Engine_ActorSetSpriteFlags(actor, 0);
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-		actor->scale_x = 0xcccc;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->scaleX = 0xcccc;
 	}
 	return 0;
 }
@@ -2833,7 +2833,7 @@ static void FieldScene_InstallSceneTasks(void)
 	case 5:
 	case 6:
 	case 7:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Task_AddCallback((s32)TriggerSceneStage95FromActor12, 3200);
 		Task_AddCallback((s32)FieldScene_RunScene3bfSequenceB, 3200);
 		Task_AddCallback((s32)FieldScene_RunScene3bfSequenceC, 3200);
@@ -2841,13 +2841,13 @@ static void FieldScene_InstallSceneTasks(void)
 		break;
 	case 12:
 	case 19:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		Engine_MapSetWorkFlagBits9To11(0xc00);
 		break;
 	case 16:
 	case 17:
 	case 18:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Task_AddCallback((s32)FieldScene_UpdateActorEighteenInteraction, 3200);
 		Task_AddCallback((s32)TriggerScene41AtVillagePath, 3200);
 		Engine_TaskWait(1);
@@ -2859,11 +2859,11 @@ static void FieldScene_InstallSceneTasks(void)
 	case 13:
 	case 14:
 	case 15:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Task_AddCallback((s32)FieldScene_RunScene3bfSequenceA, 3200);
 		break;
 	default:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		break;
 	}
@@ -2904,7 +2904,7 @@ static void FieldScene_SetupActorsForScene(void)
 	case 1:
 	case 2:
 	case 3:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		Task_AddCallback(FieldScene_UpdateActorPairInteraction, 3200);
 		Engine_TaskWait(1);
@@ -2916,7 +2916,7 @@ static void FieldScene_SetupActorsForScene(void)
 	case 20:
 	case 23:
 	case 24:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		Engine_MapSetWorkFlagBits9To11(0xc00);
 		Engine_ActorSetSpriteFlags(Actor_Get(24), 0);
 		if (FLAG_CHECK(0x314))
@@ -2926,7 +2926,7 @@ static void FieldScene_SetupActorsForScene(void)
 		break;
 	case 21:
 	case 22:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		Task_AddCallback(FieldScene_UpdateActorSeventeenInteraction, 3200);
 		Engine_TaskWait(1);
@@ -2935,14 +2935,14 @@ static void FieldScene_SetupActorsForScene(void)
 		break;
 	case 11:
 	case 12:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		if (FLAG_CHECK(0x94a))
 		{
 			FieldScene_RunSequenceTail();
 		}
 		break;
 	case 31:
-		gEventWork->start_transition =
+		gEventWork->startTransition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
 		FieldScene_RunSequenceTail();
 		break;
@@ -2952,22 +2952,22 @@ static void FieldScene_SetupActorsForScene(void)
 		Task_AddCallback(TriggerScene40AtVillagePath, 3200);
 		break;
 	default:
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		break;
 	}
 	actor = Actor_Get(8);
 	Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
 	Engine_ActorSetSpritePriority(8, 1);
-	actor->scale_x = 0xc000;
-	actor->scale_y = 0xc000;
+	actor->scaleX = 0xc000;
+	actor->scaleY = 0xc000;
 }
 
 static void FieldScene_RestoreActorsFromFlags(void)
 {
 	struct FieldActor *actor;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	FieldScene_ActivateAlternateActorGroup();
 	if (FLAG_CHECK(0x943))
 	{
@@ -3002,28 +3002,28 @@ static void FieldScene_RestoreActorsFromFlags(void)
 	actor = Actor_Get(8);
 	if (actor != 0)
 	{
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	actor = Actor_Get(9);
 	if (actor != 0)
 	{
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	actor = Actor_Get(10);
 	if (actor != 0)
 	{
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	actor = Actor_Get(11);
 	if (actor != 0)
 	{
 		Engine_ActorSetSpriteFlags(actor, 0);
 	}
-	actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	actor = Actor_Get(12);
 	if (actor != 0)
 	{
-		actor->collision_flags |= 0x10;
+		actor->collisionFlags |= 0x10;
 	}
 	Engine_ActorSetSpriteFlags(Actor_Get(11), 0);
 	EV_END();

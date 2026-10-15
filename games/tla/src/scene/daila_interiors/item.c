@@ -6,21 +6,21 @@
 #include "daila.h"
 
 struct DailaActor {
-    u8 unknown_00[0xc];
+    u8 unk00[0xc];
     s32 y;
-    u8 unknown_10[8];
-    s32 speed_18;
-    s32 speed_1c;
-    u8 unknown_20[8];
-    s32 unknown_28;
-    u8 unknown_2c[0x1c];
-    s32 unknown_48;
-    u8 unknown_4c[9];
-    u8 kind_55;
-    u8 unknown_56[3];
-    u8 flags_59;
-    u8 unknown_5a[0x12];
-    s32 unknown_6c;
+    u8 unk10[8];
+    s32 speed18;
+    s32 speed1c;
+    u8 unk20[8];
+    s32 unk28;
+    u8 unk2c[0x1c];
+    s32 unk48;
+    u8 unk4c[9];
+    u8 kind55;
+    u8 unk56[3];
+    u8 flags59;
+    u8 unk5a[0x12];
+    s32 unk6c;
 };
 
 struct DailaActor *Object_GetById(s32 id);
@@ -36,13 +36,13 @@ void Func_02000730(void)
 {
     s32 saved_48;
     s32 saved_28;
-    s32 saved_y;
+    s32 savedY;
     s32 item;
 
-    saved_48 = Object_GetById(9)->unknown_48;
+    saved_48 = Object_GetById(9)->unk48;
     item = 458;
-    saved_28 = Object_GetById(9)->unknown_28;
-    saved_y = Object_GetById(9)->y;
+    saved_28 = Object_GetById(9)->unk28;
+    savedY = Object_GetById(9)->y;
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
     if (Func_02000d14(item) >= 0) {
@@ -64,16 +64,16 @@ void Func_02000730(void)
         } else {
             Func_02000d4c(9, 0, 0);
             Battle_WaitMode0(1);
-            Object_GetById(9)->unknown_28 = saved_28;
-            Object_GetById(9)->y = saved_y;
-            Object_GetById(9)->unknown_48 = saved_48;
-            Object_GetById(9)->unknown_6c = 0;
+            Object_GetById(9)->unk28 = saved_28;
+            Object_GetById(9)->y = savedY;
+            Object_GetById(9)->unk48 = saved_48;
+            Object_GetById(9)->unk6c = 0;
             Func_02000c9c(Object_GetById(9));
             Engine_ActorSetSpritePriority(9, 1);
-            Object_GetById(9)->kind_55 = 2;
-            Object_GetById(9)->speed_1c = 0x13333;
-            Object_GetById(9)->speed_18 = 0x13333;
-            Object_GetById(9)->flags_59 |= 4;
+            Object_GetById(9)->kind55 = 2;
+            Object_GetById(9)->speed1c = 0x13333;
+            Object_GetById(9)->speed18 = 0x13333;
+            Object_GetById(9)->flags59 |= 4;
             Daila_ObjPlace(9, 232 << 16, 196 << 16);
         }
     }

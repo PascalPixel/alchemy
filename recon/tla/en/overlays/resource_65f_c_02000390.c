@@ -16,7 +16,7 @@ extern const u16 Data_020054b8[];
 // BG パレット 1 の色 8〜15 を表から作る
 void Func_02000390(void)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
     u32 i;
     s32 j;
 
@@ -29,7 +29,7 @@ void Func_02000390(void)
 // BG パレット 6 の色 1〜9 を表から作る
 void Func_020003d8(void)
 {
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
     u32 i;
     s32 j;
 

@@ -14,7 +14,7 @@ void Func_080dcb44(void);
 
 void Func_080dca50(void)
 {
-    u8 *work = Ram_HeapSlots->unknown_4c[3];
+    u8 *work = Ram_HeapSlots->unk4c[3];
 
     Func_080dcadc();
     Scheduler_RemoveCallback((SchedulerCallback)Func_080dcb44);
@@ -33,7 +33,7 @@ void Func_080dca84(void)
 {
     volatile u16 *p;
 
-    Ram_HeapSlots->window_tiles[4] = 1;
+    Ram_HeapSlots->windowTiles[4] = 1;
     p = &BG_PLTT_COLOR(15, 1);
     *p = GREY28;
     p += 2;

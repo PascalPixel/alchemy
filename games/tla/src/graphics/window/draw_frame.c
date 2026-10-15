@@ -7,7 +7,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *cursor = &canvas->tilemap[y][x];
     u32 row;
 
@@ -45,7 +45,7 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 
 void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height)
 {
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u16 *cursor = &canvas->tilemap[y][x];
     u32 row;
 

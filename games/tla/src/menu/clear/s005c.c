@@ -10,7 +10,7 @@
 
 struct ClearWork
 {
-    u8  unknown_00[20];
+    u8  unk00[20];
     u16 mode;
 };
 
@@ -92,15 +92,15 @@ scroll_pair:
     if (y <= 3)
         goto scroll_pair;
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
-    ((struct ClearWork *)Ram_HeapSlots->map_work)->mode = 0x1400;
+    ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
     {
         struct ObjectRuntime *leader;
         /* FAKEMATCH: the flag's zero is pinned to r5 as a halfword: the native loads it from the pool after the call, where plainly it reuses the scroll loop's zero kept in r5 (differ 20 with a byte pin). */
         register u16 zero asm("r5");
 
-        leader = Object_GetById(gPartyState.current_owner);
+        leader = Object_GetById(gPartyState.currentOwner);
         zero = 0;
-        leader->motion_flags = zero;
+        leader->motionFlags = zero;
     }
 }
 

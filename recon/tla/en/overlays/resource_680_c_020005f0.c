@@ -10,11 +10,11 @@
 
 struct A4SlotValues {
     s16 id;
-    s16 unknown_02;
-    s32 value_04;
-    u8 unknown_08[8];
-    s32 value_10;
-    u8 unknown_14[8];
+    s16 unk02;
+    s32 value04;
+    u8 unk08[8];
+    s32 value10;
+    u8 unk14[8];
 };
 
 static inline struct A4SlotValues *FindSlot(s32 id)
@@ -36,14 +36,14 @@ void Func_020005f0(void)
 {
     struct A4SlotValues *slot = FindSlot(8);
 
-    slot->value_10 = 0x4000;
-    slot->value_04 = 64;
+    slot->value10 = 0x4000;
+    slot->value04 = 64;
 }
 
 void Func_02000630(void)
 {
     struct A4SlotValues *slot = FindSlot(8);
 
-    slot->value_10 = 0x4000;
-    slot->value_04 += 128;
+    slot->value10 = 0x4000;
+    slot->value04 += 128;
 }

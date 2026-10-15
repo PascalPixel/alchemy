@@ -39,19 +39,19 @@ void Func_02000640(void)
     {
         Func_02001108(0);
     } while (0);
-    Func_02001070(18, gPartyState.current_owner);
+    Func_02001070(18, gPartyState.currentOwner);
     WaitFrames(1);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0xa000, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xa000, 0);
     Call3(ObjectMotion_SetSpeedParameters, 18, 0xcccc, 0x6666);
     ObjectMotion_SetPositionAndReset(18, 532, 248);
     Func_020010b8(18, 0x3000);
     Func_02001098(MsgAreWeSetting);
     UiText_OpenMessageAtObject(18, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0)
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
     {
         Object_SetModeById(18, 3);
         Func_020010a8(18, 0);
-        gPartyState.owner_override = 1;
+        gPartyState.ownerOverride = 1;
         if (Value1(GameFlag_Test, 0x9d0))
         {
             GameFlag_SetBit(0x8df);
@@ -61,18 +61,18 @@ void Func_02000640(void)
     }
     else
     {
-        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
         Func_020010a8(18, 0);
         Call3(ObjectMotion_SetSpeedParameters, 18, 0x19999, 0xcccc);
         Object_SetModeById(18, 2);
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         if (object != NULL)
             ObjectMotion_ResetAndSetPosition(
                 18, *(s16 *)((u8 *)object + 10), *(s16 *)((u8 *)object + 18));
         ObjectMotion_CommitCurrentPositionAndActivate(18);
         Func_02001060(18, 0, 0);
-        Call3(ObjectMotion_SetSpeedParameters, gPartyState.current_owner, 0xcccc, 0x6666);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 528, 276);
+        Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc, 0x6666);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 528, 276);
         Func_02001018();
     }
 }

@@ -15,12 +15,12 @@ void Func_02000338(struct ObjectRuntime *object)
     s32 z = object->z >> 20;
     s32 attr0 = MapCell_GetAttributes(0, x, z);
     s32 attr2 = MapCell_GetAttributes(2, x, z);
-    s32 height = Map_GetTerrainHeight(object->terrain_id, object->x, object->z) >> 19;
+    s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
     if (GameFlag_Test(object->action)) {
         attr2 &= 0xffff00ff;
         attr0 &= ~128;
-        if ((object->terrain_height >> 19) != height)
+        if ((object->terrainHeight >> 19) != height)
             height -= 4;
         Object_SetSpritePriority(object, 3);
     } else {
@@ -31,5 +31,5 @@ void Func_02000338(struct ObjectRuntime *object)
     }
     MapCell_SetAttributes(0, x, z, attr0);
     MapCell_SetAttributes(2, x, z, attr2);
-    Func_02003030(x << 20, z << 20, object->terrain_id, height);
+    Func_02003030(x << 20, z << 20, object->terrainId, height);
 }

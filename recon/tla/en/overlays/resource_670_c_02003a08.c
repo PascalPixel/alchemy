@@ -4,20 +4,20 @@
 void Func_02003a08(s32 x, s32 z)
 {
     struct PartyState *party = &gPartyState;
-    struct KibomboEventWork *work = Ram_HeapSlots->event_work;
-    struct KibomboObject *leader = Object_GetById(party->current_owner);
+    struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
+    struct KibomboObject *leader = Object_GetById(party->currentOwner);
 
     Func_02005a9c();
     Func_02005c3c(0);
-    leader->motion_flags = 0;
-    Kibombo_ObjSpeed(gPartyState.current_owner, 0x10000, 0x8000);
-    Kibombo_ObjWalk(gPartyState.current_owner, x, z);
-    Kibombo_ObjTurn(gPartyState.current_owner, 0xc000);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Object_SetModeById(gPartyState.current_owner, 13);
+    leader->motionFlags = 0;
+    Kibombo_ObjSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
+    Kibombo_ObjWalk(gPartyState.currentOwner, x, z);
+    Kibombo_ObjTurn(gPartyState.currentOwner, 0xc000);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    Object_SetModeById(gPartyState.currentOwner, 13);
     Func_02005a54(leader, x << 16, 0xfff40000, z << 16);
     Func_02005a5c(leader);
-    Object_SetModeById(gPartyState.current_owner, 10);
+    Object_SetModeById(gPartyState.currentOwner, 10);
     Func_02005c9c(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

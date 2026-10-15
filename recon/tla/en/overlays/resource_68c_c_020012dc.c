@@ -9,17 +9,17 @@ void Func_02002924(s32 cue);
 void Battle_WaitMode0(s32 frames);
 
 struct SpriteFrames {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 frame;
 };
 
 struct AnimatedSprite {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     s16 rotation;
-    u8 unknown_14[5];
+    u8 unk14[5];
     u8 frame;
-    u8 next_frame;
-    u8 unknown_1b[0xd];
+    u8 nextFrame;
+    u8 unk1b[0xd];
     struct SpriteFrames *frames;
 };
 

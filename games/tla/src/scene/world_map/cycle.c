@@ -36,9 +36,9 @@ void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
-    u8 unknown_14[6];
+    u8 unk14[6];
     u8 frame;
 };
 

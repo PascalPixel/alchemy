@@ -17,7 +17,7 @@ void Func_0200048c(u16 *list, s32 id)
                 Func_02000974(0);
                 WaitFrames(8);
                 Func_02001428(object, 2);
-                Func_02000bc0(-4, object->terrain_id, id);
+                Func_02000bc0(-4, object->terrainId, id);
                 Func_02000974(1);
                 WaitFrames(16);
                 Call3((void (*)())Func_02001470, -1, -1, 0xe666);

@@ -8,12 +8,12 @@
 #include "field_sprite.h"
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
 struct CellTarget {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
 };
@@ -43,15 +43,15 @@ void Func_02001d4c(s32 cue);
 
 void Func_020015cc(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x;
     s32 z = leader->z;
 
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x40000, 0x20000);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x40000, 0x20000);
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before it copies the object to r10 (one reordered row). */
     x >>= 20;
     z >>= 20;
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, (x << 4) + 8, (z << 4) + 8);
+    ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8, (z << 4) + 8);
     WaitFrames(1);
     Object_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y, (z << 20) + 0x80000);
     Battle_WaitMode0(4);

@@ -13,17 +13,17 @@ struct Effect {
 
 struct Object {
     u8 filler0[6];
-    u16 src_6;
-    u8 src_8;
+    u16 src6;
+    u8 src8;
     u8 filler9[6];
-    u8 out_15;
+    u8 out15;
     u8 filler16[4];
-    u8 out_20;
-    u8 mode_21 : 2;
-    u8 rest_21 : 6;
-    u16 pos_22 : 9;
-    u16 affine_22 : 5;
-    u16 rest_22 : 2;
+    u8 out20;
+    u8 mode21 : 2;
+    u8 rest21 : 6;
+    u16 pos22 : 9;
+    u16 affine22 : 5;
+    u16 rest22 : 2;
 };
 
 extern u32 gFrameTick;
@@ -50,14 +50,14 @@ void Ui_ApplyTableScaleToObject(struct Object *obj)
         effect.x = v;
         effect.y = v;
         effect.z = 0;
-        obj->affine_22 = AffineMatrix_BuildForEffect(&effect);
-        obj->mode_21 = 3;
+        obj->affine22 = AffineMatrix_BuildForEffect(&effect);
+        obj->mode21 = 3;
         /* FAKEMATCH: the one-pass block ends the scheduling block: the source is read before 0xfff0 is built (one reordered row). */
         do {
-            source = obj->src_6;
+            source = obj->src6;
         } while (0);
-        obj->pos_22 = source + 0xfff0;
-        obj->out_20 = obj->src_8 + 0xf0;
-        obj->out_15 = 0xfc;
+        obj->pos22 = source + 0xfff0;
+        obj->out20 = obj->src8 + 0xf0;
+        obj->out15 = 0xfc;
     }
 }

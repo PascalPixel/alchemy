@@ -10,26 +10,26 @@
 #include "party_state.h"
 
 struct StagedActor {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x0e];
-    u8 transition_mode;
-    u8 unknown_23;
-    s32 velocity_x;
-    u8 unknown_28[4];
-    s32 velocity_z;
-    s32 move_rate_x;
-    s32 move_rate_z;
-    s32 target_x;
-    u8 unknown_3c[4];
-    s32 target_z;
-    u8 unknown_44[0x15];
-    u8 collision_flags;
-    u8 unknown_5a[8];
-    u8 transition_busy;
+    u8 unk14[0x0e];
+    u8 transitionMode;
+    u8 unk23;
+    s32 velocityX;
+    u8 unk28[4];
+    s32 velocityZ;
+    s32 moveRateX;
+    s32 moveRateZ;
+    s32 targetX;
+    u8 unk3c[4];
+    s32 targetZ;
+    u8 unk44[0x15];
+    u8 collisionFlags;
+    u8 unk5a[8];
+    u8 transitionBusy;
 };
 
 extern s32 Data_02001d8c[];
@@ -54,7 +54,7 @@ void Func_0200038c(void)
     u32 step;
     s32 rate;
 
-    lead = Engine_ActorGet(gPartyState.current_owner);
+    lead = Engine_ActorGet(gPartyState.currentOwner);
     dir = lead->facing >> 12;
     step = Data_02001d8c[dir];
     dst[0] = lead->x + (step & 0xffff0000);
@@ -71,17 +71,17 @@ void Func_0200038c(void)
     step <<= 16;
     dst[2] = next->z + step;
     blocker = Object_FindInCell(dst, next);
-    if (blocker != 0 && (blocker->collision_flags & 1) != 0)
+    if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
         return;
 
     dst[0] = next->x;
     dst[1] = next->y + 0x100000;
     dst[2] = next->z;
     blocker = Object_FindInCell(dst, next);
-    if (blocker != 0 && (blocker->collision_flags & 1) != 0)
+    if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
         return;
 
-    next->transition_mode = 2;
+    next->transitionMode = 2;
     step = Data_02001d8c[dir];
     dst[0] = next->x + (step & 0xffff0000);
     dst[1] = next->y;
@@ -90,29 +90,29 @@ void Func_0200038c(void)
     if (Func_02001b64(next, dst) > 0)
         return;
 
-    if (next->transition_busy != 0)
+    if (next->transitionBusy != 0)
         return;
 
     Func_02001b2c(lead, 8);
     rate = 0x3333;
     WaitFrames(15);
     Engine_AudioPlayCue(185);
-    next->move_rate_x = rate;
-    next->move_rate_z = rate;
+    next->moveRateX = rate;
+    next->moveRateZ = rate;
     Func_02001b44(next, dst[0], dst[1], dst[2]);
-    lead->move_rate_x = rate;
-    lead->move_rate_z = rate;
+    lead->moveRateX = rate;
+    lead->moveRateZ = rate;
     Func_02001b44(lead, dst[0], dst[1], dst[2]);
     Func_02001b4c(next);
     Func_02001cbc();
     next->x = dst[0];
     next->z = dst[2];
-    next->velocity_x = 0;
-    next->velocity_z = 0;
-    lead->target_x = 0x80000000;
-    lead->target_z = 0x80000000;
-    lead->velocity_x = 0;
-    lead->velocity_z = 0;
+    next->velocityX = 0;
+    next->velocityZ = 0;
+    lead->targetX = 0x80000000;
+    lead->targetZ = 0x80000000;
+    lead->velocityX = 0;
+    lead->velocityZ = 0;
     lead->x = ((s16 *)&lead->x)[1] << 16;
     lead->z = ((s16 *)&lead->z)[1] << 16;
     Func_02001b2c(lead, 1);

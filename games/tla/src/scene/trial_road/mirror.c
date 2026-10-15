@@ -8,7 +8,7 @@ s32 Func_02002ce8(s32 side)
     do {
         state = gTrialRoadState;
     } while (0);
-    return state->field_16[side & 1];
+    return state->field16[side & 1];
 }
 
 s32 Func_02002cfc(void)

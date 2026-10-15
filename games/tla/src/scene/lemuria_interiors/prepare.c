@@ -41,20 +41,20 @@ s32 Func_02000284(void)
     struct ObjectRuntime *object;
 
 #if defined(TLA_EDITION_JA)
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x201;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
 #else
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
 #endif
     ObjectMotion_SetActionVariant(11, 1);
     ObjectMotion_SetActionVariant(14, 2);
     ObjectMotion_SetActionVariant(10, 2);
     object = Object_GetById(15);
-    object->motion_flags = 0;
-    object->terrain_height = 0;
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
     object->y = 0;
     object = Object_GetById(17);
-    object->motion_flags = 0;
-    object->terrain_height = 0;
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
     object->y = 0;
     if (GameFlag_Test(0x966)) {
         ObjectMotion_SetPositionAndReset(10, 100, 112);
@@ -236,11 +236,11 @@ void Func_0200031c(void)
     Value1((s32 (*)())Battle_WaitMode0, 30);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x4ccc, 0x2666);
     object0 = Object_GetById(7);
-    object0->action_flags &= 254;
+    object0->actionFlags &= 254;
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 7, 12, 0);
     Value1((s32 (*)())Battle_WaitMode0, 1);
     object1 = Object_GetById(7);
-    object1->action_flags |= 1;
+    object1->actionFlags |= 1;
     Value1((s32 (*)())Battle_WaitMode0, 10);
     Call2((void (*)())ObjectMotion_SetVariantCallback, 7, 3);
     Call2((void (*)())Func_020028e4, 7, 0x102);
@@ -264,11 +264,11 @@ void Func_0200031c(void)
     if (result2 != 0) goto L_020089be;
     Value1((s32 (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_020028bc, 0x200c, 0, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     goto L_020089e4;
 L_020089be:
     Value1((s32 (*)())Battle_WaitMode0, 40);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call3((void (*)())Func_020028bc, 0x200c, 0, 10);
 L_020089e4:
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
@@ -277,7 +277,7 @@ L_020089e4:
     Value1((s32 (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 12, 2);
-    object3 = Object_GetById(gPartyState.current_owner);
+    object3 = Object_GetById(gPartyState.currentOwner);
     if (object3 == 0) goto L_02008a36;
     Value3((s32 (*)())ObjectMotion_ResetAndSetPosition, 12, *(s16 *)((u8 *)object3 + 10), *(s16 *)((u8 *)object3 + 18));
 L_02008a36:

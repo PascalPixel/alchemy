@@ -30,9 +30,9 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
 {
-	object->actor.priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	object->actor.sprite->priority = 3;
-	object->actor.sprite->second_priority = 3;
+	object->actor.sprite->secondPriority = 3;
 	return 0;
 }
 
@@ -118,9 +118,9 @@ static void EV02_TOUCH(void)
 {
 	Event_PlayCue(188);
 	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCells, 67, 6);
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	Engine_EventWait(16);
@@ -142,7 +142,7 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Actor_FaceDirection(GARET, 0xa000, 0);
 	Actor_FaceDirection(IVAN, 0xc000, 0);
 	Actor_FaceDirection(MIA, 0xe000, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
@@ -385,7 +385,7 @@ static void EV10_TOUCH(void)
 		{
 			struct FieldActor *record = Object_GetById(10);
 
-			record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
+			record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
 		}
 		Engine_EventWait(10);
 		Actor_FaceDirection(10, 0x8000, 20);
@@ -503,8 +503,8 @@ static void EV11_PSYNERGY(void)
 	Engine_EventWait(20);
 	mask = 254;
 	Event_ShowMessageAndWait(8, 0, 20);
-	Object_GetById(8)->steering_flags &= mask;
-	Object_GetById(10)->steering_flags &= mask;
+	Object_GetById(8)->steeringFlags &= mask;
+	Object_GetById(10)->steeringFlags &= mask;
 	Actor_SetSpeed(8, 0x3333, 0x1999);
 	Actor_SetSpeed(10, 0x3333, 0x1999);
 	Engine_ActorSetAnimation(8, 5);
@@ -566,7 +566,7 @@ static void EV11_PSYNERGY(void)
 	{
 		struct FieldActor *record = Object_GetById(10);
 
-		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+		record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 	}
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(10, 168, 0x128);
@@ -585,7 +585,7 @@ static void EV11_PSYNERGY(void)
 	Engine_EventWait(20);
 	Engine_EventEnd();
 	GameFlag_Set(0x8b2);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventRequestExit(6);
 }
 
@@ -635,11 +635,11 @@ static s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
 	if (Object_GetById(0)->y.fixed > actor->y.fixed)
 	{
-		actor->priority_flags |= 2;
+		actor->priorityFlags |= 2;
 	}
 	else
 	{
-		actor->priority_flags &= 0xFD;
+		actor->priorityFlags &= 0xFD;
 	}
 }
 
@@ -658,9 +658,9 @@ static void EV14_PSYNERGY(void)
 {
 	Engine_EventBegin();
 
-	Object_GetById(14)->priority_flags &= 0xfd;
-	Object_GetById(14)->collision_flags &= 0xfd;
-	Object_GetById(14)->motion_flags = 0;
+	Object_GetById(14)->priorityFlags &= 0xfd;
+	Object_GetById(14)->collisionFlags &= 0xfd;
+	Object_GetById(14)->motionFlags = 0;
 	Object_GetById(14)->update =
 		(void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 
@@ -680,7 +680,7 @@ static void EV15_PSYNERGY(void)
 
 		Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
 	}
-	Object_GetById(15)->collision_flags = 254;
+	Object_GetById(15)->collisionFlags = 254;
 	Engine_GameFlagSet(0x201);
 	Engine_EventEnd();
 }
@@ -698,7 +698,7 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 {
 	s32 entrance;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2)
 	{
 		BattleFx_SetQueuedSoundAndPlay(169);
@@ -725,7 +725,7 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 	else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
 		Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-		Object_GetById(14)->priority_flags |= 2;
+		Object_GetById(14)->priorityFlags |= 2;
 		if (Engine_GameFlagIsSet(0x200))
 		{
 			Engine_ActorSetAnimation(14, 5);
@@ -769,13 +769,13 @@ s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 			Actor_FaceDirection(8, 0x5000, 0);
 			Actor_FaceDirection(10, 0xb000, 0);
 			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
-			Object_GetById(9)->scale_x = -0x10000;
+			Object_GetById(9)->scaleX = -0x10000;
 		}
 		if (!GameFlag_IsSet(0x8b2))
 		{
 			Actor_SetPosition(9, 0xa40000, 0x1180000);
 			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
-			Object_GetById(9)->scale_x = -0x10000;
+			Object_GetById(9)->scaleX = -0x10000;
 		}
 		if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109)
 			&& !Engine_GameFlagIsSet(0x8b2))

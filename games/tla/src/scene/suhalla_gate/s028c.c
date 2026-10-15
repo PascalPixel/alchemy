@@ -16,8 +16,8 @@ s32 Func_0200028c(void)
     struct EventWork *work;
     s16 scene;
 
-    work = Ram_HeapSlots->event_work;
-    work->screen_effect = 256;
+    work = Ram_HeapSlots->eventWork;
+    work->screenEffect = 256;
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_SuhallaGate1)
         Func_02000110();

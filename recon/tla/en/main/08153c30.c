@@ -46,17 +46,17 @@ void Func_08153c30(struct BattleEffectArgument *effect)
     struct EffectPosition screen;
     s32 record[3];
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, work->sheet + 0x1b00, 0, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     Func_081963ec(104, 3);
-    rectangle_a = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    rectangle_a = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 19);
-    rectangle_b = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    rectangle_b = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
     for (i = 0; i != 64; i++) {
         s32 angle;
@@ -69,25 +69,25 @@ void Func_08153c30(struct BattleEffectArgument *effect)
         step->y = 0;
         step->z = 0;
         if (i % 6 == 5) {
-            step->velocity_x = 0;
-            step->velocity_y = 0;
+            step->velocityX = 0;
+            step->velocityY = 0;
         } else {
-            step->velocity_x = (Trig_Sin(angle) * magnitude) >> 7;
-            step->velocity_y = (Trig_Cos(angle) * magnitude) >> 9;
+            step->velocityX = (Trig_Sin(angle) * magnitude) >> 7;
+            step->velocityY = (Trig_Cos(angle) * magnitude) >> 9;
         }
-        step->velocity_z = 0;
+        step->velocityZ = 0;
         step->variant = 0;
     }
 
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     for (frame = 0; frame != 96; frame++) {
         s32 member;
         s32 *camera;
 
-        camera = Ram_HeapSlots->camera_work;
+        camera = Ram_HeapSlots->cameraWork;
         for (member = 0; member != effect->count; member++) {
             struct MotionObject *member_object;
 
@@ -123,7 +123,7 @@ void Func_08153c30(struct BattleEffectArgument *effect)
                 }
             }
         }
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback(Func_08143000);

@@ -25,12 +25,12 @@ struct Record_080b06c0 {
 };
 
 struct ShopRuntime {
-    u8 unknown_000[0x4dc];
+    u8 unk000[0x4dc];
     struct RenderOutput *anchor;
-    u8 unknown_4e0[0x1a];
-    u16 keeper_resource;
-    u8 unknown_4fc[0xa];
-    s8 shop_type;
+    u8 unk4e0[0x1a];
+    u16 keeperResource;
+    u8 unk4fc[0xa];
+    s8 shopType;
 };
 
 void WaitFrames(s32);

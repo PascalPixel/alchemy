@@ -21,10 +21,10 @@ void Func_080d9978(struct ObjectRuntime *object)
 
 struct ObjectRuntime *Object_GetById(s32 id);
 
-s32 Func_080d99b8(s32 first_id, s32 second_id)
+s32 Func_080d99b8(s32 firstId, s32 second_id)
 {
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
-    struct ObjectRuntime *first = Object_GetById(first_id);
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+    struct ObjectRuntime *first = Object_GetById(firstId);
     struct ObjectRuntime *second = Object_GetById(second_id);
     s32 x = owner->x >> 20;
     s32 y = owner->y >> 20;

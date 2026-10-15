@@ -25,8 +25,8 @@ void Func_080ca2fc(void)
 
     while (entry[0] != -1) {
         if (entry[0] == first && (entry[1] == -1 || entry[1] == second)) {
-            party->saved_scene = entry[2];
-            party->saved_entrance = entry[3];
+            party->savedScene = entry[2];
+            party->savedEntrance = entry[3];
             return;
         }
         entry += 8;

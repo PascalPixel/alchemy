@@ -22,7 +22,7 @@ extern u8 MsgAreThereOther;
 // work's halfword at 0x166 is 0, another once it is set; the actor's angle is restored after.
 void Func_02000308(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(18);
     s16 angle = object->angle;
 
@@ -33,7 +33,7 @@ void Func_02000308(void)
     Func_02001d04(0);
     if (*(s16 *)(work + 0x166) == 0) {
         Func_02001c6c((s32)&MsgItHasBeen);
-        Object_LinkPair(18, gPartyState.current_owner, 2);
+        Object_LinkPair(18, gPartyState.currentOwner, 2);
     } else {
         Func_02001c6c((s32)&MsgEveryoneSpoilsMe);
     }
@@ -48,7 +48,7 @@ void Func_02000308(void)
 // The same for actor 19.
 void Func_02000398(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Object_GetById(19);
     s16 angle = object->angle;
 
@@ -59,7 +59,7 @@ void Func_02000398(void)
     Func_02001d04(0);
     if (*(s16 *)(work + 0x166) == 0) {
         Func_02001c6c((s32)&MsgWeAreThe);
-        Object_LinkPair(19, gPartyState.current_owner, 2);
+        Object_LinkPair(19, gPartyState.currentOwner, 2);
     } else {
         Func_02001c6c((s32)&MsgAreThereOther);
     }

@@ -10,7 +10,7 @@ void UnitRatio(s32 owner_id)
     struct BattleUnit *owner;
 
     owner = UnitGet(owner_id);
-    first = (owner->hp << 14) / owner->max_hp;
+    first = (owner->hp << 14) / owner->maxHp;
     first_value = 0x4000;
     if (first <= 0x4000) {
         first_value = 0;
@@ -18,12 +18,12 @@ void UnitRatio(s32 owner_id)
             first_value = first;
         }
     }
-    owner->hp_gauge = first_value;
-    if (owner->hp_gauge == 0 && owner->hp != 0) {
+    owner->hpGauge = first_value;
+    if (owner->hpGauge == 0 && owner->hp != 0) {
         first_value = 1;
-        owner->hp_gauge = first_value;
+        owner->hpGauge = first_value;
     }
-    second = (owner->pp << 14) / owner->max_pp;
+    second = (owner->pp << 14) / owner->maxPp;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -31,10 +31,10 @@ void UnitRatio(s32 owner_id)
             second_value = second;
         }
     }
-    owner->pp_gauge = second_value;
-    if (owner->pp_gauge == 0 && owner->pp != 0) {
+    owner->ppGauge = second_value;
+    if (owner->ppGauge == 0 && owner->pp != 0) {
         second_value = 1;
-        owner->pp_gauge = second_value;
+        owner->ppGauge = second_value;
     }
 }
 
@@ -42,8 +42,8 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
 {
     s32 value;
 
-    if (input > state->max_hp) {
-        value = state->max_hp;
+    if (input > state->maxHp) {
+        value = state->maxHp;
     } else {
         value = 0;
         if (input >= 0) {
@@ -51,7 +51,7 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
         }
     }
     state->hp = value;
-    value = ((value << 16) >> 2) / state->max_hp;
+    value = ((value << 16) >> 2) / state->maxHp;
 
     {
         s32 output = 0x4000;
@@ -62,13 +62,13 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
                 output = value;
             }
         }
-        state->hp_gauge = output;
+        state->hpGauge = output;
         if ((output << 16) == 0 && state->hp != 0) {
-            state->hp_gauge = 1;
+            state->hpGauge = 1;
         }
     }
 
-    value = (state->pp << 14) / state->max_pp;
+    value = (state->pp << 14) / state->maxPp;
     {
         s32 output = 0x4000;
 
@@ -78,9 +78,9 @@ void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
                 output = value;
             }
         }
-        state->pp_gauge = output;
+        state->ppGauge = output;
         if ((output << 16) == 0 && state->pp != 0) {
-            state->pp_gauge = 1;
+            state->ppGauge = 1;
         }
     }
 }

@@ -83,13 +83,13 @@ s32 Func_0200273c(s32 a);
 void Func_02002978(s32 a);
 
 struct SpriteWork {
-    u8 unknown_00[17];
+    u8 unk00[17];
     u8 layer : 2;
     u8 level : 6;
-    u8 unknown_12[7];
+    u8 unk12[7];
     u8 dirty;
     u8 mode;
-    u8 unknown_1b[17];
+    u8 unk1b[17];
     u8 *child;
 };
 

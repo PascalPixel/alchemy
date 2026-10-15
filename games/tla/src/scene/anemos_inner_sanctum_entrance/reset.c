@@ -28,7 +28,7 @@ void Func_02000494(void)
 
 void Func_020004b4(struct ObjectRuntime *object)
 {
-    if ((object->terrain_height = Map_GetTerrainHeight(0, object->x, object->z)) >= -0x200000)
+    if ((object->terrainHeight = Map_GetTerrainHeight(0, object->x, object->z)) >= -0x200000)
         ObjectDispatch_SetSingleChildFlags(object, 1);
     else
         ObjectDispatch_SetSingleChildFlags(object, 0);

@@ -19,7 +19,7 @@ s32 Math_Sine(s32 angle);
 
 void Func_02000b28(void)
 {
-    s16 *layer = (s16 *)&Ram_HeapSlots->map_work->layers[1];
+    s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[1];
     s16 *lines = Data_020025a0[Data_02002590 ^ 1];
     s32 v[2];
     s32 *count = &v[1];

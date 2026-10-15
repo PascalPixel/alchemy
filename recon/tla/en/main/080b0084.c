@@ -53,8 +53,8 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
     s32 values[4];
     s32 i;
 
-    if (state->class_index == 0) {
-        index = ((const struct EnemyDefinition *)Owner_GetRecord(state->class_id))->element_preset;
+    if (state->classIndex == 0) {
+        index = ((const struct EnemyDefinition *)Owner_GetRecord(state->classId))->elementPreset;
         if (index > 43)
             index = 0;
 
@@ -70,7 +70,7 @@ copied:
         return index;
     }
 
-    Owner_GetDigitValues(state->class_id, (u8 *)state->djinn_available, values);
+    Owner_GetDigitValues(state->classId, (u8 *)state->djinnAvailable, values);
     i = 0;
     do {
         s32 value;

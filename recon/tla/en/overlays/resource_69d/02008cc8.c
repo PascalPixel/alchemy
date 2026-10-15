@@ -33,12 +33,12 @@ void Func_02000cc8(void)
     Place(9, 472 << 16, 256 << 16);
     Place(10, 552 << 16, 256 << 16);
     WORD_AT(Object_GetById(24), 24) = 0;
-    door->motion_flags = 0;
-    door->y = door->terrain_height;
-    left->motion_flags = 0;
-    left->y = left->terrain_height;
-    right->motion_flags = 0;
-    right->y = right->terrain_height;
+    door->motionFlags = 0;
+    door->y = door->terrainHeight;
+    left->motionFlags = 0;
+    left->y = left->terrainHeight;
+    right->motionFlags = 0;
+    right->y = right->terrainHeight;
     if (FlagTest(0xa0a)) {
         left->y += 0x66640;
         door->y += 0x1eb80;
@@ -59,8 +59,8 @@ void Func_02000cc8(void)
         left->y += 0x199900;
         right->y += 0x199900;
         door->y += 0x1b8480;
-        left->motion_flags = 4;
-        right->motion_flags = 4;
-        door->motion_flags = 4;
+        left->motionFlags = 4;
+        right->motionFlags = 4;
+        door->motionFlags = 4;
     }
 }

@@ -16,7 +16,7 @@ void Func_0200201c(s32 a, s32 b);
 
 s32 Func_02001cdc(void)
 {
-    ((struct SeaOfTimeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 256;
+    ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     if (gPartyState.scene == (s32)&SceneId_Ov687Room1) {
         Data_020022c8 = gFrameCount;
         Data_020022cc = 1;
@@ -48,7 +48,7 @@ s32 Func_02001cdc(void)
                 if (!GameFlag_Test(0xa94))
                     Func_020018a8(59, 19, 13);
                 *(volatile u16 *)0x0500001e &= 0xffe0;
-                Dma_Set((const void *)0x05000000, Ram_HeapSlots->block_32, 0x84000070, (volatile u32 *)0x040000d4);
+                Dma_Set((const void *)0x05000000, Ram_HeapSlots->block32, 0x84000070, (volatile u32 *)0x040000d4);
                 Func_0200201c(0x10000, 0);
             }
             if (gPartyState.entrance == 4 && !GameFlag_Test(265))

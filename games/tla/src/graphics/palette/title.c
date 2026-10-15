@@ -28,7 +28,7 @@ void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 
 void Graphics_TransformLargePalette(s32 index, s32 transform)
 {
-    struct TitlePaletteWork *target = Ram_HeapSlots->block_32;
+    struct TitlePaletteWork *target = Ram_HeapSlots->block32;
 
     if (target != NULL)
         Graphics_TransformPaletteBuffer(index, target->palette, target->target, transform);
@@ -36,7 +36,7 @@ void Graphics_TransformLargePalette(s32 index, s32 transform)
 
 void Graphics_TransformSmallPalette(s32 index, s32 transform)
 {
-    struct TitlePaletteWork *target = Ram_HeapSlots->block_32;
+    struct TitlePaletteWork *target = Ram_HeapSlots->block32;
 
     if (target != NULL)
         Graphics_TransformPaletteBuffer(index, (u16 *)target, target->current, transform);
@@ -44,7 +44,7 @@ void Graphics_TransformSmallPalette(s32 index, s32 transform)
 
 void Graphics_SetPaletteTransformValue(s32 value)
 {
-    struct TitlePaletteWork *target = Ram_HeapSlots->block_32;
+    struct TitlePaletteWork *target = Ram_HeapSlots->block32;
 
     if (target != NULL)
         target->palette[0] = value;
@@ -52,7 +52,7 @@ void Graphics_SetPaletteTransformValue(s32 value)
 
 void Graphics_UpdatePaletteInterpolation(s32 value)
 {
-    struct TitlePaletteWork *state = Ram_HeapSlots->block_32;
+    struct TitlePaletteWork *state = Ram_HeapSlots->block32;
 
     if (state != NULL) {
         state->duration = value;

@@ -4,33 +4,33 @@
 #include "event_work.h"
 
 struct VenusActor {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
-    s16 x_low;
-    s16 x_pixel;
+    s16 xLow;
+    s16 xPixel;
     s32 y;
-    s16 z_low;
-    s16 z_pixel;
-    s32 terrain_height;
-    u8 unknown_18[0xa];
-    u8 terrain_id;
-    u8 unknown_23;
-    s32 velocity_x;
+    s16 zLow;
+    s16 zPixel;
+    s32 terrainHeight;
+    u8 unk18[0xa];
+    u8 terrainId;
+    u8 unk23;
+    s32 velocityX;
     s32 speed;
-    s32 velocity_z;
-    s32 move_rate_x;
-    s32 move_rate_z;
-    s32 target_x;
-    s32 target_y;
-    s32 target_z;
-    u8 unknown_44[0x11];
-    u8 motion_flags;
-    u8 unknown_56[3];
-    u8 collision_flags;
-    u8 select_flags;
-    u8 unknown_5b[7];
+    s32 velocityZ;
+    s32 moveRateX;
+    s32 moveRateZ;
+    s32 targetX;
+    s32 targetY;
+    s32 targetZ;
+    u8 unk44[0x11];
+    u8 motionFlags;
+    u8 unk56[3];
+    u8 collisionFlags;
+    u8 selectFlags;
+    u8 unk5b[7];
     u8 busy;
-    u8 unknown_63[9];
+    u8 unk63[9];
     void *update;
 };
 
@@ -48,7 +48,7 @@ void Engine_AudioPlayCue(s32 cue);
 void Engine_GameFlagSet(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_RefreshSelectorById(s32 actor);
@@ -101,16 +101,16 @@ void Func_020006ac(void)
         who = leader;
         ObjectMotion_SetSpeedParameters(who, 0x40000, 0x20000);
     }
-    if (*(s32 *)&actor->z_low >> 20 <= 54) {
-        Engine_ActorGet(leader)->select_flags &= ~1;
+    if (*(s32 *)&actor->zLow >> 20 <= 54) {
+        Engine_ActorGet(leader)->selectFlags &= ~1;
         z = 210;
     } else {
-        Engine_ActorGet(leader)->select_flags &= ~1;
+        Engine_ActorGet(leader)->selectFlags &= ~1;
         z = 238;
     }
-    ObjectMotion_SetPositionAndReset(leader, actor->x_pixel, z * 4);
+    ObjectMotion_SetPositionAndReset(leader, actor->xPixel, z * 4);
     Engine_EventWait(1);
-    Engine_ActorGet(leader)->select_flags |= 1;
+    Engine_ActorGet(leader)->selectFlags |= 1;
     Engine_EventWait(20);
     Object_SetPartAttribute(actor, 0);
     actor->update = Func_020005a8;
@@ -137,15 +137,15 @@ void Func_020006ac(void)
 void Func_0200078c(void)
 {
     struct VenusActor *leader = Engine_ActorGet(Engine_PartyGetLeaderActor());
-    s32 x = leader->x_pixel;
-    s32 z = leader->z_pixel;
+    s32 x = leader->xPixel;
+    s32 z = leader->zPixel;
 
     if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
         Venus_CopyCells(53, 50, 42, 49, 1, 1);
         Venus_CopyCells(55, 117, 41, 117, 3, 5);
         GameFlag_ClearBit(0x201);
-        leader->motion_flags |= 1;
-        leader->terrain_height = 0;
+        leader->motionFlags |= 1;
+        leader->terrainHeight = 0;
         leader->y = 0;
     } else if (!Venus_FlagCheck(0x201)) {
         Engine_EventBegin();
@@ -155,8 +155,8 @@ void Func_0200078c(void)
         Venus_CopyCells(52, 117, 41, 117, 3, 5);
         Venus_FlagSet(0x201);
         Engine_AudioPlayCue(161);
-        leader->motion_flags &= ~1;
-        leader->terrain_height = -0x20000;
+        leader->motionFlags &= ~1;
+        leader->terrainHeight = -0x20000;
         leader->y = -0x20000;
         Engine_EventEnd();
     }

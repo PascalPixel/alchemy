@@ -17,7 +17,7 @@ void Func_020045ec(s32 value);
 void Func_02001770(void)
 {
     if (GameFlag_Test(0xa3d) == 0 && GameFlag_Test(64) == 0) {
-        u8 *work = Ram_HeapSlots->event_work;
+        u8 *work = Ram_HeapSlots->eventWork;
 
         Func_02004464();
         Func_020045ec(1);
@@ -29,7 +29,7 @@ void Func_02001770(void)
         }
         WaitFrames(1);
         ObjectMotion_Launch(20, 4, 20);
-        ObjectMotion_SetAngleToward(20, gPartyState.current_owner, 0);
+        ObjectMotion_SetAngleToward(20, gPartyState.currentOwner, 0);
         FIELD_AT(work, u16, 362) = 200;
         Func_0200446c();
     }

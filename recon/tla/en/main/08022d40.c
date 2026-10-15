@@ -7,15 +7,15 @@
 
 struct ResourceObjectWork {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    u8 unknown_00[16];
+    u8 unk00[16];
     u8 resource;
     u8 flags;
-    u8 unknown_12[22];
+    u8 unk12[22];
 #else
-    u8 unknown_00[28];
+    u8 unk00[28];
     u8 resource;
     u8 flags;
-    u8 unknown_1e[10];
+    u8 unk1e[10];
 #endif
     void *children[4];
 };

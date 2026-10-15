@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct Probe {
-    s32 unknown_00[6];
+    s32 unk00[6];
 };
 
 s32 Func_02001f60(void);

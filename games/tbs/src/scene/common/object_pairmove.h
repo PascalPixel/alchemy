@@ -9,7 +9,7 @@ static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 	s32				   x;
 	s32				   z;
 
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	other = Object_GetById(id);
 	Engine_EventBegin();
 	{

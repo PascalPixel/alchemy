@@ -5,8 +5,8 @@
 
 struct MoveScene {
     u16 mode;
-    u8 unknown_02[14];
-    struct ObjectRuntime *main_object;
+    u8 unk02[14];
+    struct ObjectRuntime *mainObject;
 };
 
 struct MapCell;
@@ -22,23 +22,23 @@ extern const s32 Data_080f0e78[];
 
 void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {
-    struct MoveScene *scene = Ram_HeapSlots->effect_work;
-    struct ObjectRuntime *main_object = scene->main_object;
+    struct MoveScene *scene = Ram_HeapSlots->effectWork;
+    struct ObjectRuntime *mainObject = scene->mainObject;
     s32 start[3];
     s32 i = 0;
     s32 scale;
 
     if (scene->mode != 0xc000)
         ObjectDispatch_SetSpritePriorityFar(object, 0);
-    start[0] = main_object->x;
-    start[1] = main_object->y + 0x100000;
-    start[2] = main_object->z;
+    start[0] = mainObject->x;
+    start[1] = mainObject->y + 0x100000;
+    start[2] = mainObject->z;
     scale = 0;
     do {
         object->x = start[0] + i * (x - start[0]) / 10;
         object->y = start[1] + i * (y - start[1]) / 10;
         object->z = start[2] + i * (z - start[2]) / 10;
-        object->scale_x = object->scale_y = scale / 10 + 0x4000;
+        object->scaleX = object->scaleY = scale / 10 + 0x4000;
         WaitFrames(1);
         i++;
         scale += 0xc000;

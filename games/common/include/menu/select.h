@@ -34,14 +34,14 @@ struct SelectionNode
 	s16					   y;
 	s16					   dx;
 	s16					   dy;
-	s16					   target_x;
-	s16					   target_y;
-	s16					   home_x;
-	s16					   home_y;
+	s16					   targetX;
+	s16					   targetY;
+	s16					   homeX;
+	s16					   homeY;
 	u16					   message;
 	s16					   scale;
-	s16					   scale_step;
-	s16					   scale_end;
+	s16					   scaleStep;
+	s16					   scaleEnd;
 	struct SelectionSprite sprite;
 };
 
@@ -55,17 +55,17 @@ struct SelectionScreen
 	u16					  kinds[16];
 	u16					  bases[16];
 	u16					  count;
-	u16					  base_x;
-	u16					  base_y;
-	u16					  unknown_39a;
+	u16					  baseX;
+	u16					  baseY;
+	u16					  unk39a;
 	u16					  top;
-	u16					  cursor_index;
-	u16					  vertical_scroll;
+	u16					  cursorIndex;
+	u16					  verticalScroll;
 	u16					  status;
-	u16					  path_top[5];
-	u16					  path_cursor[5];
+	u16					  pathTop[5];
+	u16					  pathCursor[5];
 	u16					  locked;
-	u8					  unknown_3ba[42];
+	u8					  unk3ba[42];
 };
 
 LAYOUT_SIZE_GUARD(SelectionSprite_Size, struct SelectionSprite, 0x0c);
@@ -74,7 +74,7 @@ LAYOUT_OFFSET_GUARD(SelectionNode_Message, struct SelectionNode, message, 0x20);
 LAYOUT_OFFSET_GUARD(SelectionNode_Sprite, struct SelectionNode, sprite, 0x28);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Head, struct SelectionScreen, head, 0x348);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds, 0x354);
-LAYOUT_OFFSET_GUARD(SelectionScreen_CursorIndex, struct SelectionScreen, cursor_index, 0x39e);
+LAYOUT_OFFSET_GUARD(SelectionScreen_CursorIndex, struct SelectionScreen, cursorIndex, 0x39e);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Locked, struct SelectionScreen, locked, 0x3b8);
 LAYOUT_SIZE_GUARD(SelectionScreen_Size, struct SelectionScreen, 0x3e4);
 

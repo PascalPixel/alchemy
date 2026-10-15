@@ -19,8 +19,8 @@ s32 Event_FindFacingTrigger(s32 source)
     struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
     const struct SceneEvent *trigger = runtime->events;
     s32 facing = ((struct MotionObject *)ObjectTable_Get(
-        gGameState.selected_actor))->angle;
-    s32 selected = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
+        gGameState.selectedActor))->angle;
+    s32 selected = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
     s32 collision;
 
     source &= 0x1ff;

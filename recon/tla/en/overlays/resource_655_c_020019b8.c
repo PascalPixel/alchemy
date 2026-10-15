@@ -13,7 +13,7 @@ extern u16 Data_020041b8[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 
 void Func_020019b8(void)
 {

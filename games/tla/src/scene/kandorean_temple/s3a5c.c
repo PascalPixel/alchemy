@@ -1,14 +1,14 @@
 #include "local.h"
 
 struct MapWork17 {
-    u8 unknown_00[0x17];
+    u8 unk00[0x17];
     u8 bits0 : 2;
     u8 mode : 2;
 };
 
 void Func_02003a5c(void)
 {
-    struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->map_work;
+    struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
     Data_02006294 = 0;
     Func_02005388(170);
@@ -36,6 +36,6 @@ void Func_02003ae4(s32 id, s32 base)
 
     Object_SetModeById(id, 5);
     object->action = base + ((Random16Far() * 400) >> 16);
-    object->unknown_66 = id;
+    object->unk66 = id;
     ObjectMotion_EnableActionAndSetCallback(id, Data_02005548);
 }

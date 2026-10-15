@@ -31,17 +31,17 @@ void Func_02003504(void)
         spark = Func_02005a34(673, center->x, center->y + 0x180000, center->z);
         if (spark != 0) {
             previous = Func_02005c44(spark->sprite, previous);
-            spark->motion_flags = 0;
+            spark->motionFlags = 0;
             spark->sprite->priority = 1;
             ObjectDispatch_SetSingleChildFlags(spark, 0);
             Func_02005a24(spark, 1);
-            spark->field_64 = 0;
-            spark->field_4c = 0;
-            spark->field_66 = angle / 360;
+            spark->field64 = 0;
+            spark->field4c = 0;
+            spark->field66 = angle / 360;
             spark->timer = 0;
-            spark->target_x = center->x;
-            spark->target_y = center->y + 0x180000;
-            spark->target_z = center->z;
+            spark->targetX = center->x;
+            spark->targetY = center->y + 0x180000;
+            spark->targetZ = center->z;
             spark->update = Func_02003308;
         }
     }

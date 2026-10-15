@@ -7,18 +7,18 @@ void Func_02003178(void);
 
 void Func_02000d2c(void)
 {
-    struct ObjectRuntime *object = *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->event_work + 0xcbc);
+    struct ObjectRuntime *object = *(struct ObjectRuntime **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 
     Func_02003048();
     Func_02003148(0);
     if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
-        object->terrain_id = 2;
-        object->motion_flags = 3;
+        object->terrainId = 2;
+        object->motionFlags = 3;
         OverlayObject_WaitUntilIdle(object);
         Func_020031a8(188);
         OverlayObject_WaitUntilIdle(object);
-        object->motion_flags = 0;
-        object->terrain_id = 0;
+        object->motionFlags = 0;
+        object->terrainId = 0;
     }
     Func_02003178();
     if (gPartyState.scene == (s32)&SceneId_Ov68fRoom6) {

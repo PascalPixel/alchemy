@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -43,7 +43,7 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
 extern const u16 Data_02003fd2[];
@@ -80,7 +80,7 @@ static __inline__ void Wait(s32 frames)
 }
 
 struct EventWorkCbc {
-    u8 unknown_000[0xcbc];
+    u8 unk000[0xcbc];
     struct ObjectRuntime *active;
 };
 
@@ -88,7 +88,7 @@ void Func_0200200c(struct ObjectRuntime *object);
 
 void Func_02002124(void)
 {
-    struct EventWorkCbc *work = Ram_HeapSlots->event_work;
+    struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *active;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the field offset; the plain load starts the offset first (one pair of instructions swapped). */

@@ -5,7 +5,7 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
 };
 
@@ -50,7 +50,7 @@ static __inline__ void Actor_Place(struct ObjectRuntime *object, s32 x, s32 y, s
 // 穴へ飛びおりる
 void Func_02001630(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct ObjectRuntime *leader;
@@ -60,20 +60,20 @@ void Func_02001630(void)
         return;
     if (x == 29 && z == 10 && !(gInput.held & 0x40))
         return;
-    work = Ram_HeapSlots->event_work;
-    leader = Object_GetById(gPartyState.current_owner);
+    work = Ram_HeapSlots->eventWork;
+    leader = Object_GetById(gPartyState.currentOwner);
     Func_020056b4(leader);
     Func_0200580c(0);
-    leader->motion_flags = 0;
-    Actor_SetSpeed(gPartyState.current_owner, 0x10000, 0x8000);
-    Actor_Walk(gPartyState.current_owner, 472, 144);
-    Actor_Turn(gPartyState.current_owner, 0xc000, 0);
-    Object_RefreshSelectorById(gPartyState.current_owner);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Object_SetModeById(gPartyState.current_owner, 13);
+    leader->motionFlags = 0;
+    Actor_SetSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
+    Actor_Walk(gPartyState.currentOwner, 472, 144);
+    Actor_Turn(gPartyState.currentOwner, 0xc000, 0);
+    Object_RefreshSelectorById(gPartyState.currentOwner);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+    Object_SetModeById(gPartyState.currentOwner, 13);
     Actor_Place(leader, 472 << 16, 0, 156 << 16);
     Func_02005664(leader);
-    Object_SetModeById(gPartyState.current_owner, 10);
+    Object_SetModeById(gPartyState.currentOwner, 10);
     Func_02005854(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

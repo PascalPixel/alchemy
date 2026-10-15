@@ -10,21 +10,21 @@
 
 struct ChampaCliffCavesWork {
     u8 tiles[0x1000];
-    s32 origin_x;
-    s32 origin_y;
-    s32 origin_z;
-    struct FieldSprite sprite_a;
-    struct FieldSprite sprite_b;
-    u16 entry_a;
-    u16 vram_a;
-    u16 entry_b;
-    u16 vram_b;
-    s32 field_1064;
-    s32 field_1068;
-    s32 field_106c;
-    s32 field_1070;
-    u16 field_1074;
-    u8 unknown_1076[2];
+    s32 originX;
+    s32 originY;
+    s32 originZ;
+    struct FieldSprite spriteA;
+    struct FieldSprite spriteB;
+    u16 entryA;
+    u16 vramA;
+    u16 entryB;
+    u16 vramB;
+    s32 field1064;
+    s32 field1068;
+    s32 field106c;
+    s32 field1070;
+    u16 field1074;
+    u8 unk1076[2];
 };
 
 extern char ResourceId_Data1F7;
@@ -37,7 +37,7 @@ void Func_020035fc(struct FieldSprite *sprite, s32 width, s32 height, u32 attrib
 
 void Func_02002d34(void)
 {
-    struct ChampaCliffCavesWork *work = Ram_HeapSlots->menu_runtime;
+    struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
     struct FieldSprite *sprite;
     s32 i;
     s32 entry;
@@ -50,14 +50,14 @@ void Func_02002d34(void)
     }
     entry = Resource_FindFreeEntry();
     vram = VramBlock_LoadCached(entry, 0x800, work);
-    work->entry_b = entry;
-    work->vram_b = vram;
-    sprite = &work->sprite_b;
+    work->entryB = entry;
+    work->vramB = vram;
+    sprite = &work->spriteB;
     Func_020035fc(sprite, 15, 47, 0xc0008000, vram);
-    sprite->full_color = 1;
+    sprite->fullColor = 1;
     sprite->palette = 1;
     sprite->priority = 1;
     *(u16 *)((u8 *)sprite + 0x1e) = 1;
-    work->field_106c = 0;
-    work->field_1070 = 0;
+    work->field106c = 0;
+    work->field1070 = 0;
 }

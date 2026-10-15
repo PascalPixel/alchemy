@@ -11,13 +11,13 @@ s32 Func_02003180(s32 layer, s32 shape, s32 height);
 void Func_02002c1c(s32 level, s32 layer, s32 owner)
 {
     struct ObjectRuntime *object = Object_GetById(owner);
-    u8 *shape = gMapShapeGrid + (Ram_HeapSlots->map_work->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
-    s32 value = Func_02003010(object->terrain_id, object->x, object->z);
-    s32 height = Map_GetTerrainHeight(object->terrain_id, object->x, object->z);
+    u8 *shape = gMapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
+    s32 value = Func_02003010(object->terrainId, object->x, object->z);
+    s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
     height >>= 19;
     height += level;
 
     shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-    *shape = Func_02003180(object->terrain_id, value, height);
+    *shape = Func_02003180(object->terrainId, value, height);
 }

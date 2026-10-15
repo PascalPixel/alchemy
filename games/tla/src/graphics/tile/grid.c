@@ -7,7 +7,7 @@ extern u8 Data_03001e60[];
 
 void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {
-    u8 *base = Ram_HeapSlots->unknown_0c[1];
+    u8 *base = Ram_HeapSlots->unk0c[1];
     s32 offset = (slot & 3) * 4 + 40;
     s32 count = 9;
 
@@ -22,7 +22,7 @@ void Ui_SetGridColumnParameter(s32 slot, s32 value)
 
 void Ui_SetGridColumnPriority(s32 slot, s32 value)
 {
-    u8 *base = Ram_HeapSlots->unknown_0c[1];
+    u8 *base = Ram_HeapSlots->unk0c[1];
     s32 offset = (slot & 3) * 4 + 40;
     s32 count = 9;
 
@@ -38,14 +38,14 @@ void Ui_SetGridColumnPriority(s32 slot, s32 value)
 struct UiGridEntry {
     s16 no;
     u16 x;
-    u8 value_04;
-    u8 unknown_05[7];
-    s32 *table_0c;
-    s32 value_10;
-    u8 value_14;
-    u8 value_15;
-    u8 value_16;
-    u8 value_17;
+    u8 value04;
+    u8 unk05[7];
+    s32 *table0c;
+    s32 value10;
+    u8 value14;
+    u8 value15;
+    u8 value16;
+    u8 value17;
 };
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
@@ -57,24 +57,24 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     struct UiGridEntry *entry;
     u8 *work;
 
-    work = Ram_HeapSlots->unknown_0c[1];
+    work = Ram_HeapSlots->unk0c[1];
     count = 0;
     offset = ((3 & slot) * 4) + 0x28;
     index = 0;
     do {
         entry = *(struct UiGridEntry **)(work + offset);
-        if (entry->table_0c != 0) {
+        if (entry->table0c != 0) {
             metadata = Resource_GetMetadataRecordFar(entry->no);
-            if (value < metadata->animation_count) {
-                entry->value_04 = metadata->draw_kind;
-                entry->value_10 = entry->table_0c[value];
+            if (value < metadata->animationCount) {
+                entry->value04 = metadata->drawKind;
+                entry->value10 = entry->table0c[value];
                 entry->x = count * 0x10;
-                entry->value_15 = 0x10;
-                entry->value_14 = index;
-                entry->value_17 = index;
-                entry->value_16 = 0xFF;
+                entry->value15 = 0x10;
+                entry->value14 = index;
+                entry->value17 = index;
+                entry->value16 = 0xFF;
             }
-            work[23] = (u8)metadata->adjust_y;
+            work[23] = (u8)metadata->adjustY;
             *(s16 *)(work + 18) = index;
         }
         count += 1;
@@ -84,7 +84,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
-    u8 *base = Ram_HeapSlots->unknown_0c[1];
+    u8 *base = Ram_HeapSlots->unk0c[1];
     s32 offset;
     s32 count;
 
@@ -105,10 +105,10 @@ void Render_ApplyProjectedPlacement(void *object, s32 *position, s32 *scale, u32
 
 struct BattleCells {
     u8 *actors;
-    u8 *unk_04;
-    u8 *unk_08;
-    u8 *unk_0c;
-    u8 *unk_10;
+    u8 *unk04;
+    u8 *unk08;
+    u8 *unk0c;
+    u8 *unk10;
     u8 *work;
 };
 
@@ -123,7 +123,7 @@ extern struct Vec2 Battle_FormationPlacementScale;
 
 void Battle_PlaceActorsByFormationKind(void)
 {
-    u8 *actor = Ram_HeapSlots->unknown_0c[1];
+    u8 *actor = Ram_HeapSlots->unk0c[1];
     u32 kind = (*(u8 **)(actor + 40))[4];
     struct Vec2 scale;
     u8 *table;
@@ -134,7 +134,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    table = (u8 *)Ram_HeapSlots->battle_work;
+    table = (u8 *)Ram_HeapSlots->battleWork;
 
     switch (kind) {
     case 3:

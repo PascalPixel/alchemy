@@ -25,13 +25,13 @@ void Func_02000964(void)
     Battle_WaitMode0(2);
     TundariaTower_FadeTo(0x10000, 0);
     Func_02003118(2);
-    object->action_flags = 0;
+    object->actionFlags = 0;
     object->update = 0;
     TundariaTower_ObjPlace(8, 424, 536);
     Func_02002f90(object, Data_02003370);
     ObjectMotion_CommitCurrentPositionAndActivate(8);
     GameFlag_SetBit(0x200);
-    Object_LinkObjectAndSetCallback(8, gPartyState.current_owner);
+    Object_LinkObjectAndSetCallback(8, gPartyState.currentOwner);
     MapCell_SetAttributes(0, 21, 33, 0x3200);
     MapCell_SetAttributes(0, 22, 33, 0x3200);
     MapCell_SetAttributes(0, 26, 33, 0xff00);

@@ -1,9 +1,9 @@
 #include "ankohl_ruins.h"
 
 struct AnkohlRuinsEffectParams {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u16 kind;
-    u8 unknown_1a[0xe];
+    u8 unk1a[0xe];
 };
 
 extern const u8 Data_02003790[];

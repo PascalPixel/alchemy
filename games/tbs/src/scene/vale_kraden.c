@@ -329,7 +329,7 @@ static void EV13_TALK(void)
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
 		Actor_ShowEmote(GARET, 0x101, 0);
 		Actor_ShowEmote(JENNA, 0x101, 60);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventRequestExit(13);
@@ -352,7 +352,7 @@ static void Scene_LeaveForMtAleph(void)
 	record = Object_GetById(5);
 	record->facing = facing;
 	Map_AnimateCells(Kraden_GateCells, 43, 8);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -409,7 +409,7 @@ static void Scene_LeaveForMtAleph(void)
 	Actor_SetPosition(ACTOR_SATUROS, 0, 0);
 	Actor_SetPosition(ACTOR_MENARDI, 0, 0);
 	GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	ColorBuffer_ApplySource(0x10000, 0);
 	GameFlag_Set(0x242);
 	Engine_EventEnd();
@@ -599,18 +599,18 @@ static void EV07_TOUCH(void)
 	Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
 
 	record = Object_GetById(14);
-	record->steering_flags &= ~ACTOR_FACES_MOTION;
+	record->steeringFlags &= ~ACTOR_FACES_MOTION;
 	record = Object_GetById(15);
-	record->steering_flags &= ~ACTOR_FACES_MOTION;
+	record->steeringFlags &= ~ACTOR_FACES_MOTION;
 
 	Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
 	Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
 	Engine_EventWait(6);
 
 	record = Object_GetById(14);
-	record->steering_flags |= ACTOR_FACES_MOTION;
+	record->steeringFlags |= ACTOR_FACES_MOTION;
 	record = Object_GetById(15);
-	record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+	record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 
 	Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
 	Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
@@ -756,7 +756,7 @@ s32 ValeKraden_RestoreEntryState(void)
 		{
 			struct FieldActor *record = Object_GetById(8);
 
-			record->collision_flags = 8 | record->collision_flags;
+			record->collisionFlags = 8 | record->collisionFlags;
 		}
 		Actor_SetPosition(11, 0x530000, 0x1090000);
 		Engine_ActorWalkToAndWait(11, 83, 0x111);
@@ -914,8 +914,8 @@ static void EV10_TOUCH(void)
 	Engine_EventBegin();
 
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	work->transition_frames = 64;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	work->transitionFrames = 64;
 
 	Engine_GameFlagSet(0x87D);
 	BattleFx_SetWeightedResult(12, 0);
@@ -930,8 +930,8 @@ static void EV11_TOUCH(void)
 	Engine_EventBegin();
 
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	work->transition_frames = 64;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	work->transitionFrames = 64;
 
 	Engine_GameFlagSet(0x87E);
 	BattleFx_SetWeightedResult(12, 1);

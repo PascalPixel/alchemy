@@ -22,8 +22,8 @@ void Func_02001d8c(void)
 {
     Func_02002294(140, 1);
     Func_0200229c(15, -1);
-    FIELD_AT(Ram_HeapSlots->effect_work, HandlerFn, 36) = Func_02001d84;
-    FIELD_AT(Ram_HeapSlots->effect_work, u8, 32) = 1;
+    FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) = Func_02001d84;
+    FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
     Func_020022b4();
     Battle_WaitMode0(10);
     Field_DispatchTypeHandler(0);

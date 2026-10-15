@@ -13,18 +13,18 @@ struct AngledSlot
 
 struct SceneMotion
 {
-	u8	unk_00[8];
+	u8	unk00[8];
 	s32 x;
 	s32 y;
 	s32 z;
 	s32 ground;
-	s32 scale_x;
-	s32 scale_y;
-	u8	unk_20[8];
+	s32 scaleX;
+	s32 scaleY;
+	u8	unk20[8];
 	s32 velocity;
-	u8	unk_2c[47];
+	u8	unk2c[47];
 	u8	state;
-	u8	unk_5c[8];
+	u8	unk5c[8];
 	s16 timer;
 	s16 delay;
 	s32 active;

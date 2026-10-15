@@ -77,7 +77,7 @@ void RenderOutput_RedrawSavedRectFar(void *window);
 
 void Func_080fb6d4(void)
 {
-    u8 *work = Ram_HeapSlots->menu_runtime;
+    u8 *work = Ram_HeapSlots->menuRuntime;
     u32 item = *(u16 *)(work + 0x16c);
     u32 mask;
 

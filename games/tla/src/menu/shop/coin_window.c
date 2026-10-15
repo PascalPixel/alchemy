@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 
-struct ShopWork_08109188 { u8 unknown_00[12]; void *coin_window; };
+struct ShopWork_08109188 { u8 unk00[12]; void *coinWindow; };
 
 extern char MsgYourCoins[];
 
@@ -12,7 +12,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 
 void Func_08109188(void)
 {
-    void *window = ((struct ShopWork_08109188 *)Ram_HeapSlots->menu_runtime)->coin_window;
+    void *window = ((struct ShopWork_08109188 *)Ram_HeapSlots->menuRuntime)->coinWindow;
 
     if (window != NULL) {
         RenderOutput_PrepareForRedrawFar(window);

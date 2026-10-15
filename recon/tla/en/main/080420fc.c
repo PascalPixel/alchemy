@@ -13,8 +13,8 @@
 void UiText_DrawStringAtOffset(
     u8 *text,
     struct RenderInput *work,
-    s32 offset_x,
-    s32 offset_y)
+    s32 offsetX,
+    s32 offsetY)
 {
     u16 *buffer;
     u16 *output;
@@ -26,7 +26,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     output = buffer;
     while (*text != 0) {
         *output = *text;
@@ -37,14 +37,14 @@ void UiText_DrawStringAtOffset(
     }
     *output = 0;
 
-    cell = (((s16)work->y + ((u32)offset_y >> 3) + 1) << 5)
-        + ((s16)work->x + ((u32)offset_x >> 3)) + 1;
+    cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5)
+        + ((s16)work->x + ((u32)offsetX >> 3)) + 1;
     if (cell < 0x280) {
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
         src = (s32)canvas->tilemap + cell;
-        phase = offset_x & 7;
+        phase = offsetX & 7;
         UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, phase);
         MemFree(buffer);
     }

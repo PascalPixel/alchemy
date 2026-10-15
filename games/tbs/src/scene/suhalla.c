@@ -86,28 +86,28 @@ static void EV16_PSYNERGY(void)
 static void Suhalla_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  no = work->touched_trigger;
+	s32				  no = work->touchedTrigger;
 	u16				  x = Suhalla_CellAnimationOrigins[no][0];
 	u16				  y = Suhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(Suhalla_CellSteps0, x, y);
 	Actor_WalkBy(0, 0, -16);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
 static void EV02_TOUCH(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  no = work->touched_trigger;
+	s32				  no = work->touchedTrigger;
 	u16				  x = Suhalla_CellAnimationOrigins[no][0];
 	u16				  y = Suhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(Suhalla_CellSteps1, x, y);
 	Actor_WalkBy(0, 0, -16);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(no);
 }
 
@@ -130,8 +130,8 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 	}
 
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 24;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 24;
 
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{

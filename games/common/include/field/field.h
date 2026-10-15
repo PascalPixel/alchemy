@@ -100,7 +100,7 @@ struct FacingStateActor
 	u8	reserved00[6];
 	u16 facing;
 	u8	reserved08[92];
-	u16 state_flags;
+	u16 stateFlags;
 };
 struct AcceptActor11
 {
@@ -150,7 +150,7 @@ struct FieldObjectRecord
 struct OverlayActorPosition
 {
 	u8	pad00[8];
-	s32 depth_fixed;
+	s32 depthFixed;
 };
 struct OverlayActorState
 {
@@ -164,11 +164,11 @@ struct OverlayEffectMotion
 	s32 y;
 	s32 z;
 	u8	pad14[28];
-	s32 horizontal_rate;
-	s32 vertical_rate;
-	s32 shadow_x;
-	s32 shadow_y;
-	s32 shadow_z;
+	s32 horizontalRate;
+	s32 verticalRate;
+	s32 shadowX;
+	s32 shadowY;
+	s32 shadowZ;
 	u8	pad44[32];
 	s16 mode;
 };
@@ -182,12 +182,12 @@ struct PathRecorder
 };
 struct Presentation
 {
-	u8 reserved_00[9];
+	u8 reserved00[9];
 	u8 flags;
 };
 struct PresentationB
 {
-	u8 unk_00[9];
+	u8 unk00[9];
 	u8 flags;
 };
 struct GridMarkActor
@@ -202,38 +202,38 @@ struct GridMarkActor
 };
 struct PresentedActor
 {
-	u8					 reserved_00[35];
-	u8					 state_23;
-	u8					 reserved_24[44];
+	u8					 reserved00[35];
+	u8					 state23;
+	u8					 reserved24[44];
 	struct Presentation *presentation;
 };
 struct PresentedActorB
 {
-	u8					  unk_00[35];
-	u8					  state_23;
-	u8					  unk_24[44];
+	u8					  unk00[35];
+	u8					  state23;
+	u8					  unk24[44];
 	struct PresentationB *presentation;
 };
 struct PresentedActorC
 {
-	u8					 reserved_00[35];
-	u8					 state_23;
-	u8					 reserved_24[44];
+	u8					 reserved00[35];
+	u8					 state23;
+	u8					 reserved24[44];
 	struct Presentation *presentation;
 };
 struct BranchCounterWork
 {
 	u8	reserved000[472];
-	u16 branch_counter;
+	u16 branchCounter;
 };
 struct Actor18MarkerWork
 {
 	u8	reserved000[370];
-	u16 actor18_marker;
+	u16 actor18Marker;
 };
 struct ScrollLayer
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 };
 struct Slot
@@ -251,7 +251,7 @@ struct SwitchCell
 struct SwitchEffect
 {
 	s32 active;
-	u8	unknown_04[0x5f];
+	u8	unk04[0x5f];
 	u8	finished;
 };
 struct T
@@ -546,14 +546,14 @@ void Func_02002a4c(void);
 void Func_02002a54(void);
 void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
 s32	 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
-void Func_080caa2c(u32 object_id);
-void Object_SetSquareSprite(u32 object_id);
-void Func_080e70f8(u32 object_id);
+void Func_080caa2c(u32 objectId);
+void Object_SetSquareSprite(u32 objectId);
+void Func_080e70f8(u32 objectId);
 void Func_081b83c4(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_ApplyWorkOriginAndSpanFar(void);
 s32	 Map_GetTerrainHeightFar(u8, s32, s32);
-void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32	 Object_IsTargetUnset(void *arg0);
 #ifndef OWN_Object_SetPartAttribute
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
@@ -562,13 +562,13 @@ void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);
-void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset);
-void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset);
-void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset);
-void ObjectMotion_ResetAndSetPosition(u32 object_id, s32 x, s32 z);
-void ObjectMotion_SetPositionAndCommit(u32 object_id, s32 x, s32 z);
-void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z);
-void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant);
+void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
+void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
+void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
+void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant);
 void ObjectSystem_Configure(s32 mode);
 s32	 Party_AddActiveOwnerFar(s32 event_id);
 void Party_RemoveActiveOwnerFar(s32 owner);

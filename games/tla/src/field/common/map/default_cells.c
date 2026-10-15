@@ -13,11 +13,11 @@ void Map_UpdateCurrentTileBlock(void);
 
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
 
     Data_030011f8 = Map_ShowBg1FromBuffer;
-    work->window_top = 0;
-    work->window_bottom = 0x9f;
+    work->windowTop = 0;
+    work->windowBottom = 0x9f;
     WaitFrames(1);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Map_UpdateCurrentTileBlock();

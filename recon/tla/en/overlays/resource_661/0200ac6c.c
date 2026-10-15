@@ -6,7 +6,7 @@
 
 void Func_02002c6c(void)
 {
-    u8 *work = Ram_HeapSlots->effect_work;
+    u8 *work = Ram_HeapSlots->effectWork;
 
     if (*(s16 *)(work + 0x7c4) != 0)
         Func_02003ff0(73, 76, 78, 11, 1, 1);

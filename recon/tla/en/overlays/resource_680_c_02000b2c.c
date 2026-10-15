@@ -17,7 +17,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags)
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z)
 {
     struct ObjectRuntime *actor = Object_GetById(id);
-    u8 *cells = *(u8 **)((u8 *)Ram_HeapSlots->map_work + 424);
+    u8 *cells = *(u8 **)((u8 *)Ram_HeapSlots->mapWork + 424);
     s32 cellX = x / 0x100000;
     s32 cellZ = (z - y + 0x7fff) / 0x100000;
 
@@ -25,7 +25,7 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z)
     actor->x = (x & 0xfff00000) + 0x80000;
     actor->z = (z & 0xfff00000) + 0x80000;
     actor->y = actor->z - (cellZ << 20);
-    actor->motion_flags = 0;
-    actor->priority_flags |= 2;
+    actor->motionFlags = 0;
+    actor->priorityFlags |= 2;
     ObjectDispatch_SetSingleChildFlags(actor, 0);
 }

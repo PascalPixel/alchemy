@@ -53,21 +53,21 @@ void Func_02000468(void)
 	Call3(Func_0200195c, 12, 270 << 16, 184 << 16);
 	object->y = 22 << 16;
 	ObjectMotion_Launch(12, 11, 0);
-	object->scale_y = 0x8000;
-	object->scale_x = 0x8000;
+	object->scaleY = 0x8000;
+	object->scaleX = 0x8000;
 	Call3(ObjectMotion_SetSpeedParameters, 12, 0x23333, 0x11999);
 	Call3(ObjectMotion_ResetAndSetPositionInMode2, 12, 312, 184);
 	for (i = 23; i >= 0; i--)
 	{
 		object->angle += 0x2000;
-		if (object->scale_x <= 0xffff)
-			object->scale_x += 0xa00;
-		object->scale_y = object->scale_x;
+		if (object->scaleX <= 0xffff)
+			object->scaleX += 0xa00;
+		object->scaleY = object->scaleX;
 		WaitFrames(1);
 	}
 	object->angle = 0x3000;
-	object->scale_y = 0x10000;
-	object->scale_x = 0x10000;
+	object->scaleY = 0x10000;
+	object->scaleX = 0x10000;
 	ObjectMotion_CommitCurrentPositionAndActivate(12);
 }
 

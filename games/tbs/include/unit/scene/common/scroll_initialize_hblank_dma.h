@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y);
+void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY, s32 ampY);
 
 #endif

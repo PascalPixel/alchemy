@@ -27,12 +27,12 @@ static void Scene_UpdateTimedActor(void);
 
 static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 {
-	motion->x += motion->velocity_x << 8;
-	motion->y += motion->velocity_y << 8;
-	motion->scale_x += 0x666;
-	motion->scale_y += 0x666;
-	motion->velocity_x += 5;
-	motion->velocity_y -= 1;
+	motion->x += motion->velocityX << 8;
+	motion->y += motion->velocityY << 8;
+	motion->scaleX += 0x666;
+	motion->scaleY += 0x666;
+	motion->velocityX += 5;
+	motion->velocityY -= 1;
 	return 0;
 }
 
@@ -154,8 +154,8 @@ static void ValeInteriors_RequestWindowExit(s32 value)
 	if (Engine_GameFlagIsSet(0x834) != 0)
 		BattleFx_SetBlock30ValuesMaxZero();
 	Engine_AudioPlayCue(123);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(value);
@@ -242,7 +242,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
 				FieldScene_RunLongPresentationSequence();
 			}
 		}
-		Object_GetById(10)->collision_flags |= 0x80;
+		Object_GetById(10)->collisionFlags |= 0x80;
 	}
 	if (gGameState.entrance == 2)
 	{
@@ -389,13 +389,13 @@ static void FieldScene_RunLongPresentationSequence(void)
 	record = Actor_Get(25);
 	Engine_ActorSetSpriteFlags(record, 0);
 	v6 = 0;
-	Object_GetById(23)->motion_flags = v6;
-	Object_GetById(24)->motion_flags = v6;
-	Object_GetById(25)->motion_flags = v6;
+	Object_GetById(23)->motionFlags = v6;
+	Object_GetById(24)->motionFlags = v6;
+	Object_GetById(25)->motionFlags = v6;
 	timed_update = (s32)Scene_UpdateTimedActor;
 	FieldScheduler_AddCallback((void (*)(void))timed_update, 0xc80);
 	Engine_TaskWait(1);
-	gEventWork->transition_frames = 32;
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -426,7 +426,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	FieldObject_SetTargetAndCallback(2, 0x1000a, gValeFaceTargetScript);
 	FieldObject_SetTargetAndCallback(3, 0x1000a, gValeFaceTargetScript);
 	Engine_EventWait(0x12c);
-	Battle_GetWorkObject1e0()->motion_flags = v6;
+	Battle_GetWorkObject1e0()->motionFlags = v6;
 	Camera_SetSpeed(0x1999, 0x333);
 	Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
 	Engine_EventWait(240);
@@ -593,7 +593,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimation(10, 3);
 	Engine_ActorSetAnimationAndWait(9, 3);
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(MIA, 1);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
 	Actor_WalkToAndWait(MIA, 0x31a, 0x208);
@@ -601,7 +601,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
 	Actor_WalkToAndWait(MIA, 0x310, 0x1f0);
 	Actor_FaceDirection(MIA, 0x9000, 10);
-	Object_GetById(3)->priority_flags |= 1;
+	Object_GetById(3)->priorityFlags |= 1;
 	Event_ShowMessageAndWait(MIA, 0, 20);
 	Engine_ActorSetAnimation(8, 3);
 	Engine_ActorSetAnimation(9, 3);

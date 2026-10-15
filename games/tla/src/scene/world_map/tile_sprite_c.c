@@ -36,15 +36,15 @@ void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
-    u8 unknown_14[6];
+    u8 unk14[6];
     u8 frame;
 };
 
 s32 Func_020035e0(struct ObjectRuntime *object)
 {
-    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->map_work + 286);
+    u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
     struct TileSprite *sprite = object->animation;
 
     sprite->tile = *tile;

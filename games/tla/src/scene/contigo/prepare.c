@@ -5,8 +5,8 @@
 #include "scene_ids.h"
 
 struct SpriteAttributes {
-    u8 unknown_00[9];
-    u8 unknown_09_0 : 2;
+    u8 unk00[9];
+    u8 unk09_0 : 2;
     u8 priority : 2;
 };
 
@@ -39,7 +39,7 @@ s32 Scene_PrepareMap(void)
 void Func_020036f0(void)
 {
     if (Object_GetById(65) != 0) {
-        struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
+        struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
 
         ObjectMotion_SetActionVariant(65, ((struct SpriteAttributes *)owner->animation)->priority);
     }

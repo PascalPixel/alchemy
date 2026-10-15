@@ -478,13 +478,13 @@ s32 Scene_Initialize(void)
 {
 	s16 entrance;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	entrance = gGameState.entrance;
 	if (entrance == ROOM_SUHALLA_GATE_HOUSE)
 	{
 		Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-		gGameState.saved_scene = (s32)&SceneId_LunpaSuhalla;
-		gGameState.saved_entrance = entrance;
+		gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
+		gGameState.savedEntrance = entrance;
 	}
 	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_COUNTER), 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_COUNTER), 0);

@@ -24,7 +24,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	u32		  index;
 	u32		  half;
 
-	code = reader->previous_code;
+	code = reader->previousCode;
 	text = (const u8 *)reader->words;
 	text_bits = reader->bits;
 	tree_bits = 1;
@@ -92,7 +92,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 		code = leaves[-(index >> 1) - 1] | (half << 8);
 	}
 	reader->bits = text_bits;
-	reader->previous_code = code;
+	reader->previousCode = code;
 	reader->words = (const u32 *)text;
 	return code;
 }

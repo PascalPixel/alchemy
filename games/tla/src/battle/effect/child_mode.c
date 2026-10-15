@@ -1,18 +1,18 @@
 #include "types.h"
 
 struct ChildObject {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 mode;
-    u8 unknown_06[10];
+    u8 unk06[10];
     s32 active;
 };
 
 struct ChildGroup {
-    u8 unknown_00[25];
+    u8 unk00[25];
     u8 dirty;
-    u8 unknown_1a;
+    u8 unk1a;
     u8 count;
-    u8 unknown_1c[12];
+    u8 unk1c[12];
     struct ChildObject *children[1];
 };
 

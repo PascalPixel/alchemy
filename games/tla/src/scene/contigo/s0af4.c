@@ -1,13 +1,13 @@
 #include "contigo.h"
 
 struct ContigoGlow {
-    u8 unknown_00[0x0c];
+    u8 unk00[0x0c];
     s32 y;
-    u8 unknown_10[8];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[0x35];
-    u8 motion_flags;
+    u8 unk10[8];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[0x35];
+    u8 motionFlags;
 };
 
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -55,9 +55,9 @@ void Func_02000af4(void)
     {
         ObjectDispatch_SetSingleChildFlags(effect, 0);
         Func_02003fdc(effect, 2);
-        effect->motion_flags = 0;
-        effect->scale_x = 0x1999;
-        effect->scale_y = 0x1999;
+        effect->motionFlags = 0;
+        effect->scaleX = 0x1999;
+        effect->scaleY = 0x1999;
         i = 0;
     grow:
         {
@@ -66,11 +66,11 @@ void Func_02000af4(void)
             /* FAKEMATCH: the one-pass block keeps the scale load ahead of the 0x666 step, as the
              * native has it (differ 2 without). */
             do {
-                x = effect->scale_x;
+                x = effect->scaleX;
             } while (0);
-            effect->scale_x = x + 0x666;
+            effect->scaleX = x + 0x666;
         }
-        effect->scale_y += 0x666;
+        effect->scaleY += 0x666;
         WaitFrames(1);
         i++;
         if (i < 28)
@@ -83,11 +83,11 @@ void Func_02000af4(void)
     {
         i = 0;
     shrink:
-        effect->scale_x += 0xfffff99a;
+        effect->scaleX += 0xfffff99a;
         /* FAKEMATCH: two volatile accesses, so the y load depends on the Y scale store and is
          * issued before the 0x8000 step is built, as the native does; plain, the scheduler builds
          * the step first (differ 2). */
-        *(volatile s32 *)&effect->scale_y += 0xfffff99a;
+        *(volatile s32 *)&effect->scaleY += 0xfffff99a;
         *(volatile s32 *)&effect->y += 0x8000;
         WaitFrames(1);
         i++;

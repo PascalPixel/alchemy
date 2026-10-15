@@ -4,9 +4,9 @@
 struct TreasureIsleCell {
     s32 x;
     s32 z;
-    s32 unknown_08;
+    s32 unk08;
     u16 flag;
-    u16 unknown_0e;
+    u16 unk0e;
 };
 
 extern struct TreasureIsleCell Data_0200117c[];

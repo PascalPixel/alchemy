@@ -58,9 +58,9 @@ void Func_02001c5c(void)
 
     Func_02004c20();
     Func_02004db8(0);
-    Object_GetById(16)->motion_flags = 2;
-    Object_GetById(17)->motion_flags = 2;
-    Object_GetById(18)->motion_flags = 2;
+    Object_GetById(16)->motionFlags = 2;
+    Object_GetById(17)->motionFlags = 2;
+    Object_GetById(18)->motionFlags = 2;
     /* FAKEMATCH: held in a local, the facing angle is built once and shared by the three placements as in the native; as a literal each forwarded call builds it again. */
     angle = 0xe000;
     Func_02004c90_(16, 0x22d10000, 0x16dd0000, angle);

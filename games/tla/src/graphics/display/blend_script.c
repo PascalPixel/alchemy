@@ -7,7 +7,7 @@
 
 void DisplayBlend_RunScript(void)
 {
-    struct MapWork *work = Ram_HeapSlots->map_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
     struct BlendScriptState *state;
     u16 *cursor;
     u32 command;
@@ -44,12 +44,12 @@ again:
 
     if ((command & 0xf000) == 0x3000) {
         REG_BLDCNT = command;
-        work->blend_control = command;
+        work->blendControl = command;
         state->cursor++;
         goto again;
     }
 
-    if ((work->blend_control & 0xc0) == 0x40)
+    if ((work->blendControl & 0xc0) == 0x40)
         REG_BLDALPHA = command;
     else
         REG_BLDY = command;
@@ -70,7 +70,7 @@ void DisplayBlend_StartScript(u16 *script)
 
     started = 0;
     zero = 0;
-    state = &Ram_HeapSlots->map_work->blend;
+    state = &Ram_HeapSlots->mapWork->blend;
     Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
     first = *script;
     /* FAKEMATCH: the plain order builds 0xffff before loading the first command. */

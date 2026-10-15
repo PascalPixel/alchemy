@@ -3,7 +3,7 @@
 
 void Func_02000f58(void)
 {
-    struct MapLayer *layer = &Ram_HeapSlots->map_work->layers[2];
+    struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
     s16 y = layer->y >> 16;
 
     /* FAKEMATCH: a one-pass block builds the store's address before 1448 (one reordered row). */

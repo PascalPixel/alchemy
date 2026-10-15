@@ -25,20 +25,20 @@ void Resource_ClearOwnerListAndCounters(void)
 {
     struct SelectionScreen *screen;
 
-    screen = Ram_HeapSlots->menu_work;
+    screen = Ram_HeapSlots->menuWork;
     screen->head = NULL;
-    screen->unknown_39a = 0;
-    if (screen->cursor_index & 0x80) {
+    screen->unk39a = 0;
+    if (screen->cursorIndex & 0x80) {
         screen->top = 0;
-        screen->cursor_index = 0;
+        screen->cursorIndex = 0;
     }
-    screen->vertical_scroll = 0;
+    screen->verticalScroll = 0;
     screen->count = 0;
 }
 
 void Resource_PushPendingPair(u32 first, u32 second)
 {
-    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
     u16 cnt = state->count;
 
     if (cnt != 16) {

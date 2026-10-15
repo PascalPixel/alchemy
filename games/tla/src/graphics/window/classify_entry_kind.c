@@ -21,7 +21,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act)
 	u8	effect;
 
 	kind = 0;
-	type = act->target_flag & 15;
+	type = act->targetFlag & 15;
 	if (type == 1) // HPかいふく
 		kind = 1;
 	if (type == 11) // PPかいふく

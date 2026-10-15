@@ -7,7 +7,7 @@ void Func_08182898(s32 arg);
 
 void Func_0818284c(s32 arg)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
 
     BattleFx_BeginCanvasLayer(0);
     {

@@ -8,13 +8,13 @@ void Func_020006b0(struct ObjectRuntime *object)
     if (steam) {
         sprite = steam->animation;
         Func_02005138(steam, Data_020054e4);
-        steam->motion_flags = 0;
-        steam->terrain_id = 1;
-        steam->priority_flags = 2;
+        steam->motionFlags = 0;
+        steam->terrainId = 1;
+        steam->priorityFlags = 2;
         if (sprite) {
             Animation_ApplyChildArgument(sprite, 2);
-            sprite->blend_mode = 1;
-            sprite->next_frame = 0;
+            sprite->blendMode = 1;
+            sprite->nextFrame = 0;
             sprite->priority = 3;
         }
     }
@@ -22,7 +22,7 @@ void Func_020006b0(struct ObjectRuntime *object)
 
 void Func_02000710(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *steam;
 
     if ((gFrameCount & 7) == 0) {

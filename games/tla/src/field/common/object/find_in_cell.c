@@ -8,7 +8,7 @@
 // ☀️'s twin takes it; the search does not use it.
 struct ObjectRuntime *Object_FindInCell(s32 *position, struct ObjectRuntime *self)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     /* FAKEMATCH: the counter pinned to r4; without the pin global allocation gives r4 to the object pointer first (differ 12). */
     register u32 i asm("r4");
     void **objects;

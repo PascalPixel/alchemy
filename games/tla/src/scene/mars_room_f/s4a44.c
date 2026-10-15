@@ -2,7 +2,7 @@
 
 void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
 {
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     u8 *cells = map->layers[layer].cells;
     u32 row;
     u32 column;

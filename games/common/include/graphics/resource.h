@@ -19,7 +19,7 @@ void				   ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
 #endif
 
 #if GAME_TLA
-void *Resource_GetTableEntry(s32 resource_id);
+void *Resource_GetTableEntry(s32 resourceId);
 
 s32 Resource_FindFreeEntry(void);
 s32 Resource_LoadIntoFreeSlot(s32 size);

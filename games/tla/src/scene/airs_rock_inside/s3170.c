@@ -8,7 +8,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 // steps 65, 66, 67 and 62 and moves the leader to (312, 792).
 void Func_02003170(void)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
     s32 width;
     s32 height;
 
@@ -27,10 +27,10 @@ void Func_02003170(void)
     Battle_WaitMode0(8);
     Func_02005d9c(62, 76, 19, 92, width, height);
     Battle_WaitMode0(15);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_GetById(gPartyState.current_owner)->speed = Object_GetById(gPartyState.current_owner)->acceleration = 0x8000;
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    Object_GetById(gPartyState.currentOwner)->speed = Object_GetById(gPartyState.currentOwner)->acceleration = 0x8000;
     Func_02005f94(123);
-    ObjectMotion_ResetAndSetPositionInMode2(gPartyState.current_owner, 312, 792);
+    ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 312, 792);
     Battle_WaitMode0(5);
     Func_02005efc(15);
     Func_02005e1c();

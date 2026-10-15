@@ -45,7 +45,7 @@ void Func_02004d98(void);
 
 void Func_02001138(void)
 {
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     struct PartyState *party = &gPartyState;
     struct ObjectRuntime *object;
     s32 x;
@@ -55,12 +55,12 @@ void Func_02001138(void)
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
     do {
     } while (0);
-    object = Object_GetById(party->current_owner);
+    object = Object_GetById(party->currentOwner);
     x = object->x >> 20;
     z = object->z >> 20;
     cell = gMapCellBuffer;
     if (map != NULL)
-        cell = map->layers[object->terrain_id & 3].cells;
+        cell = map->layers[object->terrainId & 3].cells;
     cell += (x + (z << 7)) << 2;
     if (cell[3] & 64)
         Func_02000fe0(cell + 0x200);

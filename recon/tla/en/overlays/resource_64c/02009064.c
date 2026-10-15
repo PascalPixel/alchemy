@@ -10,7 +10,7 @@ s32 Math_Sine(s32 angle);
 
 s32 Func_02001064(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *anchor = object->linked_object;
+    struct ObjectRuntime *anchor = object->linkedObject;
     s32 frame;
     s32 scale;
 
@@ -19,8 +19,8 @@ s32 Func_02001064(struct ObjectRuntime *object)
     if (frame > 31)
         return 0;
     scale = Iwram_MulQ16(Math_Sine(frame << 10), 0x14000);
-    object->scale_x = scale;
-    object->scale_y = scale;
+    object->scaleX = scale;
+    object->scaleY = scale;
     object->x = anchor->x;
     object->y += 0x10000;
     object->z = anchor->z;

@@ -7,7 +7,7 @@
 
 void Func_02000668(struct ObjectRuntime *object, s32 step)
 {
-    s32 speed = (object->velocity_x + object->velocity_z) >> 1;
+    s32 speed = (object->velocityX + object->velocityZ) >> 1;
     s32 *counter = &Data_02006294;
 
     if (speed < 0)

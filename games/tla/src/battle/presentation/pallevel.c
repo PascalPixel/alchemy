@@ -9,7 +9,7 @@ void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 // パレットの明るさを設定する。level 0 は元の色をそのまま転送
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-    struct BattleWork *screen = Ram_HeapSlots->battle_work;
+    struct BattleWork *screen = Ram_HeapSlots->battleWork;
     u16 *palette = screen->palette;
     u32 ime;
     u32 *slot;

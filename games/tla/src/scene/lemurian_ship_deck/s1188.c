@@ -22,7 +22,7 @@ void Func_02001188(void)
     Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
     object = Func_02001f0c(0x2a2, position[0], position[1], position[2]);
     if (object != NULL) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         *(s32 *)((u8 *)object + 0x30) = 0x20000;
         *(s32 *)((u8 *)object + 0x34) = 0x8000;
         ObjectDispatch_SetSingleChildFlags(object, 0);

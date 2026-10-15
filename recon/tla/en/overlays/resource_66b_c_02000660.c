@@ -22,7 +22,7 @@ void Func_02001214(void);
 
 void Func_02000660(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     struct { s32 x, y, z; } position;
     s32 *out = (s32 *)&position;
 
@@ -31,11 +31,11 @@ void Func_02000660(void)
     out[2] = object->z;
     Call3(Vector_AddPolarOffsetFar, 0x100000, object->angle, (s32)out);
     if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
-        FIELD_AT(Ram_HeapSlots->event_work, u16, 346) = 1;
+        FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
     } else {
         Func_0200120c();
         Func_020012e4(0);
-        Object_LinkPair(16, gPartyState.current_owner, 0);
+        Object_LinkPair(16, gPartyState.currentOwner, 0);
         Func_0200128c((s32)MsgRrruffRrruff2);
         Func_02001294(16, 0);
         Call3(ObjectMotion_ArmCallback, 16, 0x8000, 0);

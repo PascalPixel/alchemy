@@ -4,7 +4,7 @@
 
 struct SpriteNumber
 {
-	u8		   unknown_00[0x28];
+	u8		   unk00[0x28];
 	const s16 *number;
 };
 
@@ -15,12 +15,12 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 	struct FieldActor  *origin;
 	s32					nearest_actor = 0;
 	s32					min_dist;
-	u32					actor_id;
+	u32					actorId;
 
 	min_dist = 640;
 	origin = Object_GetById(ACTOR_PARTY_LEADER);
-	actor_id = ACTOR_FIRST_PLACED;
-	slot = work->placed_actors;
+	actorId = ACTOR_FIRST_PLACED;
+	slot = work->placedActors;
 	do
 	{
 		struct FieldActor *actor = *slot++;
@@ -32,11 +32,11 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 				if (dist < min_dist)
 				{
 					min_dist = dist;
-					nearest_actor = actor_id;
+					nearest_actor = actorId;
 				}
 			}
 		}
-		actor_id++;
-	} while (actor_id <= 65);
+		actorId++;
+	} while (actorId <= 65);
 	return nearest_actor;
 }

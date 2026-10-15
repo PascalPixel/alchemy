@@ -4,7 +4,7 @@
 #include "object_runtime.h"
 
 struct EventObjects {
-    u8 unknown_00[20];
+    u8 unk00[20];
     struct ObjectRuntime *objects[64];
 };
 

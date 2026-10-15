@@ -5,7 +5,7 @@
 #include "iwram_call.h"
 
 struct EffectSprite {
-    u8 unknown_00[4];
+    u8 unk00[4];
     u16 attr0_0 : 13;
     u16 color : 1;
     u16 attr0_14 : 2;
@@ -13,29 +13,29 @@ struct EffectSprite {
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[2];
+    u8 unk0a[2];
     s32 x;
     s32 y;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_1c[2];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk1c[2];
     u16 depth;
-    u8 unknown_20[8];
+    u8 unk20[8];
 };
 
 struct EffectScene {
     u16 mode;
-    u8 unknown_02[14];
-    struct ObjectRuntime *main_object;
+    u8 unk02[14];
+    struct ObjectRuntime *mainObject;
 };
 
 struct EffectParticle {
     s32 x;
     s32 y;
     s32 z;
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
+    s32 velocityX;
+    s32 velocityY;
+    s32 velocityZ;
     s32 timer;
 };
 
@@ -63,12 +63,12 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
         sprite->tile = tiles + n;
         /* FAKEMATCH: draft barrier; the header gives the measured difference. */
         __asm__("");
-        scale = sprite->scale_x + 0x1999;
-        sprite->scale_x = scale;
+        scale = sprite->scaleX + 0x1999;
+        sprite->scaleX = scale;
         if (scale > 0x10000)
             scale = 0x10000;
-        sprite->scale_x = scale;
-        sprite->scale_y = scale;
+        sprite->scaleX = scale;
+        sprite->scaleY = scale;
         position[0] = particle->x;
         position[1] = particle->y;
         position[2] = particle->z;

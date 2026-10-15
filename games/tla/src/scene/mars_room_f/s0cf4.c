@@ -17,7 +17,7 @@ void Func_02004700(s32 a0);
 void Func_02000c80(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     s32 z = object->z >> 20;
     s32 x = object->x;
     u8 *cell = map->layers[2].cells;
@@ -28,13 +28,13 @@ void Func_02000c80(s32 id)
         cell += offset << 2;
         cell[2] = 255;
     } while (0);
-    Object_GetById(id)->priority_flags = 0;
+    Object_GetById(id)->priorityFlags = 0;
 }
 
 void Func_02000cb8(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     s32 z = object->z >> 20;
     s32 x = object->x;
     u8 *cell = map->layers[2].cells;
@@ -46,7 +46,7 @@ void Func_02000cb8(s32 id)
         cell[2] = 0;
     } while (0);
     {
-        u8 *flags = &Object_GetById(id)->priority_flags;
+        u8 *flags = &Object_GetById(id)->priorityFlags;
         s32 value = 2;
 
         value |= *flags;

@@ -41,7 +41,7 @@ s32 sub_08124af8(s32 id)
 
         BattleEventRuntime_Reset();
         hp = unit->hp;
-        max = unit->max_hp;
+        max = unit->maxHp;
         before = hp;
         hp += max * (*count + 1) / 10;
         if (hp > max)
@@ -49,7 +49,7 @@ s32 sub_08124af8(s32 id)
         gain = hp - before;
         if (gain != 0) {
             BattleEvPush(0, id);
-            if (hp == unit->max_hp) {
+            if (hp == unit->maxHp) {
                 BattleEvPush(4, (u32)&MsgHpFull);
             } else {
                 {
@@ -86,11 +86,11 @@ s32 BattleUnit_TickReflect(s32 id)
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
     struct BattleUnit *unit = UnitGet(id);
-    u8 *value = &unit->agi_cnt;
+    u8 *value = &unit->agiCnt;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
-            unit->agi_lv = 0;
+            unit->agiLv = 0;
             return 1;
         }
     }
@@ -114,7 +114,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->turns > 0 &&
-                ((struct BattleUnit *)UnitGet(timed_entry->unit_id))->hp != 0) {
+                ((struct BattleUnit *)UnitGet(timed_entry->unitId))->hp != 0) {
                 timed_entry->turns--;
             }
             index++;
@@ -126,7 +126,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         expired_entry = list->entries;
         do {
             if (expired_entry->turns == 0) {
-                u8 id = expired_entry->unit_id;
+                u8 id = expired_entry->unitId;
 
                 Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
                 Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);

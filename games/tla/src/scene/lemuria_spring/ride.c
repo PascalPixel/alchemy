@@ -9,7 +9,7 @@ struct SpringPoint {
 };
 
 struct SpringRide {
-    u16 unknown_00;
+    u16 unk00;
     u16 hold;
     struct SpringPoint trail[5];
     struct SpringPoint velocity;
@@ -105,7 +105,7 @@ start:
         Func_02001408(300);
     /* FAKEMATCH: the volatile read keeps the frame's reload where both paths meet; plain, PRE copies it onto the cue's path (differ 2). */
     if (*(volatile s32 *)&Data_02001820 == 16) {
-        Object_SetModeById(gPartyState.current_owner, 39);
+        Object_SetModeById(gPartyState.currentOwner, 39);
         ride->hold = 0;
         ride->velocity.x = 0x14ccc;
         ride->velocity.y = 0x40000;

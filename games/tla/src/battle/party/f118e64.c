@@ -28,7 +28,7 @@ void Func_08118e64(void)
 struct TradeOffer {
     u8 element;
     u8 djinn;
-    u8 unknown_02[2];
+    u8 unk02[2];
 };
 
 struct TradeOfferList {
@@ -37,7 +37,7 @@ struct TradeOfferList {
 };
 
 struct TradeOfferState {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct TradeOfferList list;
 };
 

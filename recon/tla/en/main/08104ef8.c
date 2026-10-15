@@ -2,11 +2,11 @@
 #include "ram_buffer.h"
 
 struct MenuEntryWork {
-    u8 unknown_000[30];
+    u8 unk000[30];
     u8 count;
-    u8 unknown_01f[0xf8 - 0x1f];
+    u8 unk01f[0xf8 - 0x1f];
     void *objects[8];
-    u8 unknown_118[0x158 - 0x118];
+    u8 unk118[0x158 - 0x118];
     s16 ids[8];
 };
 
@@ -18,7 +18,7 @@ s32 Func_080c82b8(s32 owner);
 
 void Menu_CreateOwnerEntryObjects(s32 first)
 {
-    struct MenuEntryWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
     u16 owners[14];
     void **objects;
     u8 *object;

@@ -15,10 +15,10 @@
 #include "ram_buffer.h"
 
 struct EventWork {
-    u8 unknown_000[0x1ac];
-    s32 start_transition;
-    u8 unknown_1b0[4];
-    s32 transition_frames;
+    u8 unk000[0x1ac];
+    s32 startTransition;
+    u8 unk1b0[4];
+    s32 transitionFrames;
 };
 
 extern const u8 Data_02004eb8[];
@@ -56,25 +56,25 @@ void Func_020029a4(void)
     Func_02004c20();
     Func_02004db8(0);
     Func_02004df8(0x9999, 1);
-    actor->scale_x = 0x13333;
-    actor->scale_y = 0x13333;
+    actor->scaleX = 0x13333;
+    actor->scaleY = 0x13333;
     Object_AttachWorkTargetToObject(8, 1);
     WaitFrames(1);
-    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     ObjectMotion_SetSpeedParameters_(8, 0x6666, 0x3333);
     actor->action = 0;
     ObjectMotion_EnableActionAndSetCallback(8, Data_02004eb8);
     Scheduler_AddOrUpdateCallback(Func_020028cc, 0x480);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->start_transition = 0x100;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x100;
     Func_02004d78(0x10003, 1);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->transition_frames = 32;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 32;
     Event_StartScreenTransition();
     Battle_WaitMode0(120);
     Func_02004df8(0x16666, 300);
     Battle_WaitMode0(270);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->transition_frames = 16;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 16;
     *(u16 *)0x05000000 = 0x7fff;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

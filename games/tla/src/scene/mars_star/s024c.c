@@ -7,7 +7,7 @@ void Func_0200432c(s32 id, s32 x, s32 z);
 void Func_02000080(s32 a);
 
 struct EventDelay {
-    u8 unknown_000[0x16a];
+    u8 unk000[0x16a];
     u16 frames;
 };
 
@@ -22,7 +22,7 @@ void Func_0200024c(s32 phase, s32 frame)
 #if !defined(TLA_EDITION_JA)
         GameFlag_SetBit(0x238);
 #endif
-        ((struct EventDelay *)Ram_HeapSlots->event_work)->frames = 20;
+        ((struct EventDelay *)Ram_HeapSlots->eventWork)->frames = 20;
     }
     if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
         Func_02000080(10);

@@ -37,7 +37,7 @@ void Menu_AppendResourceEntry(s32 no)
     s32 slot;
     s32 flags;
 
-    work = Ram_HeapSlots->menu_select_work;
+    work = Ram_HeapSlots->menuSelectWork;
     index = work->count;
     if (index <= 5) {
         work->count++;
@@ -48,7 +48,7 @@ void Menu_AppendResourceEntry(s32 no)
         flags = 136;
         entry->y = flags;
         entry->slot = slot;
-        work->resource_ids[index] = no;
+        work->resourceIds[index] = no;
     }
 }
 

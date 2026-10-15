@@ -14,8 +14,8 @@ void GameFlag_SetBit(s32 flag);
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void Field_BeginColorTransition(s32 frames, s32 color)
 {
-	u8						   *state = Ram_HeapSlots->event_work;
-	struct BattleEffectBuffers *buffers = Ram_HeapSlots->block_32;
+	u8						   *state = Ram_HeapSlots->eventWork;
+	struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
 	Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_ENABLE32 | DMA_32BIT | 0x150, REG_DMA3);
 	if (*(s8 *)(state + 0xca4) == 0)
@@ -29,7 +29,7 @@ void Field_BeginColorTransition(s32 frames, s32 color)
 
 void Field_BeginPaletteTransition(s32 frames)
 {
-    u8 *state = Ram_HeapSlots->event_work;
+    u8 *state = Ram_HeapSlots->eventWork;
     s32 colors = (s32)(state + 0x222);
 
     BattleFx_ApplyColorToTargetBuffer(colors, 2);

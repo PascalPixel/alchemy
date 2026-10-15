@@ -3,10 +3,10 @@
 #include "callback_scheduler.h"
 
 struct MenuRuntimeSelect {
-    u8 unknown_000[0x168];
-    u16 selected_slots[1];
-    u8 unknown_16a[0xac];
-    u8 selected_ids[1];
+    u8 unk000[0x168];
+    u16 selectedSlots[1];
+    u8 unk16a[0xac];
+    u8 selectedIds[1];
 };
 
 s32 GameFlag_Test(s32 flag);
@@ -19,7 +19,7 @@ s32 Func_0810021c(void);
 
 s32 Func_080fe49c(void)
 {
-    struct MenuRuntimeSelect *state = (struct MenuRuntimeSelect *)Ram_HeapSlots->menu_runtime;
+    struct MenuRuntimeSelect *state = (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
     s32 step = 0;
     s32 finished = step;
     s32 result = 0;
@@ -28,7 +28,7 @@ s32 Func_080fe49c(void)
     while (!finished && !GameFlag_Test(0x150)) {
         switch (step) {
         case 0:
-            state->selected_slots[0] = finished;
+            state->selectedSlots[0] = finished;
             Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
             MenuIcon_SetActive(1);
             step = Func_080fe580(0);

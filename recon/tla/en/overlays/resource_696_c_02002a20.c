@@ -10,10 +10,10 @@ struct Sprite {
 };
 
 struct ModeTransform {
-    u32 scale_x : 16;
-    u32 scale_y : 16;
+    u32 scaleX : 16;
+    u32 scaleY : 16;
     u32 angle : 16;
-    u32 unknown_06 : 16;
+    u32 unk06 : 16;
 };
 
 extern u32 Data_020064d0[];
@@ -123,8 +123,8 @@ commands:
             Data_0200649c = 0;
     }
     work.angle = 0;
-    work.scale_x = scale;
-    work.scale_y = scale;
+    work.scaleX = scale;
+    work.scaleY = scale;
     matrix = (s16)AffineMatrix_BuildForEffect((struct AffineTransform *)&work);
     Data_020064a0 += pos;
     pos = Data_020064a0 / 256;

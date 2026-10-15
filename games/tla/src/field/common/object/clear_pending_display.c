@@ -3,10 +3,10 @@
 #include "ram_buffer.h"
 
 struct DisplayBlock {
-    u8 unknown_000[0x18a];
+    u8 unk000[0x18a];
     s8 mode;
     s8 pending;
-    u8 unknown_18c[0x40];
+    u8 unk18c[0x40];
     u8 *object;
 };
 
@@ -30,9 +30,9 @@ void *Func_080cb8e8(void)
     void **event;
 
     asm volatile("" : "+l"(party)); /* FAKEMATCH: the party state address is loaded first; without the barrier the two constants beside it are begun before it (2 differ) */
-    event = Ram_HeapSlots->event_work;
-    if (party->owner_override == 0) {
-        s32 offset = party->current_owner * 4;
+    event = Ram_HeapSlots->eventWork;
+    if (party->ownerOverride == 0) {
+        s32 offset = party->currentOwner * 4;
 
         offset += 20;
         event = *(void **)((u8 *)event + offset);

@@ -30,7 +30,7 @@ void BattleFx_StartWindowHBlankDma(void)
 	/* FAKEMATCH: the one-pass block loads the transition work before the page offset is started (differ 2 without it). */
 	do
 	{
-		work = Ram_HeapSlots->display_transition;
+		work = Ram_HeapSlots->displayTransition;
 	} while (0);
 	src = work->pages[work->page];
 	channel = REG_DMA0;

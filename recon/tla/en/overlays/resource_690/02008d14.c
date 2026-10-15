@@ -14,7 +14,7 @@ extern u16 Data_02002c80[16];
 
 void Func_02000d14(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     if (*(s16 *)(work + 358) == 0 && *(s8 *)(work + 0xca4) == 0) {
         s32 phase;

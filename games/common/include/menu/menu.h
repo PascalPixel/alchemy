@@ -108,7 +108,7 @@ extern u8		 Workspace_StatusTitle[];
 extern const u16 WorkspaceOptions_SliderPalette[];
 extern const u8	 WorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
-struct BattleAct *Ability_GetData(s32 action_id);
+struct BattleAct *Ability_GetData(s32 actionId);
 #endif
 #ifndef OWN_Djinn_ListOwnerEntries
 #endif
@@ -120,7 +120,7 @@ struct BattleAct *Ability_GetData(s32 action_id);
 #endif
 #ifndef OWN_InventoryMenu_ShowModalMessage
 #endif
-s32 Item_FindSlot(s32 unit_id, s32 item_id);
+s32 Item_FindSlot(s32 unitId, s32 item_id);
 #ifndef OWN_LinkLobby_PollPeerReady
 #endif
 #ifndef OWN_Menu_DrawPageIndicator

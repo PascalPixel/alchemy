@@ -4,10 +4,10 @@
 #include "types.h"
 
 struct BattleFormationRecord {
-    u16 member_ids[5];
-    u8 minimum_counts[5];
-    u8 maximum_counts[5];
-    u8 unknown_14[4];
+    u16 memberIds[5];
+    u8 minimumCounts[5];
+    u8 maximumCounts[5];
+    u8 unk14[4];
 };
 
 extern struct BattleFormationRecord BattleFormation_Records[];

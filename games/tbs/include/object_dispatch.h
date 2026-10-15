@@ -6,29 +6,29 @@
 
 struct DispatchObject
 {
-	u32 value_00;
-	s16 value_04;
-	u8	unknown_06[0x2a];
-	s32 value_30;
-	s32 value_34;
-	u8	unknown_38[0x18];
+	u32 value00;
+	s16 value04;
+	u8	unk06[0x2a];
+	s32 value30;
+	s32 value34;
+	u8	unk38[0x18];
 	union
 	{
 		void  *child;
 		void **children;
 	} target;
 	u8	kind;
-	u8	unknown_55[2];
-	u8	value_57;
-	u8	unknown_58[3];
-	u8	value_5b;
-	u8	unknown_5c;
-	u8	value_5d;
-	u8	unknown_5e[6];
-	s16 value_64;
-	u8	unknown_66[2];
+	u8	unk55[2];
+	u8	value57;
+	u8	unk58[3];
+	u8	value5b;
+	u8	unk5c;
+	u8	value5d;
+	u8	unk5e[6];
+	s16 value64;
+	u8	unk66[2];
 	s32 argument;
-	u8	unknown_6c[4];
+	u8	unk6c[4];
 };
 
 extern const s32 ObjectDispatch_Table0Script[];

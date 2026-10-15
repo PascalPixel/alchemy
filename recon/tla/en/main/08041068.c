@@ -10,14 +10,14 @@ struct RenderInput;
 
 struct ScreenWork
 {
-	u8	  unknown_000[0x5a4];
+	u8	  unk000[0x5a4];
 	void *cursor;
 };
 
 struct ScreenLine
 {
 	const u8 *text;
-	s32		  unknown_4;
+	s32		  unk4;
 };
 
 extern struct ScreenLine DebugWarp_Presets[];
@@ -30,7 +30,7 @@ void			   *RenderOutput_Create(s32 slot, s32 attributes, struct RenderInput *win
 
 struct RenderInput *Func_08041068(void)
 {
-	struct ScreenWork  *work = Ram_HeapSlots->unknown_d0[0];
+	struct ScreenWork  *work = Ram_HeapSlots->unkd0[0];
 	struct RenderInput *window;
 	struct ScreenLine  *line;
 	s32					i;

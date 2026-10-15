@@ -17,18 +17,18 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
 {
     struct BattlePresentationWork work;
 
-    if (Ram_HeapSlots->transition_work->target_yaw == 0x2000)
+    if (Ram_HeapSlots->transitionWork->targetYaw == 0x2000)
     {
-        Ram_HeapSlots->transition_work->target_yaw = 0x2000;
+        Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
         WaitFrames(10);
     }
     else
     {
-        Ram_HeapSlots->transition_work->target_yaw = 0x2000;
+        Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
         WaitFrames(30);
     }
 
-    work.actor = input->unit_id;
+    work.actor = input->unitId;
     if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
 

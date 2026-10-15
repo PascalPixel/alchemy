@@ -8,33 +8,33 @@
 #include "callback_scheduler.h"
 
 struct DepthSprite {
-    u8 unknown_00[5];
-    u8 unknown_05_0 : 5;
+    u8 unk00[5];
+    u8 unk05_0 : 5;
     u8 hidden : 1;
-    u8 unknown_05_6 : 2;
-    u8 unknown_06[3];
-    u8 unknown_09_0 : 2;
+    u8 unk05_6 : 2;
+    u8 unk06[3];
+    u8 unk09_0 : 2;
     u8 priority : 2;
     u8 layer : 4;
-    u8 unknown_0a[2];
+    u8 unk0a[2];
     s32 x;
     s32 y;
-    u8 unknown_14[4];
+    u8 unk14[4];
     s32 scale;
-    u8 unknown_1c[2];
+    u8 unk1c[2];
     u16 frame;
-    u8 unknown_20[8];
+    u8 unk20[8];
 };
 
 struct DepthScene {
     u16 mode;
-    u8 unknown_02[2];
+    u8 unk02[2];
     s32 x;
-    u8 unknown_08[8];
-    struct ObjectRuntime *main_object;
-    u8 unknown_14[0x7b4];
+    u8 unk08[8];
+    struct ObjectRuntime *mainObject;
+    u8 unk14[0x7b4];
     struct DepthSprite sprite;
-    s16 vram_slot;
+    s16 vramSlot;
     s16 active;
 };
 
@@ -44,8 +44,8 @@ void Camera_WorldToScreen(s32 *position);
 
 void Func_080dba5c(void)
 {
-    struct DepthScene *scene = Ram_HeapSlots->effect_work;
-    struct ObjectRuntime *main_object;
+    struct DepthScene *scene = Ram_HeapSlots->effectWork;
+    struct ObjectRuntime *mainObject;
     struct DepthSprite *sprite;
     s32 position[3];
     void *buffer;
@@ -53,7 +53,7 @@ void Func_080dba5c(void)
     s32 tiles;
     s32 zero;
 
-    main_object = scene->main_object;
+    mainObject = scene->mainObject;
     if (scene->mode == 0xc000) {
         scene->active = 1;
         buffer = MemAlloc(0x200);
@@ -62,7 +62,7 @@ void Func_080dba5c(void)
         tiles = VramBlock_LoadCached(slot, 0x200, buffer);
         /* FAKEMATCH: ⚓️ forms the frame zero here, apart from the fill value */
         asm("" : "=l"(zero) : "0"(0));
-        scene->vram_slot = slot;
+        scene->vramSlot = slot;
         MemFree(buffer);
         sprite = &scene->sprite;
         Func_080eaf98(sprite, 16, 31, 0x80000000, tiles);
@@ -72,8 +72,8 @@ void Func_080dba5c(void)
         sprite->layer = 0;
         sprite->scale = 0x20000;
         position[0] = scene->x;
-        position[1] = main_object->y + 0x1c0000;
-        position[2] = main_object->z;
+        position[1] = mainObject->y + 0x1c0000;
+        position[2] = mainObject->z;
         Camera_WorldToScreen(position);
         sprite->x = position[0];
         sprite->y = position[2];
@@ -83,11 +83,11 @@ void Func_080dba5c(void)
 
 void Func_080dbb40(void)
 {
-    struct DepthScene *scene = Ram_HeapSlots->effect_work;
+    struct DepthScene *scene = Ram_HeapSlots->effectWork;
 
     if (scene->active != 0) {
         scene->active = 0;
         Scheduler_RemoveCallback(Func_080dba44);
-        Resource_ResetEntry(scene->vram_slot);
+        Resource_ResetEntry(scene->vramSlot);
     }
 }

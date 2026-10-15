@@ -50,7 +50,7 @@ static void MercuryEntrance_RunDoorScene(void);
 struct WorkPointers
 {
 	u8 *event;
-	u8 *unknown_04[7];
+	u8 *unk04[7];
 	u8 *scene;
 };
 
@@ -250,7 +250,7 @@ static void MercuryEntrance_OpenEntrance(void)
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_MercuryEntrance, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
@@ -276,23 +276,23 @@ s32 MercuryEntrance_ApplyEntryState(void)
 	}
 	Mercury_SpawnLightObjects(21, (struct MercuryLights *)gSceneState);
 	GameFlag_Set(0x111);
-	gGameState.retreat_entrance = 11;
-	gGameState.retreat_scene = (s32)&SceneId_MercuryLighthouse4;
+	gGameState.retreatEntrance = 11;
+	gGameState.retreatScene = (s32)&SceneId_MercuryLighthouse4;
 	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
 		FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
 	else
 		Mercury_ClearPalette();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	switch (gGameState.entrance)
 	{
 	case 1:
 		if (!GameFlag_IsSet(0x872))
 			Engine_EventRequestExit(20);
 	case 2:
-		Actor_Get(12)->scale_x = -0x10000;
-		Actor_Get(13)->scale_x = -0x10000;
-		Actor_Get(14)->scale_x = -0x10000;
+		Actor_Get(12)->scaleX = -0x10000;
+		Actor_Get(13)->scaleX = -0x10000;
+		Actor_Get(14)->scaleX = -0x10000;
 		Engine_TaskWait(1);
 		break;
 	case 7:
@@ -332,11 +332,11 @@ s32 MercuryEntrance_ApplyEntryState(void)
 		Actor_Get(0)->y.fixed = 0x820000;
 		Actor_Get(0)->gravity = 0x8000;
 		Actor_Get(0)->bounce = flag;
-		Actor_Get(0)->motion_flags = flag;
+		Actor_Get(0)->motionFlags = flag;
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(30);
-		Actor_Get(0)->motion_flags = 3;
+		Actor_Get(0)->motionFlags = 3;
 		Engine_AudioPlayCue(204);
 		Engine_EventWait(24);
 		actor = Actor_Get(0);
@@ -388,7 +388,7 @@ s32 MercuryEntrance_ApplyEntryState(void)
 		Engine_EventBegin();
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(120);
@@ -417,11 +417,11 @@ static void MercuryEntrance_CrossDoorway(void)
 
 	Engine_EventBegin();
 	actor = Object_GetById(12);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	actor = Object_GetById(13);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	actor = Object_GetById(14);
-	actor->scale_x = -0x10000;
+	actor->scaleX = -0x10000;
 	Actor_SetPosition(3, 0x880000, 0xb80000);
 	Actor_SetPosition(0, 0x880000, 0x1280000);
 	Actor_SetPosition(8, 0x880000, 0x980000);
@@ -433,7 +433,7 @@ static void MercuryEntrance_CrossDoorway(void)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorRunRepeatedMotion(3, 1);
-	Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	for (i = 0; i < 2; i++)
 	{
@@ -444,12 +444,12 @@ static void MercuryEntrance_CrossDoorway(void)
 		Actor_FaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
 		ivan = Object_GetById(3);
-		ivan->steering_flags &= ~ACTOR_FACES_MOTION;
+		ivan->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(10);
 		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
-		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
 		Engine_EventWait(30);
 		Engine_ActorWalkTo(3, 120, 168);
 		Engine_EventWait(5);
@@ -458,13 +458,13 @@ static void MercuryEntrance_CrossDoorway(void)
 		Engine_ActorFaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
 		Engine_EventWait(15);
-		Object_GetById(3)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(15);
 		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
 		Engine_ActorRunRepeatedMotion(3, 1);
-		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
 	}
 	Engine_EventWait(20);
 	Engine_ActorShowEmote(3, 0x102, 60);
@@ -487,14 +487,14 @@ static void MercuryEntrance_RunDoorScene(void)
 		GameFlag_Set(0x250);
 		Engine_EventBegin();
 		record = Actor_Get(12);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		record = Object_GetById(13);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		record = Actor_Get(14);
-		record->scale_x = -0x10000;
+		record->scaleX = -0x10000;
 		Actor_SetPosition(MIA, 0x880000, 0x900000);
 		Actor_FaceDirection(MIA, 0x4000, 10);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(60);
@@ -507,7 +507,7 @@ static void MercuryEntrance_RunDoorScene(void)
 		Engine_ActorWaitForMove(MIA);
 		Actor_SetPosition(MIA, 0, 0);
 		GameFlag_Set(0x872);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 		Engine_EventEnd();
 	}
 }
@@ -524,9 +524,9 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 		struct FieldSprite *sprite = obj->sprite;
 
 		Engine_ObjectSetScript(obj, MercuryEntrance_RiseScript);
-		obj->motion_flags = 0;
-		obj->terrain_id = 1;
-		obj->priority_flags = 2;
+		obj->motionFlags = 0;
+		obj->terrainId = 1;
+		obj->priorityFlags = 2;
 		if (sprite != 0)
 		{
 			AnimationObjects_SelectAnimation(sprite, 2);

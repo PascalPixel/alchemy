@@ -26,11 +26,11 @@ enum
 
 struct Resource373Actor
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 field08;
 	s32 field0c;
 	s32 field10;
-	u8	unknown_14[0x41];
+	u8	unk14[0x41];
 	u8	flag55;
 };
 
@@ -63,19 +63,19 @@ struct StagedParticle
 
 struct Resource373Emitter
 {
-	u8	unknown_00[6];
+	u8	unk00[6];
 	u16 field06;
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	unknown_14[4];
+	u8	unk14[4];
 	s32 field18;
 	s32 field1c;
-	u8	unknown_20[4];
+	u8	unk20[4];
 	s32 field24;
 	s32 field28;
 	s32 field2c;
-	u8	unknown_30[8];
+	u8	unk30[8];
 	s32 field38;
 	s32 field3c;
 	s32 field40;
@@ -83,14 +83,14 @@ struct Resource373Emitter
 
 struct Resource373Particle
 {
-	u8	unknown_00[0x28];
+	u8	unk00[0x28];
 	s32 lifetime;
-	u8	unknown_2c[4];
+	u8	unk2c[4];
 	s32 field30;
 	s32 field34;
-	u8	unknown_38[0x10];
+	u8	unk38[0x10];
 	s32 field48;
-	u8	unknown_4c[9];
+	u8	unk4c[9];
 	u8	field55;
 };
 

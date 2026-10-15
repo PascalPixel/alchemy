@@ -4,7 +4,7 @@
 
 void Func_02000918(u16 *list)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
 
     goto next;
     do
@@ -12,7 +12,7 @@ void Func_02000918(u16 *list)
         struct FieldActor *object = Object_GetById(list[0]);
 
         if (GameFlag_Test(list[2]))
-            map->layers[2].cells[Func_020041e0(object)].collision_code = 255;
+            map->layers[2].cells[Func_020041e0(object)].collisionCode = 255;
         list += 3;
     next:;
     } while (*list != 0xffff);

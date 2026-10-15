@@ -4,18 +4,18 @@
 void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer)
 {
     struct FieldActor *object = Object_GetById(id);
-    struct MapCell *cell = Ram_HeapSlots->map_work->layers[layer].cells;
+    struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
     cell += Func_020041e0(object);
     if (GameFlag_Test(flag)) {
         /* FAKEMATCH: the flags are read before the cell store and ORed into the register that holds 2, as the native does; as one |= the 0 for the cell is built before the read */
-        u8 flags = object->priority_flags;
+        u8 flags = object->priorityFlags;
         s32 bits;
 
-        cell->collision_code = 0;
+        cell->collisionCode = 0;
         bits = 2;
         bits |= flags;
-        object->priority_flags = bits;
+        object->priorityFlags = bits;
         switch (kind) {
         case 0:
             Func_02003fa8(object, 2);
@@ -28,7 +28,7 @@ void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer)
             break;
         }
     } else {
-        cell->collision_code = 255;
+        cell->collisionCode = 255;
         switch (kind) {
         case 0:
             Func_02003fa8(object, 1);

@@ -26,8 +26,8 @@ struct LinkPeer {
 };
 
 struct LobbyEventWork {
-    u8 unknown_000[0x16a];
-    s16 raised_trigger;
+    u8 unk000[0x16a];
+    s16 raisedTrigger;
 };
 
 extern struct LinkPeer gLinkPeerSignatures[4];
@@ -64,12 +64,12 @@ s32 Func_02000134(void)
     s32 result;
     s32 i;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     result = 1;
     if (((struct ObjectRuntime *)Object_GetById(4))->z > 0xe00000) {
         GameFlag_ClearBit(0x304);
     }
-    if (work->raised_trigger != 2) {
+    if (work->raisedTrigger != 2) {
         Func_0200006c(0);
         if (!GameFlag_Test(0x303)) {
             if (++Data_020022b8 > 25) {
@@ -87,7 +87,7 @@ s32 Func_02000134(void)
                 && (Func_0200006c(1) || Func_0200006c(2))) {
                 GameFlag_SetBit(0x201);
                 if (GameFlag_Test(0x202)) {
-                    work->raised_trigger = 1;
+                    work->raisedTrigger = 1;
                 }
                 result = 1;
             } else {
@@ -96,19 +96,19 @@ s32 Func_02000134(void)
             }
         }
         if (GameFlag_Test(0x201) && GameFlag_Test(0x202) && !GameFlag_Test(0x200)) {
-            work->raised_trigger = 1;
+            work->raisedTrigger = 1;
         }
     }
     if ((Flag_Test(0x201) || Flag_Test(0x202)) && !Flag_Test(0x173)
         && !Func_0200006c(0) && Data_020022b8 > 24) {
-        work->raised_trigger = 2;
+        work->raisedTrigger = 2;
         Flag_Set(0x205);
         Flag_Clear(0x201);
         Flag_Clear(0x202);
         LinkLobby_WriteSlotValue(4);
     }
     if (Flag_Test(0x205)) {
-        work->raised_trigger = 2;
+        work->raisedTrigger = 2;
     }
     return result;
 }
@@ -140,14 +140,14 @@ s32 Func_020002d8(void)
 
 s32 Func_02000344(void)
 {
-    struct LobbyEventWork *work = Ram_HeapSlots->event_work;
+    struct LobbyEventWork *work = Ram_HeapSlots->eventWork;
 
     LinkLobby_WriteSlotValue(4);
     GameFlag_ClearBit(0x200);
     GameFlag_ClearBit(0x203);
     Func_02001a14();
     Func_02001ab4(0);
-    work->raised_trigger = 0;
+    work->raisedTrigger = 0;
     Func_02001a64((s32)MsgTheLinkWas);
     UiText_OpenMessageAtObject(8, 0);
     GameFlag_ClearBit(0x205);

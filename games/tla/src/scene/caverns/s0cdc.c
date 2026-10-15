@@ -2,7 +2,7 @@
 
 s32 Func_02000c38(struct FieldActor *object, s16 *position)
 {
-    u8 *flags = &object->motion_flags;
+    u8 *flags = &object->motionFlags;
     s32 saved = *flags;
     s32 blocked = Func_020010b4(object, position);
 
@@ -18,7 +18,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
         Func_02001074(object, 7);
         object->speed = 0x30000;
         object->acceleration = 0x20000;
-        object->velocity_y = 0x40000;
+        object->velocityY = 0x40000;
         mask = 0x7e;
         mask &= *flags;
         *flags = mask;
@@ -27,7 +27,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
             struct PartyState *party = &gPartyState;
             s32 x = position[1];
             s32 z = position[5];
-            s32 owner = party->current_owner;
+            s32 owner = party->currentOwner;
 
             /* FAKEMATCH: the one-pass block keeps the party state's address loaded before the position (plain call: differ 2; owner read without the party pointer: differ 12). */
             do {
@@ -45,7 +45,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
 
 void Func_02000cdc(void)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
     s32 position[3];
     s32 x;
 

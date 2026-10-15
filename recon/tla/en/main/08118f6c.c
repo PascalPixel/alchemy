@@ -11,7 +11,7 @@
 #include "battle_unit.h"
 
 struct BattleSummonState *Trade_GetOfferStateFar(s32 owner);
-struct BattleUnit *UnitGet(s32 unit_id);
+struct BattleUnit *UnitGet(s32 unitId);
 
 void Func_08118f6c(void)
 {
@@ -19,10 +19,10 @@ void Func_08118f6c(void)
     u16 party_members[10];
     s32 party_size;
     s32 element;
-    u32 available_mask;
+    u32 availableMask;
 
     party_size = BattleParty_PrepareActiveOwners(party_members);
-    available_mask = Trade_GetOfferStateFar(0)->available_mask & 0xffff0000;
+    availableMask = Trade_GetOfferStateFar(0)->availableMask & 0xffff0000;
 
     element = 0;
     do {
@@ -33,7 +33,7 @@ void Func_08118f6c(void)
             for (party_slot = 0; party_slot < party_size; party_slot++) {
                 struct BattleUnit *member = UnitGet(party_members[party_slot]);
 
-                totals[element] += member->djinn_owned_counts[element];
+                totals[element] += member->djinnOwnedCounts[element];
             }
         }
         element++;
@@ -45,7 +45,7 @@ void Func_08118f6c(void)
         s32 elements_met;
 
         if (summon != 0) {
-            const u8 *required = summon->djinn_required;
+            const u8 *required = summon->djinnRequired;
 
             elements_met = 0;
             if (totals[0] >= required[0]) {
@@ -61,10 +61,10 @@ void Func_08118f6c(void)
             }
 
             if (elements_met == 4)
-                available_mask |= 1u << element;
+                availableMask |= 1u << element;
         }
         element++;
     } while (element <= 15);
 
-    Trade_GetOfferStateFar(0)->available_mask = available_mask;
+    Trade_GetOfferStateFar(0)->availableMask = availableMask;
 }

@@ -4,7 +4,7 @@
 
 void Func_0200063c(s32 x, s32 y)
 {
-    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
     struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
     struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
     u8 i;

@@ -5,7 +5,7 @@
 
 struct MapBits
 {
-	u8 unknown_00[23];
+	u8 unk00[23];
 	u8 low : 2;
 	u8 mode : 2;
 };
@@ -46,7 +46,7 @@ static __inline__ void Func_02001068_(s32 id, s32 x, s32 z, s32 speed)
 
 void Func_02000dc4(void)
 {
-	struct MapBits *map = (struct MapBits *)Ram_HeapSlots->map_work;
+	struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 	struct PartyState *party;
 
 	GameFlag_SetBit(0x9b4);
@@ -56,7 +56,7 @@ void Func_02000dc4(void)
 	party = &gPartyState;
 	/* FAKEMATCH: the native loads the party state's address before it starts the field offset; unforced the offset starts first (differ 2). */
 	asm volatile("" : "+l"(party));
-	Object_GetById(party->current_owner)->priority_flags |= 32;
+	Object_GetById(party->currentOwner)->priorityFlags |= 32;
 	Scheduler_AddOrUpdateCallback_(Func_02000c14, 0x480);
 	Scheduler_AddOrUpdateCallback_(Func_02000bb8, 0x480);
 	ObjectDispatch_SetSingleChildFlags(Object_GetById(17), 0);
@@ -77,10 +77,10 @@ void Func_02000dc4(void)
 
 			Func_02001068_(23, 0x1f80000, 0x1680000, speed << 6);
 		}
-		Object_LinkObjectAndSetCallback(19, party->current_owner);
-		Object_LinkObjectAndSetCallback(20, party->current_owner);
-		Object_LinkObjectAndSetCallback(21, party->current_owner);
-		Object_LinkObjectAndSetCallback(22, party->current_owner);
+		Object_LinkObjectAndSetCallback(19, party->currentOwner);
+		Object_LinkObjectAndSetCallback(20, party->currentOwner);
+		Object_LinkObjectAndSetCallback(21, party->currentOwner);
+		Object_LinkObjectAndSetCallback(22, party->currentOwner);
 	}
 }
 

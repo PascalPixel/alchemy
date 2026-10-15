@@ -61,8 +61,8 @@ typedef struct
 
 struct SelectedSubject
 {
-	u8	pad_000[500];
-	s32 selected_subject;
+	u8	pad000[500];
+	s32 selectedSubject;
 };
 
 // 表を符号付き半語で読む見方
@@ -73,20 +73,20 @@ static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 	switch (obj->timer)
 	{
 	case 6:
-		obj->scale_x += 0xffffc000;
-		obj->scale_y += 0x2000;
+		obj->scaleX += 0xffffc000;
+		obj->scaleY += 0x2000;
 		break;
 	case 4:
-		obj->scale_x += 0x2000;
-		obj->scale_y -= 0x1000;
+		obj->scaleX += 0x2000;
+		obj->scaleY -= 0x1000;
 		break;
 	case 2:
-		obj->scale_x += 0x1000;
-		obj->scale_y += 0xfffff800;
+		obj->scaleX += 0x1000;
+		obj->scaleY += 0xfffff800;
 		break;
 	case 0:
-		obj->scale_x += 0x1000;
-		obj->scale_y += 0xfffff800;
+		obj->scaleX += 0x1000;
+		obj->scaleY += 0xfffff800;
 		if ((s16)obj->work != 0)
 		{
 			obj->timer = (u32)Engine_RandomNext() % 40 + 40;
@@ -293,7 +293,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Engine_ActorStartRepeatedMotion(8, 2);
 			Engine_EventShowMessage(8, 0);
 			actor8_record = Object_GetById(8);
-			actor8_record->collision_flags ^= 0x2;
+			actor8_record->collisionFlags ^= 0x2;
 			GameFlag_Set(0x82c);
 			Engine_EventEnd();
 		}
@@ -419,10 +419,10 @@ static void Imil_RunExitDoor(void)
 		actor = Object_GetById(i);
 		if (actor != NULL)
 		{
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 		}
 	}
-	exit = (s16)(event->touched_trigger - 50);
+	exit = (s16)(event->touchedTrigger - 50);
 	if (exit == 6)
 	{
 		Engine_AudioPlayCue(188);
@@ -438,7 +438,7 @@ static void Imil_RunExitDoor(void)
 		Engine_MapAnimateCells(Imil_ExitCellSteps[exit - 1], x, y);
 	}
 	Actor_SetSpeed(0, 0x8000, 0x4000);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if (exit == 6)
 	{
 		Actor_SetSpeed(0, 0x3333, 0x1999);
@@ -448,7 +448,7 @@ static void Imil_RunExitDoor(void)
 	}
 	else
 	{
-		Object_GetById(0)->motion_flags = 0;
+		Object_GetById(0)->motionFlags = 0;
 		Actor_CenterAndWalk(0, 3, -16);
 	}
 	Engine_EventWait(16);
@@ -650,7 +650,7 @@ s32 Imil_ApplyEntryState(void)
 	if (gGameState.scene == (s32)&SceneId_Imil1)
 	{
 		leader = Object_GetById(0);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Engine_ActorSetAnimation(10, 9);
 		if (GameFlag_IsSet(0x109))
 		{
@@ -673,12 +673,12 @@ s32 Imil_ApplyEntryState(void)
 	}
 	else if (gGameState.scene == (s32)&SceneId_Imil2)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		entrance = gGameState.entrance;
 		if (entrance == 1)
 		{
 			Engine_ActorSetChildValue(21, 15);
-			Object_GetById(21)->collision_flags |= 8;
+			Object_GetById(21)->collisionFlags |= 8;
 			Engine_ActorSetSpritePriority(21, 1);
 			if (Engine_GameFlagIsSet(0x881))
 			{
@@ -735,16 +735,16 @@ s32 Imil_ApplyEntryState(void)
 			{
 				Actor_SetPosition(12, 0x16c0000, 0x2420000);
 				Engine_ActorSetSpritePriority(12, 2);
-				Object_GetById(12)->collision_flags |= 4;
+				Object_GetById(12)->collisionFlags |= 4;
 				Map_CopyCellsTo(6, 125, 22, 88, 3, 3);
 				Actor_SetPosition(13, 0x1ec0000, 0x2420000);
 				Engine_ActorSetSpritePriority(13, 2);
-				Object_GetById(13)->collision_flags |= 4;
+				Object_GetById(13)->collisionFlags |= 4;
 				Map_CopyCellsTo(9, 125, 28, 88, 3, 3);
 			}
 			else
 			{
-				Object_GetById(12)->scale_x = -0x10000;
+				Object_GetById(12)->scaleX = -0x10000;
 				Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
 				Engine_ActorSetAnimation(12, 5);
 				Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
@@ -757,7 +757,7 @@ s32 Imil_ApplyEntryState(void)
 			{
 				Actor_SetPosition(15, 0x1cc0000, 0x1020000);
 				Engine_ActorSetSpritePriority(15, 2);
-				Object_GetById(15)->collision_flags |= 4;
+				Object_GetById(15)->collisionFlags |= 4;
 				Engine_ActorSetPosition(14, 0x1980000, 0x1080000);
 				Object_GetById(14)->facing = 0x1000;
 				Map_CopyCellsTo(12, 125, 26, 70, 3, 3);
@@ -766,8 +766,8 @@ s32 Imil_ApplyEntryState(void)
 			{
 				Actor_SetPosition(14, 0x1cc0000, 0x1020000);
 				Engine_ActorSetSpritePriority(14, 2);
-				Object_GetById(14)->collision_flags |= 4;
-				Object_GetById(15)->scale_x = -0x10000;
+				Object_GetById(14)->collisionFlags |= 4;
+				Object_GetById(15)->scaleX = -0x10000;
 				Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
 				Engine_ActorSetAnimation(15, 5);
 			}
@@ -805,8 +805,8 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Camera_SetSpeed(0x4ccc, 0x999);
 	Camera_MoveTo(0x8c0000, -1, 0xa40000, 1);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 40;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 40;
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
 	Actor_SetSpeed(GARET, 0x6666, 0x3333);
@@ -936,17 +936,17 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Actor_SetSpeed(GARET, 0x40000, 0x20000);
 	Actor_SetSpeed(IVAN, 0x40000, 0x20000);
 	Event_PlayCue(152);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(2)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(2)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
 	Actor_SetDestination(GARET, 136, 221);
 	Actor_SetDestination(IVAN, 122, 238);
 	Object_RefreshSelectorById(3);
 	Engine_EventWait(80);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(2)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(2)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
 	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
@@ -955,8 +955,8 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Object_SetActionCallbackAndRefreshById(2, table);
 	Engine_EventWait(20);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	work->transition_frames = 24;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	work->transitionFrames = 24;
 	Engine_GameFlagSet(0x82b);
 	Engine_EventEnd();
 }
@@ -1014,10 +1014,10 @@ static void Imil_SwayAndSpark(struct FieldActor *actor)
 			spark->sprite->priority = 0;
 			Engine_ActorSetSpriteFlags(spark, 0);
 			Object_SetMode(spark, 1);
-			spark->scale_x = 0x9999;
-			spark->scale_y = 0x9999;
-			spark->priority_flags = 2;
-			spark->motion_flags = 0;
+			spark->scaleX = 0x9999;
+			spark->scaleY = 0x9999;
+			spark->priorityFlags = 2;
+			spark->motionFlags = 0;
 			ObjectGroup_SetChildValue(spark, 9);
 			Engine_ObjectSetScript(spark, Imil_SparkScript);
 		}
@@ -1049,9 +1049,9 @@ static void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work)
 {
 	struct FieldSpritePriority *rec;
 
-	work->motion_flags = 0;
+	work->motionFlags = 0;
 	work->timer = 0;
-	work->priority_flags &= ~1;
+	work->priorityFlags &= ~1;
 
 	rec = (struct FieldSpritePriority *)work->sprite;
 	rec->priority = 1;
@@ -1059,16 +1059,16 @@ static void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work)
 	ObjectGroup_SetChildValue(work, 9);
 	Engine_ActorSetSpriteFlags(work, 0);
 
-	work->scale_x = 0x8000;
-	work->scale_y = 0x8000;
+	work->scaleX = 0x8000;
+	work->scaleY = 0x8000;
 }
 
 static void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 {
 	object->effect.x += (s16)object->effect.spin << 8;
 	object->effect.y += 0x8000;
-	object->effect.scale_x += 0x7ae;
-	object->effect.scale_y += 0x7ae;
+	object->effect.scaleX += 0x7ae;
+	object->effect.scaleY += 0x7ae;
 	object->effect.spin += 2;
 	if (--object->effect.countdown == 0)
 	{
@@ -1241,12 +1241,12 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 	Engine_ActorWalkTo(0, 0x2b2, 200);
 
-	Battle_GetWorkObject1e0()->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motionFlags = 0;
 	Engine_CameraSetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
 	work = gEventWork;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	work->transition_frames = 48;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 48;
 	Engine_EventOpenScreen();
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1303,10 +1303,10 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Actor_FaceDirection(19, 0x5000, 0);
 	Actor_FaceDirection(20, 0x3000, 20);
 	Actor_SetSpeed(20, 0x10000, 0x8000);
-	Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(20, 0x290, 166);
 	Engine_EventWait(1);
-	Object_GetById(20)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(20)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4014, 0, 10);
 	Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -1363,11 +1363,11 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(MIA, 0x2b0, 200);
 	Actor_SetPosition(MIA, 0, 0);
-	Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(20, 0x284, 166);
 	Engine_EventWait(1);
 	*(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET) |= 1;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	GameFlag_Set(0x82e);
 	GameFlag_Clear(0x82d);
 	Engine_EventEnd();
@@ -1422,7 +1422,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 	s32					 x;
 	u8					*p;
 
-	subject = Engine_ActorLookup(((struct SelectedSubject *)&gGameState)->selected_subject);
+	subject = Engine_ActorLookup(((struct SelectedSubject *)&gGameState)->selectedSubject);
 
 	for (;;)
 	{
@@ -1495,7 +1495,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 
 blocked:
 	subject->update = NULL;
-	subject->steering_flags |= 1;
+	subject->steeringFlags |= 1;
 
 	subject->acceleration = 0x4000;
 

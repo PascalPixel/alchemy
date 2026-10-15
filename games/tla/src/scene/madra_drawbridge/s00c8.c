@@ -63,19 +63,19 @@ void Func_020000c8(void)
         if (FlagCheck(0x301) == 0) {
             Func_02000328(0x18000, 0x3000);
             Motion_CamBounds(0xa40000, -1, 0x1040000, 1);
-            ObjPlace(gPartyState.current_owner, 158, 316);
+            ObjPlace(gPartyState.currentOwner, 158, 316);
         }
-        Object_GetById(8)->action_flags &= ~1;
-        Object_GetById(9)->action_flags &= ~1;
+        Object_GetById(8)->actionFlags &= ~1;
+        Object_GetById(9)->actionFlags &= ~1;
         ObjectMotion_ResetAndSetPositionInMode2(9, 148, 252);
         ObjectMotion_SetPositionAndReset(8, 170, 252);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Object_GetById(8)->action_flags |= 1;
-        Object_GetById(9)->action_flags |= 1;
+        Object_GetById(8)->actionFlags |= 1;
+        Object_GetById(9)->actionFlags |= 1;
         ObjArm(8, 0x4000, 0);
         ObjArm(9, 0x4000, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
         FlagSet(0x200);
         Func_02000338();
         MapCopyAttr(11, 9, 4, 1, 8, 14);

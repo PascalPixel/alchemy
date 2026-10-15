@@ -15,11 +15,11 @@ void Func_02000a80(void)
         if (object != NULL) {
             ObjectDispatch_SetSingleChildFlags(object, 0);
             object->update = Func_020009d0;
-            object->motion_flags = 0;
+            object->motionFlags = 0;
             object->action = -(s32)((u32)(Random16Far() * 16) >> 16) * 2 + 20;
-            object->unknown_66 = 0;
+            object->unk66 = 0;
             object->gravity = 0x1999;
-            object->velocity_y = 0x30000;
+            object->velocityY = 0x30000;
             object->angle = Random16Far();
         }
     }

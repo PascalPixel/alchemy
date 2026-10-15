@@ -62,7 +62,7 @@ void Func_020002c0(void)
     done = GameFlag_Test(0xf74);
     if (done == 0) {
         Call3((void (*)())Func_02000e8c, 64, 0x2910000, 0xf60000);
-        object->motion_flags = done;
+        object->motionFlags = done;
         object->y = 0x500000;
     }
 }
@@ -81,13 +81,13 @@ void Func_02000314(void)
     if (object != NULL && object->x != 0) {
         Func_02000edc(0x1040);
     } else if (GameFlag_Test(0xf74) == 0) {
-        struct EventWork *work = Ram_HeapSlots->event_work;
+        struct EventWork *work = Ram_HeapSlots->eventWork;
 
         /* FAKEMATCH: a one-pass block keeps the work pointer load before the message arguments (one reordered row). */
         do {
         } while (0);
         UiText_ShowPositionedMessageAndWait(MsgIMSensing, 1);
-        work->unknown_15a = 1;
+        work->unk15a = 1;
     } else {
         UiText_ShowPositionedMessageAndWait(MsgICanT, 1);
     }

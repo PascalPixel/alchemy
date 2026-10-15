@@ -2,15 +2,15 @@
 #include "object_runtime.h"
 
 struct YampiDesertVisual {
-    u8 unknown_00[5];
-    u8 flags_05;
-    u8 unknown_06[3];
-    u8 flags_09;
-    u8 unknown_0a[6];
-    u8 tile_slot;
-    u8 unknown_11[9];
-    u8 value_1a;
-    u8 value_1b;
+    u8 unk00[5];
+    u8 flags05;
+    u8 unk06[3];
+    u8 flags09;
+    u8 unk0a[6];
+    u8 tileSlot;
+    u8 unk11[9];
+    u8 value1a;
+    u8 value1b;
 };
 
 struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
@@ -36,9 +36,9 @@ struct ObjectRuntime *Func_02001b70(void)
             s32 keep = 33;
 
             keep = -keep;
-            visual->flags_05 &= keep;
+            visual->flags05 &= keep;
         }
-        mask = visual->flags_09 & 0x0f;
+        mask = visual->flags09 & 0x0f;
         {
             s32 clear = 13;
 
@@ -46,14 +46,14 @@ struct ObjectRuntime *Func_02001b70(void)
             mask &= clear;
         }
         mask |= 4;
-        visual->flags_09 = mask;
-        object->motion_flags = 0;
-        object->unknown_5c[0] = 1;
-        visual->value_1a = 0;
-        visual->value_1b = 0;
+        visual->flags09 = mask;
+        object->motionFlags = 0;
+        object->unk5c[0] = 1;
+        visual->value1a = 0;
+        visual->value1b = 0;
         buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02004030(209);
-        VramBlock_LoadCached(visual->tile_slot, 128, buffer + 0x400);
+        VramBlock_LoadCached(visual->tileSlot, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
     return object;

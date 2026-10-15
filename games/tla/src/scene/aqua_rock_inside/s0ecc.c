@@ -9,12 +9,12 @@ void Func_02000ecc(s32 unused, s32 id)
     struct ObjectRuntime *object = Object_GetById(id);
 
     if (object->x >> 20 == 49) {
-        s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x140);
+        s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
         s32 i;
 
         Func_02003d7c();
         Func_02003eac(0);
-        ObjectMotion_ArmCallback_(gPartyState.current_owner, 0x4000, 0);
+        ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0x4000, 0);
         Func_02003ef4(0x22d);
         Object_SetModeById(9, 2);
         Func_02003d24_(114, 39, 1, 2, 113, 39);
@@ -28,8 +28,8 @@ place:
         object = Object_GetById(i);
         object->x = object->action << 16;
         object->z = *(s16 *)((u8 *)object + 102) << 16;
-        object->motion_flags = 0;
-        object->terrain_height = -0x200000;
+        object->motionFlags = 0;
+        object->terrainHeight = -0x200000;
         object->y = -0x200000;
         ObjectMotion_SetActionVariant(i, 3);
         i++;

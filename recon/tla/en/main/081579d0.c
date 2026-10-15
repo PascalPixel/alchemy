@@ -51,9 +51,9 @@ void Func_081579d0(struct BattleEffectArgument *effect)
     s32 j;
     s32 angle;
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    sheet = Ram_HeapSlots->unk64[0];
     BattleFx_BeginCanvasLayer(0);
     REG_BLDALPHA = 0x1010;
     draw = blit;
@@ -61,8 +61,8 @@ void Func_081579d0(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, work->sheet + 0x320, 1, 0);
-    work->transfer_mode = 2;
-    work->transfer_value = 75;
+    work->transferMode = 2;
+    work->transferValue = 75;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
     for (i = 0; i != 32; i++) {
@@ -102,12 +102,12 @@ void Func_081579d0(struct BattleEffectArgument *effect)
                         speed = (Random16() & 0x1ff) + 256;
                         mote->x = ball->x << 16;
                         mote->y = ball->y << 16;
-                        mote->velocity_x = (Trig_Sin(dir) * speed) >> 7;
-                        mote->velocity_y = (Trig_Cos(dir) * speed) >> 6;
+                        mote->velocityX = (Trig_Sin(dir) * speed) >> 7;
+                        mote->velocityY = (Trig_Cos(dir) * speed) >> 6;
                         mote->variant = (Random16() & 15) + 32;
                     }
                     Audio_PlayCue(133);
-                    work->shake_frames = 4;
+                    work->shakeFrames = 4;
                     for (j = 0; j != effect->count; j++) {
                         Func_0814cd48(effect->actors[j], 7, 5, j, 6);
                         Func_08118088(effect->actors[j], 6);
@@ -129,7 +129,7 @@ void Func_081579d0(struct BattleEffectArgument *effect)
         }
         Func_08158ce0(4, 4);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
         angle -= 0x800;
         frame++;

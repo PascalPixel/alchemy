@@ -18,7 +18,7 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
         struct UiRenderWork *work;                                                   \
         s32 idx;                                                                     \
                                                                                      \
-        work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;                   \
+        work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;                   \
         idx = UiText_BuildRenderEntries(no, 0);                                      \
         if (work->entries[idx] == 0)                                                 \
         {                                                                            \

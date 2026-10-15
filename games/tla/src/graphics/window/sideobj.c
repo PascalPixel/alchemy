@@ -78,7 +78,7 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
     s32 offset;
     struct UiRenderWork *work;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     if (Localization_LookupEntryId(arg0) == -1) {
         return 0;
     }
@@ -104,21 +104,21 @@ void Func_0803d450(s32 id)
     s32 i;
     struct RenderOutput *entity;
 
-    state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     work = state->windows;
     id = Localization_LookupEntryId(id);
     if (id == -1)
         return;
 
-    if (state->resource_ids[1] == id) {
+    if (state->resourceIds[1] == id) {
         index = 1;
-    } else if (state->resource_ids[0] == id) {
+    } else if (state->resourceIds[0] == id) {
         index = 0;
     } else {
         return;
     }
 
-    id = state->output_ids[index];
+    id = state->outputIds[index];
 
     for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
         entity = work->output.head;

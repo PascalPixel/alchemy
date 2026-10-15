@@ -19,7 +19,7 @@ void Func_02002f1c(void)
     s32 angle;
     s32 i;
 
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 64;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 64;
     if (gPartyState.entrance == 2)
         GameFlag_ClearBit(0x12f);
     i = 11;
@@ -37,10 +37,10 @@ void Func_02002f1c(void)
         object = Object_GetById(10);
         Call3((void (*)())Func_02003edc, 10, 0xb00000, 0xa80000);
         Object_SetModeById(10, 4);
-        object->priority_flags |= 2;
-        object->motion_flags = 0;
+        object->priorityFlags |= 2;
+        object->motionFlags = 0;
         object->y = -0x80000;
-        object->terrain_height = -0x80000;
+        object->terrainHeight = -0x80000;
         Func_02003e24(9, 1, 4, 1, 9, 10);
         Func_02003e24(9, 64, 4, 1, 9, 74);
     } else {
@@ -49,15 +49,15 @@ void Func_02002f1c(void)
     if (!GameFlag_Test(0xaa2)) {
         Object_LinkObjectAndSetCallback(9, 19);
         Object_SetModeById(19, 0);
-        Object_GetById(19)->action_flags &= ~1;
+        Object_GetById(19)->actionFlags &= ~1;
     } else if (!GameFlag_Test(0x109)) {
         other = Object_GetById(9);
         other->angle = 0x5000;
-        other->collision_flags |= 0x80;
+        other->collisionFlags |= 0x80;
         /* FAKEMATCH: the angle in a temporary is built before the position (differ 4 as a constant argument). */
         angle = 0x3000;
         Func_02003ee4(19, 0xea0000, 0xcc0000, angle);
-        Object_GetById(19)->collision_flags |= 0x80;
+        Object_GetById(19)->collisionFlags |= 0x80;
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x20000, 0x10000);
         Call3((void (*)())ObjectMotion_SetSpeedParameters, 19, 0x19999, 0xcccc);
         ObjectMotion_EnableActionAndSetCallback(9, Data_02004274);
@@ -77,14 +77,14 @@ void Func_020030b4(void)
     if (GameFlag_Test(0xaa3)) {
         spawned = (struct ObjectRuntime *)Value4((s32 (*)())Func_02003df4, 489, 0x680000, 0x180000, 0xa00000);
         if (spawned != 0) {
-            spawned->motion_flags = 0;
+            spawned->motionFlags = 0;
             Func_02003e3c(spawned, 453);
             ObjectDispatch_SetSingleChildFlags(spawned, 0);
-            spawned->unknown_5c[0] = 1;
+            spawned->unk5c[0] = 1;
         }
         Call3((void (*)())Func_02003edc, 10, 0x680000, 0xcc0000);
     }
     ObjectMotion_SetActionVariant(11, 1);
     Object_SetPartAttribute(Object_GetById(11), 15);
-    Object_GetById(11)->priority_flags |= 2;
+    Object_GetById(11)->priorityFlags |= 2;
 }

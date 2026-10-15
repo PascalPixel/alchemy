@@ -20,7 +20,7 @@ void Func_02002094(u16 *row)
         s16 x = row[1];
         s16 z = row[2];
 
-        object->collision_flags &= 0xfe;
+        object->collisionFlags &= 0xfe;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         row += 3;
         Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));

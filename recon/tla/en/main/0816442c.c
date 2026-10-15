@@ -40,7 +40,7 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite, s32 *positio
 
 void Func_0816442c(s32 formation, s32 x, s32 z)
 {
-    struct BattleFxWork *work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
+    struct BattleFxWork *work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
     struct FormationScale normal = Data_08196e5c;
     struct FormationScale big = Data_08196e64;
     s32 pos[4];

@@ -3,7 +3,7 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
 void UiWork_ResetCounters(s32 x);
 void UiWork_DrawByAttributes(struct UiWindow *window);
@@ -36,8 +36,8 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
         found->x = x;
         found->output.head = NULL;
         found->state = 0;
-        found->output.tail_link = &slot->output.head;
-        found->unknown_10 = 1;
+        found->output.tailLink = &slot->output.head;
+        found->unk10 = 1;
         found->flags = 1;
         UiWork_ResetCounters(x);
         if (attrs & 8)

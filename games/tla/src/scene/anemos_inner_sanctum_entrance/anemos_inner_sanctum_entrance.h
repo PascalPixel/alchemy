@@ -9,10 +9,10 @@
 #include "scene_ids.h"
 
 struct AnemosInnerSanctumEntranceParty {
-    u8 unknown_000[0x24b];
-    u8 battle_rule;
-    u8 unknown_24c[8];
-    u16 battle_group;
+    u8 unk000[0x24b];
+    u8 battleRule;
+    u8 unk24c[8];
+    u16 battleGroup;
 };
 
 s32 GameFlag_Test(s32 flag);

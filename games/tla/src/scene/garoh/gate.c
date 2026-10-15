@@ -16,10 +16,10 @@ extern s32 Data_020061d0[];
 extern s32 Data_02006278[];
 
 struct EventWork {
-    u8 unknown_000[0x154];
-    s16 unknown_154;
-    u8 unknown_156[0x56];
-    s32 unknown_1ac;
+    u8 unk000[0x154];
+    s16 unk154;
+    u8 unk156[0x56];
+    s32 unk1ac;
 };
 
 extern s32 Data_0200632c;
@@ -37,13 +37,13 @@ static inline void CamMove(s32 x, s32 y, s32 z, s32 mode)
 
 void Func_02000960(void)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
     Func_02005394(123);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->unknown_1ac = 521;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk1ac = 521;
     CamMove(-1, -1, -1, 0);
     Flag_Set(0x121);
-    Func_020052c4(event->unknown_154);
+    Func_020052c4(event->unk154);
 }
 
 void Func_020009a4(void)

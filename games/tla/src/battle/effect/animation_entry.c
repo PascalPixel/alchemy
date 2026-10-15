@@ -6,7 +6,7 @@
 // none free it clears the entry at address 0.
 struct AnimationEntry *Func_0815b24c(void)
 {
-    struct AnimationEntry *entry = Ram_HeapSlots->unknown_0c[0];
+    struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
     struct AnimationEntry *found = NULL;
     s32 i = 0;
     /* FAKEMATCH: the script field's zero held from the start lives longest,
@@ -23,7 +23,7 @@ struct AnimationEntry *Func_0815b24c(void)
         i++;
         entry++;
     }
-    found->anim_id = 0;
+    found->animId = 0;
     found->scripts = NULL;
     found->frames = NULL;
     found->script = none;

@@ -1,6 +1,6 @@
 #include "garoh.h"
 
-void Func_02005194(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02005194(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_02005304(s32 a, s32 b);
 void Func_0200530c(s32 a, s32 b);
 void Func_02005314(void);

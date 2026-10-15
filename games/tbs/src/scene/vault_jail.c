@@ -196,7 +196,7 @@ s32 Scene_Initialize(void)
 {
 	s16 entrance;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	entrance = gGameState.entrance;
 
 	if (entrance == JAIL_ENTRANCE_FROM_LUNPA)
@@ -205,13 +205,13 @@ s32 Scene_Initialize(void)
 	}
 	else if (entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT)
 	{
-		Object_GetById(ACTOR_PRISONER)->collision_flags |= CELL_COLLISION_FLAGS;
+		Object_GetById(ACTOR_PRISONER)->collisionFlags |= CELL_COLLISION_FLAGS;
 	}
 	else
 	{
-		Object_GetById(ACTOR_THIEF_LEADER)->collision_flags |= CELL_COLLISION_FLAGS;
-		Object_GetById(ACTOR_LEFT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
-		Object_GetById(ACTOR_RIGHT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
+		Object_GetById(ACTOR_THIEF_LEADER)->collisionFlags |= CELL_COLLISION_FLAGS;
+		Object_GetById(ACTOR_LEFT_THIEF)->collisionFlags |= CELL_COLLISION_FLAGS;
+		Object_GetById(ACTOR_RIGHT_THIEF)->collisionFlags |= CELL_COLLISION_FLAGS;
 	}
 
 	return 0;

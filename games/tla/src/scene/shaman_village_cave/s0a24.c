@@ -34,7 +34,7 @@ void Object_LinkPair();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 
-#define EVENT_MESSAGE (((struct { u8 unknown_000[0x1c4]; s16 message; } *)Ram_HeapSlots->event_work)->message)
+#define EVENT_MESSAGE (((struct { u8 unk000[0x1c4]; s16 message; } *)Ram_HeapSlots->eventWork)->message)
 
 extern const u8 Data_020015e0[];
 extern const u8 Data_0200161c[];

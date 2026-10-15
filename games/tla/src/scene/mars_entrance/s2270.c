@@ -5,22 +5,22 @@
 #include "iwram_call.h"
 
 struct MarsEntranceAnimation {
-    u8 unknown_00[9];
-    u8 unused_09 : 2;
+    u8 unk00[9];
+    u8 unused09 : 2;
     u8 layer : 2;
-    u8 unknown_0a[6];
-    u8 value_10;
-    u8 flag_11 : 1;
+    u8 unk0a[6];
+    u8 value10;
+    u8 flag11 : 1;
     u16 angle;
 };
 
 struct MarsEntranceRideHead {
     s32 counter;
     s16 active;
-    u8 unknown_06[6];
-    u16 value_0c;
-    s16 value_0e;
-    u8 unknown_10[0x60];
+    u8 unk06[6];
+    u16 value0c;
+    s16 value0e;
+    u8 unk10[0x60];
     struct ObjectRuntime *handle;
 };
 
@@ -39,10 +39,10 @@ void Func_02002270(void)
     if (!GameFlag_Test(0x109))
         Iwram_ClearWords(work, 116);
     object = (struct ObjectRuntime *)Value4((s32 (*)())Func_02004bd8, 365, 1, 0, 0);
-    object->unknown_5c[0] = 2;
+    object->unk5c[0] = 2;
     Func_02004bc0(object, 1);
     animation = object->animation;
     work->handle = object;
-    work->value_0c = animation->value_10;
-    animation->flag_11 = 1;
+    work->value0c = animation->value10;
+    animation->flag11 = 1;
 }

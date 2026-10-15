@@ -25,7 +25,7 @@ extern const u8 Shop_QuantityTiles[];
 extern u8 MsgCoins[];
 
 struct UiSprite {
-    u8 unknown_00[24];
+    u8 unk00[24];
     u16 tile : 10;
     u16 flags : 6;
 };

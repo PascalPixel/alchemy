@@ -1,9 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
-struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };
+struct PendingAction { u8 unk00[6]; u8 eventKind; u8 unk07[9]; };
 struct PendingEventRecord { u32 key; u16 metadata; s16 condition; s32 action; };
-struct PendingEventList { u8 unknown_00[16]; struct PendingEventRecord *events; };
-struct PendingFacingObject { u8 unknown_00[6]; u16 facing; };
+struct PendingEventList { u8 unk00[16]; struct PendingEventRecord *events; };
+struct PendingFacingObject { u8 unk00[6]; u16 facing; };
 const struct PendingAction *BattleActGet(s32 action);
 struct PendingFacingObject *ObjectTable_Get(u32 owner);
 s32 EventRuntime_GetControlledOwner(void);
@@ -14,7 +14,7 @@ s32 Func_080cdac0(s32 kind, s32 owner, s32 target);
 
 struct PendingEventRecord *Func_080ce458(u32 filter, s32 kind, s32 selector)
 {
- struct PendingEventRecord *event = ((struct PendingEventList *)Ram_HeapSlots->event_work)->events;
+ struct PendingEventRecord *event = ((struct PendingEventList *)Ram_HeapSlots->eventWork)->events;
  s32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->facing;
  s32 low = selector & 255;
  s32 high = selector & 0xff00;
@@ -24,9 +24,9 @@ struct PendingEventRecord *Func_080ce458(u32 filter, s32 kind, s32 selector)
   s32 angle = (s16)event->metadata & 0xf000;
   s16 limited = event->metadata & 0x0800;
   s32 target = event->metadata & 255;
-  s32 event_kind = BattleActGet((event->key >> 8) & 255)->event_kind;
+  s32 eventKind = BattleActGet((event->key >> 8) & 255)->eventKind;
 
-  if ((event->key & 15) == 5 && event_kind == kind &&
+  if ((event->key & 15) == 5 && eventKind == kind &&
       GameFlag_IsConditionActive(event->condition)) {
    s32 distance = (s16)(angle - facing);
    if (distance < 0) distance = -distance;

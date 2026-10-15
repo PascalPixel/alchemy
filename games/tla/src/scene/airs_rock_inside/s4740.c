@@ -13,10 +13,10 @@ void Func_02004740(void)
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
     } else {
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 248, 107);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 248, 136);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 264, 136);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 107);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
         Battle_WaitMode0(10);
         Func_02004534();
     }
@@ -30,9 +30,9 @@ void Func_020047b0(void)
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
     } else {
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 280, 136);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 264, 136);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
         Battle_WaitMode0(10);
         Func_02004534();
     }
@@ -46,9 +46,9 @@ void Func_02004818(void)
         UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
         Func_02005e1c();
     } else {
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 248, 136);
-        ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 264, 136);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
+        ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
         Battle_WaitMode0(10);
         Func_02004534();
     }

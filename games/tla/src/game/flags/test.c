@@ -30,7 +30,7 @@ void *UnitGet(s32 owner)
         unit = (struct BattleUnit *)((u8 *)states + offset);
         return unit;
     }
-    if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unknown_d0[2]) != NULL) {
+    if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unkd0[2]) != NULL) {
         unit = &states[owner - 0x80];
         return unit;
     }

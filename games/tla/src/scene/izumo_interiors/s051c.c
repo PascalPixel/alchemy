@@ -64,7 +64,7 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames)
 static inline void LeaderAnimate(s32 animation, s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_0200226c(gPartyState.current_owner, animation, frames);
+    Func_0200226c(gPartyState.currentOwner, animation, frames);
 }
 
 s32 Func_0200051c(void)
@@ -92,10 +92,10 @@ s32 Func_0200051c(void)
         Func_02002244((s32)MsgSusaPleaseDon);
         Func_02002254(17, 0);
     }
-    Object_GetById(gPartyState.current_owner)->action_flags &= ~1;
-    ObjectMotion_OffsetPositionAndReset(gPartyState.current_owner, 0, 16);
-    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
-    Object_GetById(gPartyState.current_owner)->action_flags |= 1;
+    Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
+    ObjectMotion_OffsetPositionAndReset(gPartyState.currentOwner, 0, 16);
+    ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
+    Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
     Func_020021cc();
     return 0;
 }

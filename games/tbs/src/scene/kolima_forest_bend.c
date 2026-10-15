@@ -142,8 +142,8 @@ static void Scene_RepaintBoardRecords(void)
 		if (*gKolimaForestBendLayout == 1)
 		{
 			Object_SetMode(piece, 4);
-			piece->priority_flags = 3;
-			piece->motion_flags = 0;
+			piece->priorityFlags = 3;
+			piece->motionFlags = 0;
 			piece->y.fixed = 0x1a0000;
 
 			if (record[3] != 0)
@@ -158,8 +158,8 @@ static void Scene_RepaintBoardRecords(void)
 		else
 		{
 			Object_SetMode(piece, 1);
-			piece->priority_flags = 1;
-			piece->motion_flags = 2;
+			piece->priorityFlags = 1;
+			piece->motionFlags = 2;
 			piece->y.fixed = 0;
 		}
 		record += 6;
@@ -401,12 +401,12 @@ s32 KolimaForestBend_SetupBoard(void)
 	State_StampRecordCells(KolimaForestBend_DefaultRecords, 255);
 	Scene_RepaintBoardRecords();
 	Engine_ActorSetAnimation(9, 0);
-	Object_GetById(9)->motion_flags = 0;
+	Object_GetById(9)->motionFlags = 0;
 	actor = Object_GetById(10);
 	actor->radius = 8;
-	actor->scale_x = 0xc000;
-	actor->scale_y = 0xc000;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	actor->scaleX = 0xc000;
+	actor->scaleY = 0xc000;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x845) == 0)
 		SceneEffect_AdjustPaletteColors(4);
 	return 0;
@@ -437,12 +437,12 @@ static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry)
 		entry->actor = actor;
 		Object_SetMode(actor, 1);
 		Engine_ActorSetSpriteFlags(actor, 0);
-		actor->collision_flags = 0;
+		actor->collisionFlags = 0;
 		actor->radius = 32;
 		height = Map_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
 		/* FAKEMATCH: y is updated through an s32 lvalue; the coordinate union has an s16 member, which would order the next entry load after this store. Measured 2026-10-13: actor->y += height matches when FieldActor's x, y and z are s32 and the pixel half is read as ((s16 *)&c)[1]; all six editions stay identical with three other functions holding a union FieldObject handle. Held as union FieldObject: differ 4. */
 		*(s32 *)&actor->y += height;
-		actor->terrain_height = height;
+		actor->terrainHeight = height;
 	}
 }
 
@@ -501,8 +501,8 @@ static s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 	{
 		struct MapCell *cell = &((struct MapCell *)gMapCellBuffer)[x + (z << 7)];
 
-		if (cell->collision_code == 0xff
-			|| *(u8 *)((cell->attribute_b << 2) + (s32)gMapCollision) != 0)
+		if (cell->collisionCode == 0xff
+			|| *(u8 *)((cell->attributeB << 2) + (s32)gMapCollision) != 0)
 		{
 			return -1;
 		}

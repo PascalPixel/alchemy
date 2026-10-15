@@ -59,7 +59,7 @@ void Func_02000960(void)
     Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 27, 360, 312);
     Motion_SetModeAndWaitAnimation(11, 3);
     Func_0200110c(11, 0);
-    Object_LinkObjectAndSetCallback(11, gPartyState.current_owner);
+    Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
     WaitFrames(30);
     Func_0200110c(11, 0);
     Motion_SetVarCbAndRefresh(11, 2);

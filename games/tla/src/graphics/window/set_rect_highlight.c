@@ -12,15 +12,15 @@
 #include "battle_work.h"
 
 struct WindowTiles {
-    u8 unknown_00[3];
+    u8 unk00[3];
     u8 dirty;
-    u8 unknown_04[4];
+    u8 unk04[4];
     u16 cells[32][32];
 };
 
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 {
-    struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->window_tiles;
+    struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
 
     alt &= 1;
     alt <<= 12;
@@ -66,7 +66,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    struct BattleWork *battle = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battleWork;
     s32 count;
     s32 i;
     s32 j;
@@ -76,8 +76,8 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids)
     i = 0;
     if (ids[0] != 0xff) {
     next_id:
-        for (j = 0; j < 4 && battle->party_units[j] != ids[i]; j++) {
-            if (battle->party_units[j] == 0xff) {
+        for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
+            if (battle->partyUnits[j] == 0xff) {
                 j = 4;
                 break;
             }

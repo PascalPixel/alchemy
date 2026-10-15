@@ -5,10 +5,10 @@
 #include "object_runtime.h"
 
 struct DisplayBlock {
-    u8 unknown_000[0x18a];
+    u8 unk000[0x18a];
     s8 mode;
     s8 pending;
-    u8 unknown_18c[0x40];
+    u8 unk18c[0x40];
     u8 *object;
 };
 
@@ -18,9 +18,9 @@ struct ObjectRuntime *Func_080cb8e8(void);
 
 s32 Func_080cb144(void)
 {
-    struct DisplayBlock *block = Ram_HeapSlots->event_work;
+    struct DisplayBlock *block = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object = Func_080cb8e8();
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
     s32 position[3];
     struct MapCell *cell;
     s32 x;
@@ -37,5 +37,5 @@ s32 Func_080cb144(void)
         cell = map->layers[0].cells;
         cell += x / 0x100000 + z / 0x100000 * 128;
     }
-    return cell->collision_code;
+    return cell->collisionCode;
 }

@@ -30,14 +30,14 @@ struct CanvasEffectWork
     struct EffectStep particles[64];
     u8 sheet[0x6980];
     s32 bg2X[160];
-    u8 unknown_7300[0x480];
+    u8 unk7300[0x480];
     s32 transferMode;
     s32 transferValue;
-    u8 unknown_7788[0x20];
+    u8 unk7788[0x20];
     s32 shakeFrames;
     s32 cameraDelta;
     s32 cameraPhase;
-    u8 unknown_77b4[0x134];
+    u8 unk77b4[0x134];
     s32 transferPending;
 };
 
@@ -84,15 +84,15 @@ void Func_08148a54(struct BattleEffectArgument *effect)
     s8 *flags;
 
     flags = (s8 *)gMapCellBuffer;
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(1);
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
     Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 0x1f);
     REG_BLDALPHA = 0x0f0f;
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     source = GetBattleObjectSlotFar(effect->actor)->object;
     y = source->y + Battle_GetObjectTableValueFar(effect->actor);
     for (i = 0; i != 30; i++)
@@ -101,9 +101,9 @@ void Func_08148a54(struct BattleEffectArgument *effect)
         point->x = source->x;
         point->y = y;
         point->z = source->z;
-        point->velocity_x = ((s32)((Random16() & 255) - 127) << 16) >> 5;
-        point->velocity_y = ((s32)((Random16() & 127) - 16) << 16) >> 6;
-        point->velocity_z = ((s32)((Random16() & 255) - 127) << 16) >> 5;
+        point->velocityX = ((s32)((Random16() & 255) - 127) << 16) >> 5;
+        point->velocityY = ((s32)((Random16() & 127) - 16) << 16) >> 6;
+        point->velocityZ = ((s32)((Random16() & 255) - 127) << 16) >> 5;
         point->variant = -1;
         flags[i] = 0;
     }
@@ -125,7 +125,7 @@ void Func_08148a54(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != Data_081979a8[effect->variant * 2 + 1]; frame++)
     {
-        camera = Ram_HeapSlots->camera_work;
+        camera = Ram_HeapSlots->cameraWork;
         if (frame >= 17 && frame < 64)
             work->cameraDelta = 0x180;
         else
@@ -146,21 +146,21 @@ void Func_08148a54(struct BattleEffectArgument *effect)
                 if (pos.depth > 0x31f)
                     pos.depth = 0x31f;
                 draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
-                point->x += point->velocity_x;
-                point->y += point->velocity_y;
-                point->z += point->velocity_z;
+                point->x += point->velocityX;
+                point->y += point->velocityY;
+                point->z += point->velocityZ;
             }
             if (frame > i * 2 + 48 && flags[i] == 0)
             {
                 target = &work->particles[32 + i % effect->count];
-                point->velocity_x += (target->x - point->x) >> 9;
-                point->velocity_y += (target->y - point->y) >> 9;
-                point->velocity_z += (target->z - point->z) >> 9;
+                point->velocityX += (target->x - point->x) >> 9;
+                point->velocityY += (target->y - point->y) >> 9;
+                point->velocityZ += (target->z - point->z) >> 9;
                 if (frame < i * 2 + 85)
                 {
-                    point->velocity_x = point->velocity_x * 60 / 64;
-                    point->velocity_y = point->velocity_y * 60 / 64;
-                    point->velocity_z = point->velocity_z * 60 / 64;
+                    point->velocityX = point->velocityX * 60 / 64;
+                    point->velocityY = point->velocityY * 60 / 64;
+                    point->velocityZ = point->velocityZ * 60 / 64;
                 }
                 if (point->y < 0)
                 {

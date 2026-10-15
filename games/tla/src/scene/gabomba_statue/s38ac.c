@@ -1,8 +1,8 @@
 #include "types.h"
 
 struct SceneState {
-    u8 unknown_000[0x168];
-    u16 tile_entry;
+    u8 unk000[0x168];
+    u16 tileEntry;
 };
 
 extern struct SceneState gSceneState;
@@ -35,6 +35,6 @@ void Func_020038ac(void)
     Func_020055cc(Field_CachedTilesA, buffer);
     handle = Resource_FindFreeEntry();
     Vram_Load(handle, 0xc00, buffer);
-    state->tile_entry = handle;
+    state->tileEntry = handle;
     MemFree(buffer);
 }

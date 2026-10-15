@@ -13,12 +13,12 @@ void Func_02002bd4(struct ObjectRuntime *object)
     if (child != 0) {
         struct FieldSprite *sprite = child->animation;
 
-        child->terrain_height = object->terrain_height;
+        child->terrainHeight = object->terrainHeight;
         Func_02003ccc(child, Data_0200411c);
-        child->motion_flags = 0;
+        child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = parent->priority;
         }
     }

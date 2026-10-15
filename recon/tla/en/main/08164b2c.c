@@ -17,7 +17,7 @@
 void Func_08164b2c(s32 red_delta, s32 green_delta, s32 blue_delta)
 {
     u16 *color = (u16 *)0x050000c0;
-    u16 *source = Ram_HeapSlots->battle_work->palette;
+    u16 *source = Ram_HeapSlots->battleWork->palette;
     s32 i;
 
     for (i = 0; i != 128; i++) {

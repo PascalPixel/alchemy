@@ -31,7 +31,7 @@ s32 Runtime_BlankDisplayAndRunScene(void)
 // The Broken Seal's Camera_ResetSceneDefaults, with the camera tilted to 147.
 void Camera_ResetSceneDefaultsB(void)
 {
-    struct BattleCamera *state = Ram_HeapSlots->camera_work;
+    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
     struct FixedPointPosition local;
     /* FAKEMATCH: the result pointer pinned to r1 is copied from the camera where it is set, ahead of the distance's one-pass block; plain, or with the block alone, the copy waits for the call and the distance load comes first (differ 2). */
     register s32 *result asm("r1");
@@ -44,11 +44,11 @@ void Camera_ResetSceneDefaultsB(void)
     state->pos[1] = 0;
     state->pos[2] = 0;
     state->yaw = 0;
-    state->follow_pos = 0;
+    state->followPos = 0;
     // The projection's centre.
     gCameraSceneParameters[3] = 0;
     gCameraSceneParameters[4] = 0;
-    state->unknown_18 = 0;
+    state->unk18 = 0;
 
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(&state->pos[0]);

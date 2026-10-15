@@ -60,7 +60,7 @@ static void EV18_TALK(void)
 static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
 	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				  *f = &p->motion_flags;
+	u8				  *f = &p->motionFlags;
 	s32				   saved = *f;
 
 	s32 r = FieldObject_CheckMovementCollision(p, arg);
@@ -76,7 +76,7 @@ static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 		Object_SetMode(p, 7);
 		p->speed = 0x30000;
 		p->acceleration = 0x20000;
-		p->velocity_y = 0x40000;
+		p->velocityY = 0x40000;
 		m = 0x7e;
 		m &= *f;
 		*f = m;
@@ -111,7 +111,7 @@ static void MogallForest_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 	Engine_ActorSetSpritePriority(a0, 1);
 	Actor_SetSpeed(a0, 0x30000, 0x18000);
 	Engine_AudioPlayCue(152);
-	rec7->velocity_y = a3;
+	rec7->velocityY = a3;
 	rec7->gravity = 0x8000;
 	rec7->bounce = 0;
 	Engine_ActorSetSpriteFlags(rec7, 0);
@@ -219,7 +219,7 @@ static void EV20_SCRIPT_1(void)
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
 		SceneActor_MoveAndRedraw(probe);
-		if (probe.actor_slot == 9 && (probe.position_z >> 20) == 26)
+		if (probe.actorSlot == 9 && (probe.positionZ >> 20) == 26)
 		{
 			Engine_GameFlagSet(0x310);
 			Engine_ActorSetAnimation(9, 3);
@@ -229,7 +229,7 @@ static void EV20_SCRIPT_1(void)
 			Engine_ActorSetAnimation(9, 8);
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetSpritePriority(9, 1);
-			Object_GetById(9)->priority_flags = 2;
+			Object_GetById(9)->priorityFlags = 2;
 			Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
 		}
 	}
@@ -257,7 +257,7 @@ static void EV26_TOUCH(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				  *fp = &actor->motion_flags;
+	u8				  *fp = &actor->motionFlags;
 	s32				   saved = *fp;
 
 #if EDITION_INTERNATIONAL
@@ -275,16 +275,16 @@ static void EV26_TOUCH(void)
 		*fp = 0;
 		Engine_ActorSetAnimation(9, 7);
 		actor->y.fixed += -0x10000;
-		actor->terrain_height += -0x10000;
+		actor->terrainHeight += -0x10000;
 		Engine_TaskWait(2);
 		actor->y.fixed += -0x10000;
-		actor->terrain_height += -0x10000;
+		actor->terrainHeight += -0x10000;
 		Engine_TaskWait(10);
 		actor->y.fixed += 0x10000;
-		actor->terrain_height += 0x10000;
+		actor->terrainHeight += 0x10000;
 		Engine_TaskWait(4);
 		actor->y.fixed += 0x10000;
-		actor->terrain_height += 0x10000;
+		actor->terrainHeight += 0x10000;
 		*fp = saved;
 		Engine_EventEnd();
 	}
@@ -434,13 +434,13 @@ static void EV20_SCRIPT_2(void)
 	{
 		SceneActor_MoveAndRedraw(probe);
 
-		if (probe.actor_slot == 8 && (probe.position_z >> 20) == 23)
+		if (probe.actorSlot == 8 && (probe.positionZ >> 20) == 23)
 		{
 			fifth = 35;
 			sixth = 68;
 			Map_CopyCellAttributes(35, 67, 4, 1, fifth, sixth);
 		}
-		else if (probe.actor_slot == 10 && (probe.position_x >> 20) == 35)
+		else if (probe.actorSlot == 10 && (probe.positionX >> 20) == 35)
 		{
 
 			value = 0;
@@ -451,7 +451,7 @@ static void EV20_SCRIPT_2(void)
 			Engine_ActorSetAnimation(10, 8);
 			Engine_AudioPlayCue(240);
 
-			Object_GetById(10)->priority_flags = 2;
+			Object_GetById(10)->priorityFlags = 2;
 
 			fifth = 34;
 			sixth = 30;
@@ -484,8 +484,8 @@ static void EV11_PSYNERGY(void)
 	{
 		u8 *p = (u8 *)Object_GetById(11);
 
-		((struct FieldActor *)p)->motion_flags = 0;
-		((struct FieldActor *)p)->terrain_height = 0xfffe0000;
+		((struct FieldActor *)p)->motionFlags = 0;
+		((struct FieldActor *)p)->terrainHeight = 0xfffe0000;
 		((struct FieldActor *)p)->y.fixed = 0xfffe0000;
 	}
 
@@ -644,14 +644,14 @@ static void EV20_SCRIPT_3(void)
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
 		SceneActor_MoveAndRedraw(probe);
-		if (probe.actor_slot == 9 || probe.actor_slot == 11)
+		if (probe.actorSlot == 9 || probe.actorSlot == 11)
 		{
-			if (probe.actor_slot == 9)
+			if (probe.actorSlot == 9)
 			{
-				Map_CopyCellAttributes(38, 68, 1, 4, probe.position_x >> 20, 68);
-				if (probe.position_x >> 20 == 42)
+				Map_CopyCellAttributes(38, 68, 1, 4, probe.positionX >> 20, 68);
+				if (probe.positionX >> 20 == 42)
 				{
-					Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 23);
+					Map_CopyCellAttributes(26, 20, 2, 4, probe.positionX >> 20, 23);
 					Engine_ActorSetSpritePriority(9, 1);
 					landed = 1;
 					GameFlag_Set(0x312);
@@ -659,9 +659,9 @@ static void EV20_SCRIPT_3(void)
 			}
 			else
 			{
-				if (probe.position_x >> 20 == 40)
+				if (probe.positionX >> 20 == 40)
 				{
-					Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 32);
+					Map_CopyCellAttributes(26, 20, 2, 4, probe.positionX >> 20, 32);
 					Engine_ActorSetSpritePriority(11, 1);
 					landed = 1;
 					GameFlag_Set(0x313);
@@ -672,17 +672,17 @@ static void EV20_SCRIPT_3(void)
 				Engine_EventEnd();
 				return;
 			}
-			Engine_ActorSetAnimation(probe.actor_slot, 3);
-			Engine_ActorSetDestinationOffset(probe.actor_slot, 18, 6);
+			Engine_ActorSetAnimation(probe.actorSlot, 3);
+			Engine_ActorSetDestinationOffset(probe.actorSlot, 18, 6);
 			Engine_EventWait(30);
-			Engine_ActorSetAnimation(probe.actor_slot, 8);
+			Engine_ActorSetAnimation(probe.actorSlot, 8);
 			Engine_AudioPlayCue(240);
-			Actor_Get(probe.actor_slot)->priority_flags = 2;
+			Actor_Get(probe.actorSlot)->priorityFlags = 2;
 		}
 		else
 		{
-			if (probe.actor_slot == 8)
-				Map_CopyCellAttributes(42, 49, 1, 4, probe.position_x >> 20, 49);
+			if (probe.actorSlot == 8)
+				Map_CopyCellAttributes(42, 49, 1, 4, probe.positionX >> 20, 49);
 		}
 	}
 	Engine_EventEnd();
@@ -696,7 +696,7 @@ static void EV25_TOUCH_3(void)
 	s32				   target[3];
 
 	record = Object_GetById(ACTOR_PARTY_LEADER);
-	mode = &record->motion_flags;
+	mode = &record->motionFlags;
 	saved = *mode;
 
 	target[0] = Object_GetById(0)->x.fixed + 0xffe00000;
@@ -712,19 +712,19 @@ static void EV25_TOUCH_3(void)
 		Engine_ActorSetAnimation(11, 7);
 
 		record->y.fixed += 0xffff0000;
-		record->terrain_height += 0xffff0000;
+		record->terrainHeight += 0xffff0000;
 		Engine_TaskWait(2);
 
 		record->y.fixed += 0xffff0000;
-		record->terrain_height += 0xffff0000;
+		record->terrainHeight += 0xffff0000;
 		Engine_TaskWait(10);
 
 		record->y.fixed += 0x10000;
-		record->terrain_height += 0x10000;
+		record->terrainHeight += 0x10000;
 		Engine_TaskWait(4);
 
 		record->y.fixed += 0x10000;
-		record->terrain_height += 0x10000;
+		record->terrainHeight += 0x10000;
 
 		*mode = saved;
 		Engine_EventEnd();
@@ -751,8 +751,8 @@ static void EV13_PSYNERGY_3(void)
 	{
 		u8 *record = (u8 *)Object_GetById(13);
 
-		((struct FieldActor *)record)->motion_flags = 0;
-		((struct FieldActor *)record)->terrain_height = 0xfffe0000;
+		((struct FieldActor *)record)->motionFlags = 0;
+		((struct FieldActor *)record)->terrainHeight = 0xfffe0000;
 		((struct FieldActor *)record)->y.fixed = 0xfffe0000;
 	}
 
@@ -782,8 +782,8 @@ static void EV14_PSYNERGY_3(void)
 	if ((record->z.fixed >> 20) == 27)
 	{
 		record = Object_GetById(14);
-		record->motion_flags = 0;
-		record->terrain_height = -0x20000;
+		record->motionFlags = 0;
+		record->terrainHeight = -0x20000;
 		record->y.fixed = -0x20000;
 		Engine_GameFlagSet(0x214);
 		StagedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
@@ -1034,8 +1034,8 @@ static void EV23_TOUCH(void)
 	Engine_MapWaitWorkValuesBelow256();
 	Engine_EventWait(40);
 	MogallForest_SpawnPuffRing(18);
-	actor->scale_x = 0x13333;
-	actor->scale_y = 0x13333;
+	actor->scaleX = 0x13333;
+	actor->scaleY = 0x13333;
 	Engine_ActorSetChildValue(18, 5);
 	MogallForest_HopActorTo(18, 136, 0x188, 0xf0000);
 	Engine_EventWait(15);
@@ -1097,7 +1097,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 	s32				   pos;
 	s32				   tmp;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	area = gGameState.scene;
 	if (area == (s32)&SceneId_MogallForest1)
 	{
@@ -1179,7 +1179,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			Actor_SetPosition(9, 0x2100000, 0x1980000);
 			Engine_ActorSetAnimation(9, 4);
 			Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
-			Object_GetById(9)->priority_flags = 2;
+			Object_GetById(9)->priorityFlags = 2;
 			break;
 		}
 	}
@@ -1219,7 +1219,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 				Engine_TaskWait(1);
 				Actor_SetPosition(10, 0x2280000, 0x1fe0000);
 				Engine_ActorSetAnimation(10, 4);
-				Object_GetById(10)->priority_flags = 2;
+				Object_GetById(10)->priorityFlags = 2;
 				Map_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if EDITION_INTERNATIONAL
 				StagedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
@@ -1233,7 +1233,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			StagedActor_FillGridAttributeRectangle(2, pos, tmp >> 20, 1, 1, 255);
 			Engine_TaskWait(1);
 			Engine_ActorSetChildValue(11, 6);
-			Object_GetById(8)->collision_flags |= 8;
+			Object_GetById(8)->collisionFlags |= 8;
 			if (Engine_GameFlagIsSet(0x306) != 0)
 			{
 				break;
@@ -1287,7 +1287,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			StagedActor_FillGridAttributeRectangle(2, pos, tmp >> 20, 1, 1, 255);
 			Engine_ActorSetChildValue(13, 6);
 			Engine_TaskWait(1);
-			Object_GetById(8)->collision_flags |= 8;
+			Object_GetById(8)->collisionFlags |= 8;
 			FieldScene_RedrawActorFootprint(8);
 			break;
 
@@ -1308,7 +1308,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 				Engine_TaskWait(1);
 				Engine_ActorSetAnimation(9, 4);
 				Engine_ActorSetPosition(9, 0x2ba0000, 0x18e0000);
-				Object_GetById(9)->priority_flags |= 2;
+				Object_GetById(9)->priorityFlags |= 2;
 				Map_CopyCellAttributes(26, 20, 2, 4, 42, 23);
 				Engine_GameFlagSet(532);
 				Actor_SetPosition(14, 0x2780000, 0x1b80000);
@@ -1323,7 +1323,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 				Engine_TaskWait(1);
 				Engine_ActorSetAnimation(11, 4);
 				Engine_ActorSetPosition(11, 0x29a0000, 0x2260000);
-				Object_GetById(11)->priority_flags = 2;
+				Object_GetById(11)->priorityFlags = 2;
 				Map_CopyCellAttributes(26, 20, 2, 4, 40, 32);
 			}
 			pos = Object_GetById(14)->x.fixed;
@@ -1332,7 +1332,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			StagedActor_FillGridAttributeRectangle(2, pos, tmp >> 20, 1, 1, 255);
 			Engine_ActorSetChildValue(14, 6);
 			Engine_TaskWait(1);
-			Object_GetById(9)->collision_flags |= 8;
+			Object_GetById(9)->collisionFlags |= 8;
 			if (Engine_GameFlagIsSet(0x30b) == 0)
 			{
 				Engine_ActorSetChildValue(18, 15);

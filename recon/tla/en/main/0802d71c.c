@@ -12,8 +12,8 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base)
 {
     s32 x = px >> 16;
     s32 z = pz >> 16;
-    struct MapWork *work = Ram_HeapSlots->map_work;
-    u8 *state = Ram_HeapSlots->event_work;
+    struct MapWork *work = Ram_HeapSlots->mapWork;
+    u8 *state = Ram_HeapSlots->eventWork;
     u8 *grid;
     s32 code;
 
@@ -22,7 +22,7 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base)
     if (*(s8 *)(state + 0x18a) == 3)
         return 0;
     if (layer <= 2)
-        grid = work->layers[layer].terrain_ids;
+        grid = work->layers[layer].terrainIds;
     else
         grid = gMapShapeGrid;
     code = grid[x / 16 + ((z / 16) << 7)] * 4;

@@ -21,21 +21,21 @@
 
 struct FollowDetail
 {
-	u8 unknown_00[5];
+	u8 unk00[5];
 	u8 shade;
 };
 
 struct FollowSprite
 {
-	u8					 unknown_00[37];
+	u8					 unk00[37];
 	u8					 visible;
-	u8					 unknown_26[2];
+	u8					 unk26[2];
 	struct FollowDetail *detail;
 };
 
 struct SpawnPoint
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 	s32 y;
 	s32 z;
@@ -44,7 +44,7 @@ struct SpawnPoint
 
 struct EventSpawns
 {
-	u8				   unknown_00[20];
+	u8				   unk00[20];
 	struct SpawnPoint *points[1];
 };
 
@@ -135,8 +135,8 @@ static s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 	{
 		return 0;
 	}
-	o->scale_x = (n * 3) << 10;
-	o->scale_y = (n * 3) << 10;
+	o->scaleX = (n * 3) << 10;
+	o->scaleY = (n * 3) << 10;
 	return 1;
 }
 
@@ -151,8 +151,8 @@ static s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 	{
 		return 0;
 	}
-	o->scale_x = (n << 11) + 0x10000;
-	o->scale_y = (n << 11) + 0x10000;
+	o->scaleX = (n << 11) + 0x10000;
+	o->scaleY = (n << 11) + 0x10000;
 	return 1;
 }
 
@@ -168,13 +168,13 @@ static s32 Mercury_FollowLeader(struct FieldActor *actor)
 	s32					 step;
 
 	actor->speed = 0x20000;
-	leader = actor->linked_object;
+	leader = actor->linkedObject;
 	actor->acceleration = 0x10000;
 	tx = leader->x.fixed;
 	tz = leader->z.fixed;
-	actor->target_x = ACTOR_NO_TARGET;
-	actor->target_y = ACTOR_NO_TARGET;
-	actor->target_z = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 	dx = (tx - actor->x.fixed) / 0x10000;
 	dz = (tz - actor->z.fixed) / 0x10000;
 	dist = (u16)Iwram_Sqrt(dx * dx + dz * dz);
@@ -213,16 +213,16 @@ static void MercuryLighthouse_SpawnSparkPair(void)
 	struct FieldActor  *spark;
 	struct FieldSprite *sprite;
 
-	point = (*(struct EventSpawns **)&gEventWork)->points[gGameState.selected_actor];
+	point = (*(struct EventSpawns **)&gEventWork)->points[gGameState.selectedActor];
 	spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
 	if (spark != NULL)
 	{
-		spark->terrain_height = point->value;
+		spark->terrainHeight = point->value;
 		sprite = spark->sprite;
 		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
-		spark->motion_flags = 0;
+		spark->motionFlags = 0;
 		spark->timer = 0;
-		spark->linked_object = (struct FieldActor *)point;
+		spark->linkedObject = (struct FieldActor *)point;
 		if (sprite != NULL)
 		{
 			AnimationObjects_SelectAnimation(sprite, 2);
@@ -233,13 +233,13 @@ static void MercuryLighthouse_SpawnSparkPair(void)
 	spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
 	if (spark != NULL)
 	{
-		spark->terrain_height = point->value;
+		spark->terrainHeight = point->value;
 		sprite = spark->sprite;
 		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
-		spark->motion_flags = 0;
+		spark->motionFlags = 0;
 		spark->timer = 0;
-		spark->linked_object = (struct FieldActor *)point;
-		spark->priority_flags = 2;
+		spark->linkedObject = (struct FieldActor *)point;
+		spark->priorityFlags = 2;
 		if (sprite != NULL)
 		{
 			AnimationObjects_SelectAnimation(sprite, 1);
@@ -259,7 +259,7 @@ void MercuryEntrance_RaisePillar(void)
 	s32					step;
 
 	state = *(struct PillarState **)WORK_SLOT(35);
-	leader = ((struct Work *)WORK_SLOT(HEAP_SLOT_EVENT))->actors[gGameState.selected_actor];
+	leader = ((struct Work *)WORK_SLOT(HEAP_SLOT_EVENT))->actors[gGameState.selectedActor];
 	if ((u32)state->step > 2)
 		return;
 	Engine_EventBegin();
@@ -309,8 +309,8 @@ struct PushState
 	s32				   count;
 	s32				   level;
 	s32				   active;
-	s32				   target_x;
-	s32				   target_z;
+	s32				   targetX;
+	s32				   targetZ;
 	struct FieldActor *source;
 	struct FieldActor *effect;
 };
@@ -342,7 +342,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 
 struct SceneTimer
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 count;
 };
 
@@ -367,20 +367,20 @@ void Mercury_RunActorMove(void)
 
 	state = *(struct PushState **)WORK_SLOT(35);
 	work = WORK_SLOT(HEAP_SLOT_EVENT);
-	actor = (struct FieldActor *)work->actors[gGameState.selected_actor];
-	flags = &actor->motion_flags;
+	actor = (struct FieldActor *)work->actors[gGameState.selectedActor];
+	flags = &actor->motionFlags;
 	saved = *flags;
 	keys = gKeysHeld;
 	angle = Mercury_MoveAngles[(keys >> 4) & 15];
 	if ((s16)Mercury_MoveAngles[(keys >> 4) & 15] == -1)
 		return;
 	pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
-	pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;
+	pos[1].fixed = ((struct ObjectRuntime *)actor)->terrainHeight;
 	pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
 	from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
 	Vector_AddPolarOffset(0x200000, angle, &pos[0].fixed);
 	to = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
-	if (from->collision_code != state->level && to->collision_code == state->level
+	if (from->collisionCode != state->level && to->collisionCode == state->level
 		&& state->count == 0)
 		return;
 
@@ -395,19 +395,19 @@ void Mercury_RunActorMove(void)
 		Object_SetMode(obj, 7);
 		state->effect = NULL;
 	}
-	if (to->collision_code == state->level && state->count != 0)
+	if (to->collisionCode == state->level && state->count != 0)
 	{
 		source = state->source;
 		obj = Engine_ObjectCreate(26, source->x.fixed, source->y.fixed, source->z.fixed);
 		if (obj != NULL)
 		{
 			sprite = obj->sprite;
-			((struct ObjectRuntime *)obj)->terrain_height =
-				((struct ObjectRuntime *)source)->terrain_height;
+			((struct ObjectRuntime *)obj)->terrainHeight =
+				((struct ObjectRuntime *)source)->terrainHeight;
 			Engine_ObjectSetScript(obj, Mercury_RampScript);
-			obj->motion_flags = 0;
+			obj->motionFlags = 0;
 			((union FieldObject *)obj)->effect.spin = 0;
-			obj->priority_flags = 2;
+			obj->priorityFlags = 2;
 			obj->speed = 0x40000;
 			obj->acceleration = 0x20000;
 			Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
@@ -438,19 +438,19 @@ void Mercury_RunActorMove(void)
 	Object_SetMode(actor, 7);
 	actor->speed = 0x30000;
 	actor->acceleration = 0x20000;
-	actor->velocity_y = 0x40000;
+	actor->velocityY = 0x40000;
 	*flags &= 0x7e;
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ActorMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
 	Object_SetMode(actor, 6);
 	Engine_TaskWait(2);
-	if (to->collision_code != state->level)
+	if (to->collisionCode != state->level)
 		Engine_ActorSetSpriteFlags(actor, 1);
 	else
 		Engine_AudioPlayCue(215);
 	Engine_TaskWait(1);
 	*flags = saved;
-	if (to->collision_code == state->level && state->effect == NULL)
+	if (to->collisionCode == state->level && state->effect == NULL)
 	{
 		Object_SetMode(actor, 18);
 		Engine_AudioPlayCue(241);
@@ -464,13 +464,13 @@ void Mercury_RunActorMove(void)
 		}
 		Engine_AudioPlayCue(0x120);
 		Engine_TaskWait(1);
-		actor->x.fixed = state->target_x;
-		actor->z.fixed = state->target_z;
+		actor->x.fixed = state->targetX;
+		actor->z.fixed = state->targetZ;
 		Engine_ActorSetSpriteFlags(actor, 1);
 	}
 	state->active = 0;
 	Engine_EventEnd();
-	work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
+	work->encounterSteps += Iwram_MulQ16(work->encounterRate, 0x200000);
 }
 
 void Mercury_TickSpawnTimer(void)
@@ -480,7 +480,7 @@ void Mercury_TickSpawnTimer(void)
 
 	timer = *(struct SceneTimer **)WORK_SLOT(35);
 	point = (struct FieldActor *)((struct FieldStepWork *)WORK_SLOT(HEAP_SLOT_EVENT))
-				->actors[gGameState.selected_actor];
+				->actors[gGameState.selectedActor];
 	if (timer->count != 0)
 	{
 		timer->count--;

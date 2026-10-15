@@ -6,8 +6,8 @@ void Func_020011b8(struct ObjectRuntime *object)
 {
     object->x += object->bounce;
     object->y += object->gravity;
-    object->z += object->unknown_4c;
+    object->z += object->unk4c;
     object->bounce -= object->bounce >> 3;
     object->gravity -= object->gravity >> 3;
-    object->unknown_4c -= object->unknown_4c >> 3;
+    object->unk4c -= object->unk4c >> 3;
 }

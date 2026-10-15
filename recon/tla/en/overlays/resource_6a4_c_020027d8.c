@@ -6,7 +6,7 @@
 
 s32 Func_020027d8(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     struct JupiterAerieWork *work = (struct JupiterAerieWork *)Data_02003488;

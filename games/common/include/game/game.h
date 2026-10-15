@@ -76,7 +76,7 @@ void						   Event_ClearInvalidPackedValuesFar(s32);
 s32							   Inventory_AddItemFar(s32, s32);
 s32							   Inventory_RemoveFar(s32 owner, s32 slot);
 void  Owner_CalculateBaseElements(s32 owner_id, struct BattleElementStats *elements);
-s32	  Owner_DetermineClass(s32 class_id, u32 *djinn, s32 item);
+s32	  Owner_DetermineClass(s32 classId, u32 *djinn, s32 item);
 s32	  Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 void  Owner_RefreshClassActions(s32);
 void  Owner_UpdateClassActions(s32 owner_id);

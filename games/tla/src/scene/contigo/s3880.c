@@ -6,13 +6,13 @@ s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
 void Func_020017f4(void);
 void Func_02001c44(s32 a);
-void Func_0200400c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_0200400c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020040d4(s32 actor, s32 x, s32 z);
 
-static __inline__ void Func_0200400c_(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+static __inline__ void Func_0200400c_(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_0200400c(src_x, src_y, width, height, dest_x, dest_y);
+    Func_0200400c(srcX, srcY, width, height, destX, destY);
 }
 
 void Func_02003880(void)

@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 mode);

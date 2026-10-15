@@ -15,15 +15,15 @@
 #include "ram_buffer.h"
 
 struct MapLayer {
-    u8 unknown_00[4];
+    u8 unk00[4];
     s32 y;
-    u8 unknown_08[0x10];
-    s32 unknown_18;
-    s32 unknown_1c;
+    u8 unk08[0x10];
+    s32 unk18;
+    s32 unk1c;
 };
 
 struct MapWork {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct MapLayer layer;
 };
 
@@ -35,7 +35,7 @@ extern s16 Data_02003990[2][160];
 
 void Func_020015a0(void)
 {
-    register struct MapLayer *layer asm("r8") = &Ram_HeapSlots->map_work->layer;
+    register struct MapLayer *layer asm("r8") = &Ram_HeapSlots->mapWork->layer;
     s16 *line = Data_02003990[Data_02003c14];
     s32 i;
 

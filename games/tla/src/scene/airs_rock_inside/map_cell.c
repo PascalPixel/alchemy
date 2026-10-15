@@ -7,12 +7,12 @@ void Func_02000610(void)
 
 void Func_0200061c(void)
 {
-    BYTE_AT(Ram_HeapSlots->effect_work, 52) = 1;
+    BYTE_AT(Ram_HeapSlots->effectWork, 52) = 1;
 }
 
 s32 Func_0200062c(u32 layer, s32 x, s32 y, s32 value)
 {
-    struct AirsRockInsideMapWork *map = (struct AirsRockInsideMapWork *)Ram_HeapSlots->map_work;
+    struct AirsRockInsideMapWork *map = (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
     u8 *cell;
     s32 old;
 

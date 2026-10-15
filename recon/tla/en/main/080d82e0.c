@@ -20,7 +20,7 @@ struct BattleFxScene;
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
 #define BattleFx_PulseScales Data_080f0bfc
-#define gEffectWork Ram_HeapSlots->effect_work
+#define gEffectWork Ram_HeapSlots->effectWork
 
 extern u32 gFrameTick;
 extern u32 Data_080f0bfc[];
@@ -28,9 +28,9 @@ void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
 struct EffectOwner {
-    u8 unknown_00[8];
+    u8 unk00[8];
     struct EffectVector position;
-    u8 unknown_14[0x3c];
+    u8 unk14[0x3c];
     struct AnimationObject *sprite;
 };
 
@@ -49,16 +49,16 @@ void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[68];
+    u8 unk14[4];
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[68];
     u16 timer;
-    u8 unknown_66[6];
+    u8 unk66[6];
     void *callback;
 };
 
@@ -69,11 +69,11 @@ struct OrbitPosition {
 };
 
 struct DescendingOrbitObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     u16 timer;
     s16 angle;
 };
@@ -89,27 +89,27 @@ void Audio_PlayCue(s32);
 extern const s32 BattleFx_CommonParticleScript[];
 
 struct CaptureObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    s32 base_y;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[8];
+    s32 baseY;
+    s32 scaleX;
+    s32 scaleY;
+    u8 unk20[8];
     s32 gravity;
-    u8 unknown_2c[4];
+    u8 unk2c[4];
     s32 speed;
-    u8 unknown_34[33];
+    u8 unk34[33];
     u8 mode;
-    u8 unknown_56[5];
+    u8 unk56[5];
     u8 visible;
-    u8 unknown_5c[2];
+    u8 unk5c[2];
     u16 lifetime;
-    u8 unknown_60[4];
+    u8 unk60[4];
     u16 timer;
     u16 angle;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void *callback;
 };
 
@@ -156,7 +156,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     s32 scale;
     s32 position[3];
 
-    leader = (struct CaptureObject *)Object_GetById(gPartyState.current_owner);
+    leader = (struct CaptureObject *)Object_GetById(gPartyState.currentOwner);
     djinni = (struct CaptureObject *)Object_GetById(arg);
     if (djinni == NULL)
         return;
@@ -179,9 +179,9 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
     Object_SetMode((struct ObjectRuntime *)djinni, 3);
     WaitFrames(90);
-    ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
+    ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gPartyState.current_owner), 28);
+    Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
     WaitFrames(30);
     Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
 
@@ -197,8 +197,8 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-        ((struct EffectSlot *)slot)->scale_x = 0x8000;
-        ((struct EffectSlot *)slot)->scale_y = Random16() + 0x18000;
+        ((struct EffectSlot *)slot)->scaleX = 0x8000;
+        ((struct EffectSlot *)slot)->scaleY = Random16() + 0x18000;
         remaining--;
         WaitFrames(1);
         slot += 72;
@@ -231,8 +231,8 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1], position[2]);
         if (djinni != NULL) {
             scale = Random16() / 3 + 0x10000;
-            djinni->scale_y = scale;
-            djinni->scale_x = scale;
+            djinni->scaleY = scale;
+            djinni->scaleX = scale;
             djinni->timer = 100;
             djinni->angle = (remaining << 16) / 24;
             djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
@@ -253,11 +253,11 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         djinni = (struct CaptureObject *)Object_Spawn(284, position[0], position[1], position[2]);
         if (djinni == NULL)
             break;
-        djinni->scale_y = 0x9999;
-        djinni->scale_x = 0x9999;
+        djinni->scaleY = 0x9999;
+        djinni->scaleX = 0x9999;
         djinni->mode = 2;
         djinni->gravity = 0x50000;
-        djinni->base_y = djinni->y;
+        djinni->baseY = djinni->y;
         djinni->speed = Random16() + 0x16666;
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);

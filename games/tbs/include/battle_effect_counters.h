@@ -8,7 +8,7 @@
 
 struct BattleEffectCounterState
 {
-	u8	padding_000[0x16c];
+	u8	padding000[0x16c];
 	s16 counters[12];
 };
 

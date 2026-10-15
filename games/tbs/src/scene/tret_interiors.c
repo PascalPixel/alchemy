@@ -78,7 +78,7 @@ struct Swirl
 
 struct Spark
 {
-	u8	unknown_00[0x64];
+	u8	unk00[0x64];
 	u16 phase;
 	u16 angle;
 };
@@ -119,29 +119,29 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTretInteriorsPlacements;
 }
 
-static void TretInteriors_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
+static void TretInteriors_HandleFloorSwitch(s32 flag, s32 srcX, s32 srcY, s32 entrance)
 {
-	s32				   dest_x;
-	s32				   dest_y;
+	s32				   destX;
+	s32				   destY;
 	s32				   leader;
 	struct FieldActor *actor;
 	s32				   cnt;
 
-	dest_x = (gGameState.x >> 20) + 64;
-	dest_y = gGameState.z >> 20;
-	leader = gGameState.selected_actor;
+	destX = (gGameState.x >> 20) + 64;
+	destY = gGameState.z >> 20;
+	leader = gGameState.selectedActor;
 	actor = Object_GetById(leader);
 	if (entrance == *TretInteriors_PaletteBuffer)
 		return;
 	*TretInteriors_PaletteBuffer = entrance;
 	if (Engine_GameFlagIsSet(flag) == 0)
 	{
-		Map_CopyCells(src_x, src_y, 1, 1, dest_x, dest_y);
+		Map_CopyCells(srcX, srcY, 1, 1, destX, destY);
 		Engine_GameFlagSet(flag);
 		return;
 	}
 	*TretInteriors_PaletteBuffer = -1;
-	Map_CopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
+	Map_CopyCells(srcX, srcY + 1, 1, 1, destX, destY);
 	Engine_AudioPlayCue(206);
 	Engine_EventBegin();
 	Event_SetDestination((s32)&SceneId_TretInteriors, entrance);
@@ -150,12 +150,12 @@ static void TretInteriors_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 
 	Actor_SetAttachedEffect(leader, 0x101);
 	Engine_EventWait(30);
 	Camera_MoveTo(-1, -1, -1, 0);
-	actor->motion_flags = 2;
-	actor->terrain_height = -0xa00000;
+	actor->motionFlags = 2;
+	actor->terrainHeight = -0xa00000;
 	actor->gravity = 0x8000;
 	Engine_AudioPlayCue(204);
 	Engine_EventWait(3);
-	actor->terrain_id = 2;
+	actor->terrainId = 2;
 	Engine_ActorSetSpritePriority(leader, 3);
 	for (cnt = 29; cnt >= 0; cnt--)
 	{
@@ -298,9 +298,9 @@ static void EV40_TOUCH(void)
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(2, 0x10000, 0x8000);
 	Engine_ActorSetSpeed(3, 0x10000, 0x8000);
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(3, 2);
-	Object_GetById(0)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(0, 2);
 	leader = Object_GetById(0);
 	if (leader != NULL)
@@ -357,8 +357,8 @@ static void EV40_TOUCH(void)
 	Engine_EventWait(40);
 	TretInteriors_PlayGesture(11);
 	Engine_EventShowMessage(0x8008, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	gEventWork->transition_frames = 64;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->transitionFrames = 64;
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_TretInteriors, 19);
 	BattleFx_SetWeightedResult(36, 0);
@@ -375,9 +375,9 @@ static void FieldScene_RunFourActorEncounter(void)
 	s32				   actions;
 
 	rec = GameFlag_IsSet(3);
-	Object_GetById(3)->priority_flags &= 254;
+	Object_GetById(3)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(MIA, 2);
-	Object_GetById(0)->priority_flags &= 254;
+	Object_GetById(0)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	PartyInventory_FindOwner(184);
 	Event_PlayCue(17);
@@ -404,8 +404,8 @@ static void FieldScene_RunFourActorEncounter(void)
 	}
 	TretInteriors_PlayGesture(0);
 	Engine_TaskWait(10);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 48;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 48;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
@@ -559,7 +559,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	}
 	Object_SetActionCallbackAndRefreshById(2, actions);
 	Engine_EventWait(20);
-	Object_GetById(0)->priority_flags |= 1;
+	Object_GetById(0)->priorityFlags |= 1;
 	GameFlag_Set(0x844);
 	FieldScheduler_AddCallback((s32)TretPalette_ApplyTint, 0xc80);
 	Engine_EventEnd();
@@ -603,12 +603,12 @@ s32 TretInteriors_EnterRoom(void)
 	lamp = Object_GetById(8);
 	TretInteriors_PaletteBuffer = (s16 *)gSceneState;
 	TretPalette_CaptureBank();
-	lamp->motion_flags = 0;
+	lamp->motionFlags = 0;
 	lamp->y.fixed = -0xa0000;
 	{
 		struct FieldActor *other = Object_GetById(9);
 
-		other->motion_flags = 0;
+		other->motionFlags = 0;
 		other->y.fixed = -0xa0000;
 	}
 	Engine_ActorSetChildValue(9, 15);
@@ -634,9 +634,9 @@ s32 TretInteriors_EnterRoom(void)
 	Engine_GameFlagSet(0x213);
 	Engine_TaskWait(1);
 	SceneState_ApplyRectsByFlag844(0);
-	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = 0x202;
+	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition = 0x202;
 	entrance = gGameState.entrance;
-	leader = gGameState.selected_actor;
+	leader = gGameState.selectedActor;
 	actor = Object_GetById(leader);
 	if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20)
 	{
@@ -645,14 +645,14 @@ s32 TretInteriors_EnterRoom(void)
 		Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
 		Actor_SetAttachedEffect(leader, 0x101);
 		Camera_MoveTo(-1, -1, -1, 0);
-		actor->motion_flags = 2;
+		actor->motionFlags = 2;
 		actor->y.fixed = 0x640000;
-		actor->terrain_height = -0xa00000;
+		actor->terrainHeight = -0xa00000;
 		actor->gravity = 0x8000;
 		Engine_AudioPlayCue(204);
 		Event_SetDestination((s32)&SceneId_TretInteriors, entrance - 10);
 		Engine_EventWait(20);
-		actor->terrain_id = 2;
+		actor->terrainId = 2;
 		Engine_ActorSetSpritePriority(leader, 3);
 		Engine_EventWait(2);
 		Engine_ActorSetAttachedEffect(leader, 0x100);
@@ -887,15 +887,15 @@ static void TretInteriors_SpawnSwirlSparks(void)
 			if (spark != 0)
 			{
 				previous = Object_ReplaceResourceEntry(spark->sprite, previous);
-				spark->motion_flags = 0;
+				spark->motionFlags = 0;
 				spark->sprite->priority = 0;
 				Engine_ActorSetSpriteFlags(spark, 0);
 				Object_SetMode(spark, 1);
 				((struct Spark *)spark)->phase = 0;
 				((struct Spark *)spark)->angle = ((360 / (u32)(6 - wave) * i) << 16) / 360;
-				spark->target_x = (*(struct Vec *)TretInteriors_SparkOrigin).x;
-				spark->target_y = (*(struct Vec *)TretInteriors_SparkOrigin).y;
-				spark->target_z = (*(struct Vec *)TretInteriors_SparkOrigin).z;
+				spark->targetX = (*(struct Vec *)TretInteriors_SparkOrigin).x;
+				spark->targetY = (*(struct Vec *)TretInteriors_SparkOrigin).y;
+				spark->targetZ = (*(struct Vec *)TretInteriors_SparkOrigin).z;
 				spark->speed = 0x19999;
 				spark->update = TretInteriors_UpdateSwirlObject;
 			}
@@ -953,11 +953,11 @@ static void TretInteriors_RunLandingDustScene(void)
 	Object_GetById(0)->y.fixed = 0x820000;
 	Object_GetById(0)->gravity = 0x8000;
 	Object_GetById(0)->bounce = 0;
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_AudioPlayCue(204);
-	Object_GetById(0)->motion_flags = 3;
+	Object_GetById(0)->motionFlags = 3;
 	Engine_EventWait(24);
 	leader = Object_GetById(0);
 	p = &params;

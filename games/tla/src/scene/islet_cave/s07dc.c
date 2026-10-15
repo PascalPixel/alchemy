@@ -22,7 +22,7 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag)
         if (GameFlag_Test(flag))
             Func_0200129c(id, x << 16, z << 16);
         ObjectMotion_SetActionVariant(id, 3);
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         {
             /* FAKEMATCH: the first argument pinned to r0 and taken by an empty asm: ⚓️ moves it into place right after the flag store, before the position loads; plain it moves after them (differ 2). */
             register s32 first asm("r0") = a;
@@ -45,7 +45,7 @@ void Func_02000848(s32 id, s32 a, s32 b_arg, s32 x, s32 z, s32 unused, s32 flag)
         if (GameFlag_Test(flag))
             Func_0200129c(id, x << 16, z << 16);
         object = Object_GetById(id);
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         {
             /* FAKEMATCH: the second argument pinned to r1 and taken by an empty asm: ⚓️ moves it into place right after the flag store, before the position loads; plain it moves after them (differ 2). */
             register s32 second asm("r1") = b;

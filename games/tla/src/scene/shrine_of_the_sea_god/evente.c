@@ -3,7 +3,7 @@
 struct ShrineOfTheSeaGodSpot {
     s32 x;
     s32 z;
-    s32 field_18;
+    s32 field18;
     s32 rotation;
 };
 
@@ -45,10 +45,10 @@ void Func_02002e70(void)
 
 void Func_02002e8c(void)
 {
-    Object_GetById(gPartyState.current_owner)->layer = 2;
+    Object_GetById(gPartyState.currentOwner)->layer = 2;
 }
 
 void Func_02002ea8(void)
 {
-    Object_GetById(gPartyState.current_owner)->layer = 0;
+    Object_GetById(gPartyState.currentOwner)->layer = 0;
 }

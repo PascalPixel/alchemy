@@ -74,7 +74,7 @@ static __inline__ void CenterOnColumn_(s32 id, s32 column, s32 dz)
 // party's current owner to it.
 void Func_020004cc(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     s32 index;
     s32 i;
 
@@ -88,7 +88,7 @@ loop:
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != NULL)
-            object->motion_flags = 0;
+            object->motionFlags = 0;
     }
     i++;
     if ((u32)i <= 63)
@@ -100,10 +100,10 @@ loop:
         index--;
     } while (0);
     Func_0200517c_(Data_02005de0[index].data, Data_02005de0[index].a, Data_02005de0[index].b);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     {
-        s32 owner = gPartyState.current_owner;
+        s32 owner = gPartyState.currentOwner;
 
         if (index == 5)
             OffsetPosition_(owner, 0, -4);

@@ -29,11 +29,11 @@ void Func_02000208(void)
     const struct WarpTarget *warp = &Data_02003d10;
     s32 msg;
 
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 168, 424);
-    Func_02003534(gPartyState.current_owner, 0);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 168, 424);
+    Func_02003534(gPartyState.currentOwner, 0);
     Func_0200362c(158);
     Func_02003414(warp->scene, warp->x, warp->z);
-    Object_GetById(8)->motion_flags = 0;
+    Object_GetById(8)->motionFlags = 0;
     {
         s32 x = 184 << 16;
 

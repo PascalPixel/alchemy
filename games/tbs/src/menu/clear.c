@@ -48,7 +48,7 @@ static u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
 
 struct ClearWork
 {
-	u8	unknown_00[20];
+	u8	unk00[20];
 	u16 mode;
 };
 
@@ -119,8 +119,8 @@ static void Clear_LoadBackground(void)
 	{
 		struct FieldActor *leader;
 
-		leader = Object_GetById(gGameState.selected_actor);
-		leader->motion_flags = 0;
+		leader = Object_GetById(gGameState.selectedActor);
+		leader->motionFlags = 0;
 	}
 }
 
@@ -274,7 +274,7 @@ static s32 Scene_GetModeMask(void)
 	{
 		return 0;
 	}
-	if (gGameState.scene_variant == 2)
+	if (gGameState.sceneVariant == 2)
 	{
 		return 0;
 	}
@@ -284,8 +284,8 @@ static s32 Scene_GetModeMask(void)
 
 struct SaveMenuSceneState
 {
-	u8	unknown_000[0x100];
-	s32 word_100;
+	u8	unk000[0x100];
+	s32 word100;
 };
 
 struct SaveLinkGreeting
@@ -298,7 +298,7 @@ s32							   __divsi3(s32, s32);
 
 s32 SaveMenu_Run(void)
 {
-	s32 page_count;
+	s32 pageCount;
 	s32 encoded_size;
 	s32 page_window;
 	s32 rec5;
@@ -315,7 +315,7 @@ s32 SaveMenu_Run(void)
 	s32 page_message;
 	s32 page;
 	s32 started;
-	s32 help_window;
+	s32 helpWindow;
 	s32 heading_window;
 	u8	save_data[200];
 #if EDITION_INTERNATIONAL
@@ -328,7 +328,7 @@ s32 SaveMenu_Run(void)
 	started = 0;
 	Clear_LoadBackground();
 	FieldScheduler_AddCallback((s32)Clear_CheckButtonCodes, 0xc80);
-	gEventWork->start_transition = started;
+	gEventWork->startTransition = started;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	if (gGameState.entrance == 2)
@@ -340,7 +340,7 @@ s32 SaveMenu_Run(void)
 		if (v7 == 0)
 		{
 			UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
-			gGameState.unknown_20f = 1;
+			gGameState.unk20f = 1;
 			v7 = Save_WriteSelectedSlot();
 			if (v7 == -1)
 			{
@@ -361,7 +361,7 @@ menu_top:;
 	{
 		if (gDebugMode != 0)
 		{
-			gGameState.saved_options = 1;
+			gGameState.savedOptions = 1;
 			gOptionMirror = 1;
 			UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
 		}
@@ -387,7 +387,7 @@ menu_top:;
 	if (v6 == 0)
 	{
 		GameState_InitDefaults();
-		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+		PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
 		v5 = 1;
 		v7 = 0;
 		for (;;)
@@ -432,11 +432,11 @@ menu_top:;
 		}
 		GameFlag_Set(0x109);
 		state = &gGameState;
-		PaletteGlow_Update(state->palette_glow[0], state->palette_glow[1]);
-		if (state->build_stamp != Runtime_GetBuildStampTime())
+		PaletteGlow_Update(state->paletteGlow[0], state->paletteGlow[1]);
+		if (state->buildStamp != Runtime_GetBuildStampTime())
 		{
-			state->scene = state->saved_scene;
-			state->entrance = state->saved_entrance;
+			state->scene = state->savedScene;
+			state->entrance = state->savedEntrance;
 			GameFlag_ClearBit(0x109);
 		}
 		else if ((gKeysHeld & 0x208) == 0x208)
@@ -446,12 +446,12 @@ menu_top:;
 				UiText_ShowPositionedMessageAndWait(MsgSaveRecoveryFailed, 9);
 				goto menu_top;
 			}
-			state->scene = state->saved_scene;
-			state->entrance = state->saved_entrance;
+			state->scene = state->savedScene;
+			state->entrance = state->savedEntrance;
 			GameFlag_ClearBit(0x109);
 			Engine_GameFlagSet(0x13e);
 		}
-		else if (state->play_time != ((struct SaveMenuSceneState *)gSceneState)->word_100)
+		else if (state->playTime != ((struct SaveMenuSceneState *)gSceneState)->word100)
 		{
 			UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
 			UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
@@ -467,8 +467,8 @@ menu_top:;
 				UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
 				goto menu_top;
 			}
-			state->scene = state->saved_scene;
-			state->entrance = state->saved_entrance;
+			state->scene = state->savedScene;
+			state->entrance = state->savedEntrance;
 			GameFlag_ClearBit(0x109);
 			Engine_GameFlagSet(0x13f);
 		}
@@ -492,7 +492,7 @@ menu_top:;
 		{
 			goto menu_top;
 		}
-		gGameState.selected_actor = 0;
+		gGameState.selectedActor = 0;
 		if (GameFlag_IsSet(0x952) != 0)
 		{
 			InventorySnapshot_Restore();
@@ -505,7 +505,7 @@ menu_top:;
 			Party_AddActiveOwner(2);
 			Party_AddActiveOwner(3);
 		}
-		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+		PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
 		GameFlag_ClearBit(0x109);
 		GameFlag_ClearBit(0x106);
 		Engine_GameFlagSet(0x17e);
@@ -525,7 +525,7 @@ menu_top:;
 		{
 			goto menu_top;
 		}
-		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+		PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
 	link_select:;
 		v6 = Menu_SelectResourceLayout(0);
 		if (v6 == -1)
@@ -696,7 +696,7 @@ menu_top:;
 			Ui_LoadWindowGraphics();
 			page_window = UiWindow_Create(5, 4, 20, 12, v6);
 			page = 0;
-			page_count = ((encoded_size / 50) + 1);
+			pageCount = ((encoded_size / 50) + 1);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			record = UiWindow_Create(8, 0, 13, 4, v6);
 #else
@@ -706,14 +706,14 @@ menu_top:;
 			heading_window = record;
 			UiText_DrawResource(page_message, heading_window, 6, 4);
 			v7 = 1;
-			if (page_count == 1)
+			if (pageCount == 1)
 			{
 				record = UiWindow_Create(5, 16, 20, 3, v6);
-				help_window = record;
+				helpWindow = record;
 #if EDITION_INTERNATIONAL
-				UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
+				UiText_DrawCharacterAtOffset(page_message - 2, helpWindow, 80, 0);
 #else
-				UiText_DrawCharacterAtOffset(page_message - 2, help_window, 0, 0);
+				UiText_DrawCharacterAtOffset(page_message - 2, helpWindow, 0, 0);
 #endif
 			}
 			else
@@ -726,8 +726,8 @@ menu_top:;
 #else
 				record = UiWindow_Create(1, 16, 28, 3, v6);
 #endif
-				help_window = record;
-				UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
+				helpWindow = record;
+				UiText_DrawCharacterAtOffset(page_message - 1, helpWindow, 0, 0);
 			}
 			Graphics_ExpandVramTilesByColorTable(0x6006000);
 			RenderOutput_PrepareForRedraw(page_window);
@@ -739,7 +739,7 @@ menu_top:;
 					Engine_AudioPlayCue(113);
 					RenderOutput_PrepareForRedraw(page_window);
 					UiWork_Finalize(page_window, 2);
-					UiWork_Finalize(help_window, 2);
+					UiWork_Finalize(helpWindow, 2);
 					UiWork_Finalize(heading_window, 2);
 					goto page_select;
 				}
@@ -747,12 +747,12 @@ menu_top:;
 				{
 					page = (page + 1);
 					v7 = 1;
-					if (page == page_count)
+					if (page == pageCount)
 					{
 						Engine_AudioPlayCue(112);
 						RenderOutput_PrepareForRedraw(page_window);
 						UiWork_Finalize(page_window, 2);
-						UiWork_Finalize(help_window, 2);
+						UiWork_Finalize(helpWindow, 2);
 						UiWork_Finalize(heading_window, 2);
 						Engine_TaskWait(1);
 						goto menu_top;
@@ -761,23 +761,23 @@ menu_top:;
 				}
 				else
 				{
-					if ((gKeyState & KEY_LEFT) != 0 && page_count > 1)
+					if ((gKeyState & KEY_LEFT) != 0 && pageCount > 1)
 					{
 						Engine_AudioPlayCue(111);
-						rec5 = page + page_count;
+						rec5 = page + pageCount;
 						rec5--;
 					}
-					else if ((gKeyState & KEY_RIGHT) != 0 && page_count > 1)
+					else if ((gKeyState & KEY_RIGHT) != 0 && pageCount > 1)
 					{
 						Engine_AudioPlayCue(111);
-						rec5 = page + page_count;
+						rec5 = page + pageCount;
 						rec5++;
 					}
 					else
 					{
 						goto keys_done;
 					}
-					rec5 = (rec5 % page_count);
+					rec5 = (rec5 % pageCount);
 					v7 = 1;
 					page = rec5;
 				}
@@ -797,10 +797,10 @@ menu_top:;
 						v5 = (v5 + 2);
 						v7 = (v7 + 1);
 					} while (v7 != 4);
-					if (page_count > 1)
+					if (pageCount > 1)
 					{
 						v7 = 0;
-						if (page_count != 0)
+						if (pageCount != 0)
 						{
 							v6 = 0;
 							do
@@ -811,13 +811,13 @@ menu_top:;
 									value = v7 + 0xf30b;
 								}
 								UiWindow_SetTilemapEntry(
-									page_window, value, v7 + 18 - page_count, -1, v6);
+									page_window, value, v7 + 18 - pageCount, -1, v6);
 								v7 = (v7 + 1);
-							} while (v7 != page_count);
+							} while (v7 != pageCount);
 						}
 						v5 = 0;
 						UiWindow_SetTilemapEntry(
-							page_window, 0xf128, (17 - (s32)page_count), -1, 0);
+							page_window, 0xf128, (17 - (s32)pageCount), -1, 0);
 						UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
 						UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
 							((struct UiWindow *)page_window)->y);
@@ -862,7 +862,7 @@ menu_top:;
 		goto menu_top;
 	}
 leave:;
-	gEventWork->requested_exit = 0x3e7;
+	gEventWork->requestedExit = 0x3e7;
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(17);
 	Engine_EventCloseScreen();
@@ -941,23 +941,23 @@ static void SaveMenu_FillTileBlock(const struct RenderInput *window)
 
 struct PasswordStats
 {
-	s16 value_10;
-	s16 value_12;
-	u8	unknown_14[4];
-	u16 value_18;
-	u16 value_1a;
-	u16 value_1c;
-	u8	level_1e;
+	s16 value10;
+	s16 value12;
+	u8	unk14[4];
+	u16 value18;
+	u16 value1a;
+	u16 value1c;
+	u8	level1e;
 };
 
 struct PasswordOwner
 {
-	u8					 unknown_00[0x0f];
+	u8					 unk00[0x0f];
 	u8					 rank;
 	struct PasswordStats stats;
-	u8					 unknown_20[0xb8];
+	u8					 unk20[0xb8];
 	u16					 items[15];
-	u8					 unknown_f6[2];
+	u8					 unkf6[2];
 	u32					 values[4];
 };
 
@@ -1017,40 +1017,40 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 			UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
 		struct PasswordStats *stats = &owner->stats;
 
-		if (stats->value_10 > 1999)
+		if (stats->value10 > 1999)
 		{
-			stats->value_10 = 1999;
+			stats->value10 = 1999;
 		}
-		if (stats->value_10 < 0)
+		if (stats->value10 < 0)
 		{
-			stats->value_10 = 0;
+			stats->value10 = 0;
 		}
-		if (stats->value_12 > 1999)
+		if (stats->value12 > 1999)
 		{
-			stats->value_12 = 1999;
+			stats->value12 = 1999;
 		}
-		if (stats->value_12 < 0)
+		if (stats->value12 < 0)
 		{
-			stats->value_12 = 0;
+			stats->value12 = 0;
 		}
-		if (stats->value_18 > 999)
+		if (stats->value18 > 999)
 		{
-			stats->value_18 = 999;
+			stats->value18 = 999;
 		}
-		if (stats->value_1a > 999)
+		if (stats->value1a > 999)
 		{
-			stats->value_1a = 999;
+			stats->value1a = 999;
 		}
-		if (stats->value_1c > 999)
+		if (stats->value1c > 999)
 		{
-			stats->value_1c = 999;
+			stats->value1c = 999;
 		}
-		if (stats->level_1e > 99)
+		if (stats->level1e > 99)
 		{
-			stats->level_1e = 99;
+			stats->level1e = 99;
 		}
-		rows[i * 2] = stats->value_10 << 21 | stats->value_12 << 10 | stats->value_18;
-		rows[i * 2 + 1] = stats->value_1a << 22 | stats->value_1c << 12 | stats->level_1e << 4;
+		rows[i * 2] = stats->value10 << 21 | stats->value12 << 10 | stats->value18;
+		rows[i * 2 + 1] = stats->value1a << 22 | stats->value1c << 12 | stats->level1e << 4;
 		if (owner->rank > 99)
 		{
 			owner->rank = 99;

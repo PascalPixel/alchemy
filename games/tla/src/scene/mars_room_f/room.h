@@ -13,22 +13,22 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 struct SceneWork {
-    u8 unknown_000[0x166];
-    u16 unknown_166;
-    u8 unknown_168[0x44];
-    s32 unknown_1ac;
-    u8 unknown_1b0[0xb88];
-    u8 unknown_d38;
+    u8 unk000[0x166];
+    u16 unk166;
+    u8 unk168[0x44];
+    s32 unk1ac;
+    u8 unk1b0[0xb88];
+    u8 unkd38;
 };
 
 struct MapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct MapLayers {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct MapLayer layers[3];
 };
 
@@ -36,7 +36,7 @@ struct Box {
     s32 word[6];
 };
 
-#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->event_work)
+#define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);

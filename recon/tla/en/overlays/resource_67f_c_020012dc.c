@@ -10,20 +10,20 @@
 
 s32 Func_020012dc(void)
 {
-    struct IzumoRuinsEventWork *work = Ram_HeapSlots->event_work;
+    struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     s32 height;
 
-    work->field_1ac = 0x204;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    work->field1ac = 0x204;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     Func_020014e0(0);
     if (gPartyState.scene == (s32)&SceneId_Ov67FRoom1) {
         Func_02001510(Data_02001654);
         Func_0200100c((u16 *)Data_02001674);
         Func_020014f8(Data_02001696);
     } else {
-        Object_GetById(10)->priority_flags |= 0x20;
-        Object_GetById(11)->priority_flags |= 0x20;
+        Object_GetById(10)->priorityFlags |= 0x20;
+        Object_GetById(11)->priorityFlags |= 0x20;
         Func_02001510(Data_02001658);
         Func_0200100c((u16 *)Data_02001688);
         if (GameFlag_Test(0x941)) {
@@ -32,11 +32,11 @@ s32 Func_020012dc(void)
             Func_02001448();
             WaitFrames(1);
             if (GameFlag_Test(0x109)) {
-                object = Object_GetById(gPartyState.current_owner);
-                height = Map_GetTerrainHeight(object->terrain_id, object->x, object->z - object->y);
-                object->terrain_height = height;
+                object = Object_GetById(gPartyState.currentOwner);
+                height = Map_GetTerrainHeight(object->terrainId, object->x, object->z - object->y);
+                object->terrainHeight = height;
                 object->y = height;
-                Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+                Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
             }
         }
     }

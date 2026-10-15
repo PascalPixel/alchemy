@@ -2,7 +2,7 @@
 #include "iwram_call.h"
 
 struct ClockWork {
-    u8 unknown_00[132];
+    u8 unk00[132];
     s32 timer;
     u8 ringing;
     u8 mode;

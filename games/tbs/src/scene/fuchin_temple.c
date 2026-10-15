@@ -162,7 +162,7 @@ static void EV09_TALK_1(void)
 	Engine_ActorFaceDirection(0, 0xc000, 20);
 	Engine_AudioPlayCue(132);
 	actor = Object_GetById(9);
-	actor->velocity_y = 0x140000;
+	actor->velocityY = 0x140000;
 	actor = Object_GetById(9);
 	actor->gravity = 0x40000;
 	Actor_SetSpeed(9, 0x30000, 0x18000);
@@ -227,7 +227,7 @@ static void Scene_RunScene39eSequenceB(void)
 		Object_GetById(8)->paused = 0;
 		Event_PlayCue(152);
 		record = Actor_Get(8);
-		record->velocity_y = 0x80000;
+		record->velocityY = 0x80000;
 		Engine_ActorSetAnimation(8, 1);
 		Engine_EventWait(30);
 		Engine_EventSetMessage(MsgXianMustSurviveTestGrottoBefore);
@@ -246,7 +246,7 @@ static void Scene_RunScene39eSequenceB(void)
 		Event_PlayCue(152);
 		Object_GetById(8)->paused = rec7;
 		record = Actor_Get(8);
-		record->velocity_y = 0x80000;
+		record->velocityY = 0x80000;
 		Engine_ActorSetAnimation(8, 1);
 		Engine_EventWait(30);
 		Event_OpenMessage(8, 0);
@@ -378,9 +378,9 @@ static void EV12_TALK(void)
 
 	Object_GetById(12)->y.fixed = 0;
 
-	Object_GetById(12)->target_y = ACTOR_NO_TARGET;
+	Object_GetById(12)->targetY = ACTOR_NO_TARGET;
 
-	Object_GetById(12)->velocity_y = 0;
+	Object_GetById(12)->velocityY = 0;
 
 	Object_GetById(12)->paused = 1;
 
@@ -433,7 +433,7 @@ static void FieldScene_RunForwardArcBurst(void)
 	}
 
 	actor->y.fixed = 0x120000;
-	actor->target_y = 0x120000;
+	actor->targetY = 0x120000;
 
 	Engine_AudioPlayCue(227);
 
@@ -461,8 +461,8 @@ static void FuchinTemple_SpinAway(void)
 		actor->z.fixed -= Engine_MathSin(angle) * 6;
 	}
 	actor->y.fixed = 0x120000;
-	actor->target_y = 0x120000;
-	actor->scale_x = 0xffff3334;
+	actor->targetY = 0x120000;
+	actor->scaleX = 0xffff3334;
 	Engine_AudioPlayCue(227);
 	Effect_Spawn(actor->x.fixed - 0xc0000, actor->y.fixed, actor->z.fixed + 0x80000, 0x10000,
 		0x3333, 0, 0, 0);
@@ -481,7 +481,7 @@ static void FieldScene_RunDescentBurst(void)
 	{
 		Engine_TaskWait(step);
 		actor->z.fixed += 0xffff0000;
-		actor->target_z = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		i++;
 		step -= 2;
 	} while (i <= 3);
@@ -512,14 +512,14 @@ static void Scene_RunPrimarySequence(void)
 	{
 		Engine_TaskWait(slot);
 		actor->z.fixed += 0x10000;
-		actor->target_z = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		count++;
 		slot -= 2;
 	} while (count <= 3);
 
 	actor->sprite->rotation = 0;
 	actor->z.fixed += 0x180000;
-	actor->target_z = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 	Engine_AudioPlayCue(227);
 
 	Effect_Spawn(
@@ -597,8 +597,8 @@ static void FuchinTemple_RunMasterScene(s32 mode)
 	Actor_SetPosition(19, 0xe80000, 0xa80000);
 	Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
 	Object_GetById(19)->y.fixed = 0xc0000;
-	Object_GetById(19)->target_y = ACTOR_NO_TARGET;
-	Object_GetById(19)->scale_x = 0xcccc;
+	Object_GetById(19)->targetY = ACTOR_NO_TARGET;
+	Object_GetById(19)->scaleX = 0xcccc;
 	Object_GetById(19)->sprite->rotation = 0x8000;
 	Engine_AudioPlayCue(124);
 	Engine_EventWait(40);
@@ -643,9 +643,9 @@ static void FuchinTemple_RunGatheringScene(void)
 	record = Object_GetById(19);
 	record->y.fixed = 0xc0000;
 	record = Object_GetById(19);
-	record->target_y = ACTOR_NO_TARGET;
+	record->targetY = ACTOR_NO_TARGET;
 	record = Object_GetById(19);
-	record->scale_x = 0xcccc;
+	record->scaleX = 0xcccc;
 	record = Object_GetById(19);
 	{
 		struct FieldSprite *sprite = record->sprite;
@@ -814,12 +814,12 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Engine_EventWait(20);
 	Actor_SetSpeed(16, 192 << 9, 192 << 8);
 	rec = Object_GetById(16);
-	rec->steering_flags &= ~ACTOR_FACES_MOTION;
+	rec->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
 	Engine_EventWait(1);
 	rec = Actor_Get(16);
 
-	rec->steering_flags = ACTOR_FACES_MOTION | rec->steering_flags;
+	rec->steeringFlags = ACTOR_FACES_MOTION | rec->steeringFlags;
 	Event_ShowMessageAndWait(16, 0, 50);
 	Actor_SetPosition(17, 152 << 17, 216 << 16);
 	Actor_WalkToAndWait(17, 152 << 1, 248);
@@ -969,9 +969,9 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	rec = Actor_Get(19);
 	rec->y.fixed = 0xc0000;
 	rec = Actor_Get(19);
-	rec->target_y = ACTOR_NO_TARGET;
+	rec->targetY = ACTOR_NO_TARGET;
 	rec = Actor_Get(19);
-	rec->scale_x = 0xcccc;
+	rec->scaleX = 0xcccc;
 	rec = Actor_Get(19);
 	{
 		struct FieldSprite *sprite = rec->sprite;
@@ -1253,7 +1253,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	actor = Actor_Get(19);
 	actor->y.fixed = 0xc0000;
 	actor = Actor_Get(19);
-	actor->target_y = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
 	actor = Actor_Get(19);
 	{
 		struct FieldSprite *sprite = actor->sprite;
@@ -1357,8 +1357,8 @@ static void FieldScene_SpawnRandomizedParticle(void)
 	if ((draw & 7) == 0)
 		params.palette = 5;
 
-	params.start_scale_x = 0xb333;
-	params.start_scale_y = 0xcccc;
+	params.startScaleX = 0xb333;
+	params.startScaleY = 0xcccc;
 
 	offset = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
 
@@ -1407,7 +1407,7 @@ static void EV03_TOUCH_1(void)
 	particle_task = FieldScene_SpawnRandomizedParticle;
 	FieldScheduler_AddCallback(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-	gEventWork->transition_frames = 60;
+	gEventWork->transitionFrames = 60;
 	Engine_EventCloseScreen();
 	Engine_AudioPlayCue(154);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -1433,9 +1433,9 @@ static void EV02_TOUCH(void)
 	Engine_EventBegin();
 	Event_PlayCue(188);
 	Map_AnimateCells(FuchinTemple_CellStepsA, 77, 8);
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	Engine_EventWait(16);
@@ -1450,7 +1450,7 @@ static void FuchinTemple_AskIfCurious(void)
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 0x1f8);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -1461,7 +1461,7 @@ static void FuchinTemple_AskIfCurious(void)
 	Object_GetById(8)->paused = 0;
 	Event_PlayCue(152);
 	record = Actor_Get(8);
-	record->velocity_y = 0x80000;
+	record->velocityY = 0x80000;
 	Engine_ActorSetAnimation(8, 1);
 	Engine_EventSetMessage(MsgXianExcellentIsaac);
 	Event_ShowMessageAndWait(8, 0, 20);
@@ -1979,12 +1979,12 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
 	Engine_EventWait(1);
 	{
 		struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
-		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
+		record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
 	}
 	Engine_EventWait(20);
 	FieldScene_RunParticleRain();
@@ -2108,7 +2108,7 @@ s32 FuchinTemple_ApplyEntryState(void)
 
 	if (gGameState.scene == (s32)&SceneId_FuchinTemple2)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		if (gGameState.entrance == 1)
 		{
 			if (Engine_GameFlagIsSet(0x88f))
@@ -2132,11 +2132,11 @@ s32 FuchinTemple_ApplyEntryState(void)
 			if (set == 0)
 			{
 				actor = Object_GetById(19);
-				actor->motion_flags = set;
+				actor->motionFlags = set;
 				actor->y.fixed = 0xc0000;
-				actor->target_y = 0xc0000;
-				actor->scale_x = 0xcccc;
-				actor->scale_y = 0x8000;
+				actor->targetY = 0xc0000;
+				actor->scaleX = 0xcccc;
+				actor->scaleY = 0x8000;
 				actor->sprite->rotation = 0x8000;
 				if (Engine_GameFlagIsSet(0x89a))
 				{
@@ -2155,12 +2155,12 @@ s32 FuchinTemple_ApplyEntryState(void)
 			else
 			{
 				actor = Object_GetById(19);
-				actor->motion_flags = 0;
+				actor->motionFlags = 0;
 				actor->y.fixed = 0xc0000;
-				actor->target_y = 0xc0000;
-				actor->scale_x = 0xcccc;
-				actor->scale_y = 0x8000;
-				actor->collision_flags |= 8;
+				actor->targetY = 0xc0000;
+				actor->scaleX = 0xcccc;
+				actor->scaleY = 0x8000;
+				actor->collisionFlags |= 8;
 				actor->sprite->rotation = 0x8000;
 				Map_CopyCellAttributes(14, 11, 1, 1, 14, 10);
 			}
@@ -2185,7 +2185,7 @@ s32 FuchinTemple_ApplyEntryState(void)
 	else
 	{
 		BattleFx_SetQueuedSoundAndPlay(170);
-		Object_GetById(9)->collision_flags |= 16;
+		Object_GetById(9)->collisionFlags |= 16;
 		if (gGameState.entrance == 3 && Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x894))
 		{
 			Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
@@ -2231,8 +2231,8 @@ static void FieldScene_SpawnEightShots(void)
 	descriptor.priority = 1;
 	descriptor.type = 0x0119;
 	descriptor.script = FuchinTemple_ShotScript;
-	descriptor.target_scale_x = 224 << 10;
-	descriptor.target_scale_y = 192 << 9;
+	descriptor.targetScaleX = 224 << 10;
+	descriptor.targetScaleY = 192 << 9;
 	for (i = 0; i <= 7; i++)
 	{
 		Engine_EventWait(10);

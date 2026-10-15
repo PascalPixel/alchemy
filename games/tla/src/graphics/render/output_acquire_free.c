@@ -11,7 +11,7 @@
 #endif
 
 #if GAME_TLA
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 #endif
 
 //--------------------------------------------------------------------------
@@ -20,13 +20,13 @@
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
 	struct UiRenderWork *work = UI_WORK;
-	struct RenderOutput *out = work->free_outputs.head;
+	struct RenderOutput *out = work->freeOutputs.head;
 
 	if (out != NULL)
 	{
 		if (out->next == NULL)
-			work->free_outputs.tail_link = &work->free_outputs.head; // 空になった
-		work->free_outputs.head = out->next;
+			work->freeOutputs.tailLink = &work->freeOutputs.head; // 空になった
+		work->freeOutputs.head = out->next;
 		out->next = NULL;
 	}
 	return out;
@@ -39,11 +39,11 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out)
 {
 	struct UiRenderWork *work = UI_WORK;
 
-	if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->free_outputs.head)
+	if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->freeOutputs.head)
 	{
-		struct RenderOutput **tail = work->free_outputs.tail_link;
+		struct RenderOutput **tail = work->freeOutputs.tailLink;
 
-		work->free_outputs.tail_link = &out->next;
+		work->freeOutputs.tailLink = &out->next;
 		*tail = out;
 		out->next = NULL;
 	}
@@ -61,7 +61,7 @@ void UiWork_InitFreeList(void)
 
 	work = UI_WORK;
 	out = work->outputs;
-	work->free_outputs.head = out;
+	work->freeOutputs.head = out;
 	n = UI_OUTPUT_COUNT - 2;
 	do
 	{
@@ -71,5 +71,5 @@ void UiWork_InitFreeList(void)
 		out = next;
 	} while (n >= 0);
 	next->next = NULL;
-	work->free_outputs.tail_link = &next->next;
+	work->freeOutputs.tailLink = &next->next;
 }

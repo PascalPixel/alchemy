@@ -3,16 +3,16 @@
 #include "object_runtime.h"
 
 struct SceneState {
-    u8 unknown_000[0x160];
+    u8 unk000[0x160];
     s32 count;
-    s16 first_id;
-    s16 end_id;
-    u16 tile_entry;
-    s8 redraw_a;
-    s8 redraw_b;
-    s16 origin_x;
-    s16 origin_z;
-    u8 unknown_170[0x80];
+    s16 firstId;
+    s16 endId;
+    u16 tileEntry;
+    s8 redrawA;
+    s8 redrawB;
+    s16 originX;
+    s16 originZ;
+    u8 unk170[0x80];
 };
 
 extern struct SceneState gSceneState;
@@ -38,13 +38,13 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id)
         Scheduler_AddOrUpdateCallback(Func_02004710, 1152);
     } else {
         Iwram_ClearWords(state, sizeof(struct SceneState));
-        state->origin_x = x;
-        state->origin_z = z;
+        state->originX = x;
+        state->originZ = z;
         Func_020038ac();
         count = Func_02003a64(value);
         Func_02004288(id, 0);
         Scheduler_AddOrUpdateCallback(Func_02004710, 1152);
     }
-    Object_GetById(id)->unknown_5c[0] = 2;
+    Object_GetById(id)->unk5c[0] = 2;
     return count;
 }

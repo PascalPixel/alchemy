@@ -15,8 +15,8 @@ void Func_02000738(void);
 void Func_02000768(void)
 {
     if (gPartyState.entrance == 99) {
-        gPartyState.render_mode = 7;
-        gPartyState.owner_override = 1;
+        gPartyState.renderMode = 7;
+        gPartyState.ownerOverride = 1;
         Func_020012b4((s32)&SceneId_Ov66bRoom2, 1);
     }
     Func_020012fc();

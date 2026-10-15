@@ -6,58 +6,58 @@
 #include "ram_buffer.h"
 
 struct ShrineOfTheSeaGodObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
     s32 height;
-    s32 field_18;
-    s32 field_1c;
-    u8 unknown_20[2];
+    s32 field18;
+    s32 field1c;
+    u8 unk20[2];
     u8 layer;
-    u8 priority_flags;
-    u8 unknown_24[4];
+    u8 priorityFlags;
+    u8 unk24[4];
     s32 speed;
-    u8 unknown_2c[0x24];
+    u8 unk2c[0x24];
     void *sprite;
-    u8 unknown_54;
-    u8 motion_flags;
-    u8 unknown_56[3];
-    u8 collision_flags;
-    u8 unknown_5a[8];
+    u8 unk54;
+    u8 motionFlags;
+    u8 unk56[3];
+    u8 collisionFlags;
+    u8 unk5a[8];
     u8 state;
-    u8 unknown_63[9];
+    u8 unk63[9];
     void (*update)(struct ShrineOfTheSeaGodObject *object);
 };
 
 struct ShrineOfTheSeaGodSprite {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 rotation;
 };
 
 struct ShrineOfTheSeaGodEventWork {
-    u8 unknown_000[0x154];
+    u8 unk000[0x154];
     s16 exit;
-    u8 unknown_156[4];
-    u16 unknown_15a;
-    u8 unknown_15c[0x50];
-    s32 screen_effect;
+    u8 unk156[4];
+    u16 unk15a;
+    u8 unk15c[0x50];
+    s32 screenEffect;
 };
 
 struct ShrineOfTheSeaGodMapLayer {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
-    u8 unknown_10[0x28];
+    u8 unk10[0x28];
 };
 
 struct ShrineOfTheSeaGodMapWork {
-    u8 unknown_000[0x17];
-    u8 low_17 : 2;
-    u8 mode_17 : 2;
-    u8 high_17 : 4;
-    u8 unknown_018[0xf0];
+    u8 unk000[0x17];
+    u8 low17 : 2;
+    u8 mode17 : 2;
+    u8 high17 : 4;
+    u8 unk018[0xf0];
     struct ShrineOfTheSeaGodMapLayer layers[3];
 };
 
@@ -79,7 +79,7 @@ void Func_020039d8(void);
 void Func_020039e0(void);
 void Func_02003b08(s32 skip);
 void Func_02003aa0(s32 actor);
-void Func_02003998(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02003998(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020039a8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003ae0(s32 actor, s32 value);
 void Func_02003b28(void);

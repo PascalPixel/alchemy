@@ -37,7 +37,7 @@ next:
         s32 kind = entry[1];
         s32 flag = entry[2];
 
-        object->collision_flags &= ~1;
+        object->collisionFlags &= ~1;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02000128(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
         entry += 3;
@@ -49,12 +49,12 @@ next:
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer)
 {
     struct FieldActor *object = Object_GetById(id);
-    u8 *cell = ((struct AirsRockInsideMapWork *)Ram_HeapSlots->map_work)->layers[layer].cells;
+    u8 *cell = ((struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork)->layers[layer].cells;
 
     cell += Func_02005f64(object) * 4;
     if (GameFlag_Test(flag)) {
         {
-            u8 *flags = &object->priority_flags;
+            u8 *flags = &object->priorityFlags;
             s32 bit = 2; /* FAKEMATCH: the native builds the bit in the register it ORs into */
             s32 old = *flags;
 
@@ -90,7 +90,7 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer)
 
 void Func_020004d4(struct FieldActor *object)
 {
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
 
     if (Random16Far() & 255) {
         object->x = ((Random16Far_() & 255) << 16) + 0xb00000;
@@ -116,8 +116,8 @@ next:
 
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02005d5c(object, (u16)kind * 3 + GameFlag_Test((u16)flag));
-        object->motion_flags = 0;
-        object->collision_flags &= ~1;
+        object->motionFlags = 0;
+        object->collisionFlags &= ~1;
         *(s16 *)((u8 *)object + 100) = flag;
         Func_020006cc(object);
         entry += 3;

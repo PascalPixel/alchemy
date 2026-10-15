@@ -19,15 +19,15 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
         tail = &node->next;
         node = node->next;
     }
-    list->tail_link = tail;
+    list->tailLink = tail;
 }
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
     /* FAKEMATCH: the first-word tail pointer access preserves the two-store order. */
     if (list != NULL) {
-        *list->tail_link = node;
-        *(struct RenderOutput **)&list->tail_link = node;
+        *list->tailLink = node;
+        *(struct RenderOutput **)&list->tailLink = node;
     }
 }
 
@@ -37,7 +37,7 @@ void RenderOutput_Release(struct RenderOutput *entry)
     if ((u8)entry->kind != 0) {
         Resource_ResetEntry((u8)entry->index);
         if ((u8)entry->kind == 2) {
-            u8 *dst = (u8 *)Ram_HeapSlots->window_tiles;
+            u8 *dst = (u8 *)Ram_HeapSlots->windowTiles;
             s32 idx = entry->oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
             *(u16 *)(dst + idx) = 0x3E7;
         }

@@ -7,10 +7,10 @@
 struct DebugPartyEntry {
     s8 owner;
     u8 level;
-    s8 djinn_counts[4];
+    s8 djinnCounts[4];
     u16 items[6];
     u16 actions[2];
-    u16 unknown_16;
+    u16 unk16;
 };
 
 extern struct DebugPartyEntry Data_0812a174[];
@@ -83,13 +83,13 @@ s32 DebugParty_LoadPreset(s32 preset)
         }
         for (i = 0; i < 32; i++)
             /* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
-            *(u16 *)&((struct OwnerActionState *)state)->action_slots[i] = 0;
+            *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
         for (i = 0; i < 2; i++) {
             if (Data_0812a174[row].actions[i] != 0)
                 OwnerAction_AddFar(owner, Data_0812a174[row].actions[i]);
         }
         for (i = 0; i < 4; i++) {
-            for (j = 0; j < Data_0812a174[row].djinn_counts[i]; j++) {
+            for (j = 0; j < Data_0812a174[row].djinnCounts[i]; j++) {
                 Djinn_AddToOwnerFar(owner, i, (next_djinn[i] + 7) % 18);
                 Djinn_ActivateFar(owner, i, (next_djinn[i] + 7) % 18);
                 next_djinn[i]++;

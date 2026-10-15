@@ -110,8 +110,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
 void Shop_RestoreSceneTiles(s32 layer)
 {
-    u8 *map = Ram_HeapSlots->event_work;
-    u8 *work = Ram_HeapSlots->block_32;
+    u8 *map = Ram_HeapSlots->eventWork;
+    u8 *work = Ram_HeapSlots->block32;
     u8 *saved = work + 0xe00;
 
     Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
@@ -128,10 +128,10 @@ void Shop_RestoreSceneTiles(s32 layer)
 void Shop_InitEffect(void)
 {
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Func_080c8368((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    Func_080c8368((s32)Ram_HeapSlots->eventWork + 0x222, 1);
     BattleFx_ApplyColorToSourceBufferFar(16);
 #else
-    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    BattleFx_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->eventWork + 0x222, 1);
     BattleFx_StartBufferInterpolationFar(16);
 #endif
 }

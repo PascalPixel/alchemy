@@ -15,11 +15,11 @@ void Func_020004e4(s32 a, s32 b)
         if (object->x >> 20 != *x)
             return;
         {
-            s32 cell_z = *z;
+            s32 cellZ = *z;
 
             z += 2;
             x += 2;
-            if (object->z >> 20 != cell_z)
+            if (object->z >> 20 != cellZ)
                 return;
         }
     }
@@ -36,12 +36,12 @@ void Func_02000534(s32 a)
 
     party = &gPartyState;
     if (held) {
-        if (Func_02000d0c(party->current_owner) != -1) {
+        if (Func_02000d0c(party->currentOwner) != -1) {
             Func_02000d54();
             Func_020004e4(0, a);
         }
     } else {
-        if (Object_GetById(party->current_owner)->y > -0x1c0000)
+        if (Object_GetById(party->currentOwner)->y > -0x1c0000)
             Func_02000d14();
     }
 }

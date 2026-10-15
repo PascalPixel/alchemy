@@ -18,7 +18,7 @@ void *ObjectTable_Get(s32 id);
 void Func_080ec1d0(s32 *screen_x, s32 *screen_y)
 {
 	s32	 x = EventRuntime_GetControlledOwner();
-	u8	*state = Ram_HeapSlots->event_work;
+	u8	*state = Ram_HeapSlots->eventWork;
 	u8	*object;
 	s32	 z;
 	s32	 shift;

@@ -6,12 +6,12 @@
 #include "types.h"
 
 struct YallamActor {
-    u8 unknown_00[98];
+    u8 unk00[98];
     u8 state;
     u8 kind;
     s16 timer;
     s16 count;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void (*update)(struct YallamActor *actor);
 };
 

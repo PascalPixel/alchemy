@@ -7,22 +7,22 @@
 #include "ram_buffer.h"
 
 struct MapLayer {
-    u8 unknown_00[0x30];
+    u8 unk00[0x30];
     u8 *cells;
-    u8 unknown_34[4];
+    u8 unk34[4];
 };
 
 struct MapLayers {
-    u8 unknown_000[0x108];
+    u8 unk000[0x108];
     struct MapLayer layers[3];
 };
 
 struct Object0200074c {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x4f];
+    u8 unk14[0x4f];
     u8 marked;
 };
 
@@ -36,7 +36,7 @@ void Func_0200074c(struct Object0200074c *object)
 
     if (object->marked == 0)
         return;
-    map = (struct MapLayers *)Ram_HeapSlots->map_work;
+    map = (struct MapLayers *)Ram_HeapSlots->mapWork;
     if (map == NULL)
         return;
     cells = &map->layers[2].cells;

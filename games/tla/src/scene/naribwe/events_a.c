@@ -2,7 +2,7 @@
 
 void Func_02000088(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct PartyState *party;
     u8 *flag;
 
@@ -84,7 +84,7 @@ void Func_020001a8(void)
 
 void Func_020001f0(s32 actor)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -101,7 +101,7 @@ void Func_020001f0(s32 actor)
 
 void Func_02000250(s32 actor)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -118,7 +118,7 @@ void Func_02000250(s32 actor)
 
 void Func_020002b0(s32 actor)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -135,7 +135,7 @@ void Func_020002b0(s32 actor)
 
 void Func_0200030c(s32 actor)
 {
-    s32 angle = Object_GetById(gPartyState.current_owner)->angle;
+    s32 angle = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the native loads the angle before building the quarter turn. */
     __asm__ volatile("" : "+r"(angle));
@@ -158,7 +158,7 @@ static __inline__ void Func_02000534_(const void *script, s32 x, s32 z)
 
 void Func_02000368(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     s32 index;
     u32 id;
 
@@ -183,9 +183,9 @@ void Func_02000368(void)
     asm("");
     index -= 4;
     Func_02000534_(Data_0200064c[index].script, Data_0200064c[index].x, Data_0200064c[index].z);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
-    Object_SetModeById(gPartyState.current_owner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+    Object_SetModeById(gPartyState.currentOwner, 2);
     Func_020005a4(*(s16 *)work);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

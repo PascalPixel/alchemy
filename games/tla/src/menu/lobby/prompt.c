@@ -33,7 +33,7 @@ s32 Func_02000e4c(s32 id)
 
     Func_02001a14();
     Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(id, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(id, gPartyState.currentOwner, 0);
     Func_02001a64((s32)MsgChooseYourParameters);
     Func_02001a74(id, 0);
     window = UiWindow_Create(0, 0, 6, 4, 2);

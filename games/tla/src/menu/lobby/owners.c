@@ -17,7 +17,7 @@ void Func_02000538(u16 *out)
     party = &gPartyState;
 next:
     {
-        u8 owner = party->active_owners[i];
+        u8 owner = party->activeOwners[i];
 
         if (out != NULL)
             *out++ = owner;

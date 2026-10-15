@@ -3,9 +3,9 @@
 s32 Func_02000478(struct ObjectRuntime *object)
 {
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    object->speed_limit = 0x10000;
+    object->speedLimit = 0x10000;
     object->acceleration = 0xccc;
-    object->collision_flags = 0;
+    object->collisionFlags = 0;
     object->update = (void (*)(void))Func_02000468;
     return 0;
 }

@@ -4,8 +4,8 @@
 extern struct KibomboObject *Data_02007950;
 
 struct KibomboEffectWork {
-    u8 unknown_000[0x7c4];
-    s16 field_7c4;
+    u8 unk000[0x7c4];
+    s16 field7c4;
 };
 
 void Func_02000624(void);

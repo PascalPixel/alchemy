@@ -15,7 +15,7 @@
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = Ram_HeapSlots->window_tiles;
+    u8 *base = Ram_HeapSlots->windowTiles;
     u16 *cursor = &((struct UiRenderWork *)base)->tilemap[y][x];
     u32 alternate = ((struct UiRenderWork *)base)->alt;
     u32 row;
@@ -29,7 +29,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
             if ((tile - 0x80) <= 0x7f || (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
                 u32 index = ((tile & 0xff) ^ 0x80);
 
-                ((struct UiRenderWork *)base)->tile_attributes[index] &= 0xfc;
+                ((struct UiRenderWork *)base)->tileAttributes[index] &= 0xfc;
             }
         }
         cursor += 32 - width;

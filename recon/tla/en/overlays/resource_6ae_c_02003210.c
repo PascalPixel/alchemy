@@ -13,10 +13,10 @@ void Func_02003210(struct ObjectRuntime *object)
     s32 angle = *pangle;
     s32 across;
 
-    object->x = center->x + Math_Cosine(angle) * (object->speed_limit + 3);
+    object->x = center->x + Math_Cosine(angle) * (object->speedLimit + 3);
     across = center->z + (Math_Sine(angle) << 1);
     object->z = across;
-    object->target_x = object->x;
-    object->target_z = across;
+    object->targetX = object->x;
+    object->targetZ = across;
     *pangle -= 0x800;
 }

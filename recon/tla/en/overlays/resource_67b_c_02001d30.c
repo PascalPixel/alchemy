@@ -1,5 +1,5 @@
 // differ 8: the listing loads the child's sprite between the load and the
-// store of terrain_height and the pool address after them, and the parent
+// store of terrainHeight and the pool address after them, and the parent
 // sprite's attribute byte before the child's. Assigning the sprite after the
 // terrain copy moves the parent sprite out of r8 (differ 28).
 #include "../../../../games/tla/src/scene/aqua_rock/local.h"
@@ -12,12 +12,12 @@ void Func_02001d30(struct ObjectRuntime *object)
     if (child != 0) {
         struct FieldSprite *sprite = child->animation;
 
-        child->terrain_height = object->terrain_height;
+        child->terrainHeight = object->terrainHeight;
         Func_02002918(child, Data_02002c44);
-        child->motion_flags = 0;
+        child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = parent_sprite->priority;
         }
     }

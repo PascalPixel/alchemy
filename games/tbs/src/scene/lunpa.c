@@ -133,8 +133,8 @@ static void HiddenPuddle_Freeze(void)
 	if (pillar != NULL)
 	{
 		Engine_ActorSetSpriteFlags(pillar, 0);
-		pillar->motion_flags = ACTOR_FALLS;
-		pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
+		pillar->motionFlags = ACTOR_FALLS;
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
@@ -143,26 +143,26 @@ static void IcePillar_UpdateDrawOrder(void)
 {
 	if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT)
 	{
-		Object_GetById(ACTOR_HIDDEN_PUDDLE)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		Object_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	}
 	else
 	{
-		Object_GetById(ACTOR_HIDDEN_PUDDLE)->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
 
 static void Reveal_ShowSecrets(void)
 {
 	struct FieldActor *actor;
-	s32				   cell_x;
-	s32				   cell_z;
+	s32				   cellX;
+	s32				   cellZ;
 
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
-	cell_x = actor->x.fixed / CELL_SIZE;
-	cell_z = actor->z.fixed / CELL_SIZE;
+	cellX = actor->x.fixed / CELL_SIZE;
+	cellZ = actor->z.fixed / CELL_SIZE;
 	if (GameFlag_IsSet(FLAG_LUNPA_PSYNERGY_STONE) == 0)
 	{
-		if (cell_x == 7 && cell_z == 16)
+		if (cellX == 7 && cellZ == 16)
 		{
 			Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 16);
 		}
@@ -194,11 +194,11 @@ static void Reveal_ShowSecrets(void)
 		actor = Actor_Get(ACTOR_SWITCH_GLINT);
 		if (actor != NULL)
 		{
-			actor->motion_flags = GLINT_MOTION_FLAGS;
+			actor->motionFlags = GLINT_MOTION_FLAGS;
 			actor->y.fixed = PIXELS(16);
-			actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-			actor->scale_x = GLINT_SCALE_X;
-			actor->scale_y = GLINT_SCALE_Y;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->scaleX = GLINT_SCALE_X;
+			actor->scaleY = GLINT_SCALE_Y;
 		}
 	}
 	FieldScheduler_AddCallback(IcePillar_UpdateDrawOrder, TASK_PRIORITY_SCENE);
@@ -405,7 +405,7 @@ static void LeftGuard_MindRead(void)
 		seen = GameFlag_IsSet(FLAG_GATE_GUARD_SAW_HAMMET);
 		if (seen == 0)
 		{
-			gEventWork->psynergy_request = seen;
+			gEventWork->psynergyRequest = seen;
 			Engine_PsynergyCancel();
 			Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
 			Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
@@ -442,12 +442,12 @@ static void EV09_PSYNERGY(void)
 
 static void Party_WatchForFortress(void)
 {
-	s32 cell_z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
+	s32 cellZ = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
-	if (GameFlag_IsSet(FLAG_GATE_TURNING_BACK) == 0 && cell_z == 10)
+	if (GameFlag_IsSet(FLAG_GATE_TURNING_BACK) == 0 && cellZ == 10)
 	{
 		GameFlag_Set(FLAG_GATE_TURNING_BACK);
-		gEventWork->touched_trigger = TRIGGER_FORTRESS_APPROACH;
+		gEventWork->touchedTrigger = TRIGGER_FORTRESS_APPROACH;
 	}
 }
 
@@ -480,21 +480,21 @@ static void Door_Enter(void)
 		actor = Actor_Get(id);
 		if (actor != NULL)
 		{
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	Event_PlayCue(SOUND_DOOR_OPEN);
-	index = work->touched_trigger - TRIGGER_FIRST_HOME_DOOR;
+	index = work->touchedTrigger - TRIGGER_FIRST_HOME_DOOR;
 	Map_AnimateCells(gLunpaDoors[index].steps, gLunpaDoors[index].x, gLunpaDoors[index].y);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
+	Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	if (index != DOOR_TEMPLE)
 	{
 		Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 		Engine_EventWait(10);
 	}
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
@@ -507,7 +507,7 @@ static void EV12_TOUCH(void)
 		if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0)
 		{
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-			Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
+			Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 			Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 			Engine_EventWait(13);
@@ -521,7 +521,7 @@ static void EV01_TOUCH(void)
 	GameFlag_Set(FLAG_GATE_FORTRESS_ENTERED);
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-	Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
+	Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
 	Event_PlayCue(SOUND_DOOR_OPEN);
@@ -701,7 +701,7 @@ static void Cloak_End(void)
 	{
 		Engine_TaskRemoveCallback(Guards_Watch);
 #if EDITION_INTERNATIONAL
-		work->raised_trigger = TRIGGER_PARTY_SPOTTED;
+		work->raisedTrigger = TRIGGER_PARTY_SPOTTED;
 #else
 		EV91_RAISED();
 #endif
@@ -721,7 +721,7 @@ static void Guards_Watch(void)
 		&& leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176))
 	{
 		Engine_TaskRemoveCallback(Guards_Watch);
-		work->raised_trigger = TRIGGER_PARTY_SPOTTED;
+		work->raisedTrigger = TRIGGER_PARTY_SPOTTED;
 	}
 }
 
@@ -770,17 +770,17 @@ static void Party_ThrownOut(void)
 	Engine_ActorSetSpritePriority(ACTOR_RIGHT_GUARD, 3);
 	Event_PlayCue(SOUND_SCUFFLE);
 	Engine_EventWait(30);
-	Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-	Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 	Event_PlayCue(SOUND_SCUFFLE);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
 	Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
 	Engine_TaskRemoveCallback(Leader_KickUpDust);
-	Actor_Get(ACTOR_PARTY_LEADER)->motion_flags |= ACTOR_FALLS;
-	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = PIXELS(6);
-	Actor_Get(ACTOR_PARTY_LEADER)->velocity_z = PIXELS(6);
+	Actor_Get(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
+	Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
+	Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = PIXELS(6);
 	Engine_EventWait(1);
 	while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0)
 	{
@@ -792,7 +792,7 @@ static void Party_ThrownOut(void)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
 	FieldScheduler_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
 	Engine_EventWait(2);
-	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = PIXELS(3);
+	Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(3);
 	Engine_EventWait(1);
 	while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0)
 	{
@@ -805,8 +805,8 @@ static void Party_ThrownOut(void)
 	Engine_EventWait(50);
 	Engine_EventSetMessage(MsgLunpaGuardForbidsReturn);
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-	Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-	Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x10000, 0x8000);
 	Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x10000, 0x8000);
 	Actor_WalkTo(ACTOR_LEFT_GUARD, 144, 200);
@@ -854,7 +854,7 @@ s32 Scene_Initialize(void)
 
 	if (gGameState.scene == (s32)&SceneId_Lunpa1)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Reveal_HideSecrets();
 		if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0)
 		{
@@ -869,8 +869,8 @@ s32 Scene_Initialize(void)
 	}
 	if (gGameState.scene == (s32)&SceneId_Lunpa2)
 	{
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		gGameState.retreat_entrance = GATE_RETREAT_ENTRANCE;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gGameState.retreatEntrance = GATE_RETREAT_ENTRANCE;
 		if (gGameState.entrance == GATE_ENTRANCE_THROWN_OUT
 			&& Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
 		{

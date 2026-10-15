@@ -197,7 +197,7 @@ s32 XianInteriors_PrepareWindowTransition(void)
 
 	s16 scene;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	scene = gGameState.entrance;
 	if (scene == 4 || scene == 7)
 	{

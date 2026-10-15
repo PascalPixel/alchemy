@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 
 struct ShopItemList {
-    u8 unknown_000[0x270];
+    u8 unk000[0x270];
     u16 items[0x149];
     u16 count;
-    u8 unknown_504[2];
+    u8 unk504[2];
     s8 group;
 };
 
@@ -14,7 +14,7 @@ s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
 
 s32 Func_081080a8(void)
 {
-    struct ShopItemList *menu = Ram_HeapSlots->menu_runtime;
+    struct ShopItemList *menu = Ram_HeapSlots->menuRuntime;
     s32 count = 0;
     s32 item;
 

@@ -19,9 +19,9 @@ struct EncounterZone {
 };
 
 struct EncounterWork {
-    u8 unknown_000[0x194];
+    u8 unk000[0x194];
     s32 bias;
-    s32 unknown_198;
+    s32 unk198;
     s32 threshold;
 };
 
@@ -47,11 +47,11 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     s32 i;
     struct PartyState *party = &gPartyState;
 
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     if (GameFlag_Test(351) == 0) {
         if (GameFlag_Test(352) != 0 || GameFlag_Test(353) != 0 || zone == 0)
             return 0;
-        if ((s8)party->unknown_26d[0] != 0)
+        if ((s8)party->unk26d[0] != 0)
             return 0;
         entry = Encounter_EnemyGroupTable + zone;
         rate = entry->rate;
@@ -63,7 +63,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
             level = 0;
         if (level > 5)
             level = 5;
-        if (level > 0 && party->avoid_distance != 0)
+        if (level > 0 && party->avoidDistance != 0)
             return 0;
         rate += level * 5;
 

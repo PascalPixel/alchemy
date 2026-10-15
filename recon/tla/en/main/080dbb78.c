@@ -9,13 +9,13 @@ s32 GetWorldMapCollisionFar(s32 *position);
 
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     struct MapWork *map;
     struct MapCell *cells;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds its offset */
     asm volatile("");
-    map = Ram_HeapSlots->map_work;
+    map = Ram_HeapSlots->mapWork;
 
     if (*(s8 *)(event + 394) == 3) {
         cells = &gMapBlocks[((x / 0x200000) & 31) + ((z / 0x200000) & 31) * 32];

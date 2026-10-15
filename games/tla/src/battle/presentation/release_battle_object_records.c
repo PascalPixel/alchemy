@@ -24,15 +24,15 @@ void ReleaseBattleObjectRecords(s32 no)
 		obj = slot->object;
 		if (obj != NULL)
 		{
-			slot->animation_entry = 0;
-			slot->effect_entry = 0;
+			slot->animationEntry = 0;
+			slot->effectEntry = 0;
 			i = 0;
 			while ((rec = GetMotionRecord(obj, i)) != NULL)
 			{
 				ResourceObject_ReleaseFar(rec);
 				i += 1;
 			}
-			obj->record_storage_kind = 0; // 絵なし
+			obj->recordStorageKind = 0; // 絵なし
 			obj->records = NULL;
 		}
 	}

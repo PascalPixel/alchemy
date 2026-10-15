@@ -10,7 +10,7 @@ next:
         struct PartyState *party = &gPartyState;
 
         do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the party state's address before it builds the field's offset (2 differ without it). */
-        if (party->unknown_256 == 1) {
+        if (party->unk256 == 1) {
             GameFlag_SetBit(i + 0x930);
             GameFlag_SetBit(i + 0x220);
         }

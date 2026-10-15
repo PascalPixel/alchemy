@@ -20,17 +20,17 @@ void Func_02000f00(void)
         struct FieldSprite *sprite = object->sprite;
         u8 *block;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 2;
-        object->motion_flags = zero;
-        object->field_5c = 1;
+        object->motionFlags = zero;
+        object->field5c = 1;
         object->update = Func_02000ef0;
-        sprite->next_frame = zero;
-        sprite->unknown_1b[0] = zero;
+        sprite->nextFrame = zero;
+        sprite->unk1b[0] = zero;
         block = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02001d90(230);
-        VramBlock_LoadCached(sprite->vram_block, 128, block + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, block + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
 }
@@ -48,17 +48,17 @@ void Func_02000f88(void)
         struct FieldSprite *sprite = object->sprite;
         u8 *block;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 2;
-        object->motion_flags = zero;
-        object->field_5c = 1;
+        object->motionFlags = zero;
+        object->field5c = 1;
         object->update = Func_02000ef0;
-        sprite->next_frame = zero;
-        sprite->unknown_1b[0] = zero;
+        sprite->nextFrame = zero;
+        sprite->unk1b[0] = zero;
         block = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02001d90(242);
-        VramBlock_LoadCached(sprite->vram_block, 128, block + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, block + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
 }

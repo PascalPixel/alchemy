@@ -7,28 +7,28 @@
 
 // エナジーメニューの作業領域（わかっている欄だけ）
 struct PsynergyMenuState {
-    u8 unknown_000[0x24];
-    s32 list_window;
-    u8 unknown_028[8];
-    s32 info_window;
-    u8 unknown_034[0x190];
+    u8 unk000[0x24];
+    s32 listWindow;
+    u8 unk028[8];
+    s32 infoWindow;
+    u8 unk034[0x190];
     u16 psynergies[32];
-    u8 unknown_204[0x10];
-    u8 psynergy_count;
-    u8 unknown_215;
-    u8 pane_owner[2];
-    u8 unknown_218[0x4c];
-    s8 selected_index_by_owner[8];
+    u8 unk204[0x10];
+    u8 psynergyCount;
+    u8 unk215;
+    u8 paneOwner[2];
+    u8 unk218[0x4c];
+    s8 selectedIndexByOwner[8];
 };
 
 struct MenuResult {
-    s32 owner_state;
-    s32 unknown_04;
+    s32 ownerState;
+    s32 unk04;
     s32 page;
-    s32 page_count;
+    s32 pageCount;
     s32 row;
-    s32 entry_count;
-    s32 selected_index;
+    s32 entryCount;
+    s32 selectedIndex;
 };
 
 s32 UnitGet(s32 owner);
@@ -36,33 +36,33 @@ s32 UnitGet(s32 owner);
 // index 番目の欄の持ち主のエナジーを 5 行ずつのページに割る
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
-    s32 owner_state;
-    struct PsynergyMenuState *menu = Ram_HeapSlots->menu_runtime;
-    s32 entry_count;
+    s32 ownerState;
+    struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+    s32 entryCount;
     s32 row;
     s32 page;
-    s32 page_count;
-    s32 selected_index;
+    s32 pageCount;
+    s32 selectedIndex;
     s32 owner;
 
-    owner_state = UnitGet(menu->pane_owner[index]);
-    entry_count = menu->psynergy_count;
-    owner = menu->pane_owner[index];
-    selected_index = menu->selected_index_by_owner[owner];
-    if ((selected_index + 1) > entry_count) {
-        selected_index = entry_count - 1;
+    ownerState = UnitGet(menu->paneOwner[index]);
+    entryCount = menu->psynergyCount;
+    owner = menu->paneOwner[index];
+    selectedIndex = menu->selectedIndexByOwner[owner];
+    if ((selectedIndex + 1) > entryCount) {
+        selectedIndex = entryCount - 1;
     }
-    page = selected_index / 5;
-    row = selected_index % 5;
-    page_count = entry_count / 5;
-    if (entry_count % 5 != 0) {
-        page_count++;
+    page = selectedIndex / 5;
+    row = selectedIndex % 5;
+    pageCount = entryCount / 5;
+    if (entryCount % 5 != 0) {
+        pageCount++;
     }
-    result->owner_state = owner_state;
+    result->ownerState = ownerState;
     result->page = page;
-    result->page_count = page_count;
+    result->pageCount = pageCount;
     result->row = row;
-    result->entry_count = entry_count;
-    result->selected_index = selected_index;
+    result->entryCount = entryCount;
+    result->selectedIndex = selectedIndex;
     return 1;
 }

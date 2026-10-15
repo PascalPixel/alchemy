@@ -17,7 +17,7 @@ extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
 
 struct ItemSummary {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 icon;
 };
 

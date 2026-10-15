@@ -3,7 +3,7 @@
 
 void Func_02000e90(void)
 {
-    struct MapLayer *layer = &Ram_HeapSlots->map_work->layers[2];
+    struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
     s16 y = layer->y >> 16;
 
     /* FAKEMATCH: a one-pass block builds the store's address before 1448 (one reordered row), as in overlay 679. */
@@ -30,6 +30,6 @@ void Func_02000ef0(void)
 
 void Func_02000f00(void)
 {
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 2;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 2;
     Func_02002190(Data_0200226c);
 }

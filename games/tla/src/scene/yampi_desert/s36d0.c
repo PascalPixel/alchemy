@@ -19,7 +19,7 @@ void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 // Room 10's setup.
 void Func_0200371c(void)
 {
-    ((struct SceneEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     GameFlag_SetBit(0x144);
     if (gPartyState.entrance == 1 && !GameFlag_Test(0x88c)) {
         Func_02002ebc();

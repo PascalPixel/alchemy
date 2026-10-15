@@ -29,7 +29,7 @@ void Func_02001938(s32 spoken)
         Func_0200412c(message + 2);
         Func_0200403c(tickets, 5);
         UiText_OpenMessageAtObject(18, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1)
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
         {
             Func_02004144(18, 0);
             return;
@@ -45,7 +45,7 @@ void Func_02001938(s32 spoken)
             Func_0200412c(message + 5);
             UiText_OpenMessageAtObject(18, 0);
         }
-        if (room <= 6 && Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1)
+        if (room <= 6 && Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 1)
         {
             Func_0200412c((s32)MsgContigo12);
             Func_02004144(18, 0);

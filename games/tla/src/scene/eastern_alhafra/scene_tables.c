@@ -77,10 +77,10 @@ void Func_020000c8(s32 mode, s32 arg)
     if (mode == 1) {
         a = Object_GetById(19);
         b = Object_GetById(21);
-        a->speed_limit = 0x40000;
+        a->speedLimit = 0x40000;
         a->acceleration = 0x8000;
         b->acceleration = 0x8000;
-        b->speed_limit = 0x40000;
+        b->speedLimit = 0x40000;
         /* FAKEMATCH: ⚓️ finishes the second object's speed before it builds the first position. */
         __asm__ volatile("");
         Call4((void (*)())Object_SetPositionAndResetMotion, (s32)a, 0x1e80000, a->y, 0x1380000);
@@ -111,9 +111,9 @@ void Func_02000190(s32 unused, s32 id)
     s32 x;
     s32 z;
 
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     if (id == 10) {
         leader_x = leader->x >> 20;
         x = object->x >> 20;

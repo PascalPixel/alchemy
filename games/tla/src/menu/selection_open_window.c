@@ -30,7 +30,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
     struct UiWindow **slot;
     struct UiWindow *window;
 
-    screen = Ram_HeapSlots->menu_work;
+    screen = Ram_HeapSlots->menuWork;
     node = NodeChain_GetNodeAtCount(screen, count);
     slot = &screen->window;
     window = *slot;
@@ -41,7 +41,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
             } else {
                 *slot = UiWindow_Create(17, 0, 5, 3, mode);
             }
-            screen->vertical_scroll = 0;
+            screen->verticalScroll = 0;
             screen->locked = 999;
         } else {
             *slot = UiWindow_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
@@ -71,7 +71,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
 
 void Resource_ResetOwnerEntries(void)
 {
-    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
     struct SelectionNode *node;
 
     Resource_ScheduleOwnerReset();

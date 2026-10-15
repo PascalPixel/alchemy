@@ -8,7 +8,7 @@
 #include "scene_ids.h"
 
 struct EventCounters {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -43,8 +43,8 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 // once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void)
 {
-    Object_GetById(gPartyState.current_owner)->scale_x = 0;
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    Object_GetById(gPartyState.currentOwner)->scaleX = 0;
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(20);
@@ -73,9 +73,9 @@ void Func_02002e78(void)
     if (seen == 0) {
         Func_02004c20();
         Func_02004db8(0);
-        scale = Object_GetById(gPartyState.current_owner)->scale_x;
-        Object_GetById(gPartyState.current_owner)->scale_x = 0;
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+        scale = Object_GetById(gPartyState.currentOwner)->scaleX;
+        Object_GetById(gPartyState.currentOwner)->scaleX = 0;
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Func_02004da8();
@@ -95,10 +95,10 @@ void Func_02002e78(void)
         if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
             Func_02004d08_(8, 265, 30);
             Func_02004ce8(9, 0, 10);
-            ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
         } else {
             Func_02004d08_(8, 265, 30);
-            ((struct EventCounters *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
             Func_02004ce8(9, 0, 10);
         }
         Func_02004d08_(8, 256, 30);
@@ -125,16 +125,16 @@ void Func_02002e78(void)
         Func_02004ce8(5, 0, 10);
         Func_02004ce8(7, 0, 10);
         Func_02004ce8(9, 0, 10);
-        Func_02004c88(gPartyState.current_owner, 0, 0);
-        gPartyState.render_mode = 7;
-        gPartyState.owner_override = 1;
+        Func_02004c88(gPartyState.currentOwner, 0, 0);
+        gPartyState.renderMode = 7;
+        gPartyState.ownerOverride = 1;
         Func_02004db0();
         Flag_Set(0x8de);
         Func_02004c88(7, 0, 0);
         Func_02004c88(6, 0, 0);
         Func_02004c88(9, 0, 0);
         Func_02004c88(5, 0, 0);
-        Object_GetById(gPartyState.current_owner)->scale_x = scale;
+        Object_GetById(gPartyState.currentOwner)->scaleX = scale;
         Func_02004c28();
     }
 }

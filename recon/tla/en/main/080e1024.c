@@ -31,7 +31,7 @@ struct ArcSprite {
             u16 flags08_10 : 6;
         } half;
         struct {
-            u8 tile_low;
+            u8 tileLow;
             u8 flags09_0 : 2;
             u8 variant : 2;
             u8 flags09_4 : 4;
@@ -52,15 +52,15 @@ struct ArcObject {
     s32 x;
     s32 y;
     s32 z;
-    s32 unknown_14;
-    s32 scale_x;
-    s32 scale_y;
+    s32 unk14;
+    s32 scaleX;
+    s32 scaleY;
     u8 padding20[0x30];
     struct ArcSprite *sprite;
     u8 padding54;
-    u8 unknown_55;
+    u8 unk55;
     u8 padding56[0x0e];
-    u16 unknown_64;
+    u16 unk64;
     u8 padding66[2];
     struct ArcObject *source;
     void *callback;
@@ -73,7 +73,7 @@ void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
 
 void Func_080e1024(struct ArcObject *source)
 {
-    u8 *work = Ram_HeapSlots->effect_work;
+    u8 *work = Ram_HeapSlots->effectWork;
     struct ArcObject *leader = *(struct ArcObject **)(work + 16);
     struct ArcObject *objects[2];
     struct ArcObject *object;
@@ -86,14 +86,14 @@ void Func_080e1024(struct ArcObject *source)
         objects[i] = object;
         if (object == NULL)
             continue;
-        object->unknown_14 = source->unknown_14;
+        object->unk14 = source->unk14;
         sprite = object->sprite;
-        object->unknown_55 = 0;
-        object->unknown_64 = 0;
+        object->unk55 = 0;
+        object->unk64 = 0;
         zero = 0;
         object->source = source;
-        object->scale_y = 0x6666;
-        object->scale_x = 0x6666;
+        object->scaleY = 0x6666;
+        object->scaleX = 0x6666;
         if (sprite == NULL)
             continue;
         Animation_ApplyChildArgumentFar(sprite, 0);

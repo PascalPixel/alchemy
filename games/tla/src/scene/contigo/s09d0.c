@@ -2,12 +2,12 @@
 #include "iwram_call.h"
 
 struct OrbitEffect {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[80];
+    u8 unk14[80];
     u16 timer;
     s16 pause;
 };

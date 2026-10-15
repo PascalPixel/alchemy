@@ -240,13 +240,13 @@ void Scene_RunSoldierInterception(void)
         Call3(Func_02002954, 8, 0x2000, 0);
         Func_020028ac(20);
         Func_0200294c(8, 0, 10);
-        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
     } else {
         Func_020028ac(30);
         Func_02002954(8, 0, 0);
         Func_020028ac(10);
         Func_0200291c(8, 4);
-        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
         Func_0200294c(8, 0, 10);
         Call3(Func_02002954, 8, 0x2000, 0);
     }
@@ -700,10 +700,10 @@ void Scene_RunSoldierInterception(void)
     if (Value2(Func_020028c4, 5, 0) == 0) {
         Func_020028ac(20);
         Func_0200294c(8, 0, 10);
-        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
     } else {
         Func_020028ac(40);
-        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) += 1;
         Func_0200294c(8, 0, 10);
     }
     Func_0200291c(5, 3);

@@ -2,7 +2,7 @@
 
 s32 Func_0200166c(struct ObjectRuntime *object)
 {
-    if (object->y + object->velocity_y < -0x300000)
+    if (object->y + object->velocityY < -0x300000)
         return 0;
     return 1;
 }
@@ -18,10 +18,10 @@ void Func_02001684(void)
         s32 scale = 0x547a;
 
         if (object != NULL) {
-            object->scale_x = scale;
-            object->scale_y = scale;
-            object->motion_flags = 2;
-            object->terrain_height = 0xffc00000;
+            object->scaleX = scale;
+            object->scaleY = scale;
+            object->motionFlags = 2;
+            object->terrainHeight = 0xffc00000;
             object->gravity = 0x7333;
             Func_02002800(object, Data_02002a6c);
             ObjectDispatch_SetSingleChildFlags(object, 0);
@@ -40,10 +40,10 @@ void Func_020016fc(void)
         s32 scale = 0x547a;
 
         if (object != NULL) {
-            object->scale_x = scale;
-            object->scale_y = scale;
-            object->motion_flags = 2;
-            object->terrain_height = 0xffc00000;
+            object->scaleX = scale;
+            object->scaleY = scale;
+            object->motionFlags = 2;
+            object->terrainHeight = 0xffc00000;
             object->gravity = 0x7333;
             Func_02002800(object, Data_02002a6c);
             ObjectDispatch_SetSingleChildFlags(object, 0);

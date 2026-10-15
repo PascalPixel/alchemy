@@ -44,14 +44,14 @@ s32 Func_08014220(void)
     return free_count;
 }
 
-s32 Resource_ClearSlotReferences(s32 resource_id)
+s32 Resource_ClearSlotReferences(s32 resourceId)
 {
     s32 cleared_count = 0;
     s32 remaining;
     u8 *marker;
     u8 empty_marker;
 
-    if ((u32)resource_id >= VRAM_CACHE_ENTRY_COUNT)
+    if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
     marker = ResourceBlockOwners;
     /* FAKEMATCH: the plain order sets up the count before the marker. */
@@ -61,7 +61,7 @@ s32 Resource_ClearSlotReferences(s32 resource_id)
     __asm__("" : "+r"(marker));
     remaining = VRAM_BLOCK_COUNT;
     do {
-        if (*marker == resource_id) {
+        if (*marker == resourceId) {
             *marker = empty_marker;
             cleared_count++;
         }

@@ -18,20 +18,20 @@ struct SlotEntry {
     u16 pal : 4;
 };
 struct MenuNode {
-    s32 unknown_00;
+    s32 unk00;
     struct MenuNode *next;
     u16 offset;
     u16 active;
     u16 handle;
-    u16 tile_id;
-    s16 x, y, dx, dy, x_end, y_end;
-    u8 unknown_1c[6];
-    s16 scale, scale_step, scale_end;
+    u16 tileId;
+    s16 x, y, dx, dy, xEnd, yEnd;
+    u8 unk1c[6];
+    s16 scale, scaleStep, scaleEnd;
     struct SlotEntry entry;
 };
 struct MenuSelection {
     struct MenuNode nodes[2];
-    u8 unknown_68[0x27a];
+    u8 unk68[0x27a];
     u16 mode;
 };
 extern u32 gFrameTick;

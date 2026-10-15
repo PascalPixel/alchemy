@@ -4,7 +4,7 @@
 void WaitFrames(s32 frames);
 
 struct TileSprite {
-    u8 unknown_00[18];
+    u8 unk00[18];
     u16 tile;
 };
 

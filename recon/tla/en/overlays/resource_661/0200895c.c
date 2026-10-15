@@ -7,7 +7,7 @@
 
 void Func_0200095c(u16 *list)
 {
-    struct MapWork *map = Ram_HeapSlots->map_work;
+    struct MapWork *map = Ram_HeapSlots->mapWork;
 
     /* FAKEMATCH: entering the loop at its test keeps the test single and 0xffff built on every pass; as a for or while loop the test is copied above the loop and 0xffff is kept in r8 */
     goto test;
@@ -16,7 +16,7 @@ void Func_0200095c(u16 *list)
 
         struct MapCell *cell = map->layers[2].cells + index;
 
-        cell->collision_code = 232;
+        cell->collisionCode = 232;
         list += 3;
 test:;
     } while (list[0] != 0xffff);

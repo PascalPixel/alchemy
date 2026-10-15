@@ -12,13 +12,13 @@
 
 struct FxScene13 {
     u16 angle;
-    u8 unknown_02[2];
+    u8 unk02[2];
     s32 x;
     s32 y;
     s32 z;
-    struct ObjectRuntime *main_object;
+    struct ObjectRuntime *mainObject;
     struct ObjectRuntime *child;
-    u8 unknown_18[8];
+    u8 unk18[8];
     s8 enabled;
 };
 
@@ -44,8 +44,8 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step)
 
 void Func_080e03cc(void)
 {
-    struct FxScene13 *scene = Ram_HeapSlots->effect_work;
-    struct ObjectRuntime *main_object = scene->main_object;
+    struct FxScene13 *scene = Ram_HeapSlots->effectWork;
+    struct ObjectRuntime *mainObject = scene->mainObject;
     struct ObjectRuntime *secondary = scene->child;
     struct ObjectRuntime *object;
     struct FxPosition13 spawn;
@@ -55,13 +55,13 @@ void Func_080e03cc(void)
     s32 index;
     s32 steps = 11;
 
-    origin.x = main_object->x;
-    origin.y = main_object->y + 0x100000;
-    origin.z = main_object->z;
+    origin.x = mainObject->x;
+    origin.y = mainObject->y + 0x100000;
+    origin.z = mainObject->z;
     if (scene->enabled) {
-        target.x = main_object->x;
-        target.y = main_object->y + 0x200000;
-        target.z = main_object->z;
+        target.x = mainObject->x;
+        target.y = mainObject->y + 0x200000;
+        target.z = mainObject->z;
         Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
     } else {
         target.x = scene->x;
@@ -76,9 +76,9 @@ void Func_080e03cc(void)
         return;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(138);
-    object->angle = main_object->angle;
-    object->speed_limit = 0x14ccc;
-    object->motion_flags = 0;
+    object->angle = mainObject->angle;
+    object->speedLimit = 0x14ccc;
+    object->motionFlags = 0;
     Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 1);
     step = 0;
@@ -89,8 +89,8 @@ void Func_080e03cc(void)
         object->y = origin.y + (target.y - origin.y) * step / 10;
         object->z = origin.z + (target.z - origin.z) * step / 10;
         scale = Interpolate(0x4000, 0x10000, step);
-        object->scale_x = scale;
-        object->scale_y = scale;
+        object->scaleX = scale;
+        object->scaleY = scale;
         WaitFrames(1);
         step++;
     } while (step < steps);
@@ -120,8 +120,8 @@ void Func_080e03cc(void)
         object->y = target.y + (origin.y - target.y) * step / 10;
         object->z = target.z + (origin.z - target.z) * step / 10;
         scale = Interpolate(0x10000, 0x4000, step);
-        object->scale_x = scale;
-        object->scale_y = scale;
+        object->scaleX = scale;
+        object->scaleY = scale;
         WaitFrames(1);
         step++;
     } while (step < steps);

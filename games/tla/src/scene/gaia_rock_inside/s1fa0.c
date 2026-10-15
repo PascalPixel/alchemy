@@ -8,8 +8,8 @@ s32 GameFlag_ClearBit();
 s32 Func_02004f8c();
 
 struct GaiaRockInsideEventWork {
-    u8 unknown_000[0x15a];
-    u16 unknown_15a;
+    u8 unk000[0x15a];
+    u16 unk15a;
 };
 
 extern const u8 MsgCheckedTheAltar[];
@@ -41,13 +41,13 @@ void Func_02001fd8(void)
     owner = PartyInventory_FindOwner(451);
     next = message + 2;
     if (owner != -1) {
-        struct GaiaRockInsideEventWork *work = Ram_HeapSlots->event_work;
+        struct GaiaRockInsideEventWork *work = Ram_HeapSlots->eventWork;
 
         /* FAKEMATCH: as overlay 680's Func_02000314, a one-pass block keeps the work pointer load before the message arguments (one reordered instruction, differ 2). */
         do {
         } while (0);
         UiText_ShowPositionedMessageAndWait(next, 1);
-        work->unknown_15a = 1;
+        work->unk15a = 1;
     } else {
         UiText_ShowPositionedMessageAndWait(next, 1);
     }

@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct OwnerItems {
-    u8 unknown_00[216];
+    u8 unk00[216];
     s16 items[15];
 };
 

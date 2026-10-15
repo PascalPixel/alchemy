@@ -5,7 +5,7 @@
  * mask 15 in sl and the position in fp, and leaves count on the stack; the draft keeps count in fp
  * and builds velocityX in r4 and spills it. Measured: a for, while or do-while loop hoists the mask
  * out of the loop (differ 80 to 88); the goto loop keeps it inside. As a member store the rotation
- * goes through a bit-field insert whose zero CSE keeps in sl for the velocity_z argument (59); the
+ * goes through a bit-field insert whose zero CSE keeps in sl for the velocityZ argument (59); the
  * raw u16 store off the options pointer avoids it (47). velocityX written in place in four
  * statements compiles the same.
  */
@@ -24,10 +24,10 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count, s32 scale)
 
     p->priority = 1;
     p->type = 279;
-    p->target_scale_y = 0xcccc;
-    p->target_scale_x = 0xcccc;
-    p->start_scale_y = scale;
-    p->start_scale_x = scale;
+    p->targetScaleY = 0xcccc;
+    p->targetScaleX = 0xcccc;
+    p->startScaleY = scale;
+    p->startScaleX = scale;
     p->update = Func_020006d4;
     i = 0;
     if (count == 0)

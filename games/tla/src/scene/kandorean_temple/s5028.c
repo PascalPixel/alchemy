@@ -12,15 +12,15 @@ void Func_02004fb4(void)
         struct FieldSprite *sprite = object->animation;
         u8 *buffer;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
-        object->motion_flags = zero;
-        object->unknown_5c[0] = 1;
-        sprite->next_frame = zero;
-        sprite->unknown_1b[0] = zero;
+        object->motionFlags = zero;
+        object->unk5c[0] = 1;
+        sprite->nextFrame = zero;
+        sprite->unk1b[0] = zero;
         buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_020051b0(198);
-        VramBlock_LoadCached(sprite->vram_block, 128, buffer + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
 }

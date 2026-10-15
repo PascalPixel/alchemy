@@ -28,15 +28,15 @@ static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column, s32 offs
 
 void Func_02000c8c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     Func_02001010();
     Func_02001108(0);
     Func_02001128(158);
     Func_02000ff0_(51, 38, 70, 22, 1, 2);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_CenterOnColumn_(gPartyState.current_owner, 2, -4);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -4);
     Battle_WaitMode0(8);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

@@ -45,7 +45,7 @@
 
 struct PillarWork
 {
-	u8				   unknown_00[24];
+	u8				   unk00[24];
 	struct FieldActor *rider;
 };
 
@@ -108,7 +108,7 @@ static void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 			break;
 		}
 		Engine_TaskWait(1);
-		if (obj->y.fixed <= obj->terrain_height)
+		if (obj->y.fixed <= obj->terrainHeight)
 		{
 			break;
 		}
@@ -119,8 +119,8 @@ static void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 		cnt--;
 	}
 
-	obj->velocity_y = 0;
-	obj->target_y = 0x80000000;
+	obj->velocityY = 0;
+	obj->targetY = 0x80000000;
 }
 
 static s32 FieldScene_QueryActorFootprint(
@@ -134,52 +134,52 @@ static s32 FieldScene_QueryActorFootprint(
 
 	for (i = 0; i <= 5; i++)
 	{
-		if (actor->animation->entries[0]->anim_id == StagedActor_FootprintKinds[i])
+		if (actor->animation->entries[0]->animId == StagedActor_FootprintKinds[i])
 		{
-			probe->footprint_index = i;
+			probe->footprintIndex = i;
 			break;
 		}
-		probe->footprint_index = 7;
+		probe->footprintIndex = 7;
 	}
-	if ((u32)probe->footprint_index > 6)
+	if ((u32)probe->footprintIndex > 6)
 	{
 		return 0;
 	}
-	probe->position_x = actor->x.value;
-	probe->position_y = actor->y;
-	probe->position_z = actor->z.value;
-	a = StagedActor_FootprintBounds[probe->footprint_index * 4 + 1];
+	probe->positionX = actor->x.value;
+	probe->positionY = actor->y;
+	probe->positionZ = actor->z.value;
+	a = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
 	if (a < 0)
 	{
 		a = -a;
 	}
-	b = StagedActor_FootprintBounds[probe->footprint_index * 4 + 3];
+	b = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
 	if (b < 0)
 	{
 		b = -b;
 	}
 	*depth = (a + b) >> 4;
-	a = StagedActor_FootprintBounds[probe->footprint_index * 4];
+	a = StagedActor_FootprintBounds[probe->footprintIndex * 4];
 	if (a < 0)
 	{
 		a = -a;
 	}
-	b = StagedActor_FootprintBounds[probe->footprint_index * 4 + 2];
+	b = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
 	if (b < 0)
 	{
 		b = -b;
 	}
 	*width = (a + b) >> 4;
-	probe->position_x += StagedActor_FootprintBounds[probe->footprint_index * 4] << 16;
+	probe->positionX += StagedActor_FootprintBounds[probe->footprintIndex * 4] << 16;
 	{
-		s32 step = StagedActor_FootprintBounds[probe->footprint_index * 4 + 1] << 16;
+		s32 step = StagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] << 16;
 
-		a = probe->position_z;
+		a = probe->positionZ;
 		a += step;
 		a >>= 20;
-		probe->position_z = a;
+		probe->positionZ = a;
 	}
-	probe->position_x >>= 20;
+	probe->positionX >>= 20;
 	*left = *(s32 *)(map + 0x13c) >> 20;
 	*top = *(s32 *)(map + 0x140) >> 20;
 	return 1;
@@ -205,7 +205,7 @@ static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 	Object_SetMode(obj, 4);
 	mask = 2;
-	obj->priority_flags |= mask;
+	obj->priorityFlags |= mask;
 
 	if (out20 > out16)
 	{
@@ -239,7 +239,7 @@ static s32 SceneActor_ApplyPlacementQuery(u8 *no)
 	}
 
 	Object_SetMode(obj, 1);
-	obj->priority_flags &= 0xfd;
+	obj->priorityFlags &= 0xfd;
 
 	return 1;
 }
@@ -309,7 +309,7 @@ static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far)
 	rows++;
 	for (row = 0; row <= rows; row++)
 	{
-		top = Map_GetTerrainHeight(actor->terrain_id, actor->x.fixed, (row << 20) + actor->z.fixed);
+		top = Map_GetTerrainHeight(actor->terrainId, actor->x.fixed, (row << 20) + actor->z.fixed);
 		top /= 0x100000;
 		if (level < top)
 		{
@@ -354,7 +354,7 @@ static void StagedActor_StepDownUntilClamp(s32 index)
 	struct FieldActor *obj = Object_GetById(index);
 	u32				   cnt;
 
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 
 	cnt = 0;
 	for (;;)
@@ -362,12 +362,12 @@ static void StagedActor_StepDownUntilClamp(s32 index)
 		if (cnt > 31)
 			return;
 		Engine_TaskWait(1);
-		obj->scale_y += -0x1999;
+		obj->scaleY += -0x1999;
 		obj->y.fixed += -0xcccc;
 		cnt++;
-		if (obj->scale_y <= 0x1998)
+		if (obj->scaleY <= 0x1998)
 		{
-			obj->scale_y = 0x1999;
+			obj->scaleY = 0x1999;
 			return;
 		}
 	}
@@ -418,12 +418,12 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 	s32	 buf[3];
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	flags = &leader->motion_flags;
+	flags = &leader->motionFlags;
 	saved = *flags;
 #if EDITION_INTERNATIONAL
 	mode = (leader->facing + 0x2000) & 0xc000;
 #endif
-	if (gGameState.movement_mode != 0)
+	if (gGameState.movementMode != 0)
 	{
 		return 0;
 	}
@@ -466,7 +466,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 			Object_SetMode(leader, 7);
 			leader->speed = 0x30000;
 			leader->acceleration = 0x20000;
-			leader->velocity_y = 0x40000;
+			leader->velocityY = 0x40000;
 			*flags &= 126;
 			Engine_ActorSetSpriteFlags(leader, 0);
 			Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
@@ -482,21 +482,21 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 
 static void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
 {
-	s32 velocity_x;
-	s32 velocity_y;
-	s32 velocity_z;
+	s32 velocityX;
+	s32 velocityY;
+	s32 velocityZ;
 
-	object->effect.x += object->effect.velocity_x;
-	object->effect.y += object->effect.velocity_y;
-	object->effect.z += object->effect.velocity_z;
-	velocity_x = object->effect.velocity_x;
-	velocity_y = object->effect.velocity_y;
-	velocity_z = object->effect.velocity_z;
-	object->effect.velocity_x = velocity_x - Math_Divide(velocity_x, 10);
-	object->effect.velocity_y = velocity_y - Math_Divide(velocity_y, 3);
-	object->effect.velocity_z = velocity_z - Math_Divide(velocity_z, 10);
-	object->effect.scale_x += object->effect.scale_rate_x;
-	object->effect.scale_y += object->effect.scale_rate_y;
+	object->effect.x += object->effect.velocityX;
+	object->effect.y += object->effect.velocityY;
+	object->effect.z += object->effect.velocityZ;
+	velocityX = object->effect.velocityX;
+	velocityY = object->effect.velocityY;
+	velocityZ = object->effect.velocityZ;
+	object->effect.velocityX = velocityX - Math_Divide(velocityX, 10);
+	object->effect.velocityY = velocityY - Math_Divide(velocityY, 3);
+	object->effect.velocityZ = velocityZ - Math_Divide(velocityZ, 10);
+	object->effect.scaleX += object->effect.scaleRateX;
+	object->effect.scaleY += object->effect.scaleRateY;
 	object->effect.sprite->rotation += object->effect.spin;
 }
 
@@ -708,7 +708,7 @@ static void EV20_SEARCH(void)
 		Engine_EventWait(30);
 		Event_PlayCue(240);
 		Engine_ActorSetSpritePriority(REC_ID, 1);
-		Object_GetById(REC_ID)->motion_flags = queried;
+		Object_GetById(REC_ID)->motionFlags = queried;
 		record = Actor_Get(REC_ID);
 		record->y.fixed = -0x200000;
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
@@ -733,7 +733,7 @@ static void EV20_SEARCH(void)
 		Map_AnimateCells(CrossbonePillar_ShiftSteps2, 84, 24);
 		Engine_EventWait(30);
 		Event_PlayCue(230);
-		Object_GetById(REC_ID)->motion_flags = 0;
+		Object_GetById(REC_ID)->motionFlags = 0;
 		record = Actor_Get(REC_ID);
 		record->y.fixed = -0x200000;
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
@@ -769,9 +769,9 @@ static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor, struct
 	{
 		if (SPRITE_OF(actor)->priority < SPRITE_OF(front)->priority)
 		{
-			actor->priority_flags &= ~1;
+			actor->priorityFlags &= ~1;
 			SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
-			SPRITE_OF(actor)->second_priority = SPRITE_OF(front)->second_priority;
+			SPRITE_OF(actor)->secondPriority = SPRITE_OF(front)->secondPriority;
 		}
 		result = 1;
 	}
@@ -793,9 +793,9 @@ static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front, struct 
 	{
 		if (SPRITE_OF(front)->priority > SPRITE_OF(actor)->priority)
 		{
-			actor->priority_flags &= ~1;
+			actor->priorityFlags &= ~1;
 			SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
-			SPRITE_OF(actor)->second_priority = SPRITE_OF(front)->second_priority;
+			SPRITE_OF(actor)->secondPriority = SPRITE_OF(front)->secondPriority;
 		}
 		result = 1;
 	}
@@ -811,7 +811,7 @@ static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor)
 	if (((s8 *)gEventWork)[0xcc7] == 1)
 	{
 		actor->sprite->priority = leader->sprite->priority;
-		actor->collision_flags |= 1;
+		actor->collisionFlags |= 1;
 		return 0;
 	}
 	hit = CrossbonePillar_SyncPriorityIfBehind(actor, leader);
@@ -828,24 +828,24 @@ static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor)
 	}
 	if (actor->y.fixed < leader->y.fixed)
 	{
-		actor->priority_flags |= 2;
-		actor->collision_flags &= 254;
+		actor->priorityFlags |= 2;
+		actor->collisionFlags &= 254;
 		if (actor->sprite->priority < leader->sprite->priority)
 		{
-			actor->priority_flags &= 254;
+			actor->priorityFlags &= 254;
 			SPRITE_OF(actor)->priority = SPRITE_OF(leader)->priority;
-			SPRITE_OF(actor)->second_priority = SPRITE_OF(leader)->second_priority;
+			SPRITE_OF(actor)->secondPriority = SPRITE_OF(leader)->secondPriority;
 			hit = 1;
 		}
 	}
 	else
 	{
-		actor->priority_flags &= 253;
-		actor->collision_flags |= 1;
+		actor->priorityFlags &= 253;
+		actor->collisionFlags |= 1;
 	}
 	if (hit == 0)
 	{
-		actor->priority_flags |= 1;
+		actor->priorityFlags |= 1;
 	}
 	return 0;
 }
@@ -899,17 +899,17 @@ static void CrossbonePillar_SortPillarActors(void)
 
 struct PillarActor
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 	s32 y;
 	s32 z;
-	u8	unknown_14[14];
-	u8	unknown_22;
-	u8	priority_flags;
-	s32 velocity_x;
-	s32 velocity_y;
-	u8	unknown_2c[0x29];
-	u8	motion_flags;
+	u8	unk14[14];
+	u8	unk22;
+	u8	priorityFlags;
+	s32 velocityX;
+	s32 velocityY;
+	u8	unk2c[0x29];
+	u8	motionFlags;
 };
 
 static void CrossbonePillar_UpdatePillarActors(void)
@@ -925,10 +925,10 @@ static void CrossbonePillar_UpdatePillarActors(void)
 	for (id = 8; id <= 11; id++)
 	{
 		actor = (struct PillarActor *)Object_GetById(id);
-		actor->unknown_22 = 2;
+		actor->unk22 = 2;
 		i = id - 8;
 		if ((actor->x >> 20) == CrossbonePillar_PillarSlots[i].x
-			&& (actor->z >> 20) == CrossbonePillar_PillarSlots[i].z && actor->velocity_y == 0)
+			&& (actor->z >> 20) == CrossbonePillar_PillarSlots[i].z && actor->velocityY == 0)
 		{
 			continue;
 		}
@@ -936,9 +936,9 @@ static void CrossbonePillar_UpdatePillarActors(void)
 		Dma_Wait(DMA3);
 		if (FieldObject_CheckMovementCollision(actor, CrossbonePillar_ProbePosition) == -1)
 		{
-			actor->motion_flags = 3;
+			actor->motionFlags = 3;
 		}
-		flags = &actor->motion_flags;
+		flags = &actor->motionFlags;
 		CrossbonePillar_SetCellAttributes(0, CrossbonePillar_PillarSlots[i].x,
 			CrossbonePillar_PillarSlots[i].z, (struct MapCell *)&CrossbonePillar_PillarSlots[i].cell);
 		CrossbonePillar_SetCellAttributes(2, CrossbonePillar_PillarSlots[i].x,
@@ -950,21 +950,21 @@ static void CrossbonePillar_UpdatePillarActors(void)
 				Engine_AudioPlayCue(189);
 				// Both u8 accesses are alias set 0, and the view is no struct reference (MEM_IN_STRUCT_P).
 				/* FAKEMATCH: the u8 view keeps these flag updates out of the record's alias set, as native; field stores reallocate the loop (score 2573, differ 217), a priority bit-field differs 65, the record as struct FieldActor with the view kept 2 (it matches once FieldActor's x, y and z are s32; then this PillarActor view can go). */
-				*(u8 *)&actor->priority_flags &= 254;
+				*(u8 *)&actor->priorityFlags &= 254;
 				CrossbonePillar_LowerActorToLedge(id, 1);
-				*(u8 *)&actor->priority_flags |= 1;
+				*(u8 *)&actor->priorityFlags |= 1;
 			}
 			else if (GetMapCellCollision(2, actor->x, actor->z) == 51)
 			{
 				SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
 				Engine_AudioPlayCue(189);
 				actor->y = 0;
-				actor->priority_flags &= 254;
+				actor->priorityFlags &= 254;
 				StagedActor_StepDownUntilClamp(id);
 				actor->x = 0;
 				actor->y = 0;
 				actor->z = 0;
-				actor->priority_flags |= 1;
+				actor->priorityFlags |= 1;
 			}
 			else
 			{
@@ -1009,16 +1009,16 @@ static void CrossbonePillar_PushPillar(void)
 	Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 	Object_GetById(0)->y.fixed = Map_GetTerrainHeight(
-		Object_GetById(0)->terrain_id, Object_GetById(0)->x.fixed, Object_GetById(0)->z.fixed);
+		Object_GetById(0)->terrainId, Object_GetById(0)->x.fixed, Object_GetById(0)->z.fixed);
 #endif
 	if (FieldScene_RunScene3b3SequenceD() == 0)
 	{
-		Object_GetById(0)->motion_flags &= 254;
-		Object_GetById(0)->priority_flags &= 254;
+		Object_GetById(0)->motionFlags &= 254;
+		Object_GetById(0)->priorityFlags &= 254;
 		StagedActor_AdvancePair();
 		CrossbonePillar_UpdatePillarActors();
-		Object_GetById(ACTOR_PARTY_LEADER)->motion_flags |= ACTOR_FOLLOWS_TERRAIN;
-		Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
+		Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	}
 	Engine_EventEnd();
 }
@@ -1051,7 +1051,7 @@ static void EV40_TOUCH(void)
 {
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 	PILLAR_WORK->rider = obj;
-	obj->rise_counter = 1;
+	obj->riseCounter = 1;
 }
 
 static void EV41_TOUCH(void)
@@ -1059,7 +1059,7 @@ static void EV41_TOUCH(void)
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
 	PILLAR_WORK->rider = NULL;
-	obj->rise_counter = 0;
+	obj->riseCounter = 0;
 }
 
 static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
@@ -1068,9 +1068,9 @@ static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 
 	if (actor->z.fixed > ref->z.fixed)
 	{
-		actor->priority_flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		if (actor->y.fixed < ref->y.fixed)
-			actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	}
 
 	return 0;
@@ -1125,8 +1125,8 @@ static void CrossbonePillar_RaiseActorFourteen(void)
 	struct FieldActor *pillar;
 
 	pillar = Object_GetById(14);
-	Object_GetById(13)->scale_x = 0x10000;
-	Object_GetById(13)->scale_y = 0x10000;
+	Object_GetById(13)->scaleX = 0x10000;
+	Object_GetById(13)->scaleY = 0x10000;
 	((struct FieldSpritePriority *)Object_GetById(13)->sprite)->priority = 2;
 	((struct FieldSpritePriority *)pillar->sprite)->priority = 2;
 	pillar->acceleration = 0x6666;
@@ -1152,10 +1152,10 @@ static void SceneEffect_SpawnRandomizedParticle(void)
 
 	d = &options;
 	d->palette = 10;
-	d->start_scale_x = 0x8000;
-	d->start_scale_y = 0x8000;
-	d->target_scale_x = 0x19999;
-	d->target_scale_y = 0x19999;
+	d->startScaleX = 0x8000;
+	d->startScaleY = 0x8000;
+	d->targetScaleX = 0x19999;
+	d->targetScaleY = 0x19999;
 	draw = Engine_RandomNext();
 	mask = 0x0ffff000;
 	mask &= draw;
@@ -1189,8 +1189,8 @@ static s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *acto
 
 	p = &options;
 	p->palette = 7;
-	p->start_scale_x = 0xb333;
-	p->start_scale_y = 0xb333;
+	p->startScaleX = 0xb333;
+	p->startScaleY = 0xb333;
 
 	x = actor->x.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
 	y = actor->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
@@ -1273,8 +1273,8 @@ static void EV10_PSYNERGY(void)
 		{
 			Engine_EventWait(10);
 			Engine_AudioPlayCue(159);
-			rec7->motion_flags = rec8;
-			rec7->terrain_height = -0x20000;
+			rec7->motionFlags = rec8;
+			rec7->terrainHeight = -0x20000;
 			rec7->y.fixed = -0x20000;
 			Engine_GameFlagSet(0x204);
 		}
@@ -1331,9 +1331,9 @@ static void CrossbonePillar_PrepLoweredActor(s32 id)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
-	actor->collision_flags &= 254;
-	actor->priority_flags |= 2;
-	actor->motion_flags = 0;
+	actor->collisionFlags &= 254;
+	actor->priorityFlags |= 2;
+	actor->motionFlags = 0;
 	Engine_ActorSetSpriteFlags(actor, 0);
 	actor->sprite->priority = 2;
 }
@@ -1356,8 +1356,8 @@ static void OverlayObject_SetCallbackAndMode2(s32 id)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
-	actor->terrain_id = 2;
-	actor->motion_flags = 0;
+	actor->terrainId = 2;
+	actor->motionFlags = 0;
 	actor->update = (void (*)(union FieldObject *))CrossbonePillar_UpdateActorPriority;
 }
 
@@ -1384,7 +1384,7 @@ static void SceneActor_CheckActors8To11NearSlotZero(void)
 		}
 		else
 		{
-			Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+			Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 		}
 	}
 }
@@ -1397,7 +1397,7 @@ s32 CrossbonePillar_SetupArea(void)
 	s32				   x;
 	s32				   z;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_CrossbonePillar2)
 	{
 		FieldScene_RedrawActorFootprint(8);
@@ -1437,10 +1437,10 @@ s32 CrossbonePillar_SetupArea(void)
 		OverlayObject_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
 		if (Engine_GameFlagIsSet(0x109) == 0)
 		{
-			Object_GetById(ACTOR_PARTY_LEADER)->rise_counter = 1;
+			Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
 		}
 		BattleFx_StartFadeOverlay(0);
-		if (Object_GetById(ACTOR_PARTY_LEADER)->rise_counter == 0)
+		if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0)
 		{
 			EV41_TOUCH();
 		}
@@ -1488,8 +1488,8 @@ s32 CrossbonePillar_SetupArea(void)
 		FieldScene_RedrawActorFootprint(8);
 		FieldScene_RedrawActorFootprint(9);
 #if EDITION_INTERNATIONAL
-		Object_GetById(8)->motion_flags = 0;
-		Object_GetById(9)->motion_flags = 0;
+		Object_GetById(8)->motionFlags = 0;
+		Object_GetById(9)->motionFlags = 0;
 #endif
 		EV10_PSYNERGY();
 		CrossbonePillar_PrepLoweredActor(11);
@@ -1501,11 +1501,11 @@ s32 CrossbonePillar_SetupArea(void)
 		actor = Object_GetById(13);
 		actor->update = 0;
 		CrossbonePillar_PrepLoweredActor(14);
-		Object_GetById(14)->collision_flags |= 8;
+		Object_GetById(14)->collisionFlags |= 8;
 		if (Engine_GameFlagIsSet(0x202) == 0)
 		{
-			Object_GetById(13)->scale_x = 0x18000;
-			Object_GetById(13)->scale_y = 0x18000;
+			Object_GetById(13)->scaleX = 0x18000;
+			Object_GetById(13)->scaleY = 0x18000;
 			((u8 *)Object_GetById(13)->sprite)[9] |= 12;
 			((u8 *)Object_GetById(14)->sprite)[9] |= 12;
 			Map_CopyCellAttributes(26, 12, 1, 1, 22, 16);

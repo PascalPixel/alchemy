@@ -11,7 +11,7 @@ struct ParticleEmitter {
     u8 padding[8];
     struct ParticlePosition position;
     u8 padding2[20];
-    s32 travel_offset;
+    s32 travelOffset;
     u8 padding3[41];
     u8 active;
 };
@@ -38,7 +38,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     struct ParticleEffectObject *object;
     u32 random_angle;
 
-    if (emitter->travel_offset >= -255 && emitter->travel_offset <= 255)
+    if (emitter->travelOffset >= -255 && emitter->travelOffset <= 255)
         emitter->active = 0;
 
     if ((100 * Random16() >> 16) > 9)

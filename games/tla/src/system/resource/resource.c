@@ -34,13 +34,13 @@ void *Resource_GetTableEntry(s32 index)
 
 void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 {
-    s32 entry_count;
+    s32 entryCount;
     s32 entry_index;
 
-    entry_count = byte_length >> 1;
+    entryCount = byte_length >> 1;
     entry_index = 1;
     entries++;
-    if (entry_index < entry_count) {
+    if (entry_index < entryCount) {
         u32 next_marker_mask;
         u32 current_marker_mask;
         u32 payload_mask;
@@ -76,7 +76,7 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
                 }
             }
             entry_index++;
-        } while (entry_index < entry_count);
+        } while (entry_index < entryCount);
     }
 }
 

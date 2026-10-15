@@ -11,13 +11,13 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiMessage_ShowAndRestoreState(s32 message);
 s32 UiMessage_ShowChoice(s32 value);
 void Audio_PlayCue(s32 cue);
-void Func_080772b0(s32 unit_id, s32 slot);
+void Func_080772b0(s32 unitId, s32 slot);
 void Party_AdjustCoinsFar(s32 amount);
 
-void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
+void Shop_SellItem(s32 unitId, s32 slot, s32 count)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct BattleUnit *unit = UnitGetFar(unit_id);
+    struct BattleUnit *unit = UnitGetFar(unitId);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);
     u8 rare = item->flags & 4;
@@ -64,10 +64,10 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     }
     Audio_PlayCue(102);
     for (i = 0; i < count; i++)
-        Func_080772b0(unit_id, slot);
+        Func_080772b0(unitId, slot);
     Party_AdjustCoinsFar(total);
     Shop_DrawMoney();
-    Shop_DrawUnitGrid(shop->item_window, unit_id);
+    Shop_DrawUnitGrid(shop->itemWindow, unitId);
     if (rare || all)
         message = (s32)MsgSold;
     else

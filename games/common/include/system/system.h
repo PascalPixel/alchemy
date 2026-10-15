@@ -36,9 +36,9 @@ struct FlashChipType
 {
 	u32 handlers[5];
 	u32 size;
-	u16 sector_size;
-	u16 unknown_1a;
-	u8	sector_shift;
+	u16 sectorSize;
+	u16 unk1a;
+	u8	sectorShift;
 };
 extern struct FlashChipAtmelInfo  Flash_ChipAtmel;
 extern const struct FlashChipType Flash_ChipUnknown;
@@ -184,7 +184,7 @@ s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void			BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget
 void BattleMotion_ApproachTarget(
-	s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y);
+	s32 actorId, s32 targetId, s32 travel_divisor, s32 initial_velocity_y);
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
 void BattleMotion_InterpolatePosition(

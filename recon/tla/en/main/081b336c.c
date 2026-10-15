@@ -7,22 +7,22 @@
 
 struct ReelWork
 {
-    u8 unknown_000[0x8c];
+    u8 unk000[0x8c];
     s32 state;
     s32 cursor;
     s32 spins;
-    u8 unknown_098[0x434];
-    s32 sub_window;
-    u8 unknown_4d0[8];
-    u16 scanline_offsets[160];
+    u8 unk098[0x434];
+    s32 subWindow;
+    u8 unk4d0[8];
+    u16 scanlineOffsets[160];
 };
 
 struct ReelEffectWork
 {
     struct EffectStep particles[8];
-    u8 unknown_00e0[0x7780 - 0xe0];
-    s32 transfer_mode;
-    s32 transfer_value;
+    u8 unk00e0[0x7780 - 0xe0];
+    s32 transferMode;
+    s32 transferValue;
 };
 
 extern char MsgSlotsBet[];
@@ -47,8 +47,8 @@ void ReelGame_InitTitle(void)
     s32 window;
     s32 message;
 
-    state = (struct ReelWork *)Ram_HeapSlots->canvas_map;
-    work = (struct ReelEffectWork *)Ram_HeapSlots->battle_fx_work[0];
+    state = (struct ReelWork *)Ram_HeapSlots->canvasMap;
+    work = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
     left = 0;
     for (i = 0; i != 0x800; i++)
         SPARKS[i].variant = 0;
@@ -63,30 +63,30 @@ void ReelGame_InitTitle(void)
         width++;
         left += step;
         letter[i].y = y;
-        letter[i].velocity_y = 0;
+        letter[i].velocityY = 0;
         letter[i].variant = 0;
         y += -0x80000;
     }
 
     for (i = 0; i != 160; i++)
-        state->scanline_offsets[i] = 0;
+        state->scanlineOffsets[i] = 0;
 
     for (i = 0; i != 40; i++)
     {
         angle = i * 0x199;
-        state->scanline_offsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
-        state->scanline_offsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
+        state->scanlineOffsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
+        state->scanlineOffsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
     }
 
     state->spins = 0;
     state->state = 0;
     state->cursor = 0;
-    work->transfer_mode = 1;
-    work->transfer_value = 0;
+    work->transferMode = 1;
+    work->transferValue = 0;
     REG_BLDCNT = 0;
     window = UiWindow_CreateFar(18, 0, 12, 4, 6);
-    state->sub_window = window;
+    state->subWindow = window;
     message = (s32)MsgSlotsBet;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-    UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
 }

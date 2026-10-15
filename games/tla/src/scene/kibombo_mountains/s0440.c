@@ -10,8 +10,8 @@ void Func_02000440(void)
 {
     struct ObjectRuntime *object = Object_GetById(18);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Call6((void (*)())Func_0200106c, 6, 16, 1, 1, 4, 16);
     GameFlag_SetBit(0x210);
 }
@@ -20,8 +20,8 @@ void Func_02000478(void)
 {
     struct ObjectRuntime *object = Object_GetById(19);
 
-    object->priority_flags = 0;
-    object->motion_flags = 0;
+    object->priorityFlags = 0;
+    object->motionFlags = 0;
     Call6((void (*)())Func_0200106c, 8, 30, 1, 1, 10, 30);
     GameFlag_SetBit(0x211);
 }

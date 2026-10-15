@@ -13,7 +13,7 @@ void Func_02002ae8(void);
 void Func_02002e6c(struct ObjectRuntime *self)
 {
     struct ObjectRuntime *object = Object_GetById(((u8 *)self)[0x62]);
-    s32 angle = (s16)self->unknown_66;
+    s32 angle = (s16)self->unk66;
     struct MarsRoomMAnimation *animation = object->animation;
     s32 position[3];
 
@@ -22,16 +22,16 @@ void Func_02002e6c(struct ObjectRuntime *self)
     position[2] = self->z;
     Vector_AddPolarOffsetFar(0x200000, angle, position);
     object->angle = angle;
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     Object_SetPositionAndResetMotion(object, position[0], position[1], position[2]);
     object->update = Func_02002ae8;
-    object->action_flags = 0;
-    object->speed_limit = 0x80000;
+    object->actionFlags = 0;
+    object->speedLimit = 0x80000;
     object->acceleration = 0x2000;
     animation->angle = angle - 0x4000;
-    object->scale_x = 0;
-    object->scale_y = 0;
+    object->scaleX = 0;
+    object->scaleY = 0;
     object->action = 0;
-    object->linked_object = self->linked_object;
+    object->linkedObject = self->linkedObject;
     Func_020032b8(104);
 }

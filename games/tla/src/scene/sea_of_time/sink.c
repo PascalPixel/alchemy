@@ -2,7 +2,7 @@
 
 void Func_020018a8(s32 x, s32 z, s32 actor)
 {
-    Object_GetById(actor)->collision_flags |= 16;
+    Object_GetById(actor)->collisionFlags |= 16;
     Func_02001fdc(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
     x >>= 1;
     z >>= 1;
@@ -27,8 +27,8 @@ void Func_02001928(s32 x, s32 z, s32 actor)
     Func_02002054(144);
     SeaOfTime_Tint(0, 0x100000, 0x10000);
     SeaOfTime_Tint(-1, -1, 0xe666);
-    spark.scale_x = 0x13333;
-    spark.scale_y = 0x18000;
+    spark.scaleX = 0x13333;
+    spark.scaleY = 0x18000;
     spark.mode = 1;
     spark.life = 276;
     Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);

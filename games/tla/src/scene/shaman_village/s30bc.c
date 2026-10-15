@@ -1,6 +1,6 @@
 #include "shaman_village.h"
 
-#define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->event_work)
+#define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void ObjectMotion_WaitForAnimationChange(s32 actor);
@@ -16,7 +16,7 @@ extern const u8 Data_020050bc[];
 
 void Func_020030bc(void)
 {
-    u8 *work = Ram_HeapSlots->effect_work;
+    u8 *work = Ram_HeapSlots->effectWork;
     struct ShamanVillageObject *object = Object_GetById(16);
 
     s32 result;
@@ -32,20 +32,20 @@ void Func_020030bc(void)
     ShamanVillage_CamMove(-1, -1, -1, 0);
     ShamanVillage_CamSpeed(0x6666, 0xccc);
     ShamanVillage_CamMove(0xa80000, -1, 0x2100000, 1);
-    ShamanVillage_ObjSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
-    ShamanVillage_ObjWalk(gPartyState.current_owner, 168, 536);
-    Func_02004944(18, gPartyState.current_owner);
-    Func_02004944(7, gPartyState.current_owner);
-    Func_02004944(5, gPartyState.current_owner);
-    Func_02004944(7, gPartyState.current_owner);
-    Func_02004944(6, gPartyState.current_owner);
+    ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0xcccc, 0x6666);
+    ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 536);
+    Func_02004944(18, gPartyState.currentOwner);
+    Func_02004944(7, gPartyState.currentOwner);
+    Func_02004944(5, gPartyState.currentOwner);
+    Func_02004944(7, gPartyState.currentOwner);
+    Func_02004944(6, gPartyState.currentOwner);
     WaitFrames(1);
     ShamanVillage_ObjArm(6, 0xc000, 0);
     ShamanVillage_ObjSpeed(18, 0x10000, 0x8000);
     ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);
     ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
-    ShamanVillage_ObjSpeed(gPartyState.current_owner, 0x10000, 0x8000);
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_02004f80);
+    ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x10000, 0x8000);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_02004f80);
     ObjectMotion_EnableActionAndSetCallback(5, Data_02004fc4);
     ObjectMotion_EnableActionAndSetCallback(18, Data_02004f3c);
     Object_SetActionCallbackAndRefreshById(7, Data_02005008);
@@ -93,7 +93,7 @@ void Func_020030bc(void)
     ShamanVillage_ObjTurn(15, 0xe000);
     Object_SetModeById(15, 4);
     ShamanVillage_MessagePut(15, 0);
-    ShamanVillage_ObjArm(gPartyState.current_owner, 0x4000, 0);
+    ShamanVillage_ObjArm(gPartyState.currentOwner, 0x4000, 0);
     ShamanVillage_ObjArm(18, 0, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(5, 256, 20)
@@ -240,9 +240,9 @@ void Func_020030bc(void)
     ShamanVillage_ObjArm(5, 0, 0);
     ShamanVillage_ObjArm(18, 0, 0);
     ShamanVillage_ObjArm(7, 0xa000, 0);
-    result = Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0);
-    done = &object->unknown_63;
-    owner = gPartyState.current_owner;
+    result = Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0);
+    done = &object->unk63;
+    owner = gPartyState.currentOwner;
     if (result == 0) {
         ObjectMotion_WaitForAnimationChange(owner);
         Motion_SetModeAndWaitAnimation(15, 4);
@@ -250,14 +250,14 @@ void Func_020030bc(void)
     } else {
         ObjectMotion_WaitForAnimationChange(owner);
         Motion_SetModeAndWaitAnimation(15, 4);
-        EVENT_WORK->field_1c4++;
+        EVENT_WORK->field1c4++;
         ShamanVillage_MessagePut(15, 0);
         Object_SetModeById(15, 3);
         ShamanVillage_MessagePut(15, 0);
     }
     ShamanVillage_ObjWalk(15, 212, 582);
     ShamanVillage_CamMove(0xa80000, -1, 0x1f40000, 1);
-    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 15);
+    Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 15);
     Object_LinkObjectAndSetCallback(18, 15);
     Object_LinkObjectAndSetCallback(5, 15);
     Object_LinkObjectAndSetCallback(7, 15);
@@ -271,7 +271,7 @@ void Func_020030bc(void)
     do {
         WaitFrames(1);
     } while (*done == 0);
-    ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
     ObjectMotion_EnableActionAndResetMotion(18);
     ObjectMotion_EnableActionAndResetMotion(5);
     ObjectMotion_EnableActionAndResetMotion(7);
@@ -284,7 +284,7 @@ void Func_020030bc(void)
     ShamanVillage_ObjPut(15, 0xe00000, 0x1180000, angle);
     ShamanVillage_ObjPut(16, 0xd00000, 0x1080000, angle);
     ShamanVillage_ObjPut(17, 0xf00000, 0x1080000, angle);
-    ShamanVillage_ObjArm(gPartyState.current_owner, 0x8000, 0);
+    ShamanVillage_ObjArm(gPartyState.currentOwner, 0x8000, 0);
     ShamanVillage_ObjArm(18, 0, 0);
     ShamanVillage_ObjArm(5, 0, 0);
     ShamanVillage_ObjArm(7, 0xa000, 0);
@@ -294,12 +294,12 @@ void Func_020030bc(void)
     Object_SetModeById(5, 3);
     Object_SetModeById(7, 3);
     Motion_SetModeAndWaitAnimation(6, 3);
-    ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
     ObjectMotion_EnableActionAndResetMotion(18);
     ObjectMotion_EnableActionAndResetMotion(5);
     ObjectMotion_EnableActionAndResetMotion(7);
     ObjectMotion_EnableActionAndResetMotion(6);
-    Object_GetById(gPartyState.current_owner)->update = NULL;
+    Object_GetById(gPartyState.currentOwner)->update = NULL;
     Object_GetById(18)->update = NULL;
     Object_GetById(5)->update = NULL;
     Object_GetById(7)->update = NULL;

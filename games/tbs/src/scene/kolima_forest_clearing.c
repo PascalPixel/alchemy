@@ -87,7 +87,7 @@ u8 *SceneData_GetExtraTable(void)
 s32 FieldScene_SetupEntryActors8To11(void)
 {
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0xfd3) == 0)
 	{
 		InitializeStagedActorSceneOrbitingEffect(11);

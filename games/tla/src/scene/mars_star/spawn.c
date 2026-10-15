@@ -12,12 +12,12 @@ void Func_020015ec(void);
 
 void Func_02001750(struct ObjectRuntime *object)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_020041dc(object, Data_02004744);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }
 
@@ -28,11 +28,11 @@ void Func_02001780(s32 *position, s32 speed, s32 flag)
     if (object != NULL) {
         object->bounce = 0;
         object->gravity = 0;
-        object->unknown_4c = speed;
+        object->unk4c = speed;
         ((void (*)())Func_02001750)(object, 2);
         object->update = Func_020015ec;
         if (flag != 0)
-            object->unknown_5c[0] = 2;
+            object->unk5c[0] = 2;
         Func_020041cc(object, 2);
     }
 }

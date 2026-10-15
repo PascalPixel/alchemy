@@ -125,7 +125,7 @@ void Func_02000200(s32 mode, s32 id)
         if (id != 10)
             Func_02004c9c(310);
         object->gravity = 0x170a;
-        object->motion_flags = 3;
+        object->motionFlags = 3;
         ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
         WaitFrames(5);
         for (i = 0; i < 60 && object->y > 0; i++)
@@ -133,16 +133,16 @@ void Func_02000200(s32 mode, s32 id)
         Func_02004c9c(298);
         WaitFrames(1);
         Func_02004c9c(240);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: ⚓️ stores the cleared flags before it addresses the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         Func_02004a0c(object, 4);
         i = 0;
     create:
         spark = Func_02004a1c(276, object->x, object->y, object->z);
         sparks[i] = spark;
-        spark->scale_x = 0xa666;
+        spark->scaleX = 0xa666;
         Func_02004a0c(spark, 1);
         ObjectDispatch_SetSingleChildFlags(spark, 0);
         Func_02004c9c(154);
@@ -151,7 +151,7 @@ void Func_02000200(s32 mode, s32 id)
         if (i <= 2)
             goto create;
         Func_02000fa4();
-        ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+        ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
         WaitFrames(30);
         for (i = 0; i <= 2; i++)
             Func_02004a24(sparks[i]);
@@ -168,7 +168,7 @@ void Func_02000514(void)
 
     door = Object_GetById(15);
     block = Object_GetById(16);
-    facing = (Object_GetById(gPartyState.current_owner)->angle + 0x2000) & 0xc000;
+    facing = (Object_GetById(gPartyState.currentOwner)->angle + 0x2000) & 0xc000;
     if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
         Func_02004c7c(block->x, block->z, 2, 255);
     if (Func_02004240(&plan) != 0) {
@@ -190,7 +190,7 @@ void Func_02000514(void)
             ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
             Battle_WaitMode0(20);
             door->gravity = 0xccc;
-            door->motion_flags = 3;
+            door->motionFlags = 3;
             i = 0;
             while (door->y > 0) {
                 i++;
@@ -202,7 +202,7 @@ void Func_02000514(void)
             Func_02004c9c(240);
             Object_SetModeById(15, 8);
             Battle_WaitMode0(60);
-            Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+            Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
             Func_02004a9c();
         }
     }

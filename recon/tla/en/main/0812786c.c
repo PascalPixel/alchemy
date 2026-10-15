@@ -8,20 +8,20 @@ struct OwnerElementStats {
 };
 
 struct OwnerStats {
-    s16 max_hp;
-    s16 max_pp;
+    s16 maxHp;
+    s16 maxPp;
     s16 hp;
     s16 pp;
     u16 atk;
     u16 def;
     u16 agi;
     u8 luck;
-    u8 unknown_0f[5];
+    u8 unk0f[5];
     struct OwnerElementStats element[4];
 };
 
 struct OwnerState {
-    u8 unknown_00[15];
+    u8 unk00[15];
     u8 level;
     struct OwnerStats stats;
 };
@@ -44,23 +44,23 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     stats = &state->stats;
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
-    value = stats->max_hp;
+    value = stats->maxHp;
     value += __divsi3(levels * 97, 10);
-    floor = __divsi3(base->max_hp * 7, 10);
+    floor = __divsi3(base->maxHp * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    stats->max_hp = value;
+    stats->maxHp = value;
 
-    value = state->stats.max_pp;
+    value = state->stats.maxPp;
     value += __divsi3(levels * 15, 10);
-    floor = __divsi3(base->max_pp * 7, 10);
+    floor = __divsi3(base->maxPp * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->stats.max_pp = value;
+    state->stats.maxPp = value;
 
     floor = __divsi3(levels * 123, 10);
     value = state->stats.atk;

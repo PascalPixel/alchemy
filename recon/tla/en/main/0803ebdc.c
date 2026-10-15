@@ -1,6 +1,6 @@
 /* Near miss, differ 14 of 212, 2026-10-15: Menu_StepRight on the shared
  * SelectionScreen and SelectionNode of menu/select.h, which reads the row
- * targets base_x and base_y as the native does without the earlier draft's
+ * targets baseX and baseY as the native does without the earlier draft's
  * FAKEMATCH halfword macros (the same 14 either way). Every instruction is
  * the native's and only the order differs, in four places: the native
  * stores the incremented cursor before it builds the count's 0x394 offset,
@@ -26,28 +26,28 @@ void Menu_StepRight(struct SelectionScreen *state)
     s32 y;
     u32 end;
 
-    Menu_ReloadNodeResource(state, state->cursor_index);
+    Menu_ReloadNodeResource(state, state->cursorIndex);
     state->status = 33;
     WaitFrames(1);
-    state->cursor_index++;
+    state->cursorIndex++;
     if (state->count > 5)
     {
-        end = state->top + state->cursor_index;
+        end = state->top + state->cursorIndex;
         if (end == state->count)
         {
             node = state->head;
             state->records[0].kind = 0;
             while (node->next != NULL)
             {
-                node->target_x = state->base_x;
-                node->target_y = state->base_y;
+                node->targetX = state->baseX;
+                node->targetY = state->baseY;
                 node->dx = -12;
                 node = node->next;
             }
-            node->target_x = state->base_x;
-            node->target_y = state->base_y;
+            node->targetX = state->baseX;
+            node->targetY = state->baseY;
             node->dx = -12;
-            while (node->target_x != node->x)
+            while (node->targetX != node->x)
                 WaitFrames(1);
             node = state->head;
             if (node != NULL)
@@ -60,37 +60,37 @@ void Menu_StepRight(struct SelectionScreen *state)
                     ids++;
                 } while (node != NULL);
             }
-            state->cursor_index = 0;
+            state->cursorIndex = 0;
             state->top = 0;
             node = state->head;
             y = node->x + 16;
             node = node->next;
             while (node != NULL)
             {
-                node->target_x = y;
+                node->targetX = y;
                 node->dx = 12;
                 node = node->next;
                 y += 16;
             }
             state->records[1].kind = 1;
         }
-        else if (state->cursor_index == 4 && end + 1 < state->count)
+        else if (state->cursorIndex == 4 && end + 1 < state->count)
         {
-            state->cursor_index--;
+            state->cursorIndex--;
             state->records[1].base = 8;
             state->top++;
             Menu_ScrollSelectionList(state, 1);
-            if (state->top + state->cursor_index + 2 == state->count)
+            if (state->top + state->cursorIndex + 2 == state->count)
                 state->records[1].kind = 0;
             state->records[0].kind = 1;
         }
     }
-    else if (state->cursor_index == state->count)
+    else if (state->cursorIndex == state->count)
     {
-        state->cursor_index = 0;
+        state->cursorIndex = 0;
     }
     state->status = 1;
-    Menu_LoadSelectionNodeResource(state, state->cursor_index);
+    Menu_LoadSelectionNodeResource(state, state->cursorIndex);
     WaitFrames(1);
     Menu_OpenSelectionWindow(state->head->kind, 0);
     WaitFrames(1);

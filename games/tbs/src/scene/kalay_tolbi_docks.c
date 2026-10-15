@@ -564,14 +564,14 @@ static void FieldScene_ConfigureFlaggedActors(void)
 		Actor_SetPosition(11, 0xf00000, 0x1380000);
 		Actor_FaceDirection(11, 0xc000, 0);
 		actor = Object_GetById(10);
-		actor->collision_flags = 0;
-		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		((u8 *)actor->sprite)[9] |= 12;
 		((u8 *)actor->sprite)[38] = 0;
 		zero = 0;
 		actor->sprite->rotation = 0xc000;
 		actor = Object_GetById(11);
-		actor->priority_flags = zero;
+		actor->priorityFlags = zero;
 		((u8 *)actor->sprite)[9] |= 12;
 		((u8 *)actor->sprite)[21] |= 12;
 	}
@@ -584,7 +584,7 @@ static void FieldScene_ConfigureFlaggedActors(void)
 
 static void KalayTolbiDocks_PrepareWindowTransition(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_GameFlagClear(0x12F);
 }
 
@@ -610,8 +610,8 @@ static void SceneActor_SetMode3AndFlagBit1(s32 no)
 
 	Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
 	Engine_ActorSetSpritePriority(no, 3);
-	actor->motion_flags = 0;
-	actor->priority_flags |= 2;
+	actor->motionFlags = 0;
+	actor->priorityFlags |= 2;
 }
 
 static void FieldScene_RunScene3aeSequenceA(void)
@@ -711,7 +711,7 @@ static void EV50_TOUCH(void)
 	Battle_ResetEffectCounter();
 	Engine_EventSetMessage(MsgKalayReturnedTicketCost);
 	actor = Object_GetById(11);
-	actor->priority_flags = 0;
+	actor->priorityFlags = 0;
 	((u8 *)actor->sprite)[9] |= 12;
 	((u8 *)actor->sprite)[21] |= 12;
 	Camera_MoveTo(PIXELS(232), -1, PIXELS(304), 1);
@@ -742,14 +742,14 @@ static void EV50_TOUCH(void)
 	Actor_WalkByAndWait(10, 16, 0);
 	Engine_ActorJump(10, 7, 0);
 	Actor_WalkByAndWait(10, 24, 0);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkBy(10, -16, 0);
 	Event_PlayCue(153);
 	Actor_SetSpeed(13, 0x26666, 0x13333);
 	Actor_WalkByAndWait(13, 16, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(10, 1);
-	Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_SetAttachedEffect(13, 0x102);
 	Engine_ActorStartRepeatedMotion(13, 2);
 	Event_PlayCue(155);
@@ -816,10 +816,10 @@ static void EV50_TOUCH(void)
 	Event_ShowMessage(16, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(10, 0x102, 50);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_WalkByAndWait(10, -8, 0);
-	Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Engine_EventWait(20);
@@ -829,10 +829,10 @@ static void EV50_TOUCH(void)
 	Engine_EventWait(20);
 	Event_ShowMessage(16, 0);
 	Engine_EventWait(10);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_WalkByAndWait(10, -16, 0);
-	Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_FaceDirection(10, FACING_EAST, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(10, 4);
@@ -844,18 +844,18 @@ static void EV50_TOUCH(void)
 	Event_PlayCue(133);
 	Engine_ActorJump(16, 6, 0);
 	Engine_ActorEnableActionCallback(16, KalayTolbiDocks_ActorSixteenScript);
-	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(10, 6, 0);
 	Actor_WalkByAndWait(10, -12, 4);
 	actor = Actor_Get(10);
-	actor->collision_flags = 0;
-	actor->priority_flags = 2;
+	actor->collisionFlags = 0;
+	actor->priorityFlags = 2;
 	((u8 *)actor->sprite)[9] |= 12;
 	((u8 *)actor->sprite)[38] = 0;
 	actor->sprite->rotation = 0xc000;
 	Actor_WalkByAndWait(10, -12, 4);
 	Actor_FaceDirection(10, FACING_SOUTH, 0);
-	Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
 	Event_PlayCue(159);
 	Engine_EventWait(20);
 	Actor_ShowEmote(11, 0x102, 50);

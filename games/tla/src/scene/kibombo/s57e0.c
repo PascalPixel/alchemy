@@ -14,12 +14,12 @@ void Func_020057e0(void)
     Data_02007948[1] = PALETTE_WORD(167);
     Data_02007948[2] = PALETTE_WORD(166);
     if (gPartyState.entrance == 10) {
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-        Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+        Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
         Func_02003c84();
     } else if (gPartyState.entrance == 11) {
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-        Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
+        Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
         Func_02003c14();
     } else {
         Event_StartScreenTransition();

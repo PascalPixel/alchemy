@@ -2,13 +2,13 @@
 #include "object_runtime.h"
 #include "system.h"
 
-void Object_ShakeAngle(u32 object_id)
+void Object_ShakeAngle(u32 objectId)
 {
     struct ObjectRuntime *object;
     s32 angle;
     s32 i;
 
-    object = ObjectTable_Get(object_id);
+    object = ObjectTable_Get(objectId);
     if (object == 0)
         return;
     angle = object->angle;

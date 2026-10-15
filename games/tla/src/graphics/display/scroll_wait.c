@@ -22,8 +22,8 @@ void Func_081a17d0(void)
 
 struct BucketEntry {
     void *next;
-    u8 unknown_04;
-    u8 unknown_05[7];
+    u8 unk04;
+    u8 unk05[7];
 };
 
 extern struct BucketEntry *Data_0200752c;

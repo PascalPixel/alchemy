@@ -63,13 +63,13 @@ void Func_02000808(void)
         Call3((void (*)())ObjectMotion_ArmCallback, 4, 224 << 8, 0);
         Func_0200525c(21, 0, 10);
         Func_0200528c(21, 0x102, 50);
-        Object_GetById(21)->action_flags &= ~1;
+        Object_GetById(21)->actionFlags &= ~1;
         ObjectMotion_ArmCallback(21, speed, 0);
         Battle_WaitMode0(30);
         Func_020007a0(22);
         Battle_WaitMode0(20);
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 21, 0, -16);
-        Object_GetById(21)->motion_flags = flag;
+        Object_GetById(21)->motionFlags = flag;
         Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 21, 0, -16);
         Func_0200520c(21, 0, 0);
         Battle_WaitMode0(10);

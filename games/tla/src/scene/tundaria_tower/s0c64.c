@@ -12,7 +12,7 @@ void WaitFrames(s32 frames);
 // 50 and its layer 2 attribute is not 255, then settles on the middle of its cell.
 void Func_02000c64(s32 unused, s32 actorArg)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     s16 actor;
     s32 dx;
@@ -28,7 +28,7 @@ void Func_02000c64(s32 unused, s32 actorArg)
     Func_02003148(0);
     dx = (object->x >> 20) - (object->action >> 8);
     dz = (object->z >> 20) - (object->action & 0xff);
-    object->speed_limit = 0x8000;
+    object->speedLimit = 0x8000;
     while ((MapCell_GetAttributes(1, (object->x >> 20) + dx, (object->z >> 20) + dz) >> 8) == 50
            && (MapCell_GetAttributes(2, (object->x >> 20) + dx, (object->z >> 20) + dz) >> 8) != 255) {
         Func_02002fb0(object, (dx << 20) + object->x, object->y, (dz << 20) + object->z);

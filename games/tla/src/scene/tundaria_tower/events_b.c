@@ -2,7 +2,7 @@
 
 void Func_02000bfc(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */

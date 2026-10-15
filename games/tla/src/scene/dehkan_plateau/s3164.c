@@ -15,7 +15,7 @@ void Func_02000584(const void *data);
 void Func_020012d8(void);
 void Func_020018a8(void);
 void Func_02001fac(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
@@ -55,10 +55,10 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle)
 void Func_02003164(void)
 {
     if (Flag_Test(265) == 0) {
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
         if (gPartyState.entrance == 5) {
-            ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-            Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+            ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+            Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
         }
     }
     Func_02000584(Data_02003f52);

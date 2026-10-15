@@ -5,10 +5,10 @@
 #include "party_state.h"
 
 struct SceneRecord {
-    s16 resource_id;
+    s16 resourceId;
     s8 group;
     s8 variant;
-    u16 map_index;
+    u16 mapIndex;
     s16 attributes;
 };
 
@@ -36,16 +36,16 @@ enum
 struct SceneEntrance
 {
 	s16 entrance;
-	s16 required_flag;
+	s16 requiredFlag;
 	s16 x;
 	s16 y;
 	s16 z;
 	u16 facing;
 	s16 unused1;
-	s16 camera_left;
-	s16 camera_top;
-	s16 camera_right;
-	s16 camera_bottom;
+	s16 cameraLeft;
+	s16 cameraTop;
+	s16 cameraRight;
+	s16 cameraBottom;
 	s16 unused2;
 };
 
@@ -66,7 +66,7 @@ struct ScenePlacement
 	s32 y;
 	s32 z;
 	u16 facing;
-	u8	talk_facing;
+	u8	talkFacing;
 	u8	flags;
 };
 

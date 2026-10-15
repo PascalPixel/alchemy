@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 extern const u8 Data_020046f8[];
@@ -52,7 +52,7 @@ static __inline__ void Cue(s32 cue)
 
 void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
 {
-    struct EventWork154 *work = Ram_HeapSlots->event_work;
+    struct EventWork154 *work = Ram_HeapSlots->eventWork;
     struct ObjectRuntime *object;
     s32 cell;
 
@@ -66,18 +66,18 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f)
         Map_CopyCells(a, b, c, d, mode, f);
         Battle_WaitMode0(20);
     }
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     if (mode == 1) {
-        object = Object_GetById(gPartyState.current_owner);
+        object = Object_GetById(gPartyState.currentOwner);
         cell = object->x >> 16;
         Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z);
         Func_020043fc(object);
         object->angle = 0xc000;
     }
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_020046f8);
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner, Data_020046f8);
     Wait(12);
     Cue(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Func_0200458c(work->return_entrance);
+    Func_0200458c(work->returnEntrance);
 }

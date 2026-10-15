@@ -6,7 +6,7 @@
 struct YampiDesertRideWork {
     s16 entry;
     u16 value;
-    u8 unknown_004[0x1c0];
+    u8 unk004[0x1c0];
     void *block;
 };
 
@@ -41,5 +41,5 @@ void Func_02003da0(s32 unused, s32 value)
     work->value = value;
     Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020039b8, 0x48d);
     Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02003b80, 0x480);
-    Object_GetById(Func_020041f0())->priority_flags |= 0x40;
+    Object_GetById(Func_020041f0())->priorityFlags |= 0x40;
 }

@@ -21,7 +21,7 @@ struct CursorMenuState {
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
 {
-    struct CursorMenuState *state = Ram_HeapSlots->menu_runtime;
+    struct CursorMenuState *state = Ram_HeapSlots->menuRuntime;
     u32 different;
     s32 count;
     s32 index;

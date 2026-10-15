@@ -24,9 +24,9 @@ void Func_020000f4(void)
 
 void Func_02000158(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screen_effect = 256;
+    work->screenEffect = 256;
     Scheduler_RemoveCallbackFar(Func_020001f8);
 }
 

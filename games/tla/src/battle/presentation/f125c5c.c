@@ -15,9 +15,9 @@ void BattlePres_UpdateHBlankScroll(void)
     struct BattleAffineHdma *records;
     u16 *record;
 
-    if (((struct BattleBackgroundView *)Ram_HeapSlots->transition_work)->mode == 2)
+    if (((struct BattleBackgroundView *)Ram_HeapSlots->transitionWork)->mode == 2)
     {
-        records = Ram_HeapSlots->unknown_28[0];
+        records = Ram_HeapSlots->unk28[0];
         record = records->lines[records->page];
         Io_Write16(record[0], &REG_BG2CNT);
         Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
@@ -27,7 +27,7 @@ void BattlePres_UpdateHBlankScroll(void)
 
 void Func_08125c5c(void)
 {
-    u32 index = *(s32 *)Ram_HeapSlots->unknown_84[9] - 1;
+    u32 index = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
 
     if (index <= 31)
         Dma_Set(Data_0812cc74 + (index >> 2) * 32, (void *)0x06005000, 0x84000008, REG_DMA3);
@@ -41,9 +41,9 @@ void BattlePres_AdvanceTransitionTimer(void)
     u32 frame;
     u32 next;
 
-    timer = (u32 *)Ram_HeapSlots->unknown_84[9];
+    timer = (u32 *)Ram_HeapSlots->unk84[9];
     frame = *timer;
-    camera = (struct BattleCamera *)Ram_HeapSlots->camera_work;
+    camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
     scroll = 0x34 - frame;
     if (scroll > 0x20)
         scroll = 0x20;
@@ -71,7 +71,7 @@ void BattlePres_DrawTransitionRows(void)
     u32 row;
     u16 *tiles;
 
-    frame = *(s32 *)Ram_HeapSlots->unknown_84[9];
+    frame = *(s32 *)Ram_HeapSlots->unk84[9];
     if (frame >= 0 && frame <= 79)
     {
         tile = (7 & frame) + 0xf081;

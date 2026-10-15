@@ -34,7 +34,7 @@ s32 Resource_ResetEntry(u32 slot);
 
 void Func_08044a58(s32 pc, s32 element, s32 djinn)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 name;
     struct UiWindow *window;
     s32 sprite[3];

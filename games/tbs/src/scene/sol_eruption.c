@@ -56,7 +56,7 @@ s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
 struct EmberSprite
 {
-	u8 unknown_00[9];
+	u8 unk00[9];
 	u8 lo : 2;
 	u8 layer : 2;
 	u8 hi : 4;
@@ -64,23 +64,23 @@ struct EmberSprite
 
 struct Ember
 {
-	u8					unknown_00[8];
+	u8					unk00[8];
 	s32					x;
 	s32					y;
 	s32					z;
-	u8					unknown_14[16];
-	s32					velocity_x;
-	s32					velocity_y;
-	s32					velocity_z;
+	u8					unk14[16];
+	s32					velocityX;
+	s32					velocityY;
+	s32					velocityZ;
 	s32					speed;
 	s32					acceleration;
-	s32					target_x;
-	s32					target_y;
-	s32					target_z;
-	u8					unknown_44[12];
+	s32					targetX;
+	s32					targetY;
+	s32					targetZ;
+	u8					unk44[12];
 	struct EmberSprite *sprite;
-	u8					unknown_54;
-	u8					motion_flags;
+	u8					unk54;
+	u8					motionFlags;
 };
 
 enum
@@ -104,14 +104,14 @@ enum
 
 struct QuakeWork
 {
-	u8	unknown_000[0x40c];
+	u8	unk000[0x40c];
 	s32 fading;
 };
 
 struct PairDetail
 {
-	u8 unknown_00[22];
-	u8 field_16;
+	u8 unk00[22];
+	u8 field16;
 };
 
 struct PairSprite
@@ -126,23 +126,23 @@ union PairObject
 	s32				  words[28];
 	struct
 	{
-		u8				  unknown_00[0x68];
+		u8				  unk00[0x68];
 		union PairObject *parent;
 	} link;
 };
 
 struct PairWork
 {
-	u8	unknown_00[70];
-	u16 vram_block;
+	u8	unk00[70];
+	u16 vramBlock;
 };
 
 struct WorldMapOam
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 attr0;
 	u16 x : 9;
-	u16 affine_index : 5;
+	u16 affineIndex : 5;
 	u16 size : 2;
 };
 
@@ -449,8 +449,8 @@ static void Scene_SaturosTakesHostages(void)
 	Actor_SetSpeed(JENNA, 0x13333, 0x9999);
 	Actor_WalkToAndWait(ACTOR_MENARDI, 0x1db, 0x152);
 	record = Object_GetById(11);
-	((struct FacingObject *)record)->facing_flags =
-		(254 & ((struct FacingObject *)record)->facing_flags);
+	((struct FacingObject *)record)->facingFlags =
+		(254 & ((struct FacingObject *)record)->facingFlags);
 	Actor_WalkToAndWait(ACTOR_MENARDI, 0x1db, 0x15c);
 	Engine_ActorRunRepeatedMotion(JENNA, 1);
 	Engine_ActorJump(JENNA, 4, 0);
@@ -461,7 +461,7 @@ static void Scene_SaturosTakesHostages(void)
 	Event_ShowMessageAndWait(ACTOR_FELIX, 0, 30);
 	Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
 	Engine_EventWait(20);
-	((struct FacingObject *)record)->facing_flags |= 1;
+	((struct FacingObject *)record)->facingFlags |= 1;
 	Actor_SetSpeed(ACTOR_MENARDI, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_MENARDI, 0x1db, 0x14c);
 	Actor_FaceDirection(ACTOR_MENARDI, 0xb000, 20);
@@ -546,8 +546,8 @@ static void SolEruption_RaiseAndShrinkActor(s32 a0)
 	u8				   i;
 
 	recA = Object_GetById(8);
-	recA->scale_x = 0x10000;
-	recA->scale_y = 0x10000;
+	recA->scaleX = 0x10000;
+	recA->scaleY = 0x10000;
 	Engine_ActorWalkToAndWait(a0, 0x1d7, 0x122);
 	Actor_FaceDirection(a0, 0xc000, 0);
 	Engine_EventWait(10);
@@ -556,7 +556,7 @@ static void SolEruption_RaiseAndShrinkActor(s32 a0)
 	rec2 = Object_GetById(a0);
 	Engine_ActorSetSpriteFlags(rec2, 0);
 	Actor_SetChildValue(a0, 0x100);
-	rec7->motion_flags = 0;
+	rec7->motionFlags = 0;
 	Event_PlayCue(201);
 	i = 0;
 	do
@@ -570,10 +570,10 @@ static void SolEruption_RaiseAndShrinkActor(s32 a0)
 	do
 	{
 		rec7->y.fixed += 0x1999;
-		rec7->scale_x -= 0x28f;
-		rec7->scale_y -= 0x28f;
-		recA->scale_x -= 0x28f;
-		recA->scale_y -= 0x28f;
+		rec7->scaleX -= 0x28f;
+		rec7->scaleY -= 0x28f;
+		recA->scaleX -= 0x28f;
+		recA->scaleY -= 0x28f;
 		Engine_EventWait(1);
 		i++;
 	} while (i != 90);
@@ -622,11 +622,11 @@ static void SolEruption_ThrowEruptionRing(void)
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Object_SetMode(actor, 2);
 		actor->sprite->priority = 0;
-		actor->motion_flags = 0;
+		actor->motionFlags = 0;
 		actor->speed = 0x80000;
 		actor->acceleration = 0xc000;
-		actor->scale_x = 0x1cccc;
-		actor->scale_y = 0x1cccc;
+		actor->scaleX = 0x1cccc;
+		actor->scaleY = 0x1cccc;
 		actor->x.fixed = 0xe80000;
 		actor->y.fixed = 0x140000;
 		actor->z.fixed = 0x840000;
@@ -648,17 +648,17 @@ static void SolEruption_ThrowEruptionRing(void)
 	{
 		actor = Object_GetById(i);
 		Engine_ActorStop(i);
-		actor->scale_x = 0x10000;
-		actor->scale_y = 0x10000;
+		actor->scaleX = 0x10000;
+		actor->scaleY = 0x10000;
 		actor->x.fixed = 0;
 		actor->y.fixed = 0;
 		actor->z.fixed = 0;
-		actor->velocity_x = 0;
-		actor->velocity_y = 0;
-		actor->velocity_z = 0;
-		actor->target_x = ACTOR_NO_TARGET;
-		actor->target_y = ACTOR_NO_TARGET;
-		actor->target_z = ACTOR_NO_TARGET;
+		actor->velocityX = 0;
+		actor->velocityY = 0;
+		actor->velocityZ = 0;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 	}
 }
 
@@ -711,7 +711,7 @@ static void SolEruption_StepEmbers(void)
 		if (gEmberState[i] != 0)
 		{
 			spark = (void *)Object_GetById(i + 16);
-			if (spark->target_x == 0x80000000 && spark->target_z == 0x80000000)
+			if (spark->targetX == 0x80000000 && spark->targetZ == 0x80000000)
 			{
 				gEmberState[i]++;
 				if (gEmberState[i] == 2)
@@ -721,12 +721,12 @@ static void SolEruption_StepEmbers(void)
 					spark->x = 0;
 					spark->y = 0;
 					spark->z = 0;
-					spark->velocity_x = 0;
-					spark->velocity_y = 0;
-					spark->velocity_z = 0;
-					spark->target_x = 0x80000000;
-					spark->target_y = 0x80000000;
-					spark->target_z = 0x80000000;
+					spark->velocityX = 0;
+					spark->velocityY = 0;
+					spark->velocityZ = 0;
+					spark->targetX = 0x80000000;
+					spark->targetY = 0x80000000;
+					spark->targetZ = 0x80000000;
 					ObjectGroup_SetChildValue(spark, 15);
 				}
 				else if (gEmberState[i] == 20)
@@ -750,7 +750,7 @@ static void SolEruption_StepEmbers(void)
 			if (Engine_GameFlagIsSet(0x246) == 0)
 				Engine_AudioPlayCue(246);
 			gEmberState[i] = 1;
-			ember->motion_flags = 0;
+			ember->motionFlags = 0;
 			ember->speed = 0x80000;
 			ember->acceleration = 0x10000;
 			Engine_ActorSetSpriteFlags(ember, 0);
@@ -855,15 +855,15 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(80);
 	SceneState_ConfigureEightCornerRegions();
 	center = Engine_EventGetViewCenter();
-	center->motion_flags = 0;
+	center->motionFlags = 0;
 	center->x.fixed = PIXELS(231);
 	center->z.fixed = PIXELS(144);
-	center->target_x = ACTOR_NO_TARGET;
-	center->target_y = ACTOR_NO_TARGET;
-	center->target_z = ACTOR_NO_TARGET;
+	center->targetX = ACTOR_NO_TARGET;
+	center->targetY = ACTOR_NO_TARGET;
+	center->targetZ = ACTOR_NO_TARGET;
 	center->y.fixed = 0;
-	center->velocity_x = 0;
-	center->velocity_z = 0;
+	center->velocityX = 0;
+	center->velocityZ = 0;
 	Engine_TaskWait(4);
 	Engine_MapRedraw();
 	Engine_TaskWait(4);
@@ -896,8 +896,8 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ObjectMotionSetPositionAndCommit(GARET, 220, 150);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetSpritePriority(GARET, 2);
-	Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-	Actor_Get(GARET)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_Get(GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
 	Engine_ActorStop(GARET);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -1130,8 +1130,8 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(20);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
 	Actor_SetSpeed(GARET, 0x20000, 0x10000);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
 	Engine_ActorJump(GARET, 4, 0);
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 256, 150);
@@ -1139,8 +1139,8 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ActorWaitForMove(GARET);
 	FieldScene_RunVariantStep(0, 40, 0);
 	Engine_EventWait(20);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
@@ -1252,12 +1252,12 @@ static void Scene_RunExtendedEffectPresentation(void)
 		buf = Engine_HeapAllocate(17, 0x608);
 		sprite = star->sprite;
 		sprite->flags = 0;
-		sprite->part_count = 0;
-		sprite->full_color = 0;
+		sprite->partCount = 0;
+		sprite->fullColor = 0;
 		sprite->palette = 0;
 		sprite->priority = 1;
 		Engine_ItemLoadIcon(ITEM_MARS_STAR);
-		Engine_VramLoad(sprite->vram_block, 128, buf + 0x400);
+		Engine_VramLoad(sprite->vramBlock, 128, buf + 0x400);
 		Engine_HeapRelease(17);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
 		Engine_RunRisingObjectSequence(star, 3);
@@ -1270,14 +1270,14 @@ static void Scene_RunExtendedEffectPresentation(void)
 		Engine_TaskWait(1);
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
-		star->scale_x = 0x6666;
-		star->scale_y = 0x6666;
+		star->scaleX = 0x6666;
+		star->scaleY = 0x6666;
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
-		star->scale_x = 0x10000;
-		star->scale_y = 0x10000;
+		star->scaleX = 0x10000;
+		star->scaleY = 0x10000;
 	}
 	Actor_SetChildValue(ACTOR_WISE_ONE, 0);
 	FieldScene_RunVariantStep(0, 20, 0);
@@ -1334,14 +1334,14 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
 	Engine_ActorJump(GARET, 6, 0);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 245, 145);
 	Actor_SetDestination(GARET, 215, 168);
 	Engine_ActorWaitForMove(GARET);
 	Engine_EventWait(80);
-	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_SetDestination(ACTOR_WISE_ONE, 184, 87);
 	Engine_ActorWaitForMove(ACTOR_WISE_ONE);
 	Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
@@ -1814,7 +1814,7 @@ static void SolEruption_SpawnEffectPair(union PairObject *parent)
 		{
 			child->words[5] = parent->words[5];
 			part = (struct PairSprite *)child->object.actor.sprite;
-			child->object.actor.motion_flags = 0;
+			child->object.actor.motionFlags = 0;
 			child->object.effect.spin = 0;
 			child->link.parent = parent;
 			if (part != NULL)
@@ -1822,14 +1822,14 @@ static void SolEruption_SpawnEffectPair(union PairObject *parent)
 				sprite = &part->sprite;
 				AnimationObjects_SelectAnimation(sprite, 0);
 				sprite->flags = 0;
-				Resource_ResetEntry(sprite->vram_block);
-				sprite->vram_block = work->vram_block;
-				sprite->unknown_1d_0 = 1;
-				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-				sprite->full_color = 0;
+				Resource_ResetEntry(sprite->vramBlock);
+				sprite->vramBlock = work->vramBlock;
+				sprite->unk1d0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
+				sprite->fullColor = 0;
 				sprite->shape = 1;
 				((struct WorldMapOam *)sprite)->size = 2;
-				part->detail->field_16 = 0;
+				part->detail->field16 = 0;
 			}
 		}
 	}
@@ -1841,7 +1841,7 @@ static void SolEruption_SpawnEffectPair(union PairObject *parent)
 
 		p->sprite->priority = q->sprite->priority;
 		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 }
 

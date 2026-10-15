@@ -18,7 +18,7 @@ void *Resource_GetTableEntry(s32 id);
 
 void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     u8 pixels[128];
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     u32 slot = *(u8 *)entry;
@@ -70,11 +70,11 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
 
             slot = (u8)value;
             *(u16 *)work = following;
-            if (work->tile_attributes[slot] == 0)
+            if (work->tileAttributes[slot] == 0)
                 break;
             n++;
         } while (n < 128);
-        work->tile_attributes[slot] = 1;
+        work->tileAttributes[slot] = 1;
         slot |= 0x80;
         *entry = slot | 0xf000;
         *mirror = slot | 0xf000;

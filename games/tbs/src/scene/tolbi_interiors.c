@@ -74,8 +74,8 @@ static void TolbiInteriors_StartWindowTransition(void)
 {
 	struct EventWork *state = gEventWork;
 
-	state->start_transition = 0x201;
-	state->transition_frames = 24;
+	state->startTransition = 0x201;
+	state->transitionFrames = 24;
 	Engine_EventRequestExit();
 }
 
@@ -92,7 +92,7 @@ static void FieldScene_RunPrimarySequence(void)
 		record = Object_GetById(i);
 		if (record != 0)
 		{
-			record->motion_flags = 0;
+			record->motionFlags = 0;
 		}
 	}
 	p6 += 0x16c;
@@ -100,7 +100,7 @@ static void FieldScene_RunPrimarySequence(void)
 	Engine_AudioPlayCue(158);
 	Map_AnimateCells(TolbiInteriors_ExitCells[n].steps, TolbiInteriors_ExitCells[n].x, TolbiInteriors_ExitCells[n].y);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_EventRequestExit(*(s16 *)p6);
 }
@@ -200,7 +200,7 @@ s32 Scene_InitFacingActors(void)
 	u8 *record;
 	s32 none;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
 		Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);

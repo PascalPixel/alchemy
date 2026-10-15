@@ -40,7 +40,7 @@ void Func_02000a44(void)
 // sine of the frame count less the line.
 void Func_02000a98(void)
 {
-    struct MapLayer *layer = &Ram_HeapSlots->map_work->layers[2];
+    struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
     u16 *line;
     s32 i = 0;
 

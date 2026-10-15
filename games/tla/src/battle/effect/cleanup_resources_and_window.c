@@ -11,7 +11,7 @@
 
 struct WorldMapWork {
     u16 resources[2];
-    u8 unknown_04[0x18];
+    u8 unk04[0x18];
     u32 window;
 };
 

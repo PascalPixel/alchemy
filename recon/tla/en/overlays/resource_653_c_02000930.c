@@ -9,9 +9,9 @@ void Func_02000930(struct ObjectRuntime *object, s32 priority)
 {
     struct FieldSprite *sprite;
 
-    object->motion_flags = 0;
-    object->collision_flags = 0;
-    object->priority_flags = 2;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
+    object->priorityFlags = 2;
     sprite = object->animation;
     sprite->priority = priority;
     ObjectDispatch_SetSingleChildFlags(object, 0);
@@ -19,6 +19,6 @@ void Func_02000930(struct ObjectRuntime *object, s32 priority)
     Func_02005138(object, Data_02005494);
     Object_SetPartAttribute(object, 9);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }

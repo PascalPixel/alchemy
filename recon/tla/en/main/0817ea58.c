@@ -29,67 +29,67 @@ typedef struct Vec2 {
 } Vec2;
 
 typedef struct Sprite {
-    u8 unk_00[8];
+    u8 unk00[8];
     u16 tile : 10;
     u16 priority : 2;
     u16 palette : 4;
-    u8 unk_0a[6];
+    u8 unk0a[6];
     u8 vram;
-    u8 unk_11;
+    u8 unk11;
     u16 rotation;
-    u8 unk_14[2];
-    u8 unk_16;
-    u8 unk_17;
+    u8 unk14[2];
+    u8 unk16;
+    u8 unk17;
 } Sprite;
 
 typedef struct VramSlot {
-    u16 unk_0;
+    u16 unk0;
     u16 offset;
 } VramSlot;
 
 typedef struct Bitmap {
     u32 width : 8;
     u32 height : 8;
-    u32 unk_2 : 16;
+    u32 unk2 : 16;
     void *data;
 } Bitmap;
 
 struct SummonWork {
     Particle particles[48];
-    u8 unk_0540[0x1c0];
+    u8 unk0540[0x1c0];
     u8 frames[0x7080];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unk_7788[8];
-    s32 unk_7790;
-    s32 unk_7794;
-    s32 unk_7798;
-    s32 unk_779c;
-    u8 unk_77a0[8];
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[8];
+    s32 unk7790;
+    s32 unk7794;
+    s32 unk7798;
+    s32 unk779c;
+    u8 unk77a0[8];
     s32 shake;
-    u8 unk_77ac[0x30];
+    u8 unk77ac[0x30];
     Sprite *sprites[57];
-    u8 unk_78c0[0x28];
-    s32 transfer_pending;
+    u8 unk78c0[0x28];
+    s32 transferPending;
 };
 
 struct SummonArgument {
     s32 kind;
     s32 side;
     s32 actor;
-    s32 unk_0c;
-    s32 unk_10;
+    s32 unk0c;
+    s32 unk10;
     s32 count;
     s32 variant;
-    s32 unk_1c;
-    s32 unk_20;
+    s32 unk1c;
+    s32 unk20;
     s16 actors[8];
 };
 
 struct Keys {
     u32 held;
-    u32 unk_4;
-    u32 unk_8;
+    u32 unk4;
+    u32 unk8;
     u32 pressed;
 };
 
@@ -98,14 +98,14 @@ typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
 struct SystemWork {
-    u8 unk_00[0x24];
+    u8 unk00[0x24];
     s32 *bank;
-    u8 unk_28[0x34];
+    u8 unk28[0x34];
     struct SummonWork *summon;
     u8 *canvas;
     u8 *map;
     void *blit;
-    u8 unk_6c[0x44];
+    u8 unk6c[0x44];
     s32 *control;
 };
 
@@ -203,7 +203,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     s32 wave_scroll;
     s32 ship_y;
     s32 wave_phase;
-    u16 saved_y;
+    u16 savedY;
     s32 bg_x;
     struct SummonWork *work;
     u16 *pal;
@@ -237,13 +237,13 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     Func_08179e6c();
     Func_081963ec(104, 3);
     blit[0] = SYSTEM->blit;
-    work->transfer_mode = 0;
+    work->transferMode = 0;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     camera = 0;
     wave_scroll = 0;
     ship_y = -0x1d0000;
     wave_phase = 0;
-    saved_y = *(u16 *)0x03001124;
+    savedY = *(u16 *)0x03001124;
     bg_x = -80;
 
     for (frame = 0; frame != 52; frame++) {
@@ -272,10 +272,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                     b = 31;
                 *pal = (b << 10) | (r << 5) | g;
             }
-            work->unk_7790 = 0;
-            work->unk_7794 = 5;
-            work->unk_7798 = -1;
-            work->unk_779c = 0;
+            work->unk7790 = 0;
+            work->unk7794 = 5;
+            work->unk7798 = -1;
+            work->unk779c = 0;
             Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
             ctl[4] = 1;
             Resource_LoadAndDecompress(0x134, work->frames, 0, 0);
@@ -369,7 +369,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         }
         bg_x += 4;
         *(s32 *)0x04000028 = bg_x << 8;
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         Func_08013560(1);
     }
 
@@ -380,18 +380,18 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     *(vu16 *)0x04000020 = 0x80;
     *(s32 *)0x04000028 = 0;
     Func_08144aac(0, blit);
-    work->unk_7790 = 0;
-    work->unk_7794 = 5;
-    work->unk_7798 = -1;
-    work->unk_779c = 0;
+    work->unk7790 = 0;
+    work->unk7794 = 5;
+    work->unk7798 = -1;
+    work->unk779c = 0;
     ctl[4] = 1;
     Resource_LoadAndDecompress(0xba, work->frames, 0, 0);
     Resource_LoadAndDecompress(0x13e, work->frames + 0x6c0, 1, 0);
     Resource_LoadAndDecompress(0xbb, work->frames + 0x36c0, 0, 0);
     Resource_LoadAndDecompress(0xc2, DECODE_BUFFER, 0, 0);
     Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry(0x161), 128);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     *(vu16 *)0x04000052 = 0x1010;
     *(vu16 *)0x04000050 = 0x3f44;
     for (i = 0; i < 224; i++) {
@@ -491,17 +491,17 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         if (frame == 489) {
             *(vu16 *)0x04000020 = 0x80;
             *(vu16 *)0x0400000c = 0x784;
-            work->unk_7798 = 0;
+            work->unk7798 = 0;
         }
         if (frame == 528) {
             *(vu16 *)0x04000020 = 0x80;
             *(vu16 *)0x0400000c = 0x785;
         }
         if (frame == 0) {
-            work->transfer_mode = 1;
-            work->transfer_value = 0;
-            work->transfer_mode = 2;
-            work->transfer_value = 50;
+            work->transferMode = 1;
+            work->transferValue = 0;
+            work->transferMode = 2;
+            work->transferValue = 50;
             for (i = 0; i != 10; i++) {
                 p = &PARTICLES[502 + i];
                 p->x = Ulysses_FishStart[i][0] << 16;
@@ -608,11 +608,11 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
         }
         if (frame == 578) {
-            work->unk_7794 = 1;
-            work->unk_7790 = 0;
+            work->unk7794 = 1;
+            work->unk7790 = 0;
         }
         if (frame >= 578 && frame < 594)
-            work->unk_7798 = ~((frame - 578) / 8);
+            work->unk7798 = ~((frame - 578) / 8);
         v = camera - sway_x + bob_x + 0x780000;
         for (i = 0; i != 2; i++) {
             pos2.x = v;
@@ -747,8 +747,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             pos2.z = p->y;
         }
         Render_ApplyProjectedPlacementFar(work->sprites[39], &pos2, &scale2, 0);
-        work->sprites[39]->unk_16 = 0;
-        work->sprites[39]->unk_17 = 32;
+        work->sprites[39]->unk16 = 0;
+        work->sprites[39]->unk17 = 32;
         if (frame >= 568) {
             s32 *beam;
             void *buffer;
@@ -917,12 +917,12 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         if (work->shake > 0)
             work->shake--;
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         Func_08013560(1);
     }
 
     Scheduler_RemoveCallback(Func_0813baec);
-    *(u16 *)0x03001124 = saved_y;
+    *(u16 *)0x03001124 = savedY;
     ctl[4] = 0;
     Func_0814cca8();
     for (i = 0; i != 57; i++)
@@ -931,8 +931,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     PaletteDma_LoadBlock();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (vu32 *)0x040000d4);
     *(u16 *)0x050001bc = *(u16 *)0x050001e8;
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
+    work->transferMode = 2;
+    work->transferValue = 50;
     *(s32 *)0x04000028 = 0;
     *(vu16 *)0x04000050 = 0x3f44;
     *(vu16 *)0x04000020 = 0x80;
@@ -944,8 +944,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     for (i = 0; i != 15; i++) {
         work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
         Iwram_Copy(work->sprites[1 + i], work->sprites[0], 24);
-        work->sprites[1 + i]->unk_16 = 32;
-        work->sprites[1 + i]->unk_17 = 8;
+        work->sprites[1 + i]->unk16 = 32;
+        work->sprites[1 + i]->unk17 = 8;
     }
     Resource_LoadAndDecompress(0x13e, work->frames, 1, 0);
     Resource_LoadAndDecompress(0xba, work->frames + 0x3000, 0, 0);
@@ -965,8 +965,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;
                 p->y = (((Random16() & 7) + 96) << 16) - p->vy * 24;
                 work->sprites[i]->rotation = p->z;
-                work->sprites[i]->unk_16 = 0;
-                work->sprites[i]->unk_17 = 8;
+                work->sprites[i]->unk16 = 0;
+                work->sprites[i]->unk17 = 8;
                 z -= 0x100;
             }
             for (i = 0; i != 512; i++)
@@ -1038,7 +1038,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         }
         Func_08158ce0(8, 8);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         Func_08013560(1);
     }
     for (i = 0; i != 16; i++)

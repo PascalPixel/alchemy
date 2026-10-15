@@ -12,13 +12,13 @@ void Func_02000318(s32 actor)
     message = (s32)MsgGarohInteriors01;
     Func_02000844(message);
     Message_Open(actor, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
         Func_02000844(message + 2);
         Message_Open(actor, 0);
-        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+        if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
             Func_0200085c(actor, 0);
         } else {
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
             Func_0200085c(actor, 0);
         }
     } else {

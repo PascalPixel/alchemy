@@ -16,7 +16,7 @@ s32 Func_080d072c(void)
 }
 
 struct MapLayerFlags {
-    u8 unknown_00[0x14];
+    u8 unk00[0x14];
     u16 flags;
 };
 
@@ -29,7 +29,7 @@ void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2)
     struct MapLayerFlags *map;
     u16 flags;
 
-    map = (struct MapLayerFlags *)Ram_HeapSlots->map_work;
+    map = (struct MapLayerFlags *)Ram_HeapSlots->mapWork;
     if (map == 0)
         return;
     if (layer2) {
@@ -60,10 +60,10 @@ void DisplayTransition_Update(void)
 
     /* FAKEMATCH: the one-pass block loads the transition state before the duration's offset is built (one reordered row, differ 2 without it). */
     do {
-        state = Ram_HeapSlots->display_transition;
+        state = Ram_HeapSlots->displayTransition;
     } while (0);
     duration = &state->duration;
-    window = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
     if (*duration != 0) {
         s8 *step = &state->step;
 
@@ -71,7 +71,7 @@ void DisplayTransition_Update(void)
             *duration = 0;
             Scheduler_RemoveCallback(DisplayTransition_Update);
             Runtime_SetIrqHandler(1, 0, 0);
-            window->extra_tiles = 3;
+            window->extraTiles = 3;
             return;
         } else {
             s32 delta = state->end - state->start;
@@ -88,11 +88,11 @@ void DisplayTransition_Update(void)
 
     value = state->value;
     if (value > 79) {
-        window->window_top = 200;
-        window->window_bottom = 250;
+        window->windowTop = 200;
+        window->windowBottom = 250;
     } else {
-        window->window_top = value;
-        window->window_bottom = 159 - value;
+        window->windowTop = value;
+        window->windowBottom = 159 - value;
     }
 }
 
@@ -107,10 +107,10 @@ void DisplayTransition_UpdateFromCentre(void)
 
     /* FAKEMATCH: the one-pass block loads the transition state before the duration's offset is built (one reordered row, differ 2 without it). */
     do {
-        state = Ram_HeapSlots->display_transition;
+        state = Ram_HeapSlots->displayTransition;
     } while (0);
     duration = &state->duration;
-    window = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
     if (*duration != 0) {
         s8 *step = &state->step;
 
@@ -134,14 +134,14 @@ void DisplayTransition_UpdateFromCentre(void)
 
     value = state->value;
     if (value > 79) {
-        window->window_top = 200;
-        window->window_bottom = 250;
+        window->windowTop = 200;
+        window->windowBottom = 250;
     } else if (value != 0 && (gFrameCount & 1)) {
-        window->window_top = value + 80;
-        window->window_bottom = 80 - value;
+        window->windowTop = value + 80;
+        window->windowBottom = 80 - value;
     } else {
-        window->window_top = 0;
-        window->window_bottom = 159;
+        window->windowTop = 0;
+        window->windowBottom = 159;
     }
 }
 
@@ -162,41 +162,41 @@ void DisplayTransition_UpdateScanline(void)
     u16 dispcnt;
 
     line = REG_VCOUNT;
-    state = (struct MapViewWork *)Ram_HeapSlots->map_work;
+    state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
 
 again:
-    switch (state->irq_phase) {
+    switch (state->irqPhase) {
     case 3:
-        if (line >= state->irq_first_line) {
+        if (line >= state->irqFirstLine) {
             READ_DISPCNT(dispcnt);
             REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
-            state->irq_phase = 9;
+            state->irqPhase = 9;
         }
         break;
     case 2:
-        if (line >= state->irq_second_line) {
+        if (line >= state->irqSecondLine) {
             READ_DISPCNT(dispcnt);
             REG_DISPCNT = dispcnt & 0xFFF8;
-            state->irq_phase = 9;
+            state->irqPhase = 9;
         }
         break;
     case 1:
-        if (line >= state->irq_first_line) {
+        if (line >= state->irqFirstLine) {
             READ_DISPCNT(dispcnt);
             REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
-            state->irq_phase++;
+            state->irqPhase++;
             goto again;
         }
-        if (line >= state->irq_second_line) {
+        if (line >= state->irqSecondLine) {
             READ_DISPCNT(dispcnt);
             REG_DISPCNT = dispcnt & 0xFFF8;
-            state->irq_phase = 3;
+            state->irqPhase = 3;
             goto again;
         }
         break;
     case 0:
         if (line <= 158) {
-            state->irq_phase = 1;
+            state->irqPhase = 1;
             goto again;
         }
         break;

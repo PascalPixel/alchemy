@@ -26,7 +26,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
+void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,
     u32 flags, struct EffectOptions *options);
 void Func_02005794(s32 id, s32 value);
 void Func_02005694(s32 a, s32 b, s32 c);
@@ -45,7 +45,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c)
 
 void Func_02002394(void)
 {
-    struct ObjectRuntime *actor = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
     u32 i;
     struct EffectOptions options;
 
@@ -57,17 +57,17 @@ void Func_02002394(void)
     actor->y = 0x820000;
     actor->gravity = 0x8000;
     actor->bounce = 0;
-    actor->motion_flags = 0;
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
+    actor->motionFlags = 0;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02005854(204);
-    actor->motion_flags = 3;
+    actor->motionFlags = 3;
     Battle_WaitMode0(24);
     options.palette = 7;
     options.update = Effect_AdvanceMotion;
-    options.start_scale_x = 0xcccc;
-    options.start_scale_y = 0xcccc;
+    options.startScaleX = 0xcccc;
+    options.startScaleY = 0xcccc;
     for (i = 0; i <= 16; i++) {
         s32 angle;
         s32 velocity[3];
@@ -82,16 +82,16 @@ void Func_02002394(void)
         Func_020000b8(actor->x, actor->y, actor->z, velocity[0], velocity[1], velocity[2], 0x1090001, &options);
     }
     Func_02005854(188);
-    Func_02005794(gPartyState.current_owner, 0x101);
-    Object_SetModeById(gPartyState.current_owner, 49);
+    Func_02005794(gPartyState.currentOwner, 0x101);
+    Object_SetModeById(gPartyState.currentOwner, 49);
     SetWorkTriple(0x50000, 0x50000, 0x10000);
     SetWorkTriple(-1, -1, 0xe666);
     Func_0200569c();
-    Func_02005794(gPartyState.current_owner, 0x100);
+    Func_02005794(gPartyState.currentOwner, 0x100);
     actor->gravity = 0x10000;
     actor->bounce = 0x4000;
     WaitFrames(10);
-    Object_SetModeById(gPartyState.current_owner, 1);
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
+    Object_SetModeById(gPartyState.currentOwner, 1);
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
     Func_020056bc();
 }

@@ -28,18 +28,18 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     }
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = UnitGet(gPartyState.active_owners[i]);
+        unit = UnitGet(gPartyState.activeOwners[i]);
         if (!scaled) {
             value = amount;
         } else {
-            value = unit->max_hp * amount / 100;
+            value = unit->maxHp * amount / 100;
             if (value == 0) {
                 value = amount;
                 if (value < 0)
                     value = -value;
             }
         }
-        Owner_AdjustFirstValueFar(gPartyState.active_owners[i], value);
+        Owner_AdjustFirstValueFar(gPartyState.activeOwners[i], value);
     }
 }
 

@@ -8,8 +8,8 @@
 #include "io_reg.h"
 #include "palqueue.h"
 
-#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unknown_70[0])
-#define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->event_work + (offset)))
+#define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
+#define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
 
 void Func_020034fc(void)
 {

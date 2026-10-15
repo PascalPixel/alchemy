@@ -35,14 +35,14 @@ static void McCoyPalace_RunActorRowScene(void);
 
 struct PalaceSceneRecord
 {
-	u8 unk_000[166];
-	u8 field_166;
-	u8 unk_167[23];
-	u8 field_190;
-	u8 unk_191[23];
-	u8 field_214;
-	u8 unk_215[23];
-	u8 field_238;
+	u8 unk000[166];
+	u8 field166;
+	u8 unk167[23];
+	u8 field190;
+	u8 unk191[23];
+	u8 field214;
+	u8 unk215[23];
+	u8 field238;
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -76,10 +76,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 		{
 			struct PalaceSceneRecord *rec = (struct PalaceSceneRecord *)p;
 
-			rec->field_166 = 2;
-			rec->field_190 = 0;
-			rec->field_214 = 3;
-			rec->field_238 = 1;
+			rec->field166 = 2;
+			rec->field190 = 0;
+			rec->field214 = 3;
+			rec->field238 = 1;
 		}
 
 		return (const struct ScenePlacement *)p;
@@ -210,7 +210,7 @@ static void McCoyPalace_RunDoorExitScene(void)
 
 	work = gEventWork;
 	lock = 0;
-	if (work->touched_trigger == 9)
+	if (work->touchedTrigger == 9)
 	{
 		if (Engine_GameFlagIsSet(0x200) == 0)
 		{
@@ -232,12 +232,12 @@ static void McCoyPalace_RunDoorExitScene(void)
 	Engine_EventWait(10);
 	Actor_SetSpeed(0, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(0, 2);
-	if (work->touched_trigger == 9)
+	if (work->touchedTrigger == 9)
 		Actor_SetDestinationOffset(0, 0, -16);
 	else
 		Actor_CenterAndWalk(0, 3, -16);
 	Engine_EventWait(16);
-	Engine_EventRequestExit(work->touched_trigger);
+	Engine_EventRequestExit(work->touchedTrigger);
 	Engine_EventEnd();
 	Map_SetLayerEntryFlag(1);
 	Map_SetLayerEntryFlag(2);
@@ -384,7 +384,7 @@ static void EV50_TOUCH(void)
 		Actor_SetSpeed(19, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(19, 0x23a, 0x2f6);
 		Actor_SetPosition(19, 0, 0);
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		GameFlag_Set(0x85e);
 		GameFlag_Set(0x333);
 		Engine_EventEnd();
@@ -396,7 +396,7 @@ s32 McCoyPalace_ApplyEntryState(s32 a0, s32 a1)
 	s32 rec8;
 	s32 record;
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Map_SetLayerEntryFlag(1);
 	Map_SetLayerEntryFlag(2);
 	Engine_GameFlagSet(0x84b);
@@ -456,10 +456,10 @@ s32 McCoyPalace_ApplyEntryState(s32 a0, s32 a1)
 							Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
 							record = (s32)Object_GetById(24);
 							Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-							Object_GetById(21)->motion_flags = rec8;
-							Object_GetById(22)->motion_flags = rec8;
-							Object_GetById(23)->motion_flags = rec8;
-							Object_GetById(24)->motion_flags = rec8;
+							Object_GetById(21)->motionFlags = rec8;
+							Object_GetById(22)->motionFlags = rec8;
+							Object_GetById(23)->motionFlags = rec8;
+							Object_GetById(24)->motionFlags = rec8;
 							record = (s32)Object_GetById(21);
 							((struct FieldActor *)record)->y.fixed = -0x40000;
 							record = (s32)Object_GetById(22);
@@ -488,7 +488,7 @@ static void Palace_RunKolimaRequest(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
 	Engine_TaskWait(1);
 	Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -501,8 +501,8 @@ static void Palace_RunKolimaRequest(void)
 	}
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 40;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 40;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	if (Engine_GameFlagIsSet(0x85f) == 0)
@@ -647,7 +647,7 @@ static void Palace_RunKolimaRequest(void)
 		Engine_GameFlagSet(0x85f);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-		gEventWork->transition_frames = 16;
+		gEventWork->transitionFrames = 16;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		goto leave;
@@ -720,8 +720,8 @@ accepted:
 	record = Object_GetById(20);
 	Engine_ActorSetSpriteFlags(record, 0);
 	record = Object_GetById(20);
-	record->scale_x = 0x8000;
-	record->scale_y = 0x8000;
+	record->scaleX = 0x8000;
+	record->scaleY = 0x8000;
 	record = Object_GetById(18);
 	if (record != 0)
 	{
@@ -926,7 +926,7 @@ accepted:
 	Engine_ActorSetPosition(MIA, 0, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_GameFlagSet(0x321);
@@ -1010,15 +1010,15 @@ static void RunEventScript02(void)
 	Engine_TaskWait(1);
 	buf = Engine_EventGetViewCenter();
 	flag = 0;
-	buf->motion_flags = flag;
+	buf->motionFlags = flag;
 	Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 16;
 
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -1301,7 +1301,7 @@ static void McCoyPalace_RunActorRowScene(void)
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);
 	Map_CopyCellAttributes(38, 55, 4, 1, 38, 45);
 	Map_CopyCellAttributes(42, 55, 4, 1, 38, 46);
@@ -1320,18 +1320,18 @@ static void McCoyPalace_RunActorRowScene(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
 	actor = Object_GetById(21);
-	actor->motion_flags = 0;
-	Object_GetById(22)->motion_flags = 0;
-	Object_GetById(23)->motion_flags = 0;
-	Object_GetById(24)->motion_flags = 0;
+	actor->motionFlags = 0;
+	Object_GetById(22)->motionFlags = 0;
+	Object_GetById(23)->motionFlags = 0;
+	Object_GetById(24)->motionFlags = 0;
 	Object_GetById(21)->y.fixed = -0x40000;
 	Object_GetById(22)->y.fixed = -0x40000;
 	Object_GetById(23)->y.fixed = -0x40000;
 	Object_GetById(24)->y.fixed = -0x40000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 16;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Actor_SetSpeed(19, 0x9999, 0x4ccc);

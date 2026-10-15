@@ -31,12 +31,12 @@ static void TretBranch_StartBg3Split(void);
 
 struct SceneObject
 {
-	u8	unknown_00[8];
+	u8	unk00[8];
 	s32 x;
 	s32 y;
 	s32 z;
-	s32 settled_y;
-	u8	unknown_18[10];
+	s32 settledY;
+	u8	unk18[10];
 	u8	layer;
 };
 
@@ -85,7 +85,7 @@ static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 	s32					dz = bz;
 	s32					h;
 
-	obj = (struct SceneObject *)Object_GetById(gGameState.selected_actor);
+	obj = (struct SceneObject *)Object_GetById(gGameState.selectedActor);
 	dx <<= 20;
 	dz <<= 20;
 
@@ -95,7 +95,7 @@ static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 		obj->z += dz;
 		h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
 		obj->y = h;
-		obj->settled_y = h;
+		obj->settledY = h;
 	}
 
 	obj = *(struct SceneObject **)(work + 480);
@@ -105,7 +105,7 @@ static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 		obj->z += dz;
 		h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
 		obj->y = h;
-		obj->settled_y = h;
+		obj->settledY = h;
 	}
 }
 
@@ -145,7 +145,7 @@ static void TretBranch_PlayCueAndSelectTouchedExit(void)
 	s16				 *cnt;
 
 	Engine_AudioPlayCue(0x7B);
-	cnt = &state->touched_trigger;
+	cnt = &state->touchedTrigger;
 	Engine_EventRequestExit(*cnt);
 }
 

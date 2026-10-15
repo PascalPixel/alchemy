@@ -32,18 +32,18 @@
 
 struct IntroSprite
 {
-	u32 unknown_0;
+	u32 unk0;
 	u8	y;
-	u8	unknown_5;
+	u8	unk5;
 	u16 x : 9;
-	u16 unknown_6 : 7;
+	u16 unk6 : 7;
 	s32 tile;
 };
 
 struct IntroWork
 {
-	s32 back_rows;
-	s32 front_rows;
+	s32 backRows;
+	s32 frontRows;
 	s32 frame;
 	s32 tick;
 	s32 state;
@@ -53,7 +53,7 @@ struct IntroWork
 		struct OamShadow objects[120];
 		struct
 		{
-			u8				   unknown_18[0x68];
+			u8				   unk18[0x68];
 			struct IntroSprite sprites[8];
 		} prompt;
 	} area;
@@ -231,8 +231,8 @@ void Title_LoadIntroBackgrounds(void)
 	gBgScroll[1].y = 96;
 	gBgScroll[2].y = 96;
 	work->frame = 0;
-	work->back_rows = 0;
-	work->front_rows = 0;
+	work->backRows = 0;
+	work->frontRows = 0;
 	work->tick = 0;
 	work->rise = 0;
 	work->state = 0;
@@ -323,9 +323,9 @@ s32 Title_ShowIntro(s32 prompt)
 				y = gBgScroll[1].y;
 				if ((y & 7) == 0)
 				{
-					Dma_Set(Ram_MapCellBuffer + 0x2580 - work->back_rows * 960,
-						(u8 *)0x06004b00 - work->back_rows * 960, 0x800001e0, REG_DMA3);
-					work->back_rows++;
+					Dma_Set(Ram_MapCellBuffer + 0x2580 - work->backRows * 960,
+						(u8 *)0x06004b00 - work->backRows * 960, 0x800001e0, REG_DMA3);
+					work->backRows++;
 					tick = work->tick;
 				}
 			}
@@ -337,15 +337,15 @@ s32 Title_ShowIntro(s32 prompt)
 				y = gBgScroll[2].y;
 				if ((y & 7) == 0)
 				{
-					if (work->front_rows * 8 <= 24)
+					if (work->frontRows * 8 <= 24)
 					{
-						Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->front_rows * 1920,
-							(u8 *)0x0600e4c0 - work->front_rows * 1920, 0x800003c0, REG_DMA3);
+						Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->frontRows * 1920,
+							(u8 *)0x0600e4c0 - work->frontRows * 1920, 0x800003c0, REG_DMA3);
 					}
 					else
 					{
 						zero = 0;
-						Dma_Set(&zero, (u8 *)0x06004ec0 + (160 - work->front_rows * 8) % 160 * 240,
+						Dma_Set(&zero, (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
 							0x810003c0, REG_DMA3);
 						map = (u16 *)0x0600f6c0;
 						for (i = 0; i < 5; i++)
@@ -356,7 +356,7 @@ s32 Title_ShowIntro(s32 prompt)
 							*map++ = 0x13b;
 						}
 					}
-					work->front_rows++;
+					work->frontRows++;
 				}
 			}
 			if (work->frame == 239)

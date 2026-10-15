@@ -22,7 +22,7 @@ void Func_02000e78(s32 cue);
 // Select and 1 on A, and closes on B.
 void Func_02000748(void)
 {
-    u8 *unit = UnitGet(gPartyState.current_owner);
+    u8 *unit = UnitGet(gPartyState.currentOwner);
     void *window = UiWindow_Create(0, 0, 30, 9, 2);
     const u8 *message = MsgRaiseEveryoneS;
     s32 redraw;

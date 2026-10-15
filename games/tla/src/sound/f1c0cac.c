@@ -1,13 +1,13 @@
 #include "audio_engine.h"
 #include "audio_engine_symbols.h"
 
-// The interrupt handler clears unknown_03 every frame after the sound
+// The interrupt handler clears unk03 every frame after the sound
 // update, reading it first as only a volatile access survives; while it is
 // set, sound commands are ignored.
 struct SoundFrameState
 {
-    u8 unknown_00[3];
-    u8 unknown_03;
+    u8 unk00[3];
+    u8 unk03;
 };
 
 extern const struct SongEntry Sound_SongTable[];
@@ -49,7 +49,7 @@ void AudioCommand_Play(s32 id)
 
     SongFlag_Set(id);
     flags = id & 0xf000;
-    if (Data_03001138.unknown_03 != 0)
+    if (Data_03001138.unk03 != 0)
         return;
     id &= 0xfff;
 

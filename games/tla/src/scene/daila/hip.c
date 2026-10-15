@@ -26,7 +26,7 @@ void Daila_TalkHip(void)
 
 void Func_02000340(s32 keeper)
 {
-    u16 facing = Engine_ActorGet(gPartyState.current_owner)->facing;
+    u16 facing = Engine_ActorGet(gPartyState.currentOwner)->facing;
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the facing before it builds the quadrant offset (2 differ without it). */
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {

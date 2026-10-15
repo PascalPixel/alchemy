@@ -27,7 +27,7 @@ static __inline__ void Func_0200500c_(s32 a, s32 b, s32 c)
 }
 
 struct PartyState254 {
-    u8 unknown_000[0x254];
+    u8 unk000[0x254];
     u16 value;
 };
 
@@ -52,7 +52,7 @@ void Func_02000c74(void)
     if (GameFlag_Test_(0x9b7) == 0) {
         Func_0200500c_(249, 328, 344);
         ((struct PartyState254 *)&gPartyState)->value = 0x19b7;
-        gPartyState.battle_rule_24b = 2;
+        gPartyState.battleRule24b = 2;
         Func_02004f74(106, 2);
     }
 }

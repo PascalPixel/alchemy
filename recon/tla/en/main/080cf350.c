@@ -1,4 +1,4 @@
-/* Near miss, differ 2: the native copies the owner out of r0 after the motion_flags
+/* Near miss, differ 2: the native copies the owner out of r0 after the motionFlags
  * byte store; this draft copies it one instruction earlier. Tried: store order, a result
  * temporary, empty and "+l"/"+r" asm barriers after the stores, a one-pass block,
  * two minutes of permute. */
@@ -20,8 +20,8 @@ void Func_080cf350(struct ObjectRuntime *object)
 
     owner = ObjectTable_Get(EventRuntime_GetControlledOwner());
     object->acceleration = 0x10000;
-    object->speed_limit = 0x20000;
-    object->motion_flags = 0;
+    object->speedLimit = 0x20000;
+    object->motionFlags = 0;
     Object_SetPosition(object, owner->x, owner->y + 0x240000, owner->z);
     ObjectDispatch_SetSpritePriorityFar(object, 1);
     WaitFrames(3);

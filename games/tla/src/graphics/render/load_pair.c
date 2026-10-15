@@ -53,9 +53,9 @@ struct RenderOutput *RenderResource_CreatePair(
 
 struct BobPairObject {
     struct BobPairObject *next;
-    u8 unknown_04[4];
-    u8 base_y;
-    u8 unknown_09[11];
+    u8 unk04[4];
+    u8 baseY;
+    u8 unk09[11];
     u8 y;
 };
 
@@ -69,7 +69,7 @@ void Func_08045018(struct BobPairObject *object)
 {
     s32 value;
 
-    value = object->base_y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    value = object->baseY + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
     object->y = value;
     /* FAKEMATCH: tying the object to an empty asm after the first store
        loads the next object before the second tick is shifted, as the
@@ -77,6 +77,6 @@ void Func_08045018(struct BobPairObject *object)
        differ 2). */
     asm("" : "+r"(object));
     object = object->next;
-    value = object->base_y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    value = object->baseY + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
     object->y = value;
 }

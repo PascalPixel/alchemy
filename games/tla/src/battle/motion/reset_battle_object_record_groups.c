@@ -26,7 +26,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
     void *record_group;
 
     if (object != NULL) {
-        storage_kind = object->record_storage_kind & 0xF;
+        storage_kind = object->recordStorageKind & 0xF;
         switch (storage_kind) {
         case 1:
             ResetMotionRecordGroup(object->records);
@@ -48,7 +48,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
-    u8 *work = (u8 *)Ram_HeapSlots->battle_work;
+    u8 *work = (u8 *)Ram_HeapSlots->battleWork;
     struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)
@@ -59,12 +59,12 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
     return &slots[work[id]];
 }
 
-s32 ActivateBattleObjectSlot(s32 object_id)
+s32 ActivateBattleObjectSlot(s32 objectId)
 {
     struct BattleObj *slot;
 
-    BattleMotion_ReleaseObjectSlotByValue(object_id);
-    slot = BattleObject_FindSlot(object_id);
+    BattleMotion_ReleaseObjectSlotByValue(objectId);
+    slot = BattleObject_FindSlot(objectId);
     slot->active = 1;
     return 0;
 }
@@ -94,15 +94,15 @@ void BattleMotion_DestroyAllSlotObjects(void)
 // Writes a battle object's anchor to out, at height 0.
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {
-    struct BattleWork *state = Ram_HeapSlots->battle_work;
+    struct BattleWork *state = Ram_HeapSlots->battleWork;
     /* FAKEMATCH: the native sets the return value between the two stores and the last load; plainly the load comes first (one reordered row, differ 2). The value is pinned to the r0 it returns in, and the barrier, which also orders memory, holds the load until it is set. Measured against it: the anchor read into a local, the pin without the memory clobber and the memory clobber alone (differ 4). */
     register s32 result asm("r0");
 
-    out->x = state->slots[no].anchor_x;
+    out->x = state->slots[no].anchorX;
     out->y = 0;
     result = 0;
     /* FAKEMATCH: the barrier of the pin above. */
     __asm__("" : "+l"(result) : : "memory");
-    out->z = state->slots[no].anchor_z;
+    out->z = state->slots[no].anchorZ;
     return result;
 }

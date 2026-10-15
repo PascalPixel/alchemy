@@ -1,6 +1,6 @@
 /* Draft, differ 50 of 80: overlay 662's Func_020007dc, the representative of its copies in 675, 694, 6aa, 6ac, 6ae and 6b0.
  * It records the four lists, writes each listed palette entry from its red, green and blue, then copies two palettes
- * from block_32 and starts the blend. Measured: as a while loop loop.c hoists 0x05000000 and the end marker and steps
+ * from block32 and starts the blend. Measured: as a while loop loop.c hoists 0x05000000 and the end marker and steps
  * the colour pointer as a giv (97); the loop test written twice, at the entry and after the body, lets jump2 join
  * them as the native does, but the entry keeps the whole marker build and the body allocates green and the index the
  * other way round, with 0x05000000 kept in r7; u16 locals add shifts (63); the colour expression in other orders and
@@ -19,7 +19,7 @@ void Func_02000acc(void);
 
 void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b)
 {
-    u8 *saved = Ram_HeapSlots->block_32;
+    u8 *saved = Ram_HeapSlots->block32;
 
     Data_02001fd8 = slots;
     Data_02001fdc = colours;
@@ -41,6 +41,6 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b)
     Dma_Set((const void *)0x05000000, saved, 0x84000070, REG_DMA3);
     Dma_Set((const void *)0x05000200, saved + 448, 0x84000070, REG_DMA3);
     Func_020018f0(0x10000, 0);
-    if ((s8)gPartyState.unknown_2c2 == 2)
+    if ((s8)gPartyState.unk2c2 == 2)
         Func_02000acc();
 }

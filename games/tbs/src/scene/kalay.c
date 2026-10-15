@@ -73,7 +73,7 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 	u32 action;
 	u32 next_timer;
 
-	if (effect->action_timer == 0)
+	if (effect->actionTimer == 0)
 	{
 		action = (u32)(Engine_RandomNext() * 8) >> 0x10;
 		switch (action)
@@ -86,15 +86,15 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 			break;
 		case 3:
 		case 4:
-			effect->unknown_06 += (u32)(Engine_RandomNext() << 0xF) >> 0x10;
+			effect->unk06 += (u32)(Engine_RandomNext() << 0xF) >> 0x10;
 			break;
 		}
 		next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
-		effect->action_timer = next_timer;
+		effect->actionTimer = next_timer;
 	}
-	if (effect->action_timer != 0)
+	if (effect->actionTimer != 0)
 	{
-		--effect->action_timer;
+		--effect->actionTimer;
 	}
 	return 1;
 }
@@ -337,10 +337,10 @@ static void Kalay_RunExitDoor(void)
 		actor = Object_GetById(i);
 		if (actor != NULL)
 		{
-			actor->motion_flags = 0;
+			actor->motionFlags = 0;
 		}
 	}
-	trigger = &event->touched_trigger;
+	trigger = &event->touchedTrigger;
 	door = *trigger - 1;
 	Engine_AudioPlayCue(158);
 	{
@@ -350,7 +350,7 @@ static void Kalay_RunExitDoor(void)
 		Engine_MapAnimateCells(Kalay_DoorCells[door].steps, x, y);
 	}
 	Engine_ActorSetSpeed(0, 0x8000, 0x4000);
-	Object_GetById(0)->motion_flags = 0;
+	Object_GetById(0)->motionFlags = 0;
 	Engine_ActorSetAnimation(0, 2);
 	Actor_CenterAndWalk(0, 2, -8);
 	Engine_EventWait(10);
@@ -371,7 +371,7 @@ static void EV02_TOUCH(void)
 	Map_CopyCellsTo(39, 23, 43, 12, two, two);
 	Engine_TaskWait(5);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 0;
+	Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Actor_SetDestinationOffset(0, 0, -8);
 	Engine_EventWait(10);
@@ -419,7 +419,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Event_PlayCue(9);
 		Engine_EventWait(10);
 		Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-		if (work->touched_trigger == 9)
+		if (work->touchedTrigger == 9)
 		{
 			Camera_SetSpeed(0x26666, 0x4ccc);
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
@@ -487,11 +487,11 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Event_ShowMessageAndWait(20, 0, 10);
 		Engine_ActorRunRepeatedMotion(20, 2);
 		head = Actor_Get(20);
-		head->steering_flags &= ~ACTOR_FACES_MOTION;
+		head->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 172, 264);
 		Engine_EventWait(1);
 		head_back = Actor_Get(20);
-		head_back->steering_flags |= ACTOR_FACES_MOTION;
+		head_back->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_FaceDirection(27, FACING_WEST, 0);
 		Actor_FaceDirection(28, FACING_WEST, 0);
 		Actor_FaceDirection(32, FACING_WEST, 0);
@@ -499,11 +499,11 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorSetAnimationAndWait(20, ANIM_NOD);
 		Engine_EventWait(20);
 		head_again = Actor_Get(20);
-		head_again->steering_flags &= ~ACTOR_FACES_MOTION;
+		head_again->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 172, 272);
 		Engine_EventWait(1);
 		head_home = Actor_Get(20);
-		head_home->steering_flags |= ACTOR_FACES_MOTION;
+		head_home->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 180, 272);
 		Actor_FaceDirection(20, FACING_EAST, 0);
 		Event_ShowMessageAndWait(20, 0, 10);
@@ -822,7 +822,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorDestroy(33);
 		Engine_ActorDestroy(34);
 		Event_PlayCue(17);
-		if (work->touched_trigger == 9)
+		if (work->touchedTrigger == 9)
 		{
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
 			leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -840,7 +840,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 	else
 	{
 		Event_PlayCue(123);
-		Engine_EventRequestExit(work->touched_trigger);
+		Engine_EventRequestExit(work->touchedTrigger);
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 	}
@@ -873,7 +873,7 @@ static void EV19_TOUCH(void)
 	u8 *p;
 	s32 v;
 
-	p = &Object_GetById(ACTOR_PARTY_LEADER)->priority_flags;
+	p = &Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags;
 	v = ACTOR_PRIORITY_AUTOMATIC;
 	v |= *p;
 	*p = v;
@@ -884,7 +884,7 @@ static void EV18_TOUCH(void)
 	u8 *p;
 	s32 v;
 
-	p = &Object_GetById(ACTOR_PARTY_LEADER)->priority_flags;
+	p = &Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags;
 	v = (u8)~ACTOR_PRIORITY_AUTOMATIC;
 	v &= *p;
 	*p = v;
@@ -961,9 +961,9 @@ static void Kalay_SetupEntryActors(void)
 	{
 		nut = (OrbitingSceneObject *)Object_GetById(26);
 		sprite = nut->sprite;
-		sprite->flags_09_mode = 1;
-		sprite->flags_05_bit_5 = 0;
-		sprite->flags_09_high = 0;
+		sprite->flags09Mode = 1;
+		sprite->flags05Bit5 = 0;
+		sprite->flags09High = 0;
 		sprite->state = found;
 		nut->active = 1;
 		nut->mode = found;
@@ -973,10 +973,10 @@ static void Kalay_SetupEntryActors(void)
 		Engine_ItemLoadIcon(ITEM_NUT);
 		Engine_VramLoad(sprite->palette, 128, heap + 0x400);
 		Engine_HeapRelease(17);
-		nut->orbit_angle = found;
-		nut->orbit_center_x = nut->x;
-		nut->orbit_center_y = nut->y;
-		nut->orbit_center_z = nut->z;
+		nut->orbitAngle = found;
+		nut->orbitCenterX = nut->x;
+		nut->orbitCenterY = nut->y;
+		nut->orbitCenterZ = nut->z;
 		FieldScheduler_AddCallback(SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
 	}
 }
@@ -1024,7 +1024,7 @@ static void SceneState_ApplyFlagGatedActorEightSetup(void)
 
 static void Kalay_StartWindowTransition(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x915) != 0)
 	{
 		Map_CopyCellsTo(58, 5, 58, 8, 2, 3);
@@ -1102,7 +1102,7 @@ static void FieldScene_RunMiddleSequence(void)
 			Map_CopyCellAttributes(0, 0, 1, 1, v5, 14);
 			Map_CopyCellAttributes(0, 0, 1, 1, v5, 45);
 			{
-				u8 *p = &Object_GetById(11)->priority_flags;
+				u8 *p = &Object_GetById(11)->priorityFlags;
 				s32 v = ACTOR_PRIORITY_UNDERFOOT;
 
 				v |= *p;
@@ -1295,7 +1295,7 @@ static void FieldScene_RunTwoActorCutsceneSequence(void)
 	Engine_TaskWait(1);
 	Camera_SetSpeed(0x3333, 0x666);
 	Camera_MoveTo(0xc00000, -1, 0xfc0000, 1);
-	gEventWork->transition_frames = 40;
+	gEventWork->transitionFrames = 40;
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 0x116);
@@ -1306,14 +1306,14 @@ static void FieldScene_RunTwoActorCutsceneSequence(void)
 	actor = Actor_Get(9);
 	actor->facing = 0x5000;
 	Engine_TaskWait(1);
-	Actor_Get(8)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(9)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkTo(8, 184, 232);
 	Actor_WalkToAndWait(9, 198, 232);
 	Engine_ActorSetAnimation(8, ANIM_STAND);
 	Engine_EventWait(20);
-	Actor_Get(8)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(9)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(8)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(9)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, ANIM_SHAKE_HEAD);
 	Engine_EventSetMessage(MsgKalayLordHammetsPalaceLordAway);
@@ -1431,14 +1431,14 @@ static void FieldScene_RunTwoActorCutsceneSequence(void)
 	actor->facing = 0;
 	actor = Actor_Get(9);
 	actor->facing = 0x8000;
-	Actor_Get(8)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(9)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkTo(8, 168, 232);
 	Actor_WalkToAndWait(9, 212, 232);
 	Engine_ActorSetAnimation(8, ANIM_STAND);
 	Engine_EventWait(20);
-	Actor_Get(8)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(9)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(8)->steeringFlags |= ACTOR_FACES_MOTION;
+	Actor_Get(9)->steeringFlags |= ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(IVAN, 192, 232);
 	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Event_PlayCue(188);
@@ -1459,8 +1459,8 @@ static void FieldScene_RunTwoActorCutsceneSequence(void)
 	Actor_WalkToAndWait(9, 194, 212);
 	Actor_SetPosition(8, 0, 0);
 	Actor_SetPosition(9, 0, 0);
-	gEventWork->transition_frames = 24;
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 24;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(5);
@@ -1699,7 +1699,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(8, 246, 198);
 	Actor_FaceDirection(8, 0, 20);
-	Battle_GetWorkObject1e0()->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motionFlags = 0;
 	Camera_SetSpeed(0x9999, 0x1333);
 	Camera_MoveTo(0xf80000, -1, 0xaa0000, 1);
 	Actor_WalkToAndWait(10, 0x10e, 198);
@@ -1709,7 +1709,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Actor_WalkToAndWait(10, 246, 148);
 	Actor_WalkToAndWait(10, 246, 142);
 	Actor_SetPosition(10, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Actor_SetPosition(9, 0x1b80000, 0x1540000);
@@ -1754,8 +1754,8 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Actor_WalkTo(9, 0x1b8, 0x258);
 	Event_PlayCue(0x121);
 	work = gEventWork;
-	work->transition_frames = 24;
-	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	work->transitionFrames = 24;
+	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(10);
@@ -1786,7 +1786,7 @@ static void FieldScene_RunLateSequence(void)
 	if (block != NULL)
 	{
 		zero = 0;
-		block->terrain_id = 2;
+		block->terrainId = 2;
 		dst = tmp;
 		w2 = Kalay_Data01[idx];
 		dst[0] = block->x.fixed + (w2 & -0x10000);
@@ -1808,8 +1808,8 @@ static void FieldScene_RunLateSequence(void)
 			BattleFx_PlayQueuedSound();
 			block->x.fixed = dst[0];
 			block->z.fixed = dst[2];
-			block->velocity_x = zero;
-			block->velocity_z = zero;
+			block->velocityX = zero;
+			block->velocityZ = zero;
 			Object_SetMode(leader, 1);
 			FieldScene_RunScene3a8SequenceB();
 		}
@@ -1857,8 +1857,8 @@ static void FieldScene_RunScene3a8SequenceB(void)
 		v5 = 2;
 		Map_CopyCellsTo(16, 109, 13, 109, 3, v5);
 		Engine_EventWait(40);
-		rec2->scale_x = 0x1999;
-		rec2->scale_y = 0x1999;
+		rec2->scaleX = 0x1999;
+		rec2->scaleY = 0x1999;
 		Actor_SetPosition(11, 0x960000, 0x2d80000);
 		Engine_ActorEnableActionCallback(11, Kalay_ActionScript01);
 		v6 = 1;
@@ -1965,22 +1965,22 @@ static void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p)
 	}
 	else if (v == 1)
 	{
-		p->velocity_x = 0;
-		p->velocity_y = 0;
+		p->velocityX = 0;
+		p->velocityY = 0;
 		p->x.fixed = 0;
 		p->y.fixed = 0;
 	}
 	else
 	{
-		p->scale_x += 0x800;
-		p->scale_y += 0x800;
+		p->scaleX += 0x800;
+		p->scaleY += 0x800;
 	}
-	p->x.fixed += p->velocity_x;
-	p->y.fixed += p->velocity_y;
-	a = p->velocity_x;
-	b = p->velocity_y;
-	p->velocity_x = a - a / 256;
-	p->velocity_y = b - b / 16;
+	p->x.fixed += p->velocityX;
+	p->y.fixed += p->velocityY;
+	a = p->velocityX;
+	b = p->velocityY;
+	p->velocityX = a - a / 256;
+	p->velocityY = b - b / 16;
 	{
 		s32 t = *(u16 *)h;
 		t -= 1;
@@ -2042,9 +2042,9 @@ static void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 		ObjectGroup_SetChildValue(rec7, 9);
 		Engine_ActorSetSpriteFlags(rec7, 0);
 		value = Random_Next();
-		rec7->velocity_x = ((((u32)(value << 1) >> 16) - 1) << 16);
+		rec7->velocityX = ((((u32)(value << 1) >> 16) - 1) << 16);
 		value = Random_Next();
-		rec7->velocity_y = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
+		rec7->velocityY = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
 		{
 			u16 *target = (u16 *)&rec7->timer;
 			u16	 shown = 20;
@@ -2068,8 +2068,8 @@ static void SceneEffect_UpdateLobeOrbitEffect26(void)
 	{
 		offset = -offset;
 	}
-	effect->x = effect->base_x + Engine_MathCos(effect->angle) * 2;
-	effect->y = effect->base_y + offset;
+	effect->x = effect->baseX + Engine_MathCos(effect->angle) * 2;
+	effect->y = effect->baseY + offset;
 	render->rotation = Engine_MathCos(effect->angle + 0x8000) >> 3;
 	first = Engine_RandomNext();
 	effect->angle += ((u32)(first << 9) >> 16) + ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
@@ -2085,7 +2085,7 @@ static void EV11_PSYNERGY(void)
 	{
 		Engine_ActorSetSpriteFlags(effect, 0);
 		effect->y.fixed -= 0x200000;
-		effect->priority_flags = 2;
+		effect->priorityFlags = 2;
 	}
 	Engine_GameFlagSet(0x201);
 }

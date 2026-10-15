@@ -17,13 +17,13 @@ void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 
 struct CategoryMenuState {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 items[15];
 };
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
-    struct CategoryMenuState *menu = Ram_HeapSlots->menu_runtime;
+    struct CategoryMenuState *menu = Ram_HeapSlots->menuRuntime;
     u8 *items;
 
     ItemMenu_PosCategory();

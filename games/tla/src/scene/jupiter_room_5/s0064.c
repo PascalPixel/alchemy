@@ -17,7 +17,7 @@ void Func_02000064(s32 unused, s32 id)
     if (id == 11) {
         if (!GameFlag_Test(0xa00) || object->x >> 20 != 13 || object->z >> 20 != 34)
             return;
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         for (i = 15; i >= 0; i--) {
             object->y += 0x20000;
             WaitFrames(1);

@@ -24,7 +24,7 @@ void Func_02001178(struct ObjectRuntime *object)
     if (other) {
         i = 0;
         do {
-            if (((*((struct BattleAnimationState *)other->animation)->value_28 == Data_020022d0[i])))
+            if (((*((struct BattleAnimationState *)other->animation)->value28 == Data_020022d0[i])))
                 return;
             i++;
         } while (i <= 5);

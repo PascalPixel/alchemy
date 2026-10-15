@@ -19,7 +19,7 @@ void Func_08108048(void *entry, s32 x, s32 y);
 
 struct RenderInput *Func_080409f0(void)
 {
-    u8 *work = Ram_HeapSlots->unknown_d0[0];
+    u8 *work = Ram_HeapSlots->unkd0[0];
     struct RenderInput *window;
     s32 no;
 

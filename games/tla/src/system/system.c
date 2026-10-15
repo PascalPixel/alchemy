@@ -116,7 +116,7 @@ void WaitFrames(s32 frames)
         Input_UpdateKeyRepeatAndDirection();
         if (gSerialExchangeActive) {
             SerialRuntime_PollStatus();
-            if (gSerialRuntime.mode) gSerialRuntime.transfer_enabled = 1;
+            if (gSerialRuntime.mode) gSerialRuntime.transferEnabled = 1;
         }
         if (gSleepRequested && gSleepDisabled == 0) {
             display = REG_DISPCNT;
@@ -157,5 +157,5 @@ void WaitFrames(s32 frames)
 
 void Runtime_SetMainState19(void)
 {
-    gInput.repeat_timer = 19;
+    gInput.repeatTimer = 19;
 }

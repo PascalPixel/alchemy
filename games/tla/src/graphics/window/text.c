@@ -21,7 +21,7 @@
 // セーブの記録（SaveSummary）のうち、ここで読むところ
 struct NumberRow
 {
-	u8 unknown_00[0x28];
+	u8 unk00[0x28];
 	s8 values[4]; // 属性ごとのジンの数
 };
 

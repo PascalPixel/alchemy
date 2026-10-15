@@ -73,11 +73,11 @@ void Func_020002cc(void)
     Func_02001f5c();
     Call1((void (*)())Func_020020ac, 0);
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
-    Func_02002074()->motion_flags = 0;
+    Func_02002074()->motionFlags = 0;
     Call4((void (*)())Motion_CamBounds, 0x1560000, 0x300000, 0x1980000, 0);
     Call1((void (*)())WaitFrames, 1);
     Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
-    Call4((void (*)())Func_02001fcc, gPartyState.current_owner, 0x2280000, 0x1780000, 0);
+    Call4((void (*)())Func_02001fcc, gPartyState.currentOwner, 0x2280000, 0x1780000, 0);
     /* FAKEMATCH: an angle that takes two instructions is set before its call: the native builds it ahead of the position arguments, which it does after them as a constant argument (differ 4 each). The 0x2000 stays in r8 for actor 9's later turn, so that call is direct. */
     angle = 0xd000;
     Call4((void (*)())Func_02001fcc, 9, 0x22e0000, 0x1590000, angle);
@@ -103,9 +103,9 @@ void Func_020002cc(void)
     Call2((void (*)())Func_02002044, 7, 0xe000);
     Call1((void (*)())Func_0200201c, (s32)MsgTakeTheTiller);
     Call2((void (*)())Func_02002034, 7, 0);
-    Value3(Func_0200204c, gPartyState.current_owner, 0x100, 0);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
-    Value3((s32 (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0x6000, 20);
+    Value3(Func_0200204c, gPartyState.currentOwner, 0x100, 0);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
+    Value3((s32 (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000, 20);
     Call2((void (*)())Func_02002034, 7, 0);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 5);
     Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 9);
@@ -121,15 +121,15 @@ void Func_020002cc(void)
     Value3(Func_0200204c, 5, 0x108, 20);
     Call2((void (*)())Func_02002034, 5, 0);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 7, 0);
-    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0) == 0) {
+    if (Value2(Inventory_PromptAndSetObjectMode, gPartyState.currentOwner, 0) == 0) {
         Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
         Value3(Func_0200204c, 9, 0x109, 20);
         Call2((void (*)())Func_02002034, 9, 0);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
         Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
         Value3(Func_0200204c, 9, 0x109, 20);
-        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id++;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
         Call2((void (*)())Func_02002034, 9, 0);
     }
     Value3(Func_0200204c, 7, 0x100, 0);
@@ -154,7 +154,7 @@ void Func_020002cc(void)
     Call2((void (*)())Func_02002034, 9, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 5, 0xc000, 0);
-    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.current_owner, 0xc000, 0);
+    Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
     Value3(Func_0200204c, 7, 0x101, 20);
     Call2((void (*)())Func_02002034, 7, 0);
     Value3(Func_0200204c, 9, 0x108, 20);
@@ -169,8 +169,8 @@ void Func_020002cc(void)
     Call2((void (*)())Func_02002034, 9, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    gPartyState.render_mode = 7;
-    gPartyState.owner_override = 1;
+    gPartyState.renderMode = 7;
+    gPartyState.ownerOverride = 1;
     Call1((void (*)())GameFlag_SetBit, 0x8de);
     Call1((void (*)())Func_0200207c, 10);
 }
@@ -197,7 +197,7 @@ void Func_020006e4(void)
     Func_02001f5c();
     Call1((void (*)())Func_020020ac, 0);
     Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
-    Func_02002074()->motion_flags = 0;
+    Func_02002074()->motionFlags = 0;
     Call4((void (*)())Motion_CamBounds, 0x1ca0000, 0x300000, 0x1980000, 0);
     Call1((void (*)())Func_0200201c, (s32)MsgHoldOnTo);
     Call4((void (*)())Func_02001fcc, 4, 0x1d60000, 0x1880000, 0);
@@ -308,7 +308,7 @@ void Func_020006e4(void)
 
 void Func_02000b84(void)
 {
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     AddCallback(Func_02000188, 0x480);
     AddCallback(Func_020001cc, 0x480);
     if (gPartyState.entrance == 10)

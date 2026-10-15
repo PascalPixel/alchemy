@@ -68,7 +68,7 @@ void Func_02001444(void)
     s32 y;
 
     Func_020002f8(Data_02003f92);
-    y = Object_GetById(gPartyState.current_owner)->y;
+    y = Object_GetById(gPartyState.currentOwner)->y;
     /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test starts the constant first (one pair of instructions swapped). */
     __asm__ volatile("");
     if (y < 0x180000)

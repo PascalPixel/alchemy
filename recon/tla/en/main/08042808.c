@@ -20,7 +20,7 @@ s32 Runtime_GetLowTableAddress(void);
 s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
     s32 i;
-    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 filled = value;
     s32 row;
     s32 col;
@@ -30,7 +30,7 @@ s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value)
     u32 pixels;
     u32 result;
 
-    if (canvas->menu_state == 0) {
+    if (canvas->menuState == 0) {
         Dma_Set((const void *)Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(14, 0),
             0x80000010, REG_DMA3);
         BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);

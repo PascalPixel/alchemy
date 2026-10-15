@@ -10,32 +10,32 @@
 struct ActionTargets {
     u8 side;
     s8 count;
-    u8 unknown_02;
+    u8 unk02;
     u8 ids[14];
-    u8 state_a[14];
-    u8 state_b[14];
-    u8 state_c[14];
-    u8 state_d[14];
-    u16 value_4a;
+    u8 stateA[14];
+    u8 stateB[14];
+    u8 stateC[14];
+    u8 stateD[14];
+    u16 value4a;
     s32 message;
-    s32 value_50;
-    s32 value_54;
+    s32 value50;
+    s32 value54;
     u32 cue;
-    s32 unknown_5c;
+    s32 unk5c;
     s32 extra;
-    s32 unknown_64;
+    s32 unk64;
 };
 
 struct ActionPlan {
     s32 cue;
-    s32 unknown_04;
+    s32 unk04;
     s32 side;
     s32 first;
     s32 one;
     s32 count;
     s32 kind;
     s32 zero;
-    s32 unknown_20;
+    s32 unk20;
     u16 ids[14];
 };
 

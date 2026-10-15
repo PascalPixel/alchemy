@@ -24,7 +24,7 @@ static __inline__ void Func_02001348_(s32 id, s32 x, s32 z)
 void Func_02000c84(void)
 {
     GameFlag_SetBit(0x201);
-    Object_GetById(22)->collision_flags &= 0xfe;
+    Object_GetById(22)->collisionFlags &= 0xfe;
     if (GameFlag_Test(0xff7) == 0)
         Func_02001348_(66, 0x2080000, 0x880000);
 }
@@ -40,7 +40,7 @@ const u8 *Func_02000cc0(void)
 
 void Func_02000d00(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as plain statements the constant is built first (differ 2) */
     do {

@@ -21,17 +21,17 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output)
     if (state->stun != 0) {
         s32 kind;
         flags |= 4;
-        kind = state->class_id;
+        kind = state->classId;
         if (kind == 0x79 || kind == 0x94)
             flags &= ~4;
     }
-    if (state->psy_seal != 0)
+    if (state->psySeal != 0)
         flags |= 8;
     if (state->haunt != 0)
         flags |= 0x40;
     if (state->sleep != 0)
         flags |= 0x10;
-    if (state->grim_reaper != 0)
-        flags |= 1 << (state->grim_reaper + 6);
-    output->active_conditions = flags;
+    if (state->grimReaper != 0)
+        flags |= 1 << (state->grimReaper + 6);
+    output->activeConditions = flags;
 }

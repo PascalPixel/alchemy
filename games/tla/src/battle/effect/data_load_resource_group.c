@@ -19,5 +19,5 @@ void BattleFx_LoadResourceGroup(void)
     const struct SceneRecord *table = Field_SceneTable;
     s16 scene = gPartyState.scene;
 
-    Resource_LoadCode(table[scene].resource_id, gOverlayArea);
+    Resource_LoadCode(table[scene].resourceId, gOverlayArea);
 }

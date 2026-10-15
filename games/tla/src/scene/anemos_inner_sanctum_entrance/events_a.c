@@ -28,8 +28,8 @@ void Func_02000388(void)
     Battle_WaitMode0(60);
     Func_02000ca4((s32)&MsgIAmTheShadow, 0, 6);
     party = (struct AnemosInnerSanctumEntranceParty *)&gPartyState;
-    party->battle_group = 0x1a9f;
-    party->battle_rule = 2;
+    party->battleGroup = 0x1a9f;
+    party->battleRule = 2;
     Func_02000d04(103, 3);
     GameFlag_SetBit(0x201);
 }
@@ -38,9 +38,9 @@ void Func_02000408(void)
 {
     struct ObjectRuntime *object = Object_GetById(15);
 
-    object->motion_flags = 0;
-    object->scale_x = 0x4000;
-    object->scale_y = 0x4000;
+    object->motionFlags = 0;
+    object->scaleX = 0x4000;
+    object->scaleY = 0x4000;
     Func_02000cb4();
     Func_02000d44(0);
     Func_02000d64(151);

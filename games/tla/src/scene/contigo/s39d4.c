@@ -4,8 +4,8 @@
 #include "party_state.h"
 
 struct ContigoEventWork {
-    u8 unknown_000[0x1ac];
-    s32 value_1ac;
+    u8 unk000[0x1ac];
+    s32 value1ac;
 };
 
 extern const u8 Data_02004a1c[];
@@ -20,7 +20,7 @@ void Func_020040d4(s32 actor, s32 x, s32 z);
 
 void Func_020039d4(void)
 {
-    ((struct ContigoEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x209;
+    ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
     if (gPartyState.entrance == 4) {
         if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
             Func_02001d50();

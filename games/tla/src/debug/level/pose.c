@@ -37,5 +37,5 @@ void Func_020005d8(void)
 
 void Func_02000610(void)
 {
-    *((u8 *)Ram_HeapSlots->effect_work + 53) = 1;
+    *((u8 *)Ram_HeapSlots->effectWork + 53) = 1;
 }

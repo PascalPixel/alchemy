@@ -37,10 +37,10 @@ s32 Func_02000da0(s32 actor)
 
     Func_02001a14();
     Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(actor, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
     if ((facing - 0xa001) <= 0x3ffe) {
         base = (s32)MsgItLooksLikeThisIs;
-        count = &gPartyState.link_tallies[4];
+        count = &gPartyState.linkTallies[4];
         if (*count != 0) {
             UiWork_ClearValueNameTables();
             Func_020019e4(*count, 5);
@@ -52,7 +52,7 @@ s32 Func_02000da0(s32 actor)
         }
     } else {
         base = (s32)MsgItLooksLikeThisIsYour;
-        count = &gPartyState.link_tallies[7];
+        count = &gPartyState.linkTallies[7];
         if (*count != 0) {
             UiWork_ClearValueNameTables();
             Func_020019e4(*count, 5);

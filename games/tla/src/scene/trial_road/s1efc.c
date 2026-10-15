@@ -12,7 +12,7 @@ void Func_02001eb0(void)
     if (!GameFlag_Test(123)) {
         struct ObjectRuntime *object = Object_GetById(8);
         s32 started = GameFlag_Test(0x288);
-        u8 *flags = &object->motion_flags;
+        u8 *flags = &object->motionFlags;
 
         if (!started) {
             *flags = 5;

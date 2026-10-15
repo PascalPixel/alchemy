@@ -17,7 +17,7 @@ void Func_020006ac(void);
 
 void Func_02000570(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
 
     *(s32 *)(event + 428) = 513;
     *(s32 *)(event + 436) = 24;

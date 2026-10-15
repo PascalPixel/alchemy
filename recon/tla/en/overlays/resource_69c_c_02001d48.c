@@ -4,9 +4,9 @@
  * the mask 64 for the first and; the draft copies first. Measured: one statement or two for each cell, one-pass
  * blocks on the x load, on both loads and on the masked event x (differ 4, 33, 57).
  * Func_02001db8: differ 18 of 131, order only, at four places: the base and offset registers of the first
- * current_owner address are exchanged; the pool zero for motion_flags loads between the two halves of 0x4000 in the
+ * currentOwner address are exchanged; the pool zero for motionFlags loads between the two halves of 0x4000 in the
  * native and after the angle store here; the branch over the literal pool sits one instruction earlier in the
- * native; and the last block builds its zero before the animation_kind address. What the bytes needed so far: x
+ * native; and the last block builds its zero before the animationKind address. What the bytes needed so far: x
  * reused as the loop counter (differ 83 to 34), a word temporary for 0xf1f, the mask in a variable set before a
  * one-pass boundary after the x shift, and a one-pass boundary after the WINOUT store. Those three devices need
  * FAKEMATCH tags with these reasons when the function is adopted. */
@@ -14,22 +14,22 @@
 #include "io_reg.h"
 
 struct PushEvent {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 x;
     s16 z;
-    u8 unknown_0a[4];
+    u8 unk0a[4];
     u16 busy;
 };
 
 void Func_02001cc0(void);
-void Func_02002328(s32 x, s32 z, s32 a, s32 b, s32 cell_x, s32 cell_z);
+void Func_02002328(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02001d48(struct PushEvent *event)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x;
     s32 z;
 
@@ -46,7 +46,7 @@ void Func_02001d48(struct PushEvent *event)
 
 void Func_02001db8(struct PushEvent *event)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 x;
     s32 z;
     s32 mask;
@@ -65,9 +65,9 @@ void Func_02001db8(struct PushEvent *event)
         u32 zero = 0;
 
         object->angle = 0x4000;
-        object->motion_flags = zero;
+        object->motionFlags = zero;
     }
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     {
         /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the native does; a halfword constant store loads it from the pool. */
         u32 winout = 0xf1f;
@@ -77,19 +77,19 @@ void Func_02001db8(struct PushEvent *event)
     do { } while (0);
     REG_DISPCNT |= 0x8000;
     event->busy = 1;
-    Object_SetModeById(gPartyState.current_owner, 28);
+    Object_SetModeById(gPartyState.currentOwner, 28);
     Battle_WaitMode0(16);
     for (x = 0; x < 40; x++) {
         if (x == 5)
             Func_02002470(204);
-        object->scale_x += -0x400;
-        object->scale_y += -0x300;
+        object->scaleX += -0x400;
+        object->scaleY += -0x300;
         object->y += -0x9999;
         WaitFrames(1);
     }
-    Object_GetById(gPartyState.current_owner)->animation_kind = 0;
+    Object_GetById(gPartyState.currentOwner)->animationKind = 0;
     event->busy = 0;
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
 }

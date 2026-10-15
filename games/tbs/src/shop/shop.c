@@ -50,10 +50,10 @@ s32 AbilityMenu_BuildAvailableList(void)
 	state = gMenuWork;
 	count = 0;
 	index = 0;
-	output = state->stock_item_ids;
+	output = state->stockItemIds;
 	do
 	{
-		mode = state->shop_type;
+		mode = state->shopType;
 		if (mode == Item_GetEquipmentGroupFar(index) && Item_AdjustCounterFar(index, 0) != 0)
 		{
 			*output = index;
@@ -62,8 +62,8 @@ s32 AbilityMenu_BuildAvailableList(void)
 		}
 		index++;
 	} while (index <= 0x1ff);
-	state->stock_item_ids[count] = 0;
-	state->stock_count = count;
+	state->stockItemIds[count] = 0;
+	state->stockCount = count;
 	return count;
 }
 
@@ -81,24 +81,24 @@ void Shop_InitializeCursorWork(void)
 	Battle_ResetEffectCounterFar();
 	Dma_Fill32(0, work, 0x29c * 4);
 	work->mode = 12;
-	work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
+	work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
 	slot = Resource_FindFreeEntry();
-	work->cursor_icon = slot;
+	work->cursorIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_HandTiles);
 	slot = Resource_FindFreeEntry();
-	work->previous_page_icon = slot;
+	work->previousPageIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_UpArrowTiles);
 	slot = Resource_FindFreeEntry();
-	work->next_page_icon = slot;
+	work->nextPageIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_DownArrowTiles);
 	slot = Resource_FindFreeEntry();
-	work->gem_icon = slot;
+	work->gemIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_GemTiles);
 	slot = Resource_FindFreeEntry();
-	work->stat_down_icon = slot;
+	work->statDownIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_SmallDownArrowTiles);
 	slot = Resource_FindFreeEntry();
-	work->stat_up_icon = slot;
+	work->statUpIcon = slot;
 	VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
 	Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
@@ -110,12 +110,12 @@ void Inn_Cleanup(void)
 	state = gMenuWork;
 	Scheduler_RemoveCallback(Shop_StepCursor);
 	UiWork_FinalizePendingCoreFar();
-	Resource_ResetEntry(state->cursor_icon);
-	Resource_ResetEntry(state->previous_page_icon);
-	Resource_ResetEntry(state->next_page_icon);
-	Resource_ResetEntry(state->gem_icon);
-	Resource_ResetEntry(state->stat_up_icon);
-	Resource_ResetEntry(state->stat_down_icon);
+	Resource_ResetEntry(state->cursorIcon);
+	Resource_ResetEntry(state->previousPageIcon);
+	Resource_ResetEntry(state->nextPageIcon);
+	Resource_ResetEntry(state->gemIcon);
+	Resource_ResetEntry(state->statUpIcon);
+	Resource_ResetEntry(state->statDownIcon);
 	Runtime_ReleaseHeapBlock(0x37);
 }
 
@@ -131,23 +131,23 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	EventTable_ApplyRowAbilities(row);
 	Shop_InitializeCursorWork();
 	shop = gMenuWork;
-	shop->shop_type = EventTable_GetRowType(row);
+	shop->shopType = EventTable_GetRowType(row);
 	if (row == 16)
-		shop->warrior_shop = 1;
+		shop->warriorShop = 1;
 	if (row == 17)
-		shop->warrior_shop = 1;
+		shop->warriorShop = 1;
 	if (row == 18)
-		shop->warrior_shop = 1;
-	shop->keeper_resource =
+		shop->warriorShop = 1;
+	shop->keeperResource =
 		((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(keeper_id))
 				->animation)
 			->entries[0]
-			->anim_id;
-	window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
+			->animId;
+	window = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
 	if (window == 0)
 		window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
 	anchor =
-		RenderOutput_CreateFar(shop->cursor_icon, 0x40000000, (struct RenderInput *)window, 0, 0);
+		RenderOutput_CreateFar(shop->cursorIcon, 0x40000000, (struct RenderInput *)window, 0, 0);
 	anchor->active = 1;
 	anchor->kind = 0;
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -156,10 +156,10 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	while (1)
 	{
 		choice = Menu_SelectEntry11To14Far(choice);
-		shop->party_action = choice;
+		shop->partyAction = choice;
 		if (choice == 0)
 		{
-			shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
+			shop->stockCount = EventTable_CopyRowHeader(row, shop->stockItemIds);
 			UiMessage_ShowAndWait(MsgWhatWouldYouLike);
 			Shop_SelectBuy();
 		}
@@ -208,7 +208,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused)
 {
 	gGameState.coins = 0x30d40;
-	gGameState.shop_gifts = 0x1c;
+	gGameState.shopGifts = 0x1c;
 	Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
 	Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
 	Inventory_AddItemFar(2, 0xe7);
@@ -236,17 +236,17 @@ struct SelectorRecord
 void UiMessage_ShowAndWait(s32 arg0)
 {
 	struct ShopRuntime *state = gMenuWork;
-	s32					value = BattleFx_GetResourceIdFar(state->keeper_resource);
+	s32					value = BattleFx_GetResourceIdFar(state->keeperResource);
 	s32					result = arg0;
 	s8					mode;
 
 	UiWork_FinalizePendingCoreFar();
-	mode = state->shop_type;
+	mode = state->shopType;
 	if (mode == 2)
 		result += MsgArmorShopWelcome - MsgWeaponShopWelcome;
 	if (mode == 0)
 		result += MsgItemShopWelcome - MsgWeaponShopWelcome;
-	if ((s8)state->warrior_shop != 0)
+	if ((s8)state->warriorShop != 0)
 		result += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
 	UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
 	while (UiWork_IsCompleteFar() == 0)
@@ -254,7 +254,7 @@ void UiMessage_ShowAndWait(s32 arg0)
 	WaitFrames(1);
 }
 
-void UiMessage_ShowAndRestoreState(s32 message_id)
+void UiMessage_ShowAndRestoreState(s32 messageId)
 {
 	s32					  variant;
 	s32					  no;
@@ -267,9 +267,9 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 	state = gMenuWork;
 	slot = &state->cursor.anchor;
 	saved = (*slot)->active;
-	no = message_id;
-	variant = BattleFx_GetResourceIdFar(state->keeper_resource);
-	mode = state->shop_type;
+	no = messageId;
+	variant = BattleFx_GetResourceIdFar(state->keeperResource);
+	mode = state->shopType;
 	if (mode == 2)
 	{
 		no += MsgArmorShopWelcome - MsgWeaponShopWelcome;
@@ -278,7 +278,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 	{
 		no += MsgItemShopWelcome - MsgWeaponShopWelcome;
 	}
-	flag = state->warrior_shop;
+	flag = state->warriorShop;
 	if (flag != 0)
 	{
 		no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
@@ -473,10 +473,10 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
 		return;
 	sprite = cursor->anchor;
 	step = ++cursor->active;
-	x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
+	x = cursor->x + (cursor->targetX - (s16)cursor->x) * step / kind;
 	sprite->x = x;
 	sprite->oam.x = x;
-	y = cursor->y + (cursor->target_y - (s16)cursor->y) * step / kind;
+	y = cursor->y + (cursor->targetY - (s16)cursor->y) * step / kind;
 	sprite->y = y;
 	sprite->oam.y = y;
 	if (step == kind)
@@ -495,7 +495,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 	sprite = cursor->anchor;
 	if (sprite != NULL)
 	{
-		delta = sprite->x - cursor->target_x;
+		delta = sprite->x - cursor->targetX;
 		step = delta / 4;
 		if (step < 0)
 			step = -step;
@@ -516,7 +516,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 			sprite->oam.x = sprite->x;
 		}
 
-		delta = sprite->y - cursor->target_y;
+		delta = sprite->y - cursor->targetY;
 		step = delta / 4;
 		if (step < 0)
 			step = -step;
@@ -539,14 +539,14 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 	}
 }
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s32 kind)
+void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY, s32 kind)
 {
 	struct RenderOutput *anchor = cursor->anchor;
 
 	cursor->x = anchor->x;
 	cursor->y = anchor->y;
-	cursor->target_x = target_x;
-	cursor->target_y = target_y;
+	cursor->targetX = targetX;
+	cursor->targetY = targetY;
 	cursor->kind = kind;
 	cursor->active = 0;
 }
@@ -557,7 +557,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 	{
 		struct RenderOutput *sprite = cursor->anchor;
 
-		cursor->target_x = x;
+		cursor->targetX = x;
 		cursor->kind = 1;
 		cursor->active = 0;
 		cursor->x = x;
@@ -566,7 +566,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 	{
 		struct RenderOutput *sprite;
 
-		cursor->target_y = y;
+		cursor->targetY = y;
 		cursor->y = y;
 		sprite = cursor->anchor;
 		sprite->oam.y = sprite->y = y;
@@ -595,13 +595,13 @@ s32 Shop_SelectBuy(void)
 	struct ShopRuntime	  *shop = gMenuWork;
 	s32					   price_window = 0;
 	s32					   stock_window;
-	s32					   message_window;
+	s32					   messageWindow;
 	s32					   party_window;
 	s32					   selected = 0;
 	s32					   quantity;
 	struct ItemDefinition *item;
 	s32					   ask_again;
-	s32					   item_window;
+	s32					   itemWindow;
 	s32					   redraw;
 	s32					   cursor;
 	s32					   count;
@@ -614,8 +614,8 @@ s32 Shop_SelectBuy(void)
 	s32					   i;
 	s16					  *ids;
 
-	shop->item_window = 0;
-	shop->money_window = UiWindow_CreateFar(30 - SHOP_MONEY_WIDTH, 7, SHOP_MONEY_WIDTH, 4, 2);
+	shop->itemWindow = 0;
+	shop->moneyWindow = UiWindow_CreateFar(30 - SHOP_MONEY_WIDTH, 7, SHOP_MONEY_WIDTH, 4, 2);
 	Shop_DrawMoney();
 	price_window = UiWindow_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, 2);
 
@@ -624,22 +624,22 @@ next_page:
 	stock_window = UiWindow_CreateFar(0, 12, 30, 4, 2);
 	shop->cursor.anchor->active = 18;
 	shop->mode = 12;
-	message_window = UiWindow_CreateFar(0, 17, 30, 3, 2);
+	messageWindow = UiWindow_CreateFar(0, 17, 30, 3, 2);
 	redraw = 1;
 
 	while (1)
 	{
-		count = shop->stock_count;
+		count = shop->stockCount;
 		if (redraw != 0)
 		{
-			ids = shop->stock_item_ids;
+			ids = shop->stockItemIds;
 			item_id = ids[cursor];
 			stock_item = Item_GetDirectFar(item_id);
 			redraw = 0;
 			Shop_PlaceCursor((void *)stock_window, cursor % 7 * 32 - 8, 8);
 			shop->mode = 4;
 			Shop_DrawStock(stock_window, cursor);
-			Shop_DrawMsg(message_window, item_id + MsgItemPlainName);
+			Shop_DrawMsg(messageWindow, item_id + MsgItemPlainName);
 			RenderOutput_RedrawSavedRectFar((struct UiWindow *)price_window);
 			Shop_DrawItemPrice(price_window, item_id, stock_item->price, 0);
 		}
@@ -696,15 +696,15 @@ next_page:
 		WaitFrames(1);
 	}
 
-	UiWork_FinalizeFar(message_window, 2);
+	UiWork_FinalizeFar(messageWindow, 2);
 	UiWork_FinalizeFar(stock_window, 2);
 	WaitFrames(1);
 	if (result != 0)
 		goto close;
 
-	shop->selected_item = shop->stock_item_ids[selected];
+	shop->selectedItem = shop->stockItemIds[selected];
 	UiMessage_ShowAndWait(MsgWhoGetsThis);
-	item = Item_GetDirectFar(shop->selected_item);
+	item = Item_GetDirectFar(shop->selectedItem);
 	quantity = 1;
 	member = 0;
 	ask_again = 0;
@@ -713,7 +713,7 @@ next_page:
 	shop->cursor.anchor->active = 4;
 	shop->mode = 12;
 	PsynergyMenu_InitializeEntryObjectsFar(party_window, 2, 0, 8, 0);
-	item_window = UiWindow_CreateFar(16, 11, 14, 9, 2);
+	itemWindow = UiWindow_CreateFar(16, 11, 14, 9, 2);
 	redraw = 1;
 
 	while (1)
@@ -727,24 +727,24 @@ next_page:
 		if (redraw != 0)
 		{
 			redraw = 0;
-			cursor = (cursor + shop->party_member_count) % shop->party_member_count;
-			member = shop->party_member_ids[cursor];
+			cursor = (cursor + shop->partyMemberCount) % shop->partyMemberCount;
+			member = shop->partyMemberIds[cursor];
 			Shop_PlaceCursor((void *)party_window, cursor * 24 - 12, 0);
 			shop->mode = 3;
-			Shop_DrawParty(party_window, cursor, shop->selected_item);
-			if (Item_GetEquipmentGroupFar(shop->selected_item) == 0)
-				Shop_DrawUnitItem(item_window, member, shop->selected_item);
+			Shop_DrawParty(party_window, cursor, shop->selectedItem);
+			if (Item_GetEquipmentGroupFar(shop->selectedItem) == 0)
+				Shop_DrawUnitItem(itemWindow, member, shop->selectedItem);
 			else
-				Shop_DrawEquipComparison(item_window, member, shop->selected_item);
+				Shop_DrawEquipComparison(itemWindow, member, shop->selectedItem);
 		}
 		if ((gKeyState & KEY_A) != 0)
 		{
-			slot = Inventory_AddItemFar(member, shop->selected_item);
+			slot = Inventory_AddItemFar(member, shop->selectedItem);
 			if (slot < 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 				UiWork_PushValueSlotFar(member, 1);
-				UiWork_PushValueSlotFar(shop->selected_item, 2);
+				UiWork_PushValueSlotFar(shop->selectedItem, 2);
 				if (Inventory_CountFar(member) == 15)
 					UiMessage_ShowAndWait(MsgPackFull);
 				else
@@ -759,7 +759,7 @@ next_page:
 				result = -1;
 				break;
 			}
-			if (Item_IsCompatibleWithOwnerFar(member, shop->selected_item) == 0)
+			if (Item_IsCompatibleWithOwnerFar(member, shop->selectedItem) == 0)
 			{
 				UiWork_PushValueSlotFar(member, 1);
 				UiMessage_ShowAndWait(MsgCannotEquipStillWant);
@@ -771,12 +771,12 @@ next_page:
 			}
 			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 			WaitFrames(1);
-			quantity = Shop_SelectBuyNum(member, shop->selected_item);
+			quantity = Shop_SelectBuyNum(member, shop->selectedItem);
 			ask_again = 1;
 			if (quantity == -1)
 				continue;
-			Shop_BuyDone(member, shop->selected_item, quantity);
-			Shop_BuySpecialItem((void *)party_window, item_window);
+			Shop_BuyDone(member, shop->selectedItem, quantity);
+			Shop_BuySpecialItem((void *)party_window, itemWindow);
 			result = 0;
 			break;
 		}
@@ -802,24 +802,24 @@ next_page:
 	}
 
 	Menu_ReleaseEntryObjectsFar();
-	UiWork_FinalizeFar(item_window, 2);
+	UiWork_FinalizeFar(itemWindow, 2);
 	UiWork_FinalizeFar(party_window, 2);
 	WaitFrames(1);
-	if (result == 0 && shop->party_action == 2)
+	if (result == 0 && shop->partyAction == 2)
 	{
 		for (i = 0; i < quantity; i++)
-			Item_AdjustCounterFar(shop->selected_item, -1);
+			Item_AdjustCounterFar(shop->selectedItem, -1);
 		if (AbilityMenu_BuildAvailableList() == 0)
 			goto close;
-		if (selected > shop->stock_count - 1)
-			selected = shop->stock_count - 1;
+		if (selected > shop->stockCount - 1)
+			selected = shop->stockCount - 1;
 	}
 	UiMessage_ShowAndWait(MsgBuyAnythingElse);
 	goto next_page;
 
 close:
 	UiWork_FinalizeFar(price_window, 2);
-	UiWork_FinalizeFar(shop->money_window, 2);
+	UiWork_FinalizeFar(shop->moneyWindow, 2);
 	WaitFrames(1);
 	return 0;
 }
@@ -828,9 +828,9 @@ void Shop_DrawStock(s32 window, s32 selected)
 {
 
 	struct ShopRuntime	  *shop;
-	s16					  *item_ids;
+	s16					  *itemIds;
 	s16					  *item_id;
-	s32					   item_count;
+	s32					   itemCount;
 	s32					   first;
 	s32					   slot;
 	s32					   x;
@@ -841,8 +841,8 @@ void Shop_DrawStock(s32 window, s32 selected)
 	struct RenderOutput	  *icon;
 
 	shop = gMenuWork;
-	item_ids = shop->stock_item_ids;
-	item_count = shop->stock_count;
+	itemIds = shop->stockItemIds;
+	itemCount = shop->stockCount;
 	first = selected - selected % 7;
 	if (window != 0)
 	{
@@ -850,27 +850,27 @@ void Shop_DrawStock(s32 window, s32 selected)
 		if (first != 0)
 		{
 			icon = RenderOutput_CreateFar(
-				shop->previous_page_icon, 0x40000000, (struct RenderInput *)window, 216, -16);
+				shop->previousPageIcon, 0x40000000, (struct RenderInput *)window, 216, -16);
 			clear = 0;
 			icon->kind = clear;
 			icon->active = 17;
-			icon->anim_step = clear;
+			icon->animStep = clear;
 		}
-		if (first + 7 < item_count)
+		if (first + 7 < itemCount)
 		{
 			icon = RenderOutput_CreateFar(
-				shop->next_page_icon, 0x40000000, (struct RenderInput *)window, 216, 24);
+				shop->nextPageIcon, 0x40000000, (struct RenderInput *)window, 216, 24);
 			clear = 0;
 			icon->kind = clear;
 			icon->active = 15;
-			icon->anim_step = clear;
+			icon->animStep = clear;
 		}
 		slot = 0;
-		if (first < (u32)item_count)
+		if (first < (u32)itemCount)
 		{
-			item_id = (s16 *)((first * 2) + (u32)item_ids);
+			item_id = (s16 *)((first * 2) + (u32)itemIds);
 			x = 16;
-			for (; (u32)slot <= 6 && first < (u32)item_count; x += 32, slot++, item_id++, first++)
+			for (; (u32)slot <= 6 && first < (u32)itemCount; x += 32, slot++, item_id++, first++)
 			{
 				stock_item = *item_id;
 				definition = Item_GetDirectFar(stock_item);
@@ -881,7 +881,7 @@ void Shop_DrawStock(s32 window, s32 selected)
 				{
 					icon->active = 9;
 					highlight = 10;
-					icon->anim_step = highlight;
+					icon->animStep = highlight;
 					icon->sentinel = 253;
 				}
 				icon = Shop_CreatePriceSprite(definition->price, window, x, 0);
@@ -897,7 +897,7 @@ void Shop_DrawMoney(void)
 	s32					window;
 
 	shop = gMenuWork;
-	window = shop->money_window;
+	window = shop->moneyWindow;
 	if (window != 0)
 	{
 #if EDITION_INTERNATIONAL
@@ -989,23 +989,23 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
 
 	if (window != 0)
 	{
-		for (index = 0; index < shop->party_member_count; index++)
+		for (index = 0; index < shop->partyMemberCount; index++)
 		{
 			if (index == selected)
-				AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 30);
+				AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 30);
 			else
-				AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 1);
-			shop->party_member_scale[index] = 0x10000;
-			if (!Item_IsCompatibleWithOwnerFar(shop->party_member_ids[index], requirement))
-				shop->party_member_scale[index] = 0xcccc;
+				AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 1);
+			shop->partyMemberScale[index] = 0x10000;
+			if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[index], requirement))
+				shop->partyMemberScale[index] = 0xcccc;
 		}
 	}
 }
 
-void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
+void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 item_id)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BattleUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unitId);
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
 	s32					   replaced = -1;
 	s32					   slot;
@@ -1017,12 +1017,12 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	if (window == 0)
 		return;
 	RenderOutput_PrepareForRedrawFar(window);
-	if (!Item_CanOwnerEquip(unit_id, item_id))
+	if (!Item_CanOwnerEquip(unitId, item_id))
 	{
 		UiText_DrawResourceFar(MsgShopCannotEquip, window, 8, 24);
 		return;
 	}
-	slot = Inventory_FindEquippedFar(unit_id, item->type);
+	slot = Inventory_FindEquippedFar(unitId, item->type);
 	if (slot == -1)
 	{
 		for (i = 0; i <= 14; i++)
@@ -1048,13 +1048,13 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	}
 	saved = unit->inventory[slot];
 	unit->inventory[slot] = item_id | 0x200;
-	UnitCalcFar(unit_id);
+	UnitCalcFar(unitId);
 	with[0] = unit->atk;
 	with[1] = unit->def;
 	with[2] = unit->agi;
 	with[3] = unit->luck;
 	unit->inventory[slot] = saved;
-	UnitCalcFar(unit_id);
+	UnitCalcFar(unitId);
 	without[0] = unit->atk;
 	without[1] = unit->def;
 	without[2] = unit->agi;
@@ -1063,11 +1063,11 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	{
 		if (without[i] > with[i])
 			RenderOutput_CreateFar(
-				shop->stat_down_icon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)
+				shop->statDownIcon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)
 				->kind = 0;
 		else if (without[i] < with[i])
 			RenderOutput_CreateFar(
-				shop->stat_up_icon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)
+				shop->statUpIcon, 0x40000000, (struct RenderInput *)window, 56, i * 16 - 4)
 				->kind = 0;
 		UiText_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
 		if (without[i] != with[i])
@@ -1078,7 +1078,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	if (replaced != -1)
 		UiText_DrawCharacterAtOffsetFar(replaced + MsgItemName, window, 0, 48);
 }
-void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
+void Shop_DrawUnitItem(s32 window, s32 unitId, s32 item_id)
 {
 
 	u8 *unit;
@@ -1092,13 +1092,13 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 	s32 next_offset;
 	u8 *icon;
 
-	unit = (u8 *)UnitGetFar(unit_id);
+	unit = (u8 *)UnitGetFar(unitId);
 	x = 8;
 	y = 8;
 	if (window != 0)
 	{
 		RenderOutput_PrepareForRedrawFar(window);
-		slot = Inventory_FindFar(unit_id, item_id);
+		slot = Inventory_FindFar(unitId, item_id);
 		if (slot != -1)
 		{
 			off = slot * 2 + 216;
@@ -1147,7 +1147,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 #define ACTION_Y 128
 #endif
 
-s32 Shop_SelectBuyNum(s32 unit_id, s32 item_id)
+s32 Shop_SelectBuyNum(s32 unitId, s32 item_id)
 {
 	struct ShopRuntime	  *shop;
 	struct BattleUnit		  *unit;
@@ -1159,13 +1159,13 @@ s32 Shop_SelectBuyNum(s32 unit_id, s32 item_id)
 	s32					   result;
 
 	shop = gMenuWork;
-	unit = UnitGetFar(unit_id);
+	unit = UnitGetFar(unitId);
 	item = Item_GetDirectFar(item_id);
 	result = 1;
 	if (item->flags & 0x10)
 	{
 		UiMessage_ShowAndWait(MsgHowManyToBuy);
-		slot = Inventory_FindFar(unit_id, item_id);
+		slot = Inventory_FindFar(unitId, item_id);
 		if (slot != -1)
 		{
 			quantity = (unit->inventory[slot] >> 11) + 1;
@@ -1179,7 +1179,7 @@ s32 Shop_SelectBuyNum(s32 unit_id, s32 item_id)
 		if (item->price != 0)
 			chance = (u32)gGameState.coins / item->price;
 
-		if (shop->party_action == 2)
+		if (shop->partyAction == 2)
 		{
 			maximum = Item_AdjustCounterFar(item_id, 0);
 			if (chance > maximum)
@@ -1298,7 +1298,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 	return result;
 }
 
-void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
+void Shop_BuyDone(s32 unitId, s32 item_id, s32 quantity)
 {
 	s32					   replaced_slot;
 	s32					   remaining;
@@ -1308,13 +1308,13 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 	remaining = quantity;
 	item = Item_GetDirectFar(item_id);
 	added_slot = 0;
-	replaced_slot = Inventory_FindEquippedFar(unit_id, item->type);
+	replaced_slot = Inventory_FindEquippedFar(unitId, item->type);
 	AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
 	if (added_slot < remaining)
 	{
 		do
 		{
-			added_slot = Inventory_AddItemFar(unit_id, item_id);
+			added_slot = Inventory_AddItemFar(unitId, item_id);
 			Party_AdjustCoinsFar(0 - item->price);
 			remaining -= 1;
 			Party_AdjustSixDigitCounterBFar(item->price);
@@ -1322,16 +1322,16 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 		} while (remaining != 0);
 	}
 	UiMessage_ShowAndRestoreState(MsgHereYouGo);
-	if (Shop_ConfirmEquip(unit_id, added_slot) != 0)
+	if (Shop_ConfirmEquip(unitId, added_slot) != 0)
 	{
-		Shop_SellOld(unit_id, replaced_slot);
+		Shop_SellOld(unitId, replaced_slot);
 	}
 }
 
-s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
+s32 Shop_ConfirmEquip(s32 unitId, s32 slot)
 {
 	struct ShopRuntime	  *menu = gMenuWork;
-	struct BattleUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unitId);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *info = Item_GetDirectFar(item_id);
 	s32					   replaced;
@@ -1340,10 +1340,10 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 	if (unit->inventory[slot] & 0x200)
 		return 0;
 
-	if (Item_CanOwnerEquip(unit_id, item_id) == 0)
+	if (Item_CanOwnerEquip(unitId, item_id) == 0)
 		return 0;
 
-	replaced = Inventory_FindEquippedFar(unit_id, info->type);
+	replaced = Inventory_FindEquippedFar(unitId, info->type);
 	if (replaced != -1)
 	{
 		struct ItemDefinition *old_info = Item_GetDirectFar(unit->inventory[replaced]);
@@ -1352,15 +1352,15 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 			return 0;
 	}
 
-	UiWork_PushValueSlotFar(unit_id, 1);
+	UiWork_PushValueSlotFar(unitId, 1);
 	UiMessage_ShowAndWait(MsgEquipNowPrompt);
 	if (UiMessage_ShowChoice(0) != 0)
 		return 0;
 
-	Inventory_EquipFar(unit_id, slot);
-	menu_value = menu->item_window;
+	Inventory_EquipFar(unitId, slot);
+	menu_value = menu->itemWindow;
 	if (menu_value != 0)
-		Shop_DrawUnitGrid(menu_value, unit_id);
+		Shop_DrawUnitGrid(menu_value, unitId);
 
 	if (info->flags & 1)
 	{
@@ -1377,12 +1377,12 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 	return 1;
 }
 
-s32 Shop_SellOld(s32 unit_id, s32 slot)
+s32 Shop_SellOld(s32 unitId, s32 slot)
 {
 	struct BattleUnit *unit;
 	s32				item_id;
 
-	unit = UnitGetFar(unit_id);
+	unit = UnitGetFar(unitId);
 	if (slot == -1)
 	{
 		return 0;
@@ -1396,7 +1396,7 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
 	{
 		return 0;
 	}
-	Shop_SellItem(unit_id, slot, -1);
+	Shop_SellItem(unitId, slot, -1);
 	return 1;
 }
 
@@ -1430,46 +1430,46 @@ s32 Shop_SalePrice(s32 item_id)
 s32 Shop_PickUnit(void)
 {
 	struct ShopRuntime *shop = gMenuWork;
-	s32					list_window;
+	s32					listWindow;
 	s32					selection = 0;
 	s32					redraw = 1;
-	s32					unit_id = 0;
+	s32					unitId = 0;
 
-	shop->money_window = UiWindow_CreateFar(0, 9, BASE_W, 4, 2);
+	shop->moneyWindow = UiWindow_CreateFar(0, 9, BASE_W, 4, 2);
 	Shop_DrawMoney();
-	shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
-	list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
+	shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
+	listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
 	shop->cursor.anchor->active = 4;
 	shop->mode = 12;
-	PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, 0);
+	PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
 
 	for (;;)
 	{
 		if (redraw != 0)
 		{
 			redraw = 0;
-			selection = (selection + shop->party_member_count) % shop->party_member_count;
-			unit_id = shop->party_member_ids[selection];
-			Shop_PlaceCursor((void *)list_window, selection * 24 - 12, 0);
+			selection = (selection + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[selection];
+			Shop_PlaceCursor((void *)listWindow, selection * 24 - 12, 0);
 			shop->mode = 3;
-			Shop_DrawParty(list_window, selection, 0);
-			Shop_DrawUnitGrid(shop->item_window, unit_id);
+			Shop_DrawParty(listWindow, selection, 0);
+			Shop_DrawUnitGrid(shop->itemWindow, unitId);
 		}
 
 		if ((gKeyState & KEY_A) != 0)
 		{
 			WaitFrames(1);
-			if (Inventory_CountFar(unit_id) == 0)
+			if (Inventory_CountFar(unitId) == 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 			}
 			else
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-				if (shop->party_action == 1)
-					Shop_SelectSell(unit_id);
+				if (shop->partyAction == 1)
+					Shop_SelectSell(unitId);
 				else
-					Shop_SelectRepair(unit_id);
+					Shop_SelectRepair(unitId);
 				shop->cursor.anchor->active = 4;
 				shop->mode = 12;
 				redraw = 1;
@@ -1481,9 +1481,9 @@ s32 Shop_PickUnit(void)
 		{
 			AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 			Menu_ReleaseEntryObjectsFar();
-			UiWork_FinalizeFar(list_window, 2);
-			UiWork_FinalizeFar(shop->item_window, 2);
-			UiWork_FinalizeFar(shop->money_window, 2);
+			UiWork_FinalizeFar(listWindow, 2);
+			UiWork_FinalizeFar(shop->itemWindow, 2);
+			UiWork_FinalizeFar(shop->moneyWindow, 2);
 			WaitFrames(1);
 			return 0;
 		}
@@ -1504,14 +1504,14 @@ s32 Shop_PickUnit(void)
 	}
 }
 
-s32 Shop_SelectSell(s32 unit_id)
+s32 Shop_SelectSell(s32 unitId)
 {
 	s32					price_window;
 	struct ShopRuntime *shop;
-	s32					list_window;
+	s32					listWindow;
 	struct BattleUnit	   *unit;
 	s32					selection;
-	s32					item_count;
+	s32					itemCount;
 	s32					redraw;
 	s32					result;
 	s32					item_id;
@@ -1520,9 +1520,9 @@ s32 Shop_SelectSell(s32 unit_id)
 	s32					x;
 
 	shop = gMenuWork;
-	unit = UnitGetFar(unit_id);
-	item_count = 1;
-	list_window = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+	unit = UnitGetFar(unitId);
+	itemCount = 1;
+	listWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
 	selection = 0;
 
 	for (;;)
@@ -1537,16 +1537,16 @@ s32 Shop_SelectSell(s32 unit_id)
 			if (redraw != 0)
 			{
 				redraw = 0;
-				item_count = Inventory_CountFar(unit_id);
-				if (selection > item_count - 1)
-					selection = item_count - 1;
+				itemCount = Inventory_CountFar(unitId);
+				if (selection > itemCount - 1)
+					selection = itemCount - 1;
 				item_id = 0x1ff & unit->inventory[selection];
-				window = (void *)shop->item_window;
+				window = (void *)shop->itemWindow;
 				x = selection % 5 * 16;
 				Shop_PlaceCursor(window, x, selection / 5 * 16 + 8);
 				shop->mode = 3;
 				Shop_DrawItemPrice(
-					list_window, item_id, Shop_SalePrice(unit->inventory[selection]), 1);
+					listWindow, item_id, Shop_SalePrice(unit->inventory[selection]), 1);
 				Shop_DrawMsg(price_window, item_id + MsgItemPlainName);
 			}
 
@@ -1566,14 +1566,14 @@ s32 Shop_SelectSell(s32 unit_id)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				selection -= 1;
-				selection = (selection + item_count) % item_count;
+				selection = (selection + itemCount) % itemCount;
 				redraw = 1;
 			}
 			if ((gKeysRepeat & KEY_RIGHT) != 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				selection += 1;
-				selection = (selection + item_count) % item_count;
+				selection = (selection + itemCount) % itemCount;
 				redraw = 1;
 			}
 			if ((gKeysRepeat & KEY_UP) != 0)
@@ -1581,7 +1581,7 @@ s32 Shop_SelectSell(s32 unit_id)
 				selection -= 5;
 				if (selection < 0)
 					selection += 15;
-				while (selection >= item_count)
+				while (selection >= itemCount)
 					selection -= 5;
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				redraw = 1;
@@ -1589,7 +1589,7 @@ s32 Shop_SelectSell(s32 unit_id)
 			if ((gKeysRepeat & KEY_DOWN) != 0)
 			{
 				selection += 5;
-				if (selection >= item_count)
+				if (selection >= itemCount)
 					selection -= 15;
 				while (selection < 0)
 					selection += 5;
@@ -1604,19 +1604,19 @@ s32 Shop_SelectSell(s32 unit_id)
 		if (result != 0)
 			break;
 
-		quantity = Shop_SelectSellNum(unit_id, selection);
+		quantity = Shop_SelectSellNum(unitId, selection);
 		if (quantity != -1)
-			Shop_SellItem(unit_id, selection, quantity);
+			Shop_SellItem(unitId, selection, quantity);
 		UiMessage_ShowAndWait(MsgSellAnythingElse);
-		if (Inventory_CountFar(unit_id) == 0)
+		if (Inventory_CountFar(unitId) == 0)
 			break;
 	}
 
-	UiWork_FinalizeFar(list_window, 2);
+	UiWork_FinalizeFar(listWindow, 2);
 	return result;
 }
 
-void Shop_DrawUnitGrid(s32 window, s32 unit_id)
+void Shop_DrawUnitGrid(s32 window, s32 unitId)
 {
 	struct BattleUnit		*unit;
 	s32					 x;
@@ -1624,13 +1624,13 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 	s32					 slot;
 	struct RenderOutput *icon;
 
-	unit = UnitGetFar(unit_id);
+	unit = UnitGetFar(unitId);
 	x = 8;
 	y = 0;
 	if (window != 0)
 	{
 		RenderOutput_PrepareForRedrawFar(window);
-		if (Inventory_CountFar(unit_id) == 0)
+		if (Inventory_CountFar(unitId) == 0)
 		{
 #if defined(TBS_EDITION_IT)
 			UiText_DrawResourceFar(MsgNoItems, window, 20, 12);
@@ -1672,11 +1672,11 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 #define EFFECT_X 0x80
 #endif
 
-s32 Shop_SelectSellNum(s32 unit_id, s32 slot)
+s32 Shop_SelectSellNum(s32 unitId, s32 slot)
 {
 	s32					   result;
-	s16					   saved_x;
-	s16					   saved_y;
+	s16					   savedX;
+	s16					   savedY;
 	s32					   effect;
 	s32					   state;
 	s32					   selection;
@@ -1685,32 +1685,32 @@ s32 Shop_SelectSellNum(s32 unit_id, s32 slot)
 	struct BattleUnit		  *unit;
 
 	shop = gMenuWork;
-	unit = UnitGetFar(unit_id);
+	unit = UnitGetFar(unitId);
 	item = Item_GetDirectFar(unit->inventory[slot]);
 	result = 1;
 	effect = Shop_SalePrice(unit->inventory[slot]);
-	state = Shop_GetSelectionState(unit_id, slot);
+	state = Shop_GetSelectionState(unitId, slot);
 	selection = state;
 	if ((item->flags & 0x10) && state > 1)
 	{
 		UiMessage_ShowAndWait(MsgHowManyToSell);
-		saved_x = shop->cursor.target_x;
-		saved_y = shop->cursor.target_y;
+		savedX = shop->cursor.targetX;
+		savedY = shop->cursor.targetY;
 		shop->cursor.anchor->active = 4;
 		shop->mode = 0xc;
 		Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
 		result = Shop_SelectQuantity(0, selection, effect);
 		WaitFrames(1);
 		UiIcon_PrepareObjectFar(shop->cursor.anchor);
-		Shop_PlaceCursor(NULL, saved_x, saved_y);
+		Shop_PlaceCursor(NULL, savedX, savedY);
 	}
 	return result;
 }
 
-void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
+void Shop_SellItem(s32 unitId, s32 slot, s32 count)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BattleUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unitId);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
 	u8					   rare = item->flags & 4;
@@ -1761,10 +1761,10 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 	}
 	AudioCommand_PlayFar(102);
 	for (i = 0; i < count; i++)
-		Inventory_DiscardFar(unit_id, slot);
+		Inventory_DiscardFar(unitId, slot);
 	Party_AdjustCoinsFar(total);
 	Shop_DrawMoney();
-	Shop_DrawUnitGrid(shop->item_window, unit_id);
+	Shop_DrawUnitGrid(shop->itemWindow, unitId);
 	if (rare || all)
 		message = MsgSold;
 	else
@@ -1791,12 +1791,12 @@ s32 Shop_SelectUnit(void)
 	return 0;
 }
 
-s32 Shop_SelectRepair(s32 unit_id)
+s32 Shop_SelectRepair(s32 unitId)
 {
 	struct ShopRuntime *shop;
-	s32					item_count;
+	s32					itemCount;
 	s32					price_window;
-	s32					list_window;
+	s32					listWindow;
 	struct BattleUnit	   *unit;
 	s32					selection;
 	s32					redraw;
@@ -1808,9 +1808,9 @@ s32 Shop_SelectRepair(s32 unit_id)
 	s32					y;
 
 	shop = gMenuWork;
-	unit = UnitGetFar(unit_id);
-	item_count = 1;
-	list_window = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+	unit = UnitGetFar(unitId);
+	itemCount = 1;
+	listWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
 	selection = 0;
 
 	for (;;)
@@ -1825,17 +1825,17 @@ s32 Shop_SelectRepair(s32 unit_id)
 			if (redraw != 0)
 			{
 				redraw = 0;
-				item_count = Inventory_CountFar(unit_id);
-				if (selection > item_count - 1)
-					selection = item_count - 1;
+				itemCount = Inventory_CountFar(unitId);
+				if (selection > itemCount - 1)
+					selection = itemCount - 1;
 				item_id = 0x1ff & unit->inventory[selection];
-				window = (void *)shop->item_window;
+				window = (void *)shop->itemWindow;
 				x = selection % 5 * 16;
 				y = selection / 5 * 16 + 8;
 				Shop_PlaceCursor(window, x, y);
 				shop->mode = 3;
 				price = Shop_RepairPrice(unit->inventory[selection]);
-				Shop_DrawItemPrice(list_window, item_id, price, 2);
+				Shop_DrawItemPrice(listWindow, item_id, price, 2);
 				Shop_DrawMsg(price_window, item_id + MsgItemPlainName);
 			}
 			if ((gKeyState & KEY_A) != 0)
@@ -1854,14 +1854,14 @@ s32 Shop_SelectRepair(s32 unit_id)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				selection -= 1;
-				selection = (selection + item_count) % item_count;
+				selection = (selection + itemCount) % itemCount;
 				redraw = 1;
 			}
 			if ((gKeysRepeat & KEY_RIGHT) != 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				selection += 1;
-				selection = (selection + item_count) % item_count;
+				selection = (selection + itemCount) % itemCount;
 				redraw = 1;
 			}
 			if ((gKeysRepeat & KEY_UP) != 0)
@@ -1869,7 +1869,7 @@ s32 Shop_SelectRepair(s32 unit_id)
 				selection -= 5;
 				if (selection < 0)
 					selection += 15;
-				while (selection >= item_count)
+				while (selection >= itemCount)
 					selection -= 5;
 				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 				redraw = 1;
@@ -1877,7 +1877,7 @@ s32 Shop_SelectRepair(s32 unit_id)
 			if ((gKeysRepeat & KEY_DOWN) != 0)
 			{
 				selection += 5;
-				if (selection >= item_count)
+				if (selection >= itemCount)
 					selection -= 15;
 				while (selection < 0)
 					selection += 5;
@@ -1892,29 +1892,29 @@ s32 Shop_SelectRepair(s32 unit_id)
 		if (result != 0)
 			break;
 
-		Shop_RepairItem(unit_id, selection);
+		Shop_RepairItem(unitId, selection);
 		UiMessage_ShowAndWait(MsgRepairAnythingElse);
-		if (Inventory_CountFar(unit_id) == 0)
+		if (Inventory_CountFar(unitId) == 0)
 			break;
 	}
 
-	UiWork_FinalizeFar(list_window, 2);
+	UiWork_FinalizeFar(listWindow, 2);
 	return result;
 }
 
-void Shop_RepairItem(s32 unit_id, s32 slot)
+void Shop_RepairItem(s32 unitId, s32 slot)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BattleUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unitId);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
-	s32					   equipped = Inventory_FindEquippedFar(unit_id, item->type);
+	s32					   equipped = Inventory_FindEquippedFar(unitId, item->type);
 	u32					   price = Shop_RepairPrice(unit->inventory[slot]);
 	s32					   message;
 	u8					   kind;
 	u32					   saved;
 
-	kind = item->use_type;
+	kind = item->useType;
 	if (kind != 2)
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
@@ -1949,7 +1949,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 	}
 	saved = unit->inventory[slot];
 	unit->inventory[slot] = 0;
-	Shop_DrawUnitGrid(shop->item_window, unit_id);
+	Shop_DrawUnitGrid(shop->itemWindow, unitId);
 	UiWork_PushValueSlotFar(item_id, 2);
 	UiMessage_ShowAndRestoreState(message + 2);
 	UiWork_FinalizePendingCoreFar();
@@ -1963,14 +1963,14 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 	AudioCommand_PlayFar(112);
 	WaitFrames(20);
 	unit->inventory[slot] = saved;
-	Inventory_RepairFar(unit_id, slot);
+	Inventory_RepairFar(unitId, slot);
 	Party_AdjustCoinsFar(-price);
 	Shop_DrawMoney();
-	Shop_DrawUnitGrid(shop->item_window, unit_id);
+	Shop_DrawUnitGrid(shop->itemWindow, unitId);
 	UiWork_PushValueSlotFar(item_id, 2);
 	UiMessage_ShowAndRestoreState(message + 3);
-	if (Shop_ConfirmEquip(unit_id, slot))
-		Shop_SellOld(unit_id, equipped);
+	if (Shop_ConfirmEquip(unitId, slot))
+		Shop_SellOld(unitId, equipped);
 }
 
 // 贈り物の値段
@@ -1991,30 +1991,30 @@ const s16 Shop_GiftItemIds[21] =
 	16, 195, 38, 84, 89, 90, 180, 181, 190, 0,
 };
 
-void Shop_BuySpecialItem(void *window, s32 item_window)
+void Shop_BuySpecialItem(void *window, s32 itemWindow)
 {
 	struct ShopRuntime *shop = gMenuWork;
 	s32					price;
 	u32					saved;
 	s32					redraw;
-	s32					unit_id;
-	s32					selected_index;
+	s32					unitId;
+	s32					selectedIndex;
 	s32					message;
 	s32					slot;
 
 	redraw = 1;
-	unit_id = 0;
-	saved = shop->selected_item;
-	price = Shop_SpecialItemPrices[gGameState.shop_gifts];
-	selected_index = 0;
+	unitId = 0;
+	saved = shop->selectedItem;
+	price = Shop_SpecialItemPrices[gGameState.shopGifts];
+	selectedIndex = 0;
 
-	if (price > gGameState.shop_credit)
+	if (price > gGameState.shopCredit)
 		return;
-	shop->selected_item = SPECIAL_ITEM;
+	shop->selectedItem = SPECIAL_ITEM;
 	UiWork_PushValueSlotFar(SPECIAL_ITEM, 2);
 	message = MsgTokenGift;
 	UiMessage_ShowAndRestoreState(message);
-	UiWork_PushValueSlotFar(shop->selected_item, 2);
+	UiWork_PushValueSlotFar(shop->selectedItem, 2);
 	UiMessage_ShowAndRestoreState(message + 1);
 
 	while (1)
@@ -2022,31 +2022,31 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 		if (redraw != 0)
 		{
 			redraw = 0;
-			selected_index = (selected_index + shop->party_member_count) % shop->party_member_count;
-			unit_id = shop->party_member_ids[selected_index];
-			Shop_PlaceCursor(window, selected_index * 24 - 12, 0);
+			selectedIndex = (selectedIndex + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[selectedIndex];
+			Shop_PlaceCursor(window, selectedIndex * 24 - 12, 0);
 			shop->mode = 3;
-			Shop_DrawParty((s32)window, selected_index, shop->selected_item);
-			Shop_DrawUnitItem(item_window, unit_id, shop->selected_item);
+			Shop_DrawParty((s32)window, selectedIndex, shop->selectedItem);
+			Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
 		}
 		if ((gKeyState & KEY_A) != 0)
 		{
-			slot = Inventory_AddItemFar(unit_id, shop->selected_item);
+			slot = Inventory_AddItemFar(unitId, shop->selectedItem);
 			if (slot < 0)
 			{
 				AudioCommand_PlayFar(0x71);
-				UiWork_PushValueSlotFar(unit_id, 1);
-				UiWork_PushValueSlotFar(shop->selected_item, 2);
-				if (Inventory_CountFar(unit_id) == 15)
+				UiWork_PushValueSlotFar(unitId, 1);
+				UiWork_PushValueSlotFar(shop->selectedItem, 2);
+				if (Inventory_CountFar(unitId) == 15)
 					UiMessage_ShowAndWait(MsgPackFull);
 				else
 					UiMessage_ShowAndWait(MsgCannotCarryItem);
 				continue;
 			}
-			Inventory_RemoveFar(unit_id, slot);
+			Inventory_RemoveFar(unitId, slot);
 			AudioCommand_PlayFar(0x65);
 			UiMessage_ShowAndRestoreState(MsgHereYouGo);
-			Inventory_AddItemFar(unit_id, shop->selected_item);
+			Inventory_AddItemFar(unitId, shop->selectedItem);
 			Party_AdjustSixDigitCounterBFar(-price);
 			Party_AdjustCounterCappedAt28Far(1);
 			break;
@@ -2060,18 +2060,18 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
 			AudioCommand_PlayFar(0x6f);
-			selected_index--;
+			selectedIndex--;
 			redraw = 1;
 		}
 		if ((gKeysRepeat & KEY_RIGHT) != 0)
 		{
 			AudioCommand_PlayFar(0x6f);
-			selected_index++;
+			selectedIndex++;
 			redraw = 1;
 		}
 		WaitFrames(1);
 	}
-	shop->selected_item = saved;
+	shop->selectedItem = saved;
 }
 
 // 店ごとの品物: 品物 24 個 (0 で終わり), 特別な品物 8 個 (0 で終わり), 種類
@@ -2362,12 +2362,12 @@ s32 Shop_CountUnits(void)
 {
 	struct ShopRuntime *shop = gMenuWork;
 	s32					active = 0;
-	s32					variant = shop->party_action;
+	s32					variant = shop->partyAction;
 	s32					index;
 
-	for (index = 0; index < shop->party_member_count; index++)
+	for (index = 0; index < shop->partyMemberCount; index++)
 	{
-		if (Shop_CanServe(shop->party_member_ids[index], variant))
+		if (Shop_CanServe(shop->partyMemberIds[index], variant))
 			active++;
 	}
 	return active;
@@ -2375,7 +2375,7 @@ s32 Shop_CountUnits(void)
 
 s32 Shop_MsgByMode(s32 value)
 {
-	s8 mode = ((struct ShopRuntime *)gMenuWork)->party_action;
+	s8 mode = ((struct ShopRuntime *)gMenuWork)->partyAction;
 
 	if (mode == 1)
 	{
@@ -2396,7 +2396,7 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 {
 	s32 no;
 
-	no = BattleFx_GetResourceIdFar(((struct ShopRuntime *)gMenuWork)->keeper_resource);
+	no = BattleFx_GetResourceIdFar(((struct ShopRuntime *)gMenuWork)->keeperResource);
 	UiWork_FinalizePendingCoreFar();
 	value = Shop_MsgByMode(value);
 	UiText_OpenMessageWindowFar(value, 5, 0, (no << 0x10) | 0x22);
@@ -2417,7 +2417,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 	state = gMenuWork;
 	slot = &state->cursor.anchor;
 	saved = (*slot)->active;
-	value = BattleFx_GetResourceIdFar(state->keeper_resource);
+	value = BattleFx_GetResourceIdFar(state->keeperResource);
 	arg0 = Shop_MsgByMode(arg0);
 	(*slot)->active = 13;
 	UiWork_FinalizePendingCoreFar();
@@ -2428,57 +2428,57 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 	state->cursor.anchor->active = saved;
 }
 
-s32 Shop_ConfirmAct(s32 unit_id)
+s32 Shop_ConfirmAct(s32 unitId)
 {
-	s32					 party_action = 0;
-	s32					 list_window = 0;
+	s32					 partyAction = 0;
+	s32					 listWindow = 0;
 	struct ShopRuntime	*shop;
-	struct RenderOutput *cursor_anchor;
+	struct RenderOutput *cursorAnchor;
 
 	Shop_InitializeCursorWork();
 	shop = gMenuWork;
-	shop->party_action = list_window;
+	shop->partyAction = listWindow;
 
 	{
 		s32 shown =
-			(u16)((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(unit_id))
+			(u16)((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(unitId))
 					  ->animation)
 				->entries[0]
-				->anim_id;
-		shop->keeper_resource = shown;
+				->animId;
+		shop->keeperResource = shown;
 	}
 
-	list_window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
-	if (list_window == 0)
+	listWindow = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
+	if (listWindow == 0)
 	{
-		list_window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
+		listWindow = UiWindow_CreateFar(-5, 0, 5, 5, 2);
 	}
-	if (list_window == 0)
+	if (listWindow == 0)
 	{
-		list_window = UiWindow_CreateFar(0, 0, 5, 5, 2);
-		SideObject_CreateFar(2, 0, 0, list_window, -4, -4);
+		listWindow = UiWindow_CreateFar(0, 0, 5, 5, 2);
+		SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
 	}
 
-	cursor_anchor = RenderOutput_CreateFar(
-		shop->cursor_icon, 0x40000000, (struct RenderInput *)list_window, 0, 0);
-	cursor_anchor->active = 1;
-	cursor_anchor->kind = 0;
+	cursorAnchor = RenderOutput_CreateFar(
+		shop->cursorIcon, 0x40000000, (struct RenderInput *)listWindow, 0, 0);
+	cursorAnchor->active = 1;
+	cursorAnchor->kind = 0;
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-	shop->cursor.anchor = cursor_anchor;
+	shop->cursor.anchor = cursorAnchor;
 	UiMessage_ShowResolvedAndWait(MsgSanctumWelcome);
 
 #if EDITION_INTERNATIONAL
-	shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
+	shop->moneyWindow = UiWindow_CreateFar(16, 11, 12, 4, 2);
 #else
-	shop->money_window = UiWindow_CreateFar(16, 11, 11, 4, 2);
+	shop->moneyWindow = UiWindow_CreateFar(16, 11, 11, 4, 2);
 #endif
 	Shop_DrawMoney();
 
 	for (;;)
 	{
-		party_action = Menu_SelectEntry19To1cFar(party_action);
-		shop->party_action = party_action;
-		if (party_action == -1)
+		partyAction = Menu_SelectEntry19To1cFar(partyAction);
+		shop->partyAction = partyAction;
+		if (partyAction == -1)
 			break;
 
 		{
@@ -2496,14 +2496,14 @@ s32 Shop_ConfirmAct(s32 unit_id)
 				Sanctum_RunPartyService();
 			}
 		}
-		shop->party_action = 0;
+		shop->partyAction = 0;
 		ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
 		UiMessage_ShowResolvedAndWait(MsgSanctumMoreAid);
 	}
 
 	UiMessage_ShowResolvedAndWait(MsgSanctumFarewell);
-	UiWork_FinalizeFar(shop->money_window, 2);
-	UiWork_FinalizeFar(list_window, 2);
+	UiWork_FinalizeFar(shop->moneyWindow, 2);
+	UiWork_FinalizeFar(listWindow, 2);
 	Inn_Cleanup();
 	return 0;
 }
@@ -2514,22 +2514,22 @@ s32 Sanctum_RunPartyService(void)
 	s32					price_window;
 	s32					redraw;
 	s32					kind;
-	s32					list_window;
+	s32					listWindow;
 	s32					selection;
-	s32					unit_id;
+	s32					unitId;
 	s32					retry;
 	s32					price;
 	s32					message;
 
 	price_window = 0;
 	redraw = 1;
-	kind = shop->party_action;
+	kind = shop->partyAction;
 	UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 
-	list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
+	listWindow = UiWindow_CreateFar(1, 12, 13, 3, 2);
 	shop->cursor.anchor->active = 4;
 	shop->mode = redraw;
-	PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, price_window);
+	PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, price_window);
 #if defined(TBS_EDITION_DE)
 	price_window = UiWindow_CreateFar(0, 16, 30, 3, 2);
 #elif defined(TBS_EDITION_FR)
@@ -2539,12 +2539,12 @@ s32 Sanctum_RunPartyService(void)
 #endif
 
 	selection = 0;
-	unit_id = 0;
+	unitId = 0;
 	retry = 0;
-	while (selection < shop->party_member_count)
+	while (selection < shop->partyMemberCount)
 	{
-		unit_id = shop->party_member_ids[selection];
-		if (Shop_CanServe(unit_id, kind) != 0)
+		unitId = shop->partyMemberIds[selection];
+		if (Shop_CanServe(unitId, kind) != 0)
 			break;
 		selection++;
 	}
@@ -2558,10 +2558,10 @@ s32 Sanctum_RunPartyService(void)
 			UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 			redraw = 1;
 			selection = 0;
-			while (selection < shop->party_member_count)
+			while (selection < shop->partyMemberCount)
 			{
-				unit_id = shop->party_member_ids[selection];
-				if (Shop_CanServe(unit_id, kind) != 0)
+				unitId = shop->partyMemberIds[selection];
+				if (Shop_CanServe(unitId, kind) != 0)
 					break;
 				selection++;
 			}
@@ -2570,24 +2570,24 @@ s32 Sanctum_RunPartyService(void)
 		if (redraw != 0)
 		{
 			redraw = 0;
-			selection = (selection + shop->party_member_count) % shop->party_member_count;
-			unit_id = shop->party_member_ids[selection];
-			Shop_PlaceCursor((void *)list_window, selection * 24 - 12, 0);
+			selection = (selection + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[selection];
+			Shop_PlaceCursor((void *)listWindow, selection * 24 - 12, 0);
 			shop->mode = 3;
-			Shop_HiliteUnit(list_window, selection);
-			Shop_DrawSelectMsg(price_window, unit_id);
+			Shop_HiliteUnit(listWindow, selection);
+			Shop_DrawSelectMsg(price_window, unitId);
 		}
 
 		if ((gKeyState & KEY_A) != 0)
 		{
 			WaitFrames(1);
-			price = Shop_ServicePrice(unit_id, kind);
-			if (Shop_CanServe(unit_id, kind) == 0)
+			price = Shop_ServicePrice(unitId, kind);
+			if (Shop_CanServe(unitId, kind) == 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 				continue;
 			}
-			UiWork_PushValueSlotFar(unit_id, 1);
+			UiWork_PushValueSlotFar(unitId, 1);
 			UiWork_PushValueSlotFar(price, 5);
 			message = MsgReviveDonation;
 			UiMessage_ShowResolvedAndWait(message);
@@ -2604,14 +2604,14 @@ s32 Sanctum_RunPartyService(void)
 				retry = 1;
 				continue;
 			}
-			UiWork_PushValueSlotFar(unit_id, 1);
+			UiWork_PushValueSlotFar(unitId, 1);
 			UiMessage_ShowResolvedAndWait(message + 3);
 			UiWork_FinalizePendingCoreFar();
-			BattleUnit_ResetStateByMode(unit_id, kind);
+			BattleUnit_ResetStateByMode(unitId, kind);
 			Shop_RunPartyMemberIconBurst(selection);
 			Party_AdjustCoinsFar(-price);
 			Shop_DrawMoney();
-			UiWork_PushValueSlotFar(unit_id, 1);
+			UiWork_PushValueSlotFar(unitId, 1);
 			UiMessage_ShowResolvedAndWait(message + 4);
 			if (Shop_CountUnits() != 0)
 			{
@@ -2643,7 +2643,7 @@ s32 Sanctum_RunPartyService(void)
 
 	Menu_ReleaseEntryObjectsFar();
 	UiWork_FinalizeFar(price_window, 2);
-	UiWork_FinalizeFar(list_window, 2);
+	UiWork_FinalizeFar(listWindow, 2);
 	WaitFrames(1);
 	return 0;
 }
@@ -2655,7 +2655,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 	unit = UnitGetFar(id);
 	if (mode == 0)
 	{
-		unit->hp = unit->max_hp;
+		unit->hp = unit->maxHp;
 		UnitRatioFar(id);
 	}
 	else if (mode == 1)
@@ -2688,19 +2688,19 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
 {
 	struct ShopRuntime *shop = gMenuWork;
 	s32					index;
-	s32					variant = shop->party_action;
+	s32					variant = shop->partyAction;
 
 	if (enabled != 0)
 	{
-		for (index = 0; index < shop->party_member_count; index++)
+		for (index = 0; index < shop->partyMemberCount; index++)
 		{
 			if (index == selected)
-				AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 30);
+				AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 30);
 			else
-				AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 1);
-			shop->party_member_scale[index] = 0x10000;
-			if (!Shop_CanServe(shop->party_member_ids[index], variant))
-				shop->party_member_scale[index] = 0xb333;
+				AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 1);
+			shop->partyMemberScale[index] = 0x10000;
+			if (!Shop_CanServe(shop->partyMemberIds[index], variant))
+				shop->partyMemberScale[index] = 0xb333;
 		}
 	}
 }
@@ -2710,7 +2710,7 @@ void Shop_DrawSelectMsg(s32 target, s32 selection)
 	s32 variant;
 	s32 message;
 
-	variant = ((struct ShopRuntime *)gMenuWork)->party_action;
+	variant = ((struct ShopRuntime *)gMenuWork)->partyAction;
 	message = Shop_ServicePrice(selection, variant);
 	if (target != 0)
 	{
@@ -2740,16 +2740,16 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
 	state = *state_pointer;
 	if (state == 0)
 	{
-		position.x = effect->origin_x;
-		position.z = effect->origin_z;
+		position.x = effect->originX;
+		position.z = effect->originZ;
 		Vector_AddPolarOffset(0x280000, Random16(), (s32 *)&position);
 		EffectSlot_SetPositionFar(effect, position.x, position.z);
-		position.x = effect->origin_x;
-		position.z = effect->origin_z;
+		position.x = effect->originX;
+		position.z = effect->originZ;
 		Vector_AddPolarOffset(0x40000, Random16(), (s32 *)&position);
-		effect->target_x = position.x;
-		effect->target_z = position.z;
-		effect->max_speed = 0x20000;
+		effect->targetX = position.x;
+		effect->targetZ = position.z;
+		effect->maxSpeed = 0x20000;
 		effect->acceleration = 0x6666;
 		effect->flag42 = state;
 		*state_pointer = *state_pointer + 1;
@@ -2780,10 +2780,10 @@ void Shop_ResetEffects(void)
 		EffectSlot_UpdateFar((s32)effect);
 		effect++;
 	} while (count >= 0);
-	member = shop->burst_member;
+	member = shop->burstMember;
 	if (member != -1)
 		ObjectGroup_SetChildValueUnlessFifteenFar(
-			shop->party_member_icons[member], (Random16() * 7) >> 16);
+			shop->partyMemberIcons[member], (Random16() * 7) >> 16);
 }
 
 // 仲間の動作ごとの効果音
@@ -2804,17 +2804,17 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
 	shop = gMenuWork;
 	saved_kind = shop->cursor.anchor->active;
-	shop->burst_member = 0xff;
+	shop->burstMember = 0xff;
 	shop->cursor.anchor->active = 13;
-	AudioCommand_PlayFar(Shop_PartyActionCues[shop->party_action]);
+	AudioCommand_PlayFar(Shop_PartyActionCues[shop->partyAction]);
 	Shop_RestoreSceneTiles(0x00202108);
-	AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 0);
+	AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
 	WaitFrames(20);
 	callback_flags = 0xc80;
 	Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
-	position.x = shop->party_member_x[member] << 16;
-	position.z = (shop->party_member_y[member] << 16) + 0xfff40000;
+	position.x = shop->partyMemberX[member] << 16;
+	position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
 
 	i = 0;
 	effect = shop->effects;
@@ -2824,12 +2824,12 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 		EffectSlot_SetCallbackFar(effect, BattleFx_UpdateRadialMotion);
 		EffectSlot_SetObjectModeFar(effect, 7);
 		ObjectGroup_SetChildValueUnlessFifteenFar(effect->object, (Random16() * 7) >> 16);
-		effect->scale_y = 0xb333;
-		effect->scale_x = 0xb333;
+		effect->scaleY = 0xb333;
+		effect->scaleX = 0xb333;
 		WaitFrames(3);
 		if (i == 5)
 		{
-			shop->burst_member = member;
+			shop->burstMember = member;
 		}
 		i++;
 		effect++;
@@ -2851,8 +2851,8 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
 	WaitFrames(20);
 	AudioCommand_PlayFar(126);
-	shop->burst_member = -1;
-	ObjectGroup_SetChildValueUnlessFifteenFar(shop->party_member_icons[member], 0);
+	shop->burstMember = -1;
+	ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member], 0);
 	WaitFrames(20);
 
 	{
@@ -2874,7 +2874,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 	}
 
 	Scheduler_RemoveCallback(Shop_ResetEffects);
-	AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 16);
+	AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
 	Shop_InitEffect();
 	WaitFrames(30);
 	shop->cursor.anchor->active = saved_kind;
@@ -2908,15 +2908,15 @@ s32 Inn_RoomPrice(s32 mode)
 	s32					factor = Inn_PriceMultipliers[mode];
 	s32					index;
 
-	for (index = 0; index < shop->party_member_count; index++)
+	for (index = 0; index < shop->partyMemberCount; index++)
 	{
-		if (UnitGetFar(shop->party_member_ids[index])->hp != 0)
+		if (UnitGetFar(shop->partyMemberIds[index])->hp != 0)
 			active++;
 	}
 	return factor * active;
 }
 
-s32 Inn_CheckIn(s32 mode, s32 object_id)
+s32 Inn_CheckIn(s32 mode, s32 objectId)
 {
 	struct InnRuntimeState *state;
 	struct ObjectRuntime   *object;
@@ -2928,11 +2928,11 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 	state = gMenuWork;
 	state->active = 1;
 	if (mode == 5)
-		state->special_active = 1;
+		state->specialActive = 1;
 
-	object = Object_GetByIdFar(object_id);
-	state->resource_id = ((struct AnimationObject *)object->animation)->entries[0]->anim_id;
-	win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
+	object = Object_GetByIdFar(objectId);
+	state->resourceId = ((struct AnimationObject *)object->animation)->entries[0]->animId;
+	win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
 	amount = Inn_RoomPrice(mode);
 	UiWork_PushValueSlotFar(amount, 5);
@@ -2958,9 +2958,9 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 		UiWork_FinalizeFar(win, 2);
 		Inn_PlaySleep(amount);
 
-		object = Object_GetByIdFar(object_id);
-		state->resource_id = ((struct AnimationObject *)object->animation)->entries[0]->anim_id;
-		win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
+		object = Object_GetByIdFar(objectId);
+		state->resourceId = ((struct AnimationObject *)object->animation)->entries[0]->animId;
+		win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 		UiMessage_ShowAndWait(message_base + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
 	}
 
@@ -2985,15 +2985,15 @@ void Inn_PlaySleep(s32 room_price)
 		object = UnitGetFar(objects[index]);
 		if (object->hp != 0)
 		{
-			object->hp = object->max_hp;
-			object->pp = object->max_pp;
+			object->hp = object->maxHp;
+			object->pp = object->maxPp;
 			UnitRatioFar(objects[index]);
 		}
 	}
 
 	state = (struct EventRuntime *)gEventWork;
-	state->value_1c0 = 0x209;
-	state->value_1c8 = 60;
+	state->value1c0 = 0x209;
+	state->value1c8 = 60;
 	WaitFrames(20);
 	Event_FinishScreenTransitionFar();
 	Event_WaitTransitionFramesFar();
@@ -3003,7 +3003,7 @@ void Inn_PlaySleep(s32 room_price)
 	Event_StartScreenTransitionFar();
 	Event_WaitTransitionFramesFar();
 	WaitFrames(30);
-	((struct EventRuntime *)gEventWork)->value_1c8 = 16;
+	((struct EventRuntime *)gEventWork)->value1c8 = 16;
 }
 
 // アイテム名の下の行の x（ドット）
@@ -3013,54 +3013,54 @@ void Inn_PlaySleep(s32 room_price)
 #define ITEM_NOTE_X 8
 #endif
 
-s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
+s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selectedItem)
 {
 	struct ShopRuntime	*shop;
-	struct RenderOutput *cursor_anchor;
-	s32					 list_window;
-	s32					 selected_index = 0;
+	struct RenderOutput *cursorAnchor;
+	s32					 listWindow;
+	s32					 selectedIndex = 0;
 	s32					 redraw = 1;
-	s32					 unit_id = 0;
+	s32					 unitId = 0;
 	s32					 item_slot;
 	s32					 result = 0;
 
 	Shop_InitializeCursorWork();
 	shop = gMenuWork;
-	shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
-	list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-	cursor_anchor = RenderOutput_CreateFar(
-		shop->cursor_icon, 0x40000000, (struct RenderInput *)list_window, 0, result);
-	cursor_anchor->active = 4;
-	cursor_anchor->kind = result;
+	shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
+	listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+	cursorAnchor = RenderOutput_CreateFar(
+		shop->cursorIcon, 0x40000000, (struct RenderInput *)listWindow, 0, result);
+	cursorAnchor->active = 4;
+	cursorAnchor->kind = result;
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-	shop->cursor.anchor = cursor_anchor;
+	shop->cursor.anchor = cursorAnchor;
 	shop->mode = 12;
-	PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, result);
+	PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, result);
 
 	while (1)
 	{
 		if (redraw != 0)
 		{
 			redraw = 0;
-			selected_index = (selected_index + shop->party_member_count) % shop->party_member_count;
-			unit_id = shop->party_member_ids[selected_index];
-			Shop_PlaceCursor((void *)list_window, selected_index * 24 - 12, 0);
+			selectedIndex = (selectedIndex + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[selectedIndex];
+			Shop_PlaceCursor((void *)listWindow, selectedIndex * 24 - 12, 0);
 			shop->mode = 3;
-			Shop_DrawParty(list_window, selected_index, 0);
-			Shop_DrawUnitGrid(shop->item_window, unit_id);
+			Shop_DrawParty(listWindow, selectedIndex, 0);
+			Shop_DrawUnitGrid(shop->itemWindow, unitId);
 		}
 
 		WaitFrames(1);
 		if ((gKeyState & KEY_A) != 0)
 		{
-			if (Inventory_CountFar(unit_id) == 0)
+			if (Inventory_CountFar(unitId) == 0)
 			{
 				AudioCommand_PlayFar(0x71);
 				continue;
 			}
 
 			AudioCommand_PlayFar(0x70);
-			item_slot = Shop_SelectUse(unit_id);
+			item_slot = Shop_SelectUse(unitId);
 			if (item_slot == -1)
 			{
 				shop->cursor.anchor->active = 4;
@@ -3068,8 +3068,8 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 				redraw = 1;
 				continue;
 			}
-			*selected_unit = unit_id;
-			*selected_item = item_slot;
+			*selected_unit = unitId;
+			*selectedItem = item_slot;
 			result = 0;
 			break;
 		}
@@ -3078,7 +3078,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 		{
 			AudioCommand_PlayFar(0x71);
 			*selected_unit = -1;
-			*selected_item = -1;
+			*selectedItem = -1;
 			result = -1;
 			break;
 		}
@@ -3086,20 +3086,20 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
 			AudioCommand_PlayFar(0x6f);
-			selected_index--;
+			selectedIndex--;
 			redraw = 1;
 		}
 		if ((gKeysRepeat & KEY_RIGHT) != 0)
 		{
 			AudioCommand_PlayFar(0x6f);
-			selected_index++;
+			selectedIndex++;
 			redraw = 1;
 		}
 	}
 
 	Menu_ReleaseEntryObjectsFar();
-	UiWork_FinalizeFar(list_window, 2);
-	UiWork_FinalizeFar(shop->item_window, 2);
+	UiWork_FinalizeFar(listWindow, 2);
+	UiWork_FinalizeFar(shop->itemWindow, 2);
 	WaitFrames(1);
 	Inn_Cleanup();
 	return result;
@@ -3145,7 +3145,7 @@ s32 Shop_SelectUse(s32 actor)
 				selection = count - 1;
 
 			flags = object->inventory[selection] & 0x1ff;
-			window = (void *)shop->item_window;
+			window = (void *)shop->itemWindow;
 			x = selection % 5 << 4;
 			y = (selection / 5 << 4) + 8;
 			Shop_PlaceCursor(window, x, y);
@@ -3229,9 +3229,9 @@ s32 Shop_SelectUse(s32 actor)
 	return result;
 }
 
-void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
+void Shop_DrawUseItem(s32 window, s32 unitId, s32 item_id)
 {
-	struct BattleUnit *unit = UnitGetFar(unit_id);
+	struct BattleUnit *unit = UnitGetFar(unitId);
 	s32				masked = unit->inventory[item_id] & 0x1ff;
 	u32				entry = unit->inventory[item_id];
 	s32				mult = (entry >> 11) + 1;
@@ -3243,7 +3243,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 		RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 		UiText_DrawCharacterAtOffsetFar(masked + MsgItemName, window, 0, 0);
 
-		result = Inventory_CheckDiscardFar(unit_id, item_id);
+		result = Inventory_CheckDiscardFar(unitId, item_id);
 		if (result == -4)
 		{
 			UiText_DrawCharacterAtOffsetFar(MsgCannotDrop, window, ITEM_NOTE_X, 8);

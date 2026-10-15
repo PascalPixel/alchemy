@@ -5,12 +5,12 @@
 
 void Func_02001cc4(struct ObjectRuntime *object, s32 layer)
 {
-    object->motion_flags = 0;
-    object->collision_flags = 0;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
     ((struct MarsRoomMAnimation *)object->animation)->layer = layer;
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02003120(object, Data_020032d4);
     object->action = 0;
-    object->speed_limit = 0;
+    object->speedLimit = 0;
     object->acceleration = 0;
 }

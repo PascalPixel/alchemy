@@ -45,13 +45,13 @@ void Func_02003048(s32 id)
     s32 height;
 
     object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
+    object->motionFlags = 4;
+    height = object->terrainHeight;
     asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word; without it the zero is stored first (2 differ), and storing it after the sum is worse (13) */
     WORD_AT(object, 68) = 0;
     object->y = height + 0x200000;
     {
-        u8 *flags = &object->priority_flags;
+        u8 *flags = &object->priorityFlags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
         *flags = bit | *flags;

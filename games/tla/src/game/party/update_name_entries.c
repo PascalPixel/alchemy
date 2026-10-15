@@ -83,9 +83,9 @@ s32 UpdateNameEntries(void)
 
 struct LinkOfferEntry
 {
-	u8 unknown_00[2];
-	u8 unit_id;
-	u8 unknown_03;
+	u8 unk00[2];
+	u8 unitId;
+	u8 unk03;
 };
 
 struct LinkOfferList
@@ -96,13 +96,13 @@ struct LinkOfferList
 
 struct LinkOfferTable
 {
-	u8					 unknown_00[8];
+	u8					 unk00[8];
 	struct LinkOfferList list;
 };
 
 struct LinkUnit
 {
-	u8 unknown_000[0x12a];
+	u8 unk000[0x12a];
 	u8 side;
 };
 
@@ -123,15 +123,15 @@ s32 LinkBattle_SendParty(void)
 	size = LINK_PARTY_UNIT_BYTES;
 	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
 	mark = 0xff;
-	work = Ram_HeapSlots->battle_work;
+	work = Ram_HeapSlots->battleWork;
 	for (i = 7; i >= 0; i--)
-		work->owner_slots[i] = mark;
+		work->ownerSlots[i] = mark;
 	count = BattleParty_PrepareActiveOwners(owners);
 	for (i = 0; i < count; i++)
 	{
 		Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
 		((struct LinkUnit *)buffer)->side = 2;
-		work->owner_slots[owners[i]] = i - 128;
+		work->ownerSlots[owners[i]] = i - 128;
 		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
 			break;
 		SerialRuntime_WaitForTransferA();
@@ -156,7 +156,7 @@ s32 LinkBattle_SendParty(void)
 	list = &((struct LinkOfferTable *)buffer)->list;
 	for (j = 0; j < list->count;)
 	{
-		list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
+		list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
 		/* FAKEMATCH: the empty one-pass block ends the scheduling region after the step, so the entry pointer advances before the count is reloaded as in the reference (differ 2 without it). */
 		j++;
 		do

@@ -16,13 +16,13 @@ void Func_020005a0(struct ObjectRuntime *object)
     s32 x;
 
     angle = *pangle;
-    parent = object->linked_object;
-    object->x = parent->x + Math_Cosine(angle) * (object->speed_limit + 28);
+    parent = object->linkedObject;
+    object->x = parent->x + Math_Cosine(angle) * (object->speedLimit + 28);
     sine = Math_Sine(angle);
     x = object->x;
     object->z = (sine << 4) + 0x1080000;
-    object->target_x = x;
-    object->target_z = object->z;
+    object->targetX = x;
+    object->targetZ = object->z;
     sprite = object->animation;
     if (object->z < 0x1080000)
         sprite->priority = 2;

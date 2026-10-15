@@ -19,31 +19,31 @@ void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 
 void Func_020002f8(void)
 {
-    struct AlhafranCaveMapWork *map = (struct AlhafranCaveMapWork *)Ram_HeapSlots->map_work;
+    struct AlhafranCaveMapWork *map = (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork;
     struct ObjectRuntime *object;
 
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
-    map->mode_17 = 1;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
+    map->mode17 = 1;
     Scheduler_AddOrUpdateCallback(Func_02000220, 0x480);
     if (GameFlag_Test(0x204))
         Func_020000fc();
     object = Object_GetById(8);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0xc0000;
     object = Object_GetById(9);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0xc0000;
     object = Object_GetById(10);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0xc0000;
     Animation_ApplyChildValues(Object_GetById(8), 6);
     Animation_ApplyChildValues(Object_GetById(9), 6);
     Animation_ApplyChildValues(Object_GetById(10), 6);
     object = Object_GetById(12);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0x100000;
     object = Object_GetById(11);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0x100000;
     Call2((void (*)())Func_02001598, 13, 0x1000);
     Object_SetModeById(11, 2);
@@ -52,9 +52,9 @@ void Func_020002f8(void)
     ObjectMotion_SetActionVariant(11, 2);
     ObjectMotion_SetActionVariant(12, 2);
     ObjectMotion_SetActionVariant(13, 3);
-    Object_GetById(11)->priority_flags |= 2;
-    Object_GetById(12)->priority_flags |= 2;
-    Object_GetById(13)->priority_flags |= 2;
+    Object_GetById(11)->priorityFlags |= 2;
+    Object_GetById(12)->priorityFlags |= 2;
+    Object_GetById(13)->priorityFlags |= 2;
     Animation_ApplyChildValues(Object_GetById(11), 6);
     Animation_ApplyChildValues(Object_GetById(12), 6);
     Animation_ApplyChildValues(Object_GetById(13), 6);
@@ -63,13 +63,13 @@ void Func_020002f8(void)
         Call3((void (*)())Func_02001488, 15, 0x1880000, 0x1680000);
     }
     object = Object_GetById(14);
-    object->motion_flags = 0;
-    object->terrain_height = 0;
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
     object->y = 0;
     Func_02001420_(object->x, object->z, 0, 4);
     object = Object_GetById(15);
-    object->motion_flags = 0;
-    object->terrain_height = 0;
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
     object->y = 0;
     Func_02001420_(object->x, object->z, 0, 4);
     Func_02001578(Data_02001608);

@@ -15,16 +15,16 @@ void Func_020013f8(void)
 {
     struct ObjectRuntime *object = Object_GetById(Func_02002a68());
 
-    if (object != 0 && (object->animation_kind & 15) == 1) {
+    if (object != 0 && (object->animationKind & 15) == 1) {
         struct PartyState *party = &gPartyState;
         struct FieldSprite *sprite;
         s32 priority;
 
         asm volatile("" : "+r"(party));
         sprite = object->animation;
-        priority = party->render_mode == 2 ? 2 : 1;
+        priority = party->renderMode == 2 ? 2 : 1;
         sprite->priority = priority;
-        sprite->part_priority = priority;
-        object->priority_flags &= 0xfe;
+        sprite->partPriority = priority;
+        object->priorityFlags &= 0xfe;
     }
 }

@@ -2,13 +2,13 @@
 #include "ram_buffer.h"
 
 struct MenuSlotEntry {
-    u8 unknown_00[12];
+    u8 unk00[12];
 };
 
 struct MenuIconWork {
-    u8 unknown_000[0xbcc];
+    u8 unk000[0xbcc];
     struct MenuSlotEntry slots[5];
-    u8 unknown_c08[10];
+    u8 unkc08[10];
     s8 active;
 };
 
@@ -16,7 +16,7 @@ void Runtime_PushSlotEntry(struct MenuSlotEntry *slot, s32 value);
 
 void MenuIcon_PushSlots(void)
 {
-    struct MenuIconWork *menu = Ram_HeapSlots->menu_runtime;
+    struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
     struct MenuSlotEntry *slot;
     s32 i;
 

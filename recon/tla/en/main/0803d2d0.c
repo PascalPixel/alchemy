@@ -12,11 +12,11 @@ s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x,
 
 void UiWork_SetTwoEntriesTo999(void)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     s32 index = 0;
 
     do {
-        work->resource_ids[index] = 999;
+        work->resourceIds[index] = 999;
         index++;
     } while (index != 2);
 }

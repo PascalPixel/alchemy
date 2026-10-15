@@ -14,8 +14,8 @@
 
 
 struct EventWordWork {
-    u8 unknown_00[0x10];
-    s32 word_10;
+    u8 unk00[0x10];
+    s32 word10;
 };
 
 void Event_CallWithLastActiveObjectId(s32 event_id)
@@ -25,5 +25,5 @@ void Event_CallWithLastActiveObjectId(s32 event_id)
 
 void Event_SetSceneEvents(s32 events)
 {
-    ((struct EventWordWork *)Ram_HeapSlots->event_work)->word_10 = events;
+    ((struct EventWordWork *)Ram_HeapSlots->eventWork)->word10 = events;
 }

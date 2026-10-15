@@ -20,9 +20,9 @@ void Func_02000090(struct FieldActor *self)
     asm volatile(""); /* FAKEMATCH: both positions are read before the sine is doubled; without it the shift comes before the second read */
     z += sine * 2;
     self->z = z;
-    self->target_x = x;
+    self->targetX = x;
     asm volatile(""); /* FAKEMATCH: the target z store stays ahead of the timer load; without it the store falls behind (6 differ; placed by alchemy permute) */
-    self->target_z = z;
+    self->targetZ = z;
     *(s16 *)&self->timer += -0x800;
 }
 
@@ -42,7 +42,7 @@ void Func_020000ec(struct FieldActor *self)
     asm volatile("" : "+r"(anchor));
     self->x = anchor->x + cosine * (radius + 6);
     self->z = centre->z + Math_Sine(angle) * (BYTE_AT(self, 98) + 4);
-    self->target_x = self->x;
-    self->target_z = self->z;
+    self->targetX = self->x;
+    self->targetZ = self->z;
     *(s16 *)&self->timer += -0x800;
 }

@@ -11,9 +11,9 @@
 #include "ram_buffer.h"
 
 struct ObjectRowState {
-    u8 unknown_000[248];
+    u8 unk000[248];
     void *objects[4];
-    u8 unknown_108[16];
+    u8 unk108[16];
     s16 x[8];
     s16 y[8];
     s32 scale[4];
@@ -23,7 +23,7 @@ void Render_ApplyProjectedPlacementFar(s32 handle, s32 *request, s32 *source, s3
 
 void Func_08043b70(void)
 {
-    struct ObjectRowState *state = (struct ObjectRowState *)Ram_HeapSlots->menu_runtime;
+    struct ObjectRowState *state = (struct ObjectRowState *)Ram_HeapSlots->menuRuntime;
     s32 source[2];
     s32 request[4];
     s32 index = 0;

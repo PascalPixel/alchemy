@@ -11,7 +11,7 @@ void Func_02002b18(s32 index, s32 entry, s32 delta);
 void Func_02002ba4(s32 index, s32 entry, s32 delta);
 
 struct KibomboWork90 {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     struct KibomboObject *leader;
 };
 

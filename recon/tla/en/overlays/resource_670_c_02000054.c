@@ -11,7 +11,7 @@ void Func_02002b18(s32 index, s32 entry, s32 delta);
 void Func_02002ba4(s32 index, s32 entry, s32 delta);
 
 struct KibomboWork90 {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     struct KibomboObject *leader;
 };
 
@@ -25,7 +25,7 @@ s32 Func_02000054(struct KibomboObject *object)
         dx += ((Random16Far() * 3) >> 16) << 16;
         dy += ((Random16Far() * 3) >> 16) << 16;
 
-        Object_SetPositionAndResetMotion(object, object->field_44 + dx, object->field_48 + dy, object->z);
+        Object_SetPositionAndResetMotion(object, object->field44 + dx, object->field48 + dy, object->z);
     }
     return 1;
 }

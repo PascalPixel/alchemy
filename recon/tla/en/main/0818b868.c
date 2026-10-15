@@ -19,13 +19,13 @@ typedef s32 (*DrawRectangle)(void *canvas, void *source, s32 x, s32 y, s32 width
 struct ModelTexture {
     u32 width:8;
     u32 height:8;
-    u32 unk_02:16;
+    u32 unk02:16;
     void *pixels;
 };
 
 struct Model {
     s32 kind;
-    s32 unk_04;
+    s32 unk04;
     const void *mesh;
     void *vertices;
     struct ModelTexture *texture;
@@ -77,9 +77,9 @@ void Func_08143000(void);
 
 void Func_0818b868(struct BattleEffectArgument *effect)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    void *canvas = Ram_HeapSlots->battle_fx_work[1];
-    u8 *graphics = Ram_HeapSlots->unknown_64[0];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    void *canvas = Ram_HeapSlots->battleFxWork[1];
+    u8 *graphics = Ram_HeapSlots->unk64[0];
     DrawRectangle blit[2];
     struct ModelTexture texture;
     struct EffectPosition position;
@@ -99,7 +99,7 @@ void Func_0818b868(struct BattleEffectArgument *effect)
     Func_08157530(effect->actor, effect->actors[0], 8, 80);
     WaitFrames(8);
     Func_081963ec(104, 23);
-    blit[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
@@ -137,12 +137,12 @@ void Func_0818b868(struct BattleEffectArgument *effect)
                     step->y = (position.y - 24) << 16;
                     angle = Random16();
                     force = (Random16() & 255) + 32;
-                    step->velocity_x = (Trig_Sin(angle) * force) >> 8;
-                    step->velocity_y = (Trig_Cos(angle) * force) >> 6;
+                    step->velocityX = (Trig_Sin(angle) * force) >> 8;
+                    step->velocityY = (Trig_Cos(angle) * force) >> 6;
                     if (effect->side == 0)
-                        step->velocity_x += -0x8000;
+                        step->velocityX += -0x8000;
                     else
-                        step->velocity_x += 0x8000;
+                        step->velocityX += 0x8000;
                     anchor->x = position.x;
                     anchor->y = position.y - 24;
                     step->variant = (Random16() & 7) + 16;

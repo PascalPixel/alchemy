@@ -392,7 +392,7 @@ static void EV10_TOUCH(void)
 	Engine_ActorFaceDirection(18, 0x3000, 0);
 	Engine_ActorFaceDirection(19, 0x3000, 0);
 	Engine_ActorFaceDirection(20, 0x3000, 0);
-	Engine_EventGetViewCenter()->motion_flags = 0;
+	Engine_EventGetViewCenter()->motionFlags = 0;
 	Engine_CameraSetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0x1000000, -1, 0xac0000, 1);
 	Engine_CameraWaitForMove();
@@ -494,7 +494,7 @@ static void EV10_TOUCH(void)
 		Actor_SetSpeed(0, 0x10000, 0x8000);
 		Engine_ActorEnableActionCallback(0, ColosseumEntrance_ActionTable4);
 		Engine_EventWait(80);
-		gEventWork->transition_frames = 40;
+		gEventWork->transitionFrames = 40;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 	}
@@ -549,7 +549,7 @@ static void EV10_TOUCH(void)
 			Actor_SetSpeed(0, 0x10000, 0x8000);
 			Engine_ActorEnableActionCallback(0, ColosseumEntrance_ActionTable4);
 			Engine_EventWait(80);
-			gEventWork->transition_frames = 40;
+			gEventWork->transitionFrames = 40;
 			Engine_EventCloseScreen();
 			Engine_EventWaitForScreen();
 		}
@@ -580,7 +580,7 @@ static void EV10_TOUCH(void)
 			Actor_SetSpeed(1, 0x10000, 0x8000);
 			Engine_ActorEnableActionCallback(1, ColosseumEntrance_ActionTable4);
 			Engine_EventWait(80);
-			gEventWork->transition_frames = 40;
+			gEventWork->transitionFrames = 40;
 			Engine_EventCloseScreen();
 			Engine_EventWaitForScreen();
 		}
@@ -672,22 +672,22 @@ static void EV12_TOUCH(void)
 			Engine_ActorRunRepeatedMotion(8, 2);
 			FieldScene_CallPairWith10(8);
 			Engine_ActorSetSpeed(8, 0x10000, 0x8000);
-			Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			Engine_ActorWalkToAndWait(8, 0x318, 72);
 			Engine_EventWait(1);
-			Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
+			Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
 			SceneState_ForwardMaskedHalfwordWith10(8, 0);
 			Engine_ActorStop(13);
 			actor = Object_GetById(13);
 			actor->update = NULL;
 			actor->timer = 0;
 			actor->work = 0;
-			actor->velocity_x = 0;
-			actor->velocity_y = 0;
-			actor->velocity_z = 0;
-			actor->target_x = ACTOR_NO_TARGET;
-			actor->target_y = ACTOR_NO_TARGET;
-			actor->target_z = ACTOR_NO_TARGET;
+			actor->velocityX = 0;
+			actor->velocityY = 0;
+			actor->velocityZ = 0;
+			actor->targetX = ACTOR_NO_TARGET;
+			actor->targetY = ACTOR_NO_TARGET;
+			actor->targetZ = ACTOR_NO_TARGET;
 			Engine_TaskWait(1);
 			script = (s32)ColosseumEntrance_ActionTable8;
 			Engine_ActorEnableActionCallback(15, script);
@@ -746,8 +746,8 @@ static void EV17_TALK_1(void)
 		Camera_SetSpeed(0x66666, 0xcccc);
 		Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);
 		Engine_CameraWaitForMove();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-		gEventWork->transition_frames = 32;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+		gEventWork->transitionFrames = 32;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
 		if (GameFlag_IsSet(0x8a3) != 0)
@@ -784,14 +784,14 @@ static void FieldScene_BuildActorPresentationGroup(void)
 	rec2 = Object_GetById(21);
 	Engine_ActorSetSpriteFlags(rec2, 0);
 	rec2 = Object_GetById(19);
-	rec2->scale_x = -0x10000;
+	rec2->scaleX = -0x10000;
 	rec2 = Object_GetById(20);
-	rec2->scale_x = -0x10000;
+	rec2->scaleX = -0x10000;
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -837,8 +837,8 @@ static void FieldScene_BuildActorPresentationGroup(void)
 	Engine_ActorStop(16);
 	rec2 = Object_GetById(16);
 	rec2->facing = 0xd000;
-	rec2->scale_x = 0x10000;
-	rec2->scale_y = 0x10000;
+	rec2->scaleX = 0x10000;
+	rec2->scaleY = 0x10000;
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(16, 0);
 	Engine_EventWait(40);
@@ -863,11 +863,11 @@ static void FieldScene_BuildActorPresentationGroup(void)
 	Actor_WalkToAndWait(16, 184, 0x35f);
 	Actor_WalkToAndWait(16, 184, 0x31c);
 	Actor_SetPosition(16, 0, 0);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventRequestExit(69);
 	Engine_EventEnd();
 }
@@ -875,7 +875,7 @@ static void FieldScene_BuildActorPresentationGroup(void)
 static void ColosseumEntrance_ShowQualifyingTrialMessage(void)
 {
 	Engine_EventBegin();
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -919,14 +919,14 @@ static void FieldScene_RunMiddleSequence(void)
 	rec2 = Object_GetById(21);
 	Engine_ActorSetSpriteFlags(rec2, 0);
 	rec2 = Object_GetById(19);
-	rec2->scale_x = -0x10000;
+	rec2->scaleX = -0x10000;
 	rec2 = Object_GetById(20);
-	rec2->scale_x = -0x10000;
+	rec2->scaleX = -0x10000;
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	gEventWork->transition_frames = 32;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
@@ -968,7 +968,7 @@ static void FieldScene_RunMiddleSequence(void)
 	SceneState_ForwardMaskedHalfwordWith10(18, 0x3000);
 	Actor_SetAttachedEffect(17, 0x101);
 	rec = Object_GetById(21);
-	rec->motion_flags = 0;
+	rec->motionFlags = 0;
 	for (counter = 0; counter < 20; counter++)
 	{
 		rec->y.fixed += 0x9999;
@@ -984,9 +984,9 @@ static void FieldScene_RunMiddleSequence(void)
 	Engine_ActorSetAnimation(17, 1);
 	rec2 = Object_GetById(17);
 	rec2->facing = 0xd000;
-	rec->motion_flags = 3;
-	rec->scale_x = 0x10000;
-	rec->scale_y = 0x10000;
+	rec->motionFlags = 3;
+	rec->scaleX = 0x10000;
+	rec->scaleY = 0x10000;
 	Engine_EventWait(10);
 	Event_PlayCue(107);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
@@ -1006,8 +1006,8 @@ static void FieldScene_RunMiddleSequence(void)
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(17, 10);
 	Engine_EventWait(80);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	gEventWork->transition_frames = 16;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+	gEventWork->transitionFrames = 16;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	GameFlag_Set(0x8a4);
@@ -1145,8 +1145,8 @@ static void FieldScene_BuildActorPresentationSequence(void)
 	ColorBuffer_ApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
-	gEventWork->transition_frames = 1;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+	gEventWork->transitionFrames = 1;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ColorBufferApplySource(0, 0);
@@ -1326,8 +1326,8 @@ static void FieldScene_BuildActorPresentationSequence(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
 	Engine_EventWait(60);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	gEventWork->transition_frames = 40;
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transitionFrames = 40;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(64);

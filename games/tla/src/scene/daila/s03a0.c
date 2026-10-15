@@ -23,7 +23,7 @@ static inline void Actor_JoinLeader(s32 actor)
     struct FieldActor *leader;
 
     Engine_ActorSetAnimation(actor, 2);
-    leader = Engine_ActorGet(gPartyState.current_owner);
+    leader = Engine_ActorGet(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     ObjectMotion_CommitCurrentPositionAndActivate(actor);
@@ -82,8 +82,8 @@ void Func_020003a0(void)
     Engine_EventSetMessage(msg);
     Func_02000ca8_(27, 472 << 16, 264 << 16);
     Engine_EventWait(30);
-    ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 504, 296);
-    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xa000, 0);
+    ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 504, 296);
+    ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xa000, 0);
     ObjectMotion_SetPositionAndCommit_(27, 472, 280);
     ObjectMotion_ArmCallback_(27, 0x2000, 0);
     Engine_EventWait(30);
@@ -116,10 +116,10 @@ void Func_020003a0(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(6, 0);
     Engine_EventWait(30);
-    Object_LinkPair(gPartyState.current_owner, 28, 0);
+    Object_LinkPair(gPartyState.currentOwner, 28, 0);
     Engine_EventWait(30);
     ObjectMotion_SetAngleToward(28, 27, 0);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 27, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 27, 0);
     Engine_EventWait(60);
     Engine_EventShowMessage(28, 0);
     Engine_EventWait(30);
@@ -131,7 +131,7 @@ void Func_020003a0(void)
     ObjectMotion_ArmCallback_(27, 0xc000, 0);
     Engine_EventWait(60);
     Engine_EventShowMessage(27, 0);
-    ObjectMotion_SetAngleToward(27, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(27, gPartyState.currentOwner, 0);
     Engine_EventWait(60);
     ObjectMotion_SetVariantCallback(28, 1);
     Engine_EventWait(60);
@@ -141,7 +141,7 @@ void Func_020003a0(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(27, 0);
     Engine_EventWait(30);
-    ObjectMotion_SetAngleToward(5, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(5, gPartyState.currentOwner, 0);
     Engine_EventOpenMessage(5, 0);
     if (Engine_EventChooseYesNo(Engine_PartyGetLeaderActor(), 0) == 0) {
         Engine_EventWait(30);
@@ -181,17 +181,17 @@ void Func_020003a0(void)
     Engine_EventWait(60);
     Engine_EventShowMessage(27, 0);
     ObjectMotion_SetPositionAndReset_(27, 504, 328);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 27, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 27, 0);
     ObjectMotion_SetAngleToward(5, 27, 0);
     ObjectMotion_SetAngleToward(6, 27, 0);
     ObjectMotion_SetAngleToward(28, 27, 0);
     ObjectMotion_SetPositionAndReset_(27, 456, 328);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 27, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 27, 0);
     ObjectMotion_SetAngleToward(5, 27, 0);
     ObjectMotion_SetAngleToward(6, 27, 0);
     ObjectMotion_SetAngleToward(28, 27, 0);
     ObjectMotion_SetPositionAndReset_(27, 424, 472);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 27, 0);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 27, 0);
     ObjectMotion_SetAngleToward(5, 27, 0);
     ObjectMotion_SetAngleToward(6, 27, 0);
     ObjectMotion_SetAngleToward(28, 27, 0);
@@ -209,13 +209,13 @@ void Func_020003a0(void)
     Engine_EventWait(60);
     Engine_EventShowMessage(6, 0);
     Engine_EventWait(60);
-    ObjectMotion_SetAngleToward(28, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(28, gPartyState.currentOwner, 0);
     Engine_EventWait(60);
     ObjectMotion_ArmCallback_(28, 0x4000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(28, 0);
     Engine_EventWait(60);
-    Engine_ActorSetAnimation(gPartyState.current_owner, 3);
+    Engine_ActorSetAnimation(gPartyState.currentOwner, 3);
     Engine_ActorSetAnimation(5, 3);
     Engine_ActorSetAnimation(6, 3);
     Engine_EventWait(120);

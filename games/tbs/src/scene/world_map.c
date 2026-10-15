@@ -72,13 +72,13 @@ static void Scene_RunScene371SequenceA(s32 palette);
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-#define SCENE_PHASE (gEventWork->start_transition)
+#define SCENE_PHASE (gEventWork->startTransition)
 #define ACTOR 8
 
 struct StoryDialogueWork
 {
 	u8	reserved000[370];
-	u16 story_result;
+	u16 storyResult;
 };
 
 struct StorySharedState
@@ -94,8 +94,8 @@ struct StoryVerticalEffectActor
 	s32								 y;
 	s32								 z;
 	u8								 filler14[4];
-	s32								 amplitude_x;
-	s32								 amplitude_y;
+	s32								 amplitudeX;
+	s32								 amplitudeY;
 	u8								 filler20[0x44];
 	u16								 frame;
 	u8								 filler66[2];
@@ -114,16 +114,16 @@ static void StoryProgress_TriggerEvent0808(void)
 {
 	struct EventWork *work = gEventWork;
 
-	if (gGameState.encounter_steps >= Math_Divide(work->encounter_threshold * 9, 10))
+	if (gGameState.encounterSteps >= Math_Divide(work->encounterThreshold * 9, 10))
 	{
 		if ((u32)Engine_RandomNext() < 0x8000)
 		{
 			BattleFx_SetPhaseRequest(0x808, 3);
-			work->encounter_bias = 0;
+			work->encounterBias = 0;
 		}
 		else
 		{
-			gGameState.encounter_steps = work->encounter_threshold;
+			gGameState.encounterSteps = work->encounterThreshold;
 		}
 	}
 }
@@ -131,26 +131,26 @@ static void StoryProgress_TriggerEvent0808(void)
 static void StoryProgress_TriggerEvent0809(void)
 {
 	struct GameState *state = &gGameState;
-	s32				 *steps = &state->encounter_steps;
+	s32				 *steps = &state->encounterSteps;
 	struct EventWork *work = gEventWork;
 
-	if (*steps >= Math_Divide(work->encounter_threshold * 9, 10))
+	if (*steps >= Math_Divide(work->encounterThreshold * 9, 10))
 	{
 		BattleFx_SetPhaseRequest(0x809, 42);
-		work->encounter_bias = 0;
+		work->encounterBias = 0;
 	}
 }
 
 static void StoryProgress_TriggerEvent080A(void)
 {
 	struct GameState *state = &gGameState;
-	s32				 *steps = &state->encounter_steps;
+	s32				 *steps = &state->encounterSteps;
 	struct EventWork *work = gEventWork;
 
-	if (*steps >= Math_Divide(work->encounter_threshold * 9, 10))
+	if (*steps >= Math_Divide(work->encounterThreshold * 9, 10))
 	{
 		BattleFx_SetPhaseRequest(0x80a, 24);
-		work->encounter_bias = 0;
+		work->encounterBias = 0;
 	}
 }
 
@@ -175,13 +175,13 @@ static void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 
 	if (gFrameCount & 4)
 	{
-		actor->scale_x = 0x14ccc;
-		actor->scale_y = 0x14ccc;
+		actor->scaleX = 0x14ccc;
+		actor->scaleY = 0x14ccc;
 	}
 	else
 	{
-		actor->scale_x = 0x10000;
-		actor->scale_y = 0x10000;
+		actor->scaleX = 0x10000;
+		actor->scaleY = 0x10000;
 	}
 	if (!(gFrameCount & 2))
 		return;
@@ -192,7 +192,7 @@ static void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 	Engine_AudioPlayCue(0xf6);
 	if (spark == 0)
 		return;
-	spark->motion_flags = 0;
+	spark->motionFlags = 0;
 	((struct FieldSpritePriority *)spark->sprite)->priority = 1;
 	Engine_ActorSetSpriteFlags(spark, 0);
 	Object_SetMode(spark, 1);
@@ -231,11 +231,11 @@ static s32 StoryActor_Initialize(struct FieldActor *actor)
 		return 0;
 	}
 	actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
-	actor->motion_flags = 0;
+	actor->motionFlags = 0;
 	actor->timer = 0;
 	actor->work = 0;
-	actor->scale_x = 0x8000;
-	actor->scale_y = 0x8000;
+	actor->scaleX = 0x8000;
+	actor->scaleY = 0x8000;
 	return 0;
 }
 
@@ -279,7 +279,7 @@ static s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 	struct MapRenderWork *work = gMapWork[0];
 	struct FieldSprite	 *sprite = actor->sprite;
 
-	actor->collision_flags |= 1;
+	actor->collisionFlags |= 1;
 	sprite->rotation = work->rotation;
 	return 1;
 }
@@ -288,7 +288,7 @@ static s32 StoryActor_ResetPosition(struct FieldActor *actor)
 {
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ObjectSetPartPalettes(actor, 10);
-	actor->collision_flags = 0;
+	actor->collisionFlags = 0;
 	if (Engine_GameFlagIsSet(0x8A0) != 0)
 	{
 		Engine_GameFlagSet(0x2f1);
@@ -353,15 +353,15 @@ static void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exi
 	struct FieldActor *other;
 
 	subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
-	other = Object_GetById(gGameState.selected_actor);
+	other = Object_GetById(gGameState.selectedActor);
 	work = gEventWork;
 	if (other->x.fixed < subject->x.fixed)
 	{
-		work->requested_exit = exit_before;
+		work->requestedExit = exit_before;
 	}
 	else
 	{
-		work->requested_exit = exit_after;
+		work->requestedExit = exit_after;
 	}
 	Engine_AudioPlayCue(0x7B);
 }
@@ -373,15 +373,15 @@ static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exi
 	struct FieldActor *other;
 
 	subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
-	other = Object_GetById(gGameState.selected_actor);
+	other = Object_GetById(gGameState.selectedActor);
 	work = gEventWork;
 	if (other->z.fixed < subject->z.fixed)
 	{
-		work->requested_exit = exit_before;
+		work->requestedExit = exit_before;
 	}
 	else
 	{
-		work->requested_exit = exit_after;
+		work->requestedExit = exit_after;
 	}
 	Engine_AudioPlayCue(0x7B);
 }
@@ -429,10 +429,10 @@ static void MapActor_UpdateContact(void)
 	s32				   leader_reach;
 	u32				   i;
 
-	leader = Object_GetById(gGameState.selected_actor);
+	leader = Object_GetById(gGameState.selectedActor);
 	leader_reach = leader->sprite->scale * leader->radius;
 	work = gEventWork;
-	actor = work->view_center;
+	actor = work->viewCenter;
 	left = actor->x.fixed - PIXELS(160);
 	right = actor->x.fixed + PIXELS(160);
 	top = actor->z.fixed - PIXELS(300);
@@ -476,7 +476,7 @@ static void MapActor_UpdateContact(void)
 				< reach
 			&& Engine_GameFlagIsSet(FLAG_CONTACT_BLOCKED) == 0)
 		{
-			work->touched_trigger = i + CONTACT_TRIGGER_BASE;
+			work->touchedTrigger = i + CONTACT_TRIGGER_BASE;
 		}
 	}
 }
@@ -531,8 +531,8 @@ s32 WorldMap_EnterScene(void)
 	else
 	{
 		Engine_GameFlagSet(0x144);
-		gEventWork->start_transition = 0x400;
-		gEventWork->transition_frames = 16;
+		gEventWork->startTransition = 0x400;
+		gEventWork->transitionFrames = 16;
 		Engine_TaskWait(1);
 		Engine_CameraSetSpeed(0x80000, 0x10000);
 		Engine_GameFlagClear(0x12f);
@@ -611,7 +611,7 @@ s32 WorldMap_EnterScene(void)
 			Engine_GameFlagSet(0x11c);
 			if (FieldGameFlag_GetByte(0x2f8) != 0)
 			{
-				gGameState.movement_mode = 2;
+				gGameState.movementMode = 2;
 				FieldScheduler_AddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
 			}
 			break;
@@ -622,8 +622,8 @@ s32 WorldMap_EnterScene(void)
 			FieldScene_RunActorPresentationSequence();
 			break;
 		default:
-			Object_GetById(53)->scale_x = 0x14000;
-			Object_GetById(53)->scale_y = 0x14000;
+			Object_GetById(53)->scaleX = 0x14000;
+			Object_GetById(53)->scaleY = 0x14000;
 			break;
 		}
 	}
@@ -837,8 +837,8 @@ static void FieldScene_RunActorTransferSequence(void)
 	Engine_EventWait(160);
 	actor->gravity = 0x1999;
 	actor->bounce = 0x1999;
-	actor->scale_x = 0x18000;
-	actor->scale_y = 0x18000;
+	actor->scaleX = 0x18000;
+	actor->scaleY = 0x18000;
 	actor->timer = 0;
 	actor->y.fixed = 0x400000;
 	actor->sprite->rotation = 0xf000;
@@ -858,9 +858,9 @@ static void FieldScene_RunActorTransferSequence(void)
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_EventWait(10);
 	record = Actor_Get(9);
-	record->velocity_y = 0x60000;
+	record->velocityY = 0x60000;
 	record = Object_GetById(8);
-	record->velocity_y = 0x60000;
+	record->velocityY = 0x60000;
 	Event_PlayCue(145);
 	Camera_SetSpeed(0x40000, 0x40000);
 	WorldMap_ShakeTransferLandingCamera();
@@ -1045,8 +1045,8 @@ static void WorldMap_TransferToExit102(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-	actor->scale_y = 0x14000;
-	actor->scale_x = 0x14000;
+	actor->scaleY = 0x14000;
+	actor->scaleX = 0x14000;
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(8, 0x6666, 0x3333);
@@ -1068,8 +1068,8 @@ static void WorldMap_TransferToExit103(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(8, 0x1f080000, 0xc80000);
-	actor->scale_x = 0x14000;
-	actor->scale_y = 0x14000;
+	actor->scaleX = 0x14000;
+	actor->scaleY = 0x14000;
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
@@ -1097,8 +1097,8 @@ static void WorldMap_TransferToExit104(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(8, 0x1f080000, 0xc80000);
-	actor->scale_x = 0x14000;
-	actor->scale_y = 0x14000;
+	actor->scaleX = 0x14000;
+	actor->scaleY = 0x14000;
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
@@ -1126,8 +1126,8 @@ static void WorldMap_TransferToTolbiShipInteriors(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(8, 0x1f080000, 0xc80000);
-	actor->scale_x = 0x14000;
-	actor->scale_y = 0x14000;
+	actor->scaleX = 0x14000;
+	actor->scaleY = 0x14000;
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
@@ -1155,8 +1155,8 @@ static void WorldMap_TransferToExit106(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(8, 0x1f080000, 0xc80000);
-	actor->scale_x = 0x14000;
-	actor->scale_y = 0x14000;
+	actor->scaleX = 0x14000;
+	actor->scaleY = 0x14000;
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
@@ -1191,8 +1191,8 @@ static void WorldMap_CompleteTransfer(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(8, 0x13e80000, 0x9180000);
-	actor->scale_y = 0x14000;
-	actor->scale_x = 0x14000;
+	actor->scaleY = 0x14000;
+	actor->scaleX = 0x14000;
 	Engine_TaskWait(1);
 	Engine_CameraFollowActor(8, 1);
 	Engine_EventOpenScreen();
@@ -1271,17 +1271,17 @@ static void EV90_TOUCH(void)
 		BattleFx_ScheduleRatioTransition(0x13333, 6);
 		Event_WaitForZoomTransition();
 		Battle_SetObjectFlag5bWhenMode3();
-		djinni->motion_flags = 2;
+		djinni->motionFlags = 2;
 		djinni->gravity = 0x4000;
 		djinni->speed = 0x10000;
 		djinni->acceleration = 0x10000;
-		djinni->velocity_y = 0;
-		djinni->terrain_height = 0;
+		djinni->velocityY = 0;
+		djinni->terrainHeight = 0;
 		FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
 		for (i = 0; i < 16; i++)
 		{
-			djinni->scale_x += 0x800;
-			djinni->scale_y += 0x800;
+			djinni->scaleX += 0x800;
+			djinni->scaleY += 0x800;
 			Task_Wait(1);
 		}
 		Actor_FaceActor(DJINNI, 0, 0);
@@ -1324,7 +1324,7 @@ static void EV90_TOUCH(void)
 		Actor_Jump(DJINNI, 2, 30);
 		Event_ShowMessage(DJINNI, 0);
 		i = 0;
-		djinni->motion_flags = 0;
+		djinni->motionFlags = 0;
 		FieldObject_SetPosition(djinni, x, 0x100000, z);
 		for (; i < 16; i++)
 		{
@@ -1333,9 +1333,9 @@ static void EV90_TOUCH(void)
 		}
 		Actor_SetAnimation(0, 1);
 		Event_ShowMessage(DJINNI, 0);
-		djinni->motion_flags = 2;
-		djinni->velocity_y = 0;
-		djinni->terrain_height = 0;
+		djinni->motionFlags = 2;
+		djinni->velocityY = 0;
+		djinni->terrainHeight = 0;
 		for (i = 7; i >= 0; i--)
 		{
 			djinni->facing += 0x1000;
@@ -1388,7 +1388,7 @@ static void EV90_TOUCH(void)
 	leader = Object_GetById(0);
 	if (leader != 0)
 		Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
-	djinni->velocity_y = 0xa0000;
+	djinni->velocityY = 0xa0000;
 	FieldObject_SetPosition(djinni, x, 0, z);
 	Event_Wait(30);
 	Battle_SetObjectFlag5bWhenMode3();
@@ -1461,8 +1461,8 @@ static void WorldMap_DisembarkCarriage(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
-	actor->scale_x = 0x18000;
-	actor->scale_y = 0x18000;
+	actor->scaleX = 0x18000;
+	actor->scaleY = 0x18000;
 	actor->facing = 0x4000;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -1563,15 +1563,15 @@ static void WorldMap_RunBlackOrbScene(void)
 	Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x8000, 10);
 	Engine_EventShowMessage(gWorldMapTriggerActor, 0);
 	Engine_ActorFaceDirection(0, 0, 20);
-	Object_GetById(gWorldMapTriggerActor)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(gWorldMapTriggerActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(gWorldMapTriggerActor, 0x178c, 0xd48);
 	Engine_EventWait(1);
-	Object_GetById(gWorldMapTriggerActor)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
-	Object_GetById(gWorldMapTriggerActor)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(gWorldMapTriggerActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
 	Engine_EventWait(1);
-	Object_GetById(gWorldMapTriggerActor)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ItemShowFound(242, 3);
 	Engine_PartyGiveItem(242, 0);
 	Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
@@ -1583,8 +1583,8 @@ static void WorldMap_RunBlackOrbScene(void)
 	Engine_EventWait(20);
 	Engine_GameFlagSet(0x234);
 	Engine_GameFlagSet(0x9bf);
-	gGameState.saved_scene = (s32)&SceneId_WorldMap;
-	gGameState.saved_entrance = 78;
+	gGameState.savedScene = (s32)&SceneId_WorldMap;
+	gGameState.savedEntrance = 78;
 	Engine_EventEnd();
 }
 
@@ -1668,7 +1668,7 @@ static void EV96_SEARCH(void)
 	Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
 	if (Engine_GameFlagIsSet(0x234) != 0)
 	{
-		((struct StoryDialogueWork *)gEventWork)->story_result = 1;
+		((struct StoryDialogueWork *)gEventWork)->storyResult = 1;
 	}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else
@@ -1727,13 +1727,13 @@ static void EV96_SCRIPT(void)
 	{
 		u8 *motion;
 
-		orb->motion_flags = 0;
+		orb->motionFlags = 0;
 		sprite = orb->sprite;
 		sprite->flags = 0;
-		sprite->part_count = 0;
-		sprite->full_color = 0;
+		sprite->partCount = 0;
+		sprite->fullColor = 0;
 		sprite->palette = 0;
-		/* FAKEMATCH: a second clear of motion_flags through a byte pointer.
+		/* FAKEMATCH: a second clear of motionFlags through a byte pointer.
          * Post-reload cse removes it as a no-op (the sprite stores are in
          * another alias set, so the first store's value is still known),
          * and the first store survives flow's dead-store pass because the
@@ -1745,11 +1745,11 @@ static void EV96_SCRIPT(void)
          * first store instead and leaves the clear at the end (differ 6). Held as
          * union FieldObject, as lalivero.c holds the Black Orb, the
          * plain store still differs 20 (2026-10-13). */
-		motion = &orb->motion_flags;
+		motion = &orb->motionFlags;
 		*motion = 0;
 		buffer = Heap_Allocate(17, 0x608);
 		Item_LoadIcon(ITEM_BLACK_ORB);
-		Vram_Load(sprite->vram_block, 128, buffer + 0x400);
+		Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
 		Heap_Release(17);
 		Event_Wait(20);
 		orb->update = (void (*)(union FieldObject *))StoryActor_ConfigureSpawnedObject;
@@ -1788,7 +1788,7 @@ static void EV96_SCRIPT(void)
 	Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
 	Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 20);
 	Actor_SetSpeed(gWorldMapTriggerActor, 0x10000, 0x8000);
-	Object_GetById(SITE)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(SITE)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Actor_SetAnimation(SITE, 2);
 	FieldObject_SetPosition(site, 0x176d0000, 0, 0xd600000);
 	Engine_ObjectCommitPosition(site);
@@ -1840,7 +1840,7 @@ u16 gWorldMapBlend;
 
 static void FieldScene_RunActorPresentationSequence(void)
 {
-	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+	PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
 	Engine_EventBegin();
 	BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -1849,9 +1849,9 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
 	BattleFx_ScheduleRatioTransition(0x18000, 16);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	ColorBuffer_ApplyTarget(0x10003, 1);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventOpenScreen();
 	Event_WaitForZoomTransition();
 	Battle_SetObjectFlag5bWhenMode3();
@@ -1960,7 +1960,7 @@ static void StoryScene_StartTransition(void)
 	Engine_ColorBufferApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(2);
-	gEventWork->transition_frames = 1;
+	gEventWork->transitionFrames = 1;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -2000,9 +2000,9 @@ static void StoryScene_UpdateTransitionEffect(void)
 
 		sprite->flags = 0;
 		sprite->priority = 2;
-		object->motion_flags = 0;
-		object->scale_x = scale;
-		object->scale_y = scale;
+		object->motionFlags = 0;
+		object->scaleX = scale;
+		object->scaleY = scale;
 		Object_SetMode(object, 1);
 		Engine_ObjectSetScript(object, gTransitionSparkScript);
 	}
@@ -2078,27 +2078,27 @@ static s32 StoryScene_ComputeOpposingSlotDelta(void)
 
 static s32 StoryReward_LookupBySelection(u32 selection)
 {
-	s32 flag_base = 0;
+	s32 flagBase = 0;
 	u32 offset;
 
 	switch (selection)
 	{
 	case 0:
-		flag_base = 0x92C;
+		flagBase = 0x92C;
 		break;
 	case 1:
-		flag_base = 0x935;
+		flagBase = 0x935;
 		break;
 	case 2:
-		flag_base = 0x917;
+		flagBase = 0x917;
 		break;
 	case 3:
-		flag_base = 0x990;
+		flagBase = 0x990;
 		break;
 	}
 	for (offset = 0; offset < 9; offset++)
 	{
-		if (Engine_GameFlagIsSet(flag_base + offset) != 0)
+		if (Engine_GameFlagIsSet(flagBase + offset) != 0)
 			return gWorldMapRewards[offset];
 	}
 	return 0;
@@ -2118,8 +2118,8 @@ static void WorldMap_SpawnActorEightPuff(void)
 		222, leader->x.fixed - 0x200000, leader->y.fixed, leader->z.fixed - 0x100000);
 	if (obj == 0)
 		return;
-	obj->scale_x = 0x8000;
-	obj->scale_y = 0x8000;
+	obj->scaleX = 0x8000;
+	obj->scaleY = 0x8000;
 	spr = obj->sprite;
 	if (((u32)Engine_RandomNext() * 2 >> 16))
 	{
@@ -2137,8 +2137,8 @@ static void WorldMap_SpawnActorEightPuff(void)
 	}
 	spr->flags = 0;
 	spr->priority = leader->sprite->priority;
-	obj->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-	obj->motion_flags = leader->motion_flags;
+	obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	obj->motionFlags = leader->motionFlags;
 	ObjectGroup_SetChildValue(obj, 9);
 	Object_SetMode(obj, 2);
 	Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
@@ -2153,8 +2153,8 @@ static void WorldMap_RunOpeningRise(void)
 	Engine_EventWait(60);
 	Engine_EventBegin();
 	BattleFx_ScheduleRatioTransition(0x9999, 1);
-	actor->scale_x = 0x13333;
-	actor->scale_y = 0x13333;
+	actor->scaleX = 0x13333;
+	actor->scaleY = 0x13333;
 	Engine_CameraFollowActor(8, 1);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -2166,14 +2166,14 @@ static void WorldMap_RunOpeningRise(void)
 	actor->timer = 0;
 	Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
 	FieldScheduler_AddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	ColorBuffer_ApplyTarget(0x10003, 1);
-	gEventWork->transition_frames = 32;
+	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
 	Engine_EventWait(120);
 	BattleFx_ScheduleRatioTransition(0x16666, 0x12c);
 	Engine_EventWait(0x10e);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	PLTT_BACKDROP = 0x7fff;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -2187,7 +2187,7 @@ static void StoryScene_UpdateSelectedActorProgress(void)
 	struct EventWork  *scene;
 	s32				   progress;
 
-	actor = Object_GetById(gGameState.selected_actor);
+	actor = Object_GetById(gGameState.selectedActor);
 	scene = gEventWork;
 	actor->facing = (gFrameCount << 12);
 
@@ -2196,7 +2196,7 @@ static void StoryScene_UpdateSelectedActorProgress(void)
 	{
 		if (progress == 1)
 		{
-			scene->raised_trigger = 99;
+			scene->raisedTrigger = 99;
 		}
 		else if (Engine_GameFlagIsSet(0x106) == 0)
 		{
@@ -2213,7 +2213,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 	struct FieldActor *record;
 	s32				   id;
 
-	id = gGameState.selected_actor;
+	id = gGameState.selectedActor;
 	actor = Object_GetById(id);
 	rec2 = GameFlag_IsSet(0x2f0);
 	if (rec2 == 0)
@@ -2229,16 +2229,16 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 		Engine_ActorWaitForMove(id);
 		Event_PlayCue(244);
 		FieldScheduler_AddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
-		actor->motion_flags = rec2;
+		actor->motionFlags = rec2;
 		Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
 		Engine_ActorWaitForMove(id);
-		actor->velocity_y = rec2;
-		actor->motion_flags = 4;
-		gGameState.movement_mode = 2;
+		actor->velocityY = rec2;
+		actor->motionFlags = 4;
+		gGameState.movementMode = 2;
 		GameFlag_Set(0x2f0);
 		FieldGameFlag_SetByte(0x2f8, 180);
 		Engine_EventEnd();
-		((struct EventRuntime *)gEventWork)->value_17c = rec2;
+		((struct EventRuntime *)gEventWork)->value17c = rec2;
 	}
 }
 
@@ -2254,11 +2254,11 @@ static void EV54_SCRIPT(void)
 
 static void EV54_PSYNERGY(void)
 {
-	struct FieldActor *selected_actor;
+	struct FieldActor *selectedActor;
 
-	if (gEventWork->raised_trigger == 99)
+	if (gEventWork->raisedTrigger == 99)
 	{
-		gEventWork->raised_trigger = 0;
+		gEventWork->raisedTrigger = 0;
 	}
 	Engine_GameFlagClear(0x2f0);
 	Engine_GameFlagSet(0x2f1);
@@ -2266,13 +2266,13 @@ static void EV54_PSYNERGY(void)
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(98, 7);
-	selected_actor = Object_GetById(gGameState.selected_actor);
-	selected_actor->motion_flags = 2;
+	selectedActor = Object_GetById(gGameState.selectedActor);
+	selectedActor->motionFlags = 2;
 }
 
 static void EV99_RAISED(void)
 {
-	struct FieldActor *actor = Actor_Get(gGameState.selected_actor);
+	struct FieldActor *actor = Actor_Get(gGameState.selectedActor);
 	struct FieldActor *other = Actor_Get(54);
 	s32				   frames;
 
@@ -2280,15 +2280,15 @@ static void EV99_RAISED(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Event_PlayCue(219);
 	Engine_ActorSetSpriteFlags(actor, 0);
-	other->motion_flags = 0;
-	actor->motion_flags = 0;
-	actor->velocity_y = 0;
-	actor->unknown_5d[4] = 1;
-	other->unknown_5d[4] = 1;
+	other->motionFlags = 0;
+	actor->motionFlags = 0;
+	actor->velocityY = 0;
+	actor->unk5d[4] = 1;
+	other->unk5d[4] = 1;
 	for (frames = 59; frames >= 0; --frames)
 	{
-		actor->velocity_y += 0x3333;
-		other->velocity_y += 0x3333;
+		actor->velocityY += 0x3333;
+		other->velocityY += 0x3333;
 		Engine_TaskWait(1);
 	}
 	Engine_EventCloseScreen();
@@ -2320,7 +2320,7 @@ static void FieldScene_RunLateSequence(void)
 	s32				   sy;
 	u32				   mode;
 
-	record = Actor_Get(gGameState.selected_actor);
+	record = Actor_Get(gGameState.selectedActor);
 	sx = record->x.part.pixel;
 	sy = record->z.part.pixel;
 	if (gFrameCount % 3 == 0)
@@ -2358,8 +2358,8 @@ static void Scene_RunScene371SequenceA(s32 palette)
 	FieldScheduler_AddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
 	Engine_EventBegin();
 	QueueFrame(buffer, 0x3a80);
-	Object_GetById(gGameState.selected_actor)->active = 0;
-	gEventWork->transition_frames = 16;
+	Object_GetById(gGameState.selectedActor)->active = 0;
+	gEventWork->transitionFrames = 16;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_AudioPlayCue(246);

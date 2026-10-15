@@ -5,40 +5,40 @@
 #include "layout_guard.h"
 
 struct SaveSummary {
-    u8 slot_header[16];
+    u8 slotHeader[16];
     u8 name[12];
     u8 level;
-    u8 class_id;
+    u8 classId;
     u16 area;
-    u32 play_time;
+    u32 playTime;
     u32 coins;
     u8 djinn[4];
     s8 party[5];
-    s8 send_flag;
-    s8 flag_count;
-    s8 has_flag_34;
-    u8 palette_glow;
-    u8 palette_glow_sub;
+    s8 sendFlag;
+    s8 flagCount;
+    s8 hasFlag34;
+    u8 paletteGlow;
+    u8 paletteGlowSub;
     u16 frames;
-    u8 unknown_38[4];
+    u8 unk38[4];
     u32 checksum;
 };
 
 struct SaveWorkspace {
     u8 occupied[15];
-    u8 record_id[15];
+    u8 recordId[15];
     u16 sequence[15];
     u8 slot[0x3000];
     struct SaveSummary summary[3];
     struct SaveSummary extra;
     void (*progress)(s32 step);
-    u16 sector_count;
-    u16 sector_total;
+    u16 sectorCount;
+    u16 sectorTotal;
 };
 
 struct SaveSlotHeader {
     u8 signature[7];
-    u8 record_id;
+    u8 recordId;
     u16 checksum;
     u16 sequence;
     u8 reserved[4];
@@ -51,6 +51,6 @@ LAYOUT_OFFSET_GUARD(SaveWorkspace_Extra, struct SaveWorkspace, extra, 0x30fc);
 LAYOUT_SIZE_GUARD(SaveWorkspace_Size, struct SaveWorkspace, 0x3144);
 LAYOUT_SIZE_GUARD(SaveSlotHeader_Size, struct SaveSlotHeader, 0x10);
 
-u32 SaveState_FindLatestSlot(s32 record_id);
+u32 SaveState_FindLatestSlot(s32 recordId);
 
 #endif

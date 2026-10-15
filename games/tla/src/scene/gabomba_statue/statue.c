@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 
 struct GateEventWork {
-    u8 unknown_000[362];
-    u16 gate_timer;
+    u8 unk000[362];
+    u16 gateTimer;
 };
 
 struct FieldPart {
@@ -12,7 +12,7 @@ struct FieldPart {
 };
 
 struct FieldAnimation {
-    u8 unknown_00[40];
+    u8 unk00[40];
     struct FieldPart *part;
 };
 
@@ -35,7 +35,7 @@ void Func_02001a6c(s32 value)
 {
     Func_020043a4(value);
     if (value == 1)
-        ((struct GateEventWork *)Ram_HeapSlots->event_work)->gate_timer = 200;
+        ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
 }
 
 void Func_02001a8c(void)
@@ -47,14 +47,14 @@ void Func_02001a8c(void)
     Battle_WaitMode0(20);
     Func_02005854(214);
     Func_02005624(object, 5);
-    object->scale_y = 0x10000;
+    object->scaleY = 0x10000;
     Func_020056bc();
 }
 
 void Func_02001ac0(void)
 {
     if (Func_020053a0() == 0)
-        ((struct GateEventWork *)Ram_HeapSlots->event_work)->gate_timer = 201;
+        ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 201;
 }
 
 void Func_02001adc(s32 id)
@@ -62,7 +62,7 @@ void Func_02001adc(s32 id)
     Func_02005784(id);
     Object_SetPartAttribute(Object_GetById(id), 15);
     ObjectMotion_SetActionVariant(id, 1);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02001b0c(void)
@@ -84,7 +84,7 @@ next:
         struct ObjectRuntime *object = Object_GetById(id);
 
         Func_02001adc(id);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         object->y = 0x240000;
         i++;
     }
@@ -103,7 +103,7 @@ next:
         struct ObjectRuntime *object = Object_GetById(id);
 
         Func_02001adc(id);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         object->y = 0x240000;
         i++;
     }
@@ -115,7 +115,7 @@ void Func_02001b98(void)
 {
     s32 value = 16;
     s32 open = 0;
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
     s32 i;
 
     if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
@@ -127,7 +127,7 @@ next:
     {
         struct ObjectRuntime *object = Object_GetById(i);
 
-        if (object != NULL && object->animation_kind == 1) {
+        if (object != NULL && object->animationKind == 1) {
             struct FieldPart *part = ((struct FieldAnimation *)object->animation)->part;
 
             if (part != NULL) {
@@ -141,7 +141,7 @@ next:
                     ObjectDispatch_ApplyValueToChildren(object, value);
                     break;
                 case 407:
-                    object->movement_state = open;
+                    object->movementState = open;
                     break;
                 }
             }

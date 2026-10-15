@@ -90,8 +90,8 @@ s32 SuhallaGate_EnterScene(void)
 
 	if (Engine_GameFlagIsSet(0x89f))
 	{
-		gGameState.saved_scene = (s32)&SceneId_LunpaSuhalla;
-		gGameState.saved_entrance = 10;
+		gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
+		gGameState.savedEntrance = 10;
 	}
 	scene = gGameState.scene;
 	if (scene == (s32)&SceneId_SuhallaGate1)
@@ -112,20 +112,20 @@ s32 SuhallaGate_EnterScene(void)
 			if (Engine_GameFlagIsSet(0x8fb))
 			{
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-				gGameState.retreat_scene = (s32)&SceneId_SuhallaGate1;
+				gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
 #else
-				gGameState.retreat_scene = scene;
+				gGameState.retreatScene = scene;
 #endif
-				gGameState.retreat_entrance = 1;
+				gGameState.retreatEntrance = 1;
 			}
 			if (Engine_GameFlagIsSet(0x8fc))
 			{
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-				gGameState.retreat_scene = (s32)&SceneId_SuhallaGate1;
+				gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
 #else
-				gGameState.retreat_scene = scene;
+				gGameState.retreatScene = scene;
 #endif
-				gGameState.retreat_entrance = 5;
+				gGameState.retreatEntrance = 5;
 			}
 			Engine_GameFlagClear(0x12f);
 		}
@@ -145,7 +145,7 @@ s32 SuhallaGate_EnterScene(void)
 		Engine_ActorSetAnimation(10, 3);
 		Engine_ActorSetAnimation(11, 4);
 		Engine_ActorSetAnimation(12, 3);
-		Object_GetById(15)->scale_y = 0x19999;
+		Object_GetById(15)->scaleY = 0x19999;
 		Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
 	}
 	return 0;
@@ -156,8 +156,8 @@ static void EV03_TOUCH(void)
 	s32 arg;
 	s32 v5;
 
-	arg = gEventWork->touched_trigger;
-	Actor_Get(0)->motion_flags = 0;
+	arg = gEventWork->touchedTrigger;
+	Actor_Get(0)->motionFlags = 0;
 	v5 = 2;
 	Event_PlayCue(158);
 	Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
@@ -170,7 +170,7 @@ static void EV03_TOUCH(void)
 
 static void Dialogue_ShowMessages8fbAnd8fc(void)
 {
-	s16 token = gEventWork->touched_trigger;
+	s16 token = gEventWork->touchedTrigger;
 
 	Engine_AudioPlayCue(123);
 	Engine_GameFlagClear(0x8FB);

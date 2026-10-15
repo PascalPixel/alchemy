@@ -53,9 +53,9 @@ static void SceneState_ApplyTwoRects(void);
 
 struct ShrineWork
 {
-	u8	unknown_0000[0xe5a];
+	u8	unk0000[0xe5a];
 	u16 colors[3];
-	u8	unknown_0e60[0x2a00 - 0xe60];
+	u8	unk0e60[0x2a00 - 0xe60];
 	u8	lamps[4];
 };
 
@@ -63,9 +63,9 @@ static s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
 	struct FacingObject *target;
 
-	target = Object_GetById(object->unknown_64);
+	target = Object_GetById(object->unk64);
 	object->facing = CalculateFacingAngle(
-		target->position_z - object->position_z, target->position_x - object->position_x);
+		target->positionZ - object->positionZ, target->positionX - object->positionX);
 	return 0;
 }
 
@@ -223,10 +223,10 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 					Actor_SetSpeed(8, 0x8000, 0x4000);
 					Engine_ActorFaceDirection(8, 0, 0);
 					Engine_EventWait(10);
-					Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+					Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
 					Engine_ActorWalkToAndWait(8, 152, 120);
 					Engine_EventWait(1);
-					Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
+					Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
 					Engine_EventWait(20);
 					Engine_ActorSetAnimationAndWait(8, 3);
 					Engine_EventWait(20);
@@ -304,7 +304,7 @@ static void EV10_TALK(void)
 
 s32 Sanctum_ApplyEntryState(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_ColorBufferApplyTarget(0x10000, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_EventWait(1);
@@ -404,7 +404,7 @@ static void EV01_TOUCH(void)
 static s32 Sanctum_MatchLeaderPriority(struct FieldActor *actor)
 {
 	actor->sprite->priority = Object_GetById(0)->sprite->priority;
-	actor->sprite->second_priority = Object_GetById(0)->sprite->priority;
+	actor->sprite->secondPriority = Object_GetById(0)->sprite->priority;
 	return 0;
 }
 
@@ -423,8 +423,8 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_FaceActor(0xa, ACTOR_PARTY_LEADER, 0);
 		Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
 		Engine_CameraWaitForMove();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		gEventWork->transition_frames = 0x40;
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+		gEventWork->transitionFrames = 0x40;
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(0x78);
@@ -436,7 +436,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(1);
 		Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
 		Engine_CameraWaitForMove();
-		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+		gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		FieldScene_RunPairedActorChoreography();
@@ -930,7 +930,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0x14);
-		Object_GetById(0xa)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(0xa)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		Object_GetById(0xa)->update =
 			(void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
 	}
@@ -1046,9 +1046,9 @@ static void FieldScene_RunActorUpdateSequence(void)
 		Sanctum_SpawnActorSpark(13);
 		Engine_EventWait(4);
 		record = Object_GetById(13);
-		record->scale_x += -0x28f;
+		record->scaleX += -0x28f;
 		record = Object_GetById(13);
-		record->scale_y += -0x28f;
+		record->scaleY += -0x28f;
 	}
 	Event_PlayCue(0x120);
 	Actor_SetChildValue(13, 0);
@@ -1382,7 +1382,7 @@ static void Sanctum_CopyActorPose(void)
 		}
 	}
 	p5->dirty = 1;
-	Object_GetById(14)->priority_flags &= 254;
+	Object_GetById(14)->priorityFlags &= 254;
 	((struct FieldSprite *)p5)->priority = 2;
 }
 
@@ -1398,29 +1398,29 @@ static void Sanctum_FollowLeaderOffset(struct FieldActor *actor)
 	struct FieldActor *leader;
 
 	leader = Object_GetById(8);
-	actor->target_x = actor->x.fixed = leader->x.fixed;
-	actor->target_y = actor->y.fixed = leader->y.fixed;
-	actor->target_z = actor->z.fixed = leader->z.fixed - 0x20000;
+	actor->targetX = actor->x.fixed = leader->x.fixed;
+	actor->targetY = actor->y.fixed = leader->y.fixed;
+	actor->targetZ = actor->z.fixed = leader->z.fixed - 0x20000;
 	switch (gFrameCount & 3)
 	{
 	case 0:
-		actor->target_x = actor->x.fixed = leader->x.fixed - 0x38000;
+		actor->targetX = actor->x.fixed = leader->x.fixed - 0x38000;
 		break;
 	case 1:
-		actor->target_x = actor->x.fixed = leader->x.fixed + 0x30000;
+		actor->targetX = actor->x.fixed = leader->x.fixed + 0x30000;
 		break;
 	case 2:
-		actor->target_y = actor->y.fixed = leader->y.fixed + 0x20000;
+		actor->targetY = actor->y.fixed = leader->y.fixed + 0x20000;
 		break;
 	case 3:
-		actor->target_z = actor->z.fixed = leader->z.fixed;
+		actor->targetZ = actor->z.fixed = leader->z.fixed;
 		break;
 	}
 }
 
 static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 {
-	struct FieldActor *anchor = obj->linked_object;
+	struct FieldActor *anchor = obj->linkedObject;
 	u16				  *angle = &obj->timer;
 	u16				   theta = *angle;
 	s32				   x;
@@ -1433,8 +1433,8 @@ static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 	z = anchor->z.fixed + Engine_MathSin(theta) * 10;
 	tmp = obj->x.fixed;
 	obj->z.fixed = z;
-	obj->target_z = z;
-	obj->target_x = tmp;
+	obj->targetZ = z;
+	obj->targetX = tmp;
 
 	*angle = (*angle + obj->work);
 }
@@ -1458,7 +1458,7 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1)
 			{
 				s32 zero = 0;
 
-				rec8->motion_flags = zero;
+				rec8->motionFlags = zero;
 				rec8->timer = zero;
 			}
 			rec8->work = p8;
@@ -1467,7 +1467,7 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1)
 				u16 v = 0;
 				p5->flags = v;
 			}
-			rec8->linked_object = rec;
+			rec8->linkedObject = rec;
 			p5->priority = rec->sprite->priority;
 		}
 	}
@@ -1547,16 +1547,16 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_ActorStartRepeatedMotion(0, 1);
-	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
-	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkToAndWait(1, 200, 168);
 	Engine_EventWait(1);
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
-	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
 	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(GARET, 8, 0);
@@ -1775,19 +1775,19 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_
 		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconGrowScript);
 		spr = obj->sprite;
 		spr->flags = zero;
-		spr->part_count = zero;
-		spr->full_color = 0;
+		spr->partCount = zero;
+		spr->fullColor = 0;
 		spr->palette = 0;
-		obj->velocity_y = 0x20000;
+		obj->velocityY = 0x20000;
 		obj->gravity = 0x4000;
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
 		Ui_PrepareTransferForItem(item);
-		Engine_VramLoad(spr->vram_block, 128, buf + 0x400);
+		Engine_VramLoad(spr->vramBlock, 128, buf + 0x400);
 		Runtime_ReleaseHeapBlock(17);
 		for (i = 0; i < 60; i++)
 		{
-			if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-				obj->motion_flags = 0;
+			if ((u32)(obj->velocityY + 255) <= 0x1fe)
+				obj->motionFlags = 0;
 			Engine_TaskWait(1);
 		}
 		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconEndScript);
@@ -1801,7 +1801,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object)
 	s32				   timer;
 
 	spark->y.fixed += spark->timer << 12;
-	spark->target_y = spark->y.fixed;
+	spark->targetY = spark->y.fixed;
 	scale = 0;
 	switch (((s16)spark->work >> 2) & 3)
 	{
@@ -1816,8 +1816,8 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object)
 		scale = 0x9999;
 		break;
 	}
-	spark->scale_x = scale;
-	spark->scale_y = scale;
+	spark->scaleX = scale;
+	spark->scaleY = scale;
 	timer = spark->work - 1;
 	spark->work = timer;
 	if ((s16)timer <= 0)
@@ -1844,7 +1844,7 @@ static void Sanctum_SpawnActorSpark(s32 id)
 	if (obj == 0)
 		return;
 	spr = obj->sprite;
-	obj->motion_flags = 0;
+	obj->motionFlags = 0;
 	obj->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
 	obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
 	obj->update = Sanctum_UpdateRisingSpark;

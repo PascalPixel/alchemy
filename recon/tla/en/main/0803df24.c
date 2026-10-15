@@ -30,7 +30,7 @@ void Func_0803e488(struct SelectionScreen *state, s32 index);
 
 void MenuSelection_DrawFrame(void)
 {
-    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionScreen *state = Ram_HeapSlots->menuWork;
     struct SelectionSprite *cursor_entry = &state->records[14].sprite;
     struct SelectionNode *cursor = &state->records[14];
     struct SelectionNode *transfer = &state->records[15];
@@ -50,29 +50,29 @@ void MenuSelection_DrawFrame(void)
         e->x = node->x;
         e->y = node->y;
         slot = 240;
-        if (state->vertical_scroll != 0) {
-            e->y += state->vertical_scroll;
-        } else if (node->x != node->target_x) {
+        if (state->verticalScroll != 0) {
+            e->y += state->verticalScroll;
+        } else if (node->x != node->targetX) {
             if (node->dx > 0) {
-                if (node->x + node->dx > node->target_x) {
-                    node->x = node->target_x;
+                if (node->x + node->dx > node->targetX) {
+                    node->x = node->targetX;
                 } else {
                     node->x = node->x + node->dx;
                 }
             } else {
-                if (node->x + node->dx < node->target_x) {
-                    node->x = node->target_x;
+                if (node->x + node->dx < node->targetX) {
+                    node->x = node->targetX;
                 } else {
                     node->x = node->x + node->dx;
                 }
             }
             e->x = node->x;
-        } else if (cnt == state->cursor_index) {
+        } else if (cnt == state->cursorIndex) {
             slot = 241;
             if (cursor->kind != 0) {
                 if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
-                    cursor->target_x = pos.x;
-                    cursor->target_y = pos.y;
+                    cursor->targetX = pos.x;
+                    cursor->targetY = pos.y;
                     if (cursor->scale == 0) {
                         cursor->x = pos.x;
                         cursor->y = pos.y;
@@ -111,7 +111,7 @@ void MenuSelection_DrawFrame(void)
         te->tile = transfer->tile;
         te->x = node->x - 4;
         te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
-        if (transfer->scale != transfer->scale_end) {
+        if (transfer->scale != transfer->scaleEnd) {
             state->matrix[0] = transfer->scale;
             state->matrix[1] = transfer->scale;
             state->matrix[2] = 0;
@@ -119,7 +119,7 @@ void MenuSelection_DrawFrame(void)
             te->affine = 3;
             te->x = te->x + 0xfff0;
             te->y = te->y + 0xf0;
-            transfer->scale = transfer->scale + transfer->scale_step;
+            transfer->scale = transfer->scale + transfer->scaleStep;
         }
         if (GameFlag_Test(0x103) != 0) {
             te->mode = 1;
@@ -131,16 +131,16 @@ void MenuSelection_DrawFrame(void)
     node = state->path;
     while (node != 0) {
         e = &node->sprite;
-        if (node->x != node->target_x) {
+        if (node->x != node->targetX) {
             node->x = node->x + node->dx;
         }
-        if (node->y != node->target_y) {
+        if (node->y != node->targetY) {
             node->y = node->y + node->dy;
         }
         e->x = node->x;
         e->y = node->y;
-        if (node->scale != node->scale_end) {
-            node->scale = node->scale + node->scale_step;
+        if (node->scale != node->scaleEnd) {
+            node->scale = node->scale + node->scaleStep;
             state->matrix[0] = node->scale;
             state->matrix[1] = node->scale;
             state->matrix[2] = 0;
@@ -172,19 +172,19 @@ void MenuSelection_DrawFrame(void)
 
             cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
         }
-        if (cursor->target_x != cursor->x) {
-            tmp = (cursor->target_x - cursor->x) >> 1;
+        if (cursor->targetX != cursor->x) {
+            tmp = (cursor->targetX - cursor->x) >> 1;
             if (tmp != 0) {
                 cursor->x = cursor->x + tmp;
             } else {
-                cursor->x = cursor->target_x;
+                cursor->x = cursor->targetX;
             }
         }
-        if (cursor->target_y != cursor->y) {
-            if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0) {
+        if (cursor->targetY != cursor->y) {
+            if ((tmp = (cursor->targetY - cursor->y) >> 1) != 0) {
                 cursor->y = cursor->y + tmp;
             } else {
-                cursor->y = cursor->target_y;
+                cursor->y = cursor->targetY;
             }
         }
         cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;

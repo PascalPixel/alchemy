@@ -14,7 +14,7 @@ void Func_020001cc(void)
 
 void Func_020001ec(void)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
     if (!GameFlag_Test(3999)) {
@@ -22,10 +22,10 @@ void Func_020001ec(void)
         if (object->x >> 20 == 28 && object->z >> 20 == 36) {
             Func_02000d00();
             Func_02000dd0(0);
-            Func_02000d90(gPartyState.current_owner, 258);
-            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, -16, 0);
-            object->velocity_y = 0x60000;
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Func_02000d90(gPartyState.currentOwner, 258);
+            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, -16, 0);
+            object->velocityY = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
             Func_02000d08();
         }
     }
@@ -33,7 +33,7 @@ void Func_020001ec(void)
 
 void Func_0200027c(void)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
     if (!GameFlag_Test(4000)) {
@@ -41,10 +41,10 @@ void Func_0200027c(void)
         if (object->x >> 20 == 29 && object->z >> 20 == 34) {
             Func_02000d00();
             Func_02000dd0(0);
-            Func_02000d90(gPartyState.current_owner, 258);
-            Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.current_owner, 0, -16);
-            object->velocity_y = 0x60000;
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Func_02000d90(gPartyState.currentOwner, 258);
+            Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, gPartyState.currentOwner, 0, -16);
+            object->velocityY = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
             Func_02000d08();
         }
     }
@@ -67,7 +67,7 @@ void Func_0200034c(void)
 
 void Func_0200036c(void)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
+    struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
 
     Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
     if (!GameFlag_Test(4001)) {
@@ -75,10 +75,10 @@ void Func_0200036c(void)
         if (object->x >> 20 == 10 && object->z >> 20 == 20) {
             Func_02000d00();
             Func_02000dd0(0);
-            Func_02000d90(gPartyState.current_owner, 258);
-            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, 16, 0);
-            object->velocity_y = 0x60000;
-            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Func_02000d90(gPartyState.currentOwner, 258);
+            ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 16, 0);
+            object->velocityY = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
             Func_02000d08();
         }
     }
@@ -96,13 +96,13 @@ void Func_02000418(void)
 
 void Func_02000438(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     Func_02000d00();
     Func_02000dd0(0);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
     Func_02000e08(123);
     Func_02000db0(*(s16 *)(work + 340));
     Event_FinishScreenTransition();

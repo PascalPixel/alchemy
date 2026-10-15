@@ -3,7 +3,7 @@
 #include "object_runtime.h"
 
 struct ControlEvent {
-    u8 unknown_000[362];
+    u8 unk000[362];
     u16 cue;
 };
 
@@ -33,7 +33,7 @@ void Func_080e7818(void)
 void Func_080e781c(void)
 {
     ObjectTable_Get(EventRuntime_GetControlledOwner());
-    ((struct ControlEvent *)Ram_HeapSlots->event_work)->cue = 0xfc89;
+    ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 
 void Func_080e783c(void)

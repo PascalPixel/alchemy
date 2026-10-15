@@ -64,7 +64,7 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames)
 static inline void LeaderAnimate(s32 animation, s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer; called as value-returning, the animation and frames are set before the owner is loaded (differ 4 as a void call). */
-    ((s32 (*)(s32, s32, s32))Func_0200226c)(gPartyState.current_owner, animation, frames);
+    ((s32 (*)(s32, s32, s32))Func_0200226c)(gPartyState.currentOwner, animation, frames);
 }
 
 const u8 *Func_020000b4(void)
@@ -87,7 +87,7 @@ const u8 *Func_020000f0(void)
 
 void Func_0200012c(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -110,7 +110,7 @@ void Func_0200012c(s32 actor)
 
 void Func_020001a8(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -131,7 +131,7 @@ void Func_020001a8(s32 actor)
 
 void Func_02000220(s32 actor)
 {
-    u16 facing = Object_GetById(gPartyState.current_owner)->angle;
+    u16 facing = Object_GetById(gPartyState.currentOwner)->angle;
 
     /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
     do {
@@ -188,11 +188,11 @@ void Func_02000358(void)
 
 void Func_02000378(void)
 {
-    void *work = Ram_HeapSlots->event_work;
+    void *work = Ram_HeapSlots->eventWork;
 
     Func_020021c4();
     Func_020022bc(0);
-    ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(15, gPartyState.currentOwner, 0);
     if (FlagCheck(0x92c)) {
         Func_02002244((s32)MsgWithThisDancing);
         Func_02002254(15, 0);
@@ -230,7 +230,7 @@ void Func_02000458(void)
 {
     Func_020021c4();
     Func_020022bc(0);
-    ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
+    ObjectMotion_SetAngleToward(15, gPartyState.currentOwner, 0);
     if (FlagCheck(0x92b)) {
         Func_02002244((s32)MsgTryingAgainWhat);
         Func_02002254(15, 0);

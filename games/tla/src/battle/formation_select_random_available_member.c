@@ -2,7 +2,7 @@
 #include "battle_formation.h"
 #include "system.h"
 
-s32 BattleGroupRandom(s32 record_id)
+s32 BattleGroupRandom(s32 recordId)
 {
     s32 *choices_base;
     s32 choices[5];
@@ -14,13 +14,13 @@ s32 BattleGroupRandom(s32 record_id)
     u32 count;
 
     count = 0;
-    if ((u32)record_id >= 660)
-        record_id = 1;
+    if ((u32)recordId >= 660)
+        recordId = 1;
 
-    record = &BattleFormation_Records[record_id];
+    record = &BattleFormation_Records[recordId];
     choices_base = choices;
-    member_id = record->member_ids;
-    maximum_count = record->maximum_counts;
+    member_id = record->memberIds;
+    maximum_count = record->maximumCounts;
     choice_cursor = choices_base;
     remaining = 4;
     /* FAKEMATCH: the plain order loads the record table before scaling the id. */

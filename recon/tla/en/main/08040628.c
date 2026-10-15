@@ -15,9 +15,9 @@
 #include "render_input.h"
 
 struct WorkspaceScreen {
-    u8 unknown_000[0x5a4];
+    u8 unk000[0x5a4];
     struct RenderOutput *cursor;
-    u8 unknown_5a8[0x68];
+    u8 unk5a8[0x68];
     struct RenderOutput *icons[6];
 };
 
@@ -47,7 +47,7 @@ struct RenderInput *Func_08040628(void)
     s32 i;
 
     rows = 3;
-    work = Ram_HeapSlots->unknown_d0[0];
+    work = Ram_HeapSlots->unkd0[0];
     settings_only = GameFlag_Test(0x17e);
     first = 0;
     if (settings_only != 0) {

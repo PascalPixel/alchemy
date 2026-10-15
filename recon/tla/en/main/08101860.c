@@ -17,11 +17,11 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
     total = 0;
     first = 0;
     second = 0;
-    for (i = 0; i < 32 && b[i].encoded_action != 0; i++) {
-        out[total] = b[i].encoded_action & ACTION_MASK;
+    for (i = 0; i < 32 && b[i].encodedAction != 0; i++) {
+        out[total] = b[i].encodedAction & ACTION_MASK;
         total++;
         for (j = 0; j < 32; j++) {
-            if (((b[i].encoded_action ^ a[j].encoded_action) & ACTION_MASK) == 0)
+            if (((b[i].encodedAction ^ a[j].encodedAction) & ACTION_MASK) == 0)
                 break;
         }
         if (j == 32) {
@@ -29,14 +29,14 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
             out[total - 1] |= FLAG_FIRST;
         }
     }
-    for (i = 0; i < 32 && a[i].encoded_action != 0; i++) {
+    for (i = 0; i < 32 && a[i].encodedAction != 0; i++) {
         for (j = 0; j < 32; j++) {
-            if (((a[i].encoded_action ^ b[j].encoded_action) & ACTION_MASK) == 0)
+            if (((a[i].encodedAction ^ b[j].encodedAction) & ACTION_MASK) == 0)
                 break;
         }
         if (j == 32) {
             second++;
-            out[total] = (a[i].encoded_action & ACTION_MASK) | FLAG_SECOND;
+            out[total] = (a[i].encodedAction & ACTION_MASK) | FLAG_SECOND;
             total++;
         }
     }

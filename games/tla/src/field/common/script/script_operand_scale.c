@@ -5,18 +5,18 @@ void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 
     s8 result;
 
     if (operation == 0) {
-        state->word_18 = value;
+        state->word18 = value;
         return;
     }
     if (operation == 1) {
-        state->word_18 += value;
+        state->word18 += value;
         return;
     }
     result = 0;
-    if (state->word_18 == value) {
+    if (state->word18 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value)
@@ -24,18 +24,18 @@ void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 
     s8 result;
 
     if (operation == 0) {
-        state->word_1c = value;
+        state->word1c = value;
         return;
     }
     if (operation == 1) {
-        state->word_1c += value;
+        state->word1c += value;
         return;
     }
     result = 0;
-    if (state->word_1c == value) {
+    if (state->word1c == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value)
@@ -43,18 +43,18 @@ void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s
     s8 result;
 
     if (operation == 0) {
-        state->word_24 = value;
+        state->word24 = value;
         return;
     }
     if (operation == 1) {
-        state->word_24 += value;
+        state->word24 += value;
         return;
     }
     result = 0;
-    if (state->word_24 == value) {
+    if (state->word24 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value)
@@ -62,18 +62,18 @@ void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s
     s8 result;
 
     if (operation == 0) {
-        state->word_28 = value;
+        state->word28 = value;
         return;
     }
     if (operation == 1) {
-        state->word_28 += value;
+        state->word28 += value;
         return;
     }
     result = 0;
-    if (state->word_28 == value) {
+    if (state->word28 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value)
@@ -81,18 +81,18 @@ void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s
     s8 result;
 
     if (operation == 0) {
-        state->word_2c = value;
+        state->word2c = value;
         return;
     }
     if (operation == 1) {
-        state->word_2c += value;
+        state->word2c += value;
         return;
     }
     result = 0;
-    if (state->word_2c == value) {
+    if (state->word2c == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value)
@@ -100,18 +100,18 @@ void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, 
     s8 result;
 
     if (operation == 0) {
-        state->word_30 = value;
+        state->word30 = value;
         return;
     }
     if (operation == 1) {
-        state->word_30 += value;
+        state->word30 += value;
         return;
     }
     result = 0;
-    if (state->word_30 == value) {
+    if (state->word30 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value)
@@ -119,18 +119,18 @@ void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation
     s8 result;
 
     if (operation == 0) {
-        state->word_34 = value;
+        state->word34 = value;
         return;
     }
     if (operation == 1) {
-        state->word_34 += value;
+        state->word34 += value;
         return;
     }
     result = 0;
-    if (state->word_34 == value) {
+    if (state->word34 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value)
@@ -138,18 +138,18 @@ void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32
     s8 result;
 
     if (operation == 0) {
-        state->word_38 = value;
+        state->word38 = value;
         return;
     }
     if (operation == 1) {
-        state->word_38 += value;
+        state->word38 += value;
         return;
     }
     result = 0;
-    if (state->word_38 == value) {
+    if (state->word38 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value)
@@ -157,18 +157,18 @@ void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32
     s8 result;
 
     if (operation == 0) {
-        state->word_3c = value;
+        state->word3c = value;
         return;
     }
     if (operation == 1) {
-        state->word_3c += value;
+        state->word3c += value;
         return;
     }
     result = 0;
-    if (state->word_3c == value) {
+    if (state->word3c == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value)
@@ -176,18 +176,18 @@ void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32
     s8 result;
 
     if (operation == 0) {
-        state->word_40 = value;
+        state->word40 = value;
         return;
     }
     if (operation == 1) {
-        state->word_40 += value;
+        state->word40 += value;
         return;
     }
     result = 0;
-    if (state->word_40 == value) {
+    if (state->word40 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value)
@@ -195,18 +195,18 @@ void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operati
     s8 result;
 
     if (operation == 0) {
-        state->word_44 = value;
+        state->word44 = value;
         return;
     }
     if (operation == 1) {
-        state->word_44 += value;
+        state->word44 += value;
         return;
     }
     result = 0;
-    if (state->word_44 == value) {
+    if (state->word44 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value)
@@ -214,18 +214,18 @@ void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32
     s8 result;
 
     if (operation == 0) {
-        state->word_48 = value;
+        state->word48 = value;
         return;
     }
     if (operation == 1) {
-        state->word_48 += value;
+        state->word48 += value;
         return;
     }
     result = 0;
-    if (state->word_48 == value) {
+    if (state->word48 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value)
@@ -233,18 +233,18 @@ void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operatio
     s8 result;
 
     if (operation == 0) {
-        state->word_14 = value;
+        state->word14 = value;
         return;
     }
     if (operation == 1) {
-        state->word_14 += value;
+        state->word14 += value;
         return;
     }
     result = 0;
-    if (state->word_14 == value) {
+    if (state->word14 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value)
@@ -252,18 +252,18 @@ void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 
     s8 result;
 
     if (operation == 0) {
-        state->word_4c = value;
+        state->word4c = value;
         return;
     }
     if (operation == 1) {
-        state->word_4c += value;
+        state->word4c += value;
         return;
     }
     result = 0;
-    if (state->word_4c == value) {
+    if (state->word4c == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value)
@@ -271,50 +271,50 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s
     s8 result;
 
     if (operation == 0) {
-        state->address_50 = value;
+        state->address50 = value;
         return;
     }
     if (operation == 1) {
-        state->address_50 += value * 4;
+        state->address50 += value * 4;
         return;
     }
     result = 0;
-    if (state->address_50 == value) {
+    if (state->address50 == value) {
         result = 1;
     }
-    state->comparison_result = result;
+    state->comparisonResult = result;
 }
 
 void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
-        state->byte_54 = value;
+        state->byte54 = value;
     } else if (operation == 1) {
-        state->byte_54 += value;
+        state->byte54 += value;
     } else {
-        state->comparison_result = state->byte_54 == (u8)value;
+        state->comparisonResult = state->byte54 == (u8)value;
     }
 }
 
 void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
-        state->byte_55 = value;
+        state->byte55 = value;
     } else if (operation == 1) {
-        state->byte_55 += value;
+        state->byte55 += value;
     } else {
-        state->comparison_result = state->byte_55 == (u8)value;
+        state->comparisonResult = state->byte55 == (u8)value;
     }
 }
 
 void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
-        state->byte_56 = value;
+        state->byte56 = value;
     } else if (operation == 1) {
-        state->byte_56 += value;
+        state->byte56 += value;
     } else {
-        state->comparison_result = state->byte_56 == (u8)value;
+        state->comparisonResult = state->byte56 == (u8)value;
     }
 }
 
@@ -323,18 +323,18 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 opera
     s32 result;
 
     if (operation == 0) {
-        state->comparison_result = value;
+        state->comparisonResult = value;
     } else if (operation == 1) {
-        state->comparison_result =
-            (u8)((u32)state->comparison_result + (u32)value);
+        state->comparisonResult =
+            (u8)((u32)state->comparisonResult + (u32)value);
     } else {
-        u8 current = state->comparison_result;
+        u8 current = state->comparisonResult;
 
         /* FAKEMATCH: ⚓️ loads the byte before narrowing the value */
         asm volatile("" : "+l"(current));
         result = 0;
         if (current == (u8)value)
             result = 1;
-        state->comparison_result = result;
+        state->comparisonResult = result;
     }
 }

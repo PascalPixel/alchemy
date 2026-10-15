@@ -8,10 +8,10 @@
 #if defined(TBS_EDITION_EN)
 
 struct EnemyRecord {
-    u8 unknown_00[0x4c];
+    u8 unk00[0x4c];
     u16 coins;
     s16 item;
-    s16 item_chance;
+    s16 itemChance;
     u16 experience;
 };
 
@@ -28,7 +28,7 @@ void Battle_AwardSpoils(void)
     s32 count;
     u16 *list;
     s32 i;
-    s32 unit_id;
+    s32 unitId;
     struct SpoilsUnit *unit;
     struct SpoilsUnit *backup;
     s32 cnt;
@@ -52,11 +52,11 @@ void Battle_AwardSpoils(void)
     count = BattleParty_ListLivingUnits(1, list);
     backup = Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
     for (i = 0; i < count; i++) {
-        unit_id = list[i];
-        unit = (struct SpoilsUnit *)UnitGetFar(unit_id);
+        unitId = list[i];
+        unit = (struct SpoilsUnit *)UnitGetFar(unitId);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct SpoilsUnit)),
-            Func_080770b8(unit_id, gains) != 0) {
+            Func_080770b8(unitId, gains) != 0) {
             Audio_PlayCue(0x59);
             UiWork_ClearValueNameTablesFar();
             UiWork_PushValueSlotFar(unit->class_name, 3);
@@ -74,7 +74,7 @@ void Battle_AwardSpoils(void)
                     if (j == 32) {
                         UiWork_ClearValueNameTablesFar();
                         UiWork_PushValueSlotFar(unit->class_name, 3);
-                        UiWork_PushValueSlotFar(unit_id, 1);
+                        UiWork_PushValueSlotFar(unitId, 1);
                         UiWork_PushValueSlotFar(learned & PSYNERGY_MASK, 4);
                         Audio_PlayCue(0x9a);
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);

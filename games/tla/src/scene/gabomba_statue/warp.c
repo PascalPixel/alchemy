@@ -8,7 +8,7 @@ void Func_020011bc(s32 x, s32 z);
 
 void Func_02001284(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -25,7 +25,7 @@ void Func_02001284(void)
 
 void Func_020012ec(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -45,7 +45,7 @@ void Func_020012ec(void)
 
 void Func_02001364(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -60,7 +60,7 @@ void Func_02001364(void)
 
 void Func_020013bc(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -80,7 +80,7 @@ void Func_020013bc(void)
 
 void Func_02001430(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -97,7 +97,7 @@ void Func_02001430(void)
 
 void Func_02001498(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -114,7 +114,7 @@ void Func_02001498(void)
 
 void Func_02001500(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -131,7 +131,7 @@ void Func_02001500(void)
 
 void Func_02001564(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 
@@ -144,7 +144,7 @@ void Func_02001564(void)
 
 void Func_020015b8(void)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
     s32 x = leader->x >> 20;
     s32 z = leader->z >> 20;
 

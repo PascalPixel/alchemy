@@ -19,11 +19,11 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj)
 	s32					 dir;
 	struct FacingObject *target;
 
-	target = obj->facing_target;
+	target = obj->facingTarget;
 	if (target != NULL)
 	{
-		obj->facing_flags = 0xfe & obj->facing_flags;
-		dir = (u16)ArcTan2(target->position_z - obj->position_z, target->position_x - obj->position_x);
+		obj->facingFlags = 0xfe & obj->facingFlags;
+		dir = (u16)ArcTan2(target->positionZ - obj->positionZ, target->positionX - obj->positionX);
 		old = obj->facing;
 		turn = (s16)(dir - old);
 		if (turn != 0)

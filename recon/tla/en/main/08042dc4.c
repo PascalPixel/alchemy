@@ -9,7 +9,7 @@ extern const u8 Ui_ProgressBarRows[];
 
 void Func_08042dc4(s32 step)
 {
-    u8 *save = Ram_HeapSlots->serial_work;
+    u8 *save = Ram_HeapSlots->serialWork;
     u32 row;
     const u8 *src;
     u16 *dst;

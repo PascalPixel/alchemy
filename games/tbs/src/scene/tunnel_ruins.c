@@ -62,7 +62,7 @@ static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 {
 	struct FieldActor	*actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8					 saved = actor->motion_flags;
+	u8					 saved = actor->motionFlags;
 	struct FieldPosition probe;
 
 	probe.x = (actor->x.fixed & 0xfff00000) + 0x00080000;
@@ -82,8 +82,8 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 
 		actor->speed = 0x00030000;
 		actor->acceleration = 0x00020000;
-		actor->velocity_y = 0x00040000;
-		actor->motion_flags &= 0x7e;
+		actor->velocityY = 0x00040000;
+		actor->motionFlags &= 0x7e;
 
 		Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -96,7 +96,7 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 		Engine_ActorSetSpriteFlags(actor, 1);
 		Engine_TaskWait(6);
 
-		actor->motion_flags = saved;
+		actor->motionFlags = saved;
 		Engine_EventEnd();
 		return 0;
 	}
@@ -181,8 +181,8 @@ static s32 TunnelRuins_UpdateFlickerEffect(struct FieldActor *object)
 		Object_SetMode(object, 2);
 	if (gFrameCount & 3)
 		return 0;
-	options.start_scale_x = 0x4ccc;
-	options.start_scale_y = 0x4ccc;
+	options.startScaleX = 0x4ccc;
+	options.startScaleY = 0x4ccc;
 	options.palette = 5;
 	x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
 	z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
@@ -222,7 +222,7 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 
 			Engine_TaskWait(1);
 			value = track->y.fixed;
-			limit = track->terrain_height;
+			limit = track->terrainHeight;
 			cnt--;
 			if (value <= limit)
 			{
@@ -230,12 +230,12 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 			}
 			continue;
 		}
-		limit = track->terrain_height;
+		limit = track->terrainHeight;
 		break;
 	}
-	track->velocity_y = 0;
+	track->velocityY = 0;
 	track->y.fixed = limit;
-	track->target_y = ACTOR_NO_TARGET;
+	track->targetY = ACTOR_NO_TARGET;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -252,18 +252,18 @@ static void TunnelRuins_RunLeaderSpray(void)
 	ObjectMotion_WaitForAnimationChange(0);
 	Object_SetMode(leader, 1);
 	Engine_ActorSetSpriteFlags(leader, 0);
-	leader->motion_flags |= 2;
+	leader->motionFlags |= 2;
 	Engine_AudioPlayCue(152);
-	leader->velocity_y = 0x40000;
+	leader->velocityY = 0x40000;
 	Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
 	Engine_TaskWait(6);
-	leader->motion_flags = 0;
+	leader->motionFlags = 0;
 	options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
 	Engine_AudioPlayCue(127);
 	for (i = 0; i < 8; i++)
 	{
 		leader->y.fixed -= 0x20000;
-		leader->target_y = leader->y.fixed;
+		leader->targetY = leader->y.fixed;
 		Engine_TaskWait(1);
 		if (i & 1)
 		{
@@ -277,7 +277,7 @@ static void TunnelRuins_RunLeaderSpray(void)
 		}
 	}
 	Engine_ActorSetSpriteFlags(leader, 1);
-	leader->motion_flags = 3;
+	leader->motionFlags = 3;
 	Engine_EventEnd();
 }
 
@@ -409,12 +409,12 @@ static void EV15_PSYNERGY(void)
 	Engine_GameFlagSet(0x200);
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
-		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= 0xf7;
+		Object_GetById(14)->riseCounter = 0;
+		Object_GetById(14)->collisionFlags &= 0xf7;
 	}
 	else
 	{
-		Object_GetById(14)->rise_counter = 1;
+		Object_GetById(14)->riseCounter = 1;
 		flags = Object_GetById(14);
 		flags += 89;
 		value = 8;
@@ -431,12 +431,12 @@ static void EV16_PSYNERGY(void)
 	Engine_GameFlagSet(0x201);
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
-		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= 0xf7;
+		Object_GetById(14)->riseCounter = 0;
+		Object_GetById(14)->collisionFlags &= 0xf7;
 	}
 	else
 	{
-		Object_GetById(14)->rise_counter = 1;
+		Object_GetById(14)->riseCounter = 1;
 		p = Object_GetById(14);
 		p += 89;
 		val = 8;
@@ -489,10 +489,10 @@ static void EV18_PSYNERGY(void)
 		Engine_EventWait(30);
 		rec2 = OverlayObject_PrepareObject(0x2e80000, 0, 0xb80000, 253);
 		frame = &slot16;
-		frame->start_scale_x = 0x9999;
-		frame->start_scale_y = 0x9999;
+		frame->startScaleX = 0x9999;
+		frame->startScaleY = 0x9999;
 		frame->palette = 7;
-		Actor_Get(18)->motion_flags = 0;
+		Actor_Get(18)->motionFlags = 0;
 		Engine_AudioPlayCue(185);
 		for (i = 0; i < 16; i++)
 		{
@@ -506,7 +506,7 @@ static void EV18_PSYNERGY(void)
 		}
 		Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
 		Engine_EventWait(30);
-		Actor_Get(18)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+		Actor_Get(18)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		Engine_ActorSetAnimation(18, 3);
 		Engine_ObjectDispatchRelease(rec2);
 		Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
@@ -544,7 +544,7 @@ static void EV20_PSYNERGY(void)
 	Engine_ActorSetAnimation(20, 1);
 	Engine_ActorSetChildValue(20, 0);
 	Engine_ActorSetAnimation(20, 2);
-	flags = &Object_GetById(20)->priority_flags;
+	flags = &Object_GetById(20)->priorityFlags;
 	*flags &= 0xFD;
 	Engine_GameFlagSet(0x200);
 }
@@ -572,10 +572,10 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Engine_EventWait(30);
 			rec2 = OverlayObject_PrepareObject(0x3020000, 0, 0x1120000, 223);
 			slot = &slot16;
-			slot->start_scale_x = 0x9999;
-			slot->start_scale_y = 0x9999;
+			slot->startScaleX = 0x9999;
+			slot->startScaleY = 0x9999;
 			slot->palette = 7;
-			Actor_Get(19)->motion_flags = 0;
+			Actor_Get(19)->motionFlags = 0;
 			Engine_AudioPlayCue(185);
 			for (i = 0; i < 16; i++)
 			{
@@ -589,7 +589,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			}
 			Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
 			Engine_EventWait(30);
-			Actor_Get(19)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Actor_Get(19)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			Engine_ActorSetAnimation(19, 3);
 			Engine_ObjectDispatchRelease(rec2);
 			Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
@@ -639,7 +639,7 @@ static void EV21_PSYNERGY(void)
 	Engine_ActorSetAnimation(21, 1);
 	Engine_ActorSetChildValue(21, 0);
 	Engine_ActorSetAnimation(21, 2);
-	flags = &Object_GetById(21)->priority_flags;
+	flags = &Object_GetById(21)->priorityFlags;
 	*flags &= 0xFD;
 	Engine_GameFlagSet(0x201);
 }
@@ -696,7 +696,7 @@ static void EV09_PSYNERGY(void)
 	Engine_ActorSetAnimation(9, 2);
 
 	{
-		u8 *flag = &Object_GetById(9)->priority_flags;
+		u8 *flag = &Object_GetById(9)->priorityFlags;
 		*flag &= 0xfd;
 	}
 
@@ -817,10 +817,10 @@ static void FieldScene_RunMiddleSequence(void)
 		}
 		if ((Object_GetById(i + 12)->z.fixed >> 20) == 9 && GameFlag_IsSet(i + 0x200) == 0)
 		{
-			Object_GetById(i + 12)->terrain_height = 0;
-			Object_GetById(i + 12)->velocity_y = 0;
-			Object_GetById(i + 12)->target_y = ACTOR_NO_TARGET;
-			Actor_Get(i + 12)->motion_flags = 0;
+			Object_GetById(i + 12)->terrainHeight = 0;
+			Object_GetById(i + 12)->velocityY = 0;
+			Object_GetById(i + 12)->targetY = ACTOR_NO_TARGET;
+			Actor_Get(i + 12)->motionFlags = 0;
 			Object_GetById(i + 12)->timer = 0;
 			found = i;
 			for (j = 0; j < i; j++)
@@ -840,13 +840,13 @@ static void FieldScene_RunMiddleSequence(void)
 					break;
 				}
 			}
-			Object_GetById(found + 12)->terrain_height = 0;
-			Actor_Get(found + 12)->velocity_y = 0;
-			Object_GetById(found + 12)->target_y = ACTOR_NO_TARGET;
-			Actor_Get(found + 12)->motion_flags = 0;
+			Object_GetById(found + 12)->terrainHeight = 0;
+			Actor_Get(found + 12)->velocityY = 0;
+			Object_GetById(found + 12)->targetY = ACTOR_NO_TARGET;
+			Actor_Get(found + 12)->motionFlags = 0;
 			Object_GetById(found + 12)->timer = 0;
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			Battle_GetWorkObject1e0()->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motionFlags = 0;
 			Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_LandOnHighestPlatform(found + 12);
@@ -863,7 +863,7 @@ static void FieldScene_RunMiddleSequence(void)
 			Actor_Get(found + 12)->update =
 				(void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
 			TunnelRuins_SettleSteps(40);
-			Actor_Get(found + 12)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Actor_Get(found + 12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			GameFlag_Set(0x200 + found);
 			break;
 		}
@@ -1141,7 +1141,7 @@ static void TunnelRuins_RestorePlatformCells(void)
 
 	Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
 	Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-	Object_GetById(14)->terrain_id = 1;
+	Object_GetById(14)->terrainId = 1;
 	record = Object_GetById(12);
 	p5 = record->x.fixed;
 	record = Object_GetById(12);
@@ -1170,13 +1170,13 @@ static void TunnelRuins_MarkActorCells(void)
 
 s32 FieldScene_InitializeActorGroups(void)
 {
-	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (gGameState.scene == (s32)&SceneId_TunnelRuins1
 		|| gGameState.scene == (s32)&SceneId_TunnelRuins2)
 	{
 		BattleFx_StartFadeOverlay(0);
-		gGameState.retreat_entrance = 1;
-		gGameState.retreat_scene = (s32)&SceneId_TunnelRuins1;
+		gGameState.retreatEntrance = 1;
+		gGameState.retreatScene = (s32)&SceneId_TunnelRuins1;
 	}
 	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
@@ -1209,8 +1209,8 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 3:
 		case 4:
 			FieldScene_PlaceAndPinSlots8And9();
-			Object_GetById(8)->motion_flags = 0;
-			Object_GetById(9)->motion_flags = 0;
+			Object_GetById(8)->motionFlags = 0;
+			Object_GetById(9)->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
 			Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 			Object_GetById(8)->update = ACTOR_UPDATE_IDLE;
@@ -1228,8 +1228,8 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 8:
 		case 9:
 			FieldScene_PlaceAndPinSlots10And11();
-			Object_GetById(10)->motion_flags = 0;
-			Object_GetById(11)->motion_flags = 0;
+			Object_GetById(10)->motionFlags = 0;
+			Object_GetById(11)->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 			Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 			Object_GetById(10)->update = ACTOR_UPDATE_IDLE;
@@ -1249,7 +1249,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			{
 				Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
 				Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-				Object_GetById(18)->priority_flags |= 2;
+				Object_GetById(18)->priorityFlags |= 2;
 				Engine_ActorSetAnimation(18, 3);
 				Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
 				Actor_SetPosition(18, 186 << 18, 136 << 16);
@@ -1267,7 +1267,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			{
 				Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
 				Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-				Object_GetById(19)->priority_flags |= 2;
+				Object_GetById(19)->priorityFlags |= 2;
 				Engine_ActorSetAnimation(19, 3);
 				Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
 				Actor_SetPosition(19, 194 << 18, 232 << 16);
@@ -1284,8 +1284,8 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 12:
 		case 13:
 			TunnelRuins_RestorePlatformCells();
-			Object_GetById(12)->motion_flags = 0;
-			Object_GetById(13)->motion_flags = 0;
+			Object_GetById(12)->motionFlags = 0;
+			Object_GetById(13)->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
 			Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
 			Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
@@ -1308,8 +1308,8 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 1:
 		case 2:
 		case 3:
-			gGameState.retreat_entrance = 1;
-			gGameState.retreat_scene = (s32)&SceneId_BabiLighthouse3;
+			gGameState.retreatEntrance = 1;
+			gGameState.retreatScene = (s32)&SceneId_BabiLighthouse3;
 			Engine_GameFlagClear(0x12f);
 			Engine_ActorSetChildValue(17, 6);
 			Engine_ActorSetChildValue(18, 6);
@@ -1322,12 +1322,12 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 6:
 		case 7:
 			Engine_ActorSetSpritePriority(8, 1);
-			Object_GetById(8)->motion_flags = 0;
+			Object_GetById(8)->motionFlags = 0;
 			Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
 			Engine_ActorSetSpritePriority(9, 1);
 			Engine_ActorSetChildValue(9, 15);
 			Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-			Object_GetById(9)->motion_flags = 0;
+			Object_GetById(9)->motionFlags = 0;
 			if (!Engine_GameFlagIsSet(0x204))
 				break;
 			Engine_ActorSetChildValue(9, 0);
@@ -1341,21 +1341,21 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 5:
 			if (!Engine_GameFlagIsSet(0x109))
 			{
-				Object_GetById(10)->motion_flags = 0;
-				Object_GetById(11)->motion_flags = 0;
+				Object_GetById(10)->motionFlags = 0;
+				Object_GetById(11)->motionFlags = 0;
 				Object_GetById(10)->y.fixed = -0x300000;
 				Object_GetById(11)->y.fixed = -0x300000;
-				Object_GetById(10)->priority_flags |= 2;
-				Object_GetById(11)->priority_flags |= 2;
-				Object_GetById(10)->collision_flags &= 0xfe;
-				Object_GetById(11)->collision_flags &= 0xfe;
+				Object_GetById(10)->priorityFlags |= 2;
+				Object_GetById(11)->priorityFlags |= 2;
+				Object_GetById(10)->collisionFlags &= 0xfe;
+				Object_GetById(11)->collisionFlags &= 0xfe;
 				Object_GetById(10)->timer = 3;
 				Object_GetById(11)->timer = 3;
 				Engine_ActorSetSpritePriority(10, 1);
 				Engine_ActorSetSpritePriority(11, 1);
-				Object_GetById(12)->motion_flags = 0;
-				Object_GetById(13)->motion_flags = 0;
-				Object_GetById(14)->motion_flags = 0;
+				Object_GetById(12)->motionFlags = 0;
+				Object_GetById(13)->motionFlags = 0;
+				Object_GetById(14)->motionFlags = 0;
 				Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
 				Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
 				Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
@@ -1371,15 +1371,15 @@ s32 FieldScene_InitializeActorGroups(void)
 				Actor_SetPosition(12, 200 << 16, 152 << 16);
 				Object_GetById(12)->timer = 11;
 				Object_GetById(12)->update = ACTOR_UPDATE_PANEL;
-				Object_GetById(12)->priority_flags |= 2;
+				Object_GetById(12)->priorityFlags |= 2;
 				Actor_SetPosition(13, 200 << 16, 152 << 16);
 				Object_GetById(13)->timer = 12;
 				Object_GetById(13)->update = ACTOR_UPDATE_PANEL;
-				Object_GetById(13)->priority_flags |= 2;
+				Object_GetById(13)->priorityFlags |= 2;
 				Engine_ActorSetPosition(14, 136 << 16, 152 << 16);
 				Object_GetById(14)->timer = 10;
 				Object_GetById(14)->update = ACTOR_UPDATE_PANEL;
-				Object_GetById(14)->priority_flags |= 2;
+				Object_GetById(14)->priorityFlags |= 2;
 				Engine_EventWait(2);
 				Engine_GameFlagSet(0x200);
 				Engine_GameFlagSet(0x201);
@@ -1414,11 +1414,11 @@ s32 FieldScene_InitializeActorGroups(void)
 				Actor_SetPosition(22, 188 << 17, 190 << 18);
 				Actor_SetPosition(23, 196 << 17, 194 << 18);
 			}
-			Object_GetById(19)->motion_flags &= 0xfe;
-			Object_GetById(20)->motion_flags &= 0xfe;
-			Object_GetById(21)->motion_flags &= 0xfe;
-			Object_GetById(22)->motion_flags &= 0xfe;
-			Object_GetById(23)->motion_flags &= 0xfe;
+			Object_GetById(19)->motionFlags &= 0xfe;
+			Object_GetById(20)->motionFlags &= 0xfe;
+			Object_GetById(21)->motionFlags &= 0xfe;
+			Object_GetById(22)->motionFlags &= 0xfe;
+			Object_GetById(23)->motionFlags &= 0xfe;
 			Engine_ActorSetChildValue(19, 4);
 			Engine_ActorSetChildValue(20, 1);
 			Engine_ActorSetChildValue(21, 4);

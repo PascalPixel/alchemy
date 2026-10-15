@@ -36,8 +36,8 @@ const struct ScenePlacement *Func_0200048c(void)
     }
     if (scene == (s32)&SceneId_Ov6a8Room4) {
         if (GameFlag_Test(0xa3d)) {
-            Data_0200521c[1].talk_facing = 3;
-            Data_0200521c[4].talk_facing = 3;
+            Data_0200521c[1].talkFacing = 3;
+            Data_0200521c[4].talkFacing = 3;
             return Data_0200521c;
         }
         return Data_0200506c;

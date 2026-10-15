@@ -6,9 +6,9 @@
 #include "scene_ids.h"
 
 struct ArcEffectObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
-    u8 unknown_08[0x5c];
+    u8 unk08[0x5c];
     s16 phase;
     u16 step;
 };

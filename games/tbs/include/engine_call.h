@@ -44,9 +44,9 @@ static inline void FieldUi_AdjustValueWithoutLimit(s32 message, s32 buffer)
 	Ui_AdjustValueWithoutLimit(message, buffer);
 }
 
-static inline void FieldMap_SetViewBounds(s32 min_x, s32 min_y, s32 max_x, s32 max_y)
+static inline void FieldMap_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY)
 {
-	Map_SetViewBounds(min_x, min_y, max_x, max_y);
+	Map_SetViewBounds(minX, minY, maxX, maxY);
 }
 
 static inline void FieldBattleFx_RunRisingObjectSequence(s32 actor, s32 mode, s32 action)
@@ -88,9 +88,9 @@ static inline s32 FieldResource_DecodeType01(const void *source, void *destinati
 }
 
 static inline void DisplayScroll_StartHBlankDma(
-	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
+	s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY, s32 ampY)
 {
-	Engine_DisplayScrollStartHBlankDma(mode, freq_x, step_x, amp_x, freq_y, step_y, amp_y);
+	Engine_DisplayScrollStartHBlankDma(mode, freqX, stepX, ampX, freqY, stepY, ampY);
 }
 
 #endif

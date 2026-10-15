@@ -21,14 +21,14 @@ s32 Func_080d5c70(s32 unused)
     s32 i;
     s32 c;
 
-    work = Ram_HeapSlots->event_work;
-    Audio_PlayCue(gPartyState.scene_cue);
+    work = Ram_HeapSlots->eventWork;
+    Audio_PlayCue(gPartyState.sceneCue);
     Audio_PlayCue(298);
     Audio_PlayCue(147);
-    if (work->control_mode == 3) {
+    if (work->controlMode == 3) {
         Io_Write16(0x7fff, (u16 *)0x050001e6);
         DisplayTransition_Finish(0x401, 16);
-        work->screen_status = 0;
+        work->screenStatus = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
             c = 30 - i * 2;
@@ -38,7 +38,7 @@ s32 Func_080d5c70(s32 unused)
     } else {
         Io_Write16(0x7fff, &PLTT_BACKDROP);
         DisplayTransition_Finish(0x207, 16);
-        work->screen_status = 0;
+        work->screenStatus = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
             c = 30 - i * 2;

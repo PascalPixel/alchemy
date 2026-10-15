@@ -26,15 +26,15 @@ void Func_08041268(s32 ability, struct UiWindow *window, s32 x, s32 y);
 
 struct UiWindow *Func_0804128c(void)
 {
-    void *work = Ram_HeapSlots->unknown_d0[0];
+    void *work = Ram_HeapSlots->unkd0[0];
     struct UiWindow *window = UiWindow_Create(0, 0, 30, 19, 2);
     const s16 *abilities;
     s32 i;
     s32 y;
-    s32 row_y;
+    s32 rowY;
 
-    for (i = 0, row_y = 2; i < 8; i++, row_y += 2)
-        UiWindow_DrawDividerLine(window, 0, row_y, 29, row_y);
+    for (i = 0, rowY = 2; i < 8; i++, rowY += 2)
+        UiWindow_DrawDividerLine(window, 0, rowY, 29, rowY);
     for (y = 0, i = 0; i < 9; y += 16, i++) {
         Func_08041268(Data_080aa170[0][i], window, 8, y);
         Func_08041268(Data_080aa170[1][i], window, 64, y);

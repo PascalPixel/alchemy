@@ -24,14 +24,14 @@ void Func_020001d8(void)
     Battle_WaitMode0(28);
     Func_02002124(112);
     first = Object_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
-    first->speed_limit = 0x20000;
+    first->speedLimit = 0x20000;
     first->acceleration = 0x20000;
-    first->motion_flags = 0;
+    first->motionFlags = 0;
     Func_02001fa4(first, first->x + 0x60000, first->y + 0x80000, first->z);
     second = Object_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
-    second->speed_limit = 0x20000;
+    second->speedLimit = 0x20000;
     second->acceleration = 0x20000;
-    second->motion_flags = 0;
+    second->motionFlags = 0;
     Func_02001fa4(second, first->x + 0x80000, first->y - 0x40000, first->z);
     Func_02001fac(first);
     Func_02001f9c(first);

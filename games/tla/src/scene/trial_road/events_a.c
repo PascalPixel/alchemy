@@ -10,11 +10,11 @@ s32 Func_02000058(struct ObjectRuntime *object)
 {
     s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
 
-    object->terrain_height = height;
+    object->terrainHeight = height;
     object->y = height;
-    object->motion_flags = 0;
-    object->collision_flags = 0;
-    object->scale_y = 0x18000;
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
+    object->scaleY = 0x18000;
     return 0;
 }
 
@@ -37,13 +37,13 @@ s32 Func_020000fc(s32 fallback)
 {
     struct TrialRoadState *state = gTrialRoadState;
 
-    if (state->field_1a < state->field_1c)
+    if (state->field1a < state->field1c)
         return 1;
-    if (state->field_1a > state->field_1c)
+    if (state->field1a > state->field1c)
         return 0;
     if (GameFlag_Test(0x284))
         return 0;
-    if (state->field_14 != 0)
+    if (state->field14 != 0)
         return 1;
     return fallback;
 }

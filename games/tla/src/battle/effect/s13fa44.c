@@ -2,9 +2,9 @@
 #include "ram_buffer.h"
 
 struct BattleFxFadeWork {
-    s32 unknown_00;
-    s32 halve_pending;
-    s32 frames_left;
+    s32 unk00;
+    s32 halvePending;
+    s32 framesLeft;
     s32 step;
 };
 
@@ -12,12 +12,12 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale, s32 count)
 
 void Func_0813fa44(void)
 {
-    struct BattleFxFadeWork *work = (struct BattleFxFadeWork *)Ram_HeapSlots->battle_fx_work[0];
-    u8 *battle = (u8 *)Ram_HeapSlots->battle_work;
+    struct BattleFxFadeWork *work = (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
+    u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
 
-    if (work->frames_left > 0) {
+    if (work->framesLeft > 0) {
         work->step++;
         ColorBuffer_ScaleFar(battle + 0x56c, (void *)0x050000c0, 0x10000 - work->step * 1092, 128);
-        work->frames_left--;
+        work->framesLeft--;
     }
 }

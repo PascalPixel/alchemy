@@ -10,8 +10,8 @@ s32 Scene_InitSceneRequestAndCameraZoom(void)
 	s32 zoom_z = 0x10000;
 
 	runtime = (struct Resource37deSceneRuntime *)gEventWork;
-	runtime->scene_request_1c0 = 0x204;
-	runtime->scene_setup_word_1c8 = 0x10;
+	runtime->sceneRequest1c0 = 0x204;
+	runtime->sceneSetupWord1c8 = 0x10;
 	if (Engine_GameFlagIsSet(0x814) != 0)
 	{
 		QueueSceneSound(0x8D);

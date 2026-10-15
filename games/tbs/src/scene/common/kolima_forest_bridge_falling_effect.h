@@ -70,15 +70,15 @@ void FieldScene_UpdateFallingEffect(void)
 		else
 			x = origin->x + (Engine_RandomNext() << 8) - 0x800000;
 		z = origin->z + (Engine_RandomNext() << 8) - 0x800000;
-		object->motion_flags = 0;
+		object->motionFlags = 0;
 		object->y.fixed = 0xa00000;
 		sprite = object->sprite;
-		object->scale_x = 0xe666;
-		object->scale_y = 0xe666;
+		object->scaleX = 0xe666;
+		object->scaleY = 0xe666;
 		object->x.fixed = x;
 		object->z.fixed = z;
 		sprite->flags = 0;
-		object->priority_flags &= ~1;
+		object->priorityFlags &= ~1;
 		sprite->priority = 1;
 		Object_SetMode(object, 1);
 		Engine_ObjectSetScript(object, gFallingEffectScript);

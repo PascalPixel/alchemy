@@ -14,15 +14,15 @@
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
-void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase)
 {
-    struct ResourceMenuWork *menu = Ram_HeapSlots->menu_select_work;
+    struct ResourceMenuWork *menu = Ram_HeapSlots->menuSelectWork;
     s32 x;
     s32 i;
     s32 count;
 
     menu->width = width + 2;
-    menu->resource_base = resource_base;
+    menu->resourceBase = resourceBase;
     menu->row = row;
     count = menu->count;
     x = 15 - (count * 3 + menu->width * 2 / 3) / 2;

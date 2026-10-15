@@ -10,43 +10,43 @@
 #include "io_reg.h"
 
 struct OrbitSprite {
-    u8 unknown_00[5];
-    u8 flags_05_low : 5;
-    u8 flags_05_bit_5 : 1;
-    u8 flags_05_high : 2;
-    u8 unknown_06[3];
-    u8 flags_09_low : 2;
-    u8 flags_09_mode : 2;
-    u8 flags_09_high : 4;
-    u8 unknown_0a[6];
+    u8 unk00[5];
+    u8 flags05Low : 5;
+    u8 flags05Bit5 : 1;
+    u8 flags05High : 2;
+    u8 unk06[3];
+    u8 flags09Low : 2;
+    u8 flags09Mode : 2;
+    u8 flags09High : 4;
+    u8 unk0a[6];
     u8 palette;
-    u8 unknown_11[10];
+    u8 unk11[10];
     u8 state;
 };
 
 struct OrbitObject {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[15];
-    u8 flags_23;
-    u8 unknown_24[12];
-    s32 orbit_angle;
-    u8 unknown_34[4];
-    s32 orbit_center_x;
-    s32 orbit_center_y;
-    s32 orbit_center_z;
-    u8 unknown_44[12];
+    u8 unk14[15];
+    u8 flags23;
+    u8 unk24[12];
+    s32 orbitAngle;
+    u8 unk34[4];
+    s32 orbitCenterX;
+    s32 orbitCenterY;
+    s32 orbitCenterZ;
+    u8 unk44[12];
     struct OrbitSprite *sprite;
-    u8 unknown_54;
+    u8 unk54;
     u8 mode;
     u8 state;
-    u8 unknown_57[5];
+    u8 unk57[5];
     u8 active;
-    u8 unknown_5d[4];
+    u8 unk5d[4];
     u8 visible;
-    u8 unknown_62[10];
+    u8 unk62[10];
     u32 callback;
 };
 
@@ -92,25 +92,25 @@ void Func_02000860(void)
     }
     actor = (struct OrbitObject *)Object_GetById(11);
     sprite = actor->sprite;
-    sprite->flags_09_mode = 1;
-    sprite->flags_05_bit_5 = 0;
-    sprite->flags_09_high = 0;
+    sprite->flags09Mode = 1;
+    sprite->flags05Bit5 = 0;
+    sprite->flags09High = 0;
     sprite->state = 0;
     ObjectDispatch_SetSingleChildFlags((struct ObjectRuntime *)actor, 0);
     actor->active = 0;
     actor->mode = 0;
     if (GameFlag_Test(0x109) == 0)
         actor->y += 0x100000;
-    actor->flags_23 &= 0xfe;
+    actor->flags23 &= 0xfe;
     actor->visible = 1;
     transfer = Runtime_AllocateHeapBlockFar(68, 0x608);
     Func_02002058(193);
     transfer += 0x400;
     VramBlock_LoadCached(sprite->palette, 128, transfer);
     Runtime_ReleaseHeapBlock(68);
-    actor->orbit_center_x = actor->x;
-    actor->orbit_angle = 0;
-    actor->orbit_center_y = actor->y;
+    actor->orbitCenterX = actor->x;
+    actor->orbitAngle = 0;
+    actor->orbitCenterY = actor->y;
     actor->active = 1;
     actor->callback = (u32)Func_020007fc;
     actor->state = 0;

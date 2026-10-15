@@ -12,9 +12,9 @@ void Func_02000c7c(void)
     WaitFrames(2);
     object = Object_GetById(20);
     for (i = 0; i < 30; i++) {
-        if (object->y <= object->terrain_height && object->velocity_y == 0)
+        if (object->y <= object->terrainHeight && object->velocityY == 0)
             break;
         WaitFrames(1);
     }
-    object->motion_flags = 0;
+    object->motionFlags = 0;
 }

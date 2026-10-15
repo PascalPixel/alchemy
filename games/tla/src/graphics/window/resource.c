@@ -47,7 +47,7 @@ struct RenderOutput *RenderResource_CreateFrame(
     if (index != 0x60) {
         RenderResource_LoadFrame(arg0, index, arg1);
         entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
-        entity->oam.palette_256 = 1;
+        entity->oam.palette256 = 1;
         entity->sentinel = 0xfb;
     }
     return entity;

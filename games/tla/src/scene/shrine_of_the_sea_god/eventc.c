@@ -10,33 +10,33 @@ void Func_020024e4(void)
 
     Func_020039d8();
     Func_02003b08(0);
-    Value3((s32 (*)())Func_02003aa8, gPartyState.current_owner, 0x100, 0);
-    Func_02003ad0()->motion_flags = 0;
+    Value3((s32 (*)())Func_02003aa8, gPartyState.currentOwner, 0x100, 0);
+    Func_02003ad0()->motionFlags = 0;
     ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
     Func_02003ac8();
     /* FAKEMATCH: the angle in a local is built before the coordinates, as the native does (differ 8 as constants). */
     angle = 0xc000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 624 << 16, angle);
     WaitFrames(1);
-    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 14);
-    object->priority_flags &= ~2;
+    Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 14);
+    object->priorityFlags &= ~2;
     ObjectMotion_SetActionVariant(14, 3);
     ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
     ShrineOfTheSeaGod_ObjWalk(14, 328, 568);
     ShrineOfTheSeaGod_ObjWalk(14, 328, 496);
     ShrineOfTheSeaGod_ObjWalk(14, 280, 432);
-    ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
     WaitFrames(1);
     angle = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
     ObjectMotion_SetActionVariant(14, 2);
-    Object_GetById(14)->priority_flags |= 1;
+    Object_GetById(14)->priorityFlags |= 1;
     {
         s32 bit = 2;
 
         /* FAKEMATCH: ⚓️ builds the bit before it loads the flags and fills the load's delay with WaitFrames' argument; plain, the load comes first and the argument last (differ 4). */
         asm volatile("" : "+l"(bit));
-        object->priority_flags |= bit;
+        object->priorityFlags |= bit;
     }
     WaitFrames(1);
     ShrineOfTheSeaGod_FlagSet(0x876);
@@ -51,25 +51,25 @@ void Func_020025fc(void)
     if (done == 0) {
         Func_020039d8();
         Func_02003b08(0);
-        Func_02003aa8(gPartyState.current_owner, 0x100, 0);
-        Func_02003ad0()->motion_flags = done;
+        Func_02003aa8(gPartyState.currentOwner, 0x100, 0);
+        Func_02003ad0()->motionFlags = done;
         ShrineOfTheSeaGod_CamMove(328 << 16, 48 << 16, 552 << 16, 1);
         Func_02003ac8();
         /* FAKEMATCH: reusing the old flag result for the angle retains the native early constant construction; the plain unbound angle differs 2. */
         done = 0x4000;
         ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
         WaitFrames(1);
-        Object_LinkObjectAndSetCallback(gPartyState.current_owner, 14);
+        Object_LinkObjectAndSetCallback(gPartyState.currentOwner, 14);
         ObjectMotion_SetActionVariant(14, 1);
         ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
         ShrineOfTheSeaGod_ObjWalk(14, 380, 552);
         ShrineOfTheSeaGod_ObjWalk(14, 264, 552);
         ShrineOfTheSeaGod_ObjWalk(14, 264, 540);
-        ObjectMotion_EnableActionAndResetMotion(gPartyState.current_owner);
+        ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
         WaitFrames(1);
         ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
         ObjectMotion_SetActionVariant(14, 2);
-        Object_GetById(14)->priority_flags |= 1;
+        Object_GetById(14)->priorityFlags |= 1;
         WaitFrames(1);
         ShrineOfTheSeaGod_FlagSet(0x876);
         Func_020039e0();
@@ -84,13 +84,13 @@ void Func_020026f8(void)
         Func_020039d8();
         Func_02003b08(0);
         off = 0;
-        Func_02003ad0()->motion_flags = off;
+        Func_02003ad0()->motionFlags = off;
         ShrineOfTheSeaGod_CamMove(320 << 16, -1, 300 << 16, 1);
         ShrineOfTheSeaGod_Jump(14, 0x100, 40);
         ShrineOfTheSeaGod_ObjSpeed(14, 0x13333, 0x9999);
         ShrineOfTheSeaGod_ObjWalk(14, 345, 296);
         ShrineOfTheSeaGod_ObjWalk(14, 392, 296);
-        Object_LinkObjectAndSetCallback(14, gPartyState.current_owner);
+        Object_LinkObjectAndSetCallback(14, gPartyState.currentOwner);
         Object_GetById(14)->state = off;
         WaitFrames(10);
         GameFlag_SetBit(0x87c);
@@ -102,7 +102,7 @@ void Func_0200279c(void)
 {
     Func_020039d8();
     Func_02003b08(0);
-    Func_02003ad0()->motion_flags = 0;
+    Func_02003ad0()->motionFlags = 0;
     ObjectMotion_EnableActionAndResetMotion(14);
     WaitFrames(1);
     ShrineOfTheSeaGod_ObjSpeed(14, 0x26666, 0x13333);
@@ -110,7 +110,7 @@ void Func_0200279c(void)
 
 void Func_020027d4(void)
 {
-    Object_LinkObjectAndSetCallback(14, gPartyState.current_owner);
+    Object_LinkObjectAndSetCallback(14, gPartyState.currentOwner);
     Battle_WaitMode0(5);
     Func_020039e0();
 }

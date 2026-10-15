@@ -3,10 +3,10 @@
 #include "input.h"
 
 struct EventPrompt {
-    u8 unknown_000[0x166];
+    u8 unk000[0x166];
     u16 choice[2];
     u16 result;
-    u8 unknown_16c[30];
+    u8 unk16c[30];
     s8 mode;
 };
 
@@ -14,7 +14,7 @@ s32 GameFlag_Test(s32 flag);
 
 s32 Func_08026dd0(u32 value)
 {
-    struct EventPrompt *event = Ram_HeapSlots->event_work;
+    struct EventPrompt *event = Ram_HeapSlots->eventWork;
     u32 kind = value >> 14;
     s32 code = value & 0x3fff;
 

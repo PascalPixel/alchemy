@@ -122,7 +122,7 @@ void Func_02001008(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 11, 0, 10);
     Call3((void (*)())Func_02001ec0, 25, 2, 10);
-    ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call2((void (*)())Object_SetModeById, 4, 1);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x4000, 0);
     Call1((void (*)())Battle_WaitMode0, 20);

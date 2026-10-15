@@ -6,16 +6,16 @@ void EffectSlot_UpdateFar(void *slot);
 void Animation_ApplyChildValuesToRecordFar(void *child, u32 value);
 
 struct ShopFxWork {
-    u8 unknown_000[248];
+    u8 unk000[248];
     void *children[0x104];
     s8 selected;
-    u8 unknown_509[3];
+    u8 unk509[3];
     u8 slots[24][72];
 };
 
 void Func_0810b168(void)
 {
-    struct ShopFxWork *work = Ram_HeapSlots->menu_runtime;
+    struct ShopFxWork *work = Ram_HeapSlots->menuRuntime;
     s32 i;
     s32 selected;
 

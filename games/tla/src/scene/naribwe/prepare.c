@@ -10,7 +10,7 @@ void Func_02000400(void)
 
 void Func_0200041c(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     work[0xd31] = 0;
     work[0xd32] = 24;
@@ -31,13 +31,13 @@ void Func_02000464(void)
 
 s32 Func_02000480(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(23), 0);
-    Object_GetById(23)->scale_y = 0x19999;
-    Object_GetById(27)->scale_x = 0x8000;
-    Object_GetById(27)->scale_y = 0x8000;
+    Object_GetById(23)->scaleY = 0x19999;
+    Object_GetById(27)->scaleX = 0x8000;
+    Object_GetById(27)->scaleY = 0x8000;
     Func_02000464();
     if (GameFlag_Test(0x201))
         Func_02000574(23, 0, 0);

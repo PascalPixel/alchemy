@@ -16,19 +16,19 @@ extern u8 gWindowWork[];
 struct TolbiSceneWork
 {
 #if EDITION_INTERNATIONAL
-	u8 unknown_00[0xea4];
+	u8 unk00[0xea4];
 #else
-	u8 unknown_00[0xf34];
+	u8 unk00[0xf34];
 #endif
-	u8 widen_proximity;
+	u8 widenProximity;
 };
 
 struct SceneSprite
 {
-	u8 unknown_00[0x15];
-	u8 unknown_15_low : 2;
-	u8 priority_15 : 2;
-	u8 unknown_15_high : 4;
+	u8 unk00[0x15];
+	u8 unk15Low : 2;
+	u8 priority15 : 2;
+	u8 unk15High : 4;
 };
 
 struct Actor
@@ -43,13 +43,13 @@ struct Actor
 
 struct SceneActor
 {
-	u8	unk_00[6];
+	u8	unk00[6];
 	u16 facing;
 	s32 x, y, z;
-	u8	unk_14[71];
+	u8	unk14[71];
 	u8	active;
-	u8	unk_5c[8];
-	u16 proximity_flags;
+	u8	unk5c[8];
+	u16 proximityFlags;
 };
 
 #endif

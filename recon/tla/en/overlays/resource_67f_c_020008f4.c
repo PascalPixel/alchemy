@@ -14,19 +14,19 @@ void Func_020008f4(struct ObjectRuntime *object)
     vx = object->bounce;
     object->x += vx;
     object->y += object->gravity;
-    vz = object->unknown_4c;
+    vz = object->unk4c;
     object->z += vz;
     object->bounce = vx - vx / 18;
-    object->unknown_4c = vz - vz / 16;
+    object->unk4c = vz - vz / 16;
     /* FAKEMATCH: the ARM9 scheduling would load the scale rate before storing the Z velocity. */
     __asm__("");
-    rate = object->speed_limit;
-    object->scale_x += rate;
+    rate = object->speedLimit;
+    object->scaleX += rate;
     animation = object->animation;
-    object->scale_y += object->acceleration;
+    object->scaleY += object->acceleration;
     /* FAKEMATCH: and would address the spin before storing the Y scale. */
     __asm__("");
     animation->angle += object->action;
-    owner = Object_GetById(gPartyState.current_owner);
+    owner = Object_GetById(gPartyState.currentOwner);
     ((struct IzumoRuinsAnimation *)object->animation)->layer = ((struct IzumoRuinsAnimation *)owner->animation)->layer;
 }

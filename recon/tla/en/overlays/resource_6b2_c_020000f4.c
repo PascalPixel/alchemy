@@ -27,19 +27,19 @@ void Func_020000f4(void)
 
     ObjectMotion_SetActionVariant(8, 3);
     ObjectMotion_SetActionVariant(9, 3);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
     phase = gFrameCount & 15;
     if (phase == 0) {
         object = Func_02000550(0x2a2, 0, 0, 0);
         if (object != NULL) {
             sprite = object->animation;
             x = Random16Far() * 40 + 0x32c0000;
-            object->motion_flags = phase;
+            object->motionFlags = phase;
             object->x = x;
             object->y = 0xa00000;
             object->z = 0x2b80000;
             ObjectDispatch_SetSingleChildFlags(object, 0);
-            object->priority_flags &= ~1;
+            object->priorityFlags &= ~1;
             sprite->priority = 2;
             Func_02000548(object, Data_02000618);
             Func_02000540(object, 1);

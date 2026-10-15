@@ -7,15 +7,15 @@ void Func_02001cc8(void)
     if (object->x >> 20 == 32 && object->z >> 20 == 11) {
         Func_020048c4();
         Func_02004a24(0);
-        object->motion_flags = 3;
+        object->motionFlags = 3;
         do {
             WaitFrames(1);
             /* FAKEMATCH: one more use of the object inside the loop ranks it ahead of the speed it reads, so the object takes r5 and the speed r6 as the native has; plain, the two trade registers (differ 14, with or without a named speed and a flags pointer). */
             __asm__("" : : "l"(object));
-        } while (object->velocity_y != 0);
+        } while (object->velocityY != 0);
         Engine_AudioPlayCue(188);
         WaitFrames(10);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
         WaitFrames(1);
         GameFlag_SetBit(0x94e);
@@ -31,13 +31,13 @@ void Func_02001d3c(void)
     ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
     Battle_WaitMode0(20);
     ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
-    ShamanVillage_ObjSpeed(gPartyState.current_owner, 0x26666, 0x13333);
-    ObjectMotion_Launch(gPartyState.current_owner, 4, 0);
-    Object_GetById(gPartyState.current_owner)->action_flags &= ~1;
-    ShamanVillage_ObjWalk(gPartyState.current_owner, 120, 220);
+    ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x26666, 0x13333);
+    ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
+    Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
+    ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 220);
     Battle_WaitMode0(1);
     {
-        u8 *flags = &Object_GetById(gPartyState.current_owner)->action_flags;
+        u8 *flags = &Object_GetById(gPartyState.currentOwner)->actionFlags;
 
         u32 value = *flags;
 
@@ -61,16 +61,16 @@ void Func_02001d3c(void)
     Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
     ShamanVillage_MessagePut(15, 0);
     ShamanVillage_CamSpeed(0xcccc, 0x1999);
-    Func_020049fc()->motion_flags = 0;
+    Func_020049fc()->motionFlags = 0;
     ShamanVillage_CamMove(0x780000, 0x320000, 0xe00000, 1);
-    ShamanVillage_ObjSpeed(gPartyState.current_owner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gPartyState.current_owner, 120, 256);
-    ShamanVillage_ObjTurn(gPartyState.current_owner, 0xc000);
-    ShamanVillage_ObjSpeed(gPartyState.current_owner, 0x6666, 0x3333);
-    Object_GetById(gPartyState.current_owner)->action_flags &= ~1;
-    ShamanVillage_ObjWalk(gPartyState.current_owner, 120, 264);
+    ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
+    ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 256);
+    ShamanVillage_ObjTurn(gPartyState.currentOwner, 0xc000);
+    ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x6666, 0x3333);
+    Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
+    ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 264);
     Battle_WaitMode0(1);
-    Object_GetById(gPartyState.current_owner)->action_flags |= 1;
+    Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(15, 259, 20)
     ShamanVillage_MessagePut(0x800f, 0);

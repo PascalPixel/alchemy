@@ -6,8 +6,8 @@
 
 struct PairDetail
 {
-	u8 unknown_00[22];
-	u8 field_16;
+	u8 unk00[22];
+	u8 field16;
 };
 
 struct PairSprite
@@ -22,23 +22,23 @@ union PairObject
 	s32				  words[28];
 	struct
 	{
-		u8				  unknown_00[0x68];
+		u8				  unk00[0x68];
 		union PairObject *parent;
 	} link;
 };
 
 struct PairWork
 {
-	u8	unknown_00[70];
-	u16 vram_block;
+	u8	unk00[70];
+	u16 vramBlock;
 };
 
 struct WorldMapOam
 {
-	u8	unknown_00[4];
+	u8	unk00[4];
 	u16 attr0;
 	u16 x : 9;
-	u16 affine_index : 5;
+	u16 affineIndex : 5;
 	u16 size : 2;
 };
 
@@ -61,7 +61,7 @@ void WorldMap_CreateLinkedEffects(void *object)
 		{
 			child->words[5] = parent->words[5];
 			part = (struct PairSprite *)child->object.actor.sprite;
-			child->object.actor.motion_flags = 0;
+			child->object.actor.motionFlags = 0;
 			child->object.effect.spin = 0;
 			child->link.parent = parent;
 			if (part != NULL)
@@ -69,14 +69,14 @@ void WorldMap_CreateLinkedEffects(void *object)
 				sprite = &part->sprite;
 				AnimationObjects_SelectAnimation(sprite, 0);
 				sprite->flags = 0;
-				Resource_ResetEntry(sprite->vram_block);
-				sprite->vram_block = work->vram_block;
-				sprite->unknown_1d_0 = 1;
-				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-				sprite->full_color = 0;
+				Resource_ResetEntry(sprite->vramBlock);
+				sprite->vramBlock = work->vramBlock;
+				sprite->unk1d0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
+				sprite->fullColor = 0;
 				sprite->shape = 1;
 				((struct WorldMapOam *)sprite)->size = 2;
-				part->detail->field_16 = 0;
+				part->detail->field16 = 0;
 			}
 		}
 	}
@@ -93,6 +93,6 @@ void WorldMap_CreateLinkedEffects(void *object)
 
 		sp->priority = 1;
 		p->update = (void *)Effect_AnimateVerticalPositive;
-		p->priority_flags = 2;
+		p->priorityFlags = 2;
 	}
 }

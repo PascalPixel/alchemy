@@ -31,7 +31,7 @@ void Func_02000094(s32 unused, s32 id)
         WaitFrames(10);
         Func_020022c8(134);
         y = object->y;
-        floor = object->terrain_height;
+        floor = object->terrainHeight;
         /* FAKEMATCH: the native reads the height and the floor before it clears the counter and again at the end of each pass; without the barrier the counter is cleared first and the two reads are merged into one at the test (two instructions fewer). */
         __asm__ volatile("");
         i = 0;
@@ -41,10 +41,10 @@ void Func_02000094(s32 unused, s32 id)
             if (++i > 29)
                 break;
             y = object->y;
-            floor = object->terrain_height;
+            floor = object->terrainHeight;
         test:;
-        } while (y > floor || object->velocity_y != 0);
-        object->motion_flags = 0;
+        } while (y > floor || object->velocityY != 0);
+        object->motionFlags = 0;
         Func_020021e0(object->x, object->z, 0, 0);
         Func_020022c0(object->x, object->z, 0, 128);
     }

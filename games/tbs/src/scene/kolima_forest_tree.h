@@ -26,8 +26,8 @@ struct PaletteEffect
 	u8					 pad1c[7];
 	u8					 flags;
 	u8					 pad24[12];
-	s32					 rate_x;
-	s32					 rate_y;
+	s32					 rateX;
+	s32					 rateY;
 	u8					 pad38[24];
 	struct EffectSprite *sprite;
 	u8					 pad54[1];
@@ -41,12 +41,12 @@ struct OrbitingPaletteEffect
 	s32 y;
 	s32 z;
 	s32 pad14;
-	s32 angle_x;
-	s32 angle_y;
+	s32 angleX;
+	s32 angleY;
 	s32 pad20[6];
-	s32 anchor_x;
-	s32 anchor_y;
-	s32 anchor_z;
+	s32 anchorX;
+	s32 anchorY;
+	s32 anchorZ;
 	s32 pad44[3];
 	u8 *owner;
 	s32 pad54[4];

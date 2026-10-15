@@ -31,7 +31,7 @@ void Func_02000754(struct ObjectRuntime *object)
         i = 0;
     next:
         __asm__("" : : : "memory");
-        if (*((struct BattleAnimationState *)hit->animation)->value_28 == Data_02001968[i])
+        if (*((struct BattleAnimationState *)hit->animation)->value28 == Data_02001968[i])
             return;
         i++;
         if (i <= 5)

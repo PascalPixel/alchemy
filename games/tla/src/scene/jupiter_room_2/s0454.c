@@ -13,7 +13,7 @@ void Func_020022bc(s32 a);
 // Once the leader stands at height 32 or more, it rises and spins for 110 frames.
 void Func_02000454(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     s32 i;
     s32 angle;
     s32 y;
@@ -23,11 +23,11 @@ void Func_02000454(void)
         y = object->y;
     } while (0);
     if (y >= 0x200000) {
-        ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x20000, 0x10000);
-        ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
-        ObjectMotion_ResetAndSetPositionInMode2(gPartyState.current_owner, 216, 680);
+        ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
+        ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
+        ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 216, 680);
         ObjectDispatch_ApplyValueToChildren(object, 64);
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         for (i = 109; i >= 0; i--) {
             object->y += 0x30000;
             /* FAKEMATCH: the one-pass block loads the angle before its 0x1800 step is built (one reordered row without it; as one statement loop.c hoists the step out of the loop, differ 20). */

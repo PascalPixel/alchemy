@@ -33,7 +33,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 
 void Func_08044b98(s32 member)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     struct UiWindow *window = NULL;
     s32 sprite[3];
     s32 *entry = sprite;

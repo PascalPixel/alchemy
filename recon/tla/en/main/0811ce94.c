@@ -9,15 +9,15 @@ s32 __divsi3(s32, s32);
 u32 Random16(void);
 
 struct BattleEscapeState {
-    u8 reserved_00[0x45];
+    u8 reserved00[0x45];
     u8 guaranteed;
-    u8 failed_attempts;
+    u8 failedAttempts;
 };
 
 s32 BattleEscape_CheckSuccess(void)
 {
     s32 escaped;
-    u8 *failed_attempts;
+    u8 *failedAttempts;
     s16 living_units[14];
     s32 living_count;
     s32 level_total;
@@ -26,13 +26,13 @@ s32 BattleEscape_CheckSuccess(void)
     struct BattleEscapeState *escape_state;
 
     escaped = 0;
-    escape_state = (struct BattleEscapeState *)Ram_HeapSlots->battle_work;
+    escape_state = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
     if (escape_state->guaranteed == 1) {
         escaped = 1;
     } else {
-        failed_attempts = &escape_state->failed_attempts;
+        failedAttempts = &escape_state->failedAttempts;
         level_total = 0;
-        chance = 0x1388 + (escape_state->failed_attempts * 0x7D0);
+        chance = 0x1388 + (escape_state->failedAttempts * 0x7D0);
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
             living_units);
@@ -54,9 +54,9 @@ s32 BattleEscape_CheckSuccess(void)
             ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
             escaped = 1;
         }
-        *failed_attempts += 1;
+        *failedAttempts += 1;
     }
-    if (gPartyState.battle_rule_24b == 2) {
+    if (gPartyState.battleRule24b == 2) {
         escaped = 0;
     }
     return escaped;

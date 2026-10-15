@@ -13,7 +13,7 @@
 
 struct OptionMarkerOutput
 {
-	u8 unknown_00[14];
+	u8 unk00[14];
 	u8 index;
 };
 
@@ -25,18 +25,18 @@ union OptionCursor
 
 struct OptionWork
 {
-	u8				   unknown_000[0x574];
+	u8				   unk000[0x574];
 	u16				   page;
 	u16				   tint[3];
-	u16				   cursor_frame;
+	u16				   cursorFrame;
 	u16				   preset;
-	u8				   unknown_580[0x14];
+	u8				   unk580[0x14];
 	s8				   option[5];
-	s8				   option_count[5];
-	u8				   unknown_59e[6];
+	s8				   optionCount[5];
+	u8				   unk59e[6];
 	union OptionCursor cursor;
 	union OptionCursor marker[2];
-	u8				   unknown_5d4[0x18];
+	u8				   unk5d4[0x18];
 	void			  *frame[3][3];
 };
 
@@ -50,15 +50,15 @@ void OptionMenu_InitializeWork(void)
 	work = (struct OptionWork *)Runtime_AllocateBlock(208, 0x628);
 	zero = 0;
 	Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
-	work->option[0] = gPartyState.unknown_220[5];
-	work->option_count[0] = 24;
-	work->option[1] = gPartyState.unknown_220[6];
-	work->option_count[1] = 15;
-	work->option[2] = gPartyState.event_mode;
-	work->option_count[2] = 3;
-	work->option[3] = gPartyState.battle_fx_enabled;
-	work->option_count[3] = 2;
-	work->option[4] = gPartyState.unknown_244[6];
-	work->option_count[4] = 2;
+	work->option[0] = gPartyState.unk220[5];
+	work->optionCount[0] = 24;
+	work->option[1] = gPartyState.unk220[6];
+	work->optionCount[1] = 15;
+	work->option[2] = gPartyState.eventMode;
+	work->optionCount[2] = 3;
+	work->option[3] = gPartyState.battleFxEnabled;
+	work->optionCount[3] = 2;
+	work->option[4] = gPartyState.unk244[6];
+	work->optionCount[4] = 2;
 	Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0x480);
 }

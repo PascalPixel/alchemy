@@ -54,10 +54,10 @@ void Func_02003630(struct ObjectRuntime *arg)
 
     asm("");
     object = arg;
-    owner = Object_GetById(party->current_owner);
+    owner = Object_GetById(party->currentOwner);
     ownerY = owner->y >> 16;
     y = object->y >> 16;
-    flags = &object->priority_flags;
+    flags = &object->priorityFlags;
 
     if (ownerY != y || (s16)(owner->z >> 16) < (s16)(object->z >> 16)) {
         *flags = 1;

@@ -6,7 +6,7 @@ s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 
 void Func_0803cf6c(s32 message)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
     work->count = (u16)(work->count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
     work->count = (u16)(work->count - 1) & (UI_TEXT_ENTRY_COUNT - 1);

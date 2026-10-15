@@ -3,8 +3,8 @@
 #include "object_runtime.h"
 
 struct GateEventWork {
-    u8 unknown_000[362];
-    u16 gate_timer;
+    u8 unk000[362];
+    u16 gateTimer;
 };
 
 extern const u8 Data_02005d7c[];

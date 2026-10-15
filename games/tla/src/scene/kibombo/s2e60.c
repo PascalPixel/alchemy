@@ -17,23 +17,23 @@ void Func_02002de0(void)
         struct FieldSprite *sprite = object->sprite;
         u8 *buffer;
 
-        sprite->full_color = 0;
+        sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 1;
-        object->motion_flags = zero;
-        object->field_5c = 1;
-        sprite->next_frame = zero;
-        sprite->unknown_1b[0] = zero;
+        object->motionFlags = zero;
+        object->field5c = 1;
+        sprite->nextFrame = zero;
+        sprite->unk1b[0] = zero;
         buffer = Runtime_AllocateHeapBlockFar(68, 0x608);
         Func_02005a84(242);
-        VramBlock_LoadCached(sprite->vram_block, 128, buffer + 0x400);
+        VramBlock_LoadCached(sprite->vramBlock, 128, buffer + 0x400);
         Runtime_ReleaseHeapBlock(68);
     }
 }
 
 void Func_02002e60(void)
 {
-    struct KibomboObject *leader = Object_GetById(gPartyState.current_owner);
+    struct KibomboObject *leader = Object_GetById(gPartyState.currentOwner);
 
     do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's height before it builds the limit (2 differ without it). */
     if (leader->y > 0x100000) {

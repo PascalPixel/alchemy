@@ -155,7 +155,7 @@ static void EV16_TALK(void)
 	Engine_EventOpenMessage(16, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
-		((struct BranchCounterWork *)gEventWork)->branch_counter += 1;
+		((struct BranchCounterWork *)gEventWork)->branchCounter += 1;
 	}
 	Engine_EventShowMessage(16, 0);
 	Engine_GameFlagSet(0x308);
@@ -322,7 +322,7 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay)
 
 	Actor_SetSpeed(zero, 0x8000, 0x4000);
 	Actor_WalkTo(zero, x, y);
-	gEventWork->transition_frames = 16;
+	gEventWork->transitionFrames = 16;
 	Engine_EventRequestExit(delay);
 }
 
@@ -359,7 +359,7 @@ static void EV08_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -378,7 +378,7 @@ static void EV09_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -410,7 +410,7 @@ static void EV12_TOUCH(void)
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
-	actor->state_23 &= ~1;
+	actor->state23 &= ~1;
 	flags = presentation->flags;
 	flags |= 12;
 	presentation->flags = flags;
@@ -474,7 +474,7 @@ static void EV18_TALK(void)
 
 	if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0)
 	{
-		((struct Actor18MarkerWork *)gEventWork)->actor18_marker = 1;
+		((struct Actor18MarkerWork *)gEventWork)->actor18Marker = 1;
 	}
 
 	Engine_EventEnd();

@@ -9,15 +9,15 @@ void Func_020050ac(void)
     ObjectMotion_SetActionVariant(8, 3);
     Func_02005c54();
     Func_02005c5c(0, 0x9e9, 12, 13);
-    Object_GetById(22)->collision_flags |= 0x80;
-    Object_GetById(23)->collision_flags |= 0x80;
+    Object_GetById(22)->collisionFlags |= 0x80;
+    Object_GetById(23)->collisionFlags |= 0x80;
 }
 
 void Func_02005114(void)
 {
     Func_02005b0c(11, 0x580000, 0x13a0000);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 0);
-    Object_GetById(11)->scale_y = 0x8000;
+    Object_GetById(11)->scaleY = 0x8000;
     Func_020050ac();
     GameFlag_ClearBit(0x86b);
     Func_02005b8c(25);

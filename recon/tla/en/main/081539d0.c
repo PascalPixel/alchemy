@@ -49,8 +49,8 @@ void Func_081539d0(struct BattleEffectArgument *effect)
     s32 i;
     s32 frame;
 
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battle_fx_work[0];
-    canvas = Ram_HeapSlots->battle_fx_work[1];
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
     Func_08144aac(effect->side ^ 1, draw);
@@ -59,13 +59,13 @@ void Func_081539d0(struct BattleEffectArgument *effect)
         star->x = ((Random16() & 0xff) - 127) << 16;
         star->y = ((Random16() & 0xff) - 127) << 16;
         star->z = ((Random16() & 0xff) - 127) << 16;
-        star->velocity_x = 0;
-        star->velocity_y = 0;
-        star->velocity_z = 0;
+        star->velocityX = 0;
+        star->velocityY = 0;
+        star->velocityZ = 0;
         star->variant = 0;
     }
-    work->transfer_mode = 1;
-    work->transfer_value = 0;
+    work->transferMode = 1;
+    work->transferValue = 0;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     record[0] = 0;
     record[1] = 160 << 15;
@@ -73,7 +73,7 @@ void Func_081539d0(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 160; frame++) {
         s32 *camera;
 
-        camera = Ram_HeapSlots->camera_work;
+        camera = Ram_HeapSlots->cameraWork;
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, camera + 3);
         SceneTransform_ApplyPosition(record);
@@ -115,13 +115,13 @@ void Func_081539d0(struct BattleEffectArgument *effect)
                     s32 dy = -star->y >> 8;
                     s32 dz = -star->z >> 8;
 
-                    star->velocity_x += dx;
-                    star->velocity_y += dy;
-                    star->velocity_z += dz;
+                    star->velocityX += dx;
+                    star->velocityY += dy;
+                    star->velocityZ += dz;
                 }
             }
         }
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback(Func_08143000);

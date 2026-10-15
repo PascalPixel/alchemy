@@ -31,7 +31,7 @@ const u8 *Func_02000058(void)
 
 void Func_020000bc(void)
 {
-    u8 *event = Ram_HeapSlots->event_work;
+    u8 *event = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
     asm volatile("");
@@ -40,7 +40,7 @@ void Func_020000bc(void)
 
 void Func_020000d0(void)
 {
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     u32 facing = object->angle;
 
     if (facing == 0 || facing == 0x8000) {
@@ -63,7 +63,7 @@ void Func_020000d0(void)
             }
         }
     }
-    if (Func_020055f8(gPartyState.current_owner) != -1)
+    if (Func_020055f8(gPartyState.currentOwner) != -1)
         Func_02005688();
 }
 

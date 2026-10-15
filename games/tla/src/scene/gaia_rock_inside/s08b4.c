@@ -11,7 +11,7 @@ void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
 s32 Func_020008b4(void)
 {
     struct ObjectRuntime *object = Object_GetById(9);
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
     if (leader->z >> 19 <= 45 && leader->x >> 19 <= 57)
         Func_02004dac(object, Data_02005728);

@@ -25,7 +25,7 @@ void Func_02000fcc(struct ObjectRuntime *object);
 
 void Func_02001110(s32 mode)
 {
-    struct MagmaRockWork *work = Ram_HeapSlots->effect_work;
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
     s16 *table = Data_02003d9e;
 
     if (gPartyState.scene == (s32)&SceneId_Ov691Room2) {

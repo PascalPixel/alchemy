@@ -47,10 +47,10 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused)
     Func_02001cfc(0);
     Func_02001d4c(158);
     Func_02001bc4(step->script, step->x, step->z);
-    Object_GetById(gPartyState.current_owner)->motion_flags = 2;
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.current_owner, 2, -8);
+    Object_GetById(gPartyState.currentOwner)->motionFlags = 2;
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.currentOwner, 2);
+    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2, -8);
     Battle_WaitMode0(10);
     Func_02001cd4(countdown);
     Event_FinishScreenTransition();

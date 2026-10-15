@@ -34,7 +34,7 @@ void Func_080d81ec(struct EffectSlot *effect)
     s32 magnitude;
     s32 angle;
 
-    source = Object_GetById(gPartyState.current_owner);
+    source = Object_GetById(gPartyState.currentOwner);
     state = effect->state;
 
     if (state == 0) {
@@ -53,20 +53,20 @@ void Func_080d81ec(struct EffectSlot *effect)
            it loads z; as plain constants both halves follow the z load
            (differ 6). */
         asm volatile("" : "+l"(magnitude));
-        effect->origin_x = x;
+        effect->originX = x;
         angle = 192;
         asm volatile("" : "+l"(angle));
-        effect->origin_z = position.z;
+        effect->originZ = position.z;
         effect->x = position.x;
         effect->z = position.z;
         position.x = effect->x;
         position.z = effect->z;
 
         Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
-        effect->target_x = position.x;
-        effect->target_z = position.z;
+        effect->targetX = position.x;
+        effect->targetZ = position.z;
         effect->acceleration = 0x10000;
-        effect->max_speed = 0x50000;
+        effect->maxSpeed = 0x50000;
         effect->flag42 = state;
         effect->state++;
 

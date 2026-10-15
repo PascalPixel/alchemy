@@ -28,7 +28,7 @@ void Func_02000f58(void)
 
     /* FAKEMATCH: ⚓️ loads the party state before it builds the offset */
     asm volatile("" : "+l"(party));
-    if (party->render_mode != 3)
+    if (party->renderMode != 3)
         Func_02000da8(12);
 }
 

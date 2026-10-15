@@ -4,19 +4,19 @@
 #include "party_state.h"
 
 struct EventWorkRoute {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 route;
-    u8 unknown_1b0[4];
+    u8 unk1b0[4];
     s32 countdown;
 };
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     s16 message;
 };
 
 struct AnimationRecord26 {
-    u8 unknown_00[0x1a];
+    u8 unk00[0x1a];
     u8 frame;
 };
 
@@ -77,7 +77,7 @@ static __inline__ void Show(s32 kind, s32 frames)
 
 void Func_02000310(s32 kind, s32 frames)
 {
-    struct EventWork1c4 *work = Ram_HeapSlots->event_work;
+    struct EventWork1c4 *work = Ram_HeapSlots->eventWork;
     s32 b;
     s32 a;
     s32 height;

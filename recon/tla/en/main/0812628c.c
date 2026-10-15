@@ -25,7 +25,7 @@ void Func_08125bb8(void *destination);
 
 void Func_0812628c(s32 mode, s32 value, s32 fade)
 {
-    struct BattleBackgroundView *transition = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
+    struct BattleBackgroundView *transition = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
     if (transition->mode == 0)
         Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0xcff);
@@ -44,7 +44,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
 
         do
         {
-            work = Ram_HeapSlots->battle_work;
+            work = Ram_HeapSlots->battleWork;
         } while (0);
         palette = work->palette;
         __asm__ volatile("" : : "l"(palette));
@@ -59,7 +59,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
 
         do
         {
-            work = Ram_HeapSlots->battle_work;
+            work = Ram_HeapSlots->battleWork;
         } while (0);
         source = work->palette;
         destination = (u16 *)0x050000c0;

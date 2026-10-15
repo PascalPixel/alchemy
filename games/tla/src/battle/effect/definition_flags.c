@@ -19,7 +19,7 @@ s32 Func_080d1eac(s32 id)
     /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
     do {
     } while (0);
-    if (party->battle_fx_enabled == 0 || (value = Func_080d1e60(id)->value) == 0xff)
+    if (party->battleFxEnabled == 0 || (value = Func_080d1e60(id)->value) == 0xff)
         return 0;
     return value + 0x100;
 }

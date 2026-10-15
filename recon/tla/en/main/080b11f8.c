@@ -22,10 +22,10 @@ void Party_RestoreSnapshot(void)
             Owner_RefreshDerivedData(owner);
             UnitCalc(owner);
         }
-        gPartyState.packed_events[0] = *src++;
-        gPartyState.packed_events[1] = *src++;
-        *(u16 *)&gPartyState.active_owners[0] = *src++;
-        *(u16 *)&gPartyState.active_owners[2] = src[0];
+        gPartyState.packedEvents[0] = *src++;
+        gPartyState.packedEvents[1] = *src++;
+        *(u16 *)&gPartyState.activeOwners[0] = *src++;
+        *(u16 *)&gPartyState.activeOwners[2] = src[0];
         src = Data_020023c4;
         *src = 0;
     }

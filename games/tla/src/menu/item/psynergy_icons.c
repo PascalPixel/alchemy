@@ -2,13 +2,13 @@
 #include "ram_buffer.h"
 
 struct PsynergyEntryIcon {
-    u8 unknown_00[14];
+    u8 unk00[14];
     u8 slot;
 };
 
 struct PsynergyEntryMenu {
-    u8 unknown_000[0x4c];
-    struct PsynergyEntryIcon *entry_icons[32];
+    u8 unk000[0x4c];
+    struct PsynergyEntryIcon *entryIcons[32];
 };
 
 void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
@@ -21,7 +21,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     u16 *p;
     s32 psynergy_id;
 
-    icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menu_runtime)->entry_icons;
+    icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
     p = psynergies;
     remaining = 31;
     do {

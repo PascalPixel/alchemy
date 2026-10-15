@@ -3,7 +3,7 @@
 #include "types.h"
 
 struct ObjectPairPosition {
-    u8 unknown_00[6];
+    u8 unk00[6];
     s16 angle;
     s32 x;
     s32 y;
@@ -12,12 +12,12 @@ struct ObjectPairPosition {
 
 s32 ArcTan2(s32, s32);
 
-void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
+void ObjectMotion_SetAngleToward(s32 firstId, s32 second_id, s32 wait)
 {
     struct ObjectPairPosition *first;
     struct ObjectPairPosition *second;
 
-    first = ObjectTable_Get(first_id);
+    first = ObjectTable_Get(firstId);
     second = ObjectTable_Get(second_id);
     if (first != 0 && second != 0) {
         first->angle = ArcTan2(second->z - first->z,

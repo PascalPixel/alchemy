@@ -12,8 +12,8 @@ struct FieldEffectState {
 
 struct FieldObject {
     u8 padding0[0x34];
-    u16 saved_x;
-    u16 saved_y;
+    u16 savedX;
+    u16 savedY;
     s16 x;
     u16 y;
 };
@@ -41,13 +41,13 @@ void Inn_PlaySleep(s32 room_price)
     for (index = 0; index < count; index++) {
         object = UnitGet(objects[index]);
         if (object->x != 0) {
-            object->x = object->saved_x;
-            object->y = object->saved_y;
+            object->x = object->savedX;
+            object->y = object->savedY;
             UnitRatioFar(objects[index]);
         }
     }
 
-    state = Ram_HeapSlots->event_work;
+    state = Ram_HeapSlots->eventWork;
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
@@ -59,5 +59,5 @@ void Inn_PlaySleep(s32 room_price)
     Event_StartScreenTransitionFar();
     Event_WaitTransitionFramesFar();
     WaitFrames(30);
-    ((struct FieldEffectState *)Ram_HeapSlots->event_work)->delay = 16;
+    ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
 }

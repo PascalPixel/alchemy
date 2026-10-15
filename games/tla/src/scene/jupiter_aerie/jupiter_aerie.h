@@ -14,21 +14,21 @@ struct JupiterAerieSpark {
 };
 
 struct JupiterAerieWork {
-    u8 unknown_00[2];
+    u8 unk00[2];
     s16 flag;
-    u8 unknown_04[2];
+    u8 unk04[2];
     s16 x;
     s16 z;
     s16 count;
     s16 current;
-    u8 unknown_0e[18];
+    u8 unk0e[18];
 };
 
 struct JupiterAerieEntry {
     s16 x;
     s16 z;
     s16 flag;
-    u8 unknown_06[2];
+    u8 unk06[2];
 };
 
 extern u8 gDecodeFillByte;

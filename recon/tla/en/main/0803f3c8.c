@@ -26,9 +26,9 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     u32 index;
     struct SelectionSprite *sprite;
 
-    index = screen->top + screen->cursor_index;
+    index = screen->top + screen->cursorIndex;
     Menu_SendNodeCountList(screen);
-    Menu_ReloadNodeResource(screen, screen->cursor_index);
+    Menu_ReloadNodeResource(screen, screen->cursorIndex);
     screen->status = 33;
     WaitFrames(1);
     screen->records[0].kind = 0;
@@ -37,15 +37,15 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     screen->records[14].scale = 0;
     Resource_ResetPendingTransfer();
     node = screen->head;
-    while (node != NULL && screen->cursor_index != cnt) {
+    while (node != NULL && screen->cursorIndex != cnt) {
         node = node->next;
         cnt++;
     }
-    node->home_x = node->x;
-    node->home_y = node->y;
+    node->homeX = node->x;
+    node->homeY = node->y;
     for (other = screen->head; other != NULL; other = other->next) {
         if (other != node) {
-            other->target_x = node->x;
+            other->targetX = node->x;
             other->dx = (node->x - other->x) >> 1;
         }
     }
@@ -59,18 +59,18 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     screen->head = node;
     node->prev = NULL;
     node->next = NULL;
-    node->target_x = 4;
+    node->targetX = 4;
     asm("");
     asm("");
     for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
-        node->target_x += 16;
+        node->targetX += 16;
         cnt++;
     }
-    screen->path_top[cnt] = screen->top;
-    screen->path_cursor[cnt] = screen->cursor_index;
-    node->dx = (node->target_x - node->x) >> 1;
-    screen->unknown_39a = 0;
-    screen->cursor_index |= 0x80;
+    screen->pathTop[cnt] = screen->top;
+    screen->pathCursor[cnt] = screen->cursorIndex;
+    node->dx = (node->targetX - node->x) >> 1;
+    screen->unk39a = 0;
+    screen->cursorIndex |= 0x80;
     WaitFrames(2);
     other = Resource_FindFreeTransferEntry(1);
     other->kind = node->kind;
@@ -80,14 +80,14 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     other->tile = node->tile;
     other->x = node->x;
     other->y = node->y;
-    other->target_x = other->x;
-    other->target_y = other->y;
-    other->home_x = node->home_x;
-    other->home_y = node->home_y;
+    other->targetX = other->x;
+    other->targetY = other->y;
+    other->homeX = node->homeX;
+    other->homeY = node->homeY;
     other->dx = 0;
     other->dy = 0;
     other->scale = 0x100;
-    other->scale_end = 0x100;
+    other->scaleEnd = 0x100;
     sprite = &other->sprite;
     sprite->mode = 0;
     sprite->colors = 0;

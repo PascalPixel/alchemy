@@ -20,8 +20,8 @@ extern u8 MsgAutoSleepLabel[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
-struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
+void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
 
@@ -86,7 +86,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[0].output = out;
         x = win->x * 8 + 140;
-        x += __divsi3(work->option[0] * 60, work->option_count[0]);
+        x += __divsi3(work->option[0] * 60, work->optionCount[0]);
         y = win->y * 8 + 4;
         Func_080b0038(&work->marker[0], x, y);
     }
@@ -98,7 +98,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[1].output = out;
         x = win->x * 8 + 140;
-        x += __divsi3(work->option[1] * 60, work->option_count[1]);
+        x += __divsi3(work->option[1] * 60, work->optionCount[1]);
         y = win->y * 8 + 20;
         Func_080b0038(&work->marker[1], x, y);
     }

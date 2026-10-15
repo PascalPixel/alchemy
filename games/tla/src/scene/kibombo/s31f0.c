@@ -5,7 +5,7 @@ void Func_020031f0(s32 id)
     Func_02005b8c(id);
     Object_SetPartAttribute(Object_GetById(id), 15);
     ObjectMotion_SetActionVariant(id, 1);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
 }
 
 void Func_02003220(void)
@@ -31,7 +31,7 @@ void Func_0200324c(void)
         Func_020031f0(id);
         zero = 0;
         asm("" : "+r"(zero));
-        object->motion_flags = zero;
+        object->motionFlags = zero;
     }
     Object_GetById(15)->y = 0x200000;
     Object_GetById(16)->y = zero;
@@ -51,7 +51,7 @@ void Func_02003288(void)
             /* FAKEMATCH: the zero is pinned to r3 inside the loop, where the native builds it on every pass; as a plain 0 loop.c hoists it to r8 (differ 8). */
             register s32 zero asm("r3") = 0;
 
-            object->motion_flags = zero;
+            object->motionFlags = zero;
         }
     }
     Func_02003220();

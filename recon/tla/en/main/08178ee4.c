@@ -31,13 +31,13 @@
 
 struct FxWork {
     struct EffectStep step;
-    u8 unknown_001c[0x7780 - 0x1c];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake_frames;
-    u8 unknown_77ac[0x78e8 - 0x77ac];
-    s32 transfer_pending;
+    u8 unk001c[0x7780 - 0x1c];
+    s32 transferMode;
+    s32 transferValue;
+    u8 unk7788[0x20];
+    s32 shakeFrames;
+    u8 unk77ac[0x78e8 - 0x77ac];
+    s32 transferPending;
 };
 
 extern char ResourceId_Data0DC;
@@ -82,8 +82,8 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
 
     do { } while (0);
     heap = Ram_HeapSlots;
-    work = (struct FxWork *)heap->battle_fx_work[0];
-    canvas = heap->battle_fx_work[1];
+    work = (struct FxWork *)heap->battleFxWork[0];
+    canvas = heap->battleFxWork[1];
     cells = Ram_MapCellBuffer;
     BattleFx_BeginTiledCanvas(0x2001);
     {
@@ -94,11 +94,11 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
     }
     Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, cells, 1, 1);
     Func_081963ec(104, 35);
-    blit[0] = (DrawRectangle)heap->unknown_64[1];
+    blit[0] = (DrawRectangle)heap->unk64[1];
     Func_081963ec(188, 39);
     blit[1] = ((DrawRectangle *)heap)[47];
-    work->transfer_mode = 1;
-    work->transfer_value = 0;
+    work->transferMode = 1;
+    work->transferValue = 0;
     Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
     EffectPosition_ApplyStepAndYOffset(effect->actors[0], &pos);
     for (frame = 0; frame != 108; frame++) {
@@ -109,10 +109,10 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
                 work->step.x = (pos.x - 168) << 16;
             work->step.y = -100 << 16;
             if (effect->side == 0)
-                work->step.velocity_x = -6 << 16;
+                work->step.velocityX = -6 << 16;
             else
-                work->step.velocity_x = 6 << 16;
-            work->step.velocity_y = 8 << 16;
+                work->step.velocityX = 6 << 16;
+            work->step.velocityY = 8 << 16;
             REG_BLDALPHA = 0x1000;
         }
         if (frame <= 31)
@@ -179,23 +179,23 @@ void Func_08178ee4(struct BattleEffectArgument *effect)
             }
         }
         if (frame == 80) {
-            work->shake_frames = 6;
+            work->shakeFrames = 6;
             Func_081180e8(134);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
         }
         if (frame == 30) {
             Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-            work->shake_frames = 3;
+            work->shakeFrames = 3;
             Audio_PlayCue(212);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
         }
         Func_08158ce0(4, 4);
         Func_081434f8();
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((s32)Func_08143000);
-    BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battle_work + 0x670), 24);
+    BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);
     Func_08143bb8();

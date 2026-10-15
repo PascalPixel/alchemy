@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 
 struct SparkWork {
-    u8 unknown_0000[0x1d9c];
+    u8 unk0000[0x1d9c];
     s16 resource;
 };
 
@@ -13,7 +13,7 @@ void Func_02001538(void);
 
 void Func_0200185c(void)
 {
-    struct SparkWork *work = Ram_HeapSlots->menu_runtime;
+    struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
     Scheduler_RemoveCallbackFar(Func_02001538);
     Resource_ResetEntry(work->resource);

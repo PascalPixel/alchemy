@@ -32,8 +32,8 @@ void Func_02000404(u16 *row)
 
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02002f80(object, (u16)animation + GameFlag_Test((u16)flag));
-        object->motion_flags = 0;
-        object->collision_flags &= 0xfe;
+        object->motionFlags = 0;
+        object->collisionFlags &= 0xfe;
         object->timer = flag;
         row += 3;
         Func_02000338(object);

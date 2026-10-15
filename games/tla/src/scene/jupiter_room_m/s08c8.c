@@ -33,7 +33,7 @@ void Func_020008c8(void)
     Func_020049c4(133);
     Func_0200474c_(49, 100, 4, 3, 49, 76);
     Battle_WaitMode0(20);
-    Object_AttachWorkTargetToObject(gPartyState.current_owner, 1);
+    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
     Func_020048f4();
     Func_020047dc();
 }

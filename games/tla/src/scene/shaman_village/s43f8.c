@@ -65,8 +65,8 @@ void Func_02004534(void)
 {
     u32 i;
 
-    ((struct ShamanVillageEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
-    Object_GetById(12)->collision_flags = 8;
+    ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+    Object_GetById(12)->collisionFlags = 8;
     if (GameFlag_Test(0x9fe)) {
         s32 angle = 0x3000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has; as a plain argument it is started third (one reordered row). */
 
@@ -81,8 +81,8 @@ void Func_02004534(void)
         Func_020048ac(1);
         Func_020048c4();
         Func_02004a24(0);
-        Object_SetModeById(gPartyState.current_owner, 41);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+        Object_SetModeById(gPartyState.currentOwner, 41);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 0);
         WaitFrames(1);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -97,7 +97,7 @@ void Func_02004534(void)
             if (gInput.held == 0)
                 goto next_stand;
         }
-        Object_SetModeById(gPartyState.current_owner, 42);
+        Object_SetModeById(gPartyState.currentOwner, 42);
         Battle_WaitMode0(10);
         i = 0;
         goto test_turn;
@@ -109,11 +109,11 @@ void Func_02004534(void)
             if (gInput.held == 0)
                 goto next_turn;
         }
-        ObjectMotion_Launch(gPartyState.current_owner, 4, 0);
-        Object_SetModeById(gPartyState.current_owner, 1);
-        ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x19999, 0xcccc);
-        ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, 813, 120);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 1);
+        ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
+        Object_SetModeById(gPartyState.currentOwner, 1);
+        ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
+        ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, 813, 120);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner), 1);
         Func_020048cc();
         if (gPartyState.entrance == 30) {
             GameFlag_SetBit(0x9fe);

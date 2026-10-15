@@ -28,7 +28,7 @@ void Func_020011e0(void)
     s32 column = Data_020019cc[index];
     s32 row = Data_020019cc[index + 1];
 
-    if (Object_GetById(16)->movement_state == 0) {
+    if (Object_GetById(16)->movementState == 0) {
         Func_020018a8(16, column << 19, row << 19);
         if (GameFlag_Test(0x104) == 0)
             step++;

@@ -2,19 +2,19 @@
 #include "types.h"
 
 struct Mover {
-    u8 unknown_00[8];
+    u8 unk00[8];
     s32 x;
     s32 y;
     s32 z;
     s32 fall;
-    u8 unknown_18[24];
+    u8 unk18[24];
     s32 step;
     s32 height;
-    u8 unknown_38[12];
-    s32 origin_x;
-    s32 origin_z;
+    u8 unk38[12];
+    s32 originX;
+    s32 originZ;
     s32 radius;
-    u8 unknown_50[20];
+    u8 unk50[20];
     s16 angle;
     s16 spin;
 };
@@ -27,16 +27,16 @@ s32 Func_020006f8(struct Mover *mover)
     if (mover->radius < mover->step)
         return 0;
     mover->angle += mover->spin >> 1;
-    mover->x = mover->origin_x;
+    mover->x = mover->originX;
     mover->y = mover->height;
-    mover->z = mover->origin_z;
+    mover->z = mover->originZ;
     Vector_AddPolarOffsetFar(mover->radius, mover->angle, &mover->x);
     Func_020006a4(mover);
     mover->radius -= mover->step >> 1;
     mover->angle += mover->spin >> 1;
-    mover->x = mover->origin_x;
+    mover->x = mover->originX;
     mover->y = mover->height;
-    mover->z = mover->origin_z;
+    mover->z = mover->originZ;
     Vector_AddPolarOffsetFar(mover->radius, mover->angle, &mover->x);
     Func_020006a4(mover);
     mover->radius -= mover->step >> 1;

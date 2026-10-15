@@ -13,49 +13,49 @@
 #include "item.h"
 
 struct EntryIconMenu {
-    u8 unknown_000[0x4c];
-    struct RenderOutput *entry_icons[32];
+    u8 unk000[0x4c];
+    struct RenderOutput *entryIcons[32];
 };
 
 // Places each of the 32 entry icons on the grid. The Broken Seal's
 // Menu_PlaceEntryObjectsInGrid.
-void Func_081005e4(s32 origin_x, s32 origin_y, s32 phase)
+void Func_081005e4(s32 originX, s32 originY, s32 phase)
 {
     s32 i;
     struct RenderOutput *obj;
     struct RenderOutput **table;
 
     i = 0;
-    table = ((struct EntryIconMenu *)Ram_HeapSlots->menu_runtime)->entry_icons;
+    table = ((struct EntryIconMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
     do {
         obj = *table++;
         if (obj != NULL)
-            Menu_PlaceEntryObjectInGrid(obj, i, origin_x, origin_y, phase);
+            Menu_PlaceEntryObjectInGrid(obj, i, originX, originY, phase);
         i += 1;
     } while (i <= 0x1F);
 }
 
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
-    s32 origin_x, s32 origin_y, s32 phase) {
+    s32 originX, s32 originY, s32 phase) {
     s32 no;
 
     no = index;
     if (no > 0x1F) {
         no = 0;
     }
-    obj->y = no / phase * 0x10 + origin_y;
-    obj->x = no % phase * 0x10 + origin_x;
+    obj->y = no / phase * 0x10 + originY;
+    obj->x = no % phase * 0x10 + originX;
     UiIcon_PrepareObject(obj);
 }
 
 struct CategoryItemIcon {
-    u8 reserved_00[6];
+    u8 reserved00[6];
     s16 x;
     s16 y;
 };
 
 struct CategoryItemIconState {
-    u8 reserved_00[76];
+    u8 reserved00[76];
     struct CategoryItemIcon *icons[32];
 };
 
@@ -65,7 +65,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
     struct CategoryItemIcon *icon;
     s32 i;
 
-    state = Ram_HeapSlots->menu_runtime;
+    state = Ram_HeapSlots->menuRuntime;
     ItemMenu_PosCategory();
     for (i = 0; i < 15; i++) {
         if (items[i] != 0 && (items[i] & 0x200) != 0) {
@@ -97,7 +97,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 
 void ItemMenu_PosCategory(void)
 {
-    struct CategoryItemIconState *state = Ram_HeapSlots->menu_runtime;
+    struct CategoryItemIconState *state = Ram_HeapSlots->menuRuntime;
     s32 x = 248;
     struct CategoryItemIcon **entry = state->icons;
     s32 y = 168;

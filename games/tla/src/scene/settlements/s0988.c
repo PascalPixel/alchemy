@@ -23,7 +23,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z)
 
 s32 Func_02000988(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 0x100;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
     if (gPartyState.scene == (s32)&SceneId_Ov690Room7)
         Func_02000860();
     /* FAKEMATCH: the native reads the scene again at each test; without the barrier the read is moved up both paths (differ 56 over the four tests). */
@@ -33,7 +33,7 @@ s32 Func_02000988(void)
         Func_02002188(Data_0200226c);
         if (GameFlag_Test(0x206))
             Func_020020c0(10, 0, 0);
-        Object_GetById(10)->priority_flags |= 2;
+        Object_GetById(10)->priorityFlags |= 2;
         Object_SetModeById(18, 2);
         Object_SetModeById(19, 2);
         Object_SetModeById(21, 2);
@@ -44,7 +44,7 @@ s32 Func_02000988(void)
         if (GameFlag_Test(0x204)) {
             Func_020020c0(9, 0, 0);
             Place(21, 0xb80000, 0xb80000);
-            Object_GetById(21)->motion_flags = 0;
+            Object_GetById(21)->motionFlags = 0;
             CopyCells2(9, 11, 1, 1, 11, 12);
         }
 #endif

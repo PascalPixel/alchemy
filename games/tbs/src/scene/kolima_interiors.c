@@ -37,12 +37,12 @@ static void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 	alt00 = 0x6E;
 	do
 	{
-		entry->unknown_16 = v16;
-		entry->unknown_04 = v04;
-		entry->unknown_00 = def00;
+		entry->unk16 = v16;
+		entry->unk04 = v04;
+		entry->unk00 = def00;
 		if (i == 4 || i == 7)
 		{
-			entry->unknown_00 = alt00;
+			entry->unk00 = alt00;
 		}
 		i++;
 		entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
@@ -170,7 +170,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 	s16				 *selection_p;
 	u32				  selection;
 
-	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
 	if (Engine_GameFlagIsSet(0x845) == 0)
 	{

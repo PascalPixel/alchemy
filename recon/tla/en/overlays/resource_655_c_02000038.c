@@ -43,9 +43,9 @@ void Func_02000038(const u16 *list)
     object = Object_GetById(id);
     mode = spec[1];
     flag = spec[2];
-    object->collision_flags &= 0xfe;
+    object->collisionFlags &= 0xfe;
     ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02000128(id, (u16) mode, (u16) flag, object->terrain_id);
+    Func_02000128(id, (u16) mode, (u16) flag, object->terrainId);
     limit = 0xff;
     spec += 3;
     first = spec[0];

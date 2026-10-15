@@ -142,8 +142,8 @@ static void EV10_PSYNERGY(void)
 	if (tile_x == 23)
 	{
 		Engine_EventWait(10);
-		Object_GetById(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-		Object_GetById(10)->motion_flags = 0;
+		Object_GetById(10)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		Object_GetById(10)->motionFlags = 0;
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 		Map_CopyCellAttributes(54, 17, 1, 1, tile_x, 17);
 		Engine_GameFlagSet(0x863);
@@ -162,7 +162,7 @@ static void FieldScene_RunScene387SequenceD(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	Actor_SetSpeed(9, 0x3333, 0x1999);
 	Event_PlayCue(185);
-	v5 = (11 - (p5->touched_trigger << 1)) << 4;
+	v5 = (11 - (p5->touchedTrigger << 1)) << 4;
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, v5, 0);
 	Actor_SetDestinationOffset(9, v5, 0);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -203,16 +203,16 @@ s32 GomaEntrance_RestoreEntryState(void)
 	Engine_EventWait(10);
 	BattleFx_SetQueuedSoundAndPlay(170);
 	Engine_ActorSetAnimation(11, 2);
-	Object_GetById(11)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+	Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	{
 		struct FieldActor *record = Object_GetById(8);
 
-		record->collision_flags = 16 | record->collision_flags;
+		record->collisionFlags = 16 | record->collisionFlags;
 	}
 	{
 		struct FieldActor *record = Object_GetById(15);
 
-		record->collision_flags = 8 | record->collision_flags;
+		record->collisionFlags = 8 | record->collisionFlags;
 	}
 	if (Engine_GameFlagIsSet(0x865) != 0)
 	{
@@ -221,7 +221,7 @@ s32 GomaEntrance_RestoreEntryState(void)
 	if (Engine_GameFlagIsSet(0x860) != 0)
 	{
 		Engine_ActorSetPosition(8, 0x880000, 0xc40000);
-		Object_GetById(8)->priority_flags |= 2;
+		Object_GetById(8)->priorityFlags |= 2;
 		v5 = 12;
 		Engine_ActorSetAnimation(8, 2);
 		Map_CopyCellAttributes(39, 12, 3, 1, 8, v5);
@@ -245,7 +245,7 @@ s32 GomaEntrance_RestoreEntryState(void)
 		Engine_ActorSetPosition(10, 0x1780000, 0x1180000);
 		((struct Flags35 *)Object_GetById(10))->flags = 2;
 		v5 = 0;
-		Object_GetById(10)->motion_flags = v5;
+		Object_GetById(10)->motionFlags = v5;
 		record = (s32)Object_GetById(10);
 		Engine_ActorSetSpriteFlags((s32)record, 0);
 		Map_CopyCellAttributes(54, 17, 1, 1, 23, 17);
@@ -466,7 +466,7 @@ static void Overlay387_ConfigureActorEightAtDepth(void)
 	struct OverlayActorState *state;
 
 	Engine_EventBegin();
-	depth = ((struct OverlayActorPosition *)Object_GetById(8))->depth_fixed >> 20;
+	depth = ((struct OverlayActorPosition *)Object_GetById(8))->depthFixed >> 20;
 	if (depth == 11)
 	{
 		GomaEntrance_RunSpinningLeap(8);
@@ -560,10 +560,10 @@ static void GomaEntrance_RunSpinningLeap(s32 id)
 	actor->sprite->angle = 0x1000;
 	p = &params;
 	p->type = 214;
-	p->start_scale_x = 0x8000;
-	p->start_scale_y = 0xcccc;
-	p->target_scale_x = 0x18000;
-	p->target_scale_y = 0x13333;
+	p->startScaleX = 0x8000;
+	p->startScaleY = 0xcccc;
+	p->targetScaleX = 0x18000;
+	p->targetScaleY = 0x13333;
 	Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
 	Engine_AudioPlayCue(154);
 	Engine_ActorSetAnimation(id, 3);

@@ -12,9 +12,9 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
 
 void FieldEvent_ShowStatusMessage(void)
 {
-    gPartyState.avoid_distance = 0;
+    gPartyState.avoidDistance = 0;
     Func_080cb82c();
-    if (gPartyState.avoid_by_item == 0) {
+    if (gPartyState.avoidByItem == 0) {
         UiText_DrawQuantity(150, 4);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
     } else {
@@ -25,35 +25,35 @@ void FieldEvent_ShowStatusMessage(void)
 }
 
 struct ArcEntry {
-    u8 unknown_00[5];
+    u8 unk00[5];
     u8 param;
 };
 
 struct ArcGroup {
-    u8 unknown_00[25];
+    u8 unk00[25];
     u8 dirty;
     u8 flags;
-    u8 unknown_1b[13];
+    u8 unk1b[13];
     struct ArcEntry *entries[1];
 };
 
 struct ArcEffectObject {
-    u8 unknown_00[6];
+    u8 unk00[6];
     u16 angle;
-    u8 unknown_08[0x48];
+    u8 unk08[0x48];
     struct ArcGroup *records;
-    u8 unknown_54[0x10];
+    u8 unk54[0x10];
     s16 phase;
     u16 step;
-    u8 unknown_68[4];
+    u8 unk68[4];
     void (*callback)(struct ArcEffectObject *);
 };
 
 struct ArcScene {
-    u8 unknown_00[0x10];
-    struct ArcEffectObject *main_object;
-    u8 unknown_14[0x6fc];
-    s16 arc_tile_slot;
+    u8 unk00[0x10];
+    struct ArcEffectObject *mainObject;
+    u8 unk14[0x6fc];
+    s16 arcTileSlot;
 };
 
 extern const u8 Data_080ed90c[];
@@ -82,13 +82,13 @@ void BattleFx_RunEffect16(void)
     s32 phase;
     s32 zero;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     /* FAKEMATCH: forced temporary, as The Broken Seal's twin: the zero the two
      * counters take lives in r6 from here; the one-pass block keeps its set
      * before the object load (one reordered row without it). */
     zero = 0;
     do { } while (0);
-    object = scene->main_object;
+    object = scene->mainObject;
     group = object->records;
     entry = group->entries[0];
     angle = object->angle;
@@ -104,12 +104,12 @@ void BattleFx_RunEffect16(void)
         s32 id;
 
         do { } while (0);
-        work->arc_tile_slot = slot;
+        work->arcTileSlot = slot;
         id = slot << 16;
         tiles = Data_080ed90c;
         VramBlock_LoadCached(id >> 16, 0x100, tiles);
-        gPartyState.avoid_distance = 0x09600000;
-        gPartyState.avoid_by_item = GameFlag_Test(0x145);
+        gPartyState.avoidDistance = 0x09600000;
+        gPartyState.avoidByItem = GameFlag_Test(0x145);
         Animation_ApplyChildValuesFar(object, 0);
         object->callback = Func_080e1154;
         object->phase = zero;
@@ -161,6 +161,6 @@ void BattleFx_RunEffect16(void)
     do { } while (0);
     WaitFrames(1);
     do { } while (0);
-    Resource_ResetEntry(scene->arc_tile_slot);
+    Resource_ResetEntry(scene->arcTileSlot);
     UiText_ShowPositionedMessageAndWaitFar((s32)&MsgMonstersAttackLess, 1);
 }

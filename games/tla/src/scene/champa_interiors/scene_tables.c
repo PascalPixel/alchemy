@@ -69,12 +69,12 @@ const struct SceneEvent *Func_020000a4(void)
 
 s32 Func_020000fc(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
 #ifdef TLA_EDITION_JA
-    work->screen_effect = 0x201;
+    work->screenEffect = 0x201;
 #else
-    work->screen_effect = 0x209;
+    work->screenEffect = 0x209;
 #endif
     if (gPartyState.scene == (s32)&SceneId_Ov683
         && (u16)(gPartyState.entrance - 8) <= 1)

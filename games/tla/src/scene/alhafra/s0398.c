@@ -3,10 +3,10 @@
 #include "call.h"
 
 struct AlhafraEventWork {
-    u8 unknown_000[0x15a];
-    s16 value_15a;
-    u8 unknown_15c[0x68];
-    u16 value_1c4;
+    u8 unk000[0x15a];
+    s16 value15a;
+    u8 unk15c[0x68];
+    u16 value1c4;
 };
 
 s32 GameFlag_Test();
@@ -26,7 +26,7 @@ extern const u8 MsgAlhafra71[];
 void Func_02000398(s32 id)
 {
     if (!GameFlag_Test(0x8b5)) {
-        ((struct AlhafraEventWork *)Ram_HeapSlots->event_work)->value_15a = 1;
+        ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
         Func_02001c74(MsgAlhafra65);
         Func_02001c8c(id, 0);
     } else if (Value1(GameFlag_Test, 0x8b6)) {
@@ -44,10 +44,10 @@ void Func_02000398(s32 id)
             GameFlag_SetBit(0x8b6);
             Battle_WaitMode0(20);
             Func_02001c84(id, 0, 10);
-            ((struct AlhafraEventWork *)Ram_HeapSlots->event_work)->value_1c4++;
+            ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
         } else {
             Battle_WaitMode0(30);
-            ((struct AlhafraEventWork *)Ram_HeapSlots->event_work)->value_1c4++;
+            ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
             Func_02001c84(id, 0, 10);
         }
     }

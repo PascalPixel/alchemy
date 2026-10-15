@@ -30,8 +30,8 @@ void Func_020003cc(void)
     struct EventWork *work;
     u8 saved;
 
-    saved = gPartyState.event_mode;
-    gPartyState.event_mode = 2;
+    saved = gPartyState.eventMode;
+    gPartyState.eventMode = 2;
     Func_0200055c();
     Func_020005cc(0);
     ObjectMotion_SetSpeedParameters_(8, 0x451e, 0x228f);
@@ -61,12 +61,12 @@ void Func_020003cc(void)
     Func_02000310(7, 250);
     Object_RefreshSelectorById(8);
     Battle_WaitMode0(10);
-    work = Ram_HeapSlots->event_work;
+    work = Ram_HeapSlots->eventWork;
     work->delay = 30;
-    work->screen_effect = 0x204;
+    work->screenEffect = 0x204;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_020005ac(1);
-    gPartyState.event_mode = saved;
+    gPartyState.eventMode = saved;
     Func_02000564();
 }

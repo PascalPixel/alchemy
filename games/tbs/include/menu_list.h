@@ -38,7 +38,7 @@ struct MenuSprite
 			u16 colors : 1;
 			u16 shape : 2;
 			u16 x : 9;
-			u16 affine_index : 5;
+			u16 affineIndex : 5;
 			u16 size : 2;
 			u16 tile : 10;
 			u16 priority : 2;
@@ -58,7 +58,7 @@ struct CursorSprite
 	u16					 colors : 1;
 	u16					 shape : 2;
 	u16					 x : 9;
-	u16					 affine_index : 5;
+	u16					 affineIndex : 5;
 	u16					 size : 2;
 	u16					 tile : 10;
 	u16					 priority : 2;
@@ -98,31 +98,31 @@ struct MenuPoint
 
 struct MenuCell
 {
-	u8	  unknown_00[0x28];
-	s32	  slide_offset;
-	u8	  unknown_2c[4];
+	u8	  unk00[0x28];
+	s32	  slideOffset;
+	u8	  unk2c[4];
 	s32	  row;
 	s32	  page;
-	s32	  preferred_row;
-	s32	  command_selection[2];
+	s32	  preferredRow;
+	s32	  commandSelection[2];
 	void *work;
 	s32	  busy;
 	s32	  active;
-	u8	  unknown_50[0x88];
-	s32	  auto_enabled;
-	s32	  auto_delay;
-	s32	  auto_mode;
+	u8	  unk50[0x88];
+	s32	  autoEnabled;
+	s32	  autoDelay;
+	s32	  autoMode;
 };
 
-LAYOUT_OFFSET_GUARD(MenuCell_Slide, struct MenuCell, slide_offset, 0x28);
+LAYOUT_OFFSET_GUARD(MenuCell_Slide, struct MenuCell, slideOffset, 0x28);
 LAYOUT_OFFSET_GUARD(MenuCell_Row, struct MenuCell, row, 0x30);
-LAYOUT_OFFSET_GUARD(MenuCell_CommandSelection, struct MenuCell, command_selection, 0x3c);
+LAYOUT_OFFSET_GUARD(MenuCell_CommandSelection, struct MenuCell, commandSelection, 0x3c);
 LAYOUT_OFFSET_GUARD(MenuCell_Work, struct MenuCell, work, 0x44);
 LAYOUT_OFFSET_GUARD(MenuCell_Busy, struct MenuCell, busy, 0x48);
 LAYOUT_OFFSET_GUARD(MenuCell_Active, struct MenuCell, active, 0x4c);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, auto_enabled, 0xd8);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
+LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, autoEnabled, 0xd8);
+LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, autoDelay, 0xdc);
+LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, autoMode, 0xe0);
 
 // 前に選んでいた位置 (ページ、行、戻る行) を読み戻す
 /* A statement macro (S2: a layer, 4 sites): the three cursor reads stay together at every use; as a plain block, tbs-en differs. */
@@ -131,7 +131,7 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 	{                                                                       \
 		(page_) = ((struct MenuCell *)gWindowWork[42])->page;               \
 		(row_) = ((struct MenuCell *)gWindowWork[42])->row;                 \
-		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferred_row; \
+		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferredRow; \
 	} while (0)
 
 // 選んでいる位置 (ページ、行、戻る行) を書き残す
@@ -141,7 +141,7 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 	{                                                     \
 		gLinkCountdownWork->page = (page_);               \
 		gLinkCountdownWork->row = (row_);                 \
-		gLinkCountdownWork->preferred_row = (preferred_); \
+		gLinkCountdownWork->preferredRow = (preferred_); \
 	} while (0)
 
 extern struct MenuCell *gLinkCountdownWork;

@@ -136,7 +136,7 @@ extern s32 Data_02005548[];
 extern s32 Data_02005550[];
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 value;
 };
 
@@ -343,9 +343,9 @@ static __inline__ void Func_020052d0_(s32 id, s32 value)
 #define ObjectMotion_SetActionVariantValue(id, variant) \
     (((s32 (*)(u32, s32))ObjectMotion_SetActionVariant)((id), (variant)))
 
-/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias the party state's words, so its lvalue is not a char: a whole-byte bit-field has the struct's alias set. As u8 priority_flags the next load is scheduled one step early. */
+/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias the party state's words, so its lvalue is not a char: a whole-byte bit-field has the struct's alias set. As u8 priorityFlags the next load is scheduled one step early. */
 struct ObjectFlags23 {
-    u8 unknown_00[0x23];
+    u8 unk00[0x23];
     u8 flags : 8;
 };
 

@@ -5,8 +5,8 @@
 struct ClockWork {
     u8 *tiles;
     u8 *digits;
-    u8 unknown_08[120];
-    s32 tile_entry;
+    u8 unk08[120];
+    s32 tileEntry;
     s32 timer;
     u8 ringing;
     u8 mode;
@@ -44,8 +44,8 @@ void Func_020052a4(s32 mode)
     Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
     clock->tiles = tiles;
     clock->digits = tiles + 0x2c0;
-    clock->tile_entry = Resource_FindFreeEntry();
-    VramBlock_LoadCached(clock->tile_entry, 320, NULL);
+    clock->tileEntry = Resource_FindFreeEntry();
+    VramBlock_LoadCached(clock->tileEntry, 320, NULL);
     clock->mode = mode;
     if (mode)
         Scheduler_AddOrUpdateCallback(Func_02005210, 1152);

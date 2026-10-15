@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 
 struct MapBits {
-    u8 unknown_00[23];
+    u8 unk00[23];
     u8 low : 2;
     u8 mode : 2;
     u8 high : 4;
@@ -17,10 +17,10 @@ s32 Func_02000fb8(void)
     s16 scene;
     struct PartyState *party;
 
-    ((struct MapBits *)Ram_HeapSlots->map_work)->mode = 1;
+    ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
     /* FAKEMATCH: as below. */
     asm("");
-    effect = &((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect;
+    effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
     party = &gPartyState;
     *effect = 0x202;
     /* FAKEMATCH: the empty asm takes the party state, so its address loads before the 0x202 store and the scene's offset starts after it, as in the native (plain: differ 2; the store before the party pointer: differ 2). */

@@ -16,8 +16,8 @@ void Func_02004bc4(void)
     Func_02005704(19, 0x5000);
     Func_020056dc(MsgDoNotLet);
     Func_020056f4(0x8013, 0);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0xcccc, 0x6666);
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 480, 348);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 480, 348);
     MarsAerie_ObjTurn(19, 0xb000);
     Func_02005614();
 }
@@ -29,8 +29,8 @@ void Func_02004c2c(void)
     Func_02005704(19, 0x3000);
     Func_020056dc(MsgDoNotLet);
     Func_020056f4(0x8013, 0);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0xcccc, 0x6666);
-    ObjectMotion_SetPositionAndReset(gPartyState.current_owner, 544, 348);
+    ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
+    ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 544, 348);
     MarsAerie_ObjTurn(19, 0xb000);
     Func_02005614();
 }
@@ -43,7 +43,7 @@ void Func_02004c94(void)
     WaitFrames(1);
     Func_020056dc(MsgWillYouCast);
     UiText_OpenMessageAtObject(18, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0)
+    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0)
     {
         Func_0200567c(18, 0, 0);
         WaitFrames(1);

@@ -26,19 +26,19 @@ void Func_080e0020(struct EffectSlot *effect)
     s16 angle;
     s32 state;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     st = &effect->state;
 top:
     state = *st;
     if (state == 0) {
-        pos.x = effect->origin_x;
-        pos.z = effect->origin_z;
+        pos.x = effect->originX;
+        pos.z = effect->originZ;
         angle = Random16();
         Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
-        effect->target_x = pos.x;
-        effect->target_z = pos.z;
+        effect->targetX = pos.x;
+        effect->targetZ = pos.z;
         effect->acceleration = 4 << 16;
-        effect->max_speed = 4 << 16;
+        effect->maxSpeed = 4 << 16;
         effect->flag42 = state;
         *st = *st + 1;
         return;
@@ -55,9 +55,9 @@ top:
         pos.z = scene->z;
         Camera_WorldToScreen(&pos);
         Vector_AddPolarOffset(4 << 16, Random16(), &pos);
-        effect->target_x = pos.x;
-        effect->target_z = pos.z;
-        effect->max_turn_step = 0x1000;
+        effect->targetX = pos.x;
+        effect->targetZ = pos.z;
+        effect->maxTurnStep = 0x1000;
         effect->flag42 = 1;
         *st = *st + 1;
         return;

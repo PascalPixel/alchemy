@@ -6,12 +6,12 @@
 #include "io_reg.h"
 
 struct MenuFlagWork {
-    u8 unknown_000[0x506];
+    u8 unk000[0x506];
     u8 busy;
 };
 
 struct FxGroup {
-    u8 unknown_00[32];
+    u8 unk00[32];
     struct ObjectRuntime *objects[8];
     u16 values[8];
     s32 count;
@@ -19,7 +19,7 @@ struct FxGroup {
 
 struct DescriptorEntry {
     s16 id;
-    u8 unknown_02[6];
+    u8 unk02[6];
 };
 
 extern void *gOverlayArea[];
@@ -71,7 +71,7 @@ s32 Func_080cd91c(s32 id)
                 continue;
 
             obj = ObjectTable_Get(i);
-            if (obj == 0 || (obj->collision_flags & 8) != 0)
+            if (obj == 0 || (obj->collisionFlags & 8) != 0)
                 continue;
 
             if (obj->y - src->y >= 0) {
@@ -92,7 +92,7 @@ s32 Func_080cd91c(s32 id)
             dist = Iwram_Sqrt(sq);
             if (i > 63)
                 dist <<= 1;
-            if ((obj->collision_flags & 4) != 0)
+            if ((obj->collisionFlags & 4) != 0)
                 dist = dist * 10 / 13;
             if (dist >= best_dist)
                 continue;

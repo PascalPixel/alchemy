@@ -12,19 +12,19 @@
 
 s32 Inventory_GetEquippedItem(struct BattleUnit *owner, s32 type);
 
-struct ClassDefinition *Owner_GetRecordStride84(s32 class_id)
+struct ClassDefinition *Owner_GetRecordStride84(s32 classId)
 {
-    return &Class_DefinitionTable[class_id];
+    return &Class_DefinitionTable[classId];
 }
 
 void Owner_RefreshDerivedData(s32 owner_id)
 {
     struct BattleUnit *owner = UnitGet(owner_id);
 
-    owner->class_index = Owner_DetermineClass(owner->enemy_id,
-        owner->djinn_available, Inventory_GetEquippedItem(owner, 10));
+    owner->classIndex = Owner_DetermineClass(owner->enemyId,
+        owner->djinnAvailable, Inventory_GetEquippedItem(owner, 10));
     Owner_UpdateClassActions(owner_id);
-    Owner_CalculateBaseElements(owner_id, owner->base_element);
+    Owner_CalculateBaseElements(owner_id, owner->baseElement);
 }
 
 void Owner_RefreshClassActions(s32 owner_id)

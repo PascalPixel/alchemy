@@ -9,23 +9,23 @@ void Func_0200065c(void)
 
     Func_02002898();
     Func_02002968(0);
-    ObjectMotion_SetAngleToward(gPartyState.current_owner, 8, 0);
-    Func_02002908(gPartyState.current_owner, 256, 30);
+    ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
+    Func_02002908(gPartyState.currentOwner, 256, 30);
     Motion_CamBounds(0x1980000, -1, 0x1380000, 1);
     Func_02002928();
     Func_02002910_(8, 257);
     speed = 0x8000;
     i = 2;
     do {
-        object->velocity_y = 0x20000;
+        object->velocityY = 0x20000;
         Func_020029b0(152);
-        object->speed_limit = speed;
+        object->speedLimit = speed;
         object->acceleration = speed / 2;
         ObjectMotion_CommitPositionAndActivate(8, 0, 8);
         speed += 0x4000;
     } while (--i >= 0);
     Func_020029b0(310);
-    object->velocity_y = 0x40000;
+    object->velocityY = 0x40000;
     ObjectMotion_CommitPositionAndActivate(8, 0, 8);
     Battle_WaitMode0(60);
     GameFlag_SetBit(0x310);
@@ -37,15 +37,15 @@ void Func_02000710(s32 id)
     struct ObjectRuntime *object = Object_GetById(id);
     s32 n = 60;
 
-    object->motion_flags = 3;
+    object->motionFlags = 3;
     while (n != 0) {
         WaitFrames(1);
-        if (object->velocity_y == 0)
+        if (object->velocityY == 0)
             break;
         n--;
     }
     WaitFrames(10);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
 }
 
 void Func_02000744(s32 a, s32 id)
@@ -62,7 +62,7 @@ void Func_02000744(s32 a, s32 id)
 void Func_02000784(s32 a, s32 id)
 {
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_SetModeById(id, 1);
     GameFlag_SetBit(0x220);
     GameFlag_SetBit(0x222);
@@ -72,7 +72,7 @@ void Func_020007bc(s32 a, s32 id)
 {
     Func_02002840_(28, 8, 1, 1, 26, 8);
     ObjectMotion_SetActionVariant(id, 2);
-    Object_GetById(id)->priority_flags &= 0xfd;
+    Object_GetById(id)->priorityFlags &= 0xfd;
     Func_02002778(0, id);
     GameFlag_SetBit(0x221);
     GameFlag_ClearBit(0x222);
@@ -86,19 +86,19 @@ void Func_02000810(s32 id)
 
     Object_SetModeById(id, 8);
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_GetById(id)->update = (void (*)(void))zero;
     Func_02002778(0, 0);
     GameFlag_ClearBit(0x220);
     GameFlag_ClearBit(0x221);
     GameFlag_ClearBit(0x222);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
     if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20) {
-        Func_02002910_(gPartyState.current_owner, 0x102);
-        ObjectMotion_CommitPositionAndActivate_(gPartyState.current_owner, 0, 16);
+        Func_02002910_(gPartyState.currentOwner, 0x102);
+        ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
         Battle_WaitMode0_(2);
-        ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
         Battle_WaitMode0_(10);
     }
     Func_02002840_(22, 8, 1, 1, 26, 8);
@@ -108,7 +108,7 @@ void Func_020008d8(s32 id)
 {
     Object_SetModeById(id, 7);
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_GetById(id)->update = 0;
     Func_02002778(0, 0);
     GameFlag_ClearBit(0x220);
@@ -118,7 +118,7 @@ void Func_020008d8(s32 id)
 void Func_02000920(s32 a, s32 id)
 {
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_SetModeById(id, 1);
     if (a == 5 || GameFlag_GetByte(0x230) > 3) {
         GameFlag_SetBit(0x220);
@@ -130,7 +130,7 @@ void Func_0200096c(s32 a, s32 id)
 {
     Func_02002840_(23, 27, 1, 1, 25, 27);
     ObjectMotion_SetActionVariant(id, 2);
-    Object_GetById(id)->priority_flags &= 0xfd;
+    Object_GetById(id)->priorityFlags &= 0xfd;
     Func_02002778(0, id);
     GameFlag_SetBit(0x221);
     GameFlag_ClearBit(0x222);
@@ -143,20 +143,20 @@ void Func_020009c0(s32 id)
 
     Object_SetModeById(id, 8);
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_GetById(id)->update = 0;
     Func_02002778(0, 0);
     GameFlag_ClearBit(0x220);
     GameFlag_ClearBit(0x221);
     GameFlag_ClearBit(0x222);
     GameFlag_SetByte(0x230, 0);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     object = Object_GetById(id);
     if (object->x >> 20 == leader->x >> 20 && object->z >> 20 == leader->z >> 20) {
-        Func_02002910_(gPartyState.current_owner, 0x102);
-        ObjectMotion_CommitPositionAndActivate_(gPartyState.current_owner, 0, 16);
+        Func_02002910_(gPartyState.currentOwner, 0x102);
+        ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
         Battle_WaitMode0_(2);
-        ObjectMotion_ArmCallback_(gPartyState.current_owner, 0xc000, 0);
+        ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
         Battle_WaitMode0_(10);
     }
     Func_02002840_(1, 1, 1, 1, 25, 27);
@@ -168,7 +168,7 @@ void Func_02000a94(s32 id)
 
     Object_SetModeById(id, 7);
     ObjectMotion_SetActionVariant(id, 3);
-    Object_GetById(id)->priority_flags |= 2;
+    Object_GetById(id)->priorityFlags |= 2;
     Object_GetById(id)->update = (void (*)(void))zero;
     Func_02002778(0, 0);
     GameFlag_ClearBit(0x220);
@@ -188,10 +188,10 @@ void Func_02000afc(s32 a, s32 id)
 
     if (object->x >> 20 == 7) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x332);
         GameFlag_SetBit(0x333);
         Func_02002840(7, 17, 1, 1, 7, 15);
@@ -212,10 +212,10 @@ void Func_02000b90(s32 a, s32 id)
 
     if (object->z >> 20 == 16) {
         Object_SetModeById(id, 3);
-        object->collision_flags = 0;
+        object->collisionFlags = 0;
         /* FAKEMATCH: the native stores the collision flags before addressing the priority byte. */
         __asm__ volatile("");
-        object->priority_flags |= 2;
+        object->priorityFlags |= 2;
         GameFlag_SetBit(0x335);
         GameFlag_SetBit(0x336);
         ObjectMotion_SetSpeedParameters_(id, 0x8000, 0x4000);

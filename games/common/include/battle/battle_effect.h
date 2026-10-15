@@ -14,7 +14,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
-void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
+void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack, s32 wait);
 #endif
 
 enum

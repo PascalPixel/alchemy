@@ -16,14 +16,14 @@ struct MeshVertex {
     s8 x;
     s8 y;
     s8 z;
-    u8 unk_03;
+    u8 unk03;
 };
 
 struct MeshTriangle {
     u8 vertex[3];
-    u8 unk_03;
+    u8 unk03;
     u8 texCoord[3][2];
-    u8 unk_0a[2];
+    u8 unk0a[2];
 };
 
 void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments)

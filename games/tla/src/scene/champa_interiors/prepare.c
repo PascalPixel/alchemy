@@ -12,8 +12,8 @@ s32 Scene_PrepareMap(void)
 
 void Func_0200014c(void)
 {
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    work->screen_effect = 0x209;
+    work->screenEffect = 0x209;
     GameFlag_ClearBit(0x12f);
 }

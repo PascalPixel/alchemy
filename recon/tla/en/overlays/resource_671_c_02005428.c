@@ -11,8 +11,8 @@
 #include "object_runtime.h"
 
 struct GabombaStatueEffectWork {
-    u8 unknown_00[0x1a];
-    s16 object_id;
+    u8 unk00[0x1a];
+    s16 objectId;
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -22,10 +22,10 @@ void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 // 表から今の相手の行を探して縮める
 void Func_02005428(u16 *list, s32 mode, s32 count)
 {
-    struct GabombaStatueEffectWork *work = Ram_HeapSlots->effect_work;
+    struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
     while (*list != 0xffff) {
-        s32 id = work->object_id;
+        s32 id = work->objectId;
 
         if (id == *list) {
             struct ObjectRuntime *object = Object_GetById(id);
@@ -36,11 +36,11 @@ void Func_02005428(u16 *list, s32 mode, s32 count)
             a = list[0];
             flag = list[1];
             if (count < 8)
-                object->scale_y -= 0x1f00;
+                object->scaleY -= 0x1f00;
             if (mode == 1) {
                 GameFlag_SetBit(flag);
-                Func_020054ac(id, a, flag, object->terrain_id);
-                object->scale_y = 0x10000;
+                Func_020054ac(id, a, flag, object->terrainId);
+                object->scaleY = 0x10000;
             }
             break;
         }

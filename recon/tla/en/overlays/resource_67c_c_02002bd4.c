@@ -1,4 +1,4 @@
-/* Draft, differ 8 of 46: the listing loads sprite (child->animation) right after object->terrain_height, before the store and the Data_0200411c pool load; the draft loads the pool first and the sprite after the store, and copies the priority bits one load later. Tried the scene-layer inlines and a one-pass block. */
+/* Draft, differ 8 of 46: the listing loads sprite (child->animation) right after object->terrainHeight, before the store and the Data_0200411c pool load; the draft loads the pool first and the sprite after the store, and copies the priority bits one load later. Tried the scene-layer inlines and a one-pass block. */
 #include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02002bd4(struct ObjectRuntime *object)
@@ -9,12 +9,12 @@ void Func_02002bd4(struct ObjectRuntime *object)
     if (child != 0) {
         struct FieldSprite *sprite = child->animation;
 
-        child->terrain_height = object->terrain_height;
+        child->terrainHeight = object->terrainHeight;
         Func_02003ccc(child, Data_0200411c);
-        child->motion_flags = 0;
+        child->motionFlags = 0;
         if (sprite != 0) {
             Animation_ApplyChildArgument(sprite, 1);
-            sprite->next_frame = 0;
+            sprite->nextFrame = 0;
             sprite->priority = source->priority;
         }
     }

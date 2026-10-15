@@ -53,8 +53,8 @@ void Func_08143000(void);
 
 void Func_08188cb0(struct BattleEffectArgument *effect)
 {
-    u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    void *canvas = Ram_HeapSlots->battle_fx_work[1];
+    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    void *canvas = Ram_HeapSlots->battleFxWork[1];
     DrawRectangle draw[2];
     struct EffectPosition position;
     struct EffectStep *sparks;
@@ -182,8 +182,8 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                 else
                     spark->x = (position.x / 2) << 16;
                 spark->y = 0x500000;
-                spark->velocity_x = (Trig_Sin(angle) * force) >> 7;
-                spark->velocity_y = -(Trig_Cos(angle) * force) >> 6;
+                spark->velocityX = (Trig_Sin(angle) * force) >> 7;
+                spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
                 spark->variant = (Random16() & 15) + 16;
             }
         }
@@ -196,7 +196,7 @@ void Func_08188cb0(struct BattleEffectArgument *effect)
                 BattleFxKernels_IntegrateVector2(spark, 60, 0);
                 if (spark->y > 0x680000)
                 {
-                    spark->velocity_y = -spark->velocity_y / 2;
+                    spark->velocityY = -spark->velocityY / 2;
                 }
                 else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0)
                 {

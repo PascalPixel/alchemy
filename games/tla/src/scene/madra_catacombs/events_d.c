@@ -4,17 +4,17 @@
 #include "party_state.h"
 
 struct EventWork154 {
-    u8 unknown_000[0x154];
-    s16 return_entrance;
+    u8 unk000[0x154];
+    s16 returnEntrance;
 };
 
 struct EventWork1ac {
-    u8 unknown_000[0x1ac];
+    u8 unk000[0x1ac];
     s32 flag;
 };
 
 struct AnimationRecord18 {
-    u8 unknown_00[0x12];
+    u8 unk00[0x12];
     u16 frame;
 };
 

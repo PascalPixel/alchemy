@@ -4,8 +4,8 @@
 #include "types.h"
 
 struct BattleAnimationState {
-    u8 unknown_00[0x28];
-    s16 *value_28;
+    u8 unk00[0x28];
+    s16 *value28;
 };
 
 struct ObjectRuntime {
@@ -15,39 +15,39 @@ struct ObjectRuntime {
     s32 x;
     s32 y;
     s32 z;
-    s32 terrain_height;
-    s32 scale_x;
-    s32 scale_y;
+    s32 terrainHeight;
+    s32 scaleX;
+    s32 scaleY;
     u16 radius;
-    u8 terrain_id;
-    u8 priority_flags;
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
-    s32 speed_limit;
+    u8 terrainId;
+    u8 priorityFlags;
+    s32 velocityX;
+    s32 velocityY;
+    s32 velocityZ;
+    s32 speedLimit;
     s32 acceleration;
-    s32 target_x;
-    s32 target_y;
-    s32 target_z;
+    s32 targetX;
+    s32 targetY;
+    s32 targetZ;
     s32 bounce;
     s32 gravity;
-    s32 unknown_4c;
+    s32 unk4c;
     void *animation;
-    u8 animation_kind;
-    u8 motion_flags;
-    u8 unknown_56;
-    u8 unknown_57;
-    u8 snap_to_target;
-    u8 collision_flags;
-    u8 action_flags;
-    u8 movement_state;
-    u8 unknown_5c[0x04];
+    u8 animationKind;
+    u8 motionFlags;
+    u8 unk56;
+    u8 unk57;
+    u8 snapToTarget;
+    u8 collisionFlags;
+    u8 actionFlags;
+    u8 movementState;
+    u8 unk5c[0x04];
     void *callback;
     s16 action;
-    u16 unknown_66;
-    struct ObjectRuntime *linked_object;
+    u16 unk66;
+    struct ObjectRuntime *linkedObject;
     void (*update)(void);
-    u8 unknown_70[0x10];
+    u8 unk70[0x10];
 };
 
 typedef char ObjectRuntime_size[
@@ -55,14 +55,14 @@ typedef char ObjectRuntime_size[
 ];
 
 typedef char ObjectRuntime_collision_flags_offset[
-    (u32)&((struct ObjectRuntime *)0)->collision_flags == 0x59 ? 1 : -1
+    (u32)&((struct ObjectRuntime *)0)->collisionFlags == 0x59 ? 1 : -1
 ];
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *object);
 void ObjectMotion_MoveHalfwayTowardTargetCopy(struct ObjectRuntime *object);
 
-struct ObjectRuntime *ObjectTable_Get(u32 object_id);
+struct ObjectRuntime *ObjectTable_Get(u32 objectId);
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);

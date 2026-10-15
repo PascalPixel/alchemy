@@ -33,16 +33,16 @@ void BattleEffect_PauseObject(s32 id)
 
     object = ObjectTable_Get(id);
     if (object != NULL) {
-        gPartyState.saved_callback = (u32)object->update;
-        gPartyState.saved_byte = 0;
+        gPartyState.savedCallback = (u32)object->update;
+        gPartyState.savedByte = 0;
         if (object->kind == 1) {
             entry = object->target.animation->entries[0];
             if (entry != NULL) {
-                gPartyState.saved_byte = entry->param;
+                gPartyState.savedByte = entry->param;
             }
         }
         object->update = BattleEffect_SetRandomTableValueOnObject;
-        object->value_5b = 1;
+        object->value5b = 1;
         ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     }
 }
@@ -53,11 +53,11 @@ void BattleFx_ResumeObject(s32 id)
 
     if (object != NULL) {
         if (object->update == BattleEffect_SetRandomTableValueOnObject) {
-            object->update = (void *)gPartyState.saved_callback;
-            gPartyState.saved_callback = 0;
-            Animation_ApplyChildValuesFar(object, (s8)gPartyState.saved_byte);
+            object->update = (void *)gPartyState.savedCallback;
+            gPartyState.savedCallback = 0;
+            Animation_ApplyChildValuesFar(object, (s8)gPartyState.savedByte);
         }
-        object->value_5b = 0;
+        object->value5b = 0;
         ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     }
 }

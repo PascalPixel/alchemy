@@ -9,7 +9,7 @@ s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data)
 {
-    struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(gPartyState.currentOwner);
     struct ObjectRuntime *object;
     s32 height;
     s32 cell;
@@ -20,15 +20,15 @@ void Func_02000454(const u8 *data)
         goto done;
 loop:
         object = (struct ObjectRuntime *)Object_GetById(*ids);
-        object->motion_flags = 0;
-        object->collision_flags = 0;
+        object->motionFlags = 0;
+        object->collisionFlags = 0;
         object->bounce = 0;
         ObjectDispatch_SetSingleChildFlags((struct FieldActor *)object, 0);
         height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
         Func_020010cc(object->x, object->z, 0, height);
         Func_020010cc(object->x, object->z, 2, height);
         cell = Func_020003b4(0, object->x >> 20, object->z >> 20);
-        object->unknown_4c = cell;
+        object->unk4c = cell;
         Func_020003f0(0, object->x >> 20, object->z >> 20, cell | 0x80);
         ids++;
         if (*ids != 0xffff)
@@ -36,9 +36,9 @@ loop:
 done:
     if (GameFlag_Test(0x109)) {
         WaitFrames(1);
-        leader->y = leader->terrain_height = Map_GetTerrainHeight(leader->terrain_id, leader->x, leader->z);
-        leader->velocity_y = 0;
-        leader->target_y = 0x80000000;
-        Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
+        leader->y = leader->terrainHeight = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+        leader->velocityY = 0;
+        leader->targetY = 0x80000000;
+        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
     }
 }

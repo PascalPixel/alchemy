@@ -26,7 +26,7 @@ void Func_02001164(s32 value);
 
 void Func_02000af0(void)
 {
-    s32 owner = gPartyState.current_owner;
+    s32 owner = gPartyState.currentOwner;
 
     /* FAKEMATCH: the placements go through call.h's Call3 and Func_0200111c through Value3, as in Func_02000960, which build each call's constants again and set its arguments up in the native's order (all direct: differ 126; the placements direct: 64; Func_0200111c direct: 12). */
     Func_02001084();
@@ -69,10 +69,10 @@ void Func_02000af0(void)
     Object_LinkObjectAndSetCallback(27, owner);
     Object_LinkObjectAndSetCallback(28, owner);
     Battle_WaitMode0(2);
-    Object_GetById(owner)->action_flags &= ~1;
+    Object_GetById(owner)->actionFlags &= ~1;
     Call3((void (*)())ObjectMotion_SetPositionAndReset, owner, 256, 552);
     Battle_WaitMode0(1);
-    Object_GetById(owner)->action_flags |= 1;
+    Object_GetById(owner)->actionFlags |= 1;
     Object_SetModeById(23, 1);
     Object_SetModeById(24, 1);
     Battle_WaitMode0(20);

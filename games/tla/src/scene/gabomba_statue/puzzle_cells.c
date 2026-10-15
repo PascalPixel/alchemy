@@ -10,10 +10,10 @@ struct PuzzleCell {
 
 struct SceneState {
     struct PuzzleCell cells[88];
-    u8 unknown_160[4];
-    s16 statue_id;
-    u8 unknown_166[2];
-    u16 tile_entry;
+    u8 unk160[4];
+    s16 statueId;
+    u8 unk166[2];
+    u16 tileEntry;
 };
 
 extern struct SceneState gSceneState;

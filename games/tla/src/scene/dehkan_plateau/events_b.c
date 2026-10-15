@@ -34,7 +34,7 @@ void Func_02003dc8(void);
 void Func_02003df8(s32 cue);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width, s32 height);
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -43,7 +43,7 @@ struct CellRecord {
     u16 present;
     u16 x;
     u16 y;
-    u16 unknown_06[3];
+    u16 unk06[3];
 };
 
 extern const u16 Data_02003fd2[];
@@ -91,8 +91,8 @@ void Func_020013fc(void)
 {
     Func_020002f8(Data_02003f80);
     Func_020013b0();
-    if (Object_GetById(gPartyState.current_owner)->y < -0x180000) {
-        ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
+    if (Object_GetById(gPartyState.currentOwner)->y < -0x180000) {
+        ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+        Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
     }
 }

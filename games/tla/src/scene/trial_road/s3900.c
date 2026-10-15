@@ -3,7 +3,7 @@
 
 /* The byte at 0x5a of an actor, as the field its bit 0 is set through. */
 struct ActorSolid {
-    u8 unknown_00[0x5a];
+    u8 unk00[0x5a];
     u8 solid : 8;
 };
 
@@ -94,7 +94,7 @@ void Func_02003900(void)
 
     Func_02005880();
     Func_020059e8(0);
-    Func_020058e0_(gPartyState.current_owner, 0, 0x3f80000);
+    Func_020058e0_(gPartyState.currentOwner, 0, 0x3f80000);
     Func_020058e0_(8, 0x3f80000, 0x3f80000);
     for (i = 9; i < 80; i++) {
         struct ObjectRuntime *object = Object_GetById(i);
@@ -139,7 +139,7 @@ void Func_02003900(void)
     ObjectMotion_CommitCurrentPositionAndActivate(13);
     Func_02005a68(103);
     Func_02005838_(0x20000, 0x40000, 0x10000);
-    Object_GetById(13)->velocity_y = 0x40000;
+    Object_GetById(13)->velocityY = 0x40000;
     Func_02005838_(-1, -1, 0xe666);
     OBJECT_BYTE(Object_GetById(13), 0x5a) &= ~1;
     ObjectMotion_CommitPositionAndActivate_(13, 0, 16);

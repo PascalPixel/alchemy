@@ -10,7 +10,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 val
 
 extern struct ObjectRuntime gSnapshotObjects[];
 
-struct ObjectRuntime *ObjectTable_Get(u32 object_id);
+struct ObjectRuntime *ObjectTable_Get(u32 objectId);
 void ObjectTable_Restore(void)
 {
     struct ObjectRuntime *copy = gSnapshotObjects;
@@ -41,13 +41,13 @@ void ObjectTable_Restore(void)
             ObjectDispatch_SetSingleChildFlagsFar(object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;
-            sprite->part_priority = priority;
+            sprite->partPriority = priority;
             if (index == EventRuntime_GetControlledOwner()) {
-                camera = ((struct EventWork *)Ram_HeapSlots->event_work)->view_center;
-                view = Ram_HeapSlots->map_work->origin;
+                camera = ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
+                view = Ram_HeapSlots->mapWork->origin;
                 y = object->y;
                 camera->x = object->x;
-                camera->terrain_height = y;
+                camera->terrainHeight = y;
                 camera->y = y;
                 camera->z = object->z;
                 view[1] = y;

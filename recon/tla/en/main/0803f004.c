@@ -31,22 +31,22 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         if (p == NULL)
             return;
         MenuSelection_SetupEntry(kind, base, p, 0);
-        y = screen->base_x;
+        y = screen->baseX;
         p->x = y + 80;
-        z = screen->base_y;
-        p->target_x = y + 64;
+        z = screen->baseY;
+        p->targetX = y + 64;
         p->y = z;
-        p->target_y = z;
-        p->scale_step = 32;
+        p->targetY = z;
+        p->scaleStep = 32;
         p->scale = 32;
-        p->scale_end = 256;
+        p->scaleEnd = 256;
         p->dx = -2;
         last = p;
         p = screen->head;
-        p->scale_step = -32;
-        p->scale_end = 0;
+        p->scaleStep = -32;
+        p->scaleEnd = 0;
         for (;;) {
-            p->target_x = p->x - 16;
+            p->targetX = p->x - 16;
             p->dx = -2;
             if (p->next == NULL)
                 break;
@@ -72,14 +72,14 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         if (p == NULL)
             return;
         MenuSelection_SetupEntry(kind, base, p, 0);
-        p->x = screen->base_x - 16;
-        p->y = screen->base_y;
-        p->target_y = p->y;
+        p->x = screen->baseX - 16;
+        p->y = screen->baseY;
+        p->targetY = p->y;
         p->dx = 2;
         p->scale = 32;
-        p->scale_step = 32;
-        p->target_x = p->x + 16;
-        p->scale_end = 256;
+        p->scaleStep = 32;
+        p->targetX = p->x + 16;
+        p->scaleEnd = 256;
         first = p;
         p = screen->head;
         p->prev = first;
@@ -88,14 +88,14 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         screen->head = first;
         p = first;
         for (;;) {
-            p->target_x = p->x + 16;
+            p->targetX = p->x + 16;
             p->dx = 2;
             if (p->next == NULL)
                 break;
             p = p->next;
         }
-        p->scale_end = 0;
-        p->scale_step = -32;
+        p->scaleEnd = 0;
+        p->scaleStep = -32;
         p = screen->head;
         do {
             WaitFrames(1);

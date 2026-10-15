@@ -40,7 +40,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             case 32: Audio_PlayCue(0x80); ObjectEffect_BeginContextEffect26(); break;
             case 48: Audio_PlayCue(0x81); ObjectEffect_BeginContextEffect25(); break;
             }
-            work->queued_result = (s16)desc2->result;
+            work->queuedResult = (s16)desc2->result;
 block_17:
             ret = 0;
         }

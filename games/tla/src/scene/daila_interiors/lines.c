@@ -66,7 +66,7 @@ void DailaInteriors_BeginLeaderEvent(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    Engine_ActorSetSpritePriority(gPartyState.current_owner, 1);
+    Engine_ActorSetSpritePriority(gPartyState.currentOwner, 1);
 }
 
 extern const u8 Data_020016e4[];

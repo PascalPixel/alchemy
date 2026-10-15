@@ -41,7 +41,7 @@ s32 Func_0804d7fc(s32 mode)
 
     mode &= 1;
     AffineEffect_InitializeWork();
-    work = Ram_HeapSlots->menu_select_work;
+    work = Ram_HeapSlots->menuSelectWork;
     if (mode == 0) {
         Menu_AppendResourceEntry(44);
         Menu_AppendResourceEntry(45);
@@ -53,25 +53,25 @@ s32 Func_0804d7fc(s32 mode)
     Menu_CenterResourceEntries(17, 7, 0);
     if (mode != 0) {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0x476);
-        work->previous_mode = 0xffff;
+        work->previousMode = 0xffff;
         window = UiWindow_Create(8, 0, 14, 4, 2);
         msg = (s32)MsgPasswordEntryX;
-        upper = &work->upper_window;
+        upper = &work->upperWindow;
         *upper = window;
         UiText_DrawResource(msg, (s32)window, 0, 4);
         window = UiWindow_Create(4, 4, 22, 12, 2);
-        work->lower_window = window;
+        work->lowerWindow = window;
         UiText_DrawResource(msg + 1, (s32)window, 0, 4);
         msg += 2;
-        UiText_DrawResource(msg, (s32)work->lower_window, 0, 16);
+        UiText_DrawResource(msg, (s32)work->lowerWindow, 0, 16);
     } else {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0x476);
-        work->previous_mode = 0xffff;
+        work->previousMode = 0xffff;
         window = UiWindow_Create(6, 0, 18, 4, 2);
-        upper = &work->upper_window;
+        upper = &work->upperWindow;
         *upper = window;
         UiText_DrawResource((s32)MsgTransferMethodX, (s32)window, 12, 4);
-        work->lower_window = UiWindow_Create(5, 5, 21, 7, 2);
+        work->lowerWindow = UiWindow_Create(5, 5, 21, 7, 2);
     }
     result = Menu_RunResourceSelectionLoop(0);
     if (mode != 0)
@@ -79,9 +79,9 @@ s32 Func_0804d7fc(s32 mode)
     else
         Scheduler_RemoveCallback(Menu_DrawModeIndicator);
     RenderOutput_PrepareForRedraw(*upper);
-    RenderOutput_PrepareForRedraw(work->lower_window);
+    RenderOutput_PrepareForRedraw(work->lowerWindow);
     UiWork_Finalize(*upper, 2);
-    UiWork_Finalize(work->lower_window, 2);
+    UiWork_Finalize(work->lowerWindow, 2);
     WaitFrames(1);
     Menu_EndResourceSelection();
     return result;

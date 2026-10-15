@@ -14,36 +14,36 @@ s32 Func_02000f28(void)
 {
     struct ObjectRuntime *object;
 
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 0x20;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+    Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
     Func_02001158(17);
     Func_02001158(18);
     ObjectMotion_SetActionVariant(10, 2);
-    Object_GetById(12)->collision_flags |= 4;
+    Object_GetById(12)->collisionFlags |= 4;
     ObjectMotion_SetActionVariant(16, 2);
-    Object_GetById(16)->collision_flags |= 4;
+    Object_GetById(16)->collisionFlags |= 4;
 
     object = Object_GetById(18);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = -0x40000;
-    object->terrain_height = -0x40000;
-    Object_GetById(18)->priority_flags |= 0x20;
+    object->terrainHeight = -0x40000;
+    Object_GetById(18)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(18, 1);
     Func_02001108(18, 0, 0);
 
     object = Object_GetById(19);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0xc0000;
-    object->terrain_height = 0xc0000;
-    Object_GetById(19)->priority_flags |= 0x20;
+    object->terrainHeight = 0xc0000;
+    Object_GetById(19)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(19, 1);
     Func_02001108(19, 0, 0);
 
     object = Object_GetById(20);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0xc0000;
-    object->terrain_height = 0xc0000;
-    Object_GetById(20)->priority_flags |= 0x20;
+    object->terrainHeight = 0xc0000;
+    Object_GetById(20)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(20, 1);
     Func_02001108(20, 0, 0);
 

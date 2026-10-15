@@ -26,7 +26,7 @@ void BattleUnit_ResetGuardLevels(void)
         struct BattleUnit *actor;
 
         actor = UnitGet(ids[index]);
-        actor->guard_lv = 0;
+        actor->guardLv = 0;
         UnitCalcFar(ids[index]);
     }
 }

@@ -4,8 +4,8 @@
 extern struct PartyState gPartyState;
 
 struct GarohEventWork {
-    u8 unknown_000[0xca4];
-    s8 fade_lock;
+    u8 unk000[0xca4];
+    s8 fadeLock;
 };
 
 void Func_02000e78(s32 id, struct ObjectRuntime *object)
@@ -13,7 +13,7 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object)
     s32 i;
     s32 saved;
 
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     {
         /* FAKEMATCH: the id is read through r0 into a second variable after the motion flag store: the native copies it into r7 after the strb, where plainly the copy comes first (one reordered pair, differ 2; a barrier, a one-pass block or a goto loop leave it first). */
         register s32 arg asm("r0") = id;
@@ -199,10 +199,10 @@ void Func_02001144(void)
             Flag_Clear(0x310);
             Flag_Clear(0x318);
         }
-        work = Ram_HeapSlots->event_work;
+        work = Ram_HeapSlots->eventWork;
         /* FAKEMATCH: the native loads the event work before it starts the field offset 0xca4; without the barrier the offset is started first (one reordered pair, differ 2). */
         __asm__ volatile("" : "+r"(work));
-        if (work->fade_lock == 0)
+        if (work->fadeLock == 0)
             Func_020052d4(120);
     }
 }
@@ -222,10 +222,10 @@ void Func_020011c8(void)
             Flag_Set(0x310);
             Flag_Clear(0x318);
         }
-        work = Ram_HeapSlots->event_work;
+        work = Ram_HeapSlots->eventWork;
         /* FAKEMATCH: the native loads the event work before it starts the field offset 0xca4; without the barrier the offset is started first (one reordered pair, differ 2). */
         __asm__ volatile("" : "+r"(work));
-        if (work->fade_lock == 0)
+        if (work->fadeLock == 0)
             Func_020052d4(120);
     }
 }

@@ -7,7 +7,7 @@
 
 struct TextReader
 {
-	u32		   previous_code;
+	u32		   previousCode;
 	const u32 *words;
 	u32		   bits;
 };

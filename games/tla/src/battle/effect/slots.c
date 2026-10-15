@@ -9,9 +9,9 @@
 #include "io_reg.h"
 
 struct BattleFxScene {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct EffectSlot slots[24];
-    u8 unknown_710[0xe4];
+    u8 unk710[0xe4];
 };
 
 #define BATTLE_FX_SLOT 224
@@ -22,7 +22,7 @@ void BattleFx_UpdateAllSlots(void)
     struct EffectSlot *slot;
     s32 remaining_slots;
 
-    scene = Ram_HeapSlots->effect_work;
+    scene = Ram_HeapSlots->effectWork;
     remaining_slots = 0x17;
     slot = scene->slots;
     do {
@@ -45,7 +45,7 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
-    struct BattleFxScene *scene = Ram_HeapSlots->effect_work;
+    struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
     struct EffectSlot *slot;
     s32 i;
 

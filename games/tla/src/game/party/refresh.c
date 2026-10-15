@@ -28,7 +28,7 @@ void Func_080ae16c(s32 arg0)
             struct PartyState *party = &gPartyState;
 
             asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's offset; read as a plain field the offset is started first (differ 2) */
-            obj = UnitGet(party->active_owners[n]);
+            obj = UnitGet(party->activeOwners[n]);
         }
 
         do {
@@ -98,7 +98,7 @@ void Func_080ae220(void)
             struct PartyState *party = &gPartyState;
 
             asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state before it starts the owner list's offset; read as a plain field the offset is started first (differ 2) */
-            ownerId = party->active_owners[n];
+            ownerId = party->activeOwners[n];
         }
         group = Character_ElementGroupTable[ownerId];
         doRefresh = 0;
@@ -156,7 +156,7 @@ void Func_080ae220(void)
 }
 
 struct UnitDjinnSets {
-    u8 unknown_00[0xf8];
+    u8 unk00[0xf8];
     u32 djinn[4];
 };
 

@@ -35,7 +35,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
 
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
-    entry = Ram_HeapSlots->unknown_0c[0];
+    entry = Ram_HeapSlots->unk0c[0];
     object = NULL;
 
     if (metadata->width != 0) {
@@ -46,21 +46,21 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             }
         }
         if (found != NULL) {
-            /* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the anim_id store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
+            /* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the animId store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
             frames = (void **)*(s32 *)&metadata->frames;
             object = found;
-            object->anim_id = id;
+            object->animId = id;
             if (frames == 0)
                 frames = (void **)Animation_LookupValueByKey(id);
 
             animation = metadata->animation;
             object->scripts = animation;
             object->frames = frames;
-            object->mode = metadata->frame_codec;
+            object->mode = metadata->frameCodec;
             object->frame = 0xff;
             object->script = animation[0];
             object->pos = 0;
-            object->kind = metadata->draw_kind;
+            object->kind = metadata->drawKind;
             object->param = 0;
         }
     }

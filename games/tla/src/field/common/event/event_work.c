@@ -17,30 +17,30 @@
 
 void EventRuntime_StartScreen(void)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    DisplayTransition_Start(event->screen_effect, event->delay);
-    event->screen_status = 1;
+    DisplayTransition_Start(event->screenEffect, event->delay);
+    event->screenStatus = 1;
 }
 
 void EventRuntime_FinishScreen(void)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    DisplayTransition_Finish(event->screen_effect, event->delay);
-    event->screen_status = 0;
+    DisplayTransition_Finish(event->screenEffect, event->delay);
+    event->screenStatus = 0;
 }
 
 void EventRuntime_WaitDelay(void)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
     WaitFrames(event->delay);
 }
 
 void EventRuntime_SetDestination(s32 scene, s32 entrance)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
     struct PartyState *party;
 
     event->countdown = 999;
@@ -52,19 +52,19 @@ void EventRuntime_SetDestination(s32 scene, s32 entrance)
 
 void EventRuntime_SetSavedDestination(s32 scene, s32 entrance)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
     struct PartyState *party;
 
     event->countdown = 999;
     /* FAKEMATCH: materialize the party pointer before building the saved-scene offset. */
     asm volatile ("" : "=r" (party) : "0" (&gPartyState));
-    party->saved_scene = scene;
-    party->saved_entrance = entrance;
+    party->savedScene = scene;
+    party->savedEntrance = entrance;
 }
 
 void EventRuntime_SetCountdown(u16 frames)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
     event->countdown = frames;
 }
@@ -72,12 +72,12 @@ void EventRuntime_SetCountdown(u16 frames)
 
 void BattleFx_SetWeightedResult(s32 row, s32 column)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
+    struct EventWork *event = Ram_HeapSlots->eventWork;
 
-    event->battle_group = BattleFx_GetWeightedResult(row, column);
+    event->battleGroup = BattleFx_GetWeightedResult(row, column);
     /* FAKEMATCH: the ARM9 scheduling would address the control mode before storing the group. */
     __asm__("");
-    if (event->control_mode == 3)
+    if (event->controlMode == 3)
         BattleFx_LookupResult((u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
     BattleFx_SelectBattleCue(row, column);
 }

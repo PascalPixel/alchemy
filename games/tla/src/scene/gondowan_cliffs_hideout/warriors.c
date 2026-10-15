@@ -62,7 +62,7 @@ void Func_02000074(void)
 
 s32 Func_02000154(void)
 {
-    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 428) = 513;
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
     return 0;
@@ -70,6 +70,6 @@ s32 Func_02000154(void)
 
 s32 Func_02000184(void)
 {
-    Object_GetById(Func_0200021c())->priority_flags |= 32;
+    Object_GetById(Func_0200021c())->priorityFlags |= 32;
     return 0;
 }

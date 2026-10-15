@@ -34,11 +34,11 @@ struct FxPlacement {
     s32 x;
     s32 y;
     s32 z;
-    s32 unknown_0c;
+    s32 unk0c;
 };
 
 struct FxControl {
-    u8 unknown_00[16];
+    u8 unk00[16];
     s32 busy;
 };
 
@@ -85,24 +85,24 @@ void Func_08168a40(struct BattleEffectArgument *effect)
     struct BattleFxWork *work;
     DrawRectangle blit;
     u8 *sheet;
-    s32 base_x;
+    s32 baseX;
     s32 grow;
-    s32 saved_x;
+    s32 savedX;
     struct FxControl *control;
     s32 shift;
     s32 wave;
     s32 frame;
     s32 i;
 
-    canvas = Ram_HeapSlots->battle_fx_work[1];
-    work = (struct BattleFxWork *)Ram_HeapSlots->battle_fx_work[0];
-    sheet = Ram_HeapSlots->unknown_64[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+    sheet = Ram_HeapSlots->unk64[0];
     BattleFx_BeginCanvasLayer(0);
     Func_0813ba50();
     REG_BG2CNT = 0x784;
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0x18;
-    work->transfer_mode = 0;
+    work->transferMode = 0;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     BattleEffect_WipeCanvas(1, 0);
     Func_08152404(9, 644, 1);
@@ -120,13 +120,13 @@ void Func_08168a40(struct BattleEffectArgument *effect)
     REG_BLDALPHA = 0x100e;
     REG_BLDCNT = 0x3f44;
 
-    base_x = 0;
+    baseX = 0;
     grow = 0;
-    saved_x = gBgScroll[1].x;
-    control = (struct FxControl *)Ram_HeapSlots->transition_work;
+    savedX = gBgScroll[1].x;
+    control = (struct FxControl *)Ram_HeapSlots->transitionWork;
     shift = 0;
-    work->transfer_mode = 1;
-    work->transfer_value = base_x;
+    work->transferMode = 1;
+    work->transferValue = baseX;
     control->busy = 1;
 
     i = 0;
@@ -135,13 +135,13 @@ void Func_08168a40(struct BattleEffectArgument *effect)
 
         fire->x = (Random16() & 31) + 16;
         fire->y = ((Random16() & 31) + 48) << 16;
-        fire->velocity_y = ((Random16() & 31) - 16) << 16;
+        fire->velocityY = ((Random16() & 31) - 16) << 16;
         fire->variant = Random16() % 48 + 2;
         i++;
     } while (i != 64);
 
     Func_081963ec(104, 3);
-    blit = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
     REG_BG2CNT = 0x786;
 
     for (frame = 0; frame != 120; frame++) {
@@ -176,7 +176,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             if (frame > 103)
                 lift = frame * 16 - 1664;
             if (frame >= 8 && frame <= 31)
-                base_x = base_x + shift - 8;
+                baseX = baseX + shift - 8;
             if (frame > 7) {
                 s32 amp;
                 s32 ang;
@@ -189,13 +189,13 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                     ang -= 0x8000;
                 wave = (Trig_Sin(ang) * amp) >> 16;
                 if ((frame & 31) == 8)
-                    work->shake_frames = 4;
+                    work->shakeFrames = 4;
             }
-            place.unknown_0c = 0;
+            place.unk0c = 0;
             place.y = 255 << 16;
             i = 0;
             do {
-                place.x = ((base_x + Data_08198ada[i] - lift) << 16) + (224 << 16);
+                place.x = ((baseX + Data_08198ada[i] - lift) << 16) + (224 << 16);
                 place.z = ((Data_08198ae3[i] - wave) << 16) + (144 << 15);
                 Render_ApplyProjectedPlacementFar(work->objects[i], &place.x, &pair.a, 0);
                 i++;
@@ -220,8 +220,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
         }
 
         if (frame == 24) {
-            work->transfer_mode = 2;
-            work->transfer_value = 50;
+            work->transferMode = 2;
+            work->transferValue = 50;
         }
         if (frame == 28)
             REG_BG2CNT = 0x784;
@@ -236,15 +236,15 @@ void Func_08168a40(struct BattleEffectArgument *effect)
 
                     blit(canvas, sheet + Data_08197410[size - 1], fire->x, HI(fire->y) - size, size, size * 2);
                     fire->x += 2;
-                    fire->y += fire->velocity_y;
-                    fire->velocity_y = fire->velocity_y * 48 / 64;
+                    fire->y += fire->velocityY;
+                    fire->velocityY = fire->velocityY * 48 / 64;
                 } else {
                     fire->variant--;
                 }
                 if (fire->x > 128 || fire->variant == 1) {
-                    fire->x = (Random16() & 31) + base_x + 172;
+                    fire->x = (Random16() & 31) + baseX + 172;
                     fire->y = ((Random16() & 31) - wave + 56) << 16;
-                    fire->velocity_y = ((Random16() & 31) - 16) << 15;
+                    fire->velocityY = ((Random16() & 31) - 16) << 15;
                 }
                 i++;
             } while (i != 48);
@@ -265,17 +265,17 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             } while (i != 6);
         }
 
-        if (work->shake_frames > 0) {
-            work->shake_frames--;
+        if (work->shakeFrames > 0) {
+            work->shakeFrames--;
             gBgScroll[1].y = (Random16() & 7) + 28;
         } else {
             gBgScroll[1].y = 32;
         }
-        work->transfer_pending = 1;
+        work->transferPending = 1;
         WaitFrames(1);
     }
 
-    gBgScroll[1].x = saved_x;
+    gBgScroll[1].x = savedX;
     control->busy = 0;
     Func_0814cca8();
     REG_WIN0H = 0xf0;
@@ -287,11 +287,11 @@ void Func_08168a40(struct BattleEffectArgument *effect)
     } while (i != 9);
 
     {
-        s32 row_x;
+        s32 rowX;
         u8 *hit;
         u8 *jitter;
 
-        row_x = 224;
+        rowX = 224;
         hit = hit_row;
         i = 0;
         do {
@@ -310,8 +310,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             i++;
         } while (i != 160 << 1);
 
-        work->transfer_mode = 2;
-        work->transfer_value = 75;
+        work->transferMode = 2;
+        work->transferValue = 75;
         REG_BG2CNT = 0x784;
         REG_BLDALPHA = 0x1010;
 
@@ -322,7 +322,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 s32 ang;
                 s32 rise;
 
-                row_x -= 16;
+                rowX -= 16;
                 if (frame <= 8) {
                     ang = frame * 2048 + 0x4000;
                     if (ang > 0x8000)
@@ -334,11 +334,11 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                         ang -= 0x8000;
                     rise = (Trig_Sin(ang) << 5) >> 16;
                 }
-                place2.unknown_0c = 0;
+                place2.unk0c = 0;
                 place2.y = 255 << 16;
                 i = 0;
                 do {
-                    place2.x = (row_x + Data_08198ada[i]) << 16;
+                    place2.x = (rowX + Data_08198ada[i]) << 16;
                     place2.z = ((Data_08198ae3[i] - rise) << 16) + (144 << 15);
                     Render_ApplyProjectedPlacementFar(work->objects[i], &place2.x, &pair2.a, 0);
                     i++;
@@ -346,7 +346,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             }
 
             if (frame == 8) {
-                work->shake_frames = frame;
+                work->shakeFrames = frame;
                 Audio_PlayCue(145);
             }
             if (frame == 11)
@@ -357,7 +357,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
             for (i = 0; i != effect->count; i++) {
                 if (hit[i] == 0) {
                     EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[i], &unit);
-                    if (unit.x > row_x) {
+                    if (unit.x > rowX) {
                         s32 k;
 
                         hit[i] = 1;
@@ -368,10 +368,10 @@ void Func_08168a40(struct BattleEffectArgument *effect)
 
                             burst->x = unit.x << 15;
                             burst->y = (unit.y - 16) << 16;
-                            burst->velocity_x = ((Random16() & 255) - 128) << 10;
+                            burst->velocityX = ((Random16() & 255) - 128) << 10;
                             up = (Random16() & 255) - 192;
-                            burst->velocity_y = up << 11;
-                            burst->x += burst->velocity_x * 4;
+                            burst->velocityY = up << 11;
+                            burst->x += burst->velocityX * 4;
                             burst->y += up << 13;
                             burst->variant = (Random16() & 15) + 8;
                             k++;
@@ -390,8 +390,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                     s32 size = 3;
 
                     blit(canvas, sheet + Data_08197410[size - 1], HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
-                    burst->x += burst->velocity_x;
-                    burst->y += burst->velocity_y;
+                    burst->x += burst->velocityX;
+                    burst->y += burst->velocityY;
                     burst->variant--;
                 }
                 i++;
@@ -403,8 +403,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 s32 slide = (frame - 40) * 12;
                 s32 y;
 
-                work->transfer_mode = 0;
-                work->transfer_value = 75;
+                work->transferMode = 0;
+                work->transferValue = 75;
                 i = 0;
                 y = -8;
                 do {
@@ -414,7 +414,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
                 } while (i != 16);
             }
             if (frame > 64)
-                work->transfer_mode = 2;
+                work->transferMode = 2;
             if (frame == 58) {
                 for (i = 0; i != effect->count; i++)
                     Func_0814cd48(effect->actors[i], 14, 5, -1, 0);
@@ -422,7 +422,7 @@ void Func_08168a40(struct BattleEffectArgument *effect)
 
             Func_08158ce0(8, 8);
             Func_081434f8();
-            work->transfer_pending = 1;
+            work->transferPending = 1;
             WaitFrames(1);
             frame++;
         } while (frame != 96);

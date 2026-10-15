@@ -62,7 +62,7 @@ s32 ItemCounter_Adjust(s32 index, s32 delta);
 s32 Item_AdjustCounter(s32 item_id, s32 delta);
 s32 Inventory_CountItem(s32 owner, s32 item_id);
 s32 PartyInventory_CountItem(s32 item_id);
-struct BattleAct *BattleAction_GetDirect(s32 action_id);
+struct BattleAct *BattleAction_GetDirect(s32 actionId);
 s32 Equipment_HasValue(s32 owner, s32 value);
 s32 Owner_RefreshClassActions(s32 owner);
 s32 OwnerAction_Add(s32 state_index, s32 value);
@@ -86,7 +86,7 @@ u8 GameFlag_DecrementByte(s32 flag);
 s32 GameFlag_GetNibble(u32 flag);
 void GameFlag_SetNibble(s32 flag, s32 value);
 
-s32 BattleUnitSet(s32 unit_id, s32 enemy_id, s32 suffix);
+s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix);
 s32 Party_CountActiveOwners(void);
 s32 Party_AddActiveOwner(s32 value);
 s32 Party_RemoveActiveOwner(s32 value);

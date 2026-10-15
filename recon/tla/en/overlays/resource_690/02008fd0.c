@@ -30,7 +30,7 @@ void Func_02000fd0(void)
     u8 *flags;
 
     if (column == 11 && row == 9) {
-        object->motion_flags = 0;
+        object->motionFlags = 0;
         /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: as a for loop its two uses of the object count double and the object takes the row's register (differ 97 with the direct calls below). */
         i = 8;
 sink:
@@ -46,7 +46,7 @@ sink:
         ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
         ObjectMotion_CommitCurrentPositionAndActivate(10);
         Battle_WaitMode0(10);
-        ObjectMotion_ArmCallback(gPartyState.current_owner, 0x4000, 0);
+        ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
         Speed(10, 0x26666, 0x13333);
         ObjectMotion_OffsetPositionAndResetMotion(10, 0, 80);
         ObjectMotion_CommitCurrentPositionAndActivate(10);
@@ -75,7 +75,7 @@ sink:
         Func_02002070();
     } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
         Func_02002030(17, 12, 1, 1, column, row);
-        flags = &object->motion_flags;
+        flags = &object->motionFlags;
         *flags = 3;
         Battle_WaitMode0(30);
         *flags = 0;

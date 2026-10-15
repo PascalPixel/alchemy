@@ -46,7 +46,7 @@ void Func_0200099c(void)
     u8 *work;
     s16 scene;
 
-    work = (u8 *)Ram_HeapSlots->event_work;
+    work = (u8 *)Ram_HeapSlots->eventWork;
     /* FAKEMATCH: the native loads the event work before it addresses gPartyState; without the barrier the scene offset is built first (differ 2). */
     __asm__("");
     scene = gPartyState.scene;

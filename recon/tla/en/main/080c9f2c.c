@@ -31,9 +31,9 @@ s32 BattleFx_LookupResult(void *position)
     u32 terrain;
     s32 result;
 
-    if (gPartyState.render_mode == 8)
+    if (gPartyState.renderMode == 8)
         return 0;
-    if (gPartyState.render_mode == 7)
+    if (gPartyState.renderMode == 7)
         entry = Data_080eef34;
     behavior = GetWorldMapTerrainBehaviorFar(position, (s32 *)&terrain);
     terrain %= 20;

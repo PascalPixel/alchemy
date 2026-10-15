@@ -2,15 +2,15 @@
 #include "ram_buffer.h"
 
 struct WindowTiles {
-    u8 unknown_00[3];
+    u8 unk00[3];
     u8 dirty;
-    u8 unknown_04[4];
+    u8 unk04[4];
     u16 cells[32][32];
 };
 
 void Ui_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
 {
-    struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->window_tiles;
+    struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
 
     palette <<= 12;
 

@@ -37,7 +37,7 @@ void Func_020009c0(void)
 
 void Func_020009e8(void)
 {
-    SCENE_WORK->unknown_166 = 0;
+    SCENE_WORK->unk166 = 0;
     Flag_Clear(0x106);
     Flag_Clear(0x104);
     Func_02004ca8();

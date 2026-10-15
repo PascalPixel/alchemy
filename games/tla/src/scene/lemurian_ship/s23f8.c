@@ -2,7 +2,7 @@
 
 void Func_020023f8(void)
 {
-    struct LemurianShipObject *leader = Object_GetById(gPartyState.current_owner);
+    struct LemurianShipObject *leader = Object_GetById(gPartyState.currentOwner);
 
     ObjectMotion_SetActionVariant(8, leader->sprite->priority);
 }
@@ -19,9 +19,9 @@ void Func_0200245c(s32 id)
 {
     struct LemurianShipObject *object = Object_GetById(id);
 
-    Object_GetById(id)->priority_flags |= 0x20;
+    Object_GetById(id)->priorityFlags |= 0x20;
     ObjectMotion_SetActionVariant(id, 1);
-    object->motion_flags = 0;
+    object->motionFlags = 0;
     object->y = 0;
     object->height = 0;
 }

@@ -43,7 +43,7 @@ s32 Func_0804e3f4(void)
     s32 cancel;
     u32 slot_offset;
 
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     redraw = 1;
     portrait = Func_0803d3c0(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);

@@ -14,15 +14,15 @@
 #include "ram_buffer.h"
 
 struct AnimTrack {
-    u8 unknown_00[0x10];
+    u8 unk00[0x10];
     u8 *script;
     u8 index;
 };
 
 struct AnimObject {
-    u8 unknown_00[0x18];
+    u8 unk00[0x18];
     u8 frame;
-    u8 unknown_19[0xf];
+    u8 unk19[0xf];
     struct AnimTrack *track;
 };
 
@@ -145,7 +145,7 @@ struct Thing {
 
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 {
-    u8 *state = (u8 *)Ram_HeapSlots->map_work;
+    u8 *state = (u8 *)Ram_HeapSlots->mapWork;
     s32 *org = (s32 *)(state + 228);
     s32 a;
     s32 b;

@@ -7,7 +7,7 @@
 #include "text/msg_ids.h"
 
 struct EventWork1c4 {
-    u8 unknown_000[0x1c4];
+    u8 unk000[0x1c4];
     u16 count;
 };
 
@@ -98,13 +98,13 @@ void Func_02000838(void)
         Call2((void (*)())Func_020019cc, 10, 0x102);
         Call1((void (*)())Battle_WaitMode0, 40);
         Call3((void (*)())Func_020019a4, 10, 0, 10);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     } else {
         Call1((void (*)())Battle_WaitMode0, 40);
         Call2((void (*)())ObjectMotion_SetVariantCallback, 10, 3);
         Call2((void (*)())Func_020019cc, 10, 0x102);
         Call1((void (*)())Battle_WaitMode0, 40);
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
         Call3((void (*)())Func_020019a4, 10, 0, 0);
         Call3((void (*)())ObjectMotion_Launch, 10, 6, 15);
         Call3((void (*)())ObjectMotion_Launch, 10, 6, 23);
@@ -139,7 +139,7 @@ void Func_02000838(void)
     Call1((void (*)())Battle_WaitMode0, 10);
     Call3((void (*)())Func_020019a4, 9, 0, 10);
     Call2((void (*)())Func_02001964, 7, 4);
-    Object_GetById(7)->scale_x = 0;
+    Object_GetById(7)->scaleX = 0;
     Call3((void (*)())Func_020019a4, 7, 0, 10);
     Call3((void (*)())ObjectMotion_ArmCallback, 9, 0, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x8000, 0);
@@ -147,7 +147,7 @@ void Func_02000838(void)
     Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x3000, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x5000, 0);
     Call1((void (*)())Battle_WaitMode0, 25);
-    Object_GetById(7)->scale_x = 0x10000;
+    Object_GetById(7)->scaleX = 0x10000;
     Call4((void (*)())Func_02001a0c, 7, 0, -16, 0xc000);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 7);
     Call1((void (*)())Battle_WaitMode0, 20);
@@ -351,7 +351,7 @@ void Func_02000838(void)
     Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
     Call1((void (*)())Battle_WaitMode0, 10);
     Value2((s32 (*)())UiText_OpenMessageAtObject, 9, 0);
-    if ((s8)gPartyState.counter_274 <= 4) {
+    if ((s8)gPartyState.counter274 <= 4) {
         result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
         if (result == 0) {
             Call1((void (*)())Battle_WaitMode0, 25);
@@ -360,7 +360,7 @@ void Func_02000838(void)
             Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
             Call1((void (*)())Battle_WaitMode0, 10);
             Call3((void (*)())Func_020019a4, 0x200b, 0, 10);
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
         } else {
             Call1((void (*)())Battle_WaitMode0, 35);
             Value3((s32 (*)())Func_020019c4, 9, 0x102, 0);
@@ -368,17 +368,17 @@ void Func_02000838(void)
             Call3((void (*)())ObjectMotion_ArmCallback, 11, 0x5000, 0);
             Call1((void (*)())Battle_WaitMode0, 30);
             Value3((s32 (*)())Func_020019c4, 11, 0x103, 30);
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
             Call3((void (*)())Func_020019a4, 0x200b, 0, 10);
         }
-        ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count += 2;
+        ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
     } else {
         {
             /* FAKEMATCH: the native keeps the count in r2 and the work pointer in r3. local-alloc ranks the count (4 references over 2 insns) ahead of the pointer (5 over 5) and gives it r3; five plain forms of the statement and input-operand barriers left it there (differ 14). */
             register u32 n asm("r2");
 
-            n = ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count;
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count = n + 2;
+            n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count = n + 2;
         }
         result = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, 4, 0);
         if (result == 0) {
@@ -390,7 +390,7 @@ void Func_02000838(void)
             Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
             Call1((void (*)())Battle_WaitMode0, 10);
             Call3((void (*)())Func_020019a4, 0x200b, 0, 10);
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
         } else {
             Call1((void (*)())Battle_WaitMode0, 35);
             Call3((void (*)())ObjectMotion_ArmCallback, 11, 0x5000, 0);
@@ -399,7 +399,7 @@ void Func_02000838(void)
             Value3((s32 (*)())Func_020019c4, 11, 0x103, 40);
             Call3((void (*)())ObjectMotion_Launch, 11, 6, 15);
             Call3((void (*)())ObjectMotion_Launch, 11, 6, 23);
-            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
             Call3((void (*)())Func_020019a4, 0x200b, 0, 10);
         }
         Call2((void (*)())Func_020019b4, 7, 0xc000);
@@ -493,14 +493,14 @@ void Func_02000838(void)
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 7, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 7);
     Call3((void (*)())Func_0200195c, 7, 0, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 11, 2);
-    leader = Object_GetById(gPartyState.current_owner);
+    leader = Object_GetById(gPartyState.currentOwner);
     if (leader != 0)
         ObjectMotion_ResetAndSetPosition(11, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
     Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 11);

@@ -55,7 +55,7 @@ extern u16 Data_02006cec;
 extern u16 Data_02006cf0;
 
 struct MarsAerieParty {
-    u8 unknown_000[0x26a];
+    u8 unk000[0x26a];
     s16 held;
 };
 

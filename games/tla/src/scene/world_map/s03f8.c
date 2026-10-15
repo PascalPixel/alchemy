@@ -43,11 +43,11 @@ u8 *Func_020003f8(void)
 // shown first, the event work's counters are cleared.
 void Func_02000458(void)
 {
-    u8 *work = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->eventWork;
 
     /* FAKEMATCH: an empty asm after the work load keeps it ahead of the 0x212 offset, which the native starts before it loads gPartyState's address (plain: differ 4; a one-pass block in its place: 2). */
     asm("");
-    gPartyState.render_mode = 8;
+    gPartyState.renderMode = 8;
     if (Flag_IsSet(0x147)) {
         Func_02004da8();
         Func_02004ba8(153, 4);

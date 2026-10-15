@@ -2,12 +2,12 @@
 #include "field_sprite.h"
 
 struct SpawnObject {
-    u8 unknown_00[0x50];
+    u8 unk00[0x50];
     struct FieldSprite *sprite;
-    u8 unknown_54;
-    u8 motion_flags;
-    u8 unknown_56[8];
-    u16 unknown_5e;
+    u8 unk54;
+    u8 motionFlags;
+    u8 unk56[8];
+    u16 unk5e;
 };
 
 extern u8 Data_02006330[];
@@ -44,11 +44,11 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer)
         sprite = object->sprite;
         Func_02005164(object, 1);
         Func_0200516c(object, Data_02006330);
-        object->motion_flags = 0;
-        /* FAKEMATCH: the native loads the stack argument before the pooled zero for next_frame; without the barrier the zero is loaded first (one reordered pair, differ 2). */
+        object->motionFlags = 0;
+        /* FAKEMATCH: the native loads the stack argument before the pooled zero for nextFrame; without the barrier the zero is loaded first (one reordered pair, differ 2). */
         __asm__ volatile("");
-        object->unknown_5e = timer;
-        sprite->next_frame = 0;
+        object->unk5e = timer;
+        sprite->nextFrame = 0;
         sprite->rotation = value;
     }
 }

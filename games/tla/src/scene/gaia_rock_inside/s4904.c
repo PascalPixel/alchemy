@@ -2,9 +2,9 @@
 
 struct GaiaRockInsideNode
 {
-    u8 unknown_0[2];
+    u8 unk0[2];
     u8 next[4];
-    u8 unknown_6[2];
+    u8 unk6[2];
 };
 
 struct GaiaRockInsidePath

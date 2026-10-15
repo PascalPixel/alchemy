@@ -26,7 +26,7 @@ void UiWork_ClearValueNameTables(void)
 	s32					 no;
 	struct UiRenderWork *work;
 
-	work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+	work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 	/* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
 	__asm__("");
 	no = 0;
@@ -45,7 +45,7 @@ void UiWork_ClearValueNameTables(void)
 //--------------------------------------------------------------------------
 void UiWork_PushValueSlot(u32 value, u32 kind)
 {
-	struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+	struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 	u32 no = 0;
 	u32 limit = 8;
 

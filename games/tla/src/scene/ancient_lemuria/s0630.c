@@ -63,7 +63,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag)
 
 s32 Func_020006bc(void)
 {
-	*(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 513;
+	*(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
 	Scheduler_AddOrUpdateCallback(Func_02000630, 0xc80);
 	if (gPartyState.entrance != 1)
 		GameFlag_ClearBit(0x12f);

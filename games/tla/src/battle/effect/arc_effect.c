@@ -31,7 +31,7 @@ void BattleFx_StartArcEffect(void)
 
 void BattleFx_EndArcEffect(void)
 {
-    struct ArcEffectWork *work = Ram_HeapSlots->block_62;
+    struct ArcEffectWork *work = Ram_HeapSlots->block62;
 
     Resource_ResetEntry(work->resource);
     Scheduler_RemoveCallback((u32)BattleFx_UpdateArcEffect);

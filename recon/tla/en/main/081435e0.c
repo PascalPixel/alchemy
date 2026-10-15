@@ -20,15 +20,15 @@
 
 struct CanvasWork
 {
-    u8 unknown_0000[0x77a0];
+    u8 unk0000[0x77a0];
     s32 savedBg1X;
     s32 savedBg1Y;
     s32 shakeFrames;
-    u8 unknown_77ac[8];
+    u8 unk77ac[8];
     s32 fadeFrames;
     s32 fadeStep;
-    u8 unknown_77bc[0x12c];
-    s32 unknown_78e8;
+    u8 unk77bc[0x12c];
+    s32 unk78e8;
 };
 
 static __inline__ s32 ClearWords_(void *destination, s32 size)
@@ -45,17 +45,17 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 
 void BattleFx_BeginCanvasLayer(s32 bgControl)
 {
-    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct BattleWork *battle = Ram_HeapSlots->battle_work;
-    void *canvas = Ram_HeapSlots->battle_fx_work[1];
-    struct BattleBackgroundView *display = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+    struct BattleWork *battle = Ram_HeapSlots->battleWork;
+    void *canvas = Ram_HeapSlots->battleFxWork[1];
+    struct BattleBackgroundView *display = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
     s32 row;
     s32 col;
     s32 offset;
 
     Func_0813ba50();
     Func_081434d8();
-    display->second_mode = 1;
+    display->secondMode = 1;
     WaitFrames(1);
     {
         register u16 zero asm("r3") = 0;
@@ -84,7 +84,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl)
     gBgScroll[1].y = 32;
     WaitFrames(1);
 
-    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unknown_670, 0);
+    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
     work->fadeFrames = 0;
     work->fadeStep = 0;
     Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
@@ -94,7 +94,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl)
     REG_BG2CNT = bgControl | 0x784;
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
-    display->second_mode = 0;
+    display->secondMode = 0;
     WaitFrames(1);
 
     Func_0814355c();
@@ -123,7 +123,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl)
     ClearWords_(canvas, 0x4000);
     ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
     work->shakeFrames = 0;
-    work->unknown_78e8 = 0;
+    work->unk78e8 = 0;
     work->savedBg1X = gBgScroll[1].x;
     work->savedBg1Y = gBgScroll[1].y;
     WaitFrames(1);

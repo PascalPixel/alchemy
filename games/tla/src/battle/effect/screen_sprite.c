@@ -1,10 +1,10 @@
 #include "types.h"
 
 struct ScreenSprite {
-    u8 unknown_00[0xc];
+    u8 unk00[0xc];
     s32 x;
     s32 y;
-    u8 unknown_14[0x14];
+    u8 unk14[0x14];
 };
 
 void Camera_WorldToScreen(s32 *position);

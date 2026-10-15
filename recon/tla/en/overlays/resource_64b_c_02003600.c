@@ -18,8 +18,8 @@ void Func_02004e30(s32 value);
 void Func_02003600(s32 slot, s32 before, s32 after)
 {
     struct ObjectRuntime *target = Data_02006c08[slot - 100];
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     if (owner->x < target->x)
         work->countdown = before;
@@ -31,8 +31,8 @@ void Func_02003600(s32 slot, s32 before, s32 after)
 void Func_02003654(s32 slot, s32 before, s32 after)
 {
     struct ObjectRuntime *target = Data_02006c08[slot - 100];
-    struct ObjectRuntime *owner = Object_GetById(gPartyState.current_owner);
-    struct EventWork *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *owner = Object_GetById(gPartyState.currentOwner);
+    struct EventWork *work = Ram_HeapSlots->eventWork;
 
     if (owner->z < target->z)
         work->countdown = before;

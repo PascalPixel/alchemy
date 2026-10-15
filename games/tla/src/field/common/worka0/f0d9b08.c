@@ -15,9 +15,9 @@ void Func_080d9b08(void)
     void *buffer = MemAlloc(0x900);
 
     Dma_Fill32(0, work, sizeof(struct WorkA0));
-    work->vram_entry = Resource_FindFreeEntry();
+    work->vramEntry = Resource_FindFreeEntry();
     Resource_DecodeType01(Data_080f0c04, buffer);
-    VramBlock_LoadCached(work->vram_entry, 64, buffer);
+    VramBlock_LoadCached(work->vramEntry, 64, buffer);
     Scheduler_AddOrUpdateCallback(Func_080d9b80, 0x480);
     Scheduler_AddOrUpdateCallback(Func_080d9d40, 0x48f);
     MemFree(buffer);

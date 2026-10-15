@@ -19,13 +19,14 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     u8 *state;
     u8 *cursor;
     s32 count;
-    u8 zero;
+    u8  zero;
 
     state = UnitGet(actor);
     zero = 0;
     count = 3;
     cursor = state + 0x12f;
-    do {
+    do
+    {
         count--;
         *cursor-- = zero;
     } while (count >= 0);

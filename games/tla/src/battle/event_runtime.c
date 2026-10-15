@@ -16,10 +16,11 @@ u32 BattleEventRuntime_Reset(void);
 u32 BattleEventRuntime_Reset(void)
 {
     struct BattleEventState *events;
-    struct BattleWork *work;
+    struct BattleWork       *work;
 
     /* FAKEMATCH: the one-pass block loads the battle work before the events offset is built (differ 2 without it). */
-    do {
+    do
+    {
         work = Ram_HeapSlots->battleWork;
     } while (0);
     events = &work->events;
@@ -35,17 +36,20 @@ u32 BattleEventRuntime_Reset(void)
 
 s32 BattleEventRuntime_WaitForReady(void)
 {
-    s32 state;
+    s32                      state;
     struct BattleEventState *events;
 
     events = &Ram_HeapSlots->battleWork->events;
     state = events->phase;
-    if (state == BATTLE_PLAYBACK_IDLE) {
+    if (state == BATTLE_PLAYBACK_IDLE)
+    {
         events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
         state = BATTLE_PLAYBACK_RESOLVE_TARGET;
     }
-    if (state != BATTLE_PLAYBACK_READY) {
-        do {
+    if (state != BATTLE_PLAYBACK_READY)
+    {
+        do
+        {
             WaitFrames(1U);
         } while (events->phase != BATTLE_PLAYBACK_READY);
     }

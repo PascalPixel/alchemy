@@ -3,5 +3,5 @@
 
 void Func_080d74e4(struct MotionObject *object)
 {
-	object->angle += 0x2000;
+    object->angle += 0x2000;
 }

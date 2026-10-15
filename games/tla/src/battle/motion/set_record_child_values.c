@@ -11,9 +11,9 @@ struct RecordChild
 
 struct ChildRecord
 {
-    u8 unk00[0x1b];
-    u8 count;
-    u8 unk1c[0xc];
+    u8                  unk00[0x1b];
+    u8                  count;
+    u8                  unk1c[0xc];
     struct RecordChild *entries[4];
 };
 
@@ -21,11 +21,11 @@ struct ChildRecord
 // others, hiding every child's frame.
 void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
-    s32 index = 0;
-    s32 child_index;
-    s32 count;
-    struct ChildRecord *record;
-    struct RecordChild *child;
+    s32                  index = 0;
+    s32                  child_index;
+    s32                  count;
+    struct ChildRecord  *record;
+    struct RecordChild  *child;
     struct RecordChild **children;
     /* FAKEMATCH: The Broken Seal's two: the mask is a value and the first frame is read into a temporary, so 255 stays in a register across the call and the frame is or-ed with it (child->frame |= 0xff differs 18, |= mask 28). */
     u8 mask = 0xff;

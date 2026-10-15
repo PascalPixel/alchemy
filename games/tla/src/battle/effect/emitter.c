@@ -10,24 +10,25 @@
 #include "objdisp.h"
 #include "field_event.h"
 
-struct ParticleEmitter {
-    u8 padding[8];
+struct ParticleEmitter
+{
+    u8                      padding[8];
     struct ParticlePosition position;
-    u8 padding2[20];
-    s32 travelOffset;
-    u8 padding3[41];
-    u8 active;
+    u8                      padding2[20];
+    s32                     travelOffset;
+    u8                      padding3[41];
+    u8                      active;
 };
 
-u32 Random16(void);
-void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
+u32                          Random16(void);
+void                         Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
 
 void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
 {
-    struct ParticlePosition position;
+    struct ParticlePosition      position;
     struct ParticleEffectObject *object;
-    u32 randomAngle;
+    u32                          randomAngle;
 
     if (emitter->travelOffset >= -255 && emitter->travelOffset <= 255)
         emitter->active = 0;
@@ -41,11 +42,13 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     randomAngle = Random16();
     Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
     object = Object_Spawn(0x2a1, position.x, position.y, position.z);
-    if (object != 0) {
+    if (object != 0)
+    {
         s32 mask;
-        u8 flags;
+        u8  flags;
 
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar(
+            (struct DispatchObject *)object, (u32)gBattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

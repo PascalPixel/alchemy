@@ -9,7 +9,6 @@
 #include "system.h"
 #include "types.h"
 
-
 void BattleFx_StepVector2(s32 *vector, s32 damping, s32 gravity)
 {
     BattleFx_IntegrateVector2(vector, damping, gravity);

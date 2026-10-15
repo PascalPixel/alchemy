@@ -2,7 +2,7 @@
 
 void Func_0815b410(void)
 {
-    s32 i = 0;
+    s32  i = 0;
     u16 *color = (u16 *)0x05000002;
 
 next:

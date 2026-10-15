@@ -15,12 +15,12 @@ static __inline__ void CopyWords_(void *destination, const void *source, s32 siz
 // column starting after its own random delay.
 void Graphics_ConvertBackgroundToBlueRamp(void)
 {
-    s32 i, x, y, row, end, speed;
-    s32 red, green, blue;
-    u16 color;
-    u8 *delays, *p, *pixel;
+    s32  i, x, y, row, end, speed;
+    s32  red, green, blue;
+    u16  color;
+    u8  *delays, *p, *pixel;
     u16 *palette;
-    u32 delayMask;
+    u32  delayMask;
 
     palette = (u16 *)0x05000040;
     i = 0;
@@ -59,7 +59,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
                     if (y <= 119)
                     {
                         pixel = PIXEL_BUFFER
-                              + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
+                                + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
                         color = ((s16 *)0x05000000)[*pixel];
                         red = color & 31;
                         green = (color >> 5) & 31;

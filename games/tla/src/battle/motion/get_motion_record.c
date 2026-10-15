@@ -13,11 +13,15 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex)
     if (object == NULL)
         return NULL;
     storageKind = object->recordStorageKind & 0xF;
-    if (storageKind == 1) {
-        if (recordIndex == 0) {
+    if (storageKind == 1)
+    {
+        if (recordIndex == 0)
+        {
             return object->records;
         }
-    } else if (storageKind == 2) {
+    }
+    else if (storageKind == 2)
+    {
         return ((void **)object->records)[recordIndex];
     }
     return NULL;
@@ -30,7 +34,7 @@ void SceneTransform_ApplyPitch(s32);
 
 void Camera_InitDefaultTransform(void)
 {
-    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+    struct BattleCamera      *state = Ram_HeapSlots->cameraWork;
     struct FixedPointPosition transfer;
 
     state->yaw = 192 << 6;

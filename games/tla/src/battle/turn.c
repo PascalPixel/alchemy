@@ -34,17 +34,21 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
     s32 j;
     s32 swapped;
 
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         struct BattleActionRecord *entry = &entries[i];
 
-        if (entry->command == 5) {
+        if (entry->command == 5)
+        {
             struct BattleAct *action;
 
             UnitGet(entry->unitId);
             action = BattleActGet(Djinn_GetDefinitionHeaderFar(
                 (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
-            if (action->effect == 72 || action->effect == 76 || action->effect == 79 || action->effect == 74
-                || action->effect == 46 || action->effect == 47 || action->effect == 88 || action->effect == 53) {
+            if (action->effect == 72 || action->effect == 76 || action->effect == 79
+                || action->effect == 74 || action->effect == 46 || action->effect == 47
+                || action->effect == 88 || action->effect == 53)
+            {
                 u32 priority = entry->priority;
 
                 /* FAKEMATCH: the barrier keeps the priority's load ahead of its bonus; added plainly the bonus is started first (differ 2). */
@@ -54,10 +58,13 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
         }
     }
 
-    do {
+    do
+    {
         swapped = 0;
-        for (j = count - 1; j > 0; j--) {
-            if ((s16)entries[j].priority > (s16)entries[j - 1].priority) {
+        for (j = count - 1; j > 0; j--)
+        {
+            if ((s16)entries[j].priority > (s16)entries[j - 1].priority)
+            {
                 BattleAction_Swap(&entries[j], &entries[j - 1]);
                 swapped++;
             }

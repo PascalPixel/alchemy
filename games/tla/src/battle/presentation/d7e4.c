@@ -5,7 +5,8 @@ s32 Func_0811d79c(s32 kind)
     s32 value = kind;
 
     kind = 0;
-    switch (value) {
+    switch (value)
+    {
     case 0:
     case 1:
     case 4:

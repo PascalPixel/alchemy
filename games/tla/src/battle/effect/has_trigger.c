@@ -11,8 +11,6 @@
 
 struct PendingEvent;
 
-
-
 s32 BattleFx_HasMatchingEvent5(s32 effectId)
 {
     u16 kind = effectId;

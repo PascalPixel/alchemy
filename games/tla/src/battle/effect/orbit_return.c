@@ -4,7 +4,8 @@
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
-struct Output_08097f80 {
+struct Output_08097f80
+{
     s32 x;
     s32 y;
     s32 z;
@@ -15,12 +16,13 @@ void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {
     struct Output_08097f80 position;
-    s8 *statePointer = &effect->state;
-    s32 state;
+    s8                    *statePointer = &effect->state;
+    s32                    state;
 
 next_state:
     state = *statePointer;
-    if (state == 0) {
+    if (state == 0)
+    {
         u32 angle;
 
         position.x = effect->originX;
@@ -36,15 +38,18 @@ next_state:
         return;
     }
 
-    if (state == 1) {
-        if (BattleFx_HasReachedTarget(effect) == 0) {
+    if (state == 1)
+    {
+        if (BattleFx_HasReachedTarget(effect) == 0)
+        {
             (*statePointer)++;
             goto next_state;
         }
         return;
     }
 
-    if (state == 2) {
+    if (state == 2)
+    {
         effect->targetX = effect->originX;
         effect->targetZ = effect->originZ;
         {

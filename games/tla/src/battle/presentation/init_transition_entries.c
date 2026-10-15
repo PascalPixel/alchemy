@@ -1,7 +1,8 @@
 #include "types.h"
 #include "transform.h"
 
-struct BattleTransitionEntry {
+struct BattleTransitionEntry
+{
     u32 value;
     u32 sum;
     u32 field8;

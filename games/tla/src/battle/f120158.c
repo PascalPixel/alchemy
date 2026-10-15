@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-s32 UiWork_IsCompleteFar(void);
+s32  UiWork_IsCompleteFar(void);
 void WaitFrames(s32 frames);
 
 void Func_08120158(void)

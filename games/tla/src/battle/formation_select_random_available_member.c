@@ -4,14 +4,14 @@
 
 s32 BattleGroupRandom(s32 recordId)
 {
-    s32 *choicesBase;
-    s32 choices[5];
+    s32                          *choicesBase;
+    s32                           choices[5];
     struct BattleFormationRecord *record;
-    s32 *choiceCursor;
-    u8 *maximumCount;
-    u16 *memberId;
-    s32 remaining;
-    u32 count;
+    s32                          *choiceCursor;
+    u8                           *maximumCount;
+    u16                          *memberId;
+    s32                           remaining;
+    u32                           count;
 
     count = 0;
     if ((u32)recordId >= 660)
@@ -25,8 +25,10 @@ s32 BattleGroupRandom(s32 recordId)
     remaining = 4;
     /* FAKEMATCH: the plain order loads the record table before scaling the id. */
     __asm__("");
-    do {
-        if (*maximumCount++ != 0) {
+    do
+    {
+        if (*maximumCount++ != 0)
+        {
             s32 id = *memberId;
 
             count++;

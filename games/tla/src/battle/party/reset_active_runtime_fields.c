@@ -13,7 +13,6 @@
 #include "types.h"
 #include "battle_type.h"
 
-
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
     u16 owners[10];
@@ -24,17 +23,20 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
     count += BattleParty_PrepareReserveOwners(owners + count);
 
     i = 0;
-    if (i < count) {
+    if (i < count)
+    {
         struct BattleUnit *unit;
-        u8 *cursor;
-        s32 remaining;
+        u8                *cursor;
+        s32                remaining;
 
-        do {
+        do
+        {
             unit = UnitGet(owners[i]);
             remaining = 3;
             cursor = (u8 *)&unit->elementLevels[3];
 
-            do {
+            do
+            {
                 remaining--;
                 *cursor-- = 0;
             } while (remaining >= 0);

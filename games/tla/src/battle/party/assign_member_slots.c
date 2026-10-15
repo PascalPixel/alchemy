@@ -9,7 +9,8 @@ s32 BattleParty_AssignMemberSlots(void)
     s32 memberSlot;
     s32 unitId;
 
-    for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
+    for (memberSlot = 0; memberSlot < partySize; memberSlot++)
+    {
         unitId = activeMembers[memberSlot];
         unitId += 72;
         battleState[unitId] = (s8)(memberSlot - 128);

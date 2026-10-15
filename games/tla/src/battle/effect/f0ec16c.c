@@ -6,11 +6,12 @@ s32 EventRuntime_GetControlledOwner(void);
 
 void Func_080ec16c(s32 x, s32 z)
 {
-    s32 owner = EventRuntime_GetControlledOwner();
-    s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;
+    s32                   owner = EventRuntime_GetControlledOwner();
+    s32                  *camera = *(s32 **)Ram_HeapSlots->mapWork;
     struct ObjectRuntime *object = ObjectTable_Get(owner);
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         x >>= 16;
         x = ((x << 14) + 0x434000) / 853;
         z >>= 16;

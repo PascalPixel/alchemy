@@ -19,10 +19,10 @@ static __inline__ void FillWords_(void *destination, s32 size, u32 value)
 // The battle effect work, as far as the canvas transfer reads it.
 struct CanvasWork
 {
-    u8 unk0000[0x7780];
+    u8  unk0000[0x7780];
     s32 transferMode;
     s32 transferValue;
-    u8 unk7788[0x15c];
+    u8  unk7788[0x15c];
     s32 framesSinceTransfer;
     s32 transferPending;
 };
@@ -37,8 +37,8 @@ void ColorBuffer_Brighten(void *source, s32 amount, void *destination, s32 size)
 void Func_08143000(void)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
-    void *source = Ram_HeapSlots->battleFxWork[1];
-    u32 ime;
+    void              *source = Ram_HeapSlots->battleFxWork[1];
+    u32                ime;
 
     IRQ_LOCK(ime);
     if (work->transferPending == 1)
@@ -80,18 +80,21 @@ void Func_08143000(void)
 
 void Func_08143114(void)
 {
-    u8 *work = Ram_HeapSlots->battleFxWork[0];
-    u32 ime;
+    u8  *work = Ram_HeapSlots->battleFxWork[0];
+    u32  ime;
     s32 *pending;
 
     IRQ_LOCK(ime);
     pending = (s32 *)(work + 0x78ec);
-    if (*pending == 1) {
+    if (*pending == 1)
+    {
         *pending = 0;
         IRQ_UNLOCK(ime);
         CopyWords_(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
         FillWords_(work + 0x6780, 0x1000, 0);
-    } else {
+    }
+    else
+    {
         IRQ_UNLOCK(ime);
     }
 }
@@ -101,8 +104,8 @@ void Func_08143114(void)
 void Func_08143174(void)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
-    void *source = Ram_MapCellBuffer;
-    u32 ime;
+    void              *source = Ram_MapCellBuffer;
+    u32                ime;
 
     IRQ_LOCK(ime);
     if (work->transferPending == 1)
@@ -143,8 +146,8 @@ void Func_08143174(void)
 void Func_08143264(void)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
-    void *source;
-    u32 ime;
+    void              *source;
+    u32                ime;
 
     IRQ_LOCK(ime);
     if (work->transferPending == 1)

@@ -3,7 +3,8 @@
 #include "battle.h"
 #include "battle_work.h"
 
-struct BattleFxRequest {
+struct BattleFxRequest
+{
     s32 field00;
     s32 field04;
     s32 field08;
@@ -11,25 +12,25 @@ struct BattleFxRequest {
     s32 field10;
     s32 field14;
     s32 field18;
-    u8 unk1c[8];
+    u8  unk1c[8];
     s16 field24;
-    u8 unk26[0x32];
+    u8  unk26[0x32];
 };
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 
-s32 ActivateBattleObjectSlot(s32 objectId);
-s32 EnemyCountDecrement(s32 classId, s32 n);
-s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
-s32 EnemyUpdate(void);
+s32               ActivateBattleObjectSlot(s32 objectId);
+s32               EnemyCountDecrement(s32 classId, s32 n);
+s32               BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32               EnemyUpdate(void);
 struct BattleObj *BattleObjGet(s32 objectId);
-void BattleObjPut(void);
+void              BattleObjPut(void);
 
 void Func_08119734(s32 id)
 {
     struct BattleWork *work = Ram_HeapSlots->battleWork;
-    s32 unit;
-    s32 *object;
+    s32                unit;
+    s32               *object;
 
     if (id == 78)
         unit = 373;

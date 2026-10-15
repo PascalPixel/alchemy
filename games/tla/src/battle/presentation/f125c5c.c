@@ -13,7 +13,7 @@ extern const u8 gData_0812cc74[];
 void BattlePres_UpdateHBlankScroll(void)
 {
     struct BattleAffineHdma *records;
-    u16 *record;
+    u16                     *record;
 
     if (((struct BattleBackgroundView *)Ram_HeapSlots->transitionWork)->mode == 2)
     {
@@ -35,11 +35,11 @@ void Func_08125c5c(void)
 
 void BattlePres_AdvanceTransitionTimer(void)
 {
-    s32 scroll;
+    s32                  scroll;
     struct BattleCamera *camera;
-    u32 *timer;
-    u32 frame;
-    u32 next;
+    u32                 *timer;
+    u32                  frame;
+    u32                  next;
 
     timer = (u32 *)Ram_HeapSlots->unk84[9];
     frame = *timer;
@@ -53,7 +53,8 @@ void BattlePres_AdvanceTransitionTimer(void)
     if (frame <= 0x50U)
         camera->yaw = 45 * frame * 8 + 0xaf80;
     next = (*timer = *timer + 1);
-    if (next <= 0x50U) {
+    if (next <= 0x50U)
+    {
         BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
         return;
     }
@@ -64,11 +65,11 @@ void BattlePres_AdvanceTransitionTimer(void)
 // timer runs; the lower row takes the vertically flipped tiles.
 void BattlePres_DrawTransitionRows(void)
 {
-    u32 i;
-    s32 frame;
-    s32 aligned;
-    s32 tile;
-    u32 row;
+    u32  i;
+    s32  frame;
+    s32  aligned;
+    s32  tile;
+    u32  row;
     u16 *tiles;
 
     frame = *(s32 *)Ram_HeapSlots->unk84[9];

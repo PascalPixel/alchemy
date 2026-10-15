@@ -6,8 +6,10 @@ void Func_080d20a4(s32 x, s32 y, u32 corner)
 
     cell += corner >> 2;
 
-    switch (corner & 3) {
-    case 0: {
+    switch (corner & 3)
+    {
+    case 0:
+    {
         u32 value = *cell;
         u32 mask;
 
@@ -17,7 +19,7 @@ void Func_080d20a4(s32 x, s32 y, u32 corner)
         mask &= value;
         *cell = mask;
     }
-        break;
+    break;
     case 1:
         *cell &= 0xff00;
         break;

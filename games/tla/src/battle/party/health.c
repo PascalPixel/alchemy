@@ -16,7 +16,6 @@
 #include "battle_calc.h"
 #include "field_event.h"
 
-
 void BattleParty_ApplyDrain(s32 amount)
 {
     s32 targetCount = Party_CountActiveOwnersFar();
@@ -28,28 +27,36 @@ void BattleParty_ApplyDrain(s32 amount)
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 {
-    s32 count;
-    s32 i;
-    s32 value;
+    s32                count;
+    s32                i;
+    s32                value;
     struct BattleUnit *unit;
-    if (amount < 0) {
+    if (amount < 0)
+    {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
         if (amount < -10)
             Audio_PlayCue(134);
         else
             Audio_PlayCue(133);
-    } else {
+    }
+    else
+    {
         Audio_PlayCue(126);
     }
     count = Party_CountActiveOwnersFar();
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         unit = UnitGet(gPartyState.activeOwners[i]);
-        if (!scaled) {
+        if (!scaled)
+        {
             value = amount;
-        } else {
+        }
+        else
+        {
             value = unit->maxHp * amount / 100;
-            if (value == 0) {
+            if (value == 0)
+            {
                 value = amount;
                 if (value < 0)
                     value = -value;
@@ -64,7 +71,8 @@ s32 BattleParty_ApplyStatusDamage(void)
     s32 result = 0;
     s32 count = Party_CountActiveOwnersFar();
 
-    if (result < count) {
+    if (result < count)
+    {
         s32 offset = 134;
         u8 *entry;
         s32 remaining;
@@ -73,11 +81,13 @@ s32 BattleParty_ApplyStatusDamage(void)
         entry = (u8 *)&gPartyState + offset;
         remaining = count;
 
-        do {
+        do
+        {
             struct BattleUnit *object = UnitGet(*entry);
-            s32 amount;
+            s32                amount;
 
-            switch (object->poison) {
+            switch (object->poison)
+            {
             case 1:
                 amount = -((object->maxHp + 10) / 20);
                 if (amount == 0)
@@ -103,7 +113,8 @@ s32 BattleParty_ApplyStatusDamage(void)
         } while (remaining != 0);
     }
 
-    if (result != 0) {
+    if (result != 0)
+    {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
         Audio_PlayCue(133);

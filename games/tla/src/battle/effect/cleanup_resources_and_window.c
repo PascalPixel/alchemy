@@ -9,12 +9,12 @@
 #include "types.h"
 #include "resource.h"
 
-struct WorldMapWork {
+struct WorldMapWork
+{
     u16 resources[2];
-    u8 unk04[0x18];
+    u8  unk04[0x18];
     u32 window;
 };
-
 
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 

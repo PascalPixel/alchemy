@@ -15,8 +15,8 @@ void Func_080d1840(void);
 // the object (the selected owner's when none is given).
 void Func_080d1a18(void *object)
 {
-    u32 *work;
-    u8 *tiles;
+    u32         *work;
+    u8          *tiles;
     volatile u32 fill;
 
     work = Runtime_AllocateBlock(144, 28);

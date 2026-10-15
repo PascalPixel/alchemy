@@ -7,17 +7,18 @@
 #include "iwram_call.h"
 #include "battle_work.h"
 
-void Object_Destroy(void *object);
-void Render_ResetTransformState(void);
-s32 GameFlag_Test(s32 flag);
-s32 Graphics_PrepareTransferAndRun(void *, void *);
-s32 Graphics_PrepareTransferInIwramWork(void *, void *);
-s32 Render_ProjectPoint(const s32 *, s32 *);
-void *GetMotionRecord(struct MotionObject *object, s32 record_index);
+void             Object_Destroy(void *object);
+void             Render_ResetTransformState(void);
+s32              GameFlag_Test(s32 flag);
+s32              Graphics_PrepareTransferAndRun(void *, void *);
+s32              Graphics_PrepareTransferInIwramWork(void *, void *);
+s32              Render_ProjectPoint(const s32 *, s32 *);
+void            *GetMotionRecord(struct MotionObject *object, s32 record_index);
 extern const s32 gData_08128868[];
 
-struct MotionRecordScale {
-    u8 unk00[0xc];
+struct MotionRecordScale
+{
+    u8  unk00[0xc];
     s32 scale;
 };
 
@@ -26,10 +27,13 @@ s32 Camera_ApplyTransformByFlag(void)
     struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
     Render_ResetTransformState();
-    if (GameFlag_Test(0x16B) != 0) {
+    if (GameFlag_Test(0x16B) != 0)
+    {
         Iwram_TransformMatrix(gData_08128868);
         return Graphics_PrepareTransferAndRun(state, state->pos);
-    } else {
+    }
+    else
+    {
         return Graphics_PrepareTransferInIwramWork(state, state->pos);
     }
 }
@@ -37,7 +41,7 @@ s32 Camera_ApplyTransformByFlag(void)
 // BattleObjGet, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
-    u8 *work = (u8 *)Ram_HeapSlots->battleWork;
+    u8               *work = (u8 *)Ram_HeapSlots->battleWork;
     struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)
@@ -51,10 +55,10 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 // Projects a battle object's position to the screen, in projected.
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 {
-    struct MotionObject *object = BattleObject_FindSlot(id)->object;
+    struct MotionObject      *object = BattleObject_FindSlot(id)->object;
     struct MotionRecordScale *record = GetMotionRecord(object, 0);
-    s32 position[3];
-    s32 scaled;
+    s32                       position[3];
+    s32                       scaled;
 
     Camera_ApplyTransformByFlag();
     {

@@ -14,20 +14,20 @@
 #include "battle_work.h"
 #include "field_event.h"
 
-
 void BattleMotion_RunValueSequence(s32 id)
 {
-    u16 selection[2];
+    u16  selection[2];
     u16 *selected;
-    s32 target;
-    s32 remaining;
+    s32  target;
+    s32  remaining;
 
     UnitGet(id);
     Object_SetMode(BattleObjGet(id)->object, 5);
 
     selected = selection;
     remaining = 1;
-    do {
+    do
+    {
         target = 0xff;
         selected[1] = target;
         selected[0] = id;
@@ -37,7 +37,8 @@ void BattleMotion_RunValueSequence(s32 id)
 
         selected[0] = id;
         BattleLayout_HighlightPartyPanelsFar(selected);
-        BattleMotion_SetRecordChildValues(BattleObjGet(id)->object, BattleMotion_GetSlotPalette(id));
+        BattleMotion_SetRecordChildValues(
+            BattleObjGet(id)->object, BattleMotion_GetSlotPalette(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

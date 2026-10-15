@@ -25,9 +25,12 @@ s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 {
     s32 phase = gFrameCount & 7;
 
-    if (phase == 0) {
+    if (phase == 0)
+    {
         Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 2);
-    } else if (phase == 2) {
+    }
+    else if (phase == 2)
+    {
         Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 0);
     }
     return 0;
@@ -37,16 +40,19 @@ void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object)
 {
     s32 scale;
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         scale = object->scaleX - 0x1000;
         object->scaleY -= 0x1000;
         object->scaleX = scale;
         if (scale <= 0x1000)
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gBattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar(
+                (struct DispatchObject *)object, (u32)gBattleFx_CommonParticleScript);
     }
 }
 
-struct OrbitingParticleVector {
+struct OrbitingParticleVector
+{
     s32 x;
     s32 y;
     s32 z;
@@ -57,14 +63,16 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct OrbitingParticleVect
 void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
 {
     struct OrbitingParticleVector pos;
-    s16 life;
-    s32 count;
+    s16                           life;
+    s32                           count;
 
-    if (particle != NULL) {
+    if (particle != NULL)
+    {
         count = (u16)particle->action - 1;
         particle->action = count;
         life = count;
-        if (life != 0) {
+        if (life != 0)
+        {
             pos.x = particle->targetX;
             pos.y = particle->targetY;
             pos.z = particle->targetZ;
@@ -72,7 +80,9 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
             particle->x = pos.x;
             particle->y = pos.y;
             particle->z = pos.z;
-        } else {
+        }
+        else
+        {
             particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
         }
     }
@@ -81,14 +91,16 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
 void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle)
 {
     struct OrbitingParticleVector pos;
-    s16 life;
-    s32 count;
+    s16                           life;
+    s32                           count;
 
-    if (particle != NULL) {
+    if (particle != NULL)
+    {
         count = (u16)particle->action - 1;
         particle->action = count;
         life = count;
-        if (life != 0) {
+        if (life != 0)
+        {
             pos.x = particle->targetX;
             pos.y = particle->targetY;
             pos.z = particle->targetZ;
@@ -96,25 +108,29 @@ void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle)
             particle->x = pos.x;
             particle->y = pos.y;
             particle->z = pos.z;
-        } else {
+        }
+        else
+        {
             particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleFade;
         }
     }
 }
 
-struct OrbitingParticleChild {
+struct OrbitingParticleChild
+{
     u8 reserved00[35];
     u8 flags;
 };
 
-
 void BattleFx_StartOrbitingParticles(void)
 {
-    struct BattleFxScene *state = Ram_HeapSlots->effectWork;
+    struct BattleFxScene         *state = Ram_HeapSlots->effectWork;
     struct OrbitingParticleChild *child = state->child;
 
-    if (child != 0) {
-        if (state->childMode != 0) {
+    if (child != 0)
+    {
+        if (state->childMode != 0)
+        {
             state->enabled = 1;
         }
         child->flags |= 2;
@@ -129,13 +145,13 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 // orbiting particles' main update and runs its pending event.
 void BattleFx_RunOrbitingParticles(void)
 {
-    struct OrbitingParticleVector pos;
+    struct OrbitingParticleVector  pos;
     struct OrbitingParticleVector *p;
-    struct BattleFxScene *scene;
-    struct ObjectRuntime *target;
-    struct ObjectRuntime *particle;
-    struct PendingEvent *ev;
-    s32 cnt;
+    struct BattleFxScene          *scene;
+    struct ObjectRuntime          *target;
+    struct ObjectRuntime          *particle;
+    struct PendingEvent           *ev;
+    s32                            cnt;
 
     scene = Ram_HeapSlots->effectWork;
     target = scene->child;
@@ -144,9 +160,11 @@ void BattleFx_RunOrbitingParticles(void)
 
     p = &pos;
     cnt = 15;
-    do {
+    do
+    {
         particle = Object_Spawn(681, 0, 0, 0);
-        if (particle != NULL) {
+        if (particle != NULL)
+        {
             u32 scale;
             s32 dist;
 
@@ -181,11 +199,13 @@ void BattleFx_RunOrbitingParticles(void)
     Audio_PlayCue(115);
     WaitFrames(50);
 
-    if (target != NULL && scene->enabled == 0) {
+    if (target != NULL && scene->enabled == 0)
+    {
         Audio_PlayCue(212);
 
         cnt = 7;
-        do {
+        do
+        {
             Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
             WaitFrames(1);
             Animation_ApplyChildValuesFar((struct DispatchObject *)target, 0);
@@ -193,7 +213,8 @@ void BattleFx_RunOrbitingParticles(void)
             cnt--;
         } while (cnt >= 0);
 
-        if (scene->childOption == 0) {
+        if (scene->childOption == 0)
+        {
             Audio_PlayCue(220);
             Object_SetMode(target, 2);
         }

@@ -18,10 +18,10 @@ void Graphics_AdvancePaletteCycle(void);
 // (up to 14, ended by 0xff) take the other.
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
-    s16 activeActors[14];
+    s16                activeActors[14];
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
-    u32 count;
-    u32 i;
+    u32                count;
+    u32                i;
 
     if (mode == 0)
     {

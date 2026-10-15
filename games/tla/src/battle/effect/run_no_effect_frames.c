@@ -12,15 +12,15 @@
 //--------------------------------------------------------------------------
 void BattleFx_RunNoEffectFrames(s32 cnt)
 {
-	s32 n;
+    s32 n;
 
-	n = 0;
-	if (cnt != 0)
-	{
-		do
-		{
-			n += 1;
-			BattleFx_RunNoEffect();
-		} while (n != cnt);
-	}
+    n = 0;
+    if (cnt != 0)
+    {
+        do
+        {
+            n += 1;
+            BattleFx_RunNoEffect();
+        } while (n != cnt);
+    }
 }

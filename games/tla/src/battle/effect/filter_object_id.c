@@ -13,7 +13,7 @@ s32 BattleFx_GetFlags();
 //--------------------------------------------------------------------------
 s32 BattleFx_FilterObjectIdByFlags(s32 id)
 {
-	if (BattleFx_GetFlags() == 0xff)
-		return -1;
-	return id;
+    if (BattleFx_GetFlags() == 0xff)
+        return -1;
+    return id;
 }

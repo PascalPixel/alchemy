@@ -10,7 +10,6 @@
 #include "types.h"
 #include "battle_effect_work.h"
 
-
 void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunSeriesA(effect, 0);
@@ -38,7 +37,8 @@ void BattleFx_RunSeriesAMode9(struct BattleEffectArgument *effect)
 
 void BattleFx_RunSeriesAMode3Or4(struct BattleEffectArgument *effect)
 {
-    if (effect->variant == 0) {
+    if (effect->variant == 0)
+    {
         BattleFx_RunSeriesA(effect, 3);
         return;
     }

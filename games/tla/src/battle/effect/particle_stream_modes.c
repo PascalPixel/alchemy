@@ -9,12 +9,13 @@
 // at each horizontal blank.
 void Func_08164bb4(void)
 {
-    u8 *work = Ram_HeapSlots->battleFxWork[0];
+    u8           *work = Ram_HeapSlots->battleFxWork[0];
     volatile u16 *channel = REG_DMA0;
-    u32 palette;
+    u32           palette;
 
     /* FAKEMATCH: the one-pass block reads the control word back before its mask is started (one reordered row, differ 2 without it). */
-    do {
+    do
+    {
         channel[5] &= 0xc5ff;
         channel[5] &= 0x7fff;
     } while (0);

@@ -2,18 +2,19 @@
 #include "battle_party.h"
 #include "iwram_call.h"
 
-s32 BattleParty_ListActorIds();
+s32  BattleParty_ListActorIds();
 void ObjMotRst();
 
-struct ActionTargets {
-    u8 side;
-    u8 count;
-    u8 unk02;
-    u8 ids[14];
-    u8 stateA[14];
-    u8 stateB[14];
-    u8 stateC[14];
-    u8 stateD[14];
+struct ActionTargets
+{
+    u8  side;
+    u8  count;
+    u8  unk02;
+    u8  ids[14];
+    u8  stateA[14];
+    u8  stateB[14];
+    u8  stateC[14];
+    u8  stateD[14];
     u16 value4a;
     s32 message;
     s32 value50;
@@ -49,17 +50,19 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets)
     targets->value50 = 2;
     targets->value54 = 14;
     {
-        s32 half = source[3];
+        s32  half = source[3];
         u16 *value;
 
         /* FAKEMATCH: a one-pass block keeps the halfword read ahead of the field address; without it the address is begun before the read (2 differ). */
-        do {
+        do
+        {
         } while (0);
         value = &targets->value4a;
         targets->side = own;
         *value = half;
     }
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         targets->ids[i] = ids[i];
         targets->stateA[i] = 0;
         targets->stateB[i] = 1;
@@ -81,7 +84,8 @@ void Func_0811d89c(struct ActionTargets *targets)
     if (targets->side > 7)
         side = 2;
     count = Func_0811a39c(side, ids);
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         targets->ids[i] = ids[i];
         targets->stateA[i] = 0;
         targets->stateB[i] = 1;
@@ -99,13 +103,17 @@ void Func_0811d914(struct ActionTargets *targets)
     s32 count;
     s32 i;
 
-    if (targets->side <= 7) {
+    if (targets->side <= 7)
+    {
         count = BattleParty_PrepareActiveOwners(ids);
         count += BattleParty_PrepareReserveOwners(&ids[count]);
-    } else {
+    }
+    else
+    {
         count = BattleParty_ListActorIds(2, ids);
     }
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         targets->ids[i] = ids[i];
         targets->stateA[i] = 0;
         targets->stateB[i] = 1;
@@ -113,7 +121,8 @@ void Func_0811d914(struct ActionTargets *targets)
         targets->stateD[i] = 1;
     }
     {
-        s32 zero = 0; /* FAKEMATCH: a named zero takes r3 and leaves r2 to the two constants; as a literal the registers trade places (18 differ) */
+        /* FAKEMATCH: a named zero takes r3 and leaves r2 to the two constants; as a literal the registers trade places (18 differ) */
+        s32 zero = 0;
 
         targets->message = 298;
         targets->count = count;

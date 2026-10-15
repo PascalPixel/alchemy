@@ -7,10 +7,10 @@
 
 struct ObjectRuntime;
 struct ObjectRuntime *Object_GetById(s32 id);
-void BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
-void BattleFx_PrepareBufferInterpolation(void);
-void Func_080dcadc(void);
-void Func_080dcb44(void);
+void                  BattleFx_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
+void                  BattleFx_PrepareBufferInterpolation(void);
+void                  Func_080dcadc(void);
+void                  Func_080dcb44(void);
 
 void Func_080dca50(void)
 {

@@ -1,9 +1,10 @@
 #include "object_runtime.h"
 
-struct BattleFxDefinition {
+struct BattleFxDefinition
+{
     u16 id;
-    u8 value;
-    u8 flags;
+    u8  value;
+    u8  flags;
 };
 
 extern struct BattleFxDefinition gData_080f0308[];
@@ -13,10 +14,12 @@ extern struct BattleFxDefinition gData_080f0308[];
 struct BattleFxDefinition *Func_080d1e60(u32 id)
 {
     struct BattleFxDefinition *entry = gData_080f0308;
-    u32 index = 0;
+    u32                        index = 0;
 
-    if (entry->id != id) {
-        do {
+    if (entry->id != id)
+    {
+        do
+        {
             index += 1;
             entry++;
             if (index > 242)
@@ -26,20 +29,19 @@ struct BattleFxDefinition *Func_080d1e60(u32 id)
     return entry;
 }
 
-struct BattleRenderObject {
-    u8 unk00[0x50];
+struct BattleRenderObject
+{
+    u8                           unk00[0x50];
     struct BattleAnimationState *animation;
-    u8 kind;
+    u8                           kind;
 };
 
 s32 BattleFx_GetAnimationValue(u32 objectId)
 {
-    struct BattleRenderObject *object =
-        (struct BattleRenderObject *)ObjectTable_Get(objectId);
+    struct BattleRenderObject *object = (struct BattleRenderObject *)ObjectTable_Get(objectId);
 
-    if (object->kind != 1 ||
-        object->animation == NULL ||
-        object->animation->value28 == NULL) {
+    if (object->kind != 1 || object->animation == NULL || object->animation->value28 == NULL)
+    {
         return 0;
     }
     return *object->animation->value28;

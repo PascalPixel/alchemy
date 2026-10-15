@@ -3,7 +3,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct EffectVector {
+struct EffectVector
+{
     s32 x;
     s32 y;
     s32 z;
@@ -12,32 +13,33 @@ struct EffectVector {
 extern u32 gFrameTick;
 
 void *Object_GetById(s32 id);
-u32 Random16(void);
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
-void Camera_WorldToScreen(struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
-void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
+u32   Random16(void);
+void  Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
+void  Camera_WorldToScreen(struct EffectVector *position);
+void  Audio_PlayCue(s32 cue);
+void  BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
 
 // Places a spark at random around the current owner and sends it 120 pixels
 // along angle 0xc000. Each time BattleFx_HasReachedTarget returns 0, state 1
 // starts it over and state 2 clears its slot.
 void Func_080d81ec(struct EffectSlot *effect)
 {
-    struct EffectVector position;
+    struct EffectVector   position;
     struct ObjectRuntime *source;
     /* FAKEMATCH: the state is pinned to r8, the register the native gives
        it; free, global allocation trades it with the state's address in
        r10 once the two barriers below lengthen their lives (differ 14). */
     register s32 state asm("r8");
-    u32 random;
-    s32 x;
-    s32 magnitude;
-    s32 angle;
+    u32          random;
+    s32          x;
+    s32          magnitude;
+    s32          angle;
 
     source = Object_GetById(gPartyState.currentOwner);
     state = effect->state;
 
-    if (state == 0) {
+    if (state == 0)
+    {
         position.x = source->x;
         position.y = source->y;
         position.z = source->z;
@@ -72,10 +74,14 @@ void Func_080d81ec(struct EffectSlot *effect)
 
         if ((gFrameTick & 1) != 0)
             Audio_PlayCue(0x90);
-    } else if (state == 1) {
+    }
+    else if (state == 1)
+    {
         if (BattleFx_HasReachedTarget(effect) == 0)
             effect->state--;
-    } else if (state == 2) {
+    }
+    else if (state == 2)
+    {
         if (BattleFx_HasReachedTarget(effect) == 0)
             BattleFx_ClearOwnedSlot(effect);
     }

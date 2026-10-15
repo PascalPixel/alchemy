@@ -3,7 +3,8 @@
 #include "io_reg.h"
 #include "irqlock.h"
 
-struct BattleFxFadeWork {
+struct BattleFxFadeWork
+{
     s32 unk00;
     s32 halvePending;
     s32 framesLeft;
@@ -15,11 +16,12 @@ void ColorBuffer_Halve(void *source, void *destination, s32 size);
 void Func_0813f89c(void)
 {
     struct BattleFxFadeWork *work = (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];
-    void *buffer = Ram_HeapSlots->battleFxWork[1];
-    u32 ime;
+    void                    *buffer = Ram_HeapSlots->battleFxWork[1];
+    u32                      ime;
 
     IRQ_LOCK(ime);
-    if (work->halvePending == 1) {
+    if (work->halvePending == 1)
+    {
         work->halvePending = 0;
         IRQ_UNLOCK(ime);
         {
@@ -29,7 +31,9 @@ void Func_0813f89c(void)
             __asm__ volatile("" : "+r"(destination));
             ColorBuffer_Halve(buffer, destination, 0x4000);
         }
-    } else {
+    }
+    else
+    {
         IRQ_UNLOCK(ime);
     }
 }

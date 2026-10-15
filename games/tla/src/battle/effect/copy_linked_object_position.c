@@ -12,17 +12,20 @@
 #include "scene.h"
 #include "object_runtime.h"
 
-
 s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *link;
 
     link = object->linkedObject;
-    if (link != NULL) {
+    if (link != NULL)
+    {
         object->motionFlags = 0;
         object->x = link->x;
-        object->y = link->y
-            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(object->unk66))->boxX << 16)
+        object->y =
+            link->y
+            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(object->unk66))
+                    ->boxX
+                << 16)
             + 0x80000;
         object->terrainHeight = link->terrainHeight;
         object->z = link->z;

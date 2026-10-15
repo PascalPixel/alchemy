@@ -8,14 +8,15 @@
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
-struct CompositeAnimation {
-    u8 unk00[0x11];
-    u8 displayFlags;
-    u8 unk12[7];
-    u8 dirty;
-    u8 unk1a;
-    u8 count;
-    u8 unk1c[0x0c];
+struct CompositeAnimation
+{
+    u8                     unk00[0x11];
+    u8                     displayFlags;
+    u8                     unk12[7];
+    u8                     dirty;
+    u8                     unk1a;
+    u8                     count;
+    u8                     unk1c[0x0c];
     struct AnimationEntry *entries[4];
 };
 
@@ -29,8 +30,9 @@ void Func_080e87c4(void);
 void Func_080dca50(void);
 
 // party_state.h の unk26a
-struct PartyPauseView {
-    u8 unk000[0x26a];
+struct PartyPauseView
+{
+    u8  unk000[0x26a];
     s16 pausedObject;
 };
 
@@ -38,12 +40,14 @@ void BattleFx_ClearChildValueOnMismatch(void)
 {
     struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-    if (scene->animation == 2) {
+    if (scene->animation == 2)
+    {
         struct PartyPauseView *party;
 
         Func_080dca50();
         party = (struct PartyPauseView *)&gPartyState;
-        asm volatile(""); /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2) */
+        /* FAKEMATCH: ⚓️ loads the party state's address before it builds the field offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2) */
+        asm volatile("");
         if (party->pausedObject != scene->secondObjectId)
             ((struct ObjectRuntime *)scene->child)->movementState = 0;
     }
@@ -54,7 +58,8 @@ void FieldEvent_RunTypeHandler(void)
 {
     struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-    switch (scene->animation) {
+    switch (scene->animation)
+    {
     case 8:
         Func_080dd950();
         break;
@@ -78,25 +83,29 @@ void FieldEvent_RunTypeHandler(void)
 
 void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner)
 {
-    s32 state;
+    s32                        state;
     struct CompositeAnimation *target;
-    s32 initialCount;
-    s32 count;
-    struct AnimationEntry **entry;
-    struct AnimationEntry *current;
-    u32 frame;
-    s32 value;
+    s32                        initialCount;
+    s32                        count;
+    struct AnimationEntry    **entry;
+    struct AnimationEntry     *current;
+    u32                        frame;
+    s32                        value;
 
     state = owner->animationKind;
-    if (state == 1) {
+    if (state == 1)
+    {
         target = owner->animation;
-        if (target != 0 && (target->displayFlags & state) == 0) {
+        if (target != 0 && (target->displayFlags & state) == 0)
+        {
             initialCount = target->count;
-            if (initialCount != 0) {
+            if (initialCount != 0)
+            {
                 entry = target->entries;
                 frame = gFrameCount;
                 count = initialCount;
-                do {
+                do
+                {
                     current = *entry++;
                     value = frame % 6;
                     count--;
@@ -113,7 +122,8 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 {
     s32 values[3];
 
-    if (object != 0) {
+    if (object != 0)
+    {
         values[0] = object->x;
         values[1] = object->y;
         values[2] = object->z;

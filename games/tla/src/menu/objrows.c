@@ -16,10 +16,12 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
     zero = 0;
     offset = 248;
     count = 3;
-    do {
+    do
+    {
         void *entry = *(void **)(offset + (unsigned int)base);
 
-        if (entry != 0) {
+        if (entry != 0)
+        {
             ResourceObject_ReleaseFar(entry);
             *(s32 *)(offset + (unsigned int)base) = zero;
         }

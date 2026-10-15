@@ -22,5 +22,5 @@
 //--------------------------------------------------------------------------
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit)
 {
-	Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
+    Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }

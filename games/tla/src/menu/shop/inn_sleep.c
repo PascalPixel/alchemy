@@ -14,15 +14,17 @@
 #include "battle_system.h"
 #include "field_event.h"
 
-struct FieldEffectState {
-    u8 padding0[0x1AC];
+struct FieldEffectState
+{
+    u8  padding0[0x1AC];
     s32 effect;
-    u8 padding1B0[4];
+    u8  padding1B0[4];
     s32 delay;
 };
 
-struct FieldObject {
-    u8 padding0[0x34];
+struct FieldObject
+{
+    u8  padding0[0x34];
     u16 savedX;
     u16 savedY;
     s16 x;
@@ -36,18 +38,20 @@ void Event_StartScreenTransitionFar(void);
 
 void Inn_PlaySleep(s32 roomPrice)
 {
-    s16 objects[8];
-    s32 count;
-    s32 index;
-    struct FieldObject *object;
+    s16                      objects[8];
+    s32                      count;
+    s32                      index;
+    struct FieldObject      *object;
     struct FieldEffectState *state;
 
     count = Party_ListActiveOwnersFar(objects);
     Party_AdjustCoinsFar(-roomPrice);
 
-    for (index = 0; index < count; index++) {
+    for (index = 0; index < count; index++)
+    {
         object = UnitGet(objects[index]);
-        if (object->x != 0) {
+        if (object->x != 0)
+        {
             object->x = object->savedX;
             object->y = object->savedY;
             UnitRatioFar(objects[index]);

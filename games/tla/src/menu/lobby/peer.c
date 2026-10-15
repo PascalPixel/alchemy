@@ -11,7 +11,8 @@
 #include "io_reg.h"
 #include "serial_runtime.h"
 
-struct LinkPeer {
+struct LinkPeer
+{
     s32 values[6];
 };
 
@@ -21,14 +22,18 @@ s32 Func_0200006c(s32 slot)
 {
     s32 id = -1;
 
-    if ((gLinkStatus & 3) == 3) {
+    if ((gLinkStatus & 3) == 3)
+    {
         id = (REG_SIOCNT << 26) >> 30;
         GameFlag_SetBit(0x303);
-    } else {
+    }
+    else
+    {
         GameFlag_ClearBit(0x303);
     }
     /* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. */
-    while (id >= 0 && GameFlag_Test(0x303)) {
+    while (id >= 0 && GameFlag_Test(0x303))
+    {
         const s32 *expected = &gLinkLobby_SlotValues[slot];
 
         if (id != 0)

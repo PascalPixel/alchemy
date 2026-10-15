@@ -2,8 +2,8 @@
 #include "party_state.h"
 
 void Inventory_EquipFar(s32 owner, s32 slot);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
-u8 *UnitGet(s32 owner);
+s32  Inventory_AddItemFar(s32 owner, s32 item);
+u8  *UnitGet(s32 owner);
 void Func_081082c4(s32 mode, s32 shop);
 
 s32 Debug_ApplyPresetItemsAndFlags(void)

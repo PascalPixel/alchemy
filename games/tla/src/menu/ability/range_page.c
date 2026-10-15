@@ -11,7 +11,6 @@
 
 #define RANGE_ICON_TILE 0xf300
 
-
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range)
 {
     s32 n;

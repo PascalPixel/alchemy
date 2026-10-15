@@ -10,8 +10,9 @@
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-struct LobbyEventWork {
-    u8 unk000[0x16a];
+struct LobbyEventWork
+{
+    u8  unk000[0x16a];
     s16 raisedTrigger;
 };
 
@@ -33,15 +34,18 @@ s32 Func_020002d8(void)
     s32 set;
 
     set = GameFlag_Test(0x203);
-    if (set != 0) {
+    if (set != 0)
+    {
         return set;
     }
-    if (++gData_020022bc == 300) {
+    if (++gData_020022bc == 300)
+    {
         gData_020022bc = 0;
         GameFlag_ClearBit(0x200);
     }
     set = Flag_Test(0x200);
-    if (set != 0) {
+    if (set != 0)
+    {
         return set;
     }
     Func_02001a14();

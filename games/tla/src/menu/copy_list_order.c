@@ -21,33 +21,33 @@
 //--------------------------------------------------------------------------
 void Menu_CopyListOrder(s32 mode, u8 *order)
 {
-	u8 *src;
-	s32 n;
+    u8 *src;
+    s32 n;
 
-	src = gMenu_ListOrderDefault;
-	switch (mode)
-	{
-	case 0:
-		src = gMenu_ListOrderMode0;
-		break;
-	case 1:
-		src = gMenu_ListOrderMode1;
-		break;
-	case 2:
-		src = gMenu_ListOrderMode2;
-		break;
-	}
-	*order = *src;
-	n = 0;
-	if (*order != 0xff)
-	{
-		do
-		{
-			if (++n > 31)
-				break;
-			src++;
-			order++;
-			*order = *src;
-		} while (*order != 0xff);
-	}
+    src = gMenu_ListOrderDefault;
+    switch (mode)
+    {
+    case 0:
+        src = gMenu_ListOrderMode0;
+        break;
+    case 1:
+        src = gMenu_ListOrderMode1;
+        break;
+    case 2:
+        src = gMenu_ListOrderMode2;
+        break;
+    }
+    *order = *src;
+    n = 0;
+    if (*order != 0xff)
+    {
+        do
+        {
+            if (++n > 31)
+                break;
+            src++;
+            order++;
+            *order = *src;
+        } while (*order != 0xff);
+    }
 }

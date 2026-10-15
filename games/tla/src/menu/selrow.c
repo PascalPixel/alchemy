@@ -6,13 +6,13 @@ s32 Func_080c8638(s32 scene, s32 entrance);
 #else
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 #endif
-void RenderOutput_PrepareForRedraw(void *window);
-void UiText_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
-void UiText_DrawString(const u8 *text, void *window, s32 x, s32 y);
-void UiText_DrawResource(s32 message, void *window, s32 x, s32 y);
+void            RenderOutput_PrepareForRedraw(void *window);
+void            UiText_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
+void            UiText_DrawString(const u8 *text, void *window, s32 x, s32 y);
+void            UiText_DrawResource(s32 message, void *window, s32 x, s32 y);
 extern const u8 gMenu_ColonString[];
-extern u8 MsgDebugEntryName[];
-extern u8 MsgDebugCategoryName[];
+extern u8       MsgDebugEntryName[];
+extern u8       MsgDebugCategoryName[];
 
 #if defined(TLA_EDITION_JA)
 #define SELROW_TEXT_X 100

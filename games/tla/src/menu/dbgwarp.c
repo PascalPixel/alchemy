@@ -12,7 +12,7 @@ extern char SceneId_Ov665Room1;
 extern char SceneId_Ov668Room1;
 
 extern char SceneId_Ov682Room1;
-void PartyInventory_AddFar(s32 item);
+void        PartyInventory_AddFar(s32 item);
 
 extern char SceneId_Shaman4;
 
@@ -39,7 +39,8 @@ void Func_08040e84(void)
         struct PartyState *party = &gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party->packedEvents[1] = 141;
     }
@@ -59,7 +60,8 @@ void Func_08040ed4(void)
         struct PartyState *party = &gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party->packedEvents[1] = 141;
     }
@@ -76,7 +78,8 @@ void Func_08040f14(void)
         struct PartyState *party = &gPartyState;
 
         /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
+        do
+        {
         } while (0);
         party->packedEvents[1] = 141;
     }

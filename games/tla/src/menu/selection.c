@@ -15,17 +15,16 @@
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
-
 void Menu_CenterResourceEntries(s32, s32, s32);
 
 // Lays the entries out in a row three cells apart from x, on row y, and
 // opens the menu's window after them.
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase)
 {
-    struct ResourceMenuWork *work;
-    s32 i;
+    struct ResourceMenuWork  *work;
+    s32                       i;
     struct ResourceMenuEntry *entry;
-    s16 *widthp;
+    s16                      *widthp;
 
     work = Ram_HeapSlots->menuSelectWork;
     widthp = &work->width;
@@ -41,7 +40,8 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase)
        with a memory clobber on x (differ 2), y (20) and the work pointer
        (43). */
     asm("" : "+r"(work) : "m"(work->row));
-    for (i = 0; i < work->count; i++) {
+    for (i = 0; i < work->count; i++)
+    {
         entry = &work->entries[i];
         entry->y = y << 3;
         entry->x = x << 3;
@@ -49,7 +49,6 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase)
     }
     work->window = UiWindow_Create(x, y, *widthp, 3, 2);
 }
-
 
 static __inline__ s32 TableGet(s8 *table, s32 index)
 {
@@ -64,7 +63,8 @@ s32 Menu_SelectTopEntry(s32 selection)
     s32 ret;
     s8 *table;
 
-    if (Party_SumDjinnCountsFar(-1) == 0) {
+    if (Party_SumDjinnCountsFar(-1) == 0)
+    {
         group = 1;
     }
 
@@ -72,13 +72,15 @@ s32 Menu_SelectTopEntry(s32 selection)
     table = gMenu_TopEntryPositionByCommand;
     offset = triple << 1;
     selection = TableGet(table, selection + offset) - 1;
-    if (selection < 0) {
+    if (selection < 0)
+    {
         selection = 0;
     }
 
     AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(1);
-    if (group == 0) {
+    if (group == 0)
+    {
         Menu_AppendResourceEntry(15);
     }
     Menu_AppendResourceEntry(2);
@@ -87,7 +89,8 @@ s32 Menu_SelectTopEntry(s32 selection)
     ret = Menu_RunResourceSelectionLoop(selection);
     Menu_EndResourceSelection();
 
-    if (ret >= 0) {
+    if (ret >= 0)
+    {
         s8 *commands = gMenu_TopEntryCommandByPosition;
         s32 index;
 

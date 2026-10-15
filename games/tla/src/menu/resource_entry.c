@@ -13,16 +13,16 @@
 #include "resource_menu.h"
 #include "ram_buffer.h"
 
-#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+#define Resource_DecodeByteLzInRam ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
-extern char ResourceId_CommandIcons;
+extern char      ResourceId_CommandIcons;
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
-    s32 size = 1024;
+    s32   size = 1024;
     void *buffer = (void *)MemAlloc(size);
-    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    u16  *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
@@ -31,15 +31,16 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 
 void Menu_AppendResourceEntry(s32 no)
 {
-    struct ResourceMenuWork *work;
+    struct ResourceMenuWork  *work;
     struct ResourceMenuEntry *entry;
-    s16 index;
-    s32 slot;
-    s32 flags;
+    s16                       index;
+    s32                       slot;
+    s32                       flags;
 
     work = Ram_HeapSlots->menuSelectWork;
     index = work->count;
-    if (index <= 5) {
+    if (index <= 5)
+    {
         work->count++;
         entry = &work->entries[index];
         slot = Resource_FindFreeEntry();
@@ -51,4 +52,3 @@ void Menu_AppendResourceEntry(s32 no)
         work->resourceIds[index] = no;
     }
 }
-

@@ -6,19 +6,20 @@
 #include "callback_scheduler.h"
 
 // The shop's work (heap slot 220), as far as these functions use it.
-struct ShopRuntime {
-    u8 unk000[0x4ca];
+struct ShopRuntime
+{
+    u8  unk000[0x4ca];
     s16 partyMemberIds[8];
-    u8 unk4da[0x12];
+    u8  unk4da[0x12];
     u16 cursorIcon;
     u16 previousPageIcon;
     u16 nextPageIcon;
     u16 gemIcon;
     u16 statUpIcon;
     u16 statDownIcon;
-    u8 unk4f8[0xc];
-    u8 partyMemberCount;
-    u8 mode;
+    u8  unk4f8[0xc];
+    u8  partyMemberCount;
+    u8  mode;
 };
 
 extern char ResourceId_UiIconTiles;
@@ -36,7 +37,7 @@ void BattleEffect_InitializeSharedSceneFar(void);
 #else
 void EventRuntime_ResolveAllPendingActionsFar(void);
 #endif
-s32 Party_ListActiveOwnersFar(s16 *owners);
+s32  Party_ListActiveOwnersFar(s16 *owners);
 void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
 void Func_0810bdf4(void);
@@ -54,7 +55,7 @@ void Func_08108130(void)
 void Func_08108148(void)
 {
     struct ShopRuntime *work;
-    s32 slot;
+    s32                 slot;
 
     work = Runtime_AllocateHeapBlock(220, 0xcec);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)

@@ -5,8 +5,8 @@
 void Func_02000538(u16 *out)
 {
     struct PartyState *party;
-    s32 count = Party_CountActiveOwners();
-    s32 i;
+    s32                count = Party_CountActiveOwners();
+    s32                i;
 
     if (count > 3)
         count = 3;

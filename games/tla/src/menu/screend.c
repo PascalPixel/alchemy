@@ -7,7 +7,8 @@
 
 void Func_08108030(void *panel);
 
-struct ScreenWork {
+struct ScreenWork
+{
     u8 unk000[0x5a4];
     u8 panel[0x84];
 };

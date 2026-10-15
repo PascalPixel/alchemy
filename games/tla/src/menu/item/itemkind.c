@@ -15,14 +15,16 @@ s32 Func_08100d58(s32 kind)
 {
     u8 *action = BattleActGet(kind);
 
-    switch (action[1] & 15) {
+    switch (action[1] & 15)
+    {
     case 1:
         Audio_PlayCueReturnOne(126);
     case 11:
         Audio_PlayCueReturnOne(126);
         break;
     default:
-        switch (action[3]) {
+        switch (action[3])
+        {
         case 1:
         case 2:
         case 31:

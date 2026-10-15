@@ -3,13 +3,13 @@
 #include "ram_buffer.h"
 
 void UiWindow_CreateWithLayoutBounds(s32 flags);
-s32 Menu_SelectTopEntry(s32);
-s32 UiWork_CloseAndRelease(void);
-s32 ItemMenu_Open(void);
-s32 Object_GetTriggerTileAheadOfCurrentFar(void);
-s32 Menu_OpenConfirmPromptFar(void);
-s32 Func_080f8000(void);
-s32 Func_080f8010(void);
+s32  Menu_SelectTopEntry(s32);
+s32  UiWork_CloseAndRelease(void);
+s32  ItemMenu_Open(void);
+s32  Object_GetTriggerTileAheadOfCurrentFar(void);
+s32  Menu_OpenConfirmPromptFar(void);
+s32  Func_080f8000(void);
+s32  Func_080f8010(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
 
 s32 Menu_RunTopSelection(void)
@@ -26,7 +26,8 @@ loop:
     selection = Menu_SelectTopEntry(selection);
     ret = UiWork_CloseAndRelease();
 
-    switch (selection) {
+    switch (selection)
+    {
     case 0:
         ret = Object_GetTriggerTileAheadOfCurrentFar();
         if (ret == 0)

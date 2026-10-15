@@ -16,7 +16,8 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
     arg0 += 0x3D;
     value = 0x20;
     count = 3;
-    do {
+    do
+    {
         count--;
         *(s16 *)current = value;
         *(s16 *)(current + 0x10) = arg0;

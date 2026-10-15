@@ -12,25 +12,32 @@ void Render_SetTilemapFlagRect(
     x += (s16)object->x + 1;
     y += (s16)object->y + 1;
     field <<= 12;
-    if (x < 0) {
+    if (x < 0)
+    {
         width += x;
         x = 0;
     }
-    if (x + width > 29) {
+    if (x + width > 29)
+    {
         width = 30 - x;
     }
-    if (y < 0) {
+    if (y < 0)
+    {
         height += y;
         y = 0;
     }
-    if (y + height > 29) {
+    if (y + height > 29)
+    {
         height = 20 - y;
     }
-    if (width > 0 && height > 0) {
-        do {
+    if (width > 0 && height > 0)
+    {
+        do
+        {
             u16 *pixel = &work->tilemap[y][x];
-            s32 remaining = width;
-            while (remaining != 0) {
+            s32  remaining = width;
+            while (remaining != 0)
+            {
                 u32 value = *pixel;
                 value &= 0xFFFFEFFF;
                 value |= field;

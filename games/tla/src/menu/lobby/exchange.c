@@ -24,14 +24,15 @@ static __inline__ void Flag_SetByte(s32 flag, s32 value)
 static __inline__ void Lobby_ResetTransferState(void)
 {
     struct SerialTransferState *state;
-    volatile u16 *ime;
-    u32 saved;
-    u32 zero;
+    volatile u16               *ime;
+    u32                         saved;
+    u32                         zero;
 
     state = &gSerialTransfer;
     ime = &REG_IME;
     /* FAKEMATCH: the one-pass block keeps the IME exchange before the zero and status constants. */
-    do {
+    do
+    {
         saved = *ime;
         *ime = (u16)ime;
     } while (0);
@@ -54,12 +55,14 @@ s32 Func_020007b8(void)
     s32 flag;
 
     /* FAKEMATCH: separate initialization from the following flag query. */
-    do {
+    do
+    {
         result = 0;
     } while (0);
     flag = GameFlag_Test(0x302);
     gLinkExchangeState = result;
-    if (!flag) {
+    if (!flag)
+    {
         WaitFrames(5);
         result = Func_02000578();
         if (result < 0)
@@ -68,7 +71,9 @@ s32 Func_020007b8(void)
         first = result = Func_0200039c();
         if (result < 0)
             goto check;
-    } else {
+    }
+    else
+    {
         first = result = Func_0200039c();
         if (result < 0)
             goto fail;
@@ -80,8 +85,9 @@ s32 Func_020007b8(void)
     Flag_SetByte(0x3f0, first);
     result = first;
 check:
-    if (first < 0) {
-fail:
+    if (first < 0)
+    {
+    fail:
         Lobby_ResetTransferState();
     }
     return result;

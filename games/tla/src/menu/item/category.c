@@ -16,15 +16,16 @@ void ItemMenu_HideAllIcons(void);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 
-struct CategoryMenuState {
-    u8 unk000[0x1c4];
+struct CategoryMenuState
+{
+    u8  unk000[0x1c4];
     u16 items[15];
 };
 
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode)
 {
     struct CategoryMenuState *menu = Ram_HeapSlots->menuRuntime;
-    u8 *items;
+    u8                       *items;
 
     ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
@@ -34,7 +35,8 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode)
     UiText_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 3, window, 0, 48);
     items = (u8 *)menu->items;
     ItemMenu_DrawEquippedItemNames(window, items);
-    if (mode == 0) {
+    if (mode == 0)
+    {
         WaitFrames(1);
         ItemMenu_DrawIcons((u16 *)items, 1);
         ItemMenu_ArrangeCategoryItemIcons((u16 *)items);

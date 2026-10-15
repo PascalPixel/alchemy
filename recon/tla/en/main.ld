@@ -2144,7 +2144,7 @@ SECTIONS
         "*/recon/tla/raw/08179994.o"(.text)
         "*/recon/tla/raw/08179e6c.o"(.text)
         "*/recon/tla/raw/08179f18.o"(.text)
-        "*/recon/tla/raw/0817b5d4.o"(.text)
+        "*/games/tla/src/battle/effect/f17b5d4.o"(.text)
         "*/recon/tla/raw/0817b66c.o"(.text)
         "*/games/tla/src/battle/effect/set_record_priority.o"(.text)
         "*/recon/tla/raw/0817b9b8.o"(.text)

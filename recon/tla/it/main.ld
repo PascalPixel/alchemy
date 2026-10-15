@@ -1791,7 +1791,6 @@ SECTIONS
     "*/games/tla/src/battle/party/prepare_active_owners.o"(.text)
     "*/games/tla/src/battle/party/prepare_reserve_owners.o"(.text)
     "*/games/tla/src/battle/party/list_living_units.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0011a264)
     "*/games/tla/src/battle/party/party.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011a3b4)
     "*/games/tla/src/battle/battle.o"(.text)

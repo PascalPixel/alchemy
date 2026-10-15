@@ -98,3 +98,73 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     }
     return living_count;
 }
+
+s32 BattleParty_PrepareReserveOwners(u16 *owners);
+
+// As BattleParty_ListLivingUnits, with the reserve owners listed after the
+// active ones.
+s32 Func_0811a24c(s32 side_mask, u16 *unit_ids)
+{
+    u16 members[10];
+    u16 *base;
+    s32 remaining;
+    s32 enemy_limit;
+    u16 *output;
+    s32 living_count;
+    s32 enemy_capacity;
+    u16 *member;
+    s32 unit_id;
+    s16 hp;
+    s32 count;
+    struct BtlUnit *unit;
+
+    output = unit_ids;
+    living_count = 0;
+    enemy_capacity = 6;
+    if (GameFlag_Test(0x16C) != 0) {
+        enemy_capacity = 3;
+    }
+    if (side_mask & BATTLE_SIDE_PARTY) {
+        base = members;
+        count = BattleParty_PrepareActiveOwners(base);
+        count += BattleParty_PrepareReserveOwners(base + count);
+        if (living_count < count) {
+            member = base;
+            remaining = count;
+            do {
+                unit_id = *member;
+                member += 1;
+                hp = ((struct BtlUnit *)UnitGet(unit_id))->hp;
+                if (hp > 0) {
+                    if (output != NULL) {
+                        *output = unit_id;
+                        output += 1;
+                    }
+                    living_count += 1;
+                }
+                remaining -= 1;
+            } while (remaining != 0);
+        }
+    }
+    if (side_mask & BATTLE_SIDE_ENEMIES) {
+        remaining = 0x80;
+        enemy_limit = enemy_capacity + 0x80;
+        if (remaining < enemy_limit) {
+            do {
+                unit = UnitGet(remaining);
+                if (unit->side != 0 && unit->hp > 0) {
+                    if (output != NULL) {
+                        *output = remaining;
+                        output += 1;
+                    }
+                    living_count += 1;
+                }
+                remaining += 1;
+            } while (remaining < enemy_limit);
+        }
+    }
+    if (output != NULL) {
+        *output = 0xFF;
+    }
+    return living_count;
+}

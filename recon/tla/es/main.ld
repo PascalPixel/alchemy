@@ -3405,7 +3405,7 @@ SECTIONS
     "*/games/tla/src/graphics/ui/icons.o"(.rodata)
     "*/games/tla/src/graphics/ui/command_icons.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.009682e2)
-    "*/recon/tla/es/rom.o"(.rom.009682e4)
+    "*/games/tla/src/graphics/ui/flags.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/glow_disc.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_orb.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_arcs.o"(.rodata)

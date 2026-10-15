@@ -3339,7 +3339,7 @@ SECTIONS
     "*/games/tla/src/graphics/ui/icons.o"(.rodata)
     "*/games/tla/src/graphics/ui/command_icons.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00967f72)
-    "*/recon/tla/ja/rom.o"(.rom.00967f74)
+    "*/games/tla/src/graphics/ui/flags.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/glow_disc.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_orb.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_arcs.o"(.rodata)

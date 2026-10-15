@@ -482,7 +482,7 @@ Resource_DirectoryTable:
 	resource WindowFrameFlash, Ui_WindowFrameFlash
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
-	resource , Resource_Data1D8
+	resource , Ui_Flags
 	resource , FieldFx_GlowDisc
 	resource , FieldFx_RingOrb
 	resource , FieldFx_RingArcs

@@ -3,7 +3,9 @@
  * halves of the centre offset (movs r1, #192; lsls; ldr r0, [r6, #8];
  * adds r1, #168); this finishes the offset first. A split-offset temporary
  * with two barriers orders the rows but indexes the read by the offset
- * (ldrsh r3, [r5, r3]) where the native adds it to the work first. */
+ * (ldrsh r3, [r5, r3]) where the native adds it to the work first. The offset's
+ * 0xc00 forced through an empty asm and pinned to r1 orders the rows, but the work is
+ * added before the 168 (differ 4; 2026-10-15). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

@@ -3,7 +3,9 @@
  * Data_080f0e78. In the fragment loop the listing starts the 0x100000 lift before it
  * loads work->y and starts the object id (movs r0, #209) before it loads work->z;
  * this loads both first. A block-local lift, a split y and every single barrier
- * position measured the same or worse. 080df6f4 is the same body around
+ * position measured the same or worse. The lift forced through an empty asm and pinned
+ * to r0, as in BattleFx_UpdateShrinkingOrbitObject, orders the y copy (differ 9); the id's
+ * first byte forced the same way then reallocates the whole function (differ 83). 080df6f4 is the same body around
  * BattleFx_SpawnItemBreakMode1. */
 #include "types.h"
 #include "system.h"

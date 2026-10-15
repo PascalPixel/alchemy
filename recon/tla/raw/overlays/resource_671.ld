@@ -45,7 +45,6 @@ SECTIONS
         "*/resource_671_overlay.o"(.text.x0200a53c)
         "*/resource_671_overlay.o"(.text.x0200a7cc)
         "*/resource_671_overlay.o"(.text.x0200aa64)
-        "*/resource_671_overlay.o"(.text.x0200af70)
         "*/games/tla/src/field/overlay_671/gabomba.o"(.text)
         "*/games/tla/src/field/overlay_671/s3398.o"(.text)
         "*/games/tla/src/field/overlay_671/s3494.o"(.text)

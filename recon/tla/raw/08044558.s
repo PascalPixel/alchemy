@@ -342,7 +342,7 @@ Func_08044558:
 .L_08044818:
 	.4byte gFrameTick
 .L_0804481c:
-	.4byte Data_0805f656
+	.4byte NameEntry_CaretWave
 .L_08044820:
 	.4byte gInput
 .L_08044824:

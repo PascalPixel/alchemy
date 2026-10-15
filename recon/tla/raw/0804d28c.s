@@ -94,4 +94,4 @@ Menu_SelectResource:
 .L_0804d33c:
 	.4byte 0x0000003a
 .L_0804d340:
-	.4byte Data_0805f89f
+	.4byte Menu_SelectionStepDelays

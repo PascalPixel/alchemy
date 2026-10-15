@@ -264,12 +264,12 @@ Func_0804e1d8:
 .L_0804e3dc:
 	.4byte gInput
 .L_0804e3e0:
-	.4byte Data_0805f8f0
+	.4byte Workspace_ItemTitle
 .L_0804e3e4:
-	.4byte Data_0805f8f8
+	.4byte Workspace_EnergyTitle
 .L_0804e3e8:
-	.4byte Data_0805f900
+	.4byte Workspace_StatusTitle
 .L_0804e3ec:
-	.4byte Data_0805f908
+	.4byte Workspace_PageLabel
 .L_0804e3f0:
-	.4byte Data_0805f910
+	.4byte Workspace_RangeDash

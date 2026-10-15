@@ -1385,42 +1385,6 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0005c360, 0x0000007c
 	.section .rom.0005c464, "ax"
 	.incbin "baserom.gba", 0x0005c464, 0x00000010
-	.section .rom.0005f734, "ax"
-	.incbin "baserom.gba", 0x0005f734, 0x00000101
-	.section .rom.0005f835, "ax"
-	.global Data_0805f585
-Data_0805f585:
-	.incbin "baserom.gba", 0x0005f835, 0x000000bb
-	.section .rom.0005f8f0, "ax"
-	.global StatusMenu_LevelLetterString
-StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x0005f8f0, 0x00000030
-	.section .rom.0005f920, "ax"
-	.global Data_0805f666
-Data_0805f666:
-	.incbin "baserom.gba", 0x0005f920, 0x00000078
-	.section .rom.0005fa68, "ax"
-	.global Link_TimeLabelString
-Link_TimeLabelString:
-	.incbin "baserom.gba", 0x0005fa68, 0x00000008
-	.section .rom.0005fb10, "ax"
-	.incbin "baserom.gba", 0x0005fb10, 0x0000005e
-	.section .rom.0005fb6e, "ax"
-	.global Menu_TopEntryCommandByPosition
-	.type Menu_TopEntryCommandByPosition, %function
-	.thumb_func
-Menu_TopEntryCommandByPosition:
-	.incbin "baserom.gba", 0x0005fb6e, 0x0000000c
-	.section .rom.0005fb7a, "ax"
-	.global Menu_TopEntryPositionByCommand
-	.type Menu_TopEntryPositionByCommand, %function
-	.thumb_func
-Menu_TopEntryPositionByCommand:
-	.incbin "baserom.gba", 0x0005fb7a, 0x00000026
-	.section .rom.0005fba0, "ax"
-	.global Menu_ColonString
-Menu_ColonString:
-	.incbin "baserom.gba", 0x0005fba0, 0x0000003c
 	.section .rom.000a8fd8, "ax"
 	.incbin "baserom.gba", 0x000a8fd8, 0x0000000c
 	.section .rom.000a9024, "ax"

@@ -1373,13 +1373,13 @@ Func_0804868c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08049130:
-	.4byte Data_0805f897
+	.4byte DjinnMenu_ElementXOffsets
 .L_08049134:
-	.4byte Data_0805f89b
+	.4byte DjinnMenu_ElementYOffsets
 .L_08049138:
 	.4byte gFrameCount
 .L_0804913c:
-	.4byte Data_0805f7b8
+	.4byte DjinnMenu_BlinkTile
 .L_08049140:
 	.4byte IwramCopyWords
 .L_08049144:

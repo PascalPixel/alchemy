@@ -12,7 +12,7 @@ extern u8 MsgErasing;
 extern u8 MsgCopying;
 extern u8 MsgDoNotTurnThePower;
 
-extern const u8 Data_0805f585[];
+extern const u8 Ui_ProgressBarTiles[];
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
@@ -46,7 +46,7 @@ struct UiWindow *SaveProgress_Open(u32 kind)
 
     window = UiWindow_Create(0, 0, 30, 20, 0);
     tiles = Runtime_BumpAllocateAlternatePool(0x100);
-    Resource_DecodeType01(Data_0805f585, tiles);
+    Resource_DecodeType01(Ui_ProgressBarTiles, tiles);
     Dma_Set(tiles, (void *)0x06001000, 0x84000040, REG_DMA3);
     switch (kind) {
     case 0:

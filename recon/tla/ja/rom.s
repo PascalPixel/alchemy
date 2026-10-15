@@ -1245,38 +1245,6 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0005cdcc, 0x00000010
 	.section .rom.0005ce64, "ax"
 	.incbin "baserom.gba", 0x0005ce64, 0x00000010
-	.section .rom.00060134, "ax"
-	.incbin "baserom.gba", 0x00060134, 0x00000081
-	.section .rom.000601b5, "ax"
-	.global Data_0805f585
-Data_0805f585:
-	.incbin "baserom.gba", 0x000601b5, 0x000000bb
-	.section .rom.00060270, "ax"
-	.global StatusMenu_LevelLetterString
-StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x00060270, 0x00000026
-	.section .rom.00060296, "ax"
-	.global Data_0805f666
-Data_0805f666:
-	.incbin "baserom.gba", 0x00060296, 0x0000007a
-	.section .rom.000603e0, "ax"
-	.global Link_TimeLabelString
-Link_TimeLabelString:
-	.incbin "baserom.gba", 0x000603e0, 0x00000008
-	.section .rom.00060488, "ax"
-	.incbin "baserom.gba", 0x00060488, 0x0000004f
-	.section .rom.000604d7, "ax"
-	.global Menu_TopEntryCommandByPosition
-Menu_TopEntryCommandByPosition:
-	.incbin "baserom.gba", 0x000604d7, 0x0000000c
-	.section .rom.000604e3, "ax"
-	.global Menu_TopEntryPositionByCommand
-Menu_TopEntryPositionByCommand:
-	.incbin "baserom.gba", 0x000604e3, 0x00000025
-	.section .rom.00060508, "ax"
-	.global Menu_ColonString
-Menu_ColonString:
-	.incbin "baserom.gba", 0x00060508, 0x0000003c
 	.section .rom.0009d0d0, "ax"
 	.incbin "baserom.gba", 0x0009d0d0, 0x0000000c
 	.section .rom.0009d11c, "ax"

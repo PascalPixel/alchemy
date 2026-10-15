@@ -4236,12 +4236,6 @@ Data_080f0e78:
 	.global Data_080f0e9c
 Data_080f0e9c:
 	.incbin "baserom.gba", 0x000f9e90, 0x00000008
-	.section .rom.000fa114, "ax"
-	.incbin "baserom.gba", 0x000fa114, 0x00000020
-	.section .rom.000fa134, "ax"
-	.global Data_080f1140
-Data_080f1140:
-	.incbin "baserom.gba", 0x000fa134, 0x00000668
 	.section .rom.000fb1c4, "ax"
 	.incbin "baserom.gba", 0x000fb1c4, 0x00000034
 	.section .rom.000fc210, "ax"

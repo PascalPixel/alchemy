@@ -92,6 +92,7 @@ void Func_02005168(struct ObjectRuntime *object);
 void Func_020052e8(void);
 struct ObjectRuntime *Func_020052f0(void);
 void Func_020052d8(s32 speed, s32 acceleration);
+void Func_020052d0(s32 id, s32 value);
 void Func_02005300(s32 a, s32 b);
 void Func_02005338(s32 a);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
